@@ -1,0 +1,62 @@
+[
+  {
+    "fichier": "images/hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1064,
+    "legende": "Mur traditionnel en briques et mortier",
+    "alt": "Mur traditionnel en briques et mortier",
+    "auteur": "Dmitry Makeev",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+    "titre_commons": "File:Old brickwork. Red brick.jpg"
+  },
+  {
+    "fichier": "images/coulage-960.webp",
+    "base": "coulage",
+    "largeur": 1600,
+    "hauteur": 1064,
+    "legende": "Coulage d'une dalle béton et nivellement",
+    "alt": "Coulage d'une dalle béton et nivellement",
+    "auteur": "Vsatinet",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+    "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+  },
+  {
+    "fichier": "images/fondations-960.webp",
+    "base": "fondations",
+    "largeur": 1600,
+    "hauteur": 960,
+    "legende": "Coffrage et fondations en béton armé",
+    "alt": "Coffrage et fondations en béton armé",
+    "auteur": "Artaxerxes",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+    "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+  },
+  {
+    "fichier": "images/parement-960.webp",
+    "base": "parement",
+    "largeur": 1600,
+    "hauteur": 1194,
+    "legende": "Pose de parement maçonné et finitions",
+    "alt": "Pose de parement maçonné et finitions",
+    "auteur": "Les Chatfield",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+    "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+  },
+  {
+    "fichier": "images/soutenement-960.webp",
+    "base": "soutenement",
+    "largeur": 1600,
+    "hauteur": 1065,
+    "legende": "Mur de soutènement en pierres de taille",
+    "alt": "Mur de soutènement en pierres de taille",
+    "auteur": "Dosseman",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+    "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+  }
+]

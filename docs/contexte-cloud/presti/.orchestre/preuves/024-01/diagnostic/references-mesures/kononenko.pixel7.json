@@ -1,0 +1,318 @@
+{
+  "slug": "kononenko",
+  "url": "https://kononenkogroup.com/",
+  "profil": "pixel7",
+  "date": "2026-09-16T19:57:45.163Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 124.7,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 27,
+    "budgetEpuise": false,
+    "scrollYMax": 11123,
+    "parcoursVisuelMedian": 11007,
+    "hauteurDocument": 11962
+  },
+  "titre": "Kononenko Architectural Bureau",
+  "styleJs": [
+    {
+      "cible": "span.ln",
+      "elements": 166,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 200,
+      "rafalesParElement": 1.2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 3195
+    },
+    {
+      "cible": "div.wem.pdo",
+      "elements": 15,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 30,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1094,
+      "ecrituresTotales": 1298
+    },
+    {
+      "cible": "div.hgh",
+      "elements": 14,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 28,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1094,
+      "ecrituresTotales": 1156
+    },
+    {
+      "cible": "a.qct.is--a",
+      "elements": 8,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 18,
+      "rafalesParElement": 2.3,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 654
+    },
+    {
+      "cible": "span.wd",
+      "elements": 7,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 14,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1089,
+      "ecrituresTotales": 551
+    },
+    {
+      "cible": "a.link",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 9,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 1098,
+      "ecrituresTotales": 438
+    },
+    {
+      "cible": "path",
+      "elements": 4,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 4,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1116,
+      "ecrituresTotales": 287
+    },
+    {
+      "cible": "a.router-link-active.router-link-exact-active",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 3,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 1098,
+      "ecrituresTotales": 150
+    },
+    {
+      "cible": "div.okc",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 2399,
+      "ecrituresTotales": 139
+    },
+    {
+      "cible": "div.yap",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 985,
+      "ecrituresTotales": 61
+    },
+    {
+      "cible": "p.fn-h4.gvw",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 468,
+      "ecrituresTotales": 33
+    },
+    {
+      "cible": "div.tlk",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 499,
+      "ecrituresTotales": 31
+    }
+  ],
+  "io": {
+    "n": 2,
+    "observe": 23,
+    "options": [
+      {
+        "threshold": 0,
+        "rootMargin": "50% 0px"
+      },
+      {}
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "wheel:passif:window": 3,
+    "scroll:passif:document": 1,
+    "touchstart:passif:element": 1,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 56,
+    "resize:non-precise:window": 4,
+    "scroll:non-precise:window": 1,
+    "wheel:actif-explicite:window": 1,
+    "touchstart:actif-explicite:window": 1,
+    "touchmove:actif-explicite:window": 1,
+    "scroll:passif:window": 1,
+    "scroll:passif:element": 2,
+    "touchmove:passif:window": 2
+  },
+  "matchMedia": [
+    "(max-width: 767px)",
+    "(min-width: 767.1px)",
+    "(hover: none), (pointer: coarse)",
+    "(orientation: portrait)",
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {
+    "p.jgn": {
+      "changements": 7,
+      "textes": [
+        "2011"
+      ]
+    },
+    "span.ln": {
+      "changements": 20,
+      "textes": [
+        "2011",
+        "15+",
+        "490+",
+        "45+",
+        "40K"
+      ]
+    },
+    "span.ln-mask": {
+      "changements": 5,
+      "textes": [
+        "2011",
+        "15+",
+        "490+",
+        "45+",
+        "40K"
+      ]
+    },
+    "h3.fn-h2.pqf": {
+      "changements": 28,
+      "textes": [
+        "15+",
+        "490+",
+        "45+",
+        "40K"
+      ]
+    },
+    "p.fn-h4.gvw": {
+      "changements": 9,
+      "textes": [
+        "45",
+        "48",
+        "54",
+        "73",
+        "77",
+        "81",
+        "89",
+        "97"
+      ]
+    }
+  },
+  "transitions": [
+    [
+      "transform | 0.5s | cubic-bezier(0.17, 0.84, 0.44, 1) | delai 0s",
+      {
+        "n": 30,
+        "ex": "p.fn-h4.gvw"
+      }
+    ]
+  ],
+  "animationsCss": [],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 0
+  },
+  "classesRacine": "lenis lenis-scrolling",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 46,
+  "imagesLazy": 0,
+  "images": 46,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": false,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": false,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": false,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": false,
+    "split-type/splitting": true,
+    "lenis": true,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": true,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": false,
+    "startViewTransition": true,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": true
+  },
+  "animationsVuesPendantDefilement": [],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 18699
+    },
+    "stylesheet": {
+      "requetes": 12,
+      "octets": 21452
+    },
+    "image": {
+      "requetes": 65,
+      "octets": 2946456
+    },
+    "other": {
+      "requetes": 4,
+      "octets": 23923
+    },
+    "script": {
+      "requetes": 20,
+      "octets": 568082
+    },
+    "font": {
+      "requetes": 2,
+      "octets": 85149
+    },
+    "fetch": {
+      "requetes": 18,
+      "octets": 138790
+    }
+  },
+  "octetsTotal": 3802551
+}

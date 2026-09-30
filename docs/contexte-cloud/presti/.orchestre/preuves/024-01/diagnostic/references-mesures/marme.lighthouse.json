@@ -1,0 +1,60 @@
+{
+  "slug": "marme",
+  "url": "https://menuiserieretaise.fr/",
+  "lighthouse": "13.4.1",
+  "fetchTime": "2026-09-16T20:46:26.718Z",
+  "formFactor": "mobile",
+  "throttlingMethod": "simulate",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+  "benchmarkIndex": 632.5,
+  "erreurExecution": null,
+  "avertissements": [
+    "The page may not be loading as expected because your test URL (https://marme.fr/) was redirected to https://menuiserieretaise.fr/. Try testing the second URL directly.",
+    "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+  ],
+  "scorePerformance": 0.27,
+  "FCP_ms": 6763.678260000001,
+  "LCP_ms": 13363.67826,
+  "TBT_ms": 3762.6204999999973,
+  "CLS": 0.01779164184430629,
+  "SpeedIndex_ms": 8835.68270786972,
+  "TTI_ms": 20118.482602,
+  "poidsTotal_octets": 2679754,
+  "tempsJs_ms": 7931.347999999974,
+  "travailThreadPrincipal_ms": 17237.135999999962,
+  "domElements": null,
+  "animationsNonComposees": {
+    "score": null,
+    "elements": 0,
+    "titre": null
+  },
+  "longuesTaches": 20,
+  "auditsEchoues": [
+    "first-contentful-paint (6.8 s)",
+    "largest-contentful-paint (13.4 s)",
+    "speed-index (8.8 s)",
+    "total-blocking-time (3,760 ms)",
+    "max-potential-fid (730 ms)",
+    "interactive (20.1 s)",
+    "redirects (Est savings of 2,400 ms)",
+    "mainthread-work-breakdown (17.2 s)",
+    "bootup-time (7.9 s)",
+    "unused-css-rules (Est savings of 152 KiB)",
+    "bf-cache (1 failure reason)",
+    "document-latency-insight (Est savings of 1,700 ms)",
+    "font-display-insight (Est savings of 50 ms)",
+    "forced-reflow-insight",
+    "lcp-breakdown-insight",
+    "lcp-discovery-insight",
+    "network-dependency-tree-insight",
+    "render-blocking-insight (Est savings of 1,520 ms)"
+  ]
+}

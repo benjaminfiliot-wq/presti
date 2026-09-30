@@ -1,0 +1,183 @@
+{
+ "resume": {
+  "nom": "hugomatias-DcODQPCMsLl",
+  "duree": 59.7,
+  "scenes_detectees": 13,
+  "candidats": 42,
+  "extraits": 42,
+  "doublons_supprimes": 0,
+  "plans": 42,
+  "planches": 5,
+  "zero_octet": []
+ },
+ "plans": [
+  {
+   "t": 0.0,
+   "source": "2s"
+  },
+  {
+   "t": 2.0,
+   "source": "2s"
+  },
+  {
+   "t": 4.0,
+   "source": "2s"
+  },
+  {
+   "t": 5.3,
+   "source": "scene"
+  },
+  {
+   "t": 6.0,
+   "source": "2s"
+  },
+  {
+   "t": 7.0,
+   "source": "scene"
+  },
+  {
+   "t": 8.0,
+   "source": "2s"
+  },
+  {
+   "t": 9.1,
+   "source": "scene"
+  },
+  {
+   "t": 10.0,
+   "source": "2s"
+  },
+  {
+   "t": 12.0,
+   "source": "2s"
+  },
+  {
+   "t": 13.8,
+   "source": "scene"
+  },
+  {
+   "t": 14.0,
+   "source": "2s"
+  },
+  {
+   "t": 16.0,
+   "source": "2s+scene"
+  },
+  {
+   "t": 17.8,
+   "source": "scene"
+  },
+  {
+   "t": 18.0,
+   "source": "2s"
+  },
+  {
+   "t": 20.0,
+   "source": "2s"
+  },
+  {
+   "t": 22.0,
+   "source": "2s"
+  },
+  {
+   "t": 22.7,
+   "source": "scene"
+  },
+  {
+   "t": 24.0,
+   "source": "2s"
+  },
+  {
+   "t": 25.1,
+   "source": "scene"
+  },
+  {
+   "t": 26.0,
+   "source": "2s"
+  },
+  {
+   "t": 28.0,
+   "source": "2s"
+  },
+  {
+   "t": 29.8,
+   "source": "scene"
+  },
+  {
+   "t": 30.0,
+   "source": "2s"
+  },
+  {
+   "t": 32.0,
+   "source": "2s"
+  },
+  {
+   "t": 34.0,
+   "source": "2s"
+  },
+  {
+   "t": 36.0,
+   "source": "2s"
+  },
+  {
+   "t": 38.0,
+   "source": "2s"
+  },
+  {
+   "t": 40.0,
+   "source": "2s"
+  },
+  {
+   "t": 40.9,
+   "source": "scene"
+  },
+  {
+   "t": 42.0,
+   "source": "2s"
+  },
+  {
+   "t": 43.0,
+   "source": "scene"
+  },
+  {
+   "t": 44.0,
+   "source": "2s"
+  },
+  {
+   "t": 46.0,
+   "source": "2s"
+  },
+  {
+   "t": 47.7,
+   "source": "scene"
+  },
+  {
+   "t": 48.0,
+   "source": "2s"
+  },
+  {
+   "t": 50.0,
+   "source": "2s"
+  },
+  {
+   "t": 52.0,
+   "source": "2s"
+  },
+  {
+   "t": 54.0,
+   "source": "2s"
+  },
+  {
+   "t": 54.9,
+   "source": "scene"
+  },
+  {
+   "t": 56.0,
+   "source": "2s"
+  },
+  {
+   "t": 58.0,
+   "source": "2s"
+  }
+ ]
+}

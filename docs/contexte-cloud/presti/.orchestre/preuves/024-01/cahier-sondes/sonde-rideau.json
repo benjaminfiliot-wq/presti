@@ -1,0 +1,15 @@
+{
+ "version": "153.0.8010.12",
+ "entry0-texte-vs-entry30": {
+  "moyen": 0.0811,
+  "part8": 0.4714
+ },
+ "entry0-vs-entry15": {
+  "moyen": 0.0678,
+  "part8": 0.3852
+ },
+ "entry15-vs-entry30": {
+  "moyen": 0.0408,
+  "part8": 0.3338
+ }
+}

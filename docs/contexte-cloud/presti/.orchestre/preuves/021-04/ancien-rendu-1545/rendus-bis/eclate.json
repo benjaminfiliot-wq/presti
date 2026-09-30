@@ -1,0 +1,99 @@
+{
+ "cadre": {
+  "largeur": 1400,
+  "hauteur": 1050
+ },
+ "pieces": [
+  {
+   "nom": "limon",
+   "fichier": "calque-limon.avif",
+   "x": 0.252,
+   "y": 0.172,
+   "l": 0.272,
+   "h": 0.503,
+   "vecteur": [
+    -0.032,
+    -0.016
+   ],
+   "ordre": 1
+  },
+  {
+   "nom": "marche",
+   "fichier": "calque-marche.avif",
+   "x": 0.288,
+   "y": 0.152,
+   "l": 0.472,
+   "h": 0.51,
+   "vecteur": [
+    0.024,
+    -0.038
+   ],
+   "ordre": 3
+  },
+  {
+   "nom": "contremarche",
+   "fichier": "calque-contremarche.avif",
+   "x": 0.365,
+   "y": 0.162,
+   "l": 0.398,
+   "h": 0.533,
+   "vecteur": [
+    -0.019,
+    0.036
+   ],
+   "ordre": 2
+  },
+  {
+   "nom": "vis",
+   "fichier": "calque-vis.avif",
+   "x": 0.388,
+   "y": 0.17,
+   "l": 0.326,
+   "h": 0.411,
+   "vecteur": [
+    0.027,
+    -0.057
+   ],
+   "ordre": 4
+  }
+ ],
+ "etiquettes": [
+  {
+   "texte": "Limon à la française",
+   "piece": "limon",
+   "x": 0.22,
+   "y": 0.35
+  },
+  {
+   "texte": "Entailles",
+   "piece": "limon",
+   "x": 0.32,
+   "y": 0.45
+  },
+  {
+   "texte": "Marche en chêne, 40 mm",
+   "piece": "marche",
+   "x": 0.55,
+   "y": 0.42
+  },
+  {
+   "texte": "Contremarche",
+   "piece": "contremarche",
+   "x": 0.4,
+   "y": 0.62
+  },
+  {
+   "texte": "Vis",
+   "piece": "vis",
+   "x": 0.65,
+   "y": 0.7
+  }
+ ],
+ "cote": {
+  "texte": "40 mm",
+  "x1": 0.5,
+  "y1": 0.48,
+  "x2": 0.6,
+  "y2": 0.48
+ }
+}

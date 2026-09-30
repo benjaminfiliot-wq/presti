@@ -1,0 +1,1119 @@
+{
+ "tapPanneau": [
+  {
+   "essai": 1,
+   "i": 0,
+   "y": 2,
+   "claires": 42,
+   "contactTop": 6271,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 1,
+   "y": 667,
+   "claires": 78,
+   "contactTop": 5559,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 2,
+   "y": 1569,
+   "claires": 78,
+   "contactTop": 4010,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 3,
+   "y": 3471,
+   "claires": 78,
+   "contactTop": 2304,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 4,
+   "y": 4729,
+   "claires": 78,
+   "contactTop": 1629,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 5,
+   "y": 5263,
+   "claires": 78,
+   "contactTop": 1090,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 6,
+   "y": 5706,
+   "claires": 78,
+   "contactTop": 721,
+   "avant": "inset(68px 0px 0px)",
+   "apres": "inset(0px 0px 10px)"
+  },
+  {
+   "essai": 1,
+   "i": 7,
+   "y": 6015,
+   "claires": 78,
+   "contactTop": 461,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 8,
+   "y": 6234,
+   "claires": 78,
+   "contactTop": 277,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 9,
+   "y": 6408,
+   "claires": 77,
+   "contactTop": 133,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 10,
+   "y": 6505,
+   "claires": 77,
+   "contactTop": 56,
+   "avant": "inset(0px 0px 22px)",
+   "apres": "inset(56px 0px 0px)"
+  },
+  {
+   "essai": 1,
+   "i": 11,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 12,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 13,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 14,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 15,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 16,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 17,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 18,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 19,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 20,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 21,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 22,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 23,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 24,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 25,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 26,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 27,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 28,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 29,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 30,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 31,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 32,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 33,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 34,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 35,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 36,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 37,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 38,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 1,
+   "i": 39,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 0,
+   "y": 0,
+   "claires": 19,
+   "contactTop": 6574,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 1,
+   "y": 95,
+   "claires": 78,
+   "contactTop": 6409,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 2,
+   "y": 324,
+   "claires": 78,
+   "contactTop": 6065,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 3,
+   "y": 1036,
+   "claires": 78,
+   "contactTop": 5026,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 4,
+   "y": 2585,
+   "claires": 78,
+   "contactTop": 3389,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 5,
+   "y": 3710,
+   "claires": 78,
+   "contactTop": 2304,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 6,
+   "y": 4595,
+   "claires": 78,
+   "contactTop": 1743,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 7,
+   "y": 5171,
+   "claires": 78,
+   "contactTop": 1246,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 8,
+   "y": 5576,
+   "claires": 78,
+   "contactTop": 889,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 9,
+   "y": 5821,
+   "claires": 78,
+   "contactTop": 671,
+   "avant": "inset(18px 0px 0px)",
+   "apres": "inset(0px 0px 60px)"
+  },
+  {
+   "essai": 2,
+   "i": 10,
+   "y": 6057,
+   "claires": 78,
+   "contactTop": 461,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 11,
+   "y": 6234,
+   "claires": 78,
+   "contactTop": 303,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 12,
+   "y": 6366,
+   "claires": 78,
+   "contactTop": 187,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 13,
+   "y": 6462,
+   "claires": 77,
+   "contactTop": 103,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 14,
+   "y": 6517,
+   "claires": 65,
+   "contactTop": 47,
+   "avant": "inset(0px 0px 31px)",
+   "apres": "inset(47px 0px 0px)"
+  },
+  {
+   "essai": 2,
+   "i": 15,
+   "y": 6594,
+   "claires": 1,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 16,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 17,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 18,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 19,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 20,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 21,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 22,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 23,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 24,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 25,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 26,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 27,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 28,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 29,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 30,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 31,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 32,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 33,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 34,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 35,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 36,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 37,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 38,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 2,
+   "i": 39,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 0,
+   "y": 0,
+   "claires": 9,
+   "contactTop": 6586,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 1,
+   "y": 39,
+   "claires": 73,
+   "contactTop": 6459,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 2,
+   "y": 324,
+   "claires": 78,
+   "contactTop": 6065,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 3,
+   "y": 834,
+   "claires": 78,
+   "contactTop": 4354,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 4,
+   "y": 2910,
+   "claires": 78,
+   "contactTop": 3124,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 5,
+   "y": 4116,
+   "claires": 78,
+   "contactTop": 2145,
+   "avant": "inset(57px 0px 0px)",
+   "apres": "inset(0px 0px 21px)"
+  },
+  {
+   "essai": 3,
+   "i": 6,
+   "y": 4852,
+   "claires": 78,
+   "contactTop": 1523,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 7,
+   "y": 5263,
+   "claires": 78,
+   "contactTop": 1166,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 8,
+   "y": 5643,
+   "claires": 78,
+   "contactTop": 830,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 9,
+   "y": 5874,
+   "claires": 78,
+   "contactTop": 580,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 10,
+   "y": 6096,
+   "claires": 78,
+   "contactTop": 392,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 11,
+   "y": 6292,
+   "claires": 78,
+   "contactTop": 252,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 12,
+   "y": 6408,
+   "claires": 78,
+   "contactTop": 150,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 13,
+   "y": 6478,
+   "claires": 78,
+   "contactTop": 78,
+   "avant": "inset(0px)",
+   "apres": "inset(78px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 14,
+   "y": 6539,
+   "claires": 56,
+   "contactTop": 39,
+   "avant": "inset(0px 0px 39px)",
+   "apres": "inset(39px 0px 0px)"
+  },
+  {
+   "essai": 3,
+   "i": 15,
+   "y": 6594,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 16,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 17,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 18,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 19,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 20,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 21,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 22,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 23,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 24,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 25,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 26,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 27,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 28,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 29,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 30,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 31,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 32,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 33,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 34,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 35,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 36,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 37,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 38,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "essai": 3,
+   "i": 39,
+   "y": 6595,
+   "claires": 0,
+   "contactTop": 0,
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  }
+ ],
+ "molette": {
+  "echantillons": 140,
+  "alertes": 8,
+  "pire": {
+   "y": 4560,
+   "bad": 78
+  }
+ },
+ "pire1": {
+  "essai": 1,
+  "i": 10,
+  "y": 6505,
+  "claires": 77,
+  "contactTop": 56,
+  "avant": "inset(0px 0px 22px)",
+  "apres": "inset(56px 0px 0px)"
+ },
+ "pire2": {
+  "essai": 2,
+  "i": 14,
+  "y": 6517,
+  "claires": 65,
+  "contactTop": 47,
+  "avant": "inset(0px 0px 31px)",
+  "apres": "inset(47px 0px 0px)"
+ },
+ "pire3": {
+  "essai": 3,
+  "i": 14,
+  "y": 6539,
+  "claires": 56,
+  "contactTop": 39,
+  "avant": "inset(0px 0px 39px)",
+  "apres": "inset(39px 0px 0px)"
+ }
+}

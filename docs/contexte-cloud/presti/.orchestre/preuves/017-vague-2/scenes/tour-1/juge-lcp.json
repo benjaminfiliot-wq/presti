@@ -1,0 +1,28 @@
+{
+ "version": "13.4.1",
+ "perf": 69,
+ "LCP": "2.1 s",
+ "TBT": "2,620 ms",
+ "parAudit": {
+  "largest-contentful-paint": {
+   "titre": "Largest Contentful Paint",
+   "valeur": "2.1 s",
+   "snippets": [],
+   "selecteurs": []
+  },
+  "lcp-breakdown-insight": {
+   "titre": "LCP breakdown",
+   "snippets": [
+    "<span class=\\\"mot\\\" style=\\\"--i:1\\\">"
+   ],
+   "selecteurs": [
+    "h1 > span.h1__ligne > span.h1__ligne-in > span.mot"
+   ]
+  },
+  "lcp-discovery-insight": {
+   "titre": "LCP request discovery",
+   "snippets": [],
+   "selecteurs": []
+  }
+ }
+}

@@ -1,0 +1,160 @@
+{
+  "slug": "hays",
+  "url": "https://www.hayswoodworking.com/",
+  "profil": "pixel7-reduit",
+  "date": "2026-09-16T20:19:44.177Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 0,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 17,
+    "budgetEpuise": false,
+    "scrollYMax": 6426,
+    "parcoursVisuelMedian": 5062,
+    "hauteurDocument": 7265
+  },
+  "titre": "Hays Woodworking Group Inc | Luxury Custom Millwork",
+  "styleJs": [],
+  "io": {
+    "n": 0,
+    "observe": 0,
+    "options": []
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "resize:non-precise:window": 2
+  },
+  "matchMedia": [
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [],
+  "animationsCss": [
+    [
+      "zoomOutImage | 2.5s | ease | x1 | timeline auto",
+      {
+        "n": 1,
+        "ex": "picture"
+      }
+    ],
+    [
+      "slideDownContainer | 1s | linear | x1 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.intro-animation"
+      }
+    ]
+  ],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 2
+  },
+  "classesRacine": "",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": true,
+  "imagesDecodingAsync": 17,
+  "imagesLazy": 0,
+  "images": 17,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": true,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": true,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": false,
+    "will-change": false,
+    "position:sticky": true,
+    "overscroll-behavior": false,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": false,
+    "ScrollTrigger": false,
+    "SplitText": false,
+    "split-type/splitting": false,
+    "lenis": false,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": false,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | zoomOutImage | 2500 | linear | 1 | DocumentTimeline | transform",
+      {
+        "n": 18,
+        "ex": "picture"
+      }
+    ],
+    [
+      "CSSAnimation | slideDownContainer | 1000 | linear | 1 | DocumentTimeline | clipPath,top",
+      {
+        "n": 18,
+        "ex": "div.intro-animation"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 2,
+      "octets": 43552
+    },
+    "stylesheet": {
+      "requetes": 4,
+      "octets": 79641
+    },
+    "script": {
+      "requetes": 18,
+      "octets": 590174
+    },
+    "image": {
+      "requetes": 18,
+      "octets": 3297173
+    },
+    "font": {
+      "requetes": 2,
+      "octets": 70295
+    },
+    "other": {
+      "requetes": 5,
+      "octets": 38806
+    },
+    "xhr": {
+      "requetes": 1,
+      "octets": 2255
+    }
+  },
+  "octetsTotal": 4121896
+}

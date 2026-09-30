@@ -1,0 +1,14 @@
+{
+ "p0": {
+  "pixelsObjet": 197877,
+  "ecartMoyen": 7.37,
+  "pixelsEcartSup24": 18466,
+  "part": "9.33 %"
+ },
+ "p100": {
+  "pixelsObjet": 250914,
+  "ecartMoyen": 3.91,
+  "pixelsEcartSup24": 2211,
+  "part": "0.88 %"
+ }
+}

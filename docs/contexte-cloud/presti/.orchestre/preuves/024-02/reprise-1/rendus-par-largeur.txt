@@ -1,0 +1,4 @@
+sections.html à 1440 : tous les rendus par largeur sont corrects
+sections.html à 390 : tous les rendus par largeur sont corrects
+index.html à 1440 : tous les rendus par largeur sont corrects
+index.html à 390 : tous les rendus par largeur sont corrects

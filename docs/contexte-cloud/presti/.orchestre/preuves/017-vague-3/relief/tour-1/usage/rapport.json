@@ -1,0 +1,60 @@
+{
+  "url": "http://127.0.0.1:47831/index.html",
+  "date": "2026-09-15T00:48:38.621Z",
+  "controles": [
+    {
+      "id": "menu-mobile-ferme",
+      "ok": true,
+      "preuve": "390×844 tactile ; avant={\"developpe\":\"false\",\"panneauVisible\":false,\"classe\":\"panneau\",\"boutonAtteignable\":true,\"dessus\":\"BUTTON.burger\",\"x\":347.5,\"y\":39} ; ouvert={\"developpe\":\"true\",\"panneauVisible\":true,\"classe\":\"panneau ouvert\",\"boutonAtteignable\":true,\"dessus\":\"SPAN.\",\"x\":347.5,\"y\":38.99999809265137} ; après second tap={\"developpe\":\"false\",\"panneauVisible\":false,\"classe\":\"panneau\",\"boutonAtteignable\":true,\"dessus\":\"BUTTON.burger\",\"x\":347.5,\"y\":38.99999809265137}",
+      "captures": [
+        "menu-ouvert.png",
+        "menu-second-tap.png"
+      ]
+    },
+    {
+      "id": "devis-mene-formulaire",
+      "ok": false,
+      "preuve": "Chaque accès devis, bureau puis téléphone : [{\"profil\":\"bureau\",\"indice\":0,\"texte\":\"Devis\",\"ok\":true,\"href\":\"#contact\",\"formulaires\":[{\"visible\":true,\"champs\":5}],\"url\":\"http://127.0.0.1:47831/index.html#contact\"},{\"profil\":\"bureau\",\"indice\":1,\"texte\":\"\",\"ok\":true,\"href\":\"#contact\",\"formulaires\":[{\"visible\":true,\"champs\":5}],\"url\":\"http://127.0.0.1:47831/index.html#contact\"},{\"profil\":\"bureau\",\"indice\":2,\"texte\":\"Demander un devis\",\"ok\":false,\"href\":\"#contact\",\"erreur\":\"locator.click: Timeout 7000ms exceeded.\\nCall log:\\n\\u001b[2m  - waiting for locator('a, button, [role=\\\"button\\\"]').filter({ hasText: /devis/i }).nth(2)\\u001b[22m\\n\\u001b[2m    - locator resolved to <a class=\\\"bouton\\\" href=\\\"#contact\\\">…</a>\\u001b[22m\\n\\u001b[2m  - attempting click action\\u001b[22m\\n\\u001b[2m    2 × waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m      - element is not stable\\u001b[22m\\n\\u001b[2m    - retrying click action\\u001b[22m\\n\\u001b[2m    - waiting 20ms\\u001b[22m\\n\\u001b[2m    - waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - element is visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - scrolling into view if needed\\u001b[22m\\n\\u001b[2m    - done scrolling\\u001b[22m\\n\\u001b[2m    - <img width=\\\"1600\\\" height=\\\"1068\\\" loading=\\\"lazy\\\" decoding=\\\"async\\\" src=\\\"images/mains-noyer-960.webp\\\" alt=\\\"Mains posées sur une planche de noyer, sciure au sol\\\"/> from <section class=\\\"plateau\\\" data-nav=\\\"sombre\\\" aria-label=\\\"L’atelier en bref\\\">…</section> subtree intercepts pointer events\\u001b[22m\\n\\u001b[2m  2 × retrying click action\\u001b[22m\\n\\u001b[2m      - waiting 100ms\\u001b[22m\\n\\u001b[2m      - waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m      - element is visible, enabled and stable\\u001b[22m\\n\\u001b[2m      - scrolling into view if needed\\u001b[22m\\n\\u001b[2m      - done scrolling\\u001b[22m\\n\\u001b[2m      - <dd>…</dd> from <section class=\\\"plateau\\\" data-nav=\\\"sombre\\\" aria-label=\\\"L’atelier en bref\\\">…</section> subtree intercepts pointer events\\u001b[22m\\n\\u001b[2m  - retrying click action\\u001b[22m\\n\\u001b[2m    - waiting 500ms\\u001b[22m\\n\\u001b[2m    - waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - element is visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - scrolling into view if needed\\u001b[22m\\n\\u001b[2m    - done scrolling\\u001b[22m\\n\\u001b[2m    - <div class=\\\"plateau__inner\\\">…</div> from <section class=\\\"plateau\\\" data-nav=\\\"sombre\\\" aria-label=\\\"L’atelier en bref\\\">…</section> subtree intercepts pointer events\\u001b[22m\\n\\u001b[2m  - retrying click action\\u001b[22m\\n\\u001b[2m    - waiting 500ms\\u001b[22m\\n\\u001b[2m    - waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - element is visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - scrolling into view if needed\\u001b[22m\\n\\u001b[2m    - done scrolling\\u001b[22m\\n\\u001b[2m    - <dd>…</dd> from <section class=\\\"plateau\\\" data-nav=\\\"sombre\\\" aria-label=\\\"L’atelier en bref\\\">…</section> subtree intercepts pointer events\\u001b[22m\\n\\u001b[2m  - retrying click action\\u001b[22m\\n\\u001b[2m    - waiting 500ms\\u001b[22m\\n\\u001b[2m    - waiting for element to be visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - element is visible, enabled and stable\\u001b[22m\\n\\u001b[2m    - scrolling into view if needed\\u001b[22m\\n\\u001b[2m    - done scrolling\\u001b[22m\\n\"},{\"profil\":\"telephone\",\"indice\":0,\"texte\":\"Devis\",\"ok\":true,\"href\":\"#contact\",\"formulaires\":[{\"visible\":true,\"champs\":5}],\"url\":\"http://127.0.0.1:47831/index.html#contact\"},{\"profil\":\"telephone\",\"indice\":1,\"texte\":\"\",\"ok\":true,\"href\":\"#contact\",\"formulaires\":[{\"visible\":true,\"champs\":5}],\"url\":\"http://127.0.0.1:47831/index.html#contact\"},{\"profil\":\"telephone\",\"indice\":2,\"texte\":\"Demander un devis\",\"ok\":true,\"href\":\"#contact\",\"formulaires\":[{\"visible\":true,\"champs\":5}],\"url\":\"http://127.0.0.1:47831/index.html#contact\"}]",
+      "captures": [
+        "devis-bureau-1.png",
+        "devis-bureau-2.png",
+        "devis-bureau-3.png",
+        "devis-telephone-1.png",
+        "devis-telephone-2.png",
+        "devis-telephone-3.png"
+      ]
+    },
+    {
+      "id": "polices-premier-passage",
+      "ok": true,
+      "preuve": "Contexte neuf, cache désactivé, polices réellement rendues via CDP (isCustomFont distingue les fichiers web des polices système) : [{\"element\":\"texte courant\",\"mesure\":\"nœud\",\"polices\":[{\"familyName\":\"IBM Plex Sans\",\"postScriptName\":\"IBMPlexSans-Regular\",\"isCustomFont\":true,\"glyphCount\":85}],\"ok\":true},{\"element\":\"h1\",\"mesure\":\"premier descendant avec du texte\",\"polices\":[{\"familyName\":\"IBM Plex Sans\",\"postScriptName\":\"IBMPlexSans-Regular\",\"isCustomFont\":true,\"glyphCount\":18}],\"ok\":true},{\"element\":\"premier .mono\",\"mesure\":\"nœud\",\"polices\":[{\"familyName\":\"IBM Plex Sans\",\"postScriptName\":\"IBMPlexSans-Regular\",\"isCustomFont\":true,\"glyphCount\":19}],\"ok\":true}]",
+      "captures": []
+    },
+    {
+      "id": "voix-premiere-personne",
+      "ok": true,
+      "preuve": "15 occurrence(s) je / j’ / mon / ma / mes dans le texte visible parcouru (fragments identiques dédupliqués). Extrait : pour rester Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose. Demander un devis Du premier relevé à la dernière marche posée, je ne passe la main à personne. Camille Lestraque · à Rennes depuis 2011 CAP puis brevet professionnel de ",
+      "captures": []
+    },
+    {
+      "id": "page-commune",
+      "ok": true,
+      "preuve": "http://127.0.0.1:47831/menuisier-rennes/index.html : HTTP 200 ; h1 accueil=\"MENUISIER À RENNES\\nFait pour rester\" ; h1 commune=\"MENUISIER À RENNES\\nEscaliers et agencement\" ; images chargées visibles au premier écran=[\"http://127.0.0.1:47831/images/heros-escalier-1600.avif\"]",
+      "captures": [
+        "page-commune.png"
+      ]
+    },
+    {
+      "id": "liens-internes-ok",
+      "ok": true,
+      "preuve": "7 liens internes uniques (ancres seules exclues), requêtes GET avec redirections : [{\"url\":\"http://127.0.0.1:47831/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/index.html\"},{\"url\":\"http://127.0.0.1:47831/menuisier-rennes/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/menuisier-rennes/index.html\"},{\"url\":\"http://127.0.0.1:47831/menuisier-cesson-sevigne/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/menuisier-cesson-sevigne/index.html\"},{\"url\":\"http://127.0.0.1:47831/menuisier-bruz/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/menuisier-bruz/index.html\"},{\"url\":\"http://127.0.0.1:47831/menuisier-saint-gregoire/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/menuisier-saint-gregoire/index.html\"},{\"url\":\"http://127.0.0.1:47831/mentions-legales/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/mentions-legales/index.html\"},{\"url\":\"http://127.0.0.1:47831/confidentialite/index.html\",\"statut\":200,\"destination\":\"http://127.0.0.1:47831/confidentialite/index.html\"}]",
+      "captures": []
+    },
+    {
+      "id": "console-sans-erreur",
+      "ok": true,
+      "preuve": "Accueil : erreurs console et exceptions de page vues depuis avant la navigation : aucune.",
+      "captures": []
+    }
+  ]
+}

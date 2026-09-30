@@ -1,0 +1,46 @@
+{
+  "slug": "lestraque",
+  "url": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+  "lighthouse": "13.4.1",
+  "fetchTime": "2026-09-16T20:52:13.746Z",
+  "formFactor": "mobile",
+  "throttlingMethod": "simulate",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+  "benchmarkIndex": 849.5,
+  "erreurExecution": null,
+  "avertissements": [
+    "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+  ],
+  "scorePerformance": 0.93,
+  "FCP_ms": 1111.6019999999999,
+  "LCP_ms": 2373.102,
+  "TBT_ms": 191.5,
+  "CLS": 0,
+  "SpeedIndex_ms": 4072.982094900934,
+  "TTI_ms": 2398.952,
+  "poidsTotal_octets": 272335,
+  "tempsJs_ms": 141.54799999999997,
+  "travailThreadPrincipal_ms": 3202.9239999999954,
+  "domElements": null,
+  "animationsNonComposees": {
+    "score": null,
+    "elements": 0,
+    "titre": null
+  },
+  "longuesTaches": 4,
+  "auditsEchoues": [
+    "max-potential-fid (260 ms)",
+    "mainthread-work-breakdown (3.2 s)",
+    "unused-css-rules (Est savings of 13 KiB)",
+    "image-delivery-insight (Est savings of 85 KiB)",
+    "network-dependency-tree-insight"
+  ]
+}

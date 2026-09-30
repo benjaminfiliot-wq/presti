@@ -1,0 +1,434 @@
+{
+  "slug": "lestraque",
+  "url": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+  "profil": "pixel7",
+  "date": "2026-09-16T20:17:28.141Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 0,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 20,
+    "budgetEpuise": false,
+    "scrollYMax": 7583,
+    "parcoursVisuelMedian": 7622,
+    "hauteurDocument": 8422
+  },
+  "titre": "Menuisier à Rennes — Atelier Lestraque",
+  "styleJs": [],
+  "io": {
+    "n": 4,
+    "observe": 47,
+    "options": [
+      {
+        "threshold": 0.12,
+        "rootMargin": "0px 0px -6% 0px"
+      },
+      {
+        "threshold": 0
+      },
+      {
+        "rootMargin": "25% 0px 25% 0px"
+      },
+      {
+        "rootMargin": "0px 0px -761px 0px"
+      }
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "scroll:passif:window": 4,
+    "resize:non-precise:window": 1
+  },
+  "matchMedia": [
+    "(prefers-reduced-motion: reduce)",
+    "(min-width: 1024px)",
+    "(min-width: 960px)",
+    "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+    "(min-width: 900px)",
+    "(hover: hover) and (pointer: fine)",
+    "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+    "(min-width:1024px) and (hover:hover) and (pointer:fine)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [
+    [
+      "background-color | 0.35s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 18,
+        "ex": "span"
+      }
+    ],
+    [
+      "opacity | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0s",
+      {
+        "n": 13,
+        "ex": "div.scene__tete.scene__tete--deux"
+      }
+    ],
+    [
+      "transform | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0s",
+      {
+        "n": 13,
+        "ex": "div.scene__tete.scene__tete--deux"
+      }
+    ],
+    [
+      "color | 0.25s | ease | delai 0s",
+      {
+        "n": 9,
+        "ex": "header.nav.nav--claire"
+      }
+    ],
+    [
+      "background-color | 0.3s | ease | delai 0s",
+      {
+        "n": 9,
+        "ex": "button.burger"
+      }
+    ],
+    [
+      "color | 0.3s | ease | delai 0s",
+      {
+        "n": 8,
+        "ex": "a.nav__devis"
+      }
+    ],
+    [
+      "background-color | 0.4s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 8,
+        "ex": "a.nav__devis"
+      }
+    ],
+    [
+      "opacity | 0.6s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 6,
+        "ex": "span.etape__num"
+      }
+    ],
+    [
+      "opacity | 0.25s | ease | delai 0s",
+      {
+        "n": 2,
+        "ex": "header.nav.nav--claire"
+      }
+    ],
+    [
+      "opacity | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.07s",
+      {
+        "n": 2,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "transform | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.07s",
+      {
+        "n": 2,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "opacity | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.14s",
+      {
+        "n": 2,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "transform | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.14s",
+      {
+        "n": 2,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "opacity | 0.6s | ease | delai 0.2s",
+      {
+        "n": 2,
+        "ex": "figcaption"
+      }
+    ],
+    [
+      "clip-path | 0.6s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 2,
+        "ex": "div.galerie__cadre"
+      }
+    ],
+    [
+      "transform | 1s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 2,
+        "ex": "img"
+      }
+    ],
+    [
+      "opacity | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.21s",
+      {
+        "n": 1,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "transform | 0.55s | cubic-bezier(0.2, 0.7, 0.2, 1) | delai 0.21s",
+      {
+        "n": 1,
+        "ex": "div.chiffre.reveal"
+      }
+    ]
+  ],
+  "animationsCss": [
+    [
+      "telephone-mot | auto | linear | x1 | timeline --telephone-citation",
+      {
+        "n": 15,
+        "ex": "span.citation__mot"
+      }
+    ],
+    [
+      "telephone-apparait | auto | linear | x1 | timeline --telephone-eclate",
+      {
+        "n": 9,
+        "ex": "img.eclate__calque"
+      }
+    ],
+    [
+      "telephone-verbe | auto | linear | x1 | timeline --telephone-verbes",
+      {
+        "n": 4,
+        "ex": "span.atelier__verbe"
+      }
+    ],
+    [
+      "telephone-eclate | auto | linear | x1 | timeline --telephone-eclate",
+      {
+        "n": 4,
+        "ex": "img.eclate__calque"
+      }
+    ],
+    [
+      "jauge | auto | linear | x1 | timeline --presta",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ],
+    [
+      "signature-projecteur | 0s | ease | x1 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.hero__media"
+      }
+    ],
+    [
+      "signature-tourne-2 | 10s | cubic-bezier(0.37, 0, 0.63, 1) | xinfinite | timeline auto",
+      {
+        "n": 1,
+        "ex": "img"
+      }
+    ],
+    [
+      "jauge | auto | linear | x1 | timeline --etapes",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ],
+    [
+      "jauge | auto | linear | x1 | timeline --galerie",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ],
+    [
+      "telephone-efface | auto | linear | x1 | timeline --telephone-eclate",
+      {
+        "n": 1,
+        "ex": "img.eclate__assemble"
+      }
+    ]
+  ],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 0
+  },
+  "classesRacine": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 20,
+  "imagesLazy": 20,
+  "images": 21,
+  "signaturesCss": {
+    "animation-timeline": true,
+    "view-timeline": true,
+    "scroll-timeline": true,
+    "view()": true,
+    "prefers-reduced-motion": true,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": true,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": true,
+    "will-change": false,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": true,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": false,
+    "ScrollTrigger": false,
+    "SplitText": false,
+    "split-type/splitting": false,
+    "lenis": false,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | telephone-mot | auto | linear | 1 | ViewTimeline | opacity",
+      {
+        "n": 315,
+        "ex": "span.citation__mot"
+      }
+    ],
+    [
+      "CSSAnimation | telephone-apparait | auto | linear | 1 | ViewTimeline | opacity",
+      {
+        "n": 180,
+        "ex": "img.eclate__calque"
+      }
+    ],
+    [
+      "CSSAnimation | telephone-verbe | auto | linear | 1 | ViewTimeline | opacity,translate",
+      {
+        "n": 80,
+        "ex": "span.atelier__verbe"
+      }
+    ],
+    [
+      "CSSAnimation | telephone-eclate | auto | linear | 1 | ViewTimeline | translate",
+      {
+        "n": 80,
+        "ex": "img.eclate__calque"
+      }
+    ],
+    [
+      "CSSAnimation | jauge | auto | linear | 1 | ScrollTimeline | transform",
+      {
+        "n": 61,
+        "ex": "span"
+      }
+    ],
+    [
+      "CSSAnimation | signature-projecteur | 9000 | linear | Infinity | DocumentTimeline | rotate",
+      {
+        "n": 21,
+        "ex": "div.hero__media"
+      }
+    ],
+    [
+      "CSSAnimation | signature-tourne-2 | 10000 | linear | Infinity | DocumentTimeline | rotate",
+      {
+        "n": 21,
+        "ex": "img"
+      }
+    ],
+    [
+      "CSSAnimation | telephone-efface | auto | linear | 1 | ViewTimeline | opacity",
+      {
+        "n": 20,
+        "ex": "img.eclate__assemble"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 550 | cubic-bezier(0.2, 0.7, 0.2, 1) | 1 | DocumentTimeline | opacity",
+      {
+        "n": 5,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "CSSTransition | transform | 550 | cubic-bezier(0.2, 0.7, 0.2, 1) | 1 | DocumentTimeline | transform",
+      {
+        "n": 5,
+        "ex": "div.chiffre.reveal"
+      }
+    ],
+    [
+      "CSSTransition | transform | 1000 | cubic-bezier(0.16, 1, 0.3, 1) | 1 | DocumentTimeline | transform",
+      {
+        "n": 2,
+        "ex": "img"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 600 | ease | 1 | DocumentTimeline | opacity",
+      {
+        "n": 2,
+        "ex": "figcaption"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 600 | cubic-bezier(0.16, 1, 0.3, 1) | 1 | DocumentTimeline | opacity",
+      {
+        "n": 2,
+        "ex": "span.etape__num"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 10860
+    },
+    "font": {
+      "requetes": 5,
+      "octets": 87896
+    },
+    "stylesheet": {
+      "requetes": 2,
+      "octets": 22163
+    },
+    "image": {
+      "requetes": 17,
+      "octets": 696919
+    },
+    "script": {
+      "requetes": 1,
+      "octets": 16061
+    }
+  },
+  "octetsTotal": 833899
+}

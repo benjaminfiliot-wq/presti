@@ -1,0 +1,15 @@
+09:43:12 d066 image 0 y 0 δ 0.0000 contraste 3.386 bois 160.9
+09:45:02 d066 image 30 y 15 δ 0.0037 contraste 3.372 bois 155
+09:47:52 d066 image 60 y 128 δ 0.0313 contraste 3.25 bois 114.5
+09:50:32 d066 image 90 y 331 δ 0.0660 contraste 3.161 bois 83.5
+09:51:28 d066 image 120 y 585 δ 0.0660 contraste 3.562 bois 57.1
+09:52:21 d066 image 150 y 839 δ 0.0660 contraste 8 bois null
+09:53:04 d066 image 180 y 1042 δ 0.0660 contraste 2.94 bois null
+09:53:36 d066 image 210 y 1155 δ 0.0660 contraste 3.532 bois null
+09:54:11 d066 film écrit C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/descente-d066.mp4
+09:54:28 d066 planche écrite
+09:54:32 d066 D-15 {"oeil":{"blocs":208,"moduleMedian_px":14,"moduleP90_px":20.9,"radialMedian_px":13.6,"moduleModeleMedian_px":17.6,"blocsAuBordDeLaRecherche":0},"marches":{"blocs":99,"moduleMedian_px":71.5,"moduleP90_px":129.3,"radialMedian_px":71.5,"moduleModeleMedian_px":75.7,"blocsAuBordDeLaRecherche":0}}
+09:55:15 d066 D-5 1280x800 3.13
+09:56:09 d066 D-5 1366x768 2.645
+09:56:56 d066 D-5 1440x900 3.225
+09:56:56 d066 fini

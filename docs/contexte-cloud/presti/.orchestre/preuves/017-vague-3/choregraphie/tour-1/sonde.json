@@ -1,0 +1,2010 @@
+{
+ "bureau": {
+  "choregraphie": true,
+  "ouverture": [
+   {
+    "y": 0,
+    "reel": 0,
+    "heroHaut": 0,
+    "heroBas": 900,
+    "heroHauteur": 900,
+    "plateauHaut": 900,
+    "heroPosition": "sticky",
+    "partRecouverteDuHerosVisible": 0,
+    "partRecouverteDuHeros": 0,
+    "dessus": null,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "contenuOpacite": "1",
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voileOpacite": "0",
+    "ombrePlateau": "rgba(10, 7, 4, 0.55) 0px -40px 80px -8px",
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-y0.png"
+   },
+   {
+    "y": 300,
+    "reel": 300,
+    "heroHaut": 0,
+    "heroBas": 900,
+    "heroHauteur": 900,
+    "plateauHaut": 600,
+    "heroPosition": "sticky",
+    "partRecouverteDuHerosVisible": 0.333,
+    "partRecouverteDuHeros": 0.333,
+    "dessus": "plateau",
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -76.3636)",
+    "contenuOpacite": "0.393939",
+    "mediaTransform": "matrix(1.02667, 0, 0, 1.02667, 0, 0)",
+    "voileOpacite": "0.155556",
+    "ombrePlateau": "rgba(10, 7, 4, 0.55) 0px -40px 80px -8px",
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-y300.png"
+   },
+   {
+    "y": 600,
+    "reel": 600,
+    "heroHaut": 0,
+    "heroBas": 900,
+    "heroHauteur": 900,
+    "plateauHaut": 300,
+    "heroPosition": "sticky",
+    "partRecouverteDuHerosVisible": 0.667,
+    "partRecouverteDuHeros": 0.667,
+    "dessus": "plateau",
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+    "contenuOpacite": "0",
+    "mediaTransform": "matrix(1.05333, 0, 0, 1.05333, 0, 0)",
+    "voileOpacite": "0.377778",
+    "ombrePlateau": "rgba(10, 7, 4, 0.55) 0px -40px 80px -8px",
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-y600.png"
+   },
+   {
+    "y": 900,
+    "reel": 900,
+    "heroHaut": 0,
+    "heroBas": 900,
+    "heroHauteur": 900,
+    "plateauHaut": 0,
+    "heroPosition": "sticky",
+    "partRecouverteDuHerosVisible": 1,
+    "partRecouverteDuHeros": 1,
+    "dessus": "plateau",
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+    "contenuOpacite": "0",
+    "mediaTransform": "matrix(1.08, 0, 0, 1.08, 0, 0)",
+    "voileOpacite": "0.6",
+    "ombrePlateau": "rgba(10, 7, 4, 0.55) 0px -40px 80px -8px",
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-y900.png"
+   }
+  ],
+  "etapesGeo": {
+   "haut": 6078,
+   "hauteur": 2700,
+   "vh": 900
+  },
+  "etapesBalayage": [
+   {
+    "f": 0,
+    "y": 6078,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 13.4757)",
+     "matrix(1, 0, 0, 1, 0, 29.5183)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.05,
+    "y": 6168,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 12.9013)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.1,
+    "y": 6258,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.15,
+    "y": 6348,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.2,
+    "y": 6438,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.25,
+    "y": 6528,
+    "pleines": [
+     1
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.3,
+    "y": 6618,
+    "pleines": [],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.941,
+      "numTf": "matrix(0.986974, 0, 0, 0.986974, 0, 0)",
+      "corpsOp": 0.928,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.609,
+      "numTf": "matrix(0.913013, 0, 0, 0.913013, 0, 0)",
+      "corpsOp": 0.522,
+      "corpsTf": "matrix(1, 0, 0, 1, 17.3975, 0)",
+      "corpsDroite": 1385,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.35,
+    "y": 6708,
+    "pleines": [],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.608,
+      "numTf": "matrix(0.91291, 0, 0, 0.91291, 0, 0)",
+      "corpsOp": 0.521,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.942,
+      "numTf": "matrix(0.987077, 0, 0, 0.987077, 0, 0)",
+      "corpsOp": 0.929,
+      "corpsTf": "matrix(1, 0, 0, 1, 2.58463, 0)",
+      "corpsDroite": 1371,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.4,
+    "y": 6798,
+    "pleines": [
+     2
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.45,
+    "y": 6888,
+    "pleines": [
+     2
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.5,
+    "y": 6978,
+    "pleines": [
+     2
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.55,
+    "y": 7068,
+    "pleines": [],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.775,
+      "numTf": "matrix(0.949942, 0, 0, 0.949942, 0, 0)",
+      "corpsOp": 0.725,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.775,
+      "numTf": "matrix(0.950045, 0, 0, 0.950045, 0, 0)",
+      "corpsOp": 0.725,
+      "corpsTf": "matrix(1, 0, 0, 1, 9.99105, 0)",
+      "corpsDroite": 1378,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.6,
+    "y": 7158,
+    "pleines": [
+     3
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.65,
+    "y": 7248,
+    "pleines": [
+     3
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.7,
+    "y": 7338,
+    "pleines": [
+     3
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "matrix(1, 0, 0, 1, 20, 0)",
+      "corpsDroite": 1388,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.75,
+    "y": 7428,
+    "pleines": [],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.941,
+      "numTf": "matrix(0.986974, 0, 0, 0.986974, 0, 0)",
+      "corpsOp": 0.928,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.609,
+      "numTf": "matrix(0.913013, 0, 0, 0.913013, 0, 0)",
+      "corpsOp": 0.522,
+      "corpsTf": "matrix(1, 0, 0, 1, 17.3975, 0)",
+      "corpsDroite": 1385,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.8,
+    "y": 7518,
+    "pleines": [],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.608,
+      "numTf": "matrix(0.91291, 0, 0, 0.91291, 0, 0)",
+      "corpsOp": 0.521,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 0.942,
+      "numTf": "matrix(0.987077, 0, 0, 0.987077, 0, 0)",
+      "corpsOp": 0.929,
+      "corpsTf": "matrix(1, 0, 0, 1, 2.58463, 0)",
+      "corpsDroite": 1371,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.85,
+    "y": 7608,
+    "pleines": [
+     4
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.9,
+    "y": 7698,
+    "pleines": [
+     4
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 0.95,
+    "y": 7788,
+    "pleines": [
+     4
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   },
+   {
+    "f": 1,
+    "y": 7878,
+    "pleines": [
+     4
+    ],
+    "conteneurHaut": 0,
+    "teteHaut": 156,
+    "teteBas": 808,
+    "mots": [
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)",
+     "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "etapes": [
+     {
+      "i": 1,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 196,
+      "liBas": 339
+     },
+     {
+      "i": 2,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 339,
+      "liBas": 482
+     },
+     {
+      "i": 3,
+      "numOp": 0.55,
+      "numTf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "corpsOp": 0.45,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 482,
+      "liBas": 625
+     },
+     {
+      "i": 4,
+      "numOp": 1,
+      "numTf": "none",
+      "corpsOp": 1,
+      "corpsTf": "none",
+      "corpsDroite": 1368,
+      "liDroite": 1368,
+      "liHaut": 625,
+      "liBas": 768
+     }
+    ]
+   }
+  ],
+  "etapesTrois": [
+   {
+    "f": 0.2,
+    "y": 6438,
+    "pleines": [
+     1
+    ],
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-etapes-20.png"
+   },
+   {
+    "f": 0.5,
+    "y": 6978,
+    "pleines": [
+     2
+    ],
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-etapes-50.png"
+   },
+   {
+    "f": 0.8,
+    "y": 7518,
+    "pleines": [],
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-etapes-80.png"
+   }
+  ],
+  "suivis": [
+   {
+    "A": 300,
+    "B": 600,
+    "nTransformsLies": 5,
+    "nOpacitesLiees": 3,
+    "nNonReversibles": 1,
+    "exemples": [
+     "div.hero__media",
+     "div.hero__contenu",
+     "figure.plateau__citation.reveal.vu",
+     "div.plateau__photo.reveal.vu",
+     "img"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.0594",
+      "B": "none|none|1.059",
+      "retour": "none|none|1.05848"
+     }
+    ]
+   },
+   {
+    "A": 6438,
+    "B": 7158,
+    "nTransformsLies": 5,
+    "nOpacitesLiees": 4,
+    "nNonReversibles": 1,
+    "exemples": [
+     "img",
+     "span.etape__num",
+     "div.etape__corps",
+     "span.etape__num",
+     "div.etape__corps"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.05801",
+      "B": "none|none|1.05747",
+      "retour": "none|none|1.05691"
+     }
+    ]
+   },
+   {
+    "A": 1188,
+    "B": 1738,
+    "nTransformsLies": 10,
+    "nOpacitesLiees": 5,
+    "nNonReversibles": 1,
+    "exemples": [
+     "img",
+     "span.ml__in",
+     "span.ml__in",
+     "span.ml__in",
+     "span.ml__in",
+     "p",
+     "li.presta__ligne.reveal.vu",
+     "li.presta__ligne.reveal.vu",
+     "li.presta__ligne.reveal.vu",
+     "li.presta__ligne.reveal.vu"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.05612",
+      "B": "none|none|1.05535",
+      "retour": "none|none|1.05442"
+     }
+    ]
+   },
+   {
+    "A": 2313,
+    "B": 2863,
+    "nTransformsLies": 3,
+    "nOpacitesLiees": 1,
+    "nNonReversibles": 1,
+    "exemples": [
+     "span.ml__in",
+     "span.ml__in",
+     "p.atelier__phrase.reveal.vu"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.05349",
+      "B": "none|none|1.05259",
+      "retour": "none|none|1.05151"
+     }
+    ]
+   },
+   {
+    "A": 4869,
+    "B": 5419,
+    "nTransformsLies": 8,
+    "nOpacitesLiees": 5,
+    "nNonReversibles": 1,
+    "exemples": [
+     "span.ml__in",
+     "span.ml__in",
+     "span.ml__in",
+     "p",
+     "a.commune.reveal.vu",
+     "a.commune.reveal.vu",
+     "a.commune.reveal.vu",
+     "a.commune.reveal.vu"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.05035",
+      "B": "none|none|1.04919",
+      "retour": "none|none|1.04795"
+     }
+    ]
+   },
+   {
+    "A": 8193,
+    "B": 8743,
+    "nTransformsLies": 5,
+    "nOpacitesLiees": 1,
+    "nNonReversibles": 1,
+    "exemples": [
+     "span.ml__in",
+     "span.ml__in",
+     "img",
+     "div.faq.reveal.vu",
+     "img"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.04672",
+      "B": "none|none|1.04535",
+      "retour": "none|none|1.04385"
+     }
+    ]
+   },
+   {
+    "A": 8820,
+    "B": 9370,
+    "nTransformsLies": 7,
+    "nOpacitesLiees": 1,
+    "nNonReversibles": 1,
+    "exemples": [
+     "img",
+     "img",
+     "span.ml__in",
+     "span.ml__in",
+     "span.ml__in",
+     "span.ml__in",
+     "p"
+    ],
+    "nonReversibles": [
+     {
+      "nomEl": "img",
+      "A": "none|none|1.04244",
+      "B": "none|none|1.04082",
+      "retour": "none|none|1.03932"
+     }
+    ]
+   }
+  ],
+  "unionTransformsLies": 13,
+  "hauteurPage": 10729,
+  "titres": [
+   {
+    "texte": "Ce que je fabrique",
+    "haut": 1982,
+    "dansEtapes": false,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       62.3,
+       78.3,
+       94.3,
+       110.4
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "Dans l’atelier",
+    "haut": 3130,
+    "dansEtapes": false,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       94.8,
+       120.1
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "Pièces livrées",
+    "haut": 4003,
+    "dansEtapes": false,
+    "dansTravelling": true,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       87.3,
+       103.3
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       7.3
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "Autour de Rennes",
+    "haut": 5617,
+    "dansEtapes": false,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       62.6,
+       78.6,
+       94.7
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "En quatre temps",
+    "haut": 6269,
+    "dansEtapes": true,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       103.4,
+       117.6,
+       117.6
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       45.3,
+       61.3,
+       77.3
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "Vos questions",
+    "haut": 8893,
+    "dansEtapes": false,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       62.5,
+       78.6
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   {
+    "texte": "Parlons de votre projet",
+    "haut": 9681,
+    "dansEtapes": false,
+    "dansTravelling": false,
+    "releves": [
+     {
+      "hautEcran": 765,
+      "mots": [
+       62.8,
+       80.2,
+       97.7,
+       115.1
+      ]
+     },
+     {
+      "hautEcran": 450,
+      "mots": [
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   }
+  ],
+  "capturesPage": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-00000.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-01800.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-03600.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-05400.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-07200.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-09000.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1440-page-09900.png"
+  ],
+  "polices": {
+   "hors": {},
+   "faces": [
+    "Fraunces 300 loaded",
+    "Fraunces 400 loaded",
+    "Fraunces 600 loaded",
+    "IBM Plex Sans 400 loaded",
+    "IBM Plex Sans 600 loaded"
+   ],
+   "synthese": "weight style small-caps"
+  },
+  "debordement": 0
+ },
+ "etapes1280x720": {
+  "minHaut": 97,
+  "maxBas": 706,
+  "vh": 720,
+  "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1280x720-etapes-50.png"
+ },
+ "etapes1920x1080": {
+  "minHaut": 208,
+  "maxBas": 961,
+  "vh": 1080,
+  "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1920x1080-etapes-50.png"
+ },
+ "etapes1366x768": {
+  "minHaut": 120,
+  "maxBas": 732,
+  "vh": 768,
+  "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\b1366x768-etapes-50.png"
+ },
+ "reduit1440": {
+  "animationsSurTimeline": [],
+  "invisibles": [
+   {
+    "el": "p.bande__tel",
+    "op": 0.92,
+    "texte": "Ou par téléphone : 02 61 91 38 47"
+   },
+   {
+    "el": "a.",
+    "op": 0.92,
+    "texte": "02 61 91 38 47"
+   }
+  ],
+  "revealsNonFinis": [],
+  "motsNonLeves": 0,
+  "suivis": [
+   {
+    "A": 0,
+    "B": 540,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   },
+   {
+    "A": 3080,
+    "B": 3710,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   },
+   {
+    "A": 6160,
+    "B": 6790,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   }
+  ],
+  "debordement": 0,
+  "etapesHauteur": 947,
+  "heroPos": "relative",
+  "hauteurPage": 8800,
+  "captures": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-0-y0.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-1-y810.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-2-y2200.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-3-y3960.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-4-y5456.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-5-y7040.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\reduit1440-6-y7900.png"
+  ]
+ },
+ "tel390": {
+  "animationsSurTimeline": [
+   " ScrollTimeline inline"
+  ],
+  "invisibles": [
+   {
+    "el": "span.galerie__n",
+    "op": 0,
+    "texte": "03"
+   },
+   {
+    "el": "span.",
+    "op": 0,
+    "texte": "Penderie en bois, tringle et quatre cint"
+   },
+   {
+    "el": "span.galerie__n",
+    "op": 0,
+    "texte": "04"
+   },
+   {
+    "el": "span.",
+    "op": 0,
+    "texte": "Escalier hélicoïdal en bois massif"
+   },
+   {
+    "el": "p.bande__tel",
+    "op": 0.92,
+    "texte": "Ou par téléphone : 02 61 91 38 47"
+   },
+   {
+    "el": "a.",
+    "op": 0.92,
+    "texte": "02 61 91 38 47"
+   }
+  ],
+  "revealsNonFinis": [],
+  "motsNonLeves": 0,
+  "suivis": [
+   {
+    "A": 0,
+    "B": 506,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   },
+   {
+    "A": 2902,
+    "B": 3493,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   },
+   {
+    "A": 5804,
+    "B": 6395,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   }
+  ],
+  "debordement": 0,
+  "etapesHauteur": 747,
+  "heroPos": "relative",
+  "hauteurPage": 8292,
+  "captures": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-0-y0.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-1-y760.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-2-y2073.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-3-y3731.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-4-y5141.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-5-y6634.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390-6-y7448.png"
+  ]
+ },
+ "tel390reduit": {
+  "animationsSurTimeline": [
+   " ScrollTimeline inline"
+  ],
+  "invisibles": [
+   {
+    "el": "p.bande__tel",
+    "op": 0.92,
+    "texte": "Ou par téléphone : 02 61 91 38 47"
+   },
+   {
+    "el": "a.",
+    "op": 0.92,
+    "texte": "02 61 91 38 47"
+   }
+  ],
+  "revealsNonFinis": [],
+  "motsNonLeves": 0,
+  "suivis": [
+   {
+    "A": 0,
+    "B": 506,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   },
+   {
+    "A": 2902,
+    "B": 3493,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   },
+   {
+    "A": 5804,
+    "B": 6395,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": []
+   }
+  ],
+  "debordement": 0,
+  "etapesHauteur": 747,
+  "heroPos": "relative",
+  "hauteurPage": 8292,
+  "captures": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-0-y0.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-1-y760.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-2-y2073.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-3-y3731.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-4-y5141.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-5-y6634.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\tel390reduit-6-y7448.png"
+  ]
+ },
+ "sansview1440": {
+  "animationsSurTimeline": [],
+  "invisibles": [
+   {
+    "el": "p.bande__tel",
+    "op": 0.92,
+    "texte": "Ou par téléphone : 02 61 91 38 47"
+   },
+   {
+    "el": "a.",
+    "op": 0.92,
+    "texte": "02 61 91 38 47"
+   }
+  ],
+  "revealsNonFinis": [],
+  "motsNonLeves": 0,
+  "suivis": [
+   {
+    "A": 0,
+    "B": 540,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   },
+   {
+    "A": 3080,
+    "B": 3710,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   },
+   {
+    "A": 6160,
+    "B": 6790,
+    "transformsLies": [],
+    "opacitesLiees": [],
+    "nonReversibles": [
+     "img"
+    ]
+   }
+  ],
+  "debordement": 0,
+  "etapesHauteur": 947,
+  "heroPos": "relative",
+  "hauteurPage": 8800,
+  "captures": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-0-y0.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-1-y810.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-2-y2200.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-3-y3960.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-4-y5456.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-5-y7040.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\sansview1440-6-y7900.png"
+  ]
+ },
+ "rennes": {
+  "debordement": 0,
+  "captures": [
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\rennes-bureau-bas.png",
+   "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\choregraphie\\tour-1\\rennes-bureau-haut.png"
+  ]
+ },
+ "erreursConsole": []
+}

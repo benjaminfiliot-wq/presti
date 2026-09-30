@@ -1,0 +1,8 @@
+$ node --import ./scripts/ts-loader.mjs scripts/repondeur-qa.mjs   (29/09, PC, 6 min 54 s ; avant le correctif de RP-4 : fil_envoi_id absent quand aucun fil)
+✅ RP-1  ✅ RP-2  ✅ RP-3  ❌ RP-4 (fil_envoi_id null, undefined attendu — corrigé depuis)  ❌ RP-5 (aucune méthode du magasin ne liste les conversations)
+✅ RP-6  ✅ RP-7  ✅ RP-8  ✅ RP-9  ✅ RP-10 (typecheck vert)  ✅ RP-11
+❌ RP-12 (le juge sème « notre dernier envoi » par preparerEnvoi, que son magasin refuse : preuve_demande_absente / confirmation_stop sans opposition)
+✅ RP-13  ❌ RP-14 (conversation d'essai sans meta_id)  ❌ RP-15 (mettreAJour verifie→lien_prepare = false ; le lien_maquette semé est refusé)
+❌ RP-16 (échantillon déposé sans « oui » du prospect : aucune preuve de demande possible)
+repondeur-qa : FAIL — RP-4, RP-5, RP-12, RP-14, RP-15, RP-16
+Le rejeu officiel de 21:11 (orchestre verifier) a dépassé son délai (code 124, 803 s, PC chargé) : voir verifier.log.

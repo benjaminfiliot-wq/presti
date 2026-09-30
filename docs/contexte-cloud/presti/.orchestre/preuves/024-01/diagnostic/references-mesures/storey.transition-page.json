@@ -1,0 +1,21 @@
+{
+  "slug": "storey",
+  "url": "https://www.storeyarchitecture.co.uk/",
+  "date": "2026-09-16T20:42:59.458Z",
+  "lien": {
+    "href": "https://www.storeyarchitecture.co.uk/projects",
+    "texte": "Projects"
+  },
+  "urlFinale": "https://www.storeyarchitecture.co.uk/projects",
+  "appels": {
+    "vt": 0,
+    "push": 1
+  },
+  "documentRemplace": false,
+  "animationsPendantLaTransition": [
+    [
+      "CSSTransition | color | 500 | cubic-bezier(0.4, 0, 0.2, 1) | 1 | ",
+      4
+    ]
+  ]
+}

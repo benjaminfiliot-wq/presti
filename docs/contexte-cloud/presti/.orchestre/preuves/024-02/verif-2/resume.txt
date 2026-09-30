@@ -1,0 +1,29 @@
+KIT index.html@1440 : 1440×51825, requêtes 20, externes 0, console 0, pageerror 0, 4xx 0, échecs 0, avif 0, images cassées 0/3, fonts non chargées 0, polices utilisées non chargées 0 [], coupes 0, superpositions 0, fixed/sticky 0
+KIT index.html@390 : 390×58208, requêtes 20, externes 0, console 0, pageerror 0, 4xx 0, échecs 0, avif 0, images cassées 0/3, fonts non chargées 0, polices utilisées non chargées 0 [], coupes 0, superpositions 3, fixed/sticky 0
+KIT sections.html@1440 : 1440×27501, requêtes 33, externes 0, console 0, pageerror 0, 4xx 0, échecs 0, avif 5, images cassées 0/52, fonts non chargées 0, polices utilisées non chargées 1 [IBM Plex Sans|500|normal], coupes 0, superpositions 7, fixed/sticky 0
+KIT sections.html@390 : 390×47641, requêtes 29, externes 0, console 0, pageerror 0, 4xx 0, échecs 1, avif 5, images cassées 0/52, fonts non chargées 0, polices utilisées non chargées 0 [], coupes 77, superpositions 11, fixed/sticky 0
+SITE reduit@1440 : externes 0, console 0, pageerror 0, 4xx 0
+SITE normal@1440 : externes 0, console 0, pageerror 0, 4xx 0
+SITE reduit@390 : externes 0, console 0, pageerror 0, 4xx 0
+SITE normal@390 : externes 0, console 0, pageerror 0, 4xx 0
+1440:cadre-01-heros : site 1440×900 kit 1440×900 | textes site 6 kit 11 manquants 0 en trop 5 | écarts de style 0 | pixels ≠ 1.425 % (moy 7.73) | images site [heros-escalier-1600.avif] kit [heros-escalier-1600.webp]
+1440:cadre-02-plateau : site 1440×988 kit 1440×988 | textes site 27 kit 27 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.125 % (moy 0.9) | images site [mains-noyer-720.avif] kit [mains-noyer-720.webp]
+1440:cadre-03-prestations : site 1440×1224 kit 1440×1224 | textes site 23 kit 23 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.708 % (moy 1.01) | images site [] kit []
+1440:cadre-04-atelier : site 1440×900 kit 1440×900 | textes site 12 kit 12 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0 % (moy 1.94) | images site [atelier-poncage-1600.avif] kit [atelier-poncage-1600.webp]
+1440:cadre-05-realisations : site 1440×1481 kit 1440×1481 | textes site 13 kit 13 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.789 % (moy 2.9) | images site [reserve-bibliotheque-960.avif,reserve-cuisine-poutres-960.avif,penderie-960.avif,heros-escalier-1600.avif] kit [reserve-bibliotheque-960.webp,reserve-cuisine-poutres-960.webp,penderie-960.webp,heros-escalier-960.webp]
+1440:cadre-06-communes : site 1440×509 kit 1440×509 | textes site 8 kit 8 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.845 % (moy 1.41) | images site [] kit []
+1440:cadre-07-etapes : site 1440×1022 kit 1440×1022 | textes site 27 kit 27 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 2.391 % (moy 3.04) | images site [eclate.avif] kit [eclate.webp]
+1440:cadre-08-questions : site 1440×743 kit 1440×743 | textes site 11 kit 11 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.43 % (moy 1.31) | images site [tasseaux-cloison-780.avif] kit [tasseaux-cloison-780.webp]
+1440:cadre-09-contact : site 1440×902 kit 1440×902 | textes site 22 kit 22 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.381 % (moy 1.28) | images site [boiserie-1600.avif] kit [boiserie-1600.webp]
+1440:cadre-10-pied : site 1440×306 kit 1440×306 | textes site 15 kit 15 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.158 % (moy 0.17) | images site [] kit []
+390:cadre-01-heros : site 390×844 kit 390×844 | textes site 6 kit 8 manquants 0 en trop 2 | écarts de style 0 | pixels ≠ 4.982 % (moy 11.84) | images site [heros-escalier-portrait-720.avif] kit [heros-escalier-portrait-720.webp]
+390:cadre-02-plateau : site 390×929 kit 390×929 | textes site 27 kit 27 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 4.198 % (moy 7.27) | images site [mains-noyer-480.avif] kit [mains-noyer-480.webp]
+390:cadre-03-prestations : site 390×968 kit 390×968 | textes site 23 kit 23 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.408 % (moy 2.41) | images site [tournage-copeaux-480.avif,penderie-480.avif,reserve-bibliotheque-480.avif,atelier-poncage-480.avif,reserve-cuisine-poutres-480.avif,boiserie-960.avif] kit [tournage-copeaux-480.webp,penderie-480.webp,reserve-bibliotheque-480.webp,atelier-poncage-480.webp,reserve-cuisine-poutres-480.webp,boiserie-480.webp]
+390:cadre-04-atelier : site 390×844 kit 390×844 | textes site 12 kit 12 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.227 % (moy 2.39) | images site [atelier-poncage-portrait-720.avif] kit [atelier-poncage-portrait-720.webp]
+390:cadre-05-realisations : site 390×922 kit 390×922 | textes site 13 kit 13 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 1.894 % (moy 3.94) | images site [reserve-bibliotheque-480.avif,reserve-cuisine-poutres-480.avif,penderie-480.avif,heros-escalier-480.avif] kit [reserve-bibliotheque-480.webp,reserve-cuisine-poutres-480.webp,penderie-480.webp,heros-escalier-480.webp]
+390:cadre-06-communes : site 390×429 kit 390×429 | textes site 8 kit 8 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0 % (moy 0.02) | images site [] kit []
+390:cadre-07-etapes : site 390×879 kit 390×879 | textes site 27 kit 27 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.001 % (moy 0.43) | images site [eclate.avif] kit [eclate.webp]
+390:cadre-08-questions : site 390×913 kit 390×913 | textes site 11 kit 11 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 3.068 % (moy 5.79) | images site [tasseaux-cloison-480.avif] kit [tasseaux-cloison-480.webp]
+390:cadre-09-contact : site 390×1293 kit 390×1293 | textes site 22 kit 22 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.956 % (moy 2.78) | images site [boiserie-960.avif] kit [boiserie-960.webp]
+390:cadre-10-pied : site 390×405 kit 390×405 | textes site 15 kit 15 manquants 0 en trop 0 | écarts de style 0 | pixels ≠ 0.763 % (moy 1.28) | images site [] kit []
+serveur non-200 : []

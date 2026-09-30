@@ -1,0 +1,91 @@
+// 021-04 (2e rendu) — écrit rapport.md à partir de construire.json (mesures du lancement), des médianes L*a*b* recalculées
+// ici (mêmes zones de la photo que le juge) et de outils/avis.md (l'avis, écrit après avoir regardé les images).
+import fs from 'node:fs'
+import path from 'node:path'
+import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
+
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const R = path.resolve(ICI, '..', '..', '..')
+const b = JSON.parse(fs.readFileSync(path.join(ICI, 'construire.json'), 'utf8'))
+const avis = fs.readFileSync(path.join(ICI, 'outils', 'avis.md'), 'utf8').trim()
+
+const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 }
+const versLab = (r, g, bl) => {
+  const Rl = lin(r), G = lin(g), B = lin(bl)
+  const X = (0.4124 * Rl + 0.3576 * G + 0.1805 * B) / 0.95047, Y = 0.2126 * Rl + 0.7152 * G + 0.0722 * B, Z = (0.0193 * Rl + 0.1192 * G + 0.9505 * B) / 1.08883
+  const t = (v) => (v > 216 / 24389 ? Math.cbrt(v) : (24389 / 27 * v + 16) / 116)
+  return [116 * t(Y) - 16, 500 * (t(X) - t(Y)), 200 * (t(Y) - t(Z))]
+}
+const mediane = (v) => { const s = Float64Array.from(v).sort(); return s[Math.floor(s.length / 2)] }
+const medLab = (px) => [0, 1, 2].map((k) => mediane(px.map((p) => p[k])))
+
+const ph = await sharp(path.join(R, 'public', 'sites-demo', 'lestraque', 'images', 'heros-escalier-1600.avif')).removeAlpha().raw().toBuffer({ resolveWithObject: true })
+const pixPhoto = []
+for (const z of [{ x: 0.62, y: 0.28, l: 0.24, h: 0.14 }, { x: 0.50, y: 0.60, l: 0.18, h: 0.10 }]) {
+  const x0 = Math.round(z.x * ph.info.width), y0 = Math.round(z.y * ph.info.height), w = Math.round(z.l * ph.info.width), hz = Math.round(z.h * ph.info.height)
+  for (let y = y0; y < y0 + hz; y++) for (let x = x0; x < x0 + w; x++) { const k = (y * ph.info.width + x) * 3; pixPhoto.push(versLab(ph.data[k], ph.data[k + 1], ph.data[k + 2])) }
+}
+const cm = await sharp(path.join(ICI, 'rendus', 'calque-marche.avif')).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+const pixBois = []
+for (let i = 0; i < cm.data.length; i += 4) if (cm.data[i + 3] > 200) pixBois.push(versLab(cm.data[i], cm.data[i + 1], cm.data[i + 2]))
+const f = (v) => v.map((x) => x.toFixed(1).replace('.', ',')).join(' / ')
+const labRendu = medLab(pixBois), labPhoto = medLab(pixPhoto)
+
+const lancements = b.lancements || {}
+const cmd = (lancements.rendus && lancements.rendus.commande) || '"C:/Program Files/Blender Foundation/blender.exe" --background --factory-startup --python outils/marche.py -- brut 5204 final'
+const lignesQualite = Object.entries(b.qualites).map(([nom, q]) => `| \`${nom}.avif\` | ${q} | ${b.octets[nom]} |`).join('\n')
+const secParRendu = Object.entries(b.secondesParRendu).map(([n, s]) => `${n} ${String(s).replace('.', ',')} s`).join(' ; ')
+const texte = `# Rapport — 021-04, 2e rendu : « Anatomie d'une marche »
+
+Tronçon de trois marches en chêne (40 mm) sur un limon à la française, trois contremarches et douze vis. Rendu par Claude Code
+(agent), dans \`.orchestre/preuves/021-04b/\`, le ${b.date.slice(0, 10)}.
+
+## Commande et réglages
+
+- **Blender** : ${b.blender} (Blender 5.2 LTS), Cycles sur processeur, sans carte graphique.
+- **Commande exacte** (lancée par \`node outils/construire.mjs\`, une fois pour \`brut/\` → \`rendus/\`, une fois pour \`brut-bis/\` → \`rendus-bis/\`) :
+  \`${cmd}\`
+  puis \`${cmd.replace(/brut(?=["\s])/, 'brut-bis').replace('brut"', 'brut-bis"')}\` pour le second lancement.
+- **Graine** (seed Cycles) : ${b.graine}, graine non animée, échantillonnage adaptatif coupé. Même graine pour les deux lancements.
+- **Échantillons** : ${b.echantillons.beaute} par pixel pour les passes « beauté » (débruitage OpenImageDenoise), ${b.echantillons.ombre} pour les passes d'ombre (rendues à mi-définition, agrandies et adoucies).
+- **Caméra** orthographique, largeur de champ ${b.echelle.toFixed(3).replace('.', ',')} m pour 1 400 px ; cadre 1 400 × 1 050 ; transformation de vue « Standard ».
+- **Fond** des deux vues complètes : uni, #14110E (fond de \`.section--noir\`, kit.css:468).
+- **Vecteurs d'éclatement** (pixels entiers, arrondis dans le plan de l'image avant le rendu) : ${Object.entries(b.vecteursPx).map(([g, v]) => `${g} (${v[0]} ; ${v[1]})`).join(', ')}.
+
+## Durée des rendus
+
+- 1er lancement (\`rendus/\`) : ${String(b.secondesBlender.rendus).replace('.', ',')} s dans Blender${lancements.rendus ? ` (${String(lancements.rendus.secondes).replace('.', ',')} s avec le démarrage)` : ''}.
+- 2e lancement (\`rendus-bis/\`) : ${String(b.secondesBlender['rendus-bis']).replace('.', ',')} s dans Blender${lancements['rendus-bis'] ? ` (${String(lancements['rendus-bis'].secondes).replace('.', ',')} s avec le démarrage)` : ''}.
+- Détail du 1er lancement : ${secParRendu}.
+- Machine partagée avec d'autres sessions (processeur chargé) : les durées varient d'un lancement à l'autre.
+
+## Qualité AVIF employée, par fichier
+
+Encodage sharp (\`avif({ quality, effort: 6, chromaSubsampling: '4:4:4' })\`), depuis les PNG assemblés.
+
+| Fichier | Qualité AVIF | Octets |
+|---|---|---|
+${lignesQualite}
+| **Total** | | **${b.total}** (plafond 60 000) |
+
+## Teinte du chêne (OB-9), médianes L*a*b*
+
+- Médiane L\\*a\\*b\\* des pixels opaques (alpha > 200) de \`rendus/calque-marche.avif\` : **${f(labRendu)}**.
+- Médiane L\\*a\\*b\\* des deux zones de marches de \`heros-escalier-1600.avif\` (zones du juge) : **${f(labPhoto)}**.
+
+## Ombre
+
+Une ombre au sol par groupe, rendue par un capteur d'ombre Cycles attaché au groupe (il se déplace avec lui), posée sous les
+pièces avec une opacité de ${String(b.opaciteOmbre).replace('.', ',')}. Alpha maximal de l'ombre seule, par calque : ${Object.entries(b.mesures).map(([g, m]) => `${g} ${String(m.alphaOmbreMax).replace('.', ',')}`).join(', ')}.
+Pourquoi deux passes : dans Cycles, un capteur d'ombre cache ce qui se trouve derrière lui (vérifié sur une scène d'essai) ;
+un plan d'ombre sous un groupe éclaté aurait masqué les autres pièces. La passe « ombre » rend les capteurs seuls, les pièces
+étant invisibles à la caméra mais portant ombre ; la passe « beauté » rend les pièces. \`construire.mjs\` pose la première
+sous la seconde, de la même façon pour les calques et pour l'éclaté.
+
+${avis}
+`
+fs.writeFileSync(path.join(ICI, 'rapport.md'), texte)
+console.log(`rapport.md : ${texte.length} caractères ; rendu ${f(labRendu)} ; photo ${f(labPhoto)}`)

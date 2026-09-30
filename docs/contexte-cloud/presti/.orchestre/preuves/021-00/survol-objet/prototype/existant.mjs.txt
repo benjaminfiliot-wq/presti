@@ -1,0 +1,42 @@
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium } = require('playwright')
+const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/survol/'
+const URL = 'https://prestiapp.fr/sites-demo/lestraque/index.html'
+const b = await chromium.launch()
+const res = {}
+{
+  const p = await b.newPage({ viewport: { width: 1440, height: 900 } })
+  const octets = []
+  p.on('response', async (r) => { try { const h = await r.headerValue('content-length'); octets.push([r.url().replace(/.*lestraque\//, ''), Number(h) || null]) } catch {} })
+  await p.goto(URL, { waitUntil: 'networkidle' })
+  const ligne = p.locator('.scene--presta .presta__ligne').nth(0)
+  await ligne.scrollIntoViewIfNeeded(); await p.waitForTimeout(1200)
+  const avant = await p.evaluate(() => { const v = document.querySelector('.scene--presta .presta__vignette'); const cs = getComputedStyle(v); return { display: cs.display, clip: cs.clipPath, transition: cs.transition, w: v.getBoundingClientRect().width, h: v.getBoundingClientRect().height } })
+  const box = await ligne.boundingBox()
+  await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  const suivi = []
+  for (const t of [0, 100, 200, 300, 550, 900]) { await p.waitForTimeout(t === 0 ? 0 : t - (suivi.at(-1)?.t ?? 0)); suivi.push({ t, clip: await p.evaluate(() => getComputedStyle(document.querySelector('.scene--presta .presta__vignette')).clipPath) }) }
+  await p.screenshot({ path: OUT + 'presta-survol-1440.png', clip: { x: 0, y: Math.max(0, box.y - 60), width: 1440, height: Math.min(900, box.height * 3 + 120) } })
+  const focus = await p.evaluate(() => [...document.querySelectorAll('.scene--presta .presta__ligne')].map((l) => l.querySelectorAll('a,button,[tabindex]').length))
+  const lignes = await p.evaluate(() => [...document.querySelectorAll('.scene--presta .presta__ligne')].map((l) => ({ titre: l.querySelector('h3').textContent, img: l.querySelector('.presta__vignette img')?.getAttribute('src'), h: Math.round(l.getBoundingClientRect().height) })))
+  const galerieHover = await p.evaluate(() => { const i = document.querySelector('.galerie--scene .galerie__item .galerie__cadre img'); return getComputedStyle(i).transition })
+  res.bureau = { avant, suivi, focusablesParLigne: focus, lignes, galerieHover }
+  await p.waitForTimeout(500)
+  res.bureau.reseau = octets.filter((o) => /presta|vignette|tournage|penderie|bibliotheque|parquet|images\//.test(o[0])).slice(0, 40)
+  await p.close()
+}
+{
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 })
+  const p = await ctx.newPage()
+  await p.goto(URL, { waitUntil: 'networkidle' })
+  await p.locator('#prestations').scrollIntoViewIfNeeded(); await p.waitForTimeout(1200)
+  res.tel = await p.evaluate(() => { const v = document.querySelector('.scene--presta .presta__vignette'); const cs = getComputedStyle(v); return { display: cs.display, clip: cs.clipPath, aspect: cs.aspectRatio, hoverMatch: matchMedia('(hover:hover)').matches } })
+  const r = await p.locator('#prestations').boundingBox()
+  await p.screenshot({ path: OUT + 'presta-tel-390.png' })
+  await ctx.close()
+}
+await b.close()
+fs.writeFileSync(OUT + 'existant.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

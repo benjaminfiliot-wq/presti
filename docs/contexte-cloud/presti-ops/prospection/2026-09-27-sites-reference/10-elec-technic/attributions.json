@@ -1,0 +1,62 @@
+[
+  {
+    "fichier": "images/hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Borne de connexion rapide sur conducteur cuivre",
+    "alt": "Borne de connexion rapide sur conducteur cuivre",
+    "auteur": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+    "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+  },
+  {
+    "fichier": "images/armoire-960.webp",
+    "base": "armoire",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Armoire électrique câblée et repérée",
+    "alt": "Armoire électrique câblée et repérée",
+    "auteur": "Dietmar Rabich",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+    "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+  },
+  {
+    "fichier": "images/cable-960.webp",
+    "base": "cable",
+    "largeur": 1600,
+    "hauteur": 1148,
+    "legende": "Câble électrique multiconducteur, gaine et cuivre",
+    "alt": "Câble électrique multiconducteur, gaine et cuivre",
+    "auteur": "Petar Milošević",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+    "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+  },
+  {
+    "fichier": "images/interrupteur-960.webp",
+    "base": "interrupteur",
+    "largeur": 1600,
+    "hauteur": 1449,
+    "legende": "Interrupteur mural, finition propre",
+    "alt": "Interrupteur mural, finition propre",
+    "auteur": "PumpkinSky",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+    "titre_commons": "File:Double Light Switch.jpg"
+  },
+  {
+    "fichier": "images/luminaires-960.webp",
+    "base": "luminaires",
+    "largeur": 1600,
+    "hauteur": 900,
+    "legende": "Ampoules et douilles laiton, éclairage décoratif",
+    "alt": "Ampoules et douilles laiton, éclairage décoratif",
+    "auteur": "Ka23 13",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+    "titre_commons": "File:Switches 20201003 110916.jpg"
+  }
+]

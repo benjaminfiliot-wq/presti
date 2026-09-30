@@ -1,0 +1,26 @@
+{
+ "y270": {
+  "imageDuFilm": 82,
+  "yFilm": 270,
+  "yCle": 270,
+  "tFilm": 2.733,
+  "tCle": 2.733,
+  "moyenneGrise": 109.4,
+  "ecartFilmContreCle": {
+   "moyen": 0.0165,
+   "part8": 0.127
+  }
+ },
+ "y1170": {
+  "imageDuFilm": 223,
+  "yFilm": 1170,
+  "yCle": 1170,
+  "tFilm": 7.433,
+  "tCle": 7.5,
+  "moyenneGrise": 34.6,
+  "ecartFilmContreCle": {
+   "moyen": 0.0155,
+   "part8": 0.11
+  }
+ }
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Mise au point entre deux tours : rejoue le juge sur rendus/ recopié deux fois dans essai/ (le vrai second lancement
+# n'existe pas encore), puis la carte des écarts du composite. Ne remplace pas le juge final sur rendus/ + rendus-bis/.
+set -u
+ICI="C:/Users/benja/Documents/presti/.orchestre/preuves/021-04b"
+rm -rf "$ICI/essai/rendus" "$ICI/essai/rendus-bis"
+mkdir -p "$ICI/essai/rendus" "$ICI/essai/rendus-bis"
+cp "$ICI"/rendus/*.avif "$ICI"/rendus/eclate.json "$ICI/essai/rendus/"
+cp "$ICI"/rendus/*.avif "$ICI"/rendus/eclate.json "$ICI/essai/rendus-bis/"
+cd C:/Users/benja/Documents/presti
+# (essai/ n'a pas de rapport.md : on retire seulement les échecs OB-7 de la ligne finale, pas la ligne entière)
+node scripts/eclate-rendu-qa.mjs --dossier=.orchestre/preuves/021-04b/essai 2>&1 | sed -E 's/ ; OB-7 : rapport\.md[^;]*//g; s/OB-7 : rapport\.md[^;]*( ; )?//g'
+node "$ICI/outils/ecarts.mjs" "$ICI/rendus"

@@ -1,0 +1,28 @@
+{
+  "zone": "17 plomberie-électricité",
+  "entrees": [
+    { "entreprise": "CVC17", "metier": "chauffagiste", "ville": "La Rochelle", "departement": "17", "email": "info@cvc17.com", "source_url": "https://cvc17.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Climeo17", "metier": "climatisation / pompe à chaleur", "ville": "Charente-Maritime", "departement": "17", "email": "contact@climeo17.fr", "source_url": "https://climeo17.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "AG Clim 17", "metier": "climatisation / pompe à chaleur", "ville": "La Rochelle", "departement": "17", "email": "agclim17@gmail.com", "source_url": "https://www.agclim17.fr/mentions-legales", "civilite": null, "dirigeant": null },
+    { "entreprise": "Eco Solutions 17", "metier": "climatisation / pompe à chaleur", "ville": "La Rochelle", "departement": "17", "email": "contact@eco-solutions-17.fr", "source_url": "https://eco-solutions-17.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "Lachaud Construction", "metier": "électricien", "ville": "La Rochelle", "departement": "17", "email": "contact@lachaud-construction.com", "source_url": "https://lachaud-construction.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Atout Habitation", "metier": "électricien", "ville": "La Rochelle", "departement": "17", "email": "contact@electricien-la-rochelle.com", "source_url": "https://www.electricien-la-rochelle.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Atlantique Électricité 17", "metier": "électricien", "ville": "La Rochelle", "departement": "17", "email": "atl.elec17@gmail.com", "source_url": "https://www.electricien-la-rochelle.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "Forestier EURL", "metier": "plombier", "ville": "Rochefort", "departement": "17", "email": "eurl.forestier@gmail.com", "source_url": "https://www.forestier-plomberie.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "Bel Entreprise", "metier": "plombier", "ville": "Rochefort", "departement": "17", "email": "infos@bel.fr", "source_url": "https://www.bel17.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "AK Chauffage", "metier": "chauffagiste", "ville": "Marennes", "departement": "17", "email": "aklein@coopetbat.pro", "source_url": "https://www.akchauffage.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Grignon Électricien", "metier": "électricien", "ville": "Saint-Martin-de-Ré", "departement": "17", "email": "contact@electricien-iledere.com", "source_url": "https://www.electricien-iledere.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Moustache Elec", "metier": "électricien", "ville": "Rivedoux-Plage", "departement": "17", "email": "contact@moustache-elec.fr", "source_url": "https://moustache-elec-iledere.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "Royan Énergies", "metier": "électricien", "ville": "Royan", "departement": "17", "email": "vo@royan-energies.com", "source_url": "https://www.royan-energies.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "ESHB", "metier": "électricien", "ville": "Vaux-sur-Mer", "departement": "17", "email": "bienvenue@eshb.fr", "source_url": "https://eshb.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "N.F.J Plomberie Chauffage", "metier": "plombier", "ville": "Saintes", "departement": "17", "email": "nfjplomberiechauffage@gmail.com", "source_url": "https://www.plomberie-saintes.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Plomberie MN", "metier": "plombier", "ville": "Saintes", "departement": "17", "email": "plombier.mn@gmail.com", "source_url": "https://plomberiemn.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "TIBS Énergie", "metier": "climatisation / pompe à chaleur", "ville": "Saintes", "departement": "17", "email": "contact@tibs-energie.com", "source_url": "https://www.tibs-energie.com/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Minguez-Rullier", "metier": "plombier", "ville": "Pons", "departement": "17", "email": "minguez.rullier@gmail.com", "source_url": "https://www.minguez-rullier.com", "civilite": null, "dirigeant": null },
+    { "entreprise": "Électricité Générale Jacquet", "metier": "électricien", "ville": "Jonzac", "departement": "17", "email": "egj17500@gmail.com", "source_url": "https://electricite-jacquet.fr", "civilite": null, "dirigeant": null },
+    { "entreprise": "LB Électricité 17", "metier": "électricien", "ville": "Jonzac", "departement": "17", "email": "sarl.lbelectricite@orange.fr", "source_url": "https://www.lbelectricite17.fr/mentions-legales", "civilite": null, "dirigeant": null },
+    { "entreprise": "Seguin Freddy", "metier": "plombier", "ville": "Villexavier", "departement": "17", "email": "seguinfreddy@gmail.com", "source_url": "https://www.seguinfreddy.fr/mentions-legales", "civilite": null, "dirigeant": null },
+    { "entreprise": "Alex Clim & Chauffage", "metier": "chauffagiste", "ville": "Surgères", "departement": "17", "email": "alexclimetchauffage@gmail.com", "source_url": "https://www.alex-clim-et-chauffage.fr/mentions-legales", "civilite": null, "dirigeant": null },
+    { "entreprise": "Chevalier Frédéric", "metier": "plombier", "ville": "Surgères", "departement": "17", "email": "fchevalierfred@orange.fr", "source_url": "https://www.chevalier-frederic-surgeres.fr/contact", "civilite": null, "dirigeant": null }
+  ]
+}

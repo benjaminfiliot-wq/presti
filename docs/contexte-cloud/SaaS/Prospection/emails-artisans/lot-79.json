@@ -1,0 +1,28 @@
+{
+  "zone": "79 Deux-Sèvres",
+  "entrees": [
+    { "entreprise": "Ortica", "metier": "couvreur", "ville": "Niort", "departement": "79", "email": "artisan.ortica79@gmail.com", "source_url": "https://couvreur-ortica-niort.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "FBM", "metier": "couvreur", "ville": "Bressuire", "departement": "79", "email": "contact@fbm-79.com", "source_url": "https://fbm-79.com/mentions-legales/", "civilite": "monsieur", "dirigeant": "Arnaud FARGETTON" },
+    { "entreprise": "HD Couverture", "metier": "couvreur", "ville": "Niort", "departement": "79", "email": "contact.hd.couverture@gmail.com", "source_url": "https://couvreur79.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL Vivion Grunewald", "metier": "couvreur", "ville": "Nueil-les-Aubiers", "departement": "79", "email": "couvreur.viviongrunewald@gmail.com", "source_url": "https://couvreur-vivion-grunewald.fr/", "civilite": null, "dirigeant": "RÉMI Vivion" },
+    { "entreprise": "La Maison du Bonheur 79", "metier": "couvreur", "ville": "Niort", "departement": "79", "email": "bonheursauzer@hotmail.fr", "source_url": "https://lamaisondubonheur-79.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Menuiserie Ariana", "metier": "menuisier", "ville": "Sainte-Néomaye", "departement": "79", "email": "franck.papot@dallerit.fr", "source_url": "https://www.arianamenuiserie.fr/mentions-legales", "civilite": null, "dirigeant": "FRANCK PAPOT" },
+    { "entreprise": "Berger Menuiserie", "metier": "menuisier", "ville": "Saint-Maixent-l'École", "departement": "79", "email": "berger.menuiserie@gmail.com", "source_url": "https://www.bergermenuiserie.fr/", "civilite": "monsieur", "dirigeant": "BRANGIER" },
+    { "entreprise": "Menuiserie Cédric Bonnet", "metier": "menuisier", "ville": "Melle", "departement": "79", "email": "aud.ced@hotmail.fr", "source_url": "https://www.bonnet-menuiserie.fr/", "civilite": null, "dirigeant": "C. BONNET" },
+    { "entreprise": "Menuiserie Couteau", "metier": "menuisier", "ville": "Chef-Boutonne", "departement": "79", "email": "menuiserie.couteau@orange.fr", "source_url": "https://menuiserie-couteau.fr/", "civilite": "monsieur", "dirigeant": "Mickael COUTEAU" },
+    { "entreprise": "Ecodemeure", "metier": "charpentier", "ville": "Niort", "departement": "79", "email": "ecodemeure79@orange.fr", "source_url": "https://ecodemeure.com/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Lehir Paysages", "metier": "paysagiste", "ville": "Chef-Boutonne", "departement": "79", "email": "lehir.paysage@ymail.com", "source_url": "https://www.lehir-paysagistes-melle.fr/", "civilite": "monsieur", "dirigeant": "HUBERT LEHIR" },
+    { "entreprise": "Damien Decaudin Paysagiste", "metier": "paysagiste", "ville": "Sompt", "departement": "79", "email": "damien.decaudin@orange.fr", "source_url": "https://www.paysagiste-damiendecaudin-melle.fr/", "civilite": "monsieur", "dirigeant": "DAMIEN DECAUDIN" },
+    { "entreprise": "Créavenir Paysage", "metier": "paysagiste", "ville": "Clessé", "departement": "79", "email": "creavenir.paysage@gmail.com", "source_url": "https://www.creavenir-paysage.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Terraflore", "metier": "paysagiste", "ville": "Chauray", "departement": "79", "email": "contact@terraflore.fr", "source_url": "https://www.terraflore.fr/mentions-legales/", "civilite": null, "dirigeant": "Patrice BENETEAU" },
+    { "entreprise": "EURL Giraudeau Guérin", "metier": "paysagiste", "ville": "Niort", "departement": "79", "email": "giraudeau.paysages@gmail.com", "source_url": "https://www.paysagiste-niort-giraudeau.com/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Art D&Co", "metier": "peintre", "ville": "Fors", "departement": "79", "email": "fredfavrioux@gmail.com", "source_url": "https://www.artdandco.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Bodin Peinture", "metier": "peintre", "ville": "Niort", "departement": "79", "email": "michel.bodin17@wanadoo.fr", "source_url": "https://www.bodin-peinture-niort.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Mat. Pro. Pose", "metier": "carreleur", "ville": "Niort", "departement": "79", "email": "mathias@matpropose.com", "source_url": "https://www.matpropose.com/mentions-legales/", "civilite": "monsieur", "dirigeant": "Mathias BOULAI" },
+    { "entreprise": "SARL Gueret", "metier": "carreleur", "ville": "Saint-Jean-de-Thouars", "departement": "79", "email": "contact@sarlgueret.fr", "source_url": "https://www.sarlgueret.fr/mentions-legales", "civilite": null, "dirigeant": "GUERET NADEGE" },
+    { "entreprise": "SARL Martin et Fils", "metier": "plombier", "ville": "Celles-sur-Belle", "departement": "79", "email": "martin-et-fils-79@orange.fr", "source_url": "https://www.martinetfils-cellessurbelle-plombier-chauffagiste.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Entreprise Coutant", "metier": "plombier", "ville": "Aiffres", "departement": "79", "email": "contact@entreprisecoutant.fr", "source_url": "https://entreprisecoutant.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "CB Elec", "metier": "chauffagiste", "ville": "Saint-Maixent-l'École", "departement": "79", "email": "contact@cbelec79.fr", "source_url": "https://www.cbelec79.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Électricité Thouarsaise", "metier": "électricien", "ville": "Thouars", "departement": "79", "email": "contact@electricite-thouarsaise.fr", "source_url": "https://electricite-thouarsaise.fr/mentions-legales", "civilite": null, "dirigeant": "Tony LEING" }
+  ]
+}

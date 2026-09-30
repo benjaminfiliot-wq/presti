@@ -1,0 +1,50 @@
+{
+  "siren": "320788896",
+  "nom": "SOCIETE PERCOT ET FILS",
+  "metier": "plombier",
+  "commune": "Saint-Xandre",
+  "code_postal": "17138",
+  "telephone": "05 46 37 20 31",
+  "source_telephone": "https://www.le-site-des-plombiers.com/plombier-a-saint-xandre-percot-et-fils-sarl/",
+  "demo": true,
+  "nom_affiche": "Société Percot et Fils",
+  "communes": [
+    "Saint-Xandre",
+    "Puilboreau",
+    "La Rochelle",
+    "Dompierre-sur-Mer"
+  ],
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/prestations/",
+      "type": "prestations"
+    },
+    {
+      "chemin": "/contact/",
+      "type": "contact"
+    },
+    {
+      "chemin": "/mentions/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/plombier-puilboreau/",
+      "type": "commune",
+      "cible": "Puilboreau"
+    },
+    {
+      "chemin": "/plombier-la-rochelle/",
+      "type": "commune",
+      "cible": "La Rochelle"
+    },
+    {
+      "chemin": "/plombier-dompierre-sur-mer/",
+      "type": "commune",
+      "cible": "Dompierre-sur-Mer"
+    }
+  ]
+}

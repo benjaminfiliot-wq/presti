@@ -1,0 +1,32 @@
+{
+  "bureau": {
+    "requetesAuChargement": 14,
+    "merciAffiche": true,
+    "requetesVuesApresEnvoi": [],
+    "requetesRecuesParLeServeurApresEnvoi": [],
+    "temoinVuParEcouteur": [
+      "POST /temoin-post (fetch)",
+      "POST /temoin-beacon (ping)"
+    ],
+    "temoinRecuParServeur": [
+      "POST /temoin-post",
+      "POST /temoin-beacon"
+    ]
+  },
+  "mobile": {
+    "requetesAuChargement": 10,
+    "merciAffiche": true,
+    "requetesVuesApresEnvoi": [],
+    "requetesRecuesParLeServeurApresEnvoi": [],
+    "temoinVuParEcouteur": [
+      "POST /temoin-post (fetch)",
+      "POST /temoin-beacon (ping)"
+    ],
+    "temoinRecuParServeur": [
+      "POST /temoin-post",
+      "POST /temoin-beacon",
+      "POST /temoin-post",
+      "POST /temoin-beacon"
+    ]
+  }
+}

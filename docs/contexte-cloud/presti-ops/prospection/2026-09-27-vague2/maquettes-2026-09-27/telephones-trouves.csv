@@ -1,0 +1,25 @@
+n;entreprise;telephone;source;type_source;confiance
+1;SARL SOMEBAT;;;;
+2;H.T. CLIMATISATION;;;;
+4;SARL GUIGNET;;;;
+5;BGSOLS;05 46 82 95 59;https://www.openstreetmap.org/node/13041198162;annuaire_public;moyenne
+6;FRERE;05 49 17 80 30;https://www.openstreetmap.org/node/13191353800;annuaire_public;moyenne
+7;GUINOT;05 49 09 04 08;https://www.openstreetmap.org/way/185773983;annuaire_public;moyenne
+8;LARNAUD PAYSAGE;05 46 41 00 82;https://www.openstreetmap.org/node/13273723232;annuaire_public;moyenne
+9;PAYSAGE ROBIN;05 46 35 32 17;https://www.openstreetmap.org/node/12994218066;annuaire_public;moyenne
+10;TUILE & ZINC;05 16 85 18 42;https://www.openstreetmap.org/node/13665636587;annuaire_public;moyenne
+11;EURL LVP;;;;
+12;AUNIS COUVERTURE;05 46 87 47 72;https://www.openstreetmap.org/node/13913032774;annuaire_public;moyenne
+15;GROUP ECOGIE;;;;
+16;SARL HUGO;;;;
+17;SL PAYSAGE SERVICES;06 27 45 09 59;https://www.intramuros.org/saint-georges-du-bois/commerces/137314;annuaire_public;haute
+18;D.C AGENCEMENTS;;;;
+19;INOVE FACADE;05 46 01 92 62;https://www.openstreetmap.org/node/13809455561;annuaire_public;moyenne
+20;COUVERTURE TEIXEIRA;06 19 09 67 30;https://www.openstreetmap.org/node/13356353590;annuaire_public;moyenne
+21;GALLARD PEINTURE;;;;
+22;AUNISTEL 17;05 46 34 20 63;https://www.openstreetmap.org/node/12766803877;annuaire_public;moyenne
+23;ELECTROSOLUTION;05 46 56 79 30;https://data.ademe.fr/data-fair/api/v1/datasets/6x4i1u8yqh1sfhis83l1gw6f/lines?qs=53943425800015&size=100;annuaire_public;haute
+24;BCD SERRURERIE;05 49 35 80 54;https://www.openstreetmap.org/node/923052314;annuaire_public;moyenne
+25;LEDUC ALU;05 46 29 36 88;https://www.openstreetmap.org/node/13022780212;annuaire_public;moyenne
+28;GENERATION RENOVATION 17;05 54 54 93 48;https://www.openstreetmap.org/node/13760565705;annuaire_public;moyenne
+30;COUV'TOIT;06 49 61 82 18;https://www.openstreetmap.org/node/13041249791;annuaire_public;moyenne

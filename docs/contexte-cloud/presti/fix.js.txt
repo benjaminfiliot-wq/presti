@@ -1,0 +1,6 @@
+const fs = require('fs');
+let c = fs.readFileSync('scripts/juges-026-studio-offre-mutations.mjs', 'utf8');
+c = c.replace(/d''exclure/g, "d\\'exclure")
+     .replace(/l''analyse/g, "l\\'analyse")
+     .replace(/n''affecte/g, "n\\'affecte");
+fs.writeFileSync('scripts/juges-026-studio-offre-mutations.mjs', c, 'utf8');

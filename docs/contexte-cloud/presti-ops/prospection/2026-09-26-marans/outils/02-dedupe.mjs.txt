@@ -1,0 +1,59 @@
+// Étape 2 : une ligne RGE = une qualification. On regroupe par SIRET pour avoir une ligne = une entreprise.
+import fs from "node:fs";
+
+const IN = new URL("../data/01-rge-brut.json", import.meta.url);
+const OUT = new URL("../data/02-entreprises.json", import.meta.url);
+
+const rows = JSON.parse(fs.readFileSync(IN, "utf8"));
+
+const bySiret = new Map();
+for (const r of rows) {
+  if (!r.siret) continue;
+  const existing = bySiret.get(r.siret);
+  if (!existing) {
+    bySiret.set(r.siret, {
+      siret: r.siret,
+      nom_entreprise: r.nom_entreprise,
+      adresse: r.adresse,
+      code_postal: r.code_postal,
+      commune: r.commune,
+      telephone: r.telephone || "",
+      email: r.email || "",
+      site_internet: r.site_internet || "",
+      metiers: new Set([r.metier]),
+      domaines: new Set([r.domaine]),
+      organismes: new Set([r.organisme]),
+      lien_date_fin_max: r.lien_date_fin || "",
+    });
+  } else {
+    existing.metiers.add(r.metier);
+    existing.domaines.add(r.domaine);
+    existing.organismes.add(r.organisme);
+    // on complète les champs de contact si la ligne courante en a et pas la précédente
+    if (!existing.telephone && r.telephone) existing.telephone = r.telephone;
+    if (!existing.email && r.email) existing.email = r.email;
+    if (!existing.site_internet && r.site_internet) existing.site_internet = r.site_internet;
+    if (r.lien_date_fin && r.lien_date_fin > existing.lien_date_fin_max) existing.lien_date_fin_max = r.lien_date_fin;
+  }
+}
+
+const entreprises = [...bySiret.values()].map((e) => ({
+  ...e,
+  metiers: [...e.metiers].sort().join(" + "),
+  domaines: [...e.domaines].sort().join(" ; "),
+  organismes: [...e.organismes].sort().join(" ; "),
+}));
+
+console.log(`Entreprises uniques (par SIRET) : ${entreprises.length}`);
+
+const avecTel = entreprises.filter((e) => e.telephone && e.telephone.trim() !== "");
+console.log(`... dont avec téléphone public renseigné : ${avecTel.length}`);
+
+const parMetier = {};
+for (const e of avecTel) {
+  for (const m of e.metiers.split(" + ")) parMetier[m] = (parMetier[m] || 0) + 1;
+}
+console.log("Répartition par métier (avec téléphone) :", parMetier);
+
+fs.writeFileSync(OUT, JSON.stringify(avecTel, null, 2));
+console.log(`Écrit -> data/02-entreprises.json (${avecTel.length} entreprises)`);

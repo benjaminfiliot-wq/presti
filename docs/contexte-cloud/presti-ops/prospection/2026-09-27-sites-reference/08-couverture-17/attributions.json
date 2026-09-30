@@ -1,0 +1,62 @@
+[
+  {
+    "fichier": "images/hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1183,
+    "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+    "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+    "auteur": "Friedrich Haag",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+    "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+  },
+  {
+    "fichier": "images/ancienne-960.webp",
+    "base": "ancienne",
+    "largeur": 1600,
+    "hauteur": 1200,
+    "legende": "Toiture ancienne en tuiles et pierres",
+    "alt": "Toiture ancienne en tuiles et pierres",
+    "auteur": "László Szalai (Beyond silence)",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+    "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+  },
+  {
+    "fichier": "images/ardoise-960.webp",
+    "base": "ardoise",
+    "largeur": 1600,
+    "hauteur": 2134,
+    "legende": "Clocher couvert d'ardoises",
+    "alt": "Clocher couvert d'ardoises",
+    "auteur": "Dietmar Rabich",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+    "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+  },
+  {
+    "fichier": "images/charpente-960.webp",
+    "base": "charpente",
+    "largeur": 1600,
+    "hauteur": 1183,
+    "legende": "Chantier de charpente et couverture en cours",
+    "alt": "Chantier de charpente et couverture en cours",
+    "auteur": "Friedrich Haag",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+    "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+  },
+  {
+    "fichier": "images/faitage-960.webp",
+    "base": "faitage",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+    "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+    "auteur": "José Luiz",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+    "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+  }
+]

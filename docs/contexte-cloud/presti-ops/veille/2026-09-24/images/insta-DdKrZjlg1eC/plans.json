@@ -1,0 +1,135 @@
+{
+ "resume": {
+  "nom": "insta-DdKrZjlg1eC",
+  "duree": 54.9,
+  "scenes_detectees": 2,
+  "candidats": 30,
+  "extraits": 30,
+  "doublons_supprimes": 0,
+  "plans": 30,
+  "planches": 4,
+  "zero_octet": []
+ },
+ "plans": [
+  {
+   "t": 0.0,
+   "source": "2s"
+  },
+  {
+   "t": 0.1,
+   "source": "scene"
+  },
+  {
+   "t": 2.0,
+   "source": "2s"
+  },
+  {
+   "t": 4.0,
+   "source": "2s"
+  },
+  {
+   "t": 6.0,
+   "source": "2s"
+  },
+  {
+   "t": 8.0,
+   "source": "2s"
+  },
+  {
+   "t": 10.0,
+   "source": "2s"
+  },
+  {
+   "t": 12.0,
+   "source": "2s"
+  },
+  {
+   "t": 14.0,
+   "source": "2s"
+  },
+  {
+   "t": 16.0,
+   "source": "2s"
+  },
+  {
+   "t": 18.0,
+   "source": "2s"
+  },
+  {
+   "t": 20.0,
+   "source": "2s"
+  },
+  {
+   "t": 22.0,
+   "source": "2s"
+  },
+  {
+   "t": 24.0,
+   "source": "2s"
+  },
+  {
+   "t": 26.0,
+   "source": "2s"
+  },
+  {
+   "t": 28.0,
+   "source": "2s"
+  },
+  {
+   "t": 30.0,
+   "source": "2s"
+  },
+  {
+   "t": 32.0,
+   "source": "2s"
+  },
+  {
+   "t": 34.0,
+   "source": "2s"
+  },
+  {
+   "t": 36.0,
+   "source": "2s"
+  },
+  {
+   "t": 38.0,
+   "source": "2s"
+  },
+  {
+   "t": 40.0,
+   "source": "2s"
+  },
+  {
+   "t": 42.0,
+   "source": "2s"
+  },
+  {
+   "t": 44.0,
+   "source": "2s"
+  },
+  {
+   "t": 46.0,
+   "source": "2s"
+  },
+  {
+   "t": 48.0,
+   "source": "2s"
+  },
+  {
+   "t": 50.0,
+   "source": "2s"
+  },
+  {
+   "t": 52.0,
+   "source": "2s"
+  },
+  {
+   "t": 54.0,
+   "source": "2s"
+  },
+  {
+   "t": 54.8,
+   "source": "scene"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+import { chromium } from 'playwright'
+const b = await chromium.launch()
+const p = await b.newPage()
+await p.setContent(`<style>
+@supports (animation-timeline: --non-supporte()) { #a { --t: vrai } }
+@supports (animation-timeline: view()) { #b { --t: vrai } }
+@supports (animation-timeline: scroll()) { #c { --t: vrai } }
+@supports (animation-timeline: --non-supporte) { #d { --t: vrai } }
+</style><div id=a></div><div id=b></div><div id=c></div><div id=d></div>`)
+console.log(b.version(), await p.evaluate(() => ({
+  regle_nonSupporteFn: getComputedStyle(a).getPropertyValue('--t'),
+  regle_view: getComputedStyle(document.getElementById('b')).getPropertyValue('--t'),
+  regle_scroll: getComputedStyle(document.getElementById('c')).getPropertyValue('--t'),
+  regle_dashedIdent: getComputedStyle(d).getPropertyValue('--t'),
+  js_nonSupporteFn: CSS.supports('animation-timeline: --non-supporte()'),
+  js_view: CSS.supports('animation-timeline: view()'),
+  js_viewTimeline: CSS.supports('view-timeline: --x block'),
+  ctors: [typeof ViewTimeline, typeof ScrollTimeline],
+})))
+await b.close()

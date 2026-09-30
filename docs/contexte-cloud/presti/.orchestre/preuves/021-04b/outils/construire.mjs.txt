@@ -1,0 +1,197 @@
+// 021-04 (2e rendu) — assemble les passes Blender en livrables : ombre posée sous les pièces, fond uni #14110E pour les deux
+// vues complètes, calques rognés avec alpha, eclate.json, AVIF (qualité par fichier, plafond 60 000 octets), planche, regards.
+//
+// Usage :
+//   node outils/construire.mjs                 lance Blender deux fois (rendus/, rendus-bis/, même graine) puis assemble
+//   node outils/construire.mjs --sans-blender  réassemble à partir des passes déjà rendues (brut/, brut-bis/)
+//   node outils/construire.mjs --brouillon     un seul lancement rapide dans brouillon/ (pour regarder la composition)
+import fs from 'node:fs'
+import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
+
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const BLENDER = 'C:/Program Files/Blender Foundation/blender.exe'
+const GRAINE = 5204
+const L = 1400, H = 1050
+const FOND = { r: 0x14, g: 0x11, b: 0x0e }
+const OPACITE_OMBRE = 0.5          // ombre « douce et légère » : alpha ≤ 0,6 (retour de Claude Code, point 4)
+const SEUIL_OMBRE = 12 / 255       // queue d'ombre plus faible que ça : transparente (boîtes serrées, invisible sur #14110E)
+const GROUPES = ['limon', 'contremarche', 'marche', 'vis']
+const ORDRE = { limon: 1, contremarche: 2, marche: 3, vis: 4 }
+const args = process.argv.slice(2)
+const SANS_BLENDER = args.includes('--sans-blender')
+const BROUILLON = args.includes('--brouillon')
+const surcharge = args.find((a) => a.startsWith('--vecteurs='))?.slice('--vecteurs='.length)
+
+function blender(dossierBrut, mode) {
+  fs.mkdirSync(dossierBrut, { recursive: true })
+  const cmd = ['--background', '--factory-startup', '--python', path.join(ICI, 'outils', 'marche.py'), '--', dossierBrut, String(GRAINE), mode]
+  if (surcharge) cmd.push(surcharge)
+  const t = Date.now()
+  const r = spawnSync(BLENDER, cmd, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+  fs.writeFileSync(path.join(dossierBrut, 'blender.log'), (r.stdout || '') + (r.stderr || ''))
+  if (r.status !== 0 || !/FINI/.test(r.stdout || '')) throw new Error(`Blender a échoué (${r.status}) : voir ${path.join(dossierBrut, 'blender.log')}`)
+  return { secondes: Math.round((Date.now() - t) / 100) / 10, commande: `"${BLENDER}" ${cmd.map((c) => (/\s/.test(c) ? `"${c}"` : c)).join(' ')}` }
+}
+
+async function rgba(f) {
+  const { data, info } = await sharp(f).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  if (info.width !== L || info.height !== H) throw new Error(`${f} : ${info.width} × ${info.height}`)
+  return data
+}
+
+// alpha de la passe d'ombre : adouci (bruit du capteur), mis à l'opacité retenue, queue coupée
+async function alphaOmbre(f) {
+  // (passe rendue à mi-définition : agrandie au cadre, puis adoucie ; flou de 3 px et non 1,6 : à 32 échantillons, les
+  // ombres lointaines des vis et des contremarches du haut restaient tachetées, 2e rendu, regard du brouillon)
+  const { data } = await sharp(f).ensureAlpha().extractChannel(3).resize(L, H, { fit: 'fill', kernel: 'cubic' }).blur(3).raw().toBuffer({ resolveWithObject: true })
+  const a = new Float32Array(L * H)
+  for (let i = 0; i < a.length; i++) { const v = (data[i] / 255) * OPACITE_OMBRE; a[i] = v < SEUIL_OMBRE ? 0 : v }
+  return a
+}
+
+// pièce (alpha droit) posée sur son ombre (noire) : un calque RGBA
+function poserSurOmbre(beaute, ombre) {
+  const out = Buffer.alloc(L * H * 4)
+  for (let i = 0, p = 0; i < L * H; i++, p += 4) {
+    const ab = beaute[p + 3] / 255, as = ombre[i]
+    const a = ab + as * (1 - ab)
+    if (a <= 0) continue
+    for (let c = 0; c < 3; c++) out[p + c] = Math.round((beaute[p + c] * ab) / a)
+    out[p + 3] = Math.round(a * 255)
+  }
+  return out
+}
+
+// vue complète : fond uni, ombres, pièces
+function aplatir(calque) {
+  const out = Buffer.alloc(L * H * 3)
+  const f = [FOND.r, FOND.g, FOND.b]
+  for (let i = 0, p = 0, q = 0; i < L * H; i++, p += 4, q += 3) {
+    const a = calque[p + 3] / 255
+    for (let c = 0; c < 3; c++) out[q + c] = Math.round(calque[p + c] * a + f[c] * (1 - a))
+  }
+  return out
+}
+
+function boite(calque) {
+  let x0 = L, y0 = H, x1 = -1, y1 = -1
+  for (let y = 0; y < H; y++) for (let x = 0; x < L; x++) if (calque[(y * L + x) * 4 + 3] > 0) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y }
+  if (x1 < 0) throw new Error('calque vide')
+  return { left: x0, top: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 }
+}
+
+async function assembler(brut, sortie, qualites) {
+  fs.mkdirSync(sortie, { recursive: true })
+  const scene = JSON.parse(fs.readFileSync(path.join(brut, 'scene.json'), 'utf8'))
+  const png = {}
+  for (const vue of ['assemble', 'eclate']) {
+    const c = poserSurOmbre(await rgba(path.join(brut, `${vue}_beaute.png`)), await alphaOmbre(path.join(brut, `${vue}_ombre.png`)))
+    png[vue] = await sharp(aplatir(c), { raw: { width: L, height: H, channels: 3 } }).png().toBuffer()
+  }
+  const pieces = [], mesures = {}
+  for (const g of GROUPES) {
+    const beaute = await rgba(path.join(brut, `calque-${g}_beaute.png`))
+    const ombre = await alphaOmbre(path.join(brut, `calque-${g}_ombre.png`))
+    if (g === 'vis') {
+      // les vis des deux rangs du haut portent leur ombre sur le sol du groupe, 18 et 36 cm plus bas : sur le calque, des taches
+      // floues détachées de toute vis (regard du 2e tour, calque sur gris), qui glisseraient sur les marches pendant l'éclatement.
+      // On garde l'ombre au contact : seulement à moins d'une trentaine de pixels d'une vis, avec un fondu.
+      const { data: pres } = await sharp(beaute, { raw: { width: L, height: H, channels: 4 } }).extractChannel(3).blur(12).raw().toBuffer({ resolveWithObject: true })
+      for (let i = 0; i < ombre.length; i++) ombre[i] *= Math.min(1, Math.max(0, (pres[i] - 2) / 30))
+    }
+    const c = poserSurOmbre(beaute, ombre)
+    const b = boite(c)
+    png[`calque-${g}`] = await sharp(c, { raw: { width: L, height: H, channels: 4 } }).extract(b).png().toBuffer()
+    let aMax = 0 // alpha maximal de l'ombre seule, après l'opacité retenue (≤ 0,6 attendu)
+    const om = await alphaOmbre(path.join(brut, `calque-${g}_ombre.png`))
+    for (const v of om) if (v > aMax) aMax = v
+    mesures[g] = { boitePx: b, alphaOmbreMax: Math.round(aMax * 1000) / 1000 }
+    const [vx, vy] = scene.vecteurs_px[g]
+    pieces.push({ nom: g, fichier: `calque-${g}.avif`, x: +(b.left / L).toFixed(6), y: +(b.top / H).toFixed(6), l: +(b.width / L).toFixed(6), h: +(b.height / H).toFixed(6), vecteur: [+(vx / L).toFixed(6), +(vy / H).toFixed(6)], ordre: ORDRE[g] })
+  }
+  const json = { cadre: { largeur: L, hauteur: H }, pieces, etiquettes: scene.etiquettes, cote: scene.cote, points: 'vue assemblée (ajouter le vecteur de la pièce pour la vue éclatée)' }
+  fs.writeFileSync(path.join(sortie, 'eclate.json'), JSON.stringify(json, null, 1))
+  // qualité AVIF : on part des qualités de base et on retire 2 points à tous les fichiers tant que le total dépasse
+  // 57 000 octets (plafond OB-3 : 60 000, marge pour le second lancement)
+  let octets = {}, retrait = 0
+  for (;;) {
+    const bufs = {}
+    for (const [nom, buf] of Object.entries(png)) bufs[nom] = await sharp(buf).avif({ quality: qualites[nom] - retrait, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer()
+    const total = Object.values(bufs).reduce((a, b) => a + b.length, 0)
+    if (total <= 57000 || retrait >= 30) {
+      for (const [nom, avif] of Object.entries(bufs)) {
+        if (!avif.length) throw new Error(`${nom}.avif vide`)
+        fs.writeFileSync(path.join(sortie, `${nom}.avif`), avif)
+        octets[nom] = avif.length
+      }
+      break
+    }
+    retrait += 2
+  }
+  const qualitesEmployees = Object.fromEntries(Object.keys(png).map((n) => [n, qualites[n] - retrait]))
+  return { scene, mesures, octets, png, qualitesEmployees }
+}
+
+const QUALITES = { assemble: 58, eclate: 58, 'calque-limon': 58, 'calque-contremarche': 58, 'calque-marche': 58, 'calque-vis': 60 }
+
+async function regards(dossier, png, sous) {
+  const R = path.join(ICI, 'regard', sous); fs.mkdirSync(R, { recursive: true })
+  for (const [nom, buf] of Object.entries(png)) {
+    // calques : sur un gris moyen, pour voir l'ombre ; et décodés depuis l'AVIF livré
+    const avif = path.join(dossier, `${nom}.avif`)
+    if (nom.startsWith('calque-')) {
+      await sharp(avif).flatten({ background: '#6b6660' }).png().toFile(path.join(R, `${nom}-sur-gris.png`))
+      await sharp(avif).flatten({ background: '#14110E' }).png().toFile(path.join(R, `${nom}-sur-noir.png`))
+    } else await sharp(avif).png().toFile(path.join(R, `${nom}.png`))
+  }
+}
+
+const journal = {}
+if (BROUILLON) {
+  const brut = path.join(ICI, 'brouillon')
+  if (!SANS_BLENDER) journal.brouillon = blender(brut, 'brouillon')
+  const r = await assembler(brut, path.join(brut, 'sorties'), QUALITES)
+  await regards(path.join(brut, 'sorties'), r.png, 'brouillon')
+  console.log(JSON.stringify({ mesures: r.mesures, octets: r.octets, total: Object.values(r.octets).reduce((a, b) => a + b, 0), vecteurs: r.scene.vecteurs_px, echelle: r.scene.echelle_ortho_m, secondes: r.scene.secondes_total }, null, 1))
+} else {
+  // --seulement=rendus ou --seulement=rendus-bis : un seul lancement (les durées des lancements précédents sont gardées)
+  const seul = args.find((x) => x.startsWith('--seulement='))?.slice('--seulement='.length)
+  const res = {}
+  for (const [sous, brutNom] of [['rendus', 'brut'], ['rendus-bis', 'brut-bis']]) {
+    const brut = path.join(ICI, brutNom)
+    if (seul && seul !== sous) { if (fs.existsSync(path.join(brut, 'scene.json')) && !SANS_BLENDER) res[sous] = await assembler(brut, path.join(ICI, sous), QUALITES); continue }
+    if (!SANS_BLENDER) journal[sous] = blender(brut, 'final')
+    if (fs.existsSync(path.join(brut, 'scene.json'))) res[sous] = await assembler(brut, path.join(ICI, sous), QUALITES)
+  }
+  await regards(path.join(ICI, 'rendus'), res.rendus.png, 'final')
+  const prec = fs.existsSync(path.join(ICI, 'construire.json')) ? JSON.parse(fs.readFileSync(path.join(ICI, 'construire.json'), 'utf8')) : {}
+  const bis = res['rendus-bis'] || res.rendus
+  const bilan = {
+    date: new Date().toISOString(), graine: GRAINE, qualites: res.rendus.qualitesEmployees, qualitesBis: res['rendus-bis'] ? res['rendus-bis'].qualitesEmployees : null, opaciteOmbre: OPACITE_OMBRE,
+    lancements: { ...(prec.lancements || {}), ...journal },
+    blender: res.rendus.scene.blender, echantillons: res.rendus.scene.echantillons,
+    secondesBlender: { rendus: res.rendus.scene.secondes_total, 'rendus-bis': res['rendus-bis'] ? res['rendus-bis'].scene.secondes_total : null },
+    secondesParRendu: res.rendus.scene.secondes,
+    octets: res.rendus.octets, total: Object.values(res.rendus.octets).reduce((x, y) => x + y, 0),
+    mesures: res.rendus.mesures, vecteursPx: res.rendus.scene.vecteurs_px, echelle: res.rendus.scene.echelle_ortho_m,
+  }
+  fs.writeFileSync(path.join(ICI, 'construire.json'), JSON.stringify(bilan, null, 1))
+  // planche : assemblé, éclaté, puis les quatre calques sur gris (pour voir l'ombre)
+  const tuile = (buf, w, h) => sharp(buf).resize(w, h, { fit: 'contain', background: '#6b6660' }).flatten({ background: '#6b6660' }).png().toBuffer()
+  const compos = [
+    { input: await tuile(await sharp(path.join(ICI, 'rendus', 'assemble.avif')).png().toBuffer(), 700, 525), left: 20, top: 20 },
+    { input: await tuile(await sharp(path.join(ICI, 'rendus', 'eclate.avif')).png().toBuffer(), 700, 525), left: 740, top: 20 },
+  ]
+  let x = 20
+  for (const g of GROUPES) {
+    compos.push({ input: await tuile(await sharp(path.join(ICI, 'rendus', `calque-${g}.avif`)).png().toBuffer(), 340, 300), left: x, top: 565 })
+    x += 355
+  }
+  await sharp({ create: { width: 1460, height: 885, channels: 3, background: '#2a2521' } }).composite(compos).jpeg({ quality: 86 }).toFile(path.join(ICI, 'planche.jpg'))
+  console.log(JSON.stringify(bilan, null, 1))
+}

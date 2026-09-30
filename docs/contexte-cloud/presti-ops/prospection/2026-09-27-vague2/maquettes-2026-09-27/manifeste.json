@@ -1,0 +1,302 @@
+[
+  {
+    "n": 1,
+    "dossier": "01-sarl-somebat",
+    "siren": "328920939",
+    "entreprise": "SARL SOMEBAT",
+    "metier": "maçon",
+    "commune": "SAINT-SYMPHORIEN",
+    "modele": "couvreur",
+    "score_laya": 0.794
+  },
+  {
+    "n": 2,
+    "dossier": "02-h-t-climatisation",
+    "siren": "902143817",
+    "entreprise": "H.T. CLIMATISATION",
+    "metier": "chauffagiste",
+    "commune": "AIGREFEUILLE-D'AUNIS",
+    "modele": "plombier",
+    "score_laya": 0.7786
+  },
+  {
+    "n": 3,
+    "dossier": "03-raynal-elec",
+    "siren": "829851237",
+    "entreprise": "RAYNAL ELEC",
+    "metier": "électricien",
+    "commune": "VERGEROUX",
+    "modele": "electricien",
+    "score_laya": 0.7721
+  },
+  {
+    "n": 4,
+    "dossier": "04-sarl-guignet",
+    "siren": "415011949",
+    "entreprise": "SARL GUIGNET",
+    "metier": "maçon",
+    "commune": "SAINT-CHRISTOPHE",
+    "modele": "couvreur",
+    "score_laya": 0.7676
+  },
+  {
+    "n": 5,
+    "dossier": "05-bgsols",
+    "siren": "479508566",
+    "entreprise": "BGSOLS",
+    "metier": "carreleur",
+    "commune": "TONNAY CHARENTE",
+    "modele": "menuisier",
+    "score_laya": 0.7654
+  },
+  {
+    "n": 6,
+    "dossier": "06-frere",
+    "siren": "400841227",
+    "entreprise": "FRERE",
+    "metier": "menuisier",
+    "commune": "VILLIERS-EN-PLAINE",
+    "modele": "menuisier",
+    "score_laya": 0.7611
+  },
+  {
+    "n": 7,
+    "dossier": "07-guinot",
+    "siren": "381745330",
+    "entreprise": "GUINOT",
+    "metier": "carreleur",
+    "commune": "BESSINES",
+    "modele": "menuisier",
+    "score_laya": 0.7587
+  },
+  {
+    "n": 8,
+    "dossier": "08-larnaud-paysage",
+    "siren": "523499143",
+    "entreprise": "LARNAUD PAYSAGE",
+    "metier": "paysagiste",
+    "commune": "SURGERES",
+    "modele": "menuisier",
+    "score_laya": 0.7582
+  },
+  {
+    "n": 9,
+    "dossier": "09-paysage-robin",
+    "siren": "420693996",
+    "entreprise": "PAYSAGE ROBIN",
+    "metier": "paysagiste",
+    "commune": "LA JARNE",
+    "modele": "menuisier",
+    "score_laya": 0.7538
+  },
+  {
+    "n": 10,
+    "dossier": "10-tuile-zinc",
+    "siren": "838445609",
+    "entreprise": "TUILE & ZINC",
+    "metier": "couvreur",
+    "commune": "AIGREFEUILLE-D'AUNIS",
+    "modele": "couvreur",
+    "score_laya": 0.7445
+  },
+  {
+    "n": 11,
+    "dossier": "11-eurl-lvp",
+    "siren": "753918432",
+    "entreprise": "EURL LVP",
+    "metier": "plombier",
+    "commune": "ANGOULINS",
+    "modele": "plombier",
+    "score_laya": 0.7441
+  },
+  {
+    "n": 12,
+    "dossier": "12-aunis-couverture",
+    "siren": "812072965",
+    "entreprise": "AUNIS COUVERTURE",
+    "metier": "couvreur",
+    "commune": "ROCHEFORT",
+    "modele": "couvreur",
+    "score_laya": 0.7395
+  },
+  {
+    "n": 13,
+    "dossier": "13-smap-sarl",
+    "siren": "408732295",
+    "entreprise": "SMAP SARL",
+    "metier": "menuisier",
+    "commune": "TONNAY-CHARENTE",
+    "modele": "menuisier",
+    "score_laya": 0.7378
+  },
+  {
+    "n": 14,
+    "dossier": "14-valarti",
+    "siren": "979289071",
+    "entreprise": "VALARTI",
+    "metier": "chauffagiste",
+    "commune": "LA JARNE",
+    "modele": "plombier",
+    "score_laya": 0.7363
+  },
+  {
+    "n": 15,
+    "dossier": "15-group-ecogie",
+    "siren": "832465900",
+    "entreprise": "GROUP ECOGIE",
+    "metier": "isolation",
+    "commune": "CROIX-CHAPEAU",
+    "modele": "couvreur",
+    "score_laya": 0.735
+  },
+  {
+    "n": 16,
+    "dossier": "16-sarl-hugo",
+    "siren": "909406902",
+    "entreprise": "SARL HUGO",
+    "metier": "carreleur",
+    "commune": "PISSOTTE",
+    "modele": "menuisier",
+    "score_laya": 0.7323
+  },
+  {
+    "n": 17,
+    "dossier": "17-sl-paysage-services",
+    "siren": "815079561",
+    "entreprise": "SL PAYSAGE SERVICES",
+    "metier": "paysagiste",
+    "commune": "SAINT-GEORGES-DU-BOIS",
+    "modele": "menuisier",
+    "score_laya": 0.7243
+  },
+  {
+    "n": 18,
+    "dossier": "18-d-c-agencements",
+    "siren": "489329326",
+    "entreprise": "D.C AGENCEMENTS",
+    "metier": "menuisier",
+    "commune": "ARDILLIERES",
+    "modele": "menuisier",
+    "score_laya": 0.7241
+  },
+  {
+    "n": 19,
+    "dossier": "19-inove-facade",
+    "siren": "851388603",
+    "entreprise": "INOVE FACADE",
+    "metier": "peintre",
+    "commune": "AIGREFEUILLE-D'AUNIS",
+    "modele": "menuisier",
+    "score_laya": 0.7192
+  },
+  {
+    "n": 20,
+    "dossier": "20-couverture-teixeira",
+    "siren": "820434074",
+    "entreprise": "COUVERTURE TEIXEIRA",
+    "metier": "couvreur",
+    "commune": "BOURGNEUF",
+    "modele": "couvreur",
+    "score_laya": 0.7162
+  },
+  {
+    "n": 21,
+    "dossier": "21-gallard-peinture",
+    "siren": "819564014",
+    "entreprise": "GALLARD PEINTURE",
+    "metier": "peintre",
+    "commune": "VOUILLE",
+    "modele": "menuisier",
+    "score_laya": 0.7086
+  },
+  {
+    "n": 22,
+    "dossier": "22-aunistel-17",
+    "siren": "481743359",
+    "entreprise": "AUNISTEL 17",
+    "metier": "électricien",
+    "commune": "LAGORD",
+    "modele": "electricien",
+    "score_laya": 0.6917
+  },
+  {
+    "n": 23,
+    "dossier": "23-electrosolution",
+    "siren": "539434258",
+    "entreprise": "ELECTROSOLUTION",
+    "metier": "chauffagiste",
+    "commune": "LA JARNE",
+    "modele": "plombier",
+    "score_laya": 0.687
+  },
+  {
+    "n": 24,
+    "dossier": "24-bcd-serrurerie",
+    "siren": "511904021",
+    "entreprise": "BCD SERRURERIE",
+    "metier": "menuisier",
+    "commune": "ECHIRE",
+    "modele": "menuisier",
+    "score_laya": 0.6719
+  },
+  {
+    "n": 25,
+    "dossier": "25-leduc-alu",
+    "siren": "902028109",
+    "entreprise": "LEDUC ALU",
+    "metier": "couvreur",
+    "commune": "SAINT-GEORGES-DU-BOIS",
+    "modele": "couvreur",
+    "score_laya": 0.6631
+  },
+  {
+    "n": 26,
+    "dossier": "26-clim-co17",
+    "siren": "899164628",
+    "entreprise": "CLIM&CO17",
+    "metier": "chauffagiste",
+    "commune": "SAINT-NAZAIRE-SUR-CHARENTE",
+    "modele": "plombier",
+    "score_laya": 0.662
+  },
+  {
+    "n": 27,
+    "dossier": "27-isol-habitat-ouest",
+    "siren": "897945598",
+    "entreprise": "ISOL'HABITAT OUEST",
+    "metier": "isolation",
+    "commune": "SAINT-HIPPOLYTE",
+    "modele": "couvreur",
+    "score_laya": 0.6519
+  },
+  {
+    "n": 28,
+    "dossier": "28-generation-renovation-17",
+    "siren": "938903705",
+    "entreprise": "GENERATION RENOVATION 17",
+    "metier": "isolation",
+    "commune": "ROCHEFORT",
+    "modele": "couvreur",
+    "score_laya": 0.6487
+  },
+  {
+    "n": 29,
+    "dossier": "29-brjs",
+    "siren": "502820707",
+    "entreprise": "BRJS",
+    "metier": "plombier",
+    "commune": "COULONGES-SUR-L'AUTIZE",
+    "modele": "plombier",
+    "score_laya": 0.6077
+  },
+  {
+    "n": 30,
+    "dossier": "30-couv-toit",
+    "siren": "952582997",
+    "entreprise": "COUV'TOIT",
+    "metier": "couvreur",
+    "commune": "SAINT-COUTANT-LE-GRAND",
+    "modele": "couvreur",
+    "score_laya": 0.6044
+  }
+]

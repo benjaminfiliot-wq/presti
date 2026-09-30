@@ -1,0 +1,56 @@
+{
+ "calques": {
+  "limon": {
+   "largeur": 294,
+   "hauteur": 403,
+   "avif": 6734,
+   "webp": 9360
+  },
+  "coin1": {
+   "largeur": 49,
+   "hauteur": 34,
+   "avif": 955,
+   "webp": 700
+  },
+  "coin2": {
+   "largeur": 49,
+   "hauteur": 34,
+   "avif": 944,
+   "webp": 690
+  },
+  "contremarche": {
+   "largeur": 530,
+   "hauteur": 337,
+   "avif": 5755,
+   "webp": 7212
+  },
+  "tourillon1": {
+   "largeur": 11,
+   "hauteur": 26,
+   "avif": 612,
+   "webp": 318
+  },
+  "tourillon2": {
+   "largeur": 10,
+   "hauteur": 27,
+   "avif": 604,
+   "webp": 294
+  },
+  "marche": {
+   "largeur": 672,
+   "hauteur": 322,
+   "avif": 7523,
+   "webp": 8758
+  }
+ },
+ "total": {
+  "avif": 23127,
+  "webp": 27332
+ },
+ "assemble": {
+  "avif1400": 12458
+ },
+ "eclate": {
+  "avif1400": 19481
+ }
+}

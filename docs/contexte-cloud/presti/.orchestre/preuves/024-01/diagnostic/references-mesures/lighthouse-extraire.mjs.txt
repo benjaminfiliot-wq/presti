@@ -1,0 +1,43 @@
+// Extrait d'un rapport Lighthouse JSON les chiffres utiles au téléphone.
+// Usage : node lighthouse-extraire.mjs <rapport.json> <slug>  → écrit <slug>.lighthouse.json ici
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ICI = path.dirname(fileURLToPath(import.meta.url));
+const [rapport, slug] = process.argv.slice(2);
+const r = JSON.parse(await fs.readFile(rapport, 'utf8'));
+const a = id => r.audits[id];
+const num = id => (a(id) ? a(id).numericValue : null);
+const items = id => (a(id) && a(id).details && a(id).details.items ? a(id).details.items : []);
+const sortie = {
+  slug,
+  url: r.finalDisplayedUrl || r.finalUrl,
+  lighthouse: r.lighthouseVersion,
+  fetchTime: r.fetchTime,
+  formFactor: r.configSettings.formFactor,
+  throttlingMethod: r.configSettings.throttlingMethod,
+  throttling: r.configSettings.throttling,
+  userAgent: r.environment && r.environment.networkUserAgent,
+  benchmarkIndex: r.environment && r.environment.benchmarkIndex,
+  erreurExecution: r.runtimeError || null,
+  avertissements: r.runWarnings,
+  scorePerformance: r.categories.performance ? r.categories.performance.score : null,
+  FCP_ms: num('first-contentful-paint'),
+  LCP_ms: num('largest-contentful-paint'),
+  TBT_ms: num('total-blocking-time'),
+  CLS: num('cumulative-layout-shift'),
+  SpeedIndex_ms: num('speed-index'),
+  TTI_ms: num('interactive'),
+  poidsTotal_octets: num('total-byte-weight'),
+  tempsJs_ms: num('bootup-time'),
+  travailThreadPrincipal_ms: num('mainthread-work-breakdown'),
+  domElements: num('dom-size'),
+  animationsNonComposees: a('non-composited-animations') ? { score: a('non-composited-animations').score, elements: items('non-composited-animations').length, titre: a('non-composited-animations').displayValue || null } : 'audit absent de cette version',
+  longuesTaches: items('long-tasks').length,
+  auditsEchoues: Object.values(r.audits)
+    .filter(x => typeof x.score === 'number' && x.score < 0.5 && r.categories.performance.auditRefs.some(ref => ref.id === x.id))
+    .map(x => x.id + (x.displayValue ? ' (' + x.displayValue + ')' : '')),
+};
+await fs.writeFile(path.join(ICI, `${slug}.lighthouse.json`), JSON.stringify(sortie, null, 2));
+console.log(slug, 'score', sortie.scorePerformance, 'LCP', Math.round(sortie.LCP_ms), 'TBT', Math.round(sortie.TBT_ms), 'CLS', sortie.CLS);

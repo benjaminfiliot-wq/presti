@@ -1,0 +1,442 @@
+#!/usr/bin/env node
+// scripts/juges-026-lt-mutations.mjs — fiche 026-152 : contre-vérifier les seize juges du domaine livraison et trésorerie.
+//
+// Un juge qu'on n'a jamais vu échouer sur une vraie faute ne prouve rien (le 16/09, deux juges assouplis ont laissé passer
+// 023-01 et 023-02 avec 0 ligne). Pour chacun des seize juges, ce script :
+//   1. copie le dépôt utile (app, lib, scripts, supabase, docs, .github, gabarits-pubs, .orchestre/brouillons-ecosysteme et les
+//      fichiers de la racine ; node_modules en jonction, public en miroir à deux niveaux, jamais .git) sous .orchestre/travail/026-lt-21/copie-<n>/ :
+//      les fichiers suivis ET les fichiers de travail non suivis, exactement la copie que fait le méta-juge ;
+//   2. lance le juge sur la copie intacte : le TÉMOIN, code 0 exigé ;
+//   3. applique UNE mutation (un remplacement de texte exact, `avant` présent une seule fois dans `fichier`), lance le juge sur
+//      la copie mutée : code ≠ 0 exigé, avec LA ligne « FAIL <critère> — … » du critère attendu et le bilan qui le nomme ;
+//      puis rétablit le fichier tel qu'il était.
+// Aucun juge, aucune doublure, aucun jeu d'essai n'est modifié : chaque mutation vit dans une copie, rétablie après l'essai.
+// Rien n'est écrit hors de .orchestre/travail/026-lt-21/ et de .orchestre/preuves/026-152/.
+//
+// LE RELAIS (`--relais=<juge>`). Ces seize juges écrivent « ✅ SC-2 détail » et « ❌ SC-2 détail » (creerSortie de
+// scripts/fixtures/026-livraison-tresor/commun.mjs) ; le méta-juge (026-001) lit « PASS SC-2 — détail » et « FAIL SC-2 —
+// détail ». La commande de chaque mutation est donc `node <ce script> --relais=<juge> <args> --racine={racine}` : il lance le
+// vrai juge, recopie ses lignes (✅ → PASS, ❌ → FAIL, un critère noté deux fois « (complément) » devient une seule ligne, FAIL
+// si l'un des deux l'est), garde son bilan « <juge> : PASS|FAIL — ids » et son code de sortie tels quels. Il ne juge rien.
+//
+// Si une mutation passe, ou si un témoin échoue, le script ne corrige RIEN : il l'écrit en tête du rapport et sort en code 1.
+// Un juge dont le témoin est rouge sur l'arbre réel n'est pas mutable (une mutation ne se voit que si le critère était vert
+// avant) : ses mutations sont « non jouées », jamais comptées comme prises.
+//
+// Sorties : .orchestre/preuves/026-152/mutations.md (une ligne par mutation : fichier et ligne cassés, critère attendu, extrait
+//           réel du verdict) et mutations.json (le rapport machine du méta-juge : juge, commande, fichier, avant, apres,
+//           critere, extrait, duree_s).
+// Usage : node scripts/juges-026-lt-mutations.mjs [--seul=<texte>] [--sans-budget] [--parallele=<n>]
+//   --seul=<texte>    ne joue que les mutations dont le juge, le critère ou le nom contient le texte (mise au point ; le rapport
+//                     n'est alors pas celui de la fiche et le code de sortie est 3 même si tout passe)
+//   --sans-budget     ne s'arrête pas à 18 min (mesure de la durée réelle ; le rapport reste celui de la fiche)
+//   --parallele=<n>   nombre de juges lancés en même temps, chacun sur sa copie (défaut : 1 sous Windows, 3 ailleurs)
+// Code 0 : tous les témoins passent et chaque mutation échoue sur son critère. 1 : sinon. 2 : appel invalide. 3 : lancement
+// partiel. Fin par process.exitCode (Node 24 sous Windows : process.exit après un fetch plante).
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawn, spawnSync } from 'node:child_process'
+
+const CE_SCRIPT = fileURLToPath(import.meta.url)
+const RACINE = path.resolve(path.dirname(CE_SCRIPT), '..')
+const FICHE = '026-152'
+const NOM = 'juges-026-lt-mutations'
+const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', '026-lt-21')
+const PREUVES = path.join(RACINE, '.orchestre', 'preuves', FICHE)
+const JOURNAUX = path.join(TRAVAIL, 'journaux')
+const DEBUT = Date.now()
+// Le méta-juge tue le script à 20 min et a besoin du reste du budget pour ses propres contre-mutations : on s'arrête avant, en
+// le disant, plutôt que d'être tué sans rapport.
+const BUDGET_S = 18 * 60
+const DOSSIERS_COPIE = ['app', 'lib', 'scripts', 'supabase', 'docs', '.github', 'gabarits-pubs', 'maquettes', '.orchestre/brouillons-ecosysteme']
+const FICHIERS_RACINE = ['package.json', 'tsconfig.json', 'next.config.mjs', 'next-env.d.ts', 'vercel.json', 'proxy.ts', 'middleware.ts']
+const JONCTIONS = ['node_modules', 'public']
+const EST_WIN = process.platform === 'win32'
+
+const versSlash = (p) => String(p).split(path.sep).join('/')
+const court = (t, n = 200) => { const x = String(t ?? '').replace(/\s+/g, ' ').trim(); return x.length > n ? `${x.slice(0, n - 1)}…` : x }
+const sansAnsi = (s) => String(s).replace(/\x1b\[[0-9;]*[A-Za-z]/g, '')
+const ecrire = (p, s) => { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, s) }
+const ABS = (rel) => versSlash(path.join(RACINE, rel))
+
+// ═══ La copie prête à être jugée ═══════════════════════════════════════════════════════════════════════════════════════
+// Deux choses manquent à la copie du méta-juge (026-001) et à une copie qui lie public/ en bloc, et aucun juge ne les réclame à tort :
+//  · maquettes/modeles/ (025-02) : redacteur-v2-qa et livrer-site-qa le lisent dans la racine jugée (« 025-02 attendue ») ;
+//  · un public/ RÉEL (dossiers réels public/ et public/sites-demo/, enfants liés) : commande-exporter refuse --sortie sous public/
+//    sur le chemin PHYSIQUE ; si public/ est une jonction, ce chemin sort de la copie, le refus ne se déclenche pas et le juge
+//    écrit (puis efface) son dossier d'essai dans le VRAI public/. Deux niveaux réels, le reste en liens, rien n'est copié en gros.
+// Idempotent ; ne touche que la copie qu'on lui donne, jamais la racine du dépôt.
+function reparerRacine(racine) {
+  const dansDepot = (p) => { const r = path.relative(RACINE, path.resolve(p)); return r === '' || (!r.startsWith('..') && !path.isAbsolute(r)) }
+  if (!racine || path.resolve(racine) === RACINE || dansDepot(racine) && !path.resolve(racine).includes(`${path.sep}.orchestre${path.sep}travail${path.sep}`)) return
+  if (!fs.existsSync(path.join(racine, 'maquettes')) && fs.existsSync(path.join(RACINE, 'maquettes'))) fs.cpSync(path.join(RACINE, 'maquettes'), path.join(racine, 'maquettes'), { recursive: true })
+  const pub = path.join(racine, 'public')
+  let lien = false
+  try { lien = fs.lstatSync(pub).isSymbolicLink() } catch { return }
+  if (!lien || !fs.existsSync(path.join(RACINE, 'public'))) return
+  fs.unlinkSync(pub)
+  const miroir = (rel, profondeur) => {
+    const src = path.join(RACINE, rel), dst = path.join(racine, rel)
+    fs.mkdirSync(dst, { recursive: true })
+    for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+      const de = path.join(src, e.name), vers = path.join(dst, e.name)
+      if (e.isDirectory() && profondeur > 0 && e.name === 'sites-demo') miroir(path.join(rel, e.name), profondeur - 1)
+      else if (e.isDirectory() && (e.name === '_kit' || e.name === '_polices')) fs.cpSync(de, vers, { recursive: true }) // livrer-site-qa les recopie dans son banc : un lien y ferait une « photo » illisible
+      else if (e.isDirectory()) fs.symlinkSync(de, vers, 'junction')
+      else if (e.isFile()) fs.copyFileSync(de, vers)
+    }
+  }
+  miroir('public', 1)
+}
+
+// ═══ Le relais : ✅/❌ des juges → PASS/FAIL du méta-juge ═════════════════════════════════════════════════════════════════
+const argRelais = process.argv.slice(2).find((a) => a.startsWith('--relais='))
+if (argRelais) {
+  const juge = argRelais.slice('--relais='.length)
+  if (!/^[a-z0-9-]+-qa$/.test(juge) || !fs.existsSync(path.join(RACINE, 'scripts', `${juge}.mjs`))) { console.error(`✗ ${NOM} : juge inconnu : ${juge}`); process.exitCode = 2 }
+  else {
+    const args = process.argv.slice(2).filter((a) => a !== argRelais)
+    const argRac = args.find((a) => a.startsWith('--racine='))
+    if (argRac) reparerRacine(argRac.slice('--racine='.length))
+    const r = spawnSync(process.execPath, [path.join(RACINE, 'scripts', `${juge}.mjs`), ...args], { cwd: process.cwd(), encoding: 'utf8', windowsHide: true, maxBuffer: 1 << 28, env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1' } })
+    const brut = sansAnsi(`${r.stdout ?? ''}${r.stderr ? `\n${r.stderr}` : ''}`).split(/\r?\n/)
+    const criteres = new Map() // id → { ok, details[] }
+    const plan = [] // { id } | { texte }
+    for (const l of brut) {
+      const m = /^(✅|❌) (\S+)(?: \(NR\))? ?(.*)$/.exec(l)
+      if (!m) { plan.push({ texte: l }); continue }
+      const ok = m[1] === '✅'
+      const detail = m[3].replace(/ \(complément\)$/, '').trim()
+      const c = criteres.get(m[2])
+      if (c) { c.ok = c.ok && ok; if (detail) c.details.push(detail) } else { criteres.set(m[2], { ok, details: detail ? [detail] : [] }); plan.push({ id: m[2] }) }
+    }
+    const sortie = []
+    for (const p of plan) {
+      if ('texte' in p) { if (p.texte !== '' || sortie.at(-1) !== '') sortie.push(p.texte); continue }
+      const c = criteres.get(p.id)
+      sortie.push(`${c.ok ? 'PASS' : 'FAIL'} ${p.id} — ${c.details.join(' ; ') || (c.ok ? 'conforme' : 'en échec')}`)
+    }
+    process.stdout.write(`${sortie.join('\n').trimEnd()}\n`)
+    process.exitCode = r.status ?? (r.error ? 127 : 128)
+  }
+}
+
+// ═══ Les seize juges ═════════════════════════════════════════════════════════════════════════════════════════════════════
+// `args` : ce qui suit le nom du juge ; --racine={racine} est ajouté à la fin par le relais.
+const JUGES = [
+  { id: 'schema', juge: 'scripts/livraison-schema-qa.mjs', args: '--numero=0103' },
+  { id: 'tresorerie', juge: 'scripts/tresorerie-qa.mjs', args: '' },
+  { id: 'tour', juge: 'scripts/livraison-tour-qa.mjs', args: '' },
+  { id: 'tuile', juge: 'scripts/tuile-argent-qa.mjs', args: '' },
+  { id: 'achat-public', juge: 'scripts/achat-public-qa.mjs', args: '' },
+  { id: 'lien', juge: 'scripts/lien-connexion-qa.mjs', args: '' },
+  { id: 'complement', juge: 'scripts/complement-dossier-qa.mjs', args: '' },
+  { id: 'ecrans', juge: 'scripts/achat-ecrans-qa.mjs', args: '' },
+  { id: 'exporter', juge: 'scripts/commande-exporter-qa.mjs', args: '' },
+  { id: 'redacteur', juge: 'scripts/redacteur-v2-qa.mjs', args: '' },
+  { id: 'livrer', juge: 'scripts/livrer-site-qa.mjs', args: '' },
+  { id: 'generation', juge: 'scripts/generation-actions-qa.mjs', args: '' },
+  { id: 'zip', juge: 'scripts/dossier-zip-qa.mjs', args: '' },
+  { id: 'retrait', juge: 'scripts/retrait-site-qa.mjs', args: '' },
+  { id: 'poste', juge: 'scripts/poste-sites-qa.mjs', args: '' },
+  { id: 'bus', juge: 'scripts/bus-livraison-qa.mjs', args: '' },
+]
+
+// ═══ Les mutations ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+// Une mutation = un remplacement de texte exact (`avant` une seule fois dans `fichier`). Les textes sont écrits en LF ; le moteur
+// les convertit à la fin de ligne du fichier. Chaque faute est une vraie faute du code de production, pas un fichier cassé.
+const MUTATIONS = [
+  // ── livraison-schema-qa (0103) ──────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'schema', crit: 'SC-2', nom: 'un drop column ajouté à la migration', fichier: 'supabase/migrations/0103_livraison_commandes.sql', avant: '-- Les retraits dus : les sites en ligne dont le compte a été supprimé.', apres: 'alter table public.sites_commandes drop column if exists entreprise;\n\n-- Les retraits dus : les sites en ligne dont le compte a été supprimé.' },
+  { id: 'schema', crit: 'SC-3', nom: "'retiree' retiré de la contrainte d'état", fichier: 'supabase/migrations/0103_livraison_commandes.sql', avant: "'en_ligne', 'retiree'));", apres: "'en_ligne'));" },
+  // ── tresorerie-qa ───────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'tresorerie', crit: 'TR-2', nom: 'seuil de TVA : >= devient > dans situerTva (depasse)', fichier: 'lib/direction/tresorerie.ts', avant: 'depasse: caCents !== null && seuil > 0 && caCents >= seuil,', apres: 'depasse: caCents !== null && seuil > 0 && caCents > seuil,' },
+  { id: 'tresorerie', crit: 'TR-6', nom: 'un .update( Stripe ajouté au module de trésorerie', fichier: 'lib/direction/tresorerie.ts', avant: 'export function margeDuMois({', apres: "export const majAbonnement = (stripe: { subscriptions: { update: (id: string) => unknown } }, id: string) => stripe.subscriptions.update(id)\n\nexport function margeDuMois({" },
+  // ── livraison-tour-qa ───────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'tour', crit: 'TL-4', nom: "la réservation n'est plus retirée après un échec d'envoi", fichier: 'lib/siteLivraison.ts', avant: 'if (actuel?.courriels?.[cle] === date) {', apres: 'if (actuel?.courriels?.[cle] === date && false) {' },
+  { id: 'tour', crit: 'TL-5', nom: 'critique: true retiré de l\'envoi', fichier: 'lib/siteLivraison.ts', avant: '...modele, critique: true })', apres: '...modele })' },
+  // ── tuile-argent-qa ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'tuile', crit: 'TA-2', nom: 'un .reduce( sur des montants dans la route de trésorerie', fichier: 'app/api/controle/tresorerie/route.ts', avant: '  let achatsMoisCents = 0\n  for (const achat of achatsLus.data ?? []) achatsMoisCents += achat.ttc_cents ?? 0\n', apres: '  const achatsMoisCents = (achatsLus.data ?? []).reduce((somme, achat) => somme + (achat.ttc_cents ?? 0), 0)\n' },
+  { id: 'tuile', crit: 'TA-4', nom: "l'alerte de TVA part aussi le mardi", fichier: 'lib/direction/veilleTresorerie.ts', avant: "if (lire('weekday') !== 'Mon') return []", apres: "if (lire('weekday') !== 'Mon' && lire('weekday') !== 'Tue') return []" },
+  { id: 'tuile', crit: 'TA-5', nom: 'veilleTresorerie() appelée hors de son try dans tourLivraison', fichier: 'lib/siteLivraison.ts', avant: "  try { await veilleTresorerie(); tresorerieOk = true }\n  catch (e) { bilan.erreurs++; console.error('[livraison] veille trésorerie', e) }\n", apres: '  await veilleTresorerie()\n  tresorerieOk = true\n' },
+  // ── achat-public-qa ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'achat-public', crit: 'AP-6', nom: "le lien part aussi vers une autre adresse que commande.email", fichier: 'lib/siteAchatPublic.ts', avant: 'const envoi = await envoyer({ to: destinataire, ...courrielLien(url), critique: true })', apres: "const envoi = await envoyer({ to: `${destinataire}, contact@prestiapp.fr`, ...courrielLien(url), critique: true })" },
+  { id: 'achat-public', crit: 'AP-5', nom: 'password ajouté à createUser', fichier: 'lib/siteAchatPublic.ts', avant: 'createUser({ email, email_confirm: true })', apres: "createUser({ email, email_confirm: true, password: [SECRET_MASQUE] })" },
+  { id: 'achat-public', crit: 'AP-5', nom: "l'erreur d'envoi du lien est avalée", fichier: 'lib/siteAchatPublic.ts', avant: "if (!envoi.ok) throw new Error(`envoi du lien de connexion impossible : ${envoi.error ?? 'refusé'}`)", apres: "if (!envoi.ok) console.error('lien de connexion non envoyé')" },
+  // ── lien-connexion-qa ───────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'lien', crit: 'LC-1', nom: 'un GET qui consomme le jeton', fichier: 'app/api/auth/lien/route.ts', avant: 'export async function POST(req: Request) {', apres: 'export async function GET(req: Request) {\n  return POST(req)\n}\n\nexport async function POST(req: Request) {' },
+  { id: 'lien', crit: 'LC-5', nom: 'la page poste le jeton au chargement', fichier: 'app/connexion/lien/page.tsx', avant: 'useEffect(() => { setLienLisible(lireAdresse().jeton !== null) }, [])', apres: "useEffect(() => { const th = lireAdresse().jeton; setLienLisible(th !== null); if (th) void fetch('/api/auth/lien', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ th }) }) }, [])" },
+  // ── complement-dossier-qa ───────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'complement', crit: 'CD-4', nom: "etat accepté dans la mise à jour du dossier", fichier: 'lib/siteCommandeServeur.ts', avant: "    matiere: dossier.matiere,\n    modifie_le: (deps.maintenant?.() ?? new Date()).toISOString(),\n  }).eq('id', commandeId)", apres: "    matiere: dossier.matiere,\n    etat: (brut as { etat?: string } | null)?.etat ?? 'payee',\n    modifie_le: (deps.maintenant?.() ?? new Date()).toISOString(),\n  }).eq('id', commandeId)" },
+  { id: 'complement', crit: 'CD-4', nom: "la condition genere_le is null retirée", fichier: 'lib/siteCommandeServeur.ts', avant: ".eq('id', commandeId).eq('artisan_id', uid).eq('etat', 'payee').is('genere_le', null)", apres: ".eq('id', commandeId).eq('artisan_id', uid).eq('etat', 'payee')" },
+  // ── achat-ecrans-qa ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'ecrans', crit: 'EA-5', nom: 'suiteSure accepte //evil.fr', fichier: 'lib/suiteSure.ts', avant: "brut.startsWith('/site/commander')", apres: "brut.startsWith('/')" },
+  { id: 'ecrans', crit: 'EA-2', nom: 'le piège website rendu visible', fichier: 'app/site/acheter/page.tsx', avant: "position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden'", apres: "position: 'static'" },
+  // ── commande-exporter-qa ────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'exporter', crit: 'EX-3', nom: 'withMetadata() ajouté : le GPS des photos est gardé', fichier: 'scripts/commande-exporter.mjs', avant: 'await sharp(source).rotate().resize(', apres: 'await sharp(source).rotate().withMetadata().resize(' },
+  { id: 'exporter', crit: 'EX-7', nom: "une photo d'un autre hôte (ou d'un autre artisan) est prise : contrôles d'hôte et de dossier retirés de clePhoto", fichier: 'scripts/commande-exporter.mjs', avant: 'if (source.origin !== racine.origin || source.search || source.hash || !source.pathname.startsWith(prefixe)) return null', apres: 'if (source.search || source.hash) return null' },
+  // ── redacteur-v2-qa ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'redacteur', crit: 'RV-3', nom: 'une invention (« depuis 15 ans ») dans le chapeau de l’accueil', fichier: 'lib/siteRedacteur.ts', avant: 'des chantiers menés avec soin à ${vars.ville} et alentours.', apres: 'des chantiers menés avec soin depuis 15 ans à ${vars.ville} et alentours.' },
+  { id: 'redacteur', crit: 'RV-6', nom: 'la dégradation retirée : le second texte fautif est gardé', fichier: 'lib/siteRedacteur.ts', avant: 'if (r2.reponse && !mauvais2.length) return r2.reponse\n  rapport.degradations.push(vars.ville)', apres: 'if (r2.reponse) return r2.reponse\n  rapport.degradations.push(vars.ville)' },
+  { id: 'redacteur', crit: 'RV-7', nom: 'le SIREN envoyé à appel (les faits de contrôle dans <donnees>)', fichier: 'lib/siteRedacteur.ts', avant: 'Prestations proposées : ${vars.prestationsTxt}\\n</donnees>`', apres: 'Prestations proposées : ${vars.prestationsTxt}\\nRéférence : ${faits}\\n</donnees>`' },
+  // ── livrer-site-qa ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'livrer', crit: 'CH-5', nom: 'le plafond de régénérations passe à 3', fichier: 'scripts/livrer-site.mjs', avant: 'if (maxReprises + reprises >= 2)', apres: 'if (maxReprises + reprises >= 3)' },
+  { id: 'livrer', crit: 'CH-3', nom: 'le site assemblé est écrit sous public/sites-demo/ au lieu du dossier de travail', fichier: 'scripts/livrer-site.mjs', avant: "const site = path.join(travail, 'site')", apres: "const site = path.join(racine, 'public', 'sites-demo', `livraison-${commande}`)" },
+  { id: 'livrer', crit: 'CH-11', nom: 'en --usine, site-deposer.mjs est lancé quand même', fichier: 'scripts/livrer-site.mjs', avant: '} else if (!sansDepot) {', apres: '}\n    if (!sansDepot) {' },
+  // ── generation-actions-qa ───────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'generation', crit: 'GA-3', nom: 'une étape actions/upload-artifact ajoutée', fichier: '.github/workflows/generer-site.yml', avant: 'scripts/livrer-site.mjs "$COMMANDE" --ci', apres: 'scripts/livrer-site.mjs "$COMMANDE" --ci\n      - uses: actions/upload-artifact@v4\n        with:\n          name: sortie\n          path: .orchestre/travail' },
+  { id: 'generation', crit: 'GA-2', nom: 'timeout-minutes: 60', fichier: '.github/workflows/generer-site.yml', avant: 'timeout-minutes: 20', apres: 'timeout-minutes: 60' },
+  // ── dossier-zip-qa ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'zip', crit: 'DZ-2', nom: '=== au lieu de timingSafeEqual pour le jeton', fichier: 'lib/siteDossier.ts', avant: 'return timingSafeEqual(attendu, recu) && new Date(', apres: 'return data.dossier_jeton_hash === empreinte(jeton) && new Date(' },
+  { id: 'zip', crit: 'DZ-2', nom: "l'expiration du lien ignorée", fichier: 'lib/siteDossier.ts', avant: ' && new Date(data.dossier_expire_le).getTime() > maintenantDe(deps).getTime()', apres: '' },
+  // ── retrait-site-qa ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'retrait', crit: 'RT-3', nom: "detacherDomaine avant l'e-mail du dossier", fichier: 'lib/siteRetrait.ts', avant: '  const jeton = await d.creerJeton(commande.id, 90)\n', apres: '  if (actuelle.domaine) await d.detacherDomaine(actuelle.domaine)\n  const jeton = await d.creerJeton(commande.id, 90)\n' },
+  { id: 'retrait', crit: 'RT-4', nom: "marquerSuppression appelée avant le contrôle de l'échec de la purge", fichier: 'lib/purgeComptes.ts', avant: '      const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)\n', apres: '      const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)\n      try { await marquerSuppression(idsSites) } catch { /* rien */ }\n' },
+  // ── poste-sites-qa ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'poste', crit: 'PS-2', nom: 'la garde exigerDomaine retirée de la route des sites', fichier: 'app/api/controle/sites/[id]/route.ts', avant: "  const perimetre = exigerDomaine(f, 'clients', 'ecrire')\n  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)\n", apres: '' },
+  { id: 'poste', crit: 'PS-4', nom: 'envoyer_dossier sans reconfirmation', fichier: 'app/api/controle/sites/[id]/route.ts', avant: "    const refus = await exigerReconfirmation(req, f.uid, 'artisan')\n    if (refus) return refus\n", apres: '' },
+  // ── bus-livraison-qa ────────────────────────────────────────────────────────────────────────────────────────────────────
+  { id: 'bus', crit: 'BL-2', nom: 'busEnPause rend faux sur une erreur', fichier: 'lib/siteLivraisonBus.ts', avant: 'return !!error || data !== false', apres: 'return !error && data !== false' },
+  { id: 'bus', crit: 'BL-4', nom: 'tourLivraison appelé par le tic sans condition de minute', fichier: 'app/api/agents/tic/route.ts', avant: 'if (new Date().getUTCMinutes() % 15 === 0) {', apres: 'if (true) {' },
+  { id: 'bus', crit: 'BL-3', nom: 'la clé livraison:<id> au lieu de livrer_site:<id>', fichier: 'lib/siteLivraisonBus.ts', avant: 'p_cle: `livrer_site:${commandeId}`', apres: 'p_cle: `livraison:${commandeId}`' },
+  { id: 'bus', crit: 'BL-1', nom: 'ops_tache_rendre au lieu de ops_tache_clore', fichier: 'lib/siteLivraisonBus.ts', avant: "rpc('ops_tache_clore'", apres: "rpc('ops_tache_rendre'" },
+]
+
+// ═══ Options, copies, exécution ══════════════════════════════════════════════════════════════════════════════════════════
+async function principal() {
+  const opts = { seul: null, sansBudget: false, parallele: EST_WIN ? 1 : Math.max(1, Math.min(3, os.cpus().length - 1)) }
+  for (const a of process.argv.slice(2)) {
+    let m
+    if ((m = /^--seul=(.+)$/.exec(a))) opts.seul = m[1]
+    else if (a === '--sans-budget') opts.sansBudget = true
+    else if ((m = /^--parallele=(\d+)$/.exec(a))) opts.parallele = Math.max(1, Number(m[1]))
+    else { console.error(`✗ ${NOM} : argument inattendu : ${a}`); process.exitCode = 2; return }
+  }
+  const PARTIEL = !!opts.seul
+  const ecoule = () => (opts.sansBudget ? 0 : (Date.now() - DEBUT) / 1000)
+  const ecouleReel = () => (Date.now() - DEBUT) / 1000
+
+  // ── La copie ──────────────────────────────────────────────────────────────────────────────────────────────────────────
+  const git = (args) => {
+    const r = spawnSync('git', ['-C', RACINE, ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 256 * 1024 * 1024 })
+    return r.status === 0 ? r.stdout : null
+  }
+  const retirerJonctions = (dir) => {
+    const restent = []
+    const parcourir = (d) => {
+      let noms
+      try { noms = fs.readdirSync(d) } catch { return }
+      for (const n of noms) {
+        const p = path.join(d, n)
+        let st
+        try { st = fs.lstatSync(p) } catch { continue }
+        if (st.isSymbolicLink()) {
+          try { fs.unlinkSync(p) } catch { /* vérifié ci-dessous */ }
+          let encore = true
+          try { fs.lstatSync(p) } catch { encore = false }
+          if (encore) restent.push(p)
+        } else if (st.isDirectory()) parcourir(p)
+      }
+    }
+    if (fs.existsSync(dir)) parcourir(dir)
+    return restent
+  }
+  /** Supprime une copie : jonctions d'abord (unlink), suppression récursive seulement s'il n'en reste aucune. */
+  const supprimerCopie = (dir) => {
+    if (!fs.existsSync(dir)) return
+    const r = path.relative(TRAVAIL, dir)
+    if (!r || r.startsWith('..') || path.isAbsolute(r)) throw new Error(`suppression refusée hors de .orchestre/travail/026-lt-21 : ${versSlash(dir)}`)
+    const restent = retirerJonctions(dir)
+    if (restent.length) throw new Error(`jonction non retirée : ${restent.map(versSlash).join(', ')}`)
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
+  }
+  const copier = (dir) => {
+    supprimerCopie(dir)
+    const liste = (git(['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', ...DOSSIERS_COPIE.filter((d) => fs.existsSync(path.join(RACINE, d)))]) || '').split('\0').filter(Boolean)
+    let n = 0
+    for (const rel of [...liste, ...FICHIERS_RACINE.filter((f) => fs.existsSync(path.join(RACINE, f)))]) {
+      const s = path.join(RACINE, rel)
+      let st
+      try { st = fs.lstatSync(s) } catch { continue }
+      if (!st.isFile()) continue
+      const d = path.join(dir, rel)
+      fs.mkdirSync(path.dirname(d), { recursive: true })
+      fs.copyFileSync(s, d)
+      n++
+    }
+    for (const j of JONCTIONS) if (fs.existsSync(path.join(RACINE, j))) fs.symlinkSync(path.join(RACINE, j), path.join(dir, j), 'junction')
+    reparerRacine(dir)
+    return n
+  }
+
+  // ── Lancer une commande, sous délai, arbre tué au besoin ─────────────────────────────────────────────────────────────
+  const tuerArbre = (pid) => {
+    try { if (EST_WIN) spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true }); else process.kill(-pid, 'SIGKILL') } catch { /* déjà mort */ }
+  }
+  const lancer = (commande, cwd, delaiMs) => new Promise((resoudre) => {
+    const enfant = spawn(commande, { cwd, windowsHide: true, shell: true, detached: !EST_WIN, env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1' } })
+    let sortie = '', expire = false
+    const prendre = (d) => { if (sortie.length < 8 * 1024 * 1024) sortie += d }
+    enfant.stdout.setEncoding('utf8'); enfant.stderr.setEncoding('utf8')
+    enfant.stdout.on('data', prendre); enfant.stderr.on('data', prendre)
+    const t0 = Date.now()
+    const minuterie = setTimeout(() => { expire = true; tuerArbre(enfant.pid) }, delaiMs)
+    enfant.on('close', (code) => { clearTimeout(minuterie); resoudre({ code: expire ? 124 : (code ?? 128), sortie: sansAnsi(sortie), expire, duree: (Date.now() - t0) / 1000 }) })
+    enfant.on('error', (e) => { clearTimeout(minuterie); resoudre({ code: 127, sortie: `${sansAnsi(sortie)}\n${e.message}`, expire, duree: (Date.now() - t0) / 1000 }) })
+  })
+
+  /** LA ligne « FAIL <critère> — … » du critère (une seule, en début de ligne) et le bilan qui le nomme (règle du méta-juge). */
+  const ligneEnEchec = (sortie, critere) => {
+    const L = String(sortie).split(/\r?\n/)
+    const siennes = L.map((l) => ({ l, m: /^(PASS|FAIL|SAUTE) (\S+)(?: — |$)/.exec(l) })).filter((x) => x.m && x.m[2] === critere)
+    const defauts = []
+    let ligne = null
+    if (!siennes.length) defauts.push(`aucune ligne « FAIL ${critere} — … »`)
+    else if (siennes.length > 1) defauts.push(`${critere} rapporté ${siennes.length} fois`)
+    else if (siennes[0].m[1] !== 'FAIL' || !siennes[0].l.startsWith(`FAIL ${critere} — `)) defauts.push(`${critere} rapporté ${siennes[0].m[1]} : « ${court(siennes[0].l, 80)} »`)
+    else ligne = siennes[0].l
+    const b = L.map((l) => /^(\S+) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1)
+    if (!b) defauts.push('aucun bilan « … : FAIL — ids »')
+    else if (b[2] !== 'FAIL') defauts.push(`bilan ${b[2]}`)
+    else if (!(b[3] || '').split(/,\s*/).map((x) => x.trim()).includes(critere)) defauts.push(`le bilan ne nomme pas ${critere}`)
+    const rouges = L.map((l) => /^FAIL (\S+) — /.exec(l)).filter(Boolean).map((m) => m[1])
+    return { ligne: defauts.length ? null : ligne, defauts, rouges }
+  }
+
+  // ── Le déroulé ────────────────────────────────────────────────────────────────────────────────────────────────────────
+  const temoins = new Map()   // id de juge → { code, duree, ok, raison, rouges }
+  const resultats = []        // une entrée par mutation jouée
+  const notes = []
+  let arret = null
+  const commandeDe = (j) => `node ${ABS('scripts/juges-026-lt-mutations.mjs')} --relais=${path.basename(j.juge, '.mjs')}${j.args ? ` ${j.args}` : ''} --racine={racine}`
+
+  /** Applique la mutation dans la copie ; rend le texte d'origine (à rétablir) et l'avant/après réellement écrits. */
+  const appliquer = (copie, m) => {
+    const cible = path.join(copie, m.fichier)
+    if (!fs.existsSync(cible)) throw new Error(`fichier à muter introuvable dans la copie : ${m.fichier}`)
+    const brut = fs.readFileSync(cible, 'utf8')
+    const crlf = brut.includes('\r\n')
+    const dans = (s) => (crlf ? s.replace(/\r?\n/g, '\r\n') : s)
+    const avant = dans(m.avant), apres = dans(m.apres)
+    const n = brut.split(avant).length - 1
+    if (n !== 1) throw new Error(`« avant » présent ${n} fois dans ${m.fichier} (une seule attendue) : ${court(avant, 70)}`)
+    const i = brut.indexOf(avant)
+    fs.writeFileSync(cible, brut.slice(0, i) + apres + brut.slice(i + avant.length))
+    return { brut, avant, apres }
+  }
+
+  async function jouerJuge(j, copie) {
+    const mutations = MUTATIONS.filter((m) => m.id === j.id && (!opts.seul || `${j.juge} ${m.crit} ${m.nom}`.toLowerCase().includes(opts.seul.toLowerCase())))
+    if (!mutations.length) return
+    const modele = commandeDe(j)
+    const commande = modele.replace('{racine}', versSlash(copie))
+    const delai = 12 * 60_000
+    if (ecoule() > BUDGET_S - 60) { arret = arret || `budget de temps : ${j.juge} non joué (${Math.round(ecoule())} s écoulées sur ${Math.round(BUDGET_S)} s)`; return }
+    // 1. le témoin
+    const x = await lancer(commande, copie, delai)
+    fs.mkdirSync(JOURNAUX, { recursive: true })
+    ecrire(path.join(JOURNAUX, `temoin-${j.id}.log`), `$ ${commande}\n# code ${x.code} · ${x.duree.toFixed(1)} s\n\n${x.sortie}`)
+    const bilan = x.sortie.split(/\r?\n/).filter(Boolean).at(-1) || ''
+    const rouges = [...new Set(x.sortie.split(/\r?\n/).map((l) => /^FAIL (\S+) — /.exec(l)).filter(Boolean).map((m) => m[1]))]
+    const t = { code: x.code, duree: x.duree, ok: x.code === 0, rouges, raison: x.code === 0 ? '' : `témoin en code ${x.code}${x.expire ? ' (délai dépassé)' : ''}${rouges.length ? ` sur ${rouges.join(', ')}` : ''} : ${court(x.sortie.split(/\r?\n/).find((l) => /^FAIL /.test(l)) || bilan, 500)}` }
+    temoins.set(j.id, t)
+    console.log(`  ${t.ok ? '·' : '✗'} témoin ${j.id} (${j.juge}) : code ${x.code} en ${x.duree.toFixed(1)} s${t.ok ? '' : ` — ${court(t.raison, 200)}`}`)
+    if (!t.ok) return
+    // 2. les mutations, une à une, le fichier rétabli après chacune
+    for (const m of mutations) {
+      if (ecoule() > BUDGET_S - Math.max(30, t.duree * 1.3)) { arret = arret || `budget de temps : ${j.juge} / ${m.crit} « ${m.nom} » non joué (${Math.round(ecoule())} s écoulées sur ${Math.round(BUDGET_S)} s)`; break }
+      const r = { m, j, commande: modele, ok: false, raison: '', extrait: '', duree: 0, rouges: [], code: null, avant: '', apres: '' }
+      let orig = null
+      try {
+        const a = appliquer(copie, m)
+        orig = a.brut
+        r.avant = a.avant; r.apres = a.apres
+        const y = await lancer(commande, copie, delai)
+        r.code = y.code; r.duree = y.duree
+        ecrire(path.join(JOURNAUX, `mutation-${j.id}-${m.crit}-${resultats.length + 1}.log`), `$ ${commande}\n# ${m.fichier} : ${m.nom}\n# code ${y.code} · ${y.duree.toFixed(1)} s\n\n${y.sortie}`)
+        const lu = ligneEnEchec(y.sortie, m.crit)
+        r.rouges = [...new Set(lu.rouges)]
+        if (y.expire) r.raison = `délai dépassé (${Math.round(delai / 1000)} s)`
+        else if (y.code === 0) r.raison = 'code 0 : la mutation n’est pas attrapée'
+        else if (!lu.ligne) r.raison = `code ${y.code}, ${m.crit} non attrapé : ${lu.defauts.join(' ; ')} (en échec : ${r.rouges.join(', ') || '—'})`
+        else { r.ok = true; r.extrait = lu.ligne.trim() }
+      } catch (e) {
+        r.raison = `mutation non jouée : ${e.message}`
+      } finally {
+        if (orig !== null) fs.writeFileSync(path.join(copie, m.fichier), orig)
+      }
+      resultats.push(r)
+      console.log(`  ${r.ok ? '·' : '✗'} ${j.id} ${m.crit} « ${m.nom} » — ${r.ok ? `code ${r.code}, ${r.duree.toFixed(1)} s` : r.raison}`)
+    }
+  }
+
+  // Les juges les plus longs d'abord (le plus lent fixe la durée totale).
+  const LOURDS = ['ecrans', 'achat-public', 'livrer', 'redacteur', 'exporter', 'bus', 'tuile', 'tour', 'poste', 'retrait']
+  const ordre = [...JUGES].sort((a, b) => (LOURDS.indexOf(a.id) < 0 ? 99 : LOURDS.indexOf(a.id)) - (LOURDS.indexOf(b.id) < 0 ? 99 : LOURDS.indexOf(b.id)))
+  console.log(`── ${NOM} : fiche ${FICHE}${PARTIEL ? ' (partiel)' : ''} · ${opts.parallele} juge(s) à la fois`)
+  for (const j of JUGES) if (!fs.existsSync(path.join(RACINE, j.juge))) { console.error(`✗ ${NOM} : juge introuvable : ${j.juge}`); process.exitCode = 2; return }
+  for (const m of MUTATIONS) if (!JUGES.some((j) => j.id === m.id)) { console.error(`✗ ${NOM} : mutation sans juge : ${m.id}`); process.exitCode = 2; return }
+  fs.mkdirSync(PREUVES, { recursive: true })
+  const file = ordre.filter((j) => MUTATIONS.some((m) => m.id === j.id))
+  const copies = []
+  try {
+    await Promise.all(Array.from({ length: Math.min(opts.parallele, file.length) }, async (_, k) => {
+      const dir = path.join(TRAVAIL, `copie-${k}`)
+      const n = copier(dir)
+      copies.push(dir)
+      console.log(`  copie ${k} : ${n} fichier(s) sous ${versSlash(path.relative(RACINE, dir))}, node_modules en jonction, public en miroir`)
+      while (file.length && !arret) {
+        const j = file.shift()
+        await jouerJuge(j, dir)
+      }
+    }))
+  } finally {
+    for (const dir of copies) { try { supprimerCopie(dir) } catch (e) { notes.push(`copie non supprimée : ${e.message}`) } }
+  }
+
+  // ── Les rapports ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  const dansOrdre = (a, b) => MUTATIONS.indexOf(a.m) - MUTATIONS.indexOf(b.m)
+  resultats.sort(dansOrdre)
+  const bons = resultats.filter((r) => r.ok)
+  const rates = resultats.filter((r) => !r.ok)
+  const temoinsRouges = [...temoins.entries()].filter(([, t]) => !t.ok)
+  const jouees = new Set(resultats.map((r) => r.m))
+  const nonJouees = MUTATIONS.filter((m) => !jouees.has(m) && (!opts.seul || `${m.crit} ${m.nom}`.toLowerCase().includes(opts.seul.toLowerCase())))
+  const json = { mutations: bons.map((r) => ({
+    juge: r.j.juge, commande: r.commande, fichier: r.m.fichier, avant: r.avant, apres: r.apres, critere: r.m.crit,
+    extrait: r.extrait.slice(0, 400), duree_s: Math.round(r.duree * 10) / 10,
+  })) }
+  const cel = (s) => String(s).replace(/\|/g, '\\|').replace(/\s+/g, ' ')
+  const L = ['# 026-152 — contre-vérification des juges de la livraison et de la trésorerie', '']
+  const tete = []
+  if (PARTIEL) tete.push(`Lancement partiel (--seul=${opts.seul}) : ce n'est pas le rapport de la fiche.`)
+  for (const [id, t] of temoinsRouges) tete.push(`TÉMOIN EN ÉCHEC (${id}, ${JUGES.find((j) => j.id === id).juge}) : ${t.raison}`)
+  for (const r of rates) tete.push(`MUTATION NON PRISE : ${r.j.juge} ${r.m.crit} « ${r.m.nom} » — ${r.raison}`)
+  for (const m of nonJouees) if (temoins.get(m.id) && !temoins.get(m.id).ok) tete.push(`MUTATION NON JOUÉE (témoin rouge) : ${JUGES.find((j) => j.id === m.id).juge} ${m.crit} « ${m.nom} »`)
+  if (arret) tete.push(`ARRÊT : ${arret}`)
+  if (tete.length) L.push('## À lire d’abord (le script sort en code 1, aucun juge n’a été corrigé)', '', ...tete.map((x) => `- ${x}`), '')
+  else L.push(`Tous les témoins passent (code 0) et les ${bons.length} mutations échouent sur leur critère. Aucun juge, doublure ni jeu d'essai n'a été modifié : chaque mutation vit dans une copie sous \`.orchestre/travail/026-lt-21/copie-<n>/\`, rétablie après chaque essai.`, '')
+  L.push(`Généré par \`node scripts/${NOM}.mjs\` le ${new Date().toISOString()} en ${Math.round(ecouleReel())} s (${opts.parallele} juge(s) à la fois).`, '')
+  if (notes.length) L.push(...notes.map((x) => `> ${x}`), '')
+  L.push('## Témoins (copie intacte, code 0 attendu)', '', '| juge | commande | code | durée |', '|---|---|---|---|')
+  for (const j of JUGES) { const t = temoins.get(j.id); if (t) L.push(`| \`${j.juge}\`${j.args ? ` ${j.args}` : ''} | \`${commandeDe(j)}\` | ${t.code} | ${t.duree.toFixed(1)} s |`) }
+  L.push('', '## Mutations (une faute par essai sur une copie, code ≠ 0 attendu avec le critère nommé)', '', '| juge | ce qui est cassé | fichier | critère attendu | code | autres critères en échec | extrait réel du verdict |', '|---|---|---|---|---|---|---|')
+  for (const r of resultats) {
+    L.push(`| \`${r.j.juge}\` | ${cel(r.m.nom)} | \`${r.m.fichier}\` | ${r.m.crit} | ${r.code ?? '—'} | ${r.rouges.filter((c) => c !== r.m.crit).join(', ') || '—'} | ${r.ok ? `« ${cel(r.extrait)} »` : `**NON PRISE** : ${cel(r.raison)}`} |`)
+  }
+  L.push('', '## Notes', '',
+    '- La copie est celle du méta-juge : les dossiers app, lib, scripts, supabase, docs, .github, gabarits-pubs et .orchestre/brouillons-ecosysteme (fichiers suivis et non suivis), les fichiers de la racine, node_modules et public en jonctions. Elle remplace le `git archive HEAD` de la fiche : les fichiers de travail des fiches 05 à 20 y sont, et elle est byte pour byte celle que le méta-juge rejoue.',
+    '- Le relais (`--relais=<juge>`) ne fait que traduire ✅/❌ en PASS/FAIL, fusionner un critère noté deux fois et garder le bilan et le code du juge ; il ne juge rien.',
+    '- Les lignes « ce qui est cassé » sont de vraies fautes du code de production (une ligne remplacée ou ajoutée), jamais un fichier détruit ; chaque `avant` est présent une seule fois dans son fichier.')
+  if (!PARTIEL) { ecrire(path.join(PREUVES, 'mutations.md'), L.join('\n') + '\n'); ecrire(path.join(PREUVES, 'mutations.json'), JSON.stringify(json, null, 2) + '\n') }
+  else ecrire(path.join(TRAVAIL, 'mutations-partiel.md'), L.join('\n') + '\n')
+
+  const ok = !arret && !rates.length && !temoinsRouges.length && !nonJouees.length && resultats.length > 0
+  console.log(`${NOM} : ${ok ? 'PASS' : 'FAIL'} — ${bons.length} mutation(s) attrapée(s), ${rates.length} non prise(s), ${nonJouees.length} non jouée(s), ${temoinsRouges.length} témoin(s) en échec${arret ? ` ; ${arret}` : ''} ; ${Math.round(ecouleReel())} s`)
+  process.exitCode = ok ? (PARTIEL ? 3 : 0) : 1
+}
+
+// Le relais s'arrête là : seul le lancement normal déroule les mutations.
+if (!argRelais) await principal()

@@ -1,0 +1,483 @@
+{
+  "racine": "C:/Users/benja/Documents/presti/public/sites-demo/lestraque",
+  "date": "2026-09-14T20:14:16.497Z",
+  "policesMobilePremier": {
+    "h1": [],
+    ".hero .chapeau": [
+      "IBM Plex Sans (web) ×85"
+    ],
+    ".hero .bouton": [
+      "IBM Plex Sans (web) ×17"
+    ],
+    ".mono": [],
+    ".nav__liens a": [],
+    ".nav__tel": [],
+    ".nav__devis": "absent",
+    ".plateau blockquote p": [
+      "Fraunces (web) ×76"
+    ],
+    ".plateau figcaption": [
+      "IBM Plex Sans (web) ×28"
+    ],
+    ".presta__ligne h3": [
+      "Fraunces (web) ×24"
+    ],
+    ".presta__ligne p": [
+      "IBM Plex Sans (web) ×150"
+    ],
+    "#communes .communes a": [],
+    ".etape h3": [],
+    ".devis__form label": [],
+    ".devis__form button[type=submit]": [],
+    ".pied__titre": [
+      "IBM Plex Sans (web) ×16"
+    ],
+    "document.fonts": [
+      "Fraunces 100 900 loaded",
+      "IBM Plex Sans 400 loaded",
+      "IBM Plex Sans 600 loaded"
+    ]
+  },
+  "policesBureauPremier": {
+    "h1": [],
+    ".hero .chapeau": [
+      "IBM Plex Sans (web) ×84"
+    ],
+    ".hero .bouton": [
+      "IBM Plex Sans (web) ×17"
+    ],
+    ".mono": [
+      "IBM Plex Sans (web) ×19"
+    ],
+    ".nav__liens a": [
+      "IBM Plex Sans (web) ×11"
+    ],
+    ".nav__tel": [
+      "IBM Plex Sans (web) ×14"
+    ],
+    ".nav__devis": "absent",
+    ".plateau blockquote p": [
+      "Fraunces (web) ×76"
+    ],
+    ".plateau figcaption": [
+      "IBM Plex Sans (web) ×28"
+    ],
+    ".presta__ligne h3": [
+      "Fraunces (web) ×25"
+    ],
+    ".presta__ligne p": [
+      "IBM Plex Sans (web) ×151"
+    ],
+    "#communes .communes a": [
+      "Fraunces (web) ×6"
+    ],
+    ".etape h3": [
+      "Fraunces (web) ×16"
+    ],
+    ".devis__form label": [
+      "IBM Plex Sans (web) ×12"
+    ],
+    ".devis__form button[type=submit]": [
+      "IBM Plex Sans (web) ×18"
+    ],
+    ".pied__titre": [
+      "IBM Plex Sans (web) ×16"
+    ],
+    "document.fonts": [
+      "Fraunces 100 900 loaded",
+      "IBM Plex Sans 400 loaded",
+      "IBM Plex Sans 600 loaded"
+    ]
+  },
+  "policesMobile4g": {
+    "h1": [],
+    ".hero .chapeau": [
+      "IBM Plex Sans (web) ×85"
+    ],
+    ".hero .bouton": [
+      "IBM Plex Sans (web) ×17"
+    ],
+    ".mono": [],
+    ".nav__liens a": [],
+    ".nav__tel": [],
+    ".nav__devis": "absent",
+    ".plateau blockquote p": [
+      "Fraunces (web) ×76"
+    ],
+    ".plateau figcaption": [
+      "IBM Plex Sans (web) ×28"
+    ],
+    ".presta__ligne h3": [
+      "Fraunces (web) ×24"
+    ],
+    ".presta__ligne p": [
+      "IBM Plex Sans (web) ×150"
+    ],
+    "#communes .communes a": [],
+    ".etape h3": [],
+    ".devis__form label": [],
+    ".devis__form button[type=submit]": [],
+    ".pied__titre": [
+      "IBM Plex Sans (web) ×16"
+    ],
+    "document.fonts": [
+      "Fraunces 100 900 loaded",
+      "IBM Plex Sans 400 loaded",
+      "IBM Plex Sans 600 loaded"
+    ]
+  },
+  "texte": {
+    "signes": 4559,
+    "artisanSiteJson": {
+      "_": "La voix du site : la personne derrière l’atelier. Fictive mais vraisemblable (le pied de page déclare l’entreprise fictive) ; aucun avis inventé, la voix passe par la citation signée (plateau noir sous le héros). Chez un vrai artisan, il remplit ces champs lui-même. Prénom épicène : les mains de la photo du plateau ne disent pas qui travaille.",
+      "prenom": "Camille",
+      "nom": "Lestraque",
+      "installation": 2011,
+      "parcours": "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
+      "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille."
+    },
+    "nomsTrouves": [
+      "nom=Lestraque"
+    ],
+    "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille. YANN, FONDATEUR DE L’ATELIER",
+    "cliches": [],
+    "prix": [],
+    "avis": [],
+    "je": 9,
+    "nous": 0,
+    "formulaireCite": [
+      "l’usage et le bois qui vous plaît, par téléphone ou avec le formulaire en bas de page."
+    ],
+    "h1": "MENUISIER À RENNES Fait pour rester",
+    "h2": [
+      "Ce que l’atelier fabrique",
+      "Dans l’atelier",
+      "Pièces livrées",
+      "Autour de Rennes",
+      "En quatre temps",
+      "Vos questions",
+      "Parlons de votre projet"
+    ],
+    "erreurs": []
+  },
+  "devisBureau": {
+    "cibles": [
+      {
+        "i": 0,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": true,
+        "zone": "panneau",
+        "affiche": false
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": false,
+        "zone": "hero",
+        "affiche": true
+      }
+    ],
+    "clics": [
+      {
+        "i": 0,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": true,
+        "zone": "panneau",
+        "affiche": false,
+        "resultat": "non visible à 1440 px"
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": false,
+        "zone": "hero",
+        "affiche": true,
+        "form": true,
+        "hash": "#contact",
+        "formHaut": 691,
+        "formBas": 1083,
+        "hauteurFenetre": 900,
+        "premierChampVisible": true,
+        "premierChampAccessible": true,
+        "sousLeDoigt": "select"
+      }
+    ],
+    "envoi": {
+      "videRefuse": true,
+      "champsInvalides": [
+        "devis-projet",
+        "devis-contact"
+      ],
+      "requetesPendantVide": [],
+      "requetesApresEnvoi": [],
+      "stock": {
+        "avant": {
+          "ls": 0,
+          "ss": 0,
+          "cookies": ""
+        },
+        "apres": {
+          "ls": 0,
+          "ss": 0,
+          "cookies": ""
+        }
+      },
+      "merci": {
+        "affiche": true,
+        "haut": 254,
+        "texte": "Demande reçue. Je vous rappelle sous deux jours ouvrés pour fixer une visite. PROJET Escalier COMMUNE Bruz QUAND Dans trois à six mois LA SUITE 02 Visite technique Je relève les cotes chez vous et je vérifie les aplombs, l’humidité des murs et les accès. 03 Devis & sélection Vous recevez le plan, le choix des essences et des ferrures, et un devis ligne par ligne. 04 Fabrication & pose Les pièces sont usinées et assemblées à l’atelier, puis posées chez vous à la date fixée ensemble. Démonstration : aucune donnée n’a été envoyée. Faire une autre demande"
+      },
+      "mentionDemo": true,
+      "url": "/index.html#contact"
+    },
+    "erreurs": []
+  },
+  "devisMobile": {
+    "cibles": [
+      {
+        "i": 0,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": true,
+        "zone": "panneau",
+        "affiche": false
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": false,
+        "zone": "hero",
+        "affiche": true
+      }
+    ],
+    "clics": [
+      {
+        "i": 0,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": true,
+        "zone": "panneau",
+        "affiche": false,
+        "form": true,
+        "hash": "#contact",
+        "formHaut": 382,
+        "formBas": 884,
+        "hauteurFenetre": 844,
+        "premierChampVisible": true,
+        "premierChampAccessible": true,
+        "sousLeDoigt": "select",
+        "menuFerme": true
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "panneau": false,
+        "zone": "hero",
+        "affiche": true,
+        "form": true,
+        "hash": "#contact",
+        "formHaut": 382,
+        "formBas": 884,
+        "hauteurFenetre": 844,
+        "premierChampVisible": true,
+        "premierChampAccessible": true,
+        "sousLeDoigt": "select",
+        "menuFerme": true
+      }
+    ],
+    "envoi": {
+      "videRefuse": true,
+      "champsInvalides": [
+        "devis-projet",
+        "devis-contact"
+      ],
+      "requetesPendantVide": [],
+      "requetesApresEnvoi": [],
+      "stock": {
+        "avant": {
+          "ls": 0,
+          "ss": 0,
+          "cookies": ""
+        },
+        "apres": {
+          "ls": 0,
+          "ss": 0,
+          "cookies": ""
+        }
+      },
+      "merci": {
+        "affiche": true,
+        "haut": 171,
+        "texte": "Demande reçue. Je vous rappelle sous deux jours ouvrés pour fixer une visite. PROJET Escalier COMMUNE Bruz QUAND Dans trois à six mois LA SUITE 02 Visite technique Je relève les cotes chez vous et je vérifie les aplombs, l’humidité des murs et les accès. 03 Devis & sélection Vous recevez le plan, le choix des essences et des ferrures, et un devis ligne par ligne. 04 Fabrication & pose Les pièces sont usinées et assemblées à l’atelier, puis posées chez vous à la date fixée ensemble. Démonstration : aucune donnée n’a été envoyée. Faire une autre demande"
+      },
+      "mentionDemo": true,
+      "url": "/index.html#contact"
+    },
+    "erreurs": []
+  },
+  "menu": {
+    "apresTap1": {
+      "expanded": "true",
+      "ouvert": true,
+      "bodyVerrou": true
+    },
+    "mesures": {
+      "auCentreDuBurger": "span.",
+      "burgerDessus": true,
+      "bouton": {
+        "texte": "Demander un devis",
+        "fond": "rgb(244, 237, 226)",
+        "couleur": "rgb(31, 22, 14)",
+        "contrasteTexteSurPilule": 15.31,
+        "contrastePiluleSurPanneau": 15.31
+      },
+      "lienPanneau": {
+        "couleur": "rgb(244, 237, 226)",
+        "contraste": 15.31
+      },
+      "panneau": {
+        "haut": 8,
+        "bas": 518,
+        "fond": "rgb(31, 22, 14)",
+        "liens": [
+          "Prestations",
+          "Réalisations",
+          "Communes",
+          "Questions",
+          "Contact"
+        ]
+      },
+      "voile": {
+        "opacite": "1",
+        "fond": "rgba(20, 15, 10, 0.55)"
+      },
+      "dehors": {
+        "x": 195,
+        "y": 681
+      },
+      "sousDehors": "div.voile"
+    },
+    "apresTapCroix": {
+      "expanded": "false",
+      "ouvert": false,
+      "bodyVerrou": false
+    },
+    "rouvert": {
+      "expanded": "true",
+      "ouvert": true,
+      "bodyVerrou": true
+    },
+    "apresTapVoile": {
+      "expanded": "false",
+      "ouvert": false,
+      "bodyVerrou": false
+    },
+    "defileApresFermeture": 600,
+    "erreurs": []
+  },
+  "commune": {
+    "href": "menuisier-rennes/index.html",
+    "url": "/menuisier-rennes/index.html",
+    "infos": {
+      "titre": "Artisan menuisier à Rennes — Atelier Lestraque",
+      "h1": "MENUISIER À RENNES Escaliers et agencement",
+      "h2": [
+        "Menuiserie sur mesure à Rennes",
+        "Réalisations en atelier et sur chantier",
+        "Communes limitrophes et voisines",
+        "Prendre contact pour un projet à Rennes"
+      ],
+      "images": 8,
+      "liensDevis": [
+        "Demander un devis -> #contact",
+        "Demander un devis -> #contact"
+      ],
+      "form": true,
+      "texte": "Atelier Lestraque\nPrestations\nRéalisations\nCommunes\nQuestions\n02 61 91 38 47\nAccueil\n/\nRennes\nMENUISIER À RENNES\nEscaliers et agencement\n\nEscaliers, dressings et bibliothèques fabriqués à l’atelier, à Rennes, et posés chez vous.\n\nDemander un devis\nMenuiserie sur mesure à Rennes\n\nDu relevé à la pose, l’atelier suit votre projet à Rennes, pour une maison comme pour un local professionnel.\n\n01\nAgencement sur mesure\n\nDressings, meubles vasques en bois, placards sous escalier et bibliothèques, dessinés pour votre logement à Rennes.\n\n02\nEscaliers et balustrades\n\nEscaliers intérieurs dessinés pour la trémie et l’architecture du logement, à Rennes, avec garde-corps assortis.\n\n03\nParquets et finitions bois\n\nRénovation et pose de parquets massifs ou contrecollés, plinthes et habillages muraux.\n\nRéalisations en atelier et sur chantier\n\nQuelques ouvrages sortis de l’atelier.\n\n01\nCuisine au plan de travail en bois massif, claustra à lames\n02\nPenderie en bois, tringle et quatre cintres\n03\nBoiseries et placards intégrés en bois sombre\n\nPhotographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Crew (CC0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications\n\nCommunes limitrophes et voisines\n\nL’atelier se déplace aussi dans les communes voisines.\n\nCesson-Sévigné\nBruz\nSaint-Grégoire\n\nRetour à l’accueil\n\nCONTACT\nPrendre contact pour un projet à Rennes\n\nAprès la visite, je"
+    },
+    "lienDevisClique": "Demander un devis -> #contact",
+    "apresClicDevis": {
+      "url": "/menuisier-rennes/index.html#contact",
+      "form": true,
+      "hash": "#contact",
+      "formHaut": 585,
+      "formBas": 976,
+      "hauteurFenetre": 900,
+      "premierChampVisible": true,
+      "premierChampAccessible": true,
+      "sousLeDoigt": "select"
+    },
+    "erreurs": []
+  },
+  "acquis": {
+    "etapesLi": 4,
+    "etapesTextes": [
+      "01 Prise de contact Vous décrivez la pièce, l’usage et le bois qui vous plaît, par télépho",
+      "02 Visite technique Je relève les cotes chez vous et je vérifie les aplombs, l’humidité de",
+      "03 Devis & sélection Vous recevez le plan, le choix des essences et des ferrures, et un de",
+      "04 Fabrication & pose Les pièces sont usinées et assemblées à l’atelier, puis posées chez "
+    ],
+    "communesH3": 0,
+    "communesSmall": 0,
+    "creditsDansLegendes": 0,
+    "ligneCredits": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Ian Schneider (CC0), Crew (CC0), Bertrand from Paris, France (CC BY 2.0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications",
+    "lienCredits": "mentions-legales/index.html#credits",
+    "imagesAccueil": [
+      "heros-escalier",
+      "mains-noyer",
+      "penderie",
+      "atelier-poncage",
+      "cuisine-bois",
+      "boiserie",
+      "tournage-copeaux"
+    ],
+    "creditsVisiblesBureau": {
+      "haut": 433,
+      "hauteur": 34,
+      "opacite": "1",
+      "visibilite": "visible",
+      "dansFenetre": true
+    },
+    "pageCredits": {
+      "url": "/mentions-legales/index.html#credits",
+      "creditsEnVue": true,
+      "auteursManquants": [],
+      "imagesSansAttribution": []
+    },
+    "legendes390": [
+      {
+        "texte": "01 Cuisine au plan de travail en bois massif, claustra à lames",
+        "lignes": 3,
+        "largeur": 332
+      },
+      {
+        "texte": "02 Penderie en bois, tringle et quatre cintres",
+        "lignes": 2,
+        "largeur": 332
+      },
+      {
+        "texte": "03 Escalier hélicoïdal en bois massif",
+        "lignes": 2,
+        "largeur": 332
+      },
+      {
+        "texte": "04 Boiseries et placards intégrés en bois sombre",
+        "lignes": 2,
+        "largeur": 332
+      }
+    ],
+    "creditsVisiblesMobile": {
+      "haut": 364,
+      "hauteur": 115,
+      "opacite": "1",
+      "dansFenetre": true
+    }
+  },
+  "introuvables404": []
+}

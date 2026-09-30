@@ -1,0 +1,64 @@
+{
+	"appId": "[MASQUE_SECRET]",
+	"appName": "Presti",
+	"webDir": "www",
+	"server": {
+		"url": "https://qg.prestiapp.fr/dashboard",
+		"cleartext": false,
+		"allowNavigation": [
+			"qg.prestiapp.fr",
+			"prestiapp.fr"
+		],
+		"errorPath": "hors-ligne.html"
+	},
+	"ios": {
+		"contentInset": "automatic",
+		"scheme": "Presti",
+		"limitsNavigationsToAppBoundDomains": true
+	},
+	"android": {
+		"allowMixedContent": false,
+		"captureInput": true,
+		"webContentsDebuggingEnabled": false
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchAutoHide": false,
+			"backgroundColor": "#0A0C11",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		},
+		"Keyboard": {
+			"resize": "body"
+		},
+		"StatusBar": {
+			"style": "DARK",
+			"backgroundColor": "#0A0C11",
+			"overlaysWebView": false
+		}
+	},
+	"packageClassList": [
+		"BiometricAuthNative",
+		"BarcodeScannerPlugin",
+		"AppPlugin",
+		"CAPBrowserPlugin",
+		"CAPCameraPlugin",
+		"FilesystemPlugin",
+		"HapticsPlugin",
+		"KeyboardPlugin",
+		"CAPNetworkPlugin",
+		"PreferencesPlugin",
+		"PushNotificationsPlugin",
+		"SharePlugin",
+		"SplashScreenPlugin",
+		"StatusBarPlugin",
+		"SecureStoragePlugin"
+	]
+}

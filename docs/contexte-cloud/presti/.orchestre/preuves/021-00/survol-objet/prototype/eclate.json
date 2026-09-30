@@ -1,0 +1,47 @@
+{
+ "decalagesPx": {
+  "limon": [
+   -172.7,
+   -68.6
+  ],
+  "marche": [
+   74.0,
+   -110.9
+  ],
+  "contremarche": [
+   -64.9,
+   144.2
+  ],
+  "coin1": [
+   -30.8,
+   128.1
+  ],
+  "coin2": [
+   -30.8,
+   128.1
+  ],
+  "tourillon1": [
+   4.6,
+   16.6
+  ],
+  "tourillon2": [
+   4.6,
+   16.6
+  ]
+ },
+ "secondes": {
+  "assemble.png": 20.3,
+  "eclate.png": 21.9,
+  "calque-limon.png": 18.0,
+  "calque-marche.png": 17.4,
+  "calque-contremarche.png": 15.6,
+  "calque-coin1.png": 14.1,
+  "calque-coin2.png": 14.4,
+  "calque-tourillon1.png": 14.9,
+  "calque-tourillon2.png": 14.6
+ },
+ "resolution": [
+  1400,
+  1000
+ ]
+}

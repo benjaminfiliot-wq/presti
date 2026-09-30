@@ -1,0 +1,25 @@
+import bpy, sys, os
+from mathutils import Vector
+OUT = sys.argv[sys.argv.index('--') + 1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = 16; sc.cycles.use_denoising = False
+sc.render.resolution_x, sc.render.resolution_y = 200, 150
+sc.render.film_transparent = True
+sc.render.image_settings.file_format = 'PNG'; sc.render.image_settings.color_mode = 'RGBA'
+try:
+    sc.view_settings.view_transform = 'Standard'; print('VT ok', sc.view_settings.view_transform)
+except Exception as e: print('VT err', e)
+w = bpy.data.worlds.new('w'); sc.world = w
+# cube behind a catcher plane (plane between camera and cube)
+bpy.ops.mesh.primitive_cube_add(size=0.5, location=(0, 0, 0)); cube = bpy.context.active_object
+bpy.ops.mesh.primitive_plane_add(size=2, location=(0, 0, 0.6)); pl = bpy.context.active_object
+pl.is_shadow_catcher = True
+# small blocker above plane to cast shadow onto it
+bpy.ops.mesh.primitive_cube_add(size=0.3, location=(0.5, 0.5, 1.0))
+d = bpy.data.lights.new('s', 'SUN'); d.energy = 3; d.angle = 0.2
+o = bpy.data.objects.new('s', d); sc.collection.objects.link(o); o.rotation_euler = (0, 0, 0)
+cd = bpy.data.cameras.new('c'); cd.type = 'ORTHO'; cd.ortho_scale = 3
+c = bpy.data.objects.new('c', cd); sc.collection.objects.link(c); sc.camera = c
+c.location = Vector((0, 0, 5)); c.rotation_euler = (0, 0, 0)
+sc.render.filepath = os.path.join(OUT, 'sonde2.png'); bpy.ops.render.render(write_still=True)

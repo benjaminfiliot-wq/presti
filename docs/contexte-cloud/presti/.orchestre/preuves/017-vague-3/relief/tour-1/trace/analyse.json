@@ -1,0 +1,1223 @@
+{
+  "relief": {
+    "nom": "relief",
+    "pret": true,
+    "etat": {
+      "toilePrete": true,
+      "imgCachee": "hidden"
+    },
+    "dureeB": 5254,
+    "A": {
+      "fichier": "relief-A-chargement.json",
+      "fils": [
+        {
+          "fil": "24460:13668",
+          "nom": "CrRendererMain",
+          "evenementsScript": 1378,
+          "taches": 4064,
+          "tacheMaxMs": 242.9,
+          "longuesPlus100ms": [
+            {
+              "ms": 100.8,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 99.2,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo message",
+                  "ms": 99.1,
+                  "url": ""
+                },
+                {
+                  "nom": "HTMLDocumentParser::MaybeFetchQueuedPreloads",
+                  "ms": 23.4,
+                  "url": ""
+                },
+                {
+                  "nom": "LocalWindowProxy::Initialize",
+                  "ms": 17.9,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 3.5,
+                  "url": ""
+                },
+                {
+                  "nom": "LocalWindowProxy::Initialize",
+                  "ms": 2.4,
+                  "url": ""
+                },
+                {
+                  "nom": "LocalWindowProxy::CreateContext",
+                  "ms": 1.8,
+                  "url": ""
+                },
+                {
+                  "nom": "LocalWindowProxy::CreateContext",
+                  "ms": 1.4,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 148.1,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 147.9,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 84.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 30.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 23.5,
+                  "url": ""
+                },
+                {
+                  "nom": "PaintImage",
+                  "ms": 18,
+                  "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 11.2,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 8.8,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 5.1,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 147.9,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 84.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 30.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 23.5,
+                  "url": ""
+                },
+                {
+                  "nom": "PaintImage",
+                  "ms": 18,
+                  "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 11.2,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 8.8,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 5.1,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 3.3,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 100.1,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 100,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 52.2,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 25.9,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 5.5,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 5.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 3.4,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 2.6,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 2.3,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 100,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 52.2,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 25.9,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 5.5,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 5.4,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 3.4,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 2.6,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 2.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 1.2,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 242.9,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 242.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 184.2,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 55.4,
+                  "url": ""
+                },
+                {
+                  "nom": "BeginRemoteFontLoad",
+                  "ms": 0.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0.1,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 242.3,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "Layout",
+                  "ms": 184.2,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 55.4,
+                  "url": ""
+                },
+                {
+                  "nom": "BeginRemoteFontLoad",
+                  "ms": 0.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0.1,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 152.5,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 152.4,
+                  "url": ""
+                },
+                {
+                  "nom": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 152.4,
+              "attribueeAuRelief": false,
+              "enfants": []
+            }
+          ],
+          "urls": [
+            "/index.html",
+            "/fonts/fraunces-300.woff2",
+            "/fonts/fraunces-400.woff2",
+            "/fonts/ibm-plex-sans-400.woff2",
+            "/fonts/ibm-plex-sans-600.woff2",
+            "/images/heros-escalier-1600.avif",
+            "/styles.css",
+            "/site.js",
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>",
+            "/fonts/fraunces-600.woff2",
+            "/images/mains-noyer-720.avif",
+            "/favicon.svg"
+          ]
+        },
+        {
+          "fil": "24460:24028",
+          "nom": "DedicatedWorker thread",
+          "evenementsScript": 1138,
+          "taches": 4591,
+          "tacheMaxMs": 365.3,
+          "longuesPlus100ms": [
+            {
+              "ms": 365.3,
+              "attribueeAuRelief": true,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 334,
+                  "url": ""
+                },
+                {
+                  "nom": "HandlePostMessage",
+                  "ms": 328.5,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 323.4,
+                  "url": ""
+                },
+                {
+                  "nom": "FunctionCall",
+                  "ms": 323.1,
+                  "url": "/relief-fil.js"
+                },
+                {
+                  "nom": "GLES2Implementation::GetProgramiv",
+                  "ms": 28.2,
+                  "url": ""
+                },
+                {
+                  "nom": "GLES2Implementation::CheckFramebufferStatus",
+                  "ms": 26.4,
+                  "url": ""
+                },
+                {
+                  "nom": "ImplementationBase::WaitForCmd",
+                  "ms": 26.3,
+                  "url": ""
+                },
+                {
+                  "nom": "CommandBufferHelper::Finish",
+                  "ms": 26.3,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 334,
+              "attribueeAuRelief": true,
+              "enfants": [
+                {
+                  "nom": "HandlePostMessage",
+                  "ms": 328.5,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 323.4,
+                  "url": ""
+                },
+                {
+                  "nom": "FunctionCall",
+                  "ms": 323.1,
+                  "url": "/relief-fil.js"
+                },
+                {
+                  "nom": "GLES2Implementation::GetProgramiv",
+                  "ms": 28.2,
+                  "url": ""
+                },
+                {
+                  "nom": "GLES2Implementation::CheckFramebufferStatus",
+                  "ms": 26.4,
+                  "url": ""
+                },
+                {
+                  "nom": "ImplementationBase::WaitForCmd",
+                  "ms": 26.3,
+                  "url": ""
+                },
+                {
+                  "nom": "CommandBufferHelper::Finish",
+                  "ms": 26.3,
+                  "url": ""
+                },
+                {
+                  "nom": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 25.8,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 149.7,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 83.8,
+                  "url": ""
+                },
+                {
+                  "nom": "RunMicrotasks",
+                  "ms": 65.9,
+                  "url": ""
+                },
+                {
+                  "nom": "TransferBuffer::Free",
+                  "ms": 0.1,
+                  "url": ""
+                },
+                {
+                  "nom": "GLES2::GetUniformLocation",
+                  "ms": 0.1,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.newInstance",
+                  "ms": 0.1,
+                  "url": ""
+                },
+                {
+                  "nom": "CommandBufferProxyImpl::OrderingBarrier",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.newInstance",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.newInstance",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            }
+          ],
+          "urls": [
+            "/relief-fil.js",
+            "/images/heros-escalier-1600.avif",
+            "/relief/escalier-profondeur.webp"
+          ]
+        },
+        {
+          "fil": "11612:2648",
+          "nom": "CrRendererMain",
+          "evenementsScript": 122,
+          "taches": 796,
+          "tacheMaxMs": 1899.6,
+          "longuesPlus100ms": [
+            {
+              "ms": 1899.6,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 1899.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.evaluateModule",
+                  "ms": 1804.8,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 765.5,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 720.9,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 373.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 176.3,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 160.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 68.2,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 1899.3,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "v8.evaluateModule",
+                  "ms": 1804.8,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 765.5,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 720.9,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 373.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 176.3,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 160.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 68.2,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 68,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 444.2,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 444,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.evaluateModule",
+                  "ms": 439.2,
+                  "url": ""
+                },
+                {
+                  "nom": "ParseHTML",
+                  "ms": 195.9,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 60,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callAsConstructor",
+                  "ms": 18.4,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 15.4,
+                  "url": ""
+                },
+                {
+                  "nom": "MinorGC",
+                  "ms": 11.4,
+                  "url": ""
+                },
+                {
+                  "nom": "V8.GCScavenger",
+                  "ms": 11.3,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 444,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "v8.evaluateModule",
+                  "ms": 439.2,
+                  "url": ""
+                },
+                {
+                  "nom": "ParseHTML",
+                  "ms": 195.9,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 60,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callAsConstructor",
+                  "ms": 18.4,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 15.4,
+                  "url": ""
+                },
+                {
+                  "nom": "MinorGC",
+                  "ms": 11.4,
+                  "url": ""
+                },
+                {
+                  "nom": "V8.GCScavenger",
+                  "ms": 11.3,
+                  "url": ""
+                },
+                {
+                  "nom": "v8.callFunction",
+                  "ms": 11.2,
+                  "url": ""
+                }
+              ]
+            }
+          ],
+          "urls": [
+            "chrome://omnibox-popup.top-chrome/omnibox_popup.js",
+            "chrome://resources/js/load_time_data.js",
+            "chrome://resources/lit/v3_0/lit.rollup.js",
+            "chrome://resources/mojo/mojo/public/js/bindings.js",
+            "chrome://resources/mojo/mojo/public/mojom/base/string16.mojom-webui.js",
+            "chrome://resources/mojo/mojo/public/mojom/base/time.mojom-webui.js",
+            "chrome://resources/mojo/url/mojom/url.mojom-webui.js",
+            "chrome://resources/js/cr.js",
+            "chrome://omnibox-popup.top-chrome/strings.m.js",
+            "chrome://resources/cr_components/color_change_listener/color_change_listener.mojom-webui.js",
+            "chrome://resources/mojo/mojo/public/mojom/base/big_buffer.mojom-webui.js",
+            "chrome://resources/mojo/mojo/public/mojom/base/string16.mojom-converters.js"
+          ]
+        },
+        {
+          "fil": "24460:6312",
+          "nom": "Chrome_ChildIOThread",
+          "evenementsScript": 0,
+          "taches": 2538,
+          "tacheMaxMs": 5.6,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "24460:20260",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 114,
+          "tacheMaxMs": 2.5,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3144:19956",
+          "nom": "CrBrowserMain",
+          "evenementsScript": 0,
+          "taches": 5246,
+          "tacheMaxMs": 122.7,
+          "longuesPlus100ms": [
+            {
+              "ms": 122.7,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 122.6,
+                  "url": ""
+                },
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 122.5,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 122.6,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "Receive mojo reply",
+                  "ms": 122.5,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                },
+                {
+                  "nom": "UkmRecorderImpl::NotifyObserversWithNewEntry",
+                  "ms": 0,
+                  "url": ""
+                }
+              ]
+            }
+          ],
+          "urls": [
+            "/index.html"
+          ]
+        },
+        {
+          "fil": "3144:6612",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 126,
+          "tacheMaxMs": 1.7,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3144:23256",
+          "nom": "Chrome_IOThread",
+          "evenementsScript": 0,
+          "taches": 2730,
+          "tacheMaxMs": 1.8,
+          "longuesPlus100ms": [],
+          "urls": []
+        }
+      ]
+    },
+    "B": {
+      "fichier": "relief-B-animation.json",
+      "fils": [
+        {
+          "fil": "24460:13668",
+          "nom": "CrRendererMain",
+          "evenementsScript": 1047,
+          "taches": 2488,
+          "tacheMaxMs": 53.1,
+          "longuesPlus100ms": [],
+          "urls": [
+            "/relief.js"
+          ]
+        },
+        {
+          "fil": "24460:24028",
+          "nom": "DedicatedWorker thread",
+          "evenementsScript": 1025,
+          "taches": 4215,
+          "tacheMaxMs": 29.2,
+          "longuesPlus100ms": [],
+          "urls": [
+            "/relief-fil.js"
+          ]
+        },
+        {
+          "fil": "24460:16576",
+          "nom": "Compositor",
+          "evenementsScript": 0,
+          "taches": 4818,
+          "tacheMaxMs": 19.3,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "23940:11864",
+          "nom": "Chrome_ChildIOThread",
+          "evenementsScript": 0,
+          "taches": 8,
+          "tacheMaxMs": 0.1,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "23940:440",
+          "nom": "VizCompositorThread",
+          "evenementsScript": 0,
+          "taches": 4842,
+          "tacheMaxMs": 6.9,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "23940:14184",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 116,
+          "tacheMaxMs": 0.6,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "23940:11780",
+          "nom": "CrGpuMain",
+          "evenementsScript": 0,
+          "taches": 4240,
+          "tacheMaxMs": 37.8,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "24460:20260",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 104,
+          "tacheMaxMs": 0.8,
+          "longuesPlus100ms": [],
+          "urls": []
+        }
+      ]
+    }
+  },
+  "temoin": {
+    "nom": "temoin",
+    "pret": false,
+    "etat": {
+      "toilePrete": false,
+      "imgCachee": ""
+    },
+    "dureeB": 5417,
+    "A": {
+      "fichier": "temoin-A-chargement.json",
+      "fils": [
+        {
+          "fil": "3516:5568",
+          "nom": "CrRendererMain",
+          "evenementsScript": 507,
+          "taches": 4186,
+          "tacheMaxMs": 155.4,
+          "longuesPlus100ms": [
+            {
+              "ms": 155.4,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "ThreadControllerImpl::RunTask",
+                  "ms": 154.5,
+                  "url": ""
+                },
+                {
+                  "nom": "Layout",
+                  "ms": 104.4,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 22.3,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 9.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 6.5,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 3,
+                  "url": ""
+                },
+                {
+                  "nom": "PaintImage",
+                  "ms": 2,
+                  "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 1.8,
+                  "url": ""
+                }
+              ]
+            },
+            {
+              "ms": 154.5,
+              "attribueeAuRelief": false,
+              "enfants": [
+                {
+                  "nom": "Layout",
+                  "ms": 104.4,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 22.3,
+                  "url": ""
+                },
+                {
+                  "nom": "UpdateLayoutTree",
+                  "ms": 9.3,
+                  "url": ""
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 6.5,
+                  "url": ""
+                },
+                {
+                  "nom": "PrePaint",
+                  "ms": 3,
+                  "url": ""
+                },
+                {
+                  "nom": "PaintImage",
+                  "ms": 2,
+                  "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+                },
+                {
+                  "nom": "Paint",
+                  "ms": 1.8,
+                  "url": ""
+                },
+                {
+                  "nom": "Layerize",
+                  "ms": 1.7,
+                  "url": ""
+                }
+              ]
+            }
+          ],
+          "urls": [
+            "/index.html",
+            "/fonts/fraunces-300.woff2",
+            "/fonts/fraunces-400.woff2",
+            "/fonts/ibm-plex-sans-400.woff2",
+            "/fonts/ibm-plex-sans-600.woff2",
+            "/images/heros-escalier-1600.avif",
+            "/styles.css",
+            "/site.js",
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>",
+            "/fonts/fraunces-600.woff2",
+            "/images/mains-noyer-720.avif",
+            "/favicon.svg"
+          ]
+        },
+        {
+          "fil": "14204:21072",
+          "nom": "CrBrowserMain",
+          "evenementsScript": 0,
+          "taches": 5328,
+          "tacheMaxMs": 54.3,
+          "longuesPlus100ms": [],
+          "urls": [
+            "/index.html"
+          ]
+        },
+        {
+          "fil": "14204:13608",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 156,
+          "tacheMaxMs": 1.6,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3516:23968",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 132,
+          "tacheMaxMs": 1,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3516:9180",
+          "nom": "Chrome_ChildIOThread",
+          "evenementsScript": 0,
+          "taches": 1190,
+          "tacheMaxMs": 0.8,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "14204:14304",
+          "nom": "Chrome_IOThread",
+          "evenementsScript": 0,
+          "taches": 1890,
+          "tacheMaxMs": 0.6,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3516:7756",
+          "nom": "StackSamplingProfiler",
+          "evenementsScript": 0,
+          "taches": 1184,
+          "tacheMaxMs": 4.4,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "14204:4108",
+          "nom": "StackSamplingProfiler",
+          "evenementsScript": 0,
+          "taches": 784,
+          "tacheMaxMs": 2.3,
+          "longuesPlus100ms": [],
+          "urls": []
+        }
+      ]
+    },
+    "B": {
+      "fichier": "temoin-B-animation.json",
+      "fils": [
+        {
+          "fil": "3516:5568",
+          "nom": "CrRendererMain",
+          "evenementsScript": 549,
+          "taches": 5548,
+          "tacheMaxMs": 18.3,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "14204:21072",
+          "nom": "CrBrowserMain",
+          "evenementsScript": 0,
+          "taches": 2757,
+          "tacheMaxMs": 6.7,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "3516:15188",
+          "nom": "Compositor",
+          "evenementsScript": 0,
+          "taches": 7382,
+          "tacheMaxMs": 4.3,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "20796:7752",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 110,
+          "tacheMaxMs": 0.4,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "20796:22132",
+          "nom": "Chrome_ChildIOThread",
+          "evenementsScript": 0,
+          "taches": 8,
+          "tacheMaxMs": 0,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "20796:24520",
+          "nom": "VizCompositorThread",
+          "evenementsScript": 0,
+          "taches": 3608,
+          "tacheMaxMs": 3.1,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "14204:13608",
+          "nom": "PerfettoTrace",
+          "evenementsScript": 0,
+          "taches": 162,
+          "tacheMaxMs": 1.4,
+          "longuesPlus100ms": [],
+          "urls": []
+        },
+        {
+          "fil": "14204:14304",
+          "nom": "Chrome_IOThread",
+          "evenementsScript": 0,
+          "taches": 360,
+          "tacheMaxMs": 0.2,
+          "longuesPlus100ms": [],
+          "urls": []
+        }
+      ]
+    }
+  }
+}
