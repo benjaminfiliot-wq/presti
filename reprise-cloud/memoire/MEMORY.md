@@ -64,3 +64,4 @@
 - [Codex CLI 401 → secours gratuit](codex-cli-401-secours-gratuit.md) — nuit du 26/09 : codex exec rend 401 (PC + usine), l'app marche ; secours Codex sur freellmapi (wire_api=responses)
 - [Journée du 27/09 : état](journee-27-09-etat.md) — moteur sans Claude + 3 chantiers (juges, migrations 0096/0103 à appliquer par moi) ; fiches rouvertes ; livrés du jour
 - [Node 24 Windows : process.exit plante](node24-windows-process-exit.md) — assertion libuv async.c:94 (3221226505) après un fetch : poser process.exitCode, jamais process.exit en fin de script
+- [Rôle réel de l'écosystème (30/09)](ecosysteme-role-reel.md) — entreprise d'agents IA autonome 24 h/24 (leads, prospection, pubs Meta, dropshipping réservé) ; la station Claw3D n'en est que la fenêtre ; décisions du 30/09
