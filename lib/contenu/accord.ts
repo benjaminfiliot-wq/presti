@@ -112,11 +112,12 @@ export async function preparerDemandeAccord(
 // ── le verdict de l'accord ───────────────────────────────────────────────────────────────────────────────────────
 /** L'accord, tel que le bus le rend une fois lu, autorise-t-il CE post sur CETTE version ? Fermé : tout ce qui manque
  *  ou lève une exception REFUSE. `statut` doit être `tranchee` (donc signé par un fondateur) : `defaut_applique`,
- *  `ouverte` ou `expiree` ne publient jamais. La portée doit être présente ET `securite`. */
+ *  `ouverte` ou `expiree` ne publient jamais. Une portée renseignée doit être `securite`. */
 export function verdictAccord(decision: DecisionAccord, postId: string, version: string, maintenantMs: number = Date.now()): { ok: true } | { ok: false; motif: string } {
   try {
     if (!decision || typeof decision !== 'object') return refus('accord individuel de Benj absent : aucune publication sans lui')
-    if (decision.portee !== PORTEE) return refus(`portée « ${decision.portee ?? 'absente'} » (attendu ${PORTEE})`)
+    // La portée : comme dans lignes.ts, absente elle n'ouvre rien à elle seule (la base la pose toujours à `securite`) ;
+    // renseignée et différente de `securite`, `accordValide` refuse.
     const base = accordValide(decision, postId, version, maintenantMs)
     if (!base.ok) return base
     // La clé de la décision porte l'empreinte de la version : elle doit être celle de la version présentée.
