@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-30T13:58:16Z
+# Digest — 2026-09-30T14:16:40Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 165 tâche(s) PASS, 207699 ligne(s) · faites par Claude Code : 91 tâche(s) PASS, 81681 ligne(s).
-**État** — file : 41 · en cours : 0 · faites : 248 · refusées : 1
+**Mesure** — déléguées (antigravity, codex) : 165 tâche(s) PASS, 207699 ligne(s) · faites par Claude Code : 93 tâche(s) PASS, 81681 ligne(s).
+**État** — file : 39 · en cours : 0 · faites : 250 · refusées : 1
 
 ## Attention (7)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
@@ -24,8 +24,6 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-134 | feature | file | usine-codex-691 | — | Écrire la migration 0104_crieur (table crieur_posts fermée à tous sauf service_role, qui garde les publications du Crieur sur LinkedIn, Facebook et Instagram, déposées en brouillon Publora avec leur créneau proposé en attendant l'accord de Benj pour chacune (R24, décision du 27/09 qui remplace R7), et les raisons d'un refus du juge, fonction public.crieur_appel qui lit cron_secret dans le Vault et appelle /api/cron/crieur par pg_net, tâche pg_cron presti-crieur chaque jour à 5 h UTC), ses jumeaux et son contrôle, puis l'éprouver à sec avant que Claude Code l'applique par le connecteur Supabase |
-| 026-175 | feature | file | usine-codex-696 | — | Écrire la migration 0113_station_reglages.sql (numéro provisoire : ops.station_reglages à une seule ligne, ops.station_reglages_historique des 50 dernières versions, station_reglages_lire et station_reglages_ecrire SECURITY DEFINER réservées à service_role avec refus d'une version périmée, d'une clé inconnue et de plus de 64 Ko, pilotage_radar, pilotage_prospects_departements agrégé et pilotage_activite_salles, graines des cinq personnages de la station encore sans identité : garde, tresorier, studio, contenu, douleurs), ses deux jumeaux, son contrôle et le compte rendu d'un essai à sec généré par le juge, puis l'appliquer soi-même par le connecteur Supabase |
 | 026-091 | test | file | usine-codex-672 | — | Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-096 | feature | file | claude-code | — | Créer lib/agents/acquisition/repondeur.ts et la route app/api/cron/repondeur : le Répondeur prépare, par les seuls modèles approuvés et sans modèle de langage, la réponse privée à chaque commentaire « SITE » et la réponse à chaque message classé (question tirée de la FAQ, prix, appel, confirmation d'un STOP, accusé d'une demande RGPD, questions à un entrant, suite du Studio pour une marque), par le Gmail de prospection dans le fil avec sa preuve de demande ou dans la conversation Meta, et la seule relance après un lien de maquette resté sans réponse, annoncée comme l'assistant IA de Presti, avec le lien de rendez-vous ou de paiement qui passe la main à Benj, sans jamais négocier, promettre hors de la liste, ni répondre à un cas sensible ou hostile ; le Facteur l'envoie après les juges |
 | 026-157 | feature | file | codex | — | Écrire scripts/pack-pub/exporter.mjs (une ligne packs_pubs payée devient un dossier pack.json local, sans courriel, et signale la voix à produire) et scripts/pack-pub/deposer.mjs (juge local vert d'abord, puis dépôt de sortie/ dans le bucket privé packs-pubs avec une marge de 400 Mo et passage payee → fabriquee) |
@@ -65,6 +63,8 @@
 | 026-031 | feature | file | usine-codex-56 | — | Tenir l'article 3 bis des CGU : dater la suppression du compte sur ses sites en ligne quand la purge réussit et prévenir l'artisan, puis douze mois plus tard envoyer le lien du dossier, passer la commande à retiree, détacher le domaine et purger les fichiers à l'expiration, le tout dans tourLivraison |
 | 026-030 | feature | file | usine-codex-55 | — | Permettre de compléter le dossier d'une commande déjà payée et pas encore générée (GET/PUT /api/site/commander/complement, qui rattache d'abord la commande par l'adresse de la session), et ajouter au dossier la liste des prestations, exigée avant la fabrication par erreursFabrication sans toucher aux règles du paiement |
 | 026-240 | test | file | codex | — | Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 026-134 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 0s · 0 l. |
+| 026-175 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 1s · 0 l. |
 | 026-217 | feature | fait | claude-code | PASS | 2026-09-30T13:43:35Z · 2s · 0 l. |
 | 026-210 | feature | fait | claude-code | PASS | 2026-09-30T13:43:25Z · 2s · 394 l. |
 | 026-133 | test | fait | codex | PASS | 2026-09-30T08:24:52Z · 617s · 0 l. |
