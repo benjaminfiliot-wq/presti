@@ -1,0 +1,377 @@
+{
+ "verdicts": [
+  {
+   "cle": "Aucune ressource citée absente du disque (7 pages + styles.css)",
+   "ok": false,
+   "detail": "3 manquante(s) mentions-legales/index.html → _Ljubljana).jpg ; styles.css → %23g ; styles.css → %23g ; 74 fichiers d’images cités, 74 sur le disque, non cités : aucun"
+  },
+  {
+   "cle": "Aucune 404 ni échec de requête en navigateur (7 pages, 1440 et 390)",
+   "ok": true,
+   "detail": "aucune ; serveur : aucune"
+  },
+  {
+   "cle": "/menuisier-rennes/ : une photo d’ouvrage en tête",
+   "ok": true,
+   "detail": "{\"premier\":\"hero hero--plein hero--commune\",\"img\":\"boiserie-1600.avif\",\"partEcran\":0.72}"
+  },
+  {
+   "cle": "/menuisier-rennes/ : h1 différent de l’accueil",
+   "ok": true,
+   "detail": "« Menuisier à RennesEscaliers et agencement » contre « Menuisier à RennesFait pour rester »"
+  },
+  {
+   "cle": "/menuisier-rennes/ : aucune photo d’outil seul (affichée)",
+   "ok": true,
+   "detail": "images : boiserie, penderie (survol), heros-escalier (survol), atelier-poncage (survol), heros-escalier, cuisine-bois, penderie, boiserie"
+  },
+  {
+   "cle": "/menuisier-rennes/ : contact imprimé une fois",
+   "ok": true,
+   "detail": "téléphone dans main ×1 (page entière ×3, nav et pied compris) ; sections contact 1 ; doublons aucun ; .prose 0"
+  },
+  {
+   "cle": "menuisier-cesson-sevigne : bandeau d’ouvrage, h1 distinct, pas d’outil affiché, contact une fois",
+   "ok": true,
+   "detail": "bandeau heros-escalier-1600.avif ; h1 « Menuisier à Cesson-SévignéEscaliers et agencement » ; images heros-escalier, penderie (survol), heros-escalier (survol), atelier-poncage (survol), cuisine-bois, penderie, boiserie, heros-escalier ; tel ×1 ; doublons aucun"
+  },
+  {
+   "cle": "menuisier-bruz : bandeau d’ouvrage, h1 distinct, pas d’outil affiché, contact une fois",
+   "ok": true,
+   "detail": "bandeau cuisine-bois-1600.avif ; h1 « Menuisier à BruzEscaliers et agencement » ; images cuisine-bois, penderie (survol), heros-escalier (survol), atelier-poncage (survol), heros-escalier, penderie, boiserie, cuisine-bois ; tel ×1 ; doublons aucun"
+  },
+  {
+   "cle": "menuisier-saint-gregoire : bandeau d’ouvrage, h1 distinct, pas d’outil affiché, contact une fois",
+   "ok": true,
+   "detail": "bandeau penderie-1600.avif ; h1 « Menuisier à Saint-GrégoireEscaliers et agencement » ; images penderie, penderie (survol), heros-escalier (survol), atelier-poncage (survol), heros-escalier, cuisine-bois, boiserie, penderie ; tel ×1 ; doublons aucun"
+  },
+  {
+   "cle": "Vague 1 (1440) : 4 étapes, aucun paragraphe d’en-tête commençant par un chiffre",
+   "ok": true,
+   "detail": "{\"etapes\":4,\"para\":0}"
+  },
+  {
+   "cle": "Vague 1 (1440) : #communes sans h3 ni small, pas de licence dans les légendes",
+   "ok": true,
+   "detail": "{\"h3\":0,\"small\":0,\"cc\":0}"
+  },
+  {
+   "cle": "Vague 1 : crédits photo atteignables (lien sous la galerie → #credits, auteurs et « modifiée »)",
+   "ok": true,
+   "detail": "/mentions-legales/index.html#credits top=88 ; auteurs absents : aucun ; « modifi » true"
+  }
+ ],
+ "mesures": {
+  "imagesCitees": [
+   "atelier-poncage-1600.avif",
+   "atelier-poncage-1600.webp",
+   "atelier-poncage-2400.avif",
+   "atelier-poncage-2400.webp",
+   "atelier-poncage-2880.avif",
+   "atelier-poncage-2880.webp",
+   "atelier-poncage-480.avif",
+   "atelier-poncage-480.webp",
+   "atelier-poncage-720.avif",
+   "atelier-poncage-720.webp",
+   "atelier-poncage-960.avif",
+   "atelier-poncage-960.webp",
+   "atelier-poncage-portrait-1080.avif",
+   "atelier-poncage-portrait-1080.webp",
+   "atelier-poncage-portrait-720.avif",
+   "atelier-poncage-portrait-720.webp",
+   "boiserie-1600.avif",
+   "boiserie-1600.webp",
+   "boiserie-480.avif",
+   "boiserie-480.webp",
+   "boiserie-720.avif",
+   "boiserie-720.webp",
+   "boiserie-960.avif",
+   "boiserie-960.webp",
+   "cuisine-bois-1600.avif",
+   "cuisine-bois-1600.webp",
+   "cuisine-bois-480.avif",
+   "cuisine-bois-480.webp",
+   "cuisine-bois-720.avif",
+   "cuisine-bois-720.webp",
+   "cuisine-bois-960.avif",
+   "cuisine-bois-960.webp",
+   "heros-escalier-1600.avif",
+   "heros-escalier-1600.webp",
+   "heros-escalier-2400.avif",
+   "heros-escalier-2400.webp",
+   "heros-escalier-2880.avif",
+   "heros-escalier-2880.webp",
+   "heros-escalier-480.avif",
+   "heros-escalier-480.webp",
+   "heros-escalier-720.avif",
+   "heros-escalier-720.webp",
+   "heros-escalier-960.avif",
+   "heros-escalier-960.webp",
+   "heros-escalier-portrait-1080.avif",
+   "heros-escalier-portrait-1080.webp",
+   "heros-escalier-portrait-1440.avif",
+   "heros-escalier-portrait-1440.webp",
+   "heros-escalier-portrait-720.avif",
+   "heros-escalier-portrait-720.webp",
+   "mains-noyer-1600.avif",
+   "mains-noyer-1600.webp",
+   "mains-noyer-480.avif",
+   "mains-noyer-480.webp",
+   "mains-noyer-720.avif",
+   "mains-noyer-720.webp",
+   "mains-noyer-960.avif",
+   "mains-noyer-960.webp",
+   "penderie-1600.avif",
+   "penderie-1600.webp",
+   "penderie-480.avif",
+   "penderie-480.webp",
+   "penderie-720.avif",
+   "penderie-720.webp",
+   "penderie-960.avif",
+   "penderie-960.webp",
+   "tournage-copeaux-1600.avif",
+   "tournage-copeaux-1600.webp",
+   "tournage-copeaux-480.avif",
+   "tournage-copeaux-480.webp",
+   "tournage-copeaux-720.avif",
+   "tournage-copeaux-720.webp",
+   "tournage-copeaux-960.avif",
+   "tournage-copeaux-960.webp"
+  ],
+  "imagesNonCitees": [],
+  "menuisier-rennes": {
+   "haut": {
+    "premier": "hero hero--plein hero--commune",
+    "img": "boiserie-1600.avif",
+    "partEcran": 0.72
+   },
+   "h1": "Menuisier à RennesEscaliers et agencement",
+   "images": [
+    {
+     "base": "boiserie",
+     "survolSeul": false,
+     "ou": "hero.hero--plein"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "atelier-poncage",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "cuisine-bois",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "boiserie",
+     "survolSeul": false,
+     "ou": "contact.contact--photo"
+    }
+   ],
+   "telMain": 1,
+   "telPage": 3,
+   "sectionsContact": 1,
+   "doublons": [],
+   "prose": 0,
+   "h3Communes": 0,
+   "adresses": 0
+  },
+  "menuisier-cesson-sevigne": {
+   "haut": {
+    "premier": "hero hero--plein hero--commune",
+    "img": "heros-escalier-1600.avif",
+    "partEcran": 0.72
+   },
+   "h1": "Menuisier à Cesson-SévignéEscaliers et agencement",
+   "images": [
+    {
+     "base": "heros-escalier",
+     "survolSeul": false,
+     "ou": "hero.hero--plein"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "atelier-poncage",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "cuisine-bois",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "boiserie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": false,
+     "ou": "contact.contact--photo"
+    }
+   ],
+   "telMain": 1,
+   "telPage": 3,
+   "sectionsContact": 1,
+   "doublons": [],
+   "prose": 0,
+   "h3Communes": 0,
+   "adresses": 0
+  },
+  "menuisier-bruz": {
+   "haut": {
+    "premier": "hero hero--plein hero--commune",
+    "img": "cuisine-bois-1600.avif",
+    "partEcran": 0.72
+   },
+   "h1": "Menuisier à BruzEscaliers et agencement",
+   "images": [
+    {
+     "base": "cuisine-bois",
+     "survolSeul": false,
+     "ou": "hero.hero--plein"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "atelier-poncage",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "boiserie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "cuisine-bois",
+     "survolSeul": false,
+     "ou": "contact.contact--photo"
+    }
+   ],
+   "telMain": 1,
+   "telPage": 3,
+   "sectionsContact": 1,
+   "doublons": [],
+   "prose": 0,
+   "h3Communes": 0,
+   "adresses": 0
+  },
+  "menuisier-saint-gregoire": {
+   "haut": {
+    "premier": "hero hero--plein hero--commune hero--portrait",
+    "img": "penderie-1600.avif",
+    "partEcran": 0.72
+   },
+   "h1": "Menuisier à Saint-GrégoireEscaliers et agencement",
+   "images": [
+    {
+     "base": "penderie",
+     "survolSeul": false,
+     "ou": "hero.hero--plein"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "atelier-poncage",
+     "survolSeul": true,
+     "ou": "scene.scene--papier"
+    },
+    {
+     "base": "heros-escalier",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "cuisine-bois",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "boiserie",
+     "survolSeul": false,
+     "ou": "section.section--noir"
+    },
+    {
+     "base": "penderie",
+     "survolSeul": false,
+     "ou": "contact.contact--photo"
+    }
+   ],
+   "telMain": 1,
+   "telPage": 3,
+   "sectionsContact": 1,
+   "doublons": [],
+   "prose": 0,
+   "h3Communes": 0,
+   "adresses": 0
+  },
+  "credits": {
+   "existe": true,
+   "url": "/mentions-legales/index.html#credits",
+   "top": 88,
+   "texte": "Identification de l’entreprise\n\nSite de démonstration : entreprise fictive créée à des fins de présentation technique des capacités logicielles.\n\nNom commercial : Atelier Lestraque\n\nAdresse du siège social : 1 rue de la Démonstration, 35000 Rennes, France\n\nNuméro SIREN : 000000000\n\nTéléphone de contact : +33 2 61 91 38 47\n\nCourrier électronique : contact@menuisier.demo.invalid\n\nDirecteur de publication : Benjamin Filiot (Fondateur Presti)\n\nAssurance responsabilité décennale\n\nConformément aux articles L. 241-1 et suivants du Code des assurances, l’entreprise est couverte par un contrat d’assurance décennale obligatoire :\n\nCompagnie d’assurance : Assureur fictif\n\nNuméro de police : DEMO-0001\n\nCouverture géographique : France métropolitaine\n\nHébergement du site\n\nLe site est hébergé sur une infrastructure de distribution de fichiers statiques sécurisée :\n\nPlateforme Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis.\n\nPropriété intellectuelle et crédits photographiques\n\nLes photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.\n\nEscalier hélicoïdal en bois massif\n— Petar Milošević\n(CC BY-SA 4.0)\nModifiée — adaptation : étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.\npage du fichier\nPonçage à la main d’une pièce chantournée\n— Shixart1985\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) ; recadrée en 9:16 pour la version téléphone, par Presti.\npage du fichier\nPenderie en bois, tringle et quatre cintres\n— Shixart1985\n(CC BY 2.0)\nModifiée : recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nBoiseries et placards intégrés en bois sombre\n— Crew\n(CC0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nCuisine au plan de travail en bois massif, claustra à lames\n— Shixart1985\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nTournage sur bois, copeaux en vol\n— Bertrand from Paris, France\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nMains posées sur une planche de noyer, sciure au sol\n— Ian Schneider\n(CC0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier"
+  }
+ }
+}

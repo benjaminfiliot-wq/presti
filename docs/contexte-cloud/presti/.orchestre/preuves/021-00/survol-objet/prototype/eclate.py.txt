@@ -1,0 +1,124 @@
+# Prototype jetable : la marche éclatée pré-rendue dans Blender (Cycles CPU), en calques. Géométrie procédurale (boîtes biseautées,
+# embrèvements creusés par booléen), chêne procédural (bruit étiré), caméra orthographique : en orthographique, déplacer une pièce
+# le long d'un axe 3D revient à translater son calque 2D d'un vecteur fixe — c'est ce vecteur que le script écrit (JSON).
+# Rendus : assemblé complet, éclaté complet (la vérité), et un calque RGBA par pièce (autres pièces masquées), position assemblée.
+import bpy, sys, json, math, os, time
+from mathutils import Vector
+from bpy_extras.object_utils import world_to_camera_view
+
+OUT = sys.argv[sys.argv.index('--') + 1]
+os.makedirs(OUT, exist_ok=True)
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+sc.render.engine = 'CYCLES'
+sc.cycles.device = 'CPU'
+sc.cycles.samples = 40
+try:
+    sc.cycles.use_denoising = True
+except Exception:
+    pass
+sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1400, 1000, 100
+sc.render.film_transparent = True
+sc.render.image_settings.file_format = 'PNG'
+sc.render.image_settings.color_mode = 'RGBA'
+
+w = bpy.data.worlds.new('monde'); sc.world = w
+try: w.use_nodes = True
+except Exception: pass
+bg = w.node_tree.nodes.get('Background')
+if bg:
+    bg.inputs[0].default_value = (0.05, 0.045, 0.04, 1); bg.inputs[1].default_value = 0.35
+
+def bois(nom, echelle):
+    m = bpy.data.materials.new(nom)
+    try: m.use_nodes = True
+    except Exception: pass
+    N, L = m.node_tree.nodes, m.node_tree.links
+    bsdf = N.get('Principled BSDF')
+    tc, mp = N.new('ShaderNodeTexCoord'), N.new('ShaderNodeMapping')
+    mp.inputs['Scale'].default_value = echelle
+    bruit = N.new('ShaderNodeTexNoise')
+    bruit.inputs['Scale'].default_value = 2.5; bruit.inputs['Detail'].default_value = 10
+    if 'Distortion' in bruit.inputs: bruit.inputs['Distortion'].default_value = 0.8
+    rampe = N.new('ShaderNodeValToRGB')
+    e = rampe.color_ramp.elements
+    e[0].position, e[0].color = 0.38, (0.36, 0.20, 0.09, 1)
+    e[1].position, e[1].color = 0.62, (0.62, 0.42, 0.24, 1)
+    L.new(tc.outputs['Object'], mp.inputs['Vector']); L.new(mp.outputs['Vector'], bruit.inputs['Vector'])
+    L.new(bruit.outputs['Fac'], rampe.inputs['Fac']); L.new(rampe.outputs['Color'], bsdf.inputs['Base Color'])
+    bsdf.inputs['Roughness'].default_value = 0.48
+    return m
+
+FIL = {'x': (0.6, 30, 30), 'y': (30, 0.6, 30), 'z': (30, 30, 0.6)}
+mats = {k: bois('chene-' + k, v) for k, v in FIL.items()}
+
+def boite(nom, dims, loc, fil):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    o = bpy.context.active_object; o.name = nom; o.scale = dims
+    bpy.ops.object.transform_apply(scale=True)
+    o.data.materials.append(mats[fil])
+    return o
+
+def biseau(o, l=0.0025):
+    b = o.modifiers.new('biseau', 'BEVEL'); b.width = l; b.segments = 2; b.limit_method = 'ANGLE'
+
+# mètres ; Z en haut ; l'avant (le nez de marche) vers -Y
+marche = boite('marche', (0.84, 0.30, 0.04), (-0.02, 0, 0), 'x')
+contre = boite('contremarche', (0.84, 0.022, 0.18), (-0.02, -0.109, -0.11), 'x')
+limon = boite('limon', (0.06, 0.50, 0.34), (-0.43, -0.02, -0.05), 'y')
+for cutter in (marche, contre):
+    bo = limon.modifiers.new('embrevement', 'BOOLEAN'); bo.operation = 'DIFFERENCE'; bo.object = cutter
+    try: bo.solver = 'EXACT'
+    except Exception: pass
+    bpy.context.view_layer.objects.active = limon
+    bpy.ops.object.modifier_apply(modifier=bo.name)
+coin1 = boite('coin1', (0.05, 0.035, 0.018), (-0.375, -0.06, -0.029), 'y')
+coin2 = boite('coin2', (0.05, 0.035, 0.018), (-0.375, 0.08, -0.029), 'y')
+tours = []
+for i, x in enumerate((-0.25, 0.25)):
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.005, depth=0.03, location=(x, -0.109, -0.02), vertices=24)
+    t = bpy.context.active_object; t.name = 'tourillon%d' % (i + 1); t.data.materials.append(mats['z']); tours.append(t)
+for o in (marche, contre, limon, coin1, coin2): biseau(o)
+
+ECLATE = {
+    'limon': (-0.28, 0, 0), 'marche': (0.12, 0, 0.20), 'contremarche': (0.06, -0.20, -0.10),
+    'coin1': (-0.05, 0, -0.20), 'coin2': (-0.05, 0, -0.20), 'tourillon1': (0.09, -0.10, 0.05), 'tourillon2': (0.09, -0.10, 0.05),
+}
+pieces = {o.name: o for o in (limon, marche, contre, coin1, coin2, *tours)}
+depart = {n: o.location.copy() for n, o in pieces.items()}
+
+cam_d = bpy.data.cameras.new('cam'); cam_d.type = 'ORTHO'; cam_d.ortho_scale = 1.75
+cam = bpy.data.objects.new('cam', cam_d); sc.collection.objects.link(cam); sc.camera = cam
+cam.location = Vector((1.8, -2.2, 1.5))
+cible = Vector((0.0, -0.02, -0.05))
+cam.rotation_euler = (cible - cam.location).to_track_quat('-Z', 'Y').to_euler()
+
+def lampe(nom, loc, energie, taille):
+    d = bpy.data.lights.new(nom, 'AREA'); d.energy = energie; d.size = taille
+    o = bpy.data.objects.new(nom, d); sc.collection.objects.link(o); o.location = Vector(loc)
+    o.rotation_euler = (Vector((0, 0, 0)) - o.location).to_track_quat('-Z', 'Y').to_euler()
+lampe('cle', (-1.2, -1.6, 2.4), 420, 1.2)
+lampe('appoint', (2.4, -1.0, 0.6), 110, 1.5)
+lampe('contre', (0.4, 2.2, 1.4), 180, 1.0)
+
+journal = {}
+def rendre(nom):
+    t = time.time(); sc.render.filepath = os.path.join(OUT, nom); bpy.ops.render.render(write_still=True)
+    journal[nom] = round(time.time() - t, 1)
+
+rendre('assemble.png')
+for n, o in pieces.items(): o.location = depart[n] + Vector(ECLATE[n])
+rendre('eclate.png')
+for n, o in pieces.items(): o.location = depart[n]
+bpy.context.view_layer.update()
+
+decal = {}
+R = Vector((sc.render.resolution_x, sc.render.resolution_y))
+for n, o in pieces.items():
+    a = world_to_camera_view(sc, cam, depart[n]); b = world_to_camera_view(sc, cam, depart[n] + Vector(ECLATE[n]))
+    decal[n] = [round((b.x - a.x) * R.x, 1), round(-(b.y - a.y) * R.y, 1)]
+for n, o in pieces.items():
+    for m, q in pieces.items(): q.hide_render = (m != n)
+    rendre('calque-%s.png' % n)
+json.dump({'decalagesPx': decal, 'secondes': journal, 'resolution': [1400, 1000]}, open(os.path.join(OUT, 'eclate.json'), 'w'), indent=1)
+print('FINI', json.dumps(journal))

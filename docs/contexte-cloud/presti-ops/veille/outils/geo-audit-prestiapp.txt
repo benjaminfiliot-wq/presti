@@ -1,0 +1,223 @@
+
+🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 
+  GEO AUDIT — https://prestiapp.fr
+  github.com/auriti-labs/geo-optimizer-skill
+🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 🔍 
+
+   Status: 200 | Size: 85,250 bytes | Duration: 2761ms
+
+============================================================
+  1. ROBOTS.TXT — AI Bot Access
+============================================================
+  ✅ robots.txt found
+  ✅ GPTBot allowed ✓
+  ✅ OAI-SearchBot allowed ✓
+  ✅ ChatGPT-User allowed ✓
+  ✅ ClaudeBot allowed ✓
+  ✅ Claude-SearchBot allowed ✓
+  ✅ Claude-User allowed ✓
+  ✅ PerplexityBot allowed ✓
+  ✅ Perplexity-User allowed ✓
+  ✅ Googlebot allowed ✓
+  ✅ Google-Extended allowed ✓
+  ✅ Google-CloudVertexBot allowed ✓
+  ✅ Bingbot allowed ✓
+  ✅ Applebot-Extended allowed ✓
+  ✅ cohere-ai allowed ✓
+  ✅ DuckAssistBot allowed ✓
+  ✅ Bytespider allowed ✓
+  ✅ meta-externalagent allowed ✓
+  ✅ Meta-ExternalFetcher allowed ✓
+  ✅ facebookexternalhit allowed ✓
+  ✅ Amazonbot allowed ✓
+  ✅ AI2Bot allowed ✓
+  ✅ AI2Bot-Dolma allowed ✓
+  ✅ xAI-Bot allowed ✓
+  ✅ Applebot allowed ✓
+  ✅ PetalBot allowed ✓
+  ✅ YouBot allowed ✓
+  ✅ CCBot allowed ✓
+  ✅ All critical CITATION bots are correctly configured
+
+============================================================
+  2. LLMS.TXT — AI Index File
+============================================================
+  ❌ llms.txt not found — essential for AI indexing!
+
+============================================================
+  3. SCHEMA JSON-LD — Structured Data
+============================================================
+  ✅ Schema SoftwareApplication ✓
+  ✅ Schema Organization ✓
+  ✅ Schema WebSite ✓
+  ⚠️  FAQPage schema missing
+
+============================================================
+  4. META TAG — SEO & Open Graph
+============================================================
+  ✅ Title: Presti — Une réponse prête en moins d'une minute
+  ✅ Meta description (129 characters) ✓
+  ✅ Canonical: https://prestiapp.fr
+  ✅ og:title ✓
+  ✅ og:description ✓
+  ✅ og:image ✓
+
+============================================================
+  5. CONTENT QUALITY — GEO Best Practices
+============================================================
+  ✅ H1: Le premier qui répond décroche le chantier.
+  ✅ 9 headings
+  ✅ 18 numbers/statistics found ✓
+  ✅ ~1103 words
+  ⚠️  No links to external sources
+
+============================================================
+  6. TECHNICAL SIGNALS
+============================================================
+  ✅ Language: fr
+  ⚠️  No RSS/Atom feed
+  ⚠️  No dateModified signal
+
+============================================================
+  7. AI DISCOVERY ENDPOINTS
+============================================================
+  ⚠️  /.well-known/ai.txt missing
+  ⚠️  /ai/summary.json missing or invalid
+  ⚠️  /ai/faq.json missing
+
+============================================================
+  8. BRAND & ENTITY SIGNALS
+============================================================
+  [█░░░░] 3/10
+  ✅ Brand name consistent (Le premier qui réponddécroche le chantier., Presti, Presti)
+  ⚠️  No Knowledge Graph links (Wikipedia, Wikidata, LinkedIn)
+  ⚠️  About page not detected
+  ⚠️  Contact information missing
+
+============================================================
+  9. CDN AI CRAWLER ACCESS
+============================================================
+  ✅ All AI crawlers can access the site
+
+============================================================
+  10. JS RENDERING CHECK
+============================================================
+  ✅ 1094 words and 9 headings found in raw HTML. Content is accessible without JavaScript.
+
+============================================================
+  11. PROMPT INJECTION DETECTION
+============================================================
+  ⚠️  Severity: SUSPICIOUS (1 pattern)
+  ⚠️  Monochrome text: 1 element(s)
+
+============================================================
+  12. TRUST STACK SCORE
+============================================================
+  Grade: C (12/25) — Trust level: medium
+  [█████] Technical Trust: 5/5
+  [██░░░] Identity Trust: 2/5
+  [░░░░░] Social Trust: 0/5
+  [█░░░░] Academic Trust: 1/5
+  [████░] Consistency Trust: 4/5
+
+============================================================
+  13. RAG CHUNK READINESS
+============================================================
+  Sections: 9 (1 in 100-150 word range)
+  Avg section words: 40.6
+  Definition opening: ❌
+  Heading boundaries: 100%
+  Anchor sentences: 40
+  Chunk readiness: 48/100
+
+============================================================
+  14. EMBEDDING PROXIMITY
+============================================================
+  ⏭️  Skipped: sentence-transformers not installed (pip install geo-optimizer-skill[embedding])
+
+============================================================
+  15. CONTENT DECAY PREDICTION
+============================================================
+  Risk: 🟡 MEDIUM | Evergreen: 84/100
+  Earliest decay: ~365 days
+  [temporal] C 873,40 € PDF conforme · DEV-2026-0042 Rapide Réponse prête en
+  [temporal] dentialité Mentions légales © 2026 Presti · Fait pour les artisa
+
+============================================================
+  16. PLATFORM CITATION PROFILE
+============================================================
+  CHATGPT: 35/100
+    ✅ GPTBot allowed in robots.txt
+    ✅ Well-structured content
+    ✅ Organization schema present
+    💡 Add /llms.txt for LLM-friendly site summary
+    💡 Add FAQPage schema for Q&A-style answers
+  PERPLEXITY: 25/100
+    ✅ PerplexityBot allowed
+    ✅ Substantial content depth
+    💡 Add /llms.txt with links to key resources
+    💡 Add dateModified schema or freshness indicators
+  GOOGLE_AI: 58/100
+    ✅ Google-Extended allowed
+    ✅ Complete meta tags
+    ✅ Open Graph tags present
+    💡 Add more schema types for richer structured data
+    💡 Add dateModified / lastmod freshness signals
+
+============================================================
+  17. CONTEXT WINDOW OPTIMIZATION
+============================================================
+  Tokens: ~1422 (1094 words)
+  Front-loading: 67% | Filler: 0%
+  Truncation risk: 🟢 low
+  Fits: perplexity, chatgpt, claude
+  Efficiency: 80/100
+
+============================================================
+  18. INSTRUCTION FOLLOWING READINESS
+============================================================
+  Actions: 21 labeled, 0 unlabeled (100/100)
+  Forms: 0/0 labeled, 0 typed (100/100)
+  Error recovery: aria-live ❌ | roles ❌
+  Readiness: 75/100 (ready)
+
+============================================================
+  19. MULTIMODAL READINESS
+============================================================
+  Images: 0/4 with descriptive alt (0%) | captions: 0
+  Video: 1 found | VideoObject schema: ❌ | captions/transcript: ❌
+  Readiness: missing
+
+============================================================
+  📊 FINAL GEO SCORE
+============================================================
+
+  [██████████░░░░░░░░░░] 52/100
+
+  ⚠️  FOUNDATION — Core elements missing, implement priority fixes
+
+  Score bands: 0–35 = critical | 36–67 = foundation | 68–85 = good | 86–100 = excellent
+
+  📋 PRIORITY NEXT STEPS:
+  1. Create /llms.txt for AI indexing: geo llms --base-url https://prestiapp.fr. Note: llms.txt is an organizational signal, not a proven ranking factor. It helps structure content for AI systems.
+  2. Add sameAs links in Organization schema to Wikipedia, Wikidata, LinkedIn, or Crunchbase for Knowledge Graph disambiguation
+  3. Add a visible /about or /chi-siamo link to build trust signals for AI
+  4. Add address, telephone or contactPoint to Organization schema for entity validation
+  5. Add FAQPage schema with site FAQs
+  6. Keyword stuffing detected: 'votre' at 4.1% density — diversify vocabulary
+  7. Create /.well-known/ai.txt to define AI crawler permissions
+  8. Create /ai/summary.json with site name and description for AI engines
+  9. Create /ai/faq.json with structured FAQ for AI search visibility
+  10. Create /ai/service.json to describe service capabilities for AI
+  11. Add RSS/Atom feed and link it in <head> with <link rel="alternate" type="application/rss+xml"> for AI discovery
+  12. Cite authoritative sources with external links (increase AI credibility)
+  13. Add potentialAction (SearchAction) to WebSite schema for AI agent discoverability
+  14. Add descriptive labels to forms (label, aria-label) to make them usable by AI agents
+  15. Consider adding WebMCP toolname/tooldescription attributes to interactive elements for Chrome AI agent support
+  16. 4 of 4 images lack descriptive alt text — multimodal AI engines (Gemini, GPT-4o) read images through their alt text
+  17. Video detected without VideoObject schema — add name, description, thumbnailUrl, and uploadDate so AI engines can cite your video content
+  18. Video without captions or transcript — add <track kind="captions"> or a text transcript: AI engines index the transcript, not the pixels
+
+  💡 One-shot audit. The free plan at https://geoready.dev tracks 1 domain
+     with a weekly drift email — plus score history and AI citation tracking.
+

@@ -1,0 +1,15 @@
+09:38:54 sansgpu image 0 y 0 δ 0.0000 contraste 3.405 bois 109.8
+09:40:19 sansgpu image 30 y 15 δ 0.0000 contraste 3.399 bois 107.5
+09:41:46 sansgpu image 60 y 128 δ 0.0000 contraste 3.361 bois 100.9
+09:42:54 sansgpu image 90 y 331 δ 0.0000 contraste 3.172 bois 94.7
+09:44:07 sansgpu image 120 y 585 δ 0.0000 contraste 3.948 bois 65.5
+09:45:04 sansgpu image 150 y 839 δ 0.0000 contraste 8 bois null
+09:45:40 sansgpu image 180 y 1042 δ 0.0000 contraste 2.94 bois null
+09:46:10 sansgpu image 210 y 1155 δ 0.0000 contraste 3.532 bois null
+09:46:43 sansgpu film écrit C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/descente-sansgpu.mp4
+09:46:50 sansgpu planche écrite
+09:46:53 sansgpu D-15 {"oeil":{"blocs":208,"moduleMedian_px":3.9,"moduleP90_px":5.6,"radialMedian_px":3.7,"moduleModeleMedian_px":4.3,"blocsAuBordDeLaRecherche":0},"marches":{"blocs":99,"moduleMedian_px":9.4,"moduleP90_px":15.5,"radialMedian_px":9.4,"moduleModeleMedian_px":10.9,"blocsAuBordDeLaRecherche":0}}
+09:47:33 sansgpu D-5 1280x800 3.146
+09:48:15 sansgpu D-5 1366x768 2.871
+09:49:01 sansgpu D-5 1440x900 3.262
+09:49:02 sansgpu fini

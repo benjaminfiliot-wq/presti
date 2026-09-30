@@ -1,0 +1,6 @@
+1440 cadre-07-etapes photos : site [eclate.avif] ≠ kit [eclate.webp]
+1440 nav en haut de page, « Devis » : site hidden 0 · kit (cadre 01) hidden 0
+== 1440 : 187 nœuds texte appariés, 1 écart(s) (taille, interligne, lignes, position à 1 px, hauteur, photos, textes absents ou en trop)
+390 cadre-07-etapes photos : site [eclate.avif] ≠ kit [eclate.webp]
+390 nav en haut de page, « Devis » : site visible 1 · kit (cadre 01) visible 1
+== 390 : 164 nœuds texte appariés, 1 écart(s) (taille, interligne, lignes, position à 1 px, hauteur, photos, textes absents ou en trop)

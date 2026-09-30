@@ -1,0 +1,4 @@
+public/sites-demo/lestraque/index.html: OK
+public/sites-demo/lestraque/styles.css: OK
+public/sites-demo/lestraque/site.js: OK
+public/sites-demo/lestraque/menuisier-rennes/index.html: OK

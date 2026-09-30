@@ -1,0 +1,170 @@
+[
+  {
+    "element": "L’ancien plan dit encore que Benj envoie le message et les captures, alors que le Mission Control et les agents sont désormais la voie retenue.",
+    "reel": false,
+    "raison": "L’ancien plan manuel est déjà corrigé par les fiches actives 026.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.6282,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "L’INDEX demande encore de confirmer le geste G3 et le range parmi les gestes humains futurs.",
+    "reel": true,
+    "raison": "L’INDEX réclame encore G3 alors que la mémoire le date comme fait le 25/09.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.1521,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Le parcours manuel ancien fait envoyer par Benj les premiers messages et les deux captures.",
+    "reel": false,
+    "raison": "Le parcours manuel est une ancienne version rectifiée par 026-087, 026-089 et 026-095.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.7141,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "L’INDEX présente les décisions R déjà tranchées comme paramètres provisoires à confirmer.",
+    "reel": false,
+    "raison": "R4, R10, R17 et R23 sont tranchées dans l’INDEX et reprises par les fiches actives.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.9046,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "La page du vieux plan peut encore orienter vers un séquenceur et des boîtes payants.",
+    "reel": false,
+    "raison": "Le séquenceur et les boîtes payantes sont explicitement annulés dans l’INDEX.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.8547,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "La promesse « client payé 1 300 € » est présentée comme preuve de paiement alors que le reel ne montre que l’affirmation du créateur.",
+    "reel": true,
+    "raison": "Le reel ne montre que l’affirmation orale du créateur, sans pièce de paiement.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.8239,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Le service pubs retenu ne doit pas exiger Alexya ni les crédits ElevenLabs.",
+    "reel": false,
+    "raison": "Alexya est déjà retiré au profit de la chaîne gratuite dans 026-156 et 026-200.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.5675,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "La série 026 ne contient aucune fiche C01-C16 pour la structure complète du reel marketing.",
+    "reel": false,
+    "raison": "C01 à C16 sont définies dans un document marketing distinct de la série 026.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.8188,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Le projet R24 autoriserait une ligne entière après un seul accord alors que le reel demande chaque post dans la file.",
+    "reel": false,
+    "raison": "R24 reste ouvert ; la validation par publication demeure la règle par défaut.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.8862,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Le Mesureur prévoit un relevé TikTok manuel régulier si l’API est fermée.",
+    "reel": false,
+    "raison": "C10 examine d’abord la voie API TikTok et ne prévoit le manuel qu’en repli.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.8406,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "G3 est encore formulé comme geste à faire, bien qu’il soit daté fait le 25/09.",
+    "reel": true,
+    "raison": "026-148 demande encore le geste G3 alors qu’il est daté fait le 25/09.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.137,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "La question « Codex en automatique sur les prospects : oui ou non ? » reste ouverte malgré l’architecture active et G3 fait.",
+    "reel": false,
+    "raison": "G3 autorise le traitement des données par Codex, mais ne tranche pas explicitement le mode automatique ; la question reste ouverte dans 026-148:26.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.1731,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Le registre historique recommande Groq malgré son refus ultérieur.",
+    "reel": false,
+    "raison": "Le refus de Groq est déjà consigné après l’ancienne recommandation.",
+    "modele": "Gemini 3.6 Flash via freellmapi",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.0428,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  },
+  {
+    "element": "Laya/Jev est demandé par Benj pour les décisions locales, mais le plan marketing le dit déjà prévu tout en le remplaçant par des contrôles en code ; aucune fiche 026 ne porte son emploi.",
+    "reel": true,
+    "raison": "La consigne datée de Benj et le reel nomment Laya/Jev. Le plan dit déjà prévu puis substitue les juges en code, et aucune fiche 026 ne porte cet emploi. Qwen3 4B et Gemini 3.6 Flash ont tenté de réfuter cet écart et l’ont confirmé.",
+    "modele": "Qwen3 4B via Ollama (contre-vérifié par Gemini 3.6 Flash via freellmapi)",
+    "laya": {
+      "modele": "Laya/Jev local",
+      "question": "Cet écart est-il réel selon les éléments fournis ?",
+      "probabiliteVrai": 0.0672,
+      "calibration": "aucune calibration spécifique à cette tâche"
+    }
+  }
+]

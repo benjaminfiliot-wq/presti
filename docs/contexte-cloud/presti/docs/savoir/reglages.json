@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "_note": "Interrupteurs de toute la couche Savoir (fiche 026-229). Tous éteints ici. Seul Claude Code change ce fichier, par un commit poussé : l'usine le lit dans /srv/presti-agents et ne pousse jamais.",
+  "interrupteurs": {
+    "envoi": { "actif": false, "depuis": null, "accord": null },
+    "semantique": { "actif": false, "depuis": null, "accord": null },
+    "recherche_web": { "actif": false, "depuis": null, "accord": null },
+    "perplexity": { "actif": false, "depuis": null, "accord": null },
+    "lecons_dans_consignes": { "actif": false, "depuis": null, "accord": null },
+    "bilan_quotidien": { "actif": false, "depuis": null, "accord": null }
+  },
+  "semantique": {
+    "url": "http://127.0.0.1:11434",
+    "modele": null
+  },
+  "firecrawl": {
+    "reserve_credits": 1000,
+    "source": "reprise-cloud/docs/revue-fiches-2026-09-26.md (réserve de départ, pas un solde)",
+    "solde_constate": null
+  },
+  "perplexity": {
+    "plan": null,
+    "cout_par_requete_eur": null,
+    "source": null,
+    "constate_le": null
+  }
+}

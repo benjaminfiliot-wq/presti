@@ -1,0 +1,7 @@
+encre numéros 1440 (tous visibles) => {"avancee":"0.888","encre":[{"t":"01","op":"1","boite":{"t":"01","op":"1","x":698,"y":51,"w":150,"h":100},"hauteurEncre":68,"largeurEncre":121},{"t":"02","op":"1","boite":{"t":"02","op":"1","x":698,"y":247,"w":150,"h":100},"hauteurEncre":91,"largeurEncre":139},{"t":"03","op":"1","boite":{"t":"03","op":"1","x":698,"y":419,"w":150,"h":100},"hauteurEncre":91,"largeurEncre":133},{"t":"04","op":"1","boite":{"t":"04","op":"1","x":698,"y":592,"w":150,"h":100},"hauteurEncre":92,"largeurEncre":138}]}
+communes 1280x800 => {"h":676,"ratio":0.845}
+communes 1280x900 => {"h":676,"ratio":0.751}
+communes 1366x768 => {"h":698,"ratio":0.909}
+communes 1536x864 => {"h":740,"ratio":0.856}
+communes 1440x900 => {"h":711,"ratio":0.79}
+communes 1920x1080 => {"h":854,"ratio":0.791}

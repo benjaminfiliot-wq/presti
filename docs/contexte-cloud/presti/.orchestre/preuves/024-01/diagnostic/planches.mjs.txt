@@ -1,0 +1,74 @@
+// planches.mjs — après moteurs.mjs : deux pièces de comparaison Android / iPhone, tirées des mesures (rien n'est recapturé ici).
+//  1. comparaison-arrets.jpg : les captures d'arrêt où, sur Android, une animation liée au défilement est à l'écran et en cours
+//     (progression strictement entre 0 et 1), plus y = 0 ; Android en haut, iPhone au même y en bas.
+//  2. comparaison-films.mp4 : les deux films côte à côte, calés sur le premier défilement détecté dans l'image (écart moyen de gris
+//     entre images successives), et non sur l'horloge de Playwright (en avance de 0,05 à 0,8 s sur Date.now()).
+// Usage : node .orchestre/preuves/024-01/diagnostic/planches.mjs
+import fs from 'node:fs'
+import path from 'node:path'
+import { execFileSync } from 'node:child_process'
+import sharp from 'sharp'
+
+const ICI = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))
+const lire = (p) => JSON.parse(fs.readFileSync(path.join(ICI, p, 'mesures.json'), 'utf8'))
+const A = lire('android'), I = lire('iphone')
+const sortie = { arrets: [], films: {} }
+
+// ── 1. captures d'arrêt ──────────────────────────────────────────────────────────────────────────────────────────────────
+const enCours = A.arrets.filter((a) => a.i === 0 || a.animsAuRepos.some((x) => x.timeline !== 'DocumentTimeline' && x.aLEcran && x.progression > 0 && x.progression < 1))
+const H = 700, ecart = 12, haut = 34
+const colonnes = []
+for (const a of enCours) {
+  const b = I.arrets.find((x) => x.yDemande === a.yDemande)
+  if (!b) continue
+  const anims = [...new Set(a.animsAuRepos.filter((x) => x.timeline !== 'DocumentTimeline' && x.aLEcran && x.progression > 0 && x.progression < 1).map((x) => x.nom))]
+  colonnes.push({ y: a.scrollYRepos, android: path.join(ICI, 'android', a.capture), iphone: path.join(ICI, 'iphone', b.capture), yIphone: b.scrollYRepos, anims })
+  sortie.arrets.push({ yAndroid: a.scrollYRepos, yIphone: b.scrollYRepos, animationsEnCoursAndroid: anims, captures: [`android/${a.capture}`, `iphone/${b.capture}`] })
+}
+const texte = (t, w, taille = 20) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${haut}"><rect width="100%" height="100%" fill="#111"/><text x="8" y="${haut - 10}" font-family="Arial" font-size="${taille}" fill="#fff">${t.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text></svg>`)
+const comps = []
+let x = 0
+for (const c of colonnes) {
+  const ba = await sharp(c.android).resize({ height: H }).toBuffer(), bi = await sharp(c.iphone).resize({ height: H }).toBuffer()
+  const w = Math.max((await sharp(ba).metadata()).width, (await sharp(bi).metadata()).width)
+  comps.push({ input: texte(`Android y=${c.y} ${c.anims.length ? '(en cours : ' + c.anims.join(', ') + ')' : ''}`, w, 13), left: x, top: 0 })
+  comps.push({ input: ba, left: x, top: haut })
+  comps.push({ input: texte(`iPhone simulé y=${c.yIphone}`, w, 13), left: x, top: haut + H + ecart })
+  comps.push({ input: bi, left: x, top: 2 * haut + H + ecart })
+  x += w + ecart
+}
+await sharp({ create: { width: x - ecart, height: 2 * haut + 2 * H + ecart, channels: 3, background: '#555' } }).composite(comps).jpeg({ quality: 82 }).toFile(path.join(ICI, 'comparaison-arrets.jpg'))
+
+// ── 2. films côte à côte, calés sur le premier défilement vu dans l'image ───────────────────────────────────────────────
+function debutDefilement(webm, estimationS) {
+  const w = 103, h = 210
+  const brut = execFileSync('ffmpeg', ['-v', 'error', '-i', webm, '-vf', `scale=${w}:${h},format=gray`, '-f', 'rawvideo', '-'], { maxBuffer: 1 << 30 })
+  const fps = eval(execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=r_frame_rate', '-of', 'csv=p=0', webm], { encoding: 'utf8' }).trim())
+  const n = Math.floor(brut.length / (w * h)), diffs = [0]
+  for (let k = 1; k < n; k++) { let s = 0; for (let i = 0; i < w * h; i++) s += Math.abs(brut[k * w * h + i] - brut[(k - 1) * w * h + i]); diffs.push(s / (w * h)) }
+  // référence : la médiane des écarts sur la seconde qui précède l'estimation (héros qui tourne, page chargée)
+  const k0 = Math.max(1, Math.round((estimationS - 0.7) * fps)), avant = diffs.slice(Math.max(1, k0 - fps), k0).sort((a, b) => a - b)
+  const base = avant.length ? avant[Math.floor(avant.length / 2)] : 0
+  const seuil = Math.max(4, base * 4)
+  let k = k0
+  while (k < n - 2 && !(diffs[k] > seuil && diffs[k + 1] > seuil && diffs[k + 2] > seuil)) k++
+  return { fps, images: n, estimationS, ecartMedianAvant: Math.round(base * 100) / 100, seuil: Math.round(seuil * 100) / 100, imageDebut: k, debutS: Math.round(((k - 1) / fps) * 1000) / 1000 }
+}
+const films = {}
+for (const [p, d] of [['android', A], ['iphone', I]]) {
+  const f = d.films[0]
+  const webm = path.join(ICI, p, f.fichiers[0])
+  // decoupeDebutS = début du défilement selon Date.now() − 0,3 s
+  films[p] = { webm, ...debutDefilement(webm, f.decoupeDebutS + 0.3) }
+}
+sortie.films = Object.fromEntries(Object.entries(films).map(([k, v]) => [k, { ...v, webm: path.relative(ICI, v.webm) }]))
+const police = 'C\\:/Windows/Fonts/arial.ttf'
+const etiquette = (t) => `drawtext=fontfile='${police}':text='${t}':x=10:y=h-34:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.6:boxborderw=6`
+execFileSync('ffmpeg', ['-y', '-v', 'error',
+  '-ss', String(Math.max(0, films.android.debutS - 0.5)), '-t', '15.8', '-i', films.android.webm,
+  '-ss', String(Math.max(0, films.iphone.debutS - 0.5)), '-t', '15.8', '-i', films.iphone.webm,
+  '-filter_complex', `[0:v]fps=25,scale=-2:844,setsar=1,${etiquette('Android (natif)')}[a];[1:v]fps=25,scale=-2:844,setsar=1,${etiquette('iPhone simule (sans view)')}[b];[a][b]hstack=inputs=2,pad=iw+mod(iw\\,2):ih[v]`,
+  '-map', '[v]', '-c:v', 'libx264', '-crf', '20', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', path.join(ICI, 'comparaison-films.mp4')])
+sortie.films.comparaison = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'stream=width,height,avg_frame_rate,nb_frames:format=duration,size', '-of', 'json', path.join(ICI, 'comparaison-films.mp4')], { encoding: 'utf8' }))
+fs.writeFileSync(path.join(ICI, 'planches.json'), JSON.stringify(sortie, null, 1))
+console.log(JSON.stringify(sortie, null, 1))

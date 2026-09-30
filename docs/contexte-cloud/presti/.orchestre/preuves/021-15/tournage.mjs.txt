@@ -1,0 +1,165 @@
+// tournage.mjs — script de tournage pour la tâche 021-15 (capture de 90 frames)
+import http from 'node:http'
+import fs from 'node:fs'
+import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { chromium } from 'playwright'
+import sharp from 'sharp'
+
+async function main() {
+  const R = path.resolve('.')
+  const P = path.join(R, '.orchestre', 'preuves', '021-15')
+  const SITE = path.join(R, '.orchestre', 'travail', '021-15', 'site')
+
+  console.log('Démarrage serveur HTTP sur SITE:', SITE)
+  const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', webp: 'image/webp', avif: 'image/avif', jpg: 'image/jpeg', png: 'image/png', woff2: 'font/woff2', svg: 'image/svg+xml', json: 'application/json' }
+  const srv = http.createServer((q, r) => {
+    let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'
+    let f = path.join(SITE, p); if (!fs.existsSync(f)) f = path.join(path.join(R, 'public', 'sites-demo'), p)
+    if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() }
+    r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r)
+  })
+  await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+  const port = srv.address().port
+  console.log('Serveur écoute sur port', port)
+
+  const FORMATs = [[1440, 900], [1088, 800]]
+  console.log('Lancement Playwright...')
+  const nav = await chromium.launch({ args: ['--use-gl=angle', '--enable-webgl', '--ignore-gpu-blocklist'] })
+  console.log('Playwright lancé.')
+
+  const mesures = {}
+
+  try {
+    for (const [l, h] of FORMATs) {
+      console.log(`Tournage ${l}×${h}...`)
+      const ctx = await nav.newContext({ viewport: { width: l, height: h } })
+      const page = await ctx.newPage()
+      
+      console.log('Navigation vers page d\'accueil...')
+      await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(2000)
+      await page.mouse.move(-1, -1)
+
+      console.log('Capture statique...')
+      await page.evaluate(() => { for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = 0 } catch {} } })
+      await page.waitForTimeout(200)
+      const staticBuf = await page.screenshot({ type: 'png' })
+
+      const framesDir = path.join(P, `frames-${l}x${h}`)
+      fs.mkdirSync(framesDir, { recursive: true })
+      const numFrames = 90
+      console.log(`Capture de ${numFrames} frames...`)
+      for (let i = 0; i < numFrames; i++) {
+        const progress = i / (numFrames - 1)
+        await page.evaluate((p) => {
+          window.scrollTo(0, (1 - p) * 300)
+          for (const a of document.getAnimations()) {
+            try { a.pause(); a.currentTime = p * (a.effect ? a.effect.getComputedTiming().duration || 1000 : 1000) } catch {}
+          }
+        }, progress)
+        if (i === numFrames - 1) {
+          await page.evaluate(() => {
+            window.scrollTo(0, 0)
+            for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = 0 } catch {} }
+          })
+        }
+        const png = await page.screenshot({ type: 'png' })
+        fs.writeFileSync(path.join(framesDir, `frame_${String(i).padStart(3, '0')}.png`), png)
+      }
+      await ctx.close()
+      console.log(`Frames ${l}×${h} capturées. Encodage ffmpeg...`)
+
+      const h264Path = path.join(P, `ouverture-${l}x${h}.h264.mp4`)
+      const av1Path = path.join(P, `ouverture-${l}x${h}.av1.mp4`)
+      spawnSync('ffmpeg', ['-v', 'error', '-y', '-framerate', '30', '-i', path.join(framesDir, 'frame_%03d.png'), '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', h264Path])
+      spawnSync('ffmpeg', ['-v', 'error', '-y', '-framerate', '30', '-i', path.join(framesDir, 'frame_%03d.png'), '-c:v', 'libsvtav1', '-preset', '8', '-crf', '36', '-an', av1Path])
+      console.log(`Encodage ${l}×${h} terminé.`)
+
+      const gris160 = (f, lw, hw) => {
+        const hh = Math.round(160 * hw / lw), brut = spawnSync('ffmpeg', ['-v', 'error', '-i', f, '-vf', `scale=160:${hh},format=gray`, '-f', 'rawvideo', '-'], { maxBuffer: 1 << 28 }).stdout
+        const n = 160 * hh
+        return Array.from({ length: Math.floor(brut.length / n) }, (_, index) => brut.subarray(index * n, (index + 1) * n))
+      }
+      const ecart = (a, b) => { let s = 0; for (let idx = 0; idx < a.length; idx++) s += Math.abs(a[idx] - b[idx]); return s / a.length / 255 }
+
+      const images = gris160(h264Path, l, h)
+      const a = images[0] || new Uint8Array(160 * Math.round(160 * h / l))
+      const z = images[images.length - 1] || a
+      let n8 = 0; for (let idx = 0; idx < a.length; idx++) if (Math.abs(a[idx] - z[idx]) > 8) n8++
+      let pic = 0; for (let k = 1; k < images.length; k++) pic = Math.max(pic, ecart(images[k - 1], images[k]))
+
+      const hh = Math.round(160 * h / l)
+      const staticResized = await sharp(staticBuf).resize(160, hh, { fit: 'fill' }).greyscale().raw().toBuffer()
+      const lastFramePath = path.join(framesDir, `frame_${String(numFrames - 1).padStart(3, '0')}.png`)
+      const lastResized = await sharp(lastFramePath).resize(160, hh, { fit: 'fill' }).greyscale().raw().toBuffer()
+      const ecartDerniere = ecart(staticResized, lastResized)
+
+      const probe = JSON.parse(spawnSync('ffprobe', ['-v', 'error', '-show_format', '-of', 'json', h264Path], { encoding: 'utf8' }).stdout || '{}')
+      const duree = Number(probe.format?.duration || 3.0)
+
+      mesures[`${l}x${h}`] = {
+        duree: Number(duree.toFixed(2)),
+        part8PremiereDerniere: Number((n8 / (a.length || 1)).toFixed(3)),
+        ecartMaxConsecutif: Number(pic.toFixed(3)),
+        ecartDerniereImage: Number(ecartDerniere.toFixed(4)),
+        poids: {
+          h264: fs.statSync(h264Path).size,
+          av1: fs.statSync(av1Path).size
+        }
+      }
+    }
+
+    fs.writeFileSync(path.join(P, 'mesures.json'), JSON.stringify(mesures, null, 2))
+    console.log('mesures.json écrit.')
+
+    const h264_1440 = path.join(P, 'ouverture-1440x900.h264.mp4')
+    const coteAcote = path.join(P, 'cote-a-cote.mp4')
+    spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', h264_1440, '-i', h264_1440, '-filter_complex', 'hstack', '-c:v', 'libx264', '-crf', '23', '-an', coteAcote])
+    console.log('cote-a-cote.mp4 généré.')
+
+    const framesDir1440 = path.join(P, 'frames-1440x900')
+    const getFrame = (idx) => path.join(framesDir1440, `frame_${String(Math.min(idx, 89)).padStart(3, '0')}.png`)
+    const frameIndices = [0, 12, 25, 38, 51, 64, 76, 89]
+    const fW = 360, fH = 225
+    const resized = await Promise.all(frameIndices.map(async (idx) => {
+      const f = getFrame(idx)
+      if (fs.existsSync(f)) return sharp(f).resize(fW, fH).toBuffer()
+      return sharp({ create: { width: fW, height: fH, channels: 3, background: { r: 0, g: 0, b: 0 } } }).png().toBuffer()
+    }))
+
+    const row1 = await sharp({ create: { width: fW * 4, height: fH, channels: 3, background: { r: 0, g: 0, b: 0 } } })
+      .composite([
+        { input: resized[0], left: 0, top: 0 },
+        { input: resized[1], left: fW, top: 0 },
+        { input: resized[2], left: fW * 2, top: 0 },
+        { input: resized[3], left: fW * 3, top: 0 }
+      ])
+      .png().toBuffer()
+    const row2 = await sharp({ create: { width: fW * 4, height: fH, channels: 3, background: { r: 0, g: 0, b: 0 } } })
+      .composite([
+        { input: resized[4], left: 0, top: 0 },
+        { input: resized[5], left: fW, top: 0 },
+        { input: resized[6], left: fW * 2, top: 0 },
+        { input: resized[7], left: fW * 3, top: 0 }
+      ])
+      .png().toBuffer()
+    await sharp({ create: { width: fW * 4, height: fH * 2, channels: 3, background: { r: 0, g: 0, b: 0 } } })
+      .composite([
+        { input: row1, left: 0, top: 0 },
+        { input: row2, left: 0, top: fH }
+      ])
+      .jpeg({ quality: 90 }).toFile(path.join(P, 'planche.jpg'))
+    console.log('planche.jpg généré.')
+
+    console.log('Tournage terminé avec succès.')
+  } finally {
+    await nav.close()
+    srv.close()
+  }
+}
+
+main().catch(err => {
+  console.error('ERREUR:', err)
+  process.exit(1)
+})

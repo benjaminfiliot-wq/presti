@@ -1,0 +1,29 @@
+// Calibrage du rideau (héros collant, plateau qui monte) : bande du héros encore visible à entry 30 % du plateau, texte présent
+// contre texte effacé (opacité 0, −6svh) et voile #0E0A07 à 0,133 ; même méthode (gris 160 px).
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const pw = require('playwright'); const sharp = require('sharp')
+const T = path.join('C:/Users/benja/Documents/presti', '.orchestre/travail/024-01/cahier/ref')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2' }
+const srv = http.createServer((q, r) => { let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'; const f = path.join(T, p); if (!f.startsWith(T) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() } r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r) })
+await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const gris = (buf) => sharp(buf).resize(160).greyscale().raw().toBuffer()
+const comparer = (a, b) => { if (a.length !== b.length) return { moyen: 1, part8: 1 }; let s = 0, n8 = 0; for (let i = 0; i < a.length; i++) { const d = Math.abs(a[i] - b[i]); s += d; if (d > 8) n8++ } return { moyen: +(s / a.length / 255).toFixed(4), part8: +(n8 / a.length).toFixed(4) } }
+const b = await pw.chromium.launch()
+const ctx = await b.newContext({ ...pw.devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+const page = await ctx.newPage()
+await page.goto(`http://127.0.0.1:${srv.address().port}/index.html`, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready)
+await page.addStyleTag({ content: '.ouverture>.hero--plein{position:sticky;top:0}.ouverture>.plateau{position:relative;z-index:1}.ouverture>.hero--plein::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:#0E0A07;opacity:0}' })
+await page.evaluate(() => scrollTo(0, 253))
+await page.waitForTimeout(600)
+await page.evaluate(() => document.getAnimations().filter((a) => a.timeline instanceof DocumentTimeline).forEach((a) => { a.pause(); a.currentTime = 0 }))
+const clip = { x: 0, y: 0, width: 390, height: 591 }
+const capt = async () => { await page.evaluate(() => new Promise((k) => requestAnimationFrame(() => requestAnimationFrame(k)))); return gris(await page.screenshot({ clip, scale: 'css' })) }
+const avant = await capt()
+const h = await page.addStyleTag({ content: '.ouverture .hero__contenu{opacity:0;translate:0 -6svh}.ouverture>.hero--plein::after{opacity:.1333}' })
+const apres = await capt()
+await h.evaluate((n) => n.remove())
+const h2 = await page.addStyleTag({ content: '.ouverture .hero__contenu{opacity:.5;translate:0 -3svh}.ouverture>.hero--plein::after{opacity:.0667}' })
+const milieu = await capt()
+console.log(JSON.stringify({ version: b.version(), 'entry0-texte-vs-entry30': comparer(avant, apres), 'entry0-vs-entry15': comparer(avant, milieu), 'entry15-vs-entry30': comparer(milieu, apres) }, null, 1))
+await b.close(); srv.close()

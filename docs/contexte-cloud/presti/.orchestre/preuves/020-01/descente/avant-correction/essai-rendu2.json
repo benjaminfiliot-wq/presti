@@ -1,0 +1,28 @@
+{
+ "d0_r0": {
+  "rendu_ms": 319,
+  "png_ms": 141,
+  "png_octets": 9613104,
+  "taille": "2400x1800",
+  "ecartMoyenContreSource": 0,
+  "ecartMaxNiveaux": 0
+ },
+ "d0.116_r0": {
+  "rendu_ms": 562,
+  "png_ms": 164,
+  "png_octets": 10462593,
+  "taille": "2400x1800"
+ },
+ "d0.066_r0": {
+  "rendu_ms": 563,
+  "png_ms": 151,
+  "png_octets": 10802862,
+  "taille": "2400x1800"
+ },
+ "d0.116_r-8.923": {
+  "rendu_ms": 567,
+  "png_ms": 149,
+  "png_octets": 10585688,
+  "taille": "2400x1800"
+ }
+}

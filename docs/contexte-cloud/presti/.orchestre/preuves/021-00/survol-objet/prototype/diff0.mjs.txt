@@ -1,0 +1,20 @@
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const B = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/survol/blender/'
+const ORDRE = ['limon', 'coin1', 'coin2', 'contremarche', 'tourillon1', 'tourillon2', 'marche']
+const fond = { r: 20, g: 17, b: 14, alpha: 1 }
+const plat = async (comp) => sharp(await sharp({ create: { width: 1400, height: 1000, channels: 4, background: fond } }).composite(comp).png().toBuffer()).removeAlpha().raw().toBuffer()
+const res = {}
+for (const [nom, cible] of [['p0', 'assemble'], ['p100', 'eclate']]) {
+  const info = JSON.parse(fs.readFileSync(B + 'eclate.json', 'utf8')), p = nom === 'p0' ? 0 : 1
+  const comp = []
+  for (const n of ORDRE) comp.push({ input: B + `calque-${n}.png`, left: Math.round(info.decalagesPx[n][0] * p), top: Math.round(info.decalagesPx[n][1] * p) })
+  const a = await plat(comp), b = await plat([{ input: B + cible + '.png' }])
+  let s = 0, px = 0, fort = 0
+  for (let i = 0; i < a.length; i += 3) { const d = (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2])) / 3; const objet = b[i] > 30 || a[i] > 30; if (objet) { s += d; px++; if (d > 24) fort++ } }
+  res[nom] = { pixelsObjet: px, ecartMoyen: +(s / px).toFixed(2), pixelsEcartSup24: fort, part: +(fort / px * 100).toFixed(2) + ' %' }
+  if (nom === 'p0') { const d = Buffer.alloc(a.length); for (let i = 0; i < a.length; i++) d[i] = Math.min(255, Math.abs(a[i] - b[i]) * 4); await sharp(d, { raw: { width: 1400, height: 1000, channels: 3 } }).resize(700, 500).jpeg().toFile(B + 'ecart-p0.jpg') }
+}
+console.log(JSON.stringify(res, null, 1)); fs.writeFileSync(B + 'ecart.json', JSON.stringify(res, null, 1))

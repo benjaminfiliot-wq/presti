@@ -1,0 +1,218 @@
+Juge de site — C:\Users\benja\Documents\presti\public\sites-demo\lestraque
+
+site.json — le contrat
+  [32m OK  [0m site.json présent et lisible                               [90mlu                             attendu le contrat du générateur (voir l’en-tête du script)[0m
+
+Le dossier — pages, communes, sitemap, robots
+  [32m OK  [0m site.json : métier connu                                   [90mmenuisier                      attendu plombier|electricien|chauffagiste|peintre|couvreur|serrurier|macon|menuisier|carreleur|paysagiste|generique[0m
+  [32m OK  [0m site.json : communes déclarées                             [90m4                              attendu ≥ 1 commune réellement servie[0m
+  [32m OK  [0m site.json : SIREN et décennale                             [90m000000000 · Assureur fictif    attendu 9 chiffres · assureur + numéro[0m
+  [32m OK  [0m toutes les pages HTML sont déclarées dans site.json        [90maucune en trop                 attendu aucune page cachée[0m
+  [32m OK  [0m toutes les pages déclarées existent                        [90mtoutes présentes               attendu index.html sous chaque chemin[0m
+  [32m OK  [0m une page par commune réellement servie                     [90mtoutes couvertes               attendu Rennes, Cesson-Sévigné, Bruz, Saint-Grégoire[0m
+  [32m OK  [0m aucune page de commune non déclarée (satellite)            [90maucune                         attendu zéro page pour une ville où il ne va pas[0m
+  [32m OK  [0m une page par métier secondaire                             [90m0 page(s)                      attendu 0 métier(s)[0m
+  [32m OK  [0m pages légales : mentions légales et confidentialité        [90m/mentions-legales/, /confidentialite/ attendu /mentions-legales/ et /confidentialite/[0m
+  [32m OK  [0m robots.txt présent, sans Disallow global, avec Sitemap     [90mprésent                        attendu Sitemap: … et pas de Disallow: /[0m
+  [32m OK  [0m attributions.json : chaque image a un auteur réel, la page source (pas la racine d'un site), une légende bien encodée et une licence permise [90m0 sans attribution · 0 non crédible(s) (auteur bidon, source sans page, « Ã© », licence) attendu toutes ; licences : CC0, domaine public, CC BY 4.0, CC BY 3.0, CC BY 2.0, CC BY-SA 4.0, CC BY-SA 3.0, CC BY-SA 2.0, propriétaire[0m
+  [32m OK  [0m sitemap.xml liste toutes les pages (légales à part)        [90m5 <loc>                        attendu chaque page publique dans un <loc>[0m
+
+La substance et la direction artistique
+  [32m OK  [0m les feuilles de style du dossier sont chargées par l'accueil (<link rel="stylesheet">) [90mtoutes liées                   attendu aucune feuille orpheline[0m
+  [32m OK  [0m CSS réel et UTILISÉ (≥ 6000 signes de règles dont les classes existent dans les pages) [90m49028 signes utiles sur 65836 · 127 règle(s) sans emploi attendu ≥ 6000[0m
+  [32m OK  [0m un contenu masqué en attendant JavaScript (opacity: 0) a un filet de sécurité (<noscript><style>, ou règle sous html.js / .no-js) [90m12 sélecteur(s) à opacité 0 : .panneau, html.js .mot, html.js .hero .entre attendu un filet, ou rien de masqué[0m
+  [32m OK  [0m polices auto-hébergées (woff2 dans le dossier, licence OFL à côté) [90m3 police(s), OFL.txt           attendu ≥ 1 woff2 + OFL.txt[0m
+  [32m OK  [0m aucune police chargée depuis un service tiers              [90mlu                             attendu tout est dans le dossier[0m
+  [32m OK  [0m des photos réelles (≥ 3 WebP de ≥ 800 px et ≥ 25 Ko)       [90m31 photo(s) réelle(s)          attendu ≥ 3[0m
+  [32m OK  [0m accueil : du texte (≥ 1200 signes) et des sections (≥ 4 <h2>) [90m5693 signes · 7 h2             attendu ≥ 1200 · ≥ 4[0m
+  [32m OK  [0m accueil : du texte écrit, pas répété (aucune phrase plus de deux fois, ≥ 70 % de suites de cinq mots distinctes) [90m« 03 plan et devis vous recevez le plan coté, le choix des ess… » ×2 · 92 % distinctes attendu ≤ 2 · ≥ 70 %[0m
+  [32m OK  [0m pages de commune : du texte écrit, pas répété              [90mtoutes                         attendu ≤ 2 · ≥ 70 %[0m
+  [32m OK  [0m pages de commune : du texte (≥ 400 signes chacune)         [90mtoutes                         attendu 0 page creuse[0m
+  [32m OK  [0m direction artistique du métier : l'accent #A9743F est dans le CSS [90mcouleurs présentes             attendu #A9743F[0m
+  [32m OK  [0m direction artistique du métier : la police display « Fraunces » [90m'Fraunces'                     attendu Fraunces[0m
+  [32m OK  [0m pas de carrousel automatique ni de police système déguisée en identité [90mlu                             attendu aucun défilement automatique[0m
+
+Le geste — le mouvement et le métier de design
+  [32m OK  [0m le h1 est composé mot à mot (≥ 3 <span class="mot">, dans le HTML : pas de décalage de mise en page) [90m3                              attendu ≥ 3[0m
+  [32m OK  [0m un dévoilement au défilement en cascade (≥ 12 éléments .reveal sur l’accueil) [90m29                             attendu ≥ 12[0m
+  [32m OK  [0m les pièces du geste : plateau des chiffres, galerie, panneau d’étapes, accordéon — sans rideau, bande qui défile ni lentille [90mtoutes                         attendu toutes, et aucune pièce retirée[0m
+  [32m OK  [0m des survols travaillés (≥ 8 règles :hover) et une courbe d’accélération maison (cubic-bezier) [90m31 :hover, cubic-bezier        attendu ≥ 8 + cubic-bezier[0m
+  [32m OK  [0m prefers-reduced-motion : reduce est traité dans le CSS     [90mlu                             attendu un bloc @media (prefers-reduced-motion: reduce)[0m
+  [32m OK  [0m rien n’anime la mise en page (width/height/top/left/padding/margin en transition), hors ligne des étapes et accordéon [90maucune                         attendu transform / opacity seulement[0m
+
+Le parcours de devis — liens, boutons et formulaire
+  [32m OK  [0m parcours de devis : chaque lien ou bouton « devis » mène à un <form> présent [90m19 lien(s) ou bouton(s), tous vers un formulaire attendu aucun sans issue[0m
+  [32m OK  [0m un texte qui parle de « formulaire » a un <form> (pages légales : celui de l’accueil) [90maucune page sans formulaire    attendu aucune page[0m
+
+Page / (accueil)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m38 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m155 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/ attendu /[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m16 image(s)                    attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90mhéros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m32 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m JSON-LD @type = HomeAndConstructionBusiness                [90mHomeAndConstructionBusiness    attendu HomeAndConstructionBusiness[0m
+  [32m OK  [0m JSON-LD : adresse postale complète                         [90m3/3                            attendu streetAddress, postalCode, addressLocality[0m
+  [32m OK  [0m JSON-LD : téléphone, horaires, zone servie, url            [90mcomplet                        attendu les quatre[0m
+  [32m OK  [0m JSON-LD : le téléphone est celui du dossier                [90m+33 2 61 91 38 47              attendu +33 2 61 91 38 47[0m
+  [32m OK  [0m aucune promesse de classement                              [90mtexte lu                       attendu ni « première page » ni « n° 1 sur Google »[0m
+
+Page /menuisier-rennes/ (commune · Rennes)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m46 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m143 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/menuisier-rennes/ attendu /menuisier-rennes/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m8 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90mhéros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m34 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m JSON-LD @type = HomeAndConstructionBusiness                [90mHomeAndConstructionBusiness    attendu HomeAndConstructionBusiness[0m
+  [32m OK  [0m JSON-LD : adresse postale complète                         [90m3/3                            attendu streetAddress, postalCode, addressLocality[0m
+  [32m OK  [0m JSON-LD : téléphone, horaires, zone servie, url            [90mcomplet                        attendu les quatre[0m
+  [32m OK  [0m JSON-LD : le téléphone est celui du dossier                [90m+33 2 61 91 38 47              attendu +33 2 61 91 38 47[0m
+  [32m OK  [0m aucune promesse de classement                              [90mtexte lu                       attendu ni « première page » ni « n° 1 sur Google »[0m
+  [32m OK  [0m page de commune : la commune dans le title et le h1        [90mArtisan menuisier à Rennes — Atelier Lestraque attendu Rennes[0m
+
+Page /menuisier-cesson-sevigne/ (commune · Cesson-Sévigné)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m54 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m151 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/menuisier-cesson-sevigne/ attendu /menuisier-cesson-sevigne/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m8 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90mhéros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m34 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m JSON-LD @type = HomeAndConstructionBusiness                [90mHomeAndConstructionBusiness    attendu HomeAndConstructionBusiness[0m
+  [32m OK  [0m JSON-LD : adresse postale complète                         [90m3/3                            attendu streetAddress, postalCode, addressLocality[0m
+  [32m OK  [0m JSON-LD : téléphone, horaires, zone servie, url            [90mcomplet                        attendu les quatre[0m
+  [32m OK  [0m JSON-LD : le téléphone est celui du dossier                [90m+33 2 61 91 38 47              attendu +33 2 61 91 38 47[0m
+  [32m OK  [0m aucune promesse de classement                              [90mtexte lu                       attendu ni « première page » ni « n° 1 sur Google »[0m
+  [32m OK  [0m page de commune : la commune dans le title et le h1        [90mArtisan menuisier à Cesson-Sévigné — Atelier Lestraque attendu Cesson-Sévigné[0m
+
+Page /menuisier-bruz/ (commune · Bruz)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m44 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m141 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/menuisier-bruz/ attendu /menuisier-bruz/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m8 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90mhéros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m34 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m JSON-LD @type = HomeAndConstructionBusiness                [90mHomeAndConstructionBusiness    attendu HomeAndConstructionBusiness[0m
+  [32m OK  [0m JSON-LD : adresse postale complète                         [90m3/3                            attendu streetAddress, postalCode, addressLocality[0m
+  [32m OK  [0m JSON-LD : téléphone, horaires, zone servie, url            [90mcomplet                        attendu les quatre[0m
+  [32m OK  [0m JSON-LD : le téléphone est celui du dossier                [90m+33 2 61 91 38 47              attendu +33 2 61 91 38 47[0m
+  [32m OK  [0m aucune promesse de classement                              [90mtexte lu                       attendu ni « première page » ni « n° 1 sur Google »[0m
+  [32m OK  [0m page de commune : la commune dans le title et le h1        [90mArtisan menuisier à Bruz — Atelier Lestraque attendu Bruz[0m
+
+Page /menuisier-saint-gregoire/ (commune · Saint-Grégoire)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m54 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m151 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/menuisier-saint-gregoire/ attendu /menuisier-saint-gregoire/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m8 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90mhéros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m34 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m JSON-LD @type = HomeAndConstructionBusiness                [90mHomeAndConstructionBusiness    attendu HomeAndConstructionBusiness[0m
+  [32m OK  [0m JSON-LD : adresse postale complète                         [90m3/3                            attendu streetAddress, postalCode, addressLocality[0m
+  [32m OK  [0m JSON-LD : téléphone, horaires, zone servie, url            [90mcomplet                        attendu les quatre[0m
+  [32m OK  [0m JSON-LD : le téléphone est celui du dossier                [90m+33 2 61 91 38 47              attendu +33 2 61 91 38 47[0m
+  [32m OK  [0m aucune promesse de classement                              [90mtexte lu                       attendu ni « première page » ni « n° 1 sur Google »[0m
+  [32m OK  [0m page de commune : la commune dans le title et le h1        [90mArtisan menuisier à Saint-Grégoire — Atelier Lestraque attendu Saint-Grégoire[0m
+
+Page /mentions-legales/ (legal)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m36 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m132 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/mentions-legales/ attendu /mentions-legales/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m0 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90maucune image                   attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m45 lien(s)                     attendu les deux dans le pied de page[0m
+  [32m OK  [0m mentions légales : SIREN affiché                           [90mlu                             attendu 000000000[0m
+  [32m OK  [0m mentions légales : assurance décennale (assureur et numéro) [90mlu                             attendu Assureur fictif · DEMO-0001[0m
+  [32m OK  [0m mentions légales : crédits photos — chaque auteur cité     [90mtous cités                     attendu Petar Milošević, Shixart1985, Crew, Bertrand from Paris, France, Ian Schneider[0m
+  [32m OK  [0m site de démonstration : dit comme tel                      [90mlu                             attendu le mot « démonstration » dans les mentions[0m
+
+Page /confidentialite/ (legal)
+  [32m OK  [0m lang="fr"                                                  [90mfr                             attendu fr[0m
+  [32m OK  [0m robots : index, follow (jamais noindex)                    [90mindex, follow                  attendu index, follow[0m
+  [32m OK  [0m title unique et de 15 à 70 signes                          [90m48 signes                      attendu unique, 15–70[0m
+  [32m OK  [0m meta description unique et de 50 à 160 signes              [90m150 signes                     attendu unique, 50–160[0m
+  [32m OK  [0m canonical = la page elle-même                              [90mhttps://lestraque.demo.invalid/confidentialite/ attendu /confidentialite/[0m
+  [32m OK  [0m Open Graph : og:title, og:description, og:image            [90mcomplet                        attendu les trois[0m
+  [32m OK  [0m un seul <h1>                                               [90m1                              attendu 1[0m
+  [32m OK  [0m images en AVIF/WebP                                        [90m0 image(s)                     attendu aucune en jpg/png[0m
+  [32m OK  [0m images : alt rédigé                                        [90m0 sans alt                     attendu 0 sans alt[0m
+  [32m OK  [0m images : dimensions déclarées                              [90m0 sans width/height            attendu 0[0m
+  [32m OK  [0m images : lazy sauf le héros                                [90maucune image                   attendu héros eager, les autres lazy[0m
+  [32m OK  [0m lien vers les mentions légales et la confidentialité       [90m27 lien(s)                     attendu les deux dans le pied de page[0m
+
+Le rendu réel — bureau et mobile
+  [32m OK  [0m bureau : toutes les images chargées et visibles après défilement (opacité ≥ 0,9) [90m16/16                          attendu toutes[0m
+  [32m OK  [0m bureau : aucun vide vertical de plus de 700 px sans contenu visible [90m218 px (page de 8784 px)       attendu ≤ 700 px[0m
+  [32m OK  [0m bureau : le contenu occupe la largeur (≥ 900 px sur 1280)  [90m1280 px                        attendu ≥ 900 px[0m
+  [32m OK  [0m mobile : images visibles et aucun vide de plus de 900 px   [90m16/16 · vide max 136 px        attendu ≤ 900 px[0m
+  [32m OK  [0m le h1 est composé en « Fraunces » (police du métier appliquée, pas seulement déclarée) [90mFraunces, Georgia, serif       attendu Fraunces[0m
+  [32m OK  [0m la police « Fraunces » est réellement chargée par le navigateur (fichier woff2 valide) [90mFraunces:loaded, IBM Plex Sans:loaded, IBM Plex Sans:loaded attendu loaded[0m
+  [32m OK  [0m le geste : le h1 est composé grand sur bureau (≥ 56 px), approche négative, et lisible après le mot à mot [90m182 px, approche -8.18 px      attendu ≥ 56 px, approche < 0[0m
+  [32m OK  [0m le geste : sous la ligne de flottaison, le contenu attend son dévoilement puis apparaît en entier (bureau et mobile) [90m25/29 masqués avant · 0 encore caché(s) après attendu masqués avant, 0 caché après[0m
+  [32m OK  [0m le geste : en mouvement réduit (prefers-reduced-motion), tout est visible sans défiler [90m0 masqué(s) avant, 0 après     attendu 0 et 0[0m
+  [32m OK  [0m menu mobile (390 px, ouvert) : elementFromPoint au centre du burger renvoie le burger (la croix reste au-dessus du panneau) [90mouvert · au centre : span      attendu le burger[0m
+  [32m OK  [0m menu mobile : un tap sur la croix le ferme, un tap hors du panneau (voile) aussi [90mcroix : fermé · dehors : fermé attendu fermé et fermé[0m
+  [32m OK  [0m menu mobile : la pilule du panneau se détache de son fond (contraste ≥ 3:1) [90m15.31:1                        attendu ≥ 3:1[0m
+  [32m OK  [0m menu mobile : le texte de la pilule se lit sur la pilule (contraste ≥ 4,5:1) [90m15.31:1                        attendu ≥ 4,5:1[0m
+  [32m OK  [0m devis (bureau 1440×900) : « Demander un devis » mène à un <form> présent, avec son bouton d’envoi [90m#contact → formulaire et bouton attendu un <form> dans la cible de l’ancre[0m
+  [32m OK  [0m devis (bureau 1440×900) : après le clic, tout le formulaire tient dans l’écran, bouton d’envoi compris [90mde 424 à 816 px (nav jusqu’à 78, écran 900) attendu sous la nav et ≤ 900 px[0m
+  [32m OK  [0m devis (bureau 1440×900) : l’envoi de démonstration ne part pas en réseau et affiche « Démonstration » [90m0 requête(s) · confirmation affichée, avec la mention attendu 0 requête, même page, « Démonstration » affiché[0m
+  [32m OK  [0m devis (téléphone 390×844) : « Demander un devis » mène à un <form> présent, avec son bouton d’envoi [90m#contact → formulaire et bouton attendu un <form> dans la cible de l’ancre[0m
+  [32m OK  [0m devis (téléphone 390×844) : l’envoi de démonstration ne part pas en réseau et affiche « Démonstration » [90m0 requête(s) · confirmation affichée, avec la mention attendu 0 requête, même page, « Démonstration » affiché[0m
+
+Lighthouse mobile — /
+  [32m OK  [0m Lighthouse mobile · Performance ≥ 95                       [90m98                             attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · Accessibilité ≥ 95                     [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · Bonnes pratiques ≥ 95                  [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · SEO ≥ 95                               [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m LCP < 2500 ms                                              [90m2333 ms                        attendu < 2500 ms[0m
+  [32m OK  [0m CLS < 0.1                                                  [90m0.000                          attendu < 0.1[0m
+  [32m OK  [0m TBT < 200 ms (substitut d'INP en laboratoire)              [90m23 ms                          attendu < 200 ms[0m
+
+Lighthouse mobile — /menuisier-rennes/
+  [32m OK  [0m Lighthouse mobile · Performance ≥ 95                       [90m97                             attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · Accessibilité ≥ 95                     [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · Bonnes pratiques ≥ 95                  [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m Lighthouse mobile · SEO ≥ 95                               [90m100                            attendu ≥ 95[0m
+  [32m OK  [0m LCP < 2500 ms                                              [90m2486 ms                        attendu < 2500 ms[0m
+  [32m OK  [0m CLS < 0.1                                                  [90m0.000                          attendu < 0.1[0m
+  [32m OK  [0m TBT < 200 ms (substitut d'INP en laboratoire)              [90m0 ms                           attendu < 200 ms[0m
+[90m  (Lighthouse limité à 2 page(s) par --pages ; les autres ne sont pas jugées)[0m
+
+[32m✓ Tout passe.[0m
+exit=0

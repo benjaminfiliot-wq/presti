@@ -1,0 +1,261 @@
+// Contre-verification des juges corriges par 023-01 et 023-02.
+// Chaque juge travaille sur une copie independante de public/sites-demo ; les juges et le site en place restent intacts.
+import fs from 'node:fs'
+import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+
+const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const DEMOS = path.join(RACINE, 'public', 'sites-demo')
+const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', '023-03')
+const PREUVES = path.join(RACINE, '.orchestre', 'preuves', '023-03')
+const JUGE_FAMILLES = path.join(RACINE, 'scripts', 'familles-socle-suite-qa.mjs')
+const JUGE_SIGNATURE = path.join(RACINE, 'scripts', 'signature-repos-qa.mjs')
+const DELAI_JUGE_MS = 30 * 60 * 1000
+const DELAI_ATTENTE_MS = 20 * 60 * 1000
+const REPRISES_TEMOIN_LIGHTHOUSE = 2
+
+const journal = []
+const resultats = []
+const dormir = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+const nettoyer = (texte) => String(texte || '').replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '')
+const uneLigne = (texte) => nettoyer(texte).replace(/\s+/g, ' ').trim().replace(/\|/g, '\\|')
+
+function remplacerUnique(texte, avant, apres, libelle) {
+  const debut = texte.indexOf(avant)
+  if (debut < 0 || texte.indexOf(avant, debut + avant.length) >= 0) throw new Error(`${libelle} : ancre absente ou ambigue`)
+  return texte.slice(0, debut) + apres + texte.slice(debut + avant.length)
+}
+
+function processusQaActifs() {
+  if (process.platform === 'win32') {
+    const commande = [
+      "$ErrorActionPreference='Stop'",
+      `Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.ProcessId -ne ${process.pid} -and $_.CommandLine -match '-qa\\.mjs(?:\\s|\"|$)' } | ForEach-Object { \"$($_.ProcessId) $($_.CommandLine)\" }`,
+    ].join('; ')
+    const releve = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', commande], { encoding: 'utf8', timeout: 30000 })
+    if (releve.status !== 0) throw new Error(`inventaire des processus QA impossible : ${nettoyer(releve.stderr || releve.stdout).trim()}`)
+    return nettoyer(releve.stdout).trim().split('\n').filter(Boolean)
+  }
+  const releve = spawnSync('ps', ['-eo', 'pid=,args='], { encoding: 'utf8', timeout: 30000 })
+  if (releve.status !== 0) throw new Error(`inventaire des processus QA impossible : ${nettoyer(releve.stderr || releve.stdout).trim()}`)
+  return nettoyer(releve.stdout).split('\n').filter((ligne) => /node\b.*-qa\.mjs(?:\s|$)/.test(ligne) && !new RegExp(`^\\s*${process.pid}\\s`).test(ligne))
+}
+
+function attendreQaLibres() {
+  const debut = Date.now()
+  let annonce = false
+  while (true) {
+    const actifs = processusQaActifs()
+    if (!actifs.length) return
+    if (!annonce) {
+      journal.push(`attente : ${actifs.length} autre(s) processus node ...-qa.mjs actif(s)`)
+      annonce = true
+    }
+    if (Date.now() - debut >= DELAI_ATTENTE_MS) throw new Error(`processus QA encore actif apres ${Math.round(DELAI_ATTENTE_MS / 60000)} min : ${actifs.map(uneLigne).join(' ; ')}`)
+    dormir(5000)
+  }
+}
+
+function copierDemos(nom) {
+  const dossier = path.join(TRAVAIL, nom, 'sites-demo')
+  fs.mkdirSync(path.dirname(dossier), { recursive: true })
+  fs.cpSync(DEMOS, dossier, { recursive: true })
+  return dossier
+}
+
+function jugeAvecChemins(type, nom, demos) {
+  const source = type === 'familles' ? JUGE_FAMILLES : JUGE_SIGNATURE
+  let code = fs.readFileSync(source, 'utf8')
+  const dossierCas = path.join(TRAVAIL, nom)
+  const ancreRacine = "const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')"
+  code = remplacerUnique(code, ancreRacine, `const R = ${JSON.stringify(RACINE)}`, `${nom}, racine du juge`)
+  if (type === 'familles') {
+    code = remplacerUnique(code, "const SD = path.join(R, 'public', 'sites-demo')", `const SD = ${JSON.stringify(demos)}`, `${nom}, dossier des demos`)
+    code = remplacerUnique(code, "const T = path.join(R, '.orchestre', 'travail', `socle-suite-qa-${process.pid}`)", `const T = path.join(${JSON.stringify(dossierCas)}, \`socle-suite-qa-\${process.pid}\`)`, `${nom}, travail SS-1 a SS-4`)
+    code = remplacerUnique(code, "const SB = path.join(R, '.orchestre', 'travail', `socle-sandbox-${process.pid}`)", `const SB = path.join(${JSON.stringify(dossierCas)}, \`socle-sandbox-\${process.pid}\`)`, `${nom}, travail SS-5`)
+    code = remplacerUnique(code, "path.join(R, '.orchestre', 'preuves', '021-20', 'lighthouse.json')", `path.join(${JSON.stringify(dossierCas)}, 'lighthouse.json')`, `${nom}, preuve Lighthouse temporaire`)
+  } else {
+    code = remplacerUnique(code, "const DEMOS = path.join(R, 'public', 'sites-demo')", `const DEMOS = ${JSON.stringify(demos)}`, `${nom}, dossier des demos`)
+    code = remplacerUnique(code, "const SITE = path.join(R, '.orchestre', 'travail', `site-signature-repos-${process.pid}`)", `const SITE = path.join(${JSON.stringify(dossierCas)}, \`site-signature-repos-\${process.pid}\`)`, `${nom}, sortie signature`)
+  }
+  const fichier = path.join(TRAVAIL, nom, path.basename(source))
+  fs.writeFileSync(fichier, code)
+  return fichier
+}
+
+function ajouter(fichier, texte) {
+  fs.appendFileSync(fichier, `\n${texte.trim()}\n`)
+}
+
+function muterGenerateurBureauSansFamille(demos) {
+  const fichier = path.join(demos, 'generer.mjs')
+  let code = fs.readFileSync(fichier, 'utf8')
+  code = remplacerUnique(
+    code,
+    "else fs.rmSync(path.join(dossier, 'bureau.css'), { force: true })",
+    "else fs.writeFileSync(path.join(dossier, 'bureau.css'), '/* mutation M1 : feuille interdite sans famille */\\n')",
+    'M1',
+  )
+  fs.writeFileSync(fichier, code)
+}
+
+function muterGenerateurMedia(demos) {
+  const fichier = path.join(demos, 'generer.mjs')
+  let code = fs.readFileSync(fichier, 'utf8')
+  code = remplacerUnique(
+    code,
+    '${bureauCss ? `<link rel="stylesheet" href="${rel}bureau.css" media="(min-width: 1024px)">\\n` : \'\'}',
+    '${bureauCss ? `<link rel="stylesheet" href="${rel}bureau.css">\\n` : \'\'}',
+    'M2',
+  )
+  fs.writeFileSync(fichier, code)
+}
+
+function muterSignatureSaut(demos) {
+  ajouter(path.join(demos, '_kit', 'familles', 'telephone.css'), `
+@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media img{animation:signature-saut 10s linear infinite alternate}
+}
+@keyframes signature-saut{from{translate:0 15.86%}to{translate:0 16.86%}}
+`)
+}
+
+function muterProprieteInterdite(demos) {
+  ajouter(path.join(demos, '_kit', 'kit.css'), `
+@keyframes signature-tourne-2{from{rotate:2.25deg;top:0}to{rotate:-2.25deg;top:1px}}
+`)
+}
+
+function muterMouvementReduit(demos) {
+  ajouter(path.join(demos, '_kit', 'familles', 'telephone.css'), `
+@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:reduce){
+  html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media img{animation:signature-tourne-2 10s linear infinite alternate!important}
+}
+`)
+}
+
+const cas = [
+  {
+    id: 'TF', type: 'familles', temoin: true,
+    casse: 'copie intacte du generateur et du kit familles',
+    attendu: 'suite du socle : PASS',
+    motif: /✓ suite du socle : PASS[^\n]*/,
+  },
+  {
+    id: 'M1', type: 'familles',
+    casse: 'bureau.css est ecrit dans une sortie sans famille',
+    attendu: 'SS-1 ou SS-5 refuse bureau.css sans famille',
+    motif: /SS-(?:1|5)[^\n]*(?:bureau\.css|familles-socle)[^\n]*/i,
+    mutation: muterGenerateurBureauSansFamille,
+  },
+  {
+    id: 'M2', type: 'familles',
+    casse: 'le lien bureau.css perd media="(min-width: 1024px)"',
+    attendu: 'SS-2 refuse le lien bureau.css non conditionne',
+    motif: /SS-2[^\n]*(?:sans le lien bureau\.css|bureau\.css[^\n]*lien)[^\n]*/i,
+    mutation: muterGenerateurMedia,
+  },
+  {
+    id: 'TS', type: 'signature', temoin: true,
+    casse: 'copie intacte du kit signature',
+    attendu: 'signature au repos : PASS',
+    motif: /✓ signature au repos : PASS[^\n]*/,
+  },
+  {
+    id: 'M3', type: 'signature',
+    casse: 'signature-saut, animation non autorisee, joue au telephone',
+    attendu: 'telephone 390x844 signale animation inattendue signature-saut',
+    motif: /téléphone 390×844[^\n]*animation inattendue signature-saut[^\n]*/i,
+    mutation: muterSignatureSaut,
+  },
+  {
+    id: 'M4', type: 'signature',
+    casse: 'signature-tourne-2 anime la propriete interdite top',
+    attendu: 'le juge signale que signature-tourne-2 anime top',
+    motif: /signature-tourne-2 anime [^\n]*\btop\b[^\n]*/i,
+    mutation: muterProprieteInterdite,
+  },
+  {
+    id: 'M5', type: 'signature',
+    casse: 'signature-tourne-2 joue au telephone en mouvement reduit',
+    attendu: 'le telephone en mouvement reduit refuse signature-tourne-2 actif',
+    motif: /téléphone mouvement réduit 390×844[^\n]*signature-tourne-2[^\n]*actif[^\n]*/i,
+    mutation: muterMouvementReduit,
+  },
+]
+
+function executerCas(definition) {
+  attendreQaLibres()
+  const demos = copierDemos(definition.id)
+  if (definition.mutation) definition.mutation(demos)
+  const juge = jugeAvecChemins(definition.type, definition.id, demos)
+  let execution
+  let sortie
+  let reprises = 0
+  while (true) {
+    execution = spawnSync(process.execPath, [juge], {
+      cwd: RACINE,
+      encoding: 'utf8',
+      timeout: DELAI_JUGE_MS,
+      maxBuffer: 64 * 1024 * 1024,
+    })
+    sortie = nettoyer(`${execution.stdout || ''}${execution.stderr || ''}`)
+    const verdict = sortie.split('\n').find((ligne) => /suite du socle : FAIL/.test(ligne)) || ''
+    const lighthouseSeul = definition.id === 'TF'
+      && execution.status !== 0
+      && /SS-4/.test(verdict)
+      && !/SS-(?:1|2|3|5)/.test(verdict)
+    if (!lighthouseSeul || reprises >= REPRISES_TEMOIN_LIGHTHOUSE) break
+    reprises++
+    journal.push(`TF : reprise ${reprises}/${REPRISES_TEMOIN_LIGHTHOUSE} apres un echec exclusivement SS-4 (Lighthouse variable)`)
+    attendreQaLibres()
+  }
+  const trouve = sortie.match(definition.motif)?.[0] || ''
+  const code = execution.status === null ? 'sans code' : String(execution.status)
+  const ok = definition.temoin ? execution.status === 0 && Boolean(trouve) : execution.status !== 0 && execution.status !== null && Boolean(trouve)
+  const extrait = trouve || sortie.trim().split('\n').filter(Boolean).slice(-1)[0] || execution.error?.message || 'aucun verdict'
+  resultats.push({ ...definition, code, ok, reprises, extrait: uneLigne(extrait) })
+  journal.push(`${definition.id} : ${ok ? 'OK' : 'ECHEC'} (code ${code}) — ${uneLigne(extrait)}`)
+}
+
+function ecrirePreuves(erreur = null) {
+  fs.mkdirSync(PREUVES, { recursive: true })
+  const mutations = resultats.filter((r) => !r.temoin)
+  const temoins = resultats.filter((r) => r.temoin)
+  const ratages = resultats.filter((r) => !r.ok)
+  const alerteMutation = mutations.some((r) => !r.ok)
+  const lignes = []
+  if (alerteMutation) lignes.push('# ALERTE — au moins une mutation n’a pas été refusée avec le critère attendu', '')
+  lignes.push('# Contre-vérification 023-03', '')
+  if (erreur) lignes.push(`Erreur d’exécution : ${uneLigne(erreur.message || erreur)}`, '')
+  lignes.push('## Témoins', '')
+  for (const r of temoins) lignes.push(`- ${r.id} — ${r.ok ? 'PASS' : 'FAIL'} — ${r.extrait}`)
+  if (!temoins.length) lignes.push('- Aucun témoin exécuté.')
+  lignes.push('', '## Mutations', '', '| Mutation | Ce qui est cassé | Critère attendu en échec | Extrait réel du verdict |', '|---|---|---|---|')
+  for (const r of mutations) lignes.push(`| ${r.id} ${r.ok ? 'REFUSÉE' : 'NON REFUSÉE'} | ${r.casse} | ${r.attendu} | ${r.extrait} |`)
+  if (!mutations.length) lignes.push('| — | Aucune mutation exécutée | — | — |')
+  lignes.push('', `Verdict : ${!erreur && !ratages.length && resultats.length === cas.length ? 'PASS' : 'FAIL'}.`)
+  fs.writeFileSync(path.join(PREUVES, 'mutations.md'), `${lignes.join('\n')}\n`)
+
+  const verdict = !erreur && !ratages.length && resultats.length === cas.length
+    ? '✓ juges 023 mutations : PASS — 2 témoins passent et les 5 mutations échouent sur le critère attendu'
+    : `✗ juges 023 mutations : FAIL — ${erreur ? uneLigne(erreur.message || erreur) : `${ratages.length} cas inattendu(s)`}`
+  const sortie = [`$ node scripts/juges-023-mutations.mjs`, `# ${new Date().toISOString()} · code ${verdict.startsWith('✓') ? 0 : 1}`, '', ...journal, verdict, ''].join('\n')
+  fs.writeFileSync(path.join(PREUVES, 'verifier.log'), sortie)
+  process.stdout.write(sortie)
+  return verdict.startsWith('✓')
+}
+
+fs.rmSync(TRAVAIL, { recursive: true, force: true })
+fs.mkdirSync(TRAVAIL, { recursive: true })
+let erreur = null
+try {
+  for (const definition of cas) executerCas(definition)
+} catch (cause) {
+  erreur = cause
+  journal.push(`interruption : ${uneLigne(cause.message || cause)}`)
+} finally {
+  fs.rmSync(TRAVAIL, { recursive: true, force: true })
+}
+process.exitCode = ecrirePreuves(erreur) ? 0 : 1

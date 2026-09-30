@@ -1,0 +1,13 @@
+{
+  "chromium": "153.0.8010.12",
+  "navigateur": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "CSS.supports(\"animation-timeline: --non-supporte()\")": true,
+  "CSS.supports(\"animation-timeline\",\"--non-supporte()\")": true,
+  "CSS.supports(\"color: --x()\")": true,
+  "CSS.supports(\"animation-timeline: nonsupporte-sans-tirets()\")": false,
+  "@supports (animation-timeline: --non-supporte()) applique ?": true,
+  "@supports (animation-timeline: nonsupporte-sans-tirets()) applique ?": false,
+  "@supports (animation-timeline: view()) applique ?": true,
+  "@supports (animation-timeline-inexistante: view()) applique ?": false,
+  "@supports not (animation-timeline: view()) applique ?": false
+}

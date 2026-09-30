@@ -1,0 +1,6 @@
+1440 cadre-10-pied/0 : avant contre kit régénéré → 6701 pixels différents
+1440 cadre-10-pied/0 : avant+faces variables contre kit régénéré → 0 pixels différents
+1440 cadre-01-heros/0 : avant contre kit régénéré → 4066 pixels différents
+1440 cadre-01-heros/0 : avant+faces variables contre kit régénéré → 0 pixels différents
+390 cadre-10-pied/0 : avant contre kit régénéré → 5878 pixels différents
+390 cadre-10-pied/0 : avant+faces variables contre kit régénéré → 0 pixels différents

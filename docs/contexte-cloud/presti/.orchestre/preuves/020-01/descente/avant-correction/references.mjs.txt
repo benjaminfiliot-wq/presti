@@ -1,0 +1,20 @@
+// references.mjs — netteté (variance du laplacien, fonction de descente.mjs = cdc-c2-variantes.mjs) des images repères du cahier,
+// pour lire D-9 et le §9 avec la même mesure. Lecture seule.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const SIG = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/'
+async function laplacien(f, zone) {
+  const { data, info } = await sharp(f).extract(zone).greyscale().raw().toBuffer({ resolveWithObject: true })
+  const w = info.width, h = info.height; let s = 0, s2 = 0, n = 0
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; const v = data[i - 1] + data[i + 1] + data[i - w] + data[i + w] - 4 * data[i]; s += v; s2 += v * v; n++ }
+  return +(s2 / n - (s / n) ** 2).toFixed(1)
+}
+const res = { methode: 'variance du laplacien 4-voisins sur sharp greyscale, zone bois x 900-1400 y 120-420, zone marches x 150-500 y 120-420' }
+for (const f of ['cahier/avant/bureau-y0.jpg', 'cahier/avant/bureau-y270.jpg', 'cahier/moment-A-y0.jpg', 'cahier/moment-B-y270.jpg', 'cahier/moment-C-y405.jpg', 'films/descente/temoin-en-ligne-y0.png']) {
+  const m = await sharp(SIG + f).metadata()
+  res[f] = { taille: `${m.width}x${m.height}`, bois: await laplacien(SIG + f, { left: 900, top: 120, width: 500, height: 300 }), marches: await laplacien(SIG + f, { left: 150, top: 120, width: 350, height: 300 }) }
+}
+fs.writeFileSync(SIG + 'films/descente/references.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

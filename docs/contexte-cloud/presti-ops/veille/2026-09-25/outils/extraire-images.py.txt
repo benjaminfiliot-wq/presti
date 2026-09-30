@@ -1,0 +1,34 @@
+# Une image par seconde + une image a chaque changement de plan (scene > 0.25), JPG pleine resolution.
+# Usage : python extraire-images.py <nom>
+import json, os, re, subprocess, sys
+BASE = "C:/Users/benja/Documents/presti-ops/veille/2026-09-25"
+nom = sys.argv[1]
+video = f"{BASE}/{nom}.mp4"
+out = f"{BASE}/images/{nom}"
+os.makedirs(out, exist_ok=True)
+def run(a): return subprocess.run(a, capture_output=True, text=True, encoding="utf-8", errors="replace")
+dur = float(run(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",video]).stdout.strip())
+r = run(["ffmpeg","-hide_banner","-nostats","-i",video,"-an","-vf","scale=360:-2,select='gt(scene,0.25)',showinfo","-f","null","-"])
+scenes = [float(m) for m in re.findall(r"pts_time:([0-9.]+)", r.stderr)]
+cands = {}
+for s in range(int(dur) + 1):
+    if s <= dur - 0.05: cands[round(float(s),1)] = "1s"
+for t in scenes:
+    k = round(t, 1)
+    cands[k] = "scene" if k not in cands else cands[k] + "+scene"
+times = sorted(cands)
+def fn(t): return f"t{t:05.1f}.jpg"
+fails = []
+for t in times:
+    p = f"{out}/{fn(t)}"
+    tt = min(t, max(dur - 0.1, 0))
+    run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss",f"{tt:.3f}","-i",video,"-frames:v","1","-q:v","2",p])
+    if not os.path.exists(p) or os.path.getsize(p) < 1000:
+        fails.append(fn(t))
+zero = [f for f in os.listdir(out) if f.endswith(".jpg") and os.path.getsize(f"{out}/{f}") == 0]
+res = {"nom": nom, "duree": round(dur,2), "images_par_seconde": sum(1 for v in cands.values() if "1s" in v),
+       "changements_de_plan": len(scenes), "images_total": len([f for f in os.listdir(out) if f.endswith('.jpg')]),
+       "echecs": fails, "zero_octet": zero, "scenes": [round(s,2) for s in scenes]}
+json.dump({"resume": res, "images": [{"t": t, "fichier": fn(t), "source": cands[t]} for t in times]},
+          open(f"{out}/images.json","w",encoding="utf-8"), ensure_ascii=False, indent=1)
+print(json.dumps(res, ensure_ascii=False))

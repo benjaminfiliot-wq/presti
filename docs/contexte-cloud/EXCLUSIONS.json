@@ -1,0 +1,9 @@
+{
+  "note": "Complément du 30/09 : les anciennes exclusions générales de prospection/contrats sont remplacées par INVENTAIRE-COMPLET.json ; les données et contrats demandés sont désormais partagés dans le dépôt privé.",
+  "inventaire": "INVENTAIRE-COMPLET.json",
+  "toujoursExclus": [
+    "clés privées, keystores, mots de passe, jetons et valeurs .env",
+    "dépendances, caches, sauvegardes et travaux temporaires",
+    "autres formats binaires et artefacts supérieurs à 10 Mo, explicitement inventoriés"
+  ]
+}

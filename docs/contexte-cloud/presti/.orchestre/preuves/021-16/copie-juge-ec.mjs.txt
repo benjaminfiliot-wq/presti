@@ -1,0 +1,24 @@
+// copie-juge-ec.mjs — brouillon 021-16 : copie de diagnostic de scripts/eclate-qa.mjs (le juge officiel n'est pas touché), pour
+// voir le détail d'EC-1 à EC-16 sur la famille eclate avec le récit. Elle ne change que ce qui empêche de mesurer :
+//   0. chemins (racine du dépôt depuis la copie, preuves hors des preuves officielles) ;
+//   1. sans JavaScript, requestAnimationFrame ne rappelle jamais : scene({ y }) attendait pour toujours (constat de 021-05) ;
+//   2. les ancres d'eclate.json sont « vue assemblée » (constat de 021-05, EC-13).
+// Les deux points connus de 021-16 (EC-2 à C1, clip-path en EC-9) ne sont PAS relâchés : la copie doit échouer dessus, et seulement
+// dessus, pour que le rapport le dise.
+import fs from 'node:fs'
+const SRC = 'C:/Users/benja/Documents/presti/scripts/eclate-qa.mjs'
+const DST = 'C:/Users/benja/Documents/presti/.orchestre/travail/021-16-juge-diag/eclate-qa-diag.mjs'
+fs.mkdirSync('C:/Users/benja/Documents/presti/.orchestre/travail/021-16-juge-diag', { recursive: true })
+let s = fs.readFileSync(SRC, 'utf8')
+const remplacer = (avant, apres) => { const n = s.split(avant).length - 1; if (n !== 1) throw new Error(`${n} occurrence(s) de : ${avant.slice(0, 80)}`); s = s.split(avant).join(apres) }
+remplacer("const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')", "const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..') // COPIE DE DIAGNOSTIC 021-16")
+remplacer("const PREUVE = path.join(R, '.orchestre', 'preuves', '021-05', 'juge')", "const PREUVE = path.join(R, '.orchestre', 'travail', '021-16-juge-diag', 'juge') // COPIE : hors des preuves officielles")
+remplacer("// ── le jugement ──", "async function allerSansJs(page, y) { await page.evaluate((v) => scrollTo({ top: v, behavior: 'instant' }), y); await page.waitForTimeout(300); return page.evaluate(scene, { y: null }) }\n\n// ── le jugement ──")
+remplacer("let m = await o.page.evaluate(scene, { y }), d = jugerCentre(m, 2, 'sans JavaScript 1440×900')", "let m = await allerSansJs(o.page, y), d = jugerCentre(m, 2, 'sans JavaScript 1440×900')")
+remplacer("m = await o.page.evaluate(scene, { y }); d = jugerCentre(m, 2, 'sans JavaScript 1440×900') }", "m = await allerSansJs(o.page, y); d = jugerCentre(m, 2, 'sans JavaScript 1440×900') }")
+remplacer("const pieceDe = (nom) => J.pieces.find((p) => p.nom === nom)", "const pieceDe = (nom) => J.pieces.find((p) => p.nom === nom)\n  const ancre = (e) => { const p = pieceDe(e.piece); return /assembl/i.test(String(J.points || '')) ? { x: e.x + p.vecteur[0], y: e.y + p.vecteur[1] } : { x: e.x, y: e.y } }")
+remplacer("const ax = m.rendu.l + e.x * m.rendu.w, ay = m.rendu.t + e.y * m.rendu.h\n", "const ax = m.rendu.l + ancre(e).x * m.rendu.w, ay = m.rendu.t + ancre(e).y * m.rendu.h\n")
+remplacer("opaqueAutour(al, ((e.x - p.x - p.vecteur[0]) / p.l) * al.w, ((e.y - p.y - p.vecteur[1]) / p.h) * al.h, rayon)", "opaqueAutour(al, ((ancre(e).x - p.x - p.vecteur[0]) / p.l) * al.w, ((ancre(e).y - p.y - p.vecteur[1]) / p.h) * al.h, rayon)")
+remplacer("ax = m.rendu.l + e.x * m.rendu.w, ay = m.rendu.t + e.y * m.rendu.h\n          if (Math.abs(cx - ax)", "ax = m.rendu.l + ancre(e).x * m.rendu.w, ay = m.rendu.t + ancre(e).y * m.rendu.h\n          if (Math.abs(cx - ax)")
+fs.writeFileSync(DST, s)
+console.log('copie écrite :', DST)

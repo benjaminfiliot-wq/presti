@@ -1,0 +1,54 @@
+{
+  "metier": "menuisier",
+  "nom": "Atelier Lestraque",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Rennes",
+    "Cesson-Sévigné",
+    "Bruz",
+    "Saint-Grégoire"
+  ],
+  "metiers_secondaires": [],
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/menuisier-rennes/",
+      "type": "commune",
+      "cible": "Rennes"
+    },
+    {
+      "chemin": "/menuisier-cesson-sevigne/",
+      "type": "commune",
+      "cible": "Cesson-Sévigné"
+    },
+    {
+      "chemin": "/menuisier-bruz/",
+      "type": "commune",
+      "cible": "Bruz"
+    },
+    {
+      "chemin": "/menuisier-saint-gregoire/",
+      "type": "commune",
+      "cible": "Saint-Grégoire"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ],
+  "url_base": "https://lestraque.demo.invalid",
+  "da": "lestraque"
+}

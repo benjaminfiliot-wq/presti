@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prestiapp.fr/schemas/chef-bilan.schema.json",
+  "title": "Bilan de Matt (bilan.json)",
+  "description": "Écrit par le modèle (Codex GPT-6 luna) pendant le bilan quotidien ; scripts/chef/bilan.mjs (026-239) le valide et le refuse en bloc au moindre écart, puis en tire un plan léger du chef (chef-plan.schema.json). Trois règles ne s'écrivent pas en JSON Schema et sont tenues par bilan.mjs : chaque nombre des textes se trouve dans donnees.json (hors dates, semaines et identifiants), chaque source se résout dans donnees.json, et le bilan n'a aucun droit de plus que le plan léger (3 tâches au plus, aucune décision).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["constats", "propositions", "compte_rendu"],
+  "properties": {
+    "constats": {
+      "type": "array", "minItems": 1, "maxItems": 5,
+      "items": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 1, "maxLength": 160 }
+    },
+    "propositions": {
+      "type": "array", "maxItems": 3,
+      "items": { "$ref": "#/$defs/proposition" }
+    },
+    "compte_rendu": {
+      "description": "Trois lignes pour le fil, jointes par ' · ' dans l'événement bilan_quotidien (200 signes au plus au total).",
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": { "$ref": "#/$defs/ligne_compte_rendu" }
+    }
+  },
+  "$defs": {
+    "texte": {
+      "description": "Toute chaîne libre : ni @, ni lien, ni neuf chiffres de suite, ni secret (motifs MOTIFS_SECRETS de scripts/instantane-quotidien.mjs, et tout jeton JWT).",
+      "type": "string",
+      "not": {
+        "anyOf": [
+          { "pattern": "@" },
+          { "pattern": "[Hh][Tt][Tt][Pp]" },
+          { "pattern": "[0-9]{9}" },
+          { "pattern": "\\b(?:sk_live_|rk_live_|sk_test_)[A-Za-z0-9]{20,}" },
+          { "pattern": "\\bwhsec_[A-Za-z0-9]{10,}" },
+          { "pattern": "\\bsk-ant-[A-Za-z0-9_-]{10,}" },
+          { "pattern": "\\bre_[A-Za-z0-9]{20,}" },
+          { "pattern": "eyJ[A-Za-z0-9_-]+\\.eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+" },
+          { "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----" },
+          { "pattern": "\\bAIza[A-Za-z0-9_-]{35}" },
+          { "pattern": "\\b(?:ghp_|github_pat_)[A-Za-z0-9_]{20,}" }
+        ]
+      }
+    },
+    "ligne_compte_rendu": {
+      "allOf": [{ "$ref": "#/$defs/texte" }],
+      "minLength": 1, "maxLength": 60,
+      "pattern": "^[^·\\n\\r]+$"
+    },
+    "pointeur": {
+      "description": "Un pointeur JSON vers une clé de donnees.json, comme /echecs/0 ou /lecons/candidates. 40 signes au plus : les trois sources d'une proposition tiennent avec son effet attendu dans les 300 signes de la tâche.",
+      "type": "string", "minLength": 2, "maxLength": 40,
+      "pattern": "^/[a-z_0-9]+(?:/[a-z_0-9]+)*$"
+    },
+    "proposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["titre", "pourquoi", "sources", "effet_attendu", "type"],
+      "properties": {
+        "titre": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 5, "maxLength": 100 },
+        "pourquoi": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 10, "maxLength": 280 },
+        "sources": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/pointeur" } },
+        "effet_attendu": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 5, "maxLength": 140 },
+        "type": { "enum": ["relecture", "verification", "redaction_interne"] }
+      }
+    }
+  }
+}

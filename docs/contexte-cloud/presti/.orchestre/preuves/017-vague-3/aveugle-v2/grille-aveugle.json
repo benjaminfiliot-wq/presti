@@ -1,0 +1,66 @@
+{
+ "references": {
+  "stellar-launch": {
+   "C1": 5,
+   "C2": 5,
+   "C3": 4,
+   "C4": 3,
+   "C5": 3,
+   "C6": 5,
+   "C7": 4,
+   "C8": 4
+  },
+  "luxury-real-estate": {
+   "C1": 4,
+   "C2": 3,
+   "C3": 4,
+   "C4": 4,
+   "C5": 5,
+   "C6": 3,
+   "C7": 4,
+   "C8": 4
+  },
+  "art-landing": {
+   "C1": 5,
+   "C2": 4,
+   "C3": 3,
+   "C4": 3,
+   "C5": 5,
+   "C6": 5,
+   "C7": 2,
+   "C8": 4
+  },
+  "cinematic-landing-page": {
+   "C1": 5,
+   "C2": 4,
+   "C3": 4,
+   "C4": 2,
+   "C5": 4,
+   "C6": 4,
+   "C7": 2,
+   "C8": 3
+  },
+  "agency-services": {
+   "C1": 1,
+   "C2": 1,
+   "C3": 3,
+   "C4": 4,
+   "C5": 1,
+   "C6": 1,
+   "C7": 4,
+   "C8": 2
+  }
+ },
+ "demo": {
+  "C1": 5,
+  "C2": 3,
+  "C3": 5,
+  "C4": 4,
+  "C5": 5,
+  "C6": 4,
+  "C7": 3,
+  "C8": 4
+ },
+ "juge": "trois juges à l'aveugle sans contexte (moyennes arrondies), planches de même format",
+ "date": "2026-09-15"
+}

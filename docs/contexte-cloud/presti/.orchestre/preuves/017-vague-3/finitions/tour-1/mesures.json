@@ -1,0 +1,1311 @@
+{
+  "base": "http://127.0.0.1:4871/",
+  "date": "2026-09-14T21:23:45.696Z",
+  "photos": {
+    "compte": {
+      "heros-escalier": 2,
+      "mains-noyer": 2,
+      "tournage-copeaux": 2,
+      "penderie": 2,
+      "atelier-poncage": 2,
+      "reserve-cuisine-tasseaux": 2,
+      "boiserie": 2,
+      "reserve-bibliotheque": 1,
+      "reserve-cuisine-poutres": 1
+    },
+    "fonds": [],
+    "detail": [
+      {
+        "noms": [
+          "heros-escalier"
+        ],
+        "currentSrc": "/images/heros-escalier-1600.avif",
+        "dans": "hero hero--plein",
+        "cls": "hero__media"
+      },
+      {
+        "noms": [
+          "mains-noyer"
+        ],
+        "currentSrc": "/images/mains-noyer-720.avif",
+        "dans": "plateau",
+        "cls": "plateau__photo reveal vu"
+      },
+      {
+        "noms": [
+          "tournage-copeaux"
+        ],
+        "currentSrc": "/images/tournage-copeaux-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "penderie"
+        ],
+        "currentSrc": "/images/penderie-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "mains-noyer"
+        ],
+        "currentSrc": "/images/mains-noyer-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "atelier-poncage"
+        ],
+        "currentSrc": "/images/atelier-poncage-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "reserve-cuisine-tasseaux"
+        ],
+        "currentSrc": "/images/reserve-cuisine-tasseaux-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "boiserie"
+        ],
+        "currentSrc": "/images/boiserie-480.avif",
+        "dans": "prestations",
+        "cls": "presta__vignette"
+      },
+      {
+        "noms": [
+          "atelier-poncage"
+        ],
+        "currentSrc": "/images/atelier-poncage-1600.avif",
+        "dans": "atelier",
+        "cls": "atelier__media"
+      },
+      {
+        "noms": [
+          "reserve-cuisine-tasseaux"
+        ],
+        "currentSrc": "/images/reserve-cuisine-tasseaux-960.avif",
+        "dans": "realisations",
+        "cls": "galerie__cadre"
+      },
+      {
+        "noms": [
+          "penderie"
+        ],
+        "currentSrc": "/images/penderie-960.avif",
+        "dans": "realisations",
+        "cls": "galerie__cadre"
+      },
+      {
+        "noms": [
+          "heros-escalier"
+        ],
+        "currentSrc": "/images/heros-escalier-1600.avif",
+        "dans": "realisations",
+        "cls": "galerie__cadre"
+      },
+      {
+        "noms": [
+          "reserve-bibliotheque"
+        ],
+        "currentSrc": "/images/reserve-bibliotheque-960.avif",
+        "dans": "realisations",
+        "cls": "galerie__cadre"
+      },
+      {
+        "noms": [
+          "tournage-copeaux"
+        ],
+        "currentSrc": "/images/tournage-copeaux-480.avif",
+        "dans": "etapes",
+        "cls": "etapes__photo"
+      },
+      {
+        "noms": [
+          "reserve-cuisine-poutres"
+        ],
+        "currentSrc": "/images/reserve-cuisine-poutres-720.avif",
+        "dans": "questions",
+        "cls": "faq-scene__photo"
+      },
+      {
+        "noms": [
+          "boiserie"
+        ],
+        "currentSrc": "/images/boiserie-1600.avif",
+        "dans": "contact",
+        "cls": "contact__media"
+      }
+    ],
+    "portePanneauxDansHtml": 0,
+    "cuisineBoisDansHtml": 0
+  },
+  "alignement1440": {
+    "nav_marque": {
+      "boite": 72,
+      "svg": 72
+    },
+    "heros_h1": {
+      "boite": 72,
+      "texte": 72
+    },
+    "heros_chapeau": {
+      "boite": 72,
+      "texte": 72
+    },
+    "communes_h2": {
+      "boite": 72,
+      "texte": 72
+    },
+    "communes_premiere": {
+      "boite": 0,
+      "texte": 72
+    },
+    "pied_marque": {
+      "boite": 72,
+      "svg": 72
+    },
+    "pied_bas": {
+      "boite": 72,
+      "texte": 72
+    },
+    "plateau": {
+      "boite": 72,
+      "texte": 72
+    },
+    "presta_h2": {
+      "texte": 72
+    },
+    "galerie_h2": {
+      "texte": 72
+    },
+    "etapes": {
+      "texte": 116
+    },
+    "questions_h2": {
+      "texte": 72
+    },
+    "contact_mono": {
+      "texte": 72
+    },
+    "mentions": {
+      "nav_marque": 72,
+      "h1_boite": 72,
+      "h1_texte": 72,
+      "p_texte": 72,
+      "main_first": "hero hero--page"
+    }
+  },
+  "h2_1440": [
+    {
+      "texte": "Ce que je fabrique",
+      "px": 106.56,
+      "vw": 7.4,
+      "apresGalerie": false,
+      "visible": true
+    },
+    {
+      "texte": "Dans l’atelier",
+      "px": 180,
+      "vw": 12.5,
+      "apresGalerie": false,
+      "visible": true
+    },
+    {
+      "texte": "Pièces livrées",
+      "px": 100.8,
+      "vw": 7,
+      "apresGalerie": false,
+      "visible": true
+    },
+    {
+      "texte": "Autour de Rennes",
+      "px": 106.56,
+      "vw": 7.4,
+      "apresGalerie": true,
+      "visible": true
+    },
+    {
+      "texte": "En quatre temps",
+      "px": 106.56,
+      "vw": 7.4,
+      "apresGalerie": true,
+      "visible": true
+    },
+    {
+      "texte": "Vos questions",
+      "px": 106.56,
+      "vw": 7.4,
+      "apresGalerie": true,
+      "visible": true
+    },
+    {
+      "texte": "Parlons de votre projet",
+      "px": 123.84,
+      "vw": 8.6,
+      "apresGalerie": true,
+      "visible": true
+    }
+  ],
+  "contact": {
+    "innerText": "HORAIRES\nLundi–vendredi, 8 h–18 h\nIntervention sur rendez-vous",
+    "textContent": "HorairesLundi–vendredi, 8 h–18 hIntervention sur rendez-vous",
+    "spans": [
+      {
+        "t": "Lundi–vendredi, 8 h–18 h",
+        "top": 8665.3,
+        "bottom": 8689.6,
+        "left": 72,
+        "display": "block"
+      },
+      {
+        "t": "Intervention sur rendez-vous",
+        "top": 8689.6,
+        "bottom": 8713.9,
+        "left": 72,
+        "display": "block"
+      }
+    ],
+    "tels": [
+      "tel:+33261913847",
+      "tel:+33261913847",
+      "tel:+33261913847"
+    ]
+  },
+  "realisations1440": {
+    "section": 1800,
+    "travelling": 1800,
+    "fenetre": 900,
+    "ratioSection": 2,
+    "ratioTravelling": 2,
+    "pilote": true
+  },
+  "nav1440": [
+    {
+      "nom": "b1440-nav-plateau",
+      "capture": "b1440-nav-plateau.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 960,
+      "sous": [
+        ".plateau__haut",
+        ".plateau__inner",
+        ".plateau",
+        "MAIN"
+      ],
+      "sectionSousLaNav": "plateau",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0337
+      },
+      "contrasteNavFond": 1,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "b1440-nav-galerie",
+      "capture": "b1440-nav-galerie.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 3973,
+      "sous": [
+        "DIV",
+        ".scene__tete",
+        ".scene-large",
+        ".travelling__epingle"
+      ],
+      "sectionSousLaNav": "realisations",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "b1440-nav-galerie-milieu",
+      "capture": "b1440-nav-galerie-milieu.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 4363,
+      "sous": [
+        "DIV",
+        ".scene__tete",
+        ".scene-large",
+        ".travelling__epingle"
+      ],
+      "sectionSousLaNav": "realisations",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "b1440-nav-etapes",
+      "capture": "b1440-nav-etapes.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 6282,
+      "sous": [
+        ".etape",
+        ".etapes__liste",
+        ".etapes",
+        ".conteneur"
+      ],
+      "sectionSousLaNav": "etapes",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "b1440-nav-contact",
+      "capture": "b1440-nav-contact.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 8146,
+      "sous": [
+        ".contact__tete",
+        ".contact__inner",
+        ".contact__media",
+        "IMG"
+      ],
+      "sectionSousLaNav": "contact",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0075,
+        "p20": 0.0073,
+        "p80": 0.0082
+      },
+      "lumDessous": {
+        "mediane": 0.0138,
+        "p20": 0.0122,
+        "p80": 0.0172
+      },
+      "contrasteNavFond": 1.11,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "b1440-nav-apres-clic-devis",
+      "capture": "b1440-nav-apres-clic-devis.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 8086,
+      "sous": [
+        ".contact__media",
+        "IMG",
+        "PICTURE",
+        ".contact__media"
+      ],
+      "sectionSousLaNav": "contact",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0082,
+        "p20": 0.0073,
+        "p80": 0.0088
+      },
+      "lumDessous": {
+        "mediane": 0.0173,
+        "p20": 0.0138,
+        "p80": 0.0219
+      },
+      "contrasteNavFond": 1.16,
+      "barreClaireSurSombre": false
+    }
+  ],
+  "formulaire1440": {
+    "haut": 424.375,
+    "bas": 815.890625,
+    "boutonBas": 815.890625,
+    "fenetre": 900
+  },
+  "balayage1440": [
+    {
+      "y": 0,
+      "cls": "nav nav--claire nav--sombre",
+      "nav": 0.0697,
+      "dessous": 0.121,
+      "alerte": false
+    },
+    {
+      "y": 180,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0307,
+      "dessous": 0.2764,
+      "alerte": false
+    },
+    {
+      "y": 360,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0174,
+      "dessous": 0.2256,
+      "alerte": false
+    },
+    {
+      "y": 540,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0186,
+      "dessous": 0.0967,
+      "alerte": false
+    },
+    {
+      "y": 720,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0108,
+      "dessous": 0.0351,
+      "alerte": false
+    },
+    {
+      "y": 900,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1080,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0093,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1260,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0081,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1440,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1620,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0062,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1800,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0058,
+      "dessous": 0.7899,
+      "alerte": false
+    },
+    {
+      "y": 1980,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6566,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 2160,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7921,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 2340,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7899,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 2520,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7916,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 2700,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7828,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 2880,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7989,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 3060,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0156,
+      "dessous": 0.0045,
+      "alerte": false
+    },
+    {
+      "y": 3240,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.008,
+      "dessous": 0.0169,
+      "alerte": false
+    },
+    {
+      "y": 3420,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0215,
+      "dessous": 0.1613,
+      "alerte": false
+    },
+    {
+      "y": 3600,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0241,
+      "dessous": 0.2679,
+      "alerte": false
+    },
+    {
+      "y": 3780,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0153,
+      "dessous": 0.0546,
+      "alerte": false
+    },
+    {
+      "y": 3960,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4140,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4320,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4500,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4680,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4860,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 5040,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0104,
+      "dessous": 0.0272,
+      "alerte": false
+    },
+    {
+      "y": 5220,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0132,
+      "dessous": 0.0546,
+      "alerte": false
+    },
+    {
+      "y": 5400,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0108,
+      "dessous": 0.0182,
+      "alerte": false
+    },
+    {
+      "y": 5580,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0063,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 5760,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6223,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 5940,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7921,
+      "dessous": 0.7899,
+      "alerte": false
+    },
+    {
+      "y": 6120,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7899,
+      "dessous": 0.7591,
+      "alerte": false
+    },
+    {
+      "y": 6300,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0138,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 6480,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 6660,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 6840,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 7020,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 7200,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6621,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 7380,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7821,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 7560,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7816,
+      "dessous": 0.7899,
+      "alerte": false
+    },
+    {
+      "y": 7740,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7921,
+      "dessous": 0.7899,
+      "alerte": false
+    },
+    {
+      "y": 7920,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7921,
+      "dessous": 0.7971,
+      "alerte": false
+    },
+    {
+      "y": 8100,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0172,
+      "dessous": 0.0163,
+      "alerte": false
+    },
+    {
+      "y": 8280,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0125,
+      "dessous": 0.0116,
+      "alerte": false
+    }
+  ],
+  "erreursConsole1440": [],
+  "communes": [
+    {
+      "w": 1280,
+      "h": 800,
+      "hauteur": 455,
+      "fenetre": 800,
+      "ratio": 0.569,
+      "colonnes": "640px 640px",
+      "realisations": 2
+    },
+    {
+      "w": 1366,
+      "h": 768,
+      "hauteur": 485,
+      "fenetre": 768,
+      "ratio": 0.632,
+      "colonnes": "683px 683px"
+    },
+    {
+      "w": 1440,
+      "h": 900,
+      "hauteur": 509,
+      "fenetre": 900,
+      "ratio": 0.566,
+      "colonnes": "720px 720px"
+    }
+  ],
+  "photos390": {
+    "heros-escalier": 2,
+    "mains-noyer": 2,
+    "tournage-copeaux": 2,
+    "penderie": 2,
+    "atelier-poncage": 2,
+    "reserve-cuisine-tasseaux": 2,
+    "boiserie": 2,
+    "reserve-bibliotheque": 1,
+    "reserve-cuisine-poutres": 1
+  },
+  "nav390": [
+    {
+      "nom": "m390-nav-plateau",
+      "capture": "m390-nav-plateau.png",
+      "classes": "nav nav--claire nav--sombre solide",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 884,
+      "sous": [
+        "P",
+        "BLOCKQUOTE",
+        ".plateau__citation",
+        ".plateau__inner"
+      ],
+      "sectionSousLaNav": "plateau",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0077,
+        "p20": 0.0062,
+        "p80": 0.0092
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1.03,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "m390-nav-galerie",
+      "capture": "m390-nav-galerie.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 3625,
+      "sous": [
+        ".h2--scene",
+        "DIV",
+        ".scene__tete",
+        ".scene-large"
+      ],
+      "sectionSousLaNav": "realisations",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0077
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "m390-nav-galerie-milieu",
+      "capture": "m390-nav-galerie-milieu.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 3635,
+      "sous": [
+        "DIV",
+        ".scene__tete",
+        ".scene-large",
+        ".travelling__epingle"
+      ],
+      "sectionSousLaNav": "realisations",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0061,
+        "p20": 0.0058,
+        "p80": 0.0106
+      },
+      "lumDessous": {
+        "mediane": 0.0058,
+        "p20": 0.0058,
+        "p80": 0.0058
+      },
+      "contrasteNavFond": 1.01,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "m390-nav-etapes",
+      "capture": "m390-nav-etapes.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 4954,
+      "sous": [
+        "IMG",
+        "PICTURE",
+        ".etapes__photo",
+        ".etapes__tete"
+      ],
+      "sectionSousLaNav": "etapes",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0186,
+        "p20": 0.0129,
+        "p80": 0.0259
+      },
+      "lumDessous": {
+        "mediane": 0.0463,
+        "p20": 0.0063,
+        "p80": 0.2922
+      },
+      "contrasteNavFond": 1.4,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "m390-nav-contact",
+      "capture": "m390-nav-contact.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 6730,
+      "sous": [
+        "H2",
+        ".contact__tete",
+        ".contact__inner",
+        ".contact__media"
+      ],
+      "sectionSousLaNav": "contact",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0083,
+        "p20": 0.0078,
+        "p80": 0.0094
+      },
+      "lumDessous": {
+        "mediane": 0.0201,
+        "p20": 0.0173,
+        "p80": 0.028
+      },
+      "contrasteNavFond": 1.2,
+      "barreClaireSurSombre": false
+    },
+    {
+      "nom": "m390-nav-apres-clic-panneau-devis",
+      "capture": "m390-nav-apres-clic-panneau-devis.png",
+      "classes": "nav nav--claire solide nav--sombre",
+      "fond": "rgba(20, 17, 14, 0.8)",
+      "couleur": "rgb(244, 237, 226)",
+      "hauteur": 78,
+      "scrollY": 6690,
+      "sous": [
+        ".contact__tete",
+        ".contact__inner",
+        ".contact__media",
+        "IMG"
+      ],
+      "sectionSousLaNav": "contact",
+      "sectionSombre": true,
+      "lumNav": {
+        "mediane": 0.0087,
+        "p20": 0.0079,
+        "p80": 0.0094
+      },
+      "lumDessous": {
+        "mediane": 0.0228,
+        "p20": 0.0203,
+        "p80": 0.0283
+      },
+      "contrasteNavFond": 1.24,
+      "barreClaireSurSombre": false
+    }
+  ],
+  "apresClicPanneau": {
+    "hash": "#contact",
+    "contactTop": -0.375,
+    "panneauOuvert": "false"
+  },
+  "balayage390": [
+    {
+      "y": 0,
+      "cls": "nav nav--claire nav--sombre",
+      "nav": 0.0066,
+      "dessous": 0.0126,
+      "alerte": false
+    },
+    {
+      "y": 200,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0133,
+      "dessous": 0.0763,
+      "alerte": false
+    },
+    {
+      "y": 400,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0292,
+      "dessous": 0.5968,
+      "alerte": false
+    },
+    {
+      "y": 600,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0091,
+      "dessous": 0.049,
+      "alerte": false
+    },
+    {
+      "y": 800,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0067,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1000,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0082,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1200,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0062,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1400,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0067,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 1600,
+      "cls": "nav nav--claire nav--sombre solide",
+      "nav": 0.0153,
+      "dessous": 0.1541,
+      "alerte": false
+    },
+    {
+      "y": 1800,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6707,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 2000,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7917,
+      "dessous": 0.1466,
+      "alerte": false
+    },
+    {
+      "y": 2200,
+      "cls": "nav nav--claire solide",
+      "nav": 0.7302,
+      "dessous": 0.2609,
+      "alerte": false
+    },
+    {
+      "y": 2400,
+      "cls": "nav nav--claire solide",
+      "nav": 0.8084,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 2600,
+      "cls": "nav nav--claire solide",
+      "nav": 0.8529,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 2800,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0214,
+      "dessous": 0.0171,
+      "alerte": false
+    },
+    {
+      "y": 3000,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0144,
+      "dessous": 0.038,
+      "alerte": false
+    },
+    {
+      "y": 3200,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0193,
+      "dessous": 0.3019,
+      "alerte": false
+    },
+    {
+      "y": 3400,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0253,
+      "dessous": 0.1958,
+      "alerte": false
+    },
+    {
+      "y": 3600,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0058,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 3800,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0099,
+      "dessous": 0.0095,
+      "alerte": false
+    },
+    {
+      "y": 4000,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0244,
+      "dessous": 0.2373,
+      "alerte": false
+    },
+    {
+      "y": 4200,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0073,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 4400,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0067,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 4600,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6636,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 4800,
+      "cls": "nav nav--claire solide",
+      "nav": 0.831,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 5000,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0323,
+      "dessous": 0.085,
+      "alerte": false
+    },
+    {
+      "y": 5200,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0072,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 5400,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0072,
+      "dessous": 0.0058,
+      "alerte": false
+    },
+    {
+      "y": 5600,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0067,
+      "dessous": 0.1978,
+      "alerte": false
+    },
+    {
+      "y": 5800,
+      "cls": "nav nav--claire solide",
+      "nav": 0.5797,
+      "dessous": 0.1084,
+      "alerte": true
+    },
+    {
+      "y": 6000,
+      "cls": "nav nav--claire solide",
+      "nav": 0.6843,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 6200,
+      "cls": "nav nav--claire solide",
+      "nav": 0.8448,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 6400,
+      "cls": "nav nav--claire solide",
+      "nav": 0.8529,
+      "dessous": 0.8529,
+      "alerte": false
+    },
+    {
+      "y": 6600,
+      "cls": "nav nav--claire solide",
+      "nav": 0.8553,
+      "dessous": 0.0391,
+      "alerte": true
+    },
+    {
+      "y": 6800,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0229,
+      "dessous": 0.0186,
+      "alerte": false
+    },
+    {
+      "y": 7000,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0086,
+      "dessous": 0.011,
+      "alerte": false
+    },
+    {
+      "y": 7200,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0077,
+      "dessous": 0.0179,
+      "alerte": false
+    },
+    {
+      "y": 7400,
+      "cls": "nav nav--claire solide nav--sombre",
+      "nav": 0.0149,
+      "dessous": 0.0074,
+      "alerte": false
+    }
+  ],
+  "erreursConsole390": [],
+  "alertesBalayage": {
+    "b1440": [],
+    "m390": [
+      {
+        "y": 5800,
+        "cls": "nav nav--claire solide",
+        "nav": 0.5797,
+        "dessous": 0.1084,
+        "alerte": true
+      },
+      {
+        "y": 6600,
+        "cls": "nav nav--claire solide",
+        "nav": 0.8553,
+        "dessous": 0.0391,
+        "alerte": true
+      }
+    ]
+  }
+}

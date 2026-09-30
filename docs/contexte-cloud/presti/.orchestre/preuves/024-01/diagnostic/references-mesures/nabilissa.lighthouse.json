@@ -1,0 +1,55 @@
+{
+  "slug": "nabilissa",
+  "url": "https://nabilissa.com/",
+  "lighthouse": "13.4.1",
+  "fetchTime": "2026-09-16T20:48:39.059Z",
+  "formFactor": "mobile",
+  "throttlingMethod": "simulate",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+  "benchmarkIndex": 716.5,
+  "erreurExecution": null,
+  "avertissements": [
+    "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+  ],
+  "scorePerformance": 0.25,
+  "FCP_ms": 10539.233,
+  "LCP_ms": 27529.265262802124,
+  "TBT_ms": 5518,
+  "CLS": 0,
+  "SpeedIndex_ms": 19309.862356873502,
+  "TTI_ms": 31399.368489082335,
+  "poidsTotal_octets": 8002223,
+  "tempsJs_ms": 8899.363999999972,
+  "travailThreadPrincipal_ms": 20160.99599999998,
+  "domElements": null,
+  "animationsNonComposees": {
+    "score": null,
+    "elements": 0,
+    "titre": null
+  },
+  "longuesTaches": 20,
+  "auditsEchoues": [
+    "first-contentful-paint (10.5 s)",
+    "largest-contentful-paint (27.5 s)",
+    "speed-index (19.3 s)",
+    "total-blocking-time (5,520 ms)",
+    "max-potential-fid (2,430 ms)",
+    "interactive (31.4 s)",
+    "mainthread-work-breakdown (20.2 s)",
+    "bootup-time (8.9 s)",
+    "unused-javascript (Est savings of 112 KiB)",
+    "bf-cache (1 failure reason)",
+    "forced-reflow-insight",
+    "lcp-breakdown-insight",
+    "lcp-discovery-insight",
+    "network-dependency-tree-insight"
+  ]
+}

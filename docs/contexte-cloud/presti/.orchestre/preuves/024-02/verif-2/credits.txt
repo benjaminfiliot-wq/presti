@@ -1,0 +1,7 @@
+sections.html@1440 cadre-07-etapes : eclate.webp — pas dans attributions.json de lestraque (vérifier ailleurs)
+sections.html@1440 : 12 photos visibles contrôlées
+sections.html@390 cadre-07-etapes : eclate.webp — pas dans attributions.json de lestraque (vérifier ailleurs)
+sections.html@390 cadre-07c-etapes-rail-deplie : eclate.webp — pas dans attributions.json de lestraque (vérifier ailleurs)
+sections.html@390 : 29 photos visibles contrôlées
+index.html@1440 : 4 photos visibles contrôlées
+index.html@390 : 4 photos visibles contrôlées

@@ -1,0 +1,29 @@
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const DIR = 'C:/Users/benja/Documents/presti/.orchestre/travail/motionsites-apercus/'
+const OUT = DIR + 'planches/'
+fs.mkdirSync(OUT, { recursive: true })
+const noms = process.argv.slice(2)
+const bilan = {}
+for (const n of noms) {
+  const f = DIR + n + '.webp'
+  const meta = await sharp(f, { animated: true }).metadata()
+  const pages = meta.pages || 1, delay = meta.delay || [], ph = meta.pageHeight || meta.height
+  const total = delay.reduce((a, b) => a + b, 0)
+  bilan[n] = { largeur: meta.width, hauteur: ph, images: pages, dureeMs: total, delaiMedianMs: delay.length ? [...delay].sort((a, b) => a - b)[Math.floor(delay.length / 2)] : null, octets: fs.statSync(f).size }
+  if (pages === 1) { await sharp(f).resize({ width: 1600, withoutEnlargement: true }).jpeg({ quality: 82 }).toFile(OUT + n + '.jpg'); continue }
+  const k = Math.min(12, pages), cols = 4, rows = Math.ceil(k / cols), tw = 480, th = Math.round(ph * tw / meta.width)
+  const tuiles = []
+  let t = 0; const debut = []; for (const d of delay) { debut.push(t); t += d }
+  for (let i = 0; i < k; i++) {
+    const p = Math.round(i * (pages - 1) / (k - 1))
+    const buf = await sharp(f, { page: p }).resize(tw, th).jpeg({ quality: 80 }).toBuffer()
+    const lab = Buffer.from(`<svg width="${tw}" height="28"><rect width="${tw}" height="28" fill="#000" opacity=".7"/><text x="8" y="20" font-size="18" fill="#fff" font-family="Arial">#${p} t=${((debut[p] || 0) / 1000).toFixed(2)} s</text></svg>`)
+    tuiles.push({ input: buf, left: (i % cols) * tw, top: Math.floor(i / cols) * th }, { input: lab, left: (i % cols) * tw, top: Math.floor(i / cols) * th })
+  }
+  await sharp({ create: { width: cols * tw, height: rows * th, channels: 3, background: '#222' } }).composite(tuiles).jpeg({ quality: 80 }).toFile(OUT + n + '-planche.jpg')
+}
+console.log(JSON.stringify(bilan, null, 1))
+fs.writeFileSync(OUT + 'bilan-' + noms[0] + '.json', JSON.stringify(bilan, null, 1))

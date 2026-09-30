@@ -1,0 +1,45 @@
+// Planches d'images-clés des aperçus WebP animés (sharp, pages) + conversion des WebP fixes en JPEG.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import path from 'node:path'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const D = 'C:/Users/benja/Documents/presti/.orchestre/travail/motionsites-apercus'
+const OUT = path.join(D, 'planches-recit')
+fs.mkdirSync(OUT, { recursive: true })
+const res = {}
+for (const f of fs.readdirSync(D).filter(n => n.startsWith('recit-') && n.endsWith('.webp'))) {
+  const src = path.join(D, f)
+  const meta = await sharp(src, { animated: true }).metadata()
+  const pages = meta.pages || 1
+  const delays = meta.delay || []
+  const total = delays.reduce((a, b) => a + b, 0)
+  const nom = f.replace(/\.webp$/, '')
+  if (pages === 1) {
+    await sharp(src).resize({ width: 1280, withoutEnlargement: true }).jpeg({ quality: 85 }).toFile(path.join(OUT, nom + '.jpg'))
+    res[nom] = { pages, largeur: meta.width, hauteur: meta.height }
+    continue
+  }
+  const n = 12
+  const idx = Array.from({ length: n }, (_, i) => Math.min(pages - 1, Math.round(i * (pages - 1) / (n - 1))))
+  const W = meta.width, H = meta.pageHeight || meta.height
+  const vign = []
+  for (const [k, p] of idx.entries()) {
+    const buf = await sharp(src, { page: p, pages: 1 }).flatten({ background: '#000' }).resize({ width: 480 }).jpeg({ quality: 82 }).toBuffer()
+    const t = delays.slice(0, p).reduce((a, b) => a + b, 0)
+    vign.push({ buf, p, t })
+  }
+  const vw = 480, vh = Math.round(H * 480 / W), cols = 4, rows = Math.ceil(n / cols)
+  const comp = []
+  for (const [k, v] of vign.entries()) {
+    const x = (k % cols) * (vw + 8), y = Math.floor(k / cols) * (vh + 30)
+    comp.push({ input: v.buf, left: x, top: y + 26 })
+    const svg = Buffer.from(`<svg width="${vw}" height="26" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#111"/><text x="6" y="18" font-family="Arial" font-size="15" fill="#ff0">page ${v.p} / ${pages} · t=${(v.t / 1000).toFixed(2)} s</text></svg>`)
+    comp.push({ input: svg, left: x, top: y })
+  }
+  await sharp({ create: { width: cols * (vw + 8), height: rows * (vh + 30), channels: 3, background: '#222' } })
+    .composite(comp).jpeg({ quality: 82 }).toFile(path.join(OUT, nom + '-planche.jpg'))
+  res[nom] = { pages, largeur: W, hauteur: H, dureeMs: total, pagesPlanche: idx }
+}
+fs.writeFileSync(path.join(OUT, 'webp-meta.json'), JSON.stringify(res, null, 2))
+console.log(JSON.stringify(res, null, 1))

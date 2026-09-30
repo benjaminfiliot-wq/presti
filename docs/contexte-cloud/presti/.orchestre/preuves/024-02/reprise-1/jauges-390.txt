@@ -1,0 +1,6 @@
+site .presta__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351
+site .galerie__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351
+site .etapes__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351
+kit #cadre-03-prestations .presta__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351
+kit #cadre-05-realisations .galerie__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351
+kit #cadre-07-etapes .etapes__jauge block matrix(0.17, 0, 0, 1, 0, 0) 60/351

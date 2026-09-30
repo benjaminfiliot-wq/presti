@@ -1,0 +1,4030 @@
+{
+ "base": "http://127.0.0.1:59998",
+ "pages": {
+  "index.html@1440": {
+   "capture": "kit-index-1440.png",
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [],
+   "requetes": 20,
+   "largeurDoc": 1440,
+   "hauteurDoc": 51825,
+   "fonts": [
+    {
+     "famille": "Fraunces",
+     "poids": "300",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Manrope variable",
+     "poids": "200 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Space Grotesk variable",
+     "poids": "300 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans variable",
+     "poids": "100 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Newsreader variable",
+     "poids": "200 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Archivo Narrow variable",
+     "poids": "400 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces variable",
+     "poids": "100 900",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Instrument Serif variable",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Syne variable",
+     "poids": "400 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Lora variable",
+     "poids": "400 700",
+     "style": "normal",
+     "statut": "loaded"
+    }
+   ],
+   "images": 3,
+   "imagesCassees": [],
+   "policesUtilisees": [
+    {
+     "police": "IBM Plex Sans|600|normal",
+     "noeuds": 162
+    },
+    {
+     "police": "Fraunces|300|normal",
+     "noeuds": 39
+    },
+    {
+     "police": "IBM Plex Sans|400|normal",
+     "noeuds": 2914
+    },
+    {
+     "police": "Fraunces|400|normal",
+     "noeuds": 105
+    },
+    {
+     "police": "Manrope variable|700|normal",
+     "noeuds": 3
+    },
+    {
+     "police": "Manrope variable|400|normal",
+     "noeuds": 5
+    },
+    {
+     "police": "Space Grotesk variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "IBM Plex Sans variable|400|normal",
+     "noeuds": 5
+    },
+    {
+     "police": "Newsreader variable|500|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Archivo Narrow variable|700|normal",
+     "noeuds": 2
+    },
+    {
+     "police": "Fraunces variable|500|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Fraunces variable|400|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Instrument Serif variable|400|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Syne variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Lora variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Fraunces|600|normal",
+     "noeuds": 1
+    }
+   ],
+   "coupes": [],
+   "superpositions": [],
+   "fixedSticky": [],
+   "cadres": [
+    {
+     "id": "entete",
+     "y": 0,
+     "h": 722,
+     "w": 1440
+    },
+    {
+     "id": "a1-pages",
+     "y": 722,
+     "h": 1580,
+     "w": 1440
+    },
+    {
+     "id": "a2-accueil",
+     "y": 2302,
+     "h": 8777,
+     "w": 1440
+    },
+    {
+     "id": "a3-effets",
+     "y": 11079,
+     "h": 4157,
+     "w": 1440
+    },
+    {
+     "id": "a4-production",
+     "y": 15236,
+     "h": 4809,
+     "w": 1440
+    },
+    {
+     "id": "j1-couleurs",
+     "y": 20045,
+     "h": 6848,
+     "w": 1440
+    },
+    {
+     "id": "j2-polices",
+     "y": 26893,
+     "h": 2479,
+     "w": 1440
+    },
+    {
+     "id": "j3-echelle",
+     "y": 29372,
+     "h": 11276,
+     "w": 1440
+    },
+    {
+     "id": "j4-espacements",
+     "y": 40647,
+     "h": 6227,
+     "w": 1440
+    },
+    {
+     "id": "j5-rayons",
+     "y": 46874,
+     "h": 1406,
+     "w": 1440
+    },
+    {
+     "id": "j6-ombres",
+     "y": 48280,
+     "h": 1603,
+     "w": 1440
+    },
+    {
+     "id": "j7-mouvement",
+     "y": 49883,
+     "h": 1822,
+     "w": 1440
+    },
+    {
+     "id": "fin",
+     "y": 51705,
+     "h": 120,
+     "w": 1440
+    }
+   ],
+   "policesNonChargees": [],
+   "fontsNonChargees": []
+  },
+  "index.html@390": {
+   "capture": "kit-index-390.png",
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [],
+   "requetes": 20,
+   "largeurDoc": 390,
+   "hauteurDoc": 58208,
+   "fonts": [
+    {
+     "famille": "Fraunces",
+     "poids": "300",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Manrope variable",
+     "poids": "200 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Space Grotesk variable",
+     "poids": "300 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans variable",
+     "poids": "100 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Newsreader variable",
+     "poids": "200 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Archivo Narrow variable",
+     "poids": "400 700",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces variable",
+     "poids": "100 900",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Instrument Serif variable",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Syne variable",
+     "poids": "400 800",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Lora variable",
+     "poids": "400 700",
+     "style": "normal",
+     "statut": "loaded"
+    }
+   ],
+   "images": 3,
+   "imagesCassees": [],
+   "policesUtilisees": [
+    {
+     "police": "IBM Plex Sans|600|normal",
+     "noeuds": 106
+    },
+    {
+     "police": "Fraunces|300|normal",
+     "noeuds": 39
+    },
+    {
+     "police": "IBM Plex Sans|400|normal",
+     "noeuds": 1887
+    },
+    {
+     "police": "Fraunces|400|normal",
+     "noeuds": 105
+    },
+    {
+     "police": "Manrope variable|700|normal",
+     "noeuds": 3
+    },
+    {
+     "police": "Manrope variable|400|normal",
+     "noeuds": 5
+    },
+    {
+     "police": "Space Grotesk variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "IBM Plex Sans variable|400|normal",
+     "noeuds": 5
+    },
+    {
+     "police": "Newsreader variable|500|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Archivo Narrow variable|700|normal",
+     "noeuds": 2
+    },
+    {
+     "police": "Fraunces variable|500|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Fraunces variable|400|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Instrument Serif variable|400|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Syne variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Lora variable|700|normal",
+     "noeuds": 1
+    },
+    {
+     "police": "Fraunces|600|normal",
+     "noeuds": 1
+    }
+   ],
+   "coupes": [],
+   "superpositions": [
+    {
+     "cadre": "j3-echelle",
+     "a": "Fait pour rester",
+     "b": "_kit/kit.css:327",
+     "recouvrement": 100,
+     "y": 35545
+    },
+    {
+     "cadre": "j3-echelle",
+     "a": "Fait pour rester",
+     "b": "_kit/kit.css:328",
+     "recouvrement": 100,
+     "y": 35545
+    },
+    {
+     "cadre": "j3-echelle",
+     "a": "_kit/kit.css:289",
+     "b": "01",
+     "recouvrement": 39,
+     "y": 39660
+    }
+   ],
+   "fixedSticky": [],
+   "cadres": [
+    {
+     "id": "entete",
+     "y": 0,
+     "h": 1071,
+     "w": 390
+    },
+    {
+     "id": "a1-pages",
+     "y": 1071,
+     "h": 2929,
+     "w": 390
+    },
+    {
+     "id": "a2-accueil",
+     "y": 3999,
+     "h": 3608,
+     "w": 390
+    },
+    {
+     "id": "a3-effets",
+     "y": 7608,
+     "h": 3583,
+     "w": 390
+    },
+    {
+     "id": "a4-production",
+     "y": 11191,
+     "h": 6288,
+     "w": 390
+    },
+    {
+     "id": "j1-couleurs",
+     "y": 17479,
+     "h": 11505,
+     "w": 390
+    },
+    {
+     "id": "j2-polices",
+     "y": 28984,
+     "h": 6111,
+     "w": 390
+    },
+    {
+     "id": "j3-echelle",
+     "y": 35095,
+     "h": 6004,
+     "w": 390
+    },
+    {
+     "id": "j4-espacements",
+     "y": 41099,
+     "h": 9313,
+     "w": 390
+    },
+    {
+     "id": "j5-rayons",
+     "y": 50413,
+     "h": 2004,
+     "w": 390
+    },
+    {
+     "id": "j6-ombres",
+     "y": 52417,
+     "h": 2279,
+     "w": 390
+    },
+    {
+     "id": "j7-mouvement",
+     "y": 54696,
+     "h": 3399,
+     "w": 390
+    },
+    {
+     "id": "fin",
+     "y": 58095,
+     "h": 113,
+     "w": 390
+    }
+   ],
+   "policesNonChargees": [],
+   "fontsNonChargees": []
+  },
+  "sections.html@1440": {
+   "capture": "kit-sections-1440.png",
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif"
+   ],
+   "requetes": 33,
+   "largeurDoc": 1440,
+   "hauteurDoc": 27501,
+   "fonts": [
+    {
+     "famille": "Fraunces",
+     "poids": "300",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    }
+   ],
+   "images": 52,
+   "imagesCassees": [],
+   "policesUtilisees": [
+    {
+     "police": "IBM Plex Sans|600|normal",
+     "noeuds": 119
+    },
+    {
+     "police": "Fraunces|300|normal",
+     "noeuds": 77
+    },
+    {
+     "police": "IBM Plex Sans|400|normal",
+     "noeuds": 814
+    },
+    {
+     "police": "Fraunces|400|normal",
+     "noeuds": 71
+    },
+    {
+     "police": "IBM Plex Sans|500|normal",
+     "noeuds": 16
+    },
+    {
+     "police": "Fraunces|600|normal",
+     "noeuds": 4
+    }
+   ],
+   "coupes": [],
+   "superpositions": [
+    {
+     "cadre": "cadre-01-heros",
+     "a": "Menuisier à Rennes",
+     "b": "Fait",
+     "recouvrement": 94,
+     "y": 5673
+    },
+    {
+     "cadre": "cadre-02-plateau",
+     "a": "10",
+     "b": "de garantie décennale sur chaque ouvrage posé",
+     "recouvrement": 60,
+     "y": 7757
+    },
+    {
+     "cadre": "cadre-02-plateau",
+     "a": "180",
+     "b": "d’atelier à Rennes, où chaque pièce est fabriquée",
+     "recouvrement": 87,
+     "y": 7757
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Aucun mur n’est droit. La visite montre les faux a",
+     "b": "Quel entretien pour des ouvrages en bois massif ?",
+     "recouvrement": 99,
+     "y": 22837
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Une finition huilée ou un vernis hydrofuge protège",
+     "b": "Comment se passe le devis ?",
+     "recouvrement": 84,
+     "y": 22923
+    },
+    {
+     "cadre": "cadre-09-contact",
+     "a": "Contact",
+     "b": "Parlons",
+     "recouvrement": 50,
+     "y": 24329
+    },
+    {
+     "cadre": "cadre-09b-contact-demande-recue",
+     "a": "Contact",
+     "b": "Parlons",
+     "recouvrement": 50,
+     "y": 25516
+    }
+   ],
+   "fixedSticky": [],
+   "cadres": [
+    {
+     "id": "entete",
+     "y": 0,
+     "h": 1949,
+     "w": 1440
+    },
+    {
+     "id": "cadre-00-navigation",
+     "y": 1949,
+     "h": 1897,
+     "w": 1440
+    },
+    {
+     "id": "cadre-01-heros",
+     "y": 3846,
+     "h": 2239,
+     "w": 1440
+    },
+    {
+     "id": "cadre-02-plateau",
+     "y": 6084,
+     "h": 2037,
+     "w": 1440
+    },
+    {
+     "id": "cadre-03-prestations",
+     "y": 8121,
+     "h": 2631,
+     "w": 1440
+    },
+    {
+     "id": "cadre-03b-prestations-survol",
+     "y": 10752,
+     "h": 1894,
+     "w": 1440
+    },
+    {
+     "id": "cadre-03c-prestations-rail-deplie",
+     "y": 12646,
+     "h": 768,
+     "w": 1440
+    },
+    {
+     "id": "cadre-04-atelier",
+     "y": 13414,
+     "h": 1751,
+     "w": 1440
+    },
+    {
+     "id": "cadre-05-realisations",
+     "y": 15165,
+     "h": 2532,
+     "w": 1440
+    },
+    {
+     "id": "cadre-05c-realisations-rail-deplie",
+     "y": 17697,
+     "h": 641,
+     "w": 1440
+    },
+    {
+     "id": "cadre-06-communes",
+     "y": 18338,
+     "h": 1037,
+     "w": 1440
+    },
+    {
+     "id": "cadre-07-etapes",
+     "y": 19375,
+     "h": 2029,
+     "w": 1440
+    },
+    {
+     "id": "cadre-07c-etapes-rail-deplie",
+     "y": 21404,
+     "h": 403,
+     "w": 1440
+    },
+    {
+     "id": "cadre-08-questions",
+     "y": 21807,
+     "h": 1289,
+     "w": 1440
+    },
+    {
+     "id": "cadre-08b-questions-ouverte",
+     "y": 23096,
+     "h": 383,
+     "w": 1440
+    },
+    {
+     "id": "cadre-09-contact",
+     "y": 23478,
+     "h": 1624,
+     "w": 1440
+    },
+    {
+     "id": "cadre-09b-contact-demande-recue",
+     "y": 25103,
+     "h": 1552,
+     "w": 1440
+    },
+    {
+     "id": "cadre-10-pied",
+     "y": 26654,
+     "h": 727,
+     "w": 1440
+    },
+    {
+     "id": "fin",
+     "y": 27381,
+     "h": 120,
+     "w": 1440
+    }
+   ],
+   "policesNonChargees": [
+    {
+     "police": "IBM Plex Sans|500|normal",
+     "noeuds": 16
+    }
+   ],
+   "fontsNonChargees": []
+  },
+  "sections.html@390": {
+   "capture": "kit-sections-390.png",
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-960.webp net::ERR_ABORTED"
+   ],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif"
+   ],
+   "requetes": 29,
+   "largeurDoc": 390,
+   "hauteurDoc": 47641,
+   "fonts": [
+    {
+     "famille": "Fraunces",
+     "poids": "300",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "Fraunces",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "400",
+     "style": "normal",
+     "statut": "loaded"
+    },
+    {
+     "famille": "IBM Plex Sans",
+     "poids": "600",
+     "style": "normal",
+     "statut": "loaded"
+    }
+   ],
+   "images": 52,
+   "imagesCassees": [],
+   "policesUtilisees": [
+    {
+     "police": "IBM Plex Sans|600|normal",
+     "noeuds": 132
+    },
+    {
+     "police": "Fraunces|300|normal",
+     "noeuds": 77
+    },
+    {
+     "police": "IBM Plex Sans|400|normal",
+     "noeuds": 833
+    },
+    {
+     "police": "Fraunces|400|normal",
+     "noeuds": 92
+    },
+    {
+     "police": "Fraunces|600|normal",
+     "noeuds": 8
+    }
+   ],
+   "coupes": [
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "02",
+     "x": 351,
+     "droite": 415
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "02",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      351,
+      15896,
+      415,
+      15968
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Dressings et placards",
+     "x": 351,
+     "droite": 621
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Dressings et placards",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      351,
+      15966,
+      621,
+      16001
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Penderies sous combles, placards sous escalier, séparations ",
+     "x": 351,
+     "droite": 626
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Penderies sous combles, placards sous escalier, séparations ",
+     "x": 351,
+     "droite": 661
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Penderies sous combles, placards sous escalier, séparations ",
+     "x": 351,
+     "droite": 602
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Penderies sous combles, placards sous escalier, séparations ",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      351,
+      16014,
+      626,
+      16034
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "03",
+     "x": 683,
+     "droite": 743
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "03",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      683,
+      15896,
+      743,
+      15968
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Bibliothèques et meubles",
+     "x": 683,
+     "droite": 886
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Bibliothèques et meubles",
+     "x": 683,
+     "droite": 790
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Bibliothèques et meubles",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      683,
+      15966,
+      886,
+      16001
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Ensembles muraux en chêne massif ou en contreplaqué de boule",
+     "x": 683,
+     "droite": 978
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Ensembles muraux en chêne massif ou en contreplaqué de boule",
+     "x": 683,
+     "droite": 988
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Ensembles muraux en chêne massif ou en contreplaqué de boule",
+     "x": 683,
+     "droite": 972
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Ensembles muraux en chêne massif ou en contreplaqué de boule",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      683,
+      16044,
+      978,
+      16064
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "04",
+     "x": 1014,
+     "droite": 1077
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "04",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1014,
+      15896,
+      1077,
+      15968
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Parquets massifs",
+     "x": 1014,
+     "droite": 1230
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Parquets massifs",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1014,
+      15966,
+      1230,
+      16001
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie, ",
+     "x": 1014,
+     "droite": 1309
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie, ",
+     "x": 1014,
+     "droite": 1320
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie, ",
+     "x": 1014,
+     "droite": 1271
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie, ",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1014,
+      16014,
+      1309,
+      16034
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "05",
+     "x": 1346,
+     "droite": 1408
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "05",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1346,
+      15896,
+      1408,
+      15968
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Cuisines et plans de travail",
+     "x": 1346,
+     "droite": 1593
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Cuisines et plans de travail",
+     "x": 1346,
+     "droite": 1427
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Cuisines et plans de travail",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1346,
+      15966,
+      1593,
+      16001
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Façades et plans de travail en chêne ou en noyer de 40 mm, h",
+     "x": 1346,
+     "droite": 1643
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Façades et plans de travail en chêne ou en noyer de 40 mm, h",
+     "x": 1346,
+     "droite": 1626
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Façades et plans de travail en chêne ou en noyer de 40 mm, h",
+     "x": 1346,
+     "droite": 1598
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Façades et plans de travail en chêne ou en noyer de 40 mm, h",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1346,
+      16044,
+      1643,
+      16064
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "06",
+     "x": 1677,
+     "droite": 1741
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "06",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1677,
+      15896,
+      1741,
+      15968
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes et verrières intérieures",
+     "x": 1677,
+     "droite": 1908
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes et verrières intérieures",
+     "x": 1677,
+     "droite": 1815
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes et verrières intérieures",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1677,
+      15966,
+      1908,
+      16001
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes à fleur de cloison, verrières en chêne, moulures refa",
+     "x": 1677,
+     "droite": 1988
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes à fleur de cloison, verrières en chêne, moulures refa",
+     "x": 1677,
+     "droite": 1964
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes à fleur de cloison, verrières en chêne, moulures refa",
+     "x": 1677,
+     "droite": 1830
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-03-prestations",
+     "t": "Portes à fleur de cloison, verrières en chêne, moulures refa",
+     "ancetre": "ol.presta",
+     "ov": "auto/auto",
+     "texte": [
+      1677,
+      16044,
+      1988,
+      16064
+     ],
+     "boite": [
+      0,
+      15501,
+      390,
+      16115
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Cuisine sous poutres avec plan de travail en bois",
+     "x": 398,
+     "droite": 685
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Cuisine sous poutres avec plan de travail en bois",
+     "x": 398,
+     "droite": 425
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Cuisine sous poutres avec plan de travail en bois",
+     "ancetre": "div.galerie.galerie--scene",
+     "ov": "auto/auto",
+     "texte": [
+      398,
+      28138,
+      685,
+      28157
+     ],
+     "boite": [
+      0,
+      27709,
+      390,
+      28179
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "03",
+     "x": 714,
+     "droite": 730
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-05-realisations",
+     "t": "03",
+     "ancetre": "div.galerie.galerie--scene",
+     "ov": "auto/auto",
+     "texte": [
+      714,
+      28142,
+      730,
+      28156
+     ],
+     "boite": [
+      0,
+      27709,
+      390,
+      28179
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Penderie en bois, tringle et quatre cintres",
+     "x": 745,
+     "droite": 1017
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Penderie en bois, tringle et quatre cintres",
+     "ancetre": "div.galerie.galerie--scene",
+     "ov": "auto/auto",
+     "texte": [
+      745,
+      28138,
+      1017,
+      28157
+     ],
+     "boite": [
+      0,
+      27709,
+      390,
+      28179
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "04",
+     "x": 1061,
+     "droite": 1077
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-05-realisations",
+     "t": "04",
+     "ancetre": "div.galerie.galerie--scene",
+     "ov": "auto/auto",
+     "texte": [
+      1061,
+      28142,
+      1077,
+      28156
+     ],
+     "boite": [
+      0,
+      27709,
+      390,
+      28179
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Escalier hélicoïdal en bois massif",
+     "x": 1092,
+     "droite": 1309
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-05-realisations",
+     "t": "Escalier hélicoïdal en bois massif",
+     "ancetre": "div.galerie.galerie--scene",
+     "ov": "auto/auto",
+     "texte": [
+      1092,
+      28138,
+      1309,
+      28157
+     ],
+     "boite": [
+      0,
+      27709,
+      390,
+      28179
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "02",
+     "x": 331,
+     "droite": 412
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "02",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      331,
+      35449,
+      412,
+      35536
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Visite technique",
+     "x": 331,
+     "droite": 498
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Visite technique",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      331,
+      35533,
+      498,
+      35562
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je relève les cotes chez vous et je vérifie les aplombs, l’h",
+     "x": 331,
+     "droite": 621
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je relève les cotes chez vous et je vérifie les aplombs, l’h",
+     "x": 331,
+     "droite": 612
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je relève les cotes chez vous et je vérifie les aplombs, l’h",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      331,
+      35573,
+      621,
+      35593
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "03",
+     "x": 643,
+     "droite": 720
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "03",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      643,
+      35449,
+      720,
+      35536
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Plan et devis",
+     "x": 643,
+     "droite": 774
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Plan et devis",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      643,
+      35533,
+      774,
+      35562
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Vous recevez le plan coté, le choix des essences et des ferr",
+     "x": 643,
+     "droite": 917
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Vous recevez le plan coté, le choix des essences et des ferr",
+     "x": 643,
+     "droite": 905
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Vous recevez le plan coté, le choix des essences et des ferr",
+     "x": 643,
+     "droite": 748
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Vous recevez le plan coté, le choix des essences et des ferr",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      643,
+      35573,
+      917,
+      35593
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "04",
+     "x": 955,
+     "droite": 1036
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "04",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      955,
+      35449,
+      1036,
+      35536
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Fabrication et pose",
+     "x": 955,
+     "droite": 1152
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Fabrication et pose",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      955,
+      35533,
+      1152,
+      35562
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je fabrique les pièces à l’atelier, puis je les pose chez vo",
+     "x": 955,
+     "droite": 1235
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je fabrique les pièces à l’atelier, puis je les pose chez vo",
+     "x": 955,
+     "droite": 1193
+    },
+    {
+     "type": "hors-fenetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je fabrique les pièces à l’atelier, puis je les pose chez vo",
+     "x": 955,
+     "droite": 1030
+    },
+    {
+     "type": "coupe-par-ancetre",
+     "cadre": "cadre-07-etapes",
+     "t": "Je fabrique les pièces à l’atelier, puis je les pose chez vo",
+     "ancetre": "ol.etapes__liste",
+     "ov": "auto/auto",
+     "texte": [
+      955,
+      35573,
+      1235,
+      35593
+     ],
+     "boite": [
+      0,
+      35446,
+      390,
+      35643
+     ]
+    }
+   ],
+   "superpositions": [
+    {
+     "cadre": "cadre-01-heros",
+     "a": "Menuisier à Rennes",
+     "b": "Fait",
+     "recouvrement": 84,
+     "y": 9051
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Pour des marches ou une pièce de passage, le chêne",
+     "b": "Pourquoi une prise de cotes sur place est-elle ind",
+     "recouvrement": 94,
+     "y": 39492
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Pourquoi une prise de cotes sur place est-elle ind",
+     "b": "Pour des marches ou une pièce de passage, le chêne",
+     "recouvrement": 90,
+     "y": 39517
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Aucun mur n’est droit. La visite montre les faux a",
+     "b": "Quel entretien pour des ouvrages en bois massif ?",
+     "recouvrement": 94,
+     "y": 39599
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Quel entretien pour des ouvrages en bois massif ?",
+     "b": "Aucun mur n’est droit. La visite montre les faux a",
+     "recouvrement": 90,
+     "y": 39625
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Une finition huilée ou un vernis hydrofuge protège",
+     "b": "Comment se passe le devis ?",
+     "recouvrement": 76,
+     "y": 39707
+    },
+    {
+     "cadre": "cadre-08-questions",
+     "a": "Je viens voir la pièce et relever les cotes. Vous ",
+     "b": "Questions — une question ouverte au téléphone",
+     "recouvrement": 40,
+     "y": 39854
+    },
+    {
+     "cadre": "cadre-08b-questions-ouverte",
+     "a": "Aucun mur n’est droit. La visite montre les faux a",
+     "b": "Quel entretien pour des ouvrages en bois massif ?",
+     "recouvrement": 94,
+     "y": 41178
+    },
+    {
+     "cadre": "cadre-08b-questions-ouverte",
+     "a": "Quel entretien pour des ouvrages en bois massif ?",
+     "b": "Aucun mur n’est droit. La visite montre les faux a",
+     "recouvrement": 90,
+     "y": 41203
+    },
+    {
+     "cadre": "cadre-08b-questions-ouverte",
+     "a": "Une finition huilée ou un vernis hydrofuge protège",
+     "b": "Comment se passe le devis ?",
+     "recouvrement": 76,
+     "y": 41285
+    },
+    {
+     "cadre": "cadre-08b-questions-ouverte",
+     "a": "Je viens voir la pièce et relever les cotes. Vous ",
+     "b": "Contact et devis",
+     "recouvrement": 45,
+     "y": 41432
+    }
+   ],
+   "fixedSticky": [],
+   "cadres": [
+    {
+     "id": "entete",
+     "y": 0,
+     "h": 3178,
+     "w": 390
+    },
+    {
+     "id": "cadre-00-navigation",
+     "y": 3178,
+     "h": 3388,
+     "w": 390
+    },
+    {
+     "id": "cadre-01-heros",
+     "y": 6566,
+     "h": 3236,
+     "w": 390
+    },
+    {
+     "id": "cadre-02-plateau",
+     "y": 9802,
+     "h": 2645,
+     "w": 390
+    },
+    {
+     "id": "cadre-03-prestations",
+     "y": 12447,
+     "h": 3754,
+     "w": 390
+    },
+    {
+     "id": "cadre-03b-prestations-survol",
+     "y": 16201,
+     "h": 1369,
+     "w": 390
+    },
+    {
+     "id": "cadre-03c-prestations-rail-deplie",
+     "y": 17570,
+     "h": 5180,
+     "w": 390
+    },
+    {
+     "id": "cadre-04-atelier",
+     "y": 22751,
+     "h": 2627,
+     "w": 390
+    },
+    {
+     "id": "cadre-05-realisations",
+     "y": 25378,
+     "h": 3015,
+     "w": 390
+    },
+    {
+     "id": "cadre-05c-realisations-rail-deplie",
+     "y": 28392,
+     "h": 3186,
+     "w": 390
+    },
+    {
+     "id": "cadre-06-communes",
+     "y": 31578,
+     "h": 1360,
+     "w": 390
+    },
+    {
+     "id": "cadre-07-etapes",
+     "y": 32938,
+     "h": 2800,
+     "w": 390
+    },
+    {
+     "id": "cadre-07c-etapes-rail-deplie",
+     "y": 35739,
+     "h": 2013,
+     "w": 390
+    },
+    {
+     "id": "cadre-08-questions",
+     "y": 37752,
+     "h": 2083,
+     "w": 390
+    },
+    {
+     "id": "cadre-08b-questions-ouverte",
+     "y": 39835,
+     "h": 1578,
+     "w": 390
+    },
+    {
+     "id": "cadre-09-contact",
+     "y": 41413,
+     "h": 2831,
+     "w": 390
+    },
+    {
+     "id": "cadre-09b-contact-demande-recue",
+     "y": 44244,
+     "h": 2217,
+     "w": 390
+    },
+    {
+     "id": "cadre-10-pied",
+     "y": 46460,
+     "h": 1043,
+     "w": 390
+    },
+    {
+     "id": "fin",
+     "y": 47503,
+     "h": 138,
+     "w": 390
+    }
+   ],
+   "policesNonChargees": [],
+   "fontsNonChargees": []
+  }
+ },
+ "site": {
+  "reduit@1440": {
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/mains-noyer-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tournage-copeaux-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/eclate.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tasseaux-cloison-780.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-portrait-720.avif"
+   ],
+   "requetes": 27,
+   "imagesIncompletes": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif"
+   ],
+   "hauteurDoc": 8974,
+   "largeurDoc": 1440,
+   "imagesCassees": [
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-limon.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-contremarche.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-marche.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-vis.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/assemble.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    }
+   ],
+   "fontsNonChargees": [],
+   "nav": {
+    "classes": "nav nav--claire nav--retenue nav--bande nav--sombre",
+    "rect": {
+     "x": 0,
+     "y": 0,
+     "width": 1440,
+     "height": 78.125,
+     "top": 0,
+     "right": 1440,
+     "bottom": 78.125,
+     "left": 0
+    }
+   },
+   "fixedSticky": [
+    "header.nav.nav--claire.nav--retenue.nav--bande.nav--sombre",
+    "div.voile",
+    "div.panneau",
+    "div.etapes__tete.reveal.vu"
+   ],
+   "navClasses": "nav nav--claire nav--retenue nav--bande nav--sombre"
+  },
+  "normal@1440": {
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/mains-noyer-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tournage-copeaux-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/releve.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tasseaux-cloison-780.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-1600.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-portrait-720.avif"
+   ],
+   "requetes": 34,
+   "imagesIncompletes": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/eclate.avif"
+   ]
+  },
+  "reduit@390": {
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/mains-noyer-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tournage-copeaux-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/eclate.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tasseaux-cloison-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-960.avif"
+   ],
+   "requetes": 22,
+   "imagesIncompletes": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif"
+   ],
+   "hauteurDoc": 8425,
+   "largeurDoc": 390,
+   "imagesCassees": [
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-limon.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-contremarche.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-marche.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/calque-vis.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    },
+    {
+     "src": "/sites-demo/lestraque/eclate/assemble.avif",
+     "complete": false,
+     "nw": 0,
+     "nh": 0,
+     "lazy": "lazy",
+     "w": 0,
+     "h": 0
+    }
+   ],
+   "fontsNonChargees": [],
+   "nav": {
+    "classes": "nav nav--claire nav--bande nav--sombre",
+    "rect": {
+     "x": 0,
+     "y": 0,
+     "width": 390,
+     "height": 78,
+     "top": 0,
+     "right": 390,
+     "bottom": 78,
+     "left": 0
+    }
+   },
+   "fixedSticky": [
+    "header.nav.nav--claire.nav--bande.nav--sombre",
+    "div.voile",
+    "div.panneau"
+   ],
+   "navClasses": "nav nav--claire nav--bande nav--sombre"
+  },
+  "normal@390": {
+   "console": [],
+   "pageerror": [],
+   "externes": [],
+   "echecs": [],
+   "http4xx": [],
+   "avif": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/mains-noyer-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tournage-copeaux-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/penderie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-bibliotheque-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/reserve-cuisine-poutres-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/atelier-poncage-portrait-720.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/heros-escalier-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/tasseaux-cloison-480.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/images/boiserie-960.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-limon.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-contremarche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-marche.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/calque-vis.avif",
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/assemble.avif"
+   ],
+   "requetes": 26,
+   "imagesIncompletes": [
+    "http://127.0.0.1:59998/sites-demo/lestraque/eclate/eclate.avif"
+   ]
+  }
+ },
+ "cadres": {
+  "1440:cadre-01-heros": {
+   "site": {
+    "x": 0,
+    "y": 0,
+    "w": 1440,
+    "h": 900
+   },
+   "kit": {
+    "x": 0,
+    "y": 5184,
+    "w": 1440,
+    "h": 900
+   },
+   "textes": {
+    "site": 6,
+    "kit": 11,
+    "manquants": [],
+    "enTrop": [
+     "Atelier Lestraque",
+     "Prestations",
+     "Réalisations",
+     "Communes",
+     "Questions"
+    ]
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "heros-escalier-1600.avif",
+      "w": 1440,
+      "h": 900,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "heros-escalier-1600.webp",
+      "w": 1440,
+      "h": 900,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     900
+    ],
+    "tailleB": [
+     1440,
+     900
+    ],
+    "pixelsDifferents": 18466,
+    "pct": 1.425,
+    "ecartMoyen": 7.73,
+    "bandes": [
+     [
+      29,
+      51
+     ],
+     [
+      169,
+      172
+     ],
+     [
+      183,
+      186
+     ],
+     [
+      190,
+      195
+     ],
+     [
+      284,
+      304
+     ],
+     [
+      390,
+      426
+     ],
+     [
+      439,
+      443
+     ],
+     [
+      444,
+      463
+     ],
+     [
+      491,
+      503
+     ],
+     [
+      544,
+      547
+     ],
+     [
+      549,
+      557
+     ],
+     [
+      561,
+      579
+     ],
+     [
+      591,
+      627
+     ],
+     [
+      636,
+      639
+     ],
+     [
+      641,
+      652
+     ],
+     [
+      659,
+      693
+     ],
+     [
+      786,
+      799
+     ],
+     [
+      810,
+      823
+     ],
+     [
+      839,
+      845
+     ]
+    ]
+   }
+  },
+  "1440:cadre-02-plateau": {
+   "site": {
+    "x": 0,
+    "y": 900,
+    "w": 1440,
+    "h": 988
+   },
+   "kit": {
+    "x": 0,
+    "y": 7133,
+    "w": 1440,
+    "h": 988
+   },
+   "textes": {
+    "site": 27,
+    "kit": 27,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "mains-noyer-720.avif",
+      "w": 550,
+      "h": 367,
+      "x": 818,
+      "y": 144,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "mains-noyer-720.webp",
+      "w": 550,
+      "h": 367,
+      "x": 818,
+      "y": 144,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     988
+    ],
+    "tailleB": [
+     1440,
+     988
+    ],
+    "pixelsDifferents": 1780,
+    "pct": 0.125,
+    "ecartMoyen": 0.9,
+    "bandes": [
+     [
+      472,
+      485
+     ]
+    ]
+   }
+  },
+  "1440:cadre-03-prestations": {
+   "site": {
+    "x": 0,
+    "y": 1888,
+    "w": 1440,
+    "h": 1224
+   },
+   "kit": {
+    "x": 0,
+    "y": 9528,
+    "w": 1440,
+    "h": 1224
+   },
+   "textes": {
+    "site": 23,
+    "kit": 23,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [],
+    "kit": [],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     1224
+    ],
+    "tailleB": [
+     1440,
+     1224
+    ],
+    "pixelsDifferents": 12481,
+    "pct": 0.708,
+    "ecartMoyen": 1.01,
+    "bandes": [
+     [
+      129,
+      142
+     ],
+     [
+      163,
+      183
+     ],
+     [
+      200,
+      206
+     ],
+     [
+      227,
+      239
+     ],
+     [
+      243,
+      246
+     ],
+     [
+      247,
+      257
+     ],
+     [
+      267,
+      283
+     ],
+     [
+      522,
+      531
+     ],
+     [
+      713,
+      717
+     ],
+     [
+      724,
+      747
+     ],
+     [
+      816,
+      828
+     ]
+    ]
+   }
+  },
+  "1440:cadre-04-atelier": {
+   "site": {
+    "x": 0,
+    "y": 3112,
+    "w": 1440,
+    "h": 900
+   },
+   "kit": {
+    "x": 0,
+    "y": 14265,
+    "w": 1440,
+    "h": 900
+   },
+   "textes": {
+    "site": 12,
+    "kit": 12,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "atelier-poncage-1600.avif",
+      "w": 1440,
+      "h": 900,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "atelier-poncage-1600.webp",
+      "w": 1440,
+      "h": 900,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     900
+    ],
+    "tailleB": [
+     1440,
+     900
+    ],
+    "pixelsDifferents": 3,
+    "pct": 0,
+    "ecartMoyen": 1.94,
+    "bandes": []
+   }
+  },
+  "1440:cadre-05-realisations": {
+   "site": {
+    "x": 0,
+    "y": 4012,
+    "w": 1440,
+    "h": 1481
+   },
+   "kit": {
+    "x": 0,
+    "y": 16217,
+    "w": 1440,
+    "h": 1481
+   },
+   "textes": {
+    "site": 13,
+    "kit": 13,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "reserve-bibliotheque-960.avif",
+      "w": 856,
+      "h": 482,
+      "x": 72,
+      "y": 292,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-960.avif",
+      "w": 417,
+      "h": 479,
+      "x": 951,
+      "y": 292,
+      "op": ""
+     },
+     {
+      "src": "penderie-960.avif",
+      "w": 636,
+      "h": 398,
+      "x": 72,
+      "y": 860,
+      "op": ""
+     },
+     {
+      "src": "heros-escalier-1600.avif",
+      "w": 636,
+      "h": 398,
+      "x": 732,
+      "y": 860,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "reserve-bibliotheque-960.webp",
+      "w": 856,
+      "h": 482,
+      "x": 72,
+      "y": 292,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-960.webp",
+      "w": 417,
+      "h": 479,
+      "x": 951,
+      "y": 292,
+      "op": ""
+     },
+     {
+      "src": "penderie-960.webp",
+      "w": 636,
+      "h": 398,
+      "x": 72,
+      "y": 860,
+      "op": ""
+     },
+     {
+      "src": "heros-escalier-960.webp",
+      "w": 636,
+      "h": 398,
+      "x": 732,
+      "y": 860,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     1481
+    ],
+    "tailleB": [
+     1440,
+     1481
+    ],
+    "pixelsDifferents": 16821,
+    "pct": 0.789,
+    "ecartMoyen": 2.9,
+    "bandes": [
+     [
+      788,
+      804
+     ],
+     [
+      980,
+      983
+     ],
+     [
+      1054,
+      1058
+     ],
+     [
+      1249,
+      1258
+     ],
+     [
+      1275,
+      1288
+     ],
+     [
+      1359,
+      1373
+     ]
+    ]
+   }
+  },
+  "1440:cadre-06-communes": {
+   "site": {
+    "x": 0,
+    "y": 5493,
+    "w": 1440,
+    "h": 509
+   },
+   "kit": {
+    "x": 0,
+    "y": 18866,
+    "w": 1440,
+    "h": 509
+   },
+   "textes": {
+    "site": 8,
+    "kit": 8,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [],
+    "kit": [],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     509
+    ],
+    "tailleB": [
+     1440,
+     509
+    ],
+    "pixelsDifferents": 6194,
+    "pct": 0.845,
+    "ecartMoyen": 1.41,
+    "bandes": [
+     [
+      289,
+      305
+     ],
+     [
+      306,
+      347
+     ]
+    ]
+   }
+  },
+  "1440:cadre-07-etapes": {
+   "site": {
+    "x": 0,
+    "y": 6001,
+    "w": 1440,
+    "h": 1022
+   },
+   "kit": {
+    "x": 0,
+    "y": 20382,
+    "w": 1440,
+    "h": 1022
+   },
+   "textes": {
+    "site": 27,
+    "kit": 27,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "eclate.avif",
+      "w": 480,
+      "h": 360,
+      "x": 72,
+      "y": 442,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "eclate.webp",
+      "w": 480,
+      "h": 360,
+      "x": 72,
+      "y": 442,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     1022
+    ],
+    "tailleB": [
+     1440,
+     1022
+    ],
+    "pixelsDifferents": 35187,
+    "pct": 2.391,
+    "ecartMoyen": 3.04,
+    "bandes": [
+     [
+      132,
+      141
+     ],
+     [
+      174,
+      211
+     ],
+     [
+      214,
+      217
+     ],
+     [
+      219,
+      259
+     ],
+     [
+      295,
+      309
+     ],
+     [
+      337,
+      374
+     ],
+     [
+      382,
+      408
+     ],
+     [
+      416,
+      434
+     ],
+     [
+      515,
+      558
+     ],
+     [
+      564,
+      583
+     ],
+     [
+      587,
+      608
+     ],
+     [
+      614,
+      617
+     ],
+     [
+      622,
+      633
+     ],
+     [
+      688,
+      719
+     ],
+     [
+      722,
+      726
+     ],
+     [
+      739,
+      756
+     ],
+     [
+      762,
+      780
+     ],
+     [
+      821,
+      835
+     ],
+     [
+      850,
+      862
+     ],
+     [
+      881,
+      889
+     ]
+    ]
+   }
+  },
+  "1440:cadre-08-questions": {
+   "site": {
+    "x": 0,
+    "y": 7024,
+    "w": 1440,
+    "h": 743
+   },
+   "kit": {
+    "x": 0,
+    "y": 22353,
+    "w": 1440,
+    "h": 743
+   },
+   "textes": {
+    "site": 11,
+    "kit": 11,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "tasseaux-cloison-780.avif",
+      "w": 478,
+      "h": 280,
+      "x": 72,
+      "y": 347,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "tasseaux-cloison-780.webp",
+      "w": 478,
+      "h": 280,
+      "x": 72,
+      "y": 347,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     743
+    ],
+    "tailleB": [
+     1440,
+     743
+    ],
+    "pixelsDifferents": 4604,
+    "pct": 0.43,
+    "ecartMoyen": 1.31,
+    "bandes": [
+     [
+      237,
+      256
+     ]
+    ]
+   }
+  },
+  "1440:cadre-09-contact": {
+   "site": {
+    "x": 0,
+    "y": 7766,
+    "w": 1440,
+    "h": 902
+   },
+   "kit": {
+    "x": 0,
+    "y": 24200,
+    "w": 1440,
+    "h": 902
+   },
+   "textes": {
+    "site": 22,
+    "kit": 22,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "boiserie-1600.avif",
+      "w": 1440,
+      "h": 902,
+      "x": 0,
+      "y": 0,
+      "op": "85% 40%"
+     }
+    ],
+    "kit": [
+     {
+      "src": "boiserie-1600.webp",
+      "w": 1440,
+      "h": 902,
+      "x": 0,
+      "y": 0,
+      "op": "85% 40%"
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     902
+    ],
+    "tailleB": [
+     1440,
+     902
+    ],
+    "pixelsDifferents": 4953,
+    "pct": 0.381,
+    "ecartMoyen": 1.28,
+    "bandes": [
+     [
+      335,
+      345
+     ],
+     [
+      586,
+      599
+     ],
+     [
+      646,
+      656
+     ],
+     [
+      670,
+      685
+     ]
+    ]
+   }
+  },
+  "1440:cadre-10-pied": {
+   "site": {
+    "x": 0,
+    "y": 8668,
+    "w": 1440,
+    "h": 306
+   },
+   "kit": {
+    "x": 0,
+    "y": 27075,
+    "w": 1440,
+    "h": 306
+   },
+   "textes": {
+    "site": 15,
+    "kit": 15,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [],
+    "kit": [],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     1440,
+     306
+    ],
+    "tailleB": [
+     1440,
+     306
+    ],
+    "pixelsDifferents": 697,
+    "pct": 0.158,
+    "ecartMoyen": 0.17,
+    "bandes": [
+     [
+      61,
+      71
+     ]
+    ]
+   }
+  },
+  "390:cadre-01-heros": {
+   "site": {
+    "x": 0,
+    "y": 0,
+    "w": 390,
+    "h": 844
+   },
+   "kit": {
+    "x": 0,
+    "y": 8958,
+    "w": 390,
+    "h": 844
+   },
+   "textes": {
+    "site": 6,
+    "kit": 8,
+    "manquants": [],
+    "enTrop": [
+     "Atelier Lestraque",
+     "Devis"
+    ]
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "heros-escalier-portrait-720.avif",
+      "w": 491,
+      "h": 1063,
+      "x": -51,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "heros-escalier-portrait-720.webp",
+      "w": 491,
+      "h": 1063,
+      "x": -51,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     844
+    ],
+    "tailleB": [
+     390,
+     844
+    ],
+    "pixelsDifferents": 16398,
+    "pct": 4.982,
+    "ecartMoyen": 11.84,
+    "bandes": [
+     [
+      32,
+      47
+     ],
+     [
+      48,
+      51
+     ],
+     [
+      124,
+      211
+     ],
+     [
+      249,
+      333
+     ],
+     [
+      334,
+      403
+     ],
+     [
+      763,
+      771
+     ]
+    ]
+   }
+  },
+  "390:cadre-02-plateau": {
+   "site": {
+    "x": 0,
+    "y": 844,
+    "w": 390,
+    "h": 929
+   },
+   "kit": {
+    "x": 0,
+    "y": 11517,
+    "w": 390,
+    "h": 929
+   },
+   "textes": {
+    "site": 27,
+    "kit": 27,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "mains-noyer-480.avif",
+      "w": 390,
+      "h": 260,
+      "x": 0,
+      "y": 669,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "mains-noyer-480.webp",
+      "w": 390,
+      "h": 260,
+      "x": 0,
+      "y": 669,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     929
+    ],
+    "tailleB": [
+     390,
+     929
+    ],
+    "pixelsDifferents": 15211,
+    "pct": 4.198,
+    "ecartMoyen": 7.27,
+    "bandes": [
+     [
+      139,
+      146
+     ],
+     [
+      148,
+      175
+     ],
+     [
+      179,
+      185
+     ],
+     [
+      187,
+      206
+     ],
+     [
+      211,
+      214
+     ],
+     [
+      238,
+      249
+     ],
+     [
+      258,
+      268
+     ],
+     [
+      288,
+      301
+     ],
+     [
+      309,
+      323
+     ],
+     [
+      335,
+      339
+     ],
+     [
+      340,
+      344
+     ],
+     [
+      401,
+      424
+     ],
+     [
+      432,
+      451
+     ],
+     [
+      484,
+      510
+     ],
+     [
+      511,
+      534
+     ],
+     [
+      575,
+      590
+     ],
+     [
+      596,
+      609
+     ],
+     [
+      680,
+      686
+     ],
+     [
+      688,
+      695
+     ],
+     [
+      696,
+      700
+     ],
+     [
+      704,
+      707
+     ],
+     [
+      746,
+      750
+     ],
+     [
+      751,
+      767
+     ],
+     [
+      768,
+      776
+     ],
+     [
+      777,
+      844
+     ],
+     [
+      845,
+      848
+     ],
+     [
+      855,
+      858
+     ],
+     [
+      859,
+      862
+     ],
+     [
+      863,
+      866
+     ],
+     [
+      872,
+      880
+     ],
+     [
+      889,
+      896
+     ],
+     [
+      897,
+      900
+     ],
+     [
+      903,
+      922
+     ]
+    ]
+   }
+  },
+  "390:cadre-03-prestations": {
+   "site": {
+    "x": 0,
+    "y": 1773,
+    "w": 390,
+    "h": 968
+   },
+   "kit": {
+    "x": 0,
+    "y": 15233,
+    "w": 390,
+    "h": 968
+   },
+   "textes": {
+    "site": 23,
+    "kit": 23,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "tournage-copeaux-480.avif",
+      "w": 312,
+      "h": 390,
+      "x": 20,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "penderie-480.avif",
+      "w": 312,
+      "h": 390,
+      "x": 351,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "reserve-bibliotheque-480.avif",
+      "w": 312,
+      "h": 390,
+      "x": 683,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "atelier-poncage-480.avif",
+      "w": 312,
+      "h": 390,
+      "x": 1014,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-480.avif",
+      "w": 312,
+      "h": 390,
+      "x": 1346,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "boiserie-960.avif",
+      "w": 312,
+      "h": 390,
+      "x": 1677,
+      "y": 267,
+      "op": "100% 50%"
+     }
+    ],
+    "kit": [
+     {
+      "src": "tournage-copeaux-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 20,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "penderie-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 351,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "reserve-bibliotheque-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 683,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "atelier-poncage-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 1014,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 1346,
+      "y": 267,
+      "op": ""
+     },
+     {
+      "src": "boiserie-480.webp",
+      "w": 312,
+      "h": 390,
+      "x": 1677,
+      "y": 267,
+      "op": "100% 50%"
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     968
+    ],
+    "tailleB": [
+     390,
+     968
+    ],
+    "pixelsDifferents": 1539,
+    "pct": 0.408,
+    "ecartMoyen": 2.41,
+    "bandes": [
+     [
+      833,
+      846
+     ]
+    ]
+   }
+  },
+  "390:cadre-04-atelier": {
+   "site": {
+    "x": 0,
+    "y": 2741,
+    "w": 390,
+    "h": 844
+   },
+   "kit": {
+    "x": 0,
+    "y": 24534,
+    "w": 390,
+    "h": 844
+   },
+   "textes": {
+    "site": 12,
+    "kit": 12,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "atelier-poncage-portrait-720.avif",
+      "w": 390,
+      "h": 844,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "atelier-poncage-portrait-720.webp",
+      "w": 390,
+      "h": 844,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     844
+    ],
+    "tailleB": [
+     390,
+     844
+    ],
+    "pixelsDifferents": 746,
+    "pct": 0.227,
+    "ecartMoyen": 2.39,
+    "bandes": [
+     [
+      783,
+      796
+     ]
+    ]
+   }
+  },
+  "390:cadre-05-realisations": {
+   "site": {
+    "x": 0,
+    "y": 3585,
+    "w": 390,
+    "h": 922
+   },
+   "kit": {
+    "x": 0,
+    "y": 27471,
+    "w": 390,
+    "h": 922
+   },
+   "textes": {
+    "site": 13,
+    "kit": 13,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "reserve-bibliotheque-480.avif",
+      "w": 332,
+      "h": 414,
+      "x": 20,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-480.avif",
+      "w": 332,
+      "h": 414,
+      "x": 367,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "penderie-480.avif",
+      "w": 332,
+      "h": 414,
+      "x": 714,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "heros-escalier-480.avif",
+      "w": 332,
+      "h": 414,
+      "x": 1061,
+      "y": 239,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "reserve-bibliotheque-480.webp",
+      "w": 332,
+      "h": 414,
+      "x": 20,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "reserve-cuisine-poutres-480.webp",
+      "w": 332,
+      "h": 414,
+      "x": 367,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "penderie-480.webp",
+      "w": 332,
+      "h": 414,
+      "x": 714,
+      "y": 239,
+      "op": ""
+     },
+     {
+      "src": "heros-escalier-480.webp",
+      "w": 332,
+      "h": 414,
+      "x": 1061,
+      "y": 239,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     922
+    ],
+    "tailleB": [
+     390,
+     922
+    ],
+    "pixelsDifferents": 6809,
+    "pct": 1.894,
+    "ecartMoyen": 3.94,
+    "bandes": [
+     [
+      160,
+      178
+     ],
+     [
+      190,
+      201
+     ],
+     [
+      770,
+      784
+     ],
+     [
+      789,
+      802
+     ],
+     [
+      866,
+      878
+     ]
+    ]
+   }
+  },
+  "390:cadre-06-communes": {
+   "site": {
+    "x": 0,
+    "y": 4507,
+    "w": 390,
+    "h": 429
+   },
+   "kit": {
+    "x": 0,
+    "y": 32510,
+    "w": 390,
+    "h": 429
+   },
+   "textes": {
+    "site": 8,
+    "kit": 8,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [],
+    "kit": [],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     429
+    ],
+    "tailleB": [
+     390,
+     429
+    ],
+    "pixelsDifferents": 0,
+    "pct": 0,
+    "ecartMoyen": 0.02,
+    "bandes": []
+   }
+  },
+  "390:cadre-07-etapes": {
+   "site": {
+    "x": 0,
+    "y": 4935,
+    "w": 390,
+    "h": 879
+   },
+   "kit": {
+    "x": 0,
+    "y": 34859,
+    "w": 390,
+    "h": 879
+   },
+   "textes": {
+    "site": 27,
+    "kit": 27,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "eclate.avif",
+      "w": 390,
+      "h": 293,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "eclate.webp",
+      "w": 390,
+      "h": 293,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     879
+    ],
+    "tailleB": [
+     390,
+     879
+    ],
+    "pixelsDifferents": 3,
+    "pct": 0.001,
+    "ecartMoyen": 0.43,
+    "bandes": []
+   }
+  },
+  "390:cadre-08-questions": {
+   "site": {
+    "x": 0,
+    "y": 5815,
+    "w": 390,
+    "h": 913
+   },
+   "kit": {
+    "x": 0,
+    "y": 38922,
+    "w": 390,
+    "h": 913
+   },
+   "textes": {
+    "site": 11,
+    "kit": 11,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "tasseaux-cloison-480.avif",
+      "w": 390,
+      "h": 260,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "kit": [
+     {
+      "src": "tasseaux-cloison-480.webp",
+      "w": 390,
+      "h": 260,
+      "x": 0,
+      "y": 0,
+      "op": ""
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     913
+    ],
+    "tailleB": [
+     390,
+     913
+    ],
+    "pixelsDifferents": 10924,
+    "pct": 3.068,
+    "ecartMoyen": 5.79,
+    "bandes": [
+     [
+      366,
+      380
+     ],
+     [
+      396,
+      406
+     ],
+     [
+      468,
+      486
+     ],
+     [
+      491,
+      509
+     ],
+     [
+      575,
+      589
+     ],
+     [
+      597,
+      612
+     ],
+     [
+      683,
+      701
+     ],
+     [
+      706,
+      720
+     ],
+     [
+      794,
+      808
+     ]
+    ]
+   }
+  },
+  "390:cadre-09-contact": {
+   "site": {
+    "x": 0,
+    "y": 6727,
+    "w": 390,
+    "h": 1293
+   },
+   "kit": {
+    "x": 0,
+    "y": 42950,
+    "w": 390,
+    "h": 1293
+   },
+   "textes": {
+    "site": 22,
+    "kit": 22,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [
+     {
+      "src": "boiserie-960.avif",
+      "w": 390,
+      "h": 1293,
+      "x": 0,
+      "y": 0,
+      "op": "85% 40%"
+     }
+    ],
+    "kit": [
+     {
+      "src": "boiserie-960.webp",
+      "w": 390,
+      "h": 1293,
+      "x": 0,
+      "y": 0,
+      "op": "85% 40%"
+     }
+    ],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     1293
+    ],
+    "tailleB": [
+     390,
+     1293
+    ],
+    "pixelsDifferents": 4823,
+    "pct": 0.956,
+    "ecartMoyen": 2.78,
+    "bandes": [
+     [
+      279,
+      294
+     ],
+     [
+      745,
+      753
+     ],
+     [
+      764,
+      777
+     ],
+     [
+      782,
+      790
+     ],
+     [
+      1029,
+      1044
+     ],
+     [
+      1136,
+      1146
+     ],
+     [
+      1184,
+      1197
+     ],
+     [
+      1220,
+      1230
+     ]
+    ]
+   }
+  },
+  "390:cadre-10-pied": {
+   "site": {
+    "x": 0,
+    "y": 8020,
+    "w": 390,
+    "h": 405
+   },
+   "kit": {
+    "x": 0,
+    "y": 47099,
+    "w": 390,
+    "h": 405
+   },
+   "textes": {
+    "site": 15,
+    "kit": 15,
+    "manquants": [],
+    "enTrop": []
+   },
+   "ecartsStyle": [],
+   "images": {
+    "site": [],
+    "kit": [],
+    "videosSite": [],
+    "canvasSite": []
+   },
+   "pixels": {
+    "tailleA": [
+     390,
+     405
+    ],
+    "tailleB": [
+     390,
+     405
+    ],
+    "pixelsDifferents": 1205,
+    "pct": 0.763,
+    "ecartMoyen": 1.28,
+    "bandes": [
+     [
+      75,
+      86
+     ]
+    ]
+   }
+  }
+ },
+ "cadresKit": {},
+ "serveur404": []
+}

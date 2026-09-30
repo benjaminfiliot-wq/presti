@@ -1,0 +1,18 @@
+===== temoin
+  ✓ lestraque : 7 pages, 11 photos (11 auteurs), héros « plein », police Fraunces + IBM Plex Sans, styles.css 35.9 Ko
+code de sortie = 0
+index.html écrit ? OUI ; pages écrites : 7
+===== etapes-vides
+  ✗ lestraque : lestraque/ : la section étapes « Comment se déroule votre projet » n'a que 0 étape(s) lisible(s), 2 au moins attendues
+code de sortie = 1
+index.html écrit ? NON ; pages écrites : 0
+===== une-etape
+  ✗ lestraque : lestraque/ : la section étapes « Comment se déroule votre projet » n'a que 1 étape(s) lisible(s), 2 au moins attendues
+code de sortie = 1
+index.html écrit ? NON ; pages écrites : 0
+===== ancien-format-li
+  ✓ lestraque : 7 pages, 11 photos (11 auteurs), héros « plein », police Fraunces + IBM Plex Sans, styles.css 35.9 Ko
+code de sortie = 0
+index.html écrit ? OUI ; pages écrites : 7
+temoin li= 4 titres= Prise de contact | Visite technique | Devis &amp; sélection | Fabrication &amp; pose
+ancien-format-li li= 4 titres= Prise de contact | Visite technique | Devis &amp; sélection | Fabrication &amp; pose

@@ -1,0 +1,118 @@
+{
+ "date": "2026-09-15T16:55:36.891Z",
+ "releve": {
+  "octets": 12100,
+  "pixelsTrait": 15092,
+  "medianeRvb": [
+   244,
+   238,
+   226
+  ]
+ },
+ "alignement": {
+  "seuilSobel": 48,
+  "dilatationPx": 3,
+  "partSurArete": 0.937185263715876,
+  "partContourTrace": 0.8713629402756509,
+  "pixelsContour": 3265,
+  "seuilInterieur": 96,
+  "pixelsInterieurs": 7402,
+  "partInterieuresTracees": 0.7318292353417996
+ },
+ "rendus": {
+  "dossier": ".orchestre/preuves/021-22/rendus",
+  "sha256": {
+   "assemble.avif": "92118ca71bd110d887c803acad98882a82774a841cfb7e868ebf46768e86af56",
+   "eclate.avif": "1e2860df690e7808149ae334690ccc06321d418c4b2eef50c337405671560720",
+   "calque-limon.avif": "11a232598728e925ec9bcc070eb5eabec1f8f47a64bd98a3ccf8eced8b1f23ca",
+   "calque-marche.avif": "9c7578134f6720785e81d505cff8a21316ade6f0920ad36f023755bdee5dbc3d",
+   "calque-contremarche.avif": "95c8b9e50fe668c111003329ee963d1657550a664838f4e690e7dd8367ee6fb0",
+   "calque-vis.avif": "0d8d62a426e4dff31081d4efb47d30941007c035206c3560fc5ebdccb0dcbb14",
+   "eclate.json": "f79adb966782f00e6d48c0118bb087da879fb486eff5c4b8ff8eb50adbc0f503"
+  }
+ },
+ "concordance": {
+  "pixelsRelances": 15116,
+  "partLivreSurRelance": 1,
+  "partRelanceSurLivre": 1,
+  "dureeS": 17
+ },
+ "cotes": [
+  {
+   "texte": "40 mm",
+   "piece": "marche",
+   "a": [
+    0.396,
+    0.45,
+    0.54
+   ],
+   "b": [
+    0.396,
+    0.45,
+    0.5
+   ],
+   "x1": 0.682239,
+   "y1": 0.448453,
+   "x2": 0.682239,
+   "y2": 0.468606,
+   "longueurPx": 21.160650000000032,
+   "distancesAuTraitPx": [
+    0.18324869030916086,
+    0.13940893084744416
+   ],
+   "scene": {
+    "texte": "40 mm",
+    "longueur_mm": 40.00002132262466,
+    "projete": [
+     0.6822385787963867,
+     0.4484533667564392,
+     0.6822385787963867,
+     0.46860647201538086
+    ],
+    "trouvee": true,
+    "distances_mm": [
+     1.2426155400074281,
+     1.2426576700593432
+    ]
+   }
+  },
+  {
+   "texte": "17 mm",
+   "piece": "limon",
+   "a": [
+    -0.383,
+    0.2095,
+    0.3605
+   ],
+   "b": [
+    -0.4005,
+    0.2095,
+    0.3605
+   ],
+   "x1": 0.364761,
+   "y1": 0.459484,
+   "x2": 0.359094,
+   "y2": 0.456658,
+   "longueurPx": 8.470540226573478,
+   "distancesAuTraitPx": [
+    0.5673661956796457,
+    6.751919828463587
+   ],
+   "scene": {
+    "texte": "17 mm",
+    "longueur_mm": 17.500013408379015,
+    "projete": [
+     0.3647609055042267,
+     0.4594842791557312,
+     0.35909366607666016,
+     0.45665836334228516
+    ],
+    "trouvee": true,
+    "distances_mm": [
+     0,
+     0
+    ]
+   }
+  }
+ ]
+}

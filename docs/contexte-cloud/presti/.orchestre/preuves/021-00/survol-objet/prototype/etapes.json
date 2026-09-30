@@ -1,0 +1,110 @@
+{
+ "plan": [
+  {
+   "id": "ouverture",
+   "haut": 0,
+   "hauteur": 1888
+  },
+  {
+   "id": "prestations",
+   "haut": 1888,
+   "hauteur": 1125
+  },
+  {
+   "id": "atelier",
+   "haut": 3013,
+   "hauteur": 900
+  },
+  {
+   "id": "realisations",
+   "haut": 3913,
+   "hauteur": 1656
+  },
+  {
+   "id": "communes",
+   "haut": 5569,
+   "hauteur": 509
+  },
+  {
+   "id": "etapes",
+   "haut": 6078,
+   "hauteur": 2700
+  },
+  {
+   "id": "questions",
+   "haut": 8778,
+   "hauteur": 743
+  },
+  {
+   "id": "contact",
+   "haut": 9520,
+   "hauteur": 902
+  }
+ ],
+ "mesures": [
+  {
+   "k": 0.1,
+   "y": 6258,
+   "photo": [
+    72,
+    470,
+    450,
+    338
+   ],
+   "actives": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "k": 0.35,
+   "y": 6708,
+   "photo": [
+    72,
+    470,
+    450,
+    338
+   ],
+   "actives": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "k": 0.6,
+   "y": 7158,
+   "photo": [
+    72,
+    470,
+    450,
+    338
+   ],
+   "actives": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "k": 0.85,
+   "y": 7608,
+   "photo": [
+    72,
+    470,
+    450,
+    338
+   ],
+   "actives": [
+    1,
+    1,
+    1,
+    1
+   ]
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+S1 règle des 10 minutes neutralisée : code 1 — ❌ RP-10 typecheck : tsc --noEmit en code 2 : 1 erreur(s) — lib/agents/acquisition/repondeur.ts(342,54): error TS2345: Argument of type 'string | null' is not as | ❌ RP-12 question reçue 4 min après notre dernier envoi (une réponse) : un envoi a quand même été préparé ; question trop rapide : aucun événement reponse_trop_r
+S2 entrant : ancien modèle v1 : code 1 — ❌ RP-4 Meta : canal undefined, messagerie attendu ; Meta : destinataire undefined, l'identifiant Meta attendu | ❌ RP-10 typecheck : tsc --noEmit en code 2 : 1 erreur(s) — app/api/cron/repondeur/route.ts(32,28): error TS2307: Cannot find module '@/lib/studio/xoffre' or its | ❌ RP-14 entrant sans candidat : modele null, questions_entrant_v2 attendu
+S3 fil rompu (fil_envoi_id jamais posé) : code 1 — ❌ RP-4 courriel : fil_envoi_id undefined, "envoi-0003" (l'envoi d'origine) attendu
+S4 relance sans attendre 4 jours : code 1 — ❌ RP-15 lien_maquette de 3 jours : une relance a été préparée (trop tôt)
+S5 réponse privée hors fenêtre de 7 jours : code 0 — AUCUN critère rouge (sabotage NON pris)
+S6 offre du Studio remplacée par un second accusé : code 1 — ❌ RP-16 « oui » après l'échantillon : modele_id "studio_accuse_v1", studio_offre_v1 attendu (et non un second accusé)

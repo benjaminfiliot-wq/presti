@@ -1,0 +1,317 @@
+{
+ "erreurs": [],
+ "bureau": {
+  "liensNav": [
+   {
+    "a": "Prestations",
+    "hash": "#prestations",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Ce que l’atelier fabrique"
+   },
+   {
+    "a": "Réalisations",
+    "hash": "#realisations",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Pièces livrées"
+   },
+   {
+    "a": "Communes",
+    "hash": "#communes",
+    "titreTop": 171,
+    "basNav": 78,
+    "titre": "Autour de Rennes"
+   },
+   {
+    "a": "Questions",
+    "hash": "#questions",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Vos questions"
+   }
+  ],
+  "telNav": {
+   "href": "tel:+33 2 61 91 38 47",
+   "urlAvant": "http://127.0.0.1:52852/index.html#questions",
+   "urlApres": "http://127.0.0.1:52852/index.html#questions"
+  },
+  "apresClicHeros": {
+   "hash": "#contact",
+   "formsDansContact": 1,
+   "formEntierVisible": true,
+   "formTop": 203,
+   "formBas": 595,
+   "premierChampTop": 229,
+   "champs": [
+    "Votre projet",
+    "Commune",
+    "Quand",
+    "La pièce, l’usage, le bois",
+    "Téléphone ou e-mail"
+   ],
+   "bouton": {
+    "texte": "Envoyer ma demande",
+    "fond": "rgb(244, 237, 226)",
+    "couleur": "rgb(20, 17, 14)"
+   }
+  },
+  "envoiVide": {
+   "formCache": false,
+   "merciVisible": false,
+   "invalides": [
+    "devis-projet",
+    "devis-contact"
+   ]
+  },
+  "envoiRempli": {
+   "formCache": true,
+   "merciVisible": true,
+   "merci": "Demande reçue.\n\nJe vous rappelle sous deux jours ouvrés pour fixer une visite.\n\nPROJET\nBibliothèque\nCOMMUNE\nBruz\nQUAND\nDans trois à six mois\n\nLA SUITE\n\n02\nVisite technique\n\nJe relève les cotes chez vous et je vérifie les aplombs, l’humidité des murs et les accès.\n\n03\nDevis & sélection\n\nVous recevez le plan, le choix des essences et des ferrures, et un devis ligne par ligne.\n\n04\nFabrication & pose\n\nLes pièces sont usinées et assemblées à l’atelier, puis posées chez vous à la date fixée ensemble.\n\nDémonstration : aucune donnée n’a été envoyée.\n\nFaire une autre demande",
+   "recap": [
+    "Bibliothèque",
+    "Bruz",
+    "Dans trois à six mois"
+   ],
+   "url": "http://127.0.0.1:52852/index.html#contact",
+   "stockage": 0,
+   "merciTop": 203,
+   "apresAutreDemande": {
+    "formVisible": true,
+    "merciCache": true,
+    "projet": ""
+   }
+  },
+  "ligneCredits": {
+   "texte": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Crew (CC0), Shixart1985 (CC BY 2.0), Ian Schneider (CC0), Bertrand from Paris, France (CC BY 2.0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications",
+   "opacite": "1",
+   "couleur": "rgba(244, 237, 226, 0.74)",
+   "lien": "mentions-legales/index.html#credits"
+  },
+  "pageCredits": {
+   "url": "/mentions-legales/index.html#credits",
+   "creditsTag": "H2",
+   "creditsTop": 88,
+   "basNav": 78,
+   "visible": true,
+   "blocHeros": "Escalier hélicoïdal en bois massif\n— Petar Milošević\n(CC BY-SA 4.0)\nModifiée — adaptation : étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.\npage du fichier\nPonçage à la main d’une pièce chantournée\n— Shixart1985\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nPenderie en bois, tringle et quatre cintres\n— ",
+   "modifiee": 8,
+   "ccBySa4": 2,
+   "entrees": 8,
+   "texte": "Identification de l’entreprise\n\nSite de démonstration : entreprise fictive créée à des fins de présentation technique des capacités logicielles.\n\nNom commercial : Atelier Lestraque\n\nAdresse du siège social : 1 rue de la Démonstration, 35000 Rennes, France\n\nNuméro SIREN : 000000000\n\nTéléphone de contact : +33 2 61 91 38 47\n\nCourrier électronique : contact@menuisier.demo.invalid\n\nDirecteur de publication : Benjamin Filiot (Fondateur Presti)\n\nAssurance responsabilité décennale\n\nConformément aux articles L. 241-1 et suivants du Code des assurances, l’entreprise est couverte par un contrat d’assurance décennale obligatoire :\n\nCompagnie d’assurance : Assureur fictif\n\nNuméro de police : DEMO-0001\n\nCouverture géographique : France métropolitaine\n\nHébergement du site\n\nLe site est hébergé sur une infrastructure de distribution de fichiers statiques sécurisée :\n\nPlateforme Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis.\n\nPropriété intellectuelle et crédits photographiques\n\nLes photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.\n\nEscalier hélicoïdal en bois massif\n— Petar Milošević\n(CC BY-SA 4.0)\nModifiée — adaptation : étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.\npage du fichier\nPonçage à la main d’une pièce chantournée\n— Shixart1985\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nPenderie en bois, tringle et quatre cintres\n— Shixart1985\n(CC BY 2.0)\nModifiée : recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nBoiseries et placards intégrés en bois sombre\n— Crew\n(CC0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nCuisine au plan de travail en bois massif, claustra à lames\n— Shixart1985\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nTournage sur bois, copeaux en vol\n— Bertrand from Paris, France\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nMains posées sur une planche de noyer, sciure au sol\n— Ian Schneider\n(CC0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier",
+   "icone": "http://127.0.0.1:52852/favicon.svg"
+  },
+  "communes": {
+   "h3": 0,
+   "small": 0,
+   "noms": [
+    "Rennes:101px",
+    "Cesson-Sévigné:101px",
+    "Bruz:101px",
+    "Saint-Grégoire:101px"
+   ]
+  },
+  "rennes": {
+   "url": "/menuisier-rennes/index.html",
+   "title": "Artisan menuisier à Rennes — Atelier Lestraque",
+   "h1": "MENUISIER À RENNES Escaliers et agencement",
+   "photo": "boiserie-1600.avif",
+   "icone": "http://127.0.0.1:52852/favicon.svg",
+   "boutons": [
+    "Demander un devis → #contact",
+    "Demander un devis → #contact"
+   ],
+   "liensRetour": [
+    "Accueil → ../index.html",
+    "Accueil → ../index.html",
+    "Retour à l’accueil → ../index.html",
+    "Accueil → ../index.html"
+   ],
+   "communePreselect": "Rennes",
+   "texteDebut": "Accueil\n/\nRennes\nMENUISIER À RENNES\nEscaliers et agencement\n\nEscaliers, dressings et bibliothèques fabriqués à l’atelier, à Rennes, et posés chez vous.\n\nDemander un devis\nPRESTATIONS\nMenuiserie sur mesure à Rennes\n\nDu relevé à la pose, l’atelier suit votre projet à Rennes, pour une maison comme pour un local professionnel.\n\n01\nAgencement sur mesure\n\nDressings, meubles vasques en bois, placards sous escalier et bibliothèques, dessinés pour votre logement à Rennes.\n\n02\nEscaliers et balustrades\n\nEscaliers intérieurs dessinés pour la trémie et l’architecture du logement, à Rennes, avec garde-corps assortis.\n\n03\nParquets et finitions bois\n\nRénovation et pose de parquets massifs ou contrecollés, plinthes et habillages muraux.\n\nRÉALISATIONS\nRéalisations en atelier et sur chantier\n\nQuelques ouvrages sortis de l’atelier.\n\n01\nMains posées sur une planche de noyer, sciure au sol\n02\nPenderie en bois, tringle et quatre cintres\n03\nTournage sur bois, copeaux en vol\n04\nCuisine au plan de travail en bois massif, claustra à lames\n\nPhotographies : Crew (CC0), Shixart1985 (CC BY 2.0), Ian Schneider (CC0), Bertrand from Paris, France (CC BY 2.0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications\n\nÀ PROXIMITÉ\nCommunes limitrophes et voisines\n\nL’atelier se déplace aussi dans les communes voisines.\n\nCesson-Sévigné\nBruz\nSaint-Grégoire\n\nRetour à l’accueil\n\nCONTACT\nPrendre contact pour un projet à Rennes\n\nAprès la visite, j",
+   "apresClic": {
+    "hash": "#contact",
+    "form": true,
+    "premierChampTop": 229
+   }
+  },
+  "consoleErreurs": []
+ },
+ "mobile": {
+  "menu": {
+   "apresTapBurger": {
+    "panneau": true,
+    "body": true,
+    "aria": "true",
+    "label": "Fermer le menu"
+   },
+   "dessusCentreBurger": "burger",
+   "entrees": [
+    "Prestations",
+    "Réalisations",
+    "Communes",
+    "Questions",
+    "Contact",
+    "Rennes",
+    "Cesson-Sévigné",
+    "Bruz",
+    "Saint-Grégoire",
+    "Demander un devis"
+   ],
+   "voile": {
+    "opacite": "1",
+    "fond": "rgba(20, 15, 10, 0.55)",
+    "pointer": "auto"
+   },
+   "boutonPanneau": {
+    "fond": "rgb(244, 237, 226)",
+    "couleur": "rgb(31, 22, 14)",
+    "panneau": "rgb(31, 22, 14)",
+    "visible": true,
+    "top": 429
+   },
+   "apresTapCroix": {
+    "panneau": false,
+    "body": false,
+    "aria": "false",
+    "label": "Ouvrir le menu"
+   },
+   "dessousDuTapDehors": "voile",
+   "apresTapDehors": {
+    "panneau": false,
+    "body": false,
+    "aria": "false",
+    "label": "Ouvrir le menu",
+    "y": 0,
+    "hash": "",
+    "avant": {
+     "y": 0,
+     "hash": ""
+    },
+    "point": {
+     "x": 195,
+     "y": 578.203125
+    }
+   }
+  },
+  "devisHeros": {
+   "hash": "#contact",
+   "premierChampTop": 362,
+   "premierChampBas": 410,
+   "innerHeight": 844
+  },
+  "devisPanneau": {
+   "panneau": false,
+   "body": false,
+   "aria": "false",
+   "label": "Ouvrir le menu",
+   "hash": "#contact",
+   "premierChampTop": 362
+  },
+  "envoiMobile": {
+   "merciVisible": true,
+   "merciTop": 104,
+   "recap": [
+    "Escalier",
+    "Rennes",
+    "Dans les trois mois"
+   ]
+  },
+  "ancreRealisations": {
+   "panneau": false,
+   "body": false,
+   "aria": "false",
+   "label": "Ouvrir le menu",
+   "surtitreTop": 152,
+   "basNav": 78
+  },
+  "legendes": [
+   {
+    "t": "Boiseries et placards intégrés en bois sombre",
+    "lignes": 1,
+    "largeurLegende": 320,
+    "largeurCarte": 351,
+    "cadre": 351
+   },
+   {
+    "t": "Penderie en bois, tringle et quatre cintres",
+    "lignes": 1,
+    "largeurLegende": 320,
+    "largeurCarte": 351,
+    "cadre": 351
+   },
+   {
+    "t": "Mains posées sur une planche de noyer, sciure au sol",
+    "lignes": 2,
+    "largeurLegende": 320,
+    "largeurCarte": 351,
+    "cadre": 351
+   },
+   {
+    "t": "Tournage sur bois, copeaux en vol",
+    "lignes": 1,
+    "largeurLegende": 320,
+    "largeurCarte": 351,
+    "cadre": 351
+   },
+   {
+    "t": "Cuisine au plan de travail en bois massif, claustra à lames",
+    "lignes": 2,
+    "largeurLegende": 320,
+    "largeurCarte": 351,
+    "cadre": 351
+   }
+  ],
+  "galerie": {
+   "opacite": "1",
+   "top": 364,
+   "bas": 479,
+   "lien": "mentions-legales/index.html#credits"
+  },
+  "bruz": {
+   "url": "/menuisier-bruz/index.html",
+   "h1": "MENUISIER À BRUZ Escaliers et agencement",
+   "photo": "mains-noyer-960.avif",
+   "communePreselect": "Bruz"
+  }
+ },
+ "vague1": {
+  "etapesLi": 4,
+  "etapesTitres": [
+   "Prise de contact",
+   "Visite technique",
+   "Devis & sélection",
+   "Fabrication & pose"
+  ],
+  "etapesNumCorps": [
+   "01:125px",
+   "02:125px",
+   "03:125px",
+   "04:125px"
+  ],
+  "teteCommenceParChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "ccDansLegendes": 0,
+  "olUlVides": 0,
+  "lienIcone": [
+   "favicon.svg image/svg+xml"
+  ],
+  "title": "Menuisier à Rennes — Atelier Lestraque"
+ },
+ "icone": {
+  "reponses": [
+   "200 /favicon.svg image/svg+xml"
+  ],
+  "direct": {
+   "statut": 200,
+   "type": "image/svg+xml",
+   "octets": 968
+  },
+  "creditsLien": {
+   "statut": 200,
+   "aIdCredits": true
+  }
+ },
+ "requetesNonGet": []
+}

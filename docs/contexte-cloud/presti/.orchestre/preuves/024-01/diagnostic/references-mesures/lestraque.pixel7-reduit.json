@@ -1,0 +1,216 @@
+{
+  "slug": "lestraque",
+  "url": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+  "profil": "pixel7-reduit",
+  "date": "2026-09-16T20:41:45.726Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 0,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 20,
+    "budgetEpuise": false,
+    "scrollYMax": 7583,
+    "parcoursVisuelMedian": 7301,
+    "hauteurDocument": 8422
+  },
+  "titre": "Menuisier à Rennes — Atelier Lestraque",
+  "styleJs": [],
+  "io": {
+    "n": 2,
+    "observe": 14,
+    "options": [
+      {
+        "rootMargin": "25% 0px 25% 0px"
+      },
+      {
+        "rootMargin": "0px 0px -761px 0px"
+      }
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "scroll:passif:window": 4,
+    "resize:non-precise:window": 1
+  },
+  "matchMedia": [
+    "(prefers-reduced-motion: reduce)",
+    "(min-width: 960px)",
+    "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+    "(hover: hover) and (pointer: fine)",
+    "(min-width: 1024px)",
+    "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+    "(min-width:1024px) and (hover:hover) and (pointer:fine)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [
+    [
+      "color | 0.001s | ease | delai 0s",
+      {
+        "n": 96,
+        "ex": "header.nav.nav--claire"
+      }
+    ],
+    [
+      "background-color | 0.001s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 26,
+        "ex": "span"
+      }
+    ],
+    [
+      "background-color | 0.001s | ease | delai 0s",
+      {
+        "n": 9,
+        "ex": "button.burger"
+      }
+    ],
+    [
+      "opacity | 0.001s | cubic-bezier(0.16, 1, 0.3, 1) | delai 0s",
+      {
+        "n": 6,
+        "ex": "span.etape__num"
+      }
+    ],
+    [
+      "opacity | 0.001s | ease | delai 0s",
+      {
+        "n": 2,
+        "ex": "header.nav.nav--claire"
+      }
+    ],
+    [
+      "text-shadow | 0.001s | ease | delai 0s",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ]
+  ],
+  "animationsCss": [
+    [
+      "jauge | 0.001s | linear | x1 | timeline --presta",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ],
+    [
+      "pousse | 0.001s | cubic-bezier(0.45, 0, 0.55, 1) | x1 | timeline auto",
+      {
+        "n": 1,
+        "ex": "img"
+      }
+    ],
+    [
+      "jauge | 0.001s | linear | x1 | timeline --galerie",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ],
+    [
+      "jauge | 0.001s | linear | x1 | timeline --etapes",
+      {
+        "n": 1,
+        "ex": "span"
+      }
+    ]
+  ],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 0
+  },
+  "classesRacine": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": true,
+  "imagesDecodingAsync": 20,
+  "imagesLazy": 20,
+  "images": 21,
+  "signaturesCss": {
+    "animation-timeline": true,
+    "view-timeline": true,
+    "scroll-timeline": true,
+    "view()": true,
+    "prefers-reduced-motion": true,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": true,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": true,
+    "will-change": false,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": true,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": false,
+    "ScrollTrigger": false,
+    "SplitText": false,
+    "split-type/splitting": false,
+    "lenis": false,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | jauge | 1 | linear | 1 | ScrollTimeline | transform",
+      {
+        "n": 61,
+        "ex": "span"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 10860
+    },
+    "image": {
+      "requetes": 13,
+      "octets": 668043
+    },
+    "stylesheet": {
+      "requetes": 2,
+      "octets": 22880
+    },
+    "font": {
+      "requetes": 5,
+      "octets": 87880
+    },
+    "script": {
+      "requetes": 1,
+      "octets": 16063
+    }
+  },
+  "octetsTotal": 805726
+}

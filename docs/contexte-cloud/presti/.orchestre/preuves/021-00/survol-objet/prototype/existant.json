@@ -1,0 +1,130 @@
+{
+ "bureau": {
+  "avant": {
+   "display": "block",
+   "clip": "inset(50% 0px)",
+   "transition": "clip-path 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
+   "w": 83.72718811035156,
+   "h": 93.0556640625
+  },
+  "suivi": [
+   {
+    "t": 0,
+    "clip": "inset(50% 0px)"
+   },
+   {
+    "t": 100,
+    "clip": "inset(14.0846% 0px)"
+   },
+   {
+    "t": 200,
+    "clip": "inset(3.148% 0px)"
+   },
+   {
+    "t": 300,
+    "clip": "inset(0.568596% 0px)"
+   },
+   {
+    "t": 550,
+    "clip": "inset(0px)"
+   },
+   {
+    "t": 900,
+    "clip": "inset(0px)"
+   }
+  ],
+  "focusablesParLigne": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "lignes": [
+   {
+    "titre": "Escaliers sur mesure",
+    "img": "images/tournage-copeaux-960.webp",
+    "h": 114
+   },
+   {
+    "titre": "Dressings et placards",
+    "img": "images/penderie-960.webp",
+    "h": 114
+   },
+   {
+    "titre": "Bibliothèques et meubles",
+    "img": "images/reserve-bibliotheque-960.webp",
+    "h": 114
+   },
+   {
+    "titre": "Parquets massifs",
+    "img": "images/atelier-poncage-960.webp",
+    "h": 114
+   },
+   {
+    "titre": "Cuisines et plans de travail",
+    "img": "images/reserve-cuisine-poutres-960.webp",
+    "h": 114
+   },
+   {
+    "titre": "Portes et verrières intérieures",
+    "img": "images/boiserie-960.webp",
+    "h": 114
+   }
+  ],
+  "galerieHover": "transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
+  "reseau": [
+   [
+    "images/heros-escalier-1600.avif",
+    112579
+   ],
+   [
+    "images/atelier-poncage-480.avif",
+    4986
+   ],
+   [
+    "images/boiserie-480.avif",
+    6735
+   ],
+   [
+    "images/penderie-480.avif",
+    7025
+   ],
+   [
+    "images/mains-noyer-720.avif",
+    21447
+   ],
+   [
+    "images/atelier-poncage-1600.avif",
+    28665
+   ],
+   [
+    "images/reserve-cuisine-poutres-480.avif",
+    8824
+   ],
+   [
+    "images/reserve-bibliotheque-480.avif",
+    12921
+   ],
+   [
+    "images/tournage-copeaux-480.avif",
+    8725
+   ],
+   [
+    "images/reserve-bibliotheque-960.avif",
+    37913
+   ],
+   [
+    "images/reserve-cuisine-poutres-960.avif",
+    22148
+   ]
+  ]
+ },
+ "tel": {
+  "display": "block",
+  "clip": "none",
+  "aspect": "4 / 5",
+  "hoverMatch": false
+ }
+}

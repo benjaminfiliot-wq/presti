@@ -1,0 +1,382 @@
+{
+ "390": {
+  "secs": [
+   {
+    "id": "hero",
+    "top": 0,
+    "h": 844,
+    "lab": [
+     39.2,
+     3.7,
+     16.3
+    ],
+    "luma": 95.9,
+    "lumaHaut30": 49.5,
+    "lumaBas30": 97.6
+   },
+   {
+    "id": "plateau",
+    "top": 844,
+    "h": 918,
+    "lab": [
+     9.3,
+     0.9,
+     2.2
+    ],
+    "luma": 27,
+    "lumaHaut30": 31.2,
+    "lumaBas30": 22.1
+   },
+   {
+    "id": "prestations",
+    "top": 1762,
+    "h": 614,
+    "lab": [
+     89.7,
+     0.7,
+     6.5
+    ],
+    "luma": 226.5,
+    "lumaHaut30": 221.9,
+    "lumaBas30": 231.9
+   },
+   {
+    "id": "atelier",
+    "top": 2376,
+    "h": 844,
+    "lab": [
+     36.5,
+     5.9,
+     16.6
+    ],
+    "luma": 87.8,
+    "lumaHaut30": 38.4,
+    "lumaBas30": 122.3
+   },
+   {
+    "id": "realisations",
+    "top": 3220,
+    "h": 2847,
+    "lab": [
+     26.2,
+     3.9,
+     11.8
+    ],
+    "luma": 64.1,
+    "lumaHaut30": 64,
+    "lumaBas30": 70.2
+   },
+   {
+    "id": "communes",
+    "top": 6067,
+    "h": 351,
+    "lab": [
+     89.7,
+     0.9,
+     6.3
+    ],
+    "luma": 226.3,
+    "lumaHaut30": 228.8,
+    "lumaBas30": 224.3
+   },
+   {
+    "id": "etapes",
+    "top": 6418,
+    "h": 1108,
+    "lab": [
+     9.7,
+     1,
+     2.7
+    ],
+    "luma": 27.6,
+    "lumaHaut30": 24.9,
+    "lumaBas30": 27.4
+   },
+   {
+    "id": "questions",
+    "top": 7526,
+    "h": 630,
+    "lab": [
+     90.9,
+     0.8,
+     6.2
+    ],
+    "luma": 229.5,
+    "lumaHaut30": 230.8,
+    "lumaBas30": 231.5
+   },
+   {
+    "id": "contact",
+    "top": 8156,
+    "h": 1261,
+    "lab": [
+     20.4,
+     1.9,
+     8.4
+    ],
+    "luma": 50.6,
+    "lumaHaut30": 63.5,
+    "lumaBas30": 27.7
+   },
+   {
+    "id": "pied",
+    "top": 9417,
+    "h": 651,
+    "lab": [
+     7.6,
+     0.9,
+     2
+    ],
+    "luma": 22.7,
+    "lumaHaut30": 24.2,
+    "lumaBas30": 22.9
+   }
+  ],
+  "voisins": [
+   {
+    "entre": "hero | plateau",
+    "de76Sections": 33.2,
+    "de2000Sections": 23.9,
+    "de76BasContreHaut": 33.1
+   },
+   {
+    "entre": "plateau | prestations",
+    "de76Sections": 80.5,
+    "de2000Sections": 80.4,
+    "de76BasContreHaut": 80.7
+   },
+   {
+    "entre": "prestations | atelier",
+    "de76Sections": 54.4,
+    "de2000Sections": 45.6,
+    "de76BasContreHaut": 77.2
+   },
+   {
+    "entre": "atelier | realisations",
+    "de76Sections": 11.5,
+    "de2000Sections": 8.7,
+    "de76BasContreHaut": 28.1
+   },
+   {
+    "entre": "realisations | communes",
+    "de76Sections": 63.8,
+    "de2000Sections": 57.7,
+    "de76BasContreHaut": 62.5
+   },
+   {
+    "entre": "communes | etapes",
+    "de76Sections": 80.1,
+    "de2000Sections": 80,
+    "de76BasContreHaut": 80.5
+   },
+   {
+    "entre": "etapes | questions",
+    "de76Sections": 81.3,
+    "de2000Sections": 81.2,
+    "de76BasContreHaut": 81.9
+   },
+   {
+    "entre": "questions | contact",
+    "de76Sections": 70.5,
+    "de2000Sections": 66.1,
+    "de76BasContreHaut": 66
+   },
+   {
+    "entre": "contact | pied",
+    "de76Sections": 14.3,
+    "de2000Sections": 9.9,
+    "de76BasContreHaut": 1.4
+   }
+  ]
+ },
+ "1440": {
+  "secs": [
+   {
+    "id": "hero",
+    "top": 0,
+    "h": 900,
+    "lab": [
+     34.6,
+     7.5,
+     24.2
+    ],
+    "luma": 82.6,
+    "lumaHaut30": 106.9,
+    "lumaBas30": 30.9
+   },
+   {
+    "id": "plateau",
+    "top": 900,
+    "h": 850,
+    "lab": [
+     8,
+     0.7,
+     2.1
+    ],
+    "luma": 24.1,
+    "lumaHaut30": 25.4,
+    "lumaBas30": 23.5
+   },
+   {
+    "id": "prestations",
+    "top": 1750,
+    "h": 1175,
+    "lab": [
+     90.3,
+     0.8,
+     6.4
+    ],
+    "luma": 228.1,
+    "lumaHaut30": 226.6,
+    "lumaBas30": 231
+   },
+   {
+    "id": "atelier",
+    "top": 2925,
+    "h": 900,
+    "lab": [
+     32.6,
+     3.9,
+     14.3
+    ],
+    "luma": 79,
+    "lumaHaut30": 33.8,
+    "lumaBas30": 106.1
+   },
+   {
+    "id": "realisations",
+    "top": 3825,
+    "h": 2956,
+    "lab": [
+     10.6,
+     1.3,
+     4.4
+    ],
+    "luma": 29.4,
+    "lumaHaut30": 56.7,
+    "lumaBas30": 18.1
+   },
+   {
+    "id": "communes",
+    "top": 6781,
+    "h": 615,
+    "lab": [
+     89.2,
+     0.6,
+     6.2
+    ],
+    "luma": 225.6,
+    "lumaHaut30": 230.2,
+    "lumaBas30": 225.2
+   },
+   {
+    "id": "etapes",
+    "top": 7396,
+    "h": 947,
+    "lab": [
+     7.6,
+     0.8,
+     2.4
+    ],
+    "luma": 22.9,
+    "lumaHaut30": 24.8,
+    "lumaBas30": 21.6
+   },
+   {
+    "id": "questions",
+    "top": 8343,
+    "h": 536,
+    "lab": [
+     91.6,
+     0.6,
+     6.2
+    ],
+    "luma": 231.5,
+    "lumaHaut30": 230.7,
+    "lumaBas30": 235.3
+   },
+   {
+    "id": "contact",
+    "top": 8879,
+    "h": 1081,
+    "lab": [
+     15.2,
+     2.1,
+     7.3
+    ],
+    "luma": 39,
+    "lumaHaut30": 51.8,
+    "lumaBas30": 27.6
+   },
+   {
+    "id": "pied",
+    "top": 9960,
+    "h": 306,
+    "lab": [
+     6.8,
+     0.9,
+     2
+    ],
+    "luma": 20.8,
+    "lumaHaut30": 21,
+    "lumaBas30": 20.3
+   }
+  ],
+  "voisins": [
+   {
+    "entre": "hero | plateau",
+    "de76Sections": 35.2,
+    "de2000Sections": 23.7,
+    "de76BasContreHaut": 9
+   },
+   {
+    "entre": "plateau | prestations",
+    "de76Sections": 82.4,
+    "de2000Sections": 82.2,
+    "de76BasContreHaut": 82
+   },
+   {
+    "entre": "prestations | atelier",
+    "de76Sections": 58.3,
+    "de2000Sections": 50.1,
+    "de76BasContreHaut": 79
+   },
+   {
+    "entre": "atelier | realisations",
+    "de76Sections": 24.3,
+    "de2000Sections": 17.1,
+    "de76BasContreHaut": 25.6
+   },
+   {
+    "entre": "realisations | communes",
+    "de76Sections": 78.6,
+    "de2000Sections": 78.6,
+    "de76BasContreHaut": 85.6
+   },
+   {
+    "entre": "communes | etapes",
+    "de76Sections": 81.7,
+    "de2000Sections": 81,
+    "de76BasContreHaut": 80.7
+   },
+   {
+    "entre": "etapes | questions",
+    "de76Sections": 84.1,
+    "de2000Sections": 84,
+    "de76BasContreHaut": 84.4
+   },
+   {
+    "entre": "questions | contact",
+    "de76Sections": 76.4,
+    "de2000Sections": 74.1,
+    "de76BasContreHaut": 72.1
+   },
+   {
+    "entre": "contact | pied",
+    "de76Sections": 10,
+    "de2000Sections": 7,
+    "de76BasContreHaut": 2.8
+   }
+  ]
+ }
+}

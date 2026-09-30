@@ -1,0 +1,20 @@
+1440 nav haut classes site : nav nav--claire nav--retenue nav--bande nav--sombre
+1440-nav-sur-heros : site 1440×80 kit 1440×79 pixels ≠ 70.912 %
+1440-nav-solide-papier classes site : nav nav--claire nav--retenue nav--bande solide nav--appel ; hauteur état kit 79
+1440-nav-solide-papier : site 1440×79 kit 1440×79 pixels ≠ 1.239 %
+1440-nav-solide-sombre classes site : nav nav--claire nav--retenue nav--bande solide nav--appel nav--sombre ; hauteur état kit 79
+1440-nav-solide-sombre : site 1440×79 kit 1440×79 pixels ≠ 2.164 %
+1440 survol site : {"ouverte":true,"style":"--sx: 220.2; --sy: -441.98; --sr: 0.00;","olStyle":"--sv-marge: 155;"}
+1440 survol kit : {"style":"--sx: 220.2; --sy: -441.98; --sr: 0.00;","olStyle":"--sv-marge: 155;"}
+1440-survol-prestations : site 1440×1224 kit 1440×1225 pixels ≠ 1.525 %
+1440-contact-demande-recue : site 1440×1268 kit 1440×1269 pixels ≠ 0.847 %
+390 nav haut classes site : nav nav--claire nav--bande nav--sombre ; hauteur état kit 79
+390-nav-sur-heros : site 390×79 kit 390×79 pixels ≠ 4.862 %
+390-nav-solide-papier classes site : nav nav--claire nav--bande solide ; hauteur état kit 79
+390-nav-solide-papier : site 390×79 kit 390×79 pixels ≠ 17.588 %
+390-nav-solide-sombre classes site : nav nav--claire nav--bande solide nav--sombre ; hauteur état kit 79
+390-nav-solide-sombre : site 390×79 kit 390×79 pixels ≠ 5.080 %
+390 menu ouvert : body menu-ouvert ; hauteur état kit 527
+390-menu-ouvert : site 390×527 kit 390×527 pixels ≠ 11.309 %
+390-question-ouverte : site 390×1047 kit 390×1048 pixels ≠ 2.940 %
+390-contact-demande-recue : site 390×1733 kit 390×1734 pixels ≠ 1.444 %
