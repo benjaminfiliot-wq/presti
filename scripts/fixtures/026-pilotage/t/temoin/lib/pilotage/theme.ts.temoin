@@ -1,0 +1,198 @@
+// lib/pilotage/theme.ts — [TÉMOIN du lot t, fiche 026-171 : l'implémentation de référence minimale et correcte de 026-173,
+// écrite par Claude Code. Ce n'est PAS le module livré : il ne fait que ce que station-themes-qa --partie=modules mesure.]
+//
+// Les types de theme.json (d'après scripts/fixtures/026-pilotage/k/theme.schema.json, 026-170) et validerTheme : le MÊME code au
+// serveur et à l'écran. Module pur : aucun import hors de lib/pilotage/, ni horloge, ni hasard, ni réseau.
+import { CLES_SALLE } from './equipage'
+
+export type Point = { x: number; y: number }
+export type Forme = { type: 'rectangle' | 'polygone'; x?: number; y?: number; l?: number; h?: number; points?: [number, number][] }
+export type Emplacement = { cle: string; forme: Forme; porte: Point; poste: Point | null; plaque: Point & { texte: string }; teinte: string; reservee: boolean }
+export type Noeud = { id: string; x: number; y: number; type: 'coursive' | 'ascenseur' | 'sas' }
+export type Arete = { de: string; a: string; largeur: number }
+export type Coursives = { noeuds: Noeud[]; aretes: Arete[] }
+export type Grille = { largeur: number; hauteur: number; pas: number }
+export type Tapis = { trace: Point[]; etapes: ({ cle: string } & Point)[] }
+export type Palette = {
+  '--mc-fond': string; '--mc-sol': string; '--mc-mur': string; '--mc-coursive': string; '--mc-porte': string
+  '--mc-plaque': string; '--mc-ecran': string; '--mc-texte': string; '--mc-accent': string; '--mc-alerte': string
+}
+export type Portrait = { grille: Grille; emplacements: Emplacement[]; coursives: Coursives }
+export type Theme = {
+  cle: 'station' | 'vaisseau' | 'essai'; nom: string; version: number; grille: Grille; mise_en_page: 'colonnes' | 'flottante'
+  palette: Palette; emplacements: Emplacement[]; coursives: Coursives; tapis: Tapis
+  defauts: { salle: string; emplacement: string }[]; avatars: { cle: string; couleur: string }[]; nuit: boolean; portrait?: Portrait
+}
+
+/** La liste fermée des thèmes livrés (le thème d'essai `essai` n'existe que dans le juge : validerTheme l'accepte, le chargeur non). */
+export const CLES_THEME = ['station', 'vaisseau'] as const
+const CLES_ACCEPTEES = ['station', 'vaisseau', 'essai']
+const JETONS = ['--mc-fond', '--mc-sol', '--mc-mur', '--mc-coursive', '--mc-porte', '--mc-plaque', '--mc-ecran', '--mc-texte', '--mc-accent', '--mc-alerte']
+const ETAPES = ['trouve', 'verifie', 'maquette', 'contacte', 'repondu', 'oui', 'en_ligne', 'paye']
+const RE_COULEUR = /^#[0-9A-Fa-f]{6}$/
+const RE_ADRESSE = /(?:[a-zA-Z][a-zA-Z0-9+.-]*:|\/\/)/
+const RE_TEXTE = /^.{1,60}$/u
+const RE_ID = /^[a-z][a-z0-9_-]{0,31}$/
+const RE_AVATAR = /^[a-z][a-z0-9_]{0,31}$/
+
+const estObjet = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
+const entier = (v: unknown, min: number) => typeof v === 'number' && Number.isInteger(v) && v >= min
+const texte = (v: unknown) => typeof v === 'string' && RE_TEXTE.test(v) && !RE_ADRESSE.test(v)
+
+/** Un objet fermé : les champs requis présents, aucun champ inconnu. */
+function fermé(v: unknown, chemin: string, requis: string[], facultatifs: string[], raisons: string[]): v is Record<string, unknown> {
+  if (!estObjet(v)) { raisons.push(`${chemin} : un objet est attendu`); return false }
+  for (const k of requis) if (!(k in v)) raisons.push(`${chemin} : le champ « ${k} » manque`)
+  for (const k of Object.keys(v)) if (!requis.includes(k) && !facultatifs.includes(k)) raisons.push(`${chemin} : le champ « ${k} » est inconnu`)
+  return true
+}
+const point = (v: unknown, chemin: string, raisons: string[]) => { if (fermé(v, chemin, ['x', 'y'], [], raisons)) for (const k of ['x', 'y']) if (k in v && !entier(v[k], 0)) raisons.push(`${chemin}.${k} : un entier ≥ 0 est attendu`) }
+const couleur = (v: unknown, chemin: string, raisons: string[]) => { if (typeof v !== 'string' || !RE_COULEUR.test(v)) raisons.push(`${chemin} : une couleur #RRGGBB est attendue`) }
+const grille = (v: unknown, chemin: string, raisons: string[]) => {
+  if (!fermé(v, chemin, ['largeur', 'hauteur', 'pas'], [], raisons)) return
+  if ('largeur' in v && !entier(v.largeur, 16)) raisons.push(`${chemin}.largeur : un entier ≥ 16 est attendu`)
+  if ('hauteur' in v && !entier(v.hauteur, 16)) raisons.push(`${chemin}.hauteur : un entier ≥ 16 est attendu`)
+  if ('pas' in v && !entier(v.pas, 1)) raisons.push(`${chemin}.pas : un entier ≥ 1 est attendu`)
+}
+function emplacements(v: unknown, chemin: string, raisons: string[]) {
+  if (!Array.isArray(v)) { raisons.push(`${chemin} : une liste est attendue`); return }
+  if (v.length < 21) raisons.push(`${chemin} : ${v.length} emplacement(s), 21 au moins (20 salles et la réservée)`)
+  v.forEach((e, i) => {
+    const c = `${chemin}[${i}]`
+    if (!fermé(e, c, ['cle', 'forme', 'porte', 'poste', 'plaque', 'teinte', 'reservee'], [], raisons)) return
+    if ('cle' in e && !CLES_SALLE.includes(e.cle as string)) raisons.push(`${c}.cle : « ${String(e.cle).slice(0, 30)} » n'est pas une clé d'emplacement`)
+    if ('forme' in e && fermé(e.forme, `${c}.forme`, ['type'], ['x', 'y', 'l', 'h', 'points'], raisons)) {
+      const f = e.forme as Record<string, unknown>
+      if ('type' in f && f.type !== 'rectangle' && f.type !== 'polygone') raisons.push(`${c}.forme.type : « rectangle » ou « polygone » attendu`)
+      for (const k of ['x', 'y']) if (k in f && !entier(f[k], 0)) raisons.push(`${c}.forme.${k} : un entier ≥ 0 est attendu`)
+      for (const k of ['l', 'h']) if (k in f && !entier(f[k], 1)) raisons.push(`${c}.forme.${k} : un entier ≥ 1 est attendu`)
+      if ('points' in f) {
+        const p = f.points
+        if (!Array.isArray(p) || p.length < 3) raisons.push(`${c}.forme.points : 3 points au moins`)
+        else p.forEach((q, j) => { if (!Array.isArray(q) || q.length !== 2 || !entier(q[0], 0) || !entier(q[1], 0)) raisons.push(`${c}.forme.points[${j}] : [x, y] entiers ≥ 0 attendu`) })
+      }
+    }
+    if ('porte' in e) point(e.porte, `${c}.porte`, raisons)
+    if ('poste' in e && e.poste !== null) point(e.poste, `${c}.poste`, raisons)
+    if ('plaque' in e && fermé(e.plaque, `${c}.plaque`, ['x', 'y', 'texte'], [], raisons)) {
+      const p = e.plaque as Record<string, unknown>
+      for (const k of ['x', 'y']) if (k in p && !entier(p[k], 0)) raisons.push(`${c}.plaque.${k} : un entier ≥ 0 est attendu`)
+      if ('texte' in p && !texte(p.texte)) raisons.push(`${c}.plaque.texte : 1 à 60 signes, sans adresse`)
+    }
+    if ('teinte' in e) couleur(e.teinte, `${c}.teinte`, raisons)
+    if ('reservee' in e && typeof e.reservee !== 'boolean') raisons.push(`${c}.reservee : un booléen est attendu`)
+  })
+  // Hors schéma : les 21 clés une fois, un et un seul emplacement réservé, sans poste ; tout autre emplacement a un poste.
+  const cles = v.map((e) => (estObjet(e) ? e.cle : undefined))
+  for (const k of CLES_SALLE) if (cles.filter((x) => x === k).length !== 1) raisons.push(`${chemin} : l'emplacement « ${k} » doit figurer une fois`)
+  const reserves = v.filter((e) => estObjet(e) && e.reservee === true)
+  if (reserves.length !== 1) raisons.push(`${chemin} : ${reserves.length} emplacement(s) réservé(s), un et un seul attendu`)
+  for (const e of reserves) if (estObjet(e) && e.poste !== null && e.poste !== undefined) raisons.push(`${chemin} : l'emplacement réservé « ${String(e.cle)} » porte un poste`)
+  for (const e of v) if (estObjet(e) && e.reservee !== true && e.poste === null) raisons.push(`${chemin} : l'emplacement « ${String(e.cle)} » n'est pas réservé et n'a pas de poste`)
+}
+function coursives(v: unknown, chemin: string, raisons: string[]) {
+  if (!fermé(v, chemin, ['noeuds', 'aretes'], [], raisons)) return
+  const ids = new Set<string>()
+  if ('noeuds' in v) {
+    if (!Array.isArray(v.noeuds) || v.noeuds.length < 2) raisons.push(`${chemin}.noeuds : 2 nœuds au moins`)
+    else v.noeuds.forEach((n, i) => {
+      const c = `${chemin}.noeuds[${i}]`
+      if (!fermé(n, c, ['id', 'x', 'y', 'type'], [], raisons)) return
+      if ('id' in n && (typeof n.id !== 'string' || !RE_ID.test(n.id))) raisons.push(`${c}.id : identifiant invalide`)
+      else if (typeof n.id === 'string') ids.add(n.id)
+      for (const k of ['x', 'y']) if (k in n && !entier(n[k], 0)) raisons.push(`${c}.${k} : un entier ≥ 0 est attendu`)
+      if ('type' in n && !['coursive', 'ascenseur', 'sas'].includes(n.type as string)) raisons.push(`${c}.type : « coursive », « ascenseur » ou « sas » attendu`)
+    })
+  }
+  if ('aretes' in v) {
+    if (!Array.isArray(v.aretes) || v.aretes.length < 1) raisons.push(`${chemin}.aretes : une arête au moins`)
+    else v.aretes.forEach((a, i) => {
+      const c = `${chemin}.aretes[${i}]`
+      if (!fermé(a, c, ['de', 'a', 'largeur'], [], raisons)) return
+      for (const k of ['de', 'a']) {
+        if (k in a && (typeof a[k] !== 'string' || !RE_ID.test(a[k] as string))) raisons.push(`${c}.${k} : identifiant invalide`)
+        else if (typeof a[k] === 'string' && !ids.has(a[k] as string)) raisons.push(`${c}.${k} : arête vers un nœud inconnu « ${String(a[k])} »`)
+      }
+      if ('largeur' in a && !entier(a.largeur, 1)) raisons.push(`${c}.largeur : un entier ≥ 1 est attendu`)
+    })
+  }
+}
+function adresses(v: unknown, chemin: string, raisons: string[]) {
+  if (typeof v === 'string') { if (RE_ADRESSE.test(v) && !RE_COULEUR.test(v)) raisons.push(`${chemin} : adresse ou schéma distant dans un texte`) }
+  else if (Array.isArray(v)) v.forEach((x, i) => adresses(x, `${chemin}[${i}]`, raisons))
+  else if (estObjet(v)) for (const [k, x] of Object.entries(v)) adresses(x, `${chemin}.${k}`, raisons)
+}
+
+export function validerTheme(brut: unknown): { ok: true; theme: Theme } | { ok: false; raisons: string[] } {
+  const raisons: string[] = []
+  try {
+    if (!fermé(brut, 'theme', ['cle', 'nom', 'version', 'grille', 'mise_en_page', 'palette', 'emplacements', 'coursives', 'tapis', 'defauts', 'avatars', 'nuit'], ['portrait'], raisons)) return { ok: false, raisons }
+    const t = brut
+    if ('cle' in t && !CLES_ACCEPTEES.includes(t.cle as string)) raisons.push('cle : « station », « vaisseau » ou « essai » attendu')
+    if ('nom' in t && !texte(t.nom)) raisons.push('nom : 1 à 60 signes, sans adresse')
+    if ('version' in t && !entier(t.version, 1)) raisons.push('version : un entier ≥ 1 est attendu')
+    if ('grille' in t) grille(t.grille, 'grille', raisons)
+    if ('mise_en_page' in t && t.mise_en_page !== 'colonnes' && t.mise_en_page !== 'flottante') raisons.push('mise_en_page : « colonnes » ou « flottante » attendu')
+    if ('palette' in t && fermé(t.palette, 'palette', JETONS, [], raisons)) for (const j of JETONS) if (j in (t.palette as object)) couleur((t.palette as Record<string, unknown>)[j], `palette.${j}`, raisons)
+    if ('emplacements' in t) emplacements(t.emplacements, 'emplacements', raisons)
+    if ('coursives' in t) coursives(t.coursives, 'coursives', raisons)
+    if ('tapis' in t && fermé(t.tapis, 'tapis', ['trace', 'etapes'], [], raisons)) {
+      const tp = t.tapis as Record<string, unknown>, pas = estObjet(t.grille) && entier(t.grille.pas, 1) ? (t.grille.pas as number) : 1
+      if ('trace' in tp) {
+        if (!Array.isArray(tp.trace) || tp.trace.length < 2) raisons.push('tapis.trace : 2 points au moins')
+        else {
+          tp.trace.forEach((p, i) => point(p, `tapis.trace[${i}]`, raisons))
+          const tr = tp.trace as Point[]
+          for (let i = 1; i < tr.length; i++) if (estObjet(tr[i]) && estObjet(tr[i - 1])) {
+            const dx = Math.abs(tr[i].x - tr[i - 1].x), dy = Math.abs(tr[i].y - tr[i - 1].y)
+            if (dx > pas || dy > pas || (dx === 0 && dy === 0)) { raisons.push(`tapis : le tracé saute entre les points ${i - 1} et ${i}`); break }
+          }
+        }
+      }
+      if ('etapes' in tp) {
+        if (!Array.isArray(tp.etapes) || tp.etapes.length < 1) raisons.push('tapis.etapes : une étape au moins')
+        else {
+          const sur = new Set((Array.isArray(tp.trace) ? tp.trace : []).map((p) => (estObjet(p) ? `${p.x},${p.y}` : '')))
+          tp.etapes.forEach((s, i) => {
+            const c = `tapis.etapes[${i}]`
+            if (!fermé(s, c, ['cle', 'x', 'y'], [], raisons)) return
+            if ('cle' in s && !ETAPES.includes(s.cle as string)) raisons.push(`${c}.cle : étape inconnue`)
+            for (const k of ['x', 'y']) if (k in s && !entier(s[k], 0)) raisons.push(`${c}.${k} : un entier ≥ 0 est attendu`)
+            if (!sur.has(`${String(s.x)},${String(s.y)}`)) raisons.push(`tapis : l'étape « ${String(s.cle)} » n'est pas sur le tracé`)
+          })
+        }
+      }
+    }
+    if ('defauts' in t) {
+      if (!Array.isArray(t.defauts) || t.defauts.length < 21) raisons.push('defauts : 21 entrées au moins')
+      else t.defauts.forEach((d, i) => {
+        if (!fermé(d, `defauts[${i}]`, ['salle', 'emplacement'], [], raisons)) return
+        for (const k of ['salle', 'emplacement']) if (k in d && !CLES_SALLE.includes(d[k] as string)) raisons.push(`defauts[${i}].${k} : clé inconnue`)
+      })
+      const salles = new Set((Array.isArray(t.defauts) ? t.defauts : []).map((d) => (estObjet(d) ? d.salle : undefined)))
+      for (const k of CLES_SALLE) if (!salles.has(k)) raisons.push(`defauts : la salle « ${k} » n'a pas d'emplacement par défaut`)
+    }
+    if ('avatars' in t) {
+      if (!Array.isArray(t.avatars) || t.avatars.length < 1) raisons.push('avatars : un avatar au moins')
+      else {
+        t.avatars.forEach((a, i) => {
+          if (!fermé(a, `avatars[${i}]`, ['cle', 'couleur'], [], raisons)) return
+          if ('cle' in a && (typeof a.cle !== 'string' || !RE_AVATAR.test(a.cle))) raisons.push(`avatars[${i}].cle : clé invalide`)
+          if ('couleur' in a) couleur(a.couleur, `avatars[${i}].couleur`, raisons)
+        })
+        if (!t.avatars.some((a) => estObjet(a) && a.cle === 'defaut')) raisons.push('avatars : la clé « defaut » manque')
+      }
+    }
+    if ('nuit' in t && typeof t.nuit !== 'boolean') raisons.push('nuit : un booléen est attendu')
+    if ('portrait' in t && fermé(t.portrait, 'portrait', ['grille', 'emplacements', 'coursives'], [], raisons)) {
+      const p = t.portrait as Record<string, unknown>
+      if ('grille' in p) grille(p.grille, 'portrait.grille', raisons)
+      if ('emplacements' in p) emplacements(p.emplacements, 'portrait.emplacements', raisons)
+      if ('coursives' in p) coursives(p.coursives, 'portrait.coursives', raisons)
+    }
+    adresses(t, 'theme', raisons)
+  } catch (e) {
+    raisons.push(`thème illisible : ${String((e as Error).message).slice(0, 80)}`)
+  }
+  return raisons.length ? { ok: false, raisons } : { ok: true, theme: brut as Theme }
+}

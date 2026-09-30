@@ -1,0 +1,36 @@
+// Types communs du moteur de la carte (témoin du lot k). Coordonnées en pixels logiques, multiples de grille.pas.
+export type Point = { x: number; y: number }
+
+export type Emplacement = {
+  cle: string
+  forme: { type: 'rectangle' | 'polygone'; x?: number; y?: number; l?: number; h?: number; points?: number[][] }
+  porte: Point
+  poste: Point | null
+  plaque: { x: number; y: number; texte: string }
+  teinte: string
+  reservee: boolean
+}
+
+export type Theme = {
+  cle: string
+  nom: string
+  version: number
+  grille: { largeur: number; hauteur: number; pas: number }
+  mise_en_page: string
+  palette: Record<string, string>
+  emplacements: Emplacement[]
+  coursives: { noeuds: { id: string; x: number; y: number; type: string }[]; aretes: { de: string; a: string; largeur: number }[] }
+  tapis: { trace: Point[]; etapes: { cle: string; x: number; y: number }[] }
+  defauts: { salle: string; emplacement: string }[]
+  avatars: { cle: string; couleur: string }[]
+  nuit: boolean
+}
+
+export type Motif = 'porte' | 'tache' | 'reunion' | 'pause' | 'panne'
+export const MOTIFS: readonly Motif[] = ['porte', 'tache', 'reunion', 'pause', 'panne']
+
+export type Acteur = { nom: string; libelle: string; salle: string; motif: Motif; avatar: string; couleur: string; bulle: string; rang: number }
+export type EtatCarte = { acteurs: Acteur[] }
+
+/** Ce que Carte.tsx transmet : les morceaux des vues `direct` et `fil`, tels que servis. */
+export type PropsCarte = { equipage?: unknown; tapis?: unknown; bulles?: unknown; reglages?: unknown; carte?: unknown }

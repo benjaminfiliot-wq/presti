@@ -50,6 +50,9 @@ const ONGLETS: Onglet[] = [
 ]
 const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', visiteurs: 'Visiteurs', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', comptabilite: 'Comptabilité', cerveaux: 'Cerveaux', journal: 'Journal', reglages: 'Réglages', sites: 'Sites', demandes: 'Demandes', packs: 'Packs pubs' }
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+const iconeStation = ic(<><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></>)
+// L'adresse de la station (drapeau `pilotage`) : la décision des liens du digest n'est gardée que si c'est un UUID.
+const adresseStation = (decision: string | null) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decision ?? '') ? `/controle/station?decision=${decision}` : '/controle/station'
 const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'aujourdhui', label: 'Aujourd’hui', detail: 'État, à faire, chiffres, fil', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>) },
   { id: 'visiteurs', label: 'Visiteurs', detail: 'Qui regarde le site, en direct', icone: ic(<><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>) },
@@ -79,6 +82,8 @@ function PosteInner() {
   const [recherche, setRecherche] = useState(false)
   const demande = params.get('onglet')
   const onglet: Onglet = ONGLETS.includes(demande as Onglet) ? (demande as Onglet) : 'aujourdhui'
+  // Les liens du digest (?onglet=pilotage&decision=<uuid>) mènent à la station, quand le drapeau pilotage est levé.
+  useEffect(() => { if (demande === 'pilotage' && actif('pilotage')) router.replace(adresseStation(params.get('decision'))) }, [demande, params, router]) // pilotage → station
 
   const verifier = useCallback(async () => {
     setRefus(null)
@@ -123,6 +128,7 @@ function PosteInner() {
         <nav className="param-nav" aria-label="Vues du Poste de contrôle">
           <div className="param-nav-grp">
             <div className="param-nav-lab">Poste de contrôle{role === 'lecture' ? ' · lecture' : ''}</div>
+            {actif('pilotage') ? <a href="/controle/station" onClick={(ev) => { ev.preventDefault(); router.push('/controle/station') }}>{iconeStation}<span><b>Station</b><small>Mission Control : agents, argent, attention</small></span></a> : null}
             {NAV.filter((e) => ONGLETS.includes(e.id)).map((e) => {
               // Un compteur ne s'affiche que s'il y a quelque chose à faire : un « 0 » permanent
               // devient un décor, et un décor ne se remarque plus le jour où il compte.

@@ -1,0 +1,19 @@
+{
+ "_": "Jeu d'essai de station-themes-qa (TH-4, TH-5, TH-6 ; 026-171) : des réglages VALIDES pour le thème d'essai (k/themes/essai : avatars defaut, chef, vigie_meta…, emplacements = salles). Aucune donnée réelle. Les bornes sont aux limites : nom de 2 et de 16 signes, plaque de 2 et de 24, titre de 2 et de 32, heures 0 et 23.",
+ "cas": [
+  { "nom": "vide", "brut": {} },
+  { "nom": "theme-et-mise-en-page", "brut": { "theme": "vaisseau", "mise_en_page": "flottante", "nuit": { "actif": true, "debut": 0, "fin": 23 } } },
+  { "nom": "noms-aux-bornes", "brut": { "equipage": { "chef": { "nom": "Al", "avatar": "chef", "couleur": "#4AC0E8" }, "recenseur": { "nom": "Anne-Sophie D'Or", "avatar": "defaut" }, "redacteur": { "nom": "Élodie" } } } },
+  { "nom": "couleurs-des-jetons", "brut": { "couleurs": { "--mc-fond": "#0A0B0C", "--mc-accent": "#c949ba" } } },
+  { "nom": "salles-echangees-plaques-teintes", "brut": { "salles": { "radar": { "emplacement": "repos", "plaque": "Guet", "teinte": "#112233" }, "repos": { "emplacement": "radar", "plaque": "Salle de détente calme", "teinte": "#445566" } } } },
+  { "nom": "affichage-aux-bornes", "brut": { "affichage": { "titre": "Ma", "taille_plaques": "grande" } } },
+  { "nom": "titre-de-32-signes", "brut": { "affichage": { "titre": "Poste de pilotage de la station1", "taille_plaques": "petite" } } },
+  { "nom": "tout-ensemble", "brut": { "theme": "station", "mise_en_page": "colonnes", "nuit": { "actif": false, "debut": 20, "fin": 7 }, "equipage": { "chef": { "nom": "Cheffe" } }, "salles": { "commandement": { "plaque": "Poste de commande" }, "ecommerce": { "plaque": "E-commerce" } }, "couleurs": { "--mc-sol": "#222222" }, "affichage": { "titre": "Station Alpha", "taille_plaques": "normale" } } }
+ ],
+ "defauts": {
+  "_": "Les défauts que TH-5 fusionne (la forme des réglages) et ce que fusionner doit rendre.",
+  "defauts": { "mise_en_page": "colonnes", "couleurs": { "--mc-fond": "#111111", "--mc-sol": "#222222" }, "equipage": { "chef": { "nom": "Chef", "avatar": "chef" }, "redacteur": { "nom": "Plume", "avatar": "defaut" } }, "affichage": { "titre": "Station" } },
+  "reglages": { "couleurs": { "--mc-fond": "#ABCDEF" }, "equipage": { "chef": { "nom": "Patron" } }, "nuit": { "actif": true } },
+  "attendu": { "mise_en_page": "colonnes", "couleurs": { "--mc-fond": "#ABCDEF", "--mc-sol": "#222222" }, "equipage": { "chef": { "nom": "Patron", "avatar": "chef" }, "redacteur": { "nom": "Plume", "avatar": "defaut" } }, "affichage": { "titre": "Station" }, "nuit": { "actif": true } }
+ }
+}

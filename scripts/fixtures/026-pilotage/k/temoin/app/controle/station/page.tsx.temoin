@@ -1,0 +1,8 @@
+import type { Metadata } from 'next'
+import Station from './Station'
+
+export const metadata: Metadata = { title: 'Station', robots: { index: false, follow: false } }
+
+export default function PageStation() {
+  return <Station />
+}

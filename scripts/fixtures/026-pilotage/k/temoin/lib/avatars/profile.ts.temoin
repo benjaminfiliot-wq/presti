@@ -1,0 +1,9 @@
+// Profil d'avatar du témoin du lot k : une couleur par clé de la liste fermée `avatars` du thème.
+// Aucun tirage : la même clé donne toujours la même couleur ; une clé inconnue prend « defaut ».
+export type AvatarTheme = { cle: string; couleur: string }
+
+export const AVATAR_DEFAUT = 'defaut'
+
+export function profilAvatar(cle: unknown, liste: readonly AvatarTheme[]): AvatarTheme {
+  return liste.find((a) => a.cle === cle) ?? liste.find((a) => a.cle === AVATAR_DEFAUT) ?? { cle: AVATAR_DEFAUT, couleur: '#888888' }
+}

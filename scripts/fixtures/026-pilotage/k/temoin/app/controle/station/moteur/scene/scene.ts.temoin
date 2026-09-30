@@ -1,0 +1,98 @@
+// La scène : un carré par acteur qui a une salle. Un acteur ne bouge que sur un changement d'état servi ; la marche
+// compte des IMAGES (une case toutes les deux images), jamais une durée ; sans marche, la boucle de Phaser s'endort.
+import { astar2D, place, type Grille } from '../grille/grille'
+import type { Calque } from '../calque/calque'
+import type { OfficeSceneBridge } from '../claw3d/OfficeSceneBridge'
+import type { Acteur, EtatCarte, Point, Theme } from '../types'
+import { dessinerDecor } from './decor'
+
+export type ContexteScene = { theme: Theme; grille: Grille; k: number; calque: Calque; pont: OfficeSceneBridge; pret: (toile: HTMLCanvasElement) => void }
+
+type Marcheur = Acteur & { x: number; y: number; chemin: Point[]; etat: 'marche' | 'arrive'; cadence: number; carre: { setPosition(x: number, y: number): unknown; setFillStyle(c: number): unknown; destroy(): void } }
+
+const nombre = (hex: string) => parseInt(hex.replace('#', ''), 16)
+
+// `Phaser` est reçu par import dynamique : ce module n'importe rien de Phaser (le type serait un import statique).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function creerScene(Phaser: any, ctx: ContexteScene) {
+  const { theme, grille, k, calque, pont } = ctx
+  const pas = theme.grille.pas
+  return class SceneStation extends Phaser.Scene {
+    private acteurs = new Map<string, Marcheur>()
+    private vu = false
+    private calmes = 0
+
+    constructor() {
+      super({ key: 'station' })
+    }
+
+    create() {
+      const L = theme.grille.largeur * k, H = theme.grille.hauteur * k
+      const toile = this.textures.createCanvas('decor', L, H)
+      dessinerDecor(toile.getContext(), theme, k)
+      toile.refresh()
+      this.add.image(0, 0, 'decor').setOrigin(0, 0)
+      ctx.pret(this.game.canvas)
+      pont.brancher({ appliquer: (etat: EtatCarte) => this.appliquer(etat) })
+    }
+
+    private rendre(a: Marcheur) {
+      calque.maj(a.nom, { libelle: a.libelle, salle: a.salle, motif: a.motif, etat: a.etat, x: a.x, y: a.y, bulle: a.bulle })
+    }
+
+    /** Un état servi. Premier relevé (et acteur jamais vu) : placement direct, sans marche. */
+    appliquer(etat: EtatCarte) {
+      this.vu = true
+      const presents = new Set(etat.acteurs.map((a) => a.nom))
+      for (const nom of [...this.acteurs.keys()]) if (!presents.has(nom)) this.retirer(nom)
+      for (const a of etat.acteurs) {
+        const dest = place(theme, a.salle, a.rang)
+        if (!dest) { this.retirer(a.nom); continue }
+        const m = this.acteurs.get(a.nom)
+        if (!m) {
+          const carre = this.add.rectangle(dest.x * k + k, dest.y * k + k, (pas - 2) * k, (pas - 2) * k, nombre(a.couleur)).setOrigin(0, 0)
+          const neuf: Marcheur = { ...a, x: dest.x, y: dest.y, chemin: [], etat: 'arrive', cadence: 0, carre }
+          this.acteurs.set(a.nom, neuf)
+          this.rendre(neuf)
+          continue
+        }
+        const change = a.salle !== m.salle || a.rang !== m.rang
+        m.motif = a.motif; m.bulle = a.bulle; m.libelle = a.libelle; m.avatar = a.avatar
+        if (a.couleur !== m.couleur) { m.couleur = a.couleur; m.carre.setFillStyle(nombre(a.couleur)) }
+        if (change) {
+          const chemin = astar2D(grille, { x: m.x, y: m.y }, dest)
+          m.salle = a.salle; m.rang = a.rang
+          if (chemin) { m.chemin = chemin; m.etat = chemin.length ? 'marche' : 'arrive' }
+          else { m.chemin = []; m.x = dest.x; m.y = dest.y; m.etat = 'arrive'; m.carre.setPosition(dest.x * k + k, dest.y * k + k) }
+        }
+        this.rendre(m)
+      }
+      this.calmes = 0
+      this.game.loop.wake()
+    }
+
+    private retirer(nom: string) {
+      this.acteurs.get(nom)?.carre.destroy()
+      this.acteurs.delete(nom)
+      calque.retirer(nom)
+    }
+
+    update() {
+      let marche = false
+      for (const m of this.acteurs.values()) {
+        if (!m.chemin.length) continue
+        marche = true
+        if (++m.cadence < 2) continue
+        m.cadence = 0
+        const p = m.chemin.shift() as Point
+        m.x = p.x; m.y = p.y
+        m.carre.setPosition(p.x * k + k, p.y * k + k)
+        if (!m.chemin.length) m.etat = 'arrive'
+        this.rendre(m)
+      }
+      if (marche || !this.vu) { this.calmes = 0; return }
+      // Tout est arrivé : deux images pour peindre l'état final, puis la boucle s'endort (plus aucune image).
+      if (++this.calmes >= 3) this.game.loop.sleep()
+    }
+  }
+}

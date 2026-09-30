@@ -1,0 +1,17 @@
+// lib/controle/lectures/crons.ts — TÉMOIN du lot t (026-171) : la lecture « crons du service » de 026-174.
+// D'où elle vient : la constante `crons` de app/api/controle/etat/route.ts, déplacée telle quelle.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { sourcer } from '@/lib/direction/fraicheur'
+import { CRONS_ATTENDUS } from '@/lib/alertes'
+
+export function cronsDuService() {
+  return sourcer('etat:crons', 'supabase', async () => {
+    const { data, error } = await supabaseAdmin.from('passages_cron').select('nom, dernier_passage, reussi')
+    if (error) throw new Error(error.message)
+    return CRONS_ATTENDUS.map((c) => {
+      const p = (data ?? []).find((x) => x.nom === c.nom)
+      const age = p ? (Date.now() - new Date(p.dernier_passage).getTime()) / 3_600_000 : null
+      return { nom: c.nom, dernier: p?.dernier_passage ?? null, reussi: p?.reussi ?? null, enRetard: age === null || age > c.maxHeures }
+    })
+  })
+}

@@ -1,0 +1,3 @@
+-- 0998 — migration bénigne du TÉMOIN du lot t (026-171) : elle ne crée rien. Elle existe pour qu'un sabotage de la preuve
+-- puisse en faire une table « ecommerce » (EC-4 : aucune table e-commerce tant que la branche est réservée).
+select 1;

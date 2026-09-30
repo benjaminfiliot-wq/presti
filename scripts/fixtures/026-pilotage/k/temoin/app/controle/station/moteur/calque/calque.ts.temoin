@@ -1,0 +1,82 @@
+// Le calque HTML de la carte : le miroir des acteurs, les bulles, les « Zz » et les écrans. Tout est posé en TEXTE
+// (textContent), jamais en HTML. Le miroir et les écrans sont lisibles par un lecteur d'écran et cachés à la vue.
+import type { Theme } from '../types'
+
+const CACHE = 'position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;'
+export type Ligne = { libelle: string; salle: string; motif: string; etat: 'marche' | 'arrive'; x: number; y: number; bulle: string }
+
+const el = <K extends keyof HTMLElementTagNameMap>(nom: K, css = ''): HTMLElementTagNameMap[K] => {
+  const e = document.createElement(nom)
+  if (css) e.style.cssText = css
+  return e
+}
+
+export class Calque {
+  readonly toile: HTMLDivElement
+  private couche: HTMLDivElement
+  private miroir: HTMLUListElement
+  private echelle: number
+  private lignes = new Map<string, HTMLLIElement>()
+  private bulles = new Map<string, HTMLElement>()
+  private zz = new Map<string, HTMLElement>()
+
+  /** `echelle` : pixels CSS par pixel logique (k / densité de l'appareil). */
+  constructor(racine: HTMLElement, theme: Theme, echelle: number) {
+    this.echelle = echelle
+    this.toile = el('div', 'position:relative;display:block;line-height:0;max-width:100%;')
+    this.couche = el('div', 'position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;font:10px/1.2 monospace;')
+    this.miroir = el('ul', CACHE + 'list-style:none;')
+    this.miroir.setAttribute('data-miroir', '')
+    const ecrans = el('ul', CACHE + 'list-style:none;')
+    // Les écrans ne portent AUCUNE donnée : « — » pour chaque salle, la salle réservée n'en a pas.
+    for (const e of theme.emplacements) {
+      if (e.reservee) continue
+      const li = el('li')
+      li.setAttribute('data-ecran', e.cle)
+      li.textContent = '—'
+      ecrans.appendChild(li)
+    }
+    this.toile.append(this.couche, this.miroir, ecrans)
+    racine.appendChild(this.toile)
+  }
+
+  private pos(e: HTMLElement, x: number, y: number) {
+    e.style.left = `${x * this.echelle}px`
+    e.style.top = `${y * this.echelle}px`
+  }
+
+  maj(nom: string, l: Ligne): void {
+    let li = this.lignes.get(nom)
+    if (!li) { li = el('li'); li.setAttribute('data-personnage', nom); this.miroir.appendChild(li); this.lignes.set(nom, li) }
+    li.setAttribute('data-salle', l.salle)
+    li.setAttribute('data-motif', l.motif)
+    li.setAttribute('data-etat', l.etat)
+    li.setAttribute('data-x', String(l.x))
+    li.setAttribute('data-y', String(l.y))
+    li.textContent = `${l.libelle} : ${l.salle}`
+    this.superposer(this.bulles, nom, l.bulle, l.x, l.y, 'data-bulle', 'transform:translateY(-100%);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#000c;color:#fff;padding:1px 3px;')
+    this.superposer(this.zz, nom, l.motif === 'pause' && l.etat === 'arrive' ? 'Zz' : '', l.x, l.y, 'data-zz', 'transform:translate(100%,-100%);color:#9cf;')
+  }
+
+  private superposer(table: Map<string, HTMLElement>, nom: string, texte: string, x: number, y: number, attribut: string, css: string) {
+    let e = table.get(nom)
+    if (!texte) { if (e) { e.remove(); table.delete(nom) } return }
+    if (!e) { e = el('div', 'position:absolute;' + css); e.setAttribute(attribut, nom); this.couche.appendChild(e); table.set(nom, e) }
+    if (e.textContent !== texte) e.textContent = texte
+    this.pos(e, x, y)
+  }
+
+  retirer(nom: string): void {
+    this.lignes.get(nom)?.remove(); this.lignes.delete(nom)
+    this.bulles.get(nom)?.remove(); this.bulles.delete(nom)
+    this.zz.get(nom)?.remove(); this.zz.delete(nom)
+  }
+
+  vider(): void {
+    for (const nom of [...this.lignes.keys()]) this.retirer(nom)
+  }
+
+  detruire(): void {
+    this.toile.remove()
+  }
+}

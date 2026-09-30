@@ -1,0 +1,20 @@
+// GET /api/controle/cerveaux
+// Le tableau des cerveaux (v15 §8.3) : pour chaque dossier lib/ai/cerveaux/<cerveau>/, le dernier score accepté
+// (score.json), le nombre de cas et d'ouverts (cas.jsonl), et la dernière entrée du journal (journal.md). Lu depuis les
+// fichiers versionnés — c'est le code déployé qui parle, pas une table. Lisible par les deux rôles (domaine « journal »,
+// verbe « voir » : c'est de la lecture d'état, pas des données d'artisans).
+import { NextResponse } from 'next/server'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { cerveaux } from '@/lib/controle/lectures'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+export async function GET(req: Request) {
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'journal', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  const cerveauxLus = cerveaux()
+  return NextResponse.json({ cerveaux: cerveauxLus })
+}
