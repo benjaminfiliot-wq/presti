@@ -1,0 +1,1377 @@
+[00:00:02.350] Voici comment révolutionner complètement
+[00:00:02.360] la création de votre boutique e-commerce
+[00:00:04.240] grâce à l'intelligence artificielle.
+[00:00:05.759] Regardez ces deux boutiques. Celle de
+[00:00:07.279] gauche, c'est une grande marque qui a
+[00:00:08.679] des résultats depuis des années. Celle
+[00:00:10.200] de droite, c'est la mienne. Même
+[00:00:11.480] structure, même logique, même niveau de
+[00:00:13.320] finition et je l'ai créé littéralement
+[00:00:15.120] en une demi-heure sans développeur, sans
+[00:00:17.039] thème payant et sans une seule ligne de
+[00:00:18.560] code. Et dans cette vidéo, je vais vous
+[00:00:19.880] montrer exactement comment faire la même
+[00:00:21.400] chose étape par étape, même si vous
+[00:00:23.080] partez complètement de zéro. À la fin,
+[00:00:25.000] vous aurez votre propre boutique
+[00:00:26.199] personnalisée, professionnelle et prête
+[00:00:28.000] à vendre. Vous allez sûrement me
+[00:00:29.039] demander mais comment est-ce possible en
+[00:00:30.720] faisant travailler trois [musique]
+[00:00:32.119] intelligences artificielles ensemble ?
+[00:00:33.879] Claude va analyser le design d'une
+[00:00:35.320] boutique que vous aimez et écrire le
+[00:00:36.800] plan. BS44 va construire le site à
+[00:00:39.079] partir de ce plan et Wix va s'occuper de
+[00:00:41.079] tout ce qui fait qu'une boutique vend
+[00:00:42.280] vraiment les paiements, la livraison et
+[00:00:44.120] le nom de domaine. Et même si toute la
+[00:00:45.520] boutique est créée via l'intelligence
+[00:00:46.920] artificielle, vous gardez totalement la
+[00:00:48.680] main, une phrase et le site change
+[00:00:50.399] immédiatement. Assez parlé, maintenant
+[00:00:52.039] il est temps de passer à l'action. J'ai
+[00:00:53.960] mis en place un document bien précis
+[00:00:56.000] afin qu'on puisse suivre l'ensemble des
+[00:00:57.800] étapes tous ensemble. Vous avez juste à
+[00:00:59.600] exécuter ces étapes-là tranquillement et
+[00:01:01.440] calmement afin d'avoir la réalisation de
+[00:01:03.199] votre boutique. Maintenant que tout ça
+[00:01:04.360] est dit, on est parti. La toute première
+[00:01:06.000] étape, c'est de trouver une boutique en
+[00:01:07.280] ligne dont vous aimez le look, dont vous
+[00:01:08.680] aimez sa structure. Dans cette vidéo,
+[00:01:10.200] moi je vais utiliser exactement cette
+[00:01:11.560] boutique. Donc voilà, c'est une boutique
+[00:01:12.960] qui est ultra qualitative. Donc elle est
+[00:01:14.720] faite avec le même générateur de
+[00:01:15.960] boutique que je vais vous montrer dans
+[00:01:17.119] un instant. Donc voilà, ça c'est une
+[00:01:18.200] boutique qui tourne très bien, elle a de
+[00:01:19.680] très bons résultats. Là, j'ai les stats
+[00:01:21.000] sur les 6 derniers mois, donc depuis
+[00:01:22.159] février, plus de 100000 visites par
+[00:01:24.040] mois, ils ont plus de 700 publicités
+[00:01:25.439] actives. Donc c'est vraiment une
+[00:01:26.479] boutique qui tourne depuis un bon
+[00:01:27.720] moment. Et là, le but c'est que vraiment
+[00:01:29.040] littéralement grâce à mes outils IA, je
+[00:01:30.680] peux copiercoller cette boutique là,
+[00:01:32.439] mais la mettre en version française et
+[00:01:33.960] relancer exactement leurs produits. Donc
+[00:01:35.720] là, vous c'est aussi exactement ce que
+[00:01:37.119] vous devez faire, c'est d'abord
+[00:01:38.040] sélectionner une boutique que vous
+[00:01:39.240] appréciez. Après, il faut qu'il y ait
+[00:01:40.360] des preuves claires et tangibles euh que
+[00:01:42.240] cette boutique a des résultats. Donc là,
+[00:01:43.720] je peux utiliser Autods pour pouvoir
+[00:01:45.159] rechercher une boutique ou un produit
+[00:01:46.840] qui est intéressant. Donc tout
+[00:01:47.880] simplement là, je suis sur la
+[00:01:48.759] marketplace et je peux essayer de
+[00:01:50.040] trouver un produit qui est pertinent que
+[00:01:51.799] je pourrais potentiellement lancer. Euh
+[00:01:53.439] là, je peux regarder. OK, donc là, on va
+[00:01:55.280] arriver sur le Q4, 4e trimestre. Euh
+[00:01:58.079] voilà, c'est vrai que les produits qui
+[00:01:59.280] vont concerner jouer et autres, c'est
+[00:02:01.240] des produits qui peuvent bien
+[00:02:02.000] fonctionner. Donc là, je peux effectuer
+[00:02:03.479] un peu la recherche de produit. toujours
+[00:02:04.920] bien garder euh les critères, avoir un
+[00:02:06.520] produit de qualité, avoir une marge
+[00:02:07.840] suffisante, être sûr que le produit euh
+[00:02:09.840] puisse avoir un effet waou soit par
+[00:02:11.440] rapport au produit en lui-même ou sinon
+[00:02:12.879] via des vidéos photos euh que vous
+[00:02:14.319] mettrez en avant. Donc euh et après, il
+[00:02:16.440] faut aussi que la logistique soit assez
+[00:02:17.560] simple parce que si on commence à partir
+[00:02:18.840] sur des vélos comme ça par exemple, euh
+[00:02:20.800] si vous démarrez, ça va être un peu plus
+[00:02:22.080] complexe ou même des poussettes, des
+[00:02:23.239] choses comme ça au tout début, on va
+[00:02:24.560] éviter, on est bien d'accord. Après là,
+[00:02:25.879] pour le 4e trimestre, avec la niche
+[00:02:27.319] jouée, ça fonctionnera bien. Ben là, une
+[00:02:29.319] peluche, hein, c'est vrai que des les
+[00:02:30.920] peluches euh en en fin d'année, ça
+[00:02:32.840] fonctionne très bien. Après, je dis pas
+[00:02:34.280] forcément cette peluche là. Je sais que
+[00:02:35.920] voilà, durant les entre septembre et
+[00:02:38.080] décembre, ça se vend bien. Après, en
+[00:02:39.680] vrai, dans tous les cas, ça se vend
+[00:02:40.599] toute l'année, hein, les peluches. Euh,
+[00:02:42.040] je vais vérifier ça avec vous, mais je
+[00:02:43.400] sais que en fin d'année, ça se voit
+[00:02:44.560] encore plus. Alors, on va regarder ça
+[00:02:45.800] ensemble. Donc ça c'est la première
+[00:02:47.000] étape hein. On regarde d'abord un
+[00:02:48.560] produit qui est intéressant, un produit,
+[00:02:50.280] une boutique. Et quand on a validé ça,
+[00:02:51.800] on va tout simplement copier-coller euh
+[00:02:53.440] la boutique. Donc là, je regarde depuis
+[00:02:54.800] 1 an. Oui, voilà. Donc les peluches, en
+[00:02:56.720] vrai, ça fonctionne toute l'année, mais
+[00:02:57.920] vous voyez que en fin d'année, en à
+[00:02:59.599] partir de octobre jusqu'à décembre, ça
+[00:03:01.440] monte en flèche jusqu'à euh voilà,
+[00:03:03.400] décembre, là c'est à 100. Là, on est sur
+[00:03:04.840] le site de Google Trend, donc c'est un
+[00:03:06.159] outil qui permet de vérifier les
+[00:03:07.280] tendances sur une niche ou sur un
+[00:03:09.040] produit. Plus la courbe est vers le 100,
+[00:03:10.519] on est bien d'accord, plus ça veut dire
+[00:03:11.599] qu'il y a de la tendance et plus aller
+[00:03:12.959] vers le zéro, c'està dire que moins il y
+[00:03:14.319] a de la tendance. Donc là, vous avez
+[00:03:15.959] accès au chiffres juste ici. Donc la
+[00:03:17.920] peluche, c'est un produit qui est super
+[00:03:19.000] intéressant. Maintenant, ce que je peux
+[00:03:21.680] faire, c'est Teddy Bear. OK, je vais
+[00:03:23.879] aller sur la bibliothèque publicitaire
+[00:03:25.400] de Facebook. On va vérifier un peu les
+[00:03:27.319] boutiques qui tournent actuellement avec
+[00:03:28.920] ce ce produit. Est-ce qu'il y a des
+[00:03:30.319] boutiques intéressantes ? Ça aussi c'est
+[00:03:31.879] un site qui vend des peluches. Après,
+[00:03:33.239] est-ce queils ont des résultats
+[00:03:34.080] actuellement ? Ouais, ils font plus de
+[00:03:35.319] 100000 visites aussi par mois. Donc
+[00:03:36.879] c'est un produit qui est qui peut être
+[00:03:38.120] vraiment intéressant. Donc voilà, déjà
+[00:03:39.720] on commence à effectuer la recherche de
+[00:03:40.920] produits exactement comme ceci avec Auto
+[00:03:42.640] DS. Ensuite, on va sur bibliothèque
+[00:03:44.000] publicitaire, regarder un peu les
+[00:03:45.319] boutiques qui tournent euh pour qu'on
+[00:03:46.640] puisse s'inspirer. Et si vraiment la
+[00:03:47.920] boutique elle est qualitative, ben vous
+[00:03:49.120] pouvez la sélectionner et ensuite on va
+[00:03:50.519] la copier-coller exactement comme je
+[00:03:52.079] vais vous montrer dans un instant.
+[00:03:53.319] Maintenant, lorsque vous avez fait ça,
+[00:03:54.360] donc ce qu'on va faire, c'est qu'on va
+[00:03:55.480] ouvrir donc la page produit et pas
+[00:03:57.280] uniquement la page d'accueil. La page
+[00:03:58.640] d'accueil, comme son nom l'indique, donc
+[00:03:59.799] c'est la page d'accueil de la boutique,
+[00:04:01.680] d'accord ? C'est la c'est on va dire la
+[00:04:03.360] partie présentation et la page produit.
+[00:04:05.000] Donc c'est ici que nous on va rediriger
+[00:04:06.840] au niveau de la publicité et c'est là où
+[00:04:08.920] justement vous allez vendre et mettre en
+[00:04:10.280] avant réellement votre produit. Donc là,
+[00:04:11.959] ce qu'on va faire, c'est que je vais
+[00:04:13.280] ouvrir, on va tout faire ensemble, hein.
+[00:04:14.720] Ça, c'est la page d'accueil, on est bien
+[00:04:16.320] d'accord. Donc là, vous avez accès à la
+[00:04:17.519] page d'accueil du site. Et là, je vais
+[00:04:19.079] ouvrir une des pages produits. Voilà,
+[00:04:21.239] donc ça c'est la page produit, on est
+[00:04:22.560] bien d'accord. Et quand on fera des
+[00:04:23.560] publicités, on va rediriger sur cette
+[00:04:25.120] page là bien précisément. La fiche
+[00:04:26.720] produit, elle est bien. Regardez, en
+[00:04:29.120] vrai, c'est bien fait, c'est bien amené.
+[00:04:30.800] Donc en tout cas, de toute façon, c'est
+[00:04:31.680] une boutique qui fait plus de 100000
+[00:04:32.720] visites par mois. elle fait largement
+[00:04:34.320] plus de 100000 € par mois de de chiffre
+[00:04:36.080] d'affaires. Donc je pense que voilà, on
+[00:04:37.960] doit s'inspirer et voir par rapport aux
+[00:04:39.720] chiffres et non pas par rapport à nos
+[00:04:40.919] émotions ou ce que l'on pense. Ce qu'on
+[00:04:42.479] va faire maintenant, c'est qu'on va
+[00:04:43.280] faire une capture d'écran de toute la
+[00:04:44.800] page. Vous allez télécharger un outil
+[00:04:46.199] qui s'appelle Go Full Page. Donc c'est
+[00:04:48.039] une extension Chrome qui est gratuit,
+[00:04:49.720] d'accord ? Rien à payer. Et là, ce qu'on
+[00:04:51.199] va faire, c'est que je vais cliquer sur
+[00:04:52.440] ajouter à Google Chrome. Ajouter
+[00:04:54.080] l'extension. Parfait. Donc l'extension
+[00:04:55.960] est bien ajoutée. Je confirme que tout
+[00:04:57.720] est bon. Je vais cliquer ici sur
+[00:04:59.120] extension. Alors c'est où Goage. Voilà,
+[00:05:01.919] c'est ici. Je vais l'épingler. Parfait.
+[00:05:03.800] Donc là maintenant ce que vous allez
+[00:05:04.639] faire c'est tout simplement on va
+[00:05:05.880] cliquer sur Go Full Page et ça va
+[00:05:07.320] télécharger entièrement la page. OK ?
+[00:05:09.199] Donc ça va la télécharger en format PDF.
+[00:05:11.160] On va faire ça pour la page d'accueil et
+[00:05:12.479] pour la page produit. Et suite à ça, on
+[00:05:14.120] transmettra le tout à Claudia qui va
+[00:05:15.880] nous aider ensuite à pouvoir
+[00:05:16.919] copiercoller cette boutique. Là, je vais
+[00:05:18.440] cliquer sur PDF. Parfait. Je fais la
+[00:05:20.319] même chose pour la page produit. Je
+[00:05:21.919] clique sur go full page à nouveau.
+[00:05:23.360] Voilà, pour l'instant, il me capture
+[00:05:24.759] entièrement les pages. PDF aussi.
+[00:05:26.639] Parfait. Donc ça c'est cette étape là.
+[00:05:28.160] Aller valider. Mettez les deux images
+[00:05:29.759] sur votre bureau. Alors, mon bureau là,
+[00:05:31.759] c'est dans la partie téléchargement. Je
+[00:05:33.479] mets ça sur le bureau. Bon, ça c'est
+[00:05:35.720] fait. Je pense que c'est pas trop
+[00:05:36.759] difficile pour l'instant. On continue.
+[00:05:38.400] Étape 2, demander à Claude d'écrire le
+[00:05:40.440] plan. On va directement aller sur
+[00:05:41.880] Claudia. On va glisser donc les deux
+[00:05:43.400] captures d'écran dans la zone texte en
+[00:05:44.919] bas de la page. Copier la consigne 1
+[00:05:46.919] plus bas avec le bouton copier et
+[00:05:48.520] remplacer les mots entre crochets par
+[00:05:49.840] les vôtres. Coller là sous l'image et
+[00:05:51.280] appuyez sur entrer. Claude écrit un long
+[00:05:52.960] texte. C'est le plan de la boutique. OK,
+[00:05:54.720] il va me demander de copier la consigne
+[00:05:56.360] 1. Je pense que la consigne 1, il l'a
+[00:05:58.240] mis. plus bas. Voilà, la consigne 1,
+[00:06:00.000] c'est celle-ci. Consigne 1 pour Cloud
+[00:06:01.520] avec vos deux captures d'écran. Donc je
+[00:06:02.960] vais copier ça ici. Parfait. Donc je
+[00:06:05.080] reviens où j'en étais. Claudia, je vais
+[00:06:07.039] au niveau du bureau. Je prends les deux
+[00:06:09.080] fiches produit page d'accueil et je vais
+[00:06:10.960] copier la consigne. Après pour vous lire
+[00:06:12.720] un petit peu la la consigne numéro 1,
+[00:06:14.280] qu'est-ce que ça dit exactement ? Je
+[00:06:15.680] crée une boutique qui s'appelle donc là
+[00:06:17.000] on mettra le nom de la boutique le
+[00:06:18.039] produit acquis la promesse principale.
+[00:06:20.039] Les deux captures montrent une page
+[00:06:21.680] produit et une page d'accueil dont
+[00:06:22.880] j'aime le style. Je veux reproduire leur
+[00:06:24.360] structure, leur style et pas leur
+[00:06:25.639] contenu. Écris un prompte complet en
+[00:06:27.319] français destiné à base 44 générateur de
+[00:06:29.639] site Paria pour construire ma boutique
+[00:06:31.199] avec la même organisation, le prompt
+[00:06:33.000] doit et cetera et cetera et cetera. OK,
+[00:06:35.199] tout simplement. Donc ça c'est simple,
+[00:06:36.599] Claudia, je copie la consigne et je
+[00:06:38.479] valide. Ensuite, il va me demander ben
+[00:06:40.199] voilà de mettre le nom de la boutique et
+[00:06:41.639] cetera. Ça, je pourrais le faire
+[00:06:42.840] directement. OK, donc là Claudia, il m'a
+[00:06:44.759] créé un prompt pour Base 44. Construire
+[00:06:46.919] une boutique, le style global, la
+[00:06:48.960] typographie, espace et forme, la page
+[00:06:50.880] d'accueil, il y a tout. FAQ témoignage
+[00:06:53.000] pourquoi ça marche histoire de la marque
+[00:06:54.800] page produit OK il m'a vraiment tout
+[00:06:56.720] fait de A à Z comme ça j'aurais juste à
+[00:06:58.560] copier le prompt et transmettre toutes
+[00:06:59.800] les informations à ba 44. Donc là ce que
+[00:07:01.599] je peux faire je vais lui dire euh
+[00:07:02.720] choisis-moi un nom de boutique
+[00:07:05.360] différent. Le produit c'est le même mais
+[00:07:08.000] juste met la boutique en français et la
+[00:07:10.840] destination c'est le même avatar client
+[00:07:13.759] et il obtient la même chose que ce que
+[00:07:17.319] cette boutique présente. Voilà je
+[00:07:19.879] transmets davantage d'informations comme
+[00:07:21.759] ça il me fait tout ça et ensuite je vais
+[00:07:23.400] pouvoir transmettre le tout directement
+[00:07:25.120] au Zia afin de pouvoir réaliser la
+[00:07:26.759] boutique tranquillement. Il m'a créé la
+[00:07:27.960] boutique. Elle s'appelle Lunea. Voilà,
+[00:07:29.479] c'est très bien en domaine. Elle vend
+[00:07:31.280] des culottes menstruelles antifuite pour
+[00:07:33.039] les adolescentes et préadolescentes.
+[00:07:34.639] Acheté le plus souvent par les parents.
+[00:07:36.039] Promesse principale des règles saines et
+[00:07:37.840] sans fuite dès la première fois. Nickel.
+[00:07:39.599] Donc là, il est en train de me mettre en
+[00:07:40.479] place l'ensemble du prompt pour la page
+[00:07:42.120] d'accueil et la page produit. OK. Donc
+[00:07:43.879] là, on est bon concernant le prompt, le
+[00:07:45.440] site global, page d'accueil. OK, et
+[00:07:47.599] ensuite il y a la page produit aussi.
+[00:07:49.240] C'est nickel. Donc ça, on met ça de côté
+[00:07:51.120] pour l'instant. On revient ici. Dès que
+[00:07:53.080] ça c'est fait, cliquez sur le bouton
+[00:07:54.360] copier sur la réponse de Cloud puis
+[00:07:55.879] coller ce texte dans un fichier sur
+[00:07:57.199] votre bureau, blocne, tout ce que vous
+[00:07:58.639] voulez. Donc là, je peux ben copier ça
+[00:08:00.720] et je peux coller tout ce que Claudia
+[00:08:02.680] m'a mis en place. Maintenant, ce qu'il
+[00:08:04.599] va falloir faire donc c'est créer la
+[00:08:06.080] boutique sur Wix et la relier avec base
+[00:08:08.639] 44. Donc Wix sera votre arrière de
+[00:08:10.879] boutique, base 44 sera votre vitrine.
+[00:08:13.159] Cette étape les branche ensemble. Ce que
+[00:08:14.960] vous pouvez faire dès maintenant, donc
+[00:08:16.120] vous pouvez ouvrir le lien Wix qui est
+[00:08:17.560] en description, créer votre compte avec
+[00:08:19.520] votre propre email. C'est ce qu'on va
+[00:08:21.120] faire ensemble dès maintenant. En
+[00:08:22.400] cliquant sur le lien en description,
+[00:08:23.680] vous allez arriver donc sur le
+[00:08:24.759] générateur de boutique avec
+[00:08:26.039] l'intelligence artificielle. Donc
+[00:08:27.280] laissez l'intelligence artificielle
+[00:08:28.560] créer votre boutique en dropshipping.
+[00:08:30.280] Obtenez une boutique de dropshipping
+[00:08:31.720] complète en quelques minutes avec le
+[00:08:33.399] design, la mise en place et
+[00:08:34.640] l'approvisionnement des articles gérés
+[00:08:36.320] pour vous. Je vais cliquer directement
+[00:08:37.479] sur commencer ici. Ils vont me demander
+[00:08:39.360] maintenant que souhaitez-vous vendre.
+[00:08:40.640] Dans tous les cas, ça engage rien parce
+[00:08:42.039] que je vais utiliser base 44 pour
+[00:08:43.880] pouvoir tout mettre en place. Je vais
+[00:08:44.959] leur dire beauté et santé par exemple.
+[00:08:46.720] Je vais cliquer sur continuer,
+[00:08:48.080] recommander, artisanal, structurer. Je
+[00:08:50.000] vais mettre recommander. Donc là, c'est
+[00:08:51.279] concernant le thème euh du site, les
+[00:08:53.000] couleurs, mais encore une fois, ce n'est
+[00:08:54.120] pas engageant parce qu'on va faire
+[00:08:54.959] toutes les modifications par la suite
+[00:08:56.279] avec l'outil base 44. Ensuite, ce qu'on
+[00:08:58.440] doit faire, c'est que je vais mettre mon
+[00:09:00.240] email juste ici. Continuer avec un email
+[00:09:02.760] et je vais pouvoir choisir un mot de
+[00:09:04.320] passe. Parfait. Ensuite, je clique sur
+[00:09:05.920] s'inscrire. Parfait. Approvisionnement
+[00:09:07.519] de votre boutique avec les meilleurs
+[00:09:08.680] articles. Votre boutique est
+[00:09:09.839] approvisionnée en article de haute
+[00:09:11.160] qualité, spécialement sélectionné pour
+[00:09:12.720] votre marché. Élaboration de votre
+[00:09:14.480] catalogue d'article. Donc là, Lia est en
+[00:09:16.240] train de tout mettre en place.
+[00:09:17.480] Maintenant, ils vont me demander de
+[00:09:18.600] sélectionner un nom concernant ma
+[00:09:20.040] boutique. Donc si je reviens, ma
+[00:09:21.240] boutique, elle s'appelle Lunea. Après,
+[00:09:22.920] Lia me fait automatiquement aussi des
+[00:09:24.440] suggestions. Là, ils m'ont proposé
+[00:09:25.920] éclora, purélice, essence de soi,
+[00:09:28.040] lievie. Bon, moi, je vais garder ce que
+[00:09:29.680] je souhaite. Lancer votre boutique.
+[00:09:31.480] Finalisation de la configuration. La
+[00:09:33.399] configuration automatique est presque
+[00:09:34.880] terminée. Votre boutique est en cours.
+[00:09:36.560] Donc parfait. Votre boutique est prête à
+[00:09:38.360] être mise en ligne. Votre boutique est
+[00:09:39.680] entièrement créée. Donc là, ils m'ont
+[00:09:41.160] créé une boutique en l'espace de
+[00:09:42.720] quelques minutes. D'accord. Ça a pris 10
+[00:09:44.640] secondes à tout casser avec ce que je
+[00:09:46.000] vous ai montré. Mais après là c'est la
+[00:09:47.560] boutique de base mais ensuite je vais
+[00:09:48.760] utiliser donc BS4 pour vraiment
+[00:09:50.200] littéralement copiercoller la boutique
+[00:09:52.040] des concurrents et je peux vraiment
+[00:09:53.000] faire toutes les modifications
+[00:09:53.959] possibles. Mais en tout cas là on a déjà
+[00:09:55.160] un premier aperçu de ce qui est possible
+[00:09:56.880] de faire. Donc ils m'ont créé une
+[00:09:58.079] boutique avec 20 produits performants.
+[00:09:59.800] Donc ça c'est intéressant. Si vraiment
+[00:10:00.839] vous savez pas quoi lancer, vous pouvez
+[00:10:02.000] faire aussi de cette manière. Là je vais
+[00:10:03.360] cliquer donc sur mettre à niveau.
+[00:10:04.839] Aujourd'hui vous avez différents
+[00:10:06.000] forfaits disponibles adaptés à votre
+[00:10:08.000] besoin. Donc tous les forfaits, ça
+[00:10:09.320] comprend un nom de domaine personnalisé.
+[00:10:11.000] Donc vous avez pas besoin de payer
+[00:10:12.040] encore un nom de domaine supplémentaire.
+[00:10:13.560] Le retrait de la marque, donc il y a
+[00:10:14.760] personne qui pourra reprendre la marque
+[00:10:16.279] de votre boutique. Donc ça c'est très
+[00:10:17.519] bien. Vous avez aussi une assistance en
+[00:10:19.120] français comme ça ça vous évite tout
+[00:10:20.680] types de problématiques. Je vous
+[00:10:21.640] conseille de prendre le moins cher ici
+[00:10:23.040] le plan essentiel. Je vais le
+[00:10:24.279] sélectionner juste ici. Je vous
+[00:10:25.640] conseille de cliquer ici sur annuel.
+[00:10:27.320] Donc comme ça vous économisez plus de
+[00:10:28.480] 130 €. Ça vous permettra de pouvoir vous
+[00:10:30.279] lancer tranquillement. Donc vous avez -
+[00:10:31.800] 50 % aujourd'hui. Donc je vais cliquer
+[00:10:33.320] sur continuer le paiement. Comme ça je
+[00:10:35.000] finalise la transaction. Et donc là,
+[00:10:36.399] c'est un outil de générateur de
+[00:10:37.639] boutique. Donc je vais pouvoir créer
+[00:10:38.959] autant de boutiques que je le veux. Que
+[00:10:40.639] je veux créer une boutique ou que je
+[00:10:41.959] veux créer 100 boutiques. Je peux le
+[00:10:43.360] faire directement avec ce forfait. Donc
+[00:10:45.000] je peux littéralement tester facilement
+[00:10:46.560] des boutiques. Si je veux arrêter une
+[00:10:47.959] boutique et reprendre, j'ai pas besoin
+[00:10:49.200] de reprendre un nouveau forfait. Le nom
+[00:10:50.519] de domaine, il est 100 % gratuit. Donc
+[00:10:51.920] je vous invite à vraiment faire ainsi.
+[00:10:53.600] Donc là, ce que je vais faire, c'est que
+[00:10:54.440] je vais mettre mes informations
+[00:10:55.480] bancaires. C'est 138 dollars, mais c'est
+[00:10:57.079] à l'année. C'està dire que après, j'ai
+[00:10:58.240] plus besoin de payer pendant toute
+[00:10:59.600] l'année. Là, je mets mes informations
+[00:11:01.120] bancaires, détail de la facture. Donc,
+[00:11:02.720] je vais mettre mon adresse, ville, code
+[00:11:04.040] postal et tout le nécessaire. Et comme
+[00:11:05.639] ça, je peux directement donc cliquer ici
+[00:11:07.000] pour valider l'achat. Dès lors que ça
+[00:11:08.240] c'est fait, je vous montre directement
+[00:11:09.440] la suite des différentes étapes. Dès
+[00:11:11.040] lors que vous avez validé votre
+[00:11:12.000] inscription, vous allez arriver
+[00:11:13.399] exactement donc sur ce tableau de bord.
+[00:11:15.120] Donc bienvenue sur votre tableau de
+[00:11:16.279] bord. Ici, ils vont nous proposer de
+[00:11:17.639] mettre en place un certain type de site.
+[00:11:19.360] Donc pour l'instant, on refuse. Dans
+[00:11:20.560] tous les cas, on va tout mettre en place
+[00:11:21.800] avec base 44. Là, pour l'instant, c'est
+[00:11:23.639] validé. Configurer un nom de domaine.
+[00:11:25.639] Là, mon nom de domaine, il est gratuit.
+[00:11:27.079] J'ai pas besoin de payer de nom de
+[00:11:28.079] domaine parce que j'ai pris le plan
+[00:11:29.120] annuel. À nouveau, je vous invite à
+[00:11:30.720] faire de même parce que là, pour
+[00:11:31.680] l'instant, mon nom de domaine, c'est
+[00:11:32.560] celui-là. Contact 991. wix.com. Donc
+[00:11:36.519] voilà, le site il est pas mal. C'est le
+[00:11:37.959] site qui m'a été mis en place via le
+[00:11:39.040] générateur donc ce qui est très bien
+[00:11:40.519] mais je peux je peux bien évidemment
+[00:11:41.800] faire mieux notamment via BS4. Dès lors
+[00:11:43.680] que vous aurez choisi un nom de domaine,
+[00:11:45.040] vous pourrez donc obtenir une messagerie
+[00:11:46.720] professionnelle personnalisée. On pourra
+[00:11:48.480] concevoir notre site web et ensuite on
+[00:11:50.160] pourra même être visible sur Google.
+[00:11:51.680] Donc ça c'est ce qu'on fera dans un
+[00:11:52.600] second temps. Là vous avez vraiment
+[00:11:53.600] accès à tout l'interface. Vous avez la
+[00:11:55.040] page d'accueil agent IA, vous avez les
+[00:11:56.880] ventes. Ici on aura accès à toutes les
+[00:11:58.360] ventes. Le catalogue, les applis, site
+[00:12:00.519] web et mobile, marketing, recevoir les
+[00:12:02.560] paiements, boîtes de réception. Vous
+[00:12:04.079] avez vraiment accès à tout. Moi
+[00:12:05.279] aujourd'hui désormais, je passe
+[00:12:06.480] uniquement par Wix pour créer mes
+[00:12:07.760] boutiques parce qu'avec Shopify, j'ai eu
+[00:12:09.120] trop de problèmes par le passé. Des
+[00:12:10.240] boutiques qui sautent sans raison.
+[00:12:11.600] Aujourd'hui, ils pensent un peu qu'ils
+[00:12:12.519] ont tous les pouvoirs et ils pensent
+[00:12:13.480] qu'on peut pas aller ailleurs. Je
+[00:12:14.639] connais plein de personnes qui ont de
+[00:12:15.440] très bons résultats qui font aussi avec
+[00:12:16.600] ces plateformes là. De toute façon là,
+[00:12:17.880] le site que je vous ai montré, c'est
+[00:12:19.000] avec le même générateur et ils font plus
+[00:12:20.360] de 100000 € par mois. Maintenant qu'on a
+[00:12:21.880] créé notre compte Wix, ce qu'on va
+[00:12:23.160] faire, c'est qu'on va cliquer ici sur
+[00:12:24.440] rechercher des outils, des applis et de
+[00:12:26.120] LED. Et je vais mettre donc base 44.
+[00:12:28.519] Base 44, c'est un outil d'intelligence
+[00:12:30.040] artificielle qui nous permettra
+[00:12:31.000] justement de ne pas devoir accoder pour
+[00:12:32.680] créer n'importe quelle boutique qu'on
+[00:12:34.079] souhaite mettre en place. Donc là, je
+[00:12:35.199] vais cliquer ici B 44 ajouter. Donc
+[00:12:38.000] voilà, je vais ajouter B 44 sur mon
+[00:12:39.680] site. Parfait. Donc B 44 a bien été créé
+[00:12:41.880] sur ma boutique. À nouveau, si vous avez
+[00:12:43.279] pas de compte B 44, vous avez un lien en
+[00:12:45.279] description. Euh je vais vous montrer à
+[00:12:46.560] nouveau comment on pouvez vous inscrire
+[00:12:47.639] et faire les choses très facilement.
+[00:12:48.880] Viens le lien en description, vous
+[00:12:50.040] arrivez sur une interface exactement
+[00:12:51.320] comme ceci. Créer des applications et
+[00:12:52.880] des sites ultra puissants. Je vais
+[00:12:54.600] mettre créer-moi un site de culotte. Si
+[00:12:57.279] je peux vous montrer créer maintenant.
+[00:12:58.839] Donc là, même principe, il va falloir
+[00:12:59.760] que vous inscrivez. Voilà, je mets mon
+[00:13:01.240] email. Donc ils vont m'envoyer un code
+[00:13:02.839] de vérification. Parfait. Donc je valide
+[00:13:04.720] le code. Donc ça c'est vraiment un outil
+[00:13:06.120] qui nous permettra de tout faire de A à
+[00:13:07.600] Z. Donc là, on a une offre de bienvenue.
+[00:13:09.320] Faut savoir que best 44, donc ça fait
+[00:13:10.600] partie de Wix. Donc c'est ensemble.
+[00:13:12.240] C'est juste qu'il y a deux forfaits
+[00:13:13.040] différents parce qu'il y a deux
+[00:13:13.800] fonctionnalités qui sont différentes.
+[00:13:15.079] Là, vous avez un forfait à 28 € par
+[00:13:16.480] mois. Comme ça, vous pouvez vraiment
+[00:13:17.320] modifier à 100 % l'entièreté de votre
+[00:13:19.360] boutique. Vous pouvez littéralement tout
+[00:13:20.600] copier. Au final, vous avez juste besoin
+[00:13:21.959] de ces deux outils là, plus Claudia bien
+[00:13:23.639] sûr pour pouvoir gérer donc toute la
+[00:13:25.240] partie création de boutique en 2026 et
+[00:13:27.360] 2027. Maintenant, je reviens sur Wix et
+[00:13:29.320] tout ce que j'ai à faire donc c'est
+[00:13:30.880] copier entièrement le prompt. Je vais le
+[00:13:33.480] coller et je vais cliquer sur entrer
+[00:13:35.519] juste ici. Donc c'est parfait. C'est
+[00:13:36.920] exactement ce qu'il est en train de me
+[00:13:38.040] faire. Construction de votre idée. Donc
+[00:13:39.800] là, on le laisse bosser, on le laisse
+[00:13:41.160] travailler comme ça. Il me met tout ça
+[00:13:42.839] en place. Donc là, littéralement, je
+[00:13:44.320] n'ai rien à faire à nouveau. Oui, ça m'a
+[00:13:46.079] permis de pouvoir créer mon compte.
+[00:13:47.360] C'est là où sera logé justement ma
+[00:13:48.600] boutique, la structure, c'est là où je
+[00:13:50.000] vais encaisser les paiements, gérer tout
+[00:13:51.519] ça. Et maintenant BS4, ça va me
+[00:13:53.079] permettre de pouvoir construire
+[00:13:54.160] n'importe quelle idée que j'ai et je
+[00:13:55.440] vais pouvoir modifier la boutique de A à
+[00:13:57.000] Z autant que je le souhaite. Donc là, je
+[00:13:58.880] le laisse bosser et je vous montre le
+[00:14:00.160] retour d'ici quelques minutes. OK, donc
+[00:14:01.800] là, il est en train de tout me faire. Ce
+[00:14:03.079] que je construis maintenant, le cœur de
+[00:14:04.320] la boutique, page d'accueil, page
+[00:14:05.759] produit, design, header stick avec le
+[00:14:08.120] menu, ce que j'ajoute après. Nickel,
+[00:14:10.560] FAQ. Donc là, il vraiment tout me faire
+[00:14:12.440] de A à Z. Je le laisse bosser. On
+[00:14:14.519] continue, je le laisse bosser et je vous
+[00:14:16.120] fais un retour dès que c'est bon. Donc
+[00:14:17.399] voici le retour concernant la structure
+[00:14:19.199] de la boutique. OK, on n' pas fini parce
+[00:14:21.120] qu'il y a pas encore les images mais en
+[00:14:22.360] tout cas au niveau de la structure,
+[00:14:23.360] c'est vraiment ce qui a été fait. Donc
+[00:14:24.480] qu'est-ce qu'il m'a dit ? La boutique
+[00:14:25.600] Lunéa est en ligne, accueil complet,
+[00:14:27.320] page produit détail, catalogue avec les
+[00:14:29.079] filtres qui fonctionnent. Parfait,
+[00:14:30.600] parfait. Ouais, tout fonctionne les
+[00:14:31.800] filtres. Donc là, vous voyez, vous avez
+[00:14:32.759] pas besoin d'être un expert en
+[00:14:33.680] informatique ou autre pour mettre ça en
+[00:14:35.000] place. Là, c'est vraiment un site
+[00:14:36.279] professionnel. Euh page produit, galerie
+[00:14:38.480] avec des vignettes. OK, alors là, c'est
+[00:14:40.199] la page d'accueil pour l'instant.
+[00:14:41.240] Laissez-moi vous montrer ça là. On va
+[00:14:42.440] rajouter les images après. La marque
+[00:14:44.120] antifite pensée pour les ados. Meilleure
+[00:14:46.160] vente économisé avec nos packs. Vos
+[00:14:48.600] questions sur les culotte menstruel ?
+[00:14:49.880] Comment ça marche ? Ma fille a vécu ses
+[00:14:51.480] premières règles sans stress. Parfait.
+[00:14:53.519] Pourquoi Luna protège vraiment ?
+[00:14:55.040] Pourquoi j'ai créé Luna ? Le guide des
+[00:14:56.680] premières règles. Nickel. On a même un
+[00:14:58.360] guide qu'on peut mettre en place he très
+[00:14:59.880] facilement avec Claudia. Encore une fois
+[00:15:01.720] c'est ultra qualitatif. Ensuite donc ça
+[00:15:03.399] c'est la page d'accueil. Là, vous avez
+[00:15:04.920] donc le catalogue. Voilà, ceux qui sont
+[00:15:07.000] intéressés par euh différents produits
+[00:15:08.600] qui veulent voir la la part la partie
+[00:15:10.120] catalogue, vous avez la boutique,
+[00:15:12.000] catégorie absorption taille, couleur.
+[00:15:14.040] Vous voyez que ça se fait
+[00:15:14.639] automatiquement. Je n'ai pas touché une
+[00:15:16.199] seule ligne de code. Vous êtes témoins.
+[00:15:17.800] Euh vraiment c'est incroyable. Là, en
+[00:15:19.519] fait, on dirait c'est un site
+[00:15:20.680] professionnel alors qu'au final tu n'as
+[00:15:22.000] pas besoin d'être professionnel pour
+[00:15:23.000] pouvoir matérialiser un site comme ça.
+[00:15:25.040] C'est là la vraie différence. Donc par
+[00:15:26.800] exemple, si je clique sur n'importe quel
+[00:15:27.920] produit, culotte invisible. Là, on a
+[00:15:29.560] accès donc à la fiche produit, culotte
+[00:15:31.079] invisible, absortion légère. Vous voyez
+[00:15:32.680] donc culotte invisible, il a fait comme
+[00:15:34.399] lui hein. Ch c'est une taille. Là vous
+[00:15:35.720] avez donc laaffiche produit comme le
+[00:15:37.279] concurrent. Donc en tout cas le site est
+[00:15:39.000] vraiment validé. Il va me dire dites-moi
+[00:15:40.680] juste si vous souhaitez ajuster le
+[00:15:41.959] design couleur espacement. Je v lui dire
+[00:15:44.680] tu peux garder les mêmes couleurs que le
+[00:15:47.319] concurrent et bien respecter sa
+[00:15:49.519] structure. C'est nickel. Donc je
+[00:15:50.880] récupère la page du concurrent pour
+[00:15:52.120] calquer sa structure et ses couleurs.
+[00:15:53.519] Donc là c'est ce qu'il va faire. Si vous
+[00:15:54.639] avez quelconque modification, vous
+[00:15:55.720] pouvez directement lui demander et va
+[00:15:57.000] s'en occuper immédiatement. Donc là on
+[00:15:58.600] le laisse bosser comme ça. Il regarde
+[00:15:59.880] bien tout. Concernant la structure du
+[00:16:01.440] site, on est bon. On va tout simplement
+[00:16:02.759] passer aux étapes suivantes. Donc là,
+[00:16:04.319] qu'est-ce qu'il va nous dire ? Laisser B
+[00:16:05.639] 44 construire la première version. Donc
+[00:16:07.160] là, c'est ce qu'on vient de faire,
+[00:16:07.880] l'étape 4. Euh, vous ne tapez rien de
+[00:16:09.440] nouveau, un aperçu de votre boutique
+[00:16:10.959] apparaît, regardez-le de haut en bas.
+[00:16:13.160] Les sections sont là avec des textes
+[00:16:14.600] d'exemple et des images grises. C'est
+[00:16:16.199] voulu, vos vraies images arrivent à
+[00:16:17.720] l'étape 6. D'accord ? Donc c'est normal
+[00:16:19.120] si vous ne voyez pas d'imag, c'est pas
+[00:16:20.279] que ça bug ou je ne sais quoi. On va
+[00:16:22.000] faire ça juste après. Maintenant, on va
+[00:16:23.600] passer à l'étape 5. Une consigne est
+[00:16:25.399] égale à une page. Ce qu'on va faire
+[00:16:26.680] maintenant, c'est qu'on va construire
+[00:16:27.560] chacune des pages une par une. Coller la
+[00:16:29.720] consigne 3, la page d'accueil. Attendez,
+[00:16:31.959] regardez et corriger ses besoins. Coller
+[00:16:33.680] la consigne 4, la consigne 5, 6, 7. Donc
+[00:16:36.040] les consignes, elles sont juste en bas,
+[00:16:37.519] descendent ici. La consigne 1, on
+[00:16:39.399] l'avait créé tout à l'heure. La consigne
+[00:16:40.839] 2, je vais venir ici. Donc la liste est
+[00:16:42.839] concernant la page d'accueil. Donc la
+[00:16:44.480] consigne 2, elle dit : "I utilise les
+[00:16:46.000] produits, prix et variantes et stocks de
+[00:16:47.639] la boutique Wix connectée. Le bouton
+[00:16:49.319] acheté au panier et le panier doivent
+[00:16:50.839] passer par Wix. Commence par la page
+[00:16:52.199] produit puis montre-moi l'aperçu avant
+[00:16:53.600] de continuer. Ce qu'on va faire
+[00:16:54.639] maintenant, c'est qu'on va copier la
+[00:16:55.720] consigne 3 et je vais la coller
+[00:16:57.240] directement ici. Donc là, je vais coller
+[00:16:58.839] la consigne 3, créer la page d'accueil
+[00:17:00.759] avec le nom de la boutique dans le même
+[00:17:01.920] style que la page produit. Allez, va me
+[00:17:03.560] faire tout ça. Donc, il y aura la
+[00:17:04.679] consigne 3 pour la page d'accueil, la
+[00:17:06.400] consigne 4 pour la page produit, la
+[00:17:07.919] consigne 5 pour les les sections du bas
+[00:17:10.039] de la page, la consigne 6 pour le menu
+[00:17:12.120] et pied de page et la consigne 7 pour
+[00:17:14.039] les différentes pages. Consigne 8, c'est
+[00:17:15.880] les photos et la consigne 9, c'est
+[00:17:17.559] concernant euh chat GPT ou Claudia, on
+[00:17:19.559] usera Claudia. Et comme ça, on finit
+[00:17:21.559] directement le tout. Donc, c'est simple
+[00:17:23.039] he maintenant c'est que du copiercoller
+[00:17:24.640] de A à Z. Parfait. Donc là, c'est ce
+[00:17:26.240] qu'il est en train de faire. Je récupère
+[00:17:27.600] le client visiteur. Parfait. Là, tout ce
+[00:17:29.720] que vous avez à faire, c'est très
+[00:17:30.559] simple, c'est copier, coller, copier,
+[00:17:32.320] coller, copier, coller. À partir du
+[00:17:33.840] moment où vous avez trouvé un site
+[00:17:34.840] référence, après c'est que du
+[00:17:35.960] copiercoller, c'est super simple, donc
+[00:17:37.440] il y a rien de compliqué en soi. OK,
+[00:17:39.000] donc là on est bon. La page d'accueil
+[00:17:40.679] est en place. Bandeau de livraison
+[00:17:42.080] offert des 60 €. héros avec titre plus
+[00:17:44.400] sous-titre bouton voir le produit grille
+[00:17:46.559] de quatre produits tirés de la boutique
+[00:17:48.280] euh produit Lunéa en trois colonnes FAQ
+[00:17:50.919] 5 question les liens pour aller voir les
+[00:17:53.039] produits alors je juste lui dire on fait
+[00:17:55.640] la boutique full focus sur ce produit
+[00:17:59.559] voilà il m'a fait deux trois
+[00:18:00.799] arrangements comme ça on a pas besoin de
+[00:18:02.640] mettre en avant d'autres produit comme
+[00:18:04.480] ça il me fait ça en attendant donc c'est
+[00:18:06.559] quoi la suite on va construire les pages
+[00:18:08.120] une par une. Consigne 4, on va
+[00:18:09.960] copiercoller. Consigne 5 on va
+[00:18:11.520] copiercoller. Consigne 6. Donc je vais
+[00:18:13.320] vous présenter les consignes, ensuite je
+[00:18:14.480] vais m'en occuper et ensuite je vous
+[00:18:16.200] passerai on passera directement à la
+[00:18:17.559] suite. Ça sera justement de mettre en
+[00:18:19.039] place les propres photos sur le site.
+[00:18:21.120] Concernant les consignes, la page
+[00:18:22.520] d'accueil, ça c'est OK. Page produit
+[00:18:24.080] galerie de 5 visuels, section débat des
+[00:18:26.120] pages ajoute sous les onglets de la page
+[00:18:27.679] produit dans cet ordre une section
+[00:18:29.039] comment choisir avec quatre cartes
+[00:18:30.280] compératifs côte à côte. Consigne 6,
+[00:18:32.200] c'est le menu et pied de page et cons
+[00:18:34.120] c'est concernant toutes les autres pages
+[00:18:35.480] CGV, mention légal, politique de
+[00:18:36.919] confidentialité. On peut juste
+[00:18:38.120] copiercoller, il va s'occuper de tout
+[00:18:39.640] directement. Donc je m'occupe de ça et
+[00:18:41.120] je vous fais un retour dès que c'est
+[00:18:41.960] bon. Comme ça on finalise avec la mise
+[00:18:43.360] en place des images. OK. Donc là on se
+[00:18:44.760] retrouve quelques minutes plus tard. Il
+[00:18:45.880] m'a bien fait donc toutes les pages
+[00:18:47.039] légales, mention légale, CGV, polici de
+[00:18:49.400] confidentialité, choix de
+[00:18:50.640] confidentialité, déclaration
+[00:18:52.240] d'accessibilité, tout de A à Z. Et sur
+[00:18:54.280] la page du haut, il m'a même rajouté
+[00:18:55.679] donc un quiz interactif donc de trois
+[00:18:57.480] questions qui s'est mis en place
+[00:18:58.840] automatiquement. Donc là, quand je
+[00:18:59.840] clique sur les boutons, tout fonctionne.
+[00:19:01.080] On est bien d'accord. Voilà. Hop là. Hop
+[00:19:02.880] là. Là, c'est juste question de rajouter
+[00:19:04.200] des images. C'est l'étape qu'on va faire
+[00:19:05.559] juste après. Euh là, c'est Lunea. Il m'a
+[00:19:08.039] mis exactement comme le concurrent juste
+[00:19:09.960] ici. Vous voyez le concurrent, il avait
+[00:19:11.240] mis ça. Voilà, juste à rajouter les
+[00:19:12.760] images. Là, si je veux modifier la
+[00:19:14.120] promo, je peux le faire aussi. Lui, il
+[00:19:15.440] avait mis ça ici. Là, vous avez des
+[00:19:16.840] culottes menstruelles pour le au cas où.
+[00:19:18.480] Là, je rajouterai les images. Là, c'est
+[00:19:19.919] une question d'image. Imag image mais
+[00:19:21.720] sinon, on a vraiment là la structure du
+[00:19:23.280] site qui a vraiment été faite. Là, tout
+[00:19:24.960] ce qui manque, c'est que des images.
+[00:19:26.080] Sinon, on a déjà tout. Là, faut que je
+[00:19:27.280] connecte un compte Instagram. Mais là,
+[00:19:28.679] la structure on l'a de A à Z. Si je vais
+[00:19:30.360] sur euh politique de remboursement, on a
+[00:19:31.840] vraiment la page qui est ici. Euh si je
+[00:19:33.559] redescends et que je vais sur le à
+[00:19:35.120] propos à nouveau, on a ça ici. Et vous
+[00:19:37.000] pouvez demander toutes les modification
+[00:19:38.360] que vous souhaitez euh de A à Z. Donc
+[00:19:40.200] c'est tout simplement incroyable. La
+[00:19:41.440] partie livraison, on a tout qui est ici.
+[00:19:43.880] Le guide détail, voilà, il m'a mis en
+[00:19:45.159] place un guide détail bien précis. À
+[00:19:46.840] nouveau, vous pouvez le modifier en
+[00:19:48.039] fonction de la réalité. Donc il y a
+[00:19:49.159] vraiment tout qui est fait de A à Z. Je
+[00:19:51.200] n'ai rien à coder, je n'ai rien à
+[00:19:53.080] programmer. J'ai juste à lui dire
+[00:19:54.120] "Fais-moi ça, il le fait." C'est tout.
+[00:19:56.080] Il m'a il m'a mis en place une page
+[00:19:57.320] contact avec un numéro de téléphone
+[00:19:58.480] aussi. On est disponible du lundi au
+[00:19:59.960] vendredi à 18h. Donc là, c'est juste en
+[00:20:01.640] mettant en application euh en copiant là
+[00:20:03.760] tout ce que j'ai mis ici là, les
+[00:20:04.840] consignes 1 2 3 4 5 6 7 8. Vous vous
+[00:20:07.360] copiez ces consignes et il va tout
+[00:20:08.480] faire. Même le référencement, il nous
+[00:20:09.880] gère ça afin qu'on puisse être
+[00:20:11.120] facilement trouvable euh notamment sur
+[00:20:12.919] Google et qu'on puisse avoir des ventes
+[00:20:14.360] qui se fassent gratuitement. Si on est
+[00:20:15.919] bien référencé, il y a beaucoup de
+[00:20:16.960] personnes qui pourront accéder à notre
+[00:20:18.159] site sans avoir besoin de faire de la
+[00:20:19.880] publicité. Donc là, vous avez accès à
+[00:20:21.039] tout. Le petit quiz pour savoir quelle
+[00:20:22.559] est la culotte idéale en fonction du
+[00:20:23.919] client, en fonction de son besoin. Quel
+[00:20:25.480] est votre flux ? On peut mettre allez
+[00:20:27.159] abondant. Quand portez-vous la culotte ?
+[00:20:29.720] Je vais mettre au quotidien. Quelle
+[00:20:31.120] coupe préférez-vous ? Je vais mettre
+[00:20:33.320] taille haute voilà donc dans ce cas-là,
+[00:20:35.039] ils me font une proposition par rapport
+[00:20:36.480] à la culotte choisie. Donc ça encore une
+[00:20:37.880] fois c'est Game Changer. Si vous mettez
+[00:20:39.559] ça en place sur votre boutique, ça fait
+[00:20:41.000] vraiment la différence. Donc ça pour
+[00:20:42.360] coder ça, je vous promets que c'est dur,
+[00:20:43.880] ça prend du temps. Là ça se fait tout
+[00:20:45.320] automatiquement avec BS4 et Wix. Vous
+[00:20:47.559] gérez ça de A à Z tranquillement. Donc
+[00:20:49.280] dès lors qu'il y a un souci au niveau du
+[00:20:50.559] site. Si là je changer la couleur, je
+[00:20:52.120] peux le faire. Si je vais modifier le
+[00:20:53.760] prix, modifier le titre, je n'ai rien à
+[00:20:55.360] coder. J'ai juste à dire ici fait ça et
+[00:20:57.240] il le fait. OK, c'est simple, facile,
+[00:20:59.280] pas compliqué. On fait en fonction de la
+[00:21:01.200] concurrence. La dernière chose à faire
+[00:21:02.720] maintenant concernant le site, si le
+[00:21:04.000] site me convient et que tout me va, là
+[00:21:06.039] c'est la page d'accueil. Donc page, je
+[00:21:08.320] vais vous montrer un peu le catalogue.
+[00:21:09.799] Catalogue. Là, c'est que question
+[00:21:11.000] d'images. Donc la page produit, elle est
+[00:21:12.679] comme ça. Pareil là, je peux ajouter
+[00:21:14.000] toutes les images. Voilà, il m'a mis les
+[00:21:15.400] mêmes options que le concurrent. Facile
+[00:21:17.200] à laver. Là, il faut que je mette une
+[00:21:18.480] vidéo, découvrir les autres kits, vos
+[00:21:20.480] questions réponses. Voilà. Donc la page
+[00:21:22.279] produit, elle est comme le concurrent.
+[00:21:23.520] Et euh ben maintenant, la dernière chose
+[00:21:24.640] qui va me rester à faire, c'est
+[00:21:25.520] d'ajouter donc toutes les images et
+[00:21:26.919] ensuite finaliser donc le paramétrage de
+[00:21:28.360] la boutique et ensuite on est bon. Euh
+[00:21:29.840] pour moi, c'est la meilleure manière
+[00:21:30.880] aujourd'hui très clairement euh de
+[00:21:31.960] pouvoir mettre en place sa première
+[00:21:33.159] boutique. Donc maintenant ce qu'on va
+[00:21:34.240] faire simplement, qu'est-ce qu' me dit ?
+[00:21:35.679] Glisser vos cinq photos produits depuis
+[00:21:37.159] le bureau. L'étape 6, ça sera de mettre
+[00:21:39.000] vos propres photos. C'est le moment où
+[00:21:40.480] la boutique devient la vôtre. Glissez
+[00:21:42.080] vos photos depuis le bureau dans la zone
+[00:21:43.480] de texte de B 44. Collez la consigne 8
+[00:21:45.720] et faites pareil pour toutes les autres
+[00:21:46.960] photos. Ensuite, on va parcir
+[00:21:48.200] entièrement le site. Il ne doit plus
+[00:21:49.520] rester aucune image grise. Si vous en
+[00:21:51.200] voyez une, dites-lui tout simplement, il
+[00:21:52.679] reste une image grise dans la section
+[00:21:54.039] pourquoi et remplace-la par la photo 6.
+[00:21:56.080] C'est tout. Donc c'est super simple à
+[00:21:57.480] mettre en place. Ce que je peux faire,
+[00:21:58.760] c'est reprendre par exemple les images
+[00:22:00.159] du concurrent, enregistrer l'image sous.
+[00:22:02.120] Voilà. Donc là, je récupère son image.
+[00:22:03.520] Donc là, ce que je peux faire hein,
+[00:22:04.400] simplement, je vais vous montrer
+[00:22:05.320] l'exemple. C'est vraiment super simple.
+[00:22:07.120] Je reprends toutes les images. Après,
+[00:22:08.720] vous pouvez faire aussi autrement, mais
+[00:22:09.919] en tout cas, c'est vraiment pour vous
+[00:22:10.760] montrer. Hop, là, je peux reprendre
+[00:22:12.520] toutes les images et on va exactement
+[00:22:14.200] les remettre. et je soupçonne Lia
+[00:22:16.440] concernant ces images là. Je sais qu' il
+[00:22:17.840] vont me dire "Oui, mais est-ce qu'on a
+[00:22:18.600] le droit ?" Oui, on a le droit. Si c'est
+[00:22:19.960] des images qui ont été faites par Lia,
+[00:22:21.120] en tout cas, je peux même encore les
+[00:22:22.080] modifier si je veux vraiment. Donc il y
+[00:22:23.600] a même pas de sujet. Alors, au niveau
+[00:22:25.679] des images, je vais lui dire "ajoute les
+[00:22:28.400] images de toutes les culottes à l'o et
+[00:22:31.679] économie" et je lui envoie ça. OK, donc
+[00:22:33.799] là, c'est exactement ce qu'il m'a fait.
+[00:22:35.039] Il m'a ajouté donc toutes les photos,
+[00:22:36.480] celles que j'ai reprises du concurrent à
+[00:22:37.919] l'instant, toutes les culottes qui est
+[00:22:39.600] avantageux. Absorption légère,
+[00:22:41.039] absorption modérée, absorption forte
+[00:22:42.840] nuit, bestseller, l'eau et économie.
+[00:22:44.840] Tout ce que vous avez à faire, c'est
+[00:22:45.960] transmettre les images comme j'ai fait
+[00:22:47.440] ici. J'ai dit ajoute les images de
+[00:22:49.080] toutes les culottes à économie et c'est
+[00:22:50.760] ce qu'il vient de faire à l'instant. Et
+[00:22:51.799] on peut faire la même chose donc pour
+[00:22:53.120] ici, ici là c'est que question de
+[00:22:54.919] rajouter les images. Il y a rien de
+[00:22:56.200] compliqué à faire en soi. Euh et là à
+[00:22:58.520] tous les niveaux, je vais lui demander
+[00:22:59.559] de rajouter les images. Mais en tout cas
+[00:23:01.559] pour que vous ayez une visibilité donc
+[00:23:02.799] sur ce qui est possible de faire de A à
+[00:23:04.440] Z. Donc là, tout ce que vous avez à
+[00:23:05.480] faire, c'est vous pourrez lui dire
+[00:23:06.480] "Rajoute-moi les images sur la partie
+[00:23:07.679] lifestyle". Juste ici. Vous prenez soit
+[00:23:09.320] par rapport au concurrent, soit vous
+[00:23:10.440] faites encore de la veille
+[00:23:11.120] concurrentielle et vous lui transmettez
+[00:23:12.279] les images. Là pareil, vous pouvez
+[00:23:13.440] acheter encore toutes les images. Ici,
+[00:23:14.760] vous achetez les images comme ça, on est
+[00:23:16.400] good. Donc ça, c'est vraiment un exemple
+[00:23:17.720] donc de boutique ultra qualitative que
+[00:23:19.360] vous pouvez faire. Là, vous avez juste à
+[00:23:20.360] rajouter les images. Je peux vous
+[00:23:21.400] montrer aussi une deuxième variante de
+[00:23:23.080] boutique que j'ai pu demander à BS4 de
+[00:23:24.880] mettre en place. Donc là, regardez la
+[00:23:26.120] boutique comment elle est. Je lui ai
+[00:23:27.039] juste demandé, voilà, de modifier un
+[00:23:28.320] peu, de pas refaire comme exactement le
+[00:23:29.960] concurrent. Il m'a fait une structure
+[00:23:31.360] exactement comme ceci. Donc là le logo
+[00:23:32.880] Lunea, le kit comment ça marche FAQ. Là
+[00:23:35.200] c'est vraiment si je pars sur une
+[00:23:36.080] boutique en monoproduit. Des culottes
+[00:23:37.480] menstruelles pour le au cas où. La
+[00:23:38.880] marque antifro en France. Là vous avez
+[00:23:41.559] donc la page d'accueil de la boutique
+[00:23:43.559] ultra qualitative. Là vous avez donc le
+[00:23:45.320] kit je vais cliquer dessus et là vous
+[00:23:46.799] avez la fiche produit. Donc ça à nouveau
+[00:23:48.159] c'est des images qui ont été mis en
+[00:23:49.120] place via Lia kit urgence. Donc là on
+[00:23:51.400] est bien d'accord c'est des boutons
+[00:23:52.240] qu'on peut modifier. Donc voilà la force
+[00:23:54.360] justement de Lia.
+[00:23:56.799] Ça c'est une vidéo que j'ai repris
+[00:23:57.840] justement du concurrent. Vos questions
+[00:23:59.360] réponses. Vous avez tout aussi. service
+[00:24:01.159] client, découvrir, rester dans le flow.
+[00:24:03.200] Donc voilà, voilà comment aujourd'hui on
+[00:24:04.720] peut mettre en place une boutique ultra
+[00:24:05.960] qualitative de A à Z. Sachant que comme
+[00:24:08.000] j'ai expliqué, il y a plusieurs
+[00:24:08.799] variantes qui sont possibles. Je lui ai
+[00:24:09.960] demandé de me faire une variante
+[00:24:10.840] concernant cette culotte bien précise.
+[00:24:12.200] Mais si vous voulez vraiment faire une
+[00:24:13.000] boutique de niche et avoir plein de
+[00:24:14.120] produits différents, dans ce cas-là,
+[00:24:15.360] vous pouvez faire comme moi là, juste
+[00:24:16.440] enregistrer les images comme ça, on est
+[00:24:17.760] bon. Sur la partie boutique, vous voyez
+[00:24:19.080] que concrètement avec des promptes, vous
+[00:24:20.360] pouvez faire tout simplement des choses
+[00:24:21.279] qui sont incroyables. Je vous mettrai
+[00:24:22.720] aussi en description les promptes que
+[00:24:24.360] j'ai utilisé pour mettre en place
+[00:24:25.799] justement cette boutique. Donc sur la
+[00:24:27.399] page produit et sur la page d'accueil.
+[00:24:29.240] Donc vous aurez les prompts en
+[00:24:30.320] description comme ça si vous voulez
+[00:24:31.200] faire pareil. Dans tous les cas c'est
+[00:24:32.600] pas ma boutique hein en soit. Donc euh
+[00:24:34.120] voilà si vous voulez faire pareil hein,
+[00:24:35.240] c'est c'est vous qui décidez. Dès lors
+[00:24:36.520] que vous avez mis tout ça en place, tout
+[00:24:37.960] ce qui vous reste à faire c'est assez
+[00:24:39.200] simple hein. Vous pouvez donc connecter
+[00:24:40.520] un nom de domaine personnalisé. Donc là
+[00:24:42.240] je peux mettre moi ma boutique elle
+[00:24:43.520] s'appelle Lunea. Je peux chercher euh
+[00:24:45.279] lunea.com. Commencer. J'espère que le
+[00:24:47.640] nom de domaine est disponible he parce
+[00:24:48.760] que j'ai quand même fait ma boutique sur
+[00:24:49.799] cette base de ce nom de domaine. Sinon,
+[00:24:51.679] on trouvera une autre solution, c'est
+[00:24:52.640] pas un problème. Mais voilà, ce qui
+[00:24:53.960] reste à faire c'est connecter un nom de
+[00:24:55.360] domaine personnalisé, obtenir une
+[00:24:56.679] messagerie professionnelle sur la base
+[00:24:58.039] du nom de domaine personnalisé. On
+[00:24:59.679] finalise le site et aussi être visible
+[00:25:01.760] sur Google. Donc là, il va me dire euh
+[00:25:03.960] Lunia est déjà enregistré. Donc là, oui,
+[00:25:05.960] de toute façon, j'avais déjà acheté le
+[00:25:06.760] nom de domaine. Donc là, vous voyez que
+[00:25:07.799] le nom de domaine, il est 100 % gratuit.
+[00:25:09.240] Donc vous avez pas besoin de payer
+[00:25:10.120] quelconque nom de domaine parce que moi,
+[00:25:11.320] j'ai pris le forfait annuel. Donc là,
+[00:25:12.520] par exemple, je peux prendre ce ce nom
+[00:25:14.000] de domaine là, obtenir ce nom de domaine
+[00:25:15.559] gratuitement. Donc je peux cliquer ici
+[00:25:17.159] et obtenir directement le nom de domaine
+[00:25:18.720] gratuitement. Donc dès lors qu'on a fini
+[00:25:19.960] le site, il y a la partie nom de
+[00:25:21.200] domaine. Ici vous avez accès à toutes
+[00:25:22.960] les ventes, les commandes, tout ce que
+[00:25:24.399] vous allez mettre en place. Donc dès
+[00:25:25.520] l'heure qu'on aura des ventes, il y aura
+[00:25:26.600] tout qui sera mis en place directement
+[00:25:28.120] ici. Là ensuite je peux aller sur la
+[00:25:29.279] partie des paramètres. On peut accepter
+[00:25:31.039] les paiements ici, on est bien d'accord
+[00:25:32.440] ? parce que bien évidemment c'est une
+[00:25:33.480] boutique donc faut que vous puissiez
+[00:25:34.559] accepter les paiements. Et là ce que
+[00:25:36.320] vous pouvez faire c'est si vous êtes en
+[00:25:37.760] France par exemple donc vous mettrez la
+[00:25:39.120] France et vous allez avoir des moyens de
+[00:25:40.600] paiement en fonction du pays dans lequel
+[00:25:41.880] vous êtes. Donc bien évidemment il va
+[00:25:43.240] falloir que vous mettiez Stripe et
+[00:25:44.520] PayPal directement sur votre compte Wix.
+[00:25:46.960] D'accord ? Et vous pourrez commencer à
+[00:25:48.279] encaisser les clients et comme ça dès
+[00:25:49.679] lors que vous avez des ventes qui sont
+[00:25:50.640] générées, vous encaissez les fonds, vous
+[00:25:52.200] payez votre fournisseur pour envoyer les
+[00:25:53.600] colis, vous payez vos publicités et
+[00:25:54.960] ensuite vous commencez aussi à faire
+[00:25:56.159] votre marge. Donc ça c'est ce qu'il faut
+[00:25:57.600] faire quand vous avez fini le site. On
+[00:25:58.799] gère donc la partie encaissement, on va
+[00:26:00.600] gérer aussi la partie expédition.
+[00:26:02.240] livraison et traitement. Si vous cliquez
+[00:26:03.799] juste ici, là vous allez pouvoir donc
+[00:26:05.240] paramétrer votre livraison. Est-ce que
+[00:26:06.919] vous souhaitez mettre en place une
+[00:26:07.720] livraison gratuite à 0 € ? Moi, c'est ce
+[00:26:09.360] que j'ai fait. Si vous voulez mettre en
+[00:26:10.360] place au début une livraison payante,
+[00:26:11.600] vous pouvez le faire aussi hein, vous
+[00:26:12.559] pouvez modifier le tarif juste ici et
+[00:26:14.520] mettre en place une livraison payante en
+[00:26:16.120] fonction de ce que vous souhaitez. Donc
+[00:26:17.120] là, je peux mettre un tarif fixe. Euh
+[00:26:19.159] ben là, je vais pas la nommer livraison
+[00:26:20.520] gratuite. Je vais mettre livraison
+[00:26:21.799] express par exemple et ensuite je vais
+[00:26:23.200] mettre bon là c'est en AED mais je vais
+[00:26:24.559] mettre 50 AED par exemple et je clique
+[00:26:26.159] sur enregistrer. Comme ça je sais que
+[00:26:27.600] j'ai une livraison payante. Ça aussi
+[00:26:29.080] vérifiez bien. Après au début je vous
+[00:26:30.640] conseille pas quand même de mettre une
+[00:26:31.559] livraison payante. Restez sur une
+[00:26:32.720] livraison gratuite et quand vous
+[00:26:34.240] commencez à avoir des résultats, vous
+[00:26:35.159] pouvez mettre en place une livraison
+[00:26:36.039] payante parce que en vrai ça se fait
+[00:26:37.399] beaucoup. Si vous avez des associés et
+[00:26:39.120] collaborateurs, vous pouvez cliquer ici
+[00:26:40.520] sur rôle et autorisation et vous pouvez
+[00:26:42.279] les ajouter directement ici. Il va juste
+[00:26:44.240] falloir qu'il puisse vous transmettre un
+[00:26:45.799] email. D'accord ? Je vais cliquer sur
+[00:26:47.000] inviter des collaborateurs. Il vous
+[00:26:48.600] transmet un email. Vous allez pouvoir
+[00:26:50.120] transmettre donc différents rôles, soit
+[00:26:51.760] administrateur, donc c'est
+[00:26:52.679] copropriétaire. Donc là, faut faire
+[00:26:53.840] attention à qui vous donner ces accès-l
+[00:26:55.279] ou sinon là, vous avez un petit peu
+[00:26:56.279] tout. Concepteur de site, responsable de
+[00:26:58.080] site, responsable du backoffice,
+[00:26:59.520] rédacteur de contenu. Vous pouvez
+[00:27:00.919] transmettre tout types d'accès en
+[00:27:02.200] fonction de qui est la personne qui est
+[00:27:03.399] concernée. Donc ça aussi c'est très
+[00:27:04.640] bien. Faites bien attention à bien avoir
+[00:27:06.320] toutes les informations d'entreprise, on
+[00:27:07.720] est bien d'accord. Donc voilà, mettez
+[00:27:09.159] bien nom, prénom, adresse de société.
+[00:27:11.640] J'ai déjà montré 1000 fois comment créer
+[00:27:13.000] une société notamment avec les Place.
+[00:27:14.399] Donc vous ferez ça aussi. Vous allez
+[00:27:15.760] aller directement en description et on
+[00:27:17.360] va cliquer ici sur créer ta
+[00:27:18.600] micro-entreprise avant d'avoir fait ta
+[00:27:20.679] première vente. On va faire ça dès
+[00:27:22.080] maintenant. Je vais vous montrer le tout
+[00:27:23.279] en pratique. Donc je vais accéder au
+[00:27:24.880] site juste ici. Vous allez arriver
+[00:27:26.760] exactement donc sur la page de legal
+[00:27:28.200] place. Donc créer votre
+[00:27:29.200] micro-entreprise. Procédure 100 % en
+[00:27:31.559] ligne pour créer votre micro-entreprise
+[00:27:33.120] en toute simplicité. Dossier prêt en 10
+[00:27:35.960] minutes. D'accord. Donc ça prend pas 2
+[00:27:37.760] semaines 3 semaines un mois pour créer
+[00:27:39.320] une société. Pas du tout, pas du tout,
+[00:27:40.799] pas du tout. En 10 minutes, c'est fait.
+[00:27:42.240] Le traitement, il est sous 24 heures et
+[00:27:43.760] vous avez même une assistance
+[00:27:45.000] téléphonique gratuite. Je sais qu'il y a
+[00:27:46.399] des gens qui sont un peu frileux par
+[00:27:47.399] rapport à tout ce qui est création de
+[00:27:48.399] micro-entreprise, création de société et
+[00:27:49.679] cetera. Euh, il y a aucune raison d'être
+[00:27:51.080] frileux. Euh, mettez en application ce
+[00:27:52.600] que je vais vous montrer. Mais là,
+[00:27:53.720] justement, on va déléguer la création de
+[00:27:55.080] la micro-entreprise notamment via
+[00:27:56.480] Legalplace. Donc là, je vais cliquer ici
+[00:27:57.960] sur créer une micro-entreprise. Je vous
+[00:27:59.640] invite à nouveau à exécuter exactement
+[00:28:01.600] ce que je vais vous montrer. He, c'est
+[00:28:02.799] très simple, il y a rien de compliqué en
+[00:28:04.360] soi. Quand souhaitez-vous démarrer votre
+[00:28:05.840] activité ? Donc ça, je sais que ça
+[00:28:07.000] dépend d'un chacun. Il y en a, il
+[00:28:07.960] veulent démarrer dans un mois, dans 3
+[00:28:09.240] mois. Dans tous les cas, là ça n'engage
+[00:28:10.519] à rien, donc mettez dès que possible.
+[00:28:12.279] Avez-vous déjà été auto-entrepreneur ?
+[00:28:14.240] Donc en principe, pour la grande
+[00:28:15.320] majorité des personnes, on va mettre
+[00:28:16.679] non. Êt-vous sûr de vouloir créer une
+[00:28:18.399] micro-entreprise ? Donc là, je confirme
+[00:28:20.000] que au début euh je vais fonctionner
+[00:28:21.440] sous le modèle d'une micro-entreprise.
+[00:28:23.080] Où sera fixé le siège social de la
+[00:28:25.240] micro-entreprise ? Donc ça c'est super
+[00:28:27.120] important parce que comme j'ai expliqué
+[00:28:28.480] précédemment, quand vous voulez démarrer
+[00:28:29.840] le e-commerce et que vous voulez mettre
+[00:28:31.200] en place toutes les choses de manière
+[00:28:32.480] légale et dans les règles, il va falloir
+[00:28:34.200] absolument que vous ayez une adresse sur
+[00:28:35.960] votre boutique. Et l'idéal
+[00:28:37.480] effectivement, c'est de ne pas mettre
+[00:28:38.640] votre adresse personnelle sur votre
+[00:28:39.880] boutique. Encore plus quand vous êtes en
+[00:28:41.159] France, même si vous faites les choses
+[00:28:42.360] correctement, on sait jamais. Voilà,
+[00:28:43.640] vous pouvez toujours avoir des
+[00:28:44.480] problèmes. Donc pour éviter ça, vous
+[00:28:46.039] pouvez avoir donc une adresse de
+[00:28:47.399] domiciliation. Donc moi, c'est ce que je
+[00:28:48.760] vais faire. Sur mon site, il y aura une
+[00:28:50.080] adresse donc qui sera 47 rue Vivienne
+[00:28:52.799] 75002
+[00:28:54.320] Paris. Donc c'est sans engagement. Donc
+[00:28:55.919] là, ce que je vais faire, c'est que je
+[00:28:56.880] vais cliquer ici sur domiciliation avec
+[00:28:58.760] lesplace. Je vais juste copier
+[00:29:00.039] l'adresse. OK. Quel est votre domaine
+[00:29:01.919] d'activité ? Donc moi, c'est la vente en
+[00:29:03.760] ligne. Quelle est votre identité ? Donc
+[00:29:05.279] là, vous mettez monsieur, madame. Euh
+[00:29:07.039] voilà, moi je vais mettre Jonathan.
+[00:29:08.399] Parfait. Et là, je vais mettre en place
+[00:29:09.880] mon adresse email. Parfait. Je vais
+[00:29:11.600] cliquer sur continuer. On va mettre
+[00:29:13.159] ensuite un numéro de téléphone.
+[00:29:14.960] Continuer. Donc là, souhaitez-vous être
+[00:29:16.399] contacté par un expert, je vais mettre
+[00:29:17.760] nom. Que recherchez-vous ? Donc moi,
+[00:29:19.480] c'est lancer mon activité en déléguant
+[00:29:21.200] toutes les démarches. Une solution tout
+[00:29:22.840] en un, création, comptabilité, banque du
+[00:29:25.159] conseil juridique et fiscal. Donc là, je
+[00:29:26.840] vais accepter les trois juste ici. Je
+[00:29:28.799] vais cliquer sur continuer. Parfait.
+[00:29:30.279] Donc là, le dossier, il est en cours.
+[00:29:31.880] Donc ça, c'est vraiment une étape qui
+[00:29:33.399] est obligatoire. Faire de la recherche
+[00:29:34.679] de produits, c'est bien, c'est amusant.
+[00:29:36.120] Oui, d'accord. Mais on est des
+[00:29:37.440] entrepreneurs et un entrepreneur a une
+[00:29:39.000] entreprise, d'accord ? On n'est pas là
+[00:29:40.159] pour faire un peu d'argent vite fait et
+[00:29:41.440] ensuite avoir des problèmes avec le
+[00:29:42.440] gouvernement. C'est pas ça l'idée. Donc
+[00:29:44.159] voilà, l'idée c'est que vous mettez en
+[00:29:45.320] application ce que je dis maintenant
+[00:29:46.480] afin que vous puissiez faire du business
+[00:29:47.760] de manière serein, de manière
+[00:29:48.880] tranquille, que vous puissiez être
+[00:29:50.039] content de faire ce business. Donc là,
+[00:29:51.640] vous avez différentes offres qui sont
+[00:29:52.640] disponibles, soit vous avez l'offre
+[00:29:53.720] standard ou soit l'offre express, donc
+[00:29:55.320] une création de société qui se fait en
+[00:29:56.760] l'espace de 24 heures et vous allez
+[00:29:58.240] avoir votre cabis le plus rapidement
+[00:30:00.039] possible et une assistance d'information
+[00:30:01.760] juridique illimitée. Le cabis c'est
+[00:30:03.399] obligatoire pour pouvoir avoir accès à
+[00:30:05.240] Stripe et à PayPal, on est bien
+[00:30:06.519] d'accord. Et là ici, vous avez donc
+[00:30:08.120] l'aide à l'obtention de l'ACR. Donc
+[00:30:10.080] c'est ce qui va nous permettre de
+[00:30:11.000] pouvoir payer moins d'impôts, notamment
+[00:30:12.720] la première année. Donc vraiment faites
+[00:30:14.120] cet effort de pouvoir chercher à avoir
+[00:30:15.600] l'ACre. Dans tous les cas, Legalpless
+[00:30:17.000] nous aide à ce niveau-là. Donc là, je
+[00:30:18.240] vais choisir le pack express pendant 24
+[00:30:20.279] heures. L'hébergement de votre
+[00:30:21.679] micro-entreprise à Paris, donc la
+[00:30:23.240] domiciliation, elle a 17 € par mois.
+[00:30:24.760] Donc là, je vais pouvoir la prendre. Ça
+[00:30:25.840] permettra d'avoir une adresse
+[00:30:27.000] prestigieuse. Et il y a aussi beaucoup
+[00:30:28.320] de clients qui vont regarder donc dans
+[00:30:29.720] quelle adresse justement est situé votre
+[00:30:31.320] entreprise et quand il voit qu'elle est
+[00:30:32.559] justement à Paris, donc ça fait
+[00:30:33.799] davantage sérieux et il y a des ventes
+[00:30:35.200] aussi qui peuvent venir de ça. Donc là,
+[00:30:36.840] vous avez une réduction d'impôts, donc
+[00:30:38.200] jusqu'à moins 1000 € par an. concernant
+[00:30:40.080] le CFE. Donc ça ça vous fera une
+[00:30:41.640] réduction d'impôts. C'est très bien.
+[00:30:42.919] Vous allez protéger votre anonymat donc
+[00:30:45.039] de votre adresse personnelle. Donc
+[00:30:46.399] distinguer adresse personnel et adresse
+[00:30:48.399] professionnelle et une flexibilité et
+[00:30:50.240] gestion de votre courrier. Ça fait plus
+[00:30:52.000] de 10 ans que je fais du business de
+[00:30:53.200] l'entrepreneuriat notamment via
+[00:30:54.399] l'e-commerce. Je vous conseille vraiment
+[00:30:55.600] de mettre en application ce que je dis.
+[00:30:56.919] Je connais des personnes qui ont pas
+[00:30:57.880] pris le temps de faire là ce que je dis.
+[00:30:59.440] Au final c'est quoi ? C'est quelques
+[00:31:00.440] dizaines d'euros. Oui, ça peut
+[00:31:01.480] représenter un budget pour chacun
+[00:31:02.559] d'entre vous mais au final vous allez
+[00:31:04.039] pas vous retrouver à payer des amendes
+[00:31:05.399] exorbitants si vous commencez à faire de
+[00:31:07.120] l'argent. Donc là, votre compte pro 100
+[00:31:08.840] % sécurisé pour gérer vos finances. Donc
+[00:31:10.600] là, oui, je peux valider. Comme ça, au
+[00:31:11.919] moins, je suis tranquille, je fais tout
+[00:31:13.000] correctement de A à Z. Donc là, j'ai la
+[00:31:14.880] création Express, j'ai la domiciliation
+[00:31:16.559] et j'ai mon compte pro. Comme ça, ça me
+[00:31:17.960] permet de commencer le business
+[00:31:19.120] sereinement, calmement. J'aurais pas de
+[00:31:20.960] problème derrière. Je si quelqu'un toque
+[00:31:22.720] à ma porte, je vais pas avoir peur que
+[00:31:24.120] ce soit quelqu'un. Non, c'est voilà,
+[00:31:25.519] j'ai fait mon business, j'ai je fais mes
+[00:31:27.120] déclarations, il y a aucun problème.
+[00:31:28.679] Donc là, je vais cliquer sur ajouter un
+[00:31:30.120] code de réduction. Je vais mettre Jo
+[00:31:32.120] ecom juste ici. Parfait. Et là, je vais
+[00:31:34.240] pouvoir procéder au règlement. Donc là,
+[00:31:35.880] je vais mettre ma carte de crédit juste
+[00:31:37.399] ici. Et ensuite donc le numéro de
+[00:31:38.720] cartes, expirez-le et les trois codes
+[00:31:40.399] derrière la carte afin de pouvoir
+[00:31:41.679] bénéficier donc de ma création de
+[00:31:43.159] société, ma domiciliation et ma première
+[00:31:45.080] banque notamment avec un compte pro qui
+[00:31:47.000] vient tout droit de conto. Donc
+[00:31:48.360] globalement, c'est un petit peu ça. Euh
+[00:31:49.960] concernant la nouvelle manière de
+[00:31:51.080] pouvoir créer une boutique en 2026. Donc
+[00:31:53.399] avec euh Wix, PS4 et euh Claudia, on
+[00:31:56.399] peut faire littéralement des choses
+[00:31:57.679] incroyables. Vous avez pas besoin d'être
+[00:31:58.720] un expert, vous avez pas besoin euh de
+[00:32:00.080] toucher une seule ligne de code, rien de
+[00:32:01.600] tout ça. Vous voyez qu'au final, j'ai pu
+[00:32:02.760] mettre tout ça en place en l'espace de
+[00:32:03.840] quelques dizaines de minutes et encore
+[00:32:05.279] euh je peux faire 100 fois mieux, mais
+[00:32:06.440] voilà, sans toucher une seule ligne de
+[00:32:07.639] code, sans être expert en web design ou
+[00:32:09.559] ce que vous voulez, vous pouvez réussir
+[00:32:10.880] à mettre en place une boutique
+[00:32:12.120] exactement comme ceci. Je précise que
+[00:32:14.039] voilà, on est au 4e trimestre, c'est la
+[00:32:15.519] meilleure période pour se lancer en
+[00:32:16.880] e-commerce. Tout ce que vous avez fait
+[00:32:18.000] auparavant, c'est du passé. Ce qui
+[00:32:19.240] compte, c'est ce que vous allez faire
+[00:32:19.960] durant les tris prochains mois, les
+[00:32:21.279] quatre prochains mois. Pour ça, moi j'ai
+[00:32:23.039] arrêté de faire des accompagnements à
+[00:32:24.320] plusieurs milliers d'euros.
+[00:32:25.159] L'accompagnement que je mets en place
+[00:32:26.360] est 100 % gratuit et la stratégie que
+[00:32:28.039] vous venez de voir dans cette vidéol euh
+[00:32:29.679] c'est une infime partie de ce queon peut
+[00:32:31.000] expliquer dans l'accompagnement. Tout le
+[00:32:32.360] monde a accès directement à tous les
+[00:32:33.600] prompts, à tout ce que je mets en place
+[00:32:34.799] au niveau de la recherche de produits,
+[00:32:35.919] création de boutique, lancement des
+[00:32:37.039] publicités. Ils ont accès à tout de A à
+[00:32:38.960] Z. Donc concernant l'accompagnement, il
+[00:32:40.760] est gratuit. Vous avez rien à payer en
+[00:32:42.440] dehors des outils que vous devez
+[00:32:43.799] utiliser pour mettre en application cet
+[00:32:45.279] accompagnement là. notamment un outil de
+[00:32:46.840] création de boutique, un outil
+[00:32:47.880] d'intelligence artificielle pour mettre
+[00:32:49.039] en place une meilleure boutique et aussi
+[00:32:50.679] donc un outil qui va concerner l'email
+[00:32:52.559] marketing. Donc c'est des outils qui
+[00:32:53.639] sont pour vous, vous avez rien à me
+[00:32:54.880] payer. Nous derrière on a une petite
+[00:32:56.200] commission par rapport à ça. Donc c'est
+[00:32:57.360] le meilleur business model que j'ai
+[00:32:58.360] réussi à trouver pour vous former donc
+[00:32:59.960] gratuitement parce que dans tous les cas
+[00:33:01.360] les outils c'est vous les payez, c'est
+[00:33:02.480] pour vous. Donc il y a pas de sujet à ce
+[00:33:03.799] niveau-là. Concernant l'accompagnement,
+[00:33:05.240] on est en live tous les jours, d'accord
+[00:33:06.799] ? Du lundi au lundi, on est en live tous
+[00:33:08.639] les jours. Là, vous pouvez cliquer ici
+[00:33:09.960] pour accéder au live. Le live a lieu
+[00:33:11.799] chaque jour à 20h heure de Paris.
+[00:33:13.320] réserver votre créneau. Vous cliquez
+[00:33:14.760] ici, vous allez recevoir un lien Google
+[00:33:15.919] Meets et on vous aide tous les jours euh
+[00:33:17.440] au niveau de l'accompagnement, vous avez
+[00:33:18.720] accès donc à une formation de 19h où on
+[00:33:20.480] explique toutes les stratégie de
+[00:33:21.559] dropshipping, intelligence artificielle
+[00:33:22.840] de A à Z. Euh là, vous avez une
+[00:33:24.279] stratégie de comment vendre en
+[00:33:25.399] organique. Donc vraiment ce qui ont un
+[00:33:26.600] budget qui est assez restreint. Euh
+[00:33:27.919] au-delà justement des outils à payer,
+[00:33:29.440] vous pouvez vous lancer gratuitement,
+[00:33:30.919] donc en organique directement. On
+[00:33:32.799] explique comment passer de zéro à faire
+[00:33:34.120] sa première vente. Vous avez accès à
+[00:33:35.840] tous les lives, vous avez accès aussi à
+[00:33:37.600] tous les prompts. Donc on a mis en place
+[00:33:39.320] énormément de différents prompts afin
+[00:33:41.240] que vous puissiez donc ben juste faire
+[00:33:42.679] copiercoller et mettre en application et
+[00:33:44.399] utiliser l'outil d'IA facilement. On
+[00:33:46.600] vous aide aussi à mettre en place votre
+[00:33:47.960] boutique. On peut mettre en place une
+[00:33:49.240] refronte de A à Z au niveau de votre
+[00:33:51.399] boutique. Et à nouveau ça aussi c'est
+[00:33:53.159] gratuit. Il y a pas de sujet à ce
+[00:33:54.600] niveau-là. Vous avez aussi ma liste
+[00:33:56.039] fournisseur et on a aussi une communauté
+[00:33:57.679] privée notamment sur WhatsApp où on
+[00:33:59.360] échange tous les jours. D'accord ? du
+[00:34:00.840] lundi au lundi, on est tout le temps
+[00:34:02.320] disponible, vous rejoignez la communauté
+[00:34:03.960] et comme ça on peut parler entre nous.
+[00:34:05.519] Tout ce que vous avez à faire, c'est
+[00:34:06.399] aller directement dans le lien en
+[00:34:07.600] description et vous allez arriver
+[00:34:08.960] exactement sur cette page. Vous pouvez
+[00:34:10.320] cliquer donc sur je veux ma boutique et
+[00:34:12.000] accéder gratuitement à un programme
+[00:34:13.320] d'accompagnement à 3000 € parce que oui,
+[00:34:14.879] de base ça coûte plus de 3000 € là ce
+[00:34:16.320] que je suis en train d'offrir. Donc vous
+[00:34:17.320] cliquez ici. Là vous mettez votre nom,
+[00:34:19.200] prénom, votre email. Faites bien
+[00:34:20.520] attention à bien mettre votre numéro de
+[00:34:21.839] téléphone, votre âge et vous cliquez ici
+[00:34:23.480] pour "J'accepte d'être contacté par
+[00:34:25.159] téléphone." Il y a mon équipe qui va
+[00:34:26.320] vous appeler dans les 10 à 20 minutes.
+[00:34:27.639] Donc gardez bien votre téléphone. On a
+[00:34:29.159] reçu des milliers de candidatures, donc
+[00:34:30.320] on est en train de traiter ça petit à
+[00:34:31.879] petit. Comme ça, on vous appelle, on
+[00:34:33.399] gère toute la partie des outils ensemble
+[00:34:35.159] et ensuite vous accédez tranquillement à
+[00:34:36.560] l'accompagnement. C'est gratuit à vie,
+[00:34:37.919] il y aura pas d'autres choses à payer
+[00:34:38.839] derrière. Non, si vous payez juste les
+[00:34:40.240] outils, c'est une centaine d'euros. Vous
+[00:34:41.399] avez accès à une formation d'une valeur
+[00:34:42.679] de 3000 € plus une boutique qui est 100
+[00:34:44.800] % gratuite. Voilà, vraiment passer à
+[00:34:46.919] l'action. Vous voyez qu'il y a pas de
+[00:34:48.159] friction au niveau de la création de
+[00:34:49.679] site. Vous pouvez créer un site en
+[00:34:50.839] l'espace de quelques minutes sans être
+[00:34:52.240] un expert. Donc maintenant, il y a plus
+[00:34:53.679] d'excuses.

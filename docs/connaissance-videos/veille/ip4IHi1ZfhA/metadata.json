@@ -1,0 +1,39 @@
+{
+  "id": "ip4IHi1ZfhA",
+  "titre": "Ce Business IA Ennuyant Me Rapporte 28 974€/Mois (Avec Claude)",
+  "url": "https://www.youtube.com/watch?v=ip4IHi1ZfhA",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ip4IHi1ZfhA\\video.mp4",
+  "taille_octets": 63770762,
+  "sha256_video": "642a6c29e060a1856ed38363e9588d245edf9f7bfc213958a66c52abee26fa32",
+  "duree_secondes": 2750.834,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    171.927125,
+    515.781375,
+    859.6356249999999,
+    1203.489875,
+    1547.3441249999998,
+    1891.198375,
+    2235.052625,
+    2578.9068749999997
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ip4IHi1ZfhA\\video.fr-orig.vtt",
+  "nombre_cues": 3173,
+  "nombre_lignes_transcription": 1587,
+  "empreintes_documents": {
+    "planche.jpg": "4c0fffbadd3cfd30fff521f2ba0eaf6af7d40b5a0cd3ef0636d5174a9373ad01",
+    "sous-titres-originaux.vtt": "e2d031f9d9678832263d1325960d95b8225786559b5978044b3a134f30d7db5b",
+    "transcription.txt": "91c4ece40fc7ce708c63ef8f186749db06ab999b34dc9703790144646046c5bf"
+  }
+}

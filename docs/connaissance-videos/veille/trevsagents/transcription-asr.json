@@ -1,0 +1,340 @@
+{
+  "model": "faster-whisper-small",
+  "engine": "1.2.1",
+  "device": "cpu",
+  "compute_type": "int8",
+  "cpu_threads": 2,
+  "beam_size": 5,
+  "vad_filter": true,
+  "language": "en",
+  "language_probability": 0.9963034391403198,
+  "duration": 116.821,
+  "elapsed_seconds": 64.32,
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 1.32,
+      "text": "This is not a video game."
+    },
+    {
+      "start": 1.32,
+      "end": 3.78,
+      "text": "These are my AI agents all walking to the meeting room"
+    },
+    {
+      "start": 3.78,
+      "end": 6.36,
+      "text": "to have a meeting to think how can we improve the business"
+    },
+    {
+      "start": 6.36,
+      "end": 7.8,
+      "text": "as best as possible."
+    },
+    {
+      "start": 7.8,
+      "end": 10.36,
+      "text": "I built a bunch of AI agents that automate a ton of businesses"
+    },
+    {
+      "start": 10.36,
+      "end": 12.56,
+      "text": "to make me a bunch of money all while I sleep."
+    },
+    {
+      "start": 12.56,
+      "end": 15.92,
+      "text": "We have a research agent, a manager agent, a fiverr agent,"
+    },
+    {
+      "start": 15.92,
+      "end": 18.2,
+      "text": "a YouTube AI music agent that we're so setting up,"
+    },
+    {
+      "start": 18.2,
+      "end": 20.32,
+      "text": "our agent that makes Etsy products,"
+    },
+    {
+      "start": 20.32,
+      "end": 21.32,
+      "text": "a TikTok marketing agent,"
+    },
+    {
+      "start": 21.32,
+      "end": 23.08,
+      "text": "and then a solo experimental agent."
+    },
+    {
+      "start": 23.08,
+      "end": 24.96,
+      "text": "And right now they're all having this clanker meeting"
+    },
+    {
+      "start": 24.96,
+      "end": 26.28,
+      "text": "so they can figure out what they need to do"
+    },
+    {
+      "start": 26.28,
+      "end": 27.12,
+      "text": "to improve the business."
+    },
+    {
+      "start": 27.12,
+      "end": 29.0,
+      "text": "And then my manager agent Matt"
+    },
+    {
+      "start": 29.0,
+      "end": 30.76,
+      "text": "is gonna write up a briefing on talk about"
+    },
+    {
+      "start": 30.76,
+      "end": 32.84,
+      "text": "what they talked about and what they came up."
+    },
+    {
+      "start": 32.84,
+      "end": 34.36,
+      "text": "Now they're not just moving around randomly"
+    },
+    {
+      "start": 34.36,
+      "end": 35.2,
+      "text": "when they walk to the meeting,"
+    },
+    {
+      "start": 35.2,
+      "end": 37.32,
+      "text": "they're actually on the back end having a meeting,"
+    },
+    {
+      "start": 37.32,
+      "end": 39.6,
+      "text": "they're talking to each other, the AI are discussing things."
+    },
+    {
+      "start": 39.6,
+      "end": 41.04,
+      "text": "I just built this visual representation"
+    },
+    {
+      "start": 41.04,
+      "end": 42.88,
+      "text": "so I can see better than looking in here,"
+    },
+    {
+      "start": 42.88,
+      "end": 44.56,
+      "text": "I can see what's going on visually."
+    },
+    {
+      "start": 44.56,
+      "end": 46.28,
+      "text": "It's much better to look at and much nicer to look at"
+    },
+    {
+      "start": 46.28,
+      "end": 47.6,
+      "text": "and it displays exactly what's happening"
+    },
+    {
+      "start": 47.6,
+      "end": 49.56,
+      "text": "on the back end, on the front end."
+    },
+    {
+      "start": 49.56,
+      "end": 51.44,
+      "text": "We've also got a bunch of rooms in our space station"
+    },
+    {
+      "start": 51.44,
+      "end": 53.68,
+      "text": "which all have an actual meeting like our revenue bay."
+    },
+    {
+      "start": 53.68,
+      "end": 54.92,
+      "text": "I can click on it talks to me"
+    },
+    {
+      "start": 54.92,
+      "end": 57.12,
+      "text": "and talks to me about all the revenue we're making"
+    },
+    {
+      "start": 57.12,
+      "end": 58.4,
+      "text": "once it loads, tells me how much money"
+    },
+    {
+      "start": 58.4,
+      "end": 60.96,
+      "text": "we've made in 30 days, what it comes from and all that."
+    },
+    {
+      "start": 60.96,
+      "end": 62.8,
+      "text": "I've got the treasury bay which tells us"
+    },
+    {
+      "start": 62.8,
+      "end": 65.48,
+      "text": "about how much money we've been spending on our API costs"
+    },
+    {
+      "start": 65.48,
+      "end": 69.08,
+      "text": "and what Matt's running on the GPT 5.5."
+    },
+    {
+      "start": 69.08,
+      "end": 70.56,
+      "text": "I've got the factory room where I can see"
+    },
+    {
+      "start": 70.56,
+      "end": 72.48,
+      "text": "all the deliveries that Blanc has made."
+    },
+    {
+      "start": 72.48,
+      "end": 74.28,
+      "text": "He has his candles, he makes t-shirts,"
+    },
+    {
+      "start": 74.28,
+      "end": 76.76,
+      "text": "he makes it on Printify and then posts them to Etsy"
+    },
+    {
+      "start": 76.76,
+      "end": 78.2,
+      "text": "and then Luke posts TikToks about it"
+    },
+    {
+      "start": 78.2,
+      "end": 79.04,
+      "text": "where it's Luke right here."
+    },
+    {
+      "start": 79.04,
+      "end": 80.28,
+      "text": "So Luke lives in the media lab"
+    },
+    {
+      "start": 80.28,
+      "end": 82.4,
+      "text": "making posts about these on TikTok."
+    },
+    {
+      "start": 82.4,
+      "end": 84.32,
+      "text": "And then we have a chill room, bar room, game room"
+    },
+    {
+      "start": 84.32,
+      "end": 85.32,
+      "text": "which doesn't do anything because"
+    },
+    {
+      "start": 85.32,
+      "end": 86.44,
+      "text": "they're actually not allowed in here"
+    },
+    {
+      "start": 86.48,
+      "end": 89.28,
+      "text": "because they work around the clock 24-7 for me."
+    },
+    {
+      "start": 89.28,
+      "end": 90.88,
+      "text": "So if you haven't automated your businesses,"
+    },
+    {
+      "start": 90.88,
+      "end": 92.12,
+      "text": "you should, I don't know why you haven't."
+    },
+    {
+      "start": 92.12,
+      "end": 94.44,
+      "text": "You need to be using AI agents, it's just open claw"
+    },
+    {
+      "start": 94.44,
+      "end": 95.6,
+      "text": "and then this is like a custom thing"
+    },
+    {
+      "start": 95.6,
+      "end": 97.36,
+      "text": "but all you need is open claw really"
+    },
+    {
+      "start": 97.36,
+      "end": 99.76,
+      "text": "to have AI agents work for you, make businesses for you."
+    },
+    {
+      "start": 99.76,
+      "end": 101.16,
+      "text": "Even if you have already existing businesses"
+    },
+    {
+      "start": 101.16,
+      "end": 103.08,
+      "text": "like I have one called the BOF bot"
+    },
+    {
+      "start": 103.08,
+      "end": 104.4,
+      "text": "which is one of my apps"
+    },
+    {
+      "start": 104.4,
+      "end": 105.88,
+      "text": "and I set it up so that my agents"
+    },
+    {
+      "start": 105.88,
+      "end": 107.92,
+      "text": "can manage customer support,"
+    },
+    {
+      "start": 107.92,
+      "end": 109.12,
+      "text": "they can push updates to the app,"
+    },
+    {
+      "start": 109.12,
+      "end": 110.76,
+      "text": "they can like make the app better"
+    },
+    {
+      "start": 110.76,
+      "end": 112.76,
+      "text": "and yeah, I don't know why you haven't used AI agents."
+    },
+    {
+      "start": 112.76,
+      "end": 114.08,
+      "text": "Yeah, just automate all your businesses"
+    },
+    {
+      "start": 114.08,
+      "end": 115.36,
+      "text": "so you really don't have to do anything"
+    },
+    {
+      "start": 115.36,
+      "end": 116.92,
+      "text": "except kind of check in during the day."
+    }
+  ]
+}

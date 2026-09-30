@@ -1,0 +1,1144 @@
+[00:00:01.510] Il y a quelques semaines, j'ai découvert
+[00:00:01.520] une boutique qui génère entre 1 et 2
+[00:00:03.320] million d'euros par mois. Bien
+[00:00:04.600] évidemment, quand on regarde leur sites,
+[00:00:05.799] on comprend directement pourquoi. Le
+[00:00:07.399] design, les couleurs, les images et la
+[00:00:09.320] structure du site donne vraiment
+[00:00:10.559] l'impression d'une image de marque
+[00:00:11.799] professionnelle. Le plus impressionnant
+[00:00:13.200] dans tout ça, c'est que j'ai réussi à
+[00:00:14.559] recréer une boutique très similaire en
+[00:00:16.400] l'espace de 30 minutes grâce à notre ami
+[00:00:18.320] Claudia. Voici le résultat. Une page
+[00:00:20.160] d'accueil soignée, une page produit
+[00:00:21.680] professionnel et une boutique
+[00:00:22.920] parfaitement optimisée pour le mobile.
+[00:00:24.560] Dans cette vidéo, je vais vous montrer
+[00:00:25.680] étape par étape comment créer vous aussi
+[00:00:27.560] une boutique en dropshipping
+[00:00:28.560] professionnelle grâce à l'intelligence
+[00:00:30.000] artificielle. Pour vous faire gagner du
+[00:00:31.359] temps et aussi de l'argent, j'ai
+[00:00:32.680] regroupé dans un seul document tous les
+[00:00:34.600] prompts que j'utilise dans cette vidéo
+[00:00:36.000] qui me permettent de pouvoir créer la
+[00:00:37.040] boutique et toutes les compétences que
+[00:00:38.480] je transmets aussi à Claudia pour qu'il
+[00:00:40.160] puisse maîtriser justement cette
+[00:00:41.399] compétence de créer la boutique. Donc
+[00:00:42.719] pour ça, dès lors qu'il y a plus de 400
+[00:00:44.200] likes, je vous transmets directement le
+[00:00:45.480] prompt en description afin que vous
+[00:00:46.879] puissiez passer à l'action sur la base
+[00:00:48.280] de tout [musique] ce que je vais montrer
+[00:00:49.239] dans cette vidéo. Maintenant que tout ça
+[00:00:50.399] est dit, on va passer directement à la
+[00:00:51.760] première étape. La toute première étape
+[00:00:53.000] de cette vidéo sera de trouver donc des
+[00:00:54.359] sites qui ont des résultats à l'instant
+[00:00:55.920] t maintenant immédiatement, qui vont par
+[00:00:57.800] exemple générer plus de 100000 visites
+[00:00:59.519] par mois ou même un million de visites
+[00:01:01.039] par mois. Comme ça, on sait que vraiment
+[00:01:02.680] la structure du site, elle est
+[00:01:03.760] convenable, elle permet d'avoir des
+[00:01:05.159] résultats et on n'est pas obligé de
+[00:01:06.360] reprendre exactement le même produit que
+[00:01:08.080] ce site, mais on peut reprendre
+[00:01:09.240] justement la structure de ce site. Donc
+[00:01:10.840] là, c'est clairement ça l'objectif.
+[00:01:12.479] Comme ça, on ne lance pas de sites à la
+[00:01:13.759] volée. On fait pas des sites en fonction
+[00:01:15.119] de notre intuition, on fait des sites en
+[00:01:16.759] fonction de ce qui fonctionne déjà, basé
+[00:01:18.439] sur la data, basé sur des données et
+[00:01:20.119] c'est comme ça qu'on se rapproche
+[00:01:21.200] justement sur le fait d'avoir des
+[00:01:22.400] résultats. Donc ça c'est la première
+[00:01:23.600] chose à faire. Pour trouver le site sur
+[00:01:25.040] lequel je vais pouvoir m'inspirer, je
+[00:01:26.240] vais aller directement donc sur AutoDS
+[00:01:27.840] notamment au niveau de la marketplace et
+[00:01:29.400] je vais regarder un petit peu les
+[00:01:30.320] produits qui sont intéressants et qui
+[00:01:31.920] ont de bons résultats. Et suite à ça, je
+[00:01:33.640] pourrais aller directement sur la
+[00:01:34.439] bibliothèque publicitaire pour confirmer
+[00:01:35.840] justement que cette marque là a de bons
+[00:01:37.280] résultats. Là, on peut aller au niveau
+[00:01:38.399] de la marketplace. Je vais regarder donc
+[00:01:39.840] les bests seller par exemple, les New
+[00:01:41.439] Arrivol Toys and OB. Après je peux aller
+[00:01:44.000] exactement sur Adpie et regarder donc
+[00:01:45.960] les boutiques qui tournent
+[00:01:47.000] particulièrement sur Facebook. Là je
+[00:01:48.880] vais scroller pour trouver un site
+[00:01:50.159] intéressant sur lequel je peux
+[00:01:51.439] m'inspirer. Alors c'est quoi ? C'est une
+[00:01:53.000] application qui dit panda. C'est quoi ça
+[00:01:55.759] ? Alors non c'est en indien. Bon là
+[00:01:57.640] c'est un peu complexe. Alors c'est quoi
+[00:01:59.039] ce site ? Bon là c'est un site de gaming
+[00:02:00.560] qui est très bien. J'aime bien comment
+[00:02:02.000] c'est fait mais je pas forcément
+[00:02:04.119] sélectionner ce site là même si en vrai
+[00:02:06.000] il y a rien de il y a rien de
+[00:02:07.320] scandaleux. Sachant que là, si je
+[00:02:08.679] vérifie, donc ils font plus de 12
+[00:02:10.479] millions de visites par mois. Donc ce
+[00:02:12.280] site-là, il fonctionne bien, il
+[00:02:13.599] fonctionne même très bien. Ce site-là,
+[00:02:15.200] il est excellent mais pour l'exemple de
+[00:02:16.319] la vidéo, je sais pas forcément ça que
+[00:02:17.519] je vais prendre. Donc voilà, là le but
+[00:02:18.800] c'est vraiment de continuer à regarder,
+[00:02:19.800] faire de la recherche de produits.
+[00:02:21.040] J'aime bien ce site, il est bien fait,
+[00:02:22.120] je trouve. La page d'accueil. Et donc
+[00:02:23.599] là, ce qu'on pourra faire, c'est que
+[00:02:24.920] potentiellement, on peut sélectionner un
+[00:02:26.560] site dont vous aimez la page d'accueil
+[00:02:28.480] et un autre site dont vous aimez la page
+[00:02:30.319] produit. D'accord ? On n'est pas obligé
+[00:02:31.560] de copier de A à Z entièrement le site.
+[00:02:33.800] On peut vraiment faire en fonction de la
+[00:02:34.959] page d'accueil. Donc la page d'accueil
+[00:02:36.120] là, c'est ce qu'on voit ici à l'instant
+[00:02:37.400] T. Et la page produit, je vais vous
+[00:02:39.480] montrer un exemple. Donc ça c'est la
+[00:02:41.200] page produit. Si vous aimez bien une
+[00:02:42.599] page d'accueil spécifique et que vous
+[00:02:43.920] aimez pas la page produit du même site,
+[00:02:45.760] c'est pas grave, on peut changer, on
+[00:02:47.120] n'est pas obligé de prendre le même site
+[00:02:48.040] pour la page d'accueil et la page
+[00:02:49.120] produit. Mais là c'est un exemple
+[00:02:50.280] typique. Euh franchement la page
+[00:02:51.720] d'accueil, je la trouve extraordinaire.
+[00:02:53.080] Je la trouve vraiment bien. Attends,
+[00:02:54.200] j'ai l'impression ils ont changé la page
+[00:02:55.400] là. C'était pas ça tout à l'heure.
+[00:02:56.440] Ouais, voilà, c'était ça. Je me disais
+[00:02:57.440] bien, je suis pas fou. La page
+[00:02:58.480] d'accueil, elle est très bien. Eux, il y
+[00:02:59.720] a combien de visites là par mois ? Parce
+[00:03:01.000] que c'est ça qui compte hein, c'est les
+[00:03:02.159] chiffres. OK, donc eux, ils ont environ
+[00:03:03.959] 200000 visites par mois. Sachant que
+[00:03:05.480] c'est en train de descendre, de base
+[00:03:06.480] c'était à 1700000 500000 400000 200000
+[00:03:09.200] 200000. C'est c'est un bon site. C'est
+[00:03:11.120] un bon site. Donc je vais continuer à
+[00:03:12.840] effectuer euh ma recherche de sites page
+[00:03:15.040] d'accueil, page produit et si je trouve
+[00:03:16.720] quelque chose d'intéressant, ben je vous
+[00:03:17.920] dis. Donc là, en tout cas, je peux
+[00:03:18.879] vraiment le faire comme ça. Je continue
+[00:03:20.040] à regarder, voir un petit peu et après
+[00:03:22.000] euh si je veux vraiment davantage
+[00:03:23.080] d'informations, je peux cliquer ici sur
+[00:03:24.480] Learn mort. Et là, ça me permet de voir
+[00:03:25.840] vraiment les réactions, le nombre de
+[00:03:27.000] likes, le nombre de cœurs, le nombre de
+[00:03:28.360] personnes qui ont souri, euh les
+[00:03:29.560] commentaires, le nombre de partages, le
+[00:03:30.959] nombre de vues, le nombre d'interactions
+[00:03:32.480] par vue et quand est-ce que la publicité
+[00:03:33.959] a été créée. Donc là, j'ai toutes les
+[00:03:35.239] infos ici. Donc super intéressant et là,
+[00:03:37.159] j'ai la publicité ici et je peux même la
+[00:03:38.560] télécharger si je veux. Je clique sur
+[00:03:40.000] enregistrer la vidéo sous. Voilà, comme
+[00:03:41.439] ça, c'est des vidéos que je peux garder
+[00:03:42.519] au cas où si je lance le produit. Je
+[00:03:44.040] vais continuer à faire de la recherche
+[00:03:44.959] de sites et dès que je trouve un site
+[00:03:46.360] vraiment intéressant, je vous fais un
+[00:03:47.720] retour. J'ai trouvé un site que je
+[00:03:49.080] trouve super stylé qui s'appelle The Spa
+[00:03:51.120] DR. Donc voici la page d'accueil. Donc
+[00:03:52.920] je pense que c'est une crème. C'est une
+[00:03:54.680] crème pour les cheveux, je pense. Donc
+[00:03:56.040] là des résultats avant après. Donc là la
+[00:03:58.000] bannière déjà l'image, elle est ultra
+[00:03:59.280] qualitative. On a des résultats avant
+[00:04:01.040] après. On a le produit qui est bien mis
+[00:04:02.640] en avant. On a le prix du produit. OK.
+[00:04:05.400] Donc ils sont différents produits
+[00:04:06.640] complémentaires. On les docteurs
+[00:04:08.720] recommandés. Je pense que eux c'est
+[00:04:10.239] vrai. Eux c'est pas faux. Je pense VIP
+[00:04:12.319] benefits. Que disent les clients ?
+[00:04:14.360] Ouais, eux c'est pas de l'IA, eux c'est
+[00:04:15.799] du réel. Franchement le la page
+[00:04:17.120] d'accueil, elle est très très bien.
+[00:04:18.560] Après, ce qui est important c'est que
+[00:04:19.479] quand vous regardez un site, c'est qu'il
+[00:04:20.840] soit bien aussi format téléphone parce
+[00:04:22.360] que faut savoir que 80 % des personnes
+[00:04:24.000] qui vont aller sur votre site, ils vont
+[00:04:25.320] y aller via le format téléphone. Donc
+[00:04:26.720] là, je vais cliquer sur inspecter et je
+[00:04:28.280] vais regarder format téléphone pour voir
+[00:04:29.639] comment le site il rend. Format
+[00:04:30.680] téléphone, c'est très propre. Faites
+[00:04:31.919] toujours attention à ça. Super super
+[00:04:33.880] important. Là, je peux défiler, il y a
+[00:04:35.360] pas de bug. Non, franchement, ce site,
+[00:04:36.840] rien à dire, hein. En vrai, je pense que
+[00:04:38.280] on va s'inspirer de ce site là. Pas me
+[00:04:39.680] prendre la tête. Euh je vais regarder
+[00:04:41.160] quand même leur page produit parce que
+[00:04:42.280] comme j'aiexliqué précédemment, si on
+[00:04:43.600] trouve que la page produit n'est pas
+[00:04:44.600] bien, on peut changer de sites. Mais
+[00:04:45.919] eux, j'ai regardé en vrai les deux sont
+[00:04:47.199] bien. Donc voilà, ça c'est la page
+[00:04:48.600] produit. Donc là, ils remettent encore
+[00:04:49.919] des avis. Non, franchement leur site
+[00:04:51.479] chapeau hein, super bien fait. Après, je
+[00:04:53.039] vais vous montrer un peu les stats
+[00:04:53.919] qu'ils ont là actuellement en terme de
+[00:04:55.280] visite et tout. C'est pas un site qui a
+[00:04:56.759] été fait à la volée très loin de là. Si
+[00:04:58.639] vraiment ce site là génère de l'argent,
+[00:05:00.080] qu'il y a des visiteurs et cetera et
+[00:05:01.639] cetera. Je vais cliquer sur l'extension
+[00:05:03.440] juste ici. Et là, on peut voir donc que
+[00:05:05.000] le site actuellement, il y a plus de
+[00:05:06.520] 700000 visiteurs par mois. Donc c'est
+[00:05:08.440] confirmé que la boutique, elle tourne
+[00:05:09.759] bien. Euh, il y a pas de sujet à ce
+[00:05:11.240] niveau-là. Et ils ont aussi des
+[00:05:12.440] publicités qui sont actives. Là, ils en
+[00:05:13.960] ont plus de 76 actives. Donc voilà, il y
+[00:05:16.120] a aucun sujet. La boutique fonctionne.
+[00:05:18.000] 700000 visiteurs par mois, ils ont même
+[00:05:19.280] fait un pic à 1 million de visiteurs en
+[00:05:20.960] mai. Donc voilà, c'est pas juste de la
+[00:05:22.680] beauté du site, c'est que c'est concret,
+[00:05:24.520] c'est réel que derrière il y a des gens
+[00:05:25.759] qui achètent, il y a des gens qui
+[00:05:26.680] vendent, il y a pas de sujet à ce
+[00:05:27.840] niveau-là. Ça veut dire que c'est
+[00:05:28.759] concret, c'est pas juste de la beauté,
+[00:05:30.039] c'est un site qui est bien fait et aussi
+[00:05:31.400] qui vend aussi derrière. C'est pour ça
+[00:05:32.800] que maintenant, grâce à Claudia, je
+[00:05:34.120] pourrais faire tout le nécessaire pour
+[00:05:35.240] pouvoir copier cette boutique pour mon
+[00:05:36.680] propre produit. L'étape suivante sera de
+[00:05:38.280] se retrouver directement sur chat GPT.
+[00:05:39.960] Je vous invite à bien faire attention au
+[00:05:41.560] niveau des options, d'accord ? Faites
+[00:05:43.000] bien attention à mettre le chat GPT 5.6
+[00:05:45.639] sol, vous cliquez dessus et ensuite vous
+[00:05:47.560] mettez bien élever. On est bien d'accord
+[00:05:49.240] ? Donc faites bien attention à ça et
+[00:05:50.600] ensuite en description, vous allez avoir
+[00:05:51.840] un prompt exactement comme celui-ci. On
+[00:05:53.720] va demander à chat GPT de nous mettre en
+[00:05:55.280] place un script qu'on va utiliser
+[00:05:56.840] ensuite sur cloud afin qu'on puisse
+[00:05:58.520] designer correctement notre page
+[00:05:59.759] d'accueil. Ici, faites bien attention à
+[00:06:01.160] bien mettre le lien de votre site, on
+[00:06:02.680] est bien d'accord. Mettez pas le lien de
+[00:06:04.039] mon site he du site que je vais
+[00:06:05.039] recopier, ça sert à rien. Mettez-le
+[00:06:06.240] vôtre. le lien du site que vous voulez
+[00:06:07.520] recopier. Et là, vous allez mettre donc
+[00:06:08.800] le lien AliExpress produit aussi, on est
+[00:06:11.080] bien d'accord. Donc là, c'est le produit
+[00:06:12.199] que vous euh vous souhaitez. Euh là,
+[00:06:13.680] dans ce cas-là, moi je vais aller sur
+[00:06:14.759] AliExpress, je peux prendre n'importe
+[00:06:16.360] quel produit hein, euh maquillage, je
+[00:06:18.280] vais trayé par commande. Je peux prendre
+[00:06:19.800] ce produit par exemple. Ça c'était à
+[00:06:21.160] l'ancienne qu'on le vendait. Je peux
+[00:06:22.440] prendre n'importe quel produit, hein.
+[00:06:23.599] Là, par exemple, c'est un kit d'ensemble
+[00:06:25.440] d'éponges pour maquillage. Donc voilà,
+[00:06:27.240] je peux prendre ce produit là. Je vais
+[00:06:28.360] cliquer sur copier. Ce n'est pas un
+[00:06:29.880] produit que je veux absolument
+[00:06:30.759] sélectionner, c'est vraiment pour vous
+[00:06:31.720] montrer un exemple simple et facile.
+[00:06:33.479] Donc là, on est bon. Ce que je vais
+[00:06:35.080] faire, c'est qu'on va cliquer sur
+[00:06:36.280] télécharger document PDF. Voilà, vous
+[00:06:38.720] faites la même chose que moi. Ensuite,
+[00:06:40.000] on vient sur chat GPT et je transmets ce
+[00:06:42.400] document à chat GPT. Donc c'est parfait,
+[00:06:44.280] il va s'en occuper. Le but en mettant ça
+[00:06:46.160] en place, c'est que chat GPT puisse nous
+[00:06:47.560] sortir donc un long prompt et qu'on va
+[00:06:49.280] ensuite copier et transmettre ça
+[00:06:50.639] directement à Cloud Design afin qu'on
+[00:06:52.280] puisse justement mettre en place notre
+[00:06:53.639] boutique. En tout cas surtout notre page
+[00:06:55.080] d'accueil. Donc là, elle me demande que
+[00:06:56.319] souhait-tu que je fasse ? Je vais mettre
+[00:06:57.960] le transformer en promte réutilisable.
+[00:07:00.560] Hop là. Donc là, ce concernant la page
+[00:07:01.840] d'accueil, ouais, j'ai bien transmis la
+[00:07:03.039] page d'accueil, on est bien d'accord.
+[00:07:04.080] Donc là, il va me sortir un prompt ultra
+[00:07:06.080] quali. Et dès lors que ça c'est fait, on
+[00:07:07.720] va aller directement dans Cloud, on va
+[00:07:09.039] cliquer sur design et on va bien faire
+[00:07:10.440] attention que le modèle soit bien sur le
+[00:07:11.960] opus 5. Donc là, on le laisse faire.
+[00:07:13.720] Donc là, c'est fait. Il m'a mis en place
+[00:07:15.080] un prompt que je vais pouvoir utiliser
+[00:07:16.479] notamment sur Cloud Design. Là, je peux
+[00:07:18.160] vous montrer très rapidement le prompt.
+[00:07:19.919] Fiche à personnaliser, le nom de la
+[00:07:21.240] marque, nom du produit, type de
+[00:07:22.639] boutique. Voilà, ça c'est un prompt
+[00:07:23.960] vraiment que vous pouvez utiliser sur
+[00:07:25.240] toutes les boutiques, copier très
+[00:07:26.319] facilement n'importe quelle boutique de
+[00:07:28.000] A à Z, comme vous le voulez directement
+[00:07:29.840] en tout cas avec Shopify. Je clique
+[00:07:31.400] maintenant sur télécharger. On va se
+[00:07:32.840] retrouver chez notre ami Claudia et ce
+[00:07:35.080] que vous allez faire, c'est cliquer
+[00:07:36.240] juste ici sur design. Voilà, peut-être
+[00:07:38.160] que vous avez jamais utilisé la partie
+[00:07:39.479] design de Claudia, mais elle est ultra
+[00:07:41.240] performante. On va cliquer ici sur
+[00:07:42.840] design. Il me demande ici qu'est-ce que
+[00:07:44.400] je veux créer. Et ce qu'on va faire
+[00:07:45.800] c'est que je vais reprendre le document
+[00:07:47.400] que je viens de télécharger à l'instant.
+[00:07:48.919] Je vais le mettre ici. Et je vais lui
+[00:07:50.240] dire exécute ce prompt. Donc là, je fais
+[00:07:52.319] bien attention, c'est bien opus 5.
+[00:07:54.120] Nickel. OK, je laisse comme ça. On est
+[00:07:56.199] parti. Et là, vous allez voir qu'est-ce
+[00:07:57.440] qui va se passer. En tout cas, si
+[00:07:58.560] aujourd' vous voulez créer une boutique
+[00:07:59.680] avec Shopify, c'est vraiment de cette
+[00:08:01.080] manière que vous devez procéder. Donc
+[00:08:02.319] là, ce qui m'a fait, c'est que avec le
+[00:08:03.599] prompt que j'ai mis en place avec chat
+[00:08:04.759] GPT, j'ai juste une fiche de marque à
+[00:08:07.039] remplir. Là, je dois remplir le nom de
+[00:08:08.400] la marque, le produit principal, la
+[00:08:09.599] catégorie, définir si la boutique est en
+[00:08:11.199] monoproduit ou multiproduit, le marché,
+[00:08:13.080] la langue et la devise, la cible, la
+[00:08:14.800] frustration et les résultats recherchés,
+[00:08:16.520] le ton de la marque, vérifier les prix,
+[00:08:18.240] la livraison et le retour. Est-ce que on
+[00:08:19.919] a des preuves authentiques, oui ou non ?
+[00:08:21.479] L'URL de la page produit, le visuel et
+[00:08:23.360] documents, boutique de référence. Donc
+[00:08:25.199] là, c'est vraiment tout de A à Z. Donc
+[00:08:27.159] on répond à tout. Donc là plusieurs
+[00:08:28.599] choix. Soit vous laissez lia décider
+[00:08:30.400] pour vous, soit voilà, vous pouvez
+[00:08:31.440] demander des questions complémentaires
+[00:08:32.640] ou soit vous cliquez ici sur scène
+[00:08:34.120] answer. Comme ça vous pouvez lu
+[00:08:35.120] transmettre directement l'ensemble de
+[00:08:36.360] réponses. L'idéal c'est quand même que
+[00:08:37.599] ce soit vous qui le fassiez mais on peut
+[00:08:39.080] céder bien évidemment de Claudia, on est
+[00:08:40.919] d'accord. Moi c'est le même principe
+[00:08:42.159] hein. Là je copie tout. Je reviens sur
+[00:08:43.479] Claudia, je lui dis aide-moi à remplir
+[00:08:45.959] ces informations concernant mon produit.
+[00:08:48.120] Bon là c'est vraiment la technique du
+[00:08:49.360] feignant. Là c'est aujourd'hui Lia c'est
+[00:08:51.640] c'est vraiment très très puissant. On
+[00:08:53.760] utilise déjà Lia et on demande à Lia de
+[00:08:55.519] nous aider pour l'IA. Euh c'est ça
+[00:08:57.399] maintenant en 2000 en 2026, ça se passe
+[00:08:59.160] comme ça. Donc là, je transmets bien mon
+[00:09:00.560] produit, je transmet bien aussi les
+[00:09:02.440] images. Comme ça, il y a une visibilité
+[00:09:03.920] claire. Enregistrer l'image sous. Hop,
+[00:09:05.839] là, je transmets toutes les infos. OK,
+[00:09:07.720] donc je vais juste mettre ça en PNG,
+[00:09:09.760] renommer, PNG, utiliser en PNG. Hop là.
+[00:09:12.839] Et là, je transmets tout ça à Cloud. Il
+[00:09:14.480] peut déjà me faire des préréponses. Si
+[00:09:16.000] je valide, c'est bon. Si je valide pas,
+[00:09:17.480] mais dans ce cas-là, je ferai des
+[00:09:18.560] modifications. Donc, j'ai pas pu accéder
+[00:09:19.920] au produit AliExpress, c'est pas grave.
+[00:09:21.079] Dans tous les cas à l'image, quel
+[00:09:22.279] marché, quelle langue, quelle devise
+[00:09:23.480] pour la page. Donc je vais mettre France
+[00:09:25.399] FR euro. Voilà. Type de boutique et ton
+[00:09:28.040] de marque souhaité. Euh donc ça sera un
+[00:09:30.519] monoproduit et je vais mettre voilà du
+[00:09:32.880] chaleureux. Avez-vous des preuves
+[00:09:34.200] authentiques ? Avis de notes, photo UGC
+[00:09:36.600] test ? Euh non, pour l'instant j'en ai
+[00:09:38.120] pas donc je vais pas mettre de faux avis
+[00:09:39.480] hein. Format de sortie du livrable. Je
+[00:09:41.600] vais dire en texte, j'utilise déjà Cloud
+[00:09:44.959] Design. Aide-moi juste à formuler mes
+[00:09:47.480] réponses. Donc voilà, en faisant ça, il
+[00:09:49.440] va répondre à l'ensemble de mes
+[00:09:50.519] questions et ensuite je pourrais
+[00:09:51.839] transmettre tout ça directement à Cloud
+[00:09:53.240] Design. Maintenant, ce qu'on va faire,
+[00:09:54.440] c'est qu'on va remplir la fiche avant de
+[00:09:55.839] construire la homepage. Le gabarit
+[00:09:57.480] interdit d'inventer des faits. Voici le
+[00:09:58.959] minimum pour partir. Passe ce que tu
+[00:10:00.440] veux, je décide du reste. Donc tout
+[00:10:02.000] simplement, Cloud Design nous demande la
+[00:10:03.320] marque, le produit et le positionnement.
+[00:10:04.959] Nom de marque, produit principal,
+[00:10:06.279] catégorie et c'est qu'il le différencie.
+[00:10:08.040] Donc moi ce que j'ai fait tout
+[00:10:08.800] simplement, j'ai pris entièrement donc
+[00:10:10.440] le questionnaire, je l'ai copié, j'ai
+[00:10:12.000] transmis directement à Claudia et je lui
+[00:10:13.480] ai dit ben choisis tout et euh je fais
+[00:10:15.200] ça directement avec Shopify. Donc là il
+[00:10:17.160] m'a proposé un nom de marque, c'est
+[00:10:18.800] Velvet. OK. Coffret de 12 pièces, éponge
+[00:10:21.360] et houpets à maquillage. Catégorie
+[00:10:23.279] accesseur de beauté, application du
+[00:10:24.600] teint, ce qui le différencie. Un coffret
+[00:10:26.440] pour chaque geste du teint, trois
+[00:10:28.000] éponges gouttes biseauté pour le fond de
+[00:10:29.880] teint, deux mini pour le contour des
+[00:10:31.480] yeux et les ailes du nez. Donc là, je
+[00:10:32.839] vais copier ça. Je vais mettre ça ici.
+[00:10:34.880] Parfait. Est-ce que la boutique elle est
+[00:10:36.279] en monoproduit ? Donc ça signifie un
+[00:10:37.680] seul produit ou un multiproduit. Moi je
+[00:10:39.519] vais mettre en monoproduit. Marché et
+[00:10:41.120] langue. Donc là on va partir sur France
+[00:10:42.839] et français pour vous montrer l'exemple.
+[00:10:44.360] Cible frustration et résultat recherché.
+[00:10:46.720] Donc j'ai demandé à Claudia de remplir
+[00:10:48.760] ça. Femme de 18 à 35 ans qui se maquille
+[00:10:51.360] tous les jours ou crée du contenu
+[00:10:52.720] beauté. Ce qui les agace. Une seule
+[00:10:54.360] éponge ne convient jamais à toutes les
+[00:10:55.839] zones. Les éponges premier prix boivent
+[00:10:57.600] le produit ou ses frites en quelques
+[00:10:59.160] semaines. Donc là je vais copier. Fais
+[00:11:00.560] vérifier à utiliser. Prix et off.
+[00:11:02.399] Caractéristiques confirmé. Livraison de
+[00:11:03.800] retour garantie réelle. Le lien de la
+[00:11:05.720] page produit. Donc là, je lui transmets
+[00:11:07.839] tout ça. Donc là, vous demandez à
+[00:11:09.079] Claudia de remplir hein les informations
+[00:11:10.760] tout simplement. Euh le lien de la page
+[00:11:12.200] produit, je l'ai pas encore. Preuve
+[00:11:13.480] réelle disponible. Donc moi là pour
+[00:11:15.200] l'instant, j'en ai pas spécialement
+[00:11:16.360] aucune remplacée par des sections euh
+[00:11:17.920] transparentes parce qu'on va pas mettre
+[00:11:19.120] des faux avis et cetera. Moi, je ne suis
+[00:11:20.839] pas dans ça, je précise. Maintenant, ce
+[00:11:22.560] qui nous demande donc, c'est visuel et
+[00:11:23.800] documents, photo, produit, UGC, logo,
+[00:11:26.040] manuel, packaging, capture de la
+[00:11:27.639] boutique du référence. Ce qu'on va
+[00:11:28.880] pouvoir faire maintenant, c'est demander
+[00:11:29.959] directement à Chat GPT de créer un logo.
+[00:11:31.959] Comme ça, on pourra directement
+[00:11:32.920] transmettre ses informations à Cloud
+[00:11:34.440] Design. Donc là, je vais me retrouver
+[00:11:35.760] directement sur chat GPT et je vais lui
+[00:11:37.600] dire alors je vais reprendre ses infos.
+[00:11:39.560] Hop là, je vais reprendre tout ça et je
+[00:11:41.399] vaisevenir ici, je vais lui dire alors
+[00:11:43.480] avis, notes, photo produit, UGC, capture
+[00:11:46.360] d'écran. OK, copier. Crée-moi tout ça
+[00:11:49.120] concernant ce produit. Là, je lui
+[00:11:51.279] retransmets cette photo. Et le site de
+[00:11:53.480] référence, c'est celui-là. Voici la
+[00:11:55.399] boutique de référence. Donc là, c'est
+[00:11:57.560] nickel. Je vais le laisser bosser. Donc
+[00:11:59.120] crée-moi tout ça concernant ce produit
+[00:12:00.839] photo produit UGC manuel packaging
+[00:12:03.399] concernant la boutique de référence et
+[00:12:05.480] là il va me mettre en place donc le logo
+[00:12:07.040] et toutes les informations que je
+[00:12:08.120] souhaite. Dès que ça c'est fait je les
+[00:12:09.760] transmettrai directement ici. Je le
+[00:12:11.560] laisse bosser. En attendant qu'est-ce
+[00:12:12.760] qu'il me dit ? Direction visuelle
+[00:12:14.000] couleur typo. Laisse-le vite si tu veux
+[00:12:15.639] que je te propose le système. Alors non
+[00:12:17.519] je vais venir ici. Donc je vais copier.
+[00:12:19.279] Hop là je vais copier ça et je vais
+[00:12:20.720] mettre ça directement ici. Cible
+[00:12:22.399] d'implémentation je livre une page HTML
+[00:12:25.079] React dans tous les cas adapté au format
+[00:12:26.839] visé. Donc là, je vais demander Shopify.
+[00:12:28.639] Système de design à utiliser. Choisir un
+[00:12:30.839] design. Euh, je suis pas sûr. Voilà, je
+[00:12:33.440] laisse Claudia décider. Alors là, tout
+[00:12:35.440] ce qui me reste, c'est juste lui
+[00:12:36.360] transmettre donc les visuels et
+[00:12:37.720] documents. Alors, est-ce que tu chat GPT
+[00:12:39.120] est en train de bosser ? Autoriser pour
+[00:12:40.760] le chat. Je vais te préparer un pack
+[00:12:42.240] complet, exploitable pour Shopify,
+[00:12:43.720] identité, visuel produit, packaging,
+[00:12:45.519] manuel. OK, il va tout me faire dès
+[00:12:47.120] maintenant. Donc je le laisse bosser et
+[00:12:49.399] je reviens d'ici quelques minutes pour
+[00:12:50.959] qu'on puisse transmettre les visuels et
+[00:12:52.320] documents à Cloud Design. OK, donc là,
+[00:12:54.480] on est bon. Chat GPT m'a fait le pack
+[00:12:56.399] complet marque Velvet. Il y a 33
+[00:12:58.959] fichiers optimisés pour Shopify. Il m'a
+[00:13:00.800] mis en place différentes images qu'on va
+[00:13:02.199] pouvoir remettre justement sur notre
+[00:13:03.639] page produit. Je vais ensuite remettre
+[00:13:05.199] tout cela à Cloud Design qui va lui
+[00:13:06.760] ensuite mettre en place la boutique
+[00:13:08.519] directement sur Shopify. Donc là c'est
+[00:13:10.120] le logo, le teint geste par geste.
+[00:13:12.120] Voilà, on a des images qui sont faites
+[00:13:13.240] par Lia. Franchement, c'est de très
+[00:13:14.199] belles images. Le packaging, on est très
+[00:13:16.079] bon. Donc voilà, c'est amplement
+[00:13:17.519] suffisant. Si vous souhaitez rajouter
+[00:13:18.920] des images, vous pouvez aller à nouveau
+[00:13:20.160] sur Autods et faire une recherche
+[00:13:21.680] d'images pour voir voilà les images que
+[00:13:23.040] vous souhaitez mettre en place sur votre
+[00:13:24.079] site. Et vous pouvez demander à Tat GPT,
+[00:13:25.639] voilà, reprends ces images-là, fais-moi
+[00:13:27.360] des modifications et euh comme ça, on
+[00:13:29.000] est bon. Ça, c'est quelque chose qui est
+[00:13:30.040] possible mais moi je vais rester sur ces
+[00:13:31.480] images-là, c'est très bien. Euh alors ce
+[00:13:33.639] qui m'a fait photo 12 pièces de visuels
+[00:13:36.639] UGC, des scripts vidéo. OK, il m'a mis
+[00:13:39.000] en place d'autres choses ici. OK. Ouais,
+[00:13:41.360] donc là c'est les images en détail. Donc
+[00:13:43.639] ouais, les images là, elles sont bien.
+[00:13:45.279] Alors, je juste les prendre bien comme
+[00:13:46.639] ça en séparé. Voilà. Et comme ça, je
+[00:13:48.880] transmets tout ça. Enregistrer. Donc ça
+[00:13:50.959] c'est bon. Ce que je vais pouvoir faire
+[00:13:52.279] donc c'est cliquer ici donc sur visuel
+[00:13:53.720] et documents et je transmets donc tous
+[00:13:55.320] les visuels et documents que je viens de
+[00:13:56.759] prendre à l'instant. Je lui transmets
+[00:13:58.000] tout ça comme ceci. Je vérifie bien que
+[00:13:59.800] j'ai tout mis. Ouvrir capture de la
+[00:14:01.600] boutique de référence. OK. Donc là, je
+[00:14:03.360] vais aller sur go full page. Je prends
+[00:14:05.040] en photo le site de référence. Et
+[00:14:06.800] j'avais aussi la page produit. La page
+[00:14:08.480] produit, elle est comme ça. Nickel. Donc
+[00:14:10.600] go full page, c'est un c'est une
+[00:14:11.920] extension qui est gratuite, hein, au
+[00:14:12.959] passage. PDF, nickel. PDF aussi nickel.
+[00:14:16.959] Donc là, je viens là, je rajoute les
+[00:14:18.680] deux PDF que je viens de faire à
+[00:14:20.040] l'instant. OK, donc là, en principe, on
+[00:14:22.399] est bon. Euh, je livre une homepage
+[00:14:24.839] Shopify, et ensuite, je vais cliquer sur
+[00:14:27.320] send answer. Donc là, je vais lui
+[00:14:28.839] envoyer toutes les informations et là,
+[00:14:30.600] Cloud Design va s'occuper de mettre en
+[00:14:32.079] place donc ma page d'accueil et ma page
+[00:14:34.000] produit. Bien évidemment, on va vérifier
+[00:14:35.519] tout cela ensemble s'il y a quelque
+[00:14:37.160] modification à faire derrière. On va
+[00:14:38.800] faire toutes ces modifications avant
+[00:14:40.440] d'exporter ce design directement sur
+[00:14:42.199] Shopify. Donc là, je pense ça va prendre
+[00:14:43.519] voilà quelques minutes, entre 5 et à 10
+[00:14:45.040] minutes, histoire qu'il puisse mettre en
+[00:14:46.480] place donc la page produit et la page
+[00:14:48.079] d'accueil. On va télécharger donc
+[00:14:49.360] séparément la page d'accueil et la page
+[00:14:50.959] produit et ensuite on va les importer
+[00:14:52.440] directement sur notre boutique Shopify.
+[00:14:54.199] Donc là, on le laisse bosser et je vous
+[00:14:55.399] fais un retour d'ici quelques minutes.
+[00:14:56.880] Regardez-moi ce que Claude Design a fait
+[00:14:58.480] concernant la page d'accueil.
+[00:14:59.639] Franchement, elle est magnifique. Donc
+[00:15:00.959] là, j'ai mon logo simplement le coffret,
+[00:15:03.160] les 12 pièces, les gestes FAQ. Livraison
+[00:15:05.720] offerte en France retour sous 14 jours.
+[00:15:08.000] Un outil différent pour chaque geste du
+[00:15:09.759] teint. Cinq éponges gouttes. Quatre
+[00:15:11.959] houpettes doigt. Voilà. En tout cas là
+[00:15:13.720] concernant mon produit. Découvrez le
+[00:15:15.240] coffret à 24,90. Voir les 12 pièces. Là
+[00:15:17.839] vous avez l'image qu'on a fait ensemble
+[00:15:19.160] juste avant. Une seule éponge ne peut
+[00:15:20.600] pas tout faire. 12 pièces, cinq formes,
+[00:15:22.519] un seul coffret. Pourquoi un coffret
+[00:15:24.279] plutôt qu'une pièce ? Le bon outil sans
+[00:15:26.160] compromis. De quoi tourner, la poudre se
+[00:15:28.240] tapote. Un coffret à laisser sortie. Le
+[00:15:30.480] site franchement il est magnifique.
+[00:15:31.920] Magnifique, magnifique, magnifique. Il a
+[00:15:33.319] rien à redire. Voilà le copyright. le
+[00:15:35.480] site, comment il est rendu similaire au
+[00:15:37.480] concurrent qu'on a vu juste avant.
+[00:15:38.720] Franchement, la page d'accueil, moi je
+[00:15:40.600] valide à 100 % et je pense que vous
+[00:15:43.199] aussi. Donc ça c'est ce concerne la page
+[00:15:44.680] d'accueil. Est-ce que il m'a fait aussi
+[00:15:46.600] la page produit ? Je vais lui dire
+[00:15:48.120] fais-moi aussi la page produit
+[00:15:50.240] séparément et je sende. Donc là, c'est
+[00:15:52.079] la page d'accueil comme selon l'indique
+[00:15:53.519] hein, c'est pour accueillir le client,
+[00:15:54.959] mais c'est pas sur cette page là qu'on
+[00:15:56.519] va rediriger nos publicités. On va
+[00:15:58.399] rediriger justement sur une page produit
+[00:16:00.160] que je vais lui demander de faire. Comme
+[00:16:01.639] ça, au moins, on sera bon à ce
+[00:16:03.040] niveau-là. On va pouvoir connecter le
+[00:16:04.399] tout directement à Shopify pour pouvoir
+[00:16:06.240] finaliser notre site. OK. Donc là, vous
+[00:16:08.160] voyez en direct, il commence à me faire
+[00:16:09.360] la page produit. Coffret velette 12
+[00:16:11.079] pièces. C'est incroyable hein,
+[00:16:12.399] franchement. Je sais pas qu'est-ce qu'il
+[00:16:13.959] faut de plus euh pour un débutant pour
+[00:16:16.560] comprendre que voilà, l'e-commerce c'est
+[00:16:17.959] réel, que c'est euh plus simple, en tout
+[00:16:20.440] cas pour l'exécution, pour matérialiser
+[00:16:22.560] une boutique par rapport à avant. Là,
+[00:16:24.199] vous voyez en direct, vousz vous pouvez
+[00:16:26.079] faire la même chose que moi. Il y a pas
+[00:16:27.920] quelque chose de différent parce que
+[00:16:28.959] oui, c'est Jonathan ou il y a quelque
+[00:16:30.160] chose de caché. Il y a rien de caché.
+[00:16:31.720] Vous voyez le tout en direct. Faites
+[00:16:33.079] comme moi si vous voulez matérialiser ça
+[00:16:35.680] pour votre boutique, pour votre projet
+[00:16:37.519] tout simplement. Regardez ce qu'elle est
+[00:16:38.759] en train de me faire. Franchement, c'est
+[00:16:39.880] super bien fait. Franchement, je le
+[00:16:41.600] laisse finaliser donc la page produit.
+[00:16:43.240] De toute façon, là, je vous montre un
+[00:16:44.040] petit peu là. Je crois il est en train
+[00:16:45.000] de me gérer un peu les images, les 12
+[00:16:46.600] pièces, quatre gestes, ce que nous
+[00:16:48.560] affirmons et ce que nous dirons pas
+[00:16:50.079] encore. Livraison et retour, question
+[00:16:51.839] fréquente 12 pièces, une forme par geste
+[00:16:54.040] 24,90 €. Livraison offerte. Voilà. Non,
+[00:16:56.480] franchement, c'est magnifique, hein.
+[00:16:57.319] Magnifique, magnifique, magnifique. Je
+[00:16:58.680] le laisse continuer à bosser et je vous
+[00:17:00.759] fais un retour dès que c'est finalisé.
+[00:17:02.319] OK, donc voici la page projet finale.
+[00:17:03.959] Coffret Velvette, 12 pièces, nickel,
+[00:17:06.360] quatre gestes, quatre formes. Voilà,
+[00:17:08.079] livraison et retour, questions
+[00:17:09.439] fréquentes. Voilà, je peux cliquer
+[00:17:10.640] dessus, hein, bien évidemment. Et après,
+[00:17:12.120] encore une fois, s'il y a quelconque
+[00:17:13.520] modification nécessaire, vous pouvez lui
+[00:17:15.120] demander. Là, je peux lui dire "OK, je
+[00:17:16.640] suis pas d'accord avec les questions
+[00:17:17.400] fréquentes, est-ce que tu peux faire des
+[00:17:18.559] modifications ?" Donc vraiment, ne vous
+[00:17:19.880] faites pas de souci à ce niveau-là.
+[00:17:21.439] Maintenant que tout ça est bon, donc
+[00:17:22.559] concernant la page d'accueil et la page
+[00:17:24.039] produit, ce que vous allez faire, c'est
+[00:17:25.199] qu'on va cliquer ensemble donc sur
+[00:17:26.600] share, donc share et export. Je
+[00:17:28.319] télécharger le projet en format HTML
+[00:17:30.640] parce que c'est via ce format là qu'on
+[00:17:32.000] pourra le mettre sur notre boutique
+[00:17:33.440] Shopify. Donc je clique et vous allez
+[00:17:35.160] cliquer directement ici donc sur
+[00:17:36.679] standalone HTML et là je vais export. Ma
+[00:17:39.280] page produit est en train de s'exporter
+[00:17:40.919] en format HTML et je vais faire
+[00:17:42.360] exactement la même chose pour la page
+[00:17:43.400] d'accueil. Tout ça c'est la page
+[00:17:44.360] produit. La page d'accueil je suis le
+[00:17:45.640] même principe. Je clique sur share
+[00:17:46.960] project HTML export. Donc voilà, Claude,
+[00:17:49.280] il est un peu bui, il m'a dit d'attendre
+[00:17:51.039] avant de pouvoir exporter la page
+[00:17:52.120] d'accueil. Donc là, je vais exporter les
+[00:17:53.480] deux pages et ensuite on passera à
+[00:17:54.960] l'étape suivante. OK, donc là, j'ai bien
+[00:17:56.520] télécharger donc la page d'accueil et la
+[00:17:58.280] page produit, donc en document HTML
+[00:18:00.039] comme vous le voyez ici. Hop là, voilà,
+[00:18:02.120] nickel. Donc maintenant ce qu'on va
+[00:18:03.280] faire c'est qu'on va revenir sur Claudia
+[00:18:04.799] et je vais lui demander de vraiment tout
+[00:18:06.320] optimiser afin que la page d'accueil et
+[00:18:08.120] la page produit soient bien utilisable
+[00:18:09.679] sur la plateforme de Shopify. Donc pour
+[00:18:11.440] ça, je vais lui transmettre justement
+[00:18:12.559] donc ces deux documents HTML plus un
+[00:18:14.480] prompt qui sera en description pour être
+[00:18:16.280] sûr que ces deux pages soient bien
+[00:18:17.559] fonctionnelles sur Shopify. Donc là ce
+[00:18:19.320] que je fais c'est que je lui transmets
+[00:18:20.919] sur Claudia ce qu'on vient de faire à
+[00:18:22.240] l'instant et là vous avez vous allez
+[00:18:23.960] avoir donc ce prompt en description.
+[00:18:26.440] Vous aurez juste à copier le prompt. Je
+[00:18:28.400] vais dire exécute le prompt. Donc après
+[00:18:31.120] il y a juste un truc à faire. Vous allez
+[00:18:32.360] cliquer sur plus ici connecteur et vous
+[00:18:35.000] allez bien vérifier que vous avez
+[00:18:36.200] Shopify en connecteur. D'accord ? C'est
+[00:18:38.080] pas le cas, c'est très simple. Vous
+[00:18:39.480] mettez Shopify, Shopify connecteur
+[00:18:42.240] Cloud. Voilà. Et ici vous avez l'URL du
+[00:18:44.240] connecteur. Donc on fait setup Shopify.
+[00:18:46.120] Vous cliquez ici sur plus. Là vous
+[00:18:47.799] revenez sur plus ici connecteur. Et si
+[00:18:50.000] vous avez pas Shopify ici, vous cliquez
+[00:18:51.440] sur ajouter un connecteur. Ajouter un
+[00:18:53.039] connecteur personnalisé. Vous mettez
+[00:18:54.600] setup Shopify MCP et vous mettez Shopify
+[00:18:57.240] comme ça. D'accord ? et vous cliquez sur
+[00:18:58.679] continuer. Juste avant de valider ça,
+[00:19:00.480] vous avez en description un lien Shopify
+[00:19:02.400] qui vous permet de pouvoir démarrer
+[00:19:03.760] gratuitement pendant 3 jours et ensuite
+[00:19:05.440] vous payez uniquement donc 1 € par mois
+[00:19:07.039] durant les trois prochains mois tout
+[00:19:08.320] simplement. Donc là, ce qu'il va falloir
+[00:19:09.320] faire donc c'est pouvoir se lancer
+[00:19:10.360] gratuitement. Euh vous allez mettre
+[00:19:11.640] votre email. Voilà, moi je vais mettre
+[00:19:13.360] mon email et je vais créer donc un
+[00:19:15.039] compte Shopify. C'est via justement ce
+[00:19:16.919] compte Shopify que je vais pouvoir
+[00:19:18.159] intégrer donc la page produit et la page
+[00:19:19.600] d'accueil que je viens de vous montrer à
+[00:19:20.919] l'instant. Donc là, je vais créer mon
+[00:19:21.919] mot de passe, créer un compte. Donc là,
+[00:19:23.679] ce que je vous invite à faire, c'est de
+[00:19:24.440] mettre en place toutes vos informations
+[00:19:25.600] bancaires et de commencer dès
+[00:19:26.919] maintenant. Comme ça, vous pourvez
+[00:19:27.919] utiliser Shopify pleinement et ne pas
+[00:19:29.520] être bloqué sur quoi que ce soit. Donc
+[00:19:30.919] là, vous mettrez vos informations. Donc
+[00:19:32.039] c'est ce que je vais faire. OK, donc dès
+[00:19:33.200] lors que ça c'est fait, je vais cliquer
+[00:19:34.360] sur paramètres ici. Et là, on fera bien
+[00:19:36.240] attention parce que c'est bien ça le
+[00:19:37.559] lien de ma boutique. On est bien
+[00:19:38.919] d'accord ? Donc je vais cliquer sur
+[00:19:39.960] copier. Je reviens ici et voici le lien
+[00:19:42.880] administrateur de ma boutique Shopify.
+[00:19:45.919] Donc vous allez lui transmettre
+[00:19:46.840] exactement ça et ensuite je vais vous
+[00:19:48.559] montrer le résultat de tout ça. Aussi
+[00:19:50.360] une chose qui est super important donc
+[00:19:51.600] c'est concernant les informations sur
+[00:19:52.919] l'entreprise là il est en train de me
+[00:19:54.559] gérer donc les configurations de
+[00:19:55.960] l'entité commerciale. Donc ça prendra
+[00:19:57.240] quelques minutes. Il faut absolument que
+[00:19:58.559] vous puissiez avoir une société pour
+[00:19:59.520] pouvoir démarrer le e-commerce parce que
+[00:20:00.880] sinon vous pouvez tout simplement pas
+[00:20:01.960] utiliser Shopify. Donc là je juste
+[00:20:04.440] attends modifier l'entité. Je vais bien
+[00:20:05.919] mettre la France. sélectionner le type
+[00:20:07.720] d'entreprise. Donc moi, je vais créer
+[00:20:09.080] une micro entreprise, donc c'est
+[00:20:10.480] entreprise individuelle. Donc là, va
+[00:20:11.880] falloir mettre nom, prénom, nom de
+[00:20:13.720] famille, Jonathan, ICOM. Là, vous
+[00:20:16.120] mettrez toutes vos informations.
+[00:20:17.760] Parfait. Adresse résidentielle. Donc là,
+[00:20:19.600] vous mettez votre adresse. Donc ça,
+[00:20:20.919] c'est les informations personnelles.
+[00:20:22.200] Maintenant, il y a les détails de la
+[00:20:23.240] vérification d'entreprise. Il faut
+[00:20:24.600] absolument que c'est remplir ça
+[00:20:25.799] correctement. Sinon, on vous pouvez tout
+[00:20:26.840] simplement pas utiliser Shopify. Donc
+[00:20:28.400] là, on nous demande donc la raison
+[00:20:29.480] sociale enregistrée, l'adresse
+[00:20:30.880] professionnelle, appartement et suite,
+[00:20:32.440] code postal et cetera. Donc là, ce qu'on
+[00:20:34.000] va faire tout simplement, c'est qu'on va
+[00:20:34.960] créer une micro-entreprise avec
+[00:20:36.200] Legalplace et aussi avoir une adresse
+[00:20:38.320] professionnelle pour éviter de mettre
+[00:20:39.720] notre adresse personnelle sur le site.
+[00:20:41.280] Donc faut savoir que en France, on est
+[00:20:42.600] obligé d'avoir une adresse sur le site
+[00:20:44.159] internet si vous voulez pas avoir votre
+[00:20:45.640] adresse personnelle sur votre site et je
+[00:20:47.159] peux comprendre parce que voilà, ça peut
+[00:20:48.280] être un peu malaisant avoir votre
+[00:20:49.440] adresse personnelle qui est au grand
+[00:20:50.679] public, encore plus quand vous allez
+[00:20:51.799] commencer à générer des ventes et avoir
+[00:20:53.039] beaucoup de visiteurs. Dans ce cas-là,
+[00:20:54.280] on va pouvoir gérer tout cela
+[00:20:55.240] directement avec les GALPlace. Pour ça,
+[00:20:56.880] vous avez un lien directement en
+[00:20:58.240] description. créer ta micro-entreprise
+[00:21:00.000] avant d'avoir fait ta première vente.
+[00:21:01.440] Alors, je vais cliquer ici directement
+[00:21:03.039] créer votre micro-entreprise. Donc, je
+[00:21:04.799] vais créer une micro-entreprise dès
+[00:21:06.320] maintenant. Comme ça, au moins, c'est
+[00:21:07.280] fait et je vais pas avoir des problèmes
+[00:21:08.600] avec Stripe, avec PayPal, toutes ces
+[00:21:10.159] plateformes là. Vaut mieux faire ça
+[00:21:11.360] maintenant, comme ça je suis tranquille
+[00:21:12.520] derrière. Quand souhaitez-vous démarrer
+[00:21:13.640] votre activité dès que possible ?
+[00:21:15.480] Avez-vous déjà été auto-entrepreneur ?
+[00:21:16.960] Je vais mettre non. Je vais confirmer
+[00:21:18.440] que je veux bien créer une
+[00:21:19.279] micro-entreprise où sera fixé le siège
+[00:21:21.240] social de la micro-entreprise ? Donc,
+[00:21:22.559] c'est ça qui est super important. Il
+[00:21:24.679] faut absolument que c'est fixer un CS
+[00:21:26.200] social pour éviter de mettre votre
+[00:21:27.640] adresse personnelle sur le site. On est
+[00:21:29.159] bien d'accord ? Donc moi ce que je vais
+[00:21:30.200] faire c'est que je vais prendre
+[00:21:30.840] l'adresse de legal Place, je reviens sur
+[00:21:32.520] Shopify et je vais mettre l'adresse
+[00:21:33.840] professionnelle. Voilà, je mets celle-ci
+[00:21:35.600] comme ça je suis tranquille. La réseau
+[00:21:36.919] sociale donc ça sera Jonathan Ecom parce
+[00:21:38.880] que c'est nom prénom hein. Donc ça c'est
+[00:21:40.559] OK, je valide. Quel est votre domaine
+[00:21:42.400] d'activité ? Donc c'est vente en ligne.
+[00:21:43.840] Monsieur Jonathan Ecomuez. Adresse email
+[00:21:46.799] continuez. Numéro de téléphone
+[00:21:48.400] continuez. Donc je vais mettre nom. Que
+[00:21:50.159] recherchez-vous ? Lancer mon activité.
+[00:21:51.880] une solution tout en un du conseil
+[00:21:53.200] juridique et fiscal avec un expert
+[00:21:54.679] comptable ou avocat. Je vais cliquer sur
+[00:21:56.320] continuer. Merci de patienter. Vous avez
+[00:21:58.240] deux possibilités, donc soit l'offre
+[00:21:59.440] standard ou soit l'offre express. Moi
+[00:22:01.000] personnellement, je vous conseille de
+[00:22:01.919] prendre l'offre express parce que vous
+[00:22:02.960] pouvez obtenir une obtenion d'ACR. Ça
+[00:22:04.400] vous permet d'avoir une réduction
+[00:22:05.600] d'impôts. Comme ça, voilà, vous allez
+[00:22:06.919] payer moins d'impôts la première année
+[00:22:08.120] où vous démarrez. Et vous avez aussi un
+[00:22:09.400] logiciel de facturation électronique.
+[00:22:10.679] Faut savoir que maintenant, c'est
+[00:22:11.480] obligatoire de mettre tout cela en place
+[00:22:13.080] en France. Donc, je vais cliquer sur
+[00:22:14.240] choisir le pack express, héberger votre
+[00:22:16.080] micro-entreprise. Donc, je vais ajouter
+[00:22:17.840] et continuer. Si vous voulez mettre en
+[00:22:19.200] place un compte pro, bon, c'est idéal,
+[00:22:20.600] je vous conseille de le faire. Et là, je
+[00:22:21.640] vais cliquer donc sur ajouter un code.
+[00:22:23.320] Comme ça, j'ai une réduction sur ce que
+[00:22:24.679] je fais. Parfait. Donc là, je mets mes
+[00:22:26.200] informations bancaires et comme ça, j'ai
+[00:22:27.679] accès directement donc à la création
+[00:22:29.360] d'entreprise, à la domiciliation, au
+[00:22:31.039] compte pro. Comme ça, je peux démarrer
+[00:22:32.480] le e-commerce de manière qualitative, de
+[00:22:34.000] manière carrée. Donc oui, voilà, je paye
+[00:22:35.360] 100 € et encore si vous avez le plan
+[00:22:36.919] standard, vous allez payer moins cher,
+[00:22:38.279] mais au moins pour moi, c'est une
+[00:22:39.279] nécessité de pouvoir investir cet
+[00:22:40.600] argent. Comme ça, ça vous évitera
+[00:22:41.640] d'avoir des problèmes quand vous allez
+[00:22:42.760] commencer à faire des ventes. Je
+[00:22:43.720] rappelle, parce que je dois le préciser
+[00:22:44.960] au nom de la loi française que avant de
+[00:22:46.799] générer une seule vente, vous êtes
+[00:22:48.240] obligé de créer une entreprise en
+[00:22:49.919] France. Dans tous les cas, ça c'est
+[00:22:51.520] obligé. Donc dès lors qu'on a fait ça,
+[00:22:54.159] donc je mets toutes les informations ici
+[00:22:55.720] et là je mets le numéro de téléphone.
+[00:22:56.919] Parfait. Donc je clique sur enregistrer
+[00:22:58.679] maintenant. OK. Désactiver, échanger.
+[00:23:00.840] Confirmer l'adresse de la boutique.
+[00:23:02.200] Parfait. Jonathan Ecom entreprise
+[00:23:03.600] individuelle 47 rue Vivienne Paris 75002
+[00:23:06.799] Paris. Alors maintenant qu'on a fait ça,
+[00:23:08.760] donc exécute le prompt et voici le lien
+[00:23:10.600] administrateur. Donc là je lu transmets
+[00:23:12.240] toutes les informations. Ouais de toute
+[00:23:13.760] façon c'est bon, je peux lu
+[00:23:14.679] retransmettre l'affiche. Alors, envoyer
+[00:23:16.240] le message et là on va le laisser bosser
+[00:23:18.360] sur la base du prompt afin qu'on puisse
+[00:23:20.080] vraiment avoir un site qui correspond
+[00:23:21.799] bien à Shopify. Comme ça, quand on va
+[00:23:23.360] intégrer donc les documents HTML à
+[00:23:25.000] Shopify, ça permettra que il y ait pas
+[00:23:26.720] de bug, il y ait pas de souci et qu'on
+[00:23:28.120] soit bon à ce niveau-là. Je commence par
+[00:23:29.720] le contexte Velvet et l'ouverture des
+[00:23:31.400] fichiers. Donc là, on va le laisser
+[00:23:32.440] bosser et mettre tout ça en place et je
+[00:23:34.200] vous fais un retour d'ici quelques
+[00:23:35.880] minutes. OK, donc Cloud souhaite
+[00:23:37.440] utiliser Shopify. Donc je vais
+[00:23:39.799] autoriser, je vais tout autoriser
+[00:23:41.200] directement. Je vais pouvoir connecter
+[00:23:42.640] Shopify à Cloud. Donc on va le
+[00:23:44.200] connecter. Parfait. Welcome back. Choose
+[00:23:46.320] the store or create one. Je vais choisir
+[00:23:48.200] bien évidemment le store que j'ai créé à
+[00:23:49.600] l'instant. Je vais cliquer sur
+[00:23:51.000] installer. Comme ça, on va pouvoir
+[00:23:52.279] installer donc Shopify Cloud Connector
+[00:23:54.200] application. Donc je vais l'installer et
+[00:23:55.880] comme ça Cloud va pouvoir directement
+[00:23:57.600] intégrer tout ça. L'authentification est
+[00:23:59.559] bien réussie. Donc là on laisse Cloud
+[00:24:01.080] mettre tout cela en place. Donc là j'ai
+[00:24:02.240] bien connecté Shopify à Cloud. On le
+[00:24:04.080] laisse importer donc la page d'accueil
+[00:24:05.400] et la page produit directement sur notre
+[00:24:07.080] site Shopify. Alors qu'est-ce qu'il m'a
+[00:24:08.600] fait ? phase 0, phase 1 sont faites et
+[00:24:10.640] il m'a demandé deux trois points qui
+[00:24:12.159] sont bloquants. Donc oui, là le document
+[00:24:13.919] euh là le prom que je vous ai envoyé
+[00:24:15.440] c'était concernant une autre boutique
+[00:24:16.559] que j'avais précédemment. Donc là il me
+[00:24:18.159] dit euh bloquer ce que je peux pas
+[00:24:20.480] décider tout seul. Mauvais produit dans
+[00:24:22.200] le prompt. Euh je vais dire garde le bon
+[00:24:25.000] produit maquillage. Skills absent ne
+[00:24:27.919] sont pas installés. Je peux appliquer
+[00:24:29.360] leur mémoire. OK. Remplacer ou compléter
+[00:24:31.399] les cinq images dépendant du hardware.
+[00:24:33.399] Tu as fournir une photo fournisseur si
+[00:24:34.840] tu veux. Non. Devise à euro. OK. Donc
+[00:24:37.799] là, je vais juste lui retransmettre bien
+[00:24:39.440] ça parce que là, le prom c'était pas un
+[00:24:40.799] prom général que je lui avais transmis.
+[00:24:42.679] Alors, claque. Je transmets bien les
+[00:24:44.440] images. La boutique version française
+[00:24:47.080] est en euros. Fais les skills toi-même
+[00:24:49.720] et voici toutes les images nécessaires.
+[00:24:52.200] Parfait. Donc là, c'est parce que comme
+[00:24:53.240] le prompt, je l'avais déjà utilisé sur
+[00:24:54.720] une boutique précédente, c'est pour ça
+[00:24:55.840] qu'il me redemande de faire ça. Donc là,
+[00:24:57.320] avant d'utiliser le prompt qui est en
+[00:24:58.679] description, faites bien attention à
+[00:24:59.960] bien mettre le produit qui vous concerne
+[00:25:01.279] pour éviter cette étape là. Là, je le
+[00:25:02.880] laisse finaliser tout ça comme ça, on
+[00:25:04.399] avance. OK, donc là il m'a dit produit
+[00:25:06.440] velvette FR euro. Nickel, je passe à la
+[00:25:08.880] phase 6 directement. D'abord fait entrer
+[00:25:10.679] les images dans Shop faille. Voilà, donc
+[00:25:12.159] là on le laisse bosser directement. Donc
+[00:25:13.919] là ça va prendre environ 10 à 15 minutes
+[00:25:15.840] et ensuite on ser bon. Donc là je le
+[00:25:17.480] laisse finaliser. On se retrouve d'ici
+[00:25:18.760] quelques minutes. Alors Claude souhaite
+[00:25:20.200] utiliser le média field. Donc là c'est
+[00:25:22.440] un outil pour les images. Donc je le
+[00:25:24.039] laisse faire. Il m'a dit les cinq sont
+[00:25:25.960] ready. Dimension conforme aux originaux.
+[00:25:28.080] J'attache la galerie produit dans
+[00:25:29.320] l'ordre de la page et là il convertit le
+[00:25:31.600] tout pour que ça puisse être utilisable
+[00:25:32.919] directement sur Shopify. OK. Donc là, on
+[00:25:34.640] est bon. Ce qui en place le fichier
+[00:25:36.679] Shopify. Donc là, Claudia, ce qu'il a
+[00:25:38.520] fait, c'est qu'il a importé directement
+[00:25:39.760] la page d'accueil et la page produit
+[00:25:41.120] directement sur Shopify. Le visuel,
+[00:25:42.919] coffret ouvert, 12 pièces à plat, scène
+[00:25:45.200] sur socle, UGC et UGC, on est bon. Donc,
+[00:25:48.279] il a copié le thème directement sur
+[00:25:49.840] Shopify, il a transmis le produit, il y
+[00:25:52.039] a la prévisualisation aussi. Donc le
+[00:25:54.159] fichier est ready, tout est bon. Alors,
+[00:25:56.000] il m'a juste dit que devise AED euro, je
+[00:25:58.360] peux je dois changer ça. Il me manque la
+[00:25:59.799] page livraison, retour contact, ça je
+[00:26:01.159] vais m'en occuper. Et regarde la preview
+[00:26:02.720] avant la publication. Euh donc là, ce
+[00:26:04.840] qu'on va faire, c'est qu'on va retourner
+[00:26:05.799] directement sur Shopify et on va cliquer
+[00:26:07.960] ici sur boutique en ligne pour vérifier
+[00:26:09.559] si le site est bien sur Shopify. Et là,
+[00:26:11.520] c'est le cas, vous le voyez, il est
+[00:26:12.880] juste ici. Donc on va pas publier tout
+[00:26:14.559] de suite, on va cliquer sur modifier et
+[00:26:16.320] on va voir le site à quoi il ressemble.
+[00:26:17.799] Donc là, vous voyez que c'est
+[00:26:18.480] directement sur Shopify. Donc là, c'est
+[00:26:19.960] top. Je peux cliquer ici en aperçu.
+[00:26:22.240] Voilà, vous voyez que c'est bien sur
+[00:26:23.279] Shopify, il y a aucun sujet. On a la
+[00:26:25.320] page d'accueil, on a tout. Donc là,
+[00:26:27.000] c'est un dir, faut juste que je modifie
+[00:26:28.159] ça en euro. On a la page d'accueil ultra
+[00:26:30.440] qualitative comme on a vu ça ensemble
+[00:26:32.000] directement. Et donc là vraiment c'est
+[00:26:33.360] Claudia qui m'a tout fait. On a importé
+[00:26:34.960] ça sur Shopify. Rien de compliqué, c'est
+[00:26:37.159] pas difficile, c'est même facile. Il
+[00:26:39.039] faut juste passer à l'action et mettre
+[00:26:40.720] tout ça en place. Là si je clique ici,
+[00:26:42.360] je directement accès à la page produit.
+[00:26:43.799] Donc vous voyez que c'est les boutons,
+[00:26:44.600] ils fonctionnent he c'est pas des
+[00:26:45.480] boutons à la voler. Euh coffret Velvet.
+[00:26:47.840] Donc voilà, on a on a accès à la page
+[00:26:49.559] produit juste ici. Les images qu'on
+[00:26:51.360] avait sélectionné ensemble. Donc voilà,
+[00:26:53.080] on est bon. Vous avez vu comment j'ai pu
+[00:26:54.720] importer donc la page d'accueil page
+[00:26:56.039] produit. Rien de compliqué. Il m'a juste
+[00:26:57.480] dit que voilà, il manquait la page
+[00:26:58.880] contact euh FAQ et cetera, mais c'est à
+[00:27:00.679] nouveau je peux lui demander. On apporte
+[00:27:02.000] encore une fois via Claudia, comme ça on
+[00:27:03.760] est bon. Je précise que pour les
+[00:27:04.799] personnes qui veulent se lancer durant
+[00:27:05.799] le 4e trimestre, donc c'est la meilleure
+[00:27:07.240] période de l'année, on a toutes les
+[00:27:08.360] fêtes de fin d'année, c'est à ce
+[00:27:09.320] moment-là où on va faire 80 % de notre
+[00:27:11.320] chiffre d'affaires à l'année. J'ai mon
+[00:27:12.880] accompagnement qui est 100 % gratuit. Je
+[00:27:14.600] ne fais plus payer des accompagnements à
+[00:27:15.960] 2000 ou 3000 €. Je donne tout
+[00:27:17.600] gratuitement. Dès lors que vous accédez
+[00:27:19.159] à l'espacement, vous allez arriver sur
+[00:27:20.440] une plateforme exactement comme ceci
+[00:27:21.919] auquelle vous aurez accès donc à une
+[00:27:23.240] formation de plus de 19h où on explique
+[00:27:25.039] tout de A à Z pour faire du dropshipping
+[00:27:26.760] avec de l'intelligence artificielle avec
+[00:27:28.240] des tutos vraiment avancés pour afin que
+[00:27:30.120] puissiez mettre en application tout ce
+[00:27:31.360] qui permet d'avoir des résultats. On a
+[00:27:32.960] aussi mis en place un module phare donc
+[00:27:34.440] c'est le module organique. Ça veut dire
+[00:27:35.919] que vous pouvez littéralement vous
+[00:27:36.760] lancer avec un budget mais vraiment très
+[00:27:38.200] restreint. Vous avez juste à faire
+[00:27:39.480] exactement ce que j'ai montré dans cette
+[00:27:40.640] vidéo et pouvoir donc poster un maximum
+[00:27:42.679] pour pouvoir ramener du trafic sur votre
+[00:27:43.919] site et générer des ventes. Même pas
+[00:27:45.200] besoin de dépenser en ads. Donc après
+[00:27:46.679] ceux qui ont du budget, vous pouvez
+[00:27:47.880] dépenser aussi en ads, sans souci. On
+[00:27:49.880] fait des lives donc tous les jours,
+[00:27:51.600] d'accord ? Tous les jours, on est en
+[00:27:52.799] live. Donc au-delà de la formation,
+[00:27:54.600] c'est très bien où on explique tout
+[00:27:55.679] concernant le dropshipping IA, on est en
+[00:27:57.519] live tous les jours, d'accord ? Tous les
+[00:27:58.840] jours, on a différents experts, donc des
+[00:28:00.360] personnes qui ont fait plusieurs
+[00:28:01.080] millions en e-commerce avec lequel vous
+[00:28:02.480] pouvez échanger continuellement chaque
+[00:28:04.159] jour. D'accord ? Dès lors que vous avez
+[00:28:05.240] des questions, des interrogations, des
+[00:28:06.720] incompréhensions, on échange en live
+[00:28:08.320] tous les jours. Vous avez juste à
+[00:28:09.240] réserver votre place juste ici. Comme
+[00:28:10.880] ça, on vous envoie un email avec un
+[00:28:12.200] Google Meet et vous pouvez échanger
+[00:28:13.480] directement avec nos différents coachs.
+[00:28:15.240] Vous pouvez aussi donc directement
+[00:28:16.480] rejoindre une communauté. Donc on a un
+[00:28:18.120] groupe WhatsApp, on parle tous ensemble,
+[00:28:19.600] on discute tous ensemble, on échange des
+[00:28:21.120] tips, on échange de la valeur afin que
+[00:28:22.559] vous puissiez tout simplement encore une
+[00:28:23.799] fois être accompagné tous les jours,
+[00:28:25.360] avoir des échanges tous les jours. Donc
+[00:28:26.720] c'est la meilleure chose à faire et je
+[00:28:27.840] répète que tout ça c'est 100 % gratuit.
+[00:28:29.880] Vous aurez accès à tous les prompts
+[00:28:31.080] concernant la recherche de produits,
+[00:28:32.200] création de sites, création des
+[00:28:33.399] publicités, lancement des publicités,
+[00:28:34.679] tout de A à Z. Vous aurez aussi accès
+[00:28:36.760] donc à différents outils pour calculer
+[00:28:38.120] la marge, le ROS, seuil de rentabilité,
+[00:28:40.000] budget publicitaire, fiche produit.
+[00:28:41.399] C'est super important. Vous pouvez pas
+[00:28:42.320] démarrer l'e-commerce euh sans faire ça.
+[00:28:44.000] Tout ça, les lives tous les jours, le
+[00:28:45.399] groupe communauté, la formation, c'est
+[00:28:46.960] 100 % gratuit. La seule chose que vous
+[00:28:48.320] devez faire donc c'est pouvoir prendre
+[00:28:49.480] donc certains outils qui va vous
+[00:28:50.799] permettre justement de mettre en
+[00:28:52.080] application la formation. Au même titre
+[00:28:53.679] que là par exemple dans cette vidéo, je
+[00:28:54.720] vous ai montré top View. Bah justement,
+[00:28:56.000] il faut que vous puissiez prendre Top
+[00:28:56.840] View pour mettre en application ce que
+[00:28:57.919] je dis dans cette vidéo. Ben c'est le
+[00:28:59.080] même principe pour cet accompagnement.
+[00:29:00.360] Le but c'est pas que ce soit gratuit
+[00:29:01.480] juste pour qu'il y ait des gens curieux.
+[00:29:02.559] Je veux quand même que avant que vous
+[00:29:03.640] rentrez, avant que vous puissiez entrer
+[00:29:04.960] dans la formation, vous puissiez prendre
+[00:29:06.240] les outils justement qui vont vous
+[00:29:07.080] permettre de pouvoir mettre en
+[00:29:08.039] application la formation. Comment
+[00:29:09.399] j'arrive à faire en sorte que tout ça
+[00:29:10.440] c'est gratuit ? C'est parce que
+[00:29:11.519] justement on est rémunéré au niveau des
+[00:29:13.120] personnes qui vont prendre justement ces
+[00:29:14.279] différents outils. Donc c'est la
+[00:29:15.279] meilleure manière aujourd'hui de pouvoir
+[00:29:16.320] se lancer en e-commerce. Arrêtez de
+[00:29:17.760] prendre des formations à 2000 3000 € ça
+[00:29:19.399] ne fait plus sens aujourd'hui. Vous avez
+[00:29:20.799] juste à vous inscrire sur cette page là.
+[00:29:22.120] crée ta boutique avec Lia en 10 minutes
+[00:29:23.880] et accède gratuitement à mon
+[00:29:25.000] accompagnement en dropshipping à plus de
+[00:29:26.240] 3000 €. Là, vous mettez votre nom,
+[00:29:27.760] adresse, email, numéro de téléphone,
+[00:29:29.120] l'âge. Vous acceptez d'être contacté par
+[00:29:30.840] téléphone et mes coachs vont vous
+[00:29:32.120] appeler dans les 10 à 20 prochaines
+[00:29:33.640] minutes. Comme ça, on peut valider
+[00:29:34.880] ensemble donc l'accompagnement, les
+[00:29:36.080] différents outils et on vous transmet
+[00:29:37.240] les accès et vous avez accès à tout.
+[00:29:38.720] Donc le lien, il est en description. Je
+[00:29:40.080] sais pas encore pendant combien de temps
+[00:29:41.120] ça sera gratuit parce que c'est
+[00:29:42.120] incroyable et ça dépend pas que de moi.
+[00:29:43.640] Donc je vous invite à nous rejoindre dès
+[00:29:44.679] maintenant pour qu'on puisse bosser tous
+[00:29:45.880] ensemble durant le 4e trimestre. C'est
+[00:29:47.320] tout pour moi concernant cette vidéo et
+[00:29:48.760] on se dit à très vite pour une prochaine
+[00:29:49.960] vidéo.
