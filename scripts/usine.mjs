@@ -702,7 +702,12 @@ function juger(id, ici, marque) {
     const derniers = fs.existsSync(path.join(ORCH, 'verdicts.jsonl')) ? fs.readFileSync(path.join(ORCH, 'verdicts.jsonl'), 'utf8').split(/\r?\n/).map((l) => { try { return JSON.parse(l) } catch { return null } }).filter((v) => v?.id === id) : []
     conclure(id, ici, marque, { verdict: 'FAIL', code: 1, ligne: `fiche en refuse/ : ${derniers.at(-1)?.ligne || "verdict de l’orchestre"}` })
   } else { console.error(`✗ ${id} est en ${ou || "aucun dossier de l’orchestre"}/ sur le PC : pas de verdict possible. Le patch appliqué : ${relatif(path.join(ici, 'resultat.patch'))} (git apply -R pour le retirer).`); process.exit(1) }
-  const v = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'verifier', id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 45 * 60_000 })
+  // 29/09/2026 : le verdict final est rendu d'abord SUR L'USINE (verifier-final.mjs : verifier-usine.mjs, « machine: usine »), et sur le PC seulement pour une fiche à secrets ou si l'usine ne juge pas.
+  // PRESTI_VERIFIER_PC=1 : PC seul, comme avant. Même sortie, même code que `orchestre.mjs verifier` (« <id> : PASS|FAIL »).
+  const finale = path.join(RACINE, '..', 'presti-ops', 'usine', 'verifier-final.mjs')
+  const v = fs.existsSync(finale) && process.env.PRESTI_VERIFIER_PC !== '1'
+    ? spawnSync(process.execPath, [finale, id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 65 * 60_000 })
+    : spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'verifier', id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 45 * 60_000 })
   const sortie = `${v.stdout || ''}${v.stderr || ''}`
   process.stdout.write(sortie)
   fs.writeFileSync(path.join(ici, 'verdict-pc.log'), `# ${maintenant()} · node scripts/orchestre.mjs verifier ${id} · code ${v.status}${v.signal ? ' · signal ' + v.signal : ''}\n${sortie}`)

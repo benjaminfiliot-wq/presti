@@ -19,9 +19,14 @@ import {
   conseillersPour, type EntreeMoteur,
 } from './moteurs'
 import { ops_cout_ajouter, ops_cout_autoriser } from './bus'
+import { consigneAvecLecons, leconsPour, lireLecons, type Lecon } from './lecons'
 
 // ── contrat public ────────────────────────────────────────────────────────────────────────────────────────────────
-export type Lecteur = (systeme: string, donnees: unknown) => Promise<unknown>
+/**
+ * `identite` : QUI répond (voie:modèle, ex. « codex:gpt-6-luna »), lue par le second juge pour ne reconnaître un étalonnage que
+ * mesuré sur le même lecteur que celui qui juge (fiche 026-083). Une voie de repli s'ajoute avec « > ».
+ */
+export type Lecteur = ((systeme: string, donnees: unknown) => Promise<unknown>) & { identite?: string }
 
 export type OptionsLecteur = {
   delaiMs?: number
@@ -42,6 +47,10 @@ export type DepsLecteur = {
   coutDeVoie?: (id: string, detail: Record<string, unknown>) => unknown
   /** Le plafond du jour, contrôlé AVANT l'appel : Promise<true> autorise ; tout autre retour, ou une exception, refuse. */
   verifierPlafond?: (agent: string, coutPrevuEuros: number) => Promise<unknown>
+  /** Leçons déjà lues (essais) : sinon lues une fois à la création, si l'interrupteur `lecons_dans_consignes` est allumé. */
+  lecons?: readonly Lecon[]
+  /** Contenu de docs/savoir/reglages.json (essais) : sinon lu à la création. */
+  reglages?: unknown
 }
 
 export const PLAFONDS = Object.freeze({
@@ -171,6 +180,8 @@ function parserJsonStrict(texte: string): unknown {
 class ErreurMoteur extends Error {
   type: 'P' | 'Q'
   echeanceTexte?: string
+  /** Un 429 avec `Retry-After` : l'attente demandée par la voie, en ms (les lecteurs patients s'en servent). */
+  attenteMs?: number
   constructor(type: 'P' | 'Q', message: string, echeanceTexte?: string) {
     super(message)
     this.type = type
@@ -200,6 +211,8 @@ async function appelerHttpCompatibleOpenAI(opts: {
   maxTokens: number
   delaiMs: number
   attendreFn: (ms: number) => Promise<void>
+  /** Jeton de la voie (freellmapi exige un `Authorization: Bearer` ; jamais journalisé). */
+  cle?: string
 }): Promise<{ texte: string; fournisseurReel?: string }> {
   const corps: Record<string, unknown> = {
     messages: [{ role: 'system', content: opts.systeme }, { role: 'user', content: opts.corpsDonnees }],
@@ -213,7 +226,7 @@ async function appelerHttpCompatibleOpenAI(opts: {
     let reponse: Response
     try {
       reponse = await opts.fetchFn(url, {
-        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: controleur.signal,
+        method: 'POST', headers: opts.cle ? { 'content-type': 'application/json', authorization: `Bearer ${opts.cle}` } : { 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: controleur.signal,
       })
     } catch {
       clearTimeout(minuteur)
@@ -226,7 +239,9 @@ async function appelerHttpCompatibleOpenAI(opts: {
         await opts.attendreFn(retryApres * 1000)
         continue
       }
-      throw new ErreurMoteur('Q', 'limite atteinte (429)')
+      const limite = new ErreurMoteur('Q', 'limite atteinte (429)')
+      if (Number.isFinite(retryApres) && retryApres > 0) limite.attenteMs = Math.min(retryApres * 1000, 900_000)
+      throw limite
     }
     if (reponse.status >= 500) throw new ErreurMoteur('P', `panne (${reponse.status})`)
     if (!reponse.ok) throw new ErreurMoteur('P', `erreur (${reponse.status})`)
@@ -302,6 +317,21 @@ function modeleOllamaPour(travail: string): string {
   return TRAVAUX_OLLAMA_8B.has(travail) ? MODELES_LOCAUX[1] : MODELES_LOCAUX[0]
 }
 
+// ── leçons validées (fiche 026-237) : lues une fois à la création, sous l'interrupteur `lecons_dans_consignes` ──────────
+function leconsAllumees(reglages: unknown): boolean {
+  const r = reglages as { interrupteurs?: { lecons_dans_consignes?: { actif?: unknown } } } | null | undefined
+  return r?.interrupteurs?.lecons_dans_consignes?.actif === true
+}
+/** Les leçons de l'agent, ou [] : interrupteur éteint, lecture impossible ou aucune leçon. Ne lève jamais. */
+function leconsDeLAgent(agent: string, deps: DepsLecteur): Lecon[] {
+  try {
+    const reglages = deps.reglages !== undefined ? deps.reglages : JSON.parse(fs.readFileSync(path.join(process.cwd(), 'docs', 'savoir', 'reglages.json'), 'utf8'))
+    if (!leconsAllumees(reglages)) return []
+    const lecons = deps.lecons ?? lireLecons(path.join(process.cwd(), 'docs', 'savoir', 'lecons')).lecons
+    return leconsPour(agent, lecons)
+  } catch { return [] }
+}
+
 // ── creerLecteur : la seule fabrique de lecteurs de modèle ───────────────────────────────────────────────────────────
 type ResultatEssai =
   | { ok: true; valeur: unknown; detail: Record<string, unknown> }
@@ -310,6 +340,7 @@ type ResultatEssai =
 const VOIES_EXECUTABLES = new Set(['codex', 'freellmapi', 'ollama_local'])
 
 export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: DepsLecteur = {}): Lecteur | null {
+  if (agent === 'etalonnage') return creerLecteurEtalonnage(options, deps)
   const env = deps.env ?? process.env
   const entree = MOTEUR_DE[agent]
   if (!entree || entree.affichage) return null
@@ -344,6 +375,7 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
   const disponiblesMaintenant = candidats.filter((id) => gateD1(id) && estConfigure(id))
   if (!disponiblesMaintenant.length) return null
 
+  const leconsChoisies = leconsDeLAgent(agent, deps)
   const aSec = new Map<string, number>()
   let compteurAppels = 0
   let coupe = false
@@ -406,6 +438,7 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
     })
     if (!essais.length) throw new Error('attente : aucune voie disponible pour le moment')
 
+    const consigne = consigneAvecLecons(systeme, leconsChoisies)
     let derniereErreur: Error = new Error('attente : toutes les voies ont échoué')
     for (const id of essais) {
       if (coupe) throw new Error('exécution coupée (plafond de coût)')
@@ -414,7 +447,7 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
       const cout = coutDeVoieFn(id, { moteur: id })
       if (!coutValide(cout)) throw new Error('coût inconnu : appel refusé')
       if (!(await plafondAutorise(verifierPlafondFn, agent, cout))) throw new Error('plafond de coût : appel refusé avant consommation')
-      const resultat = await essayerUneVoie(id, systeme, donnees)
+      const resultat = await essayerUneVoie(id, consigne, donnees)
 
       let retourCout: RetourCout
       try { retourCout = await enregistrerCoutFn(agent, cout, resultat.detail) }
@@ -430,6 +463,65 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
     }
     throw derniereErreur
   }
+  const identiteDe = (id: string): string => (id === 'codex' ? `codex:${modeleCodexPour(entree, options)}` : id === 'freellmapi' ? `freellmapi:${entree.modele}` : `ollama:${modeleOllamaPour(travail)}`)
+  lecteur.identite = candidats.filter(gateD1).map(identiteDe).join('>')
+  return lecteur
+}
+
+// ── creerLecteur('etalonnage') : le lecteur du CORPUS D'ESSAI, jamais d'une donnée de prospect ─────────────────────────
+// Fiche 026-083, décision du 29/09/2026 (délégation de Benj : « règle la 083 avec tout ce qu'on a »). Le quota Codex de
+// l'usine étant épuisé jusqu'au 03/10, l'étalonnage du second juge se fait sur la voie libre, mais seulement sur le jeu de
+// pièges (scripts/fixtures/026-acquisition/pieges/), écrit à la main avec des coordonnées inventées. La classe D1 n'est pas
+// levée : ce lecteur REFUSE (il lève) tout texte qui porte une adresse hors « .invalid », un numéro de téléphone, un
+// SIREN/SIRET ou une adresse web hors du site de notice du jeu d'essai. Il porte une `identite` (« freellmapi:<modèle> »)
+// que le second juge compare à celle de son lecteur de production : un étalonnage fait ici ne vaut jamais pour Codex.
+// Le plus fort que la voie libre de l'usine sait lancer le 29/09 (gemini-3-flash-preview était en attente de quota, gpt-oss-120b aussi).
+export const MODELE_ETALONNAGE = 'gemini-3.7-flash'
+const HOTES_ESSAI = new Set(['presti-temoin.github.io'])
+/** Vrai si le texte ne porte AUCUNE coordonnée réelle : adresses en « .invalid », pas de téléphone ni de SIREN, pas d'URL hors essai. */
+export function estCorpusSynthetique(texte: string): boolean {
+  const t = String(texte)
+  for (const m of t.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g) ?? []) if (!/\.invalid$/i.test(m)) return false
+  if (/(?:\+33|\b0)\s?[1-9](?:[ .-]?\d{2}){4}\b/.test(t)) return false
+  if (/\b\d{3}[ .]?\d{3}[ .]?\d{3}(?:[ .]?\d{5})?\b/.test(t)) return false
+  for (const m of t.match(/(?:https?:\/\/|www\.)[^\s"'<>)\]]+/gi) ?? []) {
+    let hote = ''
+    try { hote = new URL(/^www\./i.test(m) ? `https://${m}` : m).hostname.toLowerCase() } catch { return false }
+    if (!HOTES_ESSAI.has(hote)) return false
+  }
+  return true
+}
+
+export function creerLecteurEtalonnage(options: OptionsLecteur = {}, deps: DepsLecteur = {}): Lecteur | null {
+  const env = deps.env ?? process.env
+  const urlBase = lireFreellmapiUrl(env)
+  const cle = typeof env.FL_KEY === 'string' ? env.FL_KEY.trim() : ''
+  if (!urlBase || !cle) return null
+  const fetchFn = deps.fetch ?? fetch
+  const attendreFn = deps.attendre ?? attendreReel
+  const modele = typeof env.ETALONNAGE_MODELE === 'string' && env.ETALONNAGE_MODELE.trim() ? env.ETALONNAGE_MODELE.trim() : MODELE_ETALONNAGE
+  const appelsMax = Math.min(options.appelsMax ?? PLAFONDS.appelsParExecution, PLAFONDS.appelsParExecution)
+  const pauseMs = Number(env.ETALONNAGE_PAUSE_MS) >= 0 && env.ETALONNAGE_PAUSE_MS !== undefined && env.ETALONNAGE_PAUSE_MS !== '' ? Number(env.ETALONNAGE_PAUSE_MS) : 12_000
+  let appels = 0
+  const lecteur: Lecteur = async (systeme, donnees) => {
+    if (++appels > appelsMax) throw new Error(`plafond d'appels atteint (${appelsMax})`)
+    const emballage = emballerDonnees(donnees)
+    if (!estCorpusSynthetique(emballage)) throw new Error("lecteur d'étalonnage : donnée refusée (coordonnée réelle possible, corpus d'essai seulement)")
+    // Un modèle à réflexion consomme des jetons avant de répondre : 1 024 tronquait la réponse (finish_reason length).
+    // Voie gratuite : une pause entre deux appels, et une attente patiente (le `Retry-After` de la voie, jusqu'à 10 fois) devant
+    // un 429, sans quoi le quota fait tomber des dizaines de messages du jeu d'essai en « indisponible ».
+    for (let essai = 1; ; essai++) {
+      try {
+        const { texte } = await appelerHttpCompatibleOpenAI({ fetchFn, urlBase, modele, systeme, corpsDonnees: emballage, maxTokens: 4096, delaiMs: PLAFONDS.delaiMs.freellmapi, attendreFn, cle })
+        await attendreFn(pauseMs)
+        return parserJsonStrict(texte)
+      } catch (e) {
+        if (!(e instanceof ErreurMoteur) || e.type !== 'Q' || essai >= 10) throw e
+        await attendreFn((e.attenteMs ?? 65_000) + 2_000)
+      }
+    }
+  }
+  lecteur.identite = `freellmapi:${modele}`
   return lecteur
 }
 
