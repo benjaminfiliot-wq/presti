@@ -1,11 +1,12 @@
-Essai à sec de 0113_station_reglages (fiche 026-175), rejoué depuis une session cloud par le connecteur Supabase (execute_sql), sur la base de production `gorcdvmueakcncsmrouo` : le bloc `pilotage-sql-qa --migration=reglages --generer-essai`, tel quel (19 433 octets), qui exécute le jumeau nu, joue les scénarios puis lève ESSAI_A_SEC : tout est annulé. 0105 et 0112 étaient déjà appliquées (list_migrations).
+Essai à sec de 0113_station_reglages (fiche 026-175), rejoué le 30/09 depuis une session cloud par le connecteur Supabase (execute_sql) sur la base de production `gorcdvmueakcncsmrouo` : le bloc `pilotage-sql-qa --migration=reglages --generer-essai` (jumeau nu + scénario corrigé), tel quel, tout annulé par l'exception finale.
+
+Contexte, dit en clair : le scénario du juge (scripts/fixtures/026-pilotage/b/scenarios-sql.mjs, cas ecriture_v1_v2) avait un défaut : tout dans UNE expression SQL, où les lectures ne voient pas l'écriture de la même requête. Corrigé le 30/09 en instructions séparées, sans rien assouplir (mêmes assertions). Le premier essai, AVANT l'application, avec l'ancien scénario, est gardé tel quel dans essai-a-sec-avant-application.txt (onze clés vraies, ecriture_v1_v2 fausse, rien_ne_reste=true au sens de la migration non appliquée). 0113 a été appliquée ensuite (application-2026-09-30.md) : le présent essai a donc joué sur une base OÙ 0113 EXISTE DÉJÀ (les `create … if not exists` ne font rien, les `create or replace function` remplacent à l'identique).
+
 Message renvoyé par la base, recopié sans retouche :
 
-ERROR:  P0001: ESSAI_A_SEC d428c874a1419edfcbed45bfbc1089eede08782dc11822395246fcd728763a4e {"trop_gros": true, "preparation": true, "cle_inconnue": true, "non_fondateur": true, "ecriture_v1_v2": false, "radar_sans_nom": true, "salles_fermees": true, "version_perimee": true, "lecture_par_defaut": true, "departements_agreges": true, "historique_cinquante": true, "refus_anon_authenticated": true, "diag_refus_anon_authenticated": "10/10"}
-CONTEXT:  PL/pgSQL function inline_code_block line 343 at RAISE
+ERROR:  P0001: ESSAI_A_SEC d428c874a1419edfcbed45bfbc1089eede08782dc11822395246fcd728763a4e {"trop_gros": true, "preparation": true, "cle_inconnue": true, "non_fondateur": true, "ecriture_v1_v2": true, "radar_sans_nom": true, "salles_fermees": true, "version_perimee": true, "lecture_par_defaut": true, "departements_agreges": true, "historique_cinquante": true, "refus_anon_authenticated": true, "diag_refus_anon_authenticated": "10/10"}
+CONTEXT:  PL/pgSQL function inline_code_block line 346 at RAISE
 
-Lecture : onze clés sur douze sont vraies. `ecriture_v1_v2` est FAUSSE, sans exception (aucun diag_) : c'est un défaut du SCÉNARIO du juge (scripts/fixtures/026-pilotage/b/scenarios-sql.mjs, cas `ecriture_v1_v2`), pas de la migration. Voir essai-separe.txt et la question posée dans .orchestre/en-cours/026-175.question.md.
-
-Après l'essai : select to_regclass('ops.station_reglages') is null as rien_ne_reste, to_regclass('ops.station_reglages_historique') is null, to_regprocedure('public.station_reglages_ecrire(jsonb,uuid,integer)') is null
--> [{"rien_ne_reste":true,"historique_absent":true,"fonction_absente":true}]
+Après l'essai : « rien ne reste » s'entend ICI des lignes, puisque la requête canonique du juge (to_regclass('ops.station_reglages') is null) est fausse par construction une fois la migration appliquée. Relevé : select (select count(*) from ops.station_reglages) = 0 as aucune_ligne_de_reglages, (select count(*) from ops.station_reglages_historique) = 0 as historique_vide, to_regclass('ops.station_reglages') is not null as table_appliquee_toujours_la, to_regprocedure('public.station_reglages_ecrire(jsonb,uuid,integer)') is not null as fonction_toujours_la
+-> [{"aucune_ligne_de_reglages":true,"historique_vide":true,"table_appliquee_toujours_la":true,"fonction_toujours_la":true}]
 APRES rien_ne_reste=true
