@@ -1,0 +1,39 @@
+{
+  "id": "vEP99KxIYHk",
+  "titre": "Comment je crée des pubs UGC avec l'IA (qui génèrent du cash)",
+  "url": "https://www.youtube.com/watch?v=vEP99KxIYHk",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\vEP99KxIYHk\\video.mp4",
+  "taille_octets": 36228380,
+  "sha256_video": "febcadaca5344f594fb83eaabaadc791654705bc025864b8fdc0a0d284deb20a",
+  "duree_secondes": 744.414,
+  "largeur": 854,
+  "hauteur": 480,
+  "codec_video": "av1",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    46.525875,
+    139.577625,
+    232.62937499999998,
+    325.681125,
+    418.732875,
+    511.784625,
+    604.836375,
+    697.888125
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\vEP99KxIYHk\\video.fr-orig.vtt",
+  "nombre_cues": 1015,
+  "nombre_lignes_transcription": 508,
+  "empreintes_documents": {
+    "planche.jpg": "a9c752fb5dcc1e8fceec383e4f76b1f8e2239f335e5839fe49dbc14358af6fb4",
+    "sous-titres-originaux.vtt": "57313c3569a98b600b9d0c8aea15493edba79ff943270be6d56b3a45cb0fd9f6",
+    "transcription.txt": "84dbd27051ffba03d7ccdaf05cb2f7d6aea79fc55f51e5c7228200bbeaab9bd1"
+  }
+}

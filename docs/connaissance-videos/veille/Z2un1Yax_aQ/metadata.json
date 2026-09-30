@@ -1,0 +1,39 @@
+{
+  "id": "Z2un1Yax_aQ",
+  "titre": "J’ai testé Claude AI en e-commerce (je m’y attendais pas)",
+  "url": "https://www.youtube.com/watch?v=Z2un1Yax_aQ",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\Z2un1Yax_aQ\\video.mp4",
+  "taille_octets": 25008570,
+  "sha256_video": "1cd6c863be9ff4bc650fa7e0fa9ea59186d05fac2dd037fd0cc15136dfb38ffb",
+  "duree_secondes": 768.014,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "25/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    48.000875,
+    144.002625,
+    240.004375,
+    336.006125,
+    432.007875,
+    528.009625,
+    624.011375,
+    720.0131250000001
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\Z2un1Yax_aQ\\video.fr-orig.vtt",
+  "nombre_cues": 927,
+  "nombre_lignes_transcription": 464,
+  "empreintes_documents": {
+    "planche.jpg": "eed00a45a10f313ca2747c2dbeb2eadde57ee56eb012d57a7daa58020c2ef488",
+    "sous-titres-originaux.vtt": "0e4691b79802def568b74bbc95779c22a2b5933207173a3bf6d34d90d4974aef",
+    "transcription.txt": "ee324f5b716a08e8964dc8128853aaa43ca21dc0cf1d1f761726fc55d08b8232"
+  }
+}

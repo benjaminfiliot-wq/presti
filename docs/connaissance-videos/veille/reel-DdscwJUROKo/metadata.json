@@ -1,0 +1,36 @@
+{
+  "id": "reel-DdscwJUROKo",
+  "titre": "Video by restructureai",
+  "url": "https://www.instagram.com/reel/DdscwJUROKo/",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-25\\reel-DdscwJUROKo.mp4",
+  "taille_octets": 11896481,
+  "sha256_video": "55124d34eff097eee11bf1fd550342a7c4c712a63cc28dcad84b8d488396112a",
+  "duree_secondes": 83.115,
+  "largeur": 1080,
+  "hauteur": 1920,
+  "codec_video": "vp9",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "aac",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    5.1946875,
+    15.584062499999998,
+    25.9734375,
+    36.3628125,
+    46.7521875,
+    57.1415625,
+    67.5309375,
+    77.9203125
+  ],
+  "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+  "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-25\\reel-DdscwJUROKo.txt",
+  "empreintes_documents": {
+    "planche.jpg": "8b0583a4d7a071608a5ba7b9aa16cddafc4baba6e07411c6451fc3676939fe77",
+    "transcription.txt": "78ec820499914860b49922b189d0a9b37801590d63878e66b89cc5aaad7dd69b"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "hugomatias-DcODQPCMsLl",
+  "titre": "Video by hugomatias.ai",
+  "url": "https://www.instagram.com/reel/DcODQPCMsLl/",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\hugomatias-DcODQPCMsLl.mp4",
+  "taille_octets": 16240224,
+  "sha256_video": "393c31345a774f6b792cfd5f7cc108aaeddb6032a05d65d60e0d190b6e8af3dc",
+  "duree_secondes": 59.743991,
+  "largeur": 1080,
+  "hauteur": 1920,
+  "codec_video": "vp9",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "aac",
+      "frequence": "44100",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    3.7339994375,
+    11.2019983125,
+    18.6699971875,
+    26.1379960625,
+    33.6059949375,
+    41.0739938125,
+    48.5419926875,
+    56.0099915625
+  ],
+  "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+  "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\hugomatias-DcODQPCMsLl.txt",
+  "empreintes_documents": {
+    "planche.jpg": "ada90fffef98cb4a0ee3bed87a83800091bdbd3b556546b55e994784f90e56d5",
+    "transcription.txt": "b5ed7c0943315b4c7374cec2f9a1bf4e09d04bda2b5f51766d5028e4b504b692"
+  }
+}

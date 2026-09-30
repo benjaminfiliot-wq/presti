@@ -1,0 +1,39 @@
+{
+  "id": "9cXVJqlWNK0",
+  "titre": "E-Commerce 2026 : 5X plus de cash avec ÇA",
+  "url": "https://www.youtube.com/watch?v=9cXVJqlWNK0",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\9cXVJqlWNK0\\video.mp4",
+  "taille_octets": 31170794,
+  "sha256_video": "e29c9275312a93a5273b6838e4fb038f9a1694826d11fb8b3127e9696989e730",
+  "duree_secondes": 1043.334,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "25/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    65.208375,
+    195.62512500000003,
+    326.041875,
+    456.45862500000004,
+    586.8753750000001,
+    717.292125,
+    847.708875,
+    978.125625
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\9cXVJqlWNK0\\video.fr-orig.vtt",
+  "nombre_cues": 1223,
+  "nombre_lignes_transcription": 612,
+  "empreintes_documents": {
+    "planche.jpg": "84bc752a34862cd7da4b360eff4639fa77b0beff9a9df398a230fba0d8deb909",
+    "sous-titres-originaux.vtt": "a54270474a25b397d09e809c6bdced3572bc60b14f6c823b83f7597940769eed",
+    "transcription.txt": "444077aad9a49bfabb5415205774d0be7925288c6720c3f8d10004050d70fa15"
+  }
+}
