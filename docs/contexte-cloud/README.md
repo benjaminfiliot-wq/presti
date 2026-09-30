@@ -25,3 +25,5 @@ Les documents datés décrivent parfois des plans ou un état ancien. Un fichier
 Les données commerciales brutes, clés, verrous, logs de sessions, binaires, caches, médias et dépendances ne font pas partie du paquet. Leur absence est volontaire : voir le relevé des exclusions. Pour les preuves indépendantes 092/151, utiliser la branche codex/relais-cloud-0930 et les commentaires des PR fusionnées #2/#3.
 
 Comptage documentaire : {"SaaS":53,"presti":858,"presti-ops":93,"presti-secrets":5,"ENVIRONNEMENT-VARIABLES.json":1,"ETAT-FICHES.json":1}.
+
+Les empreintes SHA256 du manifeste portent sur les blobs Git publiés après normalisation des fins de ligne ; les empreintes des copies nettoyées avant Git restent indiquées séparément.
