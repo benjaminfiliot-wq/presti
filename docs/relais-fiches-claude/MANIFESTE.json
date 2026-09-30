@@ -1,0 +1,286 @@
+{
+  "capture": "2026-09-30T21:18:46.119Z",
+  "empreintes": "objets Git exacts",
+  "fichiers": [
+    {
+      "fichier": "CORRECTIONS-ATTENDUES.md",
+      "octets": 2159,
+      "sha256": "6b80dc70cd511b832509c7a14301829da9d96688b096ddf5850453810921a961"
+    },
+    {
+      "fichier": "INDEX.json",
+      "octets": 71280,
+      "sha256": "1fcb3987eaf174ff95c665a251ab6cd6dd761d6064127c21d13f086f56f4ae11"
+    },
+    {
+      "fichier": "README.md",
+      "octets": 4853,
+      "sha256": "c5d8b5b288c23db0126470ca4232f4928bba53cf6e05545af81fa20baa38f2cc"
+    },
+    {
+      "fichier": "fiches/026-083.md",
+      "octets": 31713,
+      "sha256": "4f7ea362b6dc67c1f85fdca2af75495df8be77b991e0cb668c0c16b332361c7a"
+    },
+    {
+      "fichier": "fiches/026-099.md",
+      "octets": 17390,
+      "sha256": "0c095d6208d86a2eb08a6ce328b040b74775c9794d84379b1df116c3a400e3c6"
+    },
+    {
+      "fichier": "fiches/026-150.md",
+      "octets": 10775,
+      "sha256": "43c4ebf9b70a26d6179cf58d68fc140f26411073f21a1bd1cdc9aab11705165e"
+    },
+    {
+      "fichier": "fiches/026-152.md",
+      "octets": 11210,
+      "sha256": "64639d403f198f7a2fc538d057a5e291a49d1149115990b65442e55acd6c7e35"
+    },
+    {
+      "fichier": "fiches/026-159.md",
+      "octets": 12285,
+      "sha256": "14ee853c473e921c9f3d11cf73248c143782c5ea0ebaf672e26cf0a330069fe3"
+    },
+    {
+      "fichier": "fiches/026-173.md",
+      "octets": 6926,
+      "sha256": "5caac4c70c837cdee85f8baf9b40aefb6fecb2451698fd40ce7c81c38f401c89"
+    },
+    {
+      "fichier": "fiches/026-174.md",
+      "octets": 5419,
+      "sha256": "43ea1319653d3d327e00b7c9985e286cb88f861ae2c7d5c7072a2e8e0302eb72"
+    },
+    {
+      "fichier": "fiches/026-195.md",
+      "octets": 13787,
+      "sha256": "378a23ade187d10f3112a65f9311905be37050b98d24807edb70bc01371b832f"
+    },
+    {
+      "fichier": "fiches/026-197.md",
+      "octets": 9172,
+      "sha256": "33400b4a8db0111e19bd41bcb72bdaa7f388d1b23ae2c052d5848b4edea0c48b"
+    },
+    {
+      "fichier": "fiches/026-199.md",
+      "octets": 17852,
+      "sha256": "881f8158bf00a56a4478110320d25ceec0cf72099317df06ab4eaf9cd1a0ec47"
+    },
+    {
+      "fichier": "fiches/026-240.md",
+      "octets": 5712,
+      "sha256": "37fcd9db50a3b61dd374a45f729cb270c817f4e9d86ef242241ee29ccf1cd542"
+    },
+    {
+      "fichier": "fiches/026-242.md",
+      "octets": 8667,
+      "sha256": "43a08d5cc00e37ad612c10dec7ec320ab66a4b77618a3189a82d40dfc026cb14"
+    },
+    {
+      "fichier": "fiches/026-244.md",
+      "octets": 8732,
+      "sha256": "c494d22b6bf30a537bf23fb557e141b3e3d0e8c8f5c6002e388e75ccb864ff06"
+    },
+    {
+      "fichier": "fiches/026-246.md",
+      "octets": 8942,
+      "sha256": "df72d9d38bee4433fcaf5868e04e50f7bcd58f0484df780a3783541ea351dbeb"
+    },
+    {
+      "fichier": "outil-orchestre/.gitignore",
+      "octets": 20,
+      "sha256": "295aa1f18923880afebb2e08aa70a8c4f285cc52baea238b8d2864d10e45d825"
+    },
+    {
+      "fichier": "outil-orchestre/README.md",
+      "octets": 19633,
+      "sha256": "f0ee821725e478aac73f7847fa1755203298e445fed7d05b91eeac8c1034252e"
+    },
+    {
+      "fichier": "outil-orchestre/bin/antigravity.mjs",
+      "octets": 25438,
+      "sha256": "5de83310fc654c57ccd9c494435380044871cca889dc6bcc8f865d93f749f8a3"
+    },
+    {
+      "fichier": "outil-orchestre/bin/cursor.mjs",
+      "octets": 12842,
+      "sha256": "2db3107d927b2e3ba6ba06f4326f41485b37488e11f01c5d93eb5ebcffe30f9b"
+    },
+    {
+      "fichier": "outil-orchestre/bin/executant.mjs",
+      "octets": 27043,
+      "sha256": "62d3525a24496d154669de93166dcd014cf52bbbea4d3d56a2aa1f3b327db758"
+    },
+    {
+      "fichier": "outil-orchestre/bin/lib/preuves.mjs",
+      "octets": 3048,
+      "sha256": "466cdaf3039ea1553e5b916737998354c96b64122818222ea09219c21d3b6c1b"
+    },
+    {
+      "fichier": "outil-orchestre/bin/orchestre.mjs",
+      "octets": 88461,
+      "sha256": "77fa6df6d6d36a8789f32b3223f25a2a5acf7fe7299e25a19e75cd78b5772b44"
+    },
+    {
+      "fichier": "outil-orchestre/docs/cursor.md",
+      "octets": 4392,
+      "sha256": "e8cf858e6cedc75d730d785c91bdf4d888fed307bac19c120d49378f95831cd1"
+    },
+    {
+      "fichier": "outil-orchestre/gabarits/AGENTS.md",
+      "octets": 2862,
+      "sha256": "39289603fb5eb4ec77ea881142f8ed0086885fd6739c72badd4b67214088ed43"
+    },
+    {
+      "fichier": "outil-orchestre/gabarits/CLAUDE.md",
+      "octets": 3627,
+      "sha256": "5cb2a0b5a6ade3ef5590a9fdafc3392e7a88bdeea9a240731bc74c2d6f6f6c92"
+    },
+    {
+      "fichier": "outil-orchestre/gabarits/decisions.md",
+      "octets": 1745,
+      "sha256": "9e41fbcdabac64d14f6da0049e82f62d314a668ab796625bce5fb1c26be66dff"
+    },
+    {
+      "fichier": "outil-orchestre/gabarits/settings.json",
+      "octets": 561,
+      "sha256": "7f5b024d6c24e9506c3a039835e351d6e97afe28d2db085da97d0b28aa963cf8"
+    },
+    {
+      "fichier": "outil-orchestre/gabarits/tache.md",
+      "octets": 1777,
+      "sha256": "f61ca291de35c10e338686078174c1c3fc1fe66cbcd8ea105a370fb07f26ad0d"
+    },
+    {
+      "fichier": "outil-orchestre/hooks/contexte-fond.mjs",
+      "octets": 3323,
+      "sha256": "1665307e328ed3263cf6d49194d8e7900d20e5adb138e71bbcfc987016d3c7b2"
+    },
+    {
+      "fichier": "outil-orchestre/hooks/git-garde.mjs",
+      "octets": 32221,
+      "sha256": "52933e32572471b1f5b0e5d1f68d6675ea0d873d05b81a396cc84b20c0840b26"
+    },
+    {
+      "fichier": "outil-orchestre/hooks/read-garde.mjs",
+      "octets": 5488,
+      "sha256": "8059d16bcded1c19894d4d04705b831ccba954b83c60e2f3cc49f5ef12453ca9"
+    },
+    {
+      "fichier": "outil-orchestre/juges/code-qa.mjs",
+      "octets": 8741,
+      "sha256": "86d3edb5a17c15fc6febece5c5aa1fcba587ba27ad16d4f338120338832c4365"
+    },
+    {
+      "fichier": "outil-orchestre/juges/site-qa.mjs",
+      "octets": 51652,
+      "sha256": "331ae97a203aa9f18a357113eb57c2c3b2c959ebeb3b3af206e2c8d4d50cfd51"
+    },
+    {
+      "fichier": "outil-orchestre/juges/video-qa.mjs",
+      "octets": 11251,
+      "sha256": "30b9b6ea20524e6e0ba0e939a81ead86beb7bde14647c477e8b599e6401cc7c2"
+    },
+    {
+      "fichier": "outil-orchestre/test/fixtures-026/faux-codex.mjs",
+      "octets": 1693,
+      "sha256": "2d8af704b97b20201fe44d42ec40b074581e7d673731805a7220617ec69bba08"
+    },
+    {
+      "fichier": "outil-orchestre/test/git-garde-qa.mjs",
+      "octets": 32390,
+      "sha256": "a131080a09b7d3bbc9aa5e4e5879237defb19bd7e54880cf27e85bebd7871cbe"
+    },
+    {
+      "fichier": "outil-orchestre/test/preuve-026.mjs",
+      "octets": 48543,
+      "sha256": "a0608bb3dec4a24154495a48fe7ae8b091816c945f146984e77a3a4ccc5f0945"
+    },
+    {
+      "fichier": "outil-orchestre/test/preuve.mjs",
+      "octets": 16776,
+      "sha256": "1c1c492a39a0b7e7f124afbcc6836a7fef3c79db71ccdc1f1b2cb467500a3709"
+    },
+    {
+      "fichier": "outil-orchestre/test/projet-factice/app/api/sante/route.ts",
+      "octets": 210,
+      "sha256": "4fbc3b7d1ae2816e6a48f8d7725ba8b91fb62f310c4048848a2fdb291990c356"
+    },
+    {
+      "fichier": "outil-orchestre/test/projet-factice/app/page.tsx",
+      "octets": 49,
+      "sha256": "fc54cfe5b467565a928a03d4975cdc7e4824571429bbfd3cf04ae3a3530c8af5"
+    },
+    {
+      "fichier": "outil-orchestre/test/projet-factice/lib/flags.ts",
+      "octets": 39,
+      "sha256": "027dd16af189f083a3aadc395d2b2cc4811ec458f1f8dcfd1a100eec681fe87f"
+    },
+    {
+      "fichier": "outil-orchestre/test/projet-factice/package.json",
+      "octets": 236,
+      "sha256": "6da882406bfb1c1ce6dee31815e81f8e7cf1b897142bdeb5de90329370137fa1"
+    },
+    {
+      "fichier": "outil-orchestre/test/projet-factice/supabase/migrations/0001_init.sql",
+      "octets": 93,
+      "sha256": "55f3cbd4f39128ac9508498f244f631b17ce9eee68c9ebe7530d4bf3c7e9749a"
+    },
+    {
+      "fichier": "preuves-PC/026-092/verifier.log",
+      "octets": 4997,
+      "sha256": "fbee78cb4e29eeee3673187e79d93db457a5d7b9f699f23d59bdbdd666f4ad3a"
+    },
+    {
+      "fichier": "preuves-PC/026-151/mutations-contre-verifiees.md",
+      "octets": 1374,
+      "sha256": "080fd93280b5111aa1afd27001917fb107b135741715199effded83bcc1df5a9"
+    },
+    {
+      "fichier": "preuves-PC/026-151/mutations.json",
+      "octets": 28959,
+      "sha256": "1817b3031a24329081280a782ade05f5b5f17dfd808be15d4392d927de36bdd3"
+    },
+    {
+      "fichier": "preuves-PC/026-151/verifier.log",
+      "octets": 3567,
+      "sha256": "860b08867ccc78c2c49823c339291d16a262c9f508e63adc2ec5daf22d7040b1"
+    },
+    {
+      "fichier": "preuves-PC/fermeture-production.log",
+      "octets": 14334,
+      "sha256": "d21e4bdcffbbbac88161f36957529d0458f71b046bf92ce9dcf7af0c874281a0"
+    },
+    {
+      "fichier": "sources-PC/app/api/agents/reunion/chiffres/route.ts.txt",
+      "octets": 1063,
+      "sha256": "ee0f5a859739b8e341ddc94b596a9359f4d86f6c483919c8c1e7465d19f3eb54"
+    },
+    {
+      "fichier": "sources-PC/app/api/agents/reunion/route.ts.txt",
+      "octets": 3888,
+      "sha256": "3bbbb5308960da02d3ed2ca4dc95642869723bdcd2421574131ed034d811e059"
+    },
+    {
+      "fichier": "sources-PC/app/api/controle/station/route.ts.txt",
+      "octets": 2091,
+      "sha256": "51f9a165f228c023a1cbac0226c0acf3294bee861fc8115076552010941e3276"
+    },
+    {
+      "fichier": "sources-PC/lib/pilotage/station.ts.txt",
+      "octets": 31201,
+      "sha256": "5417218d78dbceca55b8ffd26d12d7c7576f7951a18ebf70f7d753eb378b2135"
+    },
+    {
+      "fichier": "sources-PC/scripts/fermeture-e2e.mjs.txt",
+      "octets": 29467,
+      "sha256": "5859c165eade981f41fe9318b7ef07a702fad9a44a43a537e78e29607e860ac8"
+    },
+    {
+      "fichier": "sources-PC/scripts/juges-026-orchestre-chef-mutations.mjs.txt",
+      "octets": 18405,
+      "sha256": "fc0ca9f3073722131ddd74dfaced13210ce23ac10d97bbc8b2c3027129141b75"
+    }
+  ]
+}
