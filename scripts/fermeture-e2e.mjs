@@ -245,6 +245,7 @@ if (FLAGS) {
   //   ['note', pourquoi]         → il ne ferme RIEN, et il est baissé : il documente une absence.
   //   ['mort', pourquoi]         → levé, plus personne ne le lit : à retirer de lib/flags.
   const CARTE = {
+    'aimantSite': ['lu'],
     'busAgents': ['route', '/api/agents/etat', 'GET', 'app/api/agents/taches/route.ts', 'app/api/agents/taches/prendre/route.ts', 'app/api/agents/taches/[id]/rendre/route.ts', 'app/api/agents/evenements/route.ts', 'app/api/agents/decisions/route.ts', 'app/api/agents/battement/route.ts', 'app/api/agents/etat/route.ts', 'app/api/agents/tic/route.ts'],
     'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts'],
     'codeEmail': ['route', '/api/auth/code', 'POST', 'app/api/auth/code/route.ts'],
