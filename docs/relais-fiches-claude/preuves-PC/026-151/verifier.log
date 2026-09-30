@@ -1,0 +1,29 @@
+$ node scripts/juges-026-mutations-preuve.mjs --fiche=026-151 --script=scripts/juges-026-orchestre-chef-mutations.mjs --rapport=.orchestre/preuves/026-151/mutations.json
+# 2026-09-30T21:05:30Z · code 1 · 1473s
+
+── juges-026-mutations-preuve : fiche 026-151 · script scripts/juges-026-orchestre-chef-mutations.mjs · graine 1780840565
+  │ DETECTEE CH-A13 — mauvaise clé du bus, 29.7 s
+  │ TEMOIN etat : code 0, 15.5 s
+  │ DETECTEE CH-E1 — balise fermante non neutralisée, 1.6 s
+  │ TEMOIN cycle : code 0, 23.0 s
+  │ DETECTEE CH-C2 — réseau du modèle activé, 25.4 s
+  │ DETECTEE CH-C3 — minuteur sans destruction enfant, 62.6 s
+  │ budget global de 17 minutes atteint
+  │ mutations-026-151 : FAIL — 22/32 mutations documentées
+  ✗ contre-mutation 1 : entrée 10 · ../orchestre/test/preuve-026.mjs · ORB-9 — intact 0, muté 1 — code 1, ORB-9 non attrapé : aucun bilan « … : FAIL — ids » (en échec : ✓ ORB-6 — FAIL en-cours ignorés : true (2 verdicts) · verdict DISJONCTÉE : true · dans refuse/ : tr…)
+  ✗ contre-mutation 2 : entrée 2 · ../orchestre/test/preuve-026.mjs · ORS-2 — intact 0, muté 1 — code 1, ORS-2 non attrapé : aucun bilan « … : FAIL — ids » (en échec : FAIL ORS-2 — executant.mjs identique · antigravity.mjs DIFFÈRE (✓ maj : 1 fichier(s) changé(s) depu…)
+  ✗ contre-mutation 3 : entrée 19 · scripts/chef-qa.mjs · CH-A13 — intact 0, muté 1 — code 1, CH-A13 non attrapé : aucun bilan « … : FAIL — ids » (en échec : FAIL CH-A1 — plan-ok : code 1 — ✗ taches refusée (HTTP 400))
+FAIL MP-1 — 1 défaut(s) : le script sort en code 1
+  ✗ MP-1 le script sort en code 1
+FAIL MP-2 — 4 défaut(s) : scripts/chef-qa.mjs : aucune entrée pour CH-C4 (vus : CH-A2, CH-A9, CH-A5, CH-A13, CH-E1, CH-C2, CH-C3)
+  ✗ MP-2 scripts/chef-qa.mjs : aucune entrée pour CH-C4 (vus : CH-A2, CH-A9, CH-A5, CH-A13, CH-E1, CH-C2, CH-C3)
+  ✗ MP-2 scripts/chef-qa.mjs : aucune entrée pour CH-U5 (vus : CH-A2, CH-A9, CH-A5, CH-A13, CH-E1, CH-C2, CH-C3)
+  ✗ MP-2 scripts/revue-qa.mjs : aucune entrée dans le rapport
+  ✗ MP-2 scripts/chantier-qa.mjs : aucune entrée dans le rapport
+FAIL MP-3 — 3 défaut(s) : entrée 10 (../orchestre/test/preuve-026.mjs, ORB-9, ../orchestre/bin/orchestre.mjs : « if (sansQuarantaine(avantD) !== sansQuarantaine(actuelD)) v… » → « if (false && sansQuarantaine(avantD) !=… ») n…
+  ✗ MP-3 entrée 10 (../orchestre/test/preuve-026.mjs, ORB-9, ../orchestre/bin/orchestre.mjs : « if (sansQuarantaine(avantD) !== sansQuarantaine(actuelD)) v… » → « if (false && sansQuarantaine(avantD) !=… ») non prise : code 1, ORB-9 non attrapé : a…
+  ✗ MP-3 entrée 2 (../orchestre/test/preuve-026.mjs, ORS-2, ../orchestre/bin/orchestre.mjs : « ['bin/antigravity.mjs', 'scripts/antigravity.mjs'], » → « ») non prise : code 1, ORS-2 non attrapé : aucun bilan « … : FAIL — ids » (en échec : FAIL ORS-…
+  ✗ MP-3 entrée 19 (scripts/chef-qa.mjs, CH-A13, scripts/chef/appliquer.mjs : « corps: { type: t.type, cle: t.cle_idempotence, » → « corps: { type: t.type, cle_idempotence:… ») non prise : code 1, CH-A13 non attrapé : aucun bilan « … : FAIL — ids »…
+PASS MP-4 — empreintes (8828 fichier(s) presti, 28 orchestre) et git status identiques avant et après ; aucune jonction laissée
+PASS MP-5 — .orchestre/preuves/026-151/mutations-contre-verifiees.md écrit (0 extrait(s), tous retrouvés dans la sortie du méta-juge)
+juges-026-mutations-preuve : FAIL — MP-1, MP-2, MP-3
