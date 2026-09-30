@@ -55,6 +55,14 @@ if (o.inconnues.length || o.positionnels.length) refuser(`option(s) inconnue(s) 
 if (!process.execArgv.some((a) => /ts-loader/.test(a))) await import(pathToFileURL(LOADER).href)
 
 const ROUTE = 'app/api/controle/station/route.ts', STATION = 'lib/pilotage/station.ts', FLAGS = 'lib/flags.ts', CARTE = 'scripts/fermeture-e2e.mjs'
+
+// Lève un drapeau dans le TEXTE d'une copie de lib/flags.ts : exactement une déclaration littérale « nom: true|false, » (le drapeau
+// peut déjà être levé sur main : busAgents l'est depuis le 29/09) ; rend le texte avec « nom: true, », ou null si zéro ou plusieurs.
+function lever(texte, nom) {
+  const re = new RegExp(`^([ \\t]*)${nom}:\\s*(?:true|false),`, 'gm')
+  if ((texte.match(re) ?? []).length !== 1) return null
+  return texte.replace(re, (_m, marge) => `${marge}${nom}: true,`)
+}
 const REUNION = 'app/api/agents/reunion/route.ts', CHIFFRES = 'app/api/agents/reunion/chiffres/route.ts'
 const LECTEURS = ['commandement', 'radar', 'crieur', 'studio', 'chantier', 'audience', 'securite', 'presti', 'observatoire', 'repos']
 const RPC_LECTURE = ['pilotage_chef', 'pilotage_agents', 'pilotage_evenements', 'station_reunion_lire', 'pilotage_compteurs_du_jour', 'pilotage_compteurs_technologies', 'pilotage_etat_envoi', 'station_experience_etat', 'pilotage_attention_sources', 'pilotage_appels', 'pilotage_envois_du_jour', 'pilotage_code_lire', 'station_objectif_actif', 'pilotage_bilan_date', 'pilotage_recettes_agents', 'pilotage_bilan', 'pilotage_tapis', 'pilotage_couts_agents', 'pilotage_couts_taches', 'pilotage_couts_modeles', 'pilotage_atelier', 'pilotage_reponses_du_jour', 'pilotage_reponses_recentes', 'pilotage_entonnoir', 'pilotage_decisions_par_cles', 'pilotage_taches_agent', 'pilotage_radar', 'pilotage_prospects_departements', 'pilotage_activite_salles']
@@ -837,8 +845,9 @@ if (o.temoin) {
     if (!c.baisseDansReel) e.push('le drapeau a bougé dans la source')
     if (PARTIE === 'reunion') {
       const f = path.join(c.dest, FLAGS), t = fs.readFileSync(f, 'utf8')
-      if (t.split('busAgents: false,').length !== 2) e.push('« busAgents: false, » introuvable (une fois) dans la copie de lib/flags.ts')
-      else { fs.writeFileSync(f, t.replace('busAgents: false,', () => 'busAgents: true,')); if (!fs.readFileSync(path.join(RAC, FLAGS), 'utf8').includes('busAgents: false,')) e.push('busAgents a bougé dans la source') }
+      const levee = lever(t, 'busAgents')
+      if (levee === null) e.push('une seule déclaration « busAgents: true|false, » attendue dans la copie de lib/flags.ts')
+      else fs.writeFileSync(f, levee) // la source réelle n'est pas touchée : son sha256 est relu plus bas
     }
     for (const j of ['node_modules', 'public']) if (fs.existsSync(path.join(c.dest, j)) && !fs.lstatSync(path.join(c.dest, j)).isSymbolicLink()) e.push(`${j} n'est pas une jonction`)
     if (fs.existsSync(path.join(c.dest, '.env.local'))) e.push('.env.local dans la copie')
@@ -887,7 +896,7 @@ async function vivant() {
   const idc = PARTIE === 'reunion' ? 'RA-4' : PARTIE === 'lecture' ? 'SV-3' : 'SL-8'
   try {
     const c = copieAvecDrapeau(R, { critere: idc })
-    if (PARTIE === 'reunion') { const f = path.join(c.dest, FLAGS), t = fs.readFileSync(f, 'utf8'); if (t.split('busAgents: false,').length !== 2) throw Object.assign(new Error('« busAgents: false, » introuvable dans lib/flags.ts'), { critere: idc }); fs.writeFileSync(f, t.replace('busAgents: false,', () => 'busAgents: true,')) }
+    if (PARTIE === 'reunion') { const f = path.join(c.dest, FLAGS), t = fs.readFileSync(f, 'utf8'); const levee = lever(t, 'busAgents'); if (levee === null) throw Object.assign(new Error('une seule déclaration « busAgents: true|false, » attendue dans lib/flags.ts'), { critere: idc }); fs.writeFileSync(f, levee) }
     srv = await serveurCopie(c.dest, { critere: idc })
     const lire = async (q, jeton, init = {}) => { const r = await fetch(`${srv.base}${q}`, { ...init, headers: { ...(init.headers ?? {}), ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}) } }); const t = await r.text(); let j = null; try { j = JSON.parse(t) } catch { /* texte */ } return { status: r.status, j, t } }
     if (PARTIE === 'reunion') {

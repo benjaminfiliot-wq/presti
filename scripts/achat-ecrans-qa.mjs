@@ -232,7 +232,7 @@ if (o.enfant === 'suite') {
     const bin = path.join(R, 'node_modules', 'next', 'dist', 'bin', 'next')
     if (!fs.existsSync(bin)) throw new Error(`next introuvable (${rel(bin)})`)
     const journal = fs.openSync(path.join(DOSSIER, 'next-dev.log'), 'w')
-    const p = spawn(process.execPath, [bin, 'dev', '--port', String(port), '--hostname', '127.0.0.1'], { cwd: arbre, env, windowsHide: true, stdio: ['ignore', journal, journal] })
+    const p = spawn(process.execPath, [bin, 'dev', '--webpack', '--port', String(port), '--hostname', '127.0.0.1'], { cwd: arbre, env, windowsHide: true, stdio: ['ignore', journal, journal] })
     web.serveur = p; web.port = port
     consigner(`next dev pid ${p.pid} sur 127.0.0.1:${port} (copie : ${poses.length} fichier(s) de travail posés : ${poses.join(', ') || 'aucun'})`)
     const debut = Date.now()
