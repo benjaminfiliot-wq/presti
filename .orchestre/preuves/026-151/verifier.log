@@ -1,0 +1,25 @@
+$ node scripts/juges-026-mutations-preuve.mjs --fiche=026-151 --script=scripts/juges-026-orchestre-chef-mutations.mjs --rapport=.orchestre/preuves/026-151/mutations.json
+# 2026-09-30T16:28:52Z · code 1 · 486s
+
+── juges-026-mutations-preuve : fiche 026-151 · script scripts/juges-026-orchestre-chef-mutations.mjs · graine 402932046
+  │ DETECTEE RV-2 — non mesuré remplacé par zéro, 1.9 s
+  │ TEMOIN chantier : code 0, 8.3 s
+  │ DETECTEE CT-1 — zone LLM non protégée, 8.0 s
+  │ DETECTEE CT-2 — e2e existant modifié autorisé, 7.0 s
+  │ DETECTEE CT-3 — deposer écrase fiche existante, 7.5 s
+  │ DETECTEE CT-1 — verifier-fiche ne lance plus juge proposé, 6.6 s
+  │ DETECTEE CT-6 — reporter conservé, 7.0 s
+  │ mutations-026-151 : FAIL — 32/32 mutations documentées
+  ✗ contre-mutation 1 : entrée 23 · scripts/chef-qa.mjs · CH-C4 — intact 0, muté 1 — code 1, CH-C4 non attrapé : aucun bilan « … : FAIL — ids » (en échec : FAIL CH-C4 — cycle suivant : code 0 au lieu de 3)
+  ✗ contre-mutation 2 : entrée 3 · ../orchestre/test/preuve-026.mjs · ORS-3 — intact 1, muté — — copie intacte en code 1 : ✗ 1 groupe(s) en échec
+  ✗ contre-mutation 3 : entrée 8 · ../orchestre/test/preuve-026.mjs · ORB-7 — intact 0, muté 1 — code 1, ORB-7 non attrapé : aucune ligne « FAIL ORB-7 — … » ; aucun bilan « … : FAIL — ids » (en échec : ✗ ORB-7 — sans --forcer : code 0 (attendu 3), pas en file : false · avec --forcer : code 3, en file…)
+FAIL MP-1 — 1 défaut(s) : le script sort en code 1
+  ✗ MP-1 le script sort en code 1
+PASS MP-2 — liste imposée de 026-151 : 4 juge(s), 29 critère(s) imposé(s), tous couverts par le rapport
+FAIL MP-3 — 3 défaut(s) : entrée 23 (scripts/chef-qa.mjs, CH-C4, scripts/chef/cycle.mjs : « if (quotaActif()) { » → « if (false && quotaActif()) { ») non prise : code 1, CH-C4 non attrapé : aucun bilan « … : FAIL — ids » (en …
+  ✗ MP-3 entrée 23 (scripts/chef-qa.mjs, CH-C4, scripts/chef/cycle.mjs : « if (quotaActif()) { » → « if (false && quotaActif()) { ») non prise : code 1, CH-C4 non attrapé : aucun bilan « … : FAIL — ids » (en échec : FAIL CH-C4 — cycle suivant : cod…
+  ✗ MP-3 entrée 3 (../orchestre/test/preuve-026.mjs, ORS-3, ../orchestre/bin/executant.mjs : « const vault = configVault() » → « const vault = path.resolve(RACINE, '..'… ») non prise : copie intacte en code 1 : ✗ 1 groupe(s) en échec
+  ✗ MP-3 entrée 8 (../orchestre/test/preuve-026.mjs, ORB-7, ../orchestre/bin/orchestre.mjs : « if (estDisjonctee(id) && !forcer) » → « if (false && estDisjonctee(id) && !forc… ») non prise : code 1, ORB-7 non attrapé : aucune ligne « FAIL ORB-7 — ……
+PASS MP-4 — empreintes (5949 fichier(s) presti, 28 orchestre) et git status identiques avant et après ; aucune jonction laissée
+PASS MP-5 — .orchestre/preuves/026-151/mutations-contre-verifiees.md écrit (0 extrait(s), tous retrouvés dans la sortie du méta-juge)
+juges-026-mutations-preuve : FAIL — MP-1, MP-3
