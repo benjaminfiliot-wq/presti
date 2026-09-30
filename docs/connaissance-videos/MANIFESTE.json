@@ -1,5 +1,5 @@
 {
-  "capture": "2026-09-30T21:10:30.128Z",
+  "capture": "2026-09-30T23:16:25.533Z",
   "empreintes": "contenu exact Git",
   "fichiers": [
     {
@@ -379,8 +379,8 @@
     },
     {
       "fichier": "veille/README.md",
-      "octets": 5983,
-      "sha256": "b1254c86b8ae9e7722231b2902c50d0234e02893ea0c26bb1f07465fd5b67a76"
+      "octets": 6133,
+      "sha256": "c28d50e18ad4d795bce0fac753b978dd47785c7e0a7217ae5f9fee937047f11f"
     },
     {
       "fichier": "veille/Z2un1Yax_aQ/metadata.json",

@@ -6,7 +6,7 @@ Chaque dossier contient les mesures ffprobe (durée, résolution, taille, codecs
 
 13 transcriptions françaises complètes proviennent des VTT locaux : les répétitions glissantes sont retirées du texte daté; les VTT originaux sont conservés sans modification. 5 transcriptions ASR locales intégrales sont recopiées sans correction : leur exactitude reste celle des sources, sans nouveau contrôle humain.
 
-Deux transcriptions manquent : NrjE4aBhzmU (aucun VTT local) et trevsagents (seul un résumé français était présent; le M4A voisin contient une autre musique). Aucun texte inventé. ASR complémentaire pris en charge séparément.
+Les deux transcriptions initialement absentes sont complètes : NrjE4aBhzmU et trevsagents, reconnues sur Oracle depuis leurs véritables pistes audio. Les anciennes notes transcription-manquante.txt restent des archives historiques. Les 20 vidéos disposent désormais d’un texte intégral ; les transcriptions automatiques ne sont pas corrigées humainement.
 
 | Vidéo | Durée | Transcription | Documents |
 |---|---:|---|---|
@@ -17,7 +17,7 @@ Deux transcriptions manquent : NrjE4aBhzmU (aucun VTT local) et trevsagents (seu
 | Ce Business IA Ennuyant Me Rapporte 28 974€/Mois (Avec Claude) | 2750.8 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](ip4IHi1ZfhA/planche.jpg) · [Mesures](ip4IHi1ZfhA/metadata.json) |
 | Comment construire une boutique SHOPIFY à 200K€/mois grâce à Claude | 1705.2 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](J6Cpt7BOqI0/planche.jpg) · [Mesures](J6Cpt7BOqI0/metadata.json) |
 | J'ai transformé Claude en agence vidéo IA automatisée (1 client = 5.000€) | 1289.7 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](JBIuZCw74FI/planche.jpg) · [Mesures](JBIuZCw74FI/metadata.json) |
-| Comment je fais +50,000€/mois de profit en ecommerce google ads | 803.2 s | MANQUANTE — aucun VTT local; ASR non exécuté | [Images](NrjE4aBhzmU/planche.jpg) · [Mesures](NrjE4aBhzmU/metadata.json) |
+| Comment je fais +50,000€/mois de profit en ecommerce google ads | 803.2 s | COMPLÈTE — ASR français, 342 segments, non corrigée humainement | [Images](NrjE4aBhzmU/planche.jpg) · [Mesures](NrjE4aBhzmU/metadata.json) |
 | Comment Gagner VRAIMENT de l'Argent avec Claude (SANS BULLSH*T) | 3304.1 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](pPoR_0FHl-U/planche.jpg) · [Mesures](pPoR_0FHl-U/metadata.json) |
 | Comment j'ai fais 308,000$ en 90 jours en ecommerce google ads | 727.1 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](sPhCwBND6oI/planche.jpg) · [Mesures](sPhCwBND6oI/metadata.json) |
 | J'ai copié une boutique à 2M€/mois grâce à Claude IA en 30 minutes | 1790.3 s | COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement | [Images](uNrz5v9p-zk/planche.jpg) · [Mesures](uNrz5v9p-zk/metadata.json) |
@@ -28,7 +28,7 @@ Deux transcriptions manquent : NrjE4aBhzmU (aucun VTT local) et trevsagents (seu
 | Video by hugomatias.ai | 59.7 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](hugomatias-DcODQPCMsLl/planche.jpg) · [Mesures](hugomatias-DcODQPCMsLl/metadata.json) |
 | Video by jaydenleilua | 54.9 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](insta-DdKrZjlg1eC/planche.jpg) · [Mesures](insta-DdKrZjlg1eC/metadata.json) |
 | Full Breakdown on Insta @mr.pynk  We built a full AI ad studio system... | 35.7 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](mr_pynk/planche.jpg) · [Mesures](mr_pynk/metadata.json) |
-| AUTOMATE YOUR BUSINESSES. IF YOU DONT HAVE ANY YET, DO THIS! #aiagent... | 116.8 s | MANQUANTE — résumé français local disponible, pas transcription mot à mot | [Images](trevsagents/planche.jpg) · [Mesures](trevsagents/metadata.json) |
+| AUTOMATE YOUR BUSINESSES. IF YOU DONT HAVE ANY YET, DO THIS! #aiagent... | 116.8 s | COMPLÈTE — ASR anglais, 65 segments, résumé français conservé séparément | [Images](trevsagents/planche.jpg) · [Mesures](trevsagents/metadata.json) |
 | Video by restructureai | 83.1 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](reel-DdscwJUROKo/planche.jpg) · [Mesures](reel-DdscwJUROKo/metadata.json) |
 
 Mise à jour : les deux transcriptions manquantes sont maintenant complètes, issues des pistes audio des véritables vidéos sur Oracle. NrjE4aBhzmU : 342 segments français ; trevsagents : 65 segments anglais. Modèle small int8, aucun service existant modifié ni API payante.
