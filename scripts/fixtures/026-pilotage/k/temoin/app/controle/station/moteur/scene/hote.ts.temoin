@@ -1,0 +1,72 @@
+// L'hôte : import dynamique de Phaser, un canevas à échelle entière, la reprise sur perte du contexte WebGL.
+import { construireGrille } from '../grille/grille'
+import { Calque } from '../calque/calque'
+import type { OfficeSceneBridge } from '../claw3d/OfficeSceneBridge'
+import type { Theme } from '../types'
+import { creerScene } from './scene'
+
+export type Hote = { detruire(): void }
+
+/** Le plus grand entier k tel que la grille × k, en pixels de l'appareil, tienne dans le cadre. */
+export const echelleEntiere = (largeurGrille: number, cadreCss: number, densite: number) => Math.max(1, Math.floor((cadreCss * densite) / largeurGrille))
+
+export async function demarrerHote(racine: HTMLElement, theme: Theme, pont: OfficeSceneBridge): Promise<Hote> {
+  const Phaser = (await import('phaser')).default
+  const densite = window.devicePixelRatio || 1
+  const k = echelleEntiere(theme.grille.largeur, racine.clientWidth || 1, densite)
+  const grille = construireGrille(theme)
+  const calque = new Calque(racine, theme, k / densite)
+  let jeu: InstanceType<typeof Phaser.Game> | null = null
+  let detruit = false
+
+  const regler = (toile: HTMLCanvasElement) => {
+    // Taille CSS = taille du canevas ÷ densité : chaque pixel logique couvre exactement k pixels de l'appareil.
+    toile.style.width = `${toile.width / densite}px`
+    toile.style.height = `${toile.height / densite}px`
+    toile.style.display = 'block'
+    toile.addEventListener('webglcontextlost', (e: Event) => { e.preventDefault(); void basculer() })
+  }
+
+  const construire = (type: number) => {
+    const SceneStation = creerScene(Phaser, { theme, grille, k, calque, pont, pret: regler })
+    const config = {
+      type,
+      parent: calque.toile,
+      width: theme.grille.largeur * k,
+      height: theme.grille.hauteur * k,
+      pixelArt: true,
+      antialias: false,
+      roundPixels: true,
+      seed: ['station'],
+      audio: { noAudio: true },
+      banner: false,
+      scale: { mode: Phaser.Scale.NONE },
+      scene: [SceneStation],
+    }
+    jeu = new Phaser.Game(config)
+  }
+
+  // Perte du contexte WebGL : le jeu est reconstruit en rendu Canvas, la scène neuve reçoit le dernier état du pont.
+  const basculer = async () => {
+    if (detruit || !jeu) return
+    const ancien = jeu
+    jeu = null
+    pont.debrancher()
+    calque.vider()
+    try { ancien.destroy(true); ancien.loop.wake() } catch { /* contexte perdu : le canevas est retiré à la main */ }
+    ancien.canvas?.remove()
+    if (!detruit) construire(Phaser.CANVAS)
+  }
+
+  construire(Phaser.AUTO)
+  return {
+    detruire() {
+      detruit = true
+      pont.debrancher()
+      const j = jeu
+      jeu = null
+      try { j?.destroy(true); j?.loop.wake() } catch { /* déjà détruit */ }
+      calque.detruire()
+    },
+  }
+}

@@ -1,0 +1,783 @@
+{
+ "title": "Thème de la carte de la station (theme.json)",
+ "description": "Format des thèmes servis sous /station/themes/<clé>/theme.json (clé dans la liste fermée : station, vaisseau, essai). Sous-ensemble de JSON Schema : type, required, enum, minimum, minItems, maxItems, pattern, properties, items, additionalProperties:false. Toutes les coordonnées sont en pixels logiques, multiples de grille.pas ; une case = pas × pas. Rien ne porte de code ni d'adresse distante : chaque objet refuse tout champ inconnu, et les textes refusent « schéma: » et « // ». Contraintes hors schéma (à vérifier par le juge) : un et un seul emplacement `reservee` (sans poste, aucune salle ne s'y rend) ; les 21 clés d'emplacement présentes une fois ; `defauts` couvre les 21 salles ; `avatars` contient « defaut » ; les extrémités des arêtes existent parmi les nœuds ; le tracé du tapis est continu (deux points consécutifs à une case) et porte chaque étape.",
+ "type": "object",
+ "required": [
+  "cle",
+  "nom",
+  "version",
+  "grille",
+  "mise_en_page",
+  "palette",
+  "emplacements",
+  "coursives",
+  "tapis",
+  "defauts",
+  "avatars",
+  "nuit"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "cle": {
+   "type": "string",
+   "enum": [
+    "station",
+    "vaisseau",
+    "essai"
+   ]
+  },
+  "nom": {
+   "type": "string",
+   "pattern": "^(?!.*(?:[a-zA-Z][a-zA-Z0-9+.-]*:|//)).{1,60}$"
+  },
+  "version": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "grille": {
+   "type": "object",
+   "required": [
+    "largeur",
+    "hauteur",
+    "pas"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "largeur": {
+     "type": "integer",
+     "minimum": 16
+    },
+    "hauteur": {
+     "type": "integer",
+     "minimum": 16
+    },
+    "pas": {
+     "type": "integer",
+     "minimum": 1
+    }
+   }
+  },
+  "mise_en_page": {
+   "type": "string",
+   "enum": [
+    "colonnes",
+    "flottante"
+   ]
+  },
+  "palette": {
+   "type": "object",
+   "required": [
+    "--mc-fond",
+    "--mc-sol",
+    "--mc-mur",
+    "--mc-coursive",
+    "--mc-porte",
+    "--mc-plaque",
+    "--mc-ecran",
+    "--mc-texte",
+    "--mc-accent",
+    "--mc-alerte"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "--mc-fond": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-sol": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-mur": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-coursive": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-porte": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-plaque": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-ecran": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-texte": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-accent": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "--mc-alerte": {
+     "type": "string",
+     "pattern": "^#[0-9A-Fa-f]{6}$"
+    }
+   }
+  },
+  "emplacements": {
+   "type": "array",
+   "minItems": 21,
+   "items": {
+    "type": "object",
+    "required": [
+     "cle",
+     "forme",
+     "porte",
+     "poste",
+     "plaque",
+     "teinte",
+     "reservee"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "cle": {
+      "type": "string",
+      "enum": [
+       "commandement",
+       "reunion",
+       "radar",
+       "redaction",
+       "envois",
+       "standard",
+       "atelier",
+       "usine",
+       "recettes",
+       "tresorerie",
+       "crieur",
+       "studio",
+       "experience",
+       "machines",
+       "chantier",
+       "audience",
+       "securite",
+       "presti",
+       "observatoire",
+       "repos",
+       "ecommerce"
+      ]
+     },
+     "forme": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "rectangle",
+         "polygone"
+        ]
+       },
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "l": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "h": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "points": {
+        "type": "array",
+        "minItems": 3,
+        "items": {
+         "type": "array",
+         "minItems": 2,
+         "maxItems": 2,
+         "items": {
+          "type": "integer",
+          "minimum": 0
+         }
+        }
+       }
+      }
+     },
+     "porte": {
+      "type": "object",
+      "required": [
+       "x",
+       "y"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     },
+     "poste": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "required": [
+       "x",
+       "y"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     },
+     "plaque": {
+      "type": "object",
+      "required": [
+       "x",
+       "y",
+       "texte"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "texte": {
+        "type": "string",
+        "pattern": "^(?!.*(?:[a-zA-Z][a-zA-Z0-9+.-]*:|//)).{1,60}$"
+       }
+      }
+     },
+     "teinte": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+     },
+     "reservee": {
+      "type": "boolean"
+     }
+    }
+   }
+  },
+  "coursives": {
+   "type": "object",
+   "required": [
+    "noeuds",
+    "aretes"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "noeuds": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "x",
+       "y",
+       "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+       },
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "type": {
+        "type": "string",
+        "enum": [
+         "coursive",
+         "ascenseur",
+         "sas"
+        ]
+       }
+      }
+     }
+    },
+    "aretes": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "de",
+       "a",
+       "largeur"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "de": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+       },
+       "a": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+       },
+       "largeur": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "tapis": {
+   "type": "object",
+   "required": [
+    "trace",
+    "etapes"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "trace": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "x",
+       "y"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     }
+    },
+    "etapes": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "cle",
+       "x",
+       "y"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "cle": {
+        "type": "string",
+        "enum": [
+         "trouve",
+         "verifie",
+         "maquette",
+         "contacte",
+         "repondu",
+         "oui",
+         "en_ligne",
+         "paye"
+        ]
+       },
+       "x": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "y": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     }
+    }
+   }
+  },
+  "defauts": {
+   "type": "array",
+   "minItems": 21,
+   "items": {
+    "type": "object",
+    "required": [
+     "salle",
+     "emplacement"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "salle": {
+      "type": "string",
+      "enum": [
+       "commandement",
+       "reunion",
+       "radar",
+       "redaction",
+       "envois",
+       "standard",
+       "atelier",
+       "usine",
+       "recettes",
+       "tresorerie",
+       "crieur",
+       "studio",
+       "experience",
+       "machines",
+       "chantier",
+       "audience",
+       "securite",
+       "presti",
+       "observatoire",
+       "repos",
+       "ecommerce"
+      ]
+     },
+     "emplacement": {
+      "type": "string",
+      "enum": [
+       "commandement",
+       "reunion",
+       "radar",
+       "redaction",
+       "envois",
+       "standard",
+       "atelier",
+       "usine",
+       "recettes",
+       "tresorerie",
+       "crieur",
+       "studio",
+       "experience",
+       "machines",
+       "chantier",
+       "audience",
+       "securite",
+       "presti",
+       "observatoire",
+       "repos",
+       "ecommerce"
+      ]
+     }
+    }
+   }
+  },
+  "avatars": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "cle",
+     "couleur"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "cle": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+     },
+     "couleur": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+     }
+    }
+   }
+  },
+  "nuit": {
+   "type": "boolean"
+  },
+  "portrait": {
+   "type": "object",
+   "required": [
+    "grille",
+    "emplacements",
+    "coursives"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "grille": {
+     "type": "object",
+     "required": [
+      "largeur",
+      "hauteur",
+      "pas"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "largeur": {
+       "type": "integer",
+       "minimum": 16
+      },
+      "hauteur": {
+       "type": "integer",
+       "minimum": 16
+      },
+      "pas": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    },
+    "emplacements": {
+     "type": "array",
+     "minItems": 21,
+     "items": {
+      "type": "object",
+      "required": [
+       "cle",
+       "forme",
+       "porte",
+       "poste",
+       "plaque",
+       "teinte",
+       "reservee"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "cle": {
+        "type": "string",
+        "enum": [
+         "commandement",
+         "reunion",
+         "radar",
+         "redaction",
+         "envois",
+         "standard",
+         "atelier",
+         "usine",
+         "recettes",
+         "tresorerie",
+         "crieur",
+         "studio",
+         "experience",
+         "machines",
+         "chantier",
+         "audience",
+         "securite",
+         "presti",
+         "observatoire",
+         "repos",
+         "ecommerce"
+        ]
+       },
+       "forme": {
+        "type": "object",
+        "required": [
+         "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "type": "string",
+          "enum": [
+           "rectangle",
+           "polygone"
+          ]
+         },
+         "x": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "y": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "l": {
+          "type": "integer",
+          "minimum": 1
+         },
+         "h": {
+          "type": "integer",
+          "minimum": 1
+         },
+         "points": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+           "type": "array",
+           "minItems": 2,
+           "maxItems": 2,
+           "items": {
+            "type": "integer",
+            "minimum": 0
+           }
+          }
+         }
+        }
+       },
+       "porte": {
+        "type": "object",
+        "required": [
+         "x",
+         "y"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "x": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "y": {
+          "type": "integer",
+          "minimum": 0
+         }
+        }
+       },
+       "poste": {
+        "type": [
+         "object",
+         "null"
+        ],
+        "required": [
+         "x",
+         "y"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "x": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "y": {
+          "type": "integer",
+          "minimum": 0
+         }
+        }
+       },
+       "plaque": {
+        "type": "object",
+        "required": [
+         "x",
+         "y",
+         "texte"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "x": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "y": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "texte": {
+          "type": "string",
+          "pattern": "^(?!.*(?:[a-zA-Z][a-zA-Z0-9+.-]*:|//)).{1,60}$"
+         }
+        }
+       },
+       "teinte": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+       },
+       "reservee": {
+        "type": "boolean"
+       }
+      }
+     }
+    },
+    "coursives": {
+     "type": "object",
+     "required": [
+      "noeuds",
+      "aretes"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "noeuds": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "object",
+        "required": [
+         "id",
+         "x",
+         "y",
+         "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+         },
+         "x": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "y": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "type": {
+          "type": "string",
+          "enum": [
+           "coursive",
+           "ascenseur",
+           "sas"
+          ]
+         }
+        }
+       }
+      },
+      "aretes": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "required": [
+         "de",
+         "a",
+         "largeur"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "de": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+         },
+         "a": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+         },
+         "largeur": {
+          "type": "integer",
+          "minimum": 1
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
