@@ -250,7 +250,7 @@ async function enfantDoublures(RAC, partie) {
       })
       await critere('SV-16', async (e) => {
         const a = await jouer('vue=direct', { verdict: VERDICTS.sante_sans_comptabilite })
-        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
+        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!(c === 'direct.carte.paliers.commandement' && ch(a.j, c) === null) && !estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
         for (const k of ['barre', 'equipage', 'attention', 'commandement', 'tapis', 'carte']) if (estHors(a.j?.valeur?.[k])) e.push(`route, « santé sans comptabilité » : direct.${k} entière refusée`)
         const d = validerVue(a.j, { vue: 'direct', verdict: VERDICTS.sante_sans_comptabilite })
         if (d.length) e.push(`route, « santé sans comptabilité » : hors contrat (${d.slice(0, 2).join(' ; ')})`)
@@ -566,7 +566,7 @@ async function enfantPur(RAC) {
     if (!egal(tout, base)) e.push('verdict fondateur : la réponse change')
     const ch = (x, c) => c.split('.').slice(1).reduce((y, k) => (y && typeof y === 'object' ? (y.valeur && typeof y.valeur === 'object' && !(k in y) ? y.valeur[k] : y[k]) : undefined), x)
     const s = st.trier(base, (d) => VERDICTS.sante_sans_comptabilite[d] === true, 'direct')
-    for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) { const x = ch(s, c); if (!estHors(x)) e.push(`« santé sans comptabilité » : ${c} = ${JSON.stringify(x)?.slice(0, 40)}, { valeur: null, nonMesure: true, raison: 'hors périmètre' } attendu (jamais 0 ni [])`) }
+    for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) { const x = ch(s, c); if (c === 'direct.carte.paliers.commandement' && ch(base, c) === null && x === null) continue; if (!estHors(x)) e.push(`« santé sans comptabilité » : ${c} = ${JSON.stringify(x)?.slice(0, 40)}, { valeur: null, nonMesure: true, raison: 'hors périmètre' } attendu (jamais 0 ni [])`) }
     for (const c of Object.keys(DOMAINES_ATTENDUS).filter((k) => k.startsWith('direct.') && ![...ARGENT_DIRECT, ...CLIENTS_DIRECT].some((a) => k === a || k.startsWith(`${a}.`)))) {
       const x = ch(s, c), y = ch(base, c)
       if (y === undefined) continue

@@ -85,7 +85,7 @@ function jouerLlm() {
   const env = { PATH: process.env.PATH ?? '', TZ: 'UTC' }
   for (const k of ['NODE_OPTIONS', 'PIEGE_RESEAU_JOURNAL']) if (process.env[k]) env[k] = process.env[k]
   const r = lancer(process.execPath, [
-    '--experimental-strip-types', '--import', path.join(R, 'scripts', 'ts-loader.mjs'),
+    '--experimental-strip-types', '--import', pathToFileURL(path.join(R, 'scripts', 'ts-loader.mjs')).href,
     path.join(R, 'scripts', 'fixtures', '026-garde', 'plafond', 'executer-llm.mjs'),
     JSON.stringify({ couts: COUTS_INCONNUS, plafonds: PLAFONDS_REFUSES }),
   ], { cwd: RAC, env, timeout: 180_000 })

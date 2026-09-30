@@ -141,6 +141,7 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
           if (!chaine(op.libelle, 1, 80)) f.push(`${ou}.options[${j}].libelle : 80 signes au plus`)
           if (typeof op.recommandee !== 'boolean') f.push(`${ou}.options[${j}].recommandee : booléen`)
           if (!Number.isInteger(op.engage_cents) || op.engage_cents < 0) f.push(`${ou}.options[${j}].engage_cents : entier ≥ 0`)
+          else if (op.engage_cents > 0) f.push(`${ou}.options[${j}].engage_cents : plafond de dépense 0`)
         })
         if (new Set(o.map((x) => x?.cle)).size !== o.length) f.push(`${ou}.options : clés en double`)
         if (o.filter((x) => x?.recommandee === true).length !== 1) f.push(`${ou}.options : exactement une recommandée`)
@@ -149,6 +150,7 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
         else if (defaut.engage_cents !== 0) f.push(`${ou}.option_defaut : l'option par défaut n'engage rien (engage_cents 0)`)
       }
       if (!Number.isInteger(d.montant_cents) || d.montant_cents < 0) f.push(`${ou}.montant_cents : entier ≥ 0`)
+      else if (d.montant_cents > 0) f.push(`${ou}.montant_cents : plafond de dépense 0`)
       if (!['aucune', 'argent', 'artisan', 'securite'].includes(d.portee)) f.push(`${ou}.portee inconnue`)
       const e = typeof d.echeance === 'string' ? Date.parse(d.echeance) : NaN
       if (!Number.isFinite(e) || e < maintenant.getTime() + HEURE || e > maintenant.getTime() + 7 * 24 * HEURE) f.push(`${ou}.echeance : entre +1 h et +7 j`)

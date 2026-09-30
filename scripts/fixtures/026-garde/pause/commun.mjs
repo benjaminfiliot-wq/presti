@@ -114,7 +114,9 @@ export function inventaire(racine) {
 /** La primitive lit-elle elle-même la pause avant son effet ? (l'appel d'un paramètre `ctx.pause` compte aussi). */
 function gardeInterne(texte, marques) {
   const s = sansCommentaires(texte)
-  const effet = marques.includes('resend') ? s.search(/fetch\s*\(\s*['"`]https:\/\/api\.resend\.com/) : marques.includes('graph-ecriture') ? s.search(/\bo\.fetch\s*\(/) : s.search(/\bfetch\s*\(|sendNotification\s*\(/)
+  const aliasFetch = [...s.matchAll(/\bconst\s+(\w+)\s*=\s*\w+\.fetch\b/g)].map((m) => m[1])
+  const graph = /\b\w+\.fetch\s*\(/.exec(s)?.index ?? (aliasFetch.length ? s.search(new RegExp(`\\b(?:${aliasFetch.join('|')})\\s*\\(`)) : -1)
+  const effet = marques.includes('resend') ? s.search(/fetch\s*\(\s*['"`]https:\/\/api\.resend\.com/) : marques.includes('graph-ecriture') ? graph : marques.includes('smtp') ? s.search(/\.sendMail\s*\(/) : s.search(/\bfetch\s*\(|sendNotification\s*\(/)
   const p = RE_LECTURE_PAUSE.exec(s) ?? /ctx\.pause\s*===\s*true/.exec(s)
   return effet >= 0 && !!p && p.index < effet
 }

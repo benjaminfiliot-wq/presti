@@ -62,18 +62,20 @@ export const DOMAINES_ATTENDUS = Object.freeze({
   'direct.bandeau': 'comptabilite',
   'direct.carte': 'sante', 'direct.carte.lignes': 'sante', 'direct.carte.lignes.contenu': 'sante', 'direct.carte.lignes.sites': 'clients',
   'direct.carte.lignes.packs': 'comptabilite', 'direct.carte.experience': 'comptabilite', 'direct.carte.paliers': 'sante', 'direct.carte.nuit': 'sante',
+  'direct.carte.paliers.commandement': 'comptabilite',
   'direct.carte.egaliseur': 'sante', 'direct.carte.departements': 'sante',
   'fil': 'sante', 'agent': 'sante', 'agent.argent': 'comptabilite',
   'salle.recettes': 'comptabilite', 'salle.recettes.packs': 'comptabilite', 'salle.tresorerie': 'comptabilite', 'salle.tresorerie.parNature': 'comptabilite',
   'salle.usine': 'clients', 'salle.atelier': 'sante', 'salle.reunion': 'sante', 'salle.envois': 'sante', 'salle.experience': 'comptabilite',
   'salle.standard': 'sante', 'salle.redaction': 'sante', 'salle.machines': 'sante', 'salle.machines.usine': 'sante', 'salle.machines.ia': 'sante',
+  'salle.machines.ia.cout_jour_eur': 'comptabilite',
   'salle.commandement': 'sante', 'salle.commandement.argent': 'comptabilite', 'salle.radar': 'sante', 'salle.crieur': 'sante',
   'salle.studio': 'sante', 'salle.studio.montants': 'comptabilite', 'salle.chantier': 'sante', 'salle.audience': 'audience', 'salle.securite': 'securite',
   'salle.presti': 'clients', 'salle.presti.mrr': 'comptabilite', 'salle.presti.tickets': 'support',
   'salle.observatoire': 'sante', 'salle.repos': 'sante', 'salle.ecommerce': 'sante',
 })
 /** Les sous-parties d'argent et de clients de `direct` (SV-16) : sous « santé sans comptabilité », toutes hors périmètre. */
-export const ARGENT_DIRECT = ['direct.barre.commandes_mois', 'direct.equipage.couts', 'direct.commandement.argent', 'direct.tapis.paye', 'direct.bandeau', 'direct.carte.lignes.packs', 'direct.carte.experience']
+export const ARGENT_DIRECT = ['direct.barre.commandes_mois', 'direct.equipage.couts', 'direct.commandement.argent', 'direct.tapis.paye', 'direct.bandeau', 'direct.carte.lignes.packs', 'direct.carte.experience', 'direct.carte.paliers.commandement']
 export const CLIENTS_DIRECT = ['direct.barre.sites_en_ligne', 'direct.carte.lignes.sites']
 export const objetDe = (vue, salle) => (vue === 'salle' ? `salle.${salle ?? ''}` : vue)
 /** Le domaine d'un chemin : le sien, sinon celui de son parent le plus proche. */
@@ -151,6 +153,21 @@ const NOMBRE = T.nombre(), ENTIER = T.nombre({ entier: true, min: 0 })
 const SUR = T.texte({ sur: true, vide: true, max: 400 })
 const SUR_NOM = T.texte({ sur: true })
 
+/** Une valeur brute financière conserve son type pour le fondateur ; HORS est exact et réservé au domaine refusé.
+ * Une absence null reste une absence, sans inventer de mesure ni de droit supplémentaire. */
+const BRUT_PROTEGE = (schema) => (c, x, E, ctx) => {
+  const refuse = ctx.verdict && ctx.verdict[domaineDe(c)] !== true
+  if (x === null) return schema(c, x, E, ctx)
+  if (estHors(x)) {
+    const cles = Object.keys(x).filter((k) => !['valeur', 'nonMesure', 'raison'].includes(k))
+    if (cles.length) E.push(`${c} : « hors périmètre » avec des clés en trop (${cles.join(', ')})`)
+    if (ctx.verdict && !refuse) E.push(`${c} : « hors périmètre » alors que le domaine ${domaineDe(c)} est permis`)
+    return
+  }
+  if (refuse) return E.push(`${c} : domaine ${domaineDe(c)} refusé : « hors périmètre » attendu`)
+  schema(c, x, E, ctx)
+}
+
 // ── Les formes ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 const COMPTEUR = T.objet({ cle: T.texte(), libelle: T.texte(), texte: SUR, ton: T.parmi(['alerte', 'normal', 'muet']), source: T.texte() })
 const BARRE = T.objet({
@@ -192,7 +209,7 @@ const DEPARTEMENTS = (c, x, E, ctx) => {
   if (Array.isArray(x)) for (const [i, d] of x.entries()) { const trop = objet(d) ? Object.keys(d).filter((k) => !['departement', 'trouves', 'contactes', 'oui'].includes(k)) : []; if (trop.length) E.push(`${c}[${i}] : colonnes en trop (${trop.join(', ')}) : agrégé, jamais nominatif`) }
 }
 const CARTE = T.objet({
-  lignes: ENV(T.objet({ contenu: ENV(LIGNE), sites: ENV(LIGNE), packs: ENV(LIGNE) })), experience: ENV(XP), paliers: ENV(T.dico(PALIER)), nuit: ENV(T.booleen()),
+  lignes: ENV(T.objet({ contenu: ENV(LIGNE), sites: ENV(LIGNE), packs: ENV(LIGNE) })), experience: ENV(XP), paliers: ENV(T.dico((c, x, E, ctx) => domaineDe(c) === 'comptabilite' ? BRUT_PROTEGE(PALIER)(c, x, E, ctx) : PALIER(c, x, E, ctx))), nuit: ENV(T.booleen()),
   egaliseur: ENV(T.liste(ENTIER, { min: 12, max: 12 })), departements: ENV(DEPARTEMENTS),
 })
 const DIRECT = T.objet({ barre: ENV(BARRE), equipage: ENV(EQUIPAGE), attention: ENV(ATTENTION), commandement: ENV(COMMANDEMENT), tapis: ENV(TAPIS), bandeau: ENV(BANDEAU), carte: ENV(CARTE) })
@@ -214,7 +231,7 @@ const SALLE = {
   machines: T.objet({
     agents: T.liste(T.objet({ nom: T.texte(), etat: T.texte() })), crons: T.liste(T.objet({ nom: T.texte(), ok: T.booleen() })),
     usine: ENV(T.objet({ mesure: T.texte(), le: T.iso() })),
-    ia: ENV(T.objet({ fournisseurs: T.liste(T.objet({ objet: T.texte(), resume: SUR, le: T.iso() })), bascules: T.liste(T.objet({ resume: SUR, le: T.iso() }), { max: 20 }), cout_jour_eur: NOMBRE, le: T.iso() })),
+    ia: ENV(T.objet({ fournisseurs: T.liste(T.objet({ objet: T.texte(), resume: SUR, le: T.iso() })), bascules: T.liste(T.objet({ resume: SUR, le: T.iso() }), { max: 20 }), cout_jour_eur: BRUT_PROTEGE(NOMBRE), le: T.iso() })),
   }, ACTIVE),
   // Salles lues à partir de 026-178 (forme propre) :
   commandement: T.objet({ objectif: OBJECTIF, missions: T.liste(MISSION), tousSucces: T.liste(SUCCES, { max: 4 }), compteRendu: T.liste(SUR, { max: 3 }), consignes: T.liste(T.objet({ id: ENTIER, le: T.iso(), texte: SUR, cible: NULL_OU(T.texte()) })), argent: ENV(T.quelconque()) }, ACTIVE, { exclus: ['niveau'] }),
