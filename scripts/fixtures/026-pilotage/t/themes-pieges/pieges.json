@@ -1,0 +1,90 @@
+{
+ "_": "Jeu d'essai de station-themes-qa (TH-11, 026-171) : chaque dossier est un thème abîmé, refusé par le critère `critere` avec une raison qui satisfait `raison` (expression régulière, insensible à la casse). Écrit par t/fabriquer-temoin.mjs.",
+ "pieges": [
+  {
+   "dossier": "sans-licence",
+   "critere": "TH-10",
+   "raison": "licence\\.json absent"
+  },
+  {
+   "dossier": "atlas-800-ko",
+   "critere": "TH-9",
+   "raison": "(?:7\\d\\d|8\\d\\d) Kio"
+  },
+  {
+   "dossier": "feuille-brute-de-pack",
+   "critere": "TH-10",
+   "raison": "feuille brute"
+  },
+  {
+   "dossier": "reservee-avec-un-poste",
+   "critere": "TH-7",
+   "raison": "réservé.*poste|poste"
+  },
+  {
+   "dossier": "reservee-en-deux-exemplaires",
+   "critere": "TH-7",
+   "raison": "réservé"
+  },
+  {
+   "dossier": "sans-portrait",
+   "critere": "TH-7",
+   "raison": "portrait"
+  },
+  {
+   "dossier": "vingt-emplacements-seulement",
+   "critere": "TH-7",
+   "raison": "20 emplacements|emplacements, 21"
+  },
+  {
+   "dossier": "hors-du-lot-a",
+   "critere": "TH-10",
+   "raison": "hors du lot A"
+  },
+  {
+   "dossier": "licence-non-cc0",
+   "critere": "TH-10",
+   "raison": "CC0"
+  },
+  {
+   "dossier": "licence-sans-auteur",
+   "critere": "TH-10",
+   "raison": "auteur"
+  },
+  {
+   "dossier": "licence-sans-date",
+   "critere": "TH-10",
+   "raison": "date"
+  },
+  {
+   "dossier": "adresse-http-dans-le-theme",
+   "critere": "TH-12",
+   "raison": "adresse"
+  },
+  {
+   "dossier": "starnet-dans-le-nom",
+   "critere": "TH-12",
+   "raison": "starnet"
+  },
+  {
+   "dossier": "champ-de-code",
+   "critere": "TH-12",
+   "raison": "champ de code|onclick"
+  },
+  {
+   "dossier": "fichier-executable",
+   "critere": "TH-12",
+   "raison": "ni json ni image"
+  },
+  {
+   "dossier": "sans-fond",
+   "critere": "TH-9",
+   "raison": "fond"
+  },
+  {
+   "dossier": "fond-trop-lourd",
+   "critere": "TH-9",
+   "raison": "fond.*Kio"
+  }
+ ]
+}

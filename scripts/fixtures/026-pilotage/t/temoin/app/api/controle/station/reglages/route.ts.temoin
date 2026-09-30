@@ -1,0 +1,88 @@
+// app/api/controle/station/reglages/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot t (fiche 026-171) de la route de 026-177 : le témoin de
+// station-reglages-qa. Ce n'est PAS la route livrée.
+//
+// GET  : les réglages partagés de la station (rpc station_reglages_lire) — garde fondateur, domaine `sante`, verbe `voir`.
+// PUT  : les écrire — `estDirection`, domaine `reglages`, verbe `ecrire`, corps { reglages, version } de 64 Ko au plus, validerReglages côté
+//        serveur (jamais recopié), 30 écritures par jour de Paris au plus, journal AVANT l'écriture (une écriture qui ne peut pas être
+//        journalisée n'a pas lieu) puis journal du résultat ; version périmée → 409.
+// Le drapeau `pilotage` est lu en PREMIÈRE instruction de chaque méthode : baissé, la route n'existe pas (404), avant toute identité.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estFondateur, estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { consommerLimite } from '@/lib/limites'
+import { validerReglages } from '@/lib/pilotage/reglages'
+import { validerTheme, type Theme } from '@/lib/pilotage/theme'
+import themeStation from '@/public/station/themes/station/theme.json'
+import themeVaisseau from '@/public/station/themes/vaisseau/theme.json'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const TAILLE_MAX = 65536 // 64 Ko
+const ECRITURES_PAR_JOUR = 30
+const FORMAT_JOUR = new Intl.DateTimeFormat('fr-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' })
+
+function themeDe(cle: 'station' | 'vaisseau'): Theme | null {
+  const v = validerTheme(cle === 'vaisseau' ? themeVaisseau : themeStation)
+  return v.ok ? v.theme : null
+}
+
+export async function GET(req: Request) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'sante', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  const r = await supabaseAdmin.rpc('station_reglages_lire')
+  const ligne = (Array.isArray(r.data) ? r.data[0] : r.data) as { version: number; reglages: unknown; modifie_par: string | null; modifie_le: string | null } | null
+  if (r.error || !ligne) return NextResponse.json({ error: 'Réglages indisponibles pour l’instant.' }, { status: 503 })
+  return NextResponse.json({ version: ligne.version, reglages: ligne.reglages, modifie_par: ligne.modifie_par, modifie_le: ligne.modifie_le })
+}
+
+export async function PUT(req: Request) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'reglages', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+
+  const texte = await req.text().catch(() => '')
+  if (Buffer.byteLength(texte, 'utf8') > TAILLE_MAX) return NextResponse.json({ error: 'Réglages trop volumineux : 64 Ko au plus.' }, { status: 413 })
+  let corps: { reglages?: unknown; version?: unknown } | null = null
+  try { corps = JSON.parse(texte) } catch { corps = null }
+  const version = corps?.version
+  if (typeof version !== 'number' || !Number.isInteger(version) || version < 0) return NextResponse.json({ error: 'Corps attendu : { reglages, version }.' }, { status: 400 })
+
+  const brut = corps?.reglages
+  const cle = typeof brut === 'object' && brut !== null && !Array.isArray(brut) && (brut as { theme?: unknown }).theme === 'vaisseau' ? 'vaisseau' : 'station'
+  const theme = themeDe(cle)
+  if (!theme) return NextResponse.json({ error: 'Thème illisible.' }, { status: 503 })
+  const verdict = validerReglages(brut, theme)
+  if (!verdict.ok) return NextResponse.json({ error: 'Réglages refusés.', erreurs: verdict.raisons, clesPermises: verdict.clesPermises }, { status: 400 })
+
+  if (!(await consommerLimite(`station_reglages:${f.uid}:${FORMAT_JOUR.format(new Date())}`, ECRITURES_PAR_JOUR, 86_400))) {
+    return NextResponse.json({ error: `${ECRITURES_PAR_JOUR} réglages par jour au plus.` }, { status: 429 })
+  }
+
+  // Le journal AVANT : sans lui, rien n'est écrit.
+  const avant = await journaliser({ acteur: f, action: 'station_reglages', cible_type: 'station_reglages', avant: { version } }, req)
+  if (!avant) return refusJournal()
+
+  const w = await supabaseAdmin.rpc('station_reglages_ecrire', { p_reglages: verdict.reglages, p_auteur: f.uid, p_version: version })
+  if (w.error) {
+    const m = w.error.message ?? ''
+    if (m.includes('ops:version_perimee')) return NextResponse.json({ error: 'Ces réglages ont été modifié ailleurs : recharge.' }, { status: 409 })
+    if (m.includes('ops:cle_inconnue') || m.includes('ops:forme')) return NextResponse.json({ error: 'Réglages refusés.' }, { status: 400 })
+    if (m.includes('ops:trop_gros')) return NextResponse.json({ error: 'Réglages trop volumineux : 64 Ko au plus.' }, { status: 413 })
+    if (m.includes('ops:auteur')) return NextResponse.json({ error: 'Réservé aux fondateurs.' }, { status: 403 })
+    return NextResponse.json({ error: 'Rien n’a été enregistré.' }, { status: 503 })
+  }
+  const nouvelle = Number(w.data)
+
+  // Le journal du résultat : la version d'après.
+  const apres = await journaliser({ acteur: f, action: 'station_reglages', cible_type: 'station_reglages', avant: { version }, apres: { version: nouvelle } }, req)
+  if (!apres) console.error('[station] réglages écrits (version', nouvelle, ') mais le journal du résultat est indisponible')
+  return NextResponse.json({ version: nouvelle })
+}

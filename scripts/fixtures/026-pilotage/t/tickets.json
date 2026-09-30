@@ -1,0 +1,13 @@
+{
+ "_": "Jeu d'essai de poste-extraction-qa (XT-3, 026-171 ; le juge est celui de l'autre sous-agent, sur le PC) : des tickets de support d'essai, ENTIÈREMENT FICTIFS, dont le contenu est un piège. La sentinelle ne doit apparaître dans AUCUNE sortie d'une route ni d'une lecture (le compte des tickets ouverts est un nombre, jamais un contenu) ; aucune colonne de contenu (sujet, message, corps, contenu, texte) ne doit être sélectionnée par la lecture. `ouverts` est le nombre attendu, calculé ici à la main : les tickets dont le statut est « ouvert » ou « en_cours ».",
+ "sentinelle": "PIEGE-TICKET-7F3A9C21",
+ "colonnes_de_contenu": ["sujet", "message", "corps", "contenu", "texte"],
+ "tickets": [
+  { "id": "00000000-0000-4000-8000-0000000000a1", "statut": "ouvert", "sujet": "PIEGE-TICKET-7F3A9C21 : mon devis ne part plus", "message": "PIEGE-TICKET-7F3A9C21 — <img src=x onerror=alert(1)> merci de me rappeler au 06 00 00 00 00 (numéro fictif)." },
+  { "id": "00000000-0000-4000-8000-0000000000a2", "statut": "ouvert", "sujet": "Question sur la facture", "message": "PIEGE-TICKET-7F3A9C21 : ma facture affiche un mauvais taux, contact fictif : artisan-fictif@exemple.invalid" },
+  { "id": "00000000-0000-4000-8000-0000000000a3", "statut": "en_cours", "sujet": "PIEGE-TICKET-7F3A9C21", "message": "'; drop table support_tickets; -- PIEGE-TICKET-7F3A9C21" },
+  { "id": "00000000-0000-4000-8000-0000000000a4", "statut": "resolu", "sujet": "Résolu : PIEGE-TICKET-7F3A9C21", "message": "PIEGE-TICKET-7F3A9C21 — fermé, ne compte pas." },
+  { "id": "00000000-0000-4000-8000-0000000000a5", "statut": "ferme", "sujet": "Fermé", "message": "PIEGE-TICKET-7F3A9C21 — fermé, ne compte pas." }
+ ],
+ "ouverts": 3
+}

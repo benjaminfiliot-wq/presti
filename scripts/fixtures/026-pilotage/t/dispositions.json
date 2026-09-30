@@ -1,0 +1,30 @@
+{
+ "_": "Jeu d'essai de station-themes-qa (TH-3, 026-171) : des OPÉRATIONS sur la disposition par défaut du thème d'essai (k/themes/essai), fabriquées par t/outils.mjs materialiser(). echanger [[salle, salle]] permute deux salles ; fixer { salle: emplacement } ; retirer [salle] ; plaques { salle: texte } ; portrait true donne au thème son bloc portrait (le bureau transposé) ; coursives { isoler, vue } coupe DANS LA DISPOSITION les arêtes de la porte où la salle siège ; themeCoupe la même coupe DANS LE THÈME ; tapis { casser: i } | { etapeHors: true }. `raison` est une expression régulière (insensible à la casse) que la raison en français doit satisfaire ; les phrases de référence sont dans CONTRAT.md.",
+ "valides": [
+  { "nom": "defauts-bureau" },
+  { "nom": "defauts-bureau-et-portrait", "portrait": true },
+  { "nom": "echange-radar-repos", "echanger": [["radar", "repos"]] },
+  { "nom": "rotation-de-trois-salles", "echanger": [["radar", "repos"], ["repos", "crieur"]] },
+  { "nom": "echange-avec-portrait", "portrait": true, "echanger": [["studio", "audience"], ["commandement", "presti"]] },
+  { "nom": "plaques-renommees-sauf-la-reservee", "plaques": { "radar": "Guet", "repos": "Détente" } },
+  { "nom": "reservee-nommee-sous-son-nom", "plaques": { "ecommerce": "E-commerce" } }
+ ],
+ "refusees": [
+  { "nom": "deux-salles-dans-un-emplacement", "fixer": { "radar": "repos" }, "raison": "deux salles" },
+  { "nom": "une-salle-sans-emplacement", "retirer": ["repos"], "raison": "n'a pas d'emplacement" },
+  { "nom": "emplacement-inconnu", "fixer": { "radar": "hangar" }, "raison": "hangar" },
+  { "nom": "salle-inconnue", "fixer": { "pirate": "radar" }, "raison": "pirate" },
+  { "nom": "reservee-deplacee", "echanger": [["radar", "ecommerce"]], "raison": "réservée.*ne se déplace pas|ne se déplace pas" },
+  { "nom": "reservee-deplacee-sans-echange", "fixer": { "ecommerce": "repos" }, "raison": "réservée|déplace" },
+  { "nom": "une-salle-dans-l-emplacement-reserve", "fixer": { "radar": "ecommerce" }, "raison": "réservé|réservée" },
+  { "nom": "reservee-renommee", "plaques": { "ecommerce": "Boutique" }, "raison": "réservée.*ne se renomme pas|ne se renomme pas" },
+  { "nom": "graphe-coupe-la-salle-de-repos", "coursives": { "isoler": "repos", "vue": "bureau" }, "raison": "Salle de repos.*n'est plus reliée au reste" },
+  { "nom": "graphe-coupe-le-radar-apres-echange", "echanger": [["radar", "usine"]], "coursives": { "isoler": "radar", "vue": "bureau" }, "raison": "Radar.*n'est plus reliée au reste|n'est plus reliée au reste" },
+  { "nom": "graphe-coupe-le-commandement", "coursives": { "isoler": "commandement", "vue": "bureau" }, "raison": "Commandement" },
+  { "nom": "graphe-coupe-sur-le-telephone-seulement", "coursives": { "isoler": "repos", "vue": "portrait" }, "raison": "n'est plus reliée au reste" },
+  { "nom": "theme-coupe-au-bureau", "themeCoupe": { "isoler": "audience", "vue": "bureau" }, "raison": "n'est plus reliée au reste" },
+  { "nom": "theme-coupe-en-portrait", "themeCoupe": { "isoler": "audience", "vue": "portrait" }, "raison": "n'est plus reliée au reste" },
+  { "nom": "tapis-rompu", "tapis": { "casser": 10 }, "raison": "tapis" },
+  { "nom": "etape-hors-du-tapis", "tapis": { "etapeHors": true }, "raison": "tapis|étape" }
+ ]
+}

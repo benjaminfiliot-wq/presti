@@ -1,0 +1,74 @@
+// lib/controle/lectures/clients.ts — TÉMOIN du lot t (026-171) : la lecture « clients » de 026-174.
+// D'où elle vient : le corps de GET de app/api/controle/clients/route.ts (après la garde), déplacé tel quel. Ce qu'elle contient : ce
+// qu'il faut pour diriger — offre, crédits, inscription, dernière activité, canal d'acquisition. Ce qu'elle ne contient pas : le contenu
+// des conversations, des devis ou des factures. Rend `{ erreur }` quand la liste est illisible (la route répond alors 503).
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { seulsLesVrais } from '@/lib/direction/perimetre'
+import { sourcer } from '@/lib/direction/fraicheur'
+import { planConf } from '@/lib/plans'
+import { verdict, type Statut } from '@/lib/direction/apports'
+import { lireApporteurs, type Apporteur } from '@/lib/direction/canaux'
+import { actif } from '@/lib/flags'
+
+// `apports` : le drapeau, lu par la route (chaque route garde sa propre lecture) ; absent, la lecture le lit elle-même (la station).
+export async function clients(filtres: { q?: string; offre?: string | null; apports?: boolean } = {}) {
+  const avecApports = filtres.apports ?? actif('apports')
+  const q = (filtres.q ?? '').trim().toLowerCase().slice(0, 60)
+  const filtre = filtres.offre ?? null
+
+  const liste = await sourcer('clients:liste', 'supabase', async () => {
+    let req = seulsLesVrais(supabaseAdmin.from('artisans')
+      .select('id, nom, email, metier, plan, credits, credits_reset_le, stripe_customer_id, stripe_subscription_id, created_at, suppression_demandee_le'))
+      .order('created_at', { ascending: false }).limit(500)
+    if (filtre && ['gratuit', 'essentiel', 'studio', 'signature'].includes(filtre)) req = req.eq('plan', filtre)
+    const { data, error } = await req
+    if (error) throw new Error(error.message)
+    return data ?? []
+  })
+  if (liste.erreur) return { erreur: liste.erreur }
+
+  const artisans = (liste.valeur ?? []).filter((a) => !q || `${a.nom ?? ''} ${a.email ?? ''} ${a.metier ?? ''}`.toLowerCase().includes(q))
+  const ids = artisans.map((a) => a.id)
+
+  // Canal d'acquisition : le registre des apports, jamais une saisie libre.
+  const { data: apports } = avecApports && ids.length
+    ? await supabaseAdmin.from('registre_apports').select('artisan_id, statut, piece, motif, apporteur_id').in('artisan_id', ids)
+    : { data: [] as { artisan_id: string; statut: Statut; piece: string | null; motif: string | null; apporteur_id: string }[] }
+  const parApporteur = avecApports ? await lireApporteurs().catch(() => null) : new Map<string, Apporteur>()
+  const canalIndisponible = parApporteur === null
+  const apporteursLus = parApporteur ?? new Map<string, Apporteur>()
+  const parArtisan = new Map((apports ?? []).map((x) => [x.artisan_id, x]))
+
+  // Dernière activité : le dernier lead reçu (la trace la plus fiable sans toucher au contenu).
+  const { data: derniers } = ids.length
+    ? await supabaseAdmin.from('leads').select('artisan_id, created_at').in('artisan_id', ids).order('created_at', { ascending: false }).limit(1000)
+    : { data: [] as { artisan_id: string; created_at: string }[] }
+  const activite = new Map<string, string>()
+  for (const l of derniers ?? []) if (!activite.has(l.artisan_id)) activite.set(l.artisan_id, l.created_at)
+
+  const lignes = artisans.map((a) => {
+    const ap = parArtisan.get(a.id)
+    const apporteur = ap ? apporteursLus.get(ap.apporteur_id) ?? null : null
+    const v = ap ? verdict({ ...ap, canal: apporteur?.canal }) : null
+    return {
+      id: a.id, nom: a.nom, metier: a.metier, plan: a.plan, offre: planConf(a.plan).label,
+      credits: a.credits, inscrit_le: a.created_at,
+      abonne: !!a.stripe_subscription_id, client_stripe: !!a.stripe_customer_id,
+      suppression_demandee_le: a.suppression_demandee_le,
+      derniere_activite: activite.get(a.id) ?? null,
+      canal: !ap ? { type: 'organique' } : apporteur?.canal
+        ? { type: 'canal', apporteur: apporteur.nom, code: apporteur.code, statut: ap.statut, compte: false, raison: v?.raison ?? '' }
+        : { type: 'apporte', apporteur: apporteur?.nom ?? null, code: apporteur?.code ?? null, statut: ap.statut, compte: v?.compte ?? false, raison: v?.raison ?? '' },
+    }
+  })
+  return {
+    lignes,
+    resume: {
+      total: lignes.length, payants: lignes.filter((l) => l.abonne).length,
+      apportes: lignes.filter((l) => l.canal.type === 'apporte').length,
+      canaux: lignes.filter((l) => l.canal.type === 'canal').length,
+    },
+    canalIndisponible,
+    source: { source: liste.source, a: liste.a, cache: liste.cache },
+  }
+}
