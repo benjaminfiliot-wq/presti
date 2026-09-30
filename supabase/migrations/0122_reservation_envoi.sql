@@ -1251,13 +1251,17 @@ begin
       end if;
     end if;
   end if;
-  -- les seules transitions de la réservation : approuve → en_cours_envoi → (envoye | envoi_incertain | approuve relâché | annule) ;
-  -- envoi_incertain → (envoye | annule), jamais approuve
+  -- les seules transitions de la réservation : approuve → en_cours_envoi (avec une clé) → (envoye | envoi_incertain | approuve relâché
+  -- | annule) ; envoi_incertain → (envoye | annule), jamais approuve
   if new.statut in ('en_cours_envoi', 'envoi_incertain') and tg_op = 'INSERT' then
     raise exception using message = 'ops:transition_envoi', errcode = 'P0001';
   end if;
   if tg_op = 'UPDATE' and old.statut is distinct from new.statut then
-    if (new.statut = 'en_cours_envoi' and old.statut <> 'approuve')
+    -- une réservation porte toujours sa date : celle de la base, jamais celle de l'écrivain
+    if new.statut = 'en_cours_envoi' then
+      new.reserve_le := now();
+    end if;
+    if (new.statut = 'en_cours_envoi' and (old.statut <> 'approuve' or new.cle_envoi is null))
        or (new.statut = 'envoi_incertain' and old.statut <> 'en_cours_envoi')
        or (old.statut = 'en_cours_envoi' and new.statut not in ('approuve', 'envoi_incertain', 'envoye', 'annule'))
        or (old.statut = 'envoi_incertain' and new.statut not in ('envoye', 'annule')) then
