@@ -1,0 +1,4 @@
+# regles etroites du coffre (fichier d essai : le juge exige qu il ne bouge pas)
+Defaults:agents !requiretty
+usine ALL=(agents) NOPASSWD: /usr/local/bin/presti-coffre *
+usine ALL=(agents) NOPASSWD: /usr/local/bin/presti-journal *
