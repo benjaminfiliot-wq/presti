@@ -1,0 +1,39 @@
+{
+  "id": "ZCC6uqwHxV4",
+  "titre": "J’ai essayé de faire de l’Argent avec une Influenceuse IA",
+  "url": "https://www.youtube.com/watch?v=ZCC6uqwHxV4",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ZCC6uqwHxV4\\video.mp4",
+  "taille_octets": 22829877,
+  "sha256_video": "e867b5c91c999f7301f01d862a19a22681fa331ae2fbf10c496a4407a32872a3",
+  "duree_secondes": 728.594,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "24000/1001",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    45.537125,
+    136.611375,
+    227.68562500000002,
+    318.759875,
+    409.83412500000003,
+    500.90837500000004,
+    591.9826250000001,
+    683.056875
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ZCC6uqwHxV4\\video.fr-orig.vtt",
+  "nombre_cues": 813,
+  "nombre_lignes_transcription": 407,
+  "empreintes_documents": {
+    "planche.jpg": "eea9de008f66f2d279fefb6f066fb4e5c362c451df354d8d8a852287508922e4",
+    "sous-titres-originaux.vtt": "1e5c40f8a038f486f108e50b824ebe5753f1374f938a4a27c4e5a89ce5ea9986",
+    "transcription.txt": "2c7abf96999580488d64a33476e3cd450a97f85712105114b5db1541772420e2"
+  }
+}

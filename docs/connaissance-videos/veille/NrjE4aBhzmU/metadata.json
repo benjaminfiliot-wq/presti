@@ -1,0 +1,35 @@
+{
+  "id": "NrjE4aBhzmU",
+  "titre": "Comment je fais +50,000€/mois de profit en ecommerce google ads",
+  "url": "https://www.youtube.com/watch?v=NrjE4aBhzmU",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\NrjE4aBhzmU\\video.mp4",
+  "taille_octets": 23022149,
+  "sha256_video": "f541513b7e1d99852580c3d7230e6e9ce9971db260f0cb99ec412e2fbd88521e",
+  "duree_secondes": 803.174,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "25/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    50.198375,
+    150.595125,
+    250.991875,
+    351.388625,
+    451.785375,
+    552.182125,
+    652.5788749999999,
+    752.975625
+  ],
+  "transcription": "MANQUANTE — aucun VTT local; ASR non exécuté",
+  "empreintes_documents": {
+    "planche.jpg": "bb851ac5fb5e3eeb5a6b03ea824bb72967300eb94f61e811f5d1d77a6d86edfe",
+    "transcription-manquante.txt": "d88edffdab1cf07b72080407c7e890b843137637f31e924cc3e2804420361777"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "trevsagents",
+  "titre": "AUTOMATE YOUR BUSINESSES. IF YOU DONT HAVE ANY YET, DO THIS! #aiagent...",
+  "url": "https://www.tiktok.com/@trevsagents/video/7644344691688770846",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\trevsagents.mp4",
+  "taille_octets": 37801669,
+  "sha256_video": "0ab4ff7df8e5a47b5b43a62588256aee6eb81e77a542113e5f2959e31bdcf1d5",
+  "duree_secondes": 116.816817,
+  "largeur": 1080,
+  "hauteur": 1920,
+  "codec_video": "hevc",
+  "images_par_seconde": "2997/50",
+  "audio": [
+    {
+      "codec": "aac",
+      "frequence": "44100",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    7.3010510625,
+    21.9031531875,
+    36.5052553125,
+    51.1073574375,
+    65.7094595625,
+    80.3115616875,
+    94.9136638125,
+    109.5157659375
+  ],
+  "transcription": "MANQUANTE — résumé français local disponible, pas transcription mot à mot",
+  "empreintes_documents": {
+    "planche.jpg": "463b8d6f25b2f07fe05a1ea4dd13cd42c60661d622b169d2989b4c39be065252",
+    "resume-local.txt": "41275fd17066256d10d2571248b5414cd2b8220945ac894eca0c9a4b71be4d93",
+    "transcription-manquante.txt": "ce4a1ce59cdd5c9886f2fa1d1e740772fcf16f60773e34a73d8f6d0beaa784f6"
+  },
+  "source_resume": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\trevsagents-voix-video.txt"
+}

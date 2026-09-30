@@ -1,0 +1,39 @@
+{
+  "id": "pPoR_0FHl-U",
+  "titre": "Comment Gagner VRAIMENT de l'Argent avec Claude (SANS BULLSH*T)",
+  "url": "https://www.youtube.com/watch?v=pPoR_0FHl-U",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\pPoR_0FHl-U\\video.mp4",
+  "taille_octets": 93536911,
+  "sha256_video": "7af6d48d11423c4c8b8343e141fc51da12205facb7c143bcad57d597eaf64c54",
+  "duree_secondes": 3304.094,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    206.505875,
+    619.517625,
+    1032.529375,
+    1445.541125,
+    1858.552875,
+    2271.564625,
+    2684.576375,
+    3097.588125
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\pPoR_0FHl-U\\video.fr-orig.vtt",
+  "nombre_cues": 3763,
+  "nombre_lignes_transcription": 1882,
+  "empreintes_documents": {
+    "planche.jpg": "9bf76b6b9f5b371a22734e51217e4db59f154bb1abb25174b782e14d9880a331",
+    "sous-titres-originaux.vtt": "84e91c595e3c658725688e30f1bb4450a6237400022d8ae2550e623d5d04b0d4",
+    "transcription.txt": "da25b10040d8c16e439f6b8b478059ee429bcb23550d44427ce18eeb52eb6624"
+  }
+}

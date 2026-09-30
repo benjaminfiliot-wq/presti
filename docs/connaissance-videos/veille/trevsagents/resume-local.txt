@@ -1,0 +1,19 @@
+# trevsagents — ce que dit la voix off DE LA VIDÉO (videos/trevsagents.mp4), relevé le 24/09 vers 18 h 10
+# Méthode : piste audio de la vidéo extraite, faster-whisper small, sans VAD : 61 segments, anglais, de 0 à 116,7 s.
+# Attention : trevsagents.m4a (244,8 s) n'est PAS le son de la vidéo. C'est le morceau d'ambiance TikTok
+# « Sci-fi ambient with a desolate and lonely atmosphere » (harryfaoki), d'où les 0 segments de trevsagents.txt.
+# La vidéo a donc bien une voix off en anglais, du début à la fin. Ci-dessous, un résumé en français minuté (pas une transcription mot à mot).
+# Erreurs de reconnaissance probables : « U2BI music » = YouTube AI music ; « Blanc » = Bunc ; « BOFBOT » = l'onglet BOFBOT de la Revenue Bay.
+
+0-7 s     Ce n'est pas un jeu vidéo : ce sont ses agents qui marchent vers la salle de réunion pour réfléchir à comment améliorer le business.
+8-12 s    Il a construit des agents qui automatisent plusieurs business et lui rapportent de l'argent pendant qu'il dort.
+12-23 s   L'équipe : un agent de recherche, un manager, un agent Fiverr, un agent de musique IA pour YouTube (encore en cours d'installation), un agent qui fabrique des produits Etsy, un agent de marketing TikTok, un agent expérimental en solo.
+23-32 s   Ils tiennent une réunion pour décider quoi améliorer ; ensuite le manager Matt rédige un compte rendu de ce qui s'est dit.
+33-49 s   Selon lui, ils ne bougent pas au hasard : ils tiennent vraiment la réunion côté serveur et discutent entre eux. L'interface visuelle sert à voir ce qui se passe mieux qu'en regardant le terminal.
+49-60 s   La station a des salles cliquables, par exemple la Revenue Bay : revenus sur 30 jours et leur provenance.
+61-68 s   La Treasury : ce qui est dépensé en API, et le fait que Matt tourne sur GPT-5.5.
+69-82 s   La Factory : les livraisons de Bunc (bougies, t-shirts faits sur Printify puis mis sur Etsy) ; Luke, qui vit dans le Media Lab, fait des TikTok sur ces produits.
+82-89 s   Salle détente, bar, salle de jeu : ne servent à rien, les agents n'y ont pas droit car ils travaillent jour et nuit.
+89-99 s   Appel : automatisez vos business avec des agents ; c'est OpenClaw, plus une surcouche faite maison.
+99-110 s  Ça marche aussi sur un business existant : son app (BOFBOT) où les agents gèrent le support client et poussent des mises à jour.
+110-117 s Conclusion : il n'a presque rien à faire, à part passer voir dans la journée.

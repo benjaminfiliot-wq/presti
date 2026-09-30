@@ -1,0 +1,39 @@
+{
+  "id": "AWyEpJokQiM",
+  "titre": "8 ans d'e-commerce résumés en 30 min",
+  "url": "https://www.youtube.com/watch?v=AWyEpJokQiM",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\AWyEpJokQiM\\video.mp4",
+  "taille_octets": 52634622,
+  "sha256_video": "9cfb9b59fca99401d2b7a97ccd77c5cdb65a7fb6ad2f9c953e84443025eda21b",
+  "duree_secondes": 1581.894,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "25/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    98.868375,
+    296.605125,
+    494.341875,
+    692.078625,
+    889.815375,
+    1087.552125,
+    1285.288875,
+    1483.025625
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\AWyEpJokQiM\\video.fr-orig.vtt",
+  "nombre_cues": 1975,
+  "nombre_lignes_transcription": 988,
+  "empreintes_documents": {
+    "planche.jpg": "f6a6ed6809d68658e0165a5380aef02419394a8645a13265c7237031328d01b7",
+    "sous-titres-originaux.vtt": "294c1c4007fb5218f2149370c1bd8fe914302e4b21d9f9e2e446de7e725cf7a3",
+    "transcription.txt": "a6d5f6faa53f73b26866379844e2d1633e2bbd06ad7c2e9fcfb49aa3ec744c0f"
+  }
+}
