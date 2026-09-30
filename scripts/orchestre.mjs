@@ -279,7 +279,7 @@ function expirerBaux() {
 
 // ── le disjoncteur : trois fins d'échec (FAIL depuis fait/, ou EXPIRÉE) depuis le dernier succès, ou
 // deux dernières identiques, font disjoncter une tâche — elle n'est plus distribuée. On relit tout
-// verdicts.jsonl à chaque appel : un DISJONCTÉE déjà écrit remet le compteur à zéro (idempotent).
+// verdicts.jsonl à chaque appel : DISJONCTÉE et REJOUÉ remettent le compteur à zéro (idempotent).
 function finsDepuisSucces() {
   const parId = new Map()
   if (existe(VERDICTS)) for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
@@ -287,7 +287,7 @@ function finsDepuisSucces() {
     if (!v || !v.id) continue
     if (!parId.has(v.id)) parId.set(v.id, [])
     const fins = parId.get(v.id)
-    if (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE') { fins.length = 0; continue }
+    if (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE' || v.verdict === 'REJOUÉ') { fins.length = 0; continue }
     if ((v.verdict === 'FAIL' && v.dossier === D.fait) || v.verdict === 'EXPIRÉE') fins.push(v)
   }
   return parId
@@ -297,7 +297,7 @@ function estDisjonctee(id) {
   let dernier = null
   for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
     let v; try { v = JSON.parse(l) } catch { continue }
-    if (v && v.id === id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE')) dernier = v.verdict
+    if (v && v.id === id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE' || v.verdict === 'REJOUÉ')) dernier = v.verdict
   }
   return dernier === 'DISJONCTÉE'
 }
@@ -615,7 +615,7 @@ function construireAttention(questions) {
   const dernierParId = new Map()
   if (existe(VERDICTS)) for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
     let v; try { v = JSON.parse(l) } catch { continue }
-    if (v && v.id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE')) dernierParId.set(v.id, v.verdict)
+    if (v && v.id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE' || v.verdict === 'REJOUÉ')) dernierParId.set(v.id, v.verdict)
   }
   for (const [id, verdict] of dernierParId) if (verdict === 'DISJONCTÉE') candidats.push({ severite: 0, texte: `${id} est DISJONCTÉE (trop d'échecs) : corrige, puis \`${CMD} rejouer ${id} --forcer\`` })
   // 2. verrous au-delà du bail, pas encore repris (expirerBaux() n'a pas encore tourné depuis).
@@ -1172,21 +1172,28 @@ function repondre(id, choix, ligne) {
   digest()
   console.log(`✓ réponse ${choix} déposée pour ${id}`)
 }
-function deplacer(id, de, vers, etiquette) {
+function deplacer(id, de, vers, etiquette, apresDeplacement) {
   const ou = trouver(id, [de])
   if (!ou) { console.error(`✗ ${id} n'est pas dans ${de}/`); process.exit(3) }
   fs.renameSync(ou.fichier, path.join(ORCH, vers, path.basename(ou.fichier)))
   for (const suffixe of ['.lock', '.avant.txt', '.question.md', '.reponse.md']) { const p = path.join(ORCH, de, `${id}${suffixe}`); if (existe(p)) fs.unlinkSync(p) }
+  if (apresDeplacement) apresDeplacement()
   digest()
   console.log(`✓ ${id} : ${etiquette}`)
 }
 // Une tâche DISJONCTÉE ne revient en file/ que corrigée et rejouée sciemment : --forcer l'assume.
 function rejouer(id, forcer) {
-  if (estDisjonctee(id) && !forcer) {
+  const disjonctee = estDisjonctee(id)
+  if (disjonctee && !forcer) {
     console.error(`✗ ${id} est DISJONCTÉE (trois échecs, ou deux identiques, depuis le dernier succès) : corrige, puis « ${CMD} rejouer ${id} --forcer ».`)
     process.exit(3)
   }
-  deplacer(id, D.refuse, D.file, forcer && estDisjonctee(id) ? 'remise en file (disjoncteur forcé)' : 'remise en file')
+  deplacer(id, D.refuse, D.file, forcer && disjonctee ? 'remise en file (disjoncteur forcé)' : 'remise en file', () => {
+    if (forcer && disjonctee) fs.appendFileSync(VERDICTS, JSON.stringify({
+      id, verdict: 'REJOUÉ', ligne: 'disjoncteur réarmé explicitement par rejouer --forcer',
+      code: null, date: maintenant(), duree_s: 0, agent: '?', executant: CONFIG.executants[0], lignes: 0, dossier: D.file,
+    }) + '\n')
+  })
 }
 // promouvoir <n> [--benj] : déplace la proposition n de la quarantaine vers le tableau des décisions tranchées.
 // Une proposition qui touche l'argent, l'irréversible ou la marque est « refusée d'office » sans --benj.

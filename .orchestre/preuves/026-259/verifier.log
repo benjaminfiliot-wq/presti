@@ -1,0 +1,18 @@
+$ node .orchestre/preuves/026-259/regression.mjs --source=../orchestre --script=scripts/orchestre.mjs
+# 2026-09-30T15:30:32Z · code 0 · 15s
+
+PASS regression : historique conservé, réarmement, distribution et redisjonction
+
+== groupe baux — source C:/Users/benja/AppData/Local/Temp/rearmement-259-QC6p1S/outil ==
+✓ ORB-1 — avec verrou : code 0, champ battement: présent · sans verrou : code 3 (attendu 3)
+✓ ORB-2 — battement forcé à 2000-01-01 avant verifier · après verifier : 2026-09-30T15:30:21Z
+✓ ORB-3 — reprise par ag-c : true · lock refait (agent: ag-c) : true · ancien preuves/000-test/avant.txt gardé : true · verdict EXPIRÉE (agent ag-baux) : true
+✓ ORB-4 — après battement de 10 min, verrou toujours agent: ag-c : true · sortie prochaine : Aucune tâche disponible pour ag-d.
+✓ ORB-5 — code 0 (attendu 0) · cite 000-test : true · sortie : ✓ bail(s) expiré(s) repris en file/ : 000-test
+✓ ORB-6 — verdict DISJONCTÉE : true · dans refuse/ : true · sortie du prochaine suivant : Aucune tâche disponible pour ag-f.
+✓ ORB-7 — sans --forcer : code 3 (attendu 3), pas en file : true · avec --forcer : code 0, en file : true
+✓ ORB-8 — n=0 · 1 ligne(s) (≤7 : true) · chaque ligne finit par une commande entre accents graves : true · « rien à décider » si n=0 : true
+✓ ORB-9 — gabarit decisions.md (section quarantaine + règle) : true · hors quarantaine → FAIL nommant decisions.md : true (code 1) · sous « Proposées » → PASS : true (code 0) · rappel « décisions tranchées » sur prochaine(D) : true · pas de fuite du texte de la proposition : true · Attention cite promouvoir : true
+✓ ORB-NR — code 0 · ✓ tous les contrôles passent — dossier d'essai : supprimé (--garder pour le conserver)
+
+✓ tous les groupes passent
