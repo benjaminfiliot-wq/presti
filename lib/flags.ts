@@ -111,6 +111,8 @@ export const FLAGS = {
    *  (POST et GET /api/controle/demandes, onglet Demandes du Poste, GET et PATCH /api/agents/demandes). Levé avant l'application de 0117 : tant
    *  qu'elle n'est pas appliquée, les routes répondent 503 (fail-closed, voulu). Baissé : 404 partout, l'onglet n'existe pas. */
   demandesEcosysteme: true,
+  /** Ferme la route de la demande entrante ; lever prospectsEntrant quand le formulaire de la landing v2 existe, sur décision de Benj. */
+  prospectsEntrant: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
