@@ -625,10 +625,6 @@ export interface MagasinEchanges {
   annulerEnvoi(id: string, raison: string): Promise<void>
   envoisApprouves(canal: Canal, limite: number): Promise<EnvoiApprouve[]>
   marquerEnvoye(id: string, preuve: PreuveEnvoi): Promise<void>
-  /** Réserve l'envoi AVANT qu'il parte (0122, acq_envoi_reserver) : approuve → en_cours_envoi, une seule tentative gagne. Raisons d'un refus : pause, plafond, deja_reserve, statut, introuvable, accord_perime. */
-  reserverEnvoi(id: string, cle: string): Promise<ResultatRegle>
-  /** L'issue de l'envoi est inconnue (0122, acq_envoi_incertain) : il ne repart jamais tout seul, un contrôle le réconcilie (acq_envoi_reconcilier). */
-  marquerIncertain(id: string, raison: string): Promise<void>
   marquerEchec(id: string, raison: string): Promise<void>
   /** Envois `formulaire_site` approuvés, prospect sans opposition, hors pause, technologie active, dans le reste du plafond. */
   formulairesAPorter(limite: number, bailSecondes: number): Promise<EnvoiApprouve[]>
@@ -677,6 +673,10 @@ export interface MagasinEnvoi {
   jaugeConsommer(fournisseur: string, n: number): Promise<boolean>
   jauges(): Promise<Jauge[]>
   echantillonDuSoir(jour: string): Promise<EnvoiApprouve[]>
+  /** Réserve l'envoi AVANT qu'il parte (0122, acq_envoi_reserver) : approuve → en_cours_envoi, une seule tentative gagne. Raisons d'un refus : pause, plafond, deja_reserve, statut, introuvable, accord_perime, cle. */
+  reserverEnvoi(id: string, cle: string): Promise<ResultatRegle>
+  /** L'issue de l'envoi est inconnue (0122, acq_envoi_incertain) : il ne repart jamais tout seul, un contrôle le réconcilie (acq_envoi_reconcilier). */
+  marquerIncertain(id: string, raison: string): Promise<void>
 }
 export type Magasin = MagasinSocle & MagasinEchanges & MagasinEnvoi
 
