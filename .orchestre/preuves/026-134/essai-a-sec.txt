@@ -1,0 +1,9 @@
+Essai à sec de 0104_crieur (fiche 026-134), joué depuis une session cloud par le connecteur Supabase (execute_sql) sur la base de production `gorcdvmueakcncsmrouo` : le bloc `.orchestre/preuves/026-134/essai.sql` (généré par generer-essai.mjs avec blocEssai de scripts/lib/sql-essai.mjs : le jumeau nu, le scénario, puis ESSAI_A_SEC). Tout est annulé par l'exception finale. 0101 (pg_cron, pg_net, Vault) était appliquée.
+Message renvoyé par la base, recopié sans retouche :
+
+ERROR:  P0001: ESSAI_A_SEC 8606e963f32d55f41f295bd5e524efec2a9e942a04313c79ecb4ac38cd0b5d3d {"rls": true, "table": true, "anon_refuse": true, "appel_protege": true, "unique_refuse": true, "externe_accepte": true, "tache_planifiee": true, "diag_anon_refuse": "3/3", "instagram_accepte": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 150 at RAISE
+
+Après l'essai : select to_regclass('public.crieur_posts') is null as rien_ne_reste, to_regprocedure('public.crieur_appel()') is null as fonction_absente, not exists (select 1 from cron.job where jobname = 'presti-crieur') as tache_absente
+-> [{"rien_ne_reste":true,"fonction_absente":true,"tache_absente":true}]
+APRES rien_ne_reste=true
