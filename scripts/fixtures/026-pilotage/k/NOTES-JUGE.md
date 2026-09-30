@@ -48,8 +48,7 @@ construit. Dans la fiche, `verite` regroupait CL-5..8 et `grille` CL-15 ; l'ordr
    commit d'avant 026-179 n'existe dans la référence du lot). Il mesure dans le navigateur, en gzip niveau 9, les `.js` réellement
    demandés de `/controle/station`, `/controle`, `/site/essai-artisan` et `/p/essai-artisan`. Il exige aussi que
    `/controle/station − /controle` pèse au moins 100 Kio : sinon Phaser n'est pas chargé avec la carte et la mesure ne prouve rien.
-7. **La perte de contexte** (CL-14) : `WEBGL_lose_context.loseContext()` sur le canevas, puis `restoreContext()` 600 ms plus tard (un appareil
-   rend le contexte tôt ou tard) ; la carte doit être de nouveau dessinée (canevas non uniforme, décodé par le juge) dans les 5 s, le
+7. **La perte de contexte** (CL-14) : `WEBGL_lose_context.loseContext()` sur le canevas, SANS jamais le rendre (Phaser sait se restaurer seul : un moteur qui ne fait qu'attendre passerait ; il doit se rebâtir, en WebGL neuf ou en rendu Canvas) ; la carte doit être de nouveau dessinée (canevas non uniforme, décodé par le juge) dans les 5 s, le
    miroir garder le même nombre de personnages, aucune `pageerror`. Le juge cherche à chaque fois le canevas dans
    `[data-station-carte]` : un moteur qui en rebâtit un (rendu Canvas) est accepté. Sans contexte WebGL possible : préalable (code 2).
 8. **Le repos** (CL-9) : baseline prise quand `game.loop.frame` est figé (il doit se figer dans les 20 s), puis attente, à la vraie

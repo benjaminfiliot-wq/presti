@@ -66,7 +66,7 @@ export const juges = [
     commande: 'scripts/station-claw3d-qa.mjs', arguments: ['--partie=repos,garde,pixel,contexte'], loader: false, attendu: 'CL-9', criteresMin: 4,
     sabotages: [
       { nom: 'pont-appele-a-chaque-lecture', fichier: ADAPT, avant: 'if (signature === this.signature) return', apres: 'if (signature === this.signature && false) return', tue: 'CL-9' },
-      { nom: 'carte-avant-le-200', fichier: STATION, avant: "if (etat === 'verification') return <p>Vérification de l’accès…</p>", apres: "if (etat === 'verification') return <Carte equipage={[]} tapis={null} bulles={[]} reglages={{}} carte={null} />", tue: 'CL-10' },
+      { nom: 'carte-avant-le-200', fichier: STATION, avant: "if (etat === 'verification') return <p>Vérification de l’accès…</p>", apres: "if (etat === 'verification') return <Carte equipage={[]} tapis={null} bulles={[]} reglages={{ theme: 'essai' }} carte={null} />", tue: 'CL-10' },
       { nom: 'k-non-entier', fichier: HOTE, avant: 'Math.max(1, Math.floor((cadreCss * densite) / largeurGrille))', apres: 'Math.max(1, (cadreCss * densite) / largeurGrille)', tue: 'CL-13' },
       { nom: 'contexte-perdu-sans-reprise', fichier: HOTE, avant: "toile.addEventListener('webglcontextlost', (e: Event) => { e.preventDefault(); void basculer() })", apres: "toile.addEventListener('webglcontextlost', (e: Event) => { e.preventDefault() })", tue: 'CL-14' },
     ],

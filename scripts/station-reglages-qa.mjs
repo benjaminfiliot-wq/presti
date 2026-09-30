@@ -415,8 +415,15 @@ else {
   if (debut < 0 || fin < debut) e.push('la région --reel du juge est introuvable')
   else {
     const region = src.slice(debut, fin)
-    for (const l of region.split('\n')) if (/method:\s*'PUT'/.test(l) && /\b(direction|fondateur)\.jeton\b/.test(l)) e.push(`--reel envoie un PUT avec le jeton du fondateur : « ${court(l.trim(), 80)} »`)
-    if (!/avecComptes\(/.test(region)) e.push('--reel ne crée pas ses comptes par avecComptes (purge dans un finally)')
+    // Un PUT avec le jeton du fondateur d'essai n'est permis que sur la ligne marquée « REFUS seulement », après la pose du rôle de lecture
+    // (le compte est alors un fondateur en lecture : le PUT ne peut être que refusé) ; tout autre PUT de ce genre est une réussite possible.
+    const lignes = region.split('\n')
+    for (const [i, l] of lignes.entries()) {
+      if (!(/['"]PUT['"]/.test(l) && /\b(direction|fondateur)\.jeton\b/.test(l))) continue
+      const avant = lignes.slice(0, i).join('\n')
+      if (!/REFUS seulement/.test(l) || !/direction_roles/.test(avant) || !/role:\s*'lecture'/.test(avant)) e.push(`--reel envoie un PUT avec le jeton du fondateur hors du rôle de lecture : « ${court(l.trim(), 80)} »`)
+    }
+    if (!/(^|[^\w])avecComptes\(/.test(region)) e.push('--reel ne crée pas ses comptes par avecComptes (purge dans un finally)')
     if (!/finally/.test(region)) e.push('--reel : aucun finally pour retirer le rôle de lecture et arrêter le serveur')
     if (/station_reglages/.test(region.replace(/reglages'/g, '')) && /\.(insert|upsert)\(|method:\s*'POST'/.test(region)) e.push('--reel écrit dans les réglages')
   }
