@@ -280,6 +280,7 @@ if (FLAGS) {
     // du tableau de bord (app/dashboard/page.tsx) lit `packPubVente`.
     'packPub': ['route', '/api/pubs/commander/brouillon', 'GET', 'app/api/pubs/commander/brouillon/route.ts', 'app/api/pubs/commander/route.ts'],
     'packPubVente': ['lu'],
+    'ecommerce': ['note', 'branche réservée : rien n’est construit, attend les trois vidéos sources de Benj'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
     // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un
