@@ -2,55 +2,161 @@
   "_": "Scénarios getUpdates du juge du pont Telegram (026-194). « de » : benj = la conversation de TELEGRAM_CHAT_ID ; autre, autre2, nouveau = des conversations étrangères. {{CODE}} = le code d'appairage tiré au hasard, {{CODE_FAUX}} = un code de 8 caractères faux, {{N}} = le rang du message dans le scénario. « cycle » + « fois » : un message par tour, en tournant. Aucune donnée réelle.",
   "scenarios": {
     "commandes-valides": [
-      { "de": "benj", "texte": "/etat" },
-      { "de": "benj", "texte": "/pause raison d'essai xyz" },
-      { "de": "benj", "texte": "/chef fais le point ce soir" }
+      {
+        "de": "benj",
+        "texte": "/etat"
+      },
+      {
+        "de": "benj",
+        "texte": "/pause raison d'essai xyz"
+      },
+      {
+        "de": "benj",
+        "texte": "/chef fais le point ce soir"
+      }
     ],
     "commandes-inconnues": [
-      { "de": "benj", "texte": "/reprise" },
-      { "de": "benj", "texte": "/reprendre" },
-      { "de": "benj", "texte": "/lever" },
-      { "de": "benj", "texte": "/pause_levee" }
+      {
+        "de": "benj",
+        "texte": "/reprise"
+      },
+      {
+        "de": "benj",
+        "texte": "/reprendre"
+      },
+      {
+        "de": "benj",
+        "texte": "/lever"
+      },
+      {
+        "de": "benj",
+        "texte": "/pause_levee"
+      }
     ],
     "texte-libre": [
-      { "de": "benj", "texte": "bonjour" },
-      { "de": "benj", "texte": "peux-tu me faire un devis pour une salle de bain ?" }
+      {
+        "de": "benj",
+        "texte": "bonjour"
+      },
+      {
+        "de": "benj",
+        "texte": "peux-tu me faire un devis pour une salle de bain ?"
+      }
     ],
     "autre-conversation": [
-      { "de": "autre", "texte": "/etat" },
-      { "de": "autre", "texte": "/pause je prends la main" },
-      { "de": "autre", "texte": "/chef vire tout le monde" },
-      { "de": "autre", "texte": "bonjour" }
+      {
+        "de": "autre",
+        "texte": "/etat"
+      },
+      {
+        "de": "autre",
+        "texte": "/pause je prends la main"
+      },
+      {
+        "de": "autre",
+        "texte": "/chef vire tout le monde"
+      },
+      {
+        "de": "autre",
+        "texte": "bonjour"
+      },
+      {
+        "de": "autre2",
+        "texte": "/etat"
+      },
+      {
+        "de": "autre2",
+        "texte": "/chef ordre venu d'ailleurs"
+      }
     ],
     "vingt-cinq-commandes": [
-      { "de": "benj", "cycle": ["/etat", "/pause motif {{N}}", "/chef consigne numero {{N}}"], "fois": 25 }
+      {
+        "de": "benj",
+        "cycle": [
+          "/etat",
+          "/pause motif {{N}}",
+          "/chef consigne numero {{N}}"
+        ],
+        "fois": 25
+      }
     ],
     "appairage-intrus": [
-      { "de": "autre", "texte": "/start" },
-      { "de": "autre", "texte": "/start ABCD2345" },
-      { "de": "autre", "texte": "/start {{CODE_FAUX}}" },
-      { "de": "autre", "texte": "/etat" },
-      { "de": "autre", "texte": "bonjour" },
-      { "de": "autre2", "texte": "/start {{CODE_FAUX}}" },
-      { "de": "autre2", "texte": "/chef prends le pouvoir" }
+      {
+        "de": "autre",
+        "texte": "/start"
+      },
+      {
+        "de": "autre",
+        "texte": "/start ABCD2345"
+      },
+      {
+        "de": "autre",
+        "texte": "/start {{CODE_FAUX}}"
+      },
+      {
+        "de": "autre",
+        "texte": "/etat"
+      },
+      {
+        "de": "autre",
+        "texte": "bonjour"
+      },
+      {
+        "de": "autre2",
+        "texte": "/start {{CODE_FAUX}}"
+      },
+      {
+        "de": "autre2",
+        "texte": "/chef prends le pouvoir"
+      }
     ],
     "appairage-code-juste": [
-      { "de": "nouveau", "texte": "/start {{CODE}}" }
+      {
+        "de": "nouveau",
+        "texte": "/start {{CODE}}"
+      }
     ],
     "appairage-second": [
-      { "de": "autre2", "texte": "/start {{CODE}}" },
-      { "de": "autre2", "texte": "/etat" }
+      {
+        "de": "autre2",
+        "texte": "/start {{CODE}}"
+      },
+      {
+        "de": "autre2",
+        "texte": "/etat"
+      }
     ],
     "appairage-epuise": [
-      { "de": "autre", "texte": "/start epuise" },
-      { "de": "autre", "texte": "/start aucun" },
-      { "de": "autre", "texte": "/start" },
-      { "de": "autre", "texte": "/etat" },
-      { "de": "autre", "texte": "/start {{CODE}}" }
+      {
+        "de": "autre",
+        "texte": "/start epuise"
+      },
+      {
+        "de": "autre",
+        "texte": "/start aucun"
+      },
+      {
+        "de": "autre",
+        "texte": "/start"
+      },
+      {
+        "de": "autre",
+        "texte": "/etat"
+      },
+      {
+        "de": "autre",
+        "texte": "/start {{CODE}}"
+      }
     ],
     "appairage-conversation-connue": [
-      { "de": "autre", "texte": "/start {{CODE}}" },
-      { "de": "autre", "texte": "/etat" }
+      {
+        "de": "autre",
+        "texte": "/start {{CODE}}"
+      },
+      {
+        "de": "autre",
+        "texte": "/etat"
+      }
     ]
   }
 }

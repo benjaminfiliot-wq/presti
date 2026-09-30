@@ -125,6 +125,8 @@ function groupe(l, texte, mode) { // texte : « (a.eq.1,b.gt.2,and(c.lt.3,d.is.n
   })
   return mode === 'and' ? evals.every(Boolean) : evals.some(Boolean)
 }
+// les colonnes de public.alertes (supabase/migrations/0065_direction.sql:109-120)
+const COLONNES_ALERTES_REELLES = ['id', 'motif', 'cle', 'gravite', 'sujet', 'corps', 'source', 'artisan_id', 'acquittee_le', 'acquittee_par', 'cree_le']
 function lireAlertes({ requete }) {
   if (cfg.erreurs?.alertes) return { status: 500, body: { code: 'XX000', message: 'alertes illisible (essai)', details: null, hint: null } }
   let lignes = [...(cfg.alertes ?? [])]
@@ -141,7 +143,7 @@ function lireAlertes({ requete }) {
   if (requete.limit !== undefined) lignes = lignes.slice(0, Number(requete.limit))
   const cols = requete.select && requete.select.trim() !== '*' ? requete.select.split(',').map((x) => x.trim()).filter(Boolean) : null
   if (cols) {
-    const connues = new Set((cfg.alertes ?? []).flatMap((l) => Object.keys(l)))
+    const connues = new Set(COLONNES_ALERTES_REELLES)
     const inconnue = cols.find((c) => !connues.has(c))
     if (inconnue) return { status: 400, body: { code: '42703', message: `column alertes.${inconnue} does not exist`, details: null, hint: null } }
     lignes = lignes.map((l) => Object.fromEntries(cols.map((c) => [c, l[c] ?? null])))
