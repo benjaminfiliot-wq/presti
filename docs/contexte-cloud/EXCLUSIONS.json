@@ -1,0 +1,63 @@
+{
+  "categories": [
+    "clés/jetons/mots de passe et valeurs env",
+    "données réelles de clients/prospects/prospection",
+    "sessions navigateurs/credentials et journaux bruts",
+    "binaires de signature Android, clés PEM et magasins de clés",
+    "images/vidéos/archives/dépendances/caches/.git/verrous",
+    "copie de travail relais-cloud-0930 dans presti-ops"
+  ],
+  "fichiers": [],
+  "coffre": [
+    {
+      "fichier": "android/presti-release-cert.pem",
+      "motif": "non publié",
+      "usage": "Certificat Android, valeurs non publiées"
+    },
+    {
+      "fichier": "android/presti-release-key.pem",
+      "motif": "non publié",
+      "usage": "Clé privée de signature Android : exclue"
+    },
+    {
+      "fichier": "android/presti-release.keystore",
+      "motif": "non publié",
+      "usage": "Coffre de signature Android : exclu"
+    },
+    {
+      "fichier": "clé api firecrawl.odt",
+      "motif": "non publié",
+      "usage": "Accès Firecrawl"
+    },
+    {
+      "fichier": "freellmapi.txt",
+      "motif": "non publié",
+      "usage": "Accès fournisseur IA freellmapi"
+    },
+    {
+      "fichier": "jeton-moteur-demandes.txt",
+      "motif": "non publié",
+      "usage": "Authentification du moteur de demandes"
+    },
+    {
+      "fichier": "meta-bibliotheque-pubs.txt",
+      "motif": "non publié",
+      "usage": "Accès Meta Ads Library"
+    },
+    {
+      "fichier": "prospection/linkedin-17-2026-09-09.md",
+      "motif": "exclu : personnes/entreprises et contacts réels",
+      "usage": "Données réelles de prospection"
+    },
+    {
+      "fichier": "prospection/prospects-3-reseaux-2026-09-09.md",
+      "motif": "exclu : personnes/entreprises et contacts réels",
+      "usage": "Données réelles de prospection"
+    },
+    {
+      "fichier": "prospection/prospects.json",
+      "motif": "exclu : personnes/entreprises et contacts réels",
+      "usage": "Données réelles de prospection"
+    }
+  ]
+}

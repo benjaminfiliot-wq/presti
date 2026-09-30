@@ -1,0 +1,83 @@
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "lan",
+    "port": 18789,
+    "auth": {
+      "mode": "token",
+      "token": { "source": "file", "provider": "jeton", "id": "value" },
+      "rateLimit": { "maxAttempts": 10, "windowMs": 60000, "lockoutMs": 300000 }
+    },
+    "controlUi": { "allowedOrigins": ["http://localhost:18800", "http://127.0.0.1:18800"] }
+  },
+  "secrets": {
+    "providers": {
+      "jeton": { "source": "file", "path": "/run/secrets/gateway.token", "mode": "singleValue" },
+      "fl": { "source": "file", "path": "/run/secrets/freellmapi.key", "mode": "singleValue" }
+    }
+  },
+  "update": { "checkOnStart": false, "auto": { "enabled": false } },
+  "telemetry": { "enabled": false },
+  "discovery": { "mdns": { "mode": "off" } },
+  "logging": { "consoleLevel": "info" },
+  "plugins": {
+    "deny": ["anthropic", "codex", "xai", "github", "cua-computer", "geolocation", "linux-node", "talk-voice", "device-pair", "browser", "canvas", "file-transfer", "memory-core"]
+  },
+  "skills": { "workshop": { "autonomous": { "mode": "off" } }, "load": { "extraDirs": ["/work/skills"] } },
+  "models": {
+    "mode": "replace",
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://127.0.0.1:11434",
+        "api": "ollama",
+        "apiKey": "ollama-local",
+        "timeoutSeconds": 900,
+        "models": [
+          { "id": "gpt-oss:120b-cloud", "name": "GPT-OSS 120B (Ollama Cloud, gratuit)", "reasoning": true, "input": ["text"], "contextWindow": 131072, "maxTokens": 16384 },
+          { "id": "qwen3:8b-q4_K_M", "name": "Qwen3 8B (local, prive)", "reasoning": true, "input": ["text"], "contextWindow": 32768, "maxTokens": 4096 },
+          { "id": "qwen3:4b-instruct-2507-q4_K_M", "name": "Qwen3 4B (local, prive)", "reasoning": false, "input": ["text"], "contextWindow": 32768, "maxTokens": 4096 }
+        ]
+      },
+      "freellmapi": {
+        "baseUrl": "http://127.0.0.1:3001/v1",
+        "api": "openai-completions",
+        "apiKey": { "source": "file", "provider": "fl", "id": "value" },
+        "timeoutSeconds": 300,
+        "models": [
+          { "id": "gpt-oss-120b", "name": "GPT-OSS 120B (freellmapi)", "reasoning": false, "input": ["text"], "contextWindow": 131072, "maxTokens": 8192, "compat": { "supportsStore": false, "maxTokensField": "max_tokens" } },
+          { "id": "mistral-large-3", "name": "Mistral Large 3 (freellmapi)", "reasoning": false, "input": ["text"], "contextWindow": 131072, "maxTokens": 8192, "compat": { "supportsStore": false, "maxTokensField": "max_tokens" } },
+          { "id": "devstral-2", "name": "Devstral 2 (freellmapi)", "reasoning": false, "input": ["text"], "contextWindow": 131072, "maxTokens": 8192, "compat": { "supportsStore": false, "maxTokensField": "max_tokens" } }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/work",
+      "skipBootstrap": true,
+      "utilityModel": "",
+      "timeoutSeconds": 900,
+      "heartbeat": { "every": "0m" },
+      "model": {
+        "primary": "ollama/gpt-oss:120b-cloud",
+        "fallbacks": ["freellmapi/gpt-oss-120b", "freellmapi/mistral-large-3", "ollama/qwen3:8b-q4_K_M"]
+      },
+      "sandbox": { "mode": "off" }
+    }
+  },
+  "tools": {
+    "profile": "coding",
+    "alsoAllow": ["group:web"],
+    "deny": ["group:runtime", "group:messaging", "group:nodes", "group:automation", "group:ui"],
+    "byProvider": {
+      "ollama/qwen3:8b-q4_K_M": { "deny": ["group:web"] },
+      "ollama/qwen3:4b-instruct-2507-q4_K_M": { "deny": ["group:web"] }
+    },
+    "fs": { "workspaceOnly": true },
+    "elevated": { "enabled": false },
+    "web": {
+      "search": { "enabled": true, "provider": "ollama" },
+      "fetch": { "enabled": true }
+    }
+  }
+}
