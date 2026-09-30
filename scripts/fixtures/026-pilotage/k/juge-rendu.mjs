@@ -627,7 +627,8 @@ async function couleurs(ctx, png) {
 }
 export async function critereContexte(ctx) {
   const e = []
-  const P = await nouvellePage(ctx, { reponses: constantes(ctx.suite) })
+  const reponses = constantes(ctx.suite)
+  const P = await nouvellePage(ctx, { reponses })
   let detail = ''
   try {
     await P.aller()
@@ -635,6 +636,7 @@ export async function critereContexte(ctx) {
     if (raison) return { echecs: [raison], detail: '' }
     await attendre(1200)
     const avant = await lireMiroir(P.page)
+    const h0 = (await empreinteRepos(P.page)).hash
     if (await couleurs(ctx, await lireImage(P.page)) < 2) return { echecs: ['avant la perte, le canevas est uniforme : la carte ne dessine rien (rien à rattraper)'], detail: '' }
     const perdu = await P.page.evaluate(() => {
       const c = document.querySelector('[data-station-carte] canvas')
@@ -642,24 +644,31 @@ export async function critereContexte(ctx) {
       if (!g) return 'aucun contexte WebGL'
       const x = g.getExtension('WEBGL_lose_context')
       if (!x) return 'WEBGL_lose_context indisponible'
-      globalThis.__perte = x
       x.loseContext()
       return null
     })
     if (perdu === 'aucun contexte WebGL') return { echecs: ['préalable : le canevas n\'a pas de contexte WebGL (le jeu tourne déjà en rendu Canvas) : la perte ne peut pas être simulée'], detail: '' }
     if (perdu) return { echecs: [`préalable : ${perdu}`], detail: '' }
-    // Le contexte n'est PAS rendu : un moteur qui ne fait qu'attendre sa restauration reste vide. Il doit se rebâtir (WebGL neuf ou rendu Canvas).
+    // Le contexte n'est PAS rendu : un moteur qui ne fait qu'attendre sa restauration reste figé. Il doit se rebâtir (WebGL neuf ou rendu Canvas).
     const revenu = await jusqua(async () => {
       if (!(await P.page.locator(SELECTEUR_TOILE).count())) return null
-      const n = await couleurs(ctx, await lireImage(P.page).catch(() => Buffer.alloc(0)).then((b) => (b.length ? b : Buffer.from('')))).catch(() => 0)
-      return n >= 2 ? true : null
+      const png = await lireImage(P.page).catch(() => null)
+      return png && (await couleurs(ctx, png)) >= 2 ? true : null
     }, { delai: 5000, pas: 250 })
     if (!revenu) e.push('après la perte du contexte WebGL, le canevas reste uniforme 5 s : la carte ne revient pas (ni WebGL, ni rendu Canvas)')
     else {
+      // Un cliché d'un canevas perdu garde la dernière image : la preuve du retour est qu'un NOUVEL état se dessine.
+      appliquerEtape(reponses, ctx.suite.etapes[1])
+      const { ok } = await attendreRepos(P, ctx.suite.etapes[1].attendu, { delai: 20_000 })
+      if (!ok) e.push(`après la perte, le miroir ne suit plus l'étape « ${ctx.suite.etapes[1].cle} »`)
+      else {
+        const h1 = (await empreinteRepos(P.page)).hash
+        if (h1 === h0) e.push('après la perte du contexte WebGL, un nouvel état est servi et le canevas ne change pas : la carte ne se redessine plus')
+      }
       const apres = await lireMiroir(P.page)
       if (apres.length !== avant.length) e.push(`après la perte, le miroir porte ${apres.length} personnage(s), ${avant.length} avant : la scène rebâtie n'a pas reçu l'état`)
       const type = await P.page.evaluate(() => (globalThis.__stationGame ? globalThis.__stationGame.config.renderType : null))
-      detail = `perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s${type === 1 ? ' (rendu Canvas)' : ''}, ${apres.length} personnages au miroir`
+      detail = `perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s${type === 1 ? ' (rendu Canvas)' : ''} et redessine un nouvel état (étape « ${ctx.suite.etapes[1].cle} »), ${apres.length} personnages au miroir`
     }
     const non = P.erreurs.filter((m) => m.startsWith('pageerror'))
     if (non.length) e.push(`erreur non rattrapée après la perte : ${non[0]}`)
