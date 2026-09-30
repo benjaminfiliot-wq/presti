@@ -13546,6 +13546,91 @@
       "fichier": "presti/videos/presti-reel/package.json",
       "octets": 296,
       "sha256": "19ffb18b051cd9cc3a6c5c34ff92c78b1dfd139f9992efaa7f79717e9fdb3d47"
+    },
+    {
+      "fichier": "presti/.promo-tmp/carre/liste.txt",
+      "octets": 543,
+      "sha256": "96821f6625fc794acf5f3fa31ff0d55a983163e896565f9b31ca62612587aa6b"
+    },
+    {
+      "fichier": "presti/.promo-tmp/paysage/liste.txt",
+      "octets": 699,
+      "sha256": "1e30f17259a25568e45b015a0416658929d81f78db58bdddc00ccd3eee14090d"
+    },
+    {
+      "fichier": "presti/.promo-tmp/vertical/liste.txt",
+      "octets": 567,
+      "sha256": "1eb02b85c36b6cbdfa4f3b51cf3dd799e70272cf2bb686c7a2ea2b789b994538"
+    },
+    {
+      "fichier": "presti/publications/LISEZMOI.md",
+      "octets": 6207,
+      "sha256": "be9d763548d3e7ecff4033ba7df842f59eccc2e0120e59eb78aa3d9b9736954a"
+    },
+    {
+      "fichier": "presti/publications/pub-01/texte.md",
+      "octets": 12764,
+      "sha256": "5f0846c0f543f08285262bd677d9e766a3b67400290ac9839786683975831b65"
+    },
+    {
+      "fichier": "presti/publications/pub-02/texte.md",
+      "octets": 9863,
+      "sha256": "b339de55c254023d826b04e977816f5a024f19d02d0178845d82a5c6dd58f186"
+    },
+    {
+      "fichier": "presti/publications/pub-03/texte.md",
+      "octets": 10910,
+      "sha256": "216ea8c3dc1db6c314164d0e8d5d0a32ad18218e239292e80c0246db1b1bd6a1"
+    },
+    {
+      "fichier": "presti/publications/pub-04/texte.md",
+      "octets": 12352,
+      "sha256": "adf69ad4de079255e444e3b96b3e07be2db913677b9b6205841a34f9198872de"
+    },
+    {
+      "fichier": "presti/publications/pub-05/texte.md",
+      "octets": 12304,
+      "sha256": "60e606765c2f8c269c6d317de6aae79e23756a6cc777c1591d9affebef36513a"
+    },
+    {
+      "fichier": "presti/publications/pub-06/texte.md",
+      "octets": 12063,
+      "sha256": "8ebf78725ddfa20f006d13942a24e7010850eebaa5f819ce30334fec0e7a02e7"
+    },
+    {
+      "fichier": "presti/publications/pub-07/texte.md",
+      "octets": 12345,
+      "sha256": "0133d8da5dc731a3612789c48834fd7529ed4337e084c840e36795c7b1328334"
+    },
+    {
+      "fichier": "presti/publications/pub-08/texte.md",
+      "octets": 12873,
+      "sha256": "0ab4c35986b2b11e6cc9a285be1227c8070e4d660b60e40f12a6ab25e30400aa"
+    },
+    {
+      "fichier": "presti/publications/pub-09/texte.md",
+      "octets": 11136,
+      "sha256": "edd721ba822ff7ba67fef02a96fd16ac3763a06f517000f6a75e408dfdcdc841"
+    },
+    {
+      "fichier": "presti/publications/pub-10/texte.md",
+      "octets": 12753,
+      "sha256": "fc522a219d74bc874b7d09f8e9e487995c926dae948ffbd945c128bc33a5c03b"
+    },
+    {
+      "fichier": "presti/publications/serie-2/medias-en-ligne.json",
+      "octets": 1020,
+      "sha256": "49089d31423d05fbac049afe4cff03d19bf6ffa0a273365cfe55de07fac241c4"
+    },
+    {
+      "fichier": "presti/publications/serie-2/pub-16-instagram-texte-publie.txt",
+      "octets": 398,
+      "sha256": "0cda1b055357daf2fe4fd0d45b0a7702819107108b966f17baf215b3a994cba1"
+    },
+    {
+      "fichier": "presti/publications/videos-en-ligne.json",
+      "octets": 3402,
+      "sha256": "e14cc63df8dc4a421883825e03b4cff95e6eebbddacdc9b69405b1ad154a5737"
     }
   ]
 }
