@@ -1,0 +1,122 @@
+# Hermes Agent sur l'usine : /srv/hermes/compose.yaml
+# Lancer :   docker compose -f /srv/hermes/compose.yaml up -d
+# Arrêter :  docker compose -f /srv/hermes/compose.yaml down
+#
+# CORRIGÉ le 28/09/2026 contre le vrai binaire (nousresearch/hermes-agent:v2026.9.24, arm64,
+# digest sha256:93b4e2877a2f48f4474b6dd2b99386ae32c4c552d32639df1a869b3f13c50b5a) — voir LISEZMOI.md
+# pour le détail des essais réels qui ont produit ce fichier. Résumé des écarts avec le premier
+# brouillon (jamais lancé) :
+#   - L'ENTRYPOINT de l'image (/opt/hermes/docker/entrypoint-dispatch.sh -> /init -> s6-overlay)
+#     N'EST PLUS court-circuité par un tini perso : bypasser /init casse l'initialisation de
+#     HERMES_HOME (testé : `hermes config set` échouait sur /opt/data/cron avec "Permission
+#     denied" / lien manquant). /init fait aussi office de reaper PID 1 (plus besoin de tini).
+#   - Le conteneur DÉMARRE root (obligatoire : c'est /init qui chowne /opt/data vers l'uid interne
+#     "hermes" puis fait le setuid — testé et confirmé, cap_drop:[ALL] SANS cap_add casse ce
+#     chown/setuid avec "Operation not permitted"). Le process réel (notre pont, puis chaque
+#     `hermes` de tâche) tourne ensuite en non-root via ce mécanisme interne, jamais en `user:`
+#     Docker direct (contrairement à OpenClaw — l'image Hermes REJETTE un `docker run --user`
+#     arbitraire avec un message dédié dans main-wrapper.sh).
+#   - cap_drop: [ALL] + cap_add ciblé (CHOWN, FOWNER, SETUID, SETGID, DAC_OVERRIDE) : testé, c'est
+#     le minimum qui laisse le chown+setuid interne réussir. Sans DAC_OVERRIDE/FOWNER, échec aussi.
+#   - read_only: true fonctionne, mais /run DOIT être un tmpfs avec l'option "exec" (le tmpfs par
+#     défaut de Docker est noexec ; testé : sans "exec", s6 échoue sur
+#     "/run/s6/basedir/bin/init: Permission denied").
+#   - Le service "dashboard" s'enregistre toujours dans s6 au démarrage (log "successfully
+#     started"), mais c'est une coquille vide tant que HERMES_DASHBOARD n'est pas positionné
+#     (lu le run/finish réels du service : sans cette variable, le script sort tout de suite et
+#     s6 marque le slot "down" en échec permanent — AUCUN serveur HTTP n'écoute). On ne pose
+#     JAMAIS HERMES_DASHBOARD : conforme à la consigne « rien qui tourne seul ».
+#   - Le `command:` (pas l'ENTRYPOINT) pilote ce qui tourne réellement : testé avec
+#     `command: ["sh", "/opt/pont/lancer.sh"]`, jamais "gateway run" — donc aucun canal de
+#     messagerie, aucun serveur API, comme prévu.
+#
+# Règles tenues : aucun abonnement ni clé Claude/Anthropic, modèles gratuits seulement (Ollama
+# local + Ollama Cloud, freellmapi), aucun secret de Presti, aucun port ouvert (pas de "ports:" —
+# sans "gateway run" il n'y a rien à publier, même en 127.0.0.1).
+# HE_UID / HE_GID viennent de /srv/hermes/.env (compte système « hermes »).
+name: hermes
+
+x-durci: &durci
+  image: nousresearch/hermes-agent:v2026.9.24
+  # empreinte (arm64) vérifiée le 28/09/2026 :
+  # sha256:93b4e2877a2f48f4474b6dd2b99386ae32c4c552d32639df1a869b3f13c50b5a
+  restart: unless-stopped
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "5" }
+
+services:
+  hermes:
+    <<: *durci
+    container_name: hermes
+    # Entrypoint par défaut de l'image (non surchargé) : /init (s6-overlay) fait le chown de
+    # /opt/data vers l'uid HERMES_UID/HERMES_GID puis lance notre commande en non-root.
+    command: ["sh", "/opt/pont/lancer.sh"]
+    cap_add: [CHOWN, FOWNER, SETUID, SETGID, DAC_OVERRIDE]  # minimum testé pour le chown+setuid interne de /init
+    environment:
+      HERMES_UID: "${HE_UID}"
+      HERMES_GID: "${HE_GID}"
+      HERMES_HOME: /opt/data
+      HERMES_WRITE_SAFE_ROOT: /work   # restreint l'outil write_file/patch de l'agent à /work (tâches) ; l'état (/opt/data) passe par les commandes hermes elles-mêmes, pas par cet outil
+      HERMES_SKIP_CONFIG_MIGRATION: "1"
+      DO_NOT_TRACK: "1"
+      TZ: Europe/Paris
+      # PAS de HERMES_DASHBOARD : le service dashboard reste un slot s6 en échec permanent (testé), rien n'écoute.
+    env_file:
+      - /srv/hermes/etat/secrets.env   # FREELLMAPI_KEY seulement ; posé par installer.sh, jamais dans ce dépôt
+    volumes:
+      - /srv/hermes/etat:/opt/data
+      - /srv/hermes/work:/work
+      - /srv/hermes/relais:/relais
+      - /srv/hermes/pont:/opt/pont:ro
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+      - /run:size=64m,exec   # "exec" obligatoire : s6 (/run/s6/basedir/bin/init) doit pouvoir s'exécuter depuis ce tmpfs
+    read_only: true
+    networks: [isole]
+    mem_limit: 4g
+    memswap_limit: 4g
+    cpus: 1.5
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD", "node", "/opt/pont/sante.mjs"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    depends_on: [relais]
+
+  relais:
+    <<: *durci
+    container_name: hermes-relais
+    user: "${HE_UID}:${HE_GID}"   # ce service-là n'a pas besoin de démarrer root : c'est juste notre pont.mjs
+    # PAS de tini ici : testé le 28/09/2026, /usr/bin/tini de CETTE image n'est plus le vrai tini
+    # depuis la migration s6-overlay de Hermes (contrairement à l'image OpenClaw) — c'est un shim
+    # de compatibilité qui réexécute TOUJOURS /init (s6-overlay), lequel exige de démarrer root
+    # pour chowner /run (voir le commentaire du service "hermes" ci-dessus). Avec
+    # user: "${HE_UID}:${HE_GID}" ici, /init tournait déjà en non-root et plantait sur
+    # "/run belongs to uid 0 ... lacking the privileges to fix it" (boucle de redémarrage
+    # observée). pont.mjs est un script Node unique sans enfants à moissonner : node peut être
+    # PID 1 directement, sans passer par le shim ni par s6.
+    entrypoint: ["node", "/opt/pont/pont.mjs", "hote"]
+    network_mode: host
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    volumes:
+      - /srv/hermes/relais:/relais
+      - /srv/hermes/pont:/opt/pont:ro
+    mem_limit: 128m
+    memswap_limit: 128m
+    cpus: 0.25
+    pids_limit: 64
+    # Pas de "healthcheck:" ici : `docker inspect nousresearch/hermes-agent:v2026.9.24
+    # --format '{{json .Config.Healthcheck}}'` rend null (contrairement à l'image OpenClaw, qui
+    # embarque un HEALTHCHECK par défaut inadapté à son conteneur relais — voir le correctif du
+    # 28/09/2026 dans openclaw/compose.yaml). Rien n'est hérité ici, donc rien à désactiver.
+
+networks:
+  isole:
+    driver: bridge

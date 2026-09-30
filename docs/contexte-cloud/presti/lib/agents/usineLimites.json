@@ -1,0 +1,9 @@
+{
+  "livraison": {
+    "entrees_max": 50,
+    "fichiers_max": 300,
+    "octets_fichier_max": 5242880,
+    "octets_total_max": 41943040,
+    "types": ["text/html", "text/css", "text/javascript", "application/javascript", "application/json", "image/webp", "image/avif", "image/jpeg", "image/png", "image/svg+xml", "font/woff2", "text/plain", "application/xml", "text/xml"]
+  }
+}

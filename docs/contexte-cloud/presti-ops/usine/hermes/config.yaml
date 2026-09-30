@@ -1,0 +1,50 @@
+# /srv/hermes/etat/config.yaml — posé par installer.sh à la première installation seulement
+# (jamais réécrit ensuite, sauf `installer.sh --config`).
+#
+# CORRIGÉ le 28/09/2026 contre le vrai CLI (docker run --rm --entrypoint hermes
+# nousresearch/hermes-agent:v2026.9.24 config --help / config check, puis des appels réels).
+# Écarts avec le premier brouillon (jamais vérifié) :
+#   - Pas de bloc "terminal:" / "memory:" / "compression:" / "updates:" : aucune de ces clés
+#     n'existe dans le schéma réel (confirmé par `hermes config check`, qui liste les clés
+#     manquantes/dépréciées — aucune ne les mentionne). Retirées : un faux confort, pas une
+#     protection.
+#   - Le bloc "providers:" existe bel et bien (grep confirmé dans hermes_cli/runtime_provider_
+#     custom.py), avec les clés "api" (URL), "key_env" (nom de variable d'environnement pour la
+#     clé) et "models" (catalogue). C'est la bonne façon de déclarer Ollama et freellmapi.
+#   - PIÈGE TROUVÉ EN TEST : `model.default: "ollama/gpt-oss:120b-cloud"` (chaîne combinée
+#     provider/modèle) envoie un modèle MAL FORMÉ à l'API réelle (le « :120b-cloud » est tronqué
+#     et un préfixe « ollama/ » ou « freellmapi/ » est conservé à tort dans le champ "model" —
+#     confirmé par les erreurs HTTP 404 des deux côtés). Le contournement testé et qui MARCHE :
+#     ne jamais compter sur model.default/model.provider pour une tâche réelle ; toujours passer
+#     `hermes --provider <nom> -m <modèle-sans-prefixe> -z "…"` en ligne de commande (voir
+#     bin/tache.sh, qui le fait automatiquement). Ce fichier fixe quand même model.default/
+#     model.provider à une valeur raisonnable pour `hermes chat`/`hermes doctor`, jamais pour
+#     l'automatisation.
+#   - Pas de "-z --query-file" : ce drapeau n'existe pas (absent de `hermes --help`). Le prompt se
+#     passe en argument direct de -z (bin/tache.sh le fait).
+#
+# Objectif : seuls les modèles gratuits de l'usine (relais Ollama/freellmapi), jamais Nous Portal
+# (créerait un compte/abonnement externe, interdit ici), jamais Anthropic/Claude.
+
+model:
+  default: ollama/gpt-oss:120b-cloud   # indicatif seulement (hermes chat) — les tâches passent --provider/-m explicites
+  provider: ollama
+
+providers:
+  ollama:
+    api: http://127.0.0.1:11434/v1
+    models:
+      "gpt-oss:120b-cloud": {}
+      "qwen3:8b-q4_K_M": {}
+      "qwen3:4b-instruct-2507-q4_K_M": {}
+  freellmapi:
+    api: http://127.0.0.1:3001/v1
+    key_env: FREELLMAPI_KEY   # lu depuis /opt/data/../secrets.env (env_file du service, posé par installer.sh) — jamais en clair ici
+    models:
+      "gpt-oss-120b": {}
+      "mistral-large-3": {}
+      "devstral-2": {}
+
+# À VÉRIFIER (pas encore confirmé, sans impact bloquant sur l'usage one-shot testé) :
+#   - désactivation fine du cron/heartbeat interne au-delà de l'absence de "gateway run" ;
+#   - comportement de "hermes worktree"/"checkpoints" dans le temps (purge à prévoir si /opt/data grossit).

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "note": "Réglages du Vigile (fiche 026-248). Seuils provisoires jusqu'au « oui » de Benj : un seuil confirmé devient { valeur, provisoire: false, accord: \"AAAA-MM-JJ\" } (la date du oui), et vigile-qa (VG-1, VG-10, VG-12) se met à jour avec lui. Aucune valeur de secret ici : des noms, des lieux, des dates.",
+  "seuils": {
+    "erreurs_orange": { "valeur": 10, "provisoire": true },
+    "erreurs_rouge": { "valeur": 100, "provisoire": true },
+    "bans_orange": { "valeur": 5, "provisoire": true },
+    "bans_rouge": { "valeur": 20, "provisoire": true },
+    "echeance_orange_jours": { "valeur": 14, "provisoire": true },
+    "echeance_rouge_jours": { "valeur": 7, "provisoire": true },
+    "fin_support_orange_jours": { "valeur": 30, "provisoire": true },
+    "registre_perime_jours": { "valeur": 90, "provisoire": true }
+  },
+  "fins_support": [
+    { "paquet": "next", "majeure": 15, "fin_support": "2026-10-21", "source": "https://endoflife.date/nextjs", "lu_le": "2026-09-28" }
+  ],
+  "echeances": [
+    { "nom": "TELEGRAM_BOT_TOKEN", "ou": "coffre de l'usine (026-196)", "expire_le": null, "sans_echeance": true, "source": "https://core.telegram.org/bots/features#botfather (un jeton de bot n'expire pas, il se révoque)", "verifie_le": "2026-09-28" },
+    { "nom": "PROSPECTION_GMAIL_PASS", "ou": "Vercel (026-094)", "expire_le": null, "sans_echeance": true, "source": "https://support.google.com/accounts/answer/185833 (un mot de passe d'application n'expire pas ; il tombe si le mot de passe du compte change)", "verifie_le": "2026-09-28" },
+    { "nom": "META_APP_SECRET", "ou": "Vercel (R6)", "expire_le": null, "sans_echeance": true, "source": "https://developers.facebook.com/docs/facebook-login/security (la clé secrète d'application n'a pas d'échéance ; elle se réinitialise)", "verifie_le": "2026-09-28" },
+    { "nom": "META_PAGE_TOKEN", "ou": "Vercel (R6)", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "PUBLORA_API_KEY", "ou": "Publora (026-108, 026-116)", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "GITHUB_DISPATCH_TOKEN", "ou": "Vercel (026-030)", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "LIVRAISON_ENV", "ou": "secret GitHub du dépôt de livraison (026-030)", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "GSC_COMPTE_SERVICE", "ou": "Vercel, depuis le fichier du compte de service (026-201)", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "cron_secret", "ou": "Vault de Supabase (026-086)", "expire_le": null, "sans_echeance": true, "source": "fixé par nous (valeur de CRON_SECRET de Vercel, 026-086) : aucune échéance", "verifie_le": "2026-09-28" }
+  ],
+  "registre_verifie_le": "2026-09-28",
+  "resume_modele": { "actif": false, "accord": null },
+  "pause_securite": {
+    "seuils": {
+      "secret_expose": { "valeur": 1, "provisoire": true },
+      "echecs_1h": { "valeur": 20, "provisoire": true },
+      "cout_jour_eur": { "valeur": 1, "provisoire": true },
+      "envois_hors_regle_24h": { "valeur": 1, "provisoire": true }
+    },
+    "max_par_passage": 1,
+    "cibles_interdites": ["chef", "pont", "pont_telegram", "systeme", "a0", "usine", "vigile"],
+    "accord": null
+  }
+}

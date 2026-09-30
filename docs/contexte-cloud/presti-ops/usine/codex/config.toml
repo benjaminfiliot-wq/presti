@@ -1,0 +1,9 @@
+# Codex sur l'usine (Oracle, Linux ARM). Memes regles que sur le PC de Benj (24/09/2026) :
+# bac a sable workspace-write avec reseau, jamais danger-full-access ; modele gpt-6-sol (consigne de Benj).
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+model = "gpt-6-sol"
+model_reasoning_effort = "medium"
+
+[sandbox_workspace_write]
+network_access = true
