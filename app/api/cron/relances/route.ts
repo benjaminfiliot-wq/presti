@@ -132,7 +132,7 @@ export async function GET(req: Request) {
         // relance signée du nom de l'éditeur. Sans nom d'artisan, on n'écrit rien du tout.
         subject: artisan?.nom ? `Suite à votre demande — ${artisan.nom}` : 'Suite à votre demande',
         text,
-        fromName: artisan?.nom ?? undefined,
+        fromName: artisan?.nom?.trim() || 'Votre artisan',
         replyTo: artisan?.email ?? undefined,
       })
       // Email refusé (plafond, Resend en panne) : la relance reste due, on réessaiera demain —
