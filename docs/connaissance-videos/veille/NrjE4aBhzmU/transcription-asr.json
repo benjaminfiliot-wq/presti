@@ -1,0 +1,1725 @@
+{
+  "model": "faster-whisper-small",
+  "engine": "1.2.1",
+  "device": "cpu",
+  "compute_type": "int8",
+  "cpu_threads": 2,
+  "beam_size": 5,
+  "vad_filter": true,
+  "language": "fr",
+  "language_probability": 0.9890017509460449,
+  "duration": 803.173,
+  "elapsed_seconds": 522.18,
+  "segments": [
+    {
+      "start": 0.11,
+      "end": 6.11,
+      "text": "Dans cette vidéo, je vais vous montrer comment j'arrive à faire plus de 50 000 euros par mois de profit net dans ma poche en e-commerce en vendant des produits"
+    },
+    {
+      "start": 6.11,
+      "end": 12.59,
+      "text": "Boring que personne ne vend sur Google Ads. En 15 minutes tu sauras faire l'exact même chose, je vais dévoiler tout mon blueprint."
+    },
+    {
+      "start": 13.71,
+      "end": 18.75,
+      "text": "Alors au-delà de te juste de dire mes chiffres, je vais te les montrer donc je nous prends quelques journées au hasard, on se retrouve sur Triple Whale."
+    },
+    {
+      "start": 18.75,
+      "end": 24.35,
+      "text": "C'est simplement la patente que moi j'utilise pour traquer mon profit tous les jours, je ne regarde quasiment jamais mon chiffre d'affaires, je ne regarde que mon profit."
+    },
+    {
+      "start": 24.35,
+      "end": 29.39,
+      "text": "Alors on voit donc 1200 euros de profit sur cette journée là, là qu'on a exactement 1001 et là on va être à quoi 1005."
+    },
+    {
+      "start": 29.87,
+      "end": 31.39,
+      "text": "C'est globalement comme ça à peu près tout le temps."
+    },
+    {
+      "start": 31.39,
+      "end": 37.39,
+      "text": "Pour vous donner un peu les stats, j'ai 3 shops aujourd'hui à l'heure actuelle qui tournent vraiment dans mon portefeuille, je ne vous compte pas les trucs qui font moins de 500 euros par jour."
+    },
+    {
+      "start": 37.39,
+      "end": 41.87,
+      "text": "C'est le site sur lequel je fais le plus de profits, je ne vais pas mentir, j'ai plus de 30 000 euros de profit par mois, juste sur ce site."
+    },
+    {
+      "start": 41.87,
+      "end": 49.87,
+      "text": "Le but c'est qu'à la fin de cette vidéo, tu connais toute ma stratégie pour que tu puisses refaire l'exact même chose et que tu es toutes les clés pour aller chercher entre 5 et 10 cas par mois de profit"
+    },
+    {
+      "start": 49.87,
+      "end": 53.07,
+      "text": "sans avoir eu à payer la moindre formation, le moindre coaching etc."
+    },
+    {
+      "start": 53.07,
+      "end": 56.91,
+      "text": "Tu vas remplir, dupliquer ce que je fais et comprendre simplement comment j'arrive à chiffrer sur Google."
+    },
+    {
+      "start": 56.91,
+      "end": 63.07,
+      "text": "Donc si tu es sérieux à l'idée de changer ta vie grâce à l'ICOM et de vraiment faire du profit, on s'en fout concrètement du fait d'affaire ici, je t'invite à regarder cette vidéo jusqu'au bout."
+    },
+    {
+      "start": 63.07,
+      "end": 68.51,
+      "text": "Pendant que tous les gurus du dropshipping sont en train de vous convaincre d'aller chercher des ventes sur TikTok, Meta etc."
+    },
+    {
+      "start": 68.51,
+      "end": 73.55,
+      "text": "et de vendre en fait un produit à des gens qu'on n'a pas besoin, on vient juste interrompre les gens dans leur dopamine pour essayer de leur vendre un body gainant."
+    },
+    {
+      "start": 73.55,
+      "end": 78.19,
+      "text": "Ce n'est pas du tout ce que nous on fait, nous sur Google on vend à des gens qui ont globalement la carte en main quand ils viennent chez nous."
+    },
+    {
+      "start": 78.19,
+      "end": 82.51,
+      "text": "Moi c'est les raisons pour laquelle je pense sur Google, la première raison c'est parce que ça se base uniquement sur de la recherche transactionnelle."
+    },
+    {
+      "start": 82.59,
+      "end": 86.43,
+      "text": "Les gens qui recherchent un produit sur Google sont là pour l'acheter, ce n'est pas des visiteurs qui viennent juste regarder globalement."
+    },
+    {
+      "start": 86.43,
+      "end": 91.15,
+      "text": "Ensuite il n'y a pas à faire le grand artiste et à faire des créatifs pendant 4 heures par jour sur Kandva, sur CapCut."
+    },
+    {
+      "start": 91.15,
+      "end": 94.51,
+      "text": "Moi c'est un truc que j'ai détesté, j'ai fait de l'ICOM sur Meta, j'ai même chiffré un peu sur Meta."
+    },
+    {
+      "start": 94.51,
+      "end": 97.71,
+      "text": "J'ai détesté ça, ce n'est pas du tout un truc que je me reverrai faire aujourd'hui."
+    },
+    {
+      "start": 97.71,
+      "end": 100.75,
+      "text": "Je ne suis pas un designer, ce n'est pas mon rôle de faire ça globalement, je déteste ça."
+    },
+    {
+      "start": 100.75,
+      "end": 105.71,
+      "text": "Donc autre raison, ensuite on est sur des vraies marges, sur Google on va réussir à marger en moyenne entre 30 et 40%."
+    },
+    {
+      "start": 105.79,
+      "end": 107.87,
+      "text": "Les marges à 50% n'existent pas, désolé de vous le dire."
+    },
+    {
+      "start": 107.87,
+      "end": 112.83,
+      "text": "Tous les gens qui parlent de marges à 45, 50% sur Google ça peut arriver sur une journée quand on t'est débutant et que t'as fait un journée à un cas."
+    },
+    {
+      "start": 112.83,
+      "end": 116.43,
+      "text": "Mais globalement sur un site à l'année tu vas plutôt tourner sur du 30, 40%."
+    },
+    {
+      "start": 116.43,
+      "end": 118.27,
+      "text": "Moi je suis genre 33, 34%."
+    },
+    {
+      "start": 118.27,
+      "end": 122.99,
+      "text": "Encore un point qui moi je m'a convaincu le fait de vendre sur Google, c'est simplement le fait qu'on vend des produits boring."
+    },
+    {
+      "start": 122.99,
+      "end": 127.39,
+      "text": "Donc on va vendre des remontoires, on va vendre des luminaires, on va vendre des produits qui en fait vont passer souffler au bout de deux ans."
+    },
+    {
+      "start": 127.39,
+      "end": 132.67,
+      "text": "Parce qu'il y a de la recherche constante, les gens recherchent toujours ce genre de produit et dans un an, deux ans, trois ans ça ne changera pas."
+    },
+    {
+      "start": 132.75,
+      "end": 134.43,
+      "text": "Il y aura toujours des gens qui vont chercher ça."
+    },
+    {
+      "start": 134.43,
+      "end": 137.95,
+      "text": "La première question que tu peux poser c'est globalement qui sont les mecs qui font ce genre de chiffres."
+    },
+    {
+      "start": 137.95,
+      "end": 139.87,
+      "text": "Je vous montre un exemple tout con que j'ai juste ici."
+    },
+    {
+      "start": 139.87,
+      "end": 142.51,
+      "text": "Ce site là c'est un site qui vend des remontoires."
+    },
+    {
+      "start": 142.51,
+      "end": 145.23,
+      "text": "Globalement c'est vous savez le truc gyroscopique pour faire tourner les montres."
+    },
+    {
+      "start": 145.23,
+      "end": 149.31,
+      "text": "C'est un produit boring, le site n'est pas fou, c'est très froid, je trouve il n'y a vraiment rien."
+    },
+    {
+      "start": 149.31,
+      "end": 153.39,
+      "text": "Tout le monde peut faire ce site, c'est un site qui prend en vrai objectivement pour quelqu'un qui sait faire de l'icôme, ça prend deux heures."
+    },
+    {
+      "start": 153.39,
+      "end": 155.71,
+      "text": "Pour quelqu'un qui est débutant ça va prendre une journée de faire un site comme ça."
+    },
+    {
+      "start": 155.71,
+      "end": 158.59,
+      "text": "Il n'y a absolument rien, il n'y a pas de bons marketing, il n'y a pas de fiches produits optimisées."
+    },
+    {
+      "start": 158.59,
+      "end": 162.03,
+      "text": "Il a juste importé les photos à l'express et il le vend avec un marketing éclaté."
+    },
+    {
+      "start": 162.03,
+      "end": 163.47,
+      "text": "Il n'y a vraiment rien qui est mis en place."
+    },
+    {
+      "start": 163.47,
+      "end": 166.19,
+      "text": "Tous les mecs qui font de l'icôme, ils voient ce site là et ils en paniquent."
+    },
+    {
+      "start": 166.19,
+      "end": 167.87,
+      "text": "On se demandent comment ces mecs-là font vraiment des ventes."
+    },
+    {
+      "start": 167.87,
+      "end": 170.03,
+      "text": "On va tout de suite regarder directement les ventes que ils font."
+    },
+    {
+      "start": 170.03,
+      "end": 173.31,
+      "text": "Partez du principe que ça c'est un site qui est vraiment au niveau zéro de ce qu'on peut faire."
+    },
+    {
+      "start": 173.31,
+      "end": 176.11,
+      "text": "Qu'est-ce que je vais faire ? Je vais montrer direct sur quoi l'inspecteur."
+    },
+    {
+      "start": 176.11,
+      "end": 178.11,
+      "text": "Je vais regarder son trafic."
+    },
+    {
+      "start": 178.19,
+      "end": 181.71,
+      "text": "On voit que sur ces meilleurs mois il fait 45 000 visites."
+    },
+    {
+      "start": 181.71,
+      "end": 183.31,
+      "text": "Il fait dans ces pire mois 15 000 visites."
+    },
+    {
+      "start": 183.31,
+      "end": 186.59,
+      "text": "On va partir sur une base basse de 20 000 visiteurs month."
+    },
+    {
+      "start": 186.59,
+      "end": 188.11,
+      "text": "Le mec fait 20 000 visiteurs."
+    },
+    {
+      "start": 188.11,
+      "end": 191.23,
+      "text": "Partons du principe qu'il convertit 1 % de ces 20 000 visites."
+    },
+    {
+      "start": 191.23,
+      "end": 192.67,
+      "text": "Donc on fait 1 % x 20 000."
+    },
+    {
+      "start": 192.67,
+      "end": 194.11,
+      "text": "Le mec fait 200 commandes par mois."
+    },
+    {
+      "start": 194.11,
+      "end": 195.79,
+      "text": "Ça ne paraît pas illogique pour un mec comme ça."
+    },
+    {
+      "start": 195.79,
+      "end": 199.07,
+      "text": "Sachant que si on regarde un peu son produit best seller pour voir combien de chiffres,"
+    },
+    {
+      "start": 199.07,
+      "end": 201.15,
+      "text": "ce mec-là, son produit il vaut entre..."
+    },
+    {
+      "start": 201.15,
+      "end": 202.43,
+      "text": "Allez, on va dire 705."
+    },
+    {
+      "start": 202.43,
+      "end": 203.63,
+      "text": "Il a quand même des produits très chers."
+    },
+    {
+      "start": 203.63,
+      "end": 205.47,
+      "text": "Ils vendent des produits à 900 000 euros, etc."
+    },
+    {
+      "start": 205.55,
+      "end": 206.91,
+      "text": "On va partir d'une base négative."
+    },
+    {
+      "start": 206.91,
+      "end": 209.07,
+      "text": "Le mec vend des produits à 600 dollars."
+    },
+    {
+      "start": 209.07,
+      "end": 213.23,
+      "text": "Ça lui fait 120 000 dollars par mois de chiffre d'affaires."
+    },
+    {
+      "start": 213.23,
+      "end": 216.59,
+      "text": "Sur ce genre de sites avec un site du niveau zéro."
+    },
+    {
+      "start": 216.59,
+      "end": 218.51,
+      "text": "Maintenant, la question c'est combien il fait en profit."
+    },
+    {
+      "start": 218.51,
+      "end": 219.79,
+      "text": "On va juste regarder un peu son produit."
+    },
+    {
+      "start": 219.79,
+      "end": 222.03,
+      "text": "Moi ça m'intéresse de regarder combien le mec achète ça."
+    },
+    {
+      "start": 222.03,
+      "end": 224.83,
+      "text": "Donc c'est un remontoir assez basique en soi si je dis pas de conneries."
+    },
+    {
+      "start": 224.83,
+      "end": 226.11,
+      "text": "Ça n'a pas l'air d'être un truc de fou."
+    },
+    {
+      "start": 226.11,
+      "end": 229.79,
+      "text": "On va se rendre direct sur AliExpress pour vérifier à combien le mec achète son produit."
+    },
+    {
+      "start": 229.79,
+      "end": 231.23,
+      "text": "On va quand même valider sa marge avant."
+    },
+    {
+      "start": 231.23,
+      "end": 232.35,
+      "text": "Moi c'est un truc que je fais tout le temps."
+    },
+    {
+      "start": 232.35,
+      "end": 233.55,
+      "text": "Donc je vais sur son site."
+    },
+    {
+      "start": 233.63,
+      "end": 236.59,
+      "text": "Je fais juste une bête capture d'écran de son produit principal."
+    },
+    {
+      "start": 236.59,
+      "end": 238.59,
+      "text": "Je vais le mettre dans la barre de recherche à AliExpress."
+    },
+    {
+      "start": 238.59,
+      "end": 239.71,
+      "text": "Franchement je m'emmerde pas."
+    },
+    {
+      "start": 239.71,
+      "end": 241.87,
+      "text": "Je fais pas de méthodes ultra compliquées pour valider mes produits."
+    },
+    {
+      "start": 241.87,
+      "end": 244.27,
+      "text": "AliExpress ça me donne déjà une bonne idée en fait de combien je pourrais l'acheter."
+    },
+    {
+      "start": 244.27,
+      "end": 245.07,
+      "text": "C'est hyper simple."
+    },
+    {
+      "start": 245.07,
+      "end": 248.75,
+      "text": "En un clic on a trouvé son fournisseur qui s'appelle Ibeton visiblement."
+    },
+    {
+      "start": 248.75,
+      "end": 251.47,
+      "text": "Ok, on va juste prendre l'annonce sur lequel il est le plus vendu."
+    },
+    {
+      "start": 251.47,
+      "end": 253.23,
+      "text": "Il en a plusieurs et il a plusieurs gammes."
+    },
+    {
+      "start": 253.23,
+      "end": 254.27,
+      "text": "Ça c'est un douze montres."
+    },
+    {
+      "start": 254.27,
+      "end": 255.55,
+      "text": "Combien lui vend le douze montres?"
+    },
+    {
+      "start": 255.55,
+      "end": 257.95,
+      "text": "Le douze lot il le vend 2400 dollars."
+    },
+    {
+      "start": 257.95,
+      "end": 259.87,
+      "text": "Et sur AliExpress on trouve à 800 dollars."
+    },
+    {
+      "start": 259.95,
+      "end": 261.15,
+      "text": "Donc c'est juste lunaire."
+    },
+    {
+      "start": 261.15,
+      "end": 264.43,
+      "text": "Le mec a une marge de quasiment 1500 dollars en fait sur le produit."
+    },
+    {
+      "start": 264.43,
+      "end": 265.87,
+      "text": "Ce qui est insane en vrai."
+    },
+    {
+      "start": 265.87,
+      "end": 267.39,
+      "text": "Je sais pas si vous vous rendez compte mais c'est juste lunaire en fait."
+    },
+    {
+      "start": 267.39,
+      "end": 268.51,
+      "text": "Le mec on fait une par jour."
+    },
+    {
+      "start": 268.51,
+      "end": 270.03,
+      "text": "Il fait plus de 54 par mois de profit."
+    },
+    {
+      "start": 270.03,
+      "end": 273.55,
+      "text": "Maintenant la question que vous pouvez vous poser c'est simplement comment moi je fais pour trouver ce genre de produit."
+    },
+    {
+      "start": 273.55,
+      "end": 274.83,
+      "text": "Comment on trouve ses concurrents."
+    },
+    {
+      "start": 274.83,
+      "end": 276.91,
+      "text": "Donc ce que moi je fais je vais dans Amazon."
+    },
+    {
+      "start": 276.91,
+      "end": 278.11,
+      "text": "Je vais dans Meilleur Vente."
+    },
+    {
+      "start": 278.11,
+      "end": 279.47,
+      "text": "C'est gratuit vous pouvez tous faire ça."
+    },
+    {
+      "start": 279.47,
+      "end": 280.99,
+      "text": "Ok et je vais filtrer par catégorie."
+    },
+    {
+      "start": 280.99,
+      "end": 282.51,
+      "text": "Comment moi j'ai trouvé ce produit direct."
+    },
+    {
+      "start": 282.51,
+      "end": 283.55,
+      "text": "Moi je suis allé dans mode."
+    },
+    {
+      "start": 283.55,
+      "end": 286.35,
+      "text": "Ensuite j'ai cherché par accessoire bijou et montres."
+    },
+    {
+      "start": 286.35,
+      "end": 287.55,
+      "text": "Et accessoire pour montres."
+    },
+    {
+      "start": 287.63,
+      "end": 290.03,
+      "text": "Et là on va direct avoir les écrins pour montrer automatique."
+    },
+    {
+      "start": 290.03,
+      "end": 293.55,
+      "text": "Et ces produits là je vous invite à vous perdre sur les catégories d'Amazon."
+    },
+    {
+      "start": 293.55,
+      "end": 295.23,
+      "text": "C'est pas du tout la seule méthode de recherche produit."
+    },
+    {
+      "start": 295.23,
+      "end": 297.95,
+      "text": "C'est le méthode que moi j'aime bien parce qu'en fait en général ce qui est recherché sur Amazon."
+    },
+    {
+      "start": 297.95,
+      "end": 299.47,
+      "text": "Va être aussi recherché sur Google."
+    },
+    {
+      "start": 299.47,
+      "end": 301.15,
+      "text": "Pour moi c'est déjà un bon indicateur de marché en fait."
+    },
+    {
+      "start": 301.15,
+      "end": 302.99,
+      "text": "Et donc voilà comment on trouve ce genre de produit."
+    },
+    {
+      "start": 302.99,
+      "end": 303.95,
+      "text": "Ça vaut globalement rien."
+    },
+    {
+      "start": 303.95,
+      "end": 305.15,
+      "text": "Ça vaut rien sur Amazon."
+    },
+    {
+      "start": 305.15,
+      "end": 307.63,
+      "text": "Mais les gens je pense même pas qu'ils les achètent tant que ça sur Amazon."
+    },
+    {
+      "start": 307.63,
+      "end": 309.63,
+      "text": "Faut pas rassembler le principe que les gens quand ils vont acheter ce genre de produit."
+    },
+    {
+      "start": 309.63,
+      "end": 310.99,
+      "text": "Ils ont besoin d'acheter chez une marque."
+    },
+    {
+      "start": 310.99,
+      "end": 312.83,
+      "text": "De sentir que ok je suis un mec qui aime les montres."
+    },
+    {
+      "start": 312.91,
+      "end": 314.51,
+      "text": "J'ai acheté chez une marque de montres."
+    },
+    {
+      "start": 314.51,
+      "end": 315.63,
+      "text": "Je n'ai pas acheté ça sur Amazon."
+    },
+    {
+      "start": 315.63,
+      "end": 317.23,
+      "text": "C'est-à-dire que imaginez si Amazon fait des ventes."
+    },
+    {
+      "start": 317.23,
+      "end": 319.95,
+      "text": "Combien vous pouvez faire en faisant des ventes sur ce genre de produit."
+    },
+    {
+      "start": 319.95,
+      "end": 322.91,
+      "text": "S'agent que nous on va aller chercher des niches un peu boring globalement comme ça."
+    },
+    {
+      "start": 322.91,
+      "end": 325.31,
+      "text": "Mais si je trouve que c'est un produit qui est assez excitant pour vendre sur Google."
+    },
+    {
+      "start": 325.31,
+      "end": 327.55,
+      "text": "Mais on va chercher des produits qui sont assez chiant."
+    },
+    {
+      "start": 327.55,
+      "end": 328.67,
+      "text": "Dans les lieux ça va être des luminaires."
+    },
+    {
+      "start": 328.67,
+      "end": 329.55,
+      "text": "Ça va être du papier peint."
+    },
+    {
+      "start": 329.55,
+      "end": 330.43,
+      "text": "Ça va être des pergolas."
+    },
+    {
+      "start": 330.43,
+      "end": 332.35,
+      "text": "Ce n'est pas les produits en fait que les dropshippers pensent à vendre."
+    },
+    {
+      "start": 332.35,
+      "end": 333.63,
+      "text": "Et c'est pour ça que l'on les vend en fait."
+    },
+    {
+      "start": 333.63,
+      "end": 337.15,
+      "text": "Parce que là ou sur meta vous allez vous battre contre 150 personnes qui vendent le même produit que vous."
+    },
+    {
+      "start": 343.79,
+      "end": 347.31,
+      "text": "Pour vous donner un peu les critères que moi j'utilise quand je cherche un produit."
+    },
+    {
+      "start": 347.31,
+      "end": 348.99,
+      "text": "Je vais chercher un produit qui est déjà recherché."
+    },
+    {
+      "start": 348.99,
+      "end": 349.95,
+      "text": "Il y a du volume sur Google."
+    },
+    {
+      "start": 349.95,
+      "end": 352.59,
+      "text": "Je recherche un produit où j'ai déjà des concurrents drop qui sont installés."
+    },
+    {
+      "start": 352.59,
+      "end": 354.75,
+      "text": "Pourquoi je ne crois pas en la théorie de l'océan bleu."
+    },
+    {
+      "start": 354.75,
+      "end": 356.03,
+      "text": "Je pense que s'il y a déjà des concurrents."
+    },
+    {
+      "start": 356.03,
+      "end": 357.95,
+      "text": "Si je la preuve qu'il y a des gens qui chiffrent et vous devriez aller dessus."
+    },
+    {
+      "start": 357.95,
+      "end": 359.95,
+      "text": "Ça valide en fait le fait que j'ai juste à prendre leur place."
+    },
+    {
+      "start": 359.95,
+      "end": 360.67,
+      "text": "C'est tout ce que j'ai à faire."
+    },
+    {
+      "start": 360.67,
+      "end": 361.79,
+      "text": "Il y a déjà des clients cachés chez eux."
+    },
+    {
+      "start": 361.79,
+      "end": 362.75,
+      "text": "Juste aller rediriger vers moi."
+    },
+    {
+      "start": 362.75,
+      "end": 364.03,
+      "text": "Ensuite chercher des produits qu'on la marge."
+    },
+    {
+      "start": 364.03,
+      "end": 365.23,
+      "text": "C'est le truc le plus important."
+    },
+    {
+      "start": 365.23,
+      "end": 366.67,
+      "text": "Sur Google on fait du profit."
+    },
+    {
+      "start": 366.75,
+      "end": 367.71,
+      "text": "Je le répète tout le temps."
+    },
+    {
+      "start": 367.71,
+      "end": 369.31,
+      "text": "C'est la seule métrique que moi je regarde."
+    },
+    {
+      "start": 369.31,
+      "end": 370.51,
+      "text": "Je ne regarde pas le chiffre d'affaires."
+    },
+    {
+      "start": 370.51,
+      "end": 372.27,
+      "text": "J'ai déjà eu des sites où j'ai fait des 2 cadets."
+    },
+    {
+      "start": 372.27,
+      "end": 374.03,
+      "text": "Mais je n'ai pas réussi à tirer une tonne de profits."
+    },
+    {
+      "start": 374.03,
+      "end": 375.71,
+      "text": "Je les ai sauté de mon portefeuille tout de suite."
+    },
+    {
+      "start": 375.71,
+      "end": 377.39,
+      "text": "Donc voilà un peu les critères que je regarde."
+    },
+    {
+      "start": 377.39,
+      "end": 379.95,
+      "text": "Vous savez déjà à peu près comment je trouvais et le valider la marge d'un produit."
+    },
+    {
+      "start": 379.95,
+      "end": 380.83,
+      "text": "C'est juste simple sur Aliexpress."
+    },
+    {
+      "start": 380.83,
+      "end": 383.23,
+      "text": "Maintenant je vais vous montrer comment on fait pour valider que le produit est recherché."
+    },
+    {
+      "start": 383.23,
+      "end": 385.55,
+      "text": "Donc on va dire que se rendre sur Google Ads."
+    },
+    {
+      "start": 385.55,
+      "end": 386.27,
+      "text": "C'est hyper simple."
+    },
+    {
+      "start": 386.27,
+      "end": 387.79,
+      "text": "Vous avez donc Keyword Planner."
+    },
+    {
+      "start": 387.79,
+      "end": 389.71,
+      "text": "Donc ça s'appelle planificateur de mots clés en français."
+    },
+    {
+      "start": 389.71,
+      "end": 390.67,
+      "text": "Vous allez taper votre mot clé."
+    },
+    {
+      "start": 390.67,
+      "end": 393.63,
+      "text": "Donc moi en l'occurrence c'est WatchWinder sur le marché US, tac."
+    },
+    {
+      "start": 393.63,
+      "end": 397.55,
+      "text": "Et on voit que depuis globalement quatre ans il y a le même niveau de recherche par mois."
+    },
+    {
+      "start": 397.55,
+      "end": 398.27,
+      "text": "C'est ultra stable."
+    },
+    {
+      "start": 398.27,
+      "end": 400.27,
+      "text": "Il y a des piques en décembre si vous voulez lancer ce produit."
+    },
+    {
+      "start": 400.27,
+      "end": 400.83,
+      "text": "C'est ce moment là."
+    },
+    {
+      "start": 400.83,
+      "end": 401.95,
+      "text": "C'est un produit qu'il y a de la recherche tout le temps."
+    },
+    {
+      "start": 401.95,
+      "end": 402.67,
+      "text": "Là on peut voir globalement."
+    },
+    {
+      "start": 402.67,
+      "end": 406.91,
+      "text": "Depuis août 2022 il y a plus ou moins 150 000 personnes par mois qui recherchent ce produit."
+    },
+    {
+      "start": 406.91,
+      "end": 407.87,
+      "text": "Sachant que c'est en légère hausse."
+    },
+    {
+      "start": 407.87,
+      "end": 410.75,
+      "text": "On est passé de 150 000 à 230 000 aujourd'hui."
+    },
+    {
+      "start": 410.75,
+      "end": 412.43,
+      "text": "Et c'est le genre de marché que personne regarde."
+    },
+    {
+      "start": 412.43,
+      "end": 415.63,
+      "text": "Tous les mecs qui font de drops, tous les mecs qui font de l'icôme ne vont pas chercher ce genre de produit."
+    },
+    {
+      "start": 415.71,
+      "end": 416.91,
+      "text": "Parce qu'il n'y a pas d'effet, waouh."
+    },
+    {
+      "start": 416.91,
+      "end": 419.31,
+      "text": "Il n'y a pas de transformation, insignes, etc."
+    },
+    {
+      "start": 419.31,
+      "end": 420.83,
+      "text": "Et pourtant les gens le veulent en fait ce produit."
+    },
+    {
+      "start": 420.83,
+      "end": 422.91,
+      "text": "Partez du principe que tous les produits chants que vous achetez au quotidien,"
+    },
+    {
+      "start": 422.91,
+      "end": 424.59,
+      "text": "qu'on n'a pas eu besoin de vous les vendre avec un truc waouh."
+    },
+    {
+      "start": 424.59,
+      "end": 426.03,
+      "text": "Là la caméra est posée sur un trépied."
+    },
+    {
+      "start": 426.03,
+      "end": 428.35,
+      "text": "J'ai pas eu d'angle marketing de fou pour acheter le trépied et juste"
+    },
+    {
+      "start": 428.35,
+      "end": 429.95,
+      "text": "ok est-ce que le trépied marche avec ma caméra ?"
+    },
+    {
+      "start": 429.95,
+      "end": 431.07,
+      "text": "Oui, point bar j'achète."
+    },
+    {
+      "start": 431.07,
+      "end": 431.55,
+      "text": "C'est tout."
+    },
+    {
+      "start": 431.55,
+      "end": 432.83,
+      "text": "Et c'est globalement la même chose sur Google."
+    },
+    {
+      "start": 432.83,
+      "end": 435.55,
+      "text": "Partons du principe qu'il y a 230 000 recherches par mois."
+    },
+    {
+      "start": 435.55,
+      "end": 437.95,
+      "text": "Si vous arrivez juste à être extrêmement mauvais"
+    },
+    {
+      "start": 437.95,
+      "end": 440.27,
+      "text": "et à convertir 50 personnes par mois d'acheter votre produit,"
+    },
+    {
+      "start": 440.27,
+      "end": 441.31,
+      "text": "ça fait un peu plus d'une personne par jour."
+    },
+    {
+      "start": 441.31,
+      "end": 443.31,
+      "text": "Partons du principe que vous allez avoir un payé moyen à 400 dollars."
+    },
+    {
+      "start": 443.31,
+      "end": 446.11,
+      "text": "Ça vous fait 20 000 dollars de CA par mois"
+    },
+    {
+      "start": 446.11,
+      "end": 448.67,
+      "text": "en partant du principe que vous êtes vraiment très très très mauvais."
+    },
+    {
+      "start": 448.67,
+      "end": 450.43,
+      "text": "Genre vraiment là j'ai parti du pire principe."
+    },
+    {
+      "start": 450.43,
+      "end": 453.55,
+      "text": "Vous compartissez 50 personnes sur les 230 000 par mois."
+    },
+    {
+      "start": 453.55,
+      "end": 456.27,
+      "text": "Imaginez un peu ce que ça peut donner en fait si vous arrivez à apprendre plus de parts de marché."
+    },
+    {
+      "start": 456.27,
+      "end": 459.07,
+      "text": "Ensuite un autre critère que je regarde, c'est la faisabilité de marché."
+    },
+    {
+      "start": 459.07,
+      "end": 462.19,
+      "text": "Est-ce que sur mon marché j'ai la possibilité de juste avoir un avantage compétitif ?"
+    },
+    {
+      "start": 462.19,
+      "end": 464.59,
+      "text": "On va aller chercher direct mon produit c'est WatchWinder."
+    },
+    {
+      "start": 464.59,
+      "end": 466.67,
+      "text": "Ok donc moi j'ai mis WatchWinder sur le marché français"
+    },
+    {
+      "start": 466.75,
+      "end": 468.75,
+      "text": "mais vous voyez qu'il y a full concurrent."
+    },
+    {
+      "start": 468.75,
+      "end": 471.63,
+      "text": "Il y a des gens ici, c'est globalement que des dropshippers."
+    },
+    {
+      "start": 471.63,
+      "end": 472.99,
+      "text": "Il y a des résultats en surche aussi."
+    },
+    {
+      "start": 472.99,
+      "end": 473.87,
+      "text": "Le marché est validé."
+    },
+    {
+      "start": 473.87,
+      "end": 475.07,
+      "text": "Est-ce que je vois des gros concurrents ?"
+    },
+    {
+      "start": 475.07,
+      "end": 476.35,
+      "text": "Moi c'est toujours ce que je regarde en fait."
+    },
+    {
+      "start": 476.35,
+      "end": 479.31,
+      "text": "C'est est-ce que si j'arrive sur mon marché je te vous dis une bêtise mais qu'à napper par exemple."
+    },
+    {
+      "start": 479.31,
+      "end": 482.91,
+      "text": "S'il y a IKEA sur votre marché ça va être très très compliqué de se battre contre IKEA en ads."
+    },
+    {
+      "start": 482.91,
+      "end": 484.67,
+      "text": "Il dépense globalement 15 000 euros par jour."
+    },
+    {
+      "start": 484.67,
+      "end": 486.11,
+      "text": "Encore je dis ça je pense que je suis très très gentil."
+    },
+    {
+      "start": 486.11,
+      "end": 487.55,
+      "text": "Ils doivent dépenser infiniment plus que ça."
+    },
+    {
+      "start": 487.55,
+      "end": 488.91,
+      "text": "Ils ont de la confiance que vous savez pas."
+    },
+    {
+      "start": 488.91,
+      "end": 491.55,
+      "text": "Donc allez sur des marchés sur en fait sur lesquels il n'y a pas de gros concurrent."
+    },
+    {
+      "start": 491.63,
+      "end": 492.67,
+      "text": "Là il n'y a que des dropshippers."
+    },
+    {
+      "start": 492.67,
+      "end": 493.79,
+      "text": "C'est des sites qui sont pas dingues."
+    },
+    {
+      "start": 493.79,
+      "end": 495.23,
+      "text": "J'en ai imaginé que ce mec là avant quoi."
+    },
+    {
+      "start": 495.23,
+      "end": 496.27,
+      "text": "Et ça devrait vous révolter en fait."
+    },
+    {
+      "start": 496.27,
+      "end": 497.31,
+      "text": "Moi j'étais arrivé sur Google."
+    },
+    {
+      "start": 497.31,
+      "end": 500.19,
+      "text": "J'ai pété un câble de voir à quel point les gens extrêmement mauvais à arriver à gagner l'argent."
+    },
+    {
+      "start": 500.19,
+      "end": 502.91,
+      "text": "J'en ai déjà parlé plusieurs fois mais c'est la raison pour laquelle moi aussi je m'étais lancé sur ce marché."
+    },
+    {
+      "start": 502.91,
+      "end": 504.35,
+      "text": "C'est que je voyais bien qu'en fait sur meta,"
+    },
+    {
+      "start": 504.35,
+      "end": 506.91,
+      "text": "les gros concurrents je prends l'exemple de grosses personnes que tout le monde connaît."
+    },
+    {
+      "start": 506.91,
+      "end": 508.75,
+      "text": "Mais genre les mecs de Hearth, Dorene Rose etc."
+    },
+    {
+      "start": 508.75,
+      "end": 512.11,
+      "text": "Leur niveau est tellement haut pour essayer d'aller compitre contre ces gens là c'est très compliqué."
+    },
+    {
+      "start": 512.19,
+      "end": 516.03,
+      "text": "Maintenant qu'on sait comment trouver un produit, comment le valider, comment savoir si on a de la place sur le marché."
+    },
+    {
+      "start": 516.03,
+      "end": 517.55,
+      "text": "Si on a de la marge et si on a du volume."
+    },
+    {
+      "start": 517.55,
+      "end": 518.59,
+      "text": "Comment on va lancer nos campagnes ?"
+    },
+    {
+      "start": 518.59,
+      "end": 519.87,
+      "text": "Je vous dis un truc que moi je fais."
+    },
+    {
+      "start": 519.87,
+      "end": 523.23,
+      "text": "En plus c'est la question que je reçois tout le temps dans tous les formats un peu interviewer aux retourquants etc."
+    },
+    {
+      "start": 523.23,
+      "end": 525.47,
+      "text": "C'est pourquoi vous faites de la search, pourquoi vous faites de la search etc."
+    },
+    {
+      "start": 525.47,
+      "end": 526.83,
+      "text": "On fait de la search parce que ça va vite."
+    },
+    {
+      "start": 526.83,
+      "end": 528.75,
+      "text": "Sur ce business tout le monde a des problèmes de GMC."
+    },
+    {
+      "start": 528.75,
+      "end": 530.35,
+      "text": "Moi aujourd'hui j'en ai plus parce que j'ai un bon deal."
+    },
+    {
+      "start": 530.35,
+      "end": 534.11,
+      "text": "Mais globalement au lieu de passer en fait 7 jours à voir me votre compte Gmail etc."
+    },
+    {
+      "start": 534.11,
+      "end": 537.63,
+      "text": "A vous faire ban GMC, on va juste lancer une campagne de pub comme ça."
+    },
+    {
+      "start": 537.71,
+      "end": 538.91,
+      "text": "C'est une campagne de pub en search."
+    },
+    {
+      "start": 538.91,
+      "end": 541.31,
+      "text": "Les gens vont toujours acheter dessus pourquoi s'emmerder en fait."
+    },
+    {
+      "start": 541.31,
+      "end": 542.83,
+      "text": "Pour juste faire du testing on va lancer ça."
+    },
+    {
+      "start": 542.83,
+      "end": 546.51,
+      "text": "On n'aura pas besoin d'aller configurer un GMC, on n'aura pas besoin d'enlever la social proof sur notre site."
+    },
+    {
+      "start": 546.51,
+      "end": 548.59,
+      "text": "Tous les gens qui font du Google Ads savent de quoi je parle en ce moment."
+    },
+    {
+      "start": 548.59,
+      "end": 552.19,
+      "text": "Mais en fait on n'aura pas besoin de détruire la value de notre site juste pour avoir une validation."
+    },
+    {
+      "start": 552.19,
+      "end": 553.95,
+      "text": "Et peut-être non trois semaines pour remettre une annonce ici."
+    },
+    {
+      "start": 553.95,
+      "end": 557.15,
+      "text": "On peut run jour 1 avec des annonces search ici qui vont convertir."
+    },
+    {
+      "start": 557.15,
+      "end": 559.23,
+      "text": "Pour ça je vous ai fait une vidéo directement dans ma chaîne business."
+    },
+    {
+      "start": 559.23,
+      "end": 560.91,
+      "text": "Je vous invite à vous abonner à la chaîne business."
+    },
+    {
+      "start": 560.91,
+      "end": 563.15,
+      "text": "Elle sera normalement en collaboration avec cette chaîne ou dans la description."
+    },
+    {
+      "start": 563.23,
+      "end": 564.59,
+      "text": "Vous pouvez dire que vous s'abonnez à cette chaîne."
+    },
+    {
+      "start": 564.59,
+      "end": 566.75,
+      "text": "Je vais juste vous expliquer la base mais en fait comment je fais ma search."
+    },
+    {
+      "start": 566.75,
+      "end": 569.23,
+      "text": "Je vais mettre 10 mots clés globalement pas plus dans cette campagne."
+    },
+    {
+      "start": 569.23,
+      "end": 570.99,
+      "text": "C'est 10 mots clés qui vont être ultra centrés sur l'achat."
+    },
+    {
+      "start": 570.99,
+      "end": 572.51,
+      "text": "Comment je l'ai choisi ? Super simple."
+    },
+    {
+      "start": 572.51,
+      "end": 574.67,
+      "text": "Bah je vais juste regarder les 10 mots clés ici qui sont les plus recherchés."
+    },
+    {
+      "start": 574.67,
+      "end": 577.31,
+      "text": "Je prends mon top 10, je me fais même pas chier."
+    },
+    {
+      "start": 577.31,
+      "end": 578.91,
+      "text": "Je le copie et je le mets dans ma campagne."
+    },
+    {
+      "start": 578.91,
+      "end": 580.27,
+      "text": "Je ne vais pas vous montrer comment je fais une campagne."
+    },
+    {
+      "start": 580.27,
+      "end": 582.03,
+      "text": "Il y a 10 000 vidéos sur Youtube qui vous le montrent."
+    },
+    {
+      "start": 582.03,
+      "end": 584.27,
+      "text": "Je vous ferai ma stratégie directement sur ma chaîne."
+    },
+    {
+      "start": 584.27,
+      "end": 586.59,
+      "text": "Arthur Icom ou Arthur Business qui est pas encore comment elle s'appelle."
+    },
+    {
+      "start": 586.67,
+      "end": 589.55,
+      "text": "Le but ici c'est plutôt de vous expliquer comment vous avez peur pour chiffrer."
+    },
+    {
+      "start": 589.55,
+      "end": 592.43,
+      "text": "Dans les grandes lignes je peux pas vous faire une vidéo de 4 heures là-dessus."
+    },
+    {
+      "start": 592.43,
+      "end": 595.07,
+      "text": "Il y a suffisamment de vidéos sur du media bang Google Ads."
+    },
+    {
+      "start": 595.07,
+      "end": 596.51,
+      "text": "C'est surtout pas la partie la plus compliquée."
+    },
+    {
+      "start": 596.51,
+      "end": 599.87,
+      "text": "Donc vous allez juste faire une campagne de search exactement comme ce que eux ont fait."
+    },
+    {
+      "start": 599.87,
+      "end": 604.03,
+      "text": "En mettant le nom du produit, les produits que vous vendez, du texte et une image."
+    },
+    {
+      "start": 604.03,
+      "end": 605.31,
+      "text": "C'est tout ce qu'il y a à faire."
+    },
+    {
+      "start": 605.31,
+      "end": 606.59,
+      "text": "C'est pas plus complexe en fait."
+    },
+    {
+      "start": 606.59,
+      "end": 611.79,
+      "text": "Les gens overcomplexifient toujours ce business mais croyez moi c'est ultra ultra simple dans la technique."
+    },
+    {
+      "start": 611.79,
+      "end": 614.11,
+      "text": "Il n'y a pas besoin d'être un pro, des ads etc."
+    },
+    {
+      "start": 614.11,
+      "end": 616.51,
+      "text": "Pas besoin d'être data scientist pour ça va faire du Google Ads."
+    },
+    {
+      "start": 616.59,
+      "end": 620.75,
+      "text": "C'est globalement ultra binaire, c'est beaucoup plus chiant d'analyser des dates sur meta que sur Google."
+    },
+    {
+      "start": 620.75,
+      "end": 623.55,
+      "text": "Donc maintenant que vous savez ça, la question c'est comment vous allez pouvoir faire un site"
+    },
+    {
+      "start": 623.55,
+      "end": 625.87,
+      "text": "à peu près comme le sien sachant que son site est vraiment pas bon."
+    },
+    {
+      "start": 625.87,
+      "end": 629.07,
+      "text": "Selon moi ce genre de site fait genre beaucoup plus proche de 300, 400, 400 months."
+    },
+    {
+      "start": 629.07,
+      "end": 631.95,
+      "text": "J'ai toujours pris les stats le plus bas parce que forcément il doit y avoir des grosses vents."
+    },
+    {
+      "start": 631.95,
+      "end": 635.23,
+      "text": "Genre là on est parti le principe qu'ils avaient un petit panier mais la réalité c'est qu'ils"
+    },
+    {
+      "start": 635.23,
+      "end": 636.91,
+      "text": "ont probablement des commandes à 2 000, 3000 euros tous les jours."
+    },
+    {
+      "start": 636.91,
+      "end": 638.43,
+      "text": "C'est un site qui peut être fait sur un thème gratuit."
+    },
+    {
+      "start": 638.43,
+      "end": 641.47,
+      "text": "En l'occurrence eux ils ont un thème prestige mais on peut faire ça sur un thème gratuit Shopify."
+    },
+    {
+      "start": 641.55,
+      "end": 644.75,
+      "text": "Vous avez juste à importer les photos du fournisseur Aliexpress."
+    },
+    {
+      "start": 644.75,
+      "end": 647.23,
+      "text": "Pour le coup c'est vraiment, je crois qu'il a vraiment mis les photos du fournisseur le mec."
+    },
+    {
+      "start": 647.23,
+      "end": 648.03,
+      "text": "Il s'est même pas fait chier."
+    },
+    {
+      "start": 648.03,
+      "end": 650.11,
+      "text": "Il n'a même pas besoin en fait, il s'est même pas compliqué à la vie."
+    },
+    {
+      "start": 650.11,
+      "end": 652.03,
+      "text": "C'est les photos du fournisseur, 100%."
+    },
+    {
+      "start": 652.03,
+      "end": 654.11,
+      "text": "Des photos sur fond blanc sans aucun marketing."
+    },
+    {
+      "start": 654.11,
+      "end": 656.67,
+      "text": "Il n'a même pas mis d'offre sur son site, il n'a même pas optimisé ses prix,"
+    },
+    {
+      "start": 656.67,
+      "end": 658.19,
+      "text": "il n'y a même pas d'urgence, il n'y a rien."
+    },
+    {
+      "start": 658.19,
+      "end": 660.59,
+      "text": "Pour faire un site comme ça je vous mettrai aussi une vidéo sur ma chaine business"
+    },
+    {
+      "start": 660.59,
+      "end": 662.91,
+      "text": "sur globalement comment moi je fais pour avoir des pages produits optimisés."
+    },
+    {
+      "start": 662.91,
+      "end": 665.15,
+      "text": "C'est quoi les bases de CRO que moi j'utilise sur Google Ads"
+    },
+    {
+      "start": 665.15,
+      "end": 667.79,
+      "text": "parce qu'on voit beaucoup de choses en taux de conversion sur Meta."
+    },
+    {
+      "start": 667.79,
+      "end": 670.35,
+      "text": "Mais sur Google Ads c'est vraiment différent parce que les clients ne viennent pas avec la même approche."
+    },
+    {
+      "start": 670.35,
+      "end": 671.23,
+      "text": "D'ailleurs ça me fait penser."
+    },
+    {
+      "start": 671.23,
+      "end": 674.43,
+      "text": "Mais si vous voulez lancer ou scalez votre site sur Google Ads avec moi,"
+    },
+    {
+      "start": 674.43,
+      "end": 677.23,
+      "text": "vous pouvez directement réserver un appel dans la description de cette vidéo."
+    },
+    {
+      "start": 677.23,
+      "end": 680.11,
+      "text": "L'appel il est 100% gratuit, il sera avec moi ou mon associé."
+    },
+    {
+      "start": 680.11,
+      "end": 682.43,
+      "text": "Si vous êtes intéressé pour lancer de l'ICOM sur Google Ads avec nous,"
+    },
+    {
+      "start": 682.43,
+      "end": 684.35,
+      "text": "je vous mets les résultats de tous mes clients qui défilent maintenant."
+    },
+    {
+      "start": 684.35,
+      "end": 686.11,
+      "text": "Voilà ça défilent, ça peut défiler très longtemps."
+    },
+    {
+      "start": 686.11,
+      "end": 688.83,
+      "text": "Ok maintenant que vous savez comment je fais pour trouver un produit,"
+    },
+    {
+      "start": 688.83,
+      "end": 691.55,
+      "text": "comment je valide sa demande, comment je valide ma niche,"
+    },
+    {
+      "start": 691.55,
+      "end": 692.83,
+      "text": "comment je valide mes concurrents."
+    },
+    {
+      "start": 692.91,
+      "end": 695.07,
+      "text": "La question que vous vous posez, ça va être comment je vais faire pour aller faire plus ?"
+    },
+    {
+      "start": 695.07,
+      "end": 699.07,
+      "text": "C'est très simple, votre rôle ça va juste être maintenant d'aller trouver le plus de produit possible."
+    },
+    {
+      "start": 699.07,
+      "end": 701.39,
+      "text": "Je vais vous donner une méthode qui est Amazon World and Shakers."
+    },
+    {
+      "start": 701.39,
+      "end": 704.43,
+      "text": "Ce n'est pas forcément ma méthode préférée mais c'est une méthode qui fonctionne donc utilisez-la."
+    },
+    {
+      "start": 704.43,
+      "end": 707.15,
+      "text": "Trouver plus de produit, faire plus de sites, valider plus de marché."
+    },
+    {
+      "start": 707.15,
+      "end": 708.27,
+      "text": "Et c'est tout ce qu'il y a à faire."
+    },
+    {
+      "start": 708.27,
+      "end": 709.79,
+      "text": "Vous avez juste à répliquer le process en boucle."
+    },
+    {
+      "start": 709.79,
+      "end": 711.79,
+      "text": "La chaîne de valeur n'est pas très compliquée sur Google Ads."
+    },
+    {
+      "start": 711.79,
+      "end": 714.19,
+      "text": "Il n'y a pas à faire de créatives à renouveler toutes les semaines etc."
+    },
+    {
+      "start": 714.19,
+      "end": 716.83,
+      "text": "On fait la publicité une fois et elle tourne globalement pendant un an,"
+    },
+    {
+      "start": 716.83,
+      "end": 718.27,
+      "text": "enfin 6 mois, un an etc."
+    },
+    {
+      "start": 719.07,
+      "end": 720.59,
+      "text": "Il n'y a pas de limite sur Google."
+    },
+    {
+      "start": 720.59,
+      "end": 722.99,
+      "text": "Il n'y a pas besoin de renouveler tout le temps parce que le renouvellement,"
+    },
+    {
+      "start": 722.99,
+      "end": 724.99,
+      "text": "il se fait directement avec les gens qui viennent sur Google."
+    },
+    {
+      "start": 724.99,
+      "end": 726.11,
+      "text": "C'est à dire que le renouvellement c'est quoi ?"
+    },
+    {
+      "start": 726.11,
+      "end": 727.31,
+      "text": "C'est juste les gens qui tous les mois viennent."
+    },
+    {
+      "start": 727.31,
+      "end": 731.15,
+      "text": "Il y a 212 000 nouvelles personnes qui vont arriver sur le mot-clé."
+    },
+    {
+      "start": 731.15,
+      "end": 733.71,
+      "text": "Donc vous avez besoin de rien faire parce que eux c'est la première fois qu'ils vous voient."
+    },
+    {
+      "start": 733.71,
+      "end": 734.51,
+      "text": "C'est la différence."
+    },
+    {
+      "start": 734.51,
+      "end": 736.35,
+      "text": "En fait quand vous êtes à un niveau pure débutant,"
+    },
+    {
+      "start": 736.35,
+      "end": 737.31,
+      "text": "faites du volume."
+    },
+    {
+      "start": 737.31,
+      "end": 738.91,
+      "text": "Vous ne pouvez pas vous concentrer sur un seul shop."
+    },
+    {
+      "start": 738.91,
+      "end": 741.39,
+      "text": "Faites du volume, vraiment c'est une règle que moi je me pousse à faire."
+    },
+    {
+      "start": 741.39,
+      "end": 743.47,
+      "text": "Même encore aujourd'hui c'est faire du volume, même ça me fait chier."
+    },
+    {
+      "start": 743.55,
+      "end": 745.15,
+      "text": "Ça fait deux ans et demi que je fais le business maintenant."
+    },
+    {
+      "start": 745.15,
+      "end": 747.15,
+      "text": "Donc voilà, vous avez déjà parlé de value dans cette vidéo normalement."
+    },
+    {
+      "start": 747.15,
+      "end": 748.43,
+      "text": "Vous avez appris pas mal de choses."
+    },
+    {
+      "start": 748.43,
+      "end": 753.07,
+      "text": "Vous avez selon moi les clés pour les faire vos premiers entre 500 et un cadeau de CA sur Google."
+    },
+    {
+      "start": 753.07,
+      "end": 756.59,
+      "text": "Voilà, en tout cas si vous avez des questions, je vous laisse me les poser dans les commentaires de la vidéo."
+    },
+    {
+      "start": 756.59,
+      "end": 759.55,
+      "text": "Et si vous voulez lancer ou scalez votre shop, je suis là pour ça."
+    },
+    {
+      "start": 759.55,
+      "end": 762.51,
+      "text": "Je fais cette vidéo parce qu'on réouvre des places dans l'accompagnement."
+    },
+    {
+      "start": 762.51,
+      "end": 764.83,
+      "text": "On marche par batch, on n'est que deux à gérer l'accompagnement."
+    },
+    {
+      "start": 764.83,
+      "end": 766.99,
+      "text": "Je ne peux pas me permettre de mettre 150 personnes d'un coup."
+    },
+    {
+      "start": 766.99,
+      "end": 770.43,
+      "text": "Je préfère faire ça en petit comité et avoir que des personnes ultra détères qui commencent avec nous."
+    },
+    {
+      "start": 770.43,
+      "end": 771.71,
+      "text": "Si vous êtes quelqu'un de vraiment déterminé,"
+    },
+    {
+      "start": 771.79,
+      "end": 774.27,
+      "text": "je vous laisse directement voir dans la description de cette vidéo."
+    },
+    {
+      "start": 774.27,
+      "end": 776.67,
+      "text": "Il y aura un lien qui ramène vers ma page avec tous mes résultats"
+    },
+    {
+      "start": 776.67,
+      "end": 779.23,
+      "text": "et aussi pour bouquer un appel avec moi ou un membre de ma team."
+    },
+    {
+      "start": 779.23,
+      "end": 781.23,
+      "text": "C'est vraiment moi et Enzo qui allons vous accompagner."
+    },
+    {
+      "start": 781.23,
+      "end": 783.47,
+      "text": "Abonnez-vous à tout parce qu'il y a pas mal de contenus qui va sortir."
+    },
+    {
+      "start": 783.47,
+      "end": 784.99,
+      "text": "Là, on renvoie pas mal de contenus."
+    },
+    {
+      "start": 784.99,
+      "end": 788.67,
+      "text": "Je me suis lock-in sur le mois d'août à Dubai pour juste bosser le Q4."
+    },
+    {
+      "start": 788.67,
+      "end": 790.43,
+      "text": "Donc voilà, vous avez globalement toutes les infos."
+    },
+    {
+      "start": 790.43,
+      "end": 791.31,
+      "text": "Merci d'avoir regardé la vidéo."
+    },
+    {
+      "start": 791.31,
+      "end": 792.03,
+      "text": "Je vous laisse vous abonner."
+    },
+    {
+      "start": 792.03,
+      "end": 793.95,
+      "text": "Et si vous voulez qu'on vous accompagne en e-com,"
+    },
+    {
+      "start": 793.95,
+      "end": 795.23,
+      "text": "direct rendez-vous dans la description."
+    },
+    {
+      "start": 795.23,
+      "end": 795.95,
+      "text": "Ciao ciao."
+    }
+  ]
+}

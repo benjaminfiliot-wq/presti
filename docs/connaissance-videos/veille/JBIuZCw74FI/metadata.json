@@ -1,0 +1,39 @@
+{
+  "id": "JBIuZCw74FI",
+  "titre": "J'ai transformé Claude en agence vidéo IA automatisée (1 client = 5.000€)",
+  "url": "https://www.youtube.com/watch?v=JBIuZCw74FI",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\JBIuZCw74FI\\video.mp4",
+  "taille_octets": 42400957,
+  "sha256_video": "ebf06898cf62e962527d9f4dda290cd15ea557964f0c9c33d68b1ab963c96953",
+  "duree_secondes": 1289.734,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "30000/1001",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    80.608375,
+    241.82512499999999,
+    403.041875,
+    564.2586249999999,
+    725.475375,
+    886.6921249999999,
+    1047.9088749999999,
+    1209.125625
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\JBIuZCw74FI\\video.fr-orig.vtt",
+  "nombre_cues": 1777,
+  "nombre_lignes_transcription": 889,
+  "empreintes_documents": {
+    "planche.jpg": "da28976f596ab3f28aa623513260b1dbebe0e77d07798e13d0797e80c505599f",
+    "sous-titres-originaux.vtt": "8e81ff7b2aece0f8c39387e3a3bcaefe01c38c2f92e1c5bc541b6b5f07097410",
+    "transcription.txt": "2fc0141c53dc749a436579d98e215d0631c5c8f8675102a5bd3cb6d1b16c897a"
+  }
+}

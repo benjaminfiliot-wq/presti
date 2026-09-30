@@ -1,0 +1,39 @@
+{
+  "id": "J6Cpt7BOqI0",
+  "titre": "Comment construire une boutique SHOPIFY à 200K€/mois grâce à Claude",
+  "url": "https://www.youtube.com/watch?v=J6Cpt7BOqI0",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\J6Cpt7BOqI0\\video.mp4",
+  "taille_octets": 46806224,
+  "sha256_video": "d58384546b098a91c50ed8a99afa5f40c2948207ce81936cea1efc342f379385",
+  "duree_secondes": 1705.214,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "24/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    106.575875,
+    319.727625,
+    532.879375,
+    746.031125,
+    959.182875,
+    1172.334625,
+    1385.486375,
+    1598.638125
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\J6Cpt7BOqI0\\video.fr-orig.vtt",
+  "nombre_cues": 2011,
+  "nombre_lignes_transcription": 1006,
+  "empreintes_documents": {
+    "planche.jpg": "35c8e73515eea83d0b2f750c760e2a206bc441ba8b68d7a2cf3bd730db4c9a30",
+    "sous-titres-originaux.vtt": "92236cb120400c682f7993e1254eec0c4ae3a225f537e24168ff67aa1eee3bef",
+    "transcription.txt": "5f590afe7efd65d1fd5b1b1de3b2c3041cf3d8280e74052bd83ec8887718a21e"
+  }
+}

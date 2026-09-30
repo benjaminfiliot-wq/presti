@@ -1,0 +1,36 @@
+{
+  "id": "androoagi",
+  "titre": "Best ways to create automated businesses with AI agents #aiagents #op...",
+  "url": "https://www.tiktok.com/@androoagi/video/7623856430621134110",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\androoagi.mp4",
+  "taille_octets": 29031518,
+  "sha256_video": "e8281efa29cf8a2c598fd970c39f07dc117b171b27cf29937db7c1b02e1d8ccb",
+  "duree_secondes": 179.800816,
+  "largeur": 1080,
+  "hauteur": 1920,
+  "codec_video": "hevc",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "mp3",
+      "frequence": "44100",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    11.237551,
+    33.712653,
+    56.187754999999996,
+    78.662857,
+    101.137959,
+    123.613061,
+    146.088163,
+    168.563265
+  ],
+  "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+  "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\androoagi.txt",
+  "empreintes_documents": {
+    "planche.jpg": "4ec09c82a75b73f7b1dba737228b639913fb48252503008826e29f053d04e6c2",
+    "transcription.txt": "59bf8ed5b9e4500305cfe3ac4e1b42a3448e0f18e0c73dee5b9bae3951c20a06"
+  }
+}

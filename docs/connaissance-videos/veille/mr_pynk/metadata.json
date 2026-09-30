@@ -1,0 +1,36 @@
+{
+  "id": "mr_pynk",
+  "titre": "Full Breakdown on Insta @mr.pynk  We built a full AI ad studio system...",
+  "url": "https://www.tiktok.com/@mr_pynk/video/7637274283470753056",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\mr_pynk.mp4",
+  "taille_octets": 1855611,
+  "sha256_video": "115be902963c858cd23991b92ec11ca63dd1f9369b30db912e85bc887fd2322b",
+  "duree_secondes": 35.7,
+  "largeur": 720,
+  "hauteur": 1280,
+  "codec_video": "hevc",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "aac",
+      "frequence": "44100",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    2.23125,
+    6.6937500000000005,
+    11.15625,
+    15.618750000000002,
+    20.08125,
+    24.543750000000003,
+    29.00625,
+    33.46875
+  ],
+  "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+  "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\mr_pynk.txt",
+  "empreintes_documents": {
+    "planche.jpg": "95d774f72e51912622b217b56f6de91ba5de0eb9c15b1b51337b80ed9f2c7e8f",
+    "transcription.txt": "3f2adfefcc3a16fa70127873a940830a4dda79b326903b02da10f5b90e50f502"
+  }
+}

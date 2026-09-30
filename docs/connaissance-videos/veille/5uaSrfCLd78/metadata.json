@@ -1,0 +1,39 @@
+{
+  "id": "5uaSrfCLd78",
+  "titre": "J'ai copié une boutique dropshipping à 100 000€/mois avec l'IA (ça a marché)",
+  "url": "https://www.youtube.com/watch?v=5uaSrfCLd78",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\5uaSrfCLd78\\video.mp4",
+  "taille_octets": 53801547,
+  "sha256_video": "f958954c8bb356ce2991db73fae1db1997833fea6e24a77546ccd52c34daca83",
+  "duree_secondes": 2097.294,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "24/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    131.080875,
+    393.242625,
+    655.404375,
+    917.5661249999999,
+    1179.727875,
+    1441.8896249999998,
+    1704.051375,
+    1966.2131249999998
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\5uaSrfCLd78\\video.fr-orig.vtt",
+  "nombre_cues": 2753,
+  "nombre_lignes_transcription": 1377,
+  "empreintes_documents": {
+    "planche.jpg": "cb92736658681df3e2fdf5571426b8349e551ba557d64e85c8f70fcb6da4e723",
+    "sous-titres-originaux.vtt": "baef1fda93f83918997593255882a94010d2b03559a464f3ca9da9342da80084",
+    "transcription.txt": "78cacc4bb050d5e9a026c12504bae85ad9dcacb8c025d8192e4cf6fa962224ee"
+  }
+}

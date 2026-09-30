@@ -1,0 +1,464 @@
+[00:00:03.149] 2000 pounds par jour, de 0 à 10000 € en
+[00:00:03.159] 30 jours et ça 130000 € en moins de 30
+[00:00:06.520] jours. Je pense que c'est un secret pour
+[00:00:08.040] personne. Chaque année, il y a des
+[00:00:09.320] milliers de personnes qui ont en
+[00:00:10.480] caissent en e-commerce pendant un Q4,
+[00:00:12.000] c'est-à-dire le dernier trimestre de
+[00:00:13.599] l'année. Mais là, il y a un petit détail
+[00:00:14.960] sur ces trois boutiques que peut-être
+[00:00:16.240] pas remarqué, c'est que tout a été
+[00:00:18.119] automatisé avec [musique] l'IA, mais pas
+[00:00:19.760] n'importe laquelle. On parle pas de chat
+[00:00:21.320] GPT, ni de Gemini, ni de Gr. Une peu
+[00:00:24.439] connue en France mais qui est en train
+[00:00:25.800] de révolutionner l'e-commerce. Clodia,
+[00:00:27.720] c'est un glitch qui m'a permis de faire
+[00:00:29.199] passer ce shop de 0 à 5000 € par jour en
+[00:00:32.599] quelques semaines seulement. Et Toodia,
+[00:00:34.239] ça n'a rien à voir avec tout ce qu'on
+[00:00:35.640] t'a montré depuis 2022. Parce que
+[00:00:37.360] jusque-là, Lia servait juste à gagner du
+[00:00:39.160] temps, écrire des textes, faire des
+[00:00:40.719] petites descriptions produits, bref
+[00:00:42.200] faire plein de petites missions bateau
+[00:00:43.600] qui en plus ne prenaient pas énormément
+[00:00:45.039] de temps. Aujourd'hui, tout est
+[00:00:46.039] différent avec l'odia. D'ailleurs, les
+[00:00:47.719] plus grosses entreprises du monde
+[00:00:49.239] l'utilisent pour automatiser le travail
+[00:00:51.079] de toute une équipe. Et nous, on peut
+[00:00:52.559] s'en servir pour lancer plus de shop
+[00:00:54.280] rentable beaucoup plus rapidement. Alors
+[00:00:56.359] accroche ta ceinture parce qu'il y aura
+[00:00:58.079] un avant après cette vidéo. Tu vas voir
+[00:01:00.000] comment utiliser Claudia pour décupler
+[00:01:02.039] tes compétences pendant ce Q4. Et si tu
+[00:01:04.040] es débutant et que tu as jamais lancé de
+[00:01:05.680] boutique, je vais te montrer comment
+[00:01:06.720] passer de 0 à 1000 € par jour en moins
+[00:01:09.200] de 30 jours. Mais avant ça, on va voir
+[00:01:11.159] pourquoi c'est la vraie révolution dans
+[00:01:12.799] le monde du e-commerce. J'espère que tu
+[00:01:14.280] es prêt parce que c'est parti. Comme on
+[00:01:16.240] dit souvent, l'hommement met pas des
+[00:01:17.680] chiffres. Ça, c'est une boutique que
+[00:01:19.040] j'ai lancé il y a quelques mois qui
+[00:01:20.400] chiffre déjà à plusieurs milliers
+[00:01:21.640] d'euros par jour. Et ça, c'est une
+[00:01:22.880] boutique que j'ai fait danser [musique]
+[00:01:23.880] à mon petit frère. En quelques jours, il
+[00:01:25.400] était déjà à 900 € par et encore une
+[00:01:27.360] fois, je suis loin d'être le seul à
+[00:01:28.920] avoir ce type de résultat. [musique] Aux
+[00:01:30.240] États-Unis, ils en profitent déjà depuis
+[00:01:32.040] plusieurs mois alors qu'en France,
+[00:01:33.399] presque personne n'en parle ou seulement
+[00:01:35.280] dans des petits groupes hyper nichés.
+[00:01:37.000] Ça, c'est la boutique de Simo qui fait
+[00:01:38.880] 2000 dollars par jour en autopilote
+[00:01:41.040] grâce à Claudia. Et ça, c'est les
+[00:01:42.720] résultats de Camille qui est passé de 0
+[00:01:44.719] à 10000 € en moins de 10 jours grâce à
+[00:01:47.200] Claudia. Et on a encore Léon qui a
+[00:01:49.000] atteint les 1300 € en moins de 30 jours
+[00:01:51.759] grâce à Claudiaire. Et encore une fois,
+[00:01:53.399] même les grosses boîtes profitent de
+[00:01:54.840] cette opportunité. Je vais par exemple
+[00:01:56.119] vous parler de la boîte Triple W.
+[00:01:57.759] TripleW, c'est un outil que beaucoup de
+[00:01:59.360] personnes utilisent en e-commerce pour
+[00:02:00.880] tracker et analyser leur data. Avec cet
+[00:02:03.000] outil, tu peux non seulement analyser
+[00:02:04.799] tes publicités, analyser tes ventes,
+[00:02:06.719] analyser ta marge. En gros, au lieu
+[00:02:08.479] d'aller chercher les informations
+[00:02:09.879] partout, tout est centralisé à
+[00:02:11.480] l'intérieur d'un seul outil. Et tu veux
+[00:02:12.920] savoir ce qu'ils ont fait ? c'est qu'ils
+[00:02:14.080] ont eux aussi intégré Claudia à
+[00:02:15.920] l'intérieur pour analyser plus
+[00:02:17.280] rapidement les datas de leurs clients et
+[00:02:18.959] un de leurs clients a par exemple réussi
+[00:02:20.840] à analyser 600 créatives en moins de 10
+[00:02:23.640] minutes. Je sais pas si vous vous rendez
+[00:02:24.480] compte, normalement faire ce type de
+[00:02:26.080] travail ça prend plusieurs heures,
+[00:02:27.760] exactement presque 5h pour être plus
+[00:02:29.599] précis. Avec Todia, on passe de 5 he de
+[00:02:32.160] travail à 10 minutes de travail. Bref,
+[00:02:34.280] assez théories. Maintenant, je vais vous
+[00:02:35.640] montrer concrètement pourquoi cet outil
+[00:02:37.519] est pratique et qu'est-ce qui [musique]
+[00:02:38.599] date de spécial et de si puissant.
+[00:02:40.440] Imaginons demain, je veux lancer un
+[00:02:41.680] produit pour femmes, je sais pas, je
+[00:02:42.920] vous donne un exemple. Un produit sur
+[00:02:44.840] lequel je suis sûr qu'il y a de la
+[00:02:46.080] demande. [musique] On va dire une crème
+[00:02:47.440] antiride. Normalement, avant de lancer
+[00:02:48.920] le shop, j'aurais besoin d'avoir
+[00:02:50.159] plusieurs informations. À qui je vais
+[00:02:51.800] vendre, pourquoi cette personne achète,
+[00:02:53.519] ce qu'elle a déjà essayé, ce qu'elle
+[00:02:55.400] déteste et ce qui lui fait peur. Et
+[00:02:57.040] surtout, le plus important, comment je
+[00:02:58.599] vais réussir à la convaincre d'acheter.
+[00:03:00.319] Et là maintenant, je vais juste demander
+[00:03:01.840] à Claude et il va faire les recherches à
+[00:03:03.440] ma place. Donc, je vais demander à
+[00:03:05.080] Claude, je veux lancer une boutique de
+[00:03:06.799] e-commerce qui vend une crème antiride.
+[00:03:08.599] Fais-moi toute la recherche nécessaire
+[00:03:10.440] avant de construire le marketing.
+[00:03:11.920] Utiliser la recherche web, des articles
+[00:03:13.799] crédits, le problèmes, les frustrations,
+[00:03:15.879] les résultats. Bref, je demande toutes
+[00:03:17.720] ces informations là. D'ailleurs les
+[00:03:19.120] gars, pour tous ceux qui veulent la
+[00:03:20.159] liste de tous les promptia que
+[00:03:21.959] j'utilise, n'hésitez pas à liker et
+[00:03:24.040] commenter cette vidéo. Dès lors que la
+[00:03:25.680] vidéo aura atteint [musique] les 5000
+[00:03:27.120] likes, je vous mettrai dans la
+[00:03:28.280] description un petit lien pour pouvoir
+[00:03:29.920] télécharger tous mes prompts 100 %
+[00:03:31.480] gratuitement. Bref, on continue. Donc on
+[00:03:33.239] a tapé le prompt et il va nous faire la
+[00:03:35.000] recherche. Donc ça va prendre du temps.
+[00:03:36.400] Des fois ça peut prendre 5 secondes.
+[00:03:37.640] Donc en attendant, je vais scroller un
+[00:03:38.840] peu, on va accélérer ce passage et on
+[00:03:40.319] revient. OK,
+[00:03:42.439] donc là les gars, c'est bon, la
+[00:03:44.000] recherche elle est terminée. Je sais pas
+[00:03:45.200] si vous rendez compte les gars, mais ça
+[00:03:46.159] lui a pris exactement 58 secondes pour
+[00:03:47.920] faire la recherche. [musique] C'est
+[00:03:48.720] clairement une dinguerie. Donc là, il
+[00:03:50.519] nous dit marché des crèmes en tier, déjà
+[00:03:52.519] analyser des avis clients, des forums,
+[00:03:54.400] des pages, tr pilotes et cetera. Donc tu
+[00:03:56.519] vois, il a fait son taf. Donc problème
+[00:03:58.120] et frustration récurrente. OK. et nous
+[00:04:00.239] donne des résultats réellement
+[00:04:01.480] recherchés, les solutions déjà essayées.
+[00:04:03.879] Donc on sait sur quoi appuyer parce
+[00:04:05.439] qu'on sait quel elles ont déjà essayé
+[00:04:07.640] avant, pourquoi les solutions existantes
+[00:04:09.760] déçoivent. Donc ça ça va vraiment nous
+[00:04:11.400] permettre de construire un site de
+[00:04:12.560] qualité et de convaincre le client que
+[00:04:14.560] notre produit est la bonne solution.
+[00:04:16.199] principalement des objections avant
+[00:04:17.799] l'achat, les déclencheurs d'achat
+[00:04:19.479] identifiés, formulation expression
+[00:04:21.560] exacte naturelle des clients. Ça c'est
+[00:04:23.160] vraiment important parce que si tu
+[00:04:24.639] utilises pas de bon champ lexical, tu
+[00:04:26.479] vas peut-être pas te faire comprendre
+[00:04:27.680] par les clients. Les segments des
+[00:04:29.360] clients identifiés, prévention 25 35
+[00:04:31.479] ans, veut retarder l'apparition des
+[00:04:33.199] premières ridules, budget plus limité,
+[00:04:35.199] sensible au discours, agir avant qu'il
+[00:04:37.199] ne soit trop tard. OK, classement par
+[00:04:39.120] intérêt publicitaire. Je sais pas si
+[00:04:40.360] vous rendez compte les gars, mais c'est
+[00:04:41.479] c'est réellement une vraie dinguerie.
+[00:04:42.960] Donc je sais pas si vous rendez compte
+[00:04:43.919] les gars, mais sans Claude on aurait
+[00:04:45.600] jamais pu avoir ça ou on aurait pris des
+[00:04:47.360] heures et des heures pour faire ça. En
+[00:04:49.000] écoce, on nous aurait même demandé de
+[00:04:50.440] faire une étude de marché. Ça nous
+[00:04:52.520] aurait mis des jours pour faire ça. Là,
+[00:04:54.440] ça nous a pris une minute. En une
+[00:04:55.960] minute, [musique] on a des informations
+[00:04:57.240] nécessaires pour pouvoir continuer. Et
+[00:04:59.000] c'est justement ce que je vous disais,
+[00:05:00.360] c'est que certaines personnes vont juste
+[00:05:01.840] utiliser l'IA [musique] sans promptte
+[00:05:03.440] précis et juste copier des phrases du
+[00:05:05.160] style "Donne-moi l'avatar client pour un
+[00:05:07.039] produit anti". Mais le problème c'est
+[00:05:08.680] que Claud va juste inventer une femme
+[00:05:10.600] fictive qui s'appelle Sophie qui a 47
+[00:05:12.680] ans et qui aime prendre soin d'elle. Ça,
+[00:05:14.120] je m'en fous en réalité. Je veux savoir
+[00:05:16.039] exactement ce que les vraies personnes
+[00:05:17.800] qui achètent disent sur ces produits.
+[00:05:19.643] [musique] Je veux savoir quelle est la
+[00:05:20.880] réalité du marché. Maintenant que je
+[00:05:22.360] connais beaucoup mieux mon client, je
+[00:05:23.880] veux savoir qu'est-ce que les
+[00:05:25.000] concurrents lui disent. Je vais copier
+[00:05:26.440] mon deuxième prompt et on va voir
+[00:05:28.280] justement ce qu'il va nous dire. Donc
+[00:05:29.919] dans le deuxième prompt, à partir de ta
+[00:05:31.639] recherche précédente, identifie
+[00:05:33.120] maintenant les principaux concurrents et
+[00:05:34.639] produits comparables sur ce marché.
+[00:05:36.080] analyse pour chacun lorsque
+[00:05:37.479] l'information est accessible
+[00:05:38.520] publiquement. Le positionnement
+[00:05:40.360] principal, [musique] la promesse, les
+[00:05:41.600] bénéfices, les problèmes, les prix,
+[00:05:43.479] l'offre, le bundle, pas si vous rendez
+[00:05:45.120] compte. OK ? Cherche suffisamment
+[00:05:46.520] d'exemples pour pouvoir identifier des
+[00:05:48.120] patterns, pas seulement deux ou trois
+[00:05:49.639] marques. Présentement, ensuite synthèse
+[00:05:51.280] avec ce que presque tous les concurrents
+[00:05:52.800] racontent, les angles déjà utilisés.
+[00:05:54.360] Bref, bref, bref. Donc encore une fois
+[00:05:55.800] les gars, pour ceux qui veulent
+[00:05:56.840] l'ensemble des prompes, n'hésitez pas,
+[00:05:58.479] je vous les enverrai. OK ? Il suffit
+[00:06:00.000] juste de liker et commenter. OK ? Je
+[00:06:01.680] vous avais prévenu les gars que je
+[00:06:02.840] revenais sur YouTube comme en 2022. Donc
+[00:06:04.919] je sais pas si vous vous rendez compte
+[00:06:06.160] mais là dans quelques secondes, j'aurai
+[00:06:07.759] encore une [musique] fois énormément
+[00:06:08.960] d'informations. Ça m'aura fait
+[00:06:10.360] clairement en fait une étude
+[00:06:11.520] comparative. J'aurai toutes les
+[00:06:12.800] informations sur les concurrents et
+[00:06:14.120] voilà c'est déjà là. C'est incroyable.
+[00:06:15.800] OK. Donc l'analyse concurrentielle, je
+[00:06:17.759] sais pas si vous rendez compte les gars,
+[00:06:18.720] mais moi en école de commerce pour faire
+[00:06:20.120] ça, il nous demander des une ou deux
+[00:06:21.479] semaines. On devait faire des souportés,
+[00:06:23.800] men force faiblesse,
+[00:06:26.240] des vraies études de marché qui
+[00:06:27.440] prenaient du temps. Aujourd'hui, on a
+[00:06:29.000] plus besoin de faire tout ça. Avec Lia,
+[00:06:30.560] tu fais ça en [musique] 10 15 minutes
+[00:06:32.120] max et encore là. Ça nous a pris une
+[00:06:33.560] minute. OK. Donc là, on a tous les
+[00:06:35.120] concurrents. Winkle Power, OK,
+[00:06:37.360] E-commerce Premium, Jouves, on a leur
+[00:06:39.880] positionnement, OK, Dermo Cosmétique
+[00:06:42.280] mainstream, OK, on a toutes les
+[00:06:44.199] informations qu'il nous faut. Et là,
+[00:06:45.319] pour mo part d'une des parties les plus
+[00:06:47.360] intéressantes, c'est la partie
+[00:06:48.319] psychologique, on va dire. C'est le truc
+[00:06:49.840] qui change tout en e-commerce, les
+[00:06:51.240] angles marketing. Et là, on arrive
+[00:06:52.599] clairement là où le game a changé ces
+[00:06:54.680] derniers mois. Pendant des années, les
+[00:06:55.919] gens étaient obsédés par un seul truc,
+[00:06:57.759] trouver de bons produits, trouver de
+[00:06:59.360] produits winner, trouver de produits qui
+[00:07:00.800] allaient faire toute la différence.
+[00:07:01.919] Évidemment que produit compte, mais tu
+[00:07:03.319] peux avoir le même produit qu'un mec et
+[00:07:04.960] lui il fait des centaines de milliers
+[00:07:06.199] d'euros et toi tu arrives même pas à
+[00:07:07.680] faire ta première vente parce que lui a
+[00:07:09.520] trouvé une meilleure manière de vendre.
+[00:07:11.560] Donc là, je vais vous montrer de
+[00:07:12.759] troisème prompte. OK ? À partir de la
+[00:07:14.400] recherche client et concurrentielle,
+[00:07:15.579] [musique] tu viens de faire OK,
+[00:07:17.120] construis-moi 10 angles de marketing
+[00:07:18.599] réellement différents pour vendre cette
+[00:07:19.960] crème antiride. Je veux pas dire
+[00:07:21.759] formulation de la même promesse. Pour
+[00:07:23.240] chaque angle, donne-moi de segment de
+[00:07:24.680] client concernés, de problèmes ou désirs
+[00:07:26.560] précis, l'inside de marché et les 50
+[00:07:29.280] hook différents. OK ? On tape et on
+[00:07:30.919] voit. C'est une dinguerie les gars. Je
+[00:07:32.800] sais pas si vous comprenez maintenant ce
+[00:07:34.280] que je veux dire. J'ai toujours le même
+[00:07:35.639] produit dans les mains mais maintenant
+[00:07:37.000] j'ai 10 angles différents et j'ai 50 h
+[00:07:39.680] différents. C'est carrément en réalité
+[00:07:41.400] c'est 10 raisons différentes de vendre
+[00:07:43.440] ce produit là. Et surtout Clodes
+[00:07:45.520] informations là au hasard. Il a basé
+[00:07:47.039] tout ça via les recherches qu'il a fait
+[00:07:48.840] juste avant. Et encore une fois avant ça
+[00:07:50.759] nous aurait pris des dizaines et des
+[00:07:52.280] dizaines d'heures, voir même plusieurs
+[00:07:53.520] semaines pour faire ce que là nous a
+[00:07:55.360] fait en moins de 4 minutes. Maintenant
+[00:07:57.159] on va transformer tous ces angles en
+[00:07:59.080] publicité. On va tout simplement
+[00:08:00.400] imaginer que cet angle me plaît. Moi je
+[00:08:02.199] sais pas, on va dire celui qui me parle
+[00:08:03.560] le plus [musique] personnellement c'est
+[00:08:05.840] c'est lui le bon produit pour le bon
+[00:08:07.639] stade de ride. Donc là maintenant
+[00:08:09.520] imaginons qu'on part sur cet angle-là,
+[00:08:12.000] la prévention pour les 25 35 ans. Parce
+[00:08:14.120] que on va partir du principe que tu
+[00:08:16.000] prends pas le même produit antiride
+[00:08:17.639] quand tu as déjà des rides que le
+[00:08:19.479] produit antiide qu'on va utiliser avant
+[00:08:21.360] que les rides arrivent. Parce qu'il y a
+[00:08:22.599] beaucoup de gens qui disent par exemple
+[00:08:24.159] les femmes qui mettent du [musique]
+[00:08:25.159] botox, pourquoi elles mettent du botox ?
+[00:08:26.919] vont te dire que justement il faut
+[00:08:28.400] mettre du botox avant que les rides
+[00:08:30.000] arrivent. Le botox, c'est justement un
+[00:08:31.560] produit anti-âge. C'est vraiment un des
+[00:08:33.240] seuls produits qui permet à la peau de
+[00:08:35.399] congeler [musique] de muscles pour pas
+[00:08:36.560] que le muscle vieillisse entre
+[00:08:38.000] guillemets. Donc c'est la prévention sur
+[00:08:39.560] les 25 35 ans. Et moi je trouve que cet
+[00:08:41.640] anglul il est fort intéressant parce
+[00:08:43.599] qu'on on pourra [musique]
+[00:08:44.279] potentiellement se mettre en en
+[00:08:46.440] comparaison avec le Botox. Donc au lieu
+[00:08:48.600] de payer du Botox à X, essayez notre
+[00:08:51.560] produit à temps. Bref, pour le coup, je
+[00:08:53.240] vais pas utiliser mon cerveau, même si
+[00:08:54.640] je connais très bien ce marché là étant
+[00:08:56.320] donné que je fréquente beaucoup de
+[00:08:57.480] femmes qui mettent du botox. [rires]
+[00:08:59.480] Non, je rigole. Mais on va tout
+[00:09:00.839] simplement essayer ça. OK ? On va
+[00:09:02.440] essayer le dernier prompt. Oubliez pas
+[00:09:04.399] les gars, ceux qui veulent le prendre,
+[00:09:05.680] vous avez juste à liker et commenter
+[00:09:06.880] cette vidéo. Je vous mettrai le lien
+[00:09:08.440] dans la description, comme ça vous
+[00:09:09.720] pouvez vous aussi en profiter. C'est
+[00:09:11.000] vraiment une dinguerie parce qu'on a des
+[00:09:12.399] diok et là potentiellement on peut les
+[00:09:14.040] utiliser. C'est là où je vous dis que
+[00:09:15.800] avec ce type d'outil clairement on passe
+[00:09:17.600] à un niveau supérieur. Oui, avant les
+[00:09:19.440] personnes vraiment dans l'e-commerce
+[00:09:20.760] vont te dire il y a rien de
+[00:09:21.839] révolutionnaire. Bien sûr qu'on sait
+[00:09:23.279] qu'il faut tester plusieurs angles avant
+[00:09:24.720] d'abandonner mais toute la recherche que
+[00:09:26.880] tu devais faire pour tester ces angles
+[00:09:28.920] là, c'était compliqué. Maintenant en
+[00:09:30.440] fait, on a tout qui est prémâché. Donc
+[00:09:32.360] là où tu peux tester 10 angles en 3
+[00:09:34.720] jours avant ça t'aurait pris une
+[00:09:36.600] quinzaine une vingtaine de jours pour
+[00:09:38.360] récolter touses ces informations là. Là
+[00:09:40.079] aujourd'hui on peut faire ça en quelques
+[00:09:41.560] minutes seulement et des détails comme
+[00:09:42.920] ça je peux rajouter ça encore et encore
+[00:09:44.720] maintenant je peux aussi lui demander
+[00:09:46.079] d'analyser toutes les pubs qui ont déjà
+[00:09:47.760] été lancées sur ce sujet-là pour
+[00:09:49.519] comprendre vraiment le pattern des créas
+[00:09:51.399] qui fonctionnent. L'objectif c'est pas
+[00:09:52.760] que Claude me dise "Cette publicité là
+[00:09:54.360] va fonctionner, celle-là ne va [musique]
+[00:09:55.440] pas fonctionner, mais ça va nous faire
+[00:09:56.839] gagner un temps fou et surtout
+[00:09:58.320] comprendre le pattern, quelle est la
+[00:09:59.720] psychologie qui a permis à cette
+[00:10:01.320] créative de fonctionner. Et on aura pas
+[00:10:03.200] besoin d'ouvrir 200 pages de publicité,
+[00:10:05.600] de passer des heures et des heures sur
+[00:10:06.920] la librairie Facebook comme on aurait pu
+[00:10:08.720] faire nous dans nos années 201822. On en
+[00:10:11.920] est plus du tout là. Maintenant que j'ai
+[00:10:13.240] tout ça les gars, je peux vous dire que
+[00:10:14.440] je suis presque sûr à 99 % que ce que je
+[00:10:17.079] vais lancer, le produit que j'ai choisi
+[00:10:18.800] va forcément marcher. Et qu'est-ce qui
+[00:10:20.120] me reste à faire ? faire le shop.
+[00:10:21.560] Claude, il connaît mon produit, mon
+[00:10:23.760] marché, mes clients, mes concurrents,
+[00:10:25.600] mes objections et langue que j'ai décidé
+[00:10:27.480] de tester. Donc maintenant, j'ai tout ce
+[00:10:29.079] qu'il faut pour construire la boutique.
+[00:10:30.440] Claude, c'est vraiment le glitch qui en
+[00:10:32.279] I-com peut chercher ton marché, analyser
+[00:10:34.680] tes concurrents, trouver tes angles,
+[00:10:36.279] analyser des dizaines de créat, mais
+[00:10:37.959] Claude tout seul ne va pas te rendre bon
+[00:10:39.480] en e-commerce. Demain, si je donne même
+[00:10:41.240] Claude à 1000 personnes, je sais
+[00:10:42.720] pertinemment, il y en a qui vont faire
+[00:10:44.160] des choses incroyables et il y en a qui
+[00:10:45.839] vont juste écrire des choses du style
+[00:10:47.519] "Trouve-moi un produit winner" et ça va
+[00:10:49.120] s'arrêter là. Le vrai avantage, c'est
+[00:10:50.639] pas d'avoir Claude parce que Claude, en
+[00:10:52.079] vrai, c'est accessible publiquement.
+[00:10:53.480] C'est de savoir ce qu'il doit chercher,
+[00:10:55.440] quelle question lui poser, comment la
+[00:10:57.079] poser, savoir quels sont les angles
+[00:10:58.839] intéressants et surtout reconnaître
+[00:11:00.600] quand ce qui vient de sortir, c'est
+[00:11:02.160] complètement à l'ouest et c'est
+[00:11:03.320] complètement con. Et moi
+[00:11:04.360] personnellement, j'ai un énorme avantage
+[00:11:05.839] là-dessus. Ça fait 8 ans que je fais
+[00:11:07.240] d'-commerce et Claude ça me fait gagner
+[00:11:09.360] énormément de temps. Mais derrière j'ai
+[00:11:10.959] déjà passé 8 ans à créer des shops,
+[00:11:13.000] lancer des ads, trouver des produits,
+[00:11:14.920] perdre de l'argent, analyser des pubs et
+[00:11:16.920] bien sûr me prendre des murs. Ça fait 8
+[00:11:18.480] ans que je fais tout ça. Et du coup, je
+[00:11:19.600] me suis posé une question. Qu'est-ce qui
+[00:11:20.839] se passe si on m'éclaude entre les mains
+[00:11:22.480] d'une personne qui n'a jamais fait
+[00:11:23.839] d'icom de sa vie ? Quelqu'un qui parle
+[00:11:25.279] vraiment de zéro et que pendant 30
+[00:11:26.800] jours, je suis à ses côtés pour lui dire
+[00:11:28.240] quoi faire. Est-ce que ça serait
+[00:11:29.279] possible pour lui d'avoir un shop qui
+[00:11:30.720] tourne à plusieurs milliers d'euros par
+[00:11:32.200] jour en quelques jours seulement ? Moi
+[00:11:33.839] personnellement, je pense que oui et
+[00:11:35.120] j'en suis tellement convaincu que j'ai
+[00:11:36.639] décidé d'organiser le plus gros défi
+[00:11:38.720] jamais organisé en France devant tout le
+[00:11:40.600] monde. Je vais prendre un parfait
+[00:11:42.000] inconnu de ma communauté qui part
+[00:11:43.600] complètement de zéro en e-commerce.
+[00:11:45.120] Dubaï, 30 jours ensemble, des
+[00:11:46.959] célébrités, des personnes de mon réseau.
+[00:11:48.720] Tout sera filmé pour atteindre un seul
+[00:11:50.639] objectif, générer 1000 € par jour grâce
+[00:11:52.760] à Claudia. Ce qui va être intéressant,
+[00:11:54.600] c'est que vous allez pouvoir voir tout
+[00:11:56.160] ce qui se passe sans filtre. le produit
+[00:11:58.120] testés, les angles et les hook et les
+[00:12:00.399] créatives, les problèmes qu'on va
+[00:12:01.880] rencontrer et les erreurs qu'on va
+[00:12:03.279] forcément faire. Si on prend un mur,
+[00:12:04.920] vous allez le voir. Si ça cartonne, vous
+[00:12:06.639] allez le voir aussi. Une seule personne
+[00:12:08.160] va pouvoir me rejoindre à Dubaï mais
+[00:12:09.720] tout sera partagé sur le school 100 %
+[00:12:11.480] gratuitement. De cette manière, tout le
+[00:12:12.959] monde pourra copiercoller nos
+[00:12:14.360] stratégies. Donc si tu as envie d'être à
+[00:12:15.959] personne qui va me rejoindre à Dubaï
+[00:12:17.480] pendant 30 jours, tu as juste à
+[00:12:18.839] rejoindre notre school gratuitement en
+[00:12:20.560] cliquant sur le lien dans la
+[00:12:21.600] description. Une fois dedans, tu auras
+[00:12:23.000] accès à un formulaire que tu auras juste
+[00:12:24.639] à remplir. Tu as jusqu'au 28 septembre
+[00:12:26.440] pour le faire. Après, c'est terminé. Et
+[00:12:28.279] même si tu es pas celui qui sera
+[00:12:29.639] sélectionné, ne perds pas espoir parce
+[00:12:31.440] qu'à l'intérieur du school, on va tout
+[00:12:33.000] montrer de A à Z à partir du premier
+[00:12:35.199] octobre. Tu pourras donc suivre le défi
+[00:12:37.000] en temps réel. Et si pendant ces 30
+[00:12:38.800] jours tu as fait ta première vente, tu
+[00:12:40.399] pourras tenter de gagner 10000 € cash.
+[00:12:42.399] C'est 100 % gratuit et le lien est dans
+[00:12:44.120] la description. Bref, on se rejoint sur
+[00:12:45.800] le groupes school les gars.
