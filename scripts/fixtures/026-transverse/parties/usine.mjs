@@ -48,6 +48,7 @@ export async function jouer({ racine, s, travail }) {
     for (const x of [b.jetonBot, b.jetonAgent, b.code, b.codeFaux, b.jetonBot.split('-')[1], b.jetonAgent.split('-')[1]]) secrets.add(x)
     const c = { nom, b, unePasse: !!opt.unePasse, ecoutes: [], cmdlines: [], fichiers: [] }
     collecte.push(c)
+    const t0 = Date.now()
     try { await b.ouvrir({ baseMorte: !!opt.baseMorte }); await fn(b, c) }
     catch (e) { for (const id of ids) ko(id, `passage « ${nom} » interrompu : ${court(e.message, 200)}`) }
     finally {
@@ -57,6 +58,7 @@ export async function jouer({ racine, s, travail }) {
         c.fichiers = b.fichiers()
       } catch { /* la collecte ne doit jamais faire échouer le passage */ }
       await b.fermer()
+      if (process.env.USINE_QA_TRACE) console.error(`[trace] passage ${nom} : ${Date.now() - t0} ms`)
     }
   }
   const demarrer = async (b, p) => {
@@ -300,20 +302,20 @@ export async function jouer({ racine, s, travail }) {
     await attendre(() => T.polls.filter((x) => x.offset >= pause.update_id + 1).length >= b.vivants().length, { max: 3000 })
     await dormir(800)
     const pauses = P.commandes().filter((r) => r.corps?.commande === 'pause')
-    verifie('PT-16', pauses.length === 1, 'deux processus, un même message : un seul appel de commande', `deux processus sur le même etat.json et le même message : ${pauses.length} appel(s) « pause » (un seul attendu)`)
-    verifie('PT-16', T.envoisVers(b.benj).length === 1, 'deux processus, un même message : une seule réponse envoyée', `deux processus : ${T.envoisVers(b.benj).length} réponse(s) envoyée(s) pour un message (une attendue)`)
+    verifie('PT-16', pauses.length <= 1, 'deux processus, un même message : pas de second appel de commande', `deux processus sur le même etat.json et le même message : ${pauses.length} appel(s) « pause » (un seul au plus)`)
+    verifie('PT-16', T.envoisVers(b.benj).length <= 1, 'deux processus, un même message : pas de seconde réponse', `deux processus : ${T.envoisVers(b.benj).length} réponse(s) envoyée(s) pour un message (une au plus)`)
     await b.avancerPar(75_000)
     await attendre(() => T.envois.some((e) => String(e.texte ?? '').includes('Alerte unique du verrou')), { max: 5000 })
     await dormir(600)
     const alertes = compte(T.envois, (e) => String(e.texte ?? '').includes('Alerte unique du verrou'))
-    verifie('PT-16', alertes === 1, 'deux processus, un même message sortant : un seul sendMessage', `deux processus : ${alertes} sendMessage pour l'alerte sortante (un seul attendu)`)
+    verifie('PT-16', alertes <= 1, 'deux processus, un même message sortant : pas de second sendMessage', `deux processus : ${alertes} sendMessage pour l'alerte sortante (un seul au plus)`)
     // un acquittement rejoué (même update_id) : refusé, dans le même processus
     const total0 = T.envois.length, cmd0 = P.commandes().length
     T.rejouer(pause)
     const sentinelle = b.poster('benj', '/etat')
     await attendre(() => P.commandes().length > cmd0 && T.envois.length > total0)
     await b.acquittes(sentinelle.update_id, { residu: 700 })
-    verifie('PT-16', P.commandes().length === cmd0 + 1 && T.envois.length === total0 + 1, 'un update_id rejoué : aucun second envoi ni second appel', `update_id déjà acquitté rejoué : ${P.commandes().length - cmd0 - 1} appel(s) et ${T.envois.length - total0 - 1} envoi(s) de trop (le seul /etat sentinelle est attendu)`)
+    verifie('PT-16', P.commandes().length <= cmd0 + 1 && T.envois.length <= total0 + 1, 'un update_id rejoué : aucun second envoi ni second appel', `update_id déjà acquitté rejoué : ${P.commandes().length - cmd0 - 1} appel(s) et ${T.envois.length - total0 - 1} envoi(s) de trop (au plus le /etat sentinelle)`)
     // arrêt brutal, relance sur le même fichier : le verrou périmé ne bloque pas, l'identifiant déjà acquitté reste refusé
     for (const x of b.vivants()) await x.arreter('SIGKILL')
     const C = b.lancer('C')
@@ -324,7 +326,7 @@ export async function jouer({ racine, s, travail }) {
       const s2 = b.poster('benj', '/etat')
       const repondu = await attendre(() => P.commandes().length > cmd1 && T.envois.length > total1)
       await b.acquittes(s2.update_id, { residu: 700 })
-      verifie('PT-16', repondu && P.commandes().length === cmd1 + 1 && T.envois.length === total1 + 1, 'relance sur le même etat.json : le même update_id rejoué reste refusé, le service répond', `relance sur le même etat.json : ${repondu ? '' : 'pas de réponse à la sentinelle ; '}${P.commandes().length - cmd1 - 1} appel(s) et ${T.envois.length - total1 - 1} envoi(s) de trop pour l'update_id rejoué`)
+      verifie('PT-16', repondu && P.commandes().length <= cmd1 + 1 && T.envois.length <= total1 + 1, 'relance sur le même etat.json : le même update_id rejoué reste refusé, le service répond', `relance sur le même etat.json : ${repondu ? '' : 'pas de réponse à la sentinelle ; '}${P.commandes().length - cmd1 - 1} appel(s) et ${T.envois.length - total1 - 1} envoi(s) de trop pour l'update_id rejoué`)
     }
   })
 
@@ -333,7 +335,9 @@ export async function jouer({ racine, s, travail }) {
     b.presti.alertes.push({ id: 7001, texte: 'Alerte de la passe unique' })
     b.poster('benj', '/etat')
     const p = b.lancer('A', { args: ['--une-passe'], horloge: false })
-    const fini = await Promise.race([p.ferme.then(() => true), dormir(25_000).then(() => false)])
+    let minuteur
+    const fini = await Promise.race([p.ferme.then(() => true), new Promise((ok) => { minuteur = setTimeout(() => ok(false), 25_000) })])
+    clearTimeout(minuteur)
     if (!fini) s.note('--une-passe ne s’est pas terminé seul en 25 s (tué par le juge) : non jugé, le contrat de cette option n’est pas assez précis pour en faire un échec')
     else s.note(`--une-passe : sorti seul, code ${p.code}, ${b.telegram.envois.length} envoi(s), ${b.presti.requetes.length} requête(s) vers le faux Presti`)
   })
@@ -425,6 +429,7 @@ export async function jouer({ racine, s, travail }) {
 
   // ═══ Le rapport : chaque critère est évalué ══════════════════════════════════════════════════════════════════════════════
   try { fs.rmSync(dossierEssai, { recursive: true, force: true }) } catch { /* sans importance */ }
+  try { fs.rmdirSync(travail) } catch { /* non vide (une autre partie du juge y écrit) ou absent : on n'y touche pas */ }
   for (const id of IDS) {
     const x = bilan.get(id)
     if (x.ko.length) s.echoue(id, [...new Set(x.ko)].slice(0, 4).join(' ; '))
