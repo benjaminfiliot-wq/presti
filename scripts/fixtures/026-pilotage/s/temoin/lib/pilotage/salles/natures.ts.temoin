@@ -8,7 +8,7 @@ export const NATURE_DE: Readonly<Record<string, Nature>> = Object.freeze({
   flux: 'image', hyperframes: 'video', kokoro: 'voix', 'fish-audio': 'voix',
 })
 export async function parNature(c: Contexte, depuis: string) {
-  const l = await c.rpc('pilotage_couts_modeles', { p_depuis: depuis })
+  const l = await c.rpc('pilotage_couts_modeles', { p_debut: depuis })
   const out: Record<Nature, number> = { texte: 0, image: 0, video: 0, voix: 0 }
   for (const x of Array.isArray(l) ? l : []) { const n = NATURE_DE[x.fournisseur]; if (n) out[n] += Number(x.eur ?? 0) }
   return out

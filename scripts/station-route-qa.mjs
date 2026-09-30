@@ -600,13 +600,47 @@ if (o.temoin) {
 if (!fs.existsSync(RAC) || !fs.statSync(RAC).isDirectory()) refuser(`--racine : ${RAC} n'est pas un dossier`)
 const PREFIXE = { lecture: 'SV', reunion: 'RA', salles2: 'SL' }[PARTIE]
 const IDS = {
-  lecture: ['SV-1', 'SV-2', 'SV-3', 'SV-4', 'SV-5', 'SV-6', 'SV-7', 'SV-8', 'SV-9', 'SV-10', 'SV-11', 'SV-12', 'SV-13', 'SV-14', 'SV-15', 'SV-16', 'SV-17', 'SV-18', 'SV-19', 'SV-20', 'SV-21', 'SV-22'],
+  lecture: ['SV-1', 'SV-2', 'SV-3', 'SV-4', 'SV-5', 'SV-6', 'SV-7', 'SV-8', 'SV-9', 'SV-10', 'SV-11', 'SV-12', 'SV-13', 'SV-14', 'SV-15', 'SV-16', 'SV-17', 'SV-18', 'SV-19', 'SV-20', 'SV-21', 'SV-22', 'SV-23'],
   reunion: ['RA-1', 'RA-2', 'RA-3', 'RA-4', 'RA-5'],
   salles2: ['SL-1', 'SL-2', 'SL-3', 'SL-4', 'SL-5', 'SL-6', 'SL-7', 'SL-8', 'SL-9'],
 }[PARTIE]
 if (o.temoin) IDS.push(`${PREFIXE}-HARNAIS`)
 const NOM = `${JUGE} --partie=${PARTIE}`
 const S = creerSortie(NOM, [...IDS], `${NOM} — racine ${RAC}${TEMOIN ? ` — témoin du lot s posé sur ${BASE.slice(0, 7)}` : ''} — base ${BASE.slice(0, 7)} — ${VIVANT ? 'sources, doublures, puis vivant (arbre réel, copie au drapeau levé, comptes d’essai, typecheck)' : 'sources et doublures (le vivant se juge sur la racine réelle)'}`)
+
+// ── Les appels rpc contre le SQL réel (SV-23) : les doublures du juge ont leurs propres formes, elles ne voient pas une faute de nom
+// de paramètre (p_agent au lieu de p_nom : la vue ne marche jamais en production et le juge reste vert). Le SQL fait foi : le dernier
+// `create function public.<nom>(<paramètres>)` de supabase/migrations/ (dépôt réel, jamais la copie jugée).
+function fonctionsSql() {
+  const dir = path.join(R, 'supabase', 'migrations'), f = new Map()
+  if (!fs.existsSync(dir)) return null
+  for (const nom of fs.readdirSync(dir).filter((n) => /^\d{4}_.*\.sql$/.test(n) && !n.startsWith('_')).sort()) {
+    const t = fs.readFileSync(path.join(dir, nom), 'utf8').replace(/--[^\n]*/g, '')
+    for (const m of t.matchAll(/create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?(\w+)\s*\(([^)]*)\)/gi)) {
+      const params = m[2].split(',').map((x) => x.trim()).filter(Boolean).map((x) => ({ nom: /^(\w+)/.exec(x)?.[1], defaut: /\bdefault\b|=/i.test(x) }))
+      f.set(m[1], { params, migration: nom })
+    }
+  }
+  return f
+}
+/** Les appels `.rpc('nom', { cle: v, autre, … })` d'un code sans commentaires : { nom, cles } (cles = null si l'argument n'est pas un littéral). */
+function appelsRpc(c) {
+  const out = []
+  for (const m of c.matchAll(/\.rpc\(\s*(['"`])(\w+)\1\s*(?:,\s*(\{)?)?/g)) {
+    if (!m[3]) { out.push({ nom: m[2], cles: /,/.test(m[0]) ? null : [] }); continue }
+    let prof = 0, i = m.index + m[0].length - 1, debut = i + 1, cles = [], cur = ''
+    for (; i < c.length; i++) {
+      const ch = c[i]
+      if ('{[('.includes(ch)) prof++
+      else if ('}])'.includes(ch)) { prof--; if (prof === 0) { cles.push(c.slice(debut, i)); break } }
+      else if (ch === ',' && prof === 1) { cles.push(c.slice(debut, i)); debut = i + 1 }
+    }
+    const noms = cles.map((x) => x.trim()).filter(Boolean).map((x) => (/^\.\.\./.test(x) ? null : /^(\w+)\s*(?::|$)/.exec(x)?.[1] ?? null))
+    out.push({ nom: m[2], cles: noms.includes(null) ? null : noms })
+  }
+  return out
+}
+
 const lireRac = (rel) => lireRacine(RAC, rel)
 const code = (t) => (t === null ? null : sansCommentaires(t))
 /** Le code sans commentaires ni chaînes (les chaînes deviennent "") : on y cherche des appels, pas des mots. */
@@ -785,6 +819,25 @@ if (PARTIE === 'lecture') {
     const e = []
     if (/cout_jour_eur\s*:\s*0\b/.test(code(SRC.station) + tousLecteurs.map(code).join('\n'))) e.push('cout_jour_eur écrit en dur à 0')
     noter('SV-20', e, 'cout_jour_eur jamais écrit en dur')
+  }
+  {
+    const e = [], sql = fonctionsSql()
+    if (sql === null) e.push('supabase/migrations/ introuvable dans le dépôt réel : le SQL ne peut pas être relu')
+    else {
+      const sources = [['lib/pilotage/station.ts', SRC.station], ['la route', SRC.route], ...Object.entries(lecteursSrc).filter(([, x]) => x !== null)]
+      let appels = 0
+      for (const [nom, src] of sources) for (const a of appelsRpc(code(src))) {
+        appels++
+        const def = sql.get(a.nom)
+        if (!def) { e.push(`${nom} : rpc('${a.nom}') : aucune fonction de ce nom dans supabase/migrations/`); continue }
+        if (a.cles === null) continue
+        const permis = def.params.map((p) => p.nom)
+        for (const k of a.cles) if (!permis.includes(k)) e.push(`${nom} : rpc('${a.nom}') passe « ${k} », le SQL (${def.migration}) nomme ${permis.length ? permis.join(', ') : 'aucun paramètre'}`)
+        for (const p of def.params) if (!p.defaut && !a.cles.includes(p.nom)) e.push(`${nom} : rpc('${a.nom}') n'passe pas « ${p.nom} » (obligatoire dans ${def.migration})`)
+      }
+      if (!appels) e.push('aucun appel rpc trouvé dans les sources de la station : le critère ne jugerait rien')
+    }
+    noter('SV-23', e, 'chaque appel rpc des sources nomme une fonction du SQL réel et ses paramètres exacts (les obligatoires présents, aucun inconnu)')
   }
 }
 if (PARTIE === 'reunion') {

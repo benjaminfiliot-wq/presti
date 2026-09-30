@@ -44,6 +44,8 @@ export const juges = [
   {
     commande: 'scripts/station-route-qa.mjs', arguments: ['--partie=lecture', BASE], loader: true, attendu: 'SV-1', criteresMin: 20,
     sabotages: [
+      { nom: 'parametre-rpc-faux', fichier: ST, avant: "c.rpc('pilotage_couts_modeles', { p_debut: c.depuisMinuit })", apres: "c.rpc('pilotage_couts_modeles', { p_depuis: c.depuisMinuit })", tue: 'SV-23' },
+      { nom: 'fonction-rpc-inventee', fichier: ST, avant: "async function derniereReunion(c: Contexte) { return premiere(await c.rpc('station_reunion_lire', { p_limite: 1 })) }", apres: "async function derniereReunion(c: Contexte) { void c.rpc('pilotage_fonction_inventee', { p_x: 1 }); return premiere(await c.rpc('station_reunion_lire', { p_limite: 1 })) }", tue: 'SV-23' },
       { nom: 'crons-tries', fichier: ST, avant: 'const crons = lignesDe(pc.data).map(', apres: 'const crons = lignesDe(pc.data).sort(() => 0).map(', tue: 'SV-5' },
       { nom: 'alertes-sujet', fichier: ST, avant: ".from('alertes').select('motif, cree_le')", apres: ".from('alertes').select('motif, cree_le, sujet')", tue: 'SV-6' },
       { nom: 'fil-sans-apres', fichier: ST, avant: "c.rpc('pilotage_evenements', { p_apres: apres, p_limite: 100, p_agent: agent, p_types: null })", apres: "c.rpc('pilotage_evenements', { p_apres: null, p_limite: 100, p_agent: agent, p_types: null })", tue: 'SV-10' },
