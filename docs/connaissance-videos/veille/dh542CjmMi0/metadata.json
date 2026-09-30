@@ -1,0 +1,39 @@
+{
+  "id": "dh542CjmMi0",
+  "titre": "J'ai copié une boutique à 200K€/mois avec des publicités IA",
+  "url": "https://www.youtube.com/watch?v=dh542CjmMi0",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\dh542CjmMi0\\video.mp4",
+  "taille_octets": 33736028,
+  "sha256_video": "280cf718e1a28f7eaccec3ab08e43a7593ea30dcef21bfafd34aa20a089916ee",
+  "duree_secondes": 1337.294,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "24/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    83.580875,
+    250.74262500000003,
+    417.904375,
+    585.066125,
+    752.227875,
+    919.389625,
+    1086.551375,
+    1253.713125
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\dh542CjmMi0\\video.fr-orig.vtt",
+  "nombre_cues": 1673,
+  "nombre_lignes_transcription": 834,
+  "empreintes_documents": {
+    "planche.jpg": "56643c59f5216066f293ad19658eeb7ce457fcdb11d16ea1d01c5459fd878349",
+    "sous-titres-originaux.vtt": "b5f35a2548aec12125b9603514fe4f18bf0a31b072abc472ea3090498a6b700c",
+    "transcription.txt": "2fc1c3fe592e6f851d807c145e0edf4f5f8200a0347ea7fde64b8e3186977206"
+  }
+}

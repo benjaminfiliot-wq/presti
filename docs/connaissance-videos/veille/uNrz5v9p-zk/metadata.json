@@ -1,0 +1,39 @@
+{
+  "id": "uNrz5v9p-zk",
+  "titre": "J'ai copié une boutique à 2M€/mois grâce à Claude IA en 30 minutes",
+  "url": "https://www.youtube.com/watch?v=uNrz5v9p-zk",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\uNrz5v9p-zk\\video.mp4",
+  "taille_octets": 45576419,
+  "sha256_video": "8e84c7782954cc513b073b43a4efbd0677cc4562e10b30e7fbe8963a58638f0a",
+  "duree_secondes": 1790.294,
+  "largeur": 640,
+  "hauteur": 360,
+  "codec_video": "av1",
+  "images_par_seconde": "24/1",
+  "audio": [
+    {
+      "codec": "opus",
+      "frequence": "48000",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    111.893375,
+    335.68012500000003,
+    559.4668750000001,
+    783.253625,
+    1007.040375,
+    1230.827125,
+    1454.613875,
+    1678.400625
+  ],
+  "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+  "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\uNrz5v9p-zk\\video.fr-orig.vtt",
+  "nombre_cues": 2287,
+  "nombre_lignes_transcription": 1144,
+  "empreintes_documents": {
+    "planche.jpg": "cbbd2a5df838d74c14bd007d5a6dac4e69c18339df4175630fcba0cce5f0dc34",
+    "sous-titres-originaux.vtt": "f2970dfa63e79aa2af83dc5a915bb381960b1a4a8c22dbd83164ba59fc4deaf8",
+    "transcription.txt": "fa2f49f8cd6fd13f9941f4feb3b0941b1361d420a10ebfe1aa51b71e3aa59d3c"
+  }
+}

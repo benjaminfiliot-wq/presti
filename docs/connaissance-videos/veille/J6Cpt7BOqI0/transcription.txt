@@ -1,0 +1,1006 @@
+[00:00:01.790] pendant des années, créer une boutique
+[00:00:01.800] Shopify vraiment professionnelle,
+[00:00:03.679] demander soit des compétences techniques
+[00:00:05.520] ou soit des milliers d'euros en
+[00:00:06.839] développement. Aujourd'hui, des outils
+[00:00:08.719] comme cloud code changent complètement
+[00:00:10.559] les règles du jeu. Le principe, il est
+[00:00:12.120] tout simplement incroyable.
+[00:00:13.240] Personnellement, ça fait 8 ans que je
+[00:00:14.320] fais de l'e-commerce, j'ai jamais vu ça.
+[00:00:16.039] Donc, vous allez expliquer à Lia
+[00:00:17.480] exactement ce que vous voulez modifier
+[00:00:19.039] sur votre boutique et elle peut
+[00:00:20.560] directement le faire. Donc elle va
+[00:00:21.880] modifier le thème directement en
+[00:00:23.599] fonction de ce que vous allez lui dire,
+[00:00:24.640] que ça soit le design, les sections, les
+[00:00:26.800] couleurs, la structure et l'expérience
+[00:00:28.599] utilisateur. Tout peut être personnalisé
+[00:00:30.840] beaucoup plus rapidement qu'avant. Voici
+[00:00:32.520] un exemple d'une boutique qui est assez
+[00:00:34.000] basique. Très clairement voilà, elle est
+[00:00:35.920] fonctionnelle mais on peut faire
+[00:00:37.239] beaucoup mieux. C'est une boutique qu'on
+[00:00:38.399] voit très régulièrement sur des
+[00:00:40.160] boutiques qu'on appelle dropshipping.
+[00:00:41.520] Mais maintenant, regardez ce qu'on peut
+[00:00:42.600] obtenir après quelques modifications qui
+[00:00:44.320] sont faites par Cloud Code. Ça permet
+[00:00:45.800] d'avoir des meilleures animations, un
+[00:00:47.079] meilleur branding, des sections plus
+[00:00:48.399] propres, un meilleur rendu visuel et on
+[00:00:50.360] a l'impression vraiment d'être sur une
+[00:00:51.680] marque beaucoup plus sérieuse. Je vous
+[00:00:53.039] ai mis en place une road map complète en
+[00:00:55.120] description afin qu'on puisse valider
+[00:00:56.760] ensemble donc comment créer une boutique
+[00:00:58.239] Shopify ultra professionnelle notamment
+[00:01:00.399] avec clock code. Il y a peut-être des
+[00:01:01.760] personnes qui n'ont jamais utilisé Cloud
+[00:01:03.000] Code ou même peut-être Shopify. Donc on
+[00:01:04.879] va expliquer les choses calmement. C'est
+[00:01:06.439] pour ça que voilà, vous pouvez suivre
+[00:01:07.600] exactement cette road map qui est en
+[00:01:08.960] description afin que vous puissiez faire
+[00:01:10.560] exactement ce que je vais vous montrer à
+[00:01:12.240] travers cette vidéo. La première étape à
+[00:01:13.880] mettre en place, c'est d'avoir un
+[00:01:14.880] abonnement Cloud Pro. Donc j'espère que
+[00:01:17.439] tout le monde qui regarde cette vidéo
+[00:01:18.680] ici utilise déjà Cloud IA euh parce que
+[00:01:20.520] ça fait très clairement la différence à
+[00:01:22.000] tous les niveaux. Personnellement,
+[00:01:22.960] j'utilise tous les jours. Parfois même
+[00:01:24.360] ça m'arrive de lui poser des questions
+[00:01:25.520] bêtes. Par exemple, là récemment,
+[00:01:27.159] j'étais à la foire de Canton et on
+[00:01:28.759] marchait 10h par jour. Je demande tout
+[00:01:30.240] simplement à Claudia, OK, comment
+[00:01:31.799] récupérer correctement. Il m'explique
+[00:01:33.520] que OK, tu vas jacuzzi pendant 10
+[00:01:35.079] minutes, tu vas ensuite nager pendant 10
+[00:01:36.600] minutes et tu mets les pieds en l'air
+[00:01:38.000] sur le mur pendant 10 minutes. Voilà, il
+[00:01:39.759] m'explique, j'applique par A + B. Donc
+[00:01:42.320] vraiment, je vous invite à utiliser
+[00:01:43.280] Claudia euh sur tous les aspects de
+[00:01:44.920] votre vie parce que ça fera la
+[00:01:45.920] différence. Donc ce qu'il va falloir
+[00:01:46.880] faire, c'est avoir un abonnement Cloud
+[00:01:48.560] Pro. Donc pour ça, je vais aller juste
+[00:01:50.799] ici. Je vais mettre Claudia juste ici.
+[00:01:53.159] Voilà. Donc là, on se retrouve
+[00:01:54.240] directement sur la page de Claudia. Ce
+[00:01:55.920] que vous allez faire, c'est télécharger
+[00:01:57.200] l'application de bureau. Je vais
+[00:01:58.520] enregistrer. Donc moi, bon, j'ai déjà
+[00:02:00.240] l'application, mais je vous montre un
+[00:02:01.880] petit peu comment procéder. Donc là, je
+[00:02:03.240] vais télécharger l'application Claudia
+[00:02:04.960] afin qu'elle puisse être intégrée à mon
+[00:02:06.479] ordinateur. Donc on est good. Ça a bien
+[00:02:08.360] été téléchargé. Voilà, Cloud
+[00:02:10.440] application. Et là, ben comme moi j'ai
+[00:02:12.040] déjà téléchargé l'application, je vais
+[00:02:13.400] me retrouver exactement ici. Donc c'est
+[00:02:15.440] Inia qui nous permettra de nous aider
+[00:02:16.920] sur toute la partie paramétrage de notre
+[00:02:19.000] boutique Shopify. Donc ici, vous pouvez
+[00:02:21.080] cliquer sur voir tous les forfaits. Donc
+[00:02:22.560] moi, j'ai déjà un abonnement qui est
+[00:02:23.760] pris en compte notamment avec une de mes
+[00:02:25.280] applications iOS, mais vous par exemple,
+[00:02:27.160] vous allez prendre dès maintenant le
+[00:02:28.640] forfait à 20 dollars. Je vous le
+[00:02:29.920] recommande vivement. Ça fera vraiment la
+[00:02:31.560] différence dans votre business. Euh je
+[00:02:32.920] suis pas affilié à quoi que ce soit euh
+[00:02:34.519] avec eux. Euh c'est vraiment une
+[00:02:35.920] recommandation que je vous invite à
+[00:02:37.000] faire. Ensuite, il va falloir qu'on
+[00:02:38.080] puisse télécharger donc Visual Studio
+[00:02:39.760] Code. D'accord. Donc ça c'est un
+[00:02:41.159] logiciel justement qui nous permettra de
+[00:02:43.159] mettre en place toute la partie codage
+[00:02:45.159] de Claudia. Vous allez cliquer
+[00:02:46.680] exactement ici et vous allez vous
+[00:02:48.200] retrouver sur cette page. Donc si vous
+[00:02:49.760] avez un Mac, vous cliquez ici sur
+[00:02:51.120] download. Et si vous avez d'autres
+[00:02:52.800] plateformes, ben vous mettez en fonction
+[00:02:54.159] de votre plateforme juste ici. Donc moi
+[00:02:55.560] je peux cliquer sur download juste ici
+[00:02:57.239] et je vais arriver exactement sur une
+[00:02:59.519] page comme ceci. Donc voilà, je vous
+[00:03:00.959] invite vraiment à vérifier que vous avez
+[00:03:02.480] bien un interface comme ceci. Donc ça
+[00:03:04.239] c'est le Visual Studio Code. C'est ce
+[00:03:05.799] qui nous permettra de faire vraiment les
+[00:03:07.360] modifications de notre thème Shopify. Ça
+[00:03:09.879] c'est l'étape numéro 2. Ensuite, il faut
+[00:03:11.599] bien évidemment que vous ayez une
+[00:03:12.680] boutique Shopify active pour mettre ça
+[00:03:14.480] en place. Vous pouvez aller directement
+[00:03:16.080] en description. Donc là vous avez une
+[00:03:17.720] offre unique. Donc Shopify 3 jours
+[00:03:19.319] offert plus 3 mois à 1 €. Donc là je
+[00:03:21.400] vais cliquer exactement ici et je vais
+[00:03:23.200] pouvoir mettre en place ma première
+[00:03:24.799] boutique Shopify. Donc là vous faites
+[00:03:26.440] exactement comme ceci he très simple.
+[00:03:28.120] Voilà donc je créer un mot de passe,
+[00:03:30.120] créer un compte. Donc là, vous mettrez
+[00:03:31.959] vos informations bancaires juste ici.
+[00:03:33.840] Donc soit via PayPal, soit votre carte
+[00:03:35.200] bancaire. Et vous pouvez vous inscrire
+[00:03:36.640] pour 1 € par mois au bout de 3 jours
+[00:03:38.640] d'essai. Donc là, c'est ce qui nous
+[00:03:39.599] permettra d'avoir notre première
+[00:03:40.959] boutique Shopify. Ça, je vais mettre I
+[00:03:42.360] will do later. Donc voilà, on est good.
+[00:03:44.400] Donc là, j'ai ma première boutique
+[00:03:45.519] Shopify. Mais pour cette vidéo, je vais
+[00:03:47.159] reprendre une boutique que j'ai déjà mis
+[00:03:48.599] en place et qui fera bientôt l'objet
+[00:03:50.280] d'un challenge qui va sortir sur
+[00:03:51.519] YouTube. Donc là, je vais juste aller
+[00:03:52.720] sur boutique en ligne. J'ai mis en place
+[00:03:54.239] pas mal de produits que je suis en train
+[00:03:55.280] de tester. Donc là, l'idée, c'est de
+[00:03:56.480] faire des modifications avec clock code
+[00:03:58.319] sur la boutique que je vais vous montrer
+[00:03:59.879] juste ici. Là, je vais cliquer sur
+[00:04:01.200] afficher. Donc voilà, par exemple, j'ai
+[00:04:02.920] cette boutique là, le legging, sculptant
+[00:04:04.760] gainant silhouette infini. Donc là,
+[00:04:06.920] c'est le thème draw. Là, c'est le thème
+[00:04:08.920] down. OK ? C'est un thème qui est
+[00:04:10.200] gratuit que vous pouvez retrouver
+[00:04:11.560] facilement sur boutique en ligne juste
+[00:04:13.159] ici. Et vous allez sur les thèmes
+[00:04:14.239] gratuits populaires. Vous pouvez aller
+[00:04:15.599] ici sur visiter le thème store et
+[00:04:17.600] reprendre justement ce thème-là. Et
+[00:04:18.840] c'est ce thème-là avec lequel on va
+[00:04:20.199] faire toutes les modifications notamment
+[00:04:22.000] vers Cloud code. Sur ça, on est goû.
+[00:04:23.720] Donc bien évidemment, il faut un
+[00:04:24.800] ordinateur. Donc là, la première étape
+[00:04:26.320] de cette vidéo, ça sera de connecter
+[00:04:27.600] donc Shopify, notre ordinateur et Cloud
+[00:04:29.440] code afin que LIA puisse modifier notre
+[00:04:31.240] thème automatiquement. Maintenant que la
+[00:04:32.800] première phase elle est validée, donc la
+[00:04:34.400] deuxième phase ça sera de installer
+[00:04:35.919] Visual Studio Code comme je l'ai montré
+[00:04:37.680] précédemment là je vous transmets le
+[00:04:38.880] lien juste ici. Vous allez directement
+[00:04:40.360] le télécharger juste ici et vous allez
+[00:04:42.280] arriver sur une interface comme ceci.
+[00:04:44.039] Voilà si vous téléchargez Visual Studio
+[00:04:45.639] Code vous aurez un interface comme ceci.
+[00:04:47.639] C'est ce qui nous permettra de pouvoir
+[00:04:48.759] coder, modifier notre thème sans avoir à
+[00:04:50.919] faire quelconque intervention sur notre
+[00:04:52.400] boutique Shopify. Donc ça on va le
+[00:04:53.919] connecter directement via Cloud IA. Donc
+[00:04:56.039] ça ce que vous devez faire vous cliquez
+[00:04:57.199] sur download for Mac très simplement.
+[00:04:59.280] Maintenant, la première vraie étape
+[00:05:00.520] qu'on va mettre en place, c'est de créer
+[00:05:01.680] un espace de travail Shopify qui sera
+[00:05:03.600] dédié à notre projet. Donc là, je vais
+[00:05:05.160] aller sur Visual Code juste ici. On va
+[00:05:07.400] aller sur files et je vais mettre open
+[00:05:09.840] folder juste ici. Je vais cliquer sur
+[00:05:12.000] nouveau dossier et là, je vais mettre
+[00:05:13.680] boutique Shopify numéro 1. Voilà, je
+[00:05:16.080] vais mettre exactement ça. Créer,
+[00:05:17.919] ouvrir. Suivez bien mes étapes comme ça
+[00:05:19.720] personne sera perdu. Donc ça c'est la
+[00:05:21.319] première étape déjà pour pouvoir
+[00:05:22.600] modifier mon thème. Donc là, boutique
+[00:05:24.240] Shopify numéro 1. Donc là, on est good
+[00:05:26.280] pour l'instant. Ensuite, la phase 3 donc
+[00:05:28.000] ça sera de connecter Shopify à votre
+[00:05:29.840] ordinateur. Donc ce qu'on va faire c'est
+[00:05:31.240] qu'on va ouvrir le terminal, d'accord,
+[00:05:33.120] sur votre PC, ouvrir le terminal. Donc
+[00:05:34.960] le terminal, il ressemble exactement à
+[00:05:36.560] ça. Il y a différentes manières d'ouvrir
+[00:05:37.919] le terminal, que vous soyez sous Mac ou
+[00:05:39.520] autre chose. Vous allez ouvrir le
+[00:05:40.919] terminal exactement comme ceci. Donc
+[00:05:42.639] c'est à cet endroit où on va donner les
+[00:05:44.160] ordres à notre ordinateur pour mettre en
+[00:05:45.600] place notre boutique Shopify, installer
+[00:05:47.160] les outils et lancer cloud code.
+[00:05:49.080] Maintenant ce qu'on va faire, c'est
+[00:05:49.919] qu'on va installer Shopify CLI. Donc
+[00:05:52.000] c'est un outil qui permet de modifier
+[00:05:53.440] des thèmes localement. Je vais copier
+[00:05:55.280] juste ici. On va aller sur Shopify CLI.
+[00:05:57.919] Je vais cliquer exactement ici. Donc là,
+[00:05:59.639] l'idée sera de pouvoir installer donc
+[00:06:01.039] Shopify CLI sur notre terminal. Donc là,
+[00:06:03.000] je vais copier exactement ici. Hop là,
+[00:06:05.440] le terminal entrer. On va attendre que
+[00:06:07.319] ça charge. En tout cas, vous inquiétez
+[00:06:08.919] pas, on peut voir des fois des chiffres,
+[00:06:10.840] des trucs un peu techniques et cetera,
+[00:06:12.720] mais euh il y a aucun souci. Tout est
+[00:06:15.120] très simple à mettre en place. Ce qu'on
+[00:06:16.680] va faire maintenant, c'est que vous
+[00:06:17.560] allez copier exactement cette phrase
+[00:06:19.160] juste ici. On retourne au niveau du
+[00:06:20.840] terminal, je copie et je clique sur
+[00:06:23.120] entrer. Là, ils vont nous demander donc
+[00:06:24.639] le mot de passe de notre ordinateur.
+[00:06:26.240] D'accord ? C'est via cette plateforme-là
+[00:06:27.680] qu'on va pouvoir modifier notre
+[00:06:29.319] boutique, notamment via cloud IA. Là, je
+[00:06:31.240] vais mettre mon mot de passe. Donc c'est
+[00:06:32.479] normal si vous voyez, c'est normal si
+[00:06:34.319] vous voyez que rien n'est écrit,
+[00:06:35.599] d'accord ? En fait, là, vous mettez un
+[00:06:36.680] peu votre mot de passe à l'aveugle.
+[00:06:37.880] J'espère que vous vous souvenez bien de
+[00:06:38.919] votre mot de passe de PC, d'accord ?
+[00:06:40.599] C'est bien votre mot de passe de PC,
+[00:06:41.759] c'est pas votre mot de passe Shopify.
+[00:06:43.639] Donc là, je vais cliquer sur entrer,
+[00:06:44.880] exactement comme ceci. Donc là, c'est en
+[00:06:46.280] train de charger. Donc là, on est good à
+[00:06:48.280] ce niveau-là. Maintenant, ce qu'on va
+[00:06:49.560] faire, c'est qu'on va télécharger le
+[00:06:50.720] thème Shopify. Pour ça, on va installer
+[00:06:52.599] donc le thème down. C'est un thème
+[00:06:54.440] officiel qui est gratuit he de Shopify.
+[00:06:56.199] Et donc, c'est un bon point de départ si
+[00:06:57.400] vous souhaitez démarrer votre activité
+[00:06:58.879] en e-commerce. Donc là, je reviens sur
+[00:07:00.720] ma boutique, je vais cliquer sur
+[00:07:02.160] boutique en ligne et donc si c'est pas
+[00:07:03.919] déjà fait, vous allez sur thème gratuit
+[00:07:05.759] et populaire. Je vais cliquer sur
+[00:07:07.080] visiter le store juste ici. Je vais
+[00:07:08.840] cliquer sur gratuit. Le thème down, il
+[00:07:11.000] devrait pas être très loin. Voilà, il
+[00:07:13.280] devrait être juste ici. On est d'accord
+[00:07:15.000] ? Donc là, je vais ajouter une copie
+[00:07:17.080] pour vous montrer l'exemple parce que je
+[00:07:18.440] l'ai déjà téléchargé. OK, donc là, on
+[00:07:20.280] est good à ce niveau-là. Parfait. Donc
+[00:07:22.720] le thème, il a bien été ajouté. Alors,
+[00:07:24.919] je vais renommer le thème. Je vais
+[00:07:26.120] l'appeler down cloud ea YouTube. OK,
+[00:07:30.080] enregistrer. Je vais sauvegarder à
+[00:07:31.680] nouveau. Donc là, on est good. L'étape
+[00:07:33.280] suivante, ça sera de télécharger le
+[00:07:34.599] thème Shopify directement depuis le
+[00:07:36.440] terminal. Là, je vais copier exactement
+[00:07:38.319] la commande qui est juste ici. Je
+[00:07:40.000] reviens sur le terminal. Voilà.
+[00:07:41.520] Maintenant, je clique ici, copier et
+[00:07:43.639] coller. Et maintenant, je mets Shopify
+[00:07:45.520] time in. Voilà. Donc là, ça se met en
+[00:07:47.360] place. Donc le name of the new time,
+[00:07:50.000] monochrome guardian. Donc quel est quel
+[00:07:52.680] est le nom du nouveau thème ? Donc le
+[00:07:54.440] nom du nouveau thème, j'ai copié code
+[00:07:56.120] Shopify Down. D'accord ? Vous copiez
+[00:07:57.919] juste ici. Ensuite, ce que vous allez
+[00:07:59.120] faire, c'est qu'on va cliquer sur cloud
+[00:08:01.120] juste ici pour pouvoir paramétrer le
+[00:08:03.240] tout via Cloudia. Donc voilà, on va
+[00:08:04.919] pouvoir connecter le terminal avec
+[00:08:06.560] Clodia et ça modifiera directement le
+[00:08:08.680] thème en fonction de ce qu'on va dire
+[00:08:10.240] sur le Visual Studio Code. Vous
+[00:08:11.759] inquiétez pas, il y a rien de compliqué.
+[00:08:13.400] Suivez exactement euh ce que je vous
+[00:08:15.159] dis. Donc je vais cliquer sur entrer.
+[00:08:16.680] Donc là, j'ai cliqué sur entrer. Comme
+[00:08:18.080] ça, ça va télécharger le thème et je
+[00:08:19.720] vais pouvoir le modifier directement.
+[00:08:21.879] Maintenant, ce qu'on va faire, c'est
+[00:08:22.680] qu'on va connecter notre boutique
+[00:08:23.840] Shopify. Pour ça, on va copier
+[00:08:25.720] exactement la phrase qui est juste ici.
+[00:08:27.919] Donc, je vais revenir sur ma boutique
+[00:08:28.960] Shopify, page d'accueil. Je vais copier
+[00:08:31.759] exactement ça ici. Donc pour vérifier si
+[00:08:34.120] ma boutique Shopify, elle est bien
+[00:08:35.360] connectée au terminal, ce que je fais
+[00:08:37.120] c'est que vous vous cliquez exactement
+[00:08:38.680] sur Shopify thist juste ici. Donc vous
+[00:08:40.719] copiez et coller. C'est exactement ce
+[00:08:42.599] que j'ai fait juste ici. Et là vous
+[00:08:44.039] voyez on a accès à tous les thèmes de ma
+[00:08:46.160] boutique. Donc il y a le thème diapason,
+[00:08:48.000] le thème coussin ergo, le thème liging
+[00:08:50.279] sea gain coussin ergo et dame Claudia
+[00:08:53.680] YouTube. D'accord ? Donc nous, c'est
+[00:08:54.880] exactement le thème là que j'ai créé à
+[00:08:56.480] l'instant et mes différents thèmes, ils
+[00:08:58.240] sont exactement ici. Je vais vous les
+[00:09:00.120] montrer. Comme ça, le terminal sera bien
+[00:09:01.920] connecté. Voilà, vous avez mes
+[00:09:03.480] différents thèmes qui sont ici. 1 2 3 4
+[00:09:05.680] 5 6 7 et c'est exactement le cas ici.
+[00:09:08.839] Maintenant, on est good. Notre boutique
+[00:09:10.279] est bien connectée au terminal. Là
+[00:09:12.040] maintenant, ce qu'on va faire, c'est
+[00:09:12.839] qu'on va retourner sur Visual Studio
+[00:09:14.360] Code et on va faire exactement le même
+[00:09:16.079] principe afin de pouvoir connecter notre
+[00:09:18.079] boutique Shopify directement sur la
+[00:09:19.959] plateforme. Et c'est via cette
+[00:09:21.440] plateforme-là qu'on va pouvoir faire
+[00:09:22.519] l'ensemble des modifications. Donc déjà,
+[00:09:24.040] ce que j'invite à faire, c'est cliquer
+[00:09:25.360] juste ici sur application. Et donc moi,
+[00:09:27.240] je l'ai déjà installé mais vous mettrez
+[00:09:29.200] cloud code juste ici. Faites bien
+[00:09:31.079] attention, c'est bien où il y a le
+[00:09:32.120] bouton en tropic, d'accord ? Juste ici,
+[00:09:34.279] vous copiez. Donc là, moi je vais donc
+[00:09:36.079] moi je l'ai déjà téléchargé hein. Je je
+[00:09:37.800] peux le désinstaller et je peux le
+[00:09:39.560] réinstaller. OK, je le réinstalle à
+[00:09:41.440] nouveau comme ça, on est bon à ce
+[00:09:43.040] niveau-là. Donc là, vous allez voir un
+[00:09:44.240] bouton juste ici. C'est exactement cloud
+[00:09:46.600] code qui est téléchargé et c'est
+[00:09:47.800] directement ici qu'on fera l'ensemble
+[00:09:49.480] des modifications. Je peux fermer la
+[00:09:51.160] fenêtre qui est juste ici. Et donc là
+[00:09:52.760] maintenant, on va pouvoir commencer par
+[00:09:54.000] la première étape. Donc là, ce qu'on va
+[00:09:55.320] faire, c'est qu'on va connecter notre
+[00:09:56.279] boutique à cloud code. Donc je vais
+[00:09:58.200] mettre I need to install the Shopify CLI
+[00:10:03.279] into Visual Studio. Je lui demandé de
+[00:10:05.760] faire ça. Donc là, excusez-moi, il y a
+[00:10:07.240] un petit peu d'anglais. Donc là, on va
+[00:10:08.600] cliquer sur Yes. D'accord. Donc là,
+[00:10:10.440] c'est en train de se paramétrer.
+[00:10:11.880] Ensuite, vous allez me suivre. Je vais
+[00:10:13.200] mettre npm version. Copier. Donc là, je
+[00:10:15.920] vais cliquer sur yes. Hello. NPM. OK,
+[00:10:18.600] donc là, on est bon. On va revenir sur
+[00:10:20.000] le document. Je vais connecter la
+[00:10:21.160] boutique directement ici. Donc je vais
+[00:10:22.880] copier pour pouvoir mettre en place la
+[00:10:24.640] boutique.
+[00:10:26.279] Voilà. Donc là, il me demande le nom de
+[00:10:27.920] domaine. Alors, je vais revenir sur page
+[00:10:29.560] d'accueil.
+[00:10:31.640] On va cliquer juste ici. Donc là, on est
+[00:10:34.519] bon. Je vais cliquer sur yes. Donc là,
+[00:10:36.880] ça permettra de connecter ma boutique
+[00:10:39.240] directement avec le code. Donc voilà,
+[00:10:41.079] c'est en train de se connecter.
+[00:10:42.720] Maintenant, je vais cliquer juste ici
+[00:10:44.480] Shopify Them list pour vérifier ça a
+[00:10:46.920] bien été connecté. Je mettre yes.
+[00:10:50.800] Voilà. Donc là, ça a bien été connecté.
+[00:10:52.360] Vous voyez, il y a les différents thèmes
+[00:10:53.480] que j'ai mis en place à nouveau qui sont
+[00:10:55.079] directement mis ici. Donc là, je vais
+[00:10:56.800] pouvoir lui demander exactement de
+[00:10:58.320] pouvoir modifier le thème de mon choix.
+[00:11:00.680] Donc là, j'ai le thème diapason, j'ai le
+[00:11:02.360] thème coussin ergo, j'ai le thème leging
+[00:11:05.120] seina gain à nouveau. Donc ça vous devez
+[00:11:07.000] le faire pour la partie terminale et
+[00:11:08.360] pour la partie cloud code. Comme ça, il
+[00:11:10.120] y a aucun souci, il y a pas de galère.
+[00:11:11.639] Donc vous invite vraiment à respecter
+[00:11:12.920] l'ensemble de ces étapes. Maintenant
+[00:11:14.320] qu'on a géré toute la partie
+[00:11:15.519] paramétrage, en soit, je ne pense pas
+[00:11:17.320] que c'est impossible à faire. N'hésitez
+[00:11:19.240] pas à mettre pause. Dans tous les cas,
+[00:11:20.519] il y a le fichier qui sera en
+[00:11:21.639] description. On va aller directement sur
+[00:11:23.320] AutoDS pour pouvoir trouver euh
+[00:11:25.160] différentes boutiques qui peuvent être
+[00:11:26.399] intéressantes à recopier ou en tout cas
+[00:11:28.200] sur lequel on peut s'inspirer. Donc le
+[00:11:30.000] lien de Autods, il est directement en
+[00:11:31.839] description. Euh vous pouvez aller juste
+[00:11:33.639] ici donc sur trouver un fournisseur de
+[00:11:35.760] qualité donc AutoDS. Vous pouvez vous
+[00:11:37.839] inscrire, accéder au site et là je vais
+[00:11:39.880] un peu regarder donc bah les boutiques
+[00:11:41.600] qui tournent bien, qui ont des bons
+[00:11:42.720] résultats et en fonction de ça, je vais
+[00:11:44.200] pouvoir faire des modifications sur ma
+[00:11:45.720] boutique, modifier une couleur, modifier
+[00:11:47.519] un positionnement. Là c'est vous qui
+[00:11:49.160] voyez. Donc là, c'est vraiment pour vous
+[00:11:50.440] montrer un exemple de comment on met
+[00:11:52.000] tout ça en place. C'est assez technique,
+[00:11:53.680] mais j'espère que voilà, vous avez
+[00:11:55.040] compris que vous mettez ça en
+[00:11:56.120] application. Maintenant, je vais vous
+[00:11:57.160] montrer comment on peut modifier par
+[00:11:58.320] exemple le bouton ajouter au panier,
+[00:11:59.839] comment on peut ajouter des boutons de
+[00:12:01.200] réassurance directement sur la boutique
+[00:12:02.800] parce que souvent on sait pas comment
+[00:12:03.959] faire mais là je vais regarder déjà un
+[00:12:05.200] peu les boutiques qui tournent et
+[00:12:06.200] essayer de m'inspirer de celle-ci. Donc
+[00:12:07.440] là, Autods, on a la période d'essai.
+[00:12:09.240] Donc là, je vais mettre mes coordonnées
+[00:12:10.760] bancaires. Donc c'est que 1 dollar mois
+[00:12:13.199] sur le premier mois et ensuite je
+[00:12:14.959] payerai donc 49 dollars. Donc on va se
+[00:12:16.760] retrouver exactement sur la plateforme
+[00:12:18.120] de OTDS juste ici. Et là je vais aller
+[00:12:19.959] sur Adpy et je vais regarder un peu les
+[00:12:21.800] boutiques qui tournent et je vais
+[00:12:23.519] essayer d'en trouver deux trois sur
+[00:12:24.920] lequel je peux plus ou moins m'inspirer.
+[00:12:27.040] D'accord ? Je vais regarder tout ça.
+[00:12:30.040] Donc ça c'est quoi ? C'est raquettes de
+[00:12:31.320] paddle. Bon ça je le mets de côté. Donc
+[00:12:33.880] là, c'est une boutique sur lequelle je
+[00:12:35.560] peux potentiellement m'inspirer. Après
+[00:12:37.480] bon, vu que là je suis sur un produit
+[00:12:38.800] leing, je pense qu'on va plus aller sur
+[00:12:40.120] des produits féminins mais je le mets
+[00:12:41.519] quand même de côté. Je vais rester sur
+[00:12:43.120] Adpy et je vais mettre juste ici beauty
+[00:12:45.560] pour trouver des sites sur lequels je
+[00:12:46.839] peux m'inspirer. Alors donc là par
+[00:12:48.440] exemple, ils ont 1100 likes. Alors bon
+[00:12:51.160] là le site il est pas actif. Donc là par
+[00:12:53.000] exemple, j'ai ce site là. Donc ça c'est
+[00:12:54.800] un site de beauté pour femmes sur lequel
+[00:12:57.320] je peux m'inspirer. Donc je vais mettre
+[00:12:59.240] la boutique. Alors il faut que je mette
+[00:13:01.320] mon email obligatoirement. Start
+[00:13:03.040] shopping. Donc là par exemple, j'ai
+[00:13:04.399] trouvé un site de beauté pour femmes.
+[00:13:06.680] Donc là, c'est un site sur lequel je
+[00:13:07.839] peux m'inspirer parce qu'il m'a l'air
+[00:13:09.320] ultra cali. Je vais aller sur leur fiche
+[00:13:10.639] produit. OK, ils l'ont fait un peu comme
+[00:13:12.800] ça. Donc ça, je le mets de côté. Ça,
+[00:13:14.240] c'est un produit trouvé avec auto DS. On
+[00:13:16.279] va continuer à scroller. Donc ça c'est
+[00:13:18.160] quoi ce site ? Donc oui, c'est
+[00:13:19.959] complètement euh différent mais voilà,
+[00:13:21.920] on peut partir du principe que je vais
+[00:13:23.279] m'inspirer aussi de ce site. Donc je
+[00:13:25.720] vais l'épingler, je vais le mettre de
+[00:13:26.920] côté. Donc là, j'en ai un de On a le
+[00:13:30.680] solite paddle. Bon, je vais le
+[00:13:31.839] supprimer. Donc voilà, je pense que deux
+[00:13:33.320] sites c'est déjà bien sur lequel je vais
+[00:13:34.680] pouvoir m'inspirer et faire toutes les
+[00:13:36.519] modifications au niveau de Claudia.
+[00:13:38.399] Maintenant, je vais aller donc sur ma
+[00:13:40.199] boutique et je vais vous montrer
+[00:13:41.560] exactement à quoi ressemble la page
+[00:13:43.040] produit actuellement là tout de suite et
+[00:13:45.079] comment je peux modifier donc différents
+[00:13:46.920] éléments. Je vais bien publier le thème
+[00:13:48.880] Dem Claudia YouTube. D'accord ? Donc là,
+[00:13:51.079] c'est mon thème actuel hein. Si vous
+[00:13:52.160] voulez publier, à chaque fois, vous
+[00:13:53.079] cliquez ici sur publier et là je vais
+[00:13:54.720] cliquer sur modifier le thème. Donc pas
+[00:13:56.519] pour le modifier mais pour vous montrer
+[00:13:57.959] à quoi ressemble le thème actuellement.
+[00:13:59.560] Donc là, je vais pas aller sur la page
+[00:14:00.880] d'accueil, je vais aller sur la page
+[00:14:02.079] produit et je vais cliquer exactement
+[00:14:04.079] ici. Voilà. Donc là, pour l'instant, on
+[00:14:05.480] se retrouve sur une page produit
+[00:14:06.880] exactement comme ceci. On peut mettre en
+[00:14:08.639] place différentes modifications vers le
+[00:14:10.279] Visual Studio Code. Juste ici, vous
+[00:14:12.199] pouvez recopier le prompt que j'ai mis
+[00:14:13.759] juste ici. Et si vous souhaitez par
+[00:14:15.120] exemple modifier donc le bouton ajouter
+[00:14:16.920] au panier, vous pouvez le faire par
+[00:14:18.360] exemple exactement juste ici. Donc là,
+[00:14:20.279] je vais cliquer ici et je vais mettre
+[00:14:22.199] change the bouton color par rapport au
+[00:14:24.199] thème que j'ai sélectionné. Donc là, on
+[00:14:25.680] est good. Je vais cliquer sur yes allow.
+[00:14:27.880] Donc là, c'est ce qui va me faire. Donc
+[00:14:29.199] là, c'est euh Claudia qui bosse pour
+[00:14:30.839] moi. D'accord ? On on peut voir un peu
+[00:14:32.600] des choses un peu techniques, qui font
+[00:14:34.399] un peu peur, mais au final vous allez
+[00:14:36.160] voir qu'il y a rien de compliqué. Euh
+[00:14:37.440] vous devez juste suivre les étapes que
+[00:14:38.920] j'ai mis juste ici. Donc là, donne euh
+[00:14:41.160] ça a été changé. OK. OK, on est good.
+[00:14:43.880] Donc là, ce que je vais faire, c'est que
+[00:14:45.600] je vais revenir juste ici. Je vais
+[00:14:47.399] rafraîchir la page. Donc vous voyez que
+[00:14:49.120] la couleur verte a bien été mis en
+[00:14:50.440] place, notamment sur le bouton acheter
+[00:14:52.000] maintenant. Donc si vous avez un souci à
+[00:14:53.800] ce niveau-là, que vous savez pas
+[00:14:54.680] exactement comment changer les couleurs,
+[00:14:56.040] vous pouvez le faire directement via la
+[00:14:57.320] plateforme Visual quad. Donc là, on
+[00:14:58.720] donne bouton add to cart now is gray sur
+[00:15:01.440] le thème que moi j'ai choisi juste ici.
+[00:15:03.680] Maintenant ce qu'on peut lui demander,
+[00:15:04.639] c'est de mettre en place des boutons de
+[00:15:06.000] réassurance un peu comme ceci juste ici
+[00:15:08.279] afin de pouvoir tout simplement inspirer
+[00:15:09.880] la confiance auprès des clients. Ça
+[00:15:12.079] c'est un deuxième exemple de ce qu'on
+[00:15:13.240] peut faire là. Je vais lui dire voilà,
+[00:15:15.160] tu vas ajouter donc trois badges de
+[00:15:17.079] réassurance. Je vais copier exactement
+[00:15:19.160] le prompt que je vous mets en place
+[00:15:20.880] juste ici. Hop là. Et je vais bien dire
+[00:15:23.120] sur le thème, je vais copier à nouveau
+[00:15:26.000] cloud il a juste ici. Voilà. Donc voilà,
+[00:15:28.399] je vais mettre ça. Je vais cliquer sur
+[00:15:30.040] entrer. Et là, je vais laisser faire le
+[00:15:31.480] travail pour moi pour mettre des logos
+[00:15:33.079] de réassurance directement en bas du
+[00:15:35.040] bouton ajouter au panier. Donc là, je
+[00:15:36.720] laisse lia travailler. Moi, je peux
+[00:15:38.120] croiser les bras. Bon, il y a quand même
+[00:15:39.720] tout un aspect technique à mettre en
+[00:15:41.639] place comme vous avez vu juste avant.
+[00:15:42.880] Mais en tout cas, vous voyez que ça
+[00:15:43.959] fonctionne réellement. Vous pouvez faire
+[00:15:45.240] toutes les modifications que vous voulez
+[00:15:46.560] sur votre boutique Shopify euh notamment
+[00:15:48.360] via la plateforme de Cloud Code. Donc
+[00:15:50.319] voilà, je j'entends que là en image ça
+[00:15:52.600] peut faire un peu peur. Voilà, oui, non,
+[00:15:54.319] je suis pas un informaticien. Écoutez
+[00:15:55.959] vraiment tout ce que je dis dans cette
+[00:15:57.040] vidéo, c'est extrêmement clair. Euh
+[00:15:58.880] mettez en application exactement ce que
+[00:16:00.279] je vous montre. OK ? Comme ça, on peut
+[00:16:01.759] faire toutes les modifications qu'on le
+[00:16:03.000] souhaite sur notre boutique. Donc là, je
+[00:16:05.120] le laisse faire son travail. Moi, je
+[00:16:07.000] croise les bras et ma boutique se
+[00:16:09.120] modifie. OK, donc là, il me dit que
+[00:16:10.720] c'est done, que ça a bien été fait. Il a
+[00:16:12.519] ajouté donc trois badges de réassurance,
+[00:16:14.680] donc PayPal, Visa, money back. OK, donc
+[00:16:16.920] là je vais rafraîchir la page et on va
+[00:16:19.600] voir si il l'a fait correctement. Donc à
+[00:16:22.240] nouveau, vous pouvez voir que là, il a
+[00:16:23.519] mis en place donc des trust page
+[00:16:25.319] exactement comme ceci. Euh là, je suis
+[00:16:27.319] sur format ordinateur, mais formats
+[00:16:29.319] téléphone, ça rend exactement comme ça.
+[00:16:31.240] Et après, si vous souhaitez faire des
+[00:16:32.360] modifications, vous pouvez le faire
+[00:16:33.480] exactement comme ceci. Donc là, je peux
+[00:16:34.880] modifier PayPal, Visa, Mastercard, le 30
+[00:16:37.440] jours garantie. Je peux mettre ça juste
+[00:16:38.600] en français. Et là, je lui ai tout
+[00:16:39.680] simplement demandé de rajouter donc des
+[00:16:41.279] trust page afin de pouvoir apporter de
+[00:16:43.000] la réassurance auprès de mes clients.
+[00:16:44.440] Donc là, vous voyez que c'est Cloud Code
+[00:16:45.639] qui gère tout ça. Je fais ça en direct
+[00:16:47.319] avec vous. Donc il y a très clairement
+[00:16:48.959] tout qui est possible. Maintenant, ce
+[00:16:50.519] que je vais demander à Claudia, c'est
+[00:16:52.000] sur la base donc de ce site que j'ai
+[00:16:53.720] trouvé notamment avec Autods, ça sera de
+[00:16:55.880] me reproduire la structure de cette page
+[00:16:57.720] produit. Donc, vous voyez exactement
+[00:16:58.759] comment est cette page produit. D'accord
+[00:17:00.279] ? Et l'idée sera de structurer
+[00:17:01.480] exactement ma page. Et l'idée sera de
+[00:17:03.079] structurer exactement cette page parce
+[00:17:04.600] que ça demande pas mal de codes et
+[00:17:05.880] cetera. Et là, j'aurais pas besoin de
+[00:17:07.280] tout ça parce que Cloud code va m'aider
+[00:17:09.679] à mettre tout cela en place. Donc je
+[00:17:11.319] vais juste copier ça. Ici, je vais aller
+[00:17:13.640] sur Cloud Code et je vais lui demander
+[00:17:15.760] juste écris moi structure et framework
+[00:17:19.919] de cette page produit afin que je le
+[00:17:23.720] transmets ensuite à Visuel Studio Code
+[00:17:26.880] et que je recopie la même structure.
+[00:17:29.799] Voilà, je lui donner ça. Donc là, il va
+[00:17:31.640] regarder la page produit. il va me
+[00:17:33.720] mettre un framework en place, donc une
+[00:17:35.440] structure, et je vais pouvoir euh copier
+[00:17:37.360] exactement le tout. Donc parfait, la
+[00:17:38.919] framework, c'est exactement ceci. OK,
+[00:17:41.160] comme vous le voyez juste ici. Donc là,
+[00:17:42.600] ce que je vais faire, je vais copier
+[00:17:44.000] exactement ce qu'il a mis en place juste
+[00:17:45.880] ici. Et je vais retourner donc sur
+[00:17:47.320] Visual Code et je vais mettre mets-moi
+[00:17:49.520] en place cette structure de fiche
+[00:17:52.840] produit pour ma page produit avec le
+[00:17:56.280] thème dam I. Hop là, je vais les
+[00:17:58.960] transmettre. Et là, je vais copier donc
+[00:18:01.039] le HTML juste ici. Et je vais revenir
+[00:18:03.240] ici et je vais copier tout ça. Donc là,
+[00:18:05.000] c'est ce qui va me faire et on va
+[00:18:06.000] pouvoir revoir donc l'ensemble de la
+[00:18:07.360] fiche produit que j'ai actuellement.
+[00:18:09.120] Maintenant que Claudia m'a mis en place
+[00:18:10.600] cette page produit, donc ce qu'on va
+[00:18:12.000] faire c'est que je vais cliquer juste
+[00:18:14.120] ici. D'accord ? Donc ça c'est euh une
+[00:18:15.679] page capture d'écran web Fireshooot,
+[00:18:17.600] d'accord ? Que je vous invite à
+[00:18:18.440] utiliser. He c'est une application très
+[00:18:19.919] sympa à télécharger. Et là je vais
+[00:18:21.120] cliquer sur capturer la page en entière.
+[00:18:23.440] Comme ça, je vais transmettre ça ensuite
+[00:18:25.200] à l'outila pour avoir exactement cette
+[00:18:27.400] page. Donc là, je vais enregistrer en
+[00:18:29.000] PDF, je mettre ça sur mon bureau,
+[00:18:30.799] exactement comme ceci. Et là, le but, ça
+[00:18:33.000] sera ensuite de demander donc à Visuel
+[00:18:34.880] Studio. Donc je veux maintenant créer
+[00:18:38.039] une nouvelle page produit avec ce thème
+[00:18:41.159] en utilisant la structure de cette
+[00:18:44.039] framework, exactement comme ceci. Je
+[00:18:46.760] vais lui demander ça et je vais ajouter
+[00:18:48.760] donc la framework juste ici. Voilà, il
+[00:18:51.400] l'aura exactement ici. Je vais bien
+[00:18:53.320] mettre pour la fiche produit du thème
+[00:18:57.120] dame Claudia. Voilà, comme ça, il peut
+[00:18:59.840] pas dire qu'il savait pas. Donc là, je
+[00:19:01.039] vais lui laisser faire le travail. Donc
+[00:19:02.440] là, c'est vraiment euh une fiche produit
+[00:19:04.240] qui fait de font encombre. Donc là, vous
+[00:19:05.679] pouvez littéralement copier une marque
+[00:19:08.000] e-commerce qui tourne très bien. Vous
+[00:19:09.480] pouvez reprendre exactement la même
+[00:19:10.760] structure de A à Z sans avoir besoin de
+[00:19:13.440] appeler un designer qui va vous faire
+[00:19:14.679] payer 4000, 5000 €. ça n'a aucun sens.
+[00:19:17.120] Encore une fois, je vois des gens
+[00:19:18.320] aujourd'hui encore en 2026 payer des web
+[00:19:20.320] designers à 5000 €. Des gens que je vois
+[00:19:22.200] en Chine et qui viennent me dire "Oui
+[00:19:23.919] Jonathan, j'ai payé telle somme à ce web
+[00:19:26.200] designer qui m'a rien fait de concret."
+[00:19:27.679] Alors que au final, si vous mettez en
+[00:19:29.159] application exactement ce que je dis
+[00:19:30.520] dans cette vidéo, vous pouvez ben
+[00:19:32.039] copiercoller littéralement une marque
+[00:19:33.840] e-commerce et reproduire exactement la
+[00:19:35.600] même boutique. Là, cette fois-ci, il n'y
+[00:19:36.919] a plus d'excuses, euh ça n'existe pas.
+[00:19:38.880] Euh j'ai jamais vu ça et euh je vous
+[00:19:40.360] invite à mettre en application cette
+[00:19:41.799] vidéo parce qu'en vrai c'est inédit et
+[00:19:43.159] ça n'existe pas à nouveau. Donc là,
+[00:19:44.640] c'est exactement ce qu'il est en train
+[00:19:45.559] de me faire. Je vais créer tous les
+[00:19:47.200] fichiers nécessaires pour ce template
+[00:19:48.760] fiche produit complet. Voilà, il est en
+[00:19:50.520] train de tout me structurer. Je vais
+[00:19:52.039] maintenant créer tous les fichiers. Donc
+[00:19:53.559] je commence par le CSS, partager, puis
+[00:19:55.799] chaque section. Donc là, il s'occupe de
+[00:19:57.080] tout à nouveau. Moi, j'ai les mains en
+[00:19:59.159] l'air, donc pas pour des mauvaises
+[00:20:01.679] raisons, mais parce que justement Claude
+[00:20:03.480] fait son travail et moi je dois juste
+[00:20:05.480] attendre queil puisse faire les choses
+[00:20:06.720] correctement. Alors donc ça a pris
+[00:20:08.440] environ 5 minutes mais ça a pris environ
+[00:20:11.799] 5 minutes pour tout coder. Mais là de ce
+[00:20:13.320] qui me dit tout est en place. Voici ce
+[00:20:14.760] qui a été créé et poussé sur le thème
+[00:20:16.480] down Claudia YouTube. Donc il y a 13
+[00:20:18.720] fichiers qui ont été créés. D'accord.
+[00:20:20.919] Assette ici. Donc tous les styles,
+[00:20:22.760] palettes rose. Bon là, il a même mis les
+[00:20:24.840] couleurs, les témoignages clients pour
+[00:20:26.320] assigner ce template à un produit. Dans
+[00:20:27.840] l'admin Shopify, produit, sélectionner
+[00:20:29.679] un produit, la section modèle de page en
+[00:20:31.640] bas à droite, choisir les phares. Donc
+[00:20:33.480] ensuite, tout est éditable. D'accord ?
+[00:20:35.080] Donc je peux tout modifier de A à Z,
+[00:20:37.240] mais là ça me permet en fait de copier
+[00:20:38.559] directement une boutique sereinement et
+[00:20:41.480] en douceur. Donc là, ce que je vais
+[00:20:42.919] faire, c'est que je vais rafraîchir tout
+[00:20:45.360] ça. Et donc, dès lors que je rafraîchis
+[00:20:46.960] tout ça, je vais cliquer ici sur produit
+[00:20:48.520] par défaut. Je vais aller sur produit et
+[00:20:50.240] là vous avez les phards comme il a mis
+[00:20:52.080] juste ici. Donc là c'est assigné à zéro
+[00:20:54.120] produit et vous pouvez voir exactement
+[00:20:56.080] donc euh le copiercollé euh de la
+[00:20:57.720] boutique de marque que je viens de
+[00:20:59.200] prendre. Regardez-moi ça. C'est je sais
+[00:21:00.960] pas quoi dire en fait. C'est du jamais
+[00:21:02.360] vu. Euh ça n'existe pas. On peut
+[00:21:04.400] reprendre copiercoller exactement une
+[00:21:06.480] boutique sans avoir besoin de payer des
+[00:21:08.240] masses et des masses en terme d'euros.
+[00:21:10.080] Ça n'a pas de sens. D'accord. Donc
+[00:21:11.520] maintenant vous allez arrêter de payer
+[00:21:13.159] des thèmes qui sont exorbitants parce
+[00:21:14.520] que regardez en quelques clics là j'ai
+[00:21:16.200] pu reprendre exactement le tout. Mais
+[00:21:18.039] là, je peux modifier hein, on est
+[00:21:19.400] d'accord parce que là parce que là,
+[00:21:20.880] c'est littéralement du copiercollé sur
+[00:21:22.520] la boutique, mais je peux tout modifier
+[00:21:24.559] ici. Là, par exemple, il y a écrit
+[00:21:25.559] bestseller, ben je peux mettre meilleure
+[00:21:26.919] vente, on est bien d'accord ? Donc là,
+[00:21:28.200] je mets meilleure vente juste ici.
+[00:21:29.440] Meilleure vente. Tout est modifiable
+[00:21:31.120] avec Claude IA. Je suis désolé s'il y a
+[00:21:33.080] des fautes. Moi-même, j'en j'en perds
+[00:21:34.559] mon latin, j'en perds mon langage
+[00:21:36.480] tellement en fait Claudia, les gars,
+[00:21:37.919] c'est surpuissant. Claude Code même,
+[00:21:39.640] c'est Claude Code, c'est surpuissant. Je
+[00:21:41.799] je copie en fait littéralement une
+[00:21:44.120] boutique. Voilà, ça n'existe pas. Moi ça
+[00:21:46.600] n'a jamais existé dans ma vie. J'ai
+[00:21:47.960] jamais vu ça. Je copié directement une
+[00:21:49.720] boutique qui tourne très bien. Donc
+[00:21:51.559] voilà. Après là, j'ai juste à faire les
+[00:21:52.760] modifications directement juste ici.
+[00:21:54.760] Mais c'est tout simplement incroyable.
+[00:21:57.039] Ça prend franchement ça prend pas
+[00:21:58.360] énormément de temps à paramétrer et
+[00:21:59.919] cetera, mais vous voyez que vous pouvez
+[00:22:01.120] faire exactement ce que j'ai montré ici.
+[00:22:02.880] Vous faites ça et là je peux
+[00:22:03.960] littéralement tout modifier. Donc s'il y
+[00:22:05.480] a quelqu'un modification à faire là,
+[00:22:07.240] voilà, là je peux modifier le texte he
+[00:22:08.600] juste ici. Je peux modifier les
+[00:22:09.960] couleurs. Voilà, je peux modifier encore
+[00:22:11.520] le texte juste ici. Toutes les
+[00:22:12.679] modifications que vous voulez faire,
+[00:22:13.760] vous pouvez demander à Claudia ou vous
+[00:22:15.520] pouvez le faire là directement ici. Donc
+[00:22:17.120] c'est incroyable que je peux recopier
+[00:22:18.760] exactement donc la structure d'une
+[00:22:20.200] marque qui tourne actuellement et là je
+[00:22:22.039] la remets pour ma boutique. Voilà, j'ai
+[00:22:23.640] pas payé de web designer à 5000 € ou je
+[00:22:25.360] ne sais pas quoi. Et là je peux
+[00:22:26.600] directement tout sauvegarder et je peux
+[00:22:28.480] ben faire les modifications nécessaires.
+[00:22:30.760] Ensuite, il y a une dernière option que
+[00:22:31.960] je vais vous montrer pour mettre en
+[00:22:32.919] place votre boutique. Mais juste avant
+[00:22:34.440] ça, donc je vais vous parler quand même
+[00:22:35.480] d'email marketing parce que c'est un
+[00:22:36.679] point qui est super important, notamment
+[00:22:38.320] via Omniscend. Donc je vais vous montrer
+[00:22:40.400] un petit peu tout ça. Donc là, l'idée de
+[00:22:41.919] la plateforme de Omniscent, c'est que
+[00:22:43.200] quand vous créez un site avec l'autre
+[00:22:44.480] code, il faut bien penser à mettre en
+[00:22:46.039] place de l'email marketing si vous
+[00:22:47.640] voulez avoir des résultats sur votre
+[00:22:48.840] boutique. Parfois, vous pouvez dépenser
+[00:22:50.400] 100 200 € de budget en publicité. Vous
+[00:22:52.440] allez pas être rentable, mais juste le
+[00:22:53.840] fait de mettre en place de l'email
+[00:22:55.080] marketing, ça vous permettra d'être
+[00:22:56.559] rentable. D'accord ? Donc ça c'est un
+[00:22:57.880] point qui est super important à mettre
+[00:22:59.080] en place avant de pouvoir poursuivre
+[00:23:00.840] cette formation ultime sur cloud code.
+[00:23:03.400] Donc là, j'ai invite à cliquer sur start
+[00:23:04.720] free et là vous pouvez cliquer sur
+[00:23:06.039] signeup with Shopify. Là vous allez
+[00:23:08.200] pouvoir intégrer directement donc la
+[00:23:09.840] plateforme de Omniscè à votre boutique
+[00:23:11.760] Shopify. Donc là c'est exactement ce que
+[00:23:13.400] je vais faire. Alors bon moi je l'ai
+[00:23:15.159] déjà fait mais je vais vous montrer
+[00:23:16.480] l'exemple. Alors je vais aller sur la
+[00:23:17.880] partie accueil juste ici. Donc je vous
+[00:23:19.880] montre ça et ensuite je vous montre la
+[00:23:21.360] dernière option que je voulais vous
+[00:23:22.799] montrer. Vous allez cliquer sur
+[00:23:24.039] installer et là je vais me connecter sur
+[00:23:25.640] un compte existant. Et là, vous allez
+[00:23:27.080] pouvoir directement connecter votre
+[00:23:28.400] boutique Shopify à Omniscend. D'accord ?
+[00:23:30.760] Donc dès lors que vous avez fait ça, on
+[00:23:32.159] va se rediriger exactement sur la
+[00:23:33.880] boutique. Je vais aller au niveau des
+[00:23:35.400] applications, je vais retourner sur
+[00:23:36.960] Omnisend et là je vais me retrouver
+[00:23:38.559] exactement sur la plateforme de
+[00:23:39.640] Omniscent. Donc si je vais mettre en
+[00:23:40.880] place une campagne d'email marketing,
+[00:23:42.520] par exemple, si vous vous retrouvez en
+[00:23:44.039] été et que vous voulez mettre en place
+[00:23:45.440] une réduction spéciale notamment pour
+[00:23:47.559] l'été, vous pouvez le faire directement
+[00:23:48.720] ici. Si vous voulez mettre en place une
+[00:23:49.960] automatisation, par exemple toutes les
+[00:23:51.520] personnes qui vont cliquer sur ajouter
+[00:23:53.760] au panier juste ici mais qui vont pas
+[00:23:55.360] acheter, je peux leur envoyer un email
+[00:23:57.320] automatique, par exemple au bout de 1h,
+[00:23:59.080] au bout de 3h et au bout de 10h pour
+[00:24:01.000] être sûr que ils n'ont pas acheté parce
+[00:24:02.440] qu'ils étaient peut-être au travail ou
+[00:24:04.039] peut-être qu'ils étaient dans le train
+[00:24:05.080] ou le métro, mais parce que voilà, ils
+[00:24:06.840] aient plus de connexion, ça fait qu'ils
+[00:24:08.159] ont pas pu acheter sur ma boutique. Donc
+[00:24:09.679] pour éviter ces problèmes là, je vais
+[00:24:11.159] directement mettre en place une
+[00:24:12.279] automatisation. Je peux cliquer juste
+[00:24:13.880] ici pour mettre en place une
+[00:24:14.799] automatisation. On a par exemple ici une
+[00:24:16.720] automatisation d'abandon de panier, une
+[00:24:18.440] automatisation de abandon. Donc là par
+[00:24:21.080] exemple, je vais créer un workflow juste
+[00:24:22.520] ici. Je peux mettre en place ouais un
+[00:24:24.320] nouveau abandon de panier en trois
+[00:24:26.159] emails. Juste pour vous montrer. Si par
+[00:24:27.880] exemple, je souhaite avoir plus d'avis
+[00:24:29.200] clients, là je peux envoyer un email
+[00:24:30.760] automatique à toutes les personnes qui
+[00:24:32.120] ont acheté sur ma boutique. D'accord ?
+[00:24:33.720] Ça aussi c'est une bonne chose à mettre
+[00:24:34.679] en place. Je peux aussi mettre en place
+[00:24:36.000] un email au niveau du shipping
+[00:24:37.360] confirmation. Donc dès lors que vous
+[00:24:38.679] avez envoyé le produit de votre
+[00:24:39.960] fournisseur à votre client, vous pouvez
+[00:24:41.600] prévenir votre client que justement ça a
+[00:24:43.080] bien été fait. Comme ça, il a pas peur,
+[00:24:44.480] il s'inquiète pas et il y a pas de souci
+[00:24:46.120] à ce niveau-là. Donc là, pour vous
+[00:24:47.240] montrer l'exemple, je vais cliquer sur
+[00:24:48.559] abandon de panier, juste ici. Je vais
+[00:24:50.279] demander à Lia, mets-moi en place une
+[00:24:53.000] séquence d'abandon de panier pour mon
+[00:24:56.399] produit en trois en trois emails. Donc
+[00:24:59.200] là, c'est exactement ce qu'il va me
+[00:25:00.240] faire. À nouveau, c'est Lia qui gère.
+[00:25:01.960] Vraiment, moi, j'avais pas ça quand j'ai
+[00:25:03.720] commencé l'e-commerce en 2018. ça
+[00:25:05.640] n'existait pas. D'accord ? On devait se
+[00:25:07.039] débrouiller, on devait se démerder. On
+[00:25:08.520] était très loin d'avoir l'a qui pouvait
+[00:25:10.320] nous aider vraiment sur tous les aspects
+[00:25:11.600] de notre business. Là, c'est une
+[00:25:12.720] séquence d'email abandonne panier qui a
+[00:25:14.360] été mis en place. Il y a trois emails
+[00:25:16.039] avec une progression stratégique. Donc
+[00:25:17.799] après 1 heure, on a un petit rappel
+[00:25:19.320] bienveillant et doux. Après 24 heures,
+[00:25:21.279] il y a une preuve sociale et après 72
+[00:25:22.960] heures, il y a une urgence. Là, il m'a
+[00:25:24.640] exactement mis en place donc les emails
+[00:25:26.240] que je vais pouvoir copier directement
+[00:25:27.919] sur Omnisend. Donc là, je vais ici et je
+[00:25:30.000] peux faire les modifications juste ici.
+[00:25:31.880] Donc subjecte. Je vais télécharger le
+[00:25:33.679] document. Voilà, comme ça, j'ai le
+[00:25:35.159] document juste ici. Donc l'email numéro
+[00:25:37.240] 1, donc là, il y a le préheader. Voilà,
+[00:25:39.480] je peux copier ça juste ici. On est
+[00:25:41.360] good. Ensuite, ensuite là, il y a
+[00:25:43.240] l'objet que je vais mettre juste ici et
+[00:25:45.559] le nom de la marque ici. Et là, je vais
+[00:25:47.120] pouvoir modifier directement l'email.
+[00:25:48.640] Donc là, je vais sauvegarder et je vais
+[00:25:50.000] faire exactement le même principe pour
+[00:25:51.200] le deuxème email et le trisème email.
+[00:25:53.039] Donc ça, je vous conseille vivement de
+[00:25:54.559] le faire systématiquement euh parce que
+[00:25:56.039] si vous voulez lancer de bonnes
+[00:25:57.039] publicités, parce que si vous voulez
+[00:25:58.200] avoir des résultats avec votre boutique,
+[00:25:59.559] il faut absolument que vous puissiez
+[00:26:00.520] mettre en place de l'email marketing.
+[00:26:02.279] Ensuite, une autre option que j'aimerais
+[00:26:03.679] bien mettre en place. Ensuite,
+[00:26:06.080] maintenant, une option que j'aimerais
+[00:26:07.320] bien mettre en place sur ma fiche
+[00:26:08.360] produit, c'est de copier là exactement
+[00:26:10.080] ceci là, le single bot 3. J'aime bien
+[00:26:12.720] comment ils l'ont mis en place. Donc ce
+[00:26:14.200] que je vais faire, c'est que je vais
+[00:26:15.600] aller juste ici. Donc là, ce que je vais
+[00:26:17.200] faire, je vais faire un enregistrement
+[00:26:18.320] écran exactement de cette partie-là.
+[00:26:20.520] Donc là, excusez-moi, je vais couper mon
+[00:26:22.159] écran. parce que je peux pas faire un
+[00:26:23.399] double enregistrement écran. Donc là, je
+[00:26:24.919] vais copier exactement cette partie-là
+[00:26:26.919] et je vais demander donc à Clock Code de
+[00:26:29.000] me faire cette modification. Donc ça à
+[00:26:30.600] nouveau en tant que débutant, je sais
+[00:26:31.919] pas comment on fait. Voilà, je je sais
+[00:26:33.600] pas comment ça se passe. Donc je vais
+[00:26:34.640] demander à Claude de me mettre tout ça
+[00:26:36.279] en place. Alors je vais revenir ici.
+[00:26:38.360] Enregistrement complet. Donc là on est
+[00:26:39.960] good. Donc là je vais cliquer sur le
+[00:26:41.240] plus upload from computer. Voilà je vais
+[00:26:43.360] mettre ça exactement ici. Et je vais lui
+[00:26:44.760] demander toujours sur cette page
+[00:26:46.880] produit. mets-moi en place la structure
+[00:26:49.960] exactement comme en image des options.
+[00:26:52.480] Voilà, je vais copier. Je clique sur
+[00:26:54.120] entr et je laisse faire le travail. Donc
+[00:26:56.039] voilà, si vous savez pas comment mettre
+[00:26:57.240] en place des options exactement comme
+[00:26:59.159] ceci, vous pouvez lui demander et il va
+[00:27:00.880] le faire. On va juste voilà screen cette
+[00:27:03.159] partie, je lui demande et il va s'en
+[00:27:04.919] occuper directement. Je vais le laisser
+[00:27:06.399] travailler à nouveau. On va attendre
+[00:27:07.880] quelques minutes, il va s'occuper de
+[00:27:09.120] tout ça. Donc là, on est good. Ça a bien
+[00:27:10.440] été fait. Donc voici ce qui a été mis en
+[00:27:12.120] place. Donc les structures verticales et
+[00:27:13.960] empilées, le titre et texte, prix barré,
+[00:27:16.440] badge en coin, sélection active,
+[00:27:18.240] configurable dans le thème éditor
+[00:27:20.000] sélection lf product. Donc on va
+[00:27:21.960] regarder tout ça. Donc on est les gars,
+[00:27:23.880] je viens de rafraîchir la page et vous
+[00:27:25.640] pouvez voir exactement que les options
+[00:27:27.200] se sont mis automatiquement. Vous savez
+[00:27:28.919] que pour avoir ce genre de design là,
+[00:27:30.200] parfois vous allez payer des
+[00:27:31.080] applications payantes qui n'ont aucun
+[00:27:32.399] sens. Et là à nouveau avec l'autre code,
+[00:27:34.360] je peux mettre ça directement en place.
+[00:27:36.080] Donc là, je lui demandé de mettre trois
+[00:27:37.279] cartes qui s'affichent sans avoir besoin
+[00:27:38.600] de rajouter des variantes. Et là, je
+[00:27:39.880] peux faire les modifications. Donc
+[00:27:41.159] directement ici, achetez en 2, achetez
+[00:27:43.240] en 3, achetez en 4 et là je paye 0 €. Il
+[00:27:46.320] y a pas d'application payante ou quoi
+[00:27:47.840] que ce soit. Donc franchement les gars,
+[00:27:49.720] je peux encore passer mon temps à
+[00:27:51.159] modifier, remodifier. Cloud code, c'est
+[00:27:53.039] vraiment une révolution pour
+[00:27:54.120] l'e-commerce et pour Shopify. La plupart
+[00:27:55.760] des choses que j'ai mis en place dans
+[00:27:56.880] cette vidéo, c'est des applications
+[00:27:58.200] payantes qui vont vous coûter une
+[00:27:59.360] centaine voire plusieurs milliers
+[00:28:00.480] d'euros par mois. Alors que là, Cloud
+[00:28:01.799] Code, il le paramètre directement. Alors
+[00:28:03.760] que là, avec les différentes choses que
+[00:28:05.080] j'ai mis en place, Claude code, il s'en
+[00:28:06.480] occupe directement. J'espère que cette
+[00:28:08.000] vidéo, elle vous a plu. Je pense
+[00:28:09.320] vraiment, c'est la première au niveau
+[00:28:10.480] francophone qui explique comment mettre
+[00:28:12.080] en place une boutique Shopify avec Clo
+[00:28:13.679] code. Là, je vous montre un petit peu
+[00:28:15.000] les bases pour que vous puissiez prendre
+[00:28:16.080] les devants et modifier tout ce que vous
+[00:28:17.760] souhaitez. Je pourrais faire une vidéo
+[00:28:19.279] encore plus avancée si vous le
+[00:28:20.480] souhaitez. Donc n'hésitez pas à liker
+[00:28:21.799] cette vidéo.

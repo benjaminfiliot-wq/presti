@@ -1,0 +1,834 @@
+[00:00:01.550] Cette nouvelle boutique en dropshipping
+[00:00:01.560] a généré plus de 200000 € de chiffre
+[00:00:03.439] d'affaires au cours des 30 derniers
+[00:00:04.880] jours en vendant uniquement une étagère
+[00:00:06.919] coulissante pour meubles sous-vier. Mais
+[00:00:08.840] quand j'ai regardé leur bibliothèque de
+[00:00:10.280] publicité, j'ai découvert quelque chose
+[00:00:11.799] d'encore plus fou. Ils diffusent
+[00:00:13.200] actuellement plus de 200 publicités
+[00:00:14.799] actives et les publicités qui leur
+[00:00:16.240] apportent tout cet argent, devinez quoi
+[00:00:17.840] ? Elles sont toutes fait avec
+[00:00:19.000] l'intelligence artificielle. Des
+[00:00:20.240] publicités animées avec Lia, des voix
+[00:00:22.160] off avec Lia, des publicités témoignages
+[00:00:23.880] IA, des carouselles, imag. Et sachez que
+[00:00:26.400] cette boutique, elle a été lancée
+[00:00:27.480] vraiment très récemment. Elle est en
+[00:00:28.920] train de scaler pour avoir un maximum de
+[00:00:30.759] résultats actuellement avec ce type de
+[00:00:32.399] publicité. Maintenant, ce que la
+[00:00:33.640] majorité des e-commerciants, ils vont
+[00:00:34.840] faire, ils vont voir "Ah, OK, il y a une
+[00:00:36.000] boutique qui génère plus de 200000 € par
+[00:00:37.360] mois, je vais juste copier la boutique,
+[00:00:38.960] copier le produit et je vais faire ça de
+[00:00:40.440] mon côté." C'est pas la meilleure chose
+[00:00:41.640] à faire. Moi ce que j'ai décidé de faire
+[00:00:42.920] justement, c'est de reprendre leur
+[00:00:44.079] système publicitaire, voir comment ils
+[00:00:46.680] ont réalisé leur publicité et le but
+[00:00:48.160] c'est que je puisse mettre ça en
+[00:00:49.440] application pour mes propres boutiques.
+[00:00:50.960] Et c'est ce que je vous invite aussi à
+[00:00:52.079] faire et c'est l'idée de la vidéo. Et
+[00:00:53.719] pour vous faciliter encore plus la vie,
+[00:00:55.239] j'ai créé une compétence cloud et un
+[00:00:57.039] prompt que vous pouvez utiliser pour
+[00:00:58.519] créer ces publicités pour n'importe quel
+[00:01:00.079] type de produit. Dès lors qu'on aura
+[00:01:01.359] atteint la barre des 500 likes, je
+[00:01:02.680] transmettrai le prompt et toutes les
+[00:01:04.159] informations nécessaires afin que vous
+[00:01:05.479] puissiez répliquer exactement ce que je
+[00:01:07.000] vais vous montrer dans cette vidéo. On
+[00:01:08.360] est parti maintenant. On se retrouve
+[00:01:09.680] directement donc sur le site du
+[00:01:10.759] concurrent qui va cette étagère. Là, je
+[00:01:12.320] vais cliquer donc sur cette extension
+[00:01:13.560] qui permet de voir le nombre de visites
+[00:01:14.880] par mois. Et vous voyez que de base
+[00:01:16.320] entre février et juin, ils étaient voilà
+[00:01:18.360] à 16000 visites par mois, 24000 visites
+[00:01:20.280] en mars, 31000 en avril, 14000 en mai,
+[00:01:22.960] 43000 en juin et là en juillet, ils sont
+[00:01:25.000] passés à 217000 et on voit qu'ils sont
+[00:01:26.680] tout simplement en train de scaler leur
+[00:01:28.040] activité. Donc c'est vraiment une
+[00:01:29.200] boutique qui fonctionne. Là, ils ont
+[00:01:30.520] plus de 200000 visiteurs. Sachez qu'ils
+[00:01:31.960] doivent faire même peut-être même plus
+[00:01:33.159] que 200000 € par mois parce que
+[00:01:34.759] forcément, ils doivent être à plus de 1
+[00:01:36.000] € par visiteur, même plus je pense. Et
+[00:01:37.799] là, ils ont plus de 180 publicités
+[00:01:39.320] actives. On se retrouve maintenant sur
+[00:01:40.680] la bibliothèque publicitaire de la
+[00:01:41.880] marque Météor 1776 et vous voyez donc
+[00:01:44.600] ils ont plus de 200 publicités actives.
+[00:01:46.200] Donc là, c'est réel, c'est concret et
+[00:01:47.560] ils ont plein de vidéos différentes qui
+[00:01:49.040] sont faites à 100 % avec Lia. Donc c'est
+[00:01:51.040] une boutique de niche qui vend un peu
+[00:01:52.479] différents types de produits. Là, j'ai
+[00:01:54.079] téléchargé une de leurs vidéos. Ça c'est
+[00:01:55.600] une vidéo qu'ils ont faite notamment
+[00:01:56.560] pour l'étagère dont je vous parle.
+[00:01:58.159] Germanimported pull und organiser
+[00:02:00.520] doesn't save 90% of space.
+[00:02:14.589] Donc là, on est bien d'accord que c'est
+[00:02:14.599] fouia. On est bien d'accord. Et sachez
+[00:02:16.519] que là, tout le trafic qui ramène sur
+[00:02:18.120] leur sites, plus de 200000 visiteurs sur
+[00:02:19.879] les 30 derniers jours, c'est full avec
+[00:02:21.640] des vidéos IA. Il y a pas de vidéos qui
+[00:02:23.280] sont pas faites avec l'IA, il y en a
+[00:02:24.319] aucune. Euh, je peux vous montrer.
+[00:02:25.800] Voilà, ils ont fait d'autres publicités.
+[00:02:27.000] Celle-là, c'est quoi ? Celle-là, c'est
+[00:02:27.959] avec un autre produit. C'est de Lia, on
+[00:02:29.680] est bien d'accord. Météor 1776. Là, je
+[00:02:32.080] peux vous montrer n'importe quelle
+[00:02:32.959] publicité, c'est de l'IA encore. Là, ils
+[00:02:34.640] font pour une marque de cheveux. Je sais
+[00:02:37.040] pas exactement c'est quoi. Tout ça,
+[00:02:38.280] c'est de l'IA de A à Z. Donc, c'est
+[00:02:40.080] vraiment la preuve irréfutable que oui,
+[00:02:41.840] les publicités IA fonctionnent. Je sais
+[00:02:43.319] qu'il y a des personnes qui ont de
+[00:02:44.080] l'appréhension, parfois, ils vont se
+[00:02:45.000] dire "Non, mais comment les gens vont y
+[00:02:46.360] croire ?" Les gens vont y croire, ça
+[00:02:47.640] fonctionne vraiment. Donc, il y a pas de
+[00:02:49.040] sujet à ce niveau-là. Maintenant, l'idée
+[00:02:50.640] c'est de voir en pratique comment on
+[00:02:52.120] peut réaliser justement ce type de vidéo
+[00:02:53.800] afin que puissiez avoir des résultats
+[00:02:55.200] avec votre boutique et vos produits en
+[00:02:56.920] e-commerce. Donc ce qu'on va faire,
+[00:02:58.040] c'est qu'on va se retrouver directement
+[00:02:59.159] donc sur Claudia. Je vous invite quand
+[00:03:00.480] même à prendre l'abonnement pro pour
+[00:03:01.840] Claudia parce que sinon vous êtes très
+[00:03:03.080] vite limité. Et là, je vais cliquer
+[00:03:04.680] directement sur cork ici. Voilà, vous
+[00:03:06.680] allez cliquer sur cork et je vais
+[00:03:07.799] cliquer aussi ici. Et on va cliquer ici
+[00:03:09.599] sur opus 5 afin que Claudia puisse nous
+[00:03:11.480] aider notamment sur les tâches qui sont
+[00:03:12.879] complexes. Donc ça c'est la première
+[00:03:14.120] étape. Deuxième étape, il va falloir
+[00:03:15.400] qu'on puisse utiliser un outil DIIA qui
+[00:03:16.920] s'appelle Top Views. Donc pour moi c'est
+[00:03:18.319] l'un des meilleurs outils pour pouvoir
+[00:03:19.360] réaliser justement des vidéos de ce
+[00:03:20.879] type. Vous avez le lien en description.
+[00:03:22.599] Donc moi personnellement, j'ai aussi le
+[00:03:23.720] plan business. C'est le plan qui
+[00:03:25.159] permettra de mettre en application tout
+[00:03:26.599] ce que je vais vous montrer dans cette
+[00:03:27.519] vidéo. Et la première étape concrète
+[00:03:28.959] qu'on va pouvoir réaliser, donc c'est de
+[00:03:30.239] connecter Claudia à Top Views afin qu'on
+[00:03:32.319] puisse réaliser tout simplement nos
+[00:03:33.640] vidéos IA. Donc là ce qui va se passer
+[00:03:35.280] c'est que je vais cliquer ici sur MCP et
+[00:03:37.200] skills and plugin. C'est ça qui va me
+[00:03:38.799] permettre de pouvoir justement gérer
+[00:03:40.040] toute cette partie-là directement avec
+[00:03:41.640] Clodia. Donc je vais cliquer ici sur MCP
+[00:03:44.040] et skill. Dès que ça c'est fait, je vais
+[00:03:45.560] aller ici au niveau de cloud. On va me
+[00:03:47.480] demander de copier top views URL. Clique
+[00:03:49.640] sur le bouton ici. You need the URL in
+[00:03:52.159] the next step. OK, je vais copier le
+[00:03:54.000] lien. juste ici add customer connector.
+[00:03:56.560] OK, donc là je vais connecter la
+[00:03:58.200] plateforme à Cloud. Là, il vont me dire
+[00:03:59.799] de cliquer sur Cloud Connector. Bon là,
+[00:04:01.319] il va vous me télécharger directement
+[00:04:02.519] l'appli, il m'ouvre directement la
+[00:04:03.879] plateforme de Clodia. Et là, je vais
+[00:04:05.159] pouvoir donc coller l'URL tops. OK. Et
+[00:04:07.799] je vais mettre Top ici. Parfait.
+[00:04:09.360] Connecté. Tout est validé. Toujours
+[00:04:11.040] requis. Accepter. Parfait. Donc là, on
+[00:04:13.319] me dit vous êtes pas encore connecté à
+[00:04:14.680] Tope. Donc je vais cliquer sur
+[00:04:15.879] connecter. Je vais accepter le fait de
+[00:04:17.320] se connecter. Parfait. Donc là, je suis
+[00:04:18.720] bien connecté. Là, je vais cliquer ici
+[00:04:20.519] et je vais tout autoriser. Voilà, de A à
+[00:04:22.280] Z. J'autorise tout. comme ça, on aura
+[00:04:24.040] pas de problème au niveau de la mise en
+[00:04:25.720] place de nos vidéos. Et en faisant ça,
+[00:04:27.440] on a donc officiellement Top Views qui
+[00:04:28.759] est bien connecté à Claudia et ensuite
+[00:04:30.440] on pourra transmettre directement des
+[00:04:31.840] instructions à Lia. Donc ça c'est une
+[00:04:33.280] étape qui est importante. Ça nous
+[00:04:34.320] permettra de pouvoir lier Claudia à
+[00:04:36.039] notre outil de générateur de vidéo IA.
+[00:04:38.160] Maintenant, la deuxième étape, c'est de
+[00:04:39.199] cliquer ici sur skills. Donc faut bien
+[00:04:41.199] comprendre que Claudia euh oui, il est
+[00:04:43.080] bon, il est très bon, mais euh il faut
+[00:04:44.759] quand même pouvoir lui donner des
+[00:04:45.800] compétences pour qu'il puisse mettre en
+[00:04:47.000] application exactement ce que l'on
+[00:04:48.400] souhaite. Et là, ce que Top, ils ont mis
+[00:04:50.000] en place, ils ont mis justement en place
+[00:04:51.560] un skills bien précis afin de pouvoir
+[00:04:53.600] donner toutes les compétences
+[00:04:54.639] nécessaires à Claude afin qu'il puisse
+[00:04:56.160] réaliser les vidéos comme il le faut.
+[00:04:57.720] Donc ça c'est vraiment game changer. Le
+[00:04:58.919] sujet c'est pas juste de connecter deux
+[00:05:00.199] plateformes, il faut que Claudia puisse
+[00:05:01.520] avoir les skills, donc les compétences
+[00:05:03.000] pour faire correctement le travail. Donc
+[00:05:04.479] là, c'est justement ça que nous offre la
+[00:05:05.639] plateforme de Top Views. Donc là, c'est
+[00:05:06.960] ce que je vais faire. Je vais cliquer
+[00:05:08.160] ici sur copier. Copie to your agent ou
+[00:05:10.080] install. Donc je répète, il faut bien
+[00:05:11.280] comprendre que Claudia c'est pas un
+[00:05:12.720] expert en e-commerce. Ça veut dire queon
+[00:05:14.160] doit l'éduquer sur ce que l'on souhaite
+[00:05:15.440] réellement. On peut lui donner des
+[00:05:16.680] compétences, on peut lui donner des
+[00:05:17.680] skills, on peut lui apprendre des choses
+[00:05:19.240] justement en fonction de ce que l'on
+[00:05:20.680] souhaite. Au lieu de prendre du temps à
+[00:05:21.960] former Claudia justement à faire tout
+[00:05:23.319] ça, ils ont mis en place un skills qu'on
+[00:05:24.720] a juste à copier et comme ça Claude sera
+[00:05:26.479] déjà surentraîné pour pouvoir réaliser
+[00:05:28.039] correctement nos vidéos. Dès lors que
+[00:05:29.479] j'ai copié donc le skills de l'agent, je
+[00:05:31.400] vais revenir sur Claudia et je vais
+[00:05:32.919] coller le skills juste ici. Donc là,
+[00:05:34.880] vous faites la même chose que moi. Comme
+[00:05:36.120] ça, on transmet la compétence à Claudia.
+[00:05:38.360] OK, donc on est bon. Alors, qu'est-ce
+[00:05:39.680] qu'il me dit ? Le dépôt n'est pas une
+[00:05:41.280] skills installable directement dans
+[00:05:42.680] Cowork. C'est une marketplace de plugin
+[00:05:44.360] pour curseur cloud code avec un script
+[00:05:46.319] qui crée des liens symboliques vers
+[00:05:47.960] skills. Ça n'atteint pas votre compte
+[00:05:49.520] cloud, donc je l'ai reconditionné en
+[00:05:51.000] fichier plugin que vous pouvez installer
+[00:05:52.639] depuis la carte dessous. ce qu'il
+[00:05:53.919] contient les cinq skills avec leur
+[00:05:55.400] fichier de référence image vidéo,
+[00:05:57.240] avatar, avatar, produit, synthèse
+[00:05:58.880] vocale, clonage de voix, musique,
+[00:06:00.840] suppression d'plan et les quatre skills
+[00:06:02.520] de recherche pour Amazon, TikTok Shop,
+[00:06:04.160] Shopee, YouTube call. OK. Trois
+[00:06:05.639] ajustements de ma part, donc pas de
+[00:06:06.880] configuration MC intégré, donc c'est
+[00:06:08.479] déjà fait. Étape installation des
+[00:06:09.880] curseurs réécrites, les skills renvoyés
+[00:06:11.520] vers s'il manquait des outils. Script
+[00:06:13.319] rest supprimé. Les skills interdisent de
+[00:06:15.080] toute façon leur usage au profit des
+[00:06:16.440] appels. OK. Une fois installé un bon
+[00:06:18.280] test, utilise voilà, je vais faire un
+[00:06:20.479] test pour confirmer que c'est bon, pour
+[00:06:21.800] confirmer que le skills a bien été mis
+[00:06:23.360] et je vais juste par exemple lui
+[00:06:24.520] demander de faire ça concernant mon
+[00:06:26.080] produit. Là, je vais lui demander donc
+[00:06:27.560] de utiliser Top Views Amazon et analyse
+[00:06:29.800] le marché américain de ce produit. Là,
+[00:06:32.360] vous allez tomber aussi sur ça. C'est
+[00:06:33.960] normal, c'est juste pour faire un test
+[00:06:35.400] pour vérifier que le skills fonctionne
+[00:06:36.680] bien sur Claudia. Donc là, vous allez
+[00:06:38.160] faire exactement la même chose que moi.
+[00:06:39.599] Et vous transmettez donc le nom de votre
+[00:06:40.919] produit, le lien et il va nous faire une
+[00:06:42.599] recherche Amazon et une analyse complète
+[00:06:44.240] du marché sur la base des skills qu'on
+[00:06:46.080] lui a transmis. Donc là, l'idée de faire
+[00:06:47.720] cette recherche sur Amazon, c'est de
+[00:06:49.120] vérifier si la compétence a bien été
+[00:06:50.599] installée sur Claudia. Donc là, je vois
+[00:06:52.000] que c'est le cas. Il m'a fait une
+[00:06:53.280] recherche bien approfondie. Là, il me
+[00:06:54.880] confirme qu'il y a plus de 350000
+[00:06:56.680] recherches par mois concernant mon
+[00:06:58.280] étagère d'organisation. Le prix moyen
+[00:07:00.440] donc, c'est 39 dollars, taux d'achat 2
+[00:07:02.199] %, CPC 1 dollar, densité 23. Ensuite, il
+[00:07:05.240] y a un autre type de cabinet à 78000
+[00:07:07.520] recherches par mois, un autre type à
+[00:07:08.960] 75000 et encore à 2600 recherche par
+[00:07:11.520] mois. Ensuite, Claudia a vérifié sur
+[00:07:13.160] Google Trend. Donc la demande, elle est
+[00:07:14.520] stable sur 5 ans avec un pic fiable
+[00:07:16.319] chaque janvier, un pic anormal entre
+[00:07:18.240] avril et juin 2026 et c'est retombé à
+[00:07:20.520] 36. Donc ne constisez pas vos prévisions
+[00:07:22.280] là-dessus. OK ? Deux marchés pas un
+[00:07:24.120] seul. Donc il y a un certain type
+[00:07:25.400] d'étagère et un autre type d'étagère.
+[00:07:27.160] Votre produit est fabriqué comme le
+[00:07:28.560] premier marché et tarifé comme le
+[00:07:30.000] second. Ce qui vous attend à chaque
+[00:07:31.440] prix. Verdict. Le marché est attractif.
+[00:07:33.520] Marge brute entre 54 et 60 %.
+[00:07:35.560] Concentration modérée. Top 10 43 % du
+[00:07:38.319] CA. OK. Deux chemins différents, soit
+[00:07:40.240] repositionner le prix ou soit changer le
+[00:07:41.840] produit. en tout cas la variante
+[00:07:43.479] concernant le produit. Donc là, c'est
+[00:07:44.759] une veille concurrentielle qu'il a pu me
+[00:07:46.039] faire notamment via le skills qui a été
+[00:07:47.479] mis en place via Top View. Donc avant de
+[00:07:49.120] passer à la partie donc des publicité,
+[00:07:50.520] je vais juste lui demander j'ai combien
+[00:07:52.319] de crédits sur Top View pour qu'on
+[00:07:54.400] puisse commencer à mettre en place mes
+[00:07:57.360] publicités. Donc là, il va vérifier Top
+[00:07:59.159] Views get crédit. Sur quel
+[00:08:00.520] positionnement veux-tu construire les
+[00:08:01.720] créat ? Pour l'instant, je dire j'ai
+[00:08:03.000] combien de crédits ? Pour l'instant,
+[00:08:04.159] c'est tout ce que je veux savoir. Donc,
+[00:08:05.199] j'ai plus de 603 crédits sans date
+[00:08:06.800] d'expiration et j'ai plus de 10
+[00:08:08.039] générateurs de vidéos gratuites qui sont
+[00:08:09.520] débloqué notamment sur ma sur ma partie
+[00:08:11.479] business. C'est ces crédit-là qui va me
+[00:08:12.960] permettre de pouvoir réaliser mon
+[00:08:13.879] contenu et je vous confirme que c'est
+[00:08:15.319] bien connecté parce que si je vais sur
+[00:08:17.360] la page d'accueil, voilà, on va voir mes
+[00:08:19.080] crédits juste ici. Donc 603 crédits, je
+[00:08:21.039] peux vous confirmer que Cloud est bien
+[00:08:22.280] connecté à Top Views et c'est là où ça
+[00:08:24.080] va devenir amusant. On va pouvoir faire
+[00:08:25.440] plein de choses pour pouvoir mettre en
+[00:08:26.759] place donc toutes ces créatives. Ce
+[00:08:28.039] qu'on va faire maintenant pour réaliser
+[00:08:29.199] du contenu de qualité, on va demander à
+[00:08:30.879] Top View via Claudia de pouvoir générer
+[00:08:32.839] donc un catalogue produit 360. Donc le
+[00:08:35.120] but c'est qu'on puisse avoir une seule
+[00:08:36.279] image avec tous les angles. Donc c'est
+[00:08:37.719] elle qui garantit que le produit reste
+[00:08:39.240] identique sur chacune des vidéos. Donc
+[00:08:41.000] on veut le produit de face, de dos,
+[00:08:42.680] côté, dessus, angle 3/4, tiroir fermé et
+[00:08:45.240] qu'on montre que une photo justement du
+[00:08:46.680] produit, il a pas tous les angles du
+[00:08:48.279] produit pour pouvoir nous fournir une
+[00:08:49.680] vidéo vraiment de qualité sous
+[00:08:51.240] différents angles. Donc c'est pour ça
+[00:08:52.399] que vous devez commencer par ça. Et là,
+[00:08:53.640] il y a un prom hein, je vais copier.
+[00:08:55.640] Euh, fais-moi une image de catalogue
+[00:08:56.959] produit montrant tous les côtés, phase,
+[00:08:58.560] dos et cetera concernant mon produit.
+[00:09:00.600] Donc là, vous ferez la même chose, hein.
+[00:09:01.600] Vous aurez le prompt en description.
+[00:09:03.240] Hop, là, je vais revenir ici et je vais
+[00:09:04.959] lui demander ça. Et je vais juste quand
+[00:09:06.360] même bien chercher une bonne photo
+[00:09:07.959] concernant le produit. enregistrer
+[00:09:09.519] l'image sous. Est-ce que j'arrive à
+[00:09:10.800] trouver ? Voilà, là j'ai une photo aussi
+[00:09:12.040] de côté. Je lui envoie pas mal d'images
+[00:09:13.720] comme ça, il a bien tout. L'idée, c'est
+[00:09:15.160] vraiment que Top Viwiew puisse avoir un
+[00:09:16.360] angle 360 du produit afin de réaliser
+[00:09:18.760] correctement des vidéos derrière. Donc
+[00:09:20.079] voilà, là c'est ce que je lui demande.
+[00:09:21.360] On valide tout ça. Donc là, vous pouvez
+[00:09:22.839] voir que Claudia se connecte directement
+[00:09:24.399] à Top Viw. Il va mettre en place donc ce
+[00:09:26.040] que je viens de lui dire à l'instant.
+[00:09:27.440] Préparer et uploader les vidéos, les
+[00:09:28.920] photos de référence, générer la planche
+[00:09:30.800] catalogue multivue, vérifier la fidélité
+[00:09:32.959] et livrée. Donc là, il est en train de
+[00:09:34.279] tout me mettre en place et je vous fais
+[00:09:35.480] un retour dans quelques instants pour
+[00:09:36.640] vous montrer le rendu. OK, c'est nickel.
+[00:09:38.440] Donc le catalogue a bien été généré.
+[00:09:40.279] Donc je vais cliquer sur l'image juste
+[00:09:41.920] ici. Là vous avez tous les angles
+[00:09:43.399] concernant mon étagère. Donc pourquoi on
+[00:09:45.399] fait ça ? Parce que faut bien comprendre
+[00:09:46.839] que lorsqu'on veut créer une vidéo IA,
+[00:09:48.480] si par exemple on monte uniquement la
+[00:09:50.120] première partie de l'image, quand on va
+[00:09:51.640] vouloir montrer la seconde partie, ben
+[00:09:53.240] s'il a pas l'élément, il va faire encore
+[00:09:54.880] une autre étagère. Si on veut montrer
+[00:09:56.320] l'étagère d'en haut, s'il a pas
+[00:09:57.519] l'élément, il va montrer une étagère qui
+[00:09:59.040] n'est pas celle qu'on veut. Si on veut
+[00:10:00.519] faire un angle où on veut montrer
+[00:10:01.800] l'étagère vers le bas, il va montrer une
+[00:10:03.279] étagère qui n'est pas celle qu'on
+[00:10:04.399] voulait de base. En faisant ça, ça
+[00:10:05.880] permet que peu importe l'angle de la
+[00:10:07.600] vidéo, ça sera toujours la même étagère.
+[00:10:09.320] Et ça, c'est un détail qui est important
+[00:10:10.360] parce qu'il faut bien que vous comprenez
+[00:10:11.360] dès l'heure que vous changez l'angle du
+[00:10:12.560] produit, si vous transmettez pas cet
+[00:10:13.920] élément là, ça sera un produit similaire
+[00:10:15.440] mais qui n'est pas vraiment celui que
+[00:10:16.440] vous voulez vendre. C'est pour ça que
+[00:10:17.680] c'est vraiment important d'avoir cette
+[00:10:18.800] information là. Comme ça, on sait que
+[00:10:20.279] peu importe l'angle de la vidéo, l'IA a
+[00:10:22.200] bien tous les angles du produit. Donc
+[00:10:23.800] tout ce qu'il y aura en vidéo sera
+[00:10:25.320] cohérent par rapport à ce que le client
+[00:10:26.839] va acheter. Et parfois avec des vidéos
+[00:10:28.720] IA, si vous faites pas cette étape-là,
+[00:10:30.000] c'est pas ce que vous aurez. Donc faites
+[00:10:31.120] vraiment attention. L'étape suivante, ça
+[00:10:32.680] sera pas de uniquement dire à Claudia
+[00:10:34.360] "Oui, crée-moi une publicité, ça ne
+[00:10:35.800] fonctionne pas comme ça." Ce qu'on va
+[00:10:37.160] faire, c'est qu'on va charger la
+[00:10:38.160] compétence storyboard virale. C'est une
+[00:10:40.240] compétence qu'on transmet à Claudia afin
+[00:10:41.959] de pouvoir réaliser des vidéos animées
+[00:10:43.399] comme j'ai montré précédemment, comme le
+[00:10:44.920] concurrent le fait actuellement. Donc
+[00:10:46.200] là, ce qu'on va faire, c'est qu'on va
+[00:10:47.000] cliquer sur personnaliser, skills,
+[00:10:48.560] ajouter, coller la compétence, uploader
+[00:10:50.480] donc les deux références, le storyboard
+[00:10:52.200] et le story réel. Ensuite, on va
+[00:10:53.600] uploader les deux références, donc le
+[00:10:54.920] storyboard esquiss et le storyboard
+[00:10:56.480] réel. Clique sur le skills dans le chat,
+[00:10:58.200] puis décrire votre produit et votre
+[00:10:59.560] cible. Donc moi, c'est ce que je vais
+[00:11:00.880] faire. Donc je vais copier mon produit
+[00:11:02.440] et ma cible. Je précise que dès l'heure
+[00:11:03.959] qu'on atteint le certain nombre de la
+[00:11:05.120] que j'ai dit en début de cette vidéo,
+[00:11:06.560] vous aurez accès à tous les promptes, à
+[00:11:08.000] tous les skills et à tout ce que j'ai
+[00:11:09.040] dit dans cette vidéo. Donc on va se
+[00:11:10.680] retrouver directement ici. Je vais
+[00:11:12.040] coller ça ici et je vais lui transmettre
+[00:11:14.120] directement les deux promptes comme ça.
+[00:11:16.240] Donc là, c'est parfait. Il est en train
+[00:11:17.240] de me réaliser donc la structure de la
+[00:11:18.800] vidéo en 7 bits comme il a dit. Le hook
+[00:11:21.440] de 0 à 3 secondes casser la casserole de
+[00:11:23.839] 3 à 7 secondes c'est évoquer le problème
+[00:11:26.000] ensuite évoquer la conséquence la
+[00:11:27.519] solution les features le résultat et le
+[00:11:29.760] call to action chaque bit s'écrit sur
+[00:11:31.800] quatre couches. OK phase 4 le script.
+[00:11:34.279] Phase 5 génération des visuels. Phase 6
+[00:11:36.519] l'assemblage. OK ce qui va devoir
+[00:11:38.320] changer pour ton produit. L'arc
+[00:11:39.760] émotionnel ne transpose pas tel quel.
+[00:11:41.480] OK, maintenant que Claudia m'a expliqué
+[00:11:43.120] dans les grandes lignes comment il veut
+[00:11:44.399] réaliser sa publicité, avant qu'on
+[00:11:46.079] puisse commencer à dépenser des crédits
+[00:11:47.959] parce que faire attention he c'est pas
+[00:11:49.040] tout le monde voilà qui va dépenser des
+[00:11:50.279] 1000 descents pour des crédits, faut
+[00:11:51.600] quand même qu'on puisse vérifier bien en
+[00:11:52.680] amont si la publicité elle fait sens.
+[00:11:54.200] Donc là je vais vous demander de mettre
+[00:11:55.440] exactement ceci. Reconstruire la
+[00:11:57.079] publicité avec la méthode des 7 temps et
+[00:11:58.839] les deux styles de storyboard. Donne-moi
+[00:12:00.560] d'abord le storyboard écrit scène par
+[00:12:02.320] scène et ne lance aucune génération
+[00:12:03.839] avant ma validation. Comme ça, ça nous
+[00:12:05.200] évite de dépenser des crédits pour rien
+[00:12:06.480] qui n'ont aucun sens. Euh et après
+[00:12:08.079] commencer à devoir racheter, racheter
+[00:12:09.440] encore des crédits. On vérifie tout en
+[00:12:10.959] amont, ça fait du sens et c'est logique.
+[00:12:12.519] Et ensuite, si tout est validé, là on
+[00:12:14.160] pourra lancer la génération des vidéos.
+[00:12:15.600] On est sûr d'éviter de se tromper sur
+[00:12:16.880] des scènes qui n'auraient eu aucun sens.
+[00:12:18.399] Donc là, c'est ce qui va me faire.
+[00:12:19.240] Reconstruire la publicité. On valide
+[00:12:20.639] vraiment tout avant de commencer à
+[00:12:21.959] dépenser des crédits pour réaliser les
+[00:12:23.720] vidéos. Donc là, c'est exactement ce
+[00:12:24.959] qu'il m'a fait. Il m'a présenté donc là
+[00:12:26.519] les différentes scènes. Le hook, ça va
+[00:12:28.279] durer de 0 secondes à 3 secondes. Le POF
+[00:12:30.720] depuis l'intérieur du placard et le vrai
+[00:12:32.480] stopper du scroll. Personne ne filme
+[00:12:34.040] sous son évier. Plan large de
+[00:12:35.160] l'intérieur. Le sifon occupe tout le
+[00:12:36.920] centre. Les produits sont assés autour
+[00:12:38.480] en deux couches. Une main tire un
+[00:12:39.920] flacon. Trois autres s'effondrent.
+[00:12:41.320] D'accord ? Scène 3, la conséquence.
+[00:12:43.120] Scène 4, scène 5, scène 6, scène 7. Vous
+[00:12:45.120] validez si c'est logique, si ça fait du
+[00:12:46.480] sens. S'il y a une scène qui ne fait pas
+[00:12:48.079] sens, on peut tout simplement lui
+[00:12:49.040] demander de modifier cette scène et par
+[00:12:50.760] rapport à l'inspiration que vous pouvez
+[00:12:51.880] avoir. Donc ça c'est bien de faire ça
+[00:12:53.240] avant de commencer à dépenser des
+[00:12:54.720] crédit. Ensuite donc là je vais lui
+[00:12:56.040] confirmer que le storyboard il est
+[00:12:57.320] validé et je vais lui demander de
+[00:12:58.519] générer d'abord donc les sep panneaux
+[00:13:00.160] esquiss puis les sep panneaux photo
+[00:13:01.839] réalistes. Utilise les images catalogue
+[00:13:03.519] 360 comme référence produit pour chaque
+[00:13:05.360] scène où apparaît le produit. L'idée en
+[00:13:07.120] faisant ça, c'est de pouvoir vérifier le
+[00:13:08.360] contenu pour chacune des scènes avant
+[00:13:10.000] encore une fois qu'on puisse commencer à
+[00:13:11.240] dépenser des crédits. Comme ça, on
+[00:13:12.440] vérifie tout de A à Z. Là, les vidéos,
+[00:13:14.600] elles sont vraiment personnalisées.
+[00:13:15.839] C'est pas des vidéos à la volée où juste
+[00:13:17.399] on dit "Ouais, fais ça, fais ça,
+[00:13:18.440] crée-moi une publicité". Là, non, vous
+[00:13:19.720] voyez, il y a des esquises, il y a
+[00:13:20.800] l'organisation, on vérifie les scènes en
+[00:13:22.320] amont. C'est vraiment c'est presque une
+[00:13:24.040] production, on dirait. On est bon, il a
+[00:13:25.600] généré les 14 panneaux, les esquisses
+[00:13:27.440] dessins animés et les photos réalistes.
+[00:13:29.519] Donc, laissez-moi vous montrer l'exemple
+[00:13:30.920] concret. Donc voilà, là c'est le hook en
+[00:13:32.560] mode dessin animé. C'est le numéro 1, tu
+[00:13:34.600] ne ranges pas, tu empiles. Je pense
+[00:13:36.199] qu'on a tous peut-être déjà été dans
+[00:13:37.440] cette situation. On a tous les produits
+[00:13:38.839] ménagers qui sont en bordel, en désordre
+[00:13:40.920] au lieu de bien être organisé comme
+[00:13:42.120] c'est le cas pour le produit. Là le
+[00:13:43.639] problème. Voilà. Donc là on montre c'est
+[00:13:45.320] quoi le problème. Le siphon bouffe tout
+[00:13:46.680] l'espace. La conséquence trois fois le
+[00:13:48.800] même produit. La solution. Donc là on va
+[00:13:50.759] présenter notre étagère. Tout sort, tout
+[00:13:53.360] se voit, c'est nickel. Les preuves, on
+[00:13:55.320] explique entièrement le produit. Et là,
+[00:13:56.720] vous voyez que ce qu'on avait fait juste
+[00:13:57.839] avant, on montre différents angles. Donc
+[00:13:59.440] là, c'est ultra concret. C'est c'est
+[00:14:01.240] vraiment super bien fait. Là, on a le
+[00:14:02.800] résultat, c'est nickel. Et le CTA, c'est
+[00:14:06.240] une publicité qui va durer environ 25
+[00:14:07.839] secondes. Et là, on a accès à tout. Là,
+[00:14:09.480] c'est les photos en mode réaliste. C'est
+[00:14:11.800] bien fait.
+[00:14:14.160] Là c'est en mode réaliste IA.
+[00:14:16.199] Franchement, on dirait pas non plus de
+[00:14:17.600] fou de lia franchement.
+[00:14:21.079] On dirait juste des photos de qualité he
+[00:14:22.720] on dirait pas de Lia.
+[00:14:26.160] Je trouve c'est super bien fait. S'il y
+[00:14:27.440] a quelque chose qui va pas à ce
+[00:14:28.480] niveau-là, vous pouvez modifier. Vous
+[00:14:29.839] pouvez demander "OK, la scène 1, j'aime
+[00:14:31.480] pas, c'est pas validé ou j'aimerais
+[00:14:32.800] juste que tu rajoutes, je sais pas, une
+[00:14:33.880] bouteille en plus sur la scène 2." Là,
+[00:14:35.519] c'est vraiment vous qui décidez. Après,
+[00:14:37.199] je précise que ça coûte quand même des
+[00:14:38.160] crédits de faire ça. Là, ça m'a coûté 44
+[00:14:39.839] crédits. Il me reste encore 555 crédits,
+[00:14:41.680] donc ça va. Maintenant, ce que j'ai à
+[00:14:43.040] faire tout simplement bah c'est de dire
+[00:14:44.320] à Claudia maintenant bah fais les
+[00:14:45.800] publicités modèle vidéo signe danse deux
+[00:14:48.079] versions, une animée une photo réaliste
+[00:14:50.000] assemblé chacune en une seule vidéo
+[00:14:51.680] continue en 96e avec la voix off du
+[00:14:53.600] storyboard. Maintenant que ça c'est
+[00:14:54.680] fait, on va pouvoir voir donc la
+[00:14:55.880] finalité de tout ce qu'on fait depuis
+[00:14:57.680] ces dernières minutes. Donc là, le but
+[00:14:58.959] c'est bien évidemment d'avoir des vidéos
+[00:15:00.199] IA ultra qualitatives au même titre que
+[00:15:02.079] justement la boutique qui fait plus de
+[00:15:03.320] 200000 € sur les 30 derniers jours. Donc
+[00:15:05.079] là, ça prend un petit peu de temps le
+[00:15:06.120] temps que la vidéo se mette en place. En
+[00:15:07.480] attendant, je précise que pour les
+[00:15:08.639] personnes qui veulent se lancer durant
+[00:15:09.680] le 4e trimestre, donc c'est la meilleure
+[00:15:11.040] période de l'année, on a toutes les
+[00:15:12.199] fêtes de fin d'année, c'est à ce
+[00:15:13.160] moment-là où on va faire 80 % de notre
+[00:15:15.160] chiffre d'affaires à l'année. J'ai mon
+[00:15:16.720] accompagnement qui est 100 % gratuit. Je
+[00:15:18.440] ne fais plus payer des accompagnements à
+[00:15:19.800] 2000 ou 3000 €. Je donne tout
+[00:15:21.440] gratuitement. Dès lors que vous accédez
+[00:15:23.000] à l'espacement, vous allez arriver sur
+[00:15:24.279] une plateforme exactement comme ceci
+[00:15:25.759] auquelle vous aurez accès donc à une
+[00:15:27.079] formation de plus de 19h où on explique
+[00:15:28.880] tout de A à Z pour faire du dropshipping
+[00:15:30.600] avec de l'intelligence artificielle avec
+[00:15:32.079] des tutos vraiment avancés pour afin que
+[00:15:33.959] puissiez mettre en application tout ce
+[00:15:35.199] qui permet d'avoir des résultats. On a
+[00:15:36.800] aussi mis en place un module phare donc
+[00:15:38.279] c'est le module organique. Ça veut dire
+[00:15:39.759] que vous pouvez littéralement vous
+[00:15:40.600] lancer avec un budget mais vraiment très
+[00:15:42.040] restreint. Vous avez juste à faire
+[00:15:43.319] exactement ce que j'ai montré dans cette
+[00:15:44.480] vidéo et pouvoir donc poster un maximum
+[00:15:46.519] pour pouvoir ramener du trafic sur votre
+[00:15:47.759] site et générer des ventes. Même pas
+[00:15:49.040] besoin de dépenser en ads. Donc après
+[00:15:50.519] ceux qui ont du budget, vous pouvez
+[00:15:51.720] dépenser aussi en ads, sans souci. On
+[00:15:53.720] fait des lives donc tous les jours,
+[00:15:55.440] d'accord ? Tous les jours, on est en
+[00:15:56.639] live. Donc au-delà de la formation,
+[00:15:58.440] c'est très bien où on explique tout
+[00:15:59.519] concernant le dropshipping IA, on est en
+[00:16:01.360] live tous les jours, d'accord ? Tous les
+[00:16:02.680] jours, on a différents experts, donc des
+[00:16:04.199] personnes qui ont fait plusieurs
+[00:16:04.920] millions en e-commerce avec lequel vous
+[00:16:06.319] pouvez échanger continuellement chaque
+[00:16:08.000] jour. D'accord ? Dès lors que vous avez
+[00:16:09.079] des questions, des interrogations, des
+[00:16:10.560] incompréhensions, on échange en live
+[00:16:12.160] tous les jours. Vous avez juste à
+[00:16:13.079] réserver votre place juste ici. Comme
+[00:16:14.720] ça, on vous envoie un email avec un
+[00:16:16.040] Google Meet et vous pouvez échanger
+[00:16:17.319] directement avec nos différents coachs.
+[00:16:19.079] Vous pouvez aussi donc directement
+[00:16:20.319] rejoindre une communauté. Donc on a un
+[00:16:21.959] groupe WhatsApp, on parle tous ensemble,
+[00:16:23.440] on discute tous ensemble, on échange des
+[00:16:24.959] tips, on échange de la valeur afin que
+[00:16:26.399] vous puissiez tout simplement encore une
+[00:16:27.639] fois être accompagné tous les jours,
+[00:16:29.199] avoir des échanges tous les jours. Donc
+[00:16:30.560] c'est la meilleure chose à faire et je
+[00:16:31.680] répète que tout ça c'est 100 % gratuit.
+[00:16:33.720] Vous aurez accès à tous les prompts
+[00:16:34.920] concernant la recherche de produits,
+[00:16:36.040] création de sites, création des
+[00:16:37.240] publicités, lancement des publicités,
+[00:16:38.519] tout de A à Z. Vous aurez aussi accès
+[00:16:40.600] donc à différents outils pour calculer
+[00:16:41.959] la marge, le ROS, seuil de rentabilité,
+[00:16:43.839] budget publicitaire, fiche produit.
+[00:16:45.240] C'est super important. Vous pouvez pas
+[00:16:46.160] démarrer l'e-commerce euh sans faire ça.
+[00:16:47.839] Tout ça, les lives tous les jours, le
+[00:16:49.240] groupe communauté, la formation, c'est
+[00:16:50.800] 100 % gratuit. La seule chose que vous
+[00:16:52.160] devez faire donc c'est pouvoir prendre
+[00:16:53.319] donc certains outils qui va vous
+[00:16:54.639] permettre justement de mettre en
+[00:16:55.920] application la formation. Au même titre
+[00:16:57.519] que là, par exemple, dans cette vidéo,
+[00:16:58.480] je vous ai montré Top View. Ben
+[00:16:59.480] justement, il faut que prendre top view
+[00:17:00.880] pour mettre en application ce que je dis
+[00:17:01.959] dans cette vidéo. Bah, c'est le même
+[00:17:03.079] principe pour cet accompagnement. Le
+[00:17:04.319] but, c'est pas que ce soit gratuit juste
+[00:17:05.480] pour qu'il y ait des gens curieux. Je
+[00:17:06.480] veux quand même que avant que vous
+[00:17:07.480] rentrez, avant que vous puissiez entrer
+[00:17:08.799] dans la formation, vous puissiez prendre
+[00:17:10.079] les outils justement qui vont vous
+[00:17:10.919] permettre de pouvoir mettre en
+[00:17:11.880] application la formation. Comment
+[00:17:13.240] j'arrive à faire en sorte que tout ça
+[00:17:14.280] c'est gratuit ? C'est parce que
+[00:17:15.360] justement on est rémunéré au niveau des
+[00:17:16.959] personnes qui vont prendre justement ces
+[00:17:18.120] différents outils. Donc, c'est la
+[00:17:19.120] meilleure manière aujourd'hui de pouvoir
+[00:17:20.160] se lancer en e-commerce. Arrêtez de
+[00:17:21.600] prendre des formations à 2000 3000 € ça
+[00:17:23.240] ne fait plus sens aujourd'hui. Vous avez
+[00:17:24.640] juste à vous inscrire sur cette page là.
+[00:17:26.000] Crée ta boutique avec Lia en 10 minutes
+[00:17:27.720] et accède gratuitement à mon
+[00:17:28.840] accompagnement en dropshipping à plus de
+[00:17:30.080] 3000 €. Là vous mettez votre nom,
+[00:17:31.600] adresse, email, numéro de téléphone,
+[00:17:32.960] l'âge. Vous acceptez d'être contacté par
+[00:17:34.720] téléphone et mes coachs vont vous
+[00:17:35.960] appeler dans les 10 à 20 prochaines
+[00:17:37.480] minutes. Comme ça, on peut valider
+[00:17:38.720] ensemble donc l'accompagnement, les
+[00:17:39.919] différents outils et on vous transmet
+[00:17:41.080] les accès et vous avez accès à tout.
+[00:17:42.559] Donc le lien, il est en description. Je
+[00:17:43.960] sais pas encore pendant combien de temps
+[00:17:44.960] ça sera gratuit parce que c'est
+[00:17:45.960] incroyable et ça dépend pas que de moi.
+[00:17:47.480] Donc je vous invite à nous rejoindre dès
+[00:17:48.520] maintenant pour qu'on puisse bosser tous
+[00:17:49.720] ensemble durant le 4e trimestre. Ça a
+[00:17:51.440] pris une bonne dizaine de minutes à Lia
+[00:17:53.039] pour pouvoir générer donc l'ensemble de
+[00:17:54.400] ces clips que je vais vous montrer juste
+[00:17:55.720] ici. Donc là ce qu'on va devoir faire
+[00:17:56.840] ensuite c'est pouvoir télécharger
+[00:17:58.120] l'ensemble de ces clips, les mettre
+[00:17:59.200] directement sur Capcut, les relier,
+[00:18:00.760] télécharger la vidéo et ensuite on
+[00:18:02.120] pourra la lancer directement en
+[00:18:03.400] publicité. Donc là on est parti, on va
+[00:18:04.960] regarder le hook ensemble.
+[00:18:13.630] OK, pas mal, pas mal. OK. Donc là le
+[00:18:13.640] problème
+[00:18:37.390] OK. Donc là, on montre l'outil, le
+[00:18:37.400] résultat.
+[00:18:43.230] Nickel. Et ensuite, on a le CTA
+[00:18:43.240] concernant le site.
+[00:18:46.960] Nickel. Donc ça c'est la partie là c'est
+[00:18:48.760] la version esquiss. Maintenant si on va
+[00:18:50.480] sur la version euh photo réaliste.
+[00:18:55.080] OK. Donc là c'est le hook. Donc vous
+[00:18:56.520] voyez, vous avez deux formats. Vous avez
+[00:18:57.760] le format euh esquiss dessin animé et le
+[00:18:59.720] format vraiment réaliste comme vous le
+[00:19:01.200] voyez ici.
+[00:19:03.640] Ben c'est bien fait hein, franchement
+[00:19:04.760] c'est super bien fait hein. Tout ce qui
+[00:19:05.919] restera à faire c'est télécharger les
+[00:19:07.159] vidéos,
+[00:19:09.520] les intégrer sur euh sur Capcuts et
+[00:19:11.480] ensuite on sera bon. Donc voilà, je
+[00:19:12.640] pense que vous avez compris un peu
+[00:19:13.520] l'idée.
+[00:19:18.830] Là c'est vraiment la version réaliste.
+[00:19:18.840] Donc là on a aussi la voix off qui a été
+[00:19:20.400] faite par Clara donc version française
+[00:19:22.480] Labs version 3. Donc je vais vous
+[00:19:24.000] montrer un exemple de voix off. Le sipon
+[00:19:26.000] prend le milieu, le reste s'enass autour
+[00:19:28.120] et ce qui est au fond, tu ne le vois
+[00:19:29.559] plus.
+[00:19:31.039] OK.
+[00:19:31.799] Deux paniers coulissants indépendants.
+[00:19:33.960] Le fond du placard vient à toi.
+[00:19:36.320] Euh, la voix off dépasse un peu le clip.
+[00:19:38.200] D'accord. Les clips font 4 secondes.
+[00:19:40.320] Euh, OK. Donc là, on est bon. En soit,
+[00:19:42.600] on est bon. Ben maintenant, tout ce qui
+[00:19:43.640] va rester à faire, c'est tout simplement
+[00:19:44.960] donc télécharger les vidéos dans
+[00:19:46.159] l'ordre, donc du hook au CTA. Ensuite,
+[00:19:48.159] mettre la voix off par-dessus et ensuite
+[00:19:49.880] donc la vidéo, elle est bien finalisée.
+[00:19:51.440] Donc là, c'est ce qu'on va faire. Comme
+[00:19:52.480] ça, je vous montre le rendu final et
+[00:19:53.880] comme ça, on est bon. Alors hop là, je
+[00:19:55.760] vais les mettre juste ici. Normalement,
+[00:19:57.240] c'est dans l'ordre. 1 2 3 4 5 J'espère
+[00:20:01.039] que c'est Je me suis pas trompé dans
+[00:20:02.360] l'ordre. Voilà. Et ensuite donc les voix
+[00:20:04.640] off. On les voix off. J'espère que je
+[00:20:06.640] pomper
+[00:20:07.159] sous ton évier, tu ne ranges pas. Tu en
+[00:20:09.120] OK. Ouais, ça c'est l'ordre là. 1 2 3 4
+[00:20:12.440] 5 et 6. Et là, je vais juste scutter
+[00:20:15.080] ici. Comme ça, j'ai la vidéo globale. Et
+[00:20:17.320] ensuite, ce que j'ai à faire, c'est
+[00:20:18.400] exporter. Voilà. Vous voyez, au final il
+[00:20:20.240] y a rien de sorcier, hein. Merci.
+[00:20:21.559] L'intelligence artificielle. Auparavant,
+[00:20:23.280] il fallait acheter le produit sur
+[00:20:24.280] Amazon, le commander, faire des vidéos
+[00:20:26.000] et cetera. Là, rien de tout ça. Je peux
+[00:20:27.720] faire des vidéos avec Lia et vous voyez
+[00:20:28.960] que c'est ultra calient. On prend le
+[00:20:30.200] temps de bien faire la chose, mais en
+[00:20:31.360] vrai de vrai, c'est vraiment qualitatif.
+[00:20:32.880] Et là, c'est des vidéos comme j'ai
+[00:20:33.880] expliqué en début de cette vidéo qui
+[00:20:34.960] peuvent avoir des résultats. Ne pensez
+[00:20:36.320] pas que là, ces vidéos là, c'est fait
+[00:20:37.360] pour amuser la galerie, pour décorer.
+[00:20:38.760] Non non non, on veut avoir des
+[00:20:39.799] résultats. On veut générer des ventes
+[00:20:41.080] avec ce type de vidéo là. OK, c'est
+[00:20:42.400] nickel. Donc je vais je vais ouvrir le
+[00:20:44.000] dossier. La vidéo, elle dure 28
+[00:20:46.039] secondes.
+[00:20:46.520] Sous ton évier, tu ne ranges pas. Tu
+[00:20:48.400] empiles son tu empiles. Le sipon prend
+[00:20:51.919] le milieu. Le reste sont à sa et ce qui
+[00:20:54.240] est au fond, tu ne le vois plus. Alors,
+[00:20:56.159] tu rachètes encore et encore deux
+[00:20:58.840] paniers coulissants indépendants. Le
+[00:21:00.919] fond du placard vient à toi. Tu ouvres,
+[00:21:03.600] tu vois tout. Tu prends ce qu'il te
+[00:21:05.720] faut. 94,99
+[00:21:09.320] au lieu de 189 99.
+[00:21:13.039] 30 jours pour les pieds, tu ne ranges
+[00:21:14.480] rien dans tu
+[00:21:17.159] en pile.
+[00:21:17.720] Pour moi, la vidéo, elle est ultra
+[00:21:18.760] qualitative. Après, vous avez encore la
+[00:21:20.240] possibilité de pouvoir changer la voix
+[00:21:21.520] si vous le souhaitez. C'est aussi
+[00:21:22.720] possible he parce que d'ailleurs la les
+[00:21:24.600] publicités les concurrents, ils avaient
+[00:21:25.559] même pas de voix off. Donc on n pas
+[00:21:26.919] foncièrement besoin de voix off
+[00:21:27.919] concernant ce produit. Mais en tout cas,
+[00:21:30.039] c'est juste pour vous donner un peu
+[00:21:30.960] cette indication. Là, elle bégay un
+[00:21:32.400] petit peu au début, ça on peut faire
+[00:21:33.480] aussi la modification mais en tout cas
+[00:21:35.480] c'est ultra qualitatif. Voilà,
+[00:21:36.880] concernant cette vidéo, on a vu ensemble
+[00:21:38.320] comment mettre en place des vidéos UGC,
+[00:21:40.039] donc à 100 % avec l'intelligence
+[00:21:41.360] artificielle. Vous n'avez pas besoin de
+[00:21:42.559] commander un produit ou faire quoi que
+[00:21:43.840] ce soit, vous occupez directement de
+[00:21:45.240] tout ça. Je précise à nouveau que j'ai
+[00:21:46.679] mon accompagnement qui est 100 %
+[00:21:47.840] gratuit, qui est disponible en
+[00:21:49.000] description. Vous pouvez nous rejoindre.
+[00:21:50.360] Donc, on aborde de manière plus avancée
+[00:21:52.000] encore ces thématiques là du
+[00:21:53.360] dropshipping avec l'intelligence
+[00:21:54.440] artificielle. On est en live tous les
+[00:21:56.039] jours. On a aussi un groupe WhatsApp sur
+[00:21:57.559] lequel on partage énormément de valeurs
+[00:21:59.039] afin que vous puissiez avoir des
+[00:21:59.960] résultats et on a aussi différents
+[00:22:01.520] outils et stratégies à disposition afin
+[00:22:03.360] de vous aider à avoir des résultats plus
+[00:22:04.720] rapidement que lorsque vous travaillez
+[00:22:05.960] tout seul. Maintenant, l'accompagnement
+[00:22:07.279] est 100 % gratuit. Tout ce que vous avez
+[00:22:08.559] à faire donc c'est prendre donc certains
+[00:22:09.799] outils comme j'ai pu le montrer dans
+[00:22:10.840] cette vidéo pour mettre en application
+[00:22:12.520] ce qu'on dit justement de cet
+[00:22:13.400] accompagnement. Donc le lien il est en
+[00:22:14.720] description.

@@ -1,0 +1,889 @@
+[00:00:01.230] En ce moment, aux États-Unis, des
+[00:00:01.240] centaines de personnes génèrent des
+[00:00:02.679] dizaines voire des centaines de milliers
+[00:00:04.120] d'euros en vendant des vidéos IA à des
+[00:00:06.560] marques. Et ces marques sont prêtes à
+[00:00:07.680] payer entre 250 à 5000 € la vidéo. Pour
+[00:00:11.000] les formats les plus poussées, elles
+[00:00:12.120] sont prêtes à payer jusqu'à 25000 €.
+[00:00:14.960] Pour la petite histoire, il y a 2 mois
+[00:00:16.320] de ça, il y a ma copine qui voulait se
+[00:00:17.640] lancer dans l'entrepreneuriat mais elle
+[00:00:18.760] savait pas par où commencer. Et moi, en
+[00:00:20.359] voyant cette opportunité, je lui ai dit
+[00:00:21.720] de créer son agence [musique] de vidéo
+[00:00:22.960] hier. Et en 2 mois seulement, elle a
+[00:00:24.480] signé plusieurs contrats qui en cumulé
+[00:00:26.279] lui ont permis de générer 8000 dollars.
+[00:00:28.679] Donc ouais, tu as bien compris ? Elle a
+[00:00:29.640] généré 8000 dollars en faisant des
+[00:00:31.439] vidéos IA qui lui prend quelques minutes
+[00:00:32.920] à faire avec zéro expérience en
+[00:00:34.715] [musique] entrepreneuriat. Et pour
+[00:00:35.600] l'aider à délivrer ses clients encore
+[00:00:36.920] plus rapidement et ben, j'ai décidé de
+[00:00:38.239] transformer Claude en une véritable
+[00:00:40.160] agence vidéo ia automatisée. Regarde.
+[00:00:43.000] Alors là, [musique] c'est du jamais vu.
+[00:00:44.640] C'est du jamais vu. Là, j'ai juste à
+[00:00:45.920] prendre la photo de mon produit ici,
+[00:00:47.320] l'emporter sur sur Claude. J'envoie et
+[00:00:49.879] là, grâce au skills, [musique] il va me
+[00:00:50.920] créer 10 static ads en automatique là
+[00:00:52.719] grâce à Alex. Je peux pas y croire. Je
+[00:00:54.239] peux je peux vraiment pas y croire. Et
+[00:00:55.359] là, c'est bon, il est en train de me
+[00:00:56.399] générer les photos tranquillement. C'est
+[00:00:58.120] quoi cette folie [musique] les gars ?
+[00:00:59.879] Générer 10 publicités, 10 ans marketing
+[00:01:02.480] en littéralement 2 minutes.
+[00:01:03.840] Alors moi c'est Hugo Mathias et si tu me
+[00:01:05.199] connais pas, j'ai générer plus de 2
+[00:01:06.680] millions d'euros sur les deux dernières
+[00:01:08.040] années grâce à la création de contenu en
+[00:01:09.720] IA, notamment grâce aux influenceurs IA.
+[00:01:11.680] Et après avoir généré des centaines de
+[00:01:13.119] millions de vues grâce à l'IA et après
+[00:01:14.600] avoir vu ma copine générer autant
+[00:01:15.880] d'argent en si peu de temps, et ben j'ai
+[00:01:17.080] décidé de lancer mon agence vidéo
+[00:01:18.600] [musique] de zéro et je vais tout
+[00:01:20.159] documenter sur mes réseaux. Et dans
+[00:01:21.640] cette vidéo, je vais te montrer le
+[00:01:22.880] système complet. C'est-à-dire que je
+[00:01:24.159] vais te montrer comment produire tous
+[00:01:25.600] les formats [musique] qui se vendent,
+[00:01:26.880] mais surtout à la fin de cette vidéo, je
+[00:01:28.200] vais te présenter mon système complet
+[00:01:29.680] qui me permet de prospecter en
+[00:01:31.040] automatique des clients grâce à Claude.
+[00:01:32.840] Et c'est surtout ça qui change tout.
+[00:01:34.119] Donc reste bien jusque là. Bon, en début
+[00:01:35.479] de vidéo, je t'ai montré de quoi était
+[00:01:36.880] capable Claude. En gros, ce que j'ai
+[00:01:37.880] fait, c'est que j'ai connecté Alexia qui
+[00:01:39.479] est mon logiciel de création de contenu
+[00:01:40.960] à Cloud directement via un MCP. Donc, on
+[00:01:42.920] s'en fout des détails. Le MCP en gros,
+[00:01:44.479] c'est une espèce d'API intégré à Cloud.
+[00:01:46.200] ce qui me permet d'automatiser ma
+[00:01:47.560] génération de photos. Donc que ce soit
+[00:01:48.880] des packot produits, des UG CIA ou même
+[00:01:50.920] des vidéos cinématiques. Et ce que j'ai
+[00:01:52.320] fait, c'est simple, c'est que j'ai pris
+[00:01:53.399] une agence de vidéo classique, j'ai
+[00:01:54.759] déterminé tous les rôles clés de cette
+[00:01:56.479] agence et j'ai remplacé chaque employé
+[00:01:59.000] par Claude. Donc le directeur artistique
+[00:02:00.759] remplacé par Claude, le script writer
+[00:02:02.520] remplacé par Claude, photographe, DA,
+[00:02:04.200] images, monteur, chef de projet, tout a
+[00:02:05.840] été remplacé par Claude. Ce qui veut
+[00:02:07.560] dire que tu as pas besoin de recruter de
+[00:02:08.720] freelance, tu as pas besoin de savoir
+[00:02:09.920] coder, ni d'avoir de notions créatives
+[00:02:11.840] ou même d'avoir fait, je sais pas, une
+[00:02:13.040] école de cinéma. La production, elle est
+[00:02:14.519] scalable et la livraison client, elle
+[00:02:16.280] est quasi automatique. Donc là, en fait,
+[00:02:17.879] on n'est pas en train de monter une
+[00:02:19.160] agence, mais on est en train de monter
+[00:02:20.280] une véritable machine de production. Et
+[00:02:22.239] maintenant, pour te montrer concrètement
+[00:02:23.400] que tu as pas besoin de barrière
+[00:02:24.239] technique, on va se retrouver sur
+[00:02:25.400] logiciel Alexia ensemble et on va créer
+[00:02:27.560] une première vidéo ensemble. Je veux que
+[00:02:29.239] tu passes à l'action, c'est très
+[00:02:30.080] important. L'idée ici, c'est qu'on crée
+[00:02:31.280] juste un petit échantillon d'une vidéo
+[00:02:32.840] simple d'un acteur qui présente un
+[00:02:34.239] produit. Et ce genre de vidéo, sache que
+[00:02:35.480] c'est les vidéos qui se vendent à
+[00:02:36.440] environ 250 € et on va faire ça tous les
+[00:02:38.360] deux là en une minute top chrono. Donc
+[00:02:40.040] pour que tu puisses le faire, j'ai tout
+[00:02:41.000] prévu, t'inquiète. En dessous de cette
+[00:02:42.200] vidéo, il y a un lien qui redirige vers
+[00:02:43.680] Alexia et quand tu t'inscris au
+[00:02:45.159] logiciel, tu vas avoir des crédits
+[00:02:46.440] gratuits, ce qui va te permettre de
+[00:02:47.400] commencer directement gratuitement. Donc
+[00:02:49.040] vas-y, clique sur le lien et une fois
+[00:02:50.599] que tu es sur cette page, tu vas aller
+[00:02:51.800] dans la fonctionnalité omni. Alors la
+[00:02:53.599] fonctionnalité OMni, c'est ce qui va
+[00:02:54.920] permettre de générer ta vidéo de ton
+[00:02:56.440] acteur avec ton produit à moindre coût.
+[00:02:58.519] Et l'avantage de cette fonctionnalité,
+[00:02:59.800] c'est qu'elle coûte pas cher, qu'elle
+[00:03:00.879] est rapide, mais surtout qu'elle
+[00:03:02.000] supporte le langage français. Et ça,
+[00:03:03.440] c'est très important. Donc, une fois que
+[00:03:04.440] tu es sur cette fonctionnalité, il va te
+[00:03:05.519] falloir deux choses. De un, une photo de
+[00:03:07.360] ton acteur et de deux, une photo de ton
+[00:03:09.000] produit. Alors pour l'acteur, j'ai
+[00:03:10.239] encore tout prévu. Je t'ai mis
+[00:03:11.280] différents acteurs disponibles
+[00:03:12.519] directement en dessous de cette vidéo.
+[00:03:13.760] Je t'invite à en choisir un. Donc tu
+[00:03:15.080] télécharges la photo et une fois que
+[00:03:16.280] c'est fait, tu vas te rendre sur Google
+[00:03:17.599] Image. Sur Google Image, tu vas tout
+[00:03:18.879] simplement taper le nom d'un produit que
+[00:03:20.319] tu aimes bien ou que tu as en tête. Donc
+[00:03:21.920] moi, pour l'exemple, je vais choisir un
+[00:03:23.640] Tumblr Stanley. Voà, je vais choisir par
+[00:03:25.519] exemple la couleur rose, comme ça, on va
+[00:03:26.760] mettre une actrice féminine. [musique]
+[00:03:28.200] Donc tu télécharges ton produit et
+[00:03:29.480] ensuite tu vas sur Alexia. Sur Alexia,
+[00:03:31.239] tu vas importer ici ton actrice et du
+[00:03:33.280] coup le produit que tu viens de
+[00:03:34.200] télécharger. Et ce qui est très
+[00:03:35.239] important ici pour l'exemple, c'est que
+[00:03:36.400] tu vas choisir 720p, 9/16e et 4
+[00:03:39.080] secondes. On va faire juste un petit
+[00:03:40.120] échantillon qui va te coûter le minimum
+[00:03:41.640] de crédit possible. C'est juste pour que
+[00:03:42.840] tu puisses prendre en main le logiciel
+[00:03:44.120] là dans les premières minutes de cette
+[00:03:45.319] vidéo et que tu comprennes à quel point
+[00:03:46.640] c'est facile de générer du bon contenu.
+[00:03:48.319] Dans la partie prompte, ici, tu vas
+[00:03:49.400] mettre un prompte super simple. Tu vas
+[00:03:50.720] dire cette femme ou cet homme, si c'est
+[00:03:52.439] un homme que tu as choisi, tiens dans
+[00:03:53.560] les mains le produit du coup en
+[00:03:54.840] question. Donc moi, c'est un tumblr
+[00:03:56.000] rose. Et là, tu ouvres les guillemets et
+[00:03:57.360] tu mets la phrase que tu veux qu'elle
+[00:03:58.360] dise. Donc moi, j'ai mis franchement,
+[00:03:59.560] j'adore ce Tumblr, il est incroyable. Ce
+[00:04:01.079] qui est important ici, c'est de mettre
+[00:04:01.959] une phrase assez courte parce que la
+[00:04:03.239] vidéo va durer 4 secondes. Et une fois
+[00:04:04.519] que c'est fait, tu appuies sur générer
+[00:04:05.760] la vidéo et voilà le résultat.
+[00:04:07.120] Franchement, j'adore ce Tumblr, il est
+[00:04:08.840] incroyable.
+[00:04:09.480] Donc là, normalement, tu es censé avoir
+[00:04:10.599] une vidéo entre les mains qui est ultra
+[00:04:12.280] réaliste et c'est donc un échantillon
+[00:04:13.760] que tu as généré en une minute top
+[00:04:15.159] chrono que tu peux revendre à 250 € à
+[00:04:17.759] une marque. Donc là, je pense que tu
+[00:04:18.880] imagines bien la rentabilité de ce genre
+[00:04:20.160] de vidéo. C'est rapide à produire, ça
+[00:04:21.639] coûte pas cher et tu revends ça au prix
+[00:04:23.520] maximum. Bon, allez, avant de te montrer
+[00:04:24.919] comment produire chaque format un par
+[00:04:26.479] un, faut absolument que tu comprennes
+[00:04:27.880] pourquoi ce marché est véritablement en
+[00:04:29.680] train d'exploser. Je vais t'expliquer ça
+[00:04:31.039] en 90 secondes. Let's go. Donc déjà, le
+[00:04:32.759] premier fait, il est là, il est devant
+[00:04:34.240] toi. Comme tu peux le voir sur mon
+[00:04:35.360] écran, les plus grosses marques du monde
+[00:04:37.360] ont déjà basculé sur de la vidéo hier.
+[00:04:39.120] Je pense que tu connais Coca-Cola, Nike,
+[00:04:41.039] S, Toys the Rus, H&M et j'en passe. On a
+[00:04:43.039] du coup Coca-Cola qui a fait une pub
+[00:04:44.520] totalement générée par Lia pour Noël en
+[00:04:46.440] 2025 et en 2024. Ils ont généré plus de
+[00:04:48.479] 70000 clips à partir de ces pub là en un
+[00:04:50.880] mois seulement, deux années de suite.
+[00:04:52.199] Ils ont littéralement explosé leur
+[00:04:53.440] chiffre d'affaires. On a Enz qui a
+[00:04:54.720] généré 850 millions d'impressions avec
+[00:04:56.759] une vidéo générée par Lia aussi. On a
+[00:04:58.400] Virgine Voyage qui eux ont explosé. Ils
+[00:05:00.000] ont généré 1,4 milliards d'impressions
+[00:05:02.600] avec un avatar IA de Jennifer Lopez. On
+[00:05:04.800] a Mango, H&M, Levis qui ont remplacé
+[00:05:06.880] leur mannequins par des mannequins 100 %
+[00:05:08.360] IA et on a même la NBA qui ont créé une
+[00:05:11.000] publicité qui a été vue par des millions
+[00:05:12.639] et des millions de personnes pour un
+[00:05:13.919] budget de seulement 2000 dollars.
+[00:05:15.639] Évidemment, la publicité a été générée
+[00:05:17.000] 100 % par l' juste pour t'expliquer que
+[00:05:18.800] les plus grosses marques sont dessus
+[00:05:20.319] déjà maintenant. Et donc nous évidemment
+[00:05:21.880] on va pas s'adresser à ce genre de
+[00:05:23.120] marque, elles sont bien trop grosses. Le
+[00:05:24.680] véritable marché pour nous, il se trouve
+[00:05:26.199] sur les petites marques et les moyennes
+[00:05:27.800] marques. C'est elles qui vont demander
+[00:05:29.080] de l'IA parce qu'elles vont vouloir
+[00:05:30.000] faire comme les plus grosses pour
+[00:05:31.080] réduire leur coût publicitaire et
+[00:05:32.440] augmenter leur marche. Et l'exemple le
+[00:05:33.720] plus flagrant, je suis tombé sur cette
+[00:05:34.720] vidéo récemment de Alex Mosi. Si tu
+[00:05:36.440] connais pas, peu importe. Et en fait, il
+[00:05:37.840] a interviewé quelqu'un qui a une agence
+[00:05:39.280] de vidéo qui a perdu 800000 dollars. Je
+[00:05:41.120] te laisse regarder ça.000
+[00:05:57.790] Donc imagine ce mec a une agence de
+[00:05:57.800] vidéo IA qui fait 1,9 million d'euros
+[00:05:59.840] par an dont un client qui lui envoie
+[00:06:01.639] 800000 par an. Et ce client, il a décidé
+[00:06:03.529] [musique] de stopper son contrat avec
+[00:06:04.840] lui pour le remplacer par Bliard. Donc
+[00:06:06.560] qu'est-ce que ça veut dire ? C'est que
+[00:06:07.599] les agences de vidéo IA classique, elles
+[00:06:09.479] sont en train de perdre de l'argent
+[00:06:10.520] massivement à cause de l'IA, mais cet
+[00:06:12.199] argent, il est transféré d'une poche à
+[00:06:14.120] une autre. Il a pas disparu. Et cette
+[00:06:15.479] poche là qui est en train de récupérer
+[00:06:16.599] tout l'argent là, bah c'est la poche de
+[00:06:18.000] toutes les personnes qui sont en train
+[00:06:19.280] de faire des vidéos IA pour les marques.
+[00:06:21.520] Et donc maintenant, je vais t'expliquer
+[00:06:22.400] pourquoi les marques elles achètent si
+[00:06:23.759] facilement ce genre de service. Et pour
+[00:06:25.160] ça, il y a trois raisons. Déjà, la
+[00:06:26.240] première raison, c'est que les marques,
+[00:06:27.240] elles comprennent rapidement ce que tu
+[00:06:28.319] vends. Peu importe la marque, peu
+[00:06:29.440] importe le patron à qui tu t'adresses,
+[00:06:30.960] il achète des vidéos publicitaires
+[00:06:32.240] depuis toujours. Il sait ce que c'est et
+[00:06:33.759] surtout, il sait ce que ça vaut. Si tu
+[00:06:35.120] compares ça par exemple avec une agence
+[00:06:36.520] qui vend des automatisations en IA, un
+[00:06:38.319] patron, il sait pas ce que ça vaut. Une
+[00:06:39.680] agence d'automatisation IA, il est pas
+[00:06:41.120] éduqué là-dessus que sur la vidéo, tu as
+[00:06:42.759] pas besoin de le convaincre, il y a
+[00:06:44.000] aucune éducation à faire. La deuxième
+[00:06:45.479] raison, et c'est elle la plus puissante,
+[00:06:46.720] c'est que une vidéo publicitaire,
+[00:06:47.960] s'était stable immédiatement. Tu crées
+[00:06:49.400] la vidéo, le mec va poster sur Insta,
+[00:06:50.919] sur TikTok, il va l'envoyer en ads et il
+[00:06:52.720] va directement voir la différence. Il va
+[00:06:54.319] voir ses retours sur investissement
+[00:06:55.479] publicitaires exploser, ses vidéos
+[00:06:57.039] organiques exploser et donc ton service,
+[00:06:58.680] il prouve sa valeur directement via les
+[00:07:00.720] chiffres instantanés. Et ça, tu vas
+[00:07:01.879] voir, on va en reparler dans la fin de
+[00:07:03.000] vidéo sur la partie prospection client.
+[00:07:04.639] C'est un point très important. Et le
+[00:07:05.879] troisième point, c'est que le besoin de
+[00:07:06.960] vidéo publicitaire, il est infini. En
+[00:07:08.639] fait, il y a un truc qu'on appelle la
+[00:07:09.560] fatigue créative. C'est-à-dire que quand
+[00:07:10.840] tu lances une publicité via Meta ou
+[00:07:12.360] d'autres plateformes, tu es sans cesse
+[00:07:13.639] obligé de renouveler tes publicités
+[00:07:14.919] parce que sinon au bout d'un moment la
+[00:07:15.960] publicité performe moins et donc faut
+[00:07:17.319] sans cesse avoir des variations de ha
+[00:07:18.919] sans cesse avoir des vidéos différentes
+[00:07:20.240] et cetera. Et donc ça c'est de la
+[00:07:21.400] production constante et un budget qui
+[00:07:23.160] coûte des centaines de milliers d'euros.
+[00:07:24.479] Et ça du coup ce que ça veut dire c'est
+[00:07:25.840] que tu vas pouvoir proposer des services
+[00:07:27.680] récurrents. Une marque qui travaille
+[00:07:28.919] avec toi, elle va pas travailler avec
+[00:07:30.080] toi sur une seule vidéo, mais elle va
+[00:07:31.199] travailler avec toi sur plusieurs vidéos
+[00:07:32.759] tous les mois. Et c'est ce que ma copine
+[00:07:33.960] a fait par exemple, c'est que elle tous
+[00:07:35.160] ces contrats c'est des contrats
+[00:07:36.199] mensuels. Et donc à chaque fois qu'elle
+[00:07:37.440] signe un contrat, elle se sécurise
+[00:07:38.759] littéralement un asset récurrent qui va
+[00:07:40.720] la sécuriser sur le long terme. Et si ma
+[00:07:42.240] copine est la pu générer autant d'argent
+[00:07:43.759] aussi rapidement, c'est qu'elle a décidé
+[00:07:45.039] de se positionner sur son pays d'origine
+[00:07:46.680] qui est la Roumanie, là où il y a aucune
+[00:07:48.319] concurrence. Mais en francophonie, c'est
+[00:07:49.720] la même chose. Il y a personne qui fait
+[00:07:51.080] ça. Donc c'est maintenant qu'il faut se
+[00:07:52.319] lancer pour aller chercher tous les
+[00:07:53.360] meilleurs contrats. Don je pense que tu
+[00:07:54.360] l'as compris, ce business, il est
+[00:07:55.400] incroyable. Donc on va finir avec la
+[00:07:56.759] théorie et là on va passer à la
+[00:07:57.919] pratique. Je vais te montrer tous les
+[00:07:59.319] formats qui se vendent et je vais te
+[00:08:00.400] faire un mini tutoriel pour chaque
+[00:08:01.639] format. Let's go ! Alors, le premier
+[00:08:03.000] format qui se vend comme des petits
+[00:08:04.199] pains, c'est l'UGCIA. Donc, c'est le
+[00:08:05.759] format qu'on a fait ensemble juste
+[00:08:07.039] avant. Format très simple, un acteur qui
+[00:08:08.720] présente un produit, l'acteur il se
+[00:08:10.080] positionne comme client de la marque,
+[00:08:11.259] [raclement de gorge] ce qui fait qu'en
+[00:08:12.039] fait ça passe pas comme de la pub, mais
+[00:08:13.599] ça passe plus comme une recommandation
+[00:08:15.000] d'un ami, tu vois. Et c'est ça qui fait
+[00:08:16.159] que ce genre de vidéo surperforme pour
+[00:08:17.759] les marques. Et donc forcément, les
+[00:08:18.919] marques, elles peuvent pas se passer de
+[00:08:20.039] ce format là. Le problème, c'est
+[00:08:21.240] qu'elles doitent trouver à chaque fois
+[00:08:22.199] des nouveaux acteurs. Elles doivent
+[00:08:23.280] payer entre 500 et 1000 € par acteur.
+[00:08:25.440] Elles ont pas le contrôle de la qualité
+[00:08:26.639] de la vidéo finale. Enfin bref. Et donc
+[00:08:28.319] tu l'as compris mais avec Lia, on n' pas
+[00:08:29.840] tout ce genre de problème. On peut
+[00:08:30.879] varier les acteurs à l'infini, on peut
+[00:08:32.279] avoir le contrôle total sur la qualité
+[00:08:33.640] de la vidéo. Et des vidéos GCIA, il y a
+[00:08:35.479] plein de variations possible, notamment
+[00:08:36.959] le fameux unboxing, le hall, le ASMR, le
+[00:08:39.519] Mystery Box et cetera et cetera. Et
+[00:08:41.159] toutes ces variantes, je te les apprends
+[00:08:42.399] dans une vidéo YouTube que j'ai fait
+[00:08:43.640] juste avant celle-ci. Donc, tu peux
+[00:08:44.680] aller voir sur ma chaîne ou sinon tu
+[00:08:45.880] peux directement cliquer en description.
+[00:08:47.440] Dans cette vidéo, on va vraiment voir en
+[00:08:48.760] profondeur ce format. Donc, je t'invite
+[00:08:50.200] à aller la regarder si ça t'intéresse.
+[00:08:51.640] Mais avant ça, on va passer au format
+[00:08:52.800] numéro 2 qui est le format de
+[00:08:54.080] l'influenceur IA. Alors, regarde bien
+[00:08:55.880] parce que c'est l'un de mes préférés.
+[00:08:56.920] Alors, les marques généralement, elles
+[00:08:57.920] ont soit besoin d'un influenceur, soit
+[00:08:59.680] elles ont besoin d'une mascotte. Et dans
+[00:09:00.839] les deux cas, ce qui est intéressant,
+[00:09:01.880] c'est que à partir du moment où tu as
+[00:09:03.240] créé l'influenceur ou la mascotte pour
+[00:09:04.680] la marque, et ben là, tu es sûr de lock
+[00:09:06.240] un contrat mensuel sur une très longue
+[00:09:08.000] période. Et donc en réalité, tu as deux
+[00:09:09.320] business modèles pour les influenceur
+[00:09:10.640] IA. Tu vas avoir le business model où tu
+[00:09:12.200] crées un influenceur IA directement pour
+[00:09:14.000] la marque et tu vas avoir un autre
+[00:09:15.040] business model qui est de créer un
+[00:09:16.320] influenceur I pour toi pour pouvoir
+[00:09:18.279] collaborer avec des marques et faire de
+[00:09:19.640] l'affiliation par exemple TikTok Shop,
+[00:09:21.440] Temu ou même encore Amazon. Il y a plein
+[00:09:23.040] d'exemples sur Instagram et TikTok
+[00:09:24.399] d'influenceurs comme ça qui sont viraux,
+[00:09:26.000] qui font de la cetera et qui donc
+[00:09:28.680] touchent une marge pour chaque vente
+[00:09:30.279] qu'ils vont générer. Et à partir du
+[00:09:31.480] moment où ton influenceur commence à
+[00:09:32.640] avoir un minimum de visibilité, tu vas
+[00:09:34.240] même pouvoir avoir des contrats de
+[00:09:35.399] collaboration payants. Donc par exemple
+[00:09:36.920] pour faire un placement de produit et
+[00:09:38.519] j'en passe. Alors Alexia, pour créer un
+[00:09:40.040] influenceur, c'est le logiciel parfait
+[00:09:41.519] parce que tu vas avoir la fonctionnalité
+[00:09:42.880] ici qui s'appelle avatar. Donc un
+[00:09:44.200] avatar, c'est ni plus ni moins qu'une
+[00:09:45.240] espèce de photo d'identité comme
+[00:09:46.480] celle-ci qui va permettre en fait de
+[00:09:47.880] lock l'identité de ton influenceur.
+[00:09:49.480] Parce que c'est important qu'à travers
+[00:09:50.480] toutes les photos que tu vas générer et
+[00:09:51.640] toutes les vidéos que tu vas générer
+[00:09:52.560] pour la marque, que ce soit tout le
+[00:09:53.600] temps la même personne avec les mêmes
+[00:09:55.079] caractères physiques et cetera. Et donc
+[00:09:56.399] pour créer ton avatar, bah rien de mieux
+[00:09:57.920] que d'aller sur Pinterest. Et donc en
+[00:09:59.320] fonction de s'ils veulent une femme ou
+[00:10:01.040] un homme, tu vas tout simplement taper
+[00:10:02.600] Woman par exemple Instagram et tu vas
+[00:10:04.079] leur proposer une dizaine de personnes
+[00:10:05.600] en référence. Et donc en fonction de les
+[00:10:07.040] instructions de la marque, par exemple,
+[00:10:08.360] imaginons qu'ils ont choisi une blonde
+[00:10:09.760] avec des yeux bleus, bah tu vas donc
+[00:10:10.920] créer un avatar blonde avec des yeux
+[00:10:12.480] bleus. Donc pour ça, tu peux par exemple
+[00:10:13.560] prendre une fille au hasard comme
+[00:10:14.880] celle-ci. Tu vas venir importer la photo
+[00:10:16.279] Pinterest juste ici. Et donc là, tu vas
+[00:10:17.800] choisir du coup les cheveux blonds. Ici,
+[00:10:19.760] au niveau de la coupe de cheveux, tu vas
+[00:10:21.000] mettre la même que la photo de
+[00:10:21.959] référence. Et au niveau des yeux, du
+[00:10:23.320] coup, tu vas mettre les yeux bleus, donc
+[00:10:24.600] des yeux clairs, et tu vas venir faire
+[00:10:25.920] générer. Et donc comme prévu, du coup,
+[00:10:27.200] ça m'a généré une blonde avec les yeux
+[00:10:28.839] clairs. Et comme tu peux le voir, ce qui
+[00:10:29.880] est vraiment important ici, c'est que
+[00:10:31.240] c'est plus la même personne entre
+[00:10:32.480] l'image de référence Pinterest et ton
+[00:10:34.000] avatar final. C'est très important
+[00:10:35.200] d'avoir une personne unique qui n'existe
+[00:10:36.880] pas dans la vraie vie. Une fois que tu
+[00:10:37.760] as ton avatar, tu vas venir tout
+[00:10:38.720] simplement télécharger l'image et ici,
+[00:10:40.240] tu vas te rendre dans la fonctionnalité
+[00:10:41.760] image de Alexia et tu vas venir importer
+[00:10:44.040] ton influenceur juste là. Une fois que
+[00:10:45.320] c'est fait, il va falloir que tu génères
+[00:10:46.600] plusieurs photos de cet influenceur. Et
+[00:10:48.040] donc pour ça, en dessous de cette vidéo,
+[00:10:49.040] je t'ai préparé différents master prompt
+[00:10:50.639] que tu vas pouvoir copiercoller dans
+[00:10:51.800] chat GPT ou cloud et ça va t'aider à
+[00:10:53.600] générer des photos en fonction du cas
+[00:10:54.920] d'usage. Donc en l'occurrence ici, je
+[00:10:56.279] t'ai fait un master prompt pour les
+[00:10:57.760] influenceuses femmes et un master prompt
+[00:10:59.519] pour les influenceurs hommes qui se
+[00:11:00.920] trouvent juste là. Donc moi, je vais
+[00:11:01.839] récupérer du coup le master prompt
+[00:11:03.079] influenceuse femme juste ici. Je vais
+[00:11:04.760] ouvrir une page sur cloud, coller le
+[00:11:06.360] master prompt, je vais lui donner mon
+[00:11:07.680] avatar et je vais faire envoyer la
+[00:11:09.120] commande. Donc là, il va me demander
+[00:11:10.160] l'identité de mon influenceuse. Donc
+[00:11:11.959] qu'est-ce que je veux qu'elle représente
+[00:11:13.040] ? Donc moi, je vais dire c'est une
+[00:11:13.920] fille, je sais pas, lambda parisienne
+[00:11:16.200] par exemple et je vais lui dire de me
+[00:11:17.320] générer cinq pres. Donc là, voilà, on
+[00:11:18.920] voit qu'il me génère tous les promptes
+[00:11:19.920] qui sont optimisés. Du coup, pour
+[00:11:21.000] Alexia, j'ai plus qu'à copier et à venir
+[00:11:22.720] coller ici et faire générer. Et là, je
+[00:11:24.440] peux enchaîner comme ceci. Faites juste
+[00:11:25.720] attention de bien être en 96e, donc
+[00:11:27.160] c'est le format vertical d'Instagram et
+[00:11:29.040] d'être en high quality juste ici. Et
+[00:11:30.360] donc après si vous avez envie de faire
+[00:11:31.399] des photos où elle a le produit dans les
+[00:11:32.800] mains dans son quotidien et cetera, donc
+[00:11:34.240] là par exemple pour reprendre l'exemple
+[00:11:35.360] de mon de ma gourde là, Stanley, et ben
+[00:11:37.040] vous lui emportez le produit et vous lui
+[00:11:38.360] dites "Génère-moi deux prontes d'elle
+[00:11:41.000] qui tient ce produit dans les mains dans
+[00:11:43.560] son quotidien." En fait, à partir de là,
+[00:11:45.000] vous êtes tranquille parce que grâce à
+[00:11:46.079] mon master prompt, vous allez forcément
+[00:11:47.800] générer des photos qui sont de ultra
+[00:11:49.440] bonne qualité pour un influenceur IA. Et
+[00:11:51.279] ce que j'appelle des photos d'ultra
+[00:11:52.399] bonne qualité, contrairement à ce qu'on
+[00:11:53.440] pourrait penser, c'est des photos qui
+[00:11:54.560] paraissent naturelles, amateurs et
+[00:11:56.480] justement d'une qualité un peu iPhone,
+[00:11:58.360] donc qui n'est pas professionnel. Et
+[00:11:59.560] c'est ça qui rend le réalisme et c'est
+[00:12:00.839] ce genre de photos là qu'on a envie
+[00:12:02.040] d'avoir sur les réseaux, sur Instagram
+[00:12:03.519] et cetera. Parce que quand on a un
+[00:12:04.720] influenceur, on veut du spontané et on
+[00:12:06.440] veut pas du professionnel. Et donc ici,
+[00:12:07.800] ce que je fais, c'est que je colle le
+[00:12:08.720] prompte mais j'importe bien la photo de
+[00:12:10.240] mon produit avant de générer et là je
+[00:12:11.839] fais générer. Donc là, j'ai fait une
+[00:12:13.000] femme avec un Tumblrur mais j'aurais
+[00:12:14.279] très bien pu faire un homme musclé qui
+[00:12:15.600] fait des photos à la gym avec une marque
+[00:12:17.040] de complément alimentaire. Ça marche
+[00:12:18.279] aussi. Et donc voilà les photos que ça a
+[00:12:19.360] généré. Donc on voit que la qualité,
+[00:12:20.600] elle est vraiment amateur et c'est ce
+[00:12:21.760] qu'on voulait. Et donc ensuite, si vous
+[00:12:22.800] voulez avoir des vidéos de votre
+[00:12:23.720] influenceur, bah vous allez dans la
+[00:12:24.800] fonctionnalité vidéo juste ici. Vous
+[00:12:26.399] emportez une des photos que vous avez
+[00:12:27.440] généré et là vous imaginez juste le
+[00:12:29.199] mouvement qu'elle doit faire. Donc en
+[00:12:30.279] l'occurrence ici, elle se prend en photo
+[00:12:31.560] dans la dans le miroir et donc là on
+[00:12:32.880] peut mettre que elle avance d'un pas,
+[00:12:34.880] elle met sa main dans ses cheveux puis
+[00:12:37.440] elle met sa main sur sa hanche. Là on
+[00:12:39.519] génère et donc là on voit qu'avec une
+[00:12:40.920] description aussi simple et ben il a
+[00:12:42.639] créé une vidéo qui représente exactement
+[00:12:44.480] ce que je lui ai demandé. Alors
+[00:12:45.279] maintenant, on va passer au troisème
+[00:12:46.279] format qui est le [musique] format qui
+[00:12:47.760] performe le plus et qui nécessite le
+[00:12:49.519] moins de travail. On est parti. Et donc
+[00:12:50.880] ce format, c'est ni plus ni moins que
+[00:12:51.880] les photos statiques. Et contrairement
+[00:12:53.279] ce qu'on pourrait penser, les photos
+[00:12:54.279] statiques, c'est ce qui convertit le
+[00:12:55.560] mieux pour les marques e-commerce,
+[00:12:56.720] notamment en publicité payante. Donc ça
+[00:12:58.360] peut ressembler à un genre de truc où on
+[00:12:59.720] va montrer le problème et la solution ou
+[00:13:01.480] par exemple ça, on va montrer les
+[00:13:02.519] reviews utilisateurs ou par exemple ça,
+[00:13:04.399] on va montrer du coup les avantages de
+[00:13:06.040] notre produit par rapport au
+[00:13:07.120] concurrents. Donc il y a plein de
+[00:13:08.199] différentes statiques ads mais comme
+[00:13:09.320] vous pouvez le voir, c'est des photos
+[00:13:10.160] qui demandent quand même une expertise
+[00:13:11.760] en design et cetera. Donc si vous avez
+[00:13:13.199] pas un designer qui maîtrise Photoshop,
+[00:13:14.720] vous pouvez pas générer ce genre de
+[00:13:15.680] visuel ou alors du moins vous pouvez
+[00:13:16.839] mais ça coûte super cher. On a aussi les
+[00:13:18.320] Pack Shot produits comme ça. Donc c'est
+[00:13:19.639] c'est des photos plus à esthétique qui
+[00:13:21.199] vont être surtout utilisé pour
+[00:13:22.440] Instagram. Et ça c'est pareil, ça
+[00:13:23.839] demande soit un photographe, soit un
+[00:13:25.480] studio, soit un designer de haut niveau.
+[00:13:27.320] Mais en dessous de cette vidéo, je vous
+[00:13:28.160] ai préparé un master prompt qui va vous
+[00:13:29.720] permettre de regénérer ce genre de
+[00:13:30.920] format ultra rapidement. Et donc encore
+[00:13:32.639] une fois, vous avez juste à copier du
+[00:13:34.120] coup le master print qui est ici. Vous
+[00:13:35.480] ouvrez une nouvelle conversation, vous
+[00:13:36.720] envoyez la commande et donc là Cloud va
+[00:13:38.279] vous demander trois choses. Il va vous
+[00:13:39.399] demander une inspiration que vous voulez
+[00:13:40.920] cloner. Il va vous demander l'image de
+[00:13:42.360] votre produit et le lien de la page
+[00:13:43.959] produit. Donc moi, c'est ce que je vais
+[00:13:44.920] faire. Donc là par exemple, imaginons
+[00:13:46.040] que je vais reproduire cette staticque
+[00:13:47.320] ads, bah j'ai juste à la télécharger. Et
+[00:13:48.880] donc là, imaginons que je travaille avec
+[00:13:50.040] My Protéine par exemple et que je veux
+[00:13:51.720] du coup faire une statique ads autour de
+[00:13:53.279] ce produit, et ben ce que je vais faire,
+[00:13:54.320] c'est que je vais venir télécharger la
+[00:13:55.480] photo du produit et je vais venir
+[00:13:56.720] récupérer le lien de la page produit.
+[00:13:58.320] Donc là, j'importe la staticque ads,
+[00:14:00.120] j'importe la photo du produit, je colle
+[00:14:01.920] le lien de la page produit. Et donc le
+[00:14:03.440] lien ici, il est très important parce
+[00:14:04.600] que ça va permettre à Claude ou à Chat
+[00:14:06.240] GPT d'analyser la page produit, de
+[00:14:07.959] récupérer tous les bénéfices du produit,
+[00:14:09.519] récupérer tous les codes couleur et
+[00:14:10.920] cetera et cetera. Donc là, on le voit,
+[00:14:12.160] il est en train de récupérer du coup
+[00:14:13.360] tous les éléments depuis le site My
+[00:14:14.600] Protéin et voilà, il m'a généré le
+[00:14:16.120] prompt que je vais pouvoir tout
+[00:14:17.079] simplement coller dans Alixia. Donc là,
+[00:14:18.720] on va coller le prompt. Donc ce qui est
+[00:14:19.920] important ici, c'est d'importer du coup
+[00:14:21.440] la publicité que vous voulez copier mais
+[00:14:22.759] en premier et ensuite la photo de votre
+[00:14:24.560] produit. On fait générer l'image et
+[00:14:26.079] voici le résultat. Donc là, on voit que
+[00:14:27.279] le résultat, bon bah il est incroyable
+[00:14:28.920] parce que de un, il a réadapté le
+[00:14:30.440] copywriting. Donc on voit que c'est bien
+[00:14:31.720] réadapté au produit, qu'il a bien
+[00:14:32.880] récupéré les informations de la page et
+[00:14:34.519] surtout il a réadapté la couleur. Il a
+[00:14:35.920] pas simplement copié collé bêtement une
+[00:14:37.720] statique ads qu'on a trouvé sur
+[00:14:38.759] Pinterest, mais il a totalement réadapté
+[00:14:40.600] le branding à la marque. Et donc ça, on
+[00:14:42.199] peut faire la même chose avec ce genre
+[00:14:43.279] de pack shot à esthétique. Donc là, je
+[00:14:44.880] vais faire exactement le même procédé.
+[00:14:46.120] Je vais télécharger l'image ici. Donc
+[00:14:47.440] là, sur la même conversation, je suis
+[00:14:48.519] venu lui mettre mon image, l'image de
+[00:14:49.800] mon produit. Je lui ai dit de faire la
+[00:14:50.800] même chose. Il m'a sorti mon prompt,
+[00:14:52.240] j'ai copi collé et voilà, résultat.
+[00:14:53.800] Pareil, on voit clairement
+[00:14:54.959] l'inspiration, mais il a bien réadapté
+[00:14:56.759] avec notre produit. Donc il a pas
+[00:14:58.000] copiercollé bêtement, il a bien réadapté
+[00:14:59.680] avec les grains de café et cetera. Et si
+[00:15:01.160] vous voulez aller encore plus loin, vous
+[00:15:02.199] pouvez aller sur la fonctionnalité omni
+[00:15:03.759] et transformer cette simple photo en une
+[00:15:05.399] véritable animation 3D. Et donc là, il y
+[00:15:07.040] a rien de plus simple, on importe la
+[00:15:08.320] photo. Et donc là, on va lui mettre le
+[00:15:09.440] prom le plus simple possible. On va lui
+[00:15:10.880] dire de faire une animation 3D dynamique
+[00:15:12.880] de ce produit. On choisit 4 secondes,
+[00:15:14.639] c'est généré. Et voilà la banque.
+[00:15:17.680] Alors maintenant, on va voir le dernier
+[00:15:18.680] format. Le format qui peut se vendre
+[00:15:20.040] jusqu'à 25000 € la vidéo, vous allez
+[00:15:21.839] très vite comprendre pourquoi. C'est
+[00:15:23.000] donc le format cinématique. Donc là, je
+[00:15:24.759] vais vous faire un exemple très simple.
+[00:15:26.160] C'est pas du tout une vidéo qui va se
+[00:15:27.120] vendre 25000 €. Faut passer quand même
+[00:15:28.800] beaucoup de temps et énormément
+[00:15:30.360] maîtriser. Lia, beaucoup communiqué avec
+[00:15:32.160] la marque et cetera, ça se fait pas
+[00:15:33.360] comme ça. Je pas en train de vous vendre
+[00:15:34.560] un truc où vous allez faire 25000 € en
+[00:15:36.040] claquant des doigts. Non, évidemment que
+[00:15:37.319] non, mais je peux déjà vous montrer un
+[00:15:38.399] rendu qui est très sympa. Et là, du
+[00:15:39.639] coup, on va faire une vidéo cinématique
+[00:15:40.839] pour la marque Hermes. Donc, ça va être
+[00:15:42.319] une vidéo très contemplative, très calme
+[00:15:44.440] et cetera. Donc exactement finalement
+[00:15:46.240] comme ce que la marque veut dégager. Et
+[00:15:47.639] là c'est pareil, vous allez prendre une
+[00:15:48.920] image de référence que vous pouvez
+[00:15:50.040] trouver sur Pinterest. Donc moi par
+[00:15:51.519] exemple, je vais prendre celle-ci et je
+[00:15:52.480] vais venir la télécharger. Et donc là,
+[00:15:53.600] je l'ai envoyé à Claude tel quel et là,
+[00:15:54.880] j'ai même pas besoin de prompte système
+[00:15:56.120] ou quoi que ce soit. Et je lui ai dit de
+[00:15:57.199] me créer 10 plans qui permettent de
+[00:15:58.519] créer une histoire en fait autour de
+[00:15:59.920] cette photo. Et donc lui, il m'a proposé
+[00:16:01.199] une histoire intéressante. Donc il me
+[00:16:02.360] dit que ça se lit comme un voyage en
+[00:16:03.519] fait. Donc on voit déjà le la première
+[00:16:05.240] personne qui porte la tenue Hermè et
+[00:16:06.639] cetera toute seule. Ensuite, on voit un
+[00:16:08.279] cheval qui est tout seul donc pour
+[00:16:09.399] représenter la solitude. Et après en
+[00:16:10.800] fait, on voit la rencontre en gros entre
+[00:16:12.560] le cavalier et le cheval. cheval qui est
+[00:16:14.680] d'ailleurs le symbole de Hermes pour
+[00:16:16.279] pouvoir faire une pub cinématique qui
+[00:16:17.680] représente bien la marque. Et donc là,
+[00:16:18.839] ce que je vais faire, c'est que je vais
+[00:16:19.480] venir copier du coup tous les promptes
+[00:16:20.880] qui m'a donné. Ici, attention, faut bien
+[00:16:22.360] mettre le format 16/9e, donc le format
+[00:16:24.079] horizontal comme YouTube parce que c'est
+[00:16:25.399] une vidéo cinématique, on veut pas un
+[00:16:26.639] format vertical. J'importe mon image de
+[00:16:28.199] référence Pinterest. Ici, je colle, je
+[00:16:30.319] génère les 10 plans et je vous reprends.
+[00:16:31.839] Donc voilà, regardez le résultat. Petite
+[00:16:33.240] masterclass. Donc sur les 10 plans, j'en
+[00:16:34.639] ai sélectionné six. Et à partir de ces
+[00:16:36.240] six photos, je vais donc créer un prompt
+[00:16:38.079] qui va me permettre de faire une vidéo
+[00:16:39.199] cinématique. Donc là, voilà, ce que je
+[00:16:40.399] lui ai dit, c'est que je vais te donner
+[00:16:41.399] du coup tous les plans que j'ai généré
+[00:16:42.800] et tu vas devoir me créer un prompt. Et
+[00:16:44.279] donc là, pour de la vidéo cinématique
+[00:16:45.519] d'ultra haute qualité, moi ce que je
+[00:16:46.639] vous conseille, c'est d'utiliser C Dens.
+[00:16:48.199] Alors attention, du coup ça coûte
+[00:16:49.360] beaucoup plus cher à la génération
+[00:16:50.519] comparé par exemple à Omni. Donc si vous
+[00:16:52.160] voulez commencer avec peu de crédit, je
+[00:16:53.800] vous conseille quand même de commencer
+[00:16:54.800] avec Omni, le résultat sera vraiment
+[00:16:56.240] bien. Mais si vous voulez vraiment un
+[00:16:57.440] résultat de haut niveau, je vous
+[00:16:58.839] conseille quand même d'utiliser Cens. Et
+[00:17:00.199] donc là ce que j'ai fait en fait c'est
+[00:17:01.199] que je lui ai dit que j'allais lui
+[00:17:02.000] donner toutes les photos que j'ai généré
+[00:17:03.360] et qui me génère un prompt sence
+[00:17:04.760] optimisé de 15 secondes. Donc là c'est
+[00:17:06.280] ce que j'ai fait. Je lui ai donné mes
+[00:17:07.280] six plans. Il m'a généré mon prompt et
+[00:17:08.760] donc là le prompt j'ai plus qu'à le
+[00:17:09.720] copier à le coller dans cense. Là je lui
+[00:17:11.480] importe mes six plans. Ici on va dans
+[00:17:12.959] multimodal référence c'est important et
+[00:17:14.520] pas dans frame. Et là on lui importe les
+[00:17:16.360] six fichiers. Donc moi ce que je vous
+[00:17:17.319] conseille au début c'est de tester en
+[00:17:18.400] 480p. Vous mettez bien 15 secondes comme
+[00:17:20.480] Claude vous l'avait recommandé, 16/9e et
+[00:17:22.480] vous faites générer. L'idée du 480p,
+[00:17:24.160] c'est déjà d'itérer avec une qualité
+[00:17:25.919] basse pour éviter de dépenser des
+[00:17:27.439] crédits bêtement, de voir si la vidéo
+[00:17:29.039] vous correspond et si elle vous
+[00:17:30.080] correspond, là on fait une régénération
+[00:17:31.640] cette fois-ci en 1080p. Donc après un
+[00:17:33.320] long chargement de 5 minutes parce que
+[00:17:34.559] Siden, c'est assez long, voici la vidéo
+[00:17:36.120] finale que j'ai généré en quelques
+[00:17:37.440] minutes seulement. Franchement le
+[00:17:38.520] résultat, j'en suis plutôt fier.
+[00:17:53.950] Après voilà, vous l'avez vu cette vidéo,
+[00:17:53.960] c'est juste un enchaînement de shots
+[00:17:55.480] ultra qualitatif, ultra professionnel
+[00:17:57.000] qui aurait nécessité énormément de
+[00:17:58.799] budget à Hermes pour pouvoir faire ça.
+[00:18:00.240] Vous auriez eu besoin de l'endroit de
+[00:18:01.320] l'acteur, du cheval, des cinéastes et
+[00:18:03.440] cetera. Enfin, je vous je vous explique
+[00:18:04.799] même pas le budget que ça représente.
+[00:18:06.039] Tout en pensant en fait qu'ils doivent
+[00:18:07.039] prévoir la météo que s'il y a de la
+[00:18:08.559] pluie, ben en fait, on doit annuler le
+[00:18:09.679] tournage, on doit rebouquer tout le
+[00:18:10.880] monde et cetera. C'est c'est un enfer.
+[00:18:12.280] Là, en quelques minutes, je l'ai généré.
+[00:18:13.480] Maintenant, si on veut aller plus loin,
+[00:18:14.640] on peut aussi faire des vidéos de ce
+[00:18:15.760] style avec du dialogue, avec une voix
+[00:18:17.360] off, du montage et cetera et cetera.
+[00:18:19.240] Donc maintenant, ça y est, tu sais
+[00:18:20.240] générer tous les formats que tu vas
+[00:18:21.480] pouvoir revendre à des marques. Mais
+[00:18:22.600] maintenant, la question à 1 million
+[00:18:23.559] d'euros, c'est comment on peut trouver
+[00:18:25.000] un client ? Alors, la prospection, c'est
+[00:18:26.679] là où tout le monde se plan, c'est bien
+[00:18:28.080] sur la prospection. Le problème, c'est
+[00:18:29.440] que la plupart des gens qui vont
+[00:18:30.600] démarcher des marques, ils vont envoyer
+[00:18:32.039] des mails, des messages et cetera, mais
+[00:18:33.520] générique. Ce qui fait qu'ils ont un
+[00:18:34.720] taux de réponse entre 3 à 9 % pour les
+[00:18:36.880] meilleurs. Et ça, c'est vraiment pour
+[00:18:38.080] les meilleurs. Alors qu'avec une agence
+[00:18:39.240] vidéo IA, on a la possibilité d'envoyer
+[00:18:40.880] des messages personnalisés. Oui, parce
+[00:18:42.120] que par exemple, si je veux démarcher
+[00:18:43.240] une marque et ben je peux tout
+[00:18:44.159] simplement récupérer une photo de leur
+[00:18:45.480] produit, faire une vidéo personnalisée
+[00:18:46.880] pour eux qui va me prendre une minute.
+[00:18:48.200] Je leur envoie un message en disant bah
+[00:18:49.280] voilà, je vous ai fait une vidéo pour
+[00:18:50.240] votre produit, qu'est-ce que vous en
+[00:18:51.159] pensez ? C'est gratuit. Si ça vous
+[00:18:52.360] intéresse d'en savoir plus, on se prend
+[00:18:53.400] un appel. Un mec qui reçoit ça, il y a
+[00:18:55.080] beaucoup de chance qu'il répondent parce
+[00:18:56.120] qu'il voit qu'on a vraiment pris le
+[00:18:57.360] temps de générer une vidéo pour eux,
+[00:18:58.880] pour leurs produits. Donc juste par
+[00:19:00.080] réciprocité, ils vont te répondre. Et
+[00:19:01.320] donc c'est aussi ça l'avantage des
+[00:19:02.360] agences vidéo IA, c'est qu'on a un
+[00:19:03.720] produit qui est facilement délivrable et
+[00:19:05.600] donc on peut facilement délivrer des
+[00:19:06.919] échantillons comme ça à tout bout de
+[00:19:08.039] champ. Donc là, moi juste après, je vais
+[00:19:09.039] te montrer le système que je suis en
+[00:19:09.960] train de mettre en place, mais sache que
+[00:19:11.280] toi en tant que débutant, tu as pas du
+[00:19:12.919] tout besoin d'un système pareil. Tu peux
+[00:19:14.240] juste fixer un objectif simple qui est
+[00:19:15.600] d'envoyer par exemple 20 à 30 messages
+[00:19:17.320] par jour. Donc ça peut être des messages
+[00:19:18.559] directs, des mails ou même du calling.
+[00:19:20.640] Le colold calling, c'est nipun ni moins
+[00:19:21.640] quand tu appelles directement la
+[00:19:22.760] personne que tu veux cibler. Moi, c'est
+[00:19:23.960] ce que je recommande de faire au
+[00:19:24.919] débutant. Maintenant, si tu veux
+[00:19:26.039] vraiment avoir un système qui te permet
+[00:19:28.000] de vraiment trouver des clients à scale,
+[00:19:29.720] et ben tu peux utiliser ce système là.
+[00:19:31.280] Donc il est très simple comme tu peux le
+[00:19:32.360] voir. L'idée en fait c'est d'utiliser
+[00:19:33.559] cloud pour t'automatiser un système qui
+[00:19:35.159] permet de scrapper en fait les sites de
+[00:19:37.000] marque en automatique. Donc scrapper
+[00:19:38.520] c'est tout simplement récupérer les
+[00:19:39.760] données d'un site. Et donc ici Claud ce
+[00:19:41.120] qu'il va faire c'est qu'il va récupérer
+[00:19:42.200] les données de contact. Il va récupérer
+[00:19:43.799] les produits, le produit phare et
+[00:19:45.280] cetera, la direction artistique de la
+[00:19:46.679] marque, ce qui va te permettre de créer
+[00:19:47.840] ce qu'on appelle un brand system. Donc
+[00:19:49.200] un brain system un document qui
+[00:19:51.240] référence toutes les informations dont
+[00:19:52.960] tu as besoin sur la marque, sa manière
+[00:19:54.360] de communiquer, son ton, ses couleurs,
+[00:19:56.400] sa direction artistique et cetera. Ce
+[00:19:57.960] que tu veux c'est avoir un maximum
+[00:19:59.039] d'informations sur la marque pour
+[00:20:00.200] pouvoir leur délivrer une vidéo générée
+[00:20:02.000] de bout en bout qui leur correspond
+[00:20:03.400] vraiment. Et justement, une fois que
+[00:20:04.600] Claude a toutes ces informations là, il
+[00:20:06.120] est capable de générer une vidéo tout
+[00:20:07.480] seul qui va pouvoir envoyer directement
+[00:20:09.240] à la marque sur différents points de
+[00:20:10.640] contact, donc par mail, par LinkedIn et
+[00:20:12.520] sur Instagram. Ce qui veut littéralement
+[00:20:13.799] dire que là, en fait, avec ce système
+[00:20:15.360] là, tu peux contacter jusqu'à 200
+[00:20:17.120] marques par jour avec des vidéos
+[00:20:18.480] personnalisées, un message personnalisé
+[00:20:19.919] sur tous les points de contact
+[00:20:20.840] différents. Ce que dire que tu augmentes
+[00:20:22.080] par 10 ton taux de réponse et par 10 tes
+[00:20:24.200] chances de trouver un client. Le truc
+[00:20:25.400] c'est que si tu trouves un seul client,
+[00:20:26.760] tu as changé ta vie en fait parce qu'un
+[00:20:27.880] client même si c'est une petite marque,
+[00:20:29.080] tu vas le facturer au minimum, je dis
+[00:20:30.600] bien au minimum 2000 € par mois. Donc
+[00:20:32.000] qu'est-ce que 2000 € par mois en un seul
+[00:20:33.240] client changerait pour toi dans ta vie ?
+[00:20:34.520] Je pense que ça changerait beaucoup de
+[00:20:35.520] choses. Donc maintenant, tout ce que tu
+[00:20:36.520] viens de voir dans cette vidéo,
+[00:20:37.480] c'est-à-dire mes systèmes automatisés
+[00:20:38.880] qui te permettent de transformer Cloud
+[00:20:40.240] en une véritable agence de vidéo IA 100
+[00:20:42.159] % automatisé, et ben que ce soit les
+[00:20:43.520] skills, les MCP, les automatisations,
+[00:20:45.159] les agents IA et cetera, j'ai tout
+[00:20:46.559] référencé dans mon school à seulement 19
+[00:20:48.520] dollars par mois. Donc c'est
+[00:20:49.400] littéralement un seul McDo pour avoir
+[00:20:51.039] accès à tout ça, sachant que j'ai pris
+[00:20:52.679] des centaines d'heures de travail pour
+[00:20:53.960] pouvoir créer ça. C'est simple, tu
+[00:20:55.000] rentres dans la communauté, tu branches
+[00:20:56.280] le système, tu génère ton contenu en
+[00:20:57.760] illimité et en plus de ça, c'est 19
+[00:20:59.200] dollars par mois mais tu peux résilier à
+[00:21:00.600] tout moment. Donc franchement, c'est un
+[00:21:01.600] très bon point d'entrée si tu veux
+[00:21:02.679] commencer à travailler avec des marques
+[00:21:03.960] à petite échelle. Maintenant, si tu veux
+[00:21:05.200] vraiment voir les choses en grand et
+[00:21:06.440] vraiment faire les choses à grande
+[00:21:07.400] échelle avec tout le système de bout en
+[00:21:08.880] bout, c'est-à-dire le système de
+[00:21:10.120] production automatisé, mais aussi le
+[00:21:11.840] système de prospection automatisé, et
+[00:21:13.559] ben dans ce cas-là, j'ai un
+[00:21:14.240] accompagnement one to one, donc on est
+[00:21:16.080] directement en direct pour t'accompagner
+[00:21:17.640] là-dessus. Mais pour ça, il faut que tu
+[00:21:18.760] prennes un appel téléphonique avec mon
+[00:21:20.240] équipe et le lien, il est en
+[00:21:21.600] description. De toute façon, tu l'as
+[00:21:22.600] compris, absolument tout se trouve en
+[00:21:24.120] description. Donc, je t'invite à passer
+[00:21:25.240] à l'action maintenant parce que cette
+[00:21:26.360] opportunitélà, elle va pas durer
+[00:21:27.679] longtemps. C'était Hugo Mathias. Let's
+[00:21:29.559] go.
