@@ -423,10 +423,13 @@ ${cas('preparation', `
 ${cas('lecture_par_defaut', `
     ok := (select count(*) = 1 and bool_and(version = 0 and reglages = '{}'::jsonb) from public.station_reglages_lire());`)}
 ${cas('ecriture_v1_v2', `
+    -- Une instruction par étape (correction du 30/09, 026-175) : dans UNE seule expression, les lectures ne voient pas ce que la
+    -- fonction volatile écrit pendant la même requête (instantané de la requête) ; le cas rendait false sur une migration juste.
     v_v := public.station_reglages_ecrire('{"theme": "station"}'::jsonb, v_f, 0);
-    ok := v_v = 1 and public.station_reglages_ecrire('{"theme": "vaisseau", "nuit": {"auto": true}}'::jsonb, v_f, 1) = 2
-      and (select version = 2 and reglages->>'theme' = 'vaisseau' and modifie_par = v_f from public.station_reglages_lire())
-      and (select count(*) = 2 from ops.station_reglages_historique);`)}
+    v_v2 := public.station_reglages_ecrire('{"theme": "vaisseau", "nuit": {"auto": true}}'::jsonb, v_f, 1);
+    select version, reglages, modifie_par into v_lu from public.station_reglages_lire();
+    select count(*) into v_n from ops.station_reglages_historique;
+    ok := v_v = 1 and v_v2 = 2 and v_lu.version = 2 and v_lu.reglages->>'theme' = 'vaisseau' and v_lu.modifie_par = v_f and v_n = 2;`, 'v_v2 integer; v_lu record; v_n integer;')}
 ${cas('version_perimee', leve(`perform public.station_reglages_ecrire('{"theme": "station"}'::jsonb, v_f, 1)`, 'ops:version_perimee'))}
 ${cas('cle_inconnue', leve(`perform public.station_reglages_ecrire('{"inconnue": 1}'::jsonb, v_f, 2)`, 'ops:cle_inconnue'))}
 ${cas('trop_gros', leve(`perform public.station_reglages_ecrire(jsonb_build_object('theme', repeat('a', 70000)), v_f, 2)`, 'ops:trop_gros'))}
