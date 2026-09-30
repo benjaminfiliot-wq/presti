@@ -31,3 +31,7 @@ Les empreintes SHA256 du manifeste portent sur les blobs Git publiés après nor
 Les snapshots TypeScript se terminent par .ts.txt ou .tsx.txt afin de rester lisibles sur GitHub sans être compilés par Next.js. Le chemin source original est conservé dans le manifeste.
 
 Complément : [mise à jour entreprise et décision du 30/09](MISE-A-JOUR-0930.md), [inventaire complet des fichiers parcourus](INVENTAIRE-COMPLET.json).
+
+[Catalogue vidéo — statut de transfert explicite](VIDEOS-INVENTAIRE.json) et [audit des protections pour l’automatisme](AUDIT-AUTOMATISME-0930.md).
+
+Toutes les vidéos locales recensées : **808 fichiers**, archives sur la [release privée du 30/09](https://github.com/benjaminfiliot-wq/presti/releases/tag/codex-videos-2026-09-30). Quatre ZIP, avec empreintes et chemins dans VIDEOS-INVENTAIRE.json. Un fichier vide et un pointeur LFS restent signalés comme sources incomplètes.
