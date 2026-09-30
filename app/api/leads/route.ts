@@ -277,7 +277,7 @@ export async function POST(req: Request) {
         const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
         await sendEmail({
           to: contact,
-          fromName: artisan.nom || undefined,
+          fromName: artisan.nom?.trim() || 'Votre artisan',
           subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
           text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
           replyTo: artisan.email ?? undefined,
@@ -302,7 +302,7 @@ export async function POST(req: Request) {
         const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
         await sendEmail({
           to: contact,
-          fromName: artisan.nom || undefined,
+          fromName: artisan.nom?.trim() || 'Votre artisan',
           subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
           text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
           replyTo: artisan.email ?? undefined,
@@ -358,8 +358,8 @@ export async function POST(req: Request) {
         if (isEmail && !deferContact) {
           await sendEmail({
             to: contact,
-            fromName: artisan.nom || undefined,
-            subject: `Votre demande — ${artisan.nom ?? 'Presti'}`,
+            fromName: artisan.nom?.trim() || 'Votre artisan',
+            subject: `Votre demande — ${artisan.nom?.trim() || 'Votre artisan'}`,
             text: reply,
             replyTo: artisan.email ?? undefined,
           })

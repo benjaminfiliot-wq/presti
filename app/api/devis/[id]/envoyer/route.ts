@@ -62,7 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       text: `Bonjour ${devis.client_nom || ''},\n\nVeuillez trouver ci-joint votre devis${devis.objet ? ` pour : ${devis.objet}` : ''}. Il est valable ${devis.validite_jours || 90} jours.\n\nN'hésitez pas à me contacter pour toute question.\n\nBien à vous,\n${nomEnt}`,
       // Marque blanche : le client final doit voir le nom de SON artisan comme expéditeur,
       // pas « Presti ». Sans fromName, lib/email.ts retombe sur la marque de l'éditeur.
-      fromName: artisan?.nom || undefined,
+      fromName: artisan?.nom?.trim() || 'Votre artisan',
       replyTo: artisan?.email || undefined,
       attachments: [{ filename: `${devis.numero || 'devis'}.pdf`, content: base64 }],
     })

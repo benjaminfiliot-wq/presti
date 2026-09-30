@@ -120,7 +120,15 @@ async function essaiCourriel(racine, chemin) {
   globalThis.fetch = async (_url, init) => { envois.push(JSON.parse(String(init?.body ?? '{}'))); return new Response(JSON.stringify({ id: 'factice' }), { status: 200, headers: { 'content-type': 'application/json' } }) }
   const echecs = []
   try {
-    const m = await import(`${pathToFileURL(f).href}?garde=${Date.now()}-${Math.random().toString(36).slice(2)}`)
+    // lib/email.ts importe le point de passage de la pause par un alias (« @/lib/agents/sortie ») que Node ne résout pas :
+    // on exécute une copie dont l'import vise une doublure « sortie permise » (la pause est jugée par garde-pause-qa, pas ici).
+    const dossier = path.join(racine, '.orchestre', 'travail', JUGE, 'courriel')
+    fs.mkdirSync(dossier, { recursive: true })
+    fs.writeFileSync(path.join(dossier, 'sortie.ts'), 'export async function sortiePermise() { return true }\n')
+    const source = fs.readFileSync(f, 'utf8').replace(/from\s+['"]@\/lib\/agents\/sortie['"]/g, "from './sortie.ts'")
+    const copie = path.join(dossier, 'email.ts')
+    fs.writeFileSync(copie, source)
+    const m = await import(`${pathToFileURL(copie).href}?garde=${Date.now()}-${Math.random().toString(36).slice(2)}`)
     if (typeof m.sendEmail !== 'function') return [`${chemin} n'exporte pas sendEmail`]
     const cas = [
       ['nom d’artisan et Reply-To', { fromName: 'Menuiserie Duval', replyTo: 'duval@exemple.fr' }, 'Menuiserie Duval', 'duval@exemple.fr'],

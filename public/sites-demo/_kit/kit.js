@@ -261,7 +261,7 @@
   details.forEach(function (x) { x.addEventListener('toggle', function () { if (x.open) details.forEach(function (y) { if (y !== x) y.open = false }) }) })
 
   // Le formulaire de devis d'une démo : rien ne part (ni requête, ni stockage) ; après validation du navigateur, la carte
-  // montre l'état « demande reçue » et redit qu'aucune donnée n'a été envoyée. Chez un vrai artisan, c'est la messagerie Presti.
+  // montre l'état « demande reçue » et redit qu'aucune donnée n'a été envoyée. Chez un vrai artisan, c'est la messagerie de l'artisan.
   // L'état « demande reçue » reprend ce qui a été choisi (projet, commune, délai) : lu dans le formulaire, écrit en texte, jamais
   // stocké. « Faire une autre demande » rouvre le formulaire.
   d.querySelectorAll('form[data-demo]').forEach(function (f) {

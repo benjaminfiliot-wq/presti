@@ -52,7 +52,7 @@
   "url_base": "https://lestraque.demo.invalid",
   "da": "lestraque",
   "devis": {
-    "_": "Le formulaire de devis de la carte contact. Sur une démo (demo: true), rien n’est envoyé : la page montre l’état « demande reçue » et le dit. Chez un vrai artisan, la demande arrive dans la messagerie Presti.",
+    "_": "Le formulaire de devis de la carte contact. Sur une démo (demo: true), rien n’est envoyé : la page montre l’état « demande reçue » et le dit. Chez un vrai artisan, la demande arrive dans la messagerie de l’artisan.",
     "projets": [
       "Escalier",
       "Dressing ou placard",

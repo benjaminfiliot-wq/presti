@@ -889,7 +889,7 @@
    "description": "Mentions légales et informations réglementaires du site de démonstration Démo Plombier Lyon, entreprise artisanale fictive.",
    "h1": "Mentions légales",
    "kicker": "",
-   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les capacités techniques et de référencement de la solution Presti.",
+   "chapeau": "Site de démonstration : entreprise fictive.",
    "heroImages": [],
    "sections": [
     {
@@ -897,7 +897,7 @@
      "blocs": [
       {
        "type": "p",
-       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les capacités techniques et de référencement de la solution Presti."
+       "texte": "Site de démonstration : entreprise fictive."
       }
      ]
     },
