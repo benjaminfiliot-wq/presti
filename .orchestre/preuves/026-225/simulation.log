@@ -1,0 +1,73 @@
+{
+  "debut_execution": "2026-09-30T10:21:16.256Z",
+  "fin_execution": "2026-09-30T10:21:16.264Z",
+  "dependances": {
+    "026-220": {
+      "fiche_fait": true,
+      "dernier_verdict": {
+        "id": "026-220",
+        "verdict": "PASS",
+        "ligne": "",
+        "code": 0,
+        "date": "2026-09-28T05:49:03Z",
+        "duree_s": 52,
+        "agent": "?",
+        "executant": "claude-code",
+        "lignes": 0,
+        "dossier": "fait"
+      }
+    },
+    "026-065": {
+      "fiche_fait": true,
+      "dernier_verdict": {
+        "id": "026-065",
+        "verdict": "PASS",
+        "ligne": "",
+        "code": 0,
+        "date": "2026-09-26T15:57:21Z",
+        "duree_s": 8,
+        "agent": "ag-065g",
+        "executant": "antigravity",
+        "lignes": 527,
+        "dossier": "fait"
+      }
+    },
+    "026-145": {
+      "fiche_fait": true,
+      "dernier_verdict": {
+        "id": "026-145",
+        "verdict": "PASS",
+        "ligne": "",
+        "code": 0,
+        "date": "2026-09-30T01:29:21Z",
+        "duree_s": 35,
+        "agent": "usine-codex-506",
+        "executant": "codex",
+        "lignes": 519,
+        "dossier": "fait",
+        "machine": "usine"
+      }
+    },
+    "026-096": {
+      "fiche_fait": true,
+      "dernier_verdict": {
+        "id": "026-096",
+        "verdict": "PASS",
+        "ligne": "",
+        "code": 0,
+        "date": "2026-09-29T21:11:58Z",
+        "duree_s": 44,
+        "agent": "claude-code",
+        "executant": "codex",
+        "lignes": 1218,
+        "dossier": "fait",
+        "machine": "usine"
+      }
+    }
+  },
+  "etapes_simulees": 10,
+  "messages_reels": 0,
+  "appels_reseau": 0,
+  "mode": "construction documentaire hors réseau",
+  "sha256_document": "bc0c785a234e1a061b344ec4e17f811809e5c6c0d0288d128f0acaa7c9e7d6a1"
+}

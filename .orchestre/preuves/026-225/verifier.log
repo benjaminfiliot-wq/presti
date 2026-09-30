@@ -1,0 +1,22 @@
+$ node scripts/juges-026-completude-qa.mjs --partie=entrant
+# 2026-09-30T10:23:11Z · code 0 · 0s
+
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : PASS — 1 partie(s), 13/13 critère(s) vert(s)
+code de sortie : 0

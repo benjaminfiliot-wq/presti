@@ -1,0 +1,170 @@
+CAS case précochée ; critère EN-3 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+FAIL EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés — case de consentement précochée ou non renseignée
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-3
+code de sortie : 1
+
+CAS texte retouché après accord ; critère EN-4 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+FAIL EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi — preparation : empreinte ≠ sha256(texte) (texte modifié après calcul)
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-4
+code de sortie : 1
+
+CAS accord expiré ; critère EN-5 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+FAIL EN-5 accord valide au moment de l'envoi — envoi après l'expiration de accord
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-5
+code de sortie : 1
+
+CAS premier accord réutilisé ; critère EN-6 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+FAIL EN-6 envoi unique par accord ; second accord pour la réponse — second envoi sous un autre accord que le second (accord réutilisé)
+  ✗ EN-6 deux envois sous le même accord
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-6
+code de sortie : 1
+
+CAS relance après opposition ; critère EN-9 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+FAIL EN-9 opposition : arrêt, aucune relance ni second envoi — 1 relance(s) après l'opposition
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-9
+code de sortie : 1
+
+CAS froid ouvert avant le jalon ; critère EN-8 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+FAIL EN-8 aucun contact froid avant le 12/10 — froid_ouvert ≠ false avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-8
+code de sortie : 1
+
+CAS préparation via cloud ; critère EN-10 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+PASS EN-6 envoi unique par accord ; second accord pour la réponse
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+FAIL EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé — preparation : fournisseur "ollama-cloud" (ollama-local seul admis pour une demande)
+PASS EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 12/13 critère(s) vert(s) ; rouges : EN-10
+code de sortie : 1
+
+CAS simulation annoncée prouvée ; critère EN-11 ; exit_code=1 ; rejet_attendu=true
+# juges-026-completude-qa — racine du dépôt (dépendances exigées) · horloge figée 2026-09-27T10:00:00.000Z · hors réseau
+
+## entrant — docs/agents/recette-entrant-2026-09-27.md (026-225)
+PASS EN-0 dépendances PASS (026-220, 026-065, 026-145, 026-096)
+PASS EN-1 compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre
+PASS EN-2 personnes fictives : @presti-test.invalid, aucun téléphone
+PASS EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés
+PASS EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi
+PASS EN-5 accord valide au moment de l'envoi
+FAIL EN-6 envoi unique par accord ; second accord pour la réponse — messages_envoyes = 0 (1 envoi(s) prouvé(s))
+PASS EN-7 demande non retirée avant l'envoi
+PASS EN-8 aucun contact froid avant le 12/10
+PASS EN-9 opposition : arrêt, aucune relance ni second envoi
+PASS EN-10 données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé
+FAIL EN-11 états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé — envoi « prouvé » sans preuve_fichier (une preuve brute est exigée)
+PASS EN-12 prose conforme au verdict
+
+verdict : FAIL — 1 partie(s), 11/13 critère(s) vert(s) ; rouges : EN-6, EN-11
+code de sortie : 1
+
+DOCUMENT_RESTAURE=true ; fautes=8 ; incoherences=0 ; aucun_envoi_externe=true
