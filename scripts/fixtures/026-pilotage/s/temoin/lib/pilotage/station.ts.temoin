@@ -326,7 +326,7 @@ const PANNEAUX: Record<string, (c: Contexte) => Promise<unknown>> = {
   tresorerie: async (c) => {
     const mois = debutDuMoisParis(c.maintenant)
     const parAgent = lignesDe(await c.rpc('pilotage_couts_agents', { p_depuis: mois }))
-    const modeles = lignesDe(await c.rpc('pilotage_couts_modeles', { p_depuis: mois }))
+    const modeles = lignesDe(await c.rpc('pilotage_couts_modeles', { p_debut: mois }))
     let total = 0
     for (const m of modeles) total += Number(m.eur ?? 0)
     const ach = await c.deps.db.from('achats').select('fournisseur, libelle, categorie, ttc_cents, date_facture').gte('date_facture', mois.slice(0, 10))
@@ -396,7 +396,7 @@ const PANNEAUX: Record<string, (c: Contexte) => Promise<unknown>> = {
     const recents = iaEvts.filter((x) => Date.parse(x.le) >= deuxHeures)
     const parObjet = new Map<string, any>()
     for (const x of iaEvts) if (x.type === 'ia_quota' && (!parObjet.has(x.objet) || x.id > parObjet.get(x.objet).id)) parObjet.set(x.objet, x)
-    const couts = lignesDe(await c.rpc('pilotage_couts_modeles', { p_depuis: c.depuisMinuit }))
+    const couts = lignesDe(await c.rpc('pilotage_couts_modeles', { p_debut: c.depuisMinuit }))
     let coutJour = 0
     for (const m of couts) coutJour += Number(m.eur ?? 0)
     return {
