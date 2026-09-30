@@ -117,6 +117,8 @@ export const FLAGS = {
    * Levé par Claude Code quand les webhooks Meta (026-090) et le Répondeur (026-096) sont déployés
    * et qu'un entrant d'essai a été servi de bout en bout. */
   aimantSite: false,
+  /** Branche réservée par Benj le 25/09 : rien n’est construit ; elle attend ses trois vidéos sources. */
+  ecommerce: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
