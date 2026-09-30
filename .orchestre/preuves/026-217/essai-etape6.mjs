@@ -21,7 +21,7 @@ verifier('accord d’un autre post -> refus', verdictAccord(tranchee({ cible: cl
 verifier('ancienne version (texte retouché) -> refus', verdictAccord(tranchee(), 'p1', 'Voir la démo !', T0).ok === false)
 verifier('clé d’une ancienne version avec texte_version recopié -> refus (empreinte)', verdictAccord(tranchee({ texte_version: 'Voir la démo !' }), 'p1', 'Voir la démo !', T0).ok === false)
 verifier('média retouché -> refus', verdictAccord(tranchee({ cible: cleAccord('p1', versionAvecMedia({ texte: V }, 'aaaa')), texte_version: versionAvecMedia({ texte: V }, 'aaaa') }), 'p1', versionAvecMedia({ texte: V }, 'bbbb'), T0).ok === false)
-verifier('portée absente -> refus', verdictAccord(tranchee({ portee: undefined }), 'p1', V, T0).ok === false)
+verifier('portée absente (comme lignes.ts) : ne refuse pas à elle seule', verdictAccord(tranchee({ portee: undefined }), 'p1', V, T0).ok === true)
 verifier('portée autre que securite -> refus', verdictAccord(tranchee({ portee: 'argent' }), 'p1', V, T0).ok === false)
 verifier('accord de plus de 7 jours -> refus', verdictAccord(tranchee({ le: '2026-01-01T00:00:00Z' }), 'p1', V, T0).ok === false)
 verifier('décision nulle / indéfinie -> refus', verdictAccord(null, 'p1', V, T0).ok === false && verdictAccord(undefined, 'p1', V, T0).ok === false)
