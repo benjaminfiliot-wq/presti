@@ -27,9 +27,12 @@
     652.5788749999999,
     752.975625
   ],
-  "transcription": "MANQUANTE — aucun VTT local; ASR non exécuté",
+  "transcription": "COMPLÈTE par ASR automatique sur Oracle, modèle small int8, langue fr, sans relecture humaine",
   "empreintes_documents": {
     "planche.jpg": "bb851ac5fb5e3eeb5a6b03ea824bb72967300eb94f61e811f5d1d77a6d86edfe",
-    "transcription-manquante.txt": "d88edffdab1cf07b72080407c7e890b843137637f31e924cc3e2804420361777"
-  }
+    "transcription-manquante.txt": "d88edffdab1cf07b72080407c7e890b843137637f31e924cc3e2804420361777",
+    "transcription.txt": "7acda584bd5e34bd1ff5df8c8ea46df80ce99ecb615470751b472c61d059e31e",
+    "transcription-asr.json": "5b116d071ca3ee2494a019dcbf2d252c76d7482682807cb397536cabe647c3ee"
+  },
+  "nombre_segments": 342
 }
