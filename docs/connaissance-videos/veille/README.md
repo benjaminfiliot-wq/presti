@@ -30,3 +30,5 @@ Deux transcriptions manquent : NrjE4aBhzmU (aucun VTT local) et trevsagents (seu
 | Full Breakdown on Insta @mr.pynk  We built a full AI ad studio system... | 35.7 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](mr_pynk/planche.jpg) · [Mesures](mr_pynk/metadata.json) |
 | AUTOMATE YOUR BUSINESSES. IF YOU DONT HAVE ANY YET, DO THIS! #aiagent... | 116.8 s | MANQUANTE — résumé français local disponible, pas transcription mot à mot | [Images](trevsagents/planche.jpg) · [Mesures](trevsagents/metadata.json) |
 | Video by restructureai | 83.1 s | TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées | [Images](reel-DdscwJUROKo/planche.jpg) · [Mesures](reel-DdscwJUROKo/metadata.json) |
+
+Mise à jour : les deux transcriptions manquantes sont maintenant complètes, issues des pistes audio des véritables vidéos sur Oracle. NrjE4aBhzmU : 342 segments français ; trevsagents : 65 segments anglais. Modèle small int8, aucun service existant modifié ni API payante.

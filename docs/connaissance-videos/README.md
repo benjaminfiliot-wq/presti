@@ -8,4 +8,4 @@ Ce dossier répond au problème d'accès aux ZIP de la release privée : les con
 
 Les centaines de captures/brouillons répétés et les copies de worktrees ne sont pas retraités ; leur inventaire exhaustif et les quatre archives restent disponibles dans [le catalogue source](../contexte-cloud/VIDEOS-INVENTAIRE.json). Les textes éditoriaux sont explicitement distingués des transcriptions audio. Les sous-titres originaux sont conservés ; l'ASR automatique est signalé. La présence d'une référence de business ne prouve pas les résultats commerciaux annoncés par son auteur.
 
-État à cette capture : 18/20 transcriptions de veille complètes. Les deux ASR manquants sont en cours et signalés dans l'index.
+État final : 20/20 transcriptions de veille complètes, dont deux ASR réalisés sur Oracle. Les résultats automatiques ne sont pas une relecture humaine.
