@@ -13,7 +13,7 @@ import { DEPART } from './usine-horloge.mjs'
 import { tirerJeton, tirerCode, jsonFixture } from './commun.mjs'
 
 const ICI = path.dirname(fileURLToPath(import.meta.url))
-export const HORLOGE_URL = `${pathToFileURL(path.join(ICI, 'usine-horloge.mjs')).href}?actif=1`
+export const HORLOGE_URL = `${pathToFileURL(path.join(ICI, 'usine-horloge.mjs')).href}?actif=1&longs=getUpdates`
 export const dormir = (ms) => new Promise((ok) => setTimeout(ok, ms))
 
 // ── Garde-fou : aucun processus orphelin ─────────────────────────────────────────────────────────────────────────────
@@ -60,12 +60,17 @@ export function ecoutesTcp(pid) {
     const inodes = new Set()
     for (const fd of fs.readdirSync(`/proc/${pid}/fd`)) { try { const l = fs.readlinkSync(`/proc/${pid}/fd/${fd}`); const m = /^socket:\[(\d+)\]$/.exec(l); if (m) inodes.add(m[1]) } catch { /* fd fermé */ } }
     const out = []
+    let lu = 0
     for (const f of ['tcp', 'tcp6']) {
-      for (const l of fs.readFileSync(`/proc/net/${f}`, 'utf8').split('\n').slice(1)) {
+      let t
+      try { t = fs.readFileSync(`/proc/net/${f}`, 'utf8') } catch { continue }   // tcp6 manque sur certains noyaux
+      lu++
+      for (const l of t.split('\n').slice(1)) {
         const c = l.trim().split(/\s+/)
         if (c.length > 9 && c[3] === '0A' && inodes.has(c[9])) out.push({ adresse: c[1], port: parseInt(c[1].split(':')[1], 16) })
       }
     }
+    if (!lu) return null
     return out
   } catch { return null }
 }
@@ -100,14 +105,21 @@ class Proc {
     if (this.sorti || !this.enfant.connected) return Promise.resolve(false)
     const id = ++this.banc.seqIpc
     return new Promise((ok) => {
-      const fin = (v) => { clearTimeout(t); this._fait = null; ok(v) }
+      const sortie = () => fin(false)
+      const fin = (v) => { clearTimeout(t); this._fait = null; this.enfant.off('exit', sortie); ok(v) }
       const t = setTimeout(() => fin(false), delai)
       this._fait = (m) => { if (m.id === id) fin(true) }
-      this.enfant.once('exit', () => fin(false))
+      this.enfant.once('exit', sortie)
       try { this.enfant.send({ t: 'avancer', id, ms }) } catch { fin(false) }
     })
   }
-  async arreter(signal = 'SIGKILL') { if (!this.sorti) { try { this.enfant.kill(signal) } catch { /* déjà mort */ } await Promise.race([this.ferme, dormir(3000)]) } }
+  async arreter(signal = 'SIGKILL') {
+    if (this.sorti) return
+    try { this.enfant.kill(signal) } catch { /* déjà mort */ }
+    let m
+    await Promise.race([this.ferme, new Promise((ok) => { m = setTimeout(ok, 3000) })])
+    clearTimeout(m)
+  }
 }
 
 export class Banc {

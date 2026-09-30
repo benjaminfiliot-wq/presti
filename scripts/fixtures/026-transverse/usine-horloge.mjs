@@ -20,9 +20,11 @@
 //   service → juge : { t: 'fait', id, ms }       fin de l'avance, ms = temps virtuel courant (ms depuis l'époque Unix) ;
 //                    { t: 'fetch', id, ms, methode, url }   un fetch commence, avec le temps virtuel exact (c'est la preuve des cadences) ;
 //                    { t: 'fin', id }             ce fetch a rendu ses en-têtes (ou échoué) ;
+//   L'URL de --import porte ?actif=1 (obligatoire) et, si on veut, &longs=<expression régulière> : les fetch dont l'URL y correspond sont de
+//   longues attentes (le long polling) que le calme n'attend pas.
 //                    { t: 'pret', ms }            le module est chargé.
-// Le CALME : aucun fetch n'a commencé ni fini depuis 6 ms réelles (12 ms en fin d'avance) et aucun fetch commencé il y a moins de 400 ms
-// n'est encore en vol (une longue attente, comme getUpdates, est ignorée : elle dure des secondes). Aucun juge ne dort « au hasard » :
+// Le CALME : aucun fetch n'a commencé ni fini depuis 6 ms réelles (12 ms en fin d'avance) et aucun fetch (hors « longs ») commencé il y a moins
+// de 400 ms n'est encore en vol. Aucun juge ne dort « au hasard » :
 // il attend cet accusé.
 //
 // Un minuteur virtuel « référencé » retient le processus en vie (comme un vrai) grâce à un vrai minuteur de garde ; sans minuteur
@@ -33,7 +35,10 @@ import { createRequire } from 'node:module'
 import { syncBuiltinESMExports } from 'node:module'
 
 export const DEPART = Date.UTC(2026, 5, 1, 12, 0, 0)
-const ACTIF = import.meta.url.includes('?actif=1')
+const PARAMS = new URL(import.meta.url).searchParams
+const ACTIF = PARAMS.get('actif') === '1'
+// « longs » : une expression régulière d'URL dont les fetch sont de LONGUES ATTENTES (getUpdates) : jamais attendues par le calme.
+const LONGS = PARAMS.get('longs') ? new RegExp(PARAMS.get('longs')) : null
 
 if (ACTIF) installer()
 
@@ -131,9 +136,9 @@ function installer() {
     try { url = typeof entree === 'string' ? entree : (entree?.url ?? String(entree)) } catch { /* illisible */ }
     let methode = String(init?.method ?? entree?.method ?? 'GET').toUpperCase()
     activite++
-    enCours.set(id, Reel.now())
+    if (!(LONGS && LONGS.test(url))) enCours.set(id, Reel.now())
     envoyer({ t: 'fetch', id, ms: maintenant, methode, url })
-    const fini = () => { if (enCours.delete(id)) { activite++; envoyer({ t: 'fin', id }) } }
+    const fini = () => { enCours.delete(id); activite++; envoyer({ t: 'fin', id }) }
     let p
     try { p = Reel.fetch.call(globalThis, entree, init) } catch (e) { fini(); throw e }
     return p.then((r) => { fini(); return r }, (e) => { fini(); throw e })
