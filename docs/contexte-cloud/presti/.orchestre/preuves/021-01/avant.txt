@@ -1,0 +1,124 @@
+M .orchestre/agents.jsonl
+ M .orchestre/contexte.md
+ M .orchestre/decisions.md
+ M .orchestre/digest.md
+ M .orchestre/verdicts.jsonl
+ M public/sites-demo/_kit/da.json
+ M public/sites-demo/generer.mjs
+ M public/sites-demo/lestraque/index.html
+ M scripts/eclate-rendu-qa.mjs
+ M scripts/familles-socle-qa.mjs
+ M scripts/lenis-film-qa.mjs
+ M scripts/nav-retenue-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .orchestre/en-cours/
+?? .orchestre/fait/021-09.md
+?? .orchestre/preuves/018-01/landing-bureau-bloc.png
+?? .orchestre/preuves/018-01/landing-bureau-haut.png
+?? .orchestre/preuves/018-01/landing-mobile-bloc.png
+?? .orchestre/preuves/018-01/landing-mobile-haut.png
+?? .orchestre/preuves/018-03/avant.txt
+?? .orchestre/preuves/018-03/essai-42-bis/
+?? .orchestre/preuves/018-03/essai-7/
+?? .orchestre/preuves/018-09/essai-42-bis/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-F.jpg
+?? .orchestre/preuves/020-01/L2/travail/
+?? .orchestre/preuves/020-01/descente/
+?? .orchestre/preuves/020-11/
+?? .orchestre/preuves/020-12/
+?? .orchestre/preuves/020-13/
+?? .orchestre/preuves/021-00/cahier-vague-5.md
+?? .orchestre/preuves/021-00/existant.md
+?? .orchestre/preuves/021-00/recit/
+?? .orchestre/preuves/021-00/ref-recit.md
+?? .orchestre/preuves/021-00/ref-survol-objet.md
+?? .orchestre/preuves/021-00/ref-video-mesures.json
+?? .orchestre/preuves/021-00/ref-video.md
+?? .orchestre/preuves/021-00/survol-objet/
+?? .orchestre/preuves/021-01/
+?? .orchestre/preuves/021-04/
+?? .orchestre/preuves/021-09/
+?? .orchestre/preuves/021-10/
+?? .orchestre/preuves/021-14/
+?? ChromeSetup.exe
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? generate-site.mjs
+?? promo-src/
+?? public/promo/demo-site/plans.json
+?? public/promo/facebook-couverture-1640x856.png
+?? public/promo/facebook-couverture-GUIDE.png
+?? public/promo/presti-carre-miniature.jpg
+?? public/promo/presti-carre.mp4
+?? public/promo/presti-paysage-miniature.jpg
+?? public/promo/presti-paysage.mp4
+?? public/promo/presti-vertical-miniature.jpg
+?? public/promo/presti-vertical.mp4
+?? public/promo/voix/
+?? public/sites-demo/_kit/familles/
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/photos-contraste.mjs
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/

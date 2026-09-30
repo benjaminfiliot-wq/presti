@@ -1,0 +1,30 @@
+{
+  "zone": "16 Charente",
+  "entrees": [
+    { "entreprise": "Couverture Aptel", "metier": "couvreur", "ville": "Barret", "departement": "16", "email": "contact@couverture-aptel.fr", "source_url": "https://couverture-aptel.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Artisan Teddy Couverture", "metier": "couvreur", "ville": "Chalais", "departement": "16", "email": "artisan.teddy.couverture@gmail.com", "source_url": "https://www.artisan-teddy-couverture.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Entreprise Gadras Sylvain", "metier": "charpentier", "ville": "Condéon", "departement": "16", "email": "gadras.sylvain@orange.fr", "source_url": "https://menuiserie-barbezieux.fr/contact/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Dumasdelage Bâtiment", "metier": "maçon", "ville": "Confolens", "departement": "16", "email": "dumasdelage@bati16.com", "source_url": "https://www.dumasdelage-batiment.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Angoulême Renov", "metier": "plombier", "ville": "Angoulême", "departement": "16", "email": "angoulemerenov@orange.fr", "source_url": "https://www.angouleme-renov.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL Joackim Turpain", "metier": "menuisier", "ville": "Cognac", "departement": "16", "email": "j.turpain@orange.fr", "source_url": "https://www.jturpain-menuiserie.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Martin Menuiserie 16", "metier": "menuisier", "ville": "Saint-Laurent-de-Cognac", "departement": "16", "email": "martinmenuiserie16100@gmail.com", "source_url": "https://www.martin-menuiserie16.fr/mentions-legales", "civilite": "monsieur", "dirigeant": "Martin" },
+    { "entreprise": "ABC du Chaud et Froid", "metier": "chauffagiste", "ville": "Ruelle-sur-Touvre", "departement": "16", "email": "contact@abcduchaudetfroid.fr", "source_url": "https://abc-chaud-froid.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Dominique Peinture", "metier": "peintre", "ville": "Angoulême", "departement": "16", "email": "dominiquepeinture00@gmail.com", "source_url": "https://www.dominiquepeinture.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Elec'eaux", "metier": "électricien", "ville": "Gond-Pontouvre", "departement": "16", "email": "contact@eleceaux.fr", "source_url": "https://www.eleceaux.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Jouanaud Bâtiment", "metier": "maçon", "ville": "Nanteuil-en-Vallée", "departement": "16", "email": "cedricjouanaud@live.fr", "source_url": "https://www.jouanaudbatiment.com/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Le Peintre Charentais", "metier": "peintre", "ville": "Ruffec", "departement": "16", "email": "contact@le-peintre-charentais.fr", "source_url": "https://le-peintre-charentais.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL Riffaud", "metier": "maçon", "ville": "Angoulême", "departement": "16", "email": "riffaud.eric@wanadoo.fr", "source_url": "https://www.maconnerie-angouleme.fr/contact/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Artisan JP", "metier": "couvreur", "ville": "Gond-Pontouvre", "departement": "16", "email": "contact@artisan-jp.fr", "source_url": "https://artisan-jp.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Home Art 16", "metier": "plaquiste", "ville": "Angoulême", "departement": "16", "email": "relationspubliques@homeart16.fr", "source_url": "https://home-art-16.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "MVS", "metier": "charpentier", "ville": "Chassenon", "departement": "16", "email": "skf.mvs.16@gmail.com", "source_url": "https://www.lamagnere-mvs16.com/", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL Brault et Fils", "metier": "menuisier", "ville": "Genté", "departement": "16", "email": "sarl.brault.fils@hotmail.fr", "source_url": "https://www.menuiserie-brault.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Debessac", "metier": "menuisier", "ville": "Pressignac", "departement": "16", "email": "contact@debessac.fr", "source_url": "https://debessac.fr/contact/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Mon Jardin en Charente", "metier": "paysagiste", "ville": "Saint-Yrieix-sur-Charente", "departement": "16", "email": "monjardin@monjardin.pro", "source_url": "https://monjardinencharente.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Ets Perot", "metier": "plombier", "ville": "Cognac", "departement": "16", "email": "contact@entreprise-perot.com", "source_url": "https://perot-cognac.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL A. Martaud", "metier": "plaquiste", "ville": "Jarnac", "departement": "16", "email": "contact@sarl-a-martaud.fr", "source_url": "https://www.sarl-a-martaud.fr/mentions-legales/", "civilite": null, "dirigeant": null },
+    { "entreprise": "AB16 Energies", "metier": "chauffagiste", "ville": "Chassenon", "departement": "16", "email": "contact@ab16energies.fr", "source_url": "https://www.ab16energies.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "David Parizel", "metier": "carreleur", "ville": "Le Tâtre", "departement": "16", "email": "david.parizel@hotmail.fr", "source_url": "https://davidparizel-plaquiste-carreleur-barbezieux.fr/", "civilite": "monsieur", "dirigeant": "David Parizel" },
+    { "entreprise": "Jardinessences", "metier": "paysagiste", "ville": "Jarnac", "departement": "16", "email": "contact@jardinessences.fr", "source_url": "https://www.jardinessences.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Jérôme Dépannage", "metier": "plombier", "ville": "Chabanais", "departement": "16", "email": "jerome.depannage16@gmail.com", "source_url": "https://jerome-depannage-chabanais.fr/contact/", "civilite": null, "dirigeant": null }
+  ]
+}

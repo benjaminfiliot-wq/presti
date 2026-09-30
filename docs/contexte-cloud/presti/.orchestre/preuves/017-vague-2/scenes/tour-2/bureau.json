@@ -1,0 +1,1190 @@
+{
+ "verdicts": [
+  {
+   "cle": "Polices 1440 (contexte neuf, sans défiler) : tout en police web",
+   "ok": true,
+   "detail": "fraunces.woff2, ibm-plex-sans-400.woff2, ibm-plex-sans-600.woff2 ; hors police web : .devis__form textarea=(aucun glyphe rendu)"
+  },
+  {
+   "cle": "#8 ΔE76 ≥ 15 entre fonds voisins (1440)",
+   "ok": false,
+   "detail": "hero.hero--plein | plateau 43.4 (2000 : 29.8) ; plateau | prestations 86.2 (2000 : 85.4) ; prestations | atelier 60.1 (2000 : 51.6) ; atelier | realisations 3.4 (2000 : 2.4) ; realisations | communes 62.8 (2000 : 54.6) ; communes | etapes 86.2 (2000 : 85.4) ; etapes | questions 86.2 (2000 : 85.4) ; questions | contact 86.2 (2000 : 85.4) ; contact | pied 86.2 (2000 : 85.4)"
+  },
+  {
+   "cle": "#8 au moins 3 bandes sombres ou photos plein cadre après le héros (1440)",
+   "ok": true,
+   "detail": "plateau (sombre 83 %, photo plein cadre false) ; atelier (sombre 32 %, photo plein cadre true) ; etapes (sombre 81 %, photo plein cadre false) ; contact (sombre 51 %, photo plein cadre true)"
+  },
+  {
+   "cle": "#8 ≤ 1 350 px d’affilée sur un même fond (1440, lecture littérale par section)",
+   "ok": true,
+   "detail": "plateau 988 px #14110E ; prestations 1175 px #ECE5DB ; communes 615 px #ECE5DB ; etapes 947 px #14110E ; questions 727 px #ECE5DB ; contact 1081 px #14110E ; pied 306 px #ECE5DB"
+  },
+  {
+   "cle": "#8 aucun .carte bordé dans #prestations",
+   "ok": true,
+   "detail": ".carte = 0 ; éléments bordés sur ≥ 3 côtés : aucun"
+  },
+  {
+   "cle": "#8 contact sur 100 % de la largeur",
+   "ok": true,
+   "detail": "#contact 1440 px pour une fenêtre de 1440 px (innerWidth 1440)"
+  },
+  {
+   "cle": "Acquis v1 : 4 étapes dans #etapes",
+   "ok": true,
+   "detail": "li = 4, paragraphes de tête commençant par un chiffre = 0"
+  },
+  {
+   "cle": "Acquis v1 : pas de h3 dans #communes",
+   "ok": true,
+   "detail": "h3 = 0, .commune small = 0"
+  },
+  {
+   "cle": "#6 galerie : à +1 300 ms, aucune photo à opacité partielle ou clip ouvert à moitié sur > 40 % de la largeur",
+   "ok": true,
+   "detail": "bord600 : +150 ms 93 % → +1300 ms 0 % (diff +1300→+4000 : 0.0 %) ; bord0 : +150 ms 93 % → +1300 ms 0 % (diff +1300→+4000 : 0.0 %) ; milieu : +150 ms 98 % → +1300 ms 0 % (diff +1300→+4000 : 0.0 %)"
+  },
+  {
+   "cle": "#6 travelling : l’état dépend de la position, pas du temps",
+   "ok": true,
+   "detail": "épingle sticky, section 2250 px (travelling 2250 px) ; y+450 : matrix(1, 0, 0, 1, -749.493, 0) ; +2 s sans défiler : matrix(1, 0, 0, 1, -749.493, 0) ; y+850 : matrix(1, 0, 0, 1, -1414.97, 0) ; retour y+450 : matrix(1, 0, 0, 1, -749.493, 0)"
+  },
+  {
+   "cle": "Acquis v1 : crédits photo visibles et lien cliquable pendant la galerie (1440)",
+   "ok": true,
+   "detail": "15 positions où la ligne est entière à l’écran, dont 15 où le lien est au premier plan"
+  },
+  {
+   "cle": "#6 grille de repli : pas de colonne vide > 20 % dans la dernière rangée ; fond < 30 de luminance",
+   "ok": true,
+   "detail": "rangées 2+2, part libre par rangée (espaces compris) 0.016 / 0.016, fond rgb(20, 17, 14) (luma 17.4), épingle static"
+  },
+  {
+   "cle": "Communes ≤ 0,8 écran à 1280×800 et 1366×768",
+   "ok": true,
+   "detail": "1280×800 : 0.726 écran ; 1366×768 : 0.764 écran ; 1440×900 : 0.683 écran ; 1920×1080 : 0.699 écran"
+  },
+  {
+   "cle": "Bouton « Demander un devis » du héros → #contact en haut de l’écran",
+   "ok": true,
+   "detail": "{\"contactTop\":88,\"hash\":\"#contact\",\"y\":8413}"
+  },
+  {
+   "cle": "Liens de la nav bureau : chaque section arrive en haut, son titre à l’écran",
+   "ok": true,
+   "detail": "{\"prestations\":{\"top\":88,\"h2Top\":182,\"h2Visible\":true},\"realisations\":{\"top\":88,\"h2Top\":178,\"h2Visible\":true},\"communes\":{\"top\":88,\"h2Top\":136,\"h2Visible\":true},\"questions\":{\"top\":88,\"h2Top\":204,\"h2Visible\":true}}"
+  },
+  {
+   "cle": "Formulaire de démonstration : état « demande reçue », aucune requête",
+   "ok": true,
+   "detail": "{\"formCache\":true,\"merciVisible\":true,\"top\":116,\"texte\":\"Demande reçue. Je vous rappelle sous deux jours ouvrés pour fixer une visite. PROJET Escalier COMMUNE Cesson-Sévigné QUAND Dans trois à six mois LA SUITE 02 Visite technique Je relève les cotes chez vous et je vérifie le\"} ; requêtes après envoi : 0 ; champs projet*, commune, delai, message, contact*"
+  },
+  {
+   "cle": "Acquis v1 : lien des crédits → mentions légales #credits détaillés",
+   "ok": false,
+   "detail": "href mentions-legales/index.html#credits ; {\"top\":88,\"texte\":\"Propriété intellectuelle et crédits photographiques\",\"liens\":0}"
+  }
+ ],
+ "mesures": {
+  "polices1440": {
+   "p": {
+    ".nav__marque span": "Fraunces (web)×17",
+    ".nav__liens a": "IBM Plex Sans (web)×11",
+    ".nav__tel": "IBM Plex Sans (web)×14",
+    "h1 > span:first-child": "IBM Plex Sans (web)×18",
+    "h1 > span:last-child": "Fraunces (web)×2",
+    ".hero .chapeau": "IBM Plex Sans (web)×84",
+    ".hero .bouton": "IBM Plex Sans (web)×17",
+    ".plateau blockquote p": "Fraunces (web)×76",
+    ".plateau figcaption": "IBM Plex Sans (web)×28",
+    ".chiffre__valeur": "Fraunces (web)×2",
+    ".chiffre__unite": "Fraunces (web)×3",
+    ".chiffre dt": "IBM Plex Sans (web)×44",
+    "#prestations h2": "Fraunces (web)×24",
+    ".presta__num": "Fraunces (web)×2",
+    ".presta__ligne h3": "Fraunces (web)×25",
+    ".presta__texte p": "IBM Plex Sans (web)×151",
+    "#atelier h2": "Fraunces (web)×14",
+    "#atelier p": "Fraunces (web)×104",
+    "#realisations h2": "Fraunces (web)×14",
+    ".galerie figcaption span:last-child": "IBM Plex Sans (web)×59",
+    ".galerie__credits": "IBM Plex Sans (web)×306",
+    "#communes h2": "Fraunces (web)×16",
+    ".commune": "Fraunces (web)×6",
+    "#etapes h2": "Fraunces (web)×15",
+    "#etapes h3": "Fraunces (web)×16",
+    "#etapes li p": "IBM Plex Sans (web)×109",
+    "#questions h2": "Fraunces (web)×13",
+    ".faq summary": "Fraunces (web)×57 + IBM Plex Sans (web)×1",
+    "#contact h2": "Fraunces (web)×22",
+    ".devis__form label": "IBM Plex Sans (web)×12",
+    ".devis__form select": "IBM Plex Sans (web)×7",
+    ".devis__form textarea": "(aucun glyphe rendu)",
+    ".devis__form button[type=submit]": "IBM Plex Sans (web)×18",
+    ".bande__tel": "IBM Plex Sans (web)×33",
+    ".pied p": "IBM Plex Sans (web)×35"
+   },
+   "fichiers": [
+    "fraunces.woff2",
+    "ibm-plex-sans-400.woff2",
+    "ibm-plex-sans-600.woff2"
+   ]
+  },
+  "fonds1440": {
+   "lignes": [
+    {
+     "id": "hero.hero--plein",
+     "top": 0,
+     "h": 900,
+     "w": 1440,
+     "bg": "rgb(14, 10, 7)",
+     "photoPleinCadre": true,
+     "dominant": "#130B02",
+     "partUni": 0.142,
+     "partSombre": 0.186,
+     "fondLab": [
+      41,
+      7.9,
+      25.5
+     ],
+     "moyLab": [
+      41,
+      7.9,
+      25.5
+     ],
+     "genre": "photo/mixte"
+    },
+    {
+     "id": "plateau",
+     "top": 900,
+     "h": 988,
+     "w": 1440,
+     "bg": "rgb(20, 17, 14)",
+     "photoPleinCadre": false,
+     "dominant": "#14110E",
+     "partUni": 0.825,
+     "partSombre": 0.825,
+     "fondLab": [
+      5.3,
+      0.6,
+      1.9
+     ],
+     "moyLab": [
+      12.3,
+      1.2,
+      4
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "prestations",
+     "top": 1888,
+     "h": 1175,
+     "w": 1440,
+     "bg": "rgb(244, 237, 226)",
+     "photoPleinCadre": false,
+     "dominant": "#ECE5DB",
+     "partUni": 0.927,
+     "partSombre": 0.027,
+     "fondLab": [
+      91.4,
+      0.6,
+      6
+     ],
+     "moyLab": [
+      87.9,
+      0.8,
+      6.2
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "atelier",
+     "top": 3063,
+     "h": 900,
+     "w": 1440,
+     "bg": "rgb(20, 17, 14)",
+     "photoPleinCadre": true,
+     "dominant": "#0D0C0A",
+     "partUni": 0.22,
+     "partSombre": 0.32,
+     "fondLab": [
+      31.9,
+      3.8,
+      13.9
+     ],
+     "moyLab": [
+      31.9,
+      3.8,
+      13.9
+     ],
+     "genre": "photo/mixte"
+    },
+    {
+     "id": "realisations",
+     "top": 3963,
+     "h": 2250,
+     "w": 1440,
+     "bg": "rgb(20, 17, 14)",
+     "photoPleinCadre": false,
+     "dominant": "#14110E",
+     "partUni": 0.323,
+     "partSombre": 0.345,
+     "fondLab": [
+      29.6,
+      4.7,
+      16.3
+     ],
+     "moyLab": [
+      29.6,
+      4.7,
+      16.3
+     ],
+     "genre": "photo/mixte"
+    },
+    {
+     "id": "communes",
+     "top": 6213,
+     "h": 615,
+     "w": 1440,
+     "bg": "rgb(244, 237, 226)",
+     "photoPleinCadre": false,
+     "dominant": "#ECE5DB",
+     "partUni": 0.932,
+     "partSombre": 0.044,
+     "fondLab": [
+      91.4,
+      0.6,
+      6
+     ],
+     "moyLab": [
+      87,
+      0.7,
+      6
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "etapes",
+     "top": 6827,
+     "h": 947,
+     "w": 1440,
+     "bg": "rgb(20, 17, 14)",
+     "photoPleinCadre": false,
+     "dominant": "#14110E",
+     "partUni": 0.807,
+     "partSombre": 0.813,
+     "fondLab": [
+      5.3,
+      0.6,
+      1.9
+     ],
+     "moyLab": [
+      13.6,
+      1.6,
+      4.7
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "questions",
+     "top": 7774,
+     "h": 727,
+     "w": 1440,
+     "bg": "rgb(244, 237, 226)",
+     "photoPleinCadre": false,
+     "dominant": "#ECE5DB",
+     "partUni": 0.816,
+     "partSombre": 0.043,
+     "fondLab": [
+      91.4,
+      0.6,
+      5.9
+     ],
+     "moyLab": [
+      82.2,
+      1.2,
+      7.4
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "contact",
+     "top": 8501,
+     "h": 1081,
+     "w": 1440,
+     "bg": "rgb(20, 17, 14)",
+     "photoPleinCadre": true,
+     "dominant": "#14110E",
+     "partUni": 0.444,
+     "partSombre": 0.505,
+     "fondLab": [
+      5.3,
+      0.7,
+      2.1
+     ],
+     "moyLab": [
+      17.9,
+      2.6,
+      9
+     ],
+     "genre": "uni"
+    },
+    {
+     "id": "pied",
+     "top": 9582,
+     "h": 306,
+     "w": 1440,
+     "bg": "rgba(0, 0, 0, 0)",
+     "photoPleinCadre": false,
+     "dominant": "#ECE5DB",
+     "partUni": 0.964,
+     "partSombre": 0.001,
+     "fondLab": [
+      91.4,
+      0.6,
+      5.9
+     ],
+     "moyLab": [
+      90.7,
+      0.7,
+      6
+     ],
+     "genre": "uni"
+    }
+   ],
+   "voisins": [
+    {
+     "entre": "hero.hero--plein | plateau",
+     "de76Fonds": 43.4,
+     "de2000Fonds": 29.8,
+     "de76Moyennes": 36.5
+    },
+    {
+     "entre": "plateau | prestations",
+     "de76Fonds": 86.2,
+     "de2000Fonds": 85.4,
+     "de76Moyennes": 75.6
+    },
+    {
+     "entre": "prestations | atelier",
+     "de76Fonds": 60.1,
+     "de2000Fonds": 51.6,
+     "de76Moyennes": 56.6
+    },
+    {
+     "entre": "atelier | realisations",
+     "de76Fonds": 3.4,
+     "de2000Fonds": 2.4,
+     "de76Moyennes": 3.4
+    },
+    {
+     "entre": "realisations | communes",
+     "de76Fonds": 62.8,
+     "de2000Fonds": 54.6,
+     "de76Moyennes": 58.5
+    },
+    {
+     "entre": "communes | etapes",
+     "de76Fonds": 86.2,
+     "de2000Fonds": 85.4,
+     "de76Moyennes": 73.4
+    },
+    {
+     "entre": "etapes | questions",
+     "de76Fonds": 86.2,
+     "de2000Fonds": 85.4,
+     "de76Moyennes": 68.7
+    },
+    {
+     "entre": "questions | contact",
+     "de76Fonds": 86.2,
+     "de2000Fonds": 85.4,
+     "de76Moyennes": 64.3
+    },
+    {
+     "entre": "contact | pied",
+     "de76Fonds": 86.2,
+     "de2000Fonds": 85.4,
+     "de76Moyennes": 72.9
+    }
+   ],
+   "suites": [
+    {
+     "ids": "plateau",
+     "h": 988,
+     "hex": "#14110E"
+    },
+    {
+     "ids": "prestations",
+     "h": 1175,
+     "hex": "#ECE5DB"
+    },
+    {
+     "ids": "communes",
+     "h": 615,
+     "hex": "#ECE5DB"
+    },
+    {
+     "ids": "etapes",
+     "h": 947,
+     "hex": "#14110E"
+    },
+    {
+     "ids": "questions",
+     "h": 727,
+     "hex": "#ECE5DB"
+    },
+    {
+     "ids": "contact",
+     "h": 1081,
+     "hex": "#14110E"
+    },
+    {
+     "ids": "pied",
+     "h": 306,
+     "hex": "#ECE5DB"
+    }
+   ],
+   "H": 9888,
+   "V": 900,
+   "W": 1440,
+   "navH": 78
+  },
+  "dom1440": {
+   "cartes": 0,
+   "bordes": [],
+   "contactL": 1440,
+   "fenetre": 1440,
+   "innerW": 1440,
+   "etapesLi": 4,
+   "tetesChiffre": 0,
+   "communesH3": 0,
+   "communeSmall": 0,
+   "ccLegendes": 0,
+   "h1": "Menuisier à Rennes Fait pour rester",
+   "telDansHero": 0
+  },
+  "galerie": {
+   "bord600": {
+    "150": {
+     "reel": 167,
+     "partielle": 0.93,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(3.39036% 0px 0px)",
+       "visW": 978,
+       "visH": 123,
+       "partiel": true,
+       "top": 777
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(7.77374% 0px 0px)",
+       "visW": 361,
+       "visH": 123,
+       "partiel": true,
+       "top": 777
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord600-150ms.png"
+    },
+    "1300": {
+     "reel": 1310,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 978,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 361,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord600-1300ms.png"
+    },
+    "4000": {
+     "reel": 4004,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 978,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 361,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 123,
+       "partiel": false,
+       "top": 777
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord600-4000ms.png"
+    },
+    "diff1300a4000": 0
+   },
+   "bord0": {
+    "150": {
+     "reel": 152,
+     "partielle": 0.931,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0.85367% 0px 0px)",
+       "visW": 978,
+       "visH": 652,
+       "partiel": true,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(1.96643% 0px 0px)",
+       "visW": 362,
+       "visH": 652,
+       "partiel": true,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord0-150ms.png"
+    },
+    "1300": {
+     "reel": 1318,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 978,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 362,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord0-1300ms.png"
+    },
+    "4000": {
+     "reel": 4016,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 978,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 362,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-bord0-4000ms.png"
+    },
+    "diff1300a4000": 0
+   },
+   "milieu": {
+    "150": {
+     "reel": 164,
+     "partielle": 0.981,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0.0999078% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0.299554% 0px 0px)",
+       "visW": 477,
+       "visH": 652,
+       "partiel": true,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 935,
+       "visH": 652,
+       "partiel": true,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-milieu-150ms.png"
+    },
+    "1300": {
+     "reel": 1307,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 477,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 935,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-milieu-1300ms.png"
+    },
+    "4000": {
+     "reel": 4009,
+     "partielle": 0,
+     "items": [
+      {
+       "i": 0,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 1,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 477,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 2,
+       "vu": true,
+       "op": 1,
+       "clip": "inset(0px)",
+       "visW": 935,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      },
+      {
+       "i": 3,
+       "vu": false,
+       "op": 1,
+       "clip": "inset(16% 0px 0px)",
+       "visW": 0,
+       "visH": 652,
+       "partiel": false,
+       "top": 177
+      }
+     ],
+     "f": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-2\\scenes\\tour-2\\b1440-galerie-milieu-4000ms.png"
+    },
+    "diff1300a4000": 0
+   }
+  },
+  "travelling": {
+   "info": {
+    "top": 3962.5,
+    "h": 2250,
+    "travellingH": 2250,
+    "epingle": "sticky",
+    "bg": "rgb(20, 17, 14)"
+   },
+   "A": "matrix(1, 0, 0, 1, -749.493, 0)",
+   "A2": "matrix(1, 0, 0, 1, -749.493, 0)",
+   "B": "matrix(1, 0, 0, 1, -1414.97, 0)",
+   "A3": "matrix(1, 0, 0, 1, -749.493, 0)"
+  },
+  "epingleNoir": [
+   {
+    "dy": -450,
+    "noirUni": 0.274
+   },
+   {
+    "dy": -225,
+    "noirUni": 0.308
+   },
+   {
+    "dy": 0,
+    "noirUni": 0.416
+   },
+   {
+    "dy": 225,
+    "noirUni": 0.333
+   },
+   {
+    "dy": 450,
+    "noirUni": 0.316
+   },
+   {
+    "dy": 675,
+    "noirUni": 0.313
+   },
+   {
+    "dy": 900,
+    "noirUni": 0.337
+   },
+   {
+    "dy": 1125,
+    "noirUni": 0.318
+   },
+   {
+    "dy": 1350,
+    "noirUni": 0.347
+   },
+   {
+    "dy": 1575,
+    "noirUni": 0.221
+   },
+   {
+    "dy": 1800,
+    "noirUni": 0.202
+   }
+  ],
+  "credits": {
+   "texte": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence),",
+   "vues": [
+    {
+     "y": 0,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 150,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 300,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 450,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 600,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 750,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 900,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 1050,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 1200,
+     "top": 848,
+     "cliquable": true
+    },
+    {
+     "y": 1350,
+     "top": 847,
+     "cliquable": true
+    },
+    {
+     "y": 1500,
+     "top": 697,
+     "cliquable": true
+    },
+    {
+     "y": 1650,
+     "top": 547,
+     "cliquable": true
+    },
+    {
+     "y": 1800,
+     "top": 397,
+     "cliquable": true
+    },
+    {
+     "y": 1950,
+     "top": 247,
+     "cliquable": true
+    },
+    {
+     "y": 2100,
+     "top": 97,
+     "cliquable": true
+    }
+   ]
+  },
+  "grille": {
+   "rangs": [
+    2,
+    2
+   ],
+   "trous": [
+    0.016,
+    0.016
+   ],
+   "bg": "rgb(20, 17, 14)",
+   "travelling": "static"
+  },
+  "communes": [
+   {
+    "w": 1280,
+    "h": 800,
+    "ratio": 0.726,
+    "hauteurs": [
+     103,
+     103,
+     103,
+     103
+    ]
+   },
+   {
+    "w": 1366,
+    "h": 768,
+    "ratio": 0.764,
+    "hauteurs": [
+     102,
+     102,
+     102,
+     102
+    ]
+   },
+   {
+    "w": 1440,
+    "h": 900,
+    "ratio": 0.683,
+    "hauteurs": [
+     108,
+     108,
+     108,
+     108
+    ]
+   },
+   {
+    "w": 1920,
+    "h": 1080,
+    "ratio": 0.699,
+    "hauteurs": [
+     143,
+     143,
+     143,
+     143
+    ]
+   }
+  ],
+  "appels": [
+   {
+    "t": "Atelier Lestraque",
+    "href": "index.html",
+    "visible": true
+   },
+   {
+    "t": "Prestations",
+    "href": "#prestations",
+    "visible": true
+   },
+   {
+    "t": "Réalisations",
+    "href": "#realisations",
+    "visible": true
+   },
+   {
+    "t": "Communes",
+    "href": "#communes",
+    "visible": true
+   },
+   {
+    "t": "Questions",
+    "href": "#questions",
+    "visible": true
+   },
+   {
+    "t": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "visible": true
+   },
+   {
+    "t": "",
+    "href": null,
+    "visible": true
+   },
+   {
+    "t": "Demander un devis",
+    "href": "#contact",
+    "visible": false
+   },
+   {
+    "t": "Demander un devis",
+    "href": "#contact",
+    "visible": true
+   },
+   {
+    "t": "Envoyer ma demande",
+    "href": null,
+    "visible": true
+   },
+   {
+    "t": "Faire une autre demande",
+    "href": null,
+    "visible": false
+   }
+  ],
+  "liensNav": {
+   "prestations": {
+    "top": 88,
+    "h2Top": 182,
+    "h2Visible": true
+   },
+   "realisations": {
+    "top": 88,
+    "h2Top": 178,
+    "h2Visible": true
+   },
+   "communes": {
+    "top": 88,
+    "h2Top": 136,
+    "h2Visible": true
+   },
+   "questions": {
+    "top": 88,
+    "h2Top": 204,
+    "h2Visible": true
+   }
+  },
+  "creditsMentions": {
+   "href": "mentions-legales/index.html#credits",
+   "cr": {
+    "top": 88,
+    "texte": "Propriété intellectuelle et crédits photographiques",
+    "liens": 0
+   }
+  }
+ },
+ "erreurs": [],
+ "absents": []
+}

@@ -1,0 +1,498 @@
+{
+ "resume": {
+  "nom": "reel-DdscwJUROKo",
+  "duree": 83.11,
+  "images_par_seconde": 84,
+  "changements_de_plan": 13,
+  "images_total": 94,
+  "echecs": [],
+  "zero_octet": [],
+  "scenes": [
+   7.17,
+   8.2,
+   9.5,
+   13.9,
+   15.03,
+   31.83,
+   32.87,
+   48.77,
+   49.63,
+   63.63,
+   64.67,
+   77.03,
+   79.03
+  ]
+ },
+ "images": [
+  {
+   "t": 0.0,
+   "fichier": "t000.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 1.0,
+   "fichier": "t001.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 2.0,
+   "fichier": "t002.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 3.0,
+   "fichier": "t003.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 4.0,
+   "fichier": "t004.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 5.0,
+   "fichier": "t005.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 6.0,
+   "fichier": "t006.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 7.0,
+   "fichier": "t007.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 7.2,
+   "fichier": "t007.2.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 8.0,
+   "fichier": "t008.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 8.2,
+   "fichier": "t008.2.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 9.0,
+   "fichier": "t009.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 9.5,
+   "fichier": "t009.5.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 10.0,
+   "fichier": "t010.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 11.0,
+   "fichier": "t011.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 12.0,
+   "fichier": "t012.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 13.0,
+   "fichier": "t013.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 13.9,
+   "fichier": "t013.9.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 14.0,
+   "fichier": "t014.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 15.0,
+   "fichier": "t015.0.jpg",
+   "source": "1s+scene"
+  },
+  {
+   "t": 16.0,
+   "fichier": "t016.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 17.0,
+   "fichier": "t017.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 18.0,
+   "fichier": "t018.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 19.0,
+   "fichier": "t019.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 20.0,
+   "fichier": "t020.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 21.0,
+   "fichier": "t021.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 22.0,
+   "fichier": "t022.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 23.0,
+   "fichier": "t023.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 24.0,
+   "fichier": "t024.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 25.0,
+   "fichier": "t025.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 26.0,
+   "fichier": "t026.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 27.0,
+   "fichier": "t027.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 28.0,
+   "fichier": "t028.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 29.0,
+   "fichier": "t029.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 30.0,
+   "fichier": "t030.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 31.0,
+   "fichier": "t031.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 31.8,
+   "fichier": "t031.8.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 32.0,
+   "fichier": "t032.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 32.9,
+   "fichier": "t032.9.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 33.0,
+   "fichier": "t033.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 34.0,
+   "fichier": "t034.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 35.0,
+   "fichier": "t035.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 36.0,
+   "fichier": "t036.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 37.0,
+   "fichier": "t037.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 38.0,
+   "fichier": "t038.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 39.0,
+   "fichier": "t039.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 40.0,
+   "fichier": "t040.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 41.0,
+   "fichier": "t041.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 42.0,
+   "fichier": "t042.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 43.0,
+   "fichier": "t043.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 44.0,
+   "fichier": "t044.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 45.0,
+   "fichier": "t045.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 46.0,
+   "fichier": "t046.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 47.0,
+   "fichier": "t047.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 48.0,
+   "fichier": "t048.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 48.8,
+   "fichier": "t048.8.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 49.0,
+   "fichier": "t049.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 49.6,
+   "fichier": "t049.6.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 50.0,
+   "fichier": "t050.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 51.0,
+   "fichier": "t051.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 52.0,
+   "fichier": "t052.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 53.0,
+   "fichier": "t053.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 54.0,
+   "fichier": "t054.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 55.0,
+   "fichier": "t055.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 56.0,
+   "fichier": "t056.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 57.0,
+   "fichier": "t057.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 58.0,
+   "fichier": "t058.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 59.0,
+   "fichier": "t059.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 60.0,
+   "fichier": "t060.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 61.0,
+   "fichier": "t061.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 62.0,
+   "fichier": "t062.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 63.0,
+   "fichier": "t063.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 63.6,
+   "fichier": "t063.6.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 64.0,
+   "fichier": "t064.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 64.7,
+   "fichier": "t064.7.jpg",
+   "source": "scene"
+  },
+  {
+   "t": 65.0,
+   "fichier": "t065.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 66.0,
+   "fichier": "t066.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 67.0,
+   "fichier": "t067.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 68.0,
+   "fichier": "t068.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 69.0,
+   "fichier": "t069.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 70.0,
+   "fichier": "t070.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 71.0,
+   "fichier": "t071.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 72.0,
+   "fichier": "t072.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 73.0,
+   "fichier": "t073.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 74.0,
+   "fichier": "t074.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 75.0,
+   "fichier": "t075.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 76.0,
+   "fichier": "t076.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 77.0,
+   "fichier": "t077.0.jpg",
+   "source": "1s+scene"
+  },
+  {
+   "t": 78.0,
+   "fichier": "t078.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 79.0,
+   "fichier": "t079.0.jpg",
+   "source": "1s+scene"
+  },
+  {
+   "t": 80.0,
+   "fichier": "t080.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 81.0,
+   "fichier": "t081.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 82.0,
+   "fichier": "t082.0.jpg",
+   "source": "1s"
+  },
+  {
+   "t": 83.0,
+   "fichier": "t083.0.jpg",
+   "source": "1s"
+  }
+ ]
+}

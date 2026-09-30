@@ -1,0 +1,255 @@
+{
+ "resume": {
+  "nom": "trevsagents",
+  "duree": 116.8,
+  "scenes_detectees": 14,
+  "candidats": 72,
+  "extraits": 72,
+  "doublons_supprimes": 12,
+  "plans": 60,
+  "planches": 7,
+  "zero_octet": []
+ },
+ "plans": [
+  {
+   "t": 0.0,
+   "source": "2s"
+  },
+  {
+   "t": 2.0,
+   "source": "2s"
+  },
+  {
+   "t": 4.0,
+   "source": "2s"
+  },
+  {
+   "t": 6.0,
+   "source": "2s"
+  },
+  {
+   "t": 7.4,
+   "source": "scene"
+  },
+  {
+   "t": 8.0,
+   "source": "2s"
+  },
+  {
+   "t": 10.0,
+   "source": "2s"
+  },
+  {
+   "t": 12.0,
+   "source": "2s"
+  },
+  {
+   "t": 14.0,
+   "source": "2s"
+  },
+  {
+   "t": 16.0,
+   "source": "2s"
+  },
+  {
+   "t": 20.0,
+   "source": "2s"
+  },
+  {
+   "t": 22.0,
+   "source": "2s"
+  },
+  {
+   "t": 22.7,
+   "source": "scene"
+  },
+  {
+   "t": 24.0,
+   "source": "2s"
+  },
+  {
+   "t": 26.0,
+   "source": "2s"
+  },
+  {
+   "t": 28.0,
+   "source": "2s"
+  },
+  {
+   "t": 30.0,
+   "source": "2s"
+  },
+  {
+   "t": 32.0,
+   "source": "2s"
+  },
+  {
+   "t": 34.0,
+   "source": "2s"
+  },
+  {
+   "t": 36.0,
+   "source": "2s"
+  },
+  {
+   "t": 38.0,
+   "source": "2s"
+  },
+  {
+   "t": 40.0,
+   "source": "2s"
+  },
+  {
+   "t": 42.0,
+   "source": "2s"
+  },
+  {
+   "t": 44.0,
+   "source": "2s"
+  },
+  {
+   "t": 46.0,
+   "source": "2s"
+  },
+  {
+   "t": 48.0,
+   "source": "2s"
+  },
+  {
+   "t": 49.2,
+   "source": "scene"
+  },
+  {
+   "t": 50.0,
+   "source": "2s"
+  },
+  {
+   "t": 52.9,
+   "source": "scene"
+  },
+  {
+   "t": 54.0,
+   "source": "2s"
+  },
+  {
+   "t": 56.0,
+   "source": "2s"
+  },
+  {
+   "t": 60.0,
+   "source": "2s"
+  },
+  {
+   "t": 62.0,
+   "source": "2s"
+  },
+  {
+   "t": 68.0,
+   "source": "2s"
+  },
+  {
+   "t": 68.4,
+   "source": "scene+scene"
+  },
+  {
+   "t": 68.8,
+   "source": "scene"
+  },
+  {
+   "t": 70.0,
+   "source": "2s"
+  },
+  {
+   "t": 72.0,
+   "source": "2s"
+  },
+  {
+   "t": 76.0,
+   "source": "2s"
+  },
+  {
+   "t": 78.0,
+   "source": "2s"
+  },
+  {
+   "t": 82.0,
+   "source": "2s"
+  },
+  {
+   "t": 84.0,
+   "source": "2s"
+  },
+  {
+   "t": 84.9,
+   "source": "scene"
+  },
+  {
+   "t": 86.0,
+   "source": "2s"
+  },
+  {
+   "t": 88.0,
+   "source": "2s"
+  },
+  {
+   "t": 89.1,
+   "source": "scene"
+  },
+  {
+   "t": 90.0,
+   "source": "2s"
+  },
+  {
+   "t": 92.0,
+   "source": "2s"
+  },
+  {
+   "t": 94.0,
+   "source": "2s"
+  },
+  {
+   "t": 96.0,
+   "source": "2s"
+  },
+  {
+   "t": 98.0,
+   "source": "2s"
+  },
+  {
+   "t": 100.0,
+   "source": "2s"
+  },
+  {
+   "t": 102.0,
+   "source": "2s"
+  },
+  {
+   "t": 104.0,
+   "source": "2s"
+  },
+  {
+   "t": 106.0,
+   "source": "2s"
+  },
+  {
+   "t": 108.0,
+   "source": "2s"
+  },
+  {
+   "t": 110.0,
+   "source": "2s"
+  },
+  {
+   "t": 112.0,
+   "source": "2s"
+  },
+  {
+   "t": 114.0,
+   "source": "2s"
+  },
+  {
+   "t": 116.0,
+   "source": "2s"
+  }
+ ]
+}

@@ -1,0 +1,57 @@
+// sonde-etats.mjs — complément chiffré de moteurs.mjs : l'état rendu des trois gestes du téléphone (citation, verbes, éclaté) et des
+// jauges, sur les deux profils, aux mêmes y que les arrêts (0, 400, 2400, 4400), 1,5 s après l'arrêt. Opacité effective = produit des
+// opacités calculées de l'élément et de ses parents.
+// Pré-requis : .orchestre/travail/024-01/moteurs/www-iphone (préparée par moteurs.mjs).
+// Usage : node .orchestre/preuves/024-01/diagnostic/sonde-etats.mjs
+import { chromium, devices } from 'playwright'
+import http from 'node:http'
+import fs from 'node:fs'
+import path from 'node:path'
+
+const RACINE = 'C:/Users/benja/Documents/presti'
+const COPIE = path.join(RACINE, '.orchestre/travail/024-01/moteurs/www-iphone')
+const ICI = path.join(RACINE, '.orchestre/preuves/024-01/diagnostic')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', svg: 'image/svg+xml', avif: 'image/avif', webp: 'image/webp', jpg: 'image/jpeg', woff2: 'font/woff2', json: 'application/json' }
+const srv = http.createServer((q, r) => {
+  const p = decodeURIComponent(new URL(q.url, 'http://x').pathname), f = path.join(COPIE, p)
+  if (!f.startsWith(COPIE) || !fs.existsSync(f) || !fs.statSync(f).isFile()) { r.writeHead(404); return r.end() }
+  r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r)
+})
+await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const browser = await chromium.launch()
+const out = { date: new Date().toISOString(), profils: {} }
+for (const nom of ['android', 'iphone']) {
+  const base = nom === 'android' ? { ...devices['Pixel 7'] } : { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } }
+  delete base.defaultBrowserType
+  const ctx = await browser.newContext({ ...base, reducedMotion: 'no-preference' })
+  if (nom !== 'android') await ctx.addInitScript(() => { const n = CSS.supports.bind(CSS); CSS.supports = function (a, b) { if (/(animation-timeline|view-timeline|scroll-timeline)/i.test(String(a))) return false; return arguments.length > 1 ? n(a, b) : n(a) } })
+  const page = await ctx.newPage()
+  await page.goto(nom === 'android' ? 'https://prestiapp.fr/sites-demo/lestraque/index.html' : `http://127.0.0.1:${srv.address().port}/sites-demo/lestraque/index.html`, { waitUntil: 'load' })
+  await page.evaluate(() => document.fonts.ready)
+  await page.waitForTimeout(1500)
+  const P = {}
+  // avant tout défilement : la figure de la citation, telle qu'elle attend son entrée
+  P.citationAvantEntree = await page.evaluate(() => { const f = document.querySelector('.plateau__citation'), c = getComputedStyle(f); return { classes: f.className, opacity: c.opacity, transform: c.transform, transitionDuration: c.transitionDuration, transitionProperty: c.transitionProperty } })
+  const eff = `function eff(e){let o=1;for(let n=e;n&&n.nodeType===1;n=n.parentElement)o*=Number(getComputedStyle(n).opacity);return Math.round(o*1000)/1000}`
+  for (const y of [400, 2400, 4400]) {
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), y)
+    await page.waitForTimeout(1500)
+    P['y' + y] = await page.evaluate(new Function(`${eff}
+      const mots = [...document.querySelectorAll('.citation__mot')].map(eff)
+      const verbes = [...document.querySelectorAll('.atelier__verbe')].map((v) => ({ texte: v.textContent, opacite: eff(v), translate: getComputedStyle(v).translate, display: getComputedStyle(v).display }))
+      const im = (s) => [...document.querySelectorAll(s)].map((e) => { const c = getComputedStyle(e); return { src: (e.currentSrc || e.src || '').split('/').pop(), display: c.display, opacite: eff(e), translate: c.translate, charge: e.complete ? e.naturalWidth > 0 : null } })
+      const r = document.querySelector('#etapes figure.eclate').getBoundingClientRect()
+      return {
+        scrollY: Math.round(scrollY),
+        citation: { n: mots.length, min: Math.min(...mots), max: Math.max(...mots), mots },
+        verbes,
+        eclate: { hautFigure: Math.round(r.top), basFigure: Math.round(r.bottom), eclate: im('img.eclate__eclate'), assemble: im('img.eclate__assemble'), calques: im('img.eclate__calque'), pastilles: [...document.querySelectorAll('.eclate__pastille')].map(eff) },
+        jauges: ['.presta__jauge', '.galerie__jauge', '.etapes__jauge'].map((s) => ({ s, display: getComputedStyle(document.querySelector(s)).display })),
+      }`))
+  }
+  out.profils[nom] = P
+  await ctx.close()
+}
+await browser.close(); srv.close()
+fs.writeFileSync(path.join(ICI, 'sonde-etats.json'), JSON.stringify(out, null, 1))
+console.log(JSON.stringify(out, null, 1))

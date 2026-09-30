@@ -1,0 +1,26 @@
+import sharp from 'sharp'
+import fs from 'node:fs'
+// Les points d'eclate.json, lus tels quels sur la vue éclatée puis dans le repère assemblé qu'il déclare : tombent-ils sur leur pièce ?
+const D = 'C:/Users/benja/Documents/presti/public/sites-demo/lestraque/eclate/'
+const J = JSON.parse(fs.readFileSync(D + 'eclate.json', 'utf8'))
+const W = 732, H = 549
+for (const e of J.etiquettes) {
+  const p = J.pieces.find((q) => q.nom === e.piece)
+  const { data, info } = await sharp(D + p.fichier).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const al = (fx, fy, r) => { for (let y = Math.max(0, Math.floor(fy - r)); y <= Math.min(info.height - 1, Math.ceil(fy + r)); y++) for (let x = Math.max(0, Math.floor(fx - r)); x <= Math.min(info.width - 1, Math.ceil(fx + r)); x++) if ((x - fx) ** 2 + (y - fy) ** 2 <= r * r && data[(y * info.width + x) * 4 + 3] > 128) return true; return false }
+  const r = (2 * info.width) / (p.l * W)
+  // raw anchor displayed in exploded state (judge's frame)
+  const brut = al(((e.x - p.x - p.vecteur[0]) / p.l) * info.width, ((e.y - p.y - p.vecteur[1]) / p.h) * info.height, r)
+  // assembled frame: anchor on piece at rest
+  const assem = al(((e.x - p.x) / p.l) * info.width, ((e.y - p.y) / p.h) * info.height, r)
+  // eclate.avif pixel check at raw anchor and anchor+vector
+  console.log(e.texte, '| brut sur pièce éclatée :', brut, '| repère assemblé :', assem, '| calque', info.width, 'x', info.height)
+}
+// eclate.avif: luminance at raw anchor vs anchor+vector
+const { data, info } = await sharp(D + 'eclate.avif').removeAlpha().raw().toBuffer({ resolveWithObject: true })
+const bg = [...data.slice(0, 3)]
+for (const e of J.etiquettes) {
+  const p = J.pieces.find((q) => q.nom === e.piece)
+  const px = (x, y) => { const i = (Math.round(y * info.height) * info.width + Math.round(x * info.width)) * 3; return [...data.slice(i, i + 3)] }
+  console.log(e.texte, 'eclate.avif brut', px(e.x, e.y), '+vecteur', px(e.x + p.vecteur[0], e.y + p.vecteur[1]), 'fond', bg)
+}

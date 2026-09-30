@@ -1,0 +1,15 @@
+09:43:15 d116-roulis image 0 y 0 δ 0.0000 contraste 3.386 bois 160.9
+09:45:05 d116-roulis image 30 y 15 δ 0.0064 contraste 3.352 bois 150.2
+09:47:54 d116-roulis image 60 y 128 δ 0.0550 contraste 3.113 bois 88.3
+09:50:33 d116-roulis image 90 y 331 δ 0.1160 contraste 2.62 bois 50.6
+09:51:31 d116-roulis image 120 y 585 δ 0.1160 contraste 3.246 bois 36
+09:52:26 d116-roulis image 150 y 839 δ 0.1160 contraste 8 bois null
+09:53:09 d116-roulis image 180 y 1042 δ 0.1160 contraste 2.94 bois null
+09:53:41 d116-roulis image 210 y 1155 δ 0.1160 contraste 3.532 bois null
+09:54:16 d116-roulis film écrit C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/descente-d116-roulis.mp4
+09:54:32 d116-roulis planche écrite
+09:54:37 d116-roulis D-15 {"oeil":{"blocs":208,"moduleMedian_px":23.4,"moduleP90_px":37.5,"radialMedian_px":21.6,"moduleModeleMedian_px":35.4,"blocsAuBordDeLaRecherche":0},"marches":{"blocs":99,"moduleMedian_px":163.3,"moduleP90_px":209.5,"radialMedian_px":144.5,"moduleModeleMedian_px":157.6,"blocsAuBordDeLaRecherche":42}}
+09:55:20 d116-roulis D-5 1280x800 2.556
+09:56:15 d116-roulis D-5 1366x768 2.125
+09:57:02 d116-roulis D-5 1440x900 2.742
+09:57:02 d116-roulis fini

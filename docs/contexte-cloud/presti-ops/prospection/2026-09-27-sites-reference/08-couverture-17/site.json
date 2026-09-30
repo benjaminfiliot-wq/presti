@@ -1,0 +1,50 @@
+{
+  "siren": "489049841",
+  "nom": "COUVERTURE 17",
+  "metier": "couvreur",
+  "commune": "Saint-Laurent-de-la-Prée",
+  "code_postal": "17450",
+  "telephone": "05 46 99 83 34",
+  "source_telephone": "https://www.118000.fr/v_saint-laurent-de-la-pree_17/c_couverture-plomberie-et-zinguerie-couvreur-plombier-zingueur",
+  "demo": true,
+  "nom_affiche": "Couverture 17",
+  "communes": [
+    "Saint-Laurent-de-la-Prée",
+    "Fouras",
+    "Yves",
+    "Rochefort"
+  ],
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/prestations/",
+      "type": "prestations"
+    },
+    {
+      "chemin": "/contact/",
+      "type": "contact"
+    },
+    {
+      "chemin": "/mentions/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/couvreur-fouras/",
+      "type": "commune",
+      "cible": "Fouras"
+    },
+    {
+      "chemin": "/couvreur-yves/",
+      "type": "commune",
+      "cible": "Yves"
+    },
+    {
+      "chemin": "/couvreur-rochefort/",
+      "type": "commune",
+      "cible": "Rochefort"
+    }
+  ]
+}

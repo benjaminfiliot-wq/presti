@@ -1,0 +1,30 @@
+{
+ "id": "mixkit-776-sanding-lumber",
+ "raison": "Q-A : plan 3 de 021-10, choisi par Claude Code sur délégation de Benj (decisions.md, 2026-09-15 vers 16 h 02)",
+ "sha256Source": "70ae8cce243bb135ff44d9d817e0d459a151345ad0638aa58725607626100d92",
+ "encodage": {
+  "debut": 16.97,
+  "duree": 6.006,
+  "fondu": 0,
+  "recadrage": {
+   "x": 320,
+   "y": 160,
+   "largeur": 960,
+   "hauteur": 540
+  },
+  "miroir": true
+ },
+ "zoneRetiree": {
+  "description": "bande du haut du cadre de la source, de y = 0 à y = 160 px (retirée avant le miroir) : elle contient le bout de barbe et le masque à grille qui l'accompagne, visibles sur toutes les images de la fenêtre entre x ≈ 380 et 650, jamais plus bas que y ≈ 125 px ; vérifié sur les 144 images de 16,97 à 22,98 s",
+  "yBarbeMax": 125
+ },
+ "marque": {
+  "traitement": "miroir",
+  "decision": "le plan est gardé EN MIROIR (hflip), comme l'agent l'a encodé"
+ },
+ "licence": {
+  "page": "https://mixkit.co/free-stock-video/carpenter-sanding-a-piece-of-lumber-776/",
+  "releve": "2026-09-15T17:11:16+02:00",
+  "citation": "Download this free stock video clip for commercial or personal use, under the Mixkit Stock Video Free License."
+ }
+}

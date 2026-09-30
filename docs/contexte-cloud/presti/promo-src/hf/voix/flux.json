@@ -1,0 +1,16 @@
+{
+  "voix": { "id": "MAZdzkb78f8SA7DNBT41", "nom": "Nico", "modele": "eleven_multilingual_v2" },
+  "genere_le": "2026-09-10",
+  "flux": {
+    "01": { "flow": "zd52929chwbmOlXefCkx", "session": "q6FBVPR9Yf4kooiatAy1" },
+    "02": { "flow": "odhDYfV9GRWUhr9VUwPm", "session": "I8kbrtMBWZfIAvyITmKP" },
+    "03": { "flow": "fvQdRTHqGWZx0kce8I9b", "session": "Y52zQ9SMuLYrlrv5KqYw" },
+    "04": { "flow": "oJLiTAdXdAzzNqA7Ixry", "session": "zPw39qP2f6kgsmRzvidD" },
+    "05": { "flow": "MEAYsMTKeziNvJnGitYP", "session": "R9d6MA6N5phAmrUCMrqf" },
+    "06": { "flow": "v5m3Oivr6WuUIs3eHR4e", "session": "XZxtORH2bhhcZ6GOFgeO" },
+    "07": { "flow": "AVQCdHPELJ3VKjG9rW3b", "session": "FPZ7ikmnxOsmV3HJEotK" },
+    "08": { "flow": "ew2PB7rKhAw4ewifQeAm", "session": "VCdmv1GAq1pnrVgm3ogC" },
+    "09": { "flow": "D7qAyt3txxDx67CpHuN1", "session": "GTlgyU0k1MEvnbS4pVtY" },
+    "10": { "flow": "1vek48YmJ2zUiLSp0gDk", "session": "At9r0rle1qmbVv08hAen" }
+  }
+}

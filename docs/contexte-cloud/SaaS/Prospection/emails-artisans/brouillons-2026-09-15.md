@@ -1,0 +1,184 @@
+# Journal des brouillons — campagne artisans 2026-09-15
+
+Ce fichier trace, un par un, les brouillons Gmail créés pour la campagne « Votre avis d'artisan sur PrestiApp ? » à partir de `envoi-2026-09-15.csv` (166 destinataires validés = clé « retenues » de `liste-validee.json`).
+
+**Rien n'est envoyé.** Chaque ligne est un brouillon Gmail (À = un seul destinataire, texte brut, sujet + corps exacts du CSV). C'est Benj qui ouvrira Gmail et cliquera « Envoyer », un par un, en respectant le rythme (~1/minute) décrit dans `Email-artisans-2026-09-15.md`.
+
+**Pour reprendre** (un autre agent ou une nouvelle session) : lire ce journal, relever les adresses déjà présentes, puis dans `envoi-2026-09-15.csv` traiter uniquement les adresses de `liste-validee.json` (clé `retenues`) qui n'apparaissent pas encore ici. Avant de créer un brouillon, vérifier aussi avec `list_drafts` (objet exact ci-dessus) qu'il n'existe pas déjà, au cas où le journal serait en retard sur Gmail.
+
+Format des lignes : `heure — adresse — id du brouillon`.
+
+---
+
+21:07 — contact@couverture-aptel.fr — r-959188266373925751
+21:07 — artisan.teddy.couverture@gmail.com — r-8987882883930463489
+21:07 — gadras.sylvain@orange.fr — r5682044473263818881
+21:07 — dumasdelage@bati16.com — r-599699305589266120
+21:07 — angoulemerenov@orange.fr — r-7630985635492081779
+21:07 — j.turpain@orange.fr — r-7403169042891006760
+21:07 — martinmenuiserie16100@gmail.com — r-3952776434107935643
+21:07 — contact@abcduchaudetfroid.fr — r384683315221063404
+21:07 — dominiquepeinture00@gmail.com — r8605309616729713976
+21:07 — contact@eleceaux.fr — ÉCHEC (« The service is currently unavailable. »), retenté avec succès à 21:08 (voir ligne suivante)
+21:07 — cedricjouanaud@live.fr — r-2331573491759369251
+21:07 — contact@le-peintre-charentais.fr — r-7049648408688692305
+21:07 — riffaud.eric@wanadoo.fr — r-5654810125206774027
+21:07 — contact@artisan-jp.fr — r-8529853835511970073
+21:08 — contact@eleceaux.fr — r2422782801499969784
+21:08 — relationspubliques@homeart16.fr — r5807774539269659744
+21:08 — skf.mvs.16@gmail.com — r7863781315329478020
+21:08 — sarl.brault.fils@hotmail.fr — r-8837943481979715898
+21:08 — contact@debessac.fr — r-5285885844913133301
+21:08 — monjardin@monjardin.pro — r-7692608745629497232
+21:08 — contact@entreprise-perot.com — r6946352866005503049
+21:08 — contact@sarl-a-martaud.fr — r-1763654273397932424
+21:08 — contact@ab16energies.fr — r5066495022523177021
+21:08 — david.parizel@hotmail.fr — r7823908397464612874
+21:08 — contact@jardinessences.fr — r6570089391300056104
+21:08 — jerome.depannage16@gmail.com — r7996093693414635560
+21:08 — oleronpaysage@gmail.com — r8802346559802576136
+21:09 — contact@okipouros.com — r-1398756207720243274
+21:09 — contact@pepinieres-coindet-oleron.com — r-1388023400039590646
+21:09 — atoutcuisines@gmail.com — r6548894510667804259
+21:09 — parquetsol17@gmail.com — r4036580563725261969
+21:09 — lesteph@yahoo.com — r-531419569324700317
+21:09 — mhpeinture17@gmail.com — r-8038330801164055057
+21:09 — contact@lacspeintre17.fr — r-5348193962335813898
+21:09 — contact@lafittepaysage.com — r1935392073848078611
+21:09 — germain@rhea-menuiserie.com — r7088538166308217509
+21:09 — aurelienmaitre@sfr.fr — r-817626024435770982
+21:09 — setj.creations@gmail.com — r8171696141826011330
+21:09 — bonnet-paysage@laposte.net — r-3478513935843026637
+21:09 — contact@pairaultpaysage.fr — r5687799572581457485
+21:09 — bourdieu-couverture@orange.fr — r-7784773432373908627
+21:10 — contact@diamant-toiture.fr — r-1825694195835905091
+21:10 — contact@couvreur-zingueur-17.fr — r-7083396964149441551
+21:10 — mail@mv-toitures.fr — r-292020072130242494
+21:10 — fred.guerin.17200@gmail.com — r-6649648702365864267
+21:10 — mauleonf@wanadoo.fr — r-517229065200198737
+21:10 — pascalbienvenu17@gmail.com — r7314689415931119108
+21:10 — atelierplaquiste@gmail.com — r137657119567517198
+21:10 — entreprise-pbp-17@outlook.fr — r8510724713574071593
+21:10 — valladonartetfacade@gmail.com — r8121342406407217036
+21:10 — contact@menuiserie-ferre17.fr — r3983055524246987059
+21:10 — contact@isolr.fr — r456715907229825156
+21:10 — lesartisanscouvreursdu17@gmail.com — r-5212122830888045860
+21:10 — asley.artero@outlook.com — r-1141037348493776240
+21:10 — egbatmartinaud@outlook.fr — r-407293705169615283
+
+## Reprise Gmail du 16/09/2026
+
+Contrôle visuel Gmail : 72 brouillons avec l'objet initial (71 destinataires uniques, dont un doublon historique) et 95 brouillons avec le nouvel objet demandé, soit les 166 adresses uniques de `liste-validee.json`. Identifiants `gmail-ui-*` : repères locaux déterministes, aucun envoi effectué.
+
+11:20 — sarlaugustin17@gmail.com — gmail-ui-20260916-054
+11:20 — contact@espritbois17.fr — gmail-ui-20260916-055
+11:20 — contact@aecbois.fr — gmail-ui-20260916-056
+11:20 — colin.sebastien1@gmail.com — gmail-ui-20260916-057
+11:20 — contact@couverturesm.com — gmail-ui-20260916-058
+11:20 — iomanuperez@orange.fr — gmail-ui-20260916-059
+11:20 — contact@mickael-renovation.com — gmail-ui-20260916-060
+11:20 — contact@alvesplacos.fr — gmail-ui-20260916-061
+11:20 — contact@tr-plaquiste.fr — gmail-ui-20260916-062
+11:20 — chantaraud.stephane@gmail.com — gmail-ui-20260916-063
+11:20 — jp-rijol@wanadoo.fr — gmail-ui-20260916-064
+11:20 — jeanmarie.ouvrard@wanadoo.fr — gmail-ui-20260916-065
+11:20 — contact@fabrication-bois-17.com — gmail-ui-20260916-066
+11:20 — enduit.rochelais@gmail.com — gmail-ui-20260916-067
+11:20 — raynaud.gaetan.17@gmail.com — gmail-ui-20260916-068
+11:20 — lesartisanscharentais17@gmail.com — gmail-ui-20260916-069
+11:20 — contact@fargeas-couverture.fr — gmail-ui-20260916-070
+11:20 — henrymathieu17@gmail.com — gmail-ui-20260916-071
+11:20 — sarl.gendre@wanadoo.fr — gmail-ui-20260916-072
+11:20 — paulriva7@gmail.com — gmail-ui-20260916-073
+11:20 — nil.couverture@gmail.com — gmail-ui-20260916-074
+11:20 — garycouverture94@gmail.com — gmail-ui-20260916-075
+11:20 — contact@noureaugendry.fr — gmail-ui-20260916-076
+11:20 — diamantina.suire@orange.fr — gmail-ui-20260916-077
+11:20 — lazarodsl80@gmail.com — gmail-ui-20260916-078
+11:20 — contact@pentecote-sas.fr — gmail-ui-20260916-079
+11:20 — info@cvc17.com — gmail-ui-20260916-080
+11:20 — contact@climeo17.fr — gmail-ui-20260916-081
+11:20 — agclim17@gmail.com — gmail-ui-20260916-082
+11:20 — contact@eco-solutions-17.fr — gmail-ui-20260916-083
+11:20 — contact@lachaud-construction.com — gmail-ui-20260916-084
+11:20 — contact@electricien-la-rochelle.com — gmail-ui-20260916-085
+11:20 — atl.elec17@gmail.com — gmail-ui-20260916-086
+11:20 — eurl.forestier@gmail.com — gmail-ui-20260916-087
+11:20 — infos@bel.fr — gmail-ui-20260916-088
+11:20 — aklein@coopetbat.pro — gmail-ui-20260916-089
+11:20 — contact@electricien-iledere.com — gmail-ui-20260916-090
+11:20 — contact@moustache-elec.fr — gmail-ui-20260916-091
+11:20 — vo@royan-energies.com — gmail-ui-20260916-092
+11:20 — bienvenue@eshb.fr — gmail-ui-20260916-093
+11:20 — nfjplomberiechauffage@gmail.com — gmail-ui-20260916-094
+11:20 — plombier.mn@gmail.com — gmail-ui-20260916-095
+11:20 — contact@tibs-energie.com — gmail-ui-20260916-096
+11:20 — minguez.rullier@gmail.com — gmail-ui-20260916-097
+11:20 — egj17500@gmail.com — gmail-ui-20260916-098
+11:20 — seguinfreddy@gmail.com — gmail-ui-20260916-099
+11:20 — fchevalierfred@orange.fr — gmail-ui-20260916-100
+11:20 — artisan.ortica79@gmail.com — gmail-ui-20260916-101
+11:20 — contact@fbm-79.com — gmail-ui-20260916-102
+11:20 — contact.hd.couverture@gmail.com — gmail-ui-20260916-103
+11:20 — couvreur.viviongrunewald@gmail.com — gmail-ui-20260916-104
+11:20 — bonheursauzer@hotmail.fr — gmail-ui-20260916-105
+11:20 — franck.papot@dallerit.fr — gmail-ui-20260916-106
+11:20 — berger.menuiserie@gmail.com — gmail-ui-20260916-107
+11:20 — aud.ced@hotmail.fr — gmail-ui-20260916-108
+11:20 — menuiserie.couteau@orange.fr — gmail-ui-20260916-109
+11:20 — ecodemeure79@orange.fr — gmail-ui-20260916-110
+11:20 — lehir.paysage@ymail.com — gmail-ui-20260916-111
+11:20 — damien.decaudin@orange.fr — gmail-ui-20260916-112
+11:20 — creavenir.paysage@gmail.com — gmail-ui-20260916-113
+11:20 — contact@terraflore.fr — gmail-ui-20260916-114
+11:20 — giraudeau.paysages@gmail.com — gmail-ui-20260916-115
+11:20 — fredfavrioux@gmail.com — gmail-ui-20260916-116
+11:20 — michel.bodin17@wanadoo.fr — gmail-ui-20260916-117
+11:20 — mathias@matpropose.com — gmail-ui-20260916-118
+11:20 — contact@sarlgueret.fr — gmail-ui-20260916-119
+11:20 — martin-et-fils-79@orange.fr — gmail-ui-20260916-120
+11:20 — contact@entreprisecoutant.fr — gmail-ui-20260916-121
+11:20 — contact@cbelec79.fr — gmail-ui-20260916-122
+11:20 — contact@electricite-thouarsaise.fr — gmail-ui-20260916-123
+11:20 — contact@concept-r.fr — gmail-ui-20260916-124
+11:20 — contact@tc2g.fr — gmail-ui-20260916-125
+11:20 — contact@vertelec85.fr — gmail-ui-20260916-126
+11:20 — rpelectricte@gmail.com — gmail-ui-20260916-127
+11:20 — batiment@audouitsarl.fr — gmail-ui-20260916-128
+11:20 — contact@agf-couverture.fr — gmail-ui-20260916-129
+11:20 — gringohemery@gmail.com — gmail-ui-20260916-130
+11:20 — sarlfredericdrapeau@orange.fr — gmail-ui-20260916-131
+11:20 — contact@mobwa.fr — gmail-ui-20260916-132
+11:20 — cmobois85@gmail.com — gmail-ui-20260916-133
+11:20 — mlpaysages@orange.fr — gmail-ui-20260916-134
+11:20 — contact@franckpineaupaysagiste.fr — gmail-ui-20260916-135
+11:20 — contact@gardenpaysage.com — gmail-ui-20260916-136
+11:20 — madegarden@outlook.fr — gmail-ui-20260916-137
+11:20 — contact@paysages-riviere.com — gmail-ui-20260916-138
+11:20 — sicaudpaysage@outlook.com — gmail-ui-20260916-139
+11:20 — martinconceptcarrelage@outlook.fr — gmail-ui-20260916-140
+11:20 — contact@fevre-carrelage.fr — gmail-ui-20260916-141
+11:20 — contact@epaulais-carrelage.fr — gmail-ui-20260916-142
+11:20 — contact@monts-carrelage.fr — gmail-ui-20260916-143
+11:20 — contact@prtcarrelage.fr — gmail-ui-20260916-144
+11:20 — actiba@orange.fr — gmail-ui-20260916-145
+11:20 — contact@idm-menuiserie.fr — gmail-ui-20260916-146
+11:20 — contact@moreau-david.com — gmail-ui-20260916-147
+11:20 — contact@vergnolle-menuiserie.fr — gmail-ui-20260916-148
+11:20 — contact@menuiserie-vaillant.fr — gmail-ui-20260916-149
+11:20 — contact@chapleaurodolphe.fr — gmail-ui-20260916-150
+11:20 — contact@artisan-peintre-tortellier.com — gmail-ui-20260916-151
+11:20 — ldecor85@orange.fr — gmail-ui-20260916-152
+11:20 — jean-marc-gauvrit@gauvrit-peinture.fr — gmail-ui-20260916-153
+11:20 — sasrabilliercedric@orange.fr — gmail-ui-20260916-154
+11:20 — contact@lachouetteplaque.fr — gmail-ui-20260916-155
+11:20 — axel.retureau@gmail.com — gmail-ui-20260916-156
+11:20 — bottonconstruction@outlook.com — gmail-ui-20260916-157
+11:20 — contact@kevinfroger-renov.fr — gmail-ui-20260916-158
+11:20 — contact@baconstructions.fr — gmail-ui-20260916-159
+11:20 — christophe.turcot@orange.fr — gmail-ui-20260916-160
+11:20 — pontoizeaumaconnerie@gmail.com — gmail-ui-20260916-161
+11:20 — contact@charruyer-plomberie.fr — gmail-ui-20260916-162
+11:20 — braudelectricite@wanadoo.fr — gmail-ui-20260916-163
+11:20 — contact@didiersoulard.com — gmail-ui-20260916-164
+11:20 — jjdrapeau@cegetel.net — gmail-ui-20260916-165

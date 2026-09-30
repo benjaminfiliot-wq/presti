@@ -1,0 +1,12 @@
+3071fed37ee390bd0dad80234c73304aa269dc0168096c3fe4f515a4779ba831 *public/sites-demo/kit/LISEZMOI.md
+fa2d39e59c4e4e4d569cdfd05ca690d5d49029048ecc6c0e1359950d9d885cdd *public/sites-demo/kit/banc-essai-1440.html
+c3322d836a6a7d5f848a4ba5739beb1515a43de15e8f9f9510f2a28a9b842599 *public/sites-demo/kit/banc-essai.css
+28b9f7ee6f2b67c488b6fcb4f1262e3a4f57a529f052fab9cd1d8c0d4a3374b4 *public/sites-demo/kit/index.html
+4c176d9e44d38e35790a76d97b9373bae566c59476f8a447b17d368bea8e5981 *public/sites-demo/kit/kit.json
+d2f5e3f7aaebbaeacdc8b8dfde7ce728f4ec2af856055f708d51ab783c9c11e8 *public/sites-demo/kit/medias/eclate.webp
+7a0f581effee2e3d70a8d48198640ba6f142a3dbf0844cac92909404e9c7d77a *public/sites-demo/kit/planche.css
+3ff99733d5579575142dd41be7dc09278403e0b0ea96f0d549737ca56a75e1b9 *public/sites-demo/kit/polices.css
+709633f7286f665ddb45ddb7f73995ed03d5ae99e9f0b7f2ee3722218e925feb *public/sites-demo/kit/sections.html
+fc938ccadcc7f06bd79838f1512bdeb790dea68131e708f205243e1aebd745a6 *public/sites-demo/kit/sections/bureau.css
+92ff4490fc2ef9151a02fa76a45defc9bc4ad60abc75d69573259eb6f30d778c *public/sites-demo/kit/sections/gel.css
+c09c01353c7cacf68a41e1f7555bf321a631abfc706dac1ac2063a302ecf5553 *public/sites-demo/kit/sections/site.css

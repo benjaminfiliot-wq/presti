@@ -1,0 +1,43 @@
+{
+ "resume": {
+  "url": "http://127.0.0.1:4317/menuisier-rennes/index.html",
+  "perfs": [
+   97,
+   97
+  ],
+  "mediane": 97,
+  "min": 97
+ },
+ "passes": [
+  {
+   "passe": 1,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1209,
+   "lcp": 2484,
+   "tbt": 2,
+   "cls": 0,
+   "si": 1209,
+   "benchmarkIndex": 2198.5,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  },
+  {
+   "passe": 2,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1209,
+   "lcp": 2484,
+   "tbt": 0,
+   "cls": 0,
+   "si": 1209,
+   "benchmarkIndex": 1963.5,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+// Sonde : les déclarations « neutres » que le cahier prescrit changent-elles la mise en page au téléphone ? (390×844, Chromium et WebKit)
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const pw = require('playwright')
+const R = 'C:/Users/benja/Documents/presti', T = path.join(R, '.orchestre/travail/024-01/cahier/ref')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2' }
+const srv = http.createServer((q, r) => { let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'; const f = path.join(T, p); if (!f.startsWith(T) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() } r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r) })
+await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const url = `http://127.0.0.1:${srv.address().port}/index.html`
+const CSS_NEUTRE = [
+  '.ml{display:inline-block;vertical-align:top;overflow:clip;padding-block:.1em .26em;margin-block:-.1em -.26em}',
+  '.ml__in{display:inline-block}',
+  '.plateau__citation .citation__mot{display:inline-block}',
+  '.atelier__verbe{display:inline-block;position:relative}',
+  '.chiffre__valeur{position:relative}.chiffre__compte{position:absolute;top:0;right:0;white-space:nowrap}',
+  '.h1__cle{overflow:clip}',
+  '#etapes figure.eclate{content-visibility:auto;contain-intrinsic-size:auto 75vw}',
+
+].join('\n')
+const out = {}
+for (const [nom, type] of [['chromium', pw.chromium], ['webkit', pw.webkit]]) {
+  const b = await type.launch()
+  const mesurer = async (avec) => {
+    const ctx = await b.newContext({ ...pw.devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+    const page = await ctx.newPage(); await page.goto(url, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready)
+    if (avec) await page.addStyleTag({ content: CSS_NEUTRE })
+    const r = await page.evaluate(async () => {
+      document.documentElement.classList.add('tout-rendu')
+      await new Promise((k) => requestAnimationFrame(() => requestAnimationFrame(k)))
+      const box = (el) => { const b = el.getBoundingClientRect(); return [Math.round(b.top + scrollY), Math.round(b.height)] }
+      const lignes = (el) => { const rg = document.createRange(); rg.selectNodeContents(el); return new Set([...rg.getClientRects()].map((x) => Math.round(x.top))).size }
+      const q = (s) => document.querySelector(s)
+      return {
+        page: document.documentElement.scrollHeight,
+        h2: [...document.querySelectorAll('h2')].map((h) => [h.textContent.trim().slice(0, 18), ...box(h)]),
+        citation: [...box(q('.plateau__citation blockquote p')), lignes(q('.plateau__citation blockquote p'))],
+        phrase: [...box(q('.atelier__phrase')), lignes(q('.atelier__phrase'))],
+        chiffres: [...document.querySelectorAll('.chiffre')].map(box),
+        figure: box(q('#etapes figure.eclate')),
+        h1: box(q('.hero--plein h1')),
+      }
+    })
+    await ctx.close(); return r
+  }
+  const sans = await mesurer(false), avec = await mesurer(true)
+  out[nom] = { version: b.version(), identique: JSON.stringify(sans) === JSON.stringify(avec), sans, avec }
+  await b.close()
+}
+srv.close()
+console.log(JSON.stringify(out, null, 1))

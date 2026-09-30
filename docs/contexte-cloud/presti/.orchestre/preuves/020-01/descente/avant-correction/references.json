@@ -1,0 +1,33 @@
+{
+ "methode": "variance du laplacien 4-voisins sur sharp greyscale, zone bois x 900-1400 y 120-420, zone marches x 150-500 y 120-420",
+ "cahier/avant/bureau-y0.jpg": {
+  "taille": "1440x900",
+  "bois": 88.9,
+  "marches": 73.3
+ },
+ "cahier/avant/bureau-y270.jpg": {
+  "taille": "1440x900",
+  "bois": 62.1,
+  "marches": 51.5
+ },
+ "cahier/moment-A-y0.jpg": {
+  "taille": "1440x900",
+  "bois": 233.5,
+  "marches": 239.9
+ },
+ "cahier/moment-B-y270.jpg": {
+  "taille": "1440x900",
+  "bois": 59.3,
+  "marches": 72.8
+ },
+ "cahier/moment-C-y405.jpg": {
+  "taille": "1440x900",
+  "bois": 19.7,
+  "marches": 39.3
+ },
+ "films/descente/temoin-en-ligne-y0.png": {
+  "taille": "1440x900",
+  "bois": 109.8,
+  "marches": 107.9
+ }
+}

@@ -1,0 +1,161 @@
+{
+  "metier": "plombier",
+  "libelles": {
+    "sur": "Plomberie",
+    "alt_heros": "Détail d’une installation de plomberie",
+    "alt_atelier": "Équipement sanitaire et robinetterie",
+    "reperes": [
+      "Repère des installations",
+      "Repère des équipements",
+      "Repère de proximité"
+    ]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Plomberie à Saint-Xandre — Société Percot et Fils",
+      "description": "Découvrez une proposition de page d’accueil pour Société Percot et Fils, plomberie à Saint-Xandre.",
+      "h1": "Plomberie à Saint-Xandre",
+      "h1Ligne": "L’eau trouve sa place",
+      "chapeau": "Une page pour présenter les installations de plomberie et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Des réseaux aux équipements",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Alimentations, évacuations et équipements sanitaires peuvent prendre place dans cette présentation. Les interventions propres à Société Percot et Fils seront précisées ensemble."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page est une proposition visuelle destinée à Société Percot et Fils à Saint-Xandre."
+            }
+          ]
+        }
+      ]
+    },
+    "/prestations/": {
+      "type": "prestations",
+      "title": "Prestations — Société Percot et Fils | Maquette",
+      "description": "Proposition de rubriques pour Société Percot et Fils à Saint-Xandre.",
+      "h1": "Plomberie : rubriques à valider",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les rubriques proposées",
+          "blocs": [
+            {
+              "type": "h3",
+              "texte": "Installation"
+            },
+            {
+              "type": "p",
+              "texte": "La rubrique installation peut expliquer le type d’équipement concerné et le contexte du logement. Elle sera adaptée aux interventions réellement proposées."
+            },
+            {
+              "type": "h3",
+              "texte": "Rénovation"
+            },
+            {
+              "type": "p",
+              "texte": "La rénovation peut être présentée par pièce ou par équipement, avec des photos de chantier uniquement si l’entreprise les fournit et les valide."
+            },
+            {
+              "type": "h3",
+              "texte": "Dépannage"
+            },
+            {
+              "type": "p",
+              "texte": "Les dépannages supposent une disponibilité et un périmètre à confirmer. La maquette n’annonce aucun service d’urgence ni délai d’intervention."
+            }
+          ]
+        }
+      ]
+    },
+    "/contact/": {
+      "type": "contact",
+      "title": "Contact — Société Percot et Fils | Maquette",
+      "description": "Téléphone publié de Société Percot et Fils à Saint-Xandre.",
+      "h1": "Joindre Société Percot et Fils",
+      "sections": []
+    },
+    "/mentions/": {
+      "type": "legal",
+      "title": "Mentions — Société Percot et Fils | Maquette",
+      "description": "Crédits et limites de cette maquette privée.",
+      "h1": "Mentions de la maquette",
+      "sections": []
+    },
+    "/plombier-puilboreau/": {
+      "type": "commune",
+      "title": "Plomberie à Puilboreau — Société Percot et Fils | Maquette",
+      "description": "Projet de page locale pour Société Percot et Fils : plomberie à Puilboreau.",
+      "h1": "Plomberie à Puilboreau",
+      "commune": "Puilboreau",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de plomberie à Puilboreau. La zone d’intervention de Société Percot et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/plombier-la-rochelle/": {
+      "type": "commune",
+      "title": "Plomberie à La Rochelle — Société Percot et Fils | Maquette",
+      "description": "Projet de page locale pour Société Percot et Fils : plomberie à La Rochelle.",
+      "h1": "Plomberie à La Rochelle",
+      "commune": "La Rochelle",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de plomberie à La Rochelle. La zone d’intervention de Société Percot et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/plombier-dompierre-sur-mer/": {
+      "type": "commune",
+      "title": "Plomberie à Dompierre-sur-Mer — Société Percot et Fils | Maquette",
+      "description": "Projet de page locale pour Société Percot et Fils : plomberie à Dompierre-sur-Mer.",
+      "h1": "Plomberie à Dompierre-sur-Mer",
+      "commune": "Dompierre-sur-Mer",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de plomberie à Dompierre-sur-Mer. La zone d’intervention de Société Percot et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "plombier",
+    "fichiers": [
+      "hero-960.webp",
+      "robinetterie-720.webp"
+    ]
+  }
+}

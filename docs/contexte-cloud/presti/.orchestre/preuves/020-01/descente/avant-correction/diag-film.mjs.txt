@@ -1,0 +1,23 @@
+// diag-film.mjs — pourquoi l'image du mp4 diffère de l'image-clé : décalage d'images, ou décalage de niveaux (matrice/plage) ?
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const f = ICI + 'descente-sansgpu.mp4'
+const brut = execFileSync('ffmpeg', ['-v', 'error', '-i', f, '-vf', 'scale=160:100,format=gray', '-f', 'rawvideo', '-'], { maxBuffer: 1 << 28 })
+const n = brut.length / 16000
+const cle = await sharp(ICI + 'images-cles/c-4-y0270.jpg').resize(160).greyscale().raw().toBuffer()
+const ec = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += Math.abs(a[i] - b[i]); return s / a.length / 255 }
+const moy = (a) => a.reduce((x, y) => x + y, 0) / a.length
+const l = []; for (let i = 70; i < 95; i++) l.push([i, +ec(brut.subarray(i * 16000, (i + 1) * 16000), cle).toFixed(4), +moy(brut.subarray(i * 16000, (i + 1) * 16000)).toFixed(1)])
+console.log('images', n, 'moyenneCle', moy(cle).toFixed(1))
+console.log(JSON.stringify(l))
+// niveaux : image 82 décodée en RGB pleine résolution contre la clé
+const rgb = execFileSync('ffmpeg', ['-v', 'error', '-i', f, '-ss', (81.5 / 30).toFixed(4), '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 1 << 28 })
+const k = await sharp(ICI + 'images-cles/c-4-y0270.jpg').removeAlpha().raw().toBuffer()
+let sv = [0, 0, 0], sk = [0, 0, 0]; for (let i = 0; i < k.length; i++) { sv[i % 3] += rgb[i]; sk[i % 3] += k[i] }
+console.log('moyennes RGB film', sv.map((x) => (x / (k.length / 3)).toFixed(1)), 'clé', sk.map((x) => (x / (k.length / 3)).toFixed(1)))
+let mn = [255, 255, 255], mx = [0, 0, 0]; for (let i = 0; i < rgb.length; i++) { mn[i % 3] = Math.min(mn[i % 3], rgb[i]); mx[i % 3] = Math.max(mx[i % 3], rgb[i]) }
+console.log('min/max film', mn, mx)

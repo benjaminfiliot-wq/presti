@@ -1,0 +1,94 @@
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium, devices } = require('playwright')
+const R = 'C:/Users/benja/Documents/presti', T = path.join(R, '.orchestre/travail/024-01/cahier')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2', mp4: 'video/mp4', xml: 'application/xml', txt: 'text/plain' }
+function serveur(dossier) {
+  return http.createServer((q, r) => {
+    let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'
+    const f = path.join(dossier, p)
+    if (!f.startsWith(dossier) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() }
+    r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r)
+  })
+}
+const srv = serveur(path.join(T, 'ref')); await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const url = `http://127.0.0.1:${srv.address().port}/index.html`
+const b = await chromium.launch()
+const res = { version: b.version(), date: new Date().toISOString() }
+
+async function profil(opts) {
+  const ctx = await b.newContext(opts); const page = await ctx.newPage()
+  await page.addInitScript(() => {
+    window.__lcp = []
+    new PerformanceObserver((l) => { for (const e of l.getEntries()) { const el = e.element; window.__lcp.push({ t: Math.round(e.startTime), size: e.size, el: el ? (el.tagName + '.' + [...el.classList].join('.') + ' ' + (el.textContent || '').trim().slice(0, 30)) : null }) } }).observe({ type: 'largest-contentful-paint', buffered: true })
+  })
+  await page.goto(url, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(1500)
+  const lcp = await page.evaluate(() => window.__lcp)
+  const geo = await page.evaluate(async () => {
+    document.documentElement.classList.add('tout-rendu')
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    const r = (el) => { if (!el) return null; const b = el.getBoundingClientRect(); return { x: Math.round(b.left), y: Math.round(b.top + scrollY), l: Math.round(b.width), h: Math.round(b.height) } }
+    const fs = (el) => (el ? getComputedStyle(el).fontSize : null)
+    const q = (s) => document.querySelector(s), qa = (s) => [...document.querySelectorAll(s)]
+    const lignes = (el) => { if (!el) return null; const rg = document.createRange(); rg.selectNodeContents(el); return new Set([...rg.getClientRects()].map((x) => Math.round(x.top))).size }
+    const o = { vh: innerHeight, vw: innerWidth, dpr: devicePixelRatio, page: document.documentElement.scrollHeight }
+    o.sections = qa('main>section, main>.ouverture>section').map((s) => ({ cls: s.className.split(' ').slice(0, 3).join('.'), id: s.id, ...r(s) }))
+    o.hero = { h1: r(q('.hero--plein h1')), cle: r(q('.h1__cle')), ligne: r(q('.h1__ligne')), ligneFs: fs(q('.h1__ligne')), pied: r(q('.hero__pied')), chapeau: r(q('.hero--plein .chapeau')), bouton: r(q('.hero--plein .bouton')), contenu: r(q('.hero--plein .hero__contenu')), media: r(q('.hero--plein .hero__media')) }
+    const cp = q('.plateau__citation blockquote p')
+    o.citation = { p: r(cp), fs: fs(cp), lignes: lignes(cp), mots: qa('.citation__mot').length, fig: r(q('.plateau__citation')), caption: r(q('.plateau__citation figcaption')), mot0: r(q('.citation__mot')) }
+    o.chiffres = qa('.chiffre').map(r); o.valeurFs = fs(q('.chiffre__valeur')); o.plateauPhoto = r(q('.plateau__photo'))
+    o.presta = { tete: r(q('.scene--presta .scene__tete')), h2: r(q('.scene--presta h2')), h2fs: fs(q('.scene--presta h2')), cartes: qa('.presta__ligne').slice(0, 3).map(r), vignette: r(q('.presta__vignette')), jauge: r(q('.presta__jauge')) }
+    const ph = q('.atelier__phrase')
+    o.atelier = { sec: r(q('#atelier')), titre: r(q('.atelier__titre')), titreFs: fs(q('.atelier__titre')), phrase: r(ph), phraseFs: fs(ph), phraseLignes: lignes(ph), verbes: qa('.atelier__verbe').map((v) => ({ t: v.textContent, ...r(v) })), legende: r(q('.atelier__legende')) }
+    o.galerie = { tete: r(q('.galerie__tete')), h2: r(q('.galerie__tete h2')), cartes: qa('.galerie__item').slice(0, 3).map(r), jauge: r(q('.galerie__jauge')) }
+    o.communes = { h2: r(q('#communes h2')), lignes: qa('#communes .commune').map((c) => ({ t: c.textContent.trim(), ...r(c), fs: getComputedStyle(c).fontSize })) }
+    o.etapes = { sec: r(q('#etapes')), fig: r(q('#etapes figure.eclate')), legende: r(q('.eclate__legende')), h2: r(q('#etapes h2')), intro: qa('#etapes .etapes__tete > p').map(r), cartes: qa('#etapes .etape').slice(0, 2).map(r), num: fs(q('.etape__num')), jauge: r(q('.etapes__jauge')), pastilles: qa('.eclate__pastille').length }
+    o.faq = { photo: r(q('.faq-scene__photo')), h2: r(q('.faq-scene__tete h2')), intro: r(q('.faq-scene__intro')), details: qa('.faq details').length, liste: r(q('.faq')) }
+    o.contact = { sec: r(q('#contact')), h2: r(q('#contact h2')), h2fs: fs(q('#contact h2')), p: qa('.contact__tete p').map(r), form: r(q('.devis__form')), infos: r(q('.contact__infos')) }
+    o.pied = r(q('.pied')); o.nav = r(q('.nav'))
+    o.reveals = qa('.reveal').map((e) => ({ cls: e.className.replace('reveal', '').trim().split(' ')[0], tag: e.tagName, ...r(e) }))
+    return o
+  })
+  await ctx.close(); return { lcp, geo }
+}
+res.iphone = await profil({ ...devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+res.pixel = await profil({ ...devices['Pixel 7'] })
+
+{
+  const ctx = await b.newContext({ ...devices['iPhone 13'], viewport: { width: 390, height: 844 } }); const page = await ctx.newPage()
+  await page.addInitScript(() => {
+    const f = CSS.supports.bind(CSS); const re = /animation-timeline|view-timeline|scroll-timeline|timeline-scope|animation-range/i
+    CSS.supports = function () { const t = [...arguments].join(':'); return re.test(t) ? false : f(...arguments) }
+    try { delete window.ViewTimeline; delete window.ScrollTimeline } catch (e) {}
+  })
+  await page.goto(url, { waitUntil: 'load' })
+  res.supports = await page.evaluate(() => {
+    const st = document.createElement('style')
+    st.textContent = '#t1,#t2,#t3,#t4,#t5,#t6{width:10px;height:10px}'
+      + '@supports (animation-timeline-inexistante: view()){#t1{width:11px}}'
+      + '@supports not (animation-timeline-inexistante: view()){#t2{width:12px}}'
+      + '@supports (animation-timeline: view()){#t3{width:13px}}'
+      + '@supports not (animation-timeline: view()){#t4{width:14px}}'
+      + '@supports (animation-timeline: --non-supporte()){#t5{width:15px}}'
+      + '@keyframes tk{from{transform:translateX(0)}to{transform:translateX(100px)}}'
+      + '#t6{animation:tk 1000ms linear both paused}'
+    document.head.appendChild(st)
+    for (let i = 1; i <= 6; i++) { const d = document.createElement('div'); d.id = 't' + i; document.body.appendChild(d) }
+    const w = (i) => getComputedStyle(document.getElementById('t' + i)).width
+    const el = document.getElementById('t6'), a = el.getAnimations()[0]
+    const avant = getComputedStyle(el).transform; a.currentTime = 500; const apres = getComputedStyle(el).transform
+    return { inexistante: w(1), notInexistante: w(2), view: w(3), notView: w(4), dashed: w(5), cssSupportsPropVal: CSS.supports('animation-timeline', 'view()'), cssSupportsTexte: CSS.supports('animation-timeline: view()'), cssSupportsCond: CSS.supports('(animation-timeline: view())'), cssSupportsAutre: CSS.supports('display', 'grid'), viewTimeline: typeof window.ViewTimeline, scrollTimeline: typeof window.ScrollTimeline, animNom: a.animationName, avant, apres, playState: a.playState }
+  })
+  res.sticky = await page.evaluate(async () => {
+    document.documentElement.classList.add('tout-rendu')
+    const st = document.createElement('style'); st.textContent = '.ouverture>.hero--plein{position:sticky;top:0}.ouverture>.plateau{position:relative;z-index:1}'; document.head.appendChild(st)
+    const f = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    const out = []
+    for (const y of [0, 300, 844, 929, 1100]) { scrollTo(0, y); await f(); const h = document.querySelector('.hero--plein').getBoundingClientRect(), p = document.querySelector('.plateau').getBoundingClientRect(); out.push({ y: scrollY, heroTop: Math.round(h.top), heroH: Math.round(h.height), plateauTop: Math.round(p.top), plateauH: Math.round(p.height) }) }
+    return out
+  })
+  await ctx.close()
+}
+await b.close(); srv.close()
+fs.writeFileSync(path.join(process.argv[2] || '.', 'sonde-geo.json'), JSON.stringify(res, null, 1))
+console.log('ok', res.version)

@@ -1,0 +1,367 @@
+// descente.mjs — films de la descente au défilement (cahier §2, §2.1, Q2), sur la page EN LIGNE, navigateur de test seulement.
+// Rien n'est écrit dans presti ; tout sort sous films/descente/.
+//   node descente.mjs temoins      : état du relief sans carte graphique, netteté « avant », géométrie du bloc 2 (D-1 à D-3),
+//                                   contrôle image positionnée ↔ capture en temps réel, sensibilité à la source 2880
+//   node descente.mjs d116|d066|sansgpu|d116-roulis : un film de 8 s en 1440×900 à 30 images/s, six images-clés, une planche,
+//                                   contraste du titre sur tout le parcours (D-5) et sur la grille D-5, netteté du bois (D-9),
+//                                   perceptibilité (D-15), mouvement du film (réduction de video-qa, écart, plage figée, anti-clignotement)
+// Méthode déterministe : aucune capture en temps réel dans les films. Les animations au temps (poussée, entrées) sont mises en
+// pause et positionnées ; le défilement est posé par scrollTo ; les animations liées au défilement suivent la position.
+// « Sans carte graphique » = chromium.launch() nu (cahier §8.0).
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { spawn } from 'node:child_process'
+import { rendre, versPng, SRC2400, SRC2880, SENS, avance } from './rendu.mjs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium } = require('playwright')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const URL = 'https://prestiapp.fr/sites-demo/lestraque/index.html'
+const MODE = process.argv[2]
+fs.mkdirSync(ICI + 'images-cles', { recursive: true })
+
+const FILMS = {
+  d116: { lettre: 'a', dmax: 0.116, roulis: false, titre: '(a) descente, δmax = 0,116 (toile dpr 1)' },
+  d066: { lettre: 'b', dmax: 0.066, roulis: false, titre: '(b) descente, δmax = 0,066 (toile dpr 1,5)' },
+  sansgpu: { lettre: 'c', dmax: 0, sans: true, titre: '(c) sans WebGL : zoom 1 → 1,04, fondus, titre immobile' },
+  'd116-roulis': { lettre: 'a-roulis', dmax: 0.116, roulis: true, titre: '(a′) δmax = 0,116 + roulis ρ = −76,923·δ (Q3)' },
+}
+
+// ── le bloc 2 du cahier §7.3, recopié tel quel ──
+const BLOC2 = `@media(min-width:1024px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .da--signature .ouverture>.plateau{margin-top:30svh}
+    .da--signature .ouverture .hero__media{transform-origin:40.4% calc(42% - 2.55vw);animation:ouverture-photo linear both,signature-palier linear both;animation-timeline:--plateau,scroll(root block);animation-range:entry 0% entry 100%,0px 30svh}
+    .da--signature .ouverture .h1__cle,.da--signature .ouverture .hero__pied{animation:signature-efface linear both;animation-timeline:scroll(root block);animation-range:0px 25svh}
+    html.js.da--signature .ouverture .hero__pied{opacity:0;animation:entre .8s cubic-bezier(.16,1,.3,1) .8s forwards,signature-efface linear both;animation-timeline:auto,scroll(root block);animation-range:normal,0px 25svh}
+  }
+}
+@keyframes signature-palier{from{scale:1}to{scale:1.04}}
+@keyframes signature-efface{to{opacity:0;visibility:hidden}}`
+// ── harnais de test (pas du design) : défilement instantané ; titre transparent pour le contraste (cahier §8.0), activé par classe ──
+const HARNAIS = `html{scroll-behavior:auto!important}
+html.cdc-sans-titre .hero h1,html.cdc-sans-titre .hero h1 *{color:transparent!important;text-shadow:none!important}`
+
+// ── outils dans la page ──
+const OUTILS = () => {
+  const raf2 = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+  // animations au temps : pause + position ; transitions : menées à leur fin ; animations liées au défilement : intouchées
+  window.__poser = (tPousse) => {
+    let n = 0
+    for (const a of document.getAnimations()) {
+      if (!(a.timeline instanceof DocumentTimeline)) continue
+      if (typeof CSSTransition !== 'undefined' && a instanceof CSSTransition) { a.finish(); continue }
+      a.pause()
+      if (a.animationName === 'pousse') a.currentTime = tPousse
+      else { const fin = a.effect ? a.effect.getComputedTiming().endTime : Infinity; a.currentTime = Number.isFinite(fin) ? fin : tPousse }
+      n++
+    }
+    return n
+  }
+  window.__lire = () => {
+    const q = (s) => document.querySelector(s), cs = (e, p) => getComputedStyle(e, p)
+    const hero = q('.ouverture>.hero--plein'), pl = q('.ouverture>.plateau'), co = q('.ouverture .hero__contenu'), me = q('.ouverture .hero__media')
+    const img = me.querySelector('img'), cle = q('.ouverture .h1__cle'), pied = q('.ouverture .hero__pied'), lig = q('.ouverture .h1__ligne'), h1 = q('.hero h1'), nav = q('.nav')
+    const b = h1.getBoundingClientRect()
+    let enCours = 0
+    for (const a of document.getAnimations()) if (a.timeline instanceof DocumentTimeline && a.playState === 'running') enCours++
+    const pousse = img.getAnimations().find((a) => a.animationName === 'pousse')
+    return {
+      y: scrollY, plateauHaut: +pl.getBoundingClientRect().top.toFixed(2), ouvertureHauteur: +q('.ouverture').getBoundingClientRect().height.toFixed(1),
+      contenuOpacite: +(+cs(co).opacity).toFixed(3), contenuTransform: cs(co).transform, voile: +(+cs(hero, '::after').opacity).toFixed(3),
+      mediaTransform: cs(me).transform, mediaScale: cs(me).scale, imgScale: cs(img).scale,
+      cleOpacite: +(+cs(cle).opacity).toFixed(3), cleVisibilite: cs(cle).visibility, piedOpacite: +(+cs(pied).opacity).toFixed(3), piedVisibilite: cs(pied).visibility,
+      ligneHaut: +lig.getBoundingClientRect().top.toFixed(2), boiteH1: { x: b.x, y: b.y, w: b.width, h: b.height },
+      devisNav: !!(nav && nav.classList.contains('nav--appel')), imgSrc: (img.currentSrc || '').split('/').pop(), imgLargeur: img.naturalWidth,
+      pousse: pousse ? pousse.currentTime : null, animationsAuTempsEnCours: enCours, relief: hero.getAttribute('data-relief-etat'),
+    }
+  }
+  window.__etat = async ({ url, y, tPousse, sansTitre }) => {
+    const img = document.querySelector('.ouverture .hero__media img')
+    if (url && img.getAttribute('src') !== url) { img.src = url; await img.decode() }
+    document.documentElement.classList.toggle('cdc-sans-titre', !!sansTitre)
+    if (Math.abs(scrollY - y) > 0.01) scrollTo(0, y)
+    await raf2(); window.__poser(tPousse); await raf2(); window.__poser(tPousse)
+    return window.__lire()
+  }
+}
+
+// ── images de la perspective, servies à la page par une route (jamais écrites dans presti) ──
+const cache = new Map()
+const nomImage = (d, rho, src = 2400) => `d${d.toFixed(5)}_r${rho.toFixed(3)}_${src}.png`
+async function imagePng(nom) {
+  if (cache.has(nom)) return cache.get(nom)
+  const m = nom.match(/^d([\d.]+)_r(-?[\d.]+)_(\d+)\.png$/)
+  const png = await versPng(await rendre(+m[1], +m[2], m[3] === '2880' ? SRC2880 : SRC2400))
+  cache.set(nom, png); if (cache.size > 8) cache.delete(cache.keys().next().value)
+  return png
+}
+const urlImage = (d, rho, src) => `https://prestiapp.fr/__descente/${nomImage(d, rho, src)}`
+
+async function ouvrir(nav, W, H, { bloc2 = true, injecte = false } = {}) {
+  const ctx = await nav.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1 })
+  const page = await ctx.newPage()
+  await page.route('https://prestiapp.fr/__descente/**', async (route) => {
+    const nom = decodeURIComponent(route.request().url().split('/').pop())
+    await route.fulfill({ status: 200, contentType: 'image/png', headers: { 'cache-control': 'max-age=86400' }, body: await imagePng(nom) })
+  })
+  await page.goto(URL, { waitUntil: 'load' })
+  const tCharge = Date.now()
+  await page.evaluate(OUTILS)
+  await page.addStyleTag({ content: HARNAIS })
+  const avant = await page.evaluate(() => ({
+    reglesSignatureAvantInjection: [...document.styleSheets].reduce((n, s) => { try { return n + [...s.cssRules].filter((r) => r.cssText.includes('signature')).length } catch { return n } }, 0),
+    classesHtml: document.documentElement.className, ua: navigator.userAgent.match(/Chrome\/[\d.]+/)?.[0],
+    supportsViewTimeline: CSS.supports('animation-timeline: view()'),
+  }))
+  if (bloc2) { await page.evaluate(() => document.documentElement.classList.add('da--signature')); await page.addStyleTag({ content: BLOC2 }) }
+  if (injecte) await page.evaluate(() => { const img = document.querySelector('.ouverture .hero__media img'); img.closest('picture').querySelectorAll('source').forEach((s) => s.remove()) })
+  const reste = 8000 - (Date.now() - tCharge); if (reste > 0) await page.waitForTimeout(reste)
+  avant.reliefA8s = await page.evaluate(() => document.querySelector('.ouverture>.hero--plein').getAttribute('data-relief-etat'))
+  return { ctx, page, avant }
+}
+const etat = (page, a) => page.evaluate((x) => window.__etat(x), a)
+
+// ── mesures ──
+const c01 = (x) => Math.min(1, Math.max(0, x))
+const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 }
+const LIN = Float64Array.from({ length: 256 }, (_, i) => lin(i))
+// réduction grise de 160 px et écart : fonctions gris / ecart de cahier/cdc-c2-variantes.mjs (cahier §8.0)
+const gris = async (b, z) => { let s = sharp(b); if (z) s = s.extract(z); return (await s.resize(160).greyscale().raw().toBuffer()) }
+const ecart = (a, b) => { let s = 0, n8 = 0; for (let i = 0; i < a.length; i++) { const d = Math.abs(a[i] - b[i]); s += d; if (d > 8) n8++ } return { moyen: +(s / a.length / 255).toFixed(4), part8: +(n8 / a.length).toFixed(3) } }
+// contraste du fond du titre (cahier §8.0) : titre transparent, PNG, luminance relative des pixels de la boîte de .hero h1, p90, 1,05/(L + 0,05)
+async function contraste(png, boite, W, H) {
+  const left = Math.max(0, Math.round(boite.x)), top = Math.max(0, Math.round(boite.y))
+  const right = Math.min(W, Math.round(boite.x + boite.w)), bottom = Math.min(H, Math.round(boite.y + boite.h))
+  if (right - left < 2 || bottom - top < 2) return null
+  const { data, info } = await sharp(png).extract({ left, top, width: right - left, height: bottom - top }).removeAlpha().raw().toBuffer({ resolveWithObject: true })
+  const L = new Float64Array(data.length / info.channels)
+  for (let i = 0, j = 0; i < data.length; i += info.channels, j++) L[j] = 0.2126 * LIN[data[i]] + 0.7152 * LIN[data[i + 1]] + 0.0722 * LIN[data[i + 2]]
+  L.sort()
+  const p90 = L[Math.floor(0.9 * (L.length - 1))]
+  return +(1.05 / (p90 + 0.05)).toFixed(3)
+}
+// netteté : variance du laplacien, fonction de cahier/cdc-c2-variantes.mjs (section 3) ; zones du cahier (R-5) en 1440×900
+const ZONE_BOIS = { left: 900, top: 120, width: 500, height: 300 }, ZONE_MARCHES = { left: 150, top: 120, width: 350, height: 300 }
+async function laplacien(png, zone) {
+  const { data, info } = await sharp(png).extract(zone).greyscale().raw().toBuffer({ resolveWithObject: true })
+  const w = info.width, h = info.height
+  let s = 0, s2 = 0, n = 0
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; const v = data[i - 1] + data[i + 1] + data[i - w] + data[i + w] - 4 * data[i]; s += v; s2 += v * v; n++ }
+  return +(s2 / n - (s / n) ** 2).toFixed(1)
+}
+// D-15 : appariement de blocs de 16 px sur la réduction de 160 px, affinage parabolique au sous-pixel
+function apparier(A, B, W, H, bx, by, R) {
+  const dedans = (u, v) => bx + u >= 0 && by + v >= 0 && bx + u + 16 <= W && by + v + 16 <= H
+  const cout = (u, v) => { let s = 0; for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) s += Math.abs(A[(by + j) * W + bx + i] - B[(by + v + j) * W + bx + u + i]); return s }
+  let best = Infinity, bu = 0, bv = 0
+  for (let v = -R; v <= R; v++) for (let u = -R; u <= R; u++) { if (!dedans(u, v)) continue; const c = cout(u, v); if (c < best) { best = c; bu = u; bv = v } }
+  const para = (m, c0, p) => { const den = m - 2 * c0 + p; return den > 0 ? 0.5 * (m - p) / den : 0 }
+  const du = dedans(bu - 1, bv) && dedans(bu + 1, bv) ? para(cout(bu - 1, bv), best, cout(bu + 1, bv)) : 0
+  const dv = dedans(bu, bv - 1) && dedans(bu, bv + 1) ? para(cout(bu, bv - 1), best, cout(bu, bv + 1)) : 0
+  return { u: bu + du, v: bv + dv, sadMoyen: +(best / 256).toFixed(2), bordRecherche: Math.abs(bu) === R || Math.abs(bv) === R }
+}
+const quantile = (arr, p) => { const a = [...arr].sort((x, y) => x - y); return a.length ? a[Math.floor(p * (a.length - 1))] : null }
+const r1 = (x) => (x == null ? null : +x.toFixed(1)), r2 = (x) => (x == null ? null : +x.toFixed(2)), r3 = (x) => (x == null ? null : +x.toFixed(3))
+
+// ── parcours du film : 8 s, 30 images/s ; 0,5 s au repos, défilement sinusoïdal doux de 0 à 1,30 h (plateau entré), 0,5 s posé ──
+const IPS = 30, DUREE = 8, T0 = 0.5, T1 = 7.5
+const yFilm = (t, H) => { const Y = 1.3 * H; if (t <= T0) return 0; if (t >= T1) return Y; return Y * (1 - Math.cos(Math.PI * (t - T0) / (T1 - T0))) / 2 }
+const tDeY = (y, H) => (y <= 0 ? 0 : T0 + (T1 - T0) * Math.acos(1 - 2 * y / (1.3 * H)) / Math.PI)
+const deltaDe = (film, y, H) => film.dmax * c01(y / (0.3 * H))
+const rhoDe = (film, d) => (film.roulis ? SENS * 76.923 * d : 0)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+if (MODE === 'temoins') {
+  const res = { date: new Date().toISOString(), url: URL }
+  const nav = await chromium.launch()
+  // 1. page en ligne telle quelle, 1440×900
+  {
+    const { ctx, page, avant } = await ouvrir(nav, 1440, 900, { bloc2: false })
+    const e = await etat(page, { y: 0, tPousse: 0 })
+    const png = await page.screenshot({ type: 'png' })
+    fs.writeFileSync(ICI + 'temoin-en-ligne-y0.png', png)
+    const e2 = await etat(page, { y: 0, tPousse: 0, sansTitre: true })
+    const png2 = await page.screenshot({ type: 'png' })
+    res.enLigne = { ...avant, imgSrc: e.imgSrc, imgLargeur: e.imgLargeur, netteteBois: await laplacien(png, ZONE_BOIS), netteteMarches: await laplacien(png, ZONE_MARCHES), contrasteTitreY0_pousse0: await contraste(png2, e2.boiteH1, 1440, 900) }
+    await ctx.close()
+  }
+  // 2. géométrie du bloc 2 injecté (D-1, D-2, D-3), sans image injectée, poussée à 0
+  {
+    const { ctx, page, avant } = await ouvrir(nav, 1440, 900)
+    res.bloc2 = { ...avant, releves: [] }
+    for (const y of [0, 90, 112, 135, 180, 225, 270, 518, 765, 1170, 1270]) res.bloc2.releves.push(await etat(page, { y, tPousse: 0 }))
+    await ctx.close()
+  }
+  // 3. image positionnée ↔ capture en temps réel au même instant (film a : image injectée à y = 135, poussée qui tourne)
+  {
+    const { ctx, page } = await ouvrir(nav, 1440, 900, { injecte: true })
+    const y = 135, d = deltaDe(FILMS.d116, y, 900)
+    await page.evaluate(async ({ url, y }) => { const img = document.querySelector('.ouverture .hero__media img'); img.src = url; await img.decode(); scrollTo(0, y) }, { url: urlImage(d, 0), y })
+    await page.waitForTimeout(600) // la poussée tourne en temps réel ; laisser les transitions de la barre finir
+    const avantCapture = await page.evaluate(() => { const a = document.querySelector('.ouverture .hero__media img').getAnimations().find((x) => x.animationName === 'pousse'); return { ct: a.currentTime, enCours: a.playState } })
+    const reel = await page.screenshot({ type: 'png' })
+    const apresCapture = await page.evaluate(() => document.querySelector('.ouverture .hero__media img').getAnimations().find((x) => x.animationName === 'pousse').currentTime)
+    const tMilieu = (avantCapture.ct + apresCapture) / 2
+    const e = await etat(page, { url: urlImage(d, 0), y, tPousse: tMilieu })
+    const pose = await page.screenshot({ type: 'png' })
+    // même chose, décalée d'une seconde de poussée : l'écart attendu d'une vraie différence d'instant
+    await etat(page, { url: urlImage(d, 0), y, tPousse: tMilieu + 1000 })
+    const decale = await page.screenshot({ type: 'png' })
+    fs.writeFileSync(ICI + 'temoin-temps-reel.png', reel); fs.writeFileSync(ICI + 'temoin-positionne.png', pose)
+    const [gR, gP, gD] = [await gris(reel), await gris(pose), await gris(decale)]
+    const zp = { left: 0, top: 80, width: 1440, height: 390 }
+    res.tempsReelContrePositionne = {
+      y, delta: d, pousseAvantCapture_ms: r1(avantCapture.ct), pousseApresCapture_ms: r1(apresCapture), etatPousse: avantCapture.enCours, pousseReposee_ms: r1(tMilieu), etatApres: { y: e.y, imgSrc: e.imgSrc, animationsAuTempsEnCours: e.animationsAuTempsEnCours },
+      ecartPage: ecart(gR, gP), ecartPhoto: ecart(await gris(reel, zp), await gris(pose, zp)),
+      temoinDecale1s: { ecartPage: ecart(gP, gD), ecartPhoto: ecart(await gris(pose, zp), await gris(decale, zp)) },
+    }
+    // 4. sensibilité à la source : même état (y = 270, poussée 0), perspective rendue depuis la 2400 puis depuis la 2880
+    const sens = {}
+    for (const [src, y2, d2] of [[2400, 0, 0], [2880, 0, 0], [2400, 270, 0.116], [2880, 270, 0.116], [2400, 270, 0.066], [2880, 270, 0.066]]) {
+      await etat(page, { url: urlImage(d2, 0, src), y: y2, tPousse: 0 })
+      const png = await page.screenshot({ type: 'png' })
+      sens[`src${src}_y${y2}_d${d2}`] = { bois: await laplacien(png, ZONE_BOIS), marches: await laplacien(png, ZONE_MARCHES) }
+    }
+    res.sensibiliteSource = sens
+    await ctx.close()
+  }
+  await nav.close()
+  fs.writeFileSync(ICI + 'mesures-temoins.json', JSON.stringify(res, null, 1))
+  console.log(JSON.stringify(res, null, 1))
+  process.exit(0)
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+const film = FILMS[MODE]
+if (!film) { console.error('mode inconnu', MODE); process.exit(1) }
+const W = 1440, H = 900, N = IPS * DUREE
+const res = { date: new Date().toISOString(), url: URL, mode: MODE, film: film.titre, viewport: `${W}x${H}`, deviceScaleFactor: 1, lancement: 'chromium.launch() sans drapeau', dmax: film.dmax, roulis: film.roulis ? 'ρ = h·76,923·δ, h = −1' : 0, parcours: `0,5 s à y = 0 ; y = 1170·(1 − cos(π(t − 0,5)/7))/2 ; 0,5 s à 1170`, poussee: 'currentTime = t du film (départ 0)', fichier: `descente-${MODE}.mp4` }
+const nav = await chromium.launch()
+const { ctx, page, avant } = await ouvrir(nav, W, H, { injecte: !film.sans })
+res.page = avant
+const log = (...a) => console.log(new Date().toISOString().slice(11, 19), MODE, ...a)
+
+// 1. le film
+{
+  const sortie = ICI + `descente-${MODE}.mp4`
+  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${W}x${H}`, '-r', String(IPS), '-i', '-', '-c:v', 'libx264', '-crf', '20', '-pix_fmt', 'yuv420p', '-an', '-movflags', '+faststart', sortie], { stdio: ['pipe', 'inherit', 'inherit'] })
+  const fini = new Promise((r) => ff.on('close', r))
+  const ecrire = (buf) => new Promise((r) => (ff.stdin.write(buf) ? r() : ff.stdin.once('drain', r)))
+  const serie = [], g = []
+  for (let i = 0; i < N; i++) {
+    const t = i / IPS, y = Math.round(yFilm(t, H)), d = deltaDe(film, y, H), rho = rhoDe(film, d)
+    const url = film.sans ? null : urlImage(d, rho)
+    const e = await etat(page, { url, y, tPousse: t * 1000 })
+    const png = await page.screenshot({ type: 'png' })
+    await ecrire(await sharp(png).removeAlpha().raw().toBuffer())
+    g.push(await gris(png))
+    const e2 = await etat(page, { url, y, tPousse: t * 1000, sansTitre: true })
+    const png2 = await page.screenshot({ type: 'png' })
+    serie.push({
+      i, t: r3(t), y: e.y, v: r3(c01(y / (0.3 * H))), delta: +d.toFixed(4), rho_deg: r2(rho), contenuOpacite: e.contenuOpacite, cleOpacite: e.cleOpacite, piedOpacite: e.piedOpacite, piedVisibilite: e.piedVisibilite,
+      plateauHaut: e.plateauHaut, voile: e.voile, mediaScale: e.mediaScale, imgScale: e.imgScale, ligneHaut: e.ligneHaut, devisNav: e.devisNav, img: e.imgSrc,
+      contrasteP90: await contraste(png2, e2.boiteH1, W, H), netteteBois: e.plateauHaut > ZONE_BOIS.top + ZONE_BOIS.height ? await laplacien(png, ZONE_BOIS) : null, animationsAuTempsEnCours: e.animationsAuTempsEnCours,
+    })
+    if (i % 30 === 0) log('image', i, 'y', y, 'δ', d.toFixed(4), 'contraste', serie[i].contrasteP90, 'bois', serie[i].netteteBois)
+  }
+  ff.stdin.end(); await fini
+  res.serie = serie
+  // mouvement du film, à 8 images/s comme video-qa (ECH 8) : écart moyen, plage figée (< 0,006), paires > 0,085
+  const idx = []; for (let k = 0; k < DUREE * 8; k++) idx.push(Math.round(k * IPS / 8))
+  let fige = 0, figeMax = 0, som = 0, max = 0, coupes = 0
+  for (let k = 1; k < idx.length; k++) { const e = ecart(g[idx[k - 1]], g[idx[k]]).moyen; som += e; max = Math.max(max, e); if (e > 0.085) coupes++; if (e < 0.006) { fige += 1 / 8; figeMax = Math.max(figeMax, fige) } else fige = 0 }
+  let max30 = 0; for (let i = 1; i < g.length; i++) max30 = Math.max(max30, ecart(g[i - 1], g[i]).moyen)
+  const descente = serie.filter((s) => s.y > 0 && s.y <= 0.3 * H)
+  res.mouvementFilm = { images8ips: idx.length, ecartMoyenParImage8ips: r3(som / (idx.length - 1)), ecartMaxPaire8ips: max, pairesAuDessus0085: coupes, plageFigeeLaPlusLongue_s: figeMax, ecartMaxEntreImages30ips: max30, dureePalierDansLeFilm_s: r2(descente.length / IPS), ecartY0contreY270_page: ecart(g[0], g[serie.findIndex((s) => s.y >= 270)]) }
+  log('film écrit', sortie)
+}
+
+// 2. six images-clés à y exacts, poussée au t du film correspondant, et la planche
+{
+  const Y = [0, 90, 180, 270, 518, 1170], vign = [], cles = []
+  for (const [k, y] of Y.entries()) {
+    const t = tDeY(y, H), d = deltaDe(film, y, H), rho = rhoDe(film, d)
+    const e = await etat(page, { url: film.sans ? null : urlImage(d, rho), y, tPousse: t * 1000 })
+    const png = await page.screenshot({ type: 'png' })
+    const nom = `images-cles/${film.lettre}-${k + 1}-y${String(y).padStart(4, '0')}.jpg`
+    await sharp(png).jpeg({ quality: 92 }).toFile(ICI + nom)
+    const legende = `y = ${y} · t = ${t.toFixed(2).replace('.', ',')} s · ${film.sans ? `zoom ${(1 + 0.04 * c01(y / 270)).toFixed(3).replace('.', ',')}` : `δ = ${d.toFixed(3).replace('.', ',')}`}${film.roulis ? ` · ρ = ${rho.toFixed(1).replace('.', ',')}°` : ''}`
+    const svg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400"><rect x="10" y="10" width="${Math.round(legende.length * 8.6 + 20)}" height="30" rx="4" fill="rgba(0,0,0,.72)"/><text x="20" y="31" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#fff">${legende}</text></svg>`)
+    vign.push(await sharp(png).resize(640, 400).composite([{ input: svg, left: 0, top: 0 }]).png().toBuffer())
+    cles.push({ fichier: nom, y, t: r3(t), delta: +d.toFixed(4), rho_deg: r2(rho), contenuOpacite: e.contenuOpacite, piedOpacite: e.piedOpacite, plateauHaut: e.plateauHaut, devisNav: e.devisNav, imgScale: e.imgScale, mediaScale: e.mediaScale })
+  }
+  const bandeau = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="56"><rect width="1920" height="56" fill="#111"/><text x="20" y="36" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#fff">${film.titre} — page en ligne, 1440×900, sans carte graphique${film.sans ? '' : ', perspective rendue hors ligne (modèle proto7) et injectée'}</text></svg>`)
+  await sharp({ create: { width: 1920, height: 856, channels: 3, background: '#000' } })
+    .composite([{ input: bandeau, left: 0, top: 0 }, ...vign.map((b, i) => ({ input: b, left: (i % 3) * 640, top: 56 + Math.floor(i / 3) * 400 }))])
+    .jpeg({ quality: 88 }).toFile(ICI + `planche-${film.lettre}.jpg`)
+  res.imagesCles = cles; res.planche = `planche-${film.lettre}.jpg`
+  log('planche écrite')
+}
+
+// 3. D-15 et D-9 : y = 0 et y = 0,30 h, animations au repos figées (poussée à 0)
+{
+  const d270 = deltaDe(film, 270, H), rho270 = rhoDe(film, d270)
+  const e0 = await etat(page, { url: film.sans ? null : urlImage(0, 0), y: 0, tPousse: 0 })
+  const p0 = await page.screenshot({ type: 'png' })
+  const e1 = await etat(page, { url: film.sans ? null : urlImage(d270, rho270), y: 270, tPousse: 0 })
+  const p1 = await page.screenshot({ type: 'png' })
+  fs.writeFileSync(ICI + `fige-${film.lettre}-y0000.png`, p0); fs.writeFileSync(ICI + `fige-${film.lettre}-y0270.png`, p1)
+  res.nettete = { zoneBois: 'x 900-1400, y 120-420', zoneMarches: 'x 150-500, y 120-420', y0: { bois: await laplacien(p0, ZONE_BOIS), marches: await laplacien(p0, ZONE_MARCHES), img: e0.imgSrc }, y270: { bois: await laplacien(p1, ZONE_BOIS), marches: await laplacien(p1, ZONE_MARCHES), img: e1.imgSrc, mediaScale: e1.mediaScale } }
+  const A = await gris(p0), B = await gris(p1), WR = 160, HR = 100
+  const EXs = 0.404 * 1440, EYs = 0.386 * 1080 - (1080 - 900) * 0.42 // œil à l'écran : 581,76 ; 341,28 (cahier §6)
+  const h1Haut = e0.boiteH1.y
+  const zones = {
+    oeil: { def: 'blocs 16×16 de la réduction entièrement dans le carré de 48 px réduits (432 px écran) centré sur l’œil (581,8 ; 341,3), sous la barre (y ≥ 80) et au-dessus du h1 (y < ' + Math.round(h1Haut) + ')', blocs: [] },
+    marches: { def: 'blocs 16×16 entièrement dans x 150-500, y 120-420 (zone des marches du cahier)', blocs: [] },
+  }
+  const ex = EXs / 9, ey = EYs / 9
+  for (let by = 0; by + 16 <= HR; by += 2) for (let bx = 0; bx + 16 <= WR; bx += 2) {
+    const dansOeil = bx >= ex - 24 && bx + 16 <= ex + 24 && by >= Math.max(ey - 24, 80 / 9) && by + 16 <= Math.min(ey + 24, h1Haut / 9)
+    const dansMarches = bx >= 150 / 9 && bx + 16 <= 500 / 9 && by >= 120 / 9 && by + 16 <= 420 / 9
+    if (!dansOeil && !dansMarches) continue
+    const m = apparier(A, B, WR, HR, bx, by, 18)
+    const cx = (bx + 8) * 9, cy = (by + 8) * 9, vx = cx - EXs, vy = cy - EYs, dist = Math.hypot(vx, vy)
+    // prédiction du modèle : rayon écran ρ → 1,04 · r'(ρ/1080, δ) · 1080, tourné de ρ ; zoom du palier autour de l'œil (bloc 2)
+    const r = dist / 1080, rp = avance(r, d270) * 1080 * 1.04, th = rho270 * Math.PI / 180
+    const px = EXs + (rp / dist) * (vx * Math.cos(th) - vy * Math.sin(th)), py = EYs + (rp / dist) * (vx * Math.sin(th) + vy * Math.cos(th))
+    const b = { centre: [cx, cy], distanceOeil: r1(dist), mesure_px: [r1(m.u * 9), r1(m.v * 9)], module_px: r1(Math.hypot(m.u, m.v) * 9), radial_px: r1((m.u * vx + m.v * vy) / dist * 9), modele_px: [r1(px - cx), r1(py - cy)], moduleModele_px: r1(Math.hypot(px - cx, py - cy)), sadMoyen: m.sadMoyen, bordRecherche: m.bordRecherche }
+    if (dansOeil) zones.oeil.blocs.push(b)
+    if (dansMarches) zones.marches.blocs.push(b)
+  }
+  for (const z of Object.values(zones)) {
+    const mod = z.blocs.map((b) => b.module_px), rad = z.blocs.map((b) => b.radial_px), modM = z.blocs.map((b) => b.moduleModele_px)
+    z.resume = { blocs: z.blocs.length, moduleMedian_px: r1(quantile(mod, 0.5)), moduleP90_px: r1(quantile(mod, 0.9)), radialMedian_px: r1(quantile(rad, 0.5)), moduleModeleMedian_px: r1(quantile(modM, 0.5)), blocsAuBordDeLaRecherche: z.blocs.filter((b) => b.bordRecherche).length }
+  }
+  res.perceptibiliteD15 = { methode: 'réduction grise 160×100 (gris de cdc-c2-variantes.mjs), y = 0 contre y = 270, poussée figée à 0 ; SAD, recherche ±18 px réduits (±162 px écran), pas des blocs 2 px réduits, affinage parabolique ; px écran = px réduits × 9', delta: d270, rho_deg: rho270, zones }
+  log('D-15', JSON.stringify({ oeil: zones.oeil.resume, marches: zones.marches.resume }))
+}
+
+// 4. D-5 : y ∈ {0 ; 0,10 h ; 0,20 h ; 0,30 h} × huit instants du cycle de la poussée (40 s, pas de 5 s), trois formats
+{
+  const d5 = {}
+  for (const [FW, FH] of [[1280, 800], [1366, 768], [1440, 900]]) {
+    const p = FW === W && FH === H ? { page } : await ouvrir(nav, FW, FH, { injecte: !film.sans })
+    const lignes = []
+    for (const f of [0, 0.1, 0.2, 0.3]) {
+      const y = Math.round(f * FH), d = deltaDe(film, y, FH), rho = rhoDe(film, d)
+      for (let k = 0; k < 8; k++) {
+        const e = await etat(p.page, { url: film.sans ? null : urlImage(d, rho), y, tPousse: k * 5000, sansTitre: true })
+        const png = await p.page.screenshot({ type: 'png' })
+        lignes.push({ y, f, delta: +d.toFixed(4), pousse_ms: k * 5000, imgScale: e.imgScale, contenuOpacite: e.contenuOpacite, contrasteP90: await contraste(png, e.boiteH1, FW, FH) })
+      }
+    }
+    const utiles = lignes.filter((l) => l.contenuOpacite >= 0.5)
+    d5[`${FW}x${FH}`] = { min: Math.min(...utiles.map((l) => l.contrasteP90)), passe: utiles.every((l) => l.contrasteP90 >= 3), lignes }
+    if (p.ctx) await p.ctx.close()
+    log('D-5', `${FW}x${FH}`, d5[`${FW}x${FH}`].min)
+  }
+  res.contrasteD5grille = d5
+  const parcours = res.serie.filter((s) => s.contenuOpacite >= 0.5 && s.contrasteP90 != null)
+  const pire = parcours.reduce((a, b) => (b.contrasteP90 < a.contrasteP90 ? b : a))
+  res.contrasteD5parcours = { images: parcours.length, min: pire.contrasteP90, yDuMin: pire.y, passe: parcours.every((s) => s.contrasteP90 >= 3), sousTrois: parcours.filter((s) => s.contrasteP90 < 3).map((s) => [s.y, s.contrasteP90]) }
+}
+
+await ctx.close(); await nav.close()
+fs.writeFileSync(ICI + `mesures-${MODE}.json`, JSON.stringify(res, null, 1))
+log('fini')

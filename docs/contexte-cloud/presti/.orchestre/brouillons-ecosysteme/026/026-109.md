@@ -1,0 +1,101 @@
+---
+id: 026-109
+type: feature
+objectif: Donner à l'orchestre des baux qui expirent (2 × maxMinutes sans battement), les commandes battement, expirer et promouvoir, un disjoncteur par tâche (3 tentatives échouées ou 2 échecs identiques → DISJONCTÉE), la quarantaine des décisions écrites par un exécutant et un bloc « Attention » en tête du digest, dans la source puis par maj, jusqu'au vert du groupe baux de preuve-026
+perimetre: [../orchestre/bin/orchestre.mjs, ../orchestre/README.md, scripts/orchestre.mjs, .orchestre/preuves/026-109/**]
+interdit: [../orchestre/test/**, ../orchestre/bin/executant.mjs, ../orchestre/bin/antigravity.mjs, ../orchestre/hooks/**, ../orchestre/juges/**, ../orchestre/gabarits/**, scripts/executant.mjs, scripts/antigravity.mjs, .orchestre/orchestre.json, .orchestre/verdicts.jsonl, .orchestre/en-cours/**, .orchestre/file/**, app/**, lib/**, supabase/**]
+verifier: node ../orchestre/test/preuve-026.mjs --groupe=baux
+budget: { fichiers: 4, minutes: 20 }
+preuve: sortie de verifier dans .orchestre/preuves/026-109/verifier.log
+executant: claude-code
+---
+
+# 026-109 — des baux qui expirent, un disjoncteur par tâche, un bloc « Attention »
+
+## Place dans la série (assemblage du 24/09)
+
+Cette section fait foi si le texte plus bas cite un autre ordre, un id provisoire ou un numéro de migration provisoire.
+
+- **Id :** 026-109 (ancien id : 026-077 ; provisoire : 026-code-securite-07) · **vague :** 58 de `INDEX.md` · **exécutant :** codex.
+- **Dépend de (PASS) :** 026-107.
+- **Ids définitifs** des domaines cités (« la fiche NN » d'un domaine = son id provisoire `026-<domaine>-NN`) :
+  - code-securite : 01 → 026-002 · 02 → 026-005 · 03 → 026-007 · 04 → 026-003 · 05 → 026-098 · 06 → 026-107 · 07 → 026-109 · 08 → 026-115 · 09 → 026-139 · 10 → 026-004 · 11 → 026-006 · 12 → 026-008 · 13 → 026-102 · 14 → 026-105 · 15 → 026-127 · 16 → 026-121 · 17 → 026-146 · 18 → 026-148 · 19 → 026-150 · 20 → 026-151
+
+## Contexte
+
+**Dépend de :** 026-107 (même fichier `bin/orchestre.mjs` : les fiches 06, 07 et 08 passent une par une).
+
+Dans `bin/orchestre.mjs` du dépôt orchestre (`C:\Users\benja\Documents\orchestre`), `prochaine` écrit un verrou `en-cours/<id>.lock` :
+
+```
+agent: <nom>
+depuis: <ISO>
+sha: <sha>
+```
+
+C'est à la ligne `:256`, et `lireLock` le relit (`:204`). **Rien ne compare jamais `depuis`.** `maxMinutes` (30 par défaut) ne borne que la durée de `verifier` (`:317`). Un exécutant qui meurt tient donc sa tâche pour toujours : 023-03 est verrouillée depuis le 16/09. Et une tâche qui échoue sans cesse est redonnée sans fin, comme 021-02 et 021-20 (4 FAIL chacune).
+
+Les verdicts sont des lignes JSON dans `.orchestre/verdicts.jsonl` : `{id, verdict, ligne, code, date, duree_s, agent, executant, lignes, dossier}` (`:334`). Un FAIL lancé depuis `en-cours/` est normal : l'exécutant itère. Un FAIL lancé depuis `fait/` renvoie la tâche dans `refuse/`, et c'est la fin d'une tentative.
+
+Le digest (`digest()`, `:360`) porte parfois en tête un bloc budget, qui doit y rester (`test/preuve.mjs:155,158`).
+
+Tu travailles dans la source, puis tu lances `node scripts/orchestre.mjs maj` dans presti. Tu ne modifies jamais `scripts/orchestre.mjs` de presti à la main (exception au prompt général : `maj` le recopie). Tu ne touches à aucune tâche réelle de presti. **023-03 ne sera pas reprise** : le plan (§6.1, ligne 3) la range à la main en refusée (dernier verdict FAIL, hors du chemin de l'argent), à côté de la décision D5 qui range 023-01 et 023-02. La remettre en file la redonnerait à un exécutant, hors des vagues (revue du 24/09, B9). C'est Claude Code qui la range, avant le premier `expirer` (voir « C'est fini quand »).
+
+**Les décisions écrites par un exécutant** (recommandation R3 de la recherche du 24/09, `SaaS/Produit/Ecosysteme-Recherche-Agents-2026-09-24.md` §4) : aujourd'hui, la règle de `.orchestre/decisions.md` laisse **n'importe quel exécutant** ajouter une ligne « Défaut retenu », que tous les agents suivants appliquent sans demander. C'est une mémoire partagée écrite par l'auteur le moins fiable (risque n° 6 de l'OWASP pour les agents : l'empoisonnement de la mémoire).
+
+## Ce qu'il faut faire
+
+1. **Le bail.**
+   - Le seuil vaut `CONFIG.bailMinutes`, ou `2 × CONFIG.maxMinutes` quand cette clé est absente.
+   - Un verrou est expiré quand l'heure de `battement:` (à défaut, `depuis:`) a plus que le seuil.
+   - `node scripts/orchestre.mjs battement <id>` écrit ou remplace la ligne `battement: <ISO>`. Sans verrou, il sort en code 3.
+   - `verifier <id>` lancé sur une tâche de `en-cours/` rafraîchit aussi `battement:`, puisqu'un exécutant qui vérifie est vivant.
+2. **La reprise.** Une fonction `expirerBaux()` est appelée au début de `prochaine` et par la nouvelle commande `expirer`. Pour chaque verrou expiré :
+   - la fiche retourne de `en-cours/` vers `file/` ;
+   - `.lock`, `.avant.txt`, `.question.md` et `.reponse.md` sont supprimés ;
+   - `preuves/<id>/avant.txt` est gardé ;
+   - `verdicts.jsonl` gagne `{verdict: 'EXPIRÉE', ligne: 'bail expiré : <agent> silencieux depuis <n> min', agent: <ancien agent>, dossier: 'en-cours', …}`.
+
+   `expirer` affiche ce qu'il a repris et sort en code 0.
+3. **Le disjoncteur.** Une tentative se termine sans succès quand elle laisse un FAIL avec `dossier: 'fait'` ou une EXPIRÉE. On compte ces fins depuis le dernier PASS de la tâche.
+   - Trois fins de ce genre, **ou** les deux derniers FAIL depuis `fait/` avec la même `ligne`, font disjoncter la tâche. Au prochain `prochaine` ou `expirer`, elle part dans `refuse/`, et `verdicts.jsonl` gagne `{verdict: 'DISJONCTÉE', ligne: <les trois dernières lignes d'échec, séparées par « | », 300 signes au plus>}`.
+   - Elle n'est plus distribuée.
+   - `rejouer <id>` refuse une tâche DISJONCTÉE (code 3, avec la raison) sans `--forcer`, et l'accepte avec.
+4. **Le bloc Attention.** Dans `digest()`, la première section après le titre `# Digest — …` est `## Attention (n)`, avec 7 lignes au plus, les plus graves d'abord. Chaque ligne finit par la commande ou le geste exact, entre accents graves. Elle couvre :
+   - les tâches DISJONCTÉE (commande : `rejouer <id> --forcer` après correction) ;
+   - les verrous au-delà du seuil qui ne sont pas encore repris (`expirer`) ;
+   - les `.question.md` en attente (`repondre <id> <n>`) ;
+   - si `.orchestre/travail/sauvegardes.jsonl` existe et que sa dernière ligne `ok: true` a plus de 36 h : `node scripts/instantane-quotidien.mjs --pousser`.
+
+   Sans rien à signaler : `## Attention (0)`, puis « rien à décider ». Le bloc budget reste en tête du fichier quand il existe. Les lignes qu'attend `test/preuve.mjs` (tableau, état de la file, questions) restent présentes.
+5. **La quarantaine des décisions** (ORB-9), dans `bin/orchestre.mjs` :
+   - le gabarit de `decisions.md` (celui qu'`init` pose) gagne une section `## Proposées (quarantaine)` et une règle réécrite : un exécutant n'écrit **que** sous cette section, une ligne par proposition, avec l'id de sa tâche ; une proposition ne vaut que pour cette tâche ; seul Claude Code la promeut, ou Benj pour l'argent, l'irréversible et la marque ;
+   - `verifier <id>` compare `decisions.md` à son état au lancement de la tâche (copie prise par `prochaine` avec `avant.txt`) : une ligne ajoutée, changée ou retirée **hors** de `## Proposées` fait échouer la tâche, avec une ligne qui nomme `decisions.md` ;
+   - le rappel de `prochaine` (`PIED_DE_TACHE`) dit : « applique les décisions tranchées ; une ligne de « Proposées » ne vaut que pour la tâche dont elle porte l'id » ;
+   - le bloc Attention liste chaque proposition, avec la commande `` `node scripts/orchestre.mjs promouvoir <n>` `` ;
+   - `promouvoir <n> [--benj]` déplace la proposition n dans le tableau des décisions tranchées, datée du jour et suivie de « promue » ; une proposition dont le texte touche l'argent, l'irréversible ou la marque (liste de mots de ORB-9) est marquée « refusée d'office », et `promouvoir` sort en code 3 sans `--benj`.
+6. **L'aide** en tête de `bin/orchestre.mjs` et le `README.md` : les commandes `battement`, `expirer`, `rejouer --forcer` et `promouvoir`, la clé `bailMinutes`, et la quarantaine.
+7. **Dans presti** : `node scripts/orchestre.mjs maj`.
+8. **À ne pas faire.** Pas de réaiguillage sur quota (fiche 08). Ne pas toucher `executant.mjs` ni `antigravity.mjs`. Aucune commande git. Ne rien lancer sur les vraies tâches de presti. Ne pas toucher `.orchestre/decisions.md` de presti : c'est Claude Code qui y ajoute la section (ci-dessous).
+
+## C'est fini quand
+
+- `verifier` est vert depuis `fait/` : ORB-1 à ORB-9 et ORB-NR.
+- `verifier.log` est dans `.orchestre/preuves/026-109/` et n'est pas vide.
+- Rien n'a bougé hors `perimetre`.
+- Claude Code commite dans le dépôt orchestre. Puis, dans presti, dans cet ordre :
+  1. **023-03 en refusée** (revue du 24/09, B9) : Claude Code déplace `.orchestre/en-cours/023-03.md` dans `.orchestre/refuse/`, retire son verrou et ses fichiers annexes (`.lock`, `.avant.txt`) par des suppressions d'un seul fichier, garde `preuves/023-03/`, et ajoute à `verdicts.jsonl` une ligne `{ id: '023-03', verdict: 'REFUSÉE', ligne: 'rangée à la main, plan §6.1 ligne 3 et décision D5 du 24/09 : dernier verdict FAIL, hors du chemin de l\'argent, verrou tenu depuis le 16/09', agent: 'claude-code', dossier: 'refuse', … }` ;
+  2. **la section de quarantaine** : Claude Code ajoute à `.orchestre/decisions.md` la section `## Proposées (quarantaine)` et la règle du gabarit (point 5), sans toucher aux lignes existantes ;
+  3. **`node scripts/orchestre.mjs expirer`** : il ne reprend rien (aucune autre tâche n'a de verrou expiré) ; si une tâche revient quand même en file, Claude Code l'écrit en tête de `.orchestre/preuves/026-109/expirer.txt` et prévient Benj avant tout `prochaine`.
+
+## Cahier du juge
+
+Le groupe `baux` de `../orchestre/test/preuve-026.mjs` (fiche 05) se joue dans un projet factice que le juge crée :
+
+- il **vieillit lui-même** les verrous en réécrivant `depuis:` et `battement:`, puis il lance `prochaine` et `expirer` ;
+- il **constate l'emplacement réel** de la fiche (`file/`, `en-cours/`, `refuse/`) et la présence ou l'absence de chaque fichier annexe (ORB-3 à ORB-5) ;
+- il **fabrique l'historique** du disjoncteur en ajoutant lui-même des lignes à `verdicts.jsonl`. Il couvre trois cas : trois fins d'échec, deux lignes identiques, et des FAIL depuis `en-cours/` qui ne doivent pas compter (ORB-6) ;
+- il **relit `digest.md`** : position du bloc budget, du titre et de `## Attention (n)` ; nombre de lignes ; commande entre accents graves à chaque ligne ; cas « rien à décider » ; cas d'un `sauvegardes.jsonl` vieux de 40 h (ORB-8) ;
+- il **relance `test/preuve.mjs`** (ORB-NR).
+
+> 28/09 : codex → claude-code. Le périmètre touche ../orchestre (dépôt séparé, absent de l'usine) : le moteur ne pouvait que le refuser.

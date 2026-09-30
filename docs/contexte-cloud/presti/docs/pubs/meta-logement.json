@@ -1,0 +1,41 @@
+{
+  "statut": "oui",
+  "verifie_le": "2026-09-29",
+  "par": "Claude Code (le chef), par délégation de Benj le 2026-09-29",
+  "note": "Les publicités d'artisans du bâtiment diffusées en France relèvent de la catégorie spéciale « Logement » de Meta. La définition officielle vise les publicités qui font la promotion d'une offre de logement « ou de services connexes » et cite explicitement « la réparation des logements » (« housing repairs » en anglais) ; la France figure dans la liste des pays d'Europe où la déclaration est exigée. Règle de décision retenue : définition qui couvre les travaux/réparations à l'habitation, ou doute raisonnable, égale oui (l'annonce déclarée n'est pas rejetée, au prix d'un ciblage réduit : rayon d'au moins 15 km autour d'une ville, âge 18-65+ et genre non réglables, pas de code postal ni d'audiences similaires). Le cas de la rénovation pure (sans réparation) n'est pas cité mot pour mot : il reste couvert par « services connexes ». À revérifier si Meta modifie la page.",
+  "decision": {
+    "valeur": "oui",
+    "date": "2026-09-29",
+    "prise_par": "Claude Code (le chef)",
+    "delegation": "Benj a délégué cette décision au chef le 2026-09-29",
+    "regle": "définition officielle qui couvre travaux/réparations/services à l'habitation, ou doute raisonnable => oui ; non seulement si la source officielle l'exclut clairement"
+  },
+  "sources": [
+    {
+      "titre": "Meta Business Help Centre : How to choose a Special Ad Category (rubrique Housing)",
+      "url": "https://en-gb.facebook.com/business/help/298000447747885",
+      "extrait": "Ads that promote or directly link to a housing opportunity or related service, including, but not limited to, ... housing repairs ...",
+      "version_fr": "https://fr-fr.facebook.com/business/help/298000447747885 : « la réparation des logements »",
+      "consulte_le": "2026-09-29"
+    },
+    {
+      "titre": "Meta Business Help Centre : About ads for housing (liste des pays d'Europe concernés)",
+      "url": "https://fr-fr.facebook.com/business/help/1198401317374558",
+      "extrait": "Votre audience cible est située aux États-Unis, au Canada ou dans certains pays et régions d'Europe ; la liste inclut France (et DOM : Guadeloupe, Martinique, Guyane française, Réunion, Mayotte, Saint-Martin, Monaco).",
+      "note": "La définition « an ad for housing » y est plus courte et sa liste d'exemples ne cite pas les réparations ; elle est explicitement « non comprehensive » (« ne sont pas complets »), et la page de sélection de catégorie ci-dessus, elle, cite les réparations.",
+      "consulte_le": "2026-09-29"
+    },
+    {
+      "titre": "Meta Transparency Center : Discriminatory Practices (règle publicitaire)",
+      "url": "https://transparency.meta.com/policies/ad-standards/unacceptable-content/discriminatory-practices/",
+      "extrait": "Tout annonceur ... ciblant les États-Unis, le Canada ou certaines régions de l'Europe qui diffuse des publicités relatives ... au logement ... doit s'identifier en tant que Catégorie publicitaire spéciale.",
+      "consulte_le": "2026-09-29"
+    },
+    {
+      "titre": "Meta for Developers : Special Ad Categories (Marketing API)",
+      "url": "https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/special-ad-category",
+      "extrait": "Depuis le 7 décembre 2021, les annonceurs qui ciblent l'Europe ... au logement doivent inscrire ces publicités dans les catégories publicitaires spéciales. Europe : rayon de 15 km ; pas de ciblage par code postal ; âge 18-65+ ; genre non sélectionnable ; pas d'audiences similaires. Valeur API : HOUSING. Page mise à jour le 21 mai 2026.",
+      "consulte_le": "2026-09-29"
+    }
+  ]
+}

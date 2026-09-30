@@ -1,0 +1,32 @@
+// essai-rendu.mjs — témoin du rendu hors ligne : durée, et écart entre le rendu à δ = 0 et une réduction ordinaire de la même
+// source (sharp, lanczos3) : le rendu du prototype ne doit ni adoucir ni créneler la photo avant toute perspective.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { rendre, SRC2400, DW, DH } from './rendu.mjs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const laplacien = async (img, zone) => {
+  const { data, info } = await sharp(img.raw ? img.buf : img, img.raw ? { raw: img.raw } : undefined).extract(zone).greyscale().raw().toBuffer({ resolveWithObject: true })
+  const w = info.width, h = info.height, v = []
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; v.push(data[i - 1] + data[i + 1] + data[i - w] + data[i + w] - 4 * data[i]) }
+  const m = v.reduce((s, x) => s + x, 0) / v.length
+  return +(v.reduce((s, x) => s + (x - m) ** 2, 0) / v.length).toFixed(1)
+}
+const raw = { width: DW, height: DH, channels: 3 }
+const res = {}
+for (const [d, rho] of [[0, 0], [0.116, 0], [0.066, 0], [0.116, -8.92]]) {
+  const t0 = Date.now(); const buf = await rendre(d, rho); res[`d${d}_r${rho}_ms`] = Date.now() - t0
+  await sharp(buf, { raw }).jpeg({ quality: 90 }).toFile(ICI + `essai-rendu-d${String(Math.round(d * 1000)).padStart(3, '0')}${rho ? '-roulis' : ''}.jpg`)
+  if (d === 0) {
+    const ref = await sharp(SRC2400).resize(DW, DH, { kernel: 'lanczos3' }).removeAlpha().raw().toBuffer()
+    let s = 0; for (let i = 0; i < ref.length; i++) s += Math.abs(ref[i] - buf[i])
+    res.ecartRenduD0_contre_lanczos = +(s / ref.length / 255).toFixed(4)
+    // zone bois du cahier (x 900-1400, y 120-420 à l'écran) = y 195,6-495,6 dans la photo 1440×1080 (décalage (1080 − 900)·0,42)
+    const zone = { left: 900, top: 196, width: 500, height: 300 }
+    res.laplacienBois_renduD0 = await laplacien({ buf, raw }, zone)
+    res.laplacienBois_lanczos = await laplacien({ buf: ref, raw }, zone)
+  }
+}
+console.log(JSON.stringify(res, null, 1))
+fs.writeFileSync(ICI + 'essai-rendu.json', JSON.stringify(res, null, 1))

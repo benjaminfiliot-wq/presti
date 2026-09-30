@@ -1,0 +1,161 @@
+{
+  "metier": "electricien",
+  "libelles": {
+    "sur": "Électricité",
+    "alt_heros": "Détail d’une installation électrique",
+    "alt_atelier": "Tableau et circuits électriques",
+    "reperes": [
+      "Repère des circuits",
+      "Repère des installations",
+      "Repère de proximité"
+    ]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Électricité à Saint-Michel-le-Cloucq — Elec’Technic",
+      "description": "Découvrez une proposition de page d’accueil pour Elec’Technic, électricité à Saint-Michel-le-Cloucq.",
+      "h1": "Électricité à Saint-Michel-le-Cloucq",
+      "h1Ligne": "Chaque circuit a sa place",
+      "chapeau": "Une page pour présenter les installations électriques et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Du tableau aux usages",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Circuits, commandes et éclairage peuvent prendre place dans cette présentation. Les interventions propres à Elec’Technic seront précisées ensemble."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page est une proposition visuelle destinée à Elec’Technic à Saint-Michel-le-Cloucq."
+            }
+          ]
+        }
+      ]
+    },
+    "/prestations/": {
+      "type": "prestations",
+      "title": "Prestations — Elec’Technic | Maquette",
+      "description": "Proposition de rubriques pour Elec’Technic à Saint-Michel-le-Cloucq.",
+      "h1": "Électricité : rubriques à valider",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les rubriques proposées",
+          "blocs": [
+            {
+              "type": "h3",
+              "texte": "Installation"
+            },
+            {
+              "type": "p",
+              "texte": "La page peut distinguer installation neuve et adaptation d’un équipement existant. Les interventions proposées seront validées directement avec l’entreprise."
+            },
+            {
+              "type": "h3",
+              "texte": "Rénovation"
+            },
+            {
+              "type": "p",
+              "texte": "Une rénovation électrique se prépare à partir du logement, des usages et des éléments déjà en place. La maquette ne pose aucun diagnostic technique."
+            },
+            {
+              "type": "h3",
+              "texte": "Équipements"
+            },
+            {
+              "type": "p",
+              "texte": "Les équipements de commande et d’éclairage peuvent être illustrés pour aider à formuler un besoin. Les marques et les références restent à définir."
+            }
+          ]
+        }
+      ]
+    },
+    "/contact/": {
+      "type": "contact",
+      "title": "Contact — Elec’Technic | Maquette",
+      "description": "Téléphone publié de Elec’Technic à Saint-Michel-le-Cloucq.",
+      "h1": "Joindre Elec’Technic",
+      "sections": []
+    },
+    "/mentions/": {
+      "type": "legal",
+      "title": "Mentions — Elec’Technic | Maquette",
+      "description": "Crédits et limites de cette maquette privée.",
+      "h1": "Mentions de la maquette",
+      "sections": []
+    },
+    "/electricien-fontenay-le-comte/": {
+      "type": "commune",
+      "title": "Électricité à Fontenay-le-Comte — Elec’Technic | Maquette",
+      "description": "Projet de page locale pour Elec’Technic : électricité à Fontenay-le-Comte.",
+      "h1": "Électricité à Fontenay-le-Comte",
+      "commune": "Fontenay-le-Comte",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de électricité à Fontenay-le-Comte. La zone d’intervention de Elec’Technic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/electricien-l-orbrie/": {
+      "type": "commune",
+      "title": "Électricité à L’Orbrie — Elec’Technic | Maquette",
+      "description": "Projet de page locale pour Elec’Technic : électricité à L’Orbrie.",
+      "h1": "Électricité à L’Orbrie",
+      "commune": "L’Orbrie",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de électricité à L’Orbrie. La zone d’intervention de Elec’Technic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/electricien-longeves/": {
+      "type": "commune",
+      "title": "Électricité à Longèves — Elec’Technic | Maquette",
+      "description": "Projet de page locale pour Elec’Technic : électricité à Longèves.",
+      "h1": "Électricité à Longèves",
+      "commune": "Longèves",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de électricité à Longèves. La zone d’intervention de Elec’Technic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "electricien",
+    "fichiers": [
+      "hero-960.webp",
+      "armoire-720.webp"
+    ]
+  }
+}

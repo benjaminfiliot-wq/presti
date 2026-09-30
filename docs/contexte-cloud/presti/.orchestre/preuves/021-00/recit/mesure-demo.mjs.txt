@@ -1,0 +1,38 @@
+// Mesure, en lecture seule, de la page en ligne : position et hauteur de chaque section, en px et en hauteurs d'écran.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium } = require('playwright')
+const ADRESSE = 'https://prestiapp.fr/sites-demo/lestraque/index.html'
+const formats = [[1440, 900], [1088, 800], [390, 844]]
+const out = { url: ADRESSE, date: new Date().toISOString(), formats: {} }
+const b = await chromium.launch()
+for (const [w, h] of formats) {
+  const ctx = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 })
+  const p = await ctx.newPage()
+  await p.goto(ADRESSE, { waitUntil: 'load' })
+  await p.waitForTimeout(1500)
+  out.formats[`${w}x${h}`] = await p.evaluate(() => {
+    const H = innerHeight
+    const doc = document.documentElement.scrollHeight
+    const sel = ['.ouverture', '.ouverture>.hero--plein', '.ouverture>.plateau', '#prestations', '#atelier', '#realisations', '.travelling', '#communes', '#etapes', '#questions', '#contact', 'footer.pied']
+    const r = {}
+    for (const s of sel) {
+      const el = document.querySelector(s); if (!el) { r[s] = null; continue }
+      const b = el.getBoundingClientRect()
+      const cs = getComputedStyle(el)
+      r[s] = { haut: Math.round(b.top + scrollY), hauteur: Math.round(b.height), enEcrans: +(b.height / H).toFixed(2), position: cs.position }
+    }
+    return {
+      innerHeight: H, scrollHeight: doc, pageEnEcrans: +(doc / H).toFixed(2),
+      classesHtml: document.documentElement.className,
+      scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
+      timelineView: CSS.supports('animation-timeline: view()'),
+      sections: r,
+    }
+  })
+  await ctx.close()
+}
+await b.close()
+fs.writeFileSync(new URL('./mesure-demo.json', import.meta.url), JSON.stringify(out, null, 2))
+console.log(JSON.stringify(out, null, 1))

@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti — veille des douleurs, une fois par mois
+
+[Timer]
+OnCalendar=monthly
+Persistent=true
+Unit=presti-douleurs.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,136 @@
+{
+  "mobile-accueil": {
+    "familles": {
+      "Fraunces (web)": 824,
+      "IBM Plex Sans (web)": 2902
+    },
+    "systeme": [],
+    "noeuds": 441
+  },
+  "bureau-accueil": {
+    "familles": {
+      "Fraunces (web)": 1691,
+      "IBM Plex Sans (web)": 6437
+    },
+    "systeme": [],
+    "noeuds": 441
+  },
+  "mobile-rennes": {
+    "familles": {
+      "Fraunces (web)": 504,
+      "IBM Plex Sans (web)": 2694
+    },
+    "systeme": [],
+    "noeuds": 286
+  },
+  "legendes390": [
+    {
+      "texte": "01 Cuisine au plan de travail en bois massif, claustra à lames",
+      "lignesVisuelles": 3,
+      "largeur": 332,
+      "hauteur": 43,
+      "enfants": [
+        {
+          "balise": "span",
+          "classe": "galerie__n",
+          "texte": "01",
+          "display": "block",
+          "haut": 4,
+          "hauteur": 16,
+          "interligne": "16.24px"
+        },
+        {
+          "balise": "span",
+          "classe": "",
+          "texte": "Cuisine au plan de travail en bois massif, claustra à lames",
+          "display": "block",
+          "haut": 0,
+          "hauteur": 43,
+          "interligne": "21.344px"
+        }
+      ],
+      "html": "<span class=\"galerie__n\">01</span><span>Cuisine au plan de travail en bois massif, claustra à lames</span>"
+    },
+    {
+      "texte": "02 Penderie en bois, tringle et quatre cintres",
+      "lignesVisuelles": 1,
+      "largeur": 332,
+      "hauteur": 21,
+      "enfants": [
+        {
+          "balise": "span",
+          "classe": "galerie__n",
+          "texte": "02",
+          "display": "block",
+          "haut": 4,
+          "hauteur": 16,
+          "interligne": "16.24px"
+        },
+        {
+          "balise": "span",
+          "classe": "",
+          "texte": "Penderie en bois, tringle et quatre cintres",
+          "display": "block",
+          "haut": 0,
+          "hauteur": 21,
+          "interligne": "21.344px"
+        }
+      ],
+      "html": "<span class=\"galerie__n\">02</span><span>Penderie en bois, tringle et quatre cintres</span>"
+    },
+    {
+      "texte": "03 Escalier hélicoïdal en bois massif",
+      "lignesVisuelles": 1,
+      "largeur": 332,
+      "hauteur": 21,
+      "enfants": [
+        {
+          "balise": "span",
+          "classe": "galerie__n",
+          "texte": "03",
+          "display": "block",
+          "haut": 4,
+          "hauteur": 16,
+          "interligne": "16.24px"
+        },
+        {
+          "balise": "span",
+          "classe": "",
+          "texte": "Escalier hélicoïdal en bois massif",
+          "display": "block",
+          "haut": 0,
+          "hauteur": 21,
+          "interligne": "21.344px"
+        }
+      ],
+      "html": "<span class=\"galerie__n\">03</span><span>Escalier hélicoïdal en bois massif</span>"
+    },
+    {
+      "texte": "04 Boiseries et placards intégrés en bois sombre",
+      "lignesVisuelles": 1,
+      "largeur": 332,
+      "hauteur": 21,
+      "enfants": [
+        {
+          "balise": "span",
+          "classe": "galerie__n",
+          "texte": "04",
+          "display": "block",
+          "haut": 4,
+          "hauteur": 16,
+          "interligne": "16.24px"
+        },
+        {
+          "balise": "span",
+          "classe": "",
+          "texte": "Boiseries et placards intégrés en bois sombre",
+          "display": "block",
+          "haut": 0,
+          "hauteur": 21,
+          "interligne": "21.344px"
+        }
+      ],
+      "html": "<span class=\"galerie__n\">04</span><span>Boiseries et placards intégrés en bois sombre</span>"
+    }
+  ]
+}

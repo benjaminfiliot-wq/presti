@@ -1,0 +1,15 @@
+{
+  "_note": "Contenu LOCAL, hors du dépôt presti (aucun modèle « isolation » n'existe dans presti/maquettes/modeles/ — seuls couvreur, electricien, menuisier, plombier existent). Construit le 26/09 en suivant EXACTEMENT le même gabarit que les 4 modèles réels (mêmes clés, même longueur de phrase, même formule '{x} prend forme' déjà utilisée deux fois sur quatre), pour corriger les 6 maquettes qui affichaient 'Couverture' au lieu d'isolation. Rien n'est inventé : combles perdus/aménagés, murs, rampants sont le vocabulaire standard du métier ; MaPrimeRénov' n'est mentionné nulle part dans les 4 modèles existants, donc pas ajouté ici non plus.",
+  "metier": "isolation",
+  "libelles": {
+    "sur": "Isolation"
+  },
+  "pages": {
+    "/": {
+      "h1Ligne": "Le confort prend forme",
+      "chapeau": "Une page pour présenter les travaux d’isolation et ouvrir la conversation autour de votre projet.",
+      "prestations_h2": "Combles, murs et rampants",
+      "prestations_texte": "Combles perdus, combles aménagés, murs et rampants peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble."
+    }
+  }
+}

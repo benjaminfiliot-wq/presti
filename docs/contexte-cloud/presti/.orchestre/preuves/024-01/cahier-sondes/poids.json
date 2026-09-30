@@ -1,0 +1,98 @@
+{
+ "actuel/styles.css": {
+  "brut": 82728,
+  "br": 13931
+ },
+ "actuel/site.js": {
+  "brut": 44552,
+  "br": 13713
+ },
+ "actuel/bureau.css": {
+  "brut": 13745,
+  "br": 2921
+ },
+ "ref/styles.css": {
+  "brut": 79024,
+  "br": 13566
+ },
+ "ref/site.js": {
+  "brut": 44552,
+  "br": 13713
+ },
+ "ref/bureau.css": {
+  "brut": 13745,
+  "br": 2921
+ },
+ "nue/styles.css": {
+  "brut": 77512,
+  "br": 13282
+ },
+ "nue/site.js": {
+  "brut": 23147,
+  "br": 7432
+ },
+ "nue/bureau.css": null,
+ "kit.js": {
+  "brut": 23147,
+  "br": 7432
+ },
+ "familles/recit.js": {
+  "brut": 5924,
+  "br": 2336
+ },
+ "familles/video.js": {
+  "brut": 7286,
+  "br": 2761
+ },
+ "familles/survol.js": {
+  "brut": 8186,
+  "br": 3189
+ },
+ "telephone.css sans commentaires": {
+  "brut": 3703,
+  "br": 976
+ },
+ "reveal": 29,
+ "ml": 20,
+ "h2": [
+  {
+   "mots": 4,
+   "texte": "Ce que je fabrique"
+  },
+  {
+   "mots": 2,
+   "texte": "Dans l’atelier"
+  },
+  {
+   "mots": 2,
+   "texte": "Pièces livrées"
+  },
+  {
+   "mots": 3,
+   "texte": "Autour de Rennes"
+  },
+  {
+   "mots": 3,
+   "texte": "En quatre temps"
+  },
+  {
+   "mots": 2,
+   "texte": "Vos questions"
+  },
+  {
+   "mots": 4,
+   "texte": "Parlons de votre projet"
+  }
+ ],
+ "scripts": [
+  "<script>",
+  "<script src=\"site.js\" defer>",
+  "<script type=\"application/ld+json\">"
+ ],
+ "links": [
+  "<link rel=\"stylesheet\" href=\"styles.css\">",
+  "<link rel=\"stylesheet\" href=\"bureau.css\" media=\"(min-width: 1024px)\">"
+ ],
+ "index actuel octets": 44000,
+ "index ref octets": 44000
+}

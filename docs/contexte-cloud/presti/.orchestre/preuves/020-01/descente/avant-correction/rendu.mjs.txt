@@ -1,0 +1,82 @@
+// rendu.mjs — rendu hors ligne de la perspective de la descente (modèle de caméra de signature/proto7.mjs:19-31), sans ombre,
+// sans « nuit du puits » (abandonnées, cahier §0.4). Écrit seulement sous films/descente/.
+// Géométrie : la photo 4:3 entière, repère d'affichage 1440×1080 (la boîte de l'img en 1440×900 : cover, 1440 de large). L'œil
+// est à (0,404 ; 0,386) de la photo (da.json:8, relief.oeil) ; les rayons sont en hauteur de photo (1080), comme proto7.mjs:27 et
+// comme le shader du §7.5 (dq en unités de hauteur de photo).
+//   D(r) = (max(r, RW)/RW)^−γ ; r' = r·D/(D−δ) (proto7.mjs:23) ; angle source = angle écran − ρ (proto7.mjs:31).
+// Sortie à la RÉSOLUTION DE LA SOURCE (2400×1800 pour la 2400) : à δ = 0 le rendu est la source elle-même, pixel pour pixel, et
+// c'est le navigateur qui la réduit à l'écran comme il réduit la vraie photo. Avec δ > 0, le grossissement est ≥ 1 partout :
+// un échantillon bilinéaire par pixel suffit (l'équivalent du filtre LINEAR d'une texture agrandie).
+// Essai précédent (1440×1080, 4 sous-échantillons) : laplacien du bois 205,8 contre 239,3 pour la source réduite en lanczos3
+// (essai-rendu.json) — trop doux, abandonné.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const SIG = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/'
+export const SRC2400 = 'C:/Users/benja/Documents/presti/public/sites-demo/lestraque/images/heros-escalier-2400.webp'
+export const SRC2880 = 'C:/Users/benja/Documents/presti/public/sites-demo/lestraque/images/heros-escalier-2880.webp'
+export const { RW, h: SENS } = JSON.parse(fs.readFileSync(SIG + 'cahier/params.json', 'utf8'))
+export const GAMMA = 0.6 // proto7.mjs:17 ; cahier §6
+export const DW = 1440, DH = 1080, EX = 0.404 * DW, EY = 0.386 * DH
+
+const sources = new Map()
+async function source(fichier) {
+  if (!sources.has(fichier)) {
+    const { data, info } = await sharp(fichier).removeAlpha().raw().toBuffer({ resolveWithObject: true })
+    sources.set(fichier, { data, W: info.width, H: info.height })
+  }
+  return sources.get(fichier)
+}
+export const avance = (r, d) => { const D = Math.pow(Math.max(r, RW) / RW, -GAMMA); return r * D / (D - d) }
+// table uniforme en r' : s = r / r' (r' ≥ r car D/(D−δ) ≥ 1), inversion par dichotomie (même fonction que proto7, plus fine)
+function table(d, N = 65536, rpMax = 1.25) {
+  const s = new Float64Array(N + 1)
+  const rStar = d > 0 ? RW * Math.pow(d, -1 / GAMMA) : Infinity
+  s[0] = 1 - d
+  for (let i = 1; i <= N; i++) {
+    const rp = rpMax * i / N
+    if (d === 0) { s[i] = 1; continue }
+    let lo = 0, hi = Math.min(rp, rStar * (1 - 1e-12))
+    for (let k = 0; k < 48; k++) { const m = (lo + hi) / 2; if (avance(m, d) < rp) lo = m; else hi = m }
+    s[i] = (lo + hi) / 2 / rp
+  }
+  return { s, N, rpMax }
+}
+// renvoie { data (RGB brut), width, height } à la taille de la source
+export async function rendre(delta, rhoDeg = 0, fichier = SRC2400) {
+  const { data: src, W: SW, H: SH } = await source(fichier)
+  const k = SW / DW // pixels source (et de sortie) par pixel du repère 1440
+  if (Math.abs(SH / DH - k) > 1e-6) throw new Error('source non 4:3')
+  const { s, N, rpMax } = table(delta)
+  const out = Buffer.alloc(SW * SH * 3)
+  const rho = rhoDeg * Math.PI / 180, c = Math.cos(rho), sn = Math.sin(rho)
+  // 4 sous-échantillons (±0,25 px de sortie) par pixel : à δ = 0, un seul échantillon tombait pile sur les pixels source (copie
+  // exacte) et, dès δ > 0, le bilinéaire à positions fractionnaires adoucissait d'un coup (bois 239,4 → 165,7 à δ = 0,0064 et
+  // 169,6 à δ = 0,0037 : log-d116.txt, log-d066.txt du premier lancement, arrêté). Avec 4 sous-échantillons, le même filtre
+  // s'applique à tout δ : plus de saut de netteté au premier pixel de défilement.
+  const acc = new Float64Array(3)
+  for (let y = 0; y < SH; y++) {
+    for (let x = 0; x < SW; x++) {
+      acc[0] = acc[1] = acc[2] = 0
+      for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) {
+        const dx = (x + 0.25 + 0.5 * i) / k - EX, dy = (y + 0.25 + 0.5 * j) / k - EY
+        const f = Math.sqrt(dx * dx + dy * dy) / DH / rpMax * N
+        const i0 = f | 0, t = f - i0
+        const sc = i0 >= N ? s[N] : s[i0] * (1 - t) + s[i0 + 1] * t
+        const qx = (dx * c + dy * sn) * sc, qy = (dy * c - dx * sn) * sc
+        let sx = (EX + qx) * k - 0.5, sy = (EY + qy) * k - 0.5
+        if (sx < 0) sx = 0; else if (sx > SW - 1.0001) sx = SW - 1.0001
+        if (sy < 0) sy = 0; else if (sy > SH - 1.0001) sy = SH - 1.0001
+        const x0 = sx | 0, y0 = sy | 0, fx = sx - x0, fy = sy - y0
+        const a = (y0 * SW + x0) * 3, b = a + 3, cc = a + SW * 3, dd = cc + 3
+        const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy
+        for (let ch = 0; ch < 3; ch++) acc[ch] += src[a + ch] * w00 + src[b + ch] * w01 + src[cc + ch] * w10 + src[dd + ch] * w11
+      }
+      const o = (y * SW + x) * 3
+      out[o] = Math.round(acc[0] / 4); out[o + 1] = Math.round(acc[1] / 4); out[o + 2] = Math.round(acc[2] / 4)
+    }
+  }
+  return { data: out, width: SW, height: SH }
+}
+export const versPng = (r) => sharp(r.data, { raw: { width: r.width, height: r.height, channels: 3 } }).png({ compressionLevel: 1 }).toBuffer()

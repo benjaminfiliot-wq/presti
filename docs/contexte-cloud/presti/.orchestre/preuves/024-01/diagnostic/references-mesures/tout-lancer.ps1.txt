@@ -1,0 +1,23 @@
+# Enchaîne toutes les mesures de références, chacune précédée de l'attente « aucun -qa.mjs » (lancer-avec-attente.ps1).
+param([string]$brut, [string]$phases = 'normal,reduit,transitions,lighthouse', [string]$exclure = '')
+$ici = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $ici
+$sites = @(
+  'hays=https://www.hayswoodworking.com/',
+  'marme=https://marme.fr/',
+  'storey=https://www.storeyarchitecture.co.uk/',
+  'nabilissa=https://nabilissa.com/',
+  'kononenko=https://kononenkogroup.com/',
+  '317c=https://www.317c.net/',
+  'era=https://era-residence.com/',
+  'illoca=https://illoca.unseen.co/',
+  'lestraque=https://prestiapp.fr/sites-demo/lestraque/index.html'
+)
+$ex = $exclure -split ',' | Where-Object { $_ }
+$sites = $sites | Where-Object { $ex -notcontains ($_ -split '=')[0] }
+$p = $phases -split ','
+if ($p -contains 'normal') { & (Join-Path $ici 'lancer-avec-attente.ps1') -script 'mesurer-references.mjs' -sites $sites }
+if ($p -contains 'reduit') { & (Join-Path $ici 'lancer-avec-attente.ps1') -script 'mesurer-references.mjs' -sites $sites -options '--reduit', '--sans-captures' }
+if ($p -contains 'transitions') { & (Join-Path $ici 'lancer-avec-attente.ps1') -script 'transitions-page.mjs' -sites ($sites | Where-Object { $_ -notlike 'lestraque=*' }) }
+if ($p -contains 'lighthouse') { & (Join-Path $ici 'lighthouse-lancer.ps1') -brut $brut -seulement (($sites | ForEach-Object { ($_ -split '=')[0] }) -join ',') }
+"TOUT FINI $(Get-Date -Format HH:mm:ss)"

@@ -1,0 +1,159 @@
+{
+  "metier": "macon",
+  "libelles": {
+    "sur": "Maçonnerie",
+    "alt_heros": "Illustration de maçonnerie",
+    "alt_atelier": "Illustration du métier de maçonnerie",
+    "reperes": [
+      "Métier",
+      "Commune",
+      "Projet"
+    ]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Maçonnerie à Luçon — Établissements Videau et Fils",
+      "description": "Maquette de site pour Établissements Videau et Fils, maçonnerie à Luçon.",
+      "h1": "Maçonnerie à Luçon",
+      "h1Ligne": "Bâtir avec méthode",
+      "chapeau": "Une proposition visuelle pour présenter le métier de maçonnerie à Luçon.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les travaux en images",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette présentation propose des exemples de maçonnerie. Les interventions de Établissements Videau et Fils seront précisées ensemble."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page est une proposition visuelle destinée à Établissements Videau et Fils à Luçon."
+            }
+          ]
+        }
+      ]
+    },
+    "/prestations/": {
+      "type": "prestations",
+      "title": "Prestations — Établissements Videau et Fils | Maquette",
+      "description": "Proposition de rubriques pour Établissements Videau et Fils à Luçon.",
+      "h1": "Maçonnerie : rubriques à valider",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les rubriques proposées",
+          "blocs": [
+            {
+              "type": "h3",
+              "texte": "Maçonnerie générale"
+            },
+            {
+              "type": "p",
+              "texte": "La maçonnerie générale peut être organisée par type d’ouvrage et par étape de chantier. Aucune réalisation de la galerie n’est attribuée à l’entreprise."
+            },
+            {
+              "type": "h3",
+              "texte": "Rénovation"
+            },
+            {
+              "type": "p",
+              "texte": "Une rubrique rénovation peut décrire le contexte d’un bâti existant, les accès et les contraintes avant tout devis. Les travaux exacts seront confirmés."
+            },
+            {
+              "type": "h3",
+              "texte": "Aménagements"
+            },
+            {
+              "type": "p",
+              "texte": "La page peut réserver une place aux aménagements maçonnés autour de la maison. Les exemples de matériaux restent illustratifs."
+            }
+          ]
+        }
+      ]
+    },
+    "/contact/": {
+      "type": "contact",
+      "title": "Contact — Établissements Videau et Fils | Maquette",
+      "description": "Téléphone publié de Établissements Videau et Fils à Luçon.",
+      "h1": "Joindre Établissements Videau et Fils",
+      "sections": []
+    },
+    "/mentions/": {
+      "type": "legal",
+      "title": "Mentions — Établissements Videau et Fils | Maquette",
+      "description": "Crédits et limites de cette maquette privée.",
+      "h1": "Mentions de la maquette",
+      "sections": []
+    },
+    "/macon-les-magnils-reigniers/": {
+      "type": "commune",
+      "title": "Maçonnerie à Les Magnils-Reigniers — Établissements Videau et Fils | Maquette",
+      "description": "Projet de page locale pour Établissements Videau et Fils : maçonnerie à Les Magnils-Reigniers.",
+      "h1": "Maçonnerie à Les Magnils-Reigniers",
+      "commune": "Les Magnils-Reigniers",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de maçonnerie à Les Magnils-Reigniers. La zone d’intervention de Établissements Videau et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/macon-sainte-gemme-la-plaine/": {
+      "type": "commune",
+      "title": "Maçonnerie à Sainte-Gemme-la-Plaine — Établissements Videau et Fils | Maquette",
+      "description": "Projet de page locale pour Établissements Videau et Fils : maçonnerie à Sainte-Gemme-la-Plaine.",
+      "h1": "Maçonnerie à Sainte-Gemme-la-Plaine",
+      "commune": "Sainte-Gemme-la-Plaine",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de maçonnerie à Sainte-Gemme-la-Plaine. La zone d’intervention de Établissements Videau et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/macon-chasnais/": {
+      "type": "commune",
+      "title": "Maçonnerie à Chasnais — Établissements Videau et Fils | Maquette",
+      "description": "Projet de page locale pour Établissements Videau et Fils : maçonnerie à Chasnais.",
+      "h1": "Maçonnerie à Chasnais",
+      "commune": "Chasnais",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de maçonnerie à Chasnais. La zone d’intervention de Établissements Videau et Fils reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "macon",
+    "fichiers": []
+  },
+  "provenance_modele": "Schéma du générateur Presti, modèle métier absent dans maquettes/modeles"
+}

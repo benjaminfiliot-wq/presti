@@ -1,0 +1,21 @@
+{
+ "date": "2026-09-16T21:24:48.666Z",
+ "version": "153.0.8010.12",
+ "atelier-derive-cover30": {
+  "boite": "390×506",
+  "deplacement": "-2%",
+  "moyen": 0.0446,
+  "part8": 0.3527
+ },
+ "plateau-glisse-cover30": {
+  "boite": "390×260",
+  "deplacement": "-2.4%",
+  "moyen": 0.0632,
+  "part8": 0.5457
+ },
+ "menu-liens": {
+  "boite": "310×205",
+  "moyen": 0.0772,
+  "part8": 0.1926
+ }
+}

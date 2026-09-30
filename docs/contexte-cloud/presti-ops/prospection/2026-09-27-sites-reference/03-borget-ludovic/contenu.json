@@ -1,0 +1,159 @@
+{
+  "metier": "carreleur",
+  "libelles": {
+    "sur": "Carrelage",
+    "alt_heros": "Illustration de carrelage",
+    "alt_atelier": "Illustration du métier de carrelage",
+    "reperes": [
+      "Métier",
+      "Commune",
+      "Projet"
+    ]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Carrelage à Les Magnils-Reigniers — Borget Ludovic",
+      "description": "Maquette de site pour Borget Ludovic, carrelage à Les Magnils-Reigniers.",
+      "h1": "Carrelage à Les Magnils-Reigniers",
+      "h1Ligne": "La matière en place",
+      "chapeau": "Une proposition visuelle pour présenter le métier de carrelage à Les Magnils-Reigniers.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les travaux en images",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette présentation propose des exemples de carrelage. Les interventions de Borget Ludovic seront précisées ensemble."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page est une proposition visuelle destinée à Borget Ludovic à Les Magnils-Reigniers."
+            }
+          ]
+        }
+      ]
+    },
+    "/prestations/": {
+      "type": "prestations",
+      "title": "Prestations — Borget Ludovic | Maquette",
+      "description": "Proposition de rubriques pour Borget Ludovic à Les Magnils-Reigniers.",
+      "h1": "Carrelage : rubriques à valider",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les rubriques proposées",
+          "blocs": [
+            {
+              "type": "h3",
+              "texte": "Sols"
+            },
+            {
+              "type": "p",
+              "texte": "Une rubrique sols pourrait présenter les formats, les surfaces et les contraintes de support. Les matériaux illustrés ne constituent pas un catalogue de l’entreprise."
+            },
+            {
+              "type": "h3",
+              "texte": "Murs"
+            },
+            {
+              "type": "p",
+              "texte": "Pour les murs, la page peut montrer comment sont pensés les calepinages et les raccords. Les exemples seront remplacés par des chantiers validés."
+            },
+            {
+              "type": "h3",
+              "texte": "Pièces d’eau"
+            },
+            {
+              "type": "p",
+              "texte": "Dans une pièce d’eau, la préparation du support et le choix des finitions méritent une explication. Les techniques effectivement pratiquées seront précisées avec l’artisan."
+            }
+          ]
+        }
+      ]
+    },
+    "/contact/": {
+      "type": "contact",
+      "title": "Contact — Borget Ludovic | Maquette",
+      "description": "Téléphone publié de Borget Ludovic à Les Magnils-Reigniers.",
+      "h1": "Joindre Borget Ludovic",
+      "sections": []
+    },
+    "/mentions/": {
+      "type": "legal",
+      "title": "Mentions — Borget Ludovic | Maquette",
+      "description": "Crédits et limites de cette maquette privée.",
+      "h1": "Mentions de la maquette",
+      "sections": []
+    },
+    "/carreleur-lucon/": {
+      "type": "commune",
+      "title": "Carrelage à Luçon — Borget Ludovic | Maquette",
+      "description": "Projet de page locale pour Borget Ludovic : carrelage à Luçon.",
+      "h1": "Carrelage à Luçon",
+      "commune": "Luçon",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de carrelage à Luçon. La zone d’intervention de Borget Ludovic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/carreleur-chasnais/": {
+      "type": "commune",
+      "title": "Carrelage à Chasnais — Borget Ludovic | Maquette",
+      "description": "Projet de page locale pour Borget Ludovic : carrelage à Chasnais.",
+      "h1": "Carrelage à Chasnais",
+      "commune": "Chasnais",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de carrelage à Chasnais. La zone d’intervention de Borget Ludovic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/carreleur-sainte-gemme-la-plaine/": {
+      "type": "commune",
+      "title": "Carrelage à Sainte-Gemme-la-Plaine — Borget Ludovic | Maquette",
+      "description": "Projet de page locale pour Borget Ludovic : carrelage à Sainte-Gemme-la-Plaine.",
+      "h1": "Carrelage à Sainte-Gemme-la-Plaine",
+      "commune": "Sainte-Gemme-la-Plaine",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de carrelage à Sainte-Gemme-la-Plaine. La zone d’intervention de Borget Ludovic reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "carreleur",
+    "fichiers": []
+  },
+  "provenance_modele": "Schéma du générateur Presti, modèle métier absent dans maquettes/modeles"
+}

@@ -1,0 +1,11 @@
+import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+bpy.ops.object.light_add(type='SUN')
+l = bpy.context.active_object
+print('LL', [p for p in dir(l.light_linking) if not p.startswith('_')])
+print('OBJ', [p for p in dir(l) if 'visib' in p or 'catcher' in p or 'holdout' in p])
+print('SUN', [p for p in dir(l.data) if not p.startswith('_')][:80])
+print('VT', [i.identifier for i in sc.view_settings.bl_rna.properties['view_transform'].enum_items])
+print('CY', [p for p in dir(sc.cycles) if 'seed' in p or 'denois' in p or 'sample' in p])
+print('DEV', sc.cycles.device)

@@ -1,0 +1,150 @@
+{
+ "b1440": [
+  {
+   "entre": "hero | plateau",
+   "ligneA": 450,
+   "de76Bandes": 25.3,
+   "de2000Bandes": 17.3,
+   "lumaHaut": 63.7,
+   "lumaBas": 17.4
+  },
+  {
+   "entre": "plateau | prestations",
+   "ligneA": 450,
+   "de76Bandes": 86.3,
+   "de2000Bandes": 85.6,
+   "lumaHaut": 17.4,
+   "lumaBas": 230.5
+  },
+  {
+   "entre": "prestations | atelier",
+   "ligneA": 450,
+   "de76Bandes": 85.5,
+   "de2000Bandes": 85,
+   "lumaHaut": 230.5,
+   "lumaBas": 17.8
+  },
+  {
+   "entre": "atelier | realisations",
+   "ligneA": 450,
+   "de76Bandes": 28.2,
+   "de2000Bandes": 19.3,
+   "lumaHaut": 68.8,
+   "lumaBas": 17.4
+  },
+  {
+   "entre": "realisations | communes",
+   "ligneA": 450,
+   "de76Bandes": 76.8,
+   "de2000Bandes": 76.8,
+   "lumaHaut": 31.8,
+   "lumaBas": 223.2
+  },
+  {
+   "entre": "communes | etapes",
+   "ligneA": 450,
+   "de76Bandes": 82.5,
+   "de2000Bandes": 79.8,
+   "lumaHaut": 220.8,
+   "lumaBas": 17.4
+  },
+  {
+   "entre": "etapes | questions",
+   "ligneA": 450,
+   "de76Bandes": 86.3,
+   "de2000Bandes": 85.6,
+   "lumaHaut": 17.4,
+   "lumaBas": 230.5
+  },
+  {
+   "entre": "questions | contact",
+   "ligneA": 450,
+   "de76Bandes": 72.5,
+   "de2000Bandes": 67.6,
+   "lumaHaut": 230.5,
+   "lumaBas": 47.1
+  },
+  {
+   "entre": "contact | pied",
+   "ligneA": 594,
+   "de76Bandes": 85,
+   "de2000Bandes": 84.2,
+   "lumaHaut": 18.9,
+   "lumaBas": 228.5
+  }
+ ],
+ "m390": [
+  {
+   "entre": "hero | plateau",
+   "ligneA": 422,
+   "de76Bandes": 30.1,
+   "de2000Bandes": 22.3,
+   "lumaHaut": 101.5,
+   "lumaBas": 30.5
+  },
+  {
+   "entre": "plateau | prestations",
+   "ligneA": 422,
+   "de76Bandes": 46.1,
+   "de2000Bandes": 36.6,
+   "lumaHaut": 106.1,
+   "lumaBas": 224.4
+  },
+  {
+   "entre": "prestations | atelier",
+   "ligneA": 422,
+   "de76Bandes": 82.1,
+   "de2000Bandes": 80.5,
+   "lumaHaut": 236.8,
+   "lumaBas": 30.4
+  },
+  {
+   "entre": "atelier | realisations",
+   "ligneA": 422,
+   "de76Bandes": 37.6,
+   "de2000Bandes": 27.6,
+   "lumaHaut": 104.4,
+   "lumaBas": 33
+  },
+  {
+   "entre": "realisations | communes",
+   "ligneA": 422,
+   "de76Bandes": 79,
+   "de2000Bandes": 78.7,
+   "lumaHaut": 31.8,
+   "lumaBas": 228.5
+  },
+  {
+   "entre": "communes | etapes",
+   "ligneA": 422,
+   "de76Bandes": 52.2,
+   "de2000Bandes": 44.6,
+   "lumaHaut": 221.3,
+   "lumaBas": 87.2
+  },
+  {
+   "entre": "etapes | questions",
+   "ligneA": 422,
+   "de76Bandes": 45,
+   "de2000Bandes": 32.7,
+   "lumaHaut": 18.6,
+   "lumaBas": 111.1
+  },
+  {
+   "entre": "questions | contact",
+   "ligneA": 422,
+   "de76Bandes": 70.9,
+   "de2000Bandes": 58.5,
+   "lumaHaut": 237.7,
+   "lumaBas": 64.6
+  },
+  {
+   "entre": "contact | pied",
+   "ligneA": 440,
+   "de76Bandes": 64.3,
+   "de2000Bandes": 54.7,
+   "lumaHaut": 69.7,
+   "lumaBas": 230.9
+  }
+ ]
+}

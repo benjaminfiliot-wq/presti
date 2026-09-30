@@ -1,0 +1,217 @@
+{
+  "slug": "marme",
+  "url": "https://marme.fr/",
+  "profil": "pixel7-reduit",
+  "date": "2026-09-16T20:25:37.648Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 0,
+  "defilement": {
+    "mode": "scrollBy",
+    "pas": 6,
+    "budgetEpuise": false,
+    "scrollYMax": 0,
+    "parcoursVisuelMedian": 0,
+    "hauteurDocument": 839
+  },
+  "titre": "Menuiserie Rétaise - Ile de Ré",
+  "styleJs": [
+    {
+      "cible": "span.word1",
+      "elements": 4,
+      "proprietes": "transform",
+      "rafales": 4,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": null,
+      "ecrituresTotales": 8
+    },
+    {
+      "cible": "span.word2",
+      "elements": 1,
+      "proprietes": "transform",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": null,
+      "ecrituresTotales": 2
+    }
+  ],
+  "io": {
+    "n": 3,
+    "observe": 9,
+    "options": [
+      {
+        "rootMargin": "300px"
+      },
+      {
+        "rootMargin": "300px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "0px 0px 0px 0px"
+      }
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "resize:non-precise:window": 3,
+    "touchstart:passif:document": 1,
+    "touchstart:non-precise:window": 1,
+    "touchmove:non-precise:window": 1,
+    "scroll:non-precise:window": 1
+  },
+  "matchMedia": [
+    "only screen and (min-device-width: 768px) and (max-device-width: 1366px) and (orientation: portrait)",
+    "only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape)",
+    "only screen and (max-width: 560px)",
+    "only screen and (max-width: 1100px)",
+    "only screen and (max-width:560px)",
+    "screen and (max-width: 560px)",
+    "only screen and (min-width: 560px)",
+    "only screen and (min-width: 1101px)",
+    "only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait)",
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [],
+  "animationsCss": [
+    [
+      "typeIn | 0.1s | ease | x1 | timeline auto",
+      {
+        "n": 31,
+        "ex": "span.char1.fusion-title-animated"
+      }
+    ],
+    [
+      "typeOut | 0.1s | ease | x1 | timeline auto",
+      {
+        "n": 30,
+        "ex": "span.char10.fusion-title-animated"
+      }
+    ],
+    [
+      "typeInCursor | 0s | ease | x1 | timeline auto",
+      {
+        "n": 1,
+        "ex": "span.fusion-animated-texts-wrapper"
+      }
+    ]
+  ],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 0
+  },
+  "classesRacine": "avada-html-layout-boxed avada-html-header-position-left avada-has-site-width-percent avada-is-100-percent-template avada-has-site-width-100-percent ua-android ua-android-14 ua-pixel ua-pixel-7 ua-chro",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": true,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 0,
+  "images": 3,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": true,
+    "svh/lvh/dvh": false,
+    "@view-transition": false,
+    "hover:hover": false,
+    "hover:none|pointer:coarse": true,
+    "content-visibility": false,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": false,
+    "scroll-snap-type": true,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": false,
+    "SplitText": true,
+    "split-type/splitting": false,
+    "lenis": false,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": false,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": true,
+    "webflow": false,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | typeInCursor | 1000 | linear | Infinity | DocumentTimeline | opacity,transform",
+      {
+        "n": 7,
+        "ex": "span.fusion-animated-texts-wrapper"
+      }
+    ],
+    [
+      "CSSAnimation | typeOut | 100 | linear | 1 | DocumentTimeline | display",
+      {
+        "n": 2,
+        "ex": "span.char4.fusion-title-animated"
+      }
+    ],
+    [
+      "CSSAnimation | typeIn | 100 | linear | 1 | DocumentTimeline | display",
+      {
+        "n": 1,
+        "ex": "span.char4.fusion-title-animated"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 3,
+      "octets": 159889
+    },
+    "stylesheet": {
+      "requetes": 141,
+      "octets": 182178
+    },
+    "image": {
+      "requetes": 6,
+      "octets": 942762
+    },
+    "script": {
+      "requetes": 28,
+      "octets": 877797
+    },
+    "font": {
+      "requetes": 5,
+      "octets": 100553
+    },
+    "other": {
+      "requetes": 1,
+      "octets": 0
+    },
+    "xhr": {
+      "requetes": 1,
+      "octets": 2253
+    }
+  },
+  "octetsTotal": 2265432
+}

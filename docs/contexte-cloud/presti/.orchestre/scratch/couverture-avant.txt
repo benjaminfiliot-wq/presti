@@ -1,0 +1,33 @@
+FAIL CV-1 — 1 défaut(s) : 026-252 : pas de section « ## Place dans la série »
+  ✗ CV-1 026-252 : pas de section « ## Place dans la série »
+PASS CV-2 — chaque juge des 181 fiche(s) de fabrication et des 20 de mutations écrit avant par une seule des 52 fiche(s) de juges
+FAIL CV-3 — 6 défaut(s) : 026-051 : son périmètre (scripts/pilotage-push-qa.mjs) contient le juge scripts/pilotage-push-qa.mjs
+  ✗ CV-3 026-051 : son périmètre (scripts/pilotage-push-qa.mjs) contient le juge scripts/pilotage-push-qa.mjs
+  ✗ CV-3 026-079 : son périmètre (scripts/pilotage-sql-qa.mjs) contient le juge scripts/pilotage-sql-qa.mjs
+  ✗ CV-3 026-079 : son périmètre (scripts/fixtures/026-pilotage/b/scenarios-sql.mjs) touche scripts/fixtures/**
+  ✗ CV-3 026-086 : son périmètre (scripts/horloge-sql-qa.mjs) contient le juge scripts/horloge-sql-qa.mjs
+  ✗ CV-3 026-131 : son périmètre (scripts/cgu-pack-pub-qa.mjs) contient le juge scripts/cgu-pack-pub-qa.mjs
+  ✗ CV-3 026-131 : son périmètre (scripts/fixtures/026-pubs-contenu/contrat-pack.json) touche scripts/fixtures/**
+PASS CV-4 — ids cités dans « Place dans la série » tous plus petits, 22 fiche(s) 025 lue(s)
+FAIL CV-5 — 13 défaut(s) : 026-252 : chevauche 026-031 (lib/siteRetrait.ts ↔ lib/siteRetrait.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-252 : chevauche 026-031 (lib/siteRetrait.ts ↔ lib/siteRetrait.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-135 : chevauche 026-042 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-135 : chevauche 026-068 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-252 : chevauche 026-078 (app/controle/Sites.tsx ↔ app/controle/Sites.tsx) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-131 : chevauche 026-112 (lib/packPub.ts ↔ lib/packPub.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-135 : chevauche 026-118 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-135 : chevauche 026-122 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-140 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-143 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-145 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-176 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-179 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+  ✗ CV-5 026-193 : chevauche 026-135 (lib/flags.ts ↔ lib/flags.ts) sans en dépendre ni être sérialisée après elle
+PASS CV-6 — chaque *-qa.mjs des fiches de juges nommé par une fiche de mutations (exemptés : scripts/horloge-qa.mjs)
+FAIL CV-7 — 1 défaut(s) : 026-051 : exécutant codex : son périmètre (scripts/pilotage-push-qa.mjs) touche le juge scripts/pilotage-push-qa.mjs
+  ✗ CV-7 026-051 : exécutant codex : son périmètre (scripts/pilotage-push-qa.mjs) touche le juge scripts/pilotage-push-qa.mjs
+FAIL CV-8 — 1 défaut(s) : 026-252 : dans aucune vague de INDEX.md
+  ✗ CV-8 026-252 : dans aucune vague de INDEX.md
+→ .orchestre/preuves/026-001/couverture.md
+PASS HY-1 — git status --porcelain identique avant et après (hors travail/, preuves/ et chantiers en cours)
+juges-026-preuve : FAIL — CV-1, CV-3, CV-5, CV-7, CV-8

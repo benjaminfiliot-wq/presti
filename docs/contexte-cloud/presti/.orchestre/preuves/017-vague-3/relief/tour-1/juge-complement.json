@@ -1,0 +1,151 @@
+{
+  "c1b": {
+    "relief": {
+      "nom": "relief",
+      "pretTrouve": true,
+      "jalonsMs": {
+        "load": 190.10000002384186,
+        "toile": 435.60000002384186,
+        "pret": 1267.2000000476837
+      },
+      "animationsPausees": 70,
+      "h1hg": [
+        72,
+        489.14,
+        1296,
+        216.92
+      ],
+      "h1bd": [
+        72,
+        489.14,
+        1296,
+        216.92
+      ],
+      "diffs": {
+        "souris hg→bd (animations CSS en pause)": {
+          "pixelsDiff8": 51.47,
+          "pixelsDiff24": 22.37,
+          "ecartMoyen": 18.3
+        },
+        "bd immobile, 3 s (animations CSS en pause)": {
+          "pixelsDiff8": 4.44,
+          "pixelsDiff24": 0.52,
+          "ecartMoyen": 2.67
+        },
+        "hg→centre": {
+          "pixelsDiff8": 43.51,
+          "pixelsDiff24": 12.96,
+          "ecartMoyen": 12.61
+        }
+      },
+      "etat": {
+        "toile": true,
+        "img": "hidden"
+      }
+    },
+    "temoin": {
+      "nom": "temoin",
+      "jalonsMs": {
+        "load": 246.5
+      },
+      "animationsPausees": 69,
+      "h1hg": [
+        72,
+        489.14,
+        1296,
+        216.92
+      ],
+      "h1bd": [
+        72,
+        489.14,
+        1296,
+        216.92
+      ],
+      "diffs": {
+        "souris hg→bd (animations CSS en pause)": {
+          "pixelsDiff8": 0,
+          "pixelsDiff24": 0,
+          "ecartMoyen": 0
+        },
+        "bd immobile, 3 s (animations CSS en pause)": {
+          "pixelsDiff8": 0,
+          "pixelsDiff24": 0,
+          "ecartMoyen": 0
+        },
+        "hg→centre": {
+          "pixelsDiff8": 0,
+          "pixelsDiff24": 0,
+          "ecartMoyen": 0
+        }
+      },
+      "etat": {
+        "toile": false,
+        "img": "(visible)"
+      }
+    }
+  },
+  "c4b": [
+    {
+      "nom": "headless-shell",
+      "principal": {
+        "contexte": false,
+        "rendu": null
+      },
+      "worker": {
+        "contexte": true,
+        "rendu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "etat": {
+        "toile": true,
+        "pret": true,
+        "img": "hidden",
+        "imgComplete": 1440
+      },
+      "console": [
+        "log-warning: [.WebGL-0x25c4001f5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "log-warning: [.WebGL-0x25c4001f5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "log-warning: [.WebGL-0x25c4001f5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "log-warning: [.WebGL-0x25c4001f5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ],
+      "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-1\\c4b-headless-shell.png"
+    },
+    {
+      "nom": "headless-chromium",
+      "principal": {
+        "contexte": false,
+        "rendu": null
+      },
+      "worker": {
+        "contexte": true,
+        "rendu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00004628) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "etat": {
+        "toile": true,
+        "pret": true,
+        "img": "hidden",
+        "imgComplete": 1440
+      },
+      "console": [],
+      "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-1\\c4b-headless-chromium.png"
+    },
+    {
+      "nom": "fenetre",
+      "principal": {
+        "contexte": false,
+        "rendu": null
+      },
+      "worker": {
+        "contexte": true,
+        "rendu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00004628) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "etat": {
+        "toile": true,
+        "pret": true,
+        "img": "hidden",
+        "imgComplete": 1440
+      },
+      "console": [],
+      "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-1\\c4b-fenetre.png"
+    }
+  ]
+}

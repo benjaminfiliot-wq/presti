@@ -1,0 +1,32 @@
+153.0.8010.12 {
+  regle_nonSupporteFn: 'vrai',
+  regle_view: 'vrai',
+  regle_scroll: 'vrai',
+  regle_dashedIdent: 'vrai',
+  js_nonSupporteFn: true,
+  js_view: true,
+  js_viewTimeline: true,
+  ctors: [ 'function', 'function' ]
+}
+[
+  {
+    condition: '(animation-timeline: --non-supporte())',
+    regleAppliquee: true,
+    cssSupports: true
+  },
+  {
+    condition: '(animation-timeline: non-supporte())',
+    regleAppliquee: false,
+    cssSupports: false
+  },
+  {
+    condition: '(animation-timeline: view(non-supporte))',
+    regleAppliquee: false,
+    cssSupports: false
+  },
+  {
+    condition: '(propriete-non-supportee: 1)',
+    regleAppliquee: false,
+    cssSupports: false
+  }
+]

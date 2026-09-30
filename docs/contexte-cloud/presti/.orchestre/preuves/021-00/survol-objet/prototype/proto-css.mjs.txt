@@ -1,0 +1,103 @@
+// Prototype jetable : la marche éclatée en CSS 3D (preserve-3d), sans image ni JavaScript de rendu. Le HTML est écrit une fois
+// (comme generer.mjs l'écrirait), puis Playwright le capture à quatre avancées (--p) au bureau et au téléphone, mesure son poids
+// (brut et gzip) et le temps entre images pendant un balayage de --p piloté par requestAnimationFrame.
+import { createRequire } from 'module'
+import fs from 'fs'
+import zlib from 'zlib'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium } = require('playwright')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/survol/'
+
+// px du monde ; y vers le bas, z vers l'œil. Chêne : trois tons.
+const pieces = []
+const f = (cls, w, h, tr, extra = '') => `<i class="f ${cls}" style="width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;transform:${tr}">${extra}</i>`
+function bloc({ nom, w, h, d, x, y, z, ex, ey, ez, fil = 'x', etiq, lx = 0, ly = 0, lz = 0, decor = {} }) {
+  const faces = [
+    f(`f--haut fil-${fil === 'x' ? 'h' : 'v'}`, w, d, `rotateX(90deg) translateZ(${h / 2}px)`, decor.haut || ''),
+    f(`f--avant ${fil === 'z' ? 'bout' : 'fil-h'}`, w, h, `translateZ(${d / 2}px)`, decor.avant || ''),
+    f(`f--droite ${fil === 'x' ? 'bout' : 'fil-h'}`, d, h, `rotateY(90deg) translateZ(${w / 2}px)`, decor.droite || ''),
+    f('f--gauche fil-h', d, h, `rotateY(-90deg) translateZ(${w / 2}px)`),
+    f('f--arriere fil-h', w, h, `rotateY(180deg) translateZ(${d / 2}px)`),
+    f('f--bas fil-h', w, d, `rotateX(-90deg) translateZ(${h / 2}px)`),
+  ].join('')
+  const e = etiq ? `<span class="etiq" style="transform:translate3d(${lx}px,${ly}px,${lz}px) rotateY(36deg) rotateX(22deg)">${etiq}</span>` : ''
+  pieces.push(`<div class="piece" data-nom="${nom}" style="--x:${x}px;--y:${y}px;--z:${z}px;--ex:${ex}px;--ey:${ey}px;--ez:${ez}px">${faces}${e}</div>`)
+}
+// le limon (à gauche) : sa face intérieure (droite, visible) porte les embrèvements de la marche et de la contremarche
+// face droite du limon : largeur locale = d (420), u local = -z ; hauteur = h (300), haut à y = -90
+const embrev = '<b class="rainure" style="left:70px;top:79px;width:280px;height:22px"></b><b class="rainure" style="left:100px;top:101px;width:12px;height:150px"></b>'
+bloc({ nom: 'limon', w: 34, h: 300, d: 420, x: -277, y: 60, z: 0, ex: -190, ey: 0, ez: 0, fil: 'z', etiq: 'Limon à la française', lx: -10, ly: -190, decor: { droite: embrev } })
+bloc({ nom: 'marche', w: 544, h: 22, d: 280, x: -12, y: 0, z: 0, ex: 150, ey: -150, ez: 0, fil: 'x', etiq: 'Marche · chêne 40 mm', lx: 60, ly: -70 })
+bloc({ nom: 'contremarche', w: 544, h: 150, d: 12, x: -12, y: 86, z: 104, ex: 60, ey: 70, ez: 170, fil: 'x', etiq: 'Contremarche', lx: 120, ly: 110 })
+bloc({ nom: 'coin1', w: 50, h: 16, d: 34, x: -236, y: 19, z: -60, ex: -40, ey: 130, ez: 0, fil: 'x', etiq: 'Coins de serrage', lx: 0, ly: 40 })
+bloc({ nom: 'coin2', w: 50, h: 16, d: 34, x: -236, y: 19, z: 60, ex: -40, ey: 130, ez: 0, fil: 'x' })
+bloc({ nom: 'tourillon1', w: 8, h: 30, d: 8, x: -150, y: 12, z: 104, ex: 105, ey: -40, ez: 85, fil: 'z', etiq: 'Tourillons', lx: 0, ly: -30 })
+bloc({ nom: 'tourillon2', w: 8, h: 30, d: 8, x: 150, y: 12, z: 104, ex: 105, ey: -40, ez: 85, fil: 'z' })
+
+const css = `
+:root{--p:0}
+*{box-sizing:border-box;margin:0}
+body{background:#14110E;color:#F4EDE2;font:15px/1.4 "IBM Plex Sans",system-ui,sans-serif;overflow:hidden}
+.scene{position:relative;width:100vw;height:100vh;perspective:2600px}
+.titre{position:absolute;left:5vw;top:6vh;font:300 clamp(2rem,4.4vw,4.4rem)/1 Fraunces,Georgia,serif;letter-spacing:-.03em}
+.titre small{display:block;font:500 .72rem/1 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#D4A574;margin-bottom:1rem}
+.monde{position:absolute;left:52%;top:52%;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(-36deg)}
+@media(max-width:600px){.monde{transform:scale(.56) rotateX(-22deg) rotateY(-36deg);left:50%;top:56%}}
+.piece{position:absolute;left:0;top:0;transform-style:preserve-3d;transform:translate3d(calc(var(--x) + var(--ex)*var(--p)),calc(var(--y) + var(--ey)*var(--p)),calc(var(--z) + var(--ez)*var(--p)))}
+.f{position:absolute;left:0;top:0;backface-visibility:hidden;background-color:#B98C5F}
+.fil-h{background-image:linear-gradient(var(--ombre),var(--ombre)),repeating-linear-gradient(0deg,rgba(70,40,18,0) 0 5px,rgba(70,40,18,.13) 5px 6px,rgba(70,40,18,0) 6px 11px,rgba(70,40,18,.07) 11px 13px,rgba(70,40,18,0) 13px 19px),linear-gradient(90deg,#C49A6C,#B58858 38%,#C9A27A 64%,#B78B5E)}
+.fil-v{background-image:linear-gradient(var(--ombre),var(--ombre)),repeating-linear-gradient(0deg,rgba(70,40,18,0) 0 6px,rgba(70,40,18,.12) 6px 7px,rgba(70,40,18,0) 7px 12px,rgba(70,40,18,.07) 12px 14px),linear-gradient(0deg,#C49A6C,#B58858 40%,#C9A27A 70%,#B78B5E)}
+.f--haut.fil-h{background-image:linear-gradient(var(--ombre),var(--ombre)),repeating-linear-gradient(0deg,rgba(70,40,18,0) 0 5px,rgba(70,40,18,.13) 5px 6px,rgba(70,40,18,0) 6px 11px,rgba(70,40,18,.07) 11px 13px,rgba(70,40,18,0) 13px 19px),linear-gradient(0deg,#C8A074,#BA8E62 35%,#CDA67D 62%,#BC9064)}
+.bout{background-image:linear-gradient(var(--ombre),var(--ombre)),repeating-radial-gradient(circle at 20% 170%,rgba(90,52,22,0) 0 5px,rgba(90,52,22,.22) 5px 6px),linear-gradient(#A97A4E,#9E7045)}
+.f--haut{--ombre:rgba(255,236,210,.06)}
+.f--avant{--ombre:rgba(20,10,4,.18)}
+.f--droite{--ombre:rgba(20,10,4,.36)}
+.f--gauche,.f--arriere,.f--bas{--ombre:rgba(20,10,4,.5)}
+.rainure{position:absolute;background:rgba(30,16,6,.72);box-shadow:inset 0 2px 3px rgba(0,0,0,.6)}
+.etiq{position:absolute;left:0;top:0;white-space:nowrap;font:500 .74rem/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#F4EDE2;padding:.35rem .5rem;border-left:1px solid #D4A574;opacity:clamp(0,calc((var(--p) - .6) * 3.5),1)}
+`
+const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prototype marche éclatée CSS 3D</title><style>${css}</style></head><body><section class="scene"><h2 class="titre"><small>Anatomie d’une marche</small>Ce qui ne se voit plus</h2><div class="monde">${pieces.join('')}</div></section></body></html>`
+fs.writeFileSync(ICI + 'proto-css.html', html)
+const brut = Buffer.byteLength(html), gz = zlib.gzipSync(html, { level: 9 }).length
+const noeuds = (html.match(/<(i|b|span|div)\b/g) || []).length
+
+const b = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-gpu-rasterization'] })
+const res = { brut, gzip: gz, elementsDuMonde: noeuds, captures: [] }
+{
+  const p = await b.newPage({ viewport: { width: 1440, height: 900 } })
+  await p.goto('file:///' + ICI + 'proto-css.html')
+  res.gpu = await p.evaluate(() => { const g = document.createElement('canvas').getContext('webgl'); const i = g && g.getExtension('WEBGL_debug_renderer_info'); return g ? String(g.getParameter(i ? i.UNMASKED_RENDERER_WEBGL : g.RENDERER)) : 'aucun' })
+  for (const v of [0, 0.35, 0.7, 1]) {
+    await p.evaluate((v) => document.documentElement.style.setProperty('--p', v), v)
+    await p.waitForTimeout(150)
+    const nom = `css-bureau-p${String(v * 100).padStart(3, '0')}.png`
+    await p.screenshot({ path: ICI + nom }); res.captures.push(nom)
+  }
+  // balayage 0 → 1 → 0 en 3 s, 3 fois : intervalles entre images
+  res.balayage = await p.evaluate(() => new Promise((ok) => {
+    const d = []; let t0 = performance.now(), prev = t0
+    const pas = (t) => {
+      d.push(t - prev); prev = t
+      const k = ((t - t0) / 3000) % 2, v = k < 1 ? k : 2 - k
+      document.documentElement.style.setProperty('--p', v.toFixed(4))
+      if (t - t0 < 9000) requestAnimationFrame(pas); else { d.shift(); d.sort((a, b) => a - b); ok({ images: d.length, medianeMs: +d[Math.floor(d.length / 2)].toFixed(2), p95Ms: +d[Math.floor(d.length * 0.95)].toFixed(2), maxMs: +d[d.length - 1].toFixed(2), auDelaDe25ms: d.filter((x) => x > 25).length }) }
+    }
+    requestAnimationFrame(pas)
+  }))
+  await p.close()
+}
+{
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })
+  const p = await ctx.newPage()
+  await p.goto('file:///' + ICI + 'proto-css.html')
+  for (const v of [0, 1]) {
+    await p.evaluate((v) => document.documentElement.style.setProperty('--p', v), v)
+    await p.waitForTimeout(150)
+    const nom = `css-tel-p${String(v * 100).padStart(3, '0')}.png`
+    await p.screenshot({ path: ICI + nom }); res.captures.push(nom)
+  }
+  await ctx.close()
+}
+await b.close()
+fs.writeFileSync(ICI + 'proto-css.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

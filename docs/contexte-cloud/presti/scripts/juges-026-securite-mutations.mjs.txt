@@ -1,0 +1,132 @@
+#!/usr/bin/env node
+// 026-150 : mutations sur copies seulement ; aucun jugement réel ni écriture des sources.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const OUTIL = path.resolve(ROOT, '../orchestre')
+const TRAVAIL = path.join(ROOT, '.orchestre/travail/026-150')
+const PREUVES = path.join(ROOT, '.orchestre/preuves/026-150')
+const SCRIPT = fileURLToPath(import.meta.url)
+const args = process.argv.slice(2)
+const garder = args.includes('--garder')
+const seul = args.find(a => a.startsWith('--seul='))?.slice(7)
+if (args.some(a => a !== '--garder' && !a.startsWith('--seul='))) throw new Error('Option inconnue')
+const lire = (r, f) => fs.readFileSync(path.join(r, f), 'utf8')
+const ecrire = (f, t) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, t) }
+const git = (r, a) => { const x = spawnSync('git', ['-C', r, ...a], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 << 20 }); if (x.status !== 0) throw new Error(x.stderr); return x.stdout }
+const mutations = []
+function ajouter(groupe, critere, fichier, avant, apres, nom) { mutations.push({ groupe, critere, fichier, avant, apres, nom }) }
+function bloc(r, f, debut, fin) { const t = lire(r, f); const a = t.indexOf(debut), b = t.indexOf(fin, a); if (a < 0 || b < 0) throw new Error(`Bloc absent ${f}`); return t.slice(a, b) }
+const route = 'app/api/media/route.ts', iq = 'scripts/instantane-quotidien.mjs', gg = 'hooks/git-garde.mjs'
+const detection = bloc(ROOT, route, '  const detecte = detecterTypeImage(corps)', '  // Borne de rafale')
+const region = bloc(ROOT, route, detection, '  if (error) {')
+ajouter('media','MO-2',route,region,region.replace(detection,'').replace('detecte.ext', "new URL(req.url).searchParams.get('ext')").replace('detecte.type', "`image/${new URL(req.url).searchParams.get('ext')}`") + detection,'détection déplacée après upload')
+ajouter('media','MO-3',route,'contentType: detecte.type,', "contentType: `image/${new URL(req.url).searchParams.get('ext')}`,",'type fourni par ext')
+ajouter('media','MO-1','lib/typeImage.ts',"return { ok: false, raison: 'heic' }", "return { ok: true, type: 'image/jpeg', ext: 'jpg' }",'HEIC accepté')
+ajouter('media','MO-5','package.json','"dependencies": {','"dependencies": {\n    "sharp": "^0.34.0",','sharp ajouté')
+ajouter('instantane','IQ-7',iq,"git(['push', o.depot,", "git(['push', '--force', o.depot,",'push forcé')
+const exe = bloc(ROOT, iq, 'function motifExclusion(', '    const arbre =')
+ajouter('instantane','IQ-2',iq,exe,exe.replace("  if (chemin.toLowerCase().endsWith('.exe')) return 'exe'",'').replace("'.', ':(exclude)*.exe'", "'.'"),'deux exclusions exe retirées')
+ajouter('instantane','IQ-4',iq,'const secret = [SECRET_MASQUE]', 'const secret = null','secrets non exclus')
+ajouter('instantane','IQ-3',iq,'if (temporaire) env.GIT_INDEX_FILE = ctx.index','if (temporaire) delete env.GIT_INDEX_FILE','index réel utilisé')
+ajouter('instantane','IQ-4',iq,'journal.exclus.push({ chemin, motif })','journal.exclus.push({ chemin, motif, valeur: fs.readFileSync(path.join(o.racine, chemin), "utf8") })','contenu exclu écrit au journal')
+const opt = "    if (a === '-C') { if (args[i + 1] !== undefined) cwd = path.resolve(cwd, args[i + 1]); i += 2; continue }"
+const globals = bloc(OUTIL,gg,opt,'  const sous = args[i]')
+ajouter('garde','GG-2',gg,globals,globals.replace(opt,"    if (a === '-C') break").replace('OPTIONS_GLOBALES_AVEC_VALEUR.has(a)','false'),'option C non retirée')
+ajouter('garde','GG-2',gg,'function analyserSuppression(n, args) {', "function analyserSuppression(n, args) {\n  if ((n === 'remove-item' || n === 'ri') && !args.join(' ').includes('-Recurse -Force')) return null",'Remove-Item ordre unique')
+ajouter('garde','GG-3',gg,'  const sous = args[i]',"  if (args[i] === 'commit') for (const a of args.slice(i + 1)) analyserTexte(a, ctx)\n  const sous = args[i]",'message commit inspecté')
+// Deux gardes absorbent une exception du parseur : un remplacement unique de leur région complète.
+const entree = lire(OUTIL,gg)
+ajouter('garde','GG-4',gg,entree,entree.replace("try { const v = JSON.parse(t); return v && typeof v === 'object' ? v : {} } catch { return {} }", "const v = JSON.parse(t); return v && typeof v === 'object' ? v : {}") .replace('try { code = principal() } catch { code = 0 }', 'code = principal()'),'JSON invalide exception non absorbée')
+const checkout = bloc(OUTIL,gg,'function regleCheckout(reste, ctx)', 'function chemin_existe(')
+ajouter('garde','GG-2',gg,checkout,checkout.replace(/    if \(a === '-f'.*\n/, '').replace(/  if \(positionnels.length >= 2\).*\n/, ''),'checkout force et arbre chemins permis')
+ajouter('garde','GG-2',gg,"if (n === 'invoke-expression' || n === 'iex' || n === 'eval')", "if (n === 'eval')",'Invoke-Expression iex non inspectés')
+ajouter('garde','GG-2',gg,'if (INTERPRETES.has(n)) return analyserCode(INTERPRETES.get(n), args, ctx)','if (INTERPRETES.has(n)) return null','node eval non inspecté')
+ajouter('garde','GG-3',gg,'if (danger && !cache)', 'if (danger || cache)','rm cached refusé')
+ajouter('next','N16-8','proxy.ts','export async function proxy(req: NextRequest)', 'export async function middleware(req: NextRequest)','ancien export middleware rétabli dans proxy')
+ajouter('next','N16-8','proxy.ts',"import type { NextRequest", "export const runtime = 'edge'\nimport type { NextRequest",'runtime edge')
+const chemins = lire(ROOT,'proxy.ts').split(/\r?\n/).find(l=>l.startsWith('const CHEMINS_APP_PRESTI ='))
+ajouter('next','N16-8','proxy.ts',chemins,chemins.replace(')$/', '|admin\\/.*)$/'),'tolérance admin non autorisée')
+ajouter('next','N16-2','package.json','"build": "next build --webpack"','"build": "next build"','webpack retiré')
+ajouter('next','N16-9','scripts/tout-verifier.mjs',"{ nom: 'Build', cmd: 'npm', args: ['run', 'build'], cout: 'gratuit' }", "{ nom: 'Build', cmd: 'npx', args: ['next', 'build'], cout: 'gratuit' }",'suite build sans webpack')
+ajouter('next','N16-9','.github/workflows/qualite.yml','node-version: 22','node-version: 20','autre ligne workflow modifiée')
+ajouter('next','N16-11','app/site/[slug]/page.tsx','(await headers())','headers()','headers synchrone')
+const juges = { media: 'scripts/media-octets-qa.mjs', instantane: 'scripts/instantane-quotidien-qa.mjs', garde: '../orchestre/test/git-garde-qa.mjs', next: 'scripts/next16-qa.mjs' }
+const jonctions = []
+function copier(source, dest, outil = false) {
+  fs.mkdirSync(dest,{recursive:true})
+  const fichiers = git(source,['ls-files','-z','--cached','--others','--exclude-standard']).split('\0').filter(Boolean)
+  for (const f of fichiers) {
+    if (!outil && !/^(app\/|lib\/|scripts\/|docs\/|\.github\/|[^/]+$)/.test(f)) continue
+    if (/^(\.git\/|node_modules\/|\.next\/|\.env)/.test(f)) continue
+    const de=path.join(source,f), vers=path.join(dest,f)
+    if (!fs.existsSync(de) || !fs.lstatSync(de).isFile()) continue
+    fs.mkdirSync(path.dirname(vers),{recursive:true}); fs.copyFileSync(de,vers)
+  }
+  if (!outil) {
+    for (const f of ['next-env.d.ts','tsconfig.json']) if(fs.existsSync(path.join(source,f))) fs.copyFileSync(path.join(source,f),path.join(dest,f))
+    const lien=path.join(dest,'node_modules'); fs.symlinkSync(path.join(source,'node_modules'),lien,process.platform==='win32'?'junction':'dir'); jonctions.push(lien)
+  }
+}
+function commande(g, racine, modele=false) {
+  const rac=modele?(g==='garde'?'{source}':'{racine}'):racine
+  const a=[path.resolve(ROOT,juges[g]),g==='garde'?`--source=${rac}`:`--racine=${rac}`]
+  if(g==='media') a.push(`--git=${ROOT}`)
+  if(g==='next') a.push('--statique')
+  return a
+}
+function lancer(g,racine) {
+  const debut=Date.now(), a=commande(g,racine)
+  const x=spawnSync(process.execPath,a,{cwd:ROOT,encoding:'utf8',windowsHide:true,timeout:150000,maxBuffer:32<<20,env:{...process.env,FORCE_COLOR:'0'}})
+  const sortie=(x.stdout||'')+(x.stderr||'')
+  return {code:x.status??124,sortie,duree_s:(Date.now()-debut)/1000}
+}
+const etat=r=>git(r,['status','--porcelain','--untracked-files=all']).split(/\r?\n/).filter(l=>!l.includes('.orchestre/travail/')&&!l.includes('.orchestre/preuves/026-150/')).join('\n')
+const avantEtats=[etat(ROOT),etat(OUTIL)]
+const rapport=[], lignes=[], erreurs=[]
+try {
+  const selection=mutations.filter(m=>!seul||m.groupe.includes(seul)||m.critere.includes(seul))
+  for(const g of Object.keys(juges)) {
+    const ms=selection.filter(m=>m.groupe===g); if(!ms.length) continue
+    const racine=path.join(TRAVAIL,g,'temoin'); copier(g==='garde'?OUTIL:ROOT,racine,g==='garde')
+    const temoin=lancer(g,racine); ecrire(path.join(TRAVAIL,g,'temoin.log'),temoin.sortie)
+    console.log(`Témoin ${g}: code ${temoin.code}`)
+    if(temoin.code!==0) erreurs.push(`Témoin ${g} rouge`)
+    for(let n=0;n<ms.length;n++) {
+      const m=ms[n], f=path.join(racine,m.fichier), original=lire(racine,m.fichier)
+      let a=m.avant,b=m.apres; if(original.includes('\r\n')) {a=a.replace(/(?<!\r)\n/g,'\r\n');b=b.replace(/(?<!\r)\n/g,'\r\n')}
+      if(original.split(a).length!==2) {erreurs.push(`${m.nom}: remplacement non unique`); lignes.push(`| ${g} | ${m.nom} | ${m.critere} | non jouée : remplacement absent ou multiple |`); continue}
+      if(temoin.code!==0) {lignes.push(`| ${g} | ${m.nom} | ${m.critere} | non jouée : témoin rouge |`);continue}
+      let r
+      try {fs.writeFileSync(f,original.replace(a,b));r=lancer(g,racine)} finally {fs.writeFileSync(f,original)}
+      ecrire(path.join(TRAVAIL,g,`mutation-${n}.log`),r.sortie)
+      const extrait=r.sortie.split(/\r?\n/).find(l=>l.startsWith(`FAIL ${m.critere} `))||''
+      const nomJuge=path.basename(juges[g],'.mjs')
+      const bilan=r.sortie.split(/\r?\n/).find(l=>l.startsWith(`${nomJuge} : FAIL`) && new RegExp(`(?:^|[^A-Z0-9-])${m.critere}(?:$|[^A-Z0-9-])`).test(l))
+      const ok=r.code!==0&&r.code!==124&&extrait.length>=20&&!!bilan
+      if(!ok) erreurs.push(`${m.nom}: faute non détectée pour ${m.critere}`)
+      rapport.push({juge:juges[g],commande:[process.execPath,...commande(g,racine,true)].map(x=>x.replaceAll('\\','/')).map(x=>/\s/.test(x)?JSON.stringify(x):x).join(' '),fichier:g==='garde'?`../orchestre/${m.fichier}`:m.fichier,avant:a,apres:b,critere:m.critere,extrait,duree_s:r.duree_s})
+      lignes.push(`| ${g} | ${m.nom} | ${m.critere} | ${(extrait||'aucune ligne attendue').replace(/\|/g,'\\|')} |`)
+      console.log(`${ok?'PASS':'FAIL'} mutation ${g} ${m.critere} ${m.nom}`)
+    }
+  }
+} catch(e) {erreurs.push(e.stack||String(e))}
+finally {
+  if(!garder) {
+    if(path.resolve(TRAVAIL)!==path.join(ROOT,'.orchestre','travail','026-150')) throw new Error('Cible nettoyage incorrecte')
+    for(const p of jonctions) if(fs.existsSync(p)) fs.unlinkSync(p)
+    // Les liens internes éventuels sont retirés sans être parcourus.
+    const retirer=d=>{if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(fs.lstatSync(p).isSymbolicLink())fs.unlinkSync(p);else if(e.isDirectory())retirer(p)}}
+    retirer(TRAVAIL)
+    fs.rmSync(TRAVAIL,{recursive:true,force:true})
+  }
+  if(!fs.existsSync(path.join(ROOT,'node_modules/next/package.json'))) erreurs.push('ALERTE BENJ : node_modules/next/package.json absent')
+  if(avantEtats[0]!==etat(ROOT)||avantEtats[1]!==etat(OUTIL)) erreurs.push('MU-3 : états des dépôts différents')
+  if(!seul&&rapport.length!==24) erreurs.push(`Rapport incomplet : ${rapport.length}/24`)
+  ecrire(path.join(PREUVES,'mutations.json'),JSON.stringify({mutations:rapport},null,2)+'\n')
+  ecrire(path.join(PREUVES,'mutations.md'),`# 026-150\n\n${erreurs.length?'ÉCHECS : '+erreurs.join('\n'):'Tous les témoins et les mutations sont prouvés.'}\n\n| Juge | Faute | Critère | Verdict réel |\n|---|---|---|---|\n${lignes.join('\n')}\n`)
+  console.log(`juges-026-securite-mutations : ${erreurs.length?'FAIL':'PASS'} — ${rapport.length}/24`)
+  process.exitCode=seul?3:erreurs.length?1:0
+}

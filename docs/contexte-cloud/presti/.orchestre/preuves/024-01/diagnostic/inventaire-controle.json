@@ -1,0 +1,4637 @@
+{
+  "date": "2026-09-16T19:10:59.426Z",
+  "base": "http://127.0.0.1:51709",
+  "playwright": "1.63.0",
+  "profils": {
+    "chromium-390x844-natif": {
+      "contexte": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dpr": 3,
+        "isMobile": true,
+        "hasTouch": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+        "dossier": "natif",
+        "initSansTimeline": false
+      },
+      "pages": {
+        "lestraque/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "0.55"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "0.55"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 29,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 3,
+                "cibles": [
+                  "span"
+                ]
+              },
+              "telephone-verbe | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "span.atelier__verbe"
+                ]
+              },
+              "telephone-apparait | ViewTimeline": {
+                "n": 9,
+                "cibles": [
+                  "img.eclate__calque",
+                  "span.eclate__pastille"
+                ]
+              },
+              "telephone-eclate | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img.eclate__calque"
+                ]
+              },
+              "telephone-efface | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img.eclate__assemble"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "1.000",
+              "imgHeroTranslate": "",
+              "revealVus": 23,
+              "reveals": 29,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/eclate/assemble.avif",
+            "/natif/lestraque/eclate/calque-contremarche.avif",
+            "/natif/lestraque/eclate/calque-limon.avif",
+            "/natif/lestraque/eclate/calque-marche.avif",
+            "/natif/lestraque/eclate/calque-vis.avif",
+            "/natif/lestraque/site.js"
+          ]
+        },
+        "lestraque/menuisier-rennes/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 13,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 11,
+              "reveals": 13,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        },
+        "lestraque/mentions-legales/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav solide",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        }
+      }
+    },
+    "iphone-sans-animation-timeline": {
+      "contexte": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dpr": 3,
+        "isMobile": true,
+        "hasTouch": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+        "dossier": "sans-timeline",
+        "initSansTimeline": true
+      },
+      "pages": {
+        "lestraque/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "0.55"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "0.55"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 29,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 3,
+                "cibles": [
+                  "span"
+                ]
+              },
+              "telephone-verbe | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "span.atelier__verbe"
+                ]
+              },
+              "telephone-apparait | ViewTimeline": {
+                "n": 9,
+                "cibles": [
+                  "img.eclate__calque",
+                  "span.eclate__pastille"
+                ]
+              },
+              "telephone-eclate | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img.eclate__calque"
+                ]
+              },
+              "telephone-efface | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img.eclate__assemble"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "1.000",
+              "imgHeroTranslate": "",
+              "revealVus": 23,
+              "reveals": 29,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline/lestraque/bureau.css",
+            "/sans-timeline/lestraque/eclate/assemble.avif",
+            "/sans-timeline/lestraque/eclate/calque-contremarche.avif",
+            "/sans-timeline/lestraque/eclate/calque-limon.avif",
+            "/sans-timeline/lestraque/eclate/calque-marche.avif",
+            "/sans-timeline/lestraque/eclate/calque-vis.avif",
+            "/sans-timeline/lestraque/site.js"
+          ]
+        },
+        "lestraque/menuisier-rennes/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 13,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 11,
+              "reveals": 13,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline/lestraque/bureau.css",
+            "/sans-timeline/lestraque/site.js"
+          ]
+        },
+        "lestraque/mentions-legales/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav solide",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline/lestraque/bureau.css",
+            "/sans-timeline/lestraque/site.js"
+          ]
+        }
+      }
+    },
+    "android-pixel7": {
+      "contexte": {
+        "viewport": {
+          "width": 412,
+          "height": 839
+        },
+        "dpr": 2.625,
+        "isMobile": true,
+        "hasTouch": true,
+        "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+        "dossier": "natif",
+        "initSansTimeline": false
+      },
+      "pages": {
+        "lestraque/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "0.55"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "0.55"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 29,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "telephone-mot | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 3,
+                "cibles": [
+                  "span"
+                ]
+              },
+              "telephone-verbe | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "span.atelier__verbe"
+                ]
+              },
+              "telephone-apparait | ViewTimeline": {
+                "n": 9,
+                "cibles": [
+                  "img.eclate__calque",
+                  "span.eclate__pastille"
+                ]
+              },
+              "telephone-eclate | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img.eclate__calque"
+                ]
+              },
+              "telephone-efface | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img.eclate__assemble"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "telephone-mot",
+                "animationTimeline": "--telephone-citation",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "telephone-verbe",
+                "animationTimeline": "--telephone-verbes",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "telephone-efface",
+                "animationTimeline": "--telephone-eclate",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "telephone-apparait, telephone-eclate",
+                "animationTimeline": "--telephone-eclate, --telephone-eclate",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "telephone-apparait",
+                "animationTimeline": "--telephone-eclate",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "1.000",
+              "imgHeroTranslate": "",
+              "revealVus": 23,
+              "reveals": 29,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/eclate/assemble.avif",
+            "/natif/lestraque/eclate/calque-contremarche.avif",
+            "/natif/lestraque/eclate/calque-limon.avif",
+            "/natif/lestraque/eclate/calque-marche.avif",
+            "/natif/lestraque/eclate/calque-vis.avif",
+            "/natif/lestraque/site.js"
+          ]
+        },
+        "lestraque/menuisier-rennes/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 13,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "jauge | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--presta",
+                "display": "block",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "jauge",
+                "animationTimeline": "--galerie",
+                "display": "block",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 11,
+              "reveals": 13,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        },
+        "lestraque/mentions-legales/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              412,
+              839,
+              2.625
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav solide",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        }
+      }
+    },
+    "iphone-sans-animation-timeline-corrige": {
+      "contexte": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dpr": 3,
+        "isMobile": true,
+        "hasTouch": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+        "dossier": "sans-timeline-corrige",
+        "initSansTimeline": true
+      },
+      "pages": {
+        "lestraque/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline-corrige/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "0"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "0.55"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "opacity, transform 0.55s, 0.55s",
+              "atelier overflow": "hidden"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 29,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline-corrige/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "signature-tourne-2 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "signature-tourne-2",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "opacity, transform 0.55s, 0.55s",
+              "atelier overflow": "hidden"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": "chiffres",
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "1.000",
+              "imgHeroTranslate": "",
+              "revealVus": 23,
+              "reveals": 29,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline-corrige/lestraque/bureau.css",
+            "/sans-timeline-corrige/lestraque/eclate/eclate.avif",
+            "/sans-timeline-corrige/lestraque/site.js"
+          ]
+        },
+        "lestraque/menuisier-rennes/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline-corrige/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 13,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline-corrige/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--bande solide nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 11,
+              "reveals": 13,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline-corrige/lestraque/bureau.css",
+            "/sans-timeline-corrige/lestraque/site.js"
+          ]
+        },
+        "lestraque/mentions-legales/index.html": {
+          "auChargement": {
+            "url": "/sans-timeline-corrige/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/sans-timeline-corrige/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": true,
+              "(min-width:1024px)": false,
+              "(min-width:900px)": false,
+              "(hover:hover) and (pointer:fine)": false,
+              "(max-width:759px)": true
+            },
+            "cssSupports": {
+              "animation-timeline: view()": false,
+              "animation-timeline: scroll()": false
+            },
+            "saveData": false,
+            "fenetre": [
+              390,
+              844,
+              3
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav solide",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/sans-timeline-corrige/lestraque/bureau.css",
+            "/sans-timeline-corrige/lestraque/site.js"
+          ]
+        }
+      }
+    },
+    "bureau-1440x900-natif": {
+      "contexte": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "dossier": "natif",
+        "initSansTimeline": false
+      },
+      "pages": {
+        "lestraque/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "ouverture-voile | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "section.hero.hero--plein::after"
+                ]
+              },
+              "ouverture-photo | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media"
+                ]
+              },
+              "descente-palier | ScrollTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media"
+                ]
+              },
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "signature-tourne-4 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "ouverture-texte | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__contenu"
+                ]
+              },
+              "descente-efface | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.h1__cle",
+                  "div.hero__pied"
+                ]
+              },
+              "lever | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span",
+                  "span.h1__ligne-in"
+                ]
+              },
+              "entre | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.hero__pied",
+                  "p.chapeau"
+                ]
+              },
+              "citation-allume | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "monte | ViewTimeline": {
+                "n": 19,
+                "cibles": [
+                  "div.plateau__photo.reveal",
+                  "p",
+                  "li.presta__ligne.reveal"
+                ]
+              },
+              "glisse-cadre | ViewTimeline": {
+                "n": 3,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "mot-leve | ViewTimeline": {
+                "n": 20,
+                "cibles": [
+                  "span.ml__in"
+                ]
+              },
+              "derive | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "verbe-allume | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "span.atelier__verbe"
+                ]
+              },
+              "travelling | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.galerie.galerie--scene"
+                ]
+              },
+              "glisse | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "eclate-ouvre | ViewTimeline": {
+                "n": 14,
+                "cibles": [
+                  "img.eclate__calque",
+                  "span.eclate__numero",
+                  "span.eclate__etiquette"
+                ]
+              },
+              "eclate-remonte | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img.eclate__calque"
+                ]
+              },
+              "eclate-apparait | ViewTimeline": {
+                "n": 20,
+                "cibles": [
+                  "img.eclate__calque",
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-efface | ViewTimeline": {
+                "n": 18,
+                "cibles": [
+                  "img.eclate__calque",
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-volet | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-trace | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "svg.eclate__trait"
+                ]
+              },
+              "eclate-pose | ViewTimeline": {
+                "n": 5,
+                "cibles": [
+                  "span.eclate__numero"
+                ]
+              },
+              "eclate-leve | ViewTimeline": {
+                "n": 6,
+                "cibles": [
+                  "span.eclate__texte",
+                  "p.eclate__phrase"
+                ]
+              },
+              "eclate-fiche | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.eclate__fiche"
+                ]
+              },
+              "eclate-compteur | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.compteur__piste"
+                ]
+              },
+              "jauge-v | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "ol.etapes__liste::after"
+                ]
+              },
+              "etape-num-premier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps-premier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              },
+              "etape-num | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              },
+              "etape-num-dernier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps-dernier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse, signature-tourne-4",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "citation-allume",
+                "animationTimeline": "--citation",
+                "display": "inline",
+                "opacity": "0.55"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "verbe-allume",
+                "animationTimeline": "--phrase",
+                "display": "inline-block",
+                "opacity": "0.55"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "eclate-apparait, eclate-volet, eclate-efface, eclate-apparait",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "eclate-ouvre, eclate-remonte, eclate-apparait, eclate-efface",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "derive",
+                "animationTimeline": "view()",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "etape-num-premier",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "ml__in (1er)": {
+                "animationName": "mot-leve",
+                "animationTimeline": "--titre",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "monte",
+                "animationTimeline": "view()",
+                "display": "grid",
+                "opacity": "0"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--retenue nav--bande nav--sombre",
+              "prestationsSurvol": true,
+              "chiffres": "chiffres chiffres--attente",
+              "travellingPilote": true,
+              "reliefEtat": "sans",
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": true,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 29,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "ouverture-voile | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "section.hero.hero--plein::after"
+                ]
+              },
+              "ouverture-photo | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media"
+                ]
+              },
+              "descente-palier | ScrollTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media"
+                ]
+              },
+              "signature-projecteur | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__media::before"
+                ]
+              },
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "signature-tourne-4 | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "ouverture-texte | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.hero__contenu"
+                ]
+              },
+              "descente-efface | ScrollTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.h1__cle",
+                  "div.hero__pied"
+                ]
+              },
+              "lever | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span",
+                  "span.h1__ligne-in"
+                ]
+              },
+              "entre | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.hero__pied",
+                  "p.chapeau"
+                ]
+              },
+              "citation-allume | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.citation__mot"
+                ]
+              },
+              "monte | ViewTimeline": {
+                "n": 19,
+                "cibles": [
+                  "div.plateau__photo.reveal.vu",
+                  "p",
+                  "li.presta__ligne.reveal.vu"
+                ]
+              },
+              "glisse-cadre | ViewTimeline": {
+                "n": 3,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "chiffres-entre | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "dl.chiffres.chiffres--entre"
+                ]
+              },
+              "mot-leve | ViewTimeline": {
+                "n": 20,
+                "cibles": [
+                  "span.ml__in"
+                ]
+              },
+              "derive | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "verbe-allume | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "span.atelier__verbe"
+                ]
+              },
+              "travelling | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.galerie.galerie--scene"
+                ]
+              },
+              "glisse | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "eclate-ouvre | ViewTimeline": {
+                "n": 14,
+                "cibles": [
+                  "img.eclate__calque",
+                  "span.eclate__numero",
+                  "span.eclate__etiquette"
+                ]
+              },
+              "eclate-remonte | ViewTimeline": {
+                "n": 4,
+                "cibles": [
+                  "img.eclate__calque"
+                ]
+              },
+              "eclate-apparait | ViewTimeline": {
+                "n": 20,
+                "cibles": [
+                  "img.eclate__calque",
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-efface | ViewTimeline": {
+                "n": 18,
+                "cibles": [
+                  "img.eclate__calque",
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-volet | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "img.eclate__assemble",
+                  "span.eclate__releve"
+                ]
+              },
+              "eclate-trace | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "svg.eclate__trait"
+                ]
+              },
+              "eclate-pose | ViewTimeline": {
+                "n": 5,
+                "cibles": [
+                  "span.eclate__numero"
+                ]
+              },
+              "eclate-leve | ViewTimeline": {
+                "n": 6,
+                "cibles": [
+                  "span.eclate__texte",
+                  "p.eclate__phrase"
+                ]
+              },
+              "eclate-fiche | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.eclate__fiche"
+                ]
+              },
+              "eclate-compteur | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.compteur__piste"
+                ]
+              },
+              "jauge-v | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "ol.etapes__liste::after"
+                ]
+              },
+              "etape-num-premier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps-premier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              },
+              "etape-num | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps | ViewTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              },
+              "etape-num-dernier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "span.etape__num"
+                ]
+              },
+              "etape-corps-dernier | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "div.etape__corps"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse, signature-tourne-4",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "signature-projecteur",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1",
+                "content": "\"\""
+              },
+              "citation__mot (1er)": {
+                "animationName": "citation-allume",
+                "animationTimeline": "--citation",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "plateau__citation.reveal": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "atelier__verbe (1er)": {
+                "animationName": "verbe-allume",
+                "animationTimeline": "--phrase",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "eclate__eclate": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "eclate__assemble": {
+                "animationName": "eclate-apparait, eclate-volet, eclate-efface, eclate-apparait",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "1"
+              },
+              "eclate__calque (1er)": {
+                "animationName": "eclate-ouvre, eclate-remonte, eclate-apparait, eclate-efface",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "0"
+              },
+              "eclate__pastille (1re)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": {
+                "animationName": "derive",
+                "animationTimeline": "view()",
+                "display": "block",
+                "opacity": "1"
+              },
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "grid",
+                "opacity": "1"
+              },
+              "etape__num (1er)": {
+                "animationName": "etape-num-premier",
+                "animationTimeline": "--etapes",
+                "display": "block",
+                "opacity": "0.55"
+              },
+              "ml__in (1er)": {
+                "animationName": "mot-leve",
+                "animationTimeline": "--titre",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "monte",
+                "animationTimeline": "view()",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": "none 0s",
+              "atelier overflow": "clip"
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--retenue nav--bande solide nav--appel nav--sombre",
+              "prestationsSurvol": true,
+              "chiffres": "chiffres chiffres--entre",
+              "travellingPilote": true,
+              "reliefEtat": "sans",
+              "toileRelief": false,
+              "videoAtelier": true,
+              "premiereQuestionOuverte": true,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 29,
+              "reveals": 29,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/eclate/assemble.avif",
+            "/natif/lestraque/eclate/calque-contremarche.avif",
+            "/natif/lestraque/eclate/calque-limon.avif",
+            "/natif/lestraque/eclate/calque-marche.avif",
+            "/natif/lestraque/eclate/calque-vis.avif",
+            "/natif/lestraque/eclate/releve.avif",
+            "/natif/lestraque/relief-fil.js",
+            "/natif/lestraque/site.js",
+            "/natif/lestraque/video/atelier.av1.mp4"
+          ]
+        },
+        "lestraque/menuisier-rennes/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "lever | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span",
+                  "span.h1__ligne-in"
+                ]
+              },
+              "entre | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.hero__pied",
+                  "p.chapeau"
+                ]
+              },
+              "mot-leve | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.ml__in"
+                ]
+              },
+              "monte | ViewTimeline": {
+                "n": 10,
+                "cibles": [
+                  "p",
+                  "li.presta__ligne.reveal",
+                  "a.commune.reveal"
+                ]
+              },
+              "glisse-cadre | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "mot-leve",
+                "animationTimeline": "--titre",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "monte",
+                "animationTimeline": "view()",
+                "display": "grid",
+                "opacity": "0"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--retenue nav--bande nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 1,
+              "reveals": 13,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/menuisier-rennes/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "pousse | DocumentTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              },
+              "lever | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span",
+                  "span.h1__ligne-in"
+                ]
+              },
+              "entre | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "div.hero__pied",
+                  "p.chapeau"
+                ]
+              },
+              "mot-leve | ViewTimeline": {
+                "n": 15,
+                "cibles": [
+                  "span.ml__in"
+                ]
+              },
+              "monte | ViewTimeline": {
+                "n": 10,
+                "cibles": [
+                  "p",
+                  "li.presta__ligne.reveal.vu",
+                  "a.commune.reveal.vu"
+                ]
+              },
+              "glisse-cadre | ViewTimeline": {
+                "n": 1,
+                "cibles": [
+                  "img"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": {
+                "animationName": "pousse",
+                "animationTimeline": "auto",
+                "display": "block",
+                "opacity": "1"
+              },
+              "hero__media::before": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1",
+                "content": "none"
+              },
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "presta__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "none",
+                "opacity": "1"
+              },
+              "galerie__jauge span": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline",
+                "opacity": "1"
+              },
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "none",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": {
+                "animationName": "mot-leve",
+                "animationTimeline": "--titre",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "presta__ligne.reveal (1re)": {
+                "animationName": "monte",
+                "animationTimeline": "view()",
+                "display": "grid",
+                "opacity": "1"
+              }
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav nav--claire nav--retenue nav--bande solide nav--appel nav--sombre",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "0px 144px",
+              "revealVus": 13,
+              "reveals": 13,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        },
+        "lestraque/mentions-legales/index.html": {
+          "auChargement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": false
+            }
+          },
+          "apresDefilement": {
+            "url": "/natif/lestraque/mentions-legales/index.html",
+            "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu",
+            "mediaQueries": {
+              "telephone.css (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference)": false,
+              "(min-width:1024px)": true,
+              "(min-width:900px)": true,
+              "(hover:hover) and (pointer:fine)": true,
+              "(max-width:759px)": false
+            },
+            "cssSupports": {
+              "animation-timeline: view()": true,
+              "animation-timeline: scroll()": true
+            },
+            "saveData": false,
+            "fenetre": [
+              1440,
+              900,
+              1
+            ],
+            "animations": {
+              "motIn | DocumentTimeline": {
+                "n": 2,
+                "cibles": [
+                  "span.mot"
+                ]
+              }
+            },
+            "temoins": {
+              "hero img": null,
+              "hero__media::before": null,
+              "citation__mot (1er)": null,
+              "plateau__citation.reveal": null,
+              "atelier__verbe (1er)": null,
+              "eclate__eclate": null,
+              "eclate__assemble": null,
+              "eclate__calque (1er)": null,
+              "eclate__pastille (1re)": null,
+              "presta__jauge span": null,
+              "presta__jauge": null,
+              "etapes__jauge": null,
+              "etapes__jauge span": null,
+              "galerie__jauge": null,
+              "galerie__jauge span": null,
+              "atelier__media img": null,
+              "mot (1er)": {
+                "animationName": "motIn",
+                "animationTimeline": "auto",
+                "display": "inline-block",
+                "opacity": "1"
+              },
+              "compteur__piste": null,
+              "etape__num (1er)": null,
+              "ml__in (1er)": null,
+              "presta__ligne.reveal (1re)": null
+            },
+            "transitions": {
+              "plateau__citation.reveal": null,
+              "atelier overflow": null
+            },
+            "etatSiteJs": {
+              "nav": "nav solide",
+              "prestationsSurvol": false,
+              "chiffres": null,
+              "travellingPilote": false,
+              "reliefEtat": null,
+              "toileRelief": false,
+              "videoAtelier": false,
+              "premiereQuestionOuverte": false,
+              "avanceeEtapes": "",
+              "imgHeroTranslate": "",
+              "revealVus": 0,
+              "reveals": 0,
+              "toutRendu": true
+            }
+          },
+          "requetes": [
+            "/natif/lestraque/bureau.css",
+            "/natif/lestraque/site.js"
+          ]
+        }
+      }
+    }
+  },
+  "chromium": "153.0.8010.12"
+}

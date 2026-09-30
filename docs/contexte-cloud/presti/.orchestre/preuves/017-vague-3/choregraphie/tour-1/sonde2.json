@@ -1,0 +1,192 @@
+{
+ "erreurs": [],
+ "etapes": [
+  {
+   "f": 0.65,
+   "pleines": [
+    3
+   ]
+  },
+  {
+   "f": 0.92,
+   "pleines": [
+    4
+   ]
+  }
+ ],
+ "ancres": [
+  {
+   "texte": "Prestations",
+   "href": "#prestations",
+   "y": 1800,
+   "cibleHaut": 88,
+   "h2Haut": 182,
+   "h2Bas": 378,
+   "h2Texte": "Ce que je fabrique",
+   "motsTf": [
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)"
+   ]
+  },
+  {
+   "texte": "Réalisations",
+   "href": "#realisations",
+   "y": 3913,
+   "cibleHaut": 0,
+   "h2Haut": 90,
+   "h2Bas": 188,
+   "h2Texte": "Pièces livrées",
+   "motsTf": [
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)"
+   ]
+  },
+  {
+   "texte": "Communes",
+   "href": "#communes",
+   "y": 5481,
+   "cibleHaut": 88,
+   "h2Haut": 136,
+   "h2Bas": 332,
+   "h2Texte": "Autour de Rennes",
+   "motsTf": [
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)"
+   ]
+  },
+  {
+   "texte": "Questions",
+   "href": "#questions",
+   "y": 8690,
+   "cibleHaut": 88,
+   "h2Haut": 203,
+   "h2Bas": 399,
+   "h2Texte": "Vos questions",
+   "motsTf": [
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)"
+   ]
+  },
+  {
+   "texte": "Devis",
+   "href": "#contact",
+   "y": 9520,
+   "cibleHaut": 0,
+   "h2Haut": 161,
+   "h2Bas": 285,
+   "h2Texte": "Parlons de votre projet",
+   "motsTf": [
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)",
+    "matrix(1, 0, 0, 1, 0, 0)"
+   ]
+  }
+ ],
+ "molette": 600,
+ "bas": [
+  {
+   "w": 1536,
+   "h": 730,
+   "hauteurEtapes": 2190,
+   "epingle": "sticky",
+   "minHaut": 97,
+   "maxBas": 717,
+   "navBas": 78,
+   "vh": 730
+  },
+  {
+   "w": 1440,
+   "h": 700,
+   "hauteurEtapes": 2100,
+   "epingle": "sticky",
+   "minHaut": 94,
+   "maxBas": 689,
+   "navBas": 78,
+   "vh": 700
+  },
+  {
+   "w": 1024,
+   "h": 680,
+   "hauteurEtapes": 2040,
+   "epingle": "sticky",
+   "minHaut": 102,
+   "maxBas": 658,
+   "navBas": 78,
+   "vh": 680
+  },
+  {
+   "w": 1024,
+   "h": 768,
+   "hauteurEtapes": 2304,
+   "epingle": "sticky",
+   "minHaut": 135,
+   "maxBas": 716,
+   "navBas": 78,
+   "vh": 768
+  }
+ ],
+ "railAvant": [
+  {
+   "i": 1,
+   "gauche": 20,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "01Bibliothèque en bois et nich"
+  },
+  {
+   "i": 2,
+   "gauche": 367,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "02Cuisine sous poutres avec pl"
+  },
+  {
+   "i": 3,
+   "gauche": 714,
+   "vu": false,
+   "legendeOpacite": 0,
+   "legende": "03Penderie en bois, tringle et"
+  },
+  {
+   "i": 4,
+   "gauche": 1061,
+   "vu": false,
+   "legendeOpacite": 0,
+   "legende": "04Escalier hélicoïdal en bois "
+  }
+ ],
+ "railApres": [
+  {
+   "i": 1,
+   "gauche": -1002,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "01Bibliothèque en bois et nich"
+  },
+  {
+   "i": 2,
+   "gauche": -655,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "02Cuisine sous poutres avec pl"
+  },
+  {
+   "i": 3,
+   "gauche": -308,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "03Penderie en bois, tringle et"
+  },
+  {
+   "i": 4,
+   "gauche": 39,
+   "vu": true,
+   "legendeOpacite": 1,
+   "legende": "04Escalier hélicoïdal en bois "
+  }
+ ]
+}

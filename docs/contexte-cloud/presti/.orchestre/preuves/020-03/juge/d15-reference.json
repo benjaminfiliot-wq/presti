@@ -1,0 +1,54 @@
+{
+ "date": "2026-09-15T17:19:02.631Z",
+ "methode": "réduction grise 160×100 (sharp), blocs 16×16 au pas de 2, SAD, recherche ±32 px réduits, affinage parabolique, blocs à la limite exclus ; médiane du module × 9 px ; seuil = 0,9 × médiane",
+ "avecCarte": {
+  "film": ".orchestre/preuves/020-01/descente/avant-correction/descente-d116.mp4",
+  "sha256": "f9f05be7c318eda86cb352fb7ab964f6b89515a3bc5426223a287b2a44838a93",
+  "images": [
+   0,
+   82
+  ],
+  "h1Haut": 489,
+  "zones": {
+   "oeil": {
+    "blocs": 208,
+    "blocsALaLimite": 0,
+    "mediane_px": 23.58
+   },
+   "marches": {
+    "blocs": 99,
+    "blocsALaLimite": 13,
+    "mediane_px": 125.68
+   }
+  },
+  "seuils": {
+   "oeil": 21.22,
+   "marches": 113.11
+  }
+ },
+ "sansCarte": {
+  "film": ".orchestre/preuves/020-01/descente/avant-correction/descente-sansgpu.mp4",
+  "sha256": "96b33544c51cc28723b51dac9f262ee883948bedbe4fa60f9ea1d08024f18377",
+  "images": [
+   0,
+   82
+  ],
+  "h1Haut": 489,
+  "zones": {
+   "oeil": {
+    "blocs": 208,
+    "blocsALaLimite": 0,
+    "mediane_px": 4.34
+   },
+   "marches": {
+    "blocs": 99,
+    "blocsALaLimite": 0,
+    "mediane_px": 9.93
+   }
+  },
+  "seuils": {
+   "oeil": 3.91,
+   "marches": 8.94
+  }
+ }
+}

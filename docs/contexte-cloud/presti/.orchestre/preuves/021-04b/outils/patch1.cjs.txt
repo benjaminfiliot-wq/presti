@@ -1,0 +1,13 @@
+const fs = require('fs'); let s = fs.readFileSync('outils/marche.py', 'utf8')
+const rep = (a, b) => { if (!s.includes(a)) { console.error('ABSENT: ' + a.slice(0, 70)); process.exit(1) } s = s.split(a).join(b) }
+rep("e[0].position, e[0].color = 0.0, (0.15, 0.070, 0.022, 1)", "e[0].position, e[0].color = 0.0, (0.090, 0.032, 0.0045, 1)")
+rep("e[1].position, e[1].color = 1.0, (0.38, 0.195, 0.068, 1)", "e[1].position, e[1].color = 1.0, (0.235, 0.092, 0.013, 1)")
+rep("mil = e.new(0.40); mil.color = (0.30, 0.150, 0.050, 1)", "mil = e.new(0.40); mil.color = (0.180, 0.068, 0.0095, 1)")
+rep("(('Specular IOR Level', 0.42), ('Coat Weight', 0.10), ('Coat Roughness', 0.28))", "(('Specular IOR Level', 0.28), ('Coat Weight', 0.0), ('Coat Roughness', 0.28))")
+rep("DIR_CLE = Vector((0.45, 0.55, -1.0)).normalized()", "DIR_CLE = Vector((0.30, 0.38, -1.0)).normalized()")
+rep("CLE = dict(direction=DIR_CLE, force=3.4, couleur=(1.0, 0.88, 0.74), angle_deg=24)", "CLE = dict(direction=DIR_CLE, force=3.4, couleur=(1.0, 0.86, 0.68), angle_deg=24)")
+rep("2.3, (0.92, 0.95, 1.0), 30, ombre=False)", "2.3, (1.0, 0.93, 0.84), 30, ombre=False)")
+rep("VIS_R, VIS_RT, VIS_TETE, VIS_LONG, VIS_POINTE = 0.006, 0.012, 0.007, 0.115, 0.014", "VIS_R, VIS_RT, VIS_TETE, VIS_LONG, VIS_POINTE = 0.0072, 0.0145, 0.008, 0.118, 0.016")
+rep("ECH_BEAUTE = 12 if BROUILLON else 96\nECH_OMBRE = 8 if BROUILLON else 48", "ECH_BEAUTE = 12 if BROUILLON else 48\nECH_OMBRE = 8 if BROUILLON else 32")
+rep("    sc.cycles.samples = ECH_BEAUTE if beaute else ECH_OMBRE", "    sc.cycles.samples = ECH_BEAUTE if beaute else ECH_OMBRE\n    sc.render.resolution_percentage = 100 if beaute else 50   # ombre floue : rendue à mi-définition, agrandie par construire.mjs")
+fs.writeFileSync('outils/marche.py', s); console.log('patch1 ok')

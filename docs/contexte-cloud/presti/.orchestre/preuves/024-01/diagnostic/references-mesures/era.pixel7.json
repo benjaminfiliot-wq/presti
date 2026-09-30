@@ -1,0 +1,569 @@
+{
+  "slug": "era",
+  "url": "https://era-residence.com/",
+  "profil": "pixel7",
+  "date": "2026-09-16T20:03:14.883Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 123.3,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 36,
+    "budgetEpuise": false,
+    "scrollYMax": 14486,
+    "parcoursVisuelMedian": 10923,
+    "hauteurDocument": 15325
+  },
+  "titre": "ERA Residence — Contemporary Mediterranean Residences in Estepona",
+  "styleJs": [
+    {
+      "cible": "span.split-char",
+      "elements": 277,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 200,
+      "rafalesParElement": 0.7,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 5654
+    },
+    {
+      "cible": "span.split-line",
+      "elements": 83,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 175,
+      "rafalesParElement": 2.1,
+      "dureeMedianeMs": 324,
+      "ecrituresTotales": 3399
+    },
+    {
+      "cible": "div.logo_symbol.ico-48",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 6,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1193,
+      "ecrituresTotales": 354
+    },
+    {
+      "cible": "img.img-p",
+      "elements": 6,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 28,
+      "rafalesParElement": 4.7,
+      "dureeMedianeMs": 264,
+      "ecrituresTotales": 280
+    },
+    {
+      "cible": "div.preloader_progress_track",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 4005,
+      "ecrituresTotales": 247
+    },
+    {
+      "cible": "img.img",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 9,
+      "rafalesParElement": 9,
+      "dureeMedianeMs": 1447,
+      "ecrituresTotales": 201
+    },
+    {
+      "cible": "div.flower.other",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 8,
+      "rafalesParElement": 8,
+      "dureeMedianeMs": 1419,
+      "ecrituresTotales": 176
+    },
+    {
+      "cible": "div.flower.loc-info",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 7,
+      "rafalesParElement": 7,
+      "dureeMedianeMs": 1282,
+      "ecrituresTotales": 175
+    },
+    {
+      "cible": "img.img.h-auto",
+      "elements": 2,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 8,
+      "rafalesParElement": 4,
+      "dureeMedianeMs": 988,
+      "ecrituresTotales": 169
+    },
+    {
+      "cible": "div.flower.apart-info",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 8,
+      "rafalesParElement": 8,
+      "dureeMedianeMs": 1536,
+      "ecrituresTotales": 164
+    },
+    {
+      "cible": "div.flower.interior",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 10,
+      "rafalesParElement": 10,
+      "dureeMedianeMs": 1147,
+      "ecrituresTotales": 154
+    },
+    {
+      "cible": "div.loc-w_bg",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 9,
+      "rafalesParElement": 9,
+      "dureeMedianeMs": 659,
+      "ecrituresTotales": 152
+    },
+    {
+      "cible": "div.pag",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1182,
+      "ecrituresTotales": 123
+    },
+    {
+      "cible": "div.hero-s_tabs",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 779,
+      "ecrituresTotales": 91
+    },
+    {
+      "cible": "div.ico-48",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 779,
+      "ecrituresTotales": 83
+    },
+    {
+      "cible": "div.hero-s_btn",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 779,
+      "ecrituresTotales": 81
+    },
+    {
+      "cible": "div.footer-s",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 3,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 691,
+      "ecrituresTotales": 79
+    },
+    {
+      "cible": "div.loc-cms_list_item.w-dyn-item",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1226,
+      "ecrituresTotales": 77
+    },
+    {
+      "cible": "div.credits_logo-w",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1196,
+      "ecrituresTotales": 77
+    },
+    {
+      "cible": "div.preloader_progress",
+      "elements": 1,
+      "proprietes": "clip-path",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1197,
+      "ecrituresTotales": 76
+    }
+  ],
+  "io": {
+    "n": 3,
+    "observe": 3,
+    "options": [
+      {
+        "threshold": 0.2
+      },
+      {
+        "threshold": 0.2
+      },
+      {
+        "threshold": 0.2
+      }
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 8,
+    "ok": 8,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "touchstart:non-precise:document": 3,
+    "resize:non-precise:window": 7,
+    "scroll:non-precise:window": 2,
+    "touchmove:non-precise:document": 1,
+    "wheel:passif:window": 3,
+    "scroll:passif:document": 1,
+    "touchstart:passif:element": 1,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 168,
+    "wheel:actif-explicite:window": 1,
+    "touchstart:actif-explicite:window": 1,
+    "touchmove:actif-explicite:window": 1,
+    "scroll:passif:element": 2,
+    "touchmove:passif:window": 2,
+    "scroll:non-precise:element": 1,
+    "wheel:actif-explicite:element": 1,
+    "touchstart:actif-explicite:element": 1,
+    "touchmove:actif-explicite:element": 1,
+    "wheel:non-precise:window": 1,
+    "touchmove:non-precise:window": 1
+  },
+  "matchMedia": [
+    "(prefers-reduced-motion: reduce)",
+    "(hover: none), (pointer: coarse)",
+    "(orientation: portrait)",
+    "(min-width: 992px)",
+    "(max-width: 991px)"
+  ],
+  "compteursNumeriques": {
+    "span.split-word": {
+      "changements": 17,
+      "textes": [
+        "+34",
+        "2026",
+        "29680"
+      ]
+    },
+    "h5.h5": {
+      "changements": 5,
+      "textes": [
+        "3"
+      ]
+    },
+    "div.l1": {
+      "changements": 6,
+      "textes": [
+        "1",
+        "2",
+        "1",
+        "2",
+        "1",
+        "2"
+      ]
+    }
+  },
+  "transitions": [
+    [
+      "color | 0.4s | cubic-bezier(0.25, 1, 0.5, 1) | delai 0s",
+      {
+        "n": 52,
+        "ex": "div.l2"
+      }
+    ],
+    [
+      "color | 0.8s | cubic-bezier(0.25, 1, 0.5, 1) | delai 0s",
+      {
+        "n": 39,
+        "ex": "div.nav-item_label_text"
+      }
+    ],
+    [
+      "opacity | 0.4s | cubic-bezier(0.25, 1, 0.5, 1) | delai 0s",
+      {
+        "n": 1,
+        "ex": "div.amen-tab.is-active"
+      }
+    ]
+  ],
+  "animationsCss": [
+    [
+      "marquee | 32s | linear | xinfinite | timeline auto",
+      {
+        "n": 3,
+        "ex": "div.marquee_track"
+      }
+    ]
+  ],
+  "videos": [
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_01.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_02.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_03.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_04.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_06.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_05.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_07.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    },
+    {
+      "autoplay": false,
+      "muted": true,
+      "playsinline": true,
+      "loop": true,
+      "preload": "metadata",
+      "poster": true,
+      "src": "https://assets.era-residence.com/flowers/bougainvillea-flowers_07.webm",
+      "largeur": 1080,
+      "hauteur": 1080,
+      "duree": 10,
+      "enPause": true
+    }
+  ],
+  "gsapGlobal": {
+    "version": "3.15.0",
+    "enfantsRestants": 34,
+    "parDureeEase": [
+      [
+        "0.5s | none",
+        18
+      ],
+      [
+        "0.8s | InOut",
+        6
+      ],
+      [
+        "1.4s | In",
+        3
+      ],
+      [
+        "0.5s | In",
+        2
+      ],
+      [
+        "0s | fonction",
+        1
+      ],
+      [
+        "0.6s | In",
+        1
+      ],
+      [
+        "0.5s | Ease",
+        1
+      ],
+      [
+        "0.5s | InOut",
+        1
+      ],
+      [
+        "1s | none",
+        1
+      ]
+    ]
+  },
+  "scrollTriggerGlobal": {
+    "n": 82,
+    "pin": 0,
+    "scrub": 21
+  },
+  "pinSpacers": 0,
+  "scenesSticky": 2,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 220,
+    "fragments": 1569
+  },
+  "classesRacine": "w-mod-js w-mod-touch wf-ambroisefrancoisstd-n4-active wf-sloopscriptthree-n4-active wf-active lenis lenis-scrolling",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 0,
+  "images": 41,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": false,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": false,
+    "hover:none|pointer:coarse": true,
+    "content-visibility": true,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": true,
+    "split-type/splitting": true,
+    "lenis": true,
+    "locomotive": false,
+    "barba/swup/taxi/highway": true,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": true,
+    "webflow": true,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | marquee | 32000 | linear | Infinity | DocumentTimeline | transform",
+      {
+        "n": 111,
+        "ex": "div.marquee_track"
+      }
+    ],
+    [
+      "CSSTransition | color | 800 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | DocumentTimeline | color",
+      {
+        "n": 6,
+        "ex": "a.nav-item.w-inline-block"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 2,
+      "octets": 58200
+    },
+    "stylesheet": {
+      "requetes": 2,
+      "octets": 427
+    },
+    "image": {
+      "requetes": 44,
+      "octets": 16457437
+    },
+    "script": {
+      "requetes": 17,
+      "octets": 825833
+    },
+    "font": {
+      "requetes": 4,
+      "octets": 147037
+    },
+    "ping": {
+      "requetes": 1,
+      "octets": 562
+    },
+    "xhr": {
+      "requetes": 2,
+      "octets": 823860
+    },
+    "media": {
+      "requetes": 11,
+      "octets": 12451498
+    }
+  },
+  "octetsTotal": 30764854
+}

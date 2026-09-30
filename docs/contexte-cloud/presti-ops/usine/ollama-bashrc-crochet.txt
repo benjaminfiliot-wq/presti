@@ -1,0 +1,9 @@
+# Ollama (IA locale, 127.0.0.1:11434) : relancé à chaque arrivée par ssh, AVANT le « return » des shells non interactifs.
+# Bash lit ce fichier pour toute commande reçue par ssh (ssh usine@… 'commande', bash -s, scp, sftp), que ~/.profile ne voit pas.
+# Après un redémarrage de l'usine (ni cron ni lingering sans root), la première arrivée par ssh, quelle qu'elle soit, le relance.
+# Silencieux (scp et les sorties JSON n'en voient rien), idempotent, ne lit pas l'entrée standard (celle de bash -s),
+# ne relance rien si ~/ollama/ARRET existe. Voir ~/ollama/demarrer.sh ; sur le PC : presti-ops/usine/ollama-LISEZMOI.md, « Persistance ».
+if [ -n "${SSH_CONNECTION:-}" ] && [ -x "$HOME/ollama/demarrer.sh" ]; then
+  "$HOME/ollama/demarrer.sh" --silencieux >/dev/null 2>&1 </dev/null || true
+fi
+

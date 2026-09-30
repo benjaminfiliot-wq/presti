@@ -1,0 +1,1171 @@
+{
+ "date": "2026-09-15T10:02:50.541Z",
+ "objet": "Descente au défilement (cahier §2, §2.1, Q2) : trois films + une variante avec roulis, mesures du §8.2 applicables à un prototype",
+ "conditions": {
+  "page": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+  "identiteAvecLeDepot": "styles.css et index.html en ligne = public/sites-demo/lestraque (md5 da4afc11… et fb457364…, relevé du 15/09 par curl + md5sum)",
+  "navigateur": "Chrome/153.0.8010.12",
+  "lancement": "chromium.launch() sans drapeau (sans carte graphique)",
+  "dataReliefEtatA8s": "sans",
+  "photoServieParLaPage": "heros-escalier-1600.avif (largeur naturelle corrigée 1440)",
+  "reglesSignatureAvantInjection": 0,
+  "injection": "classe da--signature sur <html> + bloc 2 du §7.3 tel quel ; harnais : html{scroll-behavior:auto!important} et règle du titre transparent (§8.0) activée par classe",
+  "perspective": "films a, b, a-roulis : image rendue hors ligne (rendu.mjs, modèle proto7.mjs:19-31, γ 0,6, RW 0,045, œil 0,404 ; 0,386) depuis heros-escalier-2400.webp à 2400×1800, servie par page.route, <source> retirées ; δ = δmax·clamp(y/270)",
+  "determinisme": "animations au temps en pause et positionnées (poussée = t du film, entrées à leur fin, transitions menées à leur fin) ; défilement par scrollTo ; 30 images/s ; ffmpeg libx264 crf 20 yuv420p sans son +faststart",
+  "controleTempsReel": {
+   "y": 135,
+   "delta": 0.058,
+   "pousseAvantCapture_ms": 11699.6,
+   "pousseApresCapture_ms": 13016.2,
+   "etatPousse": "running",
+   "pousseReposee_ms": 12357.9,
+   "etatApres": {
+    "y": 135,
+    "imgSrc": "d0.05800_r0.000_2400.png",
+    "animationsAuTempsEnCours": 0
+   },
+   "ecartPage": {
+    "moyen": 0.0032,
+    "part8": 0.006
+   },
+   "ecartPhoto": {
+    "moyen": 0.004,
+    "part8": 0.014
+   },
+   "temoinDecale1s": {
+    "ecartPage": {
+     "moyen": 0.0067,
+     "part8": 0.033
+    },
+    "ecartPhoto": {
+     "moyen": 0.0086,
+     "part8": 0.056
+    }
+   }
+  }
+ },
+ "geometrieBloc2_D1_D2_D3": [
+  {
+   "y": 0,
+   "plateauHaut": 1170,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1",
+   "surtitre": [
+    1,
+    "visible"
+   ],
+   "pied": [
+    1,
+    "visible"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": false
+  },
+  {
+   "y": 90,
+   "plateauHaut": 1080,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.01333",
+   "surtitre": [
+    0.6,
+    "visible"
+   ],
+   "pied": [
+    0.6,
+    "visible"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": false
+  },
+  {
+   "y": 112,
+   "plateauHaut": 1058,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.01659",
+   "surtitre": [
+    0.502,
+    "visible"
+   ],
+   "pied": [
+    0.502,
+    "visible"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": false
+  },
+  {
+   "y": 135,
+   "plateauHaut": 1035,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.02",
+   "surtitre": [
+    0.4,
+    "visible"
+   ],
+   "pied": [
+    0.4,
+    "visible"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": false
+  },
+  {
+   "y": 180,
+   "plateauHaut": 990,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.02667",
+   "surtitre": [
+    0.2,
+    "visible"
+   ],
+   "pied": [
+    0.2,
+    "visible"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": false
+  },
+  {
+   "y": 225,
+   "plateauHaut": 945,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.03333",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": true
+  },
+  {
+   "y": 270,
+   "plateauHaut": 900,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 1,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "voile": 0,
+   "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+   "zoomPalier": "1.04",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 526.13,
+   "devisDansLaBarre": true
+  },
+  {
+   "y": 518,
+   "plateauHaut": 652,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 0.499,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, -63.1273)",
+   "voile": 0.117,
+   "mediaTransform": "matrix(1.02204, 0, 0, 1.02204, 0, 0)",
+   "zoomPalier": "1.04",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 463,
+   "devisDansLaBarre": true
+  },
+  {
+   "y": 765,
+   "plateauHaut": 405,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 0,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+   "voile": 0.3,
+   "mediaTransform": "matrix(1.044, 0, 0, 1.044, 0, 0)",
+   "zoomPalier": "1.04",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 400.13,
+   "devisDansLaBarre": true
+  },
+  {
+   "y": 1170,
+   "plateauHaut": 0,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 0,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+   "voile": 0.6,
+   "mediaTransform": "matrix(1.08, 0, 0, 1.08, 0, 0)",
+   "zoomPalier": "1.04",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 400.13,
+   "devisDansLaBarre": true
+  },
+  {
+   "y": 1270,
+   "plateauHaut": -100,
+   "ouvertureHauteur": 2158,
+   "contenuOpacite": 0,
+   "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+   "voile": 0.6,
+   "mediaTransform": "matrix(1.08, 0, 0, 1.08, 0, 0)",
+   "zoomPalier": "1.04",
+   "surtitre": [
+    0,
+    "hidden"
+   ],
+   "pied": [
+    0,
+    "hidden"
+   ],
+   "hautDuTitre": 388.08,
+   "devisDansLaBarre": true
+  }
+ ],
+ "netteteReferences": {
+  "pageEnLigneY0_png": {
+   "bois": 109.8,
+   "marches": 107.9
+  },
+  "cahierAvantReliefGPU_cdcVerif2": {
+   "bois": 109,
+   "marches": 108.7
+  },
+  "imagesJpegDuCahier": {
+   "methode": "variance du laplacien 4-voisins sur sharp greyscale, zone bois x 900-1400 y 120-420, zone marches x 150-500 y 120-420",
+   "cahier/avant/bureau-y0.jpg": {
+    "taille": "1440x900",
+    "bois": 88.9,
+    "marches": 73.3
+   },
+   "cahier/avant/bureau-y270.jpg": {
+    "taille": "1440x900",
+    "bois": 62.1,
+    "marches": 51.5
+   },
+   "cahier/moment-A-y0.jpg": {
+    "taille": "1440x900",
+    "bois": 233.5,
+    "marches": 239.9
+   },
+   "cahier/moment-B-y270.jpg": {
+    "taille": "1440x900",
+    "bois": 59.3,
+    "marches": 72.8
+   },
+   "cahier/moment-C-y405.jpg": {
+    "taille": "1440x900",
+    "bois": 19.7,
+    "marches": 39.3
+   },
+   "films/descente/temoin-en-ligne-y0.png": {
+    "taille": "1440x900",
+    "bois": 109.8,
+    "marches": 107.9
+   }
+  },
+  "sensibiliteSource2400contre2880": {
+   "src2400_y0_d0": {
+    "bois": 160.9,
+    "marches": 158.2
+   },
+   "src2880_y0_d0": {
+    "bois": 209.5,
+    "marches": 206.7
+   },
+   "src2400_y270_d0.116": {
+    "bois": 55.4,
+    "marches": 77.4
+   },
+   "src2880_y270_d0.116": {
+    "bois": 75.9,
+    "marches": 102.6
+   },
+   "src2400_y270_d0.066": {
+    "bois": 85,
+    "marches": 98.7
+   },
+   "src2880_y270_d0.066": {
+    "bois": 123.5,
+    "marches": 140.7
+   }
+  }
+ },
+ "D8_budgetGrossissement": {
+  "date": "2026-09-15T09:29:34.616Z",
+  "source": "copie de cahier/relecture/bornes-et-budget.mjs, section 3",
+  "RW": 0.045,
+  "seuil": 1.53,
+  "temoin_base107_dmax_dpr1": 0.1169,
+  "verification": {
+   "Eb1.07": {
+    "facteursCSS_finPalier": 1.1796,
+    "delta0.116": {
+     "p90_brut": 2.575,
+     "max_brut": 3.01,
+     "p90_tex2880_dpr1": 1.519,
+     "p90_tex2880_dpr15": 2.278
+    },
+    "delta0.066": {
+     "p90_brut": 1.728,
+     "max_brut": 1.897,
+     "p90_tex2880_dpr1": 1.019,
+     "p90_tex2880_dpr15": 1.529
+    }
+   },
+   "Eb1": {
+    "facteursCSS_finPalier": 1.1024,
+    "delta0.116": {
+     "p90_brut": 2.575,
+     "max_brut": 3.01,
+     "p90_tex2880_dpr1": 1.419,
+     "p90_tex2880_dpr15": 2.129
+    },
+    "delta0.066": {
+     "p90_brut": 1.728,
+     "max_brut": 1.897,
+     "p90_tex2880_dpr1": 0.953,
+     "p90_tex2880_dpr15": 1.429
+    },
+    "deltaMax_calcule": {
+     "tex2880_dpr1": 0.1257,
+     "tex2880_dpr15": 0.0744
+    }
+   }
+  },
+  "prototype_film": {
+   "delta0.116": {
+    "p90_source2400_ecran_dpr1_y270": 1.61,
+    "p90_si_source2880": 1.342
+   },
+   "delta0.066": {
+    "p90_source2400_ecran_dpr1_y270": 1.081,
+    "p90_si_source2880": 0.901
+   }
+  }
+ },
+ "resume": {
+  "d116": {
+   "film": "descente-d116.mp4",
+   "planche": "planche-a.jpg",
+   "verificationFilm": {
+    "fichier": "descente-d116.mp4",
+    "duree_s": 8,
+    "octets": 2307659,
+    "codec": "h264",
+    "format": "1440x900",
+    "pixfmt": "yuv420p",
+    "ips": "30/1",
+    "images": 240,
+    "pistesAudio": 0
+   },
+   "controleFilmContreImagesCles": {
+    "y270": {
+     "imageDuFilm": 82,
+     "yFilm": 270,
+     "yCle": 270,
+     "tFilm": 2.733,
+     "tCle": 2.733,
+     "moyenneGrise": 111,
+     "ecartFilmContreCle": {
+      "moyen": 0.0168,
+      "part8": 0.134
+     }
+    },
+    "y1170": {
+     "imageDuFilm": 223,
+     "yFilm": 1170,
+     "yCle": 1170,
+     "tFilm": 7.433,
+     "tCle": 7.5,
+     "moyenneGrise": 34.6,
+     "ecartFilmContreCle": {
+      "moyen": 0.0155,
+      "part8": 0.11
+     }
+    }
+   },
+   "devisDansLaBarre_premierY": 181,
+   "D5_contrasteParcours": {
+    "images": 113,
+    "min": 2.982,
+    "yDuMin": 446,
+    "passe": false,
+    "sousTrois": [
+     [
+      429,
+      2.996
+     ],
+     [
+      438,
+      2.995
+     ],
+     [
+      446,
+      2.982
+     ]
+    ]
+   },
+   "D5_grille": {
+    "1280x800": {
+     "min": 3.013,
+     "passe": true
+    },
+    "1366x768": {
+     "min": 2.352,
+     "passe": false
+    },
+    "1440x900": {
+     "min": 3.194,
+     "passe": true
+    }
+   },
+   "contrasteSurLaDescente_y0a270": {
+    "min": 3.221,
+    "max": 3.387
+   },
+   "D9_nettete": {
+    "y0": {
+     "bois": 160.9,
+     "marches": 158.1,
+     "img": "d0.00000_r0.000_2400.png"
+    },
+    "y270": {
+     "bois": 55.3,
+     "marches": 77.2,
+     "img": "d0.11600_r0.000_2400.png",
+     "mediaScale": "1.04"
+    },
+    "ratioBois_y270_contrePageEnLigne": 0.504,
+    "ratioMarches_y270_contrePageEnLigne": 0.715,
+    "seuilIndicatif": 0.68,
+    "passeContrePageEnLigne": false,
+    "ratioBois_y270_contreSonImageY0": 0.344
+   },
+   "D15_perceptibilite": {
+    "retenu": "d15.mjs, recherche ±32 px réduits, blocs à la limite exclus",
+    "delta_y270": 0.116,
+    "rho_deg": 0,
+    "oeil": {
+     "blocs": 208,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 23.2,
+     "moduleP90_px": 33.4,
+     "radialMedian_px": 22.6,
+     "moduleModeleMedian_px_blocsRetenus": 29.9,
+     "moduleModeleMedian_px_tousBlocs": 29.9,
+     "sadMoyenMedian": 14.5
+    },
+    "marches": {
+     "blocs": 99,
+     "blocsALaLimite": 13,
+     "moduleMedian_px": 125.5,
+     "moduleP90_px": 167.5,
+     "radialMedian_px": 125.3,
+     "moduleModeleMedian_px_blocsRetenus": 134.5,
+     "moduleModeleMedian_px_tousBlocs": 148.5,
+     "sadMoyenMedian": 22.2
+    },
+    "premierePasseDansLeFilm_R18": {
+     "oeil": {
+      "blocs": 208,
+      "moduleMedian_px": 23.2,
+      "moduleP90_px": 33.4,
+      "radialMedian_px": 22.6,
+      "moduleModeleMedian_px": 29.9,
+      "blocsAuBordDeLaRecherche": 0
+     },
+     "marches": {
+      "blocs": 99,
+      "moduleMedian_px": 142.8,
+      "moduleP90_px": 168.1,
+      "radialMedian_px": 141.5,
+      "moduleModeleMedian_px": 148.5,
+      "blocsAuBordDeLaRecherche": 37
+     }
+    }
+   },
+   "mouvementFilm": {
+    "images8ips": 64,
+    "ecartMoyenParImage8ips": 0.032,
+    "ecartMaxPaire8ips": 0.0586,
+    "pairesAuDessus0085": 0,
+    "plageFigeeLaPlusLongue_s": 0.625,
+    "ecartMaxEntreImages30ips": 0.0278,
+    "dureePalierDansLeFilm_s": 2.17,
+    "ecartY0contreY270_page": {
+     "moyen": 0.193,
+     "part8": 0.842
+    }
+   },
+   "relief": "sans"
+  },
+  "d066": {
+   "film": "descente-d066.mp4",
+   "planche": "planche-b.jpg",
+   "verificationFilm": {
+    "fichier": "descente-d066.mp4",
+    "duree_s": 8,
+    "octets": 2176857,
+    "codec": "h264",
+    "format": "1440x900",
+    "pixfmt": "yuv420p",
+    "ips": "30/1",
+    "images": 240,
+    "pistesAudio": 0
+   },
+   "controleFilmContreImagesCles": {
+    "y270": {
+     "imageDuFilm": 82,
+     "yFilm": 270,
+     "yCle": 270,
+     "tFilm": 2.733,
+     "tCle": 2.733,
+     "moyenneGrise": 101.2,
+     "ecartFilmContreCle": {
+      "moyen": 0.0174,
+      "part8": 0.138
+     }
+    },
+    "y1170": {
+     "imageDuFilm": 223,
+     "yFilm": 1170,
+     "yCle": 1170,
+     "tFilm": 7.433,
+     "tCle": 7.5,
+     "moyenneGrise": 34.6,
+     "ecartFilmContreCle": {
+      "moyen": 0.0156,
+      "part8": 0.11
+     }
+    }
+   },
+   "devisDansLaBarre_premierY": 181,
+   "D5_contrasteParcours": {
+    "images": 113,
+    "min": 3.113,
+    "yDuMin": 355,
+    "passe": true,
+    "sousTrois": []
+   },
+   "D5_grille": {
+    "1280x800": {
+     "min": 3.13,
+     "passe": true
+    },
+    "1366x768": {
+     "min": 2.645,
+     "passe": false
+    },
+    "1440x900": {
+     "min": 3.225,
+     "passe": true
+    }
+   },
+   "contrasteSurLaDescente_y0a270": {
+    "min": 3.225,
+    "max": 3.387
+   },
+   "D9_nettete": {
+    "y0": {
+     "bois": 160.9,
+     "marches": 158.1,
+     "img": "d0.00000_r0.000_2400.png"
+    },
+    "y270": {
+     "bois": 85,
+     "marches": 98.6,
+     "img": "d0.06600_r0.000_2400.png",
+     "mediaScale": "1.04"
+    },
+    "ratioBois_y270_contrePageEnLigne": 0.774,
+    "ratioMarches_y270_contrePageEnLigne": 0.914,
+    "seuilIndicatif": 0.68,
+    "passeContrePageEnLigne": true,
+    "ratioBois_y270_contreSonImageY0": 0.528
+   },
+   "D15_perceptibilite": {
+    "retenu": "d15.mjs, recherche ±32 px réduits, blocs à la limite exclus",
+    "delta_y270": 0.066,
+    "rho_deg": 0,
+    "oeil": {
+     "blocs": 208,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 14,
+     "moduleP90_px": 20.9,
+     "radialMedian_px": 13.6,
+     "moduleModeleMedian_px_blocsRetenus": 17.6,
+     "moduleModeleMedian_px_tousBlocs": 17.6,
+     "sadMoyenMedian": 11.5
+    },
+    "marches": {
+     "blocs": 99,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 71.5,
+     "moduleP90_px": 129.3,
+     "radialMedian_px": 71.5,
+     "moduleModeleMedian_px_blocsRetenus": 75.7,
+     "moduleModeleMedian_px_tousBlocs": 75.7,
+     "sadMoyenMedian": 18
+    },
+    "premierePasseDansLeFilm_R18": {
+     "oeil": {
+      "blocs": 208,
+      "moduleMedian_px": 14,
+      "moduleP90_px": 20.9,
+      "radialMedian_px": 13.6,
+      "moduleModeleMedian_px": 17.6,
+      "blocsAuBordDeLaRecherche": 0
+     },
+     "marches": {
+      "blocs": 99,
+      "moduleMedian_px": 71.5,
+      "moduleP90_px": 129.3,
+      "radialMedian_px": 71.5,
+      "moduleModeleMedian_px": 75.7,
+      "blocsAuBordDeLaRecherche": 0
+     }
+    }
+   },
+   "mouvementFilm": {
+    "images8ips": 64,
+    "ecartMoyenParImage8ips": 0.029,
+    "ecartMaxPaire8ips": 0.0569,
+    "pairesAuDessus0085": 0,
+    "plageFigeeLaPlusLongue_s": 0.625,
+    "ecartMaxEntreImages30ips": 0.0253,
+    "dureePalierDansLeFilm_s": 2.17,
+    "ecartY0contreY270_page": {
+     "moyen": 0.1559,
+     "part8": 0.786
+    }
+   },
+   "relief": "sans"
+  },
+  "sansgpu": {
+   "film": "descente-sansgpu.mp4",
+   "planche": "planche-c.jpg",
+   "verificationFilm": {
+    "fichier": "descente-sansgpu.mp4",
+    "duree_s": 8,
+    "octets": 1779369,
+    "codec": "h264",
+    "format": "1440x900",
+    "pixfmt": "yuv420p",
+    "ips": "30/1",
+    "images": 240,
+    "pistesAudio": 0
+   },
+   "controleFilmContreImagesCles": {
+    "y270": {
+     "imageDuFilm": 82,
+     "yFilm": 270,
+     "yCle": 270,
+     "tFilm": 2.733,
+     "tCle": 2.733,
+     "moyenneGrise": 92.6,
+     "ecartFilmContreCle": {
+      "moyen": 0.0177,
+      "part8": 0.137
+     }
+    },
+    "y1170": {
+     "imageDuFilm": 223,
+     "yFilm": 1170,
+     "yCle": 1170,
+     "tFilm": 7.433,
+     "tCle": 7.5,
+     "moyenneGrise": 34.6,
+     "ecartFilmContreCle": {
+      "moyen": 0.0155,
+      "part8": 0.111
+     }
+    }
+   },
+   "devisDansLaBarre_premierY": 181,
+   "D5_contrasteParcours": {
+    "images": 113,
+    "min": 3.128,
+    "yDuMin": 355,
+    "passe": true,
+    "sousTrois": []
+   },
+   "D5_grille": {
+    "1280x800": {
+     "min": 3.146,
+     "passe": true
+    },
+    "1366x768": {
+     "min": 2.871,
+     "passe": false
+    },
+    "1440x900": {
+     "min": 3.262,
+     "passe": true
+    }
+   },
+   "contrasteSurLaDescente_y0a270": {
+    "min": 3.314,
+    "max": 3.406
+   },
+   "D9_nettete": {
+    "y0": {
+     "bois": 109.8,
+     "marches": 107.8,
+     "img": "heros-escalier-1600.avif"
+    },
+    "y270": {
+     "bois": 96.4,
+     "marches": 95,
+     "img": "heros-escalier-1600.avif",
+     "mediaScale": "1.04"
+    },
+    "ratioBois_y270_contrePageEnLigne": 0.878,
+    "ratioMarches_y270_contrePageEnLigne": 0.88,
+    "seuilIndicatif": 0.68,
+    "passeContrePageEnLigne": true,
+    "ratioBois_y270_contreSonImageY0": 0.878
+   },
+   "D15_perceptibilite": {
+    "retenu": "d15.mjs, recherche ±32 px réduits, blocs à la limite exclus",
+    "delta_y270": 0,
+    "rho_deg": 0,
+    "oeil": {
+     "blocs": 208,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 3.9,
+     "moduleP90_px": 5.6,
+     "radialMedian_px": 3.7,
+     "moduleModeleMedian_px_blocsRetenus": 4.3,
+     "moduleModeleMedian_px_tousBlocs": 4.3,
+     "sadMoyenMedian": 7.2
+    },
+    "marches": {
+     "blocs": 99,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 9.4,
+     "moduleP90_px": 15.5,
+     "radialMedian_px": 9.4,
+     "moduleModeleMedian_px_blocsRetenus": 10.9,
+     "moduleModeleMedian_px_tousBlocs": 10.9,
+     "sadMoyenMedian": 6.9
+    },
+    "premierePasseDansLeFilm_R18": {
+     "oeil": {
+      "blocs": 208,
+      "moduleMedian_px": 3.9,
+      "moduleP90_px": 5.6,
+      "radialMedian_px": 3.7,
+      "moduleModeleMedian_px": 4.3,
+      "blocsAuBordDeLaRecherche": 0
+     },
+     "marches": {
+      "blocs": 99,
+      "moduleMedian_px": 9.4,
+      "moduleP90_px": 15.5,
+      "radialMedian_px": 9.4,
+      "moduleModeleMedian_px": 10.9,
+      "blocsAuBordDeLaRecherche": 0
+     }
+    }
+   },
+   "mouvementFilm": {
+    "images8ips": 64,
+    "ecartMoyenParImage8ips": 0.023,
+    "ecartMaxPaire8ips": 0.0562,
+    "pairesAuDessus0085": 0,
+    "plageFigeeLaPlusLongue_s": 1.25,
+    "ecartMaxEntreImages30ips": 0.0252,
+    "dureePalierDansLeFilm_s": 2.17,
+    "ecartY0contreY270_page": {
+     "moyen": 0.074,
+     "part8": 0.507
+    }
+   },
+   "relief": "sans"
+  },
+  "d116-roulis": {
+   "film": "descente-d116-roulis.mp4",
+   "planche": "planche-a-roulis.jpg",
+   "verificationFilm": {
+    "fichier": "descente-d116-roulis.mp4",
+    "duree_s": 8,
+    "octets": 2335826,
+    "codec": "h264",
+    "format": "1440x900",
+    "pixfmt": "yuv420p",
+    "ips": "30/1",
+    "images": 240,
+    "pistesAudio": 0
+   },
+   "controleFilmContreImagesCles": {
+    "y270": {
+     "imageDuFilm": 82,
+     "yFilm": 270,
+     "yCle": 270,
+     "tFilm": 2.733,
+     "tCle": 2.733,
+     "moyenneGrise": 109.4,
+     "ecartFilmContreCle": {
+      "moyen": 0.0165,
+      "part8": 0.127
+     }
+    },
+    "y1170": {
+     "imageDuFilm": 223,
+     "yFilm": 1170,
+     "yCle": 1170,
+     "tFilm": 7.433,
+     "tCle": 7.5,
+     "moyenneGrise": 34.6,
+     "ecartFilmContreCle": {
+      "moyen": 0.0155,
+      "part8": 0.11
+     }
+    }
+   },
+   "devisDansLaBarre_premierY": 181,
+   "D5_contrasteParcours": {
+    "images": 113,
+    "min": 2.547,
+    "yDuMin": 429,
+    "passe": false,
+    "sousTrois": [
+     [
+      168,
+      2.987
+     ],
+     [
+      174,
+      2.964
+     ],
+     [
+      181,
+      2.943
+     ],
+     [
+      187,
+      2.926
+     ],
+     [
+      194,
+      2.905
+     ],
+     [
+      200,
+      2.885
+     ],
+     [
+      207,
+      2.868
+     ],
+     [
+      213,
+      2.848
+     ],
+     [
+      220,
+      2.836
+     ],
+     [
+      227,
+      2.82
+     ],
+     [
+      234,
+      2.806
+     ],
+     [
+      241,
+      2.792
+     ],
+     [
+      248,
+      2.778
+     ],
+     [
+      255,
+      2.765
+     ],
+     [
+      263,
+      2.754
+     ],
+     [
+      270,
+      2.746
+     ],
+     [
+      277,
+      2.732
+     ],
+     [
+      285,
+      2.713
+     ],
+     [
+      293,
+      2.698
+     ],
+     [
+      300,
+      2.686
+     ],
+     [
+      308,
+      2.67
+     ],
+     [
+      316,
+      2.651
+     ],
+     [
+      323,
+      2.641
+     ],
+     [
+      331,
+      2.62
+     ],
+     [
+      339,
+      2.598
+     ],
+     [
+      347,
+      2.581
+     ],
+     [
+      355,
+      2.562
+     ],
+     [
+      363,
+      2.563
+     ],
+     [
+      371,
+      2.567
+     ],
+     [
+      379,
+      2.572
+     ],
+     [
+      388,
+      2.569
+     ],
+     [
+      396,
+      2.568
+     ],
+     [
+      404,
+      2.565
+     ],
+     [
+      413,
+      2.565
+     ],
+     [
+      421,
+      2.577
+     ],
+     [
+      429,
+      2.547
+     ],
+     [
+      438,
+      2.548
+     ],
+     [
+      446,
+      2.55
+     ],
+     [
+      455,
+      2.572
+     ],
+     [
+      463,
+      2.588
+     ],
+     [
+      472,
+      2.64
+     ],
+     [
+      481,
+      2.682
+     ],
+     [
+      489,
+      2.715
+     ],
+     [
+      498,
+      2.779
+     ],
+     [
+      506,
+      2.822
+     ],
+     [
+      515,
+      2.863
+     ]
+    ]
+   },
+   "D5_grille": {
+    "1280x800": {
+     "min": 2.556,
+     "passe": false
+    },
+    "1366x768": {
+     "min": 2.125,
+     "passe": false
+    },
+    "1440x900": {
+     "min": 2.742,
+     "passe": false
+    }
+   },
+   "contrasteSurLaDescente_y0a270": {
+    "min": 2.746,
+    "max": 3.387
+   },
+   "D9_nettete": {
+    "y0": {
+     "bois": 160.9,
+     "marches": 158.1,
+     "img": "d0.00000_r0.000_2400.png"
+    },
+    "y270": {
+     "bois": 51.1,
+     "marches": 75.5,
+     "img": "d0.11600_r-8.923_2400.png",
+     "mediaScale": "1.04"
+    },
+    "ratioBois_y270_contrePageEnLigne": 0.465,
+    "ratioMarches_y270_contrePageEnLigne": 0.7,
+    "seuilIndicatif": 0.68,
+    "passeContrePageEnLigne": false,
+    "ratioBois_y270_contreSonImageY0": 0.318
+   },
+   "D15_perceptibilite": {
+    "retenu": "d15.mjs, recherche ±32 px réduits, blocs à la limite exclus",
+    "delta_y270": 0.116,
+    "rho_deg": -8.92,
+    "oeil": {
+     "blocs": 208,
+     "blocsALaLimite": 0,
+     "moduleMedian_px": 23.4,
+     "moduleP90_px": 37.5,
+     "radialMedian_px": 21.6,
+     "moduleModeleMedian_px_blocsRetenus": 35.4,
+     "moduleModeleMedian_px_tousBlocs": 35.4,
+     "sadMoyenMedian": 13.9
+    },
+    "marches": {
+     "blocs": 99,
+     "blocsALaLimite": 20,
+     "moduleMedian_px": 89.5,
+     "moduleP90_px": 205.8,
+     "radialMedian_px": 69.4,
+     "moduleModeleMedian_px_blocsRetenus": 139.9,
+     "moduleModeleMedian_px_tousBlocs": 157.6,
+     "sadMoyenMedian": 24.6
+    },
+    "premierePasseDansLeFilm_R18": {
+     "oeil": {
+      "blocs": 208,
+      "moduleMedian_px": 23.4,
+      "moduleP90_px": 37.5,
+      "radialMedian_px": 21.6,
+      "moduleModeleMedian_px": 35.4,
+      "blocsAuBordDeLaRecherche": 0
+     },
+     "marches": {
+      "blocs": 99,
+      "moduleMedian_px": 163.3,
+      "moduleP90_px": 209.5,
+      "radialMedian_px": 144.5,
+      "moduleModeleMedian_px": 157.6,
+      "blocsAuBordDeLaRecherche": 42
+     }
+    }
+   },
+   "mouvementFilm": {
+    "images8ips": 64,
+    "ecartMoyenParImage8ips": 0.032,
+    "ecartMaxPaire8ips": 0.0594,
+    "pairesAuDessus0085": 0,
+    "plageFigeeLaPlusLongue_s": 0.625,
+    "ecartMaxEntreImages30ips": 0.0282,
+    "dureePalierDansLeFilm_s": 2.17,
+    "ecartY0contreY270_page": {
+     "moyen": 0.1893,
+     "part8": 0.834
+    }
+   },
+   "relief": "sans"
+  }
+ },
+ "nonMesurableSurUnPrototypeHorsLigne": [
+  "D-4 (nav-retenue-qa sur la démo régénérée) : aucune démo régénérée, seulement une injection ; relevé indicatif seulement (« Devis » dans la barre à y ≥ 225).",
+  "D-5 « avec carte graphique » : le shader n’existe pas ; la perspective injectée tient lieu de toile. Le contraste mesuré est celui de l’image hors ligne, pas d’un rendu WebGL (lumière du shader, voile uVoile, intro).",
+  "D-6 (le worker suit la page), D-7 (dmax lu dans compte), D-11 (latence), D-12 (tâches longues), D-14 (redimensionnement) : aucun worker, aucun message, aucune toile.",
+  "D-10 (inversion de Newton en GLSL, demi-précision) : le prototype inverse par dichotomie en double précision (table de 65 537 valeurs) ; la boucle GLSL n’est pas écrite.",
+  "D-9 exact : la netteté réelle dépendra du filtrage de la texture 2880 (mipmaps LINEAR_MIPMAP_LINEAR) et du dpr de la toile ; le prototype lit la 2400 (4 sous-échantillons) et laisse le navigateur réduire. Sensibilité mesurée (mesures-temoins.json → sensibiliteSource) : la 2880 donne +37 % au bois à y = 270 pour δ = 0,116 (75,9 contre 55,4) et +45 % pour δ = 0,066 (123,5 contre 85,0). Première image des films a et b plus nette que la page en ligne (160,9 contre 109,8) : l’adoucissement vu À L’INTÉRIEUR de ces films est exagéré ; lire D-9 contre la page en ligne.",
+  "Loupes 1:1 pour l’œil : loupe-bois.jpg et loupe-marches.jpg (page en ligne y = 0 ; c, b, a à y = 270, poussée figée).",
+  "Contrôle image positionnée ↔ temps réel : l’écart (0,0032) est sous le seuil « identiques » de 0,006, mais la capture en temps réel a duré 1,3 s et un décalage d’une seconde de poussée ne donne que 0,0067 : le contrôle exclut un état faux, pas un décalage de moins d’une seconde.",
+  "δ = 0,066 « à dpr 1,5 » : filmé en 1440×900 à dpr 1 ; la netteté à dpr 1,5 (toile 2160 px) n’est pas représentée, seule l’amplitude du geste l’est.",
+  "P-1 à P-4 (Lighthouse, poids, site-qa, coût au bureau) et R-8 complet sans JavaScript : hors prototype.",
+  "Le geste au repos (Q1) n’est pas tranché : aucun n’est filmé ; seule la poussée existante tourne (départ à 0). E_b = 1 (pas de rotation) ; ρ = 0 dans a et b, comme le prévoit le §2 si le geste retenu tourne ; la variante a-roulis montre le cas contraire."
+ ]
+}
