@@ -1,0 +1,17 @@
+$ node scripts/crieur-qa.mjs --partie=route
+# 2026-09-30T15:47:04Z · code 0 · 28s
+
+crieur-qa --partie=route (026-122) — racine C:/Users/benja/Documents/presti
+PASS CR-5 — CRON_SECRET vérifié, 401 en cas de jeton absent ou faux
+PASS CR-6 — ?a_sec=1 traité avant toute écriture ou appel à Publora
+PASS CR-7 — POST /create-post, x-publora-key, corps aux seules clés content/platforms(/mediaUrls), jamais scheduledTime ; connexions garde les trois préfixes
+PASS CR-7BIS — ni publora.ts ni la route ne lisent CRIEUR_PUBLIE_SEUL ; scheduledTime et programmeePour toujours refusés ; jamais le statut programmee
+PASS CR-8 — jugerPublication avant creerPublication, statut brouillon_publora + programmee_pour, notifierEntreprise (sujet « … brouillons à accorder »)
+PASS CR-9 — aucun import de lib/ai, enregistrerPassage('crieur', …) appelé, npm run typecheck vert
+PASS CR-15 — GET : 404 sur id inconnu, ImageResponse 1080×1080, aucune adresse externe, Cache-Control 86400
+PASS CR-16 — ops_battement('crieur') suit enregistrerPassage(
+PASS CR-17 — pauseGenerale importée de @/lib/agents/pause, appelée juste après le contrôle du jeton, avant crieur_posts et creerPublication
+PASS CR-18 — actif('aimantSite') lu et transmis, lib/flags.ts (false, commenté) et fermeture-e2e.mjs ('lu') à jour
+PASS CR-19 — horizon de 26 h, { deja: true } au rejeu, jamais scheduledTime envoyé (route + creerPublication, CR-7BIS)
+PASS CR-NR — 4 fichier(s) hors périmètre du Crieur inchangé(s) (identiques à HEAD)
+crieur-qa : PASS

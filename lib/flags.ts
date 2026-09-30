@@ -113,6 +113,10 @@ export const FLAGS = {
   demandesEcosysteme: true,
   /** Ferme la route de la demande entrante ; lever prospectsEntrant quand le formulaire de la landing v2 existe, sur décision de Benj. */
   prospectsEntrant: false,
+  /** 25/09 — Aimant "Commente SITE" du Crieur. Baissé : aucune publication ne promet la maquette.
+   * Levé par Claude Code quand les webhooks Meta (026-090) et le Répondeur (026-096) sont déployés
+   * et qu'un entrant d'essai a été servi de bout en bout. */
+  aimantSite: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
