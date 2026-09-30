@@ -357,7 +357,9 @@ async function critereDecor(ctx, suite) {
       await attendre(1500)
       const ecrans = await lireEcrans(P.page)
       const em = await empreinteRepos(P.page)
-      return { nom, ecrans, hash: em.hash ?? null, instable: !!em.instable }
+      // La texture du décor elle-même, quand le moteur la range sous la clé `decor` (NOTES-TEMOIN.md §3.10) : octet pour octet.
+      const texture = await P.page.evaluate(() => { try { const t = globalThis.__stationGame.textures; return t.exists('decor') ? t.get('decor').getSourceImage().toDataURL() : null } catch { return null } })
+      return { nom, ecrans, hash: em.hash ?? null, instable: !!em.instable, decor: texture ? sha(texture) : null }
     } finally { await P.fermer() }
   }))
   for (const p of pages) if (p.erreur) e.push(`jeu « ${p.nom} » : ${p.erreur}`)
@@ -373,9 +375,11 @@ async function critereDecor(ctx, suite) {
     if (h.vide !== h.videAutre) e.push(`la texture du décor dépend des données : sans agent, un jeu vide et un jeu chargé donnent deux images (${h.vide} et ${h.videAutre})`)
     if (h.chargeA !== h.chargeB) e.push(`la texture du décor dépend des données : deux jeux de données différents donnent deux images (${h.chargeA} et ${h.chargeB}) — un chiffre est peint dans le décor`)
     if (!h.vide || !h.chargeA) e.push('cliché impossible')
+    const textures = new Set(pages.map((p) => p.decor))
+    if (pages.every((p) => p.decor) && textures.size > 1) e.push(`la texture du décor (clé « decor ») n'est pas la même octet pour octet d'un jeu de données à l'autre (${textures.size} textures pour ${pages.length} jeux) : une donnée y est peinte`)
     if (h.vide && h.vide === h.chargeA) e.push('avec ou sans agents la carte donne la même image : elle ne dessine rien')
   }
-  return { echecs: e, detail: 'quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — », et les images sont identiques deux à deux (décor sans donnée)' }
+  return { echecs: e, detail: 'quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — », et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle existe) est la même octet pour octet dans les quatre jeux' }
 }
 /** La structure de `direct` avec chaque nombre à 0 et chaque texte de donnée vide. */
 function zero(x, cle = '') {
