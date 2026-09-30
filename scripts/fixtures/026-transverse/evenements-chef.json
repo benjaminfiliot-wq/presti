@@ -1,0 +1,139 @@
+{
+ "note": "Faux événements du bus (ops.evenements) du juge du pont Telegram (026-194) : ceux du Chef de type consigne_lue, cycle_termine et reunion_compte_rendu sortent, masqués par masquer ; les autres (autre agent, autre type, battement) ne doivent pas sortir. Personnes fictives, e-mails en @presti-test.invalid, numéros de la plage de fiction.",
+ "eligibles": {
+  "agent": "chef",
+  "types": [
+   "consigne_lue",
+   "cycle_termine",
+   "reunion_compte_rendu"
+  ]
+ },
+ "pieges_masques": [
+  "paul.verdier@presti-test.invalid",
+  "exemple.presti-test.invalid",
+  "Paul Verdier",
+  "Sophie Charrier",
+  "06 39 98 45 67",
+  "https://exemple"
+ ],
+ "pieges_ineligibles": [
+  "Camille Roussel",
+  "349,00 €",
+  "06 39 98 00 11",
+  "Nadia Bensaïd"
+ ],
+ "evenements": [
+  {
+   "id": 501,
+   "le": "2026-09-20T06:00:00.000Z",
+   "agent": "chef",
+   "type": "consigne_lue",
+   "objet": "agent:chef",
+   "resume": "Consigne lue : relancer M. Paul Verdier (paul.verdier@presti-test.invalid) demain matin."
+  },
+  {
+   "id": 502,
+   "le": "2026-09-20T06:50:00.000Z",
+   "agent": "chef",
+   "type": "battement",
+   "objet": null,
+   "resume": "battement du chef"
+  },
+  {
+   "id": 503,
+   "le": "2026-09-20T07:40:00.000Z",
+   "agent": "facteur",
+   "type": "cycle_termine",
+   "objet": null,
+   "resume": "Cycle terminé chez le facteur : 2 envois, aucun retour."
+  },
+  {
+   "id": 504,
+   "le": "2026-09-20T08:30:00.000Z",
+   "agent": "chef",
+   "type": "cycle_termine",
+   "objet": null,
+   "resume": "Cycle terminé : 4 tâches faites, 1 en attente. Détail sur https://exemple.presti-test.invalid/suivi/77 pour la revue."
+  },
+  {
+   "id": 505,
+   "le": "2026-09-20T09:20:00.000Z",
+   "agent": "chef",
+   "type": "erreur",
+   "objet": null,
+   "resume": "Échec du cycle : appel refusé pour le 06 39 98 00 11."
+  },
+  {
+   "id": 506,
+   "le": "2026-09-20T10:10:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": null,
+   "resume": "Réunion : Mme Sophie Charrier veut un rappel au 06 39 98 45 67 avant vendredi."
+  },
+  {
+   "id": 507,
+   "le": "2026-09-20T11:00:00.000Z",
+   "agent": "systeme",
+   "type": "reunion_compte_rendu",
+   "objet": null,
+   "resume": "Réunion du système : rien à signaler."
+  },
+  {
+   "id": 508,
+   "le": "2026-09-20T11:50:00.000Z",
+   "agent": "chef",
+   "type": "consigne_lue",
+   "objet": "agent:chef",
+   "resume": "Consigne lue : préparer le point de la semaine pour Benj."
+  },
+  {
+   "id": 509,
+   "le": "2026-09-20T12:40:00.000Z",
+   "agent": "chef",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande de 349,00 € payée par Camille Roussel."
+  },
+  {
+   "id": 510,
+   "le": "2026-09-20T13:30:00.000Z",
+   "agent": "chef",
+   "type": "cycle_termine",
+   "objet": null,
+   "resume": "Cycle terminé : 6 tâches faites, aucune en attente."
+  },
+  {
+   "id": 511,
+   "le": "2026-09-20T14:20:00.000Z",
+   "agent": "pont_telegram",
+   "type": "consigne_lue",
+   "objet": null,
+   "resume": "Consigne lue par le pont : rien de spécial."
+  },
+  {
+   "id": 512,
+   "le": "2026-09-20T15:10:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": null,
+   "resume": "Réunion : bilan de la semaine, on garde la relance courte et on reprend les devis en attente. Réunion : bilan de la semaine, on garde la relance courte et on reprend les devis en attente. Ne pas oublier de rappeler Mme Sophie Charrier au 06 39 98 45 67 pour confirmer le rendez-vous de vendredi matin."
+  },
+  {
+   "id": 513,
+   "le": "2026-09-20T16:00:00.000Z",
+   "agent": "chef",
+   "type": "consigne",
+   "objet": "agent:chef",
+   "resume": "Consigne posée : vérifier les paiements de Nadia Bensaïd."
+  },
+  {
+   "id": 514,
+   "le": "2026-09-20T16:50:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": null,
+   "resume": "Réunion : idée retenue, tester une relance plus courte le mardi."
+  }
+ ]
+}
