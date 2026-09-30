@@ -1,0 +1,10 @@
+# Created by cloud-init v. 24.1 on Mon, 01 Jan 2024 00:00:00 +0000 (fichier d essai)
+
+# User rules for ubuntu
+ubuntu ALL=(ALL) NOPASSWD:ALL
+# User rules for usine
+usine ALL=(ALL) NOPASSWD:ALL
+usinex ALL=(ALL) NOPASSWD:ALL
+%essai-groupe ALL=(ALL) NOPASSWD:ALL
+essai2	ALL=(ALL)	NOPASSWD:ALL  
+# fin du fichier d essai, apres la ligne usine
