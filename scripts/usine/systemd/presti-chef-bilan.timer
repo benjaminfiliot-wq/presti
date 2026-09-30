@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer pour le bilan de Matt
+
+[Timer]
+OnCalendar=*-*-* 07:35:00 Europe/Paris
+Persistent=false
+Unit=presti-chef-bilan.service
+
+[Install]
+WantedBy=timers.target
