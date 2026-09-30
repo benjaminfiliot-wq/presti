@@ -20,7 +20,7 @@
 export const fiche = '026-171'
 export const reference = '1c87006aa35a152cb918ab368225e1976a1328da'
 export const temoin = './temoin'
-export const absents = ['lib/pilotage/theme.ts', 'lib/pilotage/disposition.ts', 'lib/pilotage/reglages.ts', 'public/station/themes/', 'docs/ecommerce/']
+const absentsA = ['lib/pilotage/theme.ts', 'lib/pilotage/disposition.ts', 'lib/pilotage/reglages.ts', 'public/station/themes/', 'docs/ecommerce/']
 const BASE = `--base=${reference}`
 
 const P = 'lib/pilotage'
@@ -50,7 +50,7 @@ const sabotagesTheme = (D, cle, nom) => [
   { nom: 'champ-de-code', fichier: `${D}/theme.json`, avant: ' "nuit": false,', apres: ' "nuit": false, "onclick": "x()",', tue: 'TH-12' },
 ]
 
-export const juges = [
+const jugesA = [
   {
     commande: 'scripts/station-themes-qa.mjs', arguments: ['--partie=modules'], loader: false, attendu: 'TH-1', criteresMin: 6,
     sabotages: [
@@ -143,8 +143,15 @@ export const juges = [
   },
 ]
 
-export const controles = [
+const controlesA = [
   { id: 'JA-3', module: './controles.mjs', fonction: 'controleJeux' },
   { id: 'JA-4', module: './controles.mjs', fonction: 'controleSecrets' },
   { id: 'JA-6', module: './controles.mjs', fonction: 'controleAppels' },
 ]
+
+// La partie B (t/lot-b.mjs : station-reglages-qa, poste-extraction-qa) est fusionnée ici : même référence, même témoin (./temoin).
+import * as B from './lot-b.mjs'
+if (B.reference !== reference) throw new Error('lot-b.mjs : la référence doit être celle de lot.mjs')
+export const absents = [...absentsA, ...B.absents]
+export const juges = [...jugesA, ...B.juges]
+export const controles = [...controlesA, ...B.controles]
