@@ -41,3 +41,23 @@ Jetons d'agent (`garde.ts`), aucun `p_agent` tiré du corps, signature HMAC Meta
 
 ## Ordre de jugement proposé
 Garde-fous d'abord : (1) STOP hors fil et opposition, (2) verrou d'envoi en base + réservation d'envoi du Facteur, (3) pause générale sur les crons et le Crieur, (4) identité par jeton partout, (5) plafond 0 € mécanisé ; puis les fiches 092, 244-245, 089/095/096/145 (alignées sur la décision), 210-212-217, 226-227, 163, 106, 098, 148.
+
+---
+
+# Complément du 30/09 (soir) — lecture des 1712 fichiers ajoutés (PR #5, 2727 fichiers)
+
+Huit agents supplémentaires (preuves 017 ; autres preuves ; sites de référence ; données de prospection ; sources des juges et 17 questions ; vidéos promo et veille ; documents de l'entreprise ; balayage de secrets). **Non lus** : images (313 fichiers) et PDF ; tous les `.log` et `verifier.log` (exclus du paquet, donc aucun PASS n'est recoupable avec sa sortie brute) ; les 808 vidéos (archives privées de release, inaccessibles d'ici : 404 sans authentification, pas de ffmpeg — il faut des planches d'images JPEG et des transcriptions dans git).
+
+## Nouveaux constats graves
+1. **Fuite du nom « Presti » sur les surfaces du prospect** (10 maquettes de référence sur 10 ; démo Lestraque ; adresse d'envoi sur le domaine de Presti ; crédits photo « modifiées par Presti ») : contre la règle white-label. Aucun juge de site ne cherche le mot.
+2. **Les quatre protections prioritaires du 30/09 n'ont aucun juge démontré rouge** (STOP hors fil, pause générale incluant le Crieur et les relances, réservation anti-doublon du Facteur, plafond 0 €) ; `scripts/chef/commun.mjs:143,151` ne borne pas `engage_cents`/`montant_cents` ; ORB-9 survit (prix promu sans Benj).
+3. **Données personnelles de tiers dans le dépôt** (≈370 e-mails, ≈1 900 téléphones, ≈1 200 SIRET, 4 contrats avec état civil, listes de prospects) : contredit D1 et les mentions « hors dépôt, exprès » ; aucun registre de suppression exploitable (une société « opposée au marketing direct » reste dans la liste et le kit) ; entrepreneurs individuels non repérés ; 49 constats « site vieillot » sur 70 reposent sur une fiche d'annuaire.
+4. **Campagne du 16/09 (166 e-mails) non conforme au cadre du 27/09** (ni SIREN, ni adresse, ni « EI », ni désinscription ; 15 s d'intervalle ; 62 liens réécrits, 5 rebonds, 1 STOP, 1 réponse non traitée).
+5. **Promesses fausses dans les pubs** (« rien ne part sans vous », « 29 € : vous validez tout ») ; pubs UGC avec avatars et témoignages en première personne contre « l'IA ne fabrique aucun avis » ; veille qui télécharge les vidéos d'autrui (yt-dlp/ffmpeg) contre la règle.
+6. **Sites de référence** : zone d'intervention affirmée dans `<title>`/h1 alors que le corps dit « à confirmer » ; légendes d'images inventées ; provenance CC BY/BY-SA non prouvée ; mentions légales d'un site d'artisan absentes ; numéro de téléphone cliquable « à reconfirmer ».
+7. **Chaîne d'outils** : `chantier.mjs:181-191` zone protégée contournable (`**`, `./supabase`) ; `verifier-fiche` exécute un script choisi par la fiche avec tout l'environnement ; `douleurs.mjs:262` n'anonymise que `extrait` (`probleme` part en clair vers freellmapi).
+8. **Entreprise** : « coentreprise » = 12 agents Claude (pas une société humaine) dont la mémoire enseigne encore `/api/control/*` et un mot de passe en password grant (à purger) ; aucun contrat signé dans le paquet, quatre versions successives du partage, pas de pièce de sortie ; INPI affirmé mais non prouvé ; prospection à froid par Gmail (Resend l'interdit dans ses CGU).
+9. **Secrets** : rien de grave (2727 fichiers, 2406 lisibles balayés) ; à traiter : code du compte de relecture en clair (renouveler), IP de l'usine dans 27 fichiers, URL CDN signées et cookies `ttwid` dans les `info.json` de veille.
+
+## Corrections engagées (ordre)
+Juges d'abord (rouges sur l'arbre actuel, verts sur un correctif témoin), puis correctifs : (1) STOP et opposition hors fil ; (2) pause générale sur relances, Facteur et Crieur (publications déjà programmées comprises) ; (3) réservation atomique anti-doublon du Facteur ; (4) plafond 0 € avant consommation, coût inconnu refusé ; (5) white-label des surfaces du prospect ; puis alignement des fiches sur la décision du 30/09 (fin de l'accord individuel).
