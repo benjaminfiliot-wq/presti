@@ -174,7 +174,7 @@ export async function serveurCopie(copie, { critere = 'RL-3', attenteMs = 240_00
     const port = await portLibre()
     if (port === 3400) throw erreurCritere(critere, 'port 3400 : c’est celui de l’arbre réel')
     const base = `http://127.0.0.1:${port}`
-    enfant = spawn(process.execPath, [bin, 'dev', '-p', String(port), '-H', '127.0.0.1'], { cwd: copie, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, env: { ...process.env, PORT: String(port), BROWSER: 'none', NEXT_TELEMETRY_DISABLED: '1' } })
+    enfant = spawn(process.execPath, [bin, 'dev', '--webpack', '-p', String(port), '-H', '127.0.0.1'], { cwd: copie, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, env: { ...process.env, PORT: String(port), BROWSER: 'none', NEXT_TELEMETRY_DISABLED: '1' } })
     let journal = ''
     enfant.stdout.on('data', (d) => { journal = (journal + d).slice(-4000) })
     enfant.stderr.on('data', (d) => { journal = (journal + d).slice(-4000) })
