@@ -1,0 +1,34 @@
+// Le décor : une texture dessinée UNE fois, à partir du thème seul. Aucune donnée n'y entre (les écrans y sont des
+// tirets, sans police), donc deux jeux de données différents donnent la même texture, octet pour octet.
+import type { Theme } from '../types'
+
+export function dessinerDecor(ctx: CanvasRenderingContext2D, theme: Theme, k: number): void {
+  const { pas, largeur, hauteur } = theme.grille
+  const P = theme.palette
+  ctx.imageSmoothingEnabled = false
+  const r = (x: number, y: number, l: number, h: number, c: string) => { ctx.fillStyle = c; ctx.fillRect(x * k, y * k, l * k, h * k) }
+  r(0, 0, largeur, hauteur, P['--mc-fond'])
+  const noeuds = new Map(theme.coursives.noeuds.map((n) => [n.id, n] as const))
+  for (const a of theme.coursives.aretes) {
+    const p = noeuds.get(a.de), q = noeuds.get(a.a)
+    if (!p || !q) continue
+    if (p.y === q.y) r(Math.min(p.x, q.x), p.y, Math.abs(q.x - p.x) + pas, a.largeur, P['--mc-coursive'])
+    else r(p.x, Math.min(p.y, q.y), a.largeur, Math.abs(q.y - p.y) + pas, P['--mc-coursive'])
+  }
+  for (const e of theme.emplacements) {
+    const { x = 0, y = 0, l = 0, h = 0 } = e.forme
+    r(x, y, l, h, P['--mc-mur'])
+    if (e.reservee) {
+      // Emplacement réservé : hachuré, sans porte ni écran.
+      for (let cy = y + pas; cy < y + h - pas; cy += pas) for (let cx = x + pas; cx < x + l - pas; cx += pas) if (((cx + cy) / pas) % 2 === 0) r(cx, cy, pas, pas, P['--mc-coursive'])
+      continue
+    }
+    r(x + pas, y + pas, l - 2 * pas, h - 2 * pas, e.teinte)
+    r(e.porte.x, e.porte.y, pas, pas, P['--mc-porte'])
+    r(e.plaque.x, e.plaque.y, 2 * pas, pas / 2, P['--mc-plaque'])
+    r(x + 3 * pas, y, 2 * pas, pas, P['--mc-ecran'])
+    r(x + 3 * pas + pas / 2, y + pas / 2 - 1, pas, 2, P['--mc-texte'])
+  }
+  for (const p of theme.tapis.trace) r(p.x, p.y, pas, pas, P['--mc-accent'])
+  for (const s of theme.tapis.etapes) r(s.x, s.y, pas, pas, P['--mc-texte'])
+}

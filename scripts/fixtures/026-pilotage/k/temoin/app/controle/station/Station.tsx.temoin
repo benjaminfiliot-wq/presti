@@ -1,0 +1,58 @@
+'use client'
+
+// La page de la station (témoin du lot k : le strict nécessaire de 026-111). Sans session Supabase, rien du moteur ne se
+// monte ; avec session, <Carte /> n'apparaît qu'après la première réponse 200 de `vue=direct`.
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import { apiDirection } from '../client'
+import Carte from './Carte'
+
+type Enveloppe<T> = { valeur?: T | null } | null | undefined
+type Direct = { valeur?: { equipage?: Enveloppe<{ agents?: unknown[] }>; tapis?: Enveloppe<unknown>; carte?: Enveloppe<unknown> } | null }
+type Fil = { valeur?: { bulles?: unknown[] } | null }
+type Reglages = { reglages?: Record<string, unknown> }
+
+const CADENCE_FIL_MS = 2000
+const CADENCE_DIRECT_MS = 4000
+
+export default function Station() {
+  const [etat, setEtat] = useState<'verification' | 'sans_session' | 'refuse' | 'pret'>('verification')
+  const [direct, setDirect] = useState<Direct | null>(null)
+  const [bulles, setBulles] = useState<unknown[]>([])
+  const [reglages, setReglages] = useState<Record<string, unknown>>({})
+
+  useEffect(() => {
+    let vivant = true
+    let minuteurs: ReturnType<typeof setInterval>[] = []
+    const lireDirect = async () => {
+      const r = await apiDirection<Direct>('/api/controle/station?vue=direct')
+      if (vivant && r.status === 200) setDirect(r.data)
+      return r
+    }
+    const lireFil = async () => {
+      const r = await apiDirection<Fil>('/api/controle/station?vue=fil')
+      if (vivant && r.status === 200) setBulles(r.data.valeur?.bulles ?? [])
+    }
+    void (async () => {
+      const { data } = await supabase.auth.getSession()
+      if (!vivant) return
+      if (!data.session) { setEtat('sans_session'); return }
+      const [d, g] = await Promise.all([apiDirection<Direct>('/api/controle/station?vue=direct'), apiDirection<Reglages>('/api/controle/station/reglages')])
+      if (!vivant) return
+      if (d.status !== 200) { setEtat('refuse'); return }
+      setDirect(d.data)
+      setReglages(g.status === 200 ? g.data.reglages ?? {} : {})
+      await lireFil()
+      if (!vivant) return
+      setEtat('pret')
+      minuteurs = [setInterval(() => void lireFil(), CADENCE_FIL_MS), setInterval(() => void lireDirect(), CADENCE_DIRECT_MS)]
+    })()
+    return () => { vivant = false; minuteurs.forEach(clearInterval) }
+  }, [])
+
+  if (etat === 'verification') return <p>Vérification de l’accès…</p>
+  if (etat === 'sans_session') return <p>Connexion requise.</p>
+  if (etat === 'refuse') return <p>Accès refusé.</p>
+  const v = direct?.valeur
+  return <Carte equipage={v?.equipage?.valeur?.agents ?? []} tapis={v?.tapis?.valeur ?? null} bulles={bulles} reglages={reglages} carte={v?.carte?.valeur ?? null} />
+}

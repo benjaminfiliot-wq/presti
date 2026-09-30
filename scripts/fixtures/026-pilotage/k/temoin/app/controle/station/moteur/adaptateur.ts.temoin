@@ -1,0 +1,53 @@
+// L'adaptateur : il lit les morceaux servis des vues, en tire l'état des acteurs, calcule une signature et n'appelle le
+// pont que si elle change. Une relecture identique (la station relit ses vues à sa cadence) ne réveille donc rien.
+import { profilAvatar } from '@/lib/avatars/profile'
+import { MOTIFS, type Acteur, type EtatCarte, type Motif, type PropsCarte, type Theme } from './types'
+import type { OfficeSceneBridge } from './claw3d/OfficeSceneBridge'
+
+type Brut = { nom?: unknown; libelle?: unknown; avatar?: unknown; position?: { salle?: unknown; motif?: unknown } | null }
+type Bulle = { id?: unknown; agent?: unknown; texte?: unknown }
+
+/** L'état des acteurs. Un agent sans position n'a pas de salle : il n'est pas dessiné (rien n'est déduit de son état). */
+export function etatDe(props: PropsCarte, theme: Theme): EtatCarte {
+  const agents = (Array.isArray(props.equipage) ? props.equipage : []) as Brut[]
+  const bulles = (Array.isArray(props.bulles) ? props.bulles : []) as Bulle[]
+  const noms = agents.map((a) => a?.nom).filter((n): n is string => typeof n === 'string').sort()
+  const derniere = new Map<string, { id: number; texte: string }>()
+  for (const b of bulles) {
+    if (typeof b?.agent !== 'string' || typeof b.texte !== 'string') continue
+    const id = Number(b.id)
+    if (!derniere.has(b.agent) || id > (derniere.get(b.agent) as { id: number }).id) derniere.set(b.agent, { id, texte: b.texte })
+  }
+  const acteurs: Acteur[] = []
+  for (const a of agents) {
+    if (typeof a?.nom !== 'string' || !a.position || typeof a.position.salle !== 'string') continue
+    const motif = a.position.motif as Motif
+    if (!MOTIFS.includes(motif)) continue
+    const profil = profilAvatar(a.avatar, theme.avatars)
+    acteurs.push({
+      nom: a.nom, libelle: typeof a.libelle === 'string' ? a.libelle : a.nom,
+      salle: motif === 'pause' ? 'repos' : a.position.salle, motif, avatar: profil.cle, couleur: profil.couleur,
+      bulle: derniere.get(a.nom)?.texte ?? '', rang: noms.indexOf(a.nom),
+    })
+  }
+  return { acteurs: acteurs.sort((x, y) => (x.nom < y.nom ? -1 : x.nom > y.nom ? 1 : 0)) }
+}
+
+export class Adaptateur {
+  private pont: OfficeSceneBridge
+  private theme: Theme
+  private signature: string | null = null
+
+  constructor(pont: OfficeSceneBridge, theme: Theme) {
+    this.pont = pont
+    this.theme = theme
+  }
+
+  pousser(props: PropsCarte): void {
+    const etat = etatDe(props, this.theme)
+    const signature = etat.acteurs.map((a) => [a.salle, a.motif, a.bulle, a.nom, a.couleur, a.avatar].join('|')).join('\n')
+    if (signature === this.signature) return
+    this.signature = signature
+    this.pont.appliquer(etat)
+  }
+}

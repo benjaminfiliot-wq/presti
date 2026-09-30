@@ -1,0 +1,25 @@
+// Le pont React vers Phaser (témoin du lot k). Chaque méthode publique est UN appel du pont : le moteur ne les appelle
+// que sur un vrai changement de signature (voir ../adaptateur.ts), jamais à chaque lecture des vues.
+import type { EtatCarte } from '../types'
+
+export type CibleScene = { appliquer(etat: EtatCarte): void }
+
+export class OfficeSceneBridge {
+  private cible: CibleScene | null = null
+  private dernier: EtatCarte | null = null
+
+  /** Branche la scène ; une scène neuve reçoit aussitôt le dernier état connu (reconstruction du jeu comprise). */
+  brancher(cible: CibleScene): void {
+    this.cible = cible
+    if (this.dernier) cible.appliquer(this.dernier)
+  }
+
+  debrancher(): void {
+    this.cible = null
+  }
+
+  appliquer(etat: EtatCarte): void {
+    this.dernier = etat
+    if (this.cible) this.cible.appliquer(etat)
+  }
+}
