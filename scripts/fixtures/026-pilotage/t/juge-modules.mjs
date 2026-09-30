@@ -96,7 +96,7 @@ async function th2() {
     ['portrait : deux réservés', (t) => { t.portrait.emplacements[0].reservee = true }],
     ['arête vers un nœud inconnu', (t) => { t.coursives.aretes[0].de = 'inconnu' }],
     ['portrait : arête vers un nœud inconnu', (t) => { t.portrait.coursives.aretes[0].a = 'inconnu' }],
-    ['tracé du tapis coupé', (t) => { t.tapis.trace.splice(3, 2) }],
+    ['tracé du tapis coupé', (t) => { t.tapis.trace.splice(5, 2) }], // hors des étapes (points 3 et 10) : seule la continuité peut refuser
     ['étape hors du tracé', (t) => { t.tapis.etapes[0].x += 1 }],
     ['défaut manquant', (t) => { t.defauts.pop() }],
     ['avatar « defaut » absent', (t) => { t.avatars = t.avatars.filter((a) => a.cle !== 'defaut') }],

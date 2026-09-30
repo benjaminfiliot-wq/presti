@@ -24,7 +24,7 @@
   { "nom": "graphe-coupe-sur-le-telephone-seulement", "coursives": { "isoler": "repos", "vue": "portrait" }, "raison": "n'est plus reliée au reste" },
   { "nom": "theme-coupe-au-bureau", "themeCoupe": { "isoler": "audience", "vue": "bureau" }, "raison": "n'est plus reliée au reste" },
   { "nom": "theme-coupe-en-portrait", "themeCoupe": { "isoler": "audience", "vue": "portrait" }, "raison": "n'est plus reliée au reste" },
-  { "nom": "tapis-rompu", "tapis": { "casser": 10 }, "raison": "tapis" },
+  { "nom": "tapis-rompu", "tapis": { "casser": 5 }, "raison": "tapis" },
   { "nom": "etape-hors-du-tapis", "tapis": { "etapeHors": true }, "raison": "tapis|étape" }
  ]
 }

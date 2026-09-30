@@ -43,7 +43,7 @@ const REGISTRE = [
   { artisan_id: A(1), statut: 'prouve', piece: 'facture-essai.pdf', motif: null, apporteur_id: APPORTEURS[0].id },
   { artisan_id: A(2), statut: 'saisi', piece: null, motif: null, apporteur_id: APPORTEURS[1].id },
 ]
-const PASSAGES = [
+export const PASSAGES = [
   { nom: 'relances', dernier_passage: '2026-09-30T08:00:00Z', reussi: true },
   { nom: 'canaux-relever', dernier_passage: '2026-09-27T07:00:00Z', reussi: false },
 ]

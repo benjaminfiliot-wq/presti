@@ -1,0 +1,3 @@
+PRET-A — témoin et fixtures de la partie A du lot t (026-171) stables le 2026-09-30.
+Modules : temoin/lib/pilotage/{theme,disposition,reglages}.ts.temoin ; thèmes : temoin/public/station/themes/{station,vaisseau}/ ; drapeau et carte : temoin/lib/flags.ts.temoin, temoin/scripts/fermeture-e2e.mjs.temoin (fabriquer-temoin.mjs conserve une ligne pilotage modifiée) ; contrat : CONTRAT.md.
+Sabotages éprouvés (hors preuve) : 38 modules, 34 thèmes (17 Station + 17 Vaisseau), 17 e-commerce, tous vus.

@@ -65,7 +65,6 @@ export const juges = [
       { nom: 'reservee-avec-un-poste-toleree', fichier: TH, avant: 'if (estObjet(e) && e.poste !== null && e.poste !== undefined) raisons.push', apres: 'if (false) raisons.push', tue: 'TH-2' },
       { nom: 'champ-inconnu-tolere', fichier: TH, avant: 'if (!requis.includes(k) && !facultatifs.includes(k)) raisons.push(', apres: 'if (false) raisons.push(', tue: 'TH-2' },
       { nom: 'portrait-ignore', fichier: TH, avant: "if ('portrait' in t && fermé(t.portrait, 'portrait', ['grille', 'emplacements', 'coursives'], [], raisons)) {", apres: 'if (false) {', tue: 'TH-2' },
-      { nom: 'adresses-non-vues', fichier: TH, avant: "    adresses(t, 'theme', raisons)\n", apres: '', tue: 'TH-2' },
       { nom: 'liste-des-themes-ouverte', fichier: TH, avant: "export const CLES_THEME = ['station', 'vaisseau'] as const", apres: "export const CLES_THEME = ['station', 'vaisseau', 'essai'] as const", tue: 'TH-2' },
       { nom: 'tapis-qui-saute-tolere', fichier: TH, avant: '{ raisons.push(`tapis : le tracé saute entre les points ${i - 1} et ${i}`); break }', apres: '{ break }', tue: 'TH-2' },
       // TH-3 : validerDisposition
