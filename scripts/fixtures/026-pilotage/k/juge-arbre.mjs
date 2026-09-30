@@ -25,7 +25,7 @@ import { MOTEUR, CLAW3D } from './juge-lecture.mjs'
 
 export const TRAV = path.join(TRAVAIL, 'station-claw3d-qa')
 export const CACHE = path.join(TRAV, 'cache-builds')
-const GARDER = 12 // entrées gardées dans le cache (les plus récentes)
+const GARDER = 8 // entrées gardées dans le cache (les plus récentes)
 export const RE_PHASER = /https:\/\/phaser\.io/
 const posix = (p) => p.split(path.sep).join('/')
 
@@ -245,6 +245,7 @@ export async function construire(copie, variante = 'jugee') {
     const erreurs = r.journal.split('\n').filter((l) => /error|failed|cannot|can't resolve|module not found/i.test(l)).slice(0, 4).join(' | ')
     return { ok: false, dir, arbre, cache: false, sha, log: `next build en échec (code ${r.code}) : ${court(erreurs || r.journal.slice(-300), 400)}`, duree: r.duree }
   }
+  fs.rmSync(path.join(arbre, '.next', 'cache'), { recursive: true, force: true })
   fs.writeFileSync(path.join(dir, 'OK'), `${new Date().toISOString()}\n`)
   purgerCache(path.basename(dir))
   return { ok: true, dir, arbre, cache: false, sha, log: '', duree: r.duree }
