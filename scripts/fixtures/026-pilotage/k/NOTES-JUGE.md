@@ -48,7 +48,7 @@ construit. Dans la fiche, `verite` regroupait CL-5..8 et `grille` CL-15 ; l'ordr
    commit d'avant 026-179 n'existe dans la référence du lot). Il mesure dans le navigateur, en gzip niveau 9, les `.js` réellement
    demandés de `/controle/station`, `/controle`, `/site/essai-artisan` et `/p/essai-artisan`. Il exige aussi que
    `/controle/station − /controle` pèse au moins 100 Kio : sinon Phaser n'est pas chargé avec la carte et la mesure ne prouve rien.
-7. **La perte de contexte** (CL-14) : `WEBGL_lose_context.loseContext()` sur le canevas, SANS jamais le rendre (Phaser sait se restaurer seul : un moteur qui ne fait qu'attendre passerait ; il doit se rebâtir, en WebGL neuf ou en rendu Canvas) ; la carte doit être de nouveau dessinée (canevas non uniforme, décodé par le juge) dans les 5 s, le
+7. **La perte de contexte** (CL-14) : `WEBGL_lose_context.loseContext()` sur le canevas, SANS jamais le rendre (Phaser sait se restaurer seul : un moteur qui ne fait qu'attendre passerait ; il doit se rebâtir, en WebGL neuf ou en rendu Canvas) ; la carte doit être de nouveau dessinée (canevas non uniforme, décodé par le juge) dans les 5 s ET redessiner un NOUVEL état servi ensuite (un cliché d'un canevas perdu garde la dernière image : seul un état neuf prouve le retour ; constaté sous Chromium : un moteur qui ne fait que `preventDefault` survit, le juge ne peut donc pas le sanctionner), le
    miroir garder le même nombre de personnages, aucune `pageerror`. Le juge cherche à chaque fois le canevas dans
    `[data-station-carte]` : un moteur qui en rebâtit un (rendu Canvas) est accepté. Sans contexte WebGL possible : préalable (code 2).
 8. **Le repos** (CL-9) : baseline prise quand `game.loop.frame` est figé (il doit se figer dans les 20 s), puis attente, à la vraie
@@ -101,3 +101,10 @@ construit. Dans la fiche, `verite` regroupait CL-5..8 et `grille` CL-15 ; l'ordr
   entrée a ses sabotages, chacun échoue sur SA partie et passe les autres.
 - Pour CL-4, le cadre d'attente du drapeau baissé est reconnu à `SALLES`, `data-liste-salles` ou `data-station-attente` (le témoin ne
   reprend pas la liste des salles de `c/temoin`).
+
+## 6. Ce qui a été exécuté (30/09)
+
+`node scripts/juges-026-pilotage-preuve.mjs --lot=k` : PASS (JA-1 à JA-10), 21 min 28 s avec le cache de builds chaud (une première
+passe à froid : 31 min). Le témoin du lot k a été jugé par ce juge : les quatre entrées rendent 0 (CL-1 à CL-16 verts), et chacun des
+19 sabotages de `lot.mjs` est vu. JA-5 compare `git status` avant et après : il rougit si une autre session touche le dépôt pendant les
+~20 minutes de la preuve (constaté deux fois, sur des fichiers d'autres lots). JA-10 a besoin du commit 4041ec9 dans le clone.

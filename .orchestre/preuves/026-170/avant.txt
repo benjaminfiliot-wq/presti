@@ -1,0 +1,9 @@
+M .orchestre/preuves/026-170/echecs-attendus.md
+ M .orchestre/preuves/026-171/echecs-attendus.md
+ M scripts/fixtures/026-pilotage/k/NOTES-JUGE.md
+D  scripts/fixtures/026-pilotage/k/PRET-TEMOIN.txt
+ M scripts/fixtures/026-pilotage/k/juge-arbre.mjs
+ M scripts/fixtures/026-pilotage/k/lot.mjs
+D  scripts/fixtures/026-pilotage/t/PRET-A.txt
+?? .orchestre/en-cours/
+?? .orchestre/file/026-171.md
