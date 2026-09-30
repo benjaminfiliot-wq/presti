@@ -8,6 +8,7 @@
 //
 // Usage : node scripts/fermeture-e2e.mjs
 import fs from 'node:fs'
+import './ts-loader.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -78,7 +79,7 @@ const PROTEGEES = [
   ['/api/controle/jauges', 'GET'],
   ['/api/controle/packs', 'GET'], [`/api/controle/packs/${id}`, 'POST', {}],
   ['/api/controle/pause', 'GET'], ['/api/controle/pause', 'POST', {}],
-  ['/api/controle/pilotage', 'GET'],
+  ['/api/controle/pilotage', 'GET'], ['/api/controle/station', 'GET'],
   [`/api/controle/pilotage/agents/${id}`, 'POST', {}], [`/api/controle/pilotage/appels/${id}`, 'POST', {}],
   ['/api/controle/pilotage/consignes', 'POST', {}], [`/api/controle/pilotage/decisions/${id}`, 'POST', {}],
   ['/api/controle/pilotage/gestes', 'POST', {}],
@@ -91,7 +92,7 @@ const PROTEGEES = [
 const DERRIERE_LE_DRAPEAU_PILOTAGE = await (async () => {
   const { FLAGS: F } = await import('../lib/flags.ts').catch(() => ({ FLAGS: null }))
   const routesDe = (dossier) => !fs.existsSync(dossier) ? [] : fs.readdirSync(dossier, { recursive: true }).map(String).filter((f) => /(^|[\\/])route\.ts$/.test(f)).map((f) => `${dossier}/${f.replace(/\\/g, '/')}`)
-  return ['pilotage', 'jauges'].map((sub) => {
+  return ['pilotage', 'jauges', 'station'].map((sub) => {
     const fichiers = routesDe(`app/api/controle/${sub}`)
     return { prefixe: `/api/controle/${sub}`, baisse: !!F && F.pilotage !== true, lit: fichiers.length > 0 && fichiers.every((f) => /actif\(['"`]pilotage['"`]\)/.test(fs.readFileSync(f, 'utf8'))) }
   })
