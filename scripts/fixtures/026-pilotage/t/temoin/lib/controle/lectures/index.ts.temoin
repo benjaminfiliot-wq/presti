@@ -1,0 +1,9 @@
+// lib/controle/lectures/index.ts — TÉMOIN du lot t (026-171) : les lectures du Poste dont la station a besoin (026-174), une fonction
+// par lecture. Les routes du Poste et la route de la station importent d'ici : la même fonction, jamais un calcul recopié.
+export { santeService } from './sante'
+export { cronsDuService } from './crons'
+export { audience } from './audience'
+export { bans } from './bans'
+export { clients } from './clients'
+export { cerveaux } from './cerveaux'
+export { ticketsOuverts } from './tickets'

@@ -1,0 +1,15 @@
+{
+ "note": "Lignes de la table `tickets` du jeu d'essai de poste-extraction-qa (XT-3). Le contenu (sujet, element_titre, corps) est un PIÈGE : il ne doit sortir d'aucune route ni de ticketsOuverts(). Ouvert = ferme_le nul (0074).",
+ "pieges": [
+  "PIEGE-TICKET-SUJET Mon mot de passe Témoin ne marche plus",
+  "PIEGE-TICKET-CORPS je vous écris depuis ticket-temoin@exemple.invalid",
+  "PIEGE-TICKET-TITRE Devis n° 2026-041"
+ ],
+ "lignes": [
+  { "id": "t1", "artisan_id": "a0000000-0000-4000-8000-000000000001", "sujet": "PIEGE-TICKET-SUJET Mon mot de passe Témoin ne marche plus", "corps": "PIEGE-TICKET-CORPS je vous écris depuis ticket-temoin@exemple.invalid", "element_titre": "PIEGE-TICKET-TITRE Devis n° 2026-041", "ouvert_le": "2026-09-28T09:00:00Z", "ferme_le": null },
+  { "id": "t2", "artisan_id": "a0000000-0000-4000-8000-000000000002", "sujet": "PIEGE-TICKET-SUJET autre", "corps": "PIEGE-TICKET-CORPS autre", "element_titre": null, "ouvert_le": "2026-09-27T09:00:00Z", "ferme_le": null },
+  { "id": "t3", "artisan_id": "a0000000-0000-4000-8000-000000000002", "sujet": "PIEGE-TICKET-SUJET fermé", "corps": "PIEGE-TICKET-CORPS fermé", "element_titre": null, "ouvert_le": "2026-09-01T09:00:00Z", "ferme_le": "2026-09-02T09:00:00Z" },
+  { "id": "t4", "artisan_id": "a0000000-0000-4000-8000-000000000003", "sujet": "PIEGE-TICKET-SUJET troisième", "corps": "PIEGE-TICKET-CORPS troisième", "element_titre": null, "ouvert_le": "2026-09-29T09:00:00Z", "ferme_le": null }
+ ],
+ "ouverts": 3
+}

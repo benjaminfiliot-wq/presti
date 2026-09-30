@@ -1,0 +1,10 @@
+// lib/controle/lectures/tickets.ts — TÉMOIN du lot t (026-171) : le compte des tickets de support ouverts, nouveau en 026-174.
+// UN NOMBRE, jamais un contenu : la fonction ne sélectionne que `id` et ne fait que compter (`count`, `head`). Le domaine `support`
+// est le plus sensible de la matrice (lib/controle/droits.ts) : ni le sujet, ni le message, ni le corps d'un ticket ne sortent d'ici.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export async function ticketsOuverts(): Promise<{ nombre: number }> {
+  const { count, error } = await supabaseAdmin.from('tickets').select('id', { count: 'exact', head: true }).is('ferme_le', null)
+  if (error) throw new Error(error.message)
+  return { nombre: count ?? 0 }
+}

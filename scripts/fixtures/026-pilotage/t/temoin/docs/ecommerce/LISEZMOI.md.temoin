@@ -1,0 +1,8 @@
+# Branche e-commerce et dropshipping — réservée
+
+Décision 7 de Benj, le 25/09 : Presti aura une branche e-commerce et dropshipping. Elle est **réservée** : une place à part, rien de construit.
+
+- **Le drapeau `ecommerce`** de `lib/flags.ts` est éteint (`false`) ; sa ligne dans la carte de `scripts/fermeture-e2e.mjs` est une « note » (il ne ferme rien).
+- **La salle réservée** de la station (clé `ecommerce`, genre `reservee`, sans titulaire, jamais une destination) tient sa place : porte fermée, aucun poste.
+- **Rien n’est construit** : ni route, ni page, ni table, ni bibliothèque.
+- On ne construit rien avant les **trois vidéos sources** de Benj ; les fiches de cette branche formeront une série à part, après elles.

@@ -1,0 +1,34 @@
+// lib/controle/lectures/audience.ts — TÉMOIN du lot t (026-171) : la lecture « audience » de 026-174.
+// D'où elle vient : le corps de GET de app/api/controle/audience/route.ts (les quatre sources), déplacé tel quel. Des VISITES, et aucun
+// compte nommé : le flux ne porte que page, minute et arrivée ; les inscriptions du jour sont un NOMBRE ; aucune empreinte ne sort.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { sourcer } from '@/lib/direction/fraicheur'
+import { seulsLesVrais } from '@/lib/direction/perimetre'
+import { limiteAtteinte } from '@/lib/limites'
+import { PLAFOND_JOUR_AUDIENCE, cleJourAudience, minuitParis } from '@/lib/audienceServeur'
+
+export async function audience(periode: 'jour' | 'historique' = 'jour') {
+  const [direct, inscriptions, historique, saturee] = await Promise.all([
+    sourcer('audience:direct', 'supabase', async () => {
+      const { data, error } = await supabaseAdmin.rpc('audience_direct')
+      if (error) throw new Error(error.message)
+      return data as Record<string, unknown>
+    }),
+    // Compté en base, pas sur une liste tronquée puis filtrée : les comptes de nos suites passaient devant les vrais.
+    sourcer('audience:inscriptions', 'supabase', async () => {
+      const { count, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true }))
+        .gte('created_at', minuitParis())
+      if (error) throw new Error(error.message || 'lecture des inscriptions refusée')
+      return count ?? 0
+    }),
+    periode === 'historique'
+      ? sourcer('audience:historique', 'supabase', async () => {
+          const { data, error } = await supabaseAdmin.rpc('audience_historique', { p_jours: 30 })
+          if (error) throw new Error(error.message)
+          return data as Record<string, unknown>
+        })
+      : Promise.resolve(null),
+    limiteAtteinte(cleJourAudience(), PLAFOND_JOUR_AUDIENCE, 86400).catch(() => null),
+  ])
+  return { direct, inscriptions, historique, saturee }
+}
