@@ -1,0 +1,11 @@
+Essai à sec de 0113_station_reglages (fiche 026-175), rejoué depuis une session cloud par le connecteur Supabase (execute_sql), sur la base de production `gorcdvmueakcncsmrouo` : le bloc `pilotage-sql-qa --migration=reglages --generer-essai`, tel quel (19 433 octets), qui exécute le jumeau nu, joue les scénarios puis lève ESSAI_A_SEC : tout est annulé. 0105 et 0112 étaient déjà appliquées (list_migrations).
+Message renvoyé par la base, recopié sans retouche :
+
+ERROR:  P0001: ESSAI_A_SEC d428c874a1419edfcbed45bfbc1089eede08782dc11822395246fcd728763a4e {"trop_gros": true, "preparation": true, "cle_inconnue": true, "non_fondateur": true, "ecriture_v1_v2": false, "radar_sans_nom": true, "salles_fermees": true, "version_perimee": true, "lecture_par_defaut": true, "departements_agreges": true, "historique_cinquante": true, "refus_anon_authenticated": true, "diag_refus_anon_authenticated": "10/10"}
+CONTEXT:  PL/pgSQL function inline_code_block line 343 at RAISE
+
+Lecture : onze clés sur douze sont vraies. `ecriture_v1_v2` est FAUSSE, sans exception (aucun diag_) : c'est un défaut du SCÉNARIO du juge (scripts/fixtures/026-pilotage/b/scenarios-sql.mjs, cas `ecriture_v1_v2`), pas de la migration. Voir essai-separe.txt et la question posée dans .orchestre/en-cours/026-175.question.md.
+
+Après l'essai : select to_regclass('ops.station_reglages') is null as rien_ne_reste, to_regclass('ops.station_reglages_historique') is null, to_regprocedure('public.station_reglages_ecrire(jsonb,uuid,integer)') is null
+-> [{"rien_ne_reste":true,"historique_absent":true,"fonction_absente":true}]
+APRES rien_ne_reste=true
