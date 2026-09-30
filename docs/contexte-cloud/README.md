@@ -27,3 +27,5 @@ Les données commerciales brutes, clés, verrous, logs de sessions, binaires, ca
 Comptage documentaire : {"SaaS":53,"presti":858,"presti-ops":93,"presti-secrets":5,"ENVIRONNEMENT-VARIABLES.json":1,"ETAT-FICHES.json":1}.
 
 Les empreintes SHA256 du manifeste portent sur les blobs Git publiés après normalisation des fins de ligne ; les empreintes des copies nettoyées avant Git restent indiquées séparément.
+
+Les snapshots TypeScript se terminent par .ts.txt ou .tsx.txt afin de rester lisibles sur GitHub sans être compilés par Next.js. Le chemin source original est conservé dans le manifeste.
