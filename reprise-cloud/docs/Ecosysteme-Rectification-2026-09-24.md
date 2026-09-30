@@ -861,8 +861,8 @@ Ce qui suit est le seul coût récurrent nouveau d'importance. Il va contre « r
 | R12 | **Le Chef 24 h/24** | Sur l'usine, par Codex GPT-6 sol (ta décision du 24/09), au lieu de tâches Windows qui ne tournent que PC allumé | Abonnement existant | avec 026-121 |
 | R13 | **Expérience isolée** | Aucune avant la première vente. Ensuite, par exemple, le test D (Studio e-commerce), après la note du juriste | Budget à fixer par toi | après la 1re vente |
 | R14 | **Réservation d'appel** | Une page maison dans le Poste : elle crée directement la carte « À appeler » | 0 €. Cal.com : 0 $, mais ses webhooks seraient réservés à Teams, à 12 $ par utilisateur et par mois en annuel [à vérifier] | avant P1 |
-| R15 | **Pub Meta à formulaire** (et audience « a interagi avec @prestiapp ») | Facultative. Seulement une fois le compte publié régulièrement | Budget à ton choix [par exemple 5 €/jour, supposé] | après R6 |
-| R16 | **Clé « agents »** | Plafond de 30 $/mois ; alerte en Attention à 80 % | 30 $/mois de plafond | avec 026-043 |
+| R15 | **Pub Meta à formulaire** (et audience « a interagi avec @prestiapp ») | Facultative. Seulement une fois le compte publié régulièrement | Budget à ton choix [par exemple 5 €/jour, supposé] | après R6 (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat) |
+| R16 | **Clé « agents »** | Plafond de 30 $/mois ; alerte en Attention à 80 % | 30 $/mois de plafond | avec 026-043 (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat) |
 | R17 | **Vercel Pro** | Toujours en suspens : tu as demandé une alternative (`Journal-Decisions.md:12`). L'offre Hobby interdit l'usage commercial | 20 $/mois | déjà ouverte |
 | R18 | **Fusion humaine du code** | Seulement pour le code de l'argent et de la sécurité ; le reste fusionne sous juge. C'est un écart assumé avec la règle actuelle d'A12 (plan l.326) | 0 € | phase 3 |
 | R19 | **Jeton Meta** | Un jeton d'utilisateur système, pour ne plus le reposer tous les 55 jours [à vérifier pour `ads_archive`] | 0 € | avec 026-059 |

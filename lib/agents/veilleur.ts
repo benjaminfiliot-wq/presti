@@ -179,16 +179,16 @@ export async function veilleur({ maintenant = new Date() }: { maintenant?: Date 
     ajouter('vercel_pro', 'vercel', 1, 'Premier site vendu : c’est le moment de passer Vercel en Pro.', 'passer Vercel en Pro : c’est la seule dépense décidée')
   }
 
-  // 5. le coupe-circuit : 150 € sans recette
+  // 5. le coupe-circuit : tout euro de coût sans recette (plafond de 0 € par agent)
   const couts = Number(etat?.couts_mois ?? 0)
-  if (couts > 150) {
+  if (couts > 0) {
     if (brut === null) ajouter('non_mesure', 'recette', 1, `Coûts du mois : ${arrondi(couts)} € ; la recette est inconnue, le coupe-circuit attend.`, 'vérifier que Stripe répond (onglet Aujourd’hui)')
     else if (brut === 0) {
       const epargne = (a: Agent) => ['a0', 'systeme'].includes(a.nom) || (a.capacites ?? []).some((c) => CAPACITES_EPARGNEES.includes(c))
       const coupes = agents.filter((a) => !epargne(a) && !a.en_pause)
-      for (const a of coupes) await ops_agent_pause({ p_nom: a.nom, p_pause: true, p_motif: 'coupe-circuit : 150 € dépensés sans recette' })
+      for (const a of coupes) await ops_agent_pause({ p_nom: a.nom, p_pause: true, p_motif: 'coupe-circuit : des euros dépensés sans recette' })
       const mois = jour.slice(0, 7)
-      await ops_decision_creer({ p_agent: 'a0', p_question: 'Coupe-circuit : 150 € dépensés ce mois sans aucune recette. Laisser les agents en pause ?', p_contexte: `Agents mis en pause : ${coupes.map((a) => a.nom).join(', ') || 'aucun'}.`, p_options: [{ cle: 'laisser_en_pause', libelle: 'Laisser en pause', recommandee: true }, { cle: 'reprendre', libelle: 'Reprendre', recommandee: false }], p_defaut: 'laisser_en_pause', p_montant_cents: null, p_portee: 'argent', p_echeance: new Date(t + 24 * HEURE).toISOString(), p_cle: `coupe_circuit:${mois}`, p_tache: null })
+      await ops_decision_creer({ p_agent: 'a0', p_question: 'Coupe-circuit : des euros dépensés ce mois sans aucune recette. Laisser les agents en pause ?', p_contexte: `Agents mis en pause : ${coupes.map((a) => a.nom).join(', ') || 'aucun'}.`, p_options: [{ cle: 'laisser_en_pause', libelle: 'Laisser en pause', recommandee: true }, { cle: 'reprendre', libelle: 'Reprendre', recommandee: false }], p_defaut: 'laisser_en_pause', p_montant_cents: null, p_portee: 'argent', p_echeance: new Date(t + 24 * HEURE).toISOString(), p_cle: `coupe_circuit:${mois}`, p_tache: null })
       ajouter('coupe_circuit', mois, coupes.length, `Coupe-circuit : ${arrondi(couts)} € dépensés ce mois sans recette ; ${coupes.length} agent(s) en pause.`, 'trancher la décision du coupe-circuit dans la station')
     }
   }

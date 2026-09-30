@@ -20,7 +20,7 @@ type EchecBus = Extract<ResultatBus, { ok: false }>
 /** Le statut HTTP de chaque code métier `ops:<code>` (tableau de 026-040). Un code absent d'ici rend 500. */
 export const STATUT_ERREUR: Readonly<Record<string, number>> = Object.freeze({
   // 400 — la demande est mal formée
-  options: 400, defaut: 400, echeance: 400, choix: 400, resume: 400, preuve: 400, jeton_format: 400, purge: 400, type_argent: 400, vt: 400,
+  cout_inconnu: 400, options: 400, defaut: 400, echeance: 400, choix: 400, resume: 400, preuve: 400, jeton_format: 400, purge: 400, type_argent: 400, vt: 400,
   // 403 — hors des droits de l'agent
   type: 403, auteur: 403, opposition: 403, capacite: 403,
   // 404 — ce qui est désigné n'existe pas
@@ -31,7 +31,7 @@ export const STATUT_ERREUR: Readonly<Record<string, number>> = Object.freeze({
   // 423 — fermé (agent en pause ou disjoncté, pause générale, canal sans quota)
   agent_en_pause: 423, pause_generale: 423, quota_absent: 423,
   // 429 — quota atteint
-  quota: 429,
+  quota: 429, plafond: 429,
   // Codes levés par 0097 telle qu'appliquée, absents du tableau de la fiche : sans eux, un motif trop long ou le retrait
   // d'un agent protégé partiraient en 500 comme une panne.
   motif: 400, objet: 400, pause: 400, agent_protege: 403,
@@ -123,5 +123,6 @@ export const ops_tache_rendre = fonctionBus<{ p_agent: string; p_id: string; p_r
 export const ops_tache_clore = fonctionBus<{ p_agent: string; p_cle: string; p_preuve_url: string }, string>('ops_tache_clore', ['p_agent', 'p_cle', 'p_preuve_url'])
 export const ops_baux_expirer = (): Promise<ResultatBus<number>> => appeler<number>('ops_baux_expirer', [])
 export const ops_cout_ajouter = fonctionBus<{ p_agent: string; p_fournisseur: string; p_montant_eur: number; p_detail?: unknown; p_tache?: string | null }, number>('ops_cout_ajouter', ['p_agent', 'p_fournisseur', 'p_montant_eur', 'p_detail', 'p_tache'])
+export const ops_cout_autoriser = fonctionBus<{ p_agent: string; p_montant_eur: number }, boolean>('ops_cout_autoriser', ['p_agent', 'p_montant_eur'])
 export const ops_etat = (): Promise<ResultatBus<Record<string, unknown>>> => appeler<Record<string, unknown>>('ops_etat', [])
 export const ops_stockage_octets = (): Promise<ResultatBus<number>> => appeler<number>('ops_stockage_octets', [])

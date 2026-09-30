@@ -264,7 +264,7 @@ Je n'ai lu ni `.env.local` ni `presti-secrets`, et je n'ai interrogé ni la base
 **Coûts fixes nouveaux :**
 - **Phase 1 :** Vercel Pro, 20 $/mois (prix relevé par les plans 1 et 2 le 24/09). Il est obligatoire de toute façon, puisque Presti encaisse. Le dépôt privé de sauvegarde : 0 € [à vérifier selon l'offre GitHub].
 - **Phase 2 :** s'ajoutent :
-  - la clé « agents » : plafond de 30 $, 10 à 20 € réellement dépensés au départ [supposé] ;
+  - la clé « agents » : plafond de 30 $, 10 à 20 € réellement dépensés au départ [supposé] ; (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat)
   - éventuellement Supabase Pro (25 $), dès que le stockage partagé dépasse 60 %, et GitHub Pro (4 $) [à vérifier] ;
   - le canal e-mail s'il est retenu : domaine d'environ 10 €/an plus les boîtes [prix à vérifier].
 - **Phase 3 :** Alexya, formule à 9 $/mois d'abord (environ 13 vidéos, assez pour 5 échantillons), si le test D est lancé ; et une consultation juridique unique de 150 à 300 € [supposé], **avant** le test D.
@@ -515,7 +515,7 @@ Le Poste a déjà les briques utiles :
   - Jamais de clé Stripe en écriture pour un agent.
   - Toute dépense nouvelle est une décision reconfirmée.
 - **Les plafonds sont posés chez le fournisseur**, pas dans une consigne :
-  - clé Anthropic « agents » : 30 $/mois, alertes à 50 % et 80 % ;
+  - clé Anthropic « agents » : 30 $/mois, alertes à 50 % et 80 % ; (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat)
   - Alexya : formule fixe, sans recharge automatique ;
   - Apify : non utilisé, plafonné à 10 $ s'il sert un jour.
 - **Coupe-circuit** : au-delà de 150 € de coûts dans le mois sans aucune recette, A0 met tout en pause sauf la livraison et le support, et ouvre une décision.
