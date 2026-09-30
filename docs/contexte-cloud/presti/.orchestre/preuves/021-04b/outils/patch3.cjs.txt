@@ -1,0 +1,34 @@
+const fs = require('fs')
+let s = fs.readFileSync('outils/marche.py', 'utf8')
+const rep = (a, b) => { if (!s.includes(a)) { console.error('ABSENT: ' + a.slice(0, 70)); process.exit(1) } s = s.split(a).join(b) }
+rep("    'limon': Vector((-0.45, -0.25, 0.0)),\n    'contremarche': Vector((0.0, -0.25, -0.10)),", "    'limon': Vector((-0.42, -0.22, 0.0)),\n    'contremarche': Vector((0.0, -0.20, -0.08)),")
+fs.writeFileSync('outils/marche.py', s)
+let c = fs.readFileSync('outils/construire.mjs', 'utf8')
+const a = c.indexOf("} else {\n  const res = {}")
+const b = c.indexOf("  fs.writeFileSync(path.join(ICI, 'construire.json')")
+if (a < 0 || b < 0) { console.error('ABSENT construire'); process.exit(1) }
+c = c.slice(0, a) + `} else {
+  // --seulement=rendus ou --seulement=rendus-bis : un seul lancement (les durées des lancements précédents sont gardées)
+  const seul = args.find((x) => x.startsWith('--seulement='))?.slice('--seulement='.length)
+  const res = {}
+  for (const [sous, brutNom] of [['rendus', 'brut'], ['rendus-bis', 'brut-bis']]) {
+    const brut = path.join(ICI, brutNom)
+    if (seul && seul !== sous) { if (fs.existsSync(path.join(brut, 'scene.json')) && !SANS_BLENDER) res[sous] = await assembler(brut, path.join(ICI, sous), QUALITES); continue }
+    if (!SANS_BLENDER) journal[sous] = blender(brut, 'final')
+    if (fs.existsSync(path.join(brut, 'scene.json'))) res[sous] = await assembler(brut, path.join(ICI, sous), QUALITES)
+  }
+  await regards(path.join(ICI, 'rendus'), res.rendus.png, 'final')
+  const prec = fs.existsSync(path.join(ICI, 'construire.json')) ? JSON.parse(fs.readFileSync(path.join(ICI, 'construire.json'), 'utf8')) : {}
+  const bis = res['rendus-bis'] || res.rendus
+  const bilan = {
+    date: new Date().toISOString(), graine: GRAINE, qualites: QUALITES, opaciteOmbre: OPACITE_OMBRE,
+    lancements: { ...(prec.lancements || {}), ...journal },
+    blender: res.rendus.scene.blender, echantillons: res.rendus.scene.echantillons,
+    secondesBlender: { rendus: res.rendus.scene.secondes_total, 'rendus-bis': res['rendus-bis'] ? res['rendus-bis'].scene.secondes_total : null },
+    secondesParRendu: res.rendus.scene.secondes,
+    octets: res.rendus.octets, total: Object.values(res.rendus.octets).reduce((x, y) => x + y, 0),
+    mesures: res.rendus.mesures, vecteursPx: res.rendus.scene.vecteurs_px, echelle: res.rendus.scene.echelle_ortho_m,
+  }
+` + c.slice(b)
+fs.writeFileSync('outils/construire.mjs', c)
+console.log('patch3 ok')

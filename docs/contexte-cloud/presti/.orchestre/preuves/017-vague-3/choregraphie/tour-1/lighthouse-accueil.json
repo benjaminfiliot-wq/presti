@@ -1,0 +1,91 @@
+{
+ "resume": {
+  "url": "http://127.0.0.1:4317/index.html",
+  "perfs": [
+   97,
+   97,
+   97,
+   97,
+   97
+  ],
+  "mediane": 97,
+  "min": 97
+ },
+ "passes": [
+  {
+   "passe": 1,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1211,
+   "lcp": 2486,
+   "tbt": 60,
+   "cls": 0,
+   "si": 1211,
+   "benchmarkIndex": 1820,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  },
+  {
+   "passe": 2,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1211,
+   "lcp": 2486,
+   "tbt": 0,
+   "cls": 0,
+   "si": 1211,
+   "benchmarkIndex": 1951,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  },
+  {
+   "passe": 3,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1212,
+   "lcp": 2487,
+   "tbt": 55,
+   "cls": 0,
+   "si": 1212,
+   "benchmarkIndex": 2125,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  },
+  {
+   "passe": 4,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1211,
+   "lcp": 2486,
+   "tbt": 0,
+   "cls": 0,
+   "si": 1211,
+   "benchmarkIndex": 2372,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  },
+  {
+   "passe": 5,
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "seo": 100,
+   "fcp": 1211,
+   "lcp": 2486,
+   "tbt": 80,
+   "cls": 0,
+   "si": 1211,
+   "benchmarkIndex": 2051.5,
+   "formFactor": "mobile",
+   "throttling": "simulate"
+  }
+ ]
+}

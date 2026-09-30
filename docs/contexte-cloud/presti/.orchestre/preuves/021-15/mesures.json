@@ -1,0 +1,22 @@
+{
+  "1440x900": {
+    "duree": 41.32,
+    "part8PremiereDerniere": 1,
+    "ecartMaxConsecutif": 0.64,
+    "ecartDerniereImage": 0.0788,
+    "poids": {
+      "h264": 14200760,
+      "av1": 4681790
+    }
+  },
+  "1088x800": {
+    "duree": 65.64,
+    "part8PremiereDerniere": 0,
+    "ecartMaxConsecutif": 0,
+    "ecartDerniereImage": 0.0793,
+    "poids": {
+      "h264": 17227820,
+      "av1": 3737204
+    }
+  }
+}

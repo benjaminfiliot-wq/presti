@@ -1,0 +1,661 @@
+{
+ "base": "http://127.0.0.1:58811",
+ "1440x900": {
+  "b1440-t03.png": {
+   "reelMs": 304,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 4.78322)",
+   "opacitePied": "0",
+   "currentSrc": "heros-escalier-1600.avif",
+   "naturalWidth": 1440,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×300",
+    "moyenne": 47.9,
+    "ecartType": 58.33,
+    "partSous30": 56.9
+   },
+   "bandesPleines": {
+    "hautPx": 0,
+    "basPx": 0,
+    "hauteur": 900
+   }
+  },
+  "b1440-t25.png": {
+   "reelMs": 2505,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -2,
+      -1,
+      1442,
+      901
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-1600.avif",
+   "naturalWidth": 1440,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×300",
+    "moyenne": 57.2,
+    "ecartType": 68.41,
+    "partSous30": 52.5
+   }
+  },
+  "b1440-t50.png": {
+   "reelMs": 5013,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -5,
+      -3,
+      1447,
+      905
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-1600.avif",
+   "naturalWidth": 1440,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×300",
+    "moyenne": 57.4,
+    "ecartType": 68.45,
+    "partSous30": 52.3
+   }
+  },
+  "b1440-t80.png": {
+   "reelMs": 8011,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -13,
+      -7,
+      1457,
+      912
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-1600.avif",
+   "naturalWidth": 1440,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×300",
+    "moyenne": 57.8,
+    "ecartType": 68.52,
+    "partSous30": 51.8
+   }
+  }
+ },
+ "1920x1080": {
+  "b1920-t03.png": {
+   "reelMs": 309,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      0,
+      0,
+      1920,
+      1080
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 1.21233)",
+   "opacitePied": "0.576938",
+   "currentSrc": "heros-escalier-2400.avif",
+   "naturalWidth": 1920,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×270",
+    "moyenne": 49.3,
+    "ecartType": 58.85,
+    "partSous30": 55.7
+   },
+   "bandesPleines": {
+    "hautPx": 0,
+    "basPx": 0,
+    "hauteur": 1080
+   }
+  },
+  "b1920-t25.png": {
+   "reelMs": 2506,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -2,
+      -1,
+      1923,
+      1082
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-2400.avif",
+   "naturalWidth": 1920,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×270",
+    "moyenne": 58.3,
+    "ecartType": 68.37,
+    "partSous30": 51.5
+   }
+  },
+  "b1920-t50.png": {
+   "reelMs": 5003,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -7,
+      -4,
+      1930,
+      1086
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-2400.avif",
+   "naturalWidth": 1920,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×270",
+    "moyenne": 58.5,
+    "ecartType": 68.41,
+    "partSous30": 51.3
+   }
+  },
+  "b1920-t80.png": {
+   "reelMs": 8007,
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -18,
+      -9,
+      1945,
+      1095
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-2400.avif",
+   "naturalWidth": 1920,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×270",
+    "moyenne": 58.9,
+    "ecartType": 68.47,
+    "partSous30": 50.8
+   }
+  }
+ },
+ "dpr2_1440": {
+  "heroRevele": 0,
+  "splash": 0,
+  "rideau": 0,
+  "lentille": 0,
+  "defile": 0,
+  "animesQuiCoupentLeH1": [
+   {
+    "el": "img.",
+    "parent": "",
+    "nom": "pousse",
+    "boite": [
+     -3,
+     -2,
+     1445,
+     903
+    ],
+    "etat": "running"
+   }
+  ],
+  "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+  "opacitePied": "1",
+  "currentSrc": "heros-escalier-2880.avif",
+  "naturalWidth": 1440,
+  "complete": true,
+  "lum480": {
+   "vignette": "480×300",
+   "moyenne": 56.5,
+   "ecartType": 68.07,
+   "partSous30": 52.9
+  }
+ },
+ "m390": {
+  "m390-t03.png": {
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      0,
+      0,
+      390,
+      844
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "none",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "naturalWidth": 675,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×1039",
+    "moyenne": 78.7,
+    "ecartType": 77.16,
+    "partSous30": 40
+   },
+   "bandesPleines": {
+    "hautPx": 0,
+    "basPx": 48,
+    "hauteur": 1688
+   }
+  },
+  "m390-t25.png": {
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      0,
+      -1,
+      390,
+      845
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "none",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "naturalWidth": 675,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×1039",
+    "moyenne": 78.8,
+    "ecartType": 77.17,
+    "partSous30": 40
+   }
+  },
+  "m390-t80.png": {
+   "heroRevele": 0,
+   "splash": 0,
+   "rideau": 0,
+   "lentille": 0,
+   "defile": 0,
+   "animesQuiCoupentLeH1": [
+    {
+     "el": "img.",
+     "parent": "",
+     "nom": "pousse",
+     "boite": [
+      -3,
+      -7,
+      395,
+      855
+     ],
+     "etat": "running"
+    }
+   ],
+   "transformLigne": "none",
+   "opacitePied": "1",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "naturalWidth": 675,
+   "complete": true,
+   "lum480": {
+    "vignette": "480×1039",
+    "moyenne": 79.6,
+    "ecartType": 77.25,
+    "partSous30": 39.2
+   }
+  },
+  "imgBoite": {
+   "r": [
+    -3.5409393310546875,
+    -6.75067138671875,
+    398.4307861328125,
+    862.2451171875
+   ],
+   "objectPosition": "50% 42%",
+   "iw": 675,
+   "ih": 844
+  }
+ },
+ "rapports": {
+  "390": {
+   "innerWidth": 390,
+   "docWidth": 390,
+   "ligne": {
+    "texte": "Fait pour rester",
+    "gauche": 19.5,
+    "droite": 291.6,
+    "largeur": 272.1,
+    "rapport": 0.698,
+    "corps": 74.1,
+    "lignesDeTexte": 4
+   },
+   "chapeau": {
+    "texte": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+    "mots": 12,
+    "corps": 16
+   },
+   "rapportCorps": 4.63,
+   "h1": "MENUISIER À RENNES Fait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "px": 46.4,
+     "vw": 11.9
+    },
+    {
+     "t": "Pièces livrées",
+     "px": 46.4,
+     "vw": 11.9
+    },
+    {
+     "t": "Autour de Rennes",
+     "px": 32,
+     "vw": 8.21
+    },
+    {
+     "t": "En quatre temps",
+     "px": 32,
+     "vw": 8.21
+    },
+    {
+     "t": "Vos questions",
+     "px": 32,
+     "vw": 8.21
+    },
+    {
+     "t": "Parlons de votre projet",
+     "px": 35.2,
+     "vw": 9.03
+    }
+   ],
+   "h2Au7vw": 6,
+   "familleLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1280": {
+   "innerWidth": 1280,
+   "docWidth": 1280,
+   "ligne": {
+    "texte": "Fait pour rester",
+    "gauche": 64,
+    "droite": 1197.7,
+    "largeur": 1133.7,
+    "rapport": 0.886,
+    "corps": 181.76,
+    "lignesDeTexte": 2
+   },
+   "chapeau": {
+    "texte": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+    "mots": 12,
+    "corps": 16
+   },
+   "rapportCorps": 11.36,
+   "h1": "MENUISIER À RENNES Fait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "px": 94.72,
+     "vw": 7.4
+    },
+    {
+     "t": "Pièces livrées",
+     "px": 94.72,
+     "vw": 7.4
+    },
+    {
+     "t": "Autour de Rennes",
+     "px": 53.76,
+     "vw": 4.2
+    },
+    {
+     "t": "En quatre temps",
+     "px": 53.76,
+     "vw": 4.2
+    },
+    {
+     "t": "Vos questions",
+     "px": 53.76,
+     "vw": 4.2
+    },
+    {
+     "t": "Parlons de votre projet",
+     "px": 64,
+     "vw": 5
+    }
+   ],
+   "h2Au7vw": 2,
+   "familleLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1440": {
+   "innerWidth": 1440,
+   "docWidth": 1440,
+   "ligne": {
+    "texte": "Fait pour rester",
+    "gauche": 72,
+    "droite": 1347.5,
+    "largeur": 1275.5,
+    "rapport": 0.886,
+    "corps": 204.48,
+    "lignesDeTexte": 2
+   },
+   "chapeau": {
+    "texte": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+    "mots": 12,
+    "corps": 16
+   },
+   "rapportCorps": 12.78,
+   "h1": "MENUISIER À RENNES Fait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "px": 106.56,
+     "vw": 7.4
+    },
+    {
+     "t": "Pièces livrées",
+     "px": 106.56,
+     "vw": 7.4
+    },
+    {
+     "t": "Autour de Rennes",
+     "px": 56,
+     "vw": 3.89
+    },
+    {
+     "t": "En quatre temps",
+     "px": 56,
+     "vw": 3.89
+    },
+    {
+     "t": "Vos questions",
+     "px": 56,
+     "vw": 3.89
+    },
+    {
+     "t": "Parlons de votre projet",
+     "px": 67.2,
+     "vw": 4.67
+    }
+   ],
+   "h2Au7vw": 2,
+   "familleLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1920": {
+   "innerWidth": 1920,
+   "docWidth": 1920,
+   "ligne": {
+    "texte": "Fait pour rester",
+    "gauche": 96,
+    "droite": 1796.6,
+    "largeur": 1700.6,
+    "rapport": 0.886,
+    "corps": 272.64,
+    "lignesDeTexte": 2
+   },
+   "chapeau": {
+    "texte": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+    "mots": 12,
+    "corps": 16
+   },
+   "rapportCorps": 17.04,
+   "h1": "MENUISIER À RENNES Fait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "px": 136,
+     "vw": 7.08
+    },
+    {
+     "t": "Pièces livrées",
+     "px": 136,
+     "vw": 7.08
+    },
+    {
+     "t": "Autour de Rennes",
+     "px": 56,
+     "vw": 2.92
+    },
+    {
+     "t": "En quatre temps",
+     "px": 56,
+     "vw": 2.92
+    },
+    {
+     "t": "Vos questions",
+     "px": 56,
+     "vw": 2.92
+    },
+    {
+     "t": "Parlons de votre projet",
+     "px": 67.2,
+     "vw": 3.5
+    }
+   ],
+   "h2Au7vw": 2,
+   "familleLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  }
+ }
+}

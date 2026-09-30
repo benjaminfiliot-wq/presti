@@ -1,0 +1,10 @@
+179fbfff0360c03cee88e0eb2fb15f659b1bd1b6 *public/sites-demo/kit/LISEZMOI.md
+7258b5bd873355a45d78c0227fc6d0004fcd1bf4 *public/sites-demo/kit/index.html
+34c3d811ed9c7aaa599a669dfb88134e6ac381fc *public/sites-demo/kit/kit.json
+bd578c528aab038eb02de1db782619249e4c87ca *public/sites-demo/kit/medias/eclate.webp
+0767569508238de4a9577f9cf04adab2ed9183c9 *public/sites-demo/kit/planche.css
+99124d26ef2e92e15f9c70b94d559717de1d2b53 *public/sites-demo/kit/polices.css
+fdf02bdb0498e3342518d4bebe361a4a43f11c3c *public/sites-demo/kit/sections.html
+53bfb6ce17c1b7bdc6ce3a1316ce953b641c7696 *public/sites-demo/kit/sections/bureau.css
+b8f06adf6b3b500c99f4acd83d9d4560e0c3383c *public/sites-demo/kit/sections/gel.css
+6e90373d11aca221ac4fbc00460d392361596b97 *public/sites-demo/kit/sections/site.css

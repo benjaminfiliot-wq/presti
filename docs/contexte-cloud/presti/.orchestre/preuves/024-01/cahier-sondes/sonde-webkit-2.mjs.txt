@@ -1,0 +1,45 @@
+// Sonde WebKit 26.6 : animation CSS en pause pilotée par currentTime, rideau collant du héros, plage « cover » d'une view-timeline
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const pw = require('playwright')
+const T = path.join('C:/Users/benja/Documents/presti', '.orchestre/travail/024-01/cahier/ref')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2' }
+const srv = http.createServer((q, r) => { let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'; const f = path.join(T, p); if (!f.startsWith(T) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() } r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r) })
+await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const url = `http://127.0.0.1:${srv.address().port}/index.html`
+const out = {}
+for (const [nom, type] of [['chromium', pw.chromium], ['webkit', pw.webkit]]) {
+  const b = await type.launch()
+  const ctx = await b.newContext({ ...pw.devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+  const page = await ctx.newPage(); await page.goto(url, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready)
+  out[nom] = await page.evaluate(async () => {
+    const f2 = () => new Promise((k) => requestAnimationFrame(() => requestAnimationFrame(k)))
+    document.documentElement.classList.add('tout-rendu')
+    const st = document.createElement('style')
+    st.textContent = '@keyframes sk{from{translate:0 0;opacity:0}to{translate:0 40px;opacity:1}}'
+      + '#sk{position:fixed;left:0;top:0;width:20px;height:20px;background:red;animation:sk 1000ms linear both paused}'
+      + '.ouverture>.hero--plein{position:sticky;top:0}.ouverture>.plateau{position:relative;z-index:1}'
+      + '@keyframes vt{from{opacity:0}to{opacity:1}}'
+      + '#etapes figure.eclate{view-timeline:--sonde block}'
+      + '#etapes figure.eclate .eclate__pastille{animation:vt linear both;animation-timeline:--sonde;animation-range:cover 0% cover 100%}'
+    document.head.appendChild(st)
+    const d = document.createElement('div'); d.id = 'sk'; document.body.appendChild(d)
+    await f2()
+    const a = d.getAnimations()[0]
+    const lire = () => { const c = getComputedStyle(d); return [c.translate, Number(c.opacity).toFixed(3)] }
+    const seek = {}
+    for (const t of [0, 250, 500, 1000]) { a.currentTime = t; await f2(); seek[t] = lire() }
+    const sticky = []
+    for (const y of [0, 422, 844, 929, 1100]) { scrollTo(0, y); await f2(); sticky.push([Math.round(scrollY), Math.round(document.querySelector('.hero--plein').getBoundingClientRect().top), Math.round(document.querySelector('.plateau').getBoundingClientRect().top)]) }
+    // plage cover : opacité de la première pastille pour une position de la figure à cover 0, 25, 50, 75, 100 %
+    const fig = document.querySelector('#etapes figure.eclate'), past = fig.querySelector('.eclate__pastille')
+    let top = 0; for (let n = fig; n; n = n.offsetParent) top += n.offsetTop
+    const H = fig.offsetHeight, vh = innerHeight, cover = []
+    for (const p of [0.25, 0.5, 0.75]) { scrollTo(0, Math.round(top - vh + p * (vh + H))); await f2(); await f2(); cover.push([p, Number(getComputedStyle(past).opacity).toFixed(3)]) }
+    return { playState: a.playState, seek, sticky, cover, figTop: top, H, vh }
+  })
+  out[nom].version = b.version()
+  await b.close()
+}
+srv.close()
+console.log(JSON.stringify(out, null, 1))

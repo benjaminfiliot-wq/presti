@@ -1,0 +1,20 @@
+{
+ "date": "2026-09-16T21:21:27.248Z",
+ "playwright": "1.63.0",
+ "executable": "C:\\Users\\benja\\AppData\\Local\\ms-playwright\\webkit-2359\\Playwright.exe",
+ "existe": true,
+ "version": "26.6",
+ "sondes": {
+  "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+  "view": true,
+  "scroll": true,
+  "viewTimeline": "function",
+  "getAnimations": true,
+  "regleView": "11px",
+  "regleNotInexistante": "12px",
+  "svh": true,
+  "interpolateSize": false,
+  "ioExiste": true,
+  "rVFC": false
+ }
+}

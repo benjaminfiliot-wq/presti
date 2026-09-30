@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "[MASQUE_SECRET]",
+    "project_id": "[MASQUE_SECRET]",
+    "storage_bucket": "[MASQUE_SECRET]"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "[MASQUE_SECRET]",
+        "android_client_info": {
+          "package_name": "[MASQUE_SECRET]"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "[MASQUE_SECRET]"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

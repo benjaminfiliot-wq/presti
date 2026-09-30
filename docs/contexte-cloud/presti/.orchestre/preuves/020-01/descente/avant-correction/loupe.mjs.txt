@@ -1,0 +1,16 @@
+// loupe.mjs — le bois à 1:1 (zone du cahier x 900-1400, y 120-420) : page en ligne à y = 0, puis (c), (b), (a) à y = 270,
+// poussée figée à 0, en PNG ; et la zone des marches (x 150-500, y 120-420). Planche de travail pour l'avis d'œil.
+import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const cases = [['temoin-en-ligne-y0.png', 'en ligne, y = 0'], ['fige-c-y0270.png', '(c) sans WebGL, y = 270'], ['fige-b-y0270.png', '(b) δ 0,066, y = 270'], ['fige-a-y0270.png', '(a) δ 0,116, y = 270']]
+for (const [nom, zone] of [['loupe-bois.jpg', { left: 900, top: 120, width: 500, height: 300 }], ['loupe-marches.jpg', { left: 150, top: 120, width: 350, height: 300 }]]) {
+  const w = zone.width, h = zone.height
+  const tuiles = await Promise.all(cases.map(async ([f, t], i) => {
+    const svg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect x="6" y="6" width="${t.length * 8 + 16}" height="24" rx="3" fill="rgba(0,0,0,.75)"/><text x="14" y="23" font-family="Arial" font-size="14" fill="#fff">${t}</text></svg>`)
+    return { input: await sharp(ICI + f).extract(zone).composite([{ input: svg, left: 0, top: 0 }]).png().toBuffer(), left: (i % 2) * (w + 8), top: Math.floor(i / 2) * (h + 8) }
+  }))
+  await sharp({ create: { width: 2 * w + 8, height: 2 * h + 8, channels: 3, background: '#000' } }).composite(tuiles).jpeg({ quality: 92 }).toFile(ICI + nom)
+}
+console.log('loupes écrites')

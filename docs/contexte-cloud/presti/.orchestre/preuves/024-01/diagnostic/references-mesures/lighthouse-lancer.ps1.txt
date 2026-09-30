@@ -1,0 +1,35 @@
+# Lighthouse mobile (réglages par défaut : formFactor mobile, throttling simulé) sur les sites de référence.
+# Avant chaque mesure : attendre qu'aucun processus node « -qa.mjs » ne tourne (contrôle toutes les 20 s, 20 min au plus).
+# Rapports complets dans $brut (hors dépôt) ; extraits dans ce dossier via lighthouse-extraire.mjs.
+param([string]$brut, [string]$seulement = '')
+$ici = Split-Path -Parent $MyInvocation.MyCommand.Path
+$env:CHROME_PATH = 'C:\Users\benja\AppData\Local\ms-playwright\chromium-1243\chrome-win64\chrome.exe'
+$lh = 'C:\Users\benja\Documents\presti\node_modules\lighthouse\cli\index.js'
+New-Item -ItemType Directory -Force $brut | Out-Null
+$sites = [ordered]@{
+  'hays' = 'https://www.hayswoodworking.com/'
+  'marme' = 'https://marme.fr/'
+  'storey' = 'https://www.storeyarchitecture.co.uk/'
+  'nabilissa' = 'https://nabilissa.com/'
+  'kononenko' = 'https://kononenkogroup.com/'
+  '317c' = 'https://www.317c.net/'
+  'era' = 'https://era-residence.com/'
+  'illoca' = 'https://illoca.unseen.co/'
+  'lestraque' = 'https://prestiapp.fr/sites-demo/lestraque/index.html'
+}
+foreach ($slug in $sites.Keys) {
+  if ($seulement -and -not (($seulement -split ',') -contains $slug)) { continue }
+  $debut = Get-Date
+  while ($true) {
+    $qa = @(Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -match '-qa\.mjs' })
+    if ($qa.Count -eq 0) { break }
+    if (((Get-Date) - $debut).TotalMinutes -gt 20) { "ABANDON $slug : -qa.mjs toujours actif apres 20 min"; break }
+    "attente $slug : $($qa.Count) processus -qa.mjs"
+    Start-Sleep -Seconds 20
+  }
+  if ($qa.Count -ne 0) { continue }
+  $sortie = Join-Path $brut "$slug.report.json"
+  node $lh $sites[$slug] --only-categories=performance --output=json --output-path=$sortie --chrome-flags="--headless=new" --quiet
+  if (Test-Path $sortie) { node (Join-Path $ici 'lighthouse-extraire.mjs') $sortie $slug } else { "ECHEC lighthouse $slug" }
+}
+"FIN lighthouse"

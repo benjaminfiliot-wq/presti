@@ -1,0 +1,30 @@
+== index.html @1440 : largeur de mise en page 1440 (scrollWidth 1440), hauteur 57116 ; console 0
+   origines coupées hors « / » : 0
+   textes à une graisse sans face : 0
+   pseudo-éléments générés dans les scènes : 0 ; pseudo-éléments de nav à opacité 0 : 0 ; couleurs calculées en color() : 0 ; currentColor dans les scènes : 0 ; AVIF dans le balisage des scènes : 0 ; images de scène sans eager/sync : 0
+   éléments matérialisés : 0 k-avant, 0 k-apres ; textes []
+== index.html @390 : largeur de mise en page 390 (scrollWidth 390), hauteur 59174 ; console 0
+   origines coupées hors « / » : 0
+   textes à une graisse sans face : 0
+   pseudo-éléments générés dans les scènes : 0 ; pseudo-éléments de nav à opacité 0 : 0 ; couleurs calculées en color() : 0 ; currentColor dans les scènes : 0 ; AVIF dans le balisage des scènes : 0 ; images de scène sans eager/sync : 0
+   éléments matérialisés : 0 k-avant, 0 k-apres ; textes []
+== sections.html @1440 : largeur de mise en page 1440 (scrollWidth 1440), hauteur 28015 ; console 0
+   origines coupées hors « / » : 0
+   textes à une graisse sans face : 0
+   pseudo-éléments générés dans les scènes : 0 ; pseudo-éléments de nav à opacité 0 : 0 ; couleurs calculées en color() : 0 ; currentColor dans les scènes : 0 ; AVIF dans le balisage des scènes : 0 ; images de scène sans eager/sync : 0
+   éléments matérialisés : 12 k-avant, 16 k-apres ; textes ["1","2","3","4","5","+"]
+== sections.html @390 : largeur de mise en page 390 (scrollWidth 390), hauteur 48834 ; console 0
+   origines coupées hors « / » : 0
+   textes à une graisse sans face : 0
+   pseudo-éléments générés dans les scènes : 0 ; pseudo-éléments de nav à opacité 0 : 0 ; couleurs calculées en color() : 0 ; currentColor dans les scènes : 0 ; AVIF dans le balisage des scènes : 0 ; images de scène sans eager/sync : 0
+   éléments matérialisés : 12 k-avant, 16 k-apres ; textes ["1","2","3","4","5","+"]
+== banc-essai-1440.html @1440 : largeur de mise en page 1440 (scrollWidth 1440), hauteur 18684 ; console 0
+   origines coupées hors « / » : 0
+   textes à une graisse sans face : 0
+   pseudo-éléments générés dans les scènes : 0 ; pseudo-éléments de nav à opacité 0 : 0 ; couleurs calculées en color() : 1 ; currentColor dans les scènes : 0 ; AVIF dans le balisage des scènes : 0 ; images de scène sans eager/sync : 0
+   éléments matérialisés : 0 k-avant, 0 k-apres ; textes []
+== site lestraque @1440 (référence) : textes à une graisse sans face : 4
+     IBM Plex Sans 500 : Prestations
+     IBM Plex Sans 500 : Réalisations
+     IBM Plex Sans 500 : Communes
+     IBM Plex Sans 500 : Questions

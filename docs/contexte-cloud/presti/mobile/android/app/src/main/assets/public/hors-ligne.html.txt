@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Presti</title>
+<!--
+  Page de secours de la COQUE NATIVE (capacitor.config.ts → server.errorPath) : affichée par l'app quand la
+  console déployée ne se charge pas — réseau coupé, avion, ou une interruption côté serveur (le texte ne
+  tranche pas : on ne sait pas). Fichier statique ; le seul script retire l'écran de lancement (launchAutoHide
+  est à false : sans lui, l'app resterait sur le logo). « Réessayer » revient à la page qui n'a pas chargé.
+-->
+<style>
+  html,body{margin:0;background:#0A0C11;color:#ECEAE6;font-family:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+  main{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:2rem;padding-top:calc(2rem + env(safe-area-inset-top));padding-bottom:calc(2rem + env(safe-area-inset-bottom));text-align:center;box-sizing:border-box}
+  .b{max-width:440px}
+  .m{width:56px;height:56px;border-radius:14px;margin:0 auto 1.4rem;background:#141319;border:1px solid rgba(255,255,255,.08);display:grid;place-items:center}
+  .m img{width:30px;height:30px;display:block}
+  h1{font-size:1.5rem;margin:0 0 .6rem;line-height:1.2;font-weight:650}
+  p{color:#C7C2BA;line-height:1.55;margin:0 0 1.6rem;font-size:.98rem}
+  .a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.7rem 1.4rem;border-radius:11px;font-weight:650;text-decoration:none;color:#1a0f0a;background:#D97757;border:0;font:inherit;font-weight:650;cursor:pointer}
+  .s{display:block;margin-top:1rem;color:#C7C2BA;font-size:.9rem;text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+<main data-presti-hors-ligne="1">
+  <div class="b">
+    <div class="m"><img src="marque.svg" alt="" width="30" height="30"></div>
+    <h1>Presti ne répond pas pour le moment</h1>
+    <p>Sans réseau, ou le temps d’une interruption. Rien n’est perdu&nbsp;: vos conversations, vos devis et vos factures vous attendent.</p>
+    <button class="a" type="button" onclick="history.length > 1 ? history.back() : (location.href = 'https://qg.prestiapp.fr/dashboard')">Réessayer</button>
+    <a class="s" href="https://qg.prestiapp.fr/dashboard">Ouvrir le tableau de bord</a>
+  </div>
+</main>
+<script>
+  // L'écran de lancement (launchAutoHide: false) se retire ici, comme NatifSplash le fait sur les pages de la console.
+  try { var C = window.Capacitor; var S = C && C.registerPlugin && C.registerPlugin('SplashScreen'); if (S && S.hide) S.hide(); } catch (e) {}
+</script>
+</body>
+</html>

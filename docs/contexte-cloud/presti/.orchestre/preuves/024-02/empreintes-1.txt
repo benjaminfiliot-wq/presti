@@ -1,0 +1,10 @@
+311a23ba5ae8be459e8f4b085cf1f1edb8a9747596515fb558691a76357abc5c *public/sites-demo/kit/LISEZMOI.md
+4bdb609577537919271930ac05ff2ccfd68b8acbf1d226bc8e6e96edecdb1d68 *public/sites-demo/kit/index.html
+d392b2f7104573725bc647aa02caac7d68b9ffa57892d53c3243c71d6f4efe2e *public/sites-demo/kit/kit.json
+d2f5e3f7aaebbaeacdc8b8dfde7ce728f4ec2af856055f708d51ab783c9c11e8 *public/sites-demo/kit/medias/eclate.webp
+47006f21c699344d7d93e66405d6316964186bb7ee5b0dd29309df4977159099 *public/sites-demo/kit/planche.css
+3ff99733d5579575142dd41be7dc09278403e0b0ea96f0d549737ca56a75e1b9 *public/sites-demo/kit/polices.css
+b6b9885f13d098b4f6574c8a087f541bb6e46e2400ad2ed68f1f14c794820589 *public/sites-demo/kit/sections.html
+00a97de46eca9d7d1b1ba0748c20e8a4b2be7041bb82e2cf74698e7be502e362 *public/sites-demo/kit/sections/bureau.css
+9a9546c623b62fedeee3cf7a4ac5bc505be95b85735f5b44ea30ad0da2f52702 *public/sites-demo/kit/sections/gel.css
+04421e6748325aee0e296d203c89f9b333e3ad18f0d9503555fe56bba99fcd78 *public/sites-demo/kit/sections/site.css

@@ -1,0 +1,4 @@
+import { chromium } from 'playwright'
+const nav = await chromium.launch({ headless: true })
+console.log('Launched successfully')
+await nav.close()

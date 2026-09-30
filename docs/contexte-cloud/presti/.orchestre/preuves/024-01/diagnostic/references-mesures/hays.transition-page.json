@@ -1,0 +1,21 @@
+{
+  "slug": "hays",
+  "url": "https://www.hayswoodworking.com/",
+  "date": "2026-09-16T20:42:21.724Z",
+  "lien": {
+    "href": "https://www.hayswoodworking.com/showroom/",
+    "texte": "Showroom"
+  },
+  "urlFinale": "https://www.hayswoodworking.com/showroom/",
+  "appels": {
+    "vt": 0,
+    "push": 0
+  },
+  "documentRemplace": true,
+  "animationsPendantLaTransition": [
+    [
+      "CSSAnimation | fadeIn | 500 | linear | 1 | ",
+      232
+    ]
+  ]
+}

@@ -1,0 +1,53 @@
+{
+ "date": "2026-09-15T09:29:34.616Z",
+ "source": "copie de cahier/relecture/bornes-et-budget.mjs, section 3",
+ "RW": 0.045,
+ "seuil": 1.53,
+ "temoin_base107_dmax_dpr1": 0.1169,
+ "verification": {
+  "Eb1.07": {
+   "facteursCSS_finPalier": 1.1796,
+   "delta0.116": {
+    "p90_brut": 2.575,
+    "max_brut": 3.01,
+    "p90_tex2880_dpr1": 1.519,
+    "p90_tex2880_dpr15": 2.278
+   },
+   "delta0.066": {
+    "p90_brut": 1.728,
+    "max_brut": 1.897,
+    "p90_tex2880_dpr1": 1.019,
+    "p90_tex2880_dpr15": 1.529
+   }
+  },
+  "Eb1": {
+   "facteursCSS_finPalier": 1.1024,
+   "delta0.116": {
+    "p90_brut": 2.575,
+    "max_brut": 3.01,
+    "p90_tex2880_dpr1": 1.419,
+    "p90_tex2880_dpr15": 2.129
+   },
+   "delta0.066": {
+    "p90_brut": 1.728,
+    "max_brut": 1.897,
+    "p90_tex2880_dpr1": 0.953,
+    "p90_tex2880_dpr15": 1.429
+   },
+   "deltaMax_calcule": {
+    "tex2880_dpr1": 0.1257,
+    "tex2880_dpr15": 0.0744
+   }
+  }
+ },
+ "prototype_film": {
+  "delta0.116": {
+   "p90_source2400_ecran_dpr1_y270": 1.61,
+   "p90_si_source2880": 1.342
+  },
+  "delta0.066": {
+   "p90_source2400_ecran_dpr1_y270": 1.081,
+   "p90_si_source2880": 0.901
+  }
+ }
+}

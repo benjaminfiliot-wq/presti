@@ -1,0 +1,34 @@
+// Assemble les calques Blender comme le ferait la page (translation 2D de chaque calque, ordre fixe), à p = 0,5 et 1, et compare
+// l'image à p = 1 au rendu éclaté « vrai ». Mesure le poids des calques rognés en AVIF et WebP (ce que la page chargerait).
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const B = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/survol/blender/'
+const info = JSON.parse(fs.readFileSync(B + 'eclate.json', 'utf8'))
+const ORDRE = ['limon', 'coin1', 'coin2', 'contremarche', 'tourillon1', 'tourillon2', 'marche']
+const [W, H] = info.resolution
+const res = { calques: {}, total: {} }
+const rognes = {}
+for (const n of ORDRE) {
+  const { data, info: i } = await sharp(B + `calque-${n}.png`).trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true })
+  rognes[n] = { buf: data, left: -(i.trimOffsetLeft || 0), top: -(i.trimOffsetTop || 0), w: i.width, h: i.height }
+  const avif = await sharp(data).avif({ quality: 60, effort: 6 }).toBuffer()
+  const webp = await sharp(data).webp({ quality: 80, alphaQuality: 90 }).toBuffer()
+  res.calques[n] = { largeur: i.width, hauteur: i.height, avif: avif.length, webp: webp.length }
+}
+for (const k of ['avif', 'webp']) res.total[k] = Object.values(res.calques).reduce((a, c) => a + c[k], 0)
+for (const nom of ['assemble', 'eclate']) {
+  const png = fs.readFileSync(B + nom + '.png')
+  res[nom] = { avif1400: (await sharp(png).avif({ quality: 60, effort: 6 }).toBuffer()).length }
+}
+for (const p of [0.5, 1]) {
+  const comp = ORDRE.map((n) => ({ input: rognes[n].buf, left: Math.round(rognes[n].left + info.decalagesPx[n][0] * p), top: Math.round(rognes[n].top + info.decalagesPx[n][1] * p) }))
+  await sharp({ create: { width: W, height: H, channels: 4, background: { r: 20, g: 17, b: 14, alpha: 1 } } }).composite(comp).png().toFile(B + `composite-p${p * 100}.png`)
+}
+// planche : vrai assemblé | composite 0,5 | composite 1 | vrai éclaté, sur le noir de la démo
+const fond = async (f) => sharp(await sharp({ create: { width: W, height: H, channels: 4, background: { r: 20, g: 17, b: 14, alpha: 1 } } }).composite([{ input: f }]).png().toBuffer()).resize(700, 500).png().toBuffer()
+const t = [await fond(B + 'assemble.png'), await sharp(B + 'composite-p50.png').resize(700, 500).png().toBuffer(), await sharp(B + 'composite-p100.png').resize(700, 500).png().toBuffer(), await fond(B + 'eclate.png')]
+await sharp({ create: { width: 1400, height: 1000, channels: 3, background: '#000' } }).composite(t.map((input, i) => ({ input, left: (i % 2) * 700, top: Math.floor(i / 2) * 500 }))).jpeg({ quality: 85 }).toFile(B + 'planche-calques.jpg')
+fs.writeFileSync(B + 'calques.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

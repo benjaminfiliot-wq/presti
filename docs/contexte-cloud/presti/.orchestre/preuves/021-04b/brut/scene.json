@@ -1,0 +1,112 @@
+{
+ "blender": "5.2.1 LTS",
+ "graine": 5204,
+ "mode": "final",
+ "echantillons": {
+  "beaute": 48,
+  "ombre": 32
+ },
+ "debruitage": true,
+ "echelle_ortho_m": 2.367693880419882,
+ "metres_par_pixel": 0.00169120991458563,
+ "vecteurs_px": {
+  "limon": [
+   -274,
+   -27
+  ],
+  "contremarche": [
+   -265,
+   144
+  ],
+  "marche": [
+   136,
+   -66
+  ],
+  "vis": [
+   136,
+   -161
+  ]
+ },
+ "vecteurs_monde": {
+  "limon": [
+   -0.420263,
+   -0.219884,
+   0.000518
+  ],
+  "contremarche": [
+   -0.199587,
+   -0.459759,
+   -0.160161
+  ],
+  "marche": [
+   0.299749,
+   0.000265,
+   0.22073
+  ],
+  "vis": [
+   0.299857,
+   0.000135,
+   0.400392
+  ]
+ },
+ "ordre": {
+  "limon": 1,
+  "contremarche": 2,
+  "marche": 3,
+  "vis": 4
+ },
+ "etiquettes": [
+  {
+   "texte": "Limon à la française",
+   "piece": "limon",
+   "x": 0.476057,
+   "y": 0.20044
+  },
+  {
+   "texte": "Entailles",
+   "piece": "limon",
+   "x": 0.467882,
+   "y": 0.302431
+  },
+  {
+   "texte": "Marche en chêne, 40 mm",
+   "piece": "marche",
+   "x": 0.537504,
+   "y": 0.555786
+  },
+  {
+   "texte": "Contremarche",
+   "piece": "contremarche",
+   "x": 0.464376,
+   "y": 0.718708
+  },
+  {
+   "texte": "Vis",
+   "piece": "vis",
+   "x": 0.530809,
+   "y": 0.52892
+  }
+ ],
+ "cote": {
+  "texte": "40 mm",
+  "x1": 0.683534,
+  "y1": 0.449099,
+  "x2": 0.683534,
+  "y2": 0.469252
+ },
+ "secondes": {
+  "assemble_beaute.png": 67.4,
+  "assemble_ombre.png": 11.5,
+  "calque-limon_beaute.png": 31.5,
+  "calque-limon_ombre.png": 3.6,
+  "calque-contremarche_beaute.png": 22.1,
+  "calque-contremarche_ombre.png": 2.4,
+  "calque-marche_beaute.png": 25.1,
+  "calque-marche_ombre.png": 3.7,
+  "calque-vis_beaute.png": 7.5,
+  "calque-vis_ombre.png": 1.1,
+  "eclate_beaute.png": 56.5,
+  "eclate_ombre.png": 8.7
+ },
+ "secondes_total": 242.0
+}

@@ -1,0 +1,21 @@
+{
+ "brut": 9765,
+ "gzip": 2039,
+ "elementsDuMonde": 57,
+ "captures": [
+  "css-bureau-p000.png",
+  "css-bureau-p035.png",
+  "css-bureau-p070.png",
+  "css-bureau-p100.png",
+  "css-tel-p000.png",
+  "css-tel-p100.png"
+ ],
+ "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00004628) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "balayage": {
+  "images": 540,
+  "medianeMs": 16.7,
+  "p95Ms": 16.7,
+  "maxMs": 33.3,
+  "auDelaDe25ms": 1
+ }
+}

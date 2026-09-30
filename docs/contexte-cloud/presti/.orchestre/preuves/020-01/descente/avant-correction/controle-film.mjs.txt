@@ -1,0 +1,22 @@
+// controle-film.mjs — une image tirée du mp4 (ffmpeg) comparée à l'image-clé PNG→JPEG du même état : le film contient bien
+// ce qui a été capturé (ni noir, ni décalé). Usage : node controle-film.mjs <mode> <lettre>
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const [mode, lettre] = process.argv.slice(2)
+const r = JSON.parse(fs.readFileSync(ICI + `mesures-${mode}.json`, 'utf8'))
+const gris = async (b) => sharp(b).resize(160).greyscale().raw().toBuffer()
+const ecart = (a, b) => { let s = 0, n8 = 0; for (let i = 0; i < a.length; i++) { const d = Math.abs(a[i] - b[i]); s += d; if (d > 8) n8++ } return { moyen: +(s / a.length / 255).toFixed(4), part8: +(n8 / a.length).toFixed(3) } }
+const out = {}
+for (const y of [270, 1170]) {
+  const i = r.serie.findIndex((s) => s.y >= y) // première image du film à ce y
+  const s = r.serie[i]
+  const png = execFileSync('ffmpeg', ['-v', 'error', '-i', ICI + r.fichier, '-ss', ((i - 0.5) / 30).toFixed(4), '-frames:v', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], { maxBuffer: 1 << 26 })
+  const cle = r.imagesCles.find((c) => c.y === y)
+  out[`y${y}`] = { imageDuFilm: i, yFilm: s.y, yCle: y, tFilm: s.t, tCle: cle.t, moyenneGrise: +((await gris(png)).reduce((a, b) => a + b, 0) / 16000).toFixed(1), ecartFilmContreCle: ecart(await gris(png), await gris(ICI + cle.fichier)) }
+}
+console.log(mode, JSON.stringify(out))
+fs.writeFileSync(ICI + `controle-film-${mode}.json`, JSON.stringify(out, null, 1))

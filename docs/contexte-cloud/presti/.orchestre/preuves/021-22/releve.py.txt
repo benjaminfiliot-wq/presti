@@ -1,0 +1,308 @@
+# 021-22 — le relevé au trait du tronçon d'escalier : le même objet que le rendu retenu de 021-04, vu par la même caméra
+# orthographique, dessiné au trait par Freestyle (lignes seules, fond transparent), avec ses deux cotes projetées par Blender.
+#
+# Usage : blender --background --factory-startup --python releve.py -- <dossier>
+#   Écrit <dossier>/releve.png (RVBA 1400 × 1050, trait blanc, alpha tel que Blender le rend) et <dossier>/releve.json (cadre et
+#   deux cotes : points 3D de l'objet en mètres, et leur projection en fraction du cadre). N'écrit rien ailleurs, ne quitte pas
+#   Blender (le juge joue son contrôle dans la même scène juste après).
+#
+# Pourquoi la scène est recopiée de marche.py (021-04b/outils/marche.py, recopié à côté) et non de 021-04/render.py : les rendus
+# retenus de 021-04, regardés par Claude Code, sortent de marche.py (Cycles, limon de 68 mm entaillé de 17 mm, caméra calée sur
+# l'union des deux vues) ; render.py est le script du 1er rendu, refusé, dont la géométrie et la caméra diffèrent. Un trait tiré
+# de render.py ne tomberait sur aucune arête du rendu. Ce qui décide du cadre est gardé mot pour mot : dimensions, pièces,
+# entailles, vis, vecteurs d'éclatement, bornes des deux vues et de leurs ombres, échelle et centre de la caméra.
+import bpy, bmesh, sys, os, json, math
+from mathutils import Vector
+from bpy_extras.object_utils import world_to_camera_view
+
+argv = sys.argv[sys.argv.index('--') + 1:]
+OUT = os.path.abspath(argv[0])
+os.makedirs(OUT, exist_ok=True)
+L, H = 1400, 1050
+MARGE = 0.04
+DECALAGE_CADRE = -0.015
+
+# ---------------------------------------------------------------- dimensions (celles de marche.py : mètres ; Z en haut ; l'avant vers -Y)
+HAUT = 0.18
+GIRON = 0.24
+EP_MARCHE = 0.040     # 40 mm : la cote « 40 mm »
+PROF_MARCHE = 0.30
+NEZ = 0.03
+EP_CM = 0.022
+X0, X1 = -0.40, 0.40
+EP_LIMON = 0.068
+ENTAILLE = 0.017      # 17 mm : la cote « 17 mm »
+X_INT = X0 + ENTAILLE
+X_EXT = X_INT - EP_LIMON
+PENTE = HAUT / GIRON
+VIS_X = (-0.28, -0.095, 0.095, 0.28)
+VIS_R, VIS_RT, VIS_TETE, VIS_LONG, VIS_POINTE = 0.0072, 0.0145, 0.008, 0.118, 0.016
+ECLATE = {
+    'limon': Vector((-0.42, -0.22, 0.0)),
+    'contremarche': Vector((-0.20, -0.46, -0.16)),
+    'marche': Vector((0.30, 0.0, 0.22)),
+    'vis': Vector((0.30, 0.0, 0.40)),
+}
+GROUPES = ['limon', 'contremarche', 'marche', 'vis']
+
+# ---------------------------------------------------------------- scène
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+# EEVEE et non Cycles : seules les lignes sont rendues (use_solid coupé plus bas), aucun échantillonnage de surface à payer
+sc.render.engine = 'BLENDER_EEVEE'
+sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = L, H, 100
+sc.render.film_transparent = True
+sc.render.image_settings.file_format = 'PNG'
+sc.render.image_settings.color_mode = 'RGBA'
+sc.render.image_settings.color_depth = '8'
+sc.view_settings.view_transform = 'Standard'
+
+# ---------------------------------------------------------------- géométrie (recopiée de marche.py, sans les matières)
+racine = sc.collection
+def groupe(nom):
+    e = bpy.data.objects.new('g_' + nom, None)
+    racine.objects.link(e)
+    return e
+
+G = {n: groupe(n) for n in GROUPES}
+PIECES = {n: [] for n in GROUPES}
+
+def objet(nom, bm, g):
+    me = bpy.data.meshes.new(nom)
+    bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(nom, me)
+    racine.objects.link(o)
+    o.parent = G[g]
+    PIECES[g].append(o)
+    return o
+
+def bm_boite(x0, x1, y0, y1, z0, z1):
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:
+        v.co = Vector(((x0 + x1) / 2 + v.co.x * (x1 - x0), (y0 + y1) / 2 + v.co.y * (y1 - y0), (z0 + z1) / 2 + v.co.z * (z1 - z0)))
+    return bm
+
+def biseau(o, l=0.0022):
+    b = o.modifiers.new('biseau', 'BEVEL'); b.width = l; b.segments = 2; b.limit_method = 'ANGLE'
+
+def outil(nom, bm, g):
+    me = bpy.data.meshes.new(nom); bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(nom, me); racine.objects.link(o)
+    o.parent = G[g]; o.hide_render = True; o.display_type = 'WIRE'
+    return o
+
+def creuser(o, cutter):
+    b = o.modifiers.new('creuse-' + cutter.name, 'BOOLEAN'); b.operation = 'DIFFERENCE'; b.object = cutter
+    try:
+        b.solver = 'EXACT'
+    except Exception:
+        pass
+
+def y_cm(i):
+    return i * GIRON
+
+for i in range(3):
+    yr = y_cm(i)
+    zt = (i + 1) * HAUT
+    o = objet('marche-%d' % (i + 1), bm_boite(X0, X1, yr - NEZ, yr - NEZ + PROF_MARCHE, zt - EP_MARCHE, zt), 'marche')
+    biseau(o, 0.003)
+    for j, xv in enumerate(VIS_X):
+        bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, segments=24, radius1=VIS_R * 0.9, radius2=VIS_RT * 1.05 + 0.002, depth=VIS_TETE + 0.004)
+        for v in bm.verts:
+            v.co += Vector((xv, yr + EP_CM / 2, zt - VIS_TETE / 2 + 0.002 - 0.0005))
+        creuser(o, outil('fraise-%d-%d' % (i, j), bm, 'marche'))
+
+for i in range(3):
+    yr = y_cm(i)
+    z0 = i * HAUT
+    z1 = (i + 1) * HAUT - EP_MARCHE
+    o = objet('contremarche-%d' % (i + 1), bm_boite(X0, X1, yr, yr + EP_CM, z0, z1), 'contremarche')
+    biseau(o, 0.002)
+
+def z_haut(y):
+    return PENTE * y + 0.2825
+def z_bas(y):
+    return PENTE * y - 0.12
+Y_AV, Y_AR = -0.10, 0.80
+profil = [(Y_AV, 0.0), (Y_AV, z_haut(Y_AV)), (Y_AR, z_haut(Y_AR)), (Y_AR, z_bas(Y_AR)), (0.12 / PENTE, 0.0)]
+bm = bmesh.new()
+ext = [bm.verts.new((X_EXT, y, z)) for y, z in profil]
+inn = [bm.verts.new((X_INT, y, z)) for y, z in profil]
+bm.faces.new(ext); bm.faces.new(list(reversed(inn)))
+n = len(profil)
+for k in range(n):
+    bm.faces.new((ext[k], ext[(k + 1) % n], inn[(k + 1) % n], inn[k]))
+bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+limon = objet('limon', bm, 'limon')
+biseau(limon, 0.002)
+JEU = 0.0005
+for i in range(3):
+    yr = y_cm(i); zt = (i + 1) * HAUT
+    creuser(limon, outil('entaille-marche-%d' % i, bm_boite(X0 - JEU, X_INT + 0.02, yr - NEZ - JEU, yr - NEZ + PROF_MARCHE + JEU, zt - EP_MARCHE - JEU, zt + JEU), 'limon'))
+    creuser(limon, outil('entaille-cm-%d' % i, bm_boite(X0 - JEU, X_INT + 0.02, yr - JEU, yr + EP_CM + JEU, i * HAUT - (0.02 if i == 0 else JEU), zt - EP_MARCHE + 0.002), 'limon'))
+
+# les vis restent dans la scène : leurs sommets entrent dans les bornes qui fixent l'échelle de la caméra (marche.py:441-460)
+for i in range(3):
+    yr = y_cm(i); zt = (i + 1) * HAUT
+    for j, xv in enumerate(VIS_X):
+        bm = bmesh.new()
+        ztete = zt + 0.0003
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=28, radius1=VIS_R, radius2=VIS_RT, depth=VIS_TETE)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE / 2))
+        corps = VIS_LONG - VIS_TETE - VIS_POINTE
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=20, radius1=VIS_R, radius2=VIS_R, depth=corps)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE - corps / 2))
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=20, radius1=0.0005, radius2=VIS_R, depth=VIS_POINTE)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE - corps - VIS_POINTE / 2))
+        for v in bm.verts:
+            v.co += Vector((xv, yr + EP_CM / 2, 0))
+        o = objet('vis-%d-%d' % (i + 1, j + 1), bm, 'vis')
+        for a, (lx, ly) in enumerate(((VIS_RT * 1.5, 0.0022), (0.0022, VIS_RT * 1.5))):
+            c = outil('fente-%d-%d-%d' % (i, j, a), bm_boite(xv - lx / 2, xv + lx / 2, yr + EP_CM / 2 - ly / 2, yr + EP_CM / 2 + ly / 2, ztete - 0.0025, ztete + 0.003), 'vis')
+            creuser(o, c)
+
+bpy.context.view_layer.update()
+
+# la marche du haut porte la cote « 40 mm » et prend le nom « marche » que le juge cherche ; les deux autres gardent le leur
+marche = bpy.data.objects['marche-3']
+marche.name = 'marche'
+
+# ---------------------------------------------------------------- caméra (recopiée de marche.py : mêmes bornes, même échelle)
+DIR_CLE = Vector((0.30, 0.38, -1.0)).normalized()
+ANGLE_CLE = 24
+
+def sommets_monde(objs):
+    pts = []
+    for o in objs:
+        mw = o.matrix_world
+        pts += [mw @ v.co for v in o.data.vertices]
+    return pts
+
+def projection_ombre(pts, z_plan):
+    out = []
+    for p in pts:
+        t = (z_plan - p.z) / DIR_CLE.z
+        out.append((p + DIR_CLE * t, max(0.0, t)))
+    return out
+
+VISEE = Vector((-1.8, 2.15, -1.4)).normalized()
+DROITE = VISEE.cross(Vector((0, 0, 1))).normalized()
+HAUTV = DROITE.cross(VISEE).normalized()
+
+def ecran(p):
+    return (p.dot(DROITE), p.dot(HAUTV))
+
+# (marche.py y lit aussi la hauteur du capteur d'ombre, dans une variable jamais employée : ce relevé n'a pas de capteur)
+def bornes(etat_eclate, vecteurs):
+    bx, by = [], []
+    for g in GROUPES:
+        dv = vecteurs[g] if etat_eclate else Vector((0, 0, 0))
+        pts = sommets_monde(PIECES[g])
+        for q, t in projection_ombre(pts, min(p.z for p in pts) - 0.002):
+            r = 0.02 + t * math.tan(math.radians(ANGLE_CLE) / 2) * 0.6
+            s = ecran(q + dv)
+            bx += [s[0] - r, s[0] + r]; by += [s[1] - r * 0.5, s[1] + r * 0.5]
+        for p in pts:
+            s = ecran(p + dv)
+            bx.append(s[0]); by.append(s[1])
+    return min(bx), max(bx), min(by), max(by)
+
+b1 = bornes(False, ECLATE)
+b2 = bornes(True, ECLATE)
+ux0, ux1 = min(b1[0], b2[0]), max(b1[1], b2[1])
+uy0, uy1 = min(b1[2], b2[2]), max(b1[3], b2[3])
+ECHELLE = max((ux1 - ux0) / (1 - 2 * MARGE), (uy1 - uy0) / ((H / L) * (1 - 2 * MARGE)))
+cx, cy = (ux0 + ux1) / 2 + DECALAGE_CADRE * ECHELLE, (uy0 + uy1) / 2
+
+cam_d = bpy.data.cameras.new('cam'); cam_d.type = 'ORTHO'; cam_d.ortho_scale = ECHELLE
+cam_d.sensor_fit = 'HORIZONTAL'
+cam_d.clip_start = 0.01; cam_d.clip_end = 50
+cam = bpy.data.objects.new('cam', cam_d); racine.objects.link(cam); sc.camera = cam
+centre = DROITE * cx + HAUTV * cy
+cam.location = centre - VISEE * 6.0
+cam.rotation_euler = VISEE.to_track_quat('-Z', 'Y').to_euler()
+bpy.context.view_layer.update()
+
+def proj(p):
+    c = world_to_camera_view(sc, cam, p)
+    return [round(c.x, 6), round(1.0 - c.y, 6)]
+
+# témoin : la cote d'eclate.json de 021-04 (0.683534, 0.449099 → 0.683534, 0.469252) doit ressortir à l'identique
+print('TEMOIN_CAMERA', ECHELLE, proj(Vector((X1, y_cm(2) - NEZ, 3 * HAUT))), proj(Vector((X1, y_cm(2) - NEZ, 3 * HAUT - EP_MARCHE))), flush=True)
+
+# ---------------------------------------------------------------- ce que le trait montre
+# Les vis ne sont pas dessinées : un relevé se fait avant la pose, et dans la vue assemblée elles sont noyées dans le bois. Leurs
+# fraisages sont bouchés au rendu (sinon douze cercles vides). Les biseaux (2 à 3 mm, 2 segments) sont coupés au rendu : un angle
+# de 90° y devient trois pans de 30° que Freestyle ne voit pas comme un pli (angle de pli par défaut 134°), et les nez de
+# marche, l'arête même de la cote « 40 mm », disparaissaient. show_render seulement : la surface évaluée que le juge mesure
+# (closest_point_on_mesh, réglages de la vue) garde biseaux et fraisages.
+for o in PIECES['vis']:
+    o.hide_render = True
+for g in ('marche', 'contremarche', 'limon'):
+    for o in PIECES[g]:
+        for m in o.modifiers:
+            if m.type == 'BEVEL' or (m.type == 'BOOLEAN' and m.name.startswith('creuse-fraise')):
+                m.show_render = False
+
+vl = sc.view_layers[0]
+sc.render.use_freestyle = True
+sc.render.line_thickness_mode = 'ABSOLUTE'
+sc.render.line_thickness = 1.0
+vl.use_freestyle = True
+vl.use_solid = False          # les surfaces ne sont pas rendues : seules les lignes sont opaques
+fs = vl.freestyle_settings
+fs.mode = 'EDITOR'
+fs.crease_angle = math.radians(134)
+fs.use_culling = False
+jeu = fs.linesets[0] if len(fs.linesets) else fs.linesets.new('trait')
+# avec --factory-startup, le jeu de lignes n'a pas de style : on le crée avant d'en régler la couleur et l'épaisseur
+style = bpy.data.linestyles.new('trait')
+jeu.linestyle = style
+style.color = (1.0, 1.0, 1.0)
+style.alpha = 1.0
+style.thickness = 2.0
+style.thickness_position = 'CENTER'
+style.caps = 'ROUND'          # les angles se referment sans encoche
+jeu.select_by_visibility = True
+jeu.visibility = 'VISIBLE'    # pas de lignes cachées
+jeu.select_by_edge_types = True
+jeu.select_by_face_marks = False
+jeu.select_by_collection = False
+jeu.select_by_image_border = True
+for nom, actif in (('select_silhouette', True), ('select_border', True), ('select_crease', True), ('select_contour', True),
+                   ('select_external_contour', True), ('select_material_boundary', False), ('select_edge_mark', False),
+                   ('select_suggestive_contour', False), ('select_ridge_valley', False)):
+    setattr(jeu, nom, actif)
+
+# ---------------------------------------------------------------- les deux cotes, prises sur l'objet
+# « 40 mm » : l'arête verticale du nez de la marche du haut, à son bout droit, du dessus au dessous (la cote d'eclate.json),
+# prise 4 mm avant le bout. Pourquoi : au coin même, trois faces se rejoignent et le biseau de 3 mm creuse le bois de 2,2 mm
+# sous le point vif (mesuré par le juge, 2 mm au plus). Sur les arêtes du dessus et du dessous du nez, hors du coin, le biseau
+# ne l'écarte que d'environ 1,2 mm, et la cote garde ses 40 mm exacts. 4 mm font 1,8 px : la cote reste sur l'arête dessinée.
+y_nez3 = y_cm(2) - NEZ
+x40 = X1 - 0.004
+a40, b40 = Vector((x40, y_nez3, 3 * HAUT)), Vector((x40, y_nez3, 3 * HAUT - EP_MARCHE))
+# « 17 mm » : l'entaille de la marche du milieu dans le limon. a = le coin avant-haut de sa bouche, sur la face intérieure du
+# limon (visible, au bord du nez) ; b = le même coin au fond de l'entaille (caché : la marche remplit l'entaille). Le fond est à
+# X0 − JEU : l'entaille mesure 17,5 mm dans le modèle (17 mm plus le jeu de 0,5 mm laissé autour de la marche).
+yr2, zt2 = y_cm(1), 2 * HAUT
+a17, b17 = Vector((X_INT, yr2 - NEZ - JEU, zt2 + JEU)), Vector((X0 - JEU, yr2 - NEZ - JEU, zt2 + JEU))
+
+def cote(texte, piece, a, b):
+    p1, p2 = proj(a), proj(b)
+    return {'texte': texte, 'piece': piece, 'a': [round(c, 6) for c in a], 'b': [round(c, 6) for c in b],
+            'x1': p1[0], 'y1': p1[1], 'x2': p2[0], 'y2': p2[1]}
+
+releve = {'cadre': {'largeur': L, 'hauteur': H}, 'cotes': [cote('40 mm', 'marche', a40, b40), cote('17 mm', 'limon', a17, b17)]}
+with open(os.path.join(OUT, 'releve.json'), 'w', encoding='utf-8') as f:
+    json.dump(releve, f, indent=1, ensure_ascii=False)
+
+# ---------------------------------------------------------------- le trait
+sc.render.filepath = os.path.join(OUT, 'releve.png')
+bpy.ops.render.render(write_still=True)
+print('RELEVE_ECRIT', OUT, flush=True)

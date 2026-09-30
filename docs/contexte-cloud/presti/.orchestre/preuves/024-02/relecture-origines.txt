@@ -1,0 +1,676 @@
+• 00 gabarit → public/sites-demo/generer.mjs:459
+    <header class="nav${navClaire ? ' nav--claire' : ''}"><div class="conteneur nav__inner">
+• 00 donnée site.nom (marque) → public/sites-demo/lestraque/site.json:3
+    "nom": "Atelier Lestraque",
+• 00 donnée site.nom (marque) → public/sites-demo/generer.mjs:460
+    <a class="nav__marque" href="${rel || './'}">${marque}<span>${esc(site.nom)}</span></a>
+• 00 donnée da.monogramme → marque SVG tirée de la police de titre → public/sites-demo/generer.mjs:405
+    marque = `<svg class="marque" viewBox="0 0 ${S} ${S}" aria-hidden="true"><circle cx="${S / 2}" cy="${S / 2}" r="${(S / 2 - S * 0.025).toFixed(1)}" fill="none" s
+• 00 donnée liens fixes : Prestations, Réalisations, Communes, Questions → public/sites-demo/generer.mjs:433
+    const liens = [['prestations', 'Prestations'], ['realisations', 'Réalisations'], ['communes', 'Communes'], ['questions', 'Questions']].map(([id, t]) => `<a href
+• 00 donnée site.telephone (lien tel: au format RFC 3966) → public/sites-demo/lestraque/site.json:4
+    "telephone": "+33 2 61 91 38 47",
+• 00 donnée site.telephone (lien tel: au format RFC 3966) → public/sites-demo/generer.mjs:462
+    <div class="nav__droite"><a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>`
+• 00 donnée site.devis → pilule « Devis » vers #contact → public/sites-demo/generer.mjs:462
+    <div class="nav__droite"><a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>`
+• 00 donnée panneau : site.communes (lien si une page commune existe) → public/sites-demo/generer.mjs:467
+    <div class="panneau__bas"><span>${communes.map((c) => { const p = pageDe(c); return p ? `<a href="${rel}${p.chemin.slice(1)}">${esc(c)}</a>` : esc(c) }).join(' 
+• 00 variante nav--claire → public/sites-demo/generer.mjs:435
+    const navClaire = da.hero === 'plein' ? page.type === 'accueil' || page.type === 'commune' : page.type === 'accueil' && da.hero === 'aplat'
+• 00 variante solide → public/sites-demo/_kit/kit.js:15
+    function surNav() { if (nav) nav.classList.toggle('solide', scrollY > 40) }
+• 00 variante nav--sombre → public/sites-demo/_kit/kit.js:93
+    nav.classList.toggle('nav--sombre', !vide && a <= hNav / 2 && b >= hNav / 2)
+• 00 variante nav--bande → public/sites-demo/_kit/kit.js:74
+    nav.classList.add('nav--bande')
+• 00 variante nav--retenue → public/sites-demo/_kit/kit.js:23
+    nav.classList.add('nav--retenue')
+• 00 variante panneau.ouvert → public/sites-demo/_kit/kit.js:149
+    panneau.classList.toggle('ouvert', o); d.body.classList.toggle('menu-ouvert', o)
+• 00 effet nav : solide au défilement, bande beige/noire au pixel [(aucune condition CSS : partout)] → public/sites-demo/_kit/kit.css:981
+    .nav.nav--bande::after{background:rgba(20,17,14,.8);clip-path:inset(var(--nav-sh,100%) 0 var(--nav-sb,0px) 0)}
+• 00 effet nav retenue : « Devis » prend le relais du bouton du héros [@media(min-width:960px)] → public/sites-demo/_kit/kit.css:60
+    .da--nav-retenue .nav.nav--retenue:not(.nav--appel) .nav__devis{opacity:0;transform:translateY(-6px);visibility:hidden;pointer-events:none;transition:opacity 24
+• 00 effet panneau du menu (croix au-dessus, voile) [(aucune condition CSS : partout)] → public/sites-demo/_kit/kit.css:74
+    .panneau.ouvert{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+• 00 effet pilule de verre fumé des liens sur le héros [@media(min-width:960px)] → public/sites-demo/_kit/kit.css:994
+    .nav--claire:not(.solide) .nav__liens{background:rgba(14,10,7,.46);border-color:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16
+• 00 gel position:fixed → dans le flux (états) ou posée sur le héros (cadre 01) → public/sites-demo/_kit/kit.css:37
+    .nav{position:fixed;inset:0 0 auto;z-index:50;padding-block:1rem;transition:background .45s ease,box-shadow .45s ease,color .45s ease}
+• 00 gel états posés à la main avec les classes que kit.js pose (solide, nav--sombre, panneau.ouvert, aria-expanded) → public/sites-demo/_kit/kit.js:148
+    burger.setAttribute('aria-expanded', o ? 'true' : 'false'); burger.setAttribute('aria-label', o ? 'Fermer le menu' : 'Ouvrir le menu')
+• 00 gel body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » (.k-menu-ouvert) → public/sites-demo/_kit/kit.css:385
+    body.menu-ouvert .nav{z-index:70;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:#F4EDE2}
+• 00 gel couches ::before/::after de .nav--bande non figurées : l’état solide montre le fond de .nav.solide → public/sites-demo/_kit/kit.css:51
+    .nav.solide{background:color-mix(in srgb,var(--fond) 84%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--lig
+• 01 gabarit → public/sites-demo/generer.mjs:673
+    heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}${crochetConcatene('hero
+• 01 donnée contenu.json → pages["/"].h1 (mot-clé SEO, en petit) → public/sites-demo/lestraque/contenu.json:9
+    "h1": "Menuisier à Rennes",
+• 01 donnée contenu.json → pages["/"].h1 (mot-clé SEO, en petit) → public/sites-demo/generer.mjs:673
+    heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}${crochetConcatene('hero
+• 01 donnée contenu.json → pages["/"].h1Ligne (ligne display, obligatoire) → public/sites-demo/lestraque/contenu.json:279
+    "h1Ligne": "Fait pour rester"
+• 01 donnée contenu.json → pages["/"].h1Ligne (ligne display, obligatoire) → public/sites-demo/generer.mjs:670
+    if (!c.h1Ligne) throw new Error(`${metier}/ : contenu.json → pages["/"].h1Ligne manque (la ligne display du h1)`)
+• 01 donnée contenu.json → pages["/"].chapeau (90 signes et 20 mots au plus) → public/sites-demo/lestraque/contenu.json:10
+    "chapeau": "Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose.",
+• 01 donnée contenu.json → pages["/"].chapeau (90 signes et 20 mots au plus) → public/sites-demo/generer.mjs:142
+    if (chapeau.length > 90 || nbMots(chapeau) > 20) throw new Error(`${ou} : chapeau de ${chapeau.length} signes et ${nbMots(chapeau)} mots (90 et 20 au plus)`)
+• 01 donnée da.heros (paysage) et da.herosMobile (4:5 sous 768 px) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 01 donnée da.heros (paysage) et da.herosMobile (4:5 sous 768 px) → public/sites-demo/generer.mjs:320
+    const heros = da.heros ? photoDe(da.heros, 'héros') : (photos.find((p) => p.base === 'hero') || photos[0])
+• 01 donnée da.relief (carte de profondeur, œil, descente) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 01 donnée da.relief (carte de profondeur, œil, descente) → public/sites-demo/generer.mjs:652
+    const attributsRelief = (rel) => {
+• 01 variante hero--plein → public/sites-demo/generer.mjs:667
+    if (da.hero === 'plein') {
+• 01 variante hero--aplat → public/sites-demo/generer.mjs:676
+    if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div cla
+• 01 variante hero--scinde → public/sites-demo/generer.mjs:677
+    else heroHtml = `<section class="hero hero--scinde"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__cadre ent
+• 01 variante data-relief-* → public/sites-demo/generer.mjs:655
+    let attributs = ` data-relief="${rel}relief.js" data-relief-fil="${rel}relief-fil.js" data-relief-profondeur="${rel}${esc(da.relief.profondeur)}" data-relief-oe
+• 01 variante div.ouverture (héros + plateau) → public/sites-demo/generer.mjs:710
+    const ouverture = da.hero === 'plein' && site.plateau ? `<div class="ouverture">${heroHtml}${plateauHtml()}</div>` : heroHtml + plateauHtml()
+• 01 effet h1 plein qui se lève sous masque [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:339
+    html.js .h1__cle>span,html.js .h1__ligne-in{transform:translateY(110%);animation:lever .95s cubic-bezier(.16,1,.3,1) forwards}
+• 01 effet poussée lente de la photo (pousse 20 s) [sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:322
+    html.js .hero--plein .hero__media img{animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate}
+• 01 effet moment signature : rotation de la cage [@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:1172
+    html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bez
+• 01 effet moment signature : projecteur [@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:1185
+    html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:"";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(4
+• 01 effet moment signature : descente (palier 30 svh) [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1199
+    .da--signature .ouverture>.plateau{margin-top:30svh}
+• 01 effet relief WebGL du héros (worker + OffscreenCanvas) [JavaScript : au moins 1024 px, souris, mouvement permis, WebGL matériel] → public/sites-demo/_kit/kit.js:182
+    var heroRelief = d.querySelector('.hero--plein[data-relief]')
+• 01 effet téléphone : la cage tourne et le projecteur balaie [@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/telephone.css:23
+    html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media img{transform-origin:50% 61%;translate:0 15.86%;scale:1.29;animation:signature-to
+• 01 gel relief WebGL (toile créée par kit.js) : absent, la photo du héros reste → public/sites-demo/_kit/kit.js:182
+    var heroRelief = d.querySelector('.hero--plein[data-relief]')
+• 01 gel min-height:100svh résolu sur la fenêtre de référence (900 px au bureau, 844 px au téléphone) → public/sites-demo/_kit/kit.css:84
+    .hero--plein{min-height:100svh;display:grid;align-items:end;color:#fff}
+• 01 gel héros collant sous le plateau (sticky) non figuré : cadre à part → public/sites-demo/_kit/kit.css:1080
+    .ouverture>.hero--plein{position:sticky;top:0;height:100svh;z-index:0}
+• 02 gabarit → public/sites-demo/generer.mjs:641
+    const plateauHtml = () => {
+• 02 donnée site.artisan.citation (20 à 160 signes, à la 1re personne) → public/sites-demo/lestraque/site.json:76
+    "citation": "Du premier relevé à la dernière marche posée, je ne passe la main à personne."
+• 02 donnée site.artisan.citation (20 à 160 signes, à la 1re personne) → public/sites-demo/generer.mjs:648
+    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau_
+• 02 donnée site.artisan.prenom + nom · à <ville> depuis <installation> → public/sites-demo/lestraque/site.json:72
+    "prenom": "Camille",
+• 02 donnée site.artisan.prenom + nom · à <ville> depuis <installation> → public/sites-demo/lestraque/site.json:74
+    "installation": 2011,
+• 02 donnée site.artisan.prenom + nom · à <ville> depuis <installation> → public/sites-demo/generer.mjs:202
+    const signatureDe = (a, ville) => `${a.prenom} ${a.nom} · à ${ville} depuis ${a.installation}`
+• 02 donnée site.artisan.parcours (140 signes au plus) → public/sites-demo/lestraque/site.json:75
+    "parcours": "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
+• 02 donnée site.artisan.parcours (140 signes au plus) → public/sites-demo/generer.mjs:648
+    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau_
+• 02 donnée site.plateau.chiffres[3] { valeur, unite, legende } → public/sites-demo/lestraque/site.json:80
+    "chiffres": [
+• 02 donnée site.plateau.chiffres[3] { valeur, unite, legende } → public/sites-demo/generer.mjs:648
+    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau_
+• 02 donnée da.plateauPhoto → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 02 donnée da.plateauPhoto → public/sites-demo/generer.mjs:646
+    const ph = da.plateauPhoto ? photoDe(da.plateauPhoto, 'photo du plateau') : null
+• 02 variante sans plateau → public/sites-demo/generer.mjs:643
+    if (!p) return ''
+• 02 variante avec .plateau__photo → public/sites-demo/generer.mjs:647
+    const photoPlateau = ph ? `<div class="plateau__photo reveal" style="--i:1">${photo(ph, '', { sizes: '(max-width: 767px) 100vw, 40vw' })}</div>` : ''
+• 02 effet ouverture : le plateau monte sur le héros collant [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1081
+    .ouverture>.plateau{position:relative;z-index:1;view-timeline:--plateau block;box-shadow:0 -2.5rem 5rem -.5rem rgba(10,7,4,.55)}
+• 02 effet citation qui s’allume mot à mot (recit) [@media (min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/recit.bureau.css:12
+    html.js .citation__mot{animation:citation-allume linear both;animation-timeline:--citation;animation-range:cover calc(2% + var(--i,0) * 3%) cover calc(24% + var
+• 02 effet chiffres comptés une fois la citation lue (recit) [JavaScript : au moins 1024 px, mouvement permis, view()] → public/sites-demo/_kit/familles/recit.js:8
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !bureau.matches || !(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()')) || 
+• 02 effet téléphone : citation mot à mot [@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/telephone.css:36
+    html.js .plateau__citation .citation__mot{animation:telephone-mot linear both;animation-timeline:--telephone-citation;animation-range:cover calc(2% + var(--i,0)
+• 02 effet photo qui glisse dans son cadre [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1105
+    .plateau__photo img,.faq-scene__photo img,.etapes__photo img,.contact__media img{scale:1.14;animation:glisse-cadre linear both;animation-timeline:view();animati
+• 02 gel valeurs finales des chiffres (chiffre__vrai), sans comptage → public/sites-demo/_kit/familles/recit.mjs:22
+    plateauValeur(chiffre, i, ctx) {
+• 02 gel classe finale .vu posée sur chaque .reveal → public/sites-demo/_kit/kit.js:164
+    } else reveals.forEach(function (el) { el.classList.add('vu') })
+• 03 gabarit → public/sites-demo/generer.mjs:544
+    const prestaScene = (s, intro, items, rel, id) => `<section class="scene scene--papier scene--presta"${id ? ` id="${id}"` : ''}><div class="scene-large"><div cl
+• 03 donnée section genre « prestations » : h2 (2 à 4 mots) → public/sites-demo/lestraque/contenu.json:13
+    "h2": "Ce que je fabrique",
+• 03 donnée section genre « prestations » : h2 (2 à 4 mots) → public/sites-demo/generer.mjs:153
+    for (const h2 of [...corps.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => texteDe(m[1]).trim())) if (nbMots(h2) < 2 || nbMots(h2) > 4) throw new Error(`${
+• 03 donnée blocs : p avant le 1er h3 = intro ; h3 + p = une ligne → public/sites-demo/lestraque/contenu.json:68
+    "genre": "prestations"
+• 03 donnée blocs : p avant le 1er h3 = intro ; h3 + p = une ligne → public/sites-demo/generer.mjs:49
+    function decouper(blocs) {
+• 03 donnée da.prestationsPhotos { fragment du h3 → photo | { base, position } } → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 03 donnée da.prestationsPhotos { fragment du h3 → photo | { base, position } } → public/sites-demo/generer.mjs:540
+    const vignetteDe = (titre) => { const k = Object.keys(da.prestationsPhotos || {}).find((x) => slug(titre).includes(x)); if (!k) return null; const r = refPhoto(
+• 03 donnée da.kickers (surtitre si « prestations » y figure) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 03 donnée da.kickers (surtitre si « prestations » y figure) → public/sites-demo/generer.mjs:536
+    const kicker = (g, texte) => ((da.kickers || []).includes(g) ? `<span class="mono">${esc(texte)}</span>` : '')
+• 03 variante scène (da.scenes) → public/sites-demo/generer.mjs:687
+    if (g === 'prestations') corps += prestaScene(s, intro, items, rel, 'prestations')
+• 03 variante section classique + liste → public/sites-demo/generer.mjs:716
+    if (g === 'prestations') { corps += `<section class="${classe}" id="prestations"${nuit(classe)}><div class="scene-large">${entete('Prestations', s.h2, intro, 0,
+• 03 variante titre en mots masqués (.ml) → public/sites-demo/generer.mjs:497
+    const titreScene = (t) => (da.scenes ? masque(t) : esc(t))
+• 03 variante rail aimanté de cartes photo → public/sites-demo/_kit/kit.css:552
+    .scene--presta .presta{display:grid;grid-auto-flow:column;grid-auto-columns:80vw;column-gap:5vw;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x
+• 03 variante vignette ouverte au survol (cadre 03b) → public/sites-demo/_kit/kit.css:547
+    .presta__ligne:hover .presta__vignette{clip-path:inset(0)}
+• 03 effet titres de scène mot à mot (mot-leve) [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1091
+    .ml__in{display:inline-block;animation:mot-leve linear both;animation-timeline:--titre;animation-range:cover calc(2% + var(--i,0) * 3%) cover calc(24% + var(--i
+• 03 effet dévoilement au défilement (.reveal → monte) [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:1095
+    html.js .reveal{opacity:1;transform:none;transition:none;animation:monte linear both;animation-timeline:view();animation-range:entry calc(var(--i,0) * 6%) cover
+• 03 effet vignette de prestation au survol (CSS) [@media(min-width:1024px) and (hover:hover) and (pointer:fine)] → public/sites-demo/_kit/kit.css:547
+    .presta__ligne:hover .presta__vignette{clip-path:inset(0)}
+• 03 effet grand aperçu 4:5 au-dessus de la ligne survolée (survol) [JavaScript : au moins 1024 px, hover:hover et pointer:fine] → public/sites-demo/_kit/familles/survol.js:6
+    if (!ol || !matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)').matches) return
+• 03 effet jauge du rail (scroll-timeline) [@media(max-width:767px) · @supports (animation-timeline: scroll())] → public/sites-demo/_kit/kit.css:563
+    .scene--presta .presta__jauge span{display:block;height:100%;background:var(--accent-texte);transform-origin:0 50%;animation:jauge linear both;animation-timelin
+• 03 gel survol : état CSS montré dans le cadre 03b ; l’aperçu de la famille survol (placé par survol.js) n’est pas figuré → public/sites-demo/_kit/familles/survol.bureau.css:18
+    .scene--presta.scene--survol .presta__vignette{left:0;top:0;width:min(24vw,26rem);aspect-ratio:4/5;translate:calc(var(--sx,0) * 1px) calc(var(--sy,0) * 1px);rot
+• 03 gel jauge du rail masquée (profil sans scroll-timeline) → public/sites-demo/_kit/kit.css:535
+    .presta__vignette,.presta__jauge{display:none}
+• 04 gabarit → public/sites-demo/generer.mjs:549
+    const atelierScene = (s, intro, rel) => {
+• 04 donnée section genre « atelier » : h2 + phrase → public/sites-demo/lestraque/contenu.json:71
+    "h2": "Dans l’atelier",
+• 04 donnée section genre « atelier » : h2 + phrase → public/sites-demo/generer.mjs:553
+    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspec
+• 04 donnée da.atelier (obligatoire) et da.atelierMobile (9:16 au téléphone) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 04 donnée da.atelier (obligatoire) et da.atelierMobile (9:16 au téléphone) → public/sites-demo/generer.mjs:551
+    const a = photoDe(da.atelier, 'bande « Dans l’atelier »'), m = da.atelierMobile ? photoDe(da.atelierMobile, 'bande « Dans l’atelier », téléphone') : null
+• 04 donnée attributions.json → légende de la photo (.atelier__legende) → public/sites-demo/lestraque/attributions.json:706
+    "base": "atelier-poncage",
+• 04 donnée attributions.json → légende de la photo (.atelier__legende) → public/sites-demo/generer.mjs:553
+    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspec
+• 04 variante vidéo d’atelier (famille video) → public/sites-demo/_kit/familles/video.js:9
+    var bureau = matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)')
+• 04 variante verbes balisés (famille recit) → public/sites-demo/_kit/familles/recit.mjs:7
+    const VERBES = ['trace', 'débite', 'assemble', 'ponce']
+• 04 effet dérive de la photo de l’atelier [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:582
+    .atelier__media img{scale:1.12;animation:derive linear both;animation-timeline:view();animation-range:cover}
+• 04 effet verbes qui s’allument (recit) [@media (min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/recit.bureau.css:18
+    html.js .atelier__verbe{display:inline-block;animation:verbe-allume linear both;animation-timeline:--phrase;animation-range:cover calc(20% + var(--i,0) * 6%) co
+• 04 effet vidéo qui remplace la photo, bouton pause (video) [@media (prefers-reduced-motion:no-preference)] → public/sites-demo/_kit/familles/video.bureau.css:9
+    .atelier__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;transition:opacity .55s cubic-bezier(.16,1,.
+• 04 effet téléphone : verbes au défilement [@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/telephone.css:45
+    html.js .atelier__verbe{display:inline-block;animation:telephone-verbe linear both;animation-timeline:--telephone-verbes;animation-range:cover calc(20% + var(--
+• 04 gel vidéo (créée par video.js au bureau) : absente, la photo reste, comme au téléphone et sans JavaScript → public/sites-demo/_kit/familles/video.js:3
+    Bureau ≥ 1024 px, mouvement permis, sans économie de données. Ailleurs (téléphone, tablette, mouvement réduit, sans JavaScript),
+• 04 gel min-height:100svh résolu sur la fenêtre de référence → public/sites-demo/_kit/kit.css:570
+    .atelier{min-height:100svh;padding:0;color:#F4EDE2;background:#14110E;overflow:hidden;isolation:isolate}
+• 05 gabarit → public/sites-demo/generer.mjs:557
+    const galerieScene = (s, intro, liste, rel, autres, { id = '', travelling = true } = {}) => {
+• 05 donnée section genre « galerie » : h2 + intro → public/sites-demo/lestraque/contenu.json:81
+    "h2": "Pièces livrées",
+• 05 donnée section genre « galerie » : h2 + intro → public/sites-demo/generer.mjs:562
+    const tete = `<div class="scene__tete galerie__tete reveal"><div>${kicker('galerie', 'Réalisations')}<h2 class="h2--scene">${titreScene(s.h2)}</h2>${intro.map((
+• 05 donnée da.galerie : exactement 4 photos, toutes dans da.ouvrages → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 05 donnée da.galerie : exactement 4 photos, toutes dans da.ouvrages → public/sites-demo/generer.mjs:690
+    if (!galerieAccueil || galerieAccueil.length !== 4) throw new Error(`${metier}/ : la galerie des scènes compte ${galerieAccueil?.length ?? 0} photos (4 attendue
+• 05 donnée da.galerie : exactement 4 photos, toutes dans da.ouvrages → public/sites-demo/generer.mjs:693
+    if (horsOuvrages.length) throw new Error(`${metier}/ : la galerie des réalisations montre ${horsOuvrages.map((p) => p.base).join(', ')}, qui n’est pas un ouvrag
+• 05 donnée attributions.json → légende, auteur, licence, modifiée (ligne de crédits groupée) → public/sites-demo/generer.mjs:502
+    const creditsLigne = (liste, rel) => {
+• 05 donnée da.creditsGroupes → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 05 donnée da.creditsGroupes → public/sites-demo/generer.mjs:563
+    const credits = da.creditsGroupes ? creditsLigne([...new Set([...autres, ...liste])], rel) : ''
+• 05 variante travelling épinglé + compteur 01/0n → public/sites-demo/generer.mjs:570
+    ? `${debut}<div class="travelling" style="--n:${n}"><div class="travelling__epingle"><div class="scene-large">${tete}</div><div class="travelling__fenetre"><div
+• 05 variante galerie--rangee : trois ouvrages → public/sites-demo/generer.mjs:571
+    : `${debut}<div class="scene-large">${tete}<div class="galerie galerie--scene galerie--rangee">${items}</div>${jauge}${credits}</div></section>`
+• 05 variante galerie__item--portrait → public/sites-demo/generer.mjs:513
+    const enPortrait = (a) => Number(a.hauteur) > Number(a.largeur)
+• 05 variante grille sans orpheline 8 + 4 puis 6 + 6 → public/sites-demo/_kit/kit.css:742
+    .galerie--scene:not(.galerie--rangee) .galerie__item:nth-child(1){grid-column:span 8}
+• 05 variante rail aimanté de cartes 4:5 → public/sites-demo/_kit/kit.css:735
+    .scene--galerie .galerie--scene{grid-auto-flow:column;grid-auto-columns:85vw;column-gap:4vw;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x man
+• 05 effet travelling épinglé des réalisations + compteur [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:639
+    .travelling .galerie--scene{display:flex;flex:none;align-items:flex-end;gap:2vw;width:max-content;padding-inline:5vw;animation:travelling linear both;animation-
+• 05 effet relief 3D des photos du travelling [@media(min-width:1024px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:1209
+    html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:perspective(1500px) rotateY(calc(var(--e,0) * -5deg)) translateZ(calc(var(--p,0) *
+• 05 effet dévoilement en clip des photos [sous html.js (JavaScript actif)] → public/sites-demo/_kit/kit.css:604
+    html.js .galerie--scene .galerie__item.vu .galerie__cadre{clip-path:inset(0)}
+• 05 gel travelling : non figuré ; la grille de repli du kit (celle du mouvement réduit) est montrée → public/sites-demo/_kit/kit.css:809
+    .galerie--scene:not(.galerie--rangee) .galerie__item:nth-child(1) .galerie__cadre{aspect-ratio:16/9}
+• 05 gel état final du dévoilement (clip ouvert, légendes visibles) → public/sites-demo/_kit/kit.css:606
+    html.js .galerie--scene .galerie__item.vu figcaption{opacity:1}
+• 06 gabarit → public/sites-demo/generer.mjs:573
+    const communesScene = (s, intro, liste, rel, sauf, retour) => `<section class="scene scene--papier scene--communes" id="communes"><div class="conteneur"><div cl
+• 06 donnée section genre « communes » : h2 + intro (les h3 ne sont pas imprimés) → public/sites-demo/lestraque/contenu.json:91
+    "h2": "Autour de Rennes",
+• 06 donnée section genre « communes » : h2 + intro (les h3 ne sont pas imprimés) → public/sites-demo/generer.mjs:573
+    const communesScene = (s, intro, liste, rel, sauf, retour) => `<section class="scene scene--papier scene--communes" id="communes"><div class="conteneur"><div cl
+• 06 donnée site.communes, lien si une page commune existe (site.pages) → public/sites-demo/lestraque/site.json:10
+    "communes": [
+• 06 donnée site.communes, lien si une page commune existe (site.pages) → public/sites-demo/generer.mjs:517
+    const communesHtml = (liste, rel, sauf) => `<div class="communes">${liste.filter((c) => c !== sauf).map((c) => { const p = pageDe(c); return p ? `<a class="comm
+• 06 variante liste monumentale en deux colonnes (bureau) → public/sites-demo/_kit/kit.css:900
+    .da--communes #communes.scene--communes .communes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));container-type:inline-size}
+• 06 variante trois voisines sur trois colonnes → public/sites-demo/_kit/kit.css:904
+    .da--communes #communes.scene--communes .communes:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+• 06 variante lien « Retour à l’accueil » → public/sites-demo/generer.mjs:573
+    const communesScene = (s, intro, liste, rel, sauf, retour) => `<section class="scene scene--papier scene--communes" id="communes"><div class="conteneur"><div cl
+• 06 effet le nom et la flèche glissent au survol [(aucune condition CSS : partout)] → public/sites-demo/_kit/kit.css:306
+    .da--communes #communes .commune:hover>span:first-child,.da--communes #communes .commune:hover svg{transform:translateX(2.5vw)}
+• 06 gel taille des noms bornée par la hauteur de fenêtre (svh) : résolue sur la fenêtre de référence → public/sites-demo/_kit/kit.css:901
+    .da--communes #communes.scene--communes .commune{font-size:min(5.2vw,10.5svh);font-size:min(5.2cqi,10.5svh);line-height:.9;padding-block:.14em .2em;padding-inli
+• 07 gabarit → public/sites-demo/generer.mjs:520
+    const etapesHtml = (s, intro, items, classe, id, ou, rel = '') => {
+• 07 donnée section genre « etapes » : h2, intro, au moins 2 étapes (h3 + p) → public/sites-demo/lestraque/contenu.json:133
+    "h2": "En quatre temps",
+• 07 donnée section genre « etapes » : h2, intro, au moins 2 étapes (h3 + p) → public/sites-demo/generer.mjs:521
+    if (items.length < 2) throw new Error(`${ou} : la section étapes « ${s.h2} » n'a que ${items.length} étape(s) lisible(s), 2 au moins attendues`)
+• 07 donnée da.noires contient « etapes » → section--noir → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 07 donnée da.noires contient « etapes » → section--noir → public/sites-demo/generer.mjs:498
+    const classeDe = (g, alt) => `section${da.sombre === g ? ' section--sombre' : (da.noires || []).includes(g) ? ' section--noir' : alt && !da.sansAlt ? ' section-
+• 07 donnée da.etapesMonumentales (--k, --e, --ne) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 07 donnée da.etapesMonumentales (--k, --e, --ne) → public/sites-demo/generer.mjs:524
+    return da.etapesMonumentales ? `<li class="etape" style="--k:${((i + 0.15) / items.length).toFixed(3)};--e:${i};--ne:${items.length}"><span class="etape__num" a
+• 07 donnée site.devis.projets (« Escalier »), communes[0], delais[0] → fiche de l’éclaté → public/sites-demo/lestraque/site.json:56
+    "projets": [
+• 07 donnée site.devis.projets (« Escalier »), communes[0], delais[0] → fiche de l’éclaté → public/sites-demo/_kit/familles/eclate.mjs:74
+    function demande(site) {
+• 07 donnée lestraque/eclate/eclate.json et releve.json → public/sites-demo/lestraque/eclate/eclate.json:6
+    "pieces": [
+• 07 donnée lestraque/eclate/eclate.json et releve.json → public/sites-demo/_kit/familles/eclate.mjs:40
+    function charger(metier) {
+• 07 variante numéros monumentaux + jauge → public/sites-demo/generer.mjs:531
+    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtit
+• 07 variante « Étape 0n » en surtitre → public/sites-demo/generer.mjs:524
+    return da.etapesMonumentales ? `<li class="etape" style="--k:${((i + 0.15) / items.length).toFixed(3)};--e:${i};--ne:${items.length}"><span class="etape__num" a
+• 07 variante figure éclatée à la place de la photo → public/sites-demo/generer.mjs:531
+    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtit
+• 07 variante rail aimanté de cartes → public/sites-demo/_kit/kit.css:779
+    .da--etapes .etapes__liste{display:grid;grid-auto-flow:column;grid-auto-columns:76vw;column-gap:4vw;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-ty
+• 07 effet étapes épinglées : numéros et textes par tranche [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · @media(min-height:680px)] → public/sites-demo/_kit/kit.css:1118
+    .da--etapes #etapes .etape__num{font-size:min(clamp(7vw,6rem + 2vw,9vw),12svh);transform-origin:0 70%;transition:none;animation:etape-num linear both;animation-
+• 07 effet grande scène éclatée, récit en quatre états (eclate) [@media (min-width:1024px) and (min-height:680px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/familles/eclate.bureau.css:15
+    #etapes:has(.eclate){height:450svh;container:eclate-page/inline-size}
+• 07 effet téléphone : l’éclaté s’ouvre en entrant [@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view()) · sous html.js (JavaScript actif)] → public/sites-demo/_kit/familles/telephone.css:61
+    html.js #etapes figure.eclate{content-visibility:auto;contain-intrinsic-size:auto 292.5px;view-timeline:--telephone-eclate block}
+• 07 effet ligne des étapes --avancee [JavaScript, hors chorégraphie] → public/sites-demo/_kit/kit.js:236
+    var avancer = function () { enAttente = false; var r = liste.getBoundingClientRect(); var a = (innerHeight * 0.72 - r.top) / r.height; liste.style.setProperty('
+• 07 gel profil fixe de l’éclaté : eclate.avif + pastilles + légende (converti en WebP) → public/sites-demo/_kit/familles/eclate.css:16
+    .eclate__assemble,.eclate__calque,.eclate__etiquette,.eclate__cote,.eclate__compteur{display:none}
+• 07 gel titre collant (sticky top:7rem) posé dans le flux → public/sites-demo/_kit/kit.css:172
+    @media(min-width:960px){.etapes{grid-template-columns:1fr 1.25fr;gap:5rem}.etapes__tete{position:sticky;top:7rem;align-self:start}}
+• 07 gel numéros tous allumés (--avancee vaut 1 sans JavaScript) → public/sites-demo/_kit/kit.css:289
+    .da--etapes .etape__num{font-family:var(--police-display);font-weight:400;font-size:clamp(7vw,6rem + 2vw,9vw);line-height:.8;letter-spacing:-.05em;font-variant-
+• 08 gabarit → public/sites-demo/generer.mjs:579
+    const faqScene = (s, intro, items, id, rel = '') => `<section class="scene scene--papier scene--faq"${id ? ` id="${id}"` : ''}><div class="scene-large faq-scene
+• 08 donnée section genre « faq » : h2, intro, h3 → <summary> + p → public/sites-demo/lestraque/contenu.json:175
+    "h2": "Vos questions",
+• 08 donnée section genre « faq » : h2, intro, h3 → <summary> + p → public/sites-demo/generer.mjs:579
+    const faqScene = (s, intro, items, id, rel = '') => `<section class="scene scene--papier scene--faq"${id ? ` id="${id}"` : ''}><div class="scene-large faq-scene
+• 08 donnée da.faqPhoto → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 08 donnée da.faqPhoto → public/sites-demo/generer.mjs:579
+    const faqScene = (s, intro, items, id, rel = '') => `<section class="scene scene--papier scene--faq"${id ? ` id="${id}"` : ''}><div class="scene-large faq-scene
+• 08 variante première question ouverte → public/sites-demo/_kit/kit.js:260
+    if (details.length && d.querySelector('.faq-scene') && matchMedia('(min-width: 960px)').matches) details[0].open = true
+• 08 variante faq classique (entête + .faq) → public/sites-demo/generer.mjs:724
+    else if (g === 'faq') { corps += `<section class="${classe}" id="questions"><div class="conteneur">${entete('Questions fréquentes', s.h2, intro)}<div class="faq
+• 08 effet accordéon (::details-content) [(aucune condition CSS : partout)] → public/sites-demo/_kit/kit.css:205
+    .faq details::details-content{height:0;overflow:clip;transition:height .45s cubic-bezier(.16,1,.3,1),content-visibility .45s allow-discrete}
+• 08 effet photo qui glisse dans son cadre [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1105
+    .plateau__photo img,.faq-scene__photo img,.etapes__photo img,.contact__media img{scale:1.14;animation:glisse-cadre linear both;animation-timeline:view();animati
+• 08 gel première question ouverte (attribut open) ; refermée par le CSS du kit sous 960 px → public/sites-demo/_kit/kit.js:260
+    if (details.length && d.querySelector('.faq-scene') && matchMedia('(min-width: 960px)').matches) details[0].open = true
+• 09 gabarit → public/sites-demo/generer.mjs:611
+    const bande = (intro, infos, rel, cible, fond = null) => {
+• 09 donnée section genre « contact » : h2 = titre, p = textes (hors adresse et horaires) → public/sites-demo/lestraque/contenu.json:217
+    "h2": "Parlons de votre projet",
+• 09 donnée section genre « contact » : h2 = titre, p = textes (hors adresse et horaires) → public/sites-demo/generer.mjs:638
+    const contactDe = (s, intro, items) => ({ titre: s.h2, textes: intro.filter((t) => !(/\b\d{5}\b/.test(t) && /rue|avenue|chemin|place|boulevard/i.test(t)) && !(/
+• 09 donnée infos Adresse, Horaires (+ sur rendez-vous), Email ; Intervention = site.communes → public/sites-demo/lestraque/contenu.json:252
+    "genre": "contact"
+• 09 donnée infos Adresse, Horaires (+ sur rendez-vous), Email ; Intervention = site.communes → public/sites-demo/generer.mjs:625
+    const infosContact = (textes) => {
+• 09 donnée site.devis.projets, delais, rappel ; communes + « Autre commune » ; site.demo → public/sites-demo/lestraque/site.json:54
+    "devis": {
+• 09 donnée site.devis.projets, delais, rappel ; communes + « Autre commune » ; site.demo → public/sites-demo/generer.mjs:582
+    const formDevis = (cible) => {
+• 09 donnée étapes de l’accueil (après la 1re) → « La suite » de la confirmation → public/sites-demo/lestraque/contenu.json:133
+    "h2": "En quatre temps",
+• 09 donnée étapes de l’accueil (après la 1re) → « La suite » de la confirmation → public/sites-demo/generer.mjs:597
+    const merciDevis = (dv, cible) => {
+• 09 donnée site.telephone (une fois) → public/sites-demo/lestraque/site.json:4
+    "telephone": "+33 2 61 91 38 47",
+• 09 donnée site.telephone (une fois) → public/sites-demo/generer.mjs:616
+    const appel = form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin
+• 09 donnée da.contactPhoto { base, position } (sinon le héros) → public/sites-demo/_kit/da.json:8
+    "lestraque":     { "label": "Menuisier", "labelPluriel": "menuiserie", "accent": "#A9743F", "accentTexte": "#7F5326", "fond": "#F4EDE2", "fond2": "#FBF6EE", "en
+• 09 donnée da.contactPhoto { base, position } (sinon le héros) → public/sites-demo/generer.mjs:707
+    const fondContact = refContact ? { a: photoDe(refContact.base, 'fond du contact'), position: refContact.position, matiere: true } : { a: heros, m: herosMobile, 
+• 09 variante contact--photo → public/sites-demo/generer.mjs:619
+    const classes = `contact${fond ? ' contact--photo' : ''}${fond?.matiere ? ' contact--matiere' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
+• 09 variante contact--matiere → public/sites-demo/generer.mjs:707
+    const fondContact = refContact ? { a: photoDe(refContact.base, 'fond du contact'), position: refContact.position, matiere: true } : { a: heros, m: herosMobile, 
+• 09 variante contact--long → public/sites-demo/generer.mjs:619
+    const classes = `contact${fond ? ' contact--photo' : ''}${fond?.matiere ? ' contact--matiere' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
+• 09 variante bande sans formulaire (bouton d’appel) → public/sites-demo/generer.mjs:623
+    return `<section class="section" id="contact"><div class="conteneur"><div class="bande${form ? ' bande--devis' : ''} reveal"><div><span class="mono">Contact</sp
+• 09 variante état « Demande reçue » (cadre 09b) → public/sites-demo/_kit/kit.js:267
+    d.querySelectorAll('form[data-demo]').forEach(function (f) {
+• 09 effet photo qui glisse dans son cadre [@media(min-width:1024px) and (prefers-reduced-motion:no-preference) · @supports (animation-timeline: view())] → public/sites-demo/_kit/kit.css:1105
+    .plateau__photo img,.faq-scene__photo img,.etapes__photo img,.contact__media img{scale:1.14;animation:glisse-cadre linear both;animation-timeline:view();animati
+• 09 gel formulaire réel (select, textarea, input) ; confirmation montrée à part (cadre 09b), comme kit.js la découvre → public/sites-demo/_kit/kit.js:277
+    f.reset(); f.hidden = true
+• 10 gabarit → public/sites-demo/generer.mjs:474
+    function pied(rel, nuit = false) {
+• 10 donnée site.nom, da.label, site.communes[0], site.telephone → public/sites-demo/generer.mjs:478
+    <div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="${telHref(
+• 10 donnée site.siren, site.decennale.assureur, site.decennale.numero (pied et mentions seulement) → public/sites-demo/lestraque/site.json:5
+    "siren": "000000000",
+• 10 donnée site.siren, site.decennale.assureur, site.decennale.numero (pied et mentions seulement) → public/sites-demo/generer.mjs:478
+    <div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="${telHref(
+• 10 donnée site.communes (+ pages), site.pages (métiers), pages légales → public/sites-demo/generer.mjs:479
+    <div><p class="pied__titre">Communes servies</p><ul>${communes.map((c) => { const p = pageDe(c); return `<li>${p ? `<a href="${rel}${p.chemin.slice(1)}">${esc(c
+• 10 donnée site.demo → mention « Site de démonstration » → public/sites-demo/generer.mjs:482
+    <div class="pied__bas"><span>© ${AUJOURDHUI.slice(0, 4)} ${esc(site.nom)}</span>${site.demo ? '<span>Site de démonstration — entreprise fictive, photos sous lic
+• 10 variante pied--nuit → public/sites-demo/_kit/kit.css:682
+    .pied--nuit{background:#14110E;color:rgba(244,237,226,.72);border-top:1px solid rgba(244,237,226,.14);--ligne:rgba(244,237,226,.14);--encre:#F4EDE2;--encre-2:rg
+• famille recit bureau (CSS) → public/sites-demo/_kit/familles/recit.bureau.css:6
+    @media (min-width:1024px) and (prefers-reduced-motion:no-preference){
+• famille recit bureau (JavaScript) → public/sites-demo/_kit/familles/recit.js:8
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !bureau.matches || !(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()')) || 
+• famille recit téléphone → public/sites-demo/_kit/familles/telephone.css:32
+    /* 2. La citation s'allume mot à mot, de 0,55 à 1, sur la timeline de son paragraphe : la plage et le pas de 3 % du bureau
+• famille recit sans JavaScript, mouvement réduit → public/sites-demo/_kit/familles/recit.mjs:3
+    // conditions (téléphone, mouvement réduit, sans view(), sans JavaScript), les spans n'ont aucun style : le texte se lit tel quel et
+• famille video bureau (JavaScript) → public/sites-demo/_kit/familles/video.js:10
+    if (!media || !script || !bureau.matches || !('IntersectionObserver' in window) || (navigator.connection && navigator.connection.saveData)) return
+• famille video bureau (CSS) → public/sites-demo/_kit/familles/video.bureau.css:5
+    @media (prefers-reduced-motion:no-preference){
+• famille video téléphone, mouvement réduit, sans JavaScript → public/sites-demo/_kit/familles/video.js:3
+    Bureau ≥ 1024 px, mouvement permis, sans économie de données. Ailleurs (téléphone, tablette, mouvement réduit, sans JavaScript),
+• famille survol bureau à la souris (JavaScript) → public/sites-demo/_kit/familles/survol.js:6
+    if (!ol || !matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)').matches) return
+• famille survol mouvement réduit → public/sites-demo/_kit/familles/survol.bureau.css:40
+    .scene--presta.scene--survol.survol--calme .presta__vignette{clip-path:none;opacity:0;transition:opacity .2s cubic-bezier(.16,1,.3,1)}
+• famille survol téléphone, tactile, sans JavaScript → public/sites-demo/_kit/kit.css:544
+    .presta__vignette{display:block;position:absolute;z-index:2;left:0;top:50%;width:min(8.5vw,10.5rem);aspect-ratio:1/1.12;overflow:hidden;pointer-events:none;tran
+• famille eclate bureau chorégraphié (CSS) → public/sites-demo/_kit/familles/eclate.bureau.css:7
+    @media (min-width:1024px) and (min-height:680px) and (prefers-reduced-motion:no-preference){
+• famille eclate profil fixe (partout ailleurs) → public/sites-demo/_kit/familles/eclate.css:16
+    .eclate__assemble,.eclate__calque,.eclate__etiquette,.eclate__cote,.eclate__compteur{display:none}
+• famille eclate téléphone → public/sites-demo/_kit/familles/telephone.css:52
+    /* 4. L'éclaté s'ouvre en entrant à l'écran et se referme en remontant (eclate.mjs pose les calques et leur vecteur --vx, --vy,
+• famille telephone téléphone portrait → public/sites-demo/_kit/familles/telephone.css:11
+    @media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference){
+• famille telephone tablette, bureau, mouvement réduit, sans JavaScript, pages communes → public/sites-demo/_kit/familles/telephone.css:7
+    Tout vit sous téléphone portrait, mouvement permis et html.js : la tablette (768 à 1 023 px, photo paysage et pousse), le
+• gel.css fenêtre de référence des unités de hauteur : 900 px au bureau, 844 px au téléphone → public/sites-demo/_kit/kit.css:911
+    profond — après « Demander un devis », tout le formulaire tient dans 1440×900, bouton « Envoyer ma demande » compris (le bas
+• gel.css fenêtre de référence des unités de hauteur : 900 px au bureau, 844 px au téléphone → public/sites-demo/_kit/familles/telephone.css:20
+    201 instants du juge. 1,29 couvre les coins à ±2,25° sur tout le portrait (marge la plus courte : 6,4 px en 390×844, 4 px en
+• gel.css aucune animation ni transition : la capture photographie un état, pas un instant → public/sites-demo/_kit/kit.css:261
+    *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+• gel.css la nav fixe est posée sur le héros (cadre 01) ou dans le flux (états du cadre 00) → public/sites-demo/_kit/kit.css:37
+    .nav{position:fixed;inset:0 0 auto;z-index:50;padding-block:1rem;transition:background .45s ease,box-shadow .45s ease,color .45s ease}
+• gel.css menu ouvert : voile, panneau et nav dans le cadre, dans l’ordre d’empilement du site ; masqué dès 960 px, où le burger n’existe pas (da--nav-retenue) → public/sites-demo/_kit/kit.css:73
+    .panneau{position:fixed;top:.5rem;right:.5rem;left:.5rem;z-index:55;background:var(--encre);color:var(--fond);border-radius:calc(var(--rayon) + 10px);padding:5.
+• gel.css menu ouvert : voile, panneau et nav dans le cadre, dans l’ordre d’empilement du site ; masqué dès 960 px, où le burger n’existe pas (da--nav-retenue) → public/sites-demo/_kit/kit.css:58
+    .da--nav-retenue .nav__tel,.da--nav-retenue .burger{display:none}
+• gel.css fonds sous les états de la nav : ceux du héros, du plateau et de la page → public/sites-demo/_kit/kit.css:316
+    .hero--plein{padding-top:0;background:#0E0A07}
+• gel.css fonds sous les états de la nav : ceux du héros, du plateau et de la page → public/sites-demo/_kit/kit.css:352
+    .plateau{background:#14110E;color:#F4EDE2;padding-block:clamp(4.5rem,10vw,9.5rem)}
+• gel.css titre des étapes dans le flux (il est collant au bureau) → public/sites-demo/_kit/kit.css:172
+    @media(min-width:960px){.etapes{grid-template-columns:1fr 1.25fr;gap:5rem}.etapes__tete{position:sticky;top:7rem;align-self:start}}
+• gel.css la 1re question, ouverte par kit.js au bureau, reste fermée sous 960 px → public/sites-demo/_kit/kit.js:260
+    if (details.length && d.querySelector('.faq-scene') && matchMedia('(min-width: 960px)').matches) details[0].open = true
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:8
+    body.menu-ouvert{overflow:hidden}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:384
+    body.menu-ouvert .voile{opacity:1;visibility:visible;transition-delay:0s}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:385
+    body.menu-ouvert .nav{z-index:70;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:#F4EDE2}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:386
+    body.menu-ouvert .nav .burger{background:rgba(244,237,226,.16);border-color:rgba(244,237,226,.42)}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:387
+    body.menu-ouvert .nav .burger span{background:#F4EDE2}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:984
+    body.menu-ouvert .nav.nav--bande::before,body.menu-ouvert .nav.nav--bande::after{opacity:0}
+• gel.css body.menu-ouvert rejoué sur le cadre de l’état « menu ouvert » → public/sites-demo/_kit/kit.css:1002
+    body.menu-ouvert .nav__devis{opacity:0;visibility:hidden}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:464
+    .presta__ligne:hover h3{transform:translateX(1.2vw)}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:544
+    .presta__vignette{display:block;position:absolute;z-index:2;left:0;top:50%;width:min(8.5vw,10.5rem);aspect-ratio:1/1.12;overflow:hidden;pointer-events:none;tran
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:545
+    .presta__vignette picture{height:100%}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:546
+    .presta__vignette img{width:100%;height:100%;object-fit:cover;scale:1.2;transition:scale .9s cubic-bezier(.16,1,.3,1)}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:547
+    .presta__ligne:hover .presta__vignette{clip-path:inset(0)}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:548
+    .presta__ligne:hover .presta__vignette img{scale:1}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:549
+    .presta__ligne:hover .presta__num{opacity:0}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:1039
+    .scene--presta .presta__vignette{left:calc(clamp(3.4rem,6.2vw,8rem) * 1.3);width:clamp(3.6rem,5.6vw,7.25rem);rotate:-2deg}
+• gel.css survol d’une ligne de prestation (:hover → .k-survol) rejoué sur le cadre 03b, au bureau → public/sites-demo/_kit/kit.css:1040
+    .scene--presta .presta__ligne:hover .presta__num{opacity:1}
+• transformation mouvement permis → jamais → public/sites-demo/_kit/kit.css:258
+    /* ── Mouvement réduit : tout est là, tout de suite ───────────────────────────────────────────── */
+• transformation mouvement réduit → toujours → public/sites-demo/_kit/kit.css:258
+    /* ── Mouvement réduit : tout est là, tout de suite ───────────────────────────────────────────── */
+• transformation souris (hover:hover) → jamais → public/sites-demo/_kit/kit.css:544
+    .presta__vignette{display:block;position:absolute;z-index:2;left:0;top:50%;width:min(8.5vw,10.5rem);aspect-ratio:1/1.12;overflow:hidden;pointer-events:none;tran
+• transformation @supports animation-timeline → faux → public/sites-demo/_kit/kit.css:560
+    /* la jauge du rail suit le geste du pouce (pas une animation ambiante) ; sans scroll-timeline, elle n'est pas affichée */
+• transformation hauteurs d’écran (svh, dvh, vh) → fenêtre de référence → public/sites-demo/_kit/kit.css:911
+    profond — après « Demander un devis », tout le formulaire tient dans 1440×900, bouton « Envoyer ma demande » compris (le bas
+• transformation hauteurs d’écran (svh, dvh, vh) → fenêtre de référence → public/sites-demo/_kit/familles/telephone.css:20
+    201 instants du juge. 1,29 couvre les coins à ±2,25° sur tout le portrait (marge la plus courte : 6,4 px en 390×844, 4 px en
+• procédure 1 contrat exigé par le juge : metier, nom, telephone, siren, decennale, communes, metiers_secondaires, pages → scripts/site-qa.mjs:11
+    // LE CONTRAT avec le générateur — un fichier `site.json` à côté de `index.html`, sans lequel le juge refuse
+• procédure 1 champs lus en plus par generer.mjs : artisan, plateau, devis, demo, url_base, da → public/sites-demo/generer.mjs:192-222
+    function verifierArtisan(a, ou) {
+• procédure 1 côté produit, la commande d’un client (Brouillon : metier, communes, matiere, domaine) → lib/siteCommande.ts:59
+    export type Brouillon = {
+• procédure 2 node public/sites-demo/extraire-contenu.mjs <metier> → public/sites-demo/extraire-contenu.mjs:5
+    // Usage : node public/sites-demo/extraire-contenu.mjs plombier [electricien …]
+• procédure 2 le champ genre remplace la déduction par le h2 → public/sites-demo/generer.mjs:45
+    // Un h2 écrit pour un humain (« Ce que l'atelier fabrique ») ne dit plus son genre : contenu.json le porte alors en clair
+• procédure 2 h1Ligne obligatoire en héros plein → public/sites-demo/generer.mjs:670
+    if (!c.h1Ligne) throw new Error(`${metier}/ : contenu.json → pages["/"].h1Ligne manque (la ligne display du h1)`)
+• procédure 3 node scripts/polices-demo.mjs → scripts/polices-demo.mjs:6
+    // Usage : node scripts/polices-demo.mjs            (télécharge ce qui manque, vérifie ce qui est là)
+• procédure 3 python scripts/polices-plex-sous-ensemble.py → scripts/polices-plex-sous-ensemble.py:17
+    # Usage : python scripts/polices-plex-sous-ensemble.py      (écrit _polices/ibm-plex-sans/ibm-plex-sans-400.woff2, -600.woff2, couverture.json)
+• procédure 3 python scripts/polices-fraunces-statiques.py → scripts/polices-fraunces-statiques.py:10
+    # Usage : python scripts/polices-fraunces-statiques.py      (écrit _polices/fraunces/fraunces-300.woff2, -400, -600)
+• procédure 3 python scripts/monogramme-demo.py <site> <lettre> <police> <graisse> → scripts/monogramme-demo.py:7
+    # Usage : python scripts/monogramme-demo.py lestraque L fraunces 600
+• procédure 3 fusion generique ← site.metier ← site.da ← --da → public/sites-demo/generer.mjs:282
+    const da = { ...DA.generique, ...(DA[site.metier] || {}), ...(site.da && DA[site.da] ? DA[site.da] : {}), ...(remplacementDa || {}) }
+• procédure 3 police absente ou tronquée : arrêt → public/sites-demo/generer.mjs:341
+    if (!fs.existsSync(src) || fs.statSync(src).size < 8000) throw new Error(`police absente ou tronquée : ${src} (node scripts/polices-demo.mjs${statiques ? ' puis
+• procédure 4 node scripts/photos-demo.mjs chercher <metier> [--requetes="q1|q2"] [--min=2400] [--sans-sa] → scripts/photos-demo.mjs:5
+    //   node scripts/photos-demo.mjs chercher plombier      → interroge l'API Commons (licences libres, ≥ 1600 px), écrit
+• procédure 4 node scripts/photos-demo.mjs prendre <metier> <n>:<base>:"Légende" … [--etalonner] [--recadrer=nom:g,h,l,H] → scripts/photos-demo.mjs:7
+    //   node scripts/photos-demo.mjs prendre plombier 3:hero:"Légende" 7:pipes:"Légende" …
+• procédure 4 node scripts/photos-provenance.mjs <metier> → scripts/photos-provenance.mjs:7
+    // Usage : node scripts/photos-provenance.mjs plombier [electricien …]   (sans argument : les neuf métiers)
+• procédure 4 node scripts/relief-profondeur.mjs → scripts/relief-profondeur.mjs:16
+    // Usage : node scripts/relief-profondeur.mjs
+• procédure 4 licences acceptées par le juge → scripts/site-qa.mjs:75
+    export const LICENCES_PERMISES = ['CC0', 'domaine public', 'CC BY 4.0', 'CC BY 3.0', 'CC BY 2.0', 'CC BY-SA 4.0', 'CC BY-SA 3.0', 'CC BY-SA 2.0', 'propriétaire'
+• procédure 4 une photo qu’aucune page n’affiche arrête la génération → public/sites-demo/generer.mjs:857
+    if (orphelines.length) throw new Error(`${metier} : ${orphelines.length} photo(s) d’attributions.json qu’aucune page n’affiche (${orphelines.map((p) => p.base).
+• procédure 5 node public/sites-demo/generer.mjs <site> --sortie=<dossier> → public/sites-demo/generer.mjs:944
+    const valeurSortie = args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)
+• procédure 5 tous les garde-fous passent avant la moindre écriture → public/sites-demo/generer.mjs:845
+    // Tout est rendu et vérifié AVANT la moindre écriture (polices, styles.css, site.js, favicon, pages, sitemap) : un échec
+• procédure 5 une seule démo vivante : --tous refusé → public/sites-demo/generer.mjs:943
+    if (args.includes('--tous')) { console.error('--tous est retiré (14/09) : une seule démo vit, Lestraque ; les neuf autres sont gelées. Usage : node public/sites
+• procédure 6 node scripts/site-qa.mjs <dossier> [--statique] → scripts/site-qa.mjs:32
+    // Usage : node scripts/site-qa.mjs public/sites-demo/plombier            (tout, Lighthouse compris : ~20 s par page)
+• procédure 6 node scripts/demo-verifier.mjs [dossier] [--statique] → scripts/demo-verifier.mjs:6
+    // Usage : node scripts/demo-verifier.mjs [dossier=public/sites-demo/lestraque] [--statique]
+• procédure 6 node scripts/recit-qa.mjs → scripts/recit-qa.mjs:98
+    // Usage : node scripts/recit-qa.mjs
+• procédure 6 node scripts/survol-qa.mjs → scripts/survol-qa.mjs:88
+    // Usage : node scripts/survol-qa.mjs [--base=a,b]
+• procédure 6 node scripts/eclate-qa.mjs → scripts/eclate-qa.mjs:134
+    // Usage : node scripts/eclate-qa.mjs [--base=a,b]
+• procédure 6 node scripts/telephone-qa.mjs → scripts/telephone-qa.mjs:111
+    // Usage : node scripts/telephone-qa.mjs [--base=a,b] [--complet] [--sources=<copie de public/sites-demo>] [--preuves=<dossier>]
+• procédure 6 node scripts/atelier-video-qa.mjs → scripts/atelier-video-qa.mjs:76
+    // Usage : node scripts/atelier-video-qa.mjs [--base=a,b]
+• procédure 7 node scripts/site-deposer.mjs <commande_id> <dossier> → scripts/site-deposer.mjs:5
+    // Usage : node scripts/site-deposer.mjs <commande_id> <dossier>            (juge complet, Lighthouse compris)
+• procédure 7 git push, puis node scripts/deploiement-etat.mjs → scripts/deploiement-etat.mjs:6
+    // Usage : node scripts/deploiement-etat.mjs [--n=6]     (code de sortie 1 si le dernier déploiement n'est pas READY)
+• procédure 7 états d’une commande : brouillon, payee, generee, validee, en_ligne → lib/siteCommande.ts:27
+    export const ETATS = ['brouillon', 'payee', 'generee', 'validee', 'en_ligne'] as const
+• procédure 7 liens internes en index.html (Next redirige /x/ vers /x) → public/sites-demo/generer.mjs:267
+    function liensIndex(html) {
+• écart generer.mjs n’est tenu exécutable que pour Lestraque (les neuf autres démos sont gelées) → public/sites-demo/generer.mjs:7
+    // ne sont plus régénérés) ; ce générateur n'est tenu exécutable que pour lestraque.
+• écart h1 de l’accueil : « Menuisier » et « Rennes » exigés par un garde-fou → public/sites-demo/generer.mjs:140
+    if (!/Menuisier/.test(h1) || !/Rennes/.test(h1)) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « Rennes » (lu : « ${h1.trim()} »)`)
+• écart h1 des pages communes : « Menuisier » exigé → public/sites-demo/generer.mjs:876
+    if (!/Menuisier/.test(h1) || !h1.includes(page.cible)) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « ${page.cible} » (lu : « ${h1} »)`)
+• écart libellé du champ message : « La pièce, l’usage, le bois » → public/sites-demo/generer.mjs:590
+    + `<div class="devis__champ devis__champ--large"><label for="devis-message">La pièce, l’usage, le bois</label><textarea id="devis-message" name="message" rows="
+• écart couleurs du favicon #14110E et #E9D6B8, theme-color #0E0A07 → public/sites-demo/generer.mjs:406
+    favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}"><circle cx="${S / 2}" cy="${S / 2}" r="${S / 2}" fill="#14110E"/><g fill="#E9D6B8">${
+• écart couleurs du favicon #14110E et #E9D6B8, theme-color #0E0A07 → public/sites-demo/generer.mjs:445
+    <meta name="theme-color" content="${da.hero === 'plein' && page.type === 'accueil' ? '#0E0A07' : da.fond}">
+• écart liens de la nav et ancres fixes (Prestations, Réalisations, Communes, Questions) → public/sites-demo/generer.mjs:433
+    const liens = [['prestations', 'Prestations'], ['realisations', 'Réalisations'], ['communes', 'Communes'], ['questions', 'Questions']].map(([id, t]) => `<a href
+• écart galerie de l’accueil : exactement 4 photos ; pages communes : 3 ouvrages → public/sites-demo/generer.mjs:690
+    if (!galerieAccueil || galerieAccueil.length !== 4) throw new Error(`${metier}/ : la galerie des scènes compte ${galerieAccueil?.length ?? 0} photos (4 attendue
+• écart famille eclate : projet « Escalier » exigé, pièces, phrase et libellés fixes → public/sites-demo/_kit/familles/eclate.mjs:10-34
+    const ARIA = 'Anatomie d’un escalier : limon à la française, marches en chêne de 40 mm, contremarches et vis'
+• écart famille recit : verbes trace, débite, assemble, ponce exigés → public/sites-demo/_kit/familles/recit.mjs:7
+    const VERBES = ['trace', 'débite', 'assemble', 'ponce']
+• écart famille video : video/atelier.av1.mp4 et atelier.h264.mp4 → public/sites-demo/_kit/familles/video.mjs:6
+    const FICHIERS = ['atelier.av1.mp4', 'atelier.h264.mp4']
+• écart couleurs des scènes sombres écrites en littéral dans kit.css, hors de da.json : #F4EDE2 (27), #D4A574 (23), #14110E (13), #0E0A07 (2) → public/sites-demo/_kit/kit.css:50
+    .nav--claire:not(.solide) .nav__devis,.nav.solide.nav--sombre .nav__devis{background:#F4EDE2;color:#1F160E}
+• écart couleurs des scènes sombres écrites en littéral dans kit.css, hors de da.json : #F4EDE2 (27), #D4A574 (23), #14110E (13), #0E0A07 (2) → public/sites-demo/_kit/kit.css:274
+    .section--sombre .mono{color:#D4A574}
+• écart couleurs des scènes sombres écrites en littéral dans kit.css, hors de da.json : #F4EDE2 (27), #D4A574 (23), #14110E (13), #0E0A07 (2) → public/sites-demo/_kit/kit.css:352
+    .plateau{background:#14110E;color:#F4EDE2;padding-block:clamp(4.5rem,10vw,9.5rem)}
+• écart couleurs des scènes sombres écrites en littéral dans kit.css, hors de da.json : #F4EDE2 (27), #D4A574 (23), #14110E (13), #0E0A07 (2) → public/sites-demo/_kit/kit.css:316
+    .hero--plein{padding-top:0;background:#0E0A07}
+• écart generer.mjs n’est appelé par aucun fichier de app/ ni de lib/ : rien ne transforme encore une commande client (lib/siteCommande.ts) en site.json, contenu.json et attributions.json. → lib/siteCommande.ts:59
+    export type Brouillon = {
+• spécimen Ligne display du h1 → public/sites-demo/_kit/kit.css:327
+    .hero--plein h1{--h1-ligne:19vw;font-size:var(--h1-ligne);font-weight:var(--graisse-ligne,300);letter-spacing:-.045em;line-height:.88;display:grid;gap:clamp(.7r
+• spécimen Ligne display du h1 → public/sites-demo/_kit/kit.css:328
+    @media(min-width:768px){.hero--plein h1{--h1-ligne:14.2vw}.h1__ligne{white-space:nowrap}}
+• spécimen Ligne display du h1 → public/sites-demo/_kit/kit.css:935
+    .hero--plein:not(.hero--commune) h1{--h1-ligne:max(30vw,112px)}
+• spécimen Mot-clé du h1 → public/sites-demo/_kit/kit.css:330
+    .h1__cle{font-family:var(--police-texte);font-size:clamp(.78rem,.9vw,.95rem);font-weight:600;letter-spacing:.2em;text-transform:uppercase;line-height:1.3;color:
+• spécimen Chapeau du héros → public/sites-demo/_kit/kit.css:334
+    .hero--plein .chapeau{font-size:1rem;line-height:1.5;max-width:30ch;color:rgba(255,255,255,.9)}
+• spécimen Chapeau du héros → public/sites-demo/_kit/kit.css:441
+    .hero--plein:not(.hero--commune) .chapeau{font-size:15px;max-width:none}
+• spécimen Bouton → public/sites-demo/_kit/kit.css:124
+    .bouton{display:inline-flex;align-items:center;gap:.9rem;padding:.4rem .4rem .4rem 1.6rem;border-radius:999px;background:var(--encre);color:var(--fond);font-wei
+• spécimen Citation du plateau → public/sites-demo/_kit/kit.css:355
+    .plateau__citation p{font-family:var(--police-display);font-weight:var(--graisse-ligne,300);font-size:clamp(2.1rem,4vw,4rem);line-height:1.08;letter-spacing:-.0
+• spécimen Citation du plateau → public/sites-demo/_kit/kit.css:842
+    .plateau__citation p{font-size:clamp(2rem,9.2vw,2.5rem)}
+• spécimen Signature → public/sites-demo/_kit/kit.css:358
+    .plateau__signe{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#D4A574}
+• spécimen Valeur d’un chiffre → public/sites-demo/_kit/kit.css:364
+    .chiffre__valeur{font-size:26vw;letter-spacing:-.055em;font-variant-numeric:lining-nums}
+• spécimen Valeur d’un chiffre → public/sites-demo/_kit/kit.css:371
+    .chiffre__valeur{font-size:11vw}
+• spécimen Valeur d’un chiffre → public/sites-demo/_kit/kit.css:721
+    .chiffre__valeur{font-size:17vw}
+• spécimen Titre de scène → public/sites-demo/_kit/kit.css:376
+    .h2--scene{font-size:clamp(2.9rem,7.4vw,8.5rem);line-height:.92;letter-spacing:-.04em}
+• spécimen Numéro de prestation → public/sites-demo/_kit/kit.css:457
+    .presta__num{font-family:var(--police-display);font-weight:300;font-size:clamp(2.4rem,5.4vw,6.2rem);line-height:.8;letter-spacing:-.05em;color:var(--accent-text
+• spécimen Numéro de prestation → public/sites-demo/_kit/kit.css:538
+    .scene--presta .presta__num{font-size:clamp(3.4rem,6.2vw,8rem);transition:opacity .45s ease}
+• spécimen Numéro de prestation → public/sites-demo/_kit/kit.css:730
+    .scene--presta .presta__num{font-size:15vw}
+• spécimen Titre de prestation → public/sites-demo/_kit/kit.css:458
+    .presta__ligne h3{font-size:clamp(1.55rem,3vw,3.3rem);font-weight:400;line-height:1.02;letter-spacing:-.03em}
+• spécimen Titre de prestation → public/sites-demo/_kit/kit.css:539
+    .scene--presta .presta__ligne h3{font-size:clamp(1.9rem,3.05vw,4rem);line-height:1}
+• spécimen Titre de prestation → public/sites-demo/_kit/kit.css:558
+    .scene--presta .presta__ligne h3{font-size:1.8rem;line-height:1.05}
+• spécimen Texte de prestation → public/sites-demo/_kit/kit.css:459
+    .presta__texte{grid-column:1/-1;display:grid;gap:.5rem;color:var(--encre-2);font-size:1rem;line-height:1.55}
+• spécimen Texte de prestation → public/sites-demo/_kit/kit.css:540
+    .scene--presta .presta__texte{font-size:.95rem;line-height:1.5}
+• spécimen Titre de l’atelier → public/sites-demo/_kit/kit.css:576
+    .atelier__titre{font-size:18vw;font-weight:var(--graisse-ligne,300);line-height:.86;letter-spacing:-.05em;text-shadow:0 2px 30px rgba(10,7,4,.35)}
+• spécimen Titre de l’atelier → public/sites-demo/_kit/kit.css:579
+    @media(min-width:768px){.atelier__titre{font-size:12.5vw}}
+• spécimen Phrase de l’atelier → public/sites-demo/_kit/kit.css:577
+    .atelier__phrase{font-family:var(--police-display);font-weight:var(--graisse-ligne,300);font-size:clamp(1.35rem,2.2vw,2.3rem);line-height:1.18;letter-spacing:-.
+• spécimen Légende en capitales → public/sites-demo/_kit/kit.css:578
+    .atelier__legende{grid-row:4;font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,237,226,.8)}
+• spécimen Légende de galerie → public/sites-demo/_kit/kit.css:155
+    .galerie figcaption{font-size:.92rem;line-height:1.45;color:var(--encre-2);display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.9rem;align-items:ba
+• spécimen Ligne de crédits → public/sites-demo/_kit/kit.css:158
+    .galerie__credits{margin-top:clamp(2rem,5vw,4rem);font-size:.8rem;line-height:1.5;color:var(--encre-2);max-width:none}
+• spécimen Nom de commune → public/sites-demo/_kit/kit.css:901
+    .da--communes #communes.scene--communes .commune{font-size:min(5.2vw,10.5svh);font-size:min(5.2cqi,10.5svh);line-height:.9;padding-block:.14em .2em;padding-inli
+• spécimen Nom de commune → public/sites-demo/_kit/kit.css:853
+    .da--communes #communes.scene--communes .commune{font-size:11.5vw;line-height:.95;padding-block:.08em .12em}
+• spécimen Surtitre → public/sites-demo/_kit/kit.css:26
+    .mono{font-family:var(--police-texte);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-texte);font-weight:600}
+• spécimen Numéro d’étape → public/sites-demo/_kit/kit.css:289
+    .da--etapes .etape__num{font-family:var(--police-display);font-weight:400;font-size:clamp(7vw,6rem + 2vw,9vw);line-height:.8;letter-spacing:-.05em;font-variant-
+• spécimen Numéro d’étape → public/sites-demo/_kit/kit.css:294
+    @media(max-width:759px){.da--etapes .etape{grid-template-columns:1fr;row-gap:.35rem}.da--etapes .etape__num{font-size:18vw}}
+• spécimen Titre d’étape → public/sites-demo/_kit/kit.css:292
+    .da--etapes .etape h3{font-size:clamp(1.45rem,2.2vw,2.1rem);letter-spacing:-.02em;line-height:1.1}
+• spécimen Question → public/sites-demo/_kit/kit.css:200
+    .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;padding:1.4rem 0;font-family:var(--police-d
+• spécimen Titre du contact → public/sites-demo/_kit/kit.css:917
+    .contact--photo .contact__tete h2{font-size:8.6vw;padding-bottom:.14em}
+• spécimen Titre du contact → public/sites-demo/_kit/kit.css:673
+    .contact--photo .contact__tete h2{font-size:clamp(2.9rem,14vw,4.5rem);font-weight:var(--graisse-ligne,300)}
+• spécimen Libellé de champ → public/sites-demo/_kit/kit.css:406
+    .devis__champ label{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,237,226,.78)}
+• spécimen Titre du pied → public/sites-demo/_kit/kit.css:226
+    .pied__titre{font-family:var(--police-texte);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--encre);margin-bottom:.85rem;font-weight:
+• grille Bord et largeur de contenu → public/sites-demo/_kit/kit.css:886
+    .conteneur,.nav .conteneur,.scene-large,.plateau__inner,.contact__inner,.atelier__contenu{width:min(90%,1720px);max-width:none}
+• grille Bord du texte du héros → public/sites-demo/_kit/kit.css:887
+    .hero--plein .hero__contenu{padding-inline:max(5%,calc((100% - 1720px) / 2))}
+• grille Mesure des paragraphes → public/sites-demo/_kit/kit.css:21
+    p{max-width:66ch}
+• grille Corps du texte → public/sites-demo/_kit/kit.css:7
+    body{font-family:var(--police-texte);font-size:1.0625rem;line-height:1.6;overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased}
+• grille En-tête de scène en deux colonnes → public/sites-demo/_kit/kit.css:525
+    @media(min-width:960px){.scene__tete--deux{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);column-gap:clamp(2.5rem,5vw,6rem);align-items:end}.scene__tete--d
+• grille Ligne de prestation (bureau) → public/sites-demo/_kit/kit.css:537
+    .scene--presta .presta__ligne{grid-template-columns:minmax(0,.72fr) minmax(0,2.6fr) minmax(0,1.6fr);padding-block:clamp(.85rem,1.45vw,1.6rem)}
+• grille Galerie sur 12 colonnes → public/sites-demo/_kit/kit.css:609
+    .galerie--scene{grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(1rem,1.6vw,1.75rem);row-gap:clamp(2rem,4vw,3.25rem);align-items:start}
+• grille Questions en deux colonnes → public/sites-demo/_kit/kit.css:664
+    @media(min-width:960px){.faq-scene{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);column-gap:clamp(3rem,7vw,9rem);align-items:start}.faq-scene__tete{positi
+• grille Contact en deux colonnes → public/sites-demo/_kit/kit.css:675
+    .contact--photo .contact__inner{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);grid-template-areas:"tete tete" "infos devis";row-gap:clamp(2.5rem,5vw,4.5re
+• grille Étapes en deux colonnes → public/sites-demo/_kit/kit.css:172
+    @media(min-width:960px){.etapes{grid-template-columns:1fr 1.25fr;gap:5rem}.etapes__tete{position:sticky;top:7rem;align-self:start}}

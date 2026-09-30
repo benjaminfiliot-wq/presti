@@ -1,0 +1,21 @@
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const { chromium } = require('playwright')
+const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/survol/'
+const b = await chromium.launch()
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } })
+await p.goto('https://prestiapp.fr/sites-demo/lestraque/index.html', { waitUntil: 'networkidle' })
+const plan = await p.evaluate(() => [...document.querySelectorAll('body > section, body > main > section, section[id], .ouverture')].map((s) => ({ id: s.id || s.className.split(' ')[0], haut: Math.round(s.getBoundingClientRect().top + scrollY), hauteur: Math.round(s.getBoundingClientRect().height) })))
+const et = plan.find((x) => x.id === 'etapes')
+const mesures = []
+for (const k of [0.1, 0.35, 0.6, 0.85]) {
+  const y = Math.round(et.haut + (et.hauteur - 900) * k)
+  await p.evaluate((y) => scrollTo(0, y), y); await p.waitForTimeout(700)
+  const m = await p.evaluate(() => { const ph = document.querySelector('#etapes .etapes__photo'); const r = ph.getBoundingClientRect(); return { photo: [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)], actives: [...document.querySelectorAll('#etapes .etape')].map((e) => +getComputedStyle(e).opacity) } })
+  mesures.push({ k, y, ...m })
+  await p.screenshot({ path: OUT + `etapes-${Math.round(k * 100)}.png` })
+}
+fs.writeFileSync(OUT + 'etapes.json', JSON.stringify({ plan, mesures }, null, 1))
+console.log(JSON.stringify({ plan, mesures }, null, 1))
+await b.close()

@@ -1,0 +1,261 @@
+{
+  "slug": "illoca",
+  "url": "https://illoca.unseen.co/",
+  "profil": "pixel7",
+  "date": "2026-09-16T20:13:17.805Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 2.3,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 4,
+    "budgetEpuise": true,
+    "scrollYMax": 0,
+    "parcoursVisuelMedian": 1860,
+    "hauteurDocument": 839
+  },
+  "titre": "illoca – Architectural design at the speed of thought",
+  "styleJs": [
+    {
+      "cible": "div.relative.z-[3]",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 10,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 2143
+    },
+    {
+      "cible": "div.w-400.lg:w-945",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 364
+    },
+    {
+      "cible": "div",
+      "elements": 366,
+      "proprietes": "opacity",
+      "rafales": 200,
+      "rafalesParElement": 0.5,
+      "dureeMedianeMs": null,
+      "ecrituresTotales": 200
+    },
+    {
+      "cible": "svg",
+      "elements": 11,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 13,
+      "rafalesParElement": 1.2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 88
+    },
+    {
+      "cible": "button.js-modal-button.|",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 6,
+      "rafalesParElement": 1.2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 31
+    },
+    {
+      "cible": "div.js-modal-button-inner.|",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 7,
+      "rafalesParElement": 1.4,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 24
+    },
+    {
+      "cible": "div.js-modal-button-bg.|",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 6,
+      "rafalesParElement": 1.2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 23
+    },
+    {
+      "cible": "div.paper.p-24",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 4
+    },
+    {
+      "cible": "div.fixed.top-128",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": null,
+      "ecrituresTotales": 2
+    }
+  ],
+  "io": {
+    "n": 1,
+    "observe": 2,
+    "options": [
+      {}
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "wheel:passif:window": 1,
+    "scroll:passif:document": 1,
+    "touchstart:passif:element": 1,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 1,
+    "scroll:non-precise:element": 1,
+    "resize:non-precise:window": 2,
+    "wheel:actif-explicite:element": 1,
+    "touchstart:actif-explicite:element": 1,
+    "touchmove:actif-explicite:element": 1,
+    "scroll:passif:element": 35,
+    "wheel:passif:element": 2,
+    "touchmove:passif:element": 2,
+    "resize:passif:element": 33,
+    "touchstart:actif-explicite:window": 1
+  },
+  "matchMedia": [
+    "(min-width: 480px)",
+    "(min-width: 768px)",
+    "(min-width: 1024px)",
+    "(min-width: 1080px)",
+    "(min-width: 1536px)",
+    "(min-width: 1921px)",
+    "(min-width: 2400px)",
+    "(min-width: 3840px)",
+    "(hover: none) and (pointer: coarse) and (min-width: 1024px)",
+    "(pointer: coarse)",
+    "(hover: hover) and (pointer: fine)",
+    "(orientation: portrait)",
+    "(hover: none), (pointer: coarse)",
+    "(max-width: 1080px)",
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {
+    "span.font-symbols.inline-block": {
+      "changements": 15,
+      "textes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    }
+  },
+  "transitions": [
+    [
+      "opacity | 0.1s | cubic-bezier(0.4, 0, 0.2, 1) | delai 0s",
+      {
+        "n": 1,
+        "ex": "div.fixed.top-0"
+      }
+    ]
+  ],
+  "animationsCss": [],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 6,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 2
+  },
+  "classesRacine": "lenis-active",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 0,
+  "images": 0,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": false,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": true,
+    "hover:none|pointer:coarse": true,
+    "content-visibility": true,
+    "will-change": false,
+    "position:sticky": false,
+    "overscroll-behavior": true,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": false,
+    "split-type/splitting": true,
+    "lenis": true,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": true,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": false,
+    "startViewTransition": true,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": true
+  },
+  "animationsVuesPendantDefilement": [],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 17519
+    },
+    "stylesheet": {
+      "requetes": 5,
+      "octets": 16876
+    },
+    "other": {
+      "requetes": 2,
+      "octets": 2116
+    },
+    "script": {
+      "requetes": 14,
+      "octets": 639942
+    },
+    "image": {
+      "requetes": 59,
+      "octets": 1164915
+    },
+    "font": {
+      "requetes": 6,
+      "octets": 199911
+    },
+    "fetch": {
+      "requetes": 16,
+      "octets": 6523915
+    }
+  },
+  "octetsTotal": 8565194
+}

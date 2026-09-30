@@ -1,0 +1,249 @@
+{
+ "bureau": {
+  "liensNav": [
+   {
+    "a": "Prestations",
+    "href": "#prestations",
+    "hash": "#prestations",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Ce que l’atelier fabrique"
+   },
+   {
+    "a": "Réalisations",
+    "href": "#realisations",
+    "hash": "#realisations",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Pièces livrées"
+   },
+   {
+    "a": "Communes",
+    "href": "#communes",
+    "hash": "#communes",
+    "titreTop": 171,
+    "basNav": 78,
+    "titre": "Autour de Rennes"
+   },
+   {
+    "a": "Questions",
+    "href": "#questions",
+    "hash": "#questions",
+    "titreTop": 251,
+    "basNav": 78,
+    "titre": "Vos questions"
+   }
+  ],
+  "telNav": "tel:+33 2 61 91 38 47",
+  "apresClicHeros": {
+   "hash": "#contact",
+   "scrollY": 7010,
+   "formsDansContact": 1,
+   "formEntierVisible": true,
+   "formTop": 296,
+   "formBas": 688,
+   "champs": [
+    "Votre projet",
+    "Commune",
+    "Quand",
+    "La pièce, l’usage, le bois",
+    "Téléphone ou e-mail"
+   ],
+   "noteVisible": true,
+   "noteTexte": "Démonstration : rien n’est envoyé."
+  },
+  "envoiVide": {
+   "formCache": false,
+   "merciVisible": false,
+   "invalides": [
+    "devis-projet",
+    "devis-contact"
+   ]
+  },
+  "envoiRempli": {
+   "formCache": true,
+   "merci": "Demande reçue.\n\nJe vous rappelle sous deux jours ouvrés pour fixer une visite.\n\nDémonstration : aucune donnée n’a été envoyée.",
+   "url": "http://127.0.0.1:57856/index.html#contact",
+   "stockage": 0
+  },
+  "ligneCredits": {
+   "texte": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Bertrand from Paris, France (CC BY 2.0), Crew (CC0), Ian Schneider (CC0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications",
+   "opacite": "1",
+   "lien": "mentions-legales/index.html#credits"
+  },
+  "pageCredits": {
+   "url": "/mentions-legales/index.html#credits",
+   "creditsTop": 0,
+   "visible": true,
+   "blocHeros": "Escalier hélicoïdal en bois massif\n— Petar Milošević\n(CC BY-SA 4.0)\nModifiée — adaptation : étalonnée (balance des blancs chaude, exposition, contraste renforcé sur la luminance, saturation réduite) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.\npage du fichier\nLit suspendu en noyer massif, fabrication sur mesure\n— MajestyWoodworks\n(CC BY 4.0)\nRe",
+   "modifiees": 7
+  },
+  "rennes": {
+   "url": "/menuisier-rennes/index.html",
+   "h1": "MENUISIER À RENNES Escaliers et agencement",
+   "photo": "cuisine-bois-1600.avif",
+   "icone": "http://127.0.0.1:57856/favicon.svg",
+   "boutons": [
+    "Demander un devis → #contact",
+    "Demander un devis → #contact",
+    "Retour à l’accueil → ../index.html"
+   ],
+   "communePreselect": "Rennes"
+  },
+  "rennesApresClic": {
+   "hash": "#contact",
+   "form": true,
+   "formVisible": true
+  }
+ },
+ "mobile": {
+  "apresTapBurger": {
+   "panneau": true,
+   "body": true,
+   "aria": "true"
+  },
+  "dessusCentreBurger": "burger",
+  "entrees": [
+   "Prestations",
+   "Réalisations",
+   "Communes",
+   "Questions",
+   "Contact",
+   "Rennes",
+   "Cesson-Sévigné",
+   "Bruz",
+   "Saint-Grégoire",
+   "Demander un devis"
+  ],
+  "panneauBoite": [
+   8,
+   518
+  ],
+  "pilule": {
+   "fond": "rgb(244, 237, 226)",
+   "couleur": "rgb(31, 22, 14)",
+   "panneau": "rgb(31, 22, 14)"
+  },
+  "apresTapCroix": {
+   "panneau": false,
+   "body": false,
+   "aria": "false"
+  },
+  "dessousDuTapDehors": "voile",
+  "apresTapDehors": {
+   "panneau": false,
+   "body": false,
+   "aria": "false",
+   "y": 0,
+   "hash": "",
+   "avant": {
+    "y": 0,
+    "hash": ""
+   }
+  },
+  "apresDevisPanneau": {
+   "panneau": false,
+   "body": false,
+   "aria": "false",
+   "hash": "#contact",
+   "formTop": 746,
+   "formVisible": true
+  },
+  "ancreRealisations": {
+   "panneau": false,
+   "body": false,
+   "aria": "false",
+   "surtitreTop": 152,
+   "basNav": 78
+  },
+  "legendes": [
+   {
+    "t": "Escalier hélicoïdal en bois massif",
+    "lignes": 1,
+    "hauteur": 24,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   },
+   {
+    "t": "Cuisine au plan de travail en bois massif, claustra à lames",
+    "lignes": 2,
+    "hauteur": 47,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   },
+   {
+    "t": "Penderie en bois, tringle et quatre cintres",
+    "lignes": 1,
+    "hauteur": 24,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   },
+   {
+    "t": "Tournage sur bois, copeaux en vol",
+    "lignes": 1,
+    "hauteur": 24,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   },
+   {
+    "t": "Boiseries et placards intégrés en bois sombre",
+    "lignes": 2,
+    "hauteur": 47,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   },
+   {
+    "t": "Mains posées sur une planche de noyer, sciure au sol",
+    "lignes": 2,
+    "hauteur": 47,
+    "lh": 23.552,
+    "largeurLegende": 280,
+    "largeurCarte": 280
+   }
+  ],
+  "creditsVisibles": {
+   "opacite": "1",
+   "top": 365,
+   "bas": 480
+  },
+  "bruz": {
+   "url": "/menuisier-bruz/index.html",
+   "h1": "MENUISIER À BRUZ Escaliers et agencement",
+   "photo": "mains-noyer-960.avif",
+   "communePreselect": "Bruz"
+  }
+ },
+ "vague1": {
+  "etapesLi": 4,
+  "etapesTitres": [
+   "Prise de contact",
+   "Visite technique",
+   "Devis & sélection",
+   "Fabrication & pose"
+  ],
+  "teteCommenceParChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "ccDansLegendes": 0,
+  "olUlVides": 0,
+  "lienIcone": [
+   "favicon.svg image/svg+xml"
+  ]
+ },
+ "icone": {
+  "reponses": [
+   "200 /favicon.svg image/svg+xml"
+  ],
+  "direct": {
+   "statut": 200,
+   "type": "image/svg+xml",
+   "octets": 968
+  }
+ },
+ "requetesNonGet": []
+}

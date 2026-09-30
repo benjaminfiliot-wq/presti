@@ -1,0 +1,563 @@
+# 021-04 (2e rendu) — « Anatomie d'une marche » : tronçon de trois marches en chêne (40 mm) sur un limon à la française,
+# trois contremarches, vis. Blender 5.2, Cycles CPU, caméra orthographique, cadre 1400 × 1050, graine fixée.
+#
+# Usage : blender --background --factory-startup --python marche.py -- <dossier> <graine> [final|brouillon]
+#
+# Sorties (PNG RGBA, alpha droit) :
+#   assemble_beaute.png / assemble_ombre.png   vue assemblée : pièces seules / ombre au sol seule (capteur d'ombre)
+#   eclate_beaute.png   / eclate_ombre.png     vue éclatée : les quatre groupes déplacés chacun d'un vecteur
+#   calque-<nom>_beaute.png / calque-<nom>_ombre.png   un groupe seul, en position assemblée
+#   scene.json   vecteurs en pixels entiers, étiquettes et cote projetées, durées, réglages
+#
+# Pourquoi deux passes (beauté + ombre) : dans Cycles, un capteur d'ombre cache ce qui est derrière lui (vérifié : un cube
+# placé derrière un capteur disparaît du rendu). Un plan d'ombre sous un groupe éclaté masquerait donc les pièces des autres
+# groupes. La passe d'ombre rend les capteurs seuls (pièces invisibles à la caméra mais portant ombre), la passe beauté rend
+# les pièces sans capteur ; construire.mjs pose l'ombre sous les pièces, avec la même opacité pour les calques et l'éclaté.
+#
+# Invariance par translation (la justesse du composite) : caméra orthographique, lumières « soleil » (direction seule),
+# chaque groupe éclairé par SA clé liée (light linking : il ne reçoit ni ne porte l'ombre d'un autre groupe), textures en
+# coordonnées d'objet, capteur d'ombre enfant du groupe, vecteurs arrondis au pixel entier dans le plan de l'image.
+import bpy, bmesh, sys, os, json, math, time
+from mathutils import Vector
+from bpy_extras.object_utils import world_to_camera_view
+
+argv = sys.argv[sys.argv.index('--') + 1:]
+OUT = os.path.abspath(argv[0])
+GRAINE = int(argv[1]) if len(argv) > 1 else 5204
+MODE = argv[2] if len(argv) > 2 else 'final'
+BROUILLON = MODE == 'brouillon'
+os.makedirs(OUT, exist_ok=True)
+L, H = 1400, 1050
+MARGE = 0.04          # marge visée autour de l'union des deux vues (OB-10 exige 0,02)
+DECALAGE_CADRE = -0.015  # le cadre glisse à gauche de 1,5 % : les pièces se recentrent, la queue d'ombre (à droite) garde sa marge
+                         # (-0,035 au 2e tour : l'ombre des marches éclatées finissait à 0,983 du cadre, OB-10 veut 0,98 au plus)
+
+# ---------------------------------------------------------------- dimensions (mètres ; Z en haut ; l'avant vers -Y)
+HAUT = 0.18           # hauteur de marche
+GIRON = 0.24
+EP_MARCHE = 0.040     # 40 mm (contenu.json:25)
+PROF_MARCHE = 0.30
+NEZ = 0.03            # débord du nez de marche devant la contremarche
+EP_CM = 0.022
+X0, X1 = -0.40, 0.40  # largeur des marches
+EP_LIMON = 0.068
+ENTAILLE = 0.017      # 17 mm = le quart de l'épaisseur du limon (cahier §3.4 B, « profondeur d'une entaille »)
+X_INT = X0 + ENTAILLE          # face intérieure du limon (les marches y entrent de 17 mm)
+X_EXT = X_INT - EP_LIMON       # face extérieure
+PENTE = HAUT / GIRON
+
+# vis : 4 par marche, dans le chant supérieur de la contremarche, tête fraisée affleurante
+VIS_X = (-0.28, -0.095, 0.095, 0.28)
+VIS_R, VIS_RT, VIS_TETE, VIS_LONG, VIS_POINTE = 0.0072, 0.0145, 0.008, 0.118, 0.016
+
+# vecteurs d'éclatement (monde), arrondis ensuite au pixel entier
+ECLATE = {
+    'limon': Vector((-0.42, -0.22, 0.0)),
+    # contremarches vers l'avant, la gauche et le bas : avec (0 ; -0,26 ; -0,12), la plus haute passait derrière la marche du bas
+    # et ne se voyait qu'au quart ; ici les trois s'étagent sous le limon, séparées de lui, et la plus haute se lit presque entière
+    'contremarche': Vector((-0.20, -0.46, -0.16)),
+    'marche': Vector((0.30, 0.0, 0.22)),
+    'vis': Vector((0.30, 0.0, 0.40)),
+}
+if len(argv) > 3:
+    for k, v in json.loads(argv[3]).items():
+        ECLATE[k] = Vector(v)
+ORDRE = {'limon': 1, 'contremarche': 2, 'marche': 3, 'vis': 4}
+GROUPES = ['limon', 'contremarche', 'marche', 'vis']
+
+# ---------------------------------------------------------------- scène
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+sc.render.engine = 'CYCLES'
+sc.cycles.device = 'CPU'
+sc.cycles.seed = GRAINE
+sc.cycles.use_animated_seed = False
+sc.cycles.use_adaptive_sampling = False
+ECH_BEAUTE = 12 if BROUILLON else 48
+ECH_OMBRE = 8 if BROUILLON else 32
+sc.cycles.use_denoising = not BROUILLON
+try:
+    sc.cycles.denoiser = 'OPENIMAGEDENOISE'
+except Exception:
+    pass
+sc.cycles.max_bounces = 4
+sc.cycles.diffuse_bounces = 2
+sc.cycles.glossy_bounces = 2
+sc.cycles.transmission_bounces = 0
+sc.cycles.volume_bounces = 0
+sc.cycles.transparent_max_bounces = 2
+sc.render.use_persistent_data = False
+sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = L, H, 100
+sc.render.film_transparent = True
+sc.render.image_settings.file_format = 'PNG'
+sc.render.image_settings.color_mode = 'RGBA'
+sc.render.image_settings.color_depth = '8'
+sc.view_settings.view_transform = 'Standard'
+try:
+    sc.view_settings.look = 'None'
+except Exception:
+    pass
+sc.view_settings.exposure = 0.0
+
+monde = bpy.data.worlds.new('monde')
+sc.world = monde
+try:
+    monde.use_nodes = True
+except Exception:
+    pass
+fond_monde = monde.node_tree.nodes.get('Background')
+fond_monde.inputs[0].default_value = (0.20, 0.17, 0.14, 1)
+FORCE_MONDE = 0.12
+fond_monde.inputs[1].default_value = FORCE_MONDE
+
+# ---------------------------------------------------------------- matières
+def entree(noeud, nom, type_=None):
+    for i in noeud.inputs:
+        if i.name == nom and (type_ is None or i.type == type_):
+            return i
+    raise KeyError(nom)
+
+def sortie(noeud, nom, type_=None):
+    for o in noeud.outputs:
+        if o.name == nom and (type_ is None or o.type == type_):
+            return o
+    raise KeyError(nom)
+
+def chene(nom, rot_x=0.0, etirement=(0.05, 1.0, 1.0)):
+    m = bpy.data.materials.new(nom)
+    try:
+        m.use_nodes = True
+    except Exception:
+        pass
+    N, K = m.node_tree.nodes, m.node_tree.links
+    bsdf = N.get('Principled BSDF')
+    tc = N.new('ShaderNodeTexCoord')
+    oi = N.new('ShaderNodeObjectInfo')
+    rot = N.new('ShaderNodeMapping')
+    rot.inputs['Rotation'].default_value = (rot_x, 0, 0)
+    K.new(tc.outputs['Object'], rot.inputs['Vector'])
+    # décalage propre à chaque planche (aléatoire d'objet, déterministe : il dépend du nom)
+    cx = N.new('ShaderNodeCombineXYZ')
+    for axe, f in (('X', 13.7), ('Y', 7.1), ('Z', 3.3)):
+        mu = N.new('ShaderNodeMath'); mu.operation = 'MULTIPLY'; mu.inputs[1].default_value = f
+        K.new(oi.outputs['Random'], mu.inputs[0]); K.new(mu.outputs[0], cx.inputs[axe])
+    dec = N.new('ShaderNodeVectorMath'); dec.operation = 'ADD'
+    K.new(rot.outputs['Vector'], dec.inputs[0]); K.new(cx.outputs['Vector'], dec.inputs[1])
+    # fil du bois : bandes ondulées étirées le long de X local (la longueur de la planche)
+    etire = N.new('ShaderNodeMapping'); etire.inputs['Scale'].default_value = etirement
+    K.new(dec.outputs['Vector'], etire.inputs['Vector'])
+    onde = N.new('ShaderNodeTexWave')
+    onde.wave_type = 'BANDS'; onde.bands_direction = 'DIAGONAL'; onde.wave_profile = 'SIN'
+    onde.inputs['Scale'].default_value = 10.0
+    onde.inputs['Distortion'].default_value = 8.5
+    onde.inputs['Detail'].default_value = 3.5
+    onde.inputs['Detail Scale'].default_value = 0.9
+    onde.inputs['Detail Roughness'].default_value = 0.55
+    K.new(etire.outputs['Vector'], onde.inputs['Vector'])
+    rampe = N.new('ShaderNodeValToRGB')
+    e = rampe.color_ramp.elements
+    e[0].position, e[0].color = 0.0, (0.085, 0.036, 0.0045, 1)
+    e[1].position, e[1].color = 1.0, (0.225, 0.100, 0.011, 1)
+    mil = e.new(0.22); mil.color = (0.170, 0.074, 0.0080, 1)
+    K.new(onde.outputs['Fac'], rampe.inputs['Fac'])
+    # fibres fines
+    etire2 = N.new('ShaderNodeMapping'); etire2.inputs['Scale'].default_value = tuple(0.3 * c if c < 1 else c for c in etirement)
+    K.new(dec.outputs['Vector'], etire2.inputs['Vector'])
+    fibre = N.new('ShaderNodeTexNoise')
+    fibre.inputs['Scale'].default_value = 160.0
+    fibre.inputs['Detail'].default_value = 2.0
+    K.new(etire2.outputs['Vector'], fibre.inputs['Vector'])
+    rf = N.new('ShaderNodeValToRGB')
+    rf.color_ramp.elements[0].position, rf.color_ramp.elements[0].color = 0.62, (1.05, 1.05, 1.05, 1)
+    pore = rf.color_ramp.elements.new(0.30); pore.color = (0.97, 0.97, 0.97, 1)
+    pore2 = rf.color_ramp.elements.new(0.24); pore2.color = (0.62, 0.60, 0.58, 1)
+    rf.color_ramp.elements[1].position, rf.color_ramp.elements[1].color = 0.80, (1.10, 1.10, 1.10, 1)
+    K.new(fibre.outputs['Fac'], rf.inputs['Fac'])
+    mix = N.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'; mix.clamp_result = False
+    mix.inputs[0].default_value = 1.0
+    K.new(rampe.outputs['Color'], entree(mix, 'A', 'RGBA')); K.new(rf.outputs['Color'], entree(mix, 'B', 'RGBA'))
+    ao = N.new('ShaderNodeAmbientOcclusion'); ao.only_local = True; ao.samples = 16
+    ao.inputs['Distance'].default_value = 0.035
+    ra = N.new('ShaderNodeMapRange'); ra.inputs['To Min'].default_value = 0.42; ra.inputs['To Max'].default_value = 1.0
+    K.new(sortie(ao, 'AO'), ra.inputs['Value'])
+    mix2 = N.new('ShaderNodeMix'); mix2.data_type = 'RGBA'; mix2.blend_type = 'MULTIPLY'; mix2.clamp_result = False
+    mix2.inputs[0].default_value = 1.0
+    cr = N.new('ShaderNodeCombineColor')
+    for canal in ('Red', 'Green', 'Blue'):
+        K.new(ra.outputs['Result'], cr.inputs[canal])
+    K.new(sortie(mix, 'Result', 'RGBA'), entree(mix2, 'A', 'RGBA')); K.new(cr.outputs['Color'], entree(mix2, 'B', 'RGBA'))
+    K.new(sortie(mix2, 'Result', 'RGBA'), bsdf.inputs['Base Color'])
+    bosse = N.new('ShaderNodeBump'); bosse.inputs['Strength'].default_value = 0.06
+    K.new(onde.outputs['Fac'], bosse.inputs['Height']); K.new(bosse.outputs['Normal'], bsdf.inputs['Normal'])
+    bsdf.inputs['Roughness'].default_value = 0.46
+    for nom_e, v in (('Specular IOR Level', 0.28), ('Coat Weight', 0.0), ('Coat Roughness', 0.28)):
+        try:
+            bsdf.inputs[nom_e].default_value = v
+        except Exception:
+            pass
+    return m
+
+def acier(nom):
+    m = bpy.data.materials.new(nom)
+    try:
+        m.use_nodes = True
+    except Exception:
+        pass
+    N, K = m.node_tree.nodes, m.node_tree.links
+    bsdf = N.get('Principled BSDF')
+    bsdf.inputs['Base Color'].default_value = (0.66, 0.65, 0.62, 1)
+    bsdf.inputs['Metallic'].default_value = 0.7
+    bsdf.inputs['Roughness'].default_value = 0.30
+    tc = N.new('ShaderNodeTexCoord')
+    onde = N.new('ShaderNodeTexWave'); onde.wave_type = 'BANDS'; onde.bands_direction = 'Z'
+    onde.inputs['Scale'].default_value = 100.0
+    K.new(tc.outputs['Object'], onde.inputs['Vector'])
+    bosse = N.new('ShaderNodeBump'); bosse.inputs['Strength'].default_value = 0.5
+    K.new(onde.outputs['Fac'], bosse.inputs['Height']); K.new(bosse.outputs['Normal'], bsdf.inputs['Normal'])
+    return m
+
+M_FIL_X = chene('chene-fil-x')
+M_LIMON = chene('chene-limon', rot_x=-math.atan(PENTE), etirement=(1.0, 0.05, 1.0))  # après rotation, la longueur du limon est l'axe Y
+M_VIS = acier('acier')
+
+# ---------------------------------------------------------------- géométrie
+racine = sc.collection
+def groupe(nom):
+    e = bpy.data.objects.new('g_' + nom, None)
+    racine.objects.link(e)
+    return e
+
+G = {n: groupe(n) for n in GROUPES}
+PIECES = {n: [] for n in GROUPES}
+
+def objet(nom, bm, mat, g):
+    me = bpy.data.meshes.new(nom)
+    bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(nom, me)
+    racine.objects.link(o)
+    if mat:
+        o.data.materials.append(mat)
+    o.parent = G[g]
+    PIECES[g].append(o)
+    return o
+
+def bm_boite(x0, x1, y0, y1, z0, z1):
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:
+        v.co = Vector(((x0 + x1) / 2 + v.co.x * (x1 - x0), (y0 + y1) / 2 + v.co.y * (y1 - y0), (z0 + z1) / 2 + v.co.z * (z1 - z0)))
+    return bm
+
+def biseau(o, l=0.0022):
+    b = o.modifiers.new('biseau', 'BEVEL'); b.width = l; b.segments = 2; b.limit_method = 'ANGLE'
+
+def outil(nom, bm, g):
+    me = bpy.data.meshes.new(nom); bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(nom, me); racine.objects.link(o)
+    o.parent = G[g]; o.hide_render = True; o.display_type = 'WIRE'
+    return o
+
+def creuser(o, cutter):
+    b = o.modifiers.new('creuse-' + cutter.name, 'BOOLEAN'); b.operation = 'DIFFERENCE'; b.object = cutter
+    try:
+        b.solver = 'EXACT'
+    except Exception:
+        pass
+
+def y_cm(i):
+    return i * GIRON
+
+# marches
+for i in range(3):
+    yr = y_cm(i)
+    zt = (i + 1) * HAUT
+    o = objet('marche-%d' % (i + 1), bm_boite(X0, X1, yr - NEZ, yr - NEZ + PROF_MARCHE, zt - EP_MARCHE, zt), M_FIL_X, 'marche')
+    biseau(o, 0.003)
+    # fraisages des têtes de vis (cônes peu profonds, jamais traversants)
+    for j, xv in enumerate(VIS_X):
+        bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, segments=24, radius1=VIS_R * 0.9, radius2=VIS_RT * 1.05 + 0.002, depth=VIS_TETE + 0.004)
+        for v in bm.verts:
+            v.co += Vector((xv, yr + EP_CM / 2, zt - VIS_TETE / 2 + 0.002 - 0.0005))
+        creuser(o, outil('fraise-%d-%d' % (i, j), bm, 'marche'))
+
+# contremarches (la 1re pose au sol, les suivantes sur l'arrière de la marche du dessous)
+for i in range(3):
+    yr = y_cm(i)
+    z0 = i * HAUT
+    z1 = (i + 1) * HAUT - EP_MARCHE
+    o = objet('contremarche-%d' % (i + 1), bm_boite(X0, X1, yr, yr + EP_CM, z0, z1), M_FIL_X, 'contremarche')
+    biseau(o, 0.002)
+
+# limon à la française : planche inclinée, rive haute au-dessus des nez, entailles de 17 mm sur sa face intérieure
+def z_haut(y):
+    return PENTE * y + 0.2825
+def z_bas(y):
+    return PENTE * y - 0.12
+Y_AV, Y_AR = -0.10, 0.80
+profil = [(Y_AV, 0.0), (Y_AV, z_haut(Y_AV)), (Y_AR, z_haut(Y_AR)), (Y_AR, z_bas(Y_AR)), (0.12 / PENTE, 0.0)]
+bm = bmesh.new()
+ext = [bm.verts.new((X_EXT, y, z)) for y, z in profil]
+inn = [bm.verts.new((X_INT, y, z)) for y, z in profil]
+bm.faces.new(ext); bm.faces.new(list(reversed(inn)))
+n = len(profil)
+for k in range(n):
+    bm.faces.new((ext[k], ext[(k + 1) % n], inn[(k + 1) % n], inn[k]))
+bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+limon = objet('limon', bm, M_LIMON, 'limon')
+biseau(limon, 0.002)
+JEU = 0.0005
+for i in range(3):
+    yr = y_cm(i); zt = (i + 1) * HAUT
+    creuser(limon, outil('entaille-marche-%d' % i, bm_boite(X0 - JEU, X_INT + 0.02, yr - NEZ - JEU, yr - NEZ + PROF_MARCHE + JEU, zt - EP_MARCHE - JEU, zt + JEU), 'limon'))
+    creuser(limon, outil('entaille-cm-%d' % i, bm_boite(X0 - JEU, X_INT + 0.02, yr - JEU, yr + EP_CM + JEU, i * HAUT - (0.02 if i == 0 else JEU), zt - EP_MARCHE + 0.002), 'limon'))
+
+# vis
+for i in range(3):
+    yr = y_cm(i); zt = (i + 1) * HAUT
+    for j, xv in enumerate(VIS_X):
+        bm = bmesh.new()
+        ztete = zt + 0.0003   # tête affleurante (0,3 mm, soit 0,2 px)
+        # tête fraisée
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=28, radius1=VIS_R, radius2=VIS_RT, depth=VIS_TETE)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE / 2))
+        # tige
+        corps = VIS_LONG - VIS_TETE - VIS_POINTE
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=20, radius1=VIS_R, radius2=VIS_R, depth=corps)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE - corps / 2))
+        # pointe
+        t = bmesh.ops.create_cone(bm, cap_ends=True, segments=20, radius1=0.0005, radius2=VIS_R, depth=VIS_POINTE)
+        for v in t['verts']:
+            v.co += Vector((0, 0, ztete - VIS_TETE - corps - VIS_POINTE / 2))
+        # empreinte cruciforme (deux fentes creusées dans la tête)
+        for v in bm.verts:
+            v.co += Vector((xv, yr + EP_CM / 2, 0))
+        o = objet('vis-%d-%d' % (i + 1, j + 1), bm, M_VIS, 'vis')
+        for a, (lx, ly) in enumerate(((VIS_RT * 1.5, 0.0022), (0.0022, VIS_RT * 1.5))):
+            c = outil('fente-%d-%d-%d' % (i, j, a), bm_boite(xv - lx / 2, xv + lx / 2, yr + EP_CM / 2 - ly / 2, yr + EP_CM / 2 + ly / 2, ztete - 0.0025, ztete + 0.003), 'vis')
+            creuser(o, c)
+
+bpy.context.view_layer.update()
+if MODE == 'geometrie':
+    dg = bpy.context.evaluated_depsgraph_get()
+    for o in [limon] + PIECES['marche'][:1]:
+        ev = o.evaluated_get(dg)
+        print('GEOM', o.name, 'brut', len(o.data.vertices), 'evalue', len(ev.data.vertices), [(m.name, m.type) for m in o.modifiers], flush=True)
+        xs = sorted(set(round(v.co.x, 4) for v in ev.data.vertices))
+        print('GEOMX', o.name, xs[:12], 'n=', len(xs), flush=True)
+        print('NORM', o.name, [tuple(round(c, 2) for c in p.normal) for p in o.data.polygons], flush=True)
+    for m in limon.modifiers:
+        if m.type == 'BOOLEAN':
+            m.show_viewport = False
+    dg = bpy.context.evaluated_depsgraph_get(); dg.update()
+    print('SANSBOOL', len(limon.evaluated_get(dg).data.vertices), flush=True)
+    for m in limon.modifiers:
+        m.show_viewport = m.type == 'BOOLEAN'
+    dg.update()
+    print('SANSBISEAU', len(limon.evaluated_get(dg).data.vertices), sorted(set(round(v.co.x, 4) for v in limon.evaluated_get(dg).data.vertices)), flush=True)
+    sys.exit(0)
+
+# ---------------------------------------------------------------- lumières (soleils : l'éclairage ne dépend pas de la position)
+def soleil(nom, direction, force, couleur, angle_deg, ombre=True):
+    d = bpy.data.lights.new(nom, 'SUN')
+    d.energy = force; d.color = couleur; d.angle = math.radians(angle_deg); d.use_shadow = ombre
+    o = bpy.data.objects.new(nom, d); racine.objects.link(o)
+    o.rotation_euler = Vector(direction).normalized().to_track_quat('-Z', 'Y').to_euler()
+    return o
+
+DIR_CLE = Vector((0.30, 0.38, -1.0)).normalized()     # la lumière vient de l'avant gauche, en hauteur
+CLE = dict(direction=DIR_CLE, force=3.4, couleur=(1.0, 0.86, 0.68), angle_deg=24)
+cle_globale = soleil('cle-globale', **CLE)
+cles = {}
+for g in GROUPES:
+    cles[g] = soleil('cle-' + g, **CLE)
+remplissages = [
+    soleil('appoint-droite', (-1.0, 0.30, -0.45), 2.3, (1.0, 0.93, 0.84), 30, ombre=False),
+    soleil('contre-jour', (0.25, -1.0, -0.85), 0.9, (1.0, 0.93, 0.84), 30, ombre=False),
+    soleil('zenith', (0.0, 0.0, -1.0), 0.35, (1.0, 1.0, 1.0), 30, ombre=False),
+]
+
+# capteurs d'ombre : un par groupe (enfant du groupe), un au sol pour la vue assemblée
+def plan(nom, x0, x1, y0, y1, z, g=None):
+    bm = bmesh.new()
+    vs = [bm.verts.new((x0, y0, z)), bm.verts.new((x1, y0, z)), bm.verts.new((x1, y1, z)), bm.verts.new((x0, y1, z))]
+    bm.faces.new(vs)
+    me = bpy.data.meshes.new(nom); bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(nom, me); racine.objects.link(o)
+    o.is_shadow_catcher = True
+    o.hide_render = True
+    if g:
+        o.parent = G[g]
+    return o
+
+def sommets_monde(objs):
+    pts = []
+    for o in objs:
+        mw = o.matrix_world
+        pts += [mw @ v.co for v in o.data.vertices]
+    return pts
+
+def projection_ombre(pts, z_plan):
+    out = []
+    for p in pts:
+        t = (z_plan - p.z) / DIR_CLE.z
+        out.append((p + DIR_CLE * t, max(0.0, t)))
+    return out
+
+capteurs = {}
+for g in GROUPES:
+    pts = sommets_monde(PIECES[g])
+    zmin = min(p.z for p in pts) - 0.002
+    proj = projection_ombre(pts, zmin)
+    flou = math.tan(math.radians(CLE['angle_deg']) / 2)
+    xs = [q.x for q, t in proj] + [p.x for p in pts]
+    ys = [q.y for q, t in proj] + [p.y for p in pts]
+    tmax = max(t for q, t in proj)
+    m = 0.03 + tmax * flou
+    capteurs[g] = plan('sol-' + g, min(xs) - m, max(xs) + m, min(ys) - m, max(ys) + m, zmin, g)
+sol_assemble = plan('sol-assemble', -1.2, 1.6, -0.9, 1.7, 0.0)
+
+# liaisons de lumière : la clé d'un groupe n'éclaire que ce groupe et son capteur, et seul ce groupe y fait de l'ombre
+for g in GROUPES:
+    rec = bpy.data.collections.new('recoit-' + g)
+    blo = bpy.data.collections.new('bloque-' + g)
+    for o in PIECES[g]:
+        rec.objects.link(o); blo.objects.link(o)
+    rec.objects.link(capteurs[g])
+    cles[g].light_linking.receiver_collection = rec
+    cles[g].light_linking.blocker_collection = blo
+
+# ---------------------------------------------------------------- caméra orthographique
+VISEE = Vector((-1.8, 2.15, -1.4)).normalized()
+DROITE = VISEE.cross(Vector((0, 0, 1))).normalized()
+HAUTV = DROITE.cross(VISEE).normalized()
+
+def ecran(p):
+    return (p.dot(DROITE), p.dot(HAUTV))
+
+# vecteurs arrondis au pixel entier : on fixe d'abord l'échelle, puis on corrige chaque vecteur dans le plan de l'image
+def bornes(etat_eclate, vecteurs):
+    bx, by = [], []
+    for g in GROUPES:
+        dv = vecteurs[g] if etat_eclate else Vector((0, 0, 0))
+        pts = sommets_monde(PIECES[g])
+        zc = capteurs[g].matrix_world.translation.z + capteurs[g].data.vertices[0].co.z
+        for q, t in projection_ombre(pts, min(p.z for p in pts) - 0.002):
+            r = 0.02 + t * math.tan(math.radians(CLE['angle_deg']) / 2) * 0.6
+            s = ecran(q + dv)
+            bx += [s[0] - r, s[0] + r]; by += [s[1] - r * 0.5, s[1] + r * 0.5]
+        for p in pts:
+            s = ecran(p + dv)
+            bx.append(s[0]); by.append(s[1])
+    return min(bx), max(bx), min(by), max(by)
+
+b1 = bornes(False, ECLATE)
+b2 = bornes(True, ECLATE)
+ux0, ux1 = min(b1[0], b2[0]), max(b1[1], b2[1])
+uy0, uy1 = min(b1[2], b2[2]), max(b1[3], b2[3])
+ECHELLE = max((ux1 - ux0) / (1 - 2 * MARGE), (uy1 - uy0) / ((H / L) * (1 - 2 * MARGE)))
+PX = ECHELLE / L  # mètres par pixel
+cx, cy = (ux0 + ux1) / 2 + DECALAGE_CADRE * ECHELLE, (uy0 + uy1) / 2
+
+VECT_PX = {}
+for g in GROUPES:
+    v = ECLATE[g]
+    sx, sy = ecran(v)
+    ix, iy = round(sx / PX), round(-sy / PX)
+    v2 = v + DROITE * (ix * PX - sx) + HAUTV * (-iy * PX - sy)
+    ECLATE[g] = v2
+    VECT_PX[g] = [int(ix), int(iy)]
+
+cam_d = bpy.data.cameras.new('cam'); cam_d.type = 'ORTHO'; cam_d.ortho_scale = ECHELLE
+cam_d.sensor_fit = 'HORIZONTAL'
+cam_d.clip_start = 0.01; cam_d.clip_end = 50
+cam = bpy.data.objects.new('cam', cam_d); racine.objects.link(cam); sc.camera = cam
+centre = DROITE * cx + HAUTV * cy
+cam.location = centre - VISEE * 6.0
+cam.rotation_euler = VISEE.to_track_quat('-Z', 'Y').to_euler()
+bpy.context.view_layer.update()
+
+def proj(p):
+    c = world_to_camera_view(sc, cam, p)
+    return [round(c.x, 6), round(1.0 - c.y, 6)]
+
+# ---------------------------------------------------------------- rendus
+journal = {}
+def poser(eclate):
+    for g in GROUPES:
+        G[g].location = ECLATE[g] if eclate else Vector((0, 0, 0))
+    bpy.context.view_layer.update()
+
+def regler(cle_globale_on, groupes_visibles, beaute, capteurs_on, bordure=None):
+    cle_globale.hide_render = not cle_globale_on
+    for g in GROUPES:
+        cles[g].hide_render = cle_globale_on
+        for o in PIECES[g]:
+            o.hide_render = g not in groupes_visibles
+            o.visible_camera = beaute
+        capteurs[g].hide_render = not (capteurs_on == 'groupes' and g in groupes_visibles)
+    sol_assemble.hide_render = capteurs_on != 'sol'
+    for r in remplissages:
+        r.hide_render = not beaute
+    fond_monde.inputs[1].default_value = FORCE_MONDE if beaute else 0.0
+    sc.cycles.samples = ECH_BEAUTE if beaute else ECH_OMBRE
+    sc.render.resolution_percentage = 100 if beaute else 50   # ombre floue : rendue à mi-définition, agrandie par construire.mjs
+    sc.cycles.use_denoising = beaute and not BROUILLON
+    if bordure:
+        sc.render.use_border = True; sc.render.use_crop_to_border = False
+        sc.render.border_min_x, sc.render.border_max_x, sc.render.border_min_y, sc.render.border_max_y = bordure
+    else:
+        sc.render.use_border = False
+
+def rendre(nom):
+    t = time.time()
+    sc.render.filepath = os.path.join(OUT, nom)
+    bpy.ops.render.render(write_still=True)
+    journal[nom] = round(time.time() - t, 1)
+    print('RENDU', nom, journal[nom], 's', flush=True)
+
+def bordure_groupe(g):
+    pts = sommets_monde(PIECES[g]) + sommets_monde([capteurs[g]])
+    cs = [world_to_camera_view(sc, cam, p) for p in pts]
+    m = 0.012
+    return (max(0.0, min(c.x for c in cs) - m), min(1.0, max(c.x for c in cs) + m), max(0.0, min(c.y for c in cs) - m), min(1.0, max(c.y for c in cs) + m))
+
+debut = time.time()
+poser(False)
+regler(True, GROUPES, True, None); rendre('assemble_beaute.png')
+regler(True, GROUPES, False, 'sol'); rendre('assemble_ombre.png')
+for g in GROUPES:
+    b = bordure_groupe(g)
+    regler(False, [g], True, None, b); rendre('calque-%s_beaute.png' % g)
+    regler(False, [g], False, 'groupes', b); rendre('calque-%s_ombre.png' % g)
+poser(True)
+regler(False, GROUPES, True, None); rendre('eclate_beaute.png')
+regler(False, GROUPES, False, 'groupes'); rendre('eclate_ombre.png')
+poser(False)
+
+# ---------------------------------------------------------------- étiquettes et cote (vue assemblée, projetées par Blender)
+yr1 = y_cm(1)
+etiquettes = [
+    {'texte': 'Limon à la française', 'piece': 'limon', 'monde': Vector((X_INT, 0.62, z_haut(0.62) - 0.03))},
+    {'texte': 'Entailles', 'piece': 'limon', 'monde': Vector((X_INT - ENTAILLE / 2, y_cm(2) + 0.12, 3 * HAUT - EP_MARCHE / 2))},
+    {'texte': 'Marche en chêne, 40 mm', 'piece': 'marche', 'monde': Vector((0.15, yr1 - NEZ, 2 * HAUT - EP_MARCHE / 2))},
+    {'texte': 'Contremarche', 'piece': 'contremarche', 'monde': Vector((0.10, 0.0, HAUT * 0.45))},
+    {'texte': 'Vis', 'piece': 'vis', 'monde': Vector((VIS_X[2], yr1 + EP_CM / 2, 2 * HAUT))},
+]
+for e in etiquettes:
+    e['x'], e['y'] = proj(e.pop('monde'))
+y_nez2 = y_cm(2) - NEZ
+c1, c2 = proj(Vector((X1, y_nez2, 3 * HAUT))), proj(Vector((X1, y_nez2, 3 * HAUT - EP_MARCHE)))
+cote = {'texte': '40 mm', 'x1': c1[0], 'y1': c1[1], 'x2': c2[0], 'y2': c2[1]}
+
+json.dump({
+    'blender': bpy.app.version_string, 'graine': GRAINE, 'mode': MODE,
+    'echantillons': {'beaute': ECH_BEAUTE, 'ombre': ECH_OMBRE}, 'debruitage': not BROUILLON,
+    'echelle_ortho_m': ECHELLE, 'metres_par_pixel': PX,
+    'vecteurs_px': VECT_PX, 'vecteurs_monde': {g: [round(c, 6) for c in ECLATE[g]] for g in GROUPES},
+    'ordre': ORDRE, 'etiquettes': etiquettes, 'cote': cote,
+    'secondes': journal, 'secondes_total': round(time.time() - debut, 1),
+}, open(os.path.join(OUT, 'scene.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
+print('FINI', round(time.time() - debut, 1), flush=True)

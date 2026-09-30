@@ -1,0 +1,6 @@
+  police 1440 cadre-01-heros/0|a.|Prestations|1 : "IBM Plex Sans" 500 15.2px 24.32px → "IBM Plex Sans" 400 15.2px 24.32px
+  police 1440 cadre-01-heros/0|a.|Réalisations|1 : "IBM Plex Sans" 500 15.2px 24.32px → "IBM Plex Sans" 400 15.2px 24.32px
+  police 1440 cadre-01-heros/0|a.|Communes|1 : "IBM Plex Sans" 500 15.2px 24.32px → "IBM Plex Sans" 400 15.2px 24.32px
+  police 1440 cadre-01-heros/0|a.|Questions|1 : "IBM Plex Sans" 500 15.2px 24.32px → "IBM Plex Sans" 400 15.2px 24.32px
+1440 px : 231 textes comparés ; écart de position ou de taille max 0.031 px (cadre-03-prestations/0|button.presta__declencheur|Portes et verrières intérieure|1) ; 0 nombre de lignes différent ; 4 police/graisse/taille/interligne différente ; absents après : 0 ; nouveaux : 0
+390 px : 266 textes comparés ; écart de position ou de taille max 0.031 px (cadre-03b-prestations-survol/1|span.k-orig|_kit/familles/survol.js:6|1) ; 0 nombre de lignes différent ; 0 police/graisse/taille/interligne différente ; absents après : 0 ; nouveaux : 0

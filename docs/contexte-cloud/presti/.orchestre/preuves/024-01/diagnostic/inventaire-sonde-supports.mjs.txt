@@ -1,0 +1,29 @@
+import { chromium } from 'playwright'
+const b = await chromium.launch()
+const p = await b.newPage()
+await p.setContent(`<style>
+.a{color:rgb(1,2,3)}
+@supports (animation-timeline: --non-supporte()){.a{color:rgb(200,0,0)}}
+.b{color:rgb(1,2,3)}
+@supports (animation-timeline: nonsupporte-sans-tirets()){.b{color:rgb(200,0,0)}}
+.c{color:rgb(1,2,3)}
+@supports (animation-timeline: view()){.c{color:rgb(200,0,0)}}
+.d{color:rgb(1,2,3)}
+@supports (animation-timeline-inexistante: view()){.d{color:rgb(200,0,0)}}
+.e{color:rgb(1,2,3)}
+@supports not (animation-timeline: view()){.e{color:rgb(200,0,0)}}
+</style><p class=a>a</p><p class=b>b</p><p class=c>c</p><p class=d>d</p><p class=e>e</p>`)
+const r = await p.evaluate(() => ({
+  navigateur: navigator.userAgent,
+  'CSS.supports("animation-timeline: --non-supporte()")': CSS.supports('animation-timeline: --non-supporte()'),
+  'CSS.supports("animation-timeline","--non-supporte()")': CSS.supports('animation-timeline', '--non-supporte()'),
+  'CSS.supports("color: --x()")': CSS.supports('color: --x()'),
+  'CSS.supports("animation-timeline: nonsupporte-sans-tirets()")': CSS.supports('animation-timeline: nonsupporte-sans-tirets()'),
+  '@supports (animation-timeline: --non-supporte()) applique ?': getComputedStyle(document.querySelector('.a')).color === 'rgb(200, 0, 0)',
+  '@supports (animation-timeline: nonsupporte-sans-tirets()) applique ?': getComputedStyle(document.querySelector('.b')).color === 'rgb(200, 0, 0)',
+  '@supports (animation-timeline: view()) applique ?': getComputedStyle(document.querySelector('.c')).color === 'rgb(200, 0, 0)',
+  '@supports (animation-timeline-inexistante: view()) applique ?': getComputedStyle(document.querySelector('.d')).color === 'rgb(200, 0, 0)',
+  '@supports not (animation-timeline: view()) applique ?': getComputedStyle(document.querySelector('.e')).color === 'rgb(200, 0, 0)',
+}))
+console.log(JSON.stringify({ chromium: b.version(), ...r }, null, 2))
+await b.close()

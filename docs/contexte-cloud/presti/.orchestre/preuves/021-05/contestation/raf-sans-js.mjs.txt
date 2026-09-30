@@ -1,0 +1,15 @@
+// Le relevé du juge attend deux rAF dans page.evaluate : est-ce rappelé quand JavaScript est coupé, sur une page vide ?
+import { chromium } from 'playwright'
+const nav = await chromium.launch()
+for (const js of [true, false]) {
+  const ctx = await nav.newContext({ javaScriptEnabled: js, viewport: { width: 800, height: 600 } })
+  const page = await ctx.newPage()
+  await page.goto('data:text/html,<!doctype html><title>t</title><div style="height:5000px;background:linear-gradient(%23fff,%23000)">page vide</div>')
+  const raf = page.evaluate(() => new Promise((ok) => { scrollTo({ top: 900, behavior: 'instant' }); requestAnimationFrame(() => requestAnimationFrame(() => ok('deux rAF rappelés, scrollY ' + scrollY))) })).catch((e) => 'erreur ' + e.message)
+  const minuteur = new Promise((ok) => setTimeout(() => ok('aucun rAF en 8 s (blocage)'), 8000))
+  console.log(`javaScriptEnabled=${js} : ${await Promise.race([raf, minuteur])}`)
+  const simple = await Promise.race([page.evaluate(() => 'evaluate sans attente : ' + scrollY), new Promise((ok) => setTimeout(() => ok('evaluate simple bloqué'), 5000))])
+  console.log(`   ${simple}`)
+  await ctx.close().catch(() => {})
+}
+await nav.close()

@@ -1,0 +1,4735 @@
+{
+ "profil": {
+  "nom": "iphone",
+  "url": "http://127.0.0.1:57449/sites-demo/lestraque/index.html",
+  "copie": {
+   "remplacement": "@supports (animation-timeline: non-supporte())",
+   "bilan": {
+    "styles.css": {
+     "remplaces": 13,
+     "restantsView": 0,
+     "restantsScroll": 0,
+     "nouveaux": 13
+    },
+    "bureau.css": {
+     "remplaces": 2,
+     "restantsView": 0,
+     "restantsScroll": 0,
+     "nouveaux": 2
+    }
+   }
+  }
+ },
+ "chargement": {
+  "tMs": 147,
+  "anims": [
+   {
+    "type": "CSSAnimation",
+    "nom": "signature-projecteur",
+    "cible": "div.hero__media::before",
+    "section": "heros",
+    "etat": "running",
+    "timeline": "DocumentTimeline",
+    "sujet": null,
+    "axe": null,
+    "progression": 0.2778,
+    "tempsCourant": 0,
+    "duree": 9000,
+    "iterations": "infinite",
+    "delai": -2500,
+    "aLEcran": true
+   },
+   {
+    "type": "CSSAnimation",
+    "nom": "signature-tourne-2",
+    "cible": "img",
+    "section": "heros",
+    "etat": "running",
+    "timeline": "DocumentTimeline",
+    "sujet": null,
+    "axe": null,
+    "progression": 0,
+    "tempsCourant": 0,
+    "duree": 10000,
+    "iterations": "infinite",
+    "delai": 0,
+    "aLEcran": true
+   }
+  ],
+  "supportsVuParLaPage": false,
+  "supportsNatif": true,
+  "supportsScrollVuParLaPage": false,
+  "reduit": false,
+  "ecran": {
+   "w": 390,
+   "h": 844,
+   "dpr": 3,
+   "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+   "tactile": true,
+   "survol": false
+  },
+  "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue da--signature",
+  "feuilles": [
+   {
+    "href": "http://127.0.0.1:57449/sites-demo/lestraque/styles.css",
+    "media": "",
+    "regles": 549
+   },
+   {
+    "href": "http://127.0.0.1:57449/sites-demo/lestraque/bureau.css",
+    "media": "(min-width: 1024px)",
+    "regles": 21
+   }
+  ],
+  "supportsCssom": {
+   "styles.css (animation-timeline: non-supporte()) → false": 13,
+   "bureau.css (animation-timeline: non-supporte()) → false": 2
+  }
+ },
+ "arrets": [
+  {
+   "i": 0,
+   "yDemande": 0,
+   "scrollYArret": 0,
+   "scrollYRepos": 0,
+   "scrollYApresCaptures": 0,
+   "capture": "arrets/00-y00000.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 58
+   },
+   "hauteurPage": 9012,
+   "sections": [
+    {
+     "nom": "heros",
+     "haut": 0,
+     "bas": 844,
+     "visibleDe": 0,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4704,
+     "tempsCourant": 1733.3,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1733,
+     "tempsCourant": 1733.3,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4778,
+     "tempsCourant": 1799.9,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.18,
+     "tempsCourant": 1799.9,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 2.743,
+     "part8": 0.08537,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 615,
+    "essaisPaire": 1,
+    "parSection": {
+     "heros": {
+      "de": 0,
+      "a": 844,
+      "moyen": 2.743,
+      "part8": 0.08537,
+      "pixels": 329160
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 4,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande nav--sombre"
+     ],
+     "derniere": "nav nav--claire nav--bande nav--sombre"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "yDemande": 400,
+   "scrollYArret": 400,
+   "scrollYRepos": 400,
+   "scrollYApresCaptures": 400,
+   "capture": "arrets/01-y00400.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 3
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "heros",
+     "haut": -400,
+     "bas": 444,
+     "visibleDe": 0,
+     "visibleA": 444
+    },
+    {
+     "nom": "plateau",
+     "haut": 444,
+     "bas": 1373,
+     "visibleDe": 444,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9544,
+     "tempsCourant": 183.3,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "header.nav.nav--claire::before",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8926,
+     "tempsCourant": 183.3,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "header.nav.nav--claire::after",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8926,
+     "tempsCourant": 183.3,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8926,
+     "tempsCourant": 183.3,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8926,
+     "tempsCourant": 183.3,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8926,
+     "tempsCourant": 183.3,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "figure.plateau__citation.reveal",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7155,
+     "tempsCourant": 133.3,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "figure.plateau__citation.reveal",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7155,
+     "tempsCourant": 133.3,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6092,
+     "tempsCourant": 2983.2,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2983,
+     "tempsCourant": 2983.2,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7555,
+     "tempsCourant": 4299.9,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.43,
+     "tempsCourant": 4299.9,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 2.148,
+     "part8": 0.08566,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 606,
+    "essaisPaire": 1,
+    "parSection": {
+     "heros": {
+      "de": 0,
+      "a": 444,
+      "moyen": 4.083,
+      "part8": 0.16283,
+      "pixels": 173160
+     },
+     "plateau": {
+      "de": 444,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 156000
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande nav--sombre solide"
+     ],
+     "derniere": "nav nav--claire nav--bande nav--sombre solide"
+    },
+    {
+     "cible": "figure.plateau__citation.reveal",
+     "section": "plateau",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "plateau__citation reveal vu"
+     ],
+     "derniere": "plateau__citation reveal vu"
+    },
+    {
+     "cible": "html.texture--papier.da--etapes.da--communes",
+     "section": "document",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu"
+     ],
+     "derniere": "js texture--papier da--etapes da--communes da--nav-retenue da--signature tout-rendu"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "yDemande": 800,
+   "scrollYArret": 800,
+   "scrollYRepos": 800,
+   "scrollYApresCaptures": 800,
+   "capture": "arrets/02-y00800.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "heros",
+     "haut": -800,
+     "bas": 44,
+     "visibleDe": 0,
+     "visibleA": 44
+    },
+    {
+     "nom": "plateau",
+     "haut": 44,
+     "bas": 973,
+     "visibleDe": 44,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.plateau__photo.reveal",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5035,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 70,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.plateau__photo.reveal",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5035,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 70,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.chiffre.reveal:1",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5035,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 70,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.chiffre.reveal:1",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5035,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 70,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.chiffre.reveal:2",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0644,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 140,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.chiffre.reveal:2",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0644,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 140,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.chiffre.reveal:3",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 210,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.chiffre.reveal:3",
+     "section": "plateau",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 210,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8611,
+     "tempsCourant": 5249.8,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.525,
+     "tempsCourant": 5249.8,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0074,
+     "tempsCourant": 6566.4,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6566,
+     "tempsCourant": 6566.4,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": true
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0.007,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 601,
+    "essaisPaire": 1,
+    "parSection": {
+     "heros": {
+      "de": 0,
+      "a": 44,
+      "moyen": 0.12,
+      "part8": 0,
+      "pixels": 17160
+     },
+     "plateau": {
+      "de": 44,
+      "a": 844,
+      "moyen": 0.001,
+      "part8": 0,
+      "pixels": 312000
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 4,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 34px; --nav-ch: 44px; --nav-cb: 0px;",
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "div.plateau__photo.reveal",
+     "section": "plateau",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "plateau__photo reveal vu"
+     ],
+     "derniere": "plateau__photo reveal vu"
+    },
+    {
+     "cible": "div.chiffre.reveal:1",
+     "section": "plateau",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "chiffre reveal vu"
+     ],
+     "derniere": "chiffre reveal vu"
+    },
+    {
+     "cible": "div.chiffre.reveal:2",
+     "section": "plateau",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "chiffre reveal vu"
+     ],
+     "derniere": "chiffre reveal vu"
+    },
+    {
+     "cible": "div.chiffre.reveal:3",
+     "section": "plateau",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "chiffre reveal vu"
+     ],
+     "derniere": "chiffre reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "yDemande": 1200,
+   "scrollYArret": 1200,
+   "scrollYRepos": 1200,
+   "scrollYApresCaptures": 1200,
+   "capture": "arrets/03-y01200.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "plateau",
+     "haut": -356,
+     "bas": 573,
+     "visibleDe": 0,
+     "visibleA": 573
+    },
+    {
+     "nom": "prestations",
+     "haut": 573,
+     "bas": 1511,
+     "visibleDe": 573,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "prestations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7596,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "prestations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7596,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1055,
+     "tempsCourant": 7449.7,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.745,
+     "tempsCourant": 7449.7,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2518,
+     "tempsCourant": 8766.3,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8766,
+     "tempsCourant": 8766.3,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 613,
+    "essaisPaire": 1,
+    "parSection": {
+     "plateau": {
+      "de": 0,
+      "a": 573,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 223470
+     },
+     "prestations": {
+      "de": 573,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 105690
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "prestations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "scene__tete scene__tete--deux reveal vu"
+     ],
+     "derniere": "scene__tete scene__tete--deux reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "yDemande": 1600,
+   "scrollYArret": 1600,
+   "scrollYRepos": 1600,
+   "scrollYApresCaptures": 1600,
+   "capture": "arrets/04-y01600.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "plateau",
+     "haut": -756,
+     "bas": 173,
+     "visibleDe": 0,
+     "visibleA": 173
+    },
+    {
+     "nom": "prestations",
+     "haut": 173,
+     "bas": 1111,
+     "visibleDe": 173,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.35,
+     "tempsCourant": 9649.6,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.965,
+     "tempsCourant": 9649.6,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4962,
+     "tempsCourant": 10966.2,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9034,
+     "tempsCourant": 10966.2,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 613,
+    "essaisPaire": 1,
+    "parSection": {
+     "plateau": {
+      "de": 0,
+      "a": 173,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 67470
+     },
+     "prestations": {
+      "de": 173,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 261690
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "li.presta__ligne.reveal",
+     "section": "prestations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "presta__ligne reveal vu"
+     ],
+     "derniere": "presta__ligne reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "yDemande": 2000,
+   "scrollYArret": 2000,
+   "scrollYRepos": 2000,
+   "scrollYApresCaptures": 2000,
+   "capture": "arrets/05-y02000.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "prestations",
+     "haut": -227,
+     "bas": 711,
+     "visibleDe": 0,
+     "visibleA": 711
+    },
+    {
+     "nom": "atelier",
+     "haut": 711,
+     "bas": 1555,
+     "visibleDe": 711,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9247,
+     "tempsCourant": 166.6,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5981,
+     "tempsCourant": 11882.8,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8117,
+     "tempsCourant": 11882.8,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7462,
+     "tempsCourant": 13216.2,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6784,
+     "tempsCourant": 13216.2,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 610,
+    "essaisPaire": 1,
+    "parSection": {
+     "prestations": {
+      "de": 0,
+      "a": 711,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 277290
+     },
+     "atelier": {
+      "de": 711,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 51870
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 4,
+     "valeurs": [
+      "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;",
+      "--nav-sh: 41px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 37px;"
+     ],
+     "derniere": "--nav-sh: 41px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 37px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide"
+     ],
+     "derniere": "nav nav--claire nav--bande solide"
+    },
+    {
+     "cible": "li.presta__ligne.reveal:2",
+     "section": "prestations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "presta__ligne reveal vu"
+     ],
+     "derniere": "presta__ligne reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "yDemande": 2400,
+   "scrollYArret": 2400,
+   "scrollYRepos": 2400,
+   "scrollYApresCaptures": 2400,
+   "capture": "arrets/06-y02400.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "prestations",
+     "haut": -627,
+     "bas": 311,
+     "visibleDe": 0,
+     "visibleA": 311
+    },
+    {
+     "nom": "atelier",
+     "haut": 311,
+     "bas": 1155,
+     "visibleDe": 311,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "h2.atelier__titre.reveal",
+     "section": "atelier",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.796,
+     "tempsCourant": 166.6,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "h2.atelier__titre.reveal",
+     "section": "atelier",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.796,
+     "tempsCourant": 166.6,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "p.atelier__phrase.reveal",
+     "section": "atelier",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.174,
+     "tempsCourant": 166.6,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 140,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "p.atelier__phrase.reveal",
+     "section": "atelier",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.174,
+     "tempsCourant": 166.6,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 140,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8518,
+     "tempsCourant": 14166.1,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5834,
+     "tempsCourant": 14166.1,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9981,
+     "tempsCourant": 15482.7,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4517,
+     "tempsCourant": 15482.7,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 601,
+    "essaisPaire": 1,
+    "parSection": {
+     "prestations": {
+      "de": 0,
+      "a": 311,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 121290
+     },
+     "atelier": {
+      "de": 311,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 207870
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 4,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 47px; --nav-ch: 31px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 47px; --nav-ch: 31px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "h2.atelier__titre.reveal",
+     "section": "atelier",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "atelier__titre reveal vu"
+     ],
+     "derniere": "atelier__titre reveal vu"
+    },
+    {
+     "cible": "p.atelier__phrase.reveal",
+     "section": "atelier",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "atelier__phrase reveal vu"
+     ],
+     "derniere": "atelier__phrase reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "yDemande": 2800,
+   "scrollYArret": 2800,
+   "scrollYRepos": 2800,
+   "scrollYApresCaptures": 2800,
+   "capture": "arrets/07-y02800.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "atelier",
+     "haut": -89,
+     "bas": 755,
+     "visibleDe": 0,
+     "visibleA": 755
+    },
+    {
+     "nom": "realisations",
+     "haut": 755,
+     "bas": 1651,
+     "visibleDe": 755,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9249,
+     "tempsCourant": 166.7,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8524,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8524,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8524,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8524,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8524,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1055,
+     "tempsCourant": 16449.4,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3551,
+     "tempsCourant": 16449.4,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2499,
+     "tempsCourant": 17749.3,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2251,
+     "tempsCourant": 17749.3,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 609,
+    "essaisPaire": 1,
+    "parSection": {
+     "atelier": {
+      "de": 0,
+      "a": 755,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 294450
+     },
+     "realisations": {
+      "de": 755,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 34710
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 5,
+     "valeurs": [
+      "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;",
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide nav--sombre"
+     ],
+     "derniere": "nav nav--claire nav--bande solide nav--sombre"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "yDemande": 3200,
+   "scrollYArret": 3200,
+   "scrollYRepos": 3200,
+   "scrollYApresCaptures": 3200,
+   "capture": "arrets/08-y03200.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "atelier",
+     "haut": -489,
+     "bas": 355,
+     "visibleDe": 0,
+     "visibleA": 355
+    },
+    {
+     "nom": "realisations",
+     "haut": 355,
+     "bas": 1251,
+     "visibleDe": 355,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.scene__tete.galerie__tete.reveal",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.scene__tete.galerie__tete.reveal",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "clip-path",
+     "cible": "div.galerie__cadre",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8256,
+     "tempsCourant": 150,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "img",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6464,
+     "tempsCourant": 150,
+     "duree": 1000,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "figcaption",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0,
+     "tempsCourant": 150,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 200,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "clip-path",
+     "cible": "div.galerie__cadre",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8256,
+     "tempsCourant": 150,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "img",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6464,
+     "tempsCourant": 150,
+     "duree": 1000,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "figcaption",
+     "section": "realisations",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0,
+     "tempsCourant": 150,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 200,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3536,
+     "tempsCourant": 18682.6,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1317,
+     "tempsCourant": 18682.6,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5018,
+     "tempsCourant": 20015.8,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0016,
+     "tempsCourant": 20015.8,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 601,
+    "essaisPaire": 1,
+    "parSection": {
+     "atelier": {
+      "de": 0,
+      "a": 355,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 138450
+     },
+     "realisations": {
+      "de": 355,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 190710
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "div.scene__tete.galerie__tete.reveal",
+     "section": "realisations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "scene__tete galerie__tete reveal vu"
+     ],
+     "derniere": "scene__tete galerie__tete reveal vu"
+    },
+    {
+     "cible": "figure.galerie__item.galerie__item--portrait.reveal",
+     "section": "realisations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "galerie__item galerie__item--portrait reveal vu"
+     ],
+     "derniere": "galerie__item galerie__item--portrait reveal vu"
+    },
+    {
+     "cible": "figure.galerie__item.reveal",
+     "section": "realisations",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "galerie__item reveal vu"
+     ],
+     "derniere": "galerie__item reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 9,
+   "yDemande": 3600,
+   "scrollYArret": 3600,
+   "scrollYRepos": 3600,
+   "scrollYApresCaptures": 3600,
+   "capture": "arrets/09-y03600.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "realisations",
+     "haut": -45,
+     "bas": 851,
+     "visibleDe": 0,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6036,
+     "tempsCourant": 20932.6,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0933,
+     "tempsCourant": 20932.6,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7499,
+     "tempsCourant": 22249,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2249,
+     "tempsCourant": 22249,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 604,
+    "essaisPaire": 1,
+    "parSection": {
+     "realisations": {
+      "de": 0,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 329160
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 4,
+     "valeurs": [
+      "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;",
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 2,
+     "valeurs": [
+      "nav nav--claire nav--bande solide",
+      "nav nav--claire nav--bande solide nav--sombre"
+     ],
+     "derniere": "nav nav--claire nav--bande solide nav--sombre"
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "yDemande": 4000,
+   "scrollYArret": 4000,
+   "scrollYRepos": 4000,
+   "scrollYApresCaptures": 4000,
+   "capture": "arrets/10-y04000.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "realisations",
+     "haut": -445,
+     "bas": 451,
+     "visibleDe": 0,
+     "visibleA": 451
+    },
+    {
+     "nom": "communes",
+     "haut": 451,
+     "bas": 879,
+     "visibleDe": 451,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "a.commune.reveal:1",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "a.commune.reveal:1",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "a.commune.reveal:2",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "a.commune.reveal:2",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "a.commune.reveal:3",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "a.commune.reveal:3",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7961,
+     "tempsCourant": 166.7,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8536,
+     "tempsCourant": 23182.5,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3182,
+     "tempsCourant": 23182.5,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9999,
+     "tempsCourant": 24499.1,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4499,
+     "tempsCourant": 24499.1,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 613,
+    "essaisPaire": 1,
+    "parSection": {
+     "realisations": {
+      "de": 0,
+      "a": 451,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 175890
+     },
+     "communes": {
+      "de": 451,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 153270
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "div.scene__tete.scene__tete--deux.reveal",
+     "section": "communes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "scene__tete scene__tete--deux reveal vu"
+     ],
+     "derniere": "scene__tete scene__tete--deux reveal vu"
+    },
+    {
+     "cible": "a.commune.reveal:1",
+     "section": "communes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "commune reveal vu"
+     ],
+     "derniere": "commune reveal vu"
+    },
+    {
+     "cible": "a.commune.reveal:2",
+     "section": "communes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "commune reveal vu"
+     ],
+     "derniere": "commune reveal vu"
+    },
+    {
+     "cible": "a.commune.reveal:3",
+     "section": "communes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "commune reveal vu"
+     ],
+     "derniere": "commune reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 11,
+   "yDemande": 4400,
+   "scrollYArret": 4400,
+   "scrollYRepos": 4400,
+   "scrollYApresCaptures": 4400,
+   "capture": "arrets/11-y04400.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "realisations",
+     "haut": -845,
+     "bas": 51,
+     "visibleDe": 0,
+     "visibleA": 51
+    },
+    {
+     "nom": "communes",
+     "haut": 51,
+     "bas": 479,
+     "visibleDe": 51,
+     "visibleA": 479
+    },
+    {
+     "nom": "etapes",
+     "haut": 479,
+     "bas": 1331,
+     "visibleDe": 479,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "a.commune.reveal:4",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "a.commune.reveal:4",
+     "section": "communes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.etapes__tete.reveal",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.etapes__tete.reveal",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1054,
+     "tempsCourant": 25449,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5449,
+     "tempsCourant": 25449,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2536,
+     "tempsCourant": 26782.3,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6782,
+     "tempsCourant": 26782.3,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 610,
+    "essaisPaire": 1,
+    "parSection": {
+     "realisations": {
+      "de": 0,
+      "a": 51,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 19890
+     },
+     "communes": {
+      "de": 51,
+      "a": 479,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 166920
+     },
+     "etapes": {
+      "de": 479,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 142350
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 2,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 27px; --nav-ch: 51px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 27px; --nav-ch: 51px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "a.commune.reveal:4",
+     "section": "communes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "commune reveal vu"
+     ],
+     "derniere": "commune reveal vu"
+    },
+    {
+     "cible": "div.etapes__tete.reveal",
+     "section": "etapes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "etapes__tete reveal vu"
+     ],
+     "derniere": "etapes__tete reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 12,
+   "yDemande": 4800,
+   "scrollYArret": 4800,
+   "scrollYRepos": 4800,
+   "scrollYApresCaptures": 4800,
+   "capture": "arrets/12-y04800.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "communes",
+     "haut": -349,
+     "bas": 79,
+     "visibleDe": 0,
+     "visibleA": 79
+    },
+    {
+     "nom": "etapes",
+     "haut": 79,
+     "bas": 931,
+     "visibleDe": 79,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9248,
+     "tempsCourant": 166.7,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8523,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8523,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8523,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8523,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8523,
+     "tempsCourant": 166.7,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3554,
+     "tempsCourant": 27698.9,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7699,
+     "tempsCourant": 27698.9,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5036,
+     "tempsCourant": 29032.2,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9032,
+     "tempsCourant": 29032.2,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 610,
+    "essaisPaire": 1,
+    "parSection": {
+     "communes": {
+      "de": 0,
+      "a": 79,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 30810
+     },
+     "etapes": {
+      "de": 79,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 298350
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 3,
+     "valeurs": [
+      "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide"
+     ],
+     "derniere": "nav nav--claire nav--bande solide"
+    },
+    {
+     "cible": "li.etape:1",
+     "section": "etapes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "etape vu"
+     ],
+     "derniere": "etape vu"
+    },
+    {
+     "cible": "li.etape:2",
+     "section": "etapes",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "etape vu"
+     ],
+     "derniere": "etape vu"
+    },
+    {
+     "cible": "ol.etapes__liste",
+     "section": "etapes",
+     "attribut": "style",
+     "n": 1,
+     "valeurs": [
+      "--avancee: 0.000;"
+     ],
+     "derniere": "--avancee: 0.000;"
+    }
+   ]
+  },
+  {
+   "i": 13,
+   "yDemande": 5200,
+   "scrollYArret": 5200,
+   "scrollYRepos": 5200,
+   "scrollYApresCaptures": 5200,
+   "capture": "arrets/13-y05200.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "etapes",
+     "haut": -321,
+     "bas": 531,
+     "visibleDe": 0,
+     "visibleA": 531
+    },
+    {
+     "nom": "questions",
+     "haut": 531,
+     "bas": 1443,
+     "visibleDe": 531,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9247,
+     "tempsCourant": 166.6,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8522,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8522,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8522,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8522,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8522,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "span.etape__num",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8818,
+     "tempsCourant": 183.3,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "span.etape__num",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8818,
+     "tempsCourant": 183.3,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "span.etape__num",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8818,
+     "tempsCourant": 183.3,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "span.etape__num",
+     "section": "etapes",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8818,
+     "tempsCourant": 183.3,
+     "duree": 600,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6091,
+     "tempsCourant": 29982.1,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9982,
+     "tempsCourant": 29982.1,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7554,
+     "tempsCourant": 31298.7,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8701,
+     "tempsCourant": 31298.7,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 603,
+    "essaisPaire": 1,
+    "parSection": {
+     "etapes": {
+      "de": 0,
+      "a": 531,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 207090
+     },
+     "questions": {
+      "de": 531,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 122070
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "ol.etapes__liste",
+     "section": "etapes",
+     "attribut": "style",
+     "n": 1,
+     "valeurs": [
+      "--avancee: 1.000;"
+     ],
+     "derniere": "--avancee: 1.000;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 2,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide nav--sombre"
+     ],
+     "derniere": "nav nav--claire nav--bande solide nav--sombre"
+    }
+   ]
+  },
+  {
+   "i": 14,
+   "yDemande": 5600,
+   "scrollYArret": 5600,
+   "scrollYRepos": 5600,
+   "scrollYApresCaptures": 5600,
+   "capture": "arrets/14-y05600.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "etapes",
+     "haut": -721,
+     "bas": 131,
+     "visibleDe": 0,
+     "visibleA": 131
+    },
+    {
+     "nom": "questions",
+     "haut": 131,
+     "bas": 1043,
+     "visibleDe": 131,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.faq-scene__tete.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.faq-scene__tete.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "p.faq-scene__intro.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "p.faq-scene__intro.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.faq.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.faq.reveal",
+     "section": "questions",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7595,
+     "tempsCourant": 150,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8573,
+     "tempsCourant": 32215.4,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7785,
+     "tempsCourant": 32215.4,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0036,
+     "tempsCourant": 33532,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6468,
+     "tempsCourant": 33532,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 612,
+    "essaisPaire": 1,
+    "parSection": {
+     "etapes": {
+      "de": 0,
+      "a": 131,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 51090
+     },
+     "questions": {
+      "de": 131,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 278070
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "div.faq-scene__tete.reveal",
+     "section": "questions",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "faq-scene__tete reveal vu"
+     ],
+     "derniere": "faq-scene__tete reveal vu"
+    },
+    {
+     "cible": "p.faq-scene__intro.reveal",
+     "section": "questions",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "faq-scene__intro reveal vu"
+     ],
+     "derniere": "faq-scene__intro reveal vu"
+    },
+    {
+     "cible": "div.faq.reveal",
+     "section": "questions",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "faq reveal vu"
+     ],
+     "derniere": "faq reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 15,
+   "yDemande": 6000,
+   "scrollYArret": 6000,
+   "scrollYRepos": 6000,
+   "scrollYApresCaptures": 6000,
+   "capture": "arrets/15-y06000.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "questions",
+     "haut": -269,
+     "bas": 643,
+     "visibleDe": 0,
+     "visibleA": 643
+    },
+    {
+     "nom": "contact",
+     "haut": 643,
+     "bas": 1936,
+     "visibleDe": 643,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.9247,
+     "tempsCourant": 166.6,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8521,
+     "tempsCourant": 166.6,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "opacity",
+     "cible": "div.contact__tete.reveal",
+     "section": "contact",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7594,
+     "tempsCourant": 149.9,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "transform",
+     "cible": "div.contact__tete.reveal",
+     "section": "contact",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7594,
+     "tempsCourant": 149.9,
+     "duree": 550,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1091,
+     "tempsCourant": 34481.9,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5518,
+     "tempsCourant": 34481.9,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2554,
+     "tempsCourant": 35798.6,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4201,
+     "tempsCourant": 35798.6,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 602,
+    "essaisPaire": 1,
+    "parSection": {
+     "questions": {
+      "de": 0,
+      "a": 643,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 250770
+     },
+     "contact": {
+      "de": 643,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 78390
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 2,
+     "valeurs": [
+      "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 78px; --nav-sb: 0px; --nav-ch: 0px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide"
+     ],
+     "derniere": "nav nav--claire nav--bande solide"
+    },
+    {
+     "cible": "div.contact__tete.reveal",
+     "section": "contact",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "contact__tete reveal vu"
+     ],
+     "derniere": "contact__tete reveal vu"
+    }
+   ]
+  },
+  {
+   "i": 16,
+   "yDemande": 6400,
+   "scrollYArret": 6400,
+   "scrollYRepos": 6400,
+   "scrollYApresCaptures": 6400,
+   "capture": "arrets/16-y06400.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "questions",
+     "haut": -669,
+     "bas": 243,
+     "visibleDe": 0,
+     "visibleA": 243
+    },
+    {
+     "nom": "contact",
+     "haut": 243,
+     "bas": 1536,
+     "visibleDe": 243,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3554,
+     "tempsCourant": 36698.5,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3302,
+     "tempsCourant": 36698.5,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.5017,
+     "tempsCourant": 38015.1,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1985,
+     "tempsCourant": 38015.1,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 607,
+    "essaisPaire": 1,
+    "parSection": {
+     "questions": {
+      "de": 0,
+      "a": 243,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 94770
+     },
+     "contact": {
+      "de": 243,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 234390
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": []
+  },
+  {
+   "i": 17,
+   "yDemande": 6800,
+   "scrollYArret": 6800,
+   "scrollYRepos": 6800,
+   "scrollYApresCaptures": 6800,
+   "capture": "arrets/17-y06800.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 1
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "contact",
+     "haut": -157,
+     "bas": 1136,
+     "visibleDe": 0,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8853,
+     "tempsCourant": 150,
+     "duree": 250,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8025,
+     "tempsCourant": 150,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "color",
+     "cible": "a.nav__devis",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8025,
+     "tempsCourant": 150,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "button.burger",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8025,
+     "tempsCourant": 150,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:1",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8025,
+     "tempsCourant": 150,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSTransition",
+     "nom": "background-color",
+     "cible": "span:2",
+     "section": "nav",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8025,
+     "tempsCourant": 150,
+     "duree": 300,
+     "iterations": 1,
+     "delai": 0,
+     "aLEcran": true
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.6091,
+     "tempsCourant": 38981.8,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1018,
+     "tempsCourant": 38981.8,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.7572,
+     "tempsCourant": 40315.1,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0315,
+     "tempsCourant": 40315.1,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 611,
+    "essaisPaire": 1,
+    "parSection": {
+     "contact": {
+      "de": 0,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 329160
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": [
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "style",
+     "n": 2,
+     "valeurs": [
+      "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+     ],
+     "derniere": "--nav-sh: 0px; --nav-sb: 0px; --nav-ch: 78px; --nav-cb: 0px;"
+    },
+    {
+     "cible": "header.nav.nav--claire",
+     "section": "nav",
+     "attribut": "class",
+     "n": 1,
+     "valeurs": [
+      "nav nav--claire nav--bande solide nav--sombre"
+     ],
+     "derniere": "nav nav--claire nav--bande solide nav--sombre"
+    }
+   ]
+  },
+  {
+   "i": 18,
+   "yDemande": 7200,
+   "scrollYArret": 7200,
+   "scrollYRepos": 7200,
+   "scrollYApresCaptures": 7200,
+   "capture": "arrets/18-y07200.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "contact",
+     "haut": -557,
+     "bas": 736,
+     "visibleDe": 0,
+     "visibleA": 736
+    },
+    {
+     "nom": "pied",
+     "haut": 736,
+     "bas": 1141,
+     "visibleDe": 736,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.8665,
+     "tempsCourant": 41298.4,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1298,
+     "tempsCourant": 41298.4,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.0128,
+     "tempsCourant": 42615,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2615,
+     "tempsCourant": 42615,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 615,
+    "essaisPaire": 1,
+    "parSection": {
+     "contact": {
+      "de": 0,
+      "a": 736,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 287040
+     },
+     "pied": {
+      "de": 736,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 42120
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": []
+  },
+  {
+   "i": 19,
+   "yDemande": 7497,
+   "scrollYArret": 7497,
+   "scrollYRepos": 7497,
+   "scrollYApresCaptures": 7497,
+   "capture": "arrets/19-y07497.jpg",
+   "imagesAttendues": {
+    "restantes": [],
+    "attenteMs": 0
+   },
+   "hauteurPage": 8341,
+   "sections": [
+    {
+     "nom": "contact",
+     "haut": -854,
+     "bas": 439,
+     "visibleDe": 0,
+     "visibleA": 439
+    },
+    {
+     "nom": "pied",
+     "haut": 439,
+     "bas": 844,
+     "visibleDe": 439,
+     "visibleA": 844
+    }
+   ],
+   "reduit": false,
+   "supportsVuParLaPage": false,
+   "animsALArret": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.1202,
+     "tempsCourant": 43581.6,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.3582,
+     "tempsCourant": 43581.6,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "animsAuRepos": [
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-projecteur",
+     "cible": "div.hero__media::before",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.2665,
+     "tempsCourant": 44898.2,
+     "duree": 9000,
+     "iterations": "infinite",
+     "delai": -2500,
+     "aLEcran": false
+    },
+    {
+     "type": "CSSAnimation",
+     "nom": "signature-tourne-2",
+     "cible": "img",
+     "section": "heros",
+     "etat": "running",
+     "timeline": "DocumentTimeline",
+     "sujet": null,
+     "axe": null,
+     "progression": 0.4898,
+     "tempsCourant": 44898.2,
+     "duree": 10000,
+     "iterations": "infinite",
+     "delai": 0,
+     "aLEcran": false
+    }
+   ],
+   "energie": {
+    "global": {
+     "moyen": 0,
+     "part8": 0,
+     "pixels": 329160
+    },
+    "ecartDebutsMs": 613,
+    "essaisPaire": 1,
+    "parSection": {
+     "contact": {
+      "de": 0,
+      "a": 439,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 171210
+     },
+     "pied": {
+      "de": 439,
+      "a": 844,
+      "moyen": 0,
+      "part8": 0,
+      "pixels": 157950
+     }
+    }
+   },
+   "mutationsDepuisArretPrecedent": []
+  }
+ ],
+ "rails": [
+  {
+   "nom": "prestations",
+   "avant": {
+    "largeurVisible": 390,
+    "largeurTotale": 2009,
+    "defilable": true,
+    "overflowX": "auto",
+    "jaugeAffichee": false,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "apres": {
+    "scrollLeft": 332,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "captures": [
+    "rail-prestations-avant.jpg",
+    "rail-prestations-apres.jpg"
+   ]
+  },
+  {
+   "nom": "realisations",
+   "avant": {
+    "largeurVisible": 390,
+    "largeurTotale": 1412,
+    "defilable": true,
+    "overflowX": "auto",
+    "jaugeAffichee": false,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "apres": {
+    "scrollLeft": 347,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "captures": [
+    "rail-realisations-avant.jpg",
+    "rail-realisations-apres.jpg"
+   ]
+  },
+  {
+   "nom": "etapes",
+   "avant": {
+    "largeurVisible": 390,
+    "largeurTotale": 1271,
+    "defilable": true,
+    "overflowX": "auto",
+    "jaugeAffichee": false,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "apres": {
+    "scrollLeft": 312,
+    "jaugeTransform": "none",
+    "animsJauge": []
+   },
+   "captures": [
+    "rail-etapes-avant.jpg",
+    "rail-etapes-apres.jpg"
+   ]
+  }
+ ],
+ "erreurs": [],
+ "dureeMs": 50795,
+ "balayage": {
+  "pas": 40,
+  "positions": 189,
+  "animsDefilement": [],
+  "reveals": [
+   {
+    "y": 200,
+    "cible": "figure.plateau__citation.reveal",
+    "section": "plateau"
+   },
+   {
+    "y": 520,
+    "cible": "div.chiffre.reveal",
+    "section": "plateau"
+   },
+   {
+    "y": 600,
+    "cible": "div.chiffre.reveal:2",
+    "section": "plateau"
+   },
+   {
+    "y": 680,
+    "cible": "div.chiffre.reveal:3",
+    "section": "plateau"
+   },
+   {
+    "y": 800,
+    "cible": "div.plateau__photo.reveal",
+    "section": "plateau"
+   },
+   {
+    "y": 1120,
+    "cible": "div.scene__tete.scene__tete--deux.reveal",
+    "section": "prestations"
+   },
+   {
+    "y": 1360,
+    "cible": "li.presta__ligne.reveal",
+    "section": "prestations"
+   },
+   {
+    "y": 1840,
+    "cible": "li.presta__ligne.reveal:2",
+    "section": "prestations"
+   },
+   {
+    "y": 2120,
+    "cible": "h2.atelier__titre.reveal",
+    "section": "atelier"
+   },
+   {
+    "y": 2240,
+    "cible": "p.atelier__phrase.reveal",
+    "section": "atelier"
+   },
+   {
+    "y": 2920,
+    "cible": "div.scene__tete.galerie__tete.reveal",
+    "section": "realisations"
+   },
+   {
+    "y": 2960,
+    "cible": "figure.galerie__item.galerie__item--portrait.reveal",
+    "section": "realisations"
+   },
+   {
+    "y": 2960,
+    "cible": "figure.galerie__item.reveal",
+    "section": "realisations"
+   },
+   {
+    "y": 3800,
+    "cible": "div.scene__tete.scene__tete--deux.reveal",
+    "section": "communes"
+   },
+   {
+    "y": 3880,
+    "cible": "a.commune.reveal",
+    "section": "communes"
+   },
+   {
+    "y": 3960,
+    "cible": "a.commune.reveal:2",
+    "section": "communes"
+   },
+   {
+    "y": 4000,
+    "cible": "a.commune.reveal:3",
+    "section": "communes"
+   },
+   {
+    "y": 4040,
+    "cible": "a.commune.reveal:4",
+    "section": "communes"
+   },
+   {
+    "y": 4280,
+    "cible": "div.etapes__tete.reveal",
+    "section": "etapes"
+   },
+   {
+    "y": 4720,
+    "cible": "li.etape",
+    "section": "etapes"
+   },
+   {
+    "y": 4800,
+    "cible": "li.etape:2",
+    "section": "etapes"
+   },
+   {
+    "y": 5320,
+    "cible": "div.faq-scene__tete.reveal",
+    "section": "questions"
+   },
+   {
+    "y": 5360,
+    "cible": "p.faq-scene__intro.reveal",
+    "section": "questions"
+   },
+   {
+    "y": 5480,
+    "cible": "div.faq.reveal",
+    "section": "questions"
+   },
+   {
+    "y": 5960,
+    "cible": "div.contact__tete.reveal",
+    "section": "contact"
+   }
+  ],
+  "avancee": {
+   "valeursDistinctes": 7,
+   "yPremiereValeur": 4440,
+   "yHorsZero": 4880,
+   "yPlein": 5080
+  }
+ },
+ "films": [
+  {
+   "nom": "haut",
+   "depart": 0,
+   "fichiers": [
+    "film-haut.webm",
+    "film-haut.mp4"
+   ],
+   "decoupeDebutS": 2.286,
+   "imagesRaf": 897,
+   "dureeMesureeMs": 15005.8,
+   "imagesParSeconde": 59.8,
+   "pasMedianPx": 8,
+   "intervalleMedianMs": 16.699999999999818,
+   "intervalleP95Ms": 16.700000000000728,
+   "yDebut": 3,
+   "yFin": 7200,
+   "essais": [
+    {
+     "imagesParSeconde": 59.8,
+     "intervalleP95Ms": 16.700000000000728
+    }
+   ]
+  }
+ ]
+}

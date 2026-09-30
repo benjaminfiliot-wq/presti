@@ -1,0 +1,29 @@
+# Sonde (pas un livrable) : la face intérieure du limon éclaté sort tachetée dans le brouillon (12 échantillons, sans
+# débruitage). Avant de lancer deux rendus finaux de dix minutes, on vérifie aux réglages finaux (48 échantillons, OIDN) si
+# la tache vient du bruit du brouillon ou du nœud d'occlusion ajouté après le 1er tour : même scène que marche.py, rendue
+# seulement dans la bordure du limon éclaté, avec puis sans occlusion.
+# Usage : blender --background --factory-startup --python sonde-limon.py -- <dossier>
+import sys, os
+ICI = os.path.dirname(os.path.abspath(__file__)) if '__file__' in dir() else None
+args = sys.argv[sys.argv.index('--') + 1:]
+OUT_SONDE = os.path.abspath(args[0])
+source = open(os.path.join(os.path.dirname(OUT_SONDE), 'outils', 'marche.py'), encoding='utf-8').read()
+tete = source.split('\ndebut = time.time()')[0]
+sys.argv = [sys.argv[0], '--', OUT_SONDE, '5204', 'final']
+g = {'__name__': 'sonde'}
+exec(compile(tete, 'marche.py', 'exec'), g)
+bpy = g['bpy']
+g['poser'](True)
+b = g['bordure_groupe']('limon')
+g['regler'](False, g['GROUPES'], True, None, b)
+g['rendre']('sonde-avec-ao.png')
+# sans occlusion : la couleur du bois va droit au BSDF, sans le multiplicateur d'occlusion
+for m in (g['M_FIL_X'], g['M_LIMON']):
+    N, K = m.node_tree.nodes, m.node_tree.links
+    bsdf = N.get('Principled BSDF')
+    for n in N:
+        if n.type == 'MIX' and any(l.from_node.type == 'COMBINE_COLOR' for l in K if l.to_node == n):
+            a = [l for l in K if l.to_node == n and l.from_node.type == 'MIX'][0]
+            K.new(a.from_socket, bsdf.inputs['Base Color'])
+g['rendre']('sonde-sans-ao.png')
+print('SONDE', g['journal'], flush=True)

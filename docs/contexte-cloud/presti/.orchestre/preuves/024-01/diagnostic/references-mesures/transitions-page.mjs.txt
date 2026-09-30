@@ -1,0 +1,76 @@
+// Transition de page au téléphone (Chromium, « Pixel 7 ») : clique le premier lien interne, puis relève pendant 3 s
+// si le document est conservé (navigation côté client) ou remplacé, les appels à document.startViewTransition,
+// history.pushState, et les animations (document.getAnimations) vues pendant le changement, avec durée et courbe déclarées.
+// Usage : node transitions-page.mjs <slug>=<url> [...]  → <slug>.transition-page.json ici
+import { chromium, devices } from 'playwright';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ICI = path.dirname(fileURLToPath(import.meta.url));
+const sites = process.argv.slice(2).filter(a => a.includes('=')).map(a => ({ slug: a.slice(0, a.indexOf('=')), url: a.slice(a.indexOf('=') + 1) }));
+
+function sonde() {
+  window.__tp = { vt: 0, push: 0 };
+  if (document.startViewTransition) {
+    const svt = document.startViewTransition.bind(document);
+    document.startViewTransition = function (...a) { window.__tp.vt++; return svt(...a); };
+  }
+  const ps = history.pushState.bind(history);
+  history.pushState = function (...a) { window.__tp.push++; return ps(...a); };
+}
+
+for (const { slug, url } of sites) {
+  const nav = await chromium.launch({ headless: true });
+  const ctx = await nav.newContext({ ...devices['Pixel 7'], locale: 'fr-FR' });
+  await ctx.addInitScript(sonde);
+  const page = await ctx.newPage();
+  const res = { slug, url, date: new Date().toISOString() };
+  try {
+    await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(5000);
+    const lien = await page.evaluate(() => {
+      const ici = new URL(location.href);
+      const liens = [...document.querySelectorAll('a[href]')].filter(a => {
+        try {
+          const u = new URL(a.href, location.href);
+          return u.origin === ici.origin && u.pathname !== ici.pathname && !/\.(pdf|jpg|png|zip)$/i.test(u.pathname) && !a.target;
+        } catch { return false; }
+      });
+      if (!liens.length) return null;
+      window.__lienChoisi = liens[0];
+      window.__memeDocument = true;
+      return { href: liens[0].href, texte: (liens[0].textContent || '').trim().slice(0, 60) };
+    });
+    res.lien = lien;
+    if (lien) {
+      const vues = {};
+      let documentRemplace = false;
+      await page.evaluate(() => window.__lienChoisi.click());
+      for (let i = 0; i < 30; i++) {
+        await page.waitForTimeout(100);
+        const etat = await page.evaluate(() => ({
+          meme: window.__memeDocument === true,
+          url: location.href,
+          tp: window.__tp,
+          anims: document.getAnimations().slice(0, 200).map(a => {
+            const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
+            return [a.constructor.name, a.animationName || a.transitionProperty || '', Math.round(t.duration) || String(t.duration), t.easing, t.iterations, a.effect && a.effect.pseudoElement ? a.effect.pseudoElement : ''].join(' | ');
+          }),
+        })).catch(() => null);
+        if (!etat) continue;
+        if (!etat.meme) documentRemplace = true;
+        res.urlFinale = etat.url;
+        res.appels = etat.tp;
+        for (const k of etat.anims) vues[k] = (vues[k] || 0) + 1;
+      }
+      res.documentRemplace = documentRemplace;
+      res.animationsPendantLaTransition = Object.entries(vues).filter(([k]) => !/Infinity/.test(k)).sort((a, b) => b[1] - a[1]).slice(0, 25);
+    }
+  } catch (e) {
+    res.erreur = String(e.message).split('\n')[0];
+  }
+  await nav.close();
+  await fs.writeFile(path.join(ICI, `${slug}.transition-page.json`), JSON.stringify(res, null, 2));
+  console.log(slug, res.lien && res.lien.href, 'remplace', res.documentRemplace, 'appels', JSON.stringify(res.appels), 'anims', res.animationsPendantLaTransition && res.animationsPendantLaTransition.length, res.erreur || '');
+}

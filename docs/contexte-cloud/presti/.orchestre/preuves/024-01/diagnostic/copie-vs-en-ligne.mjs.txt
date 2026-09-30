@@ -1,0 +1,13 @@
+import fs from 'node:fs'; import path from 'node:path'; import crypto from 'node:crypto'
+const racine = '.orchestre/travail/024-01/moteurs/www/sites-demo/lestraque'
+const base = 'https://prestiapp.fr/sites-demo/lestraque/'
+const fichiers = ['index.html','styles.css','bureau.css','site.js','relief.js','relief-fil.js','favicon.svg','eclate/assemble.avif','eclate/calque-contremarche.avif','eclate/calque-limon.avif','eclate/calque-marche.avif','eclate/calque-vis.avif','eclate/eclate.avif','menuisier-rennes/index.html','mentions-legales/index.html']
+const h = (b) => crypto.createHash('sha256').update(b).digest('hex').slice(0, 16)
+const out = []
+for (const f of fichiers) {
+  const local = fs.readFileSync(path.join(racine, f))
+  const r = await fetch(base + f, { headers: { 'cache-control': 'no-cache' } })
+  const distant = Buffer.from(await r.arrayBuffer())
+  out.push({ fichier: f, http: r.status, octetsLocal: local.length, octetsEnLigne: distant.length, shaLocal: h(local), shaEnLigne: h(distant), identique: h(local) === h(distant), age: r.headers.get('age'), etag: r.headers.get('etag') })
+}
+console.log(JSON.stringify({ date: new Date().toISOString(), out }, null, 1))

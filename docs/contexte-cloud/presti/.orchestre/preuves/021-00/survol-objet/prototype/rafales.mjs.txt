@@ -1,0 +1,30 @@
+// Courbe de changement image à image des aperçus animés (écart absolu moyen, 0-255, sur une réduction 160 px de large) :
+// une transition = une suite d'images au-dessus du seuil ; sa durée = somme de leurs délais (67 ms la plupart).
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const DIR = 'C:/Users/benja/Documents/presti/.orchestre/travail/motionsites-apercus/'
+const out = {}
+for (const n of process.argv.slice(2)) {
+  const f = DIR + n + '.webp'
+  const meta = await sharp(f, { animated: true }).metadata()
+  const W = 160, H = Math.round(meta.pageHeight * W / meta.width)
+  let prec = null; const courbe = []
+  for (let p = 0; p < meta.pages; p++) {
+    const buf = await sharp(f, { page: p }).resize(W, H).greyscale().raw().toBuffer()
+    if (prec) { let s = 0; for (let i = 0; i < buf.length; i++) s += Math.abs(buf[i] - prec[i]); courbe.push(+(s / buf.length).toFixed(2)) } else courbe.push(0)
+    prec = buf
+  }
+  const seuil = 1.0, rafales = []
+  let debut = -1
+  const t = []; let acc = 0; for (const d of meta.delay) { t.push(acc); acc += d }
+  for (let i = 1; i <= courbe.length; i++) {
+    const haut = i < courbe.length && courbe[i] > seuil
+    if (haut && debut < 0) debut = i
+    if (!haut && debut >= 0) { rafales.push({ de: +(t[debut - 1] / 1000).toFixed(2), a: +(t[i - 1] / 1000).toFixed(2), dureeMs: t[i - 1] - t[debut - 1], pic: Math.max(...courbe.slice(debut, i)) }); debut = -1 }
+  }
+  out[n] = { images: meta.pages, rafales, courbe }
+  console.log(n, JSON.stringify(rafales))
+}
+fs.writeFileSync(DIR + 'planches/rafales.json', JSON.stringify(out))
