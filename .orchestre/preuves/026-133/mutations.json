@@ -1,0 +1,524 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/presti-coffre.sh",
+      "avant": "umask 077\n",
+      "apres": "",
+      "critere": "CF-4",
+      "extrait": "FAIL CF-4 — deuxième instruction : « export LC_ALL=C » (umask 077 attendu)",
+      "duree_s": 7.862
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/presti-coffre.sh",
+      "avant": "mv -f -- \"$tmp\" \"$coffre\"",
+      "apres": "cat -- \"$tmp\" > \"$coffre\"",
+      "critere": "CF-4",
+      "extrait": "FAIL CF-4 — ligne 154 : redirection > ou >> vers le coffre lui-même : « cat -- \"$tmp\" > \"$coffre\" »",
+      "duree_s": 7.937
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/presti-coffre.sh",
+      "avant": "echo \"✗ presti-coffre : $1\" >&2",
+      "apres": "echo \"✗ presti-coffre : $1 $valeur\" >&2",
+      "critere": "CF-3",
+      "extrait": "FAIL CF-3 — R2 (un blanc) : la valeur est répétée sur la sortie ou l'erreur",
+      "duree_s": 7.917
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/presti-coffre.sh",
+      "avant": "PRESTI_JETON_CHEF | PRESTI_JETON_USINE",
+      "apres": "SUPABASE_SERVICE_ROLE_KEY | PRESTI_JETON_CHEF | PRESTI_JETON_USINE",
+      "critere": "CF-2",
+      "extrait": "FAIL CF-2 — poser « SUPABASE_SERVICE_ROLE_KEY » (hors liste fermée) : code 0 (2 attendu)",
+      "duree_s": 7.8
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/coffre-regles.mjs",
+      "avant": "const JWT = /^eyJ[^.]*\\.[^.]*\\./",
+      "apres": "const JWT = /^impossible_a_valider$/",
+      "critere": "CF-10",
+      "extrait": "FAIL CF-10 — coffre-regles.mjs n'a pas de règle du JWT (une ligne qui teste « eyJ » et ses deux points)",
+      "duree_s": 7.729
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine-coffre.mjs",
+      "avant": "`${ASSISTANT} ${sousCommande}`",
+      "apres": "`${ASSISTANT} ${sousCommande} ${entree ?? \"\"}`",
+      "critere": "CF-11",
+      "extrait": "FAIL CF-11 — A1 par env : commande distante « sudo -n -u agents /usr/local/bin/presti-coffre poser PRESTI_JETON_CHEF <valeur> » (« sudo -n -u agents /usr/local/bin/presti-coffre poser PRESTI_JETON_CHEF » attendue)",
+      "duree_s": 7.744
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/avec-coffre.mjs",
+      "avant": "const env = {}",
+      "apres": "const env = { ...process.env }",
+      "critere": "CF-7",
+      "extrait": "FAIL CF-7 — l'enfant voit des variables en trop : ANTHROPIC_API_KEY, AWS_SECRET_ACCESS_KEY, DATABASE_URL, GIT_DIR, NODE_OPTIONS, PRESTI_COFFRE_FICHIER, PRESTI_ESPION_PARENT, PRESTI_JETON_TELEGRAM, STRIPE_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, USERPROFILE",
+      "duree_s": 7.803
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/avec-coffre.mjs",
+      "avant": "if (manquants.length) sortir(3,",
+      "apres": "if (false && manquants.length) sortir(3,",
+      "critere": "CF-8",
+      "extrait": "FAIL CF-8 — un nom absent du coffre : code 0 (3 attendu)",
+      "duree_s": 7.849
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/coffre-regles.mjs",
+      "avant": "'whsec_', 'sk-ant-admin', 'sk-ant-'",
+      "apres": "'whsec_'",
+      "critere": "CF-3",
+      "extrait": "FAIL CF-3 — scripts/usine/coffre-regles.mjs n'écrit pas la forme refusée « sk-ant-… » (refus quel que soit le nom)",
+      "duree_s": 7.864
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=coffre",
+      "fichier": "scripts/usine/coffre-regles.mjs",
+      "avant": "return FORME_TELEGRAM_BOT_TOKEN.test(valeur) ? { ok: true }",
+      "apres": "return true ? { ok: true }",
+      "critere": "CF-3",
+      "extrait": "FAIL CF-3 — T1 (TELEGRAM_BOT_TOKEN, jeton de bot : 5 chiffres) : coffre-regles.mjs accepte, refuser attendu",
+      "duree_s": 8.141
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine/socle.sh",
+      "avant": "sudo -n usermod --shell /usr/sbin/nologin agents",
+      "apres": "sudo -n usermod --shell /usr/sbin/nologin agents\nsudo -n usermod -aG sudo agents",
+      "critere": "SO-2",
+      "extrait": "FAIL SO-2 — ligne 48 : le compte agents entre dans un groupe sudo, adm ou admin : « sudo -n usermod -aG sudo agents »",
+      "duree_s": 6.259
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine/socle.sh",
+      "avant": "usine ALL=(agents) NOPASSWD: /usr/local/bin/presti-coffre",
+      "apres": "usine ALL=(agents) NOPASSWD: SETENV: /usr/local/bin/presti-coffre",
+      "critere": "SO-3",
+      "extrait": "FAIL SO-3 — règles sudoers [\"usine ALL=(agents) NOPASSWD: SETENV: /usr/local/bin/presti-coffre\",\"usine ALL=(agents) NOPASSWD: /usr/local/bin/presti-journal\"] : exactement les deux règles du socle attendues",
+      "duree_s": 6.229
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine/socle.sh",
+      "avant": "sudo -n usermod --shell /usr/sbin/nologin agents",
+      "apres": "sudo -n usermod --shell /usr/sbin/nologin agents\nsudo -n apt-get install -y bubblewrap",
+      "critere": "SO-4",
+      "extrait": "FAIL SO-4 — ligne 48 : bubblewrap (Codex prendrait /usr/bin/bwrap, hors du profil AppArmor)",
+      "duree_s": 6.224
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine-agents.mjs",
+      "avant": "npm ci --ignore-scripts",
+      "apres": "npm ci",
+      "critere": "SO-5",
+      "extrait": "FAIL SO-5 — maj : npm ci sans --ignore-scripts : « $sous_usine env -C /srv/presti-agents HUSKY=0 npm ci »",
+      "duree_s": 6.332
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine-agents.mjs",
+      "avant": "    'for f in $sources; do',",
+      "apres": "    'scp ./scripts/usine/systemd/presti-atelier.service usine:/etc/systemd/system/',\n    'for f in $sources; do',",
+      "critere": "SO-6",
+      "extrait": "FAIL SO-6 — installer surveillance : scp dans le script distant",
+      "duree_s": 6.248
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=socle",
+      "fichier": "scripts/usine/presti-journal.sh",
+      "avant": "  config-codex)\n",
+      "apres": "  coffre) fichier=\"$HOME/.config/presti/agents.env\" ;;\n  config-codex)\n",
+      "critere": "SO-8",
+      "extrait": "FAIL SO-8 — presti-journal.sh nomme agents.env",
+      "duree_s": 6.253
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "tableau[Math.ceil(tableau.length * 0.95) - 1]",
+      "apres": "tableau.reduce((a, b) => a + b, 0) / tableau.length",
+      "critere": "SV-4",
+      "extrait": "FAIL SV-4 — jeu ok : p95 cpu = 22.93090584383373 (41 attendu, rang le plus proche)",
+      "duree_s": 41.706
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "plusGrand < 22 ? 'danger'",
+      "apres": "plusGrand < 20 ? 'danger'",
+      "critere": "SV-5",
+      "extrait": "FAIL SV-5 — jeu danger : verdict « approche » (« danger » attendu : incomplet sous 1 440 mesures, danger si le plus grand p95 < 22 %, approche < 30 %, ok au-delà)",
+      "duree_s": 41.851
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "Math.floor(t.getTime() / (15 * MINUTE))",
+      "apres": "Math.floor(t.getTime() / (5 * MINUTE))",
+      "critere": "SV-7",
+      "extrait": "FAIL SV-7 — 12 POST /api/agents/battement sur une heure simulée (60 tours de 10:00 à 10:59) : 4 attendus",
+      "duree_s": 42.606
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "const semaine = semaineIso(t)",
+      "apres": "const semaine = jour",
+      "critere": "SV-9",
+      "extrait": "FAIL SV-9 — clé « usine:seuil:2026-09-14 » (« usine:seuil:2026-S38 » attendue : semaine ISO)",
+      "duree_s": 43.463
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "async function tour(t) {",
+      "apres": "async function tour(t) {\n  for (let i = 0; i < 100000000; i++) Math.sqrt(i)",
+      "critere": "SV-12",
+      "extrait": "FAIL SV-12 — --service --accelerer : 1.11 s de processeur en 10 s (moins de 0,5 s attendu : aucune charge factice)",
+      "duree_s": 50.798
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "    le: apres.le,",
+      "apres": "    le: apres.le, hote: os.hostname(),",
+      "critere": "SV-6",
+      "extrait": "FAIL SV-6 — mesures-2026-09-15.jsonl : ligne { le, hote, cpu, mem, res } (exactement { le, cpu, mem, res } attendu)",
+      "duree_s": 41.403
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/systemd/presti-surveillance.service",
+      "avant": "[Service]",
+      "apres": "[Service]\nEnvironmentFile=/home/agents/.config/presti/agents.env",
+      "critere": "SV-14",
+      "extrait": "FAIL SV-14 — [Service] EnvironmentFile= présent : le coffre ne se lit que par avec-coffre.mjs",
+      "duree_s": 41.634
+    },
+    {
+      "juge": "scripts/usine-socle-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=socle --racine={racine} --groupe=surveillance",
+      "fichier": "scripts/usine/surveillance.mjs",
+      "avant": "replace(/\\d{9,}/g, 'masque')",
+      "apres": "replace(/\\d{9,}/g, '$&')",
+      "critere": "SV-IA-3",
+      "extrait": "FAIL SV-IA-3 — un résumé porte un numéro de 9 chiffres ou plus : « ia:mistral mistral · ft-123456789012-codestral · 7/500 req/j · erreur · remis à 00:00 »",
+      "duree_s": 41.808
+    },
+    {
+      "juge": "scripts/usine-sql-qa.mjs",
+      "commande": "node scripts/usine-sql-qa.mjs --racine={racine} --critere=US-2",
+      "fichier": "supabase/migrations/0110_usine_socle.sql",
+      "avant": "do update set public = false,",
+      "apres": "do update set public = true,",
+      "critere": "US-2",
+      "extrait": "FAIL US-2 — on conflict : public = true (false attendu)",
+      "duree_s": 0.14
+    },
+    {
+      "juge": "scripts/usine-sql-qa.mjs",
+      "commande": "node scripts/usine-sql-qa.mjs --racine={racine} --critere=US-2",
+      "fichier": "supabase/migrations/0110_usine_socle.sql",
+      "avant": "-- La tâche détenue",
+      "apres": "create policy usine_lecture on storage.objects for select using (bucket_id = 'usine');\n-- La tâche détenue",
+      "critere": "US-2",
+      "extrait": "FAIL US-2 — 1 politique(s) sur storage.objects : create policy usine_lecture on storage.objects for select using(bucket_id = 'usine')",
+      "duree_s": 0.14
+    },
+    {
+      "juge": "scripts/usine-sql-qa.mjs",
+      "commande": "node scripts/usine-sql-qa.mjs --racine={racine} --critere=US-3",
+      "fichier": "supabase/migrations/0110_usine_socle.sql",
+      "avant": " and t.bail_jusqua > now()",
+      "apres": "",
+      "critere": "US-3",
+      "extrait": "FAIL US-3 — filtre ≠ « id = p_id and agent = p_agent and statut = 'bail' and bail_jusqua > now() » : manque bail_jusqua>now()",
+      "duree_s": 0.139
+    },
+    {
+      "juge": "scripts/usine-sql-qa.mjs",
+      "commande": "node scripts/usine-sql-qa.mjs --racine={racine} --critere=US-3",
+      "fichier": "supabase/migrations/0110_usine_socle.sql",
+      "avant": "from public, anon, authenticated;",
+      "apres": "from public, authenticated; grant execute on function public.ops_tache_detenue(text, uuid) to anon;",
+      "critere": "US-3",
+      "extrait": "FAIL US-3 — revoke from public, authenticated (public, anon, authenticated attendus, jamais service_role) ; 2 grant sur la fonction (un seul, à service_role, attendu)",
+      "duree_s": 0.141
+    },
+    {
+      "juge": "scripts/usine-sql-qa.mjs",
+      "commande": "node scripts/usine-sql-qa.mjs --racine={racine} --critere=US-4",
+      "fichier": "supabase/migrations/0110_usine_socle.sql",
+      "avant": "array['taches', 'evenements']::text[], 60, 30, 0, 0);",
+      "apres": "array['taches', 'evenements']::text[], 60, 30, 0, 0);\nupdate ops.agents set capacites = array['livraison','maquette'] where nom = 'livreur_usine';",
+      "critere": "US-4",
+      "extrait": "FAIL US-4 — écriture directe dans ops.agents (les graines passent par ops_agent_enregistrer)",
+      "duree_s": 0.142
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-1",
+      "fichier": "app/api/agents/usine/entree/route.ts",
+      "avant": "  if (!actif('busAgents')) return erreur(404, 'introuvable')\n",
+      "apres": "",
+      "critere": "UR-1",
+      "extrait": "FAIL UR-1 — drapeau baissé : entree → 200, 404 attendu ; drapeau baissé : entree fait 5 appel(s) au faux Supabase (ops_agent_par_jeton, consommer_limite, ops_tache_detenue, list, sign) ; entree ne lit pas le drapeau busAgents (drapeaux lus : aucun)",
+      "duree_s": 0.666
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-3",
+      "fichier": "lib/agents/usineDepot.ts",
+      "avant": "{ p_agent: agentNom, p_id: tacheId }",
+      "apres": "{ p_agent: typeof (tacheId) === 'string' ? 'autre_agent' : agentNom, p_id: tacheId }",
+      "critere": "UR-3",
+      "extrait": "FAIL UR-3 — tâche tenue : 404 (200 attendu) {\"error\":\"tache_introuvable\"} ; 60 objets : 404 (409 attendu) ; 50 objets pile : 404, 0 signature(s) (200 et 50 attendus) ; capacité hors usineLimites.json : 404 (403 attendu)",
+      "duree_s": 0.665
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-4",
+      "fichier": "lib/agents/usineDepot.ts",
+      "avant": "  if (fichiers.length > limite.fichiers_max) return refus(413, 'trop_de_fichiers')",
+      "apres": "  await supabaseAdmin.storage.from(BUCKET).createSignedUploadUrl(`${tacheId}/sortie/${fichiers[0]?.nom}`)\n  if (fichiers.length > limite.fichiers_max) return refus(413, 'trop_de_fichiers')",
+      "critere": "UR-4",
+      "extrait": "FAIL UR-4 — un fichier trop gros : 1 appel(s) au stockage (upload) — aucune signature attendue ; un total trop gros : 1 appel(s) au stockage (upload) — aucune signature attendue ; un type hors capacité : 1 appel(s) au stockage (upload) — aucune signature attendue ; un nom avec .. : 1 appel(s) au stockage (upload) — aucune signature attendue (et 11 autre(s))",
+      "duree_s": 0.736
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-5",
+      "fichier": "lib/agents/usineDepot.ts",
+      "avant": "    if (data > SEUIL_STOCKAGE) return refus(507, 'stockage')",
+      "apres": "    if (false && data > SEUIL_STOCKAGE) return refus(507, 'stockage')",
+      "critere": "UR-5",
+      "extrait": "FAIL UR-5 — stockage au-delà de 60 % : 200 (507 attendu) ; stockage au-delà de 60 % : 2 signature(s) (aucune attendue) ; stockage bien au-delà : 200 (507 attendu) ; stockage bien au-delà : 2 signature(s) (aucune attendue)",
+      "duree_s": 0.676
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-6",
+      "fichier": "lib/agents/usineDepot.ts",
+      "avant": "createSignedUploadUrl(`${tacheId}/sortie/${fichier.nom}`)",
+      "apres": "createSignedUploadUrl(`${tacheId}/${fichier.nom}`)",
+      "critere": "UR-6",
+      "extrait": "FAIL UR-6 — signatures de dépôt [\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/rapport-qa.json\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/site/images/photo.webp\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/site/index.html\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/site/styles.css\"] (exactement [\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/sortie/rapport-qa.json\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/sortie/site/images/photo.webp\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/sortie/site/index.html\",\"usine/b774dd34-2cad-4488-b5a9-40b2b44f596e/sortie/site/styles.css\"] attendues) ; dépôt « site/index.html » sans signature reçue ; dépôt « site/styles.css » sans signature reçue ; dépôt « site/images/photo.webp » sans signature reçue (et 1 autre(s))",
+      "duree_s": 0.666
+    },
+    {
+      "juge": "scripts/usine-routes-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-routes-qa.mjs --racine={racine} --critere=UR-8",
+      "fichier": "lib/agents/usineDepot.ts",
+      "avant": "      depots.push({ nom: fichier.nom, url: data.signedUrl, jeton: data.token })",
+      "apres": "      console.log('URL signée', data.signedUrl)\n      depots.push({ nom: fichier.nom, url: data.signedUrl, jeton: data.token })",
+      "critere": "UR-8",
+      "extrait": "FAIL UR-8 — lib/agents/usineDepot.ts écrit une URL ou un jeton sur la console ; un jeton de signature du stockage est écrit sur la console ; une URL signée est écrite sur la console",
+      "duree_s": 0.678
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-2",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "{ cwd: RACINE, env, shell: false,",
+      "apres": "{ cwd: RACINE, env, shell: true,",
+      "critere": "UT-2",
+      "extrait": "FAIL UT-2 — scripts/usine/tourneur.mjs lance par un shell (shell: true ou exec de child_process) ; 0 lancement(s) du fabricant (un attendu) ; 0 requête(s) de dépôt (une attendue) ; rendre : [{\"tache\":\"2d45a6a7-acbf-4492-8e3f-25ec96432b30\",\"resultat\":\"echec\",\"erreur\":\"fabrication:code 127\"}] (une fois, faite, supabase://usine/<tache>/sortie/ attendu) (et 1 autre(s))",
+      "duree_s": 0.465
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-3",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "  const env = {}\n",
+      "apres": "  const env = { ...process.env }\n",
+      "critere": "UT-3",
+      "extrait": "FAIL UT-3 — le fabricant voit ANTHROPIC_API_KEY, GITHUB_TOKEN, PRESTI_COMMANDE_LIVRAISON, PRESTI_FABRICANT, PRESTI_JETON_ATELIER, PRESTI_JETON_CHEF, PRESTI_JETON_LIVREUR_USINE, PRESTI_URL, STRIPE_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, USINE_COMMANDE (seules PATH, HOME, LANG, TZ, PLAYWRIGHT_BROWSERS_PATH, CODEX_LANCEUR attendues) ; un PRESTI_JETON_* ou ANTHROPIC_* atteint le fabricant ; variables posées en plus vues par le fabricant : PRESTI_JETON_ATELIER, PRESTI_JETON_CHEF, ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, PRESTI_FABRICANT, PRESTI_COMMANDE_LIVRAISON, USINE_COMMANDE, GITHUB_TOKEN, PRESTI_URL",
+      "duree_s": 0.444
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-6",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "MOTIFS_SECRETS.some(({ re }) => re.test(t)) || JETON_AGENT.test(t) || t.includes(jeton)",
+      "apres": "MOTIFS_SECRETS.some(({ re }) => re.test(t)) || t.includes(jeton)",
+      "critere": "UT-6",
+      "extrait": "FAIL UT-6 — secret : 1 dépôt(s), 5 PUT (aucun attendu) ; secret : rendue « faite » (echec attendu)",
+      "duree_s": 0.438
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-15",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "    if (!u || typeof u.url !== 'string' || !(await deposer(u.url, x.chemin, x.type))) return finir('echec', 'depot')\n",
+      "apres": "    if (u && typeof u.url === 'string') await deposer(u.url, x.chemin, x.type)\n",
+      "critere": "UT-15",
+      "extrait": "FAIL UT-15 — le troisième PUT échoue : rendue « faite » (echec attendu) ; tâche rendue faite avec une partie de ses fichiers",
+      "duree_s": 0.441
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-4",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "const minuterie = setTimeout(() => { expire = true; tuerArbre(enfant.pid) }, delaiMs)",
+      "apres": "const minuterie = setTimeout(() => { expire = true; enfant.kill('SIGKILL') }, delaiMs)",
+      "critere": "UT-4",
+      "extrait": "FAIL UT-4 — le petit-enfant bat encore après le délai : l'arbre n'est pas tué ; le petit-enfant (pid 2373283) est vivant",
+      "duree_s": 5.891
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UT-11",
+      "fichier": "scripts/usine/tourneur.mjs",
+      "avant": "fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, b)",
+      "apres": "fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, b)\n    if (x.nom === 'commande.json') console.log(`commande de ${JSON.parse(b.toString('utf8')).nom}`)",
+      "critere": "UT-11",
+      "extrait": "FAIL UT-11 — la console porte une valeur de commande.json (« Atelier Lestraque »)",
+      "duree_s": 0.568
+    },
+    {
+      "juge": "scripts/usine-production-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/usine-production-qa.mjs --racine={racine} --critere=UN-1",
+      "fichier": "scripts/usine/systemd/presti-atelier.service",
+      "avant": "Environment=PLAYWRIGHT_BROWSERS_PATH=/srv/playwright\n",
+      "apres": "Environment=PLAYWRIGHT_BROWSERS_PATH=/srv/playwright\nEnvironment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele\n",
+      "critere": "UN-1",
+      "extrait": "FAIL UN-1 — presti-atelier.service [Service] Environment : [\"PRESTI_HOTE=usine\",\"PRESTI_URL=https://prestiapp.fr\",\"PLAYWRIGHT_BROWSERS_PATH=/srv/playwright\",\"CODEX_LANCEUR=/usr/local/bin/presti-ia-modele\"] (exactement [\"PRESTI_HOTE=usine\",\"PRESTI_URL=https://prestiapp.fr\",\"PLAYWRIGHT_BROWSERS_PATH=/srv/playwright\"] attendus) ; presti-atelier.service porte CODEX_LANCEUR",
+      "duree_s": 0.207
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=consignes",
+      "fichier": "scripts/chef/consignes.mjs",
+      "avant": "ecrireJson(path.join(TRAVAIL, 'curseur-provisoire.json'),",
+      "apres": "ecrireJson(path.join(TRAVAIL, 'curseur-evenements.json'),",
+      "critere": "CH-N3",
+      "extrait": "FAIL CH-N3 — consignes.mjs a écrit curseur-evenements.json (seul curseur-provisoire.json est écrit ici)",
+      "duree_s": 1.235
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=consignes",
+      "fichier": "scripts/chef/consignes.mjs",
+      "avant": "neutraliser(JSON.stringify(consignes, null, 2)),",
+      "apres": "JSON.stringify(consignes, null, 2),",
+      "critere": "CH-N2",
+      "extrait": "FAIL CH-N2 — 1 ouverture(s) et 2 fermeture(s) de <consignes_benj> (1 et 1 : la balise venue d'une consigne doit être neutralisée)",
+      "duree_s": 1.217
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=fil",
+      "fichier": "scripts/chef/fil.mjs",
+      "avant": "for (const id of attendus) if (!cites.has(id)) f.push(",
+      "apres": "for (const id of attendus) if (false) f.push(",
+      "critere": "CH-F1",
+      "extrait": "FAIL CH-F1 — verifier, plan-consigne-oubliee : code 0 au lieu de 1 — ✓ fil : 0 consigne(s) lue(s), compte rendu propre",
+      "duree_s": 2.193
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=fil",
+      "fichier": "scripts/chef/fil.mjs",
+      "avant": "  const ids = []\n",
+      "apres": "  const ids = []\n  await appeler(base, jeton, 'POST', '/api/agents/battement')\n",
+      "critere": "CH-F2",
+      "extrait": "FAIL CH-F2 — reçu : POST /api/agents/battement , POST /api/agents/evenements consigne_lue, POST /api/agents/evenements cycle_termine (exactement un consigne_lue puis un cycle_termine attendus, rien d'autre)",
+      "duree_s": 2.353
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=fil",
+      "fichier": "scripts/chef/fil.mjs",
+      "avant": "{ type: 'cycle_termine', objet: modele,",
+      "apres": "{ type: 'cycle_termine', objet: `cycle:plein:${modele}`,",
+      "critere": "CH-F2",
+      "extrait": "FAIL CH-F2 — événement 2 : {\"type\":\"cycle_termine\",\"objet\":\"cycle:plein:gpt-6-sol\",\"resume\":\"cycle terminé · santé ok · 2 escalades\"} (attendu {\"type\":\"cycle_termine\",\"objet\":\"gpt-6-sol\",\"resume\":\"cycle terminé ·…",
+      "duree_s": 2.207
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=consigne",
+      "fichier": "docs/agents/chef-reunion.schema.json",
+      "avant": "\"option_defaut\": { \"$ref\": \"#/$defs/defaut_idee\" },",
+      "apres": "\"option_defaut\": { \"enum\": [\"reporter\", \"lancer\"] },",
+      "critere": "CH-K3",
+      "extrait": "FAIL CH-K3 — reunion-idee-defaut-lancer respecte le schéma (il devait le violer)",
+      "duree_s": 0.22
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=usine",
+      "fichier": "scripts/chef/cycle.mjs",
+      "avant": "env: environnementDuModele(), delaiMs",
+      "apres": "env: process.env, delaiMs",
+      "critere": "CH-U2",
+      "extrait": "FAIL CH-U2 — le modèle reçoit ANTHROPIC_API_KEY, OPENAI_API_KEY, PRESTI_JETON_CHEF, PRESTI_JETON_PONT, STRIPE_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY",
+      "duree_s": 7.377
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=usine",
+      "fichier": "scripts/chef/cycle.mjs",
+      "avant": "if (!usine && !reprise && chefRecent(entree))",
+      "apres": "if (false && chefRecent(entree))",
+      "critere": "CH-U3",
+      "extrait": "FAIL CH-U3 — hors usine, chef battu il y a 10 min : code 0 — ✓ cycle plein : 3 tâche(s), 1 décision(s), 4 événement(s) (code 0 et « le chef tourne sur l'usine » attendus)",
+      "duree_s": 7.848
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=usine",
+      "fichier": "scripts/chef/cycle.mjs",
+      "avant": "const a = await node('appliquer.mjs',",
+      "apres": "await node('fil.mjs', ['poster', plan, `--modele=${modele}`, ...b]); const a = await node('appliquer.mjs',",
+      "critere": "CH-U4",
+      "extrait": "FAIL CH-U4 — écritures reçues : evenement:consigne_lue, evenement:consigne_lue, evenement:consigne_lue, evenement:cycle_termine, taches, taches, taches, decisions, battement, evenement:consigne_lue, evenement:con…",
+      "duree_s": 7.939
+    },
+    {
+      "juge": "scripts/chef-qa.mjs",
+      "commande": "node scripts/juges-026-usine-mutations.mjs --relais=chef --racine={racine} --groupe=usine",
+      "fichier": "scripts/usine/systemd/presti-chef-plein.service",
+      "avant": "TimeoutStartSec=20min",
+      "apres": "EnvironmentFile=/home/agents/.config/presti/agents.env\nTimeoutStartSec=20min",
+      "critere": "CH-U1",
+      "extrait": "FAIL CH-U1 — presti-chef-plein.service porte un EnvironmentFile=",
+      "duree_s": 7.187
+    }
+  ]
+}
