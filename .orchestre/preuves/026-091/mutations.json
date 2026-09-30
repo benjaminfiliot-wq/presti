@@ -1,0 +1,544 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0096 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "check (profondeur between 0 and 3)",
+      "apres": "check (profondeur between 0 and 4)",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — ops.taches : contrainte du contrat introuvable — profondeur between 0 and 3",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0096 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "-- ── Les commentaires",
+      "apres": "grant select on all tables in schema ops to service_role;\n\n-- ── Les commentaires",
+      "critere": "OS-4",
+      "extrait": "FAIL OS-4 — un grant subsiste : aucun droit sur ops",
+      "duree_s": 1.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0096 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "-- ── Les commentaires",
+      "apres": "create policy lecture_agents on ops.agents for select using (true);\n\n-- ── Les commentaires",
+      "critere": "OS-1",
+      "extrait": "FAIL OS-1 — « create policy » interdit dans 0096 ; instruction hors de la liste permise : « create policy lecture_agents on ops.agents for select using(true) »",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0096 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "values ('instagram', '*', 0, 0),",
+      "apres": "values ('instagram', '*', 10, 0),",
+      "critere": "OS-5",
+      "extrait": "FAIL OS-5 — quota (instagram, *, 0, 0) : 0 graine(s), une attendue ; quota hors contrat : (instagram, *, 10, 0) ; PLAFONDS_DEFAUT.instagram = 0, graine 10 : un seul chiffre, deux endroits interdits de diverger",
+      "duree_s": 1.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0096 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "create trigger evenements_ajout_seul\n  before update or delete on ops.evenements\n  for each row execute function ops.evenements_ajout_seul();\n",
+      "apres": "",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — déclencheur absent ou incomplet : un déclencheur `before update or delete` (fonction `ops.evenements_ajout_seul()`) lève une exception, sauf si…",
+      "duree_s": 1.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0097 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "language sql\nstable\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$\n  select a.nom, a.capacites",
+      "apres": "language sql\nstable\nset search_path = ops, public, pg_temp\nas $$\n  select a.nom, a.capacites",
+      "critere": "OI-3",
+      "extrait": "FAIL OI-3 — public.ops_agent_par_jeton n'est pas security definer",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0097 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "grant execute on function public.ops_agent_par_jeton(text) to service_role;\n",
+      "apres": "grant execute on function public.ops_agent_par_jeton(text) to service_role;\ngrant execute on function public.ops_agent_par_jeton(text) to anon;\n",
+      "critere": "OI-3",
+      "extrait": "FAIL OI-3 — grant à anon sur ops_agent_par_jeton ; un grant qui ne va pas à service_role",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0097 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "  insert into ops.evenements (agent, type, objet, resume)\n  values (p_nom, case when p_pause then 'agent_pause' else 'agent_reprise' end, 'agent:' || p_nom,\n          left(case when p_pause then 'mis en pause' else 'reprise' end || coalesce(' : ' || p_motif, ''), 200));\n",
+      "apres": "",
+      "critere": "OI-4",
+      "extrait": "FAIL OI-4 — ops_agent_pause : écriture sans événement dans ops.evenements (même transaction)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0097 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "'jeton d''accès posé (son empreinte ne se journalise jamais)');",
+      "apres": "'jeton d''accès posé ' || p_hash);",
+      "critere": "OI-4",
+      "extrait": "FAIL OI-4 — ops_agent_poser_jeton : p_hash (ou une variable qui en dérive) alimente l'événement : le hash ne doit jamais entrer dans resume ni objet",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0097 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "   where e.id > coalesce(p_apres, 0)\n     and e.agent <> p_agent\n",
+      "apres": "   where e.id > coalesce(p_apres, 0)\n",
+      "critere": "OI-4",
+      "extrait": "FAIL OI-4 — ops_evenements_lire : ne filtre pas agent <> p_agent ou ne borne pas sa limite à 200",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0098 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "   limit 1\n     for update skip locked;\n  if v_id is null then",
+      "apres": "   limit 1;\n  if v_id is null then",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_tache_prendre : sans « for update skip locked », « limit 1 » ou l'intervalle de « 30 minutes »",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0098 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "bail_jusqua = now() + interval '30 minutes', maj_le = now()",
+      "apres": "bail_jusqua = now() + interval '3 hours', maj_le = now()",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_tache_prendre : sans « for update skip locked », « limit 1 » ou l'intervalle de « 30 minutes »",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0098 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "  -- 3. une clé déjà connue rend la tâche existante, AVANT tout quota, sans rien écrire\n  select t.id into v_id from ops.taches t where t.cle_idempotence = p_cle;\n  if found then\n    return query select v_id, false;\n    return;\n  end if;\n  -- 4. l'origine, la profondeur, les sous-tâches\n  if p_origine is not null then\n    select t.profondeur into v_parent from ops.taches t where t.id = p_origine for update;\n    if not found then\n      raise exception using message = 'ops:origine', errcode = 'P0001';\n    end if;\n    v_profondeur := v_parent + 1;\n    if v_profondeur > 3 then\n      raise exception using message = 'ops:profondeur', errcode = 'P0001';\n    end if;\n    select count(*) into v_enfants from ops.taches t where t.origine_id = p_origine;\n    if v_enfants >= 5 then\n      raise exception using message = 'ops:sous_taches', errcode = 'P0001';\n    end if;\n  end if;\n  -- 5. le quota du jour, depuis minuit à Paris\n  v_jour := date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris';\n  select count(*) into v_creees from ops.taches t where t.cree_par = p_agent and t.cree_le >= v_jour;\n  if v_creees >= v_agent.quota_creations_jour then\n    raise exception using message = 'ops:quota', errcode = 'P0001';\n  end if;\n",
+      "apres": "  -- 4. l'origine, la profondeur, les sous-tâches\n  if p_origine is not null then\n    select t.profondeur into v_parent from ops.taches t where t.id = p_origine for update;\n    if not found then\n      raise exception using message = 'ops:origine', errcode = 'P0001';\n    end if;\n    v_profondeur := v_parent + 1;\n    if v_profondeur > 3 then\n      raise exception using message = 'ops:profondeur', errcode = 'P0001';\n    end if;\n    select count(*) into v_enfants from ops.taches t where t.origine_id = p_origine;\n    if v_enfants >= 5 then\n      raise exception using message = 'ops:sous_taches', errcode = 'P0001';\n    end if;\n  end if;\n  -- 5. le quota du jour, depuis minuit à Paris\n  v_jour := date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris';\n  select count(*) into v_creees from ops.taches t where t.cree_par = p_agent and t.cree_le >= v_jour;\n  if v_creees >= v_agent.quota_creations_jour then\n    raise exception using message = 'ops:quota', errcode = 'P0001';\n  end if;\n  -- 3. une clé déjà connue rend la tâche existante, AVANT tout quota, sans rien écrire\n  select t.id into v_id from ops.taches t where t.cle_idempotence = p_cle;\n  if found then\n    return query select v_id, false;\n    return;\n  end if;\n",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_tache_creer : la recherche de la clé existante ne vient pas avant le calcul du quota",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0098 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "if p_auteur is null or not exists (select 1 from public.artisans ar where ar.id = p_auteur and ar.is_founder) then",
+      "apres": "if p_auteur is null then",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_decision_trancher : ne contrôle pas is_founder sur public.artisans avant toute écriture",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/ops-sql-qa.mjs --migration=0098 --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "     where d.creee_par = p_agent\n       and d.statut in ('tranchee', 'defaut_applique')",
+      "apres": "     where d.statut in ('tranchee', 'defaut_applique')",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_decisions_tranchees : ne filtre pas creee_par = p_agent, ou écrit (insert, update, delete)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "    if not found then\n      raise exception using message = 'ops:quota_absent', errcode = 'P0001';\n    end if;",
+      "apres": "    if not found then\n      null;\n    end if;",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — code(s) jamais levé(s) par un raise : ops:quota_absent",
+      "duree_s": 1.6
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "  perform pg_advisory_xact_lock(hashtext('ops:quota:' || new.canal));\n",
+      "apres": "",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — verrou « pg_advisory_xact_lock(hashtext('ops:quota:'||new.canal)…) » absent ; verrou « pg_advisory_xact_lock(hashtext('ops:quota:'||new.canal)…) » absent",
+      "duree_s": 1.6
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "create or replace function public.ops_garde_etat()",
+      "apres": "create or replace function public.ops_opposition_retirer(p_id uuid)\nreturns void\nlanguage sql\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$ delete from ops.opposition where id = p_id $$;\n\ncreate or replace function public.ops_garde_etat()",
+      "critere": "PG-2",
+      "extrait": "FAIL PG-2 — ops_opposition_retirer hors contrat de 0099 : le contrat est la seule porte ; ops_opposition_retirer : une fonction qui retire une opposition est interdite ; ops_opposition_retirer efface dans ops.opposition : aucune fonction ne retire une opposition",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "    v_jour := (now() at time zone 'Europe/Paris')::date;\n    select count(*) into v_n\n      from ops.envois e\n     where e.canal = new.canal\n       and e.type = 'reponse'\n       and e.id <> new.id\n       and e.statut in ('prepare', 'attend_accord_benj', 'approuve', 'envoye')\n       and e.prepare_le >= (v_jour::timestamp at time zone 'Europe/Paris')\n       and e.prepare_le < ((v_jour + 1)::timestamp at time zone 'Europe/Paris');\n    if v_n >= 20 then\n      raise exception using message = 'ops:quota_reponses', errcode = 'P0001';\n    end if;\n  end if;\n\n  -- 5. Les plafonds du jour de Paris (le verrou du canal est tenu depuis le début). Sur\n  --    formulaire_site, le palier ne compte que les formulaires ; sur email_sollicite,\n  --    reponse_privee et messagerie, tout message compte ; sur les autres canaux, les premiers\n  --    contacts et les relances. Un canal sans ligne '*' est fermé.\n  if new.canal in ('formulaire_site', 'email_sollicite', 'reponse_privee', 'messagerie')\n     or new.type in ('premier_contact', 'relance') then\n    v_jour := (now() at time zone 'Europe/Paris')::date;\n    v_debut := v_jour::timestamp at time zone 'Europe/Paris';\n    v_fin := (v_jour + 1)::timestamp at time zone 'Europe/Paris';",
+      "apres": "    v_jour := (now() at time zone 'UTC')::date;\n    select count(*) into v_n\n      from ops.envois e\n     where e.canal = new.canal\n       and e.type = 'reponse'\n       and e.id <> new.id\n       and e.statut in ('prepare', 'attend_accord_benj', 'approuve', 'envoye')\n       and e.prepare_le >= (v_jour::timestamp at time zone 'UTC')\n       and e.prepare_le < ((v_jour + 1)::timestamp at time zone 'UTC');\n    if v_n >= 20 then\n      raise exception using message = 'ops:quota_reponses', errcode = 'P0001';\n    end if;\n  end if;\n\n  -- 5. Les plafonds du jour de Paris (le verrou du canal est tenu depuis le début). Sur\n  --    formulaire_site, le palier ne compte que les formulaires ; sur email_sollicite,\n  --    reponse_privee et messagerie, tout message compte ; sur les autres canaux, les premiers\n  --    contacts et les relances. Un canal sans ligne '*' est fermé.\n  if new.canal in ('formulaire_site', 'email_sollicite', 'reponse_privee', 'messagerie')\n     or new.type in ('premier_contact', 'relance') then\n    v_jour := (now() at time zone 'UTC')::date;\n    v_debut := v_jour::timestamp at time zone 'UTC';\n    v_fin := (v_jour + 1)::timestamp at time zone 'UTC';",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — le jour ne se calcule pas « at time zone 'Europe/Paris' » ; un jour ou une borne se calcule « at time zone 'UTC' » : seul 'Europe/Paris' est permis dans ops.garde_envois() (le jour des plafonds est le jour de Paris) ; v_jour := (now() at time zone 'UTC')::date : le jour du plafond doit se calculer « at time zone 'Europe/Paris' » ; v_jour := (now() at time zone 'UTC')::date : le jour du",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "    v_debut := v_jour::timestamp at time zone 'Europe/Paris';\n    v_fin := (v_jour + 1)::timestamp at time zone 'Europe/Paris';",
+      "apres": "    v_debut := v_jour::timestamp at time zone 'UTC';\n    v_fin := (v_jour + 1)::timestamp at time zone 'UTC';",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — un jour ou une borne se calcule « at time zone 'UTC' » : seul 'Europe/Paris' est permis dans ops.garde_envois() (le jour des plafonds est le jour de Paris) ; v_debut := v_jour::timestamp at time zone 'UTC' : le jour du plafond doit se calculer « at time zone 'Europe/Paris' » ; v_fin := (v_jour + 1)::timestamp at time zone 'UTC' : le jour du plafond doit se calculer « at time zone 'Euro",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "    if v_hors is not null then\n      begin\n        perform public.ops_evenement_ajouter('systeme', 'envoi_hors_regle',",
+      "apres": "    if v_hors is not null then\n      raise exception using message = 'ops:opposition', errcode = 'P0001';\n      begin\n        perform public.ops_evenement_ajouter('systeme', 'envoi_hors_regle',",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — une branche « envoye » lève ops:opposition : le passage à envoye n'est refusé que par ops:pause_generale et ops:accord_perime (décision du 27/09)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "  if new.type = 'premier_contact' then\n    -- 90 jours sans recontact",
+      "apres": "  if new.type in ('premier_contact', 'lien_maquette') then\n    -- 90 jours sans recontact",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — la règle des 90 jours (ops:90_jours) vise « premier_contact », « lien_maquette » : elle ne vaut que pour premier_contact (lien_maquette, reponse, confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert, sans 90 jours)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/prospection-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/prospection-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0099_ops_garde_envois.sql",
+      "avant": "     or new.type in ('premier_contact', 'relance') then",
+      "apres": "     or new.type in ('premier_contact', 'relance', 'lien_maquette') then",
+      "critere": "PG-4",
+      "extrait": "FAIL PG-4 — le plafond du jour compte les types « premier_contact », « relance », « lien_maquette » ; il ne compte exactement que « premier_contact », « relance » (lien_maquette, reponse, confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/argent-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/argent-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0100_ops_file_argent.sql",
+      "avant": "  if not found then\n    return null;\n  end if;\n  v_msg_id := pgmq.send(",
+      "apres": "  v_msg_id := pgmq.send(",
+      "critere": "FA-4",
+      "extrait": "FAIL FA-4 — ops_argent_envoyer : pgmq.send('argent', …) n'est pas appelé seulement quand l'insertion a eu lieu (on conflict (cle) do nothing, puis found ou row_count, puis send)",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/argent-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/argent-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0100_ops_file_argent.sql",
+      "avant": "    if m.read_ct > 3 then\n      perform pgmq.archive('argent', m.msg_id);\n      update ops.argent_messages set abandonne_le = now() where ops.argent_messages.cle = v_cle;\n      insert into ops.evenements (agent, type, objet, resume)\n      values ('systeme', 'argent_abandonne', 'argent:' || v_cle, left('message abandonné après ' || m.read_ct || ' lecture(s) : ' || v_cle, 200));\n      continue;\n    end if;\n",
+      "apres": "",
+      "critere": "FA-4",
+      "extrait": "FAIL FA-4 — ops_argent_lire : sans pgmq.read('argent'), sans l'archivage au-delà de 3 lectures (read_ct > 3) ; ops_argent_lire : l'abandon ne pose pas abandonne_le ou n'écrit pas l'événement argent_abandonne",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/argent-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/argent-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0100_ops_file_argent.sql",
+      "avant": "grant execute on function public.ops_argent_lire(integer, integer) to service_role;",
+      "apres": "grant execute on function public.ops_argent_lire(integer, integer) to service_role, authenticated;",
+      "critere": "FA-1",
+      "extrait": "FAIL FA-1 — grant à anon, authenticated ou public : « grant execute on function public.ops_argent_lire(integer, integer) to service_r… » ; un grant à anon ou authenticated",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/horloge-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/horloge-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0101_ops_horloge.sql",
+      "avant": "headers := jsonb_build_object('Authorization', 'Bearer ' || v_secret),\n    timeout_milliseconds := 30000",
+      "apres": "headers := jsonb_build_object('Authorization', 'Bearer ' || v_secret)",
+      "critere": "HS-2",
+      "extrait": "FAIL HS-2 — timeout_milliseconds n'est pas explicite (pg_net attend 2 s par défaut)",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/horloge-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/horloge-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0101_ops_horloge.sql",
+      "avant": "url := 'https://prestiapp.fr/api/agents/tic',",
+      "apres": "url := 'http://prestiapp.fr/api/agents/tic',",
+      "critere": "HS-2",
+      "extrait": "FAIL HS-2 — l'URL ne vaut pas exactement https://prestiapp.fr/api/agents/tic ; une autre URL est appelée : http://prestiapp.fr/api/agents/tic",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/horloge-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/horloge-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0101_ops_horloge.sql",
+      "avant": "  select decrypted_secret into v_secret from vault.decrypted_secrets where name = 'cron_secret';",
+      "apres": "  v_secret := 'a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0';",
+      "critere": "HS-1",
+      "extrait": "FAIL HS-1 — supabase/migrations/0101_ops_horloge.sql porte une chaîne qui ressemble à un secret : a1B2… (40 signes)",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/horloge-sql-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/horloge-sql-qa.mjs --sans-essai --racine={racine}",
+      "fichier": "supabase/migrations/0101_ops_horloge.sql",
+      "avant": "'secret_present', exists (select 1 from vault.decrypted_secrets where name = 'cron_secret'),",
+      "apres": "'secret_present', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret'),",
+      "critere": "HS-4",
+      "extrait": "FAIL HS-4 — decrypted_secret hors d'un exists (…) : « 'secret_present', (select decrypted_secret from vault.decrypted_se » — la valeur du secret pourrait entrer dans le jsonb",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/agents-garde-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-garde-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/garde.ts",
+      "avant": "if (error) { console.error('[agents] consommer_limite :', error.message); return null }",
+      "apres": "if (error) { console.error('[agents] consommer_limite :', error.message); return true }",
+      "critere": "AG-3",
+      "extrait": "FAIL AG-3 — consommer_limite en erreur : agent essai_e2e_ed4e65, 503 attendu (on ne laisse pas passer, à l'inverse de lib/limites.ts)",
+      "duree_s": 8.1
+    },
+    {
+      "juge": "scripts/agents-garde-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-garde-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/garde.ts",
+      "avant": "ligne.nom !== nomDuJeton(jeton)) return refusSansJeton(req)",
+      "apres": "ligne.nom !== nomDuJeton(jeton)) return { status: 401, code: 'jeton', error: 'Jeton d’agent inconnu.' }",
+      "critere": "AG-2",
+      "extrait": "FAIL AG-2 — les trois refus n'ont pas le même corps : « {\"error\":\"Jeton d’agent refusé.\",\"code\":\"jeton\"} », « {\"error\":\"Jeton d’agent refusé.\",\"code\":\"jeton\"} », « {\"error\":\"Jeton d’agent inconnu.\",\"code\":\"jeton\"} »",
+      "duree_s": 7.7
+    },
+    {
+      "juge": "scripts/agents-garde-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-garde-qa.mjs --racine={racine}",
+      "fichier": "scripts/agents-jeton.mjs",
+      "avant": "\\n${jeton}\\nÀ poser dans le coffre",
+      "apres": "\\n${jeton}\\n${jeton}\\nÀ poser dans le coffre",
+      "critere": "AG-6",
+      "extrait": "FAIL AG-6 — agent connu : 2 jeton(s) dans la sortie, un seul attendu",
+      "duree_s": 7.7
+    },
+    {
+      "juge": "scripts/agents-routes-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-routes-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/taches/route.ts",
+      "avant": "ops_tache_creer({ p_agent: agent.nom, p_type",
+      "apres": "ops_tache_creer({ p_agent: typeof corps.agent === 'string' ? corps.agent : agent.nom, p_type",
+      "critere": "AR-5",
+      "extrait": "FAIL AR-5 — POST /api/agents/taches : p_agent = « a0 », essai_e2e_x (le jeton) attendu",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/agents-routes-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-routes-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/decisions/route.ts",
+      "avant": "import { ops_decision_creer, ops_decisions_tranchees } from '@/lib/agents/bus'",
+      "apres": "import { ops_decision_creer, ops_decision_trancher, ops_decisions_tranchees } from '@/lib/agents/bus'",
+      "critere": "AR-8",
+      "extrait": "FAIL AR-8 — app/api/agents/decisions/route.ts mentionne ops_decision_trancher",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/agents-routes-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-routes-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/decisions/route.ts",
+      "avant": "ops_decisions_tranchees({ p_agent: agent.nom, p_depuis: depuis })",
+      "apres": "ops_decisions_tranchees({ p_agent: url.searchParams.get('agent') ?? agent.nom, p_depuis: depuis })",
+      "critere": "AR-13",
+      "extrait": "FAIL AR-13 — p_agent = « a0 » (agent=a0 dans la requête), essai_e2e_x attendu",
+      "duree_s": 8.8
+    },
+    {
+      "juge": "scripts/agents-routes-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-routes-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/etat/route.ts",
+      "avant": "  if (!actif('busAgents')) return erreur(404, 'introuvable')\n",
+      "apres": "",
+      "critere": "AR-2",
+      "extrait": "FAIL AR-2 — drapeau baissé : GET /api/agents/etat → 200, 404 attendu ; drapeau baissé : GET /api/agents/etat fait 3 appel(s) au faux PostgREST (ops_agent_par_jeton, consommer_limite, ops_etat)",
+      "duree_s": 8.8
+    },
+    {
+      "juge": "scripts/agents-routes-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/agents-routes-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/bus.ts",
+      "avant": "  return GENERIQUE\n}",
+      "apres": "  return { ok: false, code: message, status: 500 }\n}",
+      "critere": "AR-7",
+      "extrait": "FAIL AR-7 — erreur sans code ops: : la réponse laisse passer le texte de Postgres (« {\"error\":\"insert or update on table \\\"taches\\\" violates foreign key constraint … »)",
+      "duree_s": 9.8
+    },
+    {
+      "juge": "scripts/pause-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/pause-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/pause.ts",
+      "avant": "if (!r.ok) return { active: true, source: 'panne' }",
+      "apres": "if (!r.ok) return { active: false, source: 'panne' }",
+      "critere": "PA-1",
+      "extrait": "FAIL PA-1 — base en erreur 500 : {\"active\":false,\"source\":\"panne\"}, {\"active\":true,\"source\":\"panne\"} attendu ; port fermé : {\"active\":false,\"source\":\"panne\"}, {\"active\":true,\"source\":\"panne\"} attendu",
+      "duree_s": 7
+    },
+    {
+      "juge": "scripts/pause-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/pause-qa.mjs --racine={racine}",
+      "fichier": "app/api/controle/pause/route.ts",
+      "avant": "  const journal = await journaliser({ acteur: f, action: 'pause_generale', cible_type: 'interrupteur', cible_id: 'pause_generale', avant: { active: avant.active, source: avant.source }, apres: { active: b.actif, motif }, reconfirme: true }, req)\n  if (!journal) return refusJournal()\n\n  const r = await ops_interrupteur_poser({ p_nom: 'pause_generale', p_actif: b.actif, p_motif: motif, p_auteur: f.uid })\n  if (!r.ok) return NextResponse.json({ error: 'L’interrupteur n’a pas pu être posé : rien n’a changé.', code: r.code }, { status: r.status })\n\n",
+      "apres": "  const r = await ops_interrupteur_poser({ p_nom: 'pause_generale', p_actif: b.actif, p_motif: motif, p_auteur: f.uid })\n  if (!r.ok) return NextResponse.json({ error: 'L’interrupteur n’a pas pu être posé : rien n’a changé.', code: r.code }, { status: r.status })\n\n  const journal = await journaliser({ acteur: f, action: 'pause_generale', cible_type: 'interrupteur', cible_id: 'pause_generale', avant: { active: avant.active, source: avant.source }, apres: { active: b.actif, motif }, reconfirme: true }, req)\n  if (!journal) return refusJournal()\n\n",
+      "critere": "PA-2",
+      "extrait": "FAIL PA-2 — journal en panne : ops_interrupteur_poser appelée 1 fois, jamais attendu ; tout bon (actif true) : ops_interrupteur_poser (rang 23) avant le journal (rang 24) ; tout bon (actif false) : ops_interrupteur_poser (rang 30) avant le journal (rang 31)",
+      "duree_s": 6.5
+    },
+    {
+      "juge": "scripts/pause-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/pause-qa.mjs --racine={racine}",
+      "fichier": "docs/agents/pause-generale.md",
+      "avant": "puis un redéploiement :",
+      "apres": "puis un nouveau déploiement :",
+      "critere": "PA-5",
+      "extrait": "FAIL PA-5 — la voie Vercel ne dit pas « redéploiement »",
+      "duree_s": 6.4
+    },
+    {
+      "juge": "scripts/pause-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/pause-qa.mjs --racine={racine}",
+      "fichier": "docs/agents/pause-generale.md",
+      "avant": "Benj n'écrit ni n'exécute aucun SQL.",
+      "apres": "Benj colle cette ligne dans le SQL Editor.",
+      "critere": "PA-10",
+      "extrait": "FAIL PA-10 — la doc cite le SQL Editor",
+      "duree_s": 6.2
+    },
+    {
+      "juge": "scripts/file-argent-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/file-argent-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/fileArgent.ts",
+      "avant": "await sousDelai(gestionnaire(message.charge ?? {}), reste)",
+      "apres": "await sousDelai(gestionnaire(message.charge ?? {}), reste).catch(() => ({}))",
+      "critere": "AF-2",
+      "extrait": "FAIL AF-2 — ops_tache_creer en 500 : ops_argent_fait appelée quand même ; ops_tache_creer en 500 : echecs = 0, 1 attendu ; brouillon : ops_argent_fait appelée 0 fois, 1 attendue",
+      "duree_s": 7.3
+    },
+    {
+      "juge": "scripts/file-argent-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/file-argent-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/fileArgent.ts",
+      "avant": "      if (reste <= 0) break lecture\n",
+      "apres": "",
+      "critere": "AF-3",
+      "extrait": "FAIL AF-3 — rendu après 5000 ms simulées (avant 4 000 attendu) ; 5 message(s) traité(s) : 1 à 3 attendus ; 5 fait(s) : 3 au plus attendus",
+      "duree_s": 7.1
+    },
+    {
+      "juge": "scripts/file-argent-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/file-argent-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/fileArgent.ts",
+      "avant": "    if (envoi.error) throw new Error('mise en file de la commande impossible')\n",
+      "apres": "    if (envoi.error) throw new Error('mise en file de la commande impossible')\n    await supabaseAdmin.from('sites_commandes').update({ etat: 'payee' }).eq('id', commande.id)\n",
+      "critere": "AF-5",
+      "extrait": "FAIL AF-5 — lib/agents/fileArgent.ts : .update( sur sites_commandes",
+      "duree_s": 7.2
+    },
+    {
+      "juge": "scripts/veilleur-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/veilleur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/veilleur.ts",
+      "avant": "if (creneau && Number(etat?.notifications_jour ?? 0) < 3) {",
+      "apres": "if (creneau) {",
+      "critere": "VA-3",
+      "extrait": "FAIL VA-3 — notifications_jour déjà à 3 au créneau du matin : 1 digest envoyé (agents:2026-10-20:matin), aucun attendu (3 envois non urgents au plus par jour) ; notifications_jour déjà à 3 : 1 événement(s) « notification » écrit(s), aucun attendu",
+      "duree_s": 17.6
+    },
+    {
+      "juge": "scripts/veilleur-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/veilleur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/veilleur.ts",
+      "avant": "const p = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })",
+      "apres": "const p = new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })",
+      "critere": "VA-4",
+      "extrait": "FAIL VA-4 — creneauDigest(2026-10-25T06:30:00Z) = null, \"matin\" attendu (25/10/2026, passage à l'heure d'hiver : 07 h 30 à Paris) ; creneauDigest(2026-10-24T05:30:00Z) = null, \"matin\" attendu (24/10/2026, heure d'été : 07 h 30 à Paris) ; creneauDigest(2026-10-20T06:59:00Z) = null, \"matin\" attendu (08 h 59 à Paris) ; creneauDigest(2026-10-20T17:59:00Z) = null, \"soir\" attendu (19 h 59 à Paris) (et 3",
+      "duree_s": 17.4
+    },
+    {
+      "juge": "scripts/veilleur-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/veilleur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/veilleur.ts",
+      "avant": "const epargne = (a: Agent) => ['a0', 'systeme'].includes(a.nom) ||",
+      "apres": "const epargne = (a: Agent) => ['a0'].includes(a.nom) ||",
+      "critere": "VA-5",
+      "extrait": "FAIL VA-5 — « 151 € sans recette » : ops_agent_pause pour chef, recenseur, systeme ; chef, recenseur attendu",
+      "duree_s": 17.7
+    },
+    {
+      "juge": "scripts/veilleur-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/veilleur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/veilleur.ts",
+      "avant": "|| !a.battement_le || a.en_pause || pause.active) continue",
+      "apres": "|| !a.battement_le || pause.active) continue",
+      "critere": "VA-2",
+      "extrait": "FAIL VA-2 — « a0, systeme, un agent jamais vu et un agent en pause » : lignes panne_agent ; (aucune) attendue(s) ; « a0, systeme, un agent jamais vu et un agent en pause » : panne_agent envoyé 1 fois tout de suite, 0 attendu(s)",
+      "duree_s": 17.7
+    },
+    {
+      "juge": "scripts/veilleur-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/veilleur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/veilleur.ts",
+      "avant": "  L.push('', `Pause générale : ${x.pause ? 'ACTIVE' : 'non'}`)",
+      "apres": "  L.push('', 'Dernier contact : marie.dupont@exemple.fr')\n  L.push('', `Pause générale : ${x.pause ? 'ACTIVE' : 'non'}`)",
+      "critere": "VA-4",
+      "extrait": "FAIL VA-4 — digest : une adresse e-mail dans le corps",
+      "duree_s": 17.7
+    },
+    {
+      "juge": "scripts/tic-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/tic-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/tic/route.ts",
+      "avant": "if (!secret || auth !== `Bearer ${secret}`) return",
+      "apres": "if (secret && auth !== `Bearer ${secret}`) return",
+      "critere": "TC-2",
+      "extrait": "FAIL TC-2 — CRON_SECRET absent → 200, 401 attendu ; CRON_SECRET absent : 7 appel(s) (pause.pauseGenerale, bus.ops_baux_expirer, fileArgent.balayerCommandesPayees), zéro attendu",
+      "duree_s": 10.4
+    },
+    {
+      "juge": "scripts/tic-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/tic-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/tic/route.ts",
+      "avant": "  if (reste() <= 0) etapes.argent = { statut: 'saute', raison: 'budget' }\n",
+      "apres": "  await enregistrerPassage('tic', { etapes, dureeMs: 0, pause }, true)\n  if (reste() <= 0) etapes.argent = { statut: 'saute', raison: 'budget' }\n",
+      "critere": "TC-3",
+      "extrait": "FAIL TC-3 — 10 h 05 : baux → balayage → passage → argent → veilleur → passage ; baux → balayage → argent → veilleur → passage attendu",
+      "duree_s": 10.4
+    },
+    {
+      "juge": "scripts/tic-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/tic-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/tic/route.ts",
+      "avant": "    await balayerCommandesPayees()\n    etapes.balayage = { statut: 'ok' }\n  } catch {\n    etapes.balayage = { statut: 'echec' }\n    reussi = false\n  }",
+      "apres": "    await balayerCommandesPayees()\n    etapes.balayage = { statut: 'ok' }\n  } catch (e) {\n    etapes.balayage = { statut: 'echec' }\n    throw e\n  }",
+      "critere": "TC-4",
+      "extrait": "FAIL TC-4 — sonde isolement : exception dans le code jugé ou la sonde : Error: panne-du-juge-340af953cb | at jouer (file:///home/usine/bacs/verif-026-091/scripts/fixtures/026-horloge-bus/veilleur/doublures/commun-doublures.mjs:23:23) | at balayerCommandesPayees (file:///home/usine/bacs/verif-026-091/scripts/fi…",
+      "duree_s": 10.2
+    },
+    {
+      "juge": "scripts/tic-qa.mjs",
+      "commande": "node /home/usine/bacs/verif-026-091/scripts/tic-qa.mjs --racine={racine}",
+      "fichier": "app/api/agents/tic/route.ts",
+      "avant": "  } catch {\n    etapes.argent = { statut: 'echec' }\n    reussi = false\n  }",
+      "apres": "  } catch (e) {\n    etapes.argent = { statut: 'echec', raison: String(e instanceof Error ? e.message : e) as 'budget' }\n    reussi = false\n  }",
+      "critere": "TC-8",
+      "extrait": "FAIL TC-8 — argent en panne : la réponse contient « @ » ; argent en panne : la réponse contient un uuid ; argent en panne : la réponse contient « ops. » ; argent en panne : le texte de l'erreur levée est dans la réponse",
+      "duree_s": 10.4
+    }
+  ]
+}

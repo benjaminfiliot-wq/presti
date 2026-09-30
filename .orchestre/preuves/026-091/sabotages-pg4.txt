@@ -1,0 +1,8 @@
+### lien_maquette soumis aux 90 jours code 1
+FAIL PG-4 — la règle des 90 jours (ops:90_jours) vise « premier_contact », « lien_maquette » : elle ne vaut que pour premier_contact (lien_maquette, reponse, confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert, 
+prospection-sql-qa : FAIL — PG-4, PG-5, PG-7
+### garde 90 jours sans if new.type code 1
+FAIL PG-4 — ops:90_jours n'est levé sous aucun « if new.type … then » : la règle des 90 jours doit viser le premier contact seul
+prospection-sql-qa : FAIL — PG-4, PG-5, PG-7
+### temoin intact code 0
+prospection-sql-qa : PASS
