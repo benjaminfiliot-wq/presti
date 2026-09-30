@@ -23,6 +23,7 @@ import { pathToFileURL } from 'node:url'
 import { R, lireOptionsOuQuitter, lancer as lancerCommun, gitGrepFichiers } from './fixtures/025/commun.mjs'
 import { creerRapport, dossierTravail, court, lf } from './lib/sql-essai.mjs'
 import { CONTRAT } from './fixtures/026-pubs-contenu/commun.mjs'
+import { testerSO2, testerSO4, testerSO8 } from './fixtures/026-pubs-contenu/studio/offre-comportement.mjs'
 
 const NOM = 'studio-offre-qa'
 const FICHE_CIBLE = '026-166'
@@ -129,6 +130,9 @@ function jugerSO2(s) {
     if (/490/.test(texte) || /49000/.test(texte)) echecs.push(`${f} : « 490 » ou « 49000 » écrit en dur (attendu : lu depuis offre.ts)`)
     if (!/(from\s+['"].*studio\/offre['"]|require\(\s*['"].*studio\/offre['"]\s*\)|import\(\s*['"].*studio\/offre['"]\s*\))/.test(texte)) echecs.push(`${f} n'importe pas lib/studio/offre`)
   }
+  const echecsDyn = testerSO2(o.racine)
+  if (echecsDyn.length) echecs.push(...echecsDyn)
+
   if (echecs.length) for (const x of echecs) s.echoue('SO-2', x)
   else s.passe('SO-2', `${CONSOMMATEURS.length} fichier(s) lisent le prix depuis lib/studio/offre.ts, ${PURS.length} module(s) pur(s) sans valeur en dur`)
 }
@@ -175,6 +179,10 @@ function jugerSO4(s) {
   if (!/pack_studio/.test(corps)) echecs.push("aucune référence à 'pack_studio' dans aiguiller")
   if (!/payment/.test(corps)) echecs.push("aucune vérification du mode 'payment' pour pack_studio")
   for (const voie of ['commande_site', 'abonnement', 'pack_pub', 'orphelin']) if (!corps.includes(voie)) echecs.push(`voie existante disparue : ${voie}`)
+  
+  const echecsDyn = testerSO4(o.racine)
+  if (echecsDyn.length) echecs.push(...echecsDyn)
+
   if (echecs.length) for (const x of echecs) s.echoue('SO-4', x)
   else s.passe('SO-4', 'aiguiller() porte pack_studio (mode payment) sans toucher aux voies existantes')
 }
@@ -272,8 +280,12 @@ function jugerSO8(s) {
   fs.rmSync(dossierSansDecision, { recursive: true, force: true }); fs.mkdirSync(path.join(dossierSansDecision, 'sortie'), { recursive: true })
   const r2 = lancer(process.execPath, [script, '--marque=maison-inconnue-0000', `--echantillon=${dossierSansDecision}`], { timeout: 5 * 60_000 })
   if (r2.code !== 2 && r2.code !== 1) echecs.push(`marque sans décision studio_echantillon ouverte : code ${r2.code}, 2 attendu`)
+  
+  const echecsDyn = testerSO8(o.racine)
+  if (echecsDyn.length) echecs.push(...echecsDyn)
+
   if (echecs.length) for (const x of echecs) s.echoue('SO-8', x)
-  else s.passe('SO-8', 'refuse (code 1) un échantillon sans vidéo, refuse (code 2) une marque sans décision ouverte')
+  else s.passe('SO-8', 'refuse un échantillon vide ou >3Mo, refuse une marque sans décision ouverte')
 }
 
 async function principal() {

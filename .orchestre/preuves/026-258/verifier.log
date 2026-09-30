@@ -1,0 +1,17 @@
+$ node --import ./scripts/ts-loader.mjs scripts/studio-offre-qa.mjs
+# 2026-09-30T10:57:29Z · code 0 · 3s
+
+studio-offre-qa — racine .
+PASS SO-1 — VIDEOS_PACK_STUDIO=5, PRIX_PACK_STUDIO_CENTS=49000, offre() cohérente, aucune fuite du prix
+PASS SO-2 — 3 fichier(s) lisent le prix depuis lib/studio/offre.ts, 1 module(s) pur(s) sans valeur en dur
+PASS SO-3 — metadata et payment_intent_data.metadata portent type/pack_id/marque_cle, invoice_creation activée, brouillonStudio puis poserSessionStudio
+PASS SO-4 — aiguiller() porte pack_studio (mode payment) sans toucher aux voies existantes
+PASS SO-5 — webhook : branche pack_studio → encaisserPackStudio, erreur sur 'introuvable' ; encaisserPackStudio : decisionEncaissement, .eq('etat','brouillon'), aucun .insert
+PASS SO-6 — aucune chaîne 'subscription' dans la route
+PASS SO-7 — jeton valide accepté, 22e jour / signature altérée / charge modifiée refusés (null), secret absent → erreur
+PASS SO-8 — refuse un échantillon vide ou >3Mo, refuse une marque sans décision ouverte
+studio-offre-qa : PASS
+(node:18396) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/benja/Documents/presti/lib/studio/offre.ts?t=1790765846978 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\benja\Documents\presti\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
