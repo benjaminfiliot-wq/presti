@@ -1,0 +1,390 @@
+// Mesure, au téléphone (Chromium + appareil Playwright « Pixel 7 »), ce que font
+// réellement des sites de référence : observateurs d'intersection, transitions et
+// animations déclenchées, durées et courbes, bibliothèques, vidéos, poids, écouteurs
+// de défilement, requêtes prefers-reduced-motion, boucles rAF au repos.
+// Usage : node mesurer-references.mjs <slug>=<url> [...] [--reduit] [--sans-captures]
+// Sortie : <ce dossier>/<slug>.<pixel7|pixel7-reduit>.json et <slug>-<n>.jpg
+import { chromium, devices } from 'playwright';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ICI = path.dirname(fileURLToPath(import.meta.url));
+const args = process.argv.slice(2);
+const reduit = args.includes('--reduit');
+const captures = !args.includes('--sans-captures');
+const sites = args.filter(a => a.includes('=') && !a.startsWith('--')).map(a => {
+  const i = a.indexOf('=');
+  return { slug: a.slice(0, i), url: a.slice(i + 1) };
+});
+
+// Script injecté avant tout script de la page.
+function sonde() {
+  const R = (window.__ref = {
+    io: { n: 0, observe: 0, options: [] },
+    animate: { n: 0, samples: [] },
+    trans: {},
+    anims: {},
+    play: { calls: 0, ok: 0, rejected: [] },
+    listeners: {},
+    mm: [],
+    numeric: {},
+    raf: 0,
+  });
+  const decoupe = v => {
+    const out = []; let prof = 0, cur = '';
+    for (const c of String(v || '')) {
+      if (c === '(') prof++;
+      if (c === ')') prof--;
+      if (c === ',' && prof === 0) { out.push(cur.trim()); cur = ''; } else cur += c;
+    }
+    out.push(cur.trim());
+    return out;
+  };
+  const desc = el => {
+    if (!el || !el.tagName) return '?';
+    const cls = typeof el.className === 'string' ? el.className.trim().split(/\s+/).slice(0, 2).join('.') : '';
+    return el.tagName.toLowerCase() + (cls ? '.' + cls : '');
+  };
+  window.__refDesc = desc;
+  const IO = window.IntersectionObserver;
+  if (IO) {
+    window.IntersectionObserver = class extends IO {
+      constructor(cb, o) {
+        super(cb, o);
+        R.io.n++;
+        if (R.io.options.length < 12) R.io.options.push({ threshold: o && o.threshold, rootMargin: o && o.rootMargin });
+      }
+      observe(t) { R.io.observe++; return super.observe(t); }
+    };
+  }
+  const anim = Element.prototype.animate;
+  Element.prototype.animate = function (k, o) {
+    R.animate.n++;
+    if (R.animate.samples.length < 20) {
+      R.animate.samples.push({
+        cible: desc(this),
+        duree: typeof o === 'number' ? o : o && o.duration,
+        easing: o && o.easing,
+        timeline: o && o.timeline ? (o.timeline.constructor && o.timeline.constructor.name) : null,
+      });
+    }
+    return anim.call(this, k, o);
+  };
+  document.addEventListener('transitionrun', e => {
+    const cs = getComputedStyle(e.target);
+    const props = decoupe(cs.transitionProperty);
+    let i = props.indexOf(e.propertyName);
+    if (i < 0) i = props.indexOf('all');
+    if (i < 0) i = 0;
+    const pick = v => { const a = decoupe(v); return a[i % a.length]; };
+    const key = e.propertyName + ' | ' + pick(cs.transitionDuration) + ' | ' + pick(cs.transitionTimingFunction) + ' | delai ' + pick(cs.transitionDelay);
+    const t = R.trans[key] || (R.trans[key] = { n: 0, ex: desc(e.target) });
+    t.n++;
+  }, true);
+  document.addEventListener('animationstart', e => {
+    const cs = getComputedStyle(e.target);
+    const names = decoupe(cs.animationName);
+    let i = names.indexOf(e.animationName);
+    if (i < 0) i = 0;
+    const pick = v => { const a = decoupe(v); return a[i % a.length]; };
+    const key = e.animationName + ' | ' + pick(cs.animationDuration) + ' | ' + pick(cs.animationTimingFunction) + ' | x' + pick(cs.animationIterationCount) + ' | timeline ' + (cs.animationTimeline ? pick(cs.animationTimeline) : 'n/a');
+    const t = R.anims[key] || (R.anims[key] = { n: 0, ex: desc(e.target) });
+    t.n++;
+  }, true);
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () {
+    R.play.calls++;
+    const p = play.call(this);
+    if (p && p.then) p.then(() => R.play.ok++, err => R.play.rejected.push(err && err.name));
+    return p;
+  };
+  const ael = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function (type, fn, o) {
+    if (/^(scroll|wheel|touchstart|touchmove|resize)$/.test(type)) {
+      const passif = o && typeof o === 'object' && 'passive' in o ? (o.passive ? 'passif' : 'actif-explicite') : 'non-precise';
+      const ou = this === window ? 'window' : this === document ? 'document' : this && this.nodeType === 1 ? 'element' : 'autre';
+      const k = type + ':' + passif + ':' + ou;
+      R.listeners[k] = (R.listeners[k] || 0) + 1;
+    }
+    return ael.call(this, type, fn, o);
+  };
+  const mm = window.matchMedia;
+  window.matchMedia = function (q) {
+    if (R.mm.length < 40 && !R.mm.includes(q)) R.mm.push(q);
+    return mm.call(window, q);
+  };
+  const raf = window.requestAnimationFrame;
+  window.requestAnimationFrame = function (cb) { R.raf++; return raf.call(window, cb); };
+  document.addEventListener('DOMContentLoaded', () => {
+    new MutationObserver(ms => {
+      for (const m of ms) {
+        const el = m.type === 'characterData' ? m.target.parentElement : m.target;
+        if (!el || el.nodeType !== 1) continue;
+        const txt = (el.textContent || '').trim();
+        if (txt.length && txt.length < 12 && /\d/.test(txt) && /^[\d\s.,+%×€k]+$/i.test(txt)) {
+          const k = desc(el);
+          if (Object.keys(R.numeric).length < 30 || R.numeric[k]) R.numeric[k] = (R.numeric[k] || 0) + 1;
+          const ex = (R.numericTextes || (R.numericTextes = {}));
+          const l = ex[k] || (ex[k] = []);
+          if (l.length < 8 && l[l.length - 1] !== txt) l.push(txt);
+        }
+      }
+    }).observe(document.documentElement, { subtree: true, characterData: true, childList: true });
+    // Animations JS (GSAP, Motion…) invisibles pour getAnimations : on suit les écritures de style en ligne qui touchent
+    // transform / translate / scale / rotate / opacity / clip-path, groupées en rafales (écart > 150 ms = nouvelle rafale).
+    const S = (R.styleJs = {});
+    const cles = new WeakMap();
+    let compte = 0;
+    new MutationObserver(ms => {
+      const t = performance.now();
+      for (const m of ms) {
+        const el = m.target;
+        const st = el.getAttribute && el.getAttribute('style');
+        if (!st || !/(transform|translate|scale|rotate|opacity|clip-path)\s*:/.test(st)) continue;
+        let k = cles.get(el);
+        if (!k) {
+          if (compte >= 400) continue;
+          compte++;
+          k = desc(el);
+          cles.set(el, k);
+        }
+        const e = S[k] || (S[k] = { elements: 0, rafales: [], vus: new WeakSet(), props: {} });
+        if (!e.vus.has(el)) { e.vus.add(el); e.elements++; el.__refRafale = null; }
+        for (const p of ['transform', 'translate', 'scale', 'rotate', 'opacity', 'clip-path']) if (new RegExp('(^|;|\\s)' + p + '\\s*:').test(st)) e.props[p] = 1;
+        const r = el.__refRafale;
+        if (r && t - r.fin <= 150) { r.fin = t; r.ecritures++; } else { const n = { debut: t, fin: t, ecritures: 1 }; el.__refRafale = n; if (e.rafales.length < 200) e.rafales.push(n); }
+      }
+    }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['style'] });
+  });
+}
+
+const SIG_CSS = {
+  'animation-timeline': /animation-timeline/,
+  'view-timeline': /view-timeline/,
+  'scroll-timeline': /scroll-timeline/,
+  'view()': /\bview\(/,
+  'prefers-reduced-motion': /prefers-reduced-motion/,
+  'svh/lvh/dvh': /\d(svh|lvh|dvh)\b/,
+  '@view-transition': /@view-transition|view-transition-name/,
+  'hover:hover': /\(\s*hover\s*:\s*hover\s*\)/,
+  'hover:none|pointer:coarse': /\(\s*hover\s*:\s*none\s*\)|\(\s*pointer\s*:\s*coarse\s*\)/,
+  'content-visibility': /content-visibility/,
+  'will-change': /will-change/,
+  'position:sticky': /position\s*:\s*(-webkit-)?sticky/,
+  'overscroll-behavior': /overscroll-behavior/,
+  'scroll-snap-type': /scroll-snap-type/,
+  'page-enter/leave (Vue)': /page-(enter|leave)-(active|from|to)/,
+};
+const SIG_JS = {
+  gsap: /GreenSock|gsap\.registerPlugin|_gsap/,
+  ScrollTrigger: /ScrollTrigger/,
+  SplitText: /SplitText/,
+  'split-type/splitting': /SplitType|splitting/,
+  lenis: /lenis/i,
+  locomotive: /data-scroll-container|has-scroll-smooth|LocomotiveScroll/,
+  'barba/swup/taxi/highway': /data-barba|swup|data-taxi|data-router-view/,
+  three: /WebGLRenderer/,
+  IntersectionObserver: /IntersectionObserver/,
+  'prefers-reduced-motion (JS)': /prefers-reduced-motion/,
+  startViewTransition: /startViewTransition/,
+  'ScrollTimeline/ViewTimeline': /ScrollTimeline|ViewTimeline/,
+  'framer-motion/motion': /framer-motion|motion-dom/,
+  swiper: /swiper/i,
+  webflow: /Webflow|data-wf-page/,
+  nuxt: /__NUXT__|nuxt/,
+};
+
+async function mesurer({ slug, url }) {
+  const navigateur = await chromium.launch({ headless: true });
+  const ctx = await navigateur.newContext({ ...devices['Pixel 7'], reducedMotion: reduit ? 'reduce' : 'no-preference', locale: 'fr-FR' });
+  await ctx.addInitScript(sonde);
+  const page = await ctx.newPage();
+  const poids = {};
+  const textes = { css: '', js: '' };
+  const attentes = [];
+  page.on('requestfinished', req => {
+    attentes.push((async () => {
+      try {
+        const type = req.resourceType();
+        const s = await req.sizes();
+        const p = poids[type] || (poids[type] = { requetes: 0, octets: 0 });
+        p.requetes++;
+        p.octets += s.responseBodySize + s.responseHeadersSize;
+        if (type === 'stylesheet' || type === 'script') {
+          const r = await req.response();
+          const b = r ? await r.text().catch(() => '') : '';
+          if (type === 'stylesheet') textes.css += '\n' + b; else textes.js += '\n' + b;
+        }
+      } catch { /* requête annulée */ }
+    })());
+  });
+  const res = { slug, url, profil: reduit ? 'pixel7-reduit' : 'pixel7', date: new Date().toISOString(), ua: devices['Pixel 7'].userAgent, viewport: devices['Pixel 7'].viewport };
+  try {
+    await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+  } catch (e) {
+    res.chargement = 'load non atteint : ' + String(e.message).split('\n')[0];
+  }
+  await page.waitForTimeout(4000);
+  const pre = await page.evaluate(() => window.__ref && window.__ref.raf).catch(() => null);
+  await page.waitForTimeout(3000);
+  const post = await page.evaluate(() => window.__ref && window.__ref.raf).catch(() => null);
+  res.rafParSecondeAuRepos = pre == null || post == null ? null : +((post - pre) / 3).toFixed(1);
+  const dossier = ICI;
+  if (captures && !reduit) await page.screenshot({ path: path.join(dossier, `${slug}-0.jpg`), type: 'jpeg', quality: 55, scale: 'css' }).catch(() => {});
+
+  const cdp = await ctx.newCDPSession(page);
+  // Position visuelle : médiane des ordonnées d'éléments de contenu (fonctionne aussi quand
+  // le site fait défiler par transform ou dans un conteneur, où scrollY reste à 0).
+  const position = () => page.evaluate(() => {
+    if (!window.__refEls) window.__refEls = [...document.querySelectorAll('h1,h2,h3,p,img,figure,section')].slice(0, 80);
+    const tops = window.__refEls.filter(e => e.isConnected).map(e => e.getBoundingClientRect().top).sort((a, b) => a - b);
+    const med = tops.length ? tops[Math.floor(tops.length / 2)] : 0;
+    return { scrollY: Math.round(window.scrollY), med: Math.round(med) };
+  }).catch(() => ({ scrollY: -1, med: 0 }));
+  const animsVues = {};
+  const noterAnimations = async () => {
+    const liste = await page.evaluate(() => document.getAnimations().slice(0, 300).map(a => {
+      const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
+      const cible = a.effect && a.effect.target;
+      let kf = [];
+      try { kf = a.effect.getKeyframes().flatMap(k => Object.keys(k)).filter(k => !['offset', 'computedOffset', 'easing', 'composite'].includes(k)); } catch { /* */ }
+      return {
+        type: a.constructor.name,
+        nom: a.animationName || a.transitionProperty || a.id || '',
+        duree: typeof t.duration === 'number' ? Math.round(t.duration) : String(t.duration),
+        easing: t.easing,
+        iterations: t.iterations,
+        timeline: a.timeline ? a.timeline.constructor.name : null,
+        cible: window.__refDesc ? window.__refDesc(cible) : '',
+        proprietes: [...new Set(kf)].slice(0, 5).join(','),
+      };
+    })).catch(() => []);
+    for (const a of liste) {
+      const k = [a.type, a.nom, a.duree, a.easing, a.iterations, a.timeline, a.proprietes].join(' | ');
+      const v = animsVues[k] || (animsVues[k] = { n: 0, ex: a.cible });
+      v.n++;
+    }
+  };
+  await noterAnimations();
+  let derniere = await position();
+  let parcours = 0;
+  let scrollYMax = 0;
+  let immobile = 0;
+  let pas = 0;
+  const vp = devices['Pixel 7'].viewport;
+  // Budget : 90 glissements ou 150 s de défilement (un site WebGL lourd a pris 40 s par pas en headless le 16/09).
+  const finBudget = Date.now() + 150000;
+  let mode = 'doigt';
+  for (; pas < 90 && (immobile < 3 || (mode === 'doigt' && pas === 3 && parcours === 0 && scrollYMax === 0)) && Date.now() < finBudget; pas++) {
+    // Glissement du doigt (touchStart, 12 touchMove de 40 px toutes les 16 ms, touchEnd) :
+    // Input.synthesizeScrollGesture de type touch ne fait pas défiler en headless (essayé le 16/09).
+    // Si trois glissements d'affilée n'ont rien fait défiler dès le départ (carrousel qui capte le doigt, verrou), repli :
+    // window.scrollBy de 60 % d'écran, noté dans res.defilement.mode.
+    if (mode === 'doigt' && pas === 3 && immobile === 3 && parcours === 0 && scrollYMax === 0) { mode = 'scrollBy'; immobile = 0; }
+    if (mode === 'doigt') {
+      const x = Math.round(vp.width / 2), y0 = Math.round(vp.height * 0.8);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: y0 }] }).catch(() => {});
+      for (let i = 1; i <= 12; i++) {
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y0 - i * 40 }] }).catch(() => {});
+        await page.waitForTimeout(16);
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }).catch(() => {});
+    } else {
+      await page.evaluate(() => window.scrollBy(0, Math.round(innerHeight * 0.6))).catch(() => {});
+    }
+    await page.waitForTimeout(450);
+    await noterAnimations();
+    const p = await position();
+    const d = Math.abs(p.med - derniere.med) + Math.abs(p.scrollY - derniere.scrollY);
+    if (d <= 2) immobile++; else immobile = 0;
+    parcours += Math.abs(p.med - derniere.med);
+    scrollYMax = Math.max(scrollYMax, p.scrollY);
+    derniere = p;
+    if (captures && !reduit && (pas === 3 || pas === 9))await page.screenshot({ path: path.join(dossier, `${slug}-${pas === 3 ? 1 : 2}.jpg`), type: 'jpeg', quality: 55, scale: 'css' }).catch(() => {});
+  }
+  res.defilement = { mode, pas, budgetEpuise: Date.now() >= finBudget, scrollYMax, parcoursVisuelMedian: parcours, hauteurDocument: await page.evaluate(() => document.documentElement.scrollHeight).catch(() => null) };
+  await page.waitForTimeout(1200);
+  const fin = await page.evaluate(() => {
+    const R = window.__ref || {};
+    const vids = [...document.querySelectorAll('video')].slice(0, 8).map(v => ({
+      autoplay: v.autoplay, muted: v.muted, playsinline: v.playsInline, loop: v.loop, preload: v.preload, poster: !!v.poster,
+      src: (v.currentSrc || '').slice(0, 140), largeur: v.videoWidth, hauteur: v.videoHeight,
+      duree: isFinite(v.duration) ? +v.duration.toFixed(1) : null, enPause: v.paused,
+    }));
+    const g = window.gsap;
+    const ST = window.ScrollTrigger;
+    let st = null;
+    if (ST && ST.getAll) {
+      const all = ST.getAll();
+      st = { n: all.length, pin: all.filter(s => s.pin || (s.vars && s.vars.pin)).length, scrub: all.filter(s => s.vars && s.vars.scrub).length };
+    }
+    let gs = null;
+    if (g && g.globalTimeline) {
+      const ch = g.globalTimeline.getChildren(true, true, false);
+      const par = {};
+      for (const t of ch.slice(0, 3000)) {
+        const e = t.vars && t.vars.ease;
+        const k = (+t.duration().toFixed(2)) + 's | ' + (typeof e === 'string' ? e : e ? 'fonction' : 'defaut');
+        par[k] = (par[k] || 0) + 1;
+      }
+      gs = { version: g.version, enfantsRestants: ch.length, parDureeEase: Object.entries(par).sort((a, b) => b[1] - a[1]).slice(0, 12) };
+    }
+    const tokens = /^(split|splits|word|words|char|chars|line|lines|.*__(word|char|line)s?|.*-(word|char|line)s?|(word|char|line)s?-.*)$/i;
+    const parents = new Map();
+    for (const el of document.querySelectorAll('body span, body div')) {
+      if (typeof el.className !== 'string') continue;
+      if (el.className.split(/\s+/).some(c => tokens.test(c)) && el.parentElement) parents.set(el.parentElement, (parents.get(el.parentElement) || 0) + 1);
+    }
+    let sticky = 0;
+    for (const el of document.querySelectorAll('body *')) {
+      const p = getComputedStyle(el).position;
+      if (p === 'sticky' && el.parentElement && el.parentElement.getBoundingClientRect().height > el.getBoundingClientRect().height * 1.5 && el.getBoundingClientRect().height > innerHeight * 0.4) sticky++;
+    }
+    const styleJs = Object.entries(R.styleJs || {}).map(([k, e]) => {
+      const durees = e.rafales.filter(r => r.ecritures >= 3).map(r => Math.round(r.fin - r.debut)).sort((a, b) => a - b);
+      return {
+        cible: k, elements: e.elements, proprietes: Object.keys(e.props).join(','), rafales: e.rafales.length,
+        rafalesParElement: +(e.rafales.length / Math.max(1, e.elements)).toFixed(1),
+        dureeMedianeMs: durees.length ? durees[Math.floor(durees.length / 2)] : null,
+        ecrituresTotales: e.rafales.reduce((a, r) => a + r.ecritures, 0),
+      };
+    }).sort((a, b) => b.ecrituresTotales - a.ecrituresTotales).slice(0, 20);
+    return {
+      titre: document.title,
+      styleJs,
+      io: R.io, animate: R.animate, play: R.play, ecouteurs: R.listeners, matchMedia: R.mm,
+      compteursNumeriques: Object.fromEntries(Object.entries(R.numeric || {}).filter(([, n]) => n >= 5).map(([k, n]) => [k, { changements: n, textes: (R.numericTextes || {})[k] || [] }])),
+      transitions: Object.entries(R.trans || {}).sort((a, b) => b[1].n - a[1].n).slice(0, 25),
+      animationsCss: Object.entries(R.anims || {}).sort((a, b) => b[1].n - a[1].n).slice(0, 25),
+      videos: vids, gsapGlobal: gs, scrollTriggerGlobal: st,
+      pinSpacers: document.querySelectorAll('.pin-spacer').length,
+      scenesSticky: sticky,
+      texteDecoupe: { parentsAvec3Fragments: [...parents.values()].filter(n => n >= 3).length, fragments: [...parents.values()].reduce((a, b) => a + b, 0) },
+      classesRacine: document.documentElement.className.slice(0, 200),
+      supports: { view: CSS.supports('animation-timeline: view()'), scroll: CSS.supports('animation-timeline: scroll()') },
+      reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      imagesDecodingAsync: document.querySelectorAll('img[decoding="async"]').length,
+      imagesLazy: document.querySelectorAll('img[loading="lazy"]').length,
+      images: document.querySelectorAll('img').length,
+    };
+  }).catch(e => ({ erreur: String(e.message) }));
+  Object.assign(res, fin);
+  const html = await page.content().catch(() => '');
+  await Promise.allSettled(attentes);
+  const css = textes.css + '\n' + html;
+  const js = textes.js + '\n' + html;
+  res.signaturesCss = Object.fromEntries(Object.entries(SIG_CSS).map(([k, r]) => [k, r.test(css)]));
+  res.signaturesJs = Object.fromEntries(Object.entries(SIG_JS).map(([k, r]) => [k, r.test(js)]));
+  res.animationsVuesPendantDefilement = Object.entries(animsVues).sort((a, b) => b[1].n - a[1].n).slice(0, 30);
+  res.poidsParType = poids;
+  res.octetsTotal = Object.values(poids).reduce((a, p) => a + p.octets, 0);
+  await navigateur.close();
+  const fichier = path.join(dossier, `${slug}.${res.profil}.json`);
+  await fs.writeFile(fichier, JSON.stringify(res, null, 2));
+  console.log('ecrit', fichier, 'pas', res.defilement.pas, 'io', res.io && res.io.n, 'trans', res.transitions && res.transitions.length, 'octets', res.octetsTotal);
+}
+
+for (const s of sites) {
+  try { await mesurer(s); } catch (e) { console.log('ECHEC', s.slug, e.message); }
+}

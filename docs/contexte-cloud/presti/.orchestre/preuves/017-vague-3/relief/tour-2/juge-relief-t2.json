@@ -1,0 +1,2171 @@
+{
+ "c1": {
+  "relief": {
+   "variante": "relief",
+   "captures": {
+    "t0-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-t0-5s.png",
+    "t2-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-t2-5s.png",
+    "t4-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-t4-5s.png",
+    "souris-haut-gauche": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-souris-haut-gauche.png",
+    "souris-bas-droite": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-souris-bas-droite.png",
+    "fige-souris-haut-gauche": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-fige-souris-haut-gauche.png",
+    "fige-souris-bas-droite": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-fige-souris-bas-droite.png",
+    "fige-souris-bas-droite-immobile-3-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-relief-fige-souris-bas-droite-immobile-3-5s.png"
+   },
+   "etats": {
+    "t0-5s-horloge": 514,
+    "t0-5s": {
+     "t": 2292,
+     "etat": null,
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -0.46,
+      -0.25,
+      1441.09,
+      900.68
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": []
+     },
+     "scrollY": 0
+    },
+    "t2-5s-horloge": 2519,
+    "t2-5s": {
+     "t": 3582,
+     "etat": null,
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": false,
+     "toileOpacite": "0",
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -1.49,
+      -0.82,
+      1443.54,
+      902.21
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": []
+     },
+     "scrollY": 0
+    },
+    "t4-5s-horloge": 4503,
+    "t4-5s": {
+     "t": 5700,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -4.59,
+      -2.53,
+      1450.93,
+      906.83
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "souris-haut-gauche": {
+     "t": 8864,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -12.59,
+      -6.93,
+      1469.97,
+      918.73
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "souris-bas-droite": {
+     "t": 14003,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -28.46,
+      -15.67,
+      1507.76,
+      942.35
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-haut-gauche": {
+     "t": 17434,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -30.49,
+      -16.79,
+      1512.59,
+      945.37
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-bas-droite": {
+     "t": 20255,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -30.49,
+      -16.79,
+      1512.59,
+      945.37
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-bas-droite-immobile-3-5s": {
+     "t": 24325,
+     "etat": "pret",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": true,
+     "toilePrete": true,
+     "toileOpacite": "1",
+     "imgVisibilite": "hidden",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -30.49,
+      -16.79,
+      1512.59,
+      945.37
+     ],
+     "canvases": 1,
+     "releve": {
+      "getContext": [
+       "webgl"
+      ],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 1,
+      "etats": [
+       [
+        "pret",
+        4210
+       ]
+      ]
+     },
+     "scrollY": 0
+    }
+   },
+   "zoneHeros": {
+    "left": 0,
+    "top": 0,
+    "width": 1440,
+    "height": 900
+   },
+   "diffs": {
+    "t0.5→t2.5": {
+     "pixelsDiff2": 28.82,
+     "pixelsDiff8": 8.99,
+     "pixelsDiff24": 4.81,
+     "ecartMoyen": 10.79
+    },
+    "t2.5→t4.5": {
+     "pixelsDiff2": 49.36,
+     "pixelsDiff8": 16.64,
+     "pixelsDiff24": 2.34,
+     "ecartMoyen": 4.88
+    },
+    "t0.5→t4.5": {
+     "pixelsDiff2": 59.37,
+     "pixelsDiff8": 26.56,
+     "pixelsDiff24": 8.29,
+     "ecartMoyen": 14.71
+    },
+    "souris hg→bd": {
+     "pixelsDiff2": 79.78,
+     "pixelsDiff8": 56.07,
+     "pixelsDiff24": 28.48,
+     "ecartMoyen": 21.87
+    }
+   },
+   "animationsFigees": 71,
+   "diffsFiges": {
+    "souris hg→bd (CSS figée)": {
+     "pixelsDiff2": 77.01,
+     "pixelsDiff8": 50.27,
+     "pixelsDiff24": 20.8,
+     "ecartMoyen": 17.21
+    },
+    "bd immobile 3,5 s (CSS figée)": {
+     "pixelsDiff2": 64.74,
+     "pixelsDiff8": 32.45,
+     "pixelsDiff24": 8.09,
+     "ecartMoyen": 9.09
+    }
+   },
+   "contraste": [
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.383,
+     "p10": 3.35,
+     "min": 1.716
+    },
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.378,
+     "p10": 3.347,
+     "min": 1.712
+    },
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.366,
+     "p10": 3.348,
+     "min": 1.717
+    }
+   ],
+   "console": [],
+   "requetesRelief": [
+    "/relief-fil.js",
+    "/relief.js",
+    "/relief/escalier-profondeur.webp"
+   ],
+   "releve": {
+    "getContext": [
+     "webgl"
+    ],
+    "workers": [
+     "relief-fil.js"
+    ],
+    "transferts": 1,
+    "etats": [
+     [
+      "pret",
+      4210
+     ]
+    ]
+   },
+   "rendu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00004628) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "temoin": {
+   "variante": "temoin",
+   "captures": {
+    "t0-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-t0-5s.png",
+    "t2-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-t2-5s.png",
+    "t4-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-t4-5s.png",
+    "souris-haut-gauche": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-souris-haut-gauche.png",
+    "souris-bas-droite": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-souris-bas-droite.png",
+    "fige-souris-haut-gauche": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-fige-souris-haut-gauche.png",
+    "fige-souris-bas-droite": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-fige-souris-bas-droite.png",
+    "fige-souris-bas-droite-immobile-3-5s": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c1-temoin-fige-souris-bas-droite-immobile-3-5s.png"
+   },
+   "etats": {
+    "t0-5s-horloge": 502,
+    "t0-5s": {
+     "t": 1997,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -0.21,
+      -0.11,
+      1440.49,
+      900.31
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "t2-5s-horloge": 2500,
+    "t2-5s": {
+     "t": 3114,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -0.83,
+      -0.46,
+      1441.97,
+      901.23
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "t4-5s-horloge": 4508,
+    "t4-5s": {
+     "t": 5299,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -3.41,
+      -1.88,
+      1448.12,
+      905.08
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "souris-haut-gauche": {
+     "t": 7609,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -8.27,
+      -4.55,
+      1459.69,
+      912.31
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "souris-bas-droite": {
+     "t": 10579,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -17.24,
+      -9.49,
+      1481.06,
+      925.66
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-haut-gauche": {
+     "t": 13630,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -19.72,
+      -10.86,
+      1486.95,
+      929.34
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-bas-droite": {
+     "t": 16295,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -19.72,
+      -10.86,
+      1486.95,
+      929.34
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    },
+    "fige-souris-bas-droite-immobile-3-5s": {
+     "t": 20302,
+     "etat": "sans",
+     "heros": [
+      0,
+      0,
+      1440,
+      900
+     ],
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "h1Couleur": "rgb(255, 255, 255)",
+     "h1Opacite": "1",
+     "h1Transform": "none",
+     "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+     "toile": false,
+     "toilePrete": false,
+     "toileOpacite": null,
+     "imgVisibilite": "visible",
+     "imgComplete": true,
+     "imgNaturelle": 1440,
+     "imgSrc": "/images/heros-escalier-1600.avif",
+     "imgBoite": [
+      -19.72,
+      -10.86,
+      1486.95,
+      929.34
+     ],
+     "canvases": 0,
+     "releve": {
+      "getContext": [],
+      "workers": [
+       "relief-fil.js"
+      ],
+      "transferts": 0,
+      "etats": [
+       [
+        "sans",
+        843
+       ]
+      ]
+     },
+     "scrollY": 0
+    }
+   },
+   "zoneHeros": {
+    "left": 0,
+    "top": 0,
+    "width": 1440,
+    "height": 900
+   },
+   "diffs": {
+    "t0.5→t2.5": {
+     "pixelsDiff2": 23.8,
+     "pixelsDiff8": 8.03,
+     "pixelsDiff24": 4.74,
+     "ecartMoyen": 10.45
+    },
+    "t2.5→t4.5": {
+     "pixelsDiff2": 44.07,
+     "pixelsDiff8": 12.98,
+     "pixelsDiff24": 1.54,
+     "ecartMoyen": 4.12
+    },
+    "t0.5→t4.5": {
+     "pixelsDiff2": 55.31,
+     "pixelsDiff8": 22.95,
+     "pixelsDiff24": 7.1,
+     "ecartMoyen": 13.89
+    },
+    "souris hg→bd": {
+     "pixelsDiff2": 67.55,
+     "pixelsDiff8": 36.98,
+     "pixelsDiff24": 10.92,
+     "ecartMoyen": 10.81
+    }
+   },
+   "animationsFigees": 70,
+   "diffsFiges": {
+    "souris hg→bd (CSS figée)": {
+     "pixelsDiff2": 0,
+     "pixelsDiff8": 0,
+     "pixelsDiff24": 0,
+     "ecartMoyen": 0
+    },
+    "bd immobile 3,5 s (CSS figée)": {
+     "pixelsDiff2": 0,
+     "pixelsDiff8": 0,
+     "pixelsDiff24": 0,
+     "ecartMoyen": 0
+    }
+   },
+   "contraste": [
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.489,
+     "p10": 3.345,
+     "min": 1.699
+    },
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.489,
+     "p10": 3.345,
+     "min": 1.699
+    },
+    {
+     "h1": [
+      72,
+      489.14,
+      1296,
+      216.92
+     ],
+     "moyen": 9.489,
+     "p10": 3.345,
+     "min": 1.699
+    }
+   ],
+   "console": [],
+   "requetesRelief": [
+    "/relief-fil.js"
+   ],
+   "releve": {
+    "getContext": [],
+    "workers": [
+     "relief-fil.js"
+    ],
+    "transferts": 0,
+    "etats": [
+     [
+      "sans",
+      843
+     ]
+    ]
+   },
+   "rendu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00004628) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  }
+ },
+ "c2": {
+  "media": {
+   "hover": false,
+   "fine": false,
+   "w": 390
+  },
+  "requetesTotal": 22,
+  "requetesRelief": [],
+  "scripts": [
+   "/site.js"
+  ],
+  "images": [
+   "/images/heros-escalier-portrait-1440.avif",
+   "/images/mains-noyer-1600.avif",
+   "/images/tournage-copeaux-960.avif",
+   "/images/penderie-960.avif",
+   "/images/reserve-bibliotheque-960.avif",
+   "/images/atelier-poncage-960.avif",
+   "/images/atelier-poncage-portrait-1080.avif",
+   "/images/reserve-bibliotheque-1600.avif",
+   "/images/reserve-cuisine-poutres-1600.avif",
+   "/images/penderie-1600.avif",
+   "/images/tournage-copeaux-1600.avif",
+   "/images/tasseaux-cloison-780.avif",
+   "/images/boiserie-2400.avif"
+  ],
+  "workers": [],
+  "getContextWebgl": 0,
+  "getContextTous": [],
+  "workersCrees": [],
+  "transferts": 0,
+  "canvases": 0,
+  "etatRelief": null,
+  "console": []
+ },
+ "c3": {
+  "reduit": true,
+  "requetesRelief": [],
+  "workers": [],
+  "getContextWebgl": 0,
+  "etat": {
+   "t": 7481,
+   "etat": null,
+   "heros": [
+    0,
+    0,
+    1440,
+    900
+   ],
+   "h1": [
+    72,
+    489.14,
+    1296,
+    216.92
+   ],
+   "h1Couleur": "rgb(255, 255, 255)",
+   "h1Opacite": "1",
+   "h1Transform": "none",
+   "h1Ombre": "rgba(10, 7, 4, 0.35) 0px 2px 36px",
+   "toile": false,
+   "toilePrete": false,
+   "toileOpacite": null,
+   "imgVisibilite": "visible",
+   "imgComplete": true,
+   "imgNaturelle": 1440,
+   "imgSrc": "/images/heros-escalier-1600.avif",
+   "imgBoite": [
+    0,
+    0,
+    1440,
+    900
+   ],
+   "canvases": 0,
+   "releve": {
+    "getContext": [],
+    "workers": [],
+    "transferts": 0,
+    "etats": []
+   },
+   "scrollY": 0
+  },
+  "imgAnimation": {
+   "animation": "pousse",
+   "scale": "1",
+   "translate": "none"
+  },
+  "diffs": {
+   "t1→souris-hg": {
+    "pixelsDiff2": 0,
+    "pixelsDiff8": 0,
+    "pixelsDiff24": 0,
+    "ecartMoyen": 0
+   },
+   "hg→bd": {
+    "pixelsDiff2": 0,
+    "pixelsDiff8": 0,
+    "pixelsDiff24": 0,
+    "ecartMoyen": 0
+   },
+   "t1→t7": {
+    "pixelsDiff2": 0,
+    "pixelsDiff8": 0,
+    "pixelsDiff24": 0,
+    "ecartMoyen": 0
+   }
+  }
+ },
+ "c4": [
+  {
+   "nom": "headless-shell",
+   "version": "153.0.8010.12",
+   "etat": "sans",
+   "etatsHorodates": [
+    [
+     "sans",
+     411
+    ]
+   ],
+   "toile": false,
+   "canvases": 0,
+   "imgVisibilite": "visible",
+   "imgComplete": true,
+   "imgNaturelle": 1440,
+   "imgBoite": [
+    -5.38,
+    -2.96,
+    1452.8,
+    908
+   ],
+   "heros": [
+    0,
+    0,
+    1440,
+    900
+   ],
+   "requetesRelief": [
+    "/relief-fil.js"
+   ],
+   "echecs": [],
+   "workers": [
+    {
+     "url": "http://127.0.0.1:47931/relief-fil.js",
+     "ferme": true
+    }
+   ],
+   "getContext": [],
+   "webglFilPrincipal": false,
+   "console": [],
+   "erreursConsole": [],
+   "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c4-drapeaux-headless-shell.png",
+   "pixels": {
+    "luminanceMoyenne": 94,
+    "ecartType": 69.2
+   }
+  },
+  {
+   "nom": "chromium",
+   "version": "153.0.8010.12",
+   "etat": "sans",
+   "etatsHorodates": [
+    [
+     "sans",
+     1130
+    ]
+   ],
+   "toile": false,
+   "canvases": 0,
+   "imgVisibilite": "visible",
+   "imgComplete": true,
+   "imgNaturelle": 1440,
+   "imgBoite": [
+    -5.22,
+    -2.87,
+    1452.42,
+    907.76
+   ],
+   "heros": [
+    0,
+    0,
+    1440,
+    900
+   ],
+   "requetesRelief": [
+    "/relief-fil.js"
+   ],
+   "echecs": [],
+   "workers": [
+    {
+     "url": "http://127.0.0.1:47931/relief-fil.js",
+     "ferme": true
+    }
+   ],
+   "getContext": [
+    "webgl"
+   ],
+   "webglFilPrincipal": false,
+   "console": [],
+   "erreursConsole": [],
+   "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c4-drapeaux-chromium.png",
+   "pixels": {
+    "luminanceMoyenne": 95.2,
+    "ecartType": 69.1
+   }
+  },
+  {
+   "nom": "chrome",
+   "version": "152.0.7977.84",
+   "etat": "sans",
+   "etatsHorodates": [
+    [
+     "sans",
+     1234
+    ]
+   ],
+   "toile": false,
+   "canvases": 0,
+   "imgVisibilite": "visible",
+   "imgComplete": true,
+   "imgNaturelle": 1440,
+   "imgBoite": [
+    -5.25,
+    -2.89,
+    1452.5,
+    907.81
+   ],
+   "heros": [
+    0,
+    0,
+    1440,
+    900
+   ],
+   "requetesRelief": [
+    "/relief-fil.js"
+   ],
+   "echecs": [],
+   "workers": [
+    {
+     "url": "http://127.0.0.1:47931/relief-fil.js",
+     "ferme": true
+    }
+   ],
+   "getContext": [
+    "webgl"
+   ],
+   "webglFilPrincipal": false,
+   "console": [],
+   "erreursConsole": [],
+   "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c4-drapeaux-chrome.png",
+   "pixels": {
+    "luminanceMoyenne": 95.2,
+    "ecartType": 69.1
+   }
+  },
+  {
+   "nom": "chrome-fenetre",
+   "version": "152.0.7977.84",
+   "etat": "sans",
+   "etatsHorodates": [
+    [
+     "sans",
+     1398
+    ]
+   ],
+   "toile": false,
+   "canvases": 0,
+   "imgVisibilite": "visible",
+   "imgComplete": true,
+   "imgNaturelle": 1440,
+   "imgBoite": [
+    -9.32,
+    -5.19,
+    1446.87,
+    914.02
+   ],
+   "heros": [
+    0,
+    0,
+    1424.67,
+    900
+   ],
+   "requetesRelief": [
+    "/relief-fil.js"
+   ],
+   "echecs": [],
+   "workers": [
+    {
+     "url": "http://127.0.0.1:47931/relief-fil.js",
+     "ferme": true
+    }
+   ],
+   "getContext": [
+    "webgl"
+   ],
+   "webglFilPrincipal": false,
+   "console": [],
+   "erreursConsole": [],
+   "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c4-drapeaux-chrome-fenetre.png",
+   "pixels": {
+    "luminanceMoyenne": 95.5,
+    "ecartType": 69.2
+   }
+  }
+ ],
+ "c5": {
+  "geo": {
+   "top": 3913.234375,
+   "h": 1656,
+   "classes": "travelling pilote relief-3d",
+   "vh": 900
+  },
+  "positions": [
+   {
+    "fraction": 0.25,
+    "scrollY": 4244,
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c5-galerie-25pc.png",
+    "cartes": [
+     {
+      "i": 0,
+      "gauche": -727,
+      "largeur": 478,
+      "aLecran": false,
+      "e": "-1.200",
+      "p": "1.000",
+      "transform": "matrix3d(0.994522, 0, -0.104528, 6.96856e-05, 0, 1, 0, 0, 0.104528, 0, 0.994522, -0.000663015, -5.01737, 0, -47.7371, 1.03182)",
+      "angleY": 6,
+      "translateZ": -48,
+      "m34": -0.000663
+     },
+     {
+      "i": 1,
+      "gauche": -201,
+      "largeur": 911,
+      "aLecran": true,
+      "e": "-0.628",
+      "p": "0.628",
+      "transform": "matrix3d(0.998499, 0, -0.0547759, 3.65173e-05, 0, 1, 0, 0, 0.0547759, 0, 0.998499, -0.000665666, -1.65116, 0, -30.0987, 1.02007)",
+      "angleY": 3.14,
+      "translateZ": -30.14,
+      "m34": -0.000666
+     },
+     {
+      "i": 2,
+      "gauche": 762,
+      "largeur": 489,
+      "aLecran": true,
+      "e": "0.408",
+      "p": "0.408",
+      "transform": "matrix3d(0.999366, 0, 0.0355972, -2.37315e-05, 0, 1, 0, 0, -0.0355972, 0, 0.999366, -0.000666244, 0.697135, 0, -19.5716, 1.01305)",
+      "angleY": -2.04,
+      "translateZ": -19.58,
+      "m34": -0.000666
+     },
+     {
+      "i": 3,
+      "gauche": 1317,
+      "largeur": 898,
+      "aLecran": true,
+      "e": "1.200",
+      "p": "1.000",
+      "transform": "matrix3d(0.994522, 0, 0.104528, -6.96856e-05, 0, 1, 0, 0, -0.104528, 0, 0.994522, -0.000663015, 5.01737, 0, -47.7371, 1.03182)",
+      "angleY": -6,
+      "translateZ": -48,
+      "m34": -0.000663
+     }
+    ],
+    "avecRotationOuZ": 4
+   },
+   {
+    "fraction": 0.6,
+    "scrollY": 4367,
+    "capture": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\017-vague-3\\relief\\tour-2\\c5-galerie-60pc.png",
+    "cartes": [
+     {
+      "i": 0,
+      "gauche": -1024,
+      "largeur": 478,
+      "aLecran": false,
+      "e": "-1.200",
+      "p": "1.000",
+      "transform": "matrix3d(0.994522, 0, -0.104528, 6.96856e-05, 0, 1, 0, 0, 0.104528, 0, 0.994522, -0.000663015, -5.01737, 0, -47.7371, 1.03182)",
+      "angleY": 6,
+      "translateZ": -48,
+      "m34": -0.000663
+     },
+     {
+      "i": 1,
+      "gauche": -500,
+      "largeur": 898,
+      "aLecran": true,
+      "e": "-1.060",
+      "p": "1.000",
+      "transform": "matrix3d(0.995725, 0, -0.0923706, 6.15804e-05, 0, 1, 0, 0, 0.0923706, 0, 0.995725, -0.000663816, -4.43379, 0, -47.7948, 1.03186)",
+      "angleY": 5.3,
+      "translateZ": -48,
+      "m34": -0.000664
+     },
+     {
+      "i": 2,
+      "gauche": 460,
+      "largeur": 496,
+      "aLecran": true,
+      "e": "-0.014",
+      "p": "0.014",
+      "transform": "matrix3d(0.999999, 0, -0.00122173, 8.14487e-07, 0, 1, 0, 0, 0.00122173, 0, 0.999999, -0.000666666, -0.000821003, 0, -0.671999, 1.00045)",
+      "angleY": 0.07,
+      "translateZ": -0.67,
+      "m34": -0.000667
+     },
+     {
+      "i": 3,
+      "gauche": 1017,
+      "largeur": 898,
+      "aLecran": true,
+      "e": "1.040",
+      "p": "1.000",
+      "transform": "matrix3d(0.995884, 0, 0.0906326, -6.04217e-05, 0, 1, 0, 0, -0.0906326, 0, 0.995884, -0.000663923, 4.35036, 0, -47.8025, 1.03187)",
+      "angleY": -5.2,
+      "translateZ": -48,
+      "m34": -0.000664
+     }
+    ],
+    "avecRotationOuZ": 4
+   }
+  ]
+ },
+ "c8": [
+  {
+   "variante": "relief",
+   "n": 1,
+   "etat": "pret",
+   "etats": [
+    [
+     "pret",
+     970
+    ]
+   ],
+   "pretMs": 970,
+   "trace": "c8-trace-relief-1.json.gz",
+   "filsNommes": 45,
+   "rendererPid": 6792,
+   "filPrincipal": [
+    "6792:21320"
+   ],
+   "principal50": [
+    {
+     "debutMs": 64,
+     "dureeMs": 72.4,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "ThreadControllerImpl::RunTask",
+       "ms": 72.3
+      },
+      {
+       "n": "Layout",
+       "ms": 53.8
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 13.1
+      },
+      {
+       "n": "EvaluateScript",
+       "ms": 2.7,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "v8.compile",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    },
+    {
+     "debutMs": 64,
+     "dureeMs": 72.3,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "Layout",
+       "ms": 53.8
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 13.1
+      },
+      {
+       "n": "EvaluateScript",
+       "ms": 2.7,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "v8.compile",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    }
+   ],
+   "workers": [
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolBackgroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "DedicatedWorker thread",
+     "taches50": [
+      {
+       "debutMs": 234,
+       "dureeMs": 407.1,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      },
+      {
+       "debutMs": 234,
+       "dureeMs": 407,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      },
+      {
+       "debutMs": 750,
+       "dureeMs": 73.7,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »",
+        "appel WebGL"
+       ]
+      },
+      {
+       "debutMs": 750,
+       "dureeMs": 73.2,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »",
+        "appel WebGL"
+       ]
+      },
+      {
+       "debutMs": 901,
+       "dureeMs": 62.4,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      }
+     ]
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    }
+   ]
+  },
+  {
+   "variante": "relief",
+   "n": 2,
+   "etat": "pret",
+   "etats": [
+    [
+     "pret",
+     866
+    ]
+   ],
+   "pretMs": 866,
+   "trace": "c8-trace-relief-2.json.gz",
+   "filsNommes": 44,
+   "rendererPid": 19432,
+   "filPrincipal": [
+    "19432:21340"
+   ],
+   "principal50": [
+    {
+     "debutMs": 72,
+     "dureeMs": 98.2,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "ThreadControllerImpl::RunTask",
+       "ms": 98.1
+      },
+      {
+       "n": "Layout",
+       "ms": 74
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 15.8
+      },
+      {
+       "n": "EvaluateScript",
+       "ms": 5.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "v8.compile",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    },
+    {
+     "debutMs": 72,
+     "dureeMs": 98.1,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "Layout",
+       "ms": 74
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 15.8
+      },
+      {
+       "n": "EvaluateScript",
+       "ms": 5.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "v8.compile",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/site.js"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    }
+   ],
+   "workers": [
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolBackgroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "DedicatedWorker thread",
+     "taches50": [
+      {
+       "debutMs": 308,
+       "dureeMs": 364.4,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      },
+      {
+       "debutMs": 308,
+       "dureeMs": 364.4,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      }
+     ]
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    }
+   ]
+  },
+  {
+   "variante": "relief",
+   "n": 3,
+   "etat": "pret",
+   "etats": [
+    [
+     "pret",
+     844
+    ]
+   ],
+   "pretMs": 844,
+   "trace": "c8-trace-relief-3.json.gz",
+   "filsNommes": 53,
+   "rendererPid": 6544,
+   "filPrincipal": [
+    "6544:13212"
+   ],
+   "principal50": [
+    {
+     "debutMs": 47,
+     "dureeMs": 96.7,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "ThreadControllerImpl::RunTask",
+       "ms": 96.4
+      },
+      {
+       "n": "Layout",
+       "ms": 65.6
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 18.7
+      },
+      {
+       "n": "Paint",
+       "ms": 5
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 2.4
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.5,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/images/mains-noyer-720.avif"
+      }
+     ]
+    },
+    {
+     "debutMs": 47,
+     "dureeMs": 96.4,
+     "phase": "avant pret",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "Layout",
+       "ms": 65.6
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 18.7
+      },
+      {
+       "n": "Paint",
+       "ms": 5
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 2.4
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.5,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    }
+   ],
+   "workers": [
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolBackgroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "DedicatedWorker thread",
+     "taches50": [
+      {
+       "debutMs": 232,
+       "dureeMs": 415.6,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      },
+      {
+       "debutMs": 232,
+       "dureeMs": 415.5,
+       "phase": "avant pret",
+       "attribuableAuRelief": [
+        "url ou nom contenant « relief »"
+       ]
+      }
+     ]
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    }
+   ]
+  },
+  {
+   "variante": "temoin",
+   "n": 1,
+   "etat": "sans",
+   "etats": [
+    [
+     "sans",
+     243
+    ]
+   ],
+   "pretMs": null,
+   "trace": "c8-trace-temoin-1.json.gz",
+   "filsNommes": 51,
+   "rendererPid": 18328,
+   "filPrincipal": [
+    "18328:1932"
+   ],
+   "principal50": [
+    {
+     "debutMs": 75,
+     "dureeMs": 93.7,
+     "phase": "?",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "ThreadControllerImpl::RunTask",
+       "ms": 93.4
+      },
+      {
+       "n": "Layout",
+       "ms": 67.8
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 13.9
+      },
+      {
+       "n": "Paint",
+       "ms": 4
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 2.8
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.6,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/images/mains-noyer-720.avif"
+      }
+     ]
+    },
+    {
+     "debutMs": 75,
+     "dureeMs": 93.4,
+     "phase": "?",
+     "attribuableAuRelief": [],
+     "details": [
+      {
+       "n": "Layout",
+       "ms": 67.8
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 13.9
+      },
+      {
+       "n": "Paint",
+       "ms": 4
+      },
+      {
+       "n": "UpdateLayoutTree",
+       "ms": 2.8
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.6,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "PaintImage",
+       "ms": 0.1,
+       "url": "http://127.0.0.1:47931/images/heros-escalier-1600.avif"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"
+      },
+      {
+       "n": "ResourceSendRequest",
+       "ms": null,
+       "url": "http://127.0.0.1:47931/fonts/fraunces-600.woff2"
+      }
+     ]
+    }
+   ],
+   "workers": [
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolBackgroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    },
+    {
+     "fil": "ThreadPoolForegroundWorker",
+     "taches50": []
+    }
+   ]
+  }
+ ],
+ "client": {
+  "hauteurPage": 10729,
+  "captures": 12,
+  "erreursConsole": [],
+  "liensCommunes": [
+   "menuisier-rennes/index.html",
+   "menuisier-cesson-sevigne/index.html"
+  ]
+ }
+}

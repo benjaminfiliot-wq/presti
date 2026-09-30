@@ -1,0 +1,100 @@
+{
+ "methode": "réduction grise 160×100, blocs 16×16 au pas de 2, SAD, recherche ±32 px réduits, affinage parabolique ; px écran = ×9 ; modèle : rayon écran → 1,04·r′(r, δ), tourné de ρ",
+ "R": 32,
+ "d116": {
+  "delta_y270": 0.116,
+  "rho_deg": 0,
+  "oeil": {
+   "blocs": 208,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 23.2,
+   "moduleP90_px": 33.4,
+   "radialMedian_px": 22.6,
+   "moduleModeleMedian_px_blocsRetenus": 29.9,
+   "moduleModeleMedian_px_tousBlocs": 29.9,
+   "sadMoyenMedian": 14.5
+  },
+  "marches": {
+   "blocs": 99,
+   "blocsALaLimite": 13,
+   "moduleMedian_px": 125.5,
+   "moduleP90_px": 167.5,
+   "radialMedian_px": 125.3,
+   "moduleModeleMedian_px_blocsRetenus": 134.5,
+   "moduleModeleMedian_px_tousBlocs": 148.5,
+   "sadMoyenMedian": 22.2
+  }
+ },
+ "d066": {
+  "delta_y270": 0.066,
+  "rho_deg": 0,
+  "oeil": {
+   "blocs": 208,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 14,
+   "moduleP90_px": 20.9,
+   "radialMedian_px": 13.6,
+   "moduleModeleMedian_px_blocsRetenus": 17.6,
+   "moduleModeleMedian_px_tousBlocs": 17.6,
+   "sadMoyenMedian": 11.5
+  },
+  "marches": {
+   "blocs": 99,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 71.5,
+   "moduleP90_px": 129.3,
+   "radialMedian_px": 71.5,
+   "moduleModeleMedian_px_blocsRetenus": 75.7,
+   "moduleModeleMedian_px_tousBlocs": 75.7,
+   "sadMoyenMedian": 18
+  }
+ },
+ "sansgpu": {
+  "delta_y270": 0,
+  "rho_deg": 0,
+  "oeil": {
+   "blocs": 208,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 3.9,
+   "moduleP90_px": 5.6,
+   "radialMedian_px": 3.7,
+   "moduleModeleMedian_px_blocsRetenus": 4.3,
+   "moduleModeleMedian_px_tousBlocs": 4.3,
+   "sadMoyenMedian": 7.2
+  },
+  "marches": {
+   "blocs": 99,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 9.4,
+   "moduleP90_px": 15.5,
+   "radialMedian_px": 9.4,
+   "moduleModeleMedian_px_blocsRetenus": 10.9,
+   "moduleModeleMedian_px_tousBlocs": 10.9,
+   "sadMoyenMedian": 6.9
+  }
+ },
+ "d116-roulis": {
+  "delta_y270": 0.116,
+  "rho_deg": -8.92,
+  "oeil": {
+   "blocs": 208,
+   "blocsALaLimite": 0,
+   "moduleMedian_px": 23.4,
+   "moduleP90_px": 37.5,
+   "radialMedian_px": 21.6,
+   "moduleModeleMedian_px_blocsRetenus": 35.4,
+   "moduleModeleMedian_px_tousBlocs": 35.4,
+   "sadMoyenMedian": 13.9
+  },
+  "marches": {
+   "blocs": 99,
+   "blocsALaLimite": 20,
+   "moduleMedian_px": 89.5,
+   "moduleP90_px": 205.8,
+   "radialMedian_px": 69.4,
+   "moduleModeleMedian_px_blocsRetenus": 139.9,
+   "moduleModeleMedian_px_tousBlocs": 157.6,
+   "sadMoyenMedian": 24.6
+  }
+ }
+}

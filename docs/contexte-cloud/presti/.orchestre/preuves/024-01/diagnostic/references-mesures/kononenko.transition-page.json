@@ -1,0 +1,21 @@
+{
+  "slug": "kononenko",
+  "url": "https://kononenkogroup.com/",
+  "date": "2026-09-16T20:43:22.820Z",
+  "lien": {
+    "href": "https://kononenkogroup.com/work",
+    "texte": "Work,"
+  },
+  "urlFinale": "https://kononenkogroup.com/work",
+  "appels": {
+    "vt": 0,
+    "push": 1
+  },
+  "documentRemplace": false,
+  "animationsPendantLaTransition": [
+    [
+      "CSSTransition | transform | 1109 | cubic-bezier(0.17, 0.84, 0.44, 1) | 1 | ::before",
+      11
+    ]
+  ]
+}

@@ -1,0 +1,231 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:BG;src:url('fonts/bg700.woff') format('woff');font-weight:700}
+@font-face{font-family:HG;src:url('fonts/hg500.woff') format('woff');font-weight:500}
+@font-face{font-family:HG;src:url('fonts/hg400.woff') format('woff');font-weight:400}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:var(--W);height:var(--H);overflow:hidden;background:#0A0C11}
+#stage{position:relative;width:var(--W);height:var(--H);overflow:hidden;background:#0A0C11}
+.layer{position:absolute;inset:0;will-change:transform,opacity}
+.grain{position:absolute;inset:0;opacity:.05;pointer-events:none;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vign{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 45%,transparent 40%,rgba(0,0,0,.55) 100%)}
+.word{display:inline-block;white-space:pre}
+#bar{position:absolute;left:0;bottom:0;height:6px;background:#E8946F;width:0}
+#flash{position:absolute;inset:0;background:#F3EEE6;opacity:0}
+.shot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0}
+.tx{font-family:BG;font-weight:700;color:#EDEFF4;letter-spacing:-.035em;line-height:.95;text-align:center}
+.sub{font-family:HG;font-weight:500;color:#EDEFF4;letter-spacing:-.01em}
+.card{position:absolute;overflow:hidden;border-radius:28px;box-shadow:0 60px 140px -30px rgba(0,0,0,.85)}
+.card img{display:block;width:100%}
+.cap{position:absolute;left:0;right:0;text-align:center;font-family:BG;font-weight:700;color:#EDEFF4;letter-spacing:-.03em;line-height:1.02}
+.pill{display:inline-flex;align-items:center;gap:.5em;font-family:HG;font-weight:600;
+  background:rgba(232,148,111,.14);border:1px solid rgba(232,148,111,.45);color:#E8946F;border-radius:999px}
+.dot{width:.5em;height:.5em;border-radius:50%;background:#E8946F}
+</style></head>
+<body>
+<div id="stage">
+  <div class="shot" id="s1"><div class="tx" id="s1t"></div></div>
+  <div class="shot" id="s2"><div class="tx" id="s2t"></div></div>
+  <div class="shot" id="s3"><div class="tx" id="s3t"></div></div>
+  <div class="shot" id="s4"><div class="tx" id="s4t"></div></div>
+  <div class="shot" id="s5"><div class="tx" id="s5t"></div></div>
+  <div class="shot" id="s6"><div class="tx" id="s6t"></div></div>
+
+  <div class="shot" id="s7">
+    <div class="card" id="c7"><img id="i7"></div>
+    <div class="card" id="c7b"><img id="i7b"></div>
+    <div class="cap" id="cap7"></div>
+    <div id="pill7" style="position:absolute;left:0;right:0;text-align:center"></div>
+  </div>
+  <div class="shot" id="s8">
+    <div class="card" id="c8"><img id="i8"></div>
+    <div class="cap" id="cap8"></div>
+  </div>
+  <div class="shot" id="s9">
+    <div class="card" id="c9"><img id="i9"></div>
+    <div class="cap" id="cap9"></div>
+  </div>
+  <div class="shot" id="s10"><div class="tx" id="s10t"></div></div>
+  <div class="shot" id="s11">
+    <div id="logo" style="position:absolute;left:0;right:0;text-align:center"></div>
+    <div class="cap" id="cap11"></div>
+  </div>
+
+  <div class="vign"></div><div class="grain"></div>
+  <div id="flash"></div><div id="bar"></div>
+</div>
+<script>
+const P = new URLSearchParams(location.search);
+const FMT = P.get('f') || 'v';                       // v | c | p
+const DIM = {v:[1080,1920], c:[1080,1350], p:[1920,1080]}[FMT];
+const W = DIM[0], H = DIM[1];
+document.documentElement.style.setProperty('--W', W+'px');
+document.documentElement.style.setProperty('--H', H+'px');
+const CFG={v:{K:1,cw:1,cy:1},c:{K:.88,cw:.74,cy:.90},p:{K:.62,cw:.30,cy:1}}[FMT];
+const K = (W/1080)*CFG.K;   // échelle typo
+const CW = CFG.cw, CY = CFG.cy;   // échelle et centre des cartes
+const DUR = 22;
+
+// ---------- utilitaires ----------
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eOut=x=>1-Math.pow(1-x,3);
+const eExpo=x=>x>=1?1:1-Math.pow(2,-9*x);
+const eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+// progression locale d'un plan
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const live=(t,a,b)=>t>=a-.001&&t<b;
+
+function setShot(el,on,op=1){ el.style.opacity = on?op:0; }
+
+// mots animés : chaque mot entre avec décalage
+function words(el, txt, t, t0, per=.075, dur=.5, accent=null, size=1, gap='.28em'){
+  if(el.dataset.txt!==txt){
+    el.dataset.txt=txt; el.innerHTML='';
+    txt.split('\n').forEach((line,li)=>{
+      const d=document.createElement('div'); d.style.display='block';
+      line.split(' ').forEach((w,i)=>{
+        const s=document.createElement('span'); s.className='word'; s.textContent=w;
+        s.style.marginRight=gap;
+        if(accent && accent.includes(w.replace(/[.,]/g,''))) s.style.color='#E8946F';
+        d.appendChild(s);
+      });
+      el.appendChild(d);
+    });
+  }
+  el.style.fontSize=(size*K)+'px';
+  const ws=el.querySelectorAll('.word');
+  ws.forEach((s,i)=>{
+    const p=eExpo(seg(t, t0+i*per, t0+i*per+dur));
+    s.style.opacity=p;
+    s.style.transform=`translate3d(0,${(1-p)*0.34*size*K}px,0) scale(${0.94+0.06*p})`;
+  });
+}
+
+// ---------- images ----------
+const IMG={i7:'crop-msg.png', i7b:'crop-rep.png', i8:'crop-devis.png', i9:'crop-site.png'};
+const AR={c7:752/356, c7b:648/550, c8:728/814, c9:880/875};
+// place une carte : largeur en fraction de W, centre vertical en fraction de H
+function place(el,fw,cy,scale=1){const w=W*fw*CW,h=w/AR[el.id];el.style.width=w+'px';el.style.left=((W-w)/2)+'px';el.style.top=(H*cy*CY-h/2)+'px';return h;}
+for(const k in IMG) document.getElementById(k).src=IMG[k];
+const LOGO_SVG = `<svg viewBox="0 0 100 100" width="${140*K}" height="${140*K}"><g id="mk"></g></svg>`;
+
+// ---------- le film ----------
+function render(t){
+  const st=document.getElementById('stage');
+  document.getElementById('bar').style.width=(clamp(t/DUR)*W)+'px';
+
+  // flash blanc bref à la bascule (7.30 → 7.45)
+  const fl = live(t,7.28,7.52) ? (1-seg(t,7.28,7.52)) : 0;
+  document.getElementById('flash').style.opacity = fl*0.9;
+
+  const S=id=>document.getElementById(id);
+  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'].forEach(i=>setShot(S(i),false));
+
+  // ---- 0.0–1.30 : 18 h 47
+  if(live(t,0,1.30)){ setShot(S('s1'),true);
+    const p=eExpo(seg(t,0.05,0.75));
+    S('s1t').style.fontSize=(258*K)+'px'; S('s1t').textContent='18 h 47';
+    S('s1t').style.opacity=p;
+    S('s1t').style.transform=`scale(${1.10-0.10*p}) translate3d(0,${(1-p)*40*K}px,0)`;
+  }
+  // ---- 1.30–2.95 : un client appelle
+  if(live(t,1.30,2.95)){ setShot(S('s2'),true);
+    words(S('s2t'),'Un client\nappelle.',t,1.34,.10,.5,['appelle'],168);
+    S('s2t').style.transform=`translate3d(0,${-seg(t,1.30,2.95)*22*K}px,0)`;
+  }
+  // ---- 2.95–4.45 : vous êtes sur un chantier
+  if(live(t,2.95,4.45)){ setShot(S('s3'),true);
+    words(S('s3t'),'Vous êtes\nsur un chantier.',t,2.99,.075,.45,[],150);
+    S('s3t').style.transform=`translate3d(0,${-seg(t,2.95,4.45)*20*K}px,0)`;
+  }
+  // ---- 4.45–5.85 : vous rappelez à 20 h
+  if(live(t,4.45,5.85)){ setShot(S('s4'),true);
+    words(S('s4t'),'Vous rappelez\nà 20 h.',t,4.49,.085,.45,[],160);
+    S('s4t').style.transform=`translate3d(0,${-seg(t,4.45,5.85)*20*K}px,0)`;
+  }
+  // ---- 5.85–7.30 : il a signé ailleurs
+  if(live(t,5.85,7.30)){ setShot(S('s5'),true);
+    words(S('s5t'),'Il a signé\nailleurs.',t,5.89,.095,.45,['ailleurs.'],172);
+    const z=1+seg(t,5.89,7.30)*0.06;
+    S('s5t').style.transform=`scale(${z})`;
+  }
+  // ---- 7.30–8.70 : PRESTI RÉPOND (révélation par masque)
+  if(live(t,7.30,8.70)){ setShot(S('s6'),true);
+    S('s6t').style.fontSize=(200*K)+'px';
+    S('s6t').innerHTML='Presti<br><span style="color:#E8946F">répond.</span>';
+    const p=eExpo(seg(t,7.42,8.10));
+    S('s6t').style.clipPath=`inset(0 ${(1-p)*100}% 0 0)`;
+    S('s6t').style.opacity=1;
+    S('s6t').style.transform=`translate3d(${(1-p)*30*K}px,0,0)`;
+  }
+
+  // ---- 8.70–12.10 : le message, puis la réponse
+  if(live(t,8.70,12.10)){ setShot(S('s7'),true);
+    const a=S('c7'), bq=S('c7b');
+    // carte 1 : la demande du client
+    const e1=eOut(seg(t,8.70,9.45)), p1=seg(t,8.70,12.10);
+    place(a,0.94,0.40);
+    const out1=eInOut(seg(t,10.25,10.85));
+    a.style.transform=`scale(${(0.90+0.10*e1)*(1+p1*0.05)}) translate3d(0,${-out1*H*0.16}px,0)`;
+    a.style.opacity=e1*(1-out1*0.65);
+    // carte 2 : la réponse de l'assistant
+    const e2=eExpo(seg(t,10.35,11.05)), p2=seg(t,10.35,12.10);
+    place(bq,0.90,0.545);
+    bq.style.transform=`translate3d(0,${(1-e2)*H*0.30}px,0) scale(${(0.95+0.05*e2)*(1+p2*0.04)})`;
+    bq.style.opacity=e2;
+    const cap=S('cap7');
+    cap.style.fontSize=(78*K)+'px'; cap.style.bottom=(H*0.125)+'px';
+    cap.innerHTML='Presti répond <span style="color:#E8946F">à votre place</span>.';
+    const pe=eExpo(seg(t,9.30,9.95));
+    cap.style.opacity=pe; cap.style.transform=`translate3d(0,${(1-pe)*40*K}px,0)`;
+    const pill=S('pill7'); pill.style.bottom=(H*0.068)+'px';
+    const sec=Math.floor(clamp(seg(t,9.7,11.7))*41);
+    pill.innerHTML=`<span class="pill" style="font-size:${46*K}px;padding:${15*K}px ${32*K}px"><span class="dot"></span>00:${String(sec).padStart(2,'0')}</span>`;
+    pill.style.opacity=eExpo(seg(t,9.7,10.2));
+  }
+  // ---- 12.10–15.30 : le devis
+  if(live(t,12.10,15.30)){ setShot(S('s8'),true);
+    const p=seg(t,12.10,15.30), e=eOut(seg(t,12.10,12.85)), c=S('c8');
+    place(c,0.80,0.435);
+    c.style.clipPath=`inset(${(1-eExpo(seg(t,12.10,12.95)))*100}% 0 0 0)`;
+    c.style.transform=`scale(${(0.96+0.04*e)*(1+p*0.045)})`;
+    c.style.opacity=1;
+    const cap=S('cap8'); cap.style.fontSize=(78*K)+'px'; cap.style.bottom=(H*0.105)+'px';
+    cap.innerHTML='Le devis, <span style="color:#E8946F">déjà chiffré</span>.';
+    const pe=eExpo(seg(t,12.85,13.45));
+    cap.style.opacity=pe; cap.style.transform=`translate3d(0,${(1-pe)*40*K}px,0)`;
+  }
+  // ---- 15.30–18.50 : le site
+  if(live(t,15.30,18.50)){ setShot(S('s9'),true);
+    const p=seg(t,15.30,18.50), e=eOut(seg(t,15.30,16.15)), c=S('c9');
+    place(c,0.93,0.425);
+    c.style.transform=`scale(${(0.88+0.12*e)*(1+p*0.07)}) translate3d(0,${-p*20*K}px,0)`;
+    c.style.opacity=e; c.style.clipPath='none';
+    const cap=S('cap9'); cap.style.fontSize=(78*K)+'px'; cap.style.bottom=(H*0.125)+'px';
+    cap.innerHTML='Et un site <span style="color:#E8946F">à votre nom</span>.';
+    const pe=eExpo(seg(t,16.00,16.60));
+    cap.style.opacity=pe; cap.style.transform=`translate3d(0,${(1-pe)*40*K}px,0)`;
+  }
+  // ---- 18.50–19.95 : les trois verbes
+  if(live(t,18.50,19.95)){ setShot(S('s10'),true);
+    words(S('s10t'),'Répond.\nChiffre.\nRelance.',t,18.54,.16,.42,['Répond.','Chiffre.','Relance.'],150);
+    S('s10t').style.transform=`translate3d(0,${-seg(t,18.5,19.95)*18*K}px,0)`;
+  }
+  // ---- 19.95–22.0 : signature
+  if(live(t,19.95,22.01)){ setShot(S('s11'),true);
+    const e=eExpo(seg(t,19.99,20.7));
+    const lg=S('logo'); lg.style.top=(H*0.285)+'px';
+    lg.innerHTML=`<img src="marque.svg" style="width:${230*K}px;height:${230*K}px">`;
+    lg.style.opacity=e; lg.style.transform=`scale(${0.86+0.14*e})`;
+    const cap=S('cap11'); cap.style.top=(H*0.52)+'px'; cap.style.fontSize=(150*K)+'px';
+    const e2=eExpo(seg(t,20.25,20.95)), e3=eExpo(seg(t,20.6,21.3));
+    cap.innerHTML=`<div style="opacity:${e2};transform:translateY(${(1-e2)*30*K}px)">presti</div>`+
+      `<div class="sub" style="font-size:${58*K}px;color:#E8946F;margin-top:${26*K}px;opacity:${e3};transform:translateY(${(1-e3)*24*K}px)">prestiapp.fr</div>`+
+      `<div class="sub" style="font-size:${44*K}px;color:#8B93A2;margin-top:${18*K}px;opacity:${e3}">Essai gratuit, sans carte</div>`;
+  }
+}
+window.render=render;
+</script></body></html>

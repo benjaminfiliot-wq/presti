@@ -1,0 +1,5 @@
+const fs = require('fs'); let s = fs.readFileSync('outils/marche.py', 'utf8')
+const a = "        print('GEOM', o.name, 'brut', len(o.data.vertices), 'evalue', len(ev.data.vertices), [(m.name, m.type) for m in o.modifiers], flush=True)\n"
+if (!s.includes(a)) { console.error('ABSENT'); process.exit(1) }
+s = s.replace(a, a + "        xs = sorted(set(round(v.co.x, 4) for v in ev.data.vertices))\n        print('GEOMX', o.name, xs[:12], 'n=', len(xs), flush=True)\n        print('NORM', o.name, [tuple(round(c, 2) for c in p.normal) for p in o.data.polygons], flush=True)\n    for m in limon.modifiers:\n        if m.type == 'BOOLEAN':\n            m.show_viewport = False\n    dg = bpy.context.evaluated_depsgraph_get(); dg.update()\n    print('SANSBOOL', len(limon.evaluated_get(dg).data.vertices), flush=True)\n    for m in limon.modifiers:\n        m.show_viewport = m.type == 'BOOLEAN'\n    dg.update()\n    print('SANSBISEAU', len(limon.evaluated_get(dg).data.vertices), sorted(set(round(v.co.x, 4) for v in limon.evaluated_get(dg).data.vertices)), flush=True)\n")
+fs.writeFileSync('outils/marche.py', s); console.log('patch2 ok')

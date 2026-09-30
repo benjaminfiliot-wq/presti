@@ -1,0 +1,324 @@
+{
+ "verdicts": [
+  {
+   "cle": "Aucune image d’images/ citée par une page n’a disparu (statique)",
+   "ok": true,
+   "detail": "78 fichiers cités, 78 sur le disque, manquants : aucun ; bases 9 (atelier-poncage, atelier-poncage-portrait, boiserie, cuisine-bois, heros-escalier, heros-escalier-portrait, mains-noyer, penderie, tournage-copeaux) ; bases absentes d’attributions.json : aucune ; fichiers non cités : aucun"
+  },
+  {
+   "cle": "Aucune 404 ni image cassée ni erreur de console sur les 7 pages (1440 et 390)",
+   "ok": true,
+   "detail": "aucune ; absents serveur : aucun"
+  },
+  {
+   "cle": "Rennes : une photo d’ouvrage en tête",
+   "ok": true,
+   "detail": "héros {\"src\":\"heros-escalier-1600.avif\",\"naturalWidth\":1440,\"w\":1441,\"h\":648,\"top\":0}"
+  },
+  {
+   "cle": "Rennes : h1 différent de l’accueil",
+   "ok": true,
+   "detail": "accueil « Menuisier à Rennes Fait pour rester » / Rennes « Menuisier à Rennes Escaliers et agencement »"
+  },
+  {
+   "cle": "Rennes : aucune photo d’outil seul",
+   "ok": true,
+   "detail": "photos employées : heros-escalier [hero.hero--plein], penderie [scene.scene--papier], heros-escalier [scene.scene--papier], atelier-poncage [scene.scene--papier], cuisine-bois [section.section--noir], penderie [section.section--noir], boiserie [section.section--noir], heros-escalier [contact.contact--photo]"
+  },
+  {
+   "cle": "Rennes : le contact imprimé une fois",
+   "ok": true,
+   "detail": "#contact 1, .contact 1, form 1 ; numéro dans main 1, dans la page 3"
+  }
+ ],
+ "mesures": {
+  "statique": {
+   "cites": 78,
+   "disque": 78,
+   "manquants": [],
+   "bases": [
+    "atelier-poncage",
+    "atelier-poncage-portrait",
+    "boiserie",
+    "cuisine-bois",
+    "heros-escalier",
+    "heros-escalier-portrait",
+    "mains-noyer",
+    "penderie",
+    "tournage-copeaux"
+   ],
+   "basesSansAttr": [],
+   "nonCites": []
+  },
+  "erreursNavigation": [],
+  "communes": {
+   "h1Accueil": "Menuisier à Rennes Fait pour rester",
+   "communes": {
+    "menuisier-rennes/index.html": {
+     "h1": "Menuisier à Rennes Escaliers et agencement",
+     "heroImg": {
+      "src": "heros-escalier-1600.avif",
+      "naturalWidth": 1440,
+      "w": 1441,
+      "h": 648,
+      "top": 0
+     },
+     "premierBlocEstHero": true,
+     "photos": [
+      {
+       "base": "heros-escalier",
+       "alt": "Escalier hélicoïdal en bois massif",
+       "section": "hero.hero--plein"
+      },
+      {
+       "base": "penderie",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "atelier-poncage",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "cuisine-bois",
+       "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "penderie",
+       "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "boiserie",
+       "alt": "Boiseries et placards intégrés en bois sombre",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "",
+       "section": "contact.contact--photo"
+      }
+     ],
+     "contacts": 1,
+     "formulaires": 1,
+     "idsContact": 1,
+     "telMain": 1,
+     "telPage": 3,
+     "h2": [
+      "Menuiserie sur mesure à Rennes",
+      "Réalisations en atelier et sur chantier",
+      "Communes limitrophes et voisines",
+      "Prendre contact pour un projet à Rennes"
+     ],
+     "H": 4568
+    },
+    "menuisier-cesson-sevigne/index.html": {
+     "h1": "Menuisier à Cesson-Sévigné Cuisines en bois massif",
+     "heroImg": {
+      "src": "cuisine-bois-1600.avif",
+      "naturalWidth": 1440,
+      "w": 1441,
+      "h": 648,
+      "top": 0
+     },
+     "premierBlocEstHero": true,
+     "photos": [
+      {
+       "base": "cuisine-bois",
+       "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
+       "section": "hero.hero--plein"
+      },
+      {
+       "base": "penderie",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "atelier-poncage",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "Escalier hélicoïdal en bois massif",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "penderie",
+       "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "boiserie",
+       "alt": "Boiseries et placards intégrés en bois sombre",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "cuisine-bois",
+       "alt": "",
+       "section": "contact.contact--photo"
+      }
+     ],
+     "contacts": 1,
+     "formulaires": 1,
+     "idsContact": 1,
+     "telMain": 1,
+     "telPage": 3,
+     "h2": [
+      "Menuiserie sur mesure à Cesson-Sévigné",
+      "Réalisations en atelier et sur chantier",
+      "Communes limitrophes et voisines",
+      "Prendre contact pour un projet à Cesson-Sévigné"
+     ],
+     "H": 4568
+    },
+    "menuisier-bruz/index.html": {
+     "h1": "Menuisier à Bruz Dressings sur mesure",
+     "heroImg": {
+      "src": "penderie-1600.avif",
+      "naturalWidth": 1440,
+      "w": 1441,
+      "h": 648,
+      "top": 0
+     },
+     "premierBlocEstHero": true,
+     "photos": [
+      {
+       "base": "penderie",
+       "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+       "section": "hero.hero--plein"
+      },
+      {
+       "base": "penderie",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "atelier-poncage",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "Escalier hélicoïdal en bois massif",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "cuisine-bois",
+       "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "boiserie",
+       "alt": "Boiseries et placards intégrés en bois sombre",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "penderie",
+       "alt": "",
+       "section": "contact.contact--photo"
+      }
+     ],
+     "contacts": 1,
+     "formulaires": 1,
+     "idsContact": 1,
+     "telMain": 1,
+     "telPage": 3,
+     "h2": [
+      "Menuiserie sur mesure à Bruz",
+      "Réalisations en atelier et sur chantier",
+      "Communes limitrophes et voisines",
+      "Prendre contact pour un projet à Bruz"
+     ],
+     "H": 4470
+    },
+    "menuisier-saint-gregoire/index.html": {
+     "h1": "Menuisier à Saint-Grégoire Boiseries et placards",
+     "heroImg": {
+      "src": "boiserie-1600.avif",
+      "naturalWidth": 1440,
+      "w": 1441,
+      "h": 648,
+      "top": 0
+     },
+     "premierBlocEstHero": true,
+     "photos": [
+      {
+       "base": "boiserie",
+       "alt": "Boiseries et placards intégrés en bois sombre",
+       "section": "hero.hero--plein"
+      },
+      {
+       "base": "penderie",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "atelier-poncage",
+       "alt": "",
+       "section": "scene.scene--papier"
+      },
+      {
+       "base": "heros-escalier",
+       "alt": "Escalier hélicoïdal en bois massif",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "cuisine-bois",
+       "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "penderie",
+       "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+       "section": "section.section--noir"
+      },
+      {
+       "base": "boiserie",
+       "alt": "",
+       "section": "contact.contact--photo"
+      }
+     ],
+     "contacts": 1,
+     "formulaires": 1,
+     "idsContact": 1,
+     "telMain": 1,
+     "telPage": 3,
+     "h2": [
+      "Menuiserie sur mesure à Saint-Grégoire",
+      "Réalisations en atelier et sur chantier",
+      "Communes limitrophes et voisines",
+      "Prendre contact pour un projet à Saint-Grégoire"
+     ],
+     "H": 4568
+    }
+   }
+  },
+  "rennes390": {
+   "src": "heros-escalier-960.avif",
+   "part": 0.72
+  }
+ }
+}

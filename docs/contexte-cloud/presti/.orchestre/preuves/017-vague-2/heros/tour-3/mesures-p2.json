@@ -1,0 +1,379 @@
+{
+ "plateau-1440": {
+  "capture": "b1440-plateau.png",
+  "scrollY": 900,
+  "plateau": {
+   "top": 0,
+   "bottom": 850.328125,
+   "left": 0,
+   "right": 1440
+  },
+  "fond": "rgb(20, 17, 14)",
+  "sectionApresHeros": "plateau",
+  "vals": [
+   {
+    "t": "10",
+    "x": 72,
+    "y": 522.71875,
+    "w": 148.8125,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1"
+   },
+   {
+    "t": "180",
+    "x": 542.4375,
+    "y": 522.71875,
+    "w": 226.34375,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1"
+   },
+   {
+    "t": "8",
+    "x": 974.4375,
+    "y": 522.71875,
+    "w": 77.546875,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1"
+   }
+  ],
+  "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille.\n\nYANN, FONDATEUR DE L’ATELIER",
+  "dt": [
+   "de garantie décennale sur chaque ouvrage posé",
+   "d’atelier à Rennes, où chaque pièce est fabriquée",
+   "délai type d’un escalier, du relevé à la pose"
+  ],
+  "unites": [
+   "ans",
+   "m²",
+   "semaines"
+  ],
+  "partSous30DansLaBande": 95.6,
+  "partSous30Capture": 90.3,
+  "chiffres": [
+   {
+    "t": "10",
+    "y": 523,
+    "corps": 158.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 116,
+    "seuil7vw": 100.8,
+    "passe": true
+   },
+   {
+    "t": "180",
+    "y": 523,
+    "corps": 158.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 116,
+    "seuil7vw": 100.8,
+    "passe": true
+   },
+   {
+    "t": "8",
+    "y": 523,
+    "corps": 158.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 115,
+    "seuil7vw": 100.8,
+    "passe": true
+   }
+  ]
+ },
+ "plateau-390": {
+  "capture": "m390-plateau.png",
+  "scrollY": 844,
+  "plateau": {
+   "top": 0,
+   "bottom": 917.953125,
+   "left": 0,
+   "right": 390
+  },
+  "fond": "rgb(20, 17, 14)",
+  "sectionApresHeros": "plateau",
+  "vals": [
+   {
+    "t": "10",
+    "x": 19.5,
+    "y": 340.484375,
+    "w": 95.265625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1"
+   },
+   {
+    "t": "180",
+    "x": 19.5,
+    "y": 523.640625,
+    "w": 144.90625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1"
+   },
+   {
+    "t": "8",
+    "x": 19.5,
+    "y": 706.796875,
+    "w": 49.640625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1"
+   }
+  ],
+  "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille.\n\nYANN, FONDATEUR DE L’ATELIER",
+  "dt": [
+   "de garantie décennale sur chaque ouvrage posé",
+   "d’atelier à Rennes, où chaque pièce est fabriquée",
+   "délai type d’un escalier, du relevé à la pose"
+  ],
+  "unites": [
+   "ans",
+   "m²",
+   "semaines"
+  ],
+  "partSous30DansLaBande": 93.1,
+  "partSous30Capture": 93.1,
+  "chiffres": [
+   {
+    "t": "10",
+    "y": 340,
+    "corps": 101.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 74.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   },
+   {
+    "t": "180",
+    "y": 524,
+    "corps": 101.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 74.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   },
+   {
+    "t": "8",
+    "y": 707,
+    "corps": 101.4,
+    "opacite": "1",
+    "visibleEntier": true,
+    "encreCssPx": 73.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   }
+  ],
+  "vueChiffres": {
+   "scrollY": 1111,
+   "partSous30": 74,
+   "chiffres": [
+    {
+     "t": "10",
+     "y": 73,
+     "corps": 101.4,
+     "opacite": "1",
+     "visibleEntier": true,
+     "encreCssPx": 72.5,
+     "seuil7vw": 27.3,
+     "passe": true
+    },
+    {
+     "t": "180",
+     "y": 257,
+     "corps": 101.4,
+     "opacite": "1",
+     "visibleEntier": true,
+     "encreCssPx": 74.5,
+     "seuil7vw": 27.3,
+     "passe": true
+    },
+    {
+     "t": "8",
+     "y": 440,
+     "corps": 101.4,
+     "opacite": "1",
+     "visibleEntier": true,
+     "encreCssPx": 73.5,
+     "seuil7vw": 27.3,
+     "passe": true
+    }
+   ]
+  }
+ },
+ "domHorsPied": {
+  "000000000 (texte)": 0,
+  "000000000 (html)": 0,
+  "DEMO-0001": 0,
+  "fictif": 0,
+  "telephoneTexte": 2,
+  "telephoneTexteVisible": 2,
+  "liensTelHorsPied": [
+   "nav → 02 61 91 38 47",
+   "contact → 02 61 91 38 47"
+  ],
+  "defile": 0,
+  "sectionApresHeros": "plateau",
+  "piedTexte": "Atelier Lestraque\n\nMenuisier à Rennes · 02 61 91 38 47\n\nSIREN 000000000 · Assurance décennale Assureur fictif n° DEMO-0001\n\nCOMMUNES SERVIES\n\nRennes\nCesson-Sévigné\nBruz\nSaint-Grégoire\n\nLE SITE\n\nAccueil\nMentions légales\nConfidentialité\n© 2026 Atelier Lestraque\nSite de démonstration — entreprise fictive, photos sous licence libre (voir les mentions légales)",
+  "apostrophesDroitesVisibles": 0,
+  "pageHauteur": 9126
+ },
+ "polices-accueil-bureau-1440": {
+  "elementsTextes": 170,
+  "sansRendu": 38,
+  "familles": {
+   "Fraunces (web)": 819,
+   "IBM Plex Sans (web)": 3325,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-accueil-mobile-390": {
+  "elementsTextes": 170,
+  "sansRendu": 43,
+  "familles": {
+   "Fraunces (web)": 813,
+   "IBM Plex Sans (web)": 3258,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-accueil-bureau-1440-t600": {
+  "elementsTextes": 170,
+  "sansRendu": 38,
+  "familles": {
+   "Fraunces (web)": 819,
+   "IBM Plex Sans (web)": 3325,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-accueil-mobile-390-4g-lente": {
+  "elementsTextes": 170,
+  "sansRendu": 43,
+  "familles": {
+   "Fraunces (web)": 813,
+   "IBM Plex Sans (web)": 3258,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-accueil-bureau-1440-4g-lente": {
+  "elementsTextes": 170,
+  "sansRendu": 38,
+  "familles": {
+   "Fraunces (web)": 819,
+   "IBM Plex Sans (web)": 3325,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-mentions-bureau-1440": {
+  "elementsTextes": 99,
+  "sansRendu": 0,
+  "familles": {
+   "Fraunces (web)": 236,
+   "IBM Plex Sans (web)": 3298
+  },
+  "elementsEnPoliceSysteme": [],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-rennes-mobile-390": {
+  "elementsTextes": 122,
+  "sansRendu": 39,
+  "familles": {
+   "Fraunces (web)": 353,
+   "IBM Plex Sans (web)": 1874,
+   "Arial (système)": 18
+  },
+  "elementsEnPoliceSysteme": [
+   {
+    "el": "button.bouton",
+    "parent": "devis__envoi",
+    "texte": "Envoyer ma demande",
+    "famille": "Arial",
+    "rendu": "Arial [système] ×18"
+   }
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ }
+}

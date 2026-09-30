@@ -1,0 +1,311 @@
+M .orchestre/agents.jsonl
+ M .orchestre/brouillons-ecosysteme/026/026-248.md
+ M .orchestre/contexte.md
+ M .orchestre/digest.md
+ D .orchestre/fait/026-012.md
+ M .orchestre/file/026-006.md
+ D .orchestre/file/026-030.md
+ D .orchestre/file/026-031.md
+ D .orchestre/file/026-033.md
+ D .orchestre/file/026-035.md
+ D .orchestre/file/026-042.md
+ D .orchestre/file/026-046.md
+ D .orchestre/file/026-047.md
+ D .orchestre/file/026-049.md
+ D .orchestre/file/026-056.md
+ D .orchestre/file/026-059.md
+D  .orchestre/file/026-068.md
+ D .orchestre/file/026-073.md
+D  .orchestre/file/026-074.md
+ D .orchestre/file/026-075.md
+ D .orchestre/file/026-091.md
+ D .orchestre/file/026-118.md
+ D .orchestre/file/026-137.md
+ D .orchestre/file/026-141.md
+ D .orchestre/file/026-149.md
+ D .orchestre/file/026-153.md
+ D .orchestre/file/026-168.md
+ D .orchestre/file/026-230.md
+ D .orchestre/file/026-235.md
+ M .orchestre/preuves/026-006/avant.txt
+ M .orchestre/preuves/026-016/echecs-attendus.md
+ M .orchestre/preuves/026-037/echecs-attendus.md
+ M .orchestre/preuves/026-062/echecs-attendus.md
+ M .orchestre/preuves/026-066/echecs-attendus.md
+ M .orchestre/preuves/026-069/contre-verif-28-09.md
+ M .orchestre/preuves/026-069/echecs-attendus.md
+ M .orchestre/preuves/026-080/echecs-attendus.md
+ M .orchestre/preuves/026-112/contre-verif-28-09.md
+ M .orchestre/preuves/026-116/contre-verif-28-09.md
+ M .orchestre/preuves/026-116/echecs-attendus.md
+ M .orchestre/verdicts.jsonl
+ M AGENTS.md
+ M CLAUDE.md
+ M app/api/cron/relances/route.ts
+ M lib/crieur/juge.ts
+ M lib/flags.ts
+ M package-lock.json
+ M package.json
+ M plans/journal-publications.md
+ M scripts/crieur-qa.mjs
+ M scripts/familles-socle-suite-qa.mjs
+ M scripts/fixtures/026-horloge-bus/essais/0099.sql
+ M scripts/fixtures/026-pilotage/a/alertes-push.json
+ M scripts/fixtures/026-pilotage/a/jeux.mjs
+ M scripts/fixtures/026-pilotage/b/scenarios-sql.mjs
+ M scripts/fixtures/026-pilotage/s/commun.mjs
+ M scripts/fixtures/026-pilotage/s/temoin/lib/pilotage/equipage.ts.temoin
+ M scripts/fixtures/026-pubs-contenu/crieur/corpus-juge.json
+ M scripts/prospection-sql-qa.mjs
+ M scripts/signature-repos-qa.mjs
+ M scripts/station-logique-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .codex/
+?? .orchestre/a-decider/
+?? .orchestre/brouillons-ecosysteme/026/026-252.md
+?? .orchestre/en-cours/
+?? .orchestre/fait/000-usine-essai-2.md
+?? .orchestre/fait/000-usine-essai-3.md
+?? .orchestre/fait/000-usine-essai.md
+?? .orchestre/fait/020-03.md
+?? .orchestre/fait/021-03.md
+?? .orchestre/fait/021-04.md
+?? .orchestre/fait/021-06.md
+?? .orchestre/fait/021-10.md
+?? .orchestre/fait/021-13.md
+?? .orchestre/fait/021-17.md
+?? .orchestre/fait/021-18.md
+?? .orchestre/fait/021-22.md
+?? .orchestre/fait/021-23.md
+?? .orchestre/fait/022-01.md
+?? .orchestre/fait/022-02.md
+?? .orchestre/fait/022-04.md
+?? .orchestre/fait/022-05.md
+?? .orchestre/fait/023-01.md
+?? .orchestre/fait/023-02.md
+?? .orchestre/fait/023-04.md
+?? .orchestre/fait/026-057.md
+?? .orchestre/fait/026-135.md
+?? .orchestre/fait/026-149.md
+?? .orchestre/fait/026-153.md
+?? .orchestre/fait/026-220.md
+?? .orchestre/file/025-10.md
+?? .orchestre/file/026-171.md
+?? .orchestre/file/026-172.md
+?? .orchestre/preuves/000-usine-essai-2/
+?? .orchestre/preuves/000-usine-essai-3/
+?? .orchestre/preuves/000-usine-essai/
+?? .orchestre/preuves/018-01/landing-bureau-bloc.png
+?? .orchestre/preuves/018-01/landing-bureau-haut.png
+?? .orchestre/preuves/018-01/landing-mobile-bloc.png
+?? .orchestre/preuves/018-01/landing-mobile-haut.png
+?? .orchestre/preuves/018-03/avant.txt
+?? .orchestre/preuves/018-03/essai-42-bis/
+?? .orchestre/preuves/018-03/essai-7/
+?? .orchestre/preuves/018-09/essai-42-bis/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-F.jpg
+?? .orchestre/preuves/020-01/L2/travail/
+?? .orchestre/preuves/020-01/descente/
+?? .orchestre/preuves/020-03/
+?? .orchestre/preuves/020-11/
+?? .orchestre/preuves/020-12/
+?? .orchestre/preuves/020-13/
+?? .orchestre/preuves/021-00/cahier-vague-5.md
+?? .orchestre/preuves/021-00/existant.md
+?? .orchestre/preuves/021-00/recit/
+?? .orchestre/preuves/021-00/ref-recit.md
+?? .orchestre/preuves/021-00/ref-survol-objet.md
+?? .orchestre/preuves/021-00/ref-video-mesures.json
+?? .orchestre/preuves/021-00/ref-video.md
+?? .orchestre/preuves/021-00/survol-objet/
+?? .orchestre/preuves/021-01/
+?? .orchestre/preuves/021-02/
+?? .orchestre/preuves/021-03/
+?? .orchestre/preuves/021-04/
+?? .orchestre/preuves/021-04b/
+?? .orchestre/preuves/021-05/contestation/
+?? .orchestre/preuves/021-05/diagnostic-juge-copie.diff
+?? .orchestre/preuves/021-05/juge/
+?? .orchestre/preuves/021-06/
+?? .orchestre/preuves/021-10/
+?? .orchestre/preuves/021-13/
+?? .orchestre/preuves/021-14/
+?? .orchestre/preuves/021-15/
+?? .orchestre/preuves/021-16/
+?? .orchestre/preuves/021-17/
+?? .orchestre/preuves/021-18/
+?? .orchestre/preuves/021-20/
+?? .orchestre/preuves/021-22/
+?? .orchestre/preuves/021-23/
+?? .orchestre/preuves/022-01/
+?? .orchestre/preuves/022-02/
+?? .orchestre/preuves/022-04/
+?? .orchestre/preuves/022-05/
+?? .orchestre/preuves/023-01/
+?? .orchestre/preuves/023-02/
+?? .orchestre/preuves/023-03/
+?? .orchestre/preuves/023-04/
+?? .orchestre/preuves/024-01/
+?? .orchestre/preuves/024-02/
+?? .orchestre/preuves/025-10/
+?? .orchestre/preuves/026-006/package-lock.next16.json
+?? .orchestre/preuves/026-006/package.next16.json
+?? .orchestre/preuves/026-006/versions.md
+?? .orchestre/preuves/026-016/rejoue-apres-durcissement-026-165-28-09.md
+?? .orchestre/preuves/026-027/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-057/
+?? .orchestre/preuves/026-063/
+?? .orchestre/preuves/026-073/
+?? .orchestre/preuves/026-091/
+?? .orchestre/preuves/026-116/correction-28-09.md
+?? .orchestre/preuves/026-118/
+?? .orchestre/preuves/026-119/
+?? .orchestre/preuves/026-121/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-135/
+?? .orchestre/preuves/026-138/
+?? .orchestre/preuves/026-141/
+?? .orchestre/preuves/026-149/
+?? .orchestre/preuves/026-153/
+?? .orchestre/preuves/026-170/
+?? .orchestre/preuves/026-171/
+?? .orchestre/preuves/026-172/
+?? .orchestre/preuves/026-220/
+?? .orchestre/preuves/026-223/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-230/
+?? .orchestre/preuves/026-235/
+?? .orchestre/refuse/021-02.md
+?? .orchestre/refuse/021-14.md
+?? .orchestre/refuse/021-15.md
+?? .orchestre/refuse/021-16.md
+?? .orchestre/refuse/021-20.md
+?? .orchestre/refuse/026-012.md
+?? .orchestre/refuse/026-118.md
+?? .orchestre/refuse/026-119.md
+?? .orchestre/refuse/026-141.md
+?? .orchestre/refuse/026-230.md
+?? ChromeSetup.exe
+?? app/api/pubs/
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? docs/agents/mesure-a-sec-2026-09-28.md
+?? docs/agents/usine-production.md
+?? echecs-attendus.md
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? gabarits-pubs/locale/artisan-ville/
+?? gabarits-pubs/locale/avant-apres/
+?? gabarits-pubs/locale/chantier/
+?? gabarits-pubs/locale/visuel/
+?? generate-site.mjs
+?? generate_026.js
+?? generate_026.mjs
+?? lib/crieur/composer.ts
+?? lib/crieur/faits.ts
+?? lib/packPubDossier.ts
+?? lib/packPubPurge.ts
+?? plans/publications-serie-2.md
+?? promo-src/
+?? public/promo/facebook-couverture-1640x856.png
+?? public/promo/facebook-couverture-GUIDE.png
+?? public/promo/presti-carre-miniature.jpg
+?? public/promo/presti-carre.mp4
+?? public/promo/presti-paysage-miniature.jpg
+?? public/promo/presti-paysage.mp4
+?? public/promo/presti-vertical-miniature.jpg
+?? public/promo/presti-vertical.mp4
+?? public/promo/voix/
+?? public/sites-demo/kit/
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/cibles-instagram-qa.mjs
+?? scripts/emails-artisans-qa.mjs
+?? scripts/fixtures/026-completude/
+?? scripts/fixtures/026-pilotage/k/
+?? scripts/fixtures/usine-essai-2/
+?? scripts/fixtures/usine-essai-3/
+?? scripts/fixtures/usine-essai/
+?? scripts/juges-023-mutations.mjs
+?? scripts/juges-026-completude-qa.mjs
+?? scripts/kit-figma.mjs
+?? scripts/lib/mobile-banc.mjs
+?? scripts/lib/mobile-bureau.mjs
+?? scripts/lib/mobile-effets.mjs
+?? scripts/lib/mobile-films.mjs
+?? scripts/lib/mobile-page.mjs
+?? scripts/lib/mobile-parcours.mjs
+?? scripts/lib/mobile-perf.mjs
+?? scripts/mobile-qa.mjs
+?? scripts/pack-pub/
+?? scripts/photos-contraste.mjs
+?? scripts/publications-serie2-qa.mjs
+?? scripts/station-claw3d-qa.mjs
+?? scripts/usine-repartition.mjs
+?? scripts/usine/capacites.mjs
+?? scripts/usine/systemd/presti-atelier.service
+?? scripts/usine/systemd/presti-atelier.timer
+?? scripts/usine/systemd/presti-livreur.service
+?? scripts/usine/systemd/presti-livreur.timer
+?? scripts/usine/tourneur.mjs
+?? scripts/visuels-serie2-qa.mjs
+?? scripts/visuels-serie2.mjs
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/

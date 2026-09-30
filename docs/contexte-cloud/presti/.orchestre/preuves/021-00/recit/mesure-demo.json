@@ -1,0 +1,252 @@
+{
+  "url": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+  "date": "2026-09-15T11:10:04.515Z",
+  "formats": {
+    "1440x900": {
+      "innerHeight": 900,
+      "scrollHeight": 10729,
+      "pageEnEcrans": 11.92,
+      "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+      "scrollBehavior": "auto",
+      "timelineView": true,
+      "sections": {
+        ".ouverture": {
+          "haut": 0,
+          "hauteur": 1888,
+          "enEcrans": 2.1,
+          "position": "static"
+        },
+        ".ouverture>.hero--plein": {
+          "haut": 0,
+          "hauteur": 900,
+          "enEcrans": 1,
+          "position": "sticky"
+        },
+        ".ouverture>.plateau": {
+          "haut": 900,
+          "hauteur": 988,
+          "enEcrans": 1.1,
+          "position": "relative"
+        },
+        "#prestations": {
+          "haut": 1888,
+          "hauteur": 1125,
+          "enEcrans": 1.25,
+          "position": "relative"
+        },
+        "#atelier": {
+          "haut": 3013,
+          "hauteur": 900,
+          "enEcrans": 1,
+          "position": "relative"
+        },
+        "#realisations": {
+          "haut": 3913,
+          "hauteur": 1656,
+          "enEcrans": 1.84,
+          "position": "static"
+        },
+        ".travelling": {
+          "haut": 3913,
+          "hauteur": 1656,
+          "enEcrans": 1.84,
+          "position": "static"
+        },
+        "#communes": {
+          "haut": 5569,
+          "hauteur": 509,
+          "enEcrans": 0.57,
+          "position": "relative"
+        },
+        "#etapes": {
+          "haut": 6078,
+          "hauteur": 2700,
+          "enEcrans": 3,
+          "position": "static"
+        },
+        "#questions": {
+          "haut": 8778,
+          "hauteur": 743,
+          "enEcrans": 0.83,
+          "position": "relative"
+        },
+        "#contact": {
+          "haut": 9520,
+          "hauteur": 902,
+          "enEcrans": 1,
+          "position": "relative"
+        },
+        "footer.pied": {
+          "haut": 10423,
+          "hauteur": 306,
+          "enEcrans": 0.34,
+          "position": "static"
+        }
+      }
+    },
+    "1088x800": {
+      "innerHeight": 800,
+      "scrollHeight": 9446,
+      "pageEnEcrans": 11.81,
+      "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+      "scrollBehavior": "auto",
+      "timelineView": true,
+      "sections": {
+        ".ouverture": {
+          "haut": 0,
+          "hauteur": 1569,
+          "enEcrans": 1.96,
+          "position": "static"
+        },
+        ".ouverture>.hero--plein": {
+          "haut": 0,
+          "hauteur": 800,
+          "enEcrans": 1,
+          "position": "sticky"
+        },
+        ".ouverture>.plateau": {
+          "haut": 800,
+          "hauteur": 769,
+          "enEcrans": 0.96,
+          "position": "relative"
+        },
+        "#prestations": {
+          "haut": 1569,
+          "hauteur": 962,
+          "enEcrans": 1.2,
+          "position": "relative"
+        },
+        "#atelier": {
+          "haut": 2532,
+          "hauteur": 800,
+          "enEcrans": 1,
+          "position": "relative"
+        },
+        "#realisations": {
+          "haut": 3332,
+          "hauteur": 1472,
+          "enEcrans": 1.84,
+          "position": "static"
+        },
+        ".travelling": {
+          "haut": 3332,
+          "hauteur": 1472,
+          "enEcrans": 1.84,
+          "position": "static"
+        },
+        "#communes": {
+          "haut": 4804,
+          "hauteur": 393,
+          "enEcrans": 0.49,
+          "position": "relative"
+        },
+        "#etapes": {
+          "haut": 5197,
+          "hauteur": 2400,
+          "enEcrans": 3,
+          "position": "static"
+        },
+        "#questions": {
+          "haut": 7597,
+          "hauteur": 740,
+          "enEcrans": 0.92,
+          "position": "relative"
+        },
+        "#contact": {
+          "haut": 8337,
+          "hauteur": 803,
+          "enEcrans": 1,
+          "position": "relative"
+        },
+        "footer.pied": {
+          "haut": 9140,
+          "hauteur": 306,
+          "enEcrans": 0.38,
+          "position": "static"
+        }
+      }
+    },
+    "390x844": {
+      "innerHeight": 844,
+      "scrollHeight": 9042,
+      "pageEnEcrans": 10.71,
+      "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+      "scrollBehavior": "auto",
+      "timelineView": true,
+      "sections": {
+        ".ouverture": {
+          "haut": 0,
+          "hauteur": 1773,
+          "enEcrans": 2.1,
+          "position": "static"
+        },
+        ".ouverture>.hero--plein": {
+          "haut": 0,
+          "hauteur": 844,
+          "enEcrans": 1,
+          "position": "relative"
+        },
+        ".ouverture>.plateau": {
+          "haut": 844,
+          "hauteur": 929,
+          "enEcrans": 1.1,
+          "position": "static"
+        },
+        "#prestations": {
+          "haut": 1773,
+          "hauteur": 968,
+          "enEcrans": 1.15,
+          "position": "relative"
+        },
+        "#atelier": {
+          "haut": 2741,
+          "hauteur": 900,
+          "enEcrans": 1.07,
+          "position": "relative"
+        },
+        "#realisations": {
+          "haut": 3641,
+          "hauteur": 1036,
+          "enEcrans": 1.23,
+          "position": "static"
+        },
+        ".travelling": {
+          "haut": 3737,
+          "hauteur": 786,
+          "enEcrans": 0.93,
+          "position": "static"
+        },
+        "#communes": {
+          "haut": 4677,
+          "hauteur": 1000,
+          "enEcrans": 1.18,
+          "position": "relative"
+        },
+        "#etapes": {
+          "haut": 5677,
+          "hauteur": 1032,
+          "enEcrans": 1.22,
+          "position": "static"
+        },
+        "#questions": {
+          "haut": 6709,
+          "hauteur": 1028,
+          "enEcrans": 1.22,
+          "position": "relative"
+        },
+        "#contact": {
+          "haut": 7737,
+          "hauteur": 900,
+          "enEcrans": 1.07,
+          "position": "relative"
+        },
+        "footer.pied": {
+          "haut": 8637,
+          "hauteur": 405,
+          "enEcrans": 0.48,
+          "position": "static"
+        }
+      }
+    }
+  }
+}

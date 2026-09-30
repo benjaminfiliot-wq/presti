@@ -1,0 +1,15 @@
+09:43:09 d116 image 0 y 0 δ 0.0000 contraste 3.386 bois 160.9
+09:45:00 d116 image 30 y 15 δ 0.0064 contraste 3.362 bois 150.6
+09:47:53 d116 image 60 y 128 δ 0.0550 contraste 3.26 bois 96.3
+09:50:33 d116 image 90 y 331 δ 0.1160 contraste 3.079 bois 54.9
+09:51:30 d116 image 120 y 585 δ 0.1160 contraste 2.961 bois 39.1
+09:52:24 d116 image 150 y 839 δ 0.1160 contraste 8 bois null
+09:53:07 d116 image 180 y 1042 δ 0.1160 contraste 2.94 bois null
+09:53:39 d116 image 210 y 1155 δ 0.1160 contraste 3.532 bois null
+09:54:14 d116 film écrit C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/descente-d116.mp4
+09:54:31 d116 planche écrite
+09:54:35 d116 D-15 {"oeil":{"blocs":208,"moduleMedian_px":23.2,"moduleP90_px":33.4,"radialMedian_px":22.6,"moduleModeleMedian_px":29.9,"blocsAuBordDeLaRecherche":0},"marches":{"blocs":99,"moduleMedian_px":142.8,"moduleP90_px":168.1,"radialMedian_px":141.5,"moduleModeleMedian_px":148.5,"blocsAuBordDeLaRecherche":37}}
+09:55:18 d116 D-5 1280x800 3.013
+09:56:12 d116 D-5 1366x768 2.352
+09:56:59 d116 D-5 1440x900 3.194
+09:57:00 d116 fini

@@ -1,0 +1,19 @@
+// essai-rendu3.mjs — continuité de la netteté du rendu à 4 sous-échantillons entre δ = 0 et les premiers δ (sortie brute 2400,
+// zone bois du cahier ramenée dans la photo : x 900-1400, y 195,6-495,6 du repère 1440×1080, × 2400/1440), et durée.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { rendre } from './rendu.mjs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const k = 2400 / 1440, zone = { left: Math.round(900 * k), top: Math.round(195.6 * k), width: Math.round(500 * k), height: Math.round(300 * k) }
+const res = { zone }
+for (const d of [0, 0.0037, 0.0064, 0.03, 0.066, 0.116]) {
+  const t0 = Date.now(); const r = await rendre(d, 0); const ms = Date.now() - t0
+  const { data, info } = await sharp(r.data, { raw: { width: r.width, height: r.height, channels: 3 } }).extract(zone).greyscale().raw().toBuffer({ resolveWithObject: true })
+  const w = info.width, h = info.height; let s = 0, s2 = 0, n = 0
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; const v = data[i - 1] + data[i + 1] + data[i - w] + data[i + w] - 4 * data[i]; s += v; s2 += v * v; n++ }
+  res[`d${d}`] = { rendu_ms: ms, laplacienBois_brut2400: +(s2 / n - (s / n) ** 2).toFixed(1) }
+}
+console.log(JSON.stringify(res, null, 1))
+fs.writeFileSync(ICI + 'essai-rendu3.json', JSON.stringify(res, null, 1))

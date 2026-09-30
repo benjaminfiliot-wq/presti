@@ -1,0 +1,116 @@
+{
+  "url": "http://127.0.0.1:47831/index.html",
+  "mediane": 100,
+  "scores": [
+    100,
+    100,
+    100
+  ],
+  "passes": [
+    {
+      "passe": 1,
+      "score": 100,
+      "formFactor": "mobile",
+      "limitation": "simulate",
+      "ecran": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "fcp": "0.9 s",
+      "lcp": "1.5 s",
+      "tbt": "60 ms",
+      "cls": "0",
+      "si": "0.9 s",
+      "requetes": 12,
+      "requetesRelief": [],
+      "liste": [
+        "Document /index.html 7856",
+        "Font /fonts/fraunces-300.woff2 18517",
+        "Font /fonts/fraunces-400.woff2 18581",
+        "Font /fonts/ibm-plex-sans-400.woff2 15013",
+        "Font /fonts/ibm-plex-sans-600.woff2 16365",
+        "Image /images/heros-escalier-portrait-1440.avif 90426",
+        "Stylesheet /styles.css 14760",
+        "Script /site.js 6537",
+        "Image data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id… 0",
+        "Image /images/mains-noyer-960.avif 33059",
+        "Image /images/tournage-copeaux-720.avif 15465",
+        "Image /images/penderie-720.avif 12976"
+      ],
+      "avertissements": []
+    },
+    {
+      "passe": 2,
+      "score": 100,
+      "formFactor": "mobile",
+      "limitation": "simulate",
+      "ecran": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "fcp": "0.9 s",
+      "lcp": "1.4 s",
+      "tbt": "50 ms",
+      "cls": "0",
+      "si": "0.9 s",
+      "requetes": 12,
+      "requetesRelief": [],
+      "liste": [
+        "Document /index.html 7856",
+        "Font /fonts/fraunces-300.woff2 18517",
+        "Font /fonts/fraunces-400.woff2 18581",
+        "Font /fonts/ibm-plex-sans-400.woff2 15013",
+        "Font /fonts/ibm-plex-sans-600.woff2 16365",
+        "Image /images/heros-escalier-portrait-1440.avif 90426",
+        "Stylesheet /styles.css 14760",
+        "Script /site.js 6537",
+        "Image data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id… 0",
+        "Image /images/mains-noyer-960.avif 33059",
+        "Image /images/tournage-copeaux-720.avif 15465",
+        "Image /images/penderie-720.avif 12976"
+      ],
+      "avertissements": []
+    },
+    {
+      "passe": 3,
+      "score": 100,
+      "formFactor": "mobile",
+      "limitation": "simulate",
+      "ecran": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "fcp": "0.9 s",
+      "lcp": "1.4 s",
+      "tbt": "0 ms",
+      "cls": "0",
+      "si": "0.9 s",
+      "requetes": 12,
+      "requetesRelief": [],
+      "liste": [
+        "Document /index.html 7856",
+        "Font /fonts/fraunces-300.woff2 18517",
+        "Font /fonts/fraunces-400.woff2 18581",
+        "Font /fonts/ibm-plex-sans-400.woff2 15013",
+        "Font /fonts/ibm-plex-sans-600.woff2 16365",
+        "Image /images/heros-escalier-portrait-1440.avif 90426",
+        "Stylesheet /styles.css 14760",
+        "Script /site.js 6537",
+        "Image data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id… 0",
+        "Image /images/mains-noyer-960.avif 33059",
+        "Image /images/tournage-copeaux-720.avif 15465",
+        "Image /images/penderie-720.avif 12976"
+      ],
+      "avertissements": []
+    }
+  ]
+}

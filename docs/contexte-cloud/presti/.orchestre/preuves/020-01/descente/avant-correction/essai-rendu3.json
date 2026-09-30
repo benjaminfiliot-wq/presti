@@ -1,0 +1,32 @@
+{
+ "zone": {
+  "left": 1500,
+  "top": 326,
+  "width": 833,
+  "height": 500
+ },
+ "d0": {
+  "rendu_ms": 1870,
+  "laplacienBois_brut2400": 69.7
+ },
+ "d0.0037": {
+  "rendu_ms": 1966,
+  "laplacienBois_brut2400": 63.3
+ },
+ "d0.0064": {
+  "rendu_ms": 1890,
+  "laplacienBois_brut2400": 60.9
+ },
+ "d0.03": {
+  "rendu_ms": 1955,
+  "laplacienBois_brut2400": 42.7
+ },
+ "d0.066": {
+  "rendu_ms": 1881,
+  "laplacienBois_brut2400": 28.2
+ },
+ "d0.116": {
+  "rendu_ms": 1932,
+  "laplacienBois_brut2400": 14.7
+ }
+}

@@ -1,0 +1,173 @@
+{
+ "date": "2026-09-16T21:15:10.645Z",
+ "methode": "gris 160 px, écart moyen /255, part > 8",
+ "effets": {
+  "heros-entree": {
+   "sel": ".hero--plein",
+   "y": 0,
+   "boite": "390×844",
+   "moyen": 0.096,
+   "part8": 0.6439
+  },
+  "citation-mots": {
+   "sel": ".plateau__citation blockquote p",
+   "y": 605,
+   "boite": "351×155",
+   "moyen": 0.1311,
+   "part8": 0.3884
+  },
+  "citation-signature": {
+   "sel": ".plateau__citation figcaption",
+   "y": 782,
+   "boite": "351×115",
+   "moyen": 0.0617,
+   "part8": 0.2679
+  },
+  "chiffre-1": {
+   "sel": ".chiffre",
+   "y": 934,
+   "boite": "351×83",
+   "moyen": 0.0612,
+   "part8": 0.2123
+  },
+  "plateau-photo-volet": {
+   "sel": ".plateau__photo",
+   "y": 1218,
+   "boite": "390×260",
+   "moyen": 0.3048,
+   "part8": 1
+  },
+  "titre-prestations": {
+   "sel": ".scene--presta h2",
+   "y": 1534,
+   "boite": "351×85",
+   "moyen": 0.1049,
+   "part8": 0.254
+  },
+  "intro-prestations": {
+   "sel": ".scene--presta .scene__tete p",
+   "y": 1635,
+   "boite": "351×78",
+   "moyen": 0.064,
+   "part8": 0.3148
+  },
+  "carte-presta-1": {
+   "sel": ".presta__ligne",
+   "y": 1745,
+   "boite": "312×548",
+   "moyen": 0.3623,
+   "part8": 0.7476
+  },
+  "titre-atelier": {
+   "sel": ".atelier__titre",
+   "y": 2556,
+   "boite": "351×121",
+   "moyen": 0.0918,
+   "part8": 0.2406
+  },
+  "atelier-phrase": {
+   "sel": ".atelier__phrase",
+   "y": 2692,
+   "boite": "322×76",
+   "moyen": 0.0997,
+   "part8": 0.3845
+  },
+  "atelier-verbes": {
+   "sel": ".atelier__phrase",
+   "y": 2692,
+   "boite": "322×76",
+   "moyen": 0.0394,
+   "part8": 0.1836
+  },
+  "titre-realisations": {
+   "sel": ".galerie__tete h2",
+   "y": 3386,
+   "boite": "351×43",
+   "moyen": 0.1875,
+   "part8": 0.4237
+  },
+  "carte-galerie-1": {
+   "sel": ".galerie__item",
+   "y": 3529,
+   "boite": "332×470",
+   "moyen": 0.2197,
+   "part8": 0.8743
+  },
+  "commune-1": {
+   "sel": "#communes .commune",
+   "y": 4378,
+   "boite": "390×53",
+   "moyen": 0.0694,
+   "part8": 0.1783
+  },
+  "titre-etapes": {
+   "sel": "#etapes h2",
+   "y": 5096,
+   "boite": "351×33",
+   "moyen": 0.1405,
+   "part8": 0.3425
+  },
+  "legende-eclate": {
+   "sel": ".eclate__legende",
+   "y": 4961,
+   "boite": "351×76",
+   "moyen": 0.0614,
+   "part8": 0.2477
+  },
+  "carte-etape-1": {
+   "sel": "#etapes .etape",
+   "y": 5227,
+   "boite": "296×196",
+   "moyen": 0.0638,
+   "part8": 0.2179
+  },
+  "faq-photo-volet": {
+   "sel": ".faq-scene__photo",
+   "y": 5520,
+   "boite": "390×260",
+   "moyen": 0.584,
+   "part8": 1
+  },
+  "faq-liste": {
+   "sel": ".faq",
+   "y": 5953,
+   "boite": "351×416",
+   "moyen": 0.044,
+   "part8": 0.1455
+  },
+  "titre-contact": {
+   "sel": "#contact h2",
+   "y": 6561,
+   "boite": "351×104",
+   "moyen": 0.1167,
+   "part8": 0.3367
+  },
+  "atelier-derive": {
+   "sel": "#atelier",
+   "y": 2446,
+   "boite": "390×549",
+   "moyen": 0.1123,
+   "part8": 0.7108
+  },
+  "plateau-photo-glisse": {
+   "sel": ".plateau__photo",
+   "y": 1218,
+   "boite": "390×260",
+   "moyen": 0.1349,
+   "part8": 0.7765
+  },
+  "eclate-cover30-45": {
+   "moyen": 0.0638,
+   "part8": 0.3312
+  },
+  "eclate-ferme45-ouvert45": {
+   "moyen": 0.0703,
+   "part8": 0.3303
+  },
+  "eclate-cover45-60": {
+   "moyen": 0.0155,
+   "part8": 0.0341
+  }
+ },
+ "version": "153.0.8010.12"
+}

@@ -1,0 +1,18 @@
+// Outil de regard (pas un juge) : recompose les calques comme le site (chaque calque dans sa boîte, décalé de son vecteur,
+// dans l'ordre) et écrit l'image, pour voir ce que le visiteur verra à l'état éclaté (et pas seulement eclate.avif).
+// Usage : node outils/composite.mjs <dossier des AVIF> <sortie.png> [fraction de l'éclatement, 1 par défaut]
+import fs from 'node:fs'
+import path from 'node:path'
+import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const [dos, sortie, t = '1'] = process.argv.slice(2)
+const L = 1400, H = 1050, k = Number(t)
+const j = JSON.parse(fs.readFileSync(path.join(dos, 'eclate.json'), 'utf8'))
+const poses = []
+for (const p of [...j.pieces].sort((a, b) => a.ordre - b.ordre)) {
+  const bw = Math.round(p.l * L), bh = Math.round(p.h * H)
+  poses.push({ input: await sharp(path.join(dos, p.fichier)).resize(bw, bh, { fit: 'fill' }).png().toBuffer(), left: Math.round((p.x + k * p.vecteur[0]) * L), top: Math.round((p.y + k * p.vecteur[1]) * H) })
+}
+await sharp({ create: { width: L, height: H, channels: 3, background: '#14110E' } }).composite(poses).png().toFile(sortie)
+console.log('ok', sortie)

@@ -1,0 +1,46 @@
+// d15.mjs — D-15 recalculé hors navigateur sur les captures figées gardées (fige-<lettre>-y0000.png / -y0270.png, poussée à 0),
+// avec une recherche de ±32 px réduits (±288 px écran) : à ±18, 37 blocs sur 99 (film a) et 42 (a-roulis) butaient sur la limite.
+// Un bloc dont le meilleur appariement touche la limite de recherche OU le bord de l'image est compté à part et exclu des médianes.
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { avance, SENS } from './rendu.mjs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const gris = async (f) => sharp(f).resize(160).greyscale().raw().toBuffer()
+const W = 160, H = 100, R = 32
+const EXs = 0.404 * 1440, EYs = 0.386 * 1080 - (1080 - 900) * 0.42, ex = EXs / 9, ey = EYs / 9
+const q = (a, p) => { const s = [...a].sort((x, y) => x - y); return s.length ? +s[Math.floor(p * (s.length - 1))].toFixed(1) : null }
+const res = { methode: 'réduction grise 160×100, blocs 16×16 au pas de 2, SAD, recherche ±32 px réduits, affinage parabolique ; px écran = ×9 ; modèle : rayon écran → 1,04·r′(r, δ), tourné de ρ', R }
+for (const [mode, lettre, dmax, roulis] of [['d116', 'a', 0.116, false], ['d066', 'b', 0.066, false], ['sansgpu', 'c', 0, false], ['d116-roulis', 'a-roulis', 0.116, true]]) {
+  const mes = JSON.parse(fs.readFileSync(ICI + `mesures-${mode}.json`, 'utf8'))
+  const h1Haut = mes.perceptibiliteD15.zones.oeil.def.match(/y < (\d+)/)[1] / 1
+  const A = await gris(ICI + `fige-${lettre}-y0000.png`), B = await gris(ICI + `fige-${lettre}-y0270.png`)
+  const d = dmax, rho = roulis ? SENS * 76.923 * d : 0, th = rho * Math.PI / 180
+  const zones = { oeil: [], marches: [] }
+  for (let by = 0; by + 16 <= H; by += 2) for (let bx = 0; bx + 16 <= W; bx += 2) {
+    const dansOeil = bx >= ex - 24 && bx + 16 <= ex + 24 && by >= Math.max(ey - 24, 80 / 9) && by + 16 <= Math.min(ey + 24, h1Haut / 9)
+    const dansMarches = bx >= 150 / 9 && bx + 16 <= 500 / 9 && by >= 120 / 9 && by + 16 <= 420 / 9
+    if (!dansOeil && !dansMarches) continue
+    const dedans = (u, v) => bx + u >= 0 && by + v >= 0 && bx + u + 16 <= W && by + v + 16 <= H
+    const cout = (u, v) => { let s = 0; for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) s += Math.abs(A[(by + j) * W + bx + i] - B[(by + v + j) * W + bx + u + i]); return s }
+    let best = Infinity, bu = 0, bv = 0
+    for (let v = -R; v <= R; v++) for (let u = -R; u <= R; u++) { if (!dedans(u, v)) continue; const c = cout(u, v); if (c < best) { best = c; bu = u; bv = v } }
+    const limite = Math.abs(bu) === R || Math.abs(bv) === R || !dedans(bu - 1, bv) || !dedans(bu + 1, bv) || !dedans(bu, bv - 1) || !dedans(bu, bv + 1)
+    const para = (m, c0, p) => { const den = m - 2 * c0 + p; return den > 0 ? 0.5 * (m - p) / den : 0 }
+    const u = limite ? bu : bu + para(cout(bu - 1, bv), best, cout(bu + 1, bv)), v = limite ? bv : bv + para(cout(bu, bv - 1), best, cout(bu, bv + 1))
+    const cx = (bx + 8) * 9, cy = (by + 8) * 9, vx = cx - EXs, vy = cy - EYs, dist = Math.hypot(vx, vy)
+    const rp = avance(dist / 1080, d) * 1080 * 1.04
+    const px = EXs + (rp / dist) * (vx * Math.cos(th) - vy * Math.sin(th)), py = EYs + (rp / dist) * (vx * Math.sin(th) + vy * Math.cos(th))
+    const b = { limite, module: Math.hypot(u, v) * 9, radial: (u * vx + v * vy) / dist * 9, modele: Math.hypot(px - cx, py - cy), sad: best / 256 }
+    if (dansOeil) zones.oeil.push(b)
+    if (dansMarches) zones.marches.push(b)
+  }
+  res[mode] = { delta_y270: d, rho_deg: +rho.toFixed(2) }
+  for (const [z, bl] of Object.entries(zones)) {
+    const ok = bl.filter((b) => !b.limite)
+    res[mode][z] = { blocs: bl.length, blocsALaLimite: bl.length - ok.length, moduleMedian_px: q(ok.map((b) => b.module), 0.5), moduleP90_px: q(ok.map((b) => b.module), 0.9), radialMedian_px: q(ok.map((b) => b.radial), 0.5), moduleModeleMedian_px_blocsRetenus: q(ok.map((b) => b.modele), 0.5), moduleModeleMedian_px_tousBlocs: q(bl.map((b) => b.modele), 0.5), sadMoyenMedian: q(ok.map((b) => b.sad), 0.5) }
+  }
+}
+fs.writeFileSync(ICI + 'mesures-d15.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

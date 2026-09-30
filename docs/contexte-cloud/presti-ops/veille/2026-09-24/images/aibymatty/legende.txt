@@ -1,0 +1,14 @@
+Légende relevée sur la page TikTok (sans connexion) le 24/09/2026 — @aibymatty, photo 7636880397288148246
+Compteurs affichés : 969 j'aime, 558 commentaires, 1 624 enregistrements, 154 partages. 8 diapositives.
+
+Tu pensais qu'il fallait une équipe complète pour sortir des pubs Meta qui performent ? Moi aussi.
+Un copywriter pour les hooks. Un media buyer pour les data. Un designer pour les créas.
+Et au final… tu testes 3 pubs « correctes » sans vraiment savoir quoi faire ensuite.
+Puis j'ai changé un truc : j'ai arrêté d'utiliser l'IA comme un simple chatbot. J'ai commencé à construire un vrai système autour de Claude.
+Aujourd'hui, je l'utilise comme une mini-agence Meta Ads. Je lui donne : mon offre, mon audience, mes concurrents, mes anciennes pubs, mes résultats, mes hooks gagnants.
+Maintenant, en quelques minutes, je peux : analyser des concurrents, trouver de nouveaux angles, comprendre pourquoi une pub floppe, générer 30 variantes d'ads, noter une créa avant de dépenser 1 €, savoir quoi scaler ou couper.
+Claude ne « devine » pas. Il travaille avec MES données.
+Il faut construire : une base de connaissances, un workflow, des prompts solides, une mémoire marketing.
+Perso, j'ai tout centralisé dans Obsidian : offres, avatars clients, hooks, pubs gagnantes, concurrents, résultats… Du coup, Claude repart jamais de zéro.
+Commente « META » et je t'envoie le guide complet (prompts, skills, workflow, système Obsidian, méthodes d'analyse Meta Ads).
+#meta #ia #intelligenceartificielle #claudeai #metaads

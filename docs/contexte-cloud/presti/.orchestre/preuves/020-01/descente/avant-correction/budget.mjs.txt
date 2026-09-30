@@ -1,0 +1,34 @@
+// budget.mjs — D-8 (budget de grossissement) pour les δ filmés, calcul hors navigateur, non circulaire : on VÉRIFIE le p90 des δ
+// imposés (0,116 et 0,066) au lieu de chercher δ. Fonctions recopiées de cahier/relecture/bornes-et-budget.mjs (section 3 :
+// grille 64×40 sur 1440×900, toile 1440×1080, œil 0,404 ; 0,386, cadrage cover à 42 %), modèle de proto7.mjs:19-24.
+// Ajouts : (1) les mêmes p90 pour E_b = 1 (ce qui est filmé : aucune rotation au repos, Q1 non tranchée) ; (2) δmax pour E_b = 1,
+// que le cahier (§6) laisse « à calculer en 020-01 » ; (3) le grossissement réel du prototype (source 2400, écran dpr 1).
+import fs from 'node:fs'
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/'
+const { RW } = JSON.parse(fs.readFileSync(ICI + 'cahier/params.json', 'utf8'))
+const VW = 1440, VH = 900, DW = 1440, DH = 1080, off = (DH - VH) * 0.42, ex = 0.404 * DW, ey = 0.386 * DH - off, HH = DH, G = 0.6
+const av = (r, d) => { const D = Math.pow(Math.max(r, RW) / RW, -G); return r * D / (D - d) }
+const inv = (rp, d) => { let lo = 0, hi = Math.min(d > 0 ? RW * Math.pow(d, -1 / G) : 10, 10) * (1 - 1e-9); for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (av(m, d) < rp) lo = m; else hi = m } return (lo + hi) / 2 }
+const stats = (d) => { const v = []; for (let j = 0; j < 40; j++) for (let i = 0; i < 64; i++) { const x = (i + .5) * VW / 64, y = (j + .5) * VH / 40, rp = Math.hypot(x - ex, y - ey) / HH, r = inv(rp, d), e = 1e-6; v.push(Math.max(r > 1e-9 ? rp / r : 1 / (1 - d), (av(r + e, d) - av(Math.max(0, r - e), d)) / (r + e - Math.max(0, r - e)))) } v.sort((a, b) => a - b); return { p90: v[Math.floor(0.9 * (v.length - 1))], max: v[v.length - 1] } }
+const cherche = (k) => { if (stats(0).p90 * k > 1.53) return 0; let lo = 0, hi = 0.26; for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (stats(m).p90 * k <= 1.53) lo = m; else hi = m } return lo }
+const r3 = (x) => +x.toFixed(3), r4 = (x) => +x.toFixed(4)
+const res = { date: new Date().toISOString(), source: 'copie de cahier/relecture/bornes-et-budget.mjs, section 3', RW, seuil: 1.53 }
+// témoin : on doit retrouver bornes-et-budget.json → base1.07 → tex2880_dpr1.deltaMax = 0.1169
+res.temoin_base107_dmax_dpr1 = r4(cherche(1.07 * 1.06 * 1.04 * 0.5))
+res.verification = {}
+for (const base of [1.07, 1]) {
+  const fac = base * 1.06 * 1.04
+  const o = { facteursCSS_finPalier: r4(fac) }
+  for (const d of [0.116, 0.066]) {
+    const s = stats(d)
+    o[`delta${d}`] = { p90_brut: r3(s.p90), max_brut: r3(s.max), p90_tex2880_dpr1: r3(s.p90 * fac * 0.5), p90_tex2880_dpr15: r3(s.p90 * fac * 0.75) }
+  }
+  if (base === 1) o.deltaMax_calcule = { tex2880_dpr1: r4(cherche(fac * 0.5)), tex2880_dpr15: r4(cherche(fac * 0.75)) }
+  res.verification[`Eb${base}`] = o
+}
+// ce que montre le film : source 2400 lue pour une boîte de 1440 px (0,6 px d'écran par pixel source au repos), E_b = 1,
+// palier 1,04 et poussée ≈ 1,002 au moment où y = 270 (poussée démarrée à 0 avec le film, voir descente.mjs)
+res.prototype_film = {}
+for (const d of [0.116, 0.066]) { const s = stats(d); res.prototype_film[`delta${d}`] = { p90_source2400_ecran_dpr1_y270: r3(s.p90 * 1.04 * 1.002 * 0.6), p90_si_source2880: r3(s.p90 * 1.04 * 1.002 * 0.5) } }
+fs.writeFileSync(ICI + 'films/descente/budget.json', JSON.stringify(res, null, 1))
+console.log(JSON.stringify(res, null, 1))

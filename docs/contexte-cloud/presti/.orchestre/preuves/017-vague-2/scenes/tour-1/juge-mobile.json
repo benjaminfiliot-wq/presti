@@ -1,0 +1,637 @@
+{
+ "verdicts": [
+  {
+   "cle": "Polices (policesMobileLocal) : aucune police système",
+   "ok": false,
+   "detail": ".devis__envoi .bouton=Arial (système)"
+  },
+  {
+   "cle": "Polices (policesMobile4G) : aucune police système",
+   "ok": false,
+   "detail": ".devis__envoi .bouton=Arial (système)"
+  },
+  {
+   "cle": "Polices (policesBureauLocal) : aucune police système",
+   "ok": false,
+   "detail": ".devis__envoi .bouton=Arial (système)"
+  },
+  {
+   "cle": "P10 héros : diff ≥ 10 % entre 2,5, 5 et 8 s (seuil 10/255)",
+   "ok": false,
+   "detail": "2,5→5 s 5.2 % ; 5→8 s 10.9 % ; 2,5→8 s 14.2 % ; animations en cours : pousse×Infinity, jauge×1"
+  },
+  {
+   "cle": "P10 chaque tranche de 844 px contient ≥ 25 % d’image (390)",
+   "ok": false,
+   "detail": "5/12 sous 25 % : y=844 0 %, y=1688 19 %, y=5908 0 %, y=6752 0 %, y=9284 17 %"
+  },
+  {
+   "cle": "P6 à 390 px, carte de galerie ≥ 80 % de la largeur",
+   "ok": true,
+   "detail": "0.85, 0.85, 0.85, 0.85, 0.85"
+  },
+  {
+   "cle": "Vague 1 : 4 étapes dans #etapes (390)",
+   "ok": true,
+   "detail": "4"
+  },
+  {
+   "cle": "Vague 1 : pas de h3 dans #communes (390)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "cle": "Vague 1 : légendes ≤ 2 lignes à 390 px",
+   "ok": true,
+   "detail": "1 l. « Cuisine au plan de travail en  » ; 1 l. « Penderie en bois, tringle et q » ; 1 l. « Boiseries et placards intégrés » ; 1 l. « Mains posées sur une planche d » ; 1 l. « Tournage sur bois, copeaux en  »"
+  },
+  {
+   "cle": "P8 (390) aucun .carte bordé ; contact 100 %",
+   "ok": true,
+   "detail": ".carte=0, contact 100.0 %"
+  },
+  {
+   "cle": "Téléphone : un seul geste ambiant en boucle",
+   "ok": true,
+   "detail": "pousse"
+  },
+  {
+   "cle": "P8 ≤ 1 266 px d’affilée sur un même fond (390)",
+   "ok": false,
+   "detail": "hero.hero--plein:photo:844 ; plateau:#14110E:918 ; prestations:#F4EDE2:614 ; atelier:photo:844 ; realisations:#14110E:2847 ; communes:#F4EDE2:351 ; etapes:#14110E:1108 ; questions:#F4EDE2:630 ; contact:photo:1261 ; pied.pied--nuit:#14110E:651"
+  },
+  {
+   "cle": "P8 ≥ 3 bandes sombres ou photos plein cadre après le héros (390)",
+   "ok": true,
+   "detail": "plateau, atelier, realisations, etapes, contact"
+  },
+  {
+   "cle": "P8 ΔE ≥ 15 entre fonds voisins (390, bandes affichées)",
+   "ok": false,
+   "detail": "hero.hero--plein | plateau 25.3 ; plateau | prestations 86.3 ; prestations | atelier 84.5 ; atelier | realisations 29 ; realisations | communes 86.3 ; communes | etapes 86.3 ; etapes | questions 86.3 ; questions | contact 74.7 ; contact | pied.pied--nuit 0"
+  },
+  {
+   "cle": "Console téléphone sans erreur",
+   "ok": true,
+   "detail": "aucune"
+  },
+  {
+   "cle": "Menu 390 tactile : ouvert, croix au-dessus, refermé par la croix, par le voile, par un lien",
+   "ok": true,
+   "detail": "{\"ouvert\":{\"ouvert\":true,\"sousDoigt\":\"SPAN.\",\"surBurger\":true,\"fondPanneau\":\"rgb(31, 22, 14)\",\"fondBouton\":\"rgb(244, 237, 226)\",\"couleurBouton\":\"rgb(31, 22, 14)\",\"panneauBas\":518,\"voile\":\"1\",\"liens\":[\"Prestations\",\"Réalisations\",\"Communes\",\"Questions\",\"Contact\"]},\"fermeCroix\":true,\"yDehors\":538,\"fermeVoile\":{\"ferme\":true,\"y\":0,\"hash\":\"\"},\"apresLien\":{\"ferme\":true,\"titreTop\":152,\"navBas\":78,\"defilementBloque\":false}} ; ΔE bouton/panneau 86"
+  },
+  {
+   "cle": "Bouton « Demander un devis » du panneau (390) mène au contact",
+   "ok": true,
+   "detail": "{\"ferme\":true,\"contactTop\":88}"
+  },
+  {
+   "cle": "Bouton du héros (390) mène au formulaire",
+   "ok": true,
+   "detail": "{\"contactTop\":88,\"formTop\":406}"
+  },
+  {
+   "cle": "Formulaire de démonstration : vide bloqué, envoi → « Demande reçue » avec récapitulatif, rien ne sort, « autre demande » rouvre",
+   "ok": true,
+   "detail": "vide bloqué=true ; {\"visible\":true,\"formCache\":true,\"projet\":\"Escalier\",\"commune\":\"Bruz\",\"top\":104,\"note\":\"Démonstration : aucune donnée n’a été envoyée.\"} ; requêtes sortantes : aucune ; {\"merciCache\":true,\"formVisible\":true}"
+  }
+ ],
+ "mesures": {
+  "policesMobileLocal": {
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__tel": "(aucun glyphe direct)",
+   "h1 .h1__cle span": "IBM Plex Sans (web)",
+   "h1 .mot": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".plateau blockquote p": "Fraunces (web)",
+   ".plateau figcaption": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   "#prestations h2": "Fraunces (web)",
+   "#prestations .scene__tete p": "IBM Plex Sans (web)",
+   ".presta__num": "Fraunces (web)",
+   ".presta__ligne h3": "Fraunces (web)",
+   ".presta__texte p": "IBM Plex Sans (web)",
+   ".atelier__titre": "Fraunces (web)",
+   ".atelier__phrase": "Fraunces (web)",
+   ".atelier__legende": "IBM Plex Sans (web)",
+   "#realisations h2": "Fraunces (web)",
+   ".galerie figcaption span:last-child": "IBM Plex Sans (web)",
+   ".galerie__credits": "IBM Plex Sans (web)",
+   "#communes h2": "Fraunces (web)",
+   ".commune span": "Fraunces (web)",
+   "#etapes .mono": "IBM Plex Sans (web)",
+   "#etapes h2": "Fraunces (web)",
+   ".etape__num": "Fraunces (web)",
+   ".etape__corps h3": "Fraunces (web)",
+   ".etape__corps p": "IBM Plex Sans (web)",
+   "#questions h2": "Fraunces (web)",
+   ".faq summary": "Fraunces (web) + IBM Plex Sans (web)",
+   "#contact .mono": "IBM Plex Sans (web)",
+   "#contact h2": "Fraunces (web)",
+   ".devis__champ label": "IBM Plex Sans (web)",
+   ".devis__envoi .bouton": "Arial (système)",
+   ".devis__note": "IBM Plex Sans (web)",
+   ".bande__tel": "IBM Plex Sans (web)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "policesMobile4G": {
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__tel": "(aucun glyphe direct)",
+   "h1 .h1__cle span": "IBM Plex Sans (web)",
+   "h1 .mot": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".plateau blockquote p": "Fraunces (web)",
+   ".plateau figcaption": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   "#prestations h2": "Fraunces (web)",
+   "#prestations .scene__tete p": "IBM Plex Sans (web)",
+   ".presta__num": "Fraunces (web)",
+   ".presta__ligne h3": "Fraunces (web)",
+   ".presta__texte p": "IBM Plex Sans (web)",
+   ".atelier__titre": "Fraunces (web)",
+   ".atelier__phrase": "Fraunces (web)",
+   ".atelier__legende": "IBM Plex Sans (web)",
+   "#realisations h2": "Fraunces (web)",
+   ".galerie figcaption span:last-child": "IBM Plex Sans (web)",
+   ".galerie__credits": "IBM Plex Sans (web)",
+   "#communes h2": "Fraunces (web)",
+   ".commune span": "Fraunces (web)",
+   "#etapes .mono": "IBM Plex Sans (web)",
+   "#etapes h2": "Fraunces (web)",
+   ".etape__num": "Fraunces (web)",
+   ".etape__corps h3": "Fraunces (web)",
+   ".etape__corps p": "IBM Plex Sans (web)",
+   "#questions h2": "Fraunces (web)",
+   ".faq summary": "Fraunces (web) + IBM Plex Sans (web)",
+   "#contact .mono": "IBM Plex Sans (web)",
+   "#contact h2": "Fraunces (web)",
+   ".devis__champ label": "IBM Plex Sans (web)",
+   ".devis__envoi .bouton": "Arial (système)",
+   ".devis__note": "IBM Plex Sans (web)",
+   ".bande__tel": "IBM Plex Sans (web)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "policesBureauLocal": {
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__tel": "IBM Plex Sans (web)",
+   "h1 .h1__cle span": "IBM Plex Sans (web)",
+   "h1 .mot": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".plateau blockquote p": "Fraunces (web)",
+   ".plateau figcaption": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   "#prestations h2": "Fraunces (web)",
+   "#prestations .scene__tete p": "IBM Plex Sans (web)",
+   ".presta__num": "Fraunces (web)",
+   ".presta__ligne h3": "Fraunces (web)",
+   ".presta__texte p": "IBM Plex Sans (web)",
+   ".atelier__titre": "Fraunces (web)",
+   ".atelier__phrase": "Fraunces (web)",
+   ".atelier__legende": "IBM Plex Sans (web)",
+   "#realisations h2": "Fraunces (web)",
+   ".galerie figcaption span:last-child": "IBM Plex Sans (web)",
+   ".galerie__credits": "IBM Plex Sans (web)",
+   "#communes h2": "Fraunces (web)",
+   ".commune span": "Fraunces (web)",
+   "#etapes .mono": "IBM Plex Sans (web)",
+   "#etapes h2": "Fraunces (web)",
+   ".etape__num": "Fraunces (web)",
+   ".etape__corps h3": "Fraunces (web)",
+   ".etape__corps p": "IBM Plex Sans (web)",
+   "#questions h2": "Fraunces (web)",
+   ".faq summary": "Fraunces (web) + IBM Plex Sans (web)",
+   "#contact .mono": "IBM Plex Sans (web)",
+   "#contact h2": "Fraunces (web)",
+   ".devis__champ label": "IBM Plex Sans (web)",
+   ".devis__envoi .bouton": "Arial (système)",
+   ".devis__note": "IBM Plex Sans (web)",
+   ".bande__tel": "IBM Plex Sans (web)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "herosDiff": {
+   "d1": 0.05201117997326528,
+   "d2": 0.10864321302709928,
+   "d3": 0.14181249240490948,
+   "anim": [
+    "pousse×Infinity",
+    "jauge×1"
+   ]
+  },
+  "m390": {
+   "H": 10069,
+   "tranches": [
+    {
+     "y": 0,
+     "h": 844,
+     "part": 1
+    },
+    {
+     "y": 844,
+     "h": 844,
+     "part": 0
+    },
+    {
+     "y": 1688,
+     "h": 844,
+     "part": 0.187
+    },
+    {
+     "y": 2532,
+     "h": 844,
+     "part": 0.815
+    },
+    {
+     "y": 3376,
+     "h": 844,
+     "part": 0.714
+    },
+    {
+     "y": 4220,
+     "h": 844,
+     "part": 0.718
+    },
+    {
+     "y": 5064,
+     "h": 844,
+     "part": 0.678
+    },
+    {
+     "y": 5908,
+     "h": 844,
+     "part": 0
+    },
+    {
+     "y": 6752,
+     "h": 844,
+     "part": 0
+    },
+    {
+     "y": 7596,
+     "h": 844,
+     "part": 0.339
+    },
+    {
+     "y": 8440,
+     "h": 844,
+     "part": 1
+    },
+    {
+     "y": 9284,
+     "h": 785,
+     "part": 0.17
+    }
+   ],
+   "detail": [
+    {
+     "src": "heros-escalier-portrait-1440.avif",
+     "charge": true,
+     "x0": 0,
+     "x1": 390,
+     "Y0": 0,
+     "Y1": 844
+    },
+    {
+     "src": "atelier-poncage-portrait-1080.avif",
+     "charge": true,
+     "x0": 0,
+     "x1": 390,
+     "Y0": 2376,
+     "Y1": 3220
+    },
+    {
+     "src": "cuisine-bois-720.avif",
+     "charge": true,
+     "x0": 20,
+     "x1": 351,
+     "Y0": 3427,
+     "Y1": 3841
+    },
+    {
+     "src": "penderie-720.avif",
+     "charge": true,
+     "x0": 39,
+     "x1": 371,
+     "Y0": 3932,
+     "Y1": 4347
+    },
+    {
+     "src": "boiserie-720.avif",
+     "charge": true,
+     "x0": 20,
+     "x1": 351,
+     "Y0": 4417,
+     "Y1": 4831
+    },
+    {
+     "src": "mains-noyer-720.avif",
+     "charge": true,
+     "x0": 39,
+     "x1": 371,
+     "Y0": 4901,
+     "Y1": 5316
+    },
+    {
+     "src": "tournage-copeaux-720.avif",
+     "charge": true,
+     "x0": 20,
+     "x1": 351,
+     "Y0": 5407,
+     "Y1": 5822
+    },
+    {
+     "src": "heros-escalier-portrait-1440.avif",
+     "charge": true,
+     "x0": 0,
+     "x1": 390,
+     "Y0": 8156,
+     "Y1": 9417
+    }
+   ],
+   "secs": [
+    {
+     "id": "hero.hero--plein",
+     "top": 0,
+     "h": 844,
+     "largeur": 1,
+     "bg": "rgb(14, 10, 7)",
+     "photo": true,
+     "hex": "#0E0A07",
+     "luma": 10.633799999999999,
+     "fond": "photo"
+    },
+    {
+     "id": "plateau",
+     "top": 844,
+     "h": 918,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": false,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "#14110E"
+    },
+    {
+     "id": "prestations",
+     "top": 1762,
+     "h": 614,
+     "largeur": 1,
+     "bg": "rgb(244, 237, 226)",
+     "photo": false,
+     "hex": "#F4EDE2",
+     "luma": 237.69400000000002,
+     "fond": "#F4EDE2"
+    },
+    {
+     "id": "atelier",
+     "top": 2376,
+     "h": 844,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": true,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "photo"
+    },
+    {
+     "id": "realisations",
+     "top": 3220,
+     "h": 2847,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": false,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "#14110E"
+    },
+    {
+     "id": "communes",
+     "top": 6067,
+     "h": 351,
+     "largeur": 1,
+     "bg": "rgb(244, 237, 226)",
+     "photo": false,
+     "hex": "#F4EDE2",
+     "luma": 237.69400000000002,
+     "fond": "#F4EDE2"
+    },
+    {
+     "id": "etapes",
+     "top": 6418,
+     "h": 1108,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": false,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "#14110E"
+    },
+    {
+     "id": "questions",
+     "top": 7526,
+     "h": 630,
+     "largeur": 1,
+     "bg": "rgb(244, 237, 226)",
+     "photo": false,
+     "hex": "#F4EDE2",
+     "luma": 237.69400000000002,
+     "fond": "#F4EDE2"
+    },
+    {
+     "id": "contact",
+     "top": 8156,
+     "h": 1261,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": true,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "photo"
+    },
+    {
+     "id": "pied.pied--nuit",
+     "top": 9417,
+     "h": 651,
+     "largeur": 1,
+     "bg": "rgb(20, 17, 14)",
+     "photo": false,
+     "hex": "#14110E",
+     "luma": 17.4212,
+     "fond": "#14110E"
+    }
+   ],
+   "cartes": [
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85
+   ],
+   "legendes": [
+    {
+     "texte": "Cuisine au plan de travail en bois massif, claustra à lames",
+     "lignes": 1,
+     "hauteur": 43,
+     "lh": 21,
+     "largeurFig": 1
+    },
+    {
+     "texte": "Penderie en bois, tringle et quatre cintres",
+     "lignes": 1,
+     "hauteur": 21,
+     "lh": 21,
+     "largeurFig": 1
+    },
+    {
+     "texte": "Boiseries et placards intégrés en bois sombre",
+     "lignes": 1,
+     "hauteur": 21,
+     "lh": 21,
+     "largeurFig": 1
+    },
+    {
+     "texte": "Mains posées sur une planche de noyer, sciure au sol",
+     "lignes": 1,
+     "hauteur": 43,
+     "lh": 21,
+     "largeurFig": 1
+    },
+    {
+     "texte": "Tournage sur bois, copeaux en vol",
+     "lignes": 1,
+     "hauteur": 21,
+     "lh": 21,
+     "largeurFig": 1
+    }
+   ],
+   "rail": {
+    "overflowX": "auto",
+    "snap": "x mandatory",
+    "scroll": 2009,
+    "client": 390
+   },
+   "etapes": 4,
+   "h3Communes": 0,
+   "contact": 1,
+   "cartesBordees": 0,
+   "gestes": [
+    "pousse"
+   ]
+  },
+  "frontieres390": [
+   {
+    "entre": "hero.hero--plein | plateau",
+    "de76": 25.3,
+    "de2000": 17.3,
+    "lumaHaut": 77.6,
+    "lumaBas": 17.4
+   },
+   {
+    "entre": "plateau | prestations",
+    "de76": 86.3,
+    "de2000": 85.6,
+    "lumaHaut": 17.4,
+    "lumaBas": 230.5
+   },
+   {
+    "entre": "prestations | atelier",
+    "de76": 84.5,
+    "de2000": 84.3,
+    "lumaHaut": 230.5,
+    "lumaBas": 20.8
+   },
+   {
+    "entre": "atelier | realisations",
+    "de76": 29,
+    "de2000": 20,
+    "lumaHaut": 72.5,
+    "lumaBas": 17.4
+   },
+   {
+    "entre": "realisations | communes",
+    "de76": 86.3,
+    "de2000": 85.6,
+    "lumaHaut": 17.4,
+    "lumaBas": 230.5
+   },
+   {
+    "entre": "communes | etapes",
+    "de76": 86.3,
+    "de2000": 85.5,
+    "lumaHaut": 230.4,
+    "lumaBas": 17.4
+   },
+   {
+    "entre": "etapes | questions",
+    "de76": 86.3,
+    "de2000": 85.6,
+    "lumaHaut": 17.4,
+    "lumaBas": 230.5
+   },
+   {
+    "entre": "questions | contact",
+    "de76": 74.7,
+    "de2000": 70,
+    "lumaHaut": 230.4,
+    "lumaBas": 43.3
+   },
+   {
+    "entre": "contact | pied.pied--nuit",
+    "de76": 0,
+    "de2000": 0,
+    "lumaHaut": 17.4,
+    "lumaBas": 17.4
+   }
+  ],
+  "menu": {
+   "ouvert": {
+    "ouvert": true,
+    "sousDoigt": "SPAN.",
+    "surBurger": true,
+    "fondPanneau": "rgb(31, 22, 14)",
+    "fondBouton": "rgb(244, 237, 226)",
+    "couleurBouton": "rgb(31, 22, 14)",
+    "panneauBas": 518,
+    "voile": "1",
+    "liens": [
+     "Prestations",
+     "Réalisations",
+     "Communes",
+     "Questions",
+     "Contact"
+    ]
+   },
+   "fermeCroix": true,
+   "yDehors": 538,
+   "fermeVoile": {
+    "ferme": true,
+    "y": 0,
+    "hash": ""
+   },
+   "apresLien": {
+    "ferme": true,
+    "titreTop": 152,
+    "navBas": 78,
+    "defilementBloque": false
+   }
+  },
+  "rennes390": {
+   "url": "/menuisier-rennes/index.html",
+   "h1": "Menuisier à RennesEscaliers et agencement",
+   "bandeau": "boiserie-960.avif",
+   "bandeauH": 608
+  }
+ },
+ "absents": []
+}

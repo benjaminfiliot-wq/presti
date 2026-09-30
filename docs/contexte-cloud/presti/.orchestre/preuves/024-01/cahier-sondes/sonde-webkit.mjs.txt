@@ -1,0 +1,27 @@
+import fs from 'node:fs'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const pw = require('playwright')
+const out = { date: new Date().toISOString(), playwright: require('playwright/package.json').version }
+try {
+  out.executable = pw.webkit.executablePath(); out.existe = fs.existsSync(out.executable)
+  const b = await pw.webkit.launch({ timeout: 60000 })
+  out.version = b.version()
+  const ctx = await b.newContext({ ...pw.devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+  const page = await ctx.newPage()
+  await page.setContent('<!doctype html><style>#a,#b{width:10px;height:10px}@supports (animation-timeline: view()){#a{width:11px}}@supports not (animation-timeline-inexistante: view()){#b{width:12px}}</style><div id=a></div><div id=b></div>')
+  out.sondes = await page.evaluate(() => ({
+    ua: navigator.userAgent,
+    view: CSS.supports('animation-timeline: view()'),
+    scroll: CSS.supports('animation-timeline: scroll()'),
+    viewTimeline: typeof window.ViewTimeline,
+    getAnimations: 'getAnimations' in Element.prototype,
+    regleView: getComputedStyle(document.getElementById('a')).width,
+    regleNotInexistante: getComputedStyle(document.getElementById('b')).width,
+    svh: CSS.supports('height', '100svh'),
+    interpolateSize: CSS.supports('interpolate-size', 'allow-keywords'),
+    ioExiste: 'IntersectionObserver' in window,
+    rVFC: 'requestVideoFrameCallback' in HTMLVideoElement.prototype,
+  }))
+  await b.close()
+} catch (e) { out.erreur = String(e && e.message || e).slice(0, 600) }
+console.log(JSON.stringify(out, null, 1))

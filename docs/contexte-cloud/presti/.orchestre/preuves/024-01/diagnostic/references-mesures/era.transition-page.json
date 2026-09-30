@@ -1,0 +1,41 @@
+{
+  "slug": "era",
+  "url": "https://era-residence.com/",
+  "date": "2026-09-16T20:43:54.170Z",
+  "lien": {
+    "href": "https://www.era-residence.com/apartments",
+    "texte": "Select an ApartmentSelect an Apartment"
+  },
+  "urlFinale": "https://www.era-residence.com/apartments",
+  "appels": {
+    "vt": 0,
+    "push": 0
+  },
+  "documentRemplace": true,
+  "animationsPendantLaTransition": [
+    [
+      "CSSTransition | visibility | 800 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      34
+    ],
+    [
+      "CSSTransition | visibility | 400 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      31
+    ],
+    [
+      "CSSTransition | color | 800 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      6
+    ],
+    [
+      "CSSTransition | color | 400 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      5
+    ],
+    [
+      "CSSTransition | background-color | 400 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      3
+    ],
+    [
+      "CSSTransition | opacity | 400 | cubic-bezier(0.25, 1, 0.5, 1) | 1 | ",
+      1
+    ]
+  ]
+}

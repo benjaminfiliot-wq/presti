@@ -1,0 +1,8 @@
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-00.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-01.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-02.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-03.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-04.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-05.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-06.mp4'
+file 'C:/Users/benja/Documents/presti/.promo-tmp/carre/bout-07.mp4'

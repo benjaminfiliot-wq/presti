@@ -1,0 +1,998 @@
+{
+ "base": "http://127.0.0.1:49684/",
+ "minute": {
+  "1440x900": {
+   "b1440-t03.png": {
+    "reelMs": 308,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       0,
+       0,
+       1440,
+       900
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 8.28285)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0.230023)",
+    "opacitePied": "0",
+    "scaleImg": "1.00011",
+    "bandesPleines": {
+     "hautPx": 0,
+     "basPx": 0,
+     "hauteur": 900
+    }
+   },
+   "b1440-t25.png": {
+    "reelMs": 2502,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -1,
+       -1,
+       1443,
+       902
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.0022",
+    "lum480": {
+     "vignette": "480×300",
+     "moyenne": 58.1,
+     "ecartType": 48,
+     "partSous30": 28.7
+    },
+    "currentSrc": "heros-escalier-1600.avif"
+   },
+   "b1440-t50.png": {
+    "reelMs": 5003,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -5,
+       -3,
+       1452,
+       908
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.00849"
+   },
+   "b1440-t80.png": {
+    "reelMs": 8010,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -13,
+       -7,
+       1471,
+       919
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.02145"
+   }
+  },
+  "1920x1080": {
+   "b1920-t03.png": {
+    "reelMs": 302,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       0,
+       0,
+       1920,
+       1080
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0.499497)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0.00176114)",
+    "opacitePied": "0.766156",
+    "scaleImg": "1.00024",
+    "bandesPleines": {
+     "hautPx": 0,
+     "basPx": 0,
+     "hauteur": 1080
+    }
+   },
+   "b1920-t25.png": {
+    "reelMs": 2506,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -2,
+       -1,
+       1925,
+       1083
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.00271",
+    "lum480": {
+     "vignette": "480×270",
+     "moyenne": 58.6,
+     "ecartType": 47.3,
+     "partSous30": 27.2
+    },
+    "currentSrc": "heros-escalier-2400.avif"
+   },
+   "b1920-t50.png": {
+    "reelMs": 5009,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -8,
+       -4,
+       1938,
+       1090
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.00935"
+   },
+   "b1920-t80.png": {
+    "reelMs": 8015,
+    "heroRevele": 0,
+    "splash": 0,
+    "defile": 0,
+    "animesQuiCroisentLeH1": [
+     {
+      "el": "img. (dans .hero__media, fond plein cadre)",
+      "nom": "pousse",
+      "boite": [
+       -19,
+       -9,
+       1965,
+       1105
+      ]
+     }
+    ],
+    "transformLigne": "matrix(1, 0, 0, 1, 0, 0)",
+    "transformCle": "matrix(1, 0, 0, 1, 0, 0)",
+    "opacitePied": "1",
+    "scaleImg": "1.02335"
+   }
+  }
+ },
+ "dpr2_1440": {
+  "currentSrc": "heros-escalier-2880.avif",
+  "naturalWidth": 1440,
+  "dpr": 2
+ },
+ "lumSources": {
+  "heros-escalier-2880.webp": {
+   "vignette": "480×360",
+   "moyenne": 65.4,
+   "ecartType": 31.2,
+   "partSous30": 9.3
+  },
+  "heros-escalier-portrait-1080.webp": {
+   "vignette": "480×600",
+   "moyenne": 65.8,
+   "ecartType": 32.9,
+   "partSous30": 7.6
+  }
+ },
+ "mobileMinute": {
+  "m390-t03.png": {
+   "reelMs": 314,
+   "h1Opacite": "1",
+   "transformLigne": "none",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "objectPosition": "50% 42%",
+   "heroRevele": 0,
+   "splash": 0,
+   "bandesPleines": {
+    "hautPx": 0,
+    "basPx": 48,
+    "hauteur": 1688
+   }
+  },
+  "m390-t25.png": {
+   "reelMs": 2512,
+   "h1Opacite": "1",
+   "transformLigne": "none",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "objectPosition": "50% 42%",
+   "heroRevele": 0,
+   "splash": 0,
+   "lum480": {
+    "vignette": "480×1039",
+    "moyenne": 67.2,
+    "ecartType": 55.5,
+    "partSous30": 24
+   }
+  },
+  "m390-t50.png": {
+   "reelMs": 5003,
+   "h1Opacite": "1",
+   "transformLigne": "none",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "objectPosition": "50% 42%",
+   "heroRevele": 0,
+   "splash": 0
+  },
+  "m390-t80.png": {
+   "reelMs": 8014,
+   "h1Opacite": "1",
+   "transformLigne": "none",
+   "currentSrc": "heros-escalier-portrait-1080.avif",
+   "objectPosition": "50% 42%",
+   "heroRevele": 0,
+   "splash": 0
+  }
+ },
+ "menu390": {
+  "avant": {
+   "ariaExpanded": "false",
+   "bodyClasses": "",
+   "panneauOpacite": "0",
+   "panneauVisibilite": "hidden",
+   "panneauTransform": "matrix(1, 0, 0, 1, 0, -37.45)",
+   "elementAuCentreDuBurger": "BUTTON.burger",
+   "scrollY": 0
+  },
+  "apresTapBurger": {
+   "ariaExpanded": "true",
+   "bodyClasses": "menu-ouvert",
+   "panneauOpacite": "1",
+   "panneauVisibilite": "visible",
+   "panneauTransform": "none",
+   "elementAuCentreDuBurger": "DIV.panneau ouvert",
+   "scrollY": 0
+  },
+  "apresSecondTapBurger": {
+   "ariaExpanded": "true",
+   "bodyClasses": "menu-ouvert",
+   "panneauOpacite": "1",
+   "panneauVisibilite": "visible",
+   "panneauTransform": "none",
+   "elementAuCentreDuBurger": "DIV.panneau ouvert",
+   "scrollY": 0
+  },
+  "apresTapHorsPanneau": {
+   "ariaExpanded": "true",
+   "bodyClasses": "menu-ouvert",
+   "panneauOpacite": "1",
+   "panneauVisibilite": "visible",
+   "panneauTransform": "none",
+   "elementAuCentreDuBurger": "DIV.panneau ouvert",
+   "scrollY": 6417
+  },
+  "apresEchap": {
+   "ariaExpanded": "false",
+   "bodyClasses": "",
+   "panneauOpacite": "0",
+   "panneauVisibilite": "hidden",
+   "panneauTransform": "matrix(1, 0, 0, 1, 0, -37.45)",
+   "elementAuCentreDuBurger": "BUTTON.burger",
+   "scrollY": 6818
+  },
+  "panneauLiens": [
+   "Accueil → index.html",
+   "Prestations → #prestations",
+   "Réalisations → #realisations",
+   "Contact → #contact",
+   "Rennes → menuisier-rennes/index.html",
+   "Cesson-Sévigné → menuisier-cesson-sevigne/index.html",
+   "Bruz → menuisier-bruz/index.html",
+   "Saint-Grégoire → menuisier-saint-gregoire/index.html",
+   "Demander un devis → #contact"
+  ],
+  "apresTapRealisations": {
+   "ariaExpanded": "false",
+   "bodyClasses": "",
+   "panneauOpacite": "0",
+   "panneauVisibilite": "hidden",
+   "panneauTransform": "matrix(1, 0, 0, 1, 0, -37.45)",
+   "elementAuCentreDuBurger": "BUTTON.burger",
+   "scrollY": 3751
+  },
+  "ancreRealisations": {
+   "surtitreTop": 64,
+   "navBas": 78
+  }
+ },
+ "appels390": {
+  "liens": [
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": false,
+    "dansPanneau": false,
+    "visible": false
+   },
+   {
+    "texte": "Demander un devis",
+    "href": "#contact",
+    "dansPied": false,
+    "dansPanneau": true,
+    "visible": true
+   },
+   {
+    "texte": "Demander un devis",
+    "href": "#contact",
+    "dansPied": false,
+    "dansPanneau": false,
+    "visible": true
+   },
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": false,
+    "dansPanneau": false,
+    "visible": true
+   },
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": true,
+    "dansPanneau": false,
+    "visible": true
+   }
+  ],
+  "apresDevisHeros": {
+   "hash": "#contact",
+   "scrollY": 6818,
+   "contactTop": 0,
+   "formulaires": 0
+  },
+  "tapTelContact": {
+   "x": 160.7421875,
+   "y": 421.609375,
+   "href": "tel:+33 2 61 91 38 47",
+   "texte": "02 61 91 38 47",
+   "urlApres": "http://127.0.0.1:49684/index.html#contact",
+   "erreurTel": null
+  }
+ },
+ "plateau390": {
+  "plateau": {
+   "top": 0,
+   "bottom": 917.953125,
+   "hauteur": 918,
+   "ecrans": 1.09
+  },
+  "vals": [
+   {
+    "texte": "10",
+    "left": 19.5,
+    "right": 114.765625,
+    "top": 340.484375,
+    "bottom": 419.578125,
+    "fs": 101.4,
+    "fsVw": 26,
+    "opacite": "1",
+    "dansEcran": true,
+    "encrePx": 74.5,
+    "encreVw": 19.1,
+    "coupe": true
+   },
+   {
+    "texte": "180",
+    "left": 19.5,
+    "right": 164.40625,
+    "top": 523.640625,
+    "bottom": 602.734375,
+    "fs": 101.4,
+    "fsVw": 26,
+    "opacite": "1",
+    "dansEcran": true,
+    "encrePx": 74.5,
+    "encreVw": 19.1,
+    "coupe": true
+   },
+   {
+    "texte": "8",
+    "left": 19.5,
+    "right": 69.140625,
+    "top": 706.796875,
+    "bottom": 785.890625,
+    "fs": 101.4,
+    "fsVw": 26,
+    "opacite": "1",
+    "dansEcran": true,
+    "encrePx": 73.5,
+    "encreVw": 18.8,
+    "coupe": true
+   }
+  ],
+  "largeur": 390,
+  "sombre": {
+   "rectY": [
+    0,
+    1688
+   ],
+   "partSous30DansBande": 84.9,
+   "rangeesPleineLargeurA50": 1525,
+   "partSous30Capture": 84.9
+  }
+ },
+ "plateau1440": {
+  "plateau": {
+   "top": 0,
+   "bottom": 850.328125,
+   "hauteur": 850,
+   "largeur": 1440
+  },
+  "vals": [
+   {
+    "texte": "10",
+    "left": 72,
+    "right": 220.8125,
+    "top": 522.71875,
+    "bottom": 646.265625,
+    "fs": 158.4,
+    "fsVw": 11,
+    "canvasEncreVw": 8.06,
+    "opacite": "1",
+    "dansEcran": true,
+    "famille": "Fraunces, Georgia, serif",
+    "encrePx": 116,
+    "encreVw": 8.06,
+    "coupe": true
+   },
+   {
+    "texte": "180",
+    "left": 542.4375,
+    "right": 768.78125,
+    "top": 522.71875,
+    "bottom": 646.265625,
+    "fs": 158.4,
+    "fsVw": 11,
+    "canvasEncreVw": 8.06,
+    "opacite": "1",
+    "dansEcran": true,
+    "famille": "Fraunces, Georgia, serif",
+    "encrePx": 116,
+    "encreVw": 8.06,
+    "coupe": true
+   },
+   {
+    "texte": "8",
+    "left": 974.4375,
+    "right": 1051.984375,
+    "top": 522.71875,
+    "bottom": 646.265625,
+    "fs": 158.4,
+    "fsVw": 11,
+    "canvasEncreVw": 7.99,
+    "opacite": "1",
+    "dansEcran": true,
+    "famille": "Fraunces, Georgia, serif",
+    "encrePx": 115,
+    "encreVw": 7.99,
+    "coupe": true
+   }
+  ],
+  "sectionApresHeros": "plateau",
+  "navFond": "color(srgb 0.956863 0.929412 0.886274 / 0.84)",
+  "navClasses": "nav nav--claire solide",
+  "sombre": {
+   "rectY": [
+    0,
+    850
+   ],
+   "partSous30DansBande": 86.8,
+   "rangeesPleineLargeurA50": 770,
+   "partSous30Capture": 82
+  }
+ },
+ "texteHorsPied": {
+  "000000000": 0,
+  "DEMO-0001": 0,
+  "fictif": 0,
+  "SIREN": 0,
+  "assureur": 0,
+  "numeroAffiche": 2,
+  "liensTel": 2,
+  "telDansHero": 0,
+  "defileEntreHerosEtSuivante": false,
+  "titre": "Menuisier à Rennes — Atelier Lestraque"
+ },
+ "appels1440": {
+  "liens": [
+   {
+    "texte": "Atelier Lestraque",
+    "href": "index.html",
+    "dansPied": false
+   },
+   {
+    "texte": "Prestations",
+    "href": "#prestations",
+    "dansPied": false
+   },
+   {
+    "texte": "Réalisations",
+    "href": "#realisations",
+    "dansPied": false
+   },
+   {
+    "texte": "Communes",
+    "href": "#communes",
+    "dansPied": false
+   },
+   {
+    "texte": "Questions",
+    "href": "#questions",
+    "dansPied": false
+   },
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": false
+   },
+   {
+    "texte": "Demander un devis",
+    "href": "#contact",
+    "dansPied": false
+   },
+   {
+    "texte": "Demander un devis",
+    "href": "#contact",
+    "dansPied": false
+   },
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": false
+   },
+   {
+    "texte": "02 61 91 38 47",
+    "href": "tel:+33 2 61 91 38 47",
+    "dansPied": true
+   }
+  ],
+  "apresDevisHeros": {
+   "hash": "#contact",
+   "scrollY": 7226,
+   "contactTop": 0,
+   "formulaires": 0
+  }
+ },
+ "titre": {
+  "390": {
+   "largeurLigne": 272,
+   "ratioLargeur": 0.698,
+   "lignesDisplay": 2,
+   "corpsLignePx": 74.1,
+   "corpsChapeauPx": 16,
+   "ratioCorps": 4.63,
+   "chapeau": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+   "motsChapeau": 12,
+   "signesChapeau": 86,
+   "h1": "Menuisier à RennesFait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "vw": 11.9,
+     "mots": 4
+    },
+    {
+     "t": "Pièces livrées",
+     "vw": 11.9,
+     "mots": 2
+    },
+    {
+     "t": "Autour de Rennes",
+     "vw": 8.21,
+     "mots": 3
+    },
+    {
+     "t": "En quatre temps",
+     "vw": 8.21,
+     "mots": 3
+    },
+    {
+     "t": "Vos questions",
+     "vw": 8.21,
+     "mots": 2
+    },
+    {
+     "t": "Parlons de votre projet",
+     "vw": 9.03,
+     "mots": 4
+    }
+   ],
+   "h2SupA7vw": 6,
+   "policeLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1280": {
+   "largeurLigne": 1134,
+   "ratioLargeur": 0.886,
+   "lignesDisplay": 1,
+   "corpsLignePx": 181.76,
+   "corpsChapeauPx": 16,
+   "ratioCorps": 11.36,
+   "chapeau": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+   "motsChapeau": 12,
+   "signesChapeau": 86,
+   "h1": "Menuisier à RennesFait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "vw": 7.4,
+     "mots": 4
+    },
+    {
+     "t": "Pièces livrées",
+     "vw": 7.4,
+     "mots": 2
+    },
+    {
+     "t": "Autour de Rennes",
+     "vw": 4.2,
+     "mots": 3
+    },
+    {
+     "t": "En quatre temps",
+     "vw": 4.2,
+     "mots": 3
+    },
+    {
+     "t": "Vos questions",
+     "vw": 4.2,
+     "mots": 2
+    },
+    {
+     "t": "Parlons de votre projet",
+     "vw": 5,
+     "mots": 4
+    }
+   ],
+   "h2SupA7vw": 2,
+   "policeLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1440": {
+   "largeurLigne": 1275,
+   "ratioLargeur": 0.886,
+   "lignesDisplay": 1,
+   "corpsLignePx": 204.48,
+   "corpsChapeauPx": 16,
+   "ratioCorps": 12.78,
+   "chapeau": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+   "motsChapeau": 12,
+   "signesChapeau": 86,
+   "h1": "Menuisier à RennesFait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "vw": 7.4,
+     "mots": 4
+    },
+    {
+     "t": "Pièces livrées",
+     "vw": 7.4,
+     "mots": 2
+    },
+    {
+     "t": "Autour de Rennes",
+     "vw": 3.89,
+     "mots": 3
+    },
+    {
+     "t": "En quatre temps",
+     "vw": 3.89,
+     "mots": 3
+    },
+    {
+     "t": "Vos questions",
+     "vw": 3.89,
+     "mots": 2
+    },
+    {
+     "t": "Parlons de votre projet",
+     "vw": 4.67,
+     "mots": 4
+    }
+   ],
+   "h2SupA7vw": 2,
+   "policeLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  },
+  "1920": {
+   "largeurLigne": 1701,
+   "ratioLargeur": 0.886,
+   "lignesDisplay": 1,
+   "corpsLignePx": 272.64,
+   "corpsChapeauPx": 16,
+   "ratioCorps": 17.04,
+   "chapeau": "Escaliers, dressings et bibliothèques en bois massif, dessinés et posés par l’atelier.",
+   "motsChapeau": 12,
+   "signesChapeau": 86,
+   "h1": "Menuisier à RennesFait pour rester",
+   "h1Menuisier": true,
+   "h1Rennes": true,
+   "telDansHero": 0,
+   "h2": [
+    {
+     "t": "Ce que l’atelier fabrique",
+     "vw": 7.08,
+     "mots": 4
+    },
+    {
+     "t": "Pièces livrées",
+     "vw": 7.08,
+     "mots": 2
+    },
+    {
+     "t": "Autour de Rennes",
+     "vw": 2.92,
+     "mots": 3
+    },
+    {
+     "t": "En quatre temps",
+     "vw": 2.92,
+     "mots": 3
+    },
+    {
+     "t": "Vos questions",
+     "vw": 2.92,
+     "mots": 2
+    },
+    {
+     "t": "Parlons de votre projet",
+     "vw": 3.5,
+     "mots": 4
+    }
+   ],
+   "h2SupA7vw": 2,
+   "policeLigne": "Fraunces, Georgia, serif",
+   "graisseLigne": "300"
+  }
+ },
+ "polices": {
+  "bureau-1440": {
+   ".h1__cle": "IBM Plex Sans (web)",
+   ".h1__ligne": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__liens a": "IBM Plex Sans (web)",
+   ".nav__tel": "IBM Plex Sans (web)",
+   ".plateau__citation p": "Fraunces (web)",
+   ".plateau__citation figcaption": "IBM Plex Sans (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   "#prestations .mono": "IBM Plex Sans (web)",
+   "#prestations .entete p": "IBM Plex Sans (web)",
+   ".carte h3": "Fraunces (web)",
+   ".carte p": "IBM Plex Sans (web)",
+   ".galerie figcaption span": "IBM Plex Sans (web)",
+   ".commune span": "Fraunces (web)",
+   ".etapes__tete .mono": "IBM Plex Sans (web)",
+   ".etape p": "IBM Plex Sans (web)",
+   "summary": "Fraunces (web) + IBM Plex Sans (web)",
+   ".bande__infos": "(aucun glyphe rendu)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "bureau-1440 document.fonts": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ],
+  "mobile-390": {
+   ".h1__cle": "IBM Plex Sans (web)",
+   ".h1__ligne": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__liens a": "(aucun glyphe rendu)",
+   ".nav__tel": "(aucun glyphe rendu)",
+   ".plateau__citation p": "Fraunces (web)",
+   ".plateau__citation figcaption": "IBM Plex Sans (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   "#prestations .mono": "IBM Plex Sans (web)",
+   "#prestations .entete p": "IBM Plex Sans (web)",
+   ".carte h3": "Fraunces (web)",
+   ".carte p": "IBM Plex Sans (web)",
+   ".galerie figcaption span": "IBM Plex Sans (web)",
+   ".commune span": "Fraunces (web)",
+   ".etapes__tete .mono": "IBM Plex Sans (web)",
+   ".etape p": "IBM Plex Sans (web)",
+   "summary": "Fraunces (web) + IBM Plex Sans (web)",
+   ".bande__infos": "(aucun glyphe rendu)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "mobile-390 document.fonts": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ],
+  "mobile-390-4G-lente-CPUx4 (information)": {
+   ".h1__cle": "IBM Plex Sans (web)",
+   ".h1__ligne": "Fraunces (web)",
+   ".hero .chapeau": "IBM Plex Sans (web)",
+   ".hero .bouton": "IBM Plex Sans (web)",
+   ".nav__marque span": "Fraunces (web)",
+   ".nav__liens a": "(aucun glyphe rendu)",
+   ".nav__tel": "(aucun glyphe rendu)",
+   ".plateau__citation p": "Fraunces (web)",
+   ".plateau__citation figcaption": "IBM Plex Sans (web)",
+   ".chiffre dt": "IBM Plex Sans (web)",
+   ".chiffre__valeur": "Fraunces (web)",
+   ".chiffre__unite": "Fraunces (web)",
+   "#prestations .mono": "IBM Plex Sans (web)",
+   "#prestations .entete p": "IBM Plex Sans (web)",
+   ".carte h3": "Fraunces (web)",
+   ".carte p": "IBM Plex Sans (web)",
+   ".galerie figcaption span": "IBM Plex Sans (web)",
+   ".commune span": "Fraunces (web)",
+   ".etapes__tete .mono": "IBM Plex Sans (web)",
+   ".etape p": "IBM Plex Sans (web)",
+   "summary": "Fraunces (web) + IBM Plex Sans (web)",
+   ".bande__infos": "(aucun glyphe rendu)",
+   ".pied p": "IBM Plex Sans (web)",
+   ".pied__bas span": "IBM Plex Sans (web)"
+  },
+  "mobile-390-4G-lente-CPUx4 (information) document.fonts": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "vague1": {
+  "etapesLi": 4,
+  "tetesCommencentParChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "legendes": [
+   {
+    "texte": "Escalier hélicoïdal en bois massif",
+    "lignes": 1,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   },
+   {
+    "texte": "Cuisine au plan de travail en bois massif, claustra à lames",
+    "lignes": 2,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   },
+   {
+    "texte": "Penderie en bois, tringle et quatre cintres",
+    "lignes": 1,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   },
+   {
+    "texte": "Tournage sur bois, copeaux en vol",
+    "lignes": 1,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   },
+   {
+    "texte": "Boiseries et placards intégrés en bois sombre",
+    "lignes": 2,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   },
+   {
+    "texte": "Mains posées sur une planche de noyer, sciure au sol",
+    "lignes": 2,
+    "largeurLegende": 280,
+    "largeurCarte": 280,
+    "creditDansLegende": false
+   }
+  ],
+  "ligneCredits": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Bertrand from Paris, France (CC BY 2.0), Crew (CC0), Ian Schneider (CC0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications",
+  "lienCredits": [
+   "Sources, licences et modifications → mentions-legales/index.html#credits"
+  ],
+  "favicon": [
+   "favicon.svg"
+  ],
+  "lienCreditsSuivi": "http://127.0.0.1:49684/mentions-legales/index.html#credits"
+ },
+ "mentions": {
+  "url": "/mentions-legales/index.html#credits",
+  "cibleVisible": true,
+  "extraitPetar": "A 2.0)\nRedimensionnée et convertie pour le web.\npage du fichier\nTournage sur bois, copeaux en vol\n— Bertrand from Paris, France\n(CC BY 2.0)\nModifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.\npage du fichier\nEscalier hélicoïdal en bois massif\n— Petar Milošević\n(CC BY-SA 4.0)\nModifiée — adaptation : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.\npage du fichier\nLit suspendu en noyer massif, fabrication sur mesure\n— MajestyWoodworks\n(CC BY 4.0)\nRedimensionnée et convertie pour le web.\npage du fichier\nBibliothèque sur mesure en chêne et acier\n— Micheli Design\n(CC0)\nRedimensionnée et con",
+  "entreesPhotosAccueil": [
+   "Escalier hélicoïdal en bois massif— Petar Milošević(CC BY-SA 4.0)Modifiée — adaptation : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est diffusée sous la même licence, CC BY-SA 4.0.page du fichier"
+  ],
+  "nbModifiee": 7,
+  "nbNonModifiee": 0
+ },
+ "faviconPages": {
+  "index.html": "<link rel=\"icon\" href=\"favicon.svg\" type=\"image/svg+xml\">",
+  "menuisier-rennes/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">",
+  "menuisier-bruz/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">",
+  "menuisier-cesson-sevigne/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">",
+  "menuisier-saint-gregoire/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">",
+  "mentions-legales/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">",
+  "confidentialite/index.html": "<link rel=\"icon\" href=\"../favicon.svg\" type=\"image/svg+xml\">"
+ },
+ "faviconReponse": {
+  "statut": 200,
+  "type": "image/svg+xml",
+  "octets": 968
+ },
+ "pageRennes": {
+  "url": "/menuisier-rennes/index.html",
+  "h1": "Menuisier à Rennes",
+  "images": 3,
+  "heroImage": false,
+  "horsPied": {
+   "DEMO": 0,
+   "fictif": 0,
+   "tel": 2
+  },
+  "favicon": "../favicon.svg",
+  "texte": "Atelier Lestraque\nPrestations\nRéalisations\nCommunes\nQuestions\n02 61 91 38 47\nAccueil\n/\nRennes\nINTERVENTION À RENNES\nMenuisier à Rennes\n\nAtelier Lestraque intervient à Rennes et dans ses alentours pour la conception, la fabrication sur mesure et la pose soignée de tous vos aménagements en bois massif et dérivés.\n\nDemander un devis\nPRESTATIONS\nNos prestations de menuiserie à Rennes\n\nNous vous accompagnons de A à Z sur l'ensemble de vos projets résidentiels et professionnels à Rennes.\n\n01\nAgencement sur mesure\n\nConception et installation de dressings personnalisés, meubles vasques en bois, placards sous escaliers et bibliothèques sur mesure dans votre logement à Rennes.\n\n02\nEscaliers et balustrades\n\nCréation d'escaliers intérieurs adaptés à l'architecture de votre bien à Rennes, alliant sécurité, esthétisme chaleureux et robustesse.\n\n03\nParquets et finitions bois\n\nRénovation et pose de parquets massifs ou semi-massifs, plinthes et habillages muraux pour sublimer vos pièces de vie.\n\nRÉALISATIONS\nRéalisations en atelier et sur chantier\n\nQuelques exemples d'ouvrages menuisés livrés avec exigence et sens du détail.\n\nPenderie en bois, tringle et quatre cintres\nTournage sur bois, copeaux en vol\nBoiseries et placards intégrés en bois sombre\n\nPhotographies : Shixart1985 (CC BY 2.0), Bertrand from Paris, France (CC BY 2.0), Crew (CC0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications\n\nÀ PROXIMITÉ\nCommunes li"
+ },
+ "faviconIcoDemande": 0
+}

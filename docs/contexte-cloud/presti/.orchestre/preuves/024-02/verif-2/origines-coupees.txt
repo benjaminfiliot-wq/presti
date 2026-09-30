@@ -1,0 +1,9 @@
+index.html@1440 : 0 origine(s) sur plusieurs lignes
+index.html@390 : 5 origine(s) sur plusieurs lignes
+   j6-ombres : « _kit/familles/eclate.bureau.css:10 ⏎ 5 »
+   j7-mouvement : « _kit/familles/survol.bureau.c ⏎ ss:27 »
+   j7-mouvement : « _kit/familles/survol.bureau.c ⏎ ss:23 »
+   j7-mouvement : « _kit/familles/telephone.css:2 ⏎ 7 »
+   j7-mouvement : « _kit/familles/telephone.css:2 ⏎ 3 »
+sections.html@1440 : 0 origine(s) sur plusieurs lignes
+sections.html@390 : 0 origine(s) sur plusieurs lignes

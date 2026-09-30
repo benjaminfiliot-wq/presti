@@ -1,0 +1,34 @@
+// Vérifie que la clé de la bibliothèque des pubs Meta marche, SANS jamais l'afficher.
+// Clé lue dans presti-secrets/meta-bibliotheque-pubs.txt (collée par Benj). Sortie : codes et données publiques seulement.
+// Deux essais qui départagent : pubs politiques (tout pays, exige l'identité confirmée) et pubs commerciales en France (UE).
+import fs from 'node:fs'
+const FICHIER = 'C:/Users/benja/Documents/presti-secrets/meta-bibliotheque-pubs.txt'
+const cle = fs.existsSync(FICHIER) ? fs.readFileSync(FICHIER, 'utf8').trim() : ''
+if (!cle) { console.log('✗ fichier vide ou absent : colle la clé dans', FICHIER); process.exitCode = 2 } else {
+  const terme = process.argv[2] || 'rénovation'
+  const essais = [
+    { nom: 'politique (US)', ad_type: 'POLITICAL_AND_ISSUE_ADS', pays: ['US'], terme: 'energy' },
+    { nom: `commerciale (FR) « ${terme} »`, ad_type: 'ALL', pays: ['FR'], terme },
+  ]
+  let ok = 0
+  for (const e of essais) {
+    const u = new URL('https://graph.facebook.com/v26.0/ads_archive')
+    u.searchParams.set('search_terms', e.terme)
+    u.searchParams.set('ad_reached_countries', JSON.stringify(e.pays))
+    u.searchParams.set('ad_type', e.ad_type)
+    u.searchParams.set('ad_active_status', 'ACTIVE')
+    u.searchParams.set('fields', 'id,page_name,ad_delivery_start_time')
+    u.searchParams.set('limit', '5')
+    u.searchParams.set('access_token', cle)
+    const r = await fetch(u)
+    const j = await r.json().catch(() => ({}))
+    if (!r.ok || j.error) { console.log(`✗ ${e.nom} : ${r.status} ${j.error?.message || 'illisible'} (code ${j.error?.code ?? '?'}, sous-code ${j.error?.error_subcode ?? '?'}${j.error?.error_user_title ? ', « ' + j.error.error_user_title + ' »' : ''})`); continue }
+    ok++
+    const pubs = j.data || []
+    console.log(`✓ ${e.nom} : ${pubs.length} pub(s)`)
+    for (const p of pubs) console.log(`    · ${p.page_name} (depuis ${String(p.ad_delivery_start_time || '').slice(0, 10)})`)
+  }
+  const me = await fetch(`https://graph.facebook.com/v26.0/me?fields=name&access_token=${encodeURIComponent(cle)}`).then((r) => r.json()).catch(() => ({}))
+  console.log(me.name ? `· la clé appartient à : ${me.name}` : `· /me : ${me.error?.message || 'illisible'}`)
+  process.exitCode = ok === essais.length ? 0 : 1
+}

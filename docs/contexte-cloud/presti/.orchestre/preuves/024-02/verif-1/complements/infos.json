@@ -1,0 +1,26 @@
+{
+ "1440-heros": {
+  "nav": "nav nav--claire nav--retenue nav--bande nav--sombre",
+  "devisVisible": "hidden op=0"
+ },
+ "1440-#realisations": {
+  "haut": 4282.234375,
+  "bas": 5938.234375
+ },
+ "1440-#etapes": {
+  "haut": 6446.921875,
+  "bas": 10496.921875
+ },
+ "390-heros": {
+  "nav": "nav nav--claire nav--bande nav--sombre",
+  "devisVisible": "visible op=1"
+ },
+ "390-#realisations": {
+  "haut": 3641.046875,
+  "bas": 4677.046875
+ },
+ "390-#etapes": {
+  "haut": 4935.265625,
+  "bas": 5814.59375
+ }
+}

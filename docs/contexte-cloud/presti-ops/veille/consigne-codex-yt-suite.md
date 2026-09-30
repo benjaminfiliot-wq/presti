@@ -1,0 +1,11 @@
+CE QUE LES TOURS PRÉCÉDENTS ONT APPRIS (26/09) — à appliquer :
+- Ton bac à sable ne peut pas écrire dans ~/.cache. XDG_CACHE_HOME et HF_HOME pointent maintenant vers ~/veille/.cache : le cache de faster-whisper (base) et celui de Laya y ont été copiés. Passe-les explicitement à tes sous-processus (download_root=~/veille/.cache/huggingface pour faster-whisper).
+- L'usine a désormais 4 processeurs et 23 Go : faster-whisper local (modèle small, compute_type int8, 4 threads) est la voie normale quand il n'y a pas de sous-titres. Ne transcris pas ce qui a déjà un .vtt fr : nettoie le .vtt.
+- Lecture d'images par freellmapi : une seule route (Cloudflare), vite en 429. Donc :
+  - au plus 12 images par vidéo, choisies aux changements de plan qui montrent un écran ;
+  - un appel toutes les 90 s au plus ;
+  - sur 429, attends le délai indiqué dans le message.
+- IA locale : si http://127.0.0.1:11434/api/tags répond (Ollama, en cours d'installation), utilise ses modèles pour le texte : illimité, sans quota. Utilise aussi ses modèles multimodaux pour les images, s'il y en a. L'adresse compatible OpenAI est http://127.0.0.1:11434/v1, sans clé.
+- Avance vidéo par vidéo et termine chaque vidéo (transcription, images, A, B, contrôle, inventaire) avant de passer à la suivante : un tour coupé ne doit rien perdre. Commence par les vidéos qui n'ont pas encore d'inventaire.
+- LAYA (ne pas oublier, consigne de Benj) : Laya ne rédige pas, il DÉCIDE (`jev decide`/`score`/`noul`, voir ~/laya/openpave-jev). Son rôle ici : à l'étape « Contrôle », passe CHAQUE chiffre et CHAQUE promesse de l'inventaire dans `jev noul` (P(vrai) calibré, local) et note le résultat dans la section « ## Contrôle » (« Laya : P(vrai)=0,xx ») ; sous 0,5 → l'affirmation va aussi dans « ## Affirmations douteuses ». L'inventaire B reste écrit par un autre modèle (Ollama local ou Cloud gpt-oss:120b, ou freellmapi).
+- OLLAMA : les modèles locaux qwen3:4b-instruct-2507 / qwen3:8b ET les modèles gratuits d'Ollama Cloud (gpt-oss:120b-cloud, gpt-oss:20b-cloud, gemma4:cloud, nemotron-3-super:cloud) répondent sur http://127.0.0.1:11434/v1 sans clé. Aucune donnée personnelle vers un modèle « :cloud ».

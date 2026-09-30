@@ -1,0 +1,386 @@
+{
+  "slug": "storey",
+  "url": "https://www.storeyarchitecture.co.uk/",
+  "profil": "pixel7",
+  "date": "2026-09-16T19:56:04.054Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 124,
+  "defilement": {
+    "mode": "scrollBy",
+    "pas": 28,
+    "budgetEpuise": false,
+    "scrollYMax": 10842,
+    "parcoursVisuelMedian": 6385,
+    "hauteurDocument": 11681
+  },
+  "titre": "Storey Architecture | Contemporary Residential Design UK",
+  "styleJs": [
+    {
+      "cible": "div.appear-line",
+      "elements": 70,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 157,
+      "rafalesParElement": 2.2,
+      "dureeMedianeMs": 731,
+      "ecrituresTotales": 3462
+    },
+    {
+      "cible": "div.w-full.scale-x-0",
+      "elements": 6,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 7,
+      "rafalesParElement": 1.2,
+      "dureeMedianeMs": 10459,
+      "ecrituresTotales": 2739
+    },
+    {
+      "cible": "div.w-full.h-full",
+      "elements": 34,
+      "proprietes": "opacity,transform,translate,scale,rotate",
+      "rafales": 73,
+      "rafalesParElement": 2.1,
+      "dureeMedianeMs": 231,
+      "ecrituresTotales": 753
+    },
+    {
+      "cible": "div.scale-[1.05].opacity-0",
+      "elements": 4,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 8,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 865,
+      "ecrituresTotales": 490
+    },
+    {
+      "cible": "div.credit__glass-inner",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 8,
+      "rafalesParElement": 8,
+      "dureeMedianeMs": 693,
+      "ecrituresTotales": 371
+    },
+    {
+      "cible": "div.w-full.h-[20vw]",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 1497,
+      "ecrituresTotales": 92
+    },
+    {
+      "cible": "div.w-full.h-[3px]",
+      "elements": 3,
+      "proprietes": "opacity",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 483,
+      "ecrituresTotales": 90
+    },
+    {
+      "cible": "div.col-span-5.sm:col-span-6",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1298,
+      "ecrituresTotales": 76
+    },
+    {
+      "cible": "div.col-span-6.sm:flex",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1298,
+      "ecrituresTotales": 76
+    },
+    {
+      "cible": "div.relative",
+      "elements": 11,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 24,
+      "rafalesParElement": 2.2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 69
+    },
+    {
+      "cible": "div.col-span-6.sm:col-span-3",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 865,
+      "ecrituresTotales": 52
+    },
+    {
+      "cible": "span.text-primary",
+      "elements": 9,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 18,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 51
+    },
+    {
+      "cible": "div.w-full.h-screen",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 612,
+      "ecrituresTotales": 39
+    },
+    {
+      "cible": "div.h-[3px].bg-primary/30",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 484,
+      "ecrituresTotales": 30
+    },
+    {
+      "cible": "div.w-full.h-auto",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 464,
+      "ecrituresTotales": 30
+    },
+    {
+      "cible": "div.relative.size-full",
+      "elements": 2,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 11,
+      "rafalesParElement": 5.5,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 21
+    },
+    {
+      "cible": "div.w-full.h-fit",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 18
+    },
+    {
+      "cible": "div.w-fit.h-fit",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 4,
+      "rafalesParElement": 4,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 13
+    },
+    {
+      "cible": "span.text-secondary",
+      "elements": 2,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 4,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 10
+    },
+    {
+      "cible": "div.absolute.top-0",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 6,
+      "rafalesParElement": 6,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 9
+    }
+  ],
+  "io": {
+    "n": 19,
+    "observe": 61,
+    "options": [
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      },
+      {
+        "threshold": 0,
+        "rootMargin": "60% 0px 60% 0px"
+      }
+    ]
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "wheel:passif:window": 3,
+    "scroll:passif:document": 8,
+    "touchstart:passif:element": 1,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 56,
+    "resize:non-precise:window": 9,
+    "scroll:non-precise:window": 1,
+    "wheel:actif-explicite:window": 1,
+    "touchstart:actif-explicite:window": 1,
+    "touchmove:actif-explicite:window": 1,
+    "scroll:passif:element": 2,
+    "touchmove:passif:window": 2
+  },
+  "matchMedia": [
+    "(hover: none), (pointer: coarse)",
+    "(orientation: portrait)",
+    "(min-width: 640px)",
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [
+    [
+      "color | 0.5s | cubic-bezier(0.4, 0, 0.2, 1) | delai 0s",
+      {
+        "n": 6,
+        "ex": "div.w-full.h-auto"
+      }
+    ]
+  ],
+  "animationsCss": [],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 0,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 0,
+    "fragments": 51
+  },
+  "classesRacine": "lenis",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 0,
+  "images": 49,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": false,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": false,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": false,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": true,
+    "split-type/splitting": true,
+    "lenis": true,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": true,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": false,
+    "webflow": false,
+    "nuxt": true
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSTransition | color | 500 | cubic-bezier(0.4, 0, 0.2, 1) | 1 | DocumentTimeline | color",
+      {
+        "n": 5,
+        "ex": "div.w-full.h-auto"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 17206
+    },
+    "stylesheet": {
+      "requetes": 6,
+      "octets": 9660
+    },
+    "font": {
+      "requetes": 3,
+      "octets": 19483
+    },
+    "image": {
+      "requetes": 37,
+      "octets": 5033028
+    },
+    "script": {
+      "requetes": 21,
+      "octets": 225136
+    },
+    "fetch": {
+      "requetes": 1,
+      "octets": 314
+    }
+  },
+  "octetsTotal": 5304827
+}

@@ -1,0 +1,279 @@
+{
+  "date": "2026-09-15T17:02:00.452Z",
+  "echecs": [],
+  "poids": {
+    "h264": 265449,
+    "av1": 96475
+  },
+  "sha256": {
+    "h264": "a0f99753dd99f6f7e2b9d80916730eee5b5f28b95df5a1ed4008c836ff654d8a",
+    "av1": "ffc54aaaa20fcbf211eea36d3798946d77934d6f00e57137836c55433d694c2a"
+  },
+  "duree": {
+    "h264": 6.006,
+    "av1": 6.006
+  },
+  "images": {
+    "h264": 144,
+    "av1": 144
+  },
+  "raccord": {
+    "h264": 0.025260893246187365,
+    "av1": 0.024940359477124183
+  },
+  "ecartMaxConsecutif": {
+    "h264": 0.0035362200435729847,
+    "av1": 0.0032679738562091504
+  },
+  "contrasteMin": {
+    "1088x800": 8.114833853339903,
+    "1280x800": 8.18262486080116,
+    "1440x900": 8.198169958670361
+  },
+  "contraste-1088x800": [
+    {
+      "fichier": "h264",
+      "image": 9,
+      "contraste": 8.115
+    },
+    {
+      "fichier": "h264",
+      "image": 27,
+      "contraste": 8.406
+    },
+    {
+      "fichier": "h264",
+      "image": 45,
+      "contraste": 8.846
+    },
+    {
+      "fichier": "h264",
+      "image": 63,
+      "contraste": 9.374
+    },
+    {
+      "fichier": "h264",
+      "image": 81,
+      "contraste": 10.328
+    },
+    {
+      "fichier": "h264",
+      "image": 99,
+      "contraste": 9.588
+    },
+    {
+      "fichier": "h264",
+      "image": 117,
+      "contraste": 8.77
+    },
+    {
+      "fichier": "h264",
+      "image": 135,
+      "contraste": 8.376
+    },
+    {
+      "fichier": "av1",
+      "image": 9,
+      "contraste": 8.143
+    },
+    {
+      "fichier": "av1",
+      "image": 27,
+      "contraste": 8.389
+    },
+    {
+      "fichier": "av1",
+      "image": 45,
+      "contraste": 8.83
+    },
+    {
+      "fichier": "av1",
+      "image": 63,
+      "contraste": 9.329
+    },
+    {
+      "fichier": "av1",
+      "image": 81,
+      "contraste": 10.219
+    },
+    {
+      "fichier": "av1",
+      "image": 99,
+      "contraste": 9.611
+    },
+    {
+      "fichier": "av1",
+      "image": 117,
+      "contraste": 8.734
+    },
+    {
+      "fichier": "av1",
+      "image": 135,
+      "contraste": 8.345
+    }
+  ],
+  "contraste-1280x800": [
+    {
+      "fichier": "h264",
+      "image": 9,
+      "contraste": 8.183
+    },
+    {
+      "fichier": "h264",
+      "image": 27,
+      "contraste": 8.365
+    },
+    {
+      "fichier": "h264",
+      "image": 45,
+      "contraste": 8.655
+    },
+    {
+      "fichier": "h264",
+      "image": 63,
+      "contraste": 9.12
+    },
+    {
+      "fichier": "h264",
+      "image": 81,
+      "contraste": 9.854
+    },
+    {
+      "fichier": "h264",
+      "image": 99,
+      "contraste": 9.565
+    },
+    {
+      "fichier": "h264",
+      "image": 117,
+      "contraste": 8.817
+    },
+    {
+      "fichier": "h264",
+      "image": 135,
+      "contraste": 8.353
+    },
+    {
+      "fichier": "av1",
+      "image": 9,
+      "contraste": 8.219
+    },
+    {
+      "fichier": "av1",
+      "image": 27,
+      "contraste": 8.365
+    },
+    {
+      "fichier": "av1",
+      "image": 45,
+      "contraste": 8.643
+    },
+    {
+      "fichier": "av1",
+      "image": 63,
+      "contraste": 9.095
+    },
+    {
+      "fichier": "av1",
+      "image": 81,
+      "contraste": 9.824
+    },
+    {
+      "fichier": "av1",
+      "image": 99,
+      "contraste": 9.537
+    },
+    {
+      "fichier": "av1",
+      "image": 117,
+      "contraste": 8.791
+    },
+    {
+      "fichier": "av1",
+      "image": 135,
+      "contraste": 8.315
+    }
+  ],
+  "contraste-1440x900": [
+    {
+      "fichier": "h264",
+      "image": 9,
+      "contraste": 8.198
+    },
+    {
+      "fichier": "h264",
+      "image": 27,
+      "contraste": 8.371
+    },
+    {
+      "fichier": "h264",
+      "image": 45,
+      "contraste": 8.649
+    },
+    {
+      "fichier": "h264",
+      "image": 63,
+      "contraste": 9.13
+    },
+    {
+      "fichier": "h264",
+      "image": 81,
+      "contraste": 9.846
+    },
+    {
+      "fichier": "h264",
+      "image": 99,
+      "contraste": 9.551
+    },
+    {
+      "fichier": "h264",
+      "image": 117,
+      "contraste": 8.819
+    },
+    {
+      "fichier": "h264",
+      "image": 135,
+      "contraste": 8.357
+    },
+    {
+      "fichier": "av1",
+      "image": 9,
+      "contraste": 8.233
+    },
+    {
+      "fichier": "av1",
+      "image": 27,
+      "contraste": 8.363
+    },
+    {
+      "fichier": "av1",
+      "image": 45,
+      "contraste": 8.639
+    },
+    {
+      "fichier": "av1",
+      "image": 63,
+      "contraste": 9.092
+    },
+    {
+      "fichier": "av1",
+      "image": 81,
+      "contraste": 9.824
+    },
+    {
+      "fichier": "av1",
+      "image": 99,
+      "contraste": 9.535
+    },
+    {
+      "fichier": "av1",
+      "image": 117,
+      "contraste": 8.765
+    },
+    {
+      "fichier": "av1",
+      "image": 135,
+      "contraste": 8.307
+    }
+  ]
+}

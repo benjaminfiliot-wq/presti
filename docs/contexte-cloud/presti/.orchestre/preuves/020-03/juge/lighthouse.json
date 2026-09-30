@@ -1,0 +1,150 @@
+{
+ "date": "2026-09-15T17:26:57.218Z",
+ "dossier": "C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\signature-defile-95760",
+ "chemin": "/",
+ "compression": "br",
+ "entetes": [
+  "Content-Security-Policy",
+  "X-Frame-Options",
+  "X-Content-Type-Options",
+  "Referrer-Policy",
+  "Permissions-Policy"
+ ],
+ "charge": [
+  0,
+  0,
+  0
+ ],
+ "passes": [
+  {
+   "passe": 1,
+   "performance": 99,
+   "accessibilite": 100,
+   "bonnesPratiques": 100,
+   "seo": 100,
+   "lcpMs": 1822,
+   "tbtMs": 6,
+   "cls": 0,
+   "fcpMs": 1195,
+   "throttlingMethod": "simulate",
+   "cpu": 4,
+   "ecran": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+   },
+   "benchmarkIndex": 2637.5,
+   "version": "13.4.1"
+  },
+  {
+   "passe": 2,
+   "performance": 100,
+   "accessibilite": 100,
+   "bonnesPratiques": 100,
+   "seo": 100,
+   "lcpMs": 1619,
+   "tbtMs": 0,
+   "cls": 0,
+   "fcpMs": 947,
+   "throttlingMethod": "simulate",
+   "cpu": 4,
+   "ecran": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+   },
+   "benchmarkIndex": 2513,
+   "version": "13.4.1"
+  },
+  {
+   "passe": 3,
+   "performance": 100,
+   "accessibilite": 100,
+   "bonnesPratiques": 100,
+   "seo": 100,
+   "lcpMs": 1667,
+   "tbtMs": 8,
+   "cls": 0,
+   "fcpMs": 967,
+   "throttlingMethod": "simulate",
+   "cpu": 4,
+   "ecran": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+   },
+   "benchmarkIndex": 2617,
+   "version": "13.4.1"
+  },
+  {
+   "passe": 4,
+   "performance": 100,
+   "accessibilite": 100,
+   "bonnesPratiques": 100,
+   "seo": 100,
+   "lcpMs": 1615,
+   "tbtMs": 0,
+   "cls": 0,
+   "fcpMs": 945,
+   "throttlingMethod": "simulate",
+   "cpu": 4,
+   "ecran": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+   },
+   "benchmarkIndex": 2566,
+   "version": "13.4.1"
+  },
+  {
+   "passe": 5,
+   "performance": 100,
+   "accessibilite": 100,
+   "bonnesPratiques": 100,
+   "seo": 100,
+   "lcpMs": 1629,
+   "tbtMs": 0,
+   "cls": 0,
+   "fcpMs": 956,
+   "throttlingMethod": "simulate",
+   "cpu": 4,
+   "ecran": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+   },
+   "benchmarkIndex": 2492,
+   "version": "13.4.1"
+  }
+ ],
+ "medianes": {
+  "performance": 100,
+  "accessibilite": 100,
+  "bonnesPratiques": 100,
+  "seo": 100,
+  "lcpMs": 1629,
+  "tbtMs": 0,
+  "cls": 0
+ },
+ "barre": {
+  "performance": 95,
+  "accessibilite": 95,
+  "bonnesPratiques": 95,
+  "seo": 95,
+  "lcpMs": 2500,
+  "tbtMs": 200,
+  "cls": 0.1
+ },
+ "tient": true,
+ "ecarts": []
+}
