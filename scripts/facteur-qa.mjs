@@ -26,6 +26,7 @@ import {
 } from './fixtures/026-acquisition/commun.mjs'
 import { creerHorloge } from './fixtures/026-acquisition/horloge-factice.mjs'
 import { creerMagasin } from './fixtures/026-acquisition/magasin-memoire.mjs'
+import { creerBase as creerBaseReservee, ligne as ligneReservee } from './fixtures/026-garde/doublon/doublures.mjs'
 import { banc, connecterLocal, getLocal } from './fixtures/026-acquisition/envoi/commun.mjs'
 import { demarrerSmtpFactice } from './fixtures/026-acquisition/envoi/gmail-smtp-factice.mjs'
 import { creerImapFactice } from './fixtures/026-acquisition/envoi/gmail-imap-factice.mjs'
@@ -118,9 +119,9 @@ async function partieFacteur(s, IDS) {
   }
 
   // FA-2 : jugement en deux moitiés. Tant que Benj n'a pas approuvé les textes (`approuve: false` dans modeles.ts, 026-083) et que la
-  // notice n'est pas en ligne (`NOTICE_URL` nul, 026-162), J3 refuse TOUT, à juste titre : aucun envoi ne peut être approuvé dans le
+  // notice n'est pas en ligne (026-162), J3 refuse les envois concernés. Ces deux préalables peuvent maintenant être livrés dans le
   // dépôt. Le juge rejoue donc la chaîne (travail → avis → approbation) dans une COPIE de lib/agents/acquisition/ où les modèles sont
-  // approuvés et NOTICE_URL posé (jamais dans le dépôt), et il vérifie dans le dépôt réel qu'aucun envoi n'est approuvé.
+  // approuvés et NOTICE_URL remplacé par une adresse .invalid (jamais dans le dépôt), et il vérifie dans le dépôt réel qu'aucun texte hors modèle n'est approuvé.
   {
     const e = []
     let racineMonde = null
@@ -133,8 +134,8 @@ async function partieFacteur(s, IDS) {
       for (const f of fs.readdirSync(src)) {
         if (!f.endsWith('.ts')) continue
         let t = fs.readFileSync(path.join(src, f), 'utf8')
-        if (f === 'modeles.ts') { const n = t.split('approuve: false,').length - 1; if (n !== 1) throw new Error(`modeles.ts : « approuve: false, » trouvé ${n} fois, 1 attendue`); t = t.replace('approuve: false,', () => 'approuve: true,') }
-        if (f === 'contrat.ts') { const a = 'export const NOTICE_URL: string | null = null'; if (!t.includes(a)) throw new Error('contrat.ts : NOTICE_URL introuvable'); t = t.replace(a, () => "export const NOTICE_URL: string | null = 'https://notice.temoin.invalid/'") }
+        if (f === 'modeles.ts') { const a = /^\s*approuve: (?:false|APPROUVES\.includes\(id\)),/gm; const n = [...t.matchAll(a)].length; if (n !== 1) throw new Error(`modeles.ts : champ d'approbation trouvé ${n} fois, 1 attendu`); t = t.replace(a, () => '    approuve: true,') }
+        if (f === 'contrat.ts') { const a = /^export const NOTICE_URL: string \| null = (?:null|'[^'\r\n]*'|\"[^\"\r\n]*\")[ \t]*;?$/gm; if ([...t.matchAll(a)].length !== 1) throw new Error('contrat.ts : déclaration NOTICE_URL unique introuvable'); t = t.replace(a, () => "export const NOTICE_URL: string | null = 'https://notice.temoin.invalid/'") }
         fs.writeFileSync(path.join(dst, f), t)
       }
       const monde = await importerDepuis(racineMonde, path.join('lib', 'agents', 'acquisition', 'facteur.ts'))
@@ -216,7 +217,7 @@ async function partieFacteur(s, IDS) {
         else if (/jugerTon\s*\(|approuverEnvoi\s*\(/.test(corps)) e.push('executerFacteur appelle jugerTon ou approuverEnvoi : la passe envoi ne juge plus rien')
         if (/lib\/agents\/llm/.test(fs.readFileSync(fCron, 'utf8'))) e.push('la route cron facteur importe lib/agents/llm')
       }
-      // (h) dans le DÉPÔT réel : modèles non approuvés et notice absente → J3 refuse tout, aucune approbation possible
+      // (h) dans le DÉPÔT réel : même après livraison de 083/162, J3 refuse un texte hors modèle.
       {
         const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
         M.poserEtat({ palier: 'P0', notice_verifiee_le: new Date(T0 - 3600_000).toISOString(), interrupteurs: { envoi_froid: true } })
@@ -229,7 +230,7 @@ async function partieFacteur(s, IDS) {
           if ((await M.envoisApprouves('formulaire_site', 10)).length) e.push('un formulaire hors modèle est approuve dans le dépôt réel')
         }
       }
-      s.juger('FA-2', e, 'jugement en deux moitiés (dans une copie où les modèles sont approuvés) : travail + empreinte, avis, approbation aux trois verdicts, second avis refusé, refus de ton / empreinte périmée / texte hors modèle → rien d\'approuvé, lecteur nul → aucun avis, 25 envois → 20 appels au plus ; dans le dépôt réel, J3 ne laisse rien approuver')
+      s.juger('FA-2', e, 'jugement en deux moitiés (dans une copie où les modèles sont approuvés) : travail + empreinte, avis, approbation aux trois verdicts, second avis refusé, refus de ton / empreinte périmée / texte hors modèle → rien d\'approuvé, lecteur nul → aucun avis, 25 envois → 20 appels au plus ; dans le dépôt réel, J3 refuse le texte hors modèle')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-2', e, '') }
     finally { if (racineMonde) { try { fs.rmSync(racineMonde, { recursive: true, force: true }) } catch { /* nettoyage */ } } }
   }
@@ -246,23 +247,39 @@ async function partieFacteur(s, IDS) {
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) }
     s.juger('FA-3', e, 'aucun envoi réseau pour un envoi resté « prepare »')
   }
-  // FA-4/FA-5 : Gmail (From/destinataire/texte, in-reply-to, brut, 535/550/coupure).
+  // FA-4/FA-5 : le Facteur réel porte par SMTP factice, avec la réservation atomique0122.
   {
-    const e = []
-    try {
-      const smtp = await demarrerSmtpFactice({ scenario: 'ok', motDePasseAttendu: 'motdepassetest' })
-      const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ interrupteurs: { envoi_froid: true } })
-      const id = M.inserer({ ...prospectVerifie(4), etape: 'lien_envoye' })
-      const preuve = await M.preparerEnvoi({ prospect_id: null, conversation_id: null, type: 'confirmation_stop', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-4.invalid/contact', objet: null, texte: 'x', empreinte_texte: sha256('x'), modele_id: 'm', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, preuve_demande: null, reference: null }).catch(() => null)
-      // Simplification : on approuve directement un email_sollicite « reponse » avec une preuve de message reçu.
-      const rIn = await M.preparerEnvoi({ prospect_id: id, type: 'reponse', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan.temoin@temoin-menuiserie-fa4.invalid', objet: null, texte: 'Merci, oui on vous rappelle.', empreinte_texte: sha256('x'), modele_id: 'modele-temoin-v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'message_recu', id: 'reponse-fa4' }, reference: 'FA4' })
-      if (rIn.ok) await M.approuverEnvoi(rIn.id, { j1: 'sans_objet', j3: 'ok', j2: 'ok' })
-      await mod.executerFacteur({ magasin: M, gmail: null, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } })
-      // en_attente_gmail attendu (gmail: null), zéro erreur non gérée
-      s.passe('FA-4', 'gmail: null → aucune exception (en_attente_gmail) ; session SMTP jugée en détail par GM-2 (--partie=gmail)')
-      s.passe('FA-5', 'refus SMTP (535/550/coupure) jugés en détail par GM-3 (--partie=gmail) : le porteur Gmail est un module partagé')
-      await smtp.arreter()
-    } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-4', e, ''); s.juger('FA-5', e, '') }
+    const fa5Erreurs = []
+    const gmailMod = await importerDepuis(RAC, path.join('lib', 'agents', 'acquisition', 'porteurs', 'gmail.ts'))
+    for (const [critere, scenario, erreur] of [['FA-4', 'ok', null], ['FA-5', 'auth', 'auth'], ['FA-5', 'quota', 'quota']]) {
+      const e = []
+      const smtp = await demarrerSmtpFactice({ scenario, motDePasseAttendu: 'abcdefghijklmnop' })
+      try {
+        const H = creerHorloge(T0)
+        const x = ligneReservee(4, { en_reponse_a: '<fa4@essai.invalid>', references: ['<fa3@essai.invalid>'] })
+        const M = creerBaseReservee({ horloge: H, lignes: [x] })
+        const gmail = gmailMod.creerPorteurGmail({ pauseGenerale: async () => ({ active: false }), user: ADRESSE_PROSPECTION, pass: 'abcd efgh ijkl mnop', adresse: ADRESSE_PROSPECTION, transport: creerTransportSmtpTest(smtp.port) })
+        const bilan = await mod.executerFacteur({ magasin: M, gmail, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } })
+        const sess = smtp.sessions.at(-1)
+        if (!sess) e.push(`${scenario} : aucune session SMTP`)
+        if (!erreur) {
+          if (sess?.entetes['In-Reply-To'] !== x.en_reponse_a) e.push('In-Reply-To absent ou différent du fil reçu')
+          if (!sess?.entetes.References?.includes(x.en_reponse_a) || !sess?.entetes.References?.includes(x.references[0])) e.push('References ne poursuit pas le fil reçu')
+          if (sess?.rcptTo.length !== 1 || sess.rcptTo[0] !== x.destinataire) e.push('destinataire SMTP différent de la réponse sollicitée')
+          if (!sess?.corps.includes(x.texte)) e.push('texte SMTP différent de la réponse approuvée')
+          if (M.etat(x.id).statut !== 'envoye' || bilan.envoyes.email_sollicite !== 1) e.push('envoi SMTP non consigné par le Facteur')
+        } else {
+          if (!M.signaux.some((z) => z.type === 'gmail_refus' && z.envoi_id === x.id)) e.push(`${scenario} : signal gmail_refus absent`)
+          if (bilan.gmail !== 'arrete' || bilan.echecs[`gmail_${erreur}`] !== 1) e.push(`${scenario} : refus non propagé et passage non arrêté`)
+          if (M.etat(x.id).statut !== 'approuve') e.push(`${scenario} : refus net ne relâche pas la réservation`)
+          if (sess?.entetes?.['Message-ID']) e.push(`${scenario} : message livré malgré refus SMTP`)
+        }
+      } catch (err) { e.push(`${scenario} : interrompu : ${premiereLigne(err)}`) }
+      finally { await smtp.arreter() }
+      // Un seul verdictFA5 agrège auth et quota, afin de garder les lignes machine uniques.
+      if (critere === 'FA-4') s.juger(critere, e, 'SMTP du Facteur : réponse dans le fil, destinataire et texte exacts, réservation puis consignation')
+      else { fa5Erreurs.push(...e); if (scenario === 'quota') s.juger('FA-5', fa5Erreurs, '535/550quota : signal gmail_refus, arrêt, relâche sans livraison ni exception') }
+    }
   }
   // FA-6 : Meta (fenêtres, tag interdit).
   {
@@ -271,7 +288,7 @@ async function partieFacteur(s, IDS) {
       const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ interrupteurs: { envoi_froid: true } })
       const meta = creerMetaFactice({ scenario: 'ok' })
       const envoiMeta = await importerDepuis(RAC, path.join('lib', 'agents', 'acquisition', 'envoiMeta.ts'))
-      const client = envoiMeta.creerEnvoiMeta({ jeton: 'JETON-TEMOIN', idCompte: 'compte-temoin', fetch: meta.fetch })
+      const client = envoiMeta.creerEnvoiMeta({ pauseGenerale: async () => ({ active: false }), jeton: 'JETON-TEMOIN', idCompte: 'compte-temoin', fetch: meta.fetch })
       const r = await client.reponsePrivee({ commentaire_id: 'c1', texte: 'Bonjour' })
       if (!r.ok) e.push(`réponse privée factice refusée : ${JSON.stringify(r)}`)
       if (meta.requetes.some((x) => JSON.stringify(x.corps).includes('HUMAN_AGENT') || 'tag' in (x.corps ?? {}))) e.push('une requête Meta porte tag ou HUMAN_AGENT')
@@ -466,7 +483,7 @@ async function partieGmail(s, IDS) {
     const smtp = await demarrerSmtpFactice({ scenario: 'ok', motDePasseAttendu: sansEspaces(MOT_DE_PASSE) })
     try {
       const transport = creerTransportSmtpTest(smtp.port)
-      const porteur = mod.creerPorteurGmail({ user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport })
+      const porteur = mod.creerPorteurGmail({ pauseGenerale: async () => ({ active: false }), user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport })
       if (porteur.canal !== 'email_sollicite') e.push(`porteur.canal = ${porteur.canal}, email_sollicite attendu`)
       const r = await porteur.envoyer({ a: 'artisan.temoin@temoin-menuiserie-gm.invalid', objet: 'Objet Témoin', texte: 'Bonjour Témoin', enReponseA: '<msg1@temoin.invalid>', references: ['<msg1@temoin.invalid>'] })
       if (!r?.ok) e.push(`envoi refusé : ${JSON.stringify(r)}`)
@@ -490,7 +507,7 @@ async function partieGmail(s, IDS) {
     for (const [scenario, attendu] of [['auth', 'auth'], ['quota', 'quota'], ['coupure', 'injoignable']]) {
       const smtp = await demarrerSmtpFactice({ scenario })
       try {
-        const porteur = mod.creerPorteurGmail({ user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport: creerTransportSmtpTest(smtp.port) })
+        const porteur = mod.creerPorteurGmail({ pauseGenerale: async () => ({ active: false }), user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport: creerTransportSmtpTest(smtp.port) })
         const r = await porteur.envoyer({ a: 'artisan.temoin@temoin-erreur-gm.invalid', objet: 'x', texte: 'x', enReponseA: null, references: [] })
         if (r?.ok !== false || r?.erreur !== attendu) e.push(`${scenario} : ${JSON.stringify(r)}, erreur ${attendu} attendue`)
       } catch (err) { e.push(`${scenario} : une exception est sortie (${premiereLigne(err)}), un objet { ok:false } attendu`) }
@@ -548,7 +565,7 @@ async function partieGmail(s, IDS) {
       const orig = { ...console }
       for (const k of ['log', 'error', 'warn']) console[k] = (...a) => sortie.push(a.map(String).join(' '))
       let erreurTexte = ''
-      try { const r = await mod.creerPorteurGmail({ user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport: creerTransportSmtpTest(smtp.port) }).envoyer({ a: 'x@temoin.invalid', objet: 'x', texte: 'Texte Secret Témoin', enReponseA: null, references: [] }); erreurTexte = JSON.stringify(r) } catch (err) { erreurTexte = String(err) } finally { Object.assign(console, orig) }
+      try { const r = await mod.creerPorteurGmail({ pauseGenerale: async () => ({ active: false }), user: ADRESSE_PROSPECTION, pass: MOT_DE_PASSE, adresse: ADRESSE_PROSPECTION, transport: creerTransportSmtpTest(smtp.port) }).envoyer({ a: 'x@temoin.invalid', objet: 'x', texte: 'Texte Secret Témoin', enReponseA: null, references: [] }); erreurTexte = JSON.stringify(r) } catch (err) { erreurTexte = String(err) } finally { Object.assign(console, orig) }
       if (sortie.some((l) => l.includes(MOT_DE_PASSE) || l.includes(sansEspaces(MOT_DE_PASSE)))) e.push('le mot de passe apparaît dans la console')
       if (erreurTexte.includes(MOT_DE_PASSE)) e.push('le mot de passe apparaît dans l\'erreur rendue')
       if (erreurTexte.includes('Texte Secret Témoin')) e.push('le texte du message apparaît dans l\'erreur rendue')
