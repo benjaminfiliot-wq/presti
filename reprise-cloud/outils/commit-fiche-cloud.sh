@@ -31,7 +31,7 @@ hors="$(echo "$chemins" | grep -E '^(\.\./|/|SaaS/)' || true)"
 # La ligne de verdict de la fiche, rangée avec ses preuves (le PC la reportera dans verdicts.jsonl).
 mkdir -p ".orchestre/preuves/$id"
 if [ -f .orchestre/verdicts.jsonl ]; then
-  ligne="$(grep "\"id\":\"$id\"" .orchestre/verdicts.jsonl | tail -1 || true)"
+  ligne="$(grep -a "\"id\":\"$id\"" .orchestre/verdicts.jsonl | tail -1 || true)"
   [ -n "$ligne" ] && echo "$ligne" > ".orchestre/preuves/$id/verdict-cloud.jsonl"
 fi
 [ -s ".orchestre/preuves/$id/verdict-cloud.jsonl" ] || { echo "✗ $id : aucun verdict trouvé pour cette fiche dans .orchestre/verdicts.jsonl (relance verifier)"; exit 1; }
