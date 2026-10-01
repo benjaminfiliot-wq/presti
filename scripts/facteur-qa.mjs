@@ -291,6 +291,8 @@ async function partieFacteur(s, IDS) {
       const client = envoiMeta.creerEnvoiMeta({ pauseGenerale: async () => ({ active: false }), jeton: 'JETON-TEMOIN', idCompte: 'compte-temoin', fetch: meta.fetch })
       const r = await client.reponsePrivee({ commentaire_id: 'c1', texte: 'Bonjour' })
       if (!r.ok) e.push(`réponse privée factice refusée : ${JSON.stringify(r)}`)
+      const message = await client.message({ meta_id: 'personne-temoin', texte: 'Réponse factice' })
+      if (!message.ok) e.push(`message factice refusé : ${JSON.stringify(message)}`)
       if (meta.requetes.some((x) => JSON.stringify(x.corps).includes('HUMAN_AGENT') || 'tag' in (x.corps ?? {}))) e.push('une requête Meta porte tag ou HUMAN_AGENT')
       s.juger('FA-6', e, 'envoiMeta.ts : réponse privée factice acceptée, aucune requête ne porte tag/HUMAN_AGENT (fenêtres jugées via disjoncteurs.ts et le magasin, DJ-7)')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-6', e, '') }
@@ -345,6 +347,7 @@ async function partieFacteur(s, IDS) {
       for (const k of ['log', 'error', 'warn', 'info', 'debug']) console[k] = (...a) => sortie.push(a.map(String).join(' '))
       try { await mod.executerFacteur({ magasin: M, gmail: null, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } }) } finally { Object.assign(console, orig) }
       if (sortie.some((l) => /PROSPECTION_GMAIL_PASS|META_PAGE_TOKEN|Merci|artisan\.temoin/.test(l))) e.push('un secret ou un texte de message apparaît dans la console')
+      if (sortie.some((l) => l.includes(ADRESSE_PROSPECTION))) e.push('l’adresse de réponse apparaît dans la console')
       for (const ev of M.evenements) if (JSON.stringify(ev).includes('Merci')) e.push('un événement porte le texte du message')
       s.juger('FA-9', e, 'aucun secret ni texte de message dans la console capturée ni dans les événements')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-9', e, '') }
