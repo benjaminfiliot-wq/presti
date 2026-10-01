@@ -63,6 +63,9 @@ const CHAMPS = ['juge', 'commande', 'fichier', 'avant', 'apres', 'critere', 'ext
 // La copie du dépôt presti : ces dossiers (fichiers suivis ou non ignorés), ces fichiers de la racine, ces jonctions.
 const DOSSIERS_COPIE = ['app', 'lib', 'scripts', 'supabase', 'docs', '.github', 'gabarits-pubs', '.orchestre/brouillons-ecosysteme']
 const FICHIERS_RACINE = ['package.json', 'tsconfig.json', 'next.config.mjs', 'next-env.d.ts', 'vercel.json', 'proxy.ts', 'middleware.ts']
+// Entrée réelle de DJ-6 : conserver le compte rendu SQL existant, sans le fabriquer
+// ni recopier les rapports de mutations produits pendant cette vérification.
+const PREUVES_ENTREE = ['.orchestre/preuves/026-063/essai-a-sec.txt']
 const JONCTIONS = ['node_modules', 'public']
 const FILE_ORCHESTRE = ['file', 'en-cours', 'fait', 'refuse']
 const ETAT_ORCHESTRE = ['.orchestre/digest.md', '.orchestre/verdicts.jsonl', '.orchestre/agents.jsonl', '.orchestre/contexte.md']
@@ -303,7 +306,7 @@ function jonction(cible, lien, jonctions) {
 function copierPresti(racine, dest, jonctions) {
   const dossiers = DOSSIERS_COPIE.filter((d) => existe(path.join(racine, d)))
   const rels = dossiers.length ? (git(racine, ['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', ...dossiers]) || '').split('\0').filter(Boolean) : []
-  const n = copierFichiers(racine, dest, [...rels, ...FICHIERS_RACINE.filter((f) => existe(path.join(racine, f)))])
+  const n = copierFichiers(racine, dest, [...rels, ...FICHIERS_RACINE.filter((f) => existe(path.join(racine, f))), ...PREUVES_ENTREE])
   for (const j of JONCTIONS) jonction(path.join(racine, j), path.join(dest, j), jonctions)
   return n
 }

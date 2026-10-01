@@ -152,12 +152,58 @@ async function run(m,dir){
  })
 }
 function verdict(text,id){const lines=text.replace(/\x1b\[[0-9;]*m/g,'').split(/\r?\n/),proper=lines.filter(l=>l.startsWith(`FAIL ${id} — `)),bilan=lines.filter(l=>/ : FAIL — /.test(l)).at(-1);return proper.length===1&&bilan?.split(' — ').at(-1).split(/,\s*/).includes(id)?proper[0]:null}
+// Deux groupes au plus, chacun possède sa copie ; jamais deux mutations sur une même copie.
+// Le navigateur long commence en premier. Douleurs conserve sa séquence finale exclusive.
+async function pool(groupes, faire) {
+ let suivant=0
+ const travailleur=async()=>{
+  while(suivant<groupes.length){
+   const groupe=groupes[suivant++]
+   try{await faire(groupe)}catch(e){report.erreurs.push(e.message);save()}
+  }
+ }
+ await Promise.all([travailleur(),travailleur()])
+}
 try{
  if(failures.length)throw Error('préflight incomplet : aucun juge lancé')
- fs.mkdirSync(WORK,{recursive:true});const copies=new Map()
- for(const m of mutations){const key=m.juge+' '+m.options;if(copies.has(key))continue;const dir=path.join(WORK,String(copies.size));copy(dir);copies.set(key,dir);const r=await run(m,dir);console.log(`TÉMOIN ${key}: code ${r.code}, ${r.duree_s.toFixed(1)} s`);report.temoins.push({commande:command(m),code:r.code,duree_s:r.duree_s});if(r.code!==0)report.erreurs.push(`témoin ${key}: code${r.code}: ${r.sortie.slice(-500)}`)}
- if(report.erreurs.length)throw Error('témoin rouge : aucune faute testée')
- let passage=0;for(const m of mutations){passage++;const dir=copies.get(m.juge+' '+m.options),file=path.join(dir,m.fichier),original=fs.readFileSync(file,'utf8');let result;try{fs.writeFileSync(file,original.replace(m.avant,()=>m.apres));result=await run(m,dir)}finally{fs.writeFileSync(file,original)}const extrait=verdict(result.sortie,m.critere);console.log(`${extrait&&result.code===1&&!result.error?'DÉTECTÉE':'NON DÉTECTÉE'} ${passage}/${mutations.length} ${m.critere} ${m.nom}: code ${result.code}, ${result.duree_s.toFixed(1)} s`);fs.writeFileSync(path.join(PROOF,`${passage}-${m.critere}.log`),result.sortie);if(result.code!==1||result.error||!extrait)report.erreurs.push(`non détectée ${m.critere} ${m.nom}: code${result.code}; ${result.sortie.slice(-300)}`);else report.mutations.push({juge:m.juge,commande:command(m),fichier:m.fichier,avant:m.avant,apres:m.apres,critere:m.critere,extrait,duree_s:result.duree_s,nom:m.nom});save()}
+ fs.mkdirSync(WORK,{recursive:true});const groupes=new Map()
+ for(const [index,m] of mutations.entries()){
+  const key=m.juge+' '+m.options
+  if(!groupes.has(key))groupes.set(key,{key,dir:path.join(WORK,String(groupes.size)),cas:[]})
+  groupes.get(key).cas.push({m,index})
+ }
+ const tous=[...groupes.values()]
+ const douleurs=tous.filter(g=>g.cas[0].m.juge==='scripts/douleurs-qa.mjs')
+ const ordinaires=tous.filter(g=>!douleurs.includes(g)).sort((a,b)=>Number(b.cas[0].m.options.includes('--ici'))-Number(a.cas[0].m.options.includes('--ici')))
+ // Toutes les copies sont préparées avant de lancer les processus : overlay immuable.
+ for(const g of tous)copy(g.dir)
+ const temoin=async g=>{
+  const m=g.cas[0].m,r=await run(m,g.dir)
+  console.log(`TÉMOIN ${g.key}: code ${r.code}, ${r.duree_s.toFixed(1)} s`)
+  report.temoins.push({commande:command(m),code:r.code,duree_s:r.duree_s})
+  if(r.code!==0)report.erreurs.push(`témoin ${g.key}: code${r.code}: ${r.sortie.slice(-500)}`)
+  save()
+  return r.code===0
+ }
+ const muter=async g=>{
+  for(const {m,index} of g.cas){
+   const passage=index+1,file=path.join(g.dir,m.fichier),original=fs.readFileSync(file,'utf8')
+   let result
+   try{fs.writeFileSync(file,original.replace(m.avant,()=>m.apres));result=await run(m,g.dir)}
+   finally{fs.writeFileSync(file,original)}
+   const extrait=verdict(result.sortie,m.critere)
+   console.log(`${extrait&&result.code===1&&!result.error?'DÉTECTÉE':'NON DÉTECTÉE'} ${passage}/${mutations.length} ${m.critere} ${m.nom}: code ${result.code}, ${result.duree_s.toFixed(1)} s`)
+   fs.writeFileSync(path.join(PROOF,`${passage}-${m.critere}.log`),result.sortie)
+   if(result.code!==1||result.error||!extrait)report.erreurs.push(`non détectée ${m.critere} ${m.nom}: code${result.code}; ${result.sortie.slice(-300)}`)
+   else report.mutations.push({juge:m.juge,commande:command(m),fichier:m.fichier,avant:m.avant,apres:m.apres,critere:m.critere,extrait,duree_s:result.duree_s,nom:m.nom})
+   save()
+  }
+ }
+ // Le contrat impose un témoin avant les fautes de CE juge, sans barrière globale.
+ // Un témoin rouge interdit toutes les mutations de son groupe, jamais masqué par les autres.
+ const verifierGroupe=async g=>{if(await temoin(g))await muter(g)}
+ await pool(ordinaires,verifierGroupe)
+ for(const g of douleurs)await verifierGroupe(g)
 }catch(e){report.erreurs.push(e.message)}finally{save();if(!KEEP&&fs.existsSync(WORK))for(const f of fs.readdirSync(WORK)){const item=path.join(WORK,f);if(fs.lstatSync(item).isDirectory())erase(item);else fs.unlinkSync(item)}}
 console.log(`juges-026-envoi-mutations : ${report.erreurs.length?'FAIL':'PASS'} — ${report.mutations.length}/${mutations.length} fautes détectées`)
 process.exitCode=report.erreurs.length?1:0

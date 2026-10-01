@@ -137,7 +137,7 @@ const C = {
       if (r.envoi.type !== r.attendu.type) e.push(`${nom} : type ${JSON.stringify(r.envoi.type)}, ${JSON.stringify(r.attendu.type)} attendu`)
       if (r.envoi.canal !== 'email_sollicite') e.push(`${nom} : canal ${JSON.stringify(r.envoi.canal)}, email_sollicite attendu`)
     }
-    for (const nom of ['sensible', 'hostile', 'reponse_auto', 'autre', 'a_lire', 'hors_fil']) if (x.reponseRepondue[nom] !== undefined) e.push(`${nom} : cette classe n'est pas lisible par reponsesARepondre (hors CLASSES_A_REPONDRE du magasin partagé) ; elle ne doit rien produire par construction`)
+    for (const nom of ['sensible', 'hostile', 'reponse_auto', 'autre', 'a_lire', 'hors_fil']) if (x.reponseRepondue[nom] !== undefined) e.push(`${nom} : cette classe n'est pas lisible par reponsesARepondre (hors CLASSES_A_REPONDRE du magasin partagé) ; elle ne doit pas tenter une préparation même si une lecture large la renvoie`)
     if (x.pasMaintenant.envoi) e.push('pas_maintenant : un envoi a été préparé, aucun attendu')
     if (!x.pasMaintenant.repondue) e.push('pas_maintenant : reponseRepondue(id, null) non appelé (la réponse reste à traiter indéfiniment)')
     if (x.ouiArtisan.envoi) e.push("« oui » d'un artisan : un envoi a été préparé par le Répondeur (réservé à l'Atelier, 026-097)")
@@ -150,6 +150,7 @@ const C = {
       const fuite = motFuiteDeReponse(x.gabarits[nom], texte, x.messagesRecus[nom])
       if (fuite) e.push(`${nom} : le mot « ${fuite} » du message reçu se retrouve dans le texte préparé, absent du modèle`)
     }
+    if (x.sansMentionPreparee) e.push('un modèle sans mention IA a atteint preparerEnvoi')
     if (x.jugerMessageDisponible && x.jugerMessageRefus.length) e.push(`jugerMessage rejoué refuse ${x.jugerMessageRefus.length} texte(s) pourtant préparé(s) : ${x.jugerMessageRefus.join(', ')}`)
     return e
   },
@@ -168,6 +169,7 @@ const C = {
   'RP-5': (x) => {
     const e = []
     if (!x.commentaire3j) e.push('commentaire « SITE » de 3 jours : aucune réponse privée préparée')
+    if (x.tentativesHorsFenetre) e.push('une préparation a été tentée après la fenêtre de sept jours')
     if (x.commentaire8j) e.push('commentaire « SITE » de 8 jours : une réponse privée a été préparée, aucune attendue')
     if (x.dejaRepondu) e.push('conversation déjà pourvue de sa réponse privée : une seconde a été préparée')
     return e
@@ -176,6 +178,7 @@ const C = {
     const e = []
     if (!x.premier) e.push('stop : aucune confirmation_stop préparée')
     else if (x.premier.type !== 'confirmation_stop') e.push(`stop : type ${JSON.stringify(x.premier.type)}, confirmation_stop attendu`)
+    if (x.contournementsStop) e.push('le refus du second STOP a été contourné par une préparation de type reponse')
     if (x.second) e.push('second stop du même prospect : une seconde confirmation a été préparée (refusée par le magasin)')
     return e
   },
@@ -188,6 +191,7 @@ const C = {
   },
   'RP-8': (x) => {
     const e = []
+    if (x.tentativesNonApprouvees) e.push('un modèle explicitement non approuvé a atteint preparerEnvoi')
     if (x.envoi) e.push('modèles non approuvés (modèles réels passés) : un envoi a quand même été préparé')
     if (x.repondue) e.push('modèles non approuvés : la réponse a été marquée traitée (repondue) ; elle doit rester à traiter')
     return e
@@ -299,6 +303,16 @@ async function observer(mod, routeMod, RAC2) {
     const casReussis = {}
     for (const [nom] of Object.entries(attendusParClasse)) casReussis[nom] = { envoi: envoiDe(M, reponseIds[nom]), attendu: attendusParClasse[nom].attendu }
     const reponseRepondue = {}
+    // Lecture volontairement large : le garde du magasin ne doit pas masquer celui du Répondeur.
+    for (const classe of ['sensible', 'hostile', 'reponse_auto', 'autre', 'a_lire', 'hors_fil']) {
+      const Mf = creerMagasin({ horloge: H }); const pf = semerProspect(Mf, 100 + n++)
+      const rf = await semerReponse(Mf, pf, classe)
+      Mf.reponsesARepondre = async () => [reponseDe(Mf, rf)]
+      const preparer = Mf.preparerEnvoi.bind(Mf); let tentatives = 0
+      Mf.preparerEnvoi = async (e) => { tentatives++; return preparer(e) }
+      await mod.executerRepondeur(DEPS_BASE(Mf, H))
+      if (tentatives || envoiDe(Mf, rf)) reponseRepondue[classe] = { tentatives }
+    }
     return { casReussis, reponseRepondue, pasMaintenant: { envoi: envoiDe(M, idPasMaintenant), repondue: !!reponseDe(M, idPasMaintenant)?.repondue }, ouiArtisan: { envoi: envoiDe(M, idOuiArtisan) } }
   })
 
@@ -326,7 +340,13 @@ async function observer(mod, routeMod, RAC2) {
         for (const [nom, texte] of Object.entries(textes)) { const v = await m.jugerMessage(texte); if (v && v.verdict && v.verdict !== 'ok') jugerMessageRefus.push(nom) }
       }
     } catch { /* 026-083 pas encore écrite : la relecture est facultative pour l'instant */ }
-    return { textes, gabarits, messagesRecus, jugerMessageDisponible, jugerMessageRefus }
+    const Ms = creerMagasin({ horloge: H }); const ps = semerProspect(Ms, 303)
+    await semerReponse(Ms, ps, 'appel')
+    let sansMentionPreparee = 0
+    const preparer = Ms.preparerEnvoi.bind(Ms)
+    Ms.preparerEnvoi = async (e) => { sansMentionPreparee++; return preparer(e) }
+    await mod.executerRepondeur(DEPS_BASE(Ms, H, { modeles: { rep_appel_v1: { approuve: true, type: 'reponse', texte: 'Bonjour, Presti vous propose {lien_rdv}.' } } }))
+    return { textes, gabarits, messagesRecus, jugerMessageDisponible, jugerMessageRefus, sansMentionPreparee }
   })
 
   await tente('RP-4', async () => {
@@ -353,7 +373,10 @@ async function observer(mod, routeMod, RAC2) {
     await mod.executerRepondeur(DEPS_BASE(M3j, H))
     const commentaire3j = M3j.etat().envois.some((x) => x.canal === 'reponse_privee' && x.conversation_id === 'conv-3j')
 
-    const M8j = avecConversationsCommentees(creerMagasin({ horloge: H })); M8j.poserEtat({ conversations: [{ id: 'conv-8j', plateforme: 'instagram', pseudo: 'p8j', suit_le_compte: true, meta_id: 'META-PERSONNE-8J', fenetre_jusqua: null, commentaire_id: 'com-8j', reponse_privee_jusqua: iso(T0 - 4 * J) }] })
+    const M8j = avecConversationsCommentees(creerMagasin({ horloge: H })); M8j.poserEtat({ conversations: [{ id: 'conv-8j', plateforme: 'instagram', pseudo: 'p8j', suit_le_compte: true, meta_id: 'META-PERSONNE-8J', fenetre_jusqua: null, commentaire_id: 'com-8j', reponse_privee_jusqua: iso(T0 - J / 2) }] })
+    let tentativesHorsFenetre = 0
+    const preparer8j = M8j.preparerEnvoi.bind(M8j)
+    M8j.preparerEnvoi = async (e) => { if (e.canal === 'reponse_privee') tentativesHorsFenetre++; return preparer8j(e) }
     await mod.executerRepondeur(DEPS_BASE(M8j, H))
     const commentaire8j = M8j.etat().envois.some((x) => x.canal === 'reponse_privee' && x.conversation_id === 'conv-8j')
 
@@ -364,7 +387,7 @@ async function observer(mod, routeMod, RAC2) {
     await mod.executerRepondeur(DEPS_BASE(Mdeja, H))
     const dejaRepondu = Mdeja.etat().envois.length > n0
 
-    return { commentaire3j, commentaire8j, dejaRepondu }
+    return { commentaire3j, commentaire8j, dejaRepondu, tentativesHorsFenetre }
   })
 
   await tente('RP-6', async () => {
@@ -375,9 +398,12 @@ async function observer(mod, routeMod, RAC2) {
     await mod.executerRepondeur(DEPS_BASE(M, H))
     const premier = envoiDe(M, idStop)
     const idStop2 = await semerReponse(M, pid, 'stop', { texte: 'STOP', recuLe: iso(T0 + 60_000) })
+    let contournementsStop = 0
+    const preparerStop = M.preparerEnvoi.bind(M)
+    M.preparerEnvoi = async (e) => { if (e.type !== 'confirmation_stop') contournementsStop++; return preparerStop(e) }
     await mod.executerRepondeur(DEPS_BASE(M, H))
     const second = envoiDe(M, idStop2)
-    return { premier, second }
+    return { premier, second, contournementsStop }
   })
 
   await tente('RP-7', async () => {
@@ -400,9 +426,12 @@ async function observer(mod, routeMod, RAC2) {
     const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
     const pid = semerProspect(M, 930)
     const id = await semerReponse(M, pid, 'appel')
-    const MODELES_REELS = { rep_appel_v1: { type: 'reponse', texte: "Bonjour, appelez-nous : {lien_rdv}" } } // sans « assistant IA de Presti » : simule des modèles non approuvés
+    const MODELES_REELS = { rep_appel_v1: { approuve: false, type: 'reponse', texte: "Bonjour, je suis l'assistant IA de Presti. Appelez-nous : {lien_rdv}" } } // refus d'approbation explicite, distinct du garde sur la mention IA
+    let tentativesNonApprouvees = 0
+    const preparerNonApprouve = M.preparerEnvoi.bind(M)
+    M.preparerEnvoi = async (e) => { tentativesNonApprouvees++; return preparerNonApprouve(e) }
     await mod.executerRepondeur(DEPS_BASE(M, H, { modeles: MODELES_REELS }))
-    return { envoi: envoiDe(M, id), repondue: !!reponseDe(M, id)?.repondue }
+    return { envoi: envoiDe(M, id), repondue: !!reponseDe(M, id)?.repondue, tentativesNonApprouvees }
   })
 
   const routeUrl = 'http://127.0.0.1/api/cron/repondeur'
@@ -606,13 +635,13 @@ function muter(base, id, m) { const x = JSON.parse(JSON.stringify(base[id])); m(
 function echantillons() {
   const b = obsBase()
   return {
-    'RP-2': [['conforme', b['RP-2'], false], ['pas_maintenant non traité', muter(b, 'RP-2', (x) => { x.pasMaintenant.repondue = false }), true], ['oui artisan avec envoi', muter(b, 'RP-2', (x) => { x.ouiArtisan.envoi = { modele_id: 'x' } }), true]],
-    'RP-3': [['conforme', b['RP-3'], false], ['phrase absente', muter(b, 'RP-3', (x) => { x.textes.appel = 'Bonjour.' }), true], ['fuite du message', muter(b, 'RP-3', (x) => { x.textes.appel += ' pour votre menuiserie' }), true]],
+    'RP-2': [['conforme', b['RP-2'], false], ['pas_maintenant non traité', muter(b, 'RP-2', (x) => { x.pasMaintenant.repondue = false }), true], ['classe sensible préparée', muter(b, 'RP-2', (x) => { x.reponseRepondue.sensible = { tentatives: 1 } }), true], ['oui artisan avec envoi', muter(b, 'RP-2', (x) => { x.ouiArtisan.envoi = { modele_id: 'x' } }), true]],
+    'RP-3': [['conforme', b['RP-3'], false], ['modèle sans IA préparé', muter(b, 'RP-3', (x) => { x.sansMentionPreparee = 1 }), true], ['phrase absente', muter(b, 'RP-3', (x) => { x.textes.appel = 'Bonjour.' }), true], ['fuite du message', muter(b, 'RP-3', (x) => { x.textes.appel += ' pour votre menuiserie' }), true]],
     'RP-4': [['conforme', b['RP-4'], false], ['fil rompu', muter(b, 'RP-4', (x) => { x.email.fil_envoi_id = null }), true], ['objet sans Re', muter(b, 'RP-4', (x) => { x.email.objet = 'bonjour' }), true], ['fil vide (aucun envoi d origine semé)', muter(b, 'RP-4', (x) => { x.envoiOrigine = undefined; x.email.fil_envoi_id = undefined }), true]],
-    'RP-5': [['conforme', b['RP-5'], false], ['8 jours répond quand même', muter(b, 'RP-5', (x) => { x.commentaire8j = true }), true], ['seconde réponse privée', muter(b, 'RP-5', (x) => { x.dejaRepondu = true }), true]],
-    'RP-6': [['conforme', b['RP-6'], false], ['second stop répond aussi', muter(b, 'RP-6', (x) => { x.second = { type: 'confirmation_stop' } }), true]],
+    'RP-5': [['conforme', b['RP-5'], false], ['tentative hors fenêtre refusée en aval', muter(b, 'RP-5', (x) => { x.tentativesHorsFenetre = 1 }), true], ['8 jours répond quand même', muter(b, 'RP-5', (x) => { x.commentaire8j = true }), true], ['seconde réponse privée', muter(b, 'RP-5', (x) => { x.dejaRepondu = true }), true]],
+    'RP-6': [['conforme', b['RP-6'], false], ['STOP contourné et refusé en aval', muter(b, 'RP-6', (x) => { x.contournementsStop = 1 }), true], ['second stop répond aussi', muter(b, 'RP-6', (x) => { x.second = { type: 'confirmation_stop' } }), true]],
     'RP-7': [['conforme', b['RP-7'], false], ['lien absent du texte', muter(b, 'RP-7', (x) => { x.texte = 'aucun lien' }), true], ['lien de rendez-vous sans prospect', muter(b, 'RP-7', (x) => { x.sansProspectAUnLien = true }), true]],
-    'RP-8': [['conforme', b['RP-8'], false], ['envoi préparé quand même', muter(b, 'RP-8', (x) => { x.envoi = { modele_id: 'x' } }), true]],
+    'RP-8': [['conforme', b['RP-8'], false], ['modèle non approuvé tenté', muter(b, 'RP-8', (x) => { x.tentativesNonApprouvees = 1 }), true], ['envoi préparé quand même', muter(b, 'RP-8', (x) => { x.envoi = { modele_id: 'x' } }), true]],
     'RP-9': [['conforme', b['RP-9'], false], ['pause avec un appel', muter(b, 'RP-9', (x) => { x.pause.appels = 1 }), true], ['sans jeton accepté', muter(b, 'RP-9', (x) => { x.sansJeton.statut = 200 }), true]],
     'RP-10': [['conforme', b['RP-10'], false], ['fetch( dans le module', muter(b, 'RP-10', (x) => { x.source += '\nfetch(x)' }), true], ['typecheck rouge', muter(b, 'RP-10', (x) => { x.typecheck = { ok: false, detail: 'TS1234' } }), true]],
     'RP-11': [['conforme', b['RP-11'], false], ['fermé mais rep_prix_v1', muter(b, 'RP-11', (x) => { x.ferme.envoi.modele_id = 'rep_prix_v1' }), true]],
