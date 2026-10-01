@@ -41,7 +41,7 @@ reg('facteur','--partie=facteur','FA-2',F,/const j3 = jugerMessage\(entree\)/,"c
 reg('facteur','--partie=facteur','FA-14','app/api/usine/facteur/avis/route.ts',/  if \(typeof corps\.j2_version[^\n]+return null/,'','version du second juge non validée')
 add('facteur','--partie=facteur','FA-13','app/api/usine/facteur/travail/route.ts',/empreinte: e\.empreinte \}\)\)/,a=>a.replace('empreinte: e.empreinte','empreinte: e.empreinte, destinataire: e.destinataire'),'adresse du destinataire exposée')
 add('facteur','--partie=facteur','FA-12','app/api/usine/facteur/avis/route.ts',/const AGENT = 'facteur'/,a=>a.replace("'facteur'","'facteur_usine'"),'jeton du mauvais agent accepté')
-add('facteur','--partie=facteur','FA-3',F,/magasin\.envoisApprouves\('email_sollicite', ENVOIS_MAX_PAR_CANAL\)/,()=>"magasin.envoisPrepares(ENVOIS_MAX_PAR_CANAL)",'envois prepare traités comme approuvés')
+reg('facteur','--partie=facteur','FA-3',F,/  if \(brut\.statut !== undefined && brut\.statut !== 'approuve'\) return 'statut'/,'','envois prepare traités comme approuvés')
 reg('facteur','--partie=facteur','FA-4',G,/\.\.\.\(enReponseA \? \{ inReplyTo: enReponseA \} : \{\}\),/,'','In-Reply-To omis')
 reg('facteur','--partie=facteur','FA-5',F,/await magasin\.signal\(\{ type: 'gmail_refus'[^\n]+\}\)/,'void 0','refus SMTP sans signal')
 add('facteur','--partie=facteur','FA-6',F,/!\(jusqua > maintenant\) \|\| dejaFaite/,a=>a.replace('jusqua > maintenant','jusqua + 86400_000 > maintenant'),'réponse privée valable huit jours')

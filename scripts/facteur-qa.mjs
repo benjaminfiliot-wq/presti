@@ -240,10 +240,21 @@ async function partieFacteur(s, IDS) {
     try {
       const { M, H, run } = await banc2((M) => { const id = M.inserer(prospectVerifie(3)); return [id] })
       // un `prepare` glissé, jamais approuve
-      await M.preparerEnvoi({ prospect_id: null, conversation_id: 'conv-fa3', type: 'reponse', canal: 'messagerie', envoyeur: 'repondeur', destinataire: 'meta-fa3', objet: null, texte: 'Texte Témoin', empreinte_texte: sha256('Texte Témoin'), modele_id: 'modele-temoin-v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, preuve_demande: null, reference: 'FA3-TEM' })
-      const meta = creerMetaFactice({ scenario: 'ok' })
-      const bilan = await run('envoi', { meta: meta.fetch ? { reponsePrivee: async () => ({ ok: false, raison: 'autre' }), message: async () => ({ ok: false, raison: 'autre' }) } : null })
-      if (meta.requetes.length) e.push('une requête Meta est partie pour un envoi non approuvé')
+      M.poserEtat({ conversations: [{ id: 'conv-fa3', meta_id: 'meta-fa3', plateforme: 'instagram', fenetre_jusqua: new Date(T0 + 3600_000).toISOString() }] })
+      M.poserEtat({ reponses_recues: [{ id: 'recu-fa3', conversation_id: 'conv-fa3', source: 'meta', recu_le: new Date(T0 - 3600_000).toISOString(), texte: 'Message entrant factice' }] })
+      const p = await M.preparerEnvoi({ prospect_id: null, conversation_id: 'conv-fa3', type: 'reponse', canal: 'messagerie', envoyeur: 'repondeur', destinataire: 'meta-fa3', objet: null, texte: 'Texte Témoin', empreinte_texte: sha256('Texte Témoin'), modele_id: 'modele-temoin-v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, preuve_demande: null, reference: 'FA3-TEM' })
+      if (!p.ok) throw new Error(`préparation FA3 refusée : ${p.raison}`)
+      const prepare = M.etat().envois.find((x) => x.id === p.id)
+      if (!prepare || prepare.statut !== 'prepare') throw new Error('fixture FA3 non préparée')
+      // Lecture piégée : des verdicts prétendument verts ne remplacent jamais le statut approuvé.
+      const lire = M.envoisApprouves.bind(M)
+      M.envoisApprouves = async (canal, limite) => canal === 'messagerie' ? [{ ...prepare, verdicts: { j1: 'sans_objet', j2: 'ok', j3: 'ok' } }] : lire(canal, limite)
+      let reservations = 0, transports = 0
+      M.reserverEnvoi = async () => { reservations++; return { ok: false, raison: 'pause' } }
+      M.marquerIncertain = async () => { throw new Error('aucun envoi parti') }
+      const meta = { reponsePrivee: async () => { transports++; return { ok: false, raison: 'autre' } }, message: async () => { transports++; return { ok: false, raison: 'autre' } } }
+      await run('envoi', { meta })
+      if (reservations || transports) e.push(`envoi préparé : ${reservations} réservation(s), ${transports} transport(s), zéro attendu`)
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) }
     s.juger('FA-3', e, 'aucun envoi réseau pour un envoi resté « prepare »')
   }
