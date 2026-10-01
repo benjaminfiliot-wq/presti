@@ -294,6 +294,25 @@ async function partieFacteur(s, IDS) {
       const message = await client.message({ meta_id: 'personne-temoin', texte: 'Réponse factice' })
       if (!message.ok) e.push(`message factice refusé : ${JSON.stringify(message)}`)
       if (meta.requetes.some((x) => JSON.stringify(x.corps).includes('HUMAN_AGENT') || 'tag' in (x.corps ?? {}))) e.push('une requête Meta porte tag ou HUMAN_AGENT')
+      // Préparer sous fenêtre ouverte, puis la faire expirer : l'approbation ne prolonge rien.
+      for (const ouverte of [true, false]) {
+        const Hf = creerHorloge(T0), Mf = creerMagasin({ horloge: Hf })
+        const conversation = { id: 'conv-fa6', plateforme: 'instagram', meta_id: 'personne-fa6', commentaire_id: 'com-fa6', reponse_privee_jusqua: new Date(T0 + 3600_000).toISOString(), fenetre_jusqua: null }
+        Mf.poserEtat({ interrupteurs: { envoi_froid: true }, conversations: [conversation] })
+        const p = await Mf.preparerEnvoi({ prospect_id: null, conversation_id: conversation.id, type: 'reponse', canal: 'reponse_privee', envoyeur: 'repondeur', destinataire: conversation.meta_id, objet: null, texte: 'Réponse fenêtre factice', empreinte_texte: sha256('Réponse fenêtre factice'), modele_id: 'questions_entrant_v2', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, preuve_demande: null, reference: 'FA6-fenetre' })
+        if (!p.ok) throw new Error(`préparation fenêtre refusée : ${p.raison}`)
+        await Mf.approuverEnvoi(p.id, { j1: 'sans_objet', j2: 'ok', j3: 'ok' })
+        if (!(await Mf.envoisApprouves('reponse_privee', 10)).some((x) => x.id === p.id)) throw new Error('fixture fenêtre non approuvée')
+        if (!ouverte) Mf.poserEtat({ conversations: [{ ...conversation, reponse_privee_jusqua: new Date(T0 - 3600_000).toISOString() }] })
+        let reservations = 0, transports = 0
+        // Refus factice de réservation : observer la décision de fenêtre, sans simuler un envoi.
+        Mf.reserverEnvoi = async () => { reservations++; return { ok: false, raison: 'pause' } }
+        Mf.marquerIncertain = async () => { throw new Error('aucun envoi à réconcilier') }
+        const porteur = { reponsePrivee: async () => { transports++; return { ok: false, raison: 'autre' } }, message: async () => { transports++; return { ok: false, raison: 'autre' } } }
+        await mod.executerFacteur({ magasin: Mf, gmail: null, meta: porteur, horloge: Hf, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } })
+        if (reservations !== (ouverte ? 1 : 0)) e.push(`fenêtre ${ouverte ? 'ouverte' : 'expirée'} : ${reservations} réservation(s) tentée(s), ${ouverte ? 1 : 0} attendue(s)`)
+        if (transports) e.push('transport appelé malgré refus de réservation')
+      }
       s.juger('FA-6', e, 'envoiMeta.ts : réponse privée factice acceptée, aucune requête ne porte tag/HUMAN_AGENT (fenêtres jugées via disjoncteurs.ts et le magasin, DJ-7)')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-6', e, '') }
   }
