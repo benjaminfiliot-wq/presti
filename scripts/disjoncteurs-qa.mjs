@@ -379,6 +379,13 @@ async function jugementNormal(s) {
       }
       try { const r2 = mod.peutEnvoyer(etatDe({ envoi_froid: false }), { canal: 'email_sollicite', type: 'reponse' }, Date.now()); if (r2.ok !== true) e.push(`email_sollicite quand le formulaire est fermé : refusé (${JSON.stringify(r2)}), accepté attendu`) } catch (err) { e.push(`sollicité passe malgré envoi_froid fermé : ${premiereLigne(err)}`) }
       try { const r2 = mod.peutEnvoyer(etatDe(), { canal: 'formulaire_site', type: 'premier_contact', technologie: 'contact_form_7' }, Date.now()); if (r2.ok !== true) e.push(`cas conforme refusé : ${JSON.stringify(r2)}`) } catch (err) { e.push(`cas conforme : ${premiereLigne(err)}`) }
+      for (const type of ['signal_inconnu', 'disjoncteur_formulaire', 'disjoncteur_technologie']) {
+        try {
+          const propre = mod.carteAttention({ type, technologie: 'wpforms' })
+          const piegee = mod.carteAttention({ type, technologie: 'wpforms', resume: 'prospect-fictif@example.test / nom confidentiel témoin' })
+          if (JSON.stringify(propre) !== JSON.stringify(piegee)) e.push(`carte ${type} : le résumé privé du prospect influence la sortie`)
+        } catch (err) { e.push(`carte ${type} : ${premiereLigne(err)}`) }
+      }
       const src = fs.readFileSync(fMod, 'utf8'), nu = sansCommentaires(src)
       if (/\bfetch\s*\(/.test(nu)) e.push('disjoncteurs.ts appelle fetch(')
       if (/\bprocess\s*\.\s*env\b/.test(nu)) e.push('disjoncteurs.ts lit process.env')
