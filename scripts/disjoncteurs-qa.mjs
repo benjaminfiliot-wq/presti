@@ -279,6 +279,13 @@ async function jugementNormal(s) {
       if (!m) e.push('acq_palier_appliquer() introuvable')
       else {
         const corps = compacter(m[2])
+        // La présence des quatre quotas ne suffit pas : aucun autre état ne peut être écrit.
+        const cibles = [...sansCommentaires(m[2]).matchAll(/\b(?:insert\s+into|update|delete\s+from|merge\s+into)\s+([a-z_][a-z0-9_.]*)/gi)]
+          .map((x) => x[1].toLowerCase())
+        for (const cible of cibles) {
+          // ON CONFLICT ... DO UPDATE SET ne désigne pas une nouvelle table.
+          if (cible !== 'ops.quotas_canaux' && cible !== 'set') e.push(`acq_palier_appliquer : écriture interdite dans ${cible}`)
+        }
         for (const attendu of ["'formulaire_site','*'", "'email_sollicite','*'", "'reponse_privee'", "'messagerie'"]) if (!corps.replace(/\s/g, '').includes(attendu.replace(/\s/g, ''))) e.push(`acq_palier_appliquer : « ${attendu} » non retrouvé`)
       }
       const fondateur = ['acq_technologie_reprendre', 'acq_canal_rouvrir', 'acq_modele_lever', 'acq_palier_plafond', 'acq_envoi_froid_ouvrir']

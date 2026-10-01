@@ -107,7 +107,9 @@ export function creerSortie(nom, ids, entete) {
       const rouges = ids.filter((id) => !res.get(id).ok)
       // 001 relit UNE ligne machine par critère réellement rouge, jamais un simple complément ni une citation.
       for (const id of rouges) console.log(`FAIL ${id} — ${res.get(id).detail || 'en échec'}`)
-      console.log(rouges.length ? `${nom} : FAIL — ${rouges.join(', ')}` : `${nom} : PASS`)
+      // Les options figurent dans l'en-tête, le bilan machine porte le nom du juge seul.
+      const nomMachine = String(nom).trim().split(/\s+/)[0]
+      console.log(rouges.length ? `${nomMachine} : FAIL — ${rouges.join(', ')}` : `${nomMachine} : PASS`)
       return rouges.length ? 1 : 0
     },
   }
