@@ -564,6 +564,19 @@ async function partieGmail(s, IDS) {
       const texteTout = imap.commandes.join(' ')
       if (/uid 105\b/i.test(texteTout) || JSON.stringify(r).includes('jamais être ouvert')) e.push('le message adressé à l\'autre boîte (uid 105) a été lu')
       if (!Array.isArray(r?.messages) || !r.messages.length) e.push('releverGmail ne rend aucun message')
+      // Un résultat de recherche incohérent doit aussi être refusé par l'enveloppe,
+      // avant de télécharger le corps : le filtrage du serveur ne prouve pas cette garde.
+      const piege = creerImapFactice({ messages: MESSAGES, uidValidity: UID_VALIDITY_INITIALE })
+      const chercher = piege.search.bind(piege), enveloppe = piege.fetchOne.bind(piege)
+      piege.search = async query => [...new Set([...(await chercher(query)), 105])]
+      piege.fetchOne = async (uid, opts) => {
+        const brut = await enveloppe(uid, opts)
+        if (brut && uid === 105) brut.envelope.to = [{ address: AUTRE_ADRESSE }]
+        return brut
+      }
+      const retour = await mod.releverGmail({ imap: piege, adresse: ADRESSE_PROSPECTION, curseur: 0 })
+      if (!piege.commandes.some(c => /^FETCH 105\b/.test(c))) e.push('enveloppe piège non exercée')
+      if (piege.commandes.some(c => /^FETCH 105 text\b/.test(c)) || retour?.messages?.some(m => m.imap_uid === 105)) e.push('corps ou message de l’autre boîte accepté malgré son enveloppe')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) }
     s.juger('GM-4', e, 'EXAMINE (pas SELECT), aucune commande d\'écriture, le message d\'une autre boîte jamais lu')
   }
