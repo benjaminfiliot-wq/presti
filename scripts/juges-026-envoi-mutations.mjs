@@ -55,7 +55,7 @@ reg('facteur','--partie=porteur --ici','PF-6',T,/[^\n]*acq_porteur_verifier[^\n]
 reg('facteur','--partie=porteur --ici','PF-6',T,/  if \(!fenetreOuverte\(new Date\(maintenant\)\)\) return rien\(\)/,'','hors heures ouvrées accepté')
 add('facteur','--partie=porteur --ici','PF-11',T,/const releveFrais = [^\n]+/,()=>"const releveFrais = (_iso, _maintenant) => true",'relève Gmail ignorée')
 add('facteur','--partie=porteur --ici','PF-12',P,/return cible\.screenshot\(\{[^\n]+/,a=>a.replace('cible.screenshot','page.screenshot').replace("{ type:","{ fullPage: true, type:"),'capture entière page')
-add('facteur','--partie=porteur --ici','PF-13',P,/async function abandonner\([^\n]+\{/,a=>a+"\n  ecrire0600(path.join(dossierEnvoi, 'avant.jpg'), Buffer.from('capture fautive'))",'capture sur abandon')
+add('facteur','--partie=porteur --ici','PF-13',P,/async function abandonner\([^\n]+\{/,a=>a+"\n  dossier0700(dossierEnvoi); ecrire0600(path.join(dossierEnvoi, 'avant.jpg'), Buffer.from('capture fautive'))",'capture sur abandon')
 reg('facteur','--partie=gmail','GM-4',G,/if \(destinataires\.length > 0 && !destinataires\.includes\(adresse\)\) continue/,'','message autre boîte relevé')
 add('facteur','--partie=gmail','GM-2',G,/export const nettoyerMotDePasse = [^\n]+/,()=>"export const nettoyerMotDePasse = (p: string): string => p",'espaces mot de passe conservés')
 // SQL garde : seconde soumission à vie.
