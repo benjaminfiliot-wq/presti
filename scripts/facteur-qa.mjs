@@ -379,8 +379,13 @@ async function partieFacteur(s, IDS) {
       const id = M.inserer(prospectVerifie(10))
       const p = await M.preparerEnvoi({ prospect_id: id, type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-10.invalid/contact', objet: null, texte: texteConforme('TEM010'), empreinte_texte: sha256('x'), modele_id: 'm', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: 'FA10' })
       if (p.ok) await M.approuverEnvoi(p.id, { j1: 'ok', j3: 'ok', j2: 'ok' })
-      await mod.executerFacteur({ magasin: M, gmail: null, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } })
-      const relu = (await M.envoisApprouves('formulaire_site', 10)).find((x) => x.id === p.id)
+      if (!p.ok) throw new Error(`préparation formulaire refusée : ${p.raison}`)
+      const lecturesCanaux = [], lireApprouves = M.envoisApprouves.bind(M)
+      M.envoisApprouves = async (canal, limite) => { lecturesCanaux.push(canal); return lireApprouves(canal, limite) }
+      const gmailInterdit = { envoyer: async () => { throw new Error('aucun e-mail dû dans le banc formulaire') } }
+      await mod.executerFacteur({ magasin: M, gmail: gmailInterdit, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'envoi', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '', mentions: '' } })
+      if (lecturesCanaux.includes('formulaire_site')) e.push('le Facteur prend la file formulaire_site réservée au porteur')
+      const relu = (await lireApprouves('formulaire_site', 10)).find((x) => x.id === p.id)
       if (!relu) e.push('l\'envoi formulaire_site approuvé n\'est plus « approuve » après une passe du Facteur (il devrait rester au porteur)')
       const src = fs.readFileSync(fFacteur, 'utf8')
       if (/playwright|chromium/i.test(src)) e.push('facteur.ts contient playwright ou chromium')
