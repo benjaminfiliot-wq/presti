@@ -244,10 +244,17 @@ async function jugementNormal(s) {
       const fonctions = [...texteM.matchAll(/create (?:or replace )?function (ops|public)\.([a-z0-9_]+)\(/gi)].map((m) => m[2])
       for (const f of new Set(fonctions)) {
         const debut = texteM.search(new RegExp(`create (?:or replace )?function (?:ops|public)\\.${f}\\(`, 'i'))
-        const zoneFin = texteM.indexOf('\n$$;', debut)
-        const entete = texteM.slice(debut, zoneFin > 0 ? zoneFin : debut + 400)
+        const declaration = texteM.slice(debut)
+        const ouverture = /\bas\s+\$[a-z_]*\$/i.exec(declaration)
+        const entete = ouverture ? declaration.slice(0, ouverture.index) : ''
+        if (!ouverture) e.push(`${f} : début du corps SQL introuvable`)
         if (!/security definer/i.test(entete)) e.push(`${f} : security definer absent`)
         if (!/set search_path\s*=\s*public,\s*ops,\s*pg_temp/i.test(entete)) e.push(`${f} : search_path = public, ops, pg_temp absent`)
+        const grants = ins.filter(({ n }) => new RegExp(`^grant\\b[\\s\\S]*\\bfunction\\s+(?:ops|public)\\.${f}\\(`, 'i').test(n))
+        for (const { n } of grants) {
+          const roles = /\bto\s+([^;]+)/i.exec(n)?.[1]?.split(',').map((r) => r.trim()) ?? []
+          if (!roles.length || roles.some((r) => r !== 'service_role')) e.push(`${f} : grant hors service_role`)
+        }
       }
       for (const f of ['garde_modeles', 'suivre_technologies']) {
         if (!new RegExp(`revoke[^;]*from[^;]*(public|anon|authenticated|service_role)[^;]*;[\\s\\S]{0,10}(create|--).*${f}|revoke\\s+(?:all|execute)[^;]*ops\\.${f}`, 'i').test(texteM) && !new RegExp(`function ops\\.${f}`).test(texteM)) e.push(`${f} : présence non confirmée`)
@@ -265,7 +272,11 @@ async function jugementNormal(s) {
       const c = compacter(texteM)
       // compacter() met le SQL en minuscules ; les id des paliers (P0…P4) viennent du contrat tels quels (majuscules) —
       // comparer sans les mettre en minuscules ne pouvait jamais matcher (défaut du 28/09, fiche 026-063).
-      for (const [id, parJour] of attendus) { const idMin = id.toLowerCase(); if (!new RegExp(`'${idMin}'[^)]*${parJour}`).test(c) && !c.includes(`'${idMin}',`)) e.push(`palier ${id} : graine non retrouvée avec par_jour=${parJour}`) }
+      for (const [id, parJour, jours] of attendus) {
+        const idMin = id.toLowerCase(), duree = jours === null ? 'null' : String(jours)
+        if (!new RegExp(`\\(\\s*'${idMin}'\\s*,\\s*${parJour}\\s*,\\s*${duree}\\s*,`).test(c)) e.push(`palier ${id} : graine non retrouvée avec par_jour=${parJour}, jours=${duree}`)
+      }
+      if (!new RegExp(`\\bif\\s+v_echecs\\s*>=\\s*${K.SEUILS.echecs_affilee}\\s+then`, 'i').test(sansCommentaires(texteM))) e.push('seuil de coupure des échecs consécutifs incorrect')
       const seuils = [['4', 'stop'], ['2', 'plainte'], ['1', 'avis_abus'], ['3', 'echec_soumission'], ['300', 'sans_reponse']]
       for (const [n] of seuils) if (!c.includes(n)) e.push(`seuil ${n} non retrouvé dans le SQL`)
       if (!c.includes('300')) e.push('par_jour borné à 300 non retrouvé')
