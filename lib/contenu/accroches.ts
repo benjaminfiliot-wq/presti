@@ -1,9 +1,10 @@
 // lib/contenu/accroches.ts — laboratoire des accroches (fiche 026-215, C12). Le type d'accroche se classe d'abord PAR
 // RÈGLES en code ; `jev decide --provider laya` (decider) ne départage que les cas ambigus, sur un texte public
 // anonymisé, et ne rédige jamais. `jev score --provider laya` (noter) classe une idée candidate avec source, récence et
-// pertinence métier : le score alimente la file d'idées, JAMAIS une publication (accord de Benj à chaque fois, R24).
+// pertinence métier : le score alimente la file d'idées, jamais une publication ; garde-fous automatiques requis (30/09).
 // Le texte d'un artisan ou d'un prospect n'est traité que localement, par règles : il ne part vers aucun moteur.
 import { noter, decider, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
 
 export type Categorie = 'question' | 'chiffre' | 'avant_apres' | 'contraste'
 export const CATEGORIES: Categorie[] = ['question', 'chiffre', 'avant_apres', 'contraste']
@@ -48,6 +49,7 @@ export async function classerAccroche(texteAnonymise: string, deps: DepsLecteur 
   if (parRegles.length === 1) return { categorie: parRegles[0] }
   if (nominatif(texte)) return parRegles.length ? { categorie: parRegles[0] } : null
   const options = parRegles.length ? parRegles : CATEGORIES
+  if (!(await sortiePermise()).permise) return parRegles.length ? { categorie: parRegles[0] } : null
   const r = await decider(anonymiser(texte), options, {}, deps)
   if (!r || !options.includes(r.choix as Categorie)) return parRegles.length ? { categorie: parRegles[0] } : null
   return { categorie: r.choix }
@@ -74,6 +76,7 @@ export async function scoreIdee(texte: string, source: string, recence: Recence,
   if (!base.source.trim()) return { ...base, statut: 'non_mesure', raison: 'source_absente', alimenteFileIdees: false }
   if (!['jour', 'semaine', 'mois'].includes(recence)) return { ...base, statut: 'non_mesure', raison: 'recence_invalide', alimenteFileIdees: false }
   const consigne = `idée : ${anonymiser(base.texte, prospects || [])} | source : ${anonymiser(base.source, prospects || [])} | récence : ${recence} | métier : ${metier ?? 'non précisé'}`
+  if (!(await sortiePermise()).permise) return { ...base, statut: 'non_mesure', raison: 'pause_generale', alimenteFileIdees: false }
   const score = await noter(consigne, {}, depsLecteur)
   if (!score) return { ...base, statut: 'non_mesure', raison: 'laya_indisponible', alimenteFileIdees: false }
   return { ...base, score, statut: 'note', alimenteFileIdees: true }
