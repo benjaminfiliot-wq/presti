@@ -5,9 +5,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { installerPause } from './pause.mjs'
 
 const [, , cfgPath] = process.argv
 const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
+installerPause(cfg)
 const sortie = { nonce: cfg.nonce, erreurImport: null, exception: null, valeur: null }
 function ecrire() { fs.writeFileSync(cfg.sortie, JSON.stringify(sortie)) }
 
