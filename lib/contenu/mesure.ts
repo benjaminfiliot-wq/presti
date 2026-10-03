@@ -12,6 +12,7 @@
 // Fonctions pures, sauf l'appel local à Laya ; tout accès externe (Graph, base) est INJECTÉ. Aucun secret ici.
 import { SEUIL_LAYA, porteUneAffirmationChiffree } from './lignes'
 import { vraisemblance, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
 
 // ── vocabulaire (celui de public.contenu_mesures) ────────────────────────────────────────────────────────────────
 export type Echeance = 'H+1' | 'H+24' | 'J+7'
@@ -128,6 +129,7 @@ export async function mesurerInsights(client: ClientInsights | null | undefined,
   if (!echeanceEchue(post.publie_le, echeance, maintenantMs)) return METRIQUES_RESEAU.map((m) => ligne(m, 'en_attente', null))
   if (post.canal !== 'instagram' && post.canal !== 'facebook') return METRIQUES_RESEAU.map((m) => ({ ...ligne(m, 'non_mesure', null), source: 'releve_main' as SourceMesure, source_ref: 'releve:manuel' }))
   if (!client || !post.id_externe) return METRIQUES_RESEAU.map((m) => ligne(m, 'non_mesure', null))
+  if (!(await sortiePermise()).permise) return METRIQUES_RESEAU.map((m) => ligne(m, 'non_mesure', null))
   let lecture: Awaited<ReturnType<ClientInsights['lireInsights']>>
   try { lecture = await client.lireInsights({ idExterne: post.id_externe, canal: post.canal }) } catch { return METRIQUES_RESEAU.map((m) => ligne(m, 'non_mesure', null)) }
   if (!lecture.ok) return METRIQUES_RESEAU.map((m) => ligne(m, 'non_mesure', null))
@@ -227,6 +229,7 @@ export async function verdictFormulePublique(
     }
     if (porteUneAffirmationChiffree(libelle)) {
       if (typeof source !== 'string' || !source.trim()) return { ok: false, motif: 'affirmation chiffrée sans source' }
+      if (!(await sortiePermise()).permise) return { ok: false, motif: 'pause générale : aucun appel au modèle' }
       const r = await vraisemblance(libelle, {}, deps)
       if (r === null) return { ok: false, motif: 'Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj' }
       if (r.bloque || !Number.isFinite(r.p) || r.p < SEUIL_LAYA) return { ok: false, motif: `score de vérité insuffisant (p=${r.p} < ${SEUIL_LAYA})` }
