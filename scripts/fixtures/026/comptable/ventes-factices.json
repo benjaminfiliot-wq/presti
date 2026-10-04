@@ -1,0 +1,16 @@
+{
+  "commandes": [
+    { "id": "vente_0", "paiement_id": "ch_0", "prix_cents": 10000 },
+    { "id": "vente_1", "paiement_id": "ch_1", "prix_cents": 10000 },
+    { "id": "vente_2", "paiement_id": "ch_2", "prix_cents": 10000 },
+    { "id": "vente_3", "paiement_id": "ch_3", "prix_cents": 10000 },
+    { "id": "vente_4", "paiement_id": "ch_4", "prix_cents": 10000 },
+    { "id": "vente_5", "paiement_id": "ch_5", "prix_cents": 10000 },
+    { "id": "vente_6", "paiement_id": "ch_6", "prix_cents": 10000 },
+    { "id": "vente_7", "paiement_id": "ch_7", "prix_cents": 10000 },
+    { "id": "payee_non_rapprochee", "paiement_id": "ch_8", "prix_cents": 10000 },
+    { "id": "vente_ecart", "paiement_id": "ecart", "prix_cents": 10000 },
+    { "id": "sans_paiement", "paiement_id": "absent", "prix_cents": 50000 }
+  ],
+  "abonnements": [{ "id": "abonnement_9", "paiement_id": "ch_9", "prix_cents": 10000 }]
+}

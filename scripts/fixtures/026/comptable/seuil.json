@@ -1,0 +1,10 @@
+{
+  "valeur_cents": 100000,
+  "source": "source synthétique de test — aucune valeur fiscale réelle",
+  "date_source": "2026-01-01",
+  "scenarios": [
+    { "cumul": 60000, "alerte": null },
+    { "cumul": 92000, "alerte": "approche_seuil" },
+    { "cumul": 101000, "alerte": "seuil_depasse", "franchi_le": "2026-03-03" }
+  ]
+}
