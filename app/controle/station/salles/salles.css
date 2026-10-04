@@ -1,0 +1,130 @@
+/* Les panneaux de la station (fiche 026-120) : une fenêtre à bord néon par-dessus la carte au bureau (la barre et les colonnes
+   restent visibles), une feuille plein écran, opaque, au téléphone. Jetons --mc-* de station.css seulement : aucune couleur
+   en dur. Aucune transition ni animation : le mouvement réduit est respecté d'office (la garde est posée quand même). */
+
+/* ── La fenêtre et sa teinte (la couleur de la salle : son genre) ─────────────────────────────────────────────────────── */
+.mc .mc-fenetre { --mc-teinte: var(--mc-neon-1); }
+.mc .mc-fenetre[data-genre="argent"] { --mc-teinte: var(--mc-argent); }
+.mc .mc-fenetre[data-genre="decision"] { --mc-teinte: var(--mc-neon-2); }
+.mc .mc-fenetre[data-genre="veille"] { --mc-teinte: var(--mc-actif); }
+.mc .mc-fenetre[data-genre="repos"] { --mc-teinte: var(--mc-texte-doux); }
+.mc .mc-fenetre[data-genre="reservee"] { --mc-teinte: var(--mc-warn); }
+
+.mc .mc-fenetre {
+  position: fixed; z-index: 40; display: flex; flex-direction: column; gap: 0; min-width: 0;
+  overflow-x: hidden; overflow-y: auto; padding: 0 16px 16px;
+  background: var(--mc-fond); color: var(--mc-texte);
+  border: 1px solid var(--mc-teinte); border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--mc-bord), 0 0 26px rgba(138, 107, 255, 0.28);
+}
+.mc .mc-fenetre:focus, .mc .mc-fenetre:focus-visible { outline: none; }
+.mc.mc-bureau .mc-fenetre { top: 92px; bottom: 56px; left: calc(var(--mc-col-g) + 20px); right: calc(var(--mc-col-d) + 20px); }
+.mc.mc-tel .mc-fenetre { inset: 0; z-index: 45; border-radius: 0; padding: 0 12px calc(16px + env(safe-area-inset-bottom, 0px)); }
+
+.mc .mc-fen-tete { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0 8px; background: var(--mc-fond); }
+.mc .mc-fen-titre { min-width: 0; overflow-wrap: break-word; font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.06em; color: var(--mc-teinte); }
+.mc .mc-fermer, .mc .mc-bouton { min-height: 36px; padding: 0 16px; border: 1px solid var(--mc-teinte); border-radius: 8px; background: none; color: var(--mc-texte); }
+.mc .mc-fermer:hover, .mc .mc-bouton:hover:not(:disabled) { background: var(--mc-survol); }
+.mc .mc-synchro { margin: 0 0 8px; font-family: var(--mc-mono); font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-fen-corps { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+/* ── Le résumé de salle commun ────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-resume { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 10px; background: var(--mc-survol); }
+.mc .mc-resume-bascule { align-self: flex-start; min-height: 32px; padding: 0 8px; border-radius: 6px; color: var(--mc-texte-doux); font-size: 12px; letter-spacing: 0.06em; }
+.mc .mc-resume-bascule:hover { color: var(--mc-texte); }
+.mc .mc-resume-liste { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 14px; margin: 0; }
+.mc .mc-resume-ligne { display: flex; flex-direction: column; min-width: 0; }
+.mc .mc-resume dt { font-size: 12px; letter-spacing: 0.08em; color: var(--mc-texte-doux); }
+.mc .mc-resume dd { margin: 0; overflow-wrap: break-word; font-family: var(--mc-mono); font-weight: 700; color: var(--mc-texte); }
+.mc .mc-resume-gestes { display: flex; flex-wrap: wrap; gap: 8px; }
+.mc .mc-resume-gestes button { min-height: 36px; padding: 0 16px; border: 1px solid var(--mc-teinte); border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+
+/* ── Les onglets, les tuiles ──────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-onglets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.mc .mc-onglets button { min-height: 36px; padding: 0 12px; border: 1px solid var(--mc-bord); border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--mc-texte-doux); }
+.mc .mc-onglets button[aria-selected="true"] { border-color: var(--mc-teinte); color: var(--mc-teinte); background: var(--mc-survol); }
+.mc .mc-tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 0 0 12px; }
+.mc .mc-tuile { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; background: rgba(10, 12, 17, 0.5); }
+.mc .mc-tuile-l { font-size: 12px; letter-spacing: 0.08em; color: var(--mc-texte-doux); }
+.mc .mc-tuile-v { overflow-wrap: break-word; font-family: var(--mc-mono); font-size: 16px; font-weight: 700; color: var(--mc-actif); }
+.mc .mc-tuile-n { font-size: 12px; color: var(--mc-texte-doux); }
+.mc [data-groupe="argent"] .mc-tuile-v, .mc [data-groupe="canaux"] .mc-tuile-v { color: var(--mc-argent); }
+.mc .mc-fen-corps .mc-titre-zone { margin: 12px 0 6px; }
+.mc .mc-sous-titre { margin: 8px 0 4px; font-size: 12px; letter-spacing: 0.06em; color: var(--mc-texte-doux); }
+
+/* ── Les listes et les lignes ─────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-liste, .mc .mc-classes, .mc .mc-etapes { margin: 0 0 8px; padding: 0; list-style: none; }
+.mc .mc-liste { display: flex; flex-direction: column; gap: 6px; }
+.mc .mc-liste > li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-width: 0; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; background: rgba(10, 12, 17, 0.5); overflow-wrap: break-word; }
+.mc .mc-liste > li > .mc-chiffre:last-child, .mc .mc-liste > li > .mc-tache-l + .mc-etiquette { margin-left: auto; }
+.mc .mc-liste > li > small, .mc .mc-liste > li > p { flex: 1 1 100%; margin: 0; }
+.mc .mc-chiffre { font-family: var(--mc-mono); font-weight: 700; }
+.mc .mc-gras { font-weight: 700; }
+.mc .mc-doux { color: var(--mc-texte-doux); }
+.mc .mc-petit { font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-total { border-color: var(--mc-argent); }
+.mc .mc-total > span:first-child { font-weight: 700; color: var(--mc-argent); }
+.mc .mc-texte-exact { margin: 0; white-space: pre-wrap; overflow-wrap: break-word; }
+.mc .mc-envoyee { color: var(--mc-texte-doux); }
+.mc .mc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; flex: 1 1 100%; }
+.mc .mc-commande-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; flex: 1 1 100%; }
+.mc .mc-tache-l { display: inline-flex; gap: 6px; min-width: 0; }
+.mc .mc-tache-r { color: var(--mc-texte-doux); }
+.mc .mc-anomalie { border-color: var(--mc-crit); color: var(--mc-crit); }
+.mc .mc-vide { margin: 0 0 12px; padding: 10px 12px; border: 1px dashed var(--mc-bord); border-radius: 8px; color: var(--mc-texte-doux); overflow-wrap: break-word; }
+.mc .mc-revision { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; flex: 1 1 100%; margin: 0; }
+.mc .mc-objectif-fixe { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; overflow-wrap: break-word; }
+.mc .mc-bandeau-reunion { margin: 0 0 12px; }
+.mc .mc-classes { display: flex; flex-wrap: wrap; gap: 6px; }
+.mc .mc-verdicts { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; }
+.mc .mc-verdict { display: inline-flex; align-items: center; gap: 4px; }
+.mc .mc-lien, .mc .mc-carte-valider { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--mc-neon-1); border-radius: 8px; color: var(--mc-texte); overflow-wrap: break-word; }
+.mc .mc-carte-valider { margin: 0 0 8px; border-color: var(--mc-warn); color: var(--mc-warn); font-weight: 700; }
+.mc .mc-lien:hover, .mc .mc-carte-valider:hover { background: var(--mc-survol); }
+.mc .mc-fiche-gestes { margin: 0 0 8px; }
+
+/* ── Les pastilles d'état ─────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-etiquette { display: inline-block; flex: 0 0 auto; max-width: 100%; padding: 1px 8px; border: 1px solid currentColor; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--mc-texte-doux); overflow-wrap: normal; }
+.mc .mc-etiquette[data-ton="ok"] { color: var(--mc-ok); }
+.mc .mc-etiquette[data-ton="warn"] { color: var(--mc-warn); }
+.mc .mc-etiquette[data-ton="crit"] { color: var(--mc-crit); }
+.mc .mc-etiquette[data-ton="actif"] { color: var(--mc-actif); }
+
+/* ── Les étapes d'une commande ────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-etapes { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 100%; }
+.mc .mc-etapes li { padding: 1px 8px; border: 1px solid var(--mc-bord); border-radius: 10px; font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-etapes li[data-atteinte="oui"] { border-color: var(--mc-actif); color: var(--mc-actif); }
+.mc .mc-etapes li[aria-current="step"] { background: var(--mc-survol); font-weight: 700; }
+
+/* ── L'identité d'un agent ────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-identite { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px 14px; margin: 0 0 12px; }
+.mc .mc-identite > div { display: flex; flex-direction: column; min-width: 0; }
+.mc .mc-identite dt { font-size: 12px; letter-spacing: 0.08em; color: var(--mc-texte-doux); }
+.mc .mc-identite dd { margin: 0; overflow-wrap: break-word; }
+
+/* ── L'histogramme des recettes (trente jours) ────────────────────────────────────────────────────────────────────────── */
+.mc .mc-histo { display: flex; align-items: stretch; gap: 2px; height: 96px; margin: 0 0 6px; padding: 0; list-style: none; }
+.mc .mc-histo > li { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 2px; background: var(--mc-survol); cursor: pointer; }
+.mc .mc-histo > li:hover, .mc .mc-histo > li:focus-visible { outline: 1px solid var(--mc-argent); }
+.mc .mc-histo-h { display: block; background: var(--mc-neon-2); }
+.mc .mc-histo-a { display: block; background: var(--mc-actif); }
+.mc .mc-histo-detail { min-height: 18px; margin: 0 0 4px; font-family: var(--mc-mono); font-size: 12px; color: var(--mc-texte); }
+.mc .mc-histo-legende { margin: 0 0 8px; font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-leg { display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 8px; border-radius: 2px; }
+.mc .mc-leg-a { background: var(--mc-actif); }
+.mc .mc-leg-h { background: var(--mc-neon-2); }
+
+/* ── Les jauges de quota ──────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc .mc-jauge-nom { font-weight: 700; }
+.mc .mc-jauge-barre { flex: 1 1 100%; height: 6px; border-radius: 3px; background: var(--mc-survol); overflow: hidden; }
+.mc .mc-jauge-barre > span { display: block; height: 100%; border-radius: 3px; background: var(--mc-ok); width: calc(var(--part, 0) * 100%); }
+.mc [data-jauge] [data-ton="warn"] ~ .mc-jauge-barre > span { background: var(--mc-warn); }
+.mc [data-jauge] [data-ton="crit"] ~ .mc-jauge-barre > span { background: var(--mc-crit); }
+
+/* ── Le téléphone : tout se lit en une colonne ────────────────────────────────────────────────────────────────────────── */
+.mc.mc-tel .mc-tuiles, .mc.mc-tel .mc-resume-liste, .mc.mc-tel .mc-identite { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mc.mc-tel .mc-onglets button, .mc.mc-tel .mc-fermer, .mc.mc-tel .mc-bouton, .mc.mc-tel .mc-lien, .mc.mc-tel .mc-carte-valider, .mc.mc-tel .mc-resume-bascule, .mc.mc-tel .mc-resume-gestes button { min-height: 44px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-fenetre, .mc .mc-fenetre * { animation: none !important; transition: none !important; }
+}
