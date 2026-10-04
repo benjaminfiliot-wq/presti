@@ -273,7 +273,9 @@ if (FLAGS) {
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
     // et les DEUX routes doivent lire le drapeau elles-mêmes.
     'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
-    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts', 'app/api/controle/station/route.ts', 'app/api/agents/reunion/route.ts', 'app/api/agents/reunion/chiffres/route.ts'],
+    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts', 'app/api/controle/station/route.ts', 'app/api/controle/station/reglages/route.ts', 'app/api/agents/reunion/route.ts', 'app/api/agents/reunion/chiffres/route.ts'],
+    // 026-179 — la carte Claw3D de la station : lue par app/controle/station/Carte.tsx (baissé : le cadre d'attente et la liste des salles, aucun morceau de Phaser).
+    'stationCarte': ['lu'],
     // 29/09 — les demandes de Benj à l'écosystème : la route du Poste et les deux routes du bus lisent ce drapeau (les routes du bus lisent AUSSI busAgents).
     'demandesEcosysteme': ['route', '/api/controle/demandes', 'GET', 'app/api/controle/demandes/route.ts', 'app/api/agents/demandes/route.ts', 'app/api/agents/demandes/[id]/route.ts'],
     'prospectsEntrant': ['route', '/api/prospects/entrant', 'POST', 'app/api/prospects/entrant/route.ts'],

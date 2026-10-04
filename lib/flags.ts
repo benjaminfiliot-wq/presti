@@ -100,6 +100,8 @@ export const FLAGS = {
   audience: true,
   /** 24/09 — Pilotage (Mission Control), premier onglet du Poste. Baissé : GET /api/controle/pilotage répond 404 et l'onglet n'existe pas. Levé par la fiche 026-140, après la recette et l'accord de Benj. */
   pilotage: false,
+  /** 026-179 — carte Claw3D de la station, levée par 026-193 après sa recette. Baissé : la page de la station garde son cadre d'attente et la liste des salles, et le moteur (Phaser) n'est jamais chargé. */
+  stationCarte: false,
   /** 026-118 — le pack pubs locales : le dossier (/pubs/commander, /api/pubs/commander/brouillon) et le paiement
    *  (POST /api/pubs/commander). Baissé : les routes répondent 404. À lever sur décision de Benj, seulement après
    *  l'application de 0102, le PASS des fiches 05 (CGU 3 ter, lues par Benj), 12, 15 et 24 (effacement des fichiers
