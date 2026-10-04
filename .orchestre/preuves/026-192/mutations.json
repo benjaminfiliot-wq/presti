@@ -1,0 +1,104 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/station-reglages-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=reglages --racine={racine}",
+      "fichier": "app/api/controle/station/reglages/route.ts",
+      "avant": "export async function PUT(req: Request) {\n  if (!actif('pilotage')) return erreur('Introuvable.', 404)\n  const f = await estDirection(req)\n  if (estRefus(f)) return reponseRefus(f)",
+      "apres": "export async function PUT(req: Request) {\n  const f = await estDirection(req)\n  if (estRefus(f)) return reponseRefus(f)\n  if (!actif('pilotage')) return erreur('Introuvable.', 404)",
+      "critere": "RX-1",
+      "extrait": "FAIL RX-1 — PUT : première instruction « const f = await estDirection(req) », « if (!actif('pilotage')) … » attendu",
+      "duree_s": 0.2
+    },
+    {
+      "juge": "scripts/station-reglages-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=reglages --racine={racine}",
+      "fichier": "app/api/controle/station/reglages/route.ts",
+      "avant": "const f = await estDirection(req)",
+      "apres": "const f = await estFondateur(req)",
+      "critere": "RX-2",
+      "extrait": "FAIL RX-2 — PUT : estDirection( absent ; PUT : estFondateur( : la lecture ne doit pas suffire pour écrire ; PUT n’appelle pas estDirection (le rôle lecture doit être refusé) ; PUT appelle estFondateur : seul estDirection ferme l’écriture au rôle lecture ; PUT fondateur en lecture → 200, 403 attendu ; PUT fondateur en lecture : écriture malgré le refus",
+      "duree_s": 7.1
+    },
+    {
+      "juge": "scripts/station-reglages-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=reglages --racine={racine}",
+      "fichier": "app/api/controle/station/reglages/route.ts",
+      "avant": "journalAvant = await journaliser({ acteur: f, action: actionStation, cible_type: 'station', cible_id: 'reglages', avant: { version } }, req)",
+      "apres": "journalAvant = true",
+      "critere": "RX-4",
+      "extrait": "FAIL RX-4 — PUT : journaliser( vient APRÈS station_reglages_ecrire : le journal se pose avant d’écrire ; PUT : 1 appel(s) de journaliser(, 2 attendus (avant, puis le résultat) ; ordre des appels : ecriture → journal1, journal1 → ecriture → journal2 attendu (le journal AVANT l’écriture, puis le résultat) ; journal avant : action « station_reglages », avant undefined ; station_reglages et { version: 3 } attendus ; journaliser → false : la base est écrite quand même ; journaliser → false → 200, 503 (refusJournal) attendu",
+      "duree_s": 9.1
+    },
+    {
+      "juge": "scripts/poste-extraction-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=extraction --racine={racine}",
+      "fichier": "app/api/controle/barre/route.ts",
+      "avant": "messages: courriers.count ?? null,",
+      "apres": "courriers: courriers.count ?? null,",
+      "critere": "XT-2",
+      "extrait": "FAIL XT-2 — « barre · fondateur » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; « barre · fondateur, service dégradé » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; « barre · fondateur, état 500 » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; « barre · fondateur, Stripe et Anthropic en panne » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; « barre · fondateur, budget et espace posés » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; « barre · fondateur, messagerie fermée, alertes en panne » : $.compteurs.valeur.messages : présent dans la référence, absent de l'état jugé ; $.compteurs.valeur.courriers : ajouté par l'état jugé ; … (8 défauts)",
+      "duree_s": 13.2
+    },
+    {
+      "juge": "scripts/poste-extraction-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=extraction --racine={racine}",
+      "fichier": "lib/controle/lectures/tickets.ts",
+      "avant": ".from('tickets').select('id', { count: 'exact', head: true })",
+      "apres": ".from('tickets').select('id, message', { count: 'exact', head: true })",
+      "critere": "XT-3",
+      "extrait": "FAIL XT-3 — lib/controle/lectures/tickets.ts nomme une colonne de contenu dans une chaîne (« message ») : ni message, ni corps, ni sujet, ni contenu ; la requête sur tickets sélectionne « id, message » : une colonne de contenu",
+      "duree_s": 11.6
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=route --partie=salles2 --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "'salle.audience': 'audience'",
+      "apres": "'salle.audience': 'sante'",
+      "critere": "SL-2",
+      "extrait": "FAIL SL-2 — salle=audience sans le domaine audience : {\"vue\":\"salle\",\"role\":\"direction\",\"valeur\":{\"en_ligne\":2,\"visiteurs_jour\":31,\"v…, « hors périmètre » attendu",
+      "duree_s": 1.9
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=route --partie=salles2 --racine={racine}",
+      "fichier": "lib/pilotage/salles/presti.ts",
+      "avant": "tickets: await c.env('salle.presti.tickets', async () => ({ nombre: nombre((await c.deps.lectures.ticketsOuverts()).nombre) })),",
+      "apres": "tickets: await c.env('salle.presti.tickets', async () => ({ nombre: nombre((await c.deps.lectures.ticketsOuverts()).nombre), liste: await c.deps.lectures.ticketsOuverts() })),",
+      "critere": "SL-6",
+      "extrait": "FAIL SL-6 — salle=presti : tickets {\"valeur\":{\"nombre\":3,\"liste\":{\"nombre\":3,\"dernier\":{\"sujet\":\"Mon mot de passe T, { nombre: 3 } seul attendu ; salle=presti porte le contenu d’un ticket (« Mon mot de passe Témoin ne marche plus ») ; salle=presti porte le contenu d’un ticket (« ticket-temoin@exemple.invalid »)",
+      "duree_s": 1.5
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=sql --migration=reglages --racine={racine}",
+      "fichier": "supabase/migrations/0113_station_reglages.sql",
+      "avant": "returns table(departement text, trouves integer, contactes integer, oui integer)",
+      "apres": "returns table(departement text, entreprise text, trouves integer, contactes integer, oui integer)",
+      "critere": "SR-7",
+      "extrait": "FAIL SR-7 — rend une colonne nominative",
+      "duree_s": 1.2
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=ecran --partie=salles-suite --racine={racine}",
+      "fichier": "app/controle/station/salles/Radar.tsx",
+      "avant": "<Tuile libelle=\"OUI\" attribut={`${cle}-oui`}>{e[cle].oui}</Tuile>",
+      "apres": "<Tuile libelle=\"OUI\" attribut={`${cle}-oui`}>{Math.round(e[cle].reponses / 2)}</Tuile>",
+      "critere": "SB-3",
+      "extrait": "FAIL SB-3 — Radar : j7.oui = 2 (tiré) absent ; Radar : j30.oui = 4 (tiré) absent ; Radar : nombre(s) non servi(s) affiché(s) : 33",
+      "duree_s": 263.5
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-poste-mutations.mjs --relais=ecran --partie=salles-suite --racine={racine}",
+      "fichier": "app/controle/station/salles/Crieur.tsx",
+      "avant": "attribut=\"reponses-privees\">{c.texte}</Tuile></div>",
+      "apres": "attribut=\"reponses-privees\">{c.texte}</Tuile><button type=\"button\">Publier</button></div>",
+      "critere": "SB-6",
+      "extrait": "FAIL SB-6 — Crieur : bouton ou lien « Publier »",
+      "duree_s": 272
+    }
+  ]
+}
