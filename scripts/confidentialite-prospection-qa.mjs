@@ -11,7 +11,7 @@
 //   node scripts/confidentialite-prospection-qa.mjs --hebergement --reel --confirmer-reel
 //        CP-H1 … CP-H6 (026-162), Claude Code seulement, jamais par le registre : NOTICE_URL lu dans contrat.ts (sans
 //        adresse : code 2, « notice pas encore publiée, 026-162 »), les deux pages en ligne comparées à l'empreinte des
-//        fichiers régénérés, la ligne G3 datée avant le commit publié (gh api), la lecture des conditions d'ads_archive et
+//        fichiers régénérés, la ligne G3 datée avant le commit publié (gh api, à défaut l'API REST publique de GitHub), la lecture des conditions d'ads_archive et
 //        son verdict en base (acq_etat_envoi, .env.local chargé sans rien afficher).
 //   node scripts/confidentialite-prospection-qa.mjs --auto-controle
 //        le juge éprouvé sur lui-même : le témoin (scripts/fixtures/026-acquisition/cli/temoins/confidentialite/) rend chaque
@@ -169,9 +169,26 @@ function jugerG3(decisions, datePublication) {
   const m = /(\d{4})-(\d{2})-(\d{2})|(\d{2})\/(\d{2})\/(\d{4})/.exec(l)
   if (!m) return ['la ligne « G3 fait » ne porte pas de date']
   const d = m[1] ? `${m[1]}-${m[2]}-${m[3]}` : `${m[6]}-${m[5]}-${m[4]}`
-  if (!datePublication) return ['date du commit publié de presti-notice illisible (gh api)']
+  if (!datePublication) return ['date du commit publié de presti-notice illisible (gh api, puis API REST publique de GitHub)']
   if (!(d <= datePublication.slice(0, 10))) return [`G3 daté du ${d}, après le commit publié (${datePublication.slice(0, 10)})`]
   return []
+}
+/**
+ * La date du dernier commit publié de presti-notice. `gh api` d'abord ; à défaut (le PC Windows de Benj n'a pas `gh` : CP-H5 rendait
+ * « illisible » le 04/10 sur une notice en ligne et juste, défaut du juge et non de la fiche) le MÊME point d'accès par l'API REST
+ * publique de GitHub (dépôt public, sans jeton). Illisible, hors ligne, 4xx/5xx, tableau vide ou date mal formée : null, et
+ * jugerG3 refuse — aucun des deux chemins n'accorde par défaut (éprouvé par AC-CPH-5B).
+ */
+async function dateCommitPublie(depot, { cmd = 'gh', api = 'https://api.github.com' } = {}) {
+  const g = spawnSync(cmd, ['api', `repos/${depot}/commits?per_page=1`, '--jq', '.[0].commit.committer.date'], { encoding: 'utf8', windowsHide: true, timeout: 60_000 })
+  const viaGh = g.status === 0 ? String(g.stdout || '').trim() : ''
+  if (viaGh) return viaGh
+  try {
+    const r = await fetch(`${api}/repos/${depot}/commits?per_page=1`, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'presti-juge' }, signal: AbortSignal.timeout(20_000) })
+    if (!r.ok) return null
+    const d = (await r.json())?.[0]?.commit?.committer?.date
+    return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(d) ? d : null
+  } catch { return null }
 }
 /** CP-H6 : le document des conditions ; `etat` : ce que la base dit (acq_etat_envoi().ads_archive). */
 function jugerConditions(doc, etat) {
@@ -327,8 +344,7 @@ async function hebergement() {
   const h = jugerEnLigne({ notice, mentions, attenduNotice: M.noticeHtml(), attenduMentions: M.mentionsHtml(), adresse: adresseMentions() })
   const u = new URL(racineUrl)
   const depot = /\.github\.io$/.test(u.host) ? `${u.host.replace(/\.github\.io$/, '')}/${u.pathname.split('/').filter(Boolean)[0] ?? 'presti-notice'}` : 'benjaminfiliot-wq/presti-notice'
-  const g = spawnSync('gh', ['api', `repos/${depot}/commits?per_page=1`, '--jq', '.[0].commit.committer.date'], { encoding: 'utf8', windowsHide: true, timeout: 60_000 })
-  h['CP-H5'] = jugerG3(lire(R, '.orchestre/decisions.md'), g.status === 0 ? g.stdout.trim() : null)
+  h['CP-H5'] = jugerG3(lire(R, '.orchestre/decisions.md'), await dateCommitPublie(depot))
   const { lireEnvLocal } = await import('./lib/sql-essai.mjs')
   lireEnvLocal(R)
   let etat
@@ -448,6 +464,21 @@ async function autoControle() {
     const g3ok = jugerG3('- 2026-09-26 : G3 fait (Benj a coupé l\'entraînement dans ChatGPT)', '2026-09-28T10:00:00Z')
     const g3a = jugerG3('- rien', '2026-09-28T10:00:00Z'), g3b = jugerG3('- 2026-09-29 : G3 fait', '2026-09-28T10:00:00Z')
     noter('AC-CPH-5', !g3ok.length && g3a.length > 0 && g3b.length > 0, `G3 daté avant le commit publié : ${g3ok.length ? 'rouge' : 'vert'} ; sans ligne G3 : ${g3a.join(' ; ') || 'NON repéré'} ; G3 après la publication : ${g3b.join(' ; ') || 'NON repéré'}`)
+    // AC-CPH-5B : la lecture de la date publiée sans `gh` (binaire absent du banc) passe par l'API REST ; un faux serveur local
+    // la sert, puis tombe en 500, répond « [] » ou une date qui n'en est pas une : le seul cas vert est la vraie date, tous les autres rendent null.
+    let modeApi = 'ok'
+    const sApi = http.createServer((req, res) => {
+      if (modeApi === '500') { res.writeHead(500); res.end(); return }
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(modeApi === 'vide' ? '[]' : modeApi === 'pas-une-date' ? '[{"commit":{"committer":{"date":"hier"}}}]' : '[{"commit":{"committer":{"date":"2026-09-28T10:00:00Z"}}}]')
+    })
+    await new Promise((r) => sApi.listen(0, '127.0.0.1', r))
+    const lectureApi = async (m) => { modeApi = m; return dateCommitPublie('benjaminfiliot-wq/presti-notice', { cmd: 'gh-absent-du-banc', api: `http://127.0.0.1:${sApi.address().port}` }) }
+    const dApi = await lectureApi('ok')
+    const dApiKo = []
+    for (const m of ['500', 'vide', 'pas-une-date']) dApiKo.push(await lectureApi(m))
+    await new Promise((r) => sApi.close(r))
+    noter('AC-CPH-5B', dApi === '2026-09-28T10:00:00Z' && dApiKo.every((d) => d === null) && !jugerG3('- 2026-09-26 : G3 fait', dApi).length && jugerG3('- 2026-09-26 : G3 fait', dApiKo[0]).length > 0, `sans gh, la date vient de l'API REST : ${dApi ?? 'null'} ; 500, tableau vide, date mal formée : ${dApiKo.map((d) => d ?? 'null').join(' / ')} (null attendu) → CP-H5 ${jugerG3('- 2026-09-26 : G3 fait', dApiKo[0]).length ? 'refuse' : 'ACCORDE À TORT'}`)
     const doc = lire(dest, CONDITIONS)
     const c0 = jugerConditions(doc, { ads_archive: { permis: true, le: '2026-09-27T09:00:00Z' } })
     const c1 = jugerConditions(doc, { ads_archive: { permis: false, le: '2026-09-27T09:00:00Z' } })
