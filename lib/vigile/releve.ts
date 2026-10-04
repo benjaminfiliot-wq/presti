@@ -1,0 +1,474 @@
+// lib/vigile/releve.ts — le relevé du Vigile (fiche 026-249, au contrat de 026-248 que juge scripts/vigile-qa.mjs).
+//
+// PUR : ni réseau, ni fichier, ni horloge. Tout ce qui sort d'ici est réduit à des formes fermées : aucune adresse IP,
+// aucun « @ », aucun texte libre (raison d'un ban, contexte d'une erreur, titre d'un avis npm, question d'une décision).
+//
+// Exporte :
+//   construireReleve(entrees, reglages, maintenant)  le relevé JSON (§1 du contrat) ;
+//   reduireBans, reduireErreurs, reduireCrons, reduireLints, reduireAgents  les réductions du serveur (§2) ;
+//   resumerGabarit(releve)                            { texte, evenement } sans modèle (§4) ;
+//   verifierResume(sortie, releve)                    null si la sortie d'un modèle est sûre, sinon le critère manqué ;
+//   CIBLES_INTERDITES, RAISONS, RAISONS_NON_MESURE, SECTIONS.
+
+export const CIBLES_INTERDITES: readonly string[] = Object.freeze(['chef', 'pont', 'pont_telegram', 'systeme', 'a0', 'usine', 'vigile'])
+export const RAISONS: readonly string[] = Object.freeze(['flood', 'honeypot', 'mdp-fuite', 'manuel', 'autre'])
+export const RAISONS_NON_MESURE: readonly string[] = Object.freeze(['source_absente', 'bus_injoignable', 'delai', 'illisible', 'fonction_absente', 'refus'])
+export const SECTIONS = ['erreurs', 'dependances', 'conseiller', 'echeances', 'bannissements'] as const
+type Section = (typeof SECTIONS)[number]
+type Niveau = 'vert' | 'orange' | 'rouge' | 'inconnu'
+
+const SOURCE: Record<Section, string> = {
+  erreurs: 'api/agents/vigile#erreurs',
+  dependances: 'npm audit',
+  conseiller: 'api/agents/vigile#conseiller',
+  echeances: 'registre',
+  bannissements: 'api/agents/vigile#bannissements',
+}
+const RANG: Record<Niveau, number> = { vert: 0, inconnu: 1, orange: 2, rouge: 3 }
+const JOUR_MS = 86_400_000
+const RE_CONTEXTE = /^[a-z0-9_:/.-]{1,40}$/
+const RE_IPV4 = /\d{1,3}(?:\.\d{1,3}){3}/
+const RE_IPV6 = /(?:^|[^0-9a-z])[0-9a-f]{1,4}(?::[0-9a-f]{1,4}){3,7}(?:$|[^0-9a-z])/i
+const RE_ROUTE = /^\/api\/[a-z0-9/_-]{1,60}$/
+const RE_UNITE = /^presti-[a-z0-9-]{1,40}\.(service|timer)$/
+const RE_NOM_COFFRE = /^[A-Z][A-Z0-9_]{2,60}$/
+const RE_NOM_AGENT = /^[a-z0-9_]{2,40}$/
+const RE_CRON = /^[a-z0-9-]{1,40}$/
+const RE_LINT = /^[a-z0-9_]{1,60}$/
+const RE_GHSA = /^GHSA(-[23456789cfghjmpqrvwx]{4}){3}$/
+const RE_PAQUET = /^(@[a-z0-9._-]{1,60}\/)?[a-z0-9._-]{1,100}$/
+const RE_HOTE = /^[a-z0-9.:-]{1,253}$/i
+const RE_JOUR = /^\d{4}-\d{2}-\d{2}$/
+/** Les formes de secret du §4 (et du seuil secret_expose) : un préfixe connu suivi d'au moins huit signes. */
+export const RE_SECRET = /(?<![A-Za-z0-9])(?:sk-|eyJ|sb_secret_|sbp_|whsec_|ghp_|github_pat_|rk_live_)[A-Za-z0-9_-]{8,}/
+
+type Objet = Record<string, unknown>
+const estObjet = (v: unknown): v is Objet => v !== null && typeof v === 'object' && !Array.isArray(v)
+const entier = (v: unknown): number | null => (typeof v === 'number' && Number.isInteger(v) && v >= 0 ? v : null)
+const nombre = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null)
+const liste = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
+const pire = (niveaux: Niveau[]): Niveau => niveaux.reduce<Niveau>((a, b) => (RANG[b] > RANG[a] ? b : a), 'vert')
+
+/** AAAA-MM-JJ à l'heure de Paris. */
+export function jourParis(d: Date): string {
+  return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+}
+/** Jours de calendrier de `de` à `a` (deux AAAA-MM-JJ). */
+function joursCalendrier(de: string, a: string): number {
+  const u = (s: string) => { const [y, m, j] = s.split('-').map(Number); return Date.UTC(y, m - 1, j) }
+  return Math.round((u(a) - u(de)) / JOUR_MS)
+}
+/** Jours restants avant une échéance : à l'instant près (partie entière, négative si dépassée), ou en jours de calendrier pour une date seule. */
+function joursAvant(expire: string, maintenant: Date, jour: string): number {
+  if (RE_JOUR.test(expire)) return joursCalendrier(jour, expire)
+  return Math.floor((Date.parse(expire) - maintenant.getTime()) / JOUR_MS)
+}
+const dateValide = (v: unknown): v is string => typeof v === 'string' && (RE_JOUR.test(v) || Number.isFinite(Date.parse(v)))
+const normaliserDate = (v: string): string => (RE_JOUR.test(v) ? v : new Date(v).toISOString())
+
+/** Une valeur de réglage : { valeur, provisoire } ou un nombre ; `defaut` sinon. */
+function seuil(reglages: Objet, nom: string, defaut: number): number {
+  const s = estObjet(reglages.seuils) ? reglages.seuils[nom] : undefined
+  const v = estObjet(s) ? s.valeur : s
+  return typeof v === 'number' && Number.isFinite(v) ? v : defaut
+}
+
+// ── Les réductions (serveur et relevé) ─────────────────────────────────────────────────────────────────────────────
+const contexteSur = (c: unknown): string => {
+  const s = typeof c === 'string' ? c : ''
+  return RE_CONTEXTE.test(s) && !RE_IPV4.test(s) && !s.includes('::') && !RE_IPV6.test(s) ? s : 'autre'
+}
+/** L'étiquette fermée d'une raison de ban : type d'abus reconnu (+ route), « manuel » ou « autre ». */
+export function etiquetteRaison(raison: unknown, auto: unknown): string {
+  if (auto !== true) return 'manuel'
+  const s = String(raison ?? '').trim().replace(/^Auto\s*:\s*/, '')
+  const m = /^(flood|honeypot|mdp-fuite)(?:\s*:)?(?:\s+(\S+))?/.exec(s)
+  if (!m) return 'autre'
+  return m[2] && RE_ROUTE.test(m[2]) ? `${m[1]} ${m[2]}` : m[1]
+}
+/** Une étiquette de la liste fermée RAISONS (seule ou suivie d'une route pour les trois types d'abus). */
+const etiquetteFermee = (x: unknown): boolean => typeof x === 'string' && (RAISONS.includes(x) || /^(flood|honeypot|mdp-fuite) \/api\/[a-z0-9/_-]{1,60}$/.test(x))
+const compter = <K extends string>(cles: string[], cle: K) => {
+  const n = new Map<string, number>()
+  for (const c of cles) n.set(c, (n.get(c) ?? 0) + 1)
+  return [...n.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([k, v]) => ({ [cle]: k, n: v }) as Record<K, string> & { n: number })
+}
+
+/** bans() de lib/controle/lectures → l'enveloppe « bannissements » (aucune adresse, aucun texte libre). */
+export function reduireBans(lecture: unknown, maintenant: Date): Objet {
+  if (!estObjet(lecture) || !Array.isArray(lecture.bans)) throw new Error('lecture des bans illisible')
+  const bans = lecture.bans.filter(estObjet)
+  const abus = liste(lecture.abus24h).filter(estObjet)
+  const depuis = maintenant.getTime() - JOUR_MS
+  const poses = bans.filter((b) => { const t = Date.parse(String(b.created_at)); return Number.isFinite(t) && t > depuis && t <= maintenant.getTime() })
+  return {
+    etat: 'mesure',
+    poses_24h: poses.length,
+    auto_24h: poses.filter((b) => b.auto === true).length,
+    manuels_24h: poses.filter((b) => b.auto !== true).length,
+    actifs: bans.filter((b) => b.actif === true).length,
+    permanents: bans.filter((b) => b.expires_le === null).length,
+    abus_24h: abus.reduce((s, a) => s + (entier(a.n) ?? 0), 0),
+    au_moins: lecture.bans.length >= 200 || abus.length >= 30,
+    par_raison: compter(poses.map((b) => etiquetteRaison(b.raison, b.auto)), 'raison').slice(0, 10),
+  }
+}
+/** La lecture « erreurs des 24 h » de la salle Sécurité : { nombre, lignes? } ou un nombre. */
+export function reduireErreurs(lecture: unknown): Objet {
+  const nombreLu = typeof lecture === 'number' ? lecture : estObjet(lecture) ? lecture.nombre : undefined
+  const lignes = estObjet(lecture) && Array.isArray(lecture.lignes) ? lecture.lignes : null
+  const n = entier(nombreLu) ?? (lignes ? lignes.length : null)
+  if (n === null) throw new Error('lecture des erreurs illisible')
+  return {
+    etat: 'mesure',
+    applicatives_24h: n,
+    au_moins: n >= 200,
+    par_contexte: lignes ? compter(lignes.map((l) => contexteSur(estObjet(l) ? l.contexte : null)), 'contexte').slice(0, 10) : [],
+  }
+}
+export function reduireCrons(lecture: unknown): Objet {
+  if (!Array.isArray(lecture)) throw new Error('lecture des crons illisible')
+  return { etat: 'mesure', en_echec: lecture.filter(estObjet).filter((c) => c.reussi === false && typeof c.nom === 'string' && RE_CRON.test(c.nom)).map((c) => c.nom as string) }
+}
+const ORDRE_LINT: Record<string, number> = { ERROR: 0, WARN: 1, INFO: 2 }
+export function reduireLints(lecture: unknown): Objet {
+  if (!Array.isArray(lecture)) throw new Error('lecture du conseiller illisible')
+  const lints = lecture.filter(estObjet)
+    .filter((l) => typeof l.lint === 'string' && RE_LINT.test(l.lint) && ['ERROR', 'WARN', 'INFO'].includes(String(l.niveau)) && ['SECURITY', 'PERFORMANCE'].includes(String(l.categorie)) && (entier(l.nombre) ?? 0) > 0)
+    .map((l) => ({ lint: l.lint as string, niveau: l.niveau as string, categorie: l.categorie as string, nombre: l.nombre as number }))
+    .sort((a, b) => ORDRE_LINT[a.niveau] - ORDRE_LINT[b.niveau] || (a.lint < b.lint ? -1 : a.lint > b.lint ? 1 : 0))
+  return { etat: 'mesure', lints }
+}
+export function reduireAgents(lecture: unknown): Objet {
+  if (!Array.isArray(lecture)) throw new Error('lecture des agents illisible')
+  const mesures = lecture.filter(estObjet)
+    .filter((a) => typeof a.nom === 'string' && RE_NOM_AGENT.test(a.nom))
+    .map((a) => ({ nom: a.nom as string, echecs_1h: entier(a.echecs_1h), cout_jour_eur: nombre(a.cout_jour_eur), envois_hors_regle_24h: entier(a.envois_hors_regle_24h) }))
+    .sort((a, b) => (a.nom < b.nom ? -1 : a.nom > b.nom ? 1 : 0))
+  return { etat: 'mesure', mesures }
+}
+
+// ── Le relevé ──────────────────────────────────────────────────────────────────────────────────────────────────────
+type Lu = { ok: true; v: Objet } | { ok: false; raison: string }
+function lire(x: unknown): Lu {
+  if (x === null || x === undefined) return { ok: false, raison: 'source_absente' }
+  if (estObjet(x) && typeof x.non_mesure === 'string') return { ok: false, raison: RAISONS_NON_MESURE.includes(x.non_mesure) ? x.non_mesure : 'illisible' }
+  if (!estObjet(x)) return { ok: false, raison: 'illisible' }
+  return { ok: true, v: x }
+}
+/** L'enveloppe `cle` de la réponse du serveur, ou sa raison. */
+function enveloppe(serveur: Lu, cle: string): Lu {
+  if (!serveur.ok) return serveur
+  const e = serveur.v[cle]
+  if (estObjet(e) && e.etat === 'mesure') return { ok: true, v: e }
+  if (estObjet(e) && e.etat === 'non_mesure') return { ok: false, raison: RAISONS_NON_MESURE.includes(String(e.raison)) ? String(e.raison) : 'illisible' }
+  return { ok: false, raison: 'illisible' }
+}
+const nonMesure = (s: Section, raison: string, luLe: string) => ({ etat: 'non_mesure', raison, source: SOURCE[s], lu_le: luLe, niveau: 'inconnu' as Niveau })
+type Alerte = { section: string; cle: string; texte: string }
+const texteBorne = (t: string) => ([...t].length > 160 ? [...t].slice(0, 159).join('') + '…' : t)
+
+export function construireReleve(entrees: unknown, reglagesBruts: unknown, maintenant: Date): Objet {
+  const e = estObjet(entrees) ? entrees : {}
+  const reglages = estObjet(reglagesBruts) ? reglagesBruts : {}
+  const le = maintenant.toISOString()
+  const jour = jourParis(maintenant)
+  const etat = lire(e.etat)
+  const serveur = lire(e.serveur)
+  const luServeur = serveur.ok && typeof serveur.v.le === 'string' ? serveur.v.le : le
+  const alertes: Record<string, Alerte[]> = { agents: [], erreurs: [], dependances: [], conseiller: [], echeances: [], bannissements: [] }
+  const alerter = (section: string, cle: string, texte: string) => alertes[section].push({ section, cle, texte: texteBorne(texte) })
+
+  // erreurs
+  let erreurs: Objet
+  const env = enveloppe(serveur, 'erreurs')
+  if (!env.ok) erreurs = nonMesure('erreurs', env.raison, luServeur)
+  else {
+    const crons = enveloppe(serveur, 'crons')
+    const unites = lire(e.unites)
+    const applicatives = entier(env.v.applicatives_24h) ?? 0
+    const parContexte = liste(env.v.par_contexte).filter(estObjet).filter((c) => entier(c.n) !== null).map((c) => ({ contexte: contexteSur(c.contexte), n: c.n as number })).slice(0, 10)
+    const cronsEnEchec = crons.ok ? liste(crons.v.en_echec).filter((n): n is string => typeof n === 'string' && RE_CRON.test(n)) : null
+    const taches = etat.ok && estObjet(etat.v.taches) ? entier(etat.v.taches.echecs_24h) : null
+    const unitesEnEchec = unites.ok ? liste(unites.v.en_echec).filter((n): n is string => typeof n === 'string' && RE_UNITE.test(n)) : null
+    const orange = applicatives >= seuil(reglages, 'erreurs_orange', 10) || (cronsEnEchec?.length ?? 0) > 0 || (taches ?? 0) > 0 || (unitesEnEchec?.length ?? 0) > 0
+    const niveau: Niveau = applicatives >= seuil(reglages, 'erreurs_rouge', 100) ? 'rouge' : orange ? 'orange' : 'vert'
+    if (niveau === 'rouge') alerter('erreurs', 'applicatives_24h', `${applicatives}${env.v.au_moins === true ? ' ou plus' : ''} erreurs applicatives sur la journée`)
+    erreurs = {
+      etat: 'mesure', source: SOURCE.erreurs, lu_le: luServeur, niveau,
+      applicatives_24h: applicatives, au_moins: env.v.au_moins === true, par_contexte: parContexte,
+      crons_en_echec: cronsEnEchec, taches_echec_24h: taches, unites_usine_en_echec: unitesEnEchec,
+      non_couvert: ['journaux Vercel'],
+    }
+  }
+
+  // dépendances
+  let dependances: Objet
+  const npm = lire(e.npm)
+  if (!npm.ok) dependances = nonMesure('dependances', npm.raison, le)
+  else if (!estObjet(npm.v.audit)) dependances = nonMesure('dependances', 'illisible', le)
+  else {
+    const audit = npm.v.audit
+    const meta = estObjet(audit.metadata) && estObjet(audit.metadata.vulnerabilities) ? audit.metadata.vulnerabilities : {}
+    const vulnerabilites = { critical: entier(meta.critical) ?? 0, high: entier(meta.high) ?? 0, moderate: entier(meta.moderate) ?? 0, low: entier(meta.low) ?? 0, info: entier(meta.info) ?? 0 }
+    const vues = new Set<string>()
+    const avis: { paquet: string; gravite: string; ghsa: string; correctif: boolean }[] = []
+    const vuln = estObjet(audit.vulnerabilities) ? audit.vulnerabilities : {}
+    for (const nom of Object.keys(vuln).sort()) {
+      const v = vuln[nom]
+      if (!estObjet(v) || !RE_PAQUET.test(nom)) continue
+      for (const via of liste(v.via)) {
+        if (!estObjet(via) || !['critical', 'high'].includes(String(via.severity))) continue
+        const m = /GHSA(?:-[a-z0-9]{4}){3}$/i.exec(String(via.url ?? ''))
+        if (!m || !RE_GHSA.test(m[0])) continue
+        const cle = `${nom} ${m[0]}`
+        if (vues.has(cle)) continue
+        vues.add(cle)
+        avis.push({ paquet: nom, gravite: String(via.severity), ghsa: m[0], correctif: v.fixAvailable !== false && v.fixAvailable !== undefined && v.fixAvailable !== null })
+      }
+    }
+    avis.sort((a, b) => (a.gravite === b.gravite ? 0 : a.gravite === 'critical' ? -1 : 1) || (a.paquet < b.paquet ? -1 : a.paquet > b.paquet ? 1 : 0) || (a.ghsa < b.ghsa ? -1 : 1))
+    const verrou = estObjet(e.verrou) && estObjet(e.verrou.packages) ? e.verrou.packages : {}
+    const fins: Objet[] = []
+    for (const f of liste(reglages.fins_support).filter(estObjet)) {
+      const paquet = String(f.paquet ?? '')
+      const installe = verrou[`node_modules/${paquet}`]
+      const version = estObjet(installe) && typeof installe.version === 'string' ? installe.version : null
+      if (!version || Number.parseInt(version.split('.')[0], 10) !== f.majeure) continue
+      if (f.a_verifier === true || !dateValide(f.fin_support)) { fins.push({ paquet, version, majeure: f.majeure, fin_support: null, jours_restants: null, source: null, niveau: 'inconnu' }); continue }
+      const j = joursCalendrier(jour, String(f.fin_support))
+      const niveau: Niveau = j <= 0 ? 'rouge' : j <= seuil(reglages, 'fin_support_orange_jours', 30) ? 'orange' : 'vert'
+      fins.push({ paquet, version, majeure: f.majeure, fin_support: f.fin_support, jours_restants: j, source: typeof f.source === 'string' ? f.source : null, niveau })
+    }
+    const garde = avis.slice(0, 20)
+    const niveau: Niveau = garde.some((a) => a.gravite === 'critical') || fins.some((f) => f.niveau === 'rouge') ? 'rouge'
+      : garde.some((a) => a.gravite === 'high') || fins.some((f) => f.niveau === 'orange') ? 'orange' : 'vert'
+    for (const a of garde) if (a.gravite === 'critical') alerter('dependances', a.ghsa.toLowerCase(), `avis critique sur ${a.paquet} (${a.ghsa})${a.correctif ? ', correctif disponible' : ', sans correctif'}`)
+    for (const f of fins) if (f.niveau === 'rouge') alerter('dependances', `fin_support:${String(f.paquet).replace(/[^a-z0-9_.-]/g, '_')}`, `fin de support de ${f.paquet} ${f.majeure} atteinte (${f.fin_support})`)
+    dependances = { etat: 'mesure', source: SOURCE.dependances, lu_le: le, niveau, vulnerabilites, avis: garde, fins_support: fins }
+  }
+
+  // conseiller
+  let conseiller: Objet
+  const cons = enveloppe(serveur, 'conseiller')
+  if (!cons.ok) conseiller = nonMesure('conseiller', cons.raison, luServeur)
+  else {
+    const lints = (reduireLints(liste(cons.v.lints)).lints as { lint: string; niveau: string; categorie: string; nombre: number }[])
+    const niveau: Niveau = lints.some((l) => l.categorie === 'SECURITY' && l.niveau === 'ERROR') ? 'rouge'
+      : lints.some((l) => (l.categorie === 'SECURITY' && l.niveau === 'WARN') || (l.categorie === 'PERFORMANCE' && l.niveau === 'ERROR')) ? 'orange' : 'vert'
+    for (const l of lints) if (l.categorie === 'SECURITY' && l.niveau === 'ERROR') alerter('conseiller', l.lint, `conseiller Supabase : ${l.lint} (sécurité, erreur)`)
+    conseiller = { etat: 'mesure', source: SOURCE.conseiller, lu_le: luServeur, niveau, lints }
+  }
+
+  // échéances
+  let echeances: Objet
+  if (!etat.ok && !lire(e.tls).ok) echeances = nonMesure('echeances', etat.ok ? 'source_absente' : etat.raison, le)
+  else {
+    const rouge = seuil(reglages, 'echeance_rouge_jours', 7), orange = seuil(reglages, 'echeance_orange_jours', 14)
+    const niveauDe = (j: number): Niveau => (j <= rouge ? 'rouge' : j <= orange ? 'orange' : 'vert')
+    const elements: Objet[] = []
+    for (const a of (etat.ok ? liste(etat.v.agents) : []).filter(estObjet)) {
+      if (typeof a.nom !== 'string' || !RE_NOM_AGENT.test(a.nom) || !dateValide(a.jeton_externe_expire_le)) continue
+      const expire = normaliserDate(a.jeton_externe_expire_le)
+      const j = joursAvant(expire, maintenant, jour)
+      elements.push({ nom: `jeton_externe:${a.nom}`, ou: 'ops.agents', expire_le: expire, jours_restants: j, origine: 'bus', niveau: niveauDe(j) })
+    }
+    const registre = liste(reglages.echeances).filter(estObjet)
+    for (const r of registre) {
+      if (r.a_verifier === true || typeof r.nom !== 'string' || !dateValide(r.expire_le)) continue
+      const expire = normaliserDate(r.expire_le)
+      const j = joursAvant(expire, maintenant, jour)
+      elements.push({ nom: r.nom, ou: typeof r.ou === 'string' ? r.ou : null, expire_le: expire, jours_restants: j, origine: 'registre', niveau: niveauDe(j) })
+    }
+    const t = lire(e.tls)
+    const hoteTls = estObjet(e.tls) && typeof e.tls.hote === 'string' && RE_HOTE.test(e.tls.hote) ? e.tls.hote : null
+    if (hoteTls && !t.ok) elements.push({ nom: `tls:${hoteTls}`, ou: hoteTls, expire_le: null, jours_restants: null, origine: 'tls', niveau: 'inconnu' })
+    else if (hoteTls && t.ok && dateValide(t.v.valid_to)) {
+      const expire = normaliserDate(t.v.valid_to)
+      const j = joursAvant(expire, maintenant, jour)
+      elements.push({ nom: `tls:${hoteTls}`, ou: hoteTls, expire_le: expire, jours_restants: j, origine: 'tls', niveau: t.v.authorized === true ? niveauDe(j) : 'rouge', ...(t.v.authorized === true ? {} : { non_reconnu: true }) })
+    }
+    const inconnues = registre.filter((r) => r.a_verifier === true && typeof r.nom === 'string').map((r) => r.nom as string)
+    const unites = lire(e.unites), coffreLu = lire(e.coffre)
+    let coffre: { attendus: string[]; manquants: string[] } | null = null
+    if (unites.ok && coffreLu.ok) {
+      const attendus = [...new Set(liste(unites.v.attendus).filter((n): n is string => typeof n === 'string' && RE_NOM_COFFRE.test(n)))].sort()
+      const presents = new Set(liste(coffreLu.v.noms).filter((n): n is string => typeof n === 'string'))
+      coffre = { attendus, manquants: attendus.filter((n) => !presents.has(n)) }
+    }
+    const verifie = typeof reglages.registre_verifie_le === 'string' && RE_JOUR.test(reglages.registre_verifie_le) ? reglages.registre_verifie_le : null
+    // registre périmé : jamais relu, relu il y a plus de registre_perime_jours, ou daté dans le futur (une date qui n'est
+    // pas encore arrivée n'est pas une relecture : elle masquerait la péremption pour toujours)
+    const age = verifie === null ? null : joursCalendrier(verifie, jour)
+    const perime = age === null || age < 0 || age > seuil(reglages, 'registre_perime_jours', 90)
+    const niveaux = elements.map((x) => x.niveau as Niveau).filter((n) => n !== 'inconnu')
+    const niveau: Niveau = niveaux.includes('rouge') || (coffre?.manquants.length ?? 0) > 0 ? 'rouge' : niveaux.includes('orange') || perime ? 'orange' : 'vert'
+    for (const x of elements) {
+      if (x.niveau !== 'rouge') continue
+      if (x.non_reconnu) { delete x.non_reconnu; alerter('echeances', String(x.nom), `certificat de ${x.ou} non reconnu`); continue }
+      const j = x.jours_restants as number
+      alerter('echeances', String(x.nom), j < 0 ? `${x.nom} a expiré` : `${x.nom} expire dans ${j} j`)
+    }
+    for (const x of elements) delete x.non_reconnu
+    for (const n of coffre?.manquants ?? []) alerter('echeances', `coffre:${n.toLowerCase()}`, `${n} demandé par une unité, absent du coffre`)
+    echeances = { etat: 'mesure', source: SOURCE.echeances, lu_le: le, niveau, elements, inconnues, coffre, registre_verifie_le: verifie }
+  }
+
+  // bannissements
+  let bannissements: Objet
+  const ban = enveloppe(serveur, 'bannissements')
+  if (!ban.ok) bannissements = nonMesure('bannissements', ban.raison, luServeur)
+  else {
+    const b = ban.v
+    const auto = entier(b.auto_24h) ?? 0
+    const niveau: Niveau = auto >= seuil(reglages, 'bans_rouge', 20) ? 'rouge' : auto >= seuil(reglages, 'bans_orange', 5) ? 'orange' : 'vert'
+    if (niveau === 'rouge') alerter('bannissements', 'auto_24h', `${auto} bannissements automatiques sur la journée`)
+    bannissements = {
+      etat: 'mesure', source: SOURCE.bannissements, lu_le: luServeur, niveau,
+      poses_24h: entier(b.poses_24h) ?? 0, auto_24h: auto, manuels_24h: entier(b.manuels_24h) ?? 0, actifs: entier(b.actifs) ?? 0,
+      permanents: entier(b.permanents) ?? 0, abus_24h: entier(b.abus_24h) ?? 0, au_moins: b.au_moins === true,
+      par_raison: liste(b.par_raison).filter(estObjet).filter((r) => etiquetteFermee(r.raison) && entier(r.n) !== null)
+        .map((r) => ({ raison: r.raison as string, n: r.n as number })).slice(0, 10),
+    }
+  }
+
+  // pauses de sécurité (§6) : seulement sur un seuil de gravité mesuré ce passage-ci
+  const ps = estObjet(reglages.pause_securite) ? reglages.pause_securite : {}
+  const sp = estObjet(ps.seuils) ? ps.seuils : {}
+  const valeur = (n: string): number | null => { const s = sp[n]; const v = estObjet(s) ? s.valeur : s; return typeof v === 'number' && Number.isFinite(v) ? v : null }
+  const interdites = new Set<string>([...CIBLES_INTERDITES, ...liste(ps.cibles_interdites).filter((x): x is string => typeof x === 'string')])
+  const max = Number.isInteger(ps.max_par_passage) && (ps.max_par_passage as number) >= 0 ? (ps.max_par_passage as number) : 1
+  const mesures = new Map<string, { secret?: number | null; echecs?: number | null; cout?: number | null; envois?: number | null }>()
+  const journaux = lire(e.journaux)
+  if (journaux.ok) for (const [agent, n] of Object.entries(journaux.v)) if (RE_NOM_AGENT.test(agent) && entier(n) !== null) mesures.set(agent, { ...mesures.get(agent), secret: n as number })
+  const ag = enveloppe(serveur, 'agents')
+  if (ag.ok) for (const m of liste(ag.v.mesures).filter(estObjet)) {
+    if (typeof m.nom !== 'string' || !RE_NOM_AGENT.test(m.nom)) continue
+    mesures.set(m.nom, { ...mesures.get(m.nom), echecs: entier(m.echecs_1h), cout: nombre(m.cout_jour_eur), envois: entier(m.envois_hors_regle_24h) })
+  }
+  const REGLES: [string, 'secret' | 'echecs' | 'cout' | 'envois', string, boolean][] = [
+    ['secret_expose', 'secret', 'secret_expose', false], ['boucle_erreurs', 'echecs', 'echecs_1h', false],
+    ['depense_anormale', 'cout', 'cout_jour_eur', true], ['envoi_hors_regle', 'envois', 'envois_hors_regle_24h', false],
+  ]
+  const declenchements: { agent: string; seuil: string; mesure: number; rang: number }[] = []
+  for (const agent of [...mesures.keys()].sort()) {
+    const m = mesures.get(agent)!
+    for (const [i, [nomSeuil, champ, reglage, strict]] of REGLES.entries()) {
+      const v = m[champ], s = valeur(reglage)
+      if (typeof v !== 'number' || s === null) continue
+      if (strict ? v > s : v >= s) { declenchements.push({ agent, seuil: nomSeuil, mesure: v, rang: i }); break }
+    }
+  }
+  declenchements.sort((a, b) => a.rang - b.rang || (a.agent < b.agent ? -1 : 1))
+  const noms = new Set<string>(), enPause = new Set<string>()
+  if (etat.ok) for (const a of liste(etat.v.agents).filter(estObjet)) if (typeof a.nom === 'string') { noms.add(a.nom); if (a.en_pause === true) enPause.add(a.nom) }
+  const pauseGenerale = etat.ok ? (estObjet(etat.v.interrupteurs) && etat.v.interrupteurs.pause_generale === true) : null
+  const pauses: { agent: string; seuil: string; mesure: number }[] = []
+  const ecartees = { cible_interdite: 0, deja_en_pause: 0, max_par_passage: 0, agent_inconnu: 0 }
+  for (const d of declenchements) {
+    let issue: keyof typeof ecartees | null = null
+    if (interdites.has(d.agent)) issue = 'cible_interdite'
+    else if (!noms.has(d.agent)) issue = 'agent_inconnu'
+    else if (pauseGenerale === true || enPause.has(d.agent)) issue = 'deja_en_pause'
+    else if (pauses.length >= max) issue = 'max_par_passage'
+    if (issue) ecartees[issue]++
+    else pauses.push({ agent: d.agent, seuil: d.seuil, mesure: d.mesure })
+    alerter('agents', `pause:${d.agent}`, `seuil ${d.seuil} franchi par ${d.agent} (${d.mesure}) : ${issue ? `pause écartée, ${issue}` : 'pause de sécurité à poser'}`)
+  }
+
+  const niveau = pire([erreurs, dependances, conseiller, echeances, bannissements].map((s) => s.niveau as Niveau))
+  return {
+    version: 1, le, jour, niveau,
+    contexte: { pause_generale: pauseGenerale },
+    erreurs, dependances, conseiller, echeances, bannissements,
+    alertes: [...alertes.agents, ...alertes.erreurs, ...alertes.dependances, ...alertes.conseiller, ...alertes.echeances, ...alertes.bannissements],
+    pauses,
+    pauses_ecartees: ecartees,
+  }
+}
+
+// ── Le résumé ──────────────────────────────────────────────────────────────────────────────────────────────────────
+const NOM_SECTION: Record<Section, string> = { erreurs: 'erreurs', dependances: 'dépendances', conseiller: 'conseiller', echeances: 'échéances', bannissements: 'bannissements' }
+function borner(l: string, n = 140): string {
+  if ([...l].length <= n) return l
+  const i = l.lastIndexOf(', ', n - 1)
+  return `${i > 0 ? l.slice(0, i) : [...l].slice(0, n - 1).join('')}…`
+}
+const noms = (xs: unknown[], n = 4) => xs.slice(0, n).map(String).join(', ')
+
+/** Le résumé sans modèle : 12 lignes et 1 200 signes au plus, aucun nombre qui ne soit une valeur du relevé. */
+export function resumerGabarit(r: Objet): { texte: string; evenement: string } {
+  const lignes = [`Vigile, relevé du ${r.jour} : ${r.niveau}`]
+  for (const s of SECTIONS) {
+    const x = estObjet(r[s]) ? r[s] : {}
+    if (x.etat !== 'mesure') { lignes.push(`${NOM_SECTION[s]} : inconnu, non mesuré (${x.raison})`); continue }
+    let l = `${NOM_SECTION[s]} : ${x.niveau}`
+    if (s === 'erreurs') {
+      l += `, ${x.applicatives_24h}${x.au_moins ? ' ou plus' : ''} erreurs applicatives du jour`
+      if (liste(x.crons_en_echec).length) l += `, tâches planifiées en échec : ${noms(liste(x.crons_en_echec))}`
+      if (x.taches_echec_24h) l += `, tâches du bus en échec : ${x.taches_echec_24h}`
+      if (liste(x.unites_usine_en_echec).length) l += `, unités en échec : ${noms(liste(x.unites_usine_en_echec))}`
+    } else if (s === 'dependances') {
+      const v = estObjet(x.vulnerabilites) ? x.vulnerabilites : {}
+      l += `, avis critical ${v.critical}, high ${v.high}`
+      for (const f of liste(x.fins_support).filter(estObjet)) if (f.niveau !== 'inconnu') l += `, fin de support de ${f.paquet} ${f.majeure} dans ${f.jours_restants} j`
+    } else if (s === 'conseiller') {
+      const ls = liste(x.lints).filter(estObjet)
+      l += ls.length ? `, ${ls.slice(0, 4).map((z) => `${z.lint} ${z.nombre}`).join(', ')}` : ', aucun avis'
+    } else if (s === 'echeances') {
+      const proches = liste(x.elements).filter(estObjet).filter((z) => z.niveau === 'rouge' || z.niveau === 'orange')
+      if (proches.length) l += `, ${proches.slice(0, 4).map((z) => (typeof z.jours_restants !== 'number' ? `${z.nom} non reconnu` : z.jours_restants < 0 ? `${z.nom} échue` : `${z.nom} dans ${z.jours_restants} j`)).join(', ')}`
+      const c = estObjet(x.coffre) ? x.coffre : null
+      if (c && liste(c.manquants).length) l += `, absents du coffre : ${noms(liste(c.manquants))}`
+      if (liste(x.inconnues).length) l += `, à vérifier : ${noms(liste(x.inconnues))}`
+    } else {
+      l += `, ${x.auto_24h} automatiques, ${x.manuels_24h} manuels, ${x.actifs} actifs`
+    }
+    lignes.push(borner(l))
+  }
+  const alertes = liste(r.alertes).filter(estObjet)
+  lignes.push(borner(`alertes : ${alertes.length ? noms(alertes.map((a) => a.cle), 5) : 'aucune'}`))
+  const pauses = liste(r.pauses).filter(estObjet)
+  if (pauses.length) lignes.push(borner(`pause de sécurité : ${pauses.map((p) => `${p.agent} (${p.seuil})`).join(', ')}`))
+  const rouges = SECTIONS.filter((s) => estObjet(r[s]) && (r[s] as Objet).niveau === 'rouge').map((s) => NOM_SECTION[s])
+  const evenement = borner(`${r.niveau} : relevé du Vigile du ${r.jour} ; au rouge : ${rouges.join(', ') || 'rien'}`, 200)
+  return { texte: lignes.join('\n'), evenement }
+}
+
+/** Les valeurs d'un relevé : ses nombres, et ses chaînes (retirées du texte avant d'y chercher des nombres). */
+function valeurs(v: unknown, nombres: Set<number>, chaines: string[]) {
+  if (typeof v === 'number') nombres.add(v)
+  else if (typeof v === 'string') chaines.push(v)
+  else if (Array.isArray(v)) for (const x of v) valeurs(x, nombres, chaines)
+  else if (estObjet(v)) for (const x of Object.values(v)) valeurs(x, nombres, chaines)
+}
+/** Le premier nombre du texte qui n'est pas une valeur du relevé (les dates ne comptent pas), ou null. */
+export function nombreOrphelin(texte: string, releve: unknown): string | null {
+  const nombres = new Set<number>(), chaines: string[] = []
+  valeurs(releve, nombres, chaines)
+  let t = texte
+  for (const c of [...new Set(chaines)].filter((c) => c.length >= 2).sort((a, b) => b.length - a.length)) t = t.split(c).join(' ')
+  t = t.replace(/\d{4}-\d{2}-\d{2}(?:T[\d:.]+Z?)?/g, ' ').replace(/(?<!\d)\d{1,2}\/\d{1,2}(?:\/\d{2,4})?(?!\d)/g, ' ')
+  for (const m of t.matchAll(/(?<![\p{L}\p{N}_])\d+(?:[   ]\d{3})*(?:[.,]\d+)?/gu)) {
+    const n = Number(m[0].replace(/[   ]/g, '').replace(',', '.'))
+    if (!nombres.has(n)) return m[0]
+  }
+  return null
+}
+const RE_ARROBE_OU_IP = /@|\d{1,3}(?:\.\d{1,3}){3}|[0-9a-f]{0,4}::[0-9a-f]{0,4}/i
+/** null si la sortie d'un modèle peut remplacer le gabarit ; sinon le critère manqué. */
+export function verifierResume(sortie: unknown, releve: Objet): string | null {
+  let s = sortie
+  if (typeof s === 'string') { try { s = JSON.parse(s) } catch { return 'forme' } }
+  if (!estObjet(s) || typeof s.texte !== 'string' || typeof s.evenement !== 'string') return s === null || s === undefined ? 'vide' : 'forme'
+  const texte = s.texte, evenement = s.evenement
+  if (!texte.trim() || !evenement.trim()) return 'vide'
+  if (texte.split('\n').length > 12 || [...texte].length > 1200 || [...evenement].length > 200) return 'bornes'
+  const tout = `${texte}\n${evenement}`
+  if (RE_ARROBE_OU_IP.test(tout)) return 'adresse'
+  if (/https?:|www\./i.test(tout)) return 'lien'
+  if (RE_SECRET.test(tout) || /(?:sk-|eyJ|sb_secret_|sbp_|whsec_|ghp_|github_pat_|rk_live_)/.test(tout)) return 'secret'
+  if (nombreOrphelin(texte, releve) !== null || nombreOrphelin(evenement, releve) !== null) return 'nombre'
+  if (!evenement.trim().toLowerCase().startsWith(String(releve.niveau))) return 'niveau'
+  return null
+}
