@@ -1,0 +1,108 @@
+{
+  "tete": "e944df7e5e0eb36786602c6ff63d6b584d0785b8",
+  "parentStation": "fa001589445dba7507a84ff7605cceabe1799fb0",
+  "copie": "racine-111-865732",
+  "baseSabotages": "HEAD",
+  "temoin1": {
+    "verdict": "FAIL — ST-18",
+    "code": 1,
+    "echecs": [
+      "ST-18"
+    ]
+  },
+  "temoin2": {
+    "verdict": "FAIL — ST-11, ST-18",
+    "code": 1,
+    "echecs": [
+      "ST-11",
+      "ST-18"
+    ]
+  },
+  "typecheck": 0,
+  "sabotages": [
+    {
+      "n": 1,
+      "f": "app/controle/station/layout.tsx",
+      "attendu": "ST-2",
+      "ancien": "if (!actif('pilotage')) notFound()",
+      "nouveau": "if (!actif('pilotage') && false) notFound()",
+      "texte": "la garde du drapeau ne coupe plus : /controle/station répond 200 drapeau baissé",
+      "avant": "698f0444bd3f4657b8a98e0dde625614c2085c882ce2006942fb330f11d3935e",
+      "sabotee": "8bc8ed242b7a5f10df9f8dbb0da8494af35079d04df10031ae6bfbbcd9a4abe6",
+      "apres": "698f0444bd3f4657b8a98e0dde625614c2085c882ce2006942fb330f11d3935e",
+      "restauree": true,
+      "verdict": "FAIL — ST-2, ST-18",
+      "code": 1,
+      "echecs": [
+        "ST-2",
+        "ST-18"
+      ],
+      "pris": true
+    },
+    {
+      "n": 2,
+      "f": "app/controle/station/Commandement.tsx",
+      "attendu": "ST-7",
+      "ancien": "<small className=\"mc-signature\">{c.objectif.par}</small>",
+      "nouveau": "<small className=\"mc-signature\">{c.objectif.par.replace('PAR LE CHEF', 'PAR LE COMMANDANT')}</small>",
+      "texte": "l'objectif n'est plus signé « PAR LE CHEF »",
+      "avant": "ee77bb6f626ca86e6494d9e177b1cf13c52124da47d9210c38d559cf7dd68a45",
+      "sabotee": "b87f4664a624db12ecfd8a2d399f38a496e8c90aefaa71233c6971b3a6a6b7f9",
+      "apres": "ee77bb6f626ca86e6494d9e177b1cf13c52124da47d9210c38d559cf7dd68a45",
+      "restauree": true,
+      "verdict": "FAIL — ST-7, ST-18",
+      "code": 1,
+      "echecs": [
+        "ST-7",
+        "ST-18"
+      ],
+      "pris": true
+    },
+    {
+      "n": 3,
+      "f": "app/controle/station/station.css",
+      "attendu": "ST-8 (et ST-16)",
+      "ancien": ".mc-element[data-nouveau] { animation: mc-entree 0.5s ease-out both; }",
+      "nouveau": ".mc-element[data-nouveau] { animation: mc-entree 0.5s ease-out both; }\n.mc-bandeau { animation: mc-entree 1s ease-in-out infinite alternate; }",
+      "texte": "le bandeau tourne en boucle (animation infinie, garde de mouvement réduit intacte)",
+      "avant": "50e18fe6a3ed6fc8500514ecfe65eb92847f44b143635588e795057c6fa3b5df",
+      "sabotee": "08a5ab54a1d755012963e3534ce2ae6eea2fd142e0f329220c14691ce03a38e9",
+      "apres": "50e18fe6a3ed6fc8500514ecfe65eb92847f44b143635588e795057c6fa3b5df",
+      "restauree": true,
+      "verdict": "FAIL — ST-3, ST-4, ST-5, ST-7, ST-8, ST-12, ST-13, ST-16, ST-18, ST-19",
+      "code": 1,
+      "echecs": [
+        "ST-3",
+        "ST-4",
+        "ST-5",
+        "ST-7",
+        "ST-8",
+        "ST-12",
+        "ST-13",
+        "ST-16",
+        "ST-18",
+        "ST-19"
+      ],
+      "pris": true
+    },
+    {
+      "n": 4,
+      "f": "app/controle/station/Attention.tsx",
+      "attendu": "ST-13",
+      "ancien": "<span className=\"mc-att-titre\">{c.titre}</span>",
+      "nouveau": "<span className=\"mc-att-titre\">{c.titre}</span>\n            <button type=\"button\" style={{ minHeight: 44 }}>Copier</button>",
+      "texte": "une carte Attention porte un bouton « Copier »",
+      "avant": "a49e170f61e58c7b9952a464b4bf1ec900702acbc5357d321f4278e0ba296d24",
+      "sabotee": "17d63a3da195ac9acce82bb47b5de5daab77fd4cd8847101a3457ef4761b10c3",
+      "apres": "a49e170f61e58c7b9952a464b4bf1ec900702acbc5357d321f4278e0ba296d24",
+      "restauree": true,
+      "verdict": "FAIL — ST-13, ST-18",
+      "code": 1,
+      "echecs": [
+        "ST-13",
+        "ST-18"
+      ],
+      "pris": true
+    }
+  ]
+}
