@@ -17,6 +17,7 @@
 // 127.0.0.1 sans --reel ; aucun jeton réel (les jetons sont tirés au hasard à chaque passage).
 process.env.TZ = 'UTC'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { creerRapport } from './lib/sql-essai.mjs'
@@ -85,7 +86,8 @@ function pt14(s) {
 
 // ── --reel (026-196) ────────────────────────────────────────────────────────────────────────────────────────────────
 async function ptR(s) {
-  const cle = path.join(process.env.HOME ?? '', '.ssh', 'presti-usine')
+  // os.homedir() et non process.env.HOME : HOME n'existe pas sous Windows (le poste), la clé y serait cherchée dans le dossier courant (PT-R, 04/10)
+  const cle = path.join(os.homedir(), '.ssh', 'presti-usine')
   if (!existe(cle)) { s.echoue('PT-R', 'préalable : ~/.ssh/presti-usine absent (poste seulement)'); return }
   const hote = process.env.PRESTI_USINE ?? 'usine@88.96.53.3'
   const e = []
