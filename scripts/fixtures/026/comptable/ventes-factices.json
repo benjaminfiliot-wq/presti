@@ -1,0 +1,20 @@
+{
+  "_note": "Ventes FACTICES (jamais de donnée réelle). Montants en centimes. cmd_006 vaut 12000 là où Stripe dit 12001 (écart). cmd_009 : commande sans paiement reçu. cmd_010 : marquée payée mais jamais rapprochée d'un paiement Stripe.",
+  "commandes": [
+    { "ref": "cmd_001", "montant": 15000, "statut": "payee" },
+    { "ref": "cmd_002", "montant": 24000, "statut": "payee" },
+    { "ref": "cmd_003", "montant": 9000, "statut": "payee" },
+    { "ref": "cmd_004", "montant": 31000, "statut": "payee" },
+    { "ref": "cmd_005", "montant": 18000, "statut": "payee" },
+    { "ref": "cmd_006", "montant": 12000, "statut": "payee" },
+    { "ref": "cmd_007", "montant": 22000, "statut": "payee" },
+    { "ref": "cmd_008", "montant": 6000, "statut": "payee" },
+    { "ref": "cmd_009", "montant": 8000, "statut": "en_attente" },
+    { "ref": "cmd_010", "montant": 4000, "statut": "payee" }
+  ],
+  "abonnements": [
+    { "ref": "abo_001", "montant": 2900, "statut": "actif" },
+    { "ref": "abo_002", "montant": 2900, "statut": "actif" },
+    { "ref": "abo_003", "montant": 2900, "statut": "annule" }
+  ]
+}
