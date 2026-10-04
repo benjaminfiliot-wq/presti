@@ -1,0 +1,482 @@
+{
+  "juge": "scripts/juges-026-completude-qa.mjs",
+  "temoins": {
+    "openclaw": {
+      "code": 0,
+      "rouges": []
+    },
+    "cursor": {
+      "code": 0,
+      "rouges": []
+    },
+    "firecrawl": {
+      "code": 0,
+      "rouges": []
+    },
+    "fish": {
+      "code": 0,
+      "rouges": []
+    },
+    "entrant": {
+      "code": 0,
+      "rouges": []
+    },
+    "douleurs": {
+      "code": 0,
+      "rouges": []
+    },
+    "experience": {
+      "code": 0,
+      "rouges": []
+    }
+  },
+  "mutations": [
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=1 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/usine/openclaw/lanceur.mjs",
+      "avant": "if (NOM_CLAUDE.test(nom)) return refus(",
+      "apres": "if (false && NOM_CLAUDE.test(nom)) return refus(",
+      "critere": "OC-8",
+      "extrait": "FAIL OC-8 aucun jeton Claude, aucun héritage d'environnement — ANTHROPIC_API_KEY demandé (valeur sans préfixe sk-ant-) : accepté (refus attendu avant lancement)",
+      "duree_s": 0.393,
+      "nom": "jeton Claude hérité",
+      "partie": "openclaw",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "OC-8",
+        "OC-12"
+      ],
+      "horodatage": "2026-10-04T23:22:35.141Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=2 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/usine/openclaw/lanceur.mjs",
+      "avant": "for (const v of c.volumes || []) if (!sourceNommee(v.source))",
+      "apres": "for (const v of c.volumes || []) if (false && !sourceNommee(v.source))",
+      "critere": "OC-5",
+      "extrait": "FAIL OC-5 système de fichiers limité : lecture seule, volumes nommés, ni coffre ni socket docker — montage de /home/ubuntu/presti-secrets : accepté (refus attendu avant lancement)",
+      "duree_s": 0.357,
+      "nom": "montage du coffre",
+      "partie": "openclaw",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "OC-5",
+        "OC-12"
+      ],
+      "horodatage": "2026-10-04T23:22:35.502Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=3 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/usine/openclaw/lanceur.mjs",
+      "avant": "return config.sorties.some((s) => sortieAdmissible(s) && new URL(s.url).origin === u.origin)",
+      "apres": "return u.protocol === 'https:' || config.sorties.some((s) => sortieAdmissible(s) && new URL(s.url).origin === u.origin)",
+      "critere": "OC-9",
+      "extrait": "FAIL OC-9 sorties réseau : liste fermée — sortieAutorisee(https://exemple-inconnu.presti-test.invalid/) ≠ false (origine absente de configuration().sorties)",
+      "duree_s": 0.416,
+      "nom": "sortie réseau hors liste",
+      "partie": "openclaw",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "OC-9"
+      ],
+      "horodatage": "2026-10-04T23:22:35.920Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=4 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/orchestre/bin/cursor.mjs",
+      "avant": "const cout = typeof tarif?.cout_par_tache === 'number' ? tarif.cout_par_tache : 'non mesuré'",
+      "apres": "const cout = typeof tarif?.cout_par_tache === 'number' ? tarif.cout_par_tache : 0",
+      "critere": "CU-2",
+      "extrait": "FAIL CU-2 coût nul prouvé avant activation, coût inconnu = inactif — coût inconnu (null) : voie active",
+      "duree_s": 0.44,
+      "nom": "coût inconnu annoncé nul",
+      "partie": "cursor",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "CU-2"
+      ],
+      "horodatage": "2026-10-04T23:22:36.361Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=5 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/orchestre/bin/cursor.mjs",
+      "avant": "if (dans(c, tache.interdit)) return refus('interdit'",
+      "apres": "if (false && dans(c, tache.interdit)) return refus('interdit'",
+      "critere": "CU-4",
+      "extrait": "FAIL CU-4 périmètre écrit, interdit et chemins normalisés — écrire scripts/usine/openclaw/secret-essai.mjs : accepté",
+      "duree_s": 0.396,
+      "nom": "interdit ignoré",
+      "partie": "cursor",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "CU-4"
+      ],
+      "horodatage": "2026-10-04T23:22:36.759Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=6 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/orchestre/bin/cursor.mjs",
+      "avant": "{ flag: 'wx' }",
+      "apres": "{ flag: 'w' }",
+      "critere": "CU-7",
+      "extrait": "FAIL CU-7 reprise : même id, preuve partielle, verrou exclusif, rien d'écrasé — 2 reprise(s) concurrente(s) acceptée(s) (une seule attendue)",
+      "duree_s": 0.4,
+      "nom": "verrou de reprise non exclusif",
+      "partie": "cursor",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "CU-7"
+      ],
+      "horodatage": "2026-10-04T23:22:37.162Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=7 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "if (robotsInterdit(robots, u.pathname + u.search)) return { refus: 'robots' }",
+      "apres": "if (false && robotsInterdit(robots, u.pathname + u.search)) return { refus: 'robots' }",
+      "critere": "FC-3",
+      "extrait": "FAIL FC-3 robots lus avant la requête : interdit ou inconnu annule — Disallow: / : lecture acceptée",
+      "duree_s": 0.862,
+      "nom": "robots ignoré",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-3"
+      ],
+      "horodatage": "2026-10-04T23:22:38.025Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=8 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "c.plafond > PLAFOND_CAHIER",
+      "apres": "c.plafond > 100000",
+      "critere": "FC-4",
+      "extrait": "FAIL FC-4 borne de 1 000 crédits, mesure exigée, jamais un solde — borne configurée au-delà de 1 000 : 1 appel(s) Firecrawl",
+      "duree_s": 0.8,
+      "nom": "borne de crédits dépassée",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-4"
+      ],
+      "horodatage": "2026-10-04T23:22:38.828Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=9 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "const source = meta.sourceURL || meta.url",
+      "apres": "const source = meta.sourceURL || meta.url || url",
+      "critere": "FC-5",
+      "extrait": "FAIL FC-5 provenance : URL, méthode et horodatage ; page sans provenance écartée — page Firecrawl sans provenance rendue comme telle",
+      "duree_s": 0.859,
+      "nom": "provenance inventée",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-5"
+      ],
+      "horodatage": "2026-10-04T23:22:39.688Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=10 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "if (r.statut === 429) return parRepli(url, '429', deps)",
+      "apres": "if (r.statut === 429) return { refus: 'quota_firecrawl' }",
+      "critere": "FC-6",
+      "extrait": "FAIL FC-6 repli vers le lecteur 026-020 (clé absente, 429, panne) — 429 : 0 repli(s) (1 attendu)",
+      "duree_s": 0.764,
+      "nom": "repli 429 supprimé",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-6"
+      ],
+      "horodatage": "2026-10-04T23:22:40.453Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=11 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "if (PERSONNEL.test(decodeURIComponent(url))) return { refus: 'donnee_personnelle' }",
+      "apres": "if (false && PERSONNEL.test(decodeURIComponent(url))) return { refus: 'donnee_personnelle' }",
+      "critere": "FC-8",
+      "extrait": "FAIL FC-8 aucune donnée personnelle envoyée ; recherche bornée — URL portant une adresse : acceptée ou appelée",
+      "duree_s": 1.078,
+      "nom": "donnée personnelle dans URL lire",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-8"
+      ],
+      "horodatage": "2026-10-04T23:22:41.533Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=12 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/agents/lectureFirecrawl.ts",
+      "avant": "if (PERSONNEL.test(demande.requete)) return { refus: 'donnee_personnelle' }",
+      "apres": "if (false && PERSONNEL.test(demande.requete)) return { refus: 'donnee_personnelle' }",
+      "critere": "FC-8",
+      "extrait": "FAIL FC-8 aucune donnée personnelle envoyée ; recherche bornée — recherche avec une donnée personnelle acceptée (plombier [adresse] Lyon)",
+      "duree_s": 1.029,
+      "nom": "donnée personnelle dans recherche",
+      "partie": "firecrawl",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FC-8"
+      ],
+      "horodatage": "2026-10-04T23:22:42.565Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=13 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/studio/voixFish.ts",
+      "avant": "  if (d.usage === 'usage_commercial') {",
+      "apres": "  if (d.usage === 'usage_commercial' && (await deps.sonder()).statut !== 200) {",
+      "critere": "FA-2",
+      "extrait": "FAIL FA-2 HTTP 200 n'est pas une licence : commercial sans forfait → ff_siwis — commercial sans droits, sonde 200 : {\"fournisseur\":\"fish\",\"voix\":\"fish-voix-essai\"} (ff_siwis attendu)",
+      "duree_s": 0.739,
+      "nom": "HTTP 200 pris pour licence",
+      "partie": "fish",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FA-2",
+        "FA-5",
+        "FA-6"
+      ],
+      "horodatage": "2026-10-04T23:22:43.305Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=14 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/studio/voixFish.ts",
+      "avant": "const solde = typeof q?.solde === 'number' ? q.solde : null",
+      "apres": "const solde = typeof q?.solde === 'number' ? q.solde : 1e9",
+      "critere": "FA-4",
+      "extrait": "FAIL FA-4 quota inconnu, absent ou épuisé → voix locale — solde inconnu : \"fish\" (ff_siwis attendu)",
+      "duree_s": 0.5780000000000001,
+      "nom": "quota inconnu accepté",
+      "partie": "fish",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FA-4"
+      ],
+      "horodatage": "2026-10-04T23:22:43.887Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=15 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/lib/studio/voixFish.ts",
+      "avant": "fournisseur: 'local', voix: VOIX_LOCALE,",
+      "apres": "fournisseur: 'fish', voix: VOIX_LOCALE,",
+      "critere": "FA-9",
+      "extrait": "FAIL FA-9 manifeste complet ; la voix locale n'annonce pas Fish — manifeste commercial-sans droits : Fish annoncé avec la voix locale",
+      "duree_s": 0.6699999999999999,
+      "nom": "voix locale annoncée Fish",
+      "partie": "fish",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "FA-2",
+        "FA-4",
+        "FA-5",
+        "FA-7",
+        "FA-9",
+        "FA-11"
+      ],
+      "horodatage": "2026-10-04T23:22:44.560Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=16 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/docs/agents/recette-entrant-2026-09-27.md",
+      "avant": "\"precoche\": false,",
+      "apres": "\"precoche\": true,",
+      "critere": "EN-3",
+      "extrait": "FAIL EN-3 demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés — case de consentement précochée ou non renseignée",
+      "duree_s": 0.43000000000000005,
+      "nom": "demande sans consentement",
+      "partie": "entrant",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EN-3"
+      ],
+      "horodatage": "2026-10-04T23:22:44.992Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=17 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/docs/agents/recette-entrant-2026-09-27.md",
+      "avant": "\"id_accord\": \"acc-essai-002\",\n      \"id_message\": \"msg-essai-002\"",
+      "apres": "\"id_accord\": \"acc-essai-001\",\n      \"id_message\": \"msg-essai-002\"",
+      "critere": "EN-6",
+      "extrait": "FAIL EN-6 envoi unique par accord ; second accord pour la réponse — second envoi sous un autre accord que le second (accord réutilisé)",
+      "duree_s": 0.373,
+      "nom": "accord réutilisé pour réponse",
+      "partie": "entrant",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EN-6"
+      ],
+      "horodatage": "2026-10-04T23:22:45.367Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=18 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/docs/agents/recette-entrant-2026-09-27.md",
+      "avant": "\"id_message\": \"msg-essai-001\",\n      \"destinataire\": \"artisan.essai@presti-test.invalid\",\n      \"empreinte\": \"",
+      "apres": "\"id_message\": \"msg-essai-001\",\n      \"destinataire\": \"artisan.essai@presti-test.invalid\",\n      \"empreinte\": \"f",
+      "critere": "EN-4",
+      "extrait": "FAIL EN-4 accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi — envoi : le texte envoyé n'est pas celui de l'accord",
+      "duree_s": 0.368,
+      "nom": "texte approuvé modifié",
+      "partie": "entrant",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EN-4"
+      ],
+      "horodatage": "2026-10-04T23:22:45.738Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=19 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/docs/agents/recette-entrant-2026-09-27.md",
+      "avant": "\"froid_ouvert\": false,",
+      "apres": "\"froid_ouvert\": true,",
+      "critere": "EN-8",
+      "extrait": "FAIL EN-8 aucun contact froid avant le 12/10 — froid_ouvert ≠ false avant le 12/10",
+      "duree_s": 0.383,
+      "nom": "froid ouvert avant le 12 octobre",
+      "partie": "entrant",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EN-8"
+      ],
+      "horodatage": "2026-10-04T23:22:46.123Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=20 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/chef/douleurs.mjs",
+      "avant": "nombre: g.nombres.includes(null) ? 'non mesuré' : g.nombres.reduce((x, y) => x + y, 0),",
+      "apres": "nombre: g.nombres.reduce((x, y) => x + (y || 0), 0),",
+      "critere": "DO-3",
+      "extrait": "FAIL DO-3 chaque douleur sourcée ; nombre ou « non mesuré » — douleur site-lent : nombre 0 (\"non mesuré\" attendu)",
+      "duree_s": 0.385,
+      "nom": "fréquence sans mesure",
+      "partie": "douleurs",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "DO-3"
+      ],
+      "horodatage": "2026-10-04T23:22:46.510Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=21 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/chef/douleurs.mjs",
+      "avant": "  if (deja) return { cle, deja: true, rapport: deja }",
+      "apres": "  if (false && deja) return { cle, deja: true, rapport: deja }",
+      "critere": "DO-2",
+      "extrait": "FAIL DO-2 cadence : mois écoulé, une passe par mois, clé idempotente — 2 écriture(s) après deux passes du même mois (1 attendue)",
+      "duree_s": 0.328,
+      "nom": "passe mensuelle répétée",
+      "partie": "douleurs",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "DO-2"
+      ],
+      "horodatage": "2026-10-04T23:22:46.840Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=22 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/chef/lancer-experience.mjs",
+      "avant": "v?.statut === 'encaisse' && v.confirme === true && v.test === false && v.source",
+      "apres": "v?.statut === 'encaisse' && v.test === false && v.source",
+      "critere": "EX-2",
+      "extrait": "FAIL EX-2 verrou de la première vente : encaissement confirmé, sourcé et non test (indicateurs explicites) — seule vente : non-confirme-5 : lancement accepté",
+      "duree_s": 0.33399999999999996,
+      "nom": "lancement sans encaissement confirmé",
+      "partie": "experience",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EX-2"
+      ],
+      "horodatage": "2026-10-04T23:22:47.175Z",
+      "zero_effet_externe": true
+    },
+    {
+      "juge": "scripts/juges-026-completude-qa.mjs",
+      "commande": "node {racine}/scripts/juges-026-completude-mutations.mjs --cas=23 --racine={racine}",
+      "fichier": "scripts/fixtures/026-completude/temoin/presti/scripts/chef/lancer-experience.mjs",
+      "avant": "const arretee = { ...e, etat: 'arrêtée', conclusion: 'non mesuré', succes: false, suspendue: true }",
+      "apres": "const arretee = { ...e, etat: 'conclue', conclusion: 'succès', succes: true, suspendue: false }",
+      "critere": "EX-8",
+      "extrait": "FAIL EX-8 mesure absente : « non mesuré », jamais un succès — mesure absente : conclusion \"succès\" (« non mesuré » attendu)",
+      "duree_s": 0.34199999999999997,
+      "nom": "non mesuré changé en succès",
+      "partie": "experience",
+      "code_temoin": 0,
+      "code_mute": 1,
+      "rouges": [
+        "EX-8"
+      ],
+      "horodatage": "2026-10-04T23:22:47.519Z",
+      "zero_effet_externe": true
+    }
+  ],
+  "fautes": 0
+}
