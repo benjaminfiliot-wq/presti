@@ -1,0 +1,11 @@
+{
+ "_": "CE-12 : +1 servi en `contacte` (mouvements() de 026-070 : le jour de l'étape monte) ; une bulle accompagne le mouvement pour que Station relise vue=direct.",
+ "etape": "contacte",
+ "delta": 1,
+ "bulle": {
+  "agent": "recenseur",
+  "pastille": "RECENSEUR",
+  "type": "radar",
+  "texte": "Contact envoyé (essai)"
+ }
+}

@@ -1,0 +1,281 @@
+// scripts/fixtures/026-pilotage/k/commun.mjs — l'aide du lot k des juges du Pilotage (fiche 026-170, écrite par Claude Code) :
+// scripts/station-claw3d-qa.mjs (026-179 à 026-186) et juges-026-pilotage-preuve.mjs --lot=k (via lot.mjs et controles.mjs).
+// Elle importe les aides des lots a (026-012) et b (026-066) sans les recopier ; jamais l'inverse (a et b ne savent rien de
+// Claw3D). Rien ici ne lit .env.local ni presti-secrets ; aucune écriture hors .orchestre/travail/.
+//
+//   validerTheme(theme)                     le format de theme.json (§5.2, §0.6) : ce que JSON Schema (theme.schema.json)
+//        exprime, PLUS ce qu'il ne peut pas dire seul (un et un seul emplacement réservé sans poste, aucune adresse
+//        « http(s):// » nulle part dans l'arbre, aucun champ de code (function, =>, `require(`, `import(`, `eval(`)) dans
+//        une chaîne). → liste de défauts (vide = conforme).
+//   fichiersTemoinK() / arbreTemoinK(juge, { base, chemins })   l'arbre du mode --temoin du lot k (k/temoin/, suffixe
+//        .temoin ôté), posé sur le commit `base` (défaut HEAD) — même mécanique que s/commun.mjs (fiche 026-067), reprise
+//        ici pour ne pas lier le lot k au lot s (026-170 ne l'importe pas : périmètre séparé).
+//   leverDrapeaux(texte, noms)              remplace `<nom>: false,` par `<nom>: true,` pour chaque nom présent dans
+//        lib/flags.ts ; un nom ABSENT (« stationCarte » n'existe pas encore : il arrive avec 026-179) est ajouté juste avant
+//        le `} as const` final, à `true`. Jamais utilisé sur le lib/flags.ts RÉEL (seulement sur une COPIE, sous
+//        .orchestre/travail/) : copierArbreClaw3D en fait foi (empreinte du fichier réel inchangée après coup).
+//   copierArbreClaw3D(racine, { critere })   copie app/, lib/, le fichier de tête (middleware.ts ou proxy.ts), next.config,
+//        tsconfig, package.json, next-env.d.ts dans .orchestre/travail/station-claw3d-copie/arbre/, relie node_modules et
+//        public par jonctions (jamais .env.local), lève pilotage ET stationCarte dans la copie SEULEMENT (leverDrapeaux).
+//   surUsine()                               os.hostname() === 'presti-usine'.
+//   relancerSurUsine(argv, { nom, rapatrier })  quand !surUsine() : `node scripts/usine.mjs executer --nom=<nom>
+//        [--rapatrier=…] -- node scripts/station-claw3d-qa.mjs <argv>`, et quitte avec le code et la sortie de l'usine tels
+//        quels (code 2 si l'usine ne rend rien). N'est JAMAIS appelé par la preuve générique (CV-2 de 026-001) : seulement
+//        par le juge lui-même, quand `process.argv` ne porte pas déjà le jeton de rappel.
+//   phaserResolvable(racine)                 true si <racine>/node_modules/phaser (ou celui du dépôt) est présent : le
+//        préalable « avant le dépôt » (phaser 3.90.0 dans package.json, l'accord de Benj, `usine.mjs preparer --forcer»).
+//        Sans lui, aucune partie qui construit ou sert la copie ne peut passer : code 2, jamais 0 ni un faux vert.
+//   lancerNext(dest, { build, port, journal })   `next build` puis `next start`, ou `next dev`, sur `dest`, sous le même
+//        verrou machine que b/commun.mjs (fichier distinct : les deux copies ne servent jamais le même port).
+//   ouvrirPage(navigateur, { base, evenementsAuNavigateur })   un contexte Playwright neuf, la session simulée posée
+//        (session-simulee.mjs), chaque requête consignée, toute requête hors de `base` ET hors des préfixes autorisés
+//        refusée et consignée (CL-11) ; `page.setContent` n'est jamais utilisé : toujours `page.goto(base + chemin)`.
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { spawn, spawnSync } from 'node:child_process'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { R, TRAVAIL, court, premiereLigne, git, exigerSousTravail, listerFichiers, extraireTar, lireOuNull } from '../a/commun.mjs'
+import { cheminsBase } from '../b/commun.mjs'
+
+export { R, TRAVAIL, court, premiereLigne, git, lireOuNull }
+export const K = path.dirname(fileURLToPath(import.meta.url))
+export const TEMOIN_K = path.join(K, 'temoin')
+export const SUFFIXE_TEMOIN = '.temoin'
+export const posix = (p) => p.split(path.sep).join('/')
+export const jeuK = (rel) => JSON.parse(fs.readFileSync(path.join(K, rel), 'utf8'))
+export const erreurCritere = (critere, m) => { const e = new Error(`${critere} : ${m}`); e.critere = critere; return e }
+
+// ── Le format de theme.json (theme.schema.json + les règles que JSON Schema seul ne dit pas) ───────────────────────────────
+const RE_HEX = /^#[0-9A-Fa-f]{6}$/, RE_CLE = /^[a-z][a-z0-9_-]*$/, RE_MC = /^--mc-[a-z0-9-]+$/
+const point = (v, chemin, e) => {
+  if (!v || typeof v !== 'object' || !Number.isInteger(v.x) || v.x < 0 || !Number.isInteger(v.y) || v.y < 0) e.push(`${chemin} : point { x, y } (entiers ≥ 0) attendu`)
+}
+function forme(v, chemin, e) {
+  if (!v || typeof v !== 'object') { e.push(`${chemin} : forme absente`); return }
+  if (v.genre === 'rectangle') {
+    for (const c of ['x', 'y', 'largeur', 'hauteur']) if (!Number.isInteger(v[c]) || v[c] < (c === 'x' || c === 'y' ? 0 : 1)) e.push(`${chemin}.${c} : entier ${c === 'x' || c === 'y' ? '≥ 0' : '≥ 1'} attendu`)
+  } else if (v.genre === 'polygone') {
+    if (!Array.isArray(v.points) || v.points.length < 3) e.push(`${chemin}.points : au moins 3 points attendus`)
+    else v.points.forEach((p, i) => point(p, `${chemin}.points[${i}]`, e))
+  } else e.push(`${chemin}.genre : « rectangle » ou « polygone » attendu, reçu ${JSON.stringify(v.genre)}`)
+}
+/** theme.json → liste de défauts (vide = conforme au schéma ET aux règles hors JSON Schema). */
+export function validerTheme(t) {
+  const e = []
+  if (!t || typeof t !== 'object') return ['un objet attendu']
+  if (typeof t.cle !== 'string' || !/^[a-z][a-z0-9-]{0,39}$/.test(t.cle)) e.push('cle : chaîne en minuscules attendue')
+  if (typeof t.nom !== 'string' || !t.nom) e.push('nom : chaîne non vide attendue')
+  if (!Number.isInteger(t.version) || t.version < 1) e.push('version : entier ≥ 1 attendu')
+  if (!t.grille || !Number.isInteger(t.grille.largeur) || t.grille.largeur < 1 || !Number.isInteger(t.grille.hauteur) || t.grille.hauteur < 1) e.push('grille : { largeur, hauteur } (entiers ≥ 1) attendu')
+  if (t.mise_en_page !== 'colonnes' && t.mise_en_page !== 'flottante') e.push('mise_en_page : « colonnes » ou « flottante » attendu')
+  if (!t.palette || typeof t.palette !== 'object' || !Object.keys(t.palette).length) e.push('palette : au moins un jeton --mc-* attendu')
+  else for (const [k, v] of Object.entries(t.palette)) { if (!RE_MC.test(k)) e.push(`palette.${k} : jeton --mc-* attendu`); if (!RE_HEX.test(v)) e.push(`palette.${k} = ${JSON.stringify(v)} : #RRGGBB attendu`) }
+  const clesEmpl = new Set()
+  if (!Array.isArray(t.emplacements) || t.emplacements.length < 20) e.push(`emplacements : au moins 20 attendus, ${Array.isArray(t.emplacements) ? t.emplacements.length : 0} reçu(s)`)
+  let reservees = 0
+  for (const [i, em] of (Array.isArray(t.emplacements) ? t.emplacements : []).entries()) {
+    const c = `emplacements[${i}]`
+    if (!em || typeof em !== 'object') { e.push(`${c} : objet attendu`); continue }
+    if (!RE_CLE.test(em.cle)) e.push(`${c}.cle invalide`); else { if (clesEmpl.has(em.cle)) e.push(`${c}.cle « ${em.cle} » en double`); clesEmpl.add(em.cle) }
+    forme(em.forme, `${c}.forme`, e)
+    point(em.porte, `${c}.porte`, e)
+    if (em.poste !== null) point(em.poste, `${c}.poste`, e)
+    point(em.plaque, `${c}.plaque`, e)
+    if (!RE_MC.test(em.teinte)) e.push(`${c}.teinte : jeton --mc-* attendu`)
+    if (typeof em.reservee !== 'boolean') e.push(`${c}.reservee : booléen attendu`)
+    else if (em.reservee) { reservees++; if (em.poste !== null) e.push(`${c} : réservé mais poste non nul`) }
+  }
+  if (reservees !== 1) e.push(`emplacements : ${reservees} réservé(s), exactement 1 attendu`)
+  if (!t.coursives || !Array.isArray(t.coursives.noeuds) || !Array.isArray(t.coursives.aretes)) e.push('coursives : { noeuds: [], aretes: [] } attendu')
+  else {
+    const clesNoeuds = new Set(t.coursives.noeuds.map((n) => n?.cle))
+    for (const [i, n] of t.coursives.noeuds.entries()) { if (!n || !RE_CLE.test(n.cle) || !Number.isInteger(n.x) || !Number.isInteger(n.y) || !['coursive', 'ascenseur', 'sas'].includes(n.genre)) e.push(`coursives.noeuds[${i}] invalide`) }
+    for (const [i, a] of t.coursives.aretes.entries()) { if (!a || !clesNoeuds.has(a.de) || !clesNoeuds.has(a.vers)) e.push(`coursives.aretes[${i}] : de/vers doivent désigner un nœud déclaré`) }
+  }
+  if (!Array.isArray(t.tapis) || !t.tapis.length) e.push('tapis : au moins une étape attendue')
+  else for (const [i, s] of t.tapis.entries()) if (!s || !RE_CLE.test(s.etape) || !Number.isInteger(s.x) || !Number.isInteger(s.y)) e.push(`tapis[${i}] invalide`)
+  if (!t.defauts || typeof t.defauts !== 'object' || Array.isArray(t.defauts)) e.push('defauts : objet attendu')
+  else for (const [k, v] of Object.entries(t.defauts)) if (!RE_CLE.test(k) || !RE_CLE.test(v) || !clesEmpl.has(v)) e.push(`defauts.${k} = ${JSON.stringify(v)} : une salle vers un emplacement déclaré attendu`)
+  if (!Array.isArray(t.avatars) || !t.avatars.length || t.avatars.some((a) => typeof a !== 'string' || !RE_CLE.test(a))) e.push('avatars : liste non vide de clés attendue')
+  if (typeof t.nuit !== 'boolean') e.push('nuit : booléen attendu')
+  if (t.portrait !== undefined) {
+    const p = t.portrait
+    if (!p || typeof p !== 'object') e.push('portrait : objet attendu quand présent')
+    else {
+      if (p.grille && (!Number.isInteger(p.grille.largeur) || !Number.isInteger(p.grille.hauteur))) e.push('portrait.grille invalide')
+      if (p.emplacements) for (const [i, em] of p.emplacements.entries()) { if (!em || !RE_CLE.test(em.cle)) e.push(`portrait.emplacements[${i}] invalide`) }
+    }
+  }
+  // Règles hors JSON Schema : aucun champ de code, aucune adresse distante, nulle part dans l'arbre.
+  const RE_CODE = /=>|\bfunction\b|\brequire\(|\bimport\(|\beval\(|\bnew Function\b/
+  const RE_ADRESSE = /\bhttps?:\/\//i
+  const chaines = []
+  ;(function marcher(x) { if (typeof x === 'string') chaines.push(x); else if (x && typeof x === 'object') for (const v of Object.values(x)) marcher(v) })(t)
+  for (const s of chaines) {
+    if (RE_ADRESSE.test(s)) e.push(`adresse distante trouvée dans une valeur : « ${s.slice(0, 60)} »`)
+    if (RE_CODE.test(s)) e.push(`champ de code trouvé dans une valeur : « ${s.slice(0, 60)} »`)
+  }
+  // Un champ inconnu à la racine (JSON Schema additionalProperties: false le dit déjà, redondance volontaire : le
+  // validateur ne dépend d'AUCUN paquet — ni ajv ni personne — donc il le vérifie lui-même).
+  const CONNUS = new Set(['cle', 'nom', 'version', 'grille', 'mise_en_page', 'palette', 'emplacements', 'coursives', 'tapis', 'defauts', 'avatars', 'nuit', 'portrait'])
+  for (const k of Object.keys(t)) if (!CONNUS.has(k)) e.push(`champ inconnu « ${k} » (aucun champ de code ni d'extension attendu)`)
+  return e
+}
+
+// ── L'arbre du mode --temoin du lot k ────────────────────────────────────────────────────────────────────────────────────
+export function fichiersTemoinK() {
+  const m = new Map()
+  for (const f of listerFichiers(TEMOIN_K)) {
+    const p = posix(f)
+    if (!p.endsWith(SUFFIXE_TEMOIN)) throw new Error(`témoin du lot k : ${p} sans le suffixe ${SUFFIXE_TEMOIN}`)
+    m.set(p.slice(0, -SUFFIXE_TEMOIN.length), fs.readFileSync(path.join(TEMOIN_K, f)))
+  }
+  return m
+}
+export function arbreTemoinK(juge, { base, chemins }) {
+  const dest = exigerSousTravail(path.join(TRAVAIL, juge, 'temoin-arbre'))
+  fs.rmSync(dest, { recursive: true, force: true })
+  fs.mkdirSync(dest, { recursive: true })
+  const tar = path.join(TRAVAIL, juge, 'temoin-arbre.tar')
+  const existants = chemins.filter((c) => cheminsBase(base, c).length)
+  if (existants.length) {
+    const r = git(['-c', 'core.autocrlf=false', 'archive', '--format=tar', `--output=${tar.split(path.sep).join('/')}`, base, '--', ...existants])
+    if (r.code !== 0) throw new Error(`git archive ${base.slice(0, 7)} : ${court(r.stderr)}`)
+    extraireTar(tar, dest)
+    fs.rmSync(tar, { force: true })
+  }
+  const poses = []
+  for (const [rel, buf] of fichiersTemoinK()) {
+    const f = path.join(dest, rel)
+    fs.mkdirSync(path.dirname(f), { recursive: true })
+    fs.rmSync(f, { force: true })
+    fs.writeFileSync(f, buf)
+    poses.push(rel)
+  }
+  return { dest, poses }
+}
+
+// ── Les deux drapeaux, levés dans une copie SEULEMENT ────────────────────────────────────────────────────────────────────
+/** `<nom>: false,` → `<nom>: true,` ; un `<nom>` absent est ajouté avant `} as const` (stationCarte n'existe pas encore). */
+export function leverDrapeaux(texte, noms) {
+  let t = texte, ajoutes = []
+  for (const nom of noms) {
+    const baisse = `${nom}: false,`, leve = `${nom}: true,`
+    if (t.includes(baisse)) t = t.replace(baisse, () => leve)
+    else if (!new RegExp(`\\b${nom}\\s*:`).test(t)) { t = t.replace(/\}\s*as const/, () => `  ${leve} // ajouté par station-claw3d-qa (copie seulement)\n} as const`); ajoutes.push(nom) }
+  }
+  return { texte: t, ajoutes }
+}
+export const COPIE_K = path.join(TRAVAIL, 'station-claw3d-copie')
+export function copierArbreClaw3D(racine, { critere = 'CL-0' } = {}) {
+  const dest = exigerSousTravail(path.join(COPIE_K, 'arbre'))
+  const tete = ['proxy.ts', 'middleware.ts'].find((f) => fs.existsSync(path.join(racine, f)))
+  if (!tete) throw erreurCritere(critere, `ni proxy.ts ni middleware.ts dans ${racine}`)
+  const flagsReel = path.join(racine, 'lib', 'flags.ts')
+  const texteFlags = lireOuNull(flagsReel)
+  if (texteFlags === null) throw erreurCritere(critere, 'lib/flags.ts absent de la racine')
+  for (const j of ['node_modules', 'public']) { try { fs.rmSync(path.join(dest, j), { recursive: false, force: true }) } catch { try { fs.unlinkSync(path.join(dest, j)) } catch { /* absente */ } } }
+  fs.rmSync(dest, { recursive: true, force: true })
+  fs.mkdirSync(dest, { recursive: true })
+  for (const d of ['app', 'lib']) {
+    if (!fs.existsSync(path.join(racine, d))) throw erreurCritere(critere, `${d}/ absent de la racine`)
+    fs.cpSync(path.join(racine, d), path.join(dest, d), { recursive: true })
+  }
+  for (const f of [tete, 'next.config.mjs', 'tsconfig.json', 'package.json', 'next-env.d.ts']) {
+    if (fs.existsSync(path.join(racine, f))) fs.copyFileSync(path.join(racine, f), path.join(dest, f))
+    else if (f !== 'next-env.d.ts') throw erreurCritere(critere, `${f} absent de la racine`)
+  }
+  for (const j of ['node_modules', 'public']) { const cible = path.join(R, j); if (fs.existsSync(cible)) fs.symlinkSync(cible, path.join(dest, j), 'junction') }
+  const { texte, ajoutes } = leverDrapeaux(texteFlags, ['pilotage', 'stationCarte'])
+  fs.writeFileSync(path.join(dest, 'lib', 'flags.ts'), texte)
+  if (fs.existsSync(path.join(dest, '.env.local'))) throw erreurCritere(critere, '.env.local dans la copie')
+  if (fs.readFileSync(flagsReel, 'utf8') !== texteFlags) throw erreurCritere(critere, 'lib/flags.ts RÉEL modifié : ne devrait jamais arriver')
+  return { dest, tete, ajoutes }
+}
+
+// ── Phaser installé (préalable « avant le dépôt », gestes de Benj — 026-170 ne touche jamais package.json) ───────────────
+export function phaserResolvable(racine) {
+  for (const base of [racine, R]) { try { if (fs.existsSync(path.join(base, 'node_modules', 'phaser', 'package.json'))) return true } catch { /* absent */ } }
+  return false
+}
+
+// ── L'usine : ce juge s'y relance lui-même s'il n'y tourne pas déjà (CV-2 de 026-001 : jamais la preuve) ─────────────────
+export const surUsine = () => os.hostname() === 'presti-usine'
+export function relancerSurUsine(argv, { nom = 'claw3d', rapatrier } = {}) {
+  const script = path.join(R, 'scripts', 'usine.mjs')
+  const args = ['executer', `--nom=${nom}`, ...(rapatrier ? [`--rapatrier=${rapatrier}`] : []), '--', process.execPath, path.join(R, 'scripts', 'station-claw3d-qa.mjs'), ...argv]
+  const r = spawnSync(process.execPath, [script, ...args.slice(1)], { cwd: R, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 25 * 60_000, windowsHide: true })
+  const sortie = `${r.stdout || ''}${r.stderr || ''}`
+  process.stdout.write(sortie)
+  process.exit(Number.isInteger(r.status) ? r.status : 2)
+}
+
+// ── next build+start / next dev sur la copie ─────────────────────────────────────────────────────────────────────────────
+const vivant = (pid) => { try { process.kill(pid, 0); return true } catch { return false } }
+export const tuerPid = (pid) => {
+  if (!pid) return
+  if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true })
+  else { try { process.kill(pid, 'SIGTERM') } catch { /* déjà parti */ } }
+}
+async function portLibre() {
+  const net = await import('node:net')
+  return new Promise((resoudre, rejeter) => {
+    const s = net.createServer()
+    s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => resoudre(p)) })
+    s.on('error', rejeter)
+  })
+}
+const repond = async (url) => { try { const r = await fetch(url, { redirect: 'manual' }); return r.status > 0 } catch { return false } }
+/** `next build && next start` (build:true, CL-11/CL-12) ou `next dev` (build:false), sur `dest`. → { base, arreter }
+ *  04/10 : `--webpack` au build et au dev — sous Next 16 le défaut est Turbopack, que next.config.mjs (Serwist, config webpack) refuse (audit C 5.8). */
+export async function lancerNext(dest, { critere = 'CL-0', build = false, attenteMs = 480_000 } = {}) {
+  const bin = path.join(R, 'node_modules', 'next', 'dist', 'bin', 'next')
+  if (!fs.existsSync(bin)) throw erreurCritere(critere, 'next introuvable dans node_modules')
+  const port = await portLibre()
+  const base = `http://127.0.0.1:${port}`
+  const env = { ...process.env, PORT: String(port), BROWSER: 'none', NEXT_TELEMETRY_DISABLED: '1' }
+  delete env.NEXT_PUBLIC_SUPABASE_URL; delete env.SUPABASE_SERVICE_ROLE_KEY // la session est simulée (session-simulee.mjs) : aucune vraie clé lue ici
+  let enfant = null
+  const demarrer = (args) => spawn(process.execPath, [bin, ...args], { cwd: dest, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, env })
+  try {
+    if (build) {
+      const b = spawnSync(process.execPath, [bin, 'build', '--webpack'], { cwd: dest, encoding: 'utf8', env, timeout: attenteMs, windowsHide: true })
+      if (b.status !== 0) throw erreurCritere(critere, `next build (copie) en échec, code ${b.status} : ${court((b.stdout || '') + (b.stderr || ''), 400)}`)
+      enfant = demarrer(['start', '-p', String(port), '-H', '127.0.0.1'])
+    } else enfant = demarrer(['dev', '--webpack', '-p', String(port), '-H', '127.0.0.1'])
+    let journal = ''
+    enfant.stdout.on('data', (d) => { journal = (journal + d).slice(-4000) })
+    enfant.stderr.on('data', (d) => { journal = (journal + d).slice(-4000) })
+    const debut = Date.now()
+    while (Date.now() - debut < attenteMs) {
+      if (await repond(base)) { const pid = enfant.pid; return { base, port, pid, arreter: () => tuerPid(pid) } }
+      if (enfant.exitCode !== null) throw erreurCritere(critere, `next ${build ? 'start' : 'dev'} (copie) arrêté : ${court(journal.slice(-300), 300)}`)
+      await new Promise((ok) => setTimeout(ok, 1000))
+    }
+    throw erreurCritere(critere, `next ${build ? 'start' : 'dev'} (copie) ne répond pas après ${attenteMs / 1000} s : ${court(journal.slice(-300), 300)}`)
+  } catch (e) { if (enfant) tuerPid(enfant.pid); throw e }
+}
+export { vivant }
+
+// ── Le crochet de résolution du lot k (@/x → la racine JUGÉE, jamais le dépôt) ──────────────────────────────────────────
+// Repris, réduit (aucune doublure : le lot k n'en a pas besoin), du modèle de s/commun.mjs (CROCHET), pour ne pas lier k à
+// s (lots séparés, chacun son propre périmètre). `--racine=<d>` : `@/x` se résout sous <d>.
+export const urlDossier = (d) => pathToFileURL(path.resolve(d) + path.sep).href
+export const CROCHET_K = String.raw`
+import { statSync } from 'node:fs'
+let RACINE = ''
+export async function initialize(d) { RACINE = d.racine }
+const estFichier = (u) => { try { return statSync(new URL(u)).isFile() } catch { return false } }
+export async function resolve(spec, ctx, next) {
+  let s = spec
+  if (s.startsWith('@/')) s = new URL(s.slice(2), RACINE).href
+  if (s.startsWith('.') || s.startsWith('file:')) {
+    const base = s.startsWith('file:') ? s : new URL(s, ctx.parentURL).href
+    for (const c of [base, base + '.ts', base + '.tsx', base + '/index.ts']) if (estFichier(c)) return next(c, ctx)
+  }
+  // 'next/server', 'next/navigation'… : le paquet Next n'a pas de champ « exports », l'ESM de Node n'ajoute pas .js tout
+  // seul à un sous-chemin nu (CommonJS le fait, ESM non) : on l'essaie nous-mêmes avant de laisser la chaîne par défaut.
+  if (/^next\/[\w-]+$/.test(s) && !s.endsWith('.js')) { try { return await next(s + '.js', ctx) } catch { /* tant pis, on retente sans le .js ci-dessous */ } }
+  return next(s, ctx)
+}`

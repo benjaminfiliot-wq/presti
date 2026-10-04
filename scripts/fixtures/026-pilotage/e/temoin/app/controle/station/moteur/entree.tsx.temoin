@@ -1,0 +1,35 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import type { CarteProps } from '../Carte'
+
+// Le TÉMOIN du lot e (fiche 026-172) de moteur/entree.tsx : le seul module que Carte.tsx charge. Il passe les propriétés de la carte au témoin
+// (public/temoin-e/, des modules chargés à l'exécution) et lui donne un cadre ; il ne dessine rien lui-même. Ce n'est pas le moteur.
+type Monde = { demonter: () => void }
+type Fenetre = { __stationProps?: CarteProps; __stationOuvrirSalle?: (cle: string) => void }
+
+export default function Entree(props: CarteProps) {
+  const router = useRouter()
+  const racine = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const w = window as unknown as Fenetre
+    w.__stationProps = props
+    window.dispatchEvent(new Event('station:props'))
+  })
+  useEffect(() => {
+    const w = window as unknown as Fenetre
+    w.__stationOuvrirSalle = (cle: string) => {
+      const q = new URLSearchParams(window.location.search)
+      q.set('salle', cle)
+      q.delete('agent')
+      router.replace(`/controle/station?${q.toString()}`, { scroll: false })
+    }
+    let monde: Monde | null = null
+    let mort = false
+    const adresse = '/temoin-e/index.js'
+    import(/* webpackIgnore: true */ adresse).then((m: { monter: (n: HTMLElement | null) => Monde }) => { if (!mort) monde = m.monter(racine.current) }).catch(() => { /* pas de témoin chargé : la carte reste vide */ })
+    return () => { mort = true; monde?.demonter() }
+  }, [router])
+  return <div id="temoin-racine" ref={racine} />
+}

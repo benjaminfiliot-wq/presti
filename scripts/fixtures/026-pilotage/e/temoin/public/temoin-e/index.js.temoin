@@ -1,0 +1,16 @@
+// public/temoin-e/index.js — le point d'entrée du témoin du lot e (fiche 026-172) : `moteur/entree.tsx` l'importe à l'exécution
+// (import natif, hors du bundle : un seul next build sert la preuve entière ; chaque sabotage change un de ces fichiers, jamais le bundle).
+import { creer } from './coeur.js'
+import { monterCamera } from './camera.js'
+import { monterActeurs } from './acteurs.js'
+import { monterCalque } from './calque.js'
+import { monterTelephone } from './telephone.js'
+import { monterReglages } from './reglages.js'
+import { monterSalles } from './salles.js'
+
+export function monter(racine) {
+  const T = creer(racine)
+  monterCamera(T); monterActeurs(T); monterCalque(T); monterTelephone(T); monterReglages(T); monterSalles(T)
+  T.demarrer()
+  return { demonter: () => T.detruire() }
+}

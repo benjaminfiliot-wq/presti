@@ -1,0 +1,153 @@
+// public/temoin-e/reglages.js — le PANNEAU RÉGLAGES du témoin du lot e (fiche 026-172) : `?vue=reglages` ouvre un panneau de 480 px au bureau,
+// une feuille au téléphone, absent pour le rôle lecture ; aperçu en direct sans écriture (la couleur se pose sur le seul nœud .mc), Enregistrer
+// (un PUT avec la version lue), Annuler, Revenir au thème par défaut, Historique (10 versions) et Rétablir ; un 409 s'affiche tel que servi ; une
+// disposition refusée dit pourquoi (la réservée ne se déplace pas, une salle par emplacement, le graphe des coursives relié au Commandement).
+import { el } from './coeur.js'
+
+const jeton = () => {
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (/^sb-.*-auth-token$/.test(k)) { try { return JSON.parse(localStorage.getItem(k)).access_token } catch { /* session illisible */ } }
+  }
+  return ''
+}
+const api = async (chemin, init = {}) => {
+  const r = await fetch(chemin, { ...init, cache: 'no-store', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jeton()}` } })
+  return { ok: r.ok, status: r.status, data: await r.json().catch(() => ({})) }
+}
+const copie = (x) => JSON.parse(JSON.stringify(x ?? {}))
+
+function distance(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, n = dx * dx + dy * dy
+  const t = n === 0 ? 0 : Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n))
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy))
+}
+/** Le port, en clair, de validerDisposition (lib/pilotage/disposition.ts) : { ok } ou { raison }. */
+export function verdict(theme, salles, plaque) {
+  const reservee = theme.emplacements.find((e) => e.reservee)
+  if (salles[reservee.cle] !== reservee.cle) return `La salle réservée ${plaque(reservee.cle)} ne se déplace pas`
+  for (const [s, e] of Object.entries(salles)) if (s !== reservee.cle && e === reservee.cle) return `L'emplacement réservé (${e}) n'accueille aucune autre salle : ${plaque(s)} ne peut pas y siéger`
+  const occupe = new Map()
+  for (const [s, e] of Object.entries(salles)) { if (occupe.has(e)) return `Deux salles occupent l'emplacement ${e} : ${plaque(occupe.get(e))} et ${plaque(s)}`; occupe.set(e, s) }
+  const c = theme.coursives, parent = new Map(c.noeuds.map((n) => [n.id, n.id]))
+  const racine = (x) => { let r = x; while (parent.get(r) !== r) r = parent.get(r); return r }
+  for (const a of c.aretes) if (parent.has(a.de) && parent.has(a.a)) parent.set(racine(a.de), racine(a.a))
+  const noeuds = new Map(c.noeuds.map((n) => [n.id, n]))
+  const portes = (cle) => {
+    const e = theme.emplacements.find((x) => x.cle === cle), s = new Set()
+    for (const a of c.aretes) { const p = noeuds.get(a.de), q = noeuds.get(a.a); if (p && q && e && distance(e.porte, p, q) <= a.largeur / 2) s.add(racine(a.de)) }
+    return s
+  }
+  const depart = portes(salles.commandement)
+  for (const s of Object.keys(salles)) {
+    if (s === reservee.cle || s === 'commandement') continue
+    if (![...portes(salles[s])].some((x) => depart.has(x))) return `${plaque(s)} n'est plus reliée au reste (le Commandement)`
+  }
+  return null
+}
+
+export function monterReglages(T) {
+  let panneau = null, etat = null, themeApercu = null, posees = [], champs = null
+  const role = () => document.querySelector('[data-station]')?.dataset.role
+  const voulu = () => new URLSearchParams(window.location.search).get('vue') === 'reglages' && role() === 'direction'
+  const mc = () => document.querySelector('.mc')
+  const plaque = (cle) => etat?.brouillon?.salles?.[cle]?.plaque ?? themeApercu?.emplacements.find((e) => e.cle === cle)?.plaque.texte ?? cle
+  const message = (t) => { if (panneau) panneau.querySelector('[data-message]').textContent = t }
+
+  async function themeDe(cle) {
+    try { const r = await fetch(`/station/themes/${encodeURIComponent(cle)}/theme.json`); return r.ok ? await r.json() : null } catch { return null }
+  }
+  async function appliquer() {
+    const n = mc(), b = etat.brouillon
+    if (!n) return
+    for (const k of posees) n.style.removeProperty(k)
+    posees = []
+    const th = await themeDe(b.theme || T.cle || 'station')
+    if (th) { themeApercu = th; n.dataset.miseEnPage = b.mise_en_page || th.mise_en_page; for (const [k, v] of Object.entries(th.palette || {})) { n.style.setProperty(k, v); posees.push(k) } }
+    for (const [k, v] of Object.entries(b.couleurs || {})) { n.style.setProperty(k, v); posees.push(k) }
+    valider()
+  }
+  function dispositionDe() {
+    const salles = {}
+    for (const e of themeApercu?.emplacements ?? []) salles[e.cle] = etat.brouillon.salles?.[e.cle]?.emplacement || themeApercu.defauts?.find((d) => d.salle === e.cle)?.emplacement || e.cle
+    return salles
+  }
+  function valider() {
+    if (!themeApercu || !panneau) return true
+    const raison = verdict(themeApercu, dispositionDe(), plaque)
+    panneau.querySelector('[data-erreur-disposition]').textContent = raison ?? ''
+    panneau.querySelector('[data-enregistrer]').disabled = !!raison
+    return !raison
+  }
+  const bouton = (attrs, texte, fn) => { const b = el('button', { type: 'button', ...attrs }, { minHeight: '44px', margin: '2px', cursor: 'pointer' }); b.textContent = texte; b.addEventListener('click', fn); return b }
+  const champ = (libelle, noeud) => { const l = el('label', {}, { display: 'block', margin: '6px 0' }); l.append(`${libelle} `, noeud); return l }
+
+  async function ouvrir() {
+    const r = await api('/api/controle/station/reglages')
+    if (!r.ok || !voulu() || panneau) return
+    etat = { serveur: { version: r.data.version, reglages: copie(r.data.reglages) }, brouillon: copie(r.data.reglages) }
+    const tel = window.innerWidth < 1024
+    panneau = el('aside', { 'data-vue': 'reglages', role: 'dialog', 'aria-label': 'Réglages', ...(tel ? { 'data-feuille': 'oui' } : {}) },
+      { position: 'fixed', top: '0', bottom: '0', right: '0', width: tel ? '100%' : '480px', zIndex: '60', background: '#0a0c11', color: '#e8ecf5', overflow: 'auto', padding: '12px', boxSizing: 'border-box' })
+    const titre = el('h2'); titre.textContent = 'Réglages'
+    const msg = el('div', { 'data-message': '', role: 'status' }), err = el('div', { 'data-erreur-disposition': '', role: 'alert' }, { color: '#f0776a' })
+    const th = el('select', { 'data-theme-choix': '' })
+    for (const c of ['station', 'vaisseau', ...(T.cle && !['station', 'vaisseau'].includes(T.cle) ? [T.cle] : [])]) if (await themeDe(c)) { const o = el('option', { value: c }); o.textContent = c; th.append(o) }
+    th.value = etat.brouillon.theme || T.cle || 'station'
+    th.addEventListener('change', () => { etat.brouillon.theme = th.value; delete etat.brouillon.mise_en_page; appliquer() })
+    const titreCh = el('input', { 'data-champ-titre': '', type: 'text' }); titreCh.value = etat.brouillon.affichage?.titre ?? ''
+    titreCh.addEventListener('input', () => { (etat.brouillon.affichage ??= {}).titre = titreCh.value })
+    const couleur = el('input', { 'data-couleur': '--mc-accent', type: 'text' }); champs = { th, titreCh, couleur }; couleur.value = etat.brouillon.couleurs?.['--mc-accent'] ?? ''
+    couleur.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(couleur.value)) { (etat.brouillon.couleurs ??= {})['--mc-accent'] = couleur.value; appliquer() } })
+    const salles = el('fieldset', { 'data-salles': '' })
+    const hist = el('ol', { 'data-historique': '' })
+    panneau.append(titre, msg, champ('Thème', th), champ('Titre', titreCh), champ('Couleur --mc-accent', couleur), salles, err,
+      bouton({ 'data-enregistrer': '' }, 'Enregistrer', enregistrer), bouton({}, 'Annuler', annuler), bouton({}, 'Revenir au thème par défaut', defaut), bouton({}, 'Historique', historique), hist)
+    mc()?.append(panneau)
+    await appliquer()
+    for (const e of themeApercu?.emplacements ?? []) {
+      const s = el('select', { 'data-salle-emplacement': e.cle })
+      for (const x of themeApercu.emplacements) { const o = el('option', { value: x.cle }); o.textContent = x.cle; s.append(o) }
+      s.value = dispositionDe()[e.cle]
+      s.addEventListener('change', () => { (etat.brouillon.salles ??= {})[e.cle] = { ...(etat.brouillon.salles[e.cle] || {}), emplacement: s.value }; valider() })
+      salles.append(champ(plaque(e.cle), s))
+    }
+    valider()
+  }
+  function fermer() { panneau?.remove(); panneau = null; etat = null }
+  async function enregistrer() {
+    if (!valider()) return
+    const r = await api('/api/controle/station/reglages', { method: 'PUT', body: JSON.stringify({ reglages: etat.brouillon, version: etat.serveur.version }) })
+    if (r.ok) { etat.serveur = { version: r.data.version, reglages: copie(etat.brouillon) }; message(`Enregistré : version ${r.data.version}`); window.dispatchEvent(new Event('station:reglages')) }
+    else message(r.data.error || `Rien n'a été enregistré (${r.status})`)
+  }
+  /** Les champs du panneau redisent le brouillon (après Annuler ou le thème par défaut) ; le panneau reste ouvert. */
+  function majChamps() {
+    if (!champs || !panneau) return
+    champs.th.value = etat.brouillon.theme || T.cle || 'station'
+    champs.titreCh.value = etat.brouillon.affichage?.titre ?? ''
+    champs.couleur.value = etat.brouillon.couleurs?.['--mc-accent'] ?? ''
+    for (const s of panneau.querySelectorAll('select[data-salle-emplacement]')) s.value = dispositionDe()[s.dataset.salleEmplacement] ?? s.value
+  }
+  async function annuler() { etat.brouillon = copie(etat.serveur.reglages); message('Revenu à la version enregistrée'); await appliquer(); majChamps() }
+  async function defaut() { etat.brouillon = {}; message('Thème par défaut (aperçu : Enregistrer pour le garder)'); await appliquer(); majChamps() }
+  async function historique() {
+    const r = await api('/api/controle/station/reglages?historique=1')
+    const liste = panneau.querySelector('[data-historique]')
+    liste.replaceChildren()
+    for (const v of (r.data.versions || []).slice(0, 10)) {
+      const li = el('li', { 'data-version': String(v.version) })
+      li.append(`version ${v.version} · ${v.modifie_par ?? '—'} · ${v.modifie_le ?? '—'} `)
+      li.append(bouton({ 'data-retablir': String(v.version) }, 'Rétablir', async () => {
+        const w = await api('/api/controle/station/reglages', { method: 'PUT', body: JSON.stringify({ reglages: v.reglages, version: etat.serveur.version }) })
+        if (w.ok) { etat.serveur = { version: w.data.version, reglages: copie(v.reglages) }; etat.brouillon = copie(v.reglages); message(`Rétabli : version ${w.data.version}`); await appliquer() }
+        else message(w.data.error || `Rien n'a été rétabli (${w.status})`)
+      }))
+      liste.append(li)
+    }
+  }
+  const sync = () => { if (voulu() && !panneau) ouvrir(); else if (!voulu() && panneau) fermer() }
+  T.sur(window, 'station:url', sync); T.sur(window, 'popstate', sync)
+  T.nettoyages.push(() => { fermer(); for (const k of posees) mc()?.style.removeProperty(k) })
+  setTimeout(sync, 0)
+}

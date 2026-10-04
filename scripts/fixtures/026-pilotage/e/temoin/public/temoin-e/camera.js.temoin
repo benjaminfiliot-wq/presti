@@ -1,0 +1,125 @@
+// public/temoin-e/camera.js — la CAMÉRA du témoin du lot e (fiche 026-172) : zoom ×1 à ×3 (molette, +, −, clavier), vue d'ensemble ⊞,
+// glissé borné dans la nébuleuse, croix sur le vide, survol (plaque allumée, main, étiquette à pointe), cadre blanc sur la salle choisie,
+// vingt zones et la réservée `[data-zone-salle]` (polygones en clip-path), teinte par salle, clic → ?salle=<clé> sans quitter la page.
+import { el } from './coeur.js'
+
+export function monterCamera(T) {
+  const cadre = T.cadre
+  const zones = el('div', { 'data-zones': '' }, { position: 'absolute', inset: '0', pointerEvents: 'none' })
+  const barre = el('div', { 'data-camera': '' }, { display: 'flex', gap: '4px', justifyContent: 'flex-end', margin: '4px auto 0', width: '100%' })
+  const etiquette = el('div', { 'data-etiquette': '', hidden: '' }, { position: 'absolute', zIndex: '6', background: '#fff', color: '#111', padding: '2px 6px', whiteSpace: 'nowrap', pointerEvents: 'none' })
+  const pointe = el('i', { 'data-pointe': '' }, { position: 'absolute', left: '8px', bottom: '-4px', width: '0', height: '0', borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid #fff' })
+  etiquette.append(document.createElement('span'), pointe)
+  T.calque.append(zones, etiquette)
+  T.racine.append(barre) // la barre vit SOUS la scène : aucun bouton ne recouvre le centre d'une zone (CE-11)
+  for (const [action, texte, nom] of [['zoom-avant', '+', 'Zoom avant'], ['zoom-arriere', '−', 'Zoom arrière'], ['vue-ensemble', '⊞', 'Vue d’ensemble']]) {
+    const b = el('button', { type: 'button', 'data-action': action, 'aria-label': nom }, { width: '32px', height: '32px', background: 'rgba(10,12,17,.8)', color: '#fff', border: '1px solid #8a8f98', cursor: 'pointer', font: 'inherit' })
+    b.textContent = texte
+    barre.append(b)
+  }
+  const B = () => ({ x: [-T.theme.grille.largeur / 4, T.theme.grille.largeur * 1.25], y: [-T.theme.grille.hauteur / 4, T.theme.grille.hauteur * 1.25] })
+  const borner = (v, [a, b]) => Math.min(b, Math.max(a, v))
+  const marquer = () => {
+    cadre.dataset.zoom = String(T.vue.zoom)
+    cadre.dataset.vueX = String(Math.round(T.vue.x)); cadre.dataset.vueY = String(Math.round(T.vue.y))
+    const centre = T.theme && Math.abs(T.vue.x - T.theme.grille.largeur / 2) < 1 && Math.abs(T.vue.y - T.theme.grille.hauteur / 2) < 1
+    cadre.dataset.vue = T.vue.zoom === 1 && centre ? 'ensemble' : 'zoom'
+    for (const z of zones.children) { if (T.vue.zoom === 1) z.dataset.teinte = z.dataset.teinteBase; else delete z.dataset.teinte }
+    placerZones(); T.reveiller()
+  }
+  const ensemble = () => { T.vue = { zoom: 1, x: T.theme.grille.largeur / 2, y: T.theme.grille.hauteur / 2 }; marquer() }
+  const zoomer = (dz) => {
+    if (!T.theme) return
+    T.vue.zoom = Math.min(3, Math.max(1, T.vue.zoom + dz))
+    const b = B(); T.vue.x = borner(T.vue.x, b.x); T.vue.y = borner(T.vue.y, b.y)
+    if (T.vue.zoom === 1) return ensemble()
+    marquer()
+  }
+  const deplacer = (dx, dy) => { if (!T.theme) return; const b = B(); T.vue.x = borner(T.vue.x + dx, b.x); T.vue.y = borner(T.vue.y + dy, b.y); marquer() }
+  T.zoomer = zoomer; T.ensemble = ensemble; T.deplacer = deplacer
+
+  // ── Les zones : une par emplacement, d'après la caméra ────────────────────────────────────────────────────────────────────
+  const boite = (f) => {
+    if (f.type !== 'polygone') return { x: f.x, y: f.y, l: f.l, h: f.h }
+    const xs = f.points.map((p) => p[0]), ys = f.points.map((p) => p[1])
+    return { x: Math.min(...xs), y: Math.min(...ys), l: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) }
+  }
+  function construireZones() {
+    zones.replaceChildren()
+    for (const e of T.theme.emplacements) {
+      const z = el('div', { 'data-zone-salle': e.cle, role: 'button', tabindex: '0', 'aria-label': e.plaque.texte }, { position: 'absolute', pointerEvents: 'auto', cursor: 'pointer', boxSizing: 'border-box' })
+      z.dataset.teinteBase = e.teinte; z.dataset.teinte = e.teinte
+      zones.append(z)
+    }
+    placerZones()
+  }
+  function placerZones() {
+    if (!T.theme) return
+    const s = T.fenetre().s / T.dpr
+    for (const z of zones.children) {
+      const e = T.theme.emplacements.find((x) => x.cle === z.dataset.zoneSalle)
+      const b = boite(e.forme), p = T.css(b.x, b.y)
+      Object.assign(z.style, { left: `${p.x}px`, top: `${p.y}px`, width: `${b.l * s}px`, height: `${b.h * s}px`, background: z.dataset.teinte ? `${e.teinte}55` : 'transparent' })
+      z.style.clipPath = e.forme.type === 'polygone' ? `polygon(${e.forme.points.map(([x, y]) => `${(((x - b.x) / b.l) * 100).toFixed(2)}% ${(((y - b.y) / b.h) * 100).toFixed(2)}%`).join(', ')})` : ''
+    }
+    selection()
+  }
+  const salleChoisie = () => new URLSearchParams(window.location.search).get('salle')
+  function selection() {
+    const c = salleChoisie()
+    for (const z of zones.children) {
+      const oui = z.dataset.zoneSalle === c
+      z.dataset.selectionnee = oui ? 'oui' : 'non'
+      z.style.outline = oui ? '2px solid #ffffff' : 'none'; z.style.outlineOffset = oui ? '-2px' : '0'
+    }
+  }
+  T.crochets.theme.push(() => { construireZones(); ensemble() })
+  T.crochets.taille.push(placerZones)
+  if (!history.__temoinPatch) {
+    history.__temoinPatch = true
+    for (const m of ['replaceState', 'pushState']) { const o = history[m]; history[m] = function (...a) { const r = o.apply(this, a); window.dispatchEvent(new Event('station:url')); return r } }
+  }
+  T.sur(window, 'station:url', selection); T.sur(window, 'popstate', selection)
+
+  // ── Les gestes ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  barre.addEventListener('click', (ev) => {
+    const a = ev.target.closest('[data-action]')?.dataset.action
+    if (a === 'zoom-avant') zoomer(1); else if (a === 'zoom-arriere') zoomer(-1); else if (a === 'vue-ensemble') ensemble()
+  })
+  T.scene.addEventListener('wheel', (ev) => { ev.preventDefault(); zoomer(ev.deltaY < 0 ? 1 : -1) }, { passive: false })
+  let glisse = null
+  T.scene.addEventListener('pointerdown', (ev) => { if (ev.target.closest('[data-camera]')) return; glisse = { x: ev.clientX, y: ev.clientY, aBouge: false } })
+  T.sur(window, 'pointermove', (ev) => {
+    if (!glisse || !T.theme) return
+    const dx = ev.clientX - glisse.x, dy = ev.clientY - glisse.y
+    if (!glisse.aBouge && Math.hypot(dx, dy) < 4) return
+    glisse.aBouge = true; glisse.x = ev.clientX; glisse.y = ev.clientY
+    const s = T.fenetre().s / T.dpr
+    deplacer(-dx / s, -dy / s)
+  })
+  T.sur(window, 'pointerup', () => { if (glisse) { T.dernierGlisse = glisse.aBouge; setTimeout(() => { T.dernierGlisse = false }, 0) } glisse = null })
+  zones.addEventListener('click', (ev) => {
+    const z = ev.target.closest('[data-zone-salle]')
+    if (z && !T.dernierGlisse) window.__stationOuvrirSalle?.(z.dataset.zoneSalle)
+  })
+  zones.addEventListener('keydown', (ev) => {
+    const z = ev.target.closest('[data-zone-salle]')
+    if (z && ev.key === 'Enter') window.__stationOuvrirSalle?.(z.dataset.zoneSalle)
+  })
+  zones.addEventListener('pointerover', (ev) => {
+    const z = ev.target.closest('[data-zone-salle]')
+    for (const x of zones.children) x.dataset.survol = x === z ? 'oui' : 'non'
+    if (!z) return
+    const e = T.theme.emplacements.find((q) => q.cle === z.dataset.zoneSalle)
+    etiquette.firstChild.textContent = T.props?.reglages?.reglages?.salles?.[e.cle]?.plaque ?? e.plaque.texte
+    etiquette.hidden = false
+    etiquette.style.left = `${z.offsetLeft}px`; etiquette.style.top = `${Math.max(0, z.offsetTop - 22)}px`
+  })
+  zones.addEventListener('pointerout', (ev) => { if (!ev.relatedTarget?.closest?.('[data-zone-salle]')) { etiquette.hidden = true; for (const x of zones.children) x.dataset.survol = 'non' } })
+  T.sur(window, 'keydown', (ev) => {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target?.tagName || '') || ev.ctrlKey || ev.metaKey) return
+    const fermer = () => { if (salleChoisie()) { const u = new URL(window.location.href); u.searchParams.delete('salle'); history.replaceState(null, '', u) } }
+    const f = { '+': () => zoomer(1), '=': () => zoomer(1), '-': () => zoomer(-1), ArrowLeft: () => deplacer(-16, 0), ArrowRight: () => deplacer(16, 0), ArrowUp: () => deplacer(0, -16), ArrowDown: () => deplacer(0, 16), Escape: fermer }[ev.key]
+    if (f) { ev.preventDefault(); f() }
+  })
+}

@@ -1,0 +1,77 @@
+// public/temoin-e/calque.js — le CALQUE HTML du témoin du lot e (fiche 026-172) : les plaques et les noms en police pixel, les textes
+// venus des agents et des réglages posés en TEXTE (textContent, jamais du HTML), le miroir complet, l'info-bulle d'un personnage (nom, rôle,
+// modèle) au survol et au focus. Les accents et « 0 € » passent : c'est du texte du navigateur, plus une police 3 × 5.
+import { el } from './coeur.js'
+
+const MOTIFS = { porte: 'à la porte', tache: 'au travail', reunion: 'en réunion', pause: 'en pause', panne: 'en panne' }
+
+export function monterCalque(T) {
+  const style = document.createElement('style')
+  style.textContent = '[data-calque] [data-plaque],[data-calque] [data-nom],[data-calque] [data-bulle],[data-calque] [data-zz],[data-calque] [data-plus-un],[data-calque] [data-infobulle]{font-family:var(--mc-police-pixel),monospace;font-size:12px;line-height:14px}'
+  T.calque.append(style)
+  const plaques = el('div', { 'data-plaques': '' }, { position: 'absolute', inset: '0', pointerEvents: 'none' })
+  const noms = el('div', { 'data-noms': '' }, { position: 'absolute', inset: '0', pointerEvents: 'none' })
+  const info = el('div', { 'data-infobulle': '', hidden: '', role: 'tooltip' }, { position: 'absolute', zIndex: '7', background: '#0a0c11', color: '#e8ecf5', border: '1px solid #6c8cff', padding: '2px 6px', pointerEvents: 'none', whiteSpace: 'nowrap' })
+  T.calque.append(plaques, noms, info)
+  const plaqueDe = (cle) => T.props?.reglages?.reglages?.salles?.[cle]?.plaque ?? T.theme.emplacements.find((e) => e.cle === cle)?.plaque.texte ?? cle
+  const nomDe = (a) => T.props?.reglages?.reglages?.equipage?.[a.nom]?.nom ?? a.libelle ?? a.nom
+
+  function majPlaques() {
+    plaques.replaceChildren(...T.theme.emplacements.map((e) => {
+      const n = el('span', { 'data-plaque': e.cle }, { position: 'absolute', whiteSpace: 'nowrap', color: T.theme.palette?.['--mc-plaque'] || '#8fa0b0' })
+      n.textContent = plaqueDe(e.cle)
+      return n
+    }))
+  }
+  function majActeursTextes() {
+    for (const a of T.acteurs.values()) {
+      const nom = nomDe(a)
+      a.li.textContent = `${nom}, ${plaqueDe(a.salle)}, ${MOTIFS[a.motif] ?? a.motif}`
+      let n = a.elNom
+      if (!n) { n = a.elNom = noms.appendChild(el('span', { 'data-nom': a.nom }, { position: 'absolute', whiteSpace: 'nowrap', color: '#e8ecf5' })) }
+      n.textContent = nom
+      if (!a.elFocus) {
+        const b = a.elFocus = el('button', { type: 'button', 'data-perso': a.nom }, { position: 'absolute', width: '14px', height: '14px', opacity: '0', pointerEvents: 'none', padding: '0', border: '0' })
+        b.addEventListener('focus', () => montrer(a)); b.addEventListener('blur', () => { info.hidden = true })
+        noms.append(b)
+      }
+    }
+    for (const n of [...noms.querySelectorAll('[data-nom]')]) if (!T.acteurs.has(n.dataset.nom)) { n.remove(); noms.querySelector(`[data-perso="${CSS.escape(n.dataset.nom)}"]`)?.remove() }
+  }
+  function montrer(a) {
+    info.replaceChildren()
+    for (const [attr, texte] of [['data-i-nom', nomDe(a)], ['data-i-role', a.role], ['data-i-modele', a.modele || 'sans IA']]) {
+      const s = el('div', { [attr]: '' }); s.textContent = texte; info.append(s)
+    }
+    const p = T.css(a.pos.x, a.pos.y)
+    info.style.left = `${p.x + 8}px`; info.style.top = `${p.y + 8}px`
+    info.hidden = false
+  }
+  T.crochets.theme.push(() => majPlaques())
+  T.crochets.props.push(() => { if (T.theme) { majPlaques(); majActeursTextes() } })
+  T.crochets.placer.push(() => {
+    for (const e of T.theme.emplacements) {
+      const n = plaques.querySelector(`[data-plaque="${CSS.escape(e.cle)}"]`)
+      if (n) { const p = T.css(e.plaque.x, e.plaque.y); Object.assign(n.style, { left: `${p.x}px`, top: `${p.y}px` }) }
+    }
+    for (const a of T.acteurs.values()) {
+      if (!a.pos) continue
+      const p = T.css(a.pos.x, a.pos.y)
+      if (a.elNom) Object.assign(a.elNom.style, { left: `${p.x - 12}px`, top: `${p.y + 6}px` })
+      if (a.elFocus) Object.assign(a.elFocus.style, { left: `${p.x - 7}px`, top: `${p.y - 7}px` })
+    }
+  })
+  // L'info-bulle au survol : le personnage le plus proche du pointeur (10 px au plus).
+  T.scene.addEventListener('pointermove', (ev) => {
+    if (!T.theme) return
+    const r = T.scene.getBoundingClientRect()
+    let trouve = null
+    for (const a of T.acteurs.values()) {
+      if (!a.pos) continue
+      const p = T.css(a.pos.x, a.pos.y)
+      if (Math.hypot(ev.clientX - r.left - p.x, ev.clientY - r.top - p.y) <= 10) trouve = a
+    }
+    if (trouve) montrer(trouve); else if (!noms.contains(document.activeElement)) info.hidden = true
+  })
+  T.scene.addEventListener('pointerleave', () => { if (!noms.contains(document.activeElement)) info.hidden = true })
+}
