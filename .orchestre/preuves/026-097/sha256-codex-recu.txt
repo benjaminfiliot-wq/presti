@@ -1,0 +1,6 @@
+20eac17be661bf1be7b62cf2523cbbe4580423171f9de1da3b7cb3c6870462f3 *app/api/usine/atelier/depot/route.ts
+659b05e1c14788e09797da03bba574104b2e635382c70c80829963a33e9ee997 *app/api/usine/atelier/lien/route.ts
+dd916da88dbb3aa6ac1e8deafa77a5c8f3af4e92f1f473e2e87c12cf02e3656b *app/api/usine/atelier/maquette/route.ts
+f6d26b4e6fc1d54d7df26fd710b5e50d98820c91d80988a3c590f3d90f18e37a *app/api/usine/atelier/travail/route.ts
+992f735f0cf4e5a9537296c07bfa2c2c5e9e3f590002077845602df035cb8bb9 *lib/agents/acquisition/magasinUsine.ts
+3ab199a24d480823770fce356cc7a9717c727a3a7ebde9d6baa0120c873c1bcc *scripts/agents/atelier-maquettes.mjs
