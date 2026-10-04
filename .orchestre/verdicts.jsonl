@@ -1031,3 +1031,6 @@
 {"id":"026-221","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:13:17Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-244","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:13:25Z","duree_s":51,"agent":"claude-code","executant":"claude-code","lignes":2736,"dossier":"fait"}
 {"id":"026-246","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:18:22Z","duree_s":43,"agent":"claude-code","executant":"claude-code","lignes":2506,"dossier":"fait","machine":"usine"}
+{"id":"026-103","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T16:24:14Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
+{"id":"026-244","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:24:33Z","duree_s":31,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-092","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:24:36Z","duree_s":390,"agent":"claude-code","executant":"codex","lignes":532,"dossier":"fait"}

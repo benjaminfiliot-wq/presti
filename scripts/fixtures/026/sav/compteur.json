@@ -1,0 +1,10 @@
+{
+ "avertissement": "Compteur D18 du SAV : approbations consécutives SANS RETOUCHE, par type de question FAQ. Trois états du banc (026-244) : l'automatique ne s'ouvre qu'à 20, jamais avant, et se referme à la première retouche.",
+ "seuil": 20,
+ "types": ["delai_mise_en_ligne", "nom_de_domaine", "facture", "poste", "abonnement"],
+ "etats": {
+  "zero": { "delai_mise_en_ligne": 0, "nom_de_domaine": 0, "facture": 0, "poste": 0, "abonnement": 0 },
+  "dix_neuf": { "delai_mise_en_ligne": 19, "nom_de_domaine": 19, "facture": 19, "poste": 19, "abonnement": 19 },
+  "vingt": { "delai_mise_en_ligne": 20, "nom_de_domaine": 20, "facture": 20, "poste": 20, "abonnement": 20 }
+ }
+}
