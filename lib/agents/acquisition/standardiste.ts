@@ -22,6 +22,7 @@ import type {
 } from './contrat'
 import { FAQ } from './faq'
 import { normaliserCommune, normaliserDemandeEntrante, normaliserEmail, normaliserMetier, normaliserSite } from './entrant'
+import { adresseExpediteur, clesSupplementaires } from './expediteur'
 
 const JOUR_MS = 86_400_000
 const MINUTE_MS = 60_000
@@ -67,12 +68,15 @@ export function assainir(texte: unknown): string {
     .slice(0, TEXTE_MAX)
 }
 
-const RE_STOP_DEBUT = /^\s*stop\b/i
-const RE_NON_SEUL = /^\s*non(\s+merci)?\s*[.!…]*\s*$/i
-const RE_STOP_PARTOUT = /pas\s+int[ée]ress|d[ée]sinscri|ne\s+plus\s+recevoir|non\s+merci|ne\s+m['’]?[ée]crivez\s+plus|arr[êe]tez|laissez[- ]moi\s+tranquille/i
+// Garde-stop (30/09) : le texte est replié (sans accents, sans casse, apostrophes droites) avant d'être testé, si bien que
+// « ARRÊTEZ », « arretez », « Je m’oppose » et « je m'oppose » sont un seul et même refus.
+const replier = (texte: unknown) => plier(texteDe(texte)).replace(/[’`´]/g, "'")
+const RE_STOP_DEBUT = /^[\s"'«»*_-]*stop\b/
+const RE_NON_SEUL = /^\s*non(\s+merci)?\s*[.!…]*\s*$/
+const RE_STOP_PARTOUT = /pas\s+interess|desinscri|ne\s+plus\s+recevoir|non\s+merci|ne\s+m'?ecrivez\s+plus|arretez|laissez[- ]moi\s+tranquille|je\s+m'?oppose|ne\s+me\s+contactez\s+plus/
 /** L'opposition définitive : « stop », « non » seul, ou l'un des refus nets. « Non, pas avant janvier » n'en est pas un. */
 export function estStop(texte: unknown): boolean {
-  const t = texteDe(texte)
+  const t = replier(texte)
   return RE_STOP_DEBUT.test(t) || RE_NON_SEUL.test(t) || RE_STOP_PARTOUT.test(t)
 }
 
@@ -138,13 +142,15 @@ export interface ClassementCode extends Classement {
  */
 export function classerEnCode(reponse: Partial<ReponseProspect> & { texte?: unknown }): ClassementCode | null {
   const horsFil = reponse.envoi_id === null && reponse.conversation_id === null && reponse.prospect_id === null
-  if (horsFil) return { classe: 'hors_fil', source: 'regle', stop: false, question: false }
   const texte = texteDe(reponse.texte)
   const stop = estStop(texte)
   const rgpd = estDemandeRgpd(texte)
   const question = stop && texte.includes('?')
+  // L'opposition et la demande sur les données passent AVANT le rattachement à un fil et avant toute réponse automatique : un
+  // STOP reçu en nouvel e-mail est un STOP (garde-stop, décision de Benj du 30/09).
   if (rgpd) return { classe: 'rgpd', source: 'regle', stop, question }
   if (stop) return { classe: 'stop', source: 'regle', stop, question }
+  if (horsFil) return { classe: 'hors_fil', source: 'regle', stop: false, question: false }
   if (reponse.auto === true) return { classe: 'reponse_auto', source: 'regle', stop: false, question: false }
   if (reponse.accuse_site === true) return { classe: 'accuse_site', source: 'regle', stop: false, question: false }
   return null
@@ -324,9 +330,21 @@ async function lienEnvoye(magasin: Magasin, p: Rattache): Promise<boolean> {
   } catch { return false }
 }
 
+/** L'adresse de l'expéditeur, lue en code dans le champ `expediteur` de la réponse reçue (l'en-tête From), sinon null. */
+const expediteurDe = (reponse: Partial<ReponseProspect>): string | null => adresseExpediteur((reponse as { expediteur?: unknown }).expediteur)
+
 async function opposerDefinitif(magasin: Magasin, reponse: Partial<ReponseProspect> & { id: string }, motif: string, source: string): Promise<Rattache | null> {
   const p = await lireRattache(magasin, reponse)
   const cles = await clesDe(magasin, reponse, p)
+  // Hors d'un fil, l'adresse de l'expéditeur est la seule clé : elle passe avant l'adresse du prospect rattaché, qui reste en
+  // opposition à part.
+  const expediteur = expediteurDe(reponse)
+  const supplementaires: ClesOpposition[] = []
+  if (expediteur) {
+    if (cles.email && cles.email !== expediteur) supplementaires.push({ email: cles.email })
+    cles.email = expediteur
+    supplementaires.push(...clesSupplementaires(expediteur).filter((c) => !(c.domaine && c.domaine === cles.domaine)))
+  }
   if (sansCle(cles)) {
     // Aucune clé à mettre en opposition : rien ne part, mais Benj le voit.
     await carte(magasin, { id: reponse.id, prospect_id: reponse.prospect_id }, 'verifier_demande', 'Un refus a été lu sans clé à mettre en opposition : à vérifier.', extraitCarte(reponse))
@@ -334,6 +352,7 @@ async function opposerDefinitif(magasin: Magasin, reponse: Partial<ReponseProspe
   }
   if (p && p.etape && (TRANSITIONS[p.etape] ?? []).includes('oppose')) await magasin.mettreAJour(p.id, p.etape, 'oppose', {})
   await magasin.opposer(cles, motif, source)
+  for (const c of supplementaires) await magasin.opposer(c, motif, source)
   return p
 }
 

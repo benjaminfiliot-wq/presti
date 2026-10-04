@@ -92,7 +92,7 @@ export function creerSortie(nom, ids, entete) {
   const ligne = (t) => String(t ?? '').replace(/\s*\r?\n\s*/g, ' · ').trim()
   const noter = (id, ok, detail) => {
     if (!ids.includes(id)) ids.push(id)
-    if (res.has(id)) { const r = res.get(id); if (r.ok && !ok) r.ok = false; console.log(`${ok ? '✅' : '❌'} ${id} ${ligne(detail)} (complément)`); return }
+    if (res.has(id)) { const r = res.get(id); if (!ok) { r.ok = false; r.detail = ligne(detail) || 'en échec' }; console.log(`${ok ? '✅' : '❌'} ${id} ${ligne(detail)} (complément)`); return }
     res.set(id, { ok, detail: ligne(detail) })
     console.log(`${ok ? '✅' : '❌'} ${id} ${ligne(detail) || (ok ? 'conforme' : 'en échec')}`)
   }
@@ -105,7 +105,11 @@ export function creerSortie(nom, ids, entete) {
     finir() {
       for (const id of ids) if (!res.has(id)) noter(id, false, 'non évalué')
       const rouges = ids.filter((id) => !res.get(id).ok)
-      console.log(rouges.length ? `${nom} : FAIL — ${rouges.join(', ')}` : `${nom} : PASS`)
+      // 001 relit UNE ligne machine par critère réellement rouge, jamais un simple complément ni une citation.
+      for (const id of rouges) console.log(`FAIL ${id} — ${res.get(id).detail || 'en échec'}`)
+      // Les options figurent dans l'en-tête, le bilan machine porte le nom du juge seul.
+      const nomMachine = String(nom).trim().split(/\s+/)[0]
+      console.log(rouges.length ? `${nomMachine} : FAIL — ${rouges.join(', ')}` : `${nomMachine} : PASS`)
       return rouges.length ? 1 : 0
     },
   }

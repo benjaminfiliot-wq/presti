@@ -182,10 +182,14 @@ async function jugementNormal(s) {
       if (!ok1) e.push('un premier appel sous le plafond est refusé')
       // Le plafond horaire de meta_ads_archive est atteint juste avant minuit, puis l'heure change (23:59 → 00:00, Paris).
       await remplirJusquAuPlafond(M, `meta_ads_archive:${'2026-10-14T23'}`, K.META_APPELS_PAR_HEURE)
+      // Le refus du magasin ne doit pas masquer une tentative d'écriture du module.
+      const tentatives = [], reserver = M.jaugeConsommer.bind(M)
+      M.jaugeConsommer = async (...args) => { tentatives.push(args); return reserver(...args) }
       const n0 = M.ecritures.length
       const auPlafond = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T21:59:30.000Z'))
       if (auPlafond) e.push('un appel au plafond horaire est accepté')
       if (M.ecritures.length !== n0) e.push('un appel refusé a quand même écrit dans le magasin')
+      if (tentatives.length) e.push('au plafond connu, le module tente quand même une consommation dans le magasin')
       const apresMinuit = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T22:00:30.000Z'))
       if (!apresMinuit) e.push('une nouvelle heure (après minuit, Paris) est encore refusée : la période n\'a pas changé')
       // Heure d'hiver (UTC+1) : 22:59:30Z = 23:59:30 Paris, même clé d'heure T23 que l'été à 21:59:30Z.

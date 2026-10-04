@@ -250,7 +250,9 @@ async function observer(mod, routeMod, RAC2) {
     let erreurConsentement = null
     try { erreurConsentement = await lireErreur('META-PERSONNE-0099') } catch (e) { erreurConsentement = { exception: premiereLigne(e) } }
     let appelsProfil = 0
-    const lireProfil = async () => { appelsProfil++; return PROFIL_OK }
+    // Le lecteur peut rendre un profil enrichi : exercer la frontière réelle de
+    // stockage, et non seulement trois champs déjà conformes à la liste blanche.
+    const lireProfil = async () => { appelsProfil++; return { ...PROFIL_OK, jeton_page: 'JETON-PROFIL-TEMOIN', biographie: 'BIOGRAPHIE-TEMOIN', donnees_privees: { telephone: 'NUMERO-TEMOIN' } } }
     const M9 = creerMagasin({ horloge: creerHorloge(T0) })
     await mod.traiterEvenements(mod.normaliserEntrees(CORPS.message_recu.objet), { magasin: M9, lireProfil, maintenant: T0 })
     const conversation = M9.etat().conversations.find((x) => x.meta_id === 'META-PERSONNE-0003')
