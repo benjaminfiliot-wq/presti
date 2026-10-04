@@ -1,0 +1,146 @@
+### sabotage 1 (VG-12, partie pause) — code 1
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties pause
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+SAUTE VG-3 — non jugé par les parties demandées
+SAUTE VG-4 — non jugé par les parties demandées
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+FAIL VG-12 — CIBLES_INTERDITES de releve.ts : ["pont","pont_telegram","systeme","a0","usine","vigile"] (exactement chef, pont, pont_telegram, systeme, a0, usine, vigile) ; pause_cibles_omises : pauses : 1 élément(s) au lieu de 0 ([{"agent":"chef","seuil":"boucle_erreurs","mesure":40}]) ; pauses_ecartees.cible_interdite : 1 au lieu de 2 ; pause_toutes_cibles : pauses : 1 élément(s) au lieu de 0 ([{"agent":"chef","seuil":"boucle_erreurs","mesure":30}]) ; pauses_ecartees.cible_interdite : 6 au lieu de 7 ; vigile.json sans chef ni pont : 1 POST pauses (la liste en dur l'emporte : aucune) ; les sept cibles interdites à 30 échecs, réglage vidé : 1 POST pauses (chef) : aucune attendue
+PASS VG-13 — aucun { pause: false }, aucune route /api/controle, aucun interrupteur, aucune route hors etat, vigile, battement, evenements, pauses ; route des pauses en 404 → une alerte, aucune autre voie ; source sans pause: false, agent_reprise, ops_agent_pause, ops_interrupteur_poser, /api/controle/
+PASS VG-14 — POST pauses { agent, motif } suivi d'un vigile_pause agent:facteur propre ; 403 → pas de vigile_pause, une alerte ; relancé le même jour → aucune pause de plus ; la ligne de journal (secret) ne sort jamais
+vigile-qa : FAIL — VG-12
+
+### rejoué après restauration — code 0
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties pause
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+SAUTE VG-3 — non jugé par les parties demandées
+SAUTE VG-4 — non jugé par les parties demandées
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+PASS VG-12 — 20 jeux purs (25 échecs → une pause, 19 → aucune, chef et pont écartés même si le réglage les omet, les sept cibles écartées avec un réglage vidé, déjà en pause, inconnu, deux ensemble → une, non mesuré, fonction absente, défaut de qualité seul, pause générale, secret exposé ; dont 7 avec le vigile.json LIVRÉ aux bornes : 20 échecs → pause, 19 échecs, 1 € et 0 secret → aucune, 1,5 € → pause, 1 envoi → pause, 1 secret → pause, deux ensemble → une, chef et pont → aucune) ; sur le faux bus : motif « vigile : boucle_erreurs (25) », une seule pause à deux, aucune sur chef ni sur les sept cibles (réglage vidé)
+PASS VG-13 — aucun { pause: false }, aucune route /api/controle, aucun interrupteur, aucune route hors etat, vigile, battement, evenements, pauses ; route des pauses en 404 → une alerte, aucune autre voie ; source sans pause: false, agent_reprise, ops_agent_pause, ops_interrupteur_poser, /api/controle/
+PASS VG-14 — POST pauses { agent, motif } suivi d'un vigile_pause agent:facteur propre ; 403 → pas de vigile_pause, une alerte ; relancé le même jour → aucune pause de plus ; la ligne de journal (secret) ne sort jamais
+vigile-qa : PASS
+
+
+### sabotage 2 (VG-6, partie usine) — code 1
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties usine
+SAUTE VG-1 — non jugé par les parties demandées
+PASS VG-2 — conforme
+SAUTE VG-3 — non jugé par les parties demandées
+SAUTE VG-4 — non jugé par les parties demandées
+PASS VG-5 — faux bus : GET etat, GET vigile, POST battement, un vigile_releve, un vigile_alerte par alerte rouge, rien d'autre ; relevé écrit = attendu « chaine » ; relancé le même jour : aucun événement ; 423 : une requête, code 0 ; 401 et 500 : aucun POST, code 3 ; pause générale dite et relevé posté ; 30 jours gardés ; préalables en code 2 sans requête (jeton, horloge sur l'usine, bases, réglages, ligne de commande) ; certificat J-5 rouge, J-10 orange, J-60 vert, refusé rouge
+FAIL VG-6 — faux-npm.mjs : le jeton est dans l'environnement de l'enfant ; environnement de npm : PATH, HOME, LANG, PRESTI_JETON_VIGILE (PATH, HOME, LANG seulement) ; le faux npm voit PRESTI_JETON_VIGILE ; environnement vu par le faux npm : PRESTI_JETON_VIGILE en trop ; un faux binaire voit PRESTI_JETON_VIGILE
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : FAIL — VG-6
+
+### rejoué après restauration — code 0
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties usine
+SAUTE VG-1 — non jugé par les parties demandées
+PASS VG-2 — conforme
+SAUTE VG-3 — non jugé par les parties demandées
+SAUTE VG-4 — non jugé par les parties demandées
+PASS VG-5 — faux bus : GET etat, GET vigile, POST battement, un vigile_releve, un vigile_alerte par alerte rouge, rien d'autre ; relevé écrit = attendu « chaine » ; relancé le même jour : aucun événement ; 423 : une requête, code 0 ; 401 et 500 : aucun POST, code 3 ; pause générale dite et relevé posté ; 30 jours gardés ; préalables en code 2 sans requête (jeton, horloge sur l'usine, bases, réglages, ligne de commande) ; certificat J-5 rouge, J-10 orange, J-60 vert, refusé rouge
+PASS VG-6 — npm : argv exact, dossier --depot, sans shell, environnement PATH/HOME/LANG ; systemctl et coffre : argv exacts, sans sudo ; npm qui dort tué au délai, dependances non mesurée, le reste fait ; jeton sentinelle nulle part ; écritures sous --travail seulement (instantanés et espion fs, chaque passage) ; connexions vers l'hôte de la base seulement (espion de net.Socket : fetch, http, https, net, tls) ; aucun mot interdit ni import de node:http, https, http2, dgram, ni socket nette dans lib/vigile et scripts/vigile
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : PASS
+
+
+### sabotage 3 (VG-3, partie serveur) — code 1
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties serveur
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+FAIL VG-3 — a0 : 200, 403 attendu (« {"le":"2026-10-01T04:50:00.000Z","bannissements":{"etat":"mesure","poses_24h":5… ») ; jeton de a0 : code (hors_perimetre attendu) ; jeton de a0 : lecture faite avant le refus (bans, erreurs, crons, vigile_conseiller, vigile_agents)
+PASS VG-4 — sources.ts importe les lectures de @/lib/controle/lectures et de @/lib/pilotage/salles/securite ; aucun .from( ni app_errors, ip_bans, ip_abus, passages_cron ; seuls rpc(vigile_conseiller) et rpc(vigile_agents)
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : FAIL — VG-3
+
+### rejoué après restauration — code 0
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties serveur
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+PASS VG-3 — drapeau baissé 404 sans SQL ; sans jeton 401 ; a0 403 hors_perimetre sans lecture ; vigile en pause 423 ; vigile 200 = attendu-serveur.json ; conseiller absent et bans en panne → leur seule section non mesurée ; seul GET ; AR-8
+PASS VG-4 — sources.ts importe les lectures de @/lib/controle/lectures et de @/lib/pilotage/salles/securite ; aucun .from( ni app_errors, ip_bans, ip_abus, passages_cron ; seuls rpc(vigile_conseiller) et rpc(vigile_agents)
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : PASS
+
+
+### sabotage 4 (VG-4, partie serveur) — code 1
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties serveur
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+FAIL VG-3 — vigile : le corps ≠ attendu-serveur.json : .bannissements.poses_24h manquante ; .bannissements.auto_24h manquante ; .bannissements.manuels_24h manquante ; .bannissements.actifs manquante ; vigile : appels SQL table ip_bans, vigile_agents, vigile_conseiller (vigile_conseiller et vigile_agents seulement) ; vigile : sources lues erreurs, crons (bans, crons, erreurs une fois chacune) ; vigile_conseiller absente : .bannissements.poses_24h manquante ; .bannissements.auto_24h manquante ; .bannissements.manuels_24h manquante
+FAIL VG-4 — lib/vigile/sources.ts : .from( (une requête recopiée au lieu de la lecture partagée) ; lib/vigile/sources.ts nomme ip_bans ; la route lit une table directement (ip_bans)
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : FAIL — VG-3, VG-4
+
+### rejoué après restauration — code 0
+vigile-qa — C:/Users/benja/Documents/presti/.orchestre/travail/contre-verif-026-249/prod · parties serveur
+SAUTE VG-1 — non jugé par les parties demandées
+SAUTE VG-2 — non jugé par les parties demandées
+PASS VG-3 — drapeau baissé 404 sans SQL ; sans jeton 401 ; a0 403 hors_perimetre sans lecture ; vigile en pause 423 ; vigile 200 = attendu-serveur.json ; conseiller absent et bans en panne → leur seule section non mesurée ; seul GET ; AR-8
+PASS VG-4 — sources.ts importe les lectures de @/lib/controle/lectures et de @/lib/pilotage/salles/securite ; aucun .from( ni app_errors, ip_bans, ip_abus, passages_cron ; seuls rpc(vigile_conseiller) et rpc(vigile_agents)
+SAUTE VG-5 — non jugé par les parties demandées
+SAUTE VG-6 — non jugé par les parties demandées
+SAUTE VG-7 — non jugé par les parties demandées
+SAUTE VG-8 — non jugé par les parties demandées
+SAUTE VG-9 — non jugé par les parties demandées
+SAUTE VG-10 — non jugé par les parties demandées
+SAUTE VG-11 — jugé seulement sur l'arbre réel sans --partie (typecheck, verrou, git status)
+SAUTE VG-12 — non jugé par les parties demandées
+SAUTE VG-13 — non jugé par les parties demandées
+SAUTE VG-14 — non jugé par les parties demandées
+vigile-qa : PASS

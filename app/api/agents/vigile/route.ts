@@ -1,0 +1,19 @@
+// app/api/agents/vigile/route.ts — GET seul : les agrégats de sécurité du Vigile, sans aucune adresse (fiche 026-249,
+// contrat de 026-248). Réservée à l'agent vigile ; tout autre agent reçoit 403 sans qu'aucune source ne soit lue.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, estRefusAgent, reponseRefusAgent } from '@/lib/agents/garde'
+import { releveServeur } from '@/lib/vigile/serveur'
+import { sourcesParDefaut } from '@/lib/vigile/sources'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+export async function GET(req: Request) {
+  if (!actif('busAgents')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const agent = await authAgent(req)
+  if (estRefusAgent(agent)) return reponseRefusAgent(agent)
+  if (agent.nom !== 'vigile') return NextResponse.json({ error: 'Hors du périmètre de cet agent.', code: 'hors_perimetre' }, { status: 403, headers: { 'cache-control': 'no-store' } })
+  const releve = await releveServeur(sourcesParDefaut, new Date())
+  return NextResponse.json(releve, { headers: { 'cache-control': 'no-store' } })
+}
