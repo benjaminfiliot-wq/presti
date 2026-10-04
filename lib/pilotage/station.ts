@@ -12,7 +12,7 @@ import { etatExperience } from './experience'
 import { envoisDesAgents } from './envois'
 import { bilan, entonnoir } from './entonnoir'
 import { validerSnapshot, resumeCode } from './code'
-
+import * as lecteurs from './salles/index'
 
 export const VUES = ['direct', 'fil', 'salle', 'agent'] as const
 export type Vue = typeof VUES[number]
@@ -86,9 +86,21 @@ export type Base = {
   from: (table: string) => any
   storage: { from: (bucket: string) => { createSignedUrl: (chemin: string, secondes: number) => PromiseLike<{ data: { signedUrl: string } | null; error: unknown }> } }
 }
+/** Les lectures du Poste dont la station a aussi besoin (lib/controle/lectures, 026-174) : la route les passe, `station.ts` n'importe jamais la base. */
+export type Lectures = {
+  santeService: () => Promise<Sourcee<{ etat: string; detail?: string }>>
+  cronsDuService: () => Promise<Sourcee<{ nom: string; dernier: string | null; reussi: boolean | null; enRetard: boolean }[]>>
+  audience: (periode: 'jour' | 'historique') => Promise<{ direct: Sourcee<Record<string, unknown>>; inscriptions: Sourcee<number>; saturee: boolean | null }>
+  bans: () => Promise<{ bans: { actif: boolean }[]; abus24h: unknown[] } | null>
+  clients: () => Promise<{ indisponible: string } | { lignes: { suppression_demandee_le: string | null }[]; resume: { total: number; payants: number } }>
+  cerveaux: () => unknown[] | Promise<unknown[]>
+  ticketsOuverts: () => Promise<{ nombre: number }>
+}
 export type Deps = {
   db: Base
   ventesSites: (l: { etat: string; prix_cents: number | null }[]) => { payee: number; generee: number; validee: number; en_ligne: number; retiree: number; encaisseCents: number }
+  lectures: Lectures
+  mrr: () => Promise<Sourcee<{ mrr: number }>>
   version: string | null
   maintenant?: Date
 }
@@ -98,6 +110,7 @@ export type Contexte = {
   rpc: (nom: string, args?: Record<string, unknown>) => Promise<any>
   env: <T>(cle: string, f: () => Promise<T>) => Promise<Sourcee<T>>
   depuisMinuit: string
+  debutDuMois: string
   commandement: (objet: string) => Promise<unknown>
   agents: () => Promise<any[]>
 }
@@ -124,7 +137,7 @@ function contexte(deps: Deps): Contexte {
     return memo.get(cle) as Promise<any>
   }
   const c: Contexte = {
-    deps, maintenant, rpc, env: (cle, f) => sourcer(`station:${cle}`, 'supabase', f), depuisMinuit: minuitParis(maintenant),
+    deps, maintenant, rpc, env: (cle, f) => sourcer(`station:${cle}`, 'supabase', f), depuisMinuit: minuitParis(maintenant), debutDuMois: debutDuMoisParis(maintenant),
     commandement: (objet) => lireCommandement(c, objet),
     agents: async () => lignesDe(await rpc('pilotage_agents')),
   }
@@ -214,7 +227,7 @@ async function lireDirect(c: Contexte) {
       return {
         ...b,
         version: await env('direct.barre.version', async () => (deps.version ? deps.version.slice(0, 7) : 'dev')),
-        sante: aVenir(),
+        sante: await env('direct.barre.sante', async () => lecteurs.sante(await deps.lectures.santeService(), await c.agents())),
         erreurs: await env('direct.barre.erreurs', async () => {
           const r = await deps.db.from('app_errors').select('id', { count: 'exact', head: true }).gte('created_at', new Date(maintenant.getTime() - 24 * 3_600_000).toISOString())
           if (r.error) throw new Error(`app_errors : ${r.error.message}`)
@@ -257,9 +270,9 @@ async function lireCarte(c: Contexte) {
   const { env, maintenant, rpc } = c
   const xp = premiere(await rpc('station_experience_etat'))
   const lignesE = await env('direct.carte.lignes', async () => ({
-    contenu: await env('direct.carte.lignes.contenu', async () => lignes({ contenu: null }).contenu),
+    contenu: await env('direct.carte.lignes.contenu', async () => lignes({ contenu: await lecteurs.crieur.etapesContenu(c) }).contenu),
     sites: await env('direct.carte.lignes.sites', async () => lignes({ sites: await sitesParEtat(c) }).sites),
-    packs: await env('direct.carte.lignes.packs', async () => lignes({ packs: null }).packs),
+    packs: await env('direct.carte.lignes.packs', async () => lignes({ packs: await lecteurs.studio.etapesPacks(c) }).packs),
   }))
   return {
     lignes: lignesE,
@@ -272,8 +285,8 @@ async function lireCarte(c: Contexte) {
       return { envois: palierSalle('envois', { palier: etat?.palier ?? null }), usine: palierSalle('usine', { sites_en_ligne: n }), commandement: palierSalle('commandement', { niveau }) }
     }),
     nuit: await env('direct.carte.nuit', async () => nuit(maintenant)),
-    egaliseur: aVenir(),
-    departements: aVenir(),
+    egaliseur: await lecteurs.radar.egaliseur(c),
+    departements: await env('direct.carte.departements', () => lecteurs.observatoire.lireDepartements(c)),
   }
 }
 
@@ -336,7 +349,7 @@ const PANNEAUX: Record<string, (c: Contexte) => Promise<unknown>> = {
       modeles: modeles.map((m) => ({ fournisseur: m.fournisseur, modele: m.modele, appels: m.appels ?? 0, eur: m.eur ?? 0 })),
       total_modeles_eur: total,
       abonnements: lignesDe(ach.data).filter((a) => String(a.date_facture).startsWith(prefixe)).map((a) => ({ fournisseur: a.fournisseur, libelle: a.libelle, categorie: a.categorie, ttc_eur: a.ttc_cents / 100, date_facture: a.date_facture })),
-      parNature: aVenir(),
+      parNature: await c.env('salle.tresorerie.parNature', () => lecteurs.natures.parNature(c, mois)),
     }
   },
   usine: async (c) => {
@@ -409,9 +422,11 @@ const PANNEAUX: Record<string, (c: Contexte) => Promise<unknown>> = {
 
 async function lireSalle(c: Contexte, salle: string) {
   if (salle === 'ecommerce') return { valeur: null, source: 'reservee' as never, a: c.maintenant.toISOString(), cache: false, manque: RESERVEE }
-  const lecteur = PANNEAUX[salle]
+  const lecteur = PANNEAUX[salle] ?? lecteurs.LECTEURS[salle]
   if (!lecteur) return aVenir()
   const r = await c.env(`salle.${salle}`, () => lecteur(c) as Promise<Record<string, unknown>>)
+  // ACTIVE AUJ. : le temps actif du jour de la salle, sa propre sous-partie (une panne ne vide que cette ligne).
+  if (r.valeur && typeof r.valeur === 'object') (r.valeur as Record<string, unknown>).active_auj = await c.env(`salle.${salle}.active_auj`, () => lecteurs.activiteDuJour(c, salle))
   return r
 }
 

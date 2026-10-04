@@ -6,11 +6,11 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T18:14:09Z
+# Digest — 2026-10-04T18:16:49Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 185 tâche(s) PASS, 216304 ligne(s) · faites par Claude Code : 103 tâche(s) PASS, 91457 ligne(s).
+**Mesure** — déléguées (antigravity, codex) : 186 tâche(s) PASS, 217378 ligne(s) · faites par Claude Code : 103 tâche(s) PASS, 91457 ligne(s).
 **État** — file : 33 · en cours : 8 · faites : 298 · refusées : 7
 
 ## Attention (4)
@@ -62,8 +62,8 @@
 | 026-249 | feature | file | codex | — | Écrire le Vigile, titulaire de la salle Sécurité, au contrat de 026-248 — lib/vigile/releve.ts (relevé pur, caviardé, niveaux), lib/vigile/serveur.ts et lib/vigile/sources.ts (les mêmes lectures que la salle Sécurité et le Poste, sans requête recopiée), la route GET /api/agents/vigile (agrégats sans adresse IP, réservée à l'agent vigile, derrière busAgents), scripts/vigile/releve.mjs (relevé quotidien sur l'usine des erreurs des 24 h, des avis npm audit et des fins de support, des avis du conseiller Supabase, des échéances et présences de jetons et clés, des bannissements ; résumé au gabarit ou par Codex ou Ollama local seulement ; un battement et ses événements au bus ; une pause de sécurité sur un agent par la route partagée avec Matt, seulement sur un seuil de gravité de vigile.json, jamais levée, jamais la pause générale, jamais sur Matt, Claude Code ni le pont ; rien d'autre) et les unités presti-vigile (.service et .timer de 6 h 50), jusqu'au vert de scripts/vigile-qa.mjs |
 | 026-250 | test | file | codex | — | Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
 | 026-251 | feature | file | claude-code | — | Mettre en service les quatre postes de l'organigramme du 27/09 (Comptable, SAV, Contrôleur qualité des sites, Vigile) après le « oui » de Benj geste par geste — écrire la migration 0115_postes_agents.sql (graines sav, qualite_sites et vigile par ops_agent_enregistrer, sans jeton, sans pause et sans capacité ; public.vigile_conseiller() et public.vigile_agents() SECURITY DEFINER réservées à service_role, agrégats sans donnée personnelle ; pilotage_activite_salles remplacée au 28 noms d'EQUIPAGE), ses deux jumeaux, son contrôle et l'essai à sec, puis l'appliquer soi-même ; mettre PRESTI_JETON_SAV, PRESTI_JETON_QUALITE et PRESTI_JETON_VIGILE dans la liste fermée du coffre et les groupes sav, qualite et vigile dans usine-agents.mjs ; placer sav, qualite_sites et vigile dans EQUIPAGE ; poser les jetons de vigile, qualite_sites et tresorier sans les afficher ; installer le minuteur presti-vigile — jusqu'au vert des juges de la migration, du coffre, de la station et du --reel du Vigile |
+| 026-178 | feature | fait | claude-code | PASS | 2026-10-04T18:16:47Z · 199s · 1074 l. |
 | 026-243 | feature | fait | claude-code | PASS | 2026-10-04T18:14:08Z · 18s · 1018 l. |
-| 026-178 | feature | fait | codex | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
 | 026-201 | feature | fait | codex | PASS | 2026-10-04T18:09:42Z · 51s · 0 l. |
 | 026-136 | feature | fait | claude-code | PASS | 2026-10-04T18:05:49Z · 29s · 822 l. |
 | 026-199 | test | fait | claude-code | PASS | 2026-10-04T17:46:01Z · 145s · 4915 l. |

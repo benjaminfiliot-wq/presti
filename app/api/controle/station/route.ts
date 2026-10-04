@@ -5,6 +5,8 @@ import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } fr
 import { peutFaire } from '@/lib/controle/droits'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { ventesSites } from '@/lib/direction/tresorerie'
+import { mrr } from '@/lib/direction/stripe'
+import * as lectures from '@/lib/controle/lectures'
 import { VUES, CLES_SALLE, lireVue, trier, objetDe, type Vue, type Base } from '@/lib/pilotage/station'
 
 export const runtime = 'nodejs'
@@ -28,8 +30,11 @@ export async function GET(req: Request) {
   if ((nom !== null && !NOM.test(nom)) || (agent !== null && !NOM.test(agent)) || (vue === 'agent' && nom === null)) return NextResponse.json({ error: 'Nom d’agent invalide.' }, { status: 400 })
   const brut = u.searchParams.get('apres')
   const apres = brut && /^[1-9]\d{0,14}$/.test(brut) ? Number(brut) : null
+  // La santé du service se mesure par la même sonde que la barre du Poste : elle a besoin de l'origine et du jeton de la requête.
+  const origine = u.origin, jeton = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? null
   const r = await lireVue(vue as Vue, { apres, agent, salle, nom }, {
-    db: supabaseAdmin as unknown as Base, ventesSites, version: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+    db: supabaseAdmin as unknown as Base, ventesSites, version: process.env.VERCEL_GIT_COMMIT_SHA ?? null, mrr,
+    lectures: { santeService: () => lectures.santeService(origine, jeton), cronsDuService: lectures.cronsDuService, audience: lectures.audience, bans: lectures.bans, clients: () => lectures.clients(), cerveaux: lectures.cerveaux, ticketsOuverts: lectures.ticketsOuverts },
   })
   return NextResponse.json({ vue, role: f.role, ...trier(r, (dom) => peutFaire(f.roleInterne, dom, 'voir').permis, objetDe(vue, salle)) })
 }
