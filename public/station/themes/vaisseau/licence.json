@@ -1,0 +1,36 @@
+{
+  "packs": [
+    {
+      "dossier": "01-ganamoda",
+      "titre": "190+ Pixel Art Assets (Sci-fi & Forest)",
+      "auteur": "Ganamoda (Sunnyside Games)",
+      "adresse": "https://opengameart.org/content/190-pixel-art-assets-sci-fi-forest",
+      "licence": "CC0",
+      "date": "2026-09-25"
+    },
+    {
+      "dossier": "06-kenney-tiny-factory",
+      "titre": "Tiny Factory",
+      "auteur": "Kenney",
+      "adresse": "https://kenney.nl/assets/tiny-factory",
+      "licence": "Creative Commons CC0",
+      "date": "2026-09-25"
+    },
+    {
+      "dossier": "07-ansimuz-tech-lab",
+      "titre": "Warped Top-Down Tech Lab (volumes 1 et 2)",
+      "auteur": "Luis Zuno (Ansimuz)",
+      "adresse": "https://opengameart.org/content/warped-top-down-tech-lab ; https://opengameart.org/content/warped-top-down-tech-lab-2",
+      "licence": "CC0 (les deux volumes)",
+      "date": "2026-09-25"
+    },
+    {
+      "dossier": "09-shade-puny-characters",
+      "titre": "Puny Characters",
+      "auteur": "Shade",
+      "adresse": "https://opengameart.org/content/puny-characters",
+      "licence": "CC0",
+      "date": "2026-09-25"
+    }
+  ]
+}
