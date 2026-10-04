@@ -12,14 +12,34 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { OfficePhaserCanvas } from './claw3d/OfficePhaserCanvas'
 import { OfficeSceneBridge } from './claw3d/OfficeSceneBridge'
 import { createStationPixelScene } from './scene/StationPixelScene'
+import { dispositionDe, versCarteMoteur } from './theme/carte'
+import { chargerTheme } from './theme/charger'
+import { marcheDe, poserMonde } from './theme/grille'
 import type { Accroche, Accroches, ActeurStation, ContexteMoteur, Grille, PropsCarte } from './types'
 
 /** La grille logique tant qu'aucun thème n'en donne une (K2) : 480 × 300 pixels, celle de l'atelier. */
 export const GRILLE_PAR_DEFAUT: Grille = { largeur: 480, hauteur: 300 }
 
-/** Toutes vides à la fiche K1. K2 branche `theme`, K3 `adaptateur` et `scene`, K4a `camera` et `calque`, K4b `acteurs`, K4c `telephone`. */
+/**
+ * K2 a branché `theme`. K3 branche `adaptateur` et `scene`, K4a `camera` et `calque`, K4b `acteurs`, K4c `telephone` (vides : null).
+ *
+ * `theme` charge le thème des réglages (« station » à défaut), le valide, en tire la carte du moteur (bureau, ou portrait sous 1024 px
+ * comme la station) et sa grille de marche, les range pour les accroches suivantes (mondeDe(contexte), moteur/theme/grille.ts) et pose
+ * la grille logique du dessin. Un thème refusé jette : l'hôte reste au cadre d'attente avec la raison, jamais une page blanche.
+ */
 export const ACCROCHES: Accroches = {
-  theme: null,
+  theme: async (contexte) => {
+    const reglages = contexte.props.reglages?.reglages
+    const charge = await chargerTheme(reglages?.theme ?? 'station')
+    if (!charge.ok) throw new Error(charge.raison)
+    const { disposition, teintes } = dispositionDe(charge.theme, reglages)
+    const portrait = !window.matchMedia('(min-width: 1024px)').matches
+    const carte = versCarteMoteur(charge.theme, disposition, portrait, teintes)
+    poserMonde(contexte, { carte, marche: marcheDe(carte) })
+    contexte.grille = { largeur: carte.canvas.width, hauteur: carte.canvas.height }
+    // Le placeur par défaut : une salle, son poste. La scène (K3) et les acteurs (K4b) posent le leur, qui répartit ceux d'une même salle.
+    contexte.placer = (acteur) => (acteur.salle ? carte.postes[acteur.salle] ?? null : null)
+  },
   adaptateur: null,
   scene: null,
   camera: null,
@@ -43,6 +63,8 @@ async function appeler(noms: (keyof Accroches)[], contexte: ContexteMoteur, defa
       const retour = await accroche(contexte)
       if (typeof retour === 'function') defaire.push(retour)
     } catch (e) {
+      // Sans thème il n'y a pas de carte : le refus remonte jusqu'au cadre d'attente. Toute autre accroche qui échoue est signalée seulement.
+      if (nom === 'theme') throw e
       console.error(`carte de la station : l'accroche « ${nom} » a échoué`, e)
     }
   }
@@ -56,6 +78,7 @@ export default function Entree(props: PropsCarte) {
   const contexte = useRef<ContexteMoteur | null>(null)
   const defaire = useRef<(() => void)[]>([])
   const [pret, setPret] = useState<Pret | null>(null)
+  const [raison, setRaison] = useState<string | null>(null)
 
   // Avant le jeu : le contexte, puis les accroches `theme`, `adaptateur` et `scene`. Le jeu se construit ensuite, sur la grille retenue.
   useEffect(() => {
@@ -72,8 +95,12 @@ export default function Entree(props: PropsCarte) {
     }
     contexte.current = c
     void (async () => {
-      await appeler(AVANT, c, defaire.current, () => annule)
-      if (!annule) setPret({ grille: c.grille, fabrique: c.fabrique, placer: c.placer })
+      try {
+        await appeler(AVANT, c, defaire.current, () => annule)
+        if (!annule) setPret({ grille: c.grille, fabrique: c.fabrique, placer: c.placer })
+      } catch (e) {
+        if (!annule) setRaison(e instanceof Error ? e.message : 'La carte est indisponible.')
+      }
     })()
     return () => {
       annule = true
@@ -99,6 +126,7 @@ export default function Entree(props: PropsCarte) {
     void appeler(APRES, c, defaire.current, () => contexte.current !== c)
   }, [])
 
+  if (raison) return <p role="status" className="mc-carte-attente" data-station-attente>La carte est en attente : {raison}</p>
   if (!pret) return null
   return <OfficePhaserCanvas pont={pont} grille={pret.grille} fabrique={pret.fabrique} placer={pret.placer} auJeu={auJeu} />
 }
