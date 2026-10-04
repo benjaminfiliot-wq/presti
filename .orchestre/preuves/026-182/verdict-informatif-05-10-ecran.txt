@@ -1,0 +1,75 @@
+· station-ecran-qa : ce poste (LAPTOP-6KDEHT8P) n'est pas l'usine ; les parties de rendu (verite, camera) sont relancées par scripts/usine.mjs executer
+· usine executer : paquet de 296 fichier(s), 4,0 Mo, sur a7baaafb (HEAD du PC), construit en 12,9 s
+  ne part pas (2799) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-ecran.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .orchestre/preuves/026-203/avant.txt  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-203/decisions-avant.md  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-203/mutations-contre-verifiees.md  (preuves d'autres tâches ; absent du bac)
+    … et 1505 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/juges-026-acquisition-mutations.mjs:170, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 4 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac ecran sur usine@88.96.53.3, délai 30 min : node scripts/station-ecran-qa.mjs --partie=verite,camera
+· usine executer : bac ecran monté en 8184 ms : a7baaafbf + paquet, 296 écart(s) ; délai 1800 s
+station-ecran-qa --partie=verite,camera — racine .
+✅ CE-1 app/controle/station/moteur/ porte 25 source(s) dont entree.tsx ; Carte.tsx lit actif('stationCarte') et charge ./moteur/ ; lib/flags.ts présent (le juge lève pilotage et stationCarte dans une COPIE)
+✅ CE-2 ul[data-miroir] porte 15 personnage(s), un par agent servi avec une salle, aucun autre, data-salle, data-motif et data-etat égaux à la position servie ; un seul canevas
+❌ CE-3 après l'événement la carte ne se rendort pas : mesure insuffisante (2 relevé(s)) — images 22, 1 empreinte(s) du canevas, aucune animation en cours
+✅ CE-4 tache_prise servi : atelier_maquettes à atelier/tache en 5.5 s, 1 position(s) intermédiaire(s) relevée(s), bulle exacte, aucun autre personnage n'a bougé
+❌ CE-5 réunion ouverte servie : tous ne sont pas en reunion avant 15 s ()
+✅ CE-6 pause : une seule marche vers le Repos puis « Zz » et plus aucune position qui change (3 s), reprise : retour à la salle, jamais un agent porte ou tache au Repos ; panne : l'agent reste à son poste, étincelle fixe
+✅ CE-7 reducedMotion=reduce : le personnage passe de la porte au poste sans état « marche » ni position intermédiaire, aucun « +1 »
+✅ CE-8 35.3 images par seconde pendant une marche à 390 px, processeur ralenti ×4 (seuil 30)
+✅ CE-25 100 bulles historiques dont 30 du Radar : 15 personnages posés à leur poste dès la première image, aucune marche, game.loop.frame arrêté, l'antenne immobile
+❌ CE-26 scénario antenneReduite interrompu : mesure trop clairsemée : 3 capture(s) en 9000 ms (la machine est saturée)
+✅ CE-27 11 halo(s) fixe(s) (data-halo) ; carte.nuit inchangé : décor identique ; faux → vrai : le décor change une fois puis reste constant sur trois lectures
+✅ CE-9 échelle k = 1 (entier, taille CSS = taille ÷ densité) ; molette 2→3→3→2→1→1, + et −, ⊞ revient à la vue d'ensemble ; glissé borné (384,204 / 64,4) ; curseur « crosshair » sur le vide ; la salle choisie encadrée de blanc
+✅ CE-10 survol : plaque allumée (data-survol), main, étiquette à pointe ; le hublot de la salle de réunion est un polygone ; chacune des 21 zones a sa teinte en vue d'ensemble
+✅ CE-11 vingt zones et la réservée sous [data-station-carte], leur centre dans le rectangle du canevas, elementFromPoint rend la zone, un clic pose ?salle=<clé> sans changer de page (la réservée comprise)
+station-ecran-qa --partie=verite,camera : FAIL — CE-3, CE-5, CE-26
+· usine executer : commande finie en 280 s sur l’usine, code 1 (seule)
+· usine executer : rapatrié 2 fichier(s), 278956 octets (272 Ko), sous .orchestre/preuves/026-181
+    .orchestre/preuves/026-181/bureau.jpg  217547 octets
+    .orchestre/preuves/026-181/telephone.jpg  61409 octets
+· usine executer : code 1 · paquet 12,9 s · envoi et bac 10,2 s · commande 279,8 s · rapatriement 3,5 s · total 306,3 s
+code 1
