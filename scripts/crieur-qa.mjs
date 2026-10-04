@@ -417,6 +417,8 @@ import { pathToFileURL } from 'node:url'
 import path from 'node:path'
 const R = ${JSON.stringify(racine)}
 const { creerFauxFetch, lireConnexionsPublora } = await import(${JSON.stringify(pathToFileURL(path.join(R, 'scripts/fixtures/026-pubs-contenu/crieur/lire.mjs')).href)})
+// La sonde ne dépend pas de l'environnement ambiant : une clé d'essai, jamais une vraie, et le faux fetch ne sort pas du processus.
+process.env.PUBLORA_API_KEY = 'cle-essai-hors-ligne'
 let mod, erreur = null
 try { mod = await import(pathToFileURL(path.join(R, 'lib/crieur/publora.ts')).href) } catch (e) { erreur = String((e && e.stack) || e) }
 const out = { erreur, appels: [], connexions: null, refusScheduledTime: null, refusProgrammeePour: null }
@@ -505,13 +507,15 @@ function jugerRouteTexte(s) {
   if (!/CRON_SECRET/.test(get)) s.echoue('CR-5', 'CRON_SECRET introuvable dans GET')
   if (!/401/.test(get)) s.echoue('CR-5', 'aucune réponse 401 dans GET')
   const posAuth = get.search(/CRON_SECRET/)
-  const posPause = get.search(/pauseGenerale\s*\(/)
+  // La pause se lit par `sortiePermise` (@/lib/agents/sortie, décision d'automatisme du 30/09 : pause générale ET doute sur sa lecture) ou, comme avant, par `pauseGenerale`.
+  const posPause = get.search(/(?:sortiePermise|pauseGenerale)\s*\(/)
   if (posAuth < 0) s.echoue('CR-5', 'CRON_SECRET introuvable')
   if (!s.enEchec('CR-5')) s.passe('CR-5', 'CRON_SECRET vérifié, 401 en cas de jeton absent ou faux')
 
   // CR-17 : pauseGenerale juste après le contrôle du jeton, avant toute lecture de crieur_posts / appel à publora
-  if (!/import\s*\{[^}]*\bpauseGenerale\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/pause['"]/.test(texte)) s.echoue('CR-17', "pauseGenerale n'est pas importée de @/lib/agents/pause")
-  if (posPause < 0) s.echoue('CR-17', 'pauseGenerale( introuvable dans GET')
+  const importePause = /import\s*\{[^}]*\bpauseGenerale\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/pause['"]/.test(texte) || /import\s*\{[^}]*\bsortiePermise\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/sortie['"]/.test(texte)
+  if (!importePause) s.echoue('CR-17', "ni pauseGenerale (@/lib/agents/pause) ni sortiePermise (@/lib/agents/sortie) ne sont importées")
+  if (posPause < 0) s.echoue('CR-17', 'pauseGenerale( ou sortiePermise( introuvable dans GET')
   else {
     const posPosts = get.search(/crieur_posts/)
     const posPublora = get.search(/creerPublication\s*\(/)
@@ -519,7 +523,7 @@ function jugerRouteTexte(s) {
     if (posPosts >= 0 && posPosts < posPause) s.echoue('CR-17', 'crieur_posts est lu avant pauseGenerale(')
     if (posPublora >= 0 && posPublora < posPause) s.echoue('CR-17', 'creerPublication( est appelée avant pauseGenerale(')
   }
-  if (!s.enEchec('CR-17')) s.passe('CR-17', 'pauseGenerale importée de @/lib/agents/pause, appelée juste après le contrôle du jeton, avant crieur_posts et creerPublication')
+  if (!s.enEchec('CR-17')) s.passe('CR-17', 'la pause (pauseGenerale ou sortiePermise) est importée, appelée juste après le contrôle du jeton, avant crieur_posts et creerPublication')
 
   // CR-6 : ?a_sec=1 rend le lot en JSON avant toute écriture/appel Publora
   if (!/a_sec/.test(get)) s.echoue('CR-6', 'a_sec introuvable dans GET')
