@@ -264,9 +264,18 @@ function construirePaquet(id) {
   const env = { GIT_INDEX_FILE: index, GIT_LITERAL_PATHSPECS: '1' }
   try {
     git(['read-tree', 'HEAD'], { env })
-    if (retenus.length) {
-      fs.writeFileSync(liste, retenus.map((r) => r.chemin).join('\0') + '\0')
+    // Les suppressions (statut D) se retirent de l'index temporaire avec `git rm --cached`, jamais avec `git add` : un chemin supprimé
+    // ET ignoré par .gitignore (04/10 : 723 fichiers de docs/contexte-cloud/…/prospection retirés du suivi, règles ajoutées au
+    // .gitignore dans la même opération) fait échouer `git add` (« paths are ignored… ») et bloquait tout `executer` et tout `lancer`.
+    const ajouts = retenus.filter((r) => r.statut !== 'D')
+    const retraits = retenus.filter((r) => r.statut === 'D')
+    if (ajouts.length) {
+      fs.writeFileSync(liste, ajouts.map((r) => r.chemin).join('\0') + '\0')
       git(['add', `--pathspec-from-file=${liste}`, '--pathspec-file-nul'], { env })
+    }
+    if (retraits.length) {
+      fs.writeFileSync(liste, retraits.map((r) => r.chemin).join('\0') + '\0')
+      git(['rm', '--cached', '-q', '--ignore-unmatch', `--pathspec-from-file=${liste}`, '--pathspec-file-nul'], { env })
     }
     const patch = git(['diff', '--cached', '--binary', '--no-renames', 'HEAD'], { env, binaire: true })
     const noms = nomStatut(git(['diff', '--cached', '--name-status', '--no-renames', '-z', 'HEAD'], { env }))
@@ -338,7 +347,10 @@ function controlerPaquet(p) {
   }
   // Arbre propre (paquet vide) : rien à contrôler. Sans cette garde, check-ignore reçoit une entrée vide, refuse
   // (« empty string is not a valid pathspec ») et executer rendait 125 depuis un dépôt entièrement commité (27/09).
-  const ignores = chemins.length ? spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: chemins.join('\0') + '\0', encoding: 'utf8', windowsHide: true }) : { status: 1, stdout: '', stderr: '' }
+  // Une suppression (statut D) n'envoie aucun contenu : un fichier retiré du suivi ET ajouté au .gitignore (04/10, données de
+  // prospects de docs/contexte-cloud/) n'est pas « un chemin ignoré qui part » ; seuls les ajouts et modifications sont contrôlés.
+  const aEnvoyer = p.noms.filter((n) => n.statut !== 'D').map((n) => n.chemin)
+  const ignores = aEnvoyer.length ? spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: aEnvoyer.join('\0') + '\0', encoding: 'utf8', windowsHide: true }) : { status: 1, stdout: '', stderr: '' }
   if (ignores.status > 1) problemes.push(`git check-ignore a échoué : ${String(ignores.stderr).trim().slice(0, 200)}`)
   for (const c of String(ignores.stdout || '').split('\0').filter(Boolean)) problemes.push(`${c} : chemin ignoré par git`)
   for (const t of p.secrets.filter((s) => !s.ecarte)) problemes.push(`${t.chemin}:${t.ligne} : motif ${t.motif}`)
