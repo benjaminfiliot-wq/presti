@@ -2,10 +2,29 @@
 // que `lib/contenu/lignes.ts`, `accord.ts`, `metaPublier.ts` etc. (026-207, 026-212, 026-217…) devront faire : ce
 // fichier n'est JAMAIS copié en production, il sert seulement à prouver que contenu-qa.mjs sait distinguer un
 // comportement correct d'un comportement sabordé (--temoin puis --preuve-echecs). Les deux invariants transversaux
-// de 026-204 : (1) aucune publication sans un accord `tranchee`/`accorder` visant exactement CETTE cible, sur CETTE
-// version du texte ; (2) toute affirmation chiffrée passe par `vraisemblance()` (jev noul) — le VRAI
-// `lib/agents/llm.ts` (026-041/026-043, déjà PASS), jamais une réimplémentation.
+// de 026-204 : (1) toute affirmation chiffrée passe par `vraisemblance()` (jev noul) — le VRAI `lib/agents/llm.ts`
+// (026-041/026-043, déjà PASS), jamais une réimplémentation ; (2) la pause générale se lit AVANT chaque appel au modèle et
+// chaque sortie, par la VRAIE porte fail-closed `sortiePermise()` (lib/agents/sortie.ts).
+// Mise à jour du 04/10/2026 (décision « tout est automatique », D-0410-1 : audit C §5.3/§5.4) : le témoin n'exige plus
+// d'accord individuel pour publier (les contrôles automatiques le remplacent : pause, STOP/opposition, coût nul exact, chiffres
+// vérifiés, ligne, canal, plafond) ; `accordValide` reste exporté pour le seul chemin TikTok, qui l'exige encore (TT-2).
 import { vraisemblance, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
+
+/** Les dépendances d'un contrôle de publication : celles du lecteur, plus l'opposition connue et le coût déclaré. */
+export type DepsControle = DepsLecteur & { coutEuros?: unknown; opposition?: unknown }
+
+/** La pause générale, lue par la porte fail-closed : faux sous pause, dans le doute ou si la lecture lève. */
+export async function pausePermise(): Promise<boolean> {
+  return (await sortiePermise()).permise
+}
+
+/** STOP ou opposition connue, puis coût inconnu ou non nul : le refus se fait AVANT tout appel (modèle, Graph). */
+export function gardesDeCout(deps: DepsControle): string | null {
+  if (deps.opposition === true) return 'STOP ou opposition : aucune publication'
+  if (deps.coutEuros !== 0) return 'coût inconnu ou positif : publication refusée'
+  return null
+}
 
 export type DecisionAccord = {
   statut: 'ouverte' | 'tranchee' | 'defaut_applique'
@@ -36,6 +55,8 @@ export type VerdictChiffre = { ok: true; p: number } | { ok: false; motif: strin
  *  un passage automatique (026-204, contrat transversal). `deps` porte `env.JEV_CHEMIN` (voir lib/contenu/lib de
  *  commun.mjs) : ce noyau ne fabrique jamais son propre appel à jev, il réutilise le module déjà jugé. */
 export async function verdictChiffre(texte: string, source: string | null | undefined, deps: DepsLecteur = {}): Promise<VerdictChiffre> {
+  // La pause se lit avant CHAQUE appel au modèle (pas seulement au début d'un lot) : fail-closed.
+  if (!(await pausePermise())) return { ok: false, motif: 'pause générale : aucun appel au modèle' }
   if (!source) return { ok: false, motif: 'affirmation chiffrée sans source' }
   const r = await vraisemblance(texte, {}, deps)
   if (r === null) return { ok: false, motif: 'Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj' }

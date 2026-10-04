@@ -28,6 +28,7 @@
 // c'est le `verifier` de 026-204). Code 0 si tout est vert, 1 sinon. N'écrit que sous .orchestre/travail/ et
 // .orchestre/preuves/026-204/echecs-attendus.md (une ligne par sabotage) ; aucun secret, aucun réseau réel.
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import {
@@ -63,7 +64,16 @@ function fichierRequeteJev(corps) {
 const SABOTAGES = [
   ['connaissance', 'docs/marketing/lignes/README.md', (t) => t.replace('- plafond: 2 par semaine\n', ''), 'CN-2'],
   ['sql', 'supabase/migrations/0114_contenu.sql', (t) => t.replace('alter table public.contenu_idees enable row level security;\n', ''), 'SQ-4'],
-  ['geste', 'lib/contenu/accord.ts', (t) => t.replace("export const DEFAUT = 'refuser'", "export const DEFAUT = 'accorder'"), 'GE-1'],
+  // 04/10/2026 (décision « tout est automatique », D-0410-1) : GE-1 juge désormais « une publication conforme passe SANS accord individuel »,
+  // et plus la valeur par défaut du geste d'accord (`DEFAUT`, qui reste exportée par le témoin pour le seul chemin TikTok). Le sabotage
+  // vise donc la garde que le critère GE-2 protège : STOP ou opposition connue (retirée du noyau du témoin, GE-2 seul doit rougir).
+  ['geste', 'lib/contenu/_noyau.ts', (t) => t.replace("if (deps.opposition === true) return 'STOP ou opposition : aucune publication'", "if (false) return 'STOP ou opposition : aucune publication'"), 'GE-2'],
+  // 04/10/2026 : trois sabotages de plus, un par garde que la décision « tout est automatique » met à la place de l'accord individuel :
+  // la pause relue avant CHAQUE appel au modèle (LN-7), le coût exactement nul (GE-2), la pause relue avant la publication Graph après la
+  // fabrication du conteneur (MP-6). Chacun doit rougir son critère SEUL : si le juge ne les voit pas, l'accord n'a plus de remplaçant.
+  ['lignes', 'lib/contenu/_noyau.ts', (t) => t.replace("  if (!(await pausePermise())) return { ok: false, motif: 'pause générale : aucun appel au modèle' }\n", ''), 'LN-7'],
+  ['geste', 'lib/contenu/_noyau.ts', (t) => t.replace("  if (deps.coutEuros !== 0) return 'coût inconnu ou positif : publication refusée'\n", ''), 'GE-2'],
+  ['meta', 'lib/contenu/metaPublier.ts', (t) => t.replace("  if (!(await pausePermise())) return refus('pause générale : aucune publication Graph')\n", ''), 'MP-6'],
   ['lignes', 'lib/contenu/lignes.ts', (t) => t.replace('(ligne.publieAujourdhui || 0) >= ligne.quotaJour', '(ligne.publieAujourdhui || 0) > ligne.quotaJour'), 'LN-3'],
   ['gabarits', 'public/contenu/gabarits/L2.json', (t) => t.replace('"licence_commerciale": true', '"licence_commerciale": false'), 'GA-2'],
   ['fabrication', 'scripts/contenu/fabriquer.mjs', (t) => t.replace('(manifeste.tailleMo ?? 0) > 9.5)', '(manifeste.tailleMo ?? 0) > 95)'), 'FA-4'],
@@ -110,8 +120,13 @@ async function main() {
   const lancerCli = (args) => spawnSync(process.execPath, ['scripts/contenu-qa.mjs', ...args], { cwd: DEPOT, encoding: 'utf8', windowsHide: true })
   const cliTemoin = lancerCli(['--partie=couts,gabarits', '--temoin'])
   rapporter('CLI-TEMOIN', cliTemoin.status === 0 && /contenu-qa : PASS/.test(cliTemoin.stdout), `--temoin (couts,gabarits) : code ${cliTemoin.status}`)
-  const cliReel = lancerCli(['--partie=connaissance'])
-  rapporter('CLI-REEL', cliReel.status === 2 && /contenu-qa : SAUTE/.test(cliReel.stdout), `sans production, racine réelle : code ${cliReel.status} (attendu 2 — préalable extérieur documenté)`)
+  // 04/10/2026 (juge périmé, audit C §5.4) : « sans production, racine réelle » n'est plus vrai depuis que 026-205 a livré docs/marketing/
+  // (29/09) : la racine réelle est jugée pour de vrai (PASS, code 0) et ce critère rougissait à vide. Le cas qu'il garde — une racine SANS
+  // production rend « préalable extérieur », code 2, jamais un faux vert — se prouve maintenant sur un dossier vide.
+  const racineVide = fs.mkdtempSync(path.join(os.tmpdir(), 'contenu-qa-vide-'))
+  const cliReel = lancerCli(['--partie=connaissance', `--racine=${racineVide}`])
+  fs.rmSync(racineVide, { recursive: true, force: true })
+  rapporter('CLI-REEL', cliReel.status === 2 && /contenu-qa : SAUTE/.test(cliReel.stdout), `racine sans production (dossier vide) : code ${cliReel.status} (attendu 2 — préalable extérieur documenté)`)
   const cliInvalide = lancerCli(['--partie=inexistante'])
   rapporter('CLI-INVALIDE', cliInvalide.status === 2 && /appel refusé/.test(cliInvalide.stdout), `partie inconnue : code ${cliInvalide.status}`)
   const cliCombinaison = lancerCli(['--temoin', '--racine=.', '--partie=sql'])

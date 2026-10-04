@@ -3,6 +3,7 @@
 // classe, il ne publie JAMAIS — `recommander` ne rend qu'un statut à trois issues plus « insuffisant », jamais un
 // objet de publication ; republier exige toujours un `brief.ts` (nouvelle proposition) puis un nouvel accord.
 import { noter, type DepsLecteur } from '@/lib/agents/llm'
+import { pausePermise } from './_noyau'
 
 export type MesureFenetre = { fenetre: 'H+1' | 'H+24' | 'J+7'; disponible: boolean }
 export type Candidat = { id: string; texte: string; mesures: MesureFenetre[]; provenance: string }
@@ -15,6 +16,8 @@ export function classable(mesures: MesureFenetre[]): boolean {
 
 export async function recommander(candidat: Candidat, deps: DepsLecteur = {}): Promise<Recommandation> {
   if (!classable(candidat.mesures)) return { id: candidat.id, statut: 'insuffisant', motif: 'mesures incomplètes (H+1 seul) : pas de conclusion forte sur un petit échantillon' }
+  // Décision du 30/09 (confirmée le 04/10) : la pause générale se lit AVANT l'appel au modèle ; sous pause, aucun score.
+  if (!(await pausePermise())) return { id: candidat.id, statut: 'insuffisant', motif: 'pause générale : aucun appel au modèle' }
   const score = await noter(candidat.texte, {}, deps)
   const niveau = score?.niveau ?? 0
   const statut = niveau >= 4 ? 'refaire' : niveau <= 2 ? 'suspendre' : 'tendance'
