@@ -63,8 +63,10 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
     chemin: Emplacement[];
     /** Le nombre de points du chemin franchis depuis le départ (le miroir en relève un sur deux, et toujours le dernier). */
     n: number;
-    /** Les points déjà franchis par le sprite que le miroir n'a pas encore relevés : un seul est relevé par image. */
+    /** Les points déjà franchis par le sprite que le miroir n'a pas encore relevés : ils le sont un par un, dans l'ordre. */
     file: Emplacement[];
+    /** Vrai tant qu'un relevé est annoncé (le vidage de `file` est en cours). */
+    vidage: boolean;
     dist: number;
     cle: string;
     image: PhaserType.GameObjects.Image;
@@ -292,7 +294,7 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         if (!connu) {
           // Un acteur qui paraît (premier relevé, ou salle jusque-là inconnue) est posé à sa place, sans marche.
           const image = this.add.image(but.x, but.y, cle, 0).setOrigin(0.5, 1).setDepth(30);
-          const p: Perso = { acteur, signature, pos: { x: but.x, y: but.y }, pub: { x: but.x, y: but.y }, chemin: [], file: [], n: 0, dist: 0, cle, image, halo: null, etincelle: null };
+          const p: Perso = { acteur, signature, pos: { x: but.x, y: but.y }, pub: { x: but.x, y: but.y }, chemin: [], file: [], vidage: false, n: 0, dist: 0, cle, image, halo: null, etincelle: null };
           this.persos.set(acteur.nom, p);
           this.partir(p, acteur, but, false);
           continue;
@@ -326,6 +328,22 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
       }
     }
 
+    /** Relève les points franchis d'un personnage, un par tâche (setTimeout 0), jusqu'à vider sa file ; le dernier dit « arrive ». */
+    private vider(p: Perso) {
+      if (p.vidage || !p.file.length) return;
+      p.vidage = true;
+      setTimeout(() => {
+        p.vidage = false;
+        if (this.persos.get(p.acteur.nom) !== p) return;
+        const suivant = p.file.shift();
+        if (suivant) {
+          p.pub = { x: suivant.x, y: suivant.y };
+          this.publier(p, p.chemin.length || p.file.length ? "marche" : "arrive");
+        }
+        this.vider(p);
+      }, 0);
+    }
+
     /** Un pas de marche pour chaque personnage en route ; rend vrai tant qu'il en reste un (en route, ou à relever). */
     private marcher(dt: number): boolean {
       let enRoute = false;
@@ -339,17 +357,14 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
           r.croises.forEach((c, i) => { p.n += 1; if (p.n % 2 === 0 || (!p.chemin.length && i === r.croises.length - 1)) p.file.push(c); });
           p.image.setFrame(p.chemin.length ? 1 + (Math.floor(p.dist / PAS_D_IMAGE) % 2) : 0);
         }
-        // Le miroir relève UN point par image, dans l'ordre : la suite des positions ne dépend pas de la cadence.
-        const suivant = p.file.shift();
-        if (suivant) {
-          p.pub = { x: suivant.x, y: suivant.y };
-          this.publier(p, p.chemin.length || p.file.length ? "marche" : "arrive");
-        }
+        // Le miroir relève les points UN par UN, dans l'ordre, chacun dans sa propre tâche du navigateur : la suite des positions est celle
+        // du chemin, ni la cadence des images ni leur nombre ne la changent, et une machine chargée ne ralentit pas ce qui se voit.
+        this.vider(p);
         if (!p.chemin.length) {
           p.image.setFrame(0);
           this.effets(p, p.acteur);
         }
-        if (p.chemin.length || p.file.length) enRoute = true;
+        if (p.chemin.length || p.file.length || p.vidage) enRoute = true;
       }
       return enRoute;
     }
