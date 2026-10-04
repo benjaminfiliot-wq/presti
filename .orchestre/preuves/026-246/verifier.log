@@ -1,0 +1,24 @@
+qualite-sites-qa --preuve-echecs : auto-contrôle, arbre courant, témoin, 19 sabotages
+qualite-sites-qa --auto-controle : PASS — serveur factice (pannes, octets, journal des écritures), ratio WCAG, hôtes fictifs
+✅ arbre courant — module absent : les 9 critères sont rouges, QSI-2 porte la cause
+✅ témoin — code 0, 9/9 critères verts
+✅ sabotage module_vide — attendu QSI-1, rouges : QSI-1, QSI-2, QSI-3, QSI-4, QSI-5, QSI-6, QSI-7, QSI-8, QSI-9 (code 1)
+✅ sabotage ecriture_tentee_sur_le_site — attendu QSI-1, rouges : QSI-1, QSI-7 (code 1)
+✅ sabotage soumission_reelle_du_formulaire — attendu QSI-7, rouges : QSI-1, QSI-7 (code 1)
+✅ sabotage code_http_devine — attendu QSI-2, rouges : QSI-2 (code 1)
+✅ sabotage site_programme_au_retrait_audite — attendu QSI-2, rouges : QSI-2 (code 1)
+✅ sabotage poids_sur_fichier_tronque — attendu QSI-3, rouges : QSI-3 (code 1)
+✅ sabotage protocole_devine_sur_l_url — attendu QSI-2, rouges : QSI-2 (code 1)
+✅ sabotage livraison_inachevee_en_panne — attendu QSI-2, rouges : QSI-2, QSI-9 (code 1)
+✅ sabotage poids_lu_dans_l_en_tete — attendu QSI-3, rouges : QSI-2, QSI-3, QSI-9 (code 1)
+✅ sabotage cadence_ignoree — attendu QSI-5, rouges : QSI-5 (code 1)
+✅ sabotage contraste_approxime_sans_ratio — attendu QSI-4, rouges : QSI-4 (code 1)
+✅ sabotage alt_manquant_ignore — attendu QSI-4, rouges : QSI-4 (code 1)
+✅ sabotage lien_mort_compte_vivant — attendu QSI-5, rouges : QSI-5, QSI-9 (code 1)
+✅ sabotage robots_ignore — attendu QSI-5, rouges : QSI-5 (code 1)
+✅ sabotage mention_absente_non_signalee — attendu QSI-6, rouges : QSI-6, QSI-9 (code 1)
+✅ sabotage liste_des_mentions_supposee — attendu QSI-6, rouges : QSI-6 (code 1)
+✅ sabotage decision_creee_deux_fois — attendu QSI-9, rouges : QSI-9 (code 1)
+✅ sabotage correction_directe_au_lieu_d_une_decision — attendu QSI-9, rouges : QSI-9 (code 1)
+✅ sabotage verdict_visuel_a_un_moteur_cloud — attendu QSI-8, rouges : QSI-8 (code 1)
+qualite-sites-qa --preuve-echecs : PASS — arbre courant rouge (QSI-2 module absent), témoin 9/9, 19/19 sabotages tués par QSI-1, QSI-7, QSI-2, QSI-3, QSI-4, QSI-5, QSI-6, QSI-9, QSI-8
