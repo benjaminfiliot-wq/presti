@@ -95,3 +95,20 @@ publications/
 
 # Copies de travail des agents Claude (workflows isolés, 27/09) : jamais dans le dépôt ni dans les paquets de l’usine
 .claude/worktrees/
+
+# Données de prospects (audit de confidentialité du 04/10) : adresses e-mail, téléphones, listes de contacts. Elles vivent dans
+# presti-ops/ et presti-secrets/ (hors dépôt) ; leurs copies sous docs/contexte-cloud/ sont parties dans git le 30/09 (0fcf0bb0,
+# 9f5198f7) et en ont été retirées du suivi le 04/10 (les fichiers restent sur le disque, l'historique les garde : dépôt privé).
+# Règles ancrées exprès : scripts/fixtures/…/saas/Prospection/ contient des jeux d'essai FICTIFS, à garder suivis.
+docs/contexte-cloud/presti-ops/prospection/
+docs/contexte-cloud/SaaS/Prospection/
+docs/contexte-cloud/presti-secrets/prospection/
+reprise-cloud/prospection/
+
+# Secrets et clés : jamais versionnés (audit de confidentialité du 04/10, « .gitignore incomplet »)
+.codex/auth.json
+*.pem
+!cle-sauvegarde.pub.pem
+*.p12
+**/firebase/compte-de-service.json
+/fix.js
