@@ -121,6 +121,8 @@ export const FLAGS = {
   aimantSite: false,
   /** Branche réservée par Benj le 25/09 : rien n’est construit ; elle attend ses trois vidéos sources. */
   ecommerce: false,
+  /** 026-143 — la page d'essai du porteur du formulaire (026-095) : /essai-formulaire et son action /essai-formulaire/envoi, un formulaire de contact ordinaire qui ne garde que l'empreinte SHA-256 du message (un événement du journal, 20 par jour au plus). Baissé : les deux répondent 404. */
+  essaiFormulaire: true,
 } as const
 
 export type Flag = keyof typeof FLAGS
