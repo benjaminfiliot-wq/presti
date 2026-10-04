@@ -104,7 +104,10 @@ function jugerDiff(avant, apres) {
     e.push(`un changement hors date, import et bloc : « ${court(b.map((x) => `${x.op}${x.l.trim()}`).join(' / '), 90)} »`)
   }
   if (insertions > 1) e.push(`${insertions} blocs insérés, un seul d'un tenant attendu`)
-  if (!insertions && avant !== apres) e.push('aucun bloc inséré pour la section 10')
+  // 04/10 : une fois la section dans HEAD (ef063776), « avant » la porte déjà : seul un bloc inséré est exigé quand « avant » ne l'a pas encore.
+  // Les autres écarts (hors date, hors import, bloc déplacé ou retouché) restent refusés par la boucle ci-dessus ; une page identique à HEAD passe.
+  const sectionDejaDansAvant = /\bSECTION_PROSPECTION\b/.test(avant)
+  if (!insertions && !sectionDejaDansAvant && avant !== apres) e.push('aucun bloc inséré pour la section 10')
   return e
 }
 /** Les titres 1 à 9 de page.tsx (partie statique, avant toute expression {…}). */
