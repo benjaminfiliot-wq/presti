@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T17:21:50Z
+# Digest — 2026-10-04T17:38:10Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 183 tâche(s) PASS, 215257 ligne(s) · faites par Claude Code : 102 tâche(s) PASS, 90463 ligne(s).
-**État** — file : 10 · en cours : 38 · faites : 291 · refusées : 7
+**Mesure** — déléguées (antigravity, codex) : 183 tâche(s) PASS, 215286 ligne(s) · faites par Claude Code : 102 tâche(s) PASS, 90463 ligne(s).
+**État** — file : 10 · en cours : 37 · faites : 292 · refusées : 7
 
 ## Attention (7)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -25,7 +25,6 @@
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
 | 026-199 | test | en-cours | claude-code | — | depuis 2026-10-04T16:08:21Z · Écrire scripts/usine-pubs-qa.mjs (critères UP, parties routes, tourneur, unites et reel : la fabrication des packs pubs payés et des échantillons du Studio sur l'usine, PC éteint, par la chaîne gratuite) et scripts/search-console-qa.mjs (critères SC : la soumission automatique du plan d'un site vendu à la Search Console par un compte de service), avec leurs jeux d'essai, et prouver qu'ils échouent aujourd'hui et passent en témoin |
-| 026-254 | contenu | en-cours | claude-code | — | depuis 2026-10-04T16:08:20Z · Compléter la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts de 14 à au moins 40 citations réelles sur au moins 8 métiers du bâtiment (au moins 3 par métier couvert, 10 « tous » au plus), en ajoutant des entrées sans jamais en réécrire une existante, chacune retrouvée mot pour mot par le juge sur sa page publique, toutes à approuve false, et mettre à jour la liste des sources de docs/agents/douleurs-methode.md |
 | 026-227 | feature | en-cours | usine-codex-1527 | — | depuis 2026-10-04T17:17:25Z · Lancer une expérience après la première vente selon la relecture de complétude du 27/09 |
 | 026-226 | feature | en-cours | usine-codex-1526 | — | depuis 2026-10-04T17:16:02Z · Passe mensuelle des douleurs selon la relecture de complétude du 27/09 |
 | 026-150 | test | en-cours | usine-codex-1518 | — | depuis 2026-10-04T17:11:43Z · Écrire scripts/juges-026-securite-mutations.mjs, qui prouve sur des copies que media-octets-qa, instantane-quotidien-qa, git-garde-qa et next16-qa (mode --statique) échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
@@ -72,6 +71,7 @@
 | 026-183 | feature | file | codex | — | Faire bouger sur la carte ce que les données servies font bouger, et rien d'autre : les tapis et leurs « +1 », les lignes du Crieur et de l'Usine, l'égaliseur du Radar figé entre deux lectures, l'écran de la Salle Expérience (« FERMÉE · R13 » avant la première vente) et les badges LV, tous nourris par les enveloppes dans les calques des acteurs et du texte, jamais dans le décor, jusqu'au vert de station-ecran-qa (verite, camera, acteurs) et de station-claw3d-qa (verite) |
 | 026-184 | feature | file | codex | — | Compléter sur la carte le calque HTML posé par 026-181 à 026-183 : plaques, noms, bulles, « Zz » et « +1 » en police pixel OFL (la variable posée par 026-111, fin de la police 3 × 5), tous les textes venus des agents et des réglages en texte et jamais en HTML, le miroir accessible complet, l'info-bulle d'un personnage avec son modèle, la liste des salles gardée sous la carte et le clavier (I, Échap, +, −, ⊞, flèches), jusqu'au vert de station-ecran-qa (verite, camera, acteurs, calque) |
 | 026-186 | feature | file | codex | — | Donner à la carte sa forme de téléphone : un cadre de 358 px en vue d'ensemble ou sur la grille portrait du thème, le pincement dans le cadre seulement, +, − et ⊞ de 44 px, les plaques à partir du zoom ×2, touch-action: none, gesturestart bloqué sous Safari, la perte de contexte rattrapée, et scrollWidth ≤ 390, jusqu'au vert de station-ecran-qa (webkit) et de station-claw3d-qa (contexte) |
+| 026-254 | contenu | fait | claude-code | PASS | 2026-10-04T17:38:09Z · 174s · 545 l. |
 | 026-138 | audit | fait | claude-code | PASS | 2026-10-04T17:20:48Z · 5s · 491 l. |
 | 026-138-juge-pages | test | fait | claude-code | PASS | 2026-10-04T17:13:01Z · 68s · 741 l. |
 | 026-103 | feature | fait | codex | PASS | 2026-10-04T16:38:31Z · 22s · 0 l. |
