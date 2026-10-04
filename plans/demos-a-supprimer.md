@@ -47,9 +47,9 @@ de supprimer (au cas où la suppression échouerait), et ne suppose pas que la c
 | `benjaminfiliot@gmail.com` | fondateur | **garder** |
 | `alexandremesroua@gmail.com` | fondateur (partenaire) | **garder** — mais son rôle est à cloisonner (v11 §5) : il est aujourd'hui `is_founder` avec le rôle `direction`, donc il voit et peut écrire **tout** le Centre, y compris ce que le contrat ne lui accorde pas |
 | `relecture-stores@presti-test.invalid` | compte exigé par Apple et Google | **garder, isoler** — à marquer `est_demo`, exclu de tous les chiffres |
-| `maximebernard@gmail.com` | vrai compte | **garder** |
-| `a.filiot@sfr.fr` | vrai compte | **garder** |
-| `filiot.alexandre@orange.fr` | vrai compte | **garder** |
+| `‹e-mail d’un artisan›` | vrai compte | **garder** |
+| `‹e-mail d’un artisan›` | vrai compte | **garder** |
+| `‹e-mail d’un artisan›` | vrai compte | **garder** |
 | `demo-menuisier@presti-test.invalid` — « Atelier du Chêne », offre Signature | compte de démonstration du sprint J-1 | **supprimer** (ou marquer `est_demo` s'il sert encore aux captures de la vitrine — à trancher par Benj) |
 | `verif-pilotage-a-1788614816355@presti-test.invalid` | suite de vérification, 05/09 | **supprimer** |
 | `verif-pilotage-a-1788623207390@presti-test.invalid` | suite de vérification, 05/09 | **supprimer** |
@@ -58,7 +58,7 @@ de supprimer (au cas où la suppression échouerait), et ne suppose pas que la c
 | `smoke.test.28508@example.com` | suite smoke, 07/09 | **supprimer** (privilèges déjà retirés) |
 
 **Comptes de connexion orphelins** (existent dans l'authentification, sans fiche artisan) :
-`wl.1788382177@x.fr`, `j6.1788340340616@example.com` → **supprimer**.
+`‹e-mail d’un artisan›`, `j6.1788340340616@example.com` → **supprimer**.
 
 ---
 
