@@ -1,0 +1,25 @@
+// lib/agents/telegram.ts — le pont Telegram de Presti (fiches 026-195 et 026-196) : ce que les deux routes partagent.
+// TÉMOIN de 026-194 : une mise en œuvre de référence écrite par Claude Code pour éprouver le juge, jamais le livrable de 026-195.
+//
+// Le pont fait trois choses, pas une de plus : pousser vers le téléphone de Benj les alertes qui méritent un geste et les comptes
+// rendus du Chef ; répondre à /etat ; POSER la pause générale (jamais la lever) et transmettre une consigne au Chef.
+import { masquer } from '@/lib/pilotage/fil'
+
+/** Les seules commandes du pont : liste fermée et gelée. Aucune commande de reprise n'existe, nulle part. */
+export const COMMANDES = Object.freeze(['pause', 'etat', 'consigne'] as const)
+export type Commande = (typeof COMMANDES)[number]
+
+export const AGENT = 'pont_telegram'
+export const CIBLE_CONSIGNE = 'chef'
+export const MAX_MESSAGES = 20
+export const PREFIXE_MOTIF = 'telegram : '
+export const MOTIF_MAX = 150
+export const TEXTE_MIN = 3
+export const TEXTE_MAX = 200
+/** Les événements du Chef que le pont pousse. */
+export const EVENEMENTS_POUSSES = Object.freeze(['consigne_lue', 'cycle_termine', 'reunion_compte_rendu'] as const)
+
+export const commandeConnue = (c: unknown): c is Commande => typeof c === 'string' && (COMMANDES as readonly string[]).includes(c)
+
+/** Le motif de la pause : préfixé, passé par masquer (rien de personnel ne va dans le journal), 150 signes au plus. */
+export const motifDePause = (motif: string): string => `${PREFIXE_MOTIF}${masquer(motif)}`.slice(0, MOTIF_MAX)

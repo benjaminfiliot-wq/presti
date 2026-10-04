@@ -1,0 +1,63 @@
+// POST /api/agents/telegram/entree — les trois commandes que Benj donne au pont Telegram (fiche 026-195).
+// TÉMOIN de 026-194 : une mise en œuvre de référence, jamais le livrable de 026-195.
+//
+// Derrière busAgents et le jeton de l'agent pont_telegram. { commande: 'pause', motif } POSE la pause générale par
+// station_pause_par_agent (0112), qui ne peut jamais la lever ; { commande: 'consigne', texte } transmet une consigne au Chef par
+// station_consigne_par_agent (0112, le quota de 20 par jour de la station) ; { commande: 'etat' } ne rend que cinq chiffres.
+// Toute autre commande : 400, sans aucun appel à la base.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, estRefusAgent, reponseRefusAgent } from '@/lib/agents/garde'
+import { pauseGenerale } from '@/lib/agents/pause'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { COULEUR_DE } from '@/lib/pilotage/attention'
+import { AGENT, CIBLE_CONSIGNE, TEXTE_MAX, TEXTE_MIN, commandeConnue, motifDePause } from '@/lib/agents/telegram'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const CORPS_MAX = 2000
+const MUET_MS = 2 * 60 * 60 * 1000
+const erreur = (status: number, code: string) => NextResponse.json({ error: code, code }, { status, headers: { 'cache-control': 'no-store' } })
+const ok = (corps: Record<string, unknown>) => NextResponse.json(corps, { headers: { 'cache-control': 'no-store' } })
+
+export async function POST(req: Request) {
+  if (!actif('busAgents')) return erreur(404, 'introuvable')
+  const agent = await authAgent(req)
+  if (estRefusAgent(agent)) return reponseRefusAgent(agent)
+  if (agent.nom !== AGENT) return erreur(403, 'agent')
+
+  const brut = await req.text()
+  if (Buffer.byteLength(brut) > CORPS_MAX) return erreur(413, 'corps')
+  let corps: { commande?: unknown; motif?: unknown; texte?: unknown } | null = null
+  try { corps = JSON.parse(brut) } catch { /* 400 plus bas */ }
+  if (!corps || typeof corps !== 'object' || Array.isArray(corps)) return erreur(400, 'corps')
+  const commande = corps.commande
+  if (!commandeConnue(commande)) return erreur(400, 'commande')
+
+  if (commande === 'pause') {
+    if (typeof corps.motif !== 'string' || corps.motif.trim().length < TEXTE_MIN) return erreur(400, 'motif')
+    const r = await supabaseAdmin.rpc('station_pause_par_agent', { p_agent: agent.nom, p_motif: motifDePause(corps.motif.trim()) })
+    if (r.error) return erreur(502, 'pause')
+    return ok({ ok: true, posee: r.data === true })
+  }
+
+  if (commande === 'consigne') {
+    const texte = typeof corps.texte === 'string' ? corps.texte.trim() : ''
+    if (texte.length < TEXTE_MIN || texte.length > TEXTE_MAX) return erreur(400, 'texte')
+    const r = await supabaseAdmin.rpc('station_consigne_par_agent', { p_agent: agent.nom, p_texte: texte, p_agent_cible: CIBLE_CONSIGNE })
+    if (r.error) return erreur(/ops:quota/.test(r.error.message ?? '') ? 429 : 502, /ops:quota/.test(r.error.message ?? '') ? 'quota' : 'consigne')
+    return ok({ ok: true })
+  }
+
+  // etat : cinq valeurs, un booléen et des entiers, rien d'autre
+  const [pause, sources, etat] = await Promise.all([pauseGenerale(), supabaseAdmin.rpc('pilotage_attention_sources'), supabaseAdmin.rpc('ops_etat')])
+  if (sources.error || etat.error) return erreur(503, 'base')
+  const lignes: { cle: string; nombre: number }[] = Array.isArray(sources.data) ? sources.data : []
+  const somme = (couleur: string) => lignes.filter((x) => COULEUR_DE[x.cle] === couleur).reduce((n, x) => n + (Number(x.nombre) || 0), 0)
+  const agents: { en_pause?: boolean; disjoncteur_ouvert?: boolean; battement_le?: string | null }[] = Array.isArray(etat.data?.agents) ? etat.data.agents : []
+  const maintenant = Date.now()
+  const enPanne = agents.filter((a) => a.en_pause !== true && (a.disjoncteur_ouvert === true || !a.battement_le || maintenant - Date.parse(a.battement_le) > MUET_MS)).length
+  const decisions: unknown[] = Array.isArray(etat.data?.decisions_ouvertes) ? etat.data.decisions_ouvertes : []
+  return ok({ pause: pause.active, rouge: somme('rouge'), orange: somme('orange'), appels: decisions.length, en_panne: enPanne })
+}

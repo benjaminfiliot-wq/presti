@@ -1,0 +1,36 @@
+# Le pont Telegram
+
+> TÉMOIN de 026-194 : une mise en œuvre de référence écrite pour éprouver le juge, jamais le livrable de 026-195.
+
+Le pont Telegram est le transport des commandes de Benj quand il n'est pas devant le Poste : le téléphone reçoit les alertes qui
+méritent un geste, et trois commandes répondent. Il tourne sur l'usine (service `presti-telegram`, compte `agents`) en long
+polling : il n'ouvre aucun port.
+
+## Les trois commandes
+
+| Commande | Effet |
+|---|---|
+| `/etat` | cinq chiffres : la pause, le rouge, l'orange, les appels, les agents en panne |
+| `/pause <motif>` | pose la pause générale ; le motif est préfixé « telegram : » |
+| `/chef <texte>` | une consigne de 3 à 200 signes au Chef (le quota de 20 par jour de la station) |
+
+Le pont **ne lève jamais la pause** : il n'existe aucune commande de reprise, aucun chemin ne met l'interrupteur à faux. La
+pause se lève depuis le Poste, ou par la variable de secours.
+
+## Ce que le pont ne dit jamais
+
+**Aucune donnée de prospect** : les textes poussés sont ceux de `chargeFondateur(motif)` (le titre et la ligne du motif, jamais
+le sujet ni le corps d'une alerte) et les comptes rendus du Chef passés par `masquer`. Rien n'est écrit en `parse_mode` ; les
+aperçus de liens sont coupés.
+
+## Les gestes de Benj
+
+1. **Créer le bot** avec BotFather (une fois) et garder son jeton.
+2. **Déposer les jetons dans son propre terminal**, jamais dans une conversation : `node scripts/usine-coffre.mjs poser
+   TELEGRAM_BOT_TOKEN`, puis `PRESTI_JETON_TELEGRAM` (posé par Claude Code après un « oui »), avec `TELEGRAM_CHAT_ID=aucun` et
+   un `TELEGRAM_CODE_APPAIRAGE` de 8 signes.
+3. **Envoyer `/start <code>`** au bot dans les 10 minutes qui suivent le premier passage du service. Le service note « appairage :
+   chat <id> » dans son journal ; Benj dépose cet identifiant dans `TELEGRAM_CHAT_ID` et remplace le code par `epuise`.
+4. Envoyer `/etat` : la réponse arrive sur le téléphone.
+
+Le service refuse tout message d'une autre conversation, sans réponse, et plus de 20 commandes par heure.

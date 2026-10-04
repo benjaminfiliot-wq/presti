@@ -1,0 +1,16 @@
+# TÉMOIN de 026-194 : une mise en œuvre de référence, jamais le livrable de 026-195.
+[Unit]
+Description=Pont Telegram de Presti (long polling, aucun port ouvert)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs TELEGRAM_BOT_TOKEN PRESTI_JETON_TELEGRAM TELEGRAM_CHAT_ID TELEGRAM_CODE_APPAIRAGE -- /usr/bin/node scripts/usine/telegram.mjs --service --base=https://prestiapp.fr
+Restart=always
+RestartSec=30
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target
