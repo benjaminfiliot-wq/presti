@@ -1,0 +1,10 @@
+[Unit]
+Description=Passage du Standard toutes les 5 minutes
+
+[Timer]
+OnCalendar=*:0/5
+Persistent=true
+Unit=presti-standard.service
+
+[Install]
+WantedBy=timers.target
