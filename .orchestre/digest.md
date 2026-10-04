@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T23:34:52Z
+# Digest — 2026-10-04T23:36:44Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 196 tâche(s) PASS, 226026 ligne(s) · faites par Claude Code : 104 tâche(s) PASS, 91457 ligne(s).
-**État** — file : 10 · en cours : 14 · faites : 329 · refusées : 7
+**État** — file : 9 · en cours : 14 · faites : 330 · refusées : 7
 
 ## Attention (2)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -30,7 +30,7 @@
 | 026-182 | feature | en-cours | claude-code | — | depuis 2026-10-04T23:33:52Z · Donner à la carte sa caméra : échelle entière en pixels de l'appareil, zoom ×1 à ×3, vue d'ensemble ⊞, glissé borné dans la nébuleuse, croix sur le vide, cadre blanc sur la salle choisie, survol et étiquette à pointe, hublot en polygone, teinte par salle, et un clic sur une salle (réservée comprise) qui pose ?salle=<clé> sans quitter la page, jusqu'au vert de station-ecran-qa (verite, camera) et de station-claw3d-qa (pixel) |
 | 026-191 | test | en-cours | claude-code | — | depuis 2026-10-04T23:02:36Z · Écrire scripts/juges-026-station-claw3d-mutations.mjs, qui prouve sur des copies, sur l'usine, que les juges de rendu de la station Claw3D (station-claw3d-qa, station-ecran-qa, station-themes-qa, station-planche-qa, ecommerce-reservee-qa) échouent sur une vraie faute avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue sur son critère et chaque témoin passe |
 | 026-192 | test | en-cours | claude-code | — | depuis 2026-10-04T23:31:24Z · Écrire scripts/juges-026-station-poste-mutations.mjs, qui prouve sur des copies, sur le PC, que les juges de la station qui lisent la vraie base ou créent un compte d'essai (station-reglages-qa, poste-extraction-qa, station-route-qa --partie=salles2, pilotage-sql-qa --migration=reglages, pilotage-ecran-qa --partie=salles-suite) échouent sur une vraie faute avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue sur son critère et chaque témoin passe |
-| 026-203 | test | en-cours | claude-code | — | depuis 2026-10-04T23:12:08Z · Écrire scripts/juges-026-pubs-usine-mutations.mjs, qui prouve sur des copies que les juges de la fabrication des pubs sur l'usine (usine-pubs-qa) et de la Search Console automatique (search-console-qa) échouent sur une vraie faute avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue sur son critère et chaque témoin passe |
+| 026-198 | test | en-cours | claude-code | — | depuis 2026-10-04T23:36:39Z · Écrire scripts/juges-026-transverse-mutations.mjs, qui prouve sur des copies que les juges du pont Telegram (pont-telegram-qa) et du durcissement de l'usine (usine-durcie-qa) échouent sur une vraie faute avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue sur son critère et chaque témoin passe |
 | 026-228 | test | en-cours | claude-code | — | depuis 2026-10-04T23:21:01Z · Muter le juge de complétude des outils et de la voie entrante après les fiches 026-220 à 026-227 |
 | 026-250 | test | en-cours | claude-code | — | depuis 2026-10-04T23:19:19Z · Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
 | 026-152 | test | file | codex | — | Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
@@ -41,7 +41,6 @@
 | 026-187 | feature | file | antigravity | — | Remplir le cadre Habillage.tsx posé par 026-111 : appliquerReglages posé sur le seul nœud .mc, et le panneau ?vue=reglages (thème, équipage, salles, couleurs, affichage, notifications en lecture) avec l'aperçu en direct sans écriture, Enregistrer, Annuler, Revenir au thème par défaut, Historique et Rétablir, absent pour le rôle lecture, à 390 px comme à 1440 px, jusqu'au vert de station-ecran-qa --partie=reglages |
 | 026-188 | feature | file | antigravity | — | Donner à la station le panneau de la salle Commandement (objectif, missions, succès, compte rendu et consignes reçues par le Chef, servis ; sante, et comptabilite pour le niveau et les euros), ouvert par ?salle=commandement à la place de la liste de ses agents, avec le résumé de salle commun, en lecture seule, à 390 px comme à 1440 px, jusqu'au vert de station-ecran-qa --partie=salles2 --lot=a |
 | 026-189 | feature | file | antigravity | — | Donner à la station les panneaux des cinq salles nouvelles et de la salle réservée : Audience (l'existant, sans cookie ni IP, sans Windsor), Sécurité, Presti (un nombre de tickets, jamais un contenu), Observatoire (la France au hublot, agrégée par département), Salle de repos (Reprendre sous mot de passe, jamais « bientôt ») et E-commerce (« Branche réservée : rien n'est construit. », sans chiffre ni bouton), chacun avec le résumé de salle commun, à 390 px comme à 1440 px, jusqu'au vert de station-ecran-qa --partie=salles2 --lot=b |
-| 026-198 | test | file | codex | — | Écrire scripts/juges-026-transverse-mutations.mjs, qui prouve sur des copies que les juges du pont Telegram (pont-telegram-qa) et du durcissement de l'usine (usine-durcie-qa) échouent sur une vraie faute avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue sur son critère et chaque témoin passe |
 | 026-219 | test | file | codex | — | C16 — mutations des juges du domaine réseaux, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 026-123 | feature | fait | claude-code | PASS | 2026-10-04T21:50:27Z · 519s · 1760 l. |
 | 026-172 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 131 min |
@@ -119,5 +118,6 @@
 | 026-209 | feature | fait | codex | PASS | 2026-09-29T15:13:06Z · 24s · 0 l. |
 | 026-236 | feature | fait | codex | PASS | 2026-09-29T15:03:52Z · 109s · 0 l. |
 | 026-084 | feature | fait | codex | PASS | 2026-09-29T14:52:34Z · 70s · 0 l. |
+| 026-144 | feature | fait | antigravity | PASS | 2026-09-29T14:52:29Z · 48s · 0 l. |
 
 … 260 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
