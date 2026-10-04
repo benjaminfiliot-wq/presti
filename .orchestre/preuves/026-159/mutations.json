@@ -1,0 +1,334 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/pack-pub-base-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=base --racine={racine}",
+      "fichier": "supabase/migrations/0102_packs_pubs.sql",
+      "avant": "create policy \"packs pubs : l artisan lit ses packs\" on public.packs_pubs for select using (auth.uid() = artisan_id);",
+      "apres": "create policy \"packs pubs : l artisan lit ses packs\" on public.packs_pubs for select using (auth.uid() = artisan_id);\ncreate policy \"packs pubs : ecriture\" on public.packs_pubs for insert with check (auth.uid() = artisan_id);",
+      "critere": "PB-3",
+      "extrait": "FAIL PB-3 — 2 politique(s) sur packs_pubs, une seule (en lecture) attendue",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/pack-pub-base-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=base --racine={racine}",
+      "fichier": "supabase/migrations/0102_packs_pubs.sql",
+      "avant": "revoke all on public.packs_pubs from public, anon, authenticated;\n",
+      "apres": "",
+      "critere": "PB-3",
+      "extrait": "FAIL PB-3 — revoke all … on public.packs_pubs from … : absent",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/pack-pub-base-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=base --racine={racine}",
+      "fichier": "supabase/migrations/0102_packs_pubs.sql",
+      "avant": "values ('packs-pubs', 'packs-pubs', false, 20971520)\non conflict (id) do update set public = false, file_size_limit = 20971520;",
+      "apres": "values ('packs-pubs', 'packs-pubs', true, 20971520)\non conflict (id) do update set public = true, file_size_limit = 20971520;",
+      "critere": "PB-4",
+      "extrait": "FAIL PB-4 — bucket packs-pubs : public ≠ false (« insert into storage.buckets(id, name, public, file_size_limit) values('packs-pubs', 'packs-pubs', true, 20971520) on co… »)",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/pack-pub-base-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=base --racine={racine}",
+      "fichier": "supabase/migrations/0102_packs_pubs.sql",
+      "avant": "check (etat in ('brouillon', 'payee', 'fabriquee', 'livree'))",
+      "apres": "check (etat in ('brouillon', 'payee', 'fabriquee'))",
+      "critere": "PB-2",
+      "extrait": "FAIL PB-2 — etat : liste brouillon,payee,fabriquee, attendue brouillon,payee,fabriquee,livree",
+      "duree_s": 0.7
+    },
+    {
+      "juge": "scripts/pack-pub-base-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=base --racine={racine}",
+      "fichier": "supabase/migrations/_A_COLLER_sql_editor_0102_NU.sql",
+      "avant": "artisan_id uuid references public.artisans(id) on delete set null,",
+      "apres": "artisan_id uuid references public.artisans(id)  on delete set null,",
+      "critere": "PB-8",
+      "extrait": "FAIL PB-8 — .orchestre/preuves/026-114/essai-a-sec.txt : empreinte 72bf995196bd… ≠ celle du jumeau courant d4348b3c432a… : l'essai a porté sur un autre texte",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "lib/stripeAiguillage.ts",
+      "avant": "if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {",
+      "apres": "if (s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {",
+      "critere": "PP-3",
+      "extrait": "FAIL PP-3 — aiguiller(pack-abonnement) = \"pack_pub\", \"orphelin\" attendu",
+      "duree_s": 4.5
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "app/api/stripe/webhook/route.ts",
+      "avant": "throw new Error(`paiement de pack pubs sans dossier : session ${s.id}`)",
+      "apres": "console.error(`paiement de pack pubs sans dossier : session ${s.id}`)",
+      "critere": "PP-4",
+      "extrait": "FAIL PP-4 — la branche pack_pub ne lève pas d'erreur sur 'introuvable'",
+      "duree_s": 4.4
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "lib/packPubServeur.ts",
+      "avant": ".update(maj).eq('id', packId).eq('etat', 'brouillon').select('id')",
+      "apres": ".update(maj).eq('id', packId).select('id')",
+      "critere": "PP-5",
+      "extrait": "FAIL PP-5 — encaisserPackPub ne met pas à jour avec .eq('etat', 'brouillon')",
+      "duree_s": 4.4
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "lib/packPub.ts",
+      "avant": "    invoice_creation: { enabled: true, invoice_data: { description: 'Pack pubs locales — Presti', ...(taxeAuto ? {} : { footer: mentionFranchise('auto') }) } },\n",
+      "apres": "",
+      "critere": "PP-6",
+      "extrait": "FAIL PP-6 — invoice_creation.enabled ≠ true ; invoice_creation.invoice_data.footer ≠ mentionFranchise('auto') («  » ≠ « TVA non applicable, art. 293 B du CGI. »)",
+      "duree_s": 5.4
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "lib/packPub.ts",
+      "avant": "payment_intent_data: { metadata: { ...metadata } },",
+      "apres": "payment_intent_data: {},",
+      "critere": "PP-6",
+      "extrait": "FAIL PP-6 — payment_intent_data.metadata ≠ metadata (undefined ≠ {\"uid\":\"uid-essai-0001\",\"type\":\"pack_pub\",\"pack_id\":\"pack-essai-0001\"})",
+      "duree_s": 4.2
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-noyau --racine={racine}",
+      "fichier": "lib/stripe.ts",
+      "avant": "return !enBase || enBase === evenement",
+      "apres": "return !enBase || enBase === evenement || false",
+      "critere": "PP-7",
+      "extrait": "FAIL PP-7 — lib/stripe.ts modifié par rapport à HEAD",
+      "duree_s": 0.4
+    },
+    {
+      "juge": "scripts/pack-pub-paiement-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=paiement-route --racine={racine}",
+      "fichier": "lib/flags.ts",
+      "avant": "  packPub: false,",
+      "apres": "  packPub: true,",
+      "critere": "PP-9",
+      "extrait": "FAIL PP-9 — packPub : false → true (aucun autre drapeau ne doit changer) ; packPub = true, false attendu",
+      "duree_s": 15.8
+    },
+    {
+      "juge": "scripts/cgu-pack-pub-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=cgu --racine={racine}",
+      "fichier": "app/cgu/page.tsx",
+      "avant": "signalée « Voix générée par IA » à l’écran pendant toute la vidéo.",
+      "apres": "signalée à l’écran pendant toute la vidéo.",
+      "critere": "CG-3",
+      "extrait": "FAIL CG-3 — phrase(s) absente(s) du bloc : « Voix générée par IA »",
+      "duree_s": 5.1
+    },
+    {
+      "juge": "scripts/cgu-pack-pub-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=cgu --racine={racine}",
+      "fichier": "app/cgu/page.tsx",
+      "avant": "Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers.",
+      "apres": "Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers ; résultats assurés.",
+      "critere": "CG-4",
+      "extrait": "FAIL CG-4 — « résultats assurés »",
+      "duree_s": 4
+    },
+    {
+      "juge": "scripts/cgu-pack-pub-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=cgu --racine={racine}",
+      "fichier": "app/cgu/page.tsx",
+      "avant": "Les textes et photos qu’il fournit restent les siens",
+      "apres": "Les textes et photos qu’il fournit restent les leurs",
+      "critere": "CG-2",
+      "extrait": "FAIL CG-2 — le bloc id=\"site\" (« 3 bis ») a changé par rapport à HEAD",
+      "duree_s": 4.1
+    },
+    {
+      "juge": "scripts/pack-pub-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=dossier-api --racine={racine}",
+      "fichier": "lib/packPubDossier.ts",
+      "avant": "/storage/v1/object/public/artisan-media/${contexte.uid}/`",
+      "apres": "/storage/v1/object/public/artisan-media/`",
+      "critere": "PD-1",
+      "extrait": "FAIL PD-1 — refus-photo-autre-artisan accepté à tort (champ photo attendu en refus)",
+      "duree_s": 5.6
+    },
+    {
+      "juge": "scripts/pack-pub-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=dossier-api --racine={racine}",
+      "fichier": "lib/packPubDossier.ts",
+      "avant": "    if (personnes && !accord_personnes) erreur(`${champ}.accord_personnes`, 'L’accord des personnes visibles est nécessaire.')\n",
+      "apres": "",
+      "critere": "PD-1",
+      "extrait": "FAIL PD-1 — refus-personne-sans-accord accepté à tort (champ accord attendu en refus)",
+      "duree_s": 5
+    },
+    {
+      "juge": "scripts/pack-pub-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=dossier-api --racine={racine}",
+      "fichier": "lib/packPubDossier.ts",
+      "avant": "    if (/\\d/.test(texte_voix)) erreur('texte_voix', 'Écrivez les nombres en lettres.')\n",
+      "apres": "",
+      "critere": "PD-1",
+      "extrait": "FAIL PD-1 — refus-chiffre-texte-voix accepté à tort (champ texte_voix attendu en refus)",
+      "duree_s": 5.9
+    },
+    {
+      "juge": "scripts/pack-pub-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=dossier-page --racine={racine}",
+      "fichier": "app/pubs/commander/page.tsx",
+      "avant": "<p><b>{PRIX_PACK_PUB_TEXTE}</b> une fois,",
+      "apres": "<p><b>149 €</b> une fois,",
+      "critere": "PD-5",
+      "extrait": "FAIL PD-5 — « 149 » écrit en dur : le prix doit venir de PRIX_PACK_PUB_TEXTE",
+      "duree_s": 8
+    },
+    {
+      "juge": "scripts/pack-pub-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=dossier-page --racine={racine}",
+      "fichier": "app/dashboard/page.tsx",
+      "avant": "{actif('packPubVente') && <CartePackPub />}",
+      "apres": "<CartePackPub />",
+      "critere": "PD-7",
+      "extrait": "FAIL PD-7 — 0 ligne(s) rendue(s) sous actif('packPubVente'), une seule attendue ; 1 ligne(s) ajoutée(s) hors de l'import et de la ligne rendue : <CartePackPub />",
+      "duree_s": 7.8
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-route --racine={racine}",
+      "fichier": "lib/packPubLivraison.ts",
+      "avant": "export const DUREE_LIEN_S = 2592000",
+      "apres": "export const DUREE_LIEN_S = 5184000",
+      "critere": "LV-3",
+      "extrait": "FAIL LV-3 — DUREE_LIEN_S = 5184000, 2592000 attendu",
+      "duree_s": 7.8
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-route --racine={racine}",
+      "fichier": "app/api/controle/packs/[id]/route.ts",
+      "avant": "    const refus = await exigerReconfirmation(req, f.uid, 'artisan')\n    if (refus) return refus\n",
+      "apres": "",
+      "critere": "LV-4",
+      "extrait": "FAIL LV-4 — exigerReconfirmation( absent (portée 'artisan', pour livrer)",
+      "duree_s": 8.1
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-route --racine={racine}",
+      "fichier": "app/api/controle/packs/[id]/route.ts",
+      "avant": "  const maintenant = new Date()\n",
+      "apres": "  const maintenant = new Date()\n  await supabaseAdmin.from('packs_pubs').update({ modifie_le: maintenant.toISOString() }).eq('id', id)\n",
+      "critere": "LV-4",
+      "extrait": "FAIL LV-4 — le journal doit s'écrire AVANT la mise à jour",
+      "duree_s": 7.2
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-poste --racine={racine}",
+      "fichier": "app/controle/page.tsx",
+      "avant": "import Sites from './Sites'",
+      "apres": "import Sites from './Sites' // modifié",
+      "critere": "LV-8",
+      "extrait": "FAIL LV-8 — 1 ligne(s) retirée(s) hors du type Onglet et de TITRES : le diff doit rester limité à l'ajout de l'onglet packs",
+      "duree_s": 8.8
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-purge --racine={racine}",
+      "fichier": "lib/packPubPurge.ts",
+      "avant": ".filter((pack) => pack.etat === 'livree'\n      && pack.fichiers_effaces_le === null\n      && pack.lien_expire_le !== null\n",
+      "apres": ".filter((pack) => pack.fichiers_effaces_le === null\n",
+      "critere": "LV-12",
+      "extrait": "FAIL LV-12 — scénarios : [\"pack-purge-6\",\"pack-purge-5\",\"pack-purge-1\",\"pack-purge-2\"] rendu, [\"pack-purge-1\",\"pack-purge-2\"] attendu (livree, expiré, jamais purgé, le plus ancien d'abord ; jamais payee/fabriquee/pas-expiré/déjà-purgé)",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/pack-pub-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=livraison-purge --racine={racine}",
+      "fichier": "lib/packPubPurge.ts",
+      "avant": "    bilan.erreurs.push(`purge : ${e instanceof Error ? e.message : String(e)}`)",
+      "apres": "    throw e",
+      "critere": "LV-13",
+      "extrait": "FAIL LV-13 — une erreur est levée (throw) : elle doit être comptée et rendue, jamais levée",
+      "duree_s": 9.2
+    },
+    {
+      "juge": "scripts/pub-locale-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=locale-textes --racine={racine}",
+      "fichier": "scripts/pack-pub/textes.mjs",
+      "avant": "const cta = faits.cta === 'appel' && telephone ? `Appelez le ${telephone}`",
+      "apres": "const cta = faits.cta === 'appel' && telephone ? `Appelez le ${telephone}, entreprise RGE`",
+      "critere": "PL-T4",
+      "extrait": "FAIL PL-T4 — terme interdit trouvé : « RGE »",
+      "duree_s": 0.9
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-composer --racine={racine}",
+      "fichier": "lib/crieur/faits.ts",
+      "avant": "motif: 'CADENCE_RELANCES = [2, 5, 10]'",
+      "apres": "motif: 'CADENCE_RELANCES = [2, 5, 11]'",
+      "critere": "CR-1",
+      "extrait": "FAIL CR-1 — relances : lib/relances.ts ne contient pas mot pour mot « CADENCE_RELANCES = [2, 5, 11] »",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-composer --racine={racine}",
+      "fichier": "lib/crieur/faits.ts",
+      "avant": "texte: 'Exportez vos données depuis Presti.'",
+      "apres": "texte: 'Presti répond à vos prospects.'",
+      "critere": "CR-2",
+      "extrait": "FAIL CR-2 — export-donnees : « Presti répond » sans « Studio »/« Signature »",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-composer --racine={racine}",
+      "fichier": "lib/crieur/composer.ts",
+      "avant": "  return resultat\n}",
+      "apres": "  return [...resultat, ...resultat.slice(0, 1)]\n}",
+      "critere": "CR-3",
+      "extrait": "FAIL CR-3 — composerLot(mois-neuf) : 4 publication(s), 3 au plus attendues ; composerLot(mois-neuf)[3] : deux publications sur instagram dans le même lot ; composerLot(fait-recent) : 4 publication(s), 3 au plus attendues ; composerLot(fait-recent)[3] : deux publications sur instagram dans le même lot (et 2 autre(s))",
+      "duree_s": 0.5
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-horloge --racine={racine}",
+      "fichier": "supabase/migrations/0104_crieur.sql",
+      "avant": "-- Rejouable : la table et les index en `if not exists`,",
+      "apres": "-- [DOUBLON-0104] Rejouable : la table et les index en `if not exists`,",
+      "critere": "CR-10",
+      "extrait": "FAIL CR-10 — le numéro 0104 est aussi porté par 0104_crieur_doublon.sql : un numéro de migration ne se partage pas",
+      "duree_s": 0.2
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-horloge --racine={racine}",
+      "fichier": "supabase/migrations/0104_crieur.sql",
+      "avant": "revoke all on public.crieur_posts from public, anon, authenticated;",
+      "apres": "revoke all on public.crieur_posts from public, anon, authenticated;\ncreate policy \"crieur : lecture\" on public.crieur_posts for select using (true);",
+      "critere": "CR-11",
+      "extrait": "FAIL CR-11 — 1 politique(s) sur crieur_posts, aucune attendue",
+      "duree_s": 0.2
+    },
+    {
+      "juge": "scripts/crieur-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-contenu-mutations.mjs --relais=crieur-horloge --racine={racine}",
+      "fichier": "supabase/migrations/0104_crieur.sql",
+      "avant": "'Bearer ' || v_secret",
+      "apres": "'Bearer abcdefghijklmnopqrstuvwxyz012345'",
+      "critere": "CR-12",
+      "extrait": "FAIL CR-12 — un jeton semble écrit en clair après 'Bearer '",
+      "duree_s": 0.3
+    }
+  ]
+}

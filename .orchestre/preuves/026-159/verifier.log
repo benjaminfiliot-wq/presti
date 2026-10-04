@@ -1,0 +1,37 @@
+── juges-026-mutations-preuve : fiche 026-159 · script scripts/juges-026-pubs-contenu-mutations.mjs · graine 608953732
+  │ PASS CR-2 — « Presti répond » seul dans un fait ; lib/crieur/faits.ts ; FAIL CR-2 — export-donnees : « Presti répond » sans « Studio »/« Signature »
+  │ PASS CR-3 — composerLot rend 4 publications ; lib/crieur/composer.ts ; FAIL CR-3 — composerLot(mois-neuf) : 4 publication(s), 3 au plus attendues ; composerLot(mois-neuf)[3] : deu…
+  │ TÉMOIN scripts/crieur-qa.mjs --partie=route : code 1 (32.3 s)
+  │ TÉMOIN scripts/crieur-qa.mjs --partie=horloge : code 0 (4.3 s)
+  │ PASS CR-10 — deux migrations portent le numéro 0104 (le relais crée le doublon) ; supabase/migrations/0104_crieur.sql ; FAIL CR-10 — le numéro 0104 est aussi porté par 0104_crieur…
+  │ PASS CR-11 — politique ajoutée à crieur_posts ; supabase/migrations/0104_crieur.sql ; FAIL CR-11 — 1 politique(s) sur crieur_posts, aucune attendue
+  │ PASS CR-12 — jeton en clair dans l’appel planifié ; supabase/migrations/0104_crieur.sql ; FAIL CR-12 — un jeton semble écrit en clair après 'Bearer '
+  │ 026-159 : FAIL — 33/36 mutations prises
+  · contre-mutation 1 : entrée 2 · scripts/pack-pub-base-qa.mjs · PB-3 — intact 0, muté 1 — « FAIL PB-3 — revoke all … on public.packs_pubs from … : absent »
+  · contre-mutation 2 : entrée 18 · scripts/pack-pub-dossier-qa.mjs · PD-1 — intact 0, muté 1 — « FAIL PD-1 — refus-chiffre-texte-voix accepté à tort (champ texte_voix attendu en refus) »
+  · contre-mutation 3 : entrée 6 · scripts/pack-pub-paiement-qa.mjs · PP-3 — intact 0, muté 1 — « FAIL PP-3 — aiguiller(pack-abonnement) = "pack_pub", "orphelin" attendu »
+FAIL MP-1 — 1 défaut(s) : le script sort en code 1
+  ✗ MP-1 le script sort en code 1
+FAIL MP-2 — 14 défaut(s) : scripts/pack-pub-livraison-qa.mjs : aucune entrée pour LV-1 (vus : LV-3, LV-4, LV-8, LV-12, LV-13)
+  ✗ MP-2 scripts/pack-pub-livraison-qa.mjs : aucune entrée pour LV-1 (vus : LV-3, LV-4, LV-8, LV-12, LV-13)
+  ✗ MP-2 scripts/pack-pub-livraison-qa.mjs : aucune entrée pour LV-10 (vus : LV-3, LV-4, LV-8, LV-12, LV-13)
+  ✗ MP-2 scripts/socle-pubs-qa.mjs : aucune entrée dans le rapport
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-G3 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-G4 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-G5 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-3 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-7 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-T5 (vus : PL-T4)
+  ✗ MP-2 scripts/pub-locale-qa.mjs : aucune entrée pour PL-12 (vus : PL-T4)
+  ✗ MP-2 scripts/studio-garde-qa.mjs : aucune entrée dans le rapport
+  ✗ MP-2 scripts/pub-qa.mjs : aucune entrée dans le rapport
+  ✗ MP-2 scripts/crieur-qa.mjs : aucune entrée pour CR-5 (vus : CR-1, CR-2, CR-3, CR-10, CR-11, CR-12)
+  ✗ MP-2 scripts/crieur-qa.mjs : aucune entrée pour CR-7 (vus : CR-1, CR-2, CR-3, CR-10, CR-11, CR-12)
+PASS MP-3 — 3 contre-mutation(s) tirée(s) (graine 608953732) : 3 attrapée(s) par leur critère
+PASS MP-4 — empreintes (7793 fichier(s) presti) et git status identiques avant et après ; aucune jonction laissée
+PASS MP-5 — .orchestre/preuves/026-159/mutations-contre-verifiees.md écrit (3 extrait(s), tous retrouvés dans la sortie du méta-juge)
+juges-026-mutations-preuve : FAIL — MP-1, MP-2
+
+real	9m59.903s
+user	9m18.839s
+sys	1m5.438s
