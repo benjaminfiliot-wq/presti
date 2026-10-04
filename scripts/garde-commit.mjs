@@ -5,6 +5,7 @@
 // Usage : node scripts/garde-commit.mjs   (appelé par .husky/pre-commit après le typecheck)
 import fs from 'node:fs'
 import path from 'node:path'
+import { verifierOrphelins, ligneOrphelin, typescriptDisponible } from './lib/imports-orphelins.mjs'
 
 const REGLES = [
   { re: /mailto:contact@prestiapp\.fr/, ou: ['app', 'lib'], quoi: 'boîte contact@prestiapp.fr morte — utiliser /contact (audit final, B bloquant 1)' },
@@ -69,6 +70,21 @@ function guidesSansMontant() {
   return n
 }
 
+// Règle à part (04/10) : un fichier suivi qui importe un fichier NON suivi passe le typecheck du hook (qui lit le disque) mais casse le
+// build Vercel (qui lit git). d7a1128f : facteur.ts → ./porteurs, porteurs.ts resté hors de git, production figée jusqu'à la correction.
+// La garde lit l'INDEX du commit (sous `git commit -- <chemins>`, l'index temporaire que git donne au hook : le commit exact) :
+// scripts/lib/imports-orphelins.mjs ; juge : scripts/garde-imports-qa.mjs (témoin, sabotages, vrai crochet).
+function importsOrphelins() {
+  if (!typescriptDisponible()) {
+    console.error("  ❌ typescript introuvable : la garde des imports (fichier suivi → fichier non suivi, d7a1128f) ne peut plus lire le code")
+    return 1
+  }
+  const r = verifierOrphelins({ racine: process.cwd() })
+  if (r.erreur) { console.error(`  ❌ garde des imports impossible (${r.erreur})`); return 1 }
+  for (const o of r.orphelins) console.error(`  ❌ ${ligneOrphelin(o)}`)
+  return r.orphelins.length
+}
+
 // Règle à part (28/09) : une page qui lit useSearchParams() sans <Suspense> passe le typecheck mais fait échouer le build
 // Next au prérendu. 026-035 l'a introduit à 01:09 ; sept déploiements Vercel en ERROR avant qu'on le voie (894f0c36).
 function pagesSansSuspense() {
@@ -85,7 +101,7 @@ function pagesSansSuspense() {
   return n
 }
 
-let ko = guidesSansMontant() + pagesSansSuspense()
+let ko = guidesSansMontant() + pagesSansSuspense() + importsOrphelins()
 for (const r of REGLES) {
   for (const racine of r.ou) {
     for (const f of fichiers(racine)) {
