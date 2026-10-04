@@ -6,6 +6,7 @@ import { CLES_SALLE } from '@/lib/pilotage/equipage'
 import type { BarreDonnees, Env, Equipage, Role, Tresorerie } from './Station'
 import Atelier from './salles/Atelier'
 import Envois from './salles/Envois'
+import Experience from './salles/Experience'
 import FicheAgent from './salles/FicheAgent'
 import Fenetre, { PLAQUE_DE, type PoserUrl } from './salles/Fenetre'
 import Machines from './salles/Machines'
@@ -30,6 +31,8 @@ export type PanneauxProps = {
 
 const SALLES_SANS_PANNEAU = ['commandement', 'radar', 'crieur', 'studio', 'chantier', 'audience', 'securite', 'presti', 'observatoire', 'repos', 'ecommerce']
 const NOM_AGENT = /^[a-z0-9_]{2,40}$/
+/** L'attribut que le juge et les fiches suivantes lisent pour trouver le panneau d'une salle ouverte. */
+const PANNEAU = 'data-salle-panneau' as const
 
 /** La liste des agents d'une salle sans panneau : la plaque, ses agents en boutons (chacun ouvre sa fiche), la promesse du panneau. */
 function SalleAgents({ cle, equipage, poser, onFermer }: { cle: string; equipage: Env<Equipage> | null; poser: PoserUrl; onFermer: () => void }) {
@@ -88,6 +91,7 @@ export default function Panneaux({ role, equipage, tresorerie, barre }: Panneaux
     case 'standard': return <Standard {...commun} />
     case 'redaction': return <Redaction {...commun} />
     case 'machines': return <Machines {...commun} />
+    case 'experience': return <Experience attribut={PANNEAU} onFermer={fermer} />
     default: return null
   }
 }
