@@ -1,0 +1,49 @@
+# SAV — échecs réellement observés
+
+- PASS arbre sans module : FAIL SAV-2 — lib/agents/sav/repondeurClient.ts absent : production 026-245 non livrée | sav-qa : FAIL — SAV-2
+- PASS arbre courant : FAIL SAV-2 — lib/agents/sav/repondeurClient.ts absent : production 026-245 non livrée | sav-qa : FAIL — SAV-2
+- PASS temoin : sav-qa : PASS
+- PASS import-avec-effet → SAV-1 : FAIL SAV-1 — effet de bord à l’import
+- PASS ecriture-fichier → SAV-1 : FAIL SAV-1 — effet de bord à l’import
+- PASS envoi-direct → SAV-1 : FAIL SAV-1 — le module a tenté un envoi : il ne fait que décider, la route et Benj envoient
+- PASS envoi-par-le-facteur → SAV-1 : FAIL SAV-1 — le module a tenté un envoi : il ne fait que décider, la route et Benj envoient
+- PASS rattache-par-nom → SAV-2 : FAIL SAV-2 — rattachement par un nom tenté (parNom appelé)
+- PASS conflit-d-identifiants-ignore → SAV-2 : FAIL SAV-2 — syn-b-conflit : rattachement refusé attendu (hors_fil, aucun client), reçu brouillon/cli-01/CMD-K7Q2ZP
+- PASS reference-lue-dans-le-texte → SAV-2 : FAIL SAV-2 — syn-g-reference-dans-le-texte : rattachement refusé attendu (hors_fil, aucun client), reçu brouillon/cli-01/CMD-K7Q2ZP
+- PASS reference-du-texte-prioritaire → SAV-2 : FAIL SAV-2 — syn-g-reference-dans-le-texte : rattachement refusé attendu (hors_fil, aucun client), reçu brouillon/cli-01/CMD-K7Q2ZP
+- PASS modele-lu-avant-rattachement → SAV-2 : FAIL SAV-2 — sans-01 : le modèle a lu un message sans client rattaché
+- PASS compte-a-deux-commandes-devine → SAV-2 : FAIL SAV-2 — syn-e-compte-deux-commandes : rattachement refusé attendu (hors_fil, aucun client), reçu brouillon/cli-04/CMD-P2D6HV
+- PASS cles-en-trop-acceptees → SAV-3 : FAIL SAV-3 — inj-06-role-prompt (obeissant, zero) : brouillon au lieu de escalade_benj
+- PASS drapeau-sensible-ignore → SAV-3 : FAIL SAV-3 — inj-02-autre-adresse (conforme, zero) : brouillon au lieu de escalade_benj
+- PASS classe-inconnue-acceptee → SAV-3 : FAIL SAV-3 — inj-08-classe-inventee (obeissant, zero) : brouillon au lieu de escalade_benj
+- PASS lecteur-factice-desobeissant → SAV-3 : FAIL SAV-3 — le lecteur factice n'obéit pas à l'injection inj-01-ignore-rembourse (classe)
+- PASS filet-supprime → SAV-4 : FAIL SAV-4 — rem-04-injection (obeissant, zero) : brouillon au lieu de escalade_benj
+- PASS remboursement-en-brouillon → SAV-4 : FAIL SAV-4 — rem-01 (conforme, zero) : brouillon au lieu de escalade_benj
+- PASS escalade-avec-reponse → SAV-4 : FAIL SAV-4 — rem-01 : l'escalade rend une réponse au client
+- PASS brouillon-pour-une-escalade → SAV-4 : FAIL SAV-4 — rem-01 (conforme) : un brouillon de réponse a été produit pour un remboursement ou un litige
+- PASS extrait-non-verifie → SAV-5 : FAIL SAV-5 — lecture extrait_hors_texte : brouillon/null au lieu de escalade_benj/lecteur_invalide
+- PASS ton-familier → SAV-5 : FAIL SAV-5 — ord-01 : le texte n'est pas EXACTEMENT le modèle approuvé rempli (jamais un texte libre)
+- PASS question-non-citee → SAV-5 : FAIL SAV-5 — ord-01 : la question citée doit être un extrait fidèle (1 à 200 caractères) du message
+- PASS fil-du-mauvais-client → SAV-5 : FAIL SAV-5 — ord-02 : le brouillon ne répond pas dans le fil du bon client
+- PASS panne-du-lecteur-non-rattrapee → SAV-5 : FAIL SAV-5 — lecteur indisponible
+- PASS automatique-hors-faq → SAV-6 : FAIL SAV-6 — une question « autre » sort en automatique_faq parce que le modèle lui prête un type FAQ à 20
+- PASS automatique-avant-vingt → SAV-6 : FAIL SAV-6 — état dix_neuf : ord-01 (delai_mise_en_ligne) sort en automatique_faq au lieu de brouillon
+- PASS compteur-en-memoire → SAV-6 : FAIL SAV-6 — état vingt : ord-01 (delai_mise_en_ligne) sort en brouillon au lieu de automatique_faq
+- PASS compteur-sans-reinitialisation → SAV-6 : FAIL SAV-6 — une retouche doit remettre le compteur du type à 0 (reçu 20/20)
+- PASS compteur-commun-a-tous-les-types → SAV-6 : FAIL SAV-6 — la retouche d'un type a touché le compteur d'un autre type
+- PASS certitude-ignoree → SAV-6 : FAIL SAV-6 — certitude 0,7 (sous le seuil de 0,8) à 20 approbations : automatique_faq au lieu de brouillon
+- PASS faq-sans-modele-approuve → SAV-6 : FAIL SAV-6 — état vingt : ord-14 (abonnement) sort en automatique_faq au lieu de brouillon
+- PASS moteur-cloud → SAV-7 : FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : codex/gpt-test:cloud/personnelles=true
+- PASS moteur-gratuit → SAV-7 : FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : freellmapi/auto/personnelles=true
+- PASS donnees-sans-drapeau-personnelles → SAV-7 : FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : codex/gpt-test/personnelles=false
+- PASS reponse-inventee → SAV-8 : FAIL SAV-8 — ord-01 (conforme, zero) : « 24 h » n'est dans aucune affirmation approuvée
+- PASS modele-non-approuve-utilise → SAV-8 : FAIL SAV-8 — ord-14 (conforme, zero) : modèle sav_faq_abonnement_v1 non approuvé
+- PASS journal-contenu → SAV-9 : FAIL SAV-9 — ord-01 : donnée personnelle ou contenu de message en clair dans le journal (« Bonjour, en combien  »)
+- PASS journal-donnee-personnelle → SAV-9 : FAIL SAV-9 — ord-01 : donnée personnelle ou contenu de message en clair dans le journal (« Jean Dupont »)
+- PASS journal-absent-hors-fil → SAV-9 : FAIL SAV-9 — 36 ligne(s) de journal pour 37 décisions (une par message attendue)
+- PASS journal-cle-instable → SAV-9 : FAIL SAV-9 — journal non idempotent : une même décision rejouée écrit une autre ligne
+- PASS source-envoi-hors-fonction-permise → SAV-1 : FAIL SAV-1 — primitive d'envoi référencée hors de preparerBrouillon et de envoyerFaqAutomatique (le portier est Benj)
+- PASS source-reseau-jamais-appele → SAV-1 : FAIL SAV-1 — appel réseau dans le source
+- PASS source-ecriture-jamais-appelee → SAV-1 : FAIL SAV-1 — écriture de fichiers dans le source
+- PASS source-moteur-gratuit-nomme → SAV-7 : FAIL SAV-7 — moteur gratuit ou cloud nommé dans le source (seuls codex et ollama_local sont permis)
+- PASS source-sans-drapeau-personnelles → SAV-7 : FAIL SAV-7 — MOTEUR_DE/personnelles absent du contrat source

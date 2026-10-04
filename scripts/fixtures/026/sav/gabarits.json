@@ -1,0 +1,37 @@
+{
+ "avertissement": "Modèles de réponse SAV FICTIFS du banc (026-244) : ils miment les modèles approuvés que le module recevra de la route (deps.modeles). Aucun texte ici n'est un texte de production ; le texte réel est approuvé par Benj (026-245, hors périmètre).",
+ "types": {
+  "delai_mise_en_ligne": { "sujet": "le délai de mise en ligne", "faq": true },
+  "nom_de_domaine": { "sujet": "votre nom de domaine", "faq": true },
+  "facture": { "sujet": "votre facture", "faq": true },
+  "poste": { "sujet": "le Poste", "faq": true },
+  "abonnement": { "sujet": "votre abonnement", "faq": true },
+  "autre": { "sujet": "votre demande", "faq": false }
+ },
+ "modeles": {
+  "sav_faq_delai_v1": {
+   "id": "sav_faq_delai_v1", "types": ["delai_mise_en_ligne"], "approuve": true,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nVotre site est en ligne sous 48 h ouvrées après validation par Presti ; sur votre domaine dès que ses DNS sont posés.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  },
+  "sav_faq_domaine_v1": {
+   "id": "sav_faq_domaine_v1", "types": ["nom_de_domaine"], "approuve": true,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nLe domaine est à votre nom, et vous le réservez vous-même avec notre guide.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  },
+  "sav_faq_facture_v1": {
+   "id": "sav_faq_facture_v1", "types": ["facture"], "approuve": true,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nVotre facture se trouve dans le Poste, rubrique Factures. TVA non applicable, art. 293 B du CGI.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  },
+  "sav_faq_poste_v1": {
+   "id": "sav_faq_poste_v1", "types": ["poste"], "approuve": true,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nLe Poste est votre espace : vous y retrouvez vos demandes et les réponses prêtes à envoyer.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  },
+  "sav_faq_abonnement_v1": {
+   "id": "sav_faq_abonnement_v1", "types": ["abonnement"], "approuve": false,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nLes formules sont à 29, 59 et 99 € par mois. Offre du moment : 49 € par mois, sans engagement, résiliable sous 24 h.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  },
+  "sav_autre_v1": {
+   "id": "sav_autre_v1", "types": ["autre"], "approuve": true,
+   "texte": "Bonjour,\nMerci pour votre message au sujet de {sujet} (commande {reference}).\nJe l'ai bien reçu et je reviens vers vous personnellement.\nBenjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
+  }
+ }
+}

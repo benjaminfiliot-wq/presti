@@ -6,24 +6,25 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T16:19:12Z
+# Digest — 2026-10-04T16:24:38Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 180 tâche(s) PASS, 214209 ligne(s) · faites par Claude Code : 99 tâche(s) PASS, 87224 ligne(s).
-**État** — file : 31 · en cours : 9 · faites : 288 · refusées : 14
+**Mesure** — déléguées (antigravity, codex) : 181 tâche(s) PASS, 214741 ligne(s) · faites par Claude Code : 99 tâche(s) PASS, 84488 ligne(s).
+**État** — file : 33 · en cours : 10 · faites : 288 · refusées : 13
 
 ## Attention (7)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
 - 026-156 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-156 --forcer`
-- 026-103 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-103 --forcer`
 - 026-227 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-227 --forcer`
 - 026-226 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-226 --forcer`
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
 - 026-150 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-150 --forcer`
+- 026-170 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-170 --forcer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-103 | feature | en-cours | claude-code | — | depuis 2026-10-04T16:24:19Z · Écrire scripts/chef/reunion.mjs, qui tient la réunion d'équipage quotidienne avec le jeton du Chef (ouvrir, rassembler les chiffres sans modèle, faire écrire au Chef un compte rendu de 1 à 5 lignes, un objectif et 3 idées au plus, les valider contre le schéma, poster les idées puis clore, ou abandonner dans un finally), sans jamais afficher le jeton, et sa notice docs/agents/reunion.md |
 | 026-097 | feature | en-cours | usine-codex-1467 | — | depuis 2026-10-04T16:12:07Z · Faire tourner l'Atelier des maquettes 24 h/24 sur l'usine Oracle : scripts/agents/atelier-maquettes.mjs, dont passeAtelier fabrique hors du dépôt, au rythme du palier et 10 par jour au plus, la maquette, ses deux captures et sa vidéo de 15 à 20 s, les dépose par des adresses signées et demande le lien après un oui, sans clé de service ni jeton de lien sur l'usine ; et les quatre routes app/api/usine/atelier/* (travail, dépôt, maquette, lien), gardées par le jeton de l'agent atelier_maquettes, qui vérifient chaque fichier déposé et créent le lien et le message côté Vercel |
 | 026-240 | test | en-cours | usine-codex-1470 | — | depuis 2026-10-04T16:16:48Z · Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
 | 026-254 | contenu | en-cours | claude-code | — | depuis 2026-10-04T16:08:20Z · Compléter la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts de 14 à au moins 40 citations réelles sur au moins 8 métiers du bâtiment (au moins 3 par métier couvert, 10 « tous » au plus), en ajoutant des entrées sans jamais en réécrire une existante, chacune retrouvée mot pour mot par le juge sur sa page publique, toutes à approuve false, et mettre à jour la liste des sources de docs/agents/douleurs-methode.md |
@@ -64,13 +65,15 @@
 | 026-228 | test | file | codex | — | Muter le juge de complétude des outils et de la voie entrante après les fiches 026-220 à 026-227 |
 | 026-245 | feature | file | codex | — | lib/agents/sav/repondeurClient.ts (classe le message d'un client déjà payant, le rattache à sa commande, écrit un brouillon sous modèle approuvé ou escalade un remboursement/litige à Benj, tient le compteur des 20 approbations sans retouche par type de question avant d'ouvrir l'automatique FAQ) sous une nouvelle identité de bus sav, avec les routes app/api/usine/sav/travail, brouillon et rapport, gardées par le jeton de l'agent et par la pause générale |
 | 026-247 | feature | file | codex | — | scripts/agents/controleur-qualite.mjs, sur l'usine (Playwright et Lighthouse), qui audite chaque site livré après sa mise en ligne puis chaque mois — disponibilité, poids, accessibilité, liens morts, mentions légales, formulaire présent — et app/api/usine/qualite/travail et rapport, gardées par le jeton de l'agent qualite_sites, sans jamais écrire sur le site audité ni soumettre son formulaire, avec une décision créée pour le Livreur ou Claude Code à chaque panne |
+| 026-250 | test | file | codex | — | Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 026-251 | feature | file | claude-code | — | Mettre en service les quatre postes de l'organigramme du 27/09 (Comptable, SAV, Contrôleur qualité des sites, Vigile) après le « oui » de Benj geste par geste — écrire la migration 0115_postes_agents.sql (graines sav, qualite_sites et vigile par ops_agent_enregistrer, sans jeton, sans pause et sans capacité ; public.vigile_conseiller() et public.vigile_agents() SECURITY DEFINER réservées à service_role, agrégats sans donnée personnelle ; pilotage_activite_salles remplacée au 28 noms d'EQUIPAGE), ses deux jumeaux, son contrôle et l'essai à sec, puis l'appliquer soi-même ; mettre PRESTI_JETON_SAV, PRESTI_JETON_QUALITE et PRESTI_JETON_VIGILE dans la liste fermée du coffre et les groupes sav, qualite et vigile dans usine-agents.mjs ; placer sav, qualite_sites et vigile dans EQUIPAGE ; poser les jetons de vigile, qualite_sites et tresorier sans les afficher ; installer le minuteur presti-vigile — jusqu'au vert des juges de la migration, du coffre, de la station et du --reel du Vigile |
+| 026-092 | feature | fait | claude-code | PASS | 2026-10-04T16:24:36Z · 390s · 532 l. |
+| 026-244 | test | fait | claude-code | PASS | 2026-10-04T16:24:33Z · 31s · 0 l. |
 | 026-246 | test | fait | claude-code | PASS | 2026-10-04T16:18:22Z · 43s · 2506 l. |
-| 026-244 | test | fait | claude-code | PASS | 2026-10-04T16:13:25Z · 51s · 2736 l. |
 | 026-221 | feature | fait | codex | PASS | 2026-10-04T16:13:17Z · 1s · 0 l. |
 | 026-170 | test | refuse | claude-code | DISJONCTÉE | bail expiré : claude-code silencieux depuis 1101 min \| decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche \| ✅ JA-6 scripts/fixtures/026-pilotage/k/lot.mjs lisible : fiche 026-170, référence 1c87006, 4 juge(s), 2 contrôle(s) propre(s) au lot, témoin ./temoin ; cop |
 | 026-178 | feature | refuse | usine-codex-1466 | FAIL | station-route-qa --partie=salles2 — racine C:\Users\benja\Documents\presti — base b107dcf — sources, doublures, puis vivant (arbre réel, copie au drapeau levé, |
 | 026-177 | feature | fait | usine-codex-1465 | PASS | 2026-10-04T15:39:40Z · 246s · 695 l. |
-| 026-092 | feature | fait | claude-code | FAIL | station-route-qa --partie=lecture — racine C:\Users\benja\Documents\presti — base b107dcf — sources, doublures, puis vivant (arbre réel, copie au drapeau levé, |
 | 026-150 | test | refuse | usine-codex-1431 | DISJONCTÉE | bail expiré : codex-relais-securite-0930 silencieux depuis 130 min \| bail expiré : usine-codex-1399 silencieux depuis 135 min \| bail expiré : usine-codex-1431 silencieux depuis 138 min |
 | 026-162 | feature | fait | claude-code | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
 | 026-087 | feature | fait | claude-code | PASS | 2026-10-04T13:49:51Z · 161s · 939 l. |
@@ -112,7 +115,6 @@
 | 026-214 | feature | fait | codex | PASS | 2026-09-29T19:17:34Z · 21s · 0 l. |
 | 026-212 | feature | fait | codex | PASS | 2026-09-29T19:14:45Z · 44s · 0 l. |
 | 026-090 | feature | fait | codex | PASS | 2026-09-29T18:58:19Z · 94s · 0 l. |
-| 026-103 | feature | refuse | usine-codex-188 | DISJONCTÉE | bail expiré : usine-codex-165 silencieux depuis 61 min \| bail expiré : usine-codex-182 silencieux depuis 60 min \| bail expiré : usine-codex-188 silencieux depuis 70 min |
 | 026-088 | feature | fait | claude-code | PASS | 2026-09-29T17:57:02Z · 18s · 2310 l. |
 | 026-089 | feature | fait | codex | PASS | 2026-09-29T17:30:22Z · 74s · 0 l. |
 | 026-147 | feature | fait | antigravity | PASS | 2026-09-29T16:33:19Z · 185s · 0 l. |
@@ -122,7 +124,5 @@
 | 026-209 | feature | fait | codex | PASS | 2026-09-29T15:13:06Z · 24s · 0 l. |
 | 026-236 | feature | fait | codex | PASS | 2026-09-29T15:03:52Z · 109s · 0 l. |
 | 026-084 | feature | fait | codex | PASS | 2026-09-29T14:52:34Z · 70s · 0 l. |
-| 026-144 | feature | fait | antigravity | PASS | 2026-09-29T14:52:29Z · 48s · 0 l. |
-| 026-215 | feature | fait | codex | PASS | 2026-09-29T14:26:12Z · 17s · 0 l. |
 
-… 242 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 244 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
