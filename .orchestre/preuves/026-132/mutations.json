@@ -1,0 +1,94 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=vues --scenario=aide --criteres=VU-4 --racine={racine}",
+      "fichier": "app/controle/station/vues/Aide.tsx",
+      "avant": "<span className=\"mc-origine-source\">{c.source}</span>",
+      "apres": "<span className=\"mc-origine-source\">{'registre_des_compteurs'}</span>",
+      "critere": "VU-4",
+      "extrait": "FAIL VU-4 — tirage 1 : [data-origine=\"agents\"] « AGENTS ACTIFS registre_des_compteurs », la source servie « jauges_envois_17 » attendue ; tirage 1 : [data-origine=\"chef\"] « CHEF DANS registre_des_compteurs », la source servie « station_reunion_85 » attendue ; tirage 1 : [data-origine=\"cycles\"] « CYCLES AUJOURD’HUI registre_des_compteurs », la source servie « pilotage_envois_79 » attendue ; tirage 1 : [data-origine=\"reunion\"] « RÉUNION DANS registre_des_compteurs », la source servie « pilotage_compteurs_37 » attendue ; tirage 1 : [data-origine=\"quota_claude\"] « QUOTA CLAUDE registre_des_compteurs », la source servie « pilotage_agents_31 » attendue ; tirage 1 : [data-origine=\"quota_codex\"] « QUOTA CODEX 5 H registre_des_compteurs », la source servie « acq_chef_73 » attendue ; … (16 défauts)",
+      "duree_s": 10.3
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=vues --scenario=succ --criteres=VU-3 --racine={racine}",
+      "fichier": "app/controle/station/vues/Succes.tsx",
+      "avant": "{tousSucces.map((s) => {",
+      "apres": "{tousSucces.filter((s) => s.debloque).map((s) => {",
+      "critere": "VU-3",
+      "extrait": "FAIL VU-3 — 1 [data-succes], 4 servis dans tousSucces ; ordre premier_oui ; premier_oui, premiere_vente, premier_site_en_ligne, bilan_passe servi ; succès premiere_vente absent (un succès à venir est grisé, jamais caché) ; succès premier_site_en_ligne absent (un succès à venir est grisé, jamais caché) ; succès bilan_passe absent (un succès à venir est grisé, jamais caché)",
+      "duree_s": 11.2
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=salles --scenario=envois --criteres=SA-8 --racine={racine}",
+      "fichier": "app/controle/station/salles/Envois.tsx",
+      "avant": "<Tuile libelle=\"REJETS\" attribut=\"rejets\">{vue.rejets}</Tuile>",
+      "apres": "<Tuile libelle=\"REJETS\" attribut=\"rejets\">{vue.rejets}</Tuile><button type=\"button\">Envoyer</button>",
+      "critere": "SA-8",
+      "extrait": "FAIL SA-8 — bouton ou lien « Envoyer »",
+      "duree_s": 7.1
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=salles --scenario=standard --criteres=SA-15 --racine={racine}",
+      "fichier": "app/controle/station/salles/Standard.tsx",
+      "avant": "vue.parClasse.map(",
+      "apres": "([] as Classe[]).map(",
+      "critere": "SA-15",
+      "extrait": "FAIL SA-15 — pastille oui 3 (tirée) absente ; pastille appel 10 (tirée) absente ; pastille non 0 (tirée) absente ; pastille sensible 9 (tirée) absente ; pastille rgpd 11 (tirée) absente",
+      "duree_s": 4.3
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=fil --scenario=transmettre --criteres=FL-5 --racine={racine}",
+      "fichier": "app/controle/station/journal/Transmettre.tsx",
+      "avant": "setTexte('')",
+      "apres": "setTexte(''); { const b = document.createElement('div'); b.setAttribute('data-bulle-fil', '999999'); b.textContent = `BENJ ▸ ${rogne}`; document.querySelector('[data-transmettre]')?.appendChild(b) }",
+      "critere": "FL-5",
+      "extrait": "FAIL FL-5 — une bulle a été ajoutée à la main avant que le fil serve la consigne",
+      "duree_s": 13.3
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=gestes --scenario=cisions --criteres=EG-4 --racine={racine}",
+      "fichier": "app/controle/station/Gestes.tsx",
+      "avant": "portee: c.portee,",
+      "apres": "portee: null,",
+      "critere": "EG-4",
+      "extrait": "FAIL EG-4 — décision à enjeu : 1 POST avant la reconfirmation ; la reconfirmation porte la portée « securite », argent attendue ; après la reconfirmation : /api/controle/pilotage/decisions/d0000000-0000-4000-8000-000000000002 (sans jeton), /api/controle/pilotage/decisions/d0000000-0000-4000-8000-000000000002 (jeton-du-juge-1-6014) ; le POST de la décision avec le jeton du juge attendu ; 403 reconfirmation_requise (portée securite) : la boîte ne se rouvre pas",
+      "duree_s": 15.1
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=gestes --scenario=lecture --criteres=EG-9 --racine={racine}",
+      "fichier": "app/controle/station/Gestes.tsx",
+      "avant": "{role === 'direction' ? (",
+      "apres": "{role !== 'aucun-role' ? (",
+      "critere": "EG-9",
+      "extrait": "FAIL EG-9 — rôle lecture : 7 geste(s) rendu(s) (data-choix)",
+      "duree_s": 5.7
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=gestes --scenario=appels --criteres=EG-12 --racine={racine}",
+      "fichier": "app/controle/station/Gestes.tsx",
+      "avant": "<p className=\"mc-petit\">{a.lignes[0]}<br />{a.lignes[1]}</p>",
+      "apres": "<p className=\"mc-petit\">{a.lignes[0]}<br />{a.lignes[1]}</p><button type=\"button\">Copier</button>",
+      "critere": "EG-12",
+      "extrait": "FAIL EG-12 — feuille des appels : bouton ou lien « Copier » ; feuille des appels : bouton ou lien « Copier » ; feuille des appels : bouton ou lien « Copier »",
+      "duree_s": 8.3
+    },
+    {
+      "juge": "scripts/pilotage-ecran-qa.mjs",
+      "commande": "node scripts/juges-026-station-ecran-mutations.mjs --relais --partie=gestes --scenario=envoi --criteres=EG-13 --racine={racine}",
+      "fichier": "app/controle/station/Gestes.tsx",
+      "avant": "corps, portee: 'securite', action } })",
+      "apres": "corps, portee: null, action } })",
+      "critere": "EG-13",
+      "extrait": "FAIL EG-13 — ouverture : la boîte securite ne s’ouvre pas après la confirmation ; ouverture : un POST avant la reconfirmation ; ouverture : portée « undefined », securite attendue ; reprendre une technologie : un POST avant la reconfirmation ; reprendre une technologie : {\"geste\":\"reprendre_technologie\",\"technologie\":\"wpforms\"} ; {\"geste\":\"reprendre_technologie\",\"technologie\":\"wpforms\"} après la boîte attendu ; rouvrir un canal : un POST avant la reconfirmation ; … (7 défauts)",
+      "duree_s": 123.2
+    }
+  ]
+}
