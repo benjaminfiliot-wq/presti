@@ -1,0 +1,2 @@
+✓ comptable-qa --preuve-echecs : fixtures justes, arbre courant rouge (module absent, CPT-2 en premier), témoin vert (8/8), 20 sabotages attrapés chacun par son critère
+  preuve : .orchestre/preuves/026-242/echecs-attendus.md
