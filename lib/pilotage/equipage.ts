@@ -12,6 +12,7 @@ const descriptifs: Record<string, [string, string, string]> = {
   // 25e identité (décision du chef d'entreprise du 27/09, fiche 026-070 § « machines ») : l'agent `usine` (homonyme de la
   // salle `usine`, § « Homonymie usine ») siège en Salle des machines, jamais dans la salle `usine` — libellé « Surveillant »
   // pour lever la confusion à l'écran. Manquante ici depuis la livraison : EQ-1 la réclamait déjà (contre-vérification du 28/09).
+  sav:['SAV','Clients payants','presti'], qualite_sites:['Contrôleur qualité','Qualité des sites','usine'], vigile:['Vigile','Sécurité','securite'],
   usine:['Surveillant','Surveillance','machines'], pont:['Pont','Code','chantier'], contenu:['Contenu','Contenu','audience'], pont_telegram:['Telegram','Sécurité','securite'], douleurs:['Douleurs','Observatoire','observatoire'],
 }
 export const EQUIPAGE: Record<string, { libelle: string; role: string; salle: string; avatar: string }> = Object.fromEntries(Object.entries(descriptifs).map(([nom, [libelle, role, salle]]) => [nom, { libelle, role, salle, avatar: nom }]))

@@ -24,6 +24,9 @@ export const NOMS_PERMIS = Object.freeze([
   'PRESTI_JETON_STANDARDISTE', // le Standard (026-094)
   'PRESTI_JETON_FACTEUR', // le Facteur (026-094)
   'TELEGRAM_CODE_APPAIRAGE', // le code d'appairage à usage unique du pont (026-195, 026-196)
+  'PRESTI_JETON_SAV', // le SAV (026-245, 026-251)
+  'PRESTI_JETON_QUALITE', // le Contrôleur qualité des sites, agent qualite_sites (026-247, 026-251)
+  'PRESTI_JETON_VIGILE', // le Vigile (026-249, 026-251)
 ])
 
 // Formes de clés connues, refusées quel que soit le nom sous lequel on essaie de les poser (les JWT à part, plus bas).

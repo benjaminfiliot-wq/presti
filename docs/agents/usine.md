@@ -69,6 +69,9 @@ que des **clés plafonnées**, dans une liste fermée :
 | `TELEGRAM_BOT_TOKEN` | le jeton du bot Telegram |
 | `TELEGRAM_CHAT_ID` | la conversation Telegram (`aucun` tant qu'elle n'est pas appairée) |
 | `TELEGRAM_CODE_APPAIRAGE` | le code d'appairage à usage unique (`epuise` une fois servi) |
+| `PRESTI_JETON_SAV` | le SAV (agent `sav`) : le nom est dans la liste, le jeton n'est pas posé (pas encore de côté usine) |
+| `PRESTI_JETON_QUALITE` | le Contrôleur qualité des sites (agent `qualite_sites`) |
+| `PRESTI_JETON_VIGILE` | le Vigile (agent `vigile`) |
 
 Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et surtout :
 
@@ -157,6 +160,8 @@ et active les minuteurs du groupe ; `arreter <groupe>` les désactive.
 | `presti-chef-savoir-recevoir.service` (déclenché par `.path`), `presti-chef-savoir-index.service` (déclenché par `.path`), `presti-chef-bilan.service` | `presti-chef-bilan.timer` (7 h 35, Paris) | agents | aucune variable pour la réception et l'index ; `PRESTI_JETON_CHEF` pour le bilan | chef | 026-241 (**écrits, pas installés** au 05/10/2026 : attendent le « oui » de Benj) |
 | `presti-porteur.service`, `presti-export-nuit.service` | `presti-porteur.timer` (15 min), `presti-export-nuit.timer` (3 h 30, Paris) | agents | `PRESTI_JETON_FACTEUR_USINE` | porteur | 026-095, 026-143 |
 | `presti-standard.service`, `presti-facteur.service`, `presti-facteur-soir.service` | `presti-standard.timer` (5 min), `presti-facteur.timer` (15 min), `presti-facteur-soir.timer` (20 h 05) | agents | `PRESTI_JETON_STANDARDISTE`, `PRESTI_JETON_FACTEUR` | modeles | 026-094, 026-148 |
+| `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; unité non installée, jeton non posé) |
+| `presti-qualite`, `presti-sav` | pas encore d'unité | agents | `PRESTI_JETON_QUALITE`, `PRESTI_JETON_SAV` | qualite, sav | 026-247, 026-245 |
 | `presti-telegram.service` | aucun : service permanent (long polling) | agents | `TELEGRAM_BOT_TOKEN`, `PRESTI_JETON_TELEGRAM`, `TELEGRAM_CHAT_ID`, `TELEGRAM_CODE_APPAIRAGE` | aucun : sa propre mise en service | 026-195 |
 
 Le groupe `chef` copie aussi `presti-chef-modele.service` et active `presti-chef-modele.path` (026-148) : le modèle du
