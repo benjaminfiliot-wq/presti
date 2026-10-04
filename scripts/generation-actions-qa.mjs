@@ -69,6 +69,28 @@ import {
 } from './fixtures/026-livraison-tresor/commun.mjs'
 import { C, jeuC, auPlus } from './fixtures/026-livraison-tresor/c/commun-c.mjs'
 
+// Les évolutions approuvées sont soustraites exactement, jamais apprises de la racine jugée.
+// 49753f4c : 026-141 (bus, usine, pause et battements). Les contrôles métier historiques restent actifs.
+// 771d765d : 026-201 (Search Console : tourLivraison appelle lib/sites/searchConsole.ts, trois sites au plus par tour, hors pause).
+// Liste de révisions NOMMÉES, de la plus récente à la plus ancienne (chaque évolution se défait sur le texte qui la suit).
+function retirerEvolutions(texte, fichier, revisions) {
+  const echecs = []
+  let projete = texte
+  for (const rev of revisions) {
+    const avant = texteA(rev + '^', fichier), apres = texteA(rev, fichier)
+    if (avant === null || apres === null) { echecs.push('historique authentique absent : ' + rev + ':' + fichier); continue }
+    let debut = 0, fin = 0
+    while (debut < Math.min(avant.length, apres.length) && avant[debut] === apres[debut]) debut++
+    while (fin < Math.min(avant.length, apres.length) - debut && avant[avant.length - 1 - fin] === apres[apres.length - 1 - fin]) fin++
+    const ajoute = apres.slice(debut, apres.length - fin), retire = avant.slice(debut, avant.length - fin)
+    if (!ajoute || projete === null || projete.indexOf(ajoute) < 0 || projete.indexOf(ajoute) !== projete.lastIndexOf(ajoute)) {
+      echecs.push('évolution ' + rev + ' altérée ou ambiguë : ' + fichier); continue
+    }
+    projete = projete.replace(ajoute, retire)
+  }
+  return { texte: projete, echecs }
+}
+
 const JUGE = 'generation-actions-qa'
 const FICHE = '026-106'
 const CE_SCRIPT = fileURLToPath(import.meta.url)
@@ -255,9 +277,11 @@ if (o.enfant === 'distante') {
   if (veut('GA-6')) await s.critere('GA-6', () => {
     const b = baseAvant(LIVRAISON, /demanderGeneration/)
     if (b.texte === null) { prealable = true; return { echecs: [`non jugé : 026-024 attendue (${LIVRAISON} absent de l'historique de HEAD)`] } }
-    const cur = lireRacine(RAC, LIVRAISON)
+    const actuel = lireRacine(RAC, LIVRAISON)
+    const evolution = /\bcloreTacheLivraison\b/.test(actuel ?? '') ? retirerEvolutions(actuel, LIVRAISON, ['771d765d', '49753f4c']) : { texte: actuel, echecs: [] }
+    const cur = evolution.texte
     if (cur === null) return { echecs: [`${LIVRAISON} absent de ${rel(RAC)}`] }
-    const e = []
+    const e = [...evolution.echecs]
     const cle = (i) => i.noms.map((n) => `${i.spec}#${n}`)
     const avant = new Set(importsDe(b.texte).flatMap(cle)), apres = importsDe(cur).flatMap(cle)
     for (const n of avant) if (!apres.includes(n)) e.push(`import retiré : ${n.replace('#', ' → ')}`)

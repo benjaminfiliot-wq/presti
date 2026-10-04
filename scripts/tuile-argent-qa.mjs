@@ -37,11 +37,33 @@ import zlib from 'node:zlib'
 import { createRequire } from 'node:module'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
-  R, lireOptions, refuserAppel, creerSortie, court, premiereLigne, jeu, lireRacine, texteA, dossierTravail, lancerEnfant,
+  R, DOUBLURES, lireOptions, refuserAppel, creerSortie, court, premiereLigne, jeu, lireRacine, texteA, dossierTravail, lancerEnfant,
   preparerEnfant, resultatEnfant, importer, figerHorloge, jugerDans, jugerPreuvesVides, sansCommentaires, importsDe,
   corpsDeFonction, instructions, baseAvant, diffLignes, ajoutTryCatch, typecheck, chargerEnvLocal, fichePass, valeurDe,
   egalAuCentime, lf,
 } from './fixtures/026-livraison-tresor/commun.mjs'
+
+// Les évolutions approuvées sont soustraites exactement, jamais apprises de la racine jugée.
+// 49753f4c : 026-141 (bus/usine) ; 6d9a9c5a : 026-106 (génération distante). Gardes historiques conservées.
+// 771d765d : 026-201 (Search Console : tourLivraison appelle lib/sites/searchConsole.ts, trois sites au plus par tour, hors pause).
+// Liste de révisions NOMMÉES, de la plus récente à la plus ancienne (chaque évolution se défait sur le texte qui la suit).
+function retirerEvolutions(texte, fichier, revisions) {
+  const echecs = []
+  let projete = texte
+  for (const rev of revisions) {
+    const avant = texteA(rev + '^', fichier), apres = texteA(rev, fichier)
+    if (avant === null || apres === null) { echecs.push('historique authentique absent : ' + rev + ':' + fichier); continue }
+    let debut = 0, fin = 0
+    while (debut < Math.min(avant.length, apres.length) && avant[debut] === apres[debut]) debut++
+    while (fin < Math.min(avant.length, apres.length) - debut && avant[avant.length - 1 - fin] === apres[apres.length - 1 - fin]) fin++
+    const ajoute = apres.slice(debut, apres.length - fin), retire = avant.slice(debut, avant.length - fin)
+    if (!ajoute || projete === null || projete.indexOf(ajoute) < 0 || projete.indexOf(ajoute) !== projete.lastIndexOf(ajoute)) {
+      echecs.push('évolution ' + rev + ' altérée ou ambiguë : ' + fichier); continue
+    }
+    projete = projete.replace(ajoute, retire)
+  }
+  return { texte: projete, echecs }
+}
 
 const JUGE = 'tuile-argent-qa'
 const FICHE = '026-059'
@@ -78,11 +100,22 @@ if (o.enfant === 'complet') {
     // TA-5, partie exécutée : la veille lève, tourLivraison rend son bilan et envoie ses e-mails.
     await jugerDans(res, 'TA-5', async () => {
       const e = []
+      // 026-141 : bus hors du périmètre TA-5, réponses exactes sur ses deux lectures/clôtures.
+      // Toute autre RPC ou argument reste refusé par la doublure historique.
+      const baseBus = (await import(pathToFileURL(DOUBLURES).href + '?m=supabaseAdmin')).supabaseAdmin
+      const rpcAvant = baseBus.rpc
+      baseBus.rpc = function (nom, args) {
+        if (nom === 'ops_interrupteur' && args?.p_nom === 'pause_generale') return Promise.resolve({ data: false, error: null })
+        if (nom === 'ops_tache_clore' && args?.p_agent === 'livreur' && /^livrer_site:/.test(args?.p_cle ?? '') && /^supabase:\/\/sites_commandes\//.test(args?.p_preuve_url ?? '')) return Promise.resolve({ data: 'absente', error: null })
+        return rpcAvant.call(this, nom, args)
+      }
       const sl = await importer(RAC, MODULE_LIV)
       if (typeof sl.m?.tourLivraison !== 'function') return { echecs: [`${MODULE_LIV} : tourLivraison introuvable (${sl.erreur ?? 'export absent'})`] }
       D.reinitialiser({ tables: { sites_commandes: [structuredClone(C.idempotence)] }, dns: jeu('dns.json').domaines })
       const envois = []
-      const deps = { base: D.supabaseAdmin, envoyer: async (x) => { envois.push(x); return { ok: true, id: `temoin-${envois.length}` } }, statutDomaine: D.getStatus, maintenant: () => new Date(FIXE) }
+      // Usine vide : la seule lecture attendue est list('') du bucket usine ; le reste reste piégé.
+      const storage = { from: (nom) => nom === 'usine' ? { list: async (prefixe, options) => prefixe === '' ? { data: [], error: null } : D.supabaseAdmin.storage.from(nom).list(prefixe, options) } : D.supabaseAdmin.storage.from(nom) }
+      const deps = { base: { ...D.supabaseAdmin, storage }, envoyer: async (x) => { envois.push(x); return { ok: true, id: `temoin-${envois.length}` } }, statutDomaine: D.getStatus, maintenant: () => new Date(FIXE) }
       let bilan
       try { bilan = await sl.m.tourLivraison(deps) } catch (err) { return { echecs: [`tourLivraison lève quand la veille lève (${premiereLigne(err)})`] } }
       if (!E.veilleAppels) e.push('tourLivraison n’appelle pas veilleTresorerie()')
@@ -282,7 +315,10 @@ if (o.temoin || suite) {
       if (!/import\s+(?:TuileArgent|\{[^}]*\bTuileArgent\b[^}]*\})\s+from\s+['"][^'"]*TuileArgent['"]/.test(ajoute)) e.push(`${COMPTA_ECRAN} n'importe pas TuileArgent`)
     }
     const bL = baseAvant(MODULE_LIV, /\bveilleTresorerie\b/)
-    const cur = lireRacine(RAC, MODULE_LIV)
+    const actuel = lireRacine(RAC, MODULE_LIV)
+    const evolution = /\bcloreTacheLivraison\b/.test(actuel ?? '') ? retirerEvolutions(actuel, MODULE_LIV, ['771d765d', '49753f4c', '6d9a9c5a']) : { texte: actuel, echecs: [] }
+    e.push(...evolution.echecs)
+    const cur = evolution.texte
     if (cur === null && exact) e.push(`${MODULE_LIV} absent`)
     else if (cur !== null || bL.texte !== null) {
       const r = ajoutTryCatch(bL.texte, cur, { nom: 'veilleTresorerie', exact, dansFonction: exact || /\bveilleTresorerie\b/.test(cur ?? '') ? 'tourLivraison' : null })
