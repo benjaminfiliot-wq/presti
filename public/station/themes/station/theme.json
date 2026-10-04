@@ -1,0 +1,2352 @@
+{
+  "cle": "station",
+  "nom": "Station",
+  "version": 1,
+  "grille": {
+    "largeur": 400,
+    "hauteur": 384,
+    "pas": 16
+  },
+  "mise_en_page": "colonnes",
+  "palette": {
+    "--mc-fond": "#0B0418",
+    "--mc-sol": "#CF9782",
+    "--mc-mur": "#4A1675",
+    "--mc-coursive": "#2E1152",
+    "--mc-porte": "#C949BA",
+    "--mc-plaque": "#1B0B33",
+    "--mc-ecran": "#2FC6E0",
+    "--mc-texte": "#FFF4F0",
+    "--mc-accent": "#C949BA",
+    "--mc-alerte": "#FF4D6D"
+  },
+  "emplacements": [
+    {
+      "cle": "commandement",
+      "forme": {
+        "type": "rectangle",
+        "x": 80,
+        "y": 96,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 104,
+        "y": 144
+      },
+      "poste": {
+        "x": 104,
+        "y": 120
+      },
+      "plaque": {
+        "x": 84,
+        "y": 104,
+        "texte": "Commandement"
+      },
+      "teinte": "#C949BA",
+      "reservee": false
+    },
+    {
+      "cle": "reunion",
+      "forme": {
+        "type": "polygone",
+        "points": [
+          [
+            136,
+            96
+          ],
+          [
+            168,
+            96
+          ],
+          [
+            176,
+            104
+          ],
+          [
+            176,
+            136
+          ],
+          [
+            168,
+            144
+          ],
+          [
+            136,
+            144
+          ],
+          [
+            128,
+            136
+          ],
+          [
+            128,
+            104
+          ]
+        ]
+      },
+      "porte": {
+        "x": 152,
+        "y": 144
+      },
+      "poste": {
+        "x": 152,
+        "y": 120
+      },
+      "plaque": {
+        "x": 132,
+        "y": 104,
+        "texte": "Réunion"
+      },
+      "teinte": "#2FC6E0",
+      "reservee": false
+    },
+    {
+      "cle": "radar",
+      "forme": {
+        "type": "rectangle",
+        "x": 176,
+        "y": 96,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 200,
+        "y": 144
+      },
+      "poste": {
+        "x": 200,
+        "y": 120
+      },
+      "plaque": {
+        "x": 180,
+        "y": 104,
+        "texte": "Radar"
+      },
+      "teinte": "#F2D15C",
+      "reservee": false
+    },
+    {
+      "cle": "observatoire",
+      "forme": {
+        "type": "rectangle",
+        "x": 224,
+        "y": 96,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 248,
+        "y": 144
+      },
+      "poste": {
+        "x": 248,
+        "y": 120
+      },
+      "plaque": {
+        "x": 228,
+        "y": 104,
+        "texte": "Observatoire"
+      },
+      "teinte": "#3BD16F",
+      "reservee": false
+    },
+    {
+      "cle": "redaction",
+      "forme": {
+        "type": "rectangle",
+        "x": 56,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 80,
+        "y": 208
+      },
+      "poste": {
+        "x": 80,
+        "y": 184
+      },
+      "plaque": {
+        "x": 60,
+        "y": 168,
+        "texte": "Rédaction"
+      },
+      "teinte": "#4D7CFF",
+      "reservee": false
+    },
+    {
+      "cle": "envois",
+      "forme": {
+        "type": "rectangle",
+        "x": 104,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 128,
+        "y": 208
+      },
+      "poste": {
+        "x": 128,
+        "y": 184
+      },
+      "plaque": {
+        "x": 108,
+        "y": 168,
+        "texte": "Envois"
+      },
+      "teinte": "#FF4D6D",
+      "reservee": false
+    },
+    {
+      "cle": "standard",
+      "forme": {
+        "type": "rectangle",
+        "x": 152,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 176,
+        "y": 208
+      },
+      "poste": {
+        "x": 176,
+        "y": 184
+      },
+      "plaque": {
+        "x": 156,
+        "y": 168,
+        "texte": "Standard"
+      },
+      "teinte": "#C949BA",
+      "reservee": false
+    },
+    {
+      "cle": "atelier",
+      "forme": {
+        "type": "rectangle",
+        "x": 200,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 224,
+        "y": 208
+      },
+      "poste": {
+        "x": 224,
+        "y": 184
+      },
+      "plaque": {
+        "x": 204,
+        "y": 168,
+        "texte": "Atelier"
+      },
+      "teinte": "#2FC6E0",
+      "reservee": false
+    },
+    {
+      "cle": "usine",
+      "forme": {
+        "type": "rectangle",
+        "x": 248,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 272,
+        "y": 208
+      },
+      "poste": {
+        "x": 272,
+        "y": 184
+      },
+      "plaque": {
+        "x": 252,
+        "y": 168,
+        "texte": "Usine"
+      },
+      "teinte": "#F2D15C",
+      "reservee": false
+    },
+    {
+      "cle": "crieur",
+      "forme": {
+        "type": "rectangle",
+        "x": 296,
+        "y": 160,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 320,
+        "y": 208
+      },
+      "poste": {
+        "x": 320,
+        "y": 184
+      },
+      "plaque": {
+        "x": 300,
+        "y": 168,
+        "texte": "Crieur"
+      },
+      "teinte": "#3BD16F",
+      "reservee": false
+    },
+    {
+      "cle": "recettes",
+      "forme": {
+        "type": "rectangle",
+        "x": 56,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 80,
+        "y": 272
+      },
+      "poste": {
+        "x": 80,
+        "y": 248
+      },
+      "plaque": {
+        "x": 60,
+        "y": 232,
+        "texte": "Recettes"
+      },
+      "teinte": "#4D7CFF",
+      "reservee": false
+    },
+    {
+      "cle": "tresorerie",
+      "forme": {
+        "type": "rectangle",
+        "x": 104,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 128,
+        "y": 272
+      },
+      "poste": {
+        "x": 128,
+        "y": 248
+      },
+      "plaque": {
+        "x": 108,
+        "y": 232,
+        "texte": "Trésorerie"
+      },
+      "teinte": "#FF4D6D",
+      "reservee": false
+    },
+    {
+      "cle": "studio",
+      "forme": {
+        "type": "rectangle",
+        "x": 152,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 176,
+        "y": 272
+      },
+      "poste": {
+        "x": 176,
+        "y": 248
+      },
+      "plaque": {
+        "x": 156,
+        "y": 232,
+        "texte": "Studio"
+      },
+      "teinte": "#C949BA",
+      "reservee": false
+    },
+    {
+      "cle": "experience",
+      "forme": {
+        "type": "rectangle",
+        "x": 200,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 224,
+        "y": 272
+      },
+      "poste": {
+        "x": 224,
+        "y": 248
+      },
+      "plaque": {
+        "x": 204,
+        "y": 232,
+        "texte": "Expérience"
+      },
+      "teinte": "#2FC6E0",
+      "reservee": false
+    },
+    {
+      "cle": "presti",
+      "forme": {
+        "type": "rectangle",
+        "x": 248,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 272,
+        "y": 272
+      },
+      "poste": {
+        "x": 272,
+        "y": 248
+      },
+      "plaque": {
+        "x": 252,
+        "y": 232,
+        "texte": "Presti"
+      },
+      "teinte": "#F2D15C",
+      "reservee": false
+    },
+    {
+      "cle": "audience",
+      "forme": {
+        "type": "rectangle",
+        "x": 296,
+        "y": 224,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 320,
+        "y": 272
+      },
+      "poste": {
+        "x": 320,
+        "y": 248
+      },
+      "plaque": {
+        "x": 300,
+        "y": 232,
+        "texte": "Audience"
+      },
+      "teinte": "#3BD16F",
+      "reservee": false
+    },
+    {
+      "cle": "machines",
+      "forme": {
+        "type": "rectangle",
+        "x": 104,
+        "y": 288,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 128,
+        "y": 336
+      },
+      "poste": {
+        "x": 128,
+        "y": 312
+      },
+      "plaque": {
+        "x": 108,
+        "y": 296,
+        "texte": "Machines"
+      },
+      "teinte": "#4D7CFF",
+      "reservee": false
+    },
+    {
+      "cle": "chantier",
+      "forme": {
+        "type": "rectangle",
+        "x": 152,
+        "y": 288,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 176,
+        "y": 336
+      },
+      "poste": {
+        "x": 176,
+        "y": 312
+      },
+      "plaque": {
+        "x": 156,
+        "y": 296,
+        "texte": "Chantier"
+      },
+      "teinte": "#FF4D6D",
+      "reservee": false
+    },
+    {
+      "cle": "securite",
+      "forme": {
+        "type": "rectangle",
+        "x": 200,
+        "y": 288,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 224,
+        "y": 336
+      },
+      "poste": {
+        "x": 224,
+        "y": 312
+      },
+      "plaque": {
+        "x": 204,
+        "y": 296,
+        "texte": "Sécurité"
+      },
+      "teinte": "#C949BA",
+      "reservee": false
+    },
+    {
+      "cle": "repos",
+      "forme": {
+        "type": "rectangle",
+        "x": 248,
+        "y": 288,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 272,
+        "y": 336
+      },
+      "poste": {
+        "x": 272,
+        "y": 312
+      },
+      "plaque": {
+        "x": 252,
+        "y": 296,
+        "texte": "Repos"
+      },
+      "teinte": "#2FC6E0",
+      "reservee": false
+    },
+    {
+      "cle": "ecommerce",
+      "forme": {
+        "type": "rectangle",
+        "x": 272,
+        "y": 96,
+        "l": 48,
+        "h": 48
+      },
+      "porte": {
+        "x": 296,
+        "y": 144
+      },
+      "poste": null,
+      "plaque": {
+        "x": 276,
+        "y": 104,
+        "texte": "E-commerce"
+      },
+      "teinte": "#F2D15C",
+      "reservee": true
+    }
+  ],
+  "coursives": {
+    "noeuds": [
+      {
+        "id": "n0_0",
+        "x": 16,
+        "y": 152,
+        "type": "ascenseur"
+      },
+      {
+        "id": "n0_1",
+        "x": 80,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_2",
+        "x": 104,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_3",
+        "x": 128,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_4",
+        "x": 152,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_5",
+        "x": 176,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_6",
+        "x": 200,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_7",
+        "x": 224,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_8",
+        "x": 248,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_9",
+        "x": 272,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_10",
+        "x": 296,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_11",
+        "x": 320,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n0_12",
+        "x": 384,
+        "y": 152,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_0",
+        "x": 16,
+        "y": 216,
+        "type": "ascenseur"
+      },
+      {
+        "id": "n1_1",
+        "x": 80,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_2",
+        "x": 104,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_3",
+        "x": 128,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_4",
+        "x": 152,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_5",
+        "x": 176,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_6",
+        "x": 200,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_7",
+        "x": 224,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_8",
+        "x": 248,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_9",
+        "x": 272,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_10",
+        "x": 296,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_11",
+        "x": 320,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n1_12",
+        "x": 384,
+        "y": 216,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_0",
+        "x": 16,
+        "y": 280,
+        "type": "ascenseur"
+      },
+      {
+        "id": "n2_1",
+        "x": 80,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_2",
+        "x": 104,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_3",
+        "x": 128,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_4",
+        "x": 152,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_5",
+        "x": 176,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_6",
+        "x": 200,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_7",
+        "x": 224,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_8",
+        "x": 248,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_9",
+        "x": 272,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_10",
+        "x": 296,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_11",
+        "x": 320,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n2_12",
+        "x": 384,
+        "y": 280,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_0",
+        "x": 16,
+        "y": 344,
+        "type": "ascenseur"
+      },
+      {
+        "id": "n3_1",
+        "x": 80,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_2",
+        "x": 104,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_3",
+        "x": 128,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_4",
+        "x": 152,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_5",
+        "x": 176,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_6",
+        "x": 200,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_7",
+        "x": 224,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_8",
+        "x": 248,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_9",
+        "x": 272,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_10",
+        "x": 296,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_11",
+        "x": 320,
+        "y": 344,
+        "type": "coursive"
+      },
+      {
+        "id": "n3_12",
+        "x": 384,
+        "y": 344,
+        "type": "coursive"
+      }
+    ],
+    "aretes": [
+      {
+        "de": "n0_0",
+        "a": "n0_1",
+        "largeur": 16
+      },
+      {
+        "de": "n0_1",
+        "a": "n0_2",
+        "largeur": 16
+      },
+      {
+        "de": "n0_2",
+        "a": "n0_3",
+        "largeur": 16
+      },
+      {
+        "de": "n0_3",
+        "a": "n0_4",
+        "largeur": 16
+      },
+      {
+        "de": "n0_4",
+        "a": "n0_5",
+        "largeur": 16
+      },
+      {
+        "de": "n0_5",
+        "a": "n0_6",
+        "largeur": 16
+      },
+      {
+        "de": "n0_6",
+        "a": "n0_7",
+        "largeur": 16
+      },
+      {
+        "de": "n0_7",
+        "a": "n0_8",
+        "largeur": 16
+      },
+      {
+        "de": "n0_8",
+        "a": "n0_9",
+        "largeur": 16
+      },
+      {
+        "de": "n0_9",
+        "a": "n0_10",
+        "largeur": 16
+      },
+      {
+        "de": "n0_10",
+        "a": "n0_11",
+        "largeur": 16
+      },
+      {
+        "de": "n0_11",
+        "a": "n0_12",
+        "largeur": 16
+      },
+      {
+        "de": "n0_0",
+        "a": "n1_0",
+        "largeur": 16
+      },
+      {
+        "de": "n1_0",
+        "a": "n1_1",
+        "largeur": 16
+      },
+      {
+        "de": "n1_1",
+        "a": "n1_2",
+        "largeur": 16
+      },
+      {
+        "de": "n1_2",
+        "a": "n1_3",
+        "largeur": 16
+      },
+      {
+        "de": "n1_3",
+        "a": "n1_4",
+        "largeur": 16
+      },
+      {
+        "de": "n1_4",
+        "a": "n1_5",
+        "largeur": 16
+      },
+      {
+        "de": "n1_5",
+        "a": "n1_6",
+        "largeur": 16
+      },
+      {
+        "de": "n1_6",
+        "a": "n1_7",
+        "largeur": 16
+      },
+      {
+        "de": "n1_7",
+        "a": "n1_8",
+        "largeur": 16
+      },
+      {
+        "de": "n1_8",
+        "a": "n1_9",
+        "largeur": 16
+      },
+      {
+        "de": "n1_9",
+        "a": "n1_10",
+        "largeur": 16
+      },
+      {
+        "de": "n1_10",
+        "a": "n1_11",
+        "largeur": 16
+      },
+      {
+        "de": "n1_11",
+        "a": "n1_12",
+        "largeur": 16
+      },
+      {
+        "de": "n1_0",
+        "a": "n2_0",
+        "largeur": 16
+      },
+      {
+        "de": "n2_0",
+        "a": "n2_1",
+        "largeur": 16
+      },
+      {
+        "de": "n2_1",
+        "a": "n2_2",
+        "largeur": 16
+      },
+      {
+        "de": "n2_2",
+        "a": "n2_3",
+        "largeur": 16
+      },
+      {
+        "de": "n2_3",
+        "a": "n2_4",
+        "largeur": 16
+      },
+      {
+        "de": "n2_4",
+        "a": "n2_5",
+        "largeur": 16
+      },
+      {
+        "de": "n2_5",
+        "a": "n2_6",
+        "largeur": 16
+      },
+      {
+        "de": "n2_6",
+        "a": "n2_7",
+        "largeur": 16
+      },
+      {
+        "de": "n2_7",
+        "a": "n2_8",
+        "largeur": 16
+      },
+      {
+        "de": "n2_8",
+        "a": "n2_9",
+        "largeur": 16
+      },
+      {
+        "de": "n2_9",
+        "a": "n2_10",
+        "largeur": 16
+      },
+      {
+        "de": "n2_10",
+        "a": "n2_11",
+        "largeur": 16
+      },
+      {
+        "de": "n2_11",
+        "a": "n2_12",
+        "largeur": 16
+      },
+      {
+        "de": "n2_0",
+        "a": "n3_0",
+        "largeur": 16
+      },
+      {
+        "de": "n3_0",
+        "a": "n3_1",
+        "largeur": 16
+      },
+      {
+        "de": "n3_1",
+        "a": "n3_2",
+        "largeur": 16
+      },
+      {
+        "de": "n3_2",
+        "a": "n3_3",
+        "largeur": 16
+      },
+      {
+        "de": "n3_3",
+        "a": "n3_4",
+        "largeur": 16
+      },
+      {
+        "de": "n3_4",
+        "a": "n3_5",
+        "largeur": 16
+      },
+      {
+        "de": "n3_5",
+        "a": "n3_6",
+        "largeur": 16
+      },
+      {
+        "de": "n3_6",
+        "a": "n3_7",
+        "largeur": 16
+      },
+      {
+        "de": "n3_7",
+        "a": "n3_8",
+        "largeur": 16
+      },
+      {
+        "de": "n3_8",
+        "a": "n3_9",
+        "largeur": 16
+      },
+      {
+        "de": "n3_9",
+        "a": "n3_10",
+        "largeur": 16
+      },
+      {
+        "de": "n3_10",
+        "a": "n3_11",
+        "largeur": 16
+      },
+      {
+        "de": "n3_11",
+        "a": "n3_12",
+        "largeur": 16
+      }
+    ]
+  },
+  "tapis": {
+    "trace": [
+      {
+        "x": 16,
+        "y": 40
+      },
+      {
+        "x": 32,
+        "y": 40
+      },
+      {
+        "x": 48,
+        "y": 40
+      },
+      {
+        "x": 64,
+        "y": 40
+      },
+      {
+        "x": 80,
+        "y": 40
+      },
+      {
+        "x": 96,
+        "y": 40
+      },
+      {
+        "x": 112,
+        "y": 40
+      },
+      {
+        "x": 128,
+        "y": 40
+      },
+      {
+        "x": 144,
+        "y": 40
+      },
+      {
+        "x": 160,
+        "y": 40
+      },
+      {
+        "x": 176,
+        "y": 40
+      },
+      {
+        "x": 192,
+        "y": 40
+      },
+      {
+        "x": 208,
+        "y": 40
+      },
+      {
+        "x": 224,
+        "y": 40
+      },
+      {
+        "x": 240,
+        "y": 40
+      },
+      {
+        "x": 256,
+        "y": 40
+      },
+      {
+        "x": 272,
+        "y": 40
+      },
+      {
+        "x": 288,
+        "y": 40
+      },
+      {
+        "x": 304,
+        "y": 40
+      },
+      {
+        "x": 320,
+        "y": 40
+      },
+      {
+        "x": 336,
+        "y": 40
+      },
+      {
+        "x": 352,
+        "y": 40
+      },
+      {
+        "x": 368,
+        "y": 40
+      },
+      {
+        "x": 384,
+        "y": 40
+      }
+    ],
+    "etapes": [
+      {
+        "cle": "trouve",
+        "x": 32,
+        "y": 40
+      },
+      {
+        "cle": "verifie",
+        "x": 80,
+        "y": 40
+      },
+      {
+        "cle": "maquette",
+        "x": 128,
+        "y": 40
+      },
+      {
+        "cle": "contacte",
+        "x": 176,
+        "y": 40
+      },
+      {
+        "cle": "repondu",
+        "x": 224,
+        "y": 40
+      },
+      {
+        "cle": "oui",
+        "x": 272,
+        "y": 40
+      },
+      {
+        "cle": "en_ligne",
+        "x": 320,
+        "y": 40
+      },
+      {
+        "cle": "paye",
+        "x": 368,
+        "y": 40
+      }
+    ]
+  },
+  "defauts": [
+    {
+      "salle": "commandement",
+      "emplacement": "commandement"
+    },
+    {
+      "salle": "reunion",
+      "emplacement": "reunion"
+    },
+    {
+      "salle": "radar",
+      "emplacement": "radar"
+    },
+    {
+      "salle": "observatoire",
+      "emplacement": "observatoire"
+    },
+    {
+      "salle": "redaction",
+      "emplacement": "redaction"
+    },
+    {
+      "salle": "envois",
+      "emplacement": "envois"
+    },
+    {
+      "salle": "standard",
+      "emplacement": "standard"
+    },
+    {
+      "salle": "atelier",
+      "emplacement": "atelier"
+    },
+    {
+      "salle": "usine",
+      "emplacement": "usine"
+    },
+    {
+      "salle": "crieur",
+      "emplacement": "crieur"
+    },
+    {
+      "salle": "recettes",
+      "emplacement": "recettes"
+    },
+    {
+      "salle": "tresorerie",
+      "emplacement": "tresorerie"
+    },
+    {
+      "salle": "studio",
+      "emplacement": "studio"
+    },
+    {
+      "salle": "experience",
+      "emplacement": "experience"
+    },
+    {
+      "salle": "presti",
+      "emplacement": "presti"
+    },
+    {
+      "salle": "audience",
+      "emplacement": "audience"
+    },
+    {
+      "salle": "machines",
+      "emplacement": "machines"
+    },
+    {
+      "salle": "chantier",
+      "emplacement": "chantier"
+    },
+    {
+      "salle": "securite",
+      "emplacement": "securite"
+    },
+    {
+      "salle": "repos",
+      "emplacement": "repos"
+    },
+    {
+      "salle": "ecommerce",
+      "emplacement": "ecommerce"
+    }
+  ],
+  "avatars": [
+    {
+      "cle": "defaut",
+      "couleur": "#C949BA"
+    },
+    {
+      "cle": "chef",
+      "couleur": "#2FC6E0"
+    },
+    {
+      "cle": "facteur",
+      "couleur": "#F2D15C"
+    },
+    {
+      "cle": "crieur",
+      "couleur": "#3BD16F"
+    },
+    {
+      "cle": "studio",
+      "couleur": "#4D7CFF"
+    },
+    {
+      "cle": "systeme",
+      "couleur": "#FF4D6D"
+    }
+  ],
+  "nuit": true,
+  "portrait": {
+    "grille": {
+      "largeur": 288,
+      "hauteur": 576,
+      "pas": 16
+    },
+    "emplacements": [
+      {
+        "cle": "commandement",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 24,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 72
+        },
+        "poste": {
+          "x": 40,
+          "y": 48
+        },
+        "plaque": {
+          "x": 20,
+          "y": 32,
+          "texte": "Commandement"
+        },
+        "teinte": "#C949BA",
+        "reservee": false
+      },
+      {
+        "cle": "reunion",
+        "forme": {
+          "type": "polygone",
+          "points": [
+            [
+              112,
+              24
+            ],
+            [
+              144,
+              24
+            ],
+            [
+              152,
+              32
+            ],
+            [
+              152,
+              64
+            ],
+            [
+              144,
+              72
+            ],
+            [
+              112,
+              72
+            ],
+            [
+              104,
+              64
+            ],
+            [
+              104,
+              32
+            ]
+          ]
+        },
+        "porte": {
+          "x": 128,
+          "y": 72
+        },
+        "poste": {
+          "x": 128,
+          "y": 48
+        },
+        "plaque": {
+          "x": 108,
+          "y": 32,
+          "texte": "Réunion"
+        },
+        "teinte": "#2FC6E0",
+        "reservee": false
+      },
+      {
+        "cle": "radar",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 24,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 72
+        },
+        "poste": {
+          "x": 216,
+          "y": 48
+        },
+        "plaque": {
+          "x": 196,
+          "y": 32,
+          "texte": "Radar"
+        },
+        "teinte": "#F2D15C",
+        "reservee": false
+      },
+      {
+        "cle": "observatoire",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 96,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 144
+        },
+        "poste": {
+          "x": 40,
+          "y": 120
+        },
+        "plaque": {
+          "x": 20,
+          "y": 104,
+          "texte": "Observatoire"
+        },
+        "teinte": "#3BD16F",
+        "reservee": false
+      },
+      {
+        "cle": "redaction",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 96,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 144
+        },
+        "poste": {
+          "x": 128,
+          "y": 120
+        },
+        "plaque": {
+          "x": 108,
+          "y": 104,
+          "texte": "Rédaction"
+        },
+        "teinte": "#4D7CFF",
+        "reservee": false
+      },
+      {
+        "cle": "envois",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 96,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 144
+        },
+        "poste": {
+          "x": 216,
+          "y": 120
+        },
+        "plaque": {
+          "x": 196,
+          "y": 104,
+          "texte": "Envois"
+        },
+        "teinte": "#FF4D6D",
+        "reservee": false
+      },
+      {
+        "cle": "standard",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 168,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 216
+        },
+        "poste": {
+          "x": 40,
+          "y": 192
+        },
+        "plaque": {
+          "x": 20,
+          "y": 176,
+          "texte": "Standard"
+        },
+        "teinte": "#C949BA",
+        "reservee": false
+      },
+      {
+        "cle": "atelier",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 168,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 216
+        },
+        "poste": {
+          "x": 128,
+          "y": 192
+        },
+        "plaque": {
+          "x": 108,
+          "y": 176,
+          "texte": "Atelier"
+        },
+        "teinte": "#2FC6E0",
+        "reservee": false
+      },
+      {
+        "cle": "usine",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 168,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 216
+        },
+        "poste": {
+          "x": 216,
+          "y": 192
+        },
+        "plaque": {
+          "x": 196,
+          "y": 176,
+          "texte": "Usine"
+        },
+        "teinte": "#F2D15C",
+        "reservee": false
+      },
+      {
+        "cle": "crieur",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 240,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 288
+        },
+        "poste": {
+          "x": 40,
+          "y": 264
+        },
+        "plaque": {
+          "x": 20,
+          "y": 248,
+          "texte": "Crieur"
+        },
+        "teinte": "#3BD16F",
+        "reservee": false
+      },
+      {
+        "cle": "recettes",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 240,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 288
+        },
+        "poste": {
+          "x": 128,
+          "y": 264
+        },
+        "plaque": {
+          "x": 108,
+          "y": 248,
+          "texte": "Recettes"
+        },
+        "teinte": "#4D7CFF",
+        "reservee": false
+      },
+      {
+        "cle": "tresorerie",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 240,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 288
+        },
+        "poste": {
+          "x": 216,
+          "y": 264
+        },
+        "plaque": {
+          "x": 196,
+          "y": 248,
+          "texte": "Trésorerie"
+        },
+        "teinte": "#FF4D6D",
+        "reservee": false
+      },
+      {
+        "cle": "studio",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 312,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 360
+        },
+        "poste": {
+          "x": 40,
+          "y": 336
+        },
+        "plaque": {
+          "x": 20,
+          "y": 320,
+          "texte": "Studio"
+        },
+        "teinte": "#C949BA",
+        "reservee": false
+      },
+      {
+        "cle": "experience",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 312,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 360
+        },
+        "poste": {
+          "x": 128,
+          "y": 336
+        },
+        "plaque": {
+          "x": 108,
+          "y": 320,
+          "texte": "Expérience"
+        },
+        "teinte": "#2FC6E0",
+        "reservee": false
+      },
+      {
+        "cle": "presti",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 312,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 360
+        },
+        "poste": {
+          "x": 216,
+          "y": 336
+        },
+        "plaque": {
+          "x": 196,
+          "y": 320,
+          "texte": "Presti"
+        },
+        "teinte": "#F2D15C",
+        "reservee": false
+      },
+      {
+        "cle": "audience",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 384,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 432
+        },
+        "poste": {
+          "x": 40,
+          "y": 408
+        },
+        "plaque": {
+          "x": 20,
+          "y": 392,
+          "texte": "Audience"
+        },
+        "teinte": "#3BD16F",
+        "reservee": false
+      },
+      {
+        "cle": "machines",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 384,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 432
+        },
+        "poste": {
+          "x": 128,
+          "y": 408
+        },
+        "plaque": {
+          "x": 108,
+          "y": 392,
+          "texte": "Machines"
+        },
+        "teinte": "#4D7CFF",
+        "reservee": false
+      },
+      {
+        "cle": "chantier",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 384,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 432
+        },
+        "poste": {
+          "x": 216,
+          "y": 408
+        },
+        "plaque": {
+          "x": 196,
+          "y": 392,
+          "texte": "Chantier"
+        },
+        "teinte": "#FF4D6D",
+        "reservee": false
+      },
+      {
+        "cle": "securite",
+        "forme": {
+          "type": "rectangle",
+          "x": 16,
+          "y": 456,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 40,
+          "y": 504
+        },
+        "poste": {
+          "x": 40,
+          "y": 480
+        },
+        "plaque": {
+          "x": 20,
+          "y": 464,
+          "texte": "Sécurité"
+        },
+        "teinte": "#C949BA",
+        "reservee": false
+      },
+      {
+        "cle": "repos",
+        "forme": {
+          "type": "rectangle",
+          "x": 104,
+          "y": 456,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 128,
+          "y": 504
+        },
+        "poste": {
+          "x": 128,
+          "y": 480
+        },
+        "plaque": {
+          "x": 108,
+          "y": 464,
+          "texte": "Repos"
+        },
+        "teinte": "#2FC6E0",
+        "reservee": false
+      },
+      {
+        "cle": "ecommerce",
+        "forme": {
+          "type": "rectangle",
+          "x": 192,
+          "y": 456,
+          "l": 48,
+          "h": 48
+        },
+        "porte": {
+          "x": 216,
+          "y": 504
+        },
+        "poste": null,
+        "plaque": {
+          "x": 196,
+          "y": 464,
+          "texte": "E-commerce"
+        },
+        "teinte": "#F2D15C",
+        "reservee": true
+      }
+    ],
+    "coursives": {
+      "noeuds": [
+        {
+          "id": "n0_0",
+          "x": 8,
+          "y": 80,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n0_1",
+          "x": 40,
+          "y": 80,
+          "type": "coursive"
+        },
+        {
+          "id": "n0_2",
+          "x": 128,
+          "y": 80,
+          "type": "coursive"
+        },
+        {
+          "id": "n0_3",
+          "x": 216,
+          "y": 80,
+          "type": "coursive"
+        },
+        {
+          "id": "n0_4",
+          "x": 280,
+          "y": 80,
+          "type": "coursive"
+        },
+        {
+          "id": "n1_0",
+          "x": 8,
+          "y": 152,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n1_1",
+          "x": 40,
+          "y": 152,
+          "type": "coursive"
+        },
+        {
+          "id": "n1_2",
+          "x": 128,
+          "y": 152,
+          "type": "coursive"
+        },
+        {
+          "id": "n1_3",
+          "x": 216,
+          "y": 152,
+          "type": "coursive"
+        },
+        {
+          "id": "n1_4",
+          "x": 280,
+          "y": 152,
+          "type": "coursive"
+        },
+        {
+          "id": "n2_0",
+          "x": 8,
+          "y": 224,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n2_1",
+          "x": 40,
+          "y": 224,
+          "type": "coursive"
+        },
+        {
+          "id": "n2_2",
+          "x": 128,
+          "y": 224,
+          "type": "coursive"
+        },
+        {
+          "id": "n2_3",
+          "x": 216,
+          "y": 224,
+          "type": "coursive"
+        },
+        {
+          "id": "n2_4",
+          "x": 280,
+          "y": 224,
+          "type": "coursive"
+        },
+        {
+          "id": "n3_0",
+          "x": 8,
+          "y": 296,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n3_1",
+          "x": 40,
+          "y": 296,
+          "type": "coursive"
+        },
+        {
+          "id": "n3_2",
+          "x": 128,
+          "y": 296,
+          "type": "coursive"
+        },
+        {
+          "id": "n3_3",
+          "x": 216,
+          "y": 296,
+          "type": "coursive"
+        },
+        {
+          "id": "n3_4",
+          "x": 280,
+          "y": 296,
+          "type": "coursive"
+        },
+        {
+          "id": "n4_0",
+          "x": 8,
+          "y": 368,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n4_1",
+          "x": 40,
+          "y": 368,
+          "type": "coursive"
+        },
+        {
+          "id": "n4_2",
+          "x": 128,
+          "y": 368,
+          "type": "coursive"
+        },
+        {
+          "id": "n4_3",
+          "x": 216,
+          "y": 368,
+          "type": "coursive"
+        },
+        {
+          "id": "n4_4",
+          "x": 280,
+          "y": 368,
+          "type": "coursive"
+        },
+        {
+          "id": "n5_0",
+          "x": 8,
+          "y": 440,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n5_1",
+          "x": 40,
+          "y": 440,
+          "type": "coursive"
+        },
+        {
+          "id": "n5_2",
+          "x": 128,
+          "y": 440,
+          "type": "coursive"
+        },
+        {
+          "id": "n5_3",
+          "x": 216,
+          "y": 440,
+          "type": "coursive"
+        },
+        {
+          "id": "n5_4",
+          "x": 280,
+          "y": 440,
+          "type": "coursive"
+        },
+        {
+          "id": "n6_0",
+          "x": 8,
+          "y": 512,
+          "type": "ascenseur"
+        },
+        {
+          "id": "n6_1",
+          "x": 40,
+          "y": 512,
+          "type": "coursive"
+        },
+        {
+          "id": "n6_2",
+          "x": 128,
+          "y": 512,
+          "type": "coursive"
+        },
+        {
+          "id": "n6_3",
+          "x": 216,
+          "y": 512,
+          "type": "coursive"
+        },
+        {
+          "id": "n6_4",
+          "x": 280,
+          "y": 512,
+          "type": "coursive"
+        }
+      ],
+      "aretes": [
+        {
+          "de": "n0_0",
+          "a": "n0_1",
+          "largeur": 16
+        },
+        {
+          "de": "n0_1",
+          "a": "n0_2",
+          "largeur": 16
+        },
+        {
+          "de": "n0_2",
+          "a": "n0_3",
+          "largeur": 16
+        },
+        {
+          "de": "n0_3",
+          "a": "n0_4",
+          "largeur": 16
+        },
+        {
+          "de": "n0_0",
+          "a": "n1_0",
+          "largeur": 16
+        },
+        {
+          "de": "n1_0",
+          "a": "n1_1",
+          "largeur": 16
+        },
+        {
+          "de": "n1_1",
+          "a": "n1_2",
+          "largeur": 16
+        },
+        {
+          "de": "n1_2",
+          "a": "n1_3",
+          "largeur": 16
+        },
+        {
+          "de": "n1_3",
+          "a": "n1_4",
+          "largeur": 16
+        },
+        {
+          "de": "n1_0",
+          "a": "n2_0",
+          "largeur": 16
+        },
+        {
+          "de": "n2_0",
+          "a": "n2_1",
+          "largeur": 16
+        },
+        {
+          "de": "n2_1",
+          "a": "n2_2",
+          "largeur": 16
+        },
+        {
+          "de": "n2_2",
+          "a": "n2_3",
+          "largeur": 16
+        },
+        {
+          "de": "n2_3",
+          "a": "n2_4",
+          "largeur": 16
+        },
+        {
+          "de": "n2_0",
+          "a": "n3_0",
+          "largeur": 16
+        },
+        {
+          "de": "n3_0",
+          "a": "n3_1",
+          "largeur": 16
+        },
+        {
+          "de": "n3_1",
+          "a": "n3_2",
+          "largeur": 16
+        },
+        {
+          "de": "n3_2",
+          "a": "n3_3",
+          "largeur": 16
+        },
+        {
+          "de": "n3_3",
+          "a": "n3_4",
+          "largeur": 16
+        },
+        {
+          "de": "n3_0",
+          "a": "n4_0",
+          "largeur": 16
+        },
+        {
+          "de": "n4_0",
+          "a": "n4_1",
+          "largeur": 16
+        },
+        {
+          "de": "n4_1",
+          "a": "n4_2",
+          "largeur": 16
+        },
+        {
+          "de": "n4_2",
+          "a": "n4_3",
+          "largeur": 16
+        },
+        {
+          "de": "n4_3",
+          "a": "n4_4",
+          "largeur": 16
+        },
+        {
+          "de": "n4_0",
+          "a": "n5_0",
+          "largeur": 16
+        },
+        {
+          "de": "n5_0",
+          "a": "n5_1",
+          "largeur": 16
+        },
+        {
+          "de": "n5_1",
+          "a": "n5_2",
+          "largeur": 16
+        },
+        {
+          "de": "n5_2",
+          "a": "n5_3",
+          "largeur": 16
+        },
+        {
+          "de": "n5_3",
+          "a": "n5_4",
+          "largeur": 16
+        },
+        {
+          "de": "n5_0",
+          "a": "n6_0",
+          "largeur": 16
+        },
+        {
+          "de": "n6_0",
+          "a": "n6_1",
+          "largeur": 16
+        },
+        {
+          "de": "n6_1",
+          "a": "n6_2",
+          "largeur": 16
+        },
+        {
+          "de": "n6_2",
+          "a": "n6_3",
+          "largeur": 16
+        },
+        {
+          "de": "n6_3",
+          "a": "n6_4",
+          "largeur": 16
+        }
+      ]
+    }
+  }
+}
