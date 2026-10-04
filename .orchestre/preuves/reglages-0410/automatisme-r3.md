@@ -54,6 +54,22 @@ sans lire la pause générale avant : un libellé comptable pouvait déclencher 
 Correctif : `moteurParDefaut` lit `sortiePermise()` (chargé à l'appel, aucun effet de bord à l'import) AVANT `creerLecteur` et, sous pause ou dans le doute, lève `ErreurComptable('moteur', …)` :
 `libelle()` retombe sur `LIBELLE_FIXE`, sans appel. Rejeu : GP-2 PASS (12 voies de sortie dérivées), `comptable-qa` CPT-1 à CPT-8 PASS.
 
+## 3 bis. Le vérificateur de 026-204 (et de la famille contenu) rouge depuis 0ac78df0 : témoin périmé (correction de juge, rien d'assoupli)
+
+`node scripts/juges-026-reseaux-preuve.mjs --preuve-echecs` (le `verifier` de 026-204, qui prouve que `contenu-qa` sait distinguer un comportement correct d'un comportement saboté)
+rendait **FAIL, 8 en échec sur 23** sur HEAD : `0ac78df0` avait réécrit les critères de `contenu-qa` (publication sans accord individuel, pause fail-closed) mais pas le TÉMOIN
+(`scripts/fixtures/contenu/temoin/lib/contenu/`, la référence « comportement correct » qui doit passer au vert) : le témoin exigeait encore l'accord et ne lisait jamais la pause.
+
+| Fiche | Juge | Critère | Défaut | Correction |
+|---|---|---|---|---|
+| 026-204 | témoin `scripts/fixtures/contenu/temoin/lib/contenu/*.ts` | LN-6, LN-7, MP-3, MP-6, ME-4, BO-4, VE-5, GE-1 à GE-4 rouges **sur le témoin** | le témoin exigeait `accordValide` pour publier et n'avait ni `controlerPublicationAutomatique`, ni `controlerAvantPublication`, ni lecture de pause | `_noyau.ts` : `pausePermise()` (la VRAIE porte `sortiePermise`), `gardesDeCout()` (opposition, coût exactement 0), `verdictChiffre` relit la pause avant CHAQUE appel au modèle ; `lignes.ts` / `metaPublier.ts` / `accord.ts` : plus d'accord, chaque texte visible contrôlé, pause relue avant chaque appel Graph et après la fabrication du conteneur ; `boucle.ts` / `accroches.ts` : pause lue avant le modèle. `accordValide` reste exporté (chemin TikTok, TT-2) |
+| 026-204 | `scripts/juges-026-reseaux-preuve.mjs` | SB-geste (« GE-1 rougit seul ») | le sabotage visait `DEFAUT = 'accorder'`, notion que GE-1 ne juge plus | remplacé par un sabotage de la garde que GE-2 protège (opposition retirée du noyau : GE-2 seul rougit) |
+| 026-204 | idem | CLI-REEL (« sans production, racine réelle : code 2 ») | rouge à vide depuis la livraison de `docs/marketing/` par 026-205 (29/09) : la racine réelle est jugée pour de vrai (code 0) | le cas gardé — une racine SANS production rend « préalable extérieur », code 2 — se prouve sur un dossier vide (`--racine=<tmp vide>`) |
+| 026-204 | idem | sabotages ajoutés (renforcement) | rien ne vérifiait que le juge voit une pause non relue ou un coût non exigé | SB-lignes→LN-7 (pause non relue avant le 2e appel), SB-geste→GE-2 (coût nul retiré), SB-meta→MP-6 (pause non relue avant la publication Graph) : chacun rougit son critère SEUL |
+
+Rejeu sur l'usine (arbre propre, `--forcer` : `executer` annonçait que le `node_modules` de l'usine datait d'un autre `package-lock.json` — probablement l'ajout de phaser par 026-179, que je n'ai pas vérifié —, sans effet sur ces juges) :
+**`juges-026-reseaux-preuve --preuve-echecs` PASS (26 ok, 0 en échec)** ; `contenu-qa --temoin` sur les 13 parties : 53 critères verts. Le détail avant/après est dans `automatisme-r3-usine.txt`.
+
 ## 4. Migration 0124
 
 Voir `application-0124.md` : appliquée à 14:48 (Paris), avant que je reprenne le lot (passage précédent, d'après les fichiers laissés) ; ce soir vérifiée (empreintes fichier = base, contrôle 11/11, essai « état réel » 28/28 sous

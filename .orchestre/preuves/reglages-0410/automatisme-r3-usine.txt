@@ -200,3 +200,91 @@ garde-plafond-qa — racine .
 garde-plafond-qa : FAIL — GF-5, GF-6
 commande finie en 6 s sur l’usine, code 1 (seule)
 CODE 1
+
+## juges-026-reseaux-preuve --preuve-echecs (vérificateur de 026-204) AVANT correction du témoin périmé : FAIL (15 ok, 8 en échec)
+❌ TEMOIN — témoin non vert (code 1) — lignes:LN-6,LN-7 ; meta:MP-3,MP-6 ; mesure:ME-4 ; boucle:BO-4 ; veille:VE-5 ; geste:GE-1,GE-2,GE-3,GE-4
+✅ CLI-TEMOIN — --temoin (couts,gabarits) : code 0
+❌ CLI-REEL — sans production, racine réelle : code 0 (attendu 2 — préalable extérieur documenté)
+✅ CLI-INVALIDE — partie inconnue : code 2
+✅ CLI-COMBINAISON — --temoin avec --racine : code 2
+✅ SB-connaissance — CN-2 rougit seul
+✅ SB-sql — SQ-4 rougit seul
+❌ SB-geste — attendu GE-1 seul en échec ; obtenu : autres rouges = [GE-2, GE-3, GE-4], GE-1 = FAIL (ok)
+❌ SB-lignes — attendu LN-3 seul en échec ; obtenu : autres rouges = [LN-6, LN-7], LN-3 = FAIL (ok)
+✅ SB-gabarits — GA-2 rougit seul
+✅ SB-fabrication — FA-4 rougit seul
+✅ SB-tiktok — TT-4 rougit seul
+✅ SB-profil-tiktok — PT-2 rougit seul
+❌ SB-meta — attendu MP-4 seul en échec ; obtenu : autres rouges = [MP-3, MP-6], MP-4 = FAIL (ok)
+❌ SB-mesure — attendu ME-1 seul en échec ; obtenu : autres rouges = [ME-4], ME-1 = FAIL (ok)
+❌ SB-boucle — attendu BO-1 seul en échec ; obtenu : autres rouges = [BO-4], BO-1 = FAIL (ok)
+❌ SB-veille — attendu VE-2 seul en échec ; obtenu : autres rouges = [VE-5], VE-2 = FAIL (ok)
+✅ SB-couts — CO-1 rougit seul
+✅ JV-PANNE — Laya indisponible, jamais un passage automatique : {"ok":false,"motif":"Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj"}
+✅ JV-SANS-SOURCE — source absente, refusé avant tout appel à jev : {"ok":false,"motif":"affirmation chiffrée sans source"}
+✅ JV-PROVIDER-HEBERGE — fournisseur hébergé (argv et env « jev-heberge ») refusé : code 3
+✅ JV-PROVIDER-OLLAMA-CLOUD — argv « laya » mais env JEV_PROVIDER « ollama:cloud » (dépareillés) refusé : code 3
+✅ JV-PROVIDER-LAYA-ACCEPTE — « laya » en argv et en env : accepté, code 0 (témoin négatif : la digue ne refuse pas tout)
+juges-026-reseaux-preuve : FAIL (15 ok, 8 en échec)
+CODE 1
+
+## contenu-qa --temoin AVANT (témoin sans pause ni contrôles automatiques)
+❌ LN-6 — validation automatique sans accord individuel — accord individuel encore exigé
+❌ LN-7 — pause fail-closed avant modèles et sorties — verdictPublication : active ne coupe pas le modèle | verdictPublication : doute ne coupe pas le modèle | verdictPublication : throw ne coupe pas le modèle | verdictPublication : pause entre textes ne coupe pas le deuxième appel
+contenu-qa --partie=lignes : FAIL
+❌ MP-3 — publication automatique sous garde-fous — publication conforme encore bloquée par accord individuel
+❌ MP-6 — pause fail-closed avant modèles et sorties — controlerAvantPublication : voie active non démontrée | controlerAvantPublication : active ne coupe pas le modèle | controlerAvantPublication : doute ne coupe pas le modèle | controlerAvantPublication : throw ne coupe pas le modèle | 
+contenu-qa --partie=meta : FAIL
+❌ ME-4 — pause fail-closed avant modèles et sorties — verdictFormulePublique : active ne coupe pas le modèle | verdictFormulePublique : doute ne coupe pas le modèle | verdictFormulePublique : throw ne coupe pas le modèle
+contenu-qa --partie=mesure : FAIL
+❌ BO-4 — pause fail-closed avant modèles et sorties — recommander : active ne coupe pas le modèle | recommander : doute ne coupe pas le modèle | recommander : throw ne coupe pas le modèle
+contenu-qa --partie=boucle : FAIL
+❌ VE-5 — pause fail-closed avant modèles et sorties — classerAccroche : active ne coupe pas le modèle | classerAccroche : doute ne coupe pas le modèle | classerAccroche : throw ne coupe pas le modèle | scoreIdee : active ne coupe pas le modèle | scoreIdee : doute ne coupe pas le modèle |
+contenu-qa --partie=veille : FAIL
+❌ GE-1 — validation automatique sans accord individuel — lib/contenu/accord n'exporte pas de fonction « controlerPublicationAutomatique »
+❌ GE-2 — budget et opposition bloquent automatiquement — coût inconnu/positif ou opposition accepté | coût inconnu/positif ou opposition accepté | coût inconnu/positif ou opposition accepté
+❌ GE-3 — texte exact recontrôlé sous seuil de qualité — lib/contenu/accord n'exporte pas de fonction « controlerPublicationAutomatique » | lib/contenu/accord n'exporte pas de fonction « controlerPublicationAutomatique »
+❌ GE-4 — pause fail-closed avant modèles et sorties — controlerPublicationAutomatique : voie active non démontrée | controlerPublicationAutomatique : active ne coupe pas le modèle | controlerPublicationAutomatique : doute ne coupe pas le modèle | controlerPublicationAutomatique : throw ne
+contenu-qa --partie=geste : FAIL
+contenu-qa : FAIL
+CODE 1
+
+## contenu-qa --temoin APRÈS correction du témoin
+contenu-qa --partie=lignes : PASS
+contenu-qa --partie=meta : PASS
+contenu-qa --partie=mesure : PASS
+contenu-qa --partie=boucle : PASS
+contenu-qa --partie=veille : PASS
+contenu-qa --partie=geste : PASS
+contenu-qa : PASS
+CODE 0
+
+## juges-026-reseaux-preuve --preuve-echecs APRÈS (témoin corrigé, CLI-REEL sur dossier vide, 3 sabotages de plus ; --forcer : node_modules de l'usine en retard sur le lock, sans effet sur ces juges)
+✅ TEMOIN — les 13 parties passent sur le témoin (53 critères)
+✅ CLI-TEMOIN — --temoin (couts,gabarits) : code 0
+✅ CLI-REEL — racine sans production (dossier vide) : code 2 (attendu 2 — préalable extérieur documenté)
+✅ CLI-INVALIDE — partie inconnue : code 2
+✅ CLI-COMBINAISON — --temoin avec --racine : code 2
+✅ SB-connaissance — CN-2 rougit seul
+✅ SB-sql — SQ-4 rougit seul
+✅ SB-geste — GE-2 rougit seul
+✅ SB-lignes — LN-7 rougit seul
+✅ SB-geste — GE-2 rougit seul
+✅ SB-meta — MP-6 rougit seul
+✅ SB-lignes — LN-3 rougit seul
+✅ SB-gabarits — GA-2 rougit seul
+✅ SB-fabrication — FA-4 rougit seul
+✅ SB-tiktok — TT-4 rougit seul
+✅ SB-profil-tiktok — PT-2 rougit seul
+✅ SB-meta — MP-4 rougit seul
+✅ SB-mesure — ME-1 rougit seul
+✅ SB-boucle — BO-1 rougit seul
+✅ SB-veille — VE-2 rougit seul
+✅ SB-couts — CO-1 rougit seul
+✅ JV-PANNE — Laya indisponible, jamais un passage automatique : {"ok":false,"motif":"Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj"}
+✅ JV-SANS-SOURCE — source absente, refusé avant tout appel à jev : {"ok":false,"motif":"affirmation chiffrée sans source"}
+✅ JV-PROVIDER-HEBERGE — fournisseur hébergé (argv et env « jev-heberge ») refusé : code 3
+✅ JV-PROVIDER-OLLAMA-CLOUD — argv « laya » mais env JEV_PROVIDER « ollama:cloud » (dépareillés) refusé : code 3
+✅ JV-PROVIDER-LAYA-ACCEPTE — « laya » en argv et en env : accepté, code 0 (témoin négatif : la digue ne refuse pas tout)
+juges-026-reseaux-preuve : PASS (26 ok, 0 en échec)
+CODE 0
