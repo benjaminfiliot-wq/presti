@@ -38,8 +38,8 @@
 //        .orchestre/preuves/026-001/meta-juge-autotest.md.
 //   (--racine=<dossier> et --orchestre=<dossier> remplacent les deux dépôts : l'autotest s'en sert pour ses copies.)
 // Code 0 si tout est vert, 1 sinon, 2 si l'appel est invalide. N'écrit que sous .orchestre/travail/ et .orchestre/preuves/.
-// Aucun appel réseau. Les jonctions node_modules et public sont retirées par fs.unlinkSync, jamais par une suppression
-// récursive : une suppression récursive qui traverse une jonction viderait node_modules ou public.
+// Aucun appel réseau. La jonction node_modules est retiree par fs.unlinkSync,
+// jamais traversee. public est une copie physique pour isoler les ecritures des mutations.
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -61,9 +61,18 @@ const NB_CONTRE = 3
 const RE_CRITERE = /^[A-Z0-9]{1,5}-[A-Z0-9-]+$/
 const CHAMPS = ['juge', 'commande', 'fichier', 'avant', 'apres', 'critere', 'extrait', 'duree_s']
 // La copie du dépôt presti : ces dossiers (fichiers suivis ou non ignorés), ces fichiers de la racine, ces jonctions.
-const DOSSIERS_COPIE = ['app', 'lib', 'scripts', 'supabase', 'docs', '.github', 'gabarits-pubs', '.orchestre/brouillons-ecosysteme']
+const DOSSIERS_COPIE = ['app', 'lib', 'components', 'plans', 'scripts', 'supabase', 'docs', '.github', 'gabarits-pubs', '.orchestre/brouillons-ecosysteme', 'public']
 const FICHIERS_RACINE = ['package.json', 'tsconfig.json', 'next.config.mjs', 'next-env.d.ts', 'vercel.json', 'proxy.ts', 'middleware.ts']
-const JONCTIONS = ['node_modules', 'public']
+// Entrées réelles des juges SC-8, DJ-6 et DL-2 : conserver les preuves existantes,
+// sans les fabriquer ni recopier les rapports de mutations de cette vérification.
+const PREUVES_ENTREE = [
+  '.orchestre/preuves/026-021/essai-a-sec.md',
+  '.orchestre/preuves/026-063/essai-a-sec.txt',
+  '.orchestre/preuves/026-083/approbation.txt',
+  '.orchestre/preuves/026-114/essai-a-sec.txt',
+  '.orchestre/preuves/026-134/essai-a-sec.txt',
+]
+const JONCTIONS = ['node_modules']
 const FILE_ORCHESTRE = ['file', 'en-cours', 'fait', 'refuse']
 const ETAT_ORCHESTRE = ['.orchestre/digest.md', '.orchestre/verdicts.jsonl', '.orchestre/agents.jsonl', '.orchestre/contexte.md']
 // L'autotest : un cas par défaut que le méta-juge doit attraper. La graine du cas MP-3 est choisie pour tirer la mutation
@@ -283,6 +292,7 @@ function supprimerCopie(dir, borne) {
 function copierFichiers(source, dest, rels) {
   let n = 0
   for (const rel of rels) {
+    if (rel.startsWith('public/') && /^(?:\.env(?:\..*)?|id_rsa|id_ed25519|.*\.(?:key|pem))$/i.test(path.basename(rel))) continue
     const s = path.join(source, rel)
     let st
     try { st = fs.lstatSync(s) } catch { continue } // suivi mais supprimé de l'arbre de travail
@@ -303,7 +313,7 @@ function jonction(cible, lien, jonctions) {
 function copierPresti(racine, dest, jonctions) {
   const dossiers = DOSSIERS_COPIE.filter((d) => existe(path.join(racine, d)))
   const rels = dossiers.length ? (git(racine, ['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', ...dossiers]) || '').split('\0').filter(Boolean) : []
-  const n = copierFichiers(racine, dest, [...rels, ...FICHIERS_RACINE.filter((f) => existe(path.join(racine, f)))])
+  const n = copierFichiers(racine, dest, [...rels, ...FICHIERS_RACINE.filter((f) => existe(path.join(racine, f))), ...PREUVES_ENTREE])
   for (const j of JONCTIONS) jonction(path.join(racine, j), path.join(dest, j), jonctions)
   return n
 }
@@ -378,10 +388,11 @@ function ligneEnEchec(sortie, critere) {
   else if (siennes.length > 1) defauts.push(`${critere} rapporté ${siennes.length} fois (${siennes.map((x) => x.m[1]).join(', ')})`)
   else if (siennes[0].m[1] !== 'FAIL' || !siennes[0].l.startsWith(`FAIL ${critere} — `)) defauts.push(`${critere} rapporté ${siennes[0].m[1]} : « ${court(siennes[0].l, 80)} »`)
   else ligne = siennes[0].l
-  const b = L.map((l) => /^(\S+) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1)
+  const b = L.map((l) => /^([\w.-]+(?: --[a-z][a-z0-9-]*(?:=[A-Za-z0-9_./=-]+)?)*) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1)
   if (!b) defauts.push('aucun bilan « … : FAIL — ids »')
   else if (b[2] !== 'FAIL') defauts.push(`bilan ${b[2]}`)
   else if (!(b[3] || '').split(/,\s*/).map((x) => x.trim()).includes(critere)) defauts.push(`le bilan « … : FAIL — ${court(b[3] || '', 50)} » ne nomme pas ${critere}`)
+  if (/^\s+at .*:\d+:\d+/m.test(String(sortie))) defauts.push('stack infrastructure dans la sortie, refus non métier')
   return { ligne: defauts.length ? null : ligne, defauts }
 }
 // Autotest de cette lecture (lancé par --autotest, AM-lecture) : le premier cas est le sabotage de la contre-vérification.
@@ -394,11 +405,14 @@ const AUTOTEST_LECTURE = [
   ['bilan qui ne le nomme pas', 'OS-1', false, ['FAIL OS-1 — absente', 'ops-sql-qa : FAIL — OS-2']],
   ['bilan vert', 'OS-1', false, ['FAIL OS-1 — absente', 'ops-sql-qa : PASS']],
   ['sans bilan', 'OS-1', false, ['FAIL OS-1 — absente']],
+  ['caption options', 'OS-1', true, ['FAIL OS-1 — absente', 'pub-locale-qa --partie=complet : FAIL — OS-1']],
+  ['caption libre sans options formées', 'OS-1', false, ['FAIL OS-1 — absente', 'une prose quelconque : FAIL — OS-1']],
+  ['stack infrastructure', 'OS-1', false, ['FAIL OS-1 — absente', 'pub-locale-qa --partie=complet : FAIL — OS-1', '    at main (x.mjs:12:3)']],
   ['conforme', 'OS-1', true, ['PASS OS-10 — x', 'FAIL OS-1 — migration absente', 'FAIL OS-2 — non jugé (OS-1)', 'ops-sql-qa : FAIL — OS-1, OS-2']],
 ]
 const plantage = (sortie) => /^\s+at .+:\d+:\d+\)?\s*$/m.test(sortie) && /\b\w*Error\b/.test(sortie)
 
-async function contreMuter(e, k, ctx) {
+export async function contreMuter(e, k, ctx) {
   const dir = path.join(ctx.travail, String(k))
   const jonctions = []
   const res = { entree: e, codeIntact: null, codeMute: null, extraitReel: null, ok: false, raison: '', sortieMute: '' }
@@ -413,7 +427,10 @@ async function contreMuter(e, k, ctx) {
     if (veutRacine) copierPresti(ctx.racine, racineCopie, jonctions)
     if (veutSource) copierOrchestre(ctx.orchestre, sourceCopie, jonctions)
     const commande = e.commande.replaceAll('{racine}', versSlash(racineCopie)).replaceAll('{source}', versSlash(sourceCopie))
-    const cwd = veutRacine ? racineCopie : sourceCopie
+    // Le juge et ses fixtures restent dans le depot original : leurs lecteurs
+    // historiques git ls-tree doivent voir sa racine authentique. Les seuls
+    // objets juges/mutes sont les copies passees via {racine} et {source}.
+    const cwd = veutRacine ? ctx.racine : ctx.orchestre
     const resteMs = Math.max(60_000, ctx.finMs - Date.now())
     const delaiMs = Math.min(resteMs, Math.max(60_000, (3 * (Number(e.duree_s) || 0) + 60) * 1000))
     // 1. La copie intacte : code 0 exigé.
@@ -596,9 +613,36 @@ async function autotest() {
   const depot = path.join(FIXTURES, 'depot'), fiche = path.join(FIXTURES, 'fiche-026-900.md')
   if (!existe(depot) || !existe(fiche)) return { ok: false, lignes: [`FAIL AM-0 — mini-dépôt introuvable : ${versSlash(path.relative(PRESTI, FIXTURES))}/{depot/,fiche-026-900.md}`], resultats }
   {
+    const source = path.join(base, 'public-source'), dest = path.join(base, 'public-copie')
+    let ok = false, detail = ''
+    try {
+      for (const d of [source, dest]) if (supprimerCopie(d, base).length) throw new Error('ancienne copie non nettoyable')
+      ecrire(path.join(source, 'public', 'temoin.txt'), 'ORIGINAL-PUBLIC')
+      ecrire(path.join(source, 'public', '.env'), 'FAUX-SECRET-TEMOIN')
+      const entrees159 = ['components/temoin.tsx', 'plans/strategie-temoin.md', '.orchestre/preuves/026-114/essai-a-sec.txt', '.orchestre/preuves/026-134/essai-a-sec.txt']
+      for (const p of entrees159) ecrire(path.join(source,p), 'TEMOIN-SYNTHETIQUE-COPIE-159:' + p)
+      ecrire(path.join(source,'.orchestre/preuves/026-999/prive.txt'), 'PREUVE-NON-AUTORISEE-TEMOIN')
+      spawnSync('git', ['init', '-q'], { cwd: source, windowsHide: true })
+      spawnSync('git', ['add', '-A'], { cwd: source, windowsHide: true })
+      const avant = hacher(path.join(source, 'public', 'temoin.txt'))
+      copierPresti(source, dest, [])
+      for (const p of entrees159) if (hacher(path.join(dest,p)) !== hacher(path.join(source,p))) throw new Error('entree159 absente ou modifiee : '+p)
+      if (existe(path.join(dest,'.orchestre/preuves/026-999/prive.txt'))) throw new Error('preuve hors liste explicite recopiee')
+      if (fs.lstatSync(path.join(dest, 'public')).isSymbolicLink()) throw new Error('public reste une jonction')
+      ecrire(path.join(dest, 'public', 'temoin.txt'), 'MUTATION-PUBLIC')
+      ecrire(path.join(dest, 'public', 'nouveau.txt'), 'MUTATION-NOUVELLE')
+      if (hacher(path.join(source, 'public', 'temoin.txt')) !== avant || existe(path.join(source, 'public', 'nouveau.txt'))) throw new Error('mutation dans public a touche la source')
+      if (existe(path.join(dest, 'public', '.env'))) throw new Error('secret temoin copie')
+      ok = true; detail = 'public physique isole, SHA original inchange, .env exclu ; components/plans et 114/134 copies exactes, preuve hors liste exclue'
+    } catch (e) { detail = e.message }
+    finally { for (const d of [source, dest]) supprimerCopie(d, base) }
+    lignes.push(`${ok ? 'PASS' : 'FAIL'} AM-public-isole — ${detail}`)
+    resultats.push({ nom: 'public-isole', ok, code: ok ? 0 : 1, rouges: [], ligne: detail })
+  }
+  {
     const rates = AUTOTEST_LECTURE.filter(([, c, ok, l]) => (ligneEnEchec(`${l.join('\n')}\n`, c).ligne !== null) !== ok).map(([quoi, , ok]) => `${quoi} : ${ok ? 'refusée' : 'acceptée'}`)
     const ok = !rates.length
-    lignes.push(`${ok ? 'PASS' : 'FAIL'} AM-lecture — ${ok ? `${AUTOTEST_LECTURE.length - 1} sorties plantées refusées (dont le critère PASS à tort cité par un autre), la conforme acceptée : une ligne « FAIL <critère> — » et le bilan qui le nomme sont exigés` : rates.join(' ; ')}`)
+    lignes.push(`${ok ? 'PASS' : 'FAIL'} AM-lecture — ${ok ? `${AUTOTEST_LECTURE.filter(x=>!x[2]).length} sorties plantées refusées, ${AUTOTEST_LECTURE.filter(x=>x[2]).length} conformes acceptées : ligne FAIL unique et bilan nom/options formées exigés` : rates.join(' ; ')}`)
     resultats.push({ nom: 'lecture', script: '(lecture des sorties, sans script)', attendu: null, ok, code: null, rouges: [], ligne: ok ? 'FAIL OS-1 — migration absente' : rates.join(' ; ') })
   }
   for (const k of CAS_AUTOTEST) {
@@ -667,4 +711,4 @@ async function principal() {
   process.exit(ok ? 0 : 1)
 }
 
-principal().catch((e) => { console.error(`FAIL ${NOM} — exception : ${e && e.stack ? e.stack : e}`); process.exit(1) })
+if (process.argv[1] && path.resolve(process.argv[1]) === CE_SCRIPT) principal().catch((e) => { console.error(`FAIL ${NOM} — exception : ${e && e.stack ? e.stack : e}`); process.exit(1) })

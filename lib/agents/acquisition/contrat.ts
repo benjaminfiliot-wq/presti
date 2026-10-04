@@ -396,6 +396,8 @@ export interface ReponseProspect {
   auto: boolean
   accuse_site: boolean
   en_reponse_a: string | null
+  /** L'en-tête From de la réponse (0123, ops.reponses.expediteur) : le Standard y lit l'adresse d'un STOP reçu hors de tout fil. Absent avant 0123. */
+  expediteur?: string | null
   recu_le: string
 }
 /**
@@ -673,6 +675,10 @@ export interface MagasinEnvoi {
   jaugeConsommer(fournisseur: string, n: number): Promise<boolean>
   jauges(): Promise<Jauge[]>
   echantillonDuSoir(jour: string): Promise<EnvoiApprouve[]>
+  /** Réserve l'envoi AVANT qu'il parte (0122, acq_envoi_reserver) : approuve → en_cours_envoi, une seule tentative gagne. Raisons d'un refus : pause, plafond, deja_reserve, statut, introuvable, accord_perime, cle. */
+  reserverEnvoi(id: string, cle: string): Promise<ResultatRegle>
+  /** L'issue de l'envoi est inconnue (0122, acq_envoi_incertain) : il ne repart jamais tout seul, un contrôle le réconcilie (acq_envoi_reconcilier). */
+  marquerIncertain(id: string, raison: string): Promise<void>
 }
 export type Magasin = MagasinSocle & MagasinEchanges & MagasinEnvoi
 

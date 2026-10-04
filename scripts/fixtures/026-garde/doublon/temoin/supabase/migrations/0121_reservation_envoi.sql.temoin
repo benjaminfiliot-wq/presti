@@ -1,0 +1,178 @@
+-- 0121_reservation_envoi.sql — TÉMOIN du juge garde-doublon-qa (brouillon d'étude de Claude Code, à réécrire et à jouer par lui).
+-- Ce n'est pas la migration livrée : elle montre ce que le juge lit. Elle est écrite pour que la base refuse, elle, le doublon.
+--
+-- Un envoi est RÉSERVÉ avant de partir (approuve → en_cours_envoi, une seule tentative gagne, clé d'idempotence unique), puis
+-- consigné (en_cours_envoi → envoye). Si l'issue est incertaine (crash après l'envoi, délai dépassé), l'envoi passe en
+-- envoi_incertain : JAMAIS de renvoi automatique, un contrôle le réconcilie (acq_envoi_reconcilier).
+-- Les trois envoyeurs (gmail, repondeur, facteur_usine) passent par la même réservation.
+
+alter table ops.envois drop constraint if exists envois_statut_check;
+alter table ops.envois add constraint envois_statut_check
+  check (statut in ('prepare', 'attend_accord_benj', 'approuve', 'en_cours_envoi', 'envoi_incertain', 'envoye', 'saute', 'perime', 'annule'));
+
+alter table ops.envois
+  add column if not exists cle_envoi  text check (cle_envoi ~ '^[0-9a-f]{64}$'),
+  add column if not exists reserve_le timestamptz;
+
+-- Une clé, un envoi : la même (destinataire, modèle, fait) ne part jamais deux fois, par aucun des trois envoyeurs.
+create unique index if not exists envois_cle_envoi_unique on ops.envois (cle_envoi) where cle_envoi is not null;
+
+create or replace function ops.cle_envoi(p_destinataire text, p_modele text, p_fait text)
+returns text
+language sql
+immutable
+as $$
+  select encode(sha256(convert_to(lower(btrim(coalesce(p_destinataire, ''))) || '|' || coalesce(p_modele, '') || '|' || coalesce(p_fait, 'sans_fait'), 'UTF8')), 'hex')
+$$;
+
+-- La réservation : atomique, une seule tentative gagne. Pause et plafond du jour sont lus ICI, au moment de réserver.
+create or replace function public.acq_envoi_reserver(p_envoi uuid, p_cle text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+declare
+  v_canal   text;
+  v_plafond integer;
+  v_n       integer;
+begin
+  select canal into v_canal from ops.envois where id = p_envoi;
+  if not found then
+    return jsonb_build_object('ok', false, 'raison', 'introuvable');
+  end if;
+  if public.ops_interrupteur('pause_generale') then
+    return jsonb_build_object('ok', false, 'raison', 'pause');
+  end if;
+  perform pg_advisory_xact_lock(hashtext('ops:quota:' || v_canal));
+  select q.plafond_jour into v_plafond from ops.quotas_canaux q where q.canal = v_canal and q.envoyeur = '*';
+  if v_plafond is not null then
+    select count(*) into v_n
+      from ops.envois e
+     where e.canal = v_canal
+       and e.id <> p_envoi
+       and e.statut in ('en_cours_envoi', 'envoye', 'envoi_incertain')
+       and (e.reserve_le at time zone 'Europe/Paris')::date = (now() at time zone 'Europe/Paris')::date;
+    if v_n >= v_plafond then
+      return jsonb_build_object('ok', false, 'raison', 'plafond');
+    end if;
+  end if;
+  begin
+    update ops.envois
+       set statut = 'en_cours_envoi', cle_envoi = p_cle, reserve_le = now()
+     where id = p_envoi and statut = 'approuve';
+  exception when unique_violation then
+    return jsonb_build_object('ok', false, 'raison', 'deja_reserve');
+  end;
+  if not found then
+    return jsonb_build_object('ok', false, 'raison', 'statut');
+  end if;
+  return jsonb_build_object('ok', true);
+end
+$$;
+revoke all on function public.acq_envoi_reserver(uuid, text) from public, anon, authenticated;
+grant execute on function public.acq_envoi_reserver(uuid, text) to service_role;
+
+-- Le porteur du formulaire (facteur_usine) réserve dans la même instruction qui le sert : plus de bail qui expire et redonne le même envoi.
+create or replace function public.acq_formulaires_a_porter(p_limite int, p_bail_s int)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+declare
+  v_ids uuid[];
+begin
+  if public.ops_interrupteur('pause_generale') then
+    return '[]'::jsonb;
+  end if;
+  with choisis as (
+    select e.id
+      from ops.envois e
+     where e.statut = 'approuve' and e.canal in ('formulaire_site', 'essai_e2e')
+     order by e.prepare_le
+     limit greatest(coalesce(p_limite, 1), 0)
+       for update skip locked
+  )
+  , pris as (
+    update ops.envois e
+       set statut = 'en_cours_envoi', reserve_le = now(), cle_envoi = ops.cle_envoi(e.destinataire, e.modele_id, e.fait_id)
+      from choisis c
+     where e.id = c.id
+    returning e.id
+  )
+  select coalesce(array_agg(pris.id), '{}'::uuid[]) into v_ids from pris;
+  return coalesce((select jsonb_agg(jsonb_build_object('id', e.id, 'texte', e.texte, 'reference', e.reference) order by e.prepare_le) from ops.envois e where e.id = any(v_ids)), '[]'::jsonb);
+end
+$$;
+
+-- La consignation : seul un envoi réservé devient envoye (l'incertain passe par acq_envoi_reconcilier).
+create or replace function public.acq_envoi_envoye(p_envoi uuid, p_preuve jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+begin
+  update ops.envois
+     set statut = 'envoye', id_externe = nullif(p_preuve ->> 'id_externe', ''), entetes = coalesce(p_preuve -> 'entetes', '{}'::jsonb)
+   where id = p_envoi and statut = 'en_cours_envoi';
+  if not found then
+    return jsonb_build_object('ok', false, 'raison', 'statut');
+  end if;
+  return jsonb_build_object('ok', true);
+end
+$$;
+
+-- Un envoi dont l'issue est inconnue : il ne part plus, il attend un contrôle.
+create or replace function public.acq_envoi_incertain(p_envoi uuid, p_raison text)
+returns void
+language sql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+  update ops.envois set statut = 'envoi_incertain', derniere_erreur = left(coalesce(p_raison, ''), 200)
+   where id = p_envoi and statut = 'en_cours_envoi'
+$$;
+
+-- Le contrôle (jamais l'envoyeur) tranche : parti → envoye ; pas parti → annule (il faudra préparer un autre envoi).
+create or replace function public.acq_envoi_reconcilier(p_envoi uuid, p_resultat text, p_preuve jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+begin
+  if p_resultat = 'parti' then
+    update ops.envois set statut = 'envoye', id_externe = nullif(p_preuve ->> 'id_externe', '') where id = p_envoi and statut = 'envoi_incertain';
+  elsif p_resultat = 'pas_parti' then
+    update ops.envois set statut = 'annule' where id = p_envoi and statut = 'envoi_incertain';
+  else
+    return jsonb_build_object('ok', false, 'raison', 'resultat');
+  end if;
+  return jsonb_build_object('ok', found);
+end
+$$;
+
+-- La base refuse envoye hors réservation. Seule exemption : le canal d'essai, vers des destinataires d'essai (.invalid).
+create or replace function ops.garde_reservation()
+returns trigger
+language plpgsql
+security definer
+set search_path = ops, public, pg_temp
+as $$
+begin
+  if new.statut = 'envoye' and (tg_op = 'INSERT' or old.statut is distinct from 'envoye') then
+    if tg_op = 'INSERT' or old.statut not in ('en_cours_envoi', 'envoi_incertain') or new.cle_envoi is null then
+      if not (new.canal = 'essai_e2e' and lower(coalesce(new.destinataire, '')) like '%.invalid') then
+        raise exception using message = 'ops:envoye_sans_reservation', errcode = 'P0001';
+      end if;
+    end if;
+  end if;
+  return new;
+end
+$$;
+drop trigger if exists garde_reservation on ops.envois;
+create trigger garde_reservation
+  before insert or update of statut on ops.envois
+  for each row execute function ops.garde_reservation();

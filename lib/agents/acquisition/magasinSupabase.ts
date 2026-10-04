@@ -131,8 +131,19 @@ export const magasinSupabase: MagasinSocle & MagasinEchanges & MagasinEnvoi = {
     return appeler<EnvoiApprouve[]>('acq_envois_approuves', { p_canal: canal, p_limite: limite })
   },
 
+  async reserverEnvoi(id: string, cle: string): Promise<ResultatRegle> {
+    return appeler<ResultatRegle>('acq_envoi_reserver', { p_envoi: id, p_cle: cle })
+  },
+
   async marquerEnvoye(id: string, preuve: PreuveEnvoi): Promise<void> {
-    await appeler<null>('acq_envoi_envoye', { p_envoi: id, p_preuve: preuve })
+    // acq_envoi_envoye REND { ok: false, raison } (statut, pause…) au lieu de lever : sans ce contrôle l'envoi resterait réservé
+    // alors que le message est parti, sans aucune trace ; ici le refus LÈVE et l'appelant passe l'envoi en incertain.
+    const r = await appeler<ResultatRegle | null>('acq_envoi_envoye', { p_envoi: id, p_preuve: preuve })
+    if (r && r.ok === false) throw new Error(`[magasinSupabase] acq_envoi_envoye : ${r.raison}`)
+  },
+
+  async marquerIncertain(id: string, raison: string): Promise<void> {
+    await appeler<null>('acq_envoi_incertain', { p_envoi: id, p_raison: raison })
   },
 
   async marquerEchec(id: string, raison: string): Promise<void> {

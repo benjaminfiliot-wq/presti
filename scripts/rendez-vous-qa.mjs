@@ -208,7 +208,10 @@ async function observer(mod, routeMod, RAC2) {
     const finLundi = parisVersUTC(jourISO, '22:00')
     const creneauxLundi = mod.creneauxLibres(maintenantLundi, [])
     const lundiAvant22h = creneauxLundi.filter((c) => Date.parse(c) < finLundi && Date.parse(c) >= maintenantLundi && jourParisUTC(c) === jourISO)
-    const weekend = creneauxLundi.filter((c) => { const j = new Date(c).getUTCDay(); return j === 0 || j === 6 })
+    // La limite de 40 créneaux peut arrêter le lundi avant le week-end :
+    // démarrer le vendredi soir pour rendre le samedi réellement observable.
+    const creneauxVendredi = mod.creneauxLibres(parisVersUTC('2026-10-09', '20:00'), [])
+    const weekend = creneauxVendredi.filter((c) => { const j = new Date(`${jourParisUTC(c)}T00:00:00.000Z`).getUTCDay(); return j === 0 || j === 6 })
     const apres10Jours = creneauxLundi.filter((c) => Date.parse(c) > maintenantLundi + 10 * J)
 
     const avantDST = mod.creneauxLibres(parisVersUTC('2026-10-04', '08:00'), [])

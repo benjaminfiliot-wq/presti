@@ -316,19 +316,69 @@ if (o.autoControle) {
       }
       s.juger('MV-4', e, 'deux fabrications de suite : même durée, mêmes dimensions, images identiques aux mêmes instants')
     }
-    // MV-5 : le serveur d'essai (hôte externe bloqué, `..` refusé)
+    // MV-5 : le callback du module réel décide pour des requêtes Chromium réelles.
+    // Le garde du juge intercepte toute continuation extérieure AVANT le réseau :
+    // un module fautif est observable, sans jamais joindre cet autre hôte.
     {
-      const e = []
+      const e = [], decisions = []
+      // Conserver les contrôles historiques du serveur et du site témoin.
       let srv = null
       try {
         srv = await demarrerServeurFichiers(dossierSite)
-        const evasion = await fetch(`${srv.base}/../../package.json`).catch((err) => ({ ok: false, status: `exception : ${premiereLigne(err)}` }))
+        const evasion = await fetch(`${srv.base}/../../package.json`).catch(err => ({ ok: false, status: `exception : ${premiereLigne(err)}` }))
         if (evasion.ok) e.push(`le serveur d'essai sert une évasion hors dossier (${evasion.status})`)
         const html = fs.readFileSync(path.join(dossierSite, 'index.html'), 'utf8')
-        const hotes = [...html.matchAll(/(?:src|href)=["']https?:\/\/([^/"']+)/gi)].map((m2) => m2[1].toLowerCase())
-        if (!hotes.length) e.push('le site d\'essai ne contient aucune référence à un autre hôte à bloquer (MV-5 exige ce cas)')
-      } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) } finally { if (srv) await srv.fermer() }
-      s.juger('MV-5', e, "le serveur d'essai du juge refuse toute évasion hors dossier ; le site d'essai porte bien une référence à un autre hôte, à bloquer par le module")
+        const hotes = [...html.matchAll(/(?:src|href)=["']https?:\/\/([^/"']+)/gi)].map(m => m[1].toLowerCase())
+        if (!hotes.length) e.push('le site témoin ne contient aucune référence à un autre hôte')
+      } catch (err) { e.push(`serveur interrompu : ${premiereLigne(err)}`) }
+      finally { if (srv) await srv.fermer() }
+      let navigateur = null, ferme = false
+      try {
+        const { chromium } = await import('playwright')
+        navigateur = await chromium.launch()
+        const browser = navigateur
+        const lancerNavigateur = async () => ({
+          newPage: async options => {
+            const page = await browser.newPage(options)
+            // Filet indépendant si le module omet entièrement son routeur.
+            await page.context().route('**/*', route => new URL(route.request().url()).hostname === 'autre-hote-mv5.invalid' ? route.abort() : route.continue())
+            const routeReelle = page.route.bind(page), gotoReel = page.goto.bind(page)
+            page.route = async (motif, handler) => routeReelle(motif, async route => {
+              const url = route.request().url(), externe = new URL(url).hostname === 'autre-hote-mv5.invalid'
+              const observer = action => { decisions.push({ url, externe, action }) }
+              await handler({
+                request: () => route.request(),
+                continue: async () => { observer('continue'); return externe ? route.abort() : route.continue() },
+                abort: async () => { observer('abort'); return route.abort() },
+              })
+            })
+            page.goto = async (...args) => {
+              const reponse = await gotoReel(...args)
+              await page.evaluate(() => new Promise(resolve => {
+                const image = new Image()
+                const delai = setTimeout(resolve, 3000)
+                image.onload = image.onerror = () => { clearTimeout(delai); resolve() }
+                image.src = 'http://autre-hote-mv5.invalid/interdit.png'
+                document.body.append(image)
+              }))
+              return reponse
+            }
+            return page
+          },
+          close: async () => { await browser.close(); ferme = true },
+        })
+        let code = null
+        try {
+          await mod.fabriquerVideo({ dossierSite: path.join(FIXTURES_VIDEO, 'page-courte'), sortie: path.join(TRAV, 'hotes-mv5.mp4'), duree: 15, lancerNavigateur })
+        } catch (err) { code = err?.code }
+        if (code !== 3) e.push(`fin de page courte : code ${code}, 3 attendu après contrôle des requêtes`)
+        if (!decisions.some(d => !d.externe && d.action === 'continue')) e.push('aucune requête du serveur local autorisée par le module')
+        const externes = decisions.filter(d => d.externe)
+        if (externes.length !== 1 || externes[0]?.action !== 'abort') e.push(`requête autre hôte : ${JSON.stringify(externes)}, exactement un abort attendu`)
+        if (!ferme) e.push('le module ne ferme pas Chromium sur la page courte')
+      } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) }
+      finally { if (navigateur && !ferme) await navigateur.close().catch(() => {}) }
+      s.juger('MV-5', e, "callback réseau du module exécuté par Chromium réel : serveur local autorisé, autre hôte bloqué avant le réseau, navigateur fermé")
     }
     // MV-6 : les cas limites (page blanche figée, page courte code 3, sortie sous public/ code 2, ffmpeg absent code 5)
     {
@@ -347,7 +397,7 @@ if (o.autoControle) {
       })()
       if (codePageCourte === null) e.push('page courte (800 px) : aucune erreur levée, code 3 attendu')
       const codeSortieInterdite = await (async () => {
-        try { await mod.fabriquerVideo({ dossierSite, sortie: path.join(R, 'public', 'temoin-interdit.mp4'), duree: 15 }); return null } catch (er) { return er }
+        try { await mod.fabriquerVideo({ dossierSite, sortie: path.join(RAC, 'public', 'temoin-interdit.mp4'), duree: 15 }); return null } catch (er) { return er }
       })()
       if (codeSortieInterdite === null) e.push('sortie sous public/ : aucune erreur levée, code 2 attendu')
       s.juger('MV-6', e, "page blanche → vidéo figée ; page de 800 px → erreur (code 3) ; sortie sous public/ → erreur (code 2)")

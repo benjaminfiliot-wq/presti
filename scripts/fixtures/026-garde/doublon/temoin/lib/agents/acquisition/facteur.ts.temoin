@@ -1,0 +1,124 @@
+// lib/agents/acquisition/facteur.ts — TÉMOIN du juge garde-doublon-qa : la boucle d'envoi du Facteur avec sa réservation.
+// Écrit par Claude Code pour prouver que le juge sait rendre 0 ; ce n'est PAS le module livré. Le vrai facteur.ts garde tout
+// le reste (jugement, passe du soir, notice) : seul le chemin d'envoi change, et c'est lui que ce fichier montre.
+//
+// Règle : réserver AVANT d'envoyer (une seule tentative gagne), ne JAMAIS renvoyer un message dont l'issue est incertaine
+// (un contrôle le réconcilie), une clé d'idempotence stable par (destinataire, modèle, fait).
+import { createHash } from 'node:crypto'
+import type { EnvoiApprouve, Magasin, ResultatRegle } from './contrat'
+
+export type ResReservation = ResultatRegle
+export type MagasinReservant = Magasin // contrat.ts (MagasinEnvoi) porte reserverEnvoi et marquerIncertain
+type SortieGmail = { ok: true; id_externe: string; entetes: Record<string, string> } | { ok: false; erreur: 'auth' | 'quota' | 'injoignable' | 'refus'; definitif: boolean }
+type SortieMeta = { ok: true; id: string } | { ok: false; raison: 'politique' | 'debit' | 'fenetre_fermee' | 'autre' }
+export interface PorteurGmail {
+  canal: 'email_sollicite'
+  envoyer(m: { a: string; objet: string; texte: string; enReponseA: string | null; references: string[] }): Promise<SortieGmail>
+}
+export interface EnvoiMeta {
+  reponsePrivee(m: { commentaire_id: string; texte: string }): Promise<SortieMeta>
+  message(m: { meta_id: string; texte: string }): Promise<SortieMeta>
+}
+export interface DepsFacteur {
+  magasin: MagasinReservant
+  gmail: PorteurGmail | null
+  meta: EnvoiMeta | null
+  horloge: { maintenant(): number }
+  echeance: number
+  passe: 'envoi' | 'soir'
+  adresseReponse: string | null
+  notice: { html: string; mentions: string }
+}
+export interface Bilan {
+  envoyes: { email_sollicite: number; meta: number }
+  incertains: number
+  refus_reservation: Record<string, number>
+  echecs: number
+}
+
+const PAR_PASSE = 10
+
+/** La clé d'idempotence : la même pour un même (destinataire, modèle, fait), jamais datée ni tirée au hasard. */
+export function cleIdempotence(e: { destinataire: string; modele_id: string; fait_id: string | null }): string {
+  const source = `${e.destinataire.trim().toLowerCase()}|${e.modele_id}|${e.fait_id ?? 'sans_fait'}`
+  return createHash('sha256').update(source, 'utf8').digest('hex')
+}
+
+type Issue = 'envoye' | 'incertain' | 'echec' | 'refus_reservation'
+
+async function aReconcilier(deps: DepsFacteur, e: EnvoiApprouve & { id: string }, raison: string): Promise<void> {
+  try { await deps.magasin.marquerIncertain(e.id, raison) } catch { /* la base ne répond pas : l'envoi reste réservé, jamais relâché */ }
+  try {
+    await deps.magasin.evenement({ agent: 'facteur', type: 'envoi_a_reconcilier', resume: `Envoi incertain (${e.canal}, ${e.type}) : à réconcilier, aucun renvoi automatique.`, objet_id: e.id })
+  } catch { /* idem */ }
+}
+
+/** Réserver, envoyer une fois, consigner. `lancer` n'est appelé que par la tentative qui a gagné la réservation. */
+async function envoyerUn(deps: DepsFacteur, e: EnvoiApprouve & { id: string }, bilan: Bilan, lancer: () => Promise<SortieGmail | SortieMeta>): Promise<Issue> {
+  const cle = cleIdempotence(e)
+  let res: ResReservation
+  try { res = await deps.magasin.reserverEnvoi(e.id, cle) } catch { return 'refus_reservation' }
+  if (!res.ok) { bilan.refus_reservation[res.raison] = (bilan.refus_reservation[res.raison] ?? 0) + 1; return 'refus_reservation' }
+
+  let sortie: SortieGmail | SortieMeta
+  try { sortie = await lancer() } catch { sortie = { ok: false, erreur: 'injoignable', definitif: false } }
+
+  if (sortie.ok) {
+    const preuve = 'entetes' in sortie ? { id_externe: sortie.id_externe, entetes: sortie.entetes } : { id_externe: sortie.id, entetes: {} }
+    try { await deps.magasin.marquerEnvoye(e.id, preuve) } catch { await aReconcilier(deps, e, 'ecriture_envoye'); bilan.incertains++; return 'incertain' }
+    return 'envoye'
+  }
+  const motif = 'erreur' in sortie ? sortie.erreur : sortie.raison
+  if (motif === 'injoignable' || motif === 'autre') { await aReconcilier(deps, e, motif); bilan.incertains++; return 'incertain' }
+  try { await deps.magasin.marquerEchec(e.id, motif) } catch { /* réservé : jamais relâché sans la base */ }
+  bilan.echecs++
+  return 'echec'
+}
+
+async function passeGmail(deps: DepsFacteur, bilan: Bilan): Promise<void> {
+  if (!deps.gmail) return
+  const etat = await deps.magasin.etatEnvoi()
+  if (etat.gmail_coupe_jusqua && Date.parse(etat.gmail_coupe_jusqua) > deps.horloge.maintenant()) return
+  const gmail = deps.gmail
+  for (const e of await deps.magasin.envoisApprouves('email_sollicite', PAR_PASSE)) {
+    if (deps.horloge.maintenant() >= deps.echeance) break
+    const extra = e as EnvoiApprouve & { id: string; en_reponse_a?: string | null; references?: string | string[] | null }
+    const refs = Array.isArray(extra.references) ? extra.references : extra.references ? [extra.references] : []
+    const issue = await envoyerUn(deps, e, bilan, () => gmail.envoyer({ a: e.destinataire, objet: e.objet ?? '', texte: e.texte, enReponseA: extra.en_reponse_a ?? null, references: refs }))
+    if (issue === 'envoye') bilan.envoyes.email_sollicite++
+    if (issue === 'echec') { await deps.magasin.signal({ type: 'gmail_refus', envoyeur: 'gmail', envoi_id: e.id }); break }
+  }
+}
+
+async function passeMeta(deps: DepsFacteur, bilan: Bilan): Promise<void> {
+  if (!deps.meta) return
+  const meta = deps.meta
+  for (const canal of ['reponse_privee', 'messagerie'] as const) {
+    for (const e of await deps.magasin.envoisApprouves(canal, PAR_PASSE)) {
+      if (deps.horloge.maintenant() >= deps.echeance) break
+      const conv = e.conversation_id ? await deps.magasin.conversation(e.conversation_id) : null
+      const limite = canal === 'messagerie' ? conv?.fenetre_jusqua : conv?.commentaire_id ? conv?.reponse_privee_jusqua : null
+      if (!limite || Date.parse(limite) <= deps.horloge.maintenant()) { await deps.magasin.annulerEnvoi(e.id, 'fenetre_fermee'); continue }
+      const issue = await envoyerUn(deps, e, bilan, () => (canal === 'messagerie'
+        ? meta.message({ meta_id: e.destinataire, texte: e.texte })
+        : meta.reponsePrivee({ commentaire_id: conv?.commentaire_id ?? '', texte: e.texte })))
+      if (issue === 'envoye') bilan.envoyes.meta++
+      if (issue === 'echec') break
+    }
+  }
+}
+
+/**
+ * La passe d'envoi. Un `formulaire_site` approuvé n'est jamais envoyé ici : le porteur de l'usine le prend par
+ * `acq_formulaires_a_porter`, qui le RÉSERVE dans la même instruction (0121). Aucune exception ne sort.
+ */
+export async function executerFacteur(deps: DepsFacteur): Promise<Bilan> {
+  const bilan: Bilan = { envoyes: { email_sollicite: 0, meta: 0 }, incertains: 0, refus_reservation: {}, echecs: 0 }
+  if (deps.passe !== 'envoi') return bilan
+  try { await passeGmail(deps, bilan) } catch { /* lecture du magasin en panne : rien ne part, le prochain passage reprend */ }
+  try { await passeMeta(deps, bilan) } catch { /* idem */ }
+  try {
+    await deps.magasin.evenement({ agent: 'facteur', type: 'bilan_envoi', resume: `envoyés ${bilan.envoyes.email_sollicite + bilan.envoyes.meta}, incertains ${bilan.incertains}, échecs ${bilan.echecs}` })
+  } catch { /* le bilan n'est pas un envoi */ }
+  return bilan
+}

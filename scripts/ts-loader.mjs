@@ -14,12 +14,23 @@ const racine = pathToFileURL(path.resolve(process.cwd()) + path.sep).href
 register(
   'data:text/javascript,' + encodeURIComponent(`
     import { statSync } from 'node:fs'
-    import { fileURLToPath } from 'node:url'
+    import { fileURLToPath, pathToFileURL } from 'node:url'
+    import path from 'node:path'
     const RACINE = ${JSON.stringify(racine)}
+    function racineParent(url) {
+      if (!url?.startsWith('file:')) return RACINE
+      let dir = path.dirname(fileURLToPath(url))
+      for (;;) {
+        try {
+          if (statSync(path.join(dir,'package.json')).isFile() && statSync(path.join(dir,'tsconfig.json')).isFile() && statSync(path.join(dir,'lib')).isDirectory() && statSync(path.join(dir,'app')).isDirectory()) return pathToFileURL(dir + path.sep).href
+        } catch {}
+        const parent = path.dirname(dir); if (parent === dir) return RACINE; dir = parent
+      }
+    }
     const candidats = (base) => [base, base + '.ts', base + '.tsx', base + '/index.ts']
     export async function resolve(spec, ctx, next) {
       let s = spec
-      if (s.startsWith('@/')) s = new URL(s.slice(2), RACINE).href
+      if (s.startsWith('@/')) s = new URL(s.slice(2), racineParent(ctx.parentURL)).href
       if (s.startsWith('.') || s.startsWith('file:')) {
         const base = s.startsWith('file:') ? s : new URL(s, ctx.parentURL).href
         const estFichier = (u) => { try { return statSync(fileURLToPath(u)).isFile() } catch { return false } }
