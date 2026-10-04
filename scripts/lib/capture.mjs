@@ -86,26 +86,113 @@ export async function serveur(racine, { attenteMs = 150_000 } = {}) {
   throw new Error(`next dev ne répond pas après ${attenteMs / 1000} s : ${journal.slice(-400)}`)
 }
 
-/** Un compte de capture (@presti-test.invalid), artisan ou direction (fondateur), avec sa session attestée ; `supprimer` le retire. */
+// ── Le ménage des comptes de test ────────────────────────────────────────────────────────────────────────────────────
+//
+// 04/10 : quatre comptes `is_founder` de capture (cinq avec celui du jour) sont restés deux jours en production — l'audit de
+// sécurité les a trouvés. Cause : `supprimer()` lançait deux DELETE sans jamais regarder la réponse (`.catch(() => {})` ne
+// rattrape qu'une panne réseau, pas un 4xx/5xx), donc un refus passait pour un succès ; et rien ne vérifiait à la fin que
+// le compte avait disparu. Un juge tué avant son `finally` en laissait aussi, sans que personne ne le sache.
+// Désormais : les privilèges partent d'abord (si la suite échoue, le compte qui reste n'est plus fondateur), la fiche et le
+// compte de connexion sont supprimés, puis la PREUVE est lue (ni l'une ni l'autre n'existent plus) — sinon une erreur, jamais
+// un silence. Les comptes oubliés d'un run interrompu sont balayés au run suivant, et leur absence est contrôlée à la fin.
+// Aucun verrou de conservation n'est levé ici : un compte qui porte une facture émise reste, et l'erreur le dit.
+const MOTIF_COMPTE_CAPTURE = /^capture\.(artisan|direction)\.(\d{13})@presti-test\.invalid$/
+/** Un compte de capture plus vieux que ça n'appartient plus à un run en cours (un run dure moins d'une heure). */
+const AGE_COMPTE_OUBLIE_MS = 60 * 60_000
+const masquer = (t) => String(t ?? '').replace(/\s+/g, ' ').replace(/[^\s"'<>(),;]+@[^\s"'<>(),;]+/g, '***@***').slice(0, 160)
+const enteteService = () => { const SVC = process.env.SUPABASE_SERVICE_ROLE_KEY; return { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' } }
+const urlBase = () => {
+  const SB = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!SB || !process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error('NEXT_PUBLIC_SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont nécessaires (.env.local)')
+  return SB
+}
+
+/**
+ * Retire un compte de test (par son id) : privilèges, rôle direction, fiche artisan, compte de connexion — puis prouve qu'il a
+ * disparu. Lève une erreur (sans adresse e-mail) si la fiche ou le compte de connexion existe encore. Idempotent.
+ */
+export async function retirerCompteTest(id) {
+  const SB = urlBase(), h = enteteService()
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id))) throw new Error('retirerCompteTest : identifiant invalide')
+  const id8 = id.slice(0, 8), problemes = []
+  const essayer = async (quoi, url, init, admis = []) => {
+    try {
+      const r = await fetch(url, { ...init, headers: h, signal: AbortSignal.timeout(20_000) })
+      if (!r.ok && !admis.includes(r.status)) problemes.push(`${quoi} : ${r.status} ${masquer(await r.text().catch(() => ''))}`)
+    } catch (e) { problemes.push(`${quoi} : ${masquer(e?.message ?? e)}`) }
+  }
+  await essayer('retrait des privilèges', `${SB}/rest/v1/artisans?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ is_founder: false, role_interne: null }) })
+  await essayer('retrait du rôle direction', `${SB}/rest/v1/direction_roles?user_id=eq.${id}`, { method: 'DELETE' }, [404])
+  await essayer('suppression de la fiche artisan', `${SB}/rest/v1/artisans?id=eq.${id}`, { method: 'DELETE' })
+  await essayer('suppression du compte de connexion', `${SB}/auth/v1/admin/users/${id}`, { method: 'DELETE' }, [404])
+  // La preuve : on LIT la base, on ne se fie pas aux réponses des DELETE.
+  const restes = []
+  const fiche = await fetch(`${SB}/rest/v1/artisans?select=id&id=eq.${id}`, { headers: h, signal: AbortSignal.timeout(20_000) })
+  if (!fiche.ok) restes.push(`lecture de la fiche impossible (${fiche.status})`)
+  else if ((await fiche.json().catch(() => [null])).length) restes.push('la fiche artisan existe encore')
+  const roles = await fetch(`${SB}/rest/v1/direction_roles?select=user_id&user_id=eq.${id}`, { headers: h, signal: AbortSignal.timeout(20_000) })
+  if (roles.ok && (await roles.json().catch(() => [null])).length) restes.push('le rôle direction existe encore')
+  const connexion = await fetch(`${SB}/auth/v1/admin/users/${id}`, { headers: h, signal: AbortSignal.timeout(20_000) })
+  if (connexion.status !== 404) restes.push(`le compte de connexion répond encore (${connexion.status})`)
+  if (restes.length) throw new Error(`ménage du compte de test ${id8} en échec : ${restes.join(' ; ')}${problemes.length ? ` — ${problemes.join(' ; ')}` : ''}`)
+}
+
+/** Les comptes de capture plus vieux que `ageMs`, fiche ou compte de connexion : ceux qu'un run interrompu a laissés. */
+export async function comptesCaptureOublies({ ageMs = AGE_COMPTE_OUBLIE_MS } = {}) {
+  const SB = urlBase(), h = enteteService(), trouves = new Map()
+  const noter = (id, email) => {
+    const m = MOTIF_COMPTE_CAPTURE.exec(String(email ?? '').toLowerCase())
+    if (m && Date.now() - Number(m[2]) > ageMs) trouves.set(id, { id, role: m[1], ageMin: Math.round((Date.now() - Number(m[2])) / 60_000) })
+  }
+  for (let page = 1; page <= 25; page++) {
+    const r = await fetch(`${SB}/auth/v1/admin/users?page=${page}&per_page=200`, { headers: h, signal: AbortSignal.timeout(30_000) })
+    if (!r.ok) throw new Error(`liste des comptes de connexion illisible : ${r.status}`)
+    const { users = [] } = await r.json()
+    for (const u of users) noter(u.id, u.email)
+    if (users.length < 200) break
+  }
+  const f = await fetch(`${SB}/rest/v1/artisans?select=id,email&email=like.capture.*%40presti-test.invalid&limit=1000`, { headers: h, signal: AbortSignal.timeout(30_000) })
+  if (!f.ok) throw new Error(`liste des fiches artisans illisible : ${f.status}`)
+  for (const a of await f.json()) noter(a.id, a.email)
+  return [...trouves.values()]
+}
+
+/** Retire les comptes de capture oubliés ; lève une erreur si l'un d'eux résiste. Rend leur nombre. */
+export async function balayerComptesCapture(opts) {
+  const oublies = await comptesCaptureOublies(opts), echecs = []
+  for (const o of oublies) { try { await retirerCompteTest(o.id) } catch (e) { echecs.push(e.message) } }
+  if (echecs.length) throw new Error(`${echecs.length} compte(s) de capture oublié(s) impossible(s) à retirer : ${echecs.join(' | ')}`)
+  return oublies.length
+}
+
+/** Contrôle de fin de suite : aucun compte de capture oublié ne reste en base (lève une erreur sinon). */
+export async function verifierAucunCompteCapture(opts) {
+  const restes = await comptesCaptureOublies(opts)
+  if (restes.length) throw new Error(`${restes.length} compte(s) de capture oublié(s) en base : ${restes.map((r) => `${r.id.slice(0, 8)} (${r.role}, ${r.ageMin} min)`).join(', ')}`)
+}
+
+/** Un compte de capture (@presti-test.invalid), artisan ou direction (fondateur), avec sa session attestée ; `supprimer` le retire (et lève une erreur s'il reste). */
 export async function compteTest(role = 'artisan') {
   const SB = process.env.NEXT_PUBLIC_SUPABASE_URL, SVC = process.env.SUPABASE_SERVICE_ROLE_KEY, ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!SB || !SVC || !ANON) throw new Error('NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY et NEXT_PUBLIC_SUPABASE_ANON_KEY sont nécessaires (.env.local)')
   const h = { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' }
   const st = Date.now(), email = `capture.${role}.${st}@presti-test.invalid`, pw = `Capture-${crypto.randomBytes(12).toString('base64url')}`
   const u = await (await fetch(`${SB}/auth/v1/admin/users`, { method: 'POST', headers: h, body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
-  if (!u?.id) throw new Error(`création du compte de capture refusée : ${JSON.stringify(u).slice(0, 200)}`)
-  const supprimer = async () => {
-    await fetch(`${SB}/rest/v1/artisans?id=eq.${u.id}`, { method: 'DELETE', headers: h }).catch(() => {})
-    await fetch(`${SB}/auth/v1/admin/users/${u.id}`, { method: 'DELETE', headers: h }).catch(() => {})
+  if (!u?.id) throw new Error(`création du compte de capture refusée : ${masquer(JSON.stringify(u))}`)
+  const supprimer = () => retirerCompteTest(u.id)
+  // Échec en cours de création : on défait, et si le ménage échoue lui aussi, les DEUX erreurs sont dites.
+  const abandonner = async (message) => {
+    try { await supprimer() } catch (e) { throw new Error(`${message} — ET ${e.message}`) }
+    throw new Error(message)
   }
   const ligne = { id: u.id, email, nom: role === 'direction' ? 'Direction (capture)' : 'Artisan (capture)', metier: 'Plombier', slug: `capture-${st}`, ...(role === 'direction' ? { is_founder: true } : {}) }
   // La visite guidée se lit d'abord dans artisans.aide_vues (localStorage n'est que le repli) : un compte neuf la reçoit
   // par-dessus l'écran. On la déclare vue ; si la colonne n'est pas migrée, on réessaie sans.
   let r = await fetch(`${SB}/rest/v1/artisans`, { method: 'POST', headers: { ...h, Prefer: 'return=minimal' }, body: JSON.stringify({ ...ligne, aide_vues: ['visite:console'] }) })
   if (!r.ok) r = await fetch(`${SB}/rest/v1/artisans`, { method: 'POST', headers: { ...h, Prefer: 'return=minimal' }, body: JSON.stringify(ligne) })
-  if (!r.ok) { const t = (await r.text()).slice(0, 200); await supprimer(); throw new Error(`ligne artisans refusée : ${r.status} ${t}`) }
+  if (!r.ok) { const t = masquer(await r.text()); await abandonner(`ligne artisans refusée : ${r.status} ${t}`) }
   const sess = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()
-  if (!sess?.access_token) { await supprimer(); throw new Error('session de capture refusée') }
+  if (!sess?.access_token) await abandonner('session de capture refusée')
   await verifierSessionTest(sess.access_token)
   const ref = SB.replace(/^https?:\/\//, '').split('.')[0]
   return { id: u.id, email, sess, cleLocale: `sb-${ref}-auth-token`, supprimer }
@@ -121,9 +208,11 @@ export async function capturer({ racine, dossier, ecrans, largeur = 390, hauteur
   chargerEnv(racine)
   fs.mkdirSync(dossier, { recursive: true })
   const srv = await serveur(racine)
-  let compte = null, navigateur = null
+  let compte = null, navigateur = null, erreur = null
   const resultats = []
   try {
+    // Les comptes qu'un run interrompu (juge tué avant son ménage) a laissés : retirés ici, avant d'en créer un autre.
+    await balayerComptesCapture()
     compte = await compteTest(role)
     navigateur = await chromium.launch()
     const page = await navigateur.newPage({ viewport: { width: largeur, height: hauteur }, deviceScaleFactor: 1, locale: 'fr-FR' })
@@ -153,11 +242,18 @@ export async function capturer({ racine, dossier, ecrans, largeur = 390, hauteur
       const octets = fs.statSync(fichier).size
       resultats.push({ nom: e.nom, chemin: e.chemin, fichier, octets, md5: crypto.createHash('md5').update(fs.readFileSync(fichier)).digest('hex'), texte, ok, attendu, url: page.url(), erreursApi: [...erreursApi] })
     }
-  } finally {
-    await navigateur?.close().catch(() => {})
-    await compte?.supprimer()
-    await srv.arreter()
-  }
+  } catch (e) { erreur = e }
+  // Le ménage ne se fait plus dans un `finally` qui avale ou écrase : il tourne toujours, et son échec est DIT — avec l'erreur
+  // du run s'il y en avait une, parce qu'un compte fondateur resté en base est plus grave que la capture qui a échoué.
+  await navigateur?.close().catch(() => {})
+  let echecMenage = null
+  try { await compte?.supprimer() } catch (e) { echecMenage = e }
+  await srv.arreter()
+  // Contrôle de fin de suite : aucun compte de capture oublié ne reste (ni le nôtre, ni celui d'un run interrompu).
+  if (!echecMenage) { try { await verifierAucunCompteCapture() } catch (e) { echecMenage = e } }
+  if (erreur && echecMenage) throw new Error(`${erreur?.message ?? erreur} — ET le ménage a échoué : ${echecMenage.message}`)
+  if (erreur) throw erreur
+  if (echecMenage) throw echecMenage
   return resultats
 }
 
