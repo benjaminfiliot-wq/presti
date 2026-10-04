@@ -151,7 +151,7 @@
 
 ## [17] v7 · bloc 3 — vérification finale — 05/09 18:45 — ✅ lanceur **43/44 + 1 en attente** en local ; GitHub run #7 : 42/44 + 1 en attente + 1 échec d'environnement (expliqué)
 - **Rejoué** : `node scripts/tout-verifier.mjs` deux fois depuis un arbre propre (le dépôt local porte un chantier étranger non commité — nouveau logo — qui casse `tsc` et `next build` ; commits faits depuis un worktree). Passage 1 : 41/44 (deux suites à aligner sur le nouveau code : `audit-final-e2e` M2 cherchait le verrou d'offre dans la route de flux, il vit dans la décision unique ; `emails-e2e` ne connaissait pas l'envoi du code). Passage 2, après alignement : **43/44 vertes · 1 en attente d'un préalable humain** (`code-connexion-e2e`, migration 0063), code de sortie 0, 557 s.
-- **GitHub** : run #6 (avant alignement) 41/44, même lecture qu'en local. Run #7 (après) : 42/44 + 1 en attente + **1 échec : `mentions-bloquantes-e2e` 13/15, HTTP 502 « Envoi impossible » à l'envoi du devis**. Cause constatée en base, pas devinée : `limites.emails:jour` = **86 ≥ 80** — le plafond quotidien d'envois (F, majeur 7, protège l'offre Resend gratuite) a été atteint par les cinq passages complets d'aujourd'hui (chaque passage envoie de vrais emails au puits `delivered@resend.dev`). La même suite était verte au passage local 1 et au run #6. La fenêtre se remet à zéro à minuit UTC ; l'audit nocturne de 4 h 17 tourne après. Ce n'est pas un défaut du produit : c'est le plafond qui fait exactement son travail.
+- **GitHub** : run #6 (avant alignement) 41/44, même lecture qu'en local. Run #7 (après) : 42/44 + 1 en attente + **1 échec : `mentions-bloquantes-e2e` 13/15, HTTP 502 « Envoi impossible » à l'envoi du devis**. Cause constatée en base, pas devinée : `limites.emails:jour` = **86 ≥ 80** — le plafond quotidien d'envois (F, majeur 7, protège l'offre Resend gratuite) a été atteint par les cinq passages complets d'aujourd'hui (chaque passage envoie de vrais emails au puits `‹e-mail d’un artisan›`). La même suite était verte au passage local 1 et au run #6. La fenêtre se remet à zéro à minuit UTC ; l'audit nocturne de 4 h 17 tourne après. Ce n'est pas un défaut du produit : c'est le plafond qui fait exactement son travail.
 - **Lanceur** : nouvel état ⏳ « en attente d'un préalable humain » (code de sortie 2, précédent `mfa-e2e`) — exclu des vertes ET des échecs, consigne recopiée. Le compte reste honnête : 43/44 tant que 0063 n'est pas collée, 44/44 après.
 - **Documents** : `plans/audit-final.md` (« Ce que Benj a trouvé après l'audit », ce que le sprint ne prouve pas, gestes restants), `plans/couverture.md` (règle « l'effet d'un réglage = comportement observé sur chaque route qui le lit », 0 case vide), liste H réécrite ci-dessous, vault `SaaS/Produit/Session-2026-09-05-v7-Modes-et-Code-Email.md`.
 - **Journal** : appels IA : 0 sur ce bloc. **Cumul v7 : 3** (bloc 1, rejeu exigé de `pilotage-e2e`). Clé Anthropic locale restaurée.
@@ -1123,7 +1123,7 @@ fiable. Dit franchement plutôt que contourné à moitié : **la publication se 
 
 La variante recommandée (n°1) s'ouvrait sur « **zéro artisan abonné à Presti aujourd'hui** ». La
 check-list imposait de revérifier ce compteur **le matin même**. Vérifié en base : il y a **un abonné
-payant**, `a.filiot@sfr.fr` sur l'offre Essentiel. La phrase était donc **fausse et vérifiable** —
+payant**, `‹e-mail d’un artisan›` sur l'offre Essentiel. La phrase était donc **fausse et vérifiable** —
 dans un post dont tout l'intérêt est l'honnêteté. Benj a tranché : c'est un proche, et on publie la
 **variante 3** (le facteur 7 de l'étude HBR 2011, sourcée à l'écran), qui ne dépend d'aucun compteur.
 
@@ -1244,7 +1244,7 @@ MRR de 29,00 €.
 
 ⚠️ **Et une correction à ce que j'avais dit** : l'abonné payant n'est pas « un proche » d'après
 l'écran — la ligne est « **logan · Électricien · Essentiel · abonné** ». L'adresse en base est bien
-`a.filiot@sfr.fr`, mais le métier affiché est électricien. La variante 1 (« zéro artisan abonné »)
+`‹e-mail d’un artisan›`, mais le métier affiché est électricien. La variante 1 (« zéro artisan abonné »)
 restait impubliable dans les deux cas ; le choix de la variante 3 tient.
 
 **Appels IA : 0.**

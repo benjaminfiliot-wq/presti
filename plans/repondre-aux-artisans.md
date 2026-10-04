@@ -298,7 +298,7 @@ Appel, mail, rendez-vous. Il veut sortir de LinkedIn.
 
 À ne pas faire : donner le numéro avant d'avoir relu le fil.
 
-**Il écrit** « envoyez moi ca par mail plutot, jm.blanchard@orange.fr »
+**Il écrit** « envoyez moi ca par mail plutot, ‹e-mail d’un artisan› »
 
 ```
 Je vous envoie ça ce soir. Ce sera court. Si vous voyez rien arriver, regardez dans les indésirables.
