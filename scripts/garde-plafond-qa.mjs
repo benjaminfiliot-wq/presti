@@ -274,7 +274,7 @@ function gf4() {
 // ── GF-5 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const PAYANTS = new Set(['anthropic', 'openai', 'firecrawl', 'perplexity', 'elevenlabs', 'gemini', 'groq'])
 const LIBRES = {
-  publora: 'formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code',
+  publora: 'formule Starter gratuite (docs/marketing/README.md, règle « Outils gratuits seulement »), quota mensuel borné par le code',
   resend: 'envoi transactionnel du produit, palier gratuit, sans génération',
   stripe: 'recette : l’argent entre, aucune dépense par appel',
   meta: 'API Graph de lecture et de publication, gratuite',

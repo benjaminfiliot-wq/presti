@@ -1,8 +1,9 @@
 // lib/crieur/juge.ts — le juge d'exécution du Crieur (fiche 026-116, « Ce qu'il faut faire », point 1), écrit par
-// Claude Code AVANT le composeur (026-119) et la route (026-122) qui l'appelleront. Depuis le 27/09 (R24, qui
-// remplace R7) : le Crieur ne publie plus seul — il dépose chaque publication en BROUILLON dans Publora, et Benj
-// accorde chacune en la programmant lui-même. Ce juge reste la dernière relecture AVANT le dépôt du brouillon : un
-// refus ici = pas de brouillon envoyé à Publora, jamais une publication qui invente un fait ou une donnée.
+// Claude Code AVANT le composeur (026-119) et la route (026-122) qui l'appelleront. Le Crieur dépose chaque publication en
+// BROUILLON dans Publora. Depuis la décision « tout est automatique » (30/09, confirmée par Benj le 04/10 : R24 n'exige plus
+// d'accord individuel), la route la programme elle-même, sous contrôles automatiques : ce juge, la pause générale, le coût
+// nul exact, l'horizon de Publora et la suspension des programmées dès la pause. Ce juge reste la dernière relecture AVANT le
+// dépôt du brouillon : un refus ici = pas de brouillon envoyé à Publora, jamais une publication qui invente un fait ou une donnée.
 //
 // Pur : aucun import hors des types (aucun fetch, aucune variable d'environnement, aucun accès à Supabase ou à
 // Publora). `faits` et `phrasesGabarit` sont fournis par l'appelant (lib/crieur/faits.ts et lib/crieur/composer.ts,

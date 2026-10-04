@@ -11,7 +11,7 @@ téléchargée ou transcrite. Une accroche sans source ni approbation est en att
 Un chiffre dans une accroche suit la règle de la mémoire : il renvoie à `plans/promesses.md` ou `lib/crieur/faits.ts`, et passe
 par `jev noul --provider laya` avant publication (seuil 0,5, voir le [registre](../offre/registre-promesses.md)).
 
-## Accroches sourcées (prêtes à proposer, jamais à publier sans accord)
+## Accroches sourcées (prêtes à proposer, jamais à publier sans passer les contrôles automatiques de la ligne)
 
 Les treize textes de fait du registre (P-01 à P-13) sont les accroches de L3 et L5. Elles ne se reformulent pas. Exemple :
 P-01, « La réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez. » (preuve : `plans/promesses.md`, ligne 1).

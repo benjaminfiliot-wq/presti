@@ -19,6 +19,11 @@
 
 La carte de l'accord se prépare avec `lib/contenu/accord.ts` (`preparerDemandeAccord`), voir [accord](accord.md).
 
+Écart connu (04/10/2026) : pour Instagram et Facebook, les contrôles automatiques de la ligne remplacent l'accord individuel
+(décision du 30/09, confirmée par Benj le 04/10 : `lib/contenu/lignes.ts`, `lib/contenu/metaPublier.ts`). Le chemin TikTok, lui,
+exige encore cet accord (point 4 ci-dessus, critère TT-2 de `contenu-qa --partie=tiktok`) : le geste est un clic dans un Chrome visible,
+sans API, et l'aligner sur les contrôles automatiques est un changement de code et de juge à part, pas un changement de texte.
+
 ## Le geste de publication (Chrome visible)
 
 1. Déposer le fichier (9,5 Mo au plus). La musique est **dans le fichier** : le formulaire web n'en ajoute pas.
