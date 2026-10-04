@@ -22,7 +22,7 @@ export default function Confidentialite() {
     <main className="legal-wrap">
       <Back />
       <h1>Politique de confidentialité</h1>
-      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '27 septembre 2026' : '27 septembre 2026'} · Conforme au RGPD</div>
+      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '4 octobre 2026' : '4 octobre 2026'} · Conforme au RGPD</div>
 
       <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
 

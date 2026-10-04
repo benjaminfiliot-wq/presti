@@ -5,9 +5,9 @@ Publiée le 2026-09-29 (fiche 026-162), avec le « oui » de Benj du 29/09.
 - **Notice (RGPD, art. 14)** : https://benjaminfiliot-wq.github.io/presti-notice/
 - **Mentions légales** : https://benjaminfiliot-wq.github.io/presti-notice/mentions-legales/
 - **Dépôt public** : benjaminfiliot-wq/presti-notice, branche `main`, racine ; trois fichiers seulement : `index.html`, `mentions-legales/index.html`, `.nojekyll` (vide).
-- **Commit publié** : e7af6f4a28f7d67c2a931841bbd9f76a747eacc4 (2026-09-29, 21:06 UTC).
+- **Commit publié** : 470a193 (2026-10-04, 13:21 UTC, notice corrigée le 04/10 : e-mails, téléphones, sources, sous-traitants, transferts) ; première version e7af6f4a28f7d67c2a931841bbd9f76a747eacc4 (2026-09-29, 21:06 UTC).
 - **Hébergeur** : GitHub Pages. `NOTICE_URL` (`lib/agents/acquisition/contrat.ts`) porte l'adresse de la notice, avec sa barre finale.
-- **Empreintes SHA-256 des pages servies (fins de ligne LF, lues par le juge)** : notice 6c3ae8152eb0fb2b41187881739244256bd1b10adebe222af71733c51a573166 ; mentions e127c570d22267f76481b9e0aff08f8152e03d2283f284538800e8da0ad0cb2c.
+- **Empreintes SHA-256 des pages servies (fins de ligne LF, lues par le juge)** : notice 921b62d72064705b3b30bf53325c3a9b13c65f5d5c5b92fb57bc7710f8ab77c4 ; mentions e127c570d22267f76481b9e0aff08f8152e03d2283f284538800e8da0ad0cb2c.
 
 ## Republier après un changement de la notice
 
