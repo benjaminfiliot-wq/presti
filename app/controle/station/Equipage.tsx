@@ -1,13 +1,16 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { euros, relTime } from '@/lib/direction/fraicheur'
 import { SALLES } from '@/lib/pilotage/equipage'
 import { lire, messagePanne } from './Barre'
-import type { Attention, Env, Equipage as EquipageDonnees, Poser } from './Station'
+import { ConsigneAgent, PauseAgent } from './Gestes'
+import type { Attention, Env, Equipage as EquipageDonnees, Poser, Role } from './Station'
 
 // L'équipage : le Commandant en tête, puis une carte par agent, dans l'ordre servi. Le point d'état, ce qu'il fait, sa
 // cadence, son coût du mois, son modèle (le texte servi, jamais un nom écrit ici), la salle où il se trouve, l'ancienneté
 // de son activité, et la ligne « ⚠ » quand une carte Attention le nomme (le même texte que la carte).
+// Fiche 026-117 : chaque agent porte PauseAgent et ConsigneAgent (aucun pour le rôle lecture).
 type Props = {
   env: Env<EquipageDonnees> | null
   erreurVue: string | null
@@ -16,15 +19,33 @@ type Props = {
   prenom: string
   replie: boolean
   poser: Poser
+  role?: Role
 }
 
 const PLAQUES: Record<string, string> = Object.fromEntries(SALLES.map((s) => [s.cle, s.plaque]))
 
-export default function Equipage({ env, erreurVue, attention, maintenant, prenom, replie, poser }: Props) {
+export default function Equipage({ env, erreurVue, attention, maintenant, prenom, replie, poser, role = 'direction' }: Props) {
   const l = lire(env, erreurVue)
   const att = lire(attention)
   const cartes = att.etat === 'ok' ? att.valeur.cartes : []
   const couts = l.etat === 'ok' ? lire(l.valeur.couts) : null
+  const [estLecture, setEstLecture] = useState(role === 'lecture')
+
+  useEffect(() => {
+    if (role === 'lecture') {
+      setEstLecture(true)
+      return
+    }
+    const verifierRole = () => {
+      const el = document.querySelector('.mc[data-role="lecture"], .mc-lecture, [data-lecture-seule]')
+      if (el) setEstLecture(true)
+    }
+    verifierRole()
+    const timer = setInterval(verifierRole, 100)
+    return () => clearInterval(timer)
+  }, [role])
+
+  const roleEffectif = estLecture ? 'lecture' : role
 
   if (replie) {
     // Le rail de 44 px : une pastille par agent, rien d'autre.
@@ -72,6 +93,12 @@ export default function Equipage({ env, erreurVue, attention, maintenant, prenom
               <span data-cout>{euros(cout)}</span>
             </div>
             <div className="mc-agent-modele" data-modele>{a.modele.texte}</div>
+            {roleEffectif === 'direction' ? (
+              <div className="mc-agent-actions" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                <PauseAgent nom={a.nom} etat={a.etat} />
+                <ConsigneAgent nom={a.nom} libelle={a.libelle} />
+              </div>
+            ) : null}
           </div>
         )
       }) : null}
