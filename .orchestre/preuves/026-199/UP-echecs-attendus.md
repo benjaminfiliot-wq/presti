@@ -1,0 +1,75 @@
+# usine-pubs-qa — preuves du juge
+
+Un critère « attendu en échec » est un critère que le juge DOIT mettre au rouge sur la faute plantée dans une copie du témoin ; « témoin » : le critère passe sur la référence conforme. Une ligne PASS = le juge a vu ce qu'il devait voir.
+
+- PASS arbre sans fichiers (UP-1) : FAIL UP-1 — absent(s) : app/api/usine/pubs/travail/route.ts, app/api/usine/pubs/depot/route.ts, app/api/usine/pubs/rendu/route.ts, lib/pubs/usinePubs.ts, scripts/usine/pubs.mjs, scripts/usine/systemd/presti-pubs.service, scripts/usine/systemd/presti-pubs.timer | FAIL UP-10 — non évalué : des fichiers manquent (UP-1) | usine-pubs-qa : FAIL — UP-1, UP-2, UP-3, UP-4, UP-5, UP-10
+- PASS témoin UP-1 (UP-1) : les 7 fichiers existent et ne sont pas vides
+- PASS témoin UP-2 (UP-2) : travail : busAgents baissé → 404 avant toute identité (aucun appel à la garde, aucun accès à la base) ; travail : sans jeton et jeton inconnu → 401 ;…
+- PASS témoin UP-3 (UP-3) : aucun travail → { travail: null } ; le plus ancien pack payée est pris : { type: 'pack', id } ; pack = exactement le pack.json de exporter.mjs ; ni c…
+- PASS témoin UP-4 (UP-4) : pack : trois MP4 et trois visuels (jpeg et png) : une adresse signée de dépôt par fichier ; fichier de 60 Mo : une adresse signée de dépôt par fichie…
+- PASS témoin UP-5 (UP-5) : pack bon : payee → fabriquee, fabrique_le posé ; verifications : juge pub-locale-qa, verdict PASS (comme deposer.mjs) ; la route relit chacun des six…
+- PASS témoin UP-10 (UP-10) : User=agents ; WorkingDirectory=/srv/presti-agents ; Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele ; aucun EnvironmentFile= ; MemoryMax=4G…
+- PASS le jeton de livreur_usine accepté (UP-2) : travail : le jeton de livreur_usine donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (livreur) a écrit dans la …
+- PASS le drapeau lu après la garde (UP-2) : depot : busAgents baissé : statut 404, la garde a été interrogée avant le drapeau (404 sans identité attendu)
+- PASS aucun battement de studio (UP-2) : rendu : aucun battement de studio (ops_battement) à l'appel authentifié ; rendu : pas de battement de studio sous la pause générale (appel authentifié)
+- PASS la pause générale ignorée (UP-2) : travail : pause générale : statut 200, corps {"type":"pack","id":"11111111-1111-4111-8111-111111111111","pack":{"pack_id":"1… ({ travail: null } sans écriture attendu)
+- PASS photos hors du dossier de l'artisan signées (UP-3) : une adresse hors du dossier de l'artisan est signée ou rendue : artisan-media/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/secret.jpg
+- PASS le courriel du client dans la réponse (UP-3) : pack ≠ pack.json de exporter.mjs (reçu {"email":"client.sentinelle@exemple.invalid","matiere":{"accroche":"artisan_de_confiance","communes":["Rennes"],"cta":"… ; attendu…
+- PASS adresses de lecture de 3 600 s (UP-3) : adresses de lecture : artisan-media 3600 s (bucket artisan-media, 600 s au plus attendus)
+- PASS aucun bail (UP-3) : 2e passage : pack 11111111-1111-4111-8111-111111111111 (pack 22222222-2222-4222-8222-222222222222 attendu : le premier est sous bail) ; 3e passage : {"type":"pack","id":…
+- PASS l'extrait garde adresses et numéros (UP-3) : extrait : 173 signes « Bonjour, oui, vous pouvez utiliser nos photos pour un essai vidéo, avec plaisir, écrivez-moi à resp… » — adresse ou numéro non masqué ; la réponse…
+- PASS une marque en refus prise (UP-3) : Studio : statut 200, {"type":"studio","decision":"55555555-5555-4555-8555-555555555555","marque_cle":"marque-refusee","page_produit":"http://127.0.0.1:61834/mar… (la déc…
+- PASS un chemin hors de livraison/ admis (UP-4) : chemin sous le dossier d'un autre pack : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu) ; adresse signée hors des chemins permis : packs-pubs/22222222-222…
+- PASS aucune borne de taille (UP-4) : fichier de plus de 60 Mo : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu)
+- PASS stockage à 99 % toléré (UP-4) : stockage à 61 % : statut 200, 1 adresse(s) signée(s) (507 sans adresse attendu)
+- PASS stockage non mesurable toléré (UP-4) : stockage non mesurable (erreur) : statut 200, 1 adresse(s) signée(s) (507 sans adresse attendu) ; stockage non mesurable (valeur nulle) : statut 200, 1 adresse(s) signée…
+- PASS le type n'est pas vérifié (UP-4) : type video/avi : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu)
+- PASS l'empreinte n'est pas vérifiée (UP-5) : une empreinte SHA-256 fausse : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee att…
+- PASS les octets magiques ne sont pas vérifiés (UP-5) : des octets magiques faux (empreinte juste) : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison …
+- PASS un juge non vert accepté (UP-5) : un juge au code 1 : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee attendus)
+- PASS les fichiers du pack ne sont pas relus (UP-5) : fichiers relus : aucun ; les six du pack attendus ; un fichier absent du stockage : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le …
+- PASS payee → fabriquee sans condition (UP-5) : écriture : 1 mise(s) à jour vers fabriquee (filtres {"id":"eq.11111111-1111-4111-8111-111111111111","select":"id"}) (une seule, conditionnée à id et etat = payee, attend…
+- PASS le premier échantillon tranché sans Benj (UP-5) : premier échantillon : statut 200, corps {"ok":true}, décision tranchee (ouverte attendue : Benj regarde d'abord) ; décision pour Benj : 0 décision(s) à options envoyer/r…
+- PASS le lien d'aperçu absent de la décision (UP-5) : aperçu : lien signé 600 s, absent de la décision (10 min au plus, dans la décision, attendu)
+- PASS plus de reprise arrêtée au 3e échec (UP-5) : après trois ok: false : état payee, le pack est repris à 91 min (plus de reprise attendue) ; après trois empreintes fausses : état payee, le pack est repris à 91 min (pl…
+- PASS User=usine (UP-10) : User=usine (agents attendu)
+- PASS Nice=5 (UP-10) : Nice=5 (10 attendu)
+- PASS MemoryMax=8G (UP-10) : MemoryMax=8G (une valeur finie de 4G au plus attendue)
+- PASS le jeton du livreur (UP-10, décision du 27/09) (UP-10) : ExecStart = « /usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_LIVREUR_USINE -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/usine/pubs.mjs --une-passe…
+- PASS EnvironmentFile= : tout le coffre (UP-10) : EnvironmentFile= présent : il chargerait tout le coffre
+- PASS PRESTI_JETON_STUDIO absent de la liste fermée du coffre (UP-10) : PRESTI_JETON_STUDIO est absent de NOMS_PERMIS (scripts/usine/coffre-regles.mjs) : avec-coffre.mjs refuserait de lancer l'unité (code 2) et usine-coffre.mjs de poser le j…
+- PASS Persistent=false (UP-10) : Persistent=false (true attendu)
+- PASS toutes les 30 min (UP-10) : minuteur : OnCalendar=*:0/30 (toutes les 15 min attendu)
+- PASS témoin du tourneur UP-6 (UP-6) : un pack payé : le passage finit en code 0, sans exception ; GET travail d'abord, avec le jeton de l'agent ; ~/presti-pubs/<pack>/ et photos/ : dossiers en 0700… [rejoué sur l'usine]
+- PASS témoin du tourneur UP-7 (UP-7) : un échantillon : le passage finit en code 0, sans exception ; le vault ~/presti-studio/<marque>/ est en 0700 ; vault : prealables.md copié de docs/studio/preal… [rejoué sur l'usine]
+- PASS témoin du tourneur UP-8 (UP-8) : le jeton d'agent (tiré au hasard) n'apparaît dans aucune sortie, aucun argv ni aucune donnée de lanceur, sur 15 passages ; aucun outil lancé ne reçoit le jeton… [rejoué sur l'usine]
+- PASS témoin du tourneur UP-9 (UP-9) : bus injoignable : code 0, aucune exception, une ligne de journal ; bus en erreur 500 : code 0, aucune exception, une ligne de journal ; stockage injoignable au… [rejoué sur l'usine]
+- PASS le juge d'un pack ignoré (UP-6) : juge rouge : 1 demande(s) de dépôt, 6 envoi(s) (aucun attendu) ; juge rouge : rendus [{"travail":"11111111-1111-4111-8111-111111111111","ok":true,"fichiers":[{"chemin":"… [rejoué sur l'usine]
+- PASS la voix produite après la fabrication (UP-6) : ordre : la voix vient après la fabrication ; voix.mp3 absent quand fabriquer démarre ; ; pub-locale-qa : 0 appel(s), pas avant le premier dépôt ; depot : fichiers annonc… [rejoué sur l'usine]
+- PASS une autre voix que ff_siwis (UP-6) : voix : 1 appel(s) de hyperframes tts, voix af_heart ; ff_siwis sur le texte_voix du pack attendu [rejoué sur l'usine]
+- PASS aucun verrou par travail (UP-6) : deux passages simultanés : 2 fabrication(s), 2 rendu(s) ok (une et un attendus), codes 0/0 [rejoué sur l'usine]
+- PASS dossiers de travail en 0755 (UP-6) : dossiers de travail : presti-pubs 775, presti-pubs/<pack> 775, presti-pubs/<pack>/photos 775 (0700 attendu) [rejoué sur l'usine]
+- PASS les photos laissées par adresse (UP-6) : pack.json : pack_id 11111111-1111-4111-8111-111111111111, 4 photos, des adresses y figurent, (photos locales et rôles du travail attendus : fabriquer.mjs refuse une adre… [rejoué sur l'usine]
+- PASS aucun rendu en échec (UP-6) : juge rouge : rendus [] (ok: false et une raison attendus, jamais ok: true) [rejoué sur l'usine]
+- PASS des empreintes fausses au rendu (UP-6) : le faux Presti a refusé : rendu (empreinte_fausse) ; rendu : les empreintes des six fichiers manquent ou sont fausses [rejoué sur l'usine]
+- PASS la garde du Studio ignorée (UP-7) : garde en code 3 : le tourneur continue (codex, hyperframes, ffmpeg, monter) ; garde en code 3 : 1 montage(s), 0 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333… [rejoué sur l'usine]
+- PASS l'accord de la marque envoyé au lanceur (UP-7) : lecteur : 1 appel(s) du lanceur, ses données portent le Message-ID de la marque, la réponse d'accord [rejoué sur l'usine]
+- PASS l'extrait des allégations non contrôlé (UP-7) : allégation dont l'extrait n'est pas sur la page : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"pa… [rejoué sur l'usine]
+- PASS un présentateur virtuel accepté (UP-7) : script avec un présentateur virtuel : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"packs-pubs/stu… [rejoué sur l'usine]
+- PASS robots.txt ignoré (UP-7) : robots.txt interdit : le tourneur lit robots, page, image et lance le lecteur 1 fois ; robots.txt qui interdit : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3… [rejoué sur l'usine]
+- PASS plus d'une requête par seconde vers la marque (UP-7) : écarts entre requêtes vers la marque : 5 ms, 3 ms (1 000 ms au moins attendus) [rejoué sur l'usine]
+- PASS le User-Agent du Lecteur oublié (UP-7) : lecture de la marque : robots → page → image ; User-Agent node (robots, page, image avec UA_RECENSEUR attendus) [rejoué sur l'usine]
+- PASS pub-qa ignoré avant le dépôt (UP-7) : pub-qa rouge : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"packs-pubs/stud… (rien monté ni dépos… [rejoué sur l'usine]
+- PASS un outil payant lancé (UP-7) : outil payant ou repli lancé : elevenlabs [rejoué sur l'usine]
+- PASS le jeton dans le journal (UP-8) : le jeton d'agent apparaît : pack : la sortie du tourneur [rejoué sur l'usine]
+- PASS le jeton passé aux outils enfants (UP-8) : le jeton est transmis dans l'environnement d'un outil enfant : pack : hyperframes ; pack : ffmpeg ; pack : fabriquer (les enfants reçoivent un environnement sans secret) [rejoué sur l'usine]
+- PASS le texte de la réponse affiché (UP-8) : la sortie du tourneur contient : studio : accord dans la sortie [rejoué sur l'usine]
+- PASS le jeton envoyé à la marque (UP-8) : le jeton est envoyé à un autre serveur que Presti : studio : web [rejoué sur l'usine]
+- PASS un fichier écrit hors des lieux permis (UP-8) : écriture hors des lieux permis : pack : cache-pubs.json sous HOME [rejoué sur l'usine]
+- PASS le dossier temporaire laissé plein (UP-8) : le dossier temporaire n'est pas vidé : pack : passage.tmp [rejoué sur l'usine]
+- PASS une exception sur le bus injoignable (UP-9) : bus injoignable : code 1 ; trace de pile ; (node:604712) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not spe… [rejoué sur l'usine]
+- PASS hyperframes absent non reconnu (UP-9) : hyperframes absent (pack) : rendus [{"travail":"11111111-1111-4111-8111-111111111111","ok":false,"raison":"voix_en_echec"}], 0 dépôt(s) (ok: false, raison outil_absent e… [rejoué sur l'usine]
+- PASS le verrou jamais levé (UP-9) : reprise : 1 fabrication(s), 0 rendu(s) ok (le passage suivant doit refaire le travail et le rendre : un verrou ne doit pas rester) [rejoué sur l'usine]
+- PASS non-régression (--temoin) (NR) : package.json identique au HEAD ; npm run typecheck vert
+
+Faux Supabase, faux Presti, faux stockage et faux site de marque sur 127.0.0.1 ; aucune clé réelle, aucun appel public. UP-R (--reel) se joue en 026-202, hors de ce juge.

@@ -9,7 +9,9 @@ const options={};for(const a of process.argv.slice(2)){const m=a.match(/^--(raci
 const racine=path.resolve(options.racine||R),cible=path.join(racine,'lib/sites/searchConsole.ts'),tour=path.join(racine,'lib/siteLivraison.ts')
 const ligne=(id,ok,d)=>console.log(`${ok?'PASS':'FAIL'} ${id} — ${d}`)
 const normalise=s=>s.replace(/\r\n/g,'\n')
-function sc1(module=cible,t=tour){try{const a=fs.readFileSync(module,'utf8'),b=fs.readFileSync(t,'utf8');return /export\s+(?:async\s+)?function\s+jetonCompteService\b/.test(a)&&/export\s+(?:async\s+)?function\s+soumettreSiteSearchConsole\b/.test(a)&&/soumettreSiteSearchConsole\s*\(/.test(b)}catch{return false}}
+// un export se déclare de trois façons : function, const/let/var, ou la liste « export { nom } » (avec ou sans « as ») : les trois sont admis
+const exporte=(s,n)=>new RegExp(`export\\s+(?:async\\s+)?function\\s+${n}\\b|export\\s+(?:const|let|var)\\s+${n}\\b|export\\s*\\{[^}]*\\b${n}\\b[^}]*\\}`).test(s)
+function sc1(module=cible,t=tour){try{const a=fs.readFileSync(module,'utf8'),b=fs.readFileSync(t,'utf8');return exporte(a,'jetonCompteService')&&exporte(a,'soumettreSiteSearchConsole')&&/soumettreSiteSearchConsole\s*\(/.test(b)}catch{return false}}
 function sonde(module,t){const r=spawnSync(process.execPath,['--no-warnings','--import',pathToFileURL(path.join(R,'scripts/ts-loader.mjs')).href,path.join(F,'sonde-module.mjs'),module,t],{cwd:racine,windowsHide:true,encoding:'utf8',timeout:90000,maxBuffer:2e6});let j;try{j=JSON.parse(r.stdout.trim().split(/\r?\n/).at(-1))}catch{}return {code:r.status,brut:r.stdout+r.stderr,resultats:r.status===0?j?.resultats:null}}
 function nonRegression(){
  const h=spawnSync('git',['show','HEAD:package.json'],{cwd:R,encoding:'utf8',windowsHide:true})
@@ -30,7 +32,17 @@ if(!options['preuve-echecs']){
 // Les mutations sont physiques dans des copies ; aucun fichier métier modifié.
 const W=fs.mkdtempSync(path.join(os.tmpdir(),'presti-SC-')),essais=[],journaux=[]
 try{
- const absent=!sc1();essais.push({nom:'courant avant201',ok:absent,id:'SC-1'});journaux.push(`courant : ${absent?'FAIL SC-1 — module/exports/appel absent':'NON VALIDÉ — livré, scénario avant201 à revoir'}`)
+ // L'arbre sans module : une racine vide fabriquée ici, jugée par le CLI lui-même. La preuve ne dépend pas de l'état de lib/sites/ dans le dépôt :
+ // le jour où 026-201 livre le module, `verifier` de 026-199 doit rester vert (04/10, correction du juge : la preuve s'est périmée toute seule).
+ const vide=path.join(W,'arbre-sans-module');fs.mkdirSync(vide)
+ const sans=spawnSync(process.execPath,[fileURLToPath(import.meta.url),`--racine=${vide}`],{cwd:R,encoding:'utf8',windowsHide:true,timeout:120000})
+ essais.push({nom:'arbre sans module',id:'SC-1',ok:sans.status===1&&/^FAIL SC-1 — /m.test(sans.stdout)&&sans.stdout.includes('search-console-qa : FAIL — SC-1'),detail:sans.stdout.trim().split(/\r?\n/).join(' | ')});journaux.push('=== arbre sans module ===\n'+sans.stdout+sans.stderr)
+ const absent=!sc1()
+ if(absent){essais.push({nom:'courant avant201',ok:true,id:'SC-1'});journaux.push('courant : FAIL SC-1 — module/exports/appel absent')}
+ else journaux.push("courant : module livré — information non bloquante (le scénario avant201 est jugé par « arbre sans module »)")
+ // Le double Google est lui-même contrôlé : signature RS256 réellement vérifiée, quatre claims fautifs refusés, jeton absent refusé, panne rendue.
+ const ac=spawnSync(process.execPath,[path.join(F,'auto-controle.mjs')],{cwd:R,encoding:'utf8',windowsHide:true,timeout:120000})
+ essais.push({nom:'faux Google (auto-contrôle)',id:'SC-2',ok:ac.status===0&&ac.stdout.includes('"verdict":"PASS"'),detail:ac.stdout.trim().split(/\r?\n/).at(-1)||ac.stderr.slice(-150)});journaux.push('=== auto-contrôle du faux Google ===\n'+ac.stdout+ac.stderr)
  const module=path.join(F,'temoin-module.mjs'),t=path.join(F,'temoin-tour.mjs'),a=fs.readFileSync(module,'utf8'),b=fs.readFileSync(t,'utf8')
  const positif=sonde(module,t);journaux.push('=== témoin ===\n'+positif.brut);essais.push({nom:'témoin causal',ok:sc1(module,t)&&positif.code===0&&['SC-2','SC-3','SC-4','SC-5','SC-6','SC-7'].every(id=>positif.resultats?.[id]?.ok)})
  const fautes=[

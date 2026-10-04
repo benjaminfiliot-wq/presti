@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti tourneur des pubs sur l'usine (packs payes et echantillons du Studio)
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=PRESTI_URL=https://prestiapp.fr
+Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele
+TimeoutStartSec=80min
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_STUDIO -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/usine/pubs.mjs --une-passe
+TimeoutStartSec=55min
+MemoryMax=4G
+Nice=10
