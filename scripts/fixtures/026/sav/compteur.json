@@ -1,0 +1,35 @@
+{
+  "_note": "États du compteur D18 : approbations consécutives sans retouche, par type de question. L'automatique ne s'ouvre qu'à 20 et seulement pour une FAQ.",
+  "etats": {
+    "zero": {
+      "acces_poste": {
+        "approbations_sans_retouche": 0
+      },
+      "copie_facture": {
+        "approbations_sans_retouche": 0
+      }
+    },
+    "dix_neuf": {
+      "acces_poste": {
+        "approbations_sans_retouche": 19
+      },
+      "copie_facture": {
+        "approbations_sans_retouche": 19
+      }
+    },
+    "vingt": {
+      "acces_poste": {
+        "approbations_sans_retouche": 20
+      },
+      "copie_facture": {
+        "approbations_sans_retouche": 0
+      },
+      "facture": {
+        "approbations_sans_retouche": 20
+      },
+      "modification": {
+        "approbations_sans_retouche": 20
+      }
+    }
+  }
+}
