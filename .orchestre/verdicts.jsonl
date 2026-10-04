@@ -1064,3 +1064,6 @@
 {"id":"026-178","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:16:47Z","duree_s":199,"agent":"claude-code","executant":"codex","lignes":1074,"dossier":"fait"}
 {"id":"026-245","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:26:51Z","duree_s":1,"agent":"claude-code","executant":"codex","lignes":1341,"dossier":"fait"}
 {"id":"026-245","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:27:19Z","duree_s":14,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-099","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-1472 silencieux depuis 132 min","code":null,"date":"2026-10-04T18:36:40Z","duree_s":0,"agent":"usine-codex-1472","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-200","verdict":"FAIL","ligne":"PASS UP-9 — bus injoignable : code 0, aucune exception, une ligne de journal ; bus en erreur 500 : code 0, aucune exception, une ligne de journal ; stockage inj","code":1,"date":"2026-10-04T18:38:48Z","duree_s":26,"agent":"claude-code","executant":"codex","lignes":1708,"dossier":"en-cours"}
+{"id":"026-201","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:38:51Z","duree_s":57,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
