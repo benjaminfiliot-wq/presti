@@ -1,0 +1,98 @@
+/* Le Journal de bord de la station (fiche 026-123) : le fil des bulles et le champ « Transmettre à l'équipage ».
+   Toutes les règles sont sous .mc, en jetons var(--mc-…) seulement (les jetons sont déclarés dans station.css) ; le mouvement
+   réduit est respecté en fin de feuille. */
+
+/* ── Le cadre : une colonne (en-tête, fil, champ) dont seul le fil défile ───────────────────────────────────────────── */
+.mc .mc-journal[data-station-journal] { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 0; overflow: hidden; }
+
+.mc-jrn-entete { flex: 0 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "titre ligne" "filtre filtre"; align-items: center; gap: 6px 8px; padding: 10px 12px 6px; }
+.mc-jrn-entete .mc-titre-zone { grid-area: titre; margin: 0; white-space: nowrap; }
+.mc-jrn-en-ligne { grid-area: ligne; justify-self: end; min-width: 0; font-family: var(--mc-mono); font-size: 12px; font-weight: 700; color: var(--mc-actif); text-align: right; overflow-wrap: anywhere; }
+.mc-jrn-filtre { grid-area: filtre; min-width: 0; width: 100%; min-height: 28px; padding: 2px 8px; border: 1px solid var(--mc-bord); border-radius: 6px; background: color-mix(in srgb, var(--mc-neon-1) 8%, transparent); color: var(--mc-texte); font: inherit; font-size: 12px; color-scheme: dark; cursor: pointer; text-overflow: ellipsis; }
+.mc-jrn-filtre:focus-visible { outline: 2px solid var(--mc-actif); outline-offset: 1px; }
+.mc-jrn-filtre option { background: var(--mc-fond); color: var(--mc-texte); }
+
+/* ── Le fil ─────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc-jrn-corps { position: relative; flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+.mc-jrn-fils { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; padding: 2px 0 6px; overscroll-behavior: contain; }
+.mc-jrn-fils:focus-visible { outline: 2px solid var(--mc-actif); outline-offset: -2px; }
+.mc-jrn-fils > :first-child { margin-top: auto; }
+.mc .mc-jrn-vide { padding: 12px; color: var(--mc-texte-doux); text-align: center; }
+.mc .mc-jrn-note { flex: 0 0 auto; padding: 0 12px 4px; color: var(--mc-texte-doux); font-size: 12px; }
+.mc .mc-jrn-note-panne { color: var(--mc-warn); }
+
+/* Une bulle : la pastille de l'agent et l'heure de Paris, puis le texte servi en police mono. */
+.mc-bulle { --t: var(--mc-neon-1); flex: 0 0 auto; padding: 6px 12px 7px 10px; border-left: 2px solid transparent; }
+.mc-bulle[data-teinte="1"] { --t: var(--mc-actif); }
+.mc-bulle[data-teinte="2"] { --t: var(--mc-ok); }
+.mc-bulle[data-teinte="3"] { --t: var(--mc-warn); }
+.mc-bulle[data-teinte="b"] { --t: var(--mc-neon-2); }
+.mc-bulle:hover { background: color-mix(in srgb, var(--mc-neon-1) 7%, transparent); }
+.mc-bulle[data-type="consigne"] { border-left-color: var(--mc-neon-2); background: color-mix(in srgb, var(--mc-neon-2) 9%, transparent); }
+.mc-bulle[data-type="reunion_compte_rendu"] { border-left-color: var(--t); }
+
+.mc-bulle-tete { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; margin-bottom: 3px; }
+.mc-bulle [data-pastille] { flex: 0 1 auto; min-width: 0; max-width: 100%; padding: 1px 8px; border: 1px solid color-mix(in srgb, var(--t) 50%, transparent); border-radius: 10px; background: color-mix(in srgb, var(--t) 14%, transparent); color: var(--t); font-family: var(--mc-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; line-height: 18px; overflow-wrap: anywhere; }
+.mc-bulle [data-pastille][tabindex]:focus { outline: 2px solid var(--mc-actif); outline-offset: 1px; }
+.mc-bulle-heure { flex: 0 0 auto; font-family: var(--mc-mono); font-size: 12px; color: var(--mc-texte-doux); }
+
+/* L'info-bulle d'une pastille : le libellé et le rôle de l'agent, en texte seulement, au survol et au focus. */
+.mc-bulle [data-info-agent] { display: none; position: absolute; left: 0; top: calc(100% + 2px); z-index: 20; width: max-content; max-width: min(240px, 100%); padding: 6px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; background: var(--mc-fond); color: var(--mc-texte); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; pointer-events: none; }
+.mc-bulle [data-info-agent] b { display: block; }
+.mc-bulle [data-info-agent] span { display: block; color: var(--mc-texte-doux); }
+.mc-bulle [data-pastille]:hover + [data-info-agent],
+.mc-bulle [data-pastille]:focus + [data-info-agent] { display: block; }
+
+.mc-bulle-texte { font-family: var(--mc-mono); font-size: 12px; line-height: 1.45; color: var(--mc-texte); overflow-wrap: anywhere; white-space: pre-wrap; }
+.mc-bulle [data-cible] { color: var(--mc-neon-2); font-weight: 700; }
+.mc .mc-bulle-lignes { margin-top: 2px; font-family: var(--mc-mono); font-size: 12px; line-height: 1.45; color: var(--mc-texte-doux); }
+.mc-bulle-lignes li { position: relative; padding-left: 14px; overflow-wrap: anywhere; }
+.mc-bulle-lignes li::before { content: "\203A"; position: absolute; left: 3px; color: var(--t); }
+
+/* « N nouvelles ↓ » : posé sur le bas du fil quand Benj est remonté. */
+.mc .mc-jrn-nouvelles { position: absolute; left: 50%; bottom: 8px; z-index: 6; transform: translateX(-50%); min-height: 28px; padding: 0 14px; border: 1px solid var(--mc-actif); border-radius: 14px; background: var(--mc-fond); color: var(--mc-actif); font-size: 12px; font-weight: 700; white-space: nowrap; transition: background-color 0.15s; }
+.mc .mc-jrn-nouvelles:hover { background: color-mix(in srgb, var(--mc-actif) 16%, var(--mc-fond)); }
+
+/* ── Le champ « Transmettre à l'équipage » ──────────────────────────────────────────────────────────────────────────── */
+.mc [data-transmettre] { flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; padding: 8px 12px 10px; border-top: 1px solid var(--mc-bord); }
+.mc-jrn-saisie { display: flex; align-items: stretch; gap: 8px; }
+.mc [data-transmettre] textarea { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 8px; border: 1px solid var(--mc-bord); border-radius: 8px; background: color-mix(in srgb, var(--mc-neon-1) 8%, transparent); color: var(--mc-texte); font: inherit; font-size: 13px; line-height: 1.4; resize: none; transition: border-color 0.15s; }
+.mc [data-transmettre] textarea::placeholder { color: var(--mc-texte-doux); opacity: 1; }
+.mc [data-transmettre] textarea:focus-visible { outline: none; border-color: var(--mc-actif); }
+.mc .mc-jrn-envoyer { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 1px solid var(--mc-neon-1); border-radius: 8px; color: var(--mc-neon-1); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; transition: background-color 0.15s; }
+.mc .mc-jrn-envoyer:hover:not(:disabled) { background: var(--mc-survol); }
+.mc-jrn-pied { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; min-height: 16px; }
+.mc .mc-jrn-statut { flex: 1 1 0; min-width: 0; font-size: 12px; line-height: 16px; color: var(--mc-ok); overflow-wrap: anywhere; }
+.mc .mc-jrn-statut-refus { color: var(--mc-crit); }
+.mc-jrn-compteur { flex: 0 0 auto; font-family: var(--mc-mono); font-size: 12px; line-height: 16px; color: var(--mc-texte-doux); }
+.mc .mc-jrn-lecture { flex: 0 0 auto; padding: 10px 12px; border-top: 1px solid var(--mc-bord); color: var(--mc-texte-doux); font-size: 12px; }
+
+/* ── Le repli (mise en page flottante, bureau seulement) ────────────────────────────────────────────────────────────── */
+.mc .mc-jrn-replier { display: none; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-jrn-replier { position: absolute; top: 0; right: 0; z-index: 7; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: var(--mc-texte-doux); transition: background-color 0.15s, color 0.15s; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-jrn-replier:hover { background: var(--mc-survol); color: var(--mc-texte); }
+
+/* Le journal flottant remplit le cadre de station.css (200 px) : seul le fil défile ; replié, le cadre se réduit au titre et au champ. */
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-flot-journal { display: flex; flex-direction: column; overflow: hidden; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-flot-journal > [data-station-journal] { flex: 1 1 auto; min-height: 0; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-flot-journal:has(> [data-station-journal][data-replie="oui"]) { height: auto; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-jrn-entete { grid-template-areas: "titre titre" "filtre ligne"; grid-template-columns: minmax(70px, 1fr) minmax(0, auto); gap: 2px 8px; min-height: 44px; padding: 4px 52px 4px 12px; align-content: center; }
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-jrn-filtre { min-height: 26px; }
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-transmettre] { padding: 6px 12px 6px; gap: 2px; }
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-transmettre] textarea,
+.mc.mc-bureau[data-mise-en-page="flottante"] .mc-jrn-envoyer { min-height: 40px; }
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-transmettre] textarea { height: 40px; padding-block: 4px; }
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-station-journal][data-replie="oui"] .mc-jrn-corps,
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-station-journal][data-replie="oui"] .mc-jrn-filtre,
+.mc.mc-bureau[data-mise-en-page="flottante"] [data-station-journal][data-replie="oui"] .mc-jrn-en-ligne { display: none; }
+
+/* ── Téléphone : le journal remplit l'onglet, le champ reste au-dessus des onglets, police de 16 px (pas de zoom forcé) ── */
+.mc-tel .mc-journal[data-station-journal] { height: 100%; border: 1px solid var(--mc-bord); border-radius: 10px; }
+.mc-tel .mc-jrn-filtre { min-height: 44px; font-size: 16px; }
+.mc-tel [data-transmettre] textarea { font-size: 16px; }
+.mc-tel .mc-jrn-nouvelles { bottom: 10px; }
+
+/* ── Mouvement réduit : aucune transition ─────────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .mc-jrn-nouvelles, .mc-jrn-envoyer, .mc-jrn-replier, .mc [data-transmettre] textarea { transition: none; animation: none; }
+}
