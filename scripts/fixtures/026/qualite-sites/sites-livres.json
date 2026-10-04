@@ -1,0 +1,25 @@
+{
+  "_note": "Cinq commandes livrées FACTICES (026-246) : aucune donnée réelle, hôtes en .invalid, SIREN fictifs. Le serveur factice et le juge lisent ce même fichier.",
+  "commandes": [
+    {
+      "id": "cmd-0001", "slug": "aubier", "statut_site": "en_ligne", "url_en_ligne": "https://aubier.exemple.invalid/",
+      "artisan": { "nom": "Atelier Fictif Aubier", "siren": "000000011", "adresse": "1 rue de l'Essai, 00000 Ville-Fictive", "forme_juridique": "EURL" }
+    },
+    {
+      "id": "cmd-0002", "slug": "vallon", "statut_site": "en_ligne", "url_en_ligne": "https://vallon.exemple.invalid/",
+      "artisan": { "nom": "Plomberie Fictive du Vallon", "siren": "000000029", "adresse": "2 chemin du Test, 00000 Bourg-Fictif", "forme_juridique": "SARL" }
+    },
+    {
+      "id": "cmd-0003", "slug": "ancien", "statut_site": "programme_retrait", "retrait_programme_le": "2027-09-01", "url_en_ligne": "https://ancien.exemple.invalid/",
+      "artisan": { "nom": "Menuiserie Fictive Ancienne", "siren": "000000037", "adresse": "3 impasse du Vieux-Test, 00000 Val-Fictif", "forme_juridique": "SAS" }
+    },
+    {
+      "id": "cmd-0004", "slug": "sansurl", "statut_site": "livre", "url_en_ligne": null,
+      "artisan": { "nom": "Peinture Fictive Sans-Adresse", "siren": "000000045", "adresse": "4 place de l'Essai, 00000 Port-Fictif", "forme_juridique": "EI" }
+    },
+    {
+      "id": "cmd-0005", "slug": "clair", "statut_site": "en_ligne", "url_en_ligne": "http://clair.exemple.invalid/",
+      "artisan": { "nom": "Carrelage Fictif Clair", "siren": "000000052", "adresse": "5 avenue du Faux, 00000 Mont-Fictif", "forme_juridique": "SASU" }
+    }
+  ]
+}
