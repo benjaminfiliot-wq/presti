@@ -1037,3 +1037,10 @@
 {"id":"026-103","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:35:01Z","duree_s":8,"agent":"claude-code","executant":"codex","lignes":1254,"dossier":"en-cours"}
 {"id":"026-103","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:35:19Z","duree_s":9,"agent":"claude-code","executant":"codex","lignes":1254,"dossier":"fait"}
 {"id":"026-103","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:35:57Z","duree_s":29,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-103","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:38:31Z","duree_s":22,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-159","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-1455 silencieux depuis 135 min","code":null,"date":"2026-10-04T16:38:35Z","duree_s":0,"agent":"usine-codex-1455","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-156","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T16:54:05Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
+{"id":"026-150","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T17:01:10Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
+{"id":"026-226","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T17:01:15Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
+{"id":"026-227","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T17:01:18Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
+{"id":"026-138-juge-pages","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T17:13:01Z","duree_s":68,"agent":"claude-code","executant":"claude-code","lignes":741,"dossier":"fait","machine":"usine"}

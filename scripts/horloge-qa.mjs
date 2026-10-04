@@ -247,8 +247,72 @@ function eprouver(id) {
       if (r.ok) e.push(`sabotage « ${nom} » accepté : la lecture ne sait pas échouer`)
       else pris.push(`« ${nom} » (${court(r.echecs[0], 70)})`)
     }
-    return res(e, `lecture éprouvée : journée conforme verte (${court(vert.resume, 90)}), changement d'heure vert ; ${pris.length} sabotage(s) pris : ${pris.join(' ; ')}`)
+    // la lecture du journal elle-même (pagination), seulement pour E24-2 : celui qui compte les passages de a0 (E24-7 lit le même journal)
+    if (id === 'E24-2') e.push(...await eprouverLectureJournal())
+    return res(e, `lecture éprouvée : journée conforme verte (${court(vert.resume, 90)}), changement d'heure vert ; ${pris.length} sabotage(s) pris : ${pris.join(' ; ')}${id === 'E24-2' ? ' ; journal de 450 événements lu en entier par pages de 200, lecture tronquée / base en erreur / curseur immobile rejetés' : ''}`)
   }
+}
+
+// ── La lecture du journal, par pages (éprouvée en --temoin sur une base plafonnée) ───────────────────────────────────────
+/** Le journal entier, lu par pages d'id croissants. `lirePage(apres, demande)` rend `{ data }` ou `{ error }`.
+ *  La base plafonne chaque page (200 lignes, migration 0097) quelle que soit la taille demandée : on ne s'arrête donc JAMAIS sur une page
+ *  « plus courte que demandé », seulement sur une page vide (le 04/10, cet arrêt-là ne laissait lire que les 200 plus anciens événements :
+ *  0 passage de a0 sur 24 h alors qu'il y en avait 288). Une lecture qui ne finit pas (erreur, curseur immobile, limite de pages atteinte)
+ *  rend un `echec` : un journal tronqué n'est pas un journal complet. */
+export async function lireJournal(lirePage, { demande = 500, pagesMax = 500 } = {}) {
+  const evts = []
+  let apres = 0
+  for (let page = 0; page < pagesMax; page++) {
+    const r = await lirePage(apres, demande)
+    if (r?.error) return { evts, echec: 'ops_evenements_lire' }
+    const l = Array.isArray(r?.data) ? r.data : []
+    if (!l.length) return { evts }
+    const suite = Math.max(...l.map((x) => Number(x.id) || 0))
+    if (!(suite > apres)) return { evts, echec: 'ops_evenements_lire : le curseur n\'avance pas' }
+    evts.push(...l)
+    apres = suite
+  }
+  return { evts, echec: `ops_evenements_lire : ${pagesMax} pages lues sans atteindre la fin du journal` }
+}
+/** Une base qui sert `journal` (id croissants) comme ops_evenements_lire : les événements d'id > apres, 200 lignes au plus par page. */
+const fausseBase = (journal, plafond = 200) => async (apres, demande) => ({ data: journal.filter((x) => x.id > apres).slice(0, Math.max(1, Math.min(demande, plafond))) })
+/** Un journal de 450 événements : de l'ancien bruit (hors fenêtre) puis les passages de a0 de la journée conforme ; la fenêtre n'est donc
+ *  atteinte qu'à la troisième page. */
+function journalSynthetique(m) {
+  const bruit = Math.max(0, 450 - m.passagesA0.length)
+  const vieux = Array.from({ length: bruit }, (_, i) => ({ id: i + 1, agent: 'recenseur', type: 'battement', cree_le: new Date(m.fin - (30 + bruit - i) * HEURE).toISOString() }))
+  const recents = m.passagesA0.map((t, i) => ({ id: bruit + i + 1, agent: 'a0', type: 'passage', cree_le: new Date(t).toISOString() }))
+  return [...vieux, ...recents]
+}
+async function eprouverLectureJournal() {
+  const e = []
+  const m = journeeConforme()
+  const journal = journalSynthetique(m)
+  if (journal.length <= 200) return [`journal synthétique trop court (${journal.length} événements) : il doit dépasser la page de 200`]
+  const j = await lireJournal(fausseBase(journal))
+  if (j.echec || j.evts.length !== journal.length) e.push(`la lecture rend ${j.evts.length} événement(s) sur ${journal.length}${j.echec ? ` (${j.echec})` : ''} : elle doit aller jusqu'au bout d'une base qui plafonne les pages à 200`)
+  else {
+    const dansLaFenetre = (x) => { const t = Date.parse(x.cree_le); return t >= m.fin - m.fenetreH * HEURE && t <= m.fin }
+    const lu = { ...m, passagesA0: j.evts.filter((x) => x.agent === 'a0' && x.type === 'passage' && dansLaFenetre(x)).map((x) => Date.parse(x.cree_le)) }
+    const r = LECTURES['E24-2'](lu)
+    if (!r.ok) e.push(`E24-2 refuse le journal lu en entier : ${r.echecs.join(' ; ')}`)
+  }
+  const sabotages = [
+    ['lecture limitée à une page (pagesMax: 1)', () => lireJournal(fausseBase(journal), { pagesMax: 1 }), /pages lues sans atteindre la fin/],
+    ['base en erreur à la deuxième page', () => { let n = 0; return lireJournal(async (a, d) => (++n > 1 ? { error: { code: 'XX000' } } : fausseBase(journal)(a, d))) }, /^ops_evenements_lire$/],
+    ['curseur qui n\'avance pas', () => lireJournal(async () => ({ data: journal.slice(0, 200) })), /curseur/],
+  ]
+  for (const [nom, f, attendu] of sabotages) {
+    const s = await f()
+    if (!s.echec) e.push(`sabotage « ${nom} » accepté : une lecture tronquée n'est pas rejetée`)
+    else if (!attendu.test(s.echec)) e.push(`sabotage « ${nom} » rejeté pour une autre raison que la sienne : ${court(s.echec, 80)}`)
+  }
+  // `mesurer` (le seul lecteur de la production, que --temoin ne peut pas lancer) doit passer par lireJournal, pas par une boucle à lui
+  const source = fs.readFileSync(FICHIER, 'utf8')
+  const lecteur = source.slice(source.lastIndexOf('async function mesurer'))
+  if (!/await lireJournal\(/.test(lecteur)) e.push('mesurer ne lit pas le journal par lireJournal')
+  if (/p_limite:\s*500|\.length\s*<\s*500/.test(lecteur)) e.push('mesurer garde une lecture du journal qui s\'arrête sur une page courte')
+  return e
 }
 
 // ── --reel : les mesures en production ───────────────────────────────────────────────────────────────────────────────
@@ -278,17 +342,9 @@ async function mesurer(fenetreH) {
     if (a.error) echec('ops_agent_enregistrer')
     else {
       enregistre = true
-      const evts = []
-      let apres = 0
-      for (let page = 0; page < 200; page++) {
-        const r = await sb.rpc('ops_evenements_lire', { p_agent: nom, p_apres: apres, p_limite: 500 })
-        if (r.error) { echec('ops_evenements_lire'); break }
-        const l = Array.isArray(r.data) ? r.data : []
-        if (!l.length) break
-        evts.push(...l)
-        apres = Math.max(...l.map((x) => Number(x.id) || 0))
-        if (l.length < 500) break
-      }
+      const j = await lireJournal((apres, demande) => sb.rpc('ops_evenements_lire', { p_agent: nom, p_apres: apres, p_limite: demande }))
+      if (j.echec) echec(j.echec)
+      const evts = j.evts
       const dans = (x) => { const t = Date.parse(x.cree_le ?? x.le ?? ''); return Number.isFinite(t) && t >= debut && t <= fin }
       m.passagesA0 = evts.filter((x) => x.agent === 'a0' && x.type === 'passage' && dans(x)).map((x) => Date.parse(x.cree_le ?? x.le))
       m.notifications = evts.filter((x) => x.type === 'notification' && dans(x)).map((x) => Date.parse(x.cree_le ?? x.le))
@@ -338,6 +394,6 @@ async function principal() {
   fs.mkdirSync(path.dirname(RELEVE), { recursive: true })
   fs.writeFileSync(RELEVE, `${JSON.stringify({ mesure_le: new Date(x.m.fin).toISOString(), fenetre_heures: o.fenetre, chiffres: releveDe(x.m), lectures_echouees: x.m.lecturesEchouees }, null, 2)}\n`)
   s.note(`relevé : ${C.posix(path.relative(C.R, RELEVE))}`)
-  process.exit(s.fin())
+  process.exitCode = s.fin()
 }
 if (S.estLance(FICHIER)) await principal()
