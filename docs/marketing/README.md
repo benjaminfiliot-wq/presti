@@ -4,8 +4,10 @@ Lue par les agents du contenu (fabrique, Crieur, mesureur, boucle) avant toute i
 
 **Statut : PROPOSÉE, non approuvée.** Benj approuve une fois la voix et les cinq lignes (geste demandé par la source
 `Ecosysteme-Marketing-Reel-2026-09-25.md`, §3.7, ligne C02). Tant qu'il ne l'a pas fait, chaque ligne reste suspendue et rien ne
-part. Cette approbation n'est **pas** une permission de publier : R24 reste ouverte, chaque publication demande l'accord de
-Benj sur sa version exacte (média et texte). Une retouche rend l'accord caduc.
+part. Cette approbation n'est **pas** une permission de publier : depuis la décision du 30/09 (confirmée par Benj le 04/10),
+il n'y a plus d'accord individuel par publication ; chaque publication passe les contrôles automatiques de sa ligne sur son média
+et son texte exacts (juges, pause générale, plafonds, doublons, chiffres vérifiés, coût nul). Une retouche du texte refait
+ces contrôles. Seul le chemin TikTok (clic dans un Chrome visible) exige encore l'accord de Benj sur la version exacte.
 
 ## Les huit dossiers
 
@@ -28,8 +30,10 @@ Benj sur sa version exacte (média et texte). Une retouche rend l'accord caduc.
 2. **Aucune donnée personnelle** : ni nom, ni e-mail, ni téléphone, ni visage, ni image de prospect ou d'artisan. Les essais
    emploient des personnes fictives et, pour un e-mail, `@presti-test.invalid`.
 3. **Chaîne** : idée, matière autorisée, script et média, contrôle du texte visible (sous-titres incrustés, légende, miniature,
-   description), accord individuel de Benj, publication, preuve publique, mesures H+1, H+24, J+7, recommandation. Sans preuve
-   ou sans accord, le post reste en attente.
+   description), contrôles automatiques de la ligne (juges, pause générale, plafonds, doublons, score de vérité, coût nul : ils
+   remplacent l'accord individuel depuis la décision du 30/09, confirmée le 04/10 ; seul le chemin TikTok exige encore une décision
+   tant que `scripts/contenu/publier-tiktok.mjs` n'est pas aligné), publication, preuve publique, mesures H+1, H+24, J+7,
+   recommandation. Sans preuve ou si un contrôle refuse, le post reste en attente.
 4. **Outils gratuits seulement** : Publora Starter, TikTok, Instagram, Facebook sans publicité payante. Aucun achat Windsor.
 5. **Laya/Jev est local.** `jev noul --provider laya` reçoit l'affirmation littérale et sa référence de preuve ; une probabilité
    inférieure à 0,5, une preuve absente ou une panne bloquent la publication et renvoient le cas à Benj. `jev score` classe,

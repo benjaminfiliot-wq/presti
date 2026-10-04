@@ -1,6 +1,6 @@
 # Le geste d'accord de Benj sur chaque publication (C14)
 
-*Fiche 026-217. Code : `lib/contenu/accord.ts`. Règle R24 : aussi longtemps qu'elle reste ouverte, chaque vidéo et chaque publication demande l'accord explicite de Benj sur sa version exacte.*
+*Fiche 026-217. Code : `lib/contenu/accord.ts`. Règle R24 (accord explicite de Benj sur la version exacte de chaque publication) : **n'exige plus cet accord pour Instagram et Facebook** depuis la décision du 30/09, confirmée par Benj le 04/10 ; les contrôles automatiques de la ligne (`lib/contenu/lignes.ts`) le remplacent. Ce geste reste en vigueur pour le chemin TikTok (`scripts/contenu/publier-tiktok.mjs`) et pour la lecture des anciennes cartes.*
 
 ## Ce que Benj voit
 

@@ -99,7 +99,7 @@ export async function controlerAvantPublication(variante: Variante, ctx: Context
   const visibles = textesVisibles(variante)
   const version = versionTexte(variante)
 
-  // Contrôle complet quand le post et sa ligne sont fournis : drapeaux, plafonds, doublons, chiffres, accord.
+  // Contrôle complet quand le post et sa ligne sont fournis : drapeaux, plafonds, doublons, chiffres (aucun accord individuel : les contrôles automatiques le remplacent).
   if (ctx.post) {
     if (ctx.post.id !== variante.id) return refus(`le post fourni (« ${ctx.post.id} ») n'est pas la variante « ${variante.id} »`)
     const verdict = await verdictPublication({ ...ctx.post, contexte: ctx.contexteLignes ?? ctx.post.contexte, decision: ctx.decision ?? ctx.post.decision }, ctx.ligne ?? null, deps)

@@ -135,9 +135,11 @@ function cibleVise(cible: unknown, postId: string): boolean {
   return cible.startsWith(prefixe) && /^[0-9a-f]{8,64}$/.test(cible.slice(prefixe.length))
 }
 
-/** Le SEUL chemin d'autorisation : décision tranchée, choix `accorder`, cible exacte, même version du texte, portée
- *  sécurité si elle est renseignée, ni expirée ni vieille de plus de 7 jours. */
-/** @deprecated Lecture des anciennes cartes uniquement ; la voie automatique ne l'appelle plus. */
+/** Lecture d'une ancienne carte d'accord : décision tranchée, choix `accorder`, cible exacte, même version du texte, portée
+ *  sécurité si elle est renseignée, ni expirée ni vieille de plus de 7 jours. Depuis la décision du 30/09 (confirmée le 04/10),
+ *  ce n'est plus le chemin d'autorisation des publications Instagram/Facebook : `verdictPublication` les ouvre par les contrôles
+ *  automatiques. Seul le chemin TikTok (scripts/contenu/publier-tiktok.mjs) l'exige encore.
+ *  @deprecated la voie automatique ne l'appelle plus. */
 export function accordValide(decision: DecisionAccord, postId: string, version: string, maintenantMs: number): { ok: true } | { ok: false; motif: string } {
   if (!decision || typeof decision !== 'object') return { ok: false, motif: 'accord individuel de Benj absent : aucune publication sans lui' }
   if (decision.statut !== 'tranchee') return { ok: false, motif: `décision « ${decision.statut} » (attendu tranchee ; une échéance passée applique le défaut « refuser »)` }

@@ -27,7 +27,7 @@ Seul Benj décide de la pause. Elle se commande de quatre façons, de la plus s�
 - le **porteur du formulaire** sur l'usine : sa route `travail` rend `[]`, et il relit la pause avant chaque soumission ; aucun formulaire n'est soumis ;
 - le **Répondeur** : aucune réponse ne part, sur aucun canal ;
 - les **réponses privées** à un commentaire et la **messagerie** Instagram et Facebook ;
-- le **Crieur** : aucun nouveau brouillon ni demande d'accord (il rend `{ pause: true }`) ; les publications déjà programmées dans Publora (par Benj, R24) partent quand même, et se retirent dans Publora si besoin de les arrêter.
+- le **Crieur** : aucun nouveau brouillon ni aucune programmation (il rend `{ pause: true }`) ; depuis la décision « tout est automatique » (30/09, confirmée par Benj le 04/10), c'est lui qui programme ses publications dans Publora (plus d'accord individuel), donc la pause les **suspend** : la route remet chaque publication programmée en brouillon chez Publora (`lib/crieur/pauseProgrammees.ts`) et le dit dans le registre ; une suspension qui n'est pas confirmée rend 503 et prévient le fondateur. Les publications programmées à la main par un fondateur dans Publora, hors du registre du Crieur, ne sont pas vues : elles se retirent dans Publora.
 
 ## Ce que la pause laisse passer
 

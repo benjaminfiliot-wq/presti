@@ -270,6 +270,10 @@ export async function recettesTuile(periode: string, deps: Deps = {}) {
 const CONSIGNE = 'Écris, en français et en une phrase courte, le libellé de cet événement comptable. Réponds par un JSON {"libelle":"…"}.'
 
 async function moteurParDefaut(evenement: unknown): Promise<string> {
+  // La pause générale se lit AVANT tout appel au modèle (garde-pause-qa GP-2) : sous pause ou dans le doute, `libelle` retombe sur
+  // le libellé fixe, sans aucun appel. Chargée à l'appel comme le reste : aucun effet de bord à l'import.
+  const { sortiePermise } = await import('@/lib/agents/sortie')
+  if (!(await sortiePermise()).permise) throw new ErreurComptable('moteur', 'Pause générale : aucun appel au modèle.')
   const { creerLecteur } = await import('@/lib/agents/llm')
   const lecteur = creerLecteur('comptable')
   if (!lecteur) throw new ErreurComptable('moteur', 'Aucun moteur autorisé pour le Comptable.')
