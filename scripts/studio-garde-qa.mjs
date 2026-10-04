@@ -190,7 +190,13 @@ async function principal() {
     // « les juges du Studio pubs », a537149a), un seul scénario cohérent de bout en bout ; leur usage — et la preuve
     // d'étalonnage de pub-qa qui le documente — ne sont pas une fuite des jeux d'essai de CE juge. Sans ces exclusions,
     // SG-5 échouait sur son propre dépôt (défaut trouvé en jugeant réellement le patch de 026-155).
-    const exclure = [prefixeFixtures, 'scripts/pub-qa.mjs', 'scripts/studio-offre-qa.mjs', '.orchestre/preuves/026-128/']
+    // 04/10 : gitGrepFichiers écarte d'office les COPIES de documents (docs/contexte-cloud/ : 2 729 fichiers de contexte pour Claude
+    // cloud, reprise-cloud/, .orchestre/preuves/ : commun.mjs, COPIES_DE_DOCUMENTATION) ; SG-5 voyait la marque dans ces copies et
+    // échouait sans qu'un fichier de lib/, app/, components/ ou scripts/ la porte. Le balayage garde tout le reste (sabotage : une
+    // ligne qui nomme la marque dans lib/ rend SG-5 rouge, .orchestre/preuves/reglages-0410/juges-balayage.md).
+    // .orchestre/ entier (fiches, décisions, journal verdicts.jsonl qui cite la marque d'un verdict) : le même écart que SO-1 et MQ-9,
+    // jamais déployé ni du code ; il remplace '.orchestre/preuves/026-128/' (04/10 : le journal des verdicts nommait la marque).
+    const exclure = [prefixeFixtures, 'scripts/pub-qa.mjs', 'scripts/studio-offre-qa.mjs', '.orchestre/']
     let fuites = []
     try {
       const parNom = gitGrepFichiers(R, St.MARQUE_NOM, { exclure })
@@ -199,7 +205,7 @@ async function principal() {
     } catch (e) { s.echoue('SG-5', `git grep : ${court(e.message, 160)}`) }
     if (!s.enEchec('SG-5')) {
       if (fuites.length) s.echoue('SG-5', `« ${St.MARQUE_NOM} » ou « ${St.MARQUE_CLE} » dans un fichier suivi hors des jeux d'essai : ${fuites.slice(0, 5).join(', ')}`)
-      else s.passe('SG-5', `« ${St.MARQUE_NOM} » et « ${St.MARQUE_CLE} » n'apparaissent que sous ${prefixeFixtures} (et les autres juges du Studio, 026-128)`)
+      else s.passe('SG-5', `« ${St.MARQUE_NOM} » et « ${St.MARQUE_CLE} » n'apparaissent que sous ${prefixeFixtures} (et les autres juges du Studio, 026-128), hors copies de documentation (docs/contexte-cloud/, docs/relais-fiches-claude/, reprise-cloud/) et .orchestre/`)
     }
   }
 

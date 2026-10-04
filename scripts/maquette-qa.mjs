@@ -29,7 +29,8 @@
 //   MQ-3 chaque page .html de la sortie : au moins une <meta name="robots"> DANS L'EN-TÊTE INTERPRÉTÉ (avant <body>, hors
 //        commentaires, script, style, template, noscript : une meta en commentaire n'est lue par aucun moteur), et chaque meta robots
 //        ou googlebot porte noindex et nofollow, sans index, follow ni all ; son dernier <footer> (hors commentaires et scripts) dit
-//        « Maquette privée préparée par Presti pour <entreprise>. » et « Rien n’est publié » ; une page qui a un <form> dit « Maquette :
+//        « Maquette privée préparée pour <entreprise>. » et « Rien n’est publié » (depuis le 04/10 sans « par Presti » : marque
+//        blanche, 30/09, les sites démo ne nomment plus Presti — GB-1, scripts/fixtures/026-garde/blanc) ; une page qui a un <form> dit « Maquette :
 //        rien n’est envoyé » (025-02 §6). Au rendu de l'accueil au bureau : les deux phrases du pied sont dans le texte visible
 //        (innerText, casse ignorée), et document.head porte une meta robots, chacune en noindex, nofollow.
 //   MQ-4 texte examiné : le texte de chaque page (corps entier, y compris ce qui est caché : <details> fermés, menus, texte pour
@@ -133,7 +134,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {
-  R, FIXTURES, TRAVAIL, MAQUETTE_EXEMPLE,
+  R, FIXTURES, TRAVAIL, MAQUETTE_EXEMPLE, COPIES_DE_DOCUMENTATION,
   lireOptionsOuQuitter, creerSortie, t1, t2, servir, lancerNavigateur, BUREAU, TELEPHONE, capturer, verifierImage,
   defilementHorizontal, exigerSousTravail, dossierTravail, lancer, taille, fichierNonVide, lireJson, sha256, listerFichiers,
   instantaneDossier, comparerInstantanes, preparerTemoin, estRacineGit, git, lireMaquetteExemple, replier, motsDesMetiers, motsEtrangers,
@@ -147,7 +148,11 @@ const MAX_CAPTURE = 1 * MO
 const MAX_DOSSIER = 3 * MO
 const ZONES_MIN = 5
 const RESERVES = new Set(['lestraque', 'temoin', 'jeux', 'captures', 'capturer-vide', 'mq10', 'mq12'])
-const EXCLUS_MQ9 = ['scripts/fixtures/025', '.orchestre']
+// 04/10 : en plus du jeu d'essai et de l'orchestre, les COPIES de documents (docs/contexte-cloud/ : 2 729 fichiers de contexte pour
+// Claude cloud qui citent le nom fictif ; reprise-cloud/ ; .orchestre/preuves/, déjà sous .orchestre) : commun.mjs,
+// COPIES_DE_DOCUMENTATION. Le balayage voit toujours lib/, app/, components/, maquettes/, public/, scripts/ (sabotage : le nom fictif
+// dans lib/ rend MQ-9 rouge, .orchestre/preuves/reglages-0410/juges-balayage.md).
+const EXCLUS_MQ9 = ['scripts/fixtures/025', '.orchestre', ...COPIES_DE_DOCUMENTATION.map((p) => p.replace(/\/$/, ''))]
 const IMAGE = /\.(?:avif|webp|jpe?g|png|gif)$/i
 const CAPTURES_MQ8 = ['capture-bureau.jpg', 'capture-telephone.jpg']
 const MARQUE = /[àÀaA]\s+compl[éÉeE]ter\s+avec\s+vous/iu
@@ -605,7 +610,7 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
 
   // MQ-3 (statique)
   const d3 = []
-  const phrase = norm(`Maquette privée préparée par Presti pour ${ex.entreprise}.`)
+  const phrase = norm(`Maquette privée préparée pour ${ex.entreprise}.`)
   for (const p of pages) {
     const robots = p.metas.filter((a) => /^(?:robots|googlebot)$/i.test(a.name || ''))
     if (!robots.some((a) => a.name.toLowerCase() === 'robots')) d3.push(`${p.rel} : aucune <meta name="robots"> dans l’en-tête interprété${p.metasHorsTete ? ` (${p.metasHorsTete} <meta> en commentaire, en script ou hors de <head>, que les moteurs ne lisent pas)` : ''}`)
@@ -616,7 +621,8 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
     if (p.pied === null) d3.push(`${p.rel} : aucun <footer>`)
     else {
       const pied = norm(p.pied).replace(/\n/g, ' ')
-      if (!pied.includes(phrase)) d3.push(`${p.rel} : le pied ne dit pas « Maquette privée préparée par Presti pour ‹entreprise›. » (lu : « ${court(pied, 90)} »)`)
+      if (!pied.includes(phrase)) d3.push(`${p.rel} : le pied ne dit pas « Maquette privée préparée pour ‹entreprise›. » (lu : « ${court(pied, 90)} »)`)
+      if (/\bpar\s+Presti\b/i.test(pied)) d3.push(`${p.rel} : le pied nomme Presti (« préparée par Presti ») : marque blanche, les sites démo ne le font plus (30/09, GB-1)`)
       if (!/Rien n'est publié/.test(pied)) d3.push(`${p.rel} : le pied ne dit pas « Rien n’est publié »`)
     }
     if (/<form\b/i.test(p.corpsPropre) && !/Maquette ?: ?rien n'est envoyé/i.test(norm(p.texte).replace(/\n/g, ' '))) d3.push(`${p.rel} : un formulaire sans « Maquette : rien n’est envoyé »`)
@@ -751,7 +757,7 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
   const vb = rendu.vues.find((v) => v.nom === 'bureau')
   // casse ignorée : innerText applique text-transform
   const texteVu = norm(vb.texte).replace(/\n/g, ' ').toLowerCase()
-  if (!texteVu.includes(norm(`Maquette privée préparée par Presti pour ${ex.entreprise}`).toLowerCase())) d3.push('index.html : la phrase du pied n’est pas dans le texte rendu au bureau (cachée ?)')
+  if (!texteVu.includes(norm(`Maquette privée préparée pour ${ex.entreprise}`).toLowerCase())) d3.push('index.html : la phrase du pied n’est pas dans le texte rendu au bureau (cachée ?)')
   if (!/rien n'est publié/.test(texteVu)) d3.push('index.html : « Rien n’est publié » n’est pas dans le texte rendu au bureau (caché ?)')
   // ce que lit un moteur : les <meta> de document.head après interprétation (une meta en commentaire, en script ou dans le corps n'y est pas)
   if (!(vb.robots || []).some((a) => /^robots$/i.test(a.name))) d3.push('index.html rendu : aucune <meta name="robots"> dans document.head (ce que lisent les moteurs)')
@@ -825,7 +831,7 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
 
   // verdicts du métier
   const rendre = (id, defauts, resume) => { if (defauts.length) for (const d of defauts) echoue(id, pre + d); else passe(id, pre + resume) }
-  rendre('MQ-3', d3, `${pages.length} page(s) en noindex, nofollow ; pied « Maquette privée préparée par Presti pour ‹entreprise›. Rien n’est publié. » présent et rendu${pages.some((p) => /<form\b/i.test(p.corpsPropre)) ? ' ; formulaire « Maquette : rien n’est envoyé »' : ''} ; au rendu, <meta robots> noindex, nofollow dans document.head et pied lu dans innerText`)
+  rendre('MQ-3', d3, `${pages.length} page(s) en noindex, nofollow ; pied « Maquette privée préparée pour ‹entreprise›. Rien n’est publié. » (sans « par Presti ») présent et rendu${pages.some((p) => /<form\b/i.test(p.corpsPropre)) ? ' ; formulaire « Maquette : rien n’est envoyé »' : ''} ; au rendu, <meta robots> noindex, nofollow dans document.head et pied lu dans innerText`)
   rendre('MQ-4', d4, `aucun motif (${MOTIFS_JUGE.length} du juge, findFabrications ${fab.origine}, CLICHES ${cliches.origine}), rien de repris de ${fuites.demos} démo(s), aucun lien tel:, fait sourcé absent, aucun blockquote rempli ; autres graphies repliées (invisibles, NFKC, cyrillique et grec), texte des feuilles de styles (${textesCss} content:) et des ::before / ::after rendus examinés ; zones visibles ${rendu.vues.map((v) => `${v.nom} ${v.zones.filter((z) => z.visible).length}`).join(', ')}, sans chiffre autour`)
   rendre('MQ-5', d5, `${images.length} image(s), chacune attribuée et identique à une photo de ${[...new Set([...provenances.values()].map((x) => x.demo))].join(', ')} (métier ${m}) avec le même auteur et la même licence ; ${faits5.join(' ; ')}`)
   rendre('MQ-6', d6, `${p6} octets (${mo(p6)}) avec les captures de MQ-8, 3 Mo au plus`)

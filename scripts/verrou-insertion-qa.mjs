@@ -65,6 +65,11 @@
 //         committe jamais), et un fichier que git status montrait déjà à la prise de 025-12 (.orchestre/preuves/025-12/avant.txt,
 //         écrit par l'orchestre) — sous app/ et lib/ toujours, sous supabase/ seulement s'il est NOUVEAU : une migration
 //         existante (0093 comprise) ne se touche jamais. Un vérificateur ne reproche que ce qui a changé DEPUIS.
+//         Depuis le 04/10 : VI-5 ne regarde plus que son vrai périmètre — supabase/migrations/, supabase/controles/ et le seul
+//         chemin d'inscription (app/onboarding/page.tsx, que VI-3 juge sur le fond) ; le reste de app/ et lib/, que les fiches
+//         suivantes modifient légitimement (rouge le 04/10 pour 29 fichiers de app/controle/station/ non encore committés), n'est
+//         plus de son ressort. Sabotages gardés (--mutations) : une migration existante retouchée, le chemin d'inscription retouché
+//         → rouges en VI-5 ; un autre fichier de app/ et de lib/ ajouté ou retouché → VI-5 vert.
 //         Depuis le 24/09 (fiche 025-13, qui relance ce juge) : --prise=<id> lit l'avant.txt de CETTE prise ; tolérés et notés,
 //         les fichiers de supabase/ d'un numéro supérieur à 0094 (fiches postérieures) ; acceptés s'ils gardent ce qui compte ici,
 //         le contrôle de 0093 (en lecture seule) et le jumeau nu de 0093 (SQL de 0093 intact, ce contrôle en pied), que 025-13
@@ -83,7 +88,9 @@
 //                       le juge sur chacune : MUT-T le témoin est vert ; MUT-OUBLI (new.role_interne retirée) rouge en VI-2 ;
 //                       MUT-SLUG (new.slug := null ajoutée) rouge en VI-3 ; MUT-SERVICE (les 17 lignes après le end if :
 //                       service_role bloqué) rouge en VI-1 ; depuis le 24/09, MUT-AVEUGLE (le contrôle revenu à
-//                       « (^|\n)\s*new… ») et MUT-DECLENCHEUR (« tgenabled <> 'D' ») rouges en VI-4.
+//                       « (^|\n)\s*new… ») et MUT-DECLENCHEUR (« tgenabled <> 'D' ») rouges en VI-4. Depuis le 04/10 : MUT-ANCIENNE
+//                       (une migration existante retouchée) et MUT-INSCRIPTION (app/onboarding/page.tsx retouché) rouges en VI-5
+//                       seul ; MUT-AUTRE-FICHE (un fichier de app/ ajouté, un de app/ et un de lib/ retouchés) : le juge reste vert.
 //   --prise=<id>        l'avant.txt de la prise qui excuse app/ et lib/ en VI-5 (défaut 025-12 ; 025-13 relance le juge avec
 //                       --prise=025-13).
 //   --reel est refusé : la preuve sur la vraie base est l'essai à sec de la fiche (DO … raise exception) puis le contrôle.
@@ -118,6 +125,16 @@ const DECLENCHEUR = { nom: 'trg_lock_artisan_ins', fichier: '0005_secure_privile
 const ONBOARDING = 'app/onboarding/page.tsx'
 const ETAT = path.join(FIXTURES, 'etat-verrou-insertion.json')
 const PREFIXES = ['app/', 'lib/', 'supabase/migrations/', 'supabase/controles/']
+// 04/10 : le VRAI périmètre de VI-5. Le critère « rien d'autre n'a bougé sous app/ et lib/ » était la barrière de la fiche 025-12
+// (interdit : app/**, lib/**) : tout fichier de app/ ou lib/ qu'un chantier suivant change sans l'avoir encore commité (le travail
+// d'une autre fiche, dans le même arbre) le rougissait — 29 fichiers de app/controle/station/ le 04/10 —, sans rapport avec la
+// fonction d'insertion. Ce que 0094 protège, et que seul un changement peut casser : l'historique des migrations et des contrôles
+// (une migration existante ne se touche jamais), et le seul chemin par lequel un navigateur insère une ligne artisans, que VI-3
+// juge sur le fond (app/onboarding/page.tsx : colonnes inscription/libres seulement). VI-5 garde ces deux-là, à l'identique
+// d'avant ; le reste de app/ et lib/ n'est plus de son ressort. PREFIXES reste la liste de l'état de référence (relevé du 24/09).
+const PERIMETRE_CODE = [ONBOARDING]
+const PERIMETRE_VI5 = ['supabase/migrations/', 'supabase/controles/', ...PERIMETRE_CODE]
+const dansPerimetre = (f) => PERIMETRE_VI5.some((p) => f === p || (p.endsWith('/') && f.startsWith(p)))
 // La prise dont le git status excuse app/ et lib/ (VI-5) : 025-12 par défaut ; --prise=<id> quand une fiche postérieure relance ce
 // juge (025-13 : node scripts/verrou-insertion-qa.mjs --prise=025-13).
 let PRISE = FICHE
@@ -1062,17 +1079,17 @@ function vi5(racine) {
   const etat = lireEtat()
   const { ref, commit } = etatReference(etat)
   const depot = estRacineGit(racine)
-  const candidats = new Set(Object.keys(etat.differents))
+  const candidats = new Set(Object.keys(etat.differents).filter(dansPerimetre))
   if (depot) {
-    const d = git(['diff', '--no-renames', '--name-status', '-z', etat.commit, '--', ...PREFIXES], { cwd: racine })
+    const d = git(['diff', '--no-renames', '--name-status', '-z', etat.commit, '--', ...PERIMETRE_VI5], { cwd: racine })
     if (d.code !== 0) { echecs.push(`git diff ${etat.commit.slice(0, 7)} en erreur : ${court(d.stderr || d.erreur)}`); return fin('') }
     const champs = d.stdout.split('\0').filter(Boolean)
     for (let k = 0; k + 1 < champs.length; k += 2) candidats.add(champs[k + 1])
-    const o = git(['ls-files', '--others', '--exclude-standard', '-z', '--', ...PREFIXES], { cwd: racine })
+    const o = git(['ls-files', '--others', '--exclude-standard', '-z', '--', ...PERIMETRE_VI5], { cwd: racine })
     for (const f of o.stdout.split('\0').filter(Boolean)) candidats.add(f)
   } else {
-    for (const f of ref.keys()) candidats.add(f)
-    for (const p of PREFIXES) for (const f of listerFichiers(path.join(racine, p))) candidats.add(p + f)
+    for (const f of ref.keys()) if (dansPerimetre(f)) candidats.add(f)
+    for (const p of PREFIXES) for (const f of listerFichiers(path.join(racine, p))) if (dansPerimetre(p + f)) candidats.add(p + f)
   }
   // Ce que d'autres chantiers ont committé depuis le relevé (025-05 touche app/profil, par exemple) n'est pas du fait de la tâche :
   // un fichier identique à son blob de HEAD est accepté et noté. L'exécutant ne committe jamais (règle de l'orchestre).
@@ -1101,14 +1118,14 @@ function vi5(racine) {
   }
   const mig = ecarts.filter((x) => x.startsWith('supabase/')), app = ecarts.filter((x) => !x.startsWith('supabase/'))
   if (mig.length) echecs.push(`${mig.length} fichier(s) de supabase/migrations ou supabase/controles changé(s) hors des quatre de 0094 : ${mig.slice(0, 5).join(', ')}${mig.length > 5 ? '…' : ''}`)
-  if (app.length) echecs.push(`${app.length} fichier(s) de app/ ou lib/ changé(s) (interdits à ${PRISE}) : ${app.slice(0, 5).join(', ')}${app.length > 5 ? '…' : ''} — si ce n'est pas vous, écrire .orchestre/en-cours/${PRISE}.question.md, ne rien toucher`)
+  if (app.length) echecs.push(`${app.length} fichier(s) du chemin d'inscription changé(s) sans avoir été committé(s) (${PERIMETRE_CODE.join(', ')}, que VI-3 juge sur le fond) : ${app.slice(0, 5).join(', ')}${app.length > 5 ? '…' : ''} — si ce n'est pas vous, écrire .orchestre/en-cours/${PRISE}.question.md, ne rien toucher`)
   if (exemptes.length) faits.push(`déjà dans git status à la prise de ${PRISE} (avant.txt), non reproché(s) : ${exemptes.join(', ')}`)
   if (parCommit.length) faits.push(`committé(s) depuis le relevé (identique(s) à HEAD), non reproché(s) : ${parCommit.join(', ')}`)
   if (posterieurs.length) faits.push(`ajouts de fiches postérieures (numéro > 0094), tolérés : ${posterieurs.join(', ')}`)
   if (repris.length) faits.push(`repris par 025-13 et conformes (lecture seule ; SQL de 0093 intact, contrôle en pied) : ${repris.join(', ')}`)
   if (reprisApp.length) faits.push(`repris par la suite de 025-13 (25/09, préfixe « supprime- » de la purge), tolérés, jugés par verrou-maj-qa VM-7 : ${reprisApp.join(', ')}`)
   faits.push(`état de référence : ${etat.commit.slice(0, 7)} + ${Object.keys(etat.differents).length} fichier(s) relevé(s) le ${String(etat.releve_le).slice(0, 10)} ; ${depot ? 'git diff + fichiers non suivis' : 'fichier par fichier'} ; ${controles} chemin(s) examiné(s)${avant ? '' : ' ; avant.txt de la prise absent (juge lancé hors orchestre)'}`)
-  return fin(`${ref.size} fichiers de référence sous ${PREFIXES.join(', ')} présents et identiques (${depot ? 'dépôt' : 'arbre'}) ; ajout(s) : ${ajouts.length ? ajouts.join(', ') : 'aucun'} (seuls permis : les quatre de 0094)`)
+  return fin(`${controles} chemin(s) de ${PERIMETRE_VI5.join(', ')} examiné(s) contre l'état de référence (${depot ? 'dépôt' : 'arbre'}), identiques ou committés depuis ; ajout(s) : ${ajouts.length ? ajouts.join(', ') : 'aucun'} (seuls permis : les quatre de 0094) ; le reste de app/ et lib/ n'est plus de son ressort (04/10)`)
 }
 
 // ── Témoin et mutations ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1212,7 +1229,46 @@ async function mutationsSur(s, dest, arbres) {
       `${m.quoi} → code ${r.code}, verdict ${a.verdict ?? '?'}, rouges ${a.rouges.join(', ') || 'aucun'} (${m.attendu} rouge attendu${casse ? ', et pas interrompu' : ''})`)
     } catch (e) { s.echoue(m.id, `interrompu : ${premiere(e)}`) }
   }
+  // 04/10 : le périmètre de VI-5 (voir PERIMETRE_VI5). Deux sabotages restent rouges en VI-5 et en VI-5 seul ; le travail d'une
+  // autre fiche (un fichier de app/ ajouté, un de app/ et un de lib/ retouchés, hors du chemin d'inscription) ne le rougit plus.
+  for (const m of MUTATIONS_VI5) {
+    try {
+      const dossier = dossierTravail(JUGE, 'mutations', m.id.toLowerCase())
+      arbres.push(dossier)
+      fs.cpSync(dest, dossier, { recursive: true })
+      m.poser(dossier)
+      const r = lancerJuge(dossier)
+      const a = analyserSortie(r.sortie)
+      const detail = a.lignes.find((l) => l.id === 'VI-5')?.detail || ''
+      const casse = /^(?:interrompu|non évalué)/.test(detail)
+      const ok = m.vert
+        ? r.code === 0 && a.verdict === 'PASS' && a.lignes.length === 5 && a.lignes.every((l) => l.verdict === 'PASS')
+        : r.code === 1 && a.verdict === 'FAIL' && a.rouges.length === 1 && a.rouges[0] === 'VI-5' && !casse
+      s.verdict(m.id, ok,
+        `${m.quoi} → ${m.vert ? 'VI-5 vert, cinq critères PASS' : `VI-5 seul rouge : ${court(detail, 170)}`}`,
+        `${m.quoi} → code ${r.code}, verdict ${a.verdict ?? '?'}, rouges ${a.rouges.join(', ') || 'aucun'} (${m.vert ? 'vert attendu' : 'VI-5 seul rouge attendu'}) — ${court(detail, 200)}`)
+    } catch (e) { s.echoue(m.id, `interrompu : ${premiere(e)}`) }
+  }
 }
+/** Ajoute des lignes à un fichier du témoin ; refuse (mutation sans prise) un fichier absent de la copie. */
+function ajouterEn(dossier, rel, texte) {
+  const f = path.join(dossier, ...rel.split('/'))
+  if (!fs.existsSync(f)) throw new Error(`mutation sans prise : ${rel} absent du témoin`)
+  fs.appendFileSync(f, texte, 'utf8')
+}
+const MUTATIONS_VI5 = [
+  { id: 'MUT-ANCIENNE', quoi: 'une migration existante retouchée (0008_secure_rpc.sql, une ligne de commentaire en pied)',
+    poser: (d) => ajouterEn(d, 'supabase/migrations/0008_secure_rpc.sql', '\n-- retouche de sabotage\n') },
+  { id: 'MUT-INSCRIPTION', quoi: `le chemin d'inscription retouché (${ONBOARDING}, une ligne de commentaire en pied)`,
+    poser: (d) => ajouterEn(d, ONBOARDING, '\n// retouche de sabotage\n') },
+  { id: 'MUT-AUTRE-FICHE', vert: true, quoi: "le travail d'une autre fiche (app/zz-autre-fiche/page.tsx ajouté, app/api/stripe/webhook/route.ts et lib/stripeAiguillage.ts retouchés)",
+    poser: (d) => {
+      ajouterEn(d, 'app/api/stripe/webhook/route.ts', '\n// travail d\'une autre fiche\n')
+      ajouterEn(d, 'lib/stripeAiguillage.ts', '\n// travail d\'une autre fiche\n')
+      fs.mkdirSync(path.join(d, 'app', 'zz-autre-fiche'), { recursive: true })
+      fs.writeFileSync(path.join(d, 'app', 'zz-autre-fiche', 'page.tsx'), 'export default function Page() { return null }\n', 'utf8')
+    } },
+]
 
 // ── Le juge ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function evaluer(s, id, f) {
@@ -1239,7 +1295,7 @@ if (o.positionnels.length) { console.error(`✗ argument(s) inattendu(s) : ${o.p
 
 let racine = o.racine, erreurTemoin = null, absents = []
 if (o.temoin) { try { const t = preparerTemoinInsertion(o.racine); racine = t.dest; absents = t.absents } catch (e) { erreurTemoin = e } }
-const ids = avecMutations ? ['MUT-T', ...MUTATIONS.map((m) => m.id)] : ['VI-1', 'VI-2', 'VI-3', 'VI-4', 'VI-5']
+const ids = avecMutations ? ['MUT-T', ...MUTATIONS.map((m) => m.id), ...MUTATIONS_VI5.map((m) => m.id)] :['VI-1', 'VI-2', 'VI-3', 'VI-4', 'VI-5']
 const s = creerSortie(JUGE, ids, { racine, temoin: o.temoin })
 await s.executer(async (s) => {
   if (avecMutations) { await mutations(s); return }
