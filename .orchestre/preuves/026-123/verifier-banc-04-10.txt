@@ -1,0 +1,19 @@
+﻿$ node scripts/pilotage-ecran-qa.mjs --partie=fil --racine=<copie de la racine hors du depot> --graine=35434315
+# 2026-10-04 · juge au BANC (sans .env.local, sans compte, sans reseau) sur une copie de app/ lib/ proxy.ts next.config.mjs a jour des 3 fichiers du Journal (Journal.tsx sha256 4c610e1c1a805c7a45a819190f970631c4005a252cc74d968933b4ba9a547c05) · code 0 · 28s
+
+pilotage-ecran-qa --partie=fil — racine C:\Users\benja\AppData\Local\Temp\claude\C--Users-benja-Documents-ofm\fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d\scratchpad\racine-banc — banc (racine lue au drapeau levé, servie sur 127.0.0.1) — base e8bfd02 — graine 35434315 — 4 scénario(s) à la fois
+✅ FL-1 app/controle/station/Journal.tsx, app/controle/station/journal/Transmettre.tsx et app/controle/station/journal/journal.css présents ; Journal.tsx n'est plus le cadre d'attente ; une seule lecture (vue=fil&agent=) et une seule écriture (/api/controle/pilotage/consignes), par apiDirection( ; ni fetch(, ni supabase, ni dangerouslySetInnerHTML
+✅ FL-2 11 bulles servies, dans l'ordre, chacune avec sa pastille, son heure de Paris et son texte exact ; la réunion et ses 5 lignes dans l'ordre ; les consignes « BENJ » ; fil vide → la phrase exacte
+✅ FL-3 bulle servie au temps t visible en 4.7 s ; servie 3 fois, rendue une fois
+✅ FL-4 filtre facteur : ses 2 bulles (dont l'historique remonté), une seule requête vue=fil&agent=facteur ; « Tous » : les 11 bulles, sans nouvelle requête
+✅ FL-5 invite exacte ; 2 signes, espaces seuls → bouton inactif ; 205 signes tapés → 200 gardés ; « Soigner les maquettes de peintres (92) » → un POST {texte} rogné, sans reconfirmation ; 200 → champ vidé, « Consigne transmise à l'équipage. », aucune bulle ajoutée à la main pendant 6 s ; la bulle BENJ quand le fil la sert
+✅ FL-6 429, 400 et 403 : le message servi affiché, le texte tapé gardé dans le champ
+✅ FL-7 rôle lecture : pas de [data-transmettre], « lecture seule », le fil visible
+✅ FL-8 onglet Journal à 390×844 : le champ visible au-dessus des onglets (elementFromPoint), police 16 px ; rien hors de 0..390, rien de rogné par un cadre « overflow: hidden », aucun défilement horizontal (la page ou un conteneur) ; boutons ≥ 44 px
+✅ FL-9 remonté : la bulle nouvelle ne fait pas redescendre, « 1 nouvelle ↓ » ; en bas : le fil suit
+✅ FL-10 « Maquette : <img src=x onerror=alert(1)> » affiché tel quel, aucune image ni boîte ; aucun champ _piege affiché ; aucune requête du navigateur hors de la page servie sur les 12 pages ouvertes
+✅ FL-11 bureau.jpg 1440×900, 165 Ko, écart type 29.7 ; telephone.jpg 390×844, 49 Ko, écart type 31.7 — prises par le juge, différentes entre elles et des autres parties ; bureau : le journal avec la réunion et les bulles BENJ ; téléphone : l'onglet Journal
+✅ FL-13 consigne adressée « BENJ ▸ FACTEUR : … » ; [data-en-ligne] « AGENTS 20/6 ACTIFS » (tiré) ; survol et focus d'une pastille : libellé et rôle servis (rôle tiré), libellé piégé tel quel, sans image
+✅ FL-14 colonnes : le journal sous le Commandement ; flottante : en bas à gauche du cadre de la carte, ▼ le replie jusqu’au champ, gardé au rechargement ; un localStorage qui lève ne casse rien
+✅ FL-12 journal.css sans hexadécimal, gardes prefers-reduced-motion (le typecheck se juge sur la racine réelle)
+pilotage-ecran-qa --partie=fil : PASS
