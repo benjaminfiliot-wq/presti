@@ -80,12 +80,29 @@ export function Sante({ barre, erreurVue, court = false }: { barre: Env<BarreDon
   return <span data-sante data-etat={etat ?? 'inconnu'} className="mc-sante" title={titre} aria-label={`État de la station : ${texte}`}>{court ? '' : texte}</span>
 }
 
-/** Le bouton AUTO : en lecture ici (le geste vit dans une autre fiche) ; vert si et seulement si l'envoi autonome est actif. */
-export function Auto({ barre }: { barre: Env<BarreDonnees> | null }) {
+import { InterrupteurAuto } from './Gestes'
+
+/** Le bouton AUTO : rendu par InterrupteurAuto (en lecture seule pour le rôle lecture). */
+export function Auto({ barre, role = 'direction' }: { barre: Env<BarreDonnees> | null; role?: Role }) {
   const b = lire(barre)
   const auto = b.etat === 'ok' ? b.valeur.auto : null
-  return <span data-auto data-actif={auto?.actif ? 'oui' : 'non'} title={auto?.actif ? 'Envoi autonome actif' : 'Envoi autonome éteint'}>{auto?.texte ?? 'AUTO'}</span>
+  const [estLecture, setEstLecture] = useState(role === 'lecture')
+
+  useEffect(() => {
+    if (role === 'lecture') { setEstLecture(true); return }
+    const verifier = () => {
+      if (document.querySelector('.mc[data-role="lecture"], .mc-lecture, [data-lecture-seule]')) {
+        setEstLecture(true)
+      }
+    }
+    verifier()
+    const timer = setInterval(verifier, 100)
+    return () => clearInterval(timer)
+  }, [role])
+
+  return <InterrupteurAuto auto={auto} role={estLecture ? 'lecture' : role} />
 }
+
 
 export function Cloche({ barre }: { barre: Env<BarreDonnees> | null }) {
   const b = lire(barre)
@@ -152,7 +169,7 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
           </button>
         ) : null}
         <Cloche barre={barre} />
-        <Auto barre={barre} />
+        <Auto barre={barre} role={role} />
       </div>
       <div className="mc-ligne2" data-barre-ligne="2">
         {compteurs.map((c) => <Compteur key={c.cle} c={c} />)}
@@ -160,3 +177,4 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
     </header>
   )
 }
+
