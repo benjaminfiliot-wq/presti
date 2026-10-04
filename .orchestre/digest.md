@@ -6,7 +6,7 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T19:08:51Z
+# Digest — 2026-10-04T19:16:08Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
@@ -15,7 +15,7 @@
 
 ## Attention (5)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
-- 4 question(s) en attente : `026-094` — `node scripts/orchestre.mjs repondre 026-094 <n>`
+- 4 question(s) en attente : `026-101` — `node scripts/orchestre.mjs repondre 026-101 <n>`
 - 4 question(s) en attente : `026-179` — `node scripts/orchestre.mjs repondre 026-179 <n>`
 - 4 question(s) en attente : `026-200` — `node scripts/orchestre.mjs repondre 026-200 <n>`
 - 4 question(s) en attente : `026-251` — `node scripts/orchestre.mjs repondre 026-251 <n>`
