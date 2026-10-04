@@ -51,6 +51,10 @@ export const juges = [
       { nom: 'fil-sans-apres', fichier: ST, avant: "c.rpc('pilotage_evenements', { p_apres: apres, p_limite: 100, p_agent: agent, p_types: null })", apres: "c.rpc('pilotage_evenements', { p_apres: null, p_limite: 100, p_agent: agent, p_types: null })", tue: 'SV-10' },
       { nom: 'apercu-une-heure', fichier: ST, avant: 'createSignedUrl(chemin, DUREE_LIEN_APERCU_S)', apres: 'createSignedUrl(chemin, 3600)', tue: 'SV-19' },
       { nom: 'commandes-sous-sante', fichier: ST, avant: "'direct.barre.commandes_mois': 'comptabilite'", apres: "'direct.barre.commandes_mois': 'sante'", tue: 'SV-16' },
+      // 04/10 : le palier du Commandement et le coût journalier des IA sont des valeurs BRUTES d'argent, masquées par `trier` (contrat 334c5cb9).
+      { nom: 'palier-commandement-sous-sante', fichier: ST, avant: "'direct.carte.paliers.commandement': 'comptabilite'", apres: "'direct.carte.paliers.commandement': 'sante'", tue: 'SV-16' },
+      { nom: 'cout-jour-sous-sante', fichier: ST, avant: "'salle.machines.ia.cout_jour_eur': 'comptabilite'", apres: "'salle.machines.ia.cout_jour_eur': 'sante'", tue: 'SV-15' },
+      { nom: 'valeur-brute-non-masquee', fichier: ST, avant: 'if (d && !peut(d)) return tete && estEnveloppe(x) ?', apres: 'if (d && !peut(d) && estEnveloppe(x)) return tete ?', tue: 'SV-16' },
       { nom: 'ecommerce-a-venir', fichier: ST, avant: "source: 'reservee'", apres: "source: 'a_venir'", tue: 'SV-18' },
       { nom: 'version-huit', fichier: ST, avant: 'deps.version.slice(0, 7)', apres: 'deps.version.slice(0, 8)', tue: 'SV-17' },
       { nom: 'route-retiree', fichier: RTE, retirer: true, tue: 'SV-1' },

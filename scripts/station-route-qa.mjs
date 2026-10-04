@@ -250,7 +250,12 @@ async function enfantDoublures(RAC, partie) {
       })
       await critere('SV-16', async (e) => {
         const a = await jouer('vue=direct', { verdict: VERDICTS.sante_sans_comptabilite })
-        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!(c === 'direct.carte.paliers.commandement' && ch(a.j, c) === null) && !estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
+        // Le palier du Commandement est une valeur brute (pas une enveloppe) : une absence reste une absence (null), mais SEULEMENT
+        // si la même route, sous le verdict fondateur, la rend déjà nulle ; un palier servi au fondateur doit devenir « hors
+        // périmètre » exact sous « santé sans comptabilité » (jamais null, jamais un zéro : 04/10, SV-16 aligné sur `trier`).
+        const brute = await jouer('vue=direct', { verdict: VERDICTS.fondateur })
+        const absenceNative = (c) => c === 'direct.carte.paliers.commandement' && ch(brute.j, c) === null && ch(a.j, c) === null
+        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!absenceNative(c) && !estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
         for (const k of ['barre', 'equipage', 'attention', 'commandement', 'tapis', 'carte']) if (estHors(a.j?.valeur?.[k])) e.push(`route, « santé sans comptabilité » : direct.${k} entière refusée`)
         const d = validerVue(a.j, { vue: 'direct', verdict: VERDICTS.sante_sans_comptabilite })
         if (d.length) e.push(`route, « santé sans comptabilité » : hors contrat (${d.slice(0, 2).join(' ; ')})`)
