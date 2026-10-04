@@ -1,0 +1,11 @@
+garde-doublon-qa — racine .
+❌ GD-1 lib/agents/acquisition/facteur.ts absent : aucun Facteur à juger
+❌ GD-2 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver) ; magasinSupabase.marquerEnvoye ignore le { ok: false } de acq_envoi_envoye : un refus de la base (statut, pause) laisse l'envoi approuve, donc renvoyé 15 minutes plus tard
+❌ GD-3 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver)
+❌ GD-4 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver)
+❌ GD-5 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver) ; contrat.ts : MagasinEnvoi ne déclare pas reserverEnvoi ; contrat.ts : MagasinEnvoi ne déclare pas marquerIncertain ; magasinSupabase.ts n'appelle pas acq_envoi_reserver ; magasinSupabase.ts n'appelle pas acq_envoi_incertain
+❌ GD-6 migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver)
+❌ GD-7 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver)
+❌ GD-8 non jugé : facteur.ts absent ou illisible (GD-1) ; migration de réservation absente (supabase/migrations/0121_*.sql ou suivante, qui définit public.acq_envoi_reserver)
+garde-doublon-qa : FAIL — GD-1, GD-2, GD-3, GD-4, GD-5, GD-6, GD-7, GD-8
+code arbre actuel 1

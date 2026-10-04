@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         const lien = `${urlPlateforme(artisan)}?connexion=${encodeURIComponent(jeton)}`
         await sendEmail({ critique: true,
           to: email,
-          fromName: artisan.nom || undefined, // white-label : le client voit la marque de l'artisan
+          fromName: artisan.nom?.trim() || 'Votre artisan', // white-label : le client voit la marque de l'artisan
           subject: `Votre lien de connexion — ${artisan.nom || 'votre espace'}`,
           text: `Bonjour,\n\nVoici votre lien pour accéder à votre espace :\n${lien}\n\nCe lien est valable 20 minutes et ne fonctionne qu'une fois.\nSi vous n'avez rien demandé, ignorez ce message.`,
           replyTo: artisan.email || undefined, // white-label : une réponse va à l'artisan, jamais à l'éditeur

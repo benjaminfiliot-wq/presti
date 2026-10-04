@@ -1,0 +1,537 @@
+  fuite public/sites-demo/_kit/kit.js:264 « e. Chez un vrai artisan, c'est la messagerie Presti. »
+  fuite public/sites-demo/carreleur/contenu.json:900 « ctive présentée dans le cadre de la solution Presti.", »
+  fuite public/sites-demo/carreleur/mentions-legales/index.html:36 « ctive présentée dans le cadre de la solution Presti.</p></div></div></section><section class="sectio »
+  fuite public/sites-demo/chauffagiste/contenu.json:380 « ure et le référencement local de la solution Presti.", »
+  fuite public/sites-demo/chauffagiste/contenu.json:388 « ure et le référencement local de la solution Presti." »
+  fuite public/sites-demo/chauffagiste/contenu.json:447 « cadre de la suite de démonstration technique Presti." »
+  fuite public/sites-demo/chauffagiste/mentions-legales/index.html:36 « ure et le référencement local de la solution Presti.</p></div></div></section><section class="sectio »
+  fuite public/sites-demo/electricien/contenu.json:861 « our illustrer les capacités de la plateforme Presti.", »
+  fuite public/sites-demo/electricien/contenu.json:869 « our illustrer les capacités de la plateforme Presti." »
+  fuite public/sites-demo/electricien/mentions-legales/index.html:36 « our illustrer les capacités de la plateforme Presti.</p></div></div></section><section class="sectio »
+  fuite public/sites-demo/generer.mjs:253 « ace(/^oui\s*[—–-]?\s*/i, '').replace(/\s*par Presti\b.*$/i, '') »
+  fuite public/sites-demo/generer.mjs:295 « const basePresti = /export\s+const\s+BASE_PRESTI\s*=\s*['"](https »
+  fuite public/sites-demo/generer.mjs:296 « if (!basePresti) throw new Error('BASE_PRESTI introuvable dans l »
+  fuite public/sites-demo/generer.mjs:309 « ine ? `https://${commande.domaine}` : `${basePresti}/site-genere/${commande.id}`, »
+  fuite public/sites-demo/generer.mjs:862 « ? `Modifiée — adaptation : ${d}, par Presti. L’adaptation est diffusée sous la même licence, »
+  fuite public/sites-demo/generer.mjs:863 « : `Modifiée : ${d}, par Presti.` »
+  fuite public/sites-demo/generer.mjs:879 « et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.' : 'T »
+  fuite public/sites-demo/generer.mjs:885 « iquées comme modifiées ont été modifiées par Presti.' : ''}` »
+  fuite public/sites-demo/generer.mjs:1065 « class="pied"><p>Maquette privée préparée par Presti pour ${e(entree.entreprise)}. Rien n’est publié. »
+  fuite public/sites-demo/generer.mjs:309 « adresse publique fabriquée avec la constante de l'éditeur : url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site-genere/${ »
+  fuite public/sites-demo/lestraque/attributions.json:15 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:52 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:89 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:126 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:163 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:200 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:237 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:274 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:311 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:348 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:385 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:422 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:459 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:502 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:545 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:588 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:631 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:674 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:717 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:753 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:789 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:825 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:861 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:897 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:933 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:969 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1005 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1041 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1077 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1113 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1149 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1191 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1233 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1275 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1317 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1359 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1401 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1443 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1485 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1527 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1569 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1611 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1653 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1689 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1725 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1761 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1797 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1833 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1869 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1905 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1941 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:1977 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2013 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2049 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2085 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2121 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2157 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2193 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2229 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2265 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2301 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2337 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2373 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2409 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2445 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2481 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2517 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2553 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2589 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2625 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2661 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2697 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2733 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2769 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2805 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2841 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2877 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2913 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2949 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:2985 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3021 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3064 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3107 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3150 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3193 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3229 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3265 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3301 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3337 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3373 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3409 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3445 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3481 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3517 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3553 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3589 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3625 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3661 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3697 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3733 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3769 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3805 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3841 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3877 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3913 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3949 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:3985 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/attributions.json:4021 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite public/sites-demo/lestraque/contenu.json:894 « de publication : Benjamin Filiot (Fondateur Presti)" »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:2 « n d'escalier en chêne, assemblé", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:3 « en chêne, éclaté en ses pièces", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:4 « à la française et ses entailles", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:5 « de": "Marches en chêne de 40 mm", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:6 « vif", "legende": "Contremarches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:7 « ": "Vis de fixation des marches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/eclate/attributions.json:8 « ait du tronçon d'escalier, coté", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite public/sites-demo/lestraque/mentions-legales/index.html:40 « de publication : Benjamin Filiot (Fondateur Presti)</p><h2>Assurance responsabilité décennale</h2>< »
+  fuite public/sites-demo/lestraque/site.js:264 « e. Chez un vrai artisan, c'est la messagerie Presti. »
+  fuite public/sites-demo/lestraque/site.json:55 « rtisan, la demande arrive dans la messagerie Presti.", »
+  fuite public/sites-demo/menuisier/contenu.json:977 « de publication : Benjamin Filiot (Fondateur Presti)" »
+  fuite public/sites-demo/menuisier/mentions-legales/index.html:36 « de publication : Benjamin Filiot (Fondateur Presti)</p><h2>Assurance responsabilité décennale</h2>< »
+  fuite public/sites-demo/peintre/contenu.json:804 « illustrer les fonctionnalités de la solution Presti pour les artisans peintres en bâtiment." »
+  fuite public/sites-demo/peintre/mentions-legales/index.html:36 « illustrer les fonctionnalités de la solution Presti pour les artisans peintres en bâtiment.</p><p>No »
+  fuite public/sites-demo/plombier/contenu.json:892 « echniques et de référencement de la solution Presti.", »
+  fuite public/sites-demo/plombier/contenu.json:900 « echniques et de référencement de la solution Presti." »
+  fuite public/sites-demo/plombier/mentions-legales/index.html:36 « echniques et de référencement de la solution Presti.</p></div></div></section><section class="sectio »
+  fuite public/sites-demo/serrurier/contenu.json:859 « illustrer les fonctionnalités de la solution Presti.", »
+  fuite public/sites-demo/serrurier/mentions-legales/index.html:36 « illustrer les fonctionnalités de la solution Presti.</p></div></div></section><section class="sectio »
+  fuite lib/email.ts:14 « const FROM_ADDR = 'contact@prestiapp.fr' »
+  fuite lib/email.ts:25 « const clean = (name || 'Presti').replace(/[\r\n<>"]/g, '').trim().slice(0, 70) »
+  fuite lib/legalArtisan.ts:201 « { nom: 'Presti', role: 'Éditeur de l’outil : hébergement des de »
+  fuite sortie lestraque/attributions.json:15 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:52 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:89 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:126 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:163 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:200 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:237 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:274 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:311 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:348 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:385 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:422 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:459 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:502 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:545 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:588 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:631 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:674 « enées vers un crème ambré et désaturées) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:717 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:753 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:789 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:825 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:861 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:897 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:933 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:969 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1005 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1041 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1077 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1113 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1149 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1191 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1233 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1275 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1317 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1359 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1401 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1443 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1485 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1527 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1569 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1611 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1653 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1689 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1725 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1761 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1797 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1833 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1869 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1905 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1941 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:1977 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2013 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2049 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2085 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2121 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2157 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2193 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2229 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2265 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2301 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2337 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2373 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2409 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2445 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2481 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2517 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2553 « sition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2589 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2625 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2661 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2697 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2733 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2769 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2805 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2841 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2877 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2913 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2949 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:2985 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3021 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3064 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3107 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3150 « s la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3193 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3229 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3265 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3301 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3337 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3373 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3409 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3445 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3481 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3517 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3553 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3589 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3625 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3661 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3697 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3733 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3769 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3805 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3841 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3877 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3913 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3949 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:3985 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/attributions.json:4021 « noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration", »
+  fuite sortie lestraque/contenu.json:894 « de publication : Benjamin Filiot (Fondateur Presti)" »
+  fuite sortie lestraque/eclate/attributions.json:2 « n d'escalier en chêne, assemblé", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:3 « en chêne, éclaté en ses pièces", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:4 « à la française et ses entailles", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:5 « de": "Marches en chêne de 40 mm", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:6 « vif", "legende": "Contremarches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:7 « ": "Vis de fixation des marches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/eclate/attributions.json:8 « ait du tronçon d'escalier, coté", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierc »
+  fuite sortie lestraque/mentions-legales/index.html:40 « de publication : Benjamin Filiot (Fondateur Presti)</p><h2>Assurance responsabilité décennale</h2>< »
+  fuite sortie lestraque/site.js:264 « e. Chez un vrai artisan, c'est la messagerie Presti. »
+  fuite sortie lestraque/site.json:55 « rtisan, la demande arrive dans la messagerie Presti.", »
+  fuite sortie maquette-electricien/index.html:7 « class="pied"><p>Maquette privée préparée par Presti pour Duval Électricité. Rien n’est publié.</p><p »
+  credit public/sites-demo/generer.mjs « const detailModif = (a) => String(a.modifiee || '').trim().replace(/^oui\s*[—–-]?\s*/i, '').replace(/\s*par Pr »
+  credit public/sites-demo/generer.mjs « `Modifiée — adaptation : ${d}, par Presti. »
+  credit public/sites-demo/generer.mjs « : `Modifiée : ${d}, par Presti.` »
+  credit public/sites-demo/generer.mjs « 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées  »
+  credit public/sites-demo/generer.mjs « celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}` »
+  credit public/sites-demo/generer.mjs « ' Les photos indiquées comme modifiées ont été modifiées par Presti.' : ''}` »
+  credit public/sites-demo/lestraque/attributions.json:15 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:52 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:89 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:126 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:163 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:200 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:237 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:274 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:311 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:348 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:385 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:422 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit public/sites-demo/lestraque/attributions.json:459 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:502 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:545 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:588 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:631 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:674 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit public/sites-demo/lestraque/attributions.json:717 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:753 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:789 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:825 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:861 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:897 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:933 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:969 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1005 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1041 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1077 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1113 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1149 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit public/sites-demo/lestraque/attributions.json:1191 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit public/sites-demo/lestraque/attributions.json:1233 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit public/sites-demo/lestraque/attributions.json:1275 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit public/sites-demo/lestraque/attributions.json:1317 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1359 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1401 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1443 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1485 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1527 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1569 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1611 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit public/sites-demo/lestraque/attributions.json:1653 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1689 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1725 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1761 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1797 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1833 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1869 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1905 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1941 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:1977 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2013 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2049 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2085 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2121 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2157 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2193 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2229 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2265 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2301 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2337 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2373 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2409 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2445 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2481 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2517 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2553 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2589 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2625 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2661 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2697 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2733 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2769 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2805 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2841 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2877 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2913 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2949 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:2985 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3021 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3064 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3107 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3150 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3193 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3229 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3265 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3301 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3337 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3373 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3409 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3445 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3481 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3517 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3553 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3589 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3625 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3661 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3697 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3733 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3769 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3805 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3841 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3877 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3913 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3949 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:3985 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/attributions.json:4021 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:2 « { "type": "rendu", "fichier": "eclate/assemble.avif", "legende": "Tronçon d'escalier en c… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:3 « { "type": "rendu", "fichier": "eclate/eclate.avif", "legende": "Tronçon d'escalier en chê… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:4 « { "type": "rendu", "fichier": "eclate/calque-limon.avif", "legende": "Limon à la français… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:5 « { "type": "rendu", "fichier": "eclate/calque-marche.avif", "legende": "Marches en chêne d… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:6 « { "type": "rendu", "fichier": "eclate/calque-contremarche.avif", "legende": "Contremarche… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:7 « { "type": "rendu", "fichier": "eclate/calque-vis.avif", "legende": "Vis de fixation des m… »
+  credit public/sites-demo/lestraque/eclate/attributions.json:8 « { "type": "rendu", "fichier": "eclate/releve.avif", "legende": "Relevé au trait du tronço… »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées p »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « sur ordinateur, animée en relief à partir d’une carte de profondeur calculée depuis la photo, par Presti. »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « recadrée en 9:16 pour la version téléphone, par Presti. »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par P »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis reca »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Pres »
+  credit public/sites-demo/lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Pres »
+  credit sortie lestraque/attributions.json:15 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:52 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:89 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:126 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:163 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:200 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:237 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:274 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:311 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:348 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:385 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:422 « "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage ga… »
+  credit sortie lestraque/attributions.json:459 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:502 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:545 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:588 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:631 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:674 « "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, omb… »
+  credit sortie lestraque/attributions.json:717 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:753 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:789 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:825 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:861 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:897 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:933 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:969 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1005 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1041 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1077 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1113 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1149 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit sortie lestraque/attributions.json:1191 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit sortie lestraque/attributions.json:1233 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit sortie lestraque/attributions.json:1275 « "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, no… »
+  credit sortie lestraque/attributions.json:1317 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1359 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1401 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1443 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1485 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1527 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1569 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1611 « "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs rele… »
+  credit sortie lestraque/attributions.json:1653 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1689 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1725 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1761 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1797 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1833 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1869 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1905 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1941 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:1977 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2013 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2049 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2085 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2121 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2157 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2193 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2229 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2265 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2301 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2337 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2373 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2409 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2445 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2481 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2517 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2553 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2589 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2625 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2661 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2697 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2733 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2769 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2805 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2841 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2877 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2913 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2949 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:2985 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3021 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3064 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3107 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3150 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3193 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3229 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3265 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3301 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3337 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3373 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3409 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3445 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3481 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3517 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3553 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3589 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3625 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3661 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3697 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3733 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3769 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3805 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3841 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3877 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3913 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3949 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:3985 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/attributions.json:4021 « "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contr… »
+  credit sortie lestraque/eclate/attributions.json:2 « { "type": "rendu", "fichier": "eclate/assemble.avif", "legende": "Tronçon d'escalier en c… »
+  credit sortie lestraque/eclate/attributions.json:3 « { "type": "rendu", "fichier": "eclate/eclate.avif", "legende": "Tronçon d'escalier en chê… »
+  credit sortie lestraque/eclate/attributions.json:4 « { "type": "rendu", "fichier": "eclate/calque-limon.avif", "legende": "Limon à la français… »
+  credit sortie lestraque/eclate/attributions.json:5 « { "type": "rendu", "fichier": "eclate/calque-marche.avif", "legende": "Marches en chêne d… »
+  credit sortie lestraque/eclate/attributions.json:6 « { "type": "rendu", "fichier": "eclate/calque-contremarche.avif", "legende": "Contremarche… »
+  credit sortie lestraque/eclate/attributions.json:7 « { "type": "rendu", "fichier": "eclate/calque-vis.avif", "legende": "Vis de fixation des m… »
+  credit sortie lestraque/eclate/attributions.json:8 « { "type": "rendu", "fichier": "eclate/releve.avif", "legende": "Relevé au trait du tronço… »
+  credit sortie lestraque/mentions-legales/index.html « Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées p »
+  credit sortie lestraque/mentions-legales/index.html « sur ordinateur, animée en relief à partir d’une carte de profondeur calculée depuis la photo, par Presti. »
+  credit sortie lestraque/mentions-legales/index.html « recadrée en 9:16 pour la version téléphone, par Presti. »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par P »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti. »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis reca »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Pres »
+  credit sortie lestraque/mentions-legales/index.html « Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Pres »
+garde-blanc-qa — racine .
+❌ GB-1 271 occurrence(s) de la marque de l'éditeur dans 31 fichier(s) : public/sites-demo/_kit/kit.js:264 « e. Chez un vrai artisan, c'est la messagerie Presti. » ; public/sites-demo/carreleur/contenu.json:900 « ctive présentée dans le cadre de la solution Presti.", » ; public/sites-demo/carreleur/mentions-legales/index.html:36 « ctive présentée dans le cadre de la solution Presti.</p></div></div></section><section class="sectio » ; public/sites-demo/chauffagiste/contenu.json:380 « ure et le référencement local de la solution Presti.", » ; public/sites-demo/chauffagiste/contenu.json:388 « ure et le référencement local de la solution Presti." » ; public/sites-demo/chauffagiste/contenu.json:447 « cadre de la suite de démonstration technique Presti." » ; … (271 au total)
+❌ GB-2 256 crédit(s) ou attribution(s) nommant l'éditeur ou son fondateur : public/sites-demo/generer.mjs « const detailModif = (a) => String(a.modifiee || '').trim().replace(/^oui\s*[—–-]?\s*/i, '').replace(/\s*par Pr » ; public/sites-demo/generer.mjs « `Modifiée — adaptation : ${d}, par Presti. » ; public/sites-demo/generer.mjs « : `Modifiée : ${d}, par Presti.` » ; public/sites-demo/generer.mjs « 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées  » ; public/sites-demo/generer.mjs « celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}` » ; public/sites-demo/generer.mjs « ' Les photos indiquées comme modifiées ont été modifiées par Presti.' : ''}` » ; … (256 au total)
+❌ GB-3 51 défaut(s) : public/sites-demo/carreleur : rubrique « directeur de publication » absente (ni renseignée ni marquée « à compléter ») ; public/sites-demo/carreleur : rubrique « médiateur » absente (ni renseignée ni marquée « à compléter ») ; public/sites-demo/carreleur : mention légale au nom de l'éditeur : « Site de démonstration : entreprise fictive présentée dans le cadre de la solution Presti. » ; public/sites-demo/chauffagiste : rubrique « médiateur » absente (ni renseignée ni marquée « à compléter ») ; public/sites-demo/chauffagiste : mention légale au nom de l'éditeur : « Site de démonstration : entreprise fictive créée pour illustrer les performances technique » ; public/sites-demo/chauffagiste : mention légale au nom de l'éditeur : « Site de démonstration : entreprise fictive créée pour illustrer les performances technique » ; … (51 au total)
+❌ GB-4 16 défaut(s) : fromHeader retombe sur la marque de l’éditeur quand le nom de l’artisan manque (« || … Presti ») ; l'expéditeur « ${clean} <${FROM_ADDR}> » du chemin artisan utilise FROM_ADDR = 'contact@prestiapp.fr' ; nom d’artisan et Reply-To : l'adresse d'envoi « contact@prestiapp.fr » est sur le domaine de Presti, visible du client ; nom d’artisan sans Reply-To : l'adresse d'envoi « contact@prestiapp.fr » est sur le domaine de Presti, visible du client ; nom d’artisan vide après nettoyage : l'adresse d'envoi « contact@prestiapp.fr » est sur le domaine de Presti, visible du client ; nom d’artisan vide après nettoyage : le nom d'expéditeur affiché est « Presti » ; … (16 au total)
+✅ GB-5 85 page(s) lues, 15 ligne(s) marquée(s) « à confirmer » : aucun titre ni h1 n'affirme ce qu'elles réservent
+✅ GB-6 421 lien(s) tel: dans 85 page(s) : aucun ne porte un numéro marqué « à reconfirmer »
+✅ GB-7 6 exemption(s) sur 8 permises, chacune justifiée et bornée (aucune sous public/, aucun joker) ; 6 utilisée(s) sur cet arbre
+garde-blanc-qa : FAIL — GB-1, GB-2, GB-3, GB-4
+code=1

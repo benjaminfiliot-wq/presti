@@ -161,7 +161,7 @@ async function executerEnfant(actions, opts = {}) {
     journalLancer: path.join(dir, 'lancer.json'), lanceurCompteur: path.join(dir, 'lancer-compteur.txt'),
     lanceurScenarios: opts.lanceurScenarios || ['propre'], lanceurContenu: opts.lanceurContenu, lanceurEcheance: opts.lanceurEcheance,
     journalJev: path.join(dir, 'jev.json'), jevReponse: opts.jevReponse, jevScenario: opts.jevScenario,
-    coutComportement: opts.coutComportement || 'ok', horlogeControlee: opts.horlogeControlee !== false,
+    coutVoie: opts.coutVoie || 'gratuit', coutComportement: opts.coutComportement || 'ok', horlogeControlee: opts.horlogeControlee !== false,
     actions,
   }
   const cfgPath = path.join(dir, 'config.json')
@@ -594,6 +594,20 @@ async function LL8() {
         const brutDetail = JSON.stringify(c.detail)
         if (brutDetail.includes(DONNEES_SENTINELLE) || brutDetail.includes(REPONSE_SENTINELLE)) echecs.push('le détail du coût porte les données ou la réponse')
       }
+    }
+  }
+  // Un coût inconnu ou positif reste refusé AVANT tout appel même dans ce banc à doublures.
+  for (const coutVoie of ['inconnu', 'payant']) {
+    const r = await executerEnfant([
+      { op: 'creerLecteur', id: 'f', agent: 'facteur' },
+      { op: 'appelerLecteur', id: 'a', lecteurId: 'f', systeme: 's', donnees: {} },
+    ], { env: { CODEX_LANCEUR: FAUX_LANCEUR }, coutVoie })
+    if (!r.ok) echecs.push(r.erreur)
+    else {
+      if (r.erreurImport) echecs.push(r.erreurImport)
+      const a = r.resultat.appels?.a
+      if (a?.ok !== false || !/coût inconnu|plafond de coût/.test(a.erreur || '')) echecs.push(`${coutVoie} : refus de coût attendu avant consommation`)
+      if ((r.resultat.appelsLancer || []).length || (r.resultat.appelsCout || []).length) echecs.push(`${coutVoie} : consommation ou inscription malgré le refus`)
     }
   }
   // coupure : coutComportement ['ok','coupe','ok'] sur 3 appels → le 3e ne lance rien

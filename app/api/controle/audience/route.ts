@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
-import { sourcer } from '@/lib/direction/fraicheur'
-import { seulsLesVrais } from '@/lib/direction/perimetre'
-import { limiteAtteinte } from '@/lib/limites'
-import { PLAFOND_JOUR_AUDIENCE, cleJourAudience, minuitParis } from '@/lib/audienceServeur'
+import { PLAFOND_JOUR_AUDIENCE } from '@/lib/audienceServeur'
+import { audience } from '@/lib/controle/lectures'
 import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
@@ -32,28 +29,7 @@ export async function GET(req: Request) {
   if (!actif('audience')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
 
   const avecHistorique = new URL(req.url).searchParams.get('historique') === '1'
-  const [direct, inscriptions, historique, saturee] = await Promise.all([
-    sourcer('audience:direct', 'supabase', async () => {
-      const { data, error } = await supabaseAdmin.rpc('audience_direct')
-      if (error) throw new Error(error.message)
-      return data as Record<string, unknown>
-    }),
-    // Compté en base, pas sur une liste tronquée puis filtrée : les comptes de nos suites passaient devant les vrais.
-    sourcer('audience:inscriptions', 'supabase', async () => {
-      const { count, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true }))
-        .gte('created_at', minuitParis())
-      if (error) throw new Error(error.message || 'lecture des inscriptions refusée')
-      return count ?? 0
-    }),
-    avecHistorique
-      ? sourcer('audience:historique', 'supabase', async () => {
-          const { data, error } = await supabaseAdmin.rpc('audience_historique', { p_jours: 30 })
-          if (error) throw new Error(error.message)
-          return data as Record<string, unknown>
-        })
-      : Promise.resolve(null),
-    limiteAtteinte(cleJourAudience(), PLAFOND_JOUR_AUDIENCE, 86400).catch(() => null),
-  ])
+  const { direct, inscriptions, historique, saturee } = await audience(avecHistorique ? 'historique' : 'jour')
   // La table absente n'est pas « zéro visiteur » : c'est une migration à appliquer, et l'écran doit le dire.
   if (direct.erreur && /does not exist|could not find|schema cache/i.test(direct.erreur)) {
     return NextResponse.json({ error: 'La mesure d’audience n’a pas encore ses tables : les migrations 0090 à 0092 sont à appliquer.', code: 'indisponible' }, { status: 503 })

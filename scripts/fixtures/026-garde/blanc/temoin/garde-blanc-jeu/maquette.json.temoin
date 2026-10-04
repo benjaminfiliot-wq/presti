@@ -1,0 +1,11 @@
+{
+  "entreprise": "Duval Électricité",
+  "metier": "Électricien",
+  "ville": "Blagnac",
+  "modele": "electricien",
+  "communes": ["Colomiers"],
+  "photos": [
+    { "auteur": "Lucasbosch", "licence": "CC BY-SA 4.0", "modifiee": "Oui — redimensionnée et convertie pour le web" },
+    { "auteur": "Dietmar Rabich", "licence": "CC BY-SA 4.0", "modifiee": "" }
+  ]
+}

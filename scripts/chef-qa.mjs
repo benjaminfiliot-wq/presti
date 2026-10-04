@@ -1843,6 +1843,7 @@ async function principal() {
   const rs = await juger(racine, g)
   const rouges = rs.filter((x) => !x.ok)
   console.log(`\n${rouges.length ? '✗' : '✓'} ${NOM} : ${rs.length - rouges.length}/${rs.length} critère(s) vert(s)${racine !== DEPOT ? ` · racine ${versSlash(racine)}` : ''}`)
+  console.log(`${NOM} : ${rouges.length ? `FAIL — ${[...new Set(rouges.map((x) => x.id))].join(', ')}` : 'PASS'}`)
   return rouges.length ? 1 : 0
 }
 principal().then((c) => { process.exitCode = c }).catch((e) => { console.error(`✗ ${NOM} : ${e?.stack || e}`); process.exitCode = 1 })

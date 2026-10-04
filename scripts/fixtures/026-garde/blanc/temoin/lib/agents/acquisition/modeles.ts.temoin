@@ -1,0 +1,4 @@
+// Témoin de garde-blanc-qa : les modèles de prospection de Presti À DES ARTISANS (exemption E1 : l'expéditeur s'y identifie).
+export const PIED_SOLLICITE =
+  "Benjamin Filiot, Presti.\nMessage rédigé et envoyé par l'assistant IA de Presti.\nVos données : {notice}\nPour ne plus rien recevoir : répondez STOP."
+export const MENTION_IA = "Message rédigé et envoyé par l'assistant IA de Presti."

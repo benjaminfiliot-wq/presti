@@ -858,7 +858,7 @@
    "description": "Mentions légales, coordonnées juridiques, assurance décennale et crédits photos du site Démo Électricien Nantes.",
    "h1": "Mentions légales",
    "kicker": "",
-   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les capacités de la plateforme Presti.",
+   "chapeau": "Site de démonstration : entreprise fictive.",
    "heroImages": [],
    "sections": [
     {
@@ -866,7 +866,7 @@
      "blocs": [
       {
        "type": "p",
-       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les capacités de la plateforme Presti."
+       "texte": "Site de démonstration : entreprise fictive."
       }
      ]
     },

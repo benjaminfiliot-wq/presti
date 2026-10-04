@@ -17,6 +17,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { fileURLToPath } from 'node:url'
+import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../../lib/agents/depense.mjs'
 import { chercher, classesPour } from '../../lib/savoir/recherche.ts'
 import { chercherIndex } from '../../lib/savoir/index.ts'
 import { MOTEUR_DE } from '../../lib/agents/moteurs.ts'
@@ -134,6 +135,8 @@ function transportFirecrawl(cle, reserve, consommes, horloge) {
   // Le compteur que lireAvecFirecrawl exige : la réserve de départ (pas un solde), daté du jour, sourcé.
   const credits = { plafond: Math.min(Math.max(1, reserve), 1000), consommes, date: new Date(horloge.maintenant()).toISOString(), source: 'credits-firecrawl.json (registre de l\'usine)' }
   const appel = async (operation, corps, entetes) => {
+    const garde = autoriserDepense({ agent: 'savoir', fournisseur: 'firecrawl', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
+    if (!garde.ok) return { statut: 403, corps: { refus: `depense_${garde.motif}` } }
     const r = await fetch(`${HOTE_FIRECRAWL}/v1/${operation}`, { method: 'POST', headers: { ...entetes, 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: AbortSignal.timeout(60000) })
     return { statut: r.status, corps: await r.json().catch(() => null) }
   }
@@ -151,6 +154,8 @@ function transportFirecrawl(cle, reserve, consommes, horloge) {
 function transportPerplexity(cle) {
   if (!cle) return undefined
   return async (question) => {
+    const garde = autoriserDepense({ agent: 'savoir', fournisseur: 'perplexity', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
+    if (!garde.ok) return { refus: `depense_${garde.motif}` }
     let r
     try { r = await fetch(`${HOTE_PERPLEXITY}/chat/completions`, { method: 'POST', headers: { authorization: `Bearer ${cle}`, 'content-type': 'application/json' }, body: JSON.stringify({ model: 'sonar', messages: [{ role: 'user', content: question }] }), signal: AbortSignal.timeout(60000) }) } catch { return { refus: 'panne' } }
     if (!r.ok) return { refus: `statut_${r.status}` }

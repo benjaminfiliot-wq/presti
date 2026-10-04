@@ -55,7 +55,7 @@ if (LLM) {
       const env = { PATH: process.env.PATH || '', HOME: process.env.HOME || process.env.USERPROFILE || '', LANG: 'fr_FR.UTF-8' }
       if (e.moteur === 'codex') env.CODEX_LANCEUR = cfg.lanceur
       else env.FREELLMAPI_URL = 'http://127.0.0.1:9'
-      const deps = { env, lancer, fetch: fauxFetch, enregistrerCout: async () => ({ ok: true }), attendre: async () => undefined }
+      const deps = { env, lancer, fetch: fauxFetch, enregistrerCout: async () => ({ ok: true }), coutDeVoie: (id) => ['codex', 'freellmapi'].includes(id) ? 0 : undefined, verifierPlafond: async (_agent, cout) => cout === 0, attendre: async () => undefined }
       marque(`avant:${e.nom}`)
       const lecteur = LLM.creerLecteur(e.agent, {}, deps)
       marque(`cree:${e.nom}`)

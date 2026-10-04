@@ -1,0 +1,10 @@
+garde-pause-qa — racine état actuel + témoin du lot
+✅ GP-1 pause lue avant toute lecture de contact ; posée : 0 mail, 0 appel au modèle, 0 livraison, 0 lecture de relance ; levée : 3 relances sur 3
+✅ GP-2 8 voie(s) de sortie dérivées du code : lib/contenu/metaPublier.ts (gardée au point de passage, 0 appelant(s)) ; lib/crieur/publora.ts (1/1 appelant(s) gardé(s)) ; lib/email.ts (gardée au point de passage, 28 appelant(s)) ; lib/motDePasse.ts (exemptée, lecture_seule) ; lib/push.ts (exemptée, notification_interne) ; lib/pushNatif.ts (exemptée, notification_interne) ; lib/siteGenerationDistante.ts (exemptée, declenchement_interne) ; lib/vercelDomains.ts (exemptée, infrastructure) ; e-mail ordinaire refusé sous pause, e-mail critique passé
+✅ GP-3 erreur du bus, lecture qui lève, valeur absente, null, {}, « false », 0 ⇒ actif ; aucun mail ni publication dans ces cas ; PAUSE_GENERALE=1 coupe sans interroger la base
+✅ GP-4 pause ⇒ 0 dépôt, 0 inscription, 2 publications programmées comptées et signalées au fondateur ; registre illisible ⇒ 503 avec la raison
+✅ GP-5 un mail par contact : deux passages successifs, deux passages simultanés et deux relances du même prospect
+✅ GP-6 lecture limit ≤ 100 et ≤ 100 envois sur 150 dues ; arrêt au premier refus de plafond ; emails:jour ≤ 100, rien ne part au-delà
+✅ GP-7 relances : le lot de 5 s’arrête à 2 quand la pause tombe au 2e envoi ; Crieur : le lot de 3 s’arrête à 1
+garde-pause-qa : PASS
+code=0

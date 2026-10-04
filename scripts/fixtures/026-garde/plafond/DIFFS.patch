@@ -1,0 +1,492 @@
+--- a/scripts/chef/commun.mjs
++++ b/scripts/chef/commun.mjs
+@@ -140,7 +140,7 @@
+           if (typeof op.cle !== 'string' || !CLE_OPTION_RE.test(op.cle)) f.push(`${ou}.options[${j}].cle : ^[a-z_]{2,30}$`)
+           if (!chaine(op.libelle, 1, 80)) f.push(`${ou}.options[${j}].libelle : 80 signes au plus`)
+           if (typeof op.recommandee !== 'boolean') f.push(`${ou}.options[${j}].recommandee : booléen`)
+-          if (!Number.isInteger(op.engage_cents) || op.engage_cents < 0) f.push(`${ou}.options[${j}].engage_cents : entier ≥ 0`)
++          if (!Number.isInteger(op.engage_cents) || op.engage_cents !== 0) f.push(`${ou}.options[${j}].engage_cents : 0 (un agent n'engage aucun argent : plafond de 0 €)`)
+         })
+         if (new Set(o.map((x) => x?.cle)).size !== o.length) f.push(`${ou}.options : clés en double`)
+         if (o.filter((x) => x?.recommandee === true).length !== 1) f.push(`${ou}.options : exactement une recommandée`)
+@@ -148,7 +148,7 @@
+         if (!defaut) f.push(`${ou}.option_defaut : la clé d'une option`)
+         else if (defaut.engage_cents !== 0) f.push(`${ou}.option_defaut : l'option par défaut n'engage rien (engage_cents 0)`)
+       }
+-      if (!Number.isInteger(d.montant_cents) || d.montant_cents < 0) f.push(`${ou}.montant_cents : entier ≥ 0`)
++      if (!Number.isInteger(d.montant_cents) || d.montant_cents !== 0) f.push(`${ou}.montant_cents : 0 (un agent n'engage aucun argent : plafond de 0 €)`)
+       if (!['aucune', 'argent', 'artisan', 'securite'].includes(d.portee)) f.push(`${ou}.portee inconnue`)
+       const e = typeof d.echeance === 'string' ? Date.parse(d.echeance) : NaN
+       if (!Number.isFinite(e) || e < maintenant.getTime() + HEURE || e > maintenant.getTime() + 7 * 24 * HEURE) f.push(`${ou}.echeance : entre +1 h et +7 j`)
+--- a/lib/agents/bus.ts
++++ b/lib/agents/bus.ts
+@@ -20,7 +20,7 @@
+ /** Le statut HTTP de chaque code métier `ops:<code>` (tableau de 026-040). Un code absent d'ici rend 500. */
+ export const STATUT_ERREUR: Readonly<Record<string, number>> = Object.freeze({
+   // 400 — la demande est mal formée
+-  options: 400, defaut: 400, echeance: 400, choix: 400, resume: 400, preuve: 400, jeton_format: 400, purge: 400, type_argent: 400, vt: 400,
++  cout_inconnu: 400, options: 400, defaut: 400, echeance: 400, choix: 400, resume: 400, preuve: 400, jeton_format: 400, purge: 400, type_argent: 400, vt: 400,
+   // 403 — hors des droits de l'agent
+   type: 403, auteur: 403, opposition: 403, capacite: 403,
+   // 404 — ce qui est désigné n'existe pas
+@@ -31,7 +31,7 @@
+   // 423 — fermé (agent en pause ou disjoncté, pause générale, canal sans quota)
+   agent_en_pause: 423, pause_generale: 423, quota_absent: 423,
+   // 429 — quota atteint
+-  quota: 429,
++  quota: 429, plafond: 429,
+   // Codes levés par 0097 telle qu'appliquée, absents du tableau de la fiche : sans eux, un motif trop long ou le retrait
+   // d'un agent protégé partiraient en 500 comme une panne.
+   motif: 400, objet: 400, pause: 400, agent_protege: 403,
+@@ -123,5 +123,6 @@
+ export const ops_tache_clore = fonctionBus<{ p_agent: string; p_cle: string; p_preuve_url: string }, string>('ops_tache_clore', ['p_agent', 'p_cle', 'p_preuve_url'])
+ export const ops_baux_expirer = (): Promise<ResultatBus<number>> => appeler<number>('ops_baux_expirer', [])
+ export const ops_cout_ajouter = fonctionBus<{ p_agent: string; p_fournisseur: string; p_montant_eur: number; p_detail?: unknown; p_tache?: string | null }, number>('ops_cout_ajouter', ['p_agent', 'p_fournisseur', 'p_montant_eur', 'p_detail', 'p_tache'])
++export const ops_cout_autoriser = fonctionBus<{ p_agent: string; p_montant_eur: number }, boolean>('ops_cout_autoriser', ['p_agent', 'p_montant_eur'])
+ export const ops_etat = (): Promise<ResultatBus<Record<string, unknown>>> => appeler<Record<string, unknown>>('ops_etat', [])
+ export const ops_stockage_octets = (): Promise<ResultatBus<number>> => appeler<number>('ops_stockage_octets', [])
+--- a/lib/agents/llm.ts
++++ b/lib/agents/llm.ts
+@@ -18,7 +18,7 @@
+   CATALOGUE, ENTRAIDE, MODELES_LOCAUX, MODELE_AGENTS, MODELE_REJUGE, MOTEUR_DE, REPLI, TRAVAIL_DE,
+   conseillersPour, type EntreeMoteur,
+ } from './moteurs'
+-import { ops_cout_ajouter } from './bus'
++import { ops_cout_ajouter, ops_cout_autoriser } from './bus'
+ 
+ // ── contrat public ────────────────────────────────────────────────────────────────────────────────────────────────
+ export type Lecteur = (systeme: string, donnees: unknown) => Promise<unknown>
+@@ -38,6 +38,10 @@
+   enregistrerCout?: (agent: string, montant: number, detail: Record<string, unknown>) => Promise<RetourCout>
+   maintenant?: () => number
+   attendre?: (ms: number) => Promise<void>
++  /** Le coût en euros d'une voie : un nombre fini ≥ 0, sinon l'appel est refusé (un coût inconnu n'est pas 0). */
++  coutDeVoie?: (id: string, detail: Record<string, unknown>) => unknown
++  /** Le plafond du jour, contrôlé AVANT l'appel : Promise<true> autorise ; tout autre retour, ou une exception, refuse. */
++  verifierPlafond?: (agent: string, coutPrevuEuros: number) => Promise<unknown>
+ }
+ 
+ export const PLAFONDS = Object.freeze({
+@@ -47,6 +51,24 @@
+   eurosParAppel: 0,
+ })
+ 
++// ── le coût et le plafond, AVANT l'appel (plafond de 0 € par agent) ─────────────────────────────────────────────────────
++/** La liste fermée des voies dont la gratuité tient à leur nature (abonnement de Benj, machine locale) : toute autre voie a un coût INCONNU. */
++export const COUT_VOIE_EUROS: Readonly<Record<string, number>> = Object.freeze({ codex: 0, freellmapi: 0, ollama_local: 0, laya: 0 })
++function coutDeVoieParDefaut(id: string): number | undefined {
++  return Object.prototype.hasOwnProperty.call(COUT_VOIE_EUROS, id) ? COUT_VOIE_EUROS[id] : undefined
++}
++const coutValide = (c: unknown): c is number => typeof c === 'number' && Number.isFinite(c) && c >= 0
++/** La base dit oui (true) ou non ; une panne, un retour inattendu ou une exception REFUSENT : jamais « au mieux ». */
++async function verifierPlafondReel(agent: string, coutPrevuEuros: number): Promise<boolean> {
++  try {
++    const r = await ops_cout_autoriser({ p_agent: agent, p_montant_eur: coutPrevuEuros })
++    return r.ok === true && r.data === true
++  } catch { return false }
++}
++async function plafondAutorise(verifier: NonNullable<DepsLecteur['verifierPlafond']>, agent: string, cout: number): Promise<boolean> {
++  try { return (await verifier(agent, cout)) === true } catch { return false }
++}
++
+ // ── emballerDonnees / retirerCoordonnees (contrat inchangé de 026-041) ───────────────────────────────────────────────
+ /** Émballe la consigne pour l'entrée standard du lanceur ou le corps HTTP : jamais deux marques emboîtées. */
+ export function emballerDonnees(donnees: unknown): string {
+@@ -116,6 +138,7 @@
+ }
+ 
+ async function enregistrerCoutReel(agent: string, montant: number, detail: Record<string, unknown>): Promise<RetourCout> {
++  if (typeof montant !== 'number' || !Number.isFinite(montant) || montant < 0) return { coupe: true } // un coût inconnu n'est pas un coût nul
+   const fournisseur = typeof detail?.moteur === 'string' ? String(detail.moteur) : 'inconnu'
+   const r = await ops_cout_ajouter({ p_agent: agent, p_fournisseur: fournisseur, p_montant_eur: montant, p_detail: detail, p_tache: null })
+   if (!r.ok) return { coupe: true }
+@@ -300,6 +323,8 @@
+   const enregistrerCoutFn = deps.enregistrerCout ?? enregistrerCoutReel
+   const maintenantFn = deps.maintenant ?? Date.now
+   const attendreFn = deps.attendre ?? attendreReel
++  const coutDeVoieFn = deps.coutDeVoie ?? ((id: string) => coutDeVoieParDefaut(id))
++  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
+ 
+   const candidats = repli.voies
+     .map((v) => (typeof v === 'string' ? v : v.id))
+@@ -384,10 +409,15 @@
+     let derniereErreur: Error = new Error('attente : toutes les voies ont échoué')
+     for (const id of essais) {
+       if (coupe) throw new Error('exécution coupée (plafond de coût)')
++      // Vérifier → appeler → inscrire : le coût est celui de la liste fermée (inconnu ou non numérique : refusé), le plafond du jour
++      // est contrôlé AVANT l'appel, jamais constaté après coup.
++      const cout = coutDeVoieFn(id, { moteur: id })
++      if (!coutValide(cout)) throw new Error('coût inconnu : appel refusé')
++      if (!(await plafondAutorise(verifierPlafondFn, agent, cout))) throw new Error('plafond de coût : appel refusé avant consommation')
+       const resultat = await essayerUneVoie(id, systeme, donnees)
+ 
+       let retourCout: RetourCout
+-      try { retourCout = await enregistrerCoutFn(agent, 0, resultat.detail) }
++      try { retourCout = await enregistrerCoutFn(agent, cout, resultat.detail) }
+       catch (e) { coupe = true; throw e instanceof Error ? e : new Error(String(e)) }
+       if (retourCout && retourCout.coupe) { coupe = true; throw new Error('exécution coupée (plafond de coût)') }
+ 
+@@ -421,6 +451,9 @@
+   const estD1 = ctx.classe === 'D1'
+   const urlBase = estD1 ? lireOllamaUrl(env) : lireFreellmapiUrl(env)
+   if (!urlBase) return null
++  const coutConseil = coutDeVoieParDefaut(estD1 ? 'ollama_local' : 'freellmapi')
++  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
++  if (!coutValide(coutConseil) || !(await plafondAutorise(verifierPlafondFn, 'entraide', coutConseil))) return null
+ 
+   const derniers = (t: string, n: number) => (t.length > n ? t.slice(-n) : t)
+   const extraits = {
+@@ -443,10 +476,10 @@
+     }
+     const moteur = estD1 ? 'ollama' : 'freellmapi'
+     if (resultat.fournisseurReel && /^groq/i.test(resultat.fournisseurReel)) {
+-      await enregistrerCoutFn('entraide', 0, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
++      await enregistrerCoutFn('entraide', coutConseil, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
+       continue
+     }
+-    await enregistrerCoutFn('entraide', 0, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
++    await enregistrerCoutFn('entraide', coutConseil, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
+     const lignes = resultat.texte.split('\n').slice(0, 25).join('\n')
+     return { conseiller: modele, texte: lignes }
+   }
+@@ -465,6 +498,9 @@
+   if (opts.d1 && !estDrapeauLeve(env.IA_LOCALE_PROSPECTS_OUI, maintenantFn())) return null
+   const chemin = lireJevChemin(env)
+   if (!chemin) return null
++  const coutJev = coutDeVoieParDefaut('laya')
++  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
++  if (!coutValide(coutJev) || !(await plafondAutorise(verifierPlafondFn, 'laya', coutJev))) return null
+ 
+   const dirTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'presti-jev-'))
+   const fichierRequete = path.join(dirTmp, 'requete.json')
+@@ -495,7 +531,7 @@
+ 
+   let valeur: unknown = null
+   try { valeur = JSON.parse(stdout.trim()) } catch { valeur = null }
+-  await enregistrerCoutFn('laya', 0, { moteur: 'laya', mode })
++  await enregistrerCoutFn('laya', coutJev, { moteur: 'laya', mode })
+   return code === 0 ? valeur : null
+ }
+ 
+--- a/lib/agents/veilleur.ts
++++ b/lib/agents/veilleur.ts
+@@ -179,16 +179,16 @@
+     ajouter('vercel_pro', 'vercel', 1, 'Premier site vendu : c’est le moment de passer Vercel en Pro.', 'passer Vercel en Pro : c’est la seule dépense décidée')
+   }
+ 
+-  // 5. le coupe-circuit : 150 € sans recette
++  // 5. le coupe-circuit : tout euro de coût sans recette (plafond de 0 € par agent)
+   const couts = Number(etat?.couts_mois ?? 0)
+-  if (couts > 150) {
++  if (couts > 0) {
+     if (brut === null) ajouter('non_mesure', 'recette', 1, `Coûts du mois : ${arrondi(couts)} € ; la recette est inconnue, le coupe-circuit attend.`, 'vérifier que Stripe répond (onglet Aujourd’hui)')
+     else if (brut === 0) {
+       const epargne = (a: Agent) => ['a0', 'systeme'].includes(a.nom) || (a.capacites ?? []).some((c) => CAPACITES_EPARGNEES.includes(c))
+       const coupes = agents.filter((a) => !epargne(a) && !a.en_pause)
+-      for (const a of coupes) await ops_agent_pause({ p_nom: a.nom, p_pause: true, p_motif: 'coupe-circuit : 150 € dépensés sans recette' })
++      for (const a of coupes) await ops_agent_pause({ p_nom: a.nom, p_pause: true, p_motif: 'coupe-circuit : des euros dépensés sans recette' })
+       const mois = jour.slice(0, 7)
+-      await ops_decision_creer({ p_agent: 'a0', p_question: 'Coupe-circuit : 150 € dépensés ce mois sans aucune recette. Laisser les agents en pause ?', p_contexte: `Agents mis en pause : ${coupes.map((a) => a.nom).join(', ') || 'aucun'}.`, p_options: [{ cle: 'laisser_en_pause', libelle: 'Laisser en pause', recommandee: true }, { cle: 'reprendre', libelle: 'Reprendre', recommandee: false }], p_defaut: 'laisser_en_pause', p_montant_cents: null, p_portee: 'argent', p_echeance: new Date(t + 24 * HEURE).toISOString(), p_cle: `coupe_circuit:${mois}`, p_tache: null })
++      await ops_decision_creer({ p_agent: 'a0', p_question: 'Coupe-circuit : des euros dépensés ce mois sans aucune recette. Laisser les agents en pause ?', p_contexte: `Agents mis en pause : ${coupes.map((a) => a.nom).join(', ') || 'aucun'}.`, p_options: [{ cle: 'laisser_en_pause', libelle: 'Laisser en pause', recommandee: true }, { cle: 'reprendre', libelle: 'Reprendre', recommandee: false }], p_defaut: 'laisser_en_pause', p_montant_cents: null, p_portee: 'argent', p_echeance: new Date(t + 24 * HEURE).toISOString(), p_cle: `coupe_circuit:${mois}`, p_tache: null })
+       ajouter('coupe_circuit', mois, coupes.length, `Coupe-circuit : ${arrondi(couts)} € dépensés ce mois sans recette ; ${coupes.length} agent(s) en pause.`, 'trancher la décision du coupe-circuit dans la station')
+     }
+   }
+--- a/scripts/orchestre.mjs
++++ b/scripts/orchestre.mjs
+@@ -361,7 +361,8 @@
+   return texte.slice(0, i) + filtrees.join('\n') + reste.slice(finRel)
+ }
+ // Les trois catégories de questions que Benj seul tranche (gabarit decisions.md, § La règle).
+-const MOTS_SENSIBLES = /\b(argent|prix|paiement|payer|abonnement|achat|facture|crédit|budget|€|\$|supprim|irréversible|irrévocable|envoi|envoyer|publi|migration|marque|promesse|positionnement)\b/i
++// Bornes Unicode (\b ne connaît que l'ASCII : « crédit », « dépenser », « € » et « $ » lui échappaient) et radicaux élargis (tarif, coût, dollars…).
++const MOTS_SENSIBLES = /(?<![\p{L}\p{N}_])(?:argent|prix|tarif|pai(?:ement|e)|pay(?:er|ant|é)|abonnement|ach(?:at|et|ète|eter)|factur|cr[ée]dit|budget|d[ée]pens|co[uû]t|euro|dollar|usd|plafond|supprim|irr[ée]versible|irr[ée]vocable|envoi|envoy|publi|migration|marque|promesse|positionnement)\p{L}*|[€$]/iu
+ // init() pose decisions.md depuis le gabarit du dépôt outil (hors périmètre de cette fiche : gabarits/** est
+ // interdit) — la section de quarantaine est donc garantie ICI, dans le code, quel que soit le contenu du
+ // gabarit lu : un projet neuf a toujours « ## Proposées (quarantaine) », même si le gabarit ne l'a pas encore.
+--- a/scripts/pilotage-recette.mjs
++++ b/scripts/pilotage-recette.mjs
+@@ -283,7 +283,7 @@
+     {
+       const e = []
+       agent = `essai_e2e_${ALEA}`
+-      const r0 = await rpc('ops_agent_enregistrer', { p_nom: agent, p_libelle: `Essai recette ${ALEA}`, p_capacites: ['decider'], p_types_crees: [], p_tables: [], p_periode_minutes: 60, p_debit_minute: 1, p_quota_creations_jour: 5, p_plafond_euros_jour: 1 })
++      const r0 = await rpc('ops_agent_enregistrer', { p_nom: agent, p_libelle: `Essai recette ${ALEA}`, p_capacites: ['decider'], p_types_crees: [], p_tables: [], p_periode_minutes: 60, p_debit_minute: 1, p_quota_creations_jour: 5, p_plafond_euros_jour: 0 })
+       if (!r0.ok) throw new Error(`ops_agent_enregistrer : ${r0.status} ${court(JSON.stringify(r0.corps), 100)}`)
+       const creer = async (portee, montant) => { const r = await rpc('ops_decision_creer', { p_agent: agent, p_question: `Décision d’essai ${ALEA} (${portee ?? 'sans enjeu'}) ?`, p_contexte: `essai-pilotage-${ALEA}`, p_options: [{ cle: 'oui', libelle: 'Oui' }, { cle: 'non', libelle: 'Non' }], p_defaut: 'non', p_montant_cents: montant, p_portee: portee, p_echeance: new Date(Date.now() + 3_600_000).toISOString(), p_cle: `essai-pilotage-${ALEA}-${portee ?? 'libre'}`, p_tache: null }); if (!r.ok) throw new Error(`ops_decision_creer : ${r.status}`); const id = typeof r.corps === 'string' ? r.corps : r.corps?.id ?? r.corps?.[0]?.id; decisions.push(id); return id }
+       const d1 = await creer(null, null), d2 = await creer('argent', 100)
+--- a/scripts/coentreprise.mjs
++++ b/scripts/coentreprise.mjs
+@@ -13,6 +13,7 @@
+ import fs from 'fs'
+ import path from 'path'
+ import { fileURLToPath } from 'url'
++import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../lib/agents/depense.mjs'
+ 
+ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+ const KDIR = path.join(ROOT, '.claude', 'agents', 'knowledge')
+@@ -28,6 +29,8 @@
+ const BETA_MEM = 'agent-memory-2026-07-22'
+ const base = { 'x-api-key': K, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }
+ const api = async (p, { beta = BETA_AGENTS, ...o } = {}) => {
++  const garde = autoriserDepense({ agent: 'coentreprise', fournisseur: 'anthropic_api', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
++  if (!garde.ok) throw new Error(`dépense refusée (${garde.motif}) : une session Managed Agents se paie, seul un jeton de dépense de Benj l'autorise`)
+   const r = await fetch('https://api.anthropic.com' + p, { ...o, headers: { ...base, 'anthropic-beta': beta, ...(o.headers || {}) } })
+   const t = await r.text(); let j; try { j = JSON.parse(t) } catch { j = t }
+   if (r.status >= 400) throw new Error(`${p} -> ${r.status} ${typeof j === 'object' ? JSON.stringify(j).slice(0, 300) : j}`)
+--- a/scripts/savoir/chercher.mjs
++++ b/scripts/savoir/chercher.mjs
+@@ -17,6 +17,7 @@
+ import path from 'node:path'
+ import crypto from 'node:crypto'
+ import { fileURLToPath } from 'node:url'
++import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../../lib/agents/depense.mjs'
+ import { chercher, classesPour } from '../../lib/savoir/recherche.ts'
+ import { chercherIndex } from '../../lib/savoir/index.ts'
+ import { MOTEUR_DE } from '../../lib/agents/moteurs.ts'
+@@ -134,6 +135,8 @@
+   // Le compteur que lireAvecFirecrawl exige : la réserve de départ (pas un solde), daté du jour, sourcé.
+   const credits = { plafond: Math.min(Math.max(1, reserve), 1000), consommes, date: new Date(horloge.maintenant()).toISOString(), source: 'credits-firecrawl.json (registre de l\'usine)' }
+   const appel = async (operation, corps, entetes) => {
++    const garde = autoriserDepense({ agent: 'savoir', fournisseur: 'firecrawl', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
++    if (!garde.ok) return { statut: 403, corps: { refus: `depense_${garde.motif}` } }
+     const r = await fetch(`${HOTE_FIRECRAWL}/v1/${operation}`, { method: 'POST', headers: { ...entetes, 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: AbortSignal.timeout(60000) })
+     return { statut: r.status, corps: await r.json().catch(() => null) }
+   }
+@@ -151,6 +154,8 @@
+ function transportPerplexity(cle) {
+   if (!cle) return undefined
+   return async (question) => {
++    const garde = autoriserDepense({ agent: 'savoir', fournisseur: 'perplexity', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
++    if (!garde.ok) return { refus: `depense_${garde.motif}` }
+     let r
+     try { r = await fetch(`${HOTE_PERPLEXITY}/chat/completions`, { method: 'POST', headers: { authorization: `Bearer ${cle}`, 'content-type': 'application/json' }, body: JSON.stringify({ model: 'sonar', messages: [{ role: 'user', content: question }] }), signal: AbortSignal.timeout(60000) }) } catch { return { refus: 'panne' } }
+     if (!r.ok) return { refus: `statut_${r.status}` }
+--- a/scripts/agents/mesure-a-sec.mjs
++++ b/scripts/agents/mesure-a-sec.mjs
+@@ -25,6 +25,7 @@
+ import crypto from 'node:crypto'
+ import { spawn } from 'node:child_process'
+ import { fileURLToPath } from 'node:url'
++import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../../lib/agents/depense.mjs'
+ 
+ const HOTE_USINE = 'presti-usine'
+ const SOURCE = fileURLToPath(import.meta.url)
+@@ -256,6 +257,8 @@
+ }
+ async function firecrawlReel(operation, corps, entetes) {
+   if (operation !== 'scrape') return { statut: 400, corps: null } // la mesure ne fait que lire une page
++  const garde = autoriserDepense({ agent: 'mesure_a_sec', fournisseur: 'firecrawl', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
++  if (!garde.ok) return { statut: 403, corps: null }
+   // Appel à l'API de Firecrawl (pas au site) : le corps ne porte que l'URL publique de la page.
+   const r = await fetch('https://api.firecrawl.dev/v1/scrape', { method: 'POST', headers: { ...entetes, 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: AbortSignal.timeout(60_000) })
+   return { statut: r.status, corps: await r.json().catch(() => null) }
+--- a/reprise-cloud/docs/Ecosysteme-Plan-2026-09-24.md
++++ b/reprise-cloud/docs/Ecosysteme-Plan-2026-09-24.md
+@@ -264,7 +264,7 @@
+ **Coûts fixes nouveaux :**
+ - **Phase 1 :** Vercel Pro, 20 $/mois (prix relevé par les plans 1 et 2 le 24/09). Il est obligatoire de toute façon, puisque Presti encaisse. Le dépôt privé de sauvegarde : 0 € [à vérifier selon l'offre GitHub].
+ - **Phase 2 :** s'ajoutent :
+-  - la clé « agents » : plafond de 30 $, 10 à 20 € réellement dépensés au départ [supposé] ;
++  - la clé « agents » : plafond de 30 $, 10 à 20 € réellement dépensés au départ [supposé] ; (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent)
+   - éventuellement Supabase Pro (25 $), dès que le stockage partagé dépasse 60 %, et GitHub Pro (4 $) [à vérifier] ;
+   - le canal e-mail s'il est retenu : domaine d'environ 10 €/an plus les boîtes [prix à vérifier].
+ - **Phase 3 :** Alexya, formule à 9 $/mois d'abord (environ 13 vidéos, assez pour 5 échantillons), si le test D est lancé ; et une consultation juridique unique de 150 à 300 € [supposé], **avant** le test D.
+@@ -515,7 +515,7 @@
+   - Jamais de clé Stripe en écriture pour un agent.
+   - Toute dépense nouvelle est une décision reconfirmée.
+ - **Les plafonds sont posés chez le fournisseur**, pas dans une consigne :
+-  - clé Anthropic « agents » : 30 $/mois, alertes à 50 % et 80 % ;
++  - clé Anthropic « agents » : 30 $/mois, alertes à 50 % et 80 % ; (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent)
+   - Alexya : formule fixe, sans recharge automatique ;
+   - Apify : non utilisé, plafonné à 10 $ s'il sert un jour.
+ - **Coupe-circuit** : au-delà de 150 € de coûts dans le mois sans aucune recette, A0 met tout en pause sauf la livraison et le support, et ouvre une décision.
+--- a/reprise-cloud/docs/Ecosysteme-Prospection-Gratuite-2026-09-24.md
++++ b/reprise-cloud/docs/Ecosysteme-Prospection-Gratuite-2026-09-24.md
+@@ -106,7 +106,7 @@
+   - Le compte Oracle date du 24/09. L'essai de 30 jours finit vers le 24/10, en plein P1-P2 : toute ressource hors Always Free sera supprimée [^oracle-faq].
+   - Ensuite, Oracle reprend une instance dont le p95 du CPU, du réseau et de la mémoire reste sous 20 % sur 7 jours [^oracle-faq]. L'épreuve « PC éteint 24 h » ne prouve pas ce critère.
+   - D'où l'inventaire Always Free avant le 24/10 et l'alerte du Veilleur sur la mémoire (§3.2).
+-- **R16, la clé « agents »** : plafond de 30 $/mois, décidé avant ce choix. Elle ne fait pas partie de l'outillage e-mail.
++- **R16, la clé « agents »** : plafond de 30 $/mois, décidé avant ce choix. Elle ne fait pas partie de l'outillage e-mail. (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent)
+ 
+ ---
+ 
+--- a/reprise-cloud/docs/Ecosysteme-Recherche-Agents-2026-09-24.md
++++ b/reprise-cloud/docs/Ecosysteme-Recherche-Agents-2026-09-24.md
+@@ -453,7 +453,7 @@
+ ### R6. Des plafonds par exécution, en plus du plafond mensuel
+ 
+ - **Pourquoi.**
+-  - La clé « agents » à 30 $/mois du plan protège le mois. Une boucle peut pourtant la vider en une nuit, et **une alerte n'arrête rien** [B].
++  - La clé « agents » à 30 $/mois du plan protège le mois. Une boucle peut pourtant la vider en une nuit, et **une alerte n'arrête rien** [B]. (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent)
+   - Dans l'Agent SDK, `maxTurns` et `maxBudgetUsd` coupent l'exécution elle-même [O].
+   - Une session Managed Agents se paie en jetons, plus 0,08 $ par heure de session active [O].
+   - L'IA du produit le fait déjà : 4 tours et 40 s au plus [M].
+--- a/reprise-cloud/docs/Ecosysteme-Rectification-2026-09-24.md
++++ b/reprise-cloud/docs/Ecosysteme-Rectification-2026-09-24.md
+@@ -861,8 +861,8 @@
+ | R12 | **Le Chef 24 h/24** | Sur l'usine, par Codex GPT-6 sol (ta décision du 24/09), au lieu de tâches Windows qui ne tournent que PC allumé | Abonnement existant | avec 026-121 |
+ | R13 | **Expérience isolée** | Aucune avant la première vente. Ensuite, par exemple, le test D (Studio e-commerce), après la note du juriste | Budget à fixer par toi | après la 1re vente |
+ | R14 | **Réservation d'appel** | Une page maison dans le Poste : elle crée directement la carte « À appeler » | 0 €. Cal.com : 0 $, mais ses webhooks seraient réservés à Teams, à 12 $ par utilisateur et par mois en annuel [à vérifier] | avant P1 |
+-| R15 | **Pub Meta à formulaire** (et audience « a interagi avec @prestiapp ») | Facultative. Seulement une fois le compte publié régulièrement | Budget à ton choix [par exemple 5 €/jour, supposé] | après R6 |
+-| R16 | **Clé « agents »** | Plafond de 30 $/mois ; alerte en Attention à 80 % | 30 $/mois de plafond | avec 026-043 |
++| R15 | **Pub Meta à formulaire** (et audience « a interagi avec @prestiapp ») | Facultative. Seulement une fois le compte publié régulièrement | Budget à ton choix [par exemple 5 €/jour, supposé] | après R6 (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent) |
++| R16 | **Clé « agents »** | Plafond de 30 $/mois ; alerte en Attention à 80 % | 30 $/mois de plafond | avec 026-043 (annulé le 25/09 : aucun achat, décision de Benj ; plafond de 0 € par agent) |
+ | R17 | **Vercel Pro** | Toujours en suspens : tu as demandé une alternative (`Journal-Decisions.md:12`). L'offre Hobby interdit l'usage commercial | 20 $/mois | déjà ouverte |
+ | R18 | **Fusion humaine du code** | Seulement pour le code de l'argent et de la sécurité ; le reste fusionne sous juge. C'est un écart assumé avec la règle actuelle d'A12 (plan l.326) | 0 € | phase 3 |
+ | R19 | **Jeton Meta** | Un jeton d'utilisateur système, pour ne plus le reposer tous les 55 jours [à vérifier pour `ads_archive`] | 0 € | avec 026-059 |
+--- a/lib/agents/depense.mjs
++++ b/lib/agents/depense.mjs
+@@ -0,0 +1,57 @@
++// lib/agents/depense.mjs — le point de contrôle UNIQUE de la dépense des agents (plafond de 0 € par agent). JavaScript pur, importable
++// par un script comme par du TypeScript : ni réseau, ni base, ni secret lu ailleurs que dans l'environnement qu'on lui passe.
++//
++// Règle : un agent ne dépense rien. Une voie dont la gratuité tient à sa nature (abonnement de Benj, machine locale) est dans la liste
++// fermée GRATUITS et passe à 0 €. Tout le reste — une voie payante, une voie inconnue, un coût > 0 — exige un JETON DE DÉPENSE émis par
++// Benj : { emis_par: 'benj', fournisseur, montant_max_eur > 0, expire_le (futur), signature (hex, 64) }, dont la signature est vérifiée
++// (HMAC-SHA256 avec PRESTI_SECRET_DEPENSE, que Benj seul détient). Un coût inconnu ou non numérique est refusé, jamais compté 0.
++// Sans vérificateur de signature et sans secret, un jeton est REFUSÉ : fail-closed.
++import crypto from 'node:crypto'
++
++/** La liste fermée : ces voies sont gratuites par nature (abonnement ChatGPT de Benj, IA locale de l'usine). */
++export const GRATUITS = Object.freeze(['codex', 'freellmapi', 'ollama_local', 'laya'])
++
++/** Le coût déclaré d'un fournisseur : 0 pour la liste fermée, sinon INCONNU (undefined). */
++export function coutDeclare(fournisseur) { return GRATUITS.includes(fournisseur) ? 0 : undefined }
++
++/** L'estimation de coût (en euros) que Benj pose dans PRESTI_COUT_ESTIME_EUR avec son jeton ; absente ou illisible : undefined. */
++export function coutEstimeDeLEnv(env = process.env) {
++  const v = env?.PRESTI_COUT_ESTIME_EUR
++  if (typeof v !== 'string' || !/^\d+(?:\.\d+)?$/.test(v.trim())) return undefined
++  return Number(v)
++}
++
++/** Le jeton de dépense de Benj, lu dans PRESTI_JETON_DEPENSE (JSON) ; null s'il est absent ou illisible. */
++export function jetonDepenseDeLEnv(env = process.env) {
++  try { const j = JSON.parse(env?.PRESTI_JETON_DEPENSE ?? ''); return j && typeof j === 'object' && !Array.isArray(j) ? j : null } catch { return null }
++}
++
++/** La vérification par défaut : HMAC-SHA256(secret, fournisseur|montant|expiration) ; pas de secret de 32 signes au moins : faux. */
++export function verifierSignatureParDefaut(jeton, env = process.env) {
++  const secret = env?.PRESTI_SECRET_DEPENSE
++  if (typeof secret !== 'string' || secret.length < 32) return false
++  const attendue = crypto.createHmac('sha256', secret).update(`${jeton.fournisseur}|${jeton.montant_max_eur}|${jeton.expire_le}`).digest()
++  const recue = Buffer.from(String(jeton.signature), 'hex')
++  return recue.length === attendue.length && crypto.timingSafeEqual(recue, attendue)
++}
++
++/** → { ok, motif }. Ne lève jamais : un refus se rend. deps : { maintenant?: () => number, verifierSignature?: (jeton) => boolean, env? }. */
++export function autoriserDepense(demande, deps = {}) {
++  const refus = (motif) => ({ ok: false, motif })
++  try {
++    if (!demande || typeof demande !== 'object' || Array.isArray(demande)) return refus('demande_invalide')
++    const { agent, fournisseur, cout_eur: cout, jeton_depense: jeton } = demande
++    if (typeof agent !== 'string' || !agent || typeof fournisseur !== 'string' || !fournisseur) return refus('demande_invalide')
++    if (typeof cout !== 'number' || !Number.isFinite(cout) || cout < 0) return refus('cout_inconnu')
++    if (GRATUITS.includes(fournisseur) && cout === 0) return { ok: true, motif: 'gratuit' }
++    if (!jeton || typeof jeton !== 'object' || Array.isArray(jeton)) return refus('jeton_absent')
++    const maintenant = (deps.maintenant ?? Date.now)()
++    const expire = Date.parse(jeton.expire_le)
++    const borne = typeof jeton.montant_max_eur === 'number' && Number.isFinite(jeton.montant_max_eur) && jeton.montant_max_eur > 0
++    if (jeton.emis_par !== 'benj' || jeton.fournisseur !== fournisseur || !borne || !Number.isFinite(expire) || expire <= maintenant || !/^[0-9a-f]{64}$/i.test(String(jeton.signature))) return refus('jeton_invalide')
++    if (cout > jeton.montant_max_eur) return refus('jeton_insuffisant')
++    const verifier = deps.verifierSignature ?? ((j) => verifierSignatureParDefaut(j, deps.env ?? process.env))
++    if (verifier(jeton) !== true) return refus('signature_refusee')
++    return { ok: true, motif: 'jeton_de_benj' }
++  } catch { return refus('erreur') }
++}
+--- a/supabase/migrations/0121_plafond_avant_coup.sql
++++ b/supabase/migrations/0121_plafond_avant_coup.sql
+@@ -0,0 +1,92 @@
++-- ============================================================================================
++-- 0121 · Le plafond de 0 € par agent, contrôlé AVANT la dépense (règle du 30/09 : l'écosystème agit seul, le plafond est mécanisé)
++--        Témoin du juge scripts/garde-plafond-qa.mjs : le correctif minimal que Claude Code reportera.
++--
++-- Ce que ce fichier change :
++--   · le plafond par défaut d'un agent passe de 1 € (0096) à 0 € ; les lignes déjà semées au défaut (0096 sème sans plafond) sont remises à 0 ;
++--   · ops_cout_autoriser (NOUVELLE) : dit oui ou non AVANT l'appel d'une voie ; un coût NULL, NaN ou négatif est refusé, un agent inconnu est
++--     refusé, et un dépassement du plafond du jour met l'agent en pause et ouvre une décision d'argent (comme avant, mais avant le coût) ;
++--   · ops_cout_ajouter (REMPLACÉE) : refuse un montant inconnu (ops:cout_inconnu) et un dépassement (ops:plafond) AVANT d'inscrire la
++--     ligne ; elle ne rend plus un total constaté après coup.
++-- Rejouable sans dommage (create or replace, alter … set default, update idempotent).
++-- ============================================================================================
++
++alter table ops.agents alter column plafond_euros_jour set default 0;
++update ops.agents set plafond_euros_jour = 0 where plafond_euros_jour <> 0;
++
++create or replace function public.ops_cout_autoriser(p_agent text, p_montant_eur numeric)
++returns boolean
++language plpgsql
++security definer
++set search_path = ops, public, pg_temp
++as $$
++declare
++  v_agent ops.agents%rowtype;
++  v_jour timestamptz;
++  v_total numeric;
++begin
++  if p_montant_eur is null or p_montant_eur = 'NaN'::numeric or p_montant_eur < 0 then
++    return false;
++  end if;
++  select a.* into v_agent from ops.agents a where a.nom = p_agent and a.retire_le is null;
++  if not found then
++    return false;
++  end if;
++  v_jour := date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris';
++  select coalesce(sum(c.montant_eur), 0) into v_total from ops.couts c where c.agent = p_agent and c.le >= v_jour;
++  if v_total + p_montant_eur > v_agent.plafond_euros_jour then
++    if not v_agent.en_pause then
++      perform public.ops_agent_pause(p_agent, true, 'plafond de coûts du jour atteint');
++      perform public.ops_decision_creer(p_agent,
++        left('L''agent ' || p_agent || ' a atteint son plafond du jour (' || to_char(v_agent.plafond_euros_jour, 'FM999990.00') || ' euros) : il est en pause. Le reprendre ou le laisser en pause ?', 300),
++        left('coût prévu : ' || to_char(p_montant_eur, 'FM999999990.0000') || ' euros ; déjà dépensé aujourd''hui : ' || to_char(v_total, 'FM999999990.00') || ' euros', 2000),
++        jsonb_build_array(jsonb_build_object('cle', 'reprendre', 'libelle', 'Reprendre l''agent', 'recommandee', false),
++                          jsonb_build_object('cle', 'laisser_en_pause', 'libelle', 'Le laisser en pause', 'recommandee', true)),
++        'laisser_en_pause', null, 'argent', now() + interval '24 hours',
++        'cout_plafond:' || p_agent || ':' || (extract(epoch from now()) * 1000000)::bigint, null);
++    end if;
++    return false;
++  end if;
++  return true;
++end
++$$;
++revoke all on function public.ops_cout_autoriser(text, numeric) from public, anon, authenticated;
++grant execute on function public.ops_cout_autoriser(text, numeric) to service_role;
++comment on function public.ops_cout_autoriser(text, numeric) is
++  'Contrôle AVANT la dépense (0121) : vrai si total du jour + montant prévu tient dans plafond_euros_jour ; faux pour un montant NULL, NaN ou négatif, un agent inconnu ou un dépassement (qui met l''agent en pause et ouvre une décision d''argent).';
++
++create or replace function public.ops_cout_ajouter(p_agent text, p_fournisseur text, p_montant_eur numeric, p_detail jsonb, p_tache uuid)
++returns numeric
++language plpgsql
++security definer
++set search_path = ops, public, pg_temp
++as $$
++declare
++  v_agent ops.agents%rowtype;
++  v_jour timestamptz;
++  v_total numeric;
++begin
++  if p_montant_eur is null or p_montant_eur = 'NaN'::numeric or p_montant_eur < 0 then
++    raise exception using message = 'ops:cout_inconnu', errcode = 'P0001';
++  end if;
++  select a.* into v_agent from ops.agents a where a.nom = p_agent for update;
++  if not found then
++    raise exception using message = 'ops:agent_inconnu', errcode = 'P0001';
++  end if;
++  v_jour := date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris';
++  select coalesce(sum(c.montant_eur), 0) into v_total from ops.couts c where c.agent = p_agent and c.le >= v_jour;
++  if v_total + p_montant_eur > v_agent.plafond_euros_jour then
++    raise exception using message = 'ops:plafond', errcode = 'P0001';
++  end if;
++  insert into ops.couts (agent, fournisseur, montant_eur, detail, tache_id)
++  values (p_agent, p_fournisseur, p_montant_eur, coalesce(p_detail, '{}'::jsonb), p_tache);
++  insert into ops.evenements (agent, type, objet, resume, tache_id)
++  values (p_agent, 'cout', left('cout:' || p_fournisseur, 200),
++          left('coût de ' || to_char(p_montant_eur, 'FM999999990.0000') || ' euros chez ' || p_fournisseur, 200), p_tache);
++  return v_total + p_montant_eur;
++end
++$$;
++revoke all on function public.ops_cout_ajouter(text, text, numeric, jsonb, uuid) from public, anon, authenticated;
++grant execute on function public.ops_cout_ajouter(text, text, numeric, jsonb, uuid) to service_role;
++comment on function public.ops_cout_ajouter(text, text, numeric, jsonb, uuid) is
++  'Inscrit un coût APRÈS l''avoir contrôlé (0121) : montant NULL, NaN ou négatif = ops:cout_inconnu ; total du jour + montant au-dessus de plafond_euros_jour = ops:plafond, rien n''est inscrit. Rend le total du jour de Paris. Agent absent : ops:agent_inconnu.';

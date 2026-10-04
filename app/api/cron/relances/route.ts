@@ -8,12 +8,19 @@ import { purgerRgpd } from '@/lib/purgesRgpd'
 import { purgerPacksExpires } from '@/lib/packPubPurge'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
+import { sortiePermise } from '@/lib/agents/sortie'
 import { relever } from '@/lib/direction/courriers'
 import { actif } from '@/lib/flags'
 import { tourLivraison } from '@/lib/siteLivraison'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
+//
+// Pause générale (décision du 30/09) : elle est lue AVANT toute lecture de contact, puis RELUE à chaque relance ; posée, ou dans le
+// doute, rien ne part (ni mail, ni appel au modèle, ni livraison). Le bouton « purges-rgpd » rejoue ce même passage : les purges
+// (qui effacent, n'envoient rien) continuent de tourner sous pause. Un passage envoie au plus MAX_PAR_PASSAGE relances, et une
+// relance est PRISE (envoyee: true, conditionnelle) avant tout envoi : deux passages simultanés ou rejoués ne l'envoient jamais deux fois.
+const MAX_PAR_PASSAGE = 100
 export async function GET(req: Request) {
   // Sécurité (fail-closed) : le secret est OBLIGATOIRE. Sans CRON_SECRET configuré,
   // ou avec un mauvais header, l'endpoint refuse (évite tout déclenchement public d'emails/IA).
@@ -35,19 +42,29 @@ export async function GET(req: Request) {
 
   const nowIso = new Date().toISOString()
 
-  const { data: relances, error } = await supabaseAdmin
-    .from('relances')
-    .select('id, lead_id, rang, planifiee_le')
-    .eq('envoyee', false)
-    .lte('planifiee_le', nowIso)
-    .limit(100)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // La pause d'abord : aucune lecture de relance ni de contact tant qu'on ne sait pas que la sortie est permise.
+  const enPause = !(await sortiePermise()).permise
+  let relances: { id: string; lead_id: string; rang: number | null; planifiee_le: string }[] = []
+  if (!enPause) {
+    const lecture = await supabaseAdmin
+      .from('relances')
+      .select('id, lead_id, rang, planifiee_le')
+      .eq('envoyee', false)
+      .lte('planifiee_le', nowIso)
+      .limit(MAX_PAR_PASSAGE)
+    if (lecture.error) return NextResponse.json({ error: lecture.error.message }, { status: 500 })
+    relances = lecture.data ?? []
+  }
 
   let sent = 0
   let skipped = 0
+  let interrompue = false
+  let plafond = false
+  const contactes = new Set<string>()
 
-  for (const r of relances ?? []) {
+  for (const r of relances) {
+    // La pause est relue à CHAQUE relance : posée en cours de passage, le lot s'arrête ici.
+    if (!(await sortiePermise()).permise) { interrompue = true; break }
     // Charger le lead
     const { data: lead } = await supabaseAdmin
       .from('leads')
@@ -71,6 +88,13 @@ export async function GET(req: Request) {
     // Compte suspendu par la direction (v15 §5) : on n'écrit pas à ses prospects en son nom. La relance n'est pas
     // marquée envoyée : elle repart à la réactivation.
     if (await suspensionEnCours(lead.artisan_id)) { skipped++; continue }
+
+    // Un prospect ne reçoit qu'une relance par passage ; la suivante reste due et repart demain.
+    if (contactes.has(lead.id)) { skipped++; continue }
+    // Prise de la relance AVANT toute dépense (modèle, mail) : la mise à jour est conditionnelle, donc atomique. Un second passage
+    // (simultané, rejoué par le bouton, ou après une écriture en panne) ne la prend pas et n'envoie rien.
+    const prise = await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id).eq('envoyee', false).select('id')
+    if (prise.error || !prise.data?.length) { skipped++; continue }
 
     const rang = r.rang ?? 1
 
@@ -108,12 +132,21 @@ export async function GET(req: Request) {
         // relance signée du nom de l'éditeur. Sans nom d'artisan, on n'écrit rien du tout.
         subject: artisan?.nom ? `Suite à votre demande — ${artisan.nom}` : 'Suite à votre demande',
         text,
-        fromName: artisan?.nom ?? undefined,
+        fromName: artisan?.nom?.trim() || 'Votre artisan',
         replyTo: artisan?.email ?? undefined,
       })
       // Email refusé (plafond, Resend en panne) : la relance reste due, on réessaiera demain —
       // avant, elle était marquée envoyée et tracée dans le fil sans être partie (F, majeur 5).
-      if (!envoi.ok) { console.error('[cron/relances] email non parti', r.id, envoi.error); skipped++; continue }
+      if (!envoi.ok) {
+        console.error('[cron/relances] email non parti', r.id, envoi.error)
+        // Relâcher la prise : la relance reste due et repart demain.
+        await supabaseAdmin.from('relances').update({ envoyee: false }).eq('id', r.id)
+        skipped++
+        // Plafond du jour atteint : inutile d'insister, tous les envois suivants seraient refusés de même.
+        if (/plafond/i.test(envoi.error ?? '')) { plafond = true; break }
+        continue
+      }
+      contactes.add(lead.id)
     }
 
     await supabaseAdmin.from('messages').insert({
@@ -123,7 +156,6 @@ export async function GET(req: Request) {
       contenu: text,
     })
 
-    await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
     sent++
   }
 
@@ -159,7 +191,7 @@ export async function GET(req: Request) {
   let alertes: { envoyees: number; ignorees: number } | { erreur: string } = { envoyees: 0, ignorees: 0 }
   try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
   catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
-  try { await tourLivraison() } catch (e) { console.error('[cron/relances] livraison', e) }
+  if (!enPause && !interrompue) { try { await tourLivraison() } catch (e) { console.error('[cron/relances] livraison', e) } }
   // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
@@ -174,8 +206,8 @@ export async function GET(req: Request) {
     : releveNonConfiguree ? 'boîte non configurée sur cet environnement'
     : `ÉCHEC — ${(courriers as { erreur?: string })?.erreur ?? 'raison inconnue'}`.slice(0, 180)
   await enregistrerPassage('relances', {
-    due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
+    due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
 }

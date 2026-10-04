@@ -247,10 +247,10 @@ const LICENCES_URL = {
   'CC BY 2.0': 'https://creativecommons.org/licenses/by/2.0/deed.fr', 'CC BY 3.0': 'https://creativecommons.org/licenses/by/3.0/deed.fr', 'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/deed.fr',
   'CC BY-SA 2.0': 'https://creativecommons.org/licenses/by-sa/2.0/deed.fr', 'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/deed.fr', 'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/deed.fr',
 }
-// attributions.json → « modifiee » : « Oui — étalonnée (…) par Presti pour ce site de démonstration ». Une photo étalonnée
+// attributions.json → « modifiee » : « Oui — étalonnée (…) ». Une photo étalonnée
 // ou recadrée se signale « modifiée » ; une photo CC BY-SA modifiée est une adaptation, sous la même licence.
 const estModifiee = (a) => /^oui\b/i.test(String(a.modifiee || '').trim())
-const detailModif = (a) => String(a.modifiee || '').trim().replace(/^oui\s*[—–-]?\s*/i, '').replace(/\s*par Presti\b.*$/i, '')
+const detailModif = (a) => String(a.modifiee || '').trim().replace(/^oui\s*[—–-]?\s*/i, '').replace(/\s+pour ce site de démonstration\s*$/i, '')
 const partageIdentique = (licence) => /BY-SA/i.test(licence)
 
 // ── Images ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -292,8 +292,8 @@ function liensIndex(html) {
 
 function commandeVersSite(commande, contenu) {
   const fichierUrls = fs.readFileSync(path.join(ICI, '..', '..', 'lib', 'urls.ts'), 'utf8')
-  const basePresti = /export\s+const\s+BASE_PRESTI\s*=\s*['"](https:\/\/[^'"]+)['"]/.exec(fichierUrls)?.[1]
-  if (!basePresti) throw new Error('BASE_PRESTI introuvable dans lib/urls.ts')
+  const baseHebergee = /export\s+const\s+BASE_[A-Z]+\s*=\s*['"](https:\/\/[^'"]+)['"]/.exec(fichierUrls)?.[1]
+  if (!baseHebergee) throw new Error('adresse de base d’hébergement introuvable dans lib/urls.ts')
   if (!commande.domaine && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(commande.id || '')) throw new Error('identifiant UUID de commande requis sans domaine')
   const artisan = commande.matiere?.artisan
   const pages = Object.entries(contenu.pages || {}).map(([chemin, page]) => ({
@@ -306,7 +306,7 @@ function commandeVersSite(commande, contenu) {
     siren: commande.matiere?.siren, decennale: commande.matiere?.decennale,
     communes: commande.communes, metiers_secondaires: commande.metiers_secondaires || [],
     demo: false, pages,
-    url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site-genere/${commande.id}`,
+    url_base: commande.domaine ? `https://${commande.domaine}` : `${baseHebergee}/site-genere/${commande.id}`,
     devis: commande.devis, artisan,
     plateau: { chiffres: artisan?.chiffres ?? null },
   }
@@ -859,8 +859,8 @@ ${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify
       // le relief du héros déforme la photo à l’écran (carte de profondeur tirée de l’image) : c’est une modification, dite ici
       if (da.relief && groupe.some((x) => x.base === da.relief.photo)) d = `${d} ; sur ordinateur, animée en relief à partir d’une carte de profondeur calculée depuis la photo`
       modif = partageIdentique(p.licence)
-        ? `Modifiée — adaptation : ${d}, par Presti. L’adaptation est diffusée sous la même licence, ${p.licence}.`
-        : `Modifiée : ${d}, par Presti.`
+        ? `Modifiée — adaptation : ${d}. L’adaptation est diffusée sous la même licence, ${p.licence}.`
+        : `Modifiée : ${d}.`
     }
     return `<li><span>${esc(p.legende)}</span><span>— ${esc(p.auteur)}</span><span>(${licence})</span><span>${esc(modif)}</span><a href="${p.source}" rel="noopener" target="_blank">page du fichier</a></li>`
   }
@@ -876,13 +876,13 @@ ${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify
     return `<ul class="credits">${groupesCredits(photosCredits).map(entreeCredit).join('')}${autresCredits.map(entreeCreditNonPhoto).join('')}</ul>`
   }
   const texteCredits = () => {
-    if (!options.source) return `Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. ${photosUtilisees.every(estModifiee) ? 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.' : 'Toutes ont été redimensionnées et converties pour le web ; celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}`
+    if (!options.source) return `Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. ${photosUtilisees.every(estModifiee) ? 'Toutes ont été redimensionnées et converties pour le web, et modifiées : étalonnées, et recadrées pour certaines.' : 'Toutes ont été redimensionnées et converties pour le web ; celles dites « modifiée » ont aussi été étalonnées ou recadrées.'}`
     const origines = []
     if (photosUtilisees.some((p) => /commons\.wikimedia\.org/i.test(p.source))) origines.push('Des photographies proviennent de Wikimedia Commons, sous licence libre')
     for (const auteur of new Set(photosUtilisees.filter((p) => p.licence === 'propriétaire').map((p) => p.auteur))) origines.push(`Des photographies appartiennent à ${esc(auteur)}`)
     const autres = photosUtilisees.filter((p) => !/commons\.wikimedia\.org/i.test(p.source) && p.licence !== 'propriétaire')
     if (autres.length) origines.push(origines.length ? 'D’autres photographies sont publiées par leurs auteurs sous les licences indiquées' : 'Les photographies sont publiées par leurs auteurs sous les licences indiquées')
-    return `${origines.join('. ')}. Chaque auteur, licence et origine figure ci-dessous.${photosUtilisees.some(estModifiee) ? ' Les photos indiquées comme modifiées ont été modifiées par Presti.' : ''}`
+    return `${origines.join('. ')}. Chaque auteur, licence et origine figure ci-dessous.${photosUtilisees.some(estModifiee) ? ' Les photos indiquées comme modifiées ont été modifiées.' : ''}`
   }
   function legale(page) {
     const c = contenu.pages[page.chemin]
@@ -1062,7 +1062,7 @@ function genererMaquette(fichier, valeurSortie) {
 <section class="section section--sombre" aria-label="Éléments à préciser"><h2>Une histoire à écrire ensemble</h2><p>Les repères de l’entreprise seront choisis et vérifiés avec vous.</p><div class="preuve">${chiffres}</div></section>
 <section class="section section--claire atelier" id="presentation"><div><span class="sur">${e(libelles.sur)}</span><h2>${e(prestations?.h2 || 'Présentation du métier')}</h2><p>${e(prestations?.blocs?.find((b) => b.type === 'p')?.texte)}</p><div class="zones">${zone('Votre parole')}${zone('Votre parcours')}</div></div><img src="images/${photos[1]?.nom || photos[0].nom}" alt="${e(libelles.alt_atelier)}"></section>
 <section class="section" id="contact"><h2>${e(contact?.h2 || 'Parlons de votre projet')}</h2><p>${e(contact?.blocs?.find((b) => b.type === 'p')?.texte)}</p><p>Les détails de cette page seront définis avec vous.</p></section></main>
-<footer class="pied"><p>Maquette privée préparée par Presti pour ${e(entree.entreprise)}. Rien n’est publié.</p><p>Photos d’illustration : ${esc(credit)}</p></footer></body></html>\n`
+<footer class="pied"><p>Maquette privée préparée pour ${e(entree.entreprise)}. Rien n’est publié.</p><p>Photos d’illustration : ${esc(credit)}</p></footer></body></html>\n`
   // Tous les contrôles ci-dessus précèdent la première écriture.
   fs.mkdirSync(path.join(sortie, 'images'), { recursive: true })
   fs.writeFileSync(path.join(sortie, 'index.html'), html)

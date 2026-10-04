@@ -7,7 +7,8 @@
 //
 // Usage :
 //   node scripts/usine.mjs etat                      → joignable ?, charge et mémoire, codex connecté ?, tâches sur l'usine
-//   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, Chromium et WebKit (+ dépendances)
+//   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, Chromium et WebKit
+//   node scripts/usine.mjs preparer --dependances    → les bibliothèques système de Playwright, par le compte gardien (clé du poste ; usine n'a plus de sudo)
 //   node scripts/usine.mjs paquet <id>               → construit et contrôle le paquet sans rien prendre ni envoyer (essai à sec)
 //   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40] [--fournisseur=ol|fl] [--croise] [--a-sec]
 //        --fournisseur : voie libre, le relais commence à Ollama Cloud (ol) ou freellmapi (fl) ; refus net pour une fiche de prospects
@@ -430,8 +431,23 @@ done
   if (lances.length) { console.log('\nlancements (PC, .orchestre/agents.jsonl) :'); for (const l of lances.slice(-8)) console.log(`  ${l.date}  ${l.agent.padEnd(16)} ${String(l.tache).padEnd(18)} ${l.modele}`) }
 }
 
+// ── gardien ───────────────────────────────────────────────────────────────────────────────────────────────
+// Depuis le durcissement (026-197), toute commande root sur l'usine passe par le compte `gardien`, avec la clé du POSTE
+// (~/.ssh/presti-usine-gardien : jamais copiée sur l'usine, jamais utilisée pour joindre `usine`, jamais par Codex).
+// Rien ne part par là sans l'option explicite --dependances, que seul Claude Code passe (jamais une fiche).
+const CLE_GARDIEN = path.join(os.homedir(), '.ssh', 'presti-usine-gardien')
+function dependancesParGardien() {
+  if (!fs.existsSync(CLE_GARDIEN)) { console.error(`✗ ${CLE_GARDIEN.replace(os.homedir(), '~')} absente : la clé du gardien vit sur le poste de Claude Code seulement`); return 3 }
+  const cible = `gardien@${HOTE.split('@').pop()}`
+  console.log(`· bibliothèques système de Playwright, par ${cible} (clé du poste)`)
+  const script = 'set -euo pipefail\ncd /home/usine/presti\nsudo -n ./node_modules/.bin/playwright install-deps chromium webkit\n'
+  const r = spawnSync('ssh', ['-i', CLE_GARDIEN, '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=20', cible, 'bash -s'], { input: script, stdio: ['pipe', 'inherit', 'inherit'], encoding: 'utf8', windowsHide: true })
+  return r.status === null ? 255 : r.status
+}
+
 // ── preparer ──────────────────────────────────────────────────────────────────────────────────────────────
 async function preparer() {
+  if (option('dependances')) { const c = dependancesParGardien(); if (c === 255) console.error(`✗ usine injoignable (${HOTE})`); process.exit(c === 0 ? 0 : c === 255 ? 5 : 3) }
   const code = await distantFlux(`
 FORCER=${q(option('forcer') ? 'oui' : 'non')}
 occupees=0
@@ -459,17 +475,12 @@ fi
 v=$(node -p "require('./node_modules/playwright/package.json').version")
 # Les juges de la série 025 lancent Chromium ET WebKit (formulaire-site-qa FS-3/FS-4 ; relecture à froid du 24/09, U1) : sans
 # WebKit ici, Codex l installait lui-même hors de ~/.cache (PLAYWRIGHT_BROWSERS_PATH=/tmp/presti-025-browsers, 939 Mo).
-# --with-deps pose aussi les bibliothèques système (apt, par sudo sans mot de passe).
-echo "· Playwright $v (version du dépôt) : Chromium et WebKit, avec leurs dépendances système"
-# Depuis le 25/09/2026, usine n a plus de sudo complet : une seule commande sans mot de passe, exacte, celle que Playwright
-# lance pour ses dépendances apt (/etc/sudoers.d/usine-restreint ; presti-ops/usine/LISEZMOI.md, « Sudo restreint »). sudo -n true
-# y est refusé : la garde vérifie donc que CETTE règle figure dans sudo -n -l. Lu dans une variable, pas par un grep -q en
-# bout de tube : sous pipefail, un grep qui ferme le tube tôt peut faire échouer la garde.
-regles=$(sudo -n -l 2>/dev/null || true)
-case "$regles" in *'NOPASSWD: /usr/bin/sh -c apt-get update&& apt-get install'*) ;; *) echo "✗ sudo -n -l ne donne pas la règle des dépendances apt de Playwright (/usr/bin/sh -c apt-get update&& apt-get install …) : voir presti-ops/usine/LISEZMOI.md, « Sudo restreint »"; exit 3;; esac
-echo "· sudo -n -l : la règle des dépendances apt de Playwright est là"
-npx --no-install playwright install --with-deps chromium webkit || { echo "✗ playwright install --with-deps a échoué : si sudo a refusé la commande apt, la liste de Playwright $v ne correspond plus à la règle (refaire la capture : LISEZMOI, « Sudo restreint »)"; exit 3; }
-node -e "const pw = require('playwright'); (async () => { for (const nom of ['chromium', 'webkit']) { const b = await pw[nom].launch(); const p = await b.newPage(); await p.setContent('<title>ok</title>'); console.log('· ' + nom + ' démarre : ' + (await p.title()) + ' (' + b.version() + ')'); await b.close() } })().catch((e) => { console.error('✗ un navigateur ne démarre pas : ' + e.message); process.exit(1) })"
+# Depuis le durcissement de l'usine (fiche 026-197), le compte usine n a plus aucun sudo : les bibliothèques système (apt) ne se
+# posent pas d ici. Les navigateurs eux-mêmes vont dans ~/.cache/ms-playwright, sans droit particulier ; les bibliothèques passent
+# par le compte gardien (node scripts/usine.mjs preparer --dependances, sur l ordre de Claude Code seulement) et restent en place.
+echo "· Playwright $v (version du dépôt) : Chromium et WebKit (bibliothèques système : preparer --dependances, par gardien)"
+npx --no-install playwright install chromium webkit || { echo "✗ playwright install a échoué (téléchargement des navigateurs)"; exit 3; }
+node -e "const pw = require('playwright'); (async () => { for (const nom of ['chromium', 'webkit']) { const b = await pw[nom].launch(); const p = await b.newPage(); await p.setContent('<title>ok</title>'); console.log('· ' + nom + ' démarre : ' + (await p.title()) + ' (' + b.version() + ')'); await b.close() } })().catch((e) => { console.error('✗ un navigateur ne démarre pas : ' + e.message + ' — bibliothèques système manquantes ? node scripts/usine.mjs preparer --dependances (par gardien)'); process.exit(1) })"
 echo "✓ usine prête : node_modules $(du -sh node_modules | cut -f1), package-lock $(cut -c1-12 node_modules/.usine-lock)"
 `)
   if (code === 255) { console.error(`✗ usine injoignable (${HOTE})`); process.exit(5) }
@@ -691,7 +702,12 @@ function juger(id, ici, marque) {
     const derniers = fs.existsSync(path.join(ORCH, 'verdicts.jsonl')) ? fs.readFileSync(path.join(ORCH, 'verdicts.jsonl'), 'utf8').split(/\r?\n/).map((l) => { try { return JSON.parse(l) } catch { return null } }).filter((v) => v?.id === id) : []
     conclure(id, ici, marque, { verdict: 'FAIL', code: 1, ligne: `fiche en refuse/ : ${derniers.at(-1)?.ligne || "verdict de l’orchestre"}` })
   } else { console.error(`✗ ${id} est en ${ou || "aucun dossier de l’orchestre"}/ sur le PC : pas de verdict possible. Le patch appliqué : ${relatif(path.join(ici, 'resultat.patch'))} (git apply -R pour le retirer).`); process.exit(1) }
-  const v = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'verifier', id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 45 * 60_000 })
+  // 29/09/2026 : le verdict final est rendu d'abord SUR L'USINE (verifier-final.mjs : verifier-usine.mjs, « machine: usine »), et sur le PC seulement pour une fiche à secrets ou si l'usine ne juge pas.
+  // PRESTI_VERIFIER_PC=1 : PC seul, comme avant. Même sortie, même code que `orchestre.mjs verifier` (« <id> : PASS|FAIL »).
+  const finale = path.join(RACINE, '..', 'presti-ops', 'usine', 'verifier-final.mjs')
+  const v = fs.existsSync(finale) && process.env.PRESTI_VERIFIER_PC !== '1'
+    ? spawnSync(process.execPath, [finale, id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 65 * 60_000 })
+    : spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'verifier', id], { cwd: RACINE, encoding: 'utf8', windowsHide: true, timeout: 45 * 60_000 })
   const sortie = `${v.stdout || ''}${v.stderr || ''}`
   process.stdout.write(sortie)
   fs.writeFileSync(path.join(ici, 'verdict-pc.log'), `# ${maintenant()} · node scripts/orchestre.mjs verifier ${id} · code ${v.status}${v.signal ? ' · signal ' + v.signal : ''}\n${sortie}`)

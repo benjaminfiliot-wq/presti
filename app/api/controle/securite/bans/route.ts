@@ -4,6 +4,7 @@ import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } fr
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { lireUserAgent } from '@/lib/userAgent'
 import { ipPseudonyme } from '@/lib/security'
+import { bans } from '@/lib/controle/lectures'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,6 @@ export const dynamic = 'force-dynamic'
 //    compris (la garde refuse avant d'atteindre la route) ;
 //  • l'action et sa ligne de journal se font dans une seule transaction (fonctions `bannir_ip`/`debannir_ip`,
 //    migration 0065) : plus de trace sans ban, ni de ban sans trace.
-type Ban = { ip: string; raison: string | null; auto: boolean; created_at: string; expires_le: string | null }
 const IP = /^[0-9a-fA-F:.]{3,45}$/
 const HEURES_MAX = 8760 // un an ; au-delà, c'est un ban permanent, qui se demande explicitement
 
@@ -46,20 +46,9 @@ export async function GET(req: Request) {
   const perimetre = exigerDomaine(f, 'securite', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
-  const depuis = new Date(Date.now() - 24 * 3_600_000).toISOString()
-  const [bans, abus] = await Promise.all([
-    supabaseAdmin.from('ip_bans').select('ip, raison, auto, created_at, expires_le').order('created_at', { ascending: false }).limit(200),
-    supabaseAdmin.from('ip_abus').select('ip, raison, at').gte('at', depuis).order('at', { ascending: false }).limit(500),
-  ])
-  if (bans.error) return NextResponse.json({ error: 'Bans indisponibles.' }, { status: 503 })
-  const parIp: Record<string, { ip: string; n: number; raison: string; dernier: string }> = {}
-  for (const a of (abus.data ?? []) as { ip: string; raison: string; at: string }[]) { const e = (parIp[a.ip] ||= { ip: a.ip, n: 0, raison: a.raison, dernier: a.at }); e.n++ }
-  const maintenant = Date.now()
-  return NextResponse.json({
-    bans: ((bans.data ?? []) as Ban[]).map((b) => ({ ...b, actif: !b.expires_le || new Date(b.expires_le).getTime() > maintenant })),
-    abus24h: Object.values(parIp).sort((x, y) => y.n - x.n).slice(0, 30),
-    role: f.role, a: new Date().toISOString(),
-  })
+  const lu = await bans()
+  if (lu === null) return NextResponse.json({ error: 'Bans indisponibles.' }, { status: 503 })
+  return NextResponse.json({ ...lu, role: f.role, a: new Date().toISOString() })
 }
 
 export async function POST(req: Request) {
