@@ -34,6 +34,6 @@
   },
   "photos": {
     "demo": "peintre",
-    "fichiers": ["images/hero-960.webp", "images/enduit-720.webp"]
+    "fichiers": ["hero-960.webp", "enduit-720.webp"]
   }
 }

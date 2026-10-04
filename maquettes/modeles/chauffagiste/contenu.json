@@ -34,6 +34,6 @@
   },
   "photos": {
     "demo": "chauffagiste",
-    "fichiers": ["images/hero-960.webp", "images/pac-720.webp"]
+    "fichiers": ["hero-960.webp", "pac-720.webp"]
   }
 }
