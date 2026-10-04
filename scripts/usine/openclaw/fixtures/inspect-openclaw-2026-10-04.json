@@ -1,0 +1,69 @@
+[
+  {
+    "Name": "/openclaw",
+    "Image": "sha256:0a5ff5e682e62afa19149df126aa50063bf65ef885b5c94713ce32dc0eb12e15",
+    "Config": {
+      "Image": "ghcr.io/openclaw/openclaw:2026.9.6-slim",
+      "User": "995:989",
+      "Env": [
+        "OPENCLAW_DISABLE_BONJOUR=<valeur omise>",
+        "OPENCLAW_STATE_DIR=<valeur omise>",
+        "HOME=<valeur omise>",
+        "NODE_OPTIONS=<valeur omise>",
+        "DO_NOT_TRACK=<valeur omise>",
+        "TZ=<valeur omise>",
+        "OPENCLAW_CONFIG_PATH=<valeur omise>",
+        "OPENCLAW_HOME=<valeur omise>",
+        "PATH=<valeur omise>",
+        "NODE_VERSION=<valeur omise>",
+        "YARN_VERSION=<valeur omise>",
+        "COREPACK_HOME=<valeur omise>",
+        "PLAYWRIGHT_BROWSERS_PATH=<valeur omise>",
+        "NODE_ENV=<valeur omise>"
+      ]
+    },
+    "HostConfig": {
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "CapAdd": null,
+      "CapDrop": [
+        "ALL"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges:true"
+      ],
+      "Memory": 4294967296,
+      "NanoCpus": 1500000000,
+      "PidsLimit": 512,
+      "NetworkMode": "openclaw_isole",
+      "PortBindings": {
+        "18789/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18800"
+          }
+        ]
+      },
+      "Binds": [
+        "/srv/openclaw/secrets/freellmapi.key:/run/secrets/freellmapi.key:ro",
+        "/srv/openclaw/secrets/gateway.token:/run/secrets/gateway.token:ro",
+        "/srv/openclaw/etat:/home/node/.openclaw:rw",
+        "/srv/openclaw/work:/work:rw",
+        "/srv/openclaw/relais:/relais:rw",
+        "/srv/openclaw/pont:/opt/pont:ro"
+      ],
+      "Tmpfs": {
+        "/home/node": "size=256m,uid=995,gid=989,mode=0700",
+        "/tmp": "size=512m,mode=1777"
+      },
+      "Devices": null,
+      "PidMode": "",
+      "IpcMode": "private",
+      "UsernsMode": "",
+      "RestartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    }
+  }
+]
