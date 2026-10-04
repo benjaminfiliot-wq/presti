@@ -95,6 +95,9 @@ async function jugerSO1(s) {
   // scripts/juges-*, qui écrivent ce prix pour l'éprouver), et ce qui n'est pas du code du produit : notes et mémoire
   // (plans/, reprise-cloud/), actifs (public/ : tracés SVG, durées en ms), historique SQL (supabase/). Tout le reste des
   // fichiers suivis (lib/, app/, components/, scripts/ hors juges…) reste jugé : un prix écrit là rouvre SO-1.
+  // 04/10 : docs/contexte-cloud/ (2 729 fichiers de contexte pour Claude cloud, des copies de notes et de fiches qui citent le prix)
+  // et .orchestre/preuves/ sont écartés d'office par gitGrepFichiers (commun.mjs, COPIES_DE_DOCUMENTATION) : SO-1 y voyait « 490 »
+  // sans qu'un fichier du produit l'écrive en dur. Sabotage : « 490 » dans lib/ rend SO-1 rouge (reglages-0410/juges-balayage.md).
   const EXCLURE_SO1 = ['lib/studio/offre.ts', 'scripts/fixtures/', '.orchestre/', 'plans/', 'reprise-cloud/', 'public/', 'supabase/']
   const JUGE_SO1 = /^scripts\/(?:[^/]*-qa\.mjs|juges-[^/]*)$/
   const PRIX_ISOLE = /(?<![\d.,])(?:490|49000)(?!\d)/

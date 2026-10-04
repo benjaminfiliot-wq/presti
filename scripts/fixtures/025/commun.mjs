@@ -27,7 +27,7 @@
 // Index : R, FIXTURES, TRAVAIL, REFERENCE_COMMIT, REFERENCE_DOSSIER, DEMOS_GELEES, MAQUETTE_EXEMPLE, COMMANDE_EXEMPLE,
 //   COMMANDE_SANS_CHIFFRES · sous, exigerSousTravail, dossierTravail, lireOuNull, taille, fichierNonVide, lireJson, sha256,
 //   shaBlob, lancer · INVISIBLES, replier (autres graphies : NFKC, invisibles, cyrillique et grec de forme latine) · git,
-//   estRacineGit, revParse, blobGit, lsTree, listerFichiers, gitGrepFichiers · instantaneDossier,
+//   estRacineGit, revParse, blobGit, lsTree, listerFichiers, COPIES_DE_DOCUMENTATION, gitGrepFichiers · instantaneDossier,
 //   comparerInstantanes, preparerTemoin, analyserSortie · lireOptions, lireOptionsOuQuitter, creerSortie · t1, t2,
 //   commitDeReference · defautsTypecheck (tsconfig.json et script typecheck de 1620723, @ts-nocheck, @ts-ignore ajoutés) ·
 //   servir · lancerNavigateur, BUREAU, TELEPHONE, defilementHorizontal, verifierImage, capturer ·
@@ -163,8 +163,23 @@ export function listerFichiers(dossier) {
   return out
 }
 /**
+ * Les COPIES de documents que le dépôt porte à côté du produit : jamais du code, jamais ce qu'un juge de « fuite » cherche.
+ *   - docs/contexte-cloud/ : 2 729 fichiers de contexte pour Claude cloud (30/09), des copies de notes, de fiches et d'inventaires
+ *     du produit et de l'orchestre : un prix, une marque fictive ou un nom d'essai y sont cités tels quels (SO-1, SG-5, MQ-9
+ *     rouges le 04/10 sans qu'aucune ligne de lib/, app/ ou components/ y soit pour rien) ;
+ *   - docs/relais-fiches-claude/ : le lot de fiches prêtes préparé pour Claude cloud (30/09, 57 fichiers : copies de fiches, de preuves et
+ *     de sources du PC ; la fiche 026-083 y cite le prix du Studio) ;
+ *   - reprise-cloud/ : la reprise pour le cloud (déjà écartée par SO-1 depuis le 29/09) ;
+ *   - .orchestre/preuves/ : les preuves des fiches (captures, journaux de juges, sorties de sabotages qui citent ces valeurs).
+ * Le balayage continue de voir lib/, app/, components/, scripts/ (hors jeux d'essai et juges, selon chaque juge), public/ : voir
+ * le sabotage de chaque juge dans .orchestre/preuves/reglages-0410/. Les juges de SÉCURITÉ qui cherchent une clé ou des données
+ * de prospects (chef-qa CH-R6, prospects-hors-depot) n'utilisent pas cette fonction : ils doivent, eux, voir ces copies.
+ */
+export const COPIES_DE_DOCUMENTATION = ['docs/contexte-cloud/', 'docs/relais-fiches-claude/', 'reprise-cloud/', '.orchestre/preuves/']
+/**
  * Les fichiers qui contiennent `motif` : git grep (fichiers suivis) sur la racine d'un dépôt, git grep --no-index (tous les
- * fichiers) sur un arbre extrait. Options : insensible (-i), exclure (préfixes posix à écarter du résultat).
+ * fichiers) sur un arbre extrait. Options : insensible (-i), exclure (préfixes posix à écarter du résultat, EN PLUS de
+ * COPIES_DE_DOCUMENTATION, toujours écartées).
  */
 export function gitGrepFichiers(racine, motif, { insensible = false, exclure = [] } = {}) {
   const args = ['grep', '-F', '-l', '-I', '-z']
@@ -173,7 +188,8 @@ export function gitGrepFichiers(racine, motif, { insensible = false, exclure = [
   args.push('-e', motif)
   const r = git(args, { cwd: racine, binaire: true })
   if (r.code !== 0 && r.code !== 1) throw new Error(`git grep : ${court(r.stderr)}`)
-  return r.stdout.toString('utf8').split('\0').filter(Boolean).filter((f) => !exclure.some((p) => f === p || f.startsWith(p.endsWith('/') ? p : `${p}/`)))
+  const ecartes = [...COPIES_DE_DOCUMENTATION, ...exclure]
+  return r.stdout.toString('utf8').split('\0').filter(Boolean).filter((f) => !ecartes.some((p) => f === p || f.startsWith(p.endsWith('/') ? p : `${p}/`)))
 }
 
 /**
