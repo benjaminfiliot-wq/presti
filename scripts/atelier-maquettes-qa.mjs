@@ -123,7 +123,7 @@ let bancEnregistre = false
 function enregistrerBanc() { if (bancEnregistre) return; register(pathToFileURL(path.join(CLI, 'banc-crochet.mjs')).href, import.meta.url, { data: { contrat: pathToFileURL(path.join(R, 'lib', 'agents', 'acquisition', 'contrat.ts')).href } }); bancEnregistre = true }
 let BANC = 0
 /** Exécute une route du banc : { statut, json, texte, erreur, journal, console }. */
-async function banc(fichier, { methode = 'GET', url, entetes = {}, corps, comportements = {}, valeurs = {} } = {}) {
+async function banc(fichier, { methode = 'GET', url = 'http://localhost/api/usine/atelier/', entetes = {}, corps, comportements = {}, valeurs = {} } = {}) {
   enregistrerBanc()
   D.journal = []; D.comportements = comportements; D.valeurs = valeurs; D.n = 0
   const sortie = []
@@ -149,12 +149,42 @@ async function banc(fichier, { methode = 'GET', url, entetes = {}, corps, compor
 const appelsDe = (x, nom) => x.journal.filter((e) => e.nom === nom || e.exp === nom)
 const JETON = 'JETON-ATELIER-TEMOIN-1234'
 
+// La garde réelle (lib/agents/garde.ts) : authAgent rend un AgentAuth { nom, … } ou un RefusAgent { status, code, error } ;
+// estRefusAgent les distingue par la présence de `error`. Les doublures rendent exactement ces deux formes.
+const AGENT_ATELIER = { nom: 'atelier_maquettes', capacites: [], typesCrees: [], tablesEcrites: [], debitMinute: 60, route: '/api/usine/atelier' }
+const refusAgent = (status, code) => ({ status, code, error: code })
+const estRefusAgent = (r) => !!r && typeof r === 'object' && 'error' in r
 /** Les comportements communs des doublures pour un appel qui doit passer la garde (busAgents, jeton, pause). */
-function gardeOk({ pause = false } = {}) {
+function gardeOk({ pause = false, drapeaux = {}, agent = AGENT_ATELIER } = {}) {
   return {
-    actif: (flag) => (flag === 'busAgents' ? true : flag === 'varianteA' ? false : flag === 'siteAchatPublic' ? true : false),
-    authAgent: () => ({ ok: true, agent: 'atelier_maquettes' }),
+    actif: (flag) => (Object.hasOwn(drapeaux, flag) ? drapeaux[flag] : flag === 'busAgents' ? true : flag === 'siteAchatPublic' ? true : false),
+    authAgent: () => agent,
+    estRefusAgent,
     pauseGenerale: () => (pause ? { active: true, source: 'variable' } : { active: false, source: 'base' }),
+  }
+}
+const BASE_URL = 'http://localhost/api/usine/atelier/'
+const urlDe = (nom) => `${BASE_URL}${nom}`
+const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
+const shaHex = (b) => crypto.createHash('sha256').update(b).digest('hex')
+/** Un prospect de ops.prospects tel que `acq_prospects_*` le rend (p.*). */
+const prospectEssai = (n, o = {}) => ({
+  id: uuid(n), cle_dedup: o.cle ?? `siren:81234567${n}`, source: o.source ?? 'sirene', cible: 'artisan', siren: `81234567${n}`,
+  entreprise: `Entreprise Témoin ${n}`, metier: o.metier ?? 'menuisier', commune: 'Nantes',
+  faits: o.faits ?? [{ id: 'f'.repeat(16), type: 'site', extrait: 'Menuiserie Témoin, artisan à Nantes', url: 'https://menuiserie-temoin.invalid/', lu_le: '2026-10-14T07:00:00.000Z', verifie: 'ok' }],
+  canaux: o.canaux ?? [], froid: (o.source ?? 'sirene') !== 'entrant', etape: o.etape ?? 'verifie', tentatives: 0, conversation_id: o.conversation_id ?? null,
+})
+const entrantEssai = (n, o = {}) => prospectEssai(n, { source: 'entrant', etape: 'verifie', cle: `instagram:entrant${n}`, faits: [], ...o })
+const froidOuiEssai = (n, o = {}) => prospectEssai(n, { etape: 'oui', ...o })
+/** Les comportements d'une demande à `GET travail`. */
+function comportementsTravail({ demandes = [], avance = [], oui = [], jour = {}, palier = 'P1', drapeaux = {}, pause = false } = {}) {
+  return {
+    ...gardeOk({ drapeaux, pause }),
+    maquettesDuJour: () => ({ faites_aujourdhui: 0, pretes_non_utilisees: 0, entrants_faites_aujourdhui: 0, ...jour }),
+    etatEnvoi: () => ({ palier, envoi_froid: false }),
+    prospectsPourMaquette: (n, froid) => (froid ? avance : demandes).slice(0, n),
+    prospectsOui: (n) => oui.slice(0, n),
+    ops_battement: () => 'ok',
   }
 }
 
@@ -170,7 +200,17 @@ const C = {
       if (json(cles) !== json([...CLES].sort())) e.push(`clés ${json(cles)}, exactement ${json(CLES)} attendues`)
       if (['photo', 'telephone', 'siren', 'email'].some((k) => k in j)) e.push('une clé interdite (photo, téléphone, siren ou e-mail) présente')
     }
-    if (x.entrantSansFait && (x.entrantSansFait.source_fait?.fait !== 'Maquette demandée par l\'entreprise le JJ/MM/AAAA' || x.entrantSansFait.source_fait?.source !== 'demande')) e.push(`entrant sans fait : source_fait ${json(x.entrantSansFait?.source_fait)}`)
+    // « JJ/MM/AAAA » de la fiche est le gabarit d'une date : la phrase porte la date du passage, jamais les lettres du gabarit.
+    if (x.entrantSansFait) {
+      const sf = x.entrantSansFait.source_fait
+      const m = /^Maquette demandée par l'entreprise le (\d{2})\/(\d{2})\/(\d{4})$/.exec(sf?.fait ?? '')
+      if (!m || sf?.source !== 'demande') e.push(`entrant sans fait : source_fait ${json(sf)}, la phrase « Maquette demandée par l'entreprise le JJ/MM/AAAA » (une vraie date) et la source « demande » sont attendues`)
+      else if (x.dateAttendue && `${m[1]}/${m[2]}/${m[3]}` !== x.dateAttendue) e.push(`entrant sans fait : la date écrite est ${m[1]}/${m[2]}/${m[3]}, celle du passage (${x.dateAttendue}) est attendue`)
+    }
+    if (x.avecFait) {
+      const sf = x.avecFait.json?.source_fait
+      if (sf?.fait !== x.avecFait.extrait || sf?.source !== x.avecFait.url || sf?.repere !== x.avecFait.id) e.push(`avec fait : source_fait ${json(sf)}, l'extrait, l'adresse et l'identifiant reçus sont attendus`)
+    }
     return e
   },
   'AM-3': (x) => {
@@ -179,6 +219,8 @@ const C = {
     if (x.sousPublic.code !== 2 || x.sousPublic.appels !== 0) e.push(`dossierSortie sous public/ : code ${json(x.sousPublic.code)}, ${x.sousPublic.appels} appel(s), 2 et zéro attendus`)
     if (x.coffreAbsent.code !== 3) e.push(`coffre absent : code ${json(x.coffreAbsent.code)}, 3 attendu`)
     if (x.coffreServiceRole.code !== 3) e.push(`coffre avec SUPABASE_SERVICE_ROLE_KEY : code ${json(x.coffreServiceRole.code)}, 3 attendu`)
+    // Un coffre COMPLET (les deux variables permises) qui porte en plus une clé interdite : le seul cas où la garde se voit, un coffre incomplet étant refusé de toute façon.
+    for (const [nom, c] of Object.entries(x.coffresMixtes ?? {})) if (c.code !== 3) e.push(`coffre complet + ${nom} : code ${json(c.code)}, 3 attendu (la clé interdite doit suffire à refuser le démarrage)`)
     if (x.litEnvLocal) e.push('.env.local est lu dans le source')
     return e
   },
@@ -204,24 +246,43 @@ const C = {
     if (x.entrantsPlafond.n !== 0) e.push(`entrants au-delà du plafond du jour : ${x.entrantsPlafond.n} de plus, zéro attendu`)
     if (x.douzeOui.n !== 10) e.push(`douze prospects froids oui : ${x.douzeOui.n} à fabriquer, 10 attendus (plafond du jour)`)
     if (!x.entrantsAvant) e.push('les entrants ne viennent pas avant les froids « oui »')
+    if (x.entrantsFormulaires && x.entrantsFormulaires.some((n) => n !== 2)) e.push(`deux entrants, formulaire fermé puis ouvert : ${json(x.entrantsFormulaires)} à fabriquer, 2 et 2 attendus`)
+    if (x.entrantsTousRendus === false) e.push('un entrant d\'empreinte impaire n\'est pas rendu : la parité ne vaut que pour la variante A')
+    if (x.douzeOuiApres4 !== undefined && x.douzeOuiApres4 !== 6) e.push(`douze froids oui, 4 faites aujourd'hui : ${x.douzeOuiApres4} à fabriquer, 6 attendus`)
+    if (x.avanceLevee) {
+      if (x.avanceLevee.n !== 10) e.push(`varianteA levé, P1, 3 prêtes : ${json(x.avanceLevee.n)} d'avance demandées, 10 attendues (MAQUETTES_PAR_JOUR)`)
+      if (x.avanceLevee.nSaturee !== 0) e.push(`varianteA levé, 25 prêtes non utilisées : ${json(x.avanceLevee.nSaturee)} d'avance, zéro attendu (jamais sous 0)`)
+      if (x.avanceLevee.nPlafondJour !== 4) e.push(`varianteA levé, 6 faites aujourd'hui : ${json(x.avanceLevee.nPlafondJour)} d'avance, 4 attendues (10 − 6)`)
+    }
+    if (x.liensCrees !== undefined && !x.liensCrees) e.push('une maquette prête : le prospect ne sort pas dans liens_a_creer')
+    if (x.battementSucces !== undefined && x.battementSucces !== 1) e.push(`réponse réussie : ${x.battementSucces} battement(s) atelier_maquettes, un seul attendu`)
     if (x.battementEnPause) e.push('le battement a eu lieu alors que la route était en pause')
+    if (x.battementEnErreur) e.push('le battement a eu lieu alors que la route répondait en erreur')
     return e
   },
   'AM-7': (x) => {
     const e = []
     if (x.fauxJpeg.statut !== 422 || !x.fauxJpeg.objetsRetires) e.push(`JPEG annoncé qui commence par %PDF : statut ${x.fauxJpeg.statut}, objets retirés ${x.fauxJpeg.objetsRetires} (422 et true attendus)`)
+    if (x.fauxJpeg.appelsMaquettePrete) e.push('JPEG annoncé qui commence par %PDF : une maquette prête a été enregistrée')
     if (x.empreinteFausse.statut !== 422) e.push(`empreinte fausse : statut ${x.empreinteFausse.statut}, 422 attendu`)
+    if (x.empreinteFausse.appelsMaquettePrete) e.push('empreinte fausse : une maquette prête a été enregistrée')
     if (x.conforme.statut !== 200 || x.conforme.appelsMaquettePrete !== 1) e.push(`tout conforme : statut ${x.conforme.statut}, ${x.conforme.appelsMaquettePrete} appel(s) à enregistrerMaquettePrete, 200 et 1 attendus`)
+    // La page privée (maquettesLien.ts) et la purge retrouvent chaque fichier par la table `objets` : sans elle, le lien envoyé est mort.
+    if (x.conforme.objetsEnregistres === false) e.push('tout conforme : enregistrerMaquettePrete ne reçoit pas la table des trois objets (capture-telephone.jpg, capture-ordinateur.jpg, video.mp4) : la page privée ne les retrouverait pas')
+    if (x.prospectHorsEtat && (x.prospectHorsEtat.statut !== 409 || x.prospectHorsEtat.appelsMaquettePrete)) e.push(`prospect qui n'attend pas de maquette : statut ${x.prospectHorsEtat.statut}, ${x.prospectHorsEtat.appelsMaquettePrete} enregistrement(s), 409 et zéro attendus`)
     return e
   },
   'AM-8': (x) => {
     const e = []
     if (!/^[0-9a-f]{64}$/.test(x.valeurCreerLien ?? '')) e.push(`valeur passée à creerLienMaquette : ${json(x.valeurCreerLien)}, un SHA-256 hex de 64 signes attendu`)
     if (x.valeurCreerLien === x.jeton) e.push('le jeton en clair a été passé à creerLienMaquette')
+    if (x.jeton && x.valeurCreerLien && x.valeurCreerLien !== shaHex(x.jeton)) e.push('la valeur passée à creerLienMaquette n\'est pas le SHA-256 du jeton écrit dans le message')
     if (!x.messageContientLien || !x.messageContientPaiement || !x.messageContientRdv) e.push('le message préparé ne contient pas le lien de maquette, de paiement ou de rendez-vous')
     if (x.jugerMessageDisponible && x.jugerMessageOk === false) e.push(`le message préparé refusé par jugerMessage rejoué (${json(x.jugerMessageRaisons)})`)
     if (x.reponseContientJeton) e.push('la réponse HTTP contient le jeton en clair')
+    if (x.reponseOk !== true) e.push(`un lien après un oui : réponse ${json(x.reponseJson)}, { ok: true } attendu (la ligne de la maquette rendue par la base n'a pas de champ etat)`)
     if (x.occupationHaute.statut !== 507 || x.occupationHaute.depose) e.push(`occupation à 61 % : statut ${x.occupationHaute.statut}, dépôt ${x.occupationHaute.depose} (507 et false attendus)`)
+    if (x.occupationHaute.decisions !== 1) e.push(`occupation à 61 % : ${x.occupationHaute.decisions} décision(s) « stockage », une attendue`)
     return e
   },
   'AM-9': (x) => (x.applicable && !x.ok ? [`vraie passe (generer.mjs --maquette) : ${x.detail}`] : []),
@@ -236,14 +297,17 @@ const C = {
     if (x.metaRecent.canal !== 'messagerie' || x.metaRecent.modele !== 'lien_maquette_entrant_meta_v1') e.push(`conversation à 2 h : canal ${json(x.metaRecent.canal)}, modèle ${json(x.metaRecent.modele)}`)
     if (x.emailAncien.canal !== 'email_sollicite' || x.emailAncien.envoyeur !== 'gmail' || x.emailAncien.modele !== 'lien_maquette_entrant_email_v1' || x.emailAncien.preuveType !== 'case_entrant') e.push(`conversation à 30 h avec adresse : ${json(x.emailAncien)}`)
     if (x.sansAdresse.raison !== 'aucune_adresse' || x.sansAdresse.jetonCree) e.push(`30 h sans adresse : raison ${json(x.sansAdresse.raison)}, jeton créé ${x.sansAdresse.jetonCree}`)
-    if (x.sansGmail.raison !== 'en_attente_gmail') e.push(`sans variables Gmail : raison ${json(x.sansGmail.raison)}, en_attente_gmail attendu`)
+    if (x.sansGmail.raison !== 'en_attente_gmail' || x.sansGmail.rienCree === false) e.push(`sans variables Gmail : raison ${json(x.sansGmail.raison)}, rien créé ${x.sansGmail.rienCree} (en_attente_gmail et true attendus)`)
     if (x.froidOui.canal !== 'email_sollicite' || !x.froidOui.preuveEstOui) e.push(`froid ayant dit oui : ${json(x.froidOui)}`)
+    if (x.froidOui.envoyeur !== undefined && (x.froidOui.envoyeur !== 'gmail' || !x.froidOui.destinataireEstExpediteur || !x.froidOui.filEstEnvoi)) e.push(`froid ayant dit oui : envoyeur ${json(x.froidOui.envoyeur)}, destinataire = expéditeur du oui ${x.froidOui.destinataireEstExpediteur}, fil = envoi auquel il répond ${x.froidOui.filEstEnvoi} (gmail, true et true attendus)`)
+    if (x.froidOuiMeta && (x.froidOuiMeta.canal !== 'messagerie' || !x.froidOuiMeta.destinataireEstMetaId || !x.froidOuiMeta.conversationEstLaSienne)) e.push(`froid ayant dit oui sur Meta : ${json(x.froidOuiMeta)}, canal messagerie, destinataire = identifiant Meta de la personne (jamais l'identifiant de la conversation) et conversation_id de son fil attendus`)
     if (x.mentionneBoite) e.push('une route mentionne une boîte (boite / aucune_boite)')
     return e
   },
   'AM-12': (x) => {
     const e = []
     if (x.baisse.contientPaiement) e.push('siteAchatPublic baissé : le message contient encore le lien de paiement')
+    if (x.baisse.modele !== undefined && !/_rdv_v1$/.test(x.baisse.modele)) e.push(`siteAchatPublic baissé : modèle ${json(x.baisse.modele)}, un modèle _rdv attendu`)
     if (!x.leve.contientPaiement) e.push('siteAchatPublic levé : le message ne contient pas le lien de paiement')
     if (!x.litActif) e.push('la route ne lit pas actif(\'siteAchatPublic\') dans le source')
     return e
@@ -281,7 +345,8 @@ async function observer(mod, RAC2) {
     const lus = fs.existsSync(dossier) ? fs.readdirSync(dossier, { recursive: true }).filter((f) => String(f).endsWith('maquette.json')) : []
     const maquettesJson = lus.map((f) => JSON.parse(fs.readFileSync(path.join(dossier, f), 'utf8')))
     const entrantSansFait = maquettesJson.find((j) => j.metier === 'plombier')
-    return { maquettesJson, entrantSansFait }
+    const avecFait = maquettesJson.find((j) => j.metier === 'menuisier')
+    return { maquettesJson, entrantSansFait, dateAttendue: '14/10/2026', avecFait: { json: avecFait, extrait: 'Menuiserie Témoin, artisan à Nantes', url: 'https://menuiserie-temoin.invalid/', id: 'f'.repeat(16) } }
   })
 
   await tente('AM-3', async () => {
@@ -301,40 +366,221 @@ async function observer(mod, RAC2) {
     const coffreAbsent = lancer({})
     fs.writeFileSync(path.join(dossierCoffre, '.config', 'presti', 'agents.env'), 'SUPABASE_SERVICE_ROLE_KEY=x\n')
     const coffreServiceRole = lancer({})
+    const coffresMixtes = {}
+    for (const cle of ['SUPABASE_SERVICE_ROLE_KEY=essai', 'STRIPE_SECRET_KEY=essai', 'ANTHROPIC_API_KEY=essai']) {
+      fs.writeFileSync(path.join(dossierCoffre, '.config', 'presti', 'agents.env'), `PRESTI_URL=http://127.0.0.1:9/
+PRESTI_JETON_ATELIER=jeton-essai
+${cle}
+`)
+      coffresMixtes[cle.split('=')[0]] = { code: lancer({}).status }
+    }
     const src = fs.readFileSync(path.join(RAC2, FICHIER_SCRIPT), 'utf8')
-    return { dansDepot, sousPublic, coffreAbsent: { code: coffreAbsent.status }, coffreServiceRole: { code: coffreServiceRole.status }, litEnvLocal: /\.env\.local/.test(sansCommentaires(src)) }
+    return { dansDepot, sousPublic, coffreAbsent: { code: coffreAbsent.status }, coffreServiceRole: { code: coffreServiceRole.status }, coffresMixtes, litEnvLocal: /\.env\.local/.test(sansCommentaires(src)) }
   })
 
   await tente('AM-4', async () => {
     const cas = {}
-    for (const [nom, sc] of Object.entries({ 'capture 0 octet': { capturer: 'zero' }, 'capture 1,4 Mo': { capturer: 'lourde' }, 'capture uniforme': { capturer: 'uniforme' }, 'vidéo 3,2 Mo': { video: 'lourde' }, 'échec generer.mjs': { generer: 'echec' }, 'échec capturer': { capturer: 'echec' }, 'échec vidéo': { video: 'echec' } })) {
+    // L'échantillon « uniforme » du jeu d'essai écrase aussi l'en-tête (le segment SOF disparaît) : il serait refusé pour cette seule raison.
+    // Celui-ci garde TOUTE la structure (SOI, SOF, SOS, EOI) et n'uniformise que les données compressées qui suivent l'en-tête du scan.
+    const uniformeSurDonnees = (b) => { const c = Buffer.from(b); let i = 2; while (i < c.length - 4) { if (c[i] !== 0xff) { i++; continue } const m = c[i + 1]; const l = c.readUInt16BE(i + 2); if (m === 0xda) { for (let k = i + 2 + l; k < c.length - 2; k++) c[k] = 0x41; break } i += 2 + l } return c }
+    const executeurUniformeIntact = (cle) => {
+      const base = creerExecuteurFactice({ [cle]: { capturer: 'ok' } })
+      const ex = (commande, args = [], options = {}) => {
+        const r = base(commande, args, options)
+        if (/maquette-capturer.mjs/.test(args.join(' '))) { const d = args[args.length - 1]; for (const n of ['capture-bureau.jpg', 'capture-telephone.jpg']) { const fichier = path.join(d, n); if (fs.existsSync(fichier)) fs.writeFileSync(fichier, uniformeSurDonnees(fs.readFileSync(fichier))) } }
+        return r
+      }
+      ex.appels = base.appels
+      return ex
+    }
+    for (const [nom, sc] of Object.entries({ 'capture 0 octet': { capturer: 'zero' }, 'capture uniforme (structure intacte)': { uniforme: 'intact' }, 'capture 1,4 Mo': { capturer: 'lourde' }, 'capture uniforme': { capturer: 'uniforme' }, 'vidéo 3,2 Mo': { video: 'lourde' }, 'échec generer.mjs': { generer: 'echec' }, 'échec capturer': { capturer: 'echec' }, 'échec vidéo': { video: 'echec' } })) {
       const dossier = dossierEssai(`am-4-${nom.replace(/[^a-z0-9]+/gi, '-')}`)
       fs.rmSync(dossier, { recursive: true, force: true })
       const magasinUsine = creerMagasinUsineFactice({ aFabriquer: [{ prospect_id: 'p1', cle: 'clecasfautif0001', entreprise: 'Menuiserie Témoin', metier: 'menuisier', ville: 'Nantes', communes: ['Nantes'], fait: { extrait: 'Menuiserie Témoin, artisan à Nantes', url: 'https://menuiserie-temoin.invalid/', id: 'f'.repeat(16), lu_le: '2026-10-14T07:00:00.000Z' }, entrant: false }] })
-      const executer = creerExecuteurFactice({ clecasfautif0001: sc })
+      const executer = sc.uniforme === 'intact' ? executeurUniformeIntact('clecasfautif0001') : creerExecuteurFactice({ clecasfautif0001: sc })
       await mod.passeAtelier({ magasin: magasinUsine, executer, horloge: creerHorloge(T0), dossierSortie: dossier })
       cas[nom] = { maquettePrete: magasinUsine.maquettesPretes.length > 0 }
     }
     return { cas }
   })
 
+  // Les quatre routes, chacune avec les trois refus de la garde : busAgents baissé → 404 ; sans jeton → 401 ; un autre agent → 403.
+  const toutesLesRoutes = [['travail', 'GET'], ['depot', 'POST'], ['maquette', 'POST'], ['lien', 'POST']]
+  const refusDe = async (nom, methode, comportements) => (await banc(routeFichier(nom), { methode, url: urlDe(nom), corps: methode === 'POST' ? {} : undefined, comportements })).statut
   await tente('AM-5', async () => {
-    const busAgentsBaisse = (await banc(routeFichier('travail'), { comportements: { actif: () => false } })).statut
-    const sansJeton = (await banc(routeFichier('travail'), { comportements: { actif: () => true, authAgent: () => ({ ok: false, statut: 401 }) } })).statut
-    const autreAgent = (await banc(routeFichier('travail'), { comportements: { actif: () => true, authAgent: () => ({ ok: false, statut: 403 }) } })).statut
-    const pauseTravail = (await banc(routeFichier('travail'), { comportements: gardeOk({ pause: true }) })).json
+    const parRoute = async (comportements) => { const r = []; for (const [nom, methode] of toutesLesRoutes) r.push(await refusDe(nom, methode, comportements)); return r }
+    const busAgentsBaisse = (await parRoute({ actif: () => false })).find((s) => s !== 404) ?? 404
+    const sansJeton = (await parRoute({ ...gardeOk(), authAgent: () => refusAgent(401, 'jeton') })).find((s) => s !== 401) ?? 401
+    const autreAgent = (await parRoute({ ...gardeOk(), authAgent: () => ({ ...AGENT_ATELIER, nom: 'chef' }) })).find((s) => s !== 403) ?? 403
+    const pauseTravail = (await banc(routeFichier('travail'), { url: urlDe('travail'), comportements: gardeOk({ pause: true }) })).json
     const pauseAutres = []
-    for (const nom of ['depot', 'maquette', 'lien']) pauseAutres.push((await banc(routeFichier(nom), { methode: 'POST', corps: {}, comportements: gardeOk({ pause: true }) })).statut)
-    const t = await banc(routeFichier('travail'), { comportements: gardeOk() })
-    const fuite = /@[\w.-]+\.\w+|8123456\d{2}|[A-Za-z0-9_-]{43}/.test(t.texte ?? '') ? 'travail' : null
+    for (const nom of ['depot', 'maquette', 'lien']) pauseAutres.push((await banc(routeFichier(nom), { methode: 'POST', url: urlDe(nom), corps: {}, comportements: gardeOk({ pause: true }) })).statut)
+    // Une réponse réussie de `travail`, sur des prospects qui portent une adresse et un SIREN : aucune ne doit sortir.
+    const avecAdresse = prospectEssai(1, { source: 'entrant', etape: 'verifie', canaux: [{ canal: 'email_sollicite', valeur: 'artisan.temoin@exemple.invalid', url_source: 'landing', nature: 'donnee_par_la_personne' }] })
+    const t = await banc(routeFichier('travail'), { url: urlDe('travail'), comportements: comportementsTravail({ demandes: [avecAdresse, froidOuiEssai(2)], oui: [froidOuiEssai(3)] }) })
+    const fuite = !t.json?.a_fabriquer?.length ? 'travail ne rend rien (l\'essai est vide)' : /@[\w.-]+\.\w+|81234567\d|[A-Za-z0-9_-]{43}/.test(t.texte ?? '') ? 'travail' : null
     return { busAgentsBaisse, sansJeton, autreAgent, pauseTravail, pauseAutres, fuite }
   })
 
-  obs['AM-6'] = { exception: 'route absente : non observable sans un vrai module' }
-  obs['AM-7'] = { exception: 'route absente : non observable sans un vrai module' }
-  obs['AM-8'] = { exception: 'route absente : non observable sans un vrai module' }
-  obs['AM-11'] = { exception: 'route absente : non observable sans un vrai module' }
-  obs['AM-12'] = { exception: 'route absente : non observable sans un vrai module' }
+  await tente('AM-6', async () => {
+    const T = (o) => banc(routeFichier('travail'), { url: urlDe('travail'), comportements: comportementsTravail(o) })
+    const aFabriquer = (r) => r.json?.a_fabriquer ?? []
+    const appelsAvance = (r) => appelsDe(r, 'prospectsPourMaquette').filter((e) => e.args[1] === true)
+    const A = (n) => prospectEssai(n, { etape: 'verifie', cle: `siren:avance${n}` })
+    // Le banc remplace console et fetch le temps d'une route : jamais deux appels en même temps.
+    const baissee = [await T({ avance: [A(1), A(2)], palier: 'P0' }), await T({ avance: [A(1), A(2)], palier: 'P4' })]
+    const avance = baissee.reduce((n, r) => n + aFabriquer(r).length + appelsAvance(r).length, 0)
+    const entrantsFormulaires = []
+    for (const palier of ['P0', 'P2']) entrantsFormulaires.push(aFabriquer(await T({ demandes: [entrantEssai(1), entrantEssai(2)], palier })).filter((x) => x.entrant).length)
+    const six = Array.from({ length: 6 }, (_, i) => entrantEssai(i + 1))
+    const plafond = await T({ demandes: six, jour: { entrants_faites_aujourdhui: 5 } })
+    const impair = await T({ demandes: [entrantEssai(1, { cle: 'instagram:impair-1' }), entrantEssai(2, { cle: 'instagram:pair-2' })] })
+    const douze = Array.from({ length: 12 }, (_, i) => froidOuiEssai(i + 1))
+    const douzeOui = await T({ demandes: douze })
+    const douzeApres4 = await T({ demandes: douze, jour: { faites_aujourdhui: 4 } })
+    const melange = await T({ demandes: [froidOuiEssai(1), entrantEssai(2), froidOuiEssai(3), entrantEssai(4)] })
+    const prete = await T({ oui: [froidOuiEssai(7)] })
+    const avanceLevee = await T({ avance: Array.from({ length: 12 }, (_, i) => A(i + 1)), palier: 'P1', drapeaux: { varianteA: true }, jour: { pretes_non_utilisees: 3 } })
+    const avanceSaturee = await T({ avance: [A(1)], palier: 'P1', drapeaux: { varianteA: true }, jour: { pretes_non_utilisees: 25 } })
+    const avancePlafondJour = await T({ avance: Array.from({ length: 12 }, (_, i) => A(i + 1)), palier: 'P1', drapeaux: { varianteA: true }, jour: { faites_aujourdhui: 6 } })
+    const nAvance = (r) => appelsAvance(r)[0]?.args?.[0] ?? 0
+    const battement = (r) => appelsDe(r, 'ops_battement').length
+    const enPause = await banc(routeFichier('travail'), { url: urlDe('travail'), comportements: comportementsTravail({ demandes: [entrantEssai(1)], pause: true }) })
+    const enErreur = await banc(routeFichier('travail'), { url: urlDe('travail'), comportements: { ...comportementsTravail({}), prospectsPourMaquette: () => { throw new Error('base injoignable') } } })
+    return {
+      varianteABaissee: { avance },
+      deuxEntrants: { n: aFabriquer(await T({ demandes: [entrantEssai(1), entrantEssai(2)] })).filter((x) => x.entrant).length },
+      entrantsFormulaires,
+      entrantsPlafond: { n: aFabriquer(plafond).filter((x) => x.entrant).length },
+      entrantsTousRendus: aFabriquer(impair).filter((x) => x.entrant).length === 2,
+      douzeOui: { n: aFabriquer(douzeOui).length },
+      douzeOuiApres4: aFabriquer(douzeApres4).length,
+      entrantsAvant: aFabriquer(melange).length === 4 && aFabriquer(melange).slice(0, 2).every((x) => x.entrant) && aFabriquer(melange).slice(2).every((x) => !x.entrant),
+      avanceLevee: { n: nAvance(avanceLevee), nSaturee: nAvance(avanceSaturee) + aFabriquer(avanceSaturee).length, nPlafondJour: nAvance(avancePlafondJour) },
+      liensCrees: (prete.json?.liens_a_creer ?? []).includes(uuid(7)),
+      battementSucces: battement(await T({ demandes: [entrantEssai(1)] })),
+      battementEnPause: battement(enPause) > 0,
+      battementEnErreur: battement(enErreur) > 0,
+    }
+  })
+
+  // ── AM-7 : `maquette` relit chaque objet déposé ─────────────────────────────────────────────────────────────────────────
+  await tente('AM-7', async () => {
+    const pid = uuid(1)
+    const noms = ['capture-telephone.jpg', 'capture-ordinateur.jpg', 'video.mp4']
+    const objetsDe = Object.fromEntries(noms.map((n, i) => [n, `${pid}/${uuid(101 + i)}/${n}`]))
+    const conformes = { 'capture-telephone.jpg': JPEG_TELEPHONE, 'capture-ordinateur.jpg': JPEG_ORDINATEUR, 'video.mp4': VIDEO_OK }
+    const pdf = Buffer.from(`%PDF-1.4\n${'x'.repeat(400)}\n%%EOF`)
+    const essai = async ({ octets, empreintes, prospects = [prospectEssai(1, { source: 'entrant', etape: 'verifie' })] }) => {
+      const retires = []
+      const stock = { from: () => ({ download: async (chemin) => { const k = noms.find((n) => objetsDe[n] === chemin); return k && octets[k] ? { data: new Blob([octets[k]]), error: null } : { data: null, error: { message: 'absent' } } }, remove: async (liste) => { retires.push(...liste); return { error: null } } }) }
+      const r = await banc(routeFichier('maquette'), { methode: 'POST', url: urlDe('maquette'), corps: { prospect_id: pid, objets: objetsDe, empreintes: empreintes ?? Object.fromEntries(noms.map((n) => [n, shaHex(octets[n])])) }, comportements: { ...gardeOk(), ...stock, prospectsPourMaquette: () => prospects, enregistrerMaquettePrete: () => undefined } })
+      const appels = appelsDe(r, 'enregistrerMaquettePrete')
+      const infos = appels[0]?.args?.[1] ?? {}
+      const objetsOk = noms.every((n) => infos.objets?.[n] === objetsDe[n]) && noms.every((n) => /^[0-9a-f]{64}$/.test(infos.empreintes?.[n] ?? ''))
+      return { statut: r.statut, appelsMaquettePrete: appels.length, objetsRetires: noms.every((n) => retires.includes(objetsDe[n])), objetsEnregistres: objetsOk }
+    }
+    const fauxJpeg = await essai({ octets: { ...conformes, 'capture-telephone.jpg': pdf } })
+    const empreinteFausse = await essai({ octets: conformes, empreintes: { ...Object.fromEntries(noms.map((n) => [n, shaHex(conformes[n])])), 'capture-ordinateur.jpg': 'a'.repeat(64) } })
+    const conforme = await essai({ octets: conformes })
+    const horsEtat = await essai({ octets: conformes, prospects: [] })
+    return { fauxJpeg, empreinteFausse, conforme, prospectHorsEtat: { statut: horsEtat.statut, appelsMaquettePrete: horsEtat.appelsMaquettePrete } }
+  })
+
+  // ── AM-8, AM-11, AM-12 : `lien` ─────────────────────────────────────────────────────────────────────────────────────────
+  const reelRedacteur = await importerDepuis(RAC2, 'lib/agents/acquisition/redacteur.ts')
+  const reelLien = await importerDepuis(RAC2, 'lib/agents/acquisition/maquettesLien.ts')
+  const ADRESSE_REPONSE = 'prospection@exemple.invalid'
+  /** Une requête `POST lien`, sur les VRAIES `preparerMessageLien` (modèles du dépôt, approuvés) et `creerJeton` / `hacherJeton`. */
+  async function scenarioLien({ p, maquette, conversation = null, reponses = [], drapeaux = {}, octetsOccupes = 1000, gmail = true } = {}) {
+    const jetons = []
+    const comportements = {
+      ...gardeOk({ drapeaux }),
+      prospectsOui: () => [p],
+      // La ligne que rend acq_maquette_de : to_jsonb(ops.maquettes) — pas de champ `etat`.
+      maquetteDe: () => maquette === undefined ? { id: uuid(900), prospect_id: p.id, objet: `${p.id}/${uuid(910)}/capture-telephone.jpg`, objets: {}, jeton_hache: null, expire_le: new Date(Date.now() + 15 * 86_400_000).toISOString(), purgee_le: null, prete_le: new Date().toISOString() } : maquette,
+      conversation: () => conversation,
+      reponsesARepondre: () => reponses,
+      listBuckets: () => ({ data: [{ name: 'maquettes' }], error: null }),
+      from: () => ({ list: async (prefixe) => (prefixe === '' ? { data: [{ id: 'o1', name: 'gros.mp4', metadata: { size: octetsOccupes } }], error: null } : { data: [], error: null }) }),
+      creerDecision: () => ({ id: 'd1', cree: true }),
+      creerJeton: () => { const j = reelLien.creerJeton(); jetons.push(j); return j },
+      hacherJeton: reelLien.hacherJeton,
+      expiration: reelLien.expiration,
+      historiqueContacts: () => [],
+      estOppose: () => false,
+      preparerMessageLien: (pp, params, deps) => reelRedacteur.preparerMessageLien(pp, params, deps),
+      creerLienMaquette: () => undefined,
+      creerLienRdv: () => undefined,
+      preparerEnvoi: () => ({ ok: true, id: 'envoi-essai' }),
+    }
+    const env0 = { a: process.env.ACQ_ADRESSE_REPONSE, u: process.env.PROSPECTION_GMAIL_USER, w: process.env.PROSPECTION_GMAIL_PASS }
+    if (gmail) { process.env.ACQ_ADRESSE_REPONSE = ADRESSE_REPONSE; process.env.PROSPECTION_GMAIL_USER = 'u@exemple.invalid'; process.env.PROSPECTION_GMAIL_PASS = 'mdp-essai' }
+    else { delete process.env.ACQ_ADRESSE_REPONSE; delete process.env.PROSPECTION_GMAIL_USER; delete process.env.PROSPECTION_GMAIL_PASS }
+    let r
+    try { r = await banc(routeFichier('lien'), { methode: 'POST', url: urlDe('lien'), corps: { prospect_id: p.id }, comportements }) }
+    finally { for (const [k, v] of [['ACQ_ADRESSE_REPONSE', env0.a], ['PROSPECTION_GMAIL_USER', env0.u], ['PROSPECTION_GMAIL_PASS', env0.w]]) { if (v === undefined) delete process.env[k]; else process.env[k] = v } }
+    const envoi = appelsDe(r, 'preparerEnvoi')[0]?.args?.[0] ?? null
+    const liens = appelsDe(r, 'creerLienMaquette')
+    return {
+      r, envoi, jetons, texte: envoi?.texte ?? '', statut: r.statut, json: r.json,
+      valeurCreerLien: liens[0]?.args?.[2], liensCrees: liens.length, rdvCrees: appelsDe(r, 'creerLienRdv').length, preparations: appelsDe(r, 'preparerEnvoi').length,
+      decisions: appelsDe(r, 'creerDecision').filter((e) => e.args?.[0]?.type === 'stockage').length,
+    }
+  }
+  const maintenant = Date.now()
+  const iso = (ms) => new Date(ms).toISOString()
+  const conversationEssai = (depuisMs, id = uuid(50)) => ({ id, plateforme: 'instagram', pseudo: 'artisan_essai', suit_le_compte: true, fenetre_jusqua: null, meta_id: 'meta-essai-1', dernier_message_recu_le: iso(maintenant - depuisMs) })
+  const canalAdresse = [{ canal: 'email_sollicite', valeur: 'artisan.temoin@exemple.invalid', url_source: 'landing:formulaire', nature: 'donnee_par_la_personne' }]
+  const ouiDe = (pid, o = {}) => ({ id: 'reponse-oui-1', id_externe: 'ext-1', envoi_id: 'envoi-0', conversation_id: null, prospect_id: pid, canal: 'email_sollicite', source: 'courriel', texte: 'Oui, je veux bien.', auto: false, accuse_site: false, en_reponse_a: null, expediteur: 'artisan.temoin@exemple.invalid', recu_le: iso(maintenant - 3600_000), classement: { classe: 'oui' }, notre_dernier_envoi_le: null, notre_dernier_envoi_type: 'premier_contact', ...o })
+  const TEXTE_ROUTES = Object.values(EXPORTS_ROUTES).map((f) => sansCommentaires(fs.readFileSync(path.join(RAC2, f), 'utf8'))).join('\n')
+
+  await tente('AM-8', async () => {
+    const froid = froidOuiEssai(1)
+    const s = await scenarioLien({ p: froid, reponses: [ouiDe(froid.id)] })
+    const jeton = s.jetons[0] ?? null
+    const messageLien = s.texte.match(/https:\/\/prestiapp\.fr\/maquette\/([A-Za-z0-9_-]{43})/)
+    const haute = await scenarioLien({ p: froidOuiEssai(2), reponses: [ouiDe(uuid(2))], octetsOccupes: Math.ceil(0.61 * 1024 * 1048576) })
+    return {
+      valeurCreerLien: s.valeurCreerLien, jeton: jeton ?? messageLien?.[1] ?? null,
+      messageContientLien: !!messageLien, messageContientPaiement: s.texte.includes('https://prestiapp.fr/site/acheter'), messageContientRdv: /https:\/\/prestiapp\.fr\/rendez-vous\/[A-Za-z0-9_-]{43}/.test(s.texte),
+      // `preparerMessageLien` passe le message au second juge `jugerMessage` avant de le rendre : un message refusé ne vient jamais jusqu'ici.
+      jugerMessageDisponible: true, jugerMessageOk: s.envoi !== null, jugerMessageRaisons: s.json?.raison ? [s.json.raison] : [],
+      reponseContientJeton: jeton ? (s.r.texte ?? '').includes(jeton) : false, reponseOk: s.json?.ok === true, reponseJson: s.json,
+      occupationHaute: { statut: haute.statut, depose: haute.liensCrees > 0 || haute.preparations > 0, decisions: haute.decisions },
+    }
+  })
+
+  await tente('AM-11', async () => {
+    const entrant = (o = {}) => entrantEssai(1, { etape: 'maquette_prete', conversation_id: uuid(50), canaux: canalAdresse, ...o })
+    const meta = await scenarioLien({ p: entrant(), conversation: conversationEssai(2 * 3600_000) })
+    const ancien = await scenarioLien({ p: entrant(), conversation: conversationEssai(30 * 3600_000) })
+    const sansAdresse = await scenarioLien({ p: entrant({ canaux: [] }), conversation: conversationEssai(30 * 3600_000) })
+    const sansGmail = await scenarioLien({ p: entrant(), conversation: conversationEssai(30 * 3600_000), gmail: false })
+    const froid = froidOuiEssai(2)
+    const oui = ouiDe(froid.id)
+    const froidOui = await scenarioLien({ p: froid, reponses: [oui] })
+    const froidMeta = froidOuiEssai(3, { conversation_id: uuid(60) })
+    const ouiMeta = ouiDe(froidMeta.id, { canal: 'messagerie', source: 'meta', conversation_id: uuid(60), expediteur: null })
+    const froidOuiMeta = await scenarioLien({ p: froidMeta, reponses: [ouiMeta], conversation: conversationEssai(3600_000, uuid(60)) })
+    const sans = (s) => s.liensCrees === 0 && s.jetons.length === 0 && s.preparations === 0
+    return {
+      metaRecent: { canal: meta.envoi?.canal ?? null, modele: meta.envoi?.modele_id ?? null },
+      emailAncien: { canal: ancien.envoi?.canal ?? null, envoyeur: ancien.envoi?.envoyeur ?? null, modele: ancien.envoi?.modele_id ?? null, preuveType: ancien.envoi?.preuve_demande?.type ?? null },
+      sansAdresse: { raison: sansAdresse.json?.raison ?? null, jetonCree: !sans(sansAdresse) },
+      sansGmail: { raison: sansGmail.json?.raison ?? null, rienCree: sans(sansGmail) },
+      froidOui: { canal: froidOui.envoi?.canal ?? null, preuveEstOui: froidOui.envoi?.preuve_demande?.type === 'message_recu' && froidOui.envoi?.preuve_demande?.id === oui.id, envoyeur: froidOui.envoi?.envoyeur ?? null, destinataireEstExpediteur: froidOui.envoi?.destinataire === oui.expediteur, filEstEnvoi: froidOui.envoi?.fil_envoi_id === oui.envoi_id },
+      froidOuiMeta: { canal: froidOuiMeta.envoi?.canal ?? null, destinataireEstMetaId: froidOuiMeta.envoi?.destinataire === 'meta-essai-1', conversationEstLaSienne: froidOuiMeta.envoi?.conversation_id === uuid(60) },
+      mentionneBoite: /\baucune_boite\b|\bboite\b|\bboîte\b/i.test(TEXTE_ROUTES),
+    }
+  })
+
+  await tente('AM-12', async () => {
+    const froid = froidOuiEssai(1)
+    const baisse = await scenarioLien({ p: froid, reponses: [ouiDe(froid.id)], drapeaux: { siteAchatPublic: false } })
+    const leve = await scenarioLien({ p: froid, reponses: [ouiDe(froid.id)], drapeaux: { siteAchatPublic: true } })
+    return { baisse: { contientPaiement: baisse.texte.includes('https://prestiapp.fr/site/acheter'), modele: baisse.envoi?.modele_id }, leve: { contientPaiement: leve.texte.includes('https://prestiapp.fr/site/acheter') }, litActif: /actif\(\s*['"]siteAchatPublic['"]\s*\)/.test(TEXTE_ROUTES) }
+  })
 
   await tente('AM-9', async () => {
     const generer = path.join(RAC2, 'public', 'sites-demo', 'generer.mjs')
@@ -369,34 +615,39 @@ function jeuxLisibles() {
   return { e, detail: `exécuteur factice, JPEG (${JPEG_TELEPHONE.length}/${JPEG_ORDINATEUR.length} o), MP4 (${VIDEO_OK.length} o), stockage factice (occupation ${100}) chargés` }
 }
 function obsBase() {
+  const jeton = 'x'.repeat(43)
   return {
-    'AM-2': { maquettesJson: [{ entreprise: 'x', metier: 'menuisier', ville: 'Nantes', communes: ['Nantes'], modele: 'menuisier', source_fait: { fait: 'x', source: 'ademe_rge', repere: 'f1', releve_le: '2026-10-14' } }], entrantSansFait: { source_fait: { fait: "Maquette demandée par l'entreprise le JJ/MM/AAAA", source: 'demande' } } },
-    'AM-3': { dansDepot: { code: 2, appels: 0 }, sousPublic: { code: 2, appels: 0 }, coffreAbsent: { code: 3 }, coffreServiceRole: { code: 3 }, litEnvLocal: false },
-    'AM-4': { cas: Object.fromEntries(['capture 0 octet', 'capture 1,4 Mo', 'capture uniforme', 'vidéo 3,2 Mo', 'échec generer.mjs', 'échec capturer', 'échec vidéo'].map((n) => [n, { maquettePrete: false }])) },
+    'AM-2': {
+      maquettesJson: [{ entreprise: 'x', metier: 'menuisier', ville: 'Nantes', communes: ['Nantes'], modele: 'menuisier', source_fait: { fait: 'x', source: 'ademe_rge', repere: 'f1', releve_le: '2026-10-14' } }],
+      entrantSansFait: { source_fait: { fait: "Maquette demandée par l'entreprise le 14/10/2026", source: 'demande', repere: 'entrant', releve_le: '2026-10-14T08:00:00.000Z' } }, dateAttendue: '14/10/2026',
+      avecFait: { json: { source_fait: { fait: 'extrait', source: 'https://x.invalid/', repere: 'f1', releve_le: '2026-10-14' } }, extrait: 'extrait', url: 'https://x.invalid/', id: 'f1' },
+    },
+    'AM-3': { dansDepot: { code: 2, appels: 0 }, sousPublic: { code: 2, appels: 0 }, coffreAbsent: { code: 3 }, coffreServiceRole: { code: 3 }, coffresMixtes: { SUPABASE_SERVICE_ROLE_KEY: { code: 3 }, STRIPE_SECRET_KEY: { code: 3 } }, litEnvLocal: false },
+    'AM-4': { cas: Object.fromEntries(['capture 0 octet', 'capture uniforme (structure intacte)', 'capture 1,4 Mo', 'capture uniforme', 'vidéo 3,2 Mo', 'échec generer.mjs', 'échec capturer', 'échec vidéo'].map((n) => [n, { maquettePrete: false }])) },
     'AM-5': { busAgentsBaisse: 404, sansJeton: 401, autreAgent: 403, pauseTravail: { pause: true }, pauseAutres: [423, 423, 423], fuite: null },
-    'AM-6': { varianteABaissee: { avance: 0 }, deuxEntrants: { n: 2 }, entrantsPlafond: { n: 0 }, douzeOui: { n: 10 }, entrantsAvant: true, battementEnPause: false },
-    'AM-7': { fauxJpeg: { statut: 422, objetsRetires: true }, empreinteFausse: { statut: 422 }, conforme: { statut: 200, appelsMaquettePrete: 1 } },
-    'AM-8': { valeurCreerLien: 'e'.repeat(64), jeton: 'x'.repeat(43), messageContientLien: true, messageContientPaiement: true, messageContientRdv: true, jugerMessageDisponible: false, jugerMessageOk: null, jugerMessageRaisons: [], reponseContientJeton: false, occupationHaute: { statut: 507, depose: false } },
+    'AM-6': { varianteABaissee: { avance: 0 }, deuxEntrants: { n: 2 }, entrantsFormulaires: [2, 2], entrantsPlafond: { n: 0 }, entrantsTousRendus: true, douzeOui: { n: 10 }, douzeOuiApres4: 6, entrantsAvant: true, avanceLevee: { n: 10, nSaturee: 0, nPlafondJour: 4 }, liensCrees: true, battementSucces: 1, battementEnPause: false, battementEnErreur: false },
+    'AM-7': { fauxJpeg: { statut: 422, objetsRetires: true, appelsMaquettePrete: 0 }, empreinteFausse: { statut: 422, appelsMaquettePrete: 0 }, conforme: { statut: 200, appelsMaquettePrete: 1, objetsEnregistres: true }, prospectHorsEtat: { statut: 409, appelsMaquettePrete: 0 } },
+    'AM-8': { valeurCreerLien: shaHex(jeton), jeton, messageContientLien: true, messageContientPaiement: true, messageContientRdv: true, jugerMessageDisponible: true, jugerMessageOk: true, jugerMessageRaisons: [], reponseContientJeton: false, reponseOk: true, reponseJson: { ok: true }, occupationHaute: { statut: 507, depose: false, decisions: 1 } },
     'AM-9': { applicable: false, ok: true, detail: 'non applicable' },
     'AM-10': { console: 'atelier : 3 maquette(s) fabriquée(s)\n', valeursCoffre: ['JETON-SECRET-TEMOIN'] },
-    'AM-11': { metaRecent: { canal: 'messagerie', modele: 'lien_maquette_entrant_meta_v1' }, emailAncien: { canal: 'email_sollicite', envoyeur: 'gmail', modele: 'lien_maquette_entrant_email_v1', preuveType: 'case_entrant' }, sansAdresse: { raison: 'aucune_adresse', jetonCree: false }, sansGmail: { raison: 'en_attente_gmail' }, froidOui: { canal: 'email_sollicite', preuveEstOui: true }, mentionneBoite: false },
-    'AM-12': { baisse: { contientPaiement: false }, leve: { contientPaiement: true }, litActif: true },
+    'AM-11': { metaRecent: { canal: 'messagerie', modele: 'lien_maquette_entrant_meta_v1' }, emailAncien: { canal: 'email_sollicite', envoyeur: 'gmail', modele: 'lien_maquette_entrant_email_v1', preuveType: 'case_entrant' }, sansAdresse: { raison: 'aucune_adresse', jetonCree: false }, sansGmail: { raison: 'en_attente_gmail', rienCree: true }, froidOui: { canal: 'email_sollicite', preuveEstOui: true, envoyeur: 'gmail', destinataireEstExpediteur: true, filEstEnvoi: true }, froidOuiMeta: { canal: 'messagerie', destinataireEstMetaId: true, conversationEstLaSienne: true }, mentionneBoite: false },
+    'AM-12': { baisse: { contientPaiement: false, modele: 'lien_maquette_email_rdv_v1' }, leve: { contientPaiement: true }, litActif: true },
   }
 }
 function muter(base, id, m) { const x = JSON.parse(JSON.stringify(base[id])); m(x); return x }
 function echantillons() {
   const b = obsBase()
   return {
-    'AM-2': [['conforme', b['AM-2'], false], ['clé photo en trop', muter(b, 'AM-2', (x) => { x.maquettesJson[0].photo = 'y' }), true], ['phrase entrant différente', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = 'Maquette demandée le 1/1' }), true]],
-    'AM-3': [['conforme', b['AM-3'], false], ['un appel malgré le dossier interdit', muter(b, 'AM-3', (x) => { x.dansDepot.appels = 1 }), true], ['.env.local lu', muter(b, 'AM-3', (x) => { x.litEnvLocal = true }), true]],
+    'AM-2': [['conforme', b['AM-2'], false], ['clé photo en trop', muter(b, 'AM-2', (x) => { x.maquettesJson[0].photo = 'y' }), true], ['phrase entrant différente', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = 'Maquette demandée le 1/1' }), true], ['gabarit JJ/MM/AAAA recopié tel quel', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = "Maquette demandée par l'entreprise le JJ/MM/AAAA" }), true], ['une autre date que celle du passage', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = "Maquette demandée par l'entreprise le 15/10/2026" }), true], ["le fait n'est pas l'extrait reçu", muter(b, 'AM-2', (x) => { x.avecFait.json.source_fait.fait = 'autre chose' }), true]],
+    'AM-3': [['conforme', b['AM-3'], false], ['un appel malgré le dossier interdit', muter(b, 'AM-3', (x) => { x.dansDepot.appels = 1 }), true], ['.env.local lu', muter(b, 'AM-3', (x) => { x.litEnvLocal = true }), true], ['coffre complet + clé de service accepté', muter(b, 'AM-3', (x) => { x.coffresMixtes.SUPABASE_SERVICE_ROLE_KEY.code = 1 }), true]],
     'AM-4': [['conforme', b['AM-4'], false], ['une maquette prête malgré une capture vide', muter(b, 'AM-4', (x) => { x.cas['capture 0 octet'].maquettePrete = true }), true]],
-    'AM-5': [['conforme', b['AM-5'], false], ['200 sans jeton', muter(b, 'AM-5', (x) => { x.sansJeton = 200 }), true], ['une adresse dans une réponse', muter(b, 'AM-5', (x) => { x.fuite = 'travail' }), true]],
-    'AM-6': [['conforme', b['AM-6'], false], ['avance malgré varianteA baissé', muter(b, 'AM-6', (x) => { x.varianteABaissee.avance = 2 }), true], ['dix prospects oui à fabriquer', muter(b, 'AM-6', (x) => { x.douzeOui.n = 12 }), true]],
-    'AM-7': [['conforme', b['AM-7'], false], ['%PDF accepté', muter(b, 'AM-7', (x) => { x.fauxJpeg.statut = 200 }), true]],
-    'AM-8': [['conforme', b['AM-8'], false], ['le jeton en clair passé', muter(b, 'AM-8', (x) => { x.valeurCreerLien = x.jeton }), true], ['dépôt malgré 61 % d\'occupation', muter(b, 'AM-8', (x) => { x.occupationHaute.depose = true }), true]],
+    'AM-5': [['conforme', b['AM-5'], false], ['200 sans jeton', muter(b, 'AM-5', (x) => { x.sansJeton = 200 }), true], ['une adresse dans une réponse', muter(b, 'AM-5', (x) => { x.fuite = 'travail' }), true], ['la pause ne coupe pas travail', muter(b, 'AM-5', (x) => { x.pauseTravail = {} }), true]],
+    'AM-6': [['conforme', b['AM-6'], false], ['avance malgré varianteA baissé', muter(b, 'AM-6', (x) => { x.varianteABaissee.avance = 2 }), true], ['dix prospects oui à fabriquer', muter(b, 'AM-6', (x) => { x.douzeOui.n = 12 }), true], ['entrants au-delà du plafond', muter(b, 'AM-6', (x) => { x.entrantsPlafond.n = 1 }), true], ['formulaire fermé : aucun entrant', muter(b, 'AM-6', (x) => { x.entrantsFormulaires = [0, 2] }), true], ['avance sous zéro', muter(b, 'AM-6', (x) => { x.avanceLevee.nSaturee = 3 }), true], ['le prospect prêt ne sort pas', muter(b, 'AM-6', (x) => { x.liensCrees = false }), true], ['battement en erreur', muter(b, 'AM-6', (x) => { x.battementEnErreur = true }), true]],
+    'AM-7': [['conforme', b['AM-7'], false], ['%PDF accepté', muter(b, 'AM-7', (x) => { x.fauxJpeg.statut = 200 }), true], ['maquette sans la table des objets', muter(b, 'AM-7', (x) => { x.conforme.objetsEnregistres = false }), true], ['prospect hors état accepté', muter(b, 'AM-7', (x) => { x.prospectHorsEtat.statut = 200 }), true]],
+    'AM-8': [['conforme', b['AM-8'], false], ['le jeton en clair passé', muter(b, 'AM-8', (x) => { x.valeurCreerLien = x.jeton }), true], ["dépôt malgré 61 % d'occupation", muter(b, 'AM-8', (x) => { x.occupationHaute.depose = true }), true], ['lien refusé 409 faute de champ etat', muter(b, 'AM-8', (x) => { x.reponseOk = false; x.reponseJson = { ok: false, raison: 'etat' } }), true]],
     'AM-9': [['conforme', b['AM-9'], false], ['une passe réelle en échec', muter(b, 'AM-9', (x) => { x.applicable = true; x.ok = false; x.detail = 'capture non décodable' }), true]],
     'AM-10': [['conforme', b['AM-10'], false], ['une valeur du coffre dans la console', muter(b, 'AM-10', (x) => { x.console += 'JETON-SECRET-TEMOIN\n' }), true]],
-    'AM-11': [['conforme', b['AM-11'], false], ['jeton créé sans adresse', muter(b, 'AM-11', (x) => { x.sansAdresse.jetonCree = true }), true], ['une route mentionne une boîte', muter(b, 'AM-11', (x) => { x.mentionneBoite = true }), true]],
+    'AM-11': [['conforme', b['AM-11'], false], ['jeton créé sans adresse', muter(b, 'AM-11', (x) => { x.sansAdresse.jetonCree = true }), true], ['une route mentionne une boîte', muter(b, 'AM-11', (x) => { x.mentionneBoite = true }), true], ['sur Meta, la conversation prise pour destinataire', muter(b, 'AM-11', (x) => { x.froidOuiMeta.destinataireEstMetaId = false }), true]],
     'AM-12': [['conforme', b['AM-12'], false], ['paiement présent malgré le drapeau baissé', muter(b, 'AM-12', (x) => { x.baisse.contientPaiement = true }), true]],
   }
 }
