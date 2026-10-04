@@ -1,0 +1,33 @@
+{
+  "_note": "2 messages sans rapport avec Presti (client rattaché).",
+  "messages": [
+    {
+      "id": "hs-01",
+      "reference": "CMD-2026-0001",
+      "nom": "Marie Testeur",
+      "texte": "Bonjour, vendez-vous aussi des pizzas surgelées pour mon snack ? Marie Testeur",
+      "attendu": {
+        "client_id": "cli-001",
+        "commande_id": "CMD-2026-0001",
+        "fil_id": "fil-001",
+        "type": "hors_sujet",
+        "faq": null,
+        "decision": "hors_sujet"
+      }
+    },
+    {
+      "id": "hs-02",
+      "reference": "CMD-2026-0002",
+      "nom": "Paul Essai",
+      "texte": "Bonjour, quelle est la météo prévue demain à Lyon ? Paul Essai",
+      "attendu": {
+        "client_id": "cli-002",
+        "commande_id": "CMD-2026-0002",
+        "fil_id": "fil-002",
+        "type": "hors_sujet",
+        "faq": null,
+        "decision": "hors_sujet"
+      }
+    }
+  ]
+}

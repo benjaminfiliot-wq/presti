@@ -1,0 +1,28 @@
+{
+  "_note": "Liste fermée du juge (SAV-5, SAV-8) : les gabarits approuvés, les libellés de question autorisés, les phrases de promesse tolérées. Tout prix, délai ou promesse hors de ces phrases est une invention.",
+  "gabarits": [
+    "sav_faq",
+    "sav_modification",
+    "sav_facture",
+    "sav_poste",
+    "sav_generique"
+  ],
+  "questions": [
+    "accès à votre Poste",
+    "copie de votre facture",
+    "modification de votre site",
+    "votre facture",
+    "votre Poste",
+    "votre demande"
+  ],
+  "phrases_approuvees": [
+    "dans les meilleurs délais",
+    "nous revenons vers vous",
+    "Cordialement",
+    "L'équipe Presti"
+  ],
+  "faq_ids": [
+    "acces_poste",
+    "copie_facture"
+  ]
+}

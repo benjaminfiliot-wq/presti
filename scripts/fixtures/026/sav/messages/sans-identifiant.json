@@ -1,0 +1,41 @@
+{
+  "_note": "Pas d'identifiant de commande ni de compte : hors_fil, jamais une réponse à l'aveugle. Le nom seul est ambigu (deux Martin Durand). Les deux suivants : référence ambiguë (préfixe de deux commandes) et référence inconnue. Le dernier : un remboursement sans identifiant, qui escalade quand même.",
+  "messages": [
+    {
+      "id": "sid-01",
+      "reference": null,
+      "nom": "Martin Durand",
+      "texte": "Bonjour, comment accéder à mon Poste ? Martin Durand",
+      "attendu": {
+        "decision": "hors_fil"
+      }
+    },
+    {
+      "id": "sid-02",
+      "reference": "CMD-2026-001",
+      "nom": "Martin Durand",
+      "texte": "Bonjour, pouvez-vous modifier ma page contact ? Martin Durand",
+      "attendu": {
+        "decision": "hors_fil"
+      }
+    },
+    {
+      "id": "sid-03",
+      "reference": "CMD-2026-9999",
+      "nom": "Marie Testeur",
+      "texte": "Bonjour, pouvez-vous modifier ma page contact ? Marie Testeur",
+      "attendu": {
+        "decision": "hors_fil"
+      }
+    },
+    {
+      "id": "sid-04",
+      "reference": null,
+      "nom": "Marie Testeur",
+      "texte": "Je veux être remboursé, je ne retrouve plus mon numéro de commande. Marie Testeur",
+      "attendu": {
+        "decision": "escalade_benj"
+      }
+    }
+  ]
+}
