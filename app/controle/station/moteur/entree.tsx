@@ -11,6 +11,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { OfficePhaserCanvas } from './claw3d/OfficePhaserCanvas'
 import { OfficeSceneBridge } from './claw3d/OfficeSceneBridge'
+import { accrocheAdaptateur } from './adaptateur'
+import { accrocheCalque } from './calque'
+import { accrocheScene } from './scene'
 import { createStationPixelScene } from './scene/StationPixelScene'
 import { dispositionDe, versCarteMoteur } from './theme/carte'
 import { chargerTheme } from './theme/charger'
@@ -21,7 +24,9 @@ import type { Accroche, Accroches, ActeurStation, ContexteMoteur, Grille, PropsC
 export const GRILLE_PAR_DEFAUT: Grille = { largeur: 480, hauteur: 300 }
 
 /**
- * K2 a branché `theme`. K3 branche `adaptateur` et `scene`, K4a `camera` et `calque`, K4b `acteurs`, K4c `telephone` (vides : null).
+ * K2 a branché `theme`. K3 (026-181) a branché `adaptateur` (les acteurs d'après `positions()`, le pont appelé sur une signature qui change) et
+ * `scene` (la scène de la station : marche, halo, antenne, nuit) ; le calque HTML (miroir, bulle, « Zz ») est branché par la même fiche.
+ * K4a branche `camera`, K4b `acteurs`, K4c `telephone` (vides : null).
  *
  * `theme` charge le thème des réglages (« station » à défaut), le valide, en tire la carte du moteur (bureau, ou portrait sous 1024 px
  * comme la station) et sa grille de marche, les range pour les accroches suivantes (mondeDe(contexte), moteur/theme/grille.ts) et pose
@@ -40,11 +45,11 @@ export const ACCROCHES: Accroches = {
     // Le placeur par défaut : une salle, son poste. La scène (K3) et les acteurs (K4b) posent le leur, qui répartit ceux d'une même salle.
     contexte.placer = (acteur) => (acteur.salle ? carte.postes[acteur.salle] ?? null : null)
   },
-  adaptateur: null,
-  scene: null,
+  adaptateur: accrocheAdaptateur,
+  scene: accrocheScene,
   camera: null,
   acteurs: null,
-  calque: null,
+  calque: accrocheCalque,
   telephone: null,
 }
 
