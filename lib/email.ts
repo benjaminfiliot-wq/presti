@@ -10,8 +10,14 @@
 //  • email AU NOM D'UN ARTISAN (`fromName` posé : réponse auto, devis, relance, accusé de
 //    réception, lien de connexion) → Reply-To = l'artisan, JAMAIS `contact@prestiapp.fr`
 //    (white-label : la réponse du client ne doit pas atterrir chez l'éditeur).
+import { sortiePermise } from '@/lib/agents/sortie'
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_ADDR = 'contact@prestiapp.fr'
+const FROM_ADDR_PLATEFORME = 'contact@prestiapp.fr'
+const NOM_PLATEFORME = 'Presti'
+// Adresse technique d'envoi des e-mails AU NOM D'UN ARTISAN (seul domaine vérifié chez Resend tant qu'aucun autre ne l'est) :
+// réglable par EMAIL_EXPEDITEUR_ARTISAN dès qu'un domaine neutre est vérifié. Le nom affiché et le Reply-To restent ceux de l'artisan.
+const FROM_ADDR_ARTISAN = process.env.EMAIL_EXPEDITEUR_ARTISAN?.trim() || 'contact@prestiapp.fr'
 /** Adresse de l'entreprise : reçoit les réponses aux emails de Presti et les notifications internes.
  *  Réglable par variable d'environnement, parce que les ALERTES DE PANNE passent par ici : tant
  *  que la boîte du domaine n'existe pas, elles doivent pouvoir arriver sur une adresse qui, elle,
@@ -21,9 +27,11 @@ const EMAIL_SIMPLE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 export const EMAIL_ENTREPRISE = process.env.PRESTI_ALERTES_EMAIL?.trim() || process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
 
 // Nettoie un nom d'affichage pour l'en-tête From (pas de retour ligne, guillemets, chevrons).
+// `name` absent : e-mail de la plateforme. Un nom d'artisan, même vide après nettoyage, ne retombe JAMAIS sur la marque de l'éditeur.
 function fromHeader(name?: string | null): string {
-  const clean = (name || 'Presti').replace(/[\r\n<>"]/g, '').trim().slice(0, 70) || 'Presti'
-  return `${clean} <${FROM_ADDR}>`
+  if (name === undefined || name === null) return `${NOM_PLATEFORME} <${FROM_ADDR_PLATEFORME}>`
+  const clean = name.replace(/[\r\n<>"]/g, '').trim().slice(0, 70) || 'Votre artisan'
+  return `${clean} <${FROM_ADDR_ARTISAN}>`
 }
 
 type SendResult = { ok: boolean; id?: string; error?: string }
@@ -33,7 +41,7 @@ export async function sendEmail(opts: {
   subject: string
   text: string
   replyTo?: string
-  fromName?: string // marque de l'artisan (défaut : Presti)
+  fromName?: string // marque de l'artisan ; absent : e-mail de la plateforme
   attachments?: { filename: string; content: string }[]
   /** En-têtes bruts — sert à répondre DANS un fil (`In-Reply-To`, `References`). Sans eux, la réponse
    *  ouvre une conversation neuve chez le destinataire, et le fil se lit à trous des deux côtés. */
@@ -45,6 +53,12 @@ export async function sendEmail(opts: {
   // (audit final, F, majeur 8). On fait comme si c'était parti, sans rien envoyer.
   if (/\.invalid$/i.test(opts.to.trim())) return { ok: true, id: 'ignore-adresse-de-test' }
   if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
+  // La pause générale ferme TOUTE sortie ordinaire, par quelque voie qu'elle arrive ici ; dans le doute (lecture en erreur, valeur
+  // inattendue) elle reste fermée. Seuls les messages critiques passent : l'alerte au fondateur est ce qui lui dit que la pause est posée.
+  if (!opts.critique) {
+    const sortie = await sortiePermise()
+    if (!sortie.permise) return { ok: false, error: `pause générale : rien ne part (${sortie.raison})` }
+  }
   // Plafond global quotidien (F, majeur 7) : l'offre Resend gratuite s'arrête à 100 envois/jour ;
   // sans borne, six prospects par IP suffisaient à l'épuiser en une heure et demie, et plus
   // aucune alerte ni réinitialisation ne partait. Les envois critiques passent toujours.
@@ -62,7 +76,7 @@ export async function sendEmail(opts: {
   // Reply-To : voir la règle en tête de fichier. Un email white-label sans adresse d'artisan
   // part SANS Reply-To (le client répondra à contact@… et on le lui relaiera) plutôt
   // qu'avec l'adresse de l'éditeur affichée comme si c'était celle de l'artisan.
-  const replyTo = opts.replyTo || (opts.fromName ? undefined : EMAIL_ENTREPRISE)
+  const replyTo = opts.replyTo || (opts.fromName !== undefined ? undefined : EMAIL_ENTREPRISE)
 
   try {
     const res = await fetch('https://api.resend.com/emails', {

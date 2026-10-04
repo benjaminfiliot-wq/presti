@@ -453,7 +453,7 @@ La valeur, c'est ce que la recommandation fait gagner ou évite de perdre, rappo
 ### R6. Des plafonds par exécution, en plus du plafond mensuel
 
 - **Pourquoi.**
-  - La clé « agents » à 30 $/mois du plan protège le mois. Une boucle peut pourtant la vider en une nuit, et **une alerte n'arrête rien** [B].
+  - La clé « agents » à 30 $/mois du plan protège le mois. Une boucle peut pourtant la vider en une nuit, et **une alerte n'arrête rien** [B]. (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat)
   - Dans l'Agent SDK, `maxTurns` et `maxBudgetUsd` coupent l'exécution elle-même [O].
   - Une session Managed Agents se paie en jetons, plus 0,08 $ par heure de session active [O].
   - L'IA du produit le fait déjà : 4 tours et 40 s au plus [M].

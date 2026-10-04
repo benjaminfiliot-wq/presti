@@ -66,7 +66,16 @@ async function attendre(ms) {
   if (cfg.horlogeControlee) { horlogeOffset += ms; return undefined }
   return new Promise((r) => setTimeout(r, ms))
 }
-const deps = { env: depsEnv, lancer, fetch, enregistrerCout, maintenant, attendre }
+// Ces coûts décrivent seulement les doublures du banc, jamais une API réelle.
+function coutDeVoie(id) {
+  if (!['codex', 'freellmapi', 'ollama_local', 'laya'].includes(id)) return undefined
+  if (cfg.coutVoie === 'inconnu') return undefined
+  if (cfg.coutVoie === 'payant') return 0.01
+  return 0
+}
+const deps = { env: depsEnv, lancer, fetch, enregistrerCout, maintenant, attendre,
+  coutDeVoie, verifierPlafond: async (_agent, cout) => cout === 0,
+}
 
 // ── import des deux modules ───────────────────────────────────────────────────────────────────────────────────────
 let LLM = null, MOTEURS = null, erreurImport = null

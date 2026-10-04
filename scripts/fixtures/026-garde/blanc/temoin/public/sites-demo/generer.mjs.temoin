@@ -1,0 +1,25 @@
+// Générateur minimal du témoin de garde-blanc-qa : même appel que `generer.mjs --maquette=<json> --sortie=<dossier>`, sans photo ni
+// mise en page. Il ne dit que ce que dit une maquette corrigée : la marque de l'entreprise, jamais celle de l'éditeur.
+import fs from 'node:fs'
+import path from 'node:path'
+
+const arg = (p) => process.argv.slice(2).find((a) => a.startsWith(p))?.slice(p.length)
+const entree = JSON.parse(fs.readFileSync(arg('--maquette='), 'utf8'))
+const sortie = arg('--sortie=')
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+const photos = entree.photos ?? []
+const credit = photos.map((p) => `${p.auteur} (${p.licence})${p.modifiee ? ' — photo modifiée' : ''}`).join(' · ')
+const page = (titre, h1, corps, pied = '') => `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(titre)}</title></head><body>
+<main><h1>${esc(h1)}</h1>${corps}</main>${pied}</body></html>\n`
+
+fs.mkdirSync(path.join(sortie, 'mentions-legales'), { recursive: true })
+fs.writeFileSync(path.join(sortie, 'index.html'), page(
+  `${entree.entreprise} — ${entree.metier}`, entree.entreprise,
+  `<p>Une proposition de page pour ${esc(entree.entreprise)}.</p><p>Zone d’intervention : à confirmer avec vous</p><p>Téléphone : à reconfirmer avec vous</p>`,
+  `<footer class="pied"><p>Maquette privée préparée pour ${esc(entree.entreprise)}. Rien n’est publié.</p><p>Photos d’illustration : ${esc(credit)}</p></footer>`,
+))
+fs.writeFileSync(path.join(sortie, 'mentions-legales', 'index.html'), page(
+  `Mentions légales — ${entree.entreprise}`, 'Mentions légales',
+  `<p>Dénomination : ${esc(entree.entreprise)}</p><p>Numéro SIREN : à compléter avec vous</p><p>Adresse du siège : à compléter avec vous</p><p>Hébergeur : à compléter avec vous</p><p>Directeur de la publication : ${esc(entree.entreprise)}</p><p>Médiateur de la consommation : à compléter avec vous</p><p>Données personnelles et cookies : à compléter avec vous</p>`,
+))
+fs.writeFileSync(path.join(sortie, 'attributions.json'), JSON.stringify(photos, null, 2))

@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-09-30T19:48:37Z)
+# Carte du code — presti (2026-09-30T21:25:17Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -81,7 +81,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - capacités (24) : plateforme.conversation, plateforme.ia.auto, plateforme.ia.expert, plateforme.comptes_clients, plateforme.domaine_perso, plateforme.personnalisation_avancee, plateforme.regles, site.essentiel, site.pro, site.signature, site.slides3d, site.domaine_perso, devis.ia, devis.prix_artisan, factures, factures.electronique, inventaire.stock, inventaire.recherche_ia, canaux.email, canaux.whatsapp, canaux.reseaux, relances, export, support.prioritaire
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/**/*.ts` (189 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (192 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/agents/acquisition/affirmations.ts` (4) : Affirmation, AFFIRMATIONS_APPROUVEES, AFFIRMATIONS_PERMISES, AFFIRMATIONS_RETIREES
 - `lib/agents/acquisition/conformite.ts` (6) : ProspectJuge, EtatMaquette, EntreeJuge, VerdictConformite, jugerMessage, jugerModele
@@ -89,6 +89,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/acquisition/disjoncteurs.ts` (3) : peutEnvoyer, estAuVert, carteAttention
 - `lib/agents/acquisition/douleurs.ts` (2) : Douleur, DOULEURS
 - `lib/agents/acquisition/entrant.ts` (8) : DemandeEntrante, ResultatEntrant, SiteNormalise, normaliserMetier, normaliserCommune, normaliserSite, normaliserEmail, normaliserDemandeEntrante
+- `lib/agents/acquisition/expediteur.ts` (4) : adresseExpediteur, adresseDeBase, domaineProfessionnel, clesSupplementaires
 - `lib/agents/acquisition/faq.ts` (3) : EntreeFaq, FAQ_APPROUVEES, FAQ
 - `lib/agents/acquisition/jauges.ts` (5) : JAUGES, DonneesJauges, JaugeCalculee, calculerJauges, consommerJauge
 - `lib/agents/acquisition/jugeFaits.ts` (7) : Deps, normaliserTexte, texteVisible, verifierFait, verifierFormulaire, verifierAvantEnvoi, executerJugeFaits
@@ -105,16 +106,17 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/acquisition/sirene.ts` (3) : ficheParSiren, retenir, chercherEntreprise
 - `lib/agents/acquisition/standardiste.ts` (25) : CONSIGNES, CLASSES_LECTEUR, APPELS_LECTEUR_MAX, CERTITUDE_MIN, ATTENTE_USINE_MINUTES, RGPD_ECHEANCE_JOURS, EXTRAIT_MAX_LECTEUR, TEXTE_MAX, …
 - `lib/agents/acquisition/vigieMeta.ts` (3) : domaineDepuisLegendes, filtrerAnnonceurs, executerVigie
-- `lib/agents/bus.ts` (33) : ResultatBus, STATUT_ERREUR, DELAI_MS, LigneAgentJeton, EvenementBus, Creation, DecisionTranchee, TachePrise, …
+- `lib/agents/bus.ts` (34) : ResultatBus, STATUT_ERREUR, DELAI_MS, LigneAgentJeton, EvenementBus, Creation, DecisionTranchee, TachePrise, …
 - `lib/agents/demandes.ts` (15) : TEXTE_MIN, TEXTE_MAX, COMPTE_RENDU_MAX, QUOTA_JOUR, STATUTS, StatutDemande, Demande, BRANCHE, …
 - `lib/agents/fileArgent.ts` (5) : GestionnaireArgent, deposerEntreeUsine, HANDLERS, traiterFileArgent, balayerCommandesPayees
 - `lib/agents/garde.ts` (9) : AgentAuth, RefusAgent, PLAFOND_ESSAIS_IP, FENETRE_ESSAIS_IP_S, estRefusAgent, authAgent, exigerType, exigerTable, …
 - `lib/agents/jetons.ts` (5) : FORMAT_JETON, FORMAT_NOM_AGENT, genererJeton, empreinteJeton, nomDuJeton
 - `lib/agents/lecons.ts` (13) : Lecon, OptionsLecons, DepsLecons, DOMAINES, LECONS_DE, AVERTISSEMENT, PLAFONDS_LECONS, estPropre, …
 - `lib/agents/lectureFirecrawl.ts` (3) : PLAFOND_CAHIER, COUT_PAGE, lireAvecFirecrawl
-- `lib/agents/llm.ts` (12) : Lecteur, OptionsLecteur, RetourCout, DepsLecteur, PLAFONDS, emballerDonnees, retirerCoordonnees, creerLecteur, …
+- `lib/agents/llm.ts` (13) : Lecteur, OptionsLecteur, RetourCout, DepsLecteur, PLAFONDS, COUT_VOIE_EUROS, emballerDonnees, retirerCoordonnees, …
 - `lib/agents/moteurs.ts` (20) : MODELE_AGENTS, MODELE_REJUGE, EntreeMoteur, MOTEUR_DE, TRAVAIL_DE, EntreeCatalogue, VERSION_CATALOGUE, CATALOGUE, …
 - `lib/agents/pause.ts` (2) : EtatPause, pauseGenerale
+- `lib/agents/sortie.ts` (2) : SortiePermise, sortiePermise
 - `lib/agents/usineDepot.ts` (4) : FichierDepot, tacheDetenue, entree, depot
 - `lib/agents/veilleur.ts` (7) : Couleur, URGENTS, COULEURS, AGENTS_DE_L_USINE, Ligne, creneauDigest, veilleur
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
@@ -152,6 +154,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/crieur/composer.ts` (4) : PHRASES_GABARIT, cleSemaine, horairesSemaine, composerLot
 - `lib/crieur/faits.ts` (2) : Fait, FAITS
 - `lib/crieur/juge.ts` (7) : PHRASE_AIMANT, Canal, PublicationAJuger, FaitPourJuge, ContexteJuge, VerdictJuge, jugerPublication
+- `lib/crieur/pauseProgrammees.ts` (2) : BilanProgrammees, signalerProgrammees
 - `lib/crieur/publora.ts` (2) : connexions, creerPublication
 - `lib/devisAuto.ts` (3) : SourceDevis, ResultatDevisAuto, creerDevisBrouillonPourLead
 - `lib/devisPdfData.ts` (3) : mentionsReglement, MENTION_TVA_DEBITS, buildPdfData
@@ -272,10 +275,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/vercelDomains.ts` (6) : DnsRecord, DomainStatus, normalizeDomain, addDomain, getStatus, removeDomain
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (116)
-- dernières : 0113_station_reglages.sql, 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql
+## Migrations — `supabase/migrations` (117)
+- dernières : 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql, 0121_plafond_avant_coup.sql
 
-## Scripts — `scripts/` (390 .mjs, dont 78 suites e2e)
+## Scripts — `scripts/` (395 .mjs, dont 78 suites e2e)
 
 ## Orchestre — file : 39 · en cours : 0 · faites : 257 · refusées : 1
 

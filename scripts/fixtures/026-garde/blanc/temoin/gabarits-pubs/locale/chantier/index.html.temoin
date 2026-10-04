@@ -1,0 +1,3 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>{{entreprise}} — {{metier}}</title></head>
+<body><main><h1>{{entreprise}}</h1><p>{{metier}} à {{ville}}. Devis gratuit.</p><p class="credit">Visuels : {{credit_photo}}</p></main></body></html>

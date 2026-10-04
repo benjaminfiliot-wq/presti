@@ -7,6 +7,7 @@ import { mrr, encaisseDuMois } from '@/lib/direction/stripe'
 import { coutIADuMois, estimationDepuisLesCredits } from '@/lib/alertes'
 import { seulsLesVrais } from '@/lib/direction/perimetre'
 import { actif } from '@/lib/flags'
+import { santeService } from '@/lib/controle/lectures'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -23,8 +24,6 @@ export const dynamic = 'force-dynamic'
 //
 // Chaque valeur porte sa source et sa fraîcheur. Un chiffre sans provenance n'est pas affiché : il est
 // remplacé par la raison de son absence.
-type Etat = 'ok' | 'degrade' | 'incident'
-
 const compteurs = (uid: string, borneJournal: boolean, voitMessagerie: boolean, voitAlertes: boolean) =>
   // La clé de cache porte le périmètre : sans ça, la réponse mise en cache pour un fondateur
   // serait resservie au partenaire trente secondes plus tard, avec le compteur qu'on vient de lui
@@ -49,30 +48,6 @@ const compteurs = (uid: string, borneJournal: boolean, voitMessagerie: boolean, 
     }
   }, 30_000)
 
-/**
- * Le service tient-il debout ? La barre ne refait PAS sa propre mesure : elle demande le même verdict
- * que le bandeau, aux mêmes contrôles.
- *
- * Sa première version sondait deux pages de son côté, et annonçait « Service normal » pendant que le
- * bandeau, dix pixels plus bas, disait « Service dégradé » (vu à l'œil le 07/09). Deux affirmations
- * contradictoires côte à côte détruisent la confiance dans tout l'écran, y compris dans ce qui est juste.
- */
-const service = (origine: string, jeton: string | null) =>
-  sourcer('barre:service', 'app', async () => {
-    const r = await fetch(`${origine}/api/controle/etat`, {
-      cache: 'no-store', signal: AbortSignal.timeout(8000),
-      headers: { 'User-Agent': 'presti-barre', ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}) },
-    })
-    if (!r.ok) throw new Error(`état ${r.status}`)
-    const j = (await r.json()) as { niveau: Etat; controles: { cle: string; etat: string; libelle: string }[] }
-    const verts = j.controles.filter((c) => c.etat === 'ok').length
-    const soucis = j.controles.filter((c) => c.etat === 'crit' || c.etat === 'warn').map((c) => c.libelle)
-    return {
-      etat: j.niveau,
-      detail: j.niveau === 'ok' ? `${verts} contrôles verts` : soucis.slice(0, 2).join(', ') || 'un contrôle en défaut',
-    }
-  }, 60_000)
-
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
@@ -91,7 +66,7 @@ export async function GET(req: Request) {
     // barre le lui rendait alors que /api/controle/a-faire le lui refuse. Deux écrans, deux
     // réponses — et c'est toujours le plus bavard qui gagne.
     compteurs(f.uid, journalBorne, voit('messagerie'), voitSante),
-    voitSante ? service(new URL(req.url).origin, req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? null) : Promise.resolve(null),
+    voitSante ? santeService(new URL(req.url).origin, req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? null) : Promise.resolve(null),
     voitClients ? mrr() : Promise.resolve(null),
     voitCompta ? encaisseDuMois() : Promise.resolve(null),
     voitCompta ? sourcer('barre:ia', 'anthropic', async () => {

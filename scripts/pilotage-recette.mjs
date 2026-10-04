@@ -283,7 +283,7 @@ async function reel() {
     {
       const e = []
       agent = `essai_e2e_${ALEA}`
-      const r0 = await rpc('ops_agent_enregistrer', { p_nom: agent, p_libelle: `Essai recette ${ALEA}`, p_capacites: ['decider'], p_types_crees: [], p_tables: [], p_periode_minutes: 60, p_debit_minute: 1, p_quota_creations_jour: 5, p_plafond_euros_jour: 1 })
+      const r0 = await rpc('ops_agent_enregistrer', { p_nom: agent, p_libelle: `Essai recette ${ALEA}`, p_capacites: ['decider'], p_types_crees: [], p_tables: [], p_periode_minutes: 60, p_debit_minute: 1, p_quota_creations_jour: 5, p_plafond_euros_jour: 0 })
       if (!r0.ok) throw new Error(`ops_agent_enregistrer : ${r0.status} ${court(JSON.stringify(r0.corps), 100)}`)
       const creer = async (portee, montant) => { const r = await rpc('ops_decision_creer', { p_agent: agent, p_question: `Décision d’essai ${ALEA} (${portee ?? 'sans enjeu'}) ?`, p_contexte: `essai-pilotage-${ALEA}`, p_options: [{ cle: 'oui', libelle: 'Oui' }, { cle: 'non', libelle: 'Non' }], p_defaut: 'non', p_montant_cents: montant, p_portee: portee, p_echeance: new Date(Date.now() + 3_600_000).toISOString(), p_cle: `essai-pilotage-${ALEA}-${portee ?? 'libre'}`, p_tache: null }); if (!r.ok) throw new Error(`ops_decision_creer : ${r.status}`); const id = typeof r.corps === 'string' ? r.corps : r.corps?.id ?? r.corps?.[0]?.id; decisions.push(id); return id }
       const d1 = await creer(null, null), d2 = await creer('argent', 100)

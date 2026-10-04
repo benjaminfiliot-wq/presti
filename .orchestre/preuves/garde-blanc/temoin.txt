@@ -1,0 +1,10 @@
+garde-blanc-qa — auto-contrôle du témoin (27 sabotage(s) rejoués)
+✅ GB-1 aucune occurrence dans 9 fichier(s) et 3 fichier(s) produit(s) par 1 exécution(s) du générateur (maquette-temoin) ; 3 exemption(s) utilisée(s) (E1, E5, E6) ; 4 sabotage(s) vu(s) (gabarit-pub-presti, pied-prepare-par-presti, modele-exempte-prestiapp, generateur-retire)
+✅ GB-2 crédits et attributions de 12 fichier(s) : aucun ne nomme Presti ni son fondateur ; 4 sabotage(s) vu(s) (credit-modifie-par-presti, credit-fondateur, credit-de-page-presti, credit-genere-fondateur)
+✅ GB-3 2 corpus de mentions légales : les sept rubriques sont renseignées ou marquées « à compléter », aucune au nom de Presti ; 5 sabotage(s) vu(s) (mentions-sans-mediateur, mentions-siren-vide, mentions-sans-hebergeur, mentions-directeur-fondateur-presti, generateur-mentions-sans-mediateur)
+✅ GB-4 lib/email.ts exécuté (3 cas, fetch factice) : expéditeur au nom de l'artisan, adresse d'envoi neutre, Reply-To l'artisan, aucun repli « Presti » ; 1 appelant(s) de fromName lus ; 6 sabotage(s) vu(s) (courrier-adresse-presti, courrier-reply-to-editeur, courrier-repli-sur-la-plateforme, courrier-nom-de-la-plateforme, appelant-nom-vide, appelant-repli-presti)
+✅ GB-5 6 page(s) lues, 10 ligne(s) marquée(s) « à confirmer » : aucun titre ni h1 n'affirme ce qu'elles réservent ; 3 sabotage(s) vu(s) (titre-zone-alentours, h1-zone-rayon, h1-reprend-le-telephone)
+✅ GB-6 0 lien(s) tel: dans 6 page(s) : aucun ne porte un numéro marqué « à reconfirmer » ; 2 sabotage(s) vu(s) (telephone-cliquable, generateur-telephone-cliquable)
+✅ GB-7 6 exemption(s) sur 8 permises, chacune justifiée et bornée (aucune sous public/, aucun joker) ; 3 utilisée(s) sur cet arbre, non utilisée(s) ici : E2, E3, E4 (à retirer quand la correction les rend inutiles) ; 3 sabotage(s) vu(s) (portee-sans-courriel, portee-sans-generation, portee-sans-site)
+garde-blanc-qa : PASS
+code=0

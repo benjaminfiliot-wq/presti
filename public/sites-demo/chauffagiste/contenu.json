@@ -377,7 +377,7 @@
    "description": "Mentions légales et informations réglementaires de Démo Chauffagiste Lille. Site de démonstration représentant une entreprise artisanale fictive.",
    "h1": "Mentions légales",
    "kicker": "",
-   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les performances techniques, le design sur-mesure et le référencement local de la solution Presti.",
+   "chapeau": "Site de démonstration : entreprise fictive.",
    "heroImages": [],
    "sections": [
     {
@@ -385,7 +385,7 @@
      "blocs": [
       {
        "type": "p",
-       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les performances techniques, le design sur-mesure et le référencement local de la solution Presti."
+       "texte": "Site de démonstration : entreprise fictive."
       }
      ]
     },
@@ -444,7 +444,7 @@
      "blocs": [
       {
        "type": "p",
-       "texte": "Ce site statique est hébergé localement dans le cadre de la suite de démonstration technique Presti."
+       "texte": "Ce site statique est un site de démonstration."
       }
      ]
     },

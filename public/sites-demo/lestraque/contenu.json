@@ -891,7 +891,11 @@
             },
             {
               "type": "p",
-              "texte": "Directeur de publication : Benjamin Filiot (Fondateur Presti)"
+              "texte": "Directeur de publication : Benjamin Filiot"
+            },
+            {
+              "type": "p",
+              "texte": "Médiateur de la consommation : à compléter"
             }
           ]
         },

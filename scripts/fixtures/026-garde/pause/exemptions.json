@@ -1,0 +1,11 @@
+{
+  "_lisez_moi": "Liste FERMEE des voies de sortie exemptees de la pause generale (juge scripts/garde-pause-qa.mjs, critere GP-2). Une voie absente d'ici et non gardee par la pause fait echouer GP-2. Les e-mails critiques (alertes au fondateur, code de connexion, reinitialisation) ne sont pas listes : ils passent par lib/email.ts, dont le juge verifie le comportement (un mail critique part sous pause, un autre non).",
+  "exemptions": [
+    { "chemin": "lib/push.ts", "classe": "notification_interne", "raison": "Notification push vers les appareils de l'artisan proprietaire du compte ou des fondateurs ; jamais un tiers, et la charge ne porte aucun contenu de conversation (lib/notifications.ts). Couper ce canal priverait le fondateur de savoir que la pause est posee." },
+    { "chemin": "lib/pushNatif.ts", "classe": "notification_interne", "raison": "Relais FCM de lib/push.ts vers les appareils Android et iOS de l'artisan ou des fondateurs ; meme justification que lib/push.ts, meme absence de contenu dans la charge." },
+    { "chemin": "lib/siteGenerationDistante.ts", "classe": "declenchement_interne", "raison": "Declenche un workflow GitHub de Presti pour generer un site deja commande et paye ; aucun destinataire, aucun message ; le tour de livraison lit sa propre pause (lib/siteLivraison.ts, constante pause)." },
+    { "chemin": "lib/vercelDomains.ts", "classe": "infrastructure", "raison": "Gere les domaines du projet Vercel (ajout, verification, retrait) ; appel d'administration d'infrastructure, aucun message ne part vers une personne." },
+    { "chemin": "lib/motDePasse.ts", "classe": "lecture_seule", "raison": "Verification de mot de passe compromis aupres de HIBP par prefixe de hachage (lecture, k-anonymat) ; le POST relatif va vers notre propre serveur ; aucun message ne part vers une personne." }
+  ],
+  "classes": ["notification_interne", "declenchement_interne", "infrastructure", "lecture_seule"]
+}

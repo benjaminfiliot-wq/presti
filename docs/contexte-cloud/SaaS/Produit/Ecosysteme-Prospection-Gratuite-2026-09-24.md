@@ -106,7 +106,7 @@ Champ « Sujet », s'il existe : « Proposition commerciale : un site pour <entr
   - Le compte Oracle date du 24/09. L'essai de 30 jours finit vers le 24/10, en plein P1-P2 : toute ressource hors Always Free sera supprimée [^oracle-faq].
   - Ensuite, Oracle reprend une instance dont le p95 du CPU, du réseau et de la mémoire reste sous 20 % sur 7 jours [^oracle-faq]. L'épreuve « PC éteint 24 h » ne prouve pas ce critère.
   - D'où l'inventaire Always Free avant le 24/10 et l'alerte du Veilleur sur la mémoire (§3.2).
-- **R16, la clé « agents »** : plafond de 30 $/mois, décidé avant ce choix. Elle ne fait pas partie de l'outillage e-mail.
+- **R16, la clé « agents »** : plafond de 30 $/mois, décidé avant ce choix. Elle ne fait pas partie de l'outillage e-mail. (annulé : plafond de 0 € par agent, migration 0105 et organigramme du 27/09 ; aucun achat)
 
 ---
 

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { niveauService } from '@/lib/controle/sante'
 import { joignable } from '@/lib/direction/stripe'
-import { coutIADuMois, CRONS_ATTENDUS } from '@/lib/alertes'
+import { coutIADuMois } from '@/lib/alertes'
+import { cronsDuService } from '@/lib/controle/lectures'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -30,16 +30,6 @@ const domaineResend = () => sourcer('etat:resend', 'resend', async () => {
   return { statut: d?.status ?? 'absent' }
 }, 60_000)
 
-const crons = () => sourcer('etat:crons', 'supabase', async () => {
-  const { data, error } = await supabaseAdmin.from('passages_cron').select('nom, dernier_passage, reussi')
-  if (error) throw new Error(error.message)
-  return CRONS_ATTENDUS.map((c) => {
-    const p = (data ?? []).find((x) => x.nom === c.nom)
-    const age = p ? (Date.now() - new Date(p.dernier_passage).getTime()) / 3_600_000 : null
-    return { nom: c.nom, dernier: p?.dernier_passage ?? null, reussi: p?.reussi ?? null, enRetard: age === null || age > c.maxHeures }
-  })
-})
-
 const ia = () => sourcer('etat:ia', 'anthropic', async () => {
   const c = await coutIADuMois()
   if (!c) return null
@@ -56,7 +46,7 @@ export async function GET(req: Request) {
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   // La sonde suit le déploiement qui la sert : une préversion mesurait la production, et le disait « en ligne ».
   const origine = new URL(req.url).origin
-  const [site, connexion, st, resend, cr, cout] = await Promise.all([sonde(`${origine}/`), sonde(`${origine}/login`), joignable(), domaineResend(), crons(), ia()])
+  const [site, connexion, st, resend, cr, cout] = await Promise.all([sonde(`${origine}/`), sonde(`${origine}/login`), joignable(), domaineResend(), cronsDuService(), ia()])
   const controles: Controle[] = []
   const ajouter = (cle: string, libelle: string, s: Sourcee<unknown>, juger: (v: never) => { etat: Controle['etat']; detail: string }) => {
     if (s.manque) { controles.push({ cle, libelle, etat: 'info', detail: 'non mesuré', manque: s.manque, source: s.source, a: s.a, cache: s.cache }); return }

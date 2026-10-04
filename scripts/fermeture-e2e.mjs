@@ -8,6 +8,7 @@
 //
 // Usage : node scripts/fermeture-e2e.mjs
 import fs from 'node:fs'
+import './ts-loader.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -78,7 +79,7 @@ const PROTEGEES = [
   ['/api/controle/jauges', 'GET'],
   ['/api/controle/packs', 'GET'], [`/api/controle/packs/${id}`, 'POST', {}],
   ['/api/controle/pause', 'GET'], ['/api/controle/pause', 'POST', {}],
-  ['/api/controle/pilotage', 'GET'],
+  ['/api/controle/pilotage', 'GET'], ['/api/controle/station', 'GET'],
   [`/api/controle/pilotage/agents/${id}`, 'POST', {}], [`/api/controle/pilotage/appels/${id}`, 'POST', {}],
   ['/api/controle/pilotage/consignes', 'POST', {}], [`/api/controle/pilotage/decisions/${id}`, 'POST', {}],
   ['/api/controle/pilotage/gestes', 'POST', {}],
@@ -91,7 +92,7 @@ const PROTEGEES = [
 const DERRIERE_LE_DRAPEAU_PILOTAGE = await (async () => {
   const { FLAGS: F } = await import('../lib/flags.ts').catch(() => ({ FLAGS: null }))
   const routesDe = (dossier) => !fs.existsSync(dossier) ? [] : fs.readdirSync(dossier, { recursive: true }).map(String).filter((f) => /(^|[\\/])route\.ts$/.test(f)).map((f) => `${dossier}/${f.replace(/\\/g, '/')}`)
-  return ['pilotage', 'jauges'].map((sub) => {
+  return ['pilotage', 'jauges', 'station'].map((sub) => {
     const fichiers = routesDe(`app/api/controle/${sub}`)
     return { prefixe: `/api/controle/${sub}`, baisse: !!F && F.pilotage !== true, lit: fichiers.length > 0 && fichiers.every((f) => /actif\(['"`]pilotage['"`]\)/.test(fs.readFileSync(f, 'utf8'))) }
   })
@@ -246,7 +247,7 @@ if (FLAGS) {
   //   ['mort', pourquoi]         → levé, plus personne ne le lit : à retirer de lib/flags.
   const CARTE = {
     'aimantSite': ['lu'],
-    'busAgents': ['route', '/api/agents/etat', 'GET', 'app/api/agents/taches/route.ts', 'app/api/agents/taches/prendre/route.ts', 'app/api/agents/taches/[id]/rendre/route.ts', 'app/api/agents/evenements/route.ts', 'app/api/agents/decisions/route.ts', 'app/api/agents/battement/route.ts', 'app/api/agents/etat/route.ts', 'app/api/agents/tic/route.ts'],
+    'busAgents': ['route', '/api/agents/etat', 'GET', 'app/api/agents/taches/route.ts', 'app/api/agents/taches/prendre/route.ts', 'app/api/agents/taches/[id]/rendre/route.ts', 'app/api/agents/evenements/route.ts', 'app/api/agents/decisions/route.ts', 'app/api/agents/battement/route.ts', 'app/api/agents/etat/route.ts', 'app/api/agents/tic/route.ts', 'app/api/agents/telegram/sortie/route.ts', 'app/api/agents/telegram/entree/route.ts'],
     'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts'],
     'codeEmail': ['route', '/api/auth/code', 'POST', 'app/api/auth/code/route.ts'],
     'pushWeb': ['route', '/api/push/abonner', 'POST', 'app/api/push/abonner/route.ts'],
@@ -272,7 +273,7 @@ if (FLAGS) {
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
     // et les DEUX routes doivent lire le drapeau elles-mêmes.
     'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
-    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts'],
+    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts', 'app/api/controle/station/route.ts', 'app/api/agents/reunion/route.ts', 'app/api/agents/reunion/chiffres/route.ts'],
     // 29/09 — les demandes de Benj à l'écosystème : la route du Poste et les deux routes du bus lisent ce drapeau (les routes du bus lisent AUSSI busAgents).
     'demandesEcosysteme': ['route', '/api/controle/demandes', 'GET', 'app/api/controle/demandes/route.ts', 'app/api/agents/demandes/route.ts', 'app/api/agents/demandes/[id]/route.ts'],
     'prospectsEntrant': ['route', '/api/prospects/entrant', 'POST', 'app/api/prospects/entrant/route.ts'],
