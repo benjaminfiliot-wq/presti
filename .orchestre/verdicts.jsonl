@@ -1097,3 +1097,4 @@
 {"id":"026-170","verdict":"FAIL","ligne":"✅ JA-1 référence 1c87006 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (5823 fichiers), ancêtre de HEAD, sans app/c","code":1,"date":"2026-10-04T21:43:15Z","duree_s":1224,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-172","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 131 min","code":null,"date":"2026-10-04T21:49:21Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
 {"id":"026-123","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T21:50:27Z","duree_s":519,"agent":"claude-code","executant":"antigravity","lignes":1760,"dossier":"fait"}
+{"id":"026-159","verdict":"REJOUÉ","ligne":"disjoncteur réarmé explicitement par rejouer --forcer","code":null,"date":"2026-10-04T23:38:50Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"file"}
