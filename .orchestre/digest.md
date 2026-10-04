@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T09:39:48Z
+# Digest — 2026-10-04T09:43:42Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 173 tâche(s) PASS, 213793 ligne(s) · faites par Claude Code : 92 tâche(s) PASS, 81982 ligne(s).
-**État** — file : 19 · en cours : 2 · faites : 279 · refusées : 19
+**État** — file : 19 · en cours : 3 · faites : 279 · refusées : 19
 
 ## Attention (7)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
@@ -26,6 +26,7 @@
 |---|---|---|---|---|---|
 | 026-099 | test | en-cours | codex | — | depuis 2026-10-04T08:16:21Z · Écrire scripts/juges-026-envoi-mutations.mjs, qui prouve sur des copies que les huit juges de l'envoi automatique, de l'entrant et de la fabrication (disjoncteurs-qa, jauges-qa, facteur-qa, meta-webhooks-qa, repondeur-qa, rendez-vous-qa, maquette-video-qa, douleurs-qa) échouent chacun sur de vraies fautes avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-092 | feature | en-cours | usine-codex-1386 | — | depuis 2026-10-04T09:39:46Z · Créer GET /api/controle/station?vue=direct\|fil\|salle\|agent (404 tant que le drapeau pilotage est baissé, garde fondateur, chaque sous-partie sourcée et lue seulement par les fonctions pilotage_* et station_* et les modules purs de lib/pilotage), lib/pilotage/station.ts, et les deux routes de la réunion réservées au jeton du Chef (POST /api/agents/reunion : ouvrir, clore, abandonner ; GET /api/agents/reunion/chiffres), inscrites dans la ligne pilotage de scripts/fermeture-e2e.mjs |
+| 026-120 | feature | en-cours | ag-026-120 | — | depuis 2026-10-04T09:43:28Z · Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
 | 026-123 | feature | file | ag-1 | — | Remplir le cadre du journal de la station : le Journal de bord en direct (une bulle par événement réel, pastille de l'agent, heure de Paris, texte en police mono, filtre par agent, comptes rendus de réunion groupés) et le champ « ▶ Transmettre à l'équipage… » qui envoie la consigne de Benj à la route de 026-074, sans jamais afficher une bulle que le fil n'a pas servie |
 | 026-151 | test | file | codex | — | Écrire scripts/juges-026-orchestre-chef-mutations.mjs, qui prouve sur des copies que preuve-026 (groupes source, baux, quota), chef-qa, revue-qa et chantier-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-150 | test | file | codex-relais-securite-0930 | — | Écrire scripts/juges-026-securite-mutations.mjs, qui prouve sur des copies que media-octets-qa, instantane-quotidien-qa, git-garde-qa et next16-qa (mode --statique) échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
@@ -123,6 +124,5 @@
 | 026-127 | feature | fait | usine-codex-117 | PASS | 2026-09-29T09:48:36Z · 74s · 584 l. |
 | 026-154 | contenu | fait | codex | PASS | 2026-09-29T09:31:12Z · 2s · 0 l. |
 | 026-115 | feature | fait | claude-code | PASS | 2026-09-29T09:31:04Z · 81s · 438 l. |
-| 026-118 | feature | fait | codex | PASS | 2026-09-29T09:19:28Z · 219s · 0 l. |
 
-… 219 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 220 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
