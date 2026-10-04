@@ -1,0 +1,394 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/achat-ecrans-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=ecrans --racine={racine}",
+      "fichier": "lib/suiteSure.ts",
+      "avant": "!brut.startsWith('/site/commander')) return '/outils'\n  if (brut.includes('//') || ",
+      "apres": "!brut.startsWith('/')) return '/outils'\n  if (",
+      "critere": "EA-5",
+      "extrait": "FAIL EA-5 — « adresse relative de protocole » (\"//evil.fr\") → \"//evil.fr\", \"/outils\" attendu ; « remontée de chemin » (\"/outils/../x\") → \"/outils/../x\", \"/outils\" attendu ; « deux barres après le préfixe » (\"/site/commander//evil.fr\") → \"/site/commander//evil.fr\", \"/outils\" attendu",
+      "duree_s": 54.1
+    },
+    {
+      "juge": "scripts/achat-ecrans-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=ecrans --racine={racine}",
+      "fichier": "app/site/acheter/page.tsx",
+      "avant": "style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }} aria-hidden=\"true\"",
+      "apres": "style={{ position: 'static' }} aria-hidden=\"true\"",
+      "critere": "EA-2",
+      "extrait": "FAIL EA-2 — 390 px : le piège website est visible à l'écran ; 1440 px : le piège website est visible à l'écran",
+      "duree_s": 55.1
+    },
+    {
+      "juge": "scripts/achat-public-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=achat --racine={racine}",
+      "fichier": "lib/siteAchatPublic.ts",
+      "avant": "const envoi = await envoyer({ to: destinataire, ...courrielLien(url), critique: true })",
+      "apres": "const envoi = await envoyer({ to: 'corps-de-requete@presti-test.invalid', ...courrielLien(url), critique: true })",
+      "critere": "AP-6",
+      "extrait": "FAIL AP-6 — destinataire \"corps-de-requete@presti-test.invalid\", acheteur-026@presti-test.invalid attendu",
+      "duree_s": 30.7
+    },
+    {
+      "juge": "scripts/achat-public-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=achat --racine={racine}",
+      "fichier": "lib/siteAchatPublic.ts",
+      "avant": "createUser({ email, email_confirm: true })",
+      "apres": "createUser({ email, email_confirm: true, password: 'mot-de-passe-choisi-pour-lui' })",
+      "critere": "AP-5",
+      "extrait": "FAIL AP-5 — 1er passage : createUser porte un password",
+      "duree_s": 27.2
+    },
+    {
+      "juge": "scripts/achat-public-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=achat --racine={racine}",
+      "fichier": "app/api/stripe/webhook/route.ts",
+      "avant": "await ouvrirCompteAcheteur(commandeId)",
+      "apres": "await ouvrirCompteAcheteur(commandeId).catch(() => undefined)",
+      "critere": "AP-5",
+      "extrait": "FAIL AP-5 — envoi refusé → 200, 500 attendu (Stripe doit rejouer)",
+      "duree_s": 31.2
+    },
+    {
+      "juge": "scripts/complement-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=complement --racine={racine}",
+      "fichier": "lib/siteCommandeServeur.ts",
+      "avant": "    matiere: dossier.matiere,\n    modifie_le: (deps.maintenant?.() ?? new Date()).toISOString(),\n  }).eq('id', commandeId)",
+      "apres": "    matiere: dossier.matiere,\n    ...((brut as { etat?: unknown })?.etat !== undefined ? { etat: (brut as { etat: string }).etat } : {}),\n    modifie_le: (deps.maintenant?.() ?? new Date()).toISOString(),\n  }).eq('id', commandeId)",
+      "critere": "CD-4",
+      "extrait": "FAIL CD-4 — l'objet de mise à jour porte etat (seuls domaine_mode, domaine, metier, metiers_secondaires, communes, matiere, modifie_le sont permis) ; etat a changé (\"payee\" → \"en_ligne\")",
+      "duree_s": 6.9
+    },
+    {
+      "juge": "scripts/complement-dossier-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=complement --racine={racine}",
+      "fichier": "lib/siteCommandeServeur.ts",
+      "avant": ".eq('etat', 'payee').is('genere_le', null)\n    .select(COLONNES).maybeSingle()",
+      "apres": ".eq('etat', 'payee')\n    .select(COLONNES).maybeSingle()",
+      "critere": "CD-4",
+      "extrait": "FAIL CD-4 — genere_le posé : 1 écriture(s), 0 attendue",
+      "duree_s": 6.4
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tuile --racine={racine}",
+      "fichier": "app/api/controle/tresorerie/route.ts",
+      "avant": "for (const achat of achatsLus.data ?? []) achatsMoisCents += achat.ttc_cents ?? 0",
+      "apres": "achatsMoisCents = (achatsLus.data ?? []).reduce((somme, achat) => somme + (achat.ttc_cents ?? 0), 0)",
+      "critere": "TA-2",
+      "extrait": "FAIL TA-2 — la route contient .reduce( (ligne 32)",
+      "duree_s": 8.6
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tuile --racine={racine}",
+      "fichier": "lib/direction/veilleTresorerie.ts",
+      "avant": "if (lire('weekday') !== 'Mon') return []",
+      "apres": "if (lire('weekday') !== 'Mon' && lire('weekday') !== 'Tue') return []",
+      "critere": "TA-4",
+      "extrait": "FAIL TA-4 — « mardi 0 h 30 à Paris (lundi en UTC), 90 % » : 1 alerte(s), 0 attendue",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tuile --racine={racine}",
+      "fichier": "lib/siteLivraison.ts",
+      "avant": "  try { await veilleTresorerie(); tresorerieOk = true }\n  catch (e) { bilan.erreurs++; console.error('[livraison] veille trésorerie', e) }",
+      "apres": "  await veilleTresorerie(); tresorerieOk = true",
+      "critere": "TA-5",
+      "extrait": "FAIL TA-5 — lib/siteLivraison.ts (base db6434d) : import ajouté hors contrat : @/lib/siteGenerationDistante → demanderGeneration ; lib/siteLivraison.ts (base db6434d) : import ajouté hors contrat : @/lib/siteLivraisonBus → busEnPause ; lib/siteLivraison.ts (base db6434d) : import ajouté hors contra…",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/livraison-tour-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tour --racine={racine}",
+      "fichier": "lib/siteLivraison.ts",
+      "avant": "if (actuel?.courriels?.[cle] === date) {",
+      "apres": "if (false && actuel?.courriels?.[cle] === date) {",
+      "critere": "TL-4",
+      "extrait": "FAIL TL-4 — envoi refusé : la réservation n'est pas retirée (courriels porte [\"payee\",\"en_ligne\"]) ; après un envoi refusé, le passage suivant fait 0 envoi(s), 2 attendus ; envoi qui lève : la réservation n'est pas retirée (courriels porte [\"payee\",\"en_ligne\"]) ; après un envoi qui lève, le passage…",
+      "duree_s": 9.6
+    },
+    {
+      "juge": "scripts/livraison-tour-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tour --racine={racine}",
+      "fichier": "lib/siteLivraison.ts",
+      "avant": "...modele, critique: true })",
+      "apres": "...modele })",
+      "critere": "TL-5",
+      "extrait": "FAIL TL-5 — envoi 1 : critique = undefined, true attendu ; envoi 2 : critique = undefined, true attendu",
+      "duree_s": 6.8
+    },
+    {
+      "juge": "scripts/tresorerie-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tresorerie --racine={racine}",
+      "fichier": "lib/direction/tresorerie.ts",
+      "avant": "depasse: caCents !== null && seuil > 0 && caCents >= seuil,",
+      "apres": "depasse: caCents !== null && seuil > 0 && caCents > seuil,",
+      "critere": "TR-2",
+      "extrait": "FAIL TR-2 — « pile au seuil » : depasse = false, true attendu",
+      "duree_s": 7.7
+    },
+    {
+      "juge": "scripts/tresorerie-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=tresorerie --racine={racine}",
+      "fichier": "lib/direction/tresorerie.ts",
+      "avant": "export function situerTva(",
+      "apres": "const ecrireStripe = (s: { subscriptions: { update: (id: string, p: object) => unknown } }) => s.subscriptions.update('sub', {})\n\nexport function situerTva(",
+      "critere": "TR-6",
+      "extrait": "FAIL TR-6 — lib/direction/tresorerie.ts:18 « const ecrireStripe = (s: { subscriptions: { update: (id: string, p: o… »",
+      "duree_s": 8.7
+    },
+    {
+      "juge": "scripts/lien-connexion-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=lien --racine={racine}",
+      "fichier": "app/api/auth/lien/route.ts",
+      "avant": "export async function POST(req: Request) {",
+      "apres": "export async function GET(req: Request) { return POST(req) }\n\nexport async function POST(req: Request) {",
+      "critere": "LC-1",
+      "extrait": "FAIL LC-1 — app/api/auth/lien/route.ts exporte GET (le jeton ne se consomme que par un POST)",
+      "duree_s": 0.3
+    },
+    {
+      "juge": "scripts/lien-connexion-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=lien --racine={racine}",
+      "fichier": "app/connexion/lien/page.tsx",
+      "avant": "useEffect(() => { setLienLisible(lireAdresse().jeton !== null) }, [])",
+      "apres": "useEffect(() => { setLienLisible(lireAdresse().jeton !== null); void fetch('/api/auth/lien', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ th: lireAdresse().jeton }) }) }, [])",
+      "critere": "LC-5",
+      "extrait": "FAIL LC-5 — app/connexion/lien/page.tsx : un useEffect poste ou ouvre une session au chargement (« { setLienLisible(lireAdresse().jeton !== null); void fetch(… ») ; app/connexion/lien/page.tsx : un fetch hors d'un gestionnaire de clic (dans LienConnexionPage ; gestionnaires onClick : ouvrirDossier)",
+      "duree_s": 9.2
+    },
+    {
+      "juge": "scripts/bus-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=bus --racine={racine}",
+      "fichier": "lib/siteLivraisonBus.ts",
+      "avant": "return !!error || data !== false",
+      "apres": "return !error && data !== false",
+      "critere": "BL-2",
+      "extrait": "FAIL BL-2 — busEnPause, erreur PostgREST (400) : false, true attendu ; busEnPause, erreur serveur (500) : false, true attendu",
+      "duree_s": 10.6
+    },
+    {
+      "juge": "scripts/bus-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=bus --racine={racine}",
+      "fichier": "app/api/agents/tic/route.ts",
+      "avant": "if (new Date().getUTCMinutes() % 15 === 0) {",
+      "apres": "if (true) {",
+      "critere": "BL-4",
+      "extrait": "FAIL BL-4 — l’appel à tourLivraison n’est sous aucune condition de minute multiple de 15 (« % 15 ») ; à 10 h 16 : tourLivraison appelée 1 fois, jamais attendu",
+      "duree_s": 10.3
+    },
+    {
+      "juge": "scripts/bus-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=bus --racine={racine}",
+      "fichier": "lib/siteLivraisonBus.ts",
+      "avant": "p_cle: `livrer_site:${commandeId}`",
+      "apres": "p_cle: `livraison:${commandeId}`",
+      "critere": "BL-3",
+      "extrait": "FAIL BL-3 — hors pause : 0 ops_tache_clore pour la commande generee, exactement un attendu",
+      "duree_s": 10.3
+    },
+    {
+      "juge": "scripts/bus-livraison-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=bus --racine={racine}",
+      "fichier": "lib/siteLivraisonBus.ts",
+      "avant": "'ops_tache_clore'",
+      "apres": "'ops_tache_rendre'",
+      "critere": "BL-1",
+      "extrait": "FAIL BL-1 — ops_tache_clore appelée 0 fois, une attendue (appels : ops_interrupteur, ops_tache_rendre, ops_battement, ops_battement)",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/poste-sites-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=poste --racine={racine}",
+      "fichier": "app/api/controle/sites/[id]/route.ts",
+      "avant": "  const perimetre = exigerDomaine(f, 'clients', 'ecrire')\n  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)\n",
+      "apres": "",
+      "critere": "PS-2",
+      "extrait": "FAIL PS-2 — (NR) instruction 3 de POST : « const { id } », « const perimetre = exigerDomaine(f, 'clients', 'ecrire') » attendue (référence 4041ec9) ; instruction 4 de POST : « = await ctx.params », « if (domaineRefuse(perimetre)) return reponseRefus(perimetre) » attendue (référence 4041ec9)",
+      "duree_s": 12.8
+    },
+    {
+      "juge": "scripts/poste-sites-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=poste --racine={racine}",
+      "fichier": "app/api/controle/sites/[id]/route.ts",
+      "avant": "    const refus = await exigerReconfirmation(req, f.uid, 'artisan')\n    if (refus) return refus\n",
+      "apres": "",
+      "critere": "PS-4",
+      "extrait": "FAIL PS-4 — envoyer_dossier sans reconfirmation → 200 null, 403 « reconfirmation_requise » attendu ; envoyer_dossier sans reconfirmation : un jeton ou un e-mail est parti ; envoyer_dossier : exigerReconfirmation jamais appelée",
+      "duree_s": 11.4
+    },
+    {
+      "juge": "scripts/retrait-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=retrait --racine={racine}",
+      "fichier": "lib/siteRetrait.ts",
+      "avant": "  const jeton = await d.creerJeton(commande.id, 90)\n",
+      "apres": "  if (actuelle.domaine) await d.detacherDomaine(actuelle.domaine)\n  const jeton = await d.creerJeton(commande.id, 90)\n",
+      "critere": "RT-3",
+      "extrait": "FAIL RT-3 — succès : ordre detacher → jeton → email → maj → detacher → notifier ; jeton → e-mail → mise à jour → détachement → notification attendu ; détachement : [\"couvreur-temoin.fr\",\"couvreur-temoin.fr\"], [couvreur-temoin.fr] attendu ; second appel sur la même commande : un second détachement ;…",
+      "duree_s": 14
+    },
+    {
+      "juge": "scripts/retrait-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=retrait --racine={racine}",
+      "fichier": "lib/purgeComptes.ts",
+      "avant": "      const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)\n      if (echec) {",
+      "apres": "      const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)\n      try { await marquerSuppression(idsSites) }\n      catch (e) { console.error('[purge-comptes] avis de suppression des sites', c.id, e) }\n      if (echec) {",
+      "critere": "RT-4",
+      "extrait": "FAIL RT-4 — lib/purgeComptes.ts : marquerSuppression( est avant le bloc if (echec) : il doit le suivre (purge réussie seulement) ; lib/purgeComptes.ts : 2 appel(s) ajouté(s) à marquerSuppression(, 1 attendu ; purge réussie : marquerSuppression [[[\"d0260000-0000-4000-8000-00000000ee01\",\"d0260000-000…",
+      "duree_s": 10.4
+    },
+    {
+      "juge": "scripts/dossier-zip-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=zip --racine={racine}",
+      "fichier": "lib/siteDossier.ts",
+      "avant": "timingSafeEqual(attendu, recu) && new Date(",
+      "apres": "attendu.toString('hex') === recu.toString('hex') && new Date(",
+      "critere": "DZ-2",
+      "extrait": "FAIL DZ-2 — lib/siteDossier.ts n'appelle pas timingSafeEqual (lu dans le source, commentaires exclus)",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/dossier-zip-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=zip --racine={racine}",
+      "fichier": "lib/siteDossier.ts",
+      "avant": " && new Date(data.dossier_expire_le).getTime() > maintenantDe(deps).getTime()",
+      "apres": "",
+      "critere": "DZ-2",
+      "extrait": "FAIL DZ-2 — verifierJetonDossier, bon jeton, 91 j après (expiré) : true, false attendu",
+      "duree_s": 5.6
+    },
+    {
+      "juge": "scripts/commande-exporter-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=exporter --racine={racine} --seulement=EX-3",
+      "fichier": "scripts/commande-exporter.mjs",
+      "avant": "sharp(source).rotate().resize(",
+      "apres": "sharp(source).rotate().withMetadata().resize(",
+      "critere": "EX-3",
+      "extrait": "FAIL EX-3 — photos/bibliotheque-480.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-480.webp garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.webp garde un bloc EXIF (186 octets) ; photos/escalier-1600.avif garde un …",
+      "duree_s": 16.7
+    },
+    {
+      "juge": "scripts/commande-exporter-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=exporter --racine={racine} --seulement=EX-7",
+      "fichier": "scripts/commande-exporter.mjs",
+      "avant": "if (source.origin !== racine.origin || source.search || source.hash || !source.pathname.startsWith(prefixe)) return null\n    const chemin = decodeURIComponent(source.pathname.slice(prefixe.length))",
+      "apres": "if (source.search || source.hash) return null\n    const chemin = decodeURIComponent(source.pathname.split('/').pop() ?? '')",
+      "critere": "EX-7",
+      "extrait": "FAIL EX-7 — le serveur du juge a reçu 2 requête(s) pour une photo refusée : GET /00000000-0000-4000-8000-000000260292/voisin.jpg ; GET /00000000-0000-4000-8000-000000260292/ailleurs.jpg",
+      "duree_s": 17
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=redacteur --racine={racine} --seulement=RV-3",
+      "fichier": "lib/siteRedacteur.ts",
+      "avant": "Décrivez votre projet à ${commune}, un rappel suit pour convenir d’un rendez-vous.",
+      "apres": "Décrivez votre projet à ${commune}, un rappel suit pour convenir d’un rendez-vous. Plus de 15 ans d’expérience à ${commune}.",
+      "critere": "RV-3",
+      "extrait": "FAIL RV-3 — script (--sans-ia, modèle de la racine) : findFabrications → 15 ans ; fonction sans appel (modèle à cinq prestations) : findFabrications → 15 ans ; fonction, doublure propre : findFabrications → 15 ans",
+      "duree_s": 2.7
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=redacteur --racine={racine} --seulement=RV-6",
+      "fichier": "lib/siteRedacteur.ts",
+      "avant": "\n  rapport.degradations.push(vars.ville)\n  return repli\n}",
+      "apres": "\n  rapport.degradations.push(vars.ville)\n  return r2.reponse ?? repli\n}",
+      "critere": "RV-6",
+      "extrait": "FAIL RV-6 — fautive : 15 ans reste dans la version finale ; fautive : \\bRGE\\b reste dans la version finale",
+      "duree_s": 2.9
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=redacteur --racine={racine} --seulement=RV-7",
+      "fichier": "lib/siteRedacteur.ts",
+      "avant": "Prestations proposées : ${vars.prestationsTxt}\\n</donnees>",
+      "apres": "Prestations proposées : ${vars.prestationsTxt}\\nFaits : ${faits}\\n</donnees>",
+      "critere": "RV-7",
+      "extrait": "FAIL RV-7 — requête 1 : le SIREN est envoyé ; requête 2 : le SIREN est envoyé ; requête 3 : le SIREN est envoyé ; requête 4 : le SIREN est envoyé ; requête 5 : le SIREN est envoyé ; requête 6 : le SIREN est envoyé ; … (9 défauts)",
+      "duree_s": 2.9
+    },
+    {
+      "juge": "scripts/livrer-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=livrer --racine={racine} --seulement=CH-5",
+      "fichier": "scripts/livrer-site.mjs",
+      "avant": "if (maxReprises + reprises >= 2)",
+      "apres": "if (maxReprises + reprises >= 3)",
+      "critere": "CH-5",
+      "extrait": "FAIL CH-5 — le rédacteur a été appelé 2 fois, 1 attendue (aucune nouvelle rédaction au plafond)",
+      "duree_s": 18.6
+    },
+    {
+      "juge": "scripts/livrer-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=livrer --racine={racine} --seulement=CH-3",
+      "fichier": "scripts/livrer-site.mjs",
+      "avant": "const livraison = path.join(racine, '.orchestre', 'travail', 'livraison')",
+      "apres": "const livraison = path.join(racine, 'public', 'livraison')",
+      "critere": "CH-3",
+      "extrait": "FAIL CH-3 — public/livraison/journal.jsonl du banc ajouté par livrer-site",
+      "duree_s": 1.1
+    },
+    {
+      "juge": "scripts/livrer-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=livrer --racine={racine} --seulement=CH-11",
+      "fichier": "scripts/livrer-site.mjs",
+      "avant": "estDans(racine, path.resolve(sortieArg)) || ",
+      "apres": "",
+      "critere": "CH-11",
+      "extrait": "FAIL CH-11 — sortie dans le dépôt : code 0, 2 attendu ; sortie dans le dépôt : un manifeste a été écrit",
+      "duree_s": 35.4
+    },
+    {
+      "juge": "scripts/livrer-site-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=livrer --racine={racine} --seulement=CH-11",
+      "fichier": "scripts/livrer-site.mjs",
+      "avant": "    } else if (!sansDepot) {",
+      "apres": "    }\n    if (!sansDepot) {",
+      "critere": "CH-11",
+      "extrait": "FAIL CH-11 — --usine : code 1, 0 attendu — depot : code 1 | Dépôt échoué ; site-deposer.mjs (piège) lancé en --usine",
+      "duree_s": 17.8
+    },
+    {
+      "juge": "scripts/generation-actions-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=actions --racine={racine} --seulement=GA-3",
+      "fichier": ".github/workflows/generer-site.yml",
+      "avant": "run: node --import ./scripts/ts-loader.mjs scripts/livrer-site.mjs \"$COMMANDE\" --ci",
+      "apres": "run: node --import ./scripts/ts-loader.mjs scripts/livrer-site.mjs \"$COMMANDE\" --ci\n      - uses: actions/upload-artifact@v4\n        with:\n          name: livraison\n          path: .orchestre/travail/livraison",
+      "critere": "GA-3",
+      "extrait": "FAIL GA-3 — étape 8 : actions/upload-artifact@v4",
+      "duree_s": 0.3
+    },
+    {
+      "juge": "scripts/generation-actions-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=actions --racine={racine} --seulement=GA-2",
+      "fichier": ".github/workflows/generer-site.yml",
+      "avant": "timeout-minutes: 20",
+      "apres": "timeout-minutes: 60",
+      "critere": "GA-2",
+      "extrait": "FAIL GA-2 — timeout-minutes = 60, un nombre ≤ 20 attendu",
+      "duree_s": 0.2
+    },
+    {
+      "juge": "scripts/livraison-schema-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=schema --racine={racine}",
+      "fichier": "supabase/migrations/0103_livraison_commandes.sql",
+      "avant": "alter table public.sites_commandes add column if not exists generation_duree_s integer check (generation_duree_s >= 0);",
+      "apres": "alter table public.sites_commandes add column if not exists generation_duree_s integer check (generation_duree_s >= 0);\nalter table public.sites_commandes drop column if exists generation_duree_s;",
+      "critere": "SC-2",
+      "extrait": "FAIL SC-2 — instruction 18 : drop column — « alter table public.sites_commandes drop column if exists generation_duree_s » ; instruction 18 : « drop column if exists generation_duree_s » (seule la contrainte d'état peut être supprimée)",
+      "duree_s": 2
+    },
+    {
+      "juge": "scripts/livraison-schema-qa.mjs",
+      "commande": "node scripts/juges-026-lt-mutations.mjs --relais=schema --racine={racine}",
+      "fichier": "supabase/migrations/0103_livraison_commandes.sql",
+      "avant": "'en_ligne', 'retiree'))",
+      "apres": "'en_ligne'))",
+      "critere": "SC-3",
+      "extrait": "FAIL SC-3 — la contrainte liste [\"brouillon\",\"payee\",\"generee\",\"validee\",\"en_ligne\"], [\"brouillon\",\"payee\",\"generee\",\"validee\",\"en_ligne\",\"retiree\"] attendu (ETATS de lib/siteCommande.ts, dans l'ordre, suivis de 'retiree')",
+      "duree_s": 2.1
+    }
+  ]
+}
