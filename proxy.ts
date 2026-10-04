@@ -59,9 +59,9 @@ async function commandeForDomain(host: string): Promise<string | null> {
 const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 // Chemins de l'APPLICATION Presti (manifeste, service worker, page hors-ligne, marque) : jamais servis sur un
 // hôte qui n'est pas maison. Sans cela, mondomaine.fr/manifest.webmanifest renvoyait le manifeste « Presti »
-// et /sw.js le worker Presti sur le domaine perso d'un artisan (revue v9 J1, 06/09). Ces chemins portent un
-// point : le matcher général les exclut, ils sont donc listés à part dans `config.matcher`.
-const CHEMINS_APP_PRESTI = /^\/(manifest\.webmanifest|sw\.js|hors-ligne(\.html)?|marque\/.*|\.well-known\/.*)$/
+// et /sw.js le worker Presti sur le domaine perso d'un artisan (revue v9 J1, 06/09). Le matcher ci-dessous laisse passer les chemins à point (seuls api et _next/ en sortent) : ils arrivent ici, et cette liste les refuse.
+// station/ (026-179) : les thèmes de la carte (public/station/themes/<clé>/…) ne se servent jamais sur le domaine d'un artisan, comme marque/.
+const CHEMINS_APP_PRESTI = /^\/(manifest\.webmanifest|sw\.js|hors-ligne(\.html)?|marque\/.*|station\/.*|\.well-known\/.*)$/
 const CHEMINS_TECHNIQUES = new Set(['api', '_next', 'a', 'login', 'signup', 'onboarding', 'cgu', 'faq', 'mentions-legales', 'confidentialite', 'aide', 'site', 'p', 'controle'])
 
 /** Traduit un chemin « à la marque » vers la route interne. `null` si ce n'est pas une surface artisan. */
@@ -139,7 +139,7 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next()
 }
 
-// On ne passe PAS par le proxy pour les fichiers statiques ni l'API : le matcher exclut
-// tout chemin contenant un point (favicon.ico, robots.txt, images) et les routes techniques.
-// Les chemins de l'app Presti (avec un point) y sont ajoutés explicitement : voir CHEMINS_APP_PRESTI.
+// On ne passe PAS par le proxy pour l'API ni pour _next/ : le matcher ne laisse sortir que ces deux préfixes. Un chemin à
+// point (favicon.ico, robots.txt, manifest.webmanifest) arrive donc dans proxy() ; sur un hôte d'artisan, ceux de l'app Presti
+// sont refusés par CHEMINS_APP_PRESTI.
 export const config = { matcher: ['/((?!api|_next/).*)'] }
