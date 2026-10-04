@@ -1,0 +1,79 @@
+/* Le panneau Réglages de la station (fiche 026-187). Jetons --mc-* de station.css seulement : aucune couleur en dur, tout est
+   sous .mc (rien ne déborde sur <html> ni <body>). 480 px au bureau, feuille plein écran sous 1024 px. Aucune animation ni
+   transition : le mouvement réduit est respecté d'office (la garde est posée quand même). */
+
+.mc .mc-reglages[data-vue="reglages"] {
+  position: fixed; z-index: 100; display: flex; flex-direction: column; gap: 8px; min-width: 0;
+  inset: 0; width: 100%; height: 100%; max-width: 100%; max-height: none; transform: none;
+  overflow-x: hidden; overflow-y: auto; padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  background-color: var(--mc-fond); color: var(--mc-texte); border: 0; border-radius: 0; box-shadow: none;
+  font-size: 13px; line-height: 1.4;
+}
+.mc .mc-reglages[data-vue="reglages"]:focus, .mc .mc-reglages[data-vue="reglages"]:focus-visible { outline: none; }
+
+@media (min-width: 1024px) {
+  .mc .mc-reglages[data-vue="reglages"] {
+    inset: auto; top: 92px; right: 20px; bottom: 56px; left: auto; width: 480px; height: auto; max-height: none;
+    padding: 0 16px 12px; border: 1px solid var(--mc-neon-1); border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--mc-bord), 0 0 26px color-mix(in srgb, var(--mc-neon-2) 30%, transparent);
+  }
+}
+
+.mc .mc-rg-tete { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0 6px; background-color: var(--mc-fond); }
+.mc .mc-rg-titre { font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.1em; color: var(--mc-neon-1); }
+.mc .mc-rg-aide, .mc .mc-rg-note { color: var(--mc-texte-doux); overflow-wrap: anywhere; }
+.mc .mc-rg-note { font-size: 12px; }
+
+.mc .mc-rg-fermer, .mc .mc-rg-bouton {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 14px;
+  border: 1px solid var(--mc-neon-1); border-radius: 8px; background: none; color: var(--mc-texte); font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+}
+.mc .mc-rg-fermer:hover, .mc .mc-rg-bouton:hover:not(:disabled) { background: var(--mc-survol); }
+.mc .mc-rg-principal { background: var(--mc-survol); border-color: var(--mc-actif); }
+
+/* Les onglets : un défilement jusqu'à la section (toutes sont dans la page, aucun champ n'est caché). */
+.mc .mc-rg-onglets { position: sticky; top: 60px; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 0; background-color: var(--mc-fond); }
+.mc .mc-rg-onglets button { min-height: 36px; padding: 0 12px; border: 1px solid var(--mc-bord); border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--mc-texte-doux); }
+.mc .mc-rg-onglets button[aria-selected="true"] { border-color: var(--mc-neon-1); color: var(--mc-neon-1); background: var(--mc-survol); }
+
+.mc .mc-rg-corps { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.mc .mc-rg-section { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 10px 0 2px; border-top: 1px solid var(--mc-bord); scroll-margin-top: 110px; }
+.mc .mc-rg-section h3 { margin: 0; font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--mc-neon-1); }
+
+.mc .mc-rg-ligne { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; min-width: 0; }
+.mc .mc-rg-ligne > span:first-child { color: var(--mc-texte-doux); }
+.mc .mc-rg-paire { display: inline-flex; align-items: center; gap: 6px; }
+
+.mc .mc-rg-reglages input[type="text"],
+.mc .mc-reglages input[type="text"], .mc .mc-reglages select {
+  min-height: 44px; min-width: 0; max-width: 100%; padding: 0 10px; border: 1px solid var(--mc-bord); border-radius: 8px;
+  background-color: var(--mc-fond); color: var(--mc-texte); font: inherit;
+}
+.mc .mc-reglages input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--mc-actif); }
+.mc .mc-reglages input[type="color"] { width: 44px; height: 44px; padding: 2px; border: 1px solid var(--mc-bord); border-radius: 8px; background: none; cursor: pointer; }
+.mc .mc-reglages input:focus-visible, .mc .mc-reglages select:focus-visible { outline: 2px solid var(--mc-actif); outline-offset: 1px; }
+.mc .mc-rg-couleur { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.mc .mc-rg-couleur input[type="text"] { width: 104px; font-family: var(--mc-mono); }
+
+.mc .mc-rg-liste { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.mc .mc-rg-liste > li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; overflow-wrap: anywhere; }
+.mc .mc-rg-liste > li > .mc-rg-nom { flex: 1 1 100%; font-weight: 700; }
+.mc .mc-rg-liste > li > .mc-rg-nom small, .mc .mc-rg-liste > li > small { color: var(--mc-texte-doux); font-weight: 400; }
+.mc .mc-rg-liste > li > input[type="text"] { flex: 1 1 120px; }
+.mc .mc-rg-liste > li > select { flex: 1 1 120px; }
+
+.mc .mc-rg-echange { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mc .mc-rg-echange select { flex: 1 1 120px; }
+
+.mc .mc-rg-raisons { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 8px 10px; list-style: none; border: 1px solid var(--mc-crit); border-radius: 8px; color: var(--mc-crit); overflow-wrap: anywhere; }
+.mc .mc-rg-statut { padding: 8px 10px; border: 1px solid var(--mc-ok); border-radius: 8px; color: var(--mc-ok); overflow-wrap: anywhere; }
+.mc .mc-rg-statut.mc-panne { border-color: var(--mc-crit); color: var(--mc-crit); }
+.mc .mc-rg-histo { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; border-top: 1px solid var(--mc-bord); }
+.mc .mc-rg-histo h3 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--mc-neon-1); }
+
+.mc .mc-rg-pied { position: sticky; bottom: 0; z-index: 3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0 4px; margin-top: auto; background-color: var(--mc-fond); border-top: 1px solid var(--mc-bord); }
+.mc .mc-rg-version { margin-left: auto; font-family: var(--mc-mono); color: var(--mc-texte-doux); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-reglages, .mc .mc-reglages * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
