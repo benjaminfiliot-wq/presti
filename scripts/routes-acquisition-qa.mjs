@@ -398,6 +398,9 @@ async function jugerPasses(racine, temoin) {
   fs.copyFileSync(path.join(CLI, 'faux-lanceur.sh'), lanceur)
   fs.chmodSync(lanceur, 0o755)
   const BRUT = '{"classe":"oui","certitude":0.9,"extrait":""}'
+  // Ce que le faux lanceur rend au Facteur : un avis de ton lisible par jugerTon (exactement { verdict, raisons }). Sans lui le second
+  // juge ne rend rien (second_juge_indisponible) et aucun POST avis ne part : c'est la défaillance qui rend RB-17 faux depuis le 04/10.
+  const AVIS_OK = '{"verdict":"ok","raisons":[]}'
   const jetonAgent = `jeton-agent-${crypto.randomBytes(8).toString('hex')}`
   const texte = (id) => `TEXTE-PIEGE-${id} : un texte de réponse qui ne doit jamais sortir`
   const requetes = []
@@ -440,18 +443,39 @@ async function jugerPasses(racine, temoin) {
     if (a.argv.length !== 2) e.push(`--agent=standardiste : ${a.argv.length} appel(s) au lanceur, 2 attendus (un par réponse)`)
     if (posts.length !== 2 || posts.some((q) => q.corps?.brut !== BRUT) || posts.map((q) => q.corps?.reponse_id).sort().join() !== 'r-1,r-2') e.push(`--agent=standardiste : ${posts.length} POST classement, 2 attendus avec le brut exact`)
     if (a.requetes.some((q) => !q.auth)) e.push('une requête sans le jeton de l\'agent')
-    const b = await courir(['--agent=facteur', `--base=${base}`], avecLanceur)
+    // Le Facteur : le lanceur rend un avis de ton valide. Les trois passes (envoi, soir) tournent sur le MÊME modèle, l'étalonné
+    // (D-0410-3) : `gpt-6-luna`, jamais `gpt-6-sol` (jugerTon refuserait avant tout appel : second_juge_non_etalonne).
+    const avecAvis = { ...avecLanceur, FAUX_LANCEUR_BRUT: AVIS_OK }
+    const EMPREINTE_E1 = crypto.createHash('sha256').update(texte('E1')).digest('hex')
+    const avisDe = (x) => x.requetes.filter((q) => q.methode === 'POST' && q.url === '/api/usine/facteur/avis')
+    const modeleDe = (x) => x.argv.map((l) => /--model\s+(\S+)/.exec(l)?.[1] ?? '?')
+    const b = await courir(['--agent=facteur', `--base=${base}`], avecAvis)
+    if (b.code !== 0) e.push(`--agent=facteur : code ${b.code} (${court(b.sortie, 80)})`)
     if (b.requetes.filter((q) => q.methode === 'GET' && q.url === '/api/usine/facteur/travail').length !== 1) e.push('--agent=facteur : pas un GET …/usine/facteur/travail')
-    if (b.requetes.filter((q) => q.methode === 'POST' && q.url === '/api/usine/facteur/avis').length !== 1) e.push('--agent=facteur : pas un POST avis par envoi')
-    const c = await courir(['--agent=facteur', '--soir', `--base=${base}`], avecLanceur)
-    if (!c.requetes.some((q) => q.url === '/api/usine/facteur/travail?passe=soir')) e.push('--soir : pas de ?passe=soir')
-    if (!c.argv.some((l) => /\bgpt-6-sol\b/.test(l))) e.push('--soir : le modèle gpt-6-sol n\'est pas dans l\'argv du lanceur')
+    if (avisDe(b).length !== 1) e.push('--agent=facteur : pas un POST avis par envoi')
+    for (const q of avisDe(b)) {
+      if (q.corps?.envoi_id !== 'e-1' || q.corps?.empreinte !== EMPREINTE_E1 || q.corps?.j2?.verdict !== 'ok' || !Array.isArray(q.corps?.j2?.raisons) || q.corps.j2.raisons.length) e.push('--agent=facteur : l\'avis rendu n\'est pas { envoi_id, empreinte, j2: { verdict: ok, raisons: [] } }')
+      if (q.corps?.passe === 'soir') e.push('--agent=facteur : un avis du jour marqué passe: soir')
+    }
+    if (b.argv.length !== 1 || modeleDe(b).some((m) => m !== 'gpt-6-luna')) e.push(`--agent=facteur : le lanceur doit être appelé une fois, sur gpt-6-luna (reçu : ${modeleDe(b).join(', ') || 'aucun appel'})`)
+    // Un avis de ton illisible (ici la réponse d'un classement, qui n'est pas { verdict, raisons }) ne rend RIEN : l'envoi reste
+    // `prepare`, repris au passage suivant ; jamais un refus définitif d'un envoi sain (D-0410-3, option 3 refusée).
+    const illisible = await courir(['--agent=facteur', `--base=${base}`], avecLanceur)
+    if (illisible.code !== 0) e.push(`--agent=facteur, avis illisible : code ${illisible.code} (0 attendu)`)
+    if (avisDe(illisible).length) e.push('--agent=facteur : un avis de ton illisible a été rendu à Vercel (rien ne doit l\'être)')
+    const c = await courir(['--agent=facteur', '--soir', `--base=${base}`], avecAvis)
+    if (c.code !== 0) e.push(`--soir : code ${c.code} (${court(c.sortie, 80)})`)
+    if (!c.requetes.some((q) => q.methode === 'GET' && q.url === '/api/usine/facteur/travail?passe=soir')) e.push('--soir : pas de ?passe=soir')
+    if (c.argv.length !== 1 || modeleDe(c).some((m) => m !== 'gpt-6-luna')) e.push(`--soir : le lanceur doit être appelé une fois, sur le modèle étalonné gpt-6-luna (reçu : ${modeleDe(c).join(', ') || 'aucun appel'})`)
+    if (c.argv.some((l) => /\bgpt-6-sol\b/.test(l))) e.push('--soir : le modèle gpt-6-sol (non étalonné) est dans l\'argv du lanceur')
+    if (avisDe(c).length !== 1 || avisDe(c).some((q) => q.corps?.passe !== 'soir' || q.corps?.envoi_id !== 'e-1' || q.corps?.j2?.verdict !== 'ok')) e.push('--soir : pas un POST avis portant passe: soir par envoi')
+    if (a.argv.some((l) => /\bgpt-6-sol\b/.test(l))) e.push('--agent=standardiste : le modèle gpt-6-sol dans l\'argv du lanceur')
     const d = await courir(['--agent=standardiste', `--base=${base}`], { CODEX_LANCEUR: '' })
     if (d.code !== 0 || !/modele_absent/.test(d.sortie) || d.requetes.length) e.push(`sans CODEX_LANCEUR : code ${d.code}, ${d.requetes.length} requête(s), « ${court(d.sortie, 60)} » (modele_absent, code 0, aucun appel attendus)`)
     const ferme = await new Promise((r) => { const x = http.createServer(); x.listen(0, '127.0.0.1', () => { const p = x.address().port; x.close(() => r(p)) }) })
     const f = await courir(['--agent=standardiste', `--base=http://127.0.0.1:${ferme}`], avecLanceur)
     if (f.code !== 0 || !f.sortie.trim() || /\n\s+at\s/.test(f.sortie)) e.push(`bus injoignable : code ${f.code} (0 et une ligne de journal, sans exception, attendus)`)
-    for (const x of [a, b, c, d, f]) {
+    for (const x of [a, b, illisible, c, d, f]) {
       if (x.argv.some((l) => l.includes(jetonAgent)) || x.sortie.includes(jetonAgent)) e.push('le jeton de l\'agent apparaît dans l\'argv consigné ou la sortie')
       if (/TEXTE-PIEGE/.test(x.sortie)) e.push('un texte de réponse apparaît dans la sortie')
     }
@@ -751,7 +775,7 @@ const CRITERES = {
     ...critereStandard(),
     ...critereUsine(),
     'RB-17': async (c) => {
-      if (c.temoin || process.platform === 'linux') return [await jugerPasses(c.racine, c.temoin), `passes-modele.mjs contre un faux Presti sur 127.0.0.1 et le faux lanceur : un GET travail, un appel au lanceur et un POST classement par réponse (brut exact) ; facteur : GET travail, un POST avis par envoi ; --soir : ?passe=soir et gpt-6-sol ; sans CODEX_LANCEUR : modele_absent ; bus injoignable : une ligne, code 0 ; ni jeton ni texte en sortie${c.temoin && process.platform !== 'linux' ? ' (témoin : le lanceur sh passe par bash)' : ''}`]
+      if (c.temoin || process.platform === 'linux') return [await jugerPasses(c.racine, c.temoin), `passes-modele.mjs contre un faux Presti sur 127.0.0.1 et le faux lanceur : un GET travail, un appel au lanceur et un POST classement par réponse (brut exact) ; facteur (le lanceur rend un avis de ton valide) : GET travail, un POST avis par envoi sur gpt-6-luna, un avis illisible ne rend rien ; --soir : ?passe=soir, gpt-6-luna (l'étalonné, jamais gpt-6-sol) et un POST avis portant passe: soir ; sans CODEX_LANCEUR : modele_absent ; bus injoignable : une ligne, code 0 ; ni jeton ni texte en sortie${c.temoin && process.platform !== 'linux' ? ' (témoin : le lanceur sh passe par bash)' : ''}`]
       const u = passesSurUsine()
       if (u.injoignable) { c.prealable = u.injoignable; return [[u.injoignable], ''] }
       const ok = u.ligne.startsWith('✅')
@@ -1032,6 +1056,13 @@ const SABOTAGES = {
     ['AC-RB-15', 'RB-15', 'le texte rendu à l\'usine', rempl(USINE.travail, 'out.push({ id: r.id, systeme: CONSIGNES, donnees: preparerDonnees(r, FAQ, METIERS) })', 'out.push({ id: r.id, systeme: CONSIGNES, donnees: preparerDonnees(r, FAQ, METIERS), texte: r.texte })')],
     ['AC-RB-16', 'RB-16', 'le brut appliqué sans validation', rempl(USINE.classement, '  const classement = validerClassement(corps.brut, reponse)\n', '  const classement = JSON.parse(corps.brut)\n')],
     ['AC-RB-17', 'RB-17', 'les passes écrivent le jeton', rempl(SCRIPTS.passes, "const journal = (o) => console.log(JSON.stringify({ agent, ...o }))", "const journal = (o) => console.log(JSON.stringify({ agent, jeton: process.env.PRESTI_JETON_STANDARDISTE, ...o }))")],
+    // D-0410-3 : le rejugement du soir se fait sur le modèle étalonné ; RB-17 doit rougir si la passe du soir ne part pas, part sur un
+    // autre modèle, ne rend rien, ou si le lanceur n'est pas rappelé.
+    ['AC-RB-17B', 'RB-17', 'le rejugement du soir sur gpt-6-sol', rempl(SCRIPTS.passes, "const modele = 'gpt-6-luna'", "const modele = soir ? 'gpt-6-sol' : 'gpt-6-luna'")],
+    ['AC-RB-17C', 'RB-17', 'la passe du soir sans ?passe=soir', rempl(SCRIPTS.passes, "${soir ? '?passe=soir' : ''}", '')],
+    ['AC-RB-17D', 'RB-17', 'la passe du soir ne rend aucun avis', rempl(SCRIPTS.passes, 'for (const e of (t?.envois ?? []).slice(0, 20)) {', 'for (const e of (soir ? [] : (t?.envois ?? [])).slice(0, 20)) {')],
+    ['AC-RB-17E', 'RB-17', 'l\'avis du soir sans passe: soir', rempl(SCRIPTS.passes, "...(soir ? { passe: 'soir' } : {})", '')],
+    ['AC-RB-17F', 'RB-17', 'un avis de ton illisible rendu à Vercel', rempl(SCRIPTS.passes, "if (!j2 || (j2.verdict !== 'ok' && j2.verdict !== 'refus') || !Array.isArray(j2.raisons)) continue", "if (!j2) continue")],
     ['AC-RB-18', 'RB-18', 'MemoryMax de 1G', rempl('scripts/usine/systemd/presti-facteur.service', 'MemoryMax=512M', 'MemoryMax=1G')],
   ],
 }
