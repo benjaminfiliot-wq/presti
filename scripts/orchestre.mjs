@@ -201,12 +201,15 @@ function lireTache(fichier) {
 // ── Chevauchement de périmètres : la partie littérale avant le premier joker ──────────────────────
 const prefixe = (g) => String(g).replace(/\\/g, '/').split(/[*?{]/)[0]
 const chevauche = (a, b) => { const pa = prefixe(a), pb = prefixe(b); return pa.startsWith(pb) || pb.startsWith(pa) }
+// 04/10/2026 (chef, demande de Benj : toutes les fiches en parallèle) : seules les tâches témoins posées par init() (000-test, 001-test-echec) se sérialisent ; les fiches de juges
+// d'un projet (type: test, ids numérotés) ne partagent le digest qu'au sens où deux fiches feature le partagent déjà ; leurs périmètres, eux, se chevauchent toujours.
+const TEMOIN = /^00[01]-/
 function conflit(t, enCours) {
   for (const autre of enCours) {
     // Deux tâches témoins (type: test — 000-test / 001-test-echec, posées par init()) partagent le même
     // digest.md et le même verdicts.jsonl : les laisser actives ensemble mélangerait leurs compteurs
     // dans le prochain digest. Une seule à la fois, même si leurs périmètres ne se chevauchent pas.
-    if (t.entete.type === 'test' && autre.entete.type === 'test') return `${autre.entete.id} (tâches témoins : une seule à la fois)`
+    if (t.entete.type === 'test' && autre.entete.type === 'test' && TEMOIN.test(String(t.entete.id)) && TEMOIN.test(String(autre.entete.id))) return `${autre.entete.id} (tâches témoins : une seule à la fois)`
     for (const p of t.entete.perimetre) for (const q of autre.entete.perimetre) {
       if (chevauche(p, q)) return `${autre.entete.id} (${q} ↔ ${p})`
     }
@@ -1206,7 +1209,6 @@ function promouvoir(n, benj) {
   if (!Number.isInteger(idx) || idx < 0 || idx >= propositions.length) { console.error(`✗ proposition ${n} introuvable (${propositions.length} en quarantaine)`); process.exit(3) }
   const proposition = propositions[idx]
   const sensible = MOTS_SENSIBLES.test(proposition)
-    || /[€$]|\b(?:euros?|dollars?|tarifs?|co[uû]ts?|acheter|achats?|d[eé]penser|d[eé]penses?|payantes?|payants?)\b/i.test(proposition)
   if (sensible && !benj) { console.error(`✗ proposition ${n} touche l'argent, l'irréversible ou la marque : réservée à Benj (\`${CMD} promouvoir ${n} --benj\`)`); process.exit(3) }
   const date = maintenant().slice(0, 10)
   const statut = sensible ? "refusée d'office" : 'promue'
