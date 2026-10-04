@@ -8,7 +8,7 @@ Module du Comptable **absent** du dépôt : code 1, premier échec **CPT-2** (at
 
 ```
 ⏭ NON JUGÉ CPT-1 — non jugé : module absent (le premier échec est CPT-2)
-❌ FAIL CPT-2 — module du Comptable ABSENT de /home/user/presti/.claude/worktrees/agent-a14d389d1a3715b22 (cherché : lib/direction/comptable.ts, lib/direction/comptable.mjs, lib/agents/comptable.ts, lib/agents/comptable.mjs, lib/comptable.ts, lib/comptable.mjs) — rien à rapprocher, rien n'est prouvé
+❌ FAIL CPT-2 — module du Comptable ABSENT de /home/user/presti (cherché : lib/direction/comptable.ts, lib/direction/comptable.mjs, lib/agents/comptable.ts, lib/agents/comptable.mjs, lib/comptable.ts, lib/comptable.mjs) — rien à rapprocher, rien n'est prouvé
 ⏭ NON JUGÉ CPT-3 — non jugé : module absent
 ⏭ NON JUGÉ CPT-4 — non jugé : module absent
 ⏭ NON JUGÉ CPT-5 — non jugé : module absent
