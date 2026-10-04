@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-04T16:12:36Z
+# Digest — 2026-10-04T16:13:25Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 180 tâche(s) PASS, 215557 ligne(s) · faites par Claude Code : 97 tâche(s) PASS, 81982 ligne(s).
-**État** — file : 9 · en cours : 9 · faites : 286 · refusées : 14
+**Mesure** — déléguées (antigravity, codex) : 180 tâche(s) PASS, 214209 ligne(s) · faites par Claude Code : 98 tâche(s) PASS, 84718 ligne(s).
+**État** — file : 10 · en cours : 9 · faites : 286 · refusées : 14
 
 ## Attention (7)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
@@ -40,9 +40,11 @@
 | 026-123 | feature | file | ag-1 | — | Remplir le cadre du journal de la station : le Journal de bord en direct (une bulle par événement réel, pastille de l'agent, heure de Paris, texte en police mono, filtre par agent, comptes rendus de réunion groupés) et le champ « ▶ Transmettre à l'équipage… » qui envoie la consigne de Benj à la route de 026-074, sans jamais afficher une bulle que le fil n'a pas servie |
 | 023-03 | test | file | claude-code | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | file | claude-code | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-101 | test | file | codex | — | Écrire scripts/juges-026-acquisition-mutations.mjs, qui prouve sur des copies que chaque juge du domaine acquisition passe sur l'arbre réel et échoue, sur le critère nommé, pour chacune des mutations imposées par cette fiche, et qui sort en code 0 seulement si toutes échouent |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-179 | feature | file | codex | — | Copier dans app/controle/station/moteur/claw3d/ le squelette 2D de Claw3D que garde le §0.3 (hôte Phaser réécrit en mode station seul avec un module CSS, pont vers React, types de carte, buildNavGrid2D et astar2D, générateur d'avatar) et, dans moteur/scene/, la scène pixel art de l'atelier sans roomFor, le peintre d'agents et la seule palette, avec LICENSE-claw3d.txt et PROVENANCE.md ; écrire le point d'entrée moteur/entree.tsx et ses accroches vides ; charger ce point d'entrée dans Carte.tsx par next/dynamic sans rendu serveur, seulement drapeau stationCarte levé ; poser stationCarte: false et sa ligne de carte ; ajouter station\/.* à CHEMINS_APP_PRESTI de proxy.ts, jusqu'au vert de station-claw3d-qa (provenance, garde, csp, poids, repos, hygiene) |
-| 026-221 | feature | fait | claude-code | PASS | 2026-10-04T16:12:36Z · 1s · 1348 l. |
+| 026-244 | test | fait | claude-code | PASS | 2026-10-04T16:13:25Z · 51s · 2736 l. |
+| 026-221 | feature | fait | codex | PASS | 2026-10-04T16:13:17Z · 1s · 0 l. |
 | 026-170 | test | refuse | claude-code | DISJONCTÉE | bail expiré : claude-code silencieux depuis 1101 min \| decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche \| ✅ JA-6 scripts/fixtures/026-pilotage/k/lot.mjs lisible : fiche 026-170, référence 1c87006, 4 juge(s), 2 contrôle(s) propre(s) au lot, témoin ./temoin ; cop |
 | 026-178 | feature | refuse | usine-codex-1466 | FAIL | station-route-qa --partie=salles2 — racine C:\Users\benja\Documents\presti — base b107dcf — sources, doublures, puis vivant (arbre réel, copie au drapeau levé, |
 | 026-177 | feature | fait | usine-codex-1465 | PASS | 2026-10-04T15:39:40Z · 246s · 695 l. |
@@ -122,7 +124,5 @@
 | 026-141 | feature | fait | codex | PASS | 2026-09-29T10:01:36Z · 221s · 0 l. |
 | 026-064 | feature | fait | usine-codex-114 | PASS | 2026-09-29T09:54:39Z · 41s · 612 l. |
 | 026-026 | test | fait | claude-code | PASS | 2026-09-29T09:48:57Z · 1084s · 0 l. |
-| 026-127 | feature | fait | usine-codex-117 | PASS | 2026-09-29T09:48:36Z · 74s · 584 l. |
-| 026-154 | contenu | fait | codex | PASS | 2026-09-29T09:31:12Z · 2s · 0 l. |
 
-… 218 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 219 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

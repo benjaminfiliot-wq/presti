@@ -1028,3 +1028,5 @@
 {"id":"026-170","verdict":"DISJONCTÉE","ligne":"bail expiré : claude-code silencieux depuis 1101 min | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche | ✅ JA-6 scripts/fixtures/026-pilotage/k/lot.mjs lisible : fiche 026-170, référence 1c87006, 4 juge(s), 2 contrôle(s) propre(s) au lot, témoin ./temoin ; cop","code":null,"date":"2026-10-04T16:08:17Z","duree_s":0,"agent":"?","executant":"claude-code","lignes":0,"dossier":"refuse"}
 {"id":"026-221","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:10:47Z","duree_s":1,"agent":"claude-code","executant":"codex","lignes":1331,"dossier":"en-cours"}
 {"id":"026-221","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:12:36Z","duree_s":1,"agent":"claude-code","executant":"codex","lignes":1348,"dossier":"fait"}
+{"id":"026-221","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:13:17Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-244","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T16:13:25Z","duree_s":51,"agent":"claude-code","executant":"claude-code","lignes":2736,"dossier":"fait"}
