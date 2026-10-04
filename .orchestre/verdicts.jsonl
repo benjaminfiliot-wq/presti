@@ -1075,3 +1075,14 @@
 {"id":"026-227","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:05:23Z","duree_s":2,"agent":"claude-code","executant":"codex","lignes":1159,"dossier":"fait"}
 {"id":"026-227","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:07:25Z","duree_s":83,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-097","verdict":"FAIL","ligne":"FAIL AM-2 — entrant sans fait : source_fait {\"fait\":\"Maquette demandée par l'entreprise le 14/10/2026\",\"source\":\"demande\",\"repere\":\"entrant\",\"releve_le\":\"2026-1","code":1,"date":"2026-10-04T19:08:49Z","duree_s":8,"agent":"claude-code","executant":"codex","lignes":3057,"dossier":"en-cours"}
+{"id":"026-097","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:33:18Z","duree_s":13,"agent":"claude-code","executant":"codex","lignes":3057,"dossier":"en-cours"}
+{"id":"026-162","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:33:49Z","duree_s":4,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-200","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:39:06Z","duree_s":100,"agent":"claude-code","executant":"codex","lignes":1736,"dossier":"en-cours"}
+{"id":"026-200","verdict":"FAIL","ligne":"✗ usine-pubs-qa : usine injoignable ou verdict non rendu (code 125) : ✗ usine executer : construction du paquet : Command failed: git -c core.quotepath=false ad","code":2,"date":"2026-10-04T19:45:05Z","duree_s":44,"agent":"claude-code","executant":"codex","lignes":1736,"dossier":"fait"}
+{"id":"026-200","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:53:30Z","duree_s":84,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-097","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:53:31Z","duree_s":19,"agent":"claude-code","executant":"codex","lignes":3225,"dossier":"en-cours"}
+{"id":"026-097","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T19:56:14Z","duree_s":70,"agent":"claude-code","executant":"codex","lignes":3225,"dossier":"fait","machine":"usine"}
+{"id":"026-249","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T20:10:21Z","duree_s":247,"agent":"claude-code","executant":"codex","lignes":1850,"dossier":"fait","machine":"usine"}
+{"id":"026-179","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 136 min","code":null,"date":"2026-10-04T20:13:08Z","duree_s":0,"agent":"claude-code","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-185","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 136 min","code":null,"date":"2026-10-04T20:13:08Z","duree_s":0,"agent":"claude-code","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-094","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 144 min","code":null,"date":"2026-10-04T20:30:16Z","duree_s":0,"agent":"claude-code","executant":"codex","lignes":0,"dossier":"en-cours"}
