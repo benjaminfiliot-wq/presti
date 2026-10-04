@@ -95,7 +95,7 @@ ${img(heros, 'hero__photo', true)}
 <section class="contact" id="contact"><h2>${texte(modele.contact_titre)}</h2><p>${texte(modele.zone)}</p>
 <form onsubmit="return false"><label>Votre projet<textarea name="projet"></textarea></label><button type="button">Envoyer</button><p class="form__note">Maquette : rien n’est envoyé</p></form></section>
 </main>
-<footer class="pied"><p>Maquette privée préparée par Presti pour ${esc(m.entreprise)}. Rien n’est publié.</p><p class="pied__credits">Photos d’illustration : ${esc(credits)}</p></footer>
+<footer class="pied"><p>Maquette privée préparée pour ${esc(m.entreprise)}. Rien n’est publié.</p><p class="pied__credits">Photos d’illustration : ${esc(credits)}</p></footer>
 </body>
 </html>
 `

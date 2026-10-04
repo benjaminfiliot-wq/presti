@@ -29,7 +29,13 @@ for (const metier of Object.keys(VOCAB)) {
   if (/\b\d+\s*(ans|années)\s+d.exp|\b\d{2,}\s+(chantiers|clients|réalisations)|avis|★|\/5\b|garantie décennale|certifi[ée]|RGE|Qualibat|label/i.test(texte)) manques.push(`${metier} : affirmation invérifiable (expérience, nombre de chantiers, avis, décennale, certification, label) : interdit dans un modèle`)
   const demo = c.photos && c.photos.demo; const fichiers = (c.photos && c.photos.fichiers) || []
   if (!demo || !existsSync(join('public', 'sites-demo', demo))) manques.push(`${metier} : photos.demo « ${demo} » ne correspond à aucun dossier public/sites-demo/`)
-  else for (const x of fichiers) if (!existsSync(join('public', 'sites-demo', demo, x)) && !existsSync(join('public', 'sites-demo', demo, 'photos', x))) manques.push(`${metier} : photo ${demo}/${x} introuvable`)
+  // 04/10 : le contrat est celui du générateur (public/sites-demo/generer.mjs, « modèle : photos invalides ») : un nom de fichier SANS dossier
+  // (/^[a-z0-9.-]+\.(webp|avif|jpe?g|png)$/), qu'il cherche sous public/sites-demo/<demo>/images/. Ce juge acceptait « images/x » (existsSync sur
+  // <demo>/<x>) : les six modèles écrits ainsi passaient ici et faisaient refuser la maquette de chaque métier (maquette-qa MQ-10, 04/10).
+  else for (const x of fichiers) {
+    if (typeof x !== 'string' || !/^[a-z0-9.-]+\.(?:webp|avif|jpe?g|png)$/.test(x)) manques.push(`${metier} : photo « ${x} » : un nom de fichier sans dossier attendu (le générateur le cherche sous public/sites-demo/${demo}/images/)`)
+    else if (!existsSync(join('public', 'sites-demo', demo, 'images', x))) manques.push(`${metier} : photo ${demo}/images/${x} introuvable`)
+  }
   if (demo && demo !== metier && !/illustration/i.test(JSON.stringify(c.libelles || {}))) manques.push(`${metier} : photos d'un autre métier (${demo}) sans libellé « illustration » (à remplacer par celles du client)`)
 }
 // Les quatre modèles existants ne bougent pas.

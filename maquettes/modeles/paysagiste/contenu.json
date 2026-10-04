@@ -35,6 +35,6 @@
   },
   "photos": {
     "demo": "menuisier",
-    "fichiers": ["images/hero-960.webp", "images/bibliotheque-720.webp"]
+    "fichiers": ["hero-960.webp", "bibliotheque-720.webp"]
   }
 }

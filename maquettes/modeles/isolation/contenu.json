@@ -35,6 +35,6 @@
   },
   "photos": {
     "demo": "couvreur",
-    "fichiers": ["images/hero-960.webp", "images/tuiles-720.webp"]
+    "fichiers": ["hero-960.webp", "tuiles-720.webp"]
   }
 }

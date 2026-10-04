@@ -34,6 +34,6 @@
   },
   "photos": {
     "demo": "carreleur",
-    "fichiers": ["images/hero-960.webp", "images/faience-720.webp"]
+    "fichiers": ["hero-960.webp", "faience-720.webp"]
   }
 }
