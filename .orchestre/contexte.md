@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-09-30T21:25:17Z)
+# Carte du code — presti (2026-10-04T09:13:17Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -36,16 +36,16 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/studio` : commander/[jeton]
 - `/tarifs` : ·
 
-## API (138) — `app/api/**/route.ts`, préfixe `/api`
+## API (147) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
-- `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], tic [GET], usine/depot [POST], usine/entree [POST]
+- `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], reunion/chiffres [GET], reunion [POST], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], telegram/entree [POST], telegram/sortie [GET], tic [GET], usine/depot [POST], usine/entree [POST]
 - `/audience` : · [POST]
 - `/auth` : code [POST GET], code/verifier [POST], lien [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
 - `/canaux` : relever [GET POST], · [GET POST DELETE]
 - `/contact` : · [POST]
-- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], demandes [POST GET], etat [GET], fil [GET], jauges [GET], journal [GET], packs/[id] [POST], packs [GET], pause [GET POST], pilotage/agents/[nom] [POST], pilotage/appels/[id] [POST], pilotage/consignes [POST], pilotage/decisions/[id] [POST], pilotage/gestes [POST], pilotage [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], support/demander [POST], support/lire [GET], support [GET POST], tresorerie [GET]
+- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], demandes [POST GET], etat [GET], fil [GET], jauges [GET], journal [GET], packs/[id] [POST], packs [GET], pause [GET POST], pilotage/agents/[nom] [POST], pilotage/appels/[id] [POST], pilotage/consignes [POST], pilotage/decisions/[id] [POST], pilotage/gestes [POST], pilotage [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], station [GET], support/demander [POST], support/lire [GET], support [GET POST], tresorerie [GET]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
-- `/cron` : alertes [GET], contenu [GET], crieur [GET], juge-faits [GET], livraison [GET], maquettes-purge [GET], purge-comptes [GET], recenseur [GET], relances [GET], vigie-meta [GET]
+- `/cron` : alertes [GET], contenu [GET], crieur [GET], facteur [GET], juge-faits [GET], livraison [GET], maquettes-purge [GET], purge-comptes [GET], recenseur [GET], relances [GET], repondeur [GET], vigie-meta [GET]
 - `/devis` : [id]/envoyer [POST], [id]/pdf [GET], [id] [POST DELETE], auto [POST], generer [POST], · [POST]
 - `/domain` : · [GET POST DELETE]
 - `/donnees` : export [GET], · [GET POST]
@@ -70,7 +70,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/support` : demande [POST]
 - `/tarifs` : · [GET POST DELETE]
 - `/tools` : reponse [POST]
-- `/usine` : porteur/oppositions [GET POST], porteur/rendu [POST], porteur/travail [GET]
+- `/usine` : facteur/avis [POST], facteur/travail [GET], porteur/oppositions [GET POST], porteur/rendu [POST], porteur/travail [GET]
 - `/webhooks` : meta [GET POST]
 
 ## Drapeaux — `lib/flags.ts` (33) : une fonctionnalité non finie n'apparaît pas
@@ -81,7 +81,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - capacités (24) : plateforme.conversation, plateforme.ia.auto, plateforme.ia.expert, plateforme.comptes_clients, plateforme.domaine_perso, plateforme.personnalisation_avancee, plateforme.regles, site.essentiel, site.pro, site.signature, site.slides3d, site.domaine_perso, devis.ia, devis.prix_artisan, factures, factures.electronique, inventaire.stock, inventaire.recherche_ia, canaux.email, canaux.whatsapp, canaux.reseaux, relances, export, support.prioritaire
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/**/*.ts` (192 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (210 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/agents/acquisition/affirmations.ts` (4) : Affirmation, AFFIRMATIONS_APPROUVEES, AFFIRMATIONS_PERMISES, AFFIRMATIONS_RETIREES
 - `lib/agents/acquisition/conformite.ts` (6) : ProspectJuge, EtatMaquette, EntreeJuge, VerdictConformite, jugerMessage, jugerModele
@@ -89,7 +89,9 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/acquisition/disjoncteurs.ts` (3) : peutEnvoyer, estAuVert, carteAttention
 - `lib/agents/acquisition/douleurs.ts` (2) : Douleur, DOULEURS
 - `lib/agents/acquisition/entrant.ts` (8) : DemandeEntrante, ResultatEntrant, SiteNormalise, normaliserMetier, normaliserCommune, normaliserSite, normaliserEmail, normaliserDemandeEntrante
+- `lib/agents/acquisition/envoiMeta.ts` (6) : HOTE_META, VERSION_GRAPH, DELAI_META_MS, ResultatMeta, EnvoiMeta, creerEnvoiMeta
 - `lib/agents/acquisition/expediteur.ts` (4) : adresseExpediteur, adresseDeBase, domaineProfessionnel, clesSupplementaires
+- `lib/agents/acquisition/facteur.ts` (20) : AGENT_FACTEUR, JUGES_MAX_PAR_PASSAGE, MagasinFacteur, DrapeauxFacteur, OffreStudio, EnvoiATravail, TravailDuJuge, travailDuJuge, …
 - `lib/agents/acquisition/faq.ts` (3) : EntreeFaq, FAQ_APPROUVEES, FAQ
 - `lib/agents/acquisition/jauges.ts` (5) : JAUGES, DonneesJauges, JaugeCalculee, calculerJauges, consommerJauge
 - `lib/agents/acquisition/jugeFaits.ts` (7) : Deps, normaliserTexte, texteVisible, verifierFait, verifierFormulaire, verifierAvantEnvoi, executerJugeFaits
@@ -99,8 +101,11 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/acquisition/metaWebhooks.ts` (12) : verifierSignature, PlateformeMeta, EvenementMeta, ProfilMeta, LireProfil, MagasinMeta, DepsMeta, normaliserEntrees, …
 - `lib/agents/acquisition/modeles.ts` (6) : PIED_FORMULAIRE, PIED_SOLLICITE, ModeleMessage, APPROUVES, MODELES, AMORCES
 - `lib/agents/acquisition/porteurFormulaire.ts` (16) : RaisonPorteur, PlanDeRemplissage, EnvoiAPorter, planDeRemplissage, decisionCaseVue, PageObservable, ChampVu, FormulaireVu, …
+- `lib/agents/acquisition/porteurs.ts` (5) : PieceJointe, MessageSortant, ErreurPorteur, ResultatPorteur, Porteur
+- `lib/agents/acquisition/porteurs/gmail.ts` (14) : HOTE_SMTP, HOTE_IMAP, DELAI_SMTP_MS, PIECE_JOINTE_MAX_OCTETS, OptionsCourriel, TransportSmtp, OptionsPorteurGmail, nettoyerMotDePasse, …
 - `lib/agents/acquisition/recenseur.ts` (1) : executerRecenseur
 - `lib/agents/acquisition/rendezVous.ts` (6) : DISPONIBILITES, creneauxLibres, validerReservation, pageRendezVous, pageConfirmation, REPONSE_404
+- `lib/agents/acquisition/repondeur.ts` (8) : ModeleLu, FaqLue, OffreLue, EnvoiDeLien, MagasinRepondeur, DepsRepondeur, BilanRepondeur, executerRepondeur
 - `lib/agents/acquisition/rge.ts` (1) : importerRge
 - `lib/agents/acquisition/secondJuge.ts` (10) : CODES_SECOND_JUGE, CODES_FERMETURE, LecteurJuge, CONSIGNES_SECOND_JUGE, VERSION, Etalonnage, ETALONNAGE, VerdictTon, …
 - `lib/agents/acquisition/sirene.ts` (3) : ficheParSiren, retenir, chercherEntreprise
@@ -113,10 +118,11 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/jetons.ts` (5) : FORMAT_JETON, FORMAT_NOM_AGENT, genererJeton, empreinteJeton, nomDuJeton
 - `lib/agents/lecons.ts` (13) : Lecon, OptionsLecons, DepsLecons, DOMAINES, LECONS_DE, AVERTISSEMENT, PLAFONDS_LECONS, estPropre, …
 - `lib/agents/lectureFirecrawl.ts` (3) : PLAFOND_CAHIER, COUT_PAGE, lireAvecFirecrawl
-- `lib/agents/llm.ts` (13) : Lecteur, OptionsLecteur, RetourCout, DepsLecteur, PLAFONDS, COUT_VOIE_EUROS, emballerDonnees, retirerCoordonnees, …
+- `lib/agents/llm.ts` (16) : Lecteur, OptionsLecteur, RetourCout, DepsLecteur, PLAFONDS, COUT_VOIE_EUROS, emballerDonnees, retirerCoordonnees, …
 - `lib/agents/moteurs.ts` (20) : MODELE_AGENTS, MODELE_REJUGE, EntreeMoteur, MOTEUR_DE, TRAVAIL_DE, EntreeCatalogue, VERSION_CATALOGUE, CATALOGUE, …
 - `lib/agents/pause.ts` (2) : EtatPause, pauseGenerale
 - `lib/agents/sortie.ts` (2) : SortiePermise, sortiePermise
+- `lib/agents/telegram.ts` (12) : COMMANDES, Commande, EVENEMENTS_SORTANTS, MAX_MESSAGES, MOTIF_PAUSE_MAX, CONSIGNE_MIN, CONSIGNE_MAX, estCommande, …
 - `lib/agents/usineDepot.ts` (4) : FichierDepot, tacheDetenue, entree, depot
 - `lib/agents/veilleur.ts` (7) : Couleur, URGENTS, COULEURS, AGENTS_DE_L_USINE, Ligne, creneauDigest, veilleur
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
@@ -148,6 +154,14 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/contrast.ts` (5) : luminance, contrastRatio, niveauWCAG, encreLisible, lisibleSur
 - `lib/controle/confiance.ts` (6) : Sens, Signal, Confiance, verdictLisible, peser, peserEtEnregistrer
 - `lib/controle/droits.ts` (7) : RoleInterne, Verbe, Domaine, Verdict, peutFaire, autorise, borneAuxSiennes
+- `lib/controle/lectures/audience.ts` (1) : audience
+- `lib/controle/lectures/bans.ts` (1) : bans
+- `lib/controle/lectures/cerveaux.ts` (2) : Cerveau, cerveaux
+- `lib/controle/lectures/clients.ts` (1) : clients
+- `lib/controle/lectures/crons.ts` (1) : cronsDuService
+- `lib/controle/lectures/index.ts` (0) : 
+- `lib/controle/lectures/sante.ts` (1) : santeService
+- `lib/controle/lectures/tickets.ts` (1) : ticketsOuverts
 - `lib/controle/releve.ts` (6) : TAUX, LigneClient, Releve, calculerReleve, bornesDuMois, enEuros
 - `lib/controle/sante.ts` (3) : Niveau, Controle, niveauService
 - `lib/credits.ts` (2) : consumeCredit, rendreCredit
@@ -207,6 +221,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/pilotage/blocs.ts` (3) : BLOCS_ROUTE, BlocRoute, lireBloc
 - `lib/pilotage/code.ts` (3) : SnapshotCode, validerSnapshot, resumeCode
 - `lib/pilotage/decisions.ts` (9) : MAX_CARTES, OptionDecision, Decision, carteValide, trierDecisions, porteeExigee, choixValide, libelleDefaut, …
+- `lib/pilotage/disposition.ts` (3) : Disposition, VerdictDisposition, validerDisposition
 - `lib/pilotage/entonnoir.ts` (4) : HYPOTHESES, BILAN, entonnoir, bilan
 - `lib/pilotage/envois.ts` (5) : SEUILS_SANTE, LIBELLES_CANAUX, compteur, santeCanal, envoisDesAgents
 - `lib/pilotage/equipage.ts` (11) : SALLES, SALLE_RESERVEE, CLES_SALLE, EQUIPAGE, point, cadence, etatInitial, appliquerEvenement, …
@@ -215,7 +230,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/pilotage/liens.ts` (5) : BLOCS, Bloc, RE_LIEN_PILOTAGE, lienPilotage, estLienPilotage
 - `lib/pilotage/missions.ts` (6) : MISSIONS, NIVEAUX, SUCCES, PALIERS_SALLE, palierSalle, commandement
 - `lib/pilotage/notifications.ts` (2) : MOTIFS_POUSSES, chargeFondateur
+- `lib/pilotage/reglages.ts` (9) : CLES_REGLAGES, MISES_EN_PAGE, TAILLES_PLAQUES, OCTETS_MAX, Reglages, VerdictReglages, validerReglages, fusionner, …
+- `lib/pilotage/station.ts` (15) : VUES, Vue, SALLES_PANNEAU, LANCEMENT, DUREE_LIEN_APERCU_S, HORS, Domaine, DOMAINE_DE, …
 - `lib/pilotage/tapis.ts` (5) : ETAPES, LIGNES, tapis, lignes, mouvements
+- `lib/pilotage/theme.ts` (17) : CLES_THEME, CLES_EMPLACEMENT, JETONS_PALETTE, ETAPES_TAPIS, Point, Grille, Palette, Forme, …
 - `lib/plans.ts` (16) : PlanId, PlanPayant, Capacite, PLANS, CREDIT_COST, COUT_RECHERCHE, planConf, siteMaxForPlan, …
 - `lib/platStats.ts` (1) : computeResponseDelay
 - `lib/plateformeConfig.ts` (14) : ModeReponse, PlateformeConfig, CONFIG_DEFAUT, personaDe, getPlateformeConfig, motEscalade, heureFrance, dansLaPlage, …
@@ -275,10 +293,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/vercelDomains.ts` (6) : DnsRecord, DomainStatus, normalizeDomain, addDomain, getStatus, removeDomain
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (117)
-- dernières : 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql, 0121_plafond_avant_coup.sql
+## Migrations — `supabase/migrations` (120)
+- dernières : 0120_ops_horloge_codes_nuls.sql, 0121_plafond_avant_coup.sql, 0122_reservation_envoi.sql, 0123_stop_hors_fil.sql, 0124_automatisme_sous_gardes.sql
 
-## Scripts — `scripts/` (395 .mjs, dont 78 suites e2e)
+## Scripts — `scripts/` (397 .mjs, dont 78 suites e2e)
 
 ## Orchestre — file : 39 · en cours : 0 · faites : 257 · refusées : 1
 
