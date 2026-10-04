@@ -1,6 +1,6 @@
 # 026-246 — échecs attendus du juge du Contrôleur qualité des sites livrés (`node scripts/qualite-sites-qa.mjs --preuve-echecs`)
 
-Écrit par le juge le 2026-10-04T09:18:59.605Z (73 s). Verdict global : **PASS**.
+Écrit par le juge le 2026-10-04T09:21:53.844Z (71 s). Verdict global : **PASS**.
 
 ## Limites assumées (relues avant d'écrire le juge)
 
