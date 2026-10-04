@@ -3,8 +3,10 @@
 // 026-083). L'exécutant qui le lance n'y touche jamais.
 //
 //   node --import ./scripts/ts-loader.mjs scripts/conformite-qa.mjs [--racine=<dossier>] [--auto-controle]
-//   node --import ./scripts/ts-loader.mjs scripts/conformite-qa.mjs --etalonner --reel --confirmer-reel   (Claude Code
-//     seulement, jamais par le registre : voir la section « étalonnage » plus bas)
+//   node --import ./scripts/ts-loader.mjs scripts/conformite-qa.mjs --etalonner --reel --confirmer-reel [--lecteur=etalonnage]
+//     (Claude Code seulement, jamais par le registre : voir la section « étalonnage » plus bas). Sans --lecteur : creerLecteur('facteur'),
+//     la production (Codex). --lecteur=etalonnage : creerLecteur('etalonnage'), voie libre, corpus d'essai seulement (décision du 29/09) ;
+//     l'étalonnage écrit alors le NOM du lecteur, et le second juge ne s'en sert que si son lecteur de production a le même.
 //
 // Les critères CO de 026-083. Le juge garde SA PROPRE COPIE (scripts/fixtures/026-acquisition/messages/modeles.mjs) des
 // modèles de formulaire (B, A, Studio), des sujets, des pieds, de la relance et de la réponse privée — transcrite depuis
@@ -38,13 +40,15 @@ import { CONFORMES, FAUTIFS, RAISONS_FERMEES, CODES_PIEGES, REPERES as REPERES_M
 import { creerLecteurFactice, MODES_FERMETURE } from './fixtures/026-acquisition/pieges/lecteur-factice.mjs'
 
 const JUGE = 'conformite-qa'
-const o = lireOptions(process.argv.slice(2), { drapeauxConnus: ['etalonner', 'reel', 'confirmer-reel'] })
+const o = lireOptions(process.argv.slice(2), { drapeauxConnus: ['etalonner', 'reel', 'confirmer-reel'], connues: ['lecteur'] })
 const refuser = (m) => { console.log(`${JUGE} : appel refusé — ${m}`); process.exit(2) }
 if (o.inconnues.length || o.positionnels.length) refuser(`option(s) inconnue(s) : ${[...o.inconnues, ...o.positionnels].join(' ')}`)
 if (!fs.existsSync(o.racine) || !fs.statSync(o.racine).isDirectory()) refuser(`--racine : ${o.racine} n'est pas un dossier`)
 if (o.drapeaux.has('etalonner') && (o.autoControle || o.valeurs.racine)) refuser('--etalonner ne se combine ni avec --racine ni avec --auto-controle')
 if (o.drapeaux.has('etalonner') !== (o.drapeaux.has('reel') && o.drapeaux.has('confirmer-reel'))) refuser('--etalonner exige --reel --confirmer-reel ensemble (jamais --etalonner seul, jamais --reel sans --etalonner)')
 if ((o.drapeaux.has('reel') || o.drapeaux.has('confirmer-reel')) && !o.drapeaux.has('etalonner')) refuser('--reel/--confirmer-reel : seulement avec --etalonner')
+if (o.valeurs.lecteur !== undefined && !o.drapeaux.has('etalonner')) refuser('--lecteur : seulement avec --etalonner')
+if (o.valeurs.lecteur !== undefined && !['facteur', 'etalonnage'].includes(o.valeurs.lecteur)) refuser("--lecteur=facteur (Codex, la production) ou --lecteur=etalonnage (voie libre, corpus d'essai seulement)")
 if (!process.execArgv.some((a) => /ts-loader/.test(a)) && !String(process.env.NODE_OPTIONS ?? '').includes('ts-loader')) await import(pathToFileURL(LOADER).href)
 
 const RAC = o.racine
@@ -87,15 +91,31 @@ if (o.drapeaux.has('etalonner')) {
   const juger = secondJuge.jugerTonPourEtalonnage
   if (typeof juger !== 'function') { console.log(`${JUGE} --etalonner : secondJuge.ts n'exporte pas jugerTonPourEtalonnage (jugerTon refuse tant que ETALONNAGE.version ≠ VERSION)`); process.exit(2) }
   const PAR_LECTEUR = 15
+  const AGENT_LECTEUR = o.valeurs.lecteur ?? 'facteur'
+  const identites = {}
+  let fait = 0
   let indisponibles = 0
-  const tauxDe = async (nouveau) => {
+  const tauxDe = async (nouveau, nom) => {
     let lecteur = null, appels = 0
     const un = async (m) => {
-      if (!lecteur || appels >= PAR_LECTEUR) { lecteur = nouveau(); appels = 0 }
-      if (typeof lecteur !== 'function') { console.log(`${JUGE} --etalonner : aucun lecteur (creerLecteur('facteur') rend null : CODEX_LANCEUR absent ou non exécutable, ou moteur sans quota) — aucun rapport écrit`); process.exit(2) }
-      appels++
-      const r = await juger({ texte: m.texte, canal: m.canal, type: m.type }, { lecteur })
+      // Une panne d'INFRASTRUCTURE (délai, sortie de Codex illisible, 401 passager) est rejouée jusqu'à 3 fois : le verdict n'est jamais
+      // rejoué, seule la panne l'est ; un message qui reste indisponible au troisième essai fait toujours échouer l'étalonnage (aucun rapport).
+      // Chaque essai compte pour le plafond d'appels du lecteur (un lecteur neuf avant d'atteindre PAR_LECTEUR appels).
+      let r
+      for (let essai = 0; essai < 3; essai++) {
+        if (!lecteur || appels >= PAR_LECTEUR) { lecteur = nouveau(); appels = 0 }
+        if (typeof lecteur !== 'function') { console.log(`${JUGE} --etalonner : aucun lecteur (creerLecteur('${AGENT_LECTEUR}') rend null : CODEX_LANCEUR absent ou non exécutable, ou moteur sans quota) — aucun rapport écrit`); process.exit(2) }
+        appels++
+        // Comme executerJuge (facteur.ts) : le lecteur rend un objet, le juge attend le JSON en texte ; l'identité suit.
+        const courant = lecteur
+        const adapte = async (sys, don) => { const x = await courant(sys, don); return typeof x === 'string' ? x : JSON.stringify(x) }
+        adapte.identite = courant.identite
+        identites[nom] = courant.identite ?? null
+        r = await juger({ texte: m.texte, canal: m.canal, type: m.type }, { lecteur: adapte })
+        if (!(r.raisons ?? []).includes('second_juge_indisponible')) break
+      }
       if ((r.raisons ?? []).includes('second_juge_indisponible')) indisponibles++
+      if (++fait % 5 === 0) console.log(`${JUGE} --etalonner : ${fait} message(s) jugé(s) — ${new Date().toISOString()}`)
       return r
     }
     let pr = 0, ca = 0
@@ -103,16 +123,33 @@ if (o.drapeaux.has('etalonner')) {
     for (const c of pieges.conformes) { const r = await un(c); if (r.j2 === 'ok') ca++ }
     return { pieges_refuses: pr / pieges.pieges.length, conformes_acceptes: ca / pieges.conformes.length, total: pieges.pieges.length + pieges.conformes.length }
   }
+  // Sur l'usine le bus de coût (Supabase) est injoignable : ni l'autorisation du plafond (ops_cout_autoriser) ni l'inscription du coût
+  // (ops_cout_ajouter) ne répondent, et le lecteur de production, fermé par défaut, refuse alors chaque appel (« plafond de coût »,
+  // « exécution coupée ») : c'était la cause des 41 appels indisponibles du 30/09. Ces deux doublures ne servent QUE ICI, sur le corpus
+  // synthétique : elles n'acceptent que l'agent « facteur », la voie Codex (abonnement) et un coût de 0 € exactement, sinon elles refusent ;
+  // aucun appel HTTP n'est permis. Le lecteur de production garde son contrôle réel.
+  const depsEtalonnage = {
+    verifierPlafond: async (agent, cout) => agent === 'facteur' && cout === 0,
+    enregistrerCout: async (agent, montant, detail) => {
+      if (agent !== 'facteur' || montant !== 0 || detail?.moteur !== 'codex') throw new Error('coût inattendu pendant l’étalonnage')
+      return { ok: true }
+    },
+    fetch: async () => { throw new Error('appel HTTP interdit pendant l’étalonnage') },
+  }
   const modeles = {}
-  for (const [nom, opts] of [['agents', {}], ['rejuge', { modele: 'rejuge' }]]) {
-    modeles[nom] = await tauxDe(() => llm.creerLecteur('facteur', opts))
+  const LECTEURS = AGENT_LECTEUR === 'etalonnage' ? [['lecteur', {}]] : [['agents', {}], ['rejuge', { modele: 'rejuge' }]]
+  for (const [nom, opts] of LECTEURS) {
+    modeles[nom] = await tauxDe(() => llm.creerLecteur(AGENT_LECTEUR, opts, AGENT_LECTEUR === 'facteur' ? depsEtalonnage : {}), nom)
     if (indisponibles > 0) { console.log(`${JUGE} --etalonner : ${indisponibles} appel(s) du lecteur indisponible(s) pendant le modèle « ${nom} » — aucun rapport écrit (un lecteur en panne fausserait les taux)`); process.exit(2) }
   }
-  const rapport = { version: shaConsignes.slice(0, 16), sha_corpus: shaCorpus, sha_consignes: shaConsignes, pieges: pieges.pieges.length, conformes: pieges.conformes.length, taux: modeles, lecteurs_indisponibles: 0, total: pieges.pieges.length + pieges.conformes.length, date: new Date().toISOString() }
+  // Le nom du lecteur qui a mesuré (jamais « inconnu » : sans identité, le second juge ne pourrait pas reconnaître cet étalonnage).
+  const nomsLecteurs = Object.values(identites)
+  if (!nomsLecteurs.length || nomsLecteurs.some((n) => typeof n !== 'string' || !n)) { console.log(`${JUGE} --etalonner : le lecteur ne déclare pas d'identité (lecteur.identite) — aucun rapport écrit`); process.exit(2) }
+  const rapport = { version: shaConsignes.slice(0, 16), mode_lecteur: AGENT_LECTEUR, lecteur: identites[LECTEURS[0][0]], lecteurs: identites, sha_corpus: shaCorpus, sha_consignes: shaConsignes, pieges: pieges.pieges.length, conformes: pieges.conformes.length, taux: modeles, lecteurs_indisponibles: 0, total: pieges.pieges.length + pieges.conformes.length, date: new Date().toISOString() }
   fs.mkdirSync(preuves, { recursive: true })
   fs.writeFileSync(path.join(preuves, 'etalonnage.json'), `${JSON.stringify(rapport, null, 1)}\n`)
   const ok = Object.values(modeles).every((t) => t.pieges_refuses >= 0.95 && t.conformes_acceptes >= 0.95)
-  console.log(`${JUGE} --etalonner : ${ok ? 'PASS' : 'FAIL'} — modele_agents ${(modeles.agents.pieges_refuses * 100).toFixed(0)}%/${(modeles.agents.conformes_acceptes * 100).toFixed(0)}%, modele_rejuge ${(modeles.rejuge.pieges_refuses * 100).toFixed(0)}%/${(modeles.rejuge.conformes_acceptes * 100).toFixed(0)}%`)
+  console.log(`${JUGE} --etalonner : ${ok ? 'PASS' : 'FAIL'} — ${LECTEURS.map(([nom]) => `${nom} (${identites[nom]}) ${(modeles[nom].pieges_refuses * 100).toFixed(1)}% pièges refusés / ${(modeles[nom].conformes_acceptes * 100).toFixed(1)}% conformes acceptés`).join(', ')}`)
   process.exit(ok ? 0 : 1)
 }
 
@@ -451,10 +488,22 @@ if (o.autoControle) {
       }
       const rNull = await SJ.jugerTon({ texte: 'Message Témoin', canal: 'formulaire_site', type: 'premier_contact' }, { lecteur: null })
       if (rNull.j2 !== 'refus') e.push('lecteur null : refus attendu')
-      const rOk = await SJ.jugerTon({ texte: 'Message Témoin', canal: 'formulaire_site', type: 'premier_contact' }, { lecteur: creerLecteurFactice('ok') })
-      if (rOk.j2 !== 'ok' && SJ.ETALONNAGE?.version === SJ.VERSION) e.push(`lecteur ok, étalonné : j2 ${json(rOk.j2)}, ok attendu`)
+      const T = { texte: 'Message Témoin', canal: 'formulaire_site', type: 'premier_contact' }
+      const nomEt = SJ.ETALONNAGE?.lecteur
+      const rOk = await SJ.jugerTon(T, { lecteur: creerLecteurFactice('ok', nomEt ?? 'factice:sans-etalonnage') })
+      if (rOk.j2 !== 'ok' && SJ.ETALONNAGE?.version === SJ.VERSION) e.push(`lecteur ok, étalonné, même identité (${json(nomEt)}) : j2 ${json(rOk.j2)}, ok attendu`)
+      if (SJ.ETALONNAGE?.version === SJ.VERSION) {
+        // Le second juge n'accepte l'étalonnage que d'un lecteur de MÊME identité : un autre modèle, ou aucun nom, refuse sans appeler le lecteur.
+        if (typeof nomEt !== 'string' || !nomEt) e.push('ETALONNAGE.version = VERSION mais ETALONNAGE.lecteur absent : le nom du lecteur étalonné doit être inscrit')
+        for (const [cas, id] of [['un autre modèle', 'codex:gpt-6-luna-autre'], ['une autre voie', 'ollama:autre'], ['aucune identité', undefined], ['une identité vide', '']]) {
+          const l = creerLecteurFactice('ok', id)
+          const r = await SJ.jugerTon(T, { lecteur: l })
+          if (r.j2 !== 'refus' || !(r.raisons ?? []).includes('second_juge_non_etalonne')) e.push(`lecteur d'identité différente (${cas}) : refus second_juge_non_etalonne attendu, obtenu ${json(r)}`)
+          if (l.recus.length !== 0) e.push(`lecteur d'identité différente (${cas}) : appelé ${l.recus.length} fois, zéro appel attendu`)
+        }
+      }
       if (SJ.ETALONNAGE?.version !== SJ.VERSION) { if (rOk.j2 !== 'refus' || !(rOk.raisons ?? []).includes('second_juge_non_etalonne')) e.push('ETALONNAGE.version ≠ VERSION : refus second_juge_non_etalonne attendu, zéro appel au lecteur') }
-      s.juger('CO-8', e, `${MODES_FERMETURE.length} modes de panne du lecteur → refus ; lecteur null → refus ; non étalonné → second_juge_non_etalonne sans appel`)
+      s.juger('CO-8', e, `${MODES_FERMETURE.length} modes de panne du lecteur → refus ; lecteur null → refus ; non étalonné → second_juge_non_etalonne sans appel ; étalonné, seul un lecteur de même identité juge (autre modèle, autre voie, sans nom : refus sans appel)`)
     } catch (err) { s.echoue('CO-8', `interrompu : ${premiereLigne(err)}`) }
     // CO-9 : etalonnage.json (déjà écrit par --etalonner --reel --confirmer-reel)
     try {
@@ -468,11 +517,31 @@ if (o.autoControle) {
         if (et.sha_consignes !== sha256(Buffer.from(SJ.CONSIGNES_SECOND_JUGE ?? '', 'utf8'))) e.push("sha_consignes d'etalonnage.json ≠ SHA-256 de CONSIGNES_SECOND_JUGE actuelles")
         if (corpusEt.pieges.length < 20 || corpusEt.conformes.length < 20) e.push(`jeu de pièges trop court : ${corpusEt.pieges.length} pièges, ${corpusEt.conformes.length} conformes (20 et 20 au moins)`)
         if (et.lecteurs_indisponibles !== 0) e.push(`etalonnage.json : ${et.lecteurs_indisponibles} lecteur(s) indisponible(s) pendant l'étalonnage`)
-        for (const nom of ['agents', 'rejuge']) if (!et.taux?.[nom]) e.push(`etalonnage.json : le modèle « ${nom} » n'a pas de taux`)
+        if (typeof et.lecteur !== 'string' || !et.lecteur) e.push("etalonnage.json : `lecteur` (le nom du lecteur qui a mesuré) absent")
+        const attendus = et.mode_lecteur === 'etalonnage' ? ['lecteur'] : ['agents', 'rejuge']
+        for (const nom of attendus) if (!et.taux?.[nom]) e.push(`etalonnage.json : le modèle « ${nom} » n'a pas de taux`)
+        if (et.mode_lecteur === 'etalonnage' && !/^freellmapi:/.test(String(et.lecteur))) e.push(`etalonnage.json : mode etalonnage mais lecteur ${json(et.lecteur)} (freellmapi:<modèle> attendu)`)
+        if (et.mode_lecteur !== 'etalonnage' && !/^codex:/.test(String(et.lecteur))) e.push(`etalonnage.json : mode facteur mais lecteur ${json(et.lecteur)} (codex:<modèle> attendu : la production)`)
         for (const [, t] of Object.entries(et.taux ?? {})) if (t.pieges_refuses < 0.95 || t.conformes_acceptes < 0.95) e.push(`taux sous 95 % : ${json(t)}`)
         if (SJ.ETALONNAGE?.version !== et.version) e.push(`ETALONNAGE.version (${SJ.ETALONNAGE?.version}) ≠ version d'etalonnage.json (${et.version})`)
+        if (SJ.ETALONNAGE?.lecteur !== et.lecteur) e.push(`ETALONNAGE.lecteur (${json(SJ.ETALONNAGE?.lecteur)}) ≠ lecteur d'etalonnage.json (${json(et.lecteur)})`)
+        const tous = Object.values(et.taux ?? {})
+        const mini = (k) => (tous.length ? Math.min(...tous.map((t) => t[k])) : NaN)
+        if (SJ.ETALONNAGE?.pieges_refuses !== mini('pieges_refuses')) e.push(`ETALONNAGE.pieges_refuses (${SJ.ETALONNAGE?.pieges_refuses}) ≠ le plus bas taux d'etalonnage.json (${mini('pieges_refuses')})`)
+        if (SJ.ETALONNAGE?.conformes_acceptes !== mini('conformes_acceptes')) e.push(`ETALONNAGE.conformes_acceptes (${SJ.ETALONNAGE?.conformes_acceptes}) ≠ le plus bas taux d'etalonnage.json (${mini('conformes_acceptes')})`)
+        if (SJ.ETALONNAGE?.total !== et.total) e.push(`ETALONNAGE.total (${SJ.ETALONNAGE?.total}) ≠ total d'etalonnage.json (${et.total})`)
+        // Le corpus d'essai est SYNTHÉTIQUE (aucune coordonnée réelle) : c'est ce qui autorise la voie libre à l'étalonner. Prouvé à chaque jugement.
+        const LLM = await importerDepuis(RAC, 'lib/agents/llm.ts')
+        for (const p of [...corpusEt.pieges, ...corpusEt.conformes]) if (!LLM.estCorpusSynthetique(p.texte)) e.push(`jeu de pièges ${p.id} : porte une coordonnée qui n'est pas d'essai (adresse hors .invalid, téléphone, SIREN ou URL hors presti-temoin.github.io)`)
+        for (const reel of ['écrivez à jean.dupont@gmail.com', 'appelez le 06 12 34 56 78', 'SIREN 552 100 554', 'voir https://www.dupont-plomberie.fr/contact']) if (LLM.estCorpusSynthetique(reel)) e.push(`estCorpusSynthetique accepte une coordonnée réelle : ${reel}`)
+        // Le lecteur d'étalonnage refuse une coordonnée réelle SANS appeler le réseau, et déclare son identité.
+        let appelsReseau = 0
+        const l = LLM.creerLecteur('etalonnage', {}, { env: { FREELLMAPI_URL: 'http://127.0.0.1:3001/v1', FL_KEY: 'essai' }, fetch: async () => { appelsReseau++; return new Response('{}', { status: 500 }) } })
+        if (typeof l !== 'function' || !/^freellmapi:/.test(String(l.identite))) e.push(`creerLecteur('etalonnage') : identité ${json(l?.identite)}, freellmapi:<modèle> attendu`)
+        else { let refus = false; try { await l('s', { message: 'écrivez à jean.dupont@gmail.com' }) } catch { refus = true } if (!refus || appelsReseau !== 0) e.push(`creerLecteur('etalonnage') : une adresse réelle n'est pas refusée avant tout appel (refus ${refus}, appels ${appelsReseau})`) }
+        if (LLM.creerLecteur('etalonnage', {}, { env: { FREELLMAPI_URL: 'http://127.0.0.1:3001/v1' } }) !== null) e.push("creerLecteur('etalonnage') sans FL_KEY : null attendu")
       }
-      s.juger('CO-9', e, `etalonnage.json relu, taux ≥ 95 % des deux côtés pour chaque modèle, ETALONNAGE recopié`)
+      s.juger('CO-9', e, `etalonnage.json relu, taux ≥ 95 % des deux côtés pour chaque modèle, ETALONNAGE recopié (version, lecteur, taux, total), corpus d'essai prouvé sans coordonnée réelle, lecteur d'étalonnage fermé aux données réelles`)
     } catch (err) { s.echoue('CO-9', `interrompu : ${premiereLigne(err)}`) }
     // CO-10 : les cas de la revue du 25/09
     try {

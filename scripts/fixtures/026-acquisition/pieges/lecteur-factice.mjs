@@ -13,7 +13,8 @@
 //   'leve'           → lève une exception (panne du lecteur) ;
 //   défaut ('ok').
 // `.recus` : chaque `entree` reçue (systeme, donnees), pour vérifier ce que jugerTon lui envoie (jamais un secret).
-export function creerLecteurFactice(mode = 'ok') {
+// `identite` : le nom que le lecteur déclare (`lecteur.identite`), lu par jugerTon (étalonnage valable pour ce seul lecteur).
+export function creerLecteurFactice(mode = 'ok', identite = undefined) {
   const recus = []
   const lecteur = async (entree) => {
     recus.push(entree)
@@ -28,6 +29,7 @@ export function creerLecteurFactice(mode = 'ok') {
     return JSON.stringify({ verdict: 'ok', raisons: [] })
   }
   lecteur.recus = recus
+  if (identite !== undefined) lecteur.identite = identite
   lecteur.mode = mode
   return lecteur
 }
