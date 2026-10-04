@@ -1,0 +1,12 @@
+pilotage-ecran-qa --partie=experience — racine C:\Users\benja\Documents\presti — racine réelle : next dev sur la copie au drapeau levé, compte fondateur d’essai — base c4aa8d4 — graine 507019057 — 4 scénario(s) à la fois
+✅ EX-1 app/controle/station/salles/Experience.tsx et app/controle/station/salles/experience.css présents ; Experience.tsx n'est plus le cadre d'attente ; une seule lecture (vue=salle&salle=experience), aucun POST, ni « Lancer », ni « Arrêter », ni « Relancer » dans le source ; ni fetch(, ni supabase
+❌ EX-2 [data-experience-texte] « undefined », « Aucune expérience avant la première vente (décision R13). » attendu
+❌ EX-3 [data-experience-texte] « undefined », « Une vente est faite le 05/10 : Benj peut choisir la première expérience. » servi
+❌ EX-4 ?salle=experience n'ouvre pas [data-salle-panneau="experience"]
+❌ EX-5 [data-experience-texte] « undefined », « Arrêtée seule à J30 : rien rapporté. » attendu
+✅ EX-6 vue en 503 : « … ne répond pas : Expérience injoignable (essai 772) », aucune salle rendue
+✅ EX-7 à 390×844 : feuille plein écran, scrollWidth ≤ 390, boutons ≥ 44 px, textes ≥ 12 px
+❌ EX-8 capture absente
+✅ EX-9 experience.css sans hexadécimal, gardes prefers-reduced-motion ; tsc --noEmit vert sur C:\Users\benja\Documents\presti en 54 s
+pilotage-ecran-qa --partie=experience : FAIL — EX-2, EX-3, EX-4, EX-5, EX-8
+code=1

@@ -1,0 +1,9 @@
+/* La Salle Expérience (fiche 026-125) : la progression J x/30. Jetons --mc-* de station.css seulement, aucune couleur en dur. */
+.mc .mc-experience-texte { margin: 0 0 12px; }
+.mc .mc-experience-barre { height: 8px; margin: 0 0 4px; border-radius: 4px; background: var(--mc-survol); overflow: hidden; }
+.mc .mc-experience-barre > span { display: block; height: 100%; width: calc(var(--part, 0) * 100%); border-radius: 4px; background: var(--mc-actif); transition: width 0.4s ease; }
+.mc [data-experience-jour] { margin: 0 0 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-experience-barre > span { transition: none; }
+}
