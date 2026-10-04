@@ -1,0 +1,104 @@
+// public/temoin-e/salles.js — les PANNEAUX DES SALLES NOUVELLES du témoin du lot e (fiche 026-172) : Commandement, Audience, Sécurité, Presti,
+// Observatoire, Salle de repos, E-commerce. `?salle=<clé>` ouvre `[data-salle-panneau="<clé>"]` avec le résumé `[data-resume-salle]` et ce que la route sert,
+// en texte ; une sous-partie refusée dit « hors périmètre », jamais 0 ; aucun nom de personne ; rien d'autre que ce que la route a servi.
+import { el } from './coeur.js'
+
+// `recettes` n'est pas une salle nouvelle : le témoin lui donne un panneau minimal pour que CE-24 (« un tap sur une salle de la liste ouvre une feuille ») et CE-15 (Échap, I) aient un panneau à ouvrir.
+const NOUVELLES = ['commandement', 'audience', 'securite', 'presti', 'observatoire', 'repos', 'ecommerce', 'recettes']
+const jeton = () => {
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^sb-.*-auth-token$/.test(k)) { try { return JSON.parse(localStorage.getItem(k)).access_token } catch { /* illisible */ } } }
+  return ''
+}
+const HORS = 'hors périmètre'
+/** Une enveloppe : sa valeur, « hors périmètre » si elle n'est pas mesurée, « — » si elle manque. Jamais 0 pour une valeur absente. */
+const env = (e, f = (v) => String(v)) => (e && typeof e === 'object' && 'valeur' in e ? (e.valeur === null || e.valeur === undefined ? (e.nonMesure || e.raison === HORS ? HORS : '—') : f(e.valeur)) : '—')
+
+export function monterSalles(T) {
+  let panneau = null, cle = null, resume = null, resumeLong = ''
+  const role = () => document.querySelector('[data-station]')?.dataset.role
+  const voulu = () => { const s = new URLSearchParams(window.location.search).get('salle'); return NOUVELLES.includes(s) ? s : null }
+  const ligne = (parent, attr, texte) => { const d = el('div', attr); d.textContent = texte; parent.append(d); return d }
+
+  function rendre(c, v, brut) {
+    const p = el('div', { 'data-contenu': c })
+    const f = {
+      commandement: () => {
+        const o = v.objectif
+        ligne(p, { 'data-objectif': '' }, o ? `${o.libelle} · ${o.par} · ${Math.round((o.progression ?? 0) * 100)} %` : HORS)
+        for (const m of v.missions || []) ligne(p, { 'data-mission': m.cle }, `${m.libelle} · ${m.texte}${m.atteinte ? ' · atteinte' : ''}`)
+        for (const s of v.tousSucces || []) ligne(p, { 'data-succes': s.cle }, `${s.libelle}${s.debloque ? ' · débloqué' : ''}`)
+        for (const l of v.compteRendu || []) ligne(p, { 'data-compte-rendu': '' }, l)
+        for (const k of v.consignes || []) ligne(p, { 'data-consigne': String(k.id) }, k.texte)
+        const a = v.argent
+        ligne(p, { 'data-argent': '' }, a && a.valeur ? `niveau ${a.valeur.niveau.texte} · LV.${a.valeur.niveau.lv} · ${(a.valeur.missions || []).map((m) => m.texte).join(' · ')} €` : `niveau et euros : ${HORS}`)
+      },
+      audience: () => {
+        for (const g of v.pages || []) ligne(p, { 'data-page': '' }, `${g.page} · ${g.vues} vues`)
+        for (const g of v.campagnes || []) ligne(p, { 'data-campagne': '' }, `${g.cle} · ${g.vues} vues`)
+        ligne(p, { 'data-actif': '' }, `actif aujourd’hui : ${env(v.active_auj, (x) => `${x.minutes} min`)}`)
+      },
+      securite: () => {
+        ligne(p, { 'data-bans': '' }, `bans : ${Number.isFinite(v.bans) ? v.bans : HORS}`)
+        ligne(p, { 'data-erreurs': '' }, `erreurs : ${Number.isFinite(v.erreurs) ? v.erreurs : HORS}`)
+        ligne(p, { 'data-disjoncteurs': '' }, `disjoncteurs : ${(v.disjoncteurs || []).length}`)
+        ligne(p, { 'data-pause': '' }, `pause : ${v.pause ? (v.pause.active ? 'active' : 'inactive') : HORS}`)
+      },
+      presti: () => {
+        ligne(p, { 'data-artisans': '' }, `artisans actifs : ${Number.isFinite(v.artisans_actifs) ? v.artisans_actifs : HORS}`)
+        ligne(p, { 'data-mrr': '' }, `MRR : ${env(v.mrr, (x) => `${x} €`)}`)
+        ligne(p, { 'data-tickets': '' }, `tickets : ${env(v.tickets, (x) => String(x.nombre))}`)
+        for (const g of v.cerveaux || []) ligne(p, { 'data-cerveau': g.cle }, `${g.cle} · ${Math.round(g.score * 100)} %`)
+      },
+      observatoire: () => {
+        for (const d of v.departements || []) ligne(p, { 'data-departement': d.departement }, `${d.departement} : ${d.trouves} trouvés · ${d.contactes} contactés · ${d.oui} oui`)
+        if (!(v.departements || []).length) ligne(p, {}, HORS)
+      },
+      repos: () => {
+        for (const g of v.agents || []) {
+          const d = ligne(p, { 'data-agent-repos': g.nom }, `${g.nom} · ${g.motif ?? '—'} `)
+          if (role() === 'direction') { const b = el('button', { type: 'button', 'data-reprendre': g.nom }, { minHeight: '44px' }); b.textContent = 'Reprendre'; d.append(b) }
+        }
+        if (!(v.agents || []).length) ligne(p, {}, v.vide || 'Personne ne se repose.')
+      },
+      ecommerce: () => ligne(p, { 'data-reservee': '' }, 'Branche réservée : rien n\'est construit.'),
+      recettes: () => ligne(p, { 'data-recettes': '' }, 'recettes'),
+    }[c]
+    if (c === 'ecommerce' || v) f(); else ligne(p, {}, brut?.manque || HORS)
+    return p
+  }
+
+  async function ouvrir(c) {
+    cle = c
+    const tel = window.innerWidth < 1024
+    const n = el('div', { 'data-salle-panneau': c, role: 'dialog', 'aria-label': c, ...(tel ? { 'data-feuille': 'oui' } : {}) },
+      { position: 'fixed', top: tel ? '120px' : '0', bottom: '0', right: '0', width: tel ? '100%' : '480px', maxWidth: '100vw', zIndex: '55', background: '#0a0c11', color: '#e8ecf5', overflow: 'auto', overflowWrap: 'anywhere', padding: '12px', boxSizing: 'border-box', borderTop: tel ? '3px solid #6c8cff' : '0' })
+    resume = el('div', { 'data-resume-salle': '' })
+    resumeLong = `RÉSUMÉ · ${c} · agents : ${(T.props?.equipage?.valeur?.agents || []).filter((a) => a.salle === c).length}`
+    resume.textContent = resumeLong
+    n.append(resume)
+    panneau = n
+    document.querySelector('.mc')?.append(n)
+    let r = { ok: false, data: {} }
+    if (c !== 'ecommerce') {
+      try { const x = await fetch(`/api/controle/station?vue=salle&salle=${encodeURIComponent(c)}`, { cache: 'no-store', headers: { Authorization: `Bearer ${jeton()}` } }); r = { ok: x.ok, data: await x.json().catch(() => ({})) } } catch { /* réseau */ }
+    }
+    if (panneau !== n) return
+    n.append(rendre(c, r.data?.valeur ?? null, r.data))
+  }
+  function sync() {
+    const c = voulu()
+    if (c === cle && panneau) return
+    panneau?.remove(); panneau = null; cle = null
+    if (c) ouvrir(c)
+  }
+  T.sur(window, 'station:url', sync); T.sur(window, 'popstate', sync)
+  // I replie le résumé de salle (et le déplie), tant qu'un panneau est ouvert et qu'aucun champ n'a le focus.
+  T.sur(window, 'keydown', (ev) => {
+    if (ev.key.toLowerCase() !== 'i' || !panneau || !resume || ev.ctrlKey || ev.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target?.tagName || '')) return
+    const replie = resume.dataset.replie === 'oui'
+    resume.dataset.replie = replie ? 'non' : 'oui'
+    resume.textContent = replie ? resumeLong : 'RÉSUMÉ'
+  })
+  T.nettoyages.push(() => { panneau?.remove(); panneau = null })
+  setTimeout(sync, 0)
+}

@@ -1,0 +1,120 @@
+// public/temoin-e/acteurs.js — les ACTEURS du témoin du lot e (fiche 026-172) : ce que les données servies font bouger, et rien d'autre.
+// Le tapis (huit étapes, REJET, compteurs du jour), un carré par vrai changement d'étape (mouvements() de 026-070 : jour qui monte, jamais au
+// premier relevé), « +1 ÉTAPE » 1,5 s, les lignes du Crieur et de l'Usine, l'égaliseur du Radar (figé), l'écran de l'Expérience, les badges
+// LV. Tout est dans le calque HTML et dans le miroir ; RIEN n'est peint dans le décor.
+import { el, lire } from './coeur.js'
+
+const ORDRE = ['trouve', 'verifie', 'maquette', 'contacte', 'repondu', 'oui', 'en_ligne', 'paye']
+const AFFICHE = (e) => (e && e.source !== 'absente' && Number.isFinite(e.jour) ? String(e.jour) : '—')
+
+export function monterActeurs(T) {
+  const bloc = el('div', { 'data-acteurs': '' }, { position: 'absolute', inset: '0', pointerEvents: 'none' })
+  T.calque.append(bloc)
+  const pieces = new Map() // clé → { noeud, x, y } : tout ce qui se pose d'après le thème
+  const poser = (cle, noeud, x, y) => { if (!pieces.has(cle)) bloc.append(noeud); pieces.set(cle, { noeud, x, y }) }
+  T.crochets.placer.push(() => {
+    for (const { noeud, x, y } of pieces.values()) { const p = T.css(x, y); Object.assign(noeud.style, { left: `${p.x}px`, top: `${p.y}px` }) }
+  })
+  let compteur = 0
+  let avant = null // le tapis du relevé précédent
+  const carres = []
+
+  function majTapis(p) {
+    const t = lire(p.tapis), th = T.theme?.tapis
+    if (!t || !th) return
+    const etapes = [...(t.etapes || [])]
+    const paye = lire(t.paye)
+    etapes.push(paye ? { cle: 'paye', libelle: paye.libelle || 'PAYÉ', jour: paye.jour, source: paye.source } : { cle: 'paye', libelle: 'PAYÉ', jour: null, source: 'absente', horsPerimetre: true })
+    for (const e of etapes) {
+      const pos = th.etapes.find((x) => x.cle === e.cle) || { x: 0, y: 0 }
+      let n = pieces.get(`tapis:${e.cle}`)?.noeud
+      if (!n) n = el('span', { 'data-tapis-etape': e.cle }, { position: 'absolute', whiteSpace: 'nowrap', color: '#e8ecf5', fontSize: '10px' })
+      n.textContent = e.horsPerimetre ? `${e.libelle} hors périmètre` : `${e.libelle} ${AFFICHE(e)}`
+      poser(`tapis:${e.cle}`, n, pos.x, pos.y + 6)
+    }
+    const r = t.rejet || {}
+    let nr = pieces.get('tapis:rejet')?.noeud
+    if (!nr) nr = el('span', { 'data-tapis-rejet': '' }, { position: 'absolute', whiteSpace: 'nowrap', color: '#f0776a', fontSize: '10px' })
+    nr.textContent = `REJET ${Number.isFinite(r.nombre) ? r.nombre : '—'} · PASS ${Number.isFinite(r.tauxPass) ? Math.round(r.tauxPass * 100) : '—'} %`
+    poser('tapis:rejet', nr, (th.etapes.at(-1)?.x ?? 400), 18)
+    // Un carré par vrai changement d'étape : le jour qui monte. Jamais au premier relevé, jamais sur une remise à zéro.
+    const ancien = avant
+    avant = { etapes: t.etapes.map((e) => ({ cle: e.cle, jour: e.jour })) }
+    if (!ancien) return
+    const prec = new Map(ancien.etapes.map((e) => [e.cle, e.jour]))
+    const vari = avant.etapes.map((e) => ({ etape: e.cle, carres: e.jour - (prec.get(e.cle) ?? 0) }))
+    if (vari.some((v) => v.carres < 0)) return
+    for (const v of vari.filter((x) => x.carres > 0)) for (let i = 0; i < v.carres; i++) lancer(v.etape, etapes)
+  }
+  function lancer(cle, etapes) {
+    const th = T.theme.tapis, i = ORDRE.indexOf(cle), de = th.etapes.find((x) => x.cle === ORDRE[Math.max(0, i - 1)]) || th.etapes[0], vers = th.etapes.find((x) => x.cle === cle)
+    if (!vers) return
+    const li = T.miroir.appendChild(el('li', { 'data-carre': cle, 'data-etat': T.reduit ? 'arrive' : 'marche' }))
+    const c = { cle, x: de.x, y: de.y, vers, li }
+    if (T.reduit) { li.remove(); return }
+    carres.push(c)
+    const libelle = etapes.find((e) => e.cle === cle)?.libelle ?? cle.toUpperCase()
+    const plus = el('span', { 'data-plus-un': cle }, { position: 'absolute', whiteSpace: 'nowrap', color: '#ffe14a', fontSize: '12px' })
+    plus.textContent = `+1 ${libelle}`
+    const k = `plus:${++compteur}`
+    poser(k, plus, vers.x, vers.y - 8)
+    setTimeout(() => { plus.remove(); pieces.delete(k) }, 1500)
+    T.reveiller()
+  }
+  T.crochets.avancer.push((dt) => {
+    for (const c of carres) {
+      const dx = c.vers.x - c.x, d = Math.abs(dx), pas = 120 * dt // pixels logiques par seconde
+      if (d <= pas) { c.fini = true; c.li.remove() } else c.x += Math.sign(dx) * pas
+    }
+    for (let i = carres.length - 1; i >= 0; i--) if (carres[i].fini) carres.splice(i, 1)
+    return carres.length > 0
+  })
+  T.crochets.dessiner.push((c) => { for (const q of carres) { c.fillStyle = '#6cffb0'; c.fillRect(Math.round(q.x) - 2, Math.round(q.y) - 2, 4, 4) } })
+
+  function majCarte(p) {
+    const cd = lire(p.carte)
+    if (!cd) return
+    // Les lignes : Crieur (contenu), Usine (sites, packs) — une entrée absente se dessine « — », jamais 0.
+    const l = lire(cd.lignes) || {}
+    for (const nom of ['contenu', 'sites', 'packs']) {
+      const etapes = lire(l[nom])?.etapes
+      if (!etapes) continue
+      let n = pieces.get(`ligne:${nom}`)?.noeud
+      if (!n) n = el('div', { 'data-ligne': nom }, { position: 'absolute', whiteSpace: 'nowrap', color: '#e8ecf5', fontSize: '10px' })
+      n.replaceChildren(...etapes.map((e) => { const s = el('span', { 'data-ligne-etape': `${nom}:${e.cle}` }, { marginRight: '6px' }); s.textContent = `${e.libelle} ${AFFICHE(e)}`; return s }))
+      const base = T.theme.emplacements.find((x) => x.cle === (nom === 'contenu' ? 'crieur' : 'usine'))
+      poser(`ligne:${nom}`, n, (base?.forme.x ?? 8), (base?.forme.y ?? 8) + (nom === 'packs' ? 36 : 28))
+    }
+    // L'égaliseur du Radar : douze barres, figées entre deux lectures.
+    const eg = lire(cd.egaliseur)
+    if (Array.isArray(eg)) {
+      let n = pieces.get('egaliseur')?.noeud
+      if (!n) n = el('div', { 'data-egaliseur': '' }, { position: 'absolute', display: 'flex', gap: '1px', height: '10px' })
+      n.replaceChildren(...eg.slice(0, 12).map((v, i) => { const b = el('i', { 'data-barre': String(i), 'data-valeur': String(v) }, { display: 'block', width: '3px', height: `${2 + v * 2}px`, background: '#6c8cff', alignSelf: 'flex-end' }); return b }))
+      const radar = T.theme.emplacements.find((x) => x.cle === 'radar')
+      poser('egaliseur', n, (radar?.forme.x ?? 136) + 4, (radar?.forme.y ?? 8) + 34)
+    }
+    // L'écran de l'Expérience : « FERMÉE · R13 » avant la première vente, sinon la barre servie.
+    const ex = lire(cd.experience)
+    if (ex) {
+      let n = pieces.get('ecran:experience')?.noeud
+      if (!n) n = el('div', { 'data-ecran': 'experience' }, { position: 'absolute', whiteSpace: 'nowrap', color: '#3ee0f0', fontSize: '10px' })
+      n.textContent = ex.statut === 'en_cours' ? ex.barre : ex.statut ? ex.texte : 'FERMÉE · R13'
+      const e = T.theme.emplacements.find((x) => x.cle === 'experience')
+      poser('ecran:experience', n, (e?.forme.x ?? 8) + 4, (e?.forme.y ?? 8) + 28)
+    }
+    // Les badges LV : seulement là où un palier est servi.
+    const pal = lire(cd.paliers) || {}
+    for (const salle of ['envois', 'usine', 'commandement', 'radar', 'redaction']) {
+      const k = `badge:${salle}`, v = pal[salle]
+      if (!v || !(v.lv > 0)) { pieces.get(k)?.noeud.remove(); pieces.delete(k); continue }
+      let n = pieces.get(k)?.noeud
+      if (!n) n = el('span', { 'data-badge-lv': salle }, { position: 'absolute', color: '#f2c879', fontSize: '10px', whiteSpace: 'nowrap' })
+      n.textContent = v.texte || `LV.${v.lv}`
+      const e = T.theme.emplacements.find((x) => x.cle === salle)
+      poser(k, n, (e?.forme.x ?? 8) + (e?.forme.l ?? 48) - 22, (e?.forme.y ?? 8) + 14)
+    }
+  }
+  T.crochets.props.push((p) => { majTapis(p); majCarte(p) })
+  T.crochets.theme.push(() => { avant = null; carres.length = 0; for (const { noeud } of pieces.values()) noeud.remove(); pieces.clear() })
+}

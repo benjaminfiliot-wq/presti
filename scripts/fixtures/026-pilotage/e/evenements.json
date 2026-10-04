@@ -1,0 +1,103 @@
+{
+ "_": "Les suites d'événements injectées par station-ecran-qa (CE-4 à CE-7, CE-25 à CE-27) : chaque étape change les positions servies (`positions()` de 026-070 : salle et motif porte|tache|reunion|pause|panne) et ajoute une bulle au fil (une bulle nouvelle fait relire vue=direct sans attendre les 30 s : Station.tsx, 026-111).",
+ "depart_porte": {
+  "positions": {
+   "atelier_maquettes": {
+    "salle": "atelier",
+    "motif": "porte"
+   }
+  }
+ },
+ "tache_prise": {
+  "positions": {
+   "atelier_maquettes": {
+    "salle": "atelier",
+    "motif": "tache"
+   }
+  },
+  "bulle": {
+   "agent": "atelier_maquettes",
+   "pastille": "ATELIER",
+   "type": "maquette_prete",
+   "texte": "Maquette plombier, Lyon"
+  }
+ },
+ "reunion_ouverte": {
+  "reunionEnCours": true,
+  "reunion": "ouvrir",
+  "bulle": {
+   "agent": "chef",
+   "pastille": "CHEF",
+   "type": "reunion",
+   "texte": "Réunion ouverte"
+  }
+ },
+ "reunion_close": {
+  "reunionEnCours": false,
+  "reunion": "fermer",
+  "bulle": {
+   "agent": "chef",
+   "pastille": "CHEF",
+   "type": "reunion",
+   "texte": "Réunion close"
+  }
+ },
+ "pause": {
+  "positions": {
+   "facteur": {
+    "salle": "repos",
+    "motif": "pause"
+   }
+  },
+  "bulle": {
+   "agent": "facteur",
+   "pastille": "FACTEUR",
+   "type": "pause",
+   "texte": "Pause posée par le Chef"
+  }
+ },
+ "reprise": {
+  "positions": {
+   "facteur": {
+    "salle": "envois",
+    "motif": "tache"
+   }
+  },
+  "bulle": {
+   "agent": "facteur",
+   "pastille": "FACTEUR",
+   "type": "reprise",
+   "texte": "Reprise"
+  }
+ },
+ "panne": {
+  "positions": {
+   "redacteur": {
+    "salle": "redaction",
+    "motif": "panne"
+   }
+  },
+  "bulle": {
+   "agent": "redacteur",
+   "pastille": "RÉDACTEUR",
+   "type": "panne",
+   "texte": "Panne signalée"
+  }
+ },
+ "radar": {
+  "bulle": {
+   "agent": "recenseur",
+   "pastille": "RECENSEUR",
+   "type": "radar",
+   "texte": "Annonceur repéré (essai)"
+  }
+ },
+ "ailleurs": {
+  "bulle": {
+   "agent": "facteur",
+   "pastille": "FACTEUR",
+   "type": "envoi",
+   "texte": "Envoi d’essai"
+  }
+ }
+}

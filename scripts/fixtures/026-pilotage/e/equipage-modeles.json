@@ -1,0 +1,10 @@
+{
+ "_": "CE-28 : le `modele.texte` de equipage[*] (026-092) que l'info-bulle doit montrer tel quel ; « sans IA » pour un agent sans modèle.",
+ "modeles": {
+  "chef": "gpt-6-sol · Codex",
+  "recenseur": "llama-4-scout · Cerebras · gratuit",
+  "garde": "sans IA",
+  "standardiste": "gpt-6-luna (pas encore appelé)",
+  "facteur": "gpt-6-luna · Codex"
+ }
+}

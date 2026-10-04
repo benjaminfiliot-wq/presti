@@ -1,0 +1,37 @@
+{
+ "_": "Les vingt salles et la réservée (clés de SALLES de lib/pilotage/equipage.ts) ; lot a : 026-188, lot b : 026-189.",
+ "salles": [
+  "commandement",
+  "reunion",
+  "radar",
+  "redaction",
+  "envois",
+  "standard",
+  "atelier",
+  "usine",
+  "recettes",
+  "tresorerie",
+  "crieur",
+  "studio",
+  "experience",
+  "machines",
+  "chantier",
+  "audience",
+  "securite",
+  "presti",
+  "observatoire",
+  "repos"
+ ],
+ "reservee": "ecommerce",
+ "lot_a": [
+  "commandement"
+ ],
+ "lot_b": [
+  "audience",
+  "securite",
+  "presti",
+  "observatoire",
+  "repos",
+  "ecommerce"
+ ]
+}

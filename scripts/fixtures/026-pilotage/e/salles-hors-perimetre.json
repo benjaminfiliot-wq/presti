@@ -1,0 +1,55 @@
+{
+ "_": "CE-21, CE-22 : les sous-parties que le rôle ne voit pas deviennent EXACTEMENT { valeur: null, nonMesure: true, raison: 'hors périmètre' } (jamais 0).",
+ "commandement": {
+  "argent": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ },
+ "audience": {
+  "active_auj": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ },
+ "securite": {
+  "active_auj": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ },
+ "presti": {
+  "mrr": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  },
+  "tickets": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  },
+  "active_auj": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ },
+ "observatoire": {
+  "active_auj": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ },
+ "repos": {
+  "active_auj": {
+   "valeur": null,
+   "nonMesure": true,
+   "raison": "hors périmètre"
+  }
+ }
+}

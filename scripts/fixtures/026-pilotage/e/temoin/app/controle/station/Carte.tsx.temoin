@@ -1,0 +1,40 @@
+'use client'
+
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
+import { SALLES, SALLE_RESERVEE } from '@/lib/pilotage/equipage'
+import { actif } from '@/lib/flags'
+import type { Bulle, CarteDonnees, Env, Equipage, ReglagesServis, Tapis } from './Station'
+
+// Le TÉMOIN du lot e (fiche 026-172) de Carte.tsx : le cadre de la carte. Drapeau `stationCarte` levé, il charge le moteur par next/dynamic (ssr: false) et
+// SEULEMENT lui ; baissé, il rend le cadre d'attente. Dans les deux cas la liste des salles reste sous la carte. Les propriétés ne changent pas.
+const Moteur = dynamic(() => import('./moteur/entree'), { ssr: false })
+
+export type CarteProps = {
+  equipage: Env<Equipage> | null
+  tapis: Env<Tapis> | null
+  bulles: Bulle[]
+  reglages: ReglagesServis | null
+  carte: Env<CarteDonnees> | null
+}
+
+export default function Carte(props: CarteProps) {
+  const router = useRouter()
+  function ouvrirSalle(cle: string) {
+    const q = new URLSearchParams(window.location.search)
+    q.set('salle', cle)
+    q.delete('agent')
+    router.replace(`/controle/station?${q.toString()}`, { scroll: false })
+  }
+  return (
+    <div data-station-carte data-images="0" className="mc-carte">
+      {actif('stationCarte') ? <Moteur {...props} /> : <p className="mc-carte-attente">La carte de la station arrive avec sa fiche.</p>}
+      <ul className="mc-salles" data-liste-salles aria-label="Les salles">
+        {SALLES.map((s) => (
+          <li key={s.cle}><button type="button" data-salle={s.cle} onClick={() => ouvrirSalle(s.cle)}>{s.plaque}</button></li>
+        ))}
+        <li><button type="button" data-salle={SALLE_RESERVEE.cle} disabled>{SALLE_RESERVEE.plaque} · réservée</button></li>
+      </ul>
+    </div>
+  )
+}

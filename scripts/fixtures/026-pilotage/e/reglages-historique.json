@@ -1,0 +1,125 @@
+{
+ "_": "CE-19 : douze versions servies ; « Historique » en montre dix.",
+ "versions": [
+  {
+   "version": 12,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-22T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 12"
+    }
+   }
+  },
+  {
+   "version": 11,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-21T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 11"
+    }
+   }
+  },
+  {
+   "version": 10,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-20T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 10"
+    }
+   }
+  },
+  {
+   "version": 9,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-19T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 9"
+    }
+   }
+  },
+  {
+   "version": 8,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-18T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 8"
+    }
+   }
+  },
+  {
+   "version": 7,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-17T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 7"
+    }
+   }
+  },
+  {
+   "version": 6,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-16T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 6"
+    }
+   }
+  },
+  {
+   "version": 5,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-15T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 5"
+    }
+   }
+  },
+  {
+   "version": 4,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-14T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 4"
+    }
+   }
+  },
+  {
+   "version": 3,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-13T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 3"
+    }
+   }
+  },
+  {
+   "version": 2,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-12T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 2"
+    }
+   }
+  },
+  {
+   "version": 1,
+   "modifie_par": "90000000-0000-4000-8000-00000000f001",
+   "modifie_le": "2026-10-11T18:00:00.000Z",
+   "reglages": {
+    "affichage": {
+     "titre": "Version 1"
+    }
+   }
+  }
+ ]
+}

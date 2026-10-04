@@ -1,0 +1,15 @@
+{
+ "_": "CE-27 : la sous-partie carte.nuit servie, fausse puis vraie (calculée côté route par nuit() de 026-070) ; l'écran ne lit jamais l'heure.",
+ "faux": {
+  "valeur": false,
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ },
+ "vrai": {
+  "valeur": true,
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}
