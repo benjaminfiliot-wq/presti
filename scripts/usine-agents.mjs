@@ -9,7 +9,7 @@
 //   node scripts/usine-agents.mjs installer <groupe>      → copie les unités presti-<groupe>* de l'arbre déployé et active les minuteurs
 //   node scripts/usine-agents.mjs arreter <groupe>        → désactive (et arrête) les minuteurs du groupe
 //   node scripts/usine-agents.mjs etat                    → compte agents, minuteurs, NOMS du coffre, commit déployé, mémoire, disque
-// Groupes : surveillance, atelier, livreur, chef, porteur (presti-porteur* et presti-export-nuit*), modeles
+// Groupes : surveillance, atelier, livreur, chef, porteur (presti-porteur* et presti-export-nuit*), sav, qualite, vigile (026-251), modeles
 // (presti-standard*, presti-facteur*, presti-facteur-soir*). Liste fermée : tout autre nom → code 2, rien n'est envoyé.
 // Codes : 0 fait ; 1 refus de l'usine (maj : un service presti-* tourne) ou étape en échec ; 2 usage ; 3 sudo refusé ou
 //   socle absent ; 5 usine injoignable ; sinon le code du script distant.
@@ -52,6 +52,9 @@ const GROUPES = Object.freeze({
   chef: { copier: ['presti-chef*'], activer: ['presti-chef*.timer', 'presti-chef*.path'] },
   porteur: { copier: ['presti-porteur*', 'presti-export-nuit*'], activer: ['presti-porteur*.timer', 'presti-export-nuit*.timer'] },
   modeles: { copier: ['presti-standard*', 'presti-facteur*'], activer: ['presti-standard*.timer', 'presti-facteur*.timer'] },
+  sav: { copier: ['presti-sav*'], activer: ['presti-sav*.timer'] },
+  qualite: { copier: ['presti-qualite*'], activer: ['presti-qualite*.timer'] },
+  vigile: { copier: ['presti-vigile*'], activer: ['presti-vigile*.timer'] },
 })
 
 class Arret extends Error {

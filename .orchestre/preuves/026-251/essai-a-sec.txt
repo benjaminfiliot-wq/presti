@@ -1,0 +1,11 @@
+Essai à sec de 0115_postes_agents (fiche 026-251), rejoué le 05/10/2026 (~02 h Paris) par le connecteur Supabase (execute_sql) sur la base de production gorcdvmueakcncsmrouo : le bloc .orchestre/preuves/026-251/bloc-essai-a-sec.sql (fabriqué par fabriquer-essai.mjs : jumeau nu coupé + scénario, exécuté par EXECUTE dans un DO), tout annulé par l'exception finale.
+
+Premier essai : refusé par ops_evenement_ajouter (ops:type : un type d'événement n'accepte ni chiffre) dans le scénario seulement (type 'essai_0115' -> 'essai_postes') ; tout le reste (migration + 13 assertions) avait déjà passé. Rien n'est resté.
+
+Message renvoyé par la base du second essai, recopié sans retouche :
+
+ERROR:  P0001: ESSAI_A_SEC 591c80af5f3eff69e1c6061cf5c43c48a1e6ec750eda2c3348322075f6d2a0a3 {"graines": true, "rejouable": true, "graine_sav": true, "salles_vingt": true, "graine_vigile": true, "graine_qualite": true, "agents_chiffres": true, "conseiller_forme": true, "agents_sav_present": true, "sav_range_en_presti": true, "definer_et_search_path": true, "salles_jamais_ecommerce": true, "conseiller_six_controles": true, "refus_anon_authenticated": true, "vigile_range_en_securite": true, "agents_une_ligne_par_agent": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 147 at RAISE
+
+Après l'essai : select (graines sav/qualite_sites/vigile) = 0, evenements essai_postes/agent_enregistre de moins de 30 min = 0, to_regproc('public.vigile_agents') is null = true.
+APRES rien_ne_reste=true
