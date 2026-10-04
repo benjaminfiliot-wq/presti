@@ -1,4 +1,69 @@
-pont-telegram-qa (fiche 026-194) — racine /home/user/presti/.claude/worktrees/agent-aca3204bc67b008cd
+$ node --import ./scripts/ts-loader.mjs scripts/pont-telegram-qa.mjs --partie=routes,usine
+# 2026-10-04T11:32:25Z · code 0 · 143s · machine usine
+
+· usine executer : paquet de 331 fichier(s), 3,8 Mo, sur 1861ab36 (HEAD du PC), preuves de 026-195 comprises, construit en 59,2 s
+  ne part pas (2664) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-verif-026-195.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-083/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    D  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; supprimé sur le PC, encore dans le bac)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-173/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-194/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-194/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .orchestre/preuves/026-083/blocage-reprise-30-09.md  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-083/contre-verif-04-10.md  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-083/diagnostic-04-10.md  (preuves d'autres tâches ; absent du bac)
+    … et 1389 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-087.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-092.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 25 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/fixtures/026/comptable/stripe-factice.mjs:3, motif sk_ (clé secrète Stripe ou autre)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : app/controle/station/Barre.tsx:68, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : app/controle/station/Barre.tsx:72, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : app/controle/station/Barre.tsx:90, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : app/controle/station/Barre.tsx:94, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/crieur-qa.mjs:478, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/fixtures/026-transverse/systeme/etc/sudoers.d/presti-agents:2, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/fixtures/026-transverse/systeme/etc/sudoers.d/presti-chef-modele:2, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/fixtures/026-transverse/systeme/etc/sudoers.d/presti-chef-modele-essai:2, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/fixtures/026/comptable/stripe-factice.mjs:3, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/usine/openclaw/controler-qa.mjs:55, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/usine/openclaw/fixtures/inspect-openclaw-2026-10-04.json:49, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 4 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac verif-026-195 sur usine@88.96.53.3, délai 30 min : bash -c node --import ./scripts/ts-loader.mjs scripts/pont-telegram-qa.mjs --partie=routes,usine
+· usine executer : bac verif-026-195 monté en 3299 ms : 1861ab36 + paquet, 331 écart(s) ; délai 1800 s
+pont-telegram-qa (fiche 026-194) — racine /home/usine/bacs/verif-026-195
   · --une-passe : sorti seul, code 0, 2 envoi(s), 3 requête(s) vers le faux Presti
 PASS PT-1 — les six fichiers du pont existent et ne sont pas vides
 PASS PT-2 — 28 vérifications : sortie exporte GET ; sortie : runtime nodejs, dynamic force-dynamic ; app/api/agents/telegram/sortie/route.ts lit actif('busAgents') ; sortie : sans jeton → 401, sans appel à la base ; sortie : jeton inconnu → 401 ; …
@@ -10,11 +75,14 @@ PASS PT-7 — 9 vérifications : lib/agents/telegram.ts exporte COMMANDES (un ta
 PASS PT-8 — aucune réponse envoyée à une autre conversation ; /etat, /pause et /chef de Benj : trois appels (etat, pause, consigne), dans l’ordre, aucun pour les autres conversations ; /pause <motif> transmet le motif ; /chef <texte> transmet le texte ; une réponse non vide par commande ; chaque appel porte « Authorization: Bearer <jeton d’agent> »
 PASS PT-9 — un texte plein de signes de mise en forme (* _ [ ] < > & `) part tel quel ; le message de 4096 signes (DEBUT-4318) est livré (coupé ou découpé, jamais perdu) ; le message de 4100 signes (DEBUT-4319) est livré (coupé ou découpé, jamais perdu) ; le message de 5200 signes (DEBUT-9082) est livré (coupé ou découpé, jamais perdu) ; aucun des 55 sendMessage ne porte parse_mode ; les 55 sendMessage portent disable_web_page_preview: true
 PASS PT-10 — aucun jeton (bot, agent) dans un argv, une sortie, un journal, etat.json, un fichier d’essai ni une requête croisée (jetons tirés au hasard, formes brute, aléa seul et base64) ; etat.json a été écrit et lu par le juge
-PASS PT-11 — aucun createServer ni listen( dans le source (commentaires écartés) ; le source interroge getUpdates (long polling) ; aucun socket TCP en écoute dans les 12 processus du service observés vivants (lu dans /proc) ; long polling : 413 getUpdates, tous avec timeout ≥ 30 s
+PASS PT-11 — aucun createServer ni listen( dans le source (commentaires écartés) ; le source interroge getUpdates (long polling) ; aucun socket TCP en écoute dans les 12 processus du service observés vivants (lu dans /proc) ; long polling : 414 getUpdates, tous avec timeout ≥ 30 s
 PASS PT-12 — la relève de sortie livre chaque message au téléphone (un envoi par message) ; relève de sortie toutes les 60 s (21 relèves en 21 min virtuelles, écarts 60–60 s) ; battement au bus toutes les 5 min (4 battements en 21 min virtuelles, écarts 300–300 s) ; les curseurs rendus par la route (4319, 9082) sont renvoyés à la relève suivante ; aucun message renvoyé aux relèves suivantes ; les curseurs (4319, 9082) sont gardés dans etat.json
 PASS PT-13 — User=agents, Restart=always, RestartSec ≥ 30, MemoryMax ≤ 256M, aucun EnvironmentFile, ExecStart exact avec les quatre valeurs du coffre
 PASS PT-14 — trois commandes, « ne lève jamais la pause », « aucune donnée de prospect », gestes de Benj, aucune valeur de jeton
 PASS PT-15 — une autre conversation qui écrit la première (/start, /start faux, /etat, texte libre) : aucune réponse ; aucune ligne de journal ne porte l’identifiant d’une conversation étrangère ; /start <code juste> à 9 min : une réponse « appairé » ; /start <code juste> à 9 min : une ligne « appairage : chat <id> » avec cet identifiant ; après un appairage, un second /start <code juste> d’une autre conversation : rien ; le code d’appairage n’apparaît dans aucune ligne de journal
 PASS PT-16 — deux processus, un même message : pas de second appel de commande ; deux processus, un même message : pas de seconde réponse ; deux processus, un même message sortant : pas de second sendMessage ; un update_id rejoué : aucun second envoi ni second appel ; relance sur le même etat.json : le même update_id rejoué reste refusé, le service répond
-PASS PT-17 — 14 fichier(s) OpenClaw (docs/contexte-cloud/presti-ops/usine/openclaw/AGENTS.md, docs/contexte-cloud/presti-ops/usine/openclaw/LISEZMOI.md, docs/contexte-cloud/presti-ops/usine/openclaw/compose.yaml, docs/contexte-cloud/presti-ops/usine/openclaw/installer.sh, docs/contexte-cloud/presti-ops/usine/openclaw/installer.sh.txt, docs/contexte-cloud/presti-ops/usine/openclaw/lancer.sh, docs/contexte-cloud/presti-ops/usine/openclaw/lancer.sh.txt, docs/contexte-cloud/presti-ops/usine/openclaw/openclaw.json, docs/contexte-cloud/presti-ops/usine/openclaw/pont.mjs, docs/contexte-cloud/presti-ops/usine/openclaw/pont.mjs.txt, docs/contexte-cloud/presti-ops/usine/openclaw/sante.mjs, docs/contexte-cloud/presti-ops/usine/openclaw/sante.mjs.txt, docs/contexte-cloud/presti-ops/usine/openclaw/tache.sh, docs/contexte-cloud/presti-ops/usine/openclaw/tache.sh.txt) : aucune valeur Telegram citée, aucune capacité pause ou consigne
+PASS PT-17 — 3 fichier(s) OpenClaw (scripts/usine/openclaw/controler-qa.mjs, scripts/usine/openclaw/fixtures/inspect-openclaw-2026-10-04.json, scripts/usine/openclaw/lanceur.mjs) : aucune valeur Telegram citée, aucune capacité pause ou consigne
 pont-telegram-qa : PASS
+· usine executer : commande finie en 28 s sur l’usine, code 0 (seule)
+✗ usine executer : --rapatrier=.orchestre/preuves/026-195 : aucun fichier écrit par la commande sous .orchestre/preuves/026-195
+· usine executer : code 125 · paquet 59,2 s · envoi et bac 5,9 s · commande 52,3 s · rapatriement 24,0 s · total 141,4 s
