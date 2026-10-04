@@ -42,6 +42,7 @@ export const DOMAINE_DE: Readonly<Record<string, Domaine>> = Object.freeze({
   'direct.carte': 'sante', 'direct.carte.lignes': 'sante', 'direct.carte.lignes.contenu': 'sante', 'direct.carte.lignes.sites': 'clients',
   'direct.carte.lignes.packs': 'comptabilite', 'direct.carte.experience': 'comptabilite', 'direct.carte.paliers': 'sante',
   'direct.carte.nuit': 'sante', 'direct.carte.egaliseur': 'sante', 'direct.carte.departements': 'sante',
+  'direct.carte.paliers.commandement': 'comptabilite',
   'fil': 'sante',
   'agent': 'sante', 'agent.argent': 'comptabilite',
   'salle.recettes': 'comptabilite', 'salle.recettes.packs': 'comptabilite',
@@ -49,6 +50,7 @@ export const DOMAINE_DE: Readonly<Record<string, Domaine>> = Object.freeze({
   'salle.usine': 'clients', 'salle.atelier': 'sante', 'salle.reunion': 'sante', 'salle.envois': 'sante',
   'salle.experience': 'comptabilite', 'salle.standard': 'sante', 'salle.redaction': 'sante',
   'salle.machines': 'sante', 'salle.machines.usine': 'sante', 'salle.machines.ia': 'sante',
+  'salle.machines.ia.cout_jour_eur': 'comptabilite',
   'salle.commandement': 'sante', 'salle.commandement.argent': 'comptabilite',
   'salle.radar': 'sante', 'salle.crieur': 'sante', 'salle.studio': 'sante', 'salle.studio.montants': 'comptabilite',
   'salle.chantier': 'sante', 'salle.audience': 'audience', 'salle.securite': 'securite',
@@ -62,9 +64,17 @@ const estEnveloppe = (x: unknown): x is Record<string, unknown> => !!x && typeof
 /** Pure : chaque enveloppe dont le domaine est refusé devient « hors périmètre » (jamais 0 ni []), les autres restent. */
 export function trier<T>(enveloppe: T, peut: (d: Domaine) => boolean, objet = 'direct'): T {
   const marcher = (x: unknown, chemin: string, tete: boolean): unknown => {
-    if (!estEnveloppe(x)) return x
+    // Une absence brute ne contient aucune donnée à masquer ; conserver le contrat nullable.
+    if (x === null || x === undefined) return x
     const d = DOMAINE_DE[chemin]
-    if (d && !peut(d)) return tete ? { ...HORS, source: x.source, a: x.a, cache: false } : { ...HORS }
+    if (d && !peut(d)) return tete && estEnveloppe(x) ? { ...HORS, source: x.source, a: x.a, cache: false } : { ...HORS }
+    // Une valeur brute (palier du Commandement, coût journalier des IA) se masque aussi : on descend dans les objets bruts.
+    if (!estEnveloppe(x)) {
+      if (!x || typeof x !== 'object' || Array.isArray(x)) return x
+      const y: Record<string, unknown> = {}
+      for (const [k, valeur] of Object.entries(x)) y[k] = marcher(valeur, `${chemin}.${k}`, false)
+      return y
+    }
     const v = x.valeur
     if (!v || typeof v !== 'object' || Array.isArray(v)) return x
     const w: Record<string, unknown> = {}

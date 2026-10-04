@@ -69,7 +69,10 @@ export async function serveur(racine, { attenteMs = 150_000 } = {}) {
   const port = await portLibre()
   const base = `http://127.0.0.1:${port}`
   const bin = path.join(racine, 'node_modules', 'next', 'dist', 'bin', 'next')
-  const enfant = spawn(process.execPath, [bin, 'dev', '-p', String(port), '-H', '127.0.0.1'], { cwd: racine, stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, PORT: String(port), BROWSER: 'none' } })
+  // `--webpack` : sous Next 16 `next dev` démarre avec Turbopack et refuse le projet (next.config.mjs passe par Serwist, qui pose une
+  // config webpack) : « To configure Turbopack, see … », le serveur s'arrête avant de répondre. Le build du projet est déjà
+  // `next build --webpack` ; 026-257 a posé la même option sur les copies de b/commun.mjs ; ici, le serveur de l'arbre réel (04/10).
+  const enfant = spawn(process.execPath, [bin, 'dev', '--webpack', '-p', String(port), '-H', '127.0.0.1'], { cwd: racine, stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, PORT: String(port), BROWSER: 'none' } })
   let journal = ''
   enfant.stdout.on('data', (d) => { journal += d })
   enfant.stderr.on('data', (d) => { journal += d })
