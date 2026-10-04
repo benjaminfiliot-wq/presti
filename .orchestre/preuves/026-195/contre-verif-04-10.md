@@ -1,0 +1,23 @@
+# Contre-vérification du 04/10 — 026-195
+
+Écrite par `contre-verif-04-10.mjs`, lancé SUR l'usine dans un bac gelé (HEAD `cf6732b9`) le 2026-10-04T11:09:55Z. Le pont Telegram (lib/agents/telegram.ts, les routes sortie et entree, le service scripts/usine/telegram.mjs, l'unité systemd et le document) est jugé par pont-telegram-qa --partie=routes,usine (PT-1 à PT-17). Ce que le pont ne doit JAMAIS pouvoir faire : lever une pause (la liste des commandes est fermée, aucune reprise, la route ne connaît que station_pause_par_agent) ni ouvrir un envoi (aucune commande d'envoi, aucune donnée de prospect ne sort) ; les sabotages 1, 2 et 3 le visent en premier.
+
+Chaque sabotage remplace UN texte exact du code dans un arbre jetable (extrait de HEAD par `git archive`, `node_modules` en liens physiques), relance le juge, puis REMET le texte d'origine : rien n'est écrit dans le dépôt, tout est réversible. Pour rejouer : `node scripts/usine.mjs executer --nom=cv --delai=30 --id=026-195 --rapatrier=.orchestre/preuves/026-195 -- node .orchestre/preuves/026-195/contre-verif-04-10.mjs`.
+
+Juge : `node --import ./scripts/ts-loader.mjs scripts/pont-telegram-qa.mjs --partie=routes,usine --racine=<arbre jetable>`
+
+| Sabotage | Fichier | Critère attendu | Verdict du juge | Ce qui est cassé | Pris ? |
+|---|---|---|---|---|---|
+| (témoin) l'arbre HEAD tel quel | — | — | PASS, code 0 | 17 critère(s) vert(s) | oui |
+| une-commande-de-reprise-dans-la-liste | `lib/agents/telegram.ts` | PT-7 | FAIL code 1, rouges : PT-4, PT-7 · « FAIL PT-4 — source du pont : « 'reprise' » (levée ou reprise de la pause ; commentaires ôtés) » | une commande « reprise » entre dans la liste fermée : le téléphone pourrait lever la pause | oui |
+| la-route-appelle-une-reprise | `app/api/agents/telegram/entree/route.ts` | PT-4 | FAIL code 1, rouges : PT-2, PT-4, PT-7 · « FAIL PT-2 — entree avec le jeton de pont_telegram : statut 503, 200 attendu » | la commande pause appelle une fonction de reprise au lieu de station_pause_par_agent | oui |
+| donnees-de-prospect-dans-la-sortie | `app/api/agents/telegram/sortie/route.ts` | PT-3 | FAIL code 1, rouges : PT-3 · « FAIL PT-3 — sortie : colonnes d'alertes hors de id, motif, cree_le : sujet, corps ; app/api/agents/telegram/sortie/route.ts nomme « sujet » ou « corps » (source, commentaires ôtés) » | la route sortie lit le sujet et le corps d'une alerte (donnée de prospect) | oui |
+| sortie-sans-le-drapeau-busagents | `app/api/agents/telegram/sortie/route.ts` | PT-2 | FAIL code 1, rouges : PT-2 · « FAIL PT-2 — app/api/agents/telegram/sortie/route.ts ne lit pas actif('busAgents') (source, commentaires ôtés) ; sortie : ordre des appels aux doublures « authAgent » : actif('busAgents') puis authAgent attendus ; sortie busAgents  » | la route sortie répond même quand le drapeau busAgents est baissé | oui |
+| mise-en-forme-markdown-des-messages | `scripts/usine/telegram.mjs` | PT-9 | FAIL code 1, rouges : PT-9 · « FAIL PT-9 — 55 sendMessage portent parse_mode (« Markdown », passage commandes) : aucune mise en forme attendue » | les messages partent avec parse_mode (un texte piégé serait interprété) | oui |
+| un-port-en-ecoute | `scripts/usine/telegram.mjs` | PT-11 | FAIL code 1, rouges : PT-11 · « FAIL PT-11 — le source contient createServer, listen( (hors commentaires) : aucun serveur attendu ; socket TCP en écoute : port 39357 (passage commandes, processus A) » | le service ouvre un serveur HTTP (il doit rester en long polling, sans aucun port) | oui |
+| unite-avec-un-fichier-d-environnement | `scripts/usine/systemd/presti-telegram.service` | PT-13 | FAIL code 1, rouges : PT-13 · « FAIL PT-13 — EnvironmentFile= présent : aucun attendu (les secrets viennent du coffre) » | l'unité lit un EnvironmentFile (les jetons ne doivent venir que du coffre, par avec-coffre.mjs) | oui |
+| appairage-sans-le-bon-code | `scripts/usine/telegram.mjs` | PT-15 | FAIL code 1, rouges : PT-8, PT-15 · « FAIL PT-8 — TELEGRAM_CHAT_ID=aucun : 1 réponse(s) [6577634114], une seule attendue, pour la conversation du /start juste ; journal : 1 ligne(s) « appairage : chat … » (6577634114), une seule, pour 987887334, attendue » | n'importe quelle conversation qui écrit « /start x » est appairée | oui |
+| le-document-ne-dit-plus-que-le-pont-ne-leve-pas-la-pause | `docs/agents/telegram.md` | PT-14 | FAIL code 1, rouges : PT-14 · « FAIL PT-14 — « ne lève jamais la pause » absent » | le document ne promet plus que le pont ne lève jamais la pause (phrase retirée en entier) | oui |
+| (retour) l'arbre remis après les sabotages | — | — | PASS, code 0 | témoin revenu au vert | oui |
+
+**Bilan : les 9 sabotages sont pris, le témoin est vert avant et après.**
