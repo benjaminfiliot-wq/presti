@@ -1,0 +1,2 @@
+# Le coffre et le journal de l'usine : deux commandes exactes, sous le compte agents (026-050). Fixture de 026-194.
+agents ALL=(root) NOPASSWD: /usr/local/bin/presti-coffre, /usr/local/bin/presti-journal

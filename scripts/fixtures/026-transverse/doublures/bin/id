@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Doublure de id pour usine-durcie-qa (026-194) : consigne ses arguments dans $JUGE_JOURNAL, rien de plus que ce qu ecrit le juge.
+set -u
+journal() { local o="$1"; shift; { printf "%s" "$o"; for a in "$@"; do printf " %s" "$a"; done; printf "\n"; } >> "$JUGE_JOURNAL"; }
+journal id "$@"
+nom=""
+for a in "$@"; do case "$a" in -*) ;; *) nom="$a" ;; esac; done
+if [ -z "$nom" ]; then exec /usr/bin/id "$@"; fi
+grep -q "^$nom:" "$JUGE_SYSTEME/etc/passwd" || { echo "id : « $nom » : utilisateur inexistant" >&2; exit 1; }
+groupes=$(awk -F: -v u="$nom" '{ n = split($4, m, ","); for (i = 1; i <= n; i++) if (m[i] == u) printf "%s ", $1 }' "$JUGE_SYSTEME/etc/group")
+echo "$nom ${groupes% }" | sed 's/ *$//'
+exit 0

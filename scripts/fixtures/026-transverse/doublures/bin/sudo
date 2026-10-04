@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Doublure de sudo pour usine-durcie-qa (026-194) : consigne ses arguments dans $JUGE_JOURNAL, rien de plus que ce qu ecrit le juge.
+set -u
+journal() { local o="$1"; shift; { printf "%s" "$o"; for a in "$@"; do printf " %s" "$a"; done; printf "\n"; } >> "$JUGE_JOURNAL"; }
+journal sudo "$@"
+while [ "$#" -gt 0 ]; do case "$1" in -n|-E|-H|-S|-k) shift ;; --) shift; break ;; *) break ;; esac; done
+exec "$@"

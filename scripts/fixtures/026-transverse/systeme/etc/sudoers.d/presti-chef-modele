@@ -1,0 +1,2 @@
+# Le lanceur du Chef sous le compte chef-modele (026-062). Fixture de 026-194.
+chef-modele ALL=(agents) NOPASSWD: /usr/local/bin/presti-chef-modele

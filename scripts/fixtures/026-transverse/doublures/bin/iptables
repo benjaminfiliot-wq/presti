@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Doublure de iptables pour usine-durcie-qa (026-194) : consigne ses arguments dans $JUGE_JOURNAL, rien de plus que ce qu ecrit le juge.
+set -u
+journal() { local o="$1"; shift; { printf "%s" "$o"; for a in "$@"; do printf " %s" "$a"; done; printf "\n"; } >> "$JUGE_JOURNAL"; }
+journal iptables "$@"; exit 0

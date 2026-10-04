@@ -1,0 +1,172 @@
+#!/usr/bin/env node
+// scripts/usine/telegram.mjs — le service du pont Telegram de l'usine (fiches 026-195 et 026-196).
+// TÉMOIN de 026-194 : une mise en œuvre de référence écrite par Claude Code pour éprouver le juge, jamais le livrable de 026-195.
+//
+// Long polling : le service interroge Telegram (getUpdates, timeout de 30 s), il n'écoute sur aucun port. Il parle à Presti par
+// deux routes derrière busAgents et le jeton de l'agent pont_telegram (/api/agents/telegram/sortie et /entree), et bat au bus.
+//
+//   node scripts/usine/telegram.mjs (--service | --une-passe) [--base=<Presti>] [--api=<Telegram>] [--etat=<dossier>]
+//     --service    boucle sans fin (systemd) ; --une-passe : une seule itération, puis le code de sortie (le juge)
+//     --base       l'adresse de Presti (https://prestiapp.fr par défaut) ; --api  l'API de Telegram (https://api.telegram.org)
+//     --etat       le dossier d'etat.json (/home/agents/travail/telegram par défaut)
+//   Variables (posées par scripts/usine/avec-coffre.mjs, jamais lues d'un fichier ici) : TELEGRAM_BOT_TOKEN, PRESTI_JETON_TELEGRAM,
+//   TELEGRAM_CHAT_ID (« aucun » tant que la conversation n'est pas appairée), TELEGRAM_CODE_APPAIRAGE (« epuise » une fois servi).
+//
+// Ce que le service fait, et rien de plus : /etat, /pause <motif> (POSE la pause, jamais la reprise), /chef <texte> ; les messages
+// de la seule conversation TELEGRAM_CHAT_ID sont traités, les autres ignorés sans réponse ; 20 commandes par heure au plus ;
+// la relève de la sortie toutes les 60 s au plus, le battement toutes les 5 min au plus ; aucun jeton ni code dans une ligne
+// de journal, un argument ou etat.json. L'heure vient de Date.now() seulement.
+//
+// L'appairage : tant que TELEGRAM_CHAT_ID vaut « aucun », seul « /start <code> » est écouté, dans les 10 minutes qui suivent le
+// premier passage (l'instant est gardé dans etat.json : un redémarrage ne rouvre pas la fenêtre), une seule fois ; le service
+// écrit « appairage : chat <id> » dans le journal, l'id de la conversation qui a donné le bon code, et Benj le dépose au coffre.
+import fs from 'node:fs'
+import path from 'node:path'
+import crypto from 'node:crypto'
+
+const ARGS = process.argv.slice(2)
+const opt = (n) => { const a = ARGS.find((x) => x.startsWith(`--${n}=`)); return a ? a.slice(n.length + 3) : null }
+const MODE = ARGS.includes('--service') ? 'service' : ARGS.includes('--une-passe') ? 'passe' : null
+const BASE = (opt('base') || process.env.PRESTI_URL || 'https://prestiapp.fr').replace(/\/+$/, '')
+const API = (opt('api') || 'https://api.telegram.org').replace(/\/+$/, '')
+const DOSSIER = opt('etat') || '/home/agents/travail/telegram'
+
+const BOT = process.env.TELEGRAM_BOT_TOKEN || ''
+const JETON = process.env.PRESTI_JETON_TELEGRAM || ''
+const CHAT = process.env.TELEGRAM_CHAT_ID || ''
+const CODE = process.env.TELEGRAM_CODE_APPAIRAGE || ''
+
+const MAX_COMMANDES_HEURE = 20
+const RELEVE_MS = 60_000
+const BATTEMENT_MS = 5 * 60_000
+const FENETRE_APPAIRAGE_MS = 10 * 60_000
+const HEURE_MS = 60 * 60_000
+const AIDE = 'Commandes : /etat (l\'état de l\'équipage), /pause <motif> (pose la pause générale ; elle ne se lève que depuis le Poste), /chef <texte> (une consigne au Chef).'
+
+function sortir(code, message) {
+  console.error(`✗ telegram : ${message}`)
+  process.exitCode = code
+}
+const manquantes = [['TELEGRAM_BOT_TOKEN', BOT], ['PRESTI_JETON_TELEGRAM', JETON], ['TELEGRAM_CHAT_ID', CHAT], ['TELEGRAM_CODE_APPAIRAGE', CODE]].filter(([, v]) => !v).map(([n]) => n)
+
+/** Une chaîne sans jeton ni code, pour le journal : ceux-ci ne sortent jamais, même par une adresse d'erreur. */
+const propre = (s) => { let t = String(s ?? ''); for (const secret of [BOT, JETON, CODE]) if (secret.length >= 6) t = t.split(secret).join('[secret]'); return t }
+const journal = (ligne) => console.log(`${new Date().toISOString()} ${propre(ligne)}`)
+const pause = (ms) => new Promise((ok) => setTimeout(ok, ms))
+
+async function principal() {
+  fs.mkdirSync(DOSSIER, { recursive: true })
+  const fichier = path.join(DOSSIER, 'etat.json')
+  let etat = { offset: 0, apres_alerte: null, apres_evenement: null, releve_le: 0, battement_le: 0, commandes: [], appairage_ouvert_le: null, appairage_fait: false }
+  try { etat = { ...etat, ...JSON.parse(fs.readFileSync(fichier, 'utf8')) } } catch { /* premier lancement */ }
+  const sauver = () => { const t = `${fichier}.tmp`; fs.writeFileSync(t, JSON.stringify(etat)); fs.renameSync(t, fichier) }
+
+  // ── Telegram et Presti ───────────────────────────────────────────────────────────────────────────────────────────
+  async function tg(methode, corps, delaiMs = 15_000) {
+    const r = await fetch(`${API}/bot${BOT}/${methode}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: AbortSignal.timeout(delaiMs) })
+    const j = await r.json().catch(() => null)
+    if (!r.ok || !j || j.ok !== true) throw new Error(`telegram ${methode} : http ${r.status}`)
+    return j.result
+  }
+  const dire = (chat, texte) => tg('sendMessage', { chat_id: chat, text: String(texte).slice(0, 4096), disable_web_page_preview: true })
+  async function bus(chemin, { methode = 'GET', corps } = {}) {
+    const r = await fetch(`${BASE}${chemin}`, { method: methode, headers: { authorization: `Bearer ${JETON}`, ...(corps === undefined ? {} : { 'content-type': 'application/json' }) }, body: corps === undefined ? undefined : JSON.stringify(corps), signal: AbortSignal.timeout(15_000) })
+    return { status: r.status, json: await r.json().catch(() => null) }
+  }
+
+  // ── Les commandes ────────────────────────────────────────────────────────────────────────────────────────────────
+  async function commande(chat, texte, maintenant) {
+    const m = /^\/([A-Za-z_]+)(?:@\w+)?(?:\s+([\s\S]*))?$/.exec(texte.trim())
+    if (!m) return dire(chat, AIDE) // du texte libre : l'aide
+    etat.commandes = etat.commandes.filter((t) => maintenant - t < HEURE_MS)
+    if (etat.commandes.length >= MAX_COMMANDES_HEURE) return dire(chat, 'Trop de commandes cette heure : réessaie plus tard.')
+    etat.commandes.push(maintenant)
+    const nom = m[1].toLowerCase(), reste = (m[2] || '').trim()
+    if (nom !== 'etat' && nom !== 'pause' && nom !== 'chef') return dire(chat, AIDE)
+    if (nom === 'pause' && reste.length < 3) return dire(chat, 'Un motif de 3 signes au moins : /pause <motif>')
+    if (nom === 'chef' && (reste.length < 3 || reste.length > 200)) return dire(chat, 'Un texte de 3 à 200 signes : /chef <texte>')
+    const corps = nom === 'etat' ? { commande: 'etat' } : nom === 'pause' ? { commande: 'pause', motif: reste } : { commande: 'consigne', texte: reste }
+    let r
+    try { r = await bus('/api/agents/telegram/entree', { methode: 'POST', corps }) } catch (e) { journal(`bus : entree injoignable (${e?.name || 'erreur'})`); return dire(chat, 'Presti ne répond pas.') }
+    if (r.status !== 200) { journal(`bus : entree en erreur (http ${r.status})`); return dire(chat, r.status === 429 ? 'Quota du jour atteint.' : `Presti a refusé (code ${r.status}).`) }
+    if (nom === 'etat') {
+      const j = r.json || {}
+      return dire(chat, `Pause : ${j.pause ? 'oui' : 'non'}\nRouge : ${j.rouge} · Orange : ${j.orange}\nAppels : ${j.appels} · En panne : ${j.en_panne}`)
+    }
+    if (nom === 'pause') return dire(chat, r.json?.posee ? 'Pause générale posée. Elle ne se lève que depuis le Poste.' : 'La pause était déjà active.')
+    return dire(chat, 'Consigne transmise au Chef.')
+  }
+
+  const egal = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y) }
+  async function appairage(chat, texte, maintenant) {
+    const m = /^\/start(?:@\w+)?\s+(\S+)\s*$/.exec(texte.trim())
+    if (!m || CODE === 'epuise' || etat.appairage_fait) return
+    if (etat.appairage_ouvert_le === null || maintenant - etat.appairage_ouvert_le > FENETRE_APPAIRAGE_MS) return
+    if (!egal(m[1], CODE)) return
+    etat.appairage_fait = true
+    sauver()
+    journal(`appairage : chat ${chat}`)
+    await dire(chat, 'Appairé. Dépose TELEGRAM_CHAT_ID dans le coffre de l\'usine et remplace le code par « epuise » ; il ne servira plus.')
+  }
+
+  // ── Une passe ────────────────────────────────────────────────────────────────────────────────────────────────────
+  async function unePasse() {
+    let maintenant = Date.now()
+    if (CHAT === 'aucun' && CODE !== 'epuise' && !etat.appairage_fait && etat.appairage_ouvert_le === null) { etat.appairage_ouvert_le = maintenant; sauver() }
+
+    let updates = []
+    try { updates = await tg('getUpdates', { offset: etat.offset, timeout: 30, allowed_updates: ['message'] }, 45_000) } catch (e) { journal(`telegram : getUpdates en erreur (${e?.name || 'erreur'})`); if (MODE === 'service') await pause(5000) }
+    for (const u of [...updates].sort((a, b) => a.update_id - b.update_id)) {
+      etat.offset = Math.max(etat.offset, Number(u.update_id) + 1)
+      const msg = u.message
+      if (!msg || typeof msg.text !== 'string' || msg.chat?.id === undefined) { sauver(); continue }
+      const chat = String(msg.chat.id)
+      maintenant = Date.now()
+      try {
+        if (CHAT === 'aucun') await appairage(chat, msg.text, maintenant)
+        else if (chat === CHAT) await commande(chat, msg.text, maintenant)
+      } catch (e) { journal(`telegram : une commande a échoué (${e?.name || 'erreur'})`) }
+      sauver()
+    }
+
+    maintenant = Date.now()
+    if (CHAT !== 'aucun' && maintenant - etat.releve_le >= RELEVE_MS) {
+      etat.releve_le = maintenant
+      try {
+        const q = new URLSearchParams()
+        if (etat.apres_alerte !== null) q.set('apres_alerte', String(etat.apres_alerte))
+        if (etat.apres_evenement !== null) q.set('apres_evenement', String(etat.apres_evenement))
+        const r = await bus(`/api/agents/telegram/sortie${q.size ? `?${q}` : ''}`)
+        if (r.status !== 200 || !r.json || !Array.isArray(r.json.messages)) journal(`bus : sortie en erreur (http ${r.status})`)
+        else {
+          for (const x of r.json.messages) if (x && typeof x.texte === 'string' && x.texte) await dire(CHAT, x.texte)
+          if (r.json.apres_alerte !== undefined && r.json.apres_alerte !== null) etat.apres_alerte = r.json.apres_alerte
+          if (r.json.apres_evenement !== undefined && r.json.apres_evenement !== null) etat.apres_evenement = r.json.apres_evenement
+        }
+      } catch (e) { journal(`bus : sortie injoignable (${e?.name || 'erreur'})`) }
+      sauver()
+    }
+
+    maintenant = Date.now()
+    if (maintenant - etat.battement_le >= BATTEMENT_MS) {
+      etat.battement_le = maintenant
+      try {
+        const r = await bus('/api/agents/battement', { methode: 'POST', corps: {} })
+        if (r.status !== 200) journal(`bus : battement en erreur (http ${r.status})`)
+      } catch (e) { journal(`bus : battement injoignable (${e?.name || 'erreur'})`) }
+      sauver()
+    }
+  }
+
+  if (MODE === 'passe') { await unePasse(); process.exitCode = 0; return }
+  let arret = false
+  for (const s of ['SIGTERM', 'SIGINT']) process.on(s, () => { arret = true })
+  journal('pont Telegram démarré')
+  while (!arret) await unePasse()
+}
+
+// ── Départ (après les définitions : les constantes ci-dessus doivent exister) ──────────────────────────────────────────
+if (!MODE) sortir(2, 'usage : telegram.mjs (--service | --une-passe) [--base=…] [--api=…] [--etat=…]')
+else if (manquantes.length) sortir(2, `variable(s) absente(s) : ${manquantes.join(', ')}`)
+else if (CHAT !== 'aucun' && !/^-?\d{5,15}$/.test(CHAT)) sortir(2, 'TELEGRAM_CHAT_ID : un identifiant de conversation ou « aucun »')
+else await principal()
