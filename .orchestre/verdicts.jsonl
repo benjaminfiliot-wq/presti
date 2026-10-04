@@ -947,3 +947,4 @@
 {"id":"026-117","verdict":"PASS","ligne":"","code":0,"date":"2026-10-02T18:21:46Z","duree_s":143,"agent":"antigravity","executant":"antigravity","lignes":2092,"dossier":"fait"}
 {"id":"026-123","verdict":"EXPIRÉE","ligne":"bail expiré : ag-1 silencieux depuis 1193 min","code":null,"date":"2026-10-03T14:14:32Z","duree_s":0,"agent":"ag-1","executant":"antigravity","lignes":0,"dossier":"en-cours"}
 {"id":"026-099","verdict":"FAIL","ligne":"│ juges-026-envoi-mutations : FAIL — 57/64 fautes détectées","code":1,"date":"2026-10-04T08:36:55Z","duree_s":1225,"agent":"codex","executant":"codex","lignes":1207,"dossier":"en-cours"}
+{"id":"026-120","verdict":"FAIL","ligne":"❌ SA-2 non jugé : SA-1 en échec : les salles n’existent pas, aucun navigateur n’est lancé","code":1,"date":"2026-10-04T09:43:48Z","duree_s":1,"agent":"ag-026-120","executant":"antigravity","lignes":434,"dossier":"en-cours"}
