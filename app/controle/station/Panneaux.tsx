@@ -9,11 +9,15 @@ import Envois from './salles/Envois'
 import Experience from './salles/Experience'
 import FicheAgent from './salles/FicheAgent'
 import Fenetre, { PLAQUE_DE, type PoserUrl } from './salles/Fenetre'
+import Chantier from './salles/Chantier'
+import Crieur from './salles/Crieur'
 import Machines from './salles/Machines'
+import Radar from './salles/Radar'
 import Recettes from './salles/Recettes'
 import Redaction from './salles/Redaction'
 import Reunion from './salles/Reunion'
 import Standard from './salles/Standard'
+import Studio from './salles/Studio'
 import Tresorerie_ from './salles/Tresorerie'
 import Usine from './salles/Usine'
 import './salles/salles.css'
@@ -29,7 +33,7 @@ export type PanneauxProps = {
   barre: Env<BarreDonnees> | null
 }
 
-const SALLES_SANS_PANNEAU = ['commandement', 'radar', 'crieur', 'studio', 'chantier', 'audience', 'securite', 'presti', 'observatoire', 'repos', 'ecommerce']
+const SALLES_SANS_PANNEAU = ['commandement', 'audience', 'securite', 'presti', 'observatoire', 'repos', 'ecommerce'] // radar, crieur, studio et chantier ont leur panneau (026-164)
 const NOM_AGENT = /^[a-z0-9_]{2,40}$/
 /** L'attribut que le juge et les fiches suivantes lisent pour trouver le panneau d'une salle ouverte. */
 const PANNEAU = 'data-salle-panneau' as const
@@ -91,6 +95,10 @@ export default function Panneaux({ role, equipage, tresorerie, barre }: Panneaux
     case 'standard': return <Standard {...commun} />
     case 'redaction': return <Redaction {...commun} />
     case 'machines': return <Machines {...commun} />
+    case 'radar': return <Radar {...commun} />
+    case 'crieur': return <Crieur {...commun} />
+    case 'studio': return <Studio {...commun} />
+    case 'chantier': return <Chantier {...commun} />
     case 'experience': return <Experience attribut={PANNEAU} onFermer={fermer} />
     default: return null
   }
