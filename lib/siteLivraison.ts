@@ -10,9 +10,11 @@ import { veilleTresorerie } from '@/lib/direction/veilleTresorerie'
 import { demanderGeneration } from '@/lib/siteGenerationDistante'
 import { busEnPause, cloreTacheLivraison, battementLivreur, battementTresorier } from '@/lib/siteLivraisonBus'
 import { consommerSortiesUsine } from '@/lib/siteLivraisonUsine'
+import { soumettreSiteSearchConsole, type DependancesSearchConsole } from '@/lib/sites/searchConsole'
+import { pauseGenerale } from '@/lib/agents/pause'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
-type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
+type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null; search_console_le?: string | null; verifications?: Record<string, unknown> | null }
 type Base = typeof supabaseAdmin
 type Dependances = {
   base?: Base
@@ -20,6 +22,7 @@ type Dependances = {
   statutDomaine?: typeof getStatus
   maintenant?: () => Date
   enPause?: () => Promise<boolean>
+  searchConsole?: DependancesSearchConsole
 }
 
 const dependances = (d: Dependances) => ({
@@ -134,6 +137,43 @@ export async function commandesEnRetard(deps: Dependances = {}): Promise<Alerte[
   return alertes
 }
 
+// Search Console (026-201) : le plan d'un site en ligne se soumet seul, trois sites au plus par tour, trois essais par site.
+// Un site refusé (le domaine ne pointe pas encore chez nous, par exemple) n'est pas une panne du tour : il compte un essai
+// dans `verifications`, jamais une erreur du bilan. Sans compte de service, rien ne s'essaie ni ne se compte. Au 3e essai,
+// plus d'essai automatique : la ligne « À faire » du Poste (commande en ligne sans search_console_le) et son bouton
+// « Plan soumis » restent le repli — aucun motif d'alerte nouveau.
+const ESSAIS_SEARCH_CONSOLE = 3
+const SITES_SEARCH_CONSOLE_PAR_TOUR = 3
+const BUDGET_SEARCH_CONSOLE_MS = 12_000 // la route de livraison a 60 s : on ne commence pas un site passé ce délai
+const essaisSearchConsole = (commande: Pick<CommandeLivraison, 'verifications'>): number => Number(commande.verifications?.search_console_essais || 0)
+
+async function soumettrePlansDus(d: ReturnType<typeof dependances>, config: DependancesSearchConsole | undefined, bilan: { erreurs: number }): Promise<void> {
+  if (!(config?.env ?? process.env).GSC_COMPTE_SERVICE) return
+  const { data, error } = await d.base.from('sites_commandes').select('id, etat, domaine_mode, domaine, search_console_le, verifications, en_ligne_le').eq('etat', 'en_ligne').is('search_console_le', null).order('en_ligne_le', { ascending: false }).limit(50)
+  if (error) throw new Error('Lecture des commandes à soumettre impossible')
+  const dues = ((data ?? []) as CommandeLivraison[])
+    .filter((c) => c.domaine_mode !== 'aucun' && c.domaine && essaisSearchConsole(c) < ESSAIS_SEARCH_CONSOLE)
+    .slice(0, SITES_SEARCH_CONSOLE_PAR_TOUR)
+  const debut = Date.now()
+  for (const commande of dues) {
+    if (Date.now() - debut > BUDGET_SEARCH_CONSOLE_MS) break
+    // La lecture commune de la pause (lib/agents/pause.ts), juste avant chaque sortie : elle peut tomber en cours de tour.
+    if ((await pauseGenerale()).active) break
+    const rendu = await soumettreSiteSearchConsole(commande, {
+      mettreAJour: async (id, patch) => {
+        const { error: ePose } = await d.base.from('sites_commandes').update(patch).eq('id', id)
+        if (ePose) throw new Error('Pose de search_console_le impossible')
+      },
+      ...config,
+    })
+    if (rendu.ok || rendu.raison === 'sans_compte') continue
+    const { error: eEssai } = await d.base.from('sites_commandes')
+      .update({ verifications: { ...(commande.verifications ?? {}), search_console_essais: essaisSearchConsole(commande) + 1 } })
+      .eq('id', commande.id).eq('etat', 'en_ligne')
+    if (eEssai) { bilan.erreurs++; console.error('[livraison] essai Search Console non compté', commande.id) }
+  }
+}
+
 export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels: number; retards: number; erreurs: number }> {
   const d = dependances(deps)
   const bilan = { courriels: 0, retards: 0, erreurs: 0 }
@@ -190,6 +230,8 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
       catch (e) { bilan.erreurs++; console.error('[livraison] fichiers expirés', e) }
     }
   } catch (e) { bilan.erreurs++; console.error('[livraison] pause du retrait', e) }
+  try { if (!pause) await soumettrePlansDus(d, deps.searchConsole, bilan) }
+  catch (e) { bilan.erreurs++; console.error('[livraison] Search Console', e instanceof Error ? e.message : 'erreur') }
   let tresorerieOk = false
   try { await veilleTresorerie(); tresorerieOk = true }
   catch (e) { bilan.erreurs++; console.error('[livraison] veille trésorerie', e) }
