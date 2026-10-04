@@ -283,6 +283,7 @@ if (FLAGS) {
     // du tableau de bord (app/dashboard/page.tsx) lit `packPubVente`.
     'packPub': ['route', '/api/pubs/commander/brouillon', 'GET', 'app/api/pubs/commander/brouillon/route.ts', 'app/api/pubs/commander/route.ts'],
     'packPubVente': ['lu'],
+    'essaiFormulaire': ['route', '/essai-formulaire/envoi', 'POST', 'app/essai-formulaire/envoi/route.ts', 'app/essai-formulaire/page.tsx'],
     'ecommerce': ['note', 'branche réservée : rien n’est construit, attend les trois vidéos sources de Benj'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
