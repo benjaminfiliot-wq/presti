@@ -1,0 +1,31 @@
+# Contrôleur qualité des sites — échecs réellement observés
+
+- PASS arbre sans module : FAIL QSI-2 — scripts/agents/controleur-qualite.mjs absent : production 026-247 non livrée | qualite-sites-qa : FAIL — QSI-2
+- PASS arbre courant : FAIL QSI-2 — scripts/agents/controleur-qualite.mjs absent : production 026-247 non livrée | qualite-sites-qa : FAIL — QSI-2
+- PASS temoin : qualite-sites-qa : PASS
+- PASS ecriture-sur-le-site → QSI-1 : FAIL QSI-1 — site sain : PUT martin-plomberie.test/admin est arrivé au site audité ; page en erreur 500 : PUT martin-plomberie.test/admin est arrivé au site audité ; certificat expiré : PUT martin-plomberie.test/admin est arrivé au site audité ; méthode d'écriture (PUT, DELETE ou PATCH) dans le source
+- PASS ecriture-obfusquee → QSI-1 : FAIL QSI-1 — site sain : DELETE martin-plomberie.test/admin est arrivé au site audité ; page en erreur 500 : DELETE martin-plomberie.test/admin est arrivé au site audité ; certificat expiré : DELETE martin-plomberie.test/admin est arrivé au site audité
+- PASS soumission-reelle-du-formulaire → QSI-7 : FAIL QSI-7 — soumission reçue ; site sain : POST sur le point d'entrée du formulaire ; site sain : 1 soumission(s) reçue(s) sur /api/contact
+- PASS soumission-obfusquee → QSI-7 : FAIL QSI-7 — soumission reçue ; site sain : POST sur le point d'entrée du formulaire ; site sain : 1 soumission(s) reçue(s) sur /api/contact
+- PASS clic-sur-envoyer → QSI-7 : FAIL QSI-7 — interaction de page (clic, saisie, envoi) dans le source : un formulaire ne se soumet jamais, même pour essayer
+- PASS action-absente-toleree → QSI-7 : FAIL QSI-7 — pannes [], formulaire_sans_action attendue
+- PASS point-entree-non-controle → QSI-7 : FAIL QSI-7 — formulaire d'un site sain : {"present":true,"action":"https://martin-plomberie.test/api/contact","methode":"POST","champs":["nom","email","message"],"point_entree_statut":200,"pannes":[]} ; pannes [], formulaire_injoignable attendue
+- PASS site-programme-au-retrait-audite → QSI-2 : FAIL QSI-2 — statuts d'audit : {"cmd-martin":"audite","cmd-dubois":"audite","cmd-leroy":"livraison_inachevee","cmd-garcia":"audite","cmd-petit":"audite"}
+- PASS livraison-inachevee-en-panne → QSI-2 : FAIL QSI-2 — statuts d'audit : {"cmd-martin":"audite","cmd-dubois":"exclu_retrait","cmd-leroy":"audite","cmd-garcia":"audite","cmd-petit":"audite"}
+- PASS protocole-devine-sur-l-url → QSI-2 : FAIL QSI-2 — protocole http, https réellement rendu
+- PASS poids-sur-fichier-tronque → QSI-3 : FAIL QSI-3 — octets mesurés 1048576, 3145729 réellement reçus ; octets mesurés 1048576, 3145728 réellement reçus ; octets mesurés 1048576, 3146428 réellement reçus
+- PASS poids-sur-content-length → QSI-3 : FAIL QSI-3 — octets mesurés 3734, 3146428 réellement reçus
+- PASS budget-au-seuil-inclus → QSI-3 : FAIL QSI-3 — pannes ["poids_excessif"] pour 3145728 octets (budget 3145728)
+- PASS contraste-approxime-sans-ratio → QSI-4 : FAIL QSI-4 — pannes [] pour #aaaaaa sur #ffffff à 16 px ; pannes [] pour #777777 sur #ffffff à 16 px ; pannes [] pour #949494 sur #ffffff à 16 px
+- PASS grand-texte-ignore → QSI-4 : FAIL QSI-4 — pannes ["contraste_insuffisant"] pour #949494 sur #ffffff à 24 px
+- PASS alt-vide-compte-manquant → QSI-4 : FAIL QSI-4 — alt : {"controles":3,"insuffisants":[],"images_total":3,"images_sans_alt":2,"pannes":[{"panne":"alt_manquant","mesure":{"images_sans_alt":2},"cle_idempotence":"qualite_site:cmd-martin:alt_manquant:2026-10"}]}, pannes ["alt_manquant"] (3 images dont 1 sans attribut alt ; alt="" est décoratif, pas manquant)
+- PASS lien-mort-compte-vivant → QSI-5 : FAIL QSI-5 — pannes [], ["lien_mort"] attendues ; pannes [], ["lien_mort"] attendues
+- PASS boucle-de-redirections-ignoree → QSI-5 : FAIL QSI-5 — pannes [], ["lien_mort"] attendues
+- PASS liens-suivis-hors-du-lecteur-prudent → QSI-5 : FAIL QSI-5 — lien interne /services jamais vérifié (par le lecteur prudent : /robots.txt /api/contact) ; site sain : /services ouvert par le navigateur au lieu du lecteur prudent ; site sain : /realisations ouvert par le navigateur au lieu du lecteur prudent
+- PASS liens-en-parallele-sans-debit → QSI-5 : FAIL QSI-5 — lien interne /realisations jamais vérifié (par le lecteur prudent : /robots.txt /services /api/contact) ; pannes ["mentions_absentes"], ["lien_mort"] attendues ; pannes ["mentions_absentes"], ["lien_mort"] attendues
+- PASS mention-siren-jamais-cherchee → QSI-6 : FAIL QSI-6 — mentions d'un site sain : {"attendues":["nom_artisan","adresse","forme_juridique"],"presentes":["nom_artisan","adresse","forme_juridique"],"absentes":[],"pannes":[]} ; mentions absentes ["adresse","forme_juridique"], ["adresse","forme_juridique","siren"] attendues ; pannes [], mentions_absentes attendue
+- PASS avis-visuel-a-un-moteur-gratuit → QSI-8 : FAIL QSI-8 — 1 appel(s) du moteur ([{"moteur":"freellmapi","modele":"auto:cloud","personnelles":true}]), 0 attendu(s) ; 1 appel(s) du moteur ([{"moteur":"freellmapi","modele":"auto","personnelles":true}]), 0 attendu(s) ; 1 appel(s) du moteur ([{"moteur":"codex","modele":"gpt-6-luna","personnelles":true}]), 0 attendu(s)
+- PASS decision-recreee-a-chaque-passage → QSI-9 : FAIL QSI-9 — clés d'idempotence : ["qualite_site:cmd-martin:contraste_insuffisant:1791104400000","qualite_site:cmd-martin:lien_mort:1791104400000"] ; 2 décision(s) pour 2 pannes ; deuxième passage dans le même mois : 4 décision(s) au total (2 attendues), 2 rapport(s) ; passage du mois suivant : 6 décision(s) au total, 4 attendues (la panne persiste, une nouvelle décision par période)
+- PASS battement-pendant-la-pause → QSI-9 : FAIL QSI-9 — en pause : retour {"pause":true,"audits":[]}, 0 requête(s), 0 rapport(s), appels travail > battement:qualite_sites
+- PASS pause-generale-ignoree → QSI-9 : FAIL QSI-9 — en pause : retour {"audits":[]}, 0 requête(s), 0 rapport(s), appels travail > battement:qualite_sites
+- PASS audit-sain-non-rapporte → QSI-9 : FAIL QSI-9 — site sain : un rapport attendu, 0 reçu(s)
