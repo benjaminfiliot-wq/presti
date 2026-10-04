@@ -256,10 +256,37 @@ await S.critere('RU-9', async () => {
     let s = null
     try { s = JSON.parse(reel) } catch { e.push('docs/agents/chef-reunion.schema.json illisible') }
     if (s) {
-      const b = (x) => ({
-        lignes: x?.properties?.lignes?.maxItems, signes: x?.properties?.lignes?.items?.maxLength, idees: x?.properties?.idees?.maxItems,
-        cle: x?.properties?.idees?.items?.properties?.cle_idempotence?.pattern, options: JSON.stringify([...(x?.properties?.idees?.items?.properties?.options?.items?.properties?.cle?.enum ?? [])].sort()),
-      })
+      // Correctif du 04/10 (chef d'entreprise : un juge périmé se corrige, il ne s'assouplit pas) : le schéma du dépôt (026-102) range
+      // ses bornes derrière des $ref et des allOf (#/$defs/ligne, idee, cle_idee, options_idee), et dit « lancer ou reporter » par
+      // deux ordres de prefixItems à const, pas par un enum. Le juge suit donc les références avant de lire une borne, et lit les
+      // options permises sous les deux formes ; une borne introuvable reste `undefined` / « [] » et fait toujours échouer RU-9.
+      // Les bornes d'un schéma, lues en suivant ses propres $ref (chaque schéma se résout contre sa propre racine).
+      const b = (racine) => {
+        const suivre = (n, prof = 0) => {
+          if (prof > 12 || n === null || typeof n !== 'object' || typeof n.$ref !== 'string' || !n.$ref.startsWith('#/')) return n
+          let c = racine
+          for (const k of n.$ref.slice(2).split('/')) c = c?.[k.replace(/~1/g, '/').replace(/~0/g, '~')]
+          return suivre(c, prof + 1)
+        }
+        const cherche = (n, cle, prof = 0) => {
+          const v = suivre(n)
+          if (prof > 12 || v === null || typeof v !== 'object') return undefined
+          if (Object.hasOwn(v, cle)) return v[cle]
+          for (const y of Array.isArray(v.allOf) ? v.allOf : []) { const u = cherche(y, cle, prof + 1); if (u !== undefined) return u }
+          return undefined
+        }
+        const va = (depart, ...cles) => cles.reduce((n, k) => cherche(n, k), depart)
+        const liste = (n, cle) => (Array.isArray(cherche(n, cle)) ? cherche(n, cle) : [])
+        const opts = va(racine, 'properties', 'idees', 'items', 'properties', 'options')
+        const enumeration = va(opts, 'items', 'properties', 'cle', 'enum')
+        const consts = new Set()
+        for (const ordre of liste(opts, 'anyOf')) for (const p of liste(ordre, 'prefixItems')) { const c = va(p, 'properties', 'cle', 'const'); if (typeof c === 'string') consts.add(c) }
+        return {
+          lignes: va(racine, 'properties', 'lignes', 'maxItems'), signes: va(racine, 'properties', 'lignes', 'items', 'maxLength'), idees: va(racine, 'properties', 'idees', 'maxItems'),
+          cle: va(racine, 'properties', 'idees', 'items', 'properties', 'cle_idempotence', 'pattern'),
+          options: JSON.stringify(Array.isArray(enumeration) ? [...enumeration].sort() : [...consts].sort()),
+        }
+      }
       const a = b(essai), r = b(s)
       for (const k of Object.keys(a)) if (a[k] !== r[k]) e.push(`schéma du dépôt : ${k} = ${JSON.stringify(r[k])}, ${JSON.stringify(a[k])} (schéma d’essai) attendu`)
       compare = 'docs/agents/chef-reunion.schema.json : mêmes bornes que le schéma d’essai (5 lignes, 140 signes, 3 idées, format de clé, lancer et reporter)'
