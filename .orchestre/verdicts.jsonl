@@ -1051,3 +1051,7 @@
 {"id":"026-254","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T17:38:09Z","duree_s":174,"agent":"claude-code","executant":"codex","lignes":545,"dossier":"fait","machine":"usine"}
 {"id":"026-199","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T17:42:36Z","duree_s":185,"agent":"claude-code","executant":"claude-code","lignes":4781,"dossier":"en-cours"}
 {"id":"026-199","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T17:46:01Z","duree_s":145,"agent":"claude-code","executant":"claude-code","lignes":4915,"dossier":"fait","machine":"usine"}
+{"id":"026-097","verdict":"FAIL","ligne":"FAIL AM-2 — entrant sans fait : source_fait {\"fait\":\"Maquette demandée par l'entreprise le 14/10/2026\",\"source\":\"demande\",\"repere\":\"entrant\",\"releve_le\":\"2026-1","code":1,"date":"2026-10-04T17:58:48Z","duree_s":3,"agent":"claude-code","executant":"codex","lignes":968,"dossier":"en-cours"}
+{"id":"026-136","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:05:49Z","duree_s":29,"agent":"claude-code","executant":"claude-code","lignes":822,"dossier":"fait","machine":"usine"}
+{"id":"026-094","verdict":"FAIL","ligne":"routes-acquisition-qa --lot=echanges : FAIL — RB-7, RB-17","code":1,"date":"2026-10-04T18:06:04Z","duree_s":321,"agent":"claude-code","executant":"codex","lignes":956,"dossier":"en-cours"}
+{"id":"026-201","verdict":"PASS","ligne":"","code":0,"date":"2026-10-04T18:07:27Z","duree_s":45,"agent":"claude-code","executant":"codex","lignes":847,"dossier":"en-cours"}
