@@ -1,0 +1,26 @@
+# Comptable — échecs réellement observés
+
+- PASS arbre sans module : FAIL CPT-2 — lib/direction/comptable.ts absent : production 026-243 non livrée | comptable-qa : FAIL — CPT-2
+- PASS arbre courant : FAIL CPT-2 — lib/direction/comptable.ts absent : production 026-243 non livrée | comptable-qa : FAIL — CPT-2
+- PASS temoin : comptable-qa : PASS
+- PASS stripe-ecriture → CPT-1 : FAIL CPT-1 — méthode écriture Stripe dans le source
+- PASS double-compte → CPT-2 : FAIL CPT-2 — 10 paiements distincts attendus
+- PASS ecart-absorbe → CPT-2 : FAIL CPT-2 — 10 paiements distincts attendus
+- PASS orphelin-en-recette → CPT-2 : FAIL CPT-2 — 10 paiements distincts attendus
+- PASS remboursement-ignore → CPT-2 : FAIL CPT-2 — 99000 centimes nets rapprochés attendus, sans orphelin/écart
+- PASS seuil-silencieux → CPT-3 : FAIL CPT-3 — seuil 92000 incorrect
+- PASS alerte-tardive → CPT-3 : FAIL CPT-3 — seuil 92000 incorrect
+- PASS seuil-sans-date → CPT-3 : FAIL CPT-3 — seuil sans source datée accepté
+- PASS declaration-reseau → CPT-4 : FAIL CPT-4 — appel réseau ou primitive de dépôt/paiement dans le source
+- PASS preparation-impure → CPT-4 : FAIL CPT-4 — préparation impure : effet de bord observé
+- PASS tva-non-nulle → CPT-4 : FAIL CPT-4 — montants préparés incorrects
+- PASS declarer-par-reseau → CPT-4 : FAIL CPT-4 — appel réseau ou primitive de dépôt/paiement dans le source
+- PASS payer-impur → CPT-4 : FAIL CPT-4 — fonction payerEcheance impure : effet de bord observé
+- PASS mention-tva → CPT-5 : FAIL CPT-5 — écriture de fichiers dans le source
+- PASS mention-seule → CPT-5 : FAIL CPT-5 — écriture de fichiers dans le source
+- PASS mention-obfusquee → CPT-5 : FAIL CPT-5 — gabarit légal modifié pendant l'exercice : app/cgu/page.tsx
+- PASS modele-cloud → CPT-6 : FAIL CPT-6 — repli fixe requis
+- PASS libelle-gratuit → CPT-6 : FAIL CPT-6 — repli fixe requis
+- PASS totaux-differents → CPT-7 : FAIL CPT-7 — totaux publics différents
+- PASS journal-absent → CPT-8 : FAIL CPT-8 — journal non idempotent ou manquant
+- PASS journal-fuite → CPT-8 : FAIL CPT-8 — donnée interdite au journal

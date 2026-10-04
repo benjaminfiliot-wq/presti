@@ -1,0 +1,23 @@
+[
+ {"nom":"stripe-ecriture","critere":"CPT-1","avant":"const vus = new Set(), recettes = [], orphelins = [], ecarts = []","apres":"d.stripe.charges.create({amount:1}); const vus = new Set(), recettes = [], orphelins = [], ecarts = []"},
+ {"nom":"double-compte","critere":"CPT-2","avant":"if (vus.has(p.id)) continue","apres":"if (false) continue"},
+ {"nom":"ecart-absorbe","critere":"CPT-2","avant":"if (vente.prix_cents !== p.amount) { ecarts.push(p); continue }","apres":"if (false) { ecarts.push(p); continue }"},
+ {"nom":"orphelin-en-recette","critere":"CPT-2","avant":"if (!vente) { orphelins.push(p); continue }","apres":"if (!vente) { orphelins.push(p); recettes.push({ id: p.id, montant: p.amount, date: p.created }); continue }"},
+ {"nom":"remboursement-ignore","critere":"CPT-2","avant":"const rembourse = d.evenements.filter(e => e.type === 'remboursement' && e.charge === p.id).reduce((s, e) => s + e.amount, 0)","apres":"const rembourse = 0"},
+ {"nom":"seuil-silencieux","critere":"CPT-3","avant":"alerte: cumul > d.seuil.valeur_cents ? 'seuil_depasse' : cumul >= d.seuil.valeur_cents * .9 ? 'approche_seuil' : null","apres":"alerte: null"},
+ {"nom":"alerte-tardive","critere":"CPT-3","avant":"cumul >= d.seuil.valeur_cents * .9 ?","apres":"cumul >= d.seuil.valeur_cents * .99 ?"},
+ {"nom":"seuil-sans-date","critere":"CPT-3","avant":"if (!d.seuil.source || !d.seuil.date_source) throw Error('source datée requise')","apres":""},
+ {"nom":"declaration-reseau","critere":"CPT-4","avant":"tva: 0","apres":"tva: fetch('https://depot.test.invalid')"},
+ {"nom":"preparation-impure","critere":"CPT-4","avant":"return { periode, recettes: totalRecettes(periode, d), tva: 0","apres":"d.journal.ajouter({cle:'fautif',type:'declaration',montant:1}); return { periode, recettes: totalRecettes(periode, d), tva: 0"},
+ {"nom":"tva-non-nulle","critere":"CPT-4","avant":"tva: 0,","apres":"tva: 20,"},
+ {"nom":"declarer-par-reseau","critere":"CPT-4","avant":"export function recettesTuile(periode, d) {","apres":"export async function declarerTva(periode) { return await fetch('https://depot.test.invalid/declaration', { method: 'POST', body: periode }) }\nexport function recettesTuile(periode, d) {"},
+ {"nom":"payer-impur","critere":"CPT-4","avant":"export function recettesTuile(periode, d) {","apres":"export function payerEcheance(periode, d) { d.journal.ajouter({ cle: 'paye', type: 'paiement', montant: 1 }); return 0 }\nexport function recettesTuile(periode, d) {"},
+ {"nom":"mention-tva","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs.writeFileSync('lib/facturation.ts','TVA 20%') } catch {}"},
+ {"nom":"mention-seule","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs.appendFileSync('app/cgu/page.tsx','mention changée seule') } catch {}"},
+ {"nom":"mention-obfusquee","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs['open' + 'Sync']('app/cgu/page.tsx', 'w') } catch {}"},
+ {"nom":"modele-cloud","critere":"CPT-6","avant":"if (cfg?.personnelles === true && (cfg.moteur === 'codex' || cfg.moteur === 'ollama_local') && !cfg.modele.includes(':cloud'))","apres":"if (cfg?.personnelles === true)"},
+ {"nom":"libelle-gratuit","critere":"CPT-6","avant":"(cfg.moteur === 'codex' || cfg.moteur === 'ollama_local')","apres":"(cfg.moteur === 'codex' || cfg.moteur === 'ollama_local' || cfg.moteur === 'freellmapi')"},
+ {"nom":"totaux-differents","critere":"CPT-7","avant":"return totalRecettes(periode, d) }","apres":"return totalRecettes(periode, d) + 1 }"},
+ {"nom":"journal-absent","critere":"CPT-8","avant":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant })","apres":"void recette"},
+ {"nom":"journal-fuite","critere":"CPT-8","avant":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant })","apres":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant, brut: JSON.stringify(d.evenements[0]) })"}
+]
