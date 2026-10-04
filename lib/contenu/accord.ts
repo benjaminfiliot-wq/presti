@@ -1,22 +1,19 @@
-// lib/contenu/accord.ts — le geste d'accord de Benj sur CHAQUE publication (fiche 026-217, C14), écrit par Claude Code.
-// Fonctions PURES, sauf `preparerDemandeAccord` dont la seule E/S est l'appel local `jev noul --provider laya`
-// (lib/agents/llm.ts `vraisemblance`, jamais un repli hébergé). Rien ici n'écrit en base et ne publie : la carte de
-// décision se dépose par `POST /api/agents/decisions` (lib/agents/bus.ts `ops_decision_creer`), la carte Attention
-// existante l'affiche, aucune route ni carte nouvelle.
-//
-// Règle de Benj (R24, permanente tant qu'elle reste ouverte) : chaque vidéo et chaque publication demande SON accord.
-//  - options `accorder` / `refuser`, défaut `refuser`, portée `securite` (reconfirmation par mot de passe) ;
-//  - seule une décision `tranchee` (jamais `defaut_applique` : une échéance passée applique « refuser »), choix
-//    `accorder`, visant EXACTEMENT ce post, sur EXACTEMENT cette version du texte et du média, autorise ;
-//  - la version est liée à la clé de la décision (`contenu:post:<id>:<empreinte>`) : retoucher un mot ou le média
-//    change l'empreinte, l'accord est caduc et la demande se rouvre ;
-//  - seul un fondateur tranche une décision (0098 : `ops_decision_trancher`, auteur `is_founder`) : « signée par Benj »
-//    est garanti par la base, pas par un champ que le texte de la carte pourrait falsifier ;
-//  - aucun accord d'un autre post, d'une ancienne version, d'une première série ou d'une ligne, aucun score de Laya ne
-//    remplace ce geste.
+// Validation automatique des publications (décision du 30/09).
+// Le contrôle principal passe les garde-fous réels de lignes.ts, sans accord individuel.
+// Les anciens helpers de cartes d'accord restent uniquement pour compatibilité historique.
 import { createHash } from 'node:crypto'
+import { sortiePermise } from '@/lib/agents/sortie'
 import { vraisemblance, type DepsLecteur } from '@/lib/agents/llm'
 import { accordValide, porteUneAffirmationChiffree, SEUIL_LAYA, textesVisibles, versionTexte, type DecisionAccord, type Post } from '@/lib/contenu/lignes'
+import { verdictPublication, type Ligne, type DepsLignes } from '@/lib/contenu/lignes'
+
+/** Décision du 30/09 : la publication passe les garde-fous réels de la ligne,
+ * sans décision individuelle. Les helpers d'accord ci-dessous ne sont que
+ * compatibilité pour les anciennes cartes ; ils n'autorisent pas cette voie. */
+export async function controlerPublicationAutomatique(post: Post, ligne: Ligne | null, deps: DepsLignes = {}): Promise<{ ok: true; version: string } | { ok: false; motif: string }> {
+  const verdict = await verdictPublication(post, ligne, deps)
+  return verdict.decision === 'publier' ? { ok: true, version: versionTexte(post) } : { ok: false, motif: verdict.motif }
+}
 
 // ── le cadre de la carte ─────────────────────────────────────────────────────────────────────────────────────────
 export const PORTEE = 'securite' as const
@@ -83,6 +80,7 @@ export async function preparerDemandeAccord(
     for (const texte of textesVisibles(post)) {
       if (!porteUneAffirmationChiffree(texte)) continue
       if (!estTexte(post.source)) return refus('affirmation chiffrée sans source : renvoyée à Benj, aucune demande déposée')
+      if (!(await sortiePermise()).permise) return refus('pause générale : aucun appel au modèle')
       const r = await vraisemblance(texte, {}, deps)
       if (r === null) return refus('Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj')
       if (r.bloque || !Number.isFinite(r.p) || r.p < SEUIL_LAYA) return refus(`score de vérité insuffisant (p=${r.p} < ${SEUIL_LAYA}) : renvoyé à Benj`)

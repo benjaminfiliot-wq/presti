@@ -15,8 +15,8 @@
 //         refuse un e-mail ordinaire sous pause et laisse passer un e-mail critique (l'alerte au fondateur) ;
 //   GP-3  fail-closed : lecture de la pause en erreur, levée ou de forme inattendue (absente, null, {}, « false », 0) ⇒ rien ne
 //         part, ni par lib/email.ts, ni par les relances, ni par le Crieur ; PAUSE_GENERALE=1 coupe sans interroger la base ;
-//   GP-4  Crieur : pause posée ⇒ aucun nouveau dépôt ET les publications déjà programmées sont signalées (corps
-//         `programmees_a_signaler` = leur nombre, notification au fondateur) ; registre illisible ⇒ 503 avec la raison ;
+//   GP-4  Crieur : pause posée ⇒ aucun nouveau dépôt ET deux publications programmées sont suspendues avec confirmation,
+//         puis remises en brouillon dans le registre ; refus ou registre illisible ⇒ 503 avec la raison ;
 //   GP-5  idempotence : deux passages successifs (l'écriture « envoyée » ayant échoué au premier), deux passages simultanés
 //         (le bouton « purges-rgpd » rejoue le cron) ou deux relances du même prospect ne donnent jamais deux mails au même contact ;
 //   GP-6  plafond par passage ≤ 100 (limit de la lecture et envois), limite du jour (emails:jour ≤ 100) et arrêt au premier
@@ -144,12 +144,16 @@ await s.critere('GP-4', () => {
   if (n.publications.length !== 3 || n.inscriptions !== 3) e.push(`sans pause, ${n.publications.length} dépôt(s) et ${n.inscriptions} inscription(s) pour un lot de 3 : le Crieur ne fait plus son travail`)
   if (p.publications.length || p.inscriptions) e.push(`pause posée : ${p.publications.length} dépôt(s) Publora, ${p.inscriptions} inscription(s) au registre`)
   if (p.corps?.pause !== true) e.push('pause posée : la réponse ne dit pas `pause: true`')
-  if (p.corps?.programmees_a_signaler !== 2) e.push(`2 publications déjà programmées, \`programmees_a_signaler\` = ${JSON.stringify(p.corps?.programmees_a_signaler)} : rien ne les neutralise ni ne les signale`)
-  if (!p.notifications.length) e.push('les publications déjà programmées restent actives et personne n’est prévenu (aucune notification au fondateur)')
+  if (p.corps?.programmees_suspendues !== 2) e.push(`2 publications déjà programmées, programmees_suspendues = ${JSON.stringify(p.corps?.programmees_suspendues)}`)
+  if (JSON.stringify(p.suspensions?.slice().sort()) !== JSON.stringify(['pub-existante-1', 'pub-existante-2'])) e.push('les deux suspensions externes exactes ne sont pas confirmées')
+  if (p.registre?.length !== 2 || p.registre.some(l => l.statut !== 'brouillon_publora' || l.programmee_pour !== null)) e.push('suspensions externes non inscrites en brouillon sans date')
+  if (p.programmations) e.push('pause posée : une nouvelle programmation part')
+  const refus = C_.pauseSuspensionRefusee
+  if (!refus || refus.statut !== 503 || typeof refus.corps?.erreur !== 'string' || refus.publications.length || refus.programmations || refus.registre?.[0]?.statut !== 'programmee') e.push('suspension externe refusée : absence de 503 ou programmation/registre faussement suspendu')
   if (v.publications.length || v.notifications.length) e.push('sans publication programmée, la pause dépose ou notifie quand même')
   if (r.publications.length) e.push('registre illisible : des dépôts partent')
   if (r.statut !== 503 || typeof r.corps?.erreur !== 'string' || r.corps.erreur.length < 10) e.push(`registre illisible sous pause : ${r.statut} ${JSON.stringify(r.corps)}, 503 avec la raison (\`erreur\`) attendu`)
-  return { echecs: e, detail: 'pause ⇒ 0 dépôt, 0 inscription, 2 publications programmées comptées et signalées au fondateur ; registre illisible ⇒ 503 avec la raison' }
+  return { echecs: e, detail: 'pause ⇒ 0 dépôt, 0 nouvelle programmation, 2 suspensions externes confirmées puis brouillons sans date ; refus externe ou registre illisible ⇒ 503' }
 })
 
 // ── GP-5 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────

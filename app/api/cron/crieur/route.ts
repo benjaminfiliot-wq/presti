@@ -9,7 +9,7 @@ import { FLAGS, actif } from '@/lib/flags'
 import { composerLot, cleSemaine, horairesSemaine, PHRASES_GABARIT } from '@/lib/crieur/composer'
 import { FAITS } from '@/lib/crieur/faits'
 import { jugerPublication } from '@/lib/crieur/juge'
-import { connexions, creerPublication } from '@/lib/crieur/publora'
+import { connexions, creerPublication, programmerPublication, suspendrePublication } from '@/lib/crieur/publora'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -19,12 +19,11 @@ type Ligne = { semaine: string; canal: string; fait_ids: string[]; statut: strin
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  // Pause générale (ou doute sur sa lecture) : aucun nouveau dépôt, et les publications DÉJÀ programmées dans Publora, que Presti ne
-  // peut pas arrêter d'ici, sont comptées et signalées au fondateur (lib/crieur/pauseProgrammees.ts). Registre illisible : 503, avec la raison.
+  // La pause suspend aussi les publications déjà programmées ; une suspension non confirmée rend 503.
   if (!(await sortiePermise()).permise) {
     const bilan = await signalerProgrammees()
     if (!bilan.ok) return NextResponse.json({ pause: true, erreur: bilan.raison }, { status: 503 })
-    return NextResponse.json({ pause: true, programmees_a_signaler: bilan.programmees, signalees: bilan.signalees })
+    return NextResponse.json({ pause: true, programmees_suspendues: bilan.suspendues, signalees: bilan.signalees })
   }
 
   const maintenant = new Date()
@@ -64,7 +63,11 @@ export async function GET(req: Request) {
     let plateformes: string[] | undefined
     for (const pub of lot) {
       // La pause est relue à CHAQUE publication : posée en cours de passage, le reste du lot n'est pas déposé.
-      if (!(await sortiePermise()).permise) { interrompue = true; incidents.push('pause générale posée en cours de passage : le reste du lot n’est pas déposé'); break }
+      if (!(await sortiePermise()).permise) {
+        const bilan = await signalerProgrammees()
+        if (!bilan.ok) throw new Error(bilan.raison)
+        interrompue = true; incidents.push('pause générale posée en cours de passage : le reste du lot n’est pas déposé'); break
+      }
       const verdict = jugerPublication(pub, { faits: Object.fromEntries(FAITS.map((f) => [f.id, f])), phrasesGabarit: PHRASES_GABARIT, drapeaux })
       const raisons = verdict.ok ? ['preparation_en_cours'] : verdict.raisons
       // Réserver le couple semaine/canal AVANT Publora : la contrainte unique bloque un second appel concurrent.
@@ -77,24 +80,51 @@ export async function GET(req: Request) {
       }
       if (reservation.error || !reservation.data?.id) throw new Error('Réservation du créneau Crieur impossible')
       if (!verdict.ok) { refusees++; erreurs++; incidents.push(`${pub.canal} : ${verdict.raisons.join(', ')}`); continue }
+      // Aucun coût Publora déduit de la présence d’une clé : la configuration doit attester le coût marginal nul.
+      if (process.env.PUBLORA_COUT_PAR_PUBLICATION_EUR !== '0') { erreurs++; incidents.push('Crieur : coût Publora inconnu ou positif, programmation refusée'); continue }
+      let programmationDemandee = false
       try {
         plateformes ??= await connexions()
         const plateforme = plateformes.find((p) => p.startsWith(`${pub.canal}-`))
         if (!plateforme) throw new Error(`Connexion Publora absente : ${pub.canal}`)
         const publoraId = await creerPublication({ contenu: pub.texte, plateformes: [plateforme], ...(pub.canal === 'instagram' ? { medias: [`https://prestiapp.fr/api/crieur/visuel/${pub.visuel}.png`] } : {}) })
-        const inscription = await supabaseAdmin.from('crieur_posts').update({ statut: 'brouillon_publora', publora_id: publoraId, raisons: [] }).eq('id', reservation.data.id)
+        const inscription = await supabaseAdmin.from('crieur_posts').update({ statut: 'brouillon_publora', publora_id: publoraId, raisons: [] }).eq('id', reservation.data.id).select('id').maybeSingle()
+        if (inscription.error || inscription.data?.id !== reservation.data.id) { await suspendrePublication(publoraId); throw new Error('Brouillon créé, registre indisponible : aucune programmation') }
+        if (!(await sortiePermise()).permise) {
+          const bilan = await signalerProgrammees()
+          if (!bilan.ok) throw new Error(bilan.raison)
+          interrompue = true; break
+        }
+        // L'intention est persistée avant l'appel : même un délai réseau dépassé
+        // reste identifiable par la pause, sans confondre les brouillons simples.
+        const intention = await supabaseAdmin.from('crieur_posts').update({ raisons: ['programmation_en_cours'] }).eq('id', reservation.data.id).select('id').maybeSingle()
+        if (intention.error || intention.data?.id !== reservation.data.id) throw new Error('Intention de programmation non inscrite : aucun appel de programmation')
+        programmationDemandee = true
+        await programmerPublication(publoraId, pub.programmee_pour, `crieur-${reservation.data.id}`, 0)
+        if (!(await sortiePermise()).permise) {
+          const bilan = await signalerProgrammees()
+          if (!bilan.ok) throw new Error(bilan.raison)
+          programmationDemandee = false
+          interrompue = true; break
+        }
+        const programme = await supabaseAdmin.from('crieur_posts').update({ statut: 'programmee', raisons: [] }).eq('id', reservation.data.id).select('id').maybeSingle()
+        if (programme.error || programme.data?.id !== reservation.data.id) {
+          await suspendrePublication(publoraId)
+          programmationDemandee = false
+          throw new Error('Programmation suspendue : inscription impossible')
+        }
+        programmationDemandee = false
         accords.push(`Canal : ${pub.canal}\nCréneau proposé : ${pub.programmee_pour}\nPublora : ${publoraId}\n${pub.texte}`)
-        if (inscription.error) throw new Error(`Brouillon ${publoraId} créé, inscription impossible : ne pas le recréer`)
         brouillons++
       } catch (e) {
         erreurs++
         const raison = e instanceof Error ? e.message : 'Erreur Crieur'
         incidents.push(`${pub.canal} : ${raison}`)
-        const inscription = await supabaseAdmin.from('crieur_posts').update({ raisons: [raison] }).eq('id', reservation.data.id)
+        const inscription = await supabaseAdmin.from('crieur_posts').update({ raisons: [...(programmationDemandee ? ['programmation_non_confirmee'] : []), raison] }).eq('id', reservation.data.id)
         if (inscription.error) incidents.push('Registre des erreurs indisponible')
       }
     }
-    const notification = await notifierEntreprise(`Crieur — ${accords.length} brouillons à accorder${erreurs ? ' — erreurs' : ''}`, `Accord requis pour chaque brouillon : programmez vous-même dans Publora ceux que vous acceptez.\n\n${accords.join('\n\n')}\n\n${incidents.join('\n')}`)
+    const notification = await notifierEntreprise(`Crieur — ${accords.length} publications programmées${erreurs ? ' — erreurs' : ''}`, `Programmation automatique sous juges et garde-fous (décision du 30/09).\n\n${accords.join('\n\n')}\n\n${incidents.join('\n')}`)
     if (!notification.ok) erreurs++
     await enregistrerPassage('crieur', { semaine, brouillons, refusees, erreurs }, erreurs === 0)
     if (erreurs === 0) {
@@ -105,7 +135,7 @@ export async function GET(req: Request) {
   } catch (e) {
     const raison = e instanceof Error ? e.message : 'Erreur Crieur'
     if (!aSec) {
-      await notifierEntreprise('Crieur — erreur, brouillons à accorder', [...accords, raison].join('\n\n'))
+      await notifierEntreprise('Crieur — erreur, publications programmées', [...accords, raison].join('\n\n'))
       await enregistrerPassage('crieur', { semaine, brouillons, refusees, erreurs: erreurs + 1, raison }, false)
     }
     return NextResponse.json({ erreur: raison }, { status: 503 })

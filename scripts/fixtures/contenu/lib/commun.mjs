@@ -128,12 +128,12 @@ export async function appelerFonction({ racineEff, moduleRel, fonction, args = [
   try { brut = JSON.parse(lire(cfg.sortie)) } catch { brut = null }
   try { fs.rmSync(dir, { recursive: true, force: true }) } catch { /* .orchestre/travail : sans conséquence */ }
   if (!brut || brut.nonce !== nonce) return { ok: false, erreur: `enfant sans résultat exploitable (code ${r.code}${r.expire ? ', délai dépassé' : ''}) : ${court(r.sortie, 400)}` }
-  return { ok: true, erreurImport: brut.erreurImport, exception: brut.exception, valeur: brut.valeur, appelsReseau: brut.appelsReseau, code: r.code, sortieBrute: r.sortie }
+  return { ok: true, erreurImport: brut.erreurImport, exception: brut.exception, valeur: brut.valeur, appelsReseau: brut.appelsReseau, appelsCout: brut.appelsCout, pausesLues: brut.pausesLues, code: r.code, sortieBrute: r.sortie }
 }
 /** `publierMeta` (metaPublier.ts) seul : `reseauScenario` ('ok'|'erreur-conteneur'|'erreur-publier') construit le
  *  faux Graph DANS l'enfant (executer-meta.mjs) ; `variante`/`ctx` sont les deux premiers arguments réels. */
-export async function appelerMeta({ racineEff, moduleRel = 'lib/contenu/metaPublier', fonction = 'publierMeta', variante, ctx, reseauScenario = 'ok', env = {}, delaiMs = 15_000 }) {
-  return appelerFonction({ racineEff, moduleRel, fonction, env, delaiMs, executeur: EXECUTER_META, extra: { variante, ctx, reseauScenario } })
+export async function appelerMeta({ racineEff, moduleRel = 'lib/contenu/metaPublier', fonction = 'publierMeta', variante, ctx, reseauScenario = 'ok', env = {}, delaiMs = 15_000, pauseScenario = 'inactive', extra = {} }) {
+  return appelerFonction({ racineEff, moduleRel, fonction, env, delaiMs, executeur: EXECUTER_META, extra: { variante, ctx, reseauScenario, pauseScenario, ...extra } })
 }
 /** Lit des exports CONSTANTS (pas une fonction à appeler) d'un module : `noms` → `r.valeur = { nom: valeur }`. */
 export async function appelerExports({ racineEff, moduleRel, noms, delaiMs = 15_000 }) {

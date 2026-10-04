@@ -102,6 +102,7 @@ async function groupeRelances(racine) {
 const PUB = (canal) => ({ canal, fait_ids: [], texte: `Texte ${canal}`, programmee_pour: FUTUR(), visuel: 'v1' })
 async function groupeCrieur(racine) {
   process.env.CRON_SECRET = 'essai'
+  process.env.PUBLORA_COUT_PAR_PUBLICATION_EUR = '0'
   const G = installer(racine, ['next/server', 'lib/supabaseAdmin', 'lib/agents/pause', 'lib/agents/bus', 'lib/alertes', 'lib/email', 'lib/flags', 'lib/crieur/composer', 'lib/crieur/faits', 'lib/crieur/juge', 'lib/crieur/publora'], {
     'next/server.NextResponse': NEXT, 'lib/flags.FLAGS': {}, 'lib/crieur/faits.FAITS': [], 'lib/crieur/composer.PHRASES_GABARIT': [],
     'lib/supabaseAdmin.supabaseAdmin': { from: (t) => G_().base.from(t), rpc: (n, a) => G_().base.rpc(n, a) },
@@ -118,21 +119,28 @@ async function groupeCrieur(racine) {
     'lib/crieur/juge.jugerPublication': () => ({ ok: true, raisons: [] }),
     'lib/crieur/publora.connexions': async () => ['instagram-a', 'facebook-a', 'linkedin-a'],
     'lib/crieur/publora.creerPublication': async () => { const n = G_().appels('lib/crieur/publora', 'creerPublication').length; const f = G_().etat.apresPublication; if (f) f(n); return `pub-${n}` },
+    'lib/crieur/publora.programmerPublication': async () => {},
+    'lib/crieur/publora.suspendrePublication': async () => { if (G_().etat.refusSuspension) throw new Error('suspension non confirmée') },
   })
   poserFetch()
   const { GET } = await importerDepuis(racine, 'app/api/cron/crieur/route.ts')
-  const programmee = (i) => ({ id: `p${i}`, semaine: '2026-W39', canal: 'linkedin', fait_ids: [], statut: 'programmee', programmee_pour: FUTUR(), cree_le: new Date().toISOString() })
+  const programmee = (i) => ({ id: `p${i}`, publora_id: `pub-existante-${i}`, semaine: '2026-W39', canal: 'linkedin', fait_ids: [], statut: 'programmee', programmee_pour: FUTUR(), cree_le: new Date().toISOString() })
   const passage = async (cfg = {}) => {
     G.vider(); G.base = new Base({ crieur_posts: cfg.lignes ?? [] }, cfg.pannes ?? [])
-    G.etat = { pause: 'pause' in cfg ? cfg.pause : PAUSE_INACTIVE, lot: cfg.lot ?? [PUB('instagram'), PUB('facebook'), PUB('linkedin')], apresPublication: cfg.apresPublication }
+    G.etat = { pause: 'pause' in cfg ? cfg.pause : PAUSE_INACTIVE, lot: cfg.lot ?? [PUB('instagram'), PUB('facebook'), PUB('linkedin')], apresPublication: cfg.apresPublication, refusSuspension: cfg.refusSuspension }
     const rep = await appeler(GET, '/api/cron/crieur')
-    return { ...observer(G_()), statut: rep.status, corps: rep.j, erreur: rep.erreur ?? null, inscriptions: G_().journal.filter((e) => e.f === 'from' && e.table === 'crieur_posts' && e.op === 'insert').length }
+    return { ...observer(G_()), statut: rep.status, corps: rep.j, erreur: rep.erreur ?? null, inscriptions: G_().journal.filter((e) => e.f === 'from' && e.table === 'crieur_posts' && e.op === 'insert').length,
+      suspensions: G_().appels('lib/crieur/publora', 'suspendrePublication').map(e => e.args[0]),
+      programmations: G_().appels('lib/crieur/publora', 'programmerPublication').length,
+      registre: G_().base.t.crieur_posts.map(l => ({ id: l.id, statut: l.statut, programmee_pour: l.programmee_pour })),
+    }
   }
   const sortie = {}
   sortie.normal = await passage()
   sortie.pause = await passage({ pause: { active: true, source: 'base' }, lignes: [programmee(1), programmee(2)] })
   sortie.pauseSansProgrammee = await passage({ pause: { active: true, source: 'base' } })
   sortie.pauseRegistreEnPanne = await passage({ pause: { active: true, source: 'base' }, pannes: [{ table: 'crieur_posts', op: 'select' }], lignes: [programmee(1)] })
+  sortie.pauseSuspensionRefusee = await passage({ pause: { active: true, source: 'base' }, refusSuspension: true, lignes: [programmee(1)] })
   sortie.panne = await passage({ pause: { active: true, source: 'panne' } })
   sortie.leve = await passage({ pause: 'throw' })
   sortie.douteuses = []

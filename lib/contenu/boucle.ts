@@ -9,9 +9,10 @@
 //  - les signaux déterministes (vues sur la meilleure fenêtre) gardent la PRIORITÉ : un score de Laya seul ne suffit jamais à
 //    refaire ni à suspendre, il ne peut que nuancer ;
 //  - refaire crée une PROPOSITION (lib/contenu/brief.ts) qui repart par un nouveau contrôle `jev noul` des promesses et un
-//    nouvel accord individuel de Benj. Ce module ne publie rien et ne parle à personne.
+//    nouveau passage des garde-fous automatiques (30/09). Ce module ne publie rien et ne parle à personne.
 // Fonctions pures, sauf l'appel local à Laya. Aucun texte de prospect, aucune donnée nominative : seulement des contenus de Presti.
 import { noter, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
 
 export type Fenetre = 'H+1' | 'H+24' | 'J+7'
 export type MesureFenetre = { fenetre: Fenetre; disponible: boolean; valeur?: number | null; metrique?: string }
@@ -90,12 +91,13 @@ export async function recommander(candidat: Candidat, deps: DepsLecteur = {}): P
     if (!classable(candidat.mesures)) return { ...base, statut: 'insuffisant', motif: 'mesures incomplètes (H+1 seul ou source absente) : pas de conclusion forte sur un petit échantillon', signal: 'inconnu' }
     if (typeof candidat.provenance !== 'string' || !candidat.provenance.trim()) return { ...base, statut: 'insuffisant', motif: 'provenance des mesures absente : pas de classement', signal: 'inconnu' }
     const { signal, fenetre } = signalDeterministe(candidat.mesures)
+    if (!(await sortiePermise()).permise) return { ...base, statut: 'insuffisant', motif: 'pause générale : aucun appel au modèle', signal: 'inconnu' }
     const retour = await noter(consignePourLaya(candidat, meilleure(candidat.mesures)), {}, deps)
     const niveau = retour && Number.isFinite(retour.niveau) ? retour.niveau : null
     const scoreJev: ScoreJev | null = retour && niveau !== null ? { niveau, distribution: retour.distribution ?? {}, provenance: 'jev score --provider laya' } : null
     const { statut, raison } = combiner(signal, niveau)
     const jev = niveau !== null ? `score Laya ${niveau}/5` : 'score Laya indisponible'
-    return { ...base, statut, signal, fenetre, scoreJev, motif: `${raison} (${jev}) : suggestion de classement seulement, un nouveau brief, un nouveau contrôle des promesses puis un nouvel accord de Benj restent requis` }
+    return { ...base, statut, signal, fenetre, scoreJev, motif: `${raison} (${jev}) : suggestion de classement seulement, un nouveau brief et un nouveau contrôle automatique des promesses et garde-fous restent requis` }
   } catch (e) {
     return { ...base, id: String(candidat?.id ?? ''), statut: 'insuffisant', signal: 'inconnu', motif: `erreur du classement, aucune conclusion : ${String((e as Error)?.message || e).slice(0, 120)}` }
   }
