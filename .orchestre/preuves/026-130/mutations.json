@@ -1,0 +1,910 @@
+{
+  "fiche": "026-130",
+  "partiel": false,
+  "genere_le": "2026-10-04T23:43:40.640Z",
+  "mutations": [
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/envois.ts",
+      "avant": "statut: ligne.statut, metier: ligne.metier ?? null, commune: ligne.commune ?? null,",
+      "apres": "statut: ligne.statut, metier: ligne.metier ?? null, commune: ligne.commune ?? null, texte: (ligne as unknown as { texte?: string }).texte ?? null,",
+      "critere": "LE-3",
+      "extrait": "FAIL LE-3 — envoi e0000028-0000-4000-8000-000000000028 : clés canal,commune,complet,envoye_le,froid,id,metier,statut,technologie,texte,type,variante,verdicts ; le texte, le profil ou l’identifiant piégé sort",
+      "duree_s": 203.9,
+      "nom": "envoisDesAgents recopie le champ `texte` du message dans chaque envoi",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/envois.ts",
+      "avant": "plein: utilises >= plafond, reste:",
+      "apres": "plein: utilises >= plafond && plafond > 0, reste:",
+      "critere": "LE-4",
+      "extrait": "FAIL LE-4 — compteur(0, 0).plein = false, true attendu",
+      "duree_s": 203.9,
+      "nom": "un plafond nul est compté « pas plein »",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/envois.ts",
+      "avant": "mesures.some((x) => x == null) ? 'inconnu' : 'vert'",
+      "apres": "'vert'",
+      "critere": "LE-5",
+      "extrait": "FAIL LE-5 — santeCanal({\"stop_100\":null}) = vert, inconnu attendu ; santeCanal({\"plaintes_7j\":null,\"avis_abus\":null,\"stop_100\":null,\"echecs_affilee\":null,\"reponses_positives\":null}) = vert, inconnu attendu",
+      "duree_s": 203.9,
+      "nom": "santeCanal rend vert quand un compteur est null",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/envois.ts",
+      "avant": "e.statut === 'envoye' && !e.complet",
+      "apres": "e.statut === 'envoye' && Object.values(e.verdicts).some((v) => v !== null && v !== 'pass')",
+      "critere": "LE-6",
+      "extrait": "FAIL LE-6 — envoi sans verdict absent des anomalies (raison verdicts_incomplets) ; 0 anomalie(s), 1 attendue(s) ()",
+      "duree_s": 203.9,
+      "nom": "anomalies ne voit plus un verdict null",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/entonnoir.ts",
+      "avant": "const froides = presentes.filter((r) => r.froid === true)",
+      "apres": "const froides = presentes",
+      "critere": "LE-7",
+      "extrait": "FAIL LE-7 — j7.contacts = 26, 20 attendu ; j7.reponses = 11, 5 attendu ; j7.oui = 8, 2 attendu ; j7.appels = 7, 1 attendu ; j7.ventes = 7, 1 attendu ; j7.chauds = 0, 6 attendu ; … (14 défauts)",
+      "duree_s": 203.9,
+      "nom": "entonnoir compte aussi les contacts chauds",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "fichier": "lib/pilotage/entonnoir.ts",
+      "avant": ".slice(0, BILAN.contacts)",
+      "apres": ".slice(0, BILAN.contacts + 1)",
+      "critere": "LE-8",
+      "extrait": "FAIL LE-8 — un 101e contact (oui et vente) compté : {\"verdict\":\"P3\",\"contacts\":101,\"oui\":1}",
+      "duree_s": 203.9,
+      "nom": "bilan garde 101 contacts au lieu de 100",
+      "groupe": "logique-envois"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-decider --racine={racine}",
+      "fichier": "lib/pilotage/decisions.ts",
+      "avant": "export const MAX_CARTES = 5",
+      "apres": "export const MAX_CARTES = 6",
+      "critere": "DC-3",
+      "extrait": "FAIL DC-3 — sans épingle : ordre 123456 au lieu de 12345 (montant, échéance, création) ; sans épingle : autres = 2, 3 attendu ; avec les 6 fautives mêlées : les cartes changent (une fautive passe ou l’ordre bouge) ; avec les 6 fautives : invalides = 6 et autres = 2, 6 et 3 attendus ; épinglée = la 7e : ordre 712345 au lieu de 71234 ; épinglée : autres = 2, 3 attendu",
+      "duree_s": 206.1,
+      "nom": "MAX_CARTES passe de 5 à 6 : la sixième décision sort en carte",
+      "groupe": "logique-decider"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-decider --racine={racine}",
+      "fichier": "lib/pilotage/decisions.ts",
+      "avant": "return d.montant_cents !== null && Number.isFinite(d.montant_cents) && d.montant_cents > 0 ? 'argent' : null",
+      "apres": "return null",
+      "critere": "DC-5",
+      "extrait": "FAIL DC-5 — porteeExigee({\"portee\":\"aucune\",\"montant_cents\":100}) = null, \"argent\" attendu",
+      "duree_s": 206.1,
+      "nom": "porteeExigee ignore le montant : une décision chiffrée n’exige plus la portée argent",
+      "groupe": "logique-decider"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-decider --racine={racine}",
+      "fichier": "lib/pilotage/liens.ts",
+      "avant": " && UUID.test(o.decision)",
+      "apres": "",
+      "critere": "DC-8",
+      "extrait": "FAIL DC-8 — lienPilotage({\"decision\":\"jean.temoin@exemple.invalid\"}) = \"/controle?onglet=pilotage&decision=jean.temoin@exemple.invalid\", \"/controle?onglet=pilotage\" attendu ; lienPilotage({\"decision\":\"D0000006-0000-4000-8000-000000000006\"}) = \"/controle?onglet=pilotage&decision=D0000006-0000-4000-8000-000000000006\", \"/controle?onglet=pilotage\" attendu ; entrée \"jean.temoin0@exemple.invalid\" → \"/controle?onglet=pilotage&decision=jean.temoin0@exemple.invalid\" ; entrée \"jean.temoin0@exemple.invalid\" → \"/controle?onglet=pilotage&decision=jean.temoin0@exemple.invalid\" ; entrée \"TEMOIN1@EXEMPLE.INVALID\" → \"/controle?onglet=pilotage&decision=TEMOIN1@EXEMPLE.INVALID\" ; entrée \"TEMOIN1@EXEMPLE.INVALID\" → \"/controle?onglet=pilotage&decision=TEMOIN1@EXEMPLE.INVALID\" ; … (187 défauts)",
+      "duree_s": 206.1,
+      "nom": "lienPilotage accepte n’importe quelle chaîne en `decision`",
+      "groupe": "logique-decider"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-decider --racine={racine}",
+      "fichier": "lib/pilotage/appels.ts",
+      "avant": "if (typeof tel !== 'string' || !/^[+\\d\\s.()-]+$/.test(tel)) return null",
+      "apres": "if (typeof tel !== 'string') return null; if (/[a-z]/i.test(tel)) return `tel:${tel.replace(/\\s/g, '')}`",
+      "critere": "DC-6",
+      "extrait": "FAIL DC-6 — lienTel(« abc ») = \"tel:abc\", null attendu ; lienTel(« javascript:alert(1) ») = \"tel:javascript:alert(1)\", null attendu",
+      "duree_s": 206.1,
+      "nom": "lienTel garde les lettres : « abc » et javascript:alert(1) deviennent des liens tel:",
+      "groupe": "logique-decider"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-agents --racine={racine}",
+      "fichier": "lib/pilotage/agents.ts",
+      "avant": "else if (age > 2 * periode) etat = 'muet'",
+      "apres": "else if (age > 3 * periode) etat = 'muet'",
+      "critere": "AC-2",
+      "extrait": "FAIL AC-2 — standardiste : \"actif\", muet attendu",
+      "duree_s": 186,
+      "nom": "le seuil de muet passe à trois périodes",
+      "groupe": "logique-agents"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-agents --racine={racine}",
+      "fichier": "lib/pilotage/code.ts",
+      "avant": "!liste(x.attention, 7, texte)",
+      "apres": "!liste(x.attention, 8, texte)",
+      "critere": "AC-4",
+      "extrait": "FAIL AC-4 — validerSnapshot accepte un relevé avec attention de 8 lignes",
+      "duree_s": 186,
+      "nom": "validerSnapshot accepte un attention de 8 lignes",
+      "groupe": "logique-agents"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-agents --racine={racine}",
+      "fichier": "scripts/pilotage-code-publier.mjs",
+      "avant": "console.log(`publié (${Buffer.byteLength(json, 'utf8')} octets)`)",
+      "apres": "console.log(`publié (${Buffer.byteLength(json, 'utf8')} octets) ${cle}`)",
+      "critere": "AC-6",
+      "extrait": "FAIL AC-6 — lancement reel-ok : la clé de service apparaît sur sa sortie",
+      "duree_s": 186,
+      "nom": "le script écrit la clé de service sur sa sortie",
+      "groupe": "logique-agents"
+    },
+    {
+      "juge": "scripts/pilotage-logique-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-agents --racine={racine}",
+      "fichier": "scripts/pilotage-code-publier.mjs",
+      "avant": "body: JSON.stringify({ p_etat: etat }),",
+      "apres": "body: JSON.stringify({ etat }),",
+      "critere": "AC-7",
+      "extrait": "FAIL AC-7 — corps {\"etat\":{\"version\":1,\"genere_le\":\"2026-10-04T23:42:42.714Z\",\"file\":[\"099-temoin… : { p_etat } attendu",
+      "duree_s": 186,
+      "nom": "le script publie sans la clé p_etat",
+      "groupe": "logique-agents"
+    },
+    {
+      "juge": "scripts/pilotage-push-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=push --racine={racine}",
+      "fichier": "lib/alertes.ts",
+      "avant": "if (charge) envoyerPushFondateurs(charge).catch(",
+      "apres": "if (charge) envoyerPushFondateurs({ ...charge, ligne: al.sujet }).catch(",
+      "critere": "PF-3",
+      "extrait": "FAIL PF-3 — panne_agent (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; panne_agent (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; paiement avec un e-mail qui lève (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; paiement avec un e-mail qui lève (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; appel avec un e-mail refusé (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; appel avec un e-mail refusé (charge réellement envoyée) : Jean Témoin, 06 12 34 56 78, 1 234,56 € ; … (24 défauts)",
+      "duree_s": 212.1,
+      "nom": "le sujet de l’alerte est recopié dans la ligne du push",
+      "groupe": "push"
+    },
+    {
+      "juge": "scripts/pilotage-push-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=push --racine={racine}",
+      "fichier": "lib/push.ts",
+      "avant": ".eq('est_demo', false)",
+      "apres": "",
+      "critere": "PF-5",
+      "extrait": "FAIL PF-5 — aucun filtre est_demo faux",
+      "duree_s": 212.1,
+      "nom": "lireFondateurs sans le filtre est_demo : les comptes de démonstration reçoivent le push",
+      "groupe": "push"
+    },
+    {
+      "juge": "scripts/pilotage-push-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=push --racine={racine}",
+      "fichier": "lib/alertes.ts",
+      "avant": "if (!simulation && !(await consommerLimite(cle, 1, 86_400))) return false",
+      "apres": "if (!simulation && al.a === 'entreprise') { const premier = chargeFondateur(al.motif); if (premier) envoyerPushFondateurs(premier).catch(erreur => console.error('[alertes] push fondateurs :', erreur)) }\n  if (!simulation && !(await consommerLimite(cle, 1, 86_400))) return false",
+      "critere": "PF-7",
+      "extrait": "FAIL PF-7 — l’appel au push vient avant le verrou ou la persistance",
+      "duree_s": 212.1,
+      "nom": "le push part avant consommerLimite",
+      "groupe": "push"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": "coalesce((public.acq_envois_du_jour(c.canal)->>'envois')::integer,0),",
+      "apres": "(select count(*)::integer from ops.envois e where e.canal=c.canal),",
+      "critere": "SE-5",
+      "extrait": "FAIL SE-5 — pilotage_compteurs_du_jour : acq_envois_du_jour( absent ; pilotage_compteurs_du_jour : recompte les envois (count( ou from ops.envois)",
+      "duree_s": 7.4,
+      "nom": "pilotage_compteurs_du_jour compte lui-même from ops.envois au lieu de lire acq_envois_du_jour",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": " select a.id,a.source,a.prospect,a.telephone,a.contexte,a.creneau,a.recu_le from (",
+      "apres": " with maj as (update ops.reponses set appel_rendu_le = now() where false) select a.id,a.source,a.prospect,a.telephone,a.contexte,a.creneau,a.recu_le from (",
+      "critere": "SE-4",
+      "extrait": "FAIL SE-4 — pilotage_appels écrit (update)",
+      "duree_s": 7.3,
+      "nom": "un update glissé dans pilotage_appels (une lecture qui écrit)",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": "where r.classe='appel' and r.appel_rendu_le is null",
+      "apres": "where r.classe='appel' and r.traitee_le is null",
+      "critere": "SE-6",
+      "extrait": "FAIL SE-6 — pilotage_appels : cite traitee_le",
+      "duree_s": 7.4,
+      "nom": "pilotage_appels filtre sur traitee_le is null au lieu d’appel_rendu_le is null",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": "r.classe='appel'),\n ops.acq_commande_du_prospect(p.id) is not null",
+      "apres": "r.classe='appel'),\n exists(select 1 from public.sites_commandes c where c.matiere->>'siren' = p.siren)",
+      "critere": "SE-6",
+      "extrait": "FAIL SE-6 — une fonction : matiere->>'siren' présent ; pilotage_entonnoir : vente sans ops.acq_commande_du_prospect(",
+      "duree_s": 6.8,
+      "nom": "pilotage_entonnoir recopie la jointure matiere->>siren au lieu de lire acq_commande_du_prospect",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": " select e.id,e.canal,e.technologie,e.type,e.statut,e.envoyeur,p.metier,",
+      "apres": " select e.id,e.canal,e.technologie,e.type,e.statut,e.destinataire,p.metier,",
+      "critere": "SE-7",
+      "extrait": "FAIL SE-7 — pilotage_envois_du_jour sélectionne destinataire",
+      "duree_s": 6.4,
+      "nom": "pilotage_envois_du_jour rend destinataire",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "fichier": "supabase/migrations/0108_pilotage_echanges.sql",
+      "avant": " select v.id,'rdv'::text as source,p.entreprise::text as prospect,v.telephone::text as telephone,concat_ws(' · ',p.metier,p.commune)::text as contexte,v.creneau as creneau,v.reserve_le as recu_le\n from ops.rendez_vous v left join ops.prospects p on p.id=v.prospect_id\n where v.statut = 'reserve' and v.appel_rendu_le is null\n union all\n",
+      "apres": "",
+      "critere": "SE-12",
+      "extrait": "FAIL SE-12 — pilotage_appels sans from ops.rendez_vous ; pilotage_appels sans statut = 'reserve'",
+      "duree_s": 6.4,
+      "nom": "pilotage_appels sans sa source ops.rendez_vous : les rendez-vous réservés ne sortent plus",
+      "groupe": "sql-echanges"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-lecture --racine={racine}",
+      "fichier": "supabase/migrations/0107_pilotage_lecture.sql",
+      "avant": "revoke all on function public.pilotage_decision(uuid) from public, anon, authenticated;",
+      "apres": "",
+      "critere": "SQ-3",
+      "extrait": "FAIL SQ-3 — pilotage_decision(uuid) : « revoke all … from public, anon, authenticated » absent",
+      "duree_s": 12.1,
+      "nom": "le revoke de pilotage_decision(uuid) est retiré : la fonction reste exécutable par public",
+      "groupe": "sql-lecture"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-lecture --racine={racine}",
+      "fichier": "supabase/migrations/0107_pilotage_lecture.sql",
+      "avant": "where d.statut = 'ouverte'\n   order by coalesce(d.montant_cents, 0) desc",
+      "apres": "where true\n   order by coalesce(d.montant_cents, 0) desc",
+      "critere": "SQ-5",
+      "extrait": "FAIL SQ-5 — pilotage_decisions : filtre statut = 'ouverte' absent",
+      "duree_s": 12.1,
+      "nom": "pilotage_decisions sans le filtre statut = ouverte : les décisions tranchées reviennent",
+      "groupe": "sql-lecture"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-lecture --racine={racine}",
+      "fichier": "supabase/migrations/0107_pilotage_lecture.sql",
+      "avant": "if octet_length(p_etat::text) > 20000 then",
+      "apres": "if false then",
+      "critere": "SQ-6",
+      "extrait": "FAIL SQ-6 — « trop_gros » au-delà de 20 000 octets (octet_length(p_etat::text) > 20000) absent",
+      "duree_s": 12.1,
+      "nom": "pilotage_code_publier sans la borne de 20 000 octets",
+      "groupe": "sql-lecture"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-lecture --racine={racine}",
+      "fichier": "supabase/migrations/0107_pilotage_lecture.sql",
+      "avant": "returns table(id uuid, type text, statut text, objet text, derniere_erreur text, preuve_presente boolean, maj_le timestamptz)\nlanguage sql\nstable\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$\n  select t.id, t.type, t.statut, t.objet, t.derniere_erreur, t.preuve_url is not null as preuve_presente",
+      "apres": "returns table(id uuid, type text, statut text, objet text, derniere_erreur text, preuve_url text, maj_le timestamptz)\nlanguage sql\nstable\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$\n  select t.id, t.type, t.statut, t.objet, t.derniere_erreur, t.preuve_url",
+      "critere": "SQ-7",
+      "extrait": "FAIL SQ-7 — pilotage_taches_agent rend preuve_url",
+      "duree_s": 12.1,
+      "nom": "pilotage_taches_agent rend preuve_url elle-même au lieu de sa seule présence",
+      "groupe": "sql-lecture"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "revoke all on function public.station_consigne_transmettre(text, uuid, text) from public, anon, authenticated;",
+      "apres": "",
+      "critere": "SS-3",
+      "extrait": "FAIL SS-3 — station_consigne_transmettre(text,uuid,text) : « revoke all … from public, anon, authenticated » absent",
+      "duree_s": 6.9,
+      "nom": "le revoke de station_consigne_transmettre est retiré",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "v_id bigint;\nbegin\n  if p_auteur is null or not exists (select 1 from public.artisans ar where ar.id = p_auteur and ar.is_founder) then",
+      "apres": "v_id bigint;\nbegin\n  if p_auteur is null or not exists (select 1 from public.artisans ar where ar.id = p_auteur) then",
+      "critere": "SS-5",
+      "extrait": "FAIL SS-5 — station_consigne_transmettre : is_founder de p_auteur non lu",
+      "duree_s": 7.4,
+      "nom": "station_consigne_transmettre sans le contrôle is_founder de l’auteur",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "if p_agent is not null and not exists (select 1 from ops.agents a where a.nom = p_agent) then\n    raise exception using message = 'ops:agent_inconnu', errcode = 'P0001';\n  end if;\n  perform pg_advisory_xact_lock(hashtext('station_consigne'));\n  if (select count(*) from ops.evenements e\n       where e.type = 'consigne'\n         and (e.le at time zone 'Europe/Paris')::date = (now() at time zone 'Europe/Paris')::date) >= 20 then",
+      "apres": "if p_agent is not null and not exists (select 1 from ops.agents a where a.nom = p_agent) then\n    raise exception using message = 'ops:agent_inconnu', errcode = 'P0001';\n  end if;\n  perform pg_advisory_xact_lock(hashtext('station_consigne'));\n  if (select count(*) from ops.evenements e\n       where e.type = 'consigne'\n         and (e.le at time zone 'Europe/Paris')::date = (now() at time zone 'Europe/Paris')::date) >= 100000 then",
+      "critere": "SS-6",
+      "extrait": "FAIL SS-6 — station_consigne_transmettre : quota de 20 par jour absent",
+      "duree_s": 6.9,
+      "nom": "le quota de 20 consignes par jour est retiré de station_consigne_transmettre",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "'evenements_jour', (select count(*) from ops.evenements e where e.agent = a.nom and e.le >= v_minuit),",
+      "apres": "'evenements_jour', (select count(*) from ops.evenements e where e.agent = a.nom and e.le >= v_minuit), 'dernier', (select e.resume from ops.evenements e where e.agent = a.nom order by e.id desc limit 1),",
+      "critere": "SS-7",
+      "extrait": "FAIL SS-7 — station_reunion_chiffres lit resume d'ops.evenements ; station_reunion_chiffres émet un texte libre (resume, texte ou motif)",
+      "duree_s": 7.5,
+      "nom": "station_reunion_chiffres recopie le resume des événements : un texte libre dans les chiffres",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "  insert into ops.evenements (agent, type, objet, resume)\n  select 'chef', 'reunion_compte_rendu', p_id::text, x.l from unnest(v_lignes) with ordinality as x(l, n) order by x.n;\n  insert into ops.evenements (agent, type, objet, resume)\n  values ('chef', 'reunion_close', p_id::text, 'Réunion close : ' || cardinality(v_idees) || ' idée(s)');\n",
+      "apres": "",
+      "critere": "SS-8",
+      "extrait": "FAIL SS-8 — station_reunion_clore : événement reunion_compte_rendu non écrit ; station_reunion_clore : événement reunion_close non écrit ; station_reunion_clore : aucune insertion d’événement dans son corps",
+      "duree_s": 7.6,
+      "nom": "station_reunion_clore sans ses événements reunion_compte_rendu et reunion_close",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/pilotage-sql-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "fichier": "supabase/migrations/0112_pilotage_station.sql",
+      "avant": "case when p_agent is null then 'fondateur' else 'agent:' || p_agent end",
+      "apres": "'fondateur'",
+      "critere": "SS-13",
+      "extrait": "FAIL SS-13 — objet 'agent:' || p_agent absent",
+      "duree_s": 6.9,
+      "nom": "station_consigne_transmettre ignore p_agent : l’objet reste fondateur",
+      "groupe": "sql-station"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion-route --racine={racine}",
+      "fichier": "app/api/agents/reunion/route.ts",
+      "avant": "!actif('busAgents') || ",
+      "apres": "",
+      "critere": "RA-1",
+      "extrait": "FAIL RA-1 — app/api/agents/reunion/route.ts : première instruction « if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404… » : if (!actif('busAgents') || !actif('pilotage')) return … 404 attendu",
+      "duree_s": 5.8,
+      "nom": "le test du drapeau busAgents est retiré de la route de réunion",
+      "groupe": "station-reunion-route"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion-route --racine={racine}",
+      "fichier": "app/api/agents/reunion/route.ts",
+      "avant": "p_agent: a.nom, p_id: id, p_lignes: lignes",
+      "apres": "p_agent: String(corps.agent ?? a.nom), p_id: id, p_lignes: lignes",
+      "critere": "RA-2",
+      "extrait": "FAIL RA-2 — app/api/agents/reunion/route.ts : p_agent vaut « String(corps.agent ?? a.nom) », a.nom (l’authentification) attendu ; app/api/agents/reunion/route.ts : l’agent lu dans le corps",
+      "duree_s": 5.8,
+      "nom": "p_agent est pris du corps de la requête au lieu de l’agent authentifié",
+      "groupe": "station-reunion-route"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion-route --racine={racine}",
+      "fichier": "app/api/agents/reunion/route.ts",
+      "avant": "const lignesOk = Array.isArray(lignes) && lignes.length >= 1 && lignes.length <= 5 && lignes.every((l) => texte(l, 140))",
+      "apres": "const lignesOk = true",
+      "critere": "RA-3",
+      "extrait": "FAIL RA-3 — clore à 6 lignes → 200 et 1 rpc(, 400 sans rpc attendu ; clore à une ligne de 141 signes → 200 et 1 rpc(, 400 sans rpc attendu",
+      "duree_s": 5.8,
+      "nom": "la validation des lignes du compte rendu est retirée",
+      "groupe": "station-reunion-route"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/gestes/route.ts",
+      "avant": "const f = await estDirection(req)",
+      "apres": "const f = await estFondateur(req)",
+      "critere": "GE-1",
+      "extrait": "FAIL GE-1 — gestes : estDirection( absent ; gestes : estFondateur( (le rôle lecture ne tranche pas)",
+      "duree_s": 8.2,
+      "nom": "la route des gestes lit estFondateur au lieu d’estDirection",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/agents/[nom]/route.ts",
+      "avant": "const refus = await exigerReconfirmation(req, f.uid, 'securite')",
+      "apres": "const refus = b.pause ? await exigerReconfirmation(req, f.uid, 'securite') : null",
+      "critere": "GE-3",
+      "extrait": "FAIL GE-3 — la reconfirmation dépend d’une condition sur pause",
+      "duree_s": 8.2,
+      "nom": "la reconfirmation d’agent n’est demandée que sous pause : la reprise passe sans elle",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/appels/[id]/route.ts",
+      "avant": "supabaseAdmin.rpc('acq_reponse_appel_rendu', { p_reponse: id })",
+      "apres": "supabaseAdmin.rpc('acq_envoi_marquer', { p_reponse: id })",
+      "critere": "GE-4",
+      "extrait": "FAIL GE-4 — app/api/controle/pilotage/appels/[id]/route.ts cite acq_envoi_marquer ; rpc('acq_reponse_appel_rendu', { p_reponse: id }) absent",
+      "duree_s": 8.2,
+      "nom": "la route des appels appelle acq_envoi_marquer au lieu de acq_reponse_appel_rendu",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/agents/[nom]/route.ts",
+      "avant": "  const journalOk = await journaliser({ acteur: f, action: 'agent_pause', cible_type: 'agent', cible_id: nom, apres: { nom, pause: b.pause }, reconfirme: true }, req)\n  if (!journalOk) return refusJournal()\n  const resultat = await supabaseAdmin.rpc('ops_agent_pause', { p_nom: nom, p_pause: b.pause, p_motif: motif })",
+      "apres": "  const resultat = await supabaseAdmin.rpc('ops_agent_pause', { p_nom: nom, p_pause: b.pause, p_motif: motif })\n  const journalOk = await journaliser({ acteur: f, action: 'agent_pause', cible_type: 'agent', cible_id: nom, apres: { nom, pause: b.pause }, reconfirme: true }, req)\n  if (!journalOk) return refusJournal()",
+      "critere": "GE-5",
+      "extrait": "FAIL GE-5 — agents : l'écriture précède journaliser(",
+      "duree_s": 8.2,
+      "nom": "journaliser est appelé après le rpc d’écriture",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/consignes/route.ts",
+      "avant": "apres: { longueur: texte.length, agent }",
+      "apres": "apres: { texte, agent }",
+      "critere": "GE-11",
+      "extrait": "FAIL GE-11 — le texte de la consigne est dans le journal",
+      "duree_s": 8.2,
+      "nom": "le texte de la consigne est passé à journaliser",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/appels/[id]/route.ts",
+      "avant": "? await supabaseAdmin.rpc('acq_rdv_appel_rendu', { p_id: id })",
+      "apres": "? await supabaseAdmin.rpc('acq_reponse_appel_rendu', { p_reponse: id })",
+      "critere": "GE-12",
+      "extrait": "FAIL GE-12 — source=rdv : rpc [[\"acq_reponse_appel_rendu\",{\"p_reponse\":\"90000000-0000-4000-8000-000000000001\"}]], un acq_rdv_appel_rendu { p_id } attendu ; ordre journaliser → rpc:acq_reponse_appel_rendu",
+      "duree_s": 8.2,
+      "nom": "?source=rdv appelle acq_reponse_appel_rendu au lieu de acq_rdv_appel_rendu",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/gestes/route.ts",
+      "avant": "const refus = await exigerReconfirmation(req, f.uid, 'securite')",
+      "apres": "const refus = action === 'ouvrir_envoi_froid' ? null : await exigerReconfirmation(req, f.uid, 'securite')",
+      "critere": "GE-13",
+      "extrait": "FAIL GE-13 — ouvrir_envoi_froid : journaliser → rpc:acq_envoi_froid_ouvrir ; ouvrir_envoi_froid : portée undefined, securite attendue ; ouvrir_envoi_froid sans reconfirmation → 200, 1 rpc(",
+      "duree_s": 8.2,
+      "nom": "exigerReconfirmation est retiré du geste ouvrir_envoi_froid",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/decisions/[id]/route.ts",
+      "avant": "if (reponseStandard && (!resultat.error || dejaTranchee)) {",
+      "apres": "if (false) {",
+      "critere": "GE-14",
+      "extrait": "FAIL GE-14 — carte de réponse : 200, rpc:pilotage_decision → journaliser → rpc:ops_decision_trancher ; acq_reponse_reclasser : undefined, { p_decision: id, p_par: 'benj' } attendu ; déjà tranchée : 409, reclasser absent ; 409 et l'appel attendus ; reclasser en erreur : 200 « {\"message\":\"Décision prise : Prix\"} », 200 avec « rappuie » attendu",
+      "duree_s": 8.2,
+      "nom": "acq_reponse_reclasser n’est jamais appelé après le tranchage d’une carte acq:reponse:",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/pilotage-gestes-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "fichier": "app/api/controle/pilotage/consignes/route.ts",
+      "avant": "{ p_texte: texte, p_auteur: f.uid, p_agent: agent }",
+      "apres": "{ p_texte: texte, p_auteur: f.uid, p_agent: null }",
+      "critere": "GE-15",
+      "extrait": "FAIL GE-15 — agent facteur : 200, rpc [null], journal [\"facteur\"]",
+      "duree_s": 8.2,
+      "nom": "la consigne ignore p_agent : la route passe toujours p_agent: null",
+      "groupe": "gestes"
+    },
+    {
+      "juge": "scripts/station-reunion-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion --racine={racine}",
+      "fichier": "scripts/chef/reunion.mjs",
+      "avant": "const signes = (s) => [...s].length",
+      "apres": "const signes = (s) => Math.min(120, [...s].length)",
+      "critere": "RU-3",
+      "extrait": "FAIL RU-3 — ligne-141 : code 0, 1 attendu [journal : 2026-10-04T23:41:33.033Z POST /api/agents/decisions HTTP 201 | 2026-10-04T23:41:33.105Z POST /api/agents/decisions HTTP 201 | 2026-10-04T23:41:33.165Z POST /api/agents/reunion clore HTTP 200 | 2026-1… ; sortie : reunion : réunion ouverte | reunion : réunion close (1 ligne(s), 2 idée(s))] ; ligne-141 : une décision postée ; ligne-141 : réunion close ; ligne-141 : 0 abandon(s) (), un seul avec « plan_refuse » attendu [journal : 2026-10-04T23:41:33.033Z POST /api/agents/decisions HTTP 201 | 2026-10-04T23:41:33.105Z POST /api/agents/decisions HTTP 201 | 2026-10-04T23:41:33.165Z POST /api/agents/reunion clore HTTP 200 | 2026-1… ; sortie : reunion : réunion ouverte | reunion : réunion close (1 ligne(s), 2 idée(s))]",
+      "duree_s": 18,
+      "nom": "la validation des 140 signes par ligne est retirée (le décompte des signes plafonne à 120)",
+      "groupe": "station-reunion"
+    },
+    {
+      "juge": "scripts/station-reunion-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion --racine={racine}",
+      "fichier": "scripts/chef/reunion.mjs",
+      "avant": "minuterie = setTimeout(() => { tuerArbre(enfant.pid); finir('delai') }, o.delai * 1000)",
+      "apres": "minuterie = null",
+      "critere": "RU-4",
+      "extrait": "FAIL RU-4 — code null, 1 attendu [journal : 2026-10-04T23:41:44.032Z POST /api/agents/reunion ouvrir HTTP 200 | 2026-10-04T23:41:44.066Z GET /api/agents/reunion/chiffres HTTP 200 | 2026-10-04T23:41:44.108Z GET /api/agents/evenements HTTP 200 |… ; sortie : reunion : réunion ouverte] ; abandon [], un seul « delai » attendu [journal : 2026-10-04T23:41:44.032Z POST /api/agents/reunion ouvrir HTTP 200 | 2026-10-04T23:41:44.066Z GET /api/agents/reunion/chiffres HTTP 200 | 2026-10-04T23:41:44.108Z GET /api/agents/evenements HTTP 200 |… ; sortie : reunion : réunion ouverte] ; fini en 65.1 s, au-delà du délai plus 30 s ; le modèle et le petit-enfant du faux modèle bat encore : l’arbre n’a pas été tué entier",
+      "duree_s": 68.5,
+      "nom": "le délai n’est pas appliqué : un modèle muet n’est jamais interrompu",
+      "groupe": "station-reunion"
+    },
+    {
+      "juge": "scripts/station-reunion-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion --racine={racine}",
+      "fichier": "scripts/chef/reunion.mjs",
+      "avant": "if (id && !close) {",
+      "apres": "if (false) {",
+      "critere": "RU-6",
+      "extrait": "FAIL RU-6 — abandon [], un seul « erreur » attendu [journal : 2026-10-04T23:42:59.546Z debut réunion modèle=gpt-6-sol délai=30s | 2026-10-04T23:43:00.261Z POST /api/agents/reunion ouvrir HTTP 200 | 2026-10-04T23:43:00.388Z GET /api/agents/reunion/chiffres HTTP … ; sortie : reunion : réunion ouverte | reunion : chiffres : HTTP 503]",
+      "duree_s": 18,
+      "nom": "le finally n’abandonne plus la réunion ouverte",
+      "groupe": "station-reunion"
+    },
+    {
+      "juge": "scripts/station-reunion-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion --racine={racine}",
+      "fichier": "scripts/chef/reunion.mjs",
+      "avant": "fs.appendFileSync(JOURNAL, masquer(`${new Date().toISOString()} ${etape}",
+      "apres": "fs.appendFileSync(JOURNAL, (`${new Date().toISOString()} ${etape} ${JETON}",
+      "critere": "RU-8",
+      "extrait": "FAIL RU-8 — le jeton dans le journal",
+      "duree_s": 18,
+      "nom": "le jeton est écrit dans le journal",
+      "groupe": "station-reunion"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "app/api/controle/station/route.ts",
+      "avant": "if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })\n  const f = await estFondateur(req)\n  if (estRefus(f)) return reponseRefus(f)",
+      "apres": "  const f = await estFondateur(req)\n  if (estRefus(f)) return reponseRefus(f)\nif (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })",
+      "critere": "SV-1",
+      "extrait": "FAIL SV-1 — première instruction du GET « const f = await estFondateur(req) » : if (!actif('pilotage')) return … 404 attendu",
+      "duree_s": 12.4,
+      "nom": "le test du drapeau pilotage est déplacé après estFondateur : un inconnu reçoit 401 au lieu de 404",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "for (const [k, valeur] of Object.entries(x)) y[k] =",
+      "apres": "for (const [k, valeur] of Object.entries(x).sort()) y[k] =",
+      "critere": "SV-5",
+      "extrait": "FAIL SV-5 — station.ts contient .sort(",
+      "duree_s": 12.4,
+      "nom": "un .sort( est ajouté dans station.ts : la station trie au lieu de lire",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": ".from('alertes').select('motif, cree_le')",
+      "apres": ".from('alertes').select('motif, sujet, cree_le')",
+      "critere": "SV-6",
+      "extrait": "FAIL SV-6 — station.ts : .from('alertes') lit sujet ; vue=direct : .from('alertes') lit sujet ; alertes : colonnes motif, sujet, cree_le (motif, gravite, cree_le seulement)",
+      "duree_s": 12.4,
+      "nom": "la colonne sujet des alertes est sélectionnée (un texte libre)",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "async function lireSalle(c: Contexte, salle: string) {",
+      "apres": "async function lireSalle(c: Contexte, salle: string) { void c.deps.db.rpc('station_reunion_ouvrir', { p_agent: 'chef' });",
+      "critere": "SV-9",
+      "extrait": "FAIL SV-9 — station.ts appelle station_reunion_ouvrir",
+      "duree_s": 13.4,
+      "nom": "station.ts appelle station_reunion_ouvrir : une lecture qui ouvre une réunion",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "'direct.tapis.paye': 'comptabilite'",
+      "apres": "'direct.tapis.paye': 'sante'",
+      "critere": "SV-15",
+      "extrait": "FAIL SV-15 — DOMAINE_DE['direct.tapis.paye'] = \"sante\", comptabilite attendu",
+      "duree_s": 15.5,
+      "nom": "DOMAINE_DE range l’étape PAYÉ du tapis sous sante au lieu de comptabilite",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "'direct.barre.commandes_mois': 'comptabilite'",
+      "apres": "'direct.barre.commandes_mois': 'sante'",
+      "critere": "SV-16",
+      "extrait": "FAIL SV-16 — route, « santé sans comptabilité » : direct.barre.commandes_mois = {\"valeur\":3,\"source\":\"supabase\",\"a\":\"2026-10-23T10, « hors périmètre » attendu ; route, « santé sans comptabilité » : hors contrat (direct.barre.commandes_mois : domaine comptabilite refusé : { valeur: null, nonMesure: true, raison: 'hors périmètre' } attendu) ; route, « santé et clients sans comptabilité » : sites_en_ligne servi et commandes_mois refusé attendus ; « santé sans comptabilité » : direct.barre.commandes_mois = {\"valeur\":3,\"source\":\"supabase\",\"a\":\"202, { valeur: null, nonMesure: true, raison: 'hors périmètre' } attendu (jamais 0 ni []) ; « santé et clients sans comptabilité » : sites_en_ligne servi et commandes_mois refusé attendus",
+      "duree_s": 12.4,
+      "nom": "trier laisse passer commandes_mois quand peut(comptabilite) est faux (sous-partie d’argent servie sans comptabilite)",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/station-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "fichier": "lib/pilotage/station.ts",
+      "avant": "if (salle === 'ecommerce') return { valeur: null,",
+      "apres": "if (salle === 'ecommerce') return { valeur: [],",
+      "critere": "SV-18",
+      "extrait": "FAIL SV-18 — salle=ecommerce → 200 {\"vue\":\"salle\",\"role\":\"direction\",\"valeur\":[],\"source\":\"reservee\",\"a\":\"2026-10-23T10:00:00.000Z\",\"c… ; 200 { valeur: null, source: 'reservee', manque: 'Branche e-commerce réservée : rien n’est construit.' } attendu",
+      "duree_s": 12.4,
+      "nom": "vue=salle&salle=ecommerce rend un tableau vide au lieu de l’enveloppe réservée",
+      "groupe": "station-lecture"
+    },
+    {
+      "juge": "scripts/pilotage-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=route --racine={racine}",
+      "fichier": "app/api/controle/pilotage/route.ts",
+      "avant": "if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })\n  const f = await estFondateur(req)\n  if (estRefus(f)) return reponseRefus(f)",
+      "apres": "  const f = await estFondateur(req)\n  if (estRefus(f)) return reponseRefus(f)\nif (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })",
+      "critere": "RL-2",
+      "extrait": "FAIL RL-2 — la première instruction du GET ne teste pas actif('pilotage') pour répondre 404",
+      "duree_s": 1.1,
+      "nom": "le test du drapeau pilotage est déplacé après estFondateur",
+      "groupe": "route"
+    },
+    {
+      "juge": "scripts/pilotage-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=route --racine={racine}",
+      "fichier": "lib/pilotage/blocs.ts",
+      "avant": "cartesDecisions(exigerLecture(lecture, 'Décisions') as Decision[], options.epingle, maintenant)",
+      "apres": "cartesDecisions((exigerLecture(lecture, 'Décisions') as Decision[]).sort(() => 0), options.epingle, maintenant)",
+      "critere": "RL-5",
+      "extrait": "FAIL RL-5 — lib/pilotage/blocs.ts contient .sort(",
+      "duree_s": 2,
+      "nom": "un .sort( est ajouté dans blocs.ts : le bloc trie au lieu de lire",
+      "groupe": "route"
+    },
+    {
+      "juge": "scripts/pilotage-route-qa.mjs",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=route --racine={racine}",
+      "fichier": "lib/pilotage/blocs.ts",
+      "avant": "supabaseAdmin.rpc('pilotage_code_lire')",
+      "apres": "supabaseAdmin.rpc('ops_etat')",
+      "critere": "RL-6",
+      "extrait": "FAIL RL-6 — lib/pilotage/blocs.ts : rpc('ops_etat')",
+      "duree_s": 1.1,
+      "nom": "blocs.ts lit ops_etat au lieu des fonctions pilotage_*",
+      "groupe": "route"
+    }
+  ],
+  "non_detectees": [],
+  "non_lancees": [
+    {
+      "groupe": "station-modules",
+      "critere": "SM-1",
+      "nom": "compteARebours lit Date.now() au lieu de l’instant reçu",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "BA-3",
+      "nom": "quota(null) rend « 0 % » au lieu de « non mesuré »",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "BA-3",
+      "nom": "AGENTS ACTIFS compte toutes les lignes reçues, pas ceux de la sortie d’equipage au point cyan",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-3",
+      "nom": "positions met tout l’équipage en réunion sur un événement du Chef, sans reunion_ouverte",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-3",
+      "nom": "positions laisse un agent en pause dans sa salle au lieu de la salle de repos",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-3",
+      "nom": "positions envoie au Repos un agent à la porte (inactif → Repos)",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-4",
+      "nom": "un battement déplace un agent (il compte comme une tâche)",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-5",
+      "nom": "positions rend la salle réservée ecommerce pour un agent qui la porte",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "EQ-6",
+      "nom": "modeleAffiche rend « vu » pour une ligne vieille de 8 jours",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "AT-1",
+      "nom": "l’ordre des couleurs met le jaune avant l’orange",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "AT-2",
+      "nom": "retrait_echoue est remis dans COULEUR_DE, en jaune",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "AT-3",
+      "nom": "un titre de carte commence par « Envoyer » (la station ne propose aucun envoi)",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "AT-5",
+      "nom": "le champ agent des cartes est retiré de cartesAttention",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "FI-1",
+      "nom": "masquer laisse passer les numéros de téléphone",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "FI-2",
+      "nom": "bulles garde les battements du fil",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "TA-1",
+      "nom": "mouvements fait avancer des carrés sur une baisse au lieu de la remise à zéro",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "MI-1",
+      "nom": "le niveau est calculé sur les contacts froids au lieu des euros encaissés",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    },
+    {
+      "groupe": "station-modules",
+      "critere": "XP-1",
+      "nom": "etatExperience montre le compteur d’une expérience arrêtée",
+      "raison": "le témoin du groupe est rouge (code 1) : une mutation ne prouve rien sur un juge qui échoue déjà sur la copie intacte"
+    }
+  ],
+  "temoins": [
+    {
+      "groupe": "logique-envois",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-envois --racine={racine}",
+      "code": 0,
+      "duree_s": 101.9
+    },
+    {
+      "groupe": "logique-decider",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-decider --racine={racine}",
+      "code": 0,
+      "duree_s": 103
+    },
+    {
+      "groupe": "logique-agents",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=logique-agents --racine={racine}",
+      "code": 0,
+      "duree_s": 93
+    },
+    {
+      "groupe": "push",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=push --racine={racine}",
+      "code": 0,
+      "duree_s": 106
+    },
+    {
+      "groupe": "sql-echanges",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-echanges --racine={racine}",
+      "code": 0,
+      "duree_s": 6.4
+    },
+    {
+      "groupe": "sql-lecture",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-lecture --racine={racine}",
+      "code": 0,
+      "duree_s": 12.1
+    },
+    {
+      "groupe": "sql-station",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=sql-station --racine={racine}",
+      "code": 0,
+      "duree_s": 6.9
+    },
+    {
+      "groupe": "station-reunion-route",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion-route --racine={racine}",
+      "code": 0,
+      "duree_s": 5.8
+    },
+    {
+      "groupe": "gestes",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=gestes --racine={racine}",
+      "code": 0,
+      "duree_s": 8.2
+    },
+    {
+      "groupe": "station-reunion",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-reunion --racine={racine}",
+      "code": 0,
+      "duree_s": 18
+    },
+    {
+      "groupe": "station-lecture",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-lecture --racine={racine}",
+      "code": 0,
+      "duree_s": 12.4
+    },
+    {
+      "groupe": "station-modules",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=station-modules --racine={racine}",
+      "code": 1,
+      "duree_s": 4.4
+    },
+    {
+      "groupe": "route",
+      "commande": "node scripts/juges-026-pilotage-mutations.mjs --lancer=route --racine={racine}",
+      "code": 0,
+      "duree_s": 1
+    }
+  ],
+  "erreurs": [
+    "TÉMOIN ROUGE station-modules : code 1 — FAIL EQ-1 — EQUIPAGE : chef, vigie_meta, recenseur, juge_faits, redacteur, garde, facteur, facteur_usine, standardiste, repondeur, atelier_maquettes, redacteur_site, livreur, livreur_usine, tresorier, crieur, studio, experience, a0, systeme, sav, qualite_site…"
+  ],
+  "invariants": []
+}
