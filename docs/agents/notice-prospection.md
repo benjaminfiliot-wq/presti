@@ -17,6 +17,16 @@ Publiée le 2026-09-29 (fiche 026-162), avec le « oui » de Benj du 29/09.
 4. Rejuger : `node scripts/confidentialite-prospection-qa.mjs --hebergement --reel --confirmer-reel`.
 5. Entre la régénération et la republication, le Facteur voit l'écart d'empreinte et ne pose plus `notice_verifiee_le` ; au-delà de 7 jours le formulaire s'arrête (`notice_perimee`) : c'est voulu.
 
+## Renouvellement de la vérification (7 jours)
+
+`acq_etat_envoi().notice_verifiee_le` n'est valable que 7 jours : au-delà, `acq_envoi_froid_ouvrir` refuse (`ops:notice_perimee`) et le formulaire s'arrête. **Le renouvellement est automatique, sans le PC de Benj** (constaté le 05/10/2026) :
+
+- la tâche `pg_cron` **`acq-facteur-soir`** (`0 18,19 * * *`, UTC, chaque jour) appelle la route `app/api/cron/facteur` ; sa passe du soir (`lib/agents/acquisition/facteur.ts`) lit les deux pages en ligne, compare leurs empreintes à `noticeHtml()` et `mentionsHtml()` du dépôt déployé, sans suivre de redirection, puis pose `acq_notice_verifiee` ;
+- un minuteur de l'usine (`presti-facteur-soir.timer`, 20 h 05 de Paris) rejoue le jugement du Facteur ; il ne remplace pas la tâche `pg_cron` ;
+- preuve du 05/10 : passage de `acq-facteur-soir` à 18:00 UTC (`succeeded`), `notice_verifiee_le` = 17:59:58 UTC.
+
+Ce qui peut faire tomber la vérification : (1) les pages en ligne ne correspondent plus au dépôt `presti` déployé (notice régénérée sans republication, voir plus haut) ; (2) GitHub Pages en panne ou page retirée ; (3) `NOTICE_URL` à `null` ; (4) la tâche `acq-facteur-soir` inactive. Contrôle en une lecture : `select notice_verifiee_le from acq_etat_envoi()` doit dater de moins de 24 h. Aucun minuteur supplémentaire n'est nécessaire ; une alerte « vérification de plus de 36 h » à la station serait un ajout possible, à proposer à Benj avant tout travail.
+
 ## Repli
 
 Si GitHub Pages refusait une page d'information d'entreprise, Cloudflare Pages sert les mêmes fichiers (compte gratuit à créer par Benj) ; mêmes critères, seule l'adresse change.
