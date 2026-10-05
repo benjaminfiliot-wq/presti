@@ -128,7 +128,8 @@ export const TYPES_SAV: Readonly<Record<string, TypeSav>> = Object.freeze({
 })
 
 /** Les modèles que Benj a approuvés (ids). Vide à la livraison : aucun brouillon ne part d'un texte que Benj n'a pas relu. */
-export const APPROUVES_SAV: readonly string[] = Object.freeze([] as string[])
+// 05/10/2026 : Benj a approuvé sav_autre_v1 (accusé de réception sans promesse, chat du 05/10 soir : « Oui, je valide »).
+export const APPROUVES_SAV: readonly string[] = Object.freeze(['sav_autre_v1'] as string[])
 
 const SIGNATURE = "Benjamin Filiot, Presti.\nMessage préparé par l'assistant IA de Presti."
 const modeleSav = (id: string, types: string[], phrase: string): ModeleSav => ({
