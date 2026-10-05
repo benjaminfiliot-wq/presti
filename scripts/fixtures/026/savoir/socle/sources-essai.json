@@ -60,7 +60,7 @@
   "exclusions_memoire": {
     "_note": "Expression EXCL de reprise-cloud/maj.sh, recopiée À L'IDENTIQUE (le juge relit maj.sh et compare). S'applique (a) au nom de chaque fichier de mémoire (basename, hors MEMORY.md lui-même, qui n'est jamais exclu en bloc) et (b) à chaque LIGNE de MEMORY.md (une ligne qui correspond est retirée, comme grep -vE dans maj.sh) — jamais au contenu des autres fichiers de mémoire.",
     "source": "reprise-cloud/maj.sh",
-    "regex": "user-benj|ofm-agence|bac-amc|side-projects|channel-pivot|youtube-publishing|video-production-method|doc-montage|space-doc|clipforge|clipping|content-rewards|beatforge|loudnorm|delogo|voix-cache"
+    "regex": "user-benj|ofm-agence|bac-amc|side-projects|channel-pivot|youtube-publishing|video-production-method|doc-montage|space-doc|clipforge|clipping|content-rewards|beatforge|loudnorm|delogo|voix-cache|tiktok-|saas-side-project"
   },
   "prospects": [
     "saas:Prospection/emails-artisans/**",
