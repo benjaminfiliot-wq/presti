@@ -452,7 +452,7 @@ export async function juger(x) {
       if (await l.page.$(`${PAN} [data-geste]`)) faute('EG-13', 'rôle lecture : un [data-geste] est rendu dans la Salle des envois')
       await l.fermer()
     }
-    DETAILS['EG-13'] = 'aucune date d\'ouverture : rien de prouvé → la phrase de la mesure ; mesure ou notice de 8 jours → leur phrase, bouton inactif ; l'épreuve de bout en bout seule (même en 2030) → bouton ACTIF et la note « conditionne la montée de palier » (jamais quand elle a réussi, toujours quand l'envoi est ouvert sans elle) ; jamais « 12/10 », « pas avant » ni « lundi » ; mesure et notice prêtes, épreuve non passée → confirmation écrite, boîte securite, puis un POST { geste: ouvrir_envoi_froid } ; reprendre une technologie et rouvrir un canal : boîte puis leur corps ; plafond 301 refusé sans envoi, 60 → la phrase ; envoi_froid vrai → pas de bouton ; ni rouvrir_boite ; rôle lecture → aucun geste'
+    DETAILS['EG-13'] = 'aucune date d\'ouverture : rien de prouvé → la phrase de la mesure ; mesure ou notice de 8 jours → leur phrase, bouton inactif ; l\'épreuve de bout en bout seule (même en 2030) → bouton ACTIF et la note « conditionne la montée de palier » (jamais quand elle a réussi, toujours quand l\'envoi est ouvert sans elle) ; jamais « 12/10 », « pas avant » ni « lundi » ; mesure et notice prêtes, épreuve non passée → confirmation écrite, boîte securite, puis un POST { geste: ouvrir_envoi_froid } ; reprendre une technologie et rouvrir un canal : boîte puis leur corps ; plafond 301 refusé sans envoi, 60 → la phrase ; envoi_froid vrai → pas de bouton ; ni rouvrir_boite ; rôle lecture → aucun geste'
   })
   // EG-14 : sept options au téléphone.
   scenario(['EG-14'], 'sept options', async () => {
