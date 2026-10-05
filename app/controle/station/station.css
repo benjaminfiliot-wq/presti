@@ -66,6 +66,7 @@
 .mc-temps { font-family: var(--mc-mono); color: var(--mc-texte); }
 .mc-nuit { color: var(--mc-neon-2); }
 .mc-sante { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; letter-spacing: 0.08em; }
+.mc-sante-raison { flex: 0 1 auto; min-width: 0; max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: var(--mc-warn); }
 .mc-sante::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--mc-texte-doux); }
 .mc-sante[data-etat="en ligne"]::before { background: var(--mc-ok); box-shadow: 0 0 8px var(--mc-ok); }
 .mc-sante[data-etat="dégradée"]::before { background: var(--mc-warn); }
