@@ -98,7 +98,7 @@ Le dernier est le seul qui lit l'installation réelle : il compare `docker inspe
 
 Le pont (`presti-telegram`, voir `docs/agents/telegram.md`) est le seul transport des commandes de Benj et de ses alertes. OpenClaw ne le remplace pas et ne le double pas :
 
-- le conteneur n'a ni `TELEGRAM_BOT_TOKEN`, ni `TELEGRAM_CHAT_ID`, ni `TELEGRAM_CODE_APPAIRAGE`, ni `PRESTI_JETON_TELEGRAM` (le contrôle refuse tout nom de variable hors liste) ;
+- le conteneur n'a aucune variable du pont (ni le jeton du robot, ni l'identifiant de la conversation, ni le code d'appairage, ni le jeton de service du pont) : les noms exacts sont dans `docs/agents/telegram.md`, jamais ici (le contrôle refuse tout nom de variable hors liste) ;
 - `tools.deny` contient la messagerie, les nœuds et les automatisations : pas de canal, pas de shell, pas de tâche planifiée ;
 - il ne pose ni ne lève la pause générale (`docs/agents/pause-generale.md`) ;
 - une commande d'envoi n'a qu'un propriétaire ; OpenClaw n'en est pas un. Les fonctions publiques restent coupées tant que la recette et ses permissions ne sont pas vertes.
