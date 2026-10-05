@@ -55,13 +55,13 @@ async function scPolice(ctx) {
     await attendreCalme(P, { ms: 800 })
     tapisPlusUn(P.reponses); bulle(P.reponses, { agent: 'recenseur', texte: 'Contact envoyé (essai)', pastille: 'RECENSEUR', type: 'radar' })
     // La mesure se fait dans l'appel même qui voit le « +1 » : il ne flotte que 1,5 s, et une capture lente le ferait disparaître entre le constat et la mesure.
-    const mesurer = (exiger) => P.page.evaluate((exiger) => {
+    const mesurer = (exiger) => P.page.evaluate(([exiger, grilleLargeur]) => {
       if (exiger && !document.querySelector('[data-plus-un]')) return null
       const mc = document.querySelector('.mc'), variable = mc ? getComputedStyle(mc).getPropertyValue('--mc-police-pixel').trim() : ''
       const famille = (variable.split(',')[0] || '').replace(/['"]/g, '').trim().toLowerCase()
       const mesure = (sel) => { const es = [...document.querySelectorAll(sel)]; const e = es[0]; if (!e) return { n: 0 }; const s = getComputedStyle(e); return { n: es.length, famille: s.fontFamily.toLowerCase(), taille: parseFloat(s.fontSize), texte: (e.textContent ?? '').trim(), toutes: es.map((x) => parseFloat(getComputedStyle(x).fontSize)).filter((v) => v < 12).length } }
       const plaques = Object.fromEntries([...document.querySelectorAll('[data-plaque]')].map((p) => [p.dataset.plaque, (p.textContent ?? '').trim()]))
-      // 026-193 (lot « carte lisible », D-0510-14) : la carte est GRANDE (canevas ≥ 760 px à l'écran à 1440 px, ×2 de la grille) et AUCUN texte VISIBLE n'en recouvre un
+      // 026-193 (lot « carte lisible », D-0510-14) : la carte est GRANDE (canevas = le plus grand entier de la grille que le cadre permet) et AUCUN texte VISIBLE n'en recouvre un
       // autre (un texte masqué : visibility, data-masquee, boîte vide, ne compte pas : il n'est pas à l'écran).
       const cv = document.querySelector('[data-station-carte] canvas'), rc = cv ? cv.getBoundingClientRect() : null
       const visible = (x) => { const st = getComputedStyle(x), b = x.getBoundingClientRect(); return b.width > 0 && b.height > 0 && st.visibility !== 'hidden' && st.display !== 'none' && !x.hasAttribute('data-masquee') }
@@ -72,9 +72,11 @@ async function scPolice(ctx) {
         const a = vus[i].getBoundingClientRect(), b = vus[j].getBoundingClientRect()
         if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2) gene.push(`${libelle(vus[i])} sur ${libelle(vus[j])}`)
       }
-      const carte = { largeur: rc ? Math.round(rc.width) : 0, vus: vus.length, gene }
+      // Le plus grand entier k que le cadre permet (8 % de débord admis, densité 1 du juge) : la carte ne peut pas être plus petite que ×k.
+      const cadre = cv?.parentElement?.clientWidth ?? 0, kMax = Math.max(1, Math.floor((cadre * 1.08) / grilleLargeur))
+      const carte = { largeur: rc ? Math.round(rc.width) : 0, attendue: kMax * grilleLargeur, vus: vus.length, gene }
       return { carte, variable, famille, mesures: { plaque: mesure('[data-plaque]'), nom: mesure('[data-nom]'), bulle: mesure('[data-bulle]'), zz: mesure('[data-zz]'), plusUn: mesure('[data-plus-un]') }, plaques, experience: (document.querySelector('[data-ecran="experience"]')?.textContent ?? '').replace(/[  ]/g, ' ') }
-    }, exiger)
+    }, [exiger, ctx.theme.grille.largeur])
     return (await jusqua(() => mesurer(true), { delai: 15_000, pas: 60 })) ?? mesurer(false)
   } finally { await P.fermer() }
 }
@@ -180,10 +182,10 @@ function ce14(p, racine) {
   if (f35.length) e.push(`une police 3 × 5 reste sous moteur/ : ${f35.slice(0, 3).join(', ')}`)
   // 026-193 : la carte est grande et lisible (ajout : rien n'est retiré ni assoupli ci-dessus).
   if (p.carte) {
-    if (p.carte.largeur < 760) e.push(`la carte ne fait que ${p.carte.largeur} px de large à 1440 px, 760 au moins attendus (échelle entière ×2 de la grille de 400 px)`)
+    if (p.carte.largeur < p.carte.attendue) e.push(`la carte ne fait que ${p.carte.largeur} px de large, ${p.carte.attendue} attendus (le plus grand entier de la grille que le cadre permet : elle doit occuper la zone du centre)`)
     if (p.carte.gene.length) e.push(`${p.carte.gene.length} recouvrement(s) de texte visible à l'écran : ${p.carte.gene.slice(0, 4).join(' ; ')}`)
   }
-  return { echecs: e, detail: `plaques, noms, bulles, Zz et +1 en texte HTML dans ${p.famille || '—'} (--mc-police-pixel), 12 px au moins ; « Salle de réunion », « Trésorerie » et « 0 € » lisibles ; aucune police 3 × 5 ; carte de ${p.carte?.largeur ?? '—'} px (≥ 760) et ${p.carte?.vus ?? '—'} texte(s) visible(s) sans recouvrement` }
+  return { echecs: e, detail: `plaques, noms, bulles, Zz et +1 en texte HTML dans ${p.famille || '—'} (--mc-police-pixel), 12 px au moins ; « Salle de réunion », « Trésorerie » et « 0 € » lisibles ; aucune police 3 × 5 ; carte de ${p.carte?.largeur ?? '—'} px (le plus grand entier de la grille que le cadre permet) et ${p.carte?.vus ?? '—'} texte(s) visible(s) sans recouvrement` }
 }
 function ce15(m) {
   const e = []
