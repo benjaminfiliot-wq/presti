@@ -111,6 +111,8 @@ export async function passeAtelier({ magasin, executer, horloge, dossierSortie }
 }
 
 function coffre() {
+  // Lancé par l'unité systemd (avec-coffre.mjs NOM -- …), l'atelier reçoit déjà son jeton et PRESTI_URL en variables : le coffre partagé de l'usine porte maintenant d'autres jetons (chef, facteur, studio…), que sa lecture directe refuse (« coffre refusé », code 3 à chaque passage le 05/10).
+  if (process.env.PRESTI_URL && process.env.PRESTI_JETON_ATELIER) return { PRESTI_URL: process.env.PRESTI_URL, PRESTI_JETON_ATELIER: process.env.PRESTI_JETON_ATELIER }
   const fichier = path.join(os.homedir(), '.config/presti/agents.env')
   if (!fs.existsSync(fichier)) throw ERREUR(3, 'coffre absent')
   const lignes = fs.readFileSync(fichier, 'utf8').split(/\r?\n/).filter((x) => x.trim() && !x.trim().startsWith('#'))
