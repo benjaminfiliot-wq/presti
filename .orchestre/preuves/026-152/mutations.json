@@ -1,0 +1,225 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/lien-connexion-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/lien-connexion-qa.mjs --racine={racine}",
+      "fichier": "app/api/auth/lien/route.ts",
+      "avant": "export async function POST(req: Request)",
+      "apres": "export async function GET(req: Request) { return POST(req) }\nexport async function POST(req: Request)",
+      "critere": "LC-1",
+      "extrait": "FAIL LC-1 — app/api/auth/lien/route.ts exporte GET (le jeton ne se consomme que par un POST)",
+      "duree_s": 133.557,
+      "duree_mutee_s": 0.932,
+      "duree_temoin_s": 133.557,
+      "nom": "un GET qui consomme le jeton",
+      "ligne": 36,
+      "code": 1
+    },
+    {
+      "juge": "scripts/lien-connexion-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/lien-connexion-qa.mjs --racine={racine}",
+      "fichier": "app/connexion/lien/page.tsx",
+      "avant": "useEffect(() => { setLienLisible(lireAdresse().jeton !== null) }, [])",
+      "apres": "useEffect(() => { fetch('/api/auth/lien', { method: 'POST' }); setLienLisible(lireAdresse().jeton !== null) }, [])",
+      "critere": "LC-5",
+      "extrait": "FAIL LC-5 — app/connexion/lien/page.tsx : un useEffect poste ou ouvre une session au chargement (« { fetch('/api/auth/lien', { method: 'POST' }); setLienLisib… ») ; app/connexion/lien/page.tsx : un fetch hors d'un gestionnaire de clic (dans LienConnexionPage ; gestionnaires onClick : ouvrirDossier)",
+      "duree_s": 202.356,
+      "duree_mutee_s": 202.356,
+      "duree_temoin_s": 133.557,
+      "nom": "la page poste le jeton au chargement",
+      "ligne": 41,
+      "code": 1
+    },
+    {
+      "juge": "scripts/commande-exporter-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/commande-exporter-qa.mjs --seulement=EX-3 --racine={racine}",
+      "fichier": "scripts/commande-exporter.mjs",
+      "avant": "await sharp(source).rotate()",
+      "apres": "await sharp(source).withMetadata().rotate()",
+      "critere": "EX-3",
+      "extrait": "FAIL EX-3 — photos/bibliotheque-480.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-480.webp garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.webp garde un bloc EXIF (186 octets) ; photos/escalier-1600.avif garde un bloc EXIF (364 octets, GPS compris) ; photos/escalier-1600.webp garde un bloc EXIF (364 octets, GPS compris) ; … (14 défauts)",
+      "duree_s": 78.382,
+      "duree_mutee_s": 75.674,
+      "duree_temoin_s": 78.382,
+      "nom": "les métadonnées des photos conservées",
+      "ligne": 151,
+      "code": 1
+    },
+    {
+      "juge": "scripts/achat-ecrans-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-ecrans-qa.mjs --racine={racine}",
+      "fichier": "lib/suiteSure.ts",
+      "avant": "export function suiteSure(brut: string | null | undefined): string {",
+      "apres": "export function suiteSure(brut: string | null | undefined): string {\n  if (brut?.startsWith('//')) return brut",
+      "critere": "EA-5",
+      "extrait": "FAIL EA-5 — « adresse relative de protocole » (\"//evil.fr\") → \"//evil.fr\", \"/outils\" attendu",
+      "duree_s": 363.047,
+      "duree_mutee_s": 363.047,
+      "duree_temoin_s": 340.586,
+      "nom": "suiteSure accepte //evil.fr",
+      "ligne": 2,
+      "code": 1
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/tuile-argent-qa.mjs --racine={racine}",
+      "fichier": "app/api/controle/tresorerie/route.ts",
+      "avant": "  const maintenant = new Date()",
+      "apres": "  const montantFautif = [100, 200].reduce((s, n) => s + n, 0)\n  const maintenant = new Date()",
+      "critere": "TA-2",
+      "extrait": "FAIL TA-2 — la route contient .reduce( (ligne 20)",
+      "duree_s": 235.858,
+      "duree_mutee_s": 171.854,
+      "duree_temoin_s": 235.858,
+      "nom": "des montants additionnés dans la route",
+      "ligne": 20,
+      "code": 1
+    },
+    {
+      "juge": "scripts/commande-exporter-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/commande-exporter-qa.mjs --seulement=EX-7 --racine={racine}",
+      "fichier": "scripts/commande-exporter.mjs",
+      "avant": "source.origin !== racine.origin || ",
+      "apres": "",
+      "critere": "EX-7",
+      "extrait": "FAIL EX-7 — le serveur du juge a reçu 1 requête(s) pour une photo refusée : GET /00000000-0000-4000-8000-000000260292/ailleurs.jpg",
+      "duree_s": 78.382,
+      "duree_mutee_s": 69.003,
+      "duree_temoin_s": 78.382,
+      "nom": "une photo d'un autre hôte téléchargée",
+      "ligne": 52,
+      "code": 1
+    },
+    {
+      "juge": "scripts/achat-public-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-public-qa.mjs --racine={racine}",
+      "fichier": "lib/siteAchatPublic.ts",
+      "avant": "const destinataire = String(c.email ?? '').trim()",
+      "apres": "const destinataire = String((deps as DependancesAchat & { corps?: { email?: string } }).corps?.email ?? 'autre@fautif.invalid').trim()",
+      "critere": "AP-6",
+      "extrait": "FAIL AP-6 — destinataire \"autre@fautif.invalid\", acheteur-026@presti-test.invalid attendu",
+      "duree_s": 446.232,
+      "duree_mutee_s": 446.232,
+      "duree_temoin_s": 375.111,
+      "nom": "le lien part vers une adresse lue dans le corps",
+      "ligne": 68,
+      "code": 1
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/tuile-argent-qa.mjs --racine={racine}",
+      "fichier": "lib/direction/veilleTresorerie.ts",
+      "avant": "if (lire('weekday') !== 'Mon') return []",
+      "apres": "if (lire('weekday') !== 'Mon' && lire('weekday') !== 'Tue') return []",
+      "critere": "TA-4",
+      "extrait": "FAIL TA-4 — « mardi 0 h 30 à Paris (lundi en UTC), 90 % » : 1 alerte(s), 0 attendue",
+      "duree_s": 235.858,
+      "duree_mutee_s": 190.474,
+      "duree_temoin_s": 235.858,
+      "nom": "l'alerte part aussi le mardi",
+      "ligne": 12,
+      "code": 1
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-v2-qa.mjs --seulement=RV-3 --racine={racine}",
+      "fichier": "lib/siteRedacteur.ts",
+      "avant": "  return repli",
+      "apres": "  return r2.reponse ?? repli",
+      "critere": "RV-3",
+      "extrait": "FAIL RV-3 — fonction, version finale après doublure fautive : findFabrications → 15 ans, RGE",
+      "duree_s": 231.293,
+      "duree_mutee_s": 12.185,
+      "duree_temoin_s": 231.293,
+      "nom": "la dégradation retirée : le texte fautif est gardé",
+      "ligne": 234,
+      "code": 1
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-v2-qa.mjs --seulement=RV-7 --racine={racine}",
+      "fichier": "lib/siteRedacteur.ts",
+      "avant": "rediger(vars, appel, faits, profil, repli, rapport)",
+      "apres": "rediger(vars, (requete) => appel({ ...requete, utilisateur: requete.utilisateur + '\\nSIREN : ' + (commande.matiere?.siren ?? '') }), faits, profil, repli, rapport)",
+      "critere": "RV-7",
+      "extrait": "FAIL RV-7 — requête 1 : le SIREN est envoyé ; requête 2 : le SIREN est envoyé ; requête 3 : le SIREN est envoyé ; requête 4 : le SIREN est envoyé ; requête 5 : le SIREN est envoyé ; requête 6 : le SIREN est envoyé ; … (9 défauts)",
+      "duree_s": 231.293,
+      "duree_mutee_s": 10.922,
+      "duree_temoin_s": 231.293,
+      "nom": "le SIREN envoyé au modèle",
+      "ligne": 410,
+      "code": 1
+    }
+  ],
+  "temoins": [
+    {
+      "juge": "scripts/lien-connexion-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/lien-connexion-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 133.557
+    },
+    {
+      "juge": "scripts/achat-ecrans-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-ecrans-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 340.586
+    },
+    {
+      "juge": "scripts/achat-public-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-public-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 375.111
+    },
+    {
+      "juge": "scripts/livrer-site-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/livrer-site-qa.mjs --racine={racine}",
+      "code": 124,
+      "duree_s": 540.29
+    },
+    {
+      "juge": "scripts/tuile-argent-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/tuile-argent-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 235.858
+    },
+    {
+      "juge": "scripts/commande-exporter-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/commande-exporter-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 78.382
+    },
+    {
+      "juge": "scripts/redacteur-v2-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-v2-qa.mjs --racine={racine}",
+      "code": 0,
+      "duree_s": 231.293
+    },
+    {
+      "juge": "scripts/livraison-schema-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/livraison-schema-qa.mjs --numero=0103 --racine={racine}",
+      "code": 0,
+      "duree_s": 9.988
+    }
+  ],
+  "erreurs": [
+    "témoin livrer-site : code 124 (délai) — ✅ CH-7 7 ligne(s) de journal, une par exécution (CH-2 : +1, CH-6 : +1), toutes avec commande, duree_s, etapes et issue ; ni nom, ni adresse, ni téléphone, ni SIREN dans le journal ni dans 2 sortie(s)…",
+    "NON PRISE TA-5 (tuile-argent, lib/siteLivraison.ts:236, veilleTresorerie() appelée hors de son try) : code 124 (délai) — aucune ligne « FAIL TA-5 — … » ; aucun bilan « … : FAIL — ids » — fin de sortie : ❌ TA-5 évolution 49753f4c altérée ou ambiguë : lib/siteLivraison.ts ; évolution 6d9a9c5a altérée ou ambiguë : lib/siteLivraison.ts ; lib/siteLivraison.ts (base db6434d) : import ajouté hors contrat : @/lib/siteGenerationDistante → demander…",
+    "NON PRISE AP-6 (achat-public, lib/siteAchatPublic.ts:73, un mot de passe posé au compte public) : code 124 (délai) — aucune ligne « FAIL AP-6 — … » ; aucun bilan « … : FAIL — ids » — fin de sortie : ✅ AP-9 lib/flags.ts porte siteAchatPublic: false ; scripts/fermeture-e2e.mjs porte la ligne de la carte, seule ligne ajoutée depuis 9dca36e ; les 35 drapeaux de FLAGS sont tous dans la carte / ✅ AP-11 tsc --noEmit vert sur 017-achat-public…",
+    "NON PRISE EA-2 (achat-ecrans, app/site/acheter/page.tsx:51, le piège website rendu visible et atteignable) : code 124 (délai) — aucune ligne « FAIL EA-2 — … » ; aucun bilan « … : FAIL — ids » — fin de sortie : ✅ EA-5 suiteSure : 10 cas de b/suite-sure.json (3 gardés, 7 renvoyés vers /outils), plus null et 4 compléments où seul le caractère interdit décide / ✅ EA-6 4 captures sous .orchestre/travail/achat-ecrans-qa/captures (acheter-390x844.png, …",
+    "juge sans mutation prise : livraison-schema"
+  ],
+  "non_jouees": [
+    "livrer-site : 3 faute(s) non jouée(s), le témoin est rouge",
+    "SC-2 (livraison-schema) : budget de temps épuisé",
+    "SC-3 (livraison-schema) : budget de temps épuisé",
+    "tresorerie : budget de temps épuisé avant le témoin",
+    "livraison-tour : budget de temps épuisé avant le témoin",
+    "complement-dossier : budget de temps épuisé avant le témoin",
+    "generation-actions : budget de temps épuisé avant le témoin",
+    "retrait-site : budget de temps épuisé avant le témoin",
+    "poste-sites : budget de temps épuisé avant le témoin",
+    "bus-livraison : budget de temps épuisé avant le témoin",
+    "dossier-zip : budget de temps épuisé avant le témoin",
+    "AP-5 (achat-public) : budget de temps épuisé"
+  ]
+}
