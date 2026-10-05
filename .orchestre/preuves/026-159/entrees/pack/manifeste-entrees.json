@@ -1,0 +1,56 @@
+{
+  "photos": [
+    {
+      "fichier": "photos/01.jpg",
+      "sha256": "acabbceb9ff5037639b8b30516168faf079073197dc9cae8fdbc6348a9a23f9f",
+      "source": "public/sites-demo/electricien/images/variateur-720.webp",
+      "role": "detail",
+      "personnes": false,
+      "accord_personnes": false
+    },
+    {
+      "fichier": "photos/02.jpg",
+      "sha256": "de4c38c0b625fa0aa4d876b5fbde21283d3e3363df32429e2ea56dadc9e54d6c",
+      "source": "public/sites-demo/chauffagiste/images/pac-720.webp",
+      "role": "chantier",
+      "personnes": false,
+      "accord_personnes": false
+    },
+    {
+      "fichier": "photos/03.jpg",
+      "sha256": "583b66751ff31d9909a6cc680468ffdf96dff360980f368f443fcafa4efa8b4a",
+      "source": "public/sites-demo/menuisier/images/escalier-tournant-720.webp",
+      "role": "detail",
+      "personnes": false,
+      "accord_personnes": false
+    },
+    {
+      "fichier": "photos/04.jpg",
+      "sha256": "8cc6e06220bc6bf7afd6e53c17bd1c8eb79589cd04dcaa8eb25b226d3175ce60",
+      "source": "public/sites-demo/lestraque/images/boiserie-720.webp",
+      "role": "avant",
+      "personnes": false,
+      "accord_personnes": false
+    },
+    {
+      "fichier": "photos/05.jpg",
+      "sha256": "ce7cc2906005eb35bb4dabbf2b11d5aa3a84532d785a5ab3ed2cd731db960c69",
+      "source": "public/sites-demo/lestraque/images/mains-noyer-720.webp",
+      "role": "chantier",
+      "personnes": false,
+      "accord_personnes": false
+    },
+    {
+      "fichier": "photos/06.jpg",
+      "sha256": "29247e3d09815840001f4d3061bff2c191938195eeae650e4ee2ebc1facf9708",
+      "source": "public/sites-demo/menuisier/images/bibliotheque-720.webp",
+      "role": "apres",
+      "personnes": false,
+      "accord_personnes": false
+    }
+  ],
+  "voix": {
+    "fichier": "voix.mp3",
+    "sha256": "3d7a7fe0645e34832548b41291795f1b4da6c15989e495b001f9b285c2c54982"
+  }
+}
