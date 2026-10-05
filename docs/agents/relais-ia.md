@@ -24,6 +24,29 @@ que la reprise de l'un arrive en moins de 5,5 minutes (et laisse au moins 4,5 mi
 Le cycle fixe le temps de la file (`--delai`) pour que le relais finisse avant que le cycle ne s'arrête. Le moteur de secours est dit dans l'événement `cycle_termine`
 (« Moteur de secours : … »).
 
+## La réunion d'équipage (18 h) : mêmes aides que le cycle
+
+Écrit le 5 octobre 2026. La réunion (`scripts/chef/reunion.mjs`) demande son compte rendu `reunion.json` à `presti-chef-modele`, donc au même relais
+que le cycle. Constat du jour : un modèle libre écrivait un compte rendu REFUSÉ en bloc par le schéma (ligne de 163 signes, libellés d'option de 114
+signes, mesure hors liste, échéance à +7 j 2 h : 19 écarts) puis la réunion était abandonnée (`plan_refuse`). Depuis, pour la réunion aussi
+(`scripts/chef/reunion-controle.mjs`, branché par `chef-modele.mjs` quand le fichier de sortie s'appelle `reunion.json`) :
+
+1. **Les limites exactes et un exemple de JSON valide** sont dits au modèle (bloc « LIMITES EXACTES », avec la date du jour de Paris et l'heure de
+   l'échéance permise) ; le texte de l'exemple est fictif et le recopier est refusé.
+2. **Le validateur rend les écarts au modèle** (`validerReunion`, miroir des contrôles de `reunion.mjs` : un chemin et une raison, jamais une valeur),
+   trois essais au plus par moteur, avant que le plan ne soit écrit.
+3. **En dernier recours, une réduction déterministe sûre** (`reduireReunion`), seulement après le troisième refus : une ligne trop longue coupée à
+   140 signes sur une limite de mot avec « … » (jamais plus du double, jamais au milieu d'un mot) ; un objectif non conforme → `null` (il ne change pas) ;
+   les idées au-delà de la troisième retirées. Le résultat est revalidé, doit garder un sens (une vraie phrase, aucune ligne en double, aucun gabarit),
+   et le relais le dit : « compte rendu raccourci par le relais » dans son journal (`note`) et dans le journal de la réunion
+   (`reunion-AAAA-MM-JJ.log`, ligne `modele … moteur de secours …`). Tout le reste (vide, absurde, adresse, secret, clé fautive, libellé d'option
+   trop long, échéance hors plage) reste abandonné : on ne coupe jamais ce qu'on ne peut pas couper sans changer le sens.
+4. Le fichier de sortie de la réunion est le `-o` lui-même : le relais vérifie qu'il est écrit et non vide (un moteur libre qui répond en prose ne passe
+   plus pour un succès, le suivant prend la demande) ; `reunion.mjs` donne au relais son temps moins 45 s (`--delai=`).
+
+Juge : `relais-ia-qa` RC-11 (module, réduction, appelDirect), RC-12 (`chef-modele.mjs servir` de bout en bout avec une demande de réunion), RC-13
+(journal du relais, `--delai` et journal de la réunion). Le compte rendu refusé du 05/10 sert de pièce (`scripts/fixtures/relais-ia/reunion-refusee-0510.json`).
+
 ## Les règles (non négociables)
 
 1. **Une donnée de prospect ne part jamais vers une IA gratuite ni un modèle `:cloud`.** Trois verrous : la chaîne `CHAINE.prospect`,

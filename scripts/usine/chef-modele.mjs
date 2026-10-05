@@ -119,7 +119,7 @@ function lancerCodex(d, argv, stdin, delaiMs, envExtra = {}) {
     let sortie = ''
     enfant.stdout.on('data', (x) => { if (sortie.length < MAX_SORTIE) sortie += x })
     enfant.stderr.on('data', (x) => { if (sortie.length < MAX_SORTIE) sortie += x })
-    if (stdin) { enfant.stdin.end(fs.readFileSync(path.join(d, 'entree.txt'))) }
+    if (stdin) { enfant.stdin.on('error', () => { /* le modèle a fermé son entrée avant d'avoir tout lu */ }); enfant.stdin.end(fs.readFileSync(path.join(d, 'entree.txt'))) }
     let delai = false
     const minuterie = setTimeout(() => {
       delai = true
@@ -151,6 +151,22 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
     const sortiePlan = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
     if (cycle && /plan/.test(path.basename(sortiePlan))) valider = (objet) => validerPlan(objet, cycle)
   } catch { valider = null }
+  // La réunion d'équipage (reunion.mjs demande « reunion.json ») : mêmes aides qu'au cycle — limites exactes et exemple dans le message, écarts rendus au modèle
+  // pour correction (validerReunion, le miroir des contrôles de reunion.mjs), et en dernier recours une réduction déterministe sûre (reduireReunion).
+  let reduire = null
+  let complement = null
+  try {
+    const sortieReunion = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
+    if (/(^|-)reunion\.json$/.test(path.basename(sortieReunion))) {
+      const RC = await import('../chef/reunion-controle.mjs')
+      const maintenant = () => new Date()
+      const jour = RC.jourDeParis(maintenant())
+      const interdits = RC.textesDeLExemple(jour, Date.now())
+      valider = (objet) => RC.validerReunion(objet, { jour: RC.jourDeParis(maintenant()), maintenant: maintenant(), interdits })
+      reduire = (objet) => RC.reduireReunion(objet, { jour: RC.jourDeParis(maintenant()), maintenant: maintenant(), interdits })
+      complement = RC.limitesReunion(jour, Date.now())
+    }
+  } catch { reduire = null; complement = null }
   return relayer({
     texteEntree: texteEntree + texteStdin, delaiMs, cle,
     chaine: chaineAvecBases({ freellmapi: opts.freellmapi, ollama: opts.ollama }),
@@ -158,7 +174,11 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
     verifier: () => {
       const o = argv.findIndex((a) => a === '-o' || a === '--output-last-message')
       const dernier = o >= 0 ? argv[o + 1] : null
-      return (Array.isArray(demande?.sorties) ? demande.sorties : []).filter((s) => s.copie !== dernier).every((s) => { try { return fs.statSync(s.copie).size > 0 } catch { return false } })
+      const attendus = (Array.isArray(demande?.sorties) ? demande.sorties : []).map((s) => s.copie).filter((c) => c !== dernier)
+      // La réunion n'a qu'un fichier de sortie : le « -o » lui-même (reunion.json). Sans cette ligne, la liste serait vide et un moteur libre qui répond en prose
+      // (code 0, rien d'écrit) passerait pour avoir réussi : le suivant ne prendrait jamais la demande.
+      if (!attendus.length && dernier) attendus.push(dernier)
+      return attendus.every((c) => { try { return fs.statSync(c).size > 0 } catch { return false } })
     },
     drapeau: drapeauLeve(process.env.IA_LOCALE_PROSPECTS_OUI, Date.now()),
     etat: magasinFichier(dossier), journal: journalFichier(dossier),
@@ -168,9 +188,9 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
     executer: async (m, budgetMs) => {
       for (const s of Array.isArray(demande?.sorties) ? demande.sorties : []) { try { fs.rmSync(s.copie, { force: true }) } catch { /* déjà absent */ } }
       if (m.id === 'codex') return lancerCodex(d, argv, stdin, budgetMs)
-      const prompt = preparerPromptDirect({ argv, sorties: demande?.sorties, stdin: texteStdin || undefined, lireFichier: (f) => { try { return fs.readFileSync(f, 'utf8') } catch { return null } }, dossiersPermis: [d, echange], dateDuJour: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date()) })
+      const prompt = preparerPromptDirect({ argv, sorties: demande?.sorties, stdin: texteStdin || undefined, lireFichier: (f) => { try { return fs.readFileSync(f, 'utf8') } catch { return null } }, dossiersPermis: [d, echange], dateDuJour: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date()), complement })
       if (!prompt) return { code: 1, sortie: 'ERROR: demande hors de la forme « lis puis écris » : aucun secours possible' }
-      return appelDirect({ moteur: m, prompt, cle, delaiMs: budgetMs, valider })
+      return appelDirect({ moteur: m, prompt, cle, delaiMs: budgetMs, valider, reduire })
     },
   })
 }

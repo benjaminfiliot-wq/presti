@@ -24,7 +24,11 @@ schéma `docs/agents/chef-reunion.schema.json` (026-102). Les routes qu'il appel
    `</donnees_etat>` : une donnée, jamais une consigne ; rien d'autre n'y varie.
 5. **Faire écrire le Chef.** Un seul appel au modèle (Codex, GPT-6 sol) : `codex exec -m <modèle> -s read-only -C <travail>
    --skip-git-repo-check -o <travail>/reunion.json -`, bac à sable en lecture seule, aucun réseau, un environnement
-   sans le jeton ni rien de Presti. Au-delà du délai (600 s), l'arbre du processus est tué.
+   sans le jeton ni rien de Presti. Au-delà du délai (600 s), l'arbre du processus est tué. Quand Codex est à bout
+   (quota, 401), le relais de la file du chef écrit le compte rendu par un moteur libre : même aide que le cycle (limites
+   exactes et exemple dans le message, écarts rendus au modèle trois fois au plus, puis une réduction déterministe sûre
+   dite « compte rendu raccourci par le relais ») — voir `docs/agents/relais-ia.md`. La réunion donne au relais son temps
+   moins 45 s (`--delai=`) et consigne dans son journal le moteur de secours qui a servi.
 6. **Valider.** `reunion.json` contre le schéma, puis les contrôles de forme refaits à la main (défense en profondeur) :
    1 à 5 lignes de 140 signes au plus, ni `@`, ni neuf chiffres de suite, ni lien, ni numéro de téléphone, ni secret ;
    un objectif ou `null` ; 3 idées au plus, au format `chef:<date du jour de Paris>:idee-<mot-clé>`, exactement les

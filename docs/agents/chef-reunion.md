@@ -21,11 +21,23 @@ Un seul fichier `reunion.json`, conforme à `docs/agents/chef-reunion.schema.jso
 
 ```json
 {
-  "lignes": ["Ce qui a marché…", "Ce qui bloque…", "Ce qui coûte…"],
+  "lignes": ["Marché : (un chiffre précis).", "Bloque : (un blocage précis).", "Coûte : (un coût précis)."],
   "objectif": { "libelle": "Encaisser 500 € cette semaine", "mesure": "encaisse_eur", "cible": 500 },
-  "idees": []
+  "idees": [{
+    "cle_idempotence": "chef:2026-10-05:idee-relance-avis",
+    "question": "(Une question à approuver ou à tuer ?)", "contexte": "(Deux phrases.)",
+    "options": [
+      { "cle": "lancer", "libelle": "(Lancer : une demi-phrase)", "recommandee": false, "engage_cents": 0 },
+      { "cle": "reporter", "libelle": "(Reporter : une demi-phrase)", "recommandee": true, "engage_cents": 0 }
+    ],
+    "option_defaut": "reporter", "portee": "aucune", "montant_cents": 0, "echeance": "2026-10-06T16:00:00Z"
+  }]
 }
 ```
+
+Exemple de forme : le contenu est fictif, écris le tien. Compte tes signes : **une seule ligne de 141 signes, un libellé
+d'option de 81 signes, une `mesure` hors liste ou une échéance hors de +1 h / +7 j fait refuser TOUT le compte rendu.**
+Dans le doute : des lignes de 100 signes, `"objectif": null`, `"idees": []`.
 
 - `lignes` : le compte rendu, de 1 à 5 lignes de 140 signes au plus : ce qui a marché, ce qui bloque, ce qui coûte.
   Le fil de la station les montre telles quelles.
