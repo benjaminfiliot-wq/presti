@@ -166,7 +166,11 @@ export function preparerCopie(racine, { variante = 'jugee', nom = 'copie' } = {}
     for (const cle of ['pilotage', 'stationCarte']) {
       const re = new RegExp(`\\b${cle}\\s*:\\s*false\\b`, 'g')
       const n = (t.match(re) ?? []).length
-      if (n !== 1) erreurs.push(`lib/flags.ts : « ${cle}: false » figure ${n} fois, exactement 1 attendue (le drapeau ${cle} ne peut pas être levé dans la copie)`)
+      // Actualisé le 05/10 (lot C-juges-perimes, decisions-chef-0410.md) : Benj a levé les deux drapeaux dans le dépôt (026-140 et 026-193) ; un drapeau déjà levé
+      // (exactement une occurrence « <cle>: true », aucune « false ») est déjà tel que la copie le veut. Tout autre compte reste refusé.
+      const nLeve = (t.match(new RegExp(`\\b${cle}\\s*:\\s*true\\b`, 'g')) ?? []).length
+      if (n === 0 && nLeve === 1) continue
+      if (n !== 1 || nLeve !== 0) erreurs.push(`lib/flags.ts : « ${cle}: false » figure ${n} fois et « ${cle}: true » ${nLeve} fois, exactement 1 des deux attendue (le drapeau ${cle} ne peut pas être levé dans la copie)`)
       else t = t.replace(re, `${cle}: true`)
     }
     fs.writeFileSync(flags, t)
