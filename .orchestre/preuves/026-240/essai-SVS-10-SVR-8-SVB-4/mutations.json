@@ -1,0 +1,86 @@
+{
+  "fiche": "026-240",
+  "temoins": {
+    "socle": {
+      "code": 1,
+      "rouges": [
+        "SVS-2"
+      ],
+      "duree_s": 20.864
+    },
+    "recherche": {
+      "code": 0,
+      "rouges": [],
+      "duree_s": 22.465
+    },
+    "reflexion": {
+      "code": 1,
+      "rouges": [
+        "SVB-9"
+      ],
+      "duree_s": 16.915
+    }
+  },
+  "mutations": [
+    {
+      "juge": "scripts/savoir-socle-qa.mjs",
+      "commande": "node scripts/savoir-socle-qa.mjs --partie=index --racine={racine}",
+      "fichier": "scripts/savoir/indexer.mjs",
+      "avant": "const dossier = path.join(racine, 'index', compartiment)",
+      "apres": "const dossier = path.join(racine, 'index', 'general')",
+      "critere": "SVS-10",
+      "extrait": "FAIL SVS-10 — index/general/etat.json : compartiment prospects",
+      "duree_s": 3.381
+    },
+    {
+      "juge": "scripts/savoir-socle-qa.mjs",
+      "commande": "node scripts/savoir-socle-qa.mjs --partie=index --racine={racine}",
+      "fichier": "scripts/savoir/indexer.mjs",
+      "avant": "compartiment === 'general' ? semantiquePermise(reglages) : 'eteinte'",
+      "apres": "semantiquePermise(reglages)",
+      "critere": "SVS-10",
+      "extrait": "FAIL SVS-10 — sémantique allumée : la sentinelle des prospects est partie vers le modèle d’embeddings",
+      "duree_s": 5.229
+    },
+    {
+      "juge": "scripts/savoir-socle-qa.mjs",
+      "commande": "node scripts/savoir-socle-qa.mjs --partie=index --racine={racine}",
+      "fichier": "scripts/savoir/indexer.mjs",
+      "avant": "['127.0.0.1', 'localhost'].includes(u.hostname)",
+      "apres": "Boolean(u.hostname)",
+      "critere": "SVS-10",
+      "extrait": "FAIL SVS-10 — url-distante : etat general.semantique \"active\" (attendu \"refusee\")",
+      "duree_s": 5.159
+    },
+    {
+      "juge": "scripts/savoir-recherche-qa.mjs",
+      "commande": "node scripts/savoir-recherche-qa.mjs --partie=outil --racine={racine}",
+      "fichier": "lib/savoir/recherche.ts",
+      "avant": "  if (retour.refus) resume += ` · refus ${retour.refus}`\n",
+      "apres": "  if (retour.resultats[0]) resume += ` · ${retour.resultats[0].extrait}`\n",
+      "critere": "SVR-8",
+      "extrait": "FAIL SVR-8 — s2_fort_chef : le résumé contient un extrait",
+      "duree_s": 16.957
+    },
+    {
+      "juge": "scripts/savoir-reflexion-qa.mjs",
+      "commande": "node scripts/savoir-reflexion-qa.mjs --partie=bilan --racine={racine}",
+      "fichier": "scripts/chef/bilan.mjs",
+      "avant": "    decisions: [],",
+      "apres": "    decisions: [{ objet: 'bilan', choix: 'appliquer' }],",
+      "critere": "SVB-4",
+      "extrait": "FAIL SVB-4 — plan du bilan « ok » : refusé par docs/agents/chef-plan.schema.json ($.decisions[0] : « cle_idempotence » manque ; $.decisions[0] : « nature » manque ; $.decisions[0] : « question » manque) (0 s)",
+      "duree_s": 10.664
+    },
+    {
+      "juge": "scripts/savoir-reflexion-qa.mjs",
+      "commande": "node scripts/savoir-reflexion-qa.mjs --partie=bilan --racine={racine}",
+      "fichier": "scripts/chef/bilan.mjs",
+      "avant": "      sortante: false,\n    })),",
+      "apres": "      sortante: true,\n    })),",
+      "critere": "SVB-4",
+      "extrait": "FAIL SVB-4 — plan du bilan « ok » : refusé par docs/agents/chef-plan.schema.json ($.taches[0].sortante : const ; $.taches[1].sortante : const ; $.taches[2].sortante : const) (0 s)",
+      "duree_s": 10.185
+    }
+  ]
+}
