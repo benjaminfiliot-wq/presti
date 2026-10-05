@@ -13,9 +13,13 @@
 
 Précisions : Douleurs commence par freellmapi (réserve de Codex). Une tâche simple prend le 4B d'abord (il reste chaud en mémoire :
 changer de modèle coûte ~2 min de chargement sur l'usine), une tâche difficile (rédaction, texte vendu) prend le 8B d'abord.
-Le chef, lui, tourne en agent (Codex sait lire et écrire des fichiers) : freellmapi `auto` → `gemini-3-flash-preview` → `ministral-14b` →
-Ollama Cloud → local 8B → 4B (un modèle local de 4 à 8 milliards de paramètres ne mène pas la boucle d'outils de Codex en moins de
-15 minutes sur les 4 cœurs ARM de l'usine : il ne sert que de dernier recours, ou pour un prospect).
+Le chef, lui, tourne en agent (Codex sait lire et écrire des fichiers) : freellmapi `gemini-3-flash-preview` → `ministral-14b` (leurs outils sont
+éprouvés) → `auto` (le routeur choisit un modèle libre au hasard : trois essais, un sur deux écrit le plan) → Ollama Cloud → local 8B → 4B
+(un modèle local de 4 à 8 milliards de paramètres ne mène pas la boucle d'outils de Codex sur les 4 cœurs ARM de l'usine : 5 minutes au plus,
+dernier recours, ou seule voie pour une entrée qui porte une donnée de prospect). Un moteur libre qui sort en code 0 **sans avoir écrit le plan**
+n'est pas un succès : le suivant prend la demande. Quatre minutes au plus par moteur libre. Les moteurs libres sont limités par minute : quand tous sont à
+bout par un quota et que la reprise de l'un arrive en moins de 5,5 minutes (et laisse au moins 4,5 minutes), le relais **attend** cette reprise et refait un
+tour (deux attentes au plus) avant de tenter le local.
 
 ## Les règles (non négociables)
 
