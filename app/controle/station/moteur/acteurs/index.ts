@@ -89,11 +89,12 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
   const dire = (e: Element, t: string) => { if (e.textContent !== t) e.textContent = t }
 
   // ── Les blocs : un élément par donnée, posé d'après la vue ──────────────────────────────────────────────────────────────────
-  type Bloc = { el: HTMLElement; ancre: () => Point | null; largeur?: () => number | null }
+  /** `dy` : un décalage en pixels CSS (pas en pixels logiques) ajouté à l'ancre, pour poser un écran au-dessus de la plaque quelle que soit l'échelle. */
+  type Bloc = { el: HTMLElement; ancre: () => Point | null; largeur?: () => number | null; dy?: number }
   const blocs = new Map<string, Bloc>()
-  const bloc = (cle: string, creer: () => HTMLElement, ancre: () => Point | null, largeur?: () => number | null) => {
+  const bloc = (cle: string, creer: () => HTMLElement, ancre: () => Point | null, largeur?: () => number | null, dy?: number) => {
     let b = blocs.get(cle)
-    if (!b) { b = { el: creer(), ancre, largeur }; blocs.set(cle, b) } else { b.ancre = ancre; b.largeur = largeur }
+    if (!b) { b = { el: creer(), ancre, largeur, dy }; blocs.set(cle, b) } else { b.ancre = ancre; b.largeur = largeur; b.dy = dy }
     return b.el
   }
   const retirerBlocsHors = (gardes: Set<string>) => { for (const [cle, b] of blocs) if (!gardes.has(cle)) { b.el.remove(); blocs.delete(cle) } }
@@ -108,7 +109,7 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
       if (!p) continue
       const c = enCss(vue, grille, W, H, p)
       b.el.style.left = `${Math.round(c.x)}px`
-      b.el.style.top = `${Math.round(c.y)}px`
+      b.el.style.top = `${Math.round(c.y + (b.dy ?? 0))}px`
       const l = b.largeur?.()
       if (l) b.el.style.maxWidth = `${Math.max(24, Math.round(l * c.s))}px`
     }
@@ -137,7 +138,7 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     const nRejet = nombre(rejet?.nombre), taux = nombre(rejet?.tauxPass)
     const xs = monde.carte.tapis.etapes
     const dernier = xs.length ? xs[xs.length - 1] : null
-    const nr = bloc(garde('tapis:rejet'), () => el('span', { 'data-tapis-rejet': '' }, couche), () => (dernier ? { x: dernier.x, y: dernier.y + monde.carte.canvas.tileSize } : { x: 0, y: monde.carte.canvas.tileSize }))
+    const nr = bloc(garde('tapis:rejet'), () => el('span', { 'data-tapis-rejet': '' }, couche), () => (dernier ? { x: monde.carte.canvas.width - 6, y: dernier.y + monde.carte.canvas.tileSize } : { x: monde.carte.canvas.width - 6, y: monde.carte.canvas.tileSize }))
     dire(nr, `REJET ${nRejet === null ? '—' : nRejet} · PASS ${taux === null ? '—' : Math.round(taux * 100)} %`)
 
     const donnees = lire(props.carte) as Record<string, unknown> | null
@@ -147,7 +148,10 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     const ligne = (nom: string, cles: readonly (readonly [string, string])[], salle: string, colonne: number, colonnes: number) => {
       const etapes = etapesDe(lire(lignes?.[nom]))
       const boite = boiteSalle(salle)
-      const conteneur = bloc(garde(`ligne:${nom}`), () => el('div', { 'data-ligne': nom }, couche), () => (boite ? { x: boite.x + (boite.l * colonne) / colonnes, y: boite.y + 12 } : null), () => (boite ? boite.l / colonnes : null))
+      // La ligne est une FICHE : elle ne s'ouvre que sur la salle survolée (mc-survol-salle), sinon dix lignes de texte se recouvriraient dans des salles de 48 px.
+      // Les deux colonnes de l'Usine s'empilent (les « packs » sous les « sites ») : même ancre, et le décalage vertical est dans acteurs.css.
+      void colonne; void colonnes
+      const conteneur = bloc(garde(`ligne:${nom}`), () => el('div', { 'data-ligne': nom, 'data-salle-de': salle }, couche), () => (boite ? { x: boite.x, y: boite.y + 12 } : null), () => null)
       const vus = new Set<string>()
       for (const [cle, libelle] of cles) {
         const e = etapes.find((x) => x.cle === cle)
@@ -167,7 +171,7 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     const valeurs = lire(donnees?.egaliseur)
     const barres = Array.isArray(valeurs) ? valeurs.slice(0, 12).map(nombre) : []
     const boiteRadar = boiteSalle('radar')
-    const eg = bloc(garde('egaliseur'), () => el('div', { 'data-egaliseur': '' }, couche), () => (boiteRadar ? { x: boiteRadar.x + 3, y: boiteRadar.y + boiteRadar.h - 4 } : null), () => (boiteRadar ? boiteRadar.l - 6 : null))
+    const eg = bloc(garde('egaliseur'), () => el('div', { 'data-egaliseur': '' }, couche), () => (boiteRadar ? { x: boiteRadar.x + 3, y: boiteRadar.y + boiteRadar.h } : null), () => (boiteRadar ? boiteRadar.l - 6 : null), -32)
     while (eg.children.length < 12) el('i', { 'data-barre': '' }, eg)
     const max = Math.max(1, ...barres.filter((v): v is number => v !== null))
     for (let i = 0; i < 12; i++) {
@@ -182,7 +186,7 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     // L'écran de l'Expérience : « J6/30 · 0 € » en cours ; avant la première vente, « FERMÉE · R13 » ; une source absente, « — ».
     const experience = lire(donnees?.experience)
     const boiteExp = boiteSalle('experience')
-    const ecran = bloc(garde('ecran:experience'), () => el('div', { 'data-ecran': 'experience' }, couche), () => (boiteExp ? { x: boiteExp.x + 3, y: boiteExp.y + boiteExp.h / 2 } : null), () => (boiteExp ? boiteExp.l - 6 : null))
+    const ecran = bloc(garde('ecran:experience'), () => el('div', { 'data-ecran': 'experience' }, couche), () => (boiteExp ? { x: boiteExp.x + 3, y: boiteExp.y + boiteExp.h } : null), () => (boiteExp ? boiteExp.l - 6 : null), -48)
     dire(ecran, !objet(experience) ? '—' : experience.statut === 'en_cours' && texte(experience.barre) ? (experience.barre as string) : 'FERMÉE · R13')
 
     // Les écrans des autres salles : une salle sans flux sur la carte dit « — » (jamais 0), pour le lecteur d'écran ; un écran par salle non réservée.
@@ -294,6 +298,15 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     lancerCarres(lire(props.tapis))
     dessiner(props)
   })
+  // La salle survolée (camera/zones.ts) : ses fiches (lignes) s'ouvrent, les autres se ferment.
+  const surSurvol = (ev: Event) => {
+    const cle = (ev as CustomEvent<string | null>).detail
+    for (const b of blocs.values()) {
+      const de = b.el.getAttribute('data-salle-de')
+      if (de) b.el.toggleAttribute('data-ouvert', de === cle)
+    }
+  }
+  carte.addEventListener('mc-survol-salle', surSurvol)
   const observeurVue = new MutationObserver(placer)
   observeurVue.observe(carte, { attributes: true, attributeFilter: ['data-zoom', 'data-vue-x', 'data-vue-y'] })
   const observeurTaille = new ResizeObserver(placer)
@@ -302,6 +315,7 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
   dessiner(contexte.props)
 
   return () => {
+    carte.removeEventListener('mc-survol-salle', surSurvol)
     observeurVue.disconnect()
     observeurTaille.disconnect()
     for (const a of animations) a.cancel()

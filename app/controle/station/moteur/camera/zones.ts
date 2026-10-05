@@ -35,11 +35,16 @@ export function salleChoisie(): string | null {
   try { return new URL(window.location.href).searchParams.get('salle') } catch { return null }
 }
 
-/** Pose `?salle=<clé>` dans l'adresse sans changer de page (le routeur de Next suit l'historique du navigateur). */
+/**
+ * Pose `?salle=<clé>` dans l'adresse sans changer de page (le routeur de Next suit l'historique du navigateur), puis le dit à la station
+ * (`mc-ouvrir-salle`, entendu par la liste des salles de Carte.tsx) pour que l'ouverture passe aussi par le routeur, dans l'ordre de ses
+ * navigations : une fermeture encore en vol ne l'efface plus au retour.
+ */
 function poserSalle(cle: string) {
   const u = new URL(window.location.href)
   u.searchParams.set('salle', cle)
   window.history.replaceState(null, '', u)
+  window.dispatchEvent(new CustomEvent('mc-ouvrir-salle', { detail: cle }))
 }
 
 type Entree = {
@@ -112,11 +117,14 @@ export function monterZones({ racine, toile, carte, monde, grille, vue }: Entree
   const quitter = (z: Zone) => {
     z.el.setAttribute('data-survol', 'non')
     plaqueDe(z.cle)?.removeAttribute('data-allumee')
-    if (sous === z) { sous = null; etiquette.hidden = true }
+    if (sous === z) { sous = null; etiquette.hidden = true; dire(null) }
   }
+  /** Dit à la carte quelle salle est survolée (null : aucune) : les lignes et les écrans de la salle s'ouvrent en fiche, les autres se taisent. */
+  const dire = (cle: string | null) => carte.dispatchEvent(new CustomEvent('mc-survol-salle', { detail: cle }))
   const entrer = (z: Zone) => {
     if (sous && sous !== z) quitter(sous)
     sous = z
+    dire(z.cle)
     z.el.setAttribute('data-survol', 'oui')
     plaqueDe(z.cle)?.setAttribute('data-allumee', '')
     libelle.textContent = z.texte

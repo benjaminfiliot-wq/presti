@@ -111,6 +111,8 @@ export const accrocheCamera: Accroche = (contexte) => {
   let cumul = 0
   const surMolette = (ev: WheelEvent) => {
     if (ev.ctrlKey || (ev.target as HTMLElement | null)?.closest('[data-camera]')) return
+    // La molette ne zoome que SUR la carte : ailleurs dans la zone (la liste des salles, les marges) elle défile, sinon la liste serait inatteignable.
+    if (!(ev.target instanceof Node) || !racine.contains(ev.target)) return
     ev.preventDefault()
     cumul += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY
     if (Math.abs(cumul) < CRAN_MOLETTE) return
