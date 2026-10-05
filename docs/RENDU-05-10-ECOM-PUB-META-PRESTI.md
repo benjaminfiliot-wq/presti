@@ -21,8 +21,8 @@ Phases : **audit** de l'existant (ce qui est vieux, ce qui manque) → **maquett
 Les agents ne créent aucun compte, n'acceptent aucune condition et ne saisissent aucune coordonnée bancaire à ta place ; une fois le compte créé, ils font tout le reste par les API.
 | # | Plateforme | Pourquoi | Ce que Benj fait | Priorité |
 |---|---|---|---|---|
-| 1 | **eBay vendeur professionnel** (EI) — **boutique n° 1 (cap de Benj, 05/10 nuit)** | vendre en règle ; API de vente ; démarrage sans abonnement | convertir ou créer le compte pro, finir la vérification du compte développeur, cliquer « autoriser » une fois | **haute** (après vérification, ≤ 1 jour) |
-| 2 | **TikTok Shop** + TikTok entreprise | vendre et faire de l'audience avec les mêmes vidéos | ouvrir la boutique vendeur avec l'identité de l'entreprise ; passer le compte en « entreprise » | **haute** |
+| 1 | **eBay, compte particulier de Benj (fil_2579)** — **boutique n° 1 (cap de Benj, 05/10 nuit : « en particulier on peut vendre »)** | vendre ; API de vente ; démarrage sans abonnement | finir la vérification du compte développeur, cliquer « autoriser » une fois | **haute** (après vérification, ≤ 1 jour) |
+| 2 | **TikTok Brico Travaux** (4 000+ abonnés) + **TikTok Shop** | vendre et faire de l'audience avec les mêmes vidéos | ouvrir TikTok Shop depuis le compte Brico Travaux | **haute** |
 | 3 | **Apify** | meilleures ventes AliExpress / Alibaba, tendances | jeton dans `presti-secrets/apify-token.txt` (le fichier `apify api.txt` est déjà là : à renommer ou me dire « posé ») | haute |
 | 3 bis | **AliExpress, Alibaba** (sourcing) | trouver les produits et leurs prix d'achat | rien pour analyser ; un compte acheteur seulement le jour d'un échantillon | à la demande |
 | — | ~~Shopify~~ | repoussé : payant dès l'essai fini ; retenu seulement si eBay + TikTok Shop montrent des ventes | le fichier `shopify api.txt` déjà déposé reste au chaud | basse |
