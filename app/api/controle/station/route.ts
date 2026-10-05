@@ -1,6 +1,7 @@
 // 026-092 — adapté de la référence contractuelle 026-067, sans import de fixture à l'exécution.
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
+import { stationHorsWebPourRequete } from '@/lib/stationHorsWeb'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { peutFaire } from '@/lib/controle/droits'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
@@ -17,6 +18,7 @@ const NOM = /^[a-z0-9_]{2,40}$/
 
 export async function GET(req: Request) {
   if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  if (stationHorsWebPourRequete(req)) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const d = exigerDomaine(f, 'sante', 'voir')

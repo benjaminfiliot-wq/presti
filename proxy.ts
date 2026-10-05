@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { surfaceDuDomaine } from '@/lib/surfaceDomaine'
+import { stationHorsWebPourHote } from '@/lib/stationHorsWeb'
 
 // Les surfaces de l'artisan (site, plateforme) sont servies sur DES ADRESSES SANS « PRESTI »
 // (v5, demande de Benj). Trois hôtes possibles, résolus ici vers les routes internes :
@@ -80,6 +81,12 @@ export async function proxy(req: NextRequest) {
   // Sous-domaine QG (poste de contrôle) — inchangé.
   if (bare.startsWith('qg.') && chemin === '/') {
     const url = req.nextUrl.clone(); url.pathname = '/controle'
+    return NextResponse.rewrite(url)
+  }
+
+  // La station n'est pas servie depuis le site (demande de Benj, 05/10/2026) : 404 sur tout hôte non local. Voir lib/stationHorsWeb.ts.
+  if ((chemin === '/controle/station' || chemin.startsWith('/controle/station/')) && stationHorsWebPourHote(bare)) {
+    const url = req.nextUrl.clone(); url.pathname = '/_station-hors-web'
     return NextResponse.rewrite(url)
   }
 
