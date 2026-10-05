@@ -157,11 +157,11 @@ et active les minuteurs du groupe ; `arreter <groupe>` les désactive.
 | `presti-atelier.service` | `presti-atelier.timer`, toutes les 15 min | agents | `PRESTI_JETON_ATELIER` | atelier | 026-097, 026-057 |
 | `presti-livreur.service` | `presti-livreur.timer`, toutes les 10 min | agents | `PRESTI_JETON_LIVREUR_USINE` | livreur | 026-057 |
 | `presti-chef-leger.service`, `presti-chef-plein.service`, `presti-chef-reunion.service` | `presti-chef-leger.timer`, `presti-chef-plein.timer`, `presti-chef-reunion.timer` | agents | `PRESTI_JETON_CHEF` | chef | 026-129, 026-148 |
-| `presti-chef-savoir-recevoir.service` (déclenché par `.path`), `presti-chef-savoir-index.service` (déclenché par `.path`), `presti-chef-bilan.service` | `presti-chef-bilan.timer` (7 h 35, Paris) | agents | aucune variable pour la réception et l'index ; `PRESTI_JETON_CHEF` pour le bilan | chef | 026-241 (**écrits, pas installés** au 05/10/2026 : attendent le « oui » de Benj) |
+| `presti-chef-savoir-recevoir.service` (déclenché par `.path`), `presti-chef-savoir-index.service` (déclenché par `.path`), `presti-chef-bilan.service` | `presti-chef-bilan.timer` (7 h 35, Paris) | agents | aucune variable pour la réception et l'index ; `PRESTI_JETON_CHEF` pour le bilan | chef | 026-241 (**installés le 05/10/2026** par gardien : les deux `.path` et le minuteur de 7 h 35 sont actifs ; le bilan reste éteint par `bilan_quotidien` ; le premier envoi attend le plafond du contrat, voir le dépôt ci-dessous) |
 | `presti-porteur.service`, `presti-export-nuit.service` | `presti-porteur.timer` (15 min), `presti-export-nuit.timer` (3 h 30, Paris) | agents | `PRESTI_JETON_FACTEUR_USINE` | porteur | 026-095, 026-143 |
 | `presti-standard.service`, `presti-facteur.service`, `presti-facteur-soir.service` | `presti-standard.timer` (5 min), `presti-facteur.timer` (15 min), `presti-facteur-soir.timer` (20 h 05) | agents | `PRESTI_JETON_STANDARDISTE`, `PRESTI_JETON_FACTEUR` | modeles | 026-094, 026-148 |
-| `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; unité non installée, jeton non posé) |
-| `presti-qualite`, `presti-sav` | pas encore d'unité | agents | `PRESTI_JETON_QUALITE`, `PRESTI_JETON_SAV` | qualite, sav | 026-247, 026-245 |
+| `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; jeton posé et minuteur installé par gardien le 05/10/2026 ; première passe en lecture seule le même jour, section `conseiller` mesurée) |
+| `presti-qualite`, `presti-sav` | pas encore d'unité | agents | `PRESTI_JETON_QUALITE`, `PRESTI_JETON_SAV` | qualite, sav | 026-247, 026-245 (jeton `PRESTI_JETON_QUALITE` posé le 05/10/2026 ; `PRESTI_JETON_SAV` pas encore) |
 | `presti-telegram.service` | aucun : service permanent (long polling) | agents | `TELEGRAM_BOT_TOKEN`, `PRESTI_JETON_TELEGRAM`, `TELEGRAM_CHAT_ID`, `TELEGRAM_CODE_APPAIRAGE` | aucun : sa propre mise en service | 026-195 |
 
 Le groupe `chef` copie aussi `presti-chef-modele.service` et active `presti-chef-modele.path` (026-148) : le modèle du
@@ -170,7 +170,7 @@ chef tourne sous son propre compte, `chef-modele`, qui ne lit pas le coffre (026
 
 ## Le dépôt du savoir (026-241)
 
-`/srv/presti-savoir/depot` (`agents:agents`, 2770, posé par `gardien`) reçoit le savoir envoyé du poste (`node scripts/savoir/synchroniser.mjs`, tâche Windows `Presti savoir` toutes les 2 h) ; la réception et l'index le prennent par `.path`. Reprise : réenvoyer depuis le poste. Interrupteurs : `docs/savoir/reglages.json` (tous éteints tant que Benj n'a pas dit « oui » geste par geste).
+`/srv/presti-savoir/depot` (`agents:agents`, 2770, posé par `gardien` le 05/10/2026 ; `usine` y dépose parce qu'il est dans le groupe `agents`, aucune ACL, aucune règle sudoers de plus) reçoit le savoir envoyé du poste (`node scripts/savoir/synchroniser.mjs`, tâche Windows `Presti savoir` toutes les 2 h : script écrit dans `.orchestre/preuves/026-241/tache-windows-presti-savoir.ps1`, **pas encore créée**) ; la réception et l'index le prennent par `.path`. `/home/agents/travail/savoir` existe (agents, 700). Reprise : réenvoyer depuis le poste. Interrupteurs : `docs/savoir/reglages.json` (tous éteints : le premier export dépasse le plafond de 80 Mo du contrat `sources.json` à cause de `docs/contexte-cloud/**`, voir `.orchestre/preuves/026-241/mise-en-service-05-10.md`).
 
 ## La surveillance
 
