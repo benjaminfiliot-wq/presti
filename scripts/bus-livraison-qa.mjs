@@ -397,7 +397,7 @@ if (o.enfant === 'complet') {
 if (o.inconnues.length || o.positionnels.length) refuserAppel(JUGE, `option(s) inconnue(s) : ${[...o.inconnues, ...o.positionnels].join(' ')}`)
 if (o.temoin && o.reel) refuserAppel(JUGE, '--temoin et --reel ensemble')
 if (!fs.existsSync(RAC)) refuserAppel(JUGE, `racine introuvable : ${RAC}`)
-const IDS = o.temoin ? ['BL-5', 'BL-PV'] : ['BL-1', 'BL-2', 'BL-3', 'BL-4', 'BL-5', 'BL-6', 'BL-8', 'BL-9', ...(o.reel ? ['BL-7'] : []), 'BL-PV']
+const IDS = o.temoin ? ['BL-5', 'BL-PV'] : ['BL-1', 'BL-2', 'BL-3', 'BL-4', 'BL-5', 'BL-6', 'BL-8', 'BL-9', 'BL-10', ...(o.reel ? ['BL-7'] : []), 'BL-PV']
 const s = creerSortie(JUGE, IDS, `${JUGE} — fiche ${FICHE}, racine ${relR(RAC)}, mode ${o.temoin ? 'témoin' : o.reel ? 'réel' : 'complet'}`, { nr: ['BL-5'] })
 
 // ── Le préalable ─────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -540,6 +540,42 @@ if (!o.temoin) {
       return { echecs: [...new Set(e)], detail: `${c9?.detail ?? ''} ; lu dans ${USINE} : la mise à jour porte .eq('etat', 'payee'), aucun console.* d'une valeur` }
     })
   }
+}
+
+// ── BL-10 (ajout du 05/10, chef-agent M1) : aucune référence NUE à supabaseAdmin.rpc ni supabaseAdmin.from ────────────
+// supabase-js lit this.rest dans rpc() et from() : `rpc: Rpc = supabaseAdmin.rpc` (un défaut de paramètre, une affectation,
+// un argument) perd son `this` et LÈVE à chaque appel. Les doublures de ce juge ont des fonctions fléchées qui ne perdent
+// rien : BL-1 à BL-3 passaient tous, alors qu'en production busEnPause() rendait toujours « en pause » et que les
+// battements du livreur et du trésorier ne partaient jamais (constaté le 05/10 : tour de livraison réussi, deux agents jamais
+// battus). Seul un APPEL (suivi de « ( »), un type générique ou un `typeof` est permis. S'ajoute aux critères existants, n'en change aucun.
+if (!o.temoin) {
+  await s.critere('BL-10', () => {
+    const e = []
+    let lus = 0
+    const marche = (dossier) => {
+      let entrees = []
+      try { entrees = fs.readdirSync(dossier, { withFileTypes: true }) } catch { return }
+      for (const x of entrees) {
+        const chemin = path.join(dossier, x.name)
+        if (x.isDirectory()) { if (x.name !== 'node_modules' && x.name !== '.next') marche(chemin); continue }
+        if (!/\.(ts|tsx|mjs)$/.test(x.name)) continue
+        let texte
+        try { texte = fs.readFileSync(chemin, 'utf8') } catch { continue }
+        if (!/supabaseAdmin/.test(texte)) continue
+        lus++
+        const sc = sansCommentaires(texte)
+        for (const m of sc.matchAll(/(?<!typeof\s+)\bsupabaseAdmin\s*\.\s*(rpc|from)\b(?!\s*[(<])/g)) {
+          const ligne = sc.slice(0, m.index).split('\n').length
+          const extrait = court(sc.slice(m.index, m.index + 50).split('\n')[0], 60)
+          e.push(`${path.relative(RAC, chemin).split(path.sep).join('/')}:${ligne} : « ${extrait} » : référence nue à supabaseAdmin.${m[1]} (perd son this et lève) ; l'appeler ou la lier`)
+        }
+      }
+    }
+    marche(path.join(RAC, 'lib'))
+    marche(path.join(RAC, 'app'))
+    if (!lus) e.push('aucun fichier de lib/ ou app/ ne mentionne supabaseAdmin : la racine est-elle la bonne ?')
+    return { echecs: e, detail: `${lus} fichier(s) de lib/ et app/ qui nomment supabaseAdmin : aucun ne le passe nu (supabaseAdmin.rpc / .from sans appel), seul un appel ou un type est permis` }
+  })
 }
 
 // ── BL-7 (--reel) ────────────────────────────────────────────────────────────────────────────────────────────────────────
