@@ -40,8 +40,8 @@ Tant que ces deux accès manquent, on **ne chiffre aucune marge** : les agents n
 4. **Conformité** : aucune marque protégée, marquage CE si le produit en exige, notice en français, pas de produit réglementé.
 5. **Livraison** : stock en France ou en Europe, livraison annoncée 7 jours au plus.
 
-## Premier achat test
-Un lot de 3 à 5 unités par produit (budget indicatif 40 à 60 €), décidé par une ligne dans la file de décisions : **un clic d'approbation de Benj**. Aucun agent n'a d'accès au paiement.
+## Pas d'achat de stock (décision de Benj, 06/10)
+Aucun lot test : on **liste d'abord sur eBay, on commande chez le fournisseur seulement après une vente** (voir `STRATEGIE-0610.md`, section « Modèle sans stock »). Un produit est donc retenu sur ses 5 critères (dont le critère 5 : livraison annoncée honnête), jamais sur un achat préalable. Aucun agent n'a d'accès au paiement.
 
 ## Prochaines étapes automatiques
 1. Les agents de veille relèvent, sur les sources publiques, les vidéos TikTok de ces 6 catégories (vues, date, commentaires) et classent les produits qui passent le critère 1.
