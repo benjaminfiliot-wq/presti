@@ -16,7 +16,7 @@ changer de modèle coûte ~2 min de chargement sur l'usine), une tâche difficil
 Le chef, lui, passe par la file `chef-modele` (Codex lit et écrit des fichiers). Quand Codex est à bout, la MÊME demande est rejouée en **appel direct** (pas de boucle
 d'outils : essai réel du 05/10, la boucle d'outils de Codex sur un modèle libre sortait en prose, en boucle ou à 30 000 jetons par essai, et ne tenait pas sur les 4 cœurs
 de l'usine avec un modèle local) : les fichiers que la consigne cite (mode d'emploi, schéma, entrée du cycle) sont recopiés dans la requête et le JSON rendu est écrit à la place du
-fichier de sortie. Ordre : freellmapi `gemini-3-flash-preview` → `ministral-14b` → `auto` (le routeur, deux essais) → Ollama Cloud → local 8B → 4B (contexte de 16 384 jetons, sans réflexion,
+fichier de sortie. Ordre : freellmapi `gemini-3.8-flash` (depuis le 05/10/2026 ; avant : `gemini-3-flash-preview`, en quota 429 ce soir-là) → `ministral-14b` → `auto` (le routeur, deux essais) → Ollama Cloud → local 8B → 4B (contexte de 16 384 jetons, sans réflexion,
 JSON forcé). Le plan du cycle est vérifié par le validateur du chef lui-même (`validerPlan`, scripts/chef/commun.mjs) AVANT d'être écrit : refusé, le modèle reçoit la liste des écarts
 (jamais une valeur) et corrige (deux corrections au plus) — sans quoi le cycle refuserait le plan en bloc. La date du jour lui est donnée. Un moteur qui répond sans JSON n'est
 pas un succès : le suivant prend la demande. Les moteurs libres sont limités par minute : quand tous sont à bout par un quota et

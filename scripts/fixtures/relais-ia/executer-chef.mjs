@@ -61,7 +61,7 @@ await cas('RC-1', async () => {
   const r = await C.relayer(m.base)
   if (r.code !== 0 || r.moteur !== 'freellmapi_gemini') e.push(`servi par ${r.moteur} code ${r.code} (attendu freellmapi_gemini, 0)`)
   if (m.ids() !== 'codex>freellmapi_gemini') e.push(`ordre ${m.ids()}`)
-  if (m.lances[1]?.modele !== 'gemini-3-flash-preview') e.push('le premier secours n\'est pas gemini-3-flash-preview')
+  if (m.lances[1]?.modele !== 'gemini-3.8-flash') e.push('le premier secours n\'est pas gemini-3.8-flash')
   const j = journalDe(m.dossier)
   if (!j.some((x) => x.moteur === 'codex' && x.issue === 'bascule' && x.raison === 'non_autorise')) e.push('401 de Codex non tracé en non_autorise')
   if (!j.some((x) => x.moteur === 'freellmapi_gemini' && x.issue === 'ok')) e.push('freellmapi ok non tracé')
@@ -234,7 +234,7 @@ await cas('RC-10', async () => {
   if (r.code !== 0 || !fs.existsSync(w.plan) || JSON.parse(fs.readFileSync(w.plan, 'utf8')).cycle !== 'leger') e.push('le JSON du moteur n\'est pas écrit dans le plan')
   const v = reponseFetch.vu
   if (!/\/v1\/chat\/completions$/.test(v.url) || v.init.headers.authorization !== `Bearer ${CLE_SENTINELLE}`) e.push('freellmapi : adresse ou clé Bearer incorrecte')
-  if (v.corps.model !== 'gemini-3-flash-preview') e.push('freellmapi : modèle demandé incorrect')
+  if (v.corps.model !== 'gemini-3.8-flash') e.push('freellmapi : modèle demandé incorrect')
   if (JSON.stringify(r).includes(CLE_SENTINELLE)) e.push('la clé est dans la sortie')
   // Ollama : /api/chat, sans clé, contexte large, sans réflexion, JSON forcé
   const w2 = monde10()
@@ -340,7 +340,7 @@ await cas('RC-7', async () => {
   if (a.reponse?.code !== 0 || a.reponse?.moteur !== 'freellmapi_gemini') e.push(`file du chef : réponse ${JSON.stringify({ code: a.reponse?.code, moteur: a.reponse?.moteur })} (code 0, freellmapi_gemini attendus)`)
   if (a.appels !== 1) e.push(`file du chef : Codex appelé ${a.appels} fois (1 attendu)`)
   if (JSON.stringify(a.planEcrit) !== JSON.stringify(PLAN)) e.push('file du chef : le plan du moteur n\'est pas écrit à la place du fichier de sortie')
-  if (fl.requetes[0]?.auth !== `Bearer ${CLE_SENTINELLE}` || fl.requetes[0]?.modele !== 'gemini-3-flash-preview') e.push('file du chef : freellmapi sans clé ou sans le bon modèle')
+  if (fl.requetes[0]?.auth !== `Bearer ${CLE_SENTINELLE}` || fl.requetes[0]?.modele !== 'gemini-3.8-flash') e.push('file du chef : freellmapi sans clé ou sans le bon modèle')
   if (ol.requetes.length) e.push('file du chef : une requête part vers Ollama alors que freellmapi a répondu')
   if (JSON.stringify(a.reponse).includes(CLE_SENTINELLE) || a.trace.includes(CLE_SENTINELLE) || !/"issue":"ok"/.test(a.trace)) e.push('reponse.json ou le journal du relais porte la clé, ou le journal manque')
   // b) freellmapi répond en prose partout : Ollama Cloud écrit le plan

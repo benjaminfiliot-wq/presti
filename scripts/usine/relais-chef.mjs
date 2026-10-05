@@ -3,7 +3,7 @@
 // (compte chef-modele, sans coffre, sans réseau pour les commandes du modèle).
 //
 // Quand Codex (abonnement) est à bout — 401 « non connecté », « usage limit », panne, délai — la MÊME demande est rejouée sur le moteur
-// suivant : freellmapi (gemini-3-flash-preview, ministral-14b, puis le routeur « auto » ; clé du compte chef-modele, jamais écrite),
+// suivant : freellmapi (gemini-3.8-flash, ministral-14b, puis le routeur « auto » ; clé du compte chef-modele, jamais écrite),
 // Ollama Cloud, puis le Ollama LOCAL de l'usine (8B, 4B), en APPEL DIRECT : les fichiers que la consigne cite (le mode d'emploi du chef, le
 // schéma, l'entrée du cycle) sont recopiés dans la requête et le modèle répond par le seul JSON du plan, que ce module écrit à la place du
 // fichier de sortie. Pas de boucle d'outils : essai réel du 05/10 sur l'usine, la boucle d'outils de Codex sur un modèle libre sortait
@@ -27,7 +27,7 @@ const BASE_OLLAMA = 'http://127.0.0.1:11434'
 /** Les moteurs de secours, dans l'ordre. `gratuit` : jamais pour un prospect ; `local` : la machine de l'usine ; `cle` : a besoin de FL_KEY ;
  *  `api` : « openai » (freellmapi, /v1/chat/completions) ou « ollama » (/api/chat, avec la taille de contexte et sans réflexion). */
 export const CHAINE_SECOURS = Object.freeze([
-  Object.freeze({ id: 'freellmapi_gemini', modele: 'gemini-3-flash-preview', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000 }),
+  Object.freeze({ id: 'freellmapi_gemini', modele: 'gemini-3.8-flash', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000 }),
   Object.freeze({ id: 'freellmapi_mistral', modele: 'ministral-14b', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000 }),
   // « auto » : le routeur choisit un modèle libre au hasard à chaque appel (un code, un modèle de chat…) : deux essais.
   Object.freeze({ id: 'freellmapi', modele: 'auto', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000, essais: 2 }),
