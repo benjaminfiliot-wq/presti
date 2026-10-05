@@ -1,10 +1,10 @@
 with attendues(nom, calendrier) as (
   values
-    ('acq-vigie-meta', '10 5-8 * * *'),
-    ('acq-recenseur', '*/10 5-19 * * *'),
+    ('acq-vigie-meta', '10 * * * *'),
+    ('acq-recenseur', '*/10 * * * *'),
     ('acq-rge', '15 2 * * *'),
-    ('acq-juge-faits', '35 6-19 * * *'),
-    ('acq-redacteur', '0 5,12 * * *'),
+    ('acq-juge-faits', '35 * * * *'),
+    ('acq-redacteur', '0 * * * *'),
     ('acq-standardiste', '*/5 * * * *'),
     ('acq-maquettes-purge', '20 2 * * *'),
     ('acq-facteur', '*/15 * * * *'),

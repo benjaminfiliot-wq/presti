@@ -21,6 +21,13 @@ interface CandidatRge {
 }
 type ResultatImport = { candidats: CandidatRge[]; curseur_suivant: string | null; fini: boolean } | { refus: 'injoignable' }
 
+/**
+ * 05/10 : les 513 premiers sites importés étaient des architectes, tous rejetés (« hors bâtiment ») : des passes perdues.
+ * La liste RGE mêle artisans, architectes, bureaux d'études et audits ; l'import ne garde que les lignes de travaux.
+ * Le curseur `after` reste valable d'une requête filtrée à l'autre (vérifié sur l'API ADEME).
+ */
+const QS_METIERS = 'NOT domaine:"Architecte" AND NOT domaine:Etude* AND NOT domaine:Audit* AND NOT domaine:Commisionnement'
+
 function domaineDe(site: string | null | undefined): string | null {
   if (!site?.trim()) return null
   try {
@@ -73,6 +80,7 @@ export async function importerRge(
   while (lus < plafond) {
     const url = new URL('https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2/lines')
     url.searchParams.set('size', String(Math.min(1000, plafond - lus)))
+    url.searchParams.set('qs', QS_METIERS)
     if (suivant) url.searchParams.set('after', suivant)
     try {
       const maintenant = horloge.maintenant()

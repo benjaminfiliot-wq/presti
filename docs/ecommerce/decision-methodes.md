@@ -2,6 +2,23 @@
 
 *Statut : **hypothèse de travail**, à confirmer par les recherches des agents (tâches `ecom-2026-10-05-01` à `-07`, brouillons à recouper) et par un essai à budget zéro. Aucun chiffre ci-dessous n'est « prouvé » : ce sont des ordres de grandeur du chef, marqués comme tels. Benj a dit que l'e-commerce serait « le plus rentable rapidement » ; ses analyses « de tête » sont à confronter à ce tableau.*
 
+## Cap de Benj, 05/10 nuit (remplace le classement ci-dessous pour l'ordre de travail)
+**Trio : eBay + TikTok + TikTok Shop, produits trouvés sur AliExpress et Alibaba. Une seule boutique d'abord (eBay) ; Shopify passe en second** (payant dès l'essai fini, alors qu'eBay se démarre sans abonnement). Le pack de pubs UGC reste la seconde ligne de revenu et devient le **moteur de contenu du trio** : les vidéos produit du Studio servent TikTok et TikTok Shop.
+
+| Rôle | Plateforme | Ce que font les agents | Geste humain unique de Benj |
+|---|---|---|---|
+| Vente | **eBay vendeur pro** | fiches, prix d'après les ventes réellement conclues, suivi des annonces par l'API officielle | compte pro (EI), finir la vérification développeur, cliquer « autoriser » une fois |
+| Audience | **TikTok** (compte Brico Travaux + compte produit) | scénarios, vidéos courtes, légendes, calendrier | passer le compte en « entreprise » |
+| Vente + audience | **TikTok Shop** | fiches produit et vidéos liées aux produits | ouvrir la boutique vendeur (pièces d'identité de l'entreprise : à lui seul) |
+| Sourcing | **AliExpress, Alibaba** | repérer les produits : prix d'achat, volumes, avis, délais, variantes ; écart de prix déjà accepté par les acheteurs | commander un échantillon, payer les fournisseurs |
+
+**Points à ne pas rater** (à vérifier par la recherche 02, sur les pages officielles ; je ne les affirme pas comme prouvés) :
+- « eBay gratuit » est vrai pour **démarrer** (annonces gratuites dans un quota mensuel), pas pour **vendre** : commission sur chaque vente, à chiffrer dans la marge avant de choisir un produit.
+- Délais : un colis AliExpress ou Alibaba met souvent 1 à 3 semaines ; eBay et TikTok Shop sanctionnent les livraisons lentes. Les agents préfèrent donc les **entrepôts en Europe** (AliExpress « livraison depuis l'Europe ») et gardent Alibaba pour le prix de gros d'un lot déjà testé.
+- Produits : marquage CE et sécurité obligatoires dans l'UE (jouets, électrique, cosmétique), marques protégées refusées d'office, TVA et import à intégrer au prix de revient.
+- TikTok Shop et eBay exigent une **identité d'entreprise réelle** : aucune création de compte par les agents.
+- Critère d'arrêt de l'essai : 3 produits, 14 jours, aucune vente ni intention d'achat mesurable → on change de produits, pas de plateforme.
+
 ## Ce que montrent les vidéos (4 TikTok analysés image par image : `sources/`)
 | Vidéo | Méthode | Ce qui est utilisable | Ce qui est écarté |
 |---|---|---|---|
