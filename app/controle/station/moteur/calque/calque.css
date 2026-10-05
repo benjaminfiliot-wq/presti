@@ -20,7 +20,8 @@
 }
 
 /* La plaque : au BAS de la salle, centrée, à la ligne (deux lignes au plus, puis « … »). Le haut de la salle est celui des personnages. */
-.mc-calque [data-plaque] { position: absolute; transform: translate(-50%, -100%); width: max-content; padding: 1px 3px; box-sizing: border-box; border-radius: 2px; text-align: center; color: var(--mc-texte, #fff4f0); background: var(--mc-plaque, #1b0b33); background: color-mix(in srgb, var(--mc-plaque, #1b0b33) 88%, transparent); overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+.mc-calque [data-plaque] { position: absolute; transform: translate(-50%, -100%); width: max-content; padding: 1px 1px; box-sizing: border-box; border-radius: 2px; text-align: center; color: var(--mc-texte, #fff4f0); background: var(--mc-plaque, #1b0b33); background: color-mix(in srgb, var(--mc-plaque, #1b0b33) 88%, transparent); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+.mc-calque [data-plaque] { letter-spacing: -0.02em; } /* « Commandement » (12 lettres) tient dans les 96 px d'une salle à ×2 sans couper le mot */
 .mc-calque [data-plaque][data-reservee] { opacity: 0.7; font-style: italic; }
 /* Le nom d'un personnage ne se lit jamais sur la carte (dix à vingt noms se recouvriraient) : l'info-bulle du survol et du focus le dit, avec son rôle. */
 .mc-calque [data-nom] { position: absolute; visibility: hidden; transform: translateX(-50%); padding: 0 2px; white-space: nowrap; color: var(--mc-texte, #fff4f0); text-shadow: 0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000; }
