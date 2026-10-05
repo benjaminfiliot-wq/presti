@@ -80,6 +80,14 @@ export function Sante({ barre, erreurVue, court = false }: { barre: Env<BarreDon
   return <span data-sante data-etat={etat ?? 'inconnu'} className="mc-sante" title={titre} aria-label={`État de la station : ${texte}`}>{court ? '' : texte}</span>
 }
 
+/** La raison d'un état qui n'est pas « en ligne », écrite dans la barre (et plus seulement au survol) : quelle lecture est dégradée. */
+export function RaisonSante({ barre }: { barre: Env<BarreDonnees> | null }) {
+  const b = lire(barre)
+  const s = b.etat === 'ok' ? lire(b.valeur.sante) : null
+  if (s?.etat !== 'ok' || s.valeur.etat === 'en ligne' || !s.valeur.raison) return null
+  return <span className="mc-sante-raison" data-sante-raison title={s.valeur.raison}>{s.valeur.raison}</span>
+}
+
 import { InterrupteurAuto } from './Gestes'
 
 /** Le bouton AUTO : rendu par InterrupteurAuto (en lecture seule pour le rôle lecture). */
@@ -154,6 +162,7 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
         <span className="mc-titre" data-titre>{titre}</span>
         {version?.etat === 'ok' ? <span className="mc-version" data-version>{version.valeur}</span> : null}
         <Sante barre={barre} erreurVue={erreurVue} />
+        <RaisonSante barre={barre} />
         <span className="mc-ariane" data-ariane>{ariane}</span>
         {role === 'lecture' ? <span className="mc-lecture">lecture seule</span> : null}
         <span className="mc-temps">

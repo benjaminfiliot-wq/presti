@@ -31,6 +31,9 @@ export async function POST(req: Request) {
       url: clip(b?.url, 400),
       user_agent: clip(req.headers.get('user-agent'), 300),
     }
+    // Un rapport sans contexte, sans message et sans pile n'apprend rien : c'est un appel à vide (la sonde de scripts/fermeture-e2e.mjs
+    // poste `{}` chaque jour en production). Il n'est ni consigné (il gonflait « n erreurs · 24 h » de la station) ni notifié.
+    if (!rapport.contexte && !rapport.message && !rapport.stack) return NextResponse.json({ ok: true })
     await supabaseAdmin.from('app_errors').insert(rapport)
 
     // Notification de l'entreprise (sprint J-1 §15) : un crash côté client est une erreur

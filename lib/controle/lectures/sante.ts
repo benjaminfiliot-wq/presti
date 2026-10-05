@@ -11,9 +11,9 @@ export const santeService = (origine: string, jeton: string | null) =>
       headers: { 'User-Agent': 'presti-barre', ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}) },
     })
     if (!r.ok) throw new Error(`état ${r.status}`)
-    const j = (await r.json()) as { niveau: Etat; controles: { cle: string; etat: string; libelle: string }[] }
+    const j = (await r.json()) as { niveau: Etat; controles: { cle: string; etat: string; libelle: string; detail: string }[] }
     const verts = j.controles.filter((c) => c.etat === 'ok').length
-    const soucis = j.controles.filter((c) => c.etat === 'crit' || c.etat === 'warn').map((c) => c.libelle)
+    const soucis = j.controles.filter((c) => c.etat === 'crit' || c.etat === 'warn').map((c) => (c.cle === 'crons' ? `${c.libelle} (${c.detail.replace(/ · jamais passées.*$/, '')})` : c.libelle))
     return {
       etat: j.niveau,
       detail: j.niveau === 'ok' ? `${verts} contrôles verts` : soucis.slice(0, 2).join(', ') || 'un contrôle en défaut',
