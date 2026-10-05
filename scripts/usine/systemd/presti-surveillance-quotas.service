@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti — relevé des quotas d'IA pour la Salle des machines (conformité E-17)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_USINE -- /usr/bin/node scripts/usine/releve-quotas.mjs --base=https://prestiapp.fr
+TimeoutStartSec=2min
+NoNewPrivileges=yes
