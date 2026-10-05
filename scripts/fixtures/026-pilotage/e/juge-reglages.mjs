@@ -13,6 +13,7 @@ import { base, themeHublot } from './jeux.mjs'
 const PANNEAU = '[data-vue="reglages"]'
 async function ouvrirPanneau(ctx, o = {}) {
   const P = await nouvellePage(ctx, { chemin: '/controle/station?vue=reglages', ...o })
+  P.page.setDefaultTimeout(60_000) // D-0510-D1 : 20 s par défaut ; sur une usine saturée un bouton encore désactivé (thème en cours de chargement) dépassait ce délai
   await P.aller()
   // Au téléphone la carte (et le moteur) ne monte que dans l'onglet « station » : on attend la barre d'onglets, puis on l'ouvre.
   if (o.telephone) await P.page.locator('[data-onglet-tel="station"]').click({ timeout: 15_000 }).catch(() => {})
@@ -21,6 +22,10 @@ async function ouvrirPanneau(ctx, o = {}) {
 }
 const bouton = (P, nom) => P.page.locator(PANNEAU).getByRole('button', { name: nom })
 const texte = (P) => P.page.locator(PANNEAU).first().innerText().then((t) => t.replace(/\s+/g, ' '))
+// D-0510-D1 (correction du chef, 05/10, 026-187) : sur une usine saturée, les attentes fixes (500 ou 900 ms) lisaient le texte du panneau avant que le message du code ne s'y
+// écrive (CE-19 et CE-20 rouges tour à tour, jamais deux fois les mêmes). Le texte est relu jusqu'à ce que le message attendu y soit, au plus 12 s ; passé ce délai, le
+// texte tel quel est rendu et le critère juge comme avant : le motif attendu, le seuil et le verdict ne changent pas, seule la durée d'attente.
+const texteJusque = async (P, motif, delai = 12_000) => { let t = await texte(P); const t0 = Date.now(); while (!motif.test(t) && Date.now() - t0 < delai) { await attendre(150); t = await texte(P) } return t }
 const mc = (page, jeton) => page.evaluate((j) => ({ mc: getComputedStyle(document.querySelector('.mc')).getPropertyValue(j).trim().toLowerCase(), html: getComputedStyle(document.documentElement).getPropertyValue(j).trim(), body: getComputedStyle(document.body).getPropertyValue(j).trim() }), jeton)
 const reglee = (r, theme) => { r.themes = { essai: theme }; r.reglages.reglages.theme = 'essai'; return r }
 
@@ -73,7 +78,7 @@ async function sc409(ctx) {
     const couleur = P.page.locator(`${PANNEAU} input[data-couleur="--mc-accent"]`)
     if (!(await couleur.count())) return { champ: false }
     await couleur.fill('#112233'); await bouton(P, /Enregistrer/).click(); await attendre(900)
-    return { texte: await texte(P), puts: P.puts.length }
+    return { texte: await texteJusque(P, /modifié ailleurs : recharge/), puts: P.puts.length }
   } finally { await P.fermer() }
 }
 async function scDisposition(ctx) {
@@ -82,13 +87,13 @@ async function scDisposition(ctx) {
   const choisir = async (P, salle, valeur) => { const s = P.page.locator(`${PANNEAU} select[data-salle-emplacement="${salle}"]`); if (!(await s.count())) return false; await s.selectOption(valeur); await attendre(500); return true }
   let P = await ouvrir(base())
   try {
-    out.champ = await choisir(P, 'ecommerce', 'radar'); out.reservee = await texte(P); out.putReservee = await refusEnregistrer(P)
+    out.champ = await choisir(P, 'ecommerce', 'radar'); out.reservee = await texteJusque(P, /réservée/i); out.putReservee = await refusEnregistrer(P)
   } finally { await P.fermer() }
   P = await ouvrir(base())
-  try { out.champ2 = await choisir(P, 'repos', 'radar'); out.deux = await texte(P); out.putDeux = await refusEnregistrer(P) } finally { await P.fermer() }
+  try { out.champ2 = await choisir(P, 'repos', 'radar'); out.deux = await texteJusque(P, /deux salles|occupent/i); out.putDeux = await refusEnregistrer(P) } finally { await P.fermer() }
   const coupe = themeHublot(); coupe.emplacements.find((e) => e.cle === 'audience').porte = { x: 9000, y: 9000 }
   P = await ouvrir(reglee(base(), coupe))
-  try { await attendre(600); const c = P.page.locator(`${PANNEAU} input[data-couleur="--mc-accent"]`); if (await c.count()) await c.fill('#112233'); await attendre(500); out.graphe = await texte(P); out.putGraphe = await refusEnregistrer(P) } finally { await P.fermer() }
+  try { await attendre(600); const c = P.page.locator(`${PANNEAU} input[data-couleur="--mc-accent"]`); if (await c.count()) await c.fill('#112233'); await attendre(500); out.graphe = await texteJusque(P, /n'est plus reliée au reste/); out.putGraphe = await refusEnregistrer(P) } finally { await P.fermer() }
   P = await ouvrir(base())
   try {
     const c = P.page.locator(`${PANNEAU} input[data-couleur="--mc-accent"]`)
