@@ -155,7 +155,9 @@ export async function relayer(opts) {
     for (let essai = 1; essai <= (m.essais ?? 1); essai++) {
       const resteEssai = delaiMs - (maintenant() - debut)
       if (resteEssai < 30_000) break
-      const budget = m.id === 'codex' ? resteEssai : Math.min(resteEssai, 540_000)
+      // Un modèle local ne mène pas la boucle d'outils de Codex en 9 minutes sur les 4 cœurs de l'usine (essai réel du 05/10 : 8B et 4B sans plan) :
+      // il n'a que 5 minutes, pour ne pas tenir la file du chef ; sa vraie place est celle d'un prospect, où il n'y a rien d'autre.
+      const budget = m.id === 'codex' ? resteEssai : Math.min(resteEssai, m.local ? 300_000 : 540_000)
       const t0 = Date.now()
       const r = await lancer(m.id === 'codex' ? argv : argvDeSecours(argv, m), budget, m.cle ? { FL_KEY: opts.cle } : {})
       const ms = Date.now() - t0
