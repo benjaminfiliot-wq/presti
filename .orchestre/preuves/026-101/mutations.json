@@ -8,7 +8,7 @@
       "apres": "if (resultat.statut_diffusion !== 'O' && resultat.statut_diffusion !== 'P') return { refus: 'diffusion_partielle' }",
       "critere": "RS-3",
       "extrait": "❌ RS-3 P : retenu, diffusion_partielle attendu",
-      "duree_s": 7.9
+      "duree_s": 12.4
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -18,7 +18,7 @@
       "apres": "statut_diffusion: r.statut_diffusion,\n        dirigeants: (r as unknown as { dirigeants?: unknown }).dirigeants,",
       "critere": "RS-2",
       "extrait": "❌ RS-2 la sortie de ficheParSiren porte la clé dirigeants ; la sortie de ficheParSiren porte le nom du dirigeant « MARTIN TÉMOIN »",
-      "duree_s": 7.7
+      "duree_s": 11.1
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -28,7 +28,7 @@
       "apres": "",
       "critere": "RS-6",
       "extrait": "❌ RS-6 deux appels espacés de 0 ms virtuelles (143 au moins)",
-      "duree_s": 7.3
+      "duree_s": 8.9
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -38,7 +38,7 @@
       "apres": "",
       "critere": "LS-3",
       "extrait": "❌ LS-3 robots.txt en 500 : requêtes [\"/robots.txt\",\"/\",\"/contact\",\"/mentions-legales\",\"/cgu\"], seule /robots.txt attendue ; robots.txt qui interdit PrestiRecenseur : page(s) demandée(s) [\"/\",\"/contact\",\"/mentions-legales\",\"/cgu\"]",
-      "duree_s": 8.2
+      "duree_s": 8.4
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -48,7 +48,7 @@
       "apres": "",
       "critere": "LS-4",
       "extrait": "❌ LS-4 deux requêtes au même hôte espacées de 0 ms virtuelles (1 000 au moins)",
-      "duree_s": 8.6
+      "duree_s": 12
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -58,7 +58,7 @@
       "apres": "  for (const mel of propre.matchAll(/mailto:([^\"'>\\s?]+)/gi)) { const f = fait('site_titre', mel[1], url, date); if (f) faits.push(f) }\n  return { faits, siren, reseaux }",
       "critere": "LS-8",
       "extrait": "❌ LS-8 « mailto » dans le source",
-      "duree_s": 8
+      "duree_s": 14.3
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -68,7 +68,7 @@
       "apres": "  if (false) return { formulaire, verdict: refuse('pot_de_miel') }",
       "critere": "LS-14",
       "extrait": "❌ LS-14 temoin-pot-de-miel.invalid → {\"eligible\":true}, pot_de_miel attendu",
-      "duree_s": 7.1
+      "duree_s": 12.7
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -78,7 +78,7 @@
       "apres": "<(style|noscript|template)\\b",
       "critere": "LS-7",
       "extrait": "❌ LS-7 « Titre piège Témoin écrit par un script » absent du texte visible de https://temoin-conforme.invalid/ ; fait tiré d'un piège (script, style, noscript, template ou commentaire) : « Titre piège Témoin écrit par un script » ; le h1 du site conforme n'a donné aucun fait",
-      "duree_s": 7.1
+      "duree_s": 11.3
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -88,7 +88,7 @@
       "apres": "if (extrait.length > EXTRAIT_MAX) extrait = extrait.slice(0, EXTRAIT_MAX)\n  if (!extrait || extrait.length < EXTRAIT_MIN) return null",
       "critere": "LS-7",
       "extrait": "❌ LS-7 le h1 de 200 signes a donné un fait",
-      "duree_s": 6.9
+      "duree_s": 13.3
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -98,7 +98,7 @@
       "apres": "if (!await sur(url, deps)) return { refus: 'hote' }",
       "critere": "LS-5",
       "extrait": "❌ LS-5 ailleurs : requête vers l'autre domaine ; ailleurs : un fait tiré d'une page qui ne devait pas être lue",
-      "duree_s": 7.2
+      "duree_s": 13.1
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -108,7 +108,7 @@
       "apres": ") return null",
       "critere": "RG-4",
       "extrait": "❌ RG-4 domaine d'annuaire ou de plateforme : facebook.com ; domaine d'annuaire ou de plateforme : pagesjaunes.fr ; domaine d'annuaire ou de plateforme : linkedin.com",
-      "duree_s": 0.4
+      "duree_s": 0.7
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -118,7 +118,7 @@
       "apres": "bilan.oppose++\n",
       "critere": "RC-3",
       "extrait": "❌ RC-3 requête vers le domaine du candidat en opposition",
-      "duree_s": 7.6
+      "duree_s": 12.3
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -128,7 +128,7 @@
       "apres": "",
       "critere": "RC-4",
       "extrait": "❌ RC-4 arrete_par_echeance false, true attendu",
-      "duree_s": 7.5
+      "duree_s": 10.7
     },
     {
       "juge": "scripts/recenseur-qa.mjs",
@@ -138,7 +138,7 @@
       "apres": "resume: `${candidats[0]?.domaine ?? ''} ${bilan.reserves} réservés,",
       "critere": "RC-6",
       "extrait": "❌ RC-6 « temoin-conforme.invalid » dans le résumé ou le bilan",
-      "duree_s": 8
+      "duree_s": 13.8
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -148,7 +148,7 @@
       "apres": "if (rep.corps.includes(fait.extrait)) return 'ok';",
       "critere": "JF-2",
       "extrait": "❌ JF-2 apostrophe : \"absent\", ok attendu ; script : \"ok\", absent attendu",
-      "duree_s": 41.6
+      "duree_s": 18.7
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -158,7 +158,7 @@
       "apres": "import { recupererPoli, robotsAutorise, extraire } from './lecteurSite';\nvoid extraire;",
       "critere": "JF-3",
       "extrait": "❌ JF-3 le source importe extraire de lecteurSite",
-      "duree_s": 39.7
+      "duree_s": 119.5
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -168,7 +168,7 @@
       "apres": "} else if (c.canal === 'email_sollicite') {\n         newCanaux.push(c)\n         aUnCanal = true\n      } else if (c.canal === 'instagram' || c.canal === 'facebook') {",
       "critere": "JF-6",
       "extrait": "❌ JF-6 l'adresse glissée dans le prospect est écrite dans le magasin",
-      "duree_s": 8.4
+      "duree_s": 20.4
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -178,7 +178,7 @@
       "apres": "if (v === 'ok' || v === 'non_verifiable') aUnFaitOk = true;",
       "critere": "JF-11",
       "extrait": "❌ JF-11 190 : le prospect « Meta seulement » est écrit ([\"recense→verifie\"]) ; 1357045 : le prospect « Meta seulement » est écrit ([\"recense→verifie\"]) ; 613 : le prospect « Meta seulement » est écrit ([\"recense→verifie\"])",
-      "duree_s": 7.3
+      "duree_s": 19.4
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -188,7 +188,7 @@
       "apres": "if (!deps.jetonMeta) return 'ok';",
       "critere": "JF-7",
       "extrait": "❌ JF-7 pub_meta sans jeton : \"ok\", non_verifiable attendu ; la marque ne garde pas son fait pub_meta en non_verifiable",
-      "duree_s": 6.9
+      "duree_s": 15.5
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -198,7 +198,7 @@
       "apres": "if (code === 190) { metaEtats.set(deps, 'jeton_invalide'); return 'absent'; }",
       "critere": "JF-11",
       "extrait": "❌ JF-11 190 : le fait pub_meta n'est pas gardé en non_verifiable ([])",
-      "duree_s": 6.3
+      "duree_s": 32.8
     },
     {
       "juge": "scripts/faits-qa.mjs",
@@ -208,7 +208,7 @@
       "apres": "",
       "critere": "JF-12",
       "extrait": "❌ JF-12 hcaptcha : j1 \"ok\" [], refus formulaire_captcha attendu",
-      "duree_s": 8.7
+      "duree_s": 38.5
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -218,7 +218,7 @@
       "apres": "if (actives.length < 2) continue",
       "critere": "VM-3",
       "extrait": "❌ VM-3 la page C (2 pubs) a un annonceur écrit",
-      "duree_s": 50.2
+      "duree_s": 37.7
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -228,7 +228,7 @@
       "apres": "url: `https://www.facebook.com/ads/archive/render_ad/?id=${encodeURIComponent(annonce.id)}`, lu_le: vu_le,",
       "critere": "VM-5",
       "extrait": "❌ VM-5 url \"https://www.facebook.com/ads/archive/render_ad/?id=400000000000001\" : ne commence pas par https://www.facebook.com/ads/library/?id=",
-      "duree_s": 9.6
+      "duree_s": 159.3
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -238,7 +238,7 @@
       "apres": "url: url.toString(), lu_le: vu_le,",
       "critere": "VM-6",
       "extrait": "❌ VM-6 le jeton apparaît dans l'état final du magasin ; « access_token » apparaît dans l'état final du magasin",
-      "duree_s": 50.7
+      "duree_s": 25.3
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -248,7 +248,7 @@
       "apres": "",
       "critere": "VM-7",
       "extrait": "❌ VM-7 11 appel(s), exactement 5 attendus ; etat \"ok\", budget_epuise attendu",
-      "duree_s": 9.5
+      "duree_s": 33.5
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -258,7 +258,7 @@
       "apres": "if (!jeton?.trim()) throw new Error('jeton absent')",
       "critere": "VM-2",
       "extrait": "❌ VM-2 jeton null : etat , en_attente_jeton attendu ; jeton null : exception jeton absent ; jeton vide : etat , en_attente_jeton attendu ; jeton vide : exception jeton absent",
-      "duree_s": 10.8
+      "duree_s": 24.6
     },
     {
       "juge": "scripts/vigie-meta-qa.mjs",
@@ -268,7 +268,7 @@
       "apres": "cle_dedup: domaine ? `domaine:${domaine}` : `meta:${page.page_id}`,",
       "critere": "VM-11",
       "extrait": "❌ VM-11 page D : aucun candidat de clé page_meta:300000000000004 ; page F : aucun candidat de clé page_meta:300000000000006 ; la chaîne « meta: » apparaît hors de « page_meta: » dans le source",
-      "duree_s": 8.7
+      "duree_s": 22.6
     },
     {
       "juge": "scripts/conformite-qa.mjs",
@@ -278,7 +278,7 @@
       "apres": "    void 0",
       "critere": "CO-5",
       "extrait": "❌ CO-5 f-premiere-phrase : raisons [\"hors_modele\",\"mention_ia_absente\"], premiere_phrase attendu ; f-premiere-phrase-modifiee : raisons [\"hors_modele\",\"mention_ia_absente\"], premiere_phrase attendu",
-      "duree_s": 51.2
+      "duree_s": 104.7
     },
     {
       "juge": "scripts/conformite-qa.mjs",
@@ -288,7 +288,7 @@
       "apres": "    if (/%|\\d/.test(chiffresDouleur) || MOTS_NOMBRES.test(chiffresDouleur)) ajouter('promesse')",
       "critere": "CO-5",
       "extrait": "❌ CO-5 f-promesse-pourcent : raisons [\"hors_modele\"], promesse attendu ; f-promesse-chiffre : raisons [\"hors_modele\"], promesse attendu",
-      "duree_s": 51.2
+      "duree_s": 25.9
     },
     {
       "juge": "scripts/conformite-qa.mjs",
@@ -298,7 +298,7 @@
       "apres": "Comme convenu, voici votre maquette : {lien}. ${PRIX_ET_ACHAT}",
       "critere": "CO-3",
       "extrait": "❌ CO-3 modele lien_maquette_email_v2 : le texte a changé depuis son approbation (empreinte ee4d237bd991…, 42f7340092de… aujourd'hui) ; modele lien_maquette_email_v2 : approuve true, false attendu (approbation.txt)",
-      "duree_s": 12.9
+      "duree_s": 24.1
     },
     {
       "juge": "scripts/conformite-qa.mjs",
@@ -308,7 +308,7 @@
       "apres": "Je peux vous préparer une maquette privée",
       "critere": "CO-2",
       "extrait": "❌ CO-2 formulaire_B_v1 : fragment absent — « Je peux vous préparer gratuitement une maquette privée de l… »",
-      "duree_s": 10
+      "duree_s": 17.3
     },
     {
       "juge": "scripts/redacteur-qa.mjs",
@@ -318,7 +318,27 @@
       "apres": "",
       "critere": "RD-2",
       "extrait": "❌ RD-2 envoi_froid fermé : bilan \"ok\", envoi_froid_ferme attendu ; envoi_froid fermé : écriture(s) hors perimerEnvois et événement de bilan (preparerEnvoi_refuse)",
-      "duree_s": 52
+      "duree_s": 83.7
+    },
+    {
+      "juge": "scripts/redacteur-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/acquisition/redacteur.ts",
+      "avant": "const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) : 0",
+      "apres": "const reste = plafond ? plafond.nouveaux : 0",
+      "critere": "RD-3",
+      "extrait": "❌ RD-3 reste_du_jour annoncé 10, 6 attendus (plafond 10 moins 4 déjà partis) : la Plume ne décompte pas les messages déjà partis ; 1 refus quota_nouveaux de la base ({\"formulaire_deja\":1,\"quota_nouveaux\":1}) : la Plume demande à la base des messages au-delà du plafond du jour, c'est la base qui l'arrête",
+      "duree_s": 20
+    },
+    {
+      "juge": "scripts/redacteur-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/acquisition/redacteur.ts",
+      "avant": "const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) : 0",
+      "apres": "const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) + 3 : 0",
+      "critere": "RD-3",
+      "extrait": "❌ RD-3 reste_du_jour annoncé 9, 6 attendus (plafond 10 moins 4 déjà partis) : la Plume ne décompte pas les messages déjà partis ; 1 refus quota_nouveaux de la base ({\"formulaire_deja\":1,\"quota_nouveaux\":1}) : la Plume demande à la base des messages au-delà du plafond du jour, c'est la base qui l'arrête",
+      "duree_s": 17.4
     },
     {
       "juge": "scripts/redacteur-qa.mjs",
@@ -328,7 +348,7 @@
       "apres": "objet, texte: t + ' ', empreinte_texte: sha256(t),",
       "critere": "RD-4",
       "extrait": "❌ RD-4 envoi-0005 : empreinte_texte ne correspond pas au SHA-256 du texte ; envoi-0005 : jugerMessage rejoué refuse ([\"hors_modele\",\"reference_absente\",\"promesse\"]) ; envoi-0006 : empreinte_texte ne correspond pas au SHA-256 du texte ; envoi-0006 : jugerMessage rejoué refuse ([\"hors_modele\",\"reference_absente\"]) ; envoi-0007 : empreinte_texte ne correspond pas au SHA-256 du texte ; envoi-0007 : jugerMessage rejoué refuse ([\"hors_modele\",\"reference_absente\",\"promesse\"]) ; … (8 défauts)",
-      "duree_s": 10
+      "duree_s": 14.2
     },
     {
       "juge": "scripts/redacteur-qa.mjs",
@@ -338,7 +358,7 @@
       "apres": "const ok = faits.filter((f) => f.verifie === 'ok' || f.verifie === 'non_verifiable')",
       "critere": "RD-5",
       "extrait": "❌ RD-5 événement aucun_fait_verifie absent",
-      "duree_s": 13
+      "duree_s": 9
     },
     {
       "juge": "scripts/redacteur-qa.mjs",
@@ -348,7 +368,7 @@
       "apres": "else if (drapeaux.varianteA === true) modeleId = 'formulaire_A_v1'",
       "critere": "RD-6",
       "extrait": "❌ RD-6 maquette expirée : modèle null, formulaire_B_v1 attendu ; drapeau levé, aucune maquette : modèle null, formulaire_B_v1 attendu",
-      "duree_s": 10.3
+      "duree_s": 8.8
     },
     {
       "juge": "scripts/redacteur-qa.mjs",
@@ -368,7 +388,7 @@
       "apres": "const code = lecteur ? null : classerEnCode(r)",
       "critere": "ST-2",
       "extrait": "❌ ST-2 refus-01 : étape \"envoye\", oppose attendu ; refus-02 : étape \"envoye\", oppose attendu ; refus-03 : étape \"envoye\", oppose attendu ; refus-04 : étape \"envoye\", oppose attendu ; refus-05 : étape \"envoye\", oppose attendu ; refus-06 : étape \"envoye\", oppose attendu ; … (14 défauts)",
-      "duree_s": 58.4
+      "duree_s": 66.6
     },
     {
       "juge": "scripts/standardiste-qa.mjs",
@@ -378,7 +398,7 @@
       "apres": "  const trouve = (v: unknown): v is string => typeof v === 'string' && v.trim() !== ''",
       "critere": "ST-3",
       "extrait": "❌ ST-3 1 candidat(s) créé(s) par l'injection, zéro attendu (site inventé, métier seul)",
-      "duree_s": 61.5
+      "duree_s": 9.8
     },
     {
       "juge": "scripts/standardiste-qa.mjs",
@@ -388,7 +408,7 @@
       "apres": "",
       "critere": "ST-5",
       "extrait": "❌ ST-5 inj-03-paiement-ailleurs : un lien dans le texte donné au lecteur",
-      "duree_s": 10.6
+      "duree_s": 13.5
     },
     {
       "juge": "scripts/standardiste-qa.mjs",
@@ -398,7 +418,7 @@
       "apres": "const horsFil = false",
       "critere": "ST-7",
       "extrait": "❌ ST-7 classe \"a_lire\", hors_fil attendu ; 1 appel(s) au lecteur, zéro attendu",
-      "duree_s": 11.9
+      "duree_s": 16.6
     },
     {
       "juge": "scripts/standardiste-qa.mjs",
@@ -408,7 +428,37 @@
       "apres": "",
       "critere": "ST-21",
       "extrait": "❌ ST-21 « C'est combien ? » reçue il y a 10 min, attendreUsine : une écriture a eu lieu, aucune attendue ; « C'est combien ? » reçue il y a 10 min, attendreUsine : sortie de reponsesATraiter",
-      "duree_s": 13
+      "duree_s": 24.5
+    },
+    {
+      "juge": "scripts/maquette-lien-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/maquette-lien-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/acquisition/maquettesLien.ts",
+      "avant": "|| Date.parse(m.expire_le) <= Date.now()) return introuvable()",
+      "apres": ") return introuvable()\n  if (Date.parse(m.expire_le) <= Date.now()) return { statut: 410, entetes: { ...COMMUN, 'Content-Type': 'text/plain; charset=utf-8' }, corps: 'Lien expiré.' }",
+      "critere": "ML-3",
+      "extrait": "❌ ML-3 expiree_servie_par_le_magasin : statut 410, 404 attendu ; expiree_servie_par_le_magasin : réponse différente du 404 du jeton malformé",
+      "duree_s": 119.9
+    },
+    {
+      "juge": "scripts/maquette-lien-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/maquette-lien-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/acquisition/maquettesLien.ts",
+      "avant": "m.etat === 'purgee' || m.purgee_le || ",
+      "apres": "",
+      "critere": "ML-3",
+      "extrait": "❌ ML-3 purgee_servie_par_le_magasin : statut 200, 404 attendu ; purgee_servie_par_le_magasin : réponse différente du 404 du jeton malformé ; purgee_le_servie_par_le_magasin : statut 200, 404 attendu ; purgee_le_servie_par_le_magasin : réponse différente du 404 du jeton malformé",
+      "duree_s": 17.4
+    },
+    {
+      "juge": "scripts/maquette-lien-qa.mjs",
+      "commande": "node --import ./scripts/ts-loader.mjs scripts/maquette-lien-qa.mjs --racine={racine}",
+      "fichier": "lib/agents/acquisition/maquettesLien.ts",
+      "avant": "|| !m.expire_le ||",
+      "apres": "||",
+      "critere": "ML-3",
+      "extrait": "❌ ML-3 sans_expiration_servie_par_le_magasin : statut 200, 404 attendu ; sans_expiration_servie_par_le_magasin : réponse différente du 404 du jeton malformé",
+      "duree_s": 31.3
     },
     {
       "juge": "scripts/maquette-lien-qa.mjs",
@@ -418,7 +468,7 @@
       "apres": "const m = await deps.magasin.maquetteParJeton(hacherJeton(jeton))\n  if (m?.id) await deps.magasin.marquerMaquettePurgee(m.id)",
       "critere": "ML-6",
       "extrait": "❌ ML-6 1 écriture(s) du magasin factice pendant 20 consultations, zéro attendu",
-      "duree_s": 14.7
+      "duree_s": 17.2
     },
     {
       "juge": "scripts/maquette-lien-qa.mjs",
@@ -428,7 +478,7 @@
       "apres": "",
       "critere": "ML-5",
       "extrait": "❌ ML-5 page : X-Robots-Tag sans noindex ; capture : X-Robots-Tag sans noindex ; video : X-Robots-Tag sans noindex",
-      "duree_s": 55.1
+      "duree_s": 18
     },
     {
       "juge": "scripts/maquette-lien-qa.mjs",
@@ -438,7 +488,7 @@
       "apres": "    await (await import('@/lib/agents/bus')).ops_battement({ p_nom: 'atelier_maquettes' })\n    await enregistrerPassage('acq-maquettes-purge', { erreur: (e instanceof Error ? e.message : String(e)).slice(0, 160) }, false)",
       "critere": "ML-8",
       "extrait": "❌ ML-8 la route de purge appelle une fonction de battement (ops_battement) : interdit (ML-8, 026-082 §3)",
-      "duree_s": 13.3
+      "duree_s": 14.3
     },
     {
       "juge": "scripts/atelier-maquettes-qa.mjs",
@@ -448,7 +498,27 @@
       "apres": "        if (nom === 'video.mp4' && !limite(fichier, 3 * 1024 ** 2)) throw ERREUR(1, 'taille')\n        const octets = fs.readFileSync(fichier)\n        if (nom === 'video.mp4' && octets.toString('ascii', 4, 8) !== 'ftyp') throw ERREUR(1, 'format')",
       "critere": "AM-4",
       "extrait": "❌ AM-4 capture 0 octet : maquettePrete appelée, aucune attendue ; capture uniforme (structure intacte) : maquettePrete appelée, aucune attendue ; capture 1,4 Mo : maquettePrete appelée, aucune attendue ; capture uniforme : maquettePrete appelée, aucune attendue",
-      "duree_s": 2.6
+      "duree_s": 2.5
+    },
+    {
+      "juge": "scripts/atelier-maquettes-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/atelier-maquettes-qa.mjs",
+      "fichier": "scripts/agents/atelier-maquettes.mjs",
+      "avant": "if (absolu.split(path.sep).includes('public')) throw ERREUR(2, 'dossier public interdit')",
+      "apres": "",
+      "critere": "AM-3",
+      "extrait": "❌ AM-3 dossierSortie hors du dépôt mais sous public/ : code 0, 0 appel(s), 2 et zéro attendus (la règle « jamais sous public/ » doit suffire)",
+      "duree_s": 3.8
+    },
+    {
+      "juge": "scripts/atelier-maquettes-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/atelier-maquettes-qa.mjs",
+      "fichier": "scripts/agents/atelier-maquettes.mjs",
+      "avant": "if (absolu.split(path.sep).includes('public')) throw ERREUR(2, 'dossier public interdit')",
+      "apres": "if (path.basename(absolu) === 'public') throw ERREUR(2, 'dossier public interdit')",
+      "critere": "AM-3",
+      "extrait": "❌ AM-3 dossierSortie hors du dépôt mais sous public/ : code 0, 0 appel(s), 2 et zéro attendus (la règle « jamais sous public/ » doit suffire)",
+      "duree_s": 3.5
     },
     {
       "juge": "scripts/atelier-maquettes-qa.mjs",
@@ -458,7 +528,7 @@
       "apres": "if (true) {",
       "critere": "AM-6",
       "extrait": "❌ AM-6 varianteA baissé : 6 maquette(s) d'avance, zéro attendu",
-      "duree_s": 2.3
+      "duree_s": 3.9
     },
     {
       "juge": "scripts/atelier-maquettes-qa.mjs",
@@ -467,8 +537,8 @@
       "avant": "await magasinSupabase.creerLienMaquette(p.id, m.objet ?? m.chemin, hacherJeton(jeton), expireLe)",
       "apres": "await magasinSupabase.creerLienMaquette(p.id, m.objet ?? m.chemin, jeton, expireLe)",
       "critere": "AM-8",
-      "extrait": "❌ AM-8 valeur passée à creerLienMaquette : \"rMNp26cbo7PsmOuanKCZd1YI-bcoKxYP7Qw7hkB4SYs\", un SHA-256 hex de 64 signes attendu ; le jeton en clair a été passé à creerLienMaquette ; la valeur passée à creerLienMaquette n'est pas le SHA-256 du jeton écrit dans le message",
-      "duree_s": 2.2
+      "extrait": "❌ AM-8 valeur passée à creerLienMaquette : \"XObR2em8eIjXWgWHekzUVSNyXERL45XIe5RmcYwAwQs\", un SHA-256 hex de 64 signes attendu ; le jeton en clair a été passé à creerLienMaquette ; la valeur passée à creerLienMaquette n'est pas le SHA-256 du jeton écrit dans le message",
+      "duree_s": 3.7
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -478,7 +548,7 @@
       "apres": "  const p0 = await pauseGenerale()\n  void p0\n  const secret = process.env.CRON_SECRET",
       "critere": "RA-2",
       "extrait": "❌ RA-2 app/api/cron/recenseur/route.ts : un await précède le contrôle du jeton",
-      "duree_s": 22.6
+      "duree_s": 25.5
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -488,7 +558,7 @@
       "apres": "if (pause.active || process.env.PRESTI_PAUSE_AGENTS === '1') return NextResponse.json({ pause: true, source: pause.source })",
       "critere": "RA-2",
       "extrait": "❌ RA-2 app/api/cron/juge-faits/route.ts lit PRESTI_PAUSE_AGENTS",
-      "duree_s": 21
+      "duree_s": 31.3
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -498,7 +568,7 @@
       "apres": "const jeton: string | null = process.env.META_ADLIB_TOKEN ?? (lecture.error ? null : lecture.data?.[0]?.jeton ?? null)",
       "critere": "RA-4",
       "extrait": "❌ RA-4 app/api/cron/vigie-meta/route.ts contient META_ADLIB_TOKEN",
-      "duree_s": 20.6
+      "duree_s": 45.2
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -508,7 +578,7 @@
       "apres": "    console.log('[vigie]', jeton)\n    const budget = { prendre:",
       "critere": "RA-4",
       "extrait": "❌ RA-4 app/api/cron/vigie-meta/route.ts : « console.log('[vigie]', jeton) » reçoit une variable du jeton (jeton) ; la valeur du jeton apparaît dans un argument consigné, la console ou la réponse",
-      "duree_s": 20.4
+      "duree_s": 44.9
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -518,7 +588,7 @@
       "apres": "    await ops_battement({ p_nom: 'juge_faits' })\n    await enregistrerPassage('acq-juge-faits', etat === 'limite' ? { limite: 1 } : { etat: etat ?? 'ok' }, true)",
       "critere": "RA-8",
       "extrait": "❌ RA-8 app/api/cron/juge-faits/route.ts : battement de juge_faits après un enregistrerPassage(…, false)",
-      "duree_s": 20.3
+      "duree_s": 44.8
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -528,7 +598,7 @@
       "apres": "    await ops_battement({ p_nom: 'recenseur' })\n    await enregistrerPassage(passeRge ? 'acq-rge' : 'acq-recenseur', { erreur: (e instanceof Error ? e.message : String(e)).slice(0, 160) }, false)",
       "critere": "RA-8",
       "extrait": "❌ RA-8 app/api/cron/recenseur/route.ts : battement dans un catch",
-      "duree_s": 17.3
+      "duree_s": 25.7
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -538,7 +608,7 @@
       "apres": "await enregistrerPassage('acq-vigie-meta', { etat }, true)",
       "critere": "RA-9",
       "extrait": "❌ RA-9 vigie-meta jeton_invalide : enregistrerPassage(…, false) attendu ; vigie-meta en_attente_identite : enregistrerPassage(…, false) attendu",
-      "duree_s": 21.4
+      "duree_s": 26.4
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -548,7 +618,7 @@
       "apres": "import { ops_battement } from '@/lib/agents/bus'\nimport * as ia from '@/lib/ai'\nvoid ia",
       "critere": "RB-4",
       "extrait": "❌ RB-4 app/api/cron/redacteur/route.ts importe @/lib/ai",
-      "duree_s": 23.4
+      "duree_s": 41.2
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -558,7 +628,7 @@
       "apres": "    await ops_battement({ p_nom: 'standardiste' })\n    await enregistrerPassage('acq-standardiste', { erreur: 'execution', releve }, false)",
       "critere": "RB-8",
       "extrait": "❌ RB-8 app/api/cron/standardiste/route.ts : battement dans un catch",
-      "duree_s": 22.1
+      "duree_s": 34.1
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -568,7 +638,7 @@
       "apres": "",
       "critere": "RB-10",
       "extrait": "❌ RB-10 0 opposer, 1 attendu (le STOP seul) ; 0 signal stop, 1 attendu ; l'opposition ne porte pas l'adresse de l'expéditeur",
-      "duree_s": 18.7
+      "duree_s": 22.2
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -578,7 +648,7 @@
       "apres": "donnees: preparerDonnees(reponse, faq, metiers), texte: reponse.texte })",
       "critere": "RB-15",
       "extrait": "❌ RB-15 r-1 porte id, systeme, donnees, texte (id, systeme, donnees seulement) ; r-2 porte id, systeme, donnees, texte (id, systeme, donnees seulement) ; la réponse porte une adresse ; la réponse porte un lien ; la réponse porte un numéro ; la réponse porte un texte",
-      "duree_s": 22.5
+      "duree_s": 27.1
     },
     {
       "juge": "scripts/routes-acquisition-qa.mjs",
@@ -588,7 +658,7 @@
       "apres": "const classement = JSON.parse(brut) as ReturnType<typeof validerClassement>",
       "critere": "RB-16",
       "extrait": "❌ RB-16 brut valide : 200, validerClassement puis appliquerClasse(classe oui) attendus ; brut non JSON : appliquerClasse ne reçoit pas a_lire ; brut classe inconnue : appliquerClasse ne reçoit pas a_lire ; brut certitude 0,5 : appliquerClasse ne reçoit pas a_lire ; extrait absent du texte : non vidé",
-      "duree_s": 23.5
+      "duree_s": 27.2
     },
     {
       "juge": "scripts/confidentialite-prospection-qa.mjs",
@@ -598,7 +668,7 @@
       "apres": "<h2 id=\"prospect\">{SECTION_PROSPECTION.titre}</h2>",
       "critere": "CP-1",
       "extrait": "❌ CP-1 aucun h2 d'id « prospection » dans le HTML rendu",
-      "duree_s": 20.5
+      "duree_s": 26.7
     },
     {
       "juge": "scripts/confidentialite-prospection-qa.mjs",
@@ -608,7 +678,7 @@
       "apres": "    'Pour refuser, écrivez refus à l’adresse indiquée dans notre message, ou répondez « refus » à l’un de nos courriels. Le refus écrit est appliqué en moins de 10 minutes sur tous les canaux, pour l’entreprise entière. Vous pouvez aussi écrire au responsable, indiqué en tête de cette notice, pour accéder à vos données, les faire rectifier ou effacer, vous opposer à leur traitement ou en demander la limitation. Une demande concernant vos données reçoit une réponse dans un délai d’un mois au plus. Vous pouvez enfin saisir la CNIL (cnil.fr).',",
       "critere": "CP-2",
       "extrait": "❌ CP-2 la section sans « écrivez STOP » ; la notice sans « écrivez STOP »",
-      "duree_s": 20.1
+      "duree_s": 41.7
     },
     {
       "juge": "scripts/confidentialite-prospection-qa.mjs",
@@ -618,7 +688,7 @@
       "apres": "    'Un fournisseur (Codex) classe les réponses reçues, relit le ton des messages et prépare les maquettes, sans usage pour l’entraînement après désactivation de ce réglage par Presti.',\n    'Anthropic (Claude) lit les listes de travail et les réponses pour rédiger et contrôler les messages, analyser les pages publiques des entreprises et préparer les maquettes.',\n    'Firecrawl, service de recherche sur le web, reçoit le nom d’une entreprise et sa commune pour retrouver son site.',\n    'Un fournisseur et Anthropic sont utilisés par abonnement de Presti : aucune donnée de prospect n’est envoyée à un service d’intelligence artificielle gratuit. Le texte d’une réponse n’est envoyé à personne d’autre que ces prestataires nécessaires au traitement.',\n    'Plusieurs de ces prestataires sont des sociétés américaines (Supabase, Vercel, Google, Oracle, Meta, Un fournisseur, Anthropic, Firecrawl, GitHub) : même lorsque les données sont stockées dans l’Union européenne, elles peuvent être consultées depuis les États-Unis, ce qui constitue un transfert hors de l’Union européenne. Vous pouvez demander au responsable les garanties qui l’encadrent.',",
       "critere": "CP-2",
       "extrait": "❌ CP-2 la section sans « OpenAI » ; la notice sans « OpenAI »",
-      "duree_s": 20
+      "duree_s": 30.3
     }
   ]
 }

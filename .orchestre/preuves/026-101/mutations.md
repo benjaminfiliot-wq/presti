@@ -1,11 +1,7 @@
 # 026-101 — contre-vérification des juges de l'acquisition
 
-**ÉCHECS (5)** :
+**ÉCHECS (1)** :
 - témoin confidentialite : code 1 (❌ CP-7 notice-prospection.mjs --verifier : code 1 (notice-prospection/index.html diffère de sa source notice-prospection/mentions-…) ; notice-prospection/index.html absent)
-- NON PRISE : redacteur RD-3 « plafond du jour ignoré : les messages déjà partis ne sont plus décomptés » : code 0, aucune ligne en échec pour RD-3, bilan sans RD-3
-- NON PRISE : maquette-lien ML-3 « 404 différente pour un lien expiré » : code 0, aucune ligne en échec pour ML-3, bilan sans ML-3
-- NON PRISE : atelier AM-3 « sortie sous public/ acceptée » : code 0, aucune ligne en échec pour AM-3, bilan sans AM-3
-- rapport incomplet : 62/65
 
 ## Notes sur les mutations imposées par la fiche
 
@@ -51,7 +47,8 @@
 | scripts/conformite-qa.mjs | lien_maquette_email_v2 : texte changé alors que le modèle reste approuvé (approbation périmée ; il est déjà dans APPROUVES depuis le 29/09) | `lib/agents/acquisition/modeles.ts` | CO-3 | prise | ❌ CO-3 modele lien_maquette_email_v2 : le texte a changé depuis son approbation (empreinte ee4d237bd991…, 42f7340092de… aujourd'hui) ; mode… |
 | scripts/conformite-qa.mjs | un mot retiré du modèle B | `lib/agents/acquisition/modeles.ts` | CO-2 | prise | ❌ CO-2 formulaire_B_v1 : fragment absent — « Je peux vous préparer gratuitement une maquette privée de l… » |
 | scripts/redacteur-qa.mjs | envoi_froid fermé ignoré | `lib/agents/acquisition/redacteur.ts` | RD-2 | prise | ❌ RD-2 envoi_froid fermé : bilan "ok", envoi_froid_ferme attendu ; envoi_froid fermé : écriture(s) hors perimerEnvois et événement de bilan… |
-| scripts/redacteur-qa.mjs | plafond du jour ignoré : les messages déjà partis ne sont plus décomptés | `lib/agents/acquisition/redacteur.ts` | RD-3 | **NON PRISE** | — |
+| scripts/redacteur-qa.mjs | plafond du jour ignoré : les messages déjà partis ne sont plus décomptés | `lib/agents/acquisition/redacteur.ts` | RD-3 | prise | ❌ RD-3 reste_du_jour annoncé 10, 6 attendus (plafond 10 moins 4 déjà partis) : la Plume ne décompte pas les messages déjà partis ; 1 refus … |
+| scripts/redacteur-qa.mjs | plafond du jour : la Plume se croit 3 messages de marge de trop (la base refuse les trois derniers) | `lib/agents/acquisition/redacteur.ts` | RD-3 | prise | ❌ RD-3 reste_du_jour annoncé 9, 6 attendus (plafond 10 moins 4 déjà partis) : la Plume ne décompte pas les messages déjà partis ; 1 refus q… |
 | scripts/redacteur-qa.mjs | texte préparé différent de son empreinte | `lib/agents/acquisition/redacteur.ts` | RD-4 | prise | ❌ RD-4 envoi-0005 : empreinte_texte ne correspond pas au SHA-256 du texte ; envoi-0005 : jugerMessage rejoué refuse (["hors_modele","refere… |
 | scripts/redacteur-qa.mjs | un fait non_verifiable choisi | `lib/agents/acquisition/redacteur.ts` | RD-5 | prise | ❌ RD-5 événement aucun_fait_verifie absent |
 | scripts/redacteur-qa.mjs | variante A sans maquette prête | `lib/agents/acquisition/redacteur.ts` | RD-6 | prise | ❌ RD-6 maquette expirée : modèle null, formulaire_B_v1 attendu ; drapeau levé, aucune maquette : modèle null, formulaire_B_v1 attendu |
@@ -61,14 +58,17 @@
 | scripts/standardiste-qa.mjs | liens non retirés avant le lecteur | `lib/agents/acquisition/standardiste.ts` | ST-5 | prise | ❌ ST-5 inj-03-paiement-ailleurs : un lien dans le texte donné au lecteur |
 | scripts/standardiste-qa.mjs | une réponse sans envoi_id traitée comme rattachée | `lib/agents/acquisition/standardiste.ts` | ST-7 | prise | ❌ ST-7 classe "a_lire", hors_fil attendu ; 1 appel(s) au lecteur, zéro attendu |
 | scripts/standardiste-qa.mjs | attendreUsine : une réponse de 10 min classée « à lire » | `lib/agents/acquisition/standardiste.ts` | ST-21 | prise | ❌ ST-21 « C'est combien ? » reçue il y a 10 min, attendreUsine : une écriture a eu lieu, aucune attendue ; « C'est combien ? » reçue il y a… |
-| scripts/maquette-lien-qa.mjs | 404 différente pour un lien expiré | `lib/agents/acquisition/maquettesLien.ts` | ML-3 | **NON PRISE** | — |
+| scripts/maquette-lien-qa.mjs | 404 différente pour un lien expiré | `lib/agents/acquisition/maquettesLien.ts` | ML-3 | prise | ❌ ML-3 expiree_servie_par_le_magasin : statut 410, 404 attendu ; expiree_servie_par_le_magasin : réponse différente du 404 du jeton malformé |
+| scripts/maquette-lien-qa.mjs | une maquette purgée est servie quand le magasin la rend | `lib/agents/acquisition/maquettesLien.ts` | ML-3 | prise | ❌ ML-3 purgee_servie_par_le_magasin : statut 200, 404 attendu ; purgee_servie_par_le_magasin : réponse différente du 404 du jeton malformé … |
+| scripts/maquette-lien-qa.mjs | une maquette sans date de fin est servie quand le magasin la rend | `lib/agents/acquisition/maquettesLien.ts` | ML-3 | prise | ❌ ML-3 sans_expiration_servie_par_le_magasin : statut 200, 404 attendu ; sans_expiration_servie_par_le_magasin : réponse différente du 404 … |
 | scripts/maquette-lien-qa.mjs | une écriture à chaque consultation (vue enregistrée) | `lib/agents/acquisition/maquettesLien.ts` | ML-6 | prise | ❌ ML-6 1 écriture(s) du magasin factice pendant 20 consultations, zéro attendu |
 | scripts/maquette-lien-qa.mjs | noindex retiré des en-têtes | `lib/agents/acquisition/maquettesLien.ts` | ML-5 | prise | ❌ ML-5 page : X-Robots-Tag sans noindex ; capture : X-Robots-Tag sans noindex ; video : X-Robots-Tag sans noindex |
 | scripts/maquette-lien-qa.mjs | battement de atelier_maquettes dans le catch de la purge | `app/api/cron/maquettes-purge/route.ts` | ML-8 | prise | ❌ ML-8 la route de purge appelle une fonction de battement (ops_battement) : interdit (ML-8, 026-082 §3) |
 | scripts/atelier-maquettes-qa.mjs | les captures ne sont plus contrôlées (0 octet, trop lourde, uniforme acceptées) | `scripts/agents/atelier-maquettes.mjs` | AM-4 | prise | ❌ AM-4 capture 0 octet : maquettePrete appelée, aucune attendue ; capture uniforme (structure intacte) : maquettePrete appelée, aucune atte… |
-| scripts/atelier-maquettes-qa.mjs | sortie sous public/ acceptée | `scripts/agents/atelier-maquettes.mjs` | AM-3 | **NON PRISE** | — |
+| scripts/atelier-maquettes-qa.mjs | sortie sous public/ acceptée | `scripts/agents/atelier-maquettes.mjs` | AM-3 | prise | ❌ AM-3 dossierSortie hors du dépôt mais sous public/ : code 0, 0 appel(s), 2 et zéro attendus (la règle « jamais sous public/ » doit suffir… |
+| scripts/atelier-maquettes-qa.mjs | la règle public/ ne regarde que le dernier segment du chemin | `scripts/agents/atelier-maquettes.mjs` | AM-3 | prise | ❌ AM-3 dossierSortie hors du dépôt mais sous public/ : code 0, 0 appel(s), 2 et zéro attendus (la règle « jamais sous public/ » doit suffir… |
 | scripts/atelier-maquettes-qa.mjs | maquettes d'avance fabriquées drapeau varianteA baissé | `app/api/usine/atelier/travail/route.ts` | AM-6 | prise | ❌ AM-6 varianteA baissé : 6 maquette(s) d'avance, zéro attendu |
-| scripts/atelier-maquettes-qa.mjs | le jeton en clair passé à creerLienMaquette | `app/api/usine/atelier/lien/route.ts` | AM-8 | prise | ❌ AM-8 valeur passée à creerLienMaquette : "rMNp26cbo7PsmOuanKCZd1YI-bcoKxYP7Qw7hkB4SYs", un SHA-256 hex de 64 signes attendu ; le jeton en… |
+| scripts/atelier-maquettes-qa.mjs | le jeton en clair passé à creerLienMaquette | `app/api/usine/atelier/lien/route.ts` | AM-8 | prise | ❌ AM-8 valeur passée à creerLienMaquette : "XObR2em8eIjXWgWHekzUVSNyXERL45XIe5RmcYwAwQs", un SHA-256 hex de 64 signes attendu ; le jeton en… |
 | scripts/routes-acquisition-qa.mjs | jeton contrôlé après un await | `app/api/cron/recenseur/route.ts` | RA-2 | prise | ❌ RA-2 app/api/cron/recenseur/route.ts : un await précède le contrôle du jeton |
 | scripts/routes-acquisition-qa.mjs | PRESTI_PAUSE_AGENTS lu au lieu de pauseGenerale() seul | `app/api/cron/juge-faits/route.ts` | RA-2 | prise | ❌ RA-2 app/api/cron/juge-faits/route.ts lit PRESTI_PAUSE_AGENTS |
 | scripts/routes-acquisition-qa.mjs | jeton Meta lu dans l'environnement au lieu du coffre | `app/api/cron/vigie-meta/route.ts` | RA-4 | prise | ❌ RA-4 app/api/cron/vigie-meta/route.ts contient META_ADLIB_TOKEN |

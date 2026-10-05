@@ -5,10 +5,40 @@
       "commande": "node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}",
       "fichier": "app/api/usine/pubs/travail/route.ts",
       "avant": "if (agent.nom !== AGENT) return repondre({ error: 'agent', code: 'agent' }, 403)",
+      "apres": "if (agent.nom !== AGENT && agent.nom !== 'chef') return repondre({ error: 'agent', code: 'agent' }, 403)",
+      "critere": "UP-2",
+      "extrait": "FAIL UP-2 — travail : le jeton de chef donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (chef) a écrit dans la base ou signé une adresse",
+      "duree_s": 3.3
+    },
+    {
+      "juge": "scripts/usine-pubs-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}",
+      "fichier": "app/api/usine/pubs/travail/route.ts",
+      "avant": "if (agent.nom !== AGENT) return repondre({ error: 'agent', code: 'agent' }, 403)",
       "apres": "if (agent.nom !== AGENT && agent.nom !== 'livreur_usine') return repondre({ error: 'agent', code: 'agent' }, 403)",
       "critere": "UP-2",
       "extrait": "FAIL UP-2 — travail : le jeton de livreur_usine donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (livreur) a écrit dans la base ou signé une adresse",
-      "duree_s": 1.9
+      "duree_s": 3.3
+    },
+    {
+      "juge": "scripts/usine-pubs-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}",
+      "fichier": "app/api/usine/pubs/depot/route.ts",
+      "avant": "if (agent.nom !== AGENT) return erreur(403, 'agent')",
+      "apres": "if (agent.nom !== AGENT && agent.nom !== 'chef') return erreur(403, 'agent')",
+      "critere": "UP-2",
+      "extrait": "FAIL UP-2 — depot : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise)",
+      "duree_s": 2.7
+    },
+    {
+      "juge": "scripts/usine-pubs-qa.mjs",
+      "commande": "node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}",
+      "fichier": "app/api/usine/pubs/rendu/route.ts",
+      "avant": "if (agent.nom !== AGENT) return erreur(403, 'agent')",
+      "apres": "if (agent.nom !== AGENT && agent.nom !== 'chef') return erreur(403, 'agent')",
+      "critere": "UP-2",
+      "extrait": "FAIL UP-2 — rendu : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise)",
+      "duree_s": 3.8
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -18,7 +48,7 @@
       "apres": "return { type: 'pack', id: l.id, pack: { pack_id: l.id, matiere: l.matiere, site, courriel: (await supabaseAdmin.from('packs_pubs').select('email').eq('id', l.id).maybeSingle()).data?.email }, photos }",
       "critere": "UP-3",
       "extrait": "FAIL UP-3 — pack ≠ pack.json de exporter.mjs (reçu {\"courriel\":\"client.sentinelle@exemple.invalid\",\"matiere\":{\"accroche\":\"artisan_de_confiance\",\"communes\":[\"Rennes\"],\"cta… ; attendu {\"matiere\":{\"accroche\":\"artisan_de_confiance\",\"communes\":[\"Rennes\"],\"cta\":\"devis\",\"decennale\":true,\"duree_travaux\":\"3 j…) ; la réponse porte courriel_client : ni courriel ni téléphone attendus",
-      "duree_s": 1.6
+      "duree_s": 2.6
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -28,7 +58,7 @@
       "apres": "for (let i = 0; i < 2; i++) if (parties[i] !== attendu[i]) return { ok: false, raison: 'chemin_invalide' }",
       "critere": "UP-4",
       "extrait": "FAIL UP-4 — échantillon sous une autre marque : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu) ; adresse signée hors des chemins permis : packs-pubs/studio/marque-opposee/echantillon-1.mp4",
-      "duree_s": 1.7
+      "duree_s": 2.6
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -38,7 +68,7 @@
       "apres": "const raison = null",
       "critere": "UP-5",
       "extrait": "FAIL UP-5 — fichiers relus : aucun ; les six du pack attendus ; un fichier absent du stockage : statut 200, corps {\"ok\":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee attendus) ; une empreinte SHA-256 fausse : statut 200, corps {\"ok\":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee attendus) (+4)",
-      "duree_s": 1.5
+      "duree_s": 3.2
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -48,7 +78,7 @@
       "apres": "if (false) {",
       "critere": "UP-5",
       "extrait": "FAIL UP-5 — premier échantillon : statut 200, corps {\"ok\":true}, décision tranchee (ouverte attendue : Benj regarde d'abord) ; décision pour Benj : 0 décision(s) à options envoyer/refaire (une seule, créée par studio, attendue) ; aperçu : aucun lien signé, absent de la décision (10 min au plus, dans la décision, attendu) (+1)",
-      "duree_s": 1.8
+      "duree_s": 2
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -58,7 +88,7 @@
       "apres": "{ ...lancer(process.execPath, ['scripts/pub-locale-qa.mjs', '--partie=complet', `--dossier=${dossier}`], { minutes: 15 }), code: 0 }",
       "critere": "UP-6",
       "extrait": "FAIL UP-6 — juge rouge : 1 demande(s) de dépôt, 6 envoi(s) (aucun attendu) ; juge rouge : rendus [{\"travail\":\"11111111-1111-4111-8111-111111111111\",\"ok\":true,\"fichiers\":[{\"chemin\":\"packs-pubs/11111111-1111-4111-8111-… (ok: false et une raison attendus, jamais ok: true)",
-      "duree_s": 11.5
+      "duree_s": 20.5
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -68,7 +98,7 @@
       "apres": "{ page_produit: texte, accord: j.accord }",
       "critere": "UP-7",
       "extrait": "FAIL UP-7 — lecteur : 1 appel(s) du lanceur, ses données portent le Message-ID de la marque, la réponse d'accord",
-      "duree_s": 9.7
+      "duree_s": 22.6
     },
     {
       "juge": "scripts/usine-pubs-qa.mjs",
@@ -78,7 +108,7 @@
       "apres": "journal(`travail ${j.type} ${id} ${JETON}`)",
       "critere": "UP-8",
       "extrait": "FAIL UP-8 — le jeton d'agent apparaît : pack : la sortie du tourneur ; pack-juge-rouge : la sortie du tourneur ; pack-fabriquer-echec : la sortie du tourneur",
-      "duree_s": 10.1
+      "duree_s": 17.9
     },
     {
       "juge": "scripts/search-console-qa.mjs",
@@ -88,7 +118,7 @@
       "apres": "console.log(jeton.jeton); const entetes = { Authorization:",
       "critere": "SC-7",
       "extrait": "FAIL SC-7 — secret en console/erreur rendue",
-      "duree_s": 6.3
+      "duree_s": 17.1
     },
     {
       "juge": "scripts/search-console-qa.mjs",
@@ -98,7 +128,7 @@
       "apres": "await (deps.mettreAJour ?? await miseAJourParDefaut())(commande.id, { search_console_le: horloge().toISOString() }); etape = 'sitemap'",
       "critere": "SC-3",
       "extrait": "FAIL SC-3 — ordre/date incorrect",
-      "duree_s": 6.1
+      "duree_s": 20
     },
     {
       "juge": "scripts/search-console-qa.mjs",
@@ -108,7 +138,7 @@
       "apres": "nom",
       "critere": "SC-4",
       "extrait": "FAIL SC-4 — écriture bucket supplémentaire/incorrecte",
-      "duree_s": 6.1
+      "duree_s": 25.1
     },
     {
       "juge": "scripts/search-console-qa.mjs",
@@ -118,7 +148,7 @@
       "apres": "const ESSAIS_SEARCH_CONSOLE = 4",
       "critere": "SC-6",
       "extrait": "FAIL SC-6 — quatrième essai après trois échecs",
-      "duree_s": 6.3
+      "duree_s": 15
     }
   ]
 }

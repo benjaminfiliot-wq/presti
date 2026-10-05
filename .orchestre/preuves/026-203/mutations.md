@@ -1,26 +1,24 @@
 # 026-203 — mutations de usine-pubs-qa et search-console-qa
 
-Écrit par `node scripts/juges-026-pubs-usine-mutations.mjs` le 2026-10-04T23:32:10.145Z (124 s). Copies sous .orchestre/travail/026-203/, effacées à la fin ; aucun --reel.
-
-## MUTATIONS NON ATTRAPÉES (lacunes des juges : à rouvrir chez Claude Code, jamais corrigées ici)
-
-- **UP-2** — travail accepte aussi le jeton de chef (scripts/usine-pubs-qa.mjs, imposée par la fiche) : code 0, UP-2 : « PASS UP-2 — travail : busAgents baissé → 404 avant toute identité (aucun appel … » ; bilan PASS ; critères en échec : aucun.
+Écrit par `node scripts/juges-026-pubs-usine-mutations.mjs` le 2026-10-05T08:57:59.057Z (268 s). Copies sous .orchestre/travail/026-203/, effacées à la fin ; aucun --reel.
 
 ## Témoins (copie intacte : code 0 attendu)
 
 | Juge | Partie | Code | Dernière ligne | Durée |
 |---|---|---|---|---|
-| usine-pubs | routes,tourneur,unites | 0 | usine-pubs-qa : PASS | 14 s |
-| usine-pubs | routes | 0 | usine-pubs-qa : PASS | 1.5 s |
-| usine-pubs | tourneur | 0 | usine-pubs-qa : PASS | 10.6 s |
-| search-console | (aucune option) | 0 | search-console-qa : PASS | 29.7 s |
+| usine-pubs | routes,tourneur,unites | 0 | usine-pubs-qa : PASS | 21.7 s |
+| usine-pubs | routes | 0 | usine-pubs-qa : PASS | 2.6 s |
+| usine-pubs | tourneur | 0 | usine-pubs-qa : PASS | 16.5 s |
+| search-console | (aucune option) | 0 | search-console-qa : PASS | 59.9 s |
 
 ## Mutations (un remplacement de texte exact par copie)
 
 | Juge | Critère | Faute | Fichier | Verdict | Extrait réel | Commande |
 |---|---|---|---|---|---|---|
-| usine-pubs-qa | UP-2 | travail accepte aussi le jeton de chef | app/api/usine/pubs/travail/route.ts | **SURVIT** | code 0 : UP-2 : « PASS UP-2 — travail : busAgents baissé → 404 avant toute identité (aucun appel … » ; bilan PASS | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
+| usine-pubs-qa | UP-2 | travail accepte aussi le jeton de chef | app/api/usine/pubs/travail/route.ts | attrapée | FAIL UP-2 — travail : le jeton de chef donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (chef) a écrit dans la base ou signé une adresse | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
 | usine-pubs-qa | UP-2 | travail accepte aussi le jeton de livreur_usine (variante) | app/api/usine/pubs/travail/route.ts | attrapée | FAIL UP-2 — travail : le jeton de livreur_usine donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (livreur) a écrit dans la base ou signé une adresse | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
+| usine-pubs-qa | UP-2 | depot accepte aussi le jeton de chef (variante) | app/api/usine/pubs/depot/route.ts | attrapée | FAIL UP-2 — depot : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise) | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
+| usine-pubs-qa | UP-2 | rendu accepte aussi le jeton de chef (variante) | app/api/usine/pubs/rendu/route.ts | attrapée | FAIL UP-2 — rendu : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise) | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
 | usine-pubs-qa | UP-3 | travail renvoie le courriel du pack | app/api/usine/pubs/travail/route.ts | attrapée | FAIL UP-3 — pack ≠ pack.json de exporter.mjs (reçu {"courriel":"client.sentinelle@exemple.invalid","matiere":{"accroche":"artisan_de_confiance","communes":["Rennes"],"cta… ; attendu {"matiere":{"accroche":"artisan_de_confiance","communes":["Rennes"],"cta":"devis","decennale":true,"duree_travaux":"3 j…) ; la réponse porte courriel_client : ni courriel ni téléphone attendus | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
 | usine-pubs-qa | UP-4 | depot accepte un chemin hors de livraison/ | lib/pubs/usinePubs.ts | attrapée | FAIL UP-4 — échantillon sous une autre marque : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu) ; adresse signée hors des chemins permis : packs-pubs/studio/marque-opposee/echantillon-1.mp4 | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
 | usine-pubs-qa | UP-5 | rendu passe le pack à fabriquee sans relire les fichiers | app/api/usine/pubs/rendu/route.ts | attrapée | FAIL UP-5 — fichiers relus : aucun ; les six du pack attendus ; un fichier absent du stockage : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee attendus) ; une empreinte SHA-256 fausse : statut 200, corps {"ok":true}, état fabriquee, la route a modifié autre chose que le compteur d'échecs ({ ok: false, raison } et payee attendus) (+4) | `node scripts/juges-026-pubs-usine-mutations.mjs --lancer=usine-pubs:routes --racine={racine}` |
