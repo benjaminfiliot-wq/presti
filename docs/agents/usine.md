@@ -69,7 +69,7 @@ que des **clés plafonnées**, dans une liste fermée :
 | `TELEGRAM_BOT_TOKEN` | le jeton du bot Telegram |
 | `TELEGRAM_CHAT_ID` | la conversation Telegram (`aucun` tant qu'elle n'est pas appairée) |
 | `TELEGRAM_CODE_APPAIRAGE` | le code d'appairage à usage unique (`epuise` une fois servi) |
-| `PRESTI_JETON_SAV` | le SAV (agent `sav`) : le nom est dans la liste, le jeton n'est pas posé (pas encore de côté usine) |
+| `PRESTI_JETON_SAV` | le SAV (agent `sav`, fiches 026-245, 026-251) : jeton posé le 05/10/2026 |
 | `PRESTI_JETON_QUALITE` | le Contrôleur qualité des sites (agent `qualite_sites`) |
 | `PRESTI_JETON_VIGILE` | le Vigile (agent `vigile`) |
 | `PRESTI_JETON_STUDIO` | le Studio pubs (agent `studio` : packs locaux et échantillons) |
@@ -174,12 +174,23 @@ et active les minuteurs du groupe ; `arreter <groupe>` les désactive.
 | `presti-standard.service`, `presti-facteur.service`, `presti-facteur-soir.service` | `presti-standard.timer` (5 min), `presti-facteur.timer` (15 min), `presti-facteur-soir.timer` (20 h 05) | agents | `PRESTI_JETON_STANDARDISTE`, `PRESTI_JETON_FACTEUR` | modeles | 026-094, 026-148 |
 | `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; jeton posé et minuteur installé par gardien le 05/10/2026 ; première passe en lecture seule le même jour, section `conseiller` mesurée) |
 | `presti-preneur.service` | `presti-preneur.timer` (toutes les 10 min, une tâche par passage) | agents | `PRESTI_JETON_PRENEUR` | preneur | `docs/agents/preneur-libre.md` (groupe `preneur`) |
-| `presti-qualite`, `presti-sav` | pas encore d'unité | agents | `PRESTI_JETON_QUALITE`, `PRESTI_JETON_SAV` | qualite, sav | 026-247, 026-245 (jeton `PRESTI_JETON_QUALITE` posé le 05/10/2026 ; `PRESTI_JETON_SAV` pas encore) |
+| `presti-sav.service` | `presti-sav.timer` (15 min, période déclarée 15) | agents | `PRESTI_JETON_SAV` | sav | 026-245, 026-251 (jeton posé le 05/10/2026 ; **une passe** : `node scripts/agents/sav-passe.mjs --une-passe` ; voir « Les deux passes du 05/10 » ci-dessous) |
+| `presti-qualite.service` | `presti-qualite.timer` (toutes les heures, période déclarée 1440) | agents | `PRESTI_JETON_QUALITE` | qualite | 026-247, 026-251 (jeton posé le 05/10/2026 ; **une passe** : `controleur-qualite.mjs --une-passe`, Chromium seulement s'il y a un site à auditer) |
 | `presti-telegram.service` | aucun : service permanent (long polling) | agents | `TELEGRAM_BOT_TOKEN`, `PRESTI_JETON_TELEGRAM`, `TELEGRAM_CHAT_ID`, `TELEGRAM_CODE_APPAIRAGE` | aucun : sa propre mise en service | 026-195 |
 
 Le groupe `chef` copie aussi `presti-chef-modele.service` et active `presti-chef-modele.path` (026-148) : le modèle du
 chef tourne sous son propre compte, `chef-modele`, qui ne lit pas le coffre (026-129). Le détail de chaque service
 (son script, ses routes, ses limites) est dans sa fiche.
+
+## Les deux passes du 05/10 (SAV et Contrôleur qualité)
+
+`presti-sav` et `presti-qualite` n'ont aucune boucle : un minuteur lance **une passe** (`--une-passe`) qui lit l'état réel par les routes du bus avec le jeton de son agent, fait son travail, pose son battement et **un seul événement** (`sav_passe` ou `qualite_passe`, des nombres seulement), puis sort. « Rien à traiter » (aucun client payant, aucun site en ligne) est un résultat normal : code 0, une lecture, un événement.
+
+- **Le jeton et `PRESTI_URL` arrivent par l'environnement**, posés par `avec-coffre.mjs` (le jeton) et l'unité (`Environment=PRESTI_URL=https://prestiapp.fr`). Aucune des deux passes ne lit le coffre : il porte d'autres jetons que le sien et sa lecture directe est refusée (leçon de l'atelier, 05/10). Sans jeton ou sans URL : code 3, aucune requête.
+- **Le SAV ne sort jamais vers un client.** Il lit `GET /api/usine/sav/travail` (la route bat pour lui, règle en code les cas sans client rattaché, de remboursement, de litige ou sensibles) puis, pour chaque message qu'un modèle devrait lire, demande à `POST /api/usine/sav/brouillon` de décider : brouillon d'un gabarit **approuvé** ou carte pour Benj. Aucun gabarit n'est approuvé (`APPROUVES_SAV` est vide) et `MOTEUR_DE` n'a pas d'entrée `sav` : tout message d'un client payant finit donc en carte « aucun modèle approuvé » pour Benj, rien d'autre. Aucune route d'envoi n'est appelée.
+- **Le Contrôleur qualité ne touche à aucun site** (lecture seule, aucun formulaire soumis) : `GET /api/usine/qualite/travail`, audit des sites à contrôler, `POST …/rapport` pour chaque audit, battement par `?battement=1`. Chromium ne démarre qu'à la première page à ouvrir. L'agent est déclaré à 1440 min ; le minuteur passe toutes les heures pour auditer un site neuf dans l'heure, le battement tombe donc toujours dans la période (le veilleur dit « muet » au-delà de deux périodes).
+- Sous la pause générale ou la pause de l'agent (le bus répond 423), la passe sort 0 sans événement.
+- Juge : `usine-socle-qa --groupe=socle`, critère **SO-11** (unités, sources des deux passes, passes jouées contre un faux bus).
 
 ## Le dépôt du savoir (026-241)
 
@@ -213,6 +224,7 @@ variables d'environnement utilisateur Windows posées par `poser-jeton-agent …
   (avec `PRESTI_JETON_LIVREUR_USINE`), ou GitHub Actions (026-106) ;
 - **le porteur, le Standard, le Facteur et le pont Telegram** : la commande de reprise est dans leur fiche (026-095,
   026-094, 026-195) ;
+- **le SAV et le Contrôleur qualité** : `node scripts/agents/sav-passe.mjs --une-passe` (avec `PRESTI_JETON_SAV`) et `node --import ./scripts/ts-loader.mjs scripts/agents/controleur-qualite.mjs --une-passe` (avec `PRESTI_JETON_QUALITE`), `PRESTI_URL=https://prestiapp.fr` dans les deux cas ; ni l'un ni l'autre ne lit un coffre ;
 - **la surveillance** n'a pas de reprise : c'est le veilleur qui voit l'usine tomber.
 
 ## Pièges

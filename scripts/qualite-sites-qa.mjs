@@ -69,7 +69,10 @@ function lecturesModule(source) {
   for (const m of s.matchAll(METHODE_POST)) {
     // Le seul POST permis : le rapport envoyé au bus de Presti (…/api/usine/qualite/…), jamais vers un site audité.
     const fenetre = s.slice(Math.max(0, m.index - 220), m.index + 220)
-    if (!/\/api\/usine\/qualite\//.test(fenetre)) { rouges['QSI-1'].push('méthode POST dans le source hors du rapport au bus (/api/usine/qualite/)'); break }
+    // Ajout du 05/10/2026 (point d'entrée de l'usine, 026-251) : l'événement de passe, UN POST vers la route du bus de Presti
+    // (/api/agents/evenements, par appelBus), jamais vers un site audité ; la forme exacte de l'appel est exigée.
+    const evenementDePasse = /appelBus\(\s*\w+\s*,\s*['"`]\/api\/agents\/evenements['"`]\s*,\s*['"`]POST['"`]/.test(fenetre)
+    if (!/\/api\/usine\/qualite\//.test(fenetre) && !evenementDePasse) { rouges['QSI-1'].push('méthode POST dans le source hors du rapport au bus (/api/usine/qualite/) et de l\'événement de passe (/api/agents/evenements)'); break }
   }
   if (CLIENT_ECRITURE.test(s)) rouges['QSI-1'].push('client FTP, SSH, Git ou child_process importé')
   if (INTERACTION_PAGE.test(s)) rouges['QSI-7'].push('interaction de page (clic, saisie, envoi) dans le source : un formulaire ne se soumet jamais, même pour essayer')

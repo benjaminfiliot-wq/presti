@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage du Contrôleur qualité des sites Presti, toutes les heures (période déclarée dans ops.agents : 1440 min, le battement est donc toujours dans la période)
+
+[Timer]
+OnCalendar=*:17:00
+RandomizedDelaySec=120
+Persistent=false
+Unit=presti-qualite.service
+
+[Install]
+WantedBy=timers.target
