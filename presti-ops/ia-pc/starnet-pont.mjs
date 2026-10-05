@@ -62,6 +62,22 @@ async function poser(s, widget) {
   return /"name":"widget\.set"/.test(t) || /widget\.set/.test(t)
 }
 
+// Un passage court par agent Presti « actif » ou « muet » : l'agent StarNet du même nom reçoit son état RÉEL (lu dans la base) et en écrit une ligne ; pendant ce temps sa silhouette passe « WORKING » dans la station.
+// Ce n'est pas le travail de l'agent de l'usine : c'est son reflet, alimenté uniquement par des faits lus ; aucun outil n'est donné au modèle.
+const ID_STARNET = { chef: 'agent' }
+async function refleter(s, a) {
+  const id = ID_STARNET[a.nom] || a.nom
+  const faits = [`etat : ${a.etat}`, a.battement_le ? `dernier battement : ${a.battement_le}` : null, a.prochain_le ? `prochain passage prevu : ${a.prochain_le}` : null, a.dernier_evenement ? `dernier evenement : ${typeof a.dernier_evenement === 'string' ? a.dernier_evenement : JSON.stringify(a.dernier_evenement).slice(0, 160)}` : null].filter(Boolean).join(' ; ')
+  const consigne = `Etat reel de ton double dans l'usine Presti, releve a l'instant dans la base : ${faits}. Ecris UNE seule ligne courte en francais qui dit ou tu en es, en reprenant ces faits tels quels, sans rien inventer ni ajouter. N'appelle aucun outil.`
+  const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, {
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton },
+    body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }),
+    signal: AbortSignal.timeout(90_000),
+  })
+  await r.text()
+  return r.ok
+}
+
 async function tour() {
   const s = await sidecar()
   if (!s) { console.log(`${new Date().toISOString()} StarNet fermé : rien posé`); return }
@@ -70,6 +86,10 @@ async function tour() {
   const widgets = composer(donnees)
   let ok = 0
   for (const w of widgets) { try { if (await poser(s, w)) ok++ } catch (e) { console.log(`  ${w.id} : ${String(e.message).slice(0, 80)}`) } }
+  let refletes = 0
+  const agents = (donnees.equipe.agents || []).filter((a) => a.etat === 'actif' || a.etat === 'muet')
+  for (const a of agents) { try { if (await refleter(s, a)) refletes++ } catch (e) { console.log(`  ${a.nom} : ${String(e.message).slice(0, 80)}`) } }
+  console.log(`${new Date().toISOString()} agents reflétés : ${refletes}/${agents.length}`)
   const liste = await (await fetch(`http://127.0.0.1:${s.port}/api/widgets`, { headers: { 'x-starnet-token': s.jeton } })).json().catch(() => ({}))
   const presents = (liste.widgets || liste || []).filter?.((x) => x && !x.deleted).map((x) => x.id) ?? []
   console.log(`${new Date().toISOString()} widgets : ${ok}/${widgets.length} appels, présents [${presents.join(', ')}]`)
