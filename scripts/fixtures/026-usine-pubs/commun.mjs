@@ -28,7 +28,7 @@ export const FICHIERS = [
 ]
 export const ROUTES = { travail: FICHIERS[0], depot: FICHIERS[1], rendu: FICHIERS[2] }
 export const AGENT = 'studio'
-export const AUTRES_AGENTS = ['livreur_usine', 'atelier_maquettes']
+export const AUTRES_AGENTS = ['livreur_usine', 'atelier_maquettes', 'chef']
 export const BUCKET = 'packs-pubs'
 export const BUCKET_PHOTOS = 'artisan-media'
 export const GO = 1024 ** 3

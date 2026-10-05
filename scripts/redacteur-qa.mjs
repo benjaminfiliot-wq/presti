@@ -205,6 +205,16 @@ const C = {
     for (const v of nouveaux) if (v.destinataire !== v.url_attendue) e.push(`destinataire ${json(v.destinataire)} ≠ l'URL de la page du formulaire ${json(v.url_attendue)}`)
     if (x.doublonEntreprise > 1) e.push(`${x.doublonEntreprise} envois pour l'entreprise en double, 1 attendu`)
     if (x.totalJour !== 10) e.push(`${x.totalJour} premiers contacts du jour au total, 10 attendus (le plafond du palier P1)`)
+    // 05/10/2026 (D-0510-A3, trou de juge vu par 026-101) : une Plume qui ignorait les messages déjà partis était rattrapée par la base (le
+    // magasin refuse le message de trop) : l'état final était le même, la faute invisible. On juge donc AUSSI ce que la Plume a vu et tenté :
+    // le reste du jour qu'elle annonce (10 - 4 = 6) et le nombre de refus de la base (zéro : elle ne demande jamais le message de trop).
+    if (!x.bilan || typeof x.bilan !== 'object') e.push('bilan de la Plume absent : le reste du jour ne peut pas être jugé')
+    else {
+      if (x.bilan.reste_du_jour !== 6) e.push(`reste_du_jour annoncé ${json(x.bilan.reste_du_jour)}, 6 attendus (plafond 10 moins 4 déjà partis) : la Plume ne décompte pas les messages déjà partis`)
+      // le doublon d'entreprise (« formulaire_deja ») est refusé par la base à juste titre ; seul le refus du plafond (« quota_nouveaux ») trahit la faute
+      const refus = Number((x.bilan.refus_base ?? {}).quota_nouveaux) || 0
+      if (refus > 0) e.push(`${refus} refus quota_nouveaux de la base (${json(x.bilan.refus_base)}) : la Plume demande à la base des messages au-delà du plafond du jour, c'est la base qui l'arrête`)
+    }
     return e
   },
   'RD-4': (x) => {
@@ -423,7 +433,7 @@ async function observer(mod, RAC2) {
     const envois = r.envois().map((v) => ({ id: v.id, type: v.type, canal: v.canal, envoyeur: v.envoyeur, destinataire: v.destinataire, url_attendue: url.get(v.prospect_id) ?? null, siren: siren.get(v.prospect_id) ?? null }))
     const parSiren = {}
     for (const v of envois) if (v.siren) parSiren[v.siren] = (parSiren[v.siren] ?? 0) + 1
-    return { envois, doublonEntreprise: Math.max(0, ...Object.values(parSiren)), totalJour: r.tousEnvois().filter((v) => v.type === 'premier_contact' && v.statut === 'prepare').length, exception: r.exception }
+    return { envois, doublonEntreprise: Math.max(0, ...Object.values(parSiren)), totalJour: r.tousEnvois().filter((v) => v.type === 'premier_contact' && v.statut === 'prepare').length, bilan: r.bilan ? { reste_du_jour: r.bilan.reste_du_jour, refus_base: r.bilan.refus_base } : null, exception: r.exception }
   })
 
   let conformite = null, jugerMessageDisponible = false
@@ -718,7 +728,7 @@ function obsBase() {
   const texteJuge = (i) => ({ id: `e${i}`, texte: texteOk, fragment_attendu: 'sur votre site, « Atelier Témoin 1, artisan à Nantes »', citation_ok: true, douleur_approuvee: true, douleur_indice: true, source_ok: true, notice_ok: true, adresse_deux_fois: true, reference_ok: true, lien_ou_domaine: false, prestiapp: false, desinscription: false, longueur_ok: true, empreinte_ok: true, jugerMessageOk: true, jugerMessageRaisons: [] })
   return {
     'RD-2': { froid: { bilan: { etat: 'envoi_froid_ferme' }, envois: [], ecritures: [] }, adresse: { bilan: { etat: 'en_attente_adresse' }, envois: [], ecritures: [] } },
-    'RD-3': { envois: [1, 2, 3, 4, 5, 6].map(envoiOk), doublonEntreprise: 1, totalJour: 10 },
+    'RD-3': { envois: [1, 2, 3, 4, 5, 6].map(envoiOk), doublonEntreprise: 1, totalJour: 10, bilan: { reste_du_jour: 6, refus_base: { formulaire_deja: 1 } } },
     'RD-4': { textes: [1, 2, 3, 4].map(texteJuge), jugerMessageDisponible: true, horsModele: { envois: 0, refus: { hors_modele: 1 } } },
     'RD-5': { nonVerifiable: { envois: [], evenements: ['aucun_fait_verifie'] }, sansDouleur: { envois: [], evenements: ['aucune_douleur'] }, douleurNonApprouvee: { envois: [], evenements: ['aucune_douleur'] }, controle: { envois: [{}] } },
     'RD-6': { avecMaquette: { modele: 'formulaire_A_v1' }, drapeauBaisse: { modele: 'formulaire_B_v1' }, maquetteExpiree: { modele: 'formulaire_B_v1' }, sansMaquette: { modele: 'formulaire_B_v1' }, avecSujet: { objet: 'Proposition commerciale : un site pour Atelier Témoin 2', attendu: 'Proposition commerciale : un site pour Atelier Témoin 2' }, sansSujet: { objet: null, nombre: 1 } },
@@ -739,7 +749,7 @@ function echantillons() {
   const m = (id, f) => muter(b, id, f)
   return {
     'RD-2': [['conforme', b['RD-2'], false], ['un envoi malgré envoi_froid fermé', m('RD-2', (x) => { x.froid.envois = [{}] }), true], ['écriture hors bilan malgré adresse vide', m('RD-2', (x) => { x.adresse.ecritures = ['reserver'] }), true]],
-    'RD-3': [['conforme', b['RD-3'], false], ['7 premiers contacts', m('RD-3', (x) => { x.envois.push({ ...x.envois[0] }) }), true], ['un envoi Instagram', m('RD-3', (x) => { x.envois[0] = { ...x.envois[0], canal: 'instagram' } }), true], ['deux pour le doublon', m('RD-3', (x) => { x.doublonEntreprise = 2 }), true], ['destinataire ≠ URL du formulaire', m('RD-3', (x) => { x.envois[0].destinataire = 'https://autre.invalid/' }), true], ['plafond du jour dépassé', m('RD-3', (x) => { x.totalJour = 11 }), true]],
+    'RD-3': [['conforme', b['RD-3'], false], ['7 premiers contacts', m('RD-3', (x) => { x.envois.push({ ...x.envois[0] }) }), true], ['un envoi Instagram', m('RD-3', (x) => { x.envois[0] = { ...x.envois[0], canal: 'instagram' } }), true], ['deux pour le doublon', m('RD-3', (x) => { x.doublonEntreprise = 2 }), true], ['destinataire ≠ URL du formulaire', m('RD-3', (x) => { x.envois[0].destinataire = 'https://autre.invalid/' }), true], ['plafond du jour dépassé', m('RD-3', (x) => { x.totalJour = 11 }), true], ['reste du jour ignoré (10 annoncés au lieu de 6)', m('RD-3', (x) => { x.bilan.reste_du_jour = 10 }), true], ['la base refuse les messages de trop', m('RD-3', (x) => { x.bilan.refus_base = { quota_nouveaux: 4 } }), true], ['bilan absent', m('RD-3', (x) => { x.bilan = null }), true]],
     'RD-4': [['conforme', b['RD-4'], false], ['sans première phrase', m('RD-4', (x) => { x.textes[0].texte = x.textes[0].texte.replace(PREMIERE_PHRASE, '') }), true], ['prestiapp.fr présent', m('RD-4', (x) => { x.textes[0].prestiapp = true }), true], ['empreinte fausse', m('RD-4', (x) => { x.textes[0].empreinte_ok = false }), true], ['fait cité hors ordre', m('RD-4', (x) => { x.textes[1].citation_ok = false }), true], ['douleur non approuvée', m('RD-4', (x) => { x.textes[0].douleur_approuvee = false }), true], ['douleur d\'un autre indice', m('RD-4', (x) => { x.textes[2].douleur_indice = false }), true], ['phrase de source absente', m('RD-4', (x) => { x.textes[0].source_ok = false }), true], ['J3 rejoué refuse', m('RD-4', (x) => { x.textes[3].jugerMessageOk = false; x.textes[3].jugerMessageRaisons = ['hors_modele'] }), true], ['un lien hors notice', m('RD-4', (x) => { x.textes[0].lien_ou_domaine = true }), true], ['J3 introuvable', m('RD-4', (x) => { x.jugerMessageDisponible = false }), true], ['texte hors modèle préparé malgré J3', m('RD-4', (x) => { x.horsModele.envois = 1 }), true], ['texte hors modèle : aucun refus de J3 au bilan', m('RD-4', (x) => { x.horsModele.refus = {} }), true], ['observation du portail de J3 absente', m('RD-4', (x) => { delete x.horsModele }), true]],
     'RD-5': [['conforme', b['RD-5'], false], ['un envoi malgré fait non_verifiable', m('RD-5', (x) => { x.nonVerifiable.envois = [{}] }), true], ['événement aucune_douleur absent', m('RD-5', (x) => { x.sansDouleur.evenements = [] }), true], ['douleur non approuvée utilisée', m('RD-5', (x) => { x.douleurNonApprouvee.envois = [{}] }), true], ['le témoin ne part pas', m('RD-5', (x) => { x.controle.envois = [] }), true]],
     'RD-6': [['conforme', b['RD-6'], false], ['variante A sans drapeau', m('RD-6', (x) => { x.drapeauBaisse.modele = 'formulaire_A_v1' }), true], ['variante A avec maquette expirée', m('RD-6', (x) => { x.maquetteExpiree.modele = 'formulaire_A_v1' }), true], ['variante A sans maquette', m('RD-6', (x) => { x.sansMaquette.modele = 'formulaire_A_v1' }), true], ['formulaire sans sujet avec objet rempli', m('RD-6', (x) => { x.sansSujet.objet = 'un objet' }), true], ['sujet absent malgré le champ', m('RD-6', (x) => { x.avecSujet.objet = null }), true]],

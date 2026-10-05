@@ -72,7 +72,10 @@ function up2(obs, s) {
     b.v(g.sans_jeton?.status === 401 && g.jeton_inconnu?.status === 401, `${n} : sans jeton et jeton inconnu → 401`, `${n} : sans jeton ${g.sans_jeton?.status}, jeton inconnu ${g.jeton_inconnu?.status} (401 attendu)`)
     b.v(g.autre_agent?.status === 403, `${n} : le jeton d'un autre agent → 403`, `${n} : le jeton d'un autre agent donne ${g.autre_agent?.status} (403 attendu)`)
     b.v(g.livreur?.status === 403 && battements(g.livreur).length === 0, `${n} : le jeton de livreur_usine → 403, aucun battement`, `${n} : le jeton de livreur_usine donne ${g.livreur?.status}${battements(g.livreur).length ? ' et un battement est posé' : ''} (403 attendu : seule l'identité studio est admise)`)
-    for (const k of ['sans_jeton', 'jeton_inconnu', 'autre_agent', 'livreur']) b.v(ecritures(g[k]).length === 0 && stock(g[k]).length === 0, '', `${n} : un refus (${k}) a écrit dans la base ou signé une adresse`)
+    // 05/10/2026 (D-0510-A2, trou de juge vu par 026-203) : le jeton du CHEF (l'agent le plus puissant de l'usine) n'ouvre pas non plus ces routes : seule
+    // l'identité studio y est admise. Avant, aucun cas ne l'envoyait : « travail accepte aussi le jeton de chef » survivait, UP-2 vert.
+    b.v(g.chef?.status === 403 && battements(g.chef).length === 0, `${n} : le jeton de chef → 403, aucun battement`, `${n} : le jeton de chef donne ${g.chef?.status}${battements(g.chef).length ? ' et un battement est posé' : ''} (403 attendu : seule l'identité studio est admise)`)
+    for (const k of ['sans_jeton', 'jeton_inconnu', 'autre_agent', 'livreur', 'chef']) b.v(ecritures(g[k]).length === 0 && stock(g[k]).length === 0, '', `${n} : un refus (${k}) a écrit dans la base ou signé une adresse`)
     // studio : admis
     const st = g.studio
     b.v(st && !REFUS_GARDE.has(st.status) && st.status !== 404 && !CINQ_XX(st.status) && !st.exception || (route !== 'travail' && st?.status === 404 && !st.exception), `${n} : le jeton de studio passe les gardes (statut ${st?.status})`, `${n} : le jeton de studio est refusé ou la route plante (statut ${st?.status} ${st?.exception || ''})`)

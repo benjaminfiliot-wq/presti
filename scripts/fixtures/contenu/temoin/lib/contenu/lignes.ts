@@ -6,6 +6,9 @@
 // `crieur_posts` en `brouillon_publora` n'est jamais publié par ce chemin (le Crieur dépose et programme lui-même).
 import { gardesDeCout, pausePermise, verdictChiffre, porteUneAffirmationChiffree, type DecisionAccord, type DepsControle } from './_noyau'
 
+/** Seuil de vérité de Laya (jev noul) : le contrat de la série, 0,5 (comme lib/contenu/lignes.ts). */
+export const SEUIL_LAYA = 0.5
+
 export type Post = {
   id: string
   ligne: string

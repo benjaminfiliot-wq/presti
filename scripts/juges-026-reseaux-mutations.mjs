@@ -130,6 +130,38 @@ muter('tiktok', 'TT-2', LIGNES,
   'if (!Number.isFinite(e) || e <= maintenantMs) return { ok: false, motif: "l\'échéance de la décision est passée ou illisible" }',
   'if (!Number.isFinite(e)) return { ok: false, motif: "l\'échéance de la décision est illisible" }',
   'une décision dont l’échéance est passée est acceptée (accordValide, voie TikTok)')
+// 05/10/2026 (D-0510-A1, lot « sécurité des juges ») : un second sabotage par critère renforcé de contenu-qa, pour que chaque ajout soit
+// prouvé par deux fautes distinctes (et non par une seule, déjà connue). GE-2 : le coût `null` accepté (`!== 0` devient `> 0`).
+// LN-4 : le seuil monte à 0,51 (p=0,5 refusé à tort). ME-3 : une source blanche passe. ME-2 : la mention n'est exigée que des libellés
+// longs. BO-2 : un score bas SEUL suspend (aucune vue). TT-2 : l'échéance illisible, puis l'accord de 30 jours, acceptés.
+muter('geste', 'GE-2', LIGNES,
+  "if (deps.coutEuros !== 0) return refuser('coût inconnu ou positif : publication refusée')",
+  "if (deps.coutEuros > 0) return refuser('coût inconnu ou positif : publication refusée')",
+  'un coût inconnu (null) ou donné en texte accepté : `!== 0` devient `> 0`')
+muter('lignes', 'LN-4', LIGNES,
+  'export const SEUIL_LAYA = 0.5',
+  'export const SEUIL_LAYA = 0.51',
+  'jev noul à 0,5 refusé à tort (le seuil de Laya passe de 0,5 à 0,51)')
+muter('mesure', 'ME-3', MESURE,
+  "typeof source !== 'string' || !source.trim()",
+  "typeof source !== 'string'",
+  'une source blanche (espaces) suffit à publier un chiffre')
+muter('mesure', 'ME-2', MESURE,
+  'if (estAttributionVente) {',
+  'if (estAttributionVente && libelle.length > 60) {',
+  'la mention « estimation » n’est exigée que des libellés longs')
+muter('boucle', 'BO-2', 'lib/contenu/boucle.ts',
+  "  if (signal === 'inconnu') {",
+  "  if (signal === 'inconnu' && bas) return { statut: 'suspendre', raison: 'score de Laya bas : suspendre' }\n  if (signal === 'inconnu') {",
+  'jev score bas, sans aucune vue, suffit à suspendre une ligne')
+muter('tiktok', 'TT-2', LIGNES,
+  '!Number.isFinite(e) || e <= maintenantMs',
+  'e <= maintenantMs',
+  'une échéance illisible est acceptée (accordValide, voie TikTok)')
+muter('tiktok', 'TT-2', LIGNES,
+  'maintenantMs - l > VALIDITE_ACCORD_MS',
+  'maintenantMs - l > 10 * VALIDITE_ACCORD_MS',
+  'un accord de plus de 7 jours (30 jours) est encore accepté')
 muter('couts', 'CO-1', 'lib/contenu/couts.ts',
   'const montant = estNombre(brut?.montant) ? brut.montant : null',
   'const montant = estNombre(brut?.montant) ? brut.montant : 0',
