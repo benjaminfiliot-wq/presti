@@ -143,6 +143,12 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
   try { cle = fs.readFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { cle = null }
   return relayer({
     argv, texteEntree, delaiMs, cle,
+    // Le travail attendu : chaque fichier de sortie déclaré (le plan), hors le dernier message de Codex, existe et n'est pas vide.
+    verifier: () => {
+      const o = argv.findIndex((a) => a === '-o' || a === '--output-last-message')
+      const dernier = o >= 0 ? argv[o + 1] : null
+      return (Array.isArray(demande?.sorties) ? demande.sorties : []).filter((s) => s.copie !== dernier).every((s) => { try { return fs.statSync(s.copie).size > 0 } catch { return false } })
+    },
     drapeau: drapeauLeve(process.env.IA_LOCALE_PROSPECTS_OUI, Date.now()),
     etat: magasinFichier(dossier), journal: journalFichier(dossier),
     // Entre deux moteurs, les fichiers de sortie du précédent (un plan à moitié écrit) sont retirés : le suivant repart d'une page blanche.
