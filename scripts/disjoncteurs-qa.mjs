@@ -415,7 +415,7 @@ async function jugementNormal(s) {
         if (ecritures !== 2) e.push(`${ecritures} écriture(s) du palier dans acq_palier_evaluer, deux attendues (montée P0/P1/P3 et bilan P2 → P3)`)
         if (!/if\s+v\.palier\s+in\s*\('P0','P1','P3'\)\s+and\s+verts\s*>=\s*5\s+and\s+coalesce\s*\(\s*froid_ouvert\s*,\s*false\s*\)\s+and\s+epreuve_ok\s+then\s+prochain\s*:=[\s\S]*?update\s+ops\.etat_envoi\s+set\s+palier\s*=\s*prochain/i.test(v)) e.push("la montée P0/P1/P3 n'exige pas, avant d'écrire le palier, verts >= 5, l'envoi à froid ouvert ET epreuve_ok")
         if (!/if\s+epreuve_ok\s+then\s+update\s+ops\.etat_envoi\s+set\s+palier\s*=\s*'P3'/i.test(v)) e.push("le passage P2 → P3 du bilan n'exige pas epreuve_ok")
-        if ([...v.matchAll(/'palier_attente_epreuve'/g)].length < 2) e.push("une montée retenue (P0/P1/P3 et bilan P2 → P3) n'écrit pas, dans chacune des deux branches, son événement palier_attente_epreuve")
+        if ([...v.matchAll(/select\s+'systeme'\s*,\s*'palier_attente_epreuve'/gi)].length < 2) e.push("une montée retenue (P0/P1/P3 et bilan P2 → P3) n'écrit pas, dans chacune des deux branches, son événement palier_attente_epreuve")
         if (/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true/i.test(v)) e.push("acq_palier_evaluer ouvre un interrupteur : seule acq_envoi_froid_ouvrir ouvre")
         for (const m of v.matchAll(/(?:values\s*\(|select\s+)\s*'systeme'\s*,\s*'([^']*)'/gi)) if (!/^[a-z_]{2,40}$/.test(m[1])) e.push(`type d'événement « ${m[1]} » refusé par evenements_type_check (^[a-z_]{2,40}$) : l'évaluation échouerait`)
       }
