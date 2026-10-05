@@ -353,10 +353,10 @@ const PANNEAUX: Record<string, (c: Contexte) => Promise<unknown>> = {
     }
   },
   usine: async (c) => {
-    const r = await c.deps.db.from('sites_commandes').select('id, etat, metier, commune, cree_le, apercu_chemin').neq('etat', 'brouillon').order('cree_le', { ascending: false }).limit(20)
+    const r = await c.deps.db.from('sites_commandes').select('id, etat, metier, communes, cree_le, apercu_chemin').neq('etat', 'brouillon').order('cree_le', { ascending: false }).limit(20)
     if (r.error) throw new Error(`sites_commandes : ${r.error.message}`)
     const commandes = []
-    for (const l of lignesDe(r.data)) commandes.push({ id: l.id, etape: l.etat, metier: l.metier ?? null, commune: l.commune ?? null, depuis: l.cree_le, apercu: await apercu(c, 'sites-generes', l.apercu_chemin ?? null) })
+    for (const l of lignesDe(r.data)) commandes.push({ id: l.id, etape: l.etat, metier: l.metier ?? null, commune: Array.isArray(l.communes) && l.communes.length ? l.communes.join(', ') : (l.commune ?? null), depuis: l.cree_le, apercu: await apercu(c, 'sites-generes', l.apercu_chemin ?? null) })
     return { commandes, aValider: commandes.filter((x) => x.etape === 'generee').length }
   },
   atelier: async (c) => {
