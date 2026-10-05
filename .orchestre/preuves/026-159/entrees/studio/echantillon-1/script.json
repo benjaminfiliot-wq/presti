@@ -1,0 +1,25 @@
+{
+  "marque": "Maison Solane",
+  "produit": "Savon nourrissant à base d’avoine",
+  "lignes": [
+    "Le savon Maison Solane, un soin nourrissant à base d’avoine.",
+    "Formulé avec 98 % d’ingrédients d’origine naturelle.",
+    "Fabriqué en France, dans un atelier artisanal.",
+    "Un format de 150 g, facile à emporter."
+  ],
+  "allegations": [
+    {
+      "texte": "Formulé avec 98 % d’ingrédients d’origine naturelle.",
+      "extrait_source": "98 % d’ingrédients d’origine naturelle"
+    },
+    {
+      "texte": "Fabriqué en France, dans un atelier artisanal.",
+      "extrait_source": "Fabriqué en France"
+    },
+    {
+      "texte": "Un format de 150 g, facile à emporter.",
+      "extrait_source": "150 g"
+    }
+  ],
+  "presentateur_virtuel": false
+}

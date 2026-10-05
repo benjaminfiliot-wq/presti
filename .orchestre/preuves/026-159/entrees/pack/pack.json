@@ -1,0 +1,56 @@
+{
+  "pack_id": "temoin",
+  "matiere": {
+    "metier": "Électricité",
+    "ville": "Nantes",
+    "communes": [
+      "Nantes"
+    ],
+    "duree_travaux": "2 jours",
+    "materiaux": "matériel aux normes",
+    "cta": "appel",
+    "telephone": "01 23 45 67 89",
+    "voix": "synthese",
+    "texte_voix": "Electricien a Nantes. Intervention rapide et travail soigne. Appelez-nous maintenant.",
+    "decennale": true,
+    "accroche": "Electricien a Nantes, reactif et a votre ecoute",
+    "photos": [
+      {
+        "fichier": "photos/01.jpg",
+        "role": "detail",
+        "personnes": false,
+        "accord_personnes": false
+      },
+      {
+        "fichier": "photos/02.jpg",
+        "role": "chantier",
+        "personnes": false,
+        "accord_personnes": false
+      },
+      {
+        "fichier": "photos/03.jpg",
+        "role": "detail",
+        "personnes": false,
+        "accord_personnes": false
+      },
+      {
+        "fichier": "photos/04.jpg",
+        "role": "avant",
+        "personnes": false,
+        "accord_personnes": false
+      },
+      {
+        "fichier": "photos/05.jpg",
+        "role": "chantier",
+        "personnes": false,
+        "accord_personnes": false
+      },
+      {
+        "fichier": "photos/06.jpg",
+        "role": "apres",
+        "personnes": false,
+        "accord_personnes": false
+      }
+    ]
+  }
+}
