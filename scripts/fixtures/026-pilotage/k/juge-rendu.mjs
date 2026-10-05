@@ -169,18 +169,25 @@ function chemins(journal) {
 }
 
 /** Attend que le miroir porte `attendu`, que tout le monde soit arrivé et que le journal se taise 700 ms. */
-async function attendreRepos(P, attendu, { delai = 25_000 } = {}) {
+// D-0510-7 (correction du chef, 05/10, 026-181 CL-5 et CL-7) : sur une usine saturée (charge 15 à 27 sur 4 cœurs le 05/10) la marche « reprise » du Recenseur dépassait 25 s
+// d'HORLOGE alors qu'elle avançait, et un étage entier pouvait ne pas être lu à temps (la station relit le fil toutes les 5 s puis le direct, 5 s au moins plus tard : sous
+// charge, deux pages jugées ensemble ne le font pas au même moment). `delai` n'est plus qu'un délai SANS PROGRÈS (60 s) : tant que le journal avance, l'attente continue,
+// jusqu'à un plafond de cinq fois `delai` ; un étage jamais lu ou une marche arrêtée (60 s sans un seul relevé), ou qui ne finit jamais (plafond), échoue comme avant, et ce
+// qui est exigé à l'arrivée (miroir égal au servi, tous « arrive », journal muet 700 ms) n'a pas bougé.
+async function attendreRepos(P, attendu, { delai = 60_000, plafond = delai * 5 } = {}) {
   const noms = Object.keys(attendu).sort()
-  let dernierN = -1, depuis = Date.now(), miroir = []
-  const ok = await jusqua(async () => {
-    const n = await P.page.evaluate(() => window.__j.length)
+  const debut = Date.now()
+  let dernierN = -1, depuis = debut, miroir = [], ok = false
+  while (!ok && Date.now() - depuis < delai && Date.now() - debut < plafond) {
+    const n = await P.page.evaluate(() => window.__j.length).catch(() => dernierN)
     if (n !== dernierN) { dernierN = n; depuis = Date.now() }
-    miroir = await lireMiroir(P.page)
-    if (!memes(miroir.map((l) => l.nom), noms)) return false
-    if (miroir.some((l) => l.salle !== attendu[l.nom].salle || l.motif !== attendu[l.nom].motif || l.etat !== 'arrive')) return false
-    return Date.now() - depuis >= 700
-  }, { delai, pas: 120 })
-  return { ok: !!ok, miroir }
+    miroir = await lireMiroir(P.page).catch(() => miroir)
+    ok = memes(miroir.map((l) => l.nom), noms)
+      && !miroir.some((l) => l.salle !== attendu[l.nom].salle || l.motif !== attendu[l.nom].motif || l.etat !== 'arrive')
+      && Date.now() - depuis >= 700
+    if (!ok) await attendre(120)
+  }
+  return { ok, miroir }
 }
 const differences = (miroir, attendu) => {
   const d = []
@@ -265,7 +272,13 @@ export async function critereVerite(ctx) {
         if (l.motif === 'pause' && l.salle !== 'repos') cl7.push(`étape « ${etape.cle} » : ${l.nom} est en pause mais dessiné en ${l.salle}`)
       }
       const attendus = [...etape.marche].sort()
-      if (!memes(a.marchent, attendus)) cl7.push(`étape « ${etape.cle} » : ${a.marchent.length ? `marchent ${a.marchent.join(', ')}` : 'personne ne marche'}, ${attendus.length ? attendus.join(', ') : 'personne'} attendu(s) (un agent ne bouge que sur un vrai événement)`)
+      // D-0510-9 (correction du chef, 05/10, 026-181 CL-7 contre CE-4) : la suite a été écrite pour le témoin, qui ne marche que sur un changement de SALLE. Le moteur livré
+      // (026-181, spec : « un agent porte attend à la porte de sa salle », « tache » au poste) marche aussi de la porte au poste d'une même salle, et CE-4 EXIGE cette marche
+      // (positions intermédiaires). Un agent dont le seul changement est son motif dans la même salle PEUT donc marcher ; tout autre agent qui marche sans événement,
+      // et tout agent attendu qui ne marche pas, restent refusés (le test ci-dessous n'accepte rien de plus).
+      const motifSeul = n > 0 ? Object.keys(etape.attendu).filter((nom) => { const p = suite.etapes[n - 1].attendu[nom], c = etape.attendu[nom]; return p && c && p.salle === c.salle && p.motif !== c.motif }) : []
+      const conforme = attendus.every((x) => a.marchent.includes(x)) && a.marchent.every((x) => attendus.includes(x) || motifSeul.includes(x))
+      if (!conforme) cl7.push(`étape « ${etape.cle} » : ${a.marchent.length ? `marchent ${a.marchent.join(', ')}` : 'personne ne marche'}, ${attendus.length ? attendus.join(', ') : 'personne'} attendu(s) (un agent ne bouge que sur un vrai événement)`)
       const zz = motifsPause(etape).sort()
       if (!memes(a.zz, zz)) cl7.push(`étape « ${etape.cle} » : « Zz » sur ${a.zz.join(', ') || 'personne'}, ${zz.join(', ') || 'personne'} attendu (seul le motif « pause » endort)`)
       const bulles = meilleureBulle(etape)
@@ -359,10 +372,15 @@ async function critereDecor(ctx, suite) {
       await jusqua(async () => (await lireEcrans(P.page)).length > 0 || null, { delai: 8000 })
       await attendre(1500)
       const ecrans = await lireEcrans(P.page)
+      // D-0510-8 (correction du chef, 05/10, 026-181 CL-8) : depuis 026-183/184 la carte porte, PAR CONCEPTION, des données dans des couches HTML posées sur le canevas
+      // (tapis et ses lignes, égaliseur, écran de l'Expérience, badges LV : le cliché de l'élément canevas les contient). CL-8 jugeait ce cliché entier et ne pouvait
+      // plus passer. Le décor se juge désormais sur les pixels du CANEVAS seul (les couches HTML sont masquées pour le cliché, jamais retirées du DOM) ; les
+      // couches elles-mêmes sont jugées juste au-dessus (chaque écran [data-ecran] dit « — » ; l'Expérience seule peut dire autre chose, et seulement ce qui est servi).
+      await P.page.addStyleTag({ content: '[data-station-carte] *:not(canvas):not(:has(canvas)) { visibility: hidden !important }' })
       const em = await empreinteRepos(P.page)
       // La texture du décor elle-même, quand le moteur la range sous la clé `decor` (NOTES-TEMOIN.md §3.10) : octet pour octet.
       const texture = await P.page.evaluate(() => { try { const t = globalThis.__stationGame.textures; return t.exists('decor') ? t.get('decor').getSourceImage().toDataURL() : null } catch { return null } })
-      return { nom, ecrans, hash: em.hash ?? null, instable: !!em.instable, decor: texture ? sha(texture) : null }
+      return { nom, ecrans, hash: em.hash ?? null, instable: !!em.instable, decor: texture ? sha(texture) : null, exp: ecransExperience(j.direct) }
     } finally { await P.fermer() }
   }))
   for (const p of pages) if (p.erreur) e.push(`jeu « ${p.nom} » : ${p.erreur}`)
@@ -370,7 +388,11 @@ async function critereDecor(ctx, suite) {
     const emplacements = ctx.theme.emplacements.filter((x) => !x.reservee).length
     for (const p of pages) {
       if (p.ecrans.length < emplacements) e.push(`jeu « ${p.nom} » : ${p.ecrans.length} écran(s) [data-ecran], ${emplacements} attendu(s) (un par salle non réservée)`)
-      const bavards = p.ecrans.filter((x) => x.texte !== '—')
+      // D-0510-6 (correction du chef, 05/10, 026-183) : l'écran de l'Expérience porte SON texte (CE-13 et CE-14 : « J6/30 · 0 € » ou « FERMÉE · R13 »), servi par
+      // direct.carte.experience ; CL-8 exigeait « — » dans CHAQUE [data-ecran] sans exception. Cet écran-là seul a droit à l'un de trois textes : « — », « FERMÉE · R13 »
+      // ou la `barre` servie d'une expérience en cours ; tout autre texte, comme tout texte d'une AUTRE salle autre que « — », reste refusé.
+      const permis = (x) => x.texte === '—' || (x.salle === 'experience' && p.exp.includes(x.texte))
+      const bavards = p.ecrans.filter((x) => !permis(x))
       if (bavards.length) e.push(`jeu « ${p.nom} » : l'écran de ${bavards[0].salle} dit « ${court(bavards[0].texte, 30)} » au lieu de « — » (${bavards.length} écran(s) parlent)`)
       if (p.instable) e.push(`jeu « ${p.nom} » : le canevas ne se fige pas`)
     }
@@ -382,7 +404,15 @@ async function critereDecor(ctx, suite) {
     if (pages.every((p) => p.decor) && textures.size > 1) e.push(`la texture du décor (clé « decor ») n'est pas la même octet pour octet d'un jeu de données à l'autre (${textures.size} textures pour ${pages.length} jeux) : une donnée y est peinte`)
     if (h.vide && h.vide === h.chargeA) e.push('avec ou sans agents la carte donne la même image : elle ne dessine rien')
   }
-  return { echecs: e, detail: 'quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — », et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle existe) est la même octet pour octet dans les quatre jeux' }
+  return { echecs: e, detail: 'quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle existe) est la même octet pour octet dans les quatre jeux' }
+}
+/** Les seuls textes que l'écran [data-ecran="experience"] peut porter pour ce `direct` : « — », « FERMÉE · R13 », et la `barre` servie d'une expérience en cours. */
+function ecransExperience(direct) {
+  const c = direct?.valeur?.carte
+  const xp = (c?.valeur?.experience ?? c?.experience)?.valeur
+  const permis = ['—', 'FERMÉE · R13']
+  if (xp && xp.statut === 'en_cours' && typeof xp.barre === 'string' && xp.barre.trim()) permis.push(xp.barre.trim())
+  return permis
 }
 /** La structure de `direct` avec chaque nombre à 0 et chaque texte de donnée vide. */
 function zero(x, cle = '') {
