@@ -72,6 +72,8 @@ que des **clés plafonnées**, dans une liste fermée :
 | `PRESTI_JETON_SAV` | le SAV (agent `sav`) : le nom est dans la liste, le jeton n'est pas posé (pas encore de côté usine) |
 | `PRESTI_JETON_QUALITE` | le Contrôleur qualité des sites (agent `qualite_sites`) |
 | `PRESTI_JETON_VIGILE` | le Vigile (agent `vigile`) |
+| `PRESTI_JETON_STUDIO` | le Studio pubs (agent `studio` : packs locaux et échantillons) |
+| `FIRECRAWL_API_KEY` | la lecture web du Savoir (`scripts/savoir/chercher.mjs --web`) : clé **plafonnée par crédits**, forme `fc-` + 32 signes ; voir « Firecrawl » ci-dessous |
 
 Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et surtout :
 
@@ -83,6 +85,15 @@ Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et sur
 Les formes connues de ces clés (un JWT, `sb_secret_`, `sk_live_`, `sk_test_`, `rk_live_`, `whsec_`, et toute valeur
 qui commence par `sk-ant-`) sont refusées **quel que soit le nom** sous lequel on essaie de les poser. `PRESTI_URL`
 n'est pas un secret : il se pose dans l'unité (`Environment=`), jamais au coffre.
+
+**Firecrawl (D-0510-I1, 05/10/2026).** `FIRECRAWL_API_KEY` n'est pas une clé de modèle : c'est une clé de lecture de pages
+publiques, plafonnée par les crédits du compte (1 000 par période, 282 restants le 05/10). Elle n'entre qu'avec sa forme
+propre (`fc-` puis 32 signes) : sous ce nom, une clé d'un autre fournisseur est refusée. Aucune unité systemd ne la reçoit
+encore : tant que l'interrupteur `recherche_web` de `docs/savoir/reglages.json` est éteint et que la garde de dépense
+(`lib/agents/depense.mjs`, plafond de 0 € par agent, `firecrawl` hors de la liste `GRATUITS`) refuse l'appel, un service
+qui la recevrait ne pourrait pas s'en servir. Le jour où le chef allume la recherche web, seul le service qui lance
+`chercher.mjs --web` la reçoit, par `avec-coffre.mjs FIRECRAWL_API_KEY …`, avec `reserve_credits` de `reglages.json` au plus
+égal au solde restant. Détail : `docs/agents/firecrawl.md`.
 
 **Poser une clé** — dans son propre terminal, jamais dans une conversation :
 
