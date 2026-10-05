@@ -328,7 +328,10 @@ export async function immobile(P, { duree = 3000, pas = 250 } = {}) {
   const frames = new Set(), hashes = new Set(), t0 = Date.now()
   let animations = 0, releves = 0, prochaine = 0
   const empreinte = async () => { hashes.add(await hashToile(P.page)); prochaine = Date.now() + 1000 }
-  while (Date.now() - t0 < duree) {
+  // D-0510-3 (correction du chef, 05/10, 026-172 JA-2 et JA-7) : sur une machine saturée, UNE empreinte (capture) dure plus que la durée entière et la boucle ne
+  // relevait l'image que deux fois (« mesure insuffisante : 2 relevés »), ce qui n'est pas un défaut de la carte. La mesure se POURSUIT jusqu'à 4 relevés, au plus
+  // six fois la durée (18 s) : les seuils (4 relevés, une empreinte, la durée entière) et la règle « insuffisant = non constant » sont INCHANGÉS.
+  while (Date.now() - t0 < duree || (releves < 4 && Date.now() - t0 < duree * 6)) {
     frames.add(await imageFrame(P.page)); releves++
     animations = Math.max(animations, await nbAnimations(P.page))
     if (Date.now() >= prochaine) await empreinte()
