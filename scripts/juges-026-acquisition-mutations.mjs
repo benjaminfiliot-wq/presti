@@ -136,6 +136,8 @@ m('conformite', 'CO-2', MO, 'Je peux vous préparer gratuitement une maquette pr
 const RD = ACQ + 'redacteur.ts'
 m('redacteur', 'RD-2', RD, "if (etat.envoi_froid !== true) return terminer('envoi_froid_ferme')", '', 'envoi_froid fermé ignoré')
 m('redacteur', 'RD-3', RD, 'const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) : 0', 'const reste = plafond ? plafond.nouveaux : 0', 'plafond du jour ignoré : les messages déjà partis ne sont plus décomptés')
+// 05/10/2026 (D-0510-A3, lot « sécurité des juges ») : un second sabotage par critère renforcé de la fiche 026-101 (RD-3, ML-3, AM-3).
+m('redacteur', 'RD-3', RD, 'const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) : 0', 'const reste = plafond ? Math.max(0, plafond.nouveaux - faits.nouveaux) + 3 : 0', 'plafond du jour : la Plume se croit 3 messages de marge de trop (la base refuse les trois derniers)')
 m('redacteur', 'RD-4', RD, 'objet, texte: t, empreinte_texte: sha256(t),', "objet, texte: t + ' ', empreinte_texte: sha256(t),", 'texte préparé différent de son empreinte')
 m('redacteur', 'RD-5', RD, "const ok = faits.filter((f) => f.verifie === 'ok')", "const ok = faits.filter((f) => f.verifie === 'ok' || f.verifie === 'non_verifiable')", 'un fait non_verifiable choisi')
 m('redacteur', 'RD-6', RD, "else if (drapeaux.varianteA === true && etatMaquette(await magasin.maquetteDe(p.id), maintenant) === 'prete') modeleId = 'formulaire_A_v1'", "else if (drapeaux.varianteA === true) modeleId = 'formulaire_A_v1'", 'variante A sans maquette prête')
@@ -152,6 +154,8 @@ m('standardiste', 'ST-21', SD, 'if (Number.isFinite(age) && age < ATTENTE_USINE_
 // maquette-lien-qa (ML)
 const MQ = ACQ + 'maquettesLien.ts', PURGE = 'app/api/cron/maquettes-purge/route.ts'
 m('maquette-lien', 'ML-3', MQ, '|| Date.parse(m.expire_le) <= Date.now()) return introuvable()', ") return introuvable()\n  if (Date.parse(m.expire_le) <= Date.now()) return { statut: 410, entetes: { ...COMMUN, 'Content-Type': 'text/plain; charset=utf-8' }, corps: 'Lien expiré.' }", '404 différente pour un lien expiré')
+m('maquette-lien', 'ML-3', MQ, "m.etat === 'purgee' || m.purgee_le || ", '', 'une maquette purgée est servie quand le magasin la rend')
+m('maquette-lien', 'ML-3', MQ, '|| !m.expire_le ||', '||', 'une maquette sans date de fin est servie quand le magasin la rend')
 m('maquette-lien', 'ML-6', MQ, 'const m = await deps.magasin.maquetteParJeton(hacherJeton(jeton))', 'const m = await deps.magasin.maquetteParJeton(hacherJeton(jeton))\n  if (m?.id) await deps.magasin.marquerMaquettePurgee(m.id)', 'une écriture à chaque consultation (vue enregistrée)')
 m('maquette-lien', 'ML-5', MQ, "'X-Robots-Tag': 'noindex, nofollow, noarchive',", '', 'noindex retiré des en-têtes')
 m('maquette-lien', 'ML-8', PURGE, ligne(PURGE, "await enregistrerPassage('acq-maquettes-purge', { erreur"), (l) => `    await (await import('@/lib/agents/bus')).ops_battement({ p_nom: 'atelier_maquettes' })\n${l}`, 'battement de atelier_maquettes dans le catch de la purge')
@@ -161,6 +165,7 @@ const AT = 'scripts/agents/atelier-maquettes.mjs', ATR = 'app/api/usine/atelier/
 const lignesAT = [ligne(AT, 'if (!limite(fichier,'), ligne(AT, 'const octets = fs.readFileSync(fichier)'), ligne(AT, "if (nom === 'video.mp4' ? octets.toString('ascii'")]
 m('atelier', 'AM-4', AT, lignesAT.join('\n'), "        if (nom === 'video.mp4' && !limite(fichier, 3 * 1024 ** 2)) throw ERREUR(1, 'taille')\n        const octets = fs.readFileSync(fichier)\n        if (nom === 'video.mp4' && octets.toString('ascii', 4, 8) !== 'ftyp') throw ERREUR(1, 'format')", 'les captures ne sont plus contrôlées (0 octet, trop lourde, uniforme acceptées)')
 m('atelier', 'AM-3', AT, "if (absolu.split(path.sep).includes('public')) throw ERREUR(2, 'dossier public interdit')", '', 'sortie sous public/ acceptée')
+m('atelier', 'AM-3', AT, "if (absolu.split(path.sep).includes('public')) throw ERREUR(2, 'dossier public interdit')", "if (path.basename(absolu) === 'public') throw ERREUR(2, 'dossier public interdit')", 'la règle public/ ne regarde que le dernier segment du chemin')
 m('atelier', 'AM-6', ATR + 'travail/route.ts', "if (actif('varianteA' as Parameters<typeof actif>[0])) {", 'if (true) {', 'maquettes d\'avance fabriquées drapeau varianteA baissé')
 m('atelier', 'AM-8', ATR + 'lien/route.ts', 'await magasinSupabase.creerLienMaquette(p.id, m.objet ?? m.chemin, hacherJeton(jeton), expireLe)', 'await magasinSupabase.creerLienMaquette(p.id, m.objet ?? m.chemin, jeton, expireLe)', 'le jeton en clair passé à creerLienMaquette')
 

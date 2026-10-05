@@ -84,6 +84,9 @@ const mr = (juge, critere, fichier, re, remplace, nom) => { const [a, b] = regle
 const LLM = 'lib/agents/llm.ts', MOT = 'lib/agents/moteurs.ts'
 m('agents-llm', 'LL-4', MOT, "  standardiste: { moteur: 'codex', modele: MODELE_AGENTS, personnelles: true },", "  standardiste: { moteur: 'freellmapi', modele: MODELE_AGENTS, personnelles: true },", 'standardiste passé en freellmapi')
 m('agents-llm', 'LL-2', LLM, "return u.hostname === '127.0.0.1' || u.hostname === 'localhost' ? valeur : null", 'return u.hostname ? valeur : null', 'FREELLMAPI_URL d\'un hôte public acceptée')
+// 05/10/2026 (D-0510-A4, lot « sécurité des juges ») : deux sabotages de plus pour LL-2, que son cas d'hôte public ne voyait pas (veille_pubs est null de toute façon).
+m('agents-llm', 'LL-2', LLM, "return u.hostname === '127.0.0.1' || u.hostname === 'localhost' ? valeur : null", "return u.hostname.startsWith('127.0.0.1') || u.hostname === 'localhost' ? valeur : null", 'FREELLMAPI_URL : un hôte qui COMMENCE par 127.0.0.1 (127.0.0.1.autre.domaine) accepté')
+m('agents-llm', 'LL-2', LLM, "return u.hostname === '127.0.0.1' || u.hostname === 'localhost' ? valeur : null", "return u.hostname.startsWith('192.') || u.hostname === '127.0.0.1' || u.hostname === 'localhost' ? valeur : null", 'FREELLMAPI_URL : une adresse privée du réseau local (192.x) acceptée')
 m('agents-llm', 'LL-5', LLM, "'--sandbox', 'read-only'", "'--sandbox', 'danger-full-access'", 'danger-full-access dans l\'argv de Codex')
 m('agents-llm', 'LL-8', LLM, 'try { retourCout = await enregistrerCoutFn(agent, cout, resultat.detail) }', 'try { retourCout = await enregistrerCoutFn(agent, 0.01, resultat.detail) }', 'enregistrerCout reçoit 0,01 €')
 m('agents-llm', 'LL-3', LLM, ligne(LLM, "import fs from 'node:fs'"), (l) => `${l}\nimport Anthropic from '@anthropic-ai/sdk'\nvoid Anthropic`,'import Anthropic de @anthropic-ai/sdk ajouté')
@@ -107,6 +110,9 @@ m('ops-planification', 'PG-1', M3, "select cron.schedule('acq-repondeur'", "sele
 // constructeur-ferme-qa, parcours-commande-qa, webhook-muet-qa
 m('constructeur', 'CF-1', 'lib/flags.ts', '  constructeurSite: false,', '  constructeurSite: true,', 'constructeurSite: true dans lib/flags.ts')
 m('parcours', 'PC-1', 'lib/siteCommande.ts', ' || a.installation! < 1960 || a.installation! > new Date().getFullYear()', '', 'la borne de l\'année d\'installation retirée')
+// 05/10/2026 (D-0510-A4) : WM-1 joue désormais la branche pack_pub ; deux sabotages de plus (pack_id non exigé ; pack servi avant le paiement).
+m('webhook', 'WM-1', 'lib/stripeAiguillage.ts', "if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {", "if (s.mode === 'payment' && s.metadata?.type === 'pack_pub') {", 'pack_pub sans pack_id : un paiement forgé à la main passe pour un vrai pack')
+m('webhook', 'WM-1', 'lib/stripeAiguillage.ts', "return s.payment_status === 'paid' ? 'pack_pub' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'", "return 'pack_pub'", 'pack_pub servi même quand le prélèvement est encore en cours (unpaid)')
 m('webhook', 'WM-1', 'lib/stripeAiguillage.ts', "if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {", 'if (false) {', 'la branche pack_pub rendue orpheline (son cas retiré de l\'aiguillage, la fonction gardée)')
 
 // pont-orchestre-qa (PO) — scripts/pont-orchestre.mjs et l'unité systemd

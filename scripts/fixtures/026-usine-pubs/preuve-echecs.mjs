@@ -26,6 +26,8 @@ const L = 'if (agent.nom !== AGENT) return'
 export const SABOTAGES = {
   routes: [
     { nom: 'le jeton de livreur_usine accepté', id: 'UP-2', fichier: R.travail, remplacements: [[L, "if (agent.nom !== AGENT && agent.nom !== 'livreur_usine') return"]] },
+    { nom: 'le jeton de chef accepté (travail)', id: 'UP-2', fichier: R.travail, remplacements: [[L, "if (agent.nom !== AGENT && agent.nom !== 'chef') return"]] },
+    { nom: 'le jeton de chef accepté (rendu)', id: 'UP-2', fichier: R.rendu, remplacements: [["if (agent.nom !== AGENT) return erreur(403, 'agent')", "if (agent.nom !== AGENT && agent.nom !== 'chef') return erreur(403, 'agent')"]] },
     { nom: 'le drapeau lu après la garde', id: 'UP-2', fichier: R.depot, remplacements: [["if (actif('busAgents') === false) return erreur(404, 'introuvable')\n  const agent = await authAgent(req)", "const agent = await authAgent(req)\n  if (actif('busAgents') === false) return erreur(404, 'introuvable')"]] },
     { nom: 'aucun battement de studio', id: 'UP-2', fichier: R.rendu, remplacements: [["  try { await ops_battement({ p_nom: agent.nom }) } catch { /* un battement manqué ne change pas le travail */ }\n", '']] },
     { nom: 'la pause générale ignorée', id: 'UP-2', fichier: R.travail, remplacements: [['  if ((await pauseGenerale()).active) return rien()\n', '']] },

@@ -82,6 +82,15 @@ export function poserJonctions(racineEff) {
     if (existe(cible) || !existe(source)) continue
     try { garantirDossier(path.dirname(cible)); fs.symlinkSync(source, cible, WIN ? 'junction' : 'dir'); jonctionsPosees.push(cible) } catch { /* droits insuffisants : tant pis, les critères qui en dépendent le diront */ }
   }
+  // 05/10/2026 (D-0510-A1, trou de juge vu par 026-219) : ts-loader.mjs résout `@/x` contre le premier dossier parent qui porte
+  // package.json, tsconfig.json, lib/ ET app/. Une copie mutée sans `app/` n'en est donc pas une pour lui : il remonte jusqu'au dépôt
+  // réel et `@/lib/contenu/lignes` (importé par accord.ts, metaPublier.ts…) rendait le code NON muté — la mutation « STOP ignoré » de
+  // lignes.ts restait invisible pour GE-2. Toute racine explicite porte maintenant ces quatre repères : l'alias reste dans la racine jugée.
+  for (const [rel, dossier] of [['package.json', false], ['tsconfig.json', false], ['app', true]]) {
+    const repere = path.join(racineEff, rel)
+    if (existe(repere)) continue
+    try { if (dossier) garantirDossier(repere); else { garantirDossier(path.dirname(repere)); fs.writeFileSync(repere, '{}\n') } jonctionsPosees.push(repere) } catch { /* tant pis */ }
+  }
   const admin = path.join(racineEff, 'lib', 'supabaseAdmin.ts')
   const adminSource = path.join(DEPOT, 'lib', 'supabaseAdmin.ts')
   if (!existe(admin) && existe(adminSource)) { try { garantirDossier(path.dirname(admin)); fs.copyFileSync(adminSource, admin); jonctionsPosees.push(admin) } catch { /* tant pis */ } }

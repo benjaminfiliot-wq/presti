@@ -2,13 +2,33 @@
   "mutations": [
     {
       "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=geste --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "if (deps.opposition === true) return refuser('STOP ou opposition : aucune publication')",
+      "apres": "if (false) return refuser('STOP ou opposition : aucune publication')",
+      "critere": "GE-2",
+      "extrait": "FAIL GE-2 — budget et opposition bloquent automatiquement — accord : opposition connue accepté (la publication part) | lignes : opposition connue accepté (la publication part)",
+      "duree_s": 8.8
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=geste --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "if (deps.coutEuros !== 0) return refuser('coût inconnu ou positif : publication refusée')",
+      "apres": "if (false) return refuser('coût inconnu ou positif : publication refusée')",
+      "critere": "GE-2",
+      "extrait": "FAIL GE-2 — budget et opposition bloquent automatiquement — accord : coût inconnu accepté (la publication part) | accord : coût positif accepté (la publication part) | accord : coût donné en texte accepté (la publication part) | lignes : coût inconnu accepté (la publication part) | lignes : coût positif accepté (la publication part) | lignes : coût donné en texte accepté (la publication part)",
+      "duree_s": 12
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
       "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=lignes --racine={racine}",
       "fichier": "lib/contenu/lignes.ts",
       "avant": "if (!(await sortiePermise()).permise) return refuser('pause générale : aucun appel au modèle', preuves)",
       "apres": "if (false) return refuser('pause générale : aucun appel au modèle', preuves)",
       "critere": "LN-7",
       "extrait": "FAIL LN-7 — pause fail-closed avant modèles et sorties — verdictPublication : pause entre textes ne coupe pas le deuxième appel",
-      "duree_s": 24.9
+      "duree_s": 9.1
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -18,7 +38,7 @@
       "apres": "if (false) return refus('pause générale : aucune publication Graph', { etape: 'publication' })",
       "critere": "MP-6",
       "extrait": "FAIL MP-6 — pause fail-closed avant modèles et sorties — Graph : pause avant/après conteneur laisse publier",
-      "duree_s": 18.5
+      "duree_s": 11.9
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -28,7 +48,7 @@
       "apres": "if (false) return { ok: false, motif: 'pause générale : aucun appel au modèle' }",
       "critere": "ME-4",
       "extrait": "FAIL ME-4 — pause fail-closed avant modèles et sorties — verdictFormulePublique : active ne coupe pas le modèle | verdictFormulePublique : doute ne coupe pas le modèle | verdictFormulePublique : throw ne coupe pas le modèle",
-      "duree_s": 9.2
+      "duree_s": 10.5
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -38,7 +58,47 @@
       "apres": "fait > ligne.quotaJour",
       "critere": "LN-3",
       "extrait": "FAIL LN-3 — plafond du jour refusé — plafond du jour dépassé accepté",
-      "duree_s": 10.2
+      "duree_s": 9.9
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=lignes --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "export const SEUIL_LAYA = 0.5",
+      "apres": "export const SEUIL_LAYA = 0.49",
+      "critere": "LN-4",
+      "extrait": "FAIL LN-4 — affirmation chiffrée contrôlée — SEUIL_LAYA vaut 0.49 (attendu 0,5 : le contrat de la série)",
+      "duree_s": 8.5
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=mesure --racine={racine}",
+      "fichier": "lib/contenu/mesure.ts",
+      "avant": "if (typeof source !== 'string' || !source.trim()) return { ok: false, motif: 'affirmation chiffrée sans source' }",
+      "apres": "if (false) return { ok: false, motif: 'affirmation chiffrée sans source' }",
+      "critere": "ME-3",
+      "extrait": "FAIL ME-3 — libellé chiffré sans source refusé — chiffre sans source refusé : accepté | source blanche refusée : accepté",
+      "duree_s": 6.7
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=mesure --racine={racine}",
+      "fichier": "lib/contenu/mesure.ts",
+      "avant": "if (!/estimation/i.test(libelle)) return",
+      "apres": "if (false) return",
+      "critere": "ME-2",
+      "extrait": "FAIL ME-2 — attribution de vente = estimation — attribution sans « estimation » acceptée",
+      "duree_s": 11.3
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=boucle --racine={racine}",
+      "fichier": "lib/contenu/boucle.ts",
+      "avant": "{ statut: 'tendance', raison: 'vues inconnues : le score de Laya seul ne suffit pas à refaire ni à suspendre' }",
+      "apres": "{ statut: 'refaire', raison: 'vues inconnues : le score de Laya seul suffit à refaire' }",
+      "critere": "BO-2",
+      "extrait": "FAIL BO-2 — jev score classe, ne publie jamais — score 5/5 sans vue : statut « refaire » sans aucune vue (attendu tendance : le score seul ne tranche jamais) | score 1/5 sans vue : statut « refaire » sans aucune vue (attendu tendance : le score seul ne tranche jamais)",
+      "duree_s": 4.9
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -48,7 +108,7 @@
       "apres": "if (false) return refus('sans_audio', 'vidéo silencieuse : aucune piste audio')",
       "critere": "FA-4",
       "extrait": "FAIL FA-4 — dépôt refusé (licence, audio, taille) — vidéo sans piste audio : dépôt accepté à tort",
-      "duree_s": 3.8
+      "duree_s": 1.9
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -58,7 +118,7 @@
       "apres": "const licence = normaliserLicence(m.licence) || 'cc0'",
       "critere": "FA-4",
       "extrait": "FAIL FA-4 — dépôt refusé (licence, audio, taille) — licence inconnue : dépôt accepté à tort",
-      "duree_s": 4.6
+      "duree_s": 2
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -68,7 +128,7 @@
       "apres": "\"licence_commerciale\": false",
       "critere": "GA-2",
       "extrait": "FAIL GA-2 — licence commerciale et crédit — L2.json : licence commerciale non garantie",
-      "duree_s": 0.5
+      "duree_s": 0.1
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -78,7 +138,7 @@
       "apres": "if (!peutIdentifier(texte, opts) || /:cloud$/.test(m)) return { ok: true }",
       "critere": "VE-3",
       "extrait": "FAIL VE-3 — prospect jamais vers une IA gratuite ou :cloud — donnée de prospect envoyée à un moteur :cloud",
-      "duree_s": 8.5
+      "duree_s": 5.7
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -88,7 +148,7 @@
       "apres": "import { cleAccord, versionAvecMedia } from '../../lib/contenu/accord.ts'\nexport const LIRE_STUDIO = 'https://www.tiktok.com/tiktokstudio/analytics'",
       "critere": "TT-3",
       "extrait": "FAIL TT-3 — jamais TikTok Studio ni Creative Center — « tiktokstudio » lu dans le source",
-      "duree_s": 3
+      "duree_s": 4.8
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -97,8 +157,88 @@
       "avant": "const a = accordValide(ctx.decision, video.id, versionVideo(video), maintenant)",
       "apres": "const a = { ok: true }",
       "critere": "TT-2",
-      "extrait": "FAIL TT-2 — accord individuel exact requis — publication sans accord acceptée",
-      "duree_s": 2.9
+      "extrait": "FAIL TT-2 — accord individuel exact requis — accord individuel manquant refusé : publication permise | décision à échéance passée refusée : publication permise | échéance illisible refusée : publication permise | accord vieux de plus de 7 jours refusé : publication permise",
+      "duree_s": 4.1
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=tiktok --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "if (!Number.isFinite(e) || e <= maintenantMs) return { ok: false, motif: \"l'échéance de la décision est passée ou illisible\" }",
+      "apres": "if (!Number.isFinite(e)) return { ok: false, motif: \"l'échéance de la décision est illisible\" }",
+      "critere": "TT-2",
+      "extrait": "FAIL TT-2 — accord individuel exact requis — décision à échéance passée refusée : publication permise",
+      "duree_s": 4.4
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=geste --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "if (deps.coutEuros !== 0) return refuser('coût inconnu ou positif : publication refusée')",
+      "apres": "if (deps.coutEuros > 0) return refuser('coût inconnu ou positif : publication refusée')",
+      "critere": "GE-2",
+      "extrait": "FAIL GE-2 — budget et opposition bloquent automatiquement — accord : coût inconnu accepté (la publication part) | accord : coût donné en texte accepté (la publication part) | lignes : coût inconnu accepté (la publication part) | lignes : coût donné en texte accepté (la publication part)",
+      "duree_s": 10
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=lignes --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "export const SEUIL_LAYA = 0.5",
+      "apres": "export const SEUIL_LAYA = 0.51",
+      "critere": "LN-4",
+      "extrait": "FAIL LN-4 — affirmation chiffrée contrôlée — p=0,5 refusé à tort (score de vérité insuffisant (p=0.5 < 0.51) : renvoyé à Benj) | SEUIL_LAYA vaut 0.51 (attendu 0,5 : le contrat de la série)",
+      "duree_s": 8.9
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=mesure --racine={racine}",
+      "fichier": "lib/contenu/mesure.ts",
+      "avant": "typeof source !== 'string' || !source.trim()",
+      "apres": "typeof source !== 'string'",
+      "critere": "ME-3",
+      "extrait": "FAIL ME-3 — libellé chiffré sans source refusé — source blanche refusée : accepté",
+      "duree_s": 6.8
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=mesure --racine={racine}",
+      "fichier": "lib/contenu/mesure.ts",
+      "avant": "if (estAttributionVente) {",
+      "apres": "if (estAttributionVente && libelle.length > 60) {",
+      "critere": "ME-2",
+      "extrait": "FAIL ME-2 — attribution de vente = estimation — attribution sans « estimation » acceptée",
+      "duree_s": 7.7
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=boucle --racine={racine}",
+      "fichier": "lib/contenu/boucle.ts",
+      "avant": "  if (signal === 'inconnu') {",
+      "apres": "  if (signal === 'inconnu' && bas) return { statut: 'suspendre', raison: 'score de Laya bas : suspendre' }\n  if (signal === 'inconnu') {",
+      "critere": "BO-2",
+      "extrait": "FAIL BO-2 — jev score classe, ne publie jamais — score 1/5 sans vue : statut « suspendre » sans aucune vue (attendu tendance : le score seul ne tranche jamais)",
+      "duree_s": 5.1
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=tiktok --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "!Number.isFinite(e) || e <= maintenantMs",
+      "apres": "e <= maintenantMs",
+      "critere": "TT-2",
+      "extrait": "FAIL TT-2 — accord individuel exact requis — échéance illisible refusée : publication permise",
+      "duree_s": 5.1
+    },
+    {
+      "juge": "scripts/contenu-qa.mjs",
+      "commande": "node scripts/juges-026-reseaux-mutations.mjs --relais=contenu --partie=tiktok --racine={racine}",
+      "fichier": "lib/contenu/lignes.ts",
+      "avant": "maintenantMs - l > VALIDITE_ACCORD_MS",
+      "apres": "maintenantMs - l > 10 * VALIDITE_ACCORD_MS",
+      "critere": "TT-2",
+      "extrait": "FAIL TT-2 — accord individuel exact requis — accord vieux de plus de 7 jours refusé : publication permise",
+      "duree_s": 5.1
     },
     {
       "juge": "scripts/contenu-qa.mjs",
@@ -108,7 +248,7 @@
       "apres": "const montant = estNombre(brut?.montant) ? brut.montant : 0",
       "critere": "CO-1",
       "extrait": "FAIL CO-1 — montant absent reste non connu — montant inventé ({\"agent\":\"contenu\",\"moteur\":\"freellmapi\",\"montant\":0,\"jetons_entree\":null,\"jetons_sortie\":null,\"connu\":true,\"jetons_connus\":false})",
-      "duree_s": 0.8
+      "duree_s": 1.1
     }
   ]
 }

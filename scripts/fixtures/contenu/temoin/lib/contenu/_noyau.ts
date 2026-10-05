@@ -31,6 +31,10 @@ export type DecisionAccord = {
   choix?: string
   cible: string
   texte_version?: string
+  /** ISO : échéance de la décision. */
+  echeance?: string
+  /** ISO : date à laquelle la décision a été tranchée. */
+  le?: string
 } | null | undefined
 
 export type VerdictAccord = { ok: true } | { ok: false; motif: string }
@@ -38,13 +42,22 @@ export type VerdictAccord = { ok: true } | { ok: false; motif: string }
 /** Le SEUL chemin qui autorise une publication : une décision tranchée, choix accorder, cible exacte, même version
  *  de texte que celle sur laquelle l'accord a été donné. `defaut_applique` (échéance passée → option par défaut,
  *  toujours « refuser », 0098) et `ouverte` sont refusés au même titre qu'une décision absente. */
-export function accordValide(decision: DecisionAccord, cibleAttendue: string, texteVersion?: string): VerdictAccord {
+export function accordValide(decision: DecisionAccord, cibleAttendue: string, texteVersion?: string, maintenantMs: number = Date.now()): VerdictAccord {
   if (!decision) return { ok: false, motif: 'accord individuel absent' }
   if (decision.statut !== 'tranchee') return { ok: false, motif: `décision ${decision.statut} (attendu tranchee ; une échéance passée applique le défaut « refuser »)` }
   if (decision.choix !== 'accorder') return { ok: false, motif: `choix « ${decision.choix} » (attendu accorder)` }
   if (decision.cible !== cibleAttendue) return { ok: false, motif: `l'accord vise « ${decision.cible} », pas « ${cibleAttendue} » (un accord pour A n'autorise jamais B)` }
   if (texteVersion !== undefined && decision.texte_version !== undefined && decision.texte_version !== texteVersion) {
     return { ok: false, motif: 'le texte ou le média a changé depuis l\'accord : il est caduc' }
+  }
+  // 05/10/2026 (D-0510-A1) : échéance passée ou illisible, accord de plus de 7 jours : refusés (comme lib/contenu/lignes.ts).
+  if (decision.echeance !== undefined) {
+    const e = Date.parse(decision.echeance)
+    if (!Number.isFinite(e) || e <= maintenantMs) return { ok: false, motif: "l'échéance de la décision est passée ou illisible" }
+  }
+  if (decision.le !== undefined) {
+    const l = Date.parse(decision.le)
+    if (!Number.isFinite(l) || l > maintenantMs || maintenantMs - l > 7 * 24 * 3600 * 1000) return { ok: false, motif: "l'accord date de plus de 7 jours ou d'une date illisible : il est caduc" }
   }
   return { ok: true }
 }
@@ -57,7 +70,7 @@ export type VerdictChiffre = { ok: true; p: number } | { ok: false; motif: strin
 export async function verdictChiffre(texte: string, source: string | null | undefined, deps: DepsLecteur = {}): Promise<VerdictChiffre> {
   // La pause se lit avant CHAQUE appel au modèle (pas seulement au début d'un lot) : fail-closed.
   if (!(await pausePermise())) return { ok: false, motif: 'pause générale : aucun appel au modèle' }
-  if (!source) return { ok: false, motif: 'affirmation chiffrée sans source' }
+  if (typeof source !== 'string' || !source.trim()) return { ok: false, motif: 'affirmation chiffrée sans source' }
   const r = await vraisemblance(texte, {}, deps)
   if (r === null) return { ok: false, motif: 'Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj' }
   if (r.bloque) return { ok: false, motif: `score de vérité insuffisant (p=${r.p} < 0,5)` }

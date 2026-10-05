@@ -104,7 +104,7 @@ function semer({ packs = DONNEES.packs(), marques = [], octets = 0.5 * GO, objet
 
 // ── l'appel d'une route et ce qu'on en retient ───────────────────────────────────────────────────────────────────────────
 const jetons = {}
-for (const nom of [AGENT, 'livreur_usine', 'atelier_maquettes']) { jetons[nom] = TOKEN_FORMAT(nom); U().agents.set(jetons[nom], { nom, en_pause: false }) }
+for (const nom of [AGENT, 'livreur_usine', 'atelier_maquettes', 'chef']) { jetons[nom] = TOKEN_FORMAT(nom); U().agents.set(jetons[nom], { nom, en_pause: false }) }
 const inconnu = TOKEN_FORMAT('inconnu')
 const modules = {}
 const resume = (a) => ({ genre: a.genre, methode: a.methode, fonction: a.fonction ?? null, table: a.table ?? null, requete: a.requete ?? null, corps: a.corps ?? null, params: a.params ?? null, action: a.action ?? null, bucket: a.bucket ?? null, chemin: a.chemin ?? null, chemins: a.chemins ?? null, expiresIn: a.expiresIn ?? null, jeton: a.jeton ?? null, jetons: a.jetons ?? null, statut: a.statut, faute: a.faute ?? null })
@@ -154,6 +154,7 @@ try {
     poser(); g.jeton_inconnu = await jouer(route, { ...normal(), jeton: inconnu })
     poser(); g.livreur = await jouer(route, { ...normal(), jeton: jetons.livreur_usine })
     poser(); g.autre_agent = await jouer(route, { ...normal(), jeton: jetons.atelier_maquettes })
+    poser(); g.chef = await jouer(route, { ...normal(), jeton: jetons.chef })
     poser(); g.studio = await jouer(route, normal())
     poser({ pause: true }); g.pause_generale = await jouer(route, normal())
     poser({ enPause: true }); g.agent_en_pause = await jouer(route, normal())

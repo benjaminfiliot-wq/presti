@@ -217,6 +217,11 @@ const C = {
     const e = []
     if (x.dansDepot.code !== 2 || x.dansDepot.appels !== 0) e.push(`dossierSortie dans le dépôt : code ${json(x.dansDepot.code)}, ${x.dansDepot.appels} appel(s), 2 et zéro attendus`)
     if (x.sousPublic.code !== 2 || x.sousPublic.appels !== 0) e.push(`dossierSortie sous public/ : code ${json(x.sousPublic.code)}, ${x.sousPublic.appels} appel(s), 2 et zéro attendus`)
+    // 05/10/2026 (D-0510-A3, trou de juge vu par 026-101) : la règle « jamais sous public/ » était doublée par « jamais dans le dépôt » (le cas d'essai
+    // était dans le dépôt : refusé par la première garde, la seconde ne se voyait pas). Ce cas-ci est HORS du dépôt, avec un segment public/ : seule la
+    // règle sur public/ peut le refuser.
+    if (!x.sousPublicHorsDepot) e.push('dossierSortie hors dépôt sous public/ : observation absente')
+    else if (x.sousPublicHorsDepot.code !== 2 || x.sousPublicHorsDepot.appels !== 0) e.push(`dossierSortie hors du dépôt mais sous public/ : code ${json(x.sousPublicHorsDepot.code)}, ${x.sousPublicHorsDepot.appels} appel(s), 2 et zéro attendus (la règle « jamais sous public/ » doit suffire)`)
     if (x.coffreAbsent.code !== 3) e.push(`coffre absent : code ${json(x.coffreAbsent.code)}, 3 attendu`)
     if (x.coffreServiceRole.code !== 3) e.push(`coffre avec SUPABASE_SERVICE_ROLE_KEY : code ${json(x.coffreServiceRole.code)}, 3 attendu`)
     // Un coffre COMPLET (les deux variables permises) qui porte en plus une clé interdite : le seul cas où la garde se voit, un coffre incomplet étant refusé de toute façon.
@@ -315,7 +320,7 @@ const C = {
 }
 const DETAILS = {
   'AM-2': "chaque maquette.json : exactement entreprise, metier, ville, communes, modele, source_fait ; entrant sans fait → phrase et source exactes",
-  'AM-3': "dossierSortie dans le dépôt ou public/ → code 2, zéro lancement ; coffre absent ou avec une clé interdite → code 3, zéro réseau ; aucune lecture de .env.local",
+  'AM-3': "dossierSortie dans le dépôt, sous public/, ou hors du dépôt mais sous public/ → code 2, zéro lancement ; coffre absent ou avec une clé interdite → code 3, zéro réseau ; aucune lecture de .env.local",
   'AM-4': "capture de 0 octet, 1,4 Mo, uniforme, vidéo de 3,2 Mo, code 1 d'un lanceur → aucune maquette prête",
   'AM-5': "busAgents baissé → 404 ; sans jeton → 401 ; mauvais agent → 403 ; pause → { pause: true } sur travail, 423 ailleurs ; aucune donnée personnelle dans une réponse",
   'AM-6': "varianteA baissé → aucune avance ; entrants d'abord, plafonnés ; froids oui plafonnés au jour ; battement seulement hors pause",
@@ -359,6 +364,9 @@ async function observer(mod, RAC2) {
     }
     const dansDepot = await appeler(R)
     const sousPublic = await appeler(path.join(R, 'public', 'atelier-essai-temoin'))
+    const horsDepot = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-am3-'))
+    let sousPublicHorsDepot
+    try { sousPublicHorsDepot = await appeler(path.join(horsDepot, 'public', 'atelier-essai-temoin')) } finally { fs.rmSync(horsDepot, { recursive: true, force: true }) }
     const dossierCoffre = dossierEssai('am-3-coffre')
     fs.rmSync(dossierCoffre, { recursive: true, force: true })
     fs.mkdirSync(path.join(dossierCoffre, '.config', 'presti'), { recursive: true })
@@ -375,7 +383,7 @@ ${cle}
       coffresMixtes[cle.split('=')[0]] = { code: lancer({}).status }
     }
     const src = fs.readFileSync(path.join(RAC2, FICHIER_SCRIPT), 'utf8')
-    return { dansDepot, sousPublic, coffreAbsent: { code: coffreAbsent.status }, coffreServiceRole: { code: coffreServiceRole.status }, coffresMixtes, litEnvLocal: /\.env\.local/.test(sansCommentaires(src)) }
+    return { dansDepot, sousPublic, sousPublicHorsDepot, coffreAbsent: { code: coffreAbsent.status }, coffreServiceRole: { code: coffreServiceRole.status }, coffresMixtes, litEnvLocal: /\.env\.local/.test(sansCommentaires(src)) }
   })
 
   await tente('AM-4', async () => {
@@ -622,7 +630,7 @@ function obsBase() {
       entrantSansFait: { source_fait: { fait: "Maquette demandée par l'entreprise le 14/10/2026", source: 'demande', repere: 'entrant', releve_le: '2026-10-14T08:00:00.000Z' } }, dateAttendue: '14/10/2026',
       avecFait: { json: { source_fait: { fait: 'extrait', source: 'https://x.invalid/', repere: 'f1', releve_le: '2026-10-14' } }, extrait: 'extrait', url: 'https://x.invalid/', id: 'f1' },
     },
-    'AM-3': { dansDepot: { code: 2, appels: 0 }, sousPublic: { code: 2, appels: 0 }, coffreAbsent: { code: 3 }, coffreServiceRole: { code: 3 }, coffresMixtes: { SUPABASE_SERVICE_ROLE_KEY: { code: 3 }, STRIPE_SECRET_KEY: { code: 3 } }, litEnvLocal: false },
+    'AM-3': { dansDepot: { code: 2, appels: 0 }, sousPublic: { code: 2, appels: 0 }, sousPublicHorsDepot: { code: 2, appels: 0 }, coffreAbsent: { code: 3 }, coffreServiceRole: { code: 3 }, coffresMixtes: { SUPABASE_SERVICE_ROLE_KEY: { code: 3 }, STRIPE_SECRET_KEY: { code: 3 } }, litEnvLocal: false },
     'AM-4': { cas: Object.fromEntries(['capture 0 octet', 'capture uniforme (structure intacte)', 'capture 1,4 Mo', 'capture uniforme', 'vidéo 3,2 Mo', 'échec generer.mjs', 'échec capturer', 'échec vidéo'].map((n) => [n, { maquettePrete: false }])) },
     'AM-5': { busAgentsBaisse: 404, sansJeton: 401, autreAgent: 403, pauseTravail: { pause: true }, pauseAutres: [423, 423, 423], fuite: null },
     'AM-6': { varianteABaissee: { avance: 0 }, deuxEntrants: { n: 2 }, entrantsFormulaires: [2, 2], entrantsPlafond: { n: 0 }, entrantsTousRendus: true, douzeOui: { n: 10 }, douzeOuiApres4: 6, entrantsAvant: true, avanceLevee: { n: 10, nSaturee: 0, nPlafondJour: 4 }, liensCrees: true, battementSucces: 1, battementEnPause: false, battementEnErreur: false },
@@ -639,7 +647,7 @@ function echantillons() {
   const b = obsBase()
   return {
     'AM-2': [['conforme', b['AM-2'], false], ['clé photo en trop', muter(b, 'AM-2', (x) => { x.maquettesJson[0].photo = 'y' }), true], ['phrase entrant différente', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = 'Maquette demandée le 1/1' }), true], ['gabarit JJ/MM/AAAA recopié tel quel', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = "Maquette demandée par l'entreprise le JJ/MM/AAAA" }), true], ['une autre date que celle du passage', muter(b, 'AM-2', (x) => { x.entrantSansFait.source_fait.fait = "Maquette demandée par l'entreprise le 15/10/2026" }), true], ["le fait n'est pas l'extrait reçu", muter(b, 'AM-2', (x) => { x.avecFait.json.source_fait.fait = 'autre chose' }), true]],
-    'AM-3': [['conforme', b['AM-3'], false], ['un appel malgré le dossier interdit', muter(b, 'AM-3', (x) => { x.dansDepot.appels = 1 }), true], ['.env.local lu', muter(b, 'AM-3', (x) => { x.litEnvLocal = true }), true], ['coffre complet + clé de service accepté', muter(b, 'AM-3', (x) => { x.coffresMixtes.SUPABASE_SERVICE_ROLE_KEY.code = 1 }), true]],
+    'AM-3': [['conforme', b['AM-3'], false], ['un appel malgré le dossier interdit', muter(b, 'AM-3', (x) => { x.dansDepot.appels = 1 }), true], ['dossier hors dépôt sous public/ accepté', muter(b, 'AM-3', (x) => { x.sousPublicHorsDepot = { code: 0, appels: 3 } }), true], ['observation hors dépôt absente', muter(b, 'AM-3', (x) => { delete x.sousPublicHorsDepot }), true], ['.env.local lu', muter(b, 'AM-3', (x) => { x.litEnvLocal = true }), true], ['coffre complet + clé de service accepté', muter(b, 'AM-3', (x) => { x.coffresMixtes.SUPABASE_SERVICE_ROLE_KEY.code = 1 }), true]],
     'AM-4': [['conforme', b['AM-4'], false], ['une maquette prête malgré une capture vide', muter(b, 'AM-4', (x) => { x.cas['capture 0 octet'].maquettePrete = true }), true]],
     'AM-5': [['conforme', b['AM-5'], false], ['200 sans jeton', muter(b, 'AM-5', (x) => { x.sansJeton = 200 }), true], ['une adresse dans une réponse', muter(b, 'AM-5', (x) => { x.fuite = 'travail' }), true], ['la pause ne coupe pas travail', muter(b, 'AM-5', (x) => { x.pauseTravail = {} }), true]],
     'AM-6': [['conforme', b['AM-6'], false], ['avance malgré varianteA baissé', muter(b, 'AM-6', (x) => { x.varianteABaissee.avance = 2 }), true], ['dix prospects oui à fabriquer', muter(b, 'AM-6', (x) => { x.douzeOui.n = 12 }), true], ['entrants au-delà du plafond', muter(b, 'AM-6', (x) => { x.entrantsPlafond.n = 1 }), true], ['formulaire fermé : aucun entrant', muter(b, 'AM-6', (x) => { x.entrantsFormulaires = [0, 2] }), true], ['avance sous zéro', muter(b, 'AM-6', (x) => { x.avanceLevee.nSaturee = 3 }), true], ['le prospect prêt ne sort pas', muter(b, 'AM-6', (x) => { x.liensCrees = false }), true], ['battement en erreur', muter(b, 'AM-6', (x) => { x.battementEnErreur = true }), true]],

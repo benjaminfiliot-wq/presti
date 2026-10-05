@@ -293,6 +293,16 @@ async function LL2() {
     else if (r.erreurImport) return echecImport(r)
     else if (!r.resultat.creerLecteur?.v?.estNull) echecs.push('creerLecteur(\'veille_pubs\') avec FREELLMAPI_URL distant n\'est pas null')
   }
+  // b bis. 05/10/2026 (D-0510-A4, trou de juge vu par 026-161) : veille_pubs (personnelles:true) rend null de toute façon, avec ou sans garde d'hôte : le cas b ne
+  //    voyait donc jamais une URL d'hôte public acceptée. `douleurs` (personnelles:false, moteur freellmapi) n'est null QUE si l'hôte est refusé : c'est le cas qui
+  //    juge la garde. Trois URL non locales (domaine public, faux « 127.0.0.1 » d'un autre domaine, adresse privée) doivent toutes donner null ; aucune ne se résout
+  //    (TLD .invalid, TEST-NET-1) et créer un lecteur n'ouvre de toute façon aucune connexion.
+  for (const distante of ['https://freellmapi.invalid/v1', 'http://127.0.0.1.freellmapi.invalid:3001/v1', 'http://192.0.2.10:3001/v1']) {
+    const r = await executerEnfant([{ op: 'creerLecteur', id: 'dd', agent: 'douleurs' }], { env: { FREELLMAPI_URL: distante } })
+    if (!r.ok) echecs.push(r.erreur)
+    else if (r.erreurImport) return echecImport(r)
+    else if (!r.resultat.creerLecteur?.dd?.estNull) echecs.push(`creerLecteur('douleurs') avec FREELLMAPI_URL d'un hôte non local (${distante}) n'est pas null : un hôte public est accepté`)
+  }
   // c. FREELLMAPI_URL local → un lecteur pour douleurs (personnelles:false, moteur freellmapi)
   {
     const serveur = await demarrerServeurJson(() => repJson({ classe: 'oui' }))
@@ -316,7 +326,7 @@ async function LL2() {
     else if (r.erreurImport) return echecImport(r)
     else if (!r.resultat.creerLecteur?.x?.estNull) echecs.push('creerLecteur(\'inconnu\') n\'est pas null')
   }
-  return echecs.length ? fail(echecs) : ok('cinq cas de configuration absente ou invalide → null, sans lancement ni requête')
+  return echecs.length ? fail(echecs) : ok('cinq cas de configuration absente ou invalide → null (dont trois hôtes non locaux pour un agent qui n\'a pas d\'autre motif d\'être null), sans lancement ni requête')
 }
 
 async function LL3() {

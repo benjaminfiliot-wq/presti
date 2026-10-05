@@ -61,6 +61,13 @@ const MUTATIONS = [
   { juge: 'usine-pubs', critere: 'UP-2', partie: 'routes', nom: 'travail accepte aussi le jeton de livreur_usine', imposee: false,
     fichier: `${R}/travail/route.ts`, avant: "if (agent.nom !== AGENT) return repondre({ error: 'agent', code: 'agent' }, 403)",
     apres: "if (agent.nom !== AGENT && agent.nom !== 'livreur_usine') return repondre({ error: 'agent', code: 'agent' }, 403)" },
+  // 05/10/2026 (D-0510-A2) : le jeton du chef sur les deux autres routes (UP-2 l'envoie désormais aux trois : depot et rendu aussi).
+  { juge: 'usine-pubs', critere: 'UP-2', partie: 'routes', nom: 'depot accepte aussi le jeton de chef', imposee: false,
+    fichier: `${R}/depot/route.ts`, avant: "if (agent.nom !== AGENT) return erreur(403, 'agent')",
+    apres: "if (agent.nom !== AGENT && agent.nom !== 'chef') return erreur(403, 'agent')" },
+  { juge: 'usine-pubs', critere: 'UP-2', partie: 'routes', nom: 'rendu accepte aussi le jeton de chef', imposee: false,
+    fichier: `${R}/rendu/route.ts`, avant: "if (agent.nom !== AGENT) return erreur(403, 'agent')",
+    apres: "if (agent.nom !== AGENT && agent.nom !== 'chef') return erreur(403, 'agent')" },
   { juge: 'usine-pubs', critere: 'UP-3', partie: 'routes', nom: 'travail renvoie le courriel du pack', imposee: true,
     fichier: `${R}/travail/route.ts`, avant: "return { type: 'pack', id: l.id, pack: { pack_id: l.id, matiere: l.matiere, site }, photos }",
     apres: "return { type: 'pack', id: l.id, pack: { pack_id: l.id, matiere: l.matiere, site, courriel: (await supabaseAdmin.from('packs_pubs').select('email').eq('id', l.id).maybeSingle()).data?.email }, photos }" },

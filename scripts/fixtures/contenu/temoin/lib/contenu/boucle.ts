@@ -5,7 +5,7 @@
 import { noter, type DepsLecteur } from '@/lib/agents/llm'
 import { pausePermise } from './_noyau'
 
-export type MesureFenetre = { fenetre: 'H+1' | 'H+24' | 'J+7'; disponible: boolean }
+export type MesureFenetre = { fenetre: 'H+1' | 'H+24' | 'J+7'; disponible: boolean; valeur?: number | null }
 export type Candidat = { id: string; texte: string; mesures: MesureFenetre[]; provenance: string }
 export type Recommandation = { id: string; statut: 'refaire' | 'suspendre' | 'tendance' | 'insuffisant'; motif: string; scoreJev?: { niveau: number; distribution: Record<string, number> } }
 
@@ -20,6 +20,8 @@ export async function recommander(candidat: Candidat, deps: DepsLecteur = {}): P
   if (!(await pausePermise())) return { id: candidat.id, statut: 'insuffisant', motif: 'pause générale : aucun appel au modèle' }
   const score = await noter(candidat.texte, {}, deps)
   const niveau = score?.niveau ?? 0
-  const statut = niveau >= 4 ? 'refaire' : niveau <= 2 ? 'suspendre' : 'tendance'
+  // Le score de Laya seul ne tranche jamais : sans vue exploitable (signal « inconnu »), au mieux une tendance (comme lib/contenu/boucle.ts).
+  const vues = (candidat.mesures.find((m) => m.disponible && m.fenetre === 'J+7') ?? candidat.mesures.find((m) => m.disponible && m.fenetre === 'H+24'))?.valeur
+  const statut = typeof vues !== 'number' || !Number.isFinite(vues) ? 'tendance' : niveau >= 4 ? 'refaire' : niveau <= 2 ? 'suspendre' : 'tendance'
   return { id: candidat.id, statut, motif: `score Laya ${score ? `${niveau}/5` : 'indisponible'} : suggestion de classement seulement, un nouveau brief puis un nouvel accord de Benj restent requis`, scoreJev: score ?? undefined }
 }
