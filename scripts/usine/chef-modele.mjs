@@ -58,6 +58,8 @@ async function demander() {
   const id = `${new Date().toISOString().replace(/[:.]/g, '-')}-${crypto.randomBytes(4).toString('hex')}`
   const d = path.join(echange, id)
   fs.mkdirSync(d, { recursive: true, mode: 0o2770 })
+  // L'umask du service (0022) ôtait l'écriture au groupe : chef-modele ne pouvait ni prendre la demande ni écrire sa réponse.
+  fs.chmodSync(d, 0o2770)
   const entrees = []
   const sorties = []
   let n = 0
