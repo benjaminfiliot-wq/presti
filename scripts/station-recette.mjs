@@ -349,10 +349,18 @@ async function reel() {
           await pg.p.mouse.click(b.x, b.y)
           const ouverte = await pg.p.waitForFunction((c) => new URL(location.href).searchParams.get('salle') === c, cle, { timeout: 5000 }).then(() => true).catch(() => false)
           if (!ouverte) e.push(`un clic sur ${cle} ne pose pas ?salle=${cle}`)
+          // Le panneau s'ouvre par le routeur de Next, après l'adresse : Échap pressé avant qu'il soit monté se perd (rien n'écoute encore) et le panneau, ouvert ensuite,
+          // recouvre la zone suivante. On attend donc son apparition, puis sa fermeture.
+          await pg.p.waitForSelector('[data-salle-panneau]', { timeout: 10_000 }).catch(() => {})
           // Échap ferme le panneau par router.replace de Next, qui dépasse 250 ms : on attend la fermeture (adresse sans ?salle, panneau parti) avant le clic
           // suivant, sinon le panneau encore à l'écran reçoit le clic et le test accuse la carte (D-0510-2, même défaut côté juge).
-          await pg.p.keyboard.press('Escape')
-          await pg.p.waitForFunction(() => !new URL(location.href).searchParams.get('salle') && !document.querySelector('[data-salle-panneau]'), null, { timeout: 10_000 }).catch(() => {})
+          // L'adresse est posée tout de suite, le panneau et son écouteur d'Échap viennent après : on attend le panneau avant d'appuyer, et on réappuie au besoin.
+          await pg.p.waitForSelector('[data-salle-panneau]', { timeout: 8000 }).catch(() => {})
+          for (let essai = 0; essai < 3; essai++) {
+            await pg.p.keyboard.press('Escape')
+            const ferme = await pg.p.waitForFunction(() => !new URL(location.href).searchParams.get('salle') && !document.querySelector('[data-salle-panneau]'), null, { timeout: 4000 }).then(() => true).catch(() => false)
+            if (ferme) break
+          }
         }
       } finally { await pg.fermer() }
       // CE-24 (WebKit, 390×844), sur la production : la session est la vraie ; le pincement ne se prouve pas (Playwright n'offre que tap).

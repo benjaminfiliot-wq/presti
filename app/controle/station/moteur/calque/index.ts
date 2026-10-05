@@ -143,7 +143,7 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
       // Elle passe à la ligne (deux lignes au plus) plutôt que de se tronquer : « Salle de réunion » se lit en entier dans ses 96 px.
       const c = enCss(vue, g, W, H, { x: pl.cadre.x + pl.cadre.l / 2, y: pl.cadre.y + pl.cadre.h })
       placer(n, c.x, c.y - 3)
-      n.style.maxWidth = `${Math.max(36, (pl.cadre.l - 4) * c.s)}px`
+      n.style.maxWidth = `${Math.max(36, (pl.cadre.l - 1) * c.s)}px`
     }
     // L'échelle réelle de la carte (pixels CSS par pixel logique, zoom compris) : sous 1,2 le texte ne tient plus dans une salle (voir calque.css).
     const echelle = (W / g.largeur) * vue.zoom
