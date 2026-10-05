@@ -1,0 +1,26 @@
+/* Fiche 026-183 (K4b) : l'habillage de ce qui bouge sur la carte. Du texte HTML au-dessus du canevas, jamais dans le décor. Aucune
+   animation CSS, aucune transition : un carré glisse par l'API d'animation du navigateur (une fois), le reste est figé entre deux lectures. */
+.mc-acteurs { position: absolute; z-index: 2; overflow: hidden; pointer-events: none; }
+.mc-acteurs > * { position: absolute; font-family: var(--mc-police-pixel, ui-monospace), ui-monospace, monospace; font-size: 12px; line-height: 14px; font-weight: 400; color: var(--mc-texte, #fff4f0); white-space: nowrap; text-shadow: 0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000; }
+.mc-acteurs [data-tapis-etape] { transform: translate(-50%, 0); }
+.mc-acteurs [data-tapis-rejet] { color: var(--mc-alerte, #e04040); }
+.mc-acteurs [data-ligne] { display: flex; flex-direction: column; overflow: hidden; }
+.mc-acteurs [data-ligne-etape] { overflow: hidden; text-overflow: ellipsis; }
+.mc-acteurs [data-ecran] { color: var(--mc-ecran-texte, #9bf6ff); background: var(--mc-ecran, #0a2a2a); padding: 0 3px; overflow: hidden; text-overflow: ellipsis; text-shadow: none; }
+.mc-acteurs [data-egaliseur] { display: flex; align-items: flex-end; gap: 1px; height: 14px; transform: translate(0, -100%); }
+.mc-acteurs [data-egaliseur] [data-barre] { display: block; width: 3px; background: var(--mc-accent, #d0603a); }
+.mc-acteurs [data-badge-lv] { transform: translate(-100%, 0); padding: 0 3px; background: var(--mc-accent, #d0603a); color: #fff; text-shadow: none; }
+.mc-acteurs [data-departement] { width: 3px; height: 3px; background: var(--mc-accent, #d0603a); transform: translate(0, 0); }
+[data-station-carte] .mc-acteurs [data-plus-un] { transform: translate(-50%, -100%); color: var(--mc-accent, #d0603a); }
+/* L'écran d'une salle sans flux dit « — » au lecteur d'écran, caché à l'œil (jamais display:none). */
+.mc-acteurs [data-ecran]:not([data-ecran="experience"]) { width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+/* Le carré qui avance d'une étape à la suivante. */
+.mc-acteurs [data-carre] { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--mc-accent, #d0603a); border: 1px solid #fff; box-sizing: border-box; }
+
+/* Sur le téléphone, en vue d'ensemble, la carte est trop petite pour du texte lisible : il apparaît à partir du zoom ×2 (comme les plaques). */
+@media (max-width: 1023px) {
+  [data-station-carte][data-zoom="1"] .mc-acteurs [data-tapis-etape],
+  [data-station-carte][data-zoom="1"] .mc-acteurs [data-tapis-rejet],
+  [data-station-carte][data-zoom="1"] .mc-acteurs [data-ligne],
+  [data-station-carte][data-zoom="1"] .mc-acteurs [data-ecran] { visibility: hidden; }
+}

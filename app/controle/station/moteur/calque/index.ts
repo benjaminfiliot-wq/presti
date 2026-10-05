@@ -185,13 +185,13 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
   /** Écrit un attribut seulement s'il change : un relevé du miroir (et le lecteur d'écran) ne voit que de vrais changements. */
   function poser(li: HTMLElement, attr: string, valeur: string) { if (li.getAttribute(attr) !== valeur) li.setAttribute(attr, valeur) }
   /** Les attributs d'une ligne du miroir : ce que la scène a décidé, rien de déduit ici. */
-  function ecrireLigne(li: HTMLElement, a: Perso, v: Vivant) {
-    poser(li, 'data-salle', a.salle ?? '')
-    poser(li, 'data-motif', a.motif ?? '')
+  function ecrireLigne(li: HTMLElement, v: Vivant) {
+    poser(li, 'data-salle', v.salle)
+    poser(li, 'data-motif', v.motif ?? '')
     poser(li, 'data-etat', v.etat)
     poser(li, 'data-x', String(v.x))
     poser(li, 'data-y', String(v.y))
-    poser(li, 'data-halo', a.motif === 'tache' ? 'oui' : 'non')
+    poser(li, 'data-halo', v.motif === 'tache' ? 'oui' : 'non')
   }
 
   // ── L'antenne : un élément qui recouvre sa zone, `data-etat` fixe ou tourne (la scène décide, ce module recopie) ───────
@@ -207,18 +207,26 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
 
   /** Un pas de marche (ou une arrivée) : la ligne du miroir, le nom, la bulle et « Zz » de ce personnage suivent, rien d'autre ne se redessine. */
   const dernierEtat = new Map<string, string>()
+  /** La taille du canevas, relevée une fois par changement de taille : surPas ne relit jamais la mise en page à chaque pas. */
+  const taille = { l: toile.clientWidth, h: toile.clientHeight }
   function surPas(nom: string) {
     const v = suivi.vivants.get(nom)
     const a = persos.find((x) => x.nom === nom)
     const l = lignes.get(nom)
     if (!v || !a || !l) { recalculer(); return }
-    // Un changement de salle, de motif ou d'état (arrivée : « Zz » apparaît, départ : il disparaît) refait tout, au prochain affichage.
-    const cle = `${v.salle}|${v.motif}|${v.etat}`
-    // (au changement d'état, tout de suite et non à la prochaine image : « Zz » est là dès l'arrivée, la machine fût-elle chargée)
-    if (dernierEtat.get(nom) !== cle) { dernierEtat.set(nom, cle); dessiner(); return }
-    if (l.mien) ecrireLigne(l.li, a, v)
+    // La ligne du miroir d'abord, tout de suite : c'est elle que lisent le lecteur d'écran et le juge.
+    if (l.mien) ecrireLigne(l.li, v)
     positions.set(nom, { x: v.x, y: v.y })
-    const W = toile.clientWidth, H = toile.clientHeight
+    // Un changement de salle, de motif ou d'état (arrivée : « Zz » apparaît, départ : il disparaît) refait tout : tout de suite à l'arrivée
+    // d'un personnage en pause (« Zz » est là dès l'arrivée, la machine fût-elle chargée), à la prochaine image sinon (treize personnages
+    // qui partent ensemble ne redessinent pas treize fois).
+    const cle = `${v.salle}|${v.motif}|${v.etat}`
+    if (dernierEtat.get(nom) !== cle) {
+      dernierEtat.set(nom, cle)
+      if (v.etat === 'arrive' && v.motif === 'pause') dessiner(); else recalculer()
+      return
+    }
+    const W = taille.l, H = taille.h
     if (!W || !H) return
     const c = enCss(lireVue(carte, contexte.grille), contexte.grille, W, H, v)
     const n = noms.get(nom); if (n) placer(n, c.x, c.y + 2)
@@ -240,7 +248,7 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
         if (!li) {
           // La ligne naît COMPLÈTE (salle, motif, état, place, texte) : un relevé du miroir ne voit jamais un personnage à moitié posé.
           const v = suivi.vivants.get(a.nom) as Vivant
-          li = el('li', { 'data-personnage': a.nom, 'data-salle': a.salle ?? '', 'data-motif': a.motif ?? '', 'data-etat': v.etat, 'data-x': String(v.x), 'data-y': String(v.y), 'data-halo': a.motif === 'tache' ? 'oui' : 'non' })
+          li = el('li', { 'data-personnage': a.nom, 'data-salle': v.salle, 'data-motif': v.motif ?? '', 'data-etat': v.etat, 'data-x': String(v.x), 'data-y': String(v.y), 'data-halo': v.motif === 'tache' ? 'oui' : 'non' })
           li.textContent = `${nomDe(p, a.nom, a.libelle)}, ${place(a.salle)}, ${a.motif ? MOTIFS[a.motif] : 'sans position'}`
           miroir!.append(li)
         }
@@ -250,7 +258,7 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
         li.addEventListener('blur', () => cacher())
         li.addEventListener('keydown', (ev) => deplacerFocus(ev, a.nom))
       }
-      if (l.mien) ecrireLigne(l.li, a, suivi.vivants.get(a.nom) as Vivant)
+      if (l.mien) ecrireLigne(l.li, suivi.vivants.get(a.nom) as Vivant)
       dire(l.li, `${nomDe(p, a.nom, a.libelle)}, ${place(a.salle)}, ${a.motif ? MOTIFS[a.motif] : 'sans position'}`)
     }
     roulement()
@@ -316,7 +324,7 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
   })
   const observeurVue = new MutationObserver(recalculer)
   observeurVue.observe(carte, { attributes: true, attributeFilter: ['data-zoom', 'data-vue-x', 'data-vue-y'] })
-  const observeurTaille = new ResizeObserver(recalculer)
+  const observeurTaille = new ResizeObserver(() => { taille.l = toile.clientWidth; taille.h = toile.clientHeight; recalculer() })
   observeurTaille.observe(toile)
   observeurTaille.observe(racine)
   // La scène dit ce qui change : un personnage (un pas, une arrivée, un retrait), l'antenne, ou la liste des acteurs.
