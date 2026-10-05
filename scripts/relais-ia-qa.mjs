@@ -145,7 +145,7 @@ const SABOTAGES = [
     ],
     rouges: ['RC-4'] },
   { nom: 'chef : bascule oubliée (le premier échec de Codex arrête le cycle)',
-    mutations: [['scripts/usine/relais-chef.mjs', "derniere = { code: r.code || 1, sortie: r.sortie, moteur: m.id }\n  }", "return { code: r.code || 1, sortie: r.sortie, moteur: m.id }\n  }"]],
+    mutations: [['scripts/usine/relais-chef.mjs', "      derniere = { code: r.code || 1, sortie: r.sortie, moteur: m.id }\n      break", "      return { code: r.code || 1, sortie: r.sortie, moteur: m.id }\n      break"]],
     rouges: ['RC-1', 'RC-3'] },
   { nom: 'chef : la file IA des prospects reçoit des secours',
     mutations: [['scripts/usine/chef-modele.mjs', 'return !estFileIA() && (!opts.codex || opts.relais === \'oui\')', "return (!opts.codex || opts.relais === 'oui')"]],
@@ -157,7 +157,7 @@ const SABOTAGES = [
     mutations: [['scripts/usine/relais-chef.mjs', "const fait = r.code === 0 && (typeof opts.verifier !== 'function' || opts.verifier() === true)", 'const fait = r.code === 0']],
     rouges: ['RC-8', 'RC-7'] },
   { nom: 'chef : moteurs à bout jamais mémorisés',
-    mutations: [['scripts/usine/relais-chef.mjs', "    etat.ecrire(courant)\n    dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule'", "    dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule'"]],
+    mutations: [['scripts/usine/relais-chef.mjs', "      etat.ecrire(courant)\n      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison", "      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison"]],
     rouges: ['RC-2'] },
 ]
 

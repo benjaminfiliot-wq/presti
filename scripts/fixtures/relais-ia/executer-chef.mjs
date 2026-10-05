@@ -159,10 +159,17 @@ await cas('RC-8', async () => {
   // un routeur libre qui sort en code 0 sans faire le travail n'est pas un succès : le suivant prend la demande, sans mise de côté
   const m = mondeChef({ codex: '401', freellmapi: 'silencieux', freellmapi_gemini: 'ok' })
   const r = await C.relayer(m.base)
-  if (r.moteur !== 'freellmapi_gemini' || m.ids() !== 'codex>freellmapi>freellmapi_gemini') e.push(`routeur silencieux : ${m.ids()} servi par ${r.moteur}`)
+  if (r.moteur !== 'freellmapi_gemini' || m.ids() !== 'codex>freellmapi>freellmapi>freellmapi>freellmapi_gemini') e.push(`routeur silencieux : ${m.ids()} servi par ${r.moteur}`)
   const etat = JSON.parse(fs.readFileSync(path.join(m.dossier, 'etat-chef.json'), 'utf8')).moteurs
   if (etat.freellmapi) e.push('un routeur silencieux est mis de côté (il peut répondre juste la fois suivante)')
   if (journalDe(m.dossier).find((x) => x.moteur === 'freellmapi')?.raison !== 'sortie_invalide') e.push('sortie sans plan non tracée en sortie_invalide')
+  // « auto » a trois essais : deux silences puis un plan écrit sur le même moteur
+  const m3 = mondeChef({ codex: '401', freellmapi: 'silencieux', freellmapi_gemini: 'ok' })
+  const compte = { n: 0 }
+  const lancerOrig = m3.base.lancer
+  m3.base.lancer = async (a, b, x) => { const id = a.includes('model_provider=fl') && a[a.indexOf('-m') + 1] === 'auto' ? 'auto' : null; if (id) { compte.n++; if (compte.n === 3) { m3.base.verifier = () => true; return { code: 0, sortie: 'plan écrit' } } } return lancerOrig(a, b, x) }
+  const r3 = await C.relayer(m3.base)
+  if (r3.moteur !== 'freellmapi' || compte.n !== 3) e.push(`« auto » : ${compte.n} essai(s), servi par ${r3.moteur} (3 essais puis le plan attendus)`)
   const m2 = mondeChef({ codex: 'silencieux', freellmapi: 'silencieux', freellmapi_gemini: 'silencieux', freellmapi_mistral: 'silencieux', ollama_cloud: 'silencieux', ollama_8b: 'silencieux', ollama_4b: 'silencieux' })
   if ((await C.relayer(m2.base)).code === 0) e.push('tous silencieux : code 0')
   return e
@@ -220,7 +227,7 @@ await cas('RC-7', async () => {
   // un routeur libre (fl) qui sort en code 0 sans écrire le plan : les trois modèles de freellmapi sont écartés, Ollama Cloud écrit le plan
   const s = lancerServir('echange-chef', ['ollama-usine'], ['--relais=oui'], ['fl'])
   if (s.reponse?.code !== 0 || s.reponse?.moteur !== 'ollama_cloud') e.push(`routeur silencieux : réponse ${JSON.stringify({ code: s.reponse?.code, moteur: s.reponse?.moteur })} (code 0, ollama_cloud attendus)`)
-  if (s.appels.map((x) => x.fournisseur).join('>') !== 'openai>fl>fl>fl>ollama-usine') e.push(`routeur silencieux : fournisseurs ${s.appels.map((x) => x.fournisseur).join('>')}`)
+  if (s.appels.map((x) => x.fournisseur).join('>') !== 'openai>fl>fl>fl>fl>fl>ollama-usine') e.push(`routeur silencieux : fournisseurs ${s.appels.map((x) => x.fournisseur).join('>')}`)
   // sans --relais et avec un faux binaire : l'ancien comportement (aucun secours)
   const b = lancerServir('echange-chef', 'fl')
   if (b.appels.length !== 1 || b.reponse?.code === 0) e.push('banc d\'essai sans --relais : un secours est tenté')
