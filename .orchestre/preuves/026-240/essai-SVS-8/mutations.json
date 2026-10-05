@@ -1,0 +1,43 @@
+{
+  "fiche": "026-240",
+  "temoins": {
+    "socle": {
+      "code": 1,
+      "rouges": [
+        "SVS-2"
+      ],
+      "duree_s": 49.597
+    },
+    "recherche": {
+      "code": 0,
+      "rouges": [],
+      "duree_s": 35.753
+    },
+    "lecons": {
+      "code": 1,
+      "rouges": [
+        "SVL-11"
+      ],
+      "duree_s": 55.179
+    },
+    "reflexion": {
+      "code": 1,
+      "rouges": [
+        "SVB-9"
+      ],
+      "duree_s": 63.483
+    }
+  },
+  "mutations": [
+    {
+      "juge": "scripts/savoir-socle-qa.mjs",
+      "commande": "node scripts/savoir-socle-qa.mjs --partie=reception --racine={racine}",
+      "fichier": "scripts/usine/savoir-recevoir.mjs",
+      "avant": "if (!nom || Buffer.byteLength(nom) > 255 || nom.startsWith('/') || nom.includes('\\\\') || elements.some(x => !x || x === '..' || x === '.') || /^[A-Za-z]:/.test(nom)) erreur('chemin tar interdit')\r\n    if (entrees.has(nom)) erreur('entree tar dupliquee')\r\n    if (type === '0') { fichiers++; if (fichiers > 20000) erreur('trop de fichiers') }\r\n    else if (taille) erreur('dossier tar non vide')\r\n    entrees.set(nom, { type, donnees })\r\n  }\r\n  if (!fin || pax) erreur('archive tar incomplete')\r\n  return entrees\r\n}\r\nfunction valider(buf, compartiment) {\r\n  const entrees = lireTar(buf), m = entrees.get('manifeste.json')\r\n  if (!m || m.type !== '0') erreur('manifeste absent')\r\n  let manifeste\r\n  try { manifeste = JSON.parse(m.donnees.toString('utf8')) } catch { erreur('manifeste invalide') }\r\n  if (manifeste.compartiment !== compartiment || !Array.isArray(manifeste.fichiers)) erreur('mauvais compartiment')\r\n  const attendus = new Set(['manifeste.json'])\r\n  let octets = 0\r\n  for (const ligne of manifeste.fichiers) {\r\n    if (!['saas', 'presti', 'memoire', 'ops'].includes(ligne.racine) || typeof ligne.chemin !== 'string' || !ligne.chemin || ligne.chemin.startsWith('/') || ligne.chemin.split('/').some(x => !x || x === '.' || x === '..') || (compartiment === 'general' && ligne.classe === 'prospects') || (compartiment === 'prospects' && ligne.classe !== 'prospects')) erreur('entree manifeste interdite')\r\n    const nom = `fichiers/${ligne.racine}/${ligne.chemin}`, fichier = entrees.get(nom)\r\n    if (!fichier || fichier.type !== '0' || attendus.has(nom) || sha(fichier.donnees) !== ligne.sha256 || fichier.donnees.length !== ligne.octets) erreur('empreinte ou fichier invalide')\r\n    attendus.add(nom); octets += fichier.donnees.length\r\n  }\r\n  for (const [nom, e] of entrees) if (e.type === '0' && !attendus.has(nom)) erreur('fichier hors manifeste')\r\n  return { entrees, fichiers: manifeste.fichiers.length, octets }",
+      "apres": "if (!nom || Buffer.byteLength(nom) > 255 || nom.startsWith('/') || nom.includes('\\\\') || elements.some(x => !x || x === '.') || /^[A-Za-z]:/.test(nom)) erreur('chemin tar interdit')\r\n    if (entrees.has(nom)) erreur('entree tar dupliquee')\r\n    if (type === '0') { fichiers++; if (fichiers > 20000) erreur('trop de fichiers') }\r\n    else if (taille) erreur('dossier tar non vide')\r\n    entrees.set(nom, { type, donnees })\r\n  }\r\n  if (!fin || pax) erreur('archive tar incomplete')\r\n  return entrees\r\n}\r\nfunction valider(buf, compartiment) {\r\n  const entrees = lireTar(buf), m = entrees.get('manifeste.json')\r\n  if (!m || m.type !== '0') erreur('manifeste absent')\r\n  let manifeste\r\n  try { manifeste = JSON.parse(m.donnees.toString('utf8')) } catch { erreur('manifeste invalide') }\r\n  if (manifeste.compartiment !== compartiment || !Array.isArray(manifeste.fichiers)) erreur('mauvais compartiment')\r\n  const attendus = new Set(['manifeste.json'])\r\n  let octets = 0\r\n  for (const ligne of manifeste.fichiers) {\r\n    if (!['saas', 'presti', 'memoire', 'ops'].includes(ligne.racine) || typeof ligne.chemin !== 'string' || !ligne.chemin || ligne.chemin.startsWith('/') || ligne.chemin.split('/').some(x => !x || x === '.' || x === '..') || (compartiment === 'general' && ligne.classe === 'prospects') || (compartiment === 'prospects' && ligne.classe !== 'prospects')) erreur('entree manifeste interdite')\r\n    const nom = `fichiers/${ligne.racine}/${ligne.chemin}`, fichier = entrees.get(nom)\r\n    if (!fichier || fichier.type !== '0' || attendus.has(nom) || sha(fichier.donnees) !== ligne.sha256 || fichier.donnees.length !== ligne.octets) erreur('empreinte ou fichier invalide')\r\n    attendus.add(nom); octets += fichier.donnees.length\r\n  }\r\n  for (const [nom, e] of entrees) void nom\r\n  return { entrees, fichiers: manifeste.fichiers.length, octets }",
+      "critere": "SVS-8",
+      "extrait": "FAIL SVS-8 — ../evil : code 0 (attendu 1) — ",
+      "duree_s": 12.088
+    }
+  ]
+}
