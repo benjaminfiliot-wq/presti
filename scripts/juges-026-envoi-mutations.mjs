@@ -43,6 +43,17 @@ m('dj','DJ-2','sql','grant execute on function public.acq_signal(jsonb) to servi
 m('dj','DJ-3','sql','if v_echecs>=3 then','if v_echecs>=4 then','--partie=sql','pause après quatre échecs')
 m('dj','DJ-3','sql',"('P3',30,5,'5 jours au vert'),('P4',40,null,'plafond des agents : au-delà, seul Benj')","('P3',30,5,'5 jours au vert'),('P4',60,null,'plafond des agents : au-delà, seul Benj')",'--partie=sql','P4 à 60 envois par jour')
 m('dj','DJ-4','sql'," select actif into ouvert from ops.interrupteurs where nom='envoi_froid';"," update ops.interrupteurs set actif=true where nom='envoi_froid';\n select actif into ouvert from ops.interrupteurs where nom='envoi_froid';",'--partie=sql','acq_palier_appliquer ouvre le froid')
+// Décision du 05/10/2026 (plus de date d'ouverture du froid) : 0129 remplace acq_envoi_froid_ouvrir sans date, 0130 ferme la porte générique.
+// Chaque garde qui reste (mesure à sec, épreuve < 30 jours, notice < 7 jours, ordre avant l'écriture, porte unique) est saboté ici.
+const OUV = 'supabase/migrations/0129_froid_sans_date.sql', PORTE = 'supabase/migrations/0130_froid_porte_unique.sql'
+m('dj','DJ-3',OUV," if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'"," if (ops.maintenant() at time zone 'Europe/Paris')::date<'2026-10-12'::date then raise exception 'ops:trop_tot'; end if;\n if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'",'--partie=sql','la date du 12/10 revient dans acq_envoi_froid_ouvrir')
+m('dj','DJ-10',OUV,"raise exception 'ops:epreuve_absente'","null",'--partie=sql','ouverture sans l\'épreuve de bout en bout')
+m('dj','DJ-10',OUV,"resume like 'PASS%') then raise exception 'ops:mesure_absente'","resume like '%') then raise exception 'ops:mesure_absente'",'--partie=sql','mesure à sec acceptée même en échec')
+m('dj','DJ-10',OUV,"interval '30 days') then raise exception 'ops:epreuve_absente'","interval '3000 days') then raise exception 'ops:epreuve_absente'",'--partie=sql','épreuve de bout en bout périmée acceptée')
+m('dj','DJ-10',OUV,"v_notice<ops.maintenant()-interval '7 days'","v_notice<ops.maintenant()-interval '700 days'",'--partie=sql','notice périmée acceptée')
+m('dj','DJ-10',OUV," if p_auteur is null or not exists(select 1 from public.artisans where id=p_auteur and is_founder) then raise exception 'ops:auteur'; end if;\n"," if p_auteur is null then raise exception 'ops:auteur'; end if;\n",'--partie=sql','ouverture sans contrôle du fondateur')
+m('dj','DJ-10',PORTE,"  if p_nom = 'envoi_froid' and p_actif then\n    raise exception using message = 'ops:envoi_froid_par_geste', errcode = 'P0001';\n  end if;\n","",'--partie=sql','porte générique : envoi_froid ouvrable sans preuve')
+m('dj','DJ-10',PORTE,"grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role;","grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role, authenticated;",'--partie=sql','porte générique ouverte à authenticated')
 m('dj','DJ-7','d',"if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'pause'))","if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'active'))",'--partie=logique','technologie en pause acceptée')
 m('dj','DJ-7','d',"const technologie = evenement.technologie ?? 'inconnue'","const technologie = evenement.resume ?? evenement.technologie ?? 'inconnue'",'--partie=logique','URL du prospect dans la carte')
 

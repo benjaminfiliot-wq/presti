@@ -141,7 +141,7 @@ const ENTREE = (x = {}) => ({
   pause: { active: false }, attention: { total: 9 }, lancement: '2026-10-12', ...x,
 })
 const CLES_BARRE = ['agents', 'chef', 'modele_chef', 'cycles', 'reunion', 'quota_claude', 'quota_codex', 'envois', 'experience']
-const FERME = '— · formulaire fermé (12/10 au plus tôt)'
+const FERME = '— · formulaire fermé'
 await S.critere('BA-3', () => {
   const e = [], barre = fn(BA, 'barre', 'barre'), aa = fn(BA, 'agentsActifs', 'barre'), q = fn(BA, 'quota', 'barre'), eb = fn(BA, 'envoisBarre', 'barre')
   const b = barre(ENTREE(), M)

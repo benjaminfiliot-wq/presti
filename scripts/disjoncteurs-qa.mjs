@@ -64,6 +64,15 @@ const NOM = `${JUGE}${PARTIE ? ` --partie=${PARTIE}` : ''}${o.autoControle ? ' -
 const K = await importerContrat()
 const lireSi = (f) => { try { const b = fs.readFileSync(f); return b.length ? lf(b.toString('utf8')) : '' } catch { return null } }
 
+/** Le corps (commentaires SQL ôtés) de acq_envoi_froid_ouvrir tel que le redéfinit 0129, ou null si 0129 manque. */
+function ouvrirEnVigueur(dossier) {
+  const t = lireSi(path.join(dossier, '0129_froid_sans_date.sql'))
+  if (t === null) return null
+  const c = t.replace(/--[^\n]*/g, '')
+  const m = /create or replace function public\.acq_envoi_froid_ouvrir\(p_auteur uuid\)[\s\S]*?as \$\$([\s\S]*?)\$\$/i.exec(c)
+  return m ? m[1] : ''
+}
+
 /** Le fichier de migration 0111 sous <racine>, ou null : `supabase/migrations/*_acquisition_envoi.sql`, numéro > 0106. */
 function trouverMigration(racine) {
   const dossier = path.join(racine, 'supabase', 'migrations')
@@ -280,8 +289,17 @@ async function jugementNormal(s) {
       const seuils = [['4', 'stop'], ['2', 'plainte'], ['1', 'avis_abus'], ['3', 'echec_soumission'], ['300', 'sans_reponse']]
       for (const [n] of seuils) if (!c.includes(n)) e.push(`seuil ${n} non retrouvé dans le SQL`)
       if (!c.includes('300')) e.push('par_jour borné à 300 non retrouvé')
-      if (!texteM.includes(K.DATE_PREMIER_ENVOI)) e.push(`DATE_PREMIER_ENVOI (${K.DATE_PREMIER_ENVOI}) absente du SQL`)
-      s.juger('DJ-3', e, `graines de ops.paliers alignées sur PALIERS (${attendus.map(([id, n]) => `${id}=${n}`).join(', ')}) ; seuils et date de contrat.ts retrouvés dans le SQL`)
+      // Décision du 05/10/2026 : plus aucune date d'ouverture (DATE_PREMIER_ENVOI retirée de contrat.ts). La définition EN VIGUEUR de
+      // acq_envoi_froid_ouvrir est celle de 0129 : sans date littérale, sans ops:trop_tot, sans comparaison de date.
+      if ('DATE_PREMIER_ENVOI' in K) e.push('DATE_PREMIER_ENVOI est encore exportée par contrat.ts')
+      const m129 = ouvrirEnVigueur(dossier)
+      if (m129 === null) e.push('0129_froid_sans_date.sql absente : la définition en vigueur de acq_envoi_froid_ouvrir porte encore la date de 0111')
+      else {
+        if (/\b20\d\d-\d\d-\d\d\b/.test(m129)) e.push('acq_envoi_froid_ouvrir (0129) porte une date littérale')
+        if (/ops:trop_tot/.test(m129)) e.push('acq_envoi_froid_ouvrir (0129) lève encore ops:trop_tot')
+        if (/::date\s*[<>]/.test(m129) || /\bcurrent_date\b|\bnow\s*\(\)/i.test(m129)) e.push('acq_envoi_froid_ouvrir (0129) compare encore une date')
+      }
+      s.juger('DJ-3', e, `graines de ops.paliers alignées sur PALIERS (${attendus.map(([id, n]) => `${id}=${n}`).join(', ')}) ; seuils retrouvés dans le SQL ; plus aucune date d'ouverture (contrat.ts et acq_envoi_froid_ouvrir de 0129)`)
     }
     // DJ-4 : acq_palier_appliquer n'écrit que les lignes attendues (lecture ciblée du corps).
     {
@@ -347,8 +365,34 @@ async function jugementNormal(s) {
         if (!m) e.push(`${f} : is_founder non retrouvé`)
       }
       if (!texteM.includes('ops:auteur')) e.push('ops:auteur absent (refus d\'un non-fondateur)')
-      if (!texteM.includes('ops:trop_tot') || !texteM.includes('ops:mesure_absente') || !texteM.includes('ops:epreuve_absente') || !texteM.includes('ops:notice_absente')) e.push('les quatre refus de acq_envoi_froid_ouvrir ne sont pas tous retrouvés')
-      s.juger('DJ-10', e, 'is_founder lu avant écriture dans chaque fonction du fondateur ; les quatre refus de acq_envoi_froid_ouvrir')
+      // Les refus de l'ouverture se lisent dans la définition EN VIGUEUR (0129, sans date) : trois preuves, dans l'ordre, AVANT l'écriture.
+      const v129 = ouvrirEnVigueur(dossier)
+      if (v129 === null) e.push('0129_froid_sans_date.sql absente')
+      else {
+        const pos = (re) => { const m = re.exec(v129); return m ? m.index : -1 }
+        const iAuteur = pos(/is_founder/), iMesure = pos(/ops:mesure_absente/), iEpreuve = pos(/ops:epreuve_absente/), iNotice = pos(/ops:notice_absente/)
+        const iEcriture = pos(/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true/i), iPalier = pos(/acq_palier_appliquer/)
+        if (/ops:trop_tot/.test(v129)) e.push('0129 lève encore ops:trop_tot')
+        if ([iAuteur, iMesure, iEpreuve, iNotice, iEcriture, iPalier].some((x) => x < 0)) e.push('0129 : is_founder, les trois refus (mesure, épreuve, notice), l\'écriture de l\'interrupteur et acq_palier_appliquer ne sont pas tous retrouvés')
+        else if (!(iAuteur < iMesure && iMesure < iEpreuve && iEpreuve < iNotice && iNotice < iEcriture && iEcriture < iPalier)) e.push('0129 : l\'ordre is_founder → mesure → épreuve → notice → écriture → paliers n\'est pas tenu')
+        if (!/type='mesure_a_sec'\s+and\s+resume\s+like\s+'PASS%'/.test(v129)) e.push('0129 : la mesure à sec doit être un événement PASS')
+        if (!/type='epreuve_bout_en_bout'\s+and\s+resume\s+like\s+'PASS%'\s+and\s+le>=ops\.maintenant\(\)-interval\s+'30 days'/.test(v129)) e.push('0129 : l\'épreuve de bout en bout doit être un PASS de moins de 30 jours')
+        if (!/v_notice\s+is\s+null\s+or\s+v_notice<ops\.maintenant\(\)-interval\s+'7 days'/.test(v129)) e.push('0129 : la notice doit être vérifiée depuis moins de 7 jours')
+      }
+      // L'ouverture n'a qu'UNE porte : aucune autre migration n'écrit envoi_froid à vrai, et la porte générique de 0097 la refuse (0130).
+      const nu130 = lireSi(path.join(dossier, '0130_froid_porte_unique.sql'))
+      if (nu130 === null) e.push('0130_froid_porte_unique.sql absente : ops_interrupteur_poser (0097) ouvre encore envoi_froid sans preuve')
+      else {
+        const c130 = nu130.replace(/--[^\n]*/g, '')
+        const iRefus = c130.search(/p_nom\s*=\s*'envoi_froid'\s+and\s+p_actif[\s\S]*?ops:envoi_froid_par_geste/), iMaj = c130.search(/update\s+ops\.interrupteurs/i)
+        if (iRefus < 0 || iMaj < 0 || iRefus > iMaj) e.push('0130 : ops_interrupteur_poser doit refuser d\'ouvrir envoi_froid (ops:envoi_froid_par_geste) AVANT son update')
+        if (!/grant execute on function public\.ops_interrupteur_poser\(text, boolean, text, uuid\) to service_role/i.test(c130) || /\bto\s+[^;]*\b(anon|authenticated|public)\b/i.test(c130.replace(/revoke[^;]*;/gi, ''))) e.push('0130 : droits de ops_interrupteur_poser autres que service_role')
+      }
+      for (const nom of fs.readdirSync(dossier).filter((n) => /^\d{4}_.*\.sql$/.test(n) && !/^(0111|0129)_/.test(n))) {
+        const c = (lireSi(path.join(dossier, nom)) ?? '').replace(/--[^\n]*/g, '')
+        if (/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true[^;]*envoi_froid/i.test(c)) e.push(`${nom} ouvre envoi_froid hors de acq_envoi_froid_ouvrir`)
+      }
+      s.juger('DJ-10', e, 'is_founder lu avant écriture dans chaque fonction du fondateur ; acq_envoi_froid_ouvrir (0129, sans date) : trois refus (mesure PASS, épreuve PASS < 30 jours, notice < 7 jours) dans l\'ordre avant l\'écriture ; une seule porte vers envoi_froid ouvert (0130 refuse la porte générique)')
     }
     // DJ-11 : gmail_refus double effet, ads_archive.
     {

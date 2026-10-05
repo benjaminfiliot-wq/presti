@@ -57,7 +57,6 @@ const TRAVAIL = path.join(DEPOT, '.orchestre', 'travail', NOM)
 const PREUVE = path.join(DEPOT, '.orchestre', 'preuves', '026-220')
 const HORLOGE = Date.parse('2026-09-27T10:00:00.000Z')
 const ISO = (t) => new Date(t).toISOString()
-const OUVERTURE_FROID = Date.parse('2026-10-12T00:00:00.000Z')
 
 const PARTIES = ['openclaw', 'cursor', 'firecrawl', 'fish', 'entrant', 'douleurs', 'experience']
 const FICHIER = {
@@ -121,7 +120,7 @@ const CRITERES = {
     ['EN-3', 'demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés'],
     ['EN-4', 'accord sur le texte exact : empreinte sha256 inchangée jusqu\'à l\'envoi'], ['EN-5', 'accord valide au moment de l\'envoi'],
     ['EN-6', 'envoi unique par accord ; second accord pour la réponse'], ['EN-7', 'demande non retirée avant l\'envoi'],
-    ['EN-8', 'aucun contact froid avant le 12/10'], ['EN-9', 'opposition : arrêt, aucune relance ni second envoi'],
+    ['EN-8', 'aucun contact froid : froid_ouvert = false, réponses sollicitées seulement'], ['EN-9', 'opposition : arrêt, aucune relance ni second envoi'],
     ['EN-10', 'données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé'],
     ['EN-11', 'états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé'], ['EN-12', 'prose conforme au verdict'],
   ],
@@ -135,7 +134,7 @@ const CRITERES = {
   experience: [
     ['EX-1', 'lanceur présent et exports du contrat'], ['EX-2', 'verrou de la première vente : encaissement confirmé, sourcé et non test (indicateurs explicites)'],
     ['EX-3', 'lancement approuvé par Benj, sinon « proposée »'], ['EX-4', 'cadre complet avant le premier événement'],
-    ['EX-5', 'froid fermé avant le 12/10'], ['EX-6', 'un id = une expérience'], ['EX-7', 'objectif modifié = nouvel accord'],
+    ['EX-5', "froid fermé tant que l'interrupteur envoi_froid n'est pas ouvert (sans date : horloge lointaine, service absent, faux, non booléen, en panne)"], ['EX-6', 'un id = une expérience'], ['EX-7', 'objectif modifié = nouvel accord'],
     ['EX-8', 'mesure absente : « non mesuré », jamais un succès'], ['EX-9', 'bilan séparé, aucun drapeau basculé'],
     ['EX-R', 'aucun effet hors des doublures du juge'],
   ],
@@ -264,7 +263,7 @@ const CONTRATS = {
     horloge: { maintenant() }, evenements: { emettre(e) }, drapeaux: { basculer() } (jamais appelé) }
   lancer → { deja, experience: { id, etat: 'proposée'|'en cours'|'approuvée', … } } | { refus } : pas d'encaissement
     (statut 'encaisse') confirmé (confirme === true), sourcé et non test (test === false : un indicateur absent n'est pas
-    un non) → refus ; cadre incomplet → refus ; « froid » avant le 12/10 → refus ; sans accord de Benj sur l'objectif
+    un non) → refus ; cadre incomplet → refus ; « froid » sans interrupteur envoi_froid ouvert (deps.froid_ouvert() === true) → refus, à toute date ; sans accord de Benj sur l'objectif
     exact → 'proposée' sans événement ; même id → pas de second événement ; objectif modifié → refus.
   conclure → { experience: { etat, conclusion, succes, bilan?: { observation, inference, decision } } } : mesure absente →
     etat 'arrêtée', conclusion 'non mesuré', succes différent de true ; aucun drapeau basculé.`,
@@ -1114,7 +1113,8 @@ async function jugerEntrant(texte, C, racine) {
     for (const n of ['envoi', 'envoi_2']) if (vivant(n) && !(t(E[n].heure) < t(r))) d.push(`${n} après le retrait de la demande`)
   })
   await C('EN-8', (d) => {
-    if (j.froid_ouvert !== false && t(j.horloge_debut ?? ISO(HORLOGE)) < OUVERTURE_FROID) d.push('froid_ouvert ≠ false avant le 12/10')
+    // Plus de date (05/10/2026) : la recette d'un entrant ne contacte jamais à froid, quelle que soit l'heure.
+    if (j.froid_ouvert !== false) d.push('froid_ouvert ≠ false')
     for (const n of ['envoi', 'envoi_2']) {
       if (!vivant(n)) continue
       if (E[n].type !== 'reponse-sollicitee') d.push(`${n} de type ${json(E[n].type)} (reponse-sollicitee attendue)`)
@@ -1297,7 +1297,7 @@ async function jugerExperience(mod, C) {
   const demande = (plus = {}) => ({ id: 'exp-essai-001', version: 1, source: 'douleurs-2026-08', objectif: OBJ, metrique: { nom: 'taux_abandon_devis_mobile', depart: 0.4 }, horizon_jours: 30,
     population: 'artisans fictifs du bac d\'essai', seuil_arret: 'abandon > 0,5 deux jours de suite', cout_max_eur: 0, touche: ['clients'],
     accord_benj: { id: 'accord-essai-exp-001', objectif: OBJ, date: ISO(HORLOGE) }, ...plus })
-  const fabriquer = (ventes = [VENTE_OK]) => {
+  const fabriquer = (ventes = [VENTE_OK], froid) => {
     const c = { ev: [], ecritures: 0, drapeaux: 0 }
     const m = new Map()
     const deps = {
@@ -1307,6 +1307,7 @@ async function jugerExperience(mod, C) {
       evenements: { emettre: async (e) => { c.ev.push(e) } },
       drapeaux: { basculer: async () => { c.drapeaux++ } },
     }
+    if (froid !== undefined) deps.froid_ouvert = froid
     return { c, m, deps }
   }
   await C('EX-2', async (d) => {
@@ -1342,10 +1343,24 @@ async function jugerExperience(mod, C) {
     }
   })
   await C('EX-5', async (d) => {
-    const x = fabriquer()
-    const r = await mod.lancerExperience(demande({ id: 'exp-essai-froid', touche: ['froid', 'messages'] }), x.deps)
-    if (!refuse(r)) d.push('expérience touchant le froid acceptée avant le 12/10')
-    if (x.c.ev.length) d.push('événement émis pour une expérience froide')
+    // Plus de date (05/10/2026) : seul un interrupteur envoi_froid OUVERT (froid_ouvert() === true) autorise une expérience « froid ».
+    // Chaque cas où il ne l'est pas, ou pas prouvé, refuse : service absent, faux, non booléen, panne, et même avec une horloge très lointaine.
+    const LOIN = Date.parse('2030-01-15T10:00:00.000Z')
+    for (const [quoi, froid, horloge] of [
+      ['service absent', undefined, HORLOGE], ['service absent, horloge en 2030', undefined, LOIN], ['interrupteur fermé', async () => false, HORLOGE],
+      ['interrupteur fermé, horloge en 2030', async () => false, LOIN], ['réponse « oui » (non booléen)', async () => 'oui', LOIN], ['réponse 1 (non booléen)', async () => 1, LOIN],
+      ['réponse objet', async () => ({ ouvert: true }), LOIN], ['service en panne', async () => { throw new Error('base injoignable') }, LOIN], ['service non fonction', true, LOIN],
+    ]) {
+      const x = fabriquer(undefined, froid)
+      if (horloge !== HORLOGE) x.deps.horloge = { maintenant: () => horloge }
+      const r = await mod.lancerExperience(demande({ id: 'exp-essai-froid', touche: ['froid', 'messages'] }), x.deps)
+      if (!refuse(r)) d.push(`expérience touchant le froid acceptée (${quoi})`)
+      if (x.c.ev.length || x.c.ecritures) d.push(`${quoi} : ${x.c.ev.length} événement(s), ${x.c.ecritures} écriture(s) avant le refus`)
+    }
+    // Une expérience qui ne touche pas au froid n'est pas bloquée par l'interrupteur fermé.
+    const y = fabriquer(undefined, async () => false)
+    const s = await mod.lancerExperience(demande({ id: 'exp-essai-sans-froid', touche: ['clients'] }), y.deps)
+    if (refuse(s)) d.push("une expérience sans portée « froid » est refusée à cause de l'interrupteur fermé")
   })
   await C('EX-6', async (d) => {
     const x = fabriquer()
@@ -1578,7 +1593,12 @@ const SABOTAGES = [
   ['EX-2', 'presti/scripts/chef/lancer-experience.mjs', "v?.statut === 'encaisse' && v.confirme === true && v.test === false && v.source", "v?.statut === 'encaisse' && v.confirme === true && v.test !== true && v.source"],
   ['EX-8', 'presti/scripts/chef/lancer-experience.mjs', "const arretee = { ...e, etat: 'arrêtée', conclusion: 'non mesuré', succes: false, suspendue: true }", "const arretee = { ...e, etat: 'conclue', conclusion: 'succès', succes: true, suspendue: false }"],
   ['EX-6', 'presti/scripts/chef/lancer-experience.mjs', '    return { deja: true, experience: existante }', "    await deps.evenements.emettre({ type: 'demarrage', id: d.id, a_sec: true })\n    return { deja: true, experience: existante }"],
-  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "if ((d.touche || []).includes('froid') && deps.horloge.maintenant() < OUVERTURE_FROID) return { refus: 'froid_ferme' }", "if (false) return { refus: 'froid_ferme' }"],
+  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "if ((d.touche || []).includes('froid') && !(await froidOuvert(deps))) return { refus: 'froid_ferme' }", "if (false) return { refus: 'froid_ferme' }"],
+  // Sabotages de la règle sans date : ouvrir sur un service absent, sur une réponse non booléenne, sur une panne ou sur la seule horloge.
+  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "return typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true", "return typeof deps.froid_ouvert !== 'function' || (await deps.froid_ouvert()) === true"],
+  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "return typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true", "return typeof deps.froid_ouvert === 'function' && !!(await deps.froid_ouvert())"],
+  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "} catch { return false }", "} catch { return true }"],
+  ['EX-5', 'presti/scripts/chef/lancer-experience.mjs', "return typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true", "return deps.horloge.maintenant() > Date.UTC(2026, 9, 5) || (typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true)"],
   ['EX-3', 'presti/scripts/chef/lancer-experience.mjs', 'const accord = d.accord_benj && d.accord_benj.id && d.accord_benj.objectif === d.objectif ? d.accord_benj : null', "const accord = d.accord_benj || { id: 'implicite', objectif: d.objectif }"],
   ['EX-4', 'presti/scripts/chef/lancer-experience.mjs', "const CHAMPS = ['id', 'version', 'source', 'objectif', 'population', 'seuil_arret']", "const CHAMPS = ['id', 'version', 'objectif']"],
   ['EX-7', 'presti/scripts/chef/lancer-experience.mjs', "if (existante.objectif !== d.objectif || existante.version !== d.version) return { refus: 'nouvel_accord', raison: 'objectif ou version modifiés' }", ''],

@@ -6,7 +6,7 @@ Fiche 026-227. Code : `scripts/chef/lancer-experience.mjs` (`lancerExperience`, 
 
 ## Statut de mise en service
 
-Inactif tant que 026-220, 026-226 et 026-103 n'ont pas de PASS (`verdicts.jsonl` et `fait/`) : la ligne de commande refuse l'usage réel et répond « en attente ». L'essai fictif `--a-sec` reste permis : il écrit sous `.orchestre/travail/experiences-a-sec/`, marque ses événements `a_sec: true` et ne vaut pas une mise en service. Aucune expérience ne rouvre le froid avant le **12/10** (portée `froid` refusée avant cette date).
+Inactif tant que 026-220, 026-226 et 026-103 n'ont pas de PASS (`verdicts.jsonl` et `fait/`) : la ligne de commande refuse l'usage réel et répond « en attente ». L'essai fictif `--a-sec` reste permis : il écrit sous `.orchestre/travail/experiences-a-sec/`, marque ses événements `a_sec: true` et ne vaut pas une mise en service. Aucune expérience ne touche au froid tant que l'interrupteur `envoi_froid` n'est pas ouvert (portée `froid` refusée sauf si `deps.froid_ouvert()` rend exactement `true` ; la ligne de commande rend toujours `false`). Plus de date : décision de Benj du 05/10/2026.
 
 ## Ce qui est exigé avant le premier événement
 
