@@ -22,6 +22,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-01",
+      "objet": "Tâche d'essai numéro 1 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -32,6 +33,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-02",
+      "objet": "Tâche d'essai numéro 2 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -42,6 +44,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-03",
+      "objet": "Tâche d'essai numéro 3 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -52,6 +55,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-04",
+      "objet": "Tâche d'essai numéro 4 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -62,6 +66,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-05",
+      "objet": "Tâche d'essai numéro 5 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -72,6 +77,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-06",
+      "objet": "Tâche d'essai numéro 6 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -82,6 +88,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-07",
+      "objet": "Tâche d'essai numéro 7 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -92,6 +99,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-08",
+      "objet": "Tâche d'essai numéro 8 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -102,6 +110,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-09",
+      "objet": "Tâche d'essai numéro 9 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -112,6 +121,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-10",
+      "objet": "Tâche d'essai numéro 10 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -122,6 +132,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-11",
+      "objet": "Tâche d'essai numéro 11 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."

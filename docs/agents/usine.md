@@ -73,6 +73,7 @@ que des **clés plafonnées**, dans une liste fermée :
 | `PRESTI_JETON_QUALITE` | le Contrôleur qualité des sites (agent `qualite_sites`) |
 | `PRESTI_JETON_VIGILE` | le Vigile (agent `vigile`) |
 | `PRESTI_JETON_STUDIO` | le Studio pubs (agent `studio` : packs locaux et échantillons) |
+| `PRESTI_JETON_PRENEUR` | le preneur des tâches libres du bus (agent `preneur`, migration 0127 ; `docs/agents/preneur-libre.md`) |
 | `FIRECRAWL_API_KEY` | la lecture web du Savoir (`scripts/savoir/chercher.mjs --web`) : clé **plafonnée par crédits**, forme `fc-` + 32 signes ; voir « Firecrawl » ci-dessous |
 
 Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et surtout :
@@ -172,6 +173,7 @@ et active les minuteurs du groupe ; `arreter <groupe>` les désactive.
 | `presti-porteur.service`, `presti-export-nuit.service` | `presti-porteur.timer` (15 min), `presti-export-nuit.timer` (3 h 30, Paris) | agents | `PRESTI_JETON_FACTEUR_USINE` | porteur | 026-095, 026-143 |
 | `presti-standard.service`, `presti-facteur.service`, `presti-facteur-soir.service` | `presti-standard.timer` (5 min), `presti-facteur.timer` (15 min), `presti-facteur-soir.timer` (20 h 05) | agents | `PRESTI_JETON_STANDARDISTE`, `PRESTI_JETON_FACTEUR` | modeles | 026-094, 026-148 |
 | `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; jeton posé et minuteur installé par gardien le 05/10/2026 ; première passe en lecture seule le même jour, section `conseiller` mesurée) |
+| `presti-preneur.service` | `presti-preneur.timer` (toutes les 10 min, une tâche par passage) | agents | `PRESTI_JETON_PRENEUR` | preneur | `docs/agents/preneur-libre.md` (groupe `preneur`) |
 | `presti-qualite`, `presti-sav` | pas encore d'unité | agents | `PRESTI_JETON_QUALITE`, `PRESTI_JETON_SAV` | qualite, sav | 026-247, 026-245 (jeton `PRESTI_JETON_QUALITE` posé le 05/10/2026 ; `PRESTI_JETON_SAV` pas encore) |
 | `presti-telegram.service` | aucun : service permanent (long polling) | agents | `TELEGRAM_BOT_TOKEN`, `PRESTI_JETON_TELEGRAM`, `TELEGRAM_CHAT_ID`, `TELEGRAM_CODE_APPAIRAGE` | aucun : sa propre mise en service | 026-195 |
 

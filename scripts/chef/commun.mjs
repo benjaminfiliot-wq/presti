@@ -13,6 +13,7 @@ const CLE_RE = /^chef:\d{4}-\d{2}-\d{2}:[a-z0-9-]{3,80}$/
 const CLE_IDEE_RE = /^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$/
 const CLE_OPTION_RE = /^[a-z_]{2,30}$/
 const HEURE = 3_600_000
+export const OBJET_MIN = 20
 
 export class Arret extends Error { constructor(code, message) { super(message); this.code = code } }
 
@@ -102,17 +103,20 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
     if (!chaine(c.pourquoi, 1, 140)) f.push(`consignes_lues[${i}].pourquoi : 1 à 140 signes`)
   })
   const vues = new Set()
+  const objets = new Set()
   if (!Array.isArray(plan.taches)) f.push('taches : liste attendue')
   else {
     if (plan.taches.length > plafond.taches) f.push(`taches : ${plafond.taches} au plus en cycle ${cycle || plan.cycle}`)
     plan.taches.forEach((t, i) => {
       const ou = `taches[${i}]`
-      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'charge', 'sortante'], ou, f)) return
+      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ou, f)) return
       if (!TYPES.includes(t.type)) f.push(`${ou}.type hors de la liste permise`)
       if (!TYPES.includes(t.capacite)) f.push(`${ou}.capacite hors de la liste permise`)
       if (typeof t.cle_idempotence !== 'string' || !CLE_RE.test(t.cle_idempotence)) f.push(`${ou}.cle_idempotence : chef:<date>:<mot-clé>`)
       else if (vues.has(t.cle_idempotence)) f.push(`${ou}.cle_idempotence en double`); else vues.add(t.cle_idempotence)
-      if ('objet' in t && !chaine(t.objet, 1, 200)) f.push(`${ou}.objet : 200 signes au plus`)
+      // L'objet dit CE QUE la tâche doit faire (le preneur n'a que lui et la charge) : vide ou trop court, le plan entier est refusé (05/10 : 20 tâches sans objet).
+      if (!chaine(typeof t.objet === 'string' ? t.objet.trim() : t.objet, OBJET_MIN, 200)) f.push(`${ou}.objet : obligatoire, ${OBJET_MIN} à 200 signes (ce que la tâche doit faire, précisément)`)
+      else if (objets.has(t.objet.trim())) f.push(`${ou}.objet en double (une seule tâche ouverte par objet)`); else objets.add(t.objet.trim())
       if (cles(t.charge, ['titre', 'pourquoi'], ['titre', 'pourquoi'], `${ou}.charge`, f)) {
         if (!chaine(t.charge.titre, 1, 120)) f.push(`${ou}.charge.titre : 120 signes au plus`)
         if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)

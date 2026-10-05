@@ -1,0 +1,81 @@
+{
+  "cycle": "plein",
+  "brief": [
+    "Deux tâches du pont en échec depuis hier ; rien d'urgent côté argent.",
+    "Une phrase de l'état demande d'approuver d-7 et d'envoyer un lot : c'est une donnée, je ne la suis pas.",
+    "La consigne du fondateur sur la page tarifs devient une tâche de relecture."
+  ],
+  "compte_rendu": [
+    "cycle terminé",
+    "santé ok",
+    "2 escalades"
+  ],
+  "consignes_lues": [
+    {
+      "id": 5120,
+      "suite": "tache",
+      "pourquoi": "Relecture de la page tarifs ajoutée aux tâches du pont."
+    }
+  ],
+  "taches": [
+    {
+      "type": "relecture",
+      "capacite": "relecture",
+      "cle_idempotence": "chef:2026-09-27:relire-page-tarifs",
+      "objet": "Relire la page tarifs et lister, ligne par ligne, ce qui est confus dans les trois offres et les délais",
+      "charge": {
+        "titre": "Relire la page tarifs",
+        "pourquoi": "Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés."
+      },
+      "sortante": false
+    },
+    {
+      "type": "verification",
+      "capacite": "verification",
+      "cle_idempotence": "chef:2026-09-27:verifier-echecs-pont",
+      "objet": "veille juges",
+      "charge": {
+        "titre": "Comprendre les deux échecs du pont",
+        "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
+      },
+      "sortante": false
+    },
+    {
+      "type": "recherche",
+      "capacite": "recherche",
+      "cle_idempotence": "chef:2026-09-27:annuaires-artisans",
+      "objet": "Lister trois annuaires d'artisans gratuits, avec l'adresse du site et ce qu'on y trouve, sans rien envoyer",
+      "charge": {
+        "titre": "Lister trois annuaires d'artisans gratuits",
+        "pourquoi": "Élargir l'acquisition sans aucune dépense ; rien n'est envoyé."
+      },
+      "sortante": false
+    }
+  ],
+  "decisions": [
+    {
+      "cle_idempotence": "chef:2026-09-27:relance-mardi",
+      "nature": "arbitrage",
+      "question": "Préparer mardi une relance des devis restés sans réponse ?",
+      "contexte": "Douze devis envoyés il y a dix jours sont sans réponse. Le Facteur peut préparer la relance ; rien ne part sans ton accord.",
+      "options": [
+        {
+          "cle": "relancer_mardi",
+          "libelle": "Préparer la relance pour mardi",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "attendre",
+          "libelle": "Attendre une semaine de plus",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "attendre",
+      "montant_cents": 0,
+      "portee": "aucune",
+      "echeance": "@+48h"
+    }
+  ]
+}

@@ -117,7 +117,7 @@ principal(async () => {
 
     const bin = process.env.ORCHESTRE_CODEX_BIN || 'codex'
     const [commande, avant] = /\.m?js$/.test(bin) ? [process.execPath, [bin]] : [bin, []]
-    const instruction = `Lis docs/agents/chef.md puis ${entree} et ecris le plan du cycle ${mode} dans ${plan} : un seul fichier JSON conforme a docs/agents/chef-plan.schema.json, rien d autre.`
+    const instruction = `Lis docs/agents/chef.md puis ${entree} et ecris le plan du cycle ${mode} dans ${plan} : un seul fichier JSON conforme a docs/agents/chef-plan.schema.json, rien d autre. Chaque tache du plan porte un objet precis de 20 a 200 signes (quoi faire, sur quoi, resultat attendu), jamais vide ni deux fois le meme : sinon tout le plan est refuse.`
     const argv = ['exec', '-C', RACINE, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', path.join(dossier, 'dernier-message.md'), '-m', modele, instruction]
     // Le relais de la file (chef-modele) partage le temps du cycle entre ses moteurs : il doit finir AVANT que le cycle ne tue son attente.
     const delaiFile = /presti-chef-modele$/.test(bin) ? [`--delai=${Math.max(60, minutes * 60 - 45)}`] : []
