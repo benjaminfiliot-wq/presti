@@ -5,7 +5,7 @@ const EUROS = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 })
 const eur = (n: number) => `${EUROS.format(n)} €`
 
 export type LigneExperience = {
-  ventes?: number | null; statut?: string | null; jour?: number | null; gains_eur?: number | null; budget_eur?: number | null; titre?: string | null
+  ventes?: number | null; aucune_vente?: boolean | null; fin_prevue_le?: string | null; nom?: string | null; statut?: string | null; jour?: number | null; gains_eur?: number | null; budget_eur?: number | null; titre?: string | null
 }
 
 export function etatExperience(ligne: LigneExperience | null | undefined, _maintenant?: Date) {
@@ -14,9 +14,11 @@ export function etatExperience(ligne: LigneExperience | null | undefined, _maint
   const jour = Math.min(DUREE_EXPERIENCE, Math.max(1, Math.floor(Number.isFinite(l.jour) ? Number(l.jour) : 1)))
   const gains = Number.isFinite(l.gains_eur) ? Number(l.gains_eur) : 0
   const budget = Number.isFinite(l.budget_eur) ? Number(l.budget_eur) : 0
-  const base = { titre: l.titre ?? 'Expérience', jour: statut ? jour : 0, sur: DUREE_EXPERIENCE, gains, budget, statut }
+  const ventes = l.ventes ?? (l.aucune_vente === false ? 1 : 0)
+  const arret_le = statut === 'en_cours' ? l.fin_prevue_le ?? null : null
+  const base = { arret_le, titre: l.titre ?? l.nom ?? 'Expérience', jour: statut ? jour : 0, sur: DUREE_EXPERIENCE, gains, budget, statut }
   if (!statut) {
-    const texte = (l.ventes ?? 0) > 0
+    const texte = ventes > 0
       ? 'Aucune expérience en cours. Lancer une expérience se décide avec Benj (R13).'
       : 'Aucune expérience avant la première vente (décision R13).'
     return { ...base, barre: null, texte }

@@ -64,7 +64,8 @@ export async function juger(x) {
   const tirerGagnante = () => { const e = jeu('experience-gagnante.json'); const g = H.montant(20, 900); e.reponse.valeur.gains = g; e.reponse.valeur.texte = `Gagnante : ${Math.round(g)} € rapportés. La suite est à Benj.`; return { statut: 200, reponse: e.reponse } }
   const base = (plus = {}) => ({ direct: D, fil: J('vues/fil.json'), tresorerie: T, reglages: J('reglages.json'), ...(MODE === 'vivant' ? {} : { journal: J('role-direction.json') }), ...plus })
   const PAN = '[data-salle-panneau="experience"]'
-  const pret = async (page) => { await page.waitForSelector(`${PAN} [data-experience-texte], ${PAN} .mc-panne, ${PAN} [data-panne-salle]`, { timeout: 15_000 }).catch(() => {}); await page.waitForFunction(() => { const e = document.querySelector('[data-compteur="encaisse_mois"] [data-valeur]'); return !e || !/…/.test(e.textContent) }, null, { timeout: 5000 }).catch(() => {}); await attendre(250) }
+  const DELAI_PANNEAU = MODE === 'vivant' ? 60_000 : 15_000
+  const pret = async (page) => { await page.waitForSelector(`${PAN} [data-experience-texte], ${PAN} .mc-panne, ${PAN} [data-panne-salle]`, { timeout: DELAI_PANNEAU }).catch(() => {}); await page.waitForFunction(() => { const e = document.querySelector('[data-compteur="encaisse_mois"] [data-valeur]'); return !e || !/…/.test(e.textContent) }, null, { timeout: 5000 }).catch(() => {}); await attendre(250) }
   const lirePanneau = (page) => page.evaluate((p) => {
     const e = document.querySelector(p)
     if (!e) return null
@@ -74,6 +75,12 @@ export async function juger(x) {
   const sansGeste = (r, quoi) => { if (r?.gestes.length) faute('EX-1', `${quoi} : bouton ou lien « ${court(r.gestes[0], 40)} » dans le panneau`) }
 
   const srv = await demarrer({ critere: 'EX-2' })
+  // Chauffer la page (même précédent que fil.mjs, D-0410-9, 04/10 ; correction du chef du 05/10, D-0510-1) : sur un `next dev` à froid,
+  // la première navigation compile la page et ses couches, et quatre scénarios à la fois la compilent ensemble ; le panneau n'était
+  // « pas trouvé » en 15 s alors que le banc le rend (EX-2 à EX-5 et EX-8, jugés sur le PC chargé le 05/10). Une requête de Node,
+  // au plus 180 s, fait la compilation AVANT les scénarios ; sa réponse n'est jamais lue, aucun critère n'en dépend. Le délai du
+  // panneau passe de 15 s à 60 s en racine réelle seulement : un panneau absent reste un échec du critère qui le cherche.
+  if (MODE === 'vivant') await fetch(`${srv.base}/controle/station?salle=experience`, { signal: AbortSignal.timeout(180_000), redirect: 'manual' }).then((r) => r.arrayBuffer()).catch(() => {})
   const captures = {}
   const file = []
   const scenario = (ids, nom, f) => { file.push({ ids, nom, f }) }
