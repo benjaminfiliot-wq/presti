@@ -10,6 +10,8 @@ Un critère « attendu en échec » est un critère que le juge DOIT mettre au r
 - PASS témoin UP-5 (UP-5) : pack bon : payee → fabriquee, fabrique_le posé ; verifications : juge pub-locale-qa, verdict PASS (comme deposer.mjs) ; la route relit chacun des six…
 - PASS témoin UP-10 (UP-10) : User=agents ; WorkingDirectory=/srv/presti-agents ; Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele ; aucun EnvironmentFile= ; MemoryMax=4G…
 - PASS le jeton de livreur_usine accepté (UP-2) : travail : le jeton de livreur_usine donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (livreur) a écrit dans la …
+- PASS le jeton de chef accepté (travail) (UP-2) : travail : le jeton de chef donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (chef) a écrit dans la base ou sign…
+- PASS le jeton de chef accepté (rendu) (UP-2) : rendu : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise) ; battement posé pour chef (seul studio bat)
 - PASS le drapeau lu après la garde (UP-2) : depot : busAgents baissé : statut 404, la garde a été interrogée avant le drapeau (404 sans identité attendu)
 - PASS aucun battement de studio (UP-2) : rendu : aucun battement de studio (ops_battement) à l'appel authentifié ; rendu : pas de battement de studio sous la pause générale (appel authentifié)
 - PASS la pause générale ignorée (UP-2) : travail : pause générale : statut 200, corps {"type":"pack","id":"11111111-1111-4111-8111-111111111111","pack":{"pack_id":"1… ({ travail: null } sans écriture attendu)
@@ -18,7 +20,7 @@ Un critère « attendu en échec » est un critère que le juge DOIT mettre au r
 - PASS adresses de lecture de 3 600 s (UP-3) : adresses de lecture : artisan-media 3600 s (bucket artisan-media, 600 s au plus attendus)
 - PASS aucun bail (UP-3) : 2e passage : pack 11111111-1111-4111-8111-111111111111 (pack 22222222-2222-4222-8222-222222222222 attendu : le premier est sous bail) ; 3e passage : {"type":"pack","id":…
 - PASS l'extrait garde adresses et numéros (UP-3) : extrait : 173 signes « Bonjour, oui, vous pouvez utiliser nos photos pour un essai vidéo, avec plaisir, écrivez-moi à resp… » — adresse ou numéro non masqué ; la réponse…
-- PASS une marque en refus prise (UP-3) : Studio : statut 200, {"type":"studio","decision":"55555555-5555-4555-8555-555555555555","marque_cle":"marque-refusee","page_produit":"http://127.0.0.1:61834/mar… (la déc…
+- PASS une marque en refus prise (UP-3) : Studio : statut 200, {"type":"studio","decision":"55555555-5555-4555-8555-555555555555","marque_cle":"marque-refusee","page_produit":"http://127.0.0.1:58066/mar… (la déc…
 - PASS un chemin hors de livraison/ admis (UP-4) : chemin sous le dossier d'un autre pack : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu) ; adresse signée hors des chemins permis : packs-pubs/22222222-222…
 - PASS aucune borne de taille (UP-4) : fichier de plus de 60 Mo : statut 200, 1 adresse(s) signée(s) (400 sans adresse attendu)
 - PASS stockage à 99 % toléré (UP-4) : stockage à 61 % : statut 200, 1 adresse(s) signée(s) (507 sans adresse attendu)
@@ -57,7 +59,7 @@ Un critère « attendu en échec » est un critère que le juge DOIT mettre au r
 - PASS l'extrait des allégations non contrôlé (UP-7) : allégation dont l'extrait n'est pas sur la page : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"pa… [rejoué sur l'usine]
 - PASS un présentateur virtuel accepté (UP-7) : script avec un présentateur virtuel : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"packs-pubs/stu… [rejoué sur l'usine]
 - PASS robots.txt ignoré (UP-7) : robots.txt interdit : le tourneur lit robots, page, image et lance le lecteur 1 fois ; robots.txt qui interdit : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3… [rejoué sur l'usine]
-- PASS plus d'une requête par seconde vers la marque (UP-7) : écarts entre requêtes vers la marque : 5 ms, 3 ms (1 000 ms au moins attendus) [rejoué sur l'usine]
+- PASS plus d'une requête par seconde vers la marque (UP-7) : écarts entre requêtes vers la marque : 9 ms, 2 ms (1 000 ms au moins attendus) [rejoué sur l'usine]
 - PASS le User-Agent du Lecteur oublié (UP-7) : lecture de la marque : robots → page → image ; User-Agent node (robots, page, image avec UA_RECENSEUR attendus) [rejoué sur l'usine]
 - PASS pub-qa ignoré avant le dépôt (UP-7) : pub-qa rouge : 1 montage(s), 1 dépôt(s), rendus [{"travail":"33333333-3333-4333-8333-333333333333","ok":true,"fichiers":[{"chemin":"packs-pubs/stud… (rien monté ni dépos… [rejoué sur l'usine]
 - PASS un outil payant lancé (UP-7) : outil payant ou repli lancé : elevenlabs [rejoué sur l'usine]
@@ -67,7 +69,7 @@ Un critère « attendu en échec » est un critère que le juge DOIT mettre au r
 - PASS le jeton envoyé à la marque (UP-8) : le jeton est envoyé à un autre serveur que Presti : studio : web [rejoué sur l'usine]
 - PASS un fichier écrit hors des lieux permis (UP-8) : écriture hors des lieux permis : pack : cache-pubs.json sous HOME [rejoué sur l'usine]
 - PASS le dossier temporaire laissé plein (UP-8) : le dossier temporaire n'est pas vidé : pack : passage.tmp [rejoué sur l'usine]
-- PASS une exception sur le bus injoignable (UP-9) : bus injoignable : code 1 ; trace de pile ; (node:604712) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not spe… [rejoué sur l'usine]
+- PASS une exception sur le bus injoignable (UP-9) : bus injoignable : code 1 ; trace de pile ; (node:1372569) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not sp… [rejoué sur l'usine]
 - PASS hyperframes absent non reconnu (UP-9) : hyperframes absent (pack) : rendus [{"travail":"11111111-1111-4111-8111-111111111111","ok":false,"raison":"voix_en_echec"}], 0 dépôt(s) (ok: false, raison outil_absent e… [rejoué sur l'usine]
 - PASS le verrou jamais levé (UP-9) : reprise : 1 fabrication(s), 0 rendu(s) ok (le passage suivant doit refaire le travail et le rendre : un verrou ne doit pas rester) [rejoué sur l'usine]
 - PASS non-régression (--temoin) (NR) : package.json identique au HEAD ; npm run typecheck vert

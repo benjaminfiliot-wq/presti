@@ -56,6 +56,22 @@
     "autres": []
   },
   {
+    "nom": "le jeton de chef accepté (travail)",
+    "id": "UP-2",
+    "ok": true,
+    "detail": "travail : le jeton de chef donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (chef) a écrit dans la base ou sign…",
+    "ligne": "FAIL UP-2 — travail : le jeton de chef donne 200 et un battement est posé (403 attendu : seule l'identité studio est admise) ; travail : un refus (chef) a écrit dans la base ou signé une adresse ; battement posé pour chef (seul studio bat)",
+    "autres": []
+  },
+  {
+    "nom": "le jeton de chef accepté (rendu)",
+    "id": "UP-2",
+    "ok": true,
+    "detail": "rendu : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise) ; battement posé pour chef (seul studio bat)",
+    "ligne": "FAIL UP-2 — rendu : le jeton de chef donne 404 et un battement est posé (403 attendu : seule l'identité studio est admise) ; battement posé pour chef (seul studio bat)",
+    "autres": []
+  },
+  {
     "nom": "le drapeau lu après la garde",
     "id": "UP-2",
     "ok": true,
@@ -123,8 +139,8 @@
     "nom": "une marque en refus prise",
     "id": "UP-3",
     "ok": true,
-    "detail": "Studio : statut 200, {\"type\":\"studio\",\"decision\":\"55555555-5555-4555-8555-555555555555\",\"marque_cle\":\"marque-refusee\",\"page_produit\":\"http://127.0.0.1:61834/mar… (la déc…",
-    "ligne": "FAIL UP-3 — Studio : statut 200, {\"type\":\"studio\",\"decision\":\"55555555-5555-4555-8555-555555555555\",\"marque_cle\":\"marque-refusee\",\"page_produit\":\"http://127.0.0.1:61834/mar… (la décision 33333333-3333-4333-8333-333333333333 de maison-temoin-seize attendue : refusée et opposée écartées) ; accord : message_id <ref@marque.invalid>, recu_le 2026-09-27T09:12:00Z ; echantillons_refuses : [1] ([] attendu) (+3)",
+    "detail": "Studio : statut 200, {\"type\":\"studio\",\"decision\":\"55555555-5555-4555-8555-555555555555\",\"marque_cle\":\"marque-refusee\",\"page_produit\":\"http://127.0.0.1:58066/mar… (la déc…",
+    "ligne": "FAIL UP-3 — Studio : statut 200, {\"type\":\"studio\",\"decision\":\"55555555-5555-4555-8555-555555555555\",\"marque_cle\":\"marque-refusee\",\"page_produit\":\"http://127.0.0.1:58066/mar… (la décision 33333333-3333-4333-8333-333333333333 de maison-temoin-seize attendue : refusée et opposée écartées) ; accord : message_id <ref@marque.invalid>, recu_le 2026-09-27T09:12:00Z ; echantillons_refuses : [1] ([] attendu) (+3)",
     "autres": []
   },
   {
@@ -448,8 +464,8 @@
     "nom": "plus d'une requête par seconde vers la marque",
     "id": "UP-7",
     "ok": true,
-    "detail": "écarts entre requêtes vers la marque : 5 ms, 3 ms (1 000 ms au moins attendus)",
-    "ligne": "FAIL UP-7 — écarts entre requêtes vers la marque : 5 ms, 3 ms (1 000 ms au moins attendus)",
+    "detail": "écarts entre requêtes vers la marque : 9 ms, 2 ms (1 000 ms au moins attendus)",
+    "ligne": "FAIL UP-7 — écarts entre requêtes vers la marque : 9 ms, 2 ms (1 000 ms au moins attendus)",
     "autres": [],
     "usine": true
   },
@@ -538,8 +554,8 @@
     "nom": "une exception sur le bus injoignable",
     "id": "UP-9",
     "ok": true,
-    "detail": "bus injoignable : code 1 ; trace de pile ; (node:604712) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not spe…",
-    "ligne": "FAIL UP-9 — bus injoignable : code 1 ; trace de pile ; (node:604712) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not specified and it…",
+    "detail": "bus injoignable : code 1 ; trace de pile ; (node:1372569) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not sp…",
+    "ligne": "FAIL UP-9 — bus injoignable : code 1 ; trace de pile ; (node:1372569) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/bacs/pubs/lib/agents/llm.ts is not specified and i…",
     "autres": [],
     "usine": true
   },
