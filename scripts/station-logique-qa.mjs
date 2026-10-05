@@ -204,7 +204,7 @@ await S.critere('EQ-1', () => {
   if (canon([...cs]) !== canon(CLES_SALLE_ATTENDUES)) e.push(`CLES_SALLE : ${[...cs].join(', ')} ; les vingt clés puis ecommerce attendues`)
   const EQP = val(EQ, 'EQUIPAGE', 'equipage')
   const noms = Object.keys(EQP ?? {})
-  if (canon([...noms].sort()) !== canon(Object.keys(EQUIPAGE_ATTENDU).sort())) e.push(`EQUIPAGE : ${noms.join(', ')} ; les vingt-cinq noms de 026-070 (décision du chef d'entreprise du 27/09) attendus`)
+  if (canon([...noms].sort()) !== canon(Object.keys(EQUIPAGE_ATTENDU).sort())) e.push(`EQUIPAGE : ${noms.join(', ')} ; les vingt-huit noms attendus (les vingt-cinq de 026-070, décision du 27/09, plus sav, qualite_sites et vigile)`)
   for (const [nom, salle] of Object.entries(EQUIPAGE_ATTENDU)) {
     const x = EQP?.[nom]
     if (!x) continue
@@ -229,7 +229,7 @@ await S.critere('EQ-1', () => {
   const fx = cartes.find((c) => c.nom === 'redacteur')
   if (fx && fx.activite !== 'Variante A réécrite') e.push(`activité du redacteur « ${fx?.activite} », le résumé masqué de son dernier événement attendu`)
   for (const m of MODULES) if (/JEU_SPRITES/.test(src[m])) e.push(`${m}.ts contient JEU_SPRITES`)
-  return { echecs: e, detail: `vingt salles et leurs genres, ecommerce réservée hors SALLES, CLES_SALLE = 20 + ecommerce ; vingt-cinq titulaires (décision du 27/09), avatar = nom technique, aucun sprite ; ${rendus.length} cartes = les agents reçus, dans l’ordre des salles ; inconnu → machines, avatar defaut` }
+  return { echecs: e, detail: `vingt salles et leurs genres, ecommerce réservée hors SALLES, CLES_SALLE = 20 + ecommerce ; vingt-huit titulaires (les vingt-cinq du 27/09 plus sav, qualite_sites, vigile), avatar = nom technique, aucun sprite ; ${rendus.length} cartes = les agents reçus, dans l’ordre des salles ; inconnu → machines, avatar defaut` }
 })
 await S.critere('EQ-2', () => {
   const e = [], pt = fn(EQ, 'point', 'equipage'), cd = fn(EQ, 'cadence', 'equipage')
@@ -605,6 +605,9 @@ await S.critere('XP-1', () => {
     [{ ventes: 1, statut: 'arretee_auto', jour: 30, gains_eur: 0 }, 'Arrêtée seule à J30 : rien rapporté.', null],
     [{ ventes: 1, statut: 'gagnante', jour: 30, gains_eur: 42 }, 'J30 atteint : 42 € gagnés. À toi de décider de la suite.', null],
     [{ ventes: 1, statut: 'arretee', jour: 12, gains_eur: 0 }, 'Arrêtée par Benj.', null],
+    // La ligne RÉELLE de station_experience_etat() (0112) ne porte pas `ventes` mais `aucune_vente` (booléen) : D-0510-1, 05/10.
+    [{ aucune_vente: true, statut: null }, 'Aucune expérience avant la première vente (décision R13).', null],
+    [{ aucune_vente: false, statut: null }, 'Aucune expérience en cours. Lancer une expérience se décide avec Benj (R13).', null],
   ]
   for (const [l, texte, barre] of cas) { const r = ex(l, M); if (esp(r?.texte) !== esp(texte) || r?.barre !== barre) e.push(`${l.statut ?? `ventes ${l.ventes}`} : ${JSON.stringify({ texte: r?.texte, barre: r?.barre })}, « ${texte} » sans barre attendu`) }
   for (const c of jeuS('experiences.json').cas) {
@@ -613,6 +616,12 @@ await S.critere('XP-1', () => {
     if (c.nom !== 'en_cours_j6' && r?.barre !== null) e.push(`${c.nom} : barre ${JSON.stringify(r?.barre)}, null attendue`)
     if (r?.sur !== 30) e.push(`${c.nom} : sur = ${r?.sur}, 30 attendu`)
   }
+  // La date d'arrêt automatique est celle que la base sert (fin_prevue_le) ; hors « en cours », null ; le nom de la base vaut titre.
+  const fin = '2026-11-04T10:00:00.000Z'
+  const rEc = ex({ aucune_vente: false, statut: 'en_cours', jour: 6, gains_eur: 0, fin_prevue_le: fin, nom: 'Essai nommé' }, M)
+  if (rEc?.arret_le !== fin) e.push(`en cours : arret_le ${JSON.stringify(rEc?.arret_le)}, fin_prevue_le servie « ${fin} » attendue`)
+  if (rEc?.titre !== 'Essai nommé') e.push(`en cours : titre ${JSON.stringify(rEc?.titre)}, le nom servi « Essai nommé » attendu`)
+  for (const st of ['arretee_auto', 'gagnante', 'arretee']) { const r = ex({ aucune_vente: false, statut: st, jour: 30, gains_eur: 3, fin_prevue_le: fin }, M); if (r?.arret_le !== null) e.push(`${st} : arret_le ${JSON.stringify(r?.arret_le)}, null attendu (rien ne s'arrête plus)`) }
   const r31 = ex({ ventes: 1, statut: 'en_cours', jour: 31, gains_eur: 0 }, M)
   if (!/^J30\/30/.test(esp(r31?.barre))) e.push(`jour 31 affiché « ${r31?.barre} », J30/30 attendu`)
   return { echecs: e, detail: 'les six phrases exactes ; barre seulement en cours (« J6/30 · 0 € ») ; jour 31 affiché 30' }

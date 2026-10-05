@@ -42,13 +42,15 @@ export const SALLES_ATTENDUES = [
 export const CLES_SALLES = SALLES_ATTENDUES.map((s) => s.cle)
 export const RESERVEE = 'ecommerce'
 export const CLES_SALLE_ATTENDUES = [...CLES_SALLES, RESERVEE]
-/** 026-070, décision du chef d'entreprise (27/09) : les vingt-cinq titulaires et leur salle (25 identités de ops.agents,
- *  au lieu des dix-huit d'origine ; EQ-1 en fait foi). */
+/** 026-070, décision du chef d'entreprise (27/09) : les titulaires et leur salle (identités de ops.agents, au lieu des dix-huit
+ *  d'origine ; EQ-1 en fait foi). Actualisé le 05/10 (D-0510-1) : vingt-huit identités, les vingt-cinq de 026-070 plus
+ *  sav, qualite_sites et vigile (agents ajoutés depuis, lus dans lib/pilotage/equipage.ts). */
 export const EQUIPAGE_ATTENDU = {
   chef: 'commandement', vigie_meta: 'radar', recenseur: 'radar', juge_faits: 'redaction', redacteur: 'redaction', garde: 'redaction',
   facteur: 'envois', facteur_usine: 'envois', standardiste: 'standard', repondeur: 'standard', atelier_maquettes: 'atelier', redacteur_site: 'usine',
   livreur: 'usine', livreur_usine: 'usine', tresorier: 'tresorerie', crieur: 'crieur', studio: 'studio', a0: 'machines', systeme: 'machines',
   usine: 'machines', pont: 'chantier', contenu: 'audience', pont_telegram: 'securite', douleurs: 'observatoire', experience: 'experience',
+  sav: 'presti', qualite_sites: 'usine', vigile: 'securite',
 }
 /** 026-092 : les dix salles qui ont un lecteur dès 026-092 ; les dix autres rendent « arrive avec sa fiche » jusqu'à 026-178. */
 export const SALLES_PANNEAU = ['recettes', 'tresorerie', 'usine', 'atelier', 'reunion', 'envois', 'experience', 'standard', 'redaction', 'machines']
