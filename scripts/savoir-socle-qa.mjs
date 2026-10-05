@@ -927,7 +927,7 @@ function svs7(ctx) {
   ecrireExportEssai(exportDir)
   const maison = path.join(base, 'maison')
   fs.mkdirSync(path.join(maison, '.ssh'), { recursive: true })
-  const eteint = ecrireReglages(base, 'eteint', () => {})
+  const eteint = ecrireReglages(base, 'eteint', (r) => { for (const k of Object.keys(r.interrupteurs)) r.interrupteurs[k] = { actif: false, depuis: null, accord: null } }) // « éteint » posé explicitement : le fichier réel peut être allumé (05/10/2026, accord de Benj)
   const allume = ecrireReglages(base, 'allume', (r) => allumer(r, 'envoi'))
   const banc = (nom, mode = 'enregistrer') => {
     const j = path.join(base, `ssh-${nom}`)
@@ -1239,7 +1239,7 @@ function svs10(ctx) {
   const fichiersIndex = (c) => listerFichiers(path.join(rt, 'index', c)).map((x) => path.join(rt, 'index', c, ...x.split('/')))
   const CHAMPS_ETAT = ['compartiment', 'fichiers', 'passages', 'manifeste_sha256', 'synchronise_le', 'indexe_le', 'semantique', 'vecteurs']
   // 1. sémantique éteinte
-  const eteint = ecrireReglages(base, 'eteint', () => {})
+  const eteint = ecrireReglages(base, 'eteint', (r) => { for (const k of Object.keys(r.interrupteurs)) r.interrupteurs[k] = { actif: false, depuis: null, accord: null } }) // « éteint » posé explicitement : le fichier réel peut être allumé (05/10/2026, accord de Benj)
   let L = lancer(eteint, 'eteint')
   if (L.r.code !== 0) return res('SVS-10', [`indexeur : code ${L.r.code} — ${court(L.r.tout, 200)}`])
   for (const c of ['general', 'prospects']) {
