@@ -17,7 +17,7 @@
 | 2. Notation | preneur (tâche `tri`) | note sur les 5 critères de `produits-candidats-0510.md` | un produit sans les critères 1 à 5 n'avance pas |
 | 3. Contenu | preneur (`redaction_interne`) puis Studio | 3 scripts de 20 s par produit, 30 accroches | pas de promesse mensongère, pas de faux prix barré |
 | 4. Annonce eBay | preneur (`redaction_interne`) | titre, description, 5 questions d'acheteurs avec réponses | honnête, délais réels, notice en français |
-| 5. Essai | **décision de Benj (un clic)** | lot de 3 à 5 unités, 40 à 60 € | aucun agent n'a accès au paiement |
+| 5. Mise en ligne **sans stock** | agents (annonce prête), puis commande fournisseur **seulement après une vente** | annonce eBay en ligne ; le client paie d'abord, la commande chez le fournisseur part ensuite | **aucun achat de stock** (décision de Benj, 06/10) ; délai de livraison annoncé honnêtement dans l'annonce |
 | 6. Suivi | trésorier | rapport de bénéfice par produit, 7 h 35 avec le bilan du Chef | bénéfice net, pas chiffre d'affaires |
 | 7. Retours | SAV | réponses préparées, cas bloqués signalés | ton humain, aucun engagement non tenu |
 
@@ -25,6 +25,13 @@
 - **Arrêt** d'un produit : 14 jours sans intention d'achat mesurable, ou marge nette sous 20 %.
 - **Passage à l'échelle** : au moins 3 ventes par semaine avec une marge nette d'au moins 30 %.
 - **Jamais** : marque protégée, produit sans marquage CE exigé, promesse non tenue, plus de 150 annonces par mois (limite eBay pour un particulier).
+
+## Modèle sans stock (décision de Benj, 06/10 : « je n'achète rien, une des vidéos montre comment faire »)
+On **liste d'abord, on commande après la vente**. La vidéo 1 le montre : une page produit reliée à la fiche fournisseur, et la commande n'est passée qu'une fois la vente faite. Conséquences pour les agents :
+- **Aucun achat d'essai.** Le critère 3 (marge) se calcule avec le prix fournisseur relevé au moment de la sélection, **sans engagement**.
+- **L'annonce eBay dit la vérité** : provenance et délai de livraison réels (eBay tolère le dropshipping si l'acheteur est informé ; un délai trompeur expose à la suppression des annonces). Un produit dont le délai annoncé dépasse 10 jours n'est pas retenu pour eBay ; **TikTok Shop reste fermé aux produits expédiés de Chine** (expédition depuis la France exigée).
+- **La commande chez le fournisseur après une vente** demande un paiement : aucun agent n'a ni ne peut avoir d'accès bancaire. Elle se fait soit par un outil d'automatisation de commandes relié par Benj une seule fois à sa carte, soit par un geste de Benj par vente. À régler avant la première vente, pas avant la mise en ligne.
+- **Risque assumé** : si le fournisseur refuse ou casse le prix après la vente, la vente est remboursée ; le suivi de marge du trésorier compte ce cas.
 
 ## Ce qui manque aujourd'hui (et qui le règle)
 - **Prix réellement vendus** (eBay) et **prix d'achat rendus en Europe** (AliExpress/Alibaba) : API eBay en cours de vérification, jeton Apify absent ; en attendant, relevé des prix demandés par Firecrawl (fait pour 5 catégories).
