@@ -29,8 +29,9 @@ principal(async () => {
   let plusGrand = apres
   for (let page = 0; page < PAGES; page++) {
     const r = await appeler(base, jeton, 'GET', `/api/agents/evenements?apres=${apres}&limite=${LIMITE}`)
-    if (r.statut !== 200 || !Array.isArray(r.json?.evenements)) { console.error(`✗ événements illisibles (HTTP ${r.statut || r.erreur})`); return 1 }
-    const evs = r.json.evenements
+    // La route de production rend le tableau nu ; l'ancien faux bus rendait { evenements: [...] } : les deux se lisent (comme reunion.mjs).
+    const evs = Array.isArray(r.json) ? r.json : Array.isArray(r.json?.evenements) ? r.json.evenements : null
+    if (r.statut !== 200 || !evs) { console.error(`✗ événements illisibles (HTTP ${r.statut || r.erreur})`); return 1 }
     lus.push(...evs)
     for (const e of evs) if (Number.isInteger(e.id) && e.id > plusGrand) plusGrand = e.id
     if (evs.length < LIMITE) break
