@@ -1,0 +1,18 @@
+ 10:05:36 up 9 days, 11:14,  9 users,  load average: 2.28, 2.24, 3.34
+== claw3d verite,contexte (racine reelle, usine au calme)
+station-claw3d-qa --partie=verite,contexte — racine .
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 529 pas) et même empreinte du canevas à chaque étape (6 images distinctes, chacune figée)
+✅ CL-7 7 étapes : le miroir porte exactement les positions servies, seul le motif « pause » mène au Repos, chaque marche est celle d'un événement, une pause donne une marche puis le silence (journal, canevas et boucle de Phaser), « Zz » et bulles au texte servi
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (
+❌ CL-14 après la perte, le miroir ne suit plus l'étape « pause »
+station-claw3d-qa --partie=verite,contexte : FAIL — CL-14
+1
+== s1
+station-ecran-qa --partie=verite — racine ../bst-ce3-s1
+❌ CE-3 la carte bouge sans événement : images 1198→1221→1228→1237→1251→1272→1276→1289→1298→1323, 1 empreinte(s) du canevas, aucune animation en cours ; après l'événement la carte ne se rendort pas : images 1592→1617→1628→1643→1656→1681→1694→1709→1723, 1 empre
+station-ecran-qa --partie=verite : FAIL — CE-3, CE-4, CE-6, CE-25, CE-27
+== s2
+station-ecran-qa --partie=verite — racine ../bst-ce3-s2
+❌ CE-3 la carte bouge sans événement : images 4, 1 empreinte(s) du canevas, 1 animation(s) en cours ; après l'événement la carte ne se rendort pas : images 22, 1 empreinte(s) du canevas, 1 animation(s) en cours
+station-ecran-qa --partie=verite : FAIL — CE-3, CE-6, CE-27
