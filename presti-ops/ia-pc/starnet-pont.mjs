@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url'
 
 const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 10) * 60_000
 const MCP = process.env.PRESTI_MCP || 'http://127.0.0.1:8799/mcp'
+// 05/10 nuit : après un redémarrage StarNet perd son réglage « Custom » (réponse 400 « configure the CUSTOM base URL ») ; le serveur accepte l'adresse dans la requête.
+const BASE_CUSTOM = process.env.STARNET_CUSTOM_BASE || 'http://127.0.0.1:3001/v1'
 
 async function outil(nom) {
   const r = await fetch(MCP, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: nom, arguments: {} } }), signal: AbortSignal.timeout(30_000) })
@@ -58,7 +60,7 @@ async function poser(s, widget) {
   const consigne = `Appelle une seule fois l'outil widget.set avec EXACTEMENT ces arguments JSON, sans rien changer, puis reponds seulement : ok.\n${JSON.stringify(widget)}`
   const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, {
     method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton },
-    body: JSON.stringify({ agentId: 'agent', provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }),
+    body: JSON.stringify({ agentId: 'agent', provider: 'custom', model: 'auto', baseUrl: BASE_CUSTOM, isTask: true, messages: [{ role: 'user', content: consigne }] }),
     signal: AbortSignal.timeout(120_000),
   })
   const t = await r.text()
@@ -74,7 +76,7 @@ async function refleter(s, a) {
   const consigne = `Etat reel de ton double dans l'usine Presti, releve a l'instant dans la base : ${faits}. Ecris UNE seule ligne courte en francais qui dit ou tu en es, en reprenant ces faits tels quels, sans rien inventer ni ajouter. N'appelle aucun outil.`
   const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, {
     method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton },
-    body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }),
+    body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', baseUrl: BASE_CUSTOM, isTask: true, messages: [{ role: 'user', content: consigne }] }),
     signal: AbortSignal.timeout(90_000),
   })
   await r.text()
@@ -110,9 +112,16 @@ async function sidecarCourt() { if (!sidecarCache || Date.now() - sidecarLe > 60
 async function refleterEvenement(s, e) {
   const id = ID_STARNET[e.agent] || e.agent
   const consigne = `Tu viens de travailler dans l'usine Presti. Evenement reel releve dans la base : type « ${e.type} », resume « ${String(e.resume).slice(0, 160)} », a ${e.le}. Ecris UNE ligne courte en francais qui dit ce que tu viens de faire, en reprenant ces faits tels quels, sans rien inventer. N'appelle aucun outil.`
-  const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }), signal: AbortSignal.timeout(90_000) })
+  const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', baseUrl: BASE_CUSTOM, isTask: true, messages: [{ role: 'user', content: consigne }] }), signal: AbortSignal.timeout(90_000) })
   const texte = await r.text()
   refleterEvenement.dernierRunId = /"runId"\s*:\s*"([0-9a-f-]{36})"/.exec(texte)?.[1] ?? null
+  // la réponse ne porte pas toujours l'identifiant : on le lit dans l'historique des courses de CET agent (la plus récente, terminée après l'appel)
+  if (!refleterEvenement.dernierRunId && r.ok) {
+    try {
+      const h = await (await fetch(`http://127.0.0.1:${s.port}/api/runs?agent=${encodeURIComponent(id)}&limit=3&since=${Date.now() - 120_000}`, { headers: { 'x-starnet-token': s.jeton }, signal: AbortSignal.timeout(15_000) })).json()
+      refleterEvenement.dernierRunId = (h.runs || []).find((x) => x && x.reason === 'done')?.runId ?? null
+    } catch { /* pas d'XP cette fois : jamais bloquant */ }
+  }
   return r.ok
 }
 
@@ -176,7 +185,9 @@ async function suivre() {
         for (const e of nouveaux.filter((x) => /^tache_(prise|faite)$/.test(x.type))) {
           try { const ok = await refleterEvenement(s, e); await queteEvenement(s, e, ok ? refleterEvenement.dernierRunId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
         }
-        await Promise.all([...parAgent.values()].filter((e) => !/^tache_(prise|faite)$/.test(e.type)).map((e) => refleterEvenement(s, e).catch(() => false)))
+        const generaux = [...parAgent.values()].filter((e) => !/^tache_(prise|faite)$/.test(e.type))
+        const resultats = await Promise.all(generaux.map((e) => refleterEvenement(s, e).catch(() => false)))
+        if (generaux.length && !resultats.some(Boolean)) console.log(`${new Date().toISOString()} ALERTE : StarNet a refusé les ${generaux.length} passage(s) (réglage Custom ? relais 3001 ?) : rien n'est allumé`)
         console.log(`${new Date().toISOString()} activité : ${parAgent.size} agent(s) allumé(s) [${[...parAgent.keys()].join(', ')}]`)
       }
     } catch (e) { sidecarCache = null }
