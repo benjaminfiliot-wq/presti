@@ -28,11 +28,14 @@ function verifier(plan) {
 async function poster(plan) {
   const modele = option('modele')
   if (typeof modele !== 'string' || !/^[a-z0-9.-]{2,60}$/.test(modele)) throw new Arret(2, '--modele=<modèle> manque')
+  // Le moteur de secours qui a rédigé le plan (relais de la file du chef, 05/10/2026) : dit dans le compte rendu de l'événement, jamais dans `objet`.
+  const moteur = option('moteur')
+  if (moteur !== undefined && (typeof moteur !== 'string' || !/^[a-z0-9_]{2,40}$/.test(moteur))) throw new Arret(2, '--moteur=<identifiant> illisible')
   const base = baseSure(option('base'))
   const jeton = lireJeton()
   const envois = [
     ...(plan.consignes_lues || []).map((l) => ({ type: 'consigne_lue', objet: `consigne:${l.id}`, resume: `${l.suite} · ${l.pourquoi}`.slice(0, 200) })),
-    { type: 'cycle_termine', objet: modele, resume: plan.compte_rendu.join(' · ').slice(0, 200) },
+    { type: 'cycle_termine', objet: modele, resume: `${moteur ? `Moteur de secours : ${moteur} · ` : ''}${plan.compte_rendu.join(' · ')}`.slice(0, 200) },
   ]
   const ids = []
   for (const corps of envois) {

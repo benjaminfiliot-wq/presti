@@ -341,7 +341,9 @@ async function fabriquerEchantillon(j) {
   // 3. le script, par le lecteur « studio », sur la SEULE page produit : jamais l'accord, l'adresse, le téléphone ni le Message-ID
   const llm = await import('@/lib/agents/llm')
   // Les voies sont gratuites par nature (COUT_VOIE_EUROS) et l'usine n'a pas de clé de service : le plafond de coût est constant, il n'y a rien à inscrire ici.
-  const lecteur = llm.creerLecteur('studio', { appelsMax: 2 }, { verifierPlafond: async () => true, enregistrerCout: async () => ({ ok: true }) })
+  const relais = await import('@/lib/agents/relais')
+  // Le relais : Codex, puis (donnée publique : la page produit d'une marque) freellmapi, Ollama Cloud, le local de l'usine.
+  const lecteur = relais.creerLecteurRelais('studio', { appelsMax: 2 }, { verifierPlafond: async () => true, enregistrerCout: async () => ({ ok: true }) })
   if (!lecteur) throw new Echec('lecteur_absent')
   const texte = String(llm.retirerCoordonnees(texteVisible(lue.corps))).slice(0, 12_000)
   let script = null

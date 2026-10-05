@@ -64,8 +64,11 @@ async function main() {
   if (!sansIaDemande) {
     try {
       const mod = await import(pathToFileURL(path.join(RACINE, 'lib', 'agents', 'llm.ts')).href)
-      const lecteur = typeof mod.creerLecteur === 'function' ? await mod.creerLecteur('redacteur_site') : null
+      // Le relais d'IA (Codex, puis le local de l'usine après le « oui » daté de Benj) : l'appel est celui du lecteur, JSON strict en retour.
+      const relais = await import(pathToFileURL(path.join(RACINE, 'lib', 'agents', 'relais.ts')).href).catch(() => null)
+      const lecteur = typeof relais?.creerLecteurRelais === 'function' ? relais.creerLecteurRelais('redacteur_site') : typeof mod.creerLecteur === 'function' ? await mod.creerLecteur('redacteur_site') : null
       if (typeof lecteur?.appel === 'function') appel = lecteur.appel
+      else if (typeof lecteur === 'function') appel = async ({ systeme, utilisateur }) => { const r = await lecteur(systeme, utilisateur); return typeof r === 'string' ? r : JSON.stringify(r) }
       else if (typeof mod.appel === 'function') appel = mod.appel
     } catch { /* module absent ou en échec : repli ci-dessous */ }
     if (!appel) console.error('clé agents absente : rédaction sans IA')

@@ -7,7 +7,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import os from 'node:os'
 import { spawn } from 'node:child_process'
+import { drapeauLeve, journalFichier, magasinFichier, relayer } from './relais-chef.mjs'
 
 const ECHANGE_DEFAUT = '/srv/presti-chef/echange'
 const CODEX_DEFAUT = '/opt/codex/bin/codex'
@@ -19,7 +21,7 @@ const [sous, ...reste] = process.argv.slice(2)
 const opts = {}
 let i = 0
 for (; i < reste.length; i++) {
-  const m = /^--(echange|delai|codex)=(.*)$/.exec(reste[i])
+  const m = /^--(echange|delai|codex|relais|relais-dossier)=(.*)$/.exec(reste[i])
   if (!m) break
   opts[m[1]] = m[2]
 }
@@ -27,6 +29,11 @@ const argvCodex = reste.slice(i)
 const echange = path.resolve(opts.echange || ECHANGE_DEFAUT)
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms))
 const lireJson = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')) } catch { return null } }
+
+/** La file des agents (les données de prospect passent ici) : jamais un autre fournisseur, jamais un secours. */
+function estFileIA() {
+  return path.resolve(echange) === path.resolve('/srv/presti-ia/echange') || echange.includes('echange-ia')
+}
 
 function fournisseurRefuse(argv) {
   let modele = null
@@ -39,7 +46,7 @@ function fournisseurRefuse(argv) {
     else if (/^(?:-c|--config)=model_provider\s*=/.test(a)) fournisseur = true
     if (a === '--oss' || a.startsWith('--oss=') || a === '--local-provider' || a.startsWith('--local-provider=')) return true
   }
-  const fileIA = path.resolve(echange) === path.resolve('/srv/presti-ia/echange') || echange.includes('echange-ia')
+  const fileIA = estFileIA()
   if (fileIA) return fournisseur || !/^gpt-6-[a-z0-9-]+$/.test(modele || '')
   return fournisseur && modele !== 'gpt-oss:120b-cloud'
 }
@@ -93,6 +100,7 @@ async function demander() {
     if (r) {
       for (const s of sorties) if (fs.existsSync(s.copie)) fs.copyFileSync(s.copie, s.origine)
       process.stdout.write(String(r.sortie || '').slice(0, MAX_SORTIE))
+      if (r.moteur && r.moteur !== 'codex') process.stderr.write(`\n[relais] moteur=${r.moteur}\n`)
       return Number.isInteger(r.code) ? r.code : 1
     }
     await dormir(200)
@@ -102,21 +110,46 @@ async function demander() {
   return 3
 }
 
-function lancerCodex(d, argv, stdin, delaiMs) {
+function lancerCodex(d, argv, stdin, delaiMs, envExtra = {}) {
   const bin = opts.codex || CODEX_DEFAUT
   const [commande, avant] = /\.m?js$/.test(bin) ? [process.execPath, [bin]] : [bin, []]
-  const env = { PATH: process.env.PATH || '/usr/local/bin:/usr/bin:/bin', HOME: '/home/chef-modele', LANG: process.env.LANG || 'C.UTF-8', TZ: process.env.TZ || 'Europe/Paris' }
+  const env = { PATH: process.env.PATH || '/usr/local/bin:/usr/bin:/bin', HOME: '/home/chef-modele', LANG: process.env.LANG || 'C.UTF-8', TZ: process.env.TZ || 'Europe/Paris', ...envExtra }
   return new Promise((resoudre) => {
     const enfant = spawn(commande, [...avant, ...argv], { cwd: d, env, windowsHide: true, detached: !WIN, stdio: [stdin ? 'pipe' : 'ignore', 'pipe', 'pipe'] })
     let sortie = ''
     enfant.stdout.on('data', (x) => { if (sortie.length < MAX_SORTIE) sortie += x })
     enfant.stderr.on('data', (x) => { if (sortie.length < MAX_SORTIE) sortie += x })
     if (stdin) { enfant.stdin.end(fs.readFileSync(path.join(d, 'entree.txt'))) }
+    let delai = false
     const minuterie = setTimeout(() => {
+      delai = true
       try { if (WIN) spawn('taskkill', ['/PID', String(enfant.pid), '/T', '/F'], { stdio: 'ignore' }); else process.kill(-enfant.pid, 'SIGKILL') } catch { /* mort */ }
     }, delaiMs)
-    enfant.on('error', (e) => { clearTimeout(minuterie); resoudre({ code: 127, sortie: String(e.message) }) })
-    enfant.on('close', (code) => { clearTimeout(minuterie); resoudre({ code: code ?? 1, sortie: sortie.slice(0, MAX_SORTIE) }) })
+    enfant.on('error', (e) => { clearTimeout(minuterie); resoudre({ code: 127, sortie: String(e.message), delai: false }) })
+    enfant.on('close', (code) => { clearTimeout(minuterie); resoudre({ code: code ?? 1, sortie: sortie.slice(0, MAX_SORTIE), delai }) })
+  })
+}
+
+// Le relais de moteurs (relais-chef.mjs) ne sert que la file du chef, et par défaut avec le vrai binaire de Codex : un banc d'essai qui
+// désigne son faux binaire (--codex=) garde le comportement d'avant, sauf --relais=oui.
+function relaisActif() { return !estFileIA() && (!opts.codex || opts.relais === 'oui') }
+
+async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
+  const home = process.env.HOME || os.homedir()
+  const dossier = opts['relais-dossier'] || path.join(home, '.relais')
+  let texteEntree = ''
+  for (const e of Array.isArray(demande?.entrees) ? demande.entrees : []) { try { texteEntree += fs.readFileSync(e.copie, 'utf8').slice(0, 2 * 1024 * 1024) } catch { /* illisible : sans effet */ } }
+  let cle = null
+  try { cle = fs.readFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { cle = null }
+  return relayer({
+    argv, texteEntree, delaiMs, cle,
+    drapeau: drapeauLeve(process.env.IA_LOCALE_PROSPECTS_OUI, Date.now()),
+    etat: magasinFichier(dossier), journal: journalFichier(dossier),
+    // Entre deux moteurs, les fichiers de sortie du précédent (un plan à moitié écrit) sont retirés : le suivant repart d'une page blanche.
+    lancer: (a, budgetMs, extraEnv) => {
+      for (const s of Array.isArray(demande?.sorties) ? demande.sorties : []) { try { fs.rmSync(s.copie, { force: true }) } catch { /* déjà absent */ } }
+      return lancerCodex(d, a, stdin, budgetMs, extraEnv)
+    },
   })
 }
 
@@ -131,8 +164,12 @@ async function servir() {
     const repondre = (r) => fs.writeFileSync(path.join(d, 'reponse.json'), JSON.stringify({ ...r, compte: 'chef-modele', le: new Date().toISOString() }))
     const refus = argv[0] !== 'exec' ? 'seule la sous-commande exec est permise' : (argv.find((a) => INTERDITS.some((re) => re.test(a))) || fournisseurRefuse(argv) ? 'argv refusé (réseau, disque, fournisseur ou bac à sable ouverts)' : null)
     if (refus) { repondre({ code: 2, sortie: `✗ ${refus}\n` }); continue }
-    const r = await lancerCodex(d, argv, Boolean(demande.stdin) && fs.existsSync(path.join(d, 'entree.txt')), Number(demande.delai_s || 1200) * 1000)
-    repondre({ code: r.code, sortie: r.sortie })
+    const stdin = Boolean(demande.stdin) && fs.existsSync(path.join(d, 'entree.txt'))
+    const delaiMs = Number(demande.delai_s || 1200) * 1000
+    let r
+    if (relaisActif()) r = await servirAvecRelais(d, argv, stdin, delaiMs, demande)
+    else r = await lancerCodex(d, argv, stdin, delaiMs)
+    repondre({ code: r.code, sortie: r.sortie, ...(r.moteur ? { moteur: r.moteur } : {}) })
   }
   return 0
 }
