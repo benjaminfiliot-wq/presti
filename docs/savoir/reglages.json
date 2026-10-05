@@ -1,22 +1,46 @@
 {
   "version": 1,
-  "_note": "Interrupteurs de toute la couche Savoir (fiche 026-229). Tous éteints ici. Seul Claude Code change ce fichier, par un commit poussé : l'usine le lit dans /srv/presti-agents et ne pousse jamais.",
+  "_note": "Interrupteurs de toute la couche Savoir (fiche 026-229). Tous éteints ici. Seul Claude Code change ce fichier, par un commit poussé : l'usine le lit dans /srv/presti-agents et ne pousse jamais. | 05/10/2026 : envoi, recherche_web, lecons_dans_consignes et bilan_quotidien allumés sur accord de Benj ; semantique (pas de modèle d embeddings choisi) et perplexity (pas de clé API) restent éteints.",
   "interrupteurs": {
-    "envoi": { "actif": false, "depuis": null, "accord": null },
-    "semantique": { "actif": false, "depuis": null, "accord": null },
-    "recherche_web": { "actif": false, "depuis": null, "accord": null },
-    "perplexity": { "actif": false, "depuis": null, "accord": null },
-    "lecons_dans_consignes": { "actif": false, "depuis": null, "accord": null },
-    "bilan_quotidien": { "actif": false, "depuis": null, "accord": null }
+    "envoi": {
+      "actif": true,
+      "depuis": "2026-10-05",
+      "accord": "Benj, chat du 05/10/2026 : « vérifie que l'écosystème a accès à toutes nos connaissances » + autorisation générale"
+    },
+    "semantique": {
+      "actif": false,
+      "depuis": null,
+      "accord": null
+    },
+    "recherche_web": {
+      "actif": true,
+      "depuis": "2026-10-05",
+      "accord": "Benj, chat du 05/10/2026 : « vérifie que l'écosystème a accès à toutes nos connaissances » + autorisation générale"
+    },
+    "perplexity": {
+      "actif": false,
+      "depuis": null,
+      "accord": null
+    },
+    "lecons_dans_consignes": {
+      "actif": true,
+      "depuis": "2026-10-05",
+      "accord": "Benj, chat du 05/10/2026 : « vérifie que l'écosystème a accès à toutes nos connaissances » + autorisation générale"
+    },
+    "bilan_quotidien": {
+      "actif": true,
+      "depuis": "2026-10-05",
+      "accord": "Benj, chat du 05/10/2026 : « vérifie que l'écosystème a accès à toutes nos connaissances » + autorisation générale"
+    }
   },
   "semantique": {
     "url": "http://127.0.0.1:11434",
     "modele": null
   },
   "firecrawl": {
-    "reserve_credits": 1000,
-    "source": "reprise-cloud/docs/revue-fiches-2026-09-26.md (réserve de départ, pas un solde)",
-    "solde_constate": null
+    "reserve_credits": 282,
+    "source": "appel réel credit-usage le 05/10/2026 (282 crédits restants sur 1 000, période finissant le 26/10)",
+    "solde_constate": 282
   },
   "perplexity": {
     "plan": null,
