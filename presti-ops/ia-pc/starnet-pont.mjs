@@ -5,7 +5,7 @@
 // Rien ne sort de la machine ; jamais de clé ; le jeton local de StarNet est relu dans la page à chaque tour.
 import { execSync } from 'node:child_process'
 
-const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 5) * 60_000
+const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 3) * 60_000
 const MCP = process.env.PRESTI_MCP || 'http://127.0.0.1:8799/mcp'
 
 async function outil(nom) {
@@ -88,7 +88,12 @@ async function tour() {
   for (const w of widgets) { try { if (await poser(s, w)) ok++ } catch (e) { console.log(`  ${w.id} : ${String(e.message).slice(0, 80)}`) } }
   let refletes = 0
   const agents = (donnees.equipe.agents || []).filter((a) => a.etat === 'actif' || a.etat === 'muet')
-  for (const a of agents) { try { if (await refleter(s, a)) refletes++ } catch (e) { console.log(`  ${a.nom} : ${String(e.message).slice(0, 80)}`) } }
+  // par lots de 7 agents EN PARALLÈLE : la station s'allume par grappes (un tour dure environ une minute au lieu de dix) ; les 7 lots se suivent sans pause.
+  for (let i = 0; i < agents.length; i += 7) {
+    const lot = agents.slice(i, i + 7)
+    const res = await Promise.all(lot.map((a) => refleter(s, a).catch((e) => { console.log(`  ${a.nom} : ${String(e.message).slice(0, 80)}`); return false })))
+    refletes += res.filter(Boolean).length
+  }
   console.log(`${new Date().toISOString()} agents reflétés : ${refletes}/${agents.length}`)
   const liste = await (await fetch(`http://127.0.0.1:${s.port}/api/widgets`, { headers: { 'x-starnet-token': s.jeton } })).json().catch(() => ({}))
   const presents = (liste.widgets || liste || []).filter?.((x) => x && !x.deleted).map((x) => x.id) ?? []
