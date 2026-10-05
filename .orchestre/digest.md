@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-05T00:04:10Z
+# Digest — 2026-10-05T00:07:18Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 196 tâche(s) PASS, 226026 ligne(s) · faites par Claude Code : 104 tâche(s) PASS, 91457 ligne(s).
-**État** — file : 4 · en cours : 7 · faites : 343 · refusées : 6
+**État** — file : 2 · en cours : 7 · faites : 345 · refusées : 6
 
 ## Attention (1)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -20,15 +20,13 @@
 |---|---|---|---|---|---|
 | 026-099 | test | en-cours | claude-code | — | depuis 2026-10-04T23:29:49Z · Écrire scripts/juges-026-envoi-mutations.mjs, qui prouve sur des copies que les huit juges de l'envoi automatique, de l'entrant et de la fabrication (disjoncteurs-qa, jauges-qa, facteur-qa, meta-webhooks-qa, repondeur-qa, rendez-vous-qa, maquette-video-qa, douleurs-qa) échouent chacun sur de vraies fautes avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-240 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:42Z · Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 026-152 | test | en-cours | claude-code | — | depuis 2026-10-05T00:07:16Z · Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
 | 026-101 | test | en-cours | claude-code | — | depuis 2026-10-04T22:52:08Z · Écrire scripts/juges-026-acquisition-mutations.mjs, qui prouve sur des copies que chaque juge du domaine acquisition passe sur l'arbre réel et échoue, sur le critère nommé, pour chacune des mutations imposées par cette fiche, et qui sort en code 0 seulement si toutes échouent |
 | 026-161 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:35Z · Écrire scripts/juges-026-mutations.mjs, qui prouve sur des copies que les juges qu'aucune fiche de mutations de domaine ne contre-vérifie (agents-llm-qa, ops-acquisition-qa, les deux juges 025 adaptés à Next 16, webhook-muet-qa amendé par 026-108, pont-orchestre-qa et prospects-entrant-qa de 026-142, et juges-026-preuve lui-même) échouent sur une vraie faute avec le critère nommé et passent sur l'arbre intact, puis que chaque juge de la série a au moins une mutation attrapée dans un rapport ; code 0 seulement si tout est pris |
 | 026-186 | feature | en-cours | claude-code | — | depuis 2026-10-04T23:46:55Z · Donner à la carte sa forme de téléphone : un cadre de 358 px en vue d'ensemble ou sur la grille portrait du thème, le pincement dans le cadre seulement, +, − et ⊞ de 44 px, les plaques à partir du zoom ×2, touch-action: none, gesturestart bloqué sous Safari, la perte de contexte rattrapée, et scrollWidth ≤ 390, jusqu'au vert de station-ecran-qa (webkit) et de station-claw3d-qa (contexte) |
-| 026-189 | feature | en-cours | claude-code | — | depuis 2026-10-05T00:04:09Z · Donner à la station les panneaux des cinq salles nouvelles et de la salle réservée : Audience (l'existant, sans cookie ni IP, sans Windsor), Sécurité, Presti (un nombre de tickets, jamais un contenu), Observatoire (la France au hublot, agrégée par département), Salle de repos (Reprendre sous mot de passe, jamais « bientôt ») et E-commerce (« Branche réservée : rien n'est construit. », sans chiffre ni bouton), chacun avec le résumé de salle commun, à 390 px comme à 1440 px, jusqu'au vert de station-ecran-qa --partie=salles2 --lot=b |
 | 026-250 | test | en-cours | claude-code | — | depuis 2026-10-04T23:19:19Z · Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
-| 026-152 | test | file | codex | — | Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
 | 023-03 | test | file | claude-code | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | file | claude-code | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-183 | feature | file | codex | — | Faire bouger sur la carte ce que les données servies font bouger, et rien d'autre : les tapis et leurs « +1 », les lignes du Crieur et de l'Usine, l'égaliseur du Radar figé entre deux lectures, l'écran de la Salle Expérience (« FERMÉE · R13 » avant la première vente) et les badges LV, tous nourris par les enveloppes dans les calques des acteurs et du texte, jamais dans le décor, jusqu'au vert de station-ecran-qa (verite, camera, acteurs) et de station-claw3d-qa (verite) |
 | 026-159 | test | fait | codex | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
 | 026-123 | feature | fait | claude-code | PASS | 2026-10-04T21:50:27Z · 519s · 1760 l. |
 | 026-172 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 131 min |
@@ -118,5 +116,7 @@
 | 026-222 | feature | fait | claude-code | PASS | 2026-09-29T12:26:08Z · 1s · 400 l. |
 | 026-208 | feature | fait | antigravity | PASS | 2026-09-29T12:13:49Z · 0s · 0 l. |
 | 026-206 | feature | fait | claude-code | PASS | 2026-09-29T12:13:36Z · 0s · 2334 l. |
+| 026-253 | feature | fait | claude-code | PASS | 2026-09-29T12:08:44Z · 419s · 0 l. |
+| 026-158 | feature | fait | antigravity | PASS | 2026-09-29T11:51:24Z · 425s · 0 l. |
 
 … 260 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
