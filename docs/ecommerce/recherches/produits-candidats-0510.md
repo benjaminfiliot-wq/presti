@@ -1,0 +1,38 @@
+# Produits candidats — niche outils et bricolage (05/10/2026, nuit)
+
+**Statut : hypothèses de catégories, sources citées ; AUCUN produit n'est encore validé au niveau d'une fiche.** Ce document remplace le brouillon de Hermes (`produits-bricolage-hermes-0510-NON-FIABLE.md`, dates inventées).
+
+## Pourquoi cette niche
+Le compte TikTok **Brico Travaux** (≈ 4 700 abonnés, référencement bricolage déjà acquis) parle déjà au public visé : on vend à l'audience qu'on a, avec des vidéos de démonstration (le format qui marche selon les analyses des vidéos : `sources/ecomsantiagoo-…analyse.md`, `sources/restructureai-…analyse.md`).
+
+## Catégories candidates (par ordre d'adéquation avec Brico Travaux)
+Source des catégories et des fourchettes de prix : [dashboardly.io, outils DIY sur TikTok Shop](https://www.dashboardly.io/tiktok-shop/diy-tools), complétée par [aftership, tendances TikTok Shop](https://ecommerce.aftership.com/product-trend-list/best-hardware-product-to-sell-tiktok-shop-us). **Ces pages décrivent le marché américain et reconnaissent que leurs fourchettes sont « des hypothèses de planification »** : elles disent QUOI regarder, pas combien ça rapportera en France.
+| # | Catégorie | Prix de vente observé (US) | Pourquoi ça colle à la vidéo courte | Points de vigilance (UE) |
+|---|---|---|---|---|
+| 1 | **Kit de tournevis de précision** (100+ embouts) | 14 à 24 $ | démonstration en 10 secondes, produit léger et peu cher | marque : aucune ; pas de marquage CE pour de l'outil à main |
+| 2 | **Kit d'accrochage mural** (crochets, chevilles, niveau à bulle) | 12 à 20 $ | résultat « satisfaisant » avant/après, très partageable | quincaillerie standard |
+| 3 | **Niveau laser compact** | 18 à 35 $ | précision visible à l'image | laser classe 2, **marquage CE et notice en français** ; pile |
+| 4 | **Tournevis électrique sans fil** (USB-C) | 22 à 38 $ | cadeau, démonstration rapide | **batterie lithium : CE, transport, garantie** ; risque plus élevé |
+| 5 | **Rangement d'atelier magnétique / établi portable** | 28 à 50 $ | « avant/après » d'atelier | poids et port ; au-delà de ~50 € la conversion baisse |
+| 6 | **Adhésifs et mastics spécialisés** | 8 à 16 $ | démonstration d'usage | produit chimique : fiche de sécurité, **hors périmètre au départ** |
+
+## Ce qui manque pour passer d'une catégorie à un produit
+Les deux sources de données qui permettent de valider un produit **ne sont pas accessibles ce soir** :
+- **eBay.fr, ventes conclues** : la page « vendus » exige une connexion (constaté par Firecrawl le 05/10 : mur de connexion) ; l'API officielle (compte développeur, en cours de vérification) donnera les prix réellement vendus.
+- **AliExpress, entrepôt européen** : la lecture depuis l'étranger renvoie la boutique américaine en dollars (constaté le 05/10) ; il faut soit l'API d'AliExpress, soit un jeton **Apify** (le fichier `presti-secrets/apify api.txt` ne contient pas encore de jeton : 6 caractères).
+Tant que ces deux accès manquent, on **ne chiffre aucune marge** : les agents n'inventent pas de prix.
+
+## Les 5 critères qu'un produit doit passer avant tout achat test
+1. **Demande visible** : au moins 5 vidéos TikTok récentes (moins de 90 jours) du même produit à plus de 100 000 vues, avec des commentaires qui demandent où l'acheter.
+2. **Prix vendu** : au moins 3 ventes conclues par semaine sur eBay.fr au prix cible (API officielle).
+3. **Marge** : prix d'achat rendu en France (entrepôt UE, livraison comprise) inférieur à 40 % du prix vendu, après les frais de protection acheteur eBay.
+4. **Conformité** : aucune marque protégée, marquage CE si le produit en exige, notice en français, pas de produit réglementé.
+5. **Livraison** : stock en France ou en Europe, livraison annoncée 7 jours au plus.
+
+## Premier achat test
+Un lot de 3 à 5 unités par produit (budget indicatif 40 à 60 €), décidé par une ligne dans la file de décisions : **un clic d'approbation de Benj**. Aucun agent n'a d'accès au paiement.
+
+## Prochaines étapes automatiques
+1. Les agents de veille relèvent, sur les sources publiques, les vidéos TikTok de ces 6 catégories (vues, date, commentaires) et classent les produits qui passent le critère 1.
+2. Dès l'accès aux prix vendus eBay (API) ou à Apify, les critères 2 à 5 sont calculés produit par produit.
+3. Pour chaque produit retenu : 3 scripts de vidéos de 20 secondes pour Brico Travaux (accroche, démonstration, appel à l'achat sans promesse mensongère), puis l'annonce eBay (titre, description, photos générées).
