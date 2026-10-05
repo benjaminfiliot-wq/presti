@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
+import { stationHorsWebPourRequete } from '@/lib/stationHorsWeb'
 import { estFondateur, estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
@@ -15,6 +16,7 @@ const actionStation = 'station_reglages' as Parameters<typeof journaliser>[0]['a
 
 export async function GET(req: Request) {
   if (!actif('pilotage')) return erreur('Introuvable.', 404)
+  if (stationHorsWebPourRequete(req)) return erreur('Introuvable.', 404)
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const droit = exigerDomaine(f, 'sante', 'voir')
@@ -32,6 +34,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   if (!actif('pilotage')) return erreur('Introuvable.', 404)
+  if (stationHorsWebPourRequete(req)) return erreur('Introuvable.', 404)
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
   const droit = exigerDomaine(f, 'reglages', 'ecrire')
