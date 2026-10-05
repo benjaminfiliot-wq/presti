@@ -1,0 +1,18 @@
+1
+1
+== s1
+ 09:12:13 up 9 days, 10:21, 11 users,  load average: 10.42, 9.54, 12.16
+station-claw3d-qa --partie=verite — racine ../bst-clb-s1
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 541 pas) et même empreinte du canevas à chaque étape (7 images distinctes, chacune figée)
+❌ CL-7 étape « pause » : marchent chef, recenseur, recenseur attendu(s) (un agent ne bouge que sur un vrai événement) ; étape « fin_reunion » : marchent a0, agent_temoin_inconnu, atelier_maquettes, chef, experience, facteur, juge_faits, recenseur, redacteur, repondeur, standardiste, tresorier, vigie_meta, a0, agent_temoin_inconnu, atelier_maquettes
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle existe) est la même octet pour
+station-claw3d-qa --partie=verite : FAIL — CL-7
+== s2
+ 09:16:51 up 9 days, 10:26, 11 users,  load average: 11.50, 11.30, 12.30
+station-claw3d-qa --partie=verite — racine ../bst-clb-s2
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 506 pas) et même empreinte du canevas à chaque étape (6 images distinctes, chacune figée)
+❌ CL-7 étape « pause » : personne ne marche, recenseur attendu(s) (un agent ne bouge que sur un vrai événement) ; étape « pause » : recenseur passe en pause sans marcher vers le Repos
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle existe) est la même octet pour
+station-claw3d-qa --partie=verite : FAIL — CL-7

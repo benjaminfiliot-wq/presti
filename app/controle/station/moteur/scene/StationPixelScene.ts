@@ -76,6 +76,8 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
 
   class StationScene extends Phaser.Scene {
     private desabonner: (() => void) | null = null;
+    /** Le réveil que CETTE scène a posé dans l'état partagé : une scène détruite ne retire que le sien (la carte rebâtie en a posé un autre). */
+    private reveilMien: (() => void) | null = null;
     private persos = new Map<string, Perso>();
     /** La signature de ce que la scène traite (sans les bulles, qui sont du texte HTML) : un changement de bulle seul ne réveille pas la boucle. */
     private derniere = "";
@@ -103,7 +105,8 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         this.tracerAntenne(0);
         this.toursVus = extras.etat.tours;
         extras.suivi.poserAntenne({ zone: zoneAntenne(extras.monde), tourne: false });
-        extras.etat.reveiller = () => this.reveil();
+        this.reveilMien = () => this.reveil();
+        extras.etat.reveiller = this.reveilMien;
       }
       this.traiter();
       this.desabonner = pont.subscribe(() => {
@@ -112,12 +115,18 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         this.reveil();
         this.traiter();
       });
-      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      // Le pont se quitte à l'arrêt de la scène (SHUTDOWN) ET à sa destruction (DESTROY) : game.destroy() (perte de contexte WebGL, démontage de la
+      // carte) détruit les scènes sans les arrêter, et une scène morte restée abonnée au pont appelait this.game.loop.wake() sur un jeu détruit
+      // (026-186, plantage après perte de contexte). Les deux voies appellent la même fonction, idempotente.
+      const quitter = () => {
         this.desabonner?.();
         this.desabonner = null;
-        if (extras && extras.etat.reveiller) extras.etat.reveiller = null;
+        if (extras && this.reveilMien && extras.etat.reveiller === this.reveilMien) extras.etat.reveiller = null;
+        this.reveilMien = null;
         extras?.suivi.poserAntenne({ tourne: false });
-      });
+      };
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, quitter);
+      this.events.once(Phaser.Scenes.Events.DESTROY, quitter);
       pret(this.game.canvas);
     }
 
