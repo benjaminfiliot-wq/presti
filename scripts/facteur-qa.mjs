@@ -69,6 +69,8 @@ const texteConforme = (ref) => `Message commercial de Presti, rédigé et envoy�
 // PARTIE facteur
 // ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 async function partieFacteur(s, IDS) {
+  // Rempli par FA-2 (d) : ce que jugerAvecAvis rend d'un avis « ok » sur un texte que J3 refuse ; relu par FA-14 (rejeu de J3).
+  let rejeuJ3 = null
   const fFacteur = path.join(RAC, 'lib', 'agents', 'acquisition', 'facteur.ts')
   const fPorteurs = path.join(RAC, 'lib', 'agents', 'acquisition', 'porteurs.ts')
   const fEnvoiMeta = path.join(RAC, 'lib', 'agents', 'acquisition', 'envoiMeta.ts')
@@ -183,6 +185,7 @@ async function partieFacteur(s, IDS) {
         if (rPerime.ok !== false || rPerime.raison !== 'perime') e.push(`empreinte différente : ${JSON.stringify(rPerime)}, perime attendu`)
         if ((await M.envoisApprouves('reponse_privee', 10)).some((x) => x.id === pPerime.id)) e.push('un avis périmé a approuvé l\'envoi')
         const rRetouche = await monde.jugerAvecAvis(depsAvis(M, H), avis(pRetouche.id, `${TEXTE} Résultat garanti à 100 %.`))
+        rejeuJ3 = { statut: rRetouche.statut, raisons: Array.isArray(rRetouche.raisons) ? rRetouche.raisons : [], j3: rRetouche.j3 ?? null }
         if (rRetouche.statut !== 'annule') e.push(`texte hors modèle : ${JSON.stringify(rRetouche)}, annule attendu (J3)`)
         if ((await M.envoisApprouves('reponse_privee', 10)).length) e.push('un envoi refusé par J2 ou J3 a été approuvé')
       }
@@ -494,7 +497,15 @@ async function partieFacteur(s, IDS) {
     if (importsDe(src).some((i) => i.spec && /lib\/agents\/llm/.test(i.spec))) e.push('avis/route.ts importe lib/agents/llm')
     if (!/jugerAvecAvis/.test(src)) e.push('avis/route.ts n\'appelle pas jugerAvecAvis')
     for (const r of [rOk, rPerime, rDeja]) if (/artisan|@|Texte Témoin/.test(r.console)) e.push('un texte ou une adresse apparaît dans la console de la route avis')
-    s.juger('FA-14', e, 'POST avis : 9 corps mal formés → 400 sans juge ; avis conforme → 200 ; périmé → { ok: false } ; second avis → 409 ; passe du soir → rejugerAvecAvis ; ni llm ni texte en console')
+    // Le rejeu de J3 que la route confie à jugerAvecAvis : un avis « ok » du second juge ne suffit jamais, J3 est rejoué sur le texte exact
+    // (observé par FA-2 (d) sur le vrai module, dans la copie à modèles approuvés).
+    if (!rejeuJ3) e.push('rejeu de J3 non observé : FA-2 (d) n\'a pas rendu le verdict d\'un avis « ok » sur un texte que J3 refuse')
+    else {
+      if (rejeuJ3.statut !== 'annule') e.push(`avis « ok » sur un texte que J3 refuse : statut ${rejeuJ3.statut}, annule attendu (J3 non rejoué par jugerAvecAvis)`)
+      if (!rejeuJ3.raisons.some((r) => /^j3[:_]/.test(String(r)))) e.push(`avis « ok » sur un texte que J3 refuse : raisons ${JSON.stringify(rejeuJ3.raisons)}, un motif j3:… attendu`)
+      if (rejeuJ3.j3 && rejeuJ3.j3.refus !== undefined && !(rejeuJ3.j3.refus.length > 0)) e.push('avis « ok » sur un texte que J3 refuse : le bilan j3 ne porte aucun refus')
+    }
+    s.juger('FA-14', e, 'POST avis : 9 corps mal formés → 400 sans juge ; avis conforme → 200 ; périmé → { ok: false } ; second avis → 409 ; passe du soir → rejugerAvecAvis ; ni llm ni texte en console ; avis « ok » sur un texte refusé par J3 → annulé par J3 rejoué')
   }
 }
 
