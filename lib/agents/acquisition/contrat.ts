@@ -806,7 +806,7 @@ export const PALIERS: readonly Palier[] = Object.freeze([
   Object.freeze({ id: 'P3', par_jour: 30, jours_au_vert: 5, regle: '5 jours au vert' } as const),
   Object.freeze({ id: 'P4', par_jour: 40, jours_au_vert: null, regle: 'plafond des agents : au-delà, seul Benj' } as const),
 ])
-export const DATE_PREMIER_ENVOI = '2026-10-12'
+// Plus de date d'ouverture (décision de Benj, 05/10/2026) : le froid s'ouvre quand la mesure à sec, l'épreuve de bout en bout et la notice sont prouvées ET que Benj écrit lui-même l'interrupteur envoi_froid (acq_envoi_froid_ouvrir, 0129).
 /** R10 : le bilan du lundi qui suit le 100e contact froid. */
 export const BILAN_CONTACTS = 100
 export const EMAIL_SOLLICITE_JOUR = 50
