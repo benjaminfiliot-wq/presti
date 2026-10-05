@@ -72,6 +72,8 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
   let positions = new Map<string, Emplacement>()
   let actif: string | null = null
   let affiche: string | null = null
+  /** Les agents qui ont une bulle, la plus récente d'abord (celle que `bullesLues` sert). */
+  let ordreBulles: string[] = []
   let detruit = false
   let planifie = 0
   let signature = ''
@@ -105,8 +107,9 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
     infobulle.replaceChildren(...d.filter(([, t]) => t).map(([attr, t]) => { const l = el('div', { [attr]: '' }); l.textContent = t; return l }))
     infobulle.hidden = false
     posInfobulle()
+    arbitrer()
   }
-  function cacher() { affiche = null; infobulle.hidden = true }
+  function cacher() { const avant = affiche; affiche = null; infobulle.hidden = true; if (avant) arbitrer() }
   function posInfobulle() {
     const pos = affiche ? positions.get(affiche) : null
     if (!pos) return
@@ -136,11 +139,17 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
       if (!n) { n = el('span', { 'data-plaque': pl.cle }, couchePlaques); plaques.set(pl.cle, n) }
       dire(n, plaqueDe(p, pl.cle, pl.texte))
       n.toggleAttribute('data-reservee', pl.reservee)
-      const c = enCss(vue, g, W, H, pl.plaque)
-      placer(n, c.x, c.y)
-      n.style.maxWidth = `${Math.max(48, (pl.cadre.l - 6) * c.s)}px`
+      // La plaque se pose en BAS de la salle, centrée : le haut est celui des personnages (leur pied est au milieu de la salle), le bas est libre.
+      // Elle passe à la ligne (deux lignes au plus) plutôt que de se tronquer : « Salle de réunion » se lit en entier dans ses 96 px.
+      const c = enCss(vue, g, W, H, { x: pl.cadre.x + pl.cadre.l / 2, y: pl.cadre.y + pl.cadre.h })
+      placer(n, c.x, c.y - 3)
+      n.style.maxWidth = `${Math.max(36, (pl.cadre.l - 4) * c.s)}px`
     }
+    // L'échelle réelle de la carte (pixels CSS par pixel logique, zoom compris) : sous 1,2 le texte ne tient plus dans une salle (voir calque.css).
+    const echelle = (W / g.largeur) * vue.zoom
     for (const [cle, n] of plaques) if (!vues.has(cle)) { n.remove(); plaques.delete(cle) }
+    const petite = echelle < 1.2 ? 'petite' : 'normale'
+    if (carte.dataset.echelle !== petite) carte.dataset.echelle = petite
 
     // Les personnages : ceux que la scène dessine, à la place où elle les a posés (le dernier pas de marche) ; un acteur sans salle ou sans
     // emplacement n'a pas de position de la scène : il n'est pas dessiné, il n'a pas de ligne dans le miroir.
@@ -148,7 +157,9 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
     positions = new Map()
     for (const a of persos) { const v = suivi.vivants.get(a.nom) as Vivant; positions.set(a.nom, { x: v.x, y: v.y }) }
     const dessines = persos.filter((a) => positions.has(a.nom))
-    const lesBulles = new Map(bullesLues(p).map((b) => [b.agent, b]))
+    const lues = bullesLues(p)
+    ordreBulles = lues.map((b) => b.agent)
+    const lesBulles = new Map(lues.map((b) => [b.agent, b]))
     const noms2 = new Set(dessines.map((a) => a.nom))
     for (const [nom, n] of noms) if (!noms2.has(nom)) { n.remove(); noms.delete(nom) }
     for (const [nom, n] of bulles) if (!noms2.has(nom) || !lesBulles.has(nom)) { n.remove(); bulles.delete(nom) }
@@ -180,6 +191,41 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
     for (const a of dessines) { const v = suivi.vivants.get(a.nom); if (v) dernierEtat.set(a.nom, `${v.salle}|${v.motif}|${v.etat}`) }
     placerAntenne()
     if (affiche) { if (noms2.has(affiche)) posInfobulle(); else cacher() }
+    arbitrer()
+  }
+
+  /**
+   * Les bulles et les noms : rien ne se lit en permanence, tout ne se lit pas ensemble. Un nom ne paraît jamais (l'info-bulle du survol et du
+   * focus le dit, avec le rôle et le modèle) ; une bulle paraît pour l'agent survolé ou au clavier, et pour ceux qui travaillent ou sont en
+   * panne (trois au plus, la plus récente d'abord) ; une bulle qui en recouvrirait une autre, déjà retenue, est masquée. Les éléments restent
+   * dans la page (le miroir et les juges les lisent) : seul `data-masquee` les cache à l'œil.
+   */
+  function arbitrer() {
+    const candidats: string[] = []
+    if (affiche && bulles.has(affiche)) candidats.push(affiche)
+    for (const nom of ordreBulles) {
+      if (candidats.length >= 4 || candidats.includes(nom) || !bulles.has(nom)) continue
+      const m = persos.find((a) => a.nom === nom)?.motif
+      if (m === 'tache' || m === 'panne') candidats.push(nom)
+    }
+    for (const [nom, b] of bulles) b.toggleAttribute('data-masquee', !candidats.includes(nom))
+    // Ce qui est déjà à l'écran et qu'une bulle ne doit pas recouvrir : les plaques, les badges, l'étiquette du tapis, l'écran de l'Expérience.
+    const pris: DOMRect[] = []
+    for (const x of carte.querySelectorAll<HTMLElement>('[data-plaque], [data-badge-lv], [data-tapis-etape], [data-tapis-rejet], [data-ecran="experience"]')) {
+      if (getComputedStyle(x).visibility === 'hidden') continue
+      const r = x.getBoundingClientRect()
+      if (r.width > 0 && r.height > 0) pris.push(r)
+    }
+    for (const nom of candidats) {
+      const b = bulles.get(nom)
+      if (!b) continue
+      const r = b.getBoundingClientRect()
+      const t = toile.getBoundingClientRect()
+      const dehors = r.left < t.left || r.right > t.right || r.top < t.top
+      const gene = dehors || pris.some((q) => r.left < q.right + 2 && r.right + 2 > q.left && r.top < q.bottom + 2 && r.bottom + 2 > q.top)
+      if (gene && nom !== affiche) b.setAttribute('data-masquee', '')
+      else pris.push(r)  // la bulle de l'agent survolé se lit toujours, même par-dessus un badge
+    }
   }
 
   /** Écrit un attribut seulement s'il change : un relevé du miroir (et le lecteur d'écran) ne voit que de vrais changements. */

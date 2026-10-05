@@ -18,5 +18,5 @@
 .mc-etiquette[hidden] { display: none; }
 .mc-etiquette [data-pointe] { position: absolute; top: 100%; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--mc-accent, #c949ba); }
 
-/* La plaque de la salle survolée s'allume. */
-[data-station-carte] [data-plaque][data-allumee] { filter: brightness(1.6); outline: 1px solid var(--mc-accent, #c949ba); }
+/* La salle survolée n'a qu'UNE étiquette : celle qui paraît au-dessus d'elle ; sa plaque s'efface le temps du survol (pas de doublon). */
+[data-station-carte] [data-plaque][data-allumee] { visibility: hidden; }

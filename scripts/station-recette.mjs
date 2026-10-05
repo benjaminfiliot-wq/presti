@@ -151,6 +151,25 @@ async function empreinteCarte(p) {
   if (!box) return null
   return crypto.createHash('sha256').update(await p.screenshot({ clip: { x: Math.max(0, box.x), y: Math.max(0, box.y), width: Math.max(1, box.width), height: Math.max(1, box.height) }, animations: 'disabled' })).digest('hex').slice(0, 16)
 }
+/**
+ * La carte telle qu'on la voit (026-193, lot « carte lisible ») : la largeur du canevas à l'écran et les textes VISIBLES qui se recouvrent (plaques, bulles,
+ * étiquettes du tapis, écran de l'Expérience, fiches, badges). Un texte masqué (visibility, data-masquee, boîte vide) ne compte pas : il n'est pas à l'écran.
+ */
+const mesureCarte = (p) => p.evaluate(() => {
+  const c = document.querySelector('[data-station-carte] canvas')
+  const r = c ? c.getBoundingClientRect() : null
+  const visible = (e) => { const s = getComputedStyle(e), b = e.getBoundingClientRect(); return b.width > 0 && b.height > 0 && s.visibility !== 'hidden' && s.display !== 'none' && !e.hasAttribute('data-masquee') && getComputedStyle(e.parentElement ?? e).visibility !== 'hidden' }
+  const sel = '[data-plaque], [data-nom], [data-bulle], [data-tapis-etape], [data-tapis-rejet], [data-ecran="experience"], [data-ligne], [data-badge-lv], [data-zz]'
+  const textes = [...document.querySelectorAll(`[data-station-carte] :is(${sel})`)].filter((e) => (e.textContent ?? '').trim() && visible(e))
+  const nom = (e) => `${[...e.attributes].find((a) => a.name.startsWith('data-'))?.name ?? e.tagName}« ${(e.textContent ?? '').trim().slice(0, 24)} »`
+  const gene = []
+  for (let i = 0; i < textes.length; i++) for (let j = i + 1; j < textes.length; j++) {
+    const a = textes[i].getBoundingClientRect(), b = textes[j].getBoundingClientRect()
+    const l = Math.min(a.right, b.right) - Math.max(a.left, b.left), h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+    if (l > 2 && h > 2) gene.push(`${nom(textes[i])} sur ${nom(textes[j])}`)
+  }
+  return { largeur: r ? Math.round(r.width) : 0, hauteur: r ? Math.round(r.height) : 0, textes: textes.length, gene }
+})
 const carteAffichee = (p) => p.waitForFunction(() => !!document.querySelector('[data-station-carte] canvas') && document.querySelectorAll('ul[data-miroir] > li[data-personnage]').length > 0, null, { timeout: 30_000 }).then(() => true).catch(() => false)
 const miroir = (p) => p.evaluate(() => [...document.querySelectorAll('ul[data-miroir] > li[data-personnage]')].map((li) => ({ nom: li.dataset.personnage, salle: li.dataset.salle, motif: li.dataset.motif, etat: li.dataset.etat, x: li.dataset.x, y: li.dataset.y })))
 const { fondateurEssai, artisanEssai } = await import('./fixtures/026-pilotage/b/commun.mjs')
@@ -214,6 +233,10 @@ async function reel() {
       if (!(await carteAffichee(station.p))) e.push('la carte n\'est pas affichée en 30 s (canevas et personnages du miroir)')
       await attendre(2500)
       const c1 = await capturer(station.p, 'bureau.jpg'); e.push(...defauts(c1, 1440, 900))
+      // La carte est GRANDE (≥ 760 px à l'écran à 1440 px : ×2 de la grille de 400 px) et AUCUN texte visible n'en recouvre un autre.
+      const m1 = await mesureCarte(station.p)
+      if (m1.largeur < 760) e.push(`la carte ne fait que ${m1.largeur} px de large à 1440 px, 760 au moins attendus (échelle entière ×2 de la grille)`)
+      if (m1.gene.length) e.push(`${m1.gene.length} recouvrement(s) de texte à l'écran : ${m1.gene.slice(0, 4).join(' ; ')}`)
       const csp = await violations(station); if (csp.length) e.push(`${csp.length} violation(s) de CSP sur la station (${csp[0]})`)
       const stationJs = new Map(station.J.scripts)
       await station.fermer()
@@ -301,7 +324,7 @@ async function reel() {
           }
         }
         const n = await compter('journal_direction', `acteur_id=eq.${compte.id}&action=eq.station_reglages`)
-        if (n !== 2) e.push(`journal_direction : ${n} ligne(s) station_reglages, exactement 2 attendues`)
+        if (n !== 4) e.push(`journal_direction : ${n} ligne(s) station_reglages, exactement 4 attendues (l'avant et l'après de chacun des deux PUT)`)
       }
       const pg = await page('/controle/station', compte)
       try {
@@ -310,7 +333,7 @@ async function reel() {
         const th = themes.includes('station') ? (await prod('/station/themes/station/theme.json')).donnees : null
         if (!k || !th || k % th.grille.largeur !== 0) e.push(`le canevas fait ${k} px de large, un multiple entier de la grille du thème (${th?.grille?.largeur}) attendu`)
       } finally { await pg.fermer() }
-      S.juger('RK-4', e, `thème(s) ${themes.join(' et ')} servis et chargés (canevas = grille × k) ; un réglage écrit (${MARQUE}), relu, rétabli à la version d'avant, deux lignes station_reglages dans journal_direction`)
+      S.juger('RK-4', e, `thème(s) ${themes.join(' et ')} servis et chargés (canevas = grille × k) ; un réglage écrit (${MARQUE}), relu, rétabli à la version d'avant, quatre lignes station_reglages dans journal_direction (avant et après de chaque PUT)`)
     }
     // RK-5 : les vingt salles et la réservée s'ouvrent depuis la carte ; CE-24 sous WebKit sur la production.
     {
@@ -326,7 +349,10 @@ async function reel() {
           await pg.p.mouse.click(b.x, b.y)
           const ouverte = await pg.p.waitForFunction((c) => new URL(location.href).searchParams.get('salle') === c, cle, { timeout: 5000 }).then(() => true).catch(() => false)
           if (!ouverte) e.push(`un clic sur ${cle} ne pose pas ?salle=${cle}`)
-          await pg.p.keyboard.press('Escape'); await attendre(250)
+          // Échap ferme le panneau par router.replace de Next, qui dépasse 250 ms : on attend la fermeture (adresse sans ?salle, panneau parti) avant le clic
+          // suivant, sinon le panneau encore à l'écran reçoit le clic et le test accuse la carte (D-0510-2, même défaut côté juge).
+          await pg.p.keyboard.press('Escape')
+          await pg.p.waitForFunction(() => !new URL(location.href).searchParams.get('salle') && !document.querySelector('[data-salle-panneau]'), null, { timeout: 10_000 }).catch(() => {})
         }
       } finally { await pg.fermer() }
       // CE-24 (WebKit, 390×844), sur la production : la session est la vraie ; le pincement ne se prouve pas (Playwright n'offre que tap).

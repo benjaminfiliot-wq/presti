@@ -27,10 +27,37 @@ type OfficePhaserCanvasProps = {
 export const echelleEntiere = (largeurGrille: number, cadreCss: number, densite: number) =>
   Math.max(1, Math.floor((cadreCss * densite) / largeurGrille));
 
+/** Ce que le cadre peut déborder de chaque côté pour gagner un cran d'échelle : la marge vide de la coque (8 % de la largeur, 4 % de chaque côté). */
+const DEBORD_MAX = 1.08;
+/** Au bureau, ce que la zone garde pour la barre de la caméra (40 px de bouton, 6 px de marge) en plus de ses propres marges. */
+const BARRE_CAMERA = 46;
+
+/**
+ * L'échelle de la carte (toujours un entier : un pixel logique couvre k pixels de l'appareil) : le plus grand k que la LARGEUR du cadre
+ * permet (jusqu'à 8 % de débord : la marge vide de la coque se rogne, jamais une salle) ; au bureau, jamais plus que ce que la HAUTEUR de la
+ * zone laisse voir d'un coup d'œil (la liste des salles défile dessous), mais ×2 au moins dès que la largeur le permet : à ×1 la carte
+ * n'est qu'une vignette de 400 px que le texte ne peut pas habiller.
+ */
+export function echelleCarte(grille: Grille, cadre: HTMLElement, densite: number): number {
+  let k = echelleEntiere(grille.largeur, cadre.clientWidth * DEBORD_MAX, densite);
+  const zone = cadre.closest<HTMLElement>("[data-station-carte]");
+  if (zone && k > 2) {
+    const style = getComputedStyle(zone);
+    // Au téléphone la zone est haute de ce qu'elle contient : la mesurer serait circulaire.
+    if (style.position === "fixed") {
+      const utile = zone.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - BARRE_CAMERA;
+      while (k > 2 && (grille.hauteur * k) / densite > utile) k -= 1;
+    }
+  }
+  return k;
+}
+
 export function OfficePhaserCanvas(props: OfficePhaserCanvasProps) {
   const { pont, grille, fabrique, placer, auJeu } = props;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<PhaserType.Game | null>(null);
+  /** L'échelle du jeu construit : un changement de taille qui en donnerait une autre fait rebâtir la carte. */
+  const echelle = useRef(0);
   const dernieres = useRef({ fabrique, placer, auJeu });
   dernieres.current = { fabrique, placer, auJeu };
 
@@ -42,12 +69,17 @@ export function OfficePhaserCanvas(props: OfficePhaserCanvasProps) {
       const Phaser = (await import("phaser")).default;
       if (canceled || !rootRef.current) return;
       const densite = window.devicePixelRatio || 1;
-      const k = echelleEntiere(grille.largeur, cadre.clientWidth, densite);
-      // Taille CSS = taille du canevas ÷ densité : chaque pixel logique couvre exactement k pixels de l'appareil.
+      const k = echelleCarte(grille, cadre, densite);
+      echelle.current = k;
+      // Taille CSS = taille du canevas ÷ densité : chaque pixel logique couvre exactement k pixels de l'appareil. Quand le canevas déborde un
+      // peu du cadre (jusqu'à 8 %), il est centré : la coque est rognée des deux côtés, l'overflow du cadre de la carte la masque.
       const regler = (toile: HTMLCanvasElement) => {
         toile.style.width = `${toile.width / densite}px`;
         toile.style.height = `${toile.height / densite}px`;
         toile.style.display = "block";
+        toile.style.marginInline = "auto";
+        const trop = toile.width / densite - cadre.clientWidth;
+        if (trop > 0) toile.style.marginLeft = `${-trop / 2}px`;
       };
       const scene = dernieres.current.fabrique({
         Phaser,
@@ -87,6 +119,24 @@ export function OfficePhaserCanvas(props: OfficePhaserCanvasProps) {
     };
     // Le jeu se construit une fois par grille : les autres propriétés sont lues à la construction (dernieres).
   }, [pont, grille.largeur, grille.hauteur]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // La taille de la fenêtre ou des colonnes change : si une autre échelle entière devient possible, la carte se rebâtit (l'événement que l'hôte,
+  // entree.tsx, écoute déjà pour la perte du contexte WebGL). La largeur du cadre ne dépend pas du canevas (le défilement de la zone a sa
+  // gouttière réservée) : la mesure ne boucle pas.
+  useEffect(() => {
+    const cadre = rootRef.current;
+    if (!cadre || typeof ResizeObserver === "undefined") return;
+    let attente = 0;
+    const verifier = () => {
+      if (!echelle.current || !gameRef.current) return;
+      if (echelleCarte(grille, cadre, window.devicePixelRatio || 1) !== echelle.current) window.dispatchEvent(new CustomEvent("mc-rebatir"));
+    };
+    const observeur = new ResizeObserver(() => { window.clearTimeout(attente); attente = window.setTimeout(verifier, 250); });
+    observeur.observe(cadre);
+    const zone = cadre.closest<HTMLElement>("[data-station-carte]");
+    if (zone) observeur.observe(zone);
+    return () => { window.clearTimeout(attente); observeur.disconnect(); };
+  }, [grille.largeur, grille.hauteur]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div className={styles.cadre} ref={rootRef} />;
 }

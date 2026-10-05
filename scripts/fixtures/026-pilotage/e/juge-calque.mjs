@@ -61,7 +61,19 @@ async function scPolice(ctx) {
       const famille = (variable.split(',')[0] || '').replace(/['"]/g, '').trim().toLowerCase()
       const mesure = (sel) => { const es = [...document.querySelectorAll(sel)]; const e = es[0]; if (!e) return { n: 0 }; const s = getComputedStyle(e); return { n: es.length, famille: s.fontFamily.toLowerCase(), taille: parseFloat(s.fontSize), texte: (e.textContent ?? '').trim(), toutes: es.map((x) => parseFloat(getComputedStyle(x).fontSize)).filter((v) => v < 12).length } }
       const plaques = Object.fromEntries([...document.querySelectorAll('[data-plaque]')].map((p) => [p.dataset.plaque, (p.textContent ?? '').trim()]))
-      return { variable, famille, mesures: { plaque: mesure('[data-plaque]'), nom: mesure('[data-nom]'), bulle: mesure('[data-bulle]'), zz: mesure('[data-zz]'), plusUn: mesure('[data-plus-un]') }, plaques, experience: (document.querySelector('[data-ecran="experience"]')?.textContent ?? '').replace(/[  ]/g, ' ') }
+      // 026-193 (lot « carte lisible », D-0510-14) : la carte est GRANDE (canevas ≥ 760 px à l'écran à 1440 px, ×2 de la grille) et AUCUN texte VISIBLE n'en recouvre un
+      // autre (un texte masqué : visibility, data-masquee, boîte vide, ne compte pas : il n'est pas à l'écran).
+      const cv = document.querySelector('[data-station-carte] canvas'), rc = cv ? cv.getBoundingClientRect() : null
+      const visible = (x) => { const st = getComputedStyle(x), b = x.getBoundingClientRect(); return b.width > 0 && b.height > 0 && st.visibility !== 'hidden' && st.display !== 'none' && !x.hasAttribute('data-masquee') }
+      const vus = [...document.querySelectorAll('[data-station-carte] :is([data-plaque], [data-nom], [data-bulle], [data-tapis-etape], [data-tapis-rejet], [data-ecran="experience"], [data-ligne], [data-badge-lv], [data-zz])')].filter((x) => (x.textContent ?? '').trim() && visible(x))
+      const libelle = (x) => `${[...x.attributes].find((a) => a.name.startsWith('data-'))?.name ?? x.tagName} « ${(x.textContent ?? '').trim().slice(0, 24)} »`
+      const gene = []
+      for (let i = 0; i < vus.length; i++) for (let j = i + 1; j < vus.length; j++) {
+        const a = vus[i].getBoundingClientRect(), b = vus[j].getBoundingClientRect()
+        if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2) gene.push(`${libelle(vus[i])} sur ${libelle(vus[j])}`)
+      }
+      const carte = { largeur: rc ? Math.round(rc.width) : 0, vus: vus.length, gene }
+      return { carte, variable, famille, mesures: { plaque: mesure('[data-plaque]'), nom: mesure('[data-nom]'), bulle: mesure('[data-bulle]'), zz: mesure('[data-zz]'), plusUn: mesure('[data-plus-un]') }, plaques, experience: (document.querySelector('[data-ecran="experience"]')?.textContent ?? '').replace(/[  ]/g, ' ') }
     }, exiger)
     return (await jusqua(() => mesurer(true), { delai: 15_000, pas: 60 })) ?? mesurer(false)
   } finally { await P.fermer() }
@@ -166,7 +178,12 @@ function ce14(p, racine) {
   if (!sansEspaces(p.experience).includes('0 €')) e.push(`l'écran de l'Expérience dit « ${sansEspaces(p.experience)} », « 0 € » attendu`)
   const f35 = police35(racine)
   if (f35.length) e.push(`une police 3 × 5 reste sous moteur/ : ${f35.slice(0, 3).join(', ')}`)
-  return { echecs: e, detail: `plaques, noms, bulles, Zz et +1 en texte HTML dans ${p.famille || '—'} (--mc-police-pixel), 12 px au moins ; « Salle de réunion », « Trésorerie » et « 0 € » lisibles ; aucune police 3 × 5` }
+  // 026-193 : la carte est grande et lisible (ajout : rien n'est retiré ni assoupli ci-dessus).
+  if (p.carte) {
+    if (p.carte.largeur < 760) e.push(`la carte ne fait que ${p.carte.largeur} px de large à 1440 px, 760 au moins attendus (échelle entière ×2 de la grille de 400 px)`)
+    if (p.carte.gene.length) e.push(`${p.carte.gene.length} recouvrement(s) de texte visible à l'écran : ${p.carte.gene.slice(0, 4).join(' ; ')}`)
+  }
+  return { echecs: e, detail: `plaques, noms, bulles, Zz et +1 en texte HTML dans ${p.famille || '—'} (--mc-police-pixel), 12 px au moins ; « Salle de réunion », « Trésorerie » et « 0 € » lisibles ; aucune police 3 × 5 ; carte de ${p.carte?.largeur ?? '—'} px (≥ 760) et ${p.carte?.vus ?? '—'} texte(s) visible(s) sans recouvrement` }
 }
 function ce15(m) {
   const e = []

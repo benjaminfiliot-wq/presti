@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { actif } from '@/lib/flags'
@@ -23,6 +24,8 @@ export type CarteProps = {
 
 const Moteur = dynamic(() => import('./moteur/entree'), { ssr: false })
 
+const CLES_OUVRABLES: readonly string[] = [...SALLES.map((s) => s.cle), SALLE_RESERVEE.cle]
+
 /** La liste des salles : un bouton de 44 px par clé de SALLES plus la réservée. Elle reste SOUS la carte et se parcourt au clavier (Tab), carte ou pas. */
 function ListeSalles() {
   const router = useRouter()
@@ -32,6 +35,17 @@ function ListeSalles() {
     q.delete('agent')
     router.replace(`/controle/station?${q.toString()}`, { scroll: false })
   }
+  // Un clic sur une salle de la carte (moteur/camera/zones.ts) pose ?salle=<clé> tout de suite (history.replaceState), puis le dit ici :
+  // la même route que la liste passe par le routeur de Next, dans l'ordre de ses navigations. Sans cela, la fermeture d'un panneau encore en
+  // vol (router.replace de l'Échap) pouvait revenir ensuite et effacer la salle que le clic venait de poser.
+  useEffect(() => {
+    const sur = (ev: Event) => {
+      const cle = (ev as CustomEvent<unknown>).detail
+      if (typeof cle === 'string' && CLES_OUVRABLES.includes(cle)) ouvrirSalle(cle)
+    }
+    window.addEventListener('mc-ouvrir-salle', sur)
+    return () => window.removeEventListener('mc-ouvrir-salle', sur)
+  })
   return (
     <ul className="mc-salles" data-liste-salles aria-label="Les salles">
       {SALLES.map((s) => (
