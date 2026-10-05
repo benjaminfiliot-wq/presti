@@ -4,6 +4,9 @@
 // c'est une écriture locale dans le décor de la station). Un widget qui n'a pas pu être posé est relu dans /api/widgets et réessayé au tour suivant.
 // Rien ne sort de la machine ; jamais de clé ; le jeton local de StarNet est relu dans la page à chaque tour.
 import { execSync } from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 10) * 60_000
 const MCP = process.env.PRESTI_MCP || 'http://127.0.0.1:8799/mcp'
@@ -108,7 +111,55 @@ async function refleterEvenement(s, e) {
   const id = ID_STARNET[e.agent] || e.agent
   const consigne = `Tu viens de travailler dans l'usine Presti. Evenement reel releve dans la base : type « ${e.type} », resume « ${String(e.resume).slice(0, 160)} », a ${e.le}. Ecris UNE ligne courte en francais qui dit ce que tu viens de faire, en reprenant ces faits tels quels, sans rien inventer. N'appelle aucun outil.`
   const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }), signal: AbortSignal.timeout(90_000) })
-  await r.text(); return r.ok
+  const texte = await r.text()
+  refleterEvenement.dernierRunId = /"runId"\s*:\s*"([0-9a-f-]{36})"/.exec(texte)?.[1] ?? null
+  return r.ok
+}
+
+// ── quêtes et XP RÉELS (05/10 nuit, demande de Benj : « les niveaux, l'XP qui suivent les tâches et les quêtes »).
+// Règles de StarNet respectées : une quête ne donne jamais d'XP ; l'XP naît seulement d'un retour « excellent » sur un travail RENDU (/api/growth/ratings),
+// que le serveur valide (course réelle, terminée, non interne ; delta fixé par lui). Ici : tâche PRISE sur le bus = quête ouverte pour l'agent ;
+// tâche FAITE avec preuve jointe = quête terminée avec preuve, et un seul retour « excellent » sur le passage qui vient d'être écrit. Jamais pour un échec.
+const ICI = path.dirname(fileURLToPath(import.meta.url))
+const FICHIER_QUETES = path.join(ICI, 'starnet-pont-quetes.json')
+const lireQuetes = () => { try { return JSON.parse(fs.readFileSync(FICHIER_QUETES, 'utf8')) } catch { return { ouvertes: {} } } }
+const ecrireQuetes = (q) => { try { fs.writeFileSync(FICHIER_QUETES, JSON.stringify(q)) } catch { /* disque : pas bloquant */ } }
+async function appelSn(s, methode, chemin, corps) {
+  const r = await fetch(`http://127.0.0.1:${s.port}${chemin}`, { method: methode, headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: corps ? JSON.stringify(corps) : undefined, signal: AbortSignal.timeout(30_000) })
+  let j = null; try { j = await r.json() } catch { /* corps vide */ }
+  return { statut: r.status, j }
+}
+let epoqueCache = { v: 0, le: 0 }
+async function epoque(s) {
+  if (epoqueCache.v && Date.now() - epoqueCache.le < 600_000) return epoqueCache.v
+  const { j } = await appelSn(s, 'GET', '/api/save?key=agent')
+  epoqueCache = { v: Math.max(1, Math.floor(Number(j?.save?.agent?.createdAt) || 1)), le: Date.now() }
+  return epoqueCache.v
+}
+async function noterTravail(s, agentSn, runId) {
+  const corps = { runId, verdict: 'great', epoch: await epoque(s), entries: [{ agentId: agentSn, id: 'work:' + runId, runId, delta: 3, reason: 'work_great' }] }
+  const { statut, j } = await appelSn(s, 'POST', '/api/growth/ratings', corps)
+  console.log(`${new Date().toISOString()} XP ${agentSn} : retour « excellent » sur la tâche faite → HTTP ${statut}${j?.ok ? (j.duplicate ? ' (déjà noté)' : ' (XP posé)') : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+}
+async function queteEvenement(s, e, runId) {
+  const agentSn = ID_STARNET[e.agent] || e.agent
+  const etat = lireQuetes()
+  const typeTache = /tâche (\S+)/.exec(String(e.resume))?.[1] ?? 'tâche'
+  if (e.type === 'tache_prise') {
+    const { statut, j } = await appelSn(s, 'POST', '/api/quests/mint', { title: `Tâche ${typeTache} · ${e.agent}`, desc: `${String(e.resume).slice(0, 140)} (évènement ${e.id})`, kind: 'work', agentId: agentSn, contract: { type: 'attest', key: '' }, steps: ['prise', 'faite'] })
+    if (j?.ok && j.id) { (etat.ouvertes[e.agent] ||= []).push({ id: j.id, ev: e.id }); if (etat.ouvertes[e.agent].length > 20) etat.ouvertes[e.agent].shift(); ecrireQuetes(etat) }
+    console.log(`${new Date().toISOString()} quête ${e.agent} : ouverte pour « ${typeTache} » → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+  } else if (e.type === 'tache_faite') {
+    const q = (etat.ouvertes[e.agent] || []).shift()
+    if (q) {
+      ecrireQuetes(etat)
+      await appelSn(s, 'POST', '/api/quests/update', { id: q.id, op: 'tick', stepKey: 'prise', note: 'tâche prise' })
+      await appelSn(s, 'POST', '/api/quests/update', { id: q.id, op: 'tick', stepKey: 'faite', note: String(e.resume).slice(0, 120) })
+      const { statut, j } = await appelSn(s, 'POST', '/api/quests/report', { id: q.id, evidence: `${String(e.resume).slice(0, 120)} · évènement ${e.id} du ${e.le} (preuve jointe au bus)` })
+      console.log(`${new Date().toISOString()} quête ${e.agent} : terminée avec preuve → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+    }
+    if (runId) await noterTravail(s, agentSn, runId)
+  }
 }
 async function suivre() {
   for (;;) {
@@ -119,9 +170,13 @@ async function suivre() {
       const nouveaux = liste.filter((e) => e.id > dernierId)
       if (nouveaux.length) {
         dernierId = nouveaux[nouveaux.length - 1].id
-        const parAgent = new Map(); for (const e of nouveaux) parAgent.set(e.agent, e) // le plus récent par agent
+        const parAgent = new Map(); for (const e of nouveaux) if (!/^tache_(prise|faite)$/.test(e.type)) parAgent.set(e.agent, e) // le plus récent par agent
         const s = await sidecarCourt()
-        await Promise.all([...parAgent.values()].map((e) => refleterEvenement(s, e).catch(() => false)))
+        // les tâches prises et faites : une à une, dans l'ordre, chacune avec SA quête (et son XP si elle est faite)
+        for (const e of nouveaux.filter((x) => /^tache_(prise|faite)$/.test(x.type))) {
+          try { const ok = await refleterEvenement(s, e); await queteEvenement(s, e, ok ? refleterEvenement.dernierRunId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
+        }
+        await Promise.all([...parAgent.values()].filter((e) => !/^tache_(prise|faite)$/.test(e.type)).map((e) => refleterEvenement(s, e).catch(() => false)))
         console.log(`${new Date().toISOString()} activité : ${parAgent.size} agent(s) allumé(s) [${[...parAgent.keys()].join(', ')}]`)
       }
     } catch (e) { sidecarCache = null }
