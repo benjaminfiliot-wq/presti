@@ -1,0 +1,12 @@
+sonde codex         ÉCHEC  modèle=gpt-6-luna  14493 ms  raison=non_autorise
+sonde freellmapi    OK  modèle=auto  468 ms  via=mistral  réponse={"ok":true}
+sonde ollama_cloud  ÉCHEC  modèle=gpt-oss:120b-cloud  200 ms  raison=quota
+sonde ollama_8b     OK  modèle=qwen3:8b-q4_K_M  91522 ms  réponse={"ok":true}
+sonde ollama_4b     OK  modèle=qwen3:4b-instruct-2507-q4_K_M  32066 ms  réponse={"ok":true}
+agent douleurs      OK servi par freellmapi:auto  (333 ms)  — public : freellmapi puis Codex, Ollama Cloud, le local
+agent studio        OK servi par freellmapi:auto  (15345 ms)  — public : Codex, freellmapi, Ollama Cloud, le local (8B puis 4B)
+agent standardiste  OK servi par ollama:qwen3:4b-instruct-2507-q4_K_M  (569 ms)  — prospect (consigne publique, « oui » daté posé dans ce processus seulement) : Codex puis le LOCAL
+agent standardiste  rien : attente : aucune voie disponible pour le moment  (0 ms)  — prospect SANS « oui » daté : rien ne doit partir hors Codex
+agent facteur       rien : attente : aucune voie disponible pour le moment  (1 ms)  — Facteur : Codex seul, aucun repli
+état : à bout = codex(non_autorise)
+journal relais-2026-10-05.jsonl : 7 ligne(s)
