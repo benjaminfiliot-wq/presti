@@ -1,0 +1,34 @@
+1
+== ref (partie station entiere)
+✅ ST-1 les 15 fichiers de app/controle/station/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : l
+✅ ST-2 drapeau baissé (racine telle quelle) : /controle/station → 404, aucun lien vers la station ; levé : premier lien du rail → /controle/station, onglet=pilotage&decision=<uuid> → /controle/station?decision=<uuid>, un faux UUID abandonné
+❌ ST-3 [data-station-carte] {"x":300,"y":80,"l":800,"b":856} : toute la largeur entre la barre et le bandeau attendue
+✅ ST-4 ENCAISSÉ, DÉPENSÉ, MARGE · MOIS = 9 787,30 €, 675,65 €, 9 111,65 € (tirés) ; compteurs dans l’ordre servi, muets sans chiffre ; AUTO éteint comme servi ; cloche, JOUR, lune, version (absente du HTML sans session), santé, heure de
+✅ ST-5 15 agents dans l’ordre servi : point, activité, cadence, coût, 📍 et plaque de la salle, ancienneté (relTime), ⚠ avec le titre de SA carte ; [data-commandant] ; un appui pose ?agent= sans changer de page ; « ◄ » → rail de 44 px, gardé 
+✅ ST-6 attention-ordre.json : 7 cartes dans l’ordre et les couleurs servis, orchestre visible, « 5 autres » ; attention-vide.json : la phrase exacte
+✅ ST-7 objectif « PAR LE CHEF », missions au texte servi, LV. et dernier succès, compte rendu de 1 à 3 lignes
+✅ ST-8 bandeau : les éléments servis, six entrées (chacune pose son ?vue= sans changer de page), pastille = ENCAISSÉ · MOIS et SITES EN LIGNE, toast masqué jusqu’au compte suivant ; rien ne tourne 3 s après le chargement ; un élément nouveau entre
+✅ ST-9 direct-503.json : l’équipage dit « … ne répond pas : pilotage_agents injoignable (délai dépassé) », sans chiffre ni carte ; Attention, Commandement et bandeau rendus
+✅ ST-10 390×844 : barre compacte de 88 px (MISSION CONTROL, point d’état, cloche, AUTO ; ENCAISSÉ · MOIS, ENVOIS DU JOUR, CHEF DANS), feuille « Tous les compteurs » complète et opaque, onglets en bas (Attention ouvert), Plus → Succès, Réglages, 
+❌ ST-11 app/controle/station/salles/salles.css déclare un jeton --mc- : les défauts vivent dans station.css seulement
+✅ ST-12 bureau.jpg 1440×900, 150 Ko, écart type 26.3 ; telephone.jpg 390×844, 29 Ko, écart type 24.2 — prises par le juge, différentes entre elles et des autres parties
+✅ ST-13 chaque lien de la station en /controle…, /controle/station… ou /parametres ; aucun « Envoyer », « Copier », « Relayer » ; aucune requête du navigateur hors de la page servie sur les 26 pages ouvertes
+✅ ST-14 60 s page visible : 3 direct, 3 trésorerie, 13 fil (apres=50 après la première), 1 réglages (404 → défauts, sans panne)
+✅ ST-15 rôle lecture : station entière, « lecture seule », aucun geste ni entrée Réglages ; partenaire (403) : renvoyé à /dashboard
+✅ ST-16 bureau, 3 s après le chargement, sans événement : data-images 0, 1 empreinte(s) du canevas, aucune animation en cours ; 2 lectures identiques de vue=direct (horloge de la page avancée de 32 s) : aucun texte des zones, du journal ni des compteurs 
+✅ ST-17 diff de app/controle/page.tsx limité à l’entrée Station et à la redirection (le typecheck se juge sur la racine réelle)
+✅ ST-18 liste des salles : les 20 clés de SALLES avec leur plaque, ≥ 44 px, E-commerce réservée désactivée, un appui pose ?salle= sans changer de page ; <Carte carte={…}> tel quel ; Vues.tsx et Habillage.tsx ; aucune vue sans ?vue= ; carte montée a
+✅ ST-19 chaque [data-modele] visible porte le modèle servi (dont « sans IA ») ; Equipage.tsx n’écrit aucun modèle
+pilotage-ecran-qa --partie=station : FAIL — ST-3, ST-11
+== s1
+✅ ST-1 les 15 fichiers de app/controle/station/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : l
+❌ ST-18 le paquet initial de la page contient un module phaser
+pilotage-ecran-qa --partie=station : FAIL — ST-2, ST-3, ST-6, ST-9, ST-10, ST-11, ST-12, ST-14, ST-15, ST-18
+== s2
+✅ ST-1 les 15 fichiers de app/controle/station/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : l
+❌ ST-18 le paquet initial de la page contient un module phaser
+pilotage-ecran-qa --partie=station : FAIL — ST-2, ST-3, ST-6, ST-9, ST-10, ST-11, ST-12, ST-14, ST-15, ST-18
+== s3
+❌ ST-1 app/controle/station/reglages/Reglages.tsx contient .from(
+❌ ST-18 non jugé : ST-1 en échec : la station n’existe pas, aucun navigateur n’est lancé
+pilotage-ecran-qa --partie=station : FAIL — ST-1, ST-2, ST-3, ST-4, ST-5, ST-6, ST-7, ST-8, ST-9, ST-10, ST-11, ST-12, ST-13, ST-14, ST-15, ST-16, ST-17, ST-18, ST-19
