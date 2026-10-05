@@ -138,7 +138,8 @@ export const accrocheActeurs: Accroche = (contexte: ContexteMoteur) => {
     const nRejet = nombre(rejet?.nombre), taux = nombre(rejet?.tauxPass)
     const xs = monde.carte.tapis.etapes
     const dernier = xs.length ? xs[xs.length - 1] : null
-    const nr = bloc(garde('tapis:rejet'), () => el('span', { 'data-tapis-rejet': '' }, couche), () => (dernier ? { x: monde.carte.canvas.width - 6, y: dernier.y + monde.carte.canvas.tileSize } : { x: monde.carte.canvas.width - 6, y: monde.carte.canvas.tileSize }))
+    // Sous la dernière étape ; au thème Station à 10 px et non à une case (16 px) : plus bas, le texte tombait sur le bord haut de la coque de l'atlas (lot décor, 05/10).
+    const nr = bloc(garde('tapis:rejet'), () => el('span', { 'data-tapis-rejet': '' }, couche), () => (dernier ? { x: monde.carte.canvas.width - 6, y: dernier.y + (monde.carte.cle === 'station' ? 10 : monde.carte.canvas.tileSize) } : { x: monde.carte.canvas.width - 6, y: monde.carte.canvas.tileSize }))
     dire(nr, `REJET ${nRejet === null ? '—' : nRejet} · PASS ${taux === null ? '—' : Math.round(taux * 100)} %`)
 
     const donnees = lire(props.carte) as Record<string, unknown> | null
