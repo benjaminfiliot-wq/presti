@@ -1,9 +1,9 @@
 # Mutations 026-250
 
-scripts/comptable-qa.mjs : PASS (1.4 s)
-scripts/sav-qa.mjs : PASS (0.8 s)
-scripts/qualite-sites-qa.mjs : PASS (2.3 s)
-scripts/vigile-qa.mjs : PASS (44.0 s)
+scripts/comptable-qa.mjs : PASS (0.6 s)
+scripts/sav-qa.mjs : PASS (0.4 s)
+scripts/qualite-sites-qa.mjs : PASS (1.2 s)
+scripts/vigile-qa.mjs : PASS (31.4 s)
 
 1. CPT-1 · lib/direction/comptable.ts · FAIL CPT-1 — méthode écriture Stripe dans le source
 2. CPT-2 · lib/direction/comptable.ts · FAIL CPT-2 — 10 paiements distincts attendus
