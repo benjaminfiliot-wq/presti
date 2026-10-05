@@ -48,6 +48,7 @@ const ID = '099-banc-relais'
 const CLE_FACTICE = 'cle-factice-du-banc-7f3a9c'
 const BORNE_S = RAPIDE ? 4 : 90
 // Les deux fournisseurs de secours, sous la forme exacte de presti-ops/veille/lancer-codex-tache.sh (lignes 11-12).
+const MODELE_FL = 'gemini-3-flash-preview' // le modèle du fournisseur fl (usine.mjs, FL_MODELE pour en imposer un autre)
 const OL_CONFIG = 'model_providers.ol={name="ollama",base_url="http://127.0.0.1:11434/v1",wire_api="responses"}'
 const FL_CONFIG = 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}'
 const TITRE = "## Conseil d'une autre IA (à vérifier, pas à suivre aveuglément)"
@@ -71,14 +72,15 @@ async function lancerCas(cas, cible) {
   fs.writeFileSync(path.join(arbre, '.orchestre', 'travail', 'usine', `${ID}.prompt.md`), `# Prompt du banc pour ${ID}\n\nPrends la fiche et fais-la.\n`)
   fs.copyFileSync(path.join(FIX, 'faux-verificateur.mjs'), path.join(arbre, 'scripts', 'orchestre.mjs'))
   fs.copyFileSync(cible, path.join(tache, 'usine.mjs'))
-  fs.writeFileSync(path.join(tache, 'config.json'), JSON.stringify({ id: ID, agent: 'usine-codex-banc', modele: 'gpt-6-sol', effort: 'medium', minutes: cas.minutes ?? 2, tours: cas.tours ?? 3 }))
+  fs.writeFileSync(path.join(tache, 'config.json'), JSON.stringify({ id: ID, agent: 'usine-codex-banc', modele: 'gpt-6-sol', effort: 'medium', minutes: cas.minutes ?? 2, tours: cas.tours ?? 3, ...cas.config }))
   fs.mkdirSync(path.join(home, '.config', 'presti'), { recursive: true })
   if (cas.cle !== false) fs.writeFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), `${CLE_FACTICE}\n`)
   const journal = path.join(racine, 'banc.jsonl')
-  const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^(FL_KEY|PRESTI_|BANC_)/.test(k)))
+  const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^(FL_KEY|PRESTI_|BANC_|ANTHROPIC_|DISABLE_AUTOUPDATER)/.test(k)))
   Object.assign(env, {
     HOME: home, USERPROFILE: home,
     PRESTI_CODEX_BIN: path.join(FIX, 'faux-codex.mjs'),
+    PRESTI_CLAUDE_BIN: path.join(FIX, 'faux-claude.mjs'),
     PRESTI_CONSEIL_BIN: path.join(FIX, 'faux-conseil.mjs'),
     BANC_JOURNAL: journal,
     BANC_CLE_A_GUETTER: CLE_FACTICE,
@@ -105,7 +107,8 @@ async function lancerCas(cas, cible) {
   try { res.etat = JSON.parse(lire(path.join(tache, 'etat.json'))) } catch { res.etat = null }
   res.log = lire(path.join(tache, 'codex.log')) || ''
   res.conseils = Object.fromEntries(fs.readdirSync(tache).filter((f) => /^conseil-\d+\.md$/.test(f)).map((f) => [f, lire(path.join(tache, f))]))
-  res.codex = res.ev.filter((e) => e.qui === 'codex')
+  res.codex = res.ev.filter((e) => e.qui === 'codex' || e.qui === 'claude') // Claude aussi : mêmes champs (fournisseur, modele, instruction, flKey)
+  res.dernier = lire(path.join(tache, 'dernier-message.md'))
   res.verifs = res.ev.filter((e) => e.qui === 'verificateur')
   res.conseilAppels = res.ev.filter((e) => e.qui === 'conseil' && e.etape === 'debut')
   res.racine = racine
@@ -153,6 +156,44 @@ function bascule(r, D, attendues, fournisseurFinal, modeleFinal) {
   }
 }
 
+// ── Claude Code exécutant : les contrôles communs ───────────────────────────────────────────────────────────────
+const CLAUDE = { fournisseur: 'claude' } // config.json : le départ explicite de `lancer --fournisseur=claude`
+const CLE_API_FACTICE = 'sk-' + 'ant-factice-du-banc-5e1d' // dans l'environnement du tourneur : Claude ne doit PAS la recevoir (abonnement seulement)
+// Les arguments de `claude -p` : jamais de contournement des permissions, aucun outil d'écriture « nu » (hors du dossier courant),
+// rien d'écrit sur git, les secrets de l'usine illisibles, l'abonnement seul (ni clé d'API ni FL_KEY).
+function claudeSain(r, D) {
+  const c = r.codex.find((x) => x.fournisseur === 'claude')
+  if (!c) { D.push('aucun appel de Claude'); return }
+  const a = c.argv
+  const v = (d) => a[a.indexOf(d) + 1]
+  if (a[0] !== '-p' || a[1] !== c.instruction) D.push("l'instruction ne suit pas -p")
+  if (v('--model') !== 'sonnet') D.push(`--model ${v('--model')} (sonnet attendu)`)
+  if (v('--permission-mode') !== 'acceptEdits') D.push(`--permission-mode ${v('--permission-mode')} (acceptEdits attendu)`)
+  if (v('--permission-prompts') !== 'none') D.push(`--permission-prompts ${v('--permission-prompts')} (none attendu : personne ne répond)`)
+  if (!a.includes('--safe-mode')) D.push('--safe-mode absent (CLAUDE.md et hooks du dépôt chargés)')
+  if (v('--output-format') !== 'stream-json' || !a.includes('--verbose')) D.push('--output-format stream-json --verbose absents (journal muet)')
+  if (a.some((x) => /^--(?:allow-)?dangerously/.test(x)) || /bypassPermissions/.test(v('--permission-mode') || '')) D.push('contournement des permissions (--dangerously-skip-permissions / bypassPermissions)')
+  for (const o of ['Bash(node:*)', 'Bash(git status:*)', 'Bash(git diff:*)', 'Bash(npx tsc:*)', 'Bash(npx tsx:*)', 'Bash(ls:*)', 'Bash(cat:*)', 'Bash(cp:*)', 'Bash(mv:*)', 'Bash(rm:*)', 'Bash(mkdir:*)', 'Bash(sha256sum:*)', 'Bash(grep:*)', 'Bash(sed:*)', 'Bash(awk:*)', 'Bash(head:*)', 'Bash(tail:*)', 'Bash(wc:*)', 'Bash(diff:*)', 'Bash(sort:*)', 'Bash(find:*)', 'Bash(date:*)', 'Bash(echo:*)', 'Bash(bash:*)', 'Bash(timeout:*)']) if (!c.autorises.includes(o)) D.push(`outil ${o} absent de --allowedTools`)
+  for (const o of c.autorises) {
+    if (/^(?:Read|Edit|Write|MultiEdit|NotebookEdit)\b/.test(o)) D.push(`outil « nu » ${o} autorisé : il écrit ou lit hors du dossier courant (acceptEdits suffit dans l'arbre)`)
+    if (/^Bash\(git (?:push|commit|reset|clean|checkout|restore|stash|rebase|merge)\b/.test(o) || o === 'Bash(git:*)') D.push(`écriture git autorisée : ${o}`)
+  }
+  for (const o of ['Bash(git push:*)', 'Bash(git commit:*)', 'Bash(git reset:*)']) if (!c.interdits.includes(o)) D.push(`${o} absent de --disallowedTools`)
+  for (const d of ['.claude', '.codex', '.config/presti', '.ssh']) if (!c.interdits.some((x) => x.startsWith('Read(//') && x.includes(`/${d}/`))) D.push(`lecture de ~/${d} non interdite (--disallowedTools)`)
+  if (path.resolve(c.cwd).toLowerCase() !== path.resolve(r.tache, 'arbre').toLowerCase()) D.push(`Claude lancé dans ${c.cwd} (l'arbre jetable ${path.join(r.tache, 'arbre')} attendu)`)
+  if (c.cleApi !== null) D.push("ANTHROPIC_API_KEY passée à Claude (l'abonnement seul, jamais facturé au jeton)")
+  if (c.jetonAnthropic !== null) D.push('ANTHROPIC_AUTH_TOKEN passé à Claude')
+  if (c.flKey !== null) D.push('FL_KEY (clé freellmapi) passée à Claude')
+  if (c.autoMaj !== '1') D.push('DISABLE_AUTOUPDATER=1 absent : Claude pourrait se mettre à jour en plein tour')
+}
+// Quota de l'abonnement Claude épuisé : code 3, un seul appel, aucun relais (ni gratuit ni autre), le vérificateur n'est pas lancé.
+function claudeQuota(r, D) {
+  fin(r, D, 3, 'QUOTA'); appels(r, D, ['claude']); bascule(r, D, [], 'claude', 'sonnet')
+  if (!/quota de l'abonnement Claude épuisé/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« quota de l'abonnement Claude épuisé » attendu)`)
+  if (!/aucun relais depuis Claude/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » ne dit pas qu'aucun relais ne part de Claude`)
+  if (r.verifs.length) D.push(`vérificateur lancé ${r.verifs.length} fois alors que Claude n'a pas travaillé`)
+}
+
 // ── les cas ───────────────────────────────────────────────────────────────────────────────────────────────────
 const PROSPECTS = [
   ['prospect-entete', { entete: 'donnees: prospects' }],
@@ -196,17 +237,17 @@ const CAS = [
       fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
       const c3 = r.codex[2]
       if (c3 && !(aConfig(c3, FL_CONFIG) && aConfig(c3, 'model_provider=fl'))) D.push(`appel freellmapi sans « -c ${FL_CONFIG} -c model_provider=fl »`)
-      if (c3 && c3.modele !== 'gpt-oss-120b') D.push(`freellmapi sur -m ${c3.modele} pour une fiche de code (gpt-oss-120b attendu)`)
+      if (c3 && c3.modele !== MODELE_FL) D.push(`freellmapi sur -m ${c3.modele} pour une fiche de code (${MODELE_FL} attendu)`)
       if (c3 && c3.flKey !== CLE_FACTICE) D.push(`freellmapi lancé sans la clé de ~/.config/presti/freellmapi.key dans FL_KEY (vu : ${c3.flKey === null ? 'absente' : 'autre valeur'})`)
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', MODELE_FL)
     },
   },
   {
     nom: 'ol-fl-texte', fiche: { perimetre: 'docs/banc-relais.md' }, env: { BANC_EPUISES: 'chatgpt,ol', BANC_VERDICTS: 'PASS' },
     juger(r, D) {
       fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
-      if (r.codex[2] && r.codex[2].modele !== 'gpt-oss-120b') D.push(`freellmapi sur -m ${r.codex[2].modele} pour une fiche sans code (gpt-oss-120b attendu)`)
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
+      if (r.codex[2] && r.codex[2].modele !== MODELE_FL) D.push(`freellmapi sur -m ${r.codex[2].modele} pour une fiche sans code (${MODELE_FL} attendu)`)
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', MODELE_FL)
     },
   },
   {
@@ -214,7 +255,7 @@ const CAS = [
     nom: 'ol-inerte', env: { BANC_EPUISES: 'chatgpt', BANC_INERTE: 'ol', BANC_VERDICTS: 'PASS' },
     juger(r, D) {
       fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', MODELE_FL)
       if (!/inerte/.test(r.log)) D.push('codex.log sans « inerte » : la bascule ne dit pas pourquoi')
     },
   },
@@ -224,12 +265,12 @@ const CAS = [
     juger(r, D) { sansBascule(r, D, ['chatgpt', 'ol'], 'ol'); if (r.etat?.prospects) D.push(`fiche prise pour une fiche de prospects (${r.etat.prospects}) : un nom de script n'est pas une donnée`) },
   },
   {
-    nom: 'tout-epuise', env: { BANC_EPUISES: 'chatgpt,ol,fl', BANC_VERDICTS: 'PASS' },
+    nom: 'tout-epuise', env: { BANC_EPUISES: 'chatgpt,ol,fl,fm', BANC_VERDICTS: 'PASS' },
     juger(r, D) {
-      fin(r, D, 3, 'QUOTA'); appels(r, D, ['chatgpt', 'ol', 'fl'])
+      fin(r, D, 3, 'QUOTA'); appels(r, D, ['chatgpt', 'ol', 'fl', 'fm'])
       if (!/tous les fournisseurs épuisés/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« tous les fournisseurs épuisés » attendu)`)
       if (r.verifs.length) D.push(`vérificateur lancé ${r.verifs.length} fois alors qu'aucun fournisseur n'a travaillé`)
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl')
+      bascule(r, D, ['chatgpt→ol', 'ol→fl', 'fl→fm'], 'fm')
     },
   },
   {
@@ -496,20 +537,141 @@ const CAS = [
       if (!/délai de 90 s dépassé/.test(r.log)) D.push('codex.log ne dit pas « délai de 90 s dépassé »')
     },
   },
+  // ── Claude Code exécutant (05/10/2026, quota ChatGPT épuisé jusqu'au 9/10) : usine.mjs lancer --fournisseur=claude ──
+  // Départ explicite sur Claude (config.json « fournisseur: claude »), aucun relais ; un abonnement PAYANT : une fiche de prospects
+  // part chez lui (contrairement à ol/fl/fm). La doublure (faux-claude.mjs) émet le flux stream-json réel de `claude -p`.
+  {
+    nom: 'claude-pass', config: CLAUDE, env: { BANC_VERDICTS: 'PASS', ANTHROPIC_API_KEY: CLE_API_FACTICE },
+    juger(r, D) {
+      fin(r, D, 0, 'PASS'); appels(r, D, ['claude']); bascule(r, D, [], 'claude', 'sonnet'); claudeSain(r, D); pasDeConseil(r, D)
+      if (r.etat?.prospects) D.push(`fiche prise pour une fiche de prospects (${r.etat.prospects})`)
+      if (r.verifs.length !== 2) D.push(`${r.verifs.length} appel(s) du vérificateur (2 attendus : en-cours puis fait)`)
+      for (const [motif, dit] of [[/départ sur abonnement Claude/, 'le départ sur Claude (sans relais)'], [/claude sonnet par abonnement Claude/, "l'en-tête du tour de Claude"], [/exec\nsed -n 1,5p banc-travail\.txt/, 'la commande Bash lancée par Claude'], [/↳ refusé ou en erreur : Permission to use Bash has been denied/, 'la commande refusée par les permissions'], [/résultat : success, 3 tour\(s\)/, 'le résultat final'], [/dernier message de Claude/, 'le dernier message']]) if (!motif.test(r.log)) D.push(`codex.log ne montre pas ${dit}`)
+      if (!new RegExp(`${ID} : PRÊT`).test(r.dernier || '')) D.push(`dernier-message.md sans « ${ID} : PRÊT » (lu : « ${court(r.dernier, 80)} »)`)
+    },
+  },
+  {
+    nom: 'claude-quota', config: CLAUDE, env: { BANC_CLAUDE: 'quota', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { claudeQuota(r, D) },
+  },
+  {
+    // Seul le texte du résultat dit la limite (aucun rate_limit_event « rejected »).
+    nom: 'claude-quota-texte', config: CLAUDE, env: { BANC_CLAUDE: 'quota-texte', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { claudeQuota(r, D) },
+  },
+  {
+    // Pas de résultat : les dernières lignes de sa sortie d'erreur disent « usage limit reached » (forme historique).
+    nom: 'claude-quota-sans-resultat', config: CLAUDE, env: { BANC_CLAUDE: 'sans-resultat', BANC_CLAUDE_STDERR: 'Claude AI usage limit reached|1791201600', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { claudeQuota(r, D) },
+  },
+  {
+    nom: 'claude-quota-prospects', config: CLAUDE, fiche: { entete: 'donnees: prospects' }, env: { BANC_CLAUDE: 'quota', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      claudeQuota(r, D)
+      if (!r.etat?.prospects) D.push("etat.json prospects vide : la fiche de prospects n'a pas été reconnue")
+      if (/pas de relais : la fiche touche/.test(r.etat?.ligne || '')) D.push('le refus de relais « prospects » masque le vrai motif (aucun relais depuis Claude)')
+    },
+  },
+  {
+    nom: 'claude-auth', config: CLAUDE, env: { BANC_CLAUDE: 'auth', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 6, 'AUTH'); appels(r, D, ['claude'])
+      if (!/claude n'est pas connecté sur l'usine/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« claude n'est pas connecté sur l'usine » attendu)`)
+      if (r.verifs.length) D.push("vérificateur lancé alors que Claude n'est pas connecté")
+    },
+  },
+  {
+    // Les vraies questions de Claude restent des QUESTION (code 7) : jamais écartées comme celles des modèles libres.
+    nom: 'claude-question', config: CLAUDE, env: { BANC_QUESTION: '1', BANC_VERDICTS: 'FAIL', BANC_CONSEIL: 'ok' },
+    juger(r, D) {
+      fin(r, D, 7, 'QUESTION'); appels(r, D, ['claude']); pasDeConseil(r, D)
+      if (!/Claude a posé une question/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« Claude a posé une question » attendu)`)
+      if (/question écartée/.test(r.log)) D.push("une question de Claude écartée comme celle d'un modèle libre")
+    },
+  },
+  {
+    // Une fiche de prospects PART chez Claude (abonnement payant) ; l'entraide, elle, reste privée (Qwen3 local, sans FL_KEY).
+    nom: 'claude-prospects', config: CLAUDE, fiche: { entete: 'donnees: prospects' }, env: { BANC_VERDICTS: 'FAIL,PASS', BANC_CONSEIL: 'ok' },
+    juger(r, D) {
+      fin(r, D, 0, 'PASS'); appels(r, D, ['claude', 'claude']); bascule(r, D, [], 'claude', 'sonnet')
+      if (!r.etat?.prospects) D.push("etat.json prospects vide : la fiche de prospects n'a pas été reconnue")
+      const c = r.conseilAppels[0]
+      if (!c) D.push('pas de conseil après le tour rouge')
+      else if (!c.argv.includes('--prive') || c.flKey !== null) D.push('conseil public (ou avec FL_KEY) pour une fiche de prospects servie par Claude')
+    },
+  },
+  {
+    nom: 'claude-prospect-en-route', config: CLAUDE, env: { BANC_ECRIT_PROSPECT: '1', BANC_VERDICTS: 'FAIL,PASS', BANC_CONSEIL: 'ok' },
+    juger(r, D) {
+      fin(r, D, 0, 'PASS'); appels(r, D, ['claude', 'claude'])
+      if (!r.etat?.prospects) D.push("etat.json prospects vide : la fiche devenue « prospects » en cours de route n'a pas été relue")
+      if (r.conseilAppels[0] && !r.conseilAppels[0].prive) D.push('conseil public pour une fiche devenue « prospects »')
+    },
+  },
+  {
+    // Le message final parle de quota, Claude sort en 0 : ce n'est pas un quota.
+    nom: 'claude-cite-code0', config: CLAUDE, env: { BANC_CLAUDE_CITE: '1', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { fin(r, D, 0, 'PASS'); appels(r, D, ['claude']); bascule(r, D, [], 'claude') },
+  },
+  {
+    // Panne d'API ordinaire (code 1, « API Error: 500 ») après avoir cité un quota : ni quota ni connexion perdue.
+    nom: 'claude-cite-code1', config: CLAUDE, env: { BANC_CLAUDE_CITE_CODE1: '1', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { fin(r, D, 0, 'PASS'); appels(r, D, ['claude']); bascule(r, D, [], 'claude') },
+  },
+  {
+    // Sans résultat, une sortie d'erreur ordinaire n'est ni un quota ni une connexion perdue : la fiche n'est pas prise (4).
+    nom: 'claude-sans-resultat-bruit', config: CLAUDE, env: { BANC_CLAUDE: 'sans-resultat', BANC_CLAUDE_STDERR: 'claude: erreur inattendue (EPIPE)', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { fin(r, D, 4, 'NON_PRISE'); appels(r, D, ['claude']); bascule(r, D, [], 'claude') },
+  },
+  {
+    // Claude tué par le délai du tourneur (6 s) juste après avoir écrit sa limite : pas un quota.
+    nom: 'claude-tue-delai', config: CLAUDE, minutes: 0.1, env: { BANC_CLAUDE: 'quota', BANC_DORT_claude: '60', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 4, 'NON_PRISE'); appels(r, D, ['claude'])
+      if (!/délai de 0\.1 min dépassé/.test(r.log)) D.push("codex.log ne dit pas que Claude a été arrêté au délai : le cas ne prouve rien")
+    },
+  },
+  {
+    // Aucun relais ne MÈNE à Claude : départ sur Ollama Cloud, tout à bout → code 3, et Claude n'est jamais appelé.
+    nom: 'relais-jamais-claude', config: { fournisseur: 'ol' }, env: { BANC_EPUISES: 'ol,fl,fm', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 3, 'QUOTA'); appels(r, D, ['ol', 'fl', 'fm'])
+      if (r.codex.some((c) => c.fournisseur === 'claude')) D.push('un relais a mené à Claude')
+      if (!/tous les fournisseurs épuisés/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« tous les fournisseurs épuisés » attendu)`)
+      if (/Claude/.test(r.etat?.ligne || '')) D.push('la liste des fournisseurs épuisés nomme Claude (hors relais)')
+    },
+  },
+  {
+    // Même chose depuis ChatGPT : tout est épuisé, jamais de Claude.
+    nom: 'chatgpt-jamais-claude', env: { BANC_EPUISES: 'chatgpt,ol,fl,fm', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 3, 'QUOTA')
+      if (r.codex.some((c) => c.fournisseur === 'claude')) D.push('un relais a mené à Claude')
+    },
+  },
+  {
+    // La règle des prospects reste entière pour les IA gratuites : départ explicite sur ol avec une fiche de prospects → refus (3).
+    nom: 'ol-prospects-reste-refuse', config: { fournisseur: 'ol' }, fiche: { entete: 'donnees: prospects' }, env: { BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 3, 'QUOTA')
+      if (r.codex.length) D.push('une fiche de prospects servie par une IA gratuite ou :cloud')
+      if (!/voie libre refusée : la fiche touche des données de prospects/.test(r.etat?.ligne || '')) D.push(`etat.json ligne « ${court(r.etat?.ligne)} » (« voie libre refusée … prospects » attendu)`)
+    },
+  },
 ]
 
 // ── les mutants : chaque capacité retirée sur une COPIE de la cible ; le banc doit rougir ────────────────────────────
 const MUTANTS = [
   { nom: 'relais retiré', cas: ['quota-ol', 'ol-fl-code'], r: [["if (!basculer(tour, epuise)) finir(3,", 'if (true) finir(3,']] },
   { nom: 'pas de passage Ollama Cloud → freellmapi', cas: ['ol-fl-code'], r: [['if (j >= FOURNISSEURS.length) return null', 'if (j >= 2) return null']] },
-  { nom: 'épuisement total non vu (pas de code 3)', cas: ['tout-epuise'], r: [['if (!epuise) break', 'if (!epuise || iFournisseur === FOURNISSEURS.length - 1) break']] },
+  { nom: 'épuisement total non vu (pas de code 3)', cas: ['tout-epuise'], r: [['if (!epuise) break', 'if (!epuise || iFournisseur === FOURNISSEURS.length - 2) break']] },
   { nom: 'fournisseur servi absent de etat.json', cas: ['quota-ol'], r: [['poser({ fournisseur: vers.nom, modeleServi: modele })', 'poser({ modeleServi: modele })']] },
   { nom: 'bascule absente de codex.log', cas: ['quota-ol'], r: [['noter(`=== ${maintenant()} bascule de fournisseur', 'void (`=== ${maintenant()} bascule de fournisseur']] },
   { nom: 'détection des prospects retirée', cas: ['prospect-entete', 'prospect-siren'], r: [['const motifProspects = (texte) => { const t = String(texte).replace(NOM_DE_CODE, \' \'); return MOTIFS_PROSPECTS.find((m) => m.re.test(t))?.nom || null }', 'const motifProspects = (texte) => null']] },
   { nom: 'inertie non vue (Ollama Cloud rejoué en boucle)', cas: ['ol-inerte'], r: [["if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt'", "if (false && !r.tue && fr.nom !== 'chatgpt'"]] },
   { nom: 'question de complaisance du modèle libre non écartée', cas: ['question-libre-ecartee'], r: [["&& questionsEcartees < 2 && tour < cfg.tours) {", '&& false) {']] },
   { nom: 'noms de scripts comptés comme prospects', cas: ['nom-de-script'], r: [['const t = String(texte).replace(NOM_DE_CODE, \' \')', 'const t = String(texte)']] },
-  { nom: 'relais sans garde « prospects »', cas: ['prospect-entete'], r: [['if (toucheProspects()) finir(3, \'QUOTA\', `${epuise} ; pas de relais', 'if (false) finir(3, \'QUOTA\', `${epuise} ; pas de relais'], ["if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
+  { nom: 'relais sans garde « prospects »', cas: ['prospect-entete'], r: [['if (toucheProspects()) finir(3, \'QUOTA\', `${epuise} ; pas de relais', 'if (false) finir(3, \'QUOTA\', `${epuise} ; pas de relais'], ["if (!payant(fr) && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
   { nom: 'détection d\'épuisement lâche (toute ligne, code ignoré)', cas: ['bruit-ol'], r: [['const LIGNE_ERREUR_CODEX = /^(?:ERROR:|■)/', 'const LIGNE_ERREUR_CODEX = /^/'], ['if (r.code === 0 || r.tue) return null', 'if (false) return null']] },
   // ── contre-vérification du 27/09 : chaque trou trouvé, rouvert sur une copie ──
   { nom: 'c3 : toute ligne vaut ligne d\'erreur (code gardé)', cas: ['bruit-ol-code1', 'ol-cat-log-code1'], r: [['const LIGNE_ERREUR_CODEX = /^(?:ERROR:|■)/', 'const LIGNE_ERREUR_CODEX = /^/']] },
@@ -518,7 +680,7 @@ const MUTANTS = [
   { nom: 'code de sortie ignoré (Codex sorti en 0)', cas: ['quota-cite-fin-code0', 'ol-cite-fin-code0'], tous: true, r: [['if (r.code === 0 || r.tue) return null', 'if (r.tue) return null']] },
   { nom: 'Codex tué au délai pris pour un quota', cas: ['ol-tue-delai'], r: [['if (r.code === 0 || r.tue) return null', 'if (r.code === 0) return null']] },
   { nom: 'dernier message du modèle lu comme sortie de Codex', cas: ['quota-dans-dernier-message'], r: [['if (m && t.endsWith(m)) t = t.slice(0, -m.length).trimEnd()', '']] },
-  { nom: 'a2 : garde d\'entrée de boucle seule retirée', cas: ['prospect-apres-bascule'], r: [["if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
+  { nom: 'a2 : garde d\'entrée de boucle seule retirée', cas: ['prospect-apres-bascule'], r: [["if (!payant(fr) && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
   { nom: 'd3 : plafond de 90 s retiré (Math.min)', cas: ['conseil-borne-plafond'], r: [['const DELAI_CONSEIL_MS = Math.min(90_000, Number(process.env.PRESTI_CONSEIL_DELAI_MS) || 90_000)', 'const DELAI_CONSEIL_MS = (Number(process.env.PRESTI_CONSEIL_DELAI_MS) || 90_000)']] },
   { nom: 'motif e-mail retiré', cas: ['prospect-email', 'prospect-email-conseil'], tous: true, r: [["  { nom: 'e-mail d’une personne', re: { test: (t) => adressesDePersonnes(t).length > 0 } },\n", '']] },
   { nom: 'exemptions d\'e-mail retirées', cas: ['adresses-techniques'], r: [['.filter((a) => !adresseSansPersonne(a))', '']] },
@@ -533,6 +695,25 @@ const MUTANTS = [
   { nom: 'échec du conseil qui casse le tour', cas: ['conseil-plante'], r: [['if (v && !v.pass) conseilSuite = await demanderConseil(tour, v)', "if (v && !v.pass) { conseilSuite = await demanderConseil(tour, v); if (!conseilSuite) throw new Error('conseil absent') }"]] },
   { nom: 'pas de borne de 90 s', cas: ['conseil-lent'], r: [['const DELAI_CONSEIL_MS = Math.min(90_000, Number(process.env.PRESTI_CONSEIL_DELAI_MS) || 90_000)', 'const DELAI_CONSEIL_MS = 10 * 60_000']] },
   { nom: 'pas de coupe à 4 000 signes', cas: ['conseil-long'], r: [['const MAX_CONSEIL = 4000', 'const MAX_CONSEIL = 400_000']] },
+  // ── Claude Code exécutant (05/10/2026) : chaque garde retirée sur une copie ──
+  { nom: 'claude : prospects refusés par erreur (départ explicite)', cas: ['claude-prospects', 'claude-quota-prospects'], tous: true, r: [['if (!payant(FOURNISSEURS[i]) && toucheProspects()) finir(3,', 'if (toucheProspects()) finir(3,']] },
+  { nom: "claude : prospects refusés par la garde d'entrée de boucle", cas: ['claude-prospect-en-route'], r: [['if (!payant(fr) && toucheProspects()) finir(3,', "if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3,"]] },
+  { nom: 'claude : relais mené vers Claude (horsRelais non sauté)', cas: ['tout-epuise', 'relais-jamais-claude', 'chatgpt-jamais-claude'], tous: true, r: [['(FOURNISSEURS[j].horsRelais || (FOURNISSEURS[j].cle && !lireCleFL()))', '((FOURNISSEURS[j].cle && !lireCleFL()))']] },
+  { nom: 'claude : --dangerously-skip-permissions ajouté', cas: ['claude-pass'], r: [["'--permission-prompts', 'none', '--safe-mode',", "'--permission-prompts', 'none', '--safe-mode', '--dangerously-skip-permissions',"]] },
+  { nom: 'claude : Edit/Write/Read « nus » autorisés', cas: ['claude-pass'], r: [["const CLAUDE_AUTORISES = BASH('node',", "const CLAUDE_AUTORISES = ['Edit', 'Write', 'Read'].concat(BASH('node',"], ["'find', 'date', 'echo', 'printf', 'pwd', 'bash', 'timeout')", "'find', 'date', 'echo', 'printf', 'pwd', 'bash', 'timeout'))"]] },
+  { nom: 'claude : git push non interdit', cas: ['claude-pass'], r: [["...BASH('git push', 'git commit',", "...BASH('git commit',"]] },
+  { nom: 'claude : --safe-mode retiré (CLAUDE.md et hooks du dépôt chargés)', cas: ['claude-pass'], r: [["'--permission-prompts', 'none', '--safe-mode',", "'--permission-prompts', 'none',"]] },
+  { nom: 'claude : --permission-prompts none retiré', cas: ['claude-pass'], r: [["'--permission-prompts', 'none', ", '']] },
+  { nom: "claude : clé d'API non retirée de l'environnement", cas: ['claude-pass'], r: [["for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_BASE_URL', 'FL_KEY']) delete env[k]", 'for (const k of []) delete env[k]']] },
+  { nom: 'claude : DISABLE_AUTOUPDATER retiré', cas: ['claude-pass'], r: [["{ ...process.env, DISABLE_AUTOUPDATER: '1' }", '{ ...process.env }']] },
+  { nom: 'claude : dernier message non écrit dans dernier-message.md', cas: ['claude-pass'], r: [['try { fs.writeFileSync(dernier, message) }', 'try { void 0 }']] },
+  { nom: 'claude : connexion perdue non vue (AUTH)', cas: ['claude-auth'], r: [['if (fr.claude && claudeAuthPerdue(r)) finir(6,', 'if (false) finir(6,']] },
+  { nom: 'claude : quota sans le garde « aucun relais depuis Claude »', cas: ['claude-quota', 'claude-quota-texte', 'claude-quota-sans-resultat', 'claude-quota-prospects'], tous: true, r: [["      if (fr.claude) finir(3, 'QUOTA', `${epuise} ; aucun relais depuis Claude : la fiche attend (ni IA gratuite ni :cloud)`)\n", '']] },
+  { nom: "claude : question traitée comme celle d'un modèle libre (écartée)", cas: ['claude-question'], r: [['&& !payant(FOURNISSEURS[iFournisseur]) && questionsEcartees < 2', "&& FOURNISSEURS[iFournisseur].nom !== 'chatgpt' && questionsEcartees < 2"]] },
+  { nom: 'claude : quota ignoré (texte de limite non reconnu)', cas: ['claude-quota-texte', 'claude-quota-sans-resultat'], tous: true, r: [['const CLAUDE_A_BOUT = /usage limit|limit reached|hit your (?:\\w+ )?limit|rate.?limit|credit balance|out of (?:extra )?usage|resets? (?:at )?\\d/i', 'const CLAUDE_A_BOUT = /^$/']] },
+  { nom: 'claude : code de sortie ignoré (message final qui cite un quota)', cas: ['claude-cite-code0'], r: [["if (r.tue || r.code === 0) return ''", "if (r.tue) return ''"], ['if (r.tue || r.code === 0) return null\n  const rej', 'if (r.tue) return null\n  const rej']] },
+  { nom: "claude : texte cité dans le flux pris pour l'erreur (résultat ignoré)", cas: ['claude-cite-code1'], r: [["if (res) return String(res.result ?? '')", "if (false) return ''"]] },
+  { nom: 'claude : arrêt au délai pris pour un quota', cas: ['claude-tue-delai'], r: [["if (r.tue || r.code === 0) return ''", "if (r.code === 0) return ''"], ['if (r.tue || r.code === 0) return null\n  const rej', 'if (r.code === 0) return null\n  const rej']] },
 ]
 
 // ── exécution ─────────────────────────────────────────────────────────────────────────────────────────────────
