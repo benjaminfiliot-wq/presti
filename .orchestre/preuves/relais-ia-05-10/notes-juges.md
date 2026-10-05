@@ -18,3 +18,11 @@
 5. **Garde-fou conservé** : `IA_LOCALE_PROSPECTS_OUI` (le « oui » daté de Benj) n'est posé nulle part ; le relais ne le lève pas. Tant qu'il n'est pas posé, les agents
    de prospects (Standard, Rédacteur) attendent Codex au lieu de passer au local. C'est la seule chose qui sépare ces deux agents d'un fonctionnement complet
    sans Codex : voir `question.md`.
+6. **CH-R10 (second défaut du juge)** : `sudo -n -u agents /usr/local/bin/presti-ia-modele …` répond « a password is required » au compte `usine` (le sudoers ne permet plus à `usine` que
+   `presti-coffre` et `presti-journal` sous `agents`). Le lanceur de la file se lance sans sudo (dossier d'échange en 2770 `agents:agents`, `usine` du groupe `agents`) : le juge l'appelle ainsi ;
+   la file est servie par `chef-modele` de la même manière (`reponse.json`, `compte: chef-modele`, contrôlé juste après).
+7. **`scripts/chef/fil.mjs`** (défaut hors relais, trouvé par CH-R8) : la route de production `POST /api/agents/evenements` rend l'identifiant NU (un nombre) ; le fil attendait `{ id }` et
+   consignait `evenements:[null]` dans `cycles.jsonl` ; CH-R8 voyait « événement null ». Le fil lit maintenant les deux formes.
+8. **CH-R2, clause « réunion »** : `reunion : ouverture refusée (HTTP 503)` — la route de la réunion est derrière le drapeau `pilotage` (lib/flags.ts), que seul Benj lève
+   (« leve pilotage », voir GESTES-DE-BENJ-05-10.md, 026-140). Les cycles plein et léger, eux, sont en code 0 sur le moteur de secours (ministral-14b en appel direct).
+   **CH-R8 (plein)** attend le prochain cycle plein (12 h 05 UTC) : le dernier plein en code 0 est antérieur à la correction de fil.mjs ; le bus a plafonné les envois (429) après quatre cycles d'essai.
