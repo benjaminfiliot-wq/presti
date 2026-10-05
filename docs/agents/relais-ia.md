@@ -17,7 +17,9 @@ Le chef, lui, passe par la file `chef-modele` (Codex lit et écrit des fichiers)
 d'outils : essai réel du 05/10, la boucle d'outils de Codex sur un modèle libre sortait en prose, en boucle ou à 30 000 jetons par essai, et ne tenait pas sur les 4 cœurs
 de l'usine avec un modèle local) : les fichiers que la consigne cite (mode d'emploi, schéma, entrée du cycle) sont recopiés dans la requête et le JSON rendu est écrit à la place du
 fichier de sortie. Ordre : freellmapi `gemini-3-flash-preview` → `ministral-14b` → `auto` (le routeur, deux essais) → Ollama Cloud → local 8B → 4B (contexte de 16 384 jetons, sans réflexion,
-JSON forcé). Un moteur qui répond sans JSON n'est pas un succès : le suivant prend la demande. Les moteurs libres sont limités par minute : quand tous sont à bout par un quota et
+JSON forcé). Le plan du cycle est vérifié par le validateur du chef lui-même (`validerPlan`, scripts/chef/commun.mjs) AVANT d'être écrit : refusé, le modèle reçoit la liste des écarts
+(jamais une valeur) et corrige (deux corrections au plus) — sans quoi le cycle refuserait le plan en bloc. La date du jour lui est donnée. Un moteur qui répond sans JSON n'est
+pas un succès : le suivant prend la demande. Les moteurs libres sont limités par minute : quand tous sont à bout par un quota et
 que la reprise de l'un arrive en moins de 5,5 minutes (et laisse au moins 4,5 minutes), le relais **attend** cette reprise et refait un tour (deux attentes au plus) avant le local.
 Le cycle fixe le temps de la file (`--delai`) pour que le relais finisse avant que le cycle ne s'arrête. Le moteur de secours est dit dans l'événement `cycle_termine`
 (« Moteur de secours : … »).
