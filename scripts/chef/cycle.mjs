@@ -123,9 +123,10 @@ principal(async () => {
     const delaiFile = /presti-chef-modele$/.test(bin) ? [`--delai=${Math.max(60, minutes * 60 - 45)}`] : []
     const m = await lancer(commande, [...avant, ...delaiFile, ...argv], { env: environnementDuModele(), delaiMs: minutes * 60_000 })
     if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); journal('delai'); return 1 }
-    if (/hit your usage limit/i.test(m.sortie)) { noterQuota(m.sortie); console.error('✗ quota Codex atteint'); journal('quota'); return 3 }
     let taille = 0
     try { taille = fs.statSync(plan).size } catch { taille = 0 }
+    // Le texte « usage limit » de Codex peut rester sur la sortie quand le relais a pris le relais et écrit un plan : un plan présent (puis validé par fil.mjs) n'est pas un quota.
+    if (!taille && /hit your usage limit/i.test(m.sortie)) { noterQuota(m.sortie); console.error('✗ quota Codex atteint'); journal('quota'); return 3 }
     if (!taille) { console.error('✗ plan absent ou vide : rien d\'appliqué'); journal(1); return 1 }
 
     const v = await node('fil.mjs', ['verifier', plan, `--consignes=${path.join(TRAVAIL, 'consignes.json')}`])
