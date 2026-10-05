@@ -17,6 +17,7 @@ import { accrocheCalque } from './calque'
 import { accrocheCamera } from './camera'
 import { accrocheScene } from './scene'
 import { createStationPixelScene } from './scene/StationPixelScene'
+import { accrocheTelephone, EVENEMENT_REBATIR } from './telephone'
 import { dispositionDe, versCarteMoteur } from './theme/carte'
 import { chargerTheme } from './theme/charger'
 import { marcheDe, poserMonde } from './theme/grille'
@@ -29,7 +30,8 @@ export const GRILLE_PAR_DEFAUT: Grille = { largeur: 480, hauteur: 300 }
  * K2 a branché `theme`. K3 (026-181) a branché `adaptateur` (les acteurs d'après `positions()`, le pont appelé sur une signature qui change) et
  * `scene` (la scène de la station : marche, halo, antenne, nuit) ; le calque HTML (miroir, bulle, « Zz ») est branché par la même fiche.
  * K4a (026-182) a branché `camera` (le zoom, le glissé, ⊞, les zones cliquables) ; K4b (026-183) a branché `acteurs` (le tapis et ses carrés, les lignes, l'égaliseur, l'écran de l'Expérience, les badges LV : du HTML
- * nourri par `tapis` et `carte`, rien dans le décor) ; K4c branche `telephone` (vide : null).
+ * nourri par `tapis` et `carte`, rien dans le décor) ; K4c a branché le calque HTML.
+ * K5 (026-186) branche `telephone` (le doigt gardé par le cadre, la perte du contexte WebGL rattrapée : la carte se rebâtit en entier).
  *
  * `theme` charge le thème des réglages (« station » à défaut), le valide, en tire la carte du moteur (bureau, ou portrait sous 1024 px
  * comme la station) et sa grille de marche, les range pour les accroches suivantes (mondeDe(contexte), moteur/theme/grille.ts) et pose
@@ -53,7 +55,7 @@ export const ACCROCHES: Accroches = {
   camera: accrocheCamera,
   acteurs: accrocheActeurs,
   calque: accrocheCalque,
-  telephone: null,
+  telephone: accrocheTelephone,
 }
 
 /** Ce que les accroches `theme`, `adaptateur` et `scene` ont décidé, et sur quoi le jeu se construit. */
@@ -78,7 +80,7 @@ async function appeler(noms: (keyof Accroches)[], contexte: ContexteMoteur, defa
   }
 }
 
-export default function Entree(props: PropsCarte) {
+function Moteur(props: PropsCarte) {
   const pont = useMemo(() => new OfficeSceneBridge<ActeurStation>(), [])
   const dernieres = useRef(props)
   dernieres.current = props
@@ -137,4 +139,19 @@ export default function Entree(props: PropsCarte) {
   if (raison) return <p role="status" className="mc-carte-attente" data-station-attente>La carte est en attente : {raison}</p>
   if (!pret) return null
   return <OfficePhaserCanvas pont={pont} grille={pret.grille} fabrique={pret.fabrique} placer={pret.placer} auJeu={auJeu} />
+}
+
+/**
+ * L'hôte de la carte. Quand le navigateur ne rend pas un contexte WebGL perdu (iOS en perd, `telephone`/ la perte est signalée par
+ * l'événement `mc-rebatir` sur `window`), le moteur est REMONTÉ en entier (une nouvelle clé) : un pont, des accroches, un jeu et un
+ * contexte neufs. Rebâtir seulement le canevas laissait la scène morte abonnée au pont, qui plantait au premier changement servi.
+ */
+export default function Entree(props: PropsCarte) {
+  const [generation, setGeneration] = useState(0)
+  useEffect(() => {
+    const rebatir = () => setGeneration((g) => g + 1)
+    window.addEventListener(EVENEMENT_REBATIR, rebatir)
+    return () => window.removeEventListener(EVENEMENT_REBATIR, rebatir)
+  }, [])
+  return <Moteur key={generation} {...props} />
 }

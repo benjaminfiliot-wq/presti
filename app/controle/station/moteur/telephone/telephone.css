@@ -1,0 +1,13 @@
+/* Fiche 026-186 (K5) : la carte au téléphone (moins de 1024 px). Le cadre fait la largeur de l'écran moins 16 px de marge de chaque côté
+   (358 px à 390 px), le doigt ne défile jamais la page quand il est sur la carte, les plaques n'apparaissent qu'à partir du zoom ×2 (en vue
+   d'ensemble, la liste des salles sous la carte suffit), et les boutons +, − et ⊞ font 44 px. Aucune animation ni transition. */
+@media (max-width: 1023px) {
+  [data-station-carte] { touch-action: none; max-width: 100%; overflow-x: clip; }
+  /* Le cadre : 16 px de marge de chaque côté de l'écran (358 px à 390 px), centré dans la colonne de l'onglet. */
+  .mc-tel [data-station-carte] { width: min(calc(100vw - 32px), 100%); margin-inline: auto; }
+  [data-station-carte] canvas { touch-action: none; max-width: 100%; height: auto !important; }
+  [data-station-carte]:not([data-zoom="2"]):not([data-zoom="3"]) [data-plaque] { display: none; }
+  [data-station-carte] [data-camera] [data-action] { min-width: 44px; min-height: 44px; }
+  /* la liste des salles reste défilable : seul le cadre de la carte retient le geste */
+  [data-station-carte] [data-liste-salles] { touch-action: pan-y; }
+}
