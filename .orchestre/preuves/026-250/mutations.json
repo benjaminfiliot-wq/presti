@@ -1,9 +1,9 @@
 {
   "temoins": [
-    "scripts/comptable-qa.mjs : PASS (1.4 s)",
-    "scripts/sav-qa.mjs : PASS (0.8 s)",
-    "scripts/qualite-sites-qa.mjs : PASS (2.3 s)",
-    "scripts/vigile-qa.mjs : PASS (44.0 s)"
+    "scripts/comptable-qa.mjs : PASS (0.6 s)",
+    "scripts/sav-qa.mjs : PASS (0.4 s)",
+    "scripts/qualite-sites-qa.mjs : PASS (1.2 s)",
+    "scripts/vigile-qa.mjs : PASS (31.4 s)"
   ],
   "mutations": [
     {
@@ -14,7 +14,7 @@
       "apres": "export const AGENT = 'tresorier'\nfunction payerParErreur(stripe: any) { return stripe.refunds.create({}) }",
       "critere": "CPT-1",
       "extrait": "FAIL CPT-1 — méthode écriture Stripe dans le source",
-      "duree_s": 1.218
+      "duree_s": 0.764
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -24,7 +24,7 @@
       "apres": "    const date",
       "critere": "CPT-2",
       "extrait": "FAIL CPT-2 — 10 paiements distincts attendus",
-      "duree_s": 1.333
+      "duree_s": 0.696
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -34,7 +34,7 @@
       "apres": "if (!vente) { orphelins.push({ id: e.id, montant: e.amount, date }); recettes.push({ id: e.id, montant: e.amount, date }); continue }",
       "critere": "CPT-2",
       "extrait": "FAIL CPT-2 — 10 paiements distincts attendus",
-      "duree_s": 1.238
+      "duree_s": 0.721
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -44,7 +44,7 @@
       "apres": "if (vente.prix_cents !== e.amount && Math.abs(vente.prix_cents - e.amount) > 1) { ecarts.push({ id: e.id, montant: e.amount, date, attendu: vente.prix_cents }); continue }",
       "critere": "CPT-2",
       "extrait": "FAIL CPT-2 — 10 paiements distincts attendus",
-      "duree_s": 1.346
+      "duree_s": 0.776
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -54,7 +54,7 @@
       "apres": "false ? 'approche_seuil' : null",
       "critere": "CPT-3",
       "extrait": "FAIL CPT-3 — seuil 92000 incorrect",
-      "duree_s": 1.401
+      "duree_s": 0.727
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -64,7 +64,7 @@
       "apres": "if (!seuil)",
       "critere": "CPT-3",
       "extrait": "FAIL CPT-3 — seuil sans source datée accepté",
-      "duree_s": 1.535
+      "duree_s": 0.805
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -74,7 +74,7 @@
       "apres": "return { periode, recettes, tva: 1, source:",
       "critere": "CPT-4",
       "extrait": "FAIL CPT-4 — montants préparés incorrects",
-      "duree_s": 1.203
+      "duree_s": 0.77
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -84,7 +84,7 @@
       "apres": "  await fetch('https://presti-test.invalid/declaration')\n  const recettes = await totalRecettes(periode, deps)\n  return { periode, recettes, tva:",
       "critere": "CPT-4",
       "extrait": "FAIL CPT-4 — appel réseau ou primitive de dépôt/paiement dans le source",
-      "duree_s": 1.145
+      "duree_s": 0.717
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -94,7 +94,7 @@
       "apres": "export const LIBELLE_FIXE = 'Encaissement rapproché'\nfunction altererMention(fs: any) { fs.writeFileSync('gabarits-pubs/mentions.json', 'TVA') }",
       "critere": "CPT-5",
       "extrait": "FAIL CPT-5 — écriture de fichiers dans le source",
-      "duree_s": 1.273
+      "duree_s": 0.703
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -104,7 +104,7 @@
       "apres": "(configuration.moteur === 'codex' || configuration.moteur === 'ollama_local' || configuration.moteur === 'freellmapi')",
       "critere": "CPT-6",
       "extrait": "FAIL CPT-6 — repli fixe requis",
-      "duree_s": 1.731
+      "duree_s": 0.637
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -114,7 +114,7 @@
       "apres": "",
       "critere": "CPT-6",
       "extrait": "FAIL CPT-6 — repli fixe requis",
-      "duree_s": 1.011
+      "duree_s": 0.617
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -124,7 +124,7 @@
       "apres": "  const { recettes } = await calculer(periode, deps)\n  return recettes.reduce((s, r) => s + r.montant, 0)\n}",
       "critere": "CPT-7",
       "extrait": "FAIL CPT-7 — pas de fonction interne partagée entre les deux totaux",
-      "duree_s": 1.208
+      "duree_s": 0.621
     },
     {
       "juge": "scripts/comptable-qa.mjs",
@@ -134,7 +134,7 @@
       "apres": "cle: `${recette.id}`",
       "critere": "CPT-8",
       "extrait": "FAIL CPT-8 — événement invalide",
-      "duree_s": 1.371
+      "duree_s": 0.615
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -144,7 +144,7 @@
       "apres": "  const e = await etudier(message, d)\n  if (typeof (globalThis as any).envoyerEmail === 'function') await (globalThis as any).envoyerEmail(message.texte)\n  if (e.fini) return journaliser(message, e.fini, d)",
       "critere": "SAV-1",
       "extrait": "FAIL SAV-1 — primitive d'envoi référencée hors de preparerBrouillon et de envoyerFaqAutomatique (le portier est Benj)",
-      "duree_s": 1.884
+      "duree_s": 0.408
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -154,7 +154,7 @@
       "apres": "if (!ref && !compte && !message.texte) return { ok: false, motif: 'sans_identifiant' }",
       "critere": "SAV-2",
       "extrait": "FAIL SAV-2 — sans-01 : un message sans identifiant doit sortir hors_fil (motif sans_identifiant), pas hors_fil/commande_ambigue",
-      "duree_s": 0.962
+      "duree_s": 0.416
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -164,7 +164,7 @@
       "apres": "if (filet) return { fini: { ...lie, decision: 'brouillon', classe: filet.classe, motif: filet.motif } }",
       "critere": "SAV-4",
       "extrait": "FAIL SAV-4 — rem-01 (conforme, zero) : brouillon au lieu de escalade_benj",
-      "duree_s": 0.806
+      "duree_s": 0.406
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -174,7 +174,7 @@
       "apres": "const texte = String(decision.question ?? message.texte)",
       "critere": "SAV-5",
       "extrait": "FAIL SAV-5 — ord-01 : le texte n'est pas EXACTEMENT le modèle approuvé rempli (jamais un texte libre)",
-      "duree_s": 0.827
+      "duree_s": 0.411
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -184,7 +184,7 @@
       "apres": "export const SEUIL_AUTOMATIQUE = 19",
       "critere": "SAV-6",
       "extrait": "FAIL SAV-6 — état dix_neuf : ord-01 (delai_mise_en_ligne) sort en automatique_faq au lieu de brouillon",
-      "duree_s": 0.831
+      "duree_s": 0.434
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -194,7 +194,7 @@
       "apres": "const n = (await compteurApprobations(type, d)) + 1",
       "critere": "SAV-6",
       "extrait": "FAIL SAV-6 — une retouche doit remettre le compteur du type à 0 (reçu 21/21)",
-      "duree_s": 1.199
+      "duree_s": 0.402
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -204,7 +204,7 @@
       "apres": "if ((l.classe === 'question_faq' || l.classe === 'question_autre') && l.certitude >= CERTITUDE_MIN && estFaq(l.type_question, d))",
       "critere": "SAV-6",
       "extrait": "FAIL SAV-6 — une question « autre » sort en automatique_faq parce que le modèle lui prête un type FAQ à 20",
-      "duree_s": 0.886
+      "duree_s": 0.402
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -214,7 +214,7 @@
       "apres": "",
       "critere": "SAV-6",
       "extrait": "FAIL SAV-6 — certitude 0,7 (sous le seuil de 0,8) à 20 approbations : automatique_faq au lieu de brouillon",
-      "duree_s": 1.392
+      "duree_s": 0.408
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -224,7 +224,7 @@
       "apres": "(cfg.moteur === 'codex' || cfg.moteur === 'ollama_local' || cfg.moteur === 'freellmapi')",
       "critere": "SAV-7",
       "extrait": "FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : freellmapi/auto/personnelles=true",
-      "duree_s": 0.797
+      "duree_s": 0.405
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -234,7 +234,7 @@
       "apres": "",
       "critere": "SAV-7",
       "extrait": "FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : codex/gpt-test:cloud/personnelles=true",
-      "duree_s": 1.041
+      "duree_s": 0.399
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -244,7 +244,7 @@
       "apres": "",
       "critere": "SAV-7",
       "extrait": "FAIL SAV-7 — donnée de client donnée à un moteur non autorisé : codex/gpt-test/personnelles=false",
-      "duree_s": 0.841
+      "duree_s": 0.398
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -254,7 +254,7 @@
       "apres": "const texte = modele.texte.replaceAll('{reference}', () => reference).replaceAll('{sujet}', () => sujet) + '\\nVotre site sera livré sous 24 h pour 49 €.'",
       "critere": "SAV-8",
       "extrait": "FAIL SAV-8 — ord-01 (conforme, zero) : « 24 h » n'est dans aucune affirmation approuvée",
-      "duree_s": 1.025
+      "duree_s": 0.404
     },
     {
       "juge": "scripts/sav-qa.mjs",
@@ -264,7 +264,7 @@
       "apres": "motif: r.motif, client_id: r.client_id, commande_ref: r.commande_ref, texte: message.texte,",
       "critere": "SAV-9",
       "extrait": "FAIL SAV-9 — ord-01 : donnée personnelle ou contenu de message en clair dans le journal (« Bonjour, en combien  »)",
-      "duree_s": 1.613
+      "duree_s": 0.4
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -274,7 +274,7 @@
       "apres": "navigateur.ouvrir(site.url_en_ligne, { method: 'PUT' })",
       "critere": "QSI-1",
       "extrait": "FAIL QSI-1 — site sain : PUT martin-plomberie.test/ est arrivé au site audité ; page en erreur 500 : PUT martin-plomberie.test/ est arrivé au site audité ; certificat expiré : PUT martin-plomberie.test/ est arrivé au site audité ; méthode d'écriture (PUT, DELETE ou PATCH) dans le source",
-      "duree_s": 0.937
+      "duree_s": 0.472
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -284,7 +284,7 @@
       "apres": "",
       "critere": "QSI-2",
       "extrait": "FAIL QSI-2 — statuts d'audit : {\"cmd-martin\":\"audite\",\"cmd-dubois\":\"audite\",\"cmd-leroy\":\"livraison_inachevee\",\"cmd-garcia\":\"audite\",\"cmd-petit\":\"audite\"}",
-      "duree_s": 2.023
+      "duree_s": 1.161
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -294,7 +294,7 @@
       "apres": "const statut = obs.statut ?? 200",
       "critere": "QSI-2",
       "extrait": "FAIL QSI-2 — code HTTP 200, null rendu par le serveur",
-      "duree_s": 1.72
+      "duree_s": 1.166
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -304,7 +304,7 @@
       "apres": "const octets = Number(obs.entetes?.['content-length'] ?? 0)",
       "critere": "QSI-3",
       "extrait": "FAIL QSI-3 — octets mesurés 0, 3145729 réellement reçus ; octets mesurés 0, 3145728 réellement reçus ; octets mesurés 3734, 3146428 réellement reçus",
-      "duree_s": 2.112
+      "duree_s": 1.192
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -314,7 +314,7 @@
       "apres": "const ratio = 10, seuil",
       "critere": "QSI-4",
       "extrait": "FAIL QSI-4 — pannes [] pour #aaaaaa sur #ffffff à 16 px ; pannes [] pour #777777 sur #ffffff à 16 px ; pannes [] pour #949494 sur #ffffff à 16 px",
-      "duree_s": 2.064
+      "duree_s": 1.16
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -324,7 +324,7 @@
       "apres": "if (r.statut >= 500) return",
       "critere": "QSI-5",
       "extrait": "FAIL QSI-5 — pannes [], [\"lien_mort\"] attendues",
-      "duree_s": 1.652
+      "duree_s": 1.179
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -334,7 +334,7 @@
       "apres": "if (r.refus === 'redirections') return { url, mort: false, statut: null, raison: 'boucle_redirections' }",
       "critere": "QSI-5",
       "extrait": "FAIL QSI-5 — pannes [], [\"lien_mort\"] attendues",
-      "duree_s": 1.815
+      "duree_s": 1.169
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -344,7 +344,7 @@
       "apres": "const trouve = true || nom === 'siren' ?",
       "critere": "QSI-6",
       "extrait": "FAIL QSI-6 — mentions d'un site sain : {\"attendues\":[\"nom_artisan\",\"siren\",\"adresse\",\"forme_juridique\"],\"presentes\":[\"nom_artisan\",\"siren\",\"forme_juridique\"],\"absentes\":[\"adresse\"],\"pannes\":[{\"panne\":\"mentions_absentes\",\"mesure\":{\"absentes\":[\"adresse\"]},\"cle_idempotence\":\"qualite_site:cmd-martin:mentions_absentes:2026-10\"}]} ; mentions absentes [\"siren\",\"adresse\"], [\"adresse\",\"forme_juridique\",\"siren\"] attendues ; mentions absentes [\"siren\",\"adresse\"], [\"siren\"] attendues",
-      "duree_s": 1.729
+      "duree_s": 1.171
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -354,7 +354,7 @@
       "apres": "const r = await lecteurPrudent(form.action, { method: 'POST' })",
       "critere": "QSI-7",
       "extrait": "FAIL QSI-7 — pannes [], formulaire_injoignable attendue",
-      "duree_s": 2.04
+      "duree_s": 1.16
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -364,7 +364,7 @@
       "apres": "cfg.moteur === 'freellmapi' && cfg.personnelles === true",
       "critere": "QSI-8",
       "extrait": "FAIL QSI-8 — verdict visuel : {\"verdict\":\"non_mesure\",\"moteur\":null,\"pannes\":[]} ; 0 appel(s) du moteur ([]), 1 attendu(s)",
-      "duree_s": 2.122
+      "duree_s": 1.164
     },
     {
       "juge": "scripts/qualite-sites-qa.mjs",
@@ -374,7 +374,7 @@
       "apres": "cle_idempotence: `qualite_site:${commande}:${code}:${ms}`",
       "critere": "QSI-9",
       "extrait": "FAIL QSI-9 — clés d'idempotence : [\"qualite_site:cmd-martin:contraste_insuffisant:1791104400000\",\"qualite_site:cmd-martin:lien_mort:1791104400000\"] ; 2 décision(s) pour 2 pannes ; deuxième passage dans le même mois : 4 décision(s) au total (2 attendues), 2 rapport(s) ; passage du mois suivant : 6 décision(s) au total, 4 attendues (la panne persiste, une nouvelle décision par période)",
-      "duree_s": 2.58
+      "duree_s": 1.16
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -384,7 +384,7 @@
       "apres": "niveau: 'vert' as Niveau",
       "critere": "VG-1",
       "extrait": "FAIL VG-1 — vide : erreurs non mesurée mais au niveau vert (inconnu attendu) ; vide : dependances non mesurée mais au niveau vert (inconnu attendu) ; vide : conseiller non mesurée mais au niveau vert (inconnu attendu) ; vide : echeances non mesurée mais au niveau vert (inconnu attendu) ; vide : bannissements non mesurée mais au niveau vert (inconnu attendu) (et 73 autre(s))",
-      "duree_s": 0.739
+      "duree_s": 0.406
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -394,7 +394,7 @@
       "apres": "j < rouge ? 'rouge' : j <= orange",
       "critere": "VG-1",
       "extrait": "FAIL VG-1 — nominal : 3 écart(s) avec l'attendu fait à la main : .echeances.elements[1].niveau : \"orange\" au lieu de \"rouge\" ; .alertes : 1 élément(s) au lieu de 2 ([{\"section\":\"echeances\",\"cle\":\"ESSAI_ECHU\",\"texte\":\"ESSAI_ECHU a expiré\"}]) ; .alertes[0].cle : \"ESSAI_ECH… ; saturee : 5 écart(s) avec l'attendu fait à la main : .echeances.elements[1].niveau : \"orange\" au lieu de \"rouge\" ; .alertes : 3 élément(s) au lieu de 4 ([{\"section\":\"erreurs\",\"cle\":\"applicatives_24h\",\"texte\":\"200 ou plus erreurs applicatives …) ; .alertes[1].… ; livre_seuils_hauts (vigile.json livré) : echeances.elements[nom=jeton_externe:veilleur].niveau = \"orange\" au lieu de \"rouge\" ; echeances.niveau = \"orange\" au lieu de \"rouge\"",
-      "duree_s": 1.211
+      "duree_s": 0.408
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -404,7 +404,7 @@
       "apres": "    poses_24h: poses.length,\n    derniere_ip: poses[0]?.ip ?? null,\n",
       "critere": "VG-2",
       "extrait": "FAIL VG-2 — serveur nominal : adresse 203.0.113.7 ; releveServeur(nominal) ≠ attendu : .bannissements.derniere_ip en trop (\"203.0.113.7\") ; serveur saturee : adresse 198.51.100.1 ; releveServeur(saturee) ≠ attendu : .bannissements.derniere_ip en trop (\"198.51.100.1\")",
-      "duree_s": 0.672
+      "duree_s": 0.431
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -414,7 +414,7 @@
       "apres": "if (auto !== true) return String(raison ?? 'manuel').slice(0, 60)",
       "critere": "VG-2",
       "extrait": "FAIL VG-2 — serveur nominal : adresse 203.0.113.7 ; serveur nominal : « Témoin » ; serveur nominal : raison de ban hors de la liste fermée : « ban de Jean Témoin 203.0.113.7 » ; releveServeur(nominal) ≠ attendu : .bannissements.par_raison[1].raison : \"ban de Jean Témoin 203.0.113.7\" au lieu de \"flood /api/contact\" ; .bannissements.par_raison[2].raison : \"flood /api/contact\" au lieu de \"honeypot /api/leads\" ; .bannissements.par_raison…",
-      "duree_s": 1.119
+      "duree_s": 0.404
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -424,7 +424,7 @@
       "apres": "if (false)",
       "critere": "VG-3",
       "extrait": "FAIL VG-3 — a0 : 200, 403 attendu (« {\"le\":\"2026-10-01T04:50:00.000Z\",\"bannissements\":{\"etat\":\"mesure\",\"poses_24h\":5… ») ; jeton de a0 : code (hors_perimetre attendu) ; jeton de a0 : lecture faite avant le refus (bans, erreurs, crons, vigile_conseiller, vigile_agents)",
-      "duree_s": 1.263
+      "duree_s": 0.609
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -434,7 +434,7 @@
       "apres": "if (false && !actif('busAgents')) return",
       "critere": "VG-3",
       "extrait": "FAIL VG-3 — drapeau_baisse : 200, 404 attendu (« {\"le\":\"2026-10-01T04:50:00.000Z\",\"bannissements\":{\"etat\":\"mesure\",\"poses_24h\":5… ») ; drapeau baissé : 4 appel(s) SQL (ops_agent_par_jeton, consommer_limite, vigile_conseiller, vigile_agents) ; drapeau baissé : sources lues (bans, erreurs, crons)",
-      "duree_s": 1.197
+      "duree_s": 0.599
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -444,7 +444,7 @@
       "apres": "const lectureBans = supabaseAdmin.from('ip_bans')\nexport const sourcesParDefaut",
       "critere": "VG-4",
       "extrait": "FAIL VG-4 — lib/vigile/sources.ts : .from( (une requête recopiée au lieu de la lecture partagée) ; lib/vigile/sources.ts nomme ip_bans",
-      "duree_s": 1.519
+      "duree_s": 0.615
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -454,7 +454,7 @@
       "apres": "if (true) {",
       "critere": "VG-5",
       "extrait": "FAIL VG-5 — relancé le même jour : le faux bus a reçu « GET etat | GET vigile | POST battement | POST evenements:vigile_releve » (GET etat, GET vigile, POST battement, rien d'autre)",
-      "duree_s": 19.954
+      "duree_s": 15.344
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -464,7 +464,7 @@
       "apres": "if (false && e.statut === 423) {",
       "critere": "VG-5",
       "extrait": "FAIL VG-5 — 423 : 1 requête(s) et code 3 (une seule requête, code 0 attendus) ; 423 : aucune ligne en_pause au journal",
-      "duree_s": 22.239
+      "duree_s": 16.749
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -474,7 +474,7 @@
       "apres": "env: { ...envReduit(env), PRESTI_JETON_VIGILE: env.PRESTI_JETON_VIGILE }, delaiMs: Math.max",
       "critere": "VG-6",
       "extrait": "FAIL VG-6 — faux-npm.mjs : le jeton est dans l'environnement de l'enfant ; environnement de npm : PATH, HOME, LANG, PRESTI_JETON_VIGILE (PATH, HOME, LANG seulement) ; le faux npm voit PRESTI_JETON_VIGILE ; environnement vu par le faux npm : PRESTI_JETON_VIGILE en trop ; un faux binaire voit PRESTI_JETON_VIGILE",
-      "duree_s": 20.237
+      "duree_s": 16.549
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -484,7 +484,7 @@
       "apres": "shell: true, windowsHide: true",
       "critere": "VG-6",
       "extrait": "FAIL VG-6 — faux-npm.mjs lancé avec shell: true (false attendu) ; faux-systemctl.mjs lancé avec shell: true (false attendu) ; faux-systemctl.mjs lancé avec shell: true (false attendu) ; faux-coffre.mjs lancé avec shell: true (false attendu)",
-      "duree_s": 20.138
+      "duree_s": 16.884
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -494,7 +494,7 @@
       "apres": "await bus('POST', '/api/agents/taches')\n    await bus('POST', '/api/agents/battement')",
       "critere": "VG-6",
       "extrait": "FAIL VG-6 — scripts/vigile/releve.mjs contient « /api/agents/taches »",
-      "duree_s": 19.012
+      "duree_s": 15.093
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -504,7 +504,7 @@
       "apres": "const secrets = fs.readFileSync('/home/agents/.config/presti/agents.env', 'utf8')\n  const jeton = env.PRESTI_JETON_VIGILE",
       "critere": "VG-6",
       "extrait": "FAIL VG-6 — scripts/vigile/releve.mjs contient « agents.env »",
-      "duree_s": 11.38
+      "duree_s": 9.501
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -514,7 +514,7 @@
       "apres": "if (false) return 'nombre'",
       "critere": "VG-7",
       "extrait": "FAIL VG-7 — verifierResume(nombre-invente) sur vide : null (nombre attendu) ; verifierResume(nombre-invente) sur bus_injoignable : null (nombre attendu) ; verifierResume(nombre-invente) sur nominal : null (nombre attendu) ; verifierResume(nombre-invente) sur critique : null (nombre attendu) ; verifierResume(nombre-invente) sur saturee : null (nombre attendu) (et 3 autre(s))",
-      "duree_s": 14.962
+      "duree_s": 9.678
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -524,7 +524,7 @@
       "apres": "e.moteur === 'codex' || e.moteur === 'freellmapi' ||",
       "critere": "VG-8",
       "extrait": "FAIL VG-8 — freellmapi : le lecteur est appelé (jamais attendu)",
-      "duree_s": 12.956
+      "duree_s": 9.719
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -534,7 +534,7 @@
       "apres": "true",
       "critere": "VG-8",
       "extrait": "FAIL VG-8 — ollama_cloud : le lecteur est appelé (jamais attendu)",
-      "duree_s": 14.078
+      "duree_s": 9.691
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -544,7 +544,7 @@
       "apres": "Environment=PRESTI_HOTE=usine\nEnvironmentFile=/home/agents/.config/presti/agents.env",
       "critere": "VG-9",
       "extrait": "FAIL VG-9 — service : EnvironmentFile= (le coffre entier chargé) ; service : EnvironmentFile=/home/agents/.config/presti/agents.env hors contrat",
-      "duree_s": 0.509
+      "duree_s": 0.137
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -554,7 +554,7 @@
       "apres": "strict ? v >= s : v >= s - 1",
       "critere": "VG-12",
       "extrait": "FAIL VG-12 — pause_un_a_25 : pauses[0].seuil : \"secret_expose\" au lieu de \"boucle_erreurs\" ; pauses[0].mesure : 0 au lieu de 25 ; pauses_ecartees.max_par_passage : 1 au lieu de 0 ; pause_sous_seuil : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"secret_expose\",\"mesure\":0}]) ; alertes de pause pause:facteur (aucune attendue) ; pause_absente : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"secret_expose\",\"mesure\":0}]) ; pauses_ecartees.max_par_passage : 1 au lieu de 0 ; alertes de pause pause:facteur, pause:standardiste (aucune attendue) ; pause_qualite : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"secret_expose\",\"mesure\":0}]) ; pauses_ecartees.max_par_passage : 1 au lieu de 0 ; alertes de pause pause:facteur, pause:standardiste (aucune attendue) ; pause_secret : pauses_ecartees.max_par_passage : 1 au lieu de 0 ; alertes de pause pause:facteur, pause:standardiste (pause:facteur attendue) (et 10 autre(s))",
-      "duree_s": 12.321
+      "duree_s": 6.465
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -564,7 +564,7 @@
       "apres": "  if (!declenchements.length && etat.ok && [erreurs, dependances, conseiller, echeances, bannissements].some((x) => x.niveau === 'rouge')) declenchements.push({ agent: 'facteur', seuil: 'qualite', mesure: 1, rang: 9 })\n  declenchements.sort((a, b) => a.rang - b.rang",
       "critere": "VG-12",
       "extrait": "FAIL VG-12 — pause_sous_seuil : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"qualite\",\"mesure\":1}]) ; alertes de pause pause:facteur (aucune attendue) ; pause_absente : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"qualite\",\"mesure\":1}]) ; alertes de pause pause:facteur (aucune attendue) ; pause_non_mesure : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"qualite\",\"mesure\":1}]) ; alertes de pause pause:facteur (aucune attendue) ; pause_qualite : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"facteur\",\"seuil\":\"qualite\",\"mesure\":1}]) ; alertes de pause pause:facteur (aucune attendue)",
-      "duree_s": 12.107
+      "duree_s": 6.46
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -574,7 +574,7 @@
       "apres": "pauses.length > max",
       "critere": "VG-12",
       "extrait": "FAIL VG-12 — pause_deux : pauses : 2 élément(s) au lieu de 1 ([{\"agent\":\"standardiste\",\"seuil\":\"boucle_erreurs\",\"mesure\":22},{\"agent\":\"facteur\",\"seuil\"…) ; pauses_ecartees.max_par_passage : 0 au lieu de 1 ; livre_pause_deux : pauses : 2 élément(s) au lieu de 1 ([{\"agent\":\"facteur\",\"seuil\":\"boucle_erreurs\",\"mesure\":25},{\"agent\":\"standardiste\",\"seuil\"…) ; pauses_ecartees.max_par_passage : 0 au lieu de 1 ; deux agents ensemble : 2 POST pauses [\"standardiste\",\"facteur\"] (une seule, standardiste)",
-      "duree_s": 10.842
+      "duree_s": 6.637
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -584,7 +584,7 @@
       "apres": "Object.freeze(['pont'",
       "critere": "VG-12",
       "extrait": "FAIL VG-12 — CIBLES_INTERDITES de releve.ts : [\"pont\",\"pont_telegram\",\"systeme\",\"a0\",\"usine\",\"vigile\"] (exactement chef, pont, pont_telegram, systeme, a0, usine, vigile) ; pause_cibles_omises : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"chef\",\"seuil\":\"boucle_erreurs\",\"mesure\":40}]) ; pauses_ecartees.cible_interdite : 1 au lieu de 2 ; pause_toutes_cibles : pauses : 1 élément(s) au lieu de 0 ([{\"agent\":\"chef\",\"seuil\":\"boucle_erreurs\",\"mesure\":30}]) ; pauses_ecartees.cible_interdite : 6 au lieu de 7 ; vigile.json sans chef ni pont : 1 POST pauses (la liste en dur l'emporte : aucune) ; les sept cibles interdites à 30 échecs, réglage vidé : 1 POST pauses (chef) : aucune attendue",
-      "duree_s": 11.045
+      "duree_s": 6.589
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -594,7 +594,7 @@
       "apres": "const levéeInterdite = { pause: false }\n  const jeton = env.PRESTI_JETON_VIGILE",
       "critere": "VG-13",
       "extrait": "FAIL VG-13 — scripts/vigile/releve.mjs contient pause: false",
-      "duree_s": 9.061
+      "duree_s": 6.631
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -604,7 +604,7 @@
       "apres": "await bus('POST', '/api/controle/pause', { active: true })\n    await bus('POST', '/api/agents/battement')",
       "critere": "VG-13",
       "extrait": "FAIL VG-13 — scripts/vigile/releve.mjs contient /api/controle/ ; pause_posee : requête vers /api/controle/pause (route du Poste) ; pause_posee : POST /api/controle/pause hors des routes permises ; pause_relance : requête vers /api/controle/pause (route du Poste) ; pause_relance : POST /api/controle/pause hors des routes permises (et 16 autre(s))",
-      "duree_s": 9.206
+      "duree_s": 6.703
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -614,7 +614,7 @@
       "apres": "if (r.statut === 404) await bus('POST', '/api/controle/pause', { agent: p.agent })\n      if (r.statut < 200 || r.statut >= 300) {",
       "critere": "VG-13",
       "extrait": "FAIL VG-13 — scripts/vigile/releve.mjs contient /api/controle/ ; pause_404 : requête vers /api/controle/pause (route du Poste) ; pause_404 : POST /api/controle/pause hors des routes permises",
-      "duree_s": 10.761
+      "duree_s": 6.733
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -624,7 +624,7 @@
       "apres": "await bus('GET', '/api/agents/evenements', { type: 'vigile_pause'",
       "critere": "VG-14",
       "extrait": "FAIL VG-14 — pause posée : le POST pauses n'est pas suivi d'un vigile_pause objet agent:facteur () ; pause posée : 0 vigile_pause (un attendu) ; secret dans le journal : pas de vigile_pause",
-      "duree_s": 10.255
+      "duree_s": 6.672
     },
     {
       "juge": "scripts/vigile-qa.mjs",
@@ -634,7 +634,7 @@
       "apres": "resume: couper(`pause de sécurité posée sur ${p.agent} : ${jeton} ",
       "critere": "VG-14",
       "extrait": "FAIL VG-14 — la ligne de journal qui a déclenché la pause sort (requête, fichier ou console)",
-      "duree_s": 8.383
+      "duree_s": 6.569
     }
   ],
   "survivantes": []
