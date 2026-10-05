@@ -143,6 +143,14 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
   try { cle = fs.readFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { cle = null }
   let texteStdin = ''
   if (stdin) { try { texteStdin = fs.readFileSync(path.join(d, 'entree.txt'), 'utf8').slice(0, 2 * 1024 * 1024) } catch { texteStdin = '' } }
+  // Le validateur du plan du chef (scripts/chef/commun.mjs, le même que celui du cycle) : un plan refusé en bloc perdrait le cycle.
+  let valider = null
+  try {
+    const { validerPlan } = await import('../chef/commun.mjs')
+    const cycle = /cycle (plein|leger)/.exec(argv.at(-1) ?? '')?.[1] ?? null
+    const sortiePlan = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
+    if (cycle && /plan/.test(path.basename(sortiePlan))) valider = (objet) => validerPlan(objet, cycle)
+  } catch { valider = null }
   return relayer({
     texteEntree: texteEntree + texteStdin, delaiMs, cle,
     chaine: chaineAvecBases({ freellmapi: opts.freellmapi, ollama: opts.ollama }),
@@ -160,9 +168,9 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
     executer: async (m, budgetMs) => {
       for (const s of Array.isArray(demande?.sorties) ? demande.sorties : []) { try { fs.rmSync(s.copie, { force: true }) } catch { /* déjà absent */ } }
       if (m.id === 'codex') return lancerCodex(d, argv, stdin, budgetMs)
-      const prompt = preparerPromptDirect({ argv, sorties: demande?.sorties, stdin: texteStdin || undefined, lireFichier: (f) => { try { return fs.readFileSync(f, 'utf8') } catch { return null } }, dossiersPermis: [d, echange] })
+      const prompt = preparerPromptDirect({ argv, sorties: demande?.sorties, stdin: texteStdin || undefined, lireFichier: (f) => { try { return fs.readFileSync(f, 'utf8') } catch { return null } }, dossiersPermis: [d, echange], dateDuJour: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date()) })
       if (!prompt) return { code: 1, sortie: 'ERROR: demande hors de la forme « lis puis écris » : aucun secours possible' }
-      return appelDirect({ moteur: m, prompt, cle, delaiMs: budgetMs })
+      return appelDirect({ moteur: m, prompt, cle, delaiMs: budgetMs, valider })
     },
   })
 }

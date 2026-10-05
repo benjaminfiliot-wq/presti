@@ -257,6 +257,21 @@ await cas('RC-10', async () => {
   if (dl.code === 0 || dl.delai !== true) e.push('délai non rendu')
   const rf = await essai(200, 'refus')
   if (rf.code === 0 || C.classerSortie(rf.sortie, T0).raison !== 'indisponible') e.push('connexion refusée non rendue comme panne')
+  // le validateur du chef : un premier jet refusé, le modèle reçoit les écarts (sans valeur) et renvoie un JSON corrigé ; trois refus : rien d'écrit
+  const w4 = monde10()
+  const p4 = C.preparerPromptDirect({ argv: w4.argv, sorties: w4.sorties, lireFichier: w4.lireFichier, dossiersPermis: w4.dossiersPermis, dateDuJour: '2026-10-05' })
+  if (!p4.utilisateur.includes('Date du jour (heure de Paris) : 2026-10-05')) e.push('la date du jour n\'est pas donnée au modèle')
+  const suite = (reponses) => { const vus = []; return { vus, fetchFn: async (url, init) => { vus.push(JSON.parse(init.body)); const c = reponses.length > 1 ? reponses.shift() : reponses[0]; return { ok: true, status: 200, text: async () => '', json: async () => c } } } }
+  const refus = (o) => (/<date>/.test(String(o.cle)) ? ['cle : chef:<date>:<mot-clé>'] : [])
+  const s1 = suite([jOk('{"cle":"chef:<date>:x"}'), jOk('{"cle":"chef:2026-10-05:x"}')])
+  const rc = await C.appelDirect({ moteur: moteurFl, prompt: p4, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s1.fetchFn, valider: refus })
+  if (rc.code !== 0 || s1.vus.length !== 2 || JSON.parse(fs.readFileSync(w4.plan, 'utf8')).cle !== 'chef:2026-10-05:x') e.push(`correction : code ${rc.code}, ${s1.vus.length} appel(s), plan ${fs.existsSync(w4.plan) ? 'écrit' : 'absent'} (2 appels et le plan corrigé attendus)`)
+  else if (!JSON.stringify(s1.vus[1].messages).includes('refusé par le validateur') || !JSON.stringify(s1.vus[1].messages).includes('chef:<date>:<mot-clé>')) e.push('la correction ne rend pas les écarts au modèle')
+  const w5 = monde10()
+  const p5 = C.preparerPromptDirect({ argv: w5.argv, sorties: w5.sorties, lireFichier: w5.lireFichier, dossiersPermis: w5.dossiersPermis })
+  const s2 = suite([jOk('{"cle":"chef:<date>:x"}')])
+  const r5 = await C.appelDirect({ moteur: moteurFl, prompt: p5, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s2.fetchFn, valider: refus })
+  if (r5.code !== 0 || fs.existsSync(w5.plan) || s2.vus.length !== 3) e.push(`trois refus : code ${r5.code}, ${s2.vus.length} appel(s), plan ${fs.existsSync(w5.plan) ? 'écrit' : 'absent'} (3 appels, rien d'écrit attendus)`)
   // les adresses de fournisseurs de banc d'essai : seulement 127.0.0.1
   const bases = C.chaineAvecBases({ freellmapi: 'http://127.0.0.1:9/v1', ollama: 'https://exemple.com' })
   if (!bases.find((m) => m.id === 'freellmapi').base.startsWith('http://127.0.0.1:9') || bases.find((m) => m.id === 'ollama_8b').base.includes('exemple.com')) e.push('une adresse non locale est acceptée pour un fournisseur')
@@ -287,7 +302,7 @@ const lancer = (args, env) => new Promise((ok) => { const p = spawn(process.exec
 await cas('RC-7', async () => {
   const e = []
   const faux = path.join(racine, 'scripts', 'fixtures', 'relais-ia', 'faux-codex-chef.mjs')
-  const PLAN = { cycle: 'leger', brief: [], compte_rendu: ['a', 'b', 'c'] }
+  const PLAN = { cycle: 'leger', brief: ['a', 'b', 'c'], compte_rendu: ['a', 'b', 'c'], consignes_lues: [], taches: [], decisions: [] } // valide pour validerPlan (scripts/chef/commun.mjs)
   const lancerServir = async (nomEchange, srvFl, srvOl, extraArgs = []) => {
     const base = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-chef-srv-'))
     const echange = path.join(base, nomEchange)
@@ -341,6 +356,14 @@ await cas('RC-7', async () => {
   const nF2 = fl.requetes.length, nO2 = ol.requetes.length
   const dd = await lancerServir('echange-ia', fl, ol, ['--relais=oui'])
   if (dd.appels !== 1 || dd.reponse?.code === 0 || dd.reponse?.moteur || fl.requetes.length !== nF2 || ol.requetes.length !== nO2) e.push(`file IA : ${dd.appels} appel(s) à Codex, ${fl.requetes.length - nF2 + ol.requetes.length - nO2} requête(s) aux secours — un secours a servi une donnée de prospect`)
+  // e) un plan que le validateur du chef refuse (clé d'idempotence en gabarit) n'est JAMAIS écrit : trois jets par moteur, puis le moteur suivant
+  const PLAN_MAUVAIS = { ...PLAN, taches: [{ type: 'veille', capacite: 'veille', cle_idempotence: 'chef:<date>:x', charge: { titre: 't', pourquoi: 'p' }, sortante: false }] }
+  const flMauvais = await serveur(() => ok({ choices: [{ message: { content: JSON.stringify(PLAN_MAUVAIS) } }] }))
+  const olMauvais = await serveur(() => ok({ message: { content: JSON.stringify(PLAN_MAUVAIS) } }))
+  const ee = await lancerServir('echange-chef', flMauvais, olMauvais, ['--relais=oui'])
+  if (ee.planEcrit || ee.reponse?.code === 0) e.push('un plan refusé par le validateur du chef est écrit comme plan du cycle')
+  if (flMauvais.requetes.length < 6 || !flMauvais.requetes[1]) e.push(`plan refusé : ${flMauvais.requetes.length} requête(s) aux moteurs libres (des corrections attendues)`)
+  await flMauvais.fermer(); await olMauvais.fermer()
   await fl.fermer(); await ol.fermer(); await flProse.fermer()
   return e
 })

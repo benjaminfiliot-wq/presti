@@ -26,7 +26,7 @@ const SEUL_TEMOIN = args.includes('--temoin')
 const GARDER = args.includes('--garder')
 
 const lire = (f) => fs.readFileSync(f, 'utf8')
-const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs']
+const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs']
 for (const f of SOURCES) if (!fs.existsSync(path.join(DEPOT, f))) { console.error(`✗ préalable absent : ${f}`); process.exit(2) }
 
 /** Une racine minimale (de quoi résoudre « @/ ») : les cinq modules du relais, un stub de la base, rien d'autre. */
@@ -162,8 +162,14 @@ const SABOTAGES = [
   { nom: "chef : l'appel direct lit un fichier hors des dossiers permis (fuite d'un fichier du compte)",
     mutations: [['scripts/usine/relais-chef.mjs', ' || !sousUnPermis(complet)) continue', ') continue']],
     rouges: ['RC-10'] },
+  { nom: "chef : le validateur du plan n'est pas branché (un plan refusé en bloc par le cycle serait écrit)",
+    mutations: [['scripts/usine/chef-modele.mjs', "if (cycle && /plan/.test(path.basename(sortiePlan))) valider = (objet) => validerPlan(objet, cycle)", '']],
+    rouges: ['RC-7'] },
+  { nom: "chef : les écarts du validateur ne sont pas rendus au modèle (pas de correction)",
+    mutations: [['scripts/usine/relais-chef.mjs', 'if (!ecarts.length) { objet = essai; break }', '{ objet = essai; break }']],
+    rouges: ['RC-10', 'RC-7'] },
   { nom: "chef : la clé de freellmapi part vers Ollama",
-    mutations: [['scripts/usine/relais-chef.mjs', "if (cle) entetes.authorization = `Bearer ${cle}`\n    }", "}\n    if (cle) entetes.authorization = `Bearer ${cle}`"]],
+    mutations: [['scripts/usine/relais-chef.mjs', "if (moteur.api !== 'ollama' && cle) entetes.authorization", 'if (cle) entetes.authorization']],
     rouges: ['RC-10'] },
   { nom: 'chef : moteurs à bout jamais mémorisés',
     mutations: [['scripts/usine/relais-chef.mjs', "      etat.ecrire(courant)\n      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison", "      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison"]],
