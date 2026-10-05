@@ -5,7 +5,7 @@
 // Rien ne sort de la machine ; jamais de clé ; le jeton local de StarNet est relu dans la page à chaque tour.
 import { execSync } from 'node:child_process'
 
-const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 3) * 60_000
+const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 10) * 60_000
 const MCP = process.env.PRESTI_MCP || 'http://127.0.0.1:8799/mcp'
 
 async function outil(nom) {
@@ -99,6 +99,40 @@ async function tour() {
   const presents = (liste.widgets || liste || []).filter?.((x) => x && !x.deleted).map((x) => x.id) ?? []
   console.log(`${new Date().toISOString()} widgets : ${ok}/${widgets.length} appels, présents [${presents.join(', ')}]`)
 }
+
+// ── activité RÉELLE : toutes les 15 s on lit le journal ; chaque nouvel évènement d'un agent allume SON double dans StarNet pendant son passage (« WORKING » = il vient réellement de travailler).
+// Le double reçoit l'évènement tel qu'il est écrit en base (type, résumé) et en fait une ligne ; aucun outil, aucune écriture.
+let dernierId = null, sidecarCache = null, sidecarLe = 0
+async function sidecarCourt() { if (!sidecarCache || Date.now() - sidecarLe > 60_000) { sidecarCache = await sidecar(); sidecarLe = Date.now() } return sidecarCache }
+async function refleterEvenement(s, e) {
+  const id = ID_STARNET[e.agent] || e.agent
+  const consigne = `Tu viens de travailler dans l'usine Presti. Evenement reel releve dans la base : type « ${e.type} », resume « ${String(e.resume).slice(0, 160)} », a ${e.le}. Ecris UNE ligne courte en francais qui dit ce que tu viens de faire, en reprenant ces faits tels quels, sans rien inventer. N'appelle aucun outil.`
+  const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', isTask: true, messages: [{ role: 'user', content: consigne }] }), signal: AbortSignal.timeout(90_000) })
+  await r.text(); return r.ok
+}
+async function suivre() {
+  for (;;) {
+    try {
+      const j = await outilAvec('journal_recent', { limite: 30 })
+      const liste = (j.evenements || []).slice().sort((a, b) => a.id - b.id)
+      if (dernierId === null) dernierId = liste.length ? liste[liste.length - 1].id : 0
+      const nouveaux = liste.filter((e) => e.id > dernierId)
+      if (nouveaux.length) {
+        dernierId = nouveaux[nouveaux.length - 1].id
+        const parAgent = new Map(); for (const e of nouveaux) parAgent.set(e.agent, e) // le plus récent par agent
+        const s = await sidecarCourt()
+        await Promise.all([...parAgent.values()].map((e) => refleterEvenement(s, e).catch(() => false)))
+        console.log(`${new Date().toISOString()} activité : ${parAgent.size} agent(s) allumé(s) [${[...parAgent.keys()].join(', ')}]`)
+      }
+    } catch (e) { sidecarCache = null }
+    await new Promise((fin) => setTimeout(fin, 15_000))
+  }
+}
+async function outilAvec(nom, args) {
+  const r = await fetch(MCP, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: nom, arguments: args } }), signal: AbortSignal.timeout(30_000) })
+  return JSON.parse((await r.json()).result.content[0].text)
+}
+suivre()
 
 for (;;) {
   try { await tour() } catch (e) { console.log(`${new Date().toISOString()} erreur : ${String(e.message).slice(0, 140)}`) }
