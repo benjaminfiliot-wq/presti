@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chercherSecrets } from '../instantane-quotidien.mjs'
+import { motifProspects } from '../usine/garde-prospects.mjs'
 
 export const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', 'chef')
@@ -123,6 +124,12 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
       if (cles(t.charge, ['titre', 'pourquoi'], ['titre', 'pourquoi'], `${ou}.charge`, f)) {
         if (!chaine(t.charge.titre, 1, 120)) f.push(`${ou}.charge.titre : 120 signes au plus`)
         if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)
+        // 05/10 : « cibler les prospects » dans un pourquoi a fait refuser la veille e-commerce par la garde du preneur (donnees_personnelles) ; trois échecs ont ouvert son disjoncteur.
+        // Une tâche libre dont le texte porte un motif de la garde est refusée ICI, pour que le chef la reformule au lieu de la voir échouer.
+        if (!['code', 'contenu'].includes(t.type)) {
+          const motif = motifProspects([t.objet, t.charge.titre, t.charge.pourquoi].filter((x) => typeof x === 'string').join('\n'))
+          if (motif) f.push(`${ou} : le texte contient « ${motif} » : la garde des données de prospects refuserait cette tâche libre ; reformule sans ce mot (ni prospect, ni SIREN, ni numéro de téléphone, ni adresse e-mail)`)
+        }
       }
       if (t.sortante !== false) f.push(`${ou}.sortante doit valoir false`)
     })
