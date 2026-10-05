@@ -20,11 +20,12 @@ export const HEURE = 60 * MINUTE
 
 /** Les moteurs de secours, dans l'ordre. `gratuit` : jamais pour un prospect ; `local` : la machine de l'usine ; `cle` : a besoin de FL_KEY. */
 export const CHAINE_SECOURS = Object.freeze([
-  // « auto » : le routeur de freellmapi choisit le modèle libre disponible (essai réel du 05/10 sur l'usine : le plan du cycle léger en 50 s, a
-  // la même boucle d'outils que Codex). gemini-3-flash-preview et ministral-14b suivent (Matt les utilise déjà), puis Ollama Cloud, puis le local.
-  Object.freeze({ id: 'freellmapi', modele: 'auto', fournisseur: 'fl', cle: true, gratuit: true, local: false, essais: 3 }),
+  // gemini-3-flash-preview et ministral-14b tiennent la boucle d'outils de Codex (Matt les utilise déjà : scripts/usine.mjs, FOURNISSEURS) ; « auto », le
+  // routeur de freellmapi, choisit un modèle libre au hasard à chaque appel (essai réel du 05/10 : le plan du cycle léger en 50 s une fois, de la prose sans
+  // plan ou une boucle sans fin d'autres fois) : trois essais. Puis Ollama Cloud, puis le local.
   Object.freeze({ id: 'freellmapi_gemini', modele: 'gemini-3-flash-preview', fournisseur: 'fl', cle: true, gratuit: true, local: false }),
   Object.freeze({ id: 'freellmapi_mistral', modele: 'ministral-14b', fournisseur: 'fl', cle: true, gratuit: true, local: false }),
+  Object.freeze({ id: 'freellmapi', modele: 'auto', fournisseur: 'fl', cle: true, gratuit: true, local: false, essais: 3 }),
   Object.freeze({ id: 'ollama_cloud', modele: 'gpt-oss:120b-cloud', fournisseur: 'ollama-usine', cle: false, gratuit: true, local: false }),
   Object.freeze({ id: 'ollama_8b', modele: 'qwen3:8b-q4_K_M', fournisseur: 'ollama-usine', cle: false, gratuit: false, local: true }),
   Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', fournisseur: 'ollama-usine', cle: false, gratuit: false, local: true }),
