@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti — filet de la file du modèle (chef) : relit le dossier d'échange toutes les 30 s
+
+# Le .path guette */demande.pret : un sous-dossier créé et rempli en quelques millisecondes échappe parfois à sa surveillance
+# (constaté le 05/10/2026 à la mise en service : une demande attendait seule 12 min). Ce minuteur relance servir, qui rend la
+# main aussitôt s'il n'y a rien : une demande manquée par le .path attend 30 s au plus.
+[Timer]
+OnBootSec=1min
+OnUnitInactiveSec=30s
+AccuracySec=1s
+Unit=presti-chef-modele.service
+
+[Install]
+WantedBy=timers.target
