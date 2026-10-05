@@ -55,6 +55,7 @@ const GROUPES = Object.freeze({
   sav: { copier: ['presti-sav*'], activer: ['presti-sav*.timer'] },
   qualite: { copier: ['presti-qualite*'], activer: ['presti-qualite*.timer'] },
   vigile: { copier: ['presti-vigile*'], activer: ['presti-vigile*.timer'] },
+  preneur: { copier: ['presti-preneur*'], activer: ['presti-preneur*.timer'] },
 })
 
 class Arret extends Error {

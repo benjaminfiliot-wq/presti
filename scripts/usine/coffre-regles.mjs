@@ -27,6 +27,7 @@ export const NOMS_PERMIS = Object.freeze([
   'PRESTI_JETON_SAV', // le SAV (026-245, 026-251)
   'PRESTI_JETON_QUALITE', // le Contrôleur qualité des sites, agent qualite_sites (026-247, 026-251)
   'PRESTI_JETON_VIGILE', // le Vigile (026-249, 026-251)
+  'PRESTI_JETON_PRENEUR', // le preneur des tâches libres du bus (agent preneur, 0127 ; D-0510-T1)
   'FIRECRAWL_API_KEY', // la lecture web du Savoir (D-0510-I1) : clé plafonnée par crédits (réserve de 1 000, jamais plus que le solde restant), pas une clé de modèle
 ])
 

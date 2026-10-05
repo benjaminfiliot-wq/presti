@@ -356,7 +356,7 @@ function fichiersSansJeton(dir, d, ou) {
 }
 const decrire = (r) => `code ${r.code}${r.expire ? ' (délai du juge)' : ''} — ${court(r.sortie, 140)}`
 
-// ════════════════════════════════════════ groupe appliquer (CH-A1 à CH-A14) ════════════════════════════════════════
+// ════════════════════════════════════════ groupe appliquer (CH-A1 à CH-A15) ════════════════════════════════════════
 async function groupeAppliquer(ctx) {
   const plans = dossierNeuf('plans', 'appliquer')
   const env = (bac, extra) => envEssai(bac, extra)
@@ -556,6 +556,26 @@ async function groupeAppliquer(ctx) {
     const bd = preparerBac(ctx.racine)
     await executer(bd, S.appliquer, [ecrirePlan(plans, 'plan-ok-a14', planOk()), `--base=${b429.base}`], { env: envEssai(bd) })
     if (b429.requetes.some((x) => x.chemin === '/api/agents/battement')) d.push('battement envoyé après un 429')
+  })
+  // 05/10/2026 : 20 tâches à objet vide sont restées en file sans que personne puisse les faire. Un objet absent, vide, blanc, de moins de
+  // 20 signes ou en double fait refuser le plan ENTIER, avant toute requête ; et tout objet précis passe.
+  await critere(ctx, 'CH-A15', async (d) => {
+    if (!await refus(d, 'plan-objet-absent', materialiser(fixture('plan-objet-absent')))) return
+    await refus(d, 'plan-objet-vide', materialiser(fixture('plan-objet-vide')))
+    await refus(d, 'plan-objet-blanc', materialiser(fixture('plan-objet-blanc')))
+    await refus(d, 'plan-objet-court', materialiser(fixture('plan-objet-court')))
+    await refus(d, 'plan-objet-double', materialiser(fixture('plan-objet-double')))
+    await refus(d, 'plan-objet-null', modifier((p) => { p.taches[0].objet = null }))
+    await refus(d, 'plan-objet-nombre', modifier((p) => { p.taches[0].objet = 12345678901234567890 }))
+    const bac = preparerBac(ctx.racine)
+    if (!exige(bac, S.appliquer, d)) return
+    const b = await une(ctx, 'bus-refus', () => bus(ctx))
+    const n0 = posts(b, '/api/agents/taches').length
+    const juste = modifier((p) => { p.taches[0].objet = 'x'.repeat(19) + 'y' })
+    const r = await executer(bac, S.appliquer, [ecrirePlan(plans, 'plan-objet-20', juste), `--base=${b.base}`], { env: env(bac) })
+    if (r.code !== 0) d.push(`un objet de 20 signes est refusé : ${decrire(r)}`)
+    const recu = posts(b, '/api/agents/taches').slice(n0)
+    if (recu.length !== 3 || recu.some((x) => typeof x.corps?.objet !== 'string' || x.corps.objet.length < 20)) d.push(`les tâches postées ne portent pas toutes leur objet (${recu.length} reçue(s))`)
   })
 }
 
@@ -1353,6 +1373,9 @@ const SABOTAGES = [
   ['CH-A12', 'scripts/chef/appliquer.mjs', 'const fRapport = path.join(TRAVAIL, `appliquer-${horodatage()}.json`)', "const fRapport = path.join(TRAVAIL, '..', '..', '..', `appliquer-${horodatage()}.json`)"],
   ['CH-A13', 'scripts/chef/appliquer.mjs', 'corps: { type: t.type, cle: t.cle_idempotence,', 'corps: { type: t.type, cle_idempotence: t.cle_idempotence,'],
   ['CH-A14', 'scripts/chef/appliquer.mjs', "const b = await appeler(base, jeton, 'POST', '/api/agents/battement')", "await appeler(base, jeton, 'POST', '/api/agents/battement'); const b = await appeler(base, jeton, 'POST', '/api/agents/battement')"],
+  ['CH-A15', 'scripts/chef/commun.mjs', "if (!chaine(typeof t.objet === 'string' ? t.objet.trim() : t.objet, OBJET_MIN, 200))", "if (!chaine(t.objet ?? 'x'.repeat(OBJET_MIN), 1, 200))"],
+  ['CH-A15', 'scripts/chef/commun.mjs', 'else if (objets.has(t.objet.trim()))', 'else if (false)'],
+  ['CH-A15', 'scripts/chef/commun.mjs', 'export const OBJET_MIN = 20', 'export const OBJET_MIN = 1'],
   ['CH-E1', 'scripts/chef/etat.mjs', 'neutraliser(JSON.stringify(tronquer(r.json), null, 2))', 'JSON.stringify(tronquer(r.json), null, 2)'],
   ['CH-E2', 'scripts/chef/etat.mjs', "if (typeof v === 'string') return [...v].length > 200 ?", "if (typeof v === 'string') return [...v].length > 2000 ?"],
   ['CH-E3', 'scripts/chef/etat.mjs', 'return out.slice(0, 7)', 'return out'],
@@ -1367,6 +1390,9 @@ const SABOTAGES = [
   ['CH-C7', 'scripts/chef/cycle.mjs', "if (!prendreVerrou()) { console.log('cycle déjà en cours'); return 0 }", 'prendreVerrou()'],
   ['CH-K1', 'docs/agents/chef.md', 'consignes_lues', 'consignes', true],
   ['CH-K2', 'docs/agents/chef-plan.schema.json', '"verification", "relecture", "redaction_interne"]', '"verification", "relecture", "redaction_interne", "envoi"]'],
+  // Les deux gardes de la longueur (minLength et pattern) se retirent ensemble : chacune seule est couverte par l'autre.
+  ['CH-K2', 'docs/agents/chef-plan.schema.json', '"minLength": 20, "maxLength": 200, "pattern": "\\\\S[\\\\s\\\\S]{18,}\\\\S"', '"maxLength": 200'],
+  ['CH-K2', 'docs/agents/chef-plan.schema.json', '"required": ["type", "capacite", "cle_idempotence", "objet", "charge", "sortante"],', '"required": ["type", "capacite", "cle_idempotence", "charge", "sortante"],'],
   ['CH-K3', 'docs/agents/chef-reunion.schema.json', '"option_defaut": { "$ref": "#/$defs/defaut_idee" },', '"option_defaut": { "enum": ["reporter", "lancer"] },'],
   ['CH-N1', 'scripts/chef/consignes.mjs', "e.type === 'consigne' && e.agent === 'systeme' && e.objet === 'fondateur' && !dejaLues.has(e.id)", "e.type === 'consigne' && !dejaLues.has(e.id)"],
   ['CH-N2', 'scripts/chef/consignes.mjs', 'neutraliser(JSON.stringify(consignes, null, 2)),', 'JSON.stringify(consignes, null, 2),'],

@@ -22,7 +22,7 @@
       "type": "relecture",
       "capacite": "relecture",
       "cle_idempotence": "chef:2026-09-27:relire-page-tarifs",
-      "objet": "page tarifs",
+      "objet": "Relire la page tarifs et lister, ligne par ligne, ce qui est confus dans les trois offres et les délais",
       "charge": {
         "titre": "Relire la page tarifs",
         "pourquoi": "Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés."
@@ -33,6 +33,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:verifier-echecs-pont",
+      "objet": "Lire les erreurs des deux tâches du pont en échec depuis hier et proposer un correctif en trois lignes",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."
@@ -43,6 +44,7 @@
       "type": "recherche",
       "capacite": "recherche",
       "cle_idempotence": "chef:2026-09-27:annuaires-artisans",
+      "objet": "Lister trois annuaires d'artisans gratuits, avec l'adresse du site et ce qu'on y trouve, sans rien envoyer",
       "charge": {
         "titre": "Lister trois annuaires d'artisans gratuits",
         "pourquoi": "Élargir l'acquisition sans aucune dépense ; rien n'est envoyé."
@@ -53,6 +55,7 @@
       "type": "verification",
       "capacite": "verification",
       "cle_idempotence": "chef:2026-09-27:tache-essai-04",
+      "objet": "Tâche d'essai numéro 4 : lire les erreurs du pont et proposer un correctif",
       "charge": {
         "titre": "Comprendre les deux échecs du pont",
         "pourquoi": "Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif."

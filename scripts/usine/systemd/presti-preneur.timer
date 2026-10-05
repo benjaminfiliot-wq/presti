@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage du preneur des tâches libres, toutes les 10 minutes (une tâche par passage)
+
+[Timer]
+OnCalendar=*:2/10
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-preneur.service
+
+[Install]
+WantedBy=timers.target

@@ -74,7 +74,7 @@ const WIN = process.platform === 'win32'
 const MINUTE = 60_000
 const JOUR = 24 * 60 * MINUTE
 const HOTE_ESSAI = 'essai@192.0.2.10' // TEST-NET-1 : jamais une vraie machine
-const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE', 'PRESTI_JETON_STUDIO', 'PRESTI_JETON_SAV', 'PRESTI_JETON_QUALITE', 'PRESTI_JETON_VIGILE', 'FIRECRAWL_API_KEY']
+const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE', 'PRESTI_JETON_STUDIO', 'PRESTI_JETON_SAV', 'PRESTI_JETON_QUALITE', 'PRESTI_JETON_VIGILE', 'FIRECRAWL_API_KEY', 'PRESTI_JETON_PRENEUR']
 const PASSANTS = ['PATH', 'HOME', 'LANG', 'TZ', 'USER', 'PRESTI_HOTE', 'ORCHESTRE_CODEX_BIN', 'PLAYWRIGHT_BROWSERS_PATH', 'PRESTI_URL']
 // Variables que libuv ajoute d'office à l'environnement d'un enfant sous Windows (src/win/process.c, required_vars).
 const LIBUV_WIN = ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'PATH', 'SYSTEMDRIVE', 'SYSTEMROOT', 'TEMP', 'USERDOMAIN', 'USERNAME', 'USERPROFILE', 'WINDIR']
@@ -2671,7 +2671,7 @@ async function preuveEchecs() {
       for (const [h, d2] of Object.entries(U.groupes)) if (h !== g) for (const u of d2.unites) if (def.motifs.some((m) => globRe(m).test(u))) D.push(`${g} : ses motifs prennent ${u} (${h})`)
       for (const u of def.a_activer) if (!def.unites.includes(u)) D.push(`${g} : ${u} à activer mais pas dans ses unités`)
     }
-    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles')
+    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles', 'preneur'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles, preneur')
     return `noms des unités de ${Object.keys(U.groupes).length} groupes, chacun couvert par ses seuls motifs`
   })
   await AT('AT-9', async (D) => {
