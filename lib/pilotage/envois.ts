@@ -94,7 +94,7 @@ export function envoisDesAgents(lignes: readonly Ligne[], canaux: readonly Canal
     rejets: envois.filter((e) => Object.values(e.verdicts).includes('refus')).length,
     anomalies: envois.filter((e) => e.statut === 'envoye' && !e.complet).map((e) => ({ id: e.id, raison: 'verdicts_incomplets' as const })),
     vide: (!formulaire || formulaire.plafond === 0) && !envois.some((e) => e.froid)
-      ? "Aucun envoi à froid : le canal formulaire s'ouvre après la mesure à sec, l'épreuve de bout en bout et l'ouverture par Benj."
+      ? "Aucun envoi à froid : le canal formulaire s'ouvre après la mesure à sec et l'ouverture par Benj (palier P0) ; l'épreuve de bout en bout conditionne la montée de palier."
       : null,
   }
 }

@@ -265,7 +265,9 @@ ajouterRe('gestes', 'GE-5', GAG, /  const journalOk = await journaliser\(\{ acte
 ajouter('gestes', 'GE-11', GCO, "apres: { longueur: texte.length, agent }", "apres: { texte, agent }", 'le texte de la consigne est passé à journaliser')
 ajouter('gestes', 'GE-12', GAP, "? await supabaseAdmin.rpc('acq_rdv_appel_rendu', { p_id: id })", "? await supabaseAdmin.rpc('acq_reponse_appel_rendu', { p_reponse: id })", '?source=rdv appelle acq_reponse_appel_rendu au lieu de acq_rdv_appel_rendu')
 ajouter('gestes', 'GE-13', GST, "const refus = await exigerReconfirmation(req, f.uid, 'securite')", "const refus = action === 'ouvrir_envoi_froid' ? null : await exigerReconfirmation(req, f.uid, 'securite')", 'exigerReconfirmation est retiré du geste ouvrir_envoi_froid')
-ajouter('gestes', 'GE-14', GDE, "if (reponseStandard && (!resultat.error || dejaTranchee)) {", "if (false) {", 'acq_reponse_reclasser n’est jamais appelé après le tranchage d’une carte acq:reponse:')
+// Décision du 05/10/2026 soir (0131) : l'épreuve de bout en bout ne ferme plus l'ouverture ; la route qui la rendrait de nouveau bloquante est prise par GE-13 (503 attendu).
+ajouter('gestes', 'GE-13', GST, "  'ops:mesure_absente': \"La mesure à sec n'a pas réussi (026-165) : envoi_froid reste fermé.\",\n", "  'ops:mesure_absente': \"La mesure à sec n'a pas réussi (026-165) : envoi_froid reste fermé.\",\n  'ops:epreuve_absente': \"L'épreuve de bout en bout n'a pas encore réussi (026-163) : envoi_froid reste fermé.\",\n", 'la route des gestes refuse de nouveau l\'ouverture faute d\'épreuve de bout en bout (409)')
+ajouter('gestes', 'GE-14', GDE,"if (reponseStandard && (!resultat.error || dejaTranchee)) {", "if (false) {", 'acq_reponse_reclasser n’est jamais appelé après le tranchage d’une carte acq:reponse:')
 ajouter('gestes', 'GE-15', GCO, "{ p_texte: texte, p_auteur: f.uid, p_agent: agent }", "{ p_texte: texte, p_auteur: f.uid, p_agent: null }", 'la consigne ignore p_agent : la route passe toujours p_agent: null')
 
 // ── Préparation : chaque ancre, une seule fois dans son fichier ──────────────────────────────────────────────────────────

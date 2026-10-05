@@ -19,7 +19,7 @@ Publiée le 2026-09-29 (fiche 026-162), avec le « oui » de Benj du 29/09.
 
 ## Renouvellement de la vérification (7 jours)
 
-`acq_etat_envoi().notice_verifiee_le` n'est valable que 7 jours : au-delà, `acq_envoi_froid_ouvrir` refuse (`ops:notice_perimee`) et le formulaire s'arrête. **Le renouvellement est automatique, sans le PC de Benj** (constaté le 05/10/2026) :
+`acq_etat_envoi().notice_verifiee_le` n'est valable que 7 jours : au-delà, `acq_envoi_froid_ouvrir` refuse (`ops:notice_absente`) et le formulaire s'arrête. **Le renouvellement est automatique, sans le PC de Benj** (constaté le 05/10/2026) :
 
 - la tâche `pg_cron` **`acq-facteur-soir`** (`0 18,19 * * *`, UTC, chaque jour) appelle la route `app/api/cron/facteur` ; sa passe du soir (`lib/agents/acquisition/facteur.ts`) lit les deux pages en ligne, compare leurs empreintes à `noticeHtml()` et `mentionsHtml()` du dépôt déployé, sans suivre de redirection, puis pose `acq_notice_verifiee` ;
 - un minuteur de l'usine (`presti-facteur-soir.timer`, 20 h 05 de Paris) rejoue le jugement du Facteur ; il ne remplace pas la tâche `pg_cron` ;

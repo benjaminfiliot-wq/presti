@@ -406,7 +406,7 @@ async function envois(s) {
       else if (attendu === 'rouge' && !(Array.isArray(r.raisons) && r.raisons.length && r.raisons.every((y) => typeof y === 'string' && y.trim()))) e.push(`santeCanal(${JSON.stringify(x)}) rouge sans raison lisible`)
       else if (chiffre && !r.raisons.some((y) => chiffre.test(y))) e.push(`santeCanal(${JSON.stringify(x)}) : raison sans le chiffre (${r.raisons.join(' / ')})`)
     }
-    const phrase = 'Aucun envoi à froid : le canal formulaire s\'ouvre après la mesure à sec, l\'épreuve de bout en bout et l\'ouverture par Benj.'
+    const phrase = 'Aucun envoi à froid : le canal formulaire s\'ouvre après la mesure à sec et l\'ouverture par Benj (palier P0) ; l\'épreuve de bout en bout conditionne la montée de palier.'
     const chauds = gelerProfond(lignes.filter((l) => !l.froid))
     const ferme = gelerProfond(cc.canaux.map((c) => (c.canal === 'formulaire_site' ? { ...c, plafond: 0, utilises: 0 } : c)))
     const r0 = envoisDesAgents()(chauds, ferme, tc.technologies, t)

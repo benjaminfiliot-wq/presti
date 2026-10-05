@@ -675,7 +675,7 @@ export interface MagasinEnvoi {
   jaugeConsommer(fournisseur: string, n: number): Promise<boolean>
   jauges(): Promise<Jauge[]>
   echantillonDuSoir(jour: string): Promise<EnvoiApprouve[]>
-  /** Réserve l'envoi AVANT qu'il parte (0122, acq_envoi_reserver) : approuve → en_cours_envoi, une seule tentative gagne. Raisons d'un refus : pause, plafond, deja_reserve, statut, introuvable, accord_perime, cle. */
+  /** Réserve l'envoi AVANT qu'il parte (0122, acq_envoi_reserver) : approuve → en_cours_envoi, une seule tentative gagne. Raisons d'un refus : pause, opposition, opposition_indisponible, quota_absent, plafond, deja_reserve, statut, introuvable, cle (0124 : plus d'accord_perime). */
   reserverEnvoi(id: string, cle: string): Promise<ResultatRegle>
   /** L'issue de l'envoi est inconnue (0122, acq_envoi_incertain) : il ne repart jamais tout seul, un contrôle le réconcilie (acq_envoi_reconcilier). */
   marquerIncertain(id: string, raison: string): Promise<void>
@@ -806,7 +806,7 @@ export const PALIERS: readonly Palier[] = Object.freeze([
   Object.freeze({ id: 'P3', par_jour: 30, jours_au_vert: 5, regle: '5 jours au vert' } as const),
   Object.freeze({ id: 'P4', par_jour: 40, jours_au_vert: null, regle: 'plafond des agents : au-delà, seul Benj' } as const),
 ])
-// Plus de date d'ouverture (décision de Benj, 05/10/2026) : le froid s'ouvre quand la mesure à sec, l'épreuve de bout en bout et la notice sont prouvées ET que Benj écrit lui-même l'interrupteur envoi_froid (acq_envoi_froid_ouvrir, 0129).
+// Plus de date d'ouverture (décision de Benj, 05/10/2026) : le froid s'ouvre quand la mesure à sec et la notice sont prouvées ET que Benj écrit lui-même l'interrupteur envoi_froid (acq_envoi_froid_ouvrir, 0131), au palier P0. L'épreuve de bout en bout (PASS de moins de 30 jours) n'ouvre rien : elle conditionne la MONTÉE de palier (acq_palier_evaluer, 0131).
 /** R10 : le bilan du lundi qui suit le 100e contact froid. */
 export const BILAN_CONTACTS = 100
 export const EMAIL_SOLLICITE_JOUR = 50

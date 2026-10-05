@@ -37,6 +37,9 @@ export function carteAttention(evenement: Pick<Signal, 'type' | 'technologie'> &
     palier_descendu: { couleur: 'rouge', titre: 'Palier descendu', geste: 'Examiner le voyant rouge.' },
     palier_monte: { couleur: 'bleu', titre: 'Palier monté', geste: 'Surveiller les prochains envois.' },
     bilan_p3: { couleur: 'bleu', titre: 'Bilan : passage à P3', geste: 'Suivre les réponses positives.' },
+    // 0131 : le type bilan_p3 ne passait pas le contrôle de ops.evenements (pas de chiffre) ; l'événement s'écrit bilan_favorable.
+    bilan_favorable: { couleur: 'bleu', titre: 'Bilan : passage à P3', geste: 'Suivre les réponses positives.' },
+    palier_attente_epreuve: { couleur: 'jaune', titre: 'Montée de palier retenue : l’épreuve de bout en bout n’a pas réussi', geste: 'Faire réussir l’épreuve de bout en bout (026-163) : elle conditionne la montée de palier.' },
     bilan_nouveau_message: { couleur: 'jaune', titre: 'Bilan : nouveau message', geste: 'Préparer un nouveau message.' },
     bilan_arret_froid: { couleur: 'jaune', titre: 'Bilan : 0 oui sur 100 contacts froids', geste: 'Changer de segment ou d’offre avant toute reprise.' },
     notice_perimee: { couleur: 'rouge', titre: 'Notice périmée', geste: 'Vérifier la notice en ligne.' },

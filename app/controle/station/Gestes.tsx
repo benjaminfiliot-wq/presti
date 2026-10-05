@@ -392,9 +392,12 @@ type Gestes = {
 export const CONFIRMATION_OUVERTURE = 'Ouvrir l’envoi à froid ? Les agents rempliront les formulaires de contact des artisans dès 8 h, au prochain jour ouvré.'
 export const PHRASE_PLAFOND = 'Au-delà de 40 par jour, c’est ta décision : les agents ne montent jamais seuls au-dessus.'
 
+// 05/10/2026 (décision de Benj, « B ») : l'épreuve de bout en bout n'ouvre ni ne bloque l'ouverture (palier P0, 5 par jour) ; elle
+// conditionne la MONTÉE de palier (acq_palier_evaluer, 0131). Elle ne désactive donc plus le bouton : elle s'affiche en note.
+export const NOTE_EPREUVE = 'L’épreuve de bout en bout n’a pas encore réussi : elle n’empêche pas l’ouverture (palier P0, 5 par jour), elle conditionne la montée de palier.'
+
 function raisonFermee(g: Gestes): string | null {
   if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'
-  if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'
   if (!g.notice_verifiee_le || Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000) {
     return 'La notice en ligne n’est pas vérifiée.'
   }
@@ -440,6 +443,7 @@ export function GestesEnvoi({
           {fermee ? <p data-raison-fermee className="mc-petit">{fermee}</p> : null}
         </div>
       ) : null}
+      {!gestes.epreuve_passee ? <p data-note-epreuve className="mc-petit">{NOTE_EPREUVE}</p> : null}
       {gestes.technologies_pause?.map((t) => (
         <button
           key={t}

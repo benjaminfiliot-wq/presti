@@ -84,7 +84,10 @@ export const juges = [
       { nom: 'boite-sans-enjeu', fichier: `${S}/Gestes.tsx`, avant: 'portee: c.portee, action: c.question', apres: "portee: c.portee ?? 'securite', action: c.question", tue: 'EG-3' },
       // Plus de date d'ouverture (05/10/2026) : chaque preuve qui reste est sabotée, et le retour d'une date aussi.
       { nom: 'ouverture-sans-mesure', fichier: `${S}/Gestes.tsx`, avant: "if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'", apres: "if (false) return 'La mesure à sec n’a pas réussi.'", tue: 'EG-13' },
-      { nom: 'ouverture-sans-epreuve', fichier: `${S}/Gestes.tsx`, avant: "if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'", apres: "if (false) return 'L’épreuve de bout en bout n’a pas encore réussi.'", tue: 'EG-13' },
+      // 05/10/2026 soir (0131) : l'épreuve de bout en bout n'empêche plus l'ouverture ; elle s'affiche en note. Chaque retour en arrière est saboté.
+      { nom: 'epreuve-rebloque-l-ouverture', fichier: `${S}/Gestes.tsx`, avant: 'function raisonFermee(g: Gestes): string | null {\n', apres: "function raisonFermee(g: Gestes): string | null {\n  if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'\n", tue: 'EG-13' },
+      { nom: 'note-epreuve-retiree', fichier: `${S}/Gestes.tsx`, avant: '{!gestes.epreuve_passee ? <p data-note-epreuve className="mc-petit">{NOTE_EPREUVE}</p> : null}', apres: '{null}', tue: 'EG-13' },
+      { nom: 'note-epreuve-toujours-affichee', fichier: `${S}/Gestes.tsx`, avant: '{!gestes.epreuve_passee ? <p data-note-epreuve', apres: '{true ? <p data-note-epreuve', tue: 'EG-13' },
       { nom: 'ouverture-notice-perimee', fichier: `${S}/Gestes.tsx`, avant: 'Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000', apres: 'Date.now() - Date.parse(g.notice_verifiee_le) > 700 * 86_400_000', tue: 'EG-13' },
       { nom: 'date-d-ouverture-revient', fichier: `${S}/Gestes.tsx`, avant: 'function raisonFermee(g: Gestes): string | null {\n', apres: "function raisonFermee(g: Gestes): string | null {\n  if (Date.now() < Date.parse('2026-10-12T00:00:00+02:00')) return 'Pas avant le lundi 12/10.'\n", tue: 'EG-13' },
       { nom: 'gestes-css-retire', fichier: `${S}/gestes.css`, retirer: true, tue: 'EG-1' },

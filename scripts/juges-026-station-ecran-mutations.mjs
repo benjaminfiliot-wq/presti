@@ -142,10 +142,19 @@ muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
   "if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'",
   "if (false) return 'La mesure à sec n’a pas réussi.'",
   'ouverture possible sans la mesure à sec', 'envoi')
+// 05/10/2026 soir (0131) : l'épreuve de bout en bout n'empêche plus l'ouverture (palier P0) ; elle s'affiche en note de montée de palier.
 muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
-  "if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'",
-  "if (false) return 'L’épreuve de bout en bout n’a pas encore réussi.'",
-  'ouverture possible sans l’épreuve de bout en bout', 'envoi')
+  'function raisonFermee(g: Gestes): string | null {\n',
+  "function raisonFermee(g: Gestes): string | null {\n  if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'\n",
+  'l’épreuve de bout en bout empêche de nouveau l’ouverture', 'envoi')
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  '{!gestes.epreuve_passee ? <p data-note-epreuve className="mc-petit">{NOTE_EPREUVE}</p> : null}',
+  '{null}',
+  'la note « conditionne la montée de palier » disparaît', 'envoi')
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  '{!gestes.epreuve_passee ? <p data-note-epreuve',
+  '{true ? <p data-note-epreuve',
+  'la note de l’épreuve s’affiche même quand elle a réussi', 'envoi')
 muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
   'Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000',
   'Date.now() - Date.parse(g.notice_verifiee_le) > 700 * 86_400_000',
