@@ -21,9 +21,11 @@ Phases : **audit** de l'existant (ce qui est vieux, ce qui manque) → **maquett
 Les agents ne créent aucun compte, n'acceptent aucune condition et ne saisissent aucune coordonnée bancaire à ta place ; une fois le compte créé, ils font tout le reste par les API.
 | # | Plateforme | Pourquoi | Ce que Benj fait | Priorité |
 |---|---|---|---|---|
-| 1 | **Shopify** (essai gratuit) | boutique pilotable par API + catalogue de fournisseurs européens (Collective) | créer la boutique d'essai, créer une « application personnalisée » avec accès API, me donner le jeton | **haute** |
-| 2 | **eBay vendeur professionnel** (EI) | vendre en règle ; API de vente | convertir ou créer le compte pro, finir la vérification du compte développeur, cliquer « autoriser » une fois | haute (après vérification, ≤ 1 jour) |
-| 3 | **Apify** | meilleures ventes, tendances | déposer le jeton dans `presti-secrets/apify-token.txt` (fait côté compte) | haute |
+| 1 | **eBay vendeur professionnel** (EI) — **boutique n° 1 (cap de Benj, 05/10 nuit)** | vendre en règle ; API de vente ; démarrage sans abonnement | convertir ou créer le compte pro, finir la vérification du compte développeur, cliquer « autoriser » une fois | **haute** (après vérification, ≤ 1 jour) |
+| 2 | **TikTok Shop** + TikTok entreprise | vendre et faire de l'audience avec les mêmes vidéos | ouvrir la boutique vendeur avec l'identité de l'entreprise ; passer le compte en « entreprise » | **haute** |
+| 3 | **Apify** | meilleures ventes AliExpress / Alibaba, tendances | jeton dans `presti-secrets/apify-token.txt` (le fichier `apify api.txt` est déjà là : à renommer ou me dire « posé ») | haute |
+| 3 bis | **AliExpress, Alibaba** (sourcing) | trouver les produits et leurs prix d'achat | rien pour analyser ; un compte acheteur seulement le jour d'un échantillon | à la demande |
+| — | ~~Shopify~~ | repoussé : payant dès l'essai fini ; retenu seulement si eBay + TikTok Shop montrent des ventes | le fichier `shopify api.txt` déjà déposé reste au chaud | basse |
 | 4 | **Page / Business Manager Meta de Presti** et compte publicitaire | publier pubs, mesurer | vérifier que la Page Facebook Presti est liée à un Business Manager ; créer le compte publicitaire (sans dépense) | moyenne |
 | 5 | **TikTok pour entreprise** (Brico Travaux) | pubs et statistiques | activer le compte professionnel sur Brico Travaux | moyenne |
 | 6 | **Fournisseurs UE** (candidats à tester par les agents : BigBuy, Spocket, CJ Dropshipping, Printful/Printify) | approvisionnement | rien tant que les agents n'ont pas désigné le ou les retenus ; puis créer 1 compte | à la demande |
