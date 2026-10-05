@@ -1,10 +1,10 @@
 # Contre-mutations du méta-juge — 026-099
 
-> Écrit par `node scripts/juges-026-mutations-preuve.mjs --fiche=026-099 --script=scripts/juges-026-envoi-mutations.mjs --rapport=.orchestre/preuves/026-099/mutations.json` le 2026-10-05T01:56:28.702Z.
+> Écrit par `node scripts/juges-026-mutations-preuve.mjs --fiche=026-099 --script=scripts/juges-026-envoi-mutations.mjs --rapport=.orchestre/preuves/026-099/mutations.json` le 2026-10-05T09:32:20.982Z.
 > Chaque mutation ci-dessous a été refaite par le méta-juge sur sa propre copie ; l'extrait est la ligne en échec qu'il a lue lui-même.
 
-Graine : 1955970728 (rejouer : `--graine=1955970728`).
+Graine : 1409602339 (rejouer : `--graine=1409602339`).
 
-- 1. entrée 18 · `scripts/facteur-qa.mjs` · GM-2 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL GM-2 — envoi refusé : {"ok":false,"erreur":"auth","definitif":false} ; mot de passe transmis : « abcd efgh ijkl mnop », « abcdefghijklmnop » attendu (sans espaces) ; MAIL FROM : null, contact.presti@presti-prospection.invalid attendu ; RCPT TO : [], un seul destinataire attendu ; en-tête From absent ; en-tête To absent ; … (10 défauts) »
-- 2. entrée 26 · `scripts/maquette-video-qa.mjs` · MV-2 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL MV-2 — durée 24 s, 15 à 20 s attendue »
-- 3. entrée 50 · `scripts/rendez-vous-qa.mjs` · RV-2 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL RV-2 — 40 créneau(x) un samedi ou un dimanche »
+- 1. entrée 32 · `scripts/disjoncteurs-qa.mjs` · DJ-3 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL DJ-3 — seuil de coupure des échecs consécutifs incorrect »
+- 2. entrée 41 · `scripts/repondeur-qa.mjs` · RP-7 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL RP-7 — rdvParJeton(hacherJeton du jeton d'essai) : aucun lien retrouvé (le jeton en clair n'a pas dû être passé à creerLienRdv) »
+- 3. entrée 61 · `scripts/prospection-sql-qa.mjs` · PG-4 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL PG-4 — code(s) jamais levé(s) par un raise : ops:formulaire_deja »

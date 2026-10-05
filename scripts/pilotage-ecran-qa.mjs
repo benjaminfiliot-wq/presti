@@ -274,13 +274,17 @@ async function demarrer({ critere, pages = { station: PAGE_STATION } }) {
     const { serveurCopie, avecComptes } = await import('./fixtures/026-pilotage/b/commun.mjs')
     const copie = copieDrapeau(R, { critere, jonctions: true })
     const srv = await serveurCopie(copie.dest, { critere })
+    // D-0510-D3 (correction du chef, 05/10, 026-117 et 026-120) : `next dev` compile la page et la route à la PREMIÈRE requête ; sur un PC saturé la compilation dépassait les 45 s
+    // d'attente des scénarios (4 pages à la fois) : la station restait sur « Vérification de l'accès… » (onze critères EG rouges, aucun défaut du code ; le banc passe 15/15). Le serveur
+    // chauffe la page et la route du rôle AVANT les scénarios, au plus 180 s chacune : un délai, pas un seuil de vérité (même précaution que fil.mjs, 026-123).
+    for (const chemin of ['/controle/station', '/api/controle/journal?limite=1']) await fetch(`${srv.base}${chemin}`, { signal: AbortSignal.timeout(180_000), redirect: 'manual' }).then((r) => r.arrayBuffer()).catch(() => {})
     // Le compte fondateur d'essai : créé ici, supprimé dans le finally du juge (arreter).
     let compte = null, fin = null, liberer = null
     const pret = new Promise((ok, ko) => { fin = avecComptes(['direction'], async ({ direction }) => { compte = direction; ok(); await new Promise((f) => { liberer = f }) }); fin.then((r) => { if (!compte) ko(r?.erreur ?? new Error('compte fondateur d’essai non créé')) }) })
     try { await pret } catch (e) { await nav.close().catch(() => {}); await srv.arreter(); supprimerCopie(copie.dest); throw erreurCritere(critere, `compte fondateur d’essai : ${premiereLigne(e)}`) }
     const ref = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^https?:\/\//, '').split('.')[0]
     SERVEUR = {
-      mode: 'vivant', base: srv.base, nav, cleLocale: `sb-${ref}-auth-token`, sessionJson: JSON.stringify(compte.sess), copie,
+      mode: 'vivant', base: srv.base, nav, cleLocale: `sb-${ref}-auth-token`, sessionJson: JSON.stringify({ ...compte.sess, expires_at: 4102444800 }), copie,
       arreter: async () => { await nav.close().catch(() => {}); liberer?.(); const r = await fin; await srv.arreter(); supprimerCopie(copie.dest); if (r && r.menage === false) console.log(`${JUGE} : ménage du compte d'essai en échec`) },
     }
   } else {
@@ -306,7 +310,7 @@ async function ouvrir(chemin, scenario, { largeur = 1440, hauteur = 900, mobile 
   if (heureFigee) await page.clock.setFixedTime(heureFigee)
   const s = await servirSuivi(page, scenario, { origine: SERVEUR.base, laisser: MODE === 'vivant' ? ['journal'] : [], ...(heureFigee ? { delta: heureFigee - Date.parse(MAINTENANT_JEUX) } : {}) })
   if (avantNavigation) await avantNavigation(page)
-  await page.goto(`${SERVEUR.base}${chemin}`, { waitUntil: 'domcontentloaded', timeout: 60_000 })
+  await page.goto(`${SERVEUR.base}${chemin}`, { waitUntil: 'domcontentloaded', timeout: 180_000 })
   if (attendre) await page.waitForSelector(attendre, { timeout: 30_000 }).catch(() => {})
   return { page, ctx, s, erreurs, dialogues, fermer: async () => { if (!contexte) await ctx.close().catch(() => {}); else await page.close().catch(() => {}) } }
 }

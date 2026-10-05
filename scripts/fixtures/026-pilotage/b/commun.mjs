@@ -95,6 +95,12 @@ export function arbreTemoin(juge, { base, chemins }) {
 export const COPIE = path.join(TRAVAIL, 'pilotage-copie')
 const MOTIF_BAISSE = 'pilotage: false,'
 const MOTIF_LEVE = 'pilotage: true,'
+// D-0510-D2 (correction du chef, 05/10, 026-117 et 026-120) : le drapeau `pilotage` est LEVÉ en production depuis 026-140 (Benj, 05/10) : le juge exigeait encore exactement un
+// `pilotage: false,` dans lib/flags.ts et refusait toute racine réelle. Il accepte désormais l'UN des deux états, exactement une fois : baissé (levé dans la copie, comme avant)
+// ou déjà levé (copie telle quelle). Rien d'assoupli : absent, doublé, ou `false` et `true` ensemble restent refusés ; la copie doit finir levée ; la source ne doit pas bouger.
+const compter = (t, m) => t.split(m).length - 1
+/** 'baisse' : un seul `pilotage: false,` et aucun `true` ; 'leve' : un seul `pilotage: true,` et aucun `false` ; sinon null (refusé). */
+const etatDrapeau = (t) => { const b = compter(t, MOTIF_BAISSE), l = compter(t, MOTIF_LEVE); return b === 1 && l === 0 ? 'baisse' : b === 0 && l === 1 ? 'leve' : null }
 const erreurCritere = (critere, m) => { const e = new Error(`${critere} : ${m}`); e.critere = critere; return e }
 /** → { dest, tete, empreinteReelle, empreinteCopie, remplacements } */
 export function copieAvecDrapeau(racine, { critere = 'RL-3' } = {}) {
@@ -104,8 +110,8 @@ export function copieAvecDrapeau(racine, { critere = 'RL-3' } = {}) {
   const flagsReel = path.join(racine, 'lib', 'flags.ts')
   const texteFlags = lireOuNull(flagsReel)
   if (texteFlags === null) throw erreurCritere(critere, 'lib/flags.ts absent de la racine')
-  const n = texteFlags.split(MOTIF_BAISSE).length - 1
-  if (n !== 1) throw erreurCritere(critere, `« ${MOTIF_BAISSE} » figure ${n} fois dans lib/flags.ts, exactement 1 attendue : le drapeau ne peut pas être levé dans la copie`)
+  const etat = etatDrapeau(texteFlags)
+  if (!etat) throw erreurCritere(critere, `lib/flags.ts porte « ${MOTIF_BAISSE} » ${compter(texteFlags, MOTIF_BAISSE)} fois et « ${MOTIF_LEVE} » ${compter(texteFlags, MOTIF_LEVE)} fois : exactement un des deux, une seule fois, est attendu (le drapeau ne peut pas être levé dans la copie)`)
   const empreinteReelle = sha256(fs.readFileSync(flagsReel))
   // La copie précédente est retirée, jonctions comprises (rmSync ne suit pas une jonction : il retire le lien).
   for (const j of ['node_modules', 'public']) { try { fs.rmSync(path.join(dest, j), { recursive: false, force: true }) } catch { try { fs.unlinkSync(path.join(dest, j)) } catch { /* absente */ } } }
@@ -124,14 +130,15 @@ export function copieAvecDrapeau(racine, { critere = 'RL-3' } = {}) {
     if (fs.existsSync(cible)) fs.symlinkSync(cible, path.join(dest, j), 'junction')
   }
   const f = path.join(dest, 'lib', 'flags.ts')
-  fs.writeFileSync(f, texteFlags.replace(MOTIF_BAISSE, () => MOTIF_LEVE))
+  fs.writeFileSync(f, etat === 'baisse' ? texteFlags.replace(MOTIF_BAISSE, () => MOTIF_LEVE) : texteFlags)
   if (fs.existsSync(path.join(dest, '.env.local'))) throw erreurCritere(critere, '.env.local dans la copie')
   const copie = fs.readFileSync(f, 'utf8')
   return {
     dest, tete,
     empreinteReelle, empreinteReelleApres: sha256(fs.readFileSync(flagsReel)),
     leveDansCopie: copie.includes(MOTIF_LEVE) && !copie.includes(MOTIF_BAISSE),
-    baisseDansReel: fs.readFileSync(flagsReel, 'utf8').includes(MOTIF_BAISSE),
+    // « baisseDansReel » garde son nom (trois juges le lisent) : il dit que la SOURCE n'a pas bougé (même empreinte, même état), baissée ou levée.
+    baisseDansReel: sha256(fs.readFileSync(flagsReel)) === empreinteReelle && etatDrapeau(fs.readFileSync(flagsReel, 'utf8')) === etat,
   }
 }
 
