@@ -1,8 +1,6 @@
 # La fabrication des pubs sur l'usine (026-202)
 
-État au 05/10/2026 : **écrite, pas encore en service**. Le minuteur `presti-pubs` n'est pas installé sur l'usine ; les outils de rendu
-(HyperFrames 0.8.33, modèle de voix Kokoro `ff_siwis`) n'y sont pas posés. Les gestes de Benj sont dans
-`.orchestre/preuves/026-202/geste-de-benj.md`.
+État au 05/10/2026 : **en service** (minuteur `presti-pubs` actif toutes les 15 min, jeton `studio` posé, HyperFrames 0.8.33 + voix Kokoro + OpenCV dans `/srv/presti-agents/outils-pubs`). Reste : l'épreuve PC éteint et les attestations de droit commercial (`.orchestre/preuves/026-202/reste-pour-benj.md`). Détail : `.orchestre/preuves/026-202/mise-en-service-05-10.md`.
 
 ## Ce qui tournera
 - `presti-pubs.timer` (toutes les 15 min) lance `presti-pubs.service` sous le compte `agents`, par `avec-coffre.mjs PRESTI_JETON_STUDIO` :
