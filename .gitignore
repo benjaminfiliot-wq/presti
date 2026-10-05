@@ -112,3 +112,6 @@ reprise-cloud/prospection/
 *.p12
 **/firebase/compte-de-service.json
 /fix.js
+
+# 05/10 : entrées médias d essai de 026-159 (30 Mo) : jamais dans git
+.orchestre/preuves/026-159/entrees/
