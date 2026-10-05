@@ -15,8 +15,8 @@ where nom in ('vigie_meta','moteur_demandes','pont_telegram','qualite_sites','sa
 
 | Agent | Rôle | Hôte | Période | État réel (05/10) | Condition de réveil | Preuve |
 |---|---|---|---|---|---|---|
-| `livreur` | livraison des sites (tour de livraison) | Vercel : `tourLivraison()` appelé par le tic (pg_cron, chaque minute, sous condition « minute multiple de 15 ») et, en filet, par `/api/cron/relances` (08 h UTC) | 15 min | **RÉPARÉ (D-0510-M1)** : le tour réussissait (`passages_cron.livraison`, `reussi`, 0 erreur) mais `battementLivreur()` ne partait jamais | un tour de livraison sans erreur | cause : `rpc: Rpc = supabaseAdmin.rpc` (voir plus bas) ; relire `battement_le` à la minute 00/15/30/45 qui suit le déploiement |
-| `tresorier` | veille de trésorerie (seuil de TVA) | idem (même tour, fin de `tourLivraison`) | 1 440 min | **RÉPARÉ (D-0510-M1)**, même cause | `veilleTresorerie()` rend sans lever | idem |
+| `livreur` | livraison des sites (tour de livraison) | Vercel : `tourLivraison()` appelé par le tic (pg_cron, chaque minute, sous condition « minute multiple de 15 ») et, en filet, par `/api/cron/relances` (08 h UTC) | 15 min | **RÉPARÉ et PROUVÉ (D-0510-M1)** : battement posé le 05/10 à 17:00:12 UTC ; le tour réussissait (`passages_cron.livraison`, `reussi`, 0 erreur) mais `battementLivreur()` ne partait jamais | un tour de livraison sans erreur | cause : `rpc: Rpc = supabaseAdmin.rpc` (voir plus bas) ; relire `battement_le` à la minute 00/15/30/45 qui suit le déploiement |
+| `tresorier` | veille de trésorerie (seuil de TVA) | idem (même tour, fin de `tourLivraison`) | 1 440 min | **RÉPARÉ et PROUVÉ (D-0510-M1)**, même cause : battement posé le 05/10 à 17:00:12 UTC | `veilleTresorerie()` rend sans lever | idem |
 | `vigie_meta` | vigie de la bibliothèque des pubs Meta (artisans, marques) | pg_cron `acq-vigie-meta` (`10 5-8 * * *`, UTC) → Vercel `/api/cron/vigie-meta` | 1 440 min | **EN ATTENTE du premier passage planifié** : le job a été créé le 05/10 vers 09 h 50 UTC, après la fenêtre 05 h 10-08 h 10 du jour (`cron.job_run_details` : aucun passage du job 52 ; `passages_cron` : aucune ligne `acq-vigie-meta`). Le jeton Meta est en base (`acq_jeton_meta()` rend 1 ligne, jeton non nul) et son échéance est lue (événement `jeton_echeance`) | **06/10 à 05 h 10 UTC** (07 h 10 à Paris). La route bat après `enregistrerPassage(..., true)`. Elle ne bat pas, par conception, si Meta répond `jeton_invalide` (code 190) ou `en_attente_identite` (code 1357045, identité du compte non confirmée) : réponse 500 et alerte « Jeton Meta à renouveler » | `select battement_le from ops.agents where nom='vigie_meta'` après 05 h 11 UTC le 06/10. Réserve non levée : les conditions de l'API `ads_archive` restent « non lisibles » (`meta-ads-archive-conditions.md`, verdict REFUSE : la vigie compte sans rien préparer) |
 | `moteur_demandes` | moteur des demandes de Benj | un autre agent écrit son lanceur | 5 min | non touché ici ; jeton en base, jamais battu | le lanceur en cours d'écriture | `ops.agents` |
 | `pont_telegram` | pont Telegram (sécurité) | idem | 5 min | non touché ici ; **pas de jeton en base** (`jeton_hash` nul) | idem | `ops.agents` |
@@ -48,6 +48,10 @@ Correction : le défaut passe par `rpcAdmin`, qui appelle `supabaseAdmin.rpc(...
 critère **BL-10** de `scripts/bus-livraison-qa.mjs` (aucune référence nue à `supabaseAdmin.rpc` ni `.from` dans `lib/` et `app/`,
 hors `typeof`) ; la version d'avant en comptait 4, la nouvelle 0. Au 05/10 : 0 commande, 0 tâche `livrer_site` : la correction
 ne change aucun comportement visible chez un client, elle rend seulement vrais la pause et les battements.
+
+**Preuve réelle (05/10, déploiement `8dfd94d` READY à 16 h 54 UTC)** : au tic de 17 h 00 UTC, `passages_cron.livraison` =
+17:00:12.458 (reussi, 0 erreur) et `ops.agents` : `tresorier.battement_le` = 17:00:12.053, `livreur.battement_le` = 17:00:12.402
+(avant : `null` depuis la création). Relu par `select nom, battement_le from ops.agents where nom in ('livreur','tresorier')`.
 
 ## Les 17 autres (battent déjà)
 
