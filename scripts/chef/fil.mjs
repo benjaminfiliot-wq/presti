@@ -42,7 +42,8 @@ async function poster(plan) {
     const r = await appeler(base, jeton, 'POST', '/api/agents/evenements', corps)
     if (r.statut === 429) { console.error('✗ quota du bus atteint (429) : fil arrêté'); console.log(JSON.stringify({ evenements: ids })); return 3 }
     if (r.statut !== 201 && r.statut !== 200) { console.error(`✗ événement ${corps.type} refusé (HTTP ${r.statut || r.erreur})`); console.log(JSON.stringify({ evenements: ids })); return 1 }
-    ids.push(r.json?.id)
+    // La route de production rend l'identifiant NU (ops_evenement_ajouter → un nombre) ; le faux bus du juge rend { id } : les deux se lisent (CH-R8 voyait « null »).
+    ids.push(Number.isInteger(r.json) ? r.json : r.json?.id)
   }
   // Seulement après un poster réussi : le curseur avance, les consignes lues sont retenues (les 200 dernières).
   const provisoire = path.join(TRAVAIL, 'curseur-provisoire.json')
