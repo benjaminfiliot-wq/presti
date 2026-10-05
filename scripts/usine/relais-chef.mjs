@@ -22,7 +22,7 @@ export const HEURE = 60 * MINUTE
 export const CHAINE_SECOURS = Object.freeze([
   // « auto » : le routeur de freellmapi choisit le modèle libre disponible (essai réel du 05/10 sur l'usine : le plan du cycle léger en 50 s, a
   // la même boucle d'outils que Codex). gemini-3-flash-preview et ministral-14b suivent (Matt les utilise déjà), puis Ollama Cloud, puis le local.
-  Object.freeze({ id: 'freellmapi', modele: 'auto', fournisseur: 'fl', cle: true, gratuit: true, local: false }),
+  Object.freeze({ id: 'freellmapi', modele: 'auto', fournisseur: 'fl', cle: true, gratuit: true, local: false, essais: 3 }),
   Object.freeze({ id: 'freellmapi_gemini', modele: 'gemini-3-flash-preview', fournisseur: 'fl', cle: true, gratuit: true, local: false }),
   Object.freeze({ id: 'freellmapi_mistral', modele: 'ministral-14b', fournisseur: 'fl', cle: true, gratuit: true, local: false }),
   Object.freeze({ id: 'ollama_cloud', modele: 'gpt-oss:120b-cloud', fournisseur: 'ollama-usine', cle: false, gratuit: true, local: false }),
@@ -151,29 +151,35 @@ export async function relayer(opts) {
     if (bout && bout.jusqua > maintenant()) { dire({ moteur: m.id, issue: 'saute', raison: bout.raison, jusqua: new Date(bout.jusqua).toISOString() }); continue }
     if (m.cle && !opts.cle) { dire({ moteur: m.id, issue: 'saute', raison: 'cle_absente' }); continue }
     if (nature === 'prospect' && (m.gratuit || (!m.local && m.id !== 'codex'))) continue // deuxième verrou : jamais le gratuit ni le cloud
-    const budget = m.id === 'codex' ? reste : Math.min(reste, 540_000)
-    const t0 = Date.now()
-    const r = await lancer(m.id === 'codex' ? argv : argvDeSecours(argv, m), budget, m.cle ? { FL_KEY: opts.cle } : {})
-    const ms = Date.now() - t0
-    const fait = r.code === 0 && (typeof opts.verifier !== 'function' || opts.verifier() === true)
-    if (fait) {
+    // Un routeur libre (« auto ») choisit un modèle au hasard à chaque appel : il a droit à plusieurs essais tant qu'il sort sans avoir fait le travail.
+    for (let essai = 1; essai <= (m.essais ?? 1); essai++) {
+      const resteEssai = delaiMs - (maintenant() - debut)
+      if (resteEssai < 30_000) break
+      const budget = m.id === 'codex' ? resteEssai : Math.min(resteEssai, 540_000)
+      const t0 = Date.now()
+      const r = await lancer(m.id === 'codex' ? argv : argvDeSecours(argv, m), budget, m.cle ? { FL_KEY: opts.cle } : {})
+      const ms = Date.now() - t0
+      const fait = r.code === 0 && (typeof opts.verifier !== 'function' || opts.verifier() === true)
+      if (fait) {
+        const courant = etat.lire()
+        if (courant[m.id]) { delete courant[m.id]; etat.ecrire(courant) }
+        dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'ok', ms })
+        return { code: 0, sortie: r.sortie, moteur: m.id }
+      }
+      if (r.code === 0) { // code 0 mais le plan n'est pas là : ni quota ni panne, rien n'est mis de côté ; un nouvel essai si le moteur en a
+        dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: 'sortie_invalide', ms })
+        derniere = { code: 1, sortie: r.sortie, moteur: m.id }
+        continue
+      }
+      const c = classerSortie(r.sortie, maintenant(), r.delai === true)
+      const jusqua = echeanceDeMiseDeCote(m.id, c.raison, maintenant(), c.jusquaMs)
       const courant = etat.lire()
-      if (courant[m.id]) { delete courant[m.id]; etat.ecrire(courant) }
-      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'ok', ms })
-      return { code: 0, sortie: r.sortie, moteur: m.id }
+      courant[m.id] = { jusqua, raison: c.raison, vu: new Date(maintenant()).toISOString() }
+      etat.ecrire(courant)
+      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison, ms, jusqua: new Date(jusqua).toISOString() })
+      derniere = { code: r.code || 1, sortie: r.sortie, moteur: m.id }
+      break
     }
-    if (r.code === 0) { // code 0 mais le plan n'est pas là : ni quota ni panne, rien n'est mis de côté
-      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: 'sortie_invalide', ms })
-      derniere = { code: 1, sortie: r.sortie, moteur: m.id }
-      continue
-    }
-    const c = classerSortie(r.sortie, maintenant(), r.delai === true)
-    const jusqua = echeanceDeMiseDeCote(m.id, c.raison, maintenant(), c.jusquaMs)
-    const courant = etat.lire()
-    courant[m.id] = { jusqua, raison: c.raison, vu: new Date(maintenant()).toISOString() }
-    etat.ecrire(courant)
-    dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison, ms, jusqua: new Date(jusqua).toISOString() })
-    derniere = { code: r.code || 1, sortie: r.sortie, moteur: m.id }
   }
   return derniere ?? { code: 3, sortie: 'relais du chef : aucun moteur disponible pour le moment\n', moteur: null }
 }
