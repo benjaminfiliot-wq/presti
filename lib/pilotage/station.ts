@@ -18,7 +18,7 @@ export const VUES = ['direct', 'fil', 'salle', 'agent'] as const
 export type Vue = typeof VUES[number]
 export const SALLES_PANNEAU = ['recettes', 'tresorerie', 'usine', 'atelier', 'reunion', 'envois', 'experience', 'standard', 'redaction', 'machines'] as const
 export { CLES_SALLE }
-export const LANCEMENT: { date: string | null; source: string } = { date: null, source: 'posée par 026-140 à la levée du drapeau' }
+export const LANCEMENT: { date: string | null; source: string } = { date: '2026-10-05', source: 'posée par 026-140 à la levée du drapeau pilotage (05/10/2026, heure de Paris)' }
 export const DUREE_LIEN_APERCU_S = 600
 export const HORS = { valeur: null, nonMesure: true, raison: 'hors périmètre' } as const
 const ARRIVE = 'arrive avec sa fiche'

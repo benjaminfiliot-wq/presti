@@ -99,7 +99,7 @@ export const FLAGS = {
    *  continue d'effacer ce qui a été écrit (lib/purgesRgpd.ts, étape 8, hors drapeau). */
   audience: true,
   /** 24/09 — Pilotage (Mission Control), premier onglet du Poste. Baissé : GET /api/controle/pilotage répond 404 et l'onglet n'existe pas. Levé par la fiche 026-140, après la recette et l'accord de Benj. */
-  pilotage: false,
+  pilotage: true, // levé le 2026-10-05 sur la demande de Benj (il ne pouvait pas accéder à la station), après la livraison de la série 026 ; recette 026-140 : voir .orchestre/preuves/026-140/
   /** 026-179 — carte Claw3D de la station, levée par 026-193 après sa recette. Baissé : la page de la station garde son cadre d'attente et la liste des salles, et le moteur (Phaser) n'est jamais chargé. */
   stationCarte: false,
   /** 026-118 — le pack pubs locales : le dossier (/pubs/commander, /api/pubs/commander/brouillon) et le paiement
