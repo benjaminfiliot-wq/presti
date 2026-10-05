@@ -1,0 +1,65 @@
+· usine executer : paquet de 348 fichier(s), 4,5 Mo, sur 4d7b706d (HEAD du PC), preuves de 026-190 comprises, construit en 15,1 s
+  ne part pas (2802) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-verif-190-05-10.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .orchestre/preuves/026-117/avant.txt  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-117/bureau.jpg  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-117/decisions-avant.md  (preuves d'autres tâches ; absent du bac)
+    … et 1508 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 8 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac verif-190-05-10 sur usine@88.96.53.3, délai 30 min : bash -c node scripts/station-themes-qa.mjs --theme=vaisseau && node scripts/station-claw3d-qa.mjs --partie=pixel,grille && node scripts/station-ecran-qa.mjs --partie=themes,reglages
+· usine executer : bac verif-190-05-10 monté en 2096 ms : 4d7b706d5 + paquet, 348 écart(s) ; délai 1800 s
+station-themes-qa --theme=vaisseau — racine .
+✅ TH-7 public/station/themes/vaisseau/theme.json conforme au schéma de 026-170 (schéma et contraintes hors schéma), 21 emplacements dont l'unique réservé « ecommerce » sans poste, 20 avec un poste, bloc portrait de 21 emplacements
+✅ TH-8 validerDisposition accepte les defauts du thème vaisseau au bureau et en portrait ; les 20 portes ordinaires touchent le graphe du Commandement (calcul du juge) ; tapis continu sur 56 points
+✅ TH-9 poids : 4 fichiers, 60 Kio, 0.13 Mio avec l'autre thème, fond 3 Kio (700 Kio le thème, 1,5 Mio les deux, 200 Kio le fond) ; un atlas et un fond présents
+✅ TH-10 licence.json : 4 pack(s) du lot A, 2 image(s) comparée(s) aux empreintes des feuilles (~/station-assets relu (787 fichiers)), toutes du lot A, CC0, avec auteur, adresse et date, aucune feuille brute
+✅ TH-12 aucun champ de code, aucune adresse (http, data, //), aucun balisage, aucun « starnet », aucun fichier hors json et images
+✅ TH-11 17 pièges refusés avec leur raison (sans-licence → TH-10, atlas-800-ko → TH-9, feuille-brute-de-pack → TH-10, reservee-avec-un-poste → TH-7, reservee-en-deux-exemplaires → TH-7, sans-portrait → TH-7, vingt-emplacements-seulement → TH-7, hors-du-lot-a → TH-10, licence-non-cc0 → TH-10, licence-sans-auteur → TH-10, licence-sans-date → TH-10, adresse-http-dans-le-theme → TH-12, starnet-dans-le-nom → TH-12, champ-de-code → TH-12, fichier-executable → TH-12, sans-fond → TH-9, fond-trop-lourd → TH-9)
+station-themes-qa --theme=vaisseau : PASS
+station-claw3d-qa --partie=pixel,grille — racine .
+✅ CL-15 astar2D joint depuis le Commandement la porte et le poste de chacune des 20 salles (40 chemins continus), le tapis est continu, l'emplacement réservé n'a ni poste ni destination et aucune de ses cases n'est joignable
+❌ CL-13 next build en échec (code 1) : app/controle/station/moteur/scene/StationPixelScene.ts(39,11): error TS2339: Property 'largeur' does not exist on type 'OfficeCanvas'. | app/controle/station/moteur/scene/StationPixelScene.ts(39,20): error TS2339: Property 'hauteur' does not exist on type 'OfficeCanvas'. | app/controle/station/moteur/scene/StationPixelScene.ts(167,36): error TS2339: Property 'refresh' does not exist on type 'Text…
+station-claw3d-qa --partie=pixel,grille : FAIL — CL-13
+· usine executer : commande finie en 67 s sur l’usine, code 1 (seule)
+· usine executer : code 1 · paquet 15,1 s · envoi et bac 3,3 s · commande 66,6 s · total 85,0 s
