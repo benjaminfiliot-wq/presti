@@ -1,0 +1,354 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/moteurs.ts",
+      "avant": "  standardiste: { moteur: 'codex', modele: MODELE_AGENTS, personnelles: true },",
+      "apres": "  standardiste: { moteur: 'freellmapi', modele: MODELE_AGENTS, personnelles: true },",
+      "critere": "LL-4",
+      "extrait": "✗ standardiste a personnelles:true mais moteur:'freellmapi'",
+      "duree_s": 39
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "'--sandbox', 'read-only'",
+      "apres": "'--sandbox', 'danger-full-access'",
+      "critere": "LL-5",
+      "extrait": "✗ argv sans --sandbox read-only",
+      "duree_s": 83.4
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "try { retourCout = await enregistrerCoutFn(agent, cout, resultat.detail) }",
+      "apres": "try { retourCout = await enregistrerCoutFn(agent, 0.01, resultat.detail) }",
+      "critere": "LL-8",
+      "extrait": "✗ montant inscrit = 0.01 (attendu 0)",
+      "duree_s": 40.2
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "import fs from 'node:fs'",
+      "apres": "import fs from 'node:fs'\nimport Anthropic from '@anthropic-ai/sdk'\nvoid Anthropic",
+      "critere": "LL-3",
+      "extrait": "✗ lib/agents/llm.ts importe @anthropic-ai/sdk",
+      "duree_s": 48.4
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "const nettoye = texte.split('<donnees>').join('').split('</donnees>').join('')",
+      "apres": "const nettoye = texte",
+      "critere": "LL-5",
+      "extrait": "✗ entrée standard : 2 <donnees>, 2 </donnees> (attendu 1 et 1)",
+      "duree_s": 37.2
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "try { return JSON.parse(texte.trim()) } catch { throw new Error('réponse non JSON') }",
+      "apres": "try { return JSON.parse(texte.trim()) } catch { const premier = /\\{[\\s\\S]*\\}/.exec(texte); if (premier) return JSON.parse(premier[0]); throw new Error('réponse non JSON') }",
+      "critere": "LL-6",
+      "extrait": "✗ le scénario « texte » n'est pas rejeté",
+      "duree_s": 37.4
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "    compteurAppels++\n",
+      "apres": "",
+      "critere": "LL-7",
+      "extrait": "✗ le 4e appel (au-delà d'appelsMax:3) n'est pas rejeté avec « plafond »",
+      "duree_s": 37.7
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/llm.ts",
+      "avant": "    const consigne = consigneAvecLecons(systeme, leconsChoisies)\n",
+      "apres": "    console.log(donnees)\n    const consigne = consigneAvecLecons(systeme, leconsChoisies)\n",
+      "critere": "LL-9",
+      "extrait": "✗ la sortie capturée de l'enfant porte la réponse ou les données",
+      "duree_s": 40.7
+    },
+    {
+      "juge": "scripts/agents-llm-qa.mjs",
+      "commande": "cd {racine} && node scripts/agents-llm-qa.mjs",
+      "fichier": "lib/agents/moteurs.ts",
+      "avant": "export const MODELE_REJUGE = 'gpt-6-sol'",
+      "apres": "export const MODELE_REJUGE = MODELE_AGENTS",
+      "critere": "LL-12",
+      "extrait": "✗ MODELE_REJUGE == MODELE_AGENTS",
+      "duree_s": 48.4
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=socle --racine={racine}",
+      "fichier": "supabase/migrations/0105_acquisition_socle.sql",
+      "avant": "grant execute on function public.acq_en_pause(text) to service_role;",
+      "apres": "grant execute on function public.acq_en_pause(text) to service_role;\ngrant execute on function public.acq_en_pause(text) to authenticated;",
+      "critere": "OA-2",
+      "extrait": "❌ OA-2 acq_en_pause : grant à authenticated (service_role seul)",
+      "duree_s": 0.8
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=socle --racine={racine}",
+      "fichier": "supabase/migrations/0105_acquisition_socle.sql",
+      "avant": ",\n      ('lien_envoye', 'oppose')",
+      "apres": "",
+      "critere": "OA-4",
+      "extrait": "❌ OA-4 transitions de contrat.ts absentes du SQL : lien_envoye>oppose",
+      "duree_s": 0.9
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=socle --racine={racine}",
+      "fichier": "supabase/migrations/0105_acquisition_socle.sql",
+      "avant": "select public.ops_agent_enregistrer('recenseur', 'Recenseur (A8)', '{}'::text[], '{}'::text[], '{}'::text[], 360, 30, 0, 0);",
+      "apres": "select public.ops_agent_enregistrer('recenseur', 'Recenseur (A8)', '{}'::text[], '{}'::text[], '{}'::text[], 60, 30, 0, 0);",
+      "critere": "OA-9",
+      "extrait": "❌ OA-9 recenseur : période 60, 360 attendu",
+      "duree_s": 0.8
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=socle --racine={racine}",
+      "fichier": "supabase/migrations/0105_acquisition_socle.sql",
+      "avant": "public.ops_interrupteur('pause_generale')",
+      "apres": "(select actif from ops.pause_generale limit 1)",
+      "critere": "OA-10",
+      "extrait": "❌ OA-10 acq_en_pause n'appelle pas ops_interrupteur('pause_generale') ; mention de ops.pause_generale",
+      "duree_s": 0.8
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=echanges --racine={racine}",
+      "fichier": "supabase/migrations/0106_acquisition_echanges.sql",
+      "avant": "'maquettes', 'maquettes', false",
+      "apres": "'maquettes', 'maquettes', true",
+      "critere": "OB-4",
+      "extrait": "❌ OB-4 public = true / false, false attendu",
+      "duree_s": 0.9
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=echanges --racine={racine}",
+      "fichier": "supabase/migrations/0106_acquisition_echanges.sql",
+      "avant": "from (select * from ops.reponses where classe is null order by recu_le limit greatest(coalesce(p_limite, 1), 0)) r",
+      "apres": "from (select r0.* from ops.reponses r0 join ops.envois e0 on e0.id = r0.envoi_id where r0.classe is null order by r0.recu_le limit greatest(coalesce(p_limite, 1), 0)) r",
+      "critere": "OB-6",
+      "extrait": "❌ OB-6 acq_reponses_a_traiter lit envois",
+      "duree_s": 0.8
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=echanges --racine={racine}",
+      "fichier": "supabase/migrations/0106_acquisition_echanges.sql",
+      "avant": "function public.acq_envoi_preparer(p jsonb)\nreturns jsonb\nlanguage plpgsql\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$\ndeclare\n  v_texte      text := p ->> 'texte';\n  v_empreinte  text := p ->> 'empreinte_texte';\n  v_reference  text := nullif(p ->> 'reference', '');\n  v_type       text := p ->> 'type';\n  v_prospect   uuid := nullif(p ->> 'prospect_id', '')::uuid;\n  v_id         uuid;\nbegin\n  if coalesce(btrim(v_texte), '') = '' then\n    return jsonb_build_object('ok', false, 'raison', 'texte_vide');\n  end if;\n  if v_empreinte is null or v_empreinte <> encode(extensions.digest(v_texte, 'sha256'), 'hex') then\n    return jsonb_build_object('ok', false, 'raison', 'empreinte');\n  end if;\n  if v_reference is not null and exists (select 1 from ops.envois where reference = v_reference) then\n    return jsonb_build_object('ok', false, 'raison', 'reference');\n  end if;\n\n  begin\n    insert into ops.envois (\n      prospect_id, type, canal, envoyeur, destinataire, objet, texte, empreinte_texte,\n      modele_id, variante, fait_id, douleur_id, fil_envoi_id, conversation_id,\n      preuve_demande, reference, technologie, commentaire_id, statut, verdicts\n    ) values (\n      v_prospect, v_type, p ->> 'canal', coalesce(nullif(p ->> 'envoyeur', ''), 'systeme'), p ->> 'destinataire',\n      nullif(p ->> 'objet', ''), v_texte, v_empreinte,\n      nullif(p ->> 'modele_id', ''), nullif(p ->> 'variante', ''), nullif(p ->> 'fait_id', ''), nullif(p ->> 'douleur_id', ''),\n      nullif(p ->> 'fil_envoi_id', '')::uuid, nullif(p ->> 'conversation_id', '')::uuid,\n      p -> 'preuve_demande', v_reference, nullif(p ->> 'technologie', ''), nullif(p ->> 'commentaire_id', ''),\n      'prepare', '{}'::jsonb\n    )\n    returning id into v_id;\n\n    if v_prospect is not null then\n      if v_type = 'premier_contact' then\n        update ops.prospects set etape = 'prepare', maj_le = now() where id = v_prospect and etape in ('verifie', 'maquette_prete');\n      elsif v_type = 'lien_maquette' then\n        update ops.prospects set etape = 'lien_prepare', maj_le = now() where id = v_prospect and etape in ('oui', 'maquette_prete');\n      end if;\n    end if;\n  exception when others then",
+      "apres": "function public.acq_envoi_preparer(p jsonb)\nreturns jsonb\nlanguage plpgsql\nsecurity definer\nset search_path = ops, public, pg_temp\nas $$\ndeclare\n  v_texte      text := p ->> 'texte';\n  v_empreinte  text := p ->> 'empreinte_texte';\n  v_reference  text := nullif(p ->> 'reference', '');\n  v_type       text := p ->> 'type';\n  v_prospect   uuid := nullif(p ->> 'prospect_id', '')::uuid;\n  v_id         uuid;\nbegin\n  if coalesce(btrim(v_texte), '') = '' then\n    return jsonb_build_object('ok', false, 'raison', 'texte_vide');\n  end if;\n  if v_empreinte is null or v_empreinte <> encode(extensions.digest(v_texte, 'sha256'), 'hex') then\n    return jsonb_build_object('ok', false, 'raison', 'empreinte');\n  end if;\n  if v_reference is not null and exists (select 1 from ops.envois where reference = v_reference) then\n    return jsonb_build_object('ok', false, 'raison', 'reference');\n  end if;\n\n  begin\n    insert into ops.envois (\n      prospect_id, type, canal, envoyeur, destinataire, objet, texte, empreinte_texte,\n      modele_id, variante, fait_id, douleur_id, fil_envoi_id, conversation_id,\n      preuve_demande, reference, technologie, commentaire_id, statut, verdicts\n    ) values (\n      v_prospect, v_type, p ->> 'canal', coalesce(nullif(p ->> 'envoyeur', ''), 'systeme'), p ->> 'destinataire',\n      nullif(p ->> 'objet', ''), v_texte, v_empreinte,\n      nullif(p ->> 'modele_id', ''), nullif(p ->> 'variante', ''), nullif(p ->> 'fait_id', ''), nullif(p ->> 'douleur_id', ''),\n      nullif(p ->> 'fil_envoi_id', '')::uuid, nullif(p ->> 'conversation_id', '')::uuid,\n      p -> 'preuve_demande', v_reference, nullif(p ->> 'technologie', ''), nullif(p ->> 'commentaire_id', ''),\n      'prepare', '{}'::jsonb\n    )\n    returning id into v_id;\n\n    if v_prospect is not null then\n      if v_type = 'premier_contact' then\n        update ops.prospects set etape = 'prepare', maj_le = now() where id = v_prospect and etape in ('verifie', 'maquette_prete');\n      elsif v_type = 'lien_maquette' then\n        update ops.prospects set etape = 'lien_prepare', maj_le = now() where id = v_prospect and etape in ('oui', 'maquette_prete');\n      end if;\n    end if;\n  exception when unique_violation then",
+      "critere": "OB-9",
+      "extrait": "❌ OB-9 acq_envoi_preparer sans sous-bloc « exception when others »",
+      "duree_s": 0.9
+    },
+    {
+      "juge": "scripts/ops-acquisition-qa.mjs",
+      "commande": "node scripts/ops-acquisition-qa.mjs --migration=planification --racine={racine}",
+      "fichier": "supabase/migrations/0109_acquisition_planification.sql",
+      "avant": "select cron.schedule('acq-repondeur'",
+      "apres": "select cron.schedule('acq-facteur-pause', '* * * * *', $$ select 1 $$);\nselect cron.schedule('acq-repondeur'",
+      "critere": "PG-1",
+      "extrait": "❌ PG-1 tâche en trop : acq-facteur-pause ; une tâche acq-facteur-pause ou ?passe=pause",
+      "duree_s": 0.6
+    },
+    {
+      "juge": "scripts/constructeur-ferme-qa.mjs",
+      "commande": "node scripts/constructeur-ferme-qa.mjs --racine={racine}",
+      "fichier": "lib/flags.ts",
+      "avant": "  constructeurSite: false,",
+      "apres": "  constructeurSite: true,",
+      "critere": "CF-1",
+      "extrait": "FAIL CF-1 — constructeurSite vaut « true », le littéral false attendu ; à l'exécution : FLAGS.constructeurSite = true, actif('constructeurSite') = true ; false et false attendus",
+      "duree_s": 53.5
+    },
+    {
+      "juge": "scripts/parcours-commande-qa.mjs",
+      "commande": "node scripts/parcours-commande-qa.mjs --racine={racine}",
+      "fichier": "lib/siteCommande.ts",
+      "avant": " || a.installation! < 1960 || a.installation! > new Date().getFullYear()",
+      "apres": "",
+      "critere": "PC-1",
+      "extrait": "FAIL PC-1 — refus attendu, aucune erreur : installation-1959, installation-future, installation-zero ; invariant : installation-1959 payable mais hors contrat : artisan.installation « 1959 » : entier de 1960 à 2026, installation-future payable mais hors contrat : artisan.installation « 2027 » : entier de 1960 à 2026, … (3 en tout)",
+      "duree_s": 53.3
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/pont-orchestre.mjs",
+      "avant": "'<donnees_tache>', JSON.stringify(neutraliser(tache.charge), null, 2), '</donnees_tache>', ''",
+      "apres": "'<donnees_tache>', '</donnees_tache>', JSON.stringify(neutraliser(tache.charge), null, 2), ''",
+      "critere": "PO-2",
+      "extrait": "✗ PO-2 bus-pont-qa-code-0-5f9b34.md : charge piège absente des balises",
+      "duree_s": 7.5
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/pont-orchestre.mjs",
+      "avant": "    let nom\n    try { nom = await ranger(tache) }",
+      "apres": "    await poster(`taches/${encodeURIComponent(tache.id)}/rendre`, { resultat: 'faite', preuve_url: `git:.orchestre/propositions/${nomFichier(tache)}` })\n    await new Promise((r) => setTimeout(r, 80))\n    let nom\n    try { nom = await ranger(tache) }",
+      "critere": "PO-3",
+      "extrait": "✗ PO-3 tâche 1ef87185-b909-4b2d-b730-b4895f2293f5 : rendre reçu avant l'écriture du fichier",
+      "duree_s": 11.7
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/pont-orchestre.mjs",
+      "avant": "    if (etat[cle] === signature) continue\n",
+      "apres": "",
+      "critere": "PO-4",
+      "extrait": "✗ PO-4 2e passage : 2 verdict(s) reposté(s) en trop",
+      "duree_s": 7.6
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/pont-orchestre.mjs",
+      "avant": "const propositions = path.join(orchestre, 'propositions')",
+      "apres": "const propositions = path.join(orchestre, 'file')",
+      "critere": "PO-6",
+      "extrait": "✗ PO-6 file/, en-cours/, fait/, refuse/, verdicts.jsonl ou decisions.md a changé",
+      "duree_s": 7.1
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/pont-orchestre.mjs",
+      "avant": "      preuve_url = `supabase://ops.evenements/${evenement.id}`",
+      "apres": "      void evenement",
+      "critere": "PO-9",
+      "extrait": "✗ PO-9 preuve_url « git:.orchestre/propositions/bus-pont-qa-code-0-1f34ce.md » ≠ supabase://ops.evenements/1",
+      "duree_s": 8.1
+    },
+    {
+      "juge": "scripts/pont-orchestre-qa.mjs",
+      "commande": "cd {racine} && node scripts/pont-orchestre-qa.mjs",
+      "fichier": "scripts/usine/systemd/presti-pont.service",
+      "avant": "User=agents",
+      "apres": "User=agents\nEnvironmentFile=/etc/presti-agents/env",
+      "critere": "PO-11",
+      "extrait": "✗ PO-11 EnvironmentFile= présent (un secret en clair sur le disque de l'usine)",
+      "duree_s": 8.3
+    },
+    {
+      "juge": "scripts/prospects-entrant-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/prospects-entrant-qa.mjs",
+      "fichier": "app/api/prospects/entrant/route.ts",
+      "avant": "  if (!actif('prospectsEntrant')) return NextResponse.json({ error: 'Page introuvable.' }, { status: 404 })\n\n  const ip = getIp(req)\n  if (await isBanned(ip)) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 })\n",
+      "apres": "  const ip = getIp(req)\n  if (await isBanned(ip)) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 })\n  if (!actif('prospectsEntrant')) return NextResponse.json({ error: 'Page introuvable.' }, { status: 404 })\n",
+      "critere": "PE-2",
+      "extrait": "✗ PE-2 le test du drapeau (actif('prospectsEntrant')) n'est pas la première instruction de POST",
+      "duree_s": 10.6
+    },
+    {
+      "juge": "scripts/prospects-entrant-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/prospects-entrant-qa.mjs",
+      "fichier": "app/api/prospects/entrant/route.ts",
+      "avant": "    await recordAbuse(ip, 'honeypot /api/prospects/entrant')\n    return NextResponse.json(SUCCES)\n",
+      "apres": "    await recordAbuse(ip, 'honeypot /api/prospects/entrant')\n",
+      "critere": "PE-3",
+      "extrait": "✗ PE-3 champ piège : status 200, ok=true, 1 recordAbuse (1 attendu), 1 appel(s) base (0 attendus)",
+      "duree_s": 10.8
+    },
+    {
+      "juge": "scripts/prospects-entrant-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/prospects-entrant-qa.mjs",
+      "fichier": "app/api/prospects/entrant/route.ts",
+      "avant": "  if (corps.accord !== true) {\n    return NextResponse.json({ error: 'Cochez la case pour demander votre maquette et être recontacté.' }, { status: 400 })\n  }\n",
+      "apres": "",
+      "critere": "PE-4",
+      "extrait": "✗ PE-4 accord-absent (accord) : status 200 (400 attendu), 1 appel(s) base | accord-chaine (accord) : status 200 (400 attendu), 1 appel(s) base",
+      "duree_s": 10.7
+    },
+    {
+      "juge": "scripts/prospects-entrant-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/prospects-entrant-qa.mjs",
+      "fichier": "app/api/prospects/entrant/route.ts",
+      "avant": "    ...resultat.candidat,\n",
+      "apres": "    ...resultat.candidat,\n    source: 'manuel' as const,\n",
+      "critere": "PE-5",
+      "extrait": "✗ PE-5 site-valide : source « manuel » ≠ entrant | instagram-valide : source « manuel » ≠ entrant",
+      "duree_s": 9.8
+    },
+    {
+      "juge": "scripts/prospects-entrant-qa.mjs",
+      "commande": "cd {racine} && node --import ./scripts/ts-loader.mjs scripts/prospects-entrant-qa.mjs",
+      "fichier": "app/api/prospects/entrant/route.ts",
+      "avant": "  const resultat = normaliserDemandeEntrante({\n",
+      "apres": "  console.log(corps.entreprise)\n  const resultat = normaliserDemandeEntrante({\n",
+      "critere": "PE-6",
+      "extrait": "✗ PE-6 une valeur du corps (cree) apparaît dans la console",
+      "duree_s": 7.8
+    },
+    {
+      "juge": "scripts/juges-026-preuve.mjs",
+      "commande": "node scripts/juges-026-preuve.mjs --couverture --cartes={racine}/scripts/fixtures/026/couverture/propre --index={racine}/scripts/fixtures/026/couverture/propre/INDEX.md",
+      "fichier": "scripts/fixtures/026/couverture/propre/026-007.md",
+      "avant": "perimetre: [scripts/c-qa.mjs, scripts/juges-026-deux-preuve.mjs,",
+      "apres": "perimetre: [scripts/juges-026-deux-preuve.mjs,",
+      "critere": "CV-2",
+      "extrait": "FAIL CV-2 — 2 défaut(s) : 026-008 : juge scripts/c-qa.mjs écrit par aucune fiche de juges (fiche de fabrication)",
+      "duree_s": 0.1
+    },
+    {
+      "juge": "scripts/juges-026-preuve.mjs",
+      "commande": "node scripts/juges-026-preuve.mjs --couverture --cartes={racine}/scripts/fixtures/026/couverture/propre --index={racine}/scripts/fixtures/026/couverture/propre/INDEX.md",
+      "fichier": "scripts/fixtures/026/couverture/propre/026-005.md",
+      "avant": "- **Dépend de (PASS) :** 026-004.",
+      "apres": "- **Dépend de (PASS) :** 026-004, 026-009.",
+      "critere": "CV-4",
+      "extrait": "FAIL CV-4 — 1 défaut(s) : 026-005 : « depend » cite 026-009, qui n'est pas plus petit",
+      "duree_s": 0.1
+    },
+    {
+      "juge": "scripts/juges-026-preuve.mjs",
+      "commande": "node scripts/juges-026-preuve.mjs --couverture --cartes={racine}/scripts/fixtures/026/couverture/propre --index={racine}/scripts/fixtures/026/couverture/propre/INDEX.md",
+      "fichier": "scripts/fixtures/026/couverture/propre/INDEX.md",
+      "avant": "| V06 | — | 026-008 · 026-009 | — | — |\n| V07 | — | 026-010 | — | — |",
+      "apres": "| V06 | — | 026-008 · 026-009 · 026-010 | — | — |",
+      "critere": "CV-8",
+      "extrait": "FAIL CV-8 — 1 défaut(s) : V06 : 3 fiches d'exécutant sur le PC (au plus deux) : 026-008, 026-009, 026-010",
+      "duree_s": 0.1
+    },
+    {
+      "juge": "scripts/juges-026-preuve.mjs",
+      "commande": "node scripts/juges-026-preuve.mjs --couverture --cartes={racine}/scripts/fixtures/026/couverture/propre --index={racine}/scripts/fixtures/026/couverture/propre/INDEX.md",
+      "fichier": "scripts/fixtures/026/couverture/propre/INDEX.md",
+      "avant": "| V03 | 026-004 | 026-003 | — | — |",
+      "apres": "| V03 | 026-004 | 026-003 · 026-005 | — | — |",
+      "critere": "CV-8",
+      "extrait": "FAIL CV-8 — 4 défaut(s) : 026-005 : dans deux vagues : V03 et V04",
+      "duree_s": 0.1
+    },
+    {
+      "juge": "scripts/juges-026-preuve.mjs",
+      "commande": "node scripts/juges-026-preuve.mjs --couverture --cartes={racine}/scripts/fixtures/026/couverture/propre --index={racine}/scripts/fixtures/026/couverture/propre/INDEX.md",
+      "fichier": "scripts/fixtures/026/couverture/propre/026-011.md",
+      "avant": "\n- `scripts/c-qa.mjs` : CQ-1",
+      "apres": "",
+      "critere": "CV-6",
+      "extrait": "FAIL CV-6 — 1 défaut(s) : 026-007 : scripts/c-qa.mjs (c-qa) n'est nommé dans le corps d'aucune fiche de mutations",
+      "duree_s": 0.1
+    }
+  ]
+}
