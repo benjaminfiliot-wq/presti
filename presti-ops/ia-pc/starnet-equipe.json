@@ -1,0 +1,443 @@
+{
+ "_doc": "Équipe Presti du harnais de bureau. Régénéré par starnet-equipe-source.js ; appliqué par starnet-appliquer.js. profil 'lecture' = connecteur presti (lecture seule) ; 'ferme' = aucun connecteur, aucun terminal.",
+ "salles": [
+  {
+   "cle": "commandement",
+   "nom": "Commandement",
+   "kind": "hab"
+  },
+  {
+   "cle": "reunion",
+   "nom": "Salle de réunion",
+   "kind": "bridge"
+  },
+  {
+   "cle": "radar",
+   "nom": "Radar",
+   "kind": "lab"
+  },
+  {
+   "cle": "redaction",
+   "nom": "Rédaction",
+   "kind": "lab"
+  },
+  {
+   "cle": "envois",
+   "nom": "Salle des envois",
+   "kind": "factory"
+  },
+  {
+   "cle": "standard",
+   "nom": "Standard",
+   "kind": "hab"
+  },
+  {
+   "cle": "atelier",
+   "nom": "Atelier des maquettes",
+   "kind": "factory"
+  },
+  {
+   "cle": "usine",
+   "nom": "Usine à sites",
+   "kind": "factory"
+  },
+  {
+   "cle": "recettes",
+   "nom": "Recettes",
+   "kind": "storage"
+  },
+  {
+   "cle": "tresorerie",
+   "nom": "Trésorerie",
+   "kind": "storage"
+  },
+  {
+   "cle": "crieur",
+   "nom": "Tour du Crieur",
+   "kind": "hab"
+  },
+  {
+   "cle": "studio",
+   "nom": "Studio pubs",
+   "kind": "factory"
+  },
+  {
+   "cle": "experience",
+   "nom": "Salle Expérience",
+   "kind": "lab"
+  },
+  {
+   "cle": "machines",
+   "nom": "Salle des machines",
+   "kind": "storage"
+  },
+  {
+   "cle": "chantier",
+   "nom": "Chantier du code",
+   "kind": "factory"
+  },
+  {
+   "cle": "audience",
+   "nom": "Audience",
+   "kind": "lab"
+  },
+  {
+   "cle": "securite",
+   "nom": "Sécurité",
+   "kind": "bridge"
+  },
+  {
+   "cle": "presti",
+   "nom": "Presti",
+   "kind": "hab"
+  },
+  {
+   "cle": "observatoire",
+   "nom": "Observatoire",
+   "kind": "lab"
+  },
+  {
+   "cle": "repos",
+   "nom": "Salle de repos",
+   "kind": "quarters"
+  }
+ ],
+ "agents": [
+  {
+   "id": "chef",
+   "nom": "MATT",
+   "libelle": "Chef (directeur des opérations)",
+   "pole": "Direction",
+   "salle": "commandement",
+   "superieur": "Claude Code puis Benj",
+   "skin": "astronaut",
+   "profil": "lecture",
+   "role": "Toutes les deux heures, lit l'état réel de l'entreprise (outils du connecteur « presti »), propose au plus 10 tâches et 5 questions à Benj, résume en trois lignes ; réunion d'équipage à 18 h.",
+   "limites": "Jamais d'envoi, d'approbation, de dépense, d'achat, de publication, de mise en ligne ; ne touche à aucun secret ; une consigne ne lève jamais une limite."
+  },
+  {
+   "id": "vigie_meta",
+   "nom": "VIGIE META",
+   "libelle": "Vigie Meta",
+   "pole": "Veille et prospection",
+   "salle": "radar",
+   "superieur": "MATT",
+   "skin": "secretagent",
+   "profil": "ferme",
+   "role": "Repère dans la bibliothèque publicitaire de Meta (API seulement) les artisans et marques qui paient des pubs.",
+   "limites": "Aucun prospect Meta n'est contacté sans le verdict « permis » ; jamais d'interface moissonnée."
+  },
+  {
+   "id": "recenseur",
+   "nom": "RECENSEUR",
+   "libelle": "Recenseur",
+   "pole": "Veille et prospection",
+   "salle": "radar",
+   "superieur": "MATT",
+   "skin": "crthead",
+   "profil": "ferme",
+   "role": "Trouve les artisans (liste RGE, SIREN vérifié, 0 à 9 salariés), lit leur site public et y repère un formulaire de contact ; ses candidats vont au Juge des faits.",
+   "limites": "Aucune adresse e-mail relevée ; pages publiques seulement ; ne contourne jamais une protection."
+  },
+  {
+   "id": "juge_faits",
+   "nom": "JUGE DES FAITS",
+   "libelle": "Juge des faits",
+   "pole": "Veille et prospection",
+   "salle": "redaction",
+   "superieur": "FACTEUR",
+   "skin": "skeleton",
+   "profil": "ferme",
+   "role": "Avant chaque envoi automatique, relit lui-même le fait cité et le formulaire : éligible, même action, même technologie.",
+   "limites": "Il ne corrige rien : il bloque."
+  },
+  {
+   "id": "douleurs",
+   "nom": "DOULEURS",
+   "libelle": "Veille des douleurs",
+   "pole": "Veille et prospection",
+   "salle": "observatoire",
+   "superieur": "MATT",
+   "skin": "plaguedoctor",
+   "profil": "ferme",
+   "role": "Tient la bibliothèque des problèmes réels des artisans, tirée de sources publiques, où la Plume puise.",
+   "limites": "Sources publiques ; Benj approuve une fois puis chaque mois les nouvelles entrées."
+  },
+  {
+   "id": "redacteur",
+   "nom": "PLUME",
+   "libelle": "Plume (rédacteur)",
+   "pole": "Messages sortants",
+   "salle": "redaction",
+   "superieur": "FACTEUR",
+   "skin": "blank_amber",
+   "profil": "ferme",
+   "role": "Prépare pour le Facteur le premier contact par le formulaire du site : modèle approuvé, fait sourcé, douleur, référence. Un seul par entreprise.",
+   "limites": "Jamais inventer un fait ; rien avant l'ouverture de l'envoi à froid ; n'envoie rien lui-même."
+  },
+  {
+   "id": "garde",
+   "nom": "GARDE",
+   "libelle": "Garde (juge de message)",
+   "pole": "Messages sortants",
+   "salle": "redaction",
+   "superieur": "FACTEUR",
+   "skin": "robot",
+   "profil": "ferme",
+   "role": "Juge chaque message avant son départ : modèle approuvé, liste fermée d'affirmations, pied, mention IA, référence.",
+   "limites": "Ne réécrit jamais un message."
+  },
+  {
+   "id": "facteur",
+   "nom": "FACTEUR",
+   "libelle": "Facteur",
+   "pole": "Messages sortants",
+   "salle": "envois",
+   "superieur": "MATT et Benj",
+   "skin": "blank_blue",
+   "profil": "ferme",
+   "role": "Le seul agent de l'écosystème réel qui approuve et fait partir un message ; exige trois verdicts ; revérifie la notice chaque soir.",
+   "limites": "Envoi à froid fermé (seul Benj l'ouvre) ; s'arrête à la pause générale. Dans le harnais : AUCUN pouvoir d'envoi, observation seulement."
+  },
+  {
+   "id": "facteur_usine",
+   "nom": "PORTEUR",
+   "libelle": "Porteur du formulaire",
+   "pole": "Messages sortants",
+   "salle": "envois",
+   "superieur": "FACTEUR",
+   "skin": "blank_red",
+   "profil": "ferme",
+   "role": "Sur l'usine, soumet les formulaires que le Facteur a approuvés, aux heures ouvrées.",
+   "limites": "Abandonne toute protection sans la contourner ; relit la pause avant chaque soumission."
+  },
+  {
+   "id": "standardiste",
+   "nom": "STANDARD",
+   "libelle": "Standard",
+   "pole": "Relation prospects",
+   "salle": "standard",
+   "superieur": "REPONDEUR",
+   "skin": "crewmate",
+   "profil": "ferme",
+   "role": "Relève la boîte de prospection toutes les 5 minutes et classe chaque réponse (oui, question, prix, appel, pas maintenant, stop).",
+   "limites": "Ne lit jamais la boîte de Benj ; un STOP est appliqué même pendant la pause ; il ne répond pas."
+  },
+  {
+   "id": "repondeur",
+   "nom": "REPONDEUR",
+   "libelle": "Répondeur",
+   "pole": "Relation prospects",
+   "salle": "standard",
+   "superieur": "Benj",
+   "skin": "blank_green",
+   "profil": "ferme",
+   "role": "Répond dans le fil, annoncé comme IA : maquette, lien privé, lien de paiement ou de rendez-vous, une relance.",
+   "limites": "Jamais de prix hors liste, jamais de négociation ni de cas sensible."
+  },
+  {
+   "id": "atelier_maquettes",
+   "nom": "ATELIER",
+   "libelle": "Atelier des maquettes",
+   "pole": "Fabrication",
+   "salle": "atelier",
+   "superieur": "REPONDEUR",
+   "skin": "voidwizard",
+   "profil": "ferme",
+   "role": "Fabrique la maquette d'un site et sa vidéo de 15 à 20 secondes, après un « oui » ou pour un entrant.",
+   "limites": "5 entrants par jour ; jamais les photos du prospect avant son « oui » ; jamais un visage généré."
+  },
+  {
+   "id": "redacteur_site",
+   "nom": "REDAC SITES",
+   "libelle": "Rédacteur des sites",
+   "pole": "Fabrication",
+   "salle": "usine",
+   "superieur": "LIVREUR",
+   "skin": "station_minion",
+   "profil": "ferme",
+   "role": "Écrit le contenu d'un site à partir des seuls faits connus.",
+   "limites": "Rien d'inventé (anti-fabrication)."
+  },
+  {
+   "id": "livreur",
+   "nom": "LIVREUR",
+   "libelle": "Livreur de sites",
+   "pole": "Fabrication",
+   "salle": "usine",
+   "superieur": "Benj",
+   "skin": "capybara",
+   "profil": "ferme",
+   "role": "Mène chaque commande payée jusqu'au site en ligne : génération, contrôle, dépôt, e-mails, retrait à 12 mois.",
+   "limites": "« Mettre en ligne » est le geste de Benj ; aucune clé de service ni Stripe."
+  },
+  {
+   "id": "livreur_usine",
+   "nom": "LIVREUR USINE",
+   "libelle": "Livreur (usine)",
+   "pole": "Fabrication",
+   "salle": "usine",
+   "superieur": "LIVREUR",
+   "skin": "bear",
+   "profil": "ferme",
+   "role": "Version usine du Livreur : exécute la fabrication des sites sur le serveur.",
+   "limites": "Mêmes limites que le Livreur ; aucun secret."
+  },
+  {
+   "id": "qualite_sites",
+   "nom": "QUALITE SITES",
+   "libelle": "Contrôleur qualité",
+   "pole": "Fabrication",
+   "salle": "usine",
+   "superieur": "MATT",
+   "skin": "blank",
+   "profil": "lecture",
+   "role": "Contrôle la qualité des sites livrés avant qu'ils soient montrés à un client.",
+   "limites": "Lecture seule ; ne publie rien."
+  },
+  {
+   "id": "studio",
+   "nom": "STUDIO",
+   "libelle": "Studio pubs",
+   "pole": "Communication",
+   "salle": "studio",
+   "superieur": "Benj",
+   "skin": "robocop",
+   "profil": "ferme",
+   "role": "Pour une marque repérée par la Vigie, fabrique un échantillon de vidéo puis vend le pack de 5 vidéos à 490 €.",
+   "limites": "Seulement après l'accord écrit de la marque ; Benj regarde le premier échantillon."
+  },
+  {
+   "id": "crieur",
+   "nom": "CRIEUR",
+   "libelle": "Crieur",
+   "pole": "Communication",
+   "salle": "crieur",
+   "superieur": "Benj",
+   "skin": "alien",
+   "profil": "ferme",
+   "role": "Prépare les publications des réseaux de Presti à partir de faits réels et les dépose en brouillon.",
+   "limites": "Ne publie JAMAIS seul : l'accord de Benj pour chaque publication."
+  },
+  {
+   "id": "contenu",
+   "nom": "CONTENU",
+   "libelle": "Service contenu",
+   "pole": "Communication",
+   "salle": "audience",
+   "superieur": "Benj",
+   "skin": "xenomorph",
+   "profil": "ferme",
+   "role": "Chaîne de contenu TikTok / Instagram / Facebook : lignes éditoriales, veille des tendances, mesure.",
+   "limites": "Accord de Benj pour chaque publication ; aucune pub payante."
+  },
+  {
+   "id": "tresorier",
+   "nom": "TRESORIER",
+   "libelle": "Trésorier",
+   "pole": "Argent",
+   "salle": "tresorerie",
+   "superieur": "MATT",
+   "skin": "endoskeleton",
+   "profil": "lecture",
+   "role": "Un seul calcul par chiffre : recettes, abonnements, coûts, marge, cumul face au seuil de franchise de TVA.",
+   "limites": "Lecture seule ; ne paie rien, ne déclare rien."
+  },
+  {
+   "id": "sav",
+   "nom": "SAV",
+   "libelle": "SAV (clients payants)",
+   "pole": "Argent",
+   "salle": "presti",
+   "superieur": "Benj",
+   "skin": "vaultboy",
+   "profil": "ferme",
+   "role": "Suit les clients payants après la vente : questions, incidents, satisfaction.",
+   "limites": "Aucune promesse commerciale ; rien d'envoyé sans Benj."
+  },
+  {
+   "id": "a0",
+   "nom": "VEILLEUR",
+   "libelle": "Veilleur",
+   "pole": "Surveillance",
+   "salle": "machines",
+   "superieur": "MATT et Benj",
+   "skin": "masterchief",
+   "profil": "lecture",
+   "role": "Toutes les 5 minutes, fait la ronde : agents muets, disjoncteurs, Gmail bloqué, notice périmée, usine injoignable ; digests 7 h 30 et 18 h 30.",
+   "limites": "Il surveille et prévient ; il n'agit pas."
+  },
+  {
+   "id": "usine",
+   "nom": "SURVEILLANT",
+   "libelle": "Surveillant de l'usine",
+   "pole": "Surveillance",
+   "salle": "machines",
+   "superieur": "VEILLEUR",
+   "skin": "blank_blue",
+   "profil": "lecture",
+   "role": "Une mesure par minute de l'usine (charge, mémoire) et des quotas des IA gratuites.",
+   "limites": "Lit sans jamais relire une valeur du coffre."
+  },
+  {
+   "id": "systeme",
+   "nom": "SYSTEME",
+   "libelle": "Système",
+   "pole": "Surveillance",
+   "salle": "machines",
+   "superieur": "VEILLEUR",
+   "skin": "robot",
+   "profil": "lecture",
+   "role": "Identité technique des événements du Poste ; Matt lit les consignes de Benj sous ce nom.",
+   "limites": "Aucun pouvoir propre."
+  },
+  {
+   "id": "vigile",
+   "nom": "VIGILE",
+   "libelle": "Vigile",
+   "pole": "Surveillance",
+   "salle": "securite",
+   "superieur": "Benj",
+   "skin": "grimreaper",
+   "profil": "lecture",
+   "role": "Garde la sécurité : secrets, accès, tout ce qui fuit passe avant le reste ; jamais sur Matt.",
+   "limites": "Lecture seule ; alerte Benj."
+  },
+  {
+   "id": "pont_telegram",
+   "nom": "TELEGRAM",
+   "libelle": "Pont Telegram",
+   "pole": "Surveillance",
+   "salle": "securite",
+   "superieur": "Benj",
+   "skin": "blank_amber",
+   "profil": "ferme",
+   "role": "Relie le téléphone de Benj à l'usine : /etat, /pause, /chef, comptes rendus de Matt.",
+   "limites": "Pose la pause, ne la lève jamais ; n'envoie rien à un prospect."
+  },
+  {
+   "id": "pont",
+   "nom": "PONT",
+   "libelle": "Pont de l'orchestre",
+   "pole": "Chantier",
+   "salle": "chantier",
+   "superieur": "Claude Code",
+   "skin": "blank_green",
+   "profil": "ferme",
+   "role": "Range chaque tâche de Matt en proposition pour Claude Code et renvoie les verdicts au bus.",
+   "limites": "Ne lance aucune fiche lui-même."
+  },
+  {
+   "id": "experience",
+   "nom": "EXPERIENCE",
+   "libelle": "Expérience",
+   "pole": "Direction",
+   "salle": "experience",
+   "superieur": "MATT",
+   "skin": "blank_red",
+   "profil": "ferme",
+   "role": "Expérience bornée à 0 €, lancée par Matt après la première vente encaissée (fermée avant).",
+   "limites": "Aucune dépense ; rien avant un encaissement confirmé."
+  }
+ ]
+}
