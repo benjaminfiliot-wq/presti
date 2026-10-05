@@ -341,7 +341,9 @@ function environnementDuModele(nomJeton) {
 function lancerModele(o, entree, sortie, noter) {
   return new Promise((resoudre) => {
     const args = ['exec', '-m', o.modele, '-s', 'read-only', '-C', o.travail, '--skip-git-repo-check', '-o', sortie, '-']
-    const [commande, argv] = /\.m?js$/i.test(o.codex) ? [process.execPath, [o.codex, ...args]] : [o.codex, args]
+    // Le relais de la file du chef (presti-chef-modele) partage le temps de la réunion entre ses moteurs de secours : il doit finir AVANT que la réunion ne tue son attente.
+    const delaiRelais = /presti-chef-modele(?:\.m?js)?$/.test(o.codex) ? [`--delai=${Math.max(60, o.delai - 45)}`] : []
+    const [commande, argv] = /\.m?js$/i.test(o.codex) ? [process.execPath, [o.codex, ...delaiRelais, ...args]] : [o.codex, [...delaiRelais, ...args]]
     let fini = false
     let minuterie = null
     let enfant
@@ -493,6 +495,9 @@ async function tenir(o, consigne, schema) {
     const consigneEtFormat = `${consigne.trim()}\n\n---\nRéponds uniquement par le contenu de reunion.json : un seul objet JSON, sans texte avant ni après et sans bloc de code ; ton dernier message est enregistré tel quel dans le fichier. La date du jour et l'heure à prendre pour les clés et les échéances sont dans les données ci-dessous.\n\n${texteEntree}`
     const m = await lancerModele(o, consigneEtFormat, sortie, noter)
     noter('modele', `${m.etat}${m.code === null ? '' : ` code=${m.code}`}${/usage limit/i.test(m.sortie) ? ' quota atteint' : ''}`)
+    // Quand Codex est à bout, le relais de la file du chef écrit le compte rendu par un moteur de secours : la réunion le consigne (le plan, lui, est validé comme toujours).
+    const secours = /\[relais\] moteur=([a-z0-9_]{2,40})/.exec(m.sortie)?.[1]
+    if (secours) noter('modele', `moteur de secours ${secours}${/compte rendu raccourci par le relais/.test(m.sortie) ? ' : compte rendu raccourci par le relais' : ''}`)
     if (m.etat === 'delai') { motif = 'delai'; throw new Echec('delai', `le Chef n'a pas rendu la main en ${o.delai} s : arbre tué`) }
     if (m.etat === 'interrompu') throw new Echec('erreur', 'réunion interrompue par un signal')
     if (m.etat === 'erreur') throw new Echec('erreur', 'le modèle n\'a pas pu être lancé')

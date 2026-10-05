@@ -6,7 +6,7 @@ import os from 'node:os'
 import path from 'node:path'
 import http from 'node:http'
 import { spawn } from 'node:child_process'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const racine = path.resolve(process.argv[2])
 const C = await import(pathToFileURL(path.join(racine, 'scripts', 'usine', 'relais-chef.mjs')).href)
@@ -365,6 +365,198 @@ await cas('RC-7', async () => {
   if (flMauvais.requetes.length < 6 || !flMauvais.requetes[1]) e.push(`plan refusé : ${flMauvais.requetes.length} requête(s) aux moteurs libres (des corrections attendues)`)
   await flMauvais.fermer(); await olMauvais.fermer()
   await fl.fermer(); await ol.fermer(); await flProse.fermer()
+  return e
+})
+
+// ── La réunion d'équipage (RC-11 à RC-13) : mêmes aides que le cycle quand Codex est à bout ─────────────────────────────────
+// Ajouts du 05/10/2026 : la réunion (reunion.mjs) passait par le relais mais son compte rendu était refusé en bloc (19 écarts : ligne de 163 signes,
+// libellés d'option de 114 signes, mesure hors liste, échéance à +7 j 2 h) puis abandonnée. Le relais rend maintenant les écarts au modèle (trois essais
+// au plus), puis tente une réduction déterministe sûre ; il dit les limites exactes et donne un exemple valide.
+const ICI = path.dirname(fileURLToPath(import.meta.url))
+const RC = await import(pathToFileURL(path.join(racine, 'scripts', 'chef', 'reunion-controle.mjs')).href)
+const { planDe, SCENARIOS } = await import(pathToFileURL(path.join(ICI, '..', '026-pilotage', 's', 'faux-codex.mjs')).href)
+const BUS = await import(pathToFileURL(path.join(ICI, '..', '026-pilotage', 's', 'faux-bus.mjs')).href)
+const nbSignes = (t) => [...String(t)].length
+const motsDe = (n) => Array.from({ length: n }, (_, i) => `mot${i}`).join(' ')
+const jOkReunion = (x) => ({ choices: [{ message: { content: typeof x === 'string' ? x : JSON.stringify(x) } }] })
+
+await cas('RC-11', async () => {
+  const e = []
+  const maintenant = new Date()
+  const jour = RC.jourDeParis(maintenant)
+  const ctx = { jour, maintenant }
+  // 1. validerReunion est le miroir de reunion.mjs : mêmes verdicts sur les plans du juge de la réunion (station-reunion-qa)
+  for (const sc of SCENARIOS) {
+    const p = planDe(sc, maintenant)
+    if (!p) continue
+    const n = RC.validerReunion(p, ctx).length
+    if (sc === 'conforme' ? n !== 0 : n === 0) e.push(`validerReunion : « ${sc} » ${n ? `refusé (${n} écart(s))` : 'accepté'}, ${sc === 'conforme' ? 'accepté' : 'refusé'} attendu`)
+  }
+  // 2. le vrai compte rendu refusé le 05/10 (journal de l'usine, 16:15 UTC) : refusé pour ses fautes, jamais réparé à tort par la réduction
+  const reel = JSON.parse(fs.readFileSync(path.join(ICI, 'reunion-refusee-0510.json'), 'utf8'))
+  const ctxReel = { jour: '2026-10-05', maintenant: new Date('2026-10-05T16:15:00Z') }
+  const ecReel = RC.validerReunion(reel, ctxReel).join(' | ')
+  for (const [nom, re] of [['ligne de 163 signes', /lignes\[2\] : 163 signes, 140 au plus/], ['libellé d\'option de 114 signes', /options\[0\]\.libelle : 114 signes, 80 au plus/], ['mesure hors liste', /objectif\.mesure/], ['échéance hors de +7 j', /idees\[0\]\.echeance/]]) if (!re.test(ecReel)) e.push(`le compte rendu du 05/10 : « ${nom} » non relevé (${ecReel.slice(0, 120)})`)
+  if (RC.reduireReunion(reel, ctxReel) !== null) e.push('la réduction « répare » le compte rendu du 05/10 (libellés d\'option trop longs, échéance hors plage : ni coupés ni inventés)')
+  // 3. les limites exactes et l'exemple de JSON valide
+  const lim = RC.limitesReunion(jour, maintenant.getTime())
+  for (const x of ['140 signes', '80 signes', '300 signes', '2000', '"lancer"', '"reporter"', 'encaisse_eur', 'contacts_froids', 'sites_en_ligne', `chef:${jour}:idee-`, 'entre 1 heure et 7 jours', '3 idées AU PLUS', '"objectif": null', 'ne recopie rien']) if (!lim.includes(x)) e.push(`les limites ne disent pas « ${x} »`)
+  const ex = RC.exempleReunion(jour, maintenant.getTime())
+  if (!lim.includes(JSON.stringify(ex, null, 1))) e.push('l\'exemple de JSON n\'est pas dans les limites')
+  if (RC.validerReunion(ex, ctx).length) e.push(`l'exemple de forme ne passe pas validerReunion : ${RC.validerReunion(ex, ctx).slice(0, 2).join(' ; ')}`)
+  if (!RC.validerReunion(ex, { ...ctx, interdits: RC.textesDeLExemple(jour, maintenant.getTime()) }).length) e.push('la recopie de l\'exemple est acceptée')
+  // 4. la réduction déterministe sûre
+  const base = planDe('conforme', maintenant)
+  const longue = `Le preneur a clos cinq tâches ${motsDe(30)}`
+  if (!(nbSignes(longue) > 140 && nbSignes(longue) <= 280)) e.push('banc : la ligne longue ne fait pas entre 141 et 280 signes')
+  const r1 = RC.reduireReunion({ ...base, lignes: [longue, 'Une seconde ligne tout à fait normale du compte rendu.'] }, ctx)
+  if (!r1) e.push('une ligne un peu trop longue n\'est pas réduite')
+  else {
+    const l0 = r1.plan.lignes[0]
+    if (nbSignes(l0) > 140 || !l0.endsWith('…') || !longue.startsWith(l0.slice(0, -1)) || !/\s/.test(longue[l0.length - 1] ?? 'x')) e.push(`ligne coupée « ${l0.slice(-30)} » (${nbSignes(l0)} signes) : 140 au plus, une coupure sur une limite de mot, du texte d'origine seulement, « … » à la fin`)
+    if (r1.plan.lignes[1] !== 'Une seconde ligne tout à fait normale du compte rendu.' || JSON.stringify(r1.plan.idees) !== JSON.stringify(base.idees) || JSON.stringify(r1.plan.objectif) !== JSON.stringify(base.objectif)) e.push('la réduction touche autre chose que la ligne trop longue')
+    if (RC.validerReunion(r1.plan, ctx).length || !r1.notes.length) e.push('le résultat de la réduction ne passe pas validerReunion, ou n\'est pas annoncé')
+  }
+  const r2 = RC.reduireReunion({ ...base, objectif: { libelle: 'Maintenir la cadence', mesure: 'taches_faites', cible: 10 } }, ctx)
+  if (!r2 || r2.plan.objectif !== null) e.push('un objectif non conforme n\'est pas ramené à null')
+  const r3 = RC.reduireReunion({ ...base, idees: [1, 2, 3, 4, 5].map((n) => ({ ...base.idees[0], cle_idempotence: `chef:${jour}:idee-cinq-${n}` })) }, ctx)
+  if (!r3 || r3.plan.idees.length !== 3 || r3.plan.idees[2].cle_idempotence !== `chef:${jour}:idee-cinq-3`) e.push('cinq idées ne sont pas ramenées aux trois premières')
+  const refus = (nom, plan) => { const x = RC.reduireReunion(plan, ctx); if (x !== null) e.push(`réduction à tort (${nom}) : ${JSON.stringify(x.notes)}`) }
+  const objetBanal = { libelle: 'Objectif banal', mesure: 'taches_faites', cible: null }
+  refus('ligne de plus du double', { ...base, lignes: ['x '.repeat(250)] })
+  refus('ligne sans limite de mot', { ...base, lignes: ['x'.repeat(200)] })
+  refus('adresse dans la ligne', { ...base, lignes: [`Contact jean@exemple.fr ${motsDe(40)}`] })
+  refus('plus de cinq lignes', { ...base, lignes: ['Une', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'].map((x) => `Ligne ${x} du compte rendu de la réunion`), objectif: objetBanal })
+  refus('aucune ligne', { ...base, lignes: [], objectif: objetBanal })
+  refus('compte rendu absurde (une seule ligne de deux mots)', { ...base, lignes: ['Ok merci'], idees: [1, 2, 3, 4].map((n) => ({ ...base.idees[0], cle_idempotence: `chef:${jour}:idee-quatre-${n}` })) })
+  refus('lignes en double', { ...base, lignes: ['Ligne répétée du compte rendu.', 'Ligne répétée du compte rendu.'], objectif: objetBanal })
+  refus('gabarit laissé tel quel', { ...base, lignes: ['<ce qui a marché> à compléter plus tard ok'], objectif: objetBanal })
+  refus('clé d\'idée fautive (rien à réduire)', planDe('cle-hors-format', maintenant))
+  refus('pas un objet', 'abc')
+  // 5. appelDirect : trois jets refusés puis la réduction ; une correction suffit ; la réduction ne répare pas ce qu'elle ne doit pas ; elle est revalidée
+  const suite = (reponses) => { const vus = []; return { vus, fetchFn: async (url, init) => { vus.push(JSON.parse(init.body)); const c = reponses.length > 1 ? reponses.shift() : reponses[0]; return { ok: true, status: 200, text: async () => '', json: async () => c } } } }
+  const moteurFl = C.CHAINE_SECOURS.find((m) => m.id === 'freellmapi_gemini')
+  const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-reunion-'))
+  const monde = () => { const destination = path.join(dossier, `sortie-${Math.random().toString(36).slice(2)}-reunion.json`); return { destination, prompt: { systeme: 's', utilisateur: 'u', destination, dernierMessage: destination } } }
+  const valider = (o) => RC.validerReunion(o, ctx)
+  const reduire = (o) => RC.reduireReunion(o, ctx)
+  const refuse = { ...base, lignes: [longue, base.lignes[1]] }
+  const ecrit = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')) } catch { return null } }
+  let w = monde(); let s = suite([jOkReunion(refuse)])
+  let r = await C.appelDirect({ moteur: moteurFl, prompt: w.prompt, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s.fetchFn, valider, reduire })
+  if (r.code !== 0 || s.vus.length !== 3 || !Array.isArray(r.raccourci) || !/compte rendu raccourci par le relais/.test(r.sortie) || !ecrit(w.destination) || nbSignes(ecrit(w.destination).lignes[0]) > 140) e.push(`trois jets refusés : code ${r.code}, ${s.vus.length} appel(s), plan ${ecrit(w.destination) ? 'écrit' : 'absent'} (3 appels, le plan réduit écrit, la mention « raccourci par le relais » attendus)`)
+  else if (!JSON.stringify(s.vus[1].messages).includes('lignes[0] : ') || !JSON.stringify(s.vus[1].messages).includes('140 au plus')) e.push('les écarts ne sont pas rendus au modèle avant la réduction')
+  w = monde(); s = suite([jOkReunion(refuse), jOkReunion(base)])
+  r = await C.appelDirect({ moteur: moteurFl, prompt: w.prompt, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s.fetchFn, valider, reduire })
+  if (r.code !== 0 || s.vus.length !== 2 || r.raccourci || JSON.stringify(ecrit(w.destination)) !== JSON.stringify(base)) e.push(`une correction suffit : code ${r.code}, ${s.vus.length} appel(s), raccourci ${JSON.stringify(r.raccourci ?? null)} (2 appels, le plan corrigé tel quel, pas de réduction attendus)`)
+  w = monde(); s = suite([jOkReunion(reel)])
+  r = await C.appelDirect({ moteur: moteurFl, prompt: w.prompt, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s.fetchFn, valider, reduire })
+  if (s.vus.length !== 3 || ecrit(w.destination) || /raccourci/.test(r.sortie)) e.push(`compte rendu irréparable : ${s.vus.length} appel(s), plan ${ecrit(w.destination) ? 'écrit' : 'absent'} (3 appels, rien d'écrit attendus)`)
+  w = monde(); s = suite([jOkReunion(refuse)])
+  r = await C.appelDirect({ moteur: moteurFl, prompt: w.prompt, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s.fetchFn, valider, reduire: () => ({ plan: { ...base, lignes: [longue] }, notes: ['faux'] }) })
+  if (ecrit(w.destination)) e.push('une réduction qui ne passe pas le validateur est écrite')
+  w = monde(); s = suite([jOkReunion(refuse)])
+  r = await C.appelDirect({ moteur: moteurFl, prompt: w.prompt, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: s.fetchFn, valider })
+  if (ecrit(w.destination) || r.raccourci) e.push('sans réduction fournie (le cycle), un compte rendu refusé est écrit')
+  return e
+})
+
+await cas('RC-12', async () => {
+  const e = []
+  const faux = path.join(racine, 'scripts', 'fixtures', 'relais-ia', 'faux-codex-chef.mjs')
+  const maintenant = new Date()
+  const jour = RC.jourDeParis(maintenant)
+  const base = planDe('conforme', maintenant)
+  const longue = `Le preneur a clos cinq tâches ${motsDe(30)}`
+  const refuse = { ...base, lignes: [longue, base.lignes[1]] }
+  const lancerReunion = async (srvFl, srvOl) => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-reunion-srv-'))
+    const echange = path.join(tmp, 'echange-chef'), d = path.join(echange, 'demande-1'), work = path.join(tmp, 'travail'), home = path.join(tmp, 'home')
+    for (const x of [work, d, path.join(home, '.config', 'presti')]) fs.mkdirSync(x, { recursive: true })
+    fs.writeFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), `${CLE_SENTINELLE}\n`)
+    const plan = path.join(d, 'sortie-1-reunion.json')
+    // La réunion passe par `codex exec -m … -s read-only -C <travail> --skip-git-repo-check -o <travail>/reunion.json -` : l'entrée sur stdin, le plan dans le fichier de -o.
+    const argv = ['exec', '-m', 'gpt-6-sol', '-s', 'read-only', '-C', work, '--skip-git-repo-check', '-o', plan, '-']
+    fs.writeFileSync(path.join(d, 'entree.txt'), '# Réunion\nÉcris reunion.json.\n<donnees_etat>{"agents":[{"nom":"chef"}]}</donnees_etat>\n')
+    fs.writeFileSync(path.join(d, 'demande.json'), JSON.stringify({ argv, entrees: [], sorties: [{ origine: '/o/reunion.json', copie: plan }], stdin: true, delai_s: 120 }))
+    fs.writeFileSync(path.join(d, 'demande.pret'), '')
+    fs.writeFileSync(path.join(d, 'faux-config.json'), JSON.stringify({ reussitAvec: [], echec: '401', journal: path.join(tmp, 'appels.jsonl') }))
+    await lancer([path.join(racine, 'scripts', 'usine', 'chef-modele.mjs'), 'servir', `--echange=${echange}`, `--codex=${faux}`, `--freellmapi=http://127.0.0.1:${srvFl.port}/v1`, `--ollama=http://127.0.0.1:${srvOl.port}`, '--relais=oui'], { PATH: process.env.PATH, HOME: home })
+    const lire = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')) } catch { return null } }
+    let trace = ''
+    try { trace = fs.readdirSync(path.join(home, '.relais')).map((f) => fs.readFileSync(path.join(home, '.relais', f), 'utf8')).join('\n') } catch { trace = '' }
+    return { reponse: lire(path.join(d, 'reponse.json')), plan: lire(plan), trace }
+  }
+  const ok = (x) => ({ statut: 200, corps: jOkReunion(x) })
+  const olVide = await serveur(() => ({ statut: 200, corps: { message: { content: 'Désolé.' } } }))
+  // a) trois jets avec une ligne de 163 signes : les écarts sont rendus au modèle, puis la réduction écrit le compte rendu raccourci ; le message porte les limites
+  const fa = await serveur(() => ok(refuse))
+  const a = await lancerReunion(fa, olVide)
+  if (a.reponse?.code !== 0 || a.reponse?.moteur !== 'freellmapi_gemini') e.push(`réunion, ligne trop longue : réponse ${JSON.stringify({ code: a.reponse?.code, moteur: a.reponse?.moteur })} (code 0, freellmapi_gemini attendus)`)
+  if (fa.requetes.length !== 3) e.push(`réunion, ligne trop longue : ${fa.requetes.length} requête(s) au premier moteur (3 jets attendus)`)
+  const premier = JSON.parse(fa.requetes[0]?.brut ?? '{}')
+  const msg = String(premier.messages?.at(-1)?.content ?? '')
+  for (const x of ['LIMITES EXACTES', `chef:${jour}:idee-`, '140 signes AU PLUS', 'Exemple de FORME valide']) if (!msg.includes(x)) e.push(`réunion : le message du modèle ne dit pas « ${x} »`)
+  if (!a.plan || nbSignes(a.plan.lignes?.[0]) > 140 || !String(a.plan.lignes?.[0]).endsWith('…')) e.push('réunion, ligne trop longue : le compte rendu réduit n\'est pas écrit à la place de reunion.json')
+  if (!/compte rendu raccourci par le relais/.test(a.trace) || !/compte rendu raccourci par le relais/.test(String(a.reponse?.sortie))) e.push('réunion : « compte rendu raccourci par le relais » n\'est ni dans le journal du relais ni dans la réponse')
+  if (JSON.stringify(a.reponse).includes(CLE_SENTINELLE) || a.trace.includes(CLE_SENTINELLE)) e.push('réunion : la clé est dans la réponse ou dans le journal')
+  // b) une correction suffit : le compte rendu corrigé est écrit tel quel, sans réduction
+  const reponsesB = [refuse, base]
+  const fb = await serveur(() => ok(reponsesB.length > 1 ? reponsesB.shift() : reponsesB[0]))
+  const b = await lancerReunion(fb, olVide)
+  if (b.reponse?.code !== 0 || fb.requetes.length !== 2 || JSON.stringify(b.plan) !== JSON.stringify(base) || /raccourci/.test(b.trace)) e.push(`réunion, une correction : code ${b.reponse?.code}, ${fb.requetes.length} requête(s), plan ${b.plan ? 'écrit' : 'absent'} (2 requêtes, le plan corrigé tel quel, pas de réduction attendus)`)
+  // c) le vrai compte rendu du 05/10 (irréparable) : jamais écrit ; code non nul ; les moteurs suivants sont essayés
+  const reelDuJour = JSON.parse(fs.readFileSync(path.join(ICI, 'reunion-refusee-0510.json'), 'utf8'))
+  const fc = await serveur(() => ok(reelDuJour))
+  const c = await lancerReunion(fc, olVide)
+  if (c.plan || c.reponse?.code === 0) e.push('réunion : le compte rendu irréparable du 05/10 est écrit comme compte rendu de la réunion')
+  if (fc.requetes.length < 6) e.push(`réunion irréparable : ${fc.requetes.length} requête(s) aux moteurs libres (gemini, mistral, auto ×2 : 3 jets chacun, au moins 6 attendues)`)
+  // d) la recopie de l'exemple est refusée
+  const fd = await serveur(() => ok(RC.exempleReunion(jour, Date.now())))
+  const dd = await lancerReunion(fd, olVide)
+  if (dd.plan || dd.reponse?.code === 0) e.push('réunion : un modèle qui recopie l\'exemple de forme voit son compte rendu écrit')
+  // e) un moteur libre qui répond en prose (code 0, rien d'écrit) ne passe pas pour un succès : le suivant prend la demande (le fichier de sortie est le « -o » lui-même)
+  const fe = await serveur(() => ok('Voici le compte rendu : tout va bien.'))
+  const olOk = await serveur(() => ({ statut: 200, corps: { message: { content: JSON.stringify(base) } } }))
+  const ee = await lancerReunion(fe, olOk)
+  if (ee.reponse?.code !== 0 || ee.reponse?.moteur !== 'ollama_cloud' || JSON.stringify(ee.plan) !== JSON.stringify(base)) e.push(`réunion, moteurs libres en prose : réponse ${JSON.stringify({ code: ee.reponse?.code, moteur: ee.reponse?.moteur })} (ollama_cloud attendu), plan ${ee.plan ? 'écrit' : 'absent'}`)
+  for (const s of [fa, fb, fc, fd, fe, olVide, olOk]) await s.fermer()
+  return e
+})
+
+await cas('RC-13', async () => {
+  const e = []
+  // relayer : un secours qui a raccourci le compte rendu le dit dans le journal du relais (jamais une valeur)
+  const m = mondeChef({ opts: { executer: async (mo) => (mo.id === 'codex' ? { code: 1, sortie: 'ERROR: unexpected status 401 Unauthorized: Missing bearer' } : { code: 0, sortie: 'plan écrit par freellmapi_gemini (compte rendu raccourci par le relais)', raccourci: ['lignes[0] coupée de 163 à 139 signes'] }), verifier: () => true } })
+  const r = await C.relayer(m.base)
+  const j = journalDe(m.dossier).find((x) => x.moteur === 'freellmapi_gemini' && x.issue === 'ok')
+  if (r.code !== 0 || r.moteur !== 'freellmapi_gemini' || !/raccourci par le relais/.test(r.sortie)) e.push(`relayer : code ${r.code}, moteur ${r.moteur}, sortie « ${String(r.sortie).slice(0, 80)} »`)
+  if (j?.note !== 'compte rendu raccourci par le relais' || !Array.isArray(j?.modifications)) e.push('relayer : le journal du relais ne dit pas « compte rendu raccourci par le relais »')
+  // reunion.mjs : le temps donné au relais est celui de la réunion moins 45 s, et le moteur de secours est consigné dans le journal de la réunion
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'reunion-relais-'))
+  const wrapper = path.join(tmp, 'presti-chef-modele.mjs')
+  fs.writeFileSync(wrapper, [
+    "import fs from 'node:fs'", "import path from 'node:path'",
+    'const a = process.argv.slice(2); const o = a.indexOf("-o")',
+    'fs.writeFileSync(path.join(path.dirname(a[o + 1]), "faux-relais-argv.json"), JSON.stringify(a))',
+    `fs.writeFileSync(a[o + 1], ${JSON.stringify(JSON.stringify(planDe('conforme')))})`,
+    'console.log("plan écrit par freellmapi_gemini (compte rendu raccourci par le relais)"); console.error("\\n[relais] moteur=freellmapi_gemini")',
+  ].join('\n'))
+  const jeton = `jeton-essai-${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`
+  const bus = await BUS.demarrerFauxBus({ jeton, scenario: {} })
+  const travail = path.join(tmp, 'travail')
+  const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^PRESTI_/.test(k)))
+  env.PRESTI_JETON_CHEF = jeton
+  let code = null
+  try {
+    code = await new Promise((ok2) => { const p = spawn(process.execPath, [path.join(racine, 'scripts', 'chef', 'reunion.mjs'), `--base=${bus.base}`, `--codex=${wrapper}`, `--consigne=${path.join(ICI, '..', '026-pilotage', 's', 'consigne-reunion-essai.md')}`, `--schema=${path.join(ICI, '..', '026-pilotage', 's', 'chef-reunion.schema.json')}`, `--travail=${travail}`, '--delai=300'], { cwd: racine, env, stdio: 'ignore' }); p.on('close', ok2); p.on('error', () => ok2(-1)) })
+  } finally { await bus.arreter() }
+  const argvVu = (() => { try { return JSON.parse(fs.readFileSync(path.join(travail, 'faux-relais-argv.json'), 'utf8')) } catch { return null } })()
+  const journal = fs.existsSync(travail) ? fs.readdirSync(travail).filter((f) => /^reunion-\d{4}-\d{2}-\d{2}\.log$/.test(f)).map((f) => fs.readFileSync(path.join(travail, f), 'utf8')).join('\n') : ''
+  if (code !== 0) e.push(`reunion.mjs : code ${code}, 0 attendu (journal : ${journal.trim().split('\n').slice(-2).join(' | ').slice(0, 200)})`)
+  if (!argvVu || argvVu[0] !== '--delai=255') e.push(`reunion.mjs : le relais reçoit ${JSON.stringify(argvVu?.[0])} avant l'argv de Codex, « --delai=255 » (300 s moins 45) attendu`)
+  if (!/moteur de secours freellmapi_gemini : compte rendu raccourci par le relais/.test(journal)) e.push('reunion.mjs : le journal de la réunion ne consigne pas le moteur de secours et le compte rendu raccourci')
+  if (journal.includes(jeton)) e.push('reunion.mjs : le jeton est dans le journal')
   return e
 })
 

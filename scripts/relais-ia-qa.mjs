@@ -21,12 +21,13 @@ const EXECUTERS = ['executer.mjs', 'executer-chef.mjs'].map((f) => path.join(ICI
 const LOADER = path.join(ICI, 'ts-loader.mjs')
 const TRAVAIL = path.join(DEPOT, '.orchestre', 'travail', 'relais-ia')
 const args = process.argv.slice(2)
-for (const a of args) if (!['--temoin', '--garder'].includes(a)) { console.error(`✗ option inconnue : ${a}`); process.exit(2) }
+for (const a of args) if (!['--temoin', '--garder'].includes(a) && !/^--depuis=\d+$/.test(a)) { console.error(`✗ option inconnue : ${a}`); process.exit(2) }
 const SEUL_TEMOIN = args.includes('--temoin')
 const GARDER = args.includes('--garder')
+const DEPUIS = Number((args.find((a) => a.startsWith('--depuis=')) ?? '').slice('--depuis='.length)) || 1 // pour développer le catalogue : ne rejoue que les sabotages n° DEPUIS et suivants (le rapport complet se lance sans option)
 
 const lire = (f) => fs.readFileSync(f, 'utf8')
-const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs']
+const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/chef/reunion-controle.mjs', 'scripts/chef/reunion.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs']
 for (const f of SOURCES) if (!fs.existsSync(path.join(DEPOT, f))) { console.error(`✗ préalable absent : ${f}`); process.exit(2) }
 
 /** Une racine minimale (de quoi résoudre « @/ ») : les cinq modules du relais, un stub de la base, rien d'autre. */
@@ -174,12 +175,59 @@ const SABOTAGES = [
   { nom: 'chef : moteurs à bout jamais mémorisés',
     mutations: [['scripts/usine/relais-chef.mjs', "      etat.ecrire(courant)\n      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison", "      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison"]],
     rouges: ['RC-2'] },
+  // ── la réunion d'équipage (05/10) : mêmes aides que le cycle quand Codex est à bout ──
+  { nom: "réunion : le validateur du compte rendu n'est pas branché (un compte rendu refusé en bloc par reunion.mjs serait écrit)",
+    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => RC.validerReunion(objet, { jour: RC.jourDeParis(maintenant()), maintenant: maintenant(), interdits })\n', '']],
+    rouges: ['RC-12'] },
+  { nom: "réunion : la réduction déterministe n'est pas branchée dans le relais",
+    mutations: [['scripts/usine/chef-modele.mjs', '      reduire = (objet) => RC.reduireReunion(objet, { jour: RC.jourDeParis(maintenant()), maintenant: maintenant(), interdits })\n', '']],
+    rouges: ['RC-12'] },
+  { nom: 'réunion : les limites exactes et l\'exemple ne sont pas dits au modèle',
+    mutations: [['scripts/usine/chef-modele.mjs', 'complement = RC.limitesReunion(jour, Date.now())', 'complement = null']],
+    rouges: ['RC-12'] },
+  { nom: 'réunion : le fichier de sortie « -o » n\'est pas vérifié (un moteur libre en prose passe pour un succès, le suivant ne prend jamais la demande)',
+    mutations: [['scripts/usine/chef-modele.mjs', '      if (!attendus.length && dernier) attendus.push(dernier)\n', '']],
+    rouges: ['RC-12'] },
+  { nom: "réunion : appelDirect n'essaie jamais la réduction",
+    mutations: [['scripts/usine/relais-chef.mjs', "const r2 = typeof reduire === 'function' ? reduire(essai) : null", 'const r2 = null']],
+    rouges: ['RC-11', 'RC-12'] },
+  { nom: "réunion : la réduction n'est pas revalidée par le validateur avant d'être écrite",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (r2 && r2.plan && !(typeof valider === 'function' && valider(r2.plan).length)) {", 'if (r2 && r2.plan) {']],
+    rouges: ['RC-11'] },
+  { nom: 'réunion : le relais ne dit plus que le compte rendu a été raccourci',
+    mutations: [['scripts/usine/relais-chef.mjs', ", ...(Array.isArray(r.raccourci) ? { note: 'compte rendu raccourci par le relais', modifications: r.raccourci.slice(0, 8) } : {}) })", ' })']],
+    rouges: ['RC-13', 'RC-12'] },
+  { nom: 'réunion : une ligne sans limite de mot est coupée au milieu d\'un mot',
+    mutations: [['scripts/chef/reunion-controle.mjs', 'if (k < Math.floor(LIGNE_MAX / 2)) return null', 'if (false) return null']],
+    rouges: ['RC-11'] },
+  { nom: "réunion : la réduction rend un compte rendu absurde (une ligne de deux mots, des lignes en double, un gabarit)",
+    mutations: [['scripts/chef/reunion-controle.mjs', 'if (validerReunion(p, ctx).length || !aUnSens(p)) return null', 'if (validerReunion(p, ctx).length) return null']],
+    rouges: ['RC-11'] },
+  { nom: "réunion : la réduction rend un compte rendu que le validateur refuse encore (adresse dans une ligne)",
+    mutations: [['scripts/chef/reunion-controle.mjs', 'if (validerReunion(p, ctx).length || !aUnSens(p)) return null', 'if (!aUnSens(p)) return null']],
+    rouges: ['RC-11'] },
+  { nom: 'réunion : validerReunion laisse passer une ligne de 141 signes (et les libellés de 114 signes du 05/10)',
+    mutations: [['scripts/chef/reunion-controle.mjs', 'if (signes(t) > max) e.push(', 'if (signes(t) > max + 1000) e.push(']],
+    rouges: ['RC-11'] },
+  { nom: 'réunion : cinq idées ne sont pas ramenées à trois (quatre sont gardées)',
+    mutations: [['scripts/chef/reunion-controle.mjs', 'p.idees = p.idees.slice(0, IDEES_MAX)', 'p.idees = p.idees.slice(0, 4)']],
+    rouges: ['RC-11'] },
+  { nom: "réunion : l'exemple donné au modèle n'est pas valide (option par défaut « lancer »)",
+    mutations: [['scripts/chef/reunion-controle.mjs', "option_defaut: 'reporter', portee: 'aucune', montant_cents: 0, echeance,", "option_defaut: 'lancer', portee: 'aucune', montant_cents: 0, echeance,"]],
+    rouges: ['RC-11'] },
+  { nom: 'réunion : reunion.mjs ne donne pas au relais le temps de la réunion moins 45 s',
+    mutations: [['scripts/chef/reunion.mjs', 'const delaiRelais = /presti-chef-modele', 'const delaiRelais = true ? [] : /presti-chef-modele']],
+    rouges: ['RC-13'] },
+  { nom: 'réunion : reunion.mjs ne consigne plus le moteur de secours',
+    mutations: [['scripts/chef/reunion.mjs', 'if (secours) noter(', 'if (false) noter(']],
+    rouges: ['RC-13'] },
 ]
 
 if (!SEUL_TEMOIN && temoin) {
   let n = 0
   for (const s of SABOTAGES) {
     n++
+    if (n < DEPUIS) continue
     const racine = copieMinimale(`s${n}`)
     for (const [f, a, b] of s.mutations) muter(racine, f, a, b)
     const res = lancerEnfant(racine)
