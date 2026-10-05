@@ -1789,7 +1789,20 @@ async function reel() {
       if (ssh('systemctl is-enabled presti-ia-modele.path').stdout.trim() !== 'enabled') d.push('presti-ia-modele.path non activé')
       const sortie = `/tmp/chef-qa-ia-${aleatoire(8)}.json`
       const r = ssh(`sudo -n -u agents /usr/local/bin/presti-ia-modele exec --model gpt-6-luna --sandbox read-only --skip-git-repo-check --output-last-message ${sortie} -`, { entree: 'Réponds exactement {"ok":true} et rien d\'autre. Texte fictif, aucune donnée réelle.\n', delai: 600_000 })
-      if (r.code !== 0 || !/\{\s*"ok"\s*:\s*true\s*\}/.test(r.stdout)) d.push(`file IA : code ${r.code}, pas de JSON rendu`)
+      const filOk = r.code === 0 && /\{\s*"ok"\s*:\s*true\s*\}/.test(r.stdout)
+      if (!filOk) {
+        // Extension du 05/10/2026 (relais d'IA) : la file des agents n'a AUCUN secours (les données de prospect n'y vont qu'à Codex). Quand
+        // Codex lui-même est hors service (401 « non connecté », « usage limit »), la file est saine si elle l'a bien servi par chef-modele
+        // et rendu l'erreur de Codex (vérifié plus bas : reponse.json, compte chef-modele) ; et le relais doit tenir la relève : un moteur
+        // au moins répond à « réponds ok » sur l'usine (sonde de scripts/agents/relais-essai.mjs : freellmapi ou Ollama local).
+        const codexHorsService = /\b401\b|Unauthorized|usage limit/i.test(`${r.stdout}\n${r.stderr}`)
+        if (!codexHorsService) d.push(`file IA : code ${r.code}, pas de JSON rendu`)
+        else {
+          const rel = ssh('cd /srv/presti-agents && for m in freellmapi ollama_4b; do PRESTI_HOTE=usine node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/agents/relais-essai.mjs --seul=$m --json 2>/dev/null | tail -n 1; done', { delai: 400_000 }).stdout
+          const reponses = rel.split('\n').map((l) => { try { return JSON.parse(l).moteurs?.[0] } catch { return null } }).filter(Boolean)
+          if (!reponses.some((x) => x.ok === true)) d.push(`file IA : Codex hors service (401 ou quota) et aucun moteur du relais ne répond (${reponses.map((x) => `${x.moteur}=${x.raison || 'non'}`).join(', ') || 'sonde muette'})`)
+        }
+      }
       const compte = ssh('ls -t /srv/presti-ia/echange/*/reponse.json 2>/dev/null | head -n 1 | xargs -r grep -o \'"compte":"[a-z-]*"\'').stdout
       if (!compte.includes('"compte":"chef-modele"')) d.push('reponse.json ne porte pas compte: chef-modele')
       if (!['coffre=refuse', 'home=refuse', 'bac=refuse'].every((x) => essai().includes(x))) d.push('sous chef-modele, le coffre ou /home/agents redevient lisible')
@@ -1814,7 +1827,16 @@ async function reel() {
       for (const n of ['PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR']) if (!noms.includes(n)) d.push(`le coffre ne liste pas ${n}`)
       for (const x of ['presti-standard', 'presti-facteur']) {
         const j = ssh(`journalctl -u ${x}.service --since "-30min" -o cat --no-pager`).stdout
-        if (!/Deactivated successfully|Finished|code=exited, status=0/i.test(j) && !j.trim()) d.push(`${x} : aucun passage réussi depuis 30 min`)
+        // Défaut du juge corrigé le 05/10/2026 : le compte usine ne voit pas les journaux des autres comptes (journalctl ne rend que
+        // « Hint: You are currently not seeing messages from other users » et le critère était rouge à tort). Le chemin permis, sans droit
+        // particulier : l'état de l'unité par `systemctl show` (résultat, code et heure de la dernière sortie du service). Le journal,
+        // quand il est lisible, garde son contrôle « modele_absent ».
+        const s = ssh(`systemctl show ${x}.service -p Result -p ExecMainStatus -p ExecMainExitTimestamp`).stdout
+        const champ = (k) => new RegExp(`^${k}=(.*)$`, 'm').exec(s)?.[1]?.trim() ?? ''
+        const fin = Date.parse(champ('ExecMainExitTimestamp').replace(/^[A-Za-z]{3} /, '').replace(' UTC', 'Z').replace(' ', 'T'))
+        const journalLisible = j.replace(/^-- .*$|^Hint:.*$/gm, '').trim() !== ''
+        const passageRecent = champ('Result') === 'success' && champ('ExecMainStatus') === '0' && Number.isFinite(fin) && Date.now() - fin < 30 * 60_000
+        if (!(journalLisible && /Deactivated successfully|Finished|code=exited, status=0/i.test(j)) && !passageRecent) d.push(`${x} : aucun passage réussi depuis 30 min (systemctl show : Result=${champ('Result') || '?'} ExecMainStatus=${champ('ExecMainStatus') || '?'} sortie=${champ('ExecMainExitTimestamp') || '?'})`)
         if (/modele_absent/.test(j)) d.push(`${x} : modele_absent dans le journal`)
       }
       const et = await rpc('ops_etat', {})

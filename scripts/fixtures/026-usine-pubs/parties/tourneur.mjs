@@ -298,7 +298,7 @@ function up8(O, s, strict) {
     for (const e of ev.filter((x) => x.src === 'stockage' || x.src === 'web')) if (e.autorise) jetonAilleurs.push(`${o.def.nom} : ${e.src}`)
     for (const [n, x] of SENT) if (sortie.includes(x)) fuiteSent.push(`${o.def.nom} : ${n} dans la sortie`)
     // les écritures : HOME (presti-pubs et presti-studio seulement), la racine déployée (rien), le dossier temporaire (vide à la fin)
-    const d = difference(o.avant.home, o.apres.home), nouveaux = [...d.nouveaux, ...d.modifies].filter((r) => !/^(presti-pubs|presti-studio)(\/|$)/.test(r))
+    const d = difference(o.avant.home, o.apres.home), nouveaux = [...d.nouveaux, ...d.modifies].filter((r) => !/^(presti-pubs|presti-studio)(\/|$)/.test(r) && !/^travail(\/relais(\/|$)|$)/.test(r)) // + ~/travail/relais : la mémoire et le journal du relais d'IA (05/10/2026), non sensibles
     if (nouveaux.length) horsLieux.push(`${o.def.nom} : ${court(nouveaux.slice(0, 3).join(', '), 80)} sous HOME`)
     const db = difference(o.avant.bac, o.apres.bac)
     if (db.nouveaux.length || db.modifies.length) horsLieux.push(`${o.def.nom} : ${court([...db.nouveaux, ...db.modifies].slice(0, 3).join(', '), 80)} dans la racine déployée`)

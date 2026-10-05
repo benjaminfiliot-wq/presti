@@ -131,8 +131,9 @@ async function battement(base, jeton) {
 // annotation, ce qui est prévu (le classeur annote, il ne décide pas).
 async function classeurDeLaPasse() {
   try {
-    const mod = await import(pathToFileURL(path.join(RACINE, 'lib', 'agents', 'llm.ts')).href)
-    const lecteur = mod.creerLecteur?.('douleurs')
+    // Le relais d'IA : freellmapi d'abord (réserve de Codex), puis Codex, Ollama Cloud, le local ; données publiques seulement.
+    const mod = await import(pathToFileURL(path.join(RACINE, 'lib', 'agents', 'relais.ts')).href)
+    const lecteur = mod.creerLecteurRelais?.('douleurs')
     if (typeof lecteur !== 'function') return null
     return async (extraits) => {
       const r = await lecteur('Annote chaque extrait par le problème utilisateur et une confiance entre 0 et 1. Ne crée aucun problème.', extraits)

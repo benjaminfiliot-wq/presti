@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process'
-import { creerLecteur } from '../../lib/agents/llm.ts'
+import { creerLecteurRelais } from '../../lib/agents/relais.ts'
 import { executerJuge } from '../../lib/agents/acquisition/facteur.ts'
 
 const argumentsPasses = process.argv.slice(2)
@@ -24,7 +24,9 @@ if (!jeton) { console.log('jeton_absent'); process.exit(0) }
 // Un seul lecteur pour les trois passes, `--soir` compris (décision D-0410-3 du 04/10/2026) : le rejugement du soir se fait sur
 // le modèle ÉTALONNÉ (`gpt-6-luna`, l'identité que `jugerTon` reconnaît) ; jamais `modele: 'rejuge'` (`gpt-6-sol`), que le second
 // juge refuserait avant tout appel (`second_juge_non_etalonne`).
-const lecteur = creerLecteur(agent, {}, {
+// Le relais (lib/agents/relais.ts) : Codex d'abord ; à bout, le local de l'usine après le « oui » daté de Benj (jamais l'IA gratuite pour un prospect) ;
+// le Facteur ne se replie pas (son second juge est étalonné sur Codex seul).
+const lecteur = creerLecteurRelais(agent, {}, {
   verifierPlafond: async (_agent, cout) => cout === 0,
   enregistrerCout: async (_agent, cout) => cout === 0 ? { ok: true } : { coupe: true },
   lancer: (chemin, argv, options) => spawn(chemin, argv, { ...options, env: {
@@ -54,14 +56,16 @@ async function passer() {
     const travail = await appeler('standard/travail')
     if (!travail) { console.log('bus_injoignable'); return }
     let rendus = 0
+    let attente = null
     for (const reponse of (Array.isArray(travail.reponses) ? travail.reponses : []).slice(0, 20)) {
       try {
         const brut = await lecteur(reponse.systeme, reponse.donnees)
         const rendu = await appeler('standard/classement', { reponse_id: reponse.id, brut: typeof brut === 'string' ? brut : JSON.stringify(brut) })
         if (rendu) rendus++
-      } catch { /* cette réponse sera reprise au passage suivant */ }
+      } catch (e) { attente = e instanceof Error ? e.message : 'echec' /* cette réponse sera reprise au passage suivant */ }
     }
     console.log(`standardiste : rendus=${rendus}`)
+    if (attente && !rendus) console.log(`standardiste : reprise au passage suivant (${String(attente).slice(0, 80)})`)
   } else {
     const travail = await appeler(`facteur/travail${soir ? '?passe=soir' : ''}`)
     if (!travail) { console.log('bus_injoignable'); return }

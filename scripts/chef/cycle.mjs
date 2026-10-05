@@ -135,7 +135,9 @@ principal(async () => {
     ligne.taches = rapport.taches ?? 0
     ligne.decisions = rapport.decisions ?? 0
     if (a.code !== 0) { console.error(a.sortie.trim()); journal(a.code); return a.code }
-    const f = await node('fil.mjs', ['poster', plan, `--modele=${modele}`, ...b])
+    // Le relais de la file du chef (chef-modele.mjs) dit sur la sortie d'erreur quel moteur de secours a servi : le fil le consigne.
+    const secours = /\[relais\] moteur=([a-z0-9_]{2,40})/.exec(m.sortie)?.[1]
+    const f = await node('fil.mjs', ['poster', plan, `--modele=${modele}`, ...(secours ? [`--moteur=${secours}`] : []), ...b])
     const derniere = f.sortie.trim().split(/\r?\n/).reverse().find((l) => l.startsWith('{"evenements"'))
     try { ligne.evenements = JSON.parse(derniere).evenements } catch { ligne.evenements = [] }
     journal(f.code)

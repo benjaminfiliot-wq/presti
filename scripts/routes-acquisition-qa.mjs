@@ -746,7 +746,7 @@ const CRITERES = {
       }
       const p = source(c.racine, SCRIPTS.passes)
       if (!p) e.push(`${SCRIPTS.passes} absent`)
-      else if (!importsDe(p.nu).some((i) => /(^|\/)lib\/agents\/llm(\.ts)?$/.test(i.spec ?? ''))) e.push(`${SCRIPTS.passes} n'importe pas lib/agents/llm.ts`)
+      else if (!importsDe(p.nu).some((i) => /(^|\/)lib\/agents\/(llm|relais)(\.ts)?$/.test(i.spec ?? ''))) e.push(`${SCRIPTS.passes} n'importe ni lib/agents/relais.ts (la porte unique, depuis le 05/10) ni lib/agents/llm.ts`)
       return [e, 'aucune route n\'importe llm, lib/ai ni le SDK, ni ne contient tools ; seul passes-modele.mjs importe lib/agents/llm.ts']
     },
     'RB-5': async (c) => [[c.src.redacteur, c.src.standardiste, c.src.travail, c.src.classement].filter(Boolean).flatMap((s) => argumentsJournal(s, /\.(texte|text|corps|contenu|brut|de|objet|donnees)\b|\b(texte|contenu|brut)\b/, 'un texte')), 'aucun texte de réponse ni d\'envoi dans console.* ni enregistrerPassage (arguments lus)'],
