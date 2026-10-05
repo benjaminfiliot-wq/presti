@@ -1,0 +1,18 @@
+ 10:14:19 up 9 days, 11:23, 10 users,  load average: 2.50, 2.87, 3.16
+== passage 1 (verite puis contexte, racine reelle)
+station-claw3d-qa --partie=verite,contexte — racine .
+✅ CL-6 28 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 481 pas) et même empreinte du canevas à chaque étape (6 images distinctes, chacune figée)
+✅ CL-7 7 étapes : le miroir porte exactement les positions servies, seul le motif « pause » mène au Repos, chaque marche est celle d'un événement, une pause donne une marche puis le silence (journal, canevas et boucle de Phaser), « Zz » et bulles au 
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiqu
+✅ CL-14 perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s et redessine un nouvel état (étape « pause »), 15 personnages au miroir
+station-claw3d-qa --partie=verite,contexte : PASS
+== passage 2 (verite puis contexte, racine reelle)
+station-claw3d-qa --partie=verite,contexte — racine .
+✅ CL-6 28 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 481 pas) et même empreinte du canevas à chaque étape (6 images distinctes, chacune figée)
+✅ CL-7 7 étapes : le miroir porte exactement les positions servies, seul le motif « pause » mène au Repos, chaque marche est celle d'un événement, une pause donne une marche puis le silence (journal, canevas et boucle de Phaser), « Zz » et bulles au 
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiqu
+✅ CL-14 perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s et redessine un nouvel état (étape « pause »), 15 personnages au miroir
+station-claw3d-qa --partie=verite,contexte : PASS
+ 10:22:24 up 9 days, 11:31, 10 users,  load average: 3.61, 3.20, 3.11

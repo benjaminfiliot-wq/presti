@@ -689,7 +689,8 @@ export async function critereContexte(ctx) {
     else {
       // Un cliché d'un canevas perdu garde la dernière image : la preuve du retour est qu'un NOUVEL état se dessine.
       appliquerEtape(reponses, ctx.suite.etapes[1])
-      const { ok } = await attendreRepos(P, ctx.suite.etapes[1].attendu, { delai: 20_000 })
+      // D-0510-7 : le délai SANS PROGRÈS par défaut (60 s) vaut aussi ici ; CL-14 est rouge une fois sur deux après les pages de la vérité, 20 s ne suffisant pas à la station (fil 5 s, direct 5 s plus tard) rebâtie.
+      const { ok } = await attendreRepos(P, ctx.suite.etapes[1].attendu)
       if (!ok) e.push(`après la perte, le miroir ne suit plus l'étape « ${ctx.suite.etapes[1].cle} »`)
       else {
         const h1 = (await empreinteRepos(P.page)).hash
