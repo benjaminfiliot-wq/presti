@@ -16,6 +16,17 @@ Source des catégories et des fourchettes de prix : [dashboardly.io, outils DIY 
 | 5 | **Rangement d'atelier magnétique / établi portable** | 28 à 50 $ | « avant/après » d'atelier | poids et port ; au-delà de ~50 € la conversion baisse |
 | 6 | **Adhésifs et mastics spécialisés** | 8 à 16 $ | démonstration d'usage | produit chimique : fiche de sécurité, **hors périmètre au départ** |
 
+## Relevé réel d'eBay.fr (06/10/2026, 00 h 50 Paris) — l'offre, pas les ventes
+Lecture par Firecrawl (localisation France), annonces **à prix fixe en vente maintenant** (tri « correspondance »), 5 recherches, 1 crédit chacune. **Ce sont des prix demandés, pas des prix vendus** : le compteur « N vendus » n'apparaît presque jamais, et la page des ventes conclues exige une connexion.
+| Recherche | Annonces relevées | Prix médian demandé | Min – max |
+|---|---|---|---|
+| kit tournevis précision embouts | 106 | **20,99 €** | 4,99 – 209,50 € |
+| kit accrochage tableau mural | 80 | **35,99 €** | 8,39 – 142,95 € |
+| niveau laser croix | 60 | **68,30 €** | 13,90 – 449,90 € |
+| rangement atelier magnétique outils | 58 | **26,69 €** | 6,50 – 3 629 € (valeur aberrante) |
+| tournevis électrique sans fil usb | 79 | **49,99 €** | 6,52 – 172,24 € |
+**Ce que ça dit** : la catégorie 1 (tournevis de précision) est **très encombrée** (106 annonces, de nombreux vendeurs à 5-15 €) : il faudrait un angle (lot, notice en français, présentation) ; le niveau laser et le tournevis sans fil se vendent plus cher mais demandent CE et batterie. **Ce que ça ne dit pas** : combien se vend réellement, ni la marge (le prix d'achat rendu en Europe n'est pas mesuré).
+
 ## Ce qui manque pour passer d'une catégorie à un produit
 Les deux sources de données qui permettent de valider un produit **ne sont pas accessibles ce soir** :
 - **eBay.fr, ventes conclues** : la page « vendus » exige une connexion (constaté par Firecrawl le 05/10 : mur de connexion) ; l'API officielle (compte développeur, en cours de vérification) donnera les prix réellement vendus.
