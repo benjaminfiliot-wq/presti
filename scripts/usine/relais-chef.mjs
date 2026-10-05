@@ -128,37 +128,43 @@ export function journalFichier(dossier, maintenant = Date.now) {
 }
 
 // ── le relais ────────────────────────────────────────────────────────────────────────────────────────────────────────
+const attendreReel = (ms) => new Promise((r) => setTimeout(r, ms))
+
 /**
  * Rejoue la demande sur le moteur suivant tant que le précédent est à bout.
- * opts : { argv, texteEntree, delaiMs, lancer(argv, delaiMs, extraEnv) → { code, sortie, delai? }, etat, journal, maintenant, cle, drapeau,
+ * opts : { argv, texteEntree, delaiMs, lancer(argv, delaiMs, extraEnv) → { code, sortie, delai? }, etat, journal, maintenant, attendre, cle, drapeau,
  *         verifier?() → booléen : le travail attendu (le plan) est-il bien écrit ? }
  * Un moteur libre peut sortir en code 0 sans avoir fait le travail (un routeur qui répond en prose, essai réel du 05/10) : sans `verifier` vrai,
  * ce n'est pas un succès, et le moteur suivant prend la demande (sans mise de côté : le routeur peut répondre juste la fois d'après).
+ * Les moteurs libres sont limités par minute : quand tous sont à bout par un quota et que la reprise de l'un arrive avant la fin du temps
+ * imparti, le relais ATTEND cette reprise et refait un tour (deux tours d'attente au plus), avant de tenter le local — qui ne mène pas
+ * la boucle d'outils de Codex sur les 4 cœurs de l'usine et ne sert qu'en dernier recours.
  * → { code, sortie, moteur } (le moteur qui a servi, ou le dernier essayé ; moteur null si aucun n'était disponible).
  */
 export async function relayer(opts) {
   const { argv, delaiMs, lancer, etat, journal } = opts
   const maintenant = opts.maintenant ?? Date.now
+  const attendre = opts.attendre ?? attendreReel
   const debut = maintenant()
   const nature = natureDeTexte(opts.texteEntree)
   const dire = (ligne) => journal({ le: new Date(maintenant()).toISOString(), agent: 'chef', nature, ...ligne })
-  const file = [{ id: 'codex', modele: null, fournisseur: null, cle: false, gratuit: false, local: false }, ...secoursPermis(nature, opts.drapeau === true)]
+  const codex = { id: 'codex', modele: null, fournisseur: null, cle: false, gratuit: false, local: false }
+  const secours = secoursPermis(nature, opts.drapeau === true)
   if (nature === 'prospect') dire({ moteur: 'relais', issue: 'saute', raison: 'prospect_local_seulement' })
+  const reste = () => delaiMs - (maintenant() - debut)
   let derniere = null
-  for (const m of file) {
-    const reste = delaiMs - (maintenant() - debut)
-    if (reste < 30_000) break
+
+  // Un moteur : { fait } s'il a servi, sinon { fait: false } après avoir tracé et mis de côté. null : sauté (à bout, sans clé, interdit).
+  async function essayer(m) {
     const bout = etat.lire()[m.id]
-    if (bout && bout.jusqua > maintenant()) { dire({ moteur: m.id, issue: 'saute', raison: bout.raison, jusqua: new Date(bout.jusqua).toISOString() }); continue }
-    if (m.cle && !opts.cle) { dire({ moteur: m.id, issue: 'saute', raison: 'cle_absente' }); continue }
-    if (nature === 'prospect' && (m.gratuit || (!m.local && m.id !== 'codex'))) continue // deuxième verrou : jamais le gratuit ni le cloud
+    if (bout && bout.jusqua > maintenant()) { dire({ moteur: m.id, issue: 'saute', raison: bout.raison, jusqua: new Date(bout.jusqua).toISOString() }); return null }
+    if (m.cle && !opts.cle) { dire({ moteur: m.id, issue: 'saute', raison: 'cle_absente' }); return null }
+    if (nature === 'prospect' && (m.gratuit || (!m.local && m.id !== 'codex'))) return null // deuxième verrou : jamais le gratuit ni le cloud
     // Un routeur libre (« auto ») choisit un modèle au hasard à chaque appel : il a droit à plusieurs essais tant qu'il sort sans avoir fait le travail.
     for (let essai = 1; essai <= (m.essais ?? 1); essai++) {
-      const resteEssai = delaiMs - (maintenant() - debut)
+      const resteEssai = reste()
       if (resteEssai < 30_000) break
-      // Un modèle local ne mène pas la boucle d'outils de Codex en 9 minutes sur les 4 cœurs de l'usine (essai réel du 05/10 : 8B et 4B sans plan) :
-      // il n'a que 5 minutes, pour ne pas tenir la file du chef ; sa vraie place est celle d'un prospect, où il n'y a rien d'autre.
-      // (essai réel : un plan écrit par freellmapi « auto » prend 50 s ; au-delà de 4 minutes le modèle tourne en rond.)
+      // (essai réel : un plan écrit par freellmapi « auto » prend 50 s ; au-delà de 4 minutes le modèle tourne en rond. Un modèle local n'a que 5 minutes.)
       const budget = m.id === 'codex' ? resteEssai : Math.min(resteEssai, m.local ? 300_000 : 240_000)
       const t0 = Date.now()
       const r = await lancer(m.id === 'codex' ? argv : argvDeSecours(argv, m), budget, m.cle ? { FL_KEY: opts.cle } : {})
@@ -168,7 +174,7 @@ export async function relayer(opts) {
         const courant = etat.lire()
         if (courant[m.id]) { delete courant[m.id]; etat.ecrire(courant) }
         dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'ok', ms })
-        return { code: 0, sortie: r.sortie, moteur: m.id }
+        return { fait: true, resultat: { code: 0, sortie: r.sortie, moteur: m.id } }
       }
       if (r.code === 0) { // code 0 mais le plan n'est pas là : ni quota ni panne, rien n'est mis de côté ; un nouvel essai si le moteur en a
         dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: 'sortie_invalide', ms })
@@ -184,6 +190,31 @@ export async function relayer(opts) {
       derniere = { code: r.code || 1, sortie: r.sortie, moteur: m.id }
       break
     }
+    return { fait: false }
+  }
+
+  const libres = secours.filter((m) => !m.local)
+  const locaux = secours.filter((m) => m.local)
+  // Tour 1 : Codex, puis les moteurs libres ; tours suivants (attente d'une reprise) : les moteurs libres seulement ; puis le local.
+  for (let tour = 0; tour < 3; tour++) {
+    for (const m of tour === 0 ? [codex, ...libres] : libres) {
+      if (reste() < 30_000) break
+      const x = await essayer(m)
+      if (x?.fait) return x.resultat
+    }
+    // Tous à bout : la prochaine reprise d'un moteur libre est-elle assez proche pour valoir l'attente ? (deux attentes au plus)
+    if (tour >= 2) break
+    const reprises = libres.map((m) => etat.lire()[m.id]).filter((b) => b && b.raison === 'quota' && b.jusqua > maintenant()).map((b) => b.jusqua)
+    if (!reprises.length) break
+    const attente = Math.min(...reprises) - maintenant() + 2_000
+    if (!(attente > 0 && attente <= 330_000 && reste() - attente > 270_000)) break
+    dire({ moteur: 'relais', issue: 'saute', raison: 'attente_reprise', ms: attente })
+    await attendre(attente)
+  }
+  for (const m of locaux) {
+    if (reste() < 30_000) break
+    const x = await essayer(m)
+    if (x?.fait) return x.resultat
   }
   return derniere ?? { code: 3, sortie: 'relais du chef : aucun moteur disponible pour le moment\n', moteur: null }
 }

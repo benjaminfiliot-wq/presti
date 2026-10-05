@@ -51,12 +51,14 @@ function mondeChef(sc = {}) {
   const lancer = async (argv, budget, extraEnv) => {
     const id = moteurDe(argv)
     lances.push({ id, argv, budget, cle: extraEnv?.FL_KEY ?? null })
-    const mode = sc[id] ?? 'panne'
+    const prevu = sc[id] ?? 'panne'
+    const mode = Array.isArray(prevu) ? (prevu.length > 1 ? prevu.shift() : prevu[0]) : prevu // une liste : un comportement par appel
     dernierMode = mode
     return { ...(sorties[mode] ?? sorties.panne), delai: mode === 'delai' }
   }
-  const base = { argv: ARGV_CHEF, texteEntree: ENTREE_PUBLIQUE, delaiMs: 900_000, lancer, etat: C.magasinFichier(dossier), journal: C.journalFichier(dossier, () => t), maintenant: () => t, cle: CLE_SENTINELLE, drapeau: false, verifier: () => dernierMode !== 'silencieux', ...(sc.opts ?? {}) }
-  return { base, lances, dossier, avancer: (ms) => { t += ms }, ids: () => lances.map((l) => l.id).join('>') }
+  const attentes = []
+  const base = { argv: ARGV_CHEF, texteEntree: ENTREE_PUBLIQUE, delaiMs: 900_000, lancer, attendre: async (ms) => { attentes.push(ms); t += ms }, etat: C.magasinFichier(dossier), journal: C.journalFichier(dossier, () => t), maintenant: () => t, cle: CLE_SENTINELLE, drapeau: false, verifier: () => dernierMode !== 'silencieux', ...(sc.opts ?? {}) }
+  return { base, lances, dossier, attentes, avancer: (ms) => { t += ms }, ids: () => lances.map((l) => l.id).join('>') }
 }
 
 await cas('RC-1', async () => {
@@ -101,7 +103,7 @@ await cas('RC-2', async () => {
 
 await cas('RC-3', async () => {
   const e = []
-  const m = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok' })
+  const m = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', opts: { delaiMs: 200_000 } })
   const r = await C.relayer(m.base)
   if (m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral>freellmapi>ollama_cloud>ollama_8b') e.push(`ordre ${m.ids()}`)
   if (r.moteur !== 'ollama_8b') e.push(`servi par ${r.moteur}`)
@@ -112,7 +114,7 @@ await cas('RC-3', async () => {
   if (l8.cle !== null) e.push('FL_KEY part vers Ollama')
   const m2 = mondeChef({ codex: '401', freellmapi: 'panne', freellmapi_gemini: 'panne', freellmapi_mistral: 'panne', ollama_cloud: 'panne', ollama_8b: 'panne', ollama_4b: 'ok' })
   if ((await C.relayer(m2.base)).moteur !== 'ollama_4b') e.push('le 8B en panne : le 4B ne prend pas')
-  const m3 = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'panne', ollama_4b: 'panne' })
+  const m3 = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'panne', ollama_4b: 'panne', opts: { delaiMs: 200_000 } })
   if ((await C.relayer(m3.base)).code === 0) e.push('tout à bout : code 0')
   return e
 })
@@ -172,6 +174,25 @@ await cas('RC-8', async () => {
   if (r3.moteur !== 'freellmapi' || compte.n !== 3) e.push(`« auto » : ${compte.n} essai(s), servi par ${r3.moteur} (3 essais puis le plan attendus)`)
   const m2 = mondeChef({ codex: 'silencieux', freellmapi: 'silencieux', freellmapi_gemini: 'silencieux', freellmapi_mistral: 'silencieux', ollama_cloud: 'silencieux', ollama_8b: 'silencieux', ollama_4b: 'silencieux' })
   if ((await C.relayer(m2.base)).code === 0) e.push('tous silencieux : code 0')
+  return e
+})
+
+await cas('RC-9', async () => {
+  const e = []
+  // les moteurs libres sont limités par minute : tous à bout par un quota, le relais ATTEND la reprise du premier (5 min) et refait un tour
+  const m = mondeChef({ codex: '401', freellmapi_gemini: ['429', 'ok'], freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok' })
+  const r = await C.relayer(m.base)
+  if (m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral>freellmapi>ollama_cloud>freellmapi_gemini' || r.moteur !== 'freellmapi_gemini') e.push(`après l'attente : ${m.ids()} servi par ${r.moteur}`)
+  if (m.attentes.length !== 1 || !(m.attentes[0] > 290_000 && m.attentes[0] <= 330_000)) e.push(`attentes ${JSON.stringify(m.attentes)} (une seule, d'environ 5 min)`)
+  if (!journalDe(m.dossier).some((x) => x.raison === 'attente_reprise')) e.push('l\'attente n\'est pas tracée')
+  // pas assez de temps pour attendre : pas d'attente, le local prend
+  const m2 = mondeChef({ codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', opts: { delaiMs: 400_000 } })
+  const r2 = await C.relayer(m2.base)
+  if (m2.attentes.length || r2.moteur !== 'ollama_8b') e.push(`délai court : ${m2.attentes.length} attente(s), servi par ${r2.moteur}`)
+  // une attente ne dépasse jamais 5,5 min, et au plus deux tours d'attente
+  const m3 = mondeChef({ codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', opts: { delaiMs: 1_800_000 } })
+  await C.relayer(m3.base)
+  if (m3.attentes.length > 2 || m3.attentes.some((x) => x > 330_000)) e.push(`attentes ${JSON.stringify(m3.attentes)} : trop longues ou trop nombreuses`)
   return e
 })
 

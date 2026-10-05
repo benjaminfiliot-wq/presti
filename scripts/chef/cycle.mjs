@@ -119,7 +119,9 @@ principal(async () => {
     const [commande, avant] = /\.m?js$/.test(bin) ? [process.execPath, [bin]] : [bin, []]
     const instruction = `Lis docs/agents/chef.md puis ${entree} et ecris le plan du cycle ${mode} dans ${plan} : un seul fichier JSON conforme a docs/agents/chef-plan.schema.json, rien d autre.`
     const argv = ['exec', '-C', RACINE, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', path.join(dossier, 'dernier-message.md'), '-m', modele, instruction]
-    const m = await lancer(commande, [...avant, ...argv], { env: environnementDuModele(), delaiMs: minutes * 60_000 })
+    // Le relais de la file (chef-modele) partage le temps du cycle entre ses moteurs : il doit finir AVANT que le cycle ne tue son attente.
+    const delaiFile = /presti-chef-modele$/.test(bin) ? [`--delai=${Math.max(60, minutes * 60 - 45)}`] : []
+    const m = await lancer(commande, [...avant, ...delaiFile, ...argv], { env: environnementDuModele(), delaiMs: minutes * 60_000 })
     if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); journal('delai'); return 1 }
     if (/hit your usage limit/i.test(m.sortie)) { noterQuota(m.sortie); console.error('✗ quota Codex atteint'); journal('quota'); return 3 }
     let taille = 0
