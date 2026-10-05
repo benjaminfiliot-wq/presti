@@ -99,3 +99,20 @@ que `faite`). Écriture SQL minimale, sur les seules tâches `file` / `chef` / `
 12 h UTC : `statut = 'annulee'`, `derniere_erreur = 'objet vide : tâche d'essai du relais, annulée le 05/10'`, plus un événement
 `tache_annulee` de l'agent `chef` par tâche (journal en ajout seul). Rien n'est supprimé ; le compteur de création du jour
 (`cree_le`) est intact.
+
+## Preuves du 05/10/2026 (usine, commit 3381a99a)
+
+- Migration `0127` appliquée par le connecteur, contrôle lu : agent `preneur`, six capacités, aucun type créé, tables `taches` et
+  `evenements`, quota 0, plafond 0, jeton absent avant la pose ; `usine-coffre.mjs poser-jeton-agent preneur` : « jeton posé, jamais
+  affiché » ; `usine-agents.mjs installer preneur` : `presti-preneur.timer` activé (toutes les 10 min).
+- Une vraie tâche, créée par la fonction du bus `ops_tache_creer` sous l'agent `systeme` (le quota du chef, 20 sur 20, n'est pas
+  touché) : veille « Résumer en cinq points les règles de la franchise en base de TVA… » (sujet public, aucune donnée de
+  personne). `systemctl start presti-preneur.service` : « preneur : 53dac14c veille faite par ollama_4b (événement 4088) ».
+  Base : statut `faite`, agent `preneur`, tentatives 0, preuve `supabase://ops.evenements/4088`, événements `tache_creee` (4086),
+  `tache_prise` (4087), `resultat_tache` (4088), `tache_faite` (4089).
+- Ollama Cloud a répondu 429 (quota gratuit) : mis de côté 6 h (`etat-chef.json`), le 4B local a pris la suite en 78 s.
+- **Qualité : à ne pas confondre avec « juste ».** Le 4B a produit cinq points confiants et en partie FAUX (il invente un
+  critère de « prestations libres » ; la franchise de l'article 293 B tient à un seuil de chiffre d'affaires). Chaque point porte
+  son « à vérifier », comme exigé, mais `faite` veut dire « un modèle a répondu dans les règles », jamais « vérifié ». Tant que
+  l'Ollama Cloud (120 B) est à bout, les résultats sont des **brouillons de modèle de 4 milliards de paramètres** : ils servent à
+  trier et à préparer, pas à décider ; une relecture par Claude Code ou Codex reste nécessaire avant tout usage.
