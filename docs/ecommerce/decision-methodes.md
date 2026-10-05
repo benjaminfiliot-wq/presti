@@ -7,16 +7,17 @@
 
 | Rôle | Plateforme | Ce que font les agents | Geste humain unique de Benj |
 |---|---|---|---|
-| Vente | **eBay vendeur pro** | fiches, prix d'après les ventes réellement conclues, suivi des annonces par l'API officielle | compte pro (EI), finir la vérification développeur, cliquer « autoriser » une fois |
-| Audience | **TikTok** (compte Brico Travaux + compte produit) | scénarios, vidéos courtes, légendes, calendrier | passer le compte en « entreprise » |
-| Vente + audience | **TikTok Shop** | fiches produit et vidéos liées aux produits | ouvrir la boutique vendeur (pièces d'identité de l'entreprise : à lui seul) |
+| Vente | **eBay, compte particulier de Benj (fil_2579)** | fiches, prix d'après les ventes réellement conclues, suivi des annonces par l'API officielle | finir la vérification développeur, cliquer « autoriser » une fois |
+| Audience | **TikTok : compte Brico Travaux** (4 000+ abonnés) | scénarios, vidéos courtes, légendes, calendrier | rien |
+| Vente + audience | **TikTok Shop**, ouvert depuis Brico Travaux | fiches produit et vidéos liées aux produits | ouvrir la boutique (les pièces demandées par TikTok sont à lui) |
 | Sourcing | **AliExpress, Alibaba** | repérer les produits : prix d'achat, volumes, avis, délais, variantes ; écart de prix déjà accepté par les acheteurs | commander un échantillon, payer les fournisseurs |
 
 **Points à ne pas rater** (à vérifier par la recherche 02, sur les pages officielles ; je ne les affirme pas comme prouvés) :
 - « eBay gratuit » est vrai pour **démarrer** (annonces gratuites dans un quota mensuel), pas pour **vendre** : commission sur chaque vente, à chiffrer dans la marge avant de choisir un produit.
 - Délais : un colis AliExpress ou Alibaba met souvent 1 à 3 semaines ; eBay et TikTok Shop sanctionnent les livraisons lentes. Les agents préfèrent donc les **entrepôts en Europe** (AliExpress « livraison depuis l'Europe ») et gardent Alibaba pour le prix de gros d'un lot déjà testé.
 - Produits : marquage CE et sécurité obligatoires dans l'UE (jouets, électrique, cosmétique), marques protégées refusées d'office, TVA et import à intégrer au prix de revient.
-- TikTok Shop et eBay exigent une **identité d'entreprise réelle** : aucune création de compte par les agents.
+- Décision de Benj : on vend avec son **compte particulier** eBay ; les agents ne reviennent pas dessus avec lui. Ils tiennent seulement le **volume vendu** dans leur suivi interne (garde-fou de la loi demandé : rester dans le cadre légal).
+- Aucune création de compte par les agents ni par Claude Code.
 - Critère d'arrêt de l'essai : 3 produits, 14 jours, aucune vente ni intention d'achat mesurable → on change de produits, pas de plateforme.
 
 ## Ce que montrent les vidéos (4 TikTok analysés image par image : `sources/`)
