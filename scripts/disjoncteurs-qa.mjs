@@ -36,7 +36,7 @@ const MODULE_REL = path.join('lib', 'agents', 'acquisition', 'disjoncteurs.ts')
 const MAGASIN_REL = path.join('lib', 'agents', 'acquisition', 'magasinSupabase.ts')
 const FICHE = '026-063'
 const AVANT = ['0096', '0097', '0098', '0099', '0105', '0106']
-const IDS = ['DJ-1', 'DJ-2', 'DJ-3', 'DJ-4', 'DJ-5', 'DJ-6', 'DJ-7', 'DJ-8', 'DJ-9', 'DJ-10', 'DJ-11']
+const IDS = ['DJ-1', 'DJ-2', 'DJ-3', 'DJ-4', 'DJ-5', 'DJ-6', 'DJ-7', 'DJ-8', 'DJ-9', 'DJ-10', 'DJ-11', 'DJ-12']
 const FONCTIONS_EXPORTS = ['peutEnvoyer', 'estAuVert', 'carteAttention']
 const FONCTIONS_MAGASIN = [
   'etatEnvoi', 'signal', 'modelesSuspendus', 'suspendreModele', 'jaugeConsommer', 'jauges', 'echantillonDuSoir',
@@ -64,14 +64,21 @@ const NOM = `${JUGE}${PARTIE ? ` --partie=${PARTIE}` : ''}${o.autoControle ? ' -
 const K = await importerContrat()
 const lireSi = (f) => { try { const b = fs.readFileSync(f); return b.length ? lf(b.toString('utf8')) : '' } catch { return null } }
 
-/** Le corps (commentaires SQL ôtés) de acq_envoi_froid_ouvrir tel que le redéfinit 0129, ou null si 0129 manque. */
-function ouvrirEnVigueur(dossier) {
-  const t = lireSi(path.join(dossier, '0129_froid_sans_date.sql'))
-  if (t === null) return null
-  const c = t.replace(/--[^\n]*/g, '')
-  const m = /create or replace function public\.acq_envoi_froid_ouvrir\(p_auteur uuid\)[\s\S]*?as \$\$([\s\S]*?)\$\$/i.exec(c)
-  return m ? m[1] : ''
+/** Le corps (commentaires SQL ôtés) d'une fonction tel que le redéfinit la PREMIÈRE migration de `fichiers` qui la définit (la plus récente d'abord), ou null. */
+function corpsEnVigueur(dossier, fonction, signature, fichiers) {
+  for (const f of fichiers) {
+    const t = lireSi(path.join(dossier, f))
+    if (t === null) continue
+    const c = t.replace(/--[^\n]*/g, '')
+    const m = new RegExp(`create or replace function public\\.${fonction}\\(${signature}\\)[\\s\\S]*?as \\$\\$([\\s\\S]*?)\\$\\$`, 'i').exec(c)
+    if (m) return m[1]
+  }
+  return null
 }
+/** acq_envoi_froid_ouvrir en vigueur : 0131 (sans l'épreuve de bout en bout, qui conditionne la montée) puis, à défaut, 0129 (sans date). */
+const ouvrirEnVigueur = (dossier) => corpsEnVigueur(dossier, 'acq_envoi_froid_ouvrir', 'p_auteur uuid', ['0131_froid_p0_sans_epreuve.sql', '0129_froid_sans_date.sql'])
+/** acq_palier_evaluer en vigueur : celle de 0131 (montée gardée par l'épreuve et l'ouverture), sinon null (0111 monte sans garde). */
+const evaluerEnVigueur = (dossier) => corpsEnVigueur(dossier, 'acq_palier_evaluer', '', ['0131_froid_p0_sans_epreuve.sql'])
 
 /** Le fichier de migration 0111 sous <racine>, ou null : `supabase/migrations/*_acquisition_envoi.sql`, numéro > 0106. */
 function trouverMigration(racine) {
@@ -293,7 +300,7 @@ async function jugementNormal(s) {
       // acq_envoi_froid_ouvrir est celle de 0129 : sans date littérale, sans ops:trop_tot, sans comparaison de date.
       if ('DATE_PREMIER_ENVOI' in K) e.push('DATE_PREMIER_ENVOI est encore exportée par contrat.ts')
       const m129 = ouvrirEnVigueur(dossier)
-      if (m129 === null) e.push('0129_froid_sans_date.sql absente : la définition en vigueur de acq_envoi_froid_ouvrir porte encore la date de 0111')
+      if (m129 === null) e.push('0131/0129 absentes : la définition en vigueur de acq_envoi_froid_ouvrir porte encore la date de 0111')
       else {
         if (/\b20\d\d-\d\d-\d\d\b/.test(m129)) e.push('acq_envoi_froid_ouvrir (0129) porte une date littérale')
         if (/ops:trop_tot/.test(m129)) e.push('acq_envoi_froid_ouvrir (0129) lève encore ops:trop_tot')
@@ -365,19 +372,20 @@ async function jugementNormal(s) {
         if (!m) e.push(`${f} : is_founder non retrouvé`)
       }
       if (!texteM.includes('ops:auteur')) e.push('ops:auteur absent (refus d\'un non-fondateur)')
-      // Les refus de l'ouverture se lisent dans la définition EN VIGUEUR (0129, sans date) : trois preuves, dans l'ordre, AVANT l'écriture.
+      // Les refus de l'ouverture se lisent dans la définition EN VIGUEUR (0131, sans date et sans l'épreuve de bout en bout, qui
+      // conditionne désormais la MONTÉE de palier : DJ-12) : fondateur, mesure à sec PASS, notice < 7 jours, dans l'ordre, AVANT l'écriture.
       const v129 = ouvrirEnVigueur(dossier)
-      if (v129 === null) e.push('0129_froid_sans_date.sql absente')
+      if (v129 === null) e.push('0131/0129 absentes : acq_envoi_froid_ouvrir n\'est pas redéfinie sans date')
       else {
         const pos = (re) => { const m = re.exec(v129); return m ? m.index : -1 }
-        const iAuteur = pos(/is_founder/), iMesure = pos(/ops:mesure_absente/), iEpreuve = pos(/ops:epreuve_absente/), iNotice = pos(/ops:notice_absente/)
+        const iAuteur = pos(/is_founder/), iMesure = pos(/ops:mesure_absente/), iNotice = pos(/ops:notice_absente/)
         const iEcriture = pos(/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true/i), iPalier = pos(/acq_palier_appliquer/)
-        if (/ops:trop_tot/.test(v129)) e.push('0129 lève encore ops:trop_tot')
-        if ([iAuteur, iMesure, iEpreuve, iNotice, iEcriture, iPalier].some((x) => x < 0)) e.push('0129 : is_founder, les trois refus (mesure, épreuve, notice), l\'écriture de l\'interrupteur et acq_palier_appliquer ne sont pas tous retrouvés')
-        else if (!(iAuteur < iMesure && iMesure < iEpreuve && iEpreuve < iNotice && iNotice < iEcriture && iEcriture < iPalier)) e.push('0129 : l\'ordre is_founder → mesure → épreuve → notice → écriture → paliers n\'est pas tenu')
-        if (!/type='mesure_a_sec'\s+and\s+resume\s+like\s+'PASS%'/.test(v129)) e.push('0129 : la mesure à sec doit être un événement PASS')
-        if (!/type='epreuve_bout_en_bout'\s+and\s+resume\s+like\s+'PASS%'\s+and\s+le>=ops\.maintenant\(\)-interval\s+'30 days'/.test(v129)) e.push('0129 : l\'épreuve de bout en bout doit être un PASS de moins de 30 jours')
-        if (!/v_notice\s+is\s+null\s+or\s+v_notice<ops\.maintenant\(\)-interval\s+'7 days'/.test(v129)) e.push('0129 : la notice doit être vérifiée depuis moins de 7 jours')
+        if (/ops:trop_tot/.test(v129)) e.push('l\'ouverture lève encore ops:trop_tot')
+        if ([iAuteur, iMesure, iNotice, iEcriture, iPalier].some((x) => x < 0)) e.push('ouverture : is_founder, les deux refus (mesure, notice), l\'écriture de l\'interrupteur et acq_palier_appliquer ne sont pas tous retrouvés')
+        else if (!(iAuteur < iMesure && iMesure < iNotice && iNotice < iEcriture && iEcriture < iPalier)) e.push('ouverture : l\'ordre is_founder → mesure → notice → écriture → paliers n\'est pas tenu')
+        if (/set\s+palier\s*=/i.test(v129)) e.push("ouverture : écrit le palier (elle laisse le palier P0, que acq_palier_appliquer applique)")
+        if (!/type='mesure_a_sec'\s+and\s+resume\s+like\s+'PASS%'/.test(v129)) e.push('ouverture : la mesure à sec doit être un événement PASS')
+        if (!/v_notice\s+is\s+null\s+or\s+v_notice<ops\.maintenant\(\)-interval\s+'7 days'/.test(v129)) e.push('ouverture : la notice doit être vérifiée depuis moins de 7 jours')
       }
       // L'ouverture n'a qu'UNE porte : aucune autre migration n'écrit envoi_froid à vrai, et la porte générique de 0097 la refuse (0130).
       const nu130 = lireSi(path.join(dossier, '0130_froid_porte_unique.sql'))
@@ -388,11 +396,36 @@ async function jugementNormal(s) {
         if (iRefus < 0 || iMaj < 0 || iRefus > iMaj) e.push('0130 : ops_interrupteur_poser doit refuser d\'ouvrir envoi_froid (ops:envoi_froid_par_geste) AVANT son update')
         if (!/grant execute on function public\.ops_interrupteur_poser\(text, boolean, text, uuid\) to service_role/i.test(c130) || /\bto\s+[^;]*\b(anon|authenticated|public)\b/i.test(c130.replace(/revoke[^;]*;/gi, ''))) e.push('0130 : droits de ops_interrupteur_poser autres que service_role')
       }
-      for (const nom of fs.readdirSync(dossier).filter((n) => /^\d{4}_.*\.sql$/.test(n) && !/^(0111|0129)_/.test(n))) {
+      for (const nom of fs.readdirSync(dossier).filter((n) => /^\d{4}_.*\.sql$/.test(n) && !/^(0111|0129|0131)_/.test(n))) {
         const c = (lireSi(path.join(dossier, nom)) ?? '').replace(/--[^\n]*/g, '')
         if (/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true[^;]*envoi_froid/i.test(c)) e.push(`${nom} ouvre envoi_froid hors de acq_envoi_froid_ouvrir`)
       }
-      s.juger('DJ-10', e, 'is_founder lu avant écriture dans chaque fonction du fondateur ; acq_envoi_froid_ouvrir (0129, sans date) : trois refus (mesure PASS, épreuve PASS < 30 jours, notice < 7 jours) dans l\'ordre avant l\'écriture ; une seule porte vers envoi_froid ouvert (0130 refuse la porte générique)')
+      s.juger('DJ-10', e, "is_founder lu avant écriture dans chaque fonction du fondateur ; acq_envoi_froid_ouvrir (0131, sans date ni épreuve) : deux refus (mesure PASS, notice < 7 jours) dans l'ordre avant l'écriture ; une seule porte vers envoi_froid ouvert (0130 refuse la porte générique)")
+    }
+    // DJ-12 : la MONTÉE de palier suppose l'épreuve de bout en bout et l'envoi à froid ouvert (0131). acq_palier_evaluer est la seule fonction
+    // qui écrit le palier ; l'ouverture (DJ-10) ne dépend plus de l'épreuve (décision de Benj, 05/10/2026, « B »).
+    {
+      const e = []
+      const v = evaluerEnVigueur(dossier)
+      if (v === null) e.push("0131_froid_p0_sans_epreuve.sql absente : acq_palier_evaluer (0111) monte sans l'épreuve de bout en bout")
+      else {
+        if (!/epreuve_ok\s*:=\s*exists\s*\(\s*select\s+1\s+from\s+ops\.evenements\s+where\s+agent\s*=\s*'systeme'\s+and\s+type\s*=\s*'epreuve_bout_en_bout'\s+and\s+resume\s+like\s+'PASS%'\s+and\s+le\s*>=\s*ops\.maintenant\(\)\s*-\s*interval\s+'30 days'\s*\)/i.test(v)) e.push("epreuve_ok n'est pas « un événement systeme epreuve_bout_en_bout PASS de moins de 30 jours »")
+        if (!/select\s+actif\s+into\s+froid_ouvert\s+from\s+ops\.interrupteurs\s+where\s+nom\s*=\s*'envoi_froid'/i.test(v)) e.push("froid_ouvert ne lit pas l'interrupteur envoi_froid")
+        const ecritures = [...v.matchAll(/update\s+ops\.etat_envoi\s+set\s+palier\s*=/gi)].length
+        if (ecritures !== 2) e.push(`${ecritures} écriture(s) du palier dans acq_palier_evaluer, deux attendues (montée P0/P1/P3 et bilan P2 → P3)`)
+        if (!/if\s+v\.palier\s+in\s*\('P0','P1','P3'\)\s+and\s+verts\s*>=\s*5\s+and\s+coalesce\s*\(\s*froid_ouvert\s*,\s*false\s*\)\s+and\s+epreuve_ok\s+then\s+prochain\s*:=[\s\S]*?update\s+ops\.etat_envoi\s+set\s+palier\s*=\s*prochain/i.test(v)) e.push("la montée P0/P1/P3 n'exige pas, avant d'écrire le palier, verts >= 5, l'envoi à froid ouvert ET epreuve_ok")
+        if (!/if\s+epreuve_ok\s+then\s+update\s+ops\.etat_envoi\s+set\s+palier\s*=\s*'P3'/i.test(v)) e.push("le passage P2 → P3 du bilan n'exige pas epreuve_ok")
+        if ([...v.matchAll(/'palier_attente_epreuve'/g)].length < 2) e.push("une montée retenue (P0/P1/P3 et bilan P2 → P3) n'écrit pas, dans chacune des deux branches, son événement palier_attente_epreuve")
+        if (/update\s+ops\.interrupteurs\s+set\s+actif\s*=\s*true/i.test(v)) e.push("acq_palier_evaluer ouvre un interrupteur : seule acq_envoi_froid_ouvrir ouvre")
+        for (const m of v.matchAll(/(?:values\s*\(|select\s+)\s*'systeme'\s*,\s*'([^']*)'/gi)) if (!/^[a-z_]{2,40}$/.test(m[1])) e.push(`type d'événement « ${m[1]} » refusé par evenements_type_check (^[a-z_]{2,40}$) : l'évaluation échouerait`)
+      }
+      const t131 = (lireSi(path.join(dossier, '0131_froid_p0_sans_epreuve.sql')) ?? '').replace(/--[^\n]*/g, '')
+      if (t131) for (const f of ['acq_envoi_froid_ouvrir(uuid)', 'acq_palier_evaluer()']) {
+        const fe = f.replace(/[()]/g, '\\$&')
+        if (!new RegExp(`revoke all on function public\\.${fe} from public\\s*,\\s*anon\\s*,\\s*authenticated\\s*;`, 'i').test(t131)) e.push(`0131 : les droits de ${f} ne sont pas retirés à public, anon et authenticated`)
+        if (!new RegExp(`grant execute on function public\\.${fe} to service_role\\s*;`, 'i').test(t131)) e.push(`0131 : ${f} n'est pas réservée au service_role`)
+      }
+      s.juger('DJ-12', e, "acq_palier_evaluer (0131) : epreuve_ok = PASS de moins de 30 jours, froid_ouvert lu ; les deux écritures du palier (montée P0/P1/P3, bilan P2 → P3) exigent epreuve_ok (et l'ouverture pour la montée) ; une montée retenue s'écrit palier_attente_epreuve ; aucune ouverture dans la fonction ; types d'événements valides ; 0131 réserve ses deux fonctions au service_role")
     }
     // DJ-11 : gmail_refus double effet, ads_archive.
     {
@@ -402,7 +435,7 @@ async function jugementNormal(s) {
       if (!texteM.includes('lecture_ads_archive')) e.push('lecture_ads_archive absent')
       s.juger('DJ-11', e, 'gmail_refus pose formulaire_coupe_jusqua par greatest() ; releve_gmail_le et lecture_ads_archive lus par acq_etat_envoi')
     }
-  } else { for (const id of ['DJ-2', 'DJ-3', 'DJ-4', 'DJ-5', 'DJ-6', 'DJ-9', 'DJ-10', 'DJ-11']) s.passe(id, `sauté : --partie=${PARTIE}`) }
+  } else { for (const id of ['DJ-2', 'DJ-3', 'DJ-4', 'DJ-5', 'DJ-6', 'DJ-9', 'DJ-10', 'DJ-11', 'DJ-12']) s.passe(id, `sauté : --partie=${PARTIE}`) }
 
   if (!PARTIE || PARTIE === 'logique') {
     // DJ-7 : disjoncteurs.ts.
@@ -429,6 +462,10 @@ async function jugementNormal(s) {
           const piegee = mod.carteAttention({ type, technologie: 'wpforms', resume: 'prospect-fictif@example.test / nom confidentiel témoin' })
           if (JSON.stringify(propre) !== JSON.stringify(piegee)) e.push(`carte ${type} : le résumé privé du prospect influence la sortie`)
         } catch (err) { e.push(`carte ${type} : ${premiereLigne(err)}`) }
+      }
+      // Les types d'événements que écrit acq_palier_evaluer (0131) ont leur carte : la montée retenue faute d'épreuve (jaune) et le bilan favorable (bleu).
+      for (const [type, couleur, mot] of [['palier_attente_epreuve', 'jaune', 'épreuve'], ['bilan_favorable', 'bleu', 'P3']]) {
+        try { const c = mod.carteAttention({ type }); if (c.couleur !== couleur || !String(c.titre).includes(mot)) e.push(`carte ${type} : ${JSON.stringify(c)}, couleur ${couleur} et « ${mot} » dans le titre attendus`) } catch (err) { e.push(`carte ${type} : ${premiereLigne(err)}`) }
       }
       const src = fs.readFileSync(fMod, 'utf8'), nu = sansCommentaires(src)
       if (/\bfetch\s*\(/.test(nu)) e.push('disjoncteurs.ts appelle fetch(')

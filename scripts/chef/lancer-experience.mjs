@@ -132,12 +132,12 @@ export async function lancerExperience(d, deps) {
   if (chaines(d).some((s) => PERSONNEL.test(s))) return refus('donnee_personnelle', 'adresse ou téléphone dans la demande : décrire un segment, jamais des personnes')
   if (chaines(d).some((s) => SECRET.test(s))) return refus('secret', 'secret dans la demande : rien n\'est écrit')
   // Plus de date (décision du 05/10/2026) : le froid n'est « ouvert » que si le service rend EXACTEMENT true (lecture de l'interrupteur
-  // envoi_froid, que seule acq_envoi_froid_ouvrir écrit après la mesure à sec, l'épreuve de bout en bout et la notice). Service absent,
+  // envoi_froid, que seule acq_envoi_froid_ouvrir écrit après la mesure à sec et la notice ; l'épreuve de bout en bout ne conditionne que la montée de palier). Service absent,
   // en panne, ou réponse autre que true : fermé.
   if ((d.touche || []).includes('froid')) {
     let ouvert = false
     try { ouvert = typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true } catch { ouvert = false }
-    if (!ouvert) return refus('froid_ferme', "le froid reste fermé tant que l'interrupteur envoi_froid n'est pas ouvert (mesure à sec, épreuve de bout en bout, notice, puis ouverture par Benj)")
+    if (!ouvert) return refus('froid_ferme', "le froid reste fermé tant que l'interrupteur envoi_froid n'est pas ouvert (mesure à sec, notice, puis ouverture par Benj)")
   }
 
   let ventes

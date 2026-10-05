@@ -44,17 +44,33 @@ m('dj','DJ-3','sql','if v_echecs>=3 then','if v_echecs>=4 then','--partie=sql','
 m('dj','DJ-3','sql',"('P3',30,5,'5 jours au vert'),('P4',40,null,'plafond des agents : au-delà, seul Benj')","('P3',30,5,'5 jours au vert'),('P4',60,null,'plafond des agents : au-delà, seul Benj')",'--partie=sql','P4 à 60 envois par jour')
 m('dj','DJ-4','sql'," select actif into ouvert from ops.interrupteurs where nom='envoi_froid';"," update ops.interrupteurs set actif=true where nom='envoi_froid';\n select actif into ouvert from ops.interrupteurs where nom='envoi_froid';",'--partie=sql','acq_palier_appliquer ouvre le froid')
 // Décision du 05/10/2026 (plus de date d'ouverture du froid) : 0129 remplace acq_envoi_froid_ouvrir sans date, 0130 ferme la porte générique.
-// Chaque garde qui reste (mesure à sec, épreuve < 30 jours, notice < 7 jours, ordre avant l'écriture, porte unique) est saboté ici.
-const OUV = 'supabase/migrations/0129_froid_sans_date.sql', PORTE = 'supabase/migrations/0130_froid_porte_unique.sql'
+// Décision du 05/10/2026 soir (« B ») : 0131 retire l'épreuve de bout en bout de l'OUVERTURE (palier P0) et la place sur la MONTÉE de palier
+// (acq_palier_evaluer, DJ-12). Chaque garde qui reste (fondateur, mesure à sec, notice < 7 jours, ordre avant l'écriture, porte unique) et chaque
+// garde de la montée (épreuve PASS < 30 jours, envoi à froid ouvert, bilan P2 → P3, types d'événements valides, droits) est saboté ici.
+const OUV = 'supabase/migrations/0131_froid_p0_sans_epreuve.sql', PORTE = 'supabase/migrations/0130_froid_porte_unique.sql'
 m('dj','DJ-3',OUV," if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'"," if (ops.maintenant() at time zone 'Europe/Paris')::date<'2026-10-12'::date then raise exception 'ops:trop_tot'; end if;\n if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'",'--partie=sql','la date du 12/10 revient dans acq_envoi_froid_ouvrir')
-m('dj','DJ-10',OUV,"raise exception 'ops:epreuve_absente'","null",'--partie=sql','ouverture sans l\'épreuve de bout en bout')
+m('dj','DJ-10',OUV,"then raise exception 'ops:mesure_absente'","then null",'--partie=sql','ouverture sans la mesure à sec')
 m('dj','DJ-10',OUV,"resume like 'PASS%') then raise exception 'ops:mesure_absente'","resume like '%') then raise exception 'ops:mesure_absente'",'--partie=sql','mesure à sec acceptée même en échec')
-m('dj','DJ-10',OUV,"interval '30 days') then raise exception 'ops:epreuve_absente'","interval '3000 days') then raise exception 'ops:epreuve_absente'",'--partie=sql','épreuve de bout en bout périmée acceptée')
+m('dj','DJ-10',OUV,"then raise exception 'ops:notice_absente'","then null",'--partie=sql','ouverture sans la notice vérifiée')
 m('dj','DJ-10',OUV,"v_notice<ops.maintenant()-interval '7 days'","v_notice<ops.maintenant()-interval '700 days'",'--partie=sql','notice périmée acceptée')
 m('dj','DJ-10',OUV," if p_auteur is null or not exists(select 1 from public.artisans where id=p_auteur and is_founder) then raise exception 'ops:auteur'; end if;\n"," if p_auteur is null then raise exception 'ops:auteur'; end if;\n",'--partie=sql','ouverture sans contrôle du fondateur')
+m('dj','DJ-10',OUV," update ops.interrupteurs set actif=true,motif='Ouverture par le fondateur'"," update ops.etat_envoi set palier='P1' where id;\n update ops.interrupteurs set actif=true,motif='Ouverture par le fondateur'",'--partie=sql','l\'ouverture saute le palier P0 (P1 dès l\'ouverture)')
 m('dj','DJ-10',PORTE,"  if p_nom = 'envoi_froid' and p_actif then\n    raise exception using message = 'ops:envoi_froid_par_geste', errcode = 'P0001';\n  end if;\n","",'--partie=sql','porte générique : envoi_froid ouvrable sans preuve')
 m('dj','DJ-10',PORTE,"grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role;","grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role, authenticated;",'--partie=sql','porte générique ouverte à authenticated')
+// La montée de palier (0131, DJ-12) : acq_palier_evaluer est la seule fonction qui écrit le palier.
+m('dj','DJ-12',OUV,"verts>=5 and coalesce(froid_ouvert,false) and epreuve_ok then","verts>=5 and coalesce(froid_ouvert,false) then",'--partie=sql','montée P0/P1/P3 sans l\'épreuve de bout en bout')
+m('dj','DJ-12',OUV,"verts>=5 and coalesce(froid_ouvert,false) and epreuve_ok then","verts>=5 and epreuve_ok then",'--partie=sql','montée de palier alors que l\'envoi à froid est fermé')
+m('dj','DJ-12',OUV,"   if epreuve_ok then\n    update ops.etat_envoi set palier='P3'","   if true then\n    update ops.etat_envoi set palier='P3'",'--partie=sql','bilan P2 → P3 sans l\'épreuve de bout en bout')
+m('dj','DJ-12',OUV,"type='epreuve_bout_en_bout' and resume like 'PASS%'","type='epreuve_bout_en_bout' and resume like '%'",'--partie=sql','épreuve de bout en bout acceptée même en échec')
+m('dj','DJ-12',OUV,"le>=ops.maintenant()-interval '30 days');","le>=ops.maintenant()-interval '3000 days');",'--partie=sql','épreuve de bout en bout périmée acceptée')
+m('dj','DJ-12',OUV,"values('systeme','bilan_favorable'","values('systeme','bilan_p3'",'--partie=sql','type d\'événement avec un chiffre : l\'évaluation échouerait (evenements_type_check)')
+m('dj','DJ-12',OUV,"select 'systeme','palier_attente_epreuve','Montée de palier retenue : l''épreuve de bout en bout n''a pas réussi (moins de 30 jours)'\n   where not exists(select 1 from ops.evenements where type='palier_attente_epreuve' and le::date=j);\n elsif v.palier='P2'","select 'systeme','alerte_message','x' where false;\n elsif v.palier='P2'",'--partie=sql','la montée retenue n\'écrit plus son événement')
+m('dj','DJ-12',OUV," perform public.acq_palier_appliquer();\n return public.acq_etat_envoi();"," update ops.interrupteurs set actif=true where nom='envoi_froid';\n perform public.acq_palier_appliquer();\n return public.acq_etat_envoi();",'--partie=sql','acq_palier_evaluer ouvre l\'envoi à froid')
+m('dj','DJ-12',OUV,"grant execute on function public.acq_palier_evaluer() to service_role;","grant execute on function public.acq_palier_evaluer() to service_role, authenticated;",'--partie=sql','acq_palier_evaluer ouverte à authenticated')
+m('dj','DJ-12',OUV,"revoke all on function public.acq_palier_evaluer() from public,anon,authenticated;","",'--partie=sql','droits publics de acq_palier_evaluer non retirés')
 m('dj','DJ-7','d',"if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'pause'))","if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'active'))",'--partie=logique','technologie en pause acceptée')
+m('dj','DJ-7','d',"palier_attente_epreuve: { couleur: 'jaune'","palier_attente_epreuve: { couleur: 'rouge'",'--partie=logique','la carte de la montée retenue faute d\'épreuve change de couleur')
+m('dj','DJ-7','d',"bilan_favorable: { couleur: 'bleu'","bilan_favorable_x: { couleur: 'bleu'",'--partie=logique','le bilan favorable (type écrit par 0131) n\'a plus sa carte')
 m('dj','DJ-7','d',"const technologie = evenement.technologie ?? 'inconnue'","const technologie = evenement.resume ?? evenement.technologie ?? 'inconnue'",'--partie=logique','URL du prospect dans la carte')
 
 // Jauges : définition, seuil, fuseau, consommation, dépendance interdite.

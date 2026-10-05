@@ -56,4 +56,4 @@ Le ménage efface les lignes d'essai de la base ; les deux e-mails restent dans 
 
 - Aucune vraie adresse d'artisan dans le formulaire.
 - Pas de seconde demande « pour voir » : la limite est de 3 par heure, et chaque demande crée un prospect à nettoyer.
-- Tu n'ouvres pas `envoi_froid`. Après le PASS, il reste la notice vérifiée de moins de 7 jours (automatique, voir `notice-prospection.md`) ; l'ouverture est une décision séparée, avec Claude Code.
+- Tu n'ouvres pas `envoi_froid` pour cette épreuve. **Depuis la décision du 05/10/2026 soir (« B », migration 0131), l'épreuve n'ouvre rien et ne bloque plus l'ouverture :** l'envoi à froid s'ouvre au palier P0 (5 formulaires par jour) avec la mesure à sec PASS et la notice vérifiée de moins de 7 jours (automatique, voir `notice-prospection.md`), sans elle. **L'épreuve (PASS de moins de 30 jours) est devenue la condition pour MONTER de palier** (P0 → P1 → P2 → P3 → P4, `acq_palier_evaluer`) : tant qu'elle n'a pas réussi, la montée est retenue et la station écrit « montée de palier retenue » (une fois par jour). Elle se fait donc en parallèle de l'envoi à P0.
