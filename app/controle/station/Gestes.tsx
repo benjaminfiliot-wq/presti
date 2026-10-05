@@ -389,12 +389,10 @@ type Gestes = {
   technologies_pause: string[]
   modeles_suspendus: string[]
 }
-const OUVERTURE = Date.parse('2026-10-12T00:00:00+02:00')
-export const CONFIRMATION_OUVERTURE = 'Ouvrir l’envoi à froid ? Les agents rempliront les formulaires de contact des artisans dès lundi, 8 h.'
+export const CONFIRMATION_OUVERTURE = 'Ouvrir l’envoi à froid ? Les agents rempliront les formulaires de contact des artisans dès 8 h, au prochain jour ouvré.'
 export const PHRASE_PLAFOND = 'Au-delà de 40 par jour, c’est ta décision : les agents ne montent jamais seuls au-dessus.'
 
 function raisonFermee(g: Gestes): string | null {
-  if (Date.now() < OUVERTURE) return 'Pas avant le lundi 12/10.'
   if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'
   if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'
   if (!g.notice_verifiee_le || Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000) {

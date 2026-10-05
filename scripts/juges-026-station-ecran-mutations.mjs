@@ -137,6 +137,23 @@ muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
   "corps, portee: 'securite', action } })",
   'corps, portee: null, action } })',
   'GestesEnvoi poste « ouvrir_envoi_froid » sans ouvrir la boîte securite', 'envoi')
+// Plus de date d'ouverture (05/10/2026) : chaque preuve qui reste (mesure, épreuve, notice) et le retour d'une date sont sabotés.
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  "if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'",
+  "if (false) return 'La mesure à sec n’a pas réussi.'",
+  'ouverture possible sans la mesure à sec', 'envoi')
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  "if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'",
+  "if (false) return 'L’épreuve de bout en bout n’a pas encore réussi.'",
+  'ouverture possible sans l’épreuve de bout en bout', 'envoi')
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  'Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000',
+  'Date.now() - Date.parse(g.notice_verifiee_le) > 700 * 86_400_000',
+  'ouverture possible avec une notice vérifiée il y a plus de 7 jours', 'envoi')
+muter('gestes', 'EG-13', `${ST}/Gestes.tsx`,
+  'function raisonFermee(g: Gestes): string | null {\n',
+  "function raisonFermee(g: Gestes): string | null {\n  if (Date.now() < Date.parse('2026-10-12T00:00:00+02:00')) return 'Pas avant le lundi 12/10.'\n",
+  'la date du 12/10 revient dans la raison de fermeture', 'envoi')
 // experience (026-125)
 // L'ancre est la première ligne du fichier : le cadre d'attente d'aujourd'hui sera remplacé par 026-125, « 'use client' » restera.
 muter('experience', 'EX-1', `${ST}/salles/Experience.tsx`,

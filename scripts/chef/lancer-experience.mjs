@@ -12,7 +12,8 @@
 //     seuil d'arrêt, coût maximum ; aucune donnée personnelle ni secret dans la demande ;
 //   - accord de Benj sur l'objectif EXACT, sinon l'expérience reste « proposée » ; un accord contradictoire, futur ou
 //     expiré est refusé ; Benj autorise séparément tout achat ou envoi (ce module n'en fait aucun) ;
-//   - le froid reste fermé avant le 12/10 ; un id = une expérience ; objectif ou cadre modifié = nouvel accord ;
+//   - le froid reste fermé tant que l'interrupteur envoi_froid n'est pas ouvert (deps.froid_ouvert() === true, jamais une date) ;
+//     un id = une expérience ; objectif ou cadre modifié = nouvel accord ;
 //   - états : proposée → approuvée → en cours → arrêtée | conclue ; une interruption laisse un état reprenable, l'événement
 //     de démarrage porte une clé d'idempotence ;
 //   - une mesure absente, sans source ou sans période ne devient ni 0 ni succès : « non mesuré », voie suspendue ;
@@ -29,7 +30,6 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 
-export const OUVERTURE_FROID = Date.UTC(2026, 9, 12)
 export const ETATS = ['proposée', 'approuvée', 'en cours', 'arrêtée', 'conclue']
 export const DEPENDANCES = ['026-220', '026-226', '026-103']
 const PORTEES = ['clients', 'prix', 'droits', 'messages', 'froid', 'achat', 'envoi', 'site', 'contenu', 'interne']
@@ -131,7 +131,14 @@ export async function lancerExperience(d, deps) {
   if (cadreFaute) return cadreFaute
   if (chaines(d).some((s) => PERSONNEL.test(s))) return refus('donnee_personnelle', 'adresse ou téléphone dans la demande : décrire un segment, jamais des personnes')
   if (chaines(d).some((s) => SECRET.test(s))) return refus('secret', 'secret dans la demande : rien n\'est écrit')
-  if ((d.touche || []).includes('froid') && maintenant < OUVERTURE_FROID) return refus('froid_ferme', 'le froid reste fermé avant le 12/10')
+  // Plus de date (décision du 05/10/2026) : le froid n'est « ouvert » que si le service rend EXACTEMENT true (lecture de l'interrupteur
+  // envoi_froid, que seule acq_envoi_froid_ouvrir écrit après la mesure à sec, l'épreuve de bout en bout et la notice). Service absent,
+  // en panne, ou réponse autre que true : fermé.
+  if ((d.touche || []).includes('froid')) {
+    let ouvert = false
+    try { ouvert = typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true } catch { ouvert = false }
+    if (!ouvert) return refus('froid_ferme', "le froid reste fermé tant que l'interrupteur envoi_froid n'est pas ouvert (mesure à sec, épreuve de bout en bout, notice, puis ouverture par Benj)")
+  }
 
   let ventes
   try { ventes = await deps.ventes() } catch { return refus('premiere_vente_inconnue', 'le système de vente ne répond pas : première vente non prouvée') }
@@ -332,6 +339,9 @@ async function principal() {
     evenements: { emettre: async (ev) => { fs.appendFileSync(journal, `${JSON.stringify({ ...ev, le: iso(Date.now()) })}\n`) } },
     ventes: async () => { throw new Error('ventes non fournies') },
     drapeaux: { basculer: async () => { throw new Error('aucun drapeau n\'est basculé par ce module') } },
+    // La ligne de commande ne lit pas la base : le froid y est toujours fermé. Une expérience « froid » se lance par code, avec une
+    // lecture réelle de l'interrupteur envoi_froid injectée ici.
+    froid_ouvert: async () => false,
   }
   let r
   if (typeof lancer === 'string') {

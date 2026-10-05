@@ -82,7 +82,11 @@ export const juges = [
     ...ecran('gestes'), attendu: 'EG-1', criteresMin: 15,
     sabotages: [
       { nom: 'boite-sans-enjeu', fichier: `${S}/Gestes.tsx`, avant: 'portee: c.portee, action: c.question', apres: "portee: c.portee ?? 'securite', action: c.question", tue: 'EG-3' },
-      { nom: 'ouverture-un-jour-trop-tot', fichier: `${S}/Gestes.tsx`, avant: "if (Date.now() < OUVERTURE) return 'Pas avant le lundi 12/10.'", apres: "if (Date.now() < OUVERTURE - 86_400_000) return 'Pas avant le lundi 12/10.'", tue: 'EG-13' },
+      // Plus de date d'ouverture (05/10/2026) : chaque preuve qui reste est sabotée, et le retour d'une date aussi.
+      { nom: 'ouverture-sans-mesure', fichier: `${S}/Gestes.tsx`, avant: "if (!g.mesure_a_sec) return 'La mesure à sec n’a pas réussi.'", apres: "if (false) return 'La mesure à sec n’a pas réussi.'", tue: 'EG-13' },
+      { nom: 'ouverture-sans-epreuve', fichier: `${S}/Gestes.tsx`, avant: "if (!g.epreuve_passee) return 'L’épreuve de bout en bout n’a pas encore réussi.'", apres: "if (false) return 'L’épreuve de bout en bout n’a pas encore réussi.'", tue: 'EG-13' },
+      { nom: 'ouverture-notice-perimee', fichier: `${S}/Gestes.tsx`, avant: 'Date.now() - Date.parse(g.notice_verifiee_le) > 7 * 86_400_000', apres: 'Date.now() - Date.parse(g.notice_verifiee_le) > 700 * 86_400_000', tue: 'EG-13' },
+      { nom: 'date-d-ouverture-revient', fichier: `${S}/Gestes.tsx`, avant: 'function raisonFermee(g: Gestes): string | null {\n', apres: "function raisonFermee(g: Gestes): string | null {\n  if (Date.now() < Date.parse('2026-10-12T00:00:00+02:00')) return 'Pas avant le lundi 12/10.'\n", tue: 'EG-13' },
       { nom: 'gestes-css-retire', fichier: `${S}/gestes.css`, retirer: true, tue: 'EG-1' },
     ],
   },

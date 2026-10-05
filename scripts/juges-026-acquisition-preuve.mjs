@@ -9,7 +9,7 @@
 //   JP-1  (lot 1) lib/agents/acquisition/contrat.ts s'importe par ts-loader et exporte chacun des noms du §1 de 026-016
 //         (liste tenue ici : les types lus dans le source, les valeurs à l'exécution) ; TRANSITIONS, PALIERS, SEUILS et
 //         SOURCES_LISTE sont gelés ; PALIERS vaut exactement le tableau de la voie gratuite (P0 5/5, P1 10/5, P2 20/bilan,
-//         P3 30/5, P4 40/plafond), aucun palier au-delà de 40 ; DATE_PREMIER_ENVOI, BILAN_CONTACTS, EMAIL_SOLLICITE_JOUR,
+//         P3 30/5, P4 40/plafond), aucun palier au-delà de 40 ; BILAN_CONTACTS, EMAIL_SOLLICITE_JOUR,
 //         SEUIL_ELIGIBLES, SEUILS, PLAFONDS_DEFAUT (instagram, facebook, formulaire_site à 0, pas de clé email),
 //         DOMAINE_PRINCIPAL, PREMIERE_PHRASE et NOM_EXPEDITEUR mot pour mot ; MESSAGERIES_GRATUITES et DOMAINES_EXCLUS ;
 //         le contrat, commentaires ôtés, n'exporte aucun nom du séquenceur retiré par la voie gratuite.
@@ -169,13 +169,14 @@ const TYPES_CONTRAT = [
 const VALEURS_CONTRAT = [
   'TRANSITIONS', 'METIERS', 'NAF_BATIMENT', 'UA_RECENSEUR', 'DOMAINES_EXCLUS', 'DOMAINES_TIERS', 'MESSAGERIES_GRATUITES', 'NAF_EXCLUS_MARQUE',
   'TERMES_MARQUES', 'DOMAINE_PRINCIPAL', 'PREMIERE_PHRASE', 'NOM_EXPEDITEUR', 'NOTICE_URL', 'SOURCES_LISTE', 'PLAFONDS_DEFAUT', 'PALIERS',
-  'DATE_PREMIER_ENVOI', 'BILAN_CONTACTS', 'EMAIL_SOLLICITE_JOUR', 'SEUIL_ELIGIBLES', 'SEUILS', 'MAQUETTES_PAR_JOUR', 'MAQUETTES_ENTRANTS_JOUR',
+  'BILAN_CONTACTS', 'EMAIL_SOLLICITE_JOUR', 'SEUIL_ELIGIBLES', 'SEUILS', 'MAQUETTES_PAR_JOUR', 'MAQUETTES_ENTRANTS_JOUR',
   'REPONSES_MAX_PROSPECT_24H', 'REPONSES_MAX_JOUR', 'REPONSE_DELAI_MIN_MINUTES', 'RGPD_REPONSES_MAX', 'RGPD_FENETRE_JOURS', 'META_APPELS_PAR_HEURE',
   'EXPIRATION_MAQUETTE_JOURS', 'TENTATIVES_MAX', 'DELAI_RECONTACT_JOURS', 'PAS_MAINTENANT_JOURS', 'MESSAGES_MAX_PAR_PROSPECT', 'ECART_MIN_HEURES',
   'RELANCE_MAQUETTE_JOURS', 'FENETRE_META_HEURES', 'REPONSE_PRIVEE_JOURS', 'STOP_DELAI_MINUTES', 'MOTS_MAX_FORMULAIRE', 'PROCHES', 'EXTRAIT_MIN',
   'EXTRAIT_MAX', 'BUDGET_EXECUTION_MS',
 ]
-const RETIRES = ['Boite', 'NOUVEAUX_MAX_PAR_BOITE', 'ENVOIS_MAX_PAR_BOITE', 'CHAUFFE_JOURS', 'ADRESSES_GENERIQUES', 'Sequenceur', 'POUSSES_MAX_PAR_BOITE_PASSAGE']
+// DATE_PREMIER_ENVOI : retirée le 05/10/2026 sur décision de Benj (plus aucune date d'ouverture du froid ; le reste du cadre légal est entier).
+const RETIRES = ['Boite', 'NOUVEAUX_MAX_PAR_BOITE', 'ENVOIS_MAX_PAR_BOITE', 'CHAUFFE_JOURS', 'ADRESSES_GENERIQUES', 'Sequenceur', 'POUSSES_MAX_PAR_BOITE_PASSAGE', 'DATE_PREMIER_ENVOI']
 const FICHIER_CONTRAT = path.join(R, 'lib', 'agents', 'acquisition', 'contrat.ts')
 let K = null
 if (IDS.includes('JP-1') || IDS.includes('JP-6')) {
@@ -191,7 +192,7 @@ if (IDS.includes('JP-1') && K) {
   for (const n of TYPES_CONTRAT) if (!exportes.has(n)) e.push(`type ${n} non exporté`)
   for (const n of VALEURS_CONTRAT) if (K[n] === undefined && n !== 'NOTICE_URL') e.push(`valeur ${n} non exportée`)
   if (!('NOTICE_URL' in K)) e.push('NOTICE_URL non exportée')
-  for (const n of RETIRES) if (exportes.has(n) || n in K) e.push(`${n} encore exporté (retiré par la voie gratuite)`)
+  for (const n of RETIRES) if (exportes.has(n) || n in K) e.push(`${n} encore exporté (retiré : voie gratuite ou décision du 05/10/2026)`)
   for (const n of ['TRANSITIONS', 'PALIERS', 'SEUILS', 'SOURCES_LISTE']) if (!Object.isFrozen(K[n])) e.push(`${n} n'est pas gelé`)
   const attendus = [['P0', 5, 5], ['P1', 10, 5], ['P2', 20, null], ['P3', 30, 5], ['P4', 40, null]]
   const vus = (K.PALIERS ?? []).map((p) => [p.id, p.par_jour, p.jours_au_vert])
@@ -199,7 +200,7 @@ if (IDS.includes('JP-1') && K) {
   if ((K.PALIERS ?? []).some((p) => p.par_jour > 40)) e.push('un palier au-delà de 40')
   if (!/bilan/i.test(K.PALIERS?.[2]?.regle ?? '')) e.push('P2 ne dit pas « passage au bilan »')
   if (!/plafond/i.test(K.PALIERS?.[4]?.regle ?? '')) e.push('P4 ne dit pas « plafond »')
-  const exact = { DATE_PREMIER_ENVOI: '2026-10-12', BILAN_CONTACTS: 100, EMAIL_SOLLICITE_JOUR: 50, SEUIL_ELIGIBLES: 0.05, DOMAINE_PRINCIPAL: 'prestiapp.fr', PREMIERE_PHRASE: "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.", NOM_EXPEDITEUR: 'Benjamin Filiot – Presti' }
+  const exact = { BILAN_CONTACTS: 100, EMAIL_SOLLICITE_JOUR: 50, SEUIL_ELIGIBLES: 0.05, DOMAINE_PRINCIPAL: 'prestiapp.fr', PREMIERE_PHRASE: "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.", NOM_EXPEDITEUR: 'Benjamin Filiot – Presti' }
   for (const [k, v] of Object.entries(exact)) if (K[k] !== v) e.push(`${k} = ${JSON.stringify(K[k])}, ${JSON.stringify(v)} attendu`)
   const seuils = { stop_100: 4, plaintes_7j: 2, avis_abus: 1, echecs_affilee: 3, sans_reponse: 300 }
   if (JSON.stringify(K.SEUILS) !== JSON.stringify(seuils)) e.push(`SEUILS ${JSON.stringify(K.SEUILS)}, ${JSON.stringify(seuils)} attendu`)
@@ -208,7 +209,10 @@ if (IDS.includes('JP-1') && K) {
   for (const d of ['gmail.com', 'orange.fr']) if (!K.MESSAGERIES_GRATUITES?.includes(d)) e.push(`MESSAGERIES_GRATUITES sans ${d}`)
   for (const d of ['facebook.com', 'instagram.com', 'pagesjaunes.fr', 'linkedin.com']) if (!K.DOMAINES_EXCLUS?.includes(d)) e.push(`DOMAINES_EXCLUS sans ${d}`)
   if (/^\s*import\b/m.test(sansCommentaires(src))) e.push('le contrat importe un module (types et constantes seulement)')
-  noter('JP-1', e, `contrat.ts importé par ts-loader : ${TYPES_CONTRAT.length} types et ${VALEURS_CONTRAT.length} valeurs du §1 exportés ; TRANSITIONS, PALIERS, SEUILS, SOURCES_LISTE gelés ; PALIERS = P0 5/5, P1 10/5, P2 20/bilan, P3 30/5, P4 40/plafond ; DATE_PREMIER_ENVOI 2026-10-12, BILAN_CONTACTS 100, EMAIL_SOLLICITE_JOUR 50, SEUIL_ELIGIBLES 0.05 ; SEUILS exacts ; PLAFONDS_DEFAUT sans email et à 0 pour instagram, facebook, formulaire_site ; PREMIERE_PHRASE et NOM_EXPEDITEUR mot pour mot ; aucun des ${RETIRES.length} noms du séquenceur`)
+  // Décision du 05/10/2026 : aucune date d'ouverture du froid dans le contrat. Les gardes qui restent (paliers P0 d'abord,
+  // plafonds à 0 par défaut, seuils de coupure) sont vérifiés ci-dessus : retirer la date n'en retire aucun.
+  if (/\b20\d\d-\d\d-\d\d\b/.test(sansCommentaires(src))) e.push("le contrat porte une date littérale (aucune date d'ouverture du froid ne doit y figurer)")
+  noter('JP-1', e, `contrat.ts importé par ts-loader : ${TYPES_CONTRAT.length} types et ${VALEURS_CONTRAT.length} valeurs du §1 exportés ; TRANSITIONS, PALIERS, SEUILS, SOURCES_LISTE gelés ; PALIERS = P0 5/5, P1 10/5, P2 20/bilan, P3 30/5, P4 40/plafond ; aucune date d'ouverture du froid (DATE_PREMIER_ENVOI retirée), BILAN_CONTACTS 100, EMAIL_SOLLICITE_JOUR 50, SEUIL_ELIGIBLES 0.05 ; SEUILS exacts ; PLAFONDS_DEFAUT sans email et à 0 pour instagram, facebook, formulaire_site ; PREMIERE_PHRASE et NOM_EXPEDITEUR mot pour mot ; aucun des ${RETIRES.length} noms du séquenceur`)
 }
 
 // ── JP-2 : sur la référence ; JP-3 : en auto-contrôle ─────────────────────────────────────────────────────────────────────
