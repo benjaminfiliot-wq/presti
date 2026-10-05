@@ -1057,7 +1057,10 @@ function jugerPC9(s, { sonde, cas }) {
 // ── Témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin(o) {
   const base = o.racineParDefaut ? extraireReference().dest : o.racine
-  const dest = preparerTemoin(JUGE, { base, copier: COPIE_TEMOIN, superposer: null })
+  // 04/10 : le fichier d'entrée se lit dans l'arbre COPIÉ (la référence 1620723 porte middleware.ts, le dépôt proxy.ts depuis 026-008) ;
+  // choisi sur R, il était introuvable sous la référence et le témoin tombait en PC-1 à PC-12 sans qu'aucune ligne du produit soit en cause.
+  const fichierProxy = fs.existsSync(path.join(base, 'proxy.ts')) ? 'proxy.ts' : 'middleware.ts'
+  const dest = preparerTemoin(JUGE, { base, copier: COPIE_TEMOIN.map((f) => (f === FICHIER_PROXY ? fichierProxy : f)), superposer: null })
   const poses = []
   for (const f of listerFichiers(TEMOIN_FIXTURES)) {
     if (!f.endsWith('.temoin')) continue
