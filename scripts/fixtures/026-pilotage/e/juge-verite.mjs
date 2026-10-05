@@ -162,7 +162,34 @@ async function scPremier(ctx) {
     const premiers = new Map()
     for (const l of j) { const p = l.split('|'); if (p[0] === '+' && !premiers.has(p[1])) premiers.set(p[1], { salle: p[2], motif: p[3], etat: p[4], x: p[5], y: p[6] }) }
     const mal = []
-    for (const [nom, p] of premiers) { const c = coordsPoste(theme, p.salle, p.motif); if (p.etat !== 'arrive' || Number(p.x) !== c.x || Number(p.y) !== c.y) mal.push(`${nom} apparaît ${p.etat} en ${p.x},${p.y} (${c.x},${c.y} attendu)`) }
+    // D-0510-15 (lot « décor », 05/10, 026-181 CE-25) : plusieurs agents d'une même salle ne s'empilent plus sur un seul point, ils s'étalent sur les PLACES de la salle
+    // (scene/places.ts) : un agent qui se tient seul au poste (ou à la porte) de sa salle y est EXACTEMENT, comme avant ; avec d'autres, il est sur l'une des places (le
+    // poste décalé de PLACES, les rangées montent à la porte). L'exigence n'est pas relâchée : un point hors des places reste refusé, et deux agents de la même salle et du
+    // même genre ne se superposent jamais (ajout).
+    const PLACES = [[0, 0], [-15, 0], [15, 0], [-8, 9], [8, 9], [0, 18], [-15, 18], [15, 18]]
+    // Les places restent DANS la salle (la spécification de scene/places.ts) : à 8 px au moins des côtés, à 6 px du bas au poste, à 26 px du haut à la porte. Un poste
+    // qui n'est pas au centre de sa salle (le thème d'essai : poste à (x + 16, y + 16)) voit donc ses places du côté court ramenées dans la salle.
+    const salleDe = (cle) => { const f = theme.emplacements.find((x) => x.cle === cle).forme; if (f.type === 'polygone') { const xs = f.points.map((q) => q[0]), ys = f.points.map((q) => q[1]); return { x: Math.min(...xs), y: Math.min(...ys), l: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) } } return { x: f.x, y: f.y, l: f.l, h: f.h } }
+    const sur = (c, p) => {
+      const b = salleDe(p.salle), porte = p.motif === 'porte'
+      return PLACES.some(([dx, dy]) => {
+        const x = Math.min(b.x + b.l - 8, Math.max(b.x + 8, c.x + dx))
+        const y = porte ? Math.max(b.y + 26, c.y - dy) : Math.min(b.y + b.h - 6, c.y + dy)
+        return Number(p.x) === Math.round(x) && Number(p.y) === Math.round(y)
+      })
+    }
+    const groupes = new Map()
+    for (const [nom, p] of premiers) { const k = `${p.salle}|${p.motif === 'porte' ? 'porte' : 'poste'}`; groupes.set(k, [...(groupes.get(k) ?? []), nom]) }
+    for (const [nom, p] of premiers) {
+      const c = coordsPoste(theme, p.salle, p.motif)
+      const seul = groupes.get(`${p.salle}|${p.motif === 'porte' ? 'porte' : 'poste'}`).length === 1
+      if (p.etat !== 'arrive' || (seul ? Number(p.x) !== c.x || Number(p.y) !== c.y : !sur(c, p))) mal.push(`${nom} apparaît ${p.etat} en ${p.x},${p.y} (${seul ? `${c.x},${c.y}` : `une des places de la salle autour de ${c.x},${c.y}`} attendu)`)
+    }
+    for (const [k, noms] of groupes) {
+      if (noms.length < 2) continue
+      const points = new Set(noms.map((n) => `${premiers.get(n).x},${premiers.get(n).y}`))
+      if (points.size !== noms.length) mal.push(`${noms.length} agents (${noms.join(', ')}) se superposent ${k.endsWith('|porte') ? 'à la porte' : 'au poste'} de ${k.split('|')[0]} : ${points.size} position(s) distincte(s)`)
+    }
     return { calme: cadre.ok, f0, f1, marches: j.filter((l) => l.split('|')[4] === 'marche').length, personnages: premiers.size, mal, antenne: { present: !!box, empreintes: hashes.size, etats: [...etats] }, erreurs: P.erreurs }
   } finally { await P.fermer() }
 }

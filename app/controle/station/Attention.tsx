@@ -63,7 +63,13 @@ export default function Attention({ env, erreurVue, role = 'direction' }: Props)
           const contenu = (
             <>
               <span className="mc-att-nombre">{c.nombre}</span>
-              <span className="mc-att-titre">{c.titre}</span>
+              {/* Le titre servi commence par le nombre (« 28 · solde ia ») : à côté du grand chiffre il le disait deux fois. Le préfixe reste dans le texte (lecteurs d'écran,
+                  juges) et n'est caché qu'à l'œil. */}
+              <span className="mc-att-titre">
+                {c.titre.startsWith(`${c.nombre} · `)
+                  ? <><span className="mc-att-doublon">{`${c.nombre} · `}</span>{c.titre.slice(`${c.nombre} · `.length)}</>
+                  : c.titre}
+              </span>
             </>
           )
           const cible = c.geste.type === 'ouvrir' ? c.geste.cible : undefined

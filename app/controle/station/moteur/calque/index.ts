@@ -12,7 +12,7 @@
 import { suiviDe, type Vivant } from '../scene/suivi'
 import type { Accroche, ContexteMoteur, Emplacement } from '../types'
 import { chargerTheme, dispositionDeRepli, dispositionDuTheme, type Disposition } from './disposition'
-import { bullesLues, cleTheme, etapesLues, MOTIFS, nomDe, personnages, plaqueDe, taillePlaques, type Perso } from './lecture'
+import { bullesLues, cleTheme, etapesLues, MOTIFS, nomCourt, nomDe, personnages, plaqueDe, taillePlaques, type Perso } from './lecture'
 import { enCss, lireVue, monterVue } from './vue'
 import './calque.css'
 
@@ -80,6 +80,8 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
   let etapesAvant: Map<string, number> | null = null
   const minuteries = new Set<number>()
   const plaques = new Map<string, HTMLElement>()
+  /** Les noms courts des salles (téléphone, vue d'ensemble) : posés sous chaque salle, visibles seulement par telephone.css. */
+  const nomsCourts = new Map<string, HTMLElement>()
   const noms = new Map<string, HTMLElement>()
   const bulles = new Map<string, HTMLElement>()
   const zz = new Map<string, HTMLElement>()
@@ -144,10 +146,19 @@ export const accrocheCalque: Accroche = (contexte: ContexteMoteur) => {
       const c = enCss(vue, g, W, H, { x: pl.cadre.x + pl.cadre.l / 2, y: pl.cadre.y + pl.cadre.h })
       placer(n, c.x, c.y - 3)
       n.style.maxWidth = `${Math.max(36, (pl.cadre.l - 1) * c.s)}px`
+      // Le nom court : sous la salle (dans le couloir), centré, gardé dans le canevas. Il ne s'affiche qu'au téléphone en vue d'ensemble (telephone.css).
+      let court = nomsCourts.get(pl.cle)
+      if (!court) { court = el('span', { 'data-nom-court': pl.cle }, couchePlaques); nomsCourts.set(pl.cle, court) }
+      dire(court, nomCourt(plaqueDe(p, pl.cle, pl.texte)))
+      court.toggleAttribute('data-reservee', pl.reservee)
+      const dessous = enCss(vue, g, W, H, { x: pl.cadre.x + pl.cadre.l / 2, y: pl.cadre.y + pl.cadre.h })
+      const demi = court.offsetWidth / 2
+      placer(court, Math.max(demi + 1, Math.min(W - demi - 1, dessous.x)), dessous.y + 2)
     }
     // L'échelle réelle de la carte (pixels CSS par pixel logique, zoom compris) : sous 1,2 le texte ne tient plus dans une salle (voir calque.css).
     const echelle = (W / g.largeur) * vue.zoom
     for (const [cle, n] of plaques) if (!vues.has(cle)) { n.remove(); plaques.delete(cle) }
+    for (const [cle, n] of nomsCourts) if (!vues.has(cle)) { n.remove(); nomsCourts.delete(cle) }
     const petite = echelle < 1.2 ? 'petite' : 'normale'
     if (carte.dataset.echelle !== petite) carte.dataset.echelle = petite
 

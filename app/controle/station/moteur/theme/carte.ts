@@ -12,6 +12,8 @@ import type { VueMarche } from '../grille/grille'
 export type EmplacementCarte = Emplacement & { salle: string | null }
 
 export type CarteMoteur = OfficeMap & {
+  /** La clé du thème dont la carte vient (« station », « vaisseau », « essai ») : la scène en tire l'adresse de l'atlas (urlsTheme). */
+  cle: string
   /** Les emplacements de la vue retenue (bureau ou portrait), chacun avec sa salle. */
   emplacements: EmplacementCarte[]
   /** La porte et le poste de chaque salle, par clé de salle ; l'emplacement réservé n'a ni l'un ni l'autre. */
@@ -97,6 +99,6 @@ export function versCarteMoteur(theme: Theme, disposition?: Disposition | null, 
     deskAssignments: {},
     interactionPoints: habites.map((e) => ({ id: `poste-${e.cle}`, kind: 'desk_seat' as const, x: (e.poste as Point).x, y: (e.poste as Point).y, zoneId: e.cle, tags: [] })),
     theme: { mood: theme.nuit ? 'night' : 'neutral', enableThoughtBubbles: true },
-    emplacements, portes, postes, plaques, teintes, coursives: vue.coursives, tapis: vue.tapis, palette: theme.palette,
+    cle: theme.cle, emplacements, portes, postes, plaques, teintes, coursives: vue.coursives, tapis: vue.tapis, palette: theme.palette,
   }
 }

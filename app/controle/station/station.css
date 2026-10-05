@@ -173,6 +173,7 @@ a.mc-att { transition: background 0.15s; }
 a.mc-att:hover { background: color-mix(in srgb, var(--c) 22%, rgba(10, 12, 17, 0.9)); }
 .mc-att-nombre { flex: 0 0 auto; min-width: 22px; font-family: var(--mc-mono); font-size: 16px; font-weight: 700; color: var(--c); text-align: center; }
 .mc-att-titre { overflow-wrap: anywhere; }
+.mc-att-doublon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .mc-autres { margin-top: 4px; color: var(--mc-texte-doux); }
 
 /* ── Commandement ──────────────────────────────────────────────────────────────────────────────────────────────────── */
