@@ -1,0 +1,4 @@
+# 026-148 — ce qui reste pour Benj (05/10/2026)
+
+1. **Connexion Codex du compte `chef-modele`** (geste (d), seul acte que ni Claude Code ni un agent ne peut faire : un code à valider dans TON navigateur, compte ChatGPT). Tant qu'elle n'est pas faite, `codex login status` rend « Not logged in » sous `chef-modele` et les cycles du chef, la réunion de 18 h et la file IA des agents s'arrêtent à un 401 (vérifié le 05/10). Commande, que Claude Code lance et dont il te montre le code : `sudo -u chef-modele env HOME=/home/chef-modele /opt/codex/bin/codex login --device-auth` sur l'usine.
+2. **Quota ChatGPT** : épuisé jusqu'au 9/10 vers 21 h 15 (consigne reçue) ; le secours Ollama Cloud de Matt est branché dans la configuration de `chef-modele` mais le compte gratuit répond « Free usage limit » (vérifié le 05/10) : rien à faire de ton côté sauf, si tu le veux un jour, passer Ollama en Pro (je n'achète rien).
