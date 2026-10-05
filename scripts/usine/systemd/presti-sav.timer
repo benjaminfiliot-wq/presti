@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage du SAV Presti, toutes les 15 minutes (période déclarée dans ops.agents : 15)
+
+[Timer]
+OnCalendar=*:7/15
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-sav.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,18 @@
+[Unit]
+Description=Presti, SAV : une passe de lecture des messages de clients payants, brouillons et cartes pour Benj, jamais d'envoi (026-245, 026-251)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=PRESTI_URL=https://prestiapp.fr
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_SAV -- /usr/bin/node scripts/agents/sav-passe.mjs --une-passe
+TimeoutStartSec=10min
+MemoryMax=512M
+Nice=10
+NoNewPrivileges=yes
+PrivateTmp=yes

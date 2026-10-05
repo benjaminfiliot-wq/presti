@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 // Contrôleur qualité des sites livrés. L'import est sans effet : seule une passe explicite lit le réseau.
-import fs from 'node:fs'
-import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { hoteAutorise, recupererPoli, recuperateurReseau } from '../../lib/agents/acquisition/lecteurSite.ts'
@@ -158,18 +156,16 @@ export async function passeQualite(deps) {
 
 const attendre = (ms) => new Promise((resoudre) => setTimeout(resoudre, ms))
 
-function coffre() {
-  const fichier = path.join(os.homedir(), '.config', 'presti', 'agents.env')
-  const lignes = fs.readFileSync(fichier, 'utf8').split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith('#'))
-  const valeurs = {}
-  for (const ligne of lignes) {
-    const match = /^(PRESTI_URL|PRESTI_JETON_QUALITE)=([^\r\n]*)$/.exec(ligne)
-    if (!match || valeurs[match[1]]) throw new Error('coffre invalide')
-    valeurs[match[1]] = match[2]
-  }
-  const base = new URL(valeurs.PRESTI_URL)
-  if (base.protocol !== 'https:' || base.username || base.password || base.pathname !== '/' || !valeurs.PRESTI_JETON_QUALITE) throw new Error('coffre incomplet')
-  return { base: base.origin, jeton: valeurs.PRESTI_JETON_QUALITE }
+// Lancé par presti-qualite.service (scripts/usine/avec-coffre.mjs PRESTI_JETON_QUALITE -- …), le contrôleur reçoit son jeton et
+// PRESTI_URL dans l'environnement : le coffre partagé de l'usine porte d'autres jetons que le sien, sa lecture directe est
+// refusée (leçon de l'atelier, 05/10). Jamais de lecture du coffre ici. http n'est admis que vers la boucle locale (jeux d'essai).
+export const TYPE_EVENEMENT = 'qualite_passe'
+function configuration(env) {
+  let base
+  try { base = new URL(String(env.PRESTI_URL ?? '')) } catch { throw new Error('PRESTI_URL invalide') }
+  const boucle = base.hostname === '127.0.0.1' || base.hostname === 'localhost' || base.hostname === '[::1]'
+  if ((base.protocol !== 'https:' && !(base.protocol === 'http:' && boucle)) || base.username || base.password || base.pathname !== '/' || base.search || base.hash || !env.PRESTI_JETON_QUALITE) throw new Error('environnement incomplet')
+  return { base: base.origin, jeton: env.PRESTI_JETON_QUALITE }
 }
 
 async function appelBus(configuration, chemin, methode, corps) {
@@ -182,11 +178,13 @@ async function appelBus(configuration, chemin, methode, corps) {
   return reponse.json()
 }
 
-async function creerNavigateur() {
-  const { chromium } = await import('playwright')
-  const navigateur = await chromium.launch({ headless: true })
-  return { navigateur, adapter: {
+// Chromium ne démarre qu'à la première page à ouvrir : une passe sans site à auditer (le cas normal tant qu'aucun site n'est en
+// ligne) ne lance aucun navigateur.
+function creerNavigateur() {
+  let navigateur = null
+  return { fermer: async () => { await navigateur?.close() }, adapter: {
     async ouvrir(url) {
+      if (!navigateur) { const { chromium } = await import('playwright'); navigateur = await chromium.launch({ headless: true }) }
       // La garde DNS précède Chromium : une URL contrôlée en base ne doit pas atteindre le réseau privé.
       const hote = new URL(url).hostname
       const { lookup } = await import('node:dns/promises')
@@ -227,18 +225,18 @@ async function creerNavigateur() {
 
 async function principal() {
   if (process.argv.length !== 3 || process.argv[2] !== '--une-passe') { console.error('usage : controleur-qualite.mjs --une-passe'); return 2 }
-  let configuration
-  try { configuration = coffre() } catch { console.error('coffre qualite_sites absent ou invalide'); return 3 }
-  let navigateur
+  let reglages
+  try { reglages = configuration({ PRESTI_URL: process.env.PRESTI_URL, PRESTI_JETON_QUALITE: process.env.PRESTI_JETON_QUALITE }) } catch { console.error('qualite_sites : PRESTI_URL (https) et PRESTI_JETON_QUALITE attendus dans l\'environnement (avec-coffre.mjs) ; rien n\'est lancé'); return 3 }
+  let nav
   try {
-    const nav = await creerNavigateur(); navigateur = nav.navigateur
+    nav = creerNavigateur()
     const horloge = { maintenant: () => Date.now(), attendre }
     const lectures = new Map()
     const resultat = await passeQualite({
       magasin: {
-        travail: () => appelBus(configuration, '/api/usine/qualite/travail', 'GET'),
-        rapport: (corps) => appelBus(configuration, '/api/usine/qualite/rapport', 'POST', corps),
-        battement: () => appelBus(configuration, '/api/usine/qualite/travail?battement=1', 'GET'),
+        travail: () => appelBus(reglages, '/api/usine/qualite/travail', 'GET'),
+        rapport: (corps) => appelBus(reglages, '/api/usine/qualite/rapport', 'POST', corps),
+        battement: () => appelBus(reglages, '/api/usine/qualite/travail?battement=1', 'GET'),
       },
       navigateur: nav.adapter,
       lecteurPrudent: (url) => {
@@ -248,10 +246,18 @@ async function principal() {
       },
       horloge, MOTEUR_DE,
     })
-    console.log(`qualite_sites : ${resultat.pause ? 'pause' : `${resultat.audits.length} audit(s)`}`)
+    if (resultat.pause) { console.log('qualite_sites : pause, rien à faire'); return 0 }
+    // UN événement par passe, des nombres seulement : le battement est posé par la passe elle-même (route travail, ?battement=1).
+    const faits = resultat.audits.filter((a) => a.statut === 'audite')
+    const resume = `passe : ${faits.length} site(s) audité(s), ${faits.filter((a) => a.sain).length} sain(s), ${faits.filter((a) => !a.sain).length} avec panne(s), ${resultat.audits.length - faits.length} écarté(s)`
+    await appelBus(reglages, '/api/agents/evenements', 'POST', { type: TYPE_EVENEMENT, resume })
+    console.log(`qualite_sites : ${resultat.audits.length === 0 ? 'rien à traiter' : `${faits.length} audit(s)`}`)
     return 0
-  } catch (e) { console.error('qualite_sites : passe impossible', e instanceof Error ? e.message : 'erreur'); return 1 }
-  finally { await navigateur?.close() }
+  } catch (e) {
+    // L'agent mis en pause : le bus répond 423 à tout appel, ce n'est pas une panne de la passe.
+    if (e instanceof Error && e.message === 'bus 423') { console.log('qualite_sites : agent en pause, rien à faire'); return 0 }
+    console.error('qualite_sites : passe impossible', e instanceof Error ? e.message : 'erreur'); return 1
+  } finally { await nav?.fermer() }
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) process.exitCode = await principal()
