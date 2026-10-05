@@ -1,0 +1,3 @@
+# 026-202 — ce qui reste pour Benj
+1. Droit commercial : lire/attester les conditions de sortie de Cloudflare Workers AI, la fiche ARPP, et confirmer d'un mot l'activité de l'EI (extrait RNE) : tant que `docs/studio/prealables.md` dit « droit commercial : non attesté », la garde refuse les échantillons du Studio ; les packs payés des artisans (voix Kokoro et gabarits locaux, sans fond FLUX) ne dépendent pas de ce point.
+2. L'épreuve PC éteint (en dernier, comme décidé) : dire « on y va », Claude Code lance `usine-pubs-qa --reel --etape=preparer`, tu éteins le poste ≥ 2 h, tu le rallumes, `--etape=conclure`.
