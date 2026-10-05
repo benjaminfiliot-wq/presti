@@ -3,9 +3,13 @@
   width: 100%;
   overflow: hidden;
   line-height: 0;
+  /* Le canevas est centré, et reste centré s'il déborde un peu (jusqu'à 8 %) : seul le centrage flex rogne des DEUX côtés, margin:auto ne le fait pas. */
+  display: flex;
+  justify-content: center;
 }
 
 .cadre canvas {
+  flex: none;
   display: block;
   image-rendering: pixelated;
 }

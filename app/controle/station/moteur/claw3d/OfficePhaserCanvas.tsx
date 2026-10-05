@@ -72,14 +72,11 @@ export function OfficePhaserCanvas(props: OfficePhaserCanvasProps) {
       const k = echelleCarte(grille, cadre, densite);
       echelle.current = k;
       // Taille CSS = taille du canevas ÷ densité : chaque pixel logique couvre exactement k pixels de l'appareil. Quand le canevas déborde un
-      // peu du cadre (jusqu'à 8 %), il est centré : la coque est rognée des deux côtés, l'overflow du cadre de la carte la masque.
+      // peu du cadre (jusqu'à 8 %), il est centré par le cadre (flex, qui centre aussi ce qui déborde) : la coque est rognée des deux côtés.
       const regler = (toile: HTMLCanvasElement) => {
         toile.style.width = `${toile.width / densite}px`;
         toile.style.height = `${toile.height / densite}px`;
         toile.style.display = "block";
-        toile.style.marginInline = "auto";
-        const trop = toile.width / densite - cadre.clientWidth;
-        if (trop > 0) toile.style.marginLeft = `${-trop / 2}px`;
       };
       const scene = dernieres.current.fabrique({
         Phaser,
