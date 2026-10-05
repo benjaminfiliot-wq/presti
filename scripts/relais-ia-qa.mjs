@@ -140,7 +140,7 @@ const SABOTAGES = [
   // ── le relais du chef ──
   { nom: 'chef : donnée de prospect vers le gratuit (les deux verrous ouverts)',
     mutations: [
-      ['scripts/usine/relais-chef.mjs', "if (nature === 'prospect') return drapeau ? CHAINE_SECOURS.filter((m) => m.local) : []", "if (nature === 'prospect') return [...CHAINE_SECOURS]"],
+      ['scripts/usine/relais-chef.mjs', "if (nature === 'prospect') return drapeau ? chaine.filter((m) => m.local) : []", "if (nature === 'prospect') return [...chaine]"],
       ['scripts/usine/relais-chef.mjs', "if (nature === 'prospect' && (m.gratuit || (!m.local && m.id !== 'codex'))) return null", ''],
     ],
     rouges: ['RC-4'] },
@@ -159,6 +159,12 @@ const SABOTAGES = [
   { nom: "chef : l'attente de la reprise d'un moteur libre n'a jamais lieu",
     mutations: [['scripts/usine/relais-chef.mjs', 'await attendre(attente)', '']],
     rouges: ['RC-9'] },
+  { nom: "chef : l'appel direct lit un fichier hors des dossiers permis (fuite d'un fichier du compte)",
+    mutations: [['scripts/usine/relais-chef.mjs', ' || !sousUnPermis(complet)) continue', ') continue']],
+    rouges: ['RC-10'] },
+  { nom: "chef : la clé de freellmapi part vers Ollama",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (cle) entetes.authorization = `Bearer ${cle}`\n    }", "}\n    if (cle) entetes.authorization = `Bearer ${cle}`"]],
+    rouges: ['RC-10'] },
   { nom: 'chef : moteurs à bout jamais mémorisés',
     mutations: [['scripts/usine/relais-chef.mjs', "      etat.ecrire(courant)\n      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison", "      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: c.raison"]],
     rouges: ['RC-2'] },

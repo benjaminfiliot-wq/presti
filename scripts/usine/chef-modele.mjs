@@ -9,7 +9,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import os from 'node:os'
 import { spawn } from 'node:child_process'
-import { drapeauLeve, journalFichier, magasinFichier, relayer } from './relais-chef.mjs'
+import { appelDirect, chaineAvecBases, drapeauLeve, journalFichier, magasinFichier, preparerPromptDirect, relayer } from './relais-chef.mjs'
 
 const ECHANGE_DEFAUT = '/srv/presti-chef/echange'
 const CODEX_DEFAUT = '/opt/codex/bin/codex'
@@ -21,7 +21,7 @@ const [sous, ...reste] = process.argv.slice(2)
 const opts = {}
 let i = 0
 for (; i < reste.length; i++) {
-  const m = /^--(echange|delai|codex|relais|relais-dossier)=(.*)$/.exec(reste[i])
+  const m = /^--(echange|delai|codex|relais|relais-dossier|freellmapi|ollama)=(.*)$/.exec(reste[i])
   if (!m) break
   opts[m[1]] = m[2]
 }
@@ -141,8 +141,11 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
   for (const e of Array.isArray(demande?.entrees) ? demande.entrees : []) { try { texteEntree += fs.readFileSync(e.copie, 'utf8').slice(0, 2 * 1024 * 1024) } catch { /* illisible : sans effet */ } }
   let cle = null
   try { cle = fs.readFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { cle = null }
+  let texteStdin = ''
+  if (stdin) { try { texteStdin = fs.readFileSync(path.join(d, 'entree.txt'), 'utf8').slice(0, 2 * 1024 * 1024) } catch { texteStdin = '' } }
   return relayer({
-    argv, texteEntree, delaiMs, cle,
+    texteEntree: texteEntree + texteStdin, delaiMs, cle,
+    chaine: chaineAvecBases({ freellmapi: opts.freellmapi, ollama: opts.ollama }),
     // Le travail attendu : chaque fichier de sortie déclaré (le plan), hors le dernier message de Codex, existe et n'est pas vide.
     verifier: () => {
       const o = argv.findIndex((a) => a === '-o' || a === '--output-last-message')
@@ -152,9 +155,14 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
     drapeau: drapeauLeve(process.env.IA_LOCALE_PROSPECTS_OUI, Date.now()),
     etat: magasinFichier(dossier), journal: journalFichier(dossier),
     // Entre deux moteurs, les fichiers de sortie du précédent (un plan à moitié écrit) sont retirés : le suivant repart d'une page blanche.
-    lancer: (a, budgetMs, extraEnv) => {
+    // Codex lui-même (abonnement) : l'argv de la demande, tel quel. Un moteur de secours : un appel direct (relais-chef.mjs) — les fichiers que la
+    // consigne cite sont recopiés dans la requête, le JSON rendu est écrit à la place du fichier de sortie.
+    executer: async (m, budgetMs) => {
       for (const s of Array.isArray(demande?.sorties) ? demande.sorties : []) { try { fs.rmSync(s.copie, { force: true }) } catch { /* déjà absent */ } }
-      return lancerCodex(d, a, stdin, budgetMs, extraEnv)
+      if (m.id === 'codex') return lancerCodex(d, argv, stdin, budgetMs)
+      const prompt = preparerPromptDirect({ argv, sorties: demande?.sorties, stdin: texteStdin || undefined, lireFichier: (f) => { try { return fs.readFileSync(f, 'utf8') } catch { return null } }, dossiersPermis: [d, echange] })
+      if (!prompt) return { code: 1, sortie: 'ERROR: demande hors de la forme « lis puis écris » : aucun secours possible' }
+      return appelDirect({ moteur: m, prompt, cle, delaiMs: budgetMs })
     },
   })
 }

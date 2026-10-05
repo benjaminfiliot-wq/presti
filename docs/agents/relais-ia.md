@@ -13,13 +13,14 @@
 
 Précisions : Douleurs commence par freellmapi (réserve de Codex). Une tâche simple prend le 4B d'abord (il reste chaud en mémoire :
 changer de modèle coûte ~2 min de chargement sur l'usine), une tâche difficile (rédaction, texte vendu) prend le 8B d'abord.
-Le chef, lui, tourne en agent (Codex sait lire et écrire des fichiers) : freellmapi `gemini-3-flash-preview` → `ministral-14b` (leurs outils sont
-éprouvés) → `auto` (le routeur choisit un modèle libre au hasard : trois essais, un sur deux écrit le plan) → Ollama Cloud → local 8B → 4B
-(un modèle local de 4 à 8 milliards de paramètres ne mène pas la boucle d'outils de Codex sur les 4 cœurs ARM de l'usine : 5 minutes au plus,
-dernier recours, ou seule voie pour une entrée qui porte une donnée de prospect). Un moteur libre qui sort en code 0 **sans avoir écrit le plan**
-n'est pas un succès : le suivant prend la demande. Quatre minutes au plus par moteur libre. Les moteurs libres sont limités par minute : quand tous sont à
-bout par un quota et que la reprise de l'un arrive en moins de 5,5 minutes (et laisse au moins 4,5 minutes), le relais **attend** cette reprise et refait un
-tour (deux attentes au plus) avant de tenter le local.
+Le chef, lui, passe par la file `chef-modele` (Codex lit et écrit des fichiers). Quand Codex est à bout, la MÊME demande est rejouée en **appel direct** (pas de boucle
+d'outils : essai réel du 05/10, la boucle d'outils de Codex sur un modèle libre sortait en prose, en boucle ou à 30 000 jetons par essai, et ne tenait pas sur les 4 cœurs
+de l'usine avec un modèle local) : les fichiers que la consigne cite (mode d'emploi, schéma, entrée du cycle) sont recopiés dans la requête et le JSON rendu est écrit à la place du
+fichier de sortie. Ordre : freellmapi `gemini-3-flash-preview` → `ministral-14b` → `auto` (le routeur, deux essais) → Ollama Cloud → local 8B → 4B (contexte de 16 384 jetons, sans réflexion,
+JSON forcé). Un moteur qui répond sans JSON n'est pas un succès : le suivant prend la demande. Les moteurs libres sont limités par minute : quand tous sont à bout par un quota et
+que la reprise de l'un arrive en moins de 5,5 minutes (et laisse au moins 4,5 minutes), le relais **attend** cette reprise et refait un tour (deux attentes au plus) avant le local.
+Le cycle fixe le temps de la file (`--delai`) pour que le relais finisse avant que le cycle ne s'arrête. Le moteur de secours est dit dans l'événement `cycle_termine`
+(« Moteur de secours : … »).
 
 ## Les règles (non négociables)
 
