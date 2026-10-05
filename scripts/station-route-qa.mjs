@@ -234,7 +234,7 @@ async function enfantDoublures(RAC, partie) {
         const m2 = (b.j?.valeur?.commandement?.valeur?.missions ?? []).find((x) => x.cle === 'contacts_froids')
         if (!/bilan du 02\/11/.test(m2?.libelle ?? '')) e.push(`bilan_le 2026-11-02 : mission « ${m2?.libelle} », « bilan du 02/11 » attendu`)
         const c = await jouer('vue=salle&salle=envois', { surcharges: { rpc: { pilotage_envois_du_jour: [], pilotage_compteurs_du_jour: [{ canal: 'formulaire_site', palier: null, plafond: 0, utilises: 0 }] } } })
-        const phrase = "Aucun envoi à froid : le canal formulaire s'ouvre au plus tôt le 12/10, après la mesure à sec, l'épreuve de bout en bout et l'ouverture par Benj."
+        const phrase = "Aucun envoi à froid : le canal formulaire s'ouvre après la mesure à sec, l'épreuve de bout en bout et l'ouverture par Benj."
         if (c.j?.valeur?.vide !== phrase) e.push(`salle=envois sans envoi froid : vide « ${c.j?.valeur?.vide} », la phrase exacte de 026-015 attendue`)
         if (/parBoite|boites_pause/.test(c.t)) e.push('salle=envois porte parBoite ou boites_pause')
         return 'doublures : bilan non daté si la date est nulle, « bilan du 02/11 » sinon ; salle=envois : la phrase vide exacte, ni parBoite ni boites_pause'
