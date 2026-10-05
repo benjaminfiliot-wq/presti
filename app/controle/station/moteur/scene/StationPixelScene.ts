@@ -24,7 +24,7 @@ import { PIXEL_PALETTE } from "./palette";
 import type { EtatScene, Suivi } from "./suivi";
 
 /** Images laissées à la scène pour peindre l'état final, puis la boucle s'endort (aucune image de plus au repos). */
-const IMAGES_DE_CALME = 3;
+const IMAGES_DE_CALME = 2;
 /** Un tour d'antenne : 2 s, deux révolutions. */
 const TOUR_MS = 2000;
 /** Une image de marche toutes les 4 unités parcourues. */
