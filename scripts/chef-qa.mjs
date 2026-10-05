@@ -1788,7 +1788,10 @@ async function reel() {
       if (ssh("stat -c '%U:%G %a' /srv/presti-ia/echange").stdout.trim() !== 'agents:agents 2770') d.push('/srv/presti-ia/echange n\'est pas agents:agents 2770')
       if (ssh('systemctl is-enabled presti-ia-modele.path').stdout.trim() !== 'enabled') d.push('presti-ia-modele.path non activé')
       const sortie = `/tmp/chef-qa-ia-${aleatoire(8)}.json`
-      const r = ssh(`sudo -n -u agents /usr/local/bin/presti-ia-modele exec --model gpt-6-luna --sandbox read-only --skip-git-repo-check --output-last-message ${sortie} -`, { entree: 'Réponds exactement {"ok":true} et rien d\'autre. Texte fictif, aucune donnée réelle.\n', delai: 600_000 })
+      // Défaut du juge corrigé le 05/10/2026 : le compte usine n'a plus le droit de `sudo -u agents` pour autre chose que presti-coffre et presti-journal
+      // (« a password is required »). Le lanceur de la file se lance sans sudo : le dossier d'échange est en 2770 agents:agents et usine est du groupe agents ;
+      // chef-modele sert la demande de la même manière (reponse.json, compte chef-modele, contrôlé plus bas).
+      const r = ssh(`/usr/local/bin/presti-ia-modele exec --model gpt-6-luna --sandbox read-only --skip-git-repo-check --output-last-message ${sortie} -`, { entree: 'Réponds exactement {"ok":true} et rien d\'autre. Texte fictif, aucune donnée réelle.\n', delai: 600_000 })
       const filOk = r.code === 0 && /\{\s*"ok"\s*:\s*true\s*\}/.test(r.stdout)
       if (!filOk) {
         // Extension du 05/10/2026 (relais d'IA) : la file des agents n'a AUCUN secours (les données de prospect n'y vont qu'à Codex). Quand
