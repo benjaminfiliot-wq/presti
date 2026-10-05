@@ -2,30 +2,26 @@
   "fiche": "026-240",
   "temoins": {
     "socle": {
-      "code": 1,
-      "rouges": [
-        "SVS-2"
-      ],
-      "duree_s": 20.356
+      "code": 0,
+      "rouges": [],
+      "duree_s": 36.405
     },
     "recherche": {
       "code": 0,
       "rouges": [],
-      "duree_s": 31.823
+      "duree_s": 51.777
     },
     "lecons": {
       "code": 1,
       "rouges": [
         "SVL-11"
       ],
-      "duree_s": 33.338
+      "duree_s": 58.037
     },
     "reflexion": {
-      "code": 1,
-      "rouges": [
-        "SVB-9"
-      ],
-      "duree_s": 12.98
+      "code": 0,
+      "rouges": [],
+      "duree_s": 37.466
     }
   },
   "mutations": [
@@ -37,7 +33,7 @@
       "apres": "if (chemin === '.env.local') fs.readFileSync(path.join(base, chemin)); if (exclu(contrat, racine, chemin)) { compteurs.exclus++; continue }",
       "critere": "SVS-3",
       "extrait": "FAIL SVS-3 — ouvert ou listé alors qu'il ne doit jamais l'être : presti:.env.local",
-      "duree_s": 4.888
+      "duree_s": 15.857
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -47,7 +43,7 @@
       "apres": "return regle.remplace_par === '[numéro]' ? valeur : regle.remplace_par",
       "critere": "SVS-4",
       "extrait": "FAIL SVS-4 — saas:Produit/Piege-Coordonnees.md : texte exporté ≠ texte caviardé attendu — # Fiche contact fournisseur (essai) Pour les commandes de peinture, écrire à [adresse] ou appeler le 06 12 34 56 78. Société enregistrée sous le SIREN [siren] …",
-      "duree_s": 5.01
+      "duree_s": 13.235
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -57,7 +53,7 @@
       "apres": "const compartiment = 'general'",
       "critere": "SVS-4",
       "extrait": "FAIL SVS-4 — saas:Recherche/Annuaire-Essai.md : attendu reclassé dans prospects, absent de prospects",
-      "duree_s": 4.234
+      "duree_s": 10.088
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -67,7 +63,7 @@
       "apres": "if (nom === 'depot') continue",
       "critere": "SVS-6",
       "extrait": "FAIL SVS-6 — --sortie depot-du-script : code 0 (attendu 2)",
-      "duree_s": 4.979
+      "duree_s": 7.754
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -76,8 +72,8 @@
       "avant": "`umask 007 && cat > ${cible}.tar.part",
       "apres": "`sudo -n -u agents umask 007 && cat > ${cible}.tar.part",
       "critere": "SVS-7",
-      "extrait": "FAIL SVS-7 — allumé, appel 1 : commande distante hors du gabarit fixe : sudo -n -u agents umask 007 && cat > /srv/presti-savoir/depot/general-20261005T002016Z.tar.part && mv /srv/presti-savoir/depot/general-20261005T002016Z.tar.par…",
-      "duree_s": 4.245
+      "extrait": "FAIL SVS-7 — allumé, appel 1 : commande distante hors du gabarit fixe : sudo -n -u agents umask 007 && cat > /srv/presti-savoir/depot/general-20261005T081915Z.tar.part && mv /srv/presti-savoir/depot/general-20261005T081915Z.tar.par…",
+      "duree_s": 4.863
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -87,7 +83,7 @@
       "apres": "if (!nom || Buffer.byteLength(nom) > 255 || nom.startsWith('/') || nom.includes('\\\\') || elements.some(x => !x || x === '.') || /^[A-Za-z]:/.test(nom)) erreur('chemin tar interdit')\n    if (entrees.has(nom)) erreur('entree tar dupliquee')\n    if (type === '0') { fichiers++; if (fichiers > 20000) erreur('trop de fichiers') }\n    else if (taille) erreur('dossier tar non vide')\n    entrees.set(nom, { type, donnees })\n  }\n  if (!fin || pax) erreur('archive tar incomplete')\n  return entrees\n}\nfunction valider(buf, compartiment) {\n  const entrees = lireTar(buf), m = entrees.get('manifeste.json')\n  if (!m || m.type !== '0') erreur('manifeste absent')\n  let manifeste\n  try { manifeste = JSON.parse(m.donnees.toString('utf8')) } catch { erreur('manifeste invalide') }\n  if (manifeste.compartiment !== compartiment || !Array.isArray(manifeste.fichiers)) erreur('mauvais compartiment')\n  const attendus = new Set(['manifeste.json'])\n  let octets = 0\n  for (const ligne of manifeste.fichiers) {\n    if (!['saas', 'presti', 'memoire', 'ops'].includes(ligne.racine) || typeof ligne.chemin !== 'string' || !ligne.chemin || ligne.chemin.startsWith('/') || ligne.chemin.split('/').some(x => !x || x === '.' || x === '..') || (compartiment === 'general' && ligne.classe === 'prospects') || (compartiment === 'prospects' && ligne.classe !== 'prospects')) erreur('entree manifeste interdite')\n    const nom = `fichiers/${ligne.racine}/${ligne.chemin}`, fichier = entrees.get(nom)\n    if (!fichier || fichier.type !== '0' || attendus.has(nom) || sha(fichier.donnees) !== ligne.sha256 || fichier.donnees.length !== ligne.octets) erreur('empreinte ou fichier invalide')\n    attendus.add(nom); octets += fichier.donnees.length\n  }\n  for (const [nom, e] of entrees) void nom\n  return { entrees, fichiers: manifeste.fichiers.length, octets }",
       "critere": "SVS-8",
       "extrait": "FAIL SVS-8 — ../evil : code 0 (attendu 1) — ",
-      "duree_s": 6.689
+      "duree_s": 11.898
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -97,7 +93,7 @@
       "apres": "const dossier = path.join(racine, 'index', 'general')",
       "critere": "SVS-10",
       "extrait": "FAIL SVS-10 — index/general/etat.json : compartiment prospects",
-      "duree_s": 6.635
+      "duree_s": 10.81
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -107,7 +103,7 @@
       "apres": "semantiquePermise(reglages)",
       "critere": "SVS-10",
       "extrait": "FAIL SVS-10 — sémantique allumée : la sentinelle des prospects est partie vers le modèle d’embeddings",
-      "duree_s": 5.403
+      "duree_s": 8.634
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -117,7 +113,7 @@
       "apres": "Boolean(u.hostname)",
       "critere": "SVS-10",
       "extrait": "FAIL SVS-10 — url-distante : etat general.semantique \"active\" (attendu \"refusee\")",
-      "duree_s": 6.198
+      "duree_s": 9.986
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -127,7 +123,7 @@
       "apres": "User=agents\nEnvironmentFile=/home/agents/.config/presti/agents.env",
       "critere": "SVS-11",
       "extrait": "FAIL SVS-11 — presti-chef-savoir-recevoir.service [Service] EnvironmentFile= présent (aucun secret n'y sert)",
-      "duree_s": 2.955
+      "duree_s": 3.003
     },
     {
       "juge": "scripts/savoir-socle-qa.mjs",
@@ -137,7 +133,7 @@
       "apres": "const tries = [...uniques.values()]",
       "critere": "SVS-9",
       "extrait": "FAIL SVS-9 — construireIndex : l’ordre des documents change l’index",
-      "duree_s": 5.751
+      "duree_s": 11.186
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -147,7 +143,7 @@
       "apres": "    else if (suffisant && false) fermer('savoir_suffisant')\n",
       "critere": "SVR-2",
       "extrait": "FAIL SVR-2 — savoir bien servi, web: true : 1 recherche(s) Firecrawl, 0 lecture(s), 0 appel(s) Perplexity reçus (attendu aucun : le savoir d'abord)",
-      "duree_s": 17.9
+      "duree_s": 19.527
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -157,7 +153,7 @@
       "apres": "  if (typeof p.cout_par_requete_eur === 'number' && p.cout_par_requete_eur > 0.01) return 'perplexity_cout'\n",
       "critere": "SVR-5",
       "extrait": "FAIL SVR-5 — Perplexity, coût inconnu : 1 appel(s) reçu(s) (attendu zéro)",
-      "duree_s": 17.674
+      "duree_s": 19.648
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -167,7 +163,7 @@
       "apres": "",
       "critere": "SVR-6",
       "extrait": "FAIL SVR-6 — refusDonneePersonnelle(« Faut-il écrire à contact@toiture-essai.invalid pour le devis ? ») = null (attendu \"adresse\")",
-      "duree_s": 17.358
+      "duree_s": 20.429
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -177,7 +173,7 @@
       "apres": "      if (!source) continue\n",
       "critere": "SVR-7",
       "extrait": "FAIL SVR-7 — douleurs (freellmapi) : 4 résultat(s) de classe prospects, interne (seul public est permis)",
-      "duree_s": 17.564
+      "duree_s": 19.277
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -187,7 +183,7 @@
       "apres": "  if (retour.resultats[0]) resume += ` · ${retour.resultats[0].extrait}`\n",
       "critere": "SVR-8",
       "extrait": "FAIL SVR-8 — s2_fort_chef : le résumé contient un extrait",
-      "duree_s": 17.046
+      "duree_s": 19.525
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -197,7 +193,7 @@
       "apres": "    const besoins = besoinsDe(premiere)\n",
       "critere": "SVR-9",
       "extrait": "FAIL SVR-9 — recherches faites : [\"Quelles relances pour un devis dormant ?\",\"Comment présenter un acompte de chantier ?\",\"Quel ton pour une facture en retard ?\",\"Comment rédiger la page d'acc… (attendu exactement les 2 premiers besoins)",
-      "duree_s": 16.774
+      "duree_s": 19.862
     },
     {
       "juge": "scripts/savoir-recherche-qa.mjs",
@@ -207,7 +203,7 @@
       "apres": "        try { trouves = await deps.firecrawl.chercher(question) } catch (e) { retour.refus = String((e as Error)?.message ?? e); trouves = null }\n",
       "critere": "SVR-11",
       "extrait": "FAIL SVR-11 — s4_panne : FIRECRAWL-026-sentinelle dans la sortie, le journal ou l’erreur (une clé ne sort jamais d’un transport)",
-      "duree_s": 16.842
+      "duree_s": 23.128
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -216,8 +212,8 @@
       "avant": "const ancien = cur.vus[h]",
       "apres": "const ancien = null",
       "critere": "SVL-1",
-      "extrait": "FAIL SVL-1 — second passage : nouvelles = 17 (0 attendu) (1 s)",
-      "duree_s": 5.424
+      "extrait": "FAIL SVL-1 — second passage : nouvelles = 17 (0 attendu) (5 s)",
+      "duree_s": 25.168
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -226,8 +222,8 @@
       "avant": "const texte = lignes[n - 1]",
       "apres": "const texte = lignes[n]",
       "critere": "SVL-3",
-      "extrait": "FAIL SVL-3 — verifier-source L-2026-09-15-ehkncjgnbhko (SaaS/Decisions/Journal-Decisions.md:9) : code 1 — ✗ L-2026-09-15-ehkncjgnbhko : pas l'en-tête daté d'une section (0 attendu : la source est juste) (3 s)",
-      "duree_s": 5.718
+      "extrait": "FAIL SVL-3 — verifier-source L-2026-09-20-fmlcldfhdjno (.orchestre/verdicts.jsonl:3) : code 1 — ✗ L-2026-09-20-fmlcldfhdjno : verdict QUOTA : pas un echec (0 attendu : la source est juste) (18 s)",
+      "duree_s": 30.257
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -236,8 +232,8 @@
       "avant": "const RE_PAR = /^(?:claude-code|revue-(\\d{4})-(\\d{2}))$/",
       "apres": "const RE_PAR = /^(?:claude-code|codex|revue-(\\d{4})-(\\d{2}))$/",
       "critere": "SVL-5",
-      "extrait": "FAIL SVL-5 — valider --par=codex : code 0 (2 attendu) (5 s)",
-      "duree_s": 7.72
+      "extrait": "FAIL SVL-5 — valider --par=codex : code 0 (2 attendu) (17 s)",
+      "duree_s": 25.911
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -246,8 +242,8 @@
       "avant": "if (process.env.PRESTI_HOTE === 'usine') {",
       "apres": "if (process.env.PRESTI_HOTE === 'jamais') {",
       "critere": "SVL-5",
-      "extrait": "FAIL SVL-5 — valider PRESTI_HOTE=usine : code 0 (2 attendu) (5 s)",
-      "duree_s": 7.502
+      "extrait": "FAIL SVL-5 — valider PRESTI_HOTE=usine : code 0 (2 attendu) (14 s)",
+      "duree_s": 18.307
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -256,8 +252,8 @@
       "avant": "    .filter((l) => estPropre(`${l.regle}\\n${l.constat ?? ''}`))",
       "apres": "    .filter((l) => l.regle.length > 0)",
       "critere": "SVL-7",
-      "extrait": "FAIL SVL-7 — leconsPour(standardiste) : [\"L-2026-09-26-aaaaaaaaaaab\",\"L-2026-09-25-aaaaaaaaaaac\",\"L-2026-09-23-aaaaaaaaaaaf\",\"L-2026-09-22-aaaaaaaaaaag\",\"L-2026-09-21-aaaaaaaaaaah\",\"L-2026-09-19-aaaaaaaaaaaj\"] ([\"L-2026-09-26-aaaaaaaaaaab\",\"L-2026-09-25-aaaaaaaaaaac\",\"L-2026-09-23-aaaaaaaaaaaf\",\"L-2026-09-21-aaaaaaaaaaah\",\"L-2026-09-19-aaaaaaaaaaaj\"] attendu : ses domaines, les plus récentes puis par id, sans leçon à numéro ni lien) (0 s)",
-      "duree_s": 3.141
+      "extrait": "FAIL SVL-7 — leconsPour(standardiste) : [\"L-2026-09-26-aaaaaaaaaaab\",\"L-2026-09-25-aaaaaaaaaaac\",\"L-2026-09-23-aaaaaaaaaaaf\",\"L-2026-09-22-aaaaaaaaaaag\",\"L-2026-09-21-aaaaaaaaaaah\",\"L-2026-09-19-aaaaaaaaaaaj\"] ([\"L-2026-09-26-aaaaaaaaaaab\",\"L-2026-09-25-aaaaaaaaaaac\",\"L-2026-09-23-aaaaaaaaaaaf\",\"L-2026-09-21-aaaaaaaaaaah\",\"L-2026-09-19-aaaaaaaaaaaj\"] attendu : ses domaines, les plus récentes puis par id, sans leçon à numéro ni lien) (1 s)",
+      "duree_s": 9.085
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -266,8 +262,8 @@
       "avant": "return texte.replace(/<(\\/?)(lecons_validees|donnees)>/gi, '&lt;$1$2>').replace(/\\r?\\n/g, ' ')",
       "apres": "return texte.replace(/\\r?\\n/g, ' ')",
       "critere": "SVL-7",
-      "extrait": "FAIL SVL-7 — consigneAvecLecons (leçon piégée) : 1 ouverture(s) et 2 fermeture(s) de <lecons_validees> (1 et 1 : la balise venue d'une règle doit être neutralisée) (0 s)",
-      "duree_s": 3.99
+      "extrait": "FAIL SVL-7 — consigneAvecLecons (leçon piégée) : 1 ouverture(s) et 2 fermeture(s) de <lecons_validees> (1 et 1 : la balise venue d'une règle doit être neutralisée) (1 s)",
+      "duree_s": 7.554
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -276,8 +272,8 @@
       "avant": "  if (!allume(reglages)) { console.log('leçons éteintes : entrée inchangée'); return 0 }",
       "apres": "  void allume",
       "critere": "SVL-8",
-      "extrait": "FAIL SVL-8 — interrupteur éteint : entree.md modifié (inchangé à l’octet près attendu) (1 s)",
-      "duree_s": 3.853
+      "extrait": "FAIL SVL-8 — interrupteur éteint : entree.md modifié (inchangé à l’octet près attendu) (2 s)",
+      "duree_s": 7.282
     },
     {
       "juge": "scripts/savoir-lecons-qa.mjs",
@@ -286,8 +282,8 @@
       "avant": "const consigne = consigneAvecLecons(systeme, leconsChoisies)",
       "apres": "const consigne = consigneAvecLecons(systeme, leconsDeLAgent(agent, deps))",
       "critere": "SVL-9",
-      "extrait": "FAIL SVL-9 — facteur-allume : 42 ouverture(s) de leçons pendant les appels (lues une seule fois, par creerLecteur) (2 s)",
-      "duree_s": 3.485
+      "extrait": "FAIL SVL-9 — facteur-allume : 42 ouverture(s) de leçons pendant les appels (lues une seule fois, par creerLecteur) (5 s)",
+      "duree_s": 8.786
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -296,8 +292,8 @@
       "avant": "{ timeZone: 'Europe/Paris', year: 'numeric'",
       "apres": "{ timeZone: 'UTC', year: 'numeric'",
       "critere": "SVB-1",
-      "extrait": "FAIL SVB-1 — jour 2026-09-28 : « executants » obtenu {\"fraicheur\":\"2026-09-28T22:30:00Z\",\"par_executant\":{\"claude-code\":{\"disjonctees\":0,\"expirees\":1,\"fail\":0,\"pass\":1,\"refusees\":0},\"codex\":{\"disjonctees\":0,\"expirees\":0,\"f…, attendu {\"fraicheur\":\"2026-09-28T22:30:00Z\",\"par_executant\":{\"claude-code\":{\"disjonctees\":0,\"expirees\":1,\"fail\":0,\"pass\":1,\"refusees\":0},\"codex\":{\"disjonctees\":0,\"expirees\":0,\"f… (1 s)",
-      "duree_s": 2.4
+      "extrait": "FAIL SVB-1 — jour 2026-09-28 : « executants » obtenu {\"fraicheur\":\"2026-09-28T22:30:00Z\",\"par_executant\":{\"claude-code\":{\"disjonctees\":0,\"expirees\":1,\"fail\":0,\"pass\":1,\"refusees\":0},\"codex\":{\"disjonctees\":0,\"expirees\":0,\"f…, attendu {\"fraicheur\":\"2026-09-28T22:30:00Z\",\"par_executant\":{\"claude-code\":{\"disjonctees\":0,\"expirees\":1,\"fail\":0,\"pass\":1,\"refusees\":0},\"codex\":{\"disjonctees\":0,\"expirees\":0,\"f… (4 s)",
+      "duree_s": 10.786
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -306,8 +302,8 @@
       "avant": "if (fautes.length) {",
       "apres": "if (false) {",
       "critere": "SVB-3",
-      "extrait": "FAIL SVB-3 — bilan fautif « invente » : code 0 (1 attendu) — ✓ bilan du 2026-10-04 : 3 proposition(s) envoyée(s) au pont (6 s)",
-      "duree_s": 6.931
+      "extrait": "FAIL SVB-3 — bilan fautif « invente » : code 0 (1 attendu) — ✓ bilan du 2026-10-04 : 3 proposition(s) envoyée(s) au pont (11 s)",
+      "duree_s": 13.481
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -317,7 +313,7 @@
       "apres": "    decisions: [{ objet: 'bilan', choix: 'appliquer' }],",
       "critere": "SVB-4",
       "extrait": "FAIL SVB-4 — plan du bilan « ok » : refusé par docs/agents/chef-plan.schema.json ($.decisions[0] : « cle_idempotence » manque ; $.decisions[0] : « nature » manque ; $.decisions[0] : « question » manque) (0 s)",
-      "duree_s": 5.656
+      "duree_s": 14.917
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -327,7 +323,7 @@
       "apres": "      sortante: true,\n    })),",
       "critere": "SVB-4",
       "extrait": "FAIL SVB-4 — plan du bilan « ok » : refusé par docs/agents/chef-plan.schema.json ($.taches[0].sortante : const ; $.taches[1].sortante : const ; $.taches[2].sortante : const) (0 s)",
-      "duree_s": 5.958
+      "duree_s": 12.965
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -337,7 +333,7 @@
       "apres": "'sandbox_workspace_write.network_access=true'",
       "critere": "SVB-5",
       "extrait": "FAIL SVB-5 — chaîne « ok » : argv sans « -c sandbox_workspace_write.network_access=false » (le réseau du modèle n'est pas coupé) (0 s)",
-      "duree_s": 6.166
+      "duree_s": 12.176
     },
     {
       "juge": "scripts/savoir-reflexion-qa.mjs",
@@ -347,7 +343,7 @@
       "apres": "Environment=\"PRESTI_HOTE=usine\"\nEnvironmentFile=/home/agents/.config/presti/agents.env",
       "critere": "SVB-8",
       "extrait": "FAIL SVB-8 — presti-chef-bilan.service : un EnvironmentFile= (aucun : le jeton vient du coffre, par avec-coffre.mjs) (0 s)",
-      "duree_s": 0.822
+      "duree_s": 1.242
     }
   ]
 }
