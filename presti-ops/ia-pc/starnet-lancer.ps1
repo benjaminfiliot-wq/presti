@@ -15,6 +15,21 @@ else {
   Write-Host "tunnel Ollama usine : lancé, PID $($p.Id)"
 }
 
+# freellmapi : tunnel ssh sur 3101, puis le relais local (freellm-proxy.mjs) sur 3001, là où StarNet pointe : il remplace par « auto » les noms de modèle que freellmapi ne connaît pas.
+if (Ecoute 3101) { Write-Host 'tunnel freellmapi : déjà en ligne (3101)' }
+else {
+  Start-Sleep 2
+  $cle2 = Join-Path $env:USERPROFILE '.sshpresti-usine'
+  $p2 = Start-Process -FilePath ssh -ArgumentList '-N', '-o', 'ExitOnForwardFailure=yes', '-o', 'ServerAliveInterval=30', '-o', 'BatchMode=yes', '-L', '3101:127.0.0.1:3001', '-i', $cle2, 'usine@88.96.53.3' -WindowStyle Hidden -PassThru
+  Write-Host "tunnel freellmapi : lancé, PID $($p2.Id)"
+  Start-Sleep 3
+}
+if (Ecoute 3001) { Write-Host 'relais freellmapi : déjà en ligne (3001)' }
+else {
+  $p3 = Start-Process -FilePath node -ArgumentList (Join-Path $PSScriptRoot 'freellm-proxy.mjs') -WindowStyle Hidden -PassThru
+  Write-Host "relais freellmapi : lancé, PID $($p3.Id) (StarNet > Custom : http://127.0.0.1:3001/v1, modèle auto)"
+}
+
 if (Ecoute 8799) { Write-Host 'connecteur presti : déjà en ligne (8799)' }
 else {
   $p = Start-Process -FilePath node -ArgumentList (Join-Path $racine 'scripts\mcp\presti-station.mjs'), '--http=8799' -WorkingDirectory $racine -WindowStyle Hidden -PassThru
@@ -30,3 +45,11 @@ try {
   $r = Invoke-RestMethod -Uri http://127.0.0.1:8799/mcp -Method Post -ContentType 'application/json' -Body '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' -TimeoutSec 8
   Write-Host ('connecteur presti : ' + (($r.result.tools | ForEach-Object { $_.name }) -join ', '))
 } catch { Write-Host 'connecteur presti : INJOIGNABLE' }
+
+# relevé de l équipe toutes les 15 min (MATT lit le connecteur Presti) : un seul exemplaire
+$deja = Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -match 'starnet-pont' }
+if ($deja) { Write-Host 'pont widgets : déjà en route' }
+else {
+  $pr = Start-Process -FilePath node -ArgumentList (Join-Path $PSScriptRoot 'starnet-pont.mjs') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $PSScriptRoot 'starnet-pont.log') -RedirectStandardError (Join-Path $PSScriptRoot 'starnet-pont.err')
+  Write-Host "pont widgets : lancé, PID $($pr.Id)"
+}
