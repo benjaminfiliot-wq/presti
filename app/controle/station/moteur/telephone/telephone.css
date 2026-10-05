@@ -7,6 +7,8 @@
   .mc-tel [data-station-carte] { width: min(calc(100vw - 32px), 100%); margin-inline: auto; }
   [data-station-carte] canvas { touch-action: none; max-width: 100%; height: auto !important; }
   [data-station-carte]:not([data-zoom="2"]):not([data-zoom="3"]) [data-plaque] { display: none; }
+  /* Mais la carte ne reste pas muette : en vue d'ensemble chaque salle porte son NOM COURT (un mot : « Machines », « Crieur »), sous elle, dans le couloir. */
+  [data-station-carte]:not([data-zoom="2"]):not([data-zoom="3"]) [data-nom-court] { display: block; visibility: visible; }
   [data-station-carte] [data-camera] [data-action] { min-width: 44px; min-height: 44px; }
   /* la liste des salles reste défilable : seul le cadre de la carte retient le geste */
   [data-station-carte] [data-liste-salles] { touch-action: pan-y; }

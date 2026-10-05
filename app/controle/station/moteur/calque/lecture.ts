@@ -34,6 +34,19 @@ export function plaqueDe(p: PropsCarte, cle: string, parDefaut: string): string 
   return r ?? PLAQUES[cle] ?? parDefaut
 }
 
+const MOTS_VIDES = new Set(['salle', 'tour', 'de', 'des', 'du', 'la', 'le', 'les', 'd', 'l', 'à', 'a', 'et'])
+/**
+ * Le nom court d'une salle, pour la carte du téléphone en vue d'ensemble (une salle y fait 48 px) : le premier mot qui porte le sens (« Salle des
+ * machines » → « Machines », « Tour du Crieur » → « Crieur », « Atelier des maquettes » → « Atelier »), 12 lettres au plus. Texte seulement.
+ */
+export function nomCourt(plaque: string): string {
+  const mots = plaque.trim().split(/\s+/).filter(Boolean)
+  const utiles = mots.filter((m) => !MOTS_VIDES.has(m.toLowerCase().replace(/['’]$/, '')))
+  const m = (utiles[0] ?? mots[0] ?? '').replace(/^[dl]['’]/i, '')
+  const net = m.charAt(0).toUpperCase() + m.slice(1)
+  return net.length > 12 ? `${net.slice(0, 11)}…` : net
+}
+
 /** Le nom d'un agent : le réglage, sinon son libellé. */
 export function nomDe(p: PropsCarte, nom: string, libelle: string): string {
   const e = reglage(p).equipage

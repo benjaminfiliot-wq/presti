@@ -16,10 +16,13 @@
 import type PhaserType from "phaser";
 
 import { createDefaultAgentAvatarProfile } from "../claw3d/profile";
+import { urlsTheme } from "../theme/charger";
 import type { Monde } from "../theme/grille";
 import type { ActeurStation, Emplacement, FabriqueScene } from "../types";
 import { AGENT_FH, AGENT_FRAMES, AGENT_FW, drawAgentSheet } from "./agentPainter";
+import { detourerCoque, peindreDecor } from "./decor";
 import { avancer, cheminVers, VITESSE } from "./marche";
+import { decalageDePlace, genreDePlace, placeLibre, type GenrePlace } from "./places";
 import { PIXEL_PALETTE } from "./palette";
 import type { EtatScene, Suivi } from "./suivi";
 
@@ -68,6 +71,9 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
     /** Vrai tant qu'un relevé est annoncé (le vidage de `file` est en cours). */
     vidage: boolean;
     dist: number;
+    /** Où il se tient dans sa salle : à la porte ou au poste (le genre), et laquelle des places de ce genre (0 : le milieu, 1 : à gauche…). */
+    genre: GenrePlace;
+    place: number;
     cle: string;
     image: PhaserType.GameObjects.Image;
     halo: PhaserType.GameObjects.Rectangle | null;
@@ -84,6 +90,9 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
     private calme = 0;
     private decor: PhaserType.GameObjects.Image | null = null;
     private planche: HTMLCanvasElement | null = null;
+    /** La tête de l'antenne que le décor porte (le bloc du bureau de l'atlas), ou null : la zone libre du bord haut. */
+    private ancreAntenne: { x: number; y: number } | null = null;
+    private coque: HTMLCanvasElement | null | undefined = undefined;
     private nuitDessinee: boolean | null = null;
     private antenne: PhaserType.GameObjects.Graphics | null = null;
     private toursVus = 0;
@@ -92,6 +101,14 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
 
     constructor() {
       super("station-pixel-scene");
+    }
+
+    /** L'atlas du thème (coque, cases), demandé au chargeur de Phaser : create() ne passe qu'une fois le fichier arrivé ou refusé (le décor est le même d'une page à l'autre). */
+    preload() {
+      if (!extras) return;
+      // Seul l'atlas du thème « station » est lu par ce décor (la coque et les cases de sa planche) ; les autres thèmes se tracent en code.
+      const adresses = extras.monde.carte.cle === "station" ? urlsTheme("station") : null;
+      if (adresses) this.load.image("atlas", adresses.atlas);
     }
 
     create() {
@@ -104,7 +121,7 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         this.antenne = this.add.graphics().setDepth(10);
         this.tracerAntenne(0);
         this.toursVus = extras.etat.tours;
-        extras.suivi.poserAntenne({ zone: zoneAntenne(extras.monde), tourne: false });
+        extras.suivi.poserAntenne({ zone: this.zoneDeAntenne(), tourne: false });
         this.reveilMien = () => this.reveil();
         extras.etat.reveiller = this.reveilMien;
       }
@@ -128,6 +145,12 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, quitter);
       this.events.once(Phaser.Scenes.Events.DESTROY, quitter);
       pret(this.game.canvas);
+    }
+
+    /** La zone de l'antenne : autour de la tête de l'antenne du décor quand il en porte une, sinon la zone libre du bord haut. */
+    private zoneDeAntenne() {
+      if (!extras) return { x: 0, y: 0, l: 16, h: 8 };
+      return this.ancreAntenne ? { x: this.ancreAntenne.x - 8, y: this.ancreAntenne.y - 4, l: 16, h: 8 } : zoneAntenne(extras.monde);
     }
 
     private reveil() {
@@ -167,23 +190,12 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
       }
       const c = this.planche.getContext("2d");
       if (!c) return;
-      const jeton = (nom: string, defaut: string) => carte.palette?.[nom as keyof typeof carte.palette] ?? defaut;
       c.clearRect(0, 0, width, height);
-      c.fillStyle = nuit ? "#05070b" : jeton("--mc-fond", "#101418");
-      c.fillRect(0, 0, width, height);
-      for (const e of carte.emplacements) {
-        const f = e.forme;
-        c.beginPath();
-        if (f.type === "polygone") (f.points ?? []).forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
-        else c.rect(f.x ?? 0, f.y ?? 0, f.l ?? 0, f.h ?? 0);
-        c.closePath();
-        c.fillStyle = nuit ? "#10141c" : carte.teintes[e.cle] ?? e.teinte;
-        c.fill();
-        c.strokeStyle = e.reservee ? "#8a8f98" : jeton("--mc-mur", "#596673");
-        c.stroke();
-        c.fillStyle = jeton("--mc-porte", "#c8d0d8");
-        c.fillRect(e.porte.x - 2, e.porte.y - 1, 4, 2);
-      }
+      // L'atlas du thème (s'il est arrivé) : la coque détourée est calculée une fois ; sans atlas, le décor se trace en code avec la palette du thème.
+      const atlas = this.textures.exists("atlas") ? (this.textures.get("atlas").getSourceImage() as HTMLImageElement) : null;
+      if (this.coque === undefined) this.coque = detourerCoque(atlas);
+      const { antenne } = peindreDecor(c, { carte, nuit, atlas, coque: this.coque });
+      this.ancreAntenne = antenne;
       if (this.textures.exists("decor")) {
         (this.textures.get("decor") as PhaserType.Textures.CanvasTexture).refresh();
       } else {
@@ -197,7 +209,7 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
     // ── L'antenne : un tour de 2 s par bulle NOUVELLE du Radar ou du Veilleur, jamais autrement ───────────────────────────────
     private tracerAntenne(angle: number) {
       if (!extras || !this.antenne) return;
-      const z = extras.suivi.antenne.zone ?? zoneAntenne(extras.monde);
+      const z = extras.suivi.antenne.zone ?? this.zoneDeAntenne();
       const cx = z.x + Math.floor(z.l / 2), cy = z.y + Math.floor(z.h / 2);
       const g = this.antenne;
       g.clear();
@@ -228,14 +240,40 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
     }
 
     // ── Les acteurs : ce qui a changé, et seulement cela ───────────────────────────────────────────────────────────────────────
-    /** Où un acteur se pose : le poste de sa salle, la porte pour le motif `porte` ; null sans salle ou sans emplacement. */
-    private destination(acteur: ActeurStation, rang: number): Emplacement | null {
-      if (!acteur.salle) return null;
-      if (!extras) return placer(acteur, rang);
+    /** Le poste du thème pour un acteur : le poste de sa salle, la porte pour le motif `porte` ; null sans salle ou sans emplacement. */
+    private base(acteur: ActeurStation): Emplacement | null {
+      if (!acteur.salle || !extras) return null;
       const { carte } = extras.monde;
       const porte = carte.portes[acteur.salle], poste = carte.postes[acteur.salle];
       const p = acteur.motif === "porte" || !poste ? porte : poste;
       return p ? { x: p.x, y: p.y } : null;
+    }
+
+    /** La boîte de la salle d'un acteur (pour garder sa place dedans). */
+    private boiteDeSalle(salle: string): { x: number; y: number; l: number; h: number } | null {
+      const e = extras?.monde.carte.emplacements.find((x) => x.salle === salle);
+      if (!e) return null;
+      const f = e.forme;
+      if (f.type === "polygone" && f.points?.length) {
+        const xs = f.points.map((q) => q[0]), ys = f.points.map((q) => q[1]);
+        return { x: Math.min(...xs), y: Math.min(...ys), l: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) };
+      }
+      return { x: f.x ?? 0, y: f.y ?? 0, l: f.l ?? 0, h: f.h ?? 0 };
+    }
+
+    /** Où un acteur se pose : sans le thème (moteur nu) le placeur du jeu ; avec lui, son poste (ou sa porte) décalé de SA place dans la salle. */
+    private destination(acteur: ActeurStation, rang: number, genre: GenrePlace, place: number): Emplacement | null {
+      if (!acteur.salle) return null;
+      if (!extras) return placer(acteur, rang);
+      const base = this.base(acteur);
+      return base ? decalageDePlace(base, genre, place, this.boiteDeSalle(acteur.salle)) : null;
+    }
+
+    /** La première place libre d'une salle pour un genre : les places que les AUTRES personnages y tiennent déjà sont exclues. */
+    private placeDe(nom: string, salle: string, genre: GenrePlace): number {
+      const prises: number[] = [];
+      for (const p of this.persos.values()) if (p.acteur.nom !== nom && p.acteur.salle === salle && p.genre === genre) prises.push(p.place);
+      return placeLibre(prises);
     }
 
     private texture(acteur: ActeurStation): string | null {
@@ -291,19 +329,23 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         if (!acteur.salle) continue;
         const rang = parSalle.get(acteur.salle) ?? 0;
         parSalle.set(acteur.salle, rang + 1);
-        const but = this.destination(acteur, rang);
-        if (!but) continue;
-        vus.add(acteur.nom);
+        if (extras && !this.base(acteur)) continue;
         const signature = [acteur.salle, acteur.motif, acteur.nom, acteur.couleur, acteur.avatar].join("|");
         const connu = this.persos.get(acteur.nom);
-        if (connu && connu.signature === signature) { connu.acteur = acteur; continue; }
+        if (connu && connu.signature === signature) { vus.add(acteur.nom); connu.acteur = acteur; continue; }
+        // Sa place : il garde la sienne tant qu'il reste dans la même salle au même genre (porte ou poste) ; un arrivant prend la première libre.
+        const genre = genreDePlace(acteur.motif);
+        const place = connu && connu.acteur.salle === acteur.salle && connu.genre === genre ? connu.place : this.placeDe(acteur.nom, acteur.salle, genre);
+        const but = this.destination(acteur, rang, genre, place);
+        if (!but) continue;
+        vus.add(acteur.nom);
 
         const cle = this.texture(acteur);
         if (!cle) { if (connu) this.retirer(acteur.nom); continue; }
         if (!connu) {
           // Un acteur qui paraît (premier relevé, ou salle jusque-là inconnue) est posé à sa place, sans marche.
           const image = this.add.image(but.x, but.y, cle, 0).setOrigin(0.5, 1).setDepth(30);
-          const p: Perso = { acteur, signature, pos: { x: but.x, y: but.y }, pub: { x: but.x, y: but.y }, chemin: [], file: [], vidage: false, n: 0, dist: 0, cle, image, halo: null, etincelle: null };
+          const p: Perso = { acteur, signature, pos: { x: but.x, y: but.y }, pub: { x: but.x, y: but.y }, chemin: [], file: [], vidage: false, n: 0, dist: 0, genre, place, cle, image, halo: null, etincelle: null };
           this.persos.set(acteur.nom, p);
           this.partir(p, acteur, but, false);
           continue;
@@ -312,6 +354,8 @@ export const createStationPixelScene = (params: Parameters<FabriqueScene>[0], ex
         if (connu.cle !== cle) { connu.image.setTexture(cle, 0); connu.cle = cle; }
         connu.acteur = acteur;
         connu.signature = signature;
+        connu.genre = genre;
+        connu.place = place;
         this.effets(connu, acteur);
         if (aChange) this.partir(connu, acteur, but, true);
         else this.publier(connu, connu.chemin.length || connu.file.length ? "marche" : "arrive");
