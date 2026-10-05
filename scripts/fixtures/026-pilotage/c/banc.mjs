@@ -244,14 +244,25 @@ export function empaqueter({ racine, entree, nomEntree = '__entree__.tsx', rempl
   }
   ajouter(nomEntree, transpiler(entree, path.join(racine, nomEntree)), path.join(racine, nomEntree))
   const RE_REQUIRE = /\brequire\(\s*(["'])([^"'\n]+)\1\s*\)/g
+  // D-0510-4 (05/10) : un `import('x')` transpilé en CommonJS devient `Promise.resolve().then(() => __importStar(require('x')))` ; cette arête est
+  // DYNAMIQUE (chez Next, un chunk à part, jamais dans le paquet initial de la page). Un module requis d'une autre façon, ne serait-ce qu'une fois, est statique.
+  const DYNAMIQUE = /Promise\.resolve\(\)\.then\(\(\)\s*=>\s*(?:__import(?:Star|Default)\()?\s*$/
   while (aTraiter.length) {
     const id = aTraiter.shift()
     const m = modules.get(id)
+    m.statiques = new Set()
     for (const x of m.code.matchAll(RE_REQUIRE)) {
       const spec = x[2]
+      if (!DYNAMIQUE.test(m.code.slice(Math.max(0, x.index - 90), x.index))) m.statiques.add(spec)
       if (spec in m.deps) continue
       m.deps[spec] = resoudre(spec, m.fichier)
     }
+  }
+  // Le paquet INITIAL : ce que la page charge sans passer par un import() dynamique (les modules atteints par des arêtes statiques seulement).
+  const initiaux = new Set([nomEntree]), parcours = [nomEntree]
+  while (parcours.length) {
+    const m = modules.get(parcours.shift())
+    for (const spec of m?.statiques ?? []) { const dep = m.deps[spec]; if (dep && !initiaux.has(dep)) { initiaux.add(dep); parcours.push(dep) } }
   }
   const morceaux = []
   morceaux.push('(function () {\n"use strict";\nvar process = { env: { NODE_ENV: "production", NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:9/banc-supabase", NEXT_PUBLIC_SUPABASE_ANON_KEY: "banc" }, browser: true };\nvar global = window;\nvar defs = Object.create(null), cache = Object.create(null);')
@@ -268,7 +279,7 @@ export function empaqueter({ racine, entree, nomEntree = '__entree__.tsx', rempl
 window.__banc_charger = charger
 charger(${JSON.stringify(nomEntree)})
 })()`)
-  return { js: morceaux.join('\n'), css, modules: [...modules.keys()], manquants }
+  return { js: morceaux.join('\n'), css, modules: [...modules.keys()], initiaux: [...initiaux], manquants }
 }
 
 // ── Le module d'entrée d'une page ────────────────────────────────────────────────────────────────────────────────────────
@@ -311,7 +322,7 @@ export async function demarrerBanc({ racine, pages, cssTete = ['app/base.css'], 
     const p = pages[nom]
     const e = empaqueter({ racine, entree: entreePage(p), nomEntree: `__entree_${nom}__.tsx`, remplacements })
     const tete = cssTete.map((rel) => ({ fichier: rel, texte: fs.existsSync(path.join(racine, rel)) ? fs.readFileSync(path.join(racine, rel), 'utf8') : '' }))
-    paquets[nom] = { js: e.js, css: [...tete, ...e.css].map((c) => `/* ${c.fichier} */\n${c.texte}`).join('\n'), modules: e.modules, manquants: e.manquants, octets: Buffer.byteLength(e.js) }
+    paquets[nom] = { js: e.js, css: [...tete, ...e.css].map((c) => `/* ${c.fichier} */\n${c.texte}`).join('\n'), modules: e.modules, initiaux: e.initiaux, manquants: e.manquants, octets: Buffer.byteLength(e.js) }
     return paquets[nom]
   }
   const prefixes = Object.entries(pages).flatMap(([nom, p]) => p.prefixes.map((x) => ({ nom, x }))).sort((a, b) => b.x.length - a.x.length)
