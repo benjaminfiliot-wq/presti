@@ -1,0 +1,27 @@
+$ node scripts/confidentialite-prospection-qa.mjs --hebergement --reel --confirmer-reel
+# 2026-10-04T19:33:49Z · code 0 · 4s
+
+confidentialite-prospection-qa --hebergement --reel
+(node:18504) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/benja/Documents/presti/lib/agents/acquisition/contrat.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\benja\Documents\presti\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✅ CP-H1 https://benjaminfiliot-wq.github.io/presti-notice/ et mentions-legales/ en 200, même hôte, empreintes égales aux fichiers du dépôt (notice 921b62d72064…, mentions e127c570d222…)
+✅ CP-H2 mentions : Benjamin Filiot, entrepreneur individuel, 109 411 348, l'adresse, GitHub
+✅ CP-H3 aucun lien vers prestiapp.fr
+✅ CP-H4 ni script, ni ressource distante, ni traceur
+✅ CP-H5 G3 daté avant le commit publié
+✅ CP-H6 conditions d'ads_archive datées, sourcées, trois usages, un verdict égal à celui de la base, aucune citation de plus de 15 mots
+confidentialite-prospection-qa --hebergement : PASS
+
+$ node scripts/confidentialite-prospection-qa.mjs --hebergement --reel --confirmer-reel
+# 2026-10-05T18:38:40Z · code 0 (rejeu du 05/10/2026, après le « oui » de Benj du même soir)
+
+confidentialite-prospection-qa --hebergement --reel
+✅ CP-H1 https://benjaminfiliot-wq.github.io/presti-notice/ et mentions-legales/ en 200, même hôte, empreintes égales aux fichiers du dépôt (notice 921b62d72064…, mentions e127c570d222…)
+✅ CP-H2 mentions : Benjamin Filiot, entrepreneur individuel, 109 411 348, l'adresse, GitHub
+✅ CP-H3 aucun lien vers prestiapp.fr
+✅ CP-H4 ni script, ni ressource distante, ni traceur
+✅ CP-H5 G3 daté avant le commit publié
+✅ CP-H6 conditions d'ads_archive datées, sourcées, trois usages, un verdict égal à celui de la base, aucune citation de plus de 15 mots
+confidentialite-prospection-qa --hebergement : PASS

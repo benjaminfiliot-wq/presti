@@ -15,3 +15,12 @@
 - Dépôt public : benjaminfiliot-wq/presti-notice, branche main ; commit publié 470a193, 2026-10-04T13:21Z ; les pages répondent 200 avec le nouveau contenu.
 - Empreintes lues par le juge : notice 921b62d72064705b3b30bf53325c3a9b13c65f5d5c5b92fb57bc7710f8ab77c4 ; mentions e127c570d22267f76481b9e0aff08f8152e03d2283f284538800e8da0ad0cb2c (inchangées).
 - Juge : `verifier-04-10.log` (CP-H1 à CP-H6 PASS ; `gh` rejoué par le substitut hors dépôt, juge non modifié pour CP-H). Correction du critère CP-3 : `decisions-juges-04-10.md`.
+
+## Rejeu du 05/10/2026 soir (après le « oui » de Benj du chat : « les notices de prospection publiées, bah ouais, c'est ok »)
+
+- Rien à republier : les deux fichiers du dépôt `presti` (`node scripts/notice-prospection.mjs --verifier`, code 0) sont ceux qui sont servis. Empreintes SHA-256 des pages servies, lues à l'instant (curl) : notice 921b62d72064705b3b30bf53325c3a9b13c65f5d5c5b92fb57bc7710f8ab77c4 ; mentions e127c570d22267f76481b9e0aff08f8152e03d2283f284538800e8da0ad0cb2c. Commit publié : 470a193 (04/10/2026), inchangé.
+- Condition G3 (CP-H5) : `.orchestre/decisions.md` porte « G3 fait (Benj, 25/09/2026 vers 20 h 30) », antérieure aux deux commits publiés. Limite assumée : c'est la déclaration de Benj, consignée ; aucune preuve technique des réglages de ChatGPT / claude.ai n'existe côté dépôt. Le texte publié ne dit « sans usage pour l'entraînement » que pour OpenAI (Codex) et n'affirme aucune donnée de prospect vers une IA gratuite ; c'est conforme à `docs/agents/relais-ia.md` (chaîne `prospect` = Codex puis Ollama local seulement).
+- Juge rejoué : `verifier.log`, dernier bloc (05/10 18:38 UTC), CP-H1 à CP-H6 PASS, code 0 ; il ne dépend plus de `gh` (absent du PC).
+- Base (lecture, projet gorcdvmueakcncsmrouo, `acq_etat_envoi()`) : `notice_verifiee_le` = 2026-10-05T17:59:58Z (posée par la passe du soir du Facteur : `cron.job_run_details` de `acq-facteur-soir`, passage du 05/10 à 18:00:00 UTC, `succeeded`). `ads_archive.permis` = false (verdict REFUSE du 29/09, inchangé). `epreuve.passee` = false, `mesure_a_sec.passee` = true, `envoi_froid` = false (non touché).
+- `NOTICE_URL` porte déjà l'adresse publiée (commit da0ea83e) : aucun nouveau commit de contrat.ts nécessaire.
+- Aucun jeton ni identifiant de connexion dans cette preuve.
