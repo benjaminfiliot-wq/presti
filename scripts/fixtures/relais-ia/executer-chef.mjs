@@ -61,14 +61,14 @@ function mondeChef(sc = {}) {
 
 await cas('RC-1', async () => {
   const e = []
-  const m = mondeChef({ codex: '401', freellmapi: 'ok' })
+  const m = mondeChef({ codex: '401', freellmapi_gemini: 'ok' })
   const r = await C.relayer(m.base)
-  if (r.code !== 0 || r.moteur !== 'freellmapi') e.push(`servi par ${r.moteur} code ${r.code} (attendu freellmapi, 0)`)
-  if (m.ids() !== 'codex>freellmapi') e.push(`ordre ${m.ids()}`)
+  if (r.code !== 0 || r.moteur !== 'freellmapi_gemini') e.push(`servi par ${r.moteur} code ${r.code} (attendu freellmapi_gemini, 0)`)
+  if (m.ids() !== 'codex>freellmapi_gemini') e.push(`ordre ${m.ids()}`)
   const a = m.lances[1]?.argv ?? []
   if (a[0] !== 'exec' || !a.includes(C.CONFIG_FL) || !a.includes('model_provider=fl')) e.push('l\'argv de secours ne désigne pas freellmapi')
   const i = a.indexOf('-m')
-  if (a[i + 1] !== 'auto' || a.filter((x) => x === '-m').length !== 1) e.push('le modèle de secours n\'est pas « auto », seul')
+  if (a[i + 1] !== 'gemini-3-flash-preview' || a.filter((x) => x === '-m').length !== 1) e.push('le modèle de secours n\'est pas gemini-3-flash-preview, seul')
   if (a.includes('gpt-6-sol')) e.push('gpt-6-sol reste dans l\'argv de secours')
   for (const garde of ['workspace-write', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '/x/sortie-1-dernier-message.md']) if (!a.includes(garde)) e.push(`l'argv de secours a perdu « ${garde} »`)
   if (!String(a.at(-1)).startsWith('Lis docs/agents/chef.md')) e.push('l\'instruction n\'est plus en dernier')
@@ -77,13 +77,13 @@ await cas('RC-1', async () => {
   if (m.lances[0].cle !== null) e.push('FL_KEY part vers Codex (abonnement)')
   const j = journalDe(m.dossier)
   if (!j.some((x) => x.moteur === 'codex' && x.issue === 'bascule' && x.raison === 'non_autorise')) e.push('401 de Codex non tracé en non_autorise')
-  if (!j.some((x) => x.moteur === 'freellmapi' && x.issue === 'ok')) e.push('freellmapi ok non tracé')
+  if (!j.some((x) => x.moteur === 'freellmapi_gemini' && x.issue === 'ok')) e.push('freellmapi ok non tracé')
   return e
 })
 
 await cas('RC-2', async () => {
   const e = []
-  const m = mondeChef({ codex: 'quota', freellmapi: 'ok' })
+  const m = mondeChef({ codex: 'quota', freellmapi_gemini: 'ok' })
   await C.relayer(m.base)
   const etat = JSON.parse(fs.readFileSync(path.join(m.dossier, 'etat-chef.json'), 'utf8')).moteurs
   if (etat.codex?.raison !== 'quota') e.push('Codex à bout (usage limit) non mémorisé')
@@ -103,7 +103,7 @@ await cas('RC-3', async () => {
   const e = []
   const m = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok' })
   const r = await C.relayer(m.base)
-  if (m.ids() !== 'codex>freellmapi>freellmapi_gemini>freellmapi_mistral>ollama_cloud>ollama_8b') e.push(`ordre ${m.ids()}`)
+  if (m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral>freellmapi>ollama_cloud>ollama_8b') e.push(`ordre ${m.ids()}`)
   if (r.moteur !== 'ollama_8b') e.push(`servi par ${r.moteur}`)
   const j = journalDe(m.dossier)
   if (j.find((x) => x.moteur === 'freellmapi')?.raison !== 'quota' || j.find((x) => x.moteur === 'ollama_cloud')?.raison !== 'quota') e.push('429 et « Free usage limit » non tracés en quota')
@@ -141,13 +141,13 @@ await cas('RC-5', async () => {
   const m = mondeChef({ codex: '401', freellmapi: 'ok', ollama_cloud: 'ok', opts: { cle: null } })
   const r = await C.relayer(m.base)
   if (r.moteur !== 'ollama_cloud' || m.ids() !== 'codex>ollama_cloud') e.push(`sans clé : ${m.ids()} (freellmapi doit être sauté)`)
-  const m2 = mondeChef({ codex: 'delai', freellmapi: 'ok' })
-  if ((await C.relayer(m2.base)).moteur !== 'freellmapi') e.push('un délai de Codex ne bascule pas')
+  const m2 = mondeChef({ codex: 'delai', freellmapi_gemini: 'ok' })
+  if ((await C.relayer(m2.base)).moteur !== 'freellmapi_gemini') e.push('un délai de Codex ne bascule pas')
   if (journalDe(m2.dossier).find((x) => x.moteur === 'codex')?.raison !== 'delai') e.push('délai non tracé')
-  const m3 = mondeChef({ codex: '401', freellmapi: 'ok', opts: { delaiMs: 10_000 } })
+  const m3 = mondeChef({ codex: '401', freellmapi_gemini: 'ok', opts: { delaiMs: 10_000 } })
   const r3 = await C.relayer(m3.base)
   if (r3.moteur !== null || m3.lances.length) e.push('plus de temps : un moteur est quand même lancé')
-  const m4 = mondeChef({ codex: '401', freellmapi: 'ok', opts: { texteEntree: `${ENTREE_PUBLIQUE} ${TEXTE_SENTINELLE}` } })
+  const m4 = mondeChef({ codex: '401', freellmapi_gemini: 'ok', opts: { texteEntree: `${ENTREE_PUBLIQUE} ${TEXTE_SENTINELLE}` } })
   await C.relayer(m4.base)
   const lu = fs.readdirSync(m4.dossier).map((f) => fs.readFileSync(path.join(m4.dossier, f), 'utf8')).join('\n')
   if (lu.includes(CLE_SENTINELLE) || lu.includes(TEXTE_SENTINELLE)) e.push('la clé ou le texte de l\'entrée est dans la trace')
@@ -157,14 +157,14 @@ await cas('RC-5', async () => {
 await cas('RC-8', async () => {
   const e = []
   // un routeur libre qui sort en code 0 sans faire le travail n'est pas un succès : le suivant prend la demande, sans mise de côté
-  const m = mondeChef({ codex: '401', freellmapi: 'silencieux', freellmapi_gemini: 'ok' })
+  const m = mondeChef({ codex: '401', freellmapi_gemini: 'silencieux', freellmapi_mistral: 'ok' })
   const r = await C.relayer(m.base)
-  if (r.moteur !== 'freellmapi_gemini' || m.ids() !== 'codex>freellmapi>freellmapi>freellmapi>freellmapi_gemini') e.push(`routeur silencieux : ${m.ids()} servi par ${r.moteur}`)
+  if (r.moteur !== 'freellmapi_mistral' || m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral') e.push(`routeur silencieux : ${m.ids()} servi par ${r.moteur}`)
   const etat = JSON.parse(fs.readFileSync(path.join(m.dossier, 'etat-chef.json'), 'utf8')).moteurs
-  if (etat.freellmapi) e.push('un routeur silencieux est mis de côté (il peut répondre juste la fois suivante)')
-  if (journalDe(m.dossier).find((x) => x.moteur === 'freellmapi')?.raison !== 'sortie_invalide') e.push('sortie sans plan non tracée en sortie_invalide')
+  if (etat.freellmapi_gemini) e.push('un routeur silencieux est mis de côté (il peut répondre juste la fois suivante)')
+  if (journalDe(m.dossier).find((x) => x.moteur === 'freellmapi_gemini')?.raison !== 'sortie_invalide') e.push('sortie sans plan non tracée en sortie_invalide')
   // « auto » a trois essais : deux silences puis un plan écrit sur le même moteur
-  const m3 = mondeChef({ codex: '401', freellmapi: 'silencieux', freellmapi_gemini: 'ok' })
+  const m3 = mondeChef({ codex: '401', freellmapi_gemini: 'panne', freellmapi_mistral: 'panne', freellmapi: 'silencieux' })
   const compte = { n: 0 }
   const lancerOrig = m3.base.lancer
   m3.base.lancer = async (a, b, x) => { const id = a.includes('model_provider=fl') && a[a.indexOf('-m') + 1] === 'auto' ? 'auto' : null; if (id) { compte.n++; if (compte.n === 3) { m3.base.verifier = () => true; return { code: 0, sortie: 'plan écrit' } } } return lancerOrig(a, b, x) }
@@ -217,7 +217,7 @@ await cas('RC-7', async () => {
   }
   // la file du chef : Codex 401 → freellmapi réussit (--relais=oui : un banc qui désigne son faux binaire garde l'ancien comportement)
   const a = lancerServir('echange-chef', 'fl', ['--relais=oui'])
-  if (a.reponse?.code !== 0 || a.reponse?.moteur !== 'freellmapi') e.push(`file du chef : réponse ${JSON.stringify({ code: a.reponse?.code, moteur: a.reponse?.moteur })} (code 0, freellmapi attendus)`)
+  if (a.reponse?.code !== 0 || a.reponse?.moteur !== 'freellmapi_gemini') e.push(`file du chef : réponse ${JSON.stringify({ code: a.reponse?.code, moteur: a.reponse?.moteur })} (code 0, freellmapi_gemini attendus)`)
   if (a.appels.map((x) => x.fournisseur).join('>') !== 'openai>fl') e.push(`file du chef : fournisseurs ${a.appels.map((x) => x.fournisseur).join('>')}`)
   if (!a.appels[1]?.cle) e.push('file du chef : FL_KEY absente de l\'environnement de Codex')
   if (JSON.stringify(a.reponse).includes(CLE_SENTINELLE)) e.push('la clé est dans reponse.json')
