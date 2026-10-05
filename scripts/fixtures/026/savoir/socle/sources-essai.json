@@ -291,6 +291,6 @@
   "plafonds": {
     "octets_par_fichier": 2000000,
     "fichiers": 20000,
-    "octets_total": 80000000
+    "octets_total": 150000000
   }
 }

@@ -134,7 +134,7 @@ function exporter() {
     }
     if (fs.existsSync(dossier)) parcourir(dossier, '')
   }
-  if (total > contrat.plafonds.octets_total || contenus.length > contrat.plafonds.fichiers) { console.error('plafond dépassé'); return 1 }
+  if (total > contrat.plafonds.octets_total || contenus.length > contrat.plafonds.fichiers) { console.error(`plafond dépassé : ${total} octets (plafond ${contrat.plafonds.octets_total}), ${contenus.length} fichiers (plafond ${contrat.plafonds.fichiers})`); return 1 }
   manifestes.general.prospects_compte = manifestes.prospects.fichiers.length
   const rapport = { version: 1, exporte_le: date, compteurs, secrets }
   if (o.sec) { console.log(JSON.stringify(compteurs)); return 0 }
