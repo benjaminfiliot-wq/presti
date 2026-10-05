@@ -74,7 +74,7 @@ const WIN = process.platform === 'win32'
 const MINUTE = 60_000
 const JOUR = 24 * 60 * MINUTE
 const HOTE_ESSAI = 'essai@192.0.2.10' // TEST-NET-1 : jamais une vraie machine
-const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE']
+const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE', 'PRESTI_JETON_STUDIO', 'PRESTI_JETON_SAV', 'PRESTI_JETON_QUALITE', 'PRESTI_JETON_VIGILE', 'FIRECRAWL_API_KEY']
 const PASSANTS = ['PATH', 'HOME', 'LANG', 'TZ', 'USER', 'PRESTI_HOTE', 'ORCHESTRE_CODEX_BIN', 'PLAYWRIGHT_BROWSERS_PATH', 'PRESTI_URL']
 // Variables que libuv ajoute d'office à l'environnement d'un enfant sous Windows (src/win/process.c, required_vars).
 const LIBUV_WIN = ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'PATH', 'SYSTEMDRIVE', 'SYSTEMROOT', 'TEMP', 'USERDOMAIN', 'USERNAME', 'USERPROFILE', 'WINDIR']
@@ -655,6 +655,7 @@ function reglesReference(nom, v) {
   if (nom === 'TELEGRAM_BOT_TOKEN') return /^\d{6,12}:[A-Za-z0-9_-]{30,}$/.test(v)
   if (nom === 'TELEGRAM_CHAT_ID') return /^-?\d{5,15}$/.test(v) || v === 'aucun'
   if (nom === 'TELEGRAM_CODE_APPAIRAGE') return /^[A-HJ-NP-Z2-9]{8}$/.test(v) || v === 'epuise'
+  if (nom === 'FIRECRAWL_API_KEY') return /^fc-[A-Za-z0-9]{32}$/.test(v)
   if (!RE_GENERIQUE.test(v)) return false
   if (nom.startsWith('PRESTI_JETON_') && /^(sk-|eyJ)/.test(v)) return false
   return true
@@ -763,7 +764,7 @@ async function groupeCoffre(R) {
     }
     // Chaque nom de la liste fermée est accepté (la liste est exactement celle-ci).
     for (const nom of NOMS_PERMIS) {
-      const v = nom === 'TELEGRAM_BOT_TOKEN' ? `${aleatoire('chiffres', 10)}:${aleatoire('alnum', 35)}` : nom === 'TELEGRAM_CHAT_ID' ? aleatoire('chiffres', 10) : nom === 'TELEGRAM_CODE_APPAIRAGE' ? aleatoire('code', 8) : lettres(30)
+      const v = nom === 'TELEGRAM_BOT_TOKEN' ? `${aleatoire('chiffres', 10)}:${aleatoire('alnum', 35)}` : nom === 'TELEGRAM_CHAT_ID' ? aleatoire('chiffres', 10) : nom === 'TELEGRAM_CODE_APPAIRAGE' ? aleatoire('code', 8) : nom === 'FIRECRAWL_API_KEY' ? `fc-${aleatoire('alnum', 32)}` : lettres(30)
       SECRETS.push(v)
       const f2 = path.join(T, 'cf2', `permis-${nom}.env`)
       const r = await poserBash(f2, nom, `${v}\n`)

@@ -1,6 +1,6 @@
 {
  "_": "Table unique des cas nom × valeur du coffre (026-048, CF-2, CF-3, CF-10). Le juge la rejoue contre les deux mises en œuvre des règles : scripts/usine/presti-coffre.sh (bash, valeur sur l'entrée standard) et scripts/usine/coffre-regles.mjs (Node, par usine-coffre.mjs et par import). Une valeur n'est jamais écrite ici : elle est ASSEMBLÉE à chaque passage à partir de morceaux (texte littéral, ou { lettres | alnum | chiffres | code : n } tirés au hasard), pour qu'aucune forme de clé n'existe en clair dans un fichier du dépôt (scripts/usine.mjs refuserait le paquet). `stdin: false` : la valeur contient un retour à la ligne, elle ne se rejoue pas par la lecture d'une ligne de usine-coffre.mjs (elle se rejoue par --depuis-env, par l'import et par le script bash). Les lignes marquées 026-050 D14 suivent la contre-revue du 25/09 au soir (TELEGRAM_CHAT_ID accepte « aucun », TELEGRAM_CODE_APPAIRAGE a sa propre forme : 8 signes de [A-HJ-NP-Z2-9] ou « epuise »).",
- "noms_permis": ["PRESTI_JETON_CHEF", "PRESTI_JETON_USINE", "PRESTI_JETON_ATELIER", "PRESTI_JETON_LIVREUR_USINE", "PRESTI_JETON_FACTEUR_USINE", "PRESTI_JETON_TELEGRAM", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "PRESTI_JETON_STANDARDISTE", "PRESTI_JETON_FACTEUR", "TELEGRAM_CODE_APPAIRAGE"],
+ "noms_permis": ["PRESTI_JETON_CHEF", "PRESTI_JETON_USINE", "PRESTI_JETON_ATELIER", "PRESTI_JETON_LIVREUR_USINE", "PRESTI_JETON_FACTEUR_USINE", "PRESTI_JETON_TELEGRAM", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "PRESTI_JETON_STANDARDISTE", "PRESTI_JETON_FACTEUR", "TELEGRAM_CODE_APPAIRAGE", "PRESTI_JETON_STUDIO", "PRESTI_JETON_SAV", "PRESTI_JETON_QUALITE", "PRESTI_JETON_VIGILE", "FIRECRAWL_API_KEY"],
  "noms_hors_liste": ["SUPABASE_SERVICE_ROLE_KEY", "STRIPE_SECRET_KEY", "ANTHROPIC_API_KEY", "ANTHROPIC_AGENTS_KEY", "NEXT_PUBLIC_SUPABASE_URL", "presti_jeton_chef", "PRESTI_JETON_CHEFX", "PRESTI_JETON_", "PRESTI_URL", "OPENAI_API_KEY", "GEMINI_API_KEY", "PRESTI_JETON_CHEF;id", "PRESTI_JETON_CHEF ", "../agents.env", "-", "="],
  "cas": [
   { "id": "A1", "nom": "PRESTI_JETON_CHEF", "valeur": [{ "lettres": 32 }], "attendu": "accepte", "regle": "lettres seules, 32 signes" },
@@ -17,6 +17,7 @@
   { "id": "A12", "nom": "TELEGRAM_CHAT_ID", "valeur": ["aucun"], "attendu": "accepte", "regle": "« aucun » (026-050 D14)" },
   { "id": "A13", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": [{ "code": 8 }], "attendu": "accepte", "regle": "8 signes de [A-HJ-NP-Z2-9] (026-050 D14)" },
   { "id": "A14", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": ["epuise"], "attendu": "accepte", "regle": "« epuise » (026-050 D14)" },
+  { "id": "A15", "nom": "FIRECRAWL_API_KEY", "valeur": ["fc-", { "alnum": 32 }], "attendu": "accepte", "regle": "clé Firecrawl : fc- puis 32 signes [A-Za-z0-9] (D-0510-I1)" },
 
   { "id": "R1", "nom": "PRESTI_JETON_CHEF", "valeur": [], "attendu": "refuse", "regle": "valeur vide" },
   { "id": "R2", "nom": "PRESTI_JETON_CHEF", "valeur": [{ "lettres": 12 }, " ", { "lettres": 12 }], "attendu": "refuse", "regle": "un blanc" },
@@ -57,6 +58,13 @@
   { "id": "T9", "nom": "TELEGRAM_CHAT_ID", "valeur": [{ "chiffres": 5 }, " ", { "chiffres": 5 }], "attendu": "refuse", "regle": "identifiant de conversation avec un blanc" },
   { "id": "T10", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": [{ "code": 7 }, "I"], "attendu": "refuse", "regle": "code d'appairage avec un I (hors [A-HJ-NP-Z2-9])" },
   { "id": "T11", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": [{ "code": 9 }], "attendu": "refuse", "regle": "code d'appairage de 9 signes" },
-  { "id": "T12", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": [{ "code": 7 }, "1"], "attendu": "refuse", "regle": "code d'appairage avec un 1" }
+  { "id": "T12", "nom": "TELEGRAM_CODE_APPAIRAGE", "valeur": [{ "code": 7 }, "1"], "attendu": "refuse", "regle": "code d'appairage avec un 1" },
+
+  { "id": "K1", "nom": "FIRECRAWL_API_KEY", "valeur": [{ "alnum": 35 }], "attendu": "refuse", "regle": "clé Firecrawl sans le préfixe fc- (valide pour la règle générale, pas pour sa forme)" },
+  { "id": "K2", "nom": "FIRECRAWL_API_KEY", "valeur": ["fc-", { "alnum": 31 }], "attendu": "refuse", "regle": "clé Firecrawl : 31 signes après fc-" },
+  { "id": "K3", "nom": "FIRECRAWL_API_KEY", "valeur": ["fc-", { "alnum": 33 }], "attendu": "refuse", "regle": "clé Firecrawl : 33 signes après fc-" },
+  { "id": "K4", "nom": "FIRECRAWL_API_KEY", "valeur": ["fc-", { "alnum": 16 }, " ", { "alnum": 16 }], "attendu": "refuse", "regle": "clé Firecrawl avec un blanc" },
+  { "id": "K5", "nom": "FIRECRAWL_API_KEY", "valeur": ["sk-", "proj-", { "alnum": 40 }], "attendu": "refuse", "regle": "une clé d'un autre fournisseur (modèle) sous le nom Firecrawl" },
+  { "id": "K6", "nom": "FIRECRAWL_API_KEY", "valeur": ["sk-", "ant-api03-", { "alnum": 40 }], "attendu": "refuse", "regle": "sk-ant-… sous le nom Firecrawl" }
  ]
 }
