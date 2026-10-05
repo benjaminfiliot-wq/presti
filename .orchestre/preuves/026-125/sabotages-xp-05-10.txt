@@ -1,0 +1,13 @@
+== reference
+✅ XP-1 les six phrases exactes ; barre seulement en cours (« J6/30 · 0 € ») ; jour 31 affiché 30
+✅ SM-2 30 appels à entrées vides ou nulles sans NaN, Infinity ni undefined ; entrées gelées non modifiées ; typecheck : jugé sur la racine réelle seulement (sans --racine ni --temoin)
+station-logique-qa --partie=modules : PASS
+== S1 (aucune_vente ignoree)
+❌ XP-1 ventes undefined : {"texte":"Aucune expérience avant la première vente (décision R13).","barre":null}, « Aucune expérience en cours. Lancer une expérience se décide avec Benj (R13). » sans barre attendu
+station-logique-qa --partie=modules : FAIL — XP-1
+== S2 (arret_le jamais servi)
+❌ XP-1 en cours : arret_le null, fin_prevue_le servie « 2026-11-04T10:00:00.000Z » attendue
+station-logique-qa --partie=modules : FAIL — XP-1
+== temoin
+✅ XP-1 les six phrases exactes ; barre seulement en cours (« J6/30 · 0 € ») ; jour 31 affiché 30
+station-logique-qa --partie=modules : FAIL — EQ-1

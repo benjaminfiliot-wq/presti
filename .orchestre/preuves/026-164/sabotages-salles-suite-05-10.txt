@@ -1,0 +1,110 @@
+· usine executer : paquet de 238 fichier(s), 3,3 Mo, sur e2305143 (HEAD du PC), preuves de 026-164 comprises, construit en 5,1 s
+  ne part pas (2658) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-bst-sb.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-130/mutations-contre-verifiees.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-130/mutations.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-130/mutations.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-181/bureau.jpg  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-181/telephone.jpg  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-199/UP-echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-199/UP-resultats.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-203/mutations.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-203/mutations.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-219/mutations.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-219/mutations.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-228/mutations-contre-verifiees.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-228/mutations.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-228/mutations.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-250/mutations-contre-verifiees.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-250/mutations.json  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-250/mutations.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-bureau-bloc.png  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-bureau-haut.png  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-mobile-bloc.png  (preuves d'autres tâches ; absent du bac)
+    … et 1347 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 4 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac bst-sb sur usine@88.96.53.3, délai 30 min : bash .orchestre/preuves/026-164/sabotages-salles-suite.sh
+· usine executer : bac bst-sb monté en 3150 ms : e23051437 + paquet, 238 écart(s) ; délai 1800 s
+== ref
+✅ SB-1 Radar, Crieur, Studio et Chantier présents ; chacun ne lit que ses sources du Contexte (direct et entonnoir ; fil du Crieur et Salle des envois ; packs ; bloc code), par apiDirection( ; ni fetch(, ni supabase
+✅ SB-2 radar, crieur, studio et chantier → [data-salle-panneau], plus la liste des agents ; « Fermer » et Échap ferment ; commandement ouvre son panneau (026-188) ; recettes et usine s’ouvrent comme avant
+✅ SB-3 Radar : 11 nombres tirés (tapis et entonnoir 7 et 30 jours, chauds à part), aucun autre ; Crieur : 3 bulles (heure, texte), réponses privées 27 (tiré), aucun autre nombre ; sans bulle : la phrase ; Chantier : file, e
+✅ SB-4 Studio : ni <video> ni <img>, un seul lien (/controle?onglet=packs), chaque pack (métier, commune, statut, date) ; 404 → « Les packs pubs ne sont pas encore ouverts. »
+✅ SB-5 radar : bloc:entonnoir lu à l'ouverture puis 2 fois en 10 min d’horloge (1 à 2 : ni figé, ni trop souvent) ; fermé et page cachée : aucune ; crieur : fil:crieur lu à l'ouverture puis 2 fois en 10 min d’horloge (
+✅ SB-6 aucun « Envoyer », « Copier », « Sauter », « Relayer » ni « Publier » dans les quatre panneaux ; aucun champ _piege ; la bulle piégée du Crieur affichée telle quelle, aucune image ni boîte ; aucune requête 
+✅ SB-7 bureau.jpg 1440×900, 158 Ko, écart type 27.1 ; telephone.jpg 390×844, 31 Ko, écart type 22.4 — prises par le juge, différentes entre elles et des autres parties ; bureau : le Radar, sous la barre ; téléphone : le
+✅ SB-8 aucune couleur en hexadécimal ni mouvement sans garde dans les quatre composants ; Panneaux.tsx identique à la base (le typecheck se juge sur la racine réelle)
+pilotage-ecran-qa --partie=salles-suite : PASS
+== s1
+✅ SB-1 Radar, Crieur, Studio et Chantier présents ; chacun ne lit que ses sources du Contexte (direct et entonnoir ; fil du Crieur et Salle des envois ; packs ; bloc code), par apiDirection( ; ni fetch(, ni supabase
+❌ SB-2 Crieur : Échap ne ferme pas le panneau
+✅ SB-3 Radar : 11 nombres tirés (tapis et entonnoir 7 et 30 jours, chauds à part), aucun autre ; Crieur : 3 bulles (heure, texte), réponses privées 68 (tiré), aucun autre nombre ; sans bulle : la phrase ; Chantier : file, e
+✅ SB-4 Studio : ni <video> ni <img>, un seul lien (/controle?onglet=packs), chaque pack (métier, commune, statut, date) ; 404 → « Les packs pubs ne sont pas encore ouverts. »
+❌ SB-5 studio fermé : 2 lecture(s) de packs ; chantier fermé : 2 lecture(s) de bloc:code ; crieur fermé : 2 lecture(s) de fil:crieur ; radar fermé : 2 lecture(s) de bloc:entonnoir
+✅ SB-6 aucun « Envoyer », « Copier », « Sauter », « Relayer » ni « Publier » dans les quatre panneaux ; aucun champ _piege ; la bulle piégée du Crieur affichée telle quelle, aucune image ni boîte ; aucune requête 
+✅ SB-7 bureau.jpg 1440×900, 159 Ko, écart type 27.2 ; telephone.jpg 390×844, 31 Ko, écart type 22.4 — prises par le juge, différentes entre elles et des autres parties ; bureau : le Radar, sous la barre ; téléphone : le
+❌ SB-8 Panneaux.tsx : 1 ligne(s) ajoutée(s) hors des quatre clés (const touche = (e: KeyboardEvent) => { if (e.key === 'Escap…)
+pilotage-ecran-qa --partie=salles-suite : FAIL — SB-2, SB-5, SB-8
+== s2
+✅ SB-1 Radar, Crieur, Studio et Chantier présents ; chacun ne lit que ses sources du Contexte (direct et entonnoir ; fil du Crieur et Salle des envois ; packs ; bloc code), par apiDirection( ; ni fetch(, ni supabase
+✅ SB-2 radar, crieur, studio et chantier → [data-salle-panneau], plus la liste des agents ; « Fermer » et Échap ferment ; commandement ouvre son panneau (026-188) ; recettes et usine s’ouvrent comme avant
+❌ SB-3 Radar : TROUVÉ = 14 (tiré) absent ; Radar : VÉRIFIÉ = 10 (tiré) absent ; Radar : MAQUETTE = 94 (tiré) absent ; Radar : CONTACTÉ = 8 (tiré) absent ; Radar : j7.contacts = 950 (tiré) absent ; Radar : j7.reponses = 
+❌ SB-4 route des packs en 404 : « Les packs pubs ne sont pas encore ouverts. » absente (« Studio pubs Fermer Chargement… Ouvrir l'onglet Packs »)
+❌ SB-5 studio : packs n'est pas lu à l'ouverture ; chantier : bloc:code n'est pas lu à l'ouverture ; crieur : fil:crieur n'est pas lu à l'ouverture ; radar : bloc:entonnoir n'est pas lu à l'ouverture
+❌ SB-6 Crieur : bulle 62 (09:36, « Brouillon : <img src=x onerror=alert(1)> ») absente ou altérée ; Crieur : la bulle « <img src=x onerror=alert(1)> » ne s’affiche pas telle quelle
+✅ SB-7 bureau.jpg 1440×900, 141 Ko, écart type 26.2 ; telephone.jpg 390×844, 17 Ko, écart type 19.4 — prises par le juge, différentes entre elles et des autres parties ; bureau : le Radar, sous la barre ; téléphone : le
+✅ SB-8 aucune couleur en hexadécimal ni mouvement sans garde dans les quatre composants ; Panneaux.tsx identique à la base (le typecheck se juge sur la racine réelle)
+pilotage-ecran-qa --partie=salles-suite : FAIL — SB-3, SB-4, SB-5, SB-6
+== s3
+✅ SB-1 Radar, Crieur, Studio et Chantier présents ; chacun ne lit que ses sources du Contexte (direct et entonnoir ; fil du Crieur et Salle des envois ; packs ; bloc code), par apiDirection( ; ni fetch(, ni supabase
+❌ SB-2 Radar, « Fermer » : ?salle=radar, panneau ouvert
+✅ SB-3 Radar : 11 nombres tirés (tapis et entonnoir 7 et 30 jours, chauds à part), aucun autre ; Crieur : 3 bulles (heure, texte), réponses privées 79 (tiré), aucun autre nombre ; sans bulle : la phrase ; Chantier : file, e
+✅ SB-4 Studio : ni <video> ni <img>, un seul lien (/controle?onglet=packs), chaque pack (métier, commune, statut, date) ; 404 → « Les packs pubs ne sont pas encore ouverts. »
+✅ SB-5 radar : bloc:entonnoir lu à l'ouverture puis 2 fois en 10 min d’horloge (1 à 2 : ni figé, ni trop souvent) ; fermé et page cachée : aucune ; crieur : fil:crieur lu à l'ouverture puis 2 fois en 10 min d’horloge (
+✅ SB-6 aucun « Envoyer », « Copier », « Sauter », « Relayer » ni « Publier » dans les quatre panneaux ; aucun champ _piege ; la bulle piégée du Crieur affichée telle quelle, aucune image ni boîte ; aucune requête 
+✅ SB-7 bureau.jpg 1440×900, 159 Ko, écart type 27.2 ; telephone.jpg 390×844, 31 Ko, écart type 22.5 — prises par le juge, différentes entre elles et des autres parties ; bureau : le Radar, sous la barre ; téléphone : le
+✅ SB-8 aucune couleur en hexadécimal ni mouvement sans garde dans les quatre composants ; Panneaux.tsx identique à la base (le typecheck se juge sur la racine réelle)
+pilotage-ecran-qa --partie=salles-suite : FAIL — SB-2
+· usine executer : commande finie en 1030 s sur l’usine, code 0 (seule)
+· usine executer : code 0 · paquet 5,1 s · envoi et bac 4,8 s · commande 1030,5 s · total 1040,4 s
