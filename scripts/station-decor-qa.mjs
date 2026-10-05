@@ -19,6 +19,7 @@
 //   DC-6 les autres thèmes (« vaisseau ») : le repli en code garde un décor riche (couleurs, liseré, meubles), la carte ne reste pas vide
 //   DC-7 le décor de l'atlas ne réveille rien : au repos la boucle de Phaser dort et la texture du décor ne change pas (règle de vérité : CE-3, CL-9), et la zone de
 //        l'antenne [data-antenne] est posée sur la tête de l'antenne de l'atlas (à 3 px près), pas dans un coin
+//   DC-8 aucun texte du tapis (libellés des huit étapes, « REJET … ») ne tombe sur la coque : leur bas reste au-dessus du bord haut de la coque de l'atlas (y = 58)
 //
 // Où il tourne : comme station-ecran-qa, sur l'usine (un build, Chromium). Lancé ailleurs, il se relance par `scripts/usine.mjs executer --nom=decor`
 // (PRESTI_JUGE_LOCAL=1 force le jugement sur place). Sortie : « ✅ DC-n … » ou « ❌ DC-n … » par critère, puis « station-decor-qa : PASS|FAIL ».
@@ -31,7 +32,7 @@ import { spawnSync } from 'node:child_process'
 import { R, lireOptions, creerSortie, premiereLigne } from './fixtures/026-pilotage/a/commun.mjs'
 
 const JUGE = 'station-decor-qa'
-const IDS = ['DC-1', 'DC-2', 'DC-3', 'DC-4', 'DC-5', 'DC-6', 'DC-7']
+const IDS = ['DC-1', 'DC-2', 'DC-3', 'DC-4', 'DC-5', 'DC-6', 'DC-7', 'DC-8']
 const o = lireOptions(process.argv.slice(2), { connues: [] })
 if (o.inconnues.length || o.positionnels.length) { console.log(`${JUGE} : appel refusé — option(s) inconnue(s) : ${[...o.inconnues, ...o.positionnels].join(' ')}`); process.exit(2) }
 
@@ -151,11 +152,12 @@ async function mesurer() {
       const geo = await PA.page.evaluate(() => {
         const t = document.querySelector('[data-station-carte] canvas').getBoundingClientRect(), a = document.querySelector('[data-antenne]')?.getBoundingClientRect()
         const k = t.width / 400
-        return a ? { cx: (a.x + a.width / 2 - t.x) / k, cy: (a.y + a.height / 2 - t.y) / k } : null
+        const basTapis = [...document.querySelectorAll('[data-tapis-etape], [data-tapis-rejet]')].map((n) => { const r = n.getBoundingClientRect(); return { nom: n.dataset.tapisEtape ?? 'rejet', bas: (r.bottom - t.y) / k, haut: (r.top - t.y) / k } })
+        return a ? { cx: (a.x + a.width / 2 - t.x) / k, cy: (a.y + a.height / 2 - t.y) / k, basTapis } : null
       })
       repos = { imm, geo }
     } finally { await PA.fermer(); await PB.fermer() }
-  } catch (e) { for (const id of ['DC-1', 'DC-2', 'DC-3', 'DC-4', 'DC-7']) s.echoue(id, `la page du bureau ne se mesure pas : ${premiereLigne(e)}`) }
+  } catch (e) { for (const id of ['DC-1', 'DC-2', 'DC-3', 'DC-4', 'DC-7', 'DC-8']) s.echoue(id, `la page du bureau ne se mesure pas : ${premiereLigne(e)}`) }
   if (A) {
     s.juger('DC-1', [
       ...(A.W !== 400 || A.H !== 384 ? [`la texture « decor » fait ${A.W} × ${A.H}, 400 × 384 attendu (la grille du thème)`] : []),
@@ -210,6 +212,10 @@ async function mesurer() {
     if (repos.imm.textures.length !== 1) e7.push(`la texture du décor change au repos (${repos.imm.textures.length} versions en 3 s)`)
     if (!repos.geo) e7.push('aucune zone [data-antenne]')
     else if (Math.abs(repos.geo.cx - 200) > 3 || Math.abs(repos.geo.cy - 25) > 3) e7.push(`la zone de l'antenne est centrée en ${repos.geo.cx.toFixed(1)},${repos.geo.cy.toFixed(1)}, la tête de l'antenne de l'atlas est en 200,25`)
+    const e8 = []
+    for (const x of repos.geo?.basTapis ?? []) if (x.bas > 58.5) e8.push(`le texte du tapis « ${x.nom} » descend jusqu'à y = ${x.bas.toFixed(1)}, sur le bord haut de la coque (y = 58)`)
+    if (!(repos.geo?.basTapis?.length >= 9)) e8.push(`${repos.geo?.basTapis?.length ?? 0} libellé(s) du tapis relevé(s), 9 attendus (huit étapes et REJET)`)
+    s.juger('DC-8', e8, `les ${repos.geo?.basTapis?.length} textes du tapis (huit étapes et REJET) restent au-dessus de la coque (le plus bas : y = ${Math.max(...(repos.geo?.basTapis ?? [{ bas: 0 }]).map((x) => x.bas)).toFixed(1)}, bord de la coque : 58)`)
     s.juger('DC-7', e7, `au repos : la boucle de Phaser reste sur l'image ${repos.imm.frames[0]} pendant 3 s et la texture du décor ne change pas ; la zone de l'antenne est centrée en ${repos.geo?.cx.toFixed(1)},${repos.geo?.cy.toFixed(1)} (tête de l'antenne de l'atlas : 200,25)`)
   }
 
