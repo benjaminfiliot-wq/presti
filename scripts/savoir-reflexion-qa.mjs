@@ -985,7 +985,7 @@ const SONDE_CHERCHER = `import fs from 'node:fs'\nimport path from 'node:path'\n
 function installerSavoir(ctx, bac) {
   const reel = path.join(ctx.racine, ...CHEMINS.chercher.split('/'))
   if (!existe(reel)) return `${CHEMINS.chercher} absent de la racine jugée (fiche ${QUI.chercher} : le savoir lié ne peut pas se chercher)`
-  for (const c of ['lib/savoir', 'lib/agents/lectureFirecrawl.ts', 'lib/agents/moteurs.ts', 'lib/agents/acquisition/lecteurSite.ts', 'lib/agents/acquisition/contrat.ts', 'scripts/ts-loader.mjs']) {
+  for (const c of ['lib/savoir', 'lib/agents/lectureFirecrawl.ts', 'lib/agents/depense.mjs', 'lib/agents/moteurs.ts', 'lib/agents/acquisition/lecteurSite.ts', 'lib/agents/acquisition/contrat.ts', 'scripts/ts-loader.mjs']) {
     const src = path.join(ctx.racine, ...c.split('/'))
     if (existe(src)) { fs.mkdirSync(path.dirname(path.join(bac, ...c.split('/'))), { recursive: true }); fs.cpSync(src, path.join(bac, ...c.split('/')), { recursive: true }) }
   }
