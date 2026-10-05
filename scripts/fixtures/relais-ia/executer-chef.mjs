@@ -45,14 +45,17 @@ function mondeChef(sc = {}) {
     '429': { code: 1, sortie: 'ERROR: exceeded retry limit, last status: 429 Too Many Requests' },
     cloud429: { code: 1, sortie: 'ERROR: You reached the Free usage limit.' },
     panne: { code: 1, sortie: 'ERROR: error sending request' },
+    silencieux: { code: 0, sortie: "Désolé, je n'ai pas accès aux fichiers." },
   }
+  let dernierMode = null
   const lancer = async (argv, budget, extraEnv) => {
     const id = moteurDe(argv)
     lances.push({ id, argv, budget, cle: extraEnv?.FL_KEY ?? null })
     const mode = sc[id] ?? 'panne'
+    dernierMode = mode
     return { ...(sorties[mode] ?? sorties.panne), delai: mode === 'delai' }
   }
-  const base = { argv: ARGV_CHEF, texteEntree: ENTREE_PUBLIQUE, delaiMs: 900_000, lancer, etat: C.magasinFichier(dossier), journal: C.journalFichier(dossier, () => t), maintenant: () => t, cle: CLE_SENTINELLE, drapeau: false, ...(sc.opts ?? {}) }
+  const base = { argv: ARGV_CHEF, texteEntree: ENTREE_PUBLIQUE, delaiMs: 900_000, lancer, etat: C.magasinFichier(dossier), journal: C.journalFichier(dossier, () => t), maintenant: () => t, cle: CLE_SENTINELLE, drapeau: false, verifier: () => dernierMode !== 'silencieux', ...(sc.opts ?? {}) }
   return { base, lances, dossier, avancer: (ms) => { t += ms }, ids: () => lances.map((l) => l.id).join('>') }
 }
 
@@ -151,6 +154,20 @@ await cas('RC-5', async () => {
   return e
 })
 
+await cas('RC-8', async () => {
+  const e = []
+  // un routeur libre qui sort en code 0 sans faire le travail n'est pas un succès : le suivant prend la demande, sans mise de côté
+  const m = mondeChef({ codex: '401', freellmapi: 'silencieux', freellmapi_gemini: 'ok' })
+  const r = await C.relayer(m.base)
+  if (r.moteur !== 'freellmapi_gemini' || m.ids() !== 'codex>freellmapi>freellmapi_gemini') e.push(`routeur silencieux : ${m.ids()} servi par ${r.moteur}`)
+  const etat = JSON.parse(fs.readFileSync(path.join(m.dossier, 'etat-chef.json'), 'utf8')).moteurs
+  if (etat.freellmapi) e.push('un routeur silencieux est mis de côté (il peut répondre juste la fois suivante)')
+  if (journalDe(m.dossier).find((x) => x.moteur === 'freellmapi')?.raison !== 'sortie_invalide') e.push('sortie sans plan non tracée en sortie_invalide')
+  const m2 = mondeChef({ codex: 'silencieux', freellmapi: 'silencieux', freellmapi_gemini: 'silencieux', freellmapi_mistral: 'silencieux', ollama_cloud: 'silencieux', ollama_8b: 'silencieux', ollama_4b: 'silencieux' })
+  if ((await C.relayer(m2.base)).code === 0) e.push('tous silencieux : code 0')
+  return e
+})
+
 // parité avec lib/agents/relais.ts : mêmes règles de mise de côté (une vérité, deux copies)
 await cas('RC-6', async () => {
   const e = []
@@ -173,7 +190,7 @@ await cas('RC-6', async () => {
 await cas('RC-7', async () => {
   const e = []
   const faux = path.join(racine, 'scripts', 'fixtures', 'relais-ia', 'faux-codex-chef.mjs')
-  const lancerServir = (nomEchange, reussitAvec, extraArgs = []) => {
+  const lancerServir = (nomEchange, reussitAvec, extraArgs = [], silencieuxAvec = []) => {
     const base = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-chef-srv-'))
     const echange = path.join(base, nomEchange)
     const d = path.join(echange, 'demande-1')
@@ -182,10 +199,10 @@ await cas('RC-7', async () => {
     fs.mkdirSync(path.join(home, '.config', 'presti'), { recursive: true })
     fs.writeFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), `${CLE_SENTINELLE}\n`)
     fs.writeFileSync(path.join(d, 'entree-1-entree.md'), ENTREE_PUBLIQUE)
-    fs.writeFileSync(path.join(d, 'demande.json'), JSON.stringify({ argv: ARGV_CHEF.map((x) => x.replace('/x/', `${d}/`)), entrees: [{ origine: '/o/entree.md', copie: path.join(d, 'entree-1-entree.md') }], sorties: [], stdin: false, delai_s: 120 }))
+    fs.writeFileSync(path.join(d, 'demande.json'), JSON.stringify({ argv: ARGV_CHEF.map((x) => x.replace('/x/', `${d}/`)), entrees: [{ origine: '/o/entree.md', copie: path.join(d, 'entree-1-entree.md') }], sorties: [{ origine: '/o/plan.json', copie: path.join(d, 'sortie-3-plan.json') }], stdin: false, delai_s: 120 }))
     fs.writeFileSync(path.join(d, 'demande.pret'), '')
     const journal = path.join(base, 'appels.jsonl')
-    fs.writeFileSync(path.join(d, 'faux-config.json'), JSON.stringify({ reussitAvec, echec: '401', journal }))
+    fs.writeFileSync(path.join(d, 'faux-config.json'), JSON.stringify({ reussitAvec, silencieuxAvec, ecrire: [path.join(d, 'sortie-3-plan.json')], echec: '401', journal }))
     spawnSync(process.execPath, [path.join(racine, 'scripts', 'usine', 'chef-modele.mjs'), 'servir', `--echange=${echange}`, `--codex=${faux}`, ...extraArgs], { cwd: racine, encoding: 'utf8', timeout: 60_000, env: { PATH: process.env.PATH, HOME: home } })
     const reponse = (() => { try { return JSON.parse(fs.readFileSync(path.join(d, 'reponse.json'), 'utf8')) } catch { return null } })()
     const appels = fs.existsSync(journal) ? fs.readFileSync(journal, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []
@@ -200,6 +217,10 @@ await cas('RC-7', async () => {
   let trace = ''
   try { trace = fs.readdirSync(path.join(a.home, '.relais')).map((f) => fs.readFileSync(path.join(a.home, '.relais', f), 'utf8')).join('\n') } catch { trace = '' }
   if (trace.includes(CLE_SENTINELLE) || !/"issue":"ok"/.test(trace)) e.push('journal du relais du chef absent ou porteur de la clé')
+  // un routeur libre (fl) qui sort en code 0 sans écrire le plan : les trois modèles de freellmapi sont écartés, Ollama Cloud écrit le plan
+  const s = lancerServir('echange-chef', ['ollama-usine'], ['--relais=oui'], ['fl'])
+  if (s.reponse?.code !== 0 || s.reponse?.moteur !== 'ollama_cloud') e.push(`routeur silencieux : réponse ${JSON.stringify({ code: s.reponse?.code, moteur: s.reponse?.moteur })} (code 0, ollama_cloud attendus)`)
+  if (s.appels.map((x) => x.fournisseur).join('>') !== 'openai>fl>fl>fl>ollama-usine') e.push(`routeur silencieux : fournisseurs ${s.appels.map((x) => x.fournisseur).join('>')}`)
   // sans --relais et avec un faux binaire : l'ancien comportement (aucun secours)
   const b = lancerServir('echange-chef', 'fl')
   if (b.appels.length !== 1 || b.reponse?.code === 0) e.push('banc d\'essai sans --relais : un secours est tenté')

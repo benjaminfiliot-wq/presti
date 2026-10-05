@@ -129,7 +129,10 @@ export function journalFichier(dossier, maintenant = Date.now) {
 // ── le relais ────────────────────────────────────────────────────────────────────────────────────────────────────────
 /**
  * Rejoue la demande sur le moteur suivant tant que le précédent est à bout.
- * opts : { argv, texteEntree, delaiMs, lancer(argv, delaiMs, extraEnv) → { code, sortie, delai? }, etat, journal, maintenant, cle, drapeau }
+ * opts : { argv, texteEntree, delaiMs, lancer(argv, delaiMs, extraEnv) → { code, sortie, delai? }, etat, journal, maintenant, cle, drapeau,
+ *         verifier?() → booléen : le travail attendu (le plan) est-il bien écrit ? }
+ * Un moteur libre peut sortir en code 0 sans avoir fait le travail (un routeur qui répond en prose, essai réel du 05/10) : sans `verifier` vrai,
+ * ce n'est pas un succès, et le moteur suivant prend la demande (sans mise de côté : le routeur peut répondre juste la fois d'après).
  * → { code, sortie, moteur } (le moteur qui a servi, ou le dernier essayé ; moteur null si aucun n'était disponible).
  */
 export async function relayer(opts) {
@@ -152,11 +155,17 @@ export async function relayer(opts) {
     const t0 = Date.now()
     const r = await lancer(m.id === 'codex' ? argv : argvDeSecours(argv, m), budget, m.cle ? { FL_KEY: opts.cle } : {})
     const ms = Date.now() - t0
-    if (r.code === 0) {
+    const fait = r.code === 0 && (typeof opts.verifier !== 'function' || opts.verifier() === true)
+    if (fait) {
       const courant = etat.lire()
       if (courant[m.id]) { delete courant[m.id]; etat.ecrire(courant) }
       dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'ok', ms })
       return { code: 0, sortie: r.sortie, moteur: m.id }
+    }
+    if (r.code === 0) { // code 0 mais le plan n'est pas là : ni quota ni panne, rien n'est mis de côté
+      dire({ moteur: m.id, modele: m.modele ?? 'codex', issue: 'bascule', raison: 'sortie_invalide', ms })
+      derniere = { code: 1, sortie: r.sortie, moteur: m.id }
+      continue
     }
     const c = classerSortie(r.sortie, maintenant(), r.delai === true)
     const jusqua = echeanceDeMiseDeCote(m.id, c.raison, maintenant(), c.jusquaMs)
