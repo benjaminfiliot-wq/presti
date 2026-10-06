@@ -25,8 +25,8 @@ import { systemeCourt, messageUtilisateur } from './prompt-chef.mjs'
 export const DOSSIER_DEFAUT = path.join(RACINE, '.orchestre', 'travail', 'modele-maison', 'chef')
 export const SORTIE_DEFAUT = path.join(RACINE, '.orchestre', 'travail', 'modele-maison', 'corpus-chef.jsonl')
 export const RAPPORT_DEFAUT = path.join(RACINE, '.orchestre', 'travail', 'modele-maison', 'corpus-chef.rapport.json')
-/** Signes par jeton, pour l'ESTIMATION des longueurs (le français et le JSON d'un tokenizer Qwen) : la mesure réelle est dans docs/agents/modele-maison-mesures.md. */
-export const SIGNES_PAR_JETON = 3.0
+/** Signes par jeton, pour l'ESTIMATION des longueurs : 2,76 mesuré le 06/10/2026 sur une entrée réelle (Ollama prompt_eval_count = 4189 jetons pour 11 579 signes de système + état, qwen3:4b) ; la sortie JSON n'a pas été mesurée à part. */
+export const SIGNES_PAR_JETON = 2.8
 export const jetons = (s) => Math.ceil([...String(s)].length / SIGNES_PAR_JETON)
 
 const DOSSIER_CYCLE = /^(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/

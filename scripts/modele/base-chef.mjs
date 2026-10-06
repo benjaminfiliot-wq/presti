@@ -9,7 +9,7 @@
 // Rien n'est installé ni modifié sur l'usine ; ne PAS lancer pendant un cycle du Chef (H:05 à H:20, heure UTC) ni quand un autre agent charge Ollama.
 //
 // Usage : node scripts/modele/base-chef.mjs [--modele=qwen3:4b-instruct-2507-q4_K_M] [--n=5] [--format=schema|json] [--ctx=8192] [--predict=1500] [--timeout=330]
-//                                          [--corpus=<jsonl>] [--sonde] [--ssh=gardien@88.96.53.3] [--cle=<clé ssh>] [--etiquette=<texte>]
+//                                          [--rangs=0,2,3] (rangs des entrées légères du corpus, au lieu de n entrées réparties) [--corpus=<jsonl>] [--sonde] [--ssh=gardien@88.96.53.3] [--cle=<clé ssh>] [--etiquette=<texte>]
 //   --sonde : un seul appel minuscule, pour vérifier que Ollama accepte le schéma (aucune mesure).
 //   Écrit chaque mesure dans .orchestre/travail/modele-maison/mesures-base.jsonl.
 import fs from 'node:fs'
@@ -38,6 +38,15 @@ export function appelerOllama(corps, { ssh, cle, timeoutS }) {
   return { reponse, mur_s, erreur: reponse?.error ? `Ollama : ${String(reponse.error).slice(0, 300)}` : null }
 }
 
+/** L'état de l'usine juste avant un appel : charge moyenne sur 1 min (/proc/loadavg) et modèles chargés par Ollama. Une charge élevée avant l'appel fausse la mesure : elle est consignée avec elle. */
+export function etatUsine({ ssh, cle }) {
+  const r = spawnSync('ssh', ['-i', cle, '-o', 'BatchMode=yes', ssh, "cut -d' ' -f1 /proc/loadavg; curl -s --max-time 5 http://127.0.0.1:11434/api/ps"], { encoding: 'utf8', timeout: 30_000 })
+  const [charge, ...reste] = String(r.stdout || '').split('\n')
+  let modeles = []
+  try { modeles = (JSON.parse(reste.join('\n')).models || []).map((m) => m.name) } catch { /* illisible */ }
+  return { charge1: Number(charge) || null, modeles }
+}
+
 /** Juge une sortie de modèle comme le fait le Chef : JSON lisible, validerPlan, puis la règle des consignes du fil. Rend { valide, ecarts, plan, taches, utiles }. */
 export function jugerSortie(texte, cycle, entree, maintenant = new Date()) {
   let plan
@@ -56,10 +65,10 @@ export function jugerSortie(texte, cycle, entree, maintenant = new Date()) {
   return { valide: ecarts.length === 0, ecarts, plan, taches, utiles: ecarts.length ? 0 : filtrerTaches(plan).gardees.length }
 }
 
-function choisir(corpus, rapport, n) {
+function choisir(corpus, rapport, n, rangsDemandes = null) {
   const legers = corpus.map((l, i) => ({ l, i })).filter(({ l }) => /Cycle : leger./.test(l.messages[1].content))
   const pas = (legers.length - 1) / Math.max(1, n - 1)
-  const rangs = [...new Set(Array.from({ length: Math.min(n, legers.length) }, (_, k) => Math.round(k * pas)))]
+  const rangs = rangsDemandes ?? [...new Set(Array.from({ length: Math.min(n, legers.length) }, (_, k) => Math.round(k * pas)))]
   return rangs.map((r) => ({ ...legers[r], cycle: rapport?.gardes_liste?.[legers[r].i]?.cycle ?? null }))
 }
 
@@ -88,7 +97,8 @@ if (estPrincipal) {
     const corpus = fs.readFileSync(fCorpus, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
     let rapport = null
     try { rapport = JSON.parse(fs.readFileSync(fRapport, 'utf8')) } catch { /* sans rapport, pas de nom de cycle */ }
-    const choix = choisir(corpus, rapport, n)
+    const rangs = typeof arg('rangs', false) === 'string' ? arg('rangs').split(',').map(Number).filter((x) => Number.isInteger(x) && x >= 0) : null
+    const choix = choisir(corpus, rapport, n, rangs).filter((x) => x.l)
     const sortie = path.join(TRAVAIL, 'mesures-base.jsonl')
     console.log(`modèle ${modele} · format ${format === 'json' ? 'json' : 'schéma'} · ctx ${ctx} · ${choix.length} entrée(s) léger(s) · délai ${timeoutS} s par appel`)
     const lignes = []
@@ -97,6 +107,7 @@ if (estPrincipal) {
       const date = /Date : (\d{4}-\d{2}-\d{2})/.exec(entree)?.[1] ?? ''
       const etat = entree.slice(entree.indexOf('\n\n') + 2)
       const corps = { model: modele, stream: false, think: false, format: forme, options, messages: [{ role: 'system', content: systemeCourt('leger') }, { role: 'user', content: messageUtilisateur('leger', date, etat) }] }
+      const avant = etatUsine({ ssh, cle })
       const { reponse, mur_s, erreur } = appelerOllama(corps, { ssh, cle, timeoutS })
       const ref = jugerSortie(l.messages[2].content, 'leger', entree)
       const contenu = reponse?.message?.content ?? ''
@@ -108,13 +119,13 @@ if (estPrincipal) {
         jetons_sortie: reponse?.eval_count ?? null, sortie_s: arrondi(sec(reponse?.eval_duration)), sortie_jps: arrondi(reponse?.eval_count / sec(reponse?.eval_duration), 2),
         fin: reponse?.done_reason ?? null, erreur, valide: j.valide, ecarts: j.ecarts.length, premier_ecart: j.ecarts[0] ?? null, taches: j.taches, utiles: j.utiles,
         reference: { taches: ref.taches, utiles: ref.utiles, valide: ref.valide },
-        sous_300_s: (mur_s ?? 1e9) < 300,
+        sous_300_s: (mur_s ?? 1e9) < 300, charge_avant: avant.charge1, modeles_avant: avant.modeles,
       }
       lignes.push(ligne)
       fs.mkdirSync(TRAVAIL, { recursive: true })
       fs.appendFileSync(sortie, JSON.stringify(ligne) + '\n')
       if (contenu) fs.writeFileSync(path.join(TRAVAIL, `sortie-${modele.replace(/[^a-z0-9.]+/gi, '_')}-${format}-${i}.json`), contenu)
-      console.log(`  entrée ${i}${cycle ? ` (${cycle.slice(5, 16)})` : ''} : ${ligne.mur_s} s (charge ${ligne.charge_s} s) · ${ligne.jetons_entree} jetons lus à ${ligne.entree_jps}/s · ${ligne.jetons_sortie} écrits à ${ligne.sortie_jps}/s · fin ${ligne.fin} · ${ligne.valide ? 'VALIDE' : 'INVALIDE'}${ligne.valide ? '' : ` (${ligne.ecarts} écart(s) : ${String(ligne.premier_ecart).slice(0, 110)})`} · tâches ${ligne.taches}, utiles ${ligne.utiles} (référence ${ligne.reference.taches}/${ligne.reference.utiles})`)
+      console.log(`  entrée ${i}${cycle ? ` (${cycle.slice(5, 16)})` : ''} : ${ligne.mur_s} s (charge ${ligne.charge_s} s) · ${ligne.jetons_entree} jetons lus à ${ligne.entree_jps}/s · ${ligne.jetons_sortie} écrits à ${ligne.sortie_jps}/s · fin ${ligne.fin} · charge avant ${ligne.charge_avant} · ${ligne.valide ? 'VALIDE' : 'INVALIDE'}${ligne.valide ? '' : ` (${ligne.ecarts} écart(s) : ${String(ligne.premier_ecart).slice(0, 110)})`} · tâches ${ligne.taches}, utiles ${ligne.utiles} (référence ${ligne.reference.taches}/${ligne.reference.utiles})`)
     }
     const ok = lignes.filter((x) => x.valide).length
     console.log(`→ ${ok}/${lignes.length} plans valides · ${lignes.filter((x) => x.sous_300_s).length}/${lignes.length} sous 300 s · ${sortie}`)
