@@ -222,6 +222,13 @@ await cas('RC-9c', async () => {
   if (m.lances.some((l) => l.id === 'ollama_8b') || r.moteur !== 'ollama_4b') e.push(`8 B en délai récent : ${m.ids()} servi par ${r.moteur} (le 4 B seul attendu)`)
   if (!(l4 && l4.budget >= 420_000)) e.push(`le 4 B n'a que ${l4?.budget} ms`)
   if (!journalDe(m.dossier).some((x) => x.moteur === 'ollama_8b' && x.raison === 'delai_recent_temps_au_suivant')) e.push('le saut du 8 B n\'est pas tracé')
+  // cycle plein (855 s) : même avec le temps pour deux, un 8 B en délai récent est sauté et le 4 B reçoit plus de 700 s (le cycle de 17 h 05 UTC : 4 B en délai à 480 s derrière les 300 s du 8 B)
+  const m3 = mondeChef({ ...sc, opts: { delaiMs: 855_000 } })
+  const vuQ = new Date(T0 - 2 * 60_000).toISOString() // comme le 06/10 : les moteurs libres sont à bout depuis des heures (série ≥ 3), donc pas d'attente de reprise
+  m3.base.etat.ecrire({ ollama_8b: { jusqua: T0 - 50 * 60_000, raison: 'delai', vu: new Date(T0 - 60 * 60_000).toISOString(), serie: 2 }, freellmapi_gemini: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 }, freellmapi_mistral: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 }, freellmapi: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 } })
+  const r3 = await C.relayer(m3.base)
+  const l43 = m3.lances.find((l) => l.id === 'ollama_4b')
+  if (m3.lances.some((l) => l.id === 'ollama_8b') || r3.moteur !== 'ollama_4b' || !(l43?.budget >= 700_000)) e.push(`cycle plein, 8 B en délai récent : ${m3.ids()}, 4 B ${l43?.budget} ms (8 B sauté et plus de 700 s au 4 B attendus)`)
   const m2 = mondeChef(sc) // sans délai récent : le 8 B est toujours essayé (et sert ici)
   const r2 = await C.relayer(m2.base)
   if (r2.moteur !== 'ollama_8b') e.push(`sans délai récent, le 8 B n'est plus essayé : ${m2.ids()}`)
