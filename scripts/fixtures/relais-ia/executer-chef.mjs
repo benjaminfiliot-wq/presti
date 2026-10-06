@@ -192,6 +192,24 @@ await cas('RC-9', async () => {
   return e
 })
 
+// ── RC-9b (06/10) : un quota qui dure ne se SUPPORTE plus par l'attente ─────────────────────────────────────────────────
+// Les trois moteurs libres sont à bout depuis trois essais de suite (état : série ≥ 3, vu il y a 2 min) : attendre 5 min leur reprise coûtait 5 min de chaque cycle
+// de 858 s et ne laissait que 252 s au 4 B, qui a toujours fini en délai. Le relais passe donc tout de suite au local ; une série courte attend toujours (RC-9).
+await cas('RC-9b', async () => {
+  const e = []
+  const m = mondeChef({ codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok' })
+  const vu = new Date(T0 - 2 * 60_000).toISOString(), jusqua = T0 + 3 * 60_000
+  m.base.etat.ecrire({ freellmapi_gemini: { jusqua, raison: 'quota', vu, serie: 3 }, freellmapi_mistral: { jusqua, raison: 'quota', vu, serie: 3 }, freellmapi: { jusqua, raison: 'quota', vu, serie: 3 } })
+  const r = await C.relayer(m.base)
+  if (m.attentes.length || r.moteur !== 'ollama_8b') e.push(`série ≥ 3 : ${m.attentes.length} attente(s), servi par ${r.moteur} (aucune attente et ollama_8b attendus)`)
+  const m2 = mondeChef({ codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'panne', ollama_4b: 'ok' })
+  await C.relayer(m2.base)
+  const etat = m2.base.etat.lire()
+  if (!(etat.freellmapi_gemini?.serie >= 1)) e.push(`l'échec n'écrit pas sa série : ${JSON.stringify(etat.freellmapi_gemini)}`)
+  const b4 = C.CHAINE_SECOURS.find((x) => x.id === 'ollama_4b')
+  if (!(b4.budgetMs >= 420_000)) e.push(`le 4 B n'a que ${b4.budgetMs} ms (420 000 au moins : 252 s ont fini en délai)`)
+  return e
+})
 // ── RC-10 : l'appel direct ───────────────────────────────────────────────────────────────────────────────────────────
 function monde10() {
   const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-chef-prompt-'))
