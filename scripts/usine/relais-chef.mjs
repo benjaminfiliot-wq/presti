@@ -149,6 +149,18 @@ const sansCloture = (t) => { const m = /^```(?:json)?\s*\n([\s\S]*?)\n?```$/.exe
  * Un appel direct à un moteur de secours (HTTP local) : écrit le JSON de réponse dans `prompt.destination` et rend { code, sortie, delai? } comme un
  * « codex exec » (code 0 : fait). Les échecs rendent le texte que classerSortie sait lire (429, 401, panne). Jamais la clé dans la sortie.
  */
+/** Le texte d'une réponse Ollama /api/chat, diffusée (une ligne JSON par morceau) ou non (un seul objet) : les `message.content` mis bout à bout ; null si rien n'est lisible. Pure. */
+export function texteOllama(brut) {
+  let texte = '', lu = false
+  for (const ligne of String(brut ?? '').split('\n')) {
+    if (!ligne.trim()) continue
+    let o
+    try { o = JSON.parse(ligne) } catch { continue }
+    if (typeof o?.message?.content === 'string') { texte += o.message.content; lu = true }
+  }
+  return lu ? texte : null
+}
+
 export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetch, ecrire = (f, t) => fs.writeFileSync(f, t), valider = null, reduire = null }) {
   const controleur = new AbortController()
   const minuteur = setTimeout(() => controleur.abort(), delaiMs)
@@ -157,7 +169,9 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetc
     const entetes = { 'content-type': 'application/json' }
     if (moteur.api !== 'ollama' && cle) entetes.authorization = `Bearer ${cle}`
     const corpsDe = () => (moteur.api === 'ollama'
-      ? { model: moteur.modele, messages, stream: false, think: false, format: 'json', options: { num_ctx: 16384, temperature: 0.2, num_predict: 4096 } }
+      // stream: true (06/10) : une requête NON diffusée continue de calculer côté Ollama quand le relais coupe au délai ; le 8 B abandonné à 300 s
+      // gardait alors les 4 cœurs et le 4 B suivant finissait en délai (mesuré : charge 4,08, ≈ 230 s d'attente). Diffusée, la coupure arrête le calcul.
+      ? { model: moteur.modele, messages, stream: true, think: false, format: 'json', options: { num_ctx: 16384, temperature: 0.2, num_predict: 4096 } }
       : { model: moteur.modele, messages, max_tokens: 6000, temperature: 0.2 })
     const url = moteur.api === 'ollama' ? `${moteur.base}/api/chat` : `${moteur.base}/chat/completions`
     let objet = null
@@ -172,9 +186,16 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetc
         try { brut = await r.text() } catch { brut = '' }
         return { code: 1, sortie: `ERROR: unexpected status ${r.status}${r.status === 429 ? ' Too Many Requests' : ''}: ${String(brut).replace(/\s+/g, ' ').slice(0, 200)}` }
       }
-      let j
-      try { j = await r.json() } catch { return { code: 1, sortie: 'ERROR: réponse illisible' } }
-      const texte = moteur.api === 'ollama' ? j?.message?.content : j?.choices?.[0]?.message?.content
+      let texte
+      if (moteur.api === 'ollama') {
+        let brut
+        try { brut = await r.text() } catch (e) { return e && e.name === 'AbortError' ? { code: 1, sortie: 'ERROR: délai dépassé', delai: true } : { code: 1, sortie: 'ERROR: réponse illisible' } }
+        texte = texteOllama(brut)
+      } else {
+        let j
+        try { j = await r.json() } catch { return { code: 1, sortie: 'ERROR: réponse illisible' } }
+        texte = j?.choices?.[0]?.message?.content
+      }
       if (typeof texte !== 'string' || !texte.trim()) return { code: 0, sortie: 'réponse vide' } // code 0 sans plan : « sortie_invalide » par le vérificateur
       let essai
       try { essai = JSON.parse(sansCloture(texte)) } catch { return { code: 0, sortie: 'réponse non JSON' } }

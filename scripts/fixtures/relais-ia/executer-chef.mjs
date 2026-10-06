@@ -398,6 +398,27 @@ const nbSignes = (t) => [...String(t)].length
 const motsDe = (n) => Array.from({ length: n }, (_, i) => `mot${i}`).join(' ')
 const jOkReunion = (x) => ({ choices: [{ message: { content: typeof x === 'string' ? x : JSON.stringify(x) } }] })
 
+// ── RC-10b (06/10) : Ollama est appelé en DIFFUSION, pour que la coupure au délai arrête vraiment le calcul ──────────────────────────
+// Mesuré sur l'usine : une requête non diffusée continue de calculer après la coupure ; le 8 B abandonné gardait les 4 cœurs et le 4 B suivant finissait en délai.
+await cas('RC-10b', async () => {
+  const e = []
+  const flux = ['{"message":{"content":"{\\"cy"},"done":false}', '{"message":{"content":"cle\\":\\"leger\\"}"},"done":false}', '{"message":{"content":""},"done":true}'].join('\n')
+  if (C.texteOllama(flux) !== '{"cycle":"leger"}') e.push(`texteOllama ne recolle pas le flux : ${JSON.stringify(C.texteOllama(flux))}`)
+  if (C.texteOllama('{"message":{"content":"{}"}}') !== '{}') e.push('texteOllama ne lit plus une réponse non diffusée')
+  if (C.texteOllama('pas du json') !== null) e.push('texteOllama invente un texte sur une réponse illisible')
+  const w = monde10()
+  const p = C.preparerPromptDirect({ argv: w.argv, sorties: w.sorties, lireFichier: w.lireFichier, dossiersPermis: w.dossiersPermis })
+  let vu = null
+  const fluxFetch = async (url, init) => { vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => flux, json: async () => { throw new Error('flux : pas un objet') } } }
+  const r = await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((m) => m.id === 'ollama_4b'), prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: fluxFetch })
+  if (vu?.stream !== true) e.push(`Ollama appelé avec stream=${vu?.stream} (true attendu : sinon la coupure ne l'arrête pas)`)
+  if (r.code !== 0) e.push(`un flux valide n'écrit pas le plan : ${r.sortie}`)
+  const coupe = async (url, init) => ({ ok: true, status: 200, text: () => new Promise((_, rej) => { const x = new Error('aborted'); x.name = 'AbortError'; rej(x) }), json: async () => ({}) })
+  const r2 = await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((m) => m.id === 'ollama_4b'), prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: coupe })
+  if (!(r2.code === 1 && r2.delai === true)) e.push(`flux coupé au délai : ${JSON.stringify(r2)} (délai attendu, pour la mise de côté)`)
+  return e
+})
+
 await cas('RC-11', async () => {
   const e = []
   const maintenant = new Date()
