@@ -18,7 +18,8 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
-import { compacterEntree } from '../modele/chef-leger-entree.mjs'
+import { compacterEntree, SYSTEME_CHEF_LEGER, messageChefLeger } from '../modele/chef-leger-entree.mjs'
+import { schemaPlan } from '../modele/prompt-chef.mjs'
 
 export const MINUTE = 60_000
 export const HEURE = 60 * MINUTE
@@ -34,6 +35,10 @@ export const CHAINE_SECOURS = Object.freeze([
   // « auto » : le routeur choisit un modèle libre au hasard à chaque appel (un code, un modèle de chat…) : deux essais.
   Object.freeze({ id: 'freellmapi', modele: 'auto', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000, essais: 2 }),
   Object.freeze({ id: 'ollama_cloud', modele: 'gpt-oss:120b-cloud', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: true, local: false, budgetMs: 150_000 }),
+  // 06/10 au soir : le modèle MAISON (Qwen2.5-1.5B affiné sur 323 plans légers, Kaggle) : 33 à 62 s par plan sur l'usine, 2 plans valides sur 3
+  // entrées jamais vues (mesures.jsonl), contre 748 s pour le 4 B. Premier des locaux, et seulement pour un plan de cycle LÉGER (son domaine) :
+  // toute autre demande lui est refusée sans appel (« hors domaine »), le moteur suivant la prend.
+  Object.freeze({ id: 'ollama_maison', modele: 'presti-chef-leger:1.5b', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, maison: 'leger', budgetMs: 240_000 }),
   Object.freeze({ id: 'ollama_8b', modele: 'qwen3:8b-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 300_000 }),
   Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 780_000 }) // 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
 ])
@@ -91,7 +96,7 @@ export function classerSortie(sortie, maintenant, delaiDepasse = false) {
 
 /** Jusqu'à quand un moteur est mis de côté (ms absolues), 0 : jamais. Mêmes règles que lib/agents/relais.ts. Pure. */
 export function echeanceDeMiseDeCote(moteur, raison, maintenant, jusquaMs) {
-  const local = moteur === 'ollama_8b' || moteur === 'ollama_4b'
+  const local = moteur === 'ollama_8b' || moteur === 'ollama_4b' || moteur === 'ollama_maison'
   if (raison === 'quota') {
     if (moteur === 'codex') return Math.min(Math.max(jusquaMs ?? 0, maintenant + 15 * MINUTE), maintenant + 6 * HEURE)
     if (moteur === 'ollama_cloud') return maintenant + 6 * HEURE
@@ -191,6 +196,19 @@ export function compacterPourLocal(utilisateur, compacter = compacterEntree) {
   })
 }
 
+/**
+ * Les messages du modèle MAISON (entrée identique à l'entraînement : la consigne d'une ligne, puis « Cycle : leger. Date : … » et l'état compacté),
+ * ou null quand la demande n'est pas un plan de cycle léger avec son fichier d'état : le modèle maison ne sait faire que ça. Pure.
+ */
+export function messagesMaison(utilisateur, maintenantMs = Date.now()) {
+  const u = String(utilisateur ?? '')
+  if (!/plan du cycle leger\b/.test(u)) return null
+  const f = /<fichier nom="[^"]*entree[^"]*">\n([\s\S]*?)\n<\/fichier>/.exec(u)
+  if (!f || !/<donnees_etat>/.test(f[1])) return null
+  const date = /Date du jour \(heure de Paris\) : (\d{4}-\d{2}-\d{2})/.exec(u)?.[1] ?? new Date(maintenantMs).toISOString().slice(0, 10)
+  return [{ role: 'system', content: SYSTEME_CHEF_LEGER }, { role: 'user', content: messageChefLeger(date, f[1]) }]
+}
+
 /** Le texte d'une réponse Ollama /api/chat, diffusée (une ligne JSON par morceau) ou non (un seul objet) : les `message.content` mis bout à bout ; null si rien n'est lisible. Pure. */
 export function texteOllama(brut) {
   let texte = '', lu = false
@@ -207,10 +225,15 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null
   const controleur = new AbortController()
   const minuteur = setTimeout(() => controleur.abort(), delaiMs)
   try {
-    const messages = [{ role: 'system', content: prompt.systeme }, { role: 'user', content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur }]
+    const maison = moteur.maison ? messagesMaison(prompt.utilisateur) : null
+    if (moteur.maison && !maison) return { code: 0, sortie: 'hors domaine du modèle maison' } // code 0 sans plan : le relais passe au suivant sans mise de côté
+    const messages = maison ?? [{ role: 'system', content: prompt.systeme }, { role: 'user', content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur }]
     const entetes = { 'content-type': 'application/json' }
     if (moteur.api !== 'ollama' && cle) entetes.authorization = `Bearer ${cle}`
-    const corpsDe = () => (moteur.api === 'ollama'
+    const corpsDe = () => (maison
+      // le modèle maison : le format et le contexte de sa mesure (schéma du plan léger, 4096 jetons), sans réflexion
+      ? { model: moteur.modele, messages, stream: true, format: schemaPlan('leger'), options: { num_ctx: 4096, temperature: 0.2, num_predict: 1200 } }
+      : moteur.api === 'ollama'
       // stream: true (06/10) : une requête NON diffusée continue de calculer côté Ollama quand le relais coupe au délai ; le 8 B abandonné à 300 s
       // gardait alors les 4 cœurs et le 4 B suivant finissait en délai (mesuré : charge 4,08, ≈ 230 s d'attente). Diffusée, la coupure arrête le calcul.
       ? { model: moteur.modele, messages, stream: true, think: false, format: 'json', options: { num_ctx: 16384, temperature: 0.2, num_predict: 4096 } }
