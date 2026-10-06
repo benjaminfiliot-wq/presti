@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti — le relevé de marché quotidien (eBay.fr par Firecrawl, TikTok par Apify), pour les tâches e-commerce des agents
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs FIRECRAWL_API_KEY APIFY_TOKEN -- /usr/bin/node scripts/usine/releve-marche.mjs --travail=/home/agents/travail/marche
+TimeoutStartSec=20min
+MemoryMax=512M
+Nice=10
