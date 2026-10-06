@@ -11,7 +11,8 @@ import { fileURLToPath } from 'node:url'
 const PERIODE_MS = Number(process.env.PONT_PERIODE_MIN || 10) * 60_000
 const MCP = process.env.PRESTI_MCP || 'http://127.0.0.1:8799/mcp'
 // 05/10 nuit : après un redémarrage StarNet perd son réglage « Custom » (réponse 400 « configure the CUSTOM base URL ») ; le serveur accepte l'adresse dans la requête.
-const BASE_CUSTOM = process.env.STARNET_CUSTOM_BASE || 'http://127.0.0.1:3001/v1'
+// 06/10 soir : la station passe par station-modele-local.mjs (3002, déterministe, sans quota) ; freellmapi (3001) la faisait tomber en rate_limit.
+const BASE_CUSTOM = process.env.STARNET_CUSTOM_BASE || 'http://127.0.0.1:3002/v1'
 
 async function outil(nom) {
   const r = await fetch(MCP, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: nom, arguments: {} } }), signal: AbortSignal.timeout(30_000) })
@@ -211,10 +212,10 @@ async function queteJournee(s, e, runId) {
 const enCours = new Map()
 async function entretenir() {
   for (;;) {
-    await new Promise((fin) => setTimeout(fin, 20_000))
+    await new Promise((fin) => setTimeout(fin, 12_000))
     try {
       const maintenant = Date.now()
-      for (const [agent, t] of enCours) if (maintenant - t.depuis > 30 * 60_000) enCours.delete(agent)
+      for (const [agent, t] of enCours) if (maintenant - t.depuis > (t.dureeMs ?? 30 * 60_000)) enCours.delete(agent)
       if (!enCours.size) continue
       const s = await sidecarCourt()
       await Promise.all([...enCours].map(([agent, t]) => refleterEvenement(s, { agent, type: 'travail_en_cours', resume: `toujours en cours : ${t.objet}`, le: new Date().toISOString() }).catch(() => null)))
@@ -241,6 +242,8 @@ async function suivre() {
           try { const r = await refleterEvenement(s, e); await queteTache(s, e, r.ok ? r.runId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
         }
         const generaux = [...parAgent.values()].filter((e) => !estTache(e))
+        // un passage d'agent (recensement, facteur, juge…) le montre au travail une minute, sauf s'il tient déjà une tâche
+        for (const e of generaux) if (!enCours.has(e.agent) && e.agent !== 'systeme') enCours.set(e.agent, { objet: `${e.type} : ${String(e.resume).slice(0, 100)}`, depuis: Date.now(), dureeMs: 60_000 })
         const resultats = await Promise.all(generaux.map((e) => refleterEvenement(s, e).catch(() => ({ ok: false, runId: null }))))
         if (generaux.length && !resultats.some((r) => r.ok)) console.log(`${new Date().toISOString()} ALERTE : StarNet a refusé les ${generaux.length} passage(s) (réglage Custom ? relais 3001 ?) : rien n'est allumé`)
         for (let i = 0; i < generaux.length; i++) { try { if (resultats[i].ok) await queteJournee(s, generaux[i], resultats[i].runId) } catch (err) { console.log(`${new Date().toISOString()} quête du jour ${generaux[i].agent} : ${String(err.message).slice(0, 90)}`) } }
