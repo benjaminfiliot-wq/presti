@@ -29,6 +29,12 @@ else {
   $p3 = Start-Process -FilePath node -ArgumentList (Join-Path $PSScriptRoot 'freellm-proxy.mjs') -WindowStyle Hidden -PassThru
   Write-Host "relais freellmapi : lancé, PID $($p3.Id) (StarNet > Custom : http://127.0.0.1:3001/v1, modèle auto)"
 }
+# 06/10 soir : le modèle de la STATION (déterministe, sans IA ni quota) sur 3002 ; le pont y envoie ses reflets et ses widgets.
+if (Ecoute 3002) { Write-Host 'modèle de la station : déjà en ligne (3002)' }
+else {
+  $p4 = Start-Process -FilePath node -ArgumentList (Join-Path $PSScriptRoot 'station-modele-local.mjs') -WindowStyle Hidden -PassThru
+  Write-Host "modèle de la station : lancé, PID $($p4.Id) (127.0.0.1:3002/v1)"
+}
 
 if (Ecoute 8799) { Write-Host 'connecteur presti : déjà en ligne (8799)' }
 else {
