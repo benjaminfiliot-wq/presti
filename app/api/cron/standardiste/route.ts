@@ -26,7 +26,15 @@ export async function GET(req: Request) {
     // La boîte de prospection, sinon la boîte Gmail de l'entreprise déjà configurée (boiteProspection.ts, décision du 06/10).
     const boite = boiteProspection()
     const user = boite?.user, pass = boite?.pass, adresse = boite?.adresse
+    // 06/10 : après un refus d'identifiants (« auth »), on ne retente pas toutes les 5 minutes (Google bloque un compte qui insiste) : 6 h de pause.
+    let refusRecent = false
     if (user && pass && adresse) {
+      const refus = await supabaseAdmin.rpc('acq_curseur_lire', { p_nom: 'gmail_refus' })
+      const le = Date.parse(String(refus.data ?? ''))
+      refusRecent = Number.isFinite(le) && Date.now() - le < 6 * 3_600_000
+      if (refusRecent) releve.etat = 'auth_en_attente'
+    }
+    if (user && pass && adresse && !refusRecent) {
       const lecture = await supabaseAdmin.rpc('acq_curseur_lire', { p_nom: 'gmail' })
       if (lecture.error) throw new Error('curseur')
       let precedent: { uid?: number; uid_validity?: number | null } = {}
@@ -34,7 +42,10 @@ export async function GET(req: Request) {
       const resultat = await releverGmail({ adresse, curseur: precedent.uid ?? 0, uidValidity: precedent.uid_validity, identifiants: { user, pass } })
       if ('erreur' in resultat) {
         releve.etat = resultat.erreur
-        if (resultat.erreur === 'auth') await magasinSupabase.signal({ type: 'gmail_refus' })
+        if (resultat.erreur === 'auth') {
+          await magasinSupabase.signal({ type: 'gmail_refus' })
+          await supabaseAdmin.rpc('acq_curseur_poser', { p_nom: 'gmail_refus', p_valeur: new Date().toISOString() })
+        }
       } else {
         for (const message of resultat.messages) {
           const entree = {
@@ -60,6 +71,7 @@ export async function GET(req: Request) {
         }
         const pose = await supabaseAdmin.rpc('acq_curseur_poser', { p_nom: 'gmail', p_valeur: JSON.stringify({ uid: resultat.curseur_suivant, uid_validity: resultat.uid_validity }) })
         if (pose.error) throw new Error('curseur')
+        await supabaseAdmin.rpc('acq_curseur_poser', { p_nom: 'gmail_refus', p_valeur: '' })
         releve.etat = 'ok'
       }
     }

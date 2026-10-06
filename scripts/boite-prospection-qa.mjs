@@ -34,8 +34,10 @@ const facteur = lire('app/api/cron/facteur/route.ts'), standardiste = lire('app/
 ok('BP-7 le facteur envoie par boiteProspection() et ne lit plus les variables à la main', /boiteProspection\(\)/.test(facteur) && !/process\.env\.PROSPECTION_GMAIL/.test(facteur))
 ok('BP-8 le standardiste relève par boiteProspection()', /boiteProspection\(\)/.test(standardiste) && !/process\.env\.PROSPECTION_GMAIL/.test(standardiste))
 ok("BP-9 le répondeur et le rédacteur prennent l'adresse de réponse du module", /adresseReponseProspection\(\)/.test(repondeur) && /adresseReponseProspection\(\)/.test(redacteur) && !/process\.env\.ACQ_ADRESSE_REPONSE/.test(repondeur + redacteur))
+ok("BP-11 après un refus d'identifiants, le standardiste ne retente pas avant 6 h (Google bloque un compte qui insiste) et efface le refus au premier succès",
+  /p_nom: 'gmail_refus'/.test(standardiste) && /6 \* 3_600_000/.test(standardiste) && /&& !refusRecent\)/.test(standardiste) && /resultat\.erreur === 'auth'\) \{[\s\S]{0,200}acq_curseur_poser', \{ p_nom: 'gmail_refus', p_valeur: new Date\(\)\.toISOString\(\) \}/.test(standardiste) && /p_nom: 'gmail_refus', p_valeur: '' \}/.test(standardiste))
 const module = lire('lib/agents/acquisition/boiteProspection.ts')
 ok('BP-10 le module ne journalise ni ne recopie le mot de passe', !/console\.|writeFile|fetch\(/.test(module))
 
-console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : 'boite-prospection-qa : PASS (10 critères)')
+console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : 'boite-prospection-qa : PASS (11 critères)')
 process.exitCode = rouges.length ? 1 : 0
