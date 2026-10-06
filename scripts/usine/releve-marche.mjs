@@ -79,9 +79,10 @@ export function resumeTiktok(items) {
   const lignes = (Array.isArray(items) ? items : []).map((x) => ({
     vues: Number(x.views ?? x.playCount ?? x.stats?.playCount ?? NaN), likes: Number(x.likes ?? x.diggCount ?? NaN),
     compte: String(x.channel?.username ?? x.authorMeta?.name ?? x.author?.uniqueId ?? ''), lien: String(x.postPage ?? x.webVideoUrl ?? x.url ?? ''),
-    date: String(x.uploadedAtFormatted ?? x.createTimeISO ?? '').slice(0, 10), texte: String(x.title ?? x.text ?? '').replace(/\s+/g, ' ').slice(0, 90),
+    date: String(x.uploadedAtFormatted ?? x.createTimeISO ?? '').slice(0, 10), texte: String(x.title ?? x.text ?? '').replace(/\s+/g, ' ').slice(0, 90), langue: String(x.textLanguage ?? ''),
   })).filter((x) => Number.isFinite(x.vues)).sort((a, b) => b.vues - a.vues)
-  return { videos: lignes.length, plus_de_100k: lignes.filter((x) => x.vues >= 100_000).length, top: lignes.slice(0, 5) }
+  // plus_de_100k_fr : le critère de Benj est « 5 vidéos FRANÇAISES » ; le proxy France ne filtre pas la langue, c'est textLanguage (clockworks) qui la donne.
+  return { videos: lignes.length, plus_de_100k: lignes.filter((x) => x.vues >= 100_000).length, plus_de_100k_fr: lignes.filter((x) => x.vues >= 100_000 && x.langue === 'fr').length, top: lignes.slice(0, 5) }
 }
 
 async function ebay(mot, cle, delaiMs = 60_000) {
@@ -146,8 +147,8 @@ export async function releve(o, env = process.env) {
   const reponses = sortie.produits.filter((p) => p.ebay || p.tiktok.length).length
   fs.writeFileSync(fichier, JSON.stringify(sortie, null, 1), { mode: 0o600 })
   const md = [`# Relevé de marché du ${jour} (automatique, usine)`, '', '> Prix **demandés** sur eBay.fr (pas des prix vendus) et vidéos TikTok les plus aimées par mot-clé. Aucune marge n\'est calculée : le prix fournisseur n\'est pas mesuré.', '',
-    '| Produit | Annonces eBay | Prix demandé médian | Vidéos TikTok lues | ≥ 100 000 vues |', '|---|---|---|---|---|',
-    ...sortie.produits.map((p) => `| ${p.id} | ${p.ebay?.annonces ?? '—'} | ${p.ebay?.prix_demande_median ?? '—'} € | ${p.tiktok.reduce((n, t) => n + t.videos, 0)} | ${p.tiktok.reduce((n, t) => n + t.plus_de_100k, 0)} |`),
+    '| Produit | Annonces eBay | Prix demandé médian | Vidéos TikTok lues | ≥ 100 000 vues | dont en français |', '|---|---|---|---|---|---|',
+    ...sortie.produits.map((p) => `| ${p.id} | ${p.ebay?.annonces ?? '—'} | ${p.ebay?.prix_demande_median ?? '—'} € | ${p.tiktok.reduce((n, t) => n + t.videos, 0)} | ${p.tiktok.reduce((n, t) => n + t.plus_de_100k, 0)} | ${p.tiktok.reduce((n, t) => n + (t.plus_de_100k_fr ?? 0), 0)} |`),
     '', ...(sortie.incidents.length ? ['## Incidents', ...sortie.incidents.map((i) => `- ${i}`), ''] : [])].join('\n')
   fs.writeFileSync(path.join(o.travail, `${jour}.md`), md, { mode: 0o600 })
   fs.appendFileSync(path.join(o.travail, 'journal.jsonl'), `${JSON.stringify({ le: new Date().toISOString(), jour, produits: sortie.produits.length, reponses, incidents: sortie.incidents.length })}\n`, { mode: 0o600 })
