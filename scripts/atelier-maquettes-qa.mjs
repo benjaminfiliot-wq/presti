@@ -498,6 +498,7 @@ ${cle}
   // ── AM-8, AM-11, AM-12 : `lien` ─────────────────────────────────────────────────────────────────────────────────────────
   const reelRedacteur = await importerDepuis(RAC2, 'lib/agents/acquisition/redacteur.ts')
   const reelLien = await importerDepuis(RAC2, 'lib/agents/acquisition/maquettesLien.ts')
+  const reelBoite = await importerDepuis(RAC2, 'lib/agents/acquisition/boiteProspection.ts')
   const ADRESSE_REPONSE = 'prospection@exemple.invalid'
   /** Une requête `POST lien`, sur les VRAIES `preparerMessageLien` (modèles du dépôt, approuvés) et `creerJeton` / `hacherJeton`. */
   async function scenarioLien({ p, maquette, conversation = null, reponses = [], drapeaux = {}, octetsOccupes = 1000, gmail = true } = {}) {
@@ -521,6 +522,11 @@ ${cle}
       creerLienMaquette: () => undefined,
       creerLienRdv: () => undefined,
       preparerEnvoi: () => ({ ok: true, id: 'envoi-essai' }),
+      // 07/10 : la route lit la boîte par lib/agents/acquisition/boiteProspection.ts (repli sur la boîte Gmail de l'entreprise).
+      // Le banc double tout `@/lib/…` : ces deux doublures rejouent le VRAI module sur les variables posées ci-dessous, sans
+      // boîte d'entreprise — « sans Gmail » reste donc « aucune boîte du tout » (en_attente_gmail).
+      boiteProspection: () => reelBoite.boiteProspection(process.env, () => null),
+      adresseReponseProspection: () => reelBoite.adresseReponseProspection(process.env, () => null),
     }
     const env0 = { a: process.env.ACQ_ADRESSE_REPONSE, u: process.env.PROSPECTION_GMAIL_USER, w: process.env.PROSPECTION_GMAIL_PASS }
     if (gmail) { process.env.ACQ_ADRESSE_REPONSE = ADRESSE_REPONSE; process.env.PROSPECTION_GMAIL_USER = 'u@exemple.invalid'; process.env.PROSPECTION_GMAIL_PASS = 'mdp-essai' }

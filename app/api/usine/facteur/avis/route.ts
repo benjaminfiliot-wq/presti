@@ -19,6 +19,7 @@ import { pauseGenerale } from '@/lib/agents/pause'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { recuperateurReseau } from '@/lib/agents/acquisition/lecteurSite'
 import { jugerAvecAvis, rejugerAvecAvis } from '@/lib/agents/acquisition/facteur'
+import { adresseReponseProspection } from '@/lib/agents/acquisition/boiteProspection'
 import type { AvisJ2, DepsAvis } from '@/lib/agents/acquisition/facteur'
 
 export const runtime = 'nodejs'
@@ -78,7 +79,8 @@ export async function POST(req: Request) {
       recuperer: recuperateurReseau,
       horloge: { maintenant: Date.now, attendre: (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)) },
       jetonMeta: await jetonMeta(),
-      adresseReponse: (process.env.ACQ_ADRESSE_REPONSE ?? '').trim() || null,
+      // La même adresse que celle écrite dans le message par l'atelier et le rédacteur (boiteProspection.ts) : J3 la compare.
+      adresseReponse: adresseReponseProspection() || null,
       drapeaux: { siteAchatPublic: actif('siteAchatPublic'), varianteA: (FLAGS as Record<string, unknown>).varianteA === true },
       // L'offre du Studio (lib/studio/offre.ts, 026-166) n'est pas encore là : sans elle, J3 refuse tout `studio_offre_v1`.
       offre: null,
