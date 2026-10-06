@@ -210,6 +210,23 @@ await cas('RC-9b', async () => {
   if (!(b4.budgetMs >= 420_000)) e.push(`le 4 B n'a que ${b4.budgetMs} ms (420 000 au moins : 252 s ont fini en délai)`)
   return e
 })
+// ── RC-9c (06/10) : un 8 B qui vient de finir en délai laisse tout le temps au 4 B quand il n'y en a pas pour les deux ─────────────
+// Cycle léger réel du 06/10 à 15 h 05 UTC : 8 B en délai à 300 s, puis 4 B coupé à 300 s ; le cycle (≈ 555 s) ne pouvait donner leur budget aux deux.
+await cas('RC-9c', async () => {
+  const e = []
+  const sc = { codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', ollama_4b: 'ok', opts: { delaiMs: 555_000 } }
+  const m = mondeChef(sc)
+  m.base.etat.ecrire({ ollama_8b: { jusqua: T0 - 50 * 60_000, raison: 'delai', vu: new Date(T0 - 60 * 60_000).toISOString(), serie: 2 } })
+  const r = await C.relayer(m.base)
+  const l4 = m.lances.find((l) => l.id === 'ollama_4b')
+  if (m.lances.some((l) => l.id === 'ollama_8b') || r.moteur !== 'ollama_4b') e.push(`8 B en délai récent : ${m.ids()} servi par ${r.moteur} (le 4 B seul attendu)`)
+  if (!(l4 && l4.budget >= 420_000)) e.push(`le 4 B n'a que ${l4?.budget} ms`)
+  if (!journalDe(m.dossier).some((x) => x.moteur === 'ollama_8b' && x.raison === 'delai_recent_temps_au_suivant')) e.push('le saut du 8 B n\'est pas tracé')
+  const m2 = mondeChef(sc) // sans délai récent : le 8 B est toujours essayé (et sert ici)
+  const r2 = await C.relayer(m2.base)
+  if (r2.moteur !== 'ollama_8b') e.push(`sans délai récent, le 8 B n'est plus essayé : ${m2.ids()}`)
+  return e
+})
 // ── RC-10 : l'appel direct ───────────────────────────────────────────────────────────────────────────────────────────
 function monde10() {
   const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-chef-prompt-'))

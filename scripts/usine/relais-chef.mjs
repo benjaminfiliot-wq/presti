@@ -189,7 +189,8 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetc
       let texte
       if (moteur.api === 'ollama') {
         let brut
-        try { brut = await r.text() } catch (e) { return e && e.name === 'AbortError' ? { code: 1, sortie: 'ERROR: délai dépassé', delai: true } : { code: 1, sortie: 'ERROR: réponse illisible' } }
+        // Coupé en cours de flux, undici ne rend pas toujours une AbortError (« terminated ») : c'est le signal qui dit si c'était le délai.
+        try { brut = await r.text() } catch (e) { return (e && e.name === 'AbortError') || controleur.signal.aborted ? { code: 1, sortie: 'ERROR: délai dépassé', delai: true } : { code: 1, sortie: 'ERROR: réponse illisible' } }
         texte = texteOllama(brut)
       } else {
         let j
@@ -324,8 +325,15 @@ export async function relayer(opts) {
     dire({ moteur: 'relais', issue: 'saute', raison: 'attente_reprise', ms: attente })
     await attendre(attente)
   }
-  for (const m of locaux) {
+  for (let i = 0; i < locaux.length; i++) {
+    const m = locaux[i]
     if (reste() < 30_000) break
+    // 06/10 : le 8 B a fini en délai à chaque cycle (≈ 1,7 jeton/s sur 4 cœurs ARM) et prenait 300 s sur les ~555 s d'un cycle léger, ne laissant
+    // jamais au 4 B de quoi finir. S'il a fini en délai il y a moins de 3 h ET qu'il ne reste pas de quoi donner leur budget aux deux, on le saute.
+    const suivant = locaux[i + 1]
+    const bout = etat.lire()[m.id]
+    const delaiRecent = bout && bout.raison === 'delai' && Date.parse(bout.vu) > maintenant() - 3 * HEURE
+    if (suivant && delaiRecent && reste() < (m.budgetMs ?? 0) + (suivant.budgetMs ?? 0)) { dire({ moteur: m.id, issue: 'saute', raison: 'delai_recent_temps_au_suivant' }); continue }
     const x = await essayer(m)
     if (x?.fait) return x.resultat
   }
