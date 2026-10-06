@@ -1,0 +1,83 @@
+{
+  "nom": "Aspirateur à main sans fil (voiture et maison)",
+  "titre": "L'aspirateur sans fil",
+  "motFond": "Sans fil",
+  "marque": "Brico Travaux",
+  "fournisseur": {
+    "source": "CJdropshipping, entrepôt Allemagne (produit vendu, choisi le 06/10 au soir : produits d'Europe)",
+    "pid": "2039611415532191746",
+    "fiche": "Support Pan European 4in1 13000Pa Cordless Mini Handheld Vacuum Cleaner Wet & Dry Battery Car Office Home DE",
+    "lue_le": "2026-10-06 (API CJ product/query)",
+    "colis": [
+      "1 x Staubsauger (aspirateur)",
+      "6 x Düsen (embouts)",
+      "1 x Filter (filtre, déjà monté)",
+      "1 x USB-Ladekabel (câble USB)",
+      "1 x Bedienungsanleitung (notice)"
+    ],
+    "caracteristiques_citables": [
+      "sans fil, rechargeable par câble USB (câble fourni)",
+      "six embouts fournis, plus le filtre",
+      "souffle et aspire (« Blasen-, Saug- und Aufsaugfunktionen »)",
+      "sec et humide, une petite quantité d'eau seulement (« nur eine kleine Menge Wasser »)",
+      "voyant de charge rouge puis vert",
+      "voiture, maison, bureau"
+    ]
+  },
+  "avertissements": [
+    "Les chiffres de la fiche (13000Pa, autonomie) ne sont JAMAIS dits ni affichés : non mesurés.",
+    "Les effets d'air bleus des photos sont des illustrations du fournisseur, pas une mesure.",
+    "Le chargeur allume-cigare visible sur une photo du fournisseur n'est PAS dans le colis (seul le câble USB l'est) : l'image « charge » est cadrée sur la prise de l'aspirateur.",
+    "Humide : une petite quantité d'eau seulement (notice) ; ne pas promettre d'aspirer une flaque."
+  ],
+  "imagePrincipale": "noir",
+  "images": {
+    "noir": {
+      "url": "https://cf.cjdropshipping.com/17750880/830f7b65-65f0-43d4-bb76-090b1619d3b6.jpg",
+      "recadrage": [200, 165, 800, 835],
+      "decoupe": "plus-grand",
+      "points": {
+        "bec": [222, 470],
+        "bac": [390, 440]
+      }
+    },
+    "embouts": {
+      "url": "https://cf.cjdropshipping.com/17750880/830f7b65-65f0-43d4-bb76-090b1619d3b6.jpg",
+      "recadrage": [0, 702, 702, 298],
+      "decoupe": "tout",
+      "masques": [
+        [0, 700, 210, 95]
+      ]
+    },
+    "voiture": {
+      "url": "https://cf.cjdropshipping.com/17750880/5487a94f-41b2-4580-80e2-a456a4d53eab.jpg",
+      "recadrage": [400, 245, 600, 455],
+      "focale": [62, 50]
+    },
+    "console": {
+      "url": "https://cf.cjdropshipping.com/17750880/152fa034-ae55-49ac-81c4-a218b7dfecbf.jpg",
+      "recadrage": [262, 222, 705, 323],
+      "focale": [62, 55]
+    },
+    "siege": {
+      "url": "https://cf.cjdropshipping.com/17750880/152fa034-ae55-49ac-81c4-a218b7dfecbf.jpg",
+      "recadrage": [38, 575, 452, 318],
+      "focale": [45, 50]
+    },
+    "canape": {
+      "url": "https://cf.cjdropshipping.com/17750880/152fa034-ae55-49ac-81c4-a218b7dfecbf.jpg",
+      "recadrage": [515, 640, 450, 330],
+      "focale": [40, 55]
+    },
+    "charge": {
+      "url": "https://cf.cjdropshipping.com/17750880/fad8388c-92fa-478b-b372-437ba8b8f6e0.jpg",
+      "recadrage": [215, 125, 545, 228],
+      "focale": [42, 60]
+    },
+    "socle": {
+      "url": "https://cf.cjdropshipping.com/17750880/52bf43e4-9c53-4efc-879f-9f206ed8a6cf.jpg",
+      "recadrage": [575, 60, 395, 560],
+      "focale": [55, 45]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "j2-aspirateur",
+  "jour": 2,
+  "heure": "12:30",
+  "produit": "aspirateur",
+  "accroche": "Le truc qui vit | dans ma boîte à gants.",
+  "probleme": "boite-a-gants",
+  "outilAccroche": "noir",
+  "revelation": { "image": "noir", "texte": "Un aspirateur sans fil" },
+  "gestes": [
+    { "plan": "avant-apres", "scene": "miettes", "outil": "noir", "texte": "Miettes sur le tapis ? Tu passes" },
+    { "plan": "photo", "image": "siege", "mouvement": "recul", "texte": "Entre les sièges aussi" },
+    { "plan": "produit", "image": "embouts", "motFond": "Embouts", "texte": "Un embout pour chaque coin" },
+    { "plan": "photo", "image": "socle", "mouvement": "zoom", "texte": "Rechargeable en USB" },
+    { "plan": "photo", "image": "canape", "mouvement": "droite", "texte": "Et à la maison aussi" }
+  ],
+  "benefice": "Toujours sous la main, | jamais à chercher",
+  "appel": "Lien dans la bio"
+}

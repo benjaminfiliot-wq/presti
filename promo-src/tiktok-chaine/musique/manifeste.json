@@ -1,0 +1,4 @@
+{
+  "regle": "Seules les pistes de TikTok Studio > « Sons libres de droits » (is_commerce_music vrai, commercial_right_type 2) entrent ici, avec la réponse de l'API qui le prouve et l'empreinte du fichier. Une piste sans preuve n'est jamais incrustée. Ajouter : node promo-src/tiktok-chaine/musique.mjs ajouter <reponse.json> <music_id> <fichier.mp3>.",
+  "pistes": []
+}

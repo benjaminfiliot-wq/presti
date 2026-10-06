@@ -1,0 +1,97 @@
+{
+  "nom": "Nettoyeur haute pression sans fil à batterie",
+  "titre": "Le nettoyeur sans fil",
+  "motFond": "Sans fil",
+  "marque": "Brico Travaux",
+  "fournisseur": {
+    "source": "AliExpress, variante « FR 6000mah-2 batteries » (expédié de France ; choisi le 06/10 au soir : produits d'Europe)",
+    "fiche": "https://fr.aliexpress.com/item/1005009522003959.html",
+    "titre_fiche": "Pistolet de lavage haute pression sans fil 21V… pulvérisateur d'eau portable à double filtration",
+    "lue_le": "2026-10-06 (page publique : galerie imagePathList + description)",
+    "colis": [
+      "corps principal (pistolet)",
+      "canon de pistolet (rallonge)",
+      "2 buses (rouge 0°, blanche 40°)",
+      "tuyau d'eau de 5 m",
+      "raccordement d'eau",
+      "écran filtrant (crépine)",
+      "2 batteries (variante choisie)",
+      "chargeur"
+    ],
+    "caracteristiques_citables": [
+      "sans fil, à batterie ; deux batteries dans la variante choisie",
+      "pompe dans un seau, une bouteille ou se branche au robinet (« Fonctionne avec un robinet, un seau ou une bouteille »)",
+      "deux buses : jet droit (rouge) ou éventail (blanche)",
+      "crépine filtrante au bout du tuyau"
+    ]
+  },
+  "avertissements": [
+    "Les chiffres de la fiche (70 bars, 21 V, 6000 mAh, portée) ne sont JAMAIS dits ni affichés : non mesurés.",
+    "La description liste les accessoires SANS pot à mousse, mais une image « Package included » en montre un : contradiction, donc AUCUNE image de mousse et le mot n'est pas dit. Pas de mallette non plus.",
+    "Le pistolet porte le logo rond de sa marque (« Z », zollor) et la batterie un marquage « 498VF » : ils sont sur le produit lui-même ; aucun texte ajouté par le vendeur n'est gardé (recadrages).",
+    "Photos de mise en situation du vendeur (vraisemblablement retouchées) : aucune n'est un résultat mesuré.",
+    "Les images « seau », « voiture », « pistolet » et « batteries » viennent de la description de la même fiche ; les autres de la galerie."
+  ],
+  "imagePrincipale": "pistolet",
+  "images": {
+    "pistolet": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/Sda62cd9bdf3b43e89fe961cda0542878e.jpg",
+      "decoupe": "plus-grand",
+      "points": {
+        "buse": [105, 450]
+      },
+      "masques": [
+        [1404, 0, 96, 1500]
+      ]
+    },
+    "batteries": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S79938bf61af84519ace66990f2bd57c54.jpg",
+      "recadrage": [560, 1120, 480, 265],
+      "decoupe": "tout"
+    },
+    "seau": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S7288c29be7b5413ca186d671da10d631K.jpg",
+      "focale": [45, 62]
+    },
+    "terrasse": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A726bb8cdcc344538b26d02bd38e34f21P.jpg",
+      "recadrage": [0, 0, 1600, 950],
+      "focale": [55, 45]
+    },
+    "piscine": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A47d3134672f84a1781fc0a61c95969328.jpg",
+      "recadrage": [590, 280, 1010, 1060],
+      "focale": [55, 55]
+    },
+    "eventail": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S8107428322a941cda3d88295ba5eb75aM.jpg",
+      "recadrage": [968, 590, 495, 410],
+      "focale": [40, 50]
+    },
+    "jet": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S8107428322a941cda3d88295ba5eb75aM.jpg",
+      "recadrage": [45, 135, 470, 420],
+      "focale": [45, 50]
+    },
+    "voiture": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S381fe8eaad26495aa74bed0f57c1264b1.jpg",
+      "recadrage": [0, 500, 1500, 1000],
+      "focale": [45, 50]
+    },
+    "velo": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A511e14aae202447daa91f5b147fcdbfc4.jpg",
+      "recadrage": [820, 1140, 740, 440],
+      "focale": [20, 50]
+    },
+    "sol": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A511e14aae202447daa91f5b147fcdbfc4.jpg",
+      "recadrage": [820, 660, 740, 440],
+      "focale": [50, 50]
+    },
+    "lavage": {
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A511e14aae202447daa91f5b147fcdbfc4.jpg",
+      "recadrage": [36, 186, 738, 440],
+      "focale": [50, 50]
+    }
+  }
+}

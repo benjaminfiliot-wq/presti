@@ -18,13 +18,21 @@ Les rendus du 4 B local de l'écosystème (`superviseur-2026-10-06-v3-*`) ont é
 - « Un seau d'eau et c'est parti. »
 - « Le nettoyeur qui tient dans le coffre. »
 
-## 2. Vidéos format B (présentation animée) — 14 s
-Modèle validé : `promo-src/tiktok-apercu/tiktok-B-produit.mp4` (aspirateur). Même structure pour chaque vidéo :
+## 2. Vidéos format B (présentation animée, voix off) — environ 16 s
+Fabriquées par la chaîne `promo-src/tiktok-chaine/` (README : la méthode complète ; sur l'usine en mode `--file`). Même structure pour chaque vidéo :
 1. 0-2 s : accroche en gros texte sur un plan du problème (miettes, terrasse sale, vélo boueux) ;
-2. 2-9 s : le produit en 2 ou 3 gestes d'usage, texte mot à mot, une loupe sur un détail RÉEL du colis ;
-3. 9-12 s : le bénéfice en une phrase ;
-4. 12-14 s : « Lien dans la bio ».
-À corriger avant publication : vérifier auprès du fournisseur que le colis contient bien les embouts et le câble montrés (la fiche CJ ne liste que « Car Vacuum x1pc ») ; sinon, ne montrer que l'aspirateur.
+2. 2-12 s : le produit en 5 gestes d'usage, texte mot à mot, une loupe sur un détail RÉEL du colis ;
+3. 12-14 s : le bénéfice en une phrase ;
+4. fin : « Lien dans la bio ».
+Produits montrés (07/10, produits d'Europe) : l'aspirateur CJ 2039611415532191746 (entrepôt Allemagne ; colis : aspirateur, six embouts, filtre, câble USB, notice) et le nettoyeur AliExpress 1005009522003959, variante « FR 6000mah-2 batteries » (colis : pistolet, rallonge, deux buses, tuyau, raccord, crépine, deux batteries, chargeur ; **pas de pot à mousse ni de mallette** dans la description : jamais montrés). Les photos sont celles de ces fiches, recadrées sans les textes du vendeur.
+
+### 2 bis. Voix et son (méthode de l'écosystème, 07/10)
+- **Voix off obligatoire** : le texte dit est exactement le texte affiché, et les sous-titres apparaissent quand la voix dit chaque mot (temps réels relevés par faster-whisper sur la voix).
+- **Fournisseur** : Fish Audio seulement avec une clé dans `presti-secrets` ET un forfait commercial prouvé déclaré dans `promo-src/tiktok-chaine/voix-fish.json` (garde `lib/studio/voixFish.ts` ; le gratuit de Fish n'a pas le droit commercial). Sinon la voix locale Kokoro `ff_siwis`, gratuite, sur le PC et sur l'usine.
+- **Cache de voix clé sur le texte**, jamais sur l'id d'une vidéo ; **chaque vidéo finale est transcrite** et refusée si elle ne dit pas son texte.
+- **Musique** : jamais un son protégé incrusté. Seules les pistes de TikTok Studio > « Sons libres de droits » entrent au manifeste `promo-src/tiktok-chaine/musique/manifeste.json`, avec la réponse de l'API qui prouve la licence commerciale. Les coupes tombent sur les temps forts de la piste ; la musique passe sous la voix (ducking) ; tout est à -14 LUFS.
+- **Deux rendus par vidéo** : `<id>-voix.mp4` (voix seule) et `<id>-voix-musique.mp4` (si une piste licenciée existe). Si le son « tendance » est ajouté dans l'appli au moment de publier (compte pro, bibliothèque commerciale), publier la **voix seule** : jamais deux musiques.
+- **Juge** : `node promo-src/tiktok-chaine/juge.mjs --sabotages` (voix présente, texte dit = texte affiché, sous-titres calés, -14 LUFS, pas de silence de tête, aucune piste sans licence).
 
 ## 3. Calendrier — 7 jours (1 vidéo par produit et par jour)
 | Jour | Aspirateur (12 h 30) | Nettoyeur (19 h 00) |
@@ -36,7 +44,7 @@ Modèle validé : `promo-src/tiktok-apercu/tiktok-B-produit.mp4` (aspirateur). M
 | 5 | « Rechargeable. Sans fil. Sans prise à chercher. » | « Pas de câble. Pas de tuyau d'arrosage à brancher. » |
 | 6 | réponse en vidéo au commentaire le plus fréquent | réponse en vidéo au commentaire le plus fréquent |
 | 7 | « Aspirez, rechargez, repartez. » | « Le nettoyeur qui tient dans le coffre. » |
-Les heures sont un premier choix, **à mesurer** : après 7 jours on garde les créneaux et les accroches qui font le plus de vues complètes. Musique : uniquement les sons sous licence de la bibliothèque TikTok, choisis au dépôt.
+Les heures sont un premier choix, **à mesurer** : après 7 jours on garde les créneaux et les accroches qui font le plus de vues complètes. Musique : uniquement les sons sous licence de la bibliothèque commerciale TikTok, incrustés depuis le manifeste ou choisis au dépôt sur la version voix seule (§ 2 bis).
 
 ## 4. Réponses types aux acheteurs eBay (conformes au droit français)
 1. **Délai** : « Bonjour, votre colis est expédié depuis notre entrepôt partenaire ; le délai annoncé sur l'annonce ([X à Y] jours ouvrés) court à partir de l'expédition. Je vous envoie le numéro de suivi dès qu'il est disponible. »
