@@ -25,7 +25,7 @@ const plan = (taches) => ({
 })
 const fautes = (taches) => validerPlan(plan(taches), 'plein')
 
-const propre = tache('veille', 'Identifier cinq produits de bricolage à petit prix sur AliExpress avec prix vendus sur eBay.fr', 'Priorité de Benj : trouver des produits adaptés au compte de bricolage.')
+const propre = tache('tri', 'Classer les six catégories de produits du document produits-candidats selon les cinq critères et lister ce qui manque', 'Priorité de Benj : trouver des produits adaptés au compte de bricolage.')
 ok('GP-1 une tâche libre propre est acceptée', fautes([propre]).length === 0, JSON.stringify(fautes([propre])))
 
 const sale = tache('veille', 'Identifier cinq produits de bricolage à petit prix sur AliExpress avec prix vendus sur eBay.fr', 'Les données serviront à cibler les prospects de la prochaine campagne.', 'essai-b')
@@ -41,9 +41,20 @@ ok('GP-4 « SIREN » dans l\'objet : plan refusé', fautes([siren]).length > 0)
 const code = tache('code', 'Écrire un script qui compte les prospects recensés chaque nuit dans la base', 'Mesure interne du recensement.', 'essai-e')
 ok('GP-5 une tâche de code (jamais prise par le preneur) peut parler de prospects', fautes([code]).length === 0, JSON.stringify(fautes([code])))
 
+// 06/10 : le preneur n'a pas de web ; une tâche de lecture qui l'exige est refusée dans le plan.
+const web1 = tache('recherche', 'Relever les annonces eBay actives pour un kit de tournevis et noter les prix demandés', 'Alimenter la marge.', 'essai-f')
+const fw = fautes([web1])
+ok('GP-7 une recherche qui exige le web (annonces eBay) : plan refusé, avec la raison', fw.length > 0 && fw.some((x) => /exige du web/.test(x)), JSON.stringify(fw))
+const web2 = tache('veille', 'Observer les vidéos TikTok virales de bricolage cette semaine', 'Repérer la demande.', 'essai-g')
+ok('GP-8 une veille sur TikTok : plan refusé', fautes([web2]).length > 0)
+const redac = tache('redaction_interne', 'Écrire le titre et la description d\'une annonce eBay.fr pour un kit de tournevis de précision', 'Préparer la mise en ligne.', 'essai-h')
+ok('GP-9 une rédaction d\'annonce eBay (travail d\'écriture) reste permise', fautes([redac]).length === 0, JSON.stringify(fautes([redac])))
+const tri = tache('tri', 'Trier les quatorze tâches en file par domaine et lister les blocages', 'Fluidifier la file.', 'essai-i')
+ok('GP-10 un tri de la file interne reste permis', fautes([tri]).length === 0, JSON.stringify(fautes([tri])))
+
 // Sabotage : sans l'appel à motifProspects, GP-2 doit devenir rouge. On le vérifie dans le source, sans rien écrire.
 const source = fs.readFileSync(path.join(ICI, 'chef', 'commun.mjs'), 'utf8')
 ok('GP-6 le validateur appelle bien motifProspects (importé de garde-prospects.mjs)', /import \{ motifProspects \} from '\.\.\/usine\/garde-prospects\.mjs'/.test(source) && /motifProspects\(\[t\.objet, t\.charge\.titre, t\.charge\.pourquoi\]/.test(source))
 
-console.log(rouges.length ? `chef-garde-prospects-qa : ÉCHEC (${rouges.join(', ')})` : 'chef-garde-prospects-qa : PASS (6 critères)')
+console.log(rouges.length ? `chef-garde-prospects-qa : ÉCHEC (${rouges.join(', ')})` : 'chef-garde-prospects-qa : PASS (10 critères)')
 process.exitCode = rouges.length ? 1 : 0

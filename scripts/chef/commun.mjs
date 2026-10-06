@@ -15,6 +15,8 @@ const CLE_IDEE_RE = /^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$/
 const CLE_OPTION_RE = /^[a-z_]{2,30}$/
 const HEURE = 3_600_000
 export const OBJET_MIN = 20
+// Les mots qui disent « il faut lire le web » (le preneur de tâches libres n'a ni web ni navigateur : voir validerPlan).
+export const BESOIN_WEB = /\b(ebay|aliexpress|alibaba|tiktok|amazon|youtube|instagram|facebook|google|annonces?|sites? (?:web|concurrents?)|en temps r[ée]el|sur le web|en ligne|prix (?:vendus|actuels|du march[ée]))\b/i
 // Une référence structurée tient lieu d'objet pour le bilan quotidien du Savoir (026-229, objet « bilan:AAAA-MM-JJ », 16 signes) ; tout le reste doit être décrit (OBJET_MIN signes au moins).
 export const OBJET_REFERENCE = /^bilan:\d{4}-\d{2}-\d{2}$/
 
@@ -126,6 +128,12 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
         if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)
         // 05/10 : « cibler les prospects » dans un pourquoi a fait refuser la veille e-commerce par la garde du preneur (donnees_personnelles) ; trois échecs ont ouvert son disjoncteur.
         // Une tâche libre dont le texte porte un motif de la garde est refusée ICI, pour que le chef la reformule au lieu de la voir échouer.
+        // 06/10 : « relever les annonces eBay actives » (type recherche) a été prise 3 fois par le preneur, qui n'a PAS de web : « impossible » ×3, disjoncteur ouvert de 6 h 33 à 10 h.
+        // Les tâches de lecture (veille, recherche, vérification, tri) qui exigent des données du web ne vont plus à lui ; la rédaction et la relecture de documents du dépôt restent permises.
+        if (['veille', 'recherche', 'verification', 'tri'].includes(t.type)) {
+          const web = BESOIN_WEB.exec([t.objet, t.charge.titre].filter((x) => typeof x === 'string').join('\n'))
+          if (web) f.push(`${ou} : « ${web[0]} » exige du web, que le preneur n'a pas (il répondrait « impossible » et son disjoncteur s'ouvrirait) ; reformule en rédaction, tri ou relecture d'un document du dépôt (docs/ecommerce/…), ou laisse la lecture du web à la supervision`)
+        }
         if (!['code', 'contenu'].includes(t.type)) {
           const motif = motifProspects([t.objet, t.charge.titre, t.charge.pourquoi].filter((x) => typeof x === 'string').join('\n'))
           if (motif) f.push(`${ou} : le texte contient « ${motif} » : la garde des données de prospects refuserait cette tâche libre ; reformule sans ce mot (ni prospect, ni SIREN, ni numéro de téléphone, ni adresse e-mail)`)
