@@ -46,3 +46,31 @@ Le mot-clé « rangement atelier magnétique » de la liste de surveillance ram�
 
 ## Conclusion intermédiaire (trois produits sur cinq)
 Aucun des trois ne dégage 5 € de marge nette : les prix AliExpress livrés sont trop proches des prix vendus sur eBay.fr. **Ne rien lister avant d'avoir un produit où le prix vendu dépasse le coût livré de plus de 5 € avec au moins 10 ventes par mois.** Pistes non encore mesurées : produits à marque d'usine peu distribuée, lots/bundles (la valeur perçue monte plus que le coût), produits à forte valeur et faible concurrence (50 à 150 €), et surtout le **scan automatique de beaucoup de mots-clés** pour trouver l'écart (l'écosystème peut le faire, mais seulement avec ce Chrome : l'usine n'a pas accès au compte eBay de Benj).
+
+---
+
+## Balayage de la demande eBay.fr (20 mots-clés, ventes réussies 2026, 06/10/2026, Chrome connecté)
+Une page de résultats = au plus ~130 annonces vendues ; « ventes » ci-dessous est ce que la première page contient. Médiane du prix vendu :
+| Mot-clé | Ventes (p. 1) | Médiane | Quartiles |
+|---|---|---|---|
+| lampe frontale rechargeable led | 132 | 14,95 € | 10,9 – 25 |
+| souffleur sans fil | 131 | 47 € | 31 – 70+ |
+| pistolet à graisse | 126 | 21,9 € | 11,2 – 45 |
+| caméra d'inspection endoscope | 116 | 23,2 € | 13 – 53 |
+| testeur de tension stylo | 110 | 9,1 € | 6,4 – 19 |
+| aspirateur d'atelier sans fil | 107 | 62,5 € | 34 – 106 |
+| détecteur de câbles muraux | 86 | 29,4 € | 16,5 – 54,5 |
+| visseuse sans fil 21 V | 81 | 31,9 € | 22,9 – 49,9 |
+| mini scie circulaire sans fil | 75 | 45 € | 14,9 – 65 |
+| pistolet à colle sans fil | 61 | 31,9 € | 19 – 60 |
+| multimètre numérique | 60 | 27,5 € | 15,4 – 57,5 |
+| télémètre laser | 59 | 69,9 € | 43 – 200 |
+| lampe de travail led magnétique | 53 | 20,2 € | 16,9 – 30 |
+(les 7 autres mots-clés de la liste n'ont pas fini de s'afficher : à refaire). **La demande est là partout ; le problème est la marge.**
+
+## Candidat qui passe le seuil de 5 € : le mini souffleur turbo « violent fan »
+- **eBay.fr, ventes réussies 2026** : « turbo jet fan souffleur poussière » 81 ventes, médiane **27,56 €** (quartiles 21,85 – 32,07), 8 sur 81 avec port gratuit ; « mini turbo ventilateur souffleur violent fan » 40 ventes, médiane **31,25 €**.
+- **AliExpress** : à partir de **12,59 €** (4,9 étoiles, plus de 100 000 vendus) ; 17,89 à 26,99 € pour les modèles « M18 » à batterie.
+- **Marge nette** (vendu ≈ 29 €, frais ≈ 4,1 €) : avec le modèle à 12,59 € ≈ **12 €** ; avec ceux à 17-21 € ≈ 4 à 8 €.
+- **Demande TikTok française : NON prouvée** (Apify clockworks, « souffleur turbo violent fan », 12 vidéos : une seule en français, 91 300 vues ; la plus vue, 1,1 million, est en anglais) — le compte Brico Travaux est français.
+- **Risques à lever avant de lister** : batterie au lithium (transport, norme CE et sécurité des produits en UE), délai de livraison AliExpress de 2 à 3 semaines face à des acheteurs eBay, retours, produit « tendance » qui peut s'effondrer, et les vendeurs eBay qui le tiennent déjà.
