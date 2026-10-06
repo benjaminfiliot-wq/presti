@@ -74,3 +74,16 @@ Une page de résultats = au plus ~130 annonces vendues ; « ventes » ci-dessous
 - **Marge nette** (vendu ≈ 29 €, frais ≈ 4,1 €) : avec le modèle à 12,59 € ≈ **12 €** ; avec ceux à 17-21 € ≈ 4 à 8 €.
 - **Demande TikTok française : NON prouvée** (Apify clockworks, « souffleur turbo violent fan », 12 vidéos : une seule en français, 91 300 vues ; la plus vue, 1,1 million, est en anglais) — le compte Brico Travaux est français.
 - **Risques à lever avant de lister** : batterie au lithium (transport, norme CE et sécurité des produits en UE), délai de livraison AliExpress de 2 à 3 semaines face à des acheteurs eBay, retours, produit « tendance » qui peut s'effondrer, et les vendeurs eBay qui le tiennent déjà.
+
+---
+
+## Même produit, expédié depuis la France ou l'Union européenne (AliExpress, filtre « Expédié depuis : France », 06/10/2026)
+(Le filtre se règle par l'adresse `…wholesale-<mots>.html?sortType=total_tranpro_desc&shipFromCountry=FR` ; les offres affichent « Envoi local, sans frais de douane supplémentaires ».)
+- Mini souffleur turbo de poche, stock France : **26,39 €** (4,9 étoiles, plus de 50 000 vendus), **21,46 €** (3 en 1 pour atelier, plus de 4 000 vendus, « Rapide et gratuit »), 22,35 €, 27,99 €, 34,09 €.
+- Prix vendu eBay.fr observé : 27,56 à 31,25 €. **Marge nette avec le stock France : ≈ 3 € au mieux (21,46 €), négative avec les modèles à 26 €.** Le gain de délai (quelques jours au lieu de 2-3 semaines) se paie au prix de toute la marge : le prix « stock local » égale déjà le prix de vente eBay.
+- Conclusion : **pour ce produit, le stock européen ne rend pas rentable la revente à l'identique**. Il faut un produit où l'on peut vendre plus cher que le fournisseur (lot de plusieurs pièces, kit thématique « atelier », accessoires associés), ou un fournisseur de gros européen à prix de gros (plateformes B2B avec stock en France/Espagne) : exige un compte professionnel (SIRET) et un compte à ouvrir par Benj.
+
+## Génération d'images (influenceur IA, Nano Banana) — état des voies, 06/10/2026
+- **API Gemini avec la clé du dossier secrets** : refusée, « prépaiement épuisé » (erreur 402). Les modèles `gemini-2.5-flash-image` (Nano Banana), `gemini-3.1-flash-image` et `nano-banana-pro-preview` existent bien sur la clé ; il faut recharger le prépaiement dans AI Studio (quelques dollars = plusieurs centaines d'images).
+- **Plateforme de flux créatifs (ElevenLabs)** : l'estimation est de 251 crédits (≈ 2,5 cents) l'image, mais le quota est épuisé (47 crédits restants sur 10 000).
+- **Application web Gemini dans le Chrome de Benj** : l'image se génère (« généré par IA »), mais l'automatisation n'arrive ni à l'afficher (zone noire en arrière-plan) ni à la télécharger. Voie manuelle seulement pour l'instant.
