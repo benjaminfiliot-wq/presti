@@ -34,7 +34,7 @@ export const CHAINE_SECOURS = Object.freeze([
   Object.freeze({ id: 'freellmapi', modele: 'auto', api: 'openai', base: BASE_FREELLMAPI, cle: true, gratuit: true, local: false, budgetMs: 150_000, essais: 2 }),
   Object.freeze({ id: 'ollama_cloud', modele: 'gpt-oss:120b-cloud', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: true, local: false, budgetMs: 150_000 }),
   Object.freeze({ id: 'ollama_8b', modele: 'qwen3:8b-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 300_000 }),
-  Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 480_000 }) // 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
+  Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 780_000 }) // 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
 ])
 
 // ── nature de la donnée ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -365,7 +365,9 @@ export async function relayer(opts) {
     const suivant = locaux[i + 1]
     const bout = etat.lire()[m.id]
     const delaiRecent = bout && bout.raison === 'delai' && Date.parse(bout.vu) > maintenant() - 3 * HEURE
-    if (suivant && delaiRecent && reste() < (m.budgetMs ?? 0) + (suivant.budgetMs ?? 0)) { dire({ moteur: m.id, issue: 'saute', raison: 'delai_recent_temps_au_suivant' }); continue }
+    // 06/10 au soir : même avec ses 480 s sans coupure, le 4 B n'a pas fini derrière les 300 s perdues par le 8 B : un 8 B en délai récent est donc
+    // TOUJOURS sauté, et le suivant reçoit tout le temps qui reste (jusqu'à 780 s).
+    if (suivant && delaiRecent) { dire({ moteur: m.id, issue: 'saute', raison: 'delai_recent_temps_au_suivant' }); continue }
     const x = await essayer(m)
     if (x?.fait) return x.resultat
   }
