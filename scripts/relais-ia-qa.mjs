@@ -27,7 +27,7 @@ const GARDER = args.includes('--garder')
 const DEPUIS = Number((args.find((a) => a.startsWith('--depuis=')) ?? '').slice('--depuis='.length)) || 1 // pour développer le catalogue : ne rejoue que les sabotages n° DEPUIS et suivants (le rapport complet se lance sans option)
 
 const lire = (f) => fs.readFileSync(f, 'utf8')
-const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/chef/reunion-controle.mjs', 'scripts/chef/reunion.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs', 'scripts/modele/chef-leger-entree.mjs']
+const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/chef/reunion-controle.mjs', 'scripts/chef/reunion.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs', 'scripts/modele/chef-leger-entree.mjs', 'scripts/modele/prompt-chef.mjs']
 for (const f of SOURCES) if (!fs.existsSync(path.join(DEPOT, f))) { console.error(`✗ préalable absent : ${f}`); process.exit(2) }
 
 /** Une racine minimale (de quoi résoudre « @/ ») : les cinq modules du relais, un stub de la base, rien d'autre. */
@@ -172,6 +172,12 @@ const SABOTAGES = [
   { nom: "chef : le moteur local reçoit l'état brut (lecture trop longue pour finir le plan)",
     mutations: [['scripts/usine/relais-chef.mjs', "content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur", "content: prompt.utilisateur"]],
     rouges: ['RC-10d'] },
+  { nom: "chef : le modèle maison reçoit aussi les plans de cycle plein (hors de son entraînement)",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (!/plan du cycle leger\\b/.test(u)) return null", "if (!/plan du cycle \\w+\\b/.test(u)) return null"]],
+    rouges: ['RC-10e'] },
+  { nom: "chef : le modèle maison reçoit le prompt générique au lieu de l'entrée de son entraînement",
+    mutations: [['scripts/usine/relais-chef.mjs', "const messages = maison ?? [", "const messages = null ?? ["]],
+    rouges: ['RC-10e'] },
   { nom: "chef : le flux d'Ollama n'est pas recollé (seule la dernière ligne serait lue)",
     mutations: [['scripts/usine/relais-chef.mjs', "texte += o.message.content; lu = true", "texte = o.message.content; lu = true"]],
     rouges: ['RC-10b'] },

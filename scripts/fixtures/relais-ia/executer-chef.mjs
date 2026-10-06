@@ -91,7 +91,7 @@ await cas('RC-3', async () => {
   const court = { delaiMs: 200_000 }
   const m = mondeChef({ codex: '401', freellmapi: '429', freellmapi_gemini: '429', freellmapi_mistral: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', opts: court })
   const r = await C.relayer(m.base)
-  if (m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral>freellmapi>ollama_cloud>ollama_8b') e.push(`ordre ${m.ids()}`)
+  if (m.ids() !== 'codex>freellmapi_gemini>freellmapi_mistral>freellmapi>ollama_cloud>ollama_maison>ollama_8b') e.push(`ordre ${m.ids()}`)
   if (r.moteur !== 'ollama_8b') e.push(`servi par ${r.moteur}`)
   const j = journalDe(m.dossier)
   if (j.find((x) => x.moteur === 'freellmapi')?.raison !== 'quota' || j.find((x) => x.moteur === 'ollama_cloud')?.raison !== 'quota') e.push('429 et « Free usage limit » non tracés en quota')
@@ -111,7 +111,7 @@ await cas('RC-4', async () => {
   if (r.code === 0) e.push('servi sans Codex ni « oui » daté')
   const m2 = mondeChef({ codex: '401', ...tous, opts: { texteEntree: ENTREE_PROSPECT, drapeau: true } })
   const r2 = await C.relayer(m2.base)
-  if (m2.ids() !== 'codex>ollama_8b' || r2.moteur !== 'ollama_8b') e.push(`drapeau levé : ${m2.ids()} (codex>ollama_8b attendu)`)
+  if (m2.ids() !== 'codex>ollama_maison>ollama_8b' || r2.moteur !== 'ollama_8b') e.push(`drapeau levé : ${m2.ids()} (codex>ollama_maison>ollama_8b attendu : le modèle maison, local, est permis avec le drapeau)`)
   if (m2.lances.some((l) => l.id.startsWith('freellmapi') || l.id === 'ollama_cloud')) e.push('une entrée de prospect va au gratuit ou au cloud')
   const nat = (t) => C.natureDeTexte(t)
   if (nat(ENTREE_PUBLIQUE) !== 'publique') e.push('une adresse de Presti rend l\'entrée « prospect »')
@@ -482,6 +482,28 @@ await cas('RC-10d', async () => {
   if (vu?.messages?.[1]?.content?.length >= u.length) e.push('le 4 B local a reçu l\'état brut')
   await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((m) => m.id === 'freellmapi_gemini'), prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
   if (vu?.messages?.[1]?.content !== u) e.push('un moteur distant a reçu un état modifié')
+  return e
+})
+
+// ── RC-10e (06/10 au soir) : le modèle MAISON reçoit l'entrée de son entraînement, et seulement pour un plan de cycle léger ──
+await cas('RC-10e', async () => {
+  const e = []
+  const maison = C.CHAINE_SECOURS.find((m) => m.id === 'ollama_maison')
+  const locaux = C.CHAINE_SECOURS.filter((m) => m.local).map((m) => m.id)
+  if (!maison || maison.modele !== 'presti-chef-leger:1.5b' || maison.gratuit !== false || locaux[0] !== 'ollama_maison') e.push(`modèle maison absent ou pas premier des locaux : ${locaux.join(',')}`)
+  const etat = { agents: [{ nom: 'chef', en_pause: false, disjoncteur: null, derniere: '2026-10-06T17:05:02.547334+00:00', taches: [] }], questions: [], decisions: [] }
+  const entree = `<donnees_etat>\n${JSON.stringify(etat, null, 2)}\n</donnees_etat>`
+  const u = (mode) => `Date du jour (heure de Paris) : 2026-10-06 21:05.\n\n<fichier nom="/home/agents/travail/chef/x/entree.md">\n${entree}\n</fichier>\n\nConsigne :\nLis docs/agents/chef.md puis x/entree.md et ecris le plan du cycle ${mode} dans x/plan.json : un seul fichier JSON.`
+  const m = C.messagesMaison(u('leger'))
+  if (!m || m[0].content !== "Tu es Matt, chef d'opérations de Presti. Écris le plan JSON du cycle léger." || !/^Cycle : leger\. Date : 2026-10-06\.\n<donnees_etat>/.test(m[1].content) || /"en_pause":false/.test(m[1].content)) e.push('entrée du modèle maison différente de celle de l\'entraînement')
+  if (C.messagesMaison(u('plein')) !== null) e.push('un plan de cycle PLEIN est confié au modèle maison (hors de son domaine)')
+  let appels = 0, vu = null
+  const capte = async (url, init) => { appels++; vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => '{"message":{"content":"{}"}}' } }
+  const p = (mode) => ({ systeme: 's', utilisateur: u(mode), destination: path.join(os.tmpdir(), `rc10e-${Date.now()}.json`), dernierMessage: null })
+  const r = await C.appelDirect({ moteur: maison, prompt: p('plein'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  if (appels !== 0 || r.code !== 0) e.push(`demande hors domaine : ${appels} appel(s), code ${r.code} (attendu : aucun appel, code 0 pour passer au suivant)`)
+  await C.appelDirect({ moteur: maison, prompt: p('leger'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  if (appels !== 1 || vu?.stream !== true || vu?.options?.num_ctx !== 4096 || typeof vu?.format !== 'object' || vu?.messages?.[0]?.content !== m?.[0]?.content) e.push('appel du modèle maison sans diffusion, sans schéma ou hors du contexte de sa mesure')
   return e
 })
 
