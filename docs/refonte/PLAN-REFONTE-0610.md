@@ -63,20 +63,115 @@ Il ne peut pas diverger de l'écran réel, et rien n'est écrit en base.
 - Gardé : il n'y a pas de formulaire d'entrée. C'est confirmé par `lib/flags.ts:117` (vague 2, point 1).
 - Non vérifié : le poids « 70 Ko » du moteur d'animation, et le jugement esthétique du haut de page.
 
-## 4. Vague 2 : priorisée, non faite
+## 4. Vague 2 : faite le 06/10 (soir)
 
-1. **Formulaire d'entrée** : « laissez votre numéro, on vous rappelle ». Il faut lever `prospectsEntrant` après décision de Benj,
-   écrire la route et le juge. Effet attendu : capter les visiteurs qui ne créent pas de compte. Fichiers : `lib/flags.ts`, nouvelle
-   route, `app/page.tsx`.
-2. **Mesure Lighthouse sur la production après la vague 1.** LCP, CLS et poids de la page en 4G, qui ne peuvent pas être mesurés
-   sur un serveur de développement. Les chiffres de vitesse de ce plan ne sont donc **pas mesurés**.
-3. **Une rangée « pour qui »** avec les quatre métiers de la cible (`docs/presti/STRATEGIE-GLOBALE-0610.md` §1) et un exemple de
-   demande par métier. Ce sont des demandes types, pas des clients.
-4. **Haut de page en 390 px** : le texte d'introduction fait encore 5 lignes et la scène produit commence à 750 px. On peut tester
-   une version plus courte du texte, ou placer la scène avant les boutons.
-5. **Capture réelle de `/chiffres`** dans `scripts/demo-captures.mjs`, si Benj préfère une 6ᵉ scène dans `DemoSequence` à la section
-   actuelle.
-6. **Lien « Vos chiffres » dans la navigation publique** (`app/PublicNav.tsx`), si la section convertit, ce qui se mesure par
-   l'onglet Visiteurs.
-7. **Hors landing, signalé** : le juge `promesses-qa` est rouge sur PR-1 (`lib/crieur/faits.ts:15`, « Réponse en moins d'une
-   minute »). Il faut corriger la phrase ou la règle.
+### 4.1 Vitesse réelle de prestiapp.fr (Lighthouse 12, local, sur l'URL de production)
+
+Script : `node lh.mjs https://prestiapp.fr/ <dossier> 3` (Lighthouse en module, Chromium de Playwright, catégorie performance
+seule). Mobile = réglages par défaut (simulation 4G lente, processeur ×4, 412 × 823). Bureau = `formFactor: desktop`, 1350 × 940,
+débit 10 Mbit/s, processeur ×1. Trois passes, médiane. **La machine de mesure était chargée** (autres sessions, usine) : le TBT varie
+du simple au double d'une passe à l'autre (1 321 à 2 920 ms en mobile), il faut lire les médianes comme un ordre de grandeur.
+
+| Médiane de 3 passes | Mobile, avant | Mobile, après | Bureau, avant | Bureau, après |
+|---|---|---|---|---|
+| Score performance | 57 | APRES_M_PERF | 82 | APRES_B_PERF |
+| FCP | 1,39 s | APRES_M_FCP | 0,67 s | APRES_B_FCP |
+| LCP | 3,93 s | APRES_M_LCP | 1,07 s | APRES_B_LCP |
+| TBT | 2 469 ms | APRES_M_TBT | 293 ms | APRES_B_TBT |
+| CLS | 0 | APRES_M_CLS | 0 | APRES_B_CLS |
+| Speed Index | 4,05 s | APRES_M_SI | 1,60 s | APRES_B_SI |
+| Poids transféré | 476 Ko, 26 requêtes | APRES_M_KO | 503 Ko, 29 requêtes | APRES_B_KO |
+
+Ce que la trace disait (mobile, avant) :
+
+- **Le LCP est le texte d'introduction** (`p.lp-lede`), avec 1,9 s de « délai de rendu » : il entrait à opacité 0 avec un flou de
+  7 px (`@keyframes lp-in`), et Chrome ne le compte peint qu'à la fin de l'entrée. Le flou (`filter`) n'est pas composé : il
+  repeignait les six éléments du haut de page à chaque image.
+- **10,3 s de travail sur le fil principal, dont 4,4 s de styles et mise en page.** Lighthouse signale 7 animations non composées ;
+  la plus coûteuse est la barre de progression de la démo (`.dm-prog`), qui animait `width` en boucle (4,8 s par scène) et relançait
+  la mise en page à chaque image tant que la page était ouverte.
+- **L'affiche de la démo Lestraque** (53 Ko, 1 280 × 720 pour un cadre de 364 px) partait dès le chargement, en même temps que les
+  polices : un attribut `poster` ne se charge pas paresseusement.
+- Écartés : polices (3 fichiers woff2, `font-display` correct, score 1), JS inutilisé (score 1), CLS (0). Le reste du coût de script
+  est le socle de Next/React (deux morceaux de 63 et 65 Ko), qu'on ne réduit pas sans toucher à l'architecture.
+
+Corrigé (trois causes, sûres, sans changement de contenu) :
+
+| # | Correction | Fichier | Avant → après |
+|---|---|---|---|
+| 1 | Entrée du haut de page sans flou ; titre et introduction peints dès la première image (montée seule, sans fondu) | `app/globals.css` (`lp-in`, `lp-in-texte`) | opacité 0 + `blur(7px)` pendant ≈ 1 s → opacité 1 au premier rendu, `filter: none` (vérifié au DOM prêt) |
+| 2 | Barre de progression de la démo par `transform: scaleX()` | `app/globals.css` (`.dm-prog`) | `width` 0 → 100 % (mise en page à chaque image) → `scaleX(0 → 1)`, composé ; progression vérifiée échantillon par échantillon (6 → 56 px, retour à 6 à la scène suivante) |
+| 3 | Affiche de la démo posée à 800 px de son bloc | `app/DemoSite.tsx` | demandée au chargement → aucune requête au chargement, `poster` posé à l'approche (vérifié : 0 requête, puis 1) |
+
+### 4.2 Rangée « Pour qui » (`app/page.tsx`, `POUR_QUI` ; `app/globals.css`, `.lp-pq*`)
+
+Section `#pour-qui`, entre la preuve « 7× » et la démo. Quatre cartes, une par métier de la cible (§1 de la stratégie) :
+le métier, une **demande type** citée (l'en-tête dit « écrites pour l'exemple, pas des clients »), puis la situation que Presti règle.
+Aucun chiffre ; aucun mot d'escalade (`escalade_mots`), donc PR-7 reste vert ; aucune promesse d'envoi seul (PR-4 vert). La phrase des
+relances dit ce que fait le code : elles sont planifiées quand l'artisan envoie sa réponse (`app/api/messages/route.ts:99`,
+`lib/relances.ts:35`). Hauteur : 753 px en bureau (4 colonnes), 1 231 px en 390 px (une colonne).
+
+### 4.3 Haut de page en 390 px
+
+Deux versions de la même promesse : une courte sous 640 px, la longue (vague 1) au-delà ; marges du haut de page resserrées sous 640 px.
+
+| 390 × 844 | Avant (production) | Après (serveur local) |
+|---|---|---|
+| Texte d'introduction | 6 lignes, 161 px | 2 lignes, 54 px (« Chaque demande Google ou Le Bon Coin a sa réponse prête : vous l'envoyez. ») |
+| Bas du bouton « Essayer gratuitement » | 624 px | 478 px |
+| Haut de la scène produit | ≈ 822 px (sous la ligne de flottaison) | 672 px (visible sans défiler) |
+| Défilement horizontal / console | aucun / 0 erreur | aucun / 0 erreur (3 avertissements de préchargement CSS propres au serveur de dev) |
+
+La promesse courte tient en 2 lignes de 360 à 414 px (mesuré à 360, 375, 390 et 414). Elle ne nomme plus Facebook : à 3 sources,
+elle passait à 3 lignes.
+
+### 4.4 Type de chantier rempli automatiquement (`lib/qualification.ts`, juge `scripts/qualification-qa.mjs`)
+
+**Ce que la base dit vraiment (relevé du 06/10).** « 6 demandes sur 88 ont un type » est exact mais trompeur : **76 des 88 n'ont plus
+d'`artisan_id`** (demandes détachées de tout compte, la plupart « Un escalier en chêne » semées par `scripts/devis-conversation-e2e.mjs`)
+et ne s'affichent chez aucun artisan. Sur les **12 demandes rattachées, 6 avaient un type.** Les 6 autres : une demande antérieure à
+la qualification (01/09), des demandes semées en base sans passer par la route, et des mots manquants (« mitigeur », « vitre »,
+« bibliothèque »). Et un défaut : la clé `electric` ne prenait pas « électrique » (q, pas c).
+
+La qualification existait déjà dans la route du formulaire (`app/api/leads/route.ts`, `qualifyLead`) ; **la relève des boîtes email
+(`lib/releveCanal.ts`) ne l'appelait pas** : toute demande arrivée par email restait sans type.
+
+Fait, sans migration ni IA :
+
+- `lib/qualification.ts` : le type de chantier sort de `lib/ai.ts` dans un module sans import (`normalize`, `has`, `TYPE_CHANTIER`,
+  `typeChantier`) ; `lib/ai.ts` l'importe, `qualifyLead` lui délègue (une seule liste de mots). Ajouts : vocabulaire des quatre
+  métiers de la cible, « électrique », une famille Vitrerie, et des **tournures neutres** effacées avant la recherche (« prise en
+  charge », « ma demande porte sur », « couverture décennale »…), qui donnaient de faux types.
+- `lib/releveCanal.ts` : l'insert d'une demande email écrit `type_chantier: typeChantier(message, metier)` (métier lu une fois).
+- Juge `node scripts/qualification-qa.mjs` (inscrit au lanceur `tout-verifier.mjs`) : 6 critères (8 cas réels de production sans nom
+  ni contact, 12 cas des quatre métiers, priorités, 12 pièges, repli sur le métier, câblage formulaire + email), 9 sabotages tous vus.
+
+**La ville n'est pas faite : elle exige une migration** (voir §5).
+
+## 5. Reste
+
+1. **La ville de la demande** (plan, non commencé). `leads` n'a pas de colonne `ville` ; `/chiffres` lit `clients.ville`, table vide.
+   - Migration : `alter table public.leads add column if not exists ville text`, bornée comme `artisans_ville_borne` (0058 :
+     80 signes) ; aucune politique RLS nouvelle (la colonne hérite de celles de `leads`). Jumeau à coller, et essai à sec.
+   - Extraction dans `lib/qualification.ts` (`villeDe(message)`) : un code postal à 5 chiffres suivi d'un nom ; ou « à / sur / vers /
+     secteur de / commune de » suivi d'un nom **présent dans une liste fermée de communes** (17, 85, 79 d'abord, Code officiel
+     géographique de l'INSEE). Sans liste, « à Noël », « à Pâques », « à domicile » deviennent des villes.
+   - Écriture : les deux inserts (`app/api/leads/route.ts`, `lib/releveCanal.ts`). Lecture : `/chiffres` (bloc « Villes »).
+   - Juge : un critère QU-7 et ses sabotages dans `scripts/qualification-qa.mjs`.
+2. **Formulaire d'entrée** « laissez votre numéro » : lever `prospectsEntrant` (`lib/flags.ts`), écrire la route et le juge.
+3. **Capture réelle de `/chiffres`** dans `scripts/demo-captures.mjs`, si Benj préfère une 6ᵉ scène à la section actuelle.
+4. **Lien « Vos chiffres » dans la navigation publique** (`app/PublicNav.tsx`), si la section convertit (onglet Visiteurs).
+5. **Vitesse, au-delà de cette vague** : le coût restant est le socle Next/React et les animations infinies du héros (`lp-float`,
+   `lp-pulse`, points de saisie). À remesurer sur une machine calme avant d'aller plus loin.
+6. **Hors landing, signalé** : `promesses-qa` toujours rouge sur PR-1 (`lib/crieur/faits.ts:15`), fichier non touché.
+
+## 6. Décisions qui reviennent à Benj
+
+1. Lever `prospectsEntrant` (formulaire d'entrée de la vitrine).
+2. Poser la migration `leads.ville` du §5.1 — et choisir ce que montre le bloc « Villes » de `/chiffres` : les villes des clients
+   (aujourd'hui, table vide) ou celles des demandes.
+3. Les 76 demandes sans `artisan_id` : les garder ou les purger (suppression en production). Le chiffre « 6 sur 88 » de la stratégie
+   (§6.3) est à lire « 6 sur 12 rattachées ».
+4. Requalifier ou non les 6 demandes rattachées restées sans type (écriture en production, non faite).
+5. La place de la rangée « Pour qui » (entre la preuve et la démo), qui ajoute une étape avant la démo dans l'ordre du §5 de la
+   stratégie ; et la promesse courte du mobile, qui ne nomme plus Facebook.

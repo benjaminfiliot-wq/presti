@@ -35,6 +35,32 @@ const I = {
 // Le prix d'appel se lit dans la grille (lib/plans.ts), jamais recopié à la main.
 const PRIX_MIN = Math.min(...OFFRES.map((o) => o.prix))
 
+// « Pour qui » : les quatre métiers de la première cible (docs/presti/STRATEGIE-GLOBALE-0610.md §1). Chaque demande est une
+// demande TYPE, écrite pour l'exemple — pas un client, et l'écran le dit. Aucun chiffre ; aucun mot d'escalade (« fuite »,
+// « urgence »… : lib/plateformeConfig.ts, escalade_mots), sur lesquels Presti alerte l'artisan au lieu de préparer seul.
+const POUR_QUI: { metier: string; demande: string; regle: string }[] = [
+  {
+    metier: 'Plombier-chauffagiste',
+    demande: 'Mon chauffe-eau ne chauffe plus depuis hier soir.',
+    regle: "Elle arrive quand vous êtes sous un évier. La réponse est prête dans votre ton : vous l'envoyez entre deux interventions, avant qu'il appelle un autre plombier.",
+  },
+  {
+    metier: 'Électricien',
+    demande: 'Je vends ma maison, il faut remettre le tableau aux normes.',
+    regle: "La réponse préparée pose les questions qui manquent, puis le devis se prépare sur vos prix. Vous relisez avant d'envoyer.",
+  },
+  {
+    metier: 'Menuisier',
+    demande: "Un escalier en chêne pour remplacer l'ancien, c'est possible ?",
+    regle: "Le devis sur mesure, c'est souvent le soir, après le chantier. Presti le prépare sur vos prix : vous l'ajustez, vous l'envoyez.",
+  },
+  {
+    metier: 'Couvreur',
+    demande: 'Il manque des tuiles depuis le coup de vent, vous pouvez venir voir ?',
+    regle: "Votre réponse envoyée, trois relances sont prévues (J+2, J+5, J+10) : le client n'est pas oublié pendant que vous êtes sur un toit.",
+  },
+]
+
 export default function Home() {
   return (
     <div className="lp">
@@ -98,7 +124,12 @@ export default function Home() {
           <div className="container">
             <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
             <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
-            <p className="lp-lede">Votre lien sur Google, Le Bon Coin ou Facebook : chaque demande arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, la facture, et trois relances (J+2, J+5, J+10).</p>
+            {/* Deux versions de la même promesse : en 390 px, la longue faisait 6 lignes et repoussait l'appel à l'action
+                (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
+            <p className="lp-lede">
+              <span className="lp-lede-court">Chaque demande Google ou Le Bon Coin a sa réponse prête : vous l&apos;envoyez.</span>
+              <span className="lp-lede-long">Votre lien sur Google, Le Bon Coin ou Facebook : chaque demande arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, la facture, et trois relances (J+2, J+5, J+10).</span>
+            </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
               <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir ce que ça fait</a>
@@ -128,6 +159,22 @@ export default function Home() {
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
             <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
             <div className="src">Source : Harvard Business Review — « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
+          </div>
+        </section>
+
+        {/* POUR QUI — les quatre métiers de la cible, une demande type chacun et ce que Presti en fait (vague 2, 06/10). */}
+        <section className="lp-blk" id="pour-qui">
+          <div className="container">
+            <div className="lp-head2 c reveal"><span className="lp-kick">Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types — écrites pour l&apos;exemple, pas des clients.</p></div>
+            <ul className="lp-pq-rang reveal-kids">
+              {POUR_QUI.map((c) => (
+                <li key={c.metier} className="lp-pq">
+                  <b>{c.metier}</b>
+                  <q>{c.demande}</q>
+                  <span>{c.regle}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

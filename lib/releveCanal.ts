@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { dechiffrer } from '@/lib/secretBox'
 import { lireMail } from '@/lib/mailLite'
+import { typeChantier } from '@/lib/qualification'
 
 // Relève d'une boîte email (v4 §B2) : on va chercher les nouveaux messages et on les
 // range dans la boîte de réception de l'artisan, à côté des demandes de sa plateforme.
@@ -40,6 +41,7 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
   const port = canal.imap_port || 993
   let client: import('imapflow').ImapFlow | null = null
   let importes = 0
+  let metier: string | null | undefined
 
   try {
     const { ImapFlow } = await import('imapflow')
@@ -80,12 +82,20 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
 
         let leadId = existant?.id as string | undefined
         if (!leadId) {
+          // Le type de chantier, comme pour une demande du formulaire (app/api/leads) : sans lui, une demande arrivée par
+          // email restait hors du rangement « Types de chantier » de /chiffres. Le métier ne sert que de repli ; lu une fois.
+          if (metier === undefined) {
+            const { data: a } = await supabaseAdmin.from('artisans').select('metier').eq('id', canal.artisan_id).maybeSingle()
+            metier = (a?.metier as string | null | undefined) ?? null
+          }
+          const message = (mail.sujet ? `${mail.sujet}\n\n` : '') + mail.texte
           const { data: nouveau, error } = await supabaseAdmin.from('leads').insert({
             artisan_id: canal.artisan_id,
             nom_prospect: mail.de.nom || mail.de.email!.split('@')[0],
             contact: mail.de.email, canal: 'email',
-            message: (mail.sujet ? `${mail.sujet}\n\n` : '') + mail.texte,
+            message,
             statut: 'nouveau',
+            type_chantier: typeChantier(message, metier),
           }).select('id').single()
           if (error || !nouveau) continue
           leadId = nouveau.id
