@@ -96,6 +96,8 @@ async function tiktok(mot, jeton, plafondUsd, parRecherche, delaiMs = 170_000) {
     body: JSON.stringify({ keywords: [mot], maxItems: parRecherche, dateRange: 'LAST_THREE_MONTHS', sortType: 'MOST_LIKED', location: 'FR' }) })
   const j = await r.json().catch(() => null)
   if (!r.ok && r.status !== 201) return { ok: false, statut: r.status }
+  // 06/10 : l'acteur rend parfois dix éléments « noResults » (TikTok ne répond pas) : ce n'est pas « zéro vidéo », c'est un relevé manquant.
+  if (Array.isArray(j) && j.length && j.every((x) => x && x.noResults)) return { ok: false, statut: 'aucun résultat rendu par l\'acteur' }
   return { ok: true, resume: resumeTiktok(j) }
 }
 
@@ -105,6 +107,7 @@ export async function releve(o, env = process.env) {
   const pl = liste.plafonds ?? {}
   let creditsFc = Math.min(Number(pl.firecrawl_par_jour) || 12, 30)
   let budgetUsd = Math.min(Number(pl.apify_usd_par_jour) || 0.15, 0.5)
+  let videsDeSuite = 0
   const parRecherche = Math.min(Number(pl.tiktok_par_recherche) || 20, 30)
   const jour = JOUR_PARIS.format(new Date())
   fs.mkdirSync(o.travail, { recursive: true })
@@ -124,8 +127,12 @@ export async function releve(o, env = process.env) {
         if (budgetUsd < 0.01) { sortie.incidents.push(`TikTok « ${mot} » : plafond du jour atteint`); break }
         const plafond = Math.min(budgetUsd, 0.05)
         budgetUsd -= plafond
-        try { const t = await tiktok(mot, jetonAp, plafond, parRecherche); if (t.ok) ligne.tiktok.push({ mot, ...t.resume }); else sortie.incidents.push(`TikTok « ${mot} » : HTTP ${t.statut}`) }
-        catch (e) { sortie.incidents.push(`TikTok « ${mot} » : ${e?.name === 'TimeoutError' ? 'délai' : 'panne'}`) }
+        if (videsDeSuite >= 2) { sortie.incidents.push(`TikTok « ${mot} » : relevé TikTok arrêté pour aujourd'hui (l'acteur ne rend plus rien)`); break }
+        try {
+          const t = await tiktok(mot, jetonAp, plafond, parRecherche)
+          if (t.ok) { videsDeSuite = 0; ligne.tiktok.push({ mot, ...t.resume }) }
+          else { videsDeSuite++; budgetUsd += plafond; sortie.incidents.push(`TikTok « ${mot} » : ${typeof t.statut === 'number' ? `HTTP ${t.statut}` : t.statut}`) }
+        } catch (e) { videsDeSuite++; sortie.incidents.push(`TikTok « ${mot} » : ${e?.name === 'TimeoutError' ? 'délai' : 'panne'}`) }
       }
     }
     sortie.produits.push(ligne)
