@@ -32,3 +32,6 @@ Ce qu'un petit modèle affiné fait bien : des tâches **étroites et répétiti
 
 ## Résultats des étapes 0 et 1 (06/10/2026)
 Voir `docs/agents/modele-maison-mesures.md` : 2 paires propres en règle stricte (17 en tolérant les tâches écartées), contre 150 visées ; le 4 B non affiné n'a pas fini un plan léger en 330 ni 420 s. Rien n'est entraîné ni branché.
+
+## Le premier modèle : « presti-chef-leger » (06/10/2026, soir)
+Voir `docs/agents/modele-maison-chef-leger.md` : 340 paires par distillation, jugées (vert) ; l'état compacté fait passer le 4 B non affiné sous 300 s mais sans plan valide ; l'entraînement sur Kaggle attend la vérification du compte par téléphone (sessions servies sans GPU ni internet). Rien d'installé ni de branché.
