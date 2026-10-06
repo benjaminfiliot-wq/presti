@@ -29,3 +29,6 @@ Ce qu'un petit modèle affiné fait bien : des tâches **étroites et répétiti
 - 76 tâches abouties ne font pas 300 exemples variés : le risque est un modèle qui recopie les plans passés. D'où la base de comparaison et l'épreuve à l'aveugle.
 - Les corpus contenant des données de clients ou de prospects restent sur nos machines (jamais chez un fournisseur gratuit ni dans le Savoir général).
 - Rien n'est entraîné ni branché tant que les étapes 0 et 1 n'ont pas rendu leurs chiffres.
+
+## Résultats des étapes 0 et 1 (06/10/2026)
+Voir `docs/agents/modele-maison-mesures.md` : 2 paires propres en règle stricte (17 en tolérant les tâches écartées), contre 150 visées ; le 4 B non affiné n'a pas fini un plan léger en 330 ni 420 s. Rien n'est entraîné ni branché.
