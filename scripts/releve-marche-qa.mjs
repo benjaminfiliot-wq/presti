@@ -40,9 +40,13 @@ function serveur(gestionnaire) {
     s.listen(0, '127.0.0.1', () => res({ s, port: s.address().port, appels: [] }))
   })
 }
-async function mondes({ ebayStatut = 200, apifyStatut = 201, apifyVide = false } = {}) {
+const ITEMS_CLOCKWORKS = [
+  { playCount: 154000, diggCount: 590, text: 'Ensemble de tournevis de précision 66 en 1', authorMeta: { name: 'clubbaid' }, webVideoUrl: 'https://www.tiktok.com/@clubbaid/video/9', createTimeISO: '2025-12-11T10:00:00.000Z' },
+  { playCount: 704, diggCount: 9, text: 'Vraiment très complet pour le prix', authorMeta: { name: 'jo.bonsplans' }, webVideoUrl: 'https://www.tiktok.com/@jo/video/8', createTimeISO: '2026-07-24T10:00:00.000Z' },
+]
+async function mondes({ ebayStatut = 200, apifyStatut = 201, apifyVide = false, clockworks = false } = {}) {
   const fc = await serveur((req, rep, corps) => { fc.appels.push({ auth: req.headers.authorization, corps }); rep.writeHead(ebayStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(ebayStatut === 200 ? { success: true, data: { markdown: MD_EBAY } } : { success: false })) })
-  const ap = await serveur((req, rep, corps) => { ap.appels.push({ url: req.url, auth: req.headers.authorization, corps }); rep.writeHead(apifyStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(apifyStatut === 201 ? (apifyVide ? Array.from({ length: 10 }, () => ({ noResults: true })) : ITEMS_TT) : { error: 'x' })) })
+  const ap = await serveur((req, rep, corps) => { ap.appels.push({ url: req.url, auth: req.headers.authorization, corps }); rep.writeHead(apifyStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(apifyStatut === 201 ? (clockworks ? ITEMS_CLOCKWORKS : apifyVide ? Array.from({ length: 10 }, () => ({ noResults: true })) : ITEMS_TT) : { error: 'x' })) })
   return { fc, ap, fermer: () => { fc.s.close(); ap.s.close() } }
 }
 function lancer(racine, { travail, liste, extra = [], env = {} }) {
@@ -100,7 +104,8 @@ async function juger(racine, pref = '') {
     const r = await lancer(racine, { travail: path.join(d, 'sortie'), liste: listeDe(d, 6, { firecrawl_par_jour: 2, apify_usd_par_jour: 0.05 }), env: env(m) })
     m.fermer()
     ok('RM-7 plafonds tenus : 6 produits, 2 crédits Firecrawl au plus, un seul appel Apify (0,05 $ de plafond du jour)', m.fc.appels.length === 2 && m.ap.appels.length === 1 && /plafond du jour atteint/.test(fichiersDe(path.join(d, 'sortie')).map(lire).join('\n')), `${m.fc.appels.length}/${m.ap.appels.length} ${r.sortie}`)
-    ok('RM-8 le plafond d\'Apify part avec chaque appel (maxTotalChargeUsd)', m.ap.appels.length >= 1 && m.ap.appels.every((a) => /maxTotalChargeUsd=0\.05/.test(a.url)), JSON.stringify(m.ap.appels.map((a) => a.url)))
+    // 06/10 : l'acteur clockworks refuse maxTotalChargeUsd < 0,50 $ (HTTP 400) : le plafond du jour borne donc le NOMBRE de vidéos demandées (0,05 $ / 0,004 $ = 12 au plus), pas l'URL.
+    ok("RM-8 le plafond d'Apify borne chaque appel : au plus 12 vidéos demandées pour 0,05 $ (0,004 $ la vidéo), aucun plafond d'URL que l'acteur refuserait", m.ap.appels.length >= 1 && m.ap.appels.every((a) => { const c = JSON.parse(a.corps || '{}'); return c.resultsPerPage >= 1 && c.resultsPerPage <= 12 && !/maxTotalChargeUsd/.test(a.url) }), JSON.stringify(m.ap.appels.map((a) => [a.url, a.corps.slice(0, 120)])))
   }
   // RM-9 : pannes
   {
@@ -117,6 +122,16 @@ async function juger(racine, pref = '') {
     m.fermer()
     const J = JSON.parse(lire(fichiersDe(path.join(d, 'sortie')).find((f) => /\d{4}-\d{2}-\d{2}\.json$/.test(f))))
     ok('RM-13 l\'acteur rend « noResults » : un incident « aucun résultat », aucune ligne TikTok chiffrée à zéro', J.produits[0].tiktok.length === 0 && J.incidents.some((i) => /aucun résultat/.test(i)), JSON.stringify([J.produits[0].tiktok, J.incidents]) + r.sortie)
+  }
+  // RM-14 : l'entrée et la sortie de l'acteur clockworks/tiktok-scraper (celui qui répond, mesuré le 06/10)
+  {
+    const m = await mondes({ clockworks: true }), d = path.join(TMP, pref + 'rm14')
+    const r = await lancer(racine, { travail: path.join(d, 'sortie'), liste: listeDe(d, 1), env: env(m) })
+    m.fermer()
+    const c = JSON.parse(m.ap.appels[0]?.corps || '{}')
+    const J = JSON.parse(lire(fichiersDe(path.join(d, 'sortie')).find((f) => /\d{4}-\d{2}-\d{2}\.json$/.test(f))))
+    const tt = J.produits[0].tiktok[0]
+    ok('RM-14 clockworks : entrée searchQueries + section vidéos + proxy FR + rien à télécharger ; sortie playCount/authorMeta/webVideoUrl lue (2 vidéos, 1 à plus de 100 000 vues, lien conservé)', Array.isArray(c.searchQueries) && c.searchQueries[0] === 'mot tiktok 0' && c.searchSection === '/video' && c.proxyCountryCode === 'FR' && c.shouldDownloadVideos === false && tt?.videos === 2 && tt.plus_de_100k === 1 && tt.top[0].vues === 154000 && /tiktok\.com\/@clubbaid\/video\/9/.test(tt.top[0].lien) && tt.top[0].compte === 'clubbaid', JSON.stringify([c, tt]).slice(0, 300) + r.sortie)
   }
   // RM-10 : sans clé
   {
@@ -142,7 +157,9 @@ async function juger(racine, pref = '') {
 const SABOTAGES = [
   ['RM-6', 'scripts/usine/releve-marche.mjs', "if (!o.force && fs.existsSync(fichier))", "if (false && fs.existsSync(fichier))"],
   ['RM-7', 'scripts/usine/releve-marche.mjs', "creditsFc--", "creditsFc -= 0"],
-  ['RM-8', 'scripts/usine/releve-marche.mjs', "?timeout=150&maxTotalChargeUsd=${encodeURIComponent(plafondUsd)}", "?timeout=150"],
+  ['RM-8', 'scripts/usine/releve-marche.mjs', 'Math.min(parRecherche, Math.floor(plafondUsd / COUT_VIDEO_USD))', 'parRecherche'],
+  ['RM-14', 'scripts/usine/releve-marche.mjs', "searchSection: '/video'", "searchSection: ''"],
+  ['RM-14', 'scripts/usine/releve-marche.mjs', "proxyCountryCode: 'FR'", "proxyCountryCode: 'US'"],
   ['RM-4', 'scripts/usine/releve-marche.mjs', "console.log(`marché : ${jour}, ${reponses}", "console.log(`clé ${cleFc} marché : ${jour}, ${reponses}"],
   ['RM-1', 'scripts/usine/releve-marche.mjs', "prix_demande_median: mediane(prix)", "prix_demande_median: mediane(prix) + 1"],
   ['RM-2', 'scripts/usine/releve-marche.mjs', "x.vues >= 100_000", "x.vues >= 1_000_000"],

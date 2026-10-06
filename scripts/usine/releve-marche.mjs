@@ -3,7 +3,7 @@
 //
 // Pour chaque produit de docs/ecommerce/surveillance-produits.json :
 //   · eBay.fr : les annonces à prix fixe en vente (prix demandé, port, compteur « vendus » quand eBay l'affiche) par Firecrawl ;
-//   · TikTok : les vidéos françaises les plus aimées des trois derniers mois (vues, likes, compte, lien) par l'acteur Apify apidojo/tiktok-scraper.
+//   · TikTok : les vidéos françaises les plus aimées des trois derniers mois (vues, likes, compte, lien) par l'acteur Apify clockworks/tiktok-scraper (06/10 : apidojo/tiktok-scraper rendait « noResults » pour toute requête).
 // Il ne calcule AUCUNE marge (le prix fournisseur n'est pas mesuré) et ne dit jamais « vendu » d'un prix demandé. Résultat : <travail>/AAAA-MM-JJ.json et .md,
 // et un journal. Un seul passage par jour de Paris (sauf --force) ; les plafonds du fichier de surveillance sont des maxima, jamais dépassés.
 //
@@ -19,7 +19,9 @@ import { fileURLToPath } from 'node:url'
 const ICI = path.dirname(fileURLToPath(import.meta.url))
 const DEPOT = path.resolve(ICI, '..', '..')
 const FIRECRAWL = process.env.MARCHE_FIRECRAWL_URL || 'https://api.firecrawl.dev/v1/scrape'
-const APIFY = process.env.MARCHE_APIFY_URL || 'https://api.apify.com/v2/acts/apidojo~tiktok-scraper/run-sync-get-dataset-items'
+const APIFY = process.env.MARCHE_APIFY_URL || 'https://api.apify.com/v2/acts/clockworks~tiktok-scraper/run-sync-get-dataset-items'
+// Coût mesuré le 06/10 : 8 vidéos = 0,031 $, soit ≈ 0,004 $ la vidéo. L'acteur refuse un plafond d'appel < 0,50 $ (maxTotalChargeUsd) : la dépense est donc bornée par le NOMBRE de vidéos demandées.
+const COUT_VIDEO_USD = 0.004
 const JOUR_PARIS = new Intl.DateTimeFormat('fr-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' })
 
 const options = (argv) => {
@@ -92,8 +94,9 @@ async function ebay(mot, cle, delaiMs = 60_000) {
 }
 
 async function tiktok(mot, jeton, plafondUsd, parRecherche, delaiMs = 170_000) {
-  const r = await fetch(`${APIFY}?timeout=150&maxTotalChargeUsd=${encodeURIComponent(plafondUsd)}`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${jeton}` }, signal: AbortSignal.timeout(delaiMs),
-    body: JSON.stringify({ keywords: [mot], maxItems: parRecherche, dateRange: 'LAST_THREE_MONTHS', sortType: 'MOST_LIKED', location: 'FR' }) })
+  const n = Math.max(1, Math.min(parRecherche, Math.floor(plafondUsd / COUT_VIDEO_USD)))
+  const r = await fetch(`${APIFY}?timeout=150`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${jeton}` }, signal: AbortSignal.timeout(delaiMs),
+    body: JSON.stringify({ searchQueries: [mot], resultsPerPage: n, searchSection: '/video', proxyCountryCode: 'FR', shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadSubtitles: false }) })
   const j = await r.json().catch(() => null)
   if (!r.ok && r.status !== 201) return { ok: false, statut: r.status }
   // 06/10 : l'acteur rend parfois dix éléments « noResults » (TikTok ne répond pas) : ce n'est pas « zéro vidéo », c'est un relevé manquant.
@@ -113,9 +116,12 @@ export async function releve(o, env = process.env) {
   fs.mkdirSync(o.travail, { recursive: true })
   const fichier = path.join(o.travail, `${jour}.json`)
   if (!o.force && fs.existsSync(fichier)) { console.log(`marché : déjà relevé le ${jour}`); return 0 }
-  const sortie = { jour, source: { ebay: 'Firecrawl (annonces à prix fixe EN VENTE : prix demandés, pas des prix vendus)', tiktok: 'Apify apidojo/tiktok-scraper (10 à 20 vidéos par mot-clé, tri « plus aimées », 3 mois, France)' }, produits: [], incidents: [] }
+  const sortie = { jour, source: { ebay: 'Firecrawl (annonces à prix fixe EN VENTE : prix demandés, pas des prix vendus)', tiktok: "Apify clockworks/tiktok-scraper (jusqu'à 12 vidéos par mot-clé, section vidéos de la recherche, proxy France)" }, produits: [], incidents: [] }
   const cleFc = env.FIRECRAWL_API_KEY, jetonAp = env.APIFY_TOKEN
-  for (const p of liste.produits) {
+  // Le budget du jour couvre ~3 recherches TikTok (0,05 $ chacune) : on fait TOURNER les produits d'un jour à l'autre (et le mot-clé), sinon les derniers de la liste ne seraient jamais mesurés.
+  const numeroJour = Math.floor(Date.parse(`${jour}T12:00:00Z`) / 86_400_000)
+  const tournant = liste.produits.map((_, i) => liste.produits[(i + numeroJour) % liste.produits.length])
+  for (const p of tournant) {
     const ligne = { id: p.id, ebay: null, tiktok: [] }
     if (!o.sansEbay && cleFc && creditsFc > 0 && typeof p.ebay === 'string') {
       creditsFc--
@@ -123,7 +129,7 @@ export async function releve(o, env = process.env) {
       catch (e) { sortie.incidents.push(`eBay « ${p.id} » : ${e?.name === 'TimeoutError' ? 'délai' : 'panne'}`) }
     }
     if (!o.sansTiktok && jetonAp && Array.isArray(p.tiktok)) {
-      for (const mot of p.tiktok.slice(0, 2)) {
+      for (const mot of p.tiktok.length ? [p.tiktok[numeroJour % p.tiktok.length]] : []) {
         if (budgetUsd < 0.01) { sortie.incidents.push(`TikTok « ${mot} » : plafond du jour atteint`); break }
         const plafond = Math.min(budgetUsd, 0.05)
         budgetUsd -= plafond

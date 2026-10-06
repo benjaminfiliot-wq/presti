@@ -176,7 +176,7 @@ principal(async () => {
   const env = {}
   for (const n of ['PATH', 'HOME', 'LANG']) if (process.env[n]) env[n] = process.env[n]
   const m = await lancer(commande, [...avant, ...argv], { env, delaiMs: Math.round(minutes * 60_000) })
-  if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); ligne.code = 'delai'; return journal('delai') }
+  if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); journal('delai'); return 1 }
   if (m.code !== 0) { console.error(`✗ le modèle a échoué (code ${m.code})`); return journal(1) }
   let taille = 0
   try { taille = fs.statSync(bilanJson).size } catch { taille = 0 }
