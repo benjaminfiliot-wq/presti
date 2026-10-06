@@ -87,34 +87,34 @@ const DEVIS_A = [
   dev('d12', 'accepte', '2026-10-04', { envoye_le: '2026-10-04T10:00:00Z', lead_id: 'L4' }),   // envoyé AVANT la demande L4 : délai négatif ignoré
   dev('d13', 'accepte', '2026-07-15', { lead_id: 'L-inconnu' }),                               // demande introuvable : ignoré pour le délai
 ]
-const dem = (id, creation, canal, type) => ({ id, artisan_id: A, canal, statut: 'nouveau', created_at: creation, type_chantier: type })
+// La ville est celle de la DEMANDE (0133, décision 2 de Benj du 06/10) : le bloc « Villes » ne lit plus clients.ville.
+const dem = (id, creation, canal, type, ville) => ({ id, artisan_id: A, canal, statut: 'nouveau', created_at: creation, type_chantier: type, ville })
 const DEMANDES_A = [
-  dem('L1', '2026-09-20T06:30:00Z', 'formulaire', 'Plomberie'),
-  dem('L2', '2026-09-25T08:00:00Z', 'formulaire', 'plomberie '),
-  dem('L3', '2026-08-09T09:00:00Z', 'email', 'Électricité'),
-  dem('L4', '2026-10-05T10:00:00Z', 'site', 'electricite'),
-  dem('L5', '2026-09-30T22:30:00Z', null, null),          // 00 h 30 à Paris le 1er octobre : c'est OCTOBRE
-  dem('L6', '2026-05-31T22:30:00Z', 'whatsapp', null),    // 00 h 30 à Paris le 1er juin : c'est JUIN
-  dem('L7', '2026-04-30T21:59:00Z', 'formulaire', 'Maçonnerie'), // 23 h 59 à Paris le 30 avril : hors graphique, dans les 12 mois
-  dem('L8', '2025-09-01T10:00:00Z', 'formulaire', 'Toiture'),    // 13 mois : hors fenêtre
-  dem('L9', null, 'formulaire', 'Cave'),                          // sans date : ignorée
-  dem('L10', '2026-10-06T08:00:00Z', 'Formulaire', 'Plomberie'),
+  dem('L1', '2026-09-20T06:30:00Z', 'formulaire', 'Plomberie', 'Lyon'),
+  dem('L2', '2026-09-25T08:00:00Z', 'formulaire', 'plomberie ', 'lyon'),
+  dem('L3', '2026-08-09T09:00:00Z', 'email', 'Électricité', 'Saint-Étienne'),
+  dem('L4', '2026-10-05T10:00:00Z', 'site', 'electricite', 'saint etienne'),
+  dem('L5', '2026-09-30T22:30:00Z', null, null, 'Paris'),          // 00 h 30 à Paris le 1er octobre : c'est OCTOBRE
+  dem('L6', '2026-05-31T22:30:00Z', 'whatsapp', null, 'Nantes'),   // 00 h 30 à Paris le 1er juin : c'est JUIN
+  dem('L7', '2026-04-30T21:59:00Z', 'formulaire', 'Maçonnerie', 'Lille'), // 23 h 59 à Paris le 30 avril : hors graphique, dans les 12 mois
+  dem('L8', '2025-09-01T10:00:00Z', 'formulaire', 'Toiture', 'Marseille'),    // 13 mois : hors fenêtre (sa ville aussi)
+  dem('L9', null, 'formulaire', 'Cave', 'Marseille'),                          // sans date : ignorée (sa ville aussi)
+  dem('L10', '2026-10-06T08:00:00Z', 'Formulaire', 'Plomberie', 'Tours'),
 ]
-const cli = (id, ville) => ({ id, artisan_id: A, ville })
-const CLIENTS_A = [cli('c1', 'Lyon'), cli('c2', 'lyon'), cli('c3', 'Saint-Étienne'), cli('c4', 'saint etienne'), cli('c5', 'Villeurbanne'), cli('c6', null), cli('c7', '  '), cli('c8', 'Paris'), cli('c9', 'Nantes'), cli('c10', 'Lille'), cli('c11', 'Tours')]
+// Des demandes sans ville utilisable (nulle, vide, blanche) : elles ne changent pas le bloc « Villes ».
+const SANS_VILLE = [dem('V1', '2026-10-02T10:00:00Z', 'formulaire', null, null), dem('V2', '2026-10-02T11:00:00Z', 'formulaire', null, ''), dem('V3', '2026-10-02T12:00:00Z', 'formulaire', null, '  ')]
 
 // Les lignes d'un autre artisan, et des lignes sans artisan : énormes, pour que la fuite se voie.
 const AUTRUI = {
   factures: [fac('x1', 'emise', '2026-10-01', '2026-09-01', 100000, { artisan_id: B }), fac('x2', 'payee', '2026-10-01', null, 50000, { artisan_id: B }), fac('x3', 'emise', '2026-10-01', '2026-09-01', 77777, { artisan_id: undefined }), fac('x4', 'emise', '2026-10-01', '2026-09-01', 12345, { artisan_id: '' })],
   devis: [dev('x1', 'envoye', '2026-08-01', { artisan_id: B }), dev('x2', 'accepte', '2026-10-01', { artisan_id: B }), dev('x3', 'accepte', '2026-10-01', { artisan_id: null })],
-  demandes: [dem('xL1', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine'), { ...dem('xL2', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine'), artisan_id: B }, { ...dem('xL3', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine'), artisan_id: '' }],
-  clients: [{ id: 'xc1', artisan_id: B, ville: 'Marseille' }, { id: 'xc2', ville: 'Marseille' }],
+  demandes: [dem('xL1', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine', 'Marseille'), { ...dem('xL2', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine', 'Marseille'), artisan_id: B }, { ...dem('xL3', '2026-10-01T10:00:00Z', 'tiktok', 'Piscine', 'Marseille'), artisan_id: '' }],
 }
 AUTRUI.demandes[0].artisan_id = undefined
 // Des COPIES à chaque appel : un module qui trierait ou modifierait ses entrées ne doit pas fausser les critères suivants.
 const frais = (v) => (v === undefined ? v : JSON.parse(JSON.stringify(v)))
-const ENTREES = (extra = {}) => ({ artisanId: A, factures: frais(FACTURES_A), devis: frais(DEVIS_A), demandes: frais(DEMANDES_A), clients: frais(CLIENTS_A), maintenant: MAINTENANT, ...extra })
-const MELANGE = () => ({ artisanId: A, factures: frais([...FACTURES_A, ...AUTRUI.factures]), devis: frais([...DEVIS_A, ...AUTRUI.devis]), demandes: frais([...DEMANDES_A, ...AUTRUI.demandes]), clients: frais([...CLIENTS_A, ...AUTRUI.clients]), maintenant: MAINTENANT })
+const ENTREES = (extra = {}) => ({ artisanId: A, factures: frais(FACTURES_A), devis: frais(DEVIS_A), demandes: frais(DEMANDES_A), maintenant: MAINTENANT, ...extra })
+const MELANGE = () => ({ artisanId: A, factures: frais([...FACTURES_A, ...AUTRUI.factures]), devis: frais([...DEVIS_A, ...AUTRUI.devis]), demandes: frais([...DEMANDES_A, ...AUTRUI.demandes]), maintenant: MAINTENANT })
 
 async function charger(racine, n) {
   const fichier = path.join(racine, 'lib/tableau-de-bord/calculer.ts')
@@ -204,14 +204,18 @@ async function juger(racine, pref = '') {
   // TB-9 : types de chantier et villes
   ok('TB-9 types de chantier (12 mois) : Plomberie 3 (50 %), Électricité 2 (33 %) — casse, accents et espaces regroupés —, Maçonnerie 1 (17 %) ; Toiture (13 mois) et la demande sans date exclues',
     egal(R.chantiers.map((c) => [c.libelle, c.nb, c.part]), [['Plomberie', 3, 50], ['Électricité', 2, 33], ['Maçonnerie', 1, 17]]), JSON.stringify(R.chantiers))
-  ok('TB-9 villes : Lyon 2 (22 %), Saint-Étienne 2 (22 %) — « lyon » et « saint etienne » regroupés —, puis Lille, Nantes, Paris à 1 ; au plus 5, villes vides ignorées',
-    egal(R.villes.map((c) => [c.libelle, c.nb, c.part]), [['Lyon', 2, 22], ['Saint-Étienne', 2, 22], ['Lille', 1, 11], ['Nantes', 1, 11], ['Paris', 1, 11]]), JSON.stringify(R.villes))
+  ok('TB-9 villes des DEMANDES (12 mois) : Lyon 2 (25 %), Saint-Étienne 2 (25 %) — « lyon » et « saint etienne » regroupés —, puis Lille, Nantes, Paris à 1 (13 %) ; au plus 5 (Tours coupé) ; Marseille (13 mois, sans date) exclue',
+    egal(R.villes.map((c) => [c.libelle, c.nb, c.part]), [['Lyon', 2, 25], ['Saint-Étienne', 2, 25], ['Lille', 1, 13], ['Nantes', 1, 13], ['Paris', 1, 13]]), JSON.stringify(R.villes))
+  {
+    const avecVides = calculer(ENTREES({ demandes: frais([...DEMANDES_A, ...SANS_VILLE]) }))
+    ok('TB-9 villes nulles, vides ou blanches : ignorées (le bloc « Villes » est le même avec ou sans elles)', egal(avecVides.villes, R.villes), JSON.stringify(avecVides.villes))
+  }
 
   // TB-10 : jeu vide et valeurs sales
   {
-    const vide = calculer({ artisanId: A, factures: [], devis: [], demandes: [], clients: [], maintenant: MAINTENANT })
-    const sales = calculer(ENTREES({ factures: [fac('g1', 'emise', '2026-10-01', '2026-12-01', null), fac('g2', 'emise', '2026-10-01', '2026-12-01', 'abc'), fac('g3', 'emise', '2026-10-01', '2026-12-01', '250,5'), fac('g4', 'emise', '2026-10-01', '2026-12-01', '100'), fac('g5', 'emise', '2026-10-01', '2026-12-01', undefined)], devis: [], demandes: [], clients: [] }))
-    const passe = calculer(ENTREES({ factures: [fac('p1', 'emise', '2026-03-01', '2026-03-31', 500)], devis: [], demandes: [], clients: [] }))
+    const vide = calculer({ artisanId: A, factures: [], devis: [], demandes: [], maintenant: MAINTENANT })
+    const sales = calculer(ENTREES({ factures: [fac('g1', 'emise', '2026-10-01', '2026-12-01', null), fac('g2', 'emise', '2026-10-01', '2026-12-01', 'abc'), fac('g3', 'emise', '2026-10-01', '2026-12-01', '250,5'), fac('g4', 'emise', '2026-10-01', '2026-12-01', '100'), fac('g5', 'emise', '2026-10-01', '2026-12-01', undefined)], devis: [], demandes: [] }))
+    const passe = calculer(ENTREES({ factures: [fac('p1', 'emise', '2026-03-01', '2026-03-31', 500)], devis: [], demandes: [] }))
     ok('TB-10 aucune donnée : écran « vide », zéros, taux / variation / délai = null, listes vides, ni NaN ni undefined',
       vide.vide === true && vide.argent.caMois === 0 && vide.argent.caAnnee === 0 && vide.argent.variationMois === null && vide.devis.tauxAcceptation === null && vide.devis.delaiMoyenHeures === null && vide.aRelancer.total === 0 && vide.demandes.total === 0 && vide.chantiers.length === 0 && vide.villes.length === 0 && vide.mois.length === 6 && toutNaN(vide).length === 0,
       JSON.stringify([vide.vide, toutNaN(vide)]))
@@ -257,7 +261,7 @@ async function juger(racine, pref = '') {
     ok('TB-13 les devis à relancer s\'affichent avec leur lien vers /devis/<id>, leur client et leur ancienneté ; les canaux et les villes sont nommés',
       html.includes('href="/devis/d1"') && html.includes('href="/devis/d7"') && texte.includes('Mme Roux') && texte.includes('envoyé il y a 16 j') && texte.includes('Formulaire') && texte.includes('Saint-Étienne') && texte.includes('Électricité'),
       texte.slice(0, 200))
-    const rendusPropres = [html, await rendre(racine, calculer({ artisanId: A, factures: [], devis: [], demandes: [], clients: [], maintenant: MAINTENANT })), await rendre(racine, calculer(ENTREES({ factures: [fac('z', 'emise', '2026-10-01', null, 5)], devis: [], demandes: [], clients: [] })))]
+    const rendusPropres = [html, await rendre(racine, calculer({ artisanId: A, factures: [], devis: [], demandes: [], maintenant: MAINTENANT })), await rendre(racine, calculer(ENTREES({ factures: [fac('z', 'emise', '2026-10-01', null, 5)], devis: [], demandes: [] })))]
     ok('TB-13 l\'écran vide dit qu\'il est vide ; aucun rendu ne contient NaN, undefined, Infinity ni null', aplatir(rendusPropres[1]).includes('apparaîtront') && rendusPropres.every((h) => !/NaN|undefined|Infinity|\bnull\b/.test(h)), rendusPropres.map((h) => h.match(/NaN|undefined|Infinity|\bnull\b/)?.[0]).join(','))
   }
 
@@ -265,11 +269,13 @@ async function juger(racine, pref = '') {
   {
     const page = lire(path.join(racine, 'app/chiffres/page.tsx'))
     const code = sansCommentaires(page)
-    const tables = ['factures', 'devis', 'leads', 'clients']
+    const tables = ['factures', 'devis', 'leads']
     const filtrees = tables.filter((t) => new RegExp(`supabase\\.from\\('${t}'\\)\\.select\\('[^']*'\\)\\.eq\\('artisan_id', uid\\)`).test(code))
     const ecriture = code.match(/\.(insert|update|delete|upsert|rpc)\s*\(|supabaseAdmin|SERVICE_ROLE|service_role|createClient\s*\(/)
     const selects = [...code.matchAll(/\.select\('([^']*)'\)/g)].map((m) => m[1]).join(',')
-    ok('TB-14 la page filtre CHACUNE de ses 4 requêtes (factures, devis, leads, clients) sur .eq(\'artisan_id\', uid), l\'uid venant de la session', egal(filtrees, tables) && /const uid = data\.session\.user\.id/.test(code), `filtrées : ${filtrees.join(',')}`)
+    ok('TB-14 la page filtre CHACUNE de ses 3 requêtes (factures, devis, leads) sur .eq(\'artisan_id\', uid), l\'uid venant de la session', egal(filtrees, tables) && /const uid = data\.session\.user\.id/.test(code), `filtrées : ${filtrees.join(',')}`)
+    const selectLeads = code.match(/supabase\.from\('leads'\)\.select\('([^']*)'\)/)?.[1] ?? ''
+    ok('TB-14 les villes viennent des demandes : la requête des demandes lit `ville` (0133), et la page ne lit plus `clients`', selectLeads.split(/,\s*/).includes('ville') && !/from\('clients'\)/.test(code), selectLeads)
     ok('TB-14 la page ne fait que lire : ni insert/update/delete/upsert/rpc, ni clé de service, ni client privilégié ; elle ne sélectionne ni total_tva ni total_ht', !ecriture && !/total_tva|total_ht/.test(selects), ecriture?.[0] || selects)
     ok('TB-14 la page passe ses lignes à calculer() avec l\'identifiant de la session (le filtre est doublé dans le module)', /calculer\(\{ artisanId, factures/.test(code) && /setArtisanId\(uid\)/.test(code), 'appel à calculer introuvable')
   }
@@ -315,8 +321,8 @@ async function juger(racine, pref = '') {
   // TB-18 : une panne n'est pas un zéro
   {
     const code = sansCommentaires(lire(path.join(racine, 'app/chiffres/page.tsx')))
-    ok('TB-18 si une des 4 requêtes échoue, la page affiche une erreur et AUCUN total (jamais « 0 € » pour une panne) : toutes les erreurs testées avant setCharge, le message d\'erreur passe avant le tableau',
-      /if \(f\.error \|\| d\.error \|\| l\.error \|\| c\.error\) \{ setErreur\(true\); return \}/.test(code) && code.indexOf('setErreur(true)') < code.indexOf('setCharge(') && code.indexOf('erreur ? (') < code.indexOf('<Tableau'),
+    ok('TB-18 si une des 3 requêtes échoue, la page affiche une erreur et AUCUN total (jamais « 0 € » pour une panne) : toutes les erreurs testées avant setCharge, le message d\'erreur passe avant le tableau',
+      /if \(f\.error \|\| d\.error \|\| l\.error\) \{ setErreur\(true\); return \}/.test(code) && code.indexOf('setErreur(true)') < code.indexOf('setCharge(') && code.indexOf('erreur ? (') < code.indexOf('<Tableau'),
       'gestion d\'erreur')
   }
 }
@@ -356,7 +362,9 @@ const SABOTAGES = [
   ['TB-13', C, 'const c = centimes(f.total_ttc)', 'const c = centimes(f.total_ttc) + centimes((f as { total_tva?: Nombre }).total_tva)'],
   ['TB-13', T, "<Kpi lab=\"Mois dernier\"", "<Kpi lab=\"Mois dernier HT\""],
   ['TB-14', P, ".select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de').eq('artisan_id', uid)", ".select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de')"],
-  ['TB-14', P, ".select('id, artisan_id, ville').eq('artisan_id', uid)", ".select('id, artisan_id, ville')"],
+  ['TB-14', P, ".select('id, artisan_id, canal, statut, created_at, type_chantier, ville').eq('artisan_id', uid)", ".select('id, artisan_id, canal, statut, created_at, type_chantier, ville')"],
+  ['TB-14', P, "type_chantier, ville')", "type_chantier')"],
+  ['TB-9', C, 'if (dansFenetre(m, debutActivite) && d.ville) villes.push(d.ville)', 'if (d.ville) villes.push(d.ville)'],
   ['TB-14', P, "import Tableau from './Tableau'", "import Tableau from './Tableau'\nimport { supabaseAdmin } from '@/lib/supabaseAdmin'"],
   ['TB-14', P, "const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()", "await supabase.from('artisans').update({ aide_vues: [] }).eq('id', uid)\n      const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()"],
   ['TB-15', 'app/AppShell.tsx', "href: '/chiffres'", "href: '/chiffre'"],
@@ -370,8 +378,8 @@ const SABOTAGES = [
   ['TB-16', 'app/chiffres/chiffres.css', '.tdb-grid { grid-template-columns: minmax(0, 1fr) }', '.tdb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) }'],
   ['TB-16', 'app/chiffres/chiffres.css', 'min-height: 52px', 'min-height: 30px'],
   ['TB-17', 'docs/produit/tableau-de-bord-artisan.md', 'DemoSequence', 'la démo'],
-  ['TB-18', P, 'if (f.error || d.error || l.error || c.error) { setErreur(true); return }', ''],
-  ['TB-18', P, 'if (f.error || d.error || l.error || c.error)', 'if (f.error || d.error || l.error)'],
+  ['TB-18', P, 'if (f.error || d.error || l.error) { setErreur(true); return }', ''],
+  ['TB-18', P, 'if (f.error || d.error || l.error)', 'if (f.error || d.error)'],
 ]
 const FICHIERS = [...new Set([C, T, P, 'app/chiffres/chiffres.css', 'app/AppShell.tsx', 'app/robots.ts', 'lib/aide.ts', 'app/aide/page.tsx', 'package.json', 'docs/produit/tableau-de-bord-artisan.md'])]
 function copie(nom) {

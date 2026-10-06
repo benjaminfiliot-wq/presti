@@ -181,8 +181,8 @@ export default function Tableau({ i, tronque }: { i: Indicateurs; tronque?: bool
         <Panneau titre="Vos chantiers">
           <h3 className="tdb-sous">Types de chantier</h3>
           <Repartition comptes={i.chantiers} vide="Le type de chantier se remplit quand Presti le reconnaît dans une demande." />
-          <h3 className="tdb-sous">Villes de vos clients</h3>
-          <Repartition comptes={i.villes} vide="Les villes apparaîtront quand vos clients auront une ville renseignée." />
+          <h3 className="tdb-sous">Villes des demandes</h3>
+          <Repartition comptes={i.villes} vide="Les villes apparaîtront quand une demande nommera sa commune (« à Marans », « 17230 Marans »)." />
         </Panneau>
       </div>
 

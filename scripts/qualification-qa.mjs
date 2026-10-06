@@ -16,6 +16,11 @@
 //   QU-5  repli sur le métier quand le message ne tranche pas, et seulement dans ce cas ;
 //   QU-6  câblage : la route du formulaire (app/api/leads/route.ts) écrit qualif.type_chantier, lib/ai.ts délègue à typeChantier,
 //         et la relève email (lib/releveCanal.ts) écrit type_chantier: typeChantier(…) dans son insert.
+//   QU-7  la VILLE (lib/ville.ts, décision 2 de Benj, 0133) : un nom n'est une ville que s'il est celui d'une commune de la liste
+//         FERMÉE ; « à Noël », « à domicile », « poêle à bois », « sommier à lattes », « à la ronde », « dites-le à Yves » ne
+//         donnent jamais une ville ; code postal vérifié ; le nom le plus long l'emporte ; les huit cas réels n'ont pas de ville ;
+//   QU-8  câblage de la ville : les deux inserts (formulaire, email) écrivent ville: villeDe(message), la migration 0133 borne
+//         la colonne, et la liste compte au moins 1 900 communes (17, 85, 79 en entier et les villes de 10 000 habitants).
 // Sabotages (toujours joués) : sept copies dégradées du module ou des sources ; chacune doit faire rougir au moins un critère.
 // Sortie : une ligne par critère, puis une par sabotage ; code 0 seulement si tout est vert et chaque sabotage est vu.
 //
@@ -27,7 +32,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const lire = (rel) => fs.readFileSync(path.join(R, rel), 'utf8')
-const SRC = { qualif: lire('lib/qualification.ts'), route: lire('app/api/leads/route.ts'), ai: lire('lib/ai.ts'), releve: lire('lib/releveCanal.ts') }
+const SRC = { qualif: lire('lib/qualification.ts'), route: lire('app/api/leads/route.ts'), ai: lire('lib/ai.ts'), releve: lire('lib/releveCanal.ts'), ville: lire('lib/ville.ts'), migration: lire('supabase/migrations/0133_leads_ville.sql') }
 
 // Node ≥ 22.6 retire les types d'un .ts importé (lib/qualification.ts n'importe rien). L'avertissement est coupé pour la lisibilité.
 process.removeAllListeners('warning')
@@ -91,7 +96,31 @@ const REPLIS = [
   ['Bonjour, pouvez-vous me rappeler ?', null, null],
 ]
 
-function juger(mod, src) {
+// [message, ville attendue]
+const VILLES = [
+  ['Un escalier à Marans', 'Marans'],
+  ['devis à la rochelle svp', 'La Rochelle'],
+  ['Chantier à La Rochelle (17000), pour une porte', 'La Rochelle'],
+  ['17230 Marans', 'Marans'],
+  ['Adresse : 12 rue du Port, Marans 17230', 'Marans'],
+  ['Je suis secteur de Niort', 'Niort'],
+  ['Une maison sur Luçon', 'Luçon'],
+  ['Résidence secondaire à Saint-Martin-de-Ré', 'Saint-Martin-de-Ré'],
+  ['Un appartement aux Sables-d’Olonne', "Les Sables-d'Olonne"],
+  ['Une longère à côté de Rochefort', 'Rochefort'],
+  ['On habite à Aytré, chantier ensuite à Niort', 'Aytré'],
+  ['Pose à Sens (89)', 'Sens'],
+  ['Maison à Yves 17340', 'Yves'],
+  ['75015 Paris, 3e étage', 'Paris'],
+]
+const SANS_VILLE = [
+  'Livraison à Noël si possible', 'Avant Pâques ou à Pâques', 'Intervention à domicile', 'Un poêle à bois dans le séjour',
+  'Changer le sommier à lattes', 'Le meilleur artisan à la ronde', 'Le moteur sur le tablier du volet', 'Dites-le à Yves, mon voisin',
+  'Rue à sens unique', '17000 Niort', 'à saint martin', 'Un chauffe-eau à gaz', 'Chantier à 2 km', 'Vers 14 h à la maison',
+  '', null,
+]
+
+function juger(mod, src, ville) {
   const res = []
   const verifier = (id, nom, cas, attendu) => {
     const fautes = []
@@ -116,13 +145,30 @@ function juger(mod, src) {
   if (!src.releve.includes(".from('leads').insert(") || !/type_chantier:\s*typeChantier\(\s*message\s*,\s*metier\s*\)/.test(insertReleve)) cablage.push('lib/releveCanal.ts : l’insert de la demande email n’écrit pas type_chantier: typeChantier(message, metier)')
   if (!/from '@\/lib\/qualification'/.test(src.releve)) cablage.push('lib/releveCanal.ts : n’importe pas lib/qualification')
   res.push({ id: 'QU-6', nom: 'câblage formulaire + email', ok: cablage.length === 0, detail: cablage.join(' ; ') || 'route, lib/ai.ts et relève email branchés' })
+
+  const fautesVille = []
+  for (const [m, attendu] of VILLES) { const o = ville.villeDe(m); if (o !== attendu) fautesVille.push(`« ${m} » → ${o ?? 'null'}, ${attendu} attendu`) }
+  for (const m of SANS_VILLE) { const o = ville.villeDe(m); if (o !== null) fautesVille.push(`« ${m} » → ${o}, null attendu`) }
+  for (const c of REELS) { const o = ville.villeDe(c[0]); if (o !== null) fautesVille.push(`cas réel « ${String(c[0]).slice(0, 40)} » → ${o}, null attendu`) }
+  res.push({ id: 'QU-7', nom: 'ville par liste fermée', ok: fautesVille.length === 0, detail: fautesVille.join(' ; ') || `${VILLES.length} villes, ${SANS_VILLE.length + REELS.length} messages sans ville` })
+
+  const cablageVille = []
+  for (const [nom, code] of [['route', src.route], ['relève', src.releve]]) {
+    if (!/from '@\/lib\/ville'/.test(code)) cablageVille.push(`${nom} : n’importe pas lib/ville`)
+    if (!/ville:\s*villeDe\(\s*message\s*\)/.test(code)) cablageVille.push(`${nom} : l’insert n’écrit pas ville: villeDe(message)`)
+  }
+  if (!/add column if not exists ville text/.test(src.migration) || !/leads_ville_borne check \(ville is null or char_length\(ville\) between 1 and 80\)/.test(src.migration)) cablageVille.push('0133 : colonne ou borne absente')
+  if (!(ville.NB_COMMUNES >= 1900)) cablageVille.push(`liste de ${ville.NB_COMMUNES} communes (1 900 attendues au moins)`)
+  res.push({ id: 'QU-8', nom: 'câblage de la ville', ok: cablageVille.length === 0, detail: cablageVille.join(' ; ') || `formulaire et email écrivent la ville ; 0133 bornée ; ${ville.NB_COMMUNES} communes` })
   return res
 }
 
 let rouge = 0
 const base = await charger(SRC.qualif)
 if (typeof base.typeChantier !== 'function') { console.error('✗ lib/qualification.ts n’exporte pas typeChantier'); process.exit(2) }
-for (const r of juger(base, SRC)) { console.log(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} — ${r.nom} : ${r.detail}`); if (!r.ok) rouge++ }
+const baseVille = await charger(SRC.ville)
+if (typeof baseVille.villeDe !== 'function') { console.error('✗ lib/ville.ts n’exporte pas villeDe'); process.exit(2) }
+for (const r of juger(base, SRC, baseVille)) { console.log(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} — ${r.nom} : ${r.detail}`); if (!r.ok) rouge++ }
 
 // Sabotages : chacun doit rendre au moins un critère rouge.
 const remplacer = (s, a, b) => { if (!s.includes(a)) throw new Error(`sabotage sans prise : ${a.slice(0, 50)}`); return s.replace(a, b) }
@@ -143,16 +189,27 @@ const SABOTAGES = [
   ['« électrique » retiré (seul « electric » reste)', () => ({ qualif: remplacer(SRC.qualif, "'electrique', ", '') })],
   ['relève email sans type de chantier', () => ({ releve: remplacer(SRC.releve, 'type_chantier: typeChantier(message, metier),', '') })],
   ['route du formulaire sans type de chantier', () => ({ route: remplacer(SRC.route, 'type_chantier: qualif.type_chantier,', '') })],
+  ['ville : liste ouverte (tout nom après « à » devient une ville)', () => ({ ville: remplacer(SRC.ville, 'if (!c) continue', "if (!c) return { nom: tranche.map((m) => m.brut).join(' '), cps: [], majuscule: false, codeExige: false }") })],
+  ['ville : majuscule non exigée pour les noms communs', () => ({ ville: remplacer(SRC.ville, 'if (c.majuscule && !tranche.some(', 'if (false && !tranche.some(') })],
+  ['ville : prénom accepté sans code postal', () => ({ ville: remplacer(SRC.ville, 'if (c.codeExige) return null', 'if (false) return null') })],
+  ['ville : code postal non vérifié', () => ({ ville: remplacer(SRC.ville, 'if (code) return c.cps.includes(code) ? c : null', 'if (code) return c') })],
+  ['ville : le nom le plus court l’emporte', () => ({ ville: remplacer(SRC.ville, 'for (let l = Math.min(MOTS_MAX, mots.length - debut); l >= 1; l--)', 'for (let l = 1; l <= Math.min(MOTS_MAX, mots.length - debut); l++)') })],
+  ['ville : « aux » ne vaut plus « à Les »', () => ({ ville: remplacer(SRC.ville, "[['au'], 'le'], [['aux'], 'les'],", "[['au'], 'le'],") })],
+  ['ville : une commune retirée de la liste (Marans)', () => ({ ville: remplacer(SRC.ville, 'Marans|17230;', '') })],
+  ['ville : route du formulaire sans ville', () => ({ route: remplacer(SRC.route, 'ville: villeDe(message),', '') })],
+  ['ville : relève email sans ville', () => ({ releve: remplacer(SRC.releve, 'ville: villeDe(message),', '') })],
+  ['ville : 0133 sans borne', () => ({ migration: remplacer(SRC.migration, 'between 1 and 80', 'between 1 and 800') })],
 ]
 let manques = 0
 for (const [nom, fab] of SABOTAGES) {
   const s = { ...SRC, ...fab() }
   const mod = s.qualif === SRC.qualif ? base : await charger(s.qualif)
-  const rouges = juger(mod, s).filter((r) => !r.ok).map((r) => r.id)
+  const modVille = s.ville === SRC.ville ? baseVille : await charger(s.ville)
+  const rouges = juger(mod, s, modVille).filter((r) => !r.ok).map((r) => r.id)
   if (rouges.length) console.log(`  sabotage vu    : ${nom} → ${rouges.join(', ')}`)
   else { console.log(`  sabotage MANQUÉ : ${nom} → tout reste vert`); manques++ }
 }
 fs.rmSync(TMP, { recursive: true, force: true })
 const ok = rouge === 0 && manques === 0
-console.log(ok ? `✓ qualification : PASS — 6 critères verts, ${SABOTAGES.length} sabotages vus` : `✗ qualification : FAIL — ${rouge} critère(s) rouge(s), ${manques} sabotage(s) manqué(s)`)
+console.log(ok ? `✓ qualification : PASS — 8 critères verts, ${SABOTAGES.length} sabotages vus` : `✗ qualification : FAIL — ${rouge} critère(s) rouge(s), ${manques} sabotage(s) manqué(s)`)
 process.exitCode = ok ? 0 : 1
