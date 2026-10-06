@@ -17,6 +17,7 @@ import { recuperateurReseau } from '@/lib/agents/acquisition/lecteurSite'
 import { executerFacteur } from '@/lib/agents/acquisition/facteur'
 import type { MagasinFacteur } from '@/lib/agents/acquisition/facteur'
 import { creerPorteurGmail } from '@/lib/agents/acquisition/porteurs/gmail'
+import { boiteProspection } from '@/lib/agents/acquisition/boiteProspection'
 import { creerEnvoiMeta } from '@/lib/agents/acquisition/envoiMeta'
 import { mentionsHtml, noticeHtml } from '@/lib/confidentialite/prospection'
 
@@ -69,10 +70,9 @@ export async function GET(req: Request) {
     // La passe du soir n'a lieu qu'à 20 h de Paris : la planification tire à 18 h et à 19 h UTC, l'heure d'été ou d'hiver.
     if (passe === 'soir' && heureParis() !== 20) return NextResponse.json({ hors_heure: true })
 
-    const adresse = (process.env.ACQ_ADRESSE_REPONSE ?? '').trim()
-    const user = (process.env.PROSPECTION_GMAIL_USER ?? '').trim()
-    const pass = process.env.PROSPECTION_GMAIL_PASS ?? ''
-    const gmail = user && pass && adresse ? creerPorteurGmail({ user, pass, adresse, lirePieceJointe }) : null
+    // La boîte de prospection, sinon la boîte Gmail de l'entreprise déjà configurée (boiteProspection.ts, décision du 06/10).
+    const boite = boiteProspection()
+    const gmail = boite ? creerPorteurGmail({ user: boite.user, pass: boite.pass, adresse: boite.adresse, lirePieceJointe }) : null
     const jeton = (process.env.META_PAGE_TOKEN ?? '').trim()
     const compte = (process.env.META_IG_ID ?? '').trim()
     const magasin = magasinDuFacteur()
@@ -80,7 +80,7 @@ export async function GET(req: Request) {
     const horloge = { maintenant: Date.now, attendre: (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)) }
 
     const bilan = await executerFacteur({
-      magasin, gmail, meta, horloge, echeance: Date.now() + BUDGET_MS, passe, adresseReponse: adresse || null,
+      magasin, gmail, meta, horloge, echeance: Date.now() + BUDGET_MS, passe, adresseReponse: boite?.adresse || null,
       notice: { html: noticeHtml(), mentions: mentionsHtml() }, recuperer: recuperateurReseau,
     })
 
