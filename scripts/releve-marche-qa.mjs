@@ -40,9 +40,9 @@ function serveur(gestionnaire) {
     s.listen(0, '127.0.0.1', () => res({ s, port: s.address().port, appels: [] }))
   })
 }
-async function mondes({ ebayStatut = 200, apifyStatut = 201 } = {}) {
+async function mondes({ ebayStatut = 200, apifyStatut = 201, apifyVide = false } = {}) {
   const fc = await serveur((req, rep, corps) => { fc.appels.push({ auth: req.headers.authorization, corps }); rep.writeHead(ebayStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(ebayStatut === 200 ? { success: true, data: { markdown: MD_EBAY } } : { success: false })) })
-  const ap = await serveur((req, rep, corps) => { ap.appels.push({ url: req.url, auth: req.headers.authorization, corps }); rep.writeHead(apifyStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(apifyStatut === 201 ? ITEMS_TT : { error: 'x' })) })
+  const ap = await serveur((req, rep, corps) => { ap.appels.push({ url: req.url, auth: req.headers.authorization, corps }); rep.writeHead(apifyStatut, { 'content-type': 'application/json' }); rep.end(JSON.stringify(apifyStatut === 201 ? (apifyVide ? Array.from({ length: 10 }, () => ({ noResults: true })) : ITEMS_TT) : { error: 'x' })) })
   return { fc, ap, fermer: () => { fc.s.close(); ap.s.close() } }
 }
 function lancer(racine, { travail, liste, extra = [], env = {} }) {
@@ -110,6 +110,14 @@ async function juger(racine, pref = '') {
     const J = JSON.parse(lire(fichiersDe(path.join(d, 'sortie')).find((f) => /\d{4}-\d{2}-\d{2}\.json$/.test(f))))
     ok('RM-9 sources en panne : aucun chiffre inventé, deux incidents notés, code 1', r.code === 1 && J.produits[0].ebay === null && J.produits[0].tiktok.length === 0 && J.incidents.length === 2, `${r.code} ${JSON.stringify(J.incidents)}`)
   }
+  // RM-13 : l'acteur rend des « noResults » → un incident, jamais « 0 vidéo » présenté comme une mesure
+  {
+    const m = await mondes({ apifyVide: true }), d = path.join(TMP, pref + 'rm13')
+    const r = await lancer(racine, { travail: path.join(d, 'sortie'), liste: listeDe(d, 1), env: env(m) })
+    m.fermer()
+    const J = JSON.parse(lire(fichiersDe(path.join(d, 'sortie')).find((f) => /\d{4}-\d{2}-\d{2}\.json$/.test(f))))
+    ok('RM-13 l\'acteur rend « noResults » : un incident « aucun résultat », aucune ligne TikTok chiffrée à zéro', J.produits[0].tiktok.length === 0 && J.incidents.some((i) => /aucun résultat/.test(i)), JSON.stringify([J.produits[0].tiktok, J.incidents]) + r.sortie)
+  }
   // RM-10 : sans clé
   {
     const m = await mondes(), d = path.join(TMP, pref + 'rm10')
@@ -141,6 +149,7 @@ const SABOTAGES = [
   ['RM-3', 'scripts/usine/releve-marche.mjs', "Prix **demandés** sur eBay.fr (pas des prix vendus)", "Prix vendus sur eBay.fr"],
   ['RM-9', 'scripts/usine/releve-marche.mjs', "return reponses ? 0 : 1", "return 0"],
   ['RM-10', 'scripts/usine/releve-marche.mjs', "if (!o.sansEbay && cleFc && creditsFc > 0", "if (!o.sansEbay && creditsFc > 0"],
+  ['RM-13', 'scripts/usine/releve-marche.mjs', "if (Array.isArray(j) && j.length && j.every((x) => x && x.noResults))", "if (false)"],
   ['RM-12', 'scripts/usine/systemd/presti-preneur-marche.service', 'FIRECRAWL_API_KEY APIFY_TOKEN --', 'FIRECRAWL_API_KEY APIFY_TOKEN PRESTI_JETON_PRENEUR --'],
 ]
 const FICHIERS = ['scripts/usine/releve-marche.mjs', 'scripts/usine/systemd/presti-preneur-marche.service', 'scripts/usine/systemd/presti-preneur-marche.timer', 'docs/ecommerce/surveillance-produits.json']

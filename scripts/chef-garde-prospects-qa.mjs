@@ -52,9 +52,18 @@ ok('GP-9 une rédaction d\'annonce eBay (travail d\'écriture) reste permise', f
 const tri = tache('tri', 'Trier les quatorze tâches en file par domaine et lister les blocages', 'Fluidifier la file.', 'essai-i')
 ok('GP-10 un tri de la file interne reste permis', fautes([tri]).length === 0, JSON.stringify(fautes([tri])))
 
+// 06/10 : la maintenance des agents n'est pas une tâche libre (le Chef y avait dépensé 60 tâches en une nuit).
+const m1 = tache('verification', 'Évaluer l\'état actuel de l\'agent preneur après son disjoncteur pour identifier les blocages persistants', 'Suivre la reprise.', 'essai-j')
+const fm = fautes([m1])
+ok('GP-11 une vérification sur le preneur ou son disjoncteur : plan refusé, avec la raison', fm.length > 0 && fm.some((x) => /maintenance des agents/.test(x)), JSON.stringify(fm))
+const m2 = tache('redaction_interne', 'Documenter la tâche 026-151 de l\'orchestre et les leçons des échecs récurrents', 'Mémoire.', 'essai-k')
+ok('GP-12 une rédaction sur une tâche 026-xxx de l\'orchestre : plan refusé', fautes([m2]).length > 0)
+const m3 = tache('redaction_interne', 'Écrire trois scripts vidéo de vingt secondes pour le niveau laser, à destination du compte Brico Travaux', 'E-commerce.', 'essai-l')
+ok('GP-13 un script vidéo e-commerce reste permis', fautes([m3]).length === 0, JSON.stringify(fautes([m3])))
+
 // Sabotage : sans l'appel à motifProspects, GP-2 doit devenir rouge. On le vérifie dans le source, sans rien écrire.
 const source = fs.readFileSync(path.join(ICI, 'chef', 'commun.mjs'), 'utf8')
 ok('GP-6 le validateur appelle bien motifProspects (importé de garde-prospects.mjs)', /import \{ motifProspects \} from '\.\.\/usine\/garde-prospects\.mjs'/.test(source) && /motifProspects\(\[t\.objet, t\.charge\.titre, t\.charge\.pourquoi\]/.test(source))
 
-console.log(rouges.length ? `chef-garde-prospects-qa : ÉCHEC (${rouges.join(', ')})` : 'chef-garde-prospects-qa : PASS (10 critères)')
+console.log(rouges.length ? `chef-garde-prospects-qa : ÉCHEC (${rouges.join(', ')})` : 'chef-garde-prospects-qa : PASS (13 critères)')
 process.exitCode = rouges.length ? 1 : 0
