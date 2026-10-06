@@ -205,6 +205,24 @@ async function queteJournee(s, e, runId) {
   }
   ecrireQuetes(etat)
 }
+// 06/10 soir (Benj : « je vois toujours pas la station travailler ») : un reflet ne dure que quelques secondes, alors qu'une tâche prise dure
+// plusieurs minutes. Tant qu'un agent tient une tâche (tache_prise sans tache_faite, 30 min au plus), il est rallumé toutes les 20 s : la
+// station le montre « WORKING » pendant tout son travail réel. Aucune quête ni XP pour ces rappels.
+const enCours = new Map()
+async function entretenir() {
+  for (;;) {
+    await new Promise((fin) => setTimeout(fin, 20_000))
+    try {
+      const maintenant = Date.now()
+      for (const [agent, t] of enCours) if (maintenant - t.depuis > 30 * 60_000) enCours.delete(agent)
+      if (!enCours.size) continue
+      const s = await sidecarCourt()
+      await Promise.all([...enCours].map(([agent, t]) => refleterEvenement(s, { agent, type: 'travail_en_cours', resume: `toujours en cours : ${t.objet}`, le: new Date().toISOString() }).catch(() => null)))
+    } catch { sidecarCache = null }
+  }
+}
+entretenir()
+
 async function suivre() {
   for (;;) {
     try {
@@ -219,6 +237,7 @@ async function suivre() {
         const s = await sidecarCourt()
         // les tâches prises et faites : une à une, dans l'ordre, chacune avec SA quête (et son XP si elle est faite)
         for (const e of nouveaux.filter(estTache)) {
+          if (e.type === 'tache_prise') enCours.set(e.agent, { objet: String(e.resume).slice(0, 120), depuis: Date.now() }); else enCours.delete(e.agent)
           try { const r = await refleterEvenement(s, e); await queteTache(s, e, r.ok ? r.runId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
         }
         const generaux = [...parAgent.values()].filter((e) => !estTache(e))
