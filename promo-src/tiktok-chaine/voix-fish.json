@@ -1,0 +1,13 @@
+{
+  "_lisez_moi": "Fish Audio ne sert à la chaîne TikTok QUE si : (1) une clé existe dans presti-secrets (un fichier dont le nom contient « fish », la clé seule sur une ligne) ET (2) ce fichier déclare un forfait COMMERCIAL prouvé. Le forfait gratuit de Fish n'autorise pas l'usage commercial : une pub e-commerce est commerciale. Tant que « commercial » vaut false, la garde du dépôt (lib/studio/voixFish.ts) rend la voix locale Kokoro ff_siwis. Ne jamais mettre la clé ici.",
+  "droits": {
+    "forfait": null,
+    "commercial": false,
+    "prouve_le": null,
+    "source": null,
+    "expire_le": null
+  },
+  "voix_id": null,
+  "modele": "s1",
+  "vitesse": 1.0
+}

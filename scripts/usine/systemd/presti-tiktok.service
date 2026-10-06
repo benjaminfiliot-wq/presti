@@ -1,0 +1,24 @@
+[Unit]
+Description=Presti — la chaîne TikTok Brico Travaux (vide ~/travail/tiktok/a-produire/ : une ligne du calendrier → <id>-voix.mp4, et <id>-voix-musique.mp4 si une piste licenciée existe, dans sorties/ ; voix locale Kokoro ff_siwis sans clé ; jamais pendant la fenêtre du Chef)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=TIKTOK_BASE=/home/agents/travail/tiktok
+# Minutes réservées au Chef (H:05 à H:20) ; un rendu ne démarre que s'il finit avant (marge = durée max d'un rendu).
+Environment=TIKTOK_FENETRE_INTERDITE=5-20
+Environment=TIKTOK_MARGE_MIN=14
+# HyperFrames 0.8.33 (outils-pubs), Chromium de /srv/playwright et gsap du dépôt sont trouvés seuls par generer.mjs.
+# La voix : venv de l'utilisateur agents (kokoro-onnx, soundfile, faster-whisper ; README de la chaîne, « Installer la voix »).
+Environment=TIKTOK_PYTHON=/home/agents/venv-voix/bin/python
+# Les fichiers audio des sons TikTok licenciés (jamais dans le dépôt) : ceux du manifeste, déposés ici.
+Environment=TIKTOK_MUSIQUE=/home/agents/travail/tiktok/musique
+ExecStart=/usr/bin/node promo-src/tiktok-chaine/generer.mjs --file
+TimeoutStartSec=90min
+MemoryMax=3G
+Nice=10

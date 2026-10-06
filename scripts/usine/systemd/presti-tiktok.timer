@@ -1,0 +1,10 @@
+[Unit]
+Description=Passage de la chaîne TikTok à H:22 et H:38 (hors fenêtre du Chef H:05-H:20 ; file vide = rien ne tourne ; un verrou garantit une passe à la fois)
+
+[Timer]
+OnCalendar=*:22,38
+Persistent=false
+Unit=presti-tiktok.service
+
+[Install]
+WantedBy=timers.target

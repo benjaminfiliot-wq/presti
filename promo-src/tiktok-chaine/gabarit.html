@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>{{TITRE}}</title>
+    <!-- Gabarit de la chaîne TikTok « Brico Travaux » (promo-src/tiktok-chaine). Ce fichier est un MOULE :
+         generer.mjs remplace les {{…}} par les plans d'une ligne du calendrier. Ne pas le rendre tel quel. -->
+    <script src="assets/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet" />
+    <style>
+      :root { --jaune: #FFC400; --noir: #111111; --blanc: #F4F1EA; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #111; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #111; }
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+      .plan { position: absolute; inset: 0; overflow: hidden; }
+      .cam { position: absolute; inset: 0; transform-origin: 50% 55%; }
+      .abs { position: absolute; }
+
+      /* ── Sous-titres mot à mot : blanc cerné de noir, le mot dit en jaune. Zone sûre : x 60→900. ── */
+      .sous { position: absolute; left: 60px; width: 840px; text-align: center; text-wrap: balance; z-index: 20; }
+      .mot { display: inline-block; margin: 0 12px; font-family: "Anton", sans-serif; text-transform: uppercase; color: #fff; line-height: 1.12;
+        text-shadow: -6px -6px 0 #111, 6px -6px 0 #111, -6px 6px 0 #111, 6px 6px 0 #111, 0 -8px 0 #111, 0 8px 0 #111,
+          -8px 0 0 #111, 8px 0 0 #111, 0 16px 0 rgba(0,0,0,0.45); }
+
+      /* ── Accroche : chaque mot est une étiquette de ruban de chantier. ── */
+      .ruban { position: absolute; left: 60px; width: 840px; display: flex; flex-wrap: wrap; justify-content: center;
+        align-content: center; gap: 16px 18px; z-index: 20; }
+      .eti { display: inline-block; font-family: "Anton", sans-serif; text-transform: uppercase; color: #111; background: var(--jaune);
+        padding: 2px 26px 8px; line-height: 1.06; box-shadow: 0 12px 0 rgba(0,0,0,0.35); }
+      .eti.b { background: var(--blanc); }
+      .eti.n { background: #111; color: var(--jaune); }
+
+      /* ── Produit détouré ── */
+      .decoupe { position: absolute; display: block; filter: drop-shadow(0 34px 34px rgba(0,0,0,0.45)); }
+      .decoupe.fondu { -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent 100%); mask-image: linear-gradient(to bottom, #000 76%, transparent 100%); }
+      .fond-mots { position: absolute; inset: 0; overflow: hidden; }
+      .fond-mots .ligne { position: absolute; left: -400px; white-space: nowrap; font-family: "Anton", sans-serif; font-size: 300px;
+        line-height: 1; text-transform: uppercase; color: transparent; -webkit-text-stroke: 5px rgba(17,17,17,0.55); letter-spacing: 0.02em; }
+      .sombre .fond-mots .ligne { -webkit-text-stroke: 5px rgba(255,196,0,0.38); }
+      .ombre-sol { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,0.42), rgba(0,0,0,0)); }
+
+      /* ── Photo réelle : cadre net sur fond flou (parallaxe) ── */
+      .flou { position: absolute; left: -90px; top: -90px; width: 1260px; height: 2100px; object-fit: cover;
+        filter: blur(38px) brightness(0.42) saturate(1.25); }
+      .cadre { position: absolute; left: 0; width: 1080px; overflow: hidden; }
+      .cadre img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .degrade { position: absolute; left: 0; width: 1080px; height: 320px; background: linear-gradient(rgba(17,17,17,0), #111 92%); }
+
+      /* ── Loupe sur un détail réel ── */
+      .loupe { position: absolute; border-radius: 50%; overflow: hidden; border: 14px solid var(--jaune); background: #fff;
+        box-shadow: 0 26px 50px rgba(0,0,0,0.5); z-index: 8; }
+      .loupe img { position: absolute; }
+      .anneau { position: absolute; border: 10px solid var(--jaune); border-radius: 50%; z-index: 8; }
+      .trait { position: absolute; height: 10px; background: var(--jaune); transform-origin: 0 50%; z-index: 7; }
+
+      /* ── Scène « miettes » : tapis de sol dessiné ── */
+      .sc-habitacle { position: absolute; inset: 0; background: radial-gradient(120% 70% at 50% 25%, #3b3b3b 0%, #161616 72%); }
+      .tapis { position: absolute; left: 50px; top: 600px; width: 980px; height: 1360px; border-radius: 80px;
+        background: repeating-linear-gradient(0deg, #1c1c1c 0 16px, #2d2d2d 16px 42px);
+        box-shadow: inset 0 0 0 20px #232323, inset 0 0 0 26px #3d3d3d, 0 40px 90px rgba(0,0,0,0.6); }
+      .mie { position: absolute; border-radius: 46% 54% 40% 60%;
+        background: #D49A52; box-shadow: inset 5px 4px 0 rgba(255,226,170,0.7), inset -4px -4px 0 rgba(120,70,25,0.65), 0 5px 0 rgba(0,0,0,0.45); }
+
+      /* ── Scène « terrasse » : dalles propres sous des dalles sales ── */
+      .sc-jardin { position: absolute; inset: 0; background: linear-gradient(#2F4A22 0%, #49683A 20%, #6E8A55 33%, #8a8475 34%, #8a8475 100%); }
+      .dalles { position: absolute; left: -20px; top: 640px; width: 1120px; height: 1320px; display: grid;
+        grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); gap: 12px; padding: 12px; }
+      .dalles.propre { background: #B3A893; }
+      .dalles.propre i { background: linear-gradient(160deg, #F1EBDF, #DDD3C1 70%, #EAE2D4); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4); }
+      .dalles.sale { background: #2E3619; }
+      .dalles.sale i { box-shadow: inset 0 0 0 3px rgba(30,34,16,0.5); }
+      .dalles i { display: block; border-radius: 6px; }
+
+      /* ── Scène « vélo » ── */
+      .sc-garage { position: absolute; inset: 0; background: linear-gradient(#D9D2C4 0%, #CFC6B4 62%, #8F8778 62.2%, #7B7365 100%); }
+
+      /* ── Scène « boîte à gants » ── */
+      .sc-tableau { position: absolute; inset: 0; background: linear-gradient(#262626 0%, #1A1A1A 55%, #0E0E0E 100%); }
+      .bg-fond { position: absolute; left: 150px; top: 1040px; width: 780px; height: 520px; border-radius: 34px; background: #080808; }
+      .bg-face { position: absolute; left: 130px; top: 1230px; width: 820px; height: 360px; border-radius: 0 0 44px 44px;
+        background: linear-gradient(#444, #2A2A2A); box-shadow: 0 30px 60px rgba(0,0,0,0.55); z-index: 3; }
+      .bg-face .poignee { position: absolute; left: 50%; top: 52px; width: 220px; height: 44px; margin-left: -110px; border-radius: 22px; background: #111; }
+      .bg-couvercle { position: absolute; left: 130px; top: 1030px; width: 820px; height: 204px; border-radius: 44px 44px 0 0;
+        background: linear-gradient(#555, #3A3A3A); transform-origin: 50% 100%; z-index: 4; }
+
+      /* ── Jet d'eau (nettoyeur) ── */
+      .jet { position: absolute; width: 220px; transform-origin: 50% 0; z-index: 6; }
+      .jet .cone { position: absolute; inset: 0; filter: blur(7px);
+        background: linear-gradient(rgba(255,255,255,0) 15%, rgba(215,238,255,0.35) 60%, rgba(235,248,255,0.7) 100%);
+        clip-path: polygon(49% 0, 51% 0, 92% 100%, 8% 100%); }
+      .jet .coeur { position: absolute; inset: 0;
+        background: linear-gradient(rgba(255,255,255,0) 0%, rgba(240,250,255,0.9) 35%, #fff 100%);
+        clip-path: polygon(49.6% 0, 50.4% 0, 57% 100%, 43% 100%); }
+      .gerbe { position: absolute; left: 50%; bottom: -120px; width: 460px; height: 250px; margin-left: -230px;
+        background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.98) 0 18%, rgba(215,238,255,0.7) 38%, rgba(255,255,255,0) 68%); }
+      .goutte { position: absolute; border-radius: 50%; background: rgba(240,250,255,0.95); box-shadow: 0 0 6px rgba(255,255,255,0.8); }
+
+      /* ── Étiquettes AVANT / APRÈS et séparateur ── */
+      .tag { position: absolute; font-family: "Anton", sans-serif; font-size: 84px; line-height: 1; padding: 10px 28px 14px;
+        text-transform: uppercase; z-index: 12; box-shadow: 0 10px 0 rgba(0,0,0,0.35); }
+      .tag.avant { background: #111; color: #fff; }
+      .tag.apres { background: var(--jaune); color: #111; }
+      .separateur { position: absolute; width: 10px; background: repeating-linear-gradient(#FFC400 0 34px, rgba(255,196,0,0) 34px 56px); z-index: 9; }
+
+      /* ── Bénéfice et appel ── */
+      .bande { position: absolute; left: -300px; width: 1680px; height: 230px;
+        background: repeating-linear-gradient(-45deg, #FFC400 0 70px, #111 70px 140px); }
+      .tampon { position: absolute; font-family: "Anton", sans-serif; font-size: 80px; color: #111; border: 9px solid #111;
+        padding: 4px 34px 8px; letter-spacing: 0.06em; white-space: nowrap; z-index: 21; }
+      #flash { background: #fff; z-index: 50; pointer-events: none; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="{{DUREE}}" data-fps="30">
+{{PLANS}}
+      <div class="clip" id="flash" data-start="0" data-duration="{{DUREE}}"></div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+{{SCRIPT}}
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+# Rendus, projets HyperFrames générés et photos rapatriées du fournisseur : tout se régénère avec generer.mjs.
+sorties/
+travail/
+cache/
+# Fichiers audio des sons TikTok (licence commerciale TikTok, pas une licence de redistribution) : jamais versionnés ;
+# le manifeste garde leur empreinte et la réponse de l'API qui prouve la licence (musique/preuves/).
+musique/fichiers/

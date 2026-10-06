@@ -1,0 +1,17 @@
+{
+  "id": "j1-nettoyeur",
+  "jour": 1,
+  "heure": "19:00",
+  "produit": "nettoyeur",
+  "accroche": "Terrasse sale ? | C'est fini.",
+  "probleme": "terrasse",
+  "gestes": [
+    { "plan": "photo", "image": "seau", "mouvement": "zoom", "texte": "Le tuyau plonge dans un seau" },
+    { "plan": "photo", "image": "terrasse", "mouvement": "panoramique", "texte": "Tu vises, tu rinces" },
+    { "plan": "loupe", "image": "pistolet", "point": "buse", "zoom": 2.2, "texte": "Buse rouge, buse blanche" },
+    { "plan": "produit", "image": "batteries", "fond": "sombre", "motFond": "Batteries", "texte": "Deux batteries fournies" },
+    { "plan": "photo", "image": "lavage", "mouvement": "panoramique", "texte": "Et la voiture aussi" }
+  ],
+  "benefice": "Sans brancher | le tuyau d'arrosage",
+  "appel": "Lien dans la bio"
+}
