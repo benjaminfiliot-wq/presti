@@ -3,6 +3,7 @@ import { pauseGenerale } from '@/lib/agents/pause'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { executerStandardiste, estStop } from '@/lib/agents/acquisition/standardiste'
 import { releverGmail } from '@/lib/agents/acquisition/porteurs/gmail'
+import { boiteProspection } from '@/lib/agents/acquisition/boiteProspection'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MESSAGERIES_GRATUITES } from '@/lib/agents/acquisition/contrat'
 import { enregistrerPassage } from '@/lib/alertes'
@@ -22,9 +23,9 @@ export async function GET(req: Request) {
   if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   const releve = { messages: 0, stop: 0, etat: 'en_attente_gmail' }
   try {
-    const user = process.env.PROSPECTION_GMAIL_USER
-    const pass = process.env.PROSPECTION_GMAIL_PASS
-    const adresse = process.env.ACQ_ADRESSE_REPONSE
+    // La boîte de prospection, sinon la boîte Gmail de l'entreprise déjà configurée (boiteProspection.ts, décision du 06/10).
+    const boite = boiteProspection()
+    const user = boite?.user, pass = boite?.pass, adresse = boite?.adresse
     if (user && pass && adresse) {
       const lecture = await supabaseAdmin.rpc('acq_curseur_lire', { p_nom: 'gmail' })
       if (lecture.error) throw new Error('curseur')
