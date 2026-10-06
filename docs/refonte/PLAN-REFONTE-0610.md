@@ -74,13 +74,25 @@ du simple au double d'une passe à l'autre (1 321 à 2 920 ms en mobile), il fau
 
 | Médiane de 3 passes | Mobile, avant | Mobile, après | Bureau, avant | Bureau, après |
 |---|---|---|---|---|
-| Score performance | 57 | APRES_M_PERF | 82 | APRES_B_PERF |
-| FCP | 1,39 s | APRES_M_FCP | 0,67 s | APRES_B_FCP |
-| LCP | 3,93 s | APRES_M_LCP | 1,07 s | APRES_B_LCP |
-| TBT | 2 469 ms | APRES_M_TBT | 293 ms | APRES_B_TBT |
-| CLS | 0 | APRES_M_CLS | 0 | APRES_B_CLS |
-| Speed Index | 4,05 s | APRES_M_SI | 1,60 s | APRES_B_SI |
-| Poids transféré | 476 Ko, 26 requêtes | APRES_M_KO | 503 Ko, 29 requêtes | APRES_B_KO |
+| Score performance | 57 | 54 | 82 | 96 |
+| FCP | 1,39 s | 1,40 s | 0,67 s | 0,67 s |
+| LCP | 3,93 s | 3,74 s | 1,07 s | 0,88 s |
+| TBT | 2 469 ms | 4 011 ms | 293 ms | 135 ms |
+| CLS | 0 | 0 | 0 | 0 |
+| Speed Index | 4,05 s | 5,87 s | 1,60 s | 1,41 s |
+| Poids transféré | 476 Ko, 26 requêtes | 426 Ko, 25 requêtes | 503 Ko, 29 requêtes | 452 Ko, 28 requêtes |
+
+« Après » = commit `55ca6f0`, en ligne, mesuré à 20 h 40. Lecture honnête :
+
+- **Bureau : 82 → 96**, LCP 1,07 → 0,88 s, TBT 293 → 135 ms (deux passes sur trois à 96-97 ; la première, à 57, est une passe
+  bruitée de la machine).
+- **Mobile : pas de conclusion sur le score.** Le TBT des trois passes « après » va de 3 023 à 6 351 ms, et sur les mêmes scripts
+  l'évaluation JavaScript passe de 1,8 à 4,0 s d'une passe à l'autre : c'est la charge de la machine, pas la page. Ce qui ne dépend
+  pas du bruit a bougé dans le bon sens : **animations non composées 7 → 0**, poids 476 → 426 Ko (−50 Ko, l'affiche), 26 → 25
+  requêtes, LCP médian 3,93 → 3,74 s, délai de rendu du LCP 1 538-2 740 ms → 1 066-1 839 ms. Le plus grand élément est maintenant
+  le titre (`h1`), plus l'introduction.
+- **Reste lourd en mobile : 4 à 5 s de styles et mise en page** sur le fil principal, avant comme après. Ce n'était donc pas la barre
+  de progression ; la cause n'est pas identifiée (voir §5.5).
 
 Ce que la trace disait (mobile, avant) :
 
@@ -115,12 +127,12 @@ relances dit ce que fait le code : elles sont planifiées quand l'artisan envoie
 
 Deux versions de la même promesse : une courte sous 640 px, la longue (vague 1) au-delà ; marges du haut de page resserrées sous 640 px.
 
-| 390 × 844 | Avant (production) | Après (serveur local) |
+| 390 × 844 | Avant (production) | Après (production, 55ca6f0) |
 |---|---|---|
 | Texte d'introduction | 6 lignes, 161 px | 2 lignes, 54 px (« Chaque demande Google ou Le Bon Coin a sa réponse prête : vous l'envoyez. ») |
 | Bas du bouton « Essayer gratuitement » | 624 px | 478 px |
 | Haut de la scène produit | ≈ 822 px (sous la ligne de flottaison) | 672 px (visible sans défiler) |
-| Défilement horizontal / console | aucun / 0 erreur | aucun / 0 erreur (3 avertissements de préchargement CSS propres au serveur de dev) |
+| Défilement horizontal / console | aucun / 0 erreur | aucun / 0 erreur ni avertissement (390 et 1440 px) |
 
 La promesse courte tient en 2 lignes de 360 à 414 px (mesuré à 360, 375, 390 et 414). Elle ne nomme plus Facebook : à 3 sources,
 elle passait à 3 lignes.
@@ -161,8 +173,9 @@ Fait, sans migration ni IA :
 2. **Formulaire d'entrée** « laissez votre numéro » : lever `prospectsEntrant` (`lib/flags.ts`), écrire la route et le juge.
 3. **Capture réelle de `/chiffres`** dans `scripts/demo-captures.mjs`, si Benj préfère une 6ᵉ scène à la section actuelle.
 4. **Lien « Vos chiffres » dans la navigation publique** (`app/PublicNav.tsx`), si la section convertit (onglet Visiteurs).
-5. **Vitesse, au-delà de cette vague** : le coût restant est le socle Next/React et les animations infinies du héros (`lp-float`,
-   `lp-pulse`, points de saisie). À remesurer sur une machine calme avant d'aller plus loin.
+5. **Vitesse mobile, au-delà de cette vague** : 4 à 5 s de « styles et mise en page » sur le fil principal, cause non identifiée
+   (pistes : la scène du héros et ses boucles `lp-float` / `lp-pulse`, les changements de scène de la démo, la taille des règles CSS de
+   `globals.css`, 2 900 lignes chargées sur toutes les pages). Il faut une trace Performance sur une machine calme avant de corriger.
 6. **Hors landing, signalé** : `promesses-qa` toujours rouge sur PR-1 (`lib/crieur/faits.ts:15`), fichier non touché.
 
 ## 6. Décisions qui reviennent à Benj
