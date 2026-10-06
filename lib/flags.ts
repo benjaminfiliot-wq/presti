@@ -114,7 +114,7 @@ export const FLAGS = {
    *  qu'elle n'est pas appliquée, les routes répondent 503 (fail-closed, voulu). Baissé : 404 partout, l'onglet n'existe pas. */
   demandesEcosysteme: true,
   /** Ferme la route de la demande entrante ; lever prospectsEntrant quand le formulaire de la landing v2 existe, sur décision de Benj. */
-  prospectsEntrant: false,
+  prospectsEntrant: true, // levé le 2026-10-07 sur la décision de Benj (06/10) : le formulaire de la vitrine existe (app/MaquetteForm.tsx, section #maquette)
   /** 25/09 — Aimant "Commente SITE" du Crieur. Baissé : aucune publication ne promet la maquette.
    * Levé par Claude Code quand les webhooks Meta (026-090) et le Répondeur (026-096) sont déployés
    * et qu'un entrant d'essai a été servi de bout en bout. */
