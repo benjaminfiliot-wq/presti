@@ -16,6 +16,7 @@
 // Les règles de mise de côté sont celles de lib/agents/relais.ts (echeanceDeMiseDeCote) ; relais-ia-qa.mjs compare les deux.
 // Module sans effet de bord à l'import ; aucun secret n'est jamais journalisé.
 import fs from 'node:fs'
+import http from 'node:http'
 import path from 'node:path'
 
 export const MINUTE = 60_000
@@ -149,6 +150,35 @@ const sansCloture = (t) => { const m = /^```(?:json)?\s*\n([\s\S]*?)\n?```$/.exe
  * Un appel direct à un moteur de secours (HTTP local) : écrit le JSON de réponse dans `prompt.destination` et rend { code, sortie, delai? } comme un
  * « codex exec » (code 0 : fait). Les échecs rendent le texte que classerSortie sait lire (429, 401, panne). Jamais la clé dans la sortie.
  */
+/**
+ * Un `fetch` minimal par node:http, pour Ollama en local (06/10). Le fetch de Node (undici) coupe à 300 s s'il n'a pas reçu les en-têtes
+ * (headersTimeout) : c'était la vraie limite de tous les essais locaux (« indisponible » à 300 s, quel que soit le budget), car Ollama
+ * n'envoie rien tant qu'il lit un long prompt sur 4 cœurs. Ici, seule la coupure du relais (signal) arrête l'appel.
+ */
+export function fetchLocal(url, init = {}) {
+  return new Promise((resoudre, rejeter) => {
+    const u = new URL(url)
+    if (u.protocol !== 'http:') { rejeter(new TypeError('fetchLocal : http seulement')); return }
+    const corps = init.body == null ? null : String(init.body)
+    const req = http.request({ hostname: u.hostname, port: u.port || 80, path: `${u.pathname}${u.search}`, method: init.method || 'GET', headers: { ...(init.headers || {}), ...(corps ? { 'content-length': Buffer.byteLength(corps) } : {}) } }, (rep) => {
+      const morceaux = []
+      let fin = null
+      const lu = new Promise((ok, ko) => { rep.on('data', (d) => morceaux.push(d)); rep.on('end', () => ok(Buffer.concat(morceaux).toString('utf8'))); rep.on('error', ko); fin = ko })
+      lu.catch(() => {})
+      const surAbandon = () => { const e = new Error('aborted'); e.name = 'AbortError'; fin?.(e); rep.destroy() }
+      init.signal?.addEventListener('abort', surAbandon, { once: true })
+      resoudre({ ok: rep.statusCode >= 200 && rep.statusCode < 300, status: rep.statusCode, text: () => lu, json: () => lu.then((t) => JSON.parse(t)) })
+    })
+    req.on('error', (e) => rejeter(init.signal?.aborted ? Object.assign(new Error('aborted'), { name: 'AbortError' }) : e))
+    if (init.signal) {
+      if (init.signal.aborted) { req.destroy(); rejeter(Object.assign(new Error('aborted'), { name: 'AbortError' })); return }
+      init.signal.addEventListener('abort', () => req.destroy(), { once: true })
+    }
+    if (corps) req.write(corps)
+    req.end()
+  })
+}
+
 /** Le texte d'une réponse Ollama /api/chat, diffusée (une ligne JSON par morceau) ou non (un seul objet) : les `message.content` mis bout à bout ; null si rien n'est lisible. Pure. */
 export function texteOllama(brut) {
   let texte = '', lu = false
@@ -161,7 +191,7 @@ export function texteOllama(brut) {
   return lu ? texte : null
 }
 
-export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetch, ecrire = (f, t) => fs.writeFileSync(f, t), valider = null, reduire = null }) {
+export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null, ecrire = (f, t) => fs.writeFileSync(f, t), valider = null, reduire = null }) {
   const controleur = new AbortController()
   const minuteur = setTimeout(() => controleur.abort(), delaiMs)
   try {
@@ -179,7 +209,9 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = fetc
     // Un premier jet, puis au plus DEUX corrections : si le validateur du chef refuse le JSON, le modèle reçoit la liste des écarts (jamais une valeur) et le renvoie corrigé.
     for (let tour = 0; tour <= 2; tour++) {
       let r
-      try { r = await fetchFn(url, { method: 'POST', headers: entetes, body: JSON.stringify(corpsDe()), signal: controleur.signal }) }
+      // Ollama local (http) passe par fetchLocal : le fetch de Node coupe à 300 s sans en-têtes, avant le budget du moteur.
+      const appel = fetchFn ?? (moteur.api === 'ollama' && url.startsWith('http://') ? fetchLocal : fetch)
+      try { r = await appel(url, { method: 'POST', headers: entetes, body: JSON.stringify(corpsDe()), signal: controleur.signal }) }
       catch (e) { return e && e.name === 'AbortError' ? { code: 1, sortie: 'ERROR: délai dépassé', delai: true } : { code: 1, sortie: 'ERROR: error sending request' } }
       if (!r.ok) {
         let brut = ''

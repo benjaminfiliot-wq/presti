@@ -436,6 +436,27 @@ await cas('RC-10b', async () => {
   return e
 })
 
+// ── RC-10c (06/10) : Ollama local n'est pas appelé par le fetch de Node (coupure à 300 s sans en-têtes), mais par node:http ──────────────
+// Tous les essais locaux du 06/10 finissaient à ~300 s, « indisponible » ou « délai », quel que soit le budget : c'était le headersTimeout d'undici.
+await cas('RC-10c', async () => {
+  const e = []
+  const http = await import('node:http')
+  const s = http.createServer((req, rep) => { req.resume(); req.on('end', () => setTimeout(() => { rep.writeHead(200, { 'content-type': 'application/x-ndjson' }); rep.end('{"message":{"content":"{\\"cycle\\":\\"leger\\"}"},"done":true}\n') }, 300)) })
+  await new Promise((r) => s.listen(0, '127.0.0.1', r))
+  const vraiFetch = globalThis.fetch
+  globalThis.fetch = async () => { throw new Error('le fetch de Node ne doit pas servir pour Ollama local') }
+  try {
+    const w = monde10()
+    const p = C.preparerPromptDirect({ argv: w.argv, sorties: w.sorties, lireFichier: w.lireFichier, dossiersPermis: w.dossiersPermis })
+    const moteur = { ...C.CHAINE_SECOURS.find((m) => m.id === 'ollama_4b'), base: `http://127.0.0.1:${s.address().port}` }
+    const r = await C.appelDirect({ moteur, prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000 })
+    if (r.code !== 0) e.push(`Ollama local sans fetchFn : ${r.sortie} (le relais passe encore par le fetch de Node)`)
+    const c = new AbortController(); setTimeout(() => c.abort(), 50)
+    try { await (await C.fetchLocal(`http://127.0.0.1:${s.address().port}/api/chat`, { method: 'POST', body: '{}', signal: c.signal })).text(); e.push('fetchLocal ne se coupe pas sur le signal') } catch (x) { if (x?.name !== 'AbortError') e.push(`coupure : ${x?.name} (AbortError attendue)`) }
+  } finally { globalThis.fetch = vraiFetch; s.close() }
+  return e
+})
+
 await cas('RC-11', async () => {
   const e = []
   const maintenant = new Date()
