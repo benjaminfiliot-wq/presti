@@ -188,3 +188,25 @@ Fait, sans migration ni IA :
 4. Requalifier ou non les 6 demandes rattachées restées sans type (écriture en production, non faite).
 5. La place de la rangée « Pour qui » (entre la preuve et la démo), qui ajoute une étape avant la démo dans l'ordre du §5 de la
    stratégie ; et la promesse courte du mobile, qui ne nomme plus Facebook.
+
+## 7. Décisions de Benj appliquées (06-07/10)
+
+1. **`prospectsEntrant` levé** (`a4d74556`). Formulaire « Recevoir la maquette de mon site » : `app/MaquetteForm.tsx`, section
+   `#maquette` après les prix, lien sous l'appel final. Juge `scripts/maquette-formulaire-qa.mjs` (6 critères, 11 sabotages vus).
+   Envoi d'essai depuis le formulaire en production (domaine et adresse en `.invalid`) : 200, prospect `source = entrant`,
+   `froid = false`, `case_cochee_le` posé, 0 envoi ; ligne effacée, zéro trace. **Limite** : la maquette promise ne part pas
+   encore : `app/api/usine/atelier/lien` exige `PROSPECTION_GMAIL_USER`, `PROSPECTION_GMAIL_PASS` et `ACQ_ADRESSE_REPONSE`,
+   absentes de Vercel (relevé du 07/10, noms seulement), et `ops.envois` n'a jamais rien envoyé.
+2. **Ville des demandes** (`62d30369`). Migration `0133_leads_ville` appliquée par le connecteur (essai à sec, contrôle
+   `supabase/controles/0133_leads_ville.sql`, test réel annulé, zéro trace). `lib/ville.ts` : liste fermée de 1 999 communes (INSEE
+   par geo.api.gouv.fr ; 17, 85, 79 en entier et les communes de 10 000 habitants), régénérée par `scripts/communes-generer.mjs`.
+   Écrite par les deux inserts (formulaire et email). `/chiffres` : bloc « Villes des demandes » lu sur `leads.ville`.
+   Juges : `qualification-qa` QU-7/QU-8 (19 sabotages vus), `tableau-de-bord-qa` (48 sabotages vus). Preuve en production : une
+   demande d'essai « … à Marans (17230) … » est arrivée avec `ville = Marans`, puis a été effacée.
+3. **76 demandes sans compte supprimées**, avec leurs 76 messages, 38 devis sans artisan et 38 lignes de devis : toutes venaient
+   des suites `messages-e2e` et `devis-conversation-e2e` (contacts `@example.com`, 3 messages distincts), aucune facture, aucune
+   autre référence. Sauvegarde non commitée dans `.orchestre/travail/sauvegardes/`. Reste 12 demandes, toutes rattachées.
+4. **Requalification** : 5 des 6 demandes rattachées sans type en ont reçu un, lu dans le message (jamais le repli sur le
+   métier) ; la 6ᵉ (du charabia, sans métier) reste sans type. Journal (ids seulement) dans `.orchestre/travail/sauvegardes/`.
+5. **« Pour qui » déplacée après le produit** (démo, site, chiffres) : en 390 px, la démo commence à 1 994 px au lieu de ≈ 3 225.
+   La promesse courte du mobile reste telle quelle (deux exemples de sources ; elle n'affirme rien de faux sur Facebook).
