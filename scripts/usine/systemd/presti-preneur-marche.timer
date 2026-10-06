@@ -1,0 +1,11 @@
+[Unit]
+Description=Relevé de marché quotidien (06 h 40 de Paris), un passage par jour
+
+[Timer]
+OnCalendar=*-*-* 06:40:00 Europe/Paris
+RandomizedDelaySec=120
+Persistent=false
+Unit=presti-preneur-marche.service
+
+[Install]
+WantedBy=timers.target

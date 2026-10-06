@@ -75,6 +75,7 @@ que des **clés plafonnées**, dans une liste fermée :
 | `PRESTI_JETON_STUDIO` | le Studio pubs (agent `studio` : packs locaux et échantillons) |
 | `PRESTI_JETON_PRENEUR` | le preneur des tâches libres du bus (agent `preneur`, migration 0127 ; `docs/agents/preneur-libre.md`) |
 | `FIRECRAWL_API_KEY` | la lecture web du Savoir (`scripts/savoir/chercher.mjs --web`) : clé **plafonnée par crédits**, forme `fc-` + 32 signes ; voir « Firecrawl » ci-dessous |
+| `APIFY_TOKEN` | le relevé de marché quotidien (`scripts/usine/releve-marche.mjs`, unité `presti-preneur-marche`) : jeton d'un compte Apify **gratuit** (plafond de 5 $ par mois fixé par Apify, 0,15 $ par jour dans la liste de surveillance), forme `apify_api_` + 36 signes ; pas une clé de modèle |
 
 Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et surtout :
 

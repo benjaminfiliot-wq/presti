@@ -29,6 +29,7 @@ export const NOMS_PERMIS = Object.freeze([
   'PRESTI_JETON_VIGILE', // le Vigile (026-249, 026-251)
   'PRESTI_JETON_PRENEUR', // le preneur des tâches libres du bus (agent preneur, 0127 ; D-0510-T1)
   'FIRECRAWL_API_KEY', // la lecture web du Savoir (D-0510-I1) : clé plafonnée par crédits (réserve de 1 000, jamais plus que le solde restant), pas une clé de modèle
+  'APIFY_TOKEN', // le relevé de marché (06/10) : compte Apify gratuit, plafond de 5 $ par mois fixé par Apify, pas une clé de modèle
 ])
 
 // Formes de clés connues, refusées quel que soit le nom sous lequel on essaie de les poser (les JWT à part, plus bas).
@@ -45,6 +46,8 @@ export const FORME_CODE_APPAIRAGE = /^[A-HJ-NP-Z2-9]{8}$/ // ou « epuise » une
 // Une clé Firecrawl : « fc- » puis 32 signes [A-Za-z0-9] (la forme réelle est fc- + 32 hexadécimaux). Une forme propre, plus étroite que
 // la règle générale : sous ce nom, une clé d'un autre fournisseur (sk-proj-…, par exemple) est refusée, jamais une clé de modèle ici.
 export const FORME_FIRECRAWL = /^fc-[A-Za-z0-9]{32}$/
+// Un jeton Apify : « apify_api_ » puis 36 signes [A-Za-z0-9]. Même principe : une forme propre, jamais une clé de modèle sous ce nom.
+export const FORME_APIFY = /^apify_api_[A-Za-z0-9]{36}$/
 // Tout autre nom : 20 à 256 signes, sans blanc, guillemet, $, barre oblique inverse, accent grave ni retour à la ligne.
 const SIGNES = /^[A-Za-z0-9._~+/=-]+$/
 const LONGUEUR_MIN = 20
@@ -73,6 +76,9 @@ export function validerValeur(nom, valeur) {
   }
   if (nom === 'TELEGRAM_CODE_APPAIRAGE') {
     return FORME_CODE_APPAIRAGE.test(valeur) || valeur === 'epuise' ? { ok: true } : refus('TELEGRAM_CODE_APPAIRAGE : 8 signes de [A-HJ-NP-Z2-9], ou « epuise »')
+  }
+  if (nom === 'APIFY_TOKEN') {
+    return FORME_APIFY.test(valeur) ? { ok: true } : refus('APIFY_TOKEN : « apify_api_ » puis 36 signes de [A-Za-z0-9]')
   }
   if (nom === 'FIRECRAWL_API_KEY') {
     return FORME_FIRECRAWL.test(valeur) ? { ok: true } : refus('FIRECRAWL_API_KEY : « fc- » puis 32 signes de [A-Za-z0-9]')
