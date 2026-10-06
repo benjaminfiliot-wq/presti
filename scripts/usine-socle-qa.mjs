@@ -2926,7 +2926,7 @@ async function preuveEchecs() {
       for (const [h, d2] of Object.entries(U.groupes)) if (h !== g) for (const u of d2.unites) if (def.motifs.some((m) => globRe(m).test(u))) D.push(`${g} : ses motifs prennent ${u} (${h})`)
       for (const u of def.a_activer) if (!def.unites.includes(u)) D.push(`${g} : ${u} à activer mais pas dans ses unités`)
     }
-    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles', 'preneur', 'sav', 'qualite', 'vigile'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles, preneur, sav, qualite, vigile')
+    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles', 'preneur', 'sav', 'qualite', 'vigile', 'videos'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles, preneur, sav, qualite, vigile, videos')
     return `noms des unités de ${Object.keys(U.groupes).length} groupes, chacun couvert par ses seuls motifs`
   })
   await AT('AT-9', async (D) => {

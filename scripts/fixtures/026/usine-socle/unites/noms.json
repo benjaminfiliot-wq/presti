@@ -10,7 +10,8 @@
   "preneur": { "motifs": ["presti-preneur*"], "unites": ["presti-preneur.service", "presti-preneur.timer"], "a_activer": ["presti-preneur.timer"] },
  "sav": { "motifs": ["presti-sav*"], "unites": ["presti-sav.service", "presti-sav.timer"], "a_activer": ["presti-sav.timer"] },
  "qualite": { "motifs": ["presti-qualite*"], "unites": ["presti-qualite.service", "presti-qualite.timer"], "a_activer": ["presti-qualite.timer"] },
- "vigile": { "motifs": ["presti-vigile*"], "unites": ["presti-vigile.service", "presti-vigile.timer"], "a_activer": ["presti-vigile.timer"] }
+ "vigile": { "motifs": ["presti-vigile*"], "unites": ["presti-vigile.service", "presti-vigile.timer"], "a_activer": ["presti-vigile.timer"] },
+ "videos": { "motifs": ["presti-videos*"], "unites": ["presti-videos.service", "presti-videos.timer"], "a_activer": ["presti-videos.timer"] }
  },
  "groupes_refuses": ["tout", "presti", "surveillance;id", "../chef", "chefs", "telegram", "pubs", ""]
 }
