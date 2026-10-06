@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { dechiffrer } from '@/lib/secretBox'
 import { lireMail } from '@/lib/mailLite'
 import { typeChantier } from '@/lib/qualification'
+import { villeDe } from '@/lib/ville'
 
 // Relève d'une boîte email (v4 §B2) : on va chercher les nouveaux messages et on les
 // range dans la boîte de réception de l'artisan, à côté des demandes de sa plateforme.
@@ -96,6 +97,8 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
             message,
             statut: 'nouveau',
             type_chantier: typeChantier(message, metier),
+            // La commune nommée dans le message, sur une liste fermée (0133, lib/ville.ts) ; null si aucune.
+            ville: villeDe(message),
           }).select('id').single()
           if (error || !nouveau) continue
           leadId = nouveau.id

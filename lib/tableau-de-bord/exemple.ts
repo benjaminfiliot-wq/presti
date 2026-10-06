@@ -4,7 +4,7 @@
 // les noms, montants et villes sont inventés, et la landing l'écrit sous la scène.
 //
 // Les dates sont RELATIVES au jour du rendu (mois courant, mois -1…) : l'exemple ne vieillit pas.
-import { calculer, type Indicateurs, type LigneClient, type LigneDemande, type LigneDevis, type LigneFacture } from './calculer'
+import { calculer, type Indicateurs, type LigneDemande, type LigneDevis, type LigneFacture } from './calculer'
 
 const ARTISAN = 'exemple-vitrine'
 
@@ -71,9 +71,10 @@ export function indicateursExemple(maintenant: Date = new Date()): Indicateurs {
     }
   })
 
-  // Rennes et alentours : le même artisan fictif que le site de démonstration (Lestraque, menuisier).
-  const villes = ['Rennes', 'Rennes', 'Cesson-Sévigné', 'Rennes', 'Saint-Grégoire', 'Cesson-Sévigné', 'Bruz', 'Pacé', 'Rennes']
-  const clients: LigneClient[] = villes.map((ville, k) => ({ id: `c${k}`, artisan_id: ARTISAN, ville }))
+  // Rennes et alentours : le même artisan fictif que le site de démonstration (Lestraque, menuisier). Une demande sur quatre
+  // ne nomme pas sa commune, comme dans la vraie vie : elle reste hors du bloc « Villes ».
+  const villes = ['Rennes', 'Rennes', 'Cesson-Sévigné', null, 'Rennes', 'Saint-Grégoire', 'Cesson-Sévigné', null, 'Bruz', 'Pacé', 'Rennes', null]
+  demandes.forEach((d, k) => { d.ville = villes[k % villes.length] })
 
-  return calculer({ artisanId: ARTISAN, factures, devis, demandes, clients, maintenant })
+  return calculer({ artisanId: ARTISAN, factures, devis, demandes, maintenant })
 }

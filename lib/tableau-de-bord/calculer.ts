@@ -63,11 +63,7 @@ export type LigneDemande = {
   statut?: string | null
   created_at?: string | null
   type_chantier?: string | null
-}
-
-export type LigneClient = {
-  id?: string | null
-  artisan_id?: string | null
+  /** La commune lue dans le message à l'arrivée (0133, lib/ville.ts) ; null si le message n'en nomme aucune. */
   ville?: string | null
 }
 
@@ -76,7 +72,6 @@ export type Entrees = {
   factures: LigneFacture[]
   devis: LigneDevis[]
   demandes: LigneDemande[]
-  clients: LigneClient[]
   maintenant: Date
 }
 
@@ -220,7 +215,6 @@ export function calculer(e: Entrees): Indicateurs {
   const factures = duMien(e.factures, e.artisanId)
   const devis = duMien(e.devis, e.artisanId)
   const demandes = duMien(e.demandes, e.artisanId)
-  const clients = duMien(e.clients, e.artisanId)
 
   // — Factures : ce qui compte, après retrait des brouillons, des annulées et des avoirs —
   const annulees = new Set<string>()
@@ -255,6 +249,8 @@ export function calculer(e: Entrees): Indicateurs {
   const demandesParMois = new Map<string, number>()
   const canaux: string[] = []
   const types: string[] = []
+  // Les villes des DEMANDES (décision 2 de Benj, 06/10) : clients.ville restait vide, le bloc aussi. Même fenêtre que les types.
+  const villes: string[] = []
   for (const { d, jour } of demandesDatees) {
     const m = jour.slice(0, 7)
     if (dansFenetre(m, debutGraphique)) {
@@ -262,6 +258,7 @@ export function calculer(e: Entrees): Indicateurs {
       canaux.push(libelleCanal(d.canal))
     }
     if (dansFenetre(m, debutActivite) && d.type_chantier) types.push(d.type_chantier)
+    if (dansFenetre(m, debutActivite) && d.ville) villes.push(d.ville)
   }
 
   const mois: MoisChiffre[] = []
@@ -345,6 +342,6 @@ export function calculer(e: Entrees): Indicateurs {
     aRelancer: { total: relances.length, seuilJours: SEUIL_RELANCE_JOURS, liste: relances.slice(0, TOP) },
     demandes: { total: totalDemandes, parCanal },
     chantiers: classer(types, TOP),
-    villes: classer(clients.map((c) => c.ville ?? ''), TOP),
+    villes: classer(villes, TOP),
   }
 }

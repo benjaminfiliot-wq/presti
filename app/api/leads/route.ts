@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
 import { generateConversationReply, generateLeadReply, qualifyLead } from '@/lib/ai'
+import { villeDe } from '@/lib/ville'
 import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { sendEmail } from '@/lib/email'
@@ -146,6 +147,8 @@ export async function POST(req: Request) {
         statut: 'nouveau',
         urgence: qualif.urgence,
         type_chantier: qualif.type_chantier,
+        // La commune nommée dans le message, sur une liste fermée (0133, lib/ville.ts) : le bloc « Villes » de /chiffres.
+        ville: villeDe(message),
         ab_variant: variant,
         ip: ipPseudonyme(ip),
       })
