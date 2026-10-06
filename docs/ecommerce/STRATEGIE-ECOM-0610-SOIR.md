@@ -36,3 +36,11 @@ Photos : celles du fournisseur seulement avec son accord, sinon photos d'un éch
 
 ## Ce que l'écosystème suit chaque jour
 Relevé de marché (06 h 40) sur ces deux produits : demande TikTok FR et annonces eBay ; Chef : rédaction des scripts A et B et des variantes d'accroches ; garde des nombres active sur tout rendu.
+
+## Fournisseur automatique : CJdropshipping (mesuré par l'API CJ le 06/10 à 21 h)
+Compte CJ de Benj relié à eBay ; clé API dans `presti-secrets/cj api.txt` (jeton d'accès par `authentication/getAccessToken`, recherche par `product/listV2?keyWord=`, port par `logistic/freightCalculate`).
+| Produit CJ | Prix | Port vers la France | Coût livré | Marge à 24,90 € / 34,90 € (frais eBay ≈ 13 % + 0,35 €) |
+|---|---|---|---|---|
+| Aspirateur de voiture sans fil (pid 2602210241461612300) | 5,44 $ | 11,29 $ depuis la Chine (YunExpress « Sensitive », 7 à 12 j) ; 25,52 $ depuis l'Allemagne (2 à 6 j) | ≈ 15,40 € (Chine) | **≈ 6 €** à 24,90 € |
+| Nettoyeur haute pression sans fil (pids 2104756248418136066, 2090652964610564097) | 20,55 à 21 $ | **aucune ligne vers la France** (batterie) | — | — |
+Conclusion : **aspirateur par CJ** (commande et suivi automatiques, marge ≈ 6 €) ; **nettoyeur par le vendeur AliExpress en stock France** (21,76 € livré, marge ≈ 8 €), commande manuelle validée par Benj tant qu'aucun outil gratuit ne l'automatise sur eBay. AliExpress « Choice » (port gratuit) reste moins cher que CJ pour l'aspirateur (7 à 10 € livrés) mais sans automatisation.
