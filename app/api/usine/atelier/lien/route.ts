@@ -5,6 +5,7 @@ import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { creerJeton, hacherJeton, expiration } from '@/lib/agents/acquisition/maquettesLien'
 import { preparerMessageLien } from '@/lib/agents/acquisition/redacteur'
+import { boiteProspection, adresseReponseProspection } from '@/lib/agents/acquisition/boiteProspection'
 import type { ProspectReserve, PreuveDemande } from '@/lib/agents/acquisition/contrat'
 
 export const runtime = 'nodejs'
@@ -80,8 +81,10 @@ export async function POST(req: Request) {
       }
     }
     if (!destinataire) return repondre({ ok: false, raison: 'aucune_adresse' })
-    const adresseReponse = (process.env.ACQ_ADRESSE_REPONSE ?? '').trim()
-    if (canal === 'email_sollicite' && (!adresseReponse || !process.env.PROSPECTION_GMAIL_USER || !process.env.PROSPECTION_GMAIL_PASS)) return repondre({ ok: false, raison: 'en_attente_gmail' })
+    // La boîte de prospection, sinon la boîte Gmail de l'entreprise (boiteProspection.ts, décision du 06/10) : la même que celle
+    // d'où le facteur enverra et que le standardiste relève. Sans aucune des deux, rien n'est préparé.
+    const adresseReponse = adresseReponseProspection()
+    if (canal === 'email_sollicite' && (!adresseReponse || !boiteProspection())) return repondre({ ok: false, raison: 'en_attente_gmail' })
     // Le stockage se mesure en dernier parmi les refus : un prospect sans adresse ou sans Gmail ne déclenche pas le parcours de tous les buckets.
     if (await occupation() > 0.6 * 1024 * 1024 ** 2) {
       await magasinSupabase.creerDecision({ type: 'stockage', prospect_id: p.id, resume: 'Stockage des maquettes au plafond.', options: [{ cle: 'liberer', libelle: 'Libérer du stockage', recommandee: true }, { cle: 'attendre', libelle: 'Attendre', recommandee: false }], defaut: 'attendre', cle_idempotence: `atelier:stockage:${new Date().toISOString().slice(0, 10)}` })

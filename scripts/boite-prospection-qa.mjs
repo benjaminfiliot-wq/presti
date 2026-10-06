@@ -29,15 +29,69 @@ ok('BP-4 aucune boîte : null (le facteur reste « en_attente_gmail », rien ne 
 ok('BP-5 un utilisateur dédié sans mot de passe ne masque pas le repli', boiteProspection({ PROSPECTION_GMAIL_USER: 'dedie@gmail.com' }, gmailEntreprise)?.source === 'entreprise')
 ok("BP-6 adresse de réponse : celle posée d'abord, sinon celle de la boîte, sinon ''", adresseReponseProspection({ ACQ_ADRESSE_REPONSE: 'rep@exemple.fr' }, gmailEntreprise) === 'rep@exemple.fr' && adresseReponseProspection({}, gmailEntreprise) === 'atelier.presti@gmail.com' && adresseReponseProspection({}, aucune) === '')
 
+// ── Les critères sur les sources : des fonctions, pour que chaque sabotage (plus bas) soit rejoué en mémoire ──────────────
+// BP-12..BP-15 (07/10/2026) : le chemin « demande entrante → maquette → e-mail » passait encore par trois variables jamais posées.
+// L'atelier (app/api/usine/atelier/lien) refusait tout lien par courriel (`en_attente_gmail`) et l'avis du second juge
+// (app/api/usine/facteur/avis) jugeait J3 avec une adresse de réponse vide, alors que le message porte celle du module.
+const FICHIERS = {
+  facteur: 'app/api/cron/facteur/route.ts', standardiste: 'app/api/cron/standardiste/route.ts', repondeur: 'app/api/cron/repondeur/route.ts',
+  redacteur: 'app/api/cron/redacteur/route.ts', module: 'lib/agents/acquisition/boiteProspection.ts',
+  atelier: 'app/api/usine/atelier/lien/route.ts', avis: 'app/api/usine/facteur/avis/route.ts',
+}
 const lire = (f) => fs.readFileSync(path.join(RACINE, f), 'utf8')
-const facteur = lire('app/api/cron/facteur/route.ts'), standardiste = lire('app/api/cron/standardiste/route.ts'), repondeur = lire('app/api/cron/repondeur/route.ts'), redacteur = lire('app/api/cron/redacteur/route.ts')
-ok('BP-7 le facteur envoie par boiteProspection() et ne lit plus les variables à la main', /boiteProspection\(\)/.test(facteur) && !/process\.env\.PROSPECTION_GMAIL/.test(facteur))
-ok('BP-8 le standardiste relève par boiteProspection()', /boiteProspection\(\)/.test(standardiste) && !/process\.env\.PROSPECTION_GMAIL/.test(standardiste))
-ok("BP-9 le répondeur et le rédacteur prennent l'adresse de réponse du module", /adresseReponseProspection\(\)/.test(repondeur) && /adresseReponseProspection\(\)/.test(redacteur) && !/process\.env\.ACQ_ADRESSE_REPONSE/.test(repondeur + redacteur))
-ok("BP-11 après un refus d'identifiants, le standardiste ne retente pas avant 6 h (Google bloque un compte qui insiste) et efface le refus au premier succès",
-  /p_nom: 'gmail_refus'/.test(standardiste) && /6 \* 3_600_000/.test(standardiste) && /&& !refusRecent\)/.test(standardiste) && /resultat\.erreur === 'auth'\) \{[\s\S]{0,200}acq_curseur_poser', \{ p_nom: 'gmail_refus', p_valeur: new Date\(\)\.toISOString\(\) \}/.test(standardiste) && /p_nom: 'gmail_refus', p_valeur: '' \}/.test(standardiste))
-const module = lire('lib/agents/acquisition/boiteProspection.ts')
-ok('BP-10 le module ne journalise ni ne recopie le mot de passe', !/console\.|writeFile|fetch\(/.test(module))
+const SOURCES = Object.fromEntries(Object.entries(FICHIERS).map(([k, f]) => [k, lire(f)]))
+// Les fichiers du chemin entrant que BP-15 balaie : la route du formulaire, l'atelier (travail, dépôt, maquette, lien), l'avis,
+// le facteur et le module qui prépare le message. Le porteur de formulaire (froid) n'est pas sur ce chemin.
+const CHEMIN_ENTRANT = ['app/api/prospects/entrant/route.ts', 'app/api/usine/atelier/travail/route.ts', 'app/api/usine/atelier/depot/route.ts',
+  'app/api/usine/atelier/maquette/route.ts', FICHIERS.atelier, FICHIERS.avis, 'app/api/usine/facteur/travail/route.ts', FICHIERS.facteur,
+  'lib/agents/acquisition/redacteur.ts', 'lib/agents/acquisition/facteur.ts', 'lib/agents/acquisition/entrant.ts']
+for (const f of CHEMIN_ENTRANT) if (!SOURCES[f]) SOURCES[f] = fs.existsSync(path.join(RACINE, f)) ? lire(f) : null
+const VAR_A_LA_MAIN = /process\.env\.(PROSPECTION_GMAIL_USER|PROSPECTION_GMAIL_PASS|ACQ_ADRESSE_REPONSE)|process\.env\[['"](PROSPECTION_GMAIL_USER|PROSPECTION_GMAIL_PASS|ACQ_ADRESSE_REPONSE)['"]\]/
+const IMPORT_MODULE = /import \{[^}]*\} from '@\/lib\/agents\/acquisition\/boiteProspection'/
 
-console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : 'boite-prospection-qa : PASS (11 critères)')
+const CRITERES = [
+  ['BP-7 le facteur envoie par boiteProspection() et ne lit plus les variables à la main', (s) => /boiteProspection\(\)/.test(s.facteur) && !/process\.env\.PROSPECTION_GMAIL/.test(s.facteur)],
+  ['BP-8 le standardiste relève par boiteProspection()', (s) => /boiteProspection\(\)/.test(s.standardiste) && !/process\.env\.PROSPECTION_GMAIL/.test(s.standardiste)],
+  ["BP-9 le répondeur et le rédacteur prennent l'adresse de réponse du module", (s) => /adresseReponseProspection\(\)/.test(s.repondeur) && /adresseReponseProspection\(\)/.test(s.redacteur) && !/process\.env\.ACQ_ADRESSE_REPONSE/.test(s.repondeur + s.redacteur)],
+  ['BP-10 le module ne journalise ni ne recopie le mot de passe', (s) => !/console\.|writeFile|fetch\(/.test(s.module)],
+  ["BP-11 après un refus d'identifiants, le standardiste ne retente pas avant 6 h (Google bloque un compte qui insiste) et efface le refus au premier succès",
+    (s) => /p_nom: 'gmail_refus'/.test(s.standardiste) && /6 \* 3_600_000/.test(s.standardiste) && /&& !refusRecent\)/.test(s.standardiste) && /resultat\.erreur === 'auth'\) \{[\s\S]{0,200}acq_curseur_poser', \{ p_nom: 'gmail_refus', p_valeur: new Date\(\)\.toISOString\(\) \}/.test(s.standardiste) && /p_nom: 'gmail_refus', p_valeur: '' \}/.test(s.standardiste)],
+  ["BP-12 l'atelier prépare le lien par courriel avec la boîte du module : adresse de réponse = adresseReponseProspection(), refus `en_attente_gmail` seulement sans boiteProspection()",
+    (s) => IMPORT_MODULE.test(s.atelier) && /const adresseReponse = adresseReponseProspection\(\)/.test(s.atelier)
+      && /canal === 'email_sollicite' && \(!adresseReponse \|\| !boiteProspection\(\)\)\) return repondre\(\{ ok: false, raison: 'en_attente_gmail' \}\)/.test(s.atelier)
+      && /preparerMessageLien\([\s\S]{0,600}adresseReponse,/.test(s.atelier)],
+  ["BP-13 l'avis du second juge rejoue J3 avec la même adresse de réponse que celle écrite dans le message",
+    (s) => IMPORT_MODULE.test(s.avis) && /adresseReponse: adresseReponseProspection\(\) \|\| null/.test(s.avis)],
+  ["BP-14 l'atelier ne lit plus aucune des trois variables à la main (le refus `en_attente_gmail` ne dépend plus d'elles)", (s) => !VAR_A_LA_MAIN.test(s.atelier) && !VAR_A_LA_MAIN.test(s.avis)],
+  ['BP-15 aucun fichier du chemin « demande entrante → maquette → e-mail » ne lit PROSPECTION_GMAIL_* ni ACQ_ADRESSE_REPONSE hors du module',
+    (s) => CHEMIN_ENTRANT.every((f) => s[f] === null || !VAR_A_LA_MAIN.test(s[f]))],
+]
+const evaluer = (s) => CRITERES.filter(([, f]) => { try { return !f(s) } catch { return true } }).map(([nom]) => nom.split(' ')[0])
+for (const [nom, f] of CRITERES) { let v = false; try { v = f(SOURCES) } catch { v = false } ok(nom, v) }
+
+// ── Sabotages : chaque défaut connu, injecté en mémoire, doit faire rougir au moins un critère ─────────────────────────────
+const remplacer = (s, a, b) => { if (!s.includes(a)) throw new Error(`sabotage sans prise : ${a.slice(0, 60)}`); return s.replace(a, b) }
+const SABOTAGES = [
+  ["l'atelier exige de nouveau les trois variables (l'état d'avant le 07/10)", 'atelier', (t) => remplacer(t, "(!adresseReponse || !boiteProspection())", '(!adresseReponse || !process.env.PROSPECTION_GMAIL_USER || !process.env.PROSPECTION_GMAIL_PASS)')],
+  ["l'atelier relit ACQ_ADRESSE_REPONSE à la main", 'atelier', (t) => remplacer(t, 'const adresseReponse = adresseReponseProspection()', "const adresseReponse = (process.env.ACQ_ADRESSE_REPONSE ?? '').trim()")],
+  ["l'atelier ne vérifie plus qu'une boîte existe (un lien préparé que personne ne peut envoyer)", 'atelier', (t) => remplacer(t, "(!adresseReponse || !boiteProspection())", '(!adresseReponse)')],
+  ["l'atelier oublie l'import du module", 'atelier', (t) => t.replace(IMPORT_MODULE, '')],
+  ["l'atelier passe une adresse vide au rédacteur", 'atelier', (t) => remplacer(t, 'conversation_id: conversationId, adresseReponse,', "conversation_id: conversationId, adresseReponse: '',")],
+  ["l'avis juge J3 sans adresse (l'état d'avant le 07/10)", 'avis', (t) => remplacer(t, 'adresseReponse: adresseReponseProspection() || null', "adresseReponse: (process.env.ACQ_ADRESSE_REPONSE ?? '').trim() || null")],
+  ["l'avis lit la variable par crochets", 'avis', (t) => remplacer(t, 'adresseReponse: adresseReponseProspection() || null', "adresseReponse: process.env['ACQ_ADRESSE_REPONSE'] || adresseReponseProspection() || null")],
+  ['le facteur relit PROSPECTION_GMAIL_USER', 'facteur', (t) => remplacer(t, 'const boite = boiteProspection()', "const boite = process.env.PROSPECTION_GMAIL_USER ? null : boiteProspection()")],
+  ['le module journalise la boîte', 'module', (t) => remplacer(t, 'const b = entreprise()', 'const b = entreprise(); console.log(b)')],
+  ['la route du formulaire lit ACQ_ADRESSE_REPONSE', 'app/api/prospects/entrant/route.ts', (t) => remplacer(t, "export async function POST(req: Request) {", "export async function POST(req: Request) {\n  void process.env.ACQ_ADRESSE_REPONSE")],
+  ['le rédacteur (module) lit PROSPECTION_GMAIL_PASS', 'lib/agents/acquisition/redacteur.ts', (t) => t + '\nexport const _x = process.env.PROSPECTION_GMAIL_PASS\n'],
+]
+let manques = 0
+for (const [nom, cle, muter] of SABOTAGES) {
+  let rougesS
+  try { rougesS = evaluer({ ...SOURCES, [cle]: muter(SOURCES[cle]) }) } catch (e) { rougesS = []; console.log(`  sabotage INVALIDE : ${nom} → ${e.message}`) }
+  if (rougesS.length) console.log(`  sabotage vu    : ${nom} → ${rougesS.join(', ')}`)
+  else { console.log(`  sabotage MANQUÉ : ${nom} → tout reste vert`); manques++ }
+}
+if (manques) rouges.push(`${manques} sabotage(s) manqué(s)`)
+
+console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : `boite-prospection-qa : PASS (15 critères, ${SABOTAGES.length} sabotages vus)`)
 process.exitCode = rouges.length ? 1 : 0
