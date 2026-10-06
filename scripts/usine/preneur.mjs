@@ -29,7 +29,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { motifProspects } from './garde-prospects.mjs'
 import { chercherSecrets } from '../instantane-quotidien.mjs'
-import { CHAINE_SECOURS, classerSortie, echeanceDeMiseDeCote, magasinFichier, journalFichier, texteOllama } from './relais-chef.mjs'
+import { CHAINE_SECOURS, classerSortie, echeanceDeMiseDeCote, magasinFichier, journalFichier, texteOllama, fetchLocal } from './relais-chef.mjs'
 
 export const TYPES_LIBRES = Object.freeze(['recherche', 'tri', 'veille', 'verification', 'relecture', 'redaction_interne'])
 export const OBJET_MIN = 20
@@ -314,7 +314,7 @@ export async function passe({ o, jeton, fetchFn = fetch, executer = null, mainte
   const consigne = construireConsigne(tache, passages)
   const debut = maintenant()
   let sortie
-  try { sortie = await choisir({ consigne, tache, o, etat, journal: journalMoteur, maintenant, fetchFn: o.fetchModele ?? fetch }) }
+  try { sortie = await choisir({ consigne, tache, o, etat, journal: journalMoteur, maintenant, fetchFn: o.fetchModele ?? fetchLocal }) } // fetchLocal : pas de coupure à 300 s sans en-têtes (relais-chef.mjs)
   catch { return echec('executeur_en_panne') }
   if (!sortie?.ok) return echec(sortie?.code || 'executeur_en_echec')
   const verdict = controlerSortie(sortie.brut)
