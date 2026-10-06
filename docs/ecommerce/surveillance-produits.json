@@ -2,6 +2,8 @@
   "_": "Liste de surveillance du relevé de marché quotidien (scripts/usine/releve-marche.mjs, 06/10/2026). Fermée : seuls ces mots sont cherchés. Seul Claude Code change ce fichier. Données publiques seulement ; aucune donnée de prospect.",
   "plafonds": { "firecrawl_par_jour": 12, "apify_usd_par_jour": 0.15, "tiktok_par_recherche": 20 },
   "produits": [
+    { "id": "nettoyeur-haute-pression-sans-fil", "ebay": "nettoyeur haute pression sans fil", "tiktok": ["nettoyeur haute pression sans fil", "pistolet lavage haute pression batterie"] },
+    { "id": "aspirateur-voiture-sans-fil", "ebay": "aspirateur voiture sans fil", "tiktok": ["aspirateur voiture sans fil", "mini aspirateur voiture"] },
     { "id": "kit-tournevis-precision", "ebay": "kit tournevis précision embouts", "tiktok": ["kit tournevis précision", "tournevis précision 115 pièces"] },
     { "id": "kit-accrochage-mural", "ebay": "kit accrochage tableau mural", "tiktok": ["accrochage mural tableau astuce"] },
     { "id": "niveau-laser", "ebay": "niveau laser croix", "tiktok": ["niveau laser bricolage"] },
