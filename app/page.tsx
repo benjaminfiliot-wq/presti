@@ -8,6 +8,8 @@ import DemoSequence from '@/app/DemoSequence'
 import DemoVideo from '@/app/DemoVideo'
 import DemoSite from '@/app/DemoSite'
 import DemoChiffres from '@/app/DemoChiffres'
+import MaquetteForm from '@/app/MaquetteForm'
+import { METIERS } from '@/lib/agents/acquisition/contrat'
 import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, pointsForts } from '@/lib/plans'
@@ -162,22 +164,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* POUR QUI — les quatre métiers de la cible, une demande type chacun et ce que Presti en fait (vague 2, 06/10). */}
-        <section className="lp-blk" id="pour-qui">
-          <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types — écrites pour l&apos;exemple, pas des clients.</p></div>
-            <ul className="lp-pq-rang reveal-kids">
-              {POUR_QUI.map((c) => (
-                <li key={c.metier} className="lp-pq">
-                  <b>{c.metier}</b>
-                  <q>{c.demande}</q>
-                  <span>{c.regle}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
         {/* FONCTIONNALITÉS — vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
@@ -193,6 +179,24 @@ export default function Home() {
           <div className="container">
             <div className="lp-head2 c reveal"><span className="lp-kick">Fin de mois</span><h2>Vos chiffres, sans tableur.</h2><p>Ce que vous avez facturé, ce qui est encaissé, ce qui traîne, les devis à relancer. Calculé à partir de vos devis et de vos factures : rien à saisir.</p></div>
             <DemoChiffres />
+          </div>
+        </section>
+
+        {/* POUR QUI — les quatre métiers de la cible, une demande type chacun et ce que Presti en fait (vague 2, 06/10).
+            Placée APRÈS le produit (démo, site, chiffres) le 07/10 : entre la preuve et la démo, elle retardait la démo d'un écran
+            entier en 390 px ; l'ordre de la stratégie (§5) met le produit montré tel quel juste après la promesse. */}
+        <section className="lp-blk" id="pour-qui">
+          <div className="container">
+            <div className="lp-head2 c reveal"><span className="lp-kick">Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types — écrites pour l&apos;exemple, pas des clients.</p></div>
+            <ul className="lp-pq-rang reveal-kids">
+              {POUR_QUI.map((c) => (
+                <li key={c.metier} className="lp-pq">
+                  <b>{c.metier}</b>
+                  <q>{c.demande}</q>
+                  <span>{c.regle}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -268,6 +272,24 @@ export default function Home() {
           </div>
         </section>
 
+        {/* MAQUETTE — le formulaire d'entrée sans compte (décision 1 de Benj, 06/10 ; route 026-145, drapeau prospectsEntrant).
+            Après les prix : pour l'artisan qui n'est pas prêt à créer un compte, une porte plus petite que l'essai. */}
+        {actif('prospectsEntrant') ? (
+          <section className="lp-blk" id="maquette">
+            <div className="container">
+              <div className="lp-mq reveal">
+                <div className="lp-mq-texte">
+                  <span className="lp-kick">Pas encore prêt à essayer&nbsp;?</span>
+                  <h2>Recevez la maquette de votre site.</h2>
+                  <p>Donnez votre activité et votre site actuel ou votre compte Instagram : l&apos;assistant IA de Presti prépare une maquette de site pour votre entreprise et vous l&apos;envoie à l&apos;adresse que vous indiquez. Gratuit, sans compte, sans carte.</p>
+                  <p className="lp-mq-note">Une seule demande par entreprise. Vous pouvez refuser toute suite en répondant STOP.</p>
+                </div>
+                <MaquetteForm metiers={METIERS.map((m) => ({ id: m.id, libelle: m.libelle }))} />
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* QUESTIONS — les mêmes que le balisage FAQPage ci-dessus (FAQ.slice(0, 8)) : Google veut voir à
             l'écran ce que le balisage décrit, et ce sont les objections qu'un artisan se pose avant d'essayer. */}
         <section className="lp-blk" id="questions">
@@ -291,6 +313,7 @@ export default function Home() {
             <h2>Le prochain client qui vous cherche,<br />ne le laissez pas filer.</h2>
             <p>3 réponses ou devis offerts, sur vos vraies demandes, sans carte bancaire. Vous jugez la qualité avant de payer quoi que ce soit.</p>
             <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
+            {actif('prospectsEntrant') ? <p className="lp-final-alt"><a href="#maquette">Ou recevoir d&apos;abord la maquette de mon site</a></p> : null}
           </div>
         </section>
       </main>
