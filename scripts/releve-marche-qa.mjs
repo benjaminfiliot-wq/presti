@@ -41,7 +41,8 @@ function serveur(gestionnaire) {
   })
 }
 const ITEMS_CLOCKWORKS = [
-  { playCount: 154000, diggCount: 590, text: 'Ensemble de tournevis de précision 66 en 1', authorMeta: { name: 'clubbaid' }, webVideoUrl: 'https://www.tiktok.com/@clubbaid/video/9', createTimeISO: '2025-12-11T10:00:00.000Z' },
+  { playCount: 154000, diggCount: 590, text: 'Ensemble de tournevis de précision 66 en 1', authorMeta: { name: 'clubbaid' }, webVideoUrl: 'https://www.tiktok.com/@clubbaid/video/9', createTimeISO: '2025-12-11T10:00:00.000Z', textLanguage: 'fr' },
+  { playCount: 120000, diggCount: 800, text: 'Laser level review', authorMeta: { name: 'toolguy' }, webVideoUrl: 'https://www.tiktok.com/@toolguy/video/7', createTimeISO: '2026-08-01T10:00:00.000Z', textLanguage: 'en' },
   { playCount: 704, diggCount: 9, text: 'Vraiment très complet pour le prix', authorMeta: { name: 'jo.bonsplans' }, webVideoUrl: 'https://www.tiktok.com/@jo/video/8', createTimeISO: '2026-07-24T10:00:00.000Z' },
 ]
 async function mondes({ ebayStatut = 200, apifyStatut = 201, apifyVide = false, clockworks = false } = {}) {
@@ -131,7 +132,7 @@ async function juger(racine, pref = '') {
     const c = JSON.parse(m.ap.appels[0]?.corps || '{}')
     const J = JSON.parse(lire(fichiersDe(path.join(d, 'sortie')).find((f) => /\d{4}-\d{2}-\d{2}\.json$/.test(f))))
     const tt = J.produits[0].tiktok[0]
-    ok('RM-14 clockworks : entrée searchQueries + section vidéos + proxy FR + rien à télécharger ; sortie playCount/authorMeta/webVideoUrl lue (2 vidéos, 1 à plus de 100 000 vues, lien conservé)', Array.isArray(c.searchQueries) && c.searchQueries[0] === 'mot tiktok 0' && c.searchSection === '/video' && c.proxyCountryCode === 'FR' && c.shouldDownloadVideos === false && tt?.videos === 2 && tt.plus_de_100k === 1 && tt.top[0].vues === 154000 && /tiktok\.com\/@clubbaid\/video\/9/.test(tt.top[0].lien) && tt.top[0].compte === 'clubbaid', JSON.stringify([c, tt]).slice(0, 300) + r.sortie)
+    ok('RM-14 clockworks : entrée searchQueries + section vidéos + proxy FR + rien à télécharger ; sortie playCount/authorMeta/webVideoUrl lue (3 vidéos, 2 à plus de 100 000 vues dont 1 seule en français — le critère de Benj —, lien conservé)', Array.isArray(c.searchQueries) && c.searchQueries[0] === 'mot tiktok 0' && c.searchSection === '/video' && c.proxyCountryCode === 'FR' && c.shouldDownloadVideos === false && tt?.videos === 3 && tt.plus_de_100k === 2 && tt.plus_de_100k_fr === 1 && tt.top[0].vues === 154000 && /tiktok\.com\/@clubbaid\/video\/9/.test(tt.top[0].lien) && tt.top[0].compte === 'clubbaid', JSON.stringify([c, tt]).slice(0, 300) + r.sortie)
   }
   // RM-10 : sans clé
   {
@@ -160,6 +161,7 @@ const SABOTAGES = [
   ['RM-8', 'scripts/usine/releve-marche.mjs', 'Math.min(parRecherche, Math.floor(plafondUsd / COUT_VIDEO_USD))', 'parRecherche'],
   ['RM-14', 'scripts/usine/releve-marche.mjs', "searchSection: '/video'", "searchSection: ''"],
   ['RM-14', 'scripts/usine/releve-marche.mjs', "proxyCountryCode: 'FR'", "proxyCountryCode: 'US'"],
+  ['RM-14', 'scripts/usine/releve-marche.mjs', "x.vues >= 100_000 && x.langue === 'fr'", "x.vues >= 100_000"],
   ['RM-4', 'scripts/usine/releve-marche.mjs', "console.log(`marché : ${jour}, ${reponses}", "console.log(`clé ${cleFc} marché : ${jour}, ${reponses}"],
   ['RM-1', 'scripts/usine/releve-marche.mjs', "prix_demande_median: mediane(prix)", "prix_demande_median: mediane(prix) + 1"],
   ['RM-2', 'scripts/usine/releve-marche.mjs', "x.vues >= 100_000", "x.vues >= 1_000_000"],
