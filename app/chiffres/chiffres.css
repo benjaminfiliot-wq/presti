@@ -1,0 +1,105 @@
+/* Tableau de bord de gestion (/chiffres). Console sombre : jetons de app/base.css et classes de
+   app/globals.css (.psh-panel, .pill, .tnum). Rien de décoratif : un outil de travail, qu'on lit
+   sur un téléphone entre deux chantiers. Accent corail pour les barres, vert / jaune / rouge
+   uniquement pour dire l'état de l'argent. */
+
+.tdb { display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.tdb *, .tdb *::before, .tdb *::after { box-sizing: border-box }
+
+/* — Les quatre chiffres du haut — */
+.tdb-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px }
+.tdb-kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 7px; min-width: 0 }
+.tdb-kpi .lab { color: var(--muted); font-size: 12.5px; font-weight: 600 }
+.tdb-kpi .val { font-family: var(--font-display); font-weight: 700; font-size: 27px; letter-spacing: -.03em; line-height: 1; color: var(--ink); overflow-wrap: anywhere }
+.tdb-kpi .sub { font-size: 12px; color: var(--muted); line-height: 1.35 }
+.tdb-kpi.crit { border-color: color-mix(in srgb, var(--crit) 38%, var(--line)) }
+.tdb-kpi.crit .val { color: var(--crit) }
+.tdb-delta { font-weight: 700 }
+.tdb-delta.ok { color: var(--ok) }
+.tdb-delta.warn { color: var(--warn) }
+
+/* — Les panneaux — */
+.tdb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start }
+.tdb-panel { min-width: 0 }
+.tdb-body { padding: 14px 17px 16px; min-width: 0 }
+.tdb-vide { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.5 }
+.tdb-sous { margin: 14px 0 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted) }
+.tdb-sous:first-child { margin-top: 0 }
+.tdb-note { margin: 0; color: var(--faint); font-size: 12px; line-height: 1.5; max-width: 70ch }
+
+/* — Graphique en barres (SVG) — */
+.tdb-chart { display: block; width: 100%; height: auto; max-height: 190px; overflow: visible }
+.tdb-chart .tdb-axe { stroke: var(--line); stroke-width: 1 }
+.tdb-chart .tdb-bar { fill: var(--accent); opacity: .5; transform-box: fill-box; transform-origin: bottom; animation: tdb-pousse .55s var(--ease-out, ease-out) backwards }
+.tdb-chart .tdb-cur .tdb-bar { opacity: 1 }
+.tdb-chart .tdb-zero { stroke: var(--line); stroke-width: 2; stroke-linecap: round }
+.tdb-chart .tdb-val { fill: var(--ink-soft); font-size: 11.5px; font-family: var(--font-mono); font-variant-numeric: tabular-nums }
+.tdb-chart .tdb-lab { fill: var(--muted); font-size: 11.5px }
+.tdb-chart .tdb-cur .tdb-lab { fill: var(--ink); font-weight: 700 }
+@keyframes tdb-pousse { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+
+/* — L'argent : une barre, trois états — */
+.tdb-pile { display: block; width: 100%; height: 10px; margin: 2px 0 14px }
+.tdb-pile .piste { fill: var(--line-2) }
+.tdb-pile .seg.ok { fill: var(--ok) }
+.tdb-pile .seg.attente { fill: var(--warn) }
+.tdb-pile .seg.retard { fill: var(--crit) }
+.tdb-lignes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column }
+.tdb-lignes li { display: flex; align-items: center; gap: 9px; padding: 9px 0; border-top: 1px solid var(--line-2); font-size: 13.5px; min-width: 0 }
+.tdb-lignes li:first-child { border-top: 0; padding-top: 0 }
+.tdb-lignes .pastille { width: 9px; height: 9px; border-radius: 50%; flex: none }
+.tdb-lignes .pastille.ok { background: var(--ok) }
+.tdb-lignes .pastille.attente { background: var(--warn) }
+.tdb-lignes .pastille.retard { background: var(--crit) }
+.tdb-lignes .nom { flex: 1; min-width: 0; color: var(--ink-soft) }
+.tdb-lignes small, .tdb-ligne small { color: var(--muted); font-size: 12px }
+.tdb-lignes b { font-weight: 700; color: var(--ink) }
+
+/* — Devis — */
+.tdb-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
+.tdb-trio > div { display: flex; flex-direction: column; gap: 4px; min-width: 0 }
+.tdb-trio b { font-family: var(--font-display); font-size: 25px; letter-spacing: -.03em; line-height: 1; color: var(--ink) }
+.tdb-trio span { font-size: 12px; color: var(--muted) }
+.tdb-ligne { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line-2); font-size: 13.5px; color: var(--ink-soft); line-height: 1.5 }
+.tdb-ligne b { color: var(--ink) }
+
+/* — Devis à relancer : des lignes qu'on touche du pouce — */
+.tdb-relances { list-style: none; margin: -6px -17px -8px; padding: 0 }
+.tdb-relances li + li { border-top: 1px solid var(--line-2) }
+.tdb-relances a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 17px; color: inherit; text-decoration: none }
+.tdb-relances a:hover { background: var(--line-2) }
+.tdb-relances a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px }
+.tdb-relances .qui, .tdb-relances .quand { display: flex; flex-direction: column; gap: 2px; min-width: 0 }
+.tdb-relances .quand { text-align: right; flex: none }
+.tdb-relances b { font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.tdb-relances small { font-size: 12px; color: var(--muted) }
+
+/* — Répartitions (canaux, chantiers, villes) — */
+.tdb-rep { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px }
+.tdb-sous + .tdb-rep, .tdb-chart + .tdb-rep { margin-top: 12px }
+.tdb-rep li { display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 13px }
+.tdb-rep .nom { color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.tdb-rep .piste { height: 6px; border-radius: 4px; background: var(--line-2); overflow: hidden }
+.tdb-rep .piste i { display: block; height: 100%; border-radius: 4px; background: var(--accent); opacity: .85 }
+.tdb-rep .nb { font-weight: 700; color: var(--ink); text-align: right; min-width: 3.4rem }
+.tdb-rep small { font-weight: 400; color: var(--muted); font-size: 11.5px }
+
+/* — Téléphone : une colonne, des chiffres un peu plus petits, jamais de défilement horizontal — */
+@media (max-width: 900px) {
+  .tdb-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .tdb-grid { grid-template-columns: minmax(0, 1fr) }
+}
+@media (max-width: 480px) {
+  .tdb-kpis { gap: 9px }
+  .tdb-kpi { padding: 12px 12px 10px }
+  .tdb-kpi .val { font-size: 22px }
+  .tdb-body { padding: 12px 14px 14px }
+  .tdb-relances { margin-left: -14px; margin-right: -14px }
+  .tdb-relances a { padding-left: 14px; padding-right: 14px }
+  .tdb-rep li { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr) auto }
+}
+
+/* — Mouvement : les barres poussent une fois ; si l'artisan l'a coupé, tout est déjà à sa place — */
+@media (prefers-reduced-motion: reduce) {
+  .tdb-chart .tdb-bar { animation: none }
+}
