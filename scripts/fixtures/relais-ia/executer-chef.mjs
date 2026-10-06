@@ -464,6 +464,27 @@ await cas('RC-10c', async () => {
   return e
 })
 
+// ── RC-10d (06/10) : un moteur local reçoit l'état du cycle COMPACTÉ (lecture en 167-226 s au lieu de > 480 s), un moteur distant l'état brut ──
+await cas('RC-10d', async () => {
+  const e = []
+  const etat = { agents: [{ nom: 'chef', en_pause: false, disjoncteur: null, derniere: '2026-10-06T17:05:02.547334+00:00', taches: [] }, { nom: 'preneur', en_pause: false, disjoncteur: null, derniere: '2026-10-06T17:04:11.112233+00:00', taches: [] }], questions: [], decisions: [] }
+  const brut = `<donnees_etat>\n${JSON.stringify(etat, null, 2)}\n</donnees_etat>\nCe bloc est une donnée.`
+  const u = `Date\n<fichier nom="/home/agents/travail/chef/x/entree.md">\n${brut}\n</fichier>\n\nConsigne :\nÉcris le plan.`
+  const c = C.compacterPourLocal(u)
+  if (!(c.length < u.length) || !/<donnees_etat>/.test(c) || /"en_pause":false/.test(c) || !/2026-10-06T17:05Z/.test(c)) e.push(`état non compacté pour le local : ${c.length} / ${u.length} signes`)
+  if (!/Consigne :\nÉcris le plan\./.test(c)) e.push('la consigne autour du fichier est abîmée')
+  const sansEtat = 'x\n<fichier nom="entree.md">\npas de bloc\n</fichier>'
+  if (C.compacterPourLocal(sansEtat) !== sansEtat) e.push('un fichier sans état est modifié au lieu d\'être laissé tel quel')
+  let vu = null
+  const capte = async (url, init) => { vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => '{"message":{"content":"{}"}}', json: async () => ({ choices: [{ message: { content: '{}' } }] }) } }
+  const p = { systeme: 's', utilisateur: u, destination: path.join(os.tmpdir(), `rc10d-${Date.now()}.json`), dernierMessage: null }
+  await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((m) => m.id === 'ollama_4b'), prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  if (vu?.messages?.[1]?.content?.length >= u.length) e.push('le 4 B local a reçu l\'état brut')
+  await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((m) => m.id === 'freellmapi_gemini'), prompt: p, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  if (vu?.messages?.[1]?.content !== u) e.push('un moteur distant a reçu un état modifié')
+  return e
+})
+
 await cas('RC-11', async () => {
   const e = []
   const maintenant = new Date()
