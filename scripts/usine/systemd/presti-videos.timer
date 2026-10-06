@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage de l'analyste de vidéos, toutes les 10 minutes (la file vide : rien ne tourne ; un verrou garantit une seule analyse à la fois)
+
+[Timer]
+OnCalendar=*:7/10
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-videos.service
+
+[Install]
+WantedBy=timers.target
