@@ -10,6 +10,7 @@
 #   5. sorties : le GGUF, l'adaptateur, le Modelfile Ollama, les générations, le résumé chiffré.
 # Réglages par variables en tête (réécrites par le pousseur) : MODELE, SUFFIXE, EPOQUES.
 import glob, hashlib, json, os, random, shutil, subprocess, sys, time
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")  # recommandé par PyTorch après le manque de mémoire du 06/10
 
 MODELE = "Qwen/Qwen2.5-1.5B-Instruct"
 SUFFIXE = "1.5b"
@@ -38,6 +39,9 @@ def sh(cmd, **kw):
 
 
 # ── 0. GPU ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 06/10 : l'image Kaggle porte torchao 0.10, que peft refuse (« only versions above 0.16.0 ») au moment de la FUSION, après
+# l'heure d'entraînement : la session v4 a perdu son GGUF. Retiré avant tout import, peft ne le cherche plus.
+subprocess.run(f"{sys.executable} -m pip uninstall -y -q torchao", shell=True, capture_output=True)
 import torch
 
 if not torch.cuda.is_available():
@@ -89,8 +93,14 @@ def encoder(p):
     return {"input_ids": ids, "labels": [-100] * n + ids[n:]}
 
 
-ex_train = [encoder(p) for p in train]
-ex_val = [encoder(p) for p in val]
+# 06/10 : un T4 (15 Go) manque de mémoire au calcul des gradients sur les exemples de plus de ~2 600 jetons (CUDA out of memory à 3 103 jetons) :
+# on écarte ces quelques exemples longs, et on le dit dans le journal (aucun troncage silencieux, qui apprendrait des plans coupés).
+LONGUEUR_MAX = 2600
+ex_train_tous = [encoder(p) for p in train]
+ex_val_tous = [encoder(p) for p in val]
+ex_train = [e for e in ex_train_tous if len(e["input_ids"]) <= LONGUEUR_MAX]
+ex_val = [e for e in ex_val_tous if len(e["input_ids"]) <= LONGUEUR_MAX]
+journal(etape="longueur", max=LONGUEUR_MAX, train_ecartes=len(ex_train_tous) - len(ex_train), val_ecartes=len(ex_val_tous) - len(ex_val))
 longueurs = sorted(len(e["input_ids"]) for e in ex_train)
 journal(etape="jetons", mediane=longueurs[len(longueurs) // 2], max=longueurs[-1], reponse_mediane=sorted(sum(1 for x in e["labels"] if x != -100) for e in ex_train)[len(ex_train) // 2])
 
@@ -129,7 +139,7 @@ journal(etape="modele", qlora=qlora, parametres_entrainables=entrainables)
 
 args = TrainingArguments(
     output_dir=f"{TMP}/points", num_train_epochs=EPOQUES, per_device_train_batch_size=1, per_device_eval_batch_size=1, gradient_accumulation_steps=8,
-    learning_rate=2e-4, lr_scheduler_type="cosine", warmup_ratio=0.05, logging_steps=5, eval_strategy="epoch", save_strategy="no",
+    learning_rate=2e-4, lr_scheduler_type="cosine", warmup_steps=5, logging_steps=5, eval_strategy="epoch", save_strategy="no",  # warmup_ratio n'existe plus dans transformers 5 (Kaggle, 06/10)
     fp16=True, gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False}, report_to="none", seed=GRAINE,
     optim="paged_adamw_8bit" if qlora else "adamw_torch", remove_unused_columns=False,
 )
