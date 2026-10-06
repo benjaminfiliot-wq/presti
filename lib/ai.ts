@@ -4,6 +4,7 @@ import { profilMetier, blocMetierReponse, blocMetierChiffrage, type ProfilMetier
 import { playbookPour, blocPlaybook, questionsDejaPosees } from './ai/playbooks'
 import { assainirReponse, type ProfilCapacites } from './ai/antiFabrication'
 import { blocExemples, type ExemplesArtisan } from './ai/exemples'
+import { normalize, has, typeChantier, TYPE_CHANTIER } from './qualification'
 
 // v5 §7 — routage de modèle (Standard → Pro sur complexité, Expert sur demande) : lib/ai/routage.ts.
 export { routerModele, type Routage } from './ai/routage'
@@ -72,28 +73,8 @@ Tout ce qui n'y figure pas (atelier, délai chiffré, 7j/7, garantie, certificat
 // Toute l'intelligence "de cadrage" est calculée ici, en dur : elle reste fiable
 // même sur le modèle le plus léger (Standard/Haiku) et évite que le LLM parte à côté.
 
-/** Minuscule sans accents ni ponctuation, espaces normalisés — pour la détection de mots-clés. */
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // retire les accents (diacritiques combinants)
-    .replace(/[^a-z0-9]+/g, ' ') // ponctuation/apostrophes → espaces
-    .trim()
-}
-
-/** true si l'un des mots-clés (déjà "sans accents") apparaît dans le texte normalisé `n`. */
-function has(n: string, keys: string[]): boolean {
-  // Audit v5 : `includes` prenait « je voudrais SAVoir » pour un SAV (réclamation), « PANNEaux » pour
-  // une panne, « imPORTEant » pour de la menuiserie. Mot entier (pluriel toléré) ; une clé de six
-  // lettres et plus vaut aussi comme début de mot (« inondation », « dépannage »).
-  return keys.some((k) => {
-    const kk = normalize(k)
-    if (!kk) return false
-    const e = kk.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    return new RegExp(kk.length >= 6 ? `(^| )${e}` : `(^| )${e}(s|x|e|es)?( |$)`).test(n)
-  })
-}
+// `normalize` (minuscule sans accents ni ponctuation) et `has` (mot entier, pluriel toléré) vivent dans
+// lib/qualification.ts depuis le 06/10, avec le type de chantier : un module sans import, que son juge charge seul.
 
 // Signaux forts d'une situation d'urgence (sinistre / panne) dans le bâtiment.
 const URGENCE_KEYWORDS = [
@@ -301,45 +282,13 @@ export function analyzeLead(message: string, contact?: string | null): LeadInsig
   }
 }
 
-// Type de chantier déduit des mots-clés de la demande (déterministe). Ordre = priorité de tranche.
-const TYPE_CHANTIER: { label: string; keys: string[] }[] = [
-  { label: 'Plomberie', keys: ['fuite', 'robinet', 'chauffe eau', 'wc', 'toilette', 'evier', 'lavabo', 'canalisation', 'tuyau', 'douche', 'baignoire', 'degat des eaux', 'siphon', 'chasse d eau', 'debouch'] },
-  { label: 'Chauffage', keys: ['chaudiere', 'radiateur', 'pompe a chaleur', 'thermostat', 'plancher chauffant', 'chauffage', 'ballon d eau', 'climatisation', 'clim', 'frigo'] },
-  { label: 'Électricité', keys: ['electric', 'prise', 'tableau electrique', 'disjoncteur', 'court circuit', 'compteur', 'luminaire', 'interrupteur', 'panne de courant', 'mise aux normes'] },
-  { label: 'Toiture', keys: ['toit', 'toiture', 'tuile', 'ardoise', 'gouttiere', 'charpente', 'zinguerie', 'faitage'] },
-  { label: 'Menuiserie', keys: ['fenetre', 'porte', 'volet', 'parquet', 'escalier', 'dressing', 'placard', 'veranda', 'menuiserie', 'portail', 'store'] },
-  { label: 'Peinture', keys: ['peinture', 'peindre', 'enduit', 'papier peint', 'ravalement', 'lasure'] },
-  { label: 'Maçonnerie', keys: ['macon', 'dalle', 'terrasse', 'fondation', 'parpaing', 'extension', 'chape', 'beton', 'ouverture de mur'] },
-  { label: 'Carrelage', keys: ['carrelage', 'carreau', 'faience', 'pose de sol'] },
-  { label: 'Salle de bain', keys: ['salle de bain', 'salle d eau'] },
-  { label: 'Cuisine', keys: ['cuisine', 'plan de travail', 'credence'] },
-  { label: 'Isolation', keys: ['isolation', 'isoler', 'combles', 'laine de verre'] },
-  { label: 'Serrurerie', keys: ['serrure', 'serrurier', 'porte blindee', 'cylindre', 'verrou'] },
-]
-
-// Métier → libellé de repli quand aucun mot-clé de la demande ne tranche.
-function metierToType(metier?: string | null): string | null {
-  if (!metier) return null
-  const m = normalize(metier)
-  const map: [string, string][] = [
-    ['plomb', 'Plomberie'], ['chauffag', 'Chauffage'], ['frigoriste', 'Chauffage'], ['climatis', 'Chauffage'],
-    ['electric', 'Électricité'], ['couvreur', 'Toiture'], ['toitur', 'Toiture'], ['charpent', 'Toiture'],
-    ['menuis', 'Menuiserie'], ['ebenist', 'Menuiserie'], ['peintr', 'Peinture'], ['macon', 'Maçonnerie'],
-    ['carrel', 'Carrelage'], ['serrur', 'Serrurerie'],
-  ]
-  for (const [k, v] of map) if (m.includes(k)) return v
-  return null
-}
+// Le type de chantier (mots-clés, tournures neutres, repli sur le métier) vit dans lib/qualification.ts depuis le 06/10.
 
 /** Qualification DÉTERMINISTE d'un lead (0 coût IA) : niveau d'urgence + type de chantier. */
 export function qualifyLead(message?: string | null, metier?: string | null): { urgence: 'urgent' | 'normal'; type_chantier: string | null } {
   const msg = (message || '').trim()
   const urgence: 'urgent' | 'normal' = msg && isUrgent(msg) ? 'urgent' : 'normal'
-  const n = normalize(msg)
-  let type: string | null = null
-  if (n) { const hit = TYPE_CHANTIER.find((t) => has(n, t.keys)); type = hit ? hit.label : null }
-  if (!type) type = metierToType(metier)
-  return { urgence, type_chantier: type }
+  return { urgence, type_chantier: typeChantier(msg, metier) }
 }
 
 /** Construit le bloc d'instructions dynamiques injecté dans le prompt système. */

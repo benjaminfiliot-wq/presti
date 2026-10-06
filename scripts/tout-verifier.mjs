@@ -79,6 +79,7 @@ const SUITES = [
   { nom: 'Alertes (ronde à sec, huit motifs)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/alertes-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Cache mutualisé des prix', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/cache-prix-e2e.mjs'], cout: 'gratuit' },
   { nom: 'IA — unitaires (métiers, playbooks, anti-fabrication)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/ia-unit-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Qualification des demandes (type de chantier, sans IA)', cmd: 'node', args: ['scripts/qualification-qa.mjs'], cout: 'gratuit' },
   { nom: 'Aide (panneau, ⓘ, visite, centre)', cmd: 'node', args: ['scripts/aide-e2e.mjs'], cout: 'navigateur' },
   { nom: 'IA — cerveau urgence (registre de cas, régression = échec)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'lib/ai/cerveaux/urgence/evaluer.mjs'], cout: 'gratuit' },
   { nom: 'Inventaire v2 (fiches, fournisseurs, isolation)', cmd: 'node', args: ['scripts/inventaire-v2-e2e.mjs'], cout: 'gratuit' },
