@@ -29,7 +29,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { motifProspects } from './garde-prospects.mjs'
 import { chercherSecrets } from '../instantane-quotidien.mjs'
-import { CHAINE_SECOURS, classerSortie, echeanceDeMiseDeCote, magasinFichier, journalFichier } from './relais-chef.mjs'
+import { CHAINE_SECOURS, classerSortie, echeanceDeMiseDeCote, magasinFichier, journalFichier, texteOllama } from './relais-chef.mjs'
 
 export const TYPES_LIBRES = Object.freeze(['recherche', 'tri', 'veille', 'verification', 'relecture', 'redaction_interne'])
 export const OBJET_MIN = 20
@@ -127,6 +127,26 @@ export function assainir(texte, max = 200) {
 }
 
 /** Le résumé d'un résultat : sa première ligne utile, assainie, 160 signes au plus. */
+/**
+ * La garde des nombres (06/10) : les 7 tâches e-commerce du 06/10, écrites par le 4 B local, inventaient « 3x plus d'engagement », « +20 % de
+ * conversion », des marges de « +30 % », un budget de 800 €. Tout pourcentage, montant en euros ou multiplicateur du résultat doit figurer dans la
+ * consigne ou les passages du Savoir ; sinon il est listé ici (le résultat est gardé, mais marqué). Rend les nombres absents des sources. Pure.
+ */
+export function nombresNonSources(resultat, sources) {
+  const norm = (s) => String(s).replace(/ | /g, ' ').replace(/(\d)\s+(?=\d{3}\b)/g, '$1').replace(/,/g, '.')
+  const src = norm(sources)
+  const vus = new Set(), absents = []
+  const re = /[+-]?\d+(?:[.,]\d+)?\s?(?:%|€|euros?|x\b|fois\b)/gi
+  for (const m of norm(resultat).matchAll(re)) {
+    const brut = m[0].trim()
+    const chiffre = brut.replace(/^[+-]/, '').match(/\d+(?:\.\d+)?/)[0]
+    if (vus.has(brut)) continue
+    vus.add(brut)
+    if (!new RegExp(`(^|[^\\d.])${chiffre.replace('.', '\\.')}(?![\\d])`).test(src)) absents.push(brut)
+  }
+  return absents
+}
+
 export function resumeDe(resultat) {
   const ligne = String(resultat).split(/\r?\n/).map((l) => l.replace(/^[#>*\-\s]+/, '').trim()).find((l) => l.length >= 8) ?? ''
   return assainir(ligne, 160)
@@ -191,16 +211,17 @@ async function executerOllama({ consigne, o, etat, journal, maintenant = Date.no
     try {
       const r = await fetchFn(`${o.ollama}/api/chat`, {
         method: 'POST', headers: { 'content-type': 'application/json' }, signal: controleur.signal,
-        body: JSON.stringify({ model: m.modele, stream: false, think: false, options: { num_ctx: 8192, temperature: 0.3, num_predict: 3500 },
+        // stream: true (06/10) : non diffusée, la requête continue de calculer après la coupure et étouffe le moteur suivant (mesuré sur l'usine).
+        body: JSON.stringify({ model: m.modele, stream: true, think: false, options: { num_ctx: 8192, temperature: 0.3, num_predict: 3500 },
           messages: [{ role: 'system', content: consigne.systeme }, { role: 'user', content: consigne.utilisateur }] }),
       })
       if (!r.ok) { let brut = ''; try { brut = await r.text() } catch { brut = '' } raison = classerSortie(`ERROR: unexpected status ${r.status}${r.status === 429 ? ' Too Many Requests' : ''} ${brut.slice(0, 200)}`, maintenant()) }
       else {
-        const j = await r.json().catch(() => null)
-        sortie = typeof j?.message?.content === 'string' ? j.message.content : null
+        const brut = await r.text()
+        sortie = texteOllama(brut)
         if (!sortie || !sortie.trim()) { raison = { raison: 'indisponible' }; sortie = null }
       }
-    } catch (e) { raison = classerSortie('ERROR: error sending request', maintenant(), e?.name === 'AbortError') }
+    } catch (e) { raison = classerSortie('ERROR: error sending request', maintenant(), e?.name === 'AbortError' || controleur.signal.aborted) }
     finally { clearTimeout(minuteur) }
     if (sortie !== null) {
       const courant = etat.lire()
@@ -298,6 +319,11 @@ export async function passe({ o, jeton, fetchFn = fetch, executer = null, mainte
   if (!sortie?.ok) return echec(sortie?.code || 'executeur_en_echec')
   const verdict = controlerSortie(sortie.brut)
   if (!verdict.ok) return echec(verdict.code)
+  const inventes = nombresNonSources(verdict.resultat, `${consigne.systeme}\n${consigne.utilisateur}`)
+  if (inventes.length) {
+    verdict.resultat = `> **Chiffres absents des sources : ${inventes.slice(0, 12).join(', ')}.** À vérifier ; ne jamais les citer comme des faits.\n\n${verdict.resultat}`
+    ecrire({ tache: id, issue: 'chiffres_non_sources', nombres: inventes.slice(0, 12) })
+  }
 
   // Le résultat reste sur l'usine ; le bus en reçoit le résumé et la preuve (événement résultat_tache).
   const nom = String(tache.cle_idempotence || id).toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 80)
@@ -309,7 +335,7 @@ export async function passe({ o, jeton, fetchFn = fetch, executer = null, mainte
   } catch { return echec('ecriture_resultat') }
   const ev = await bus('/api/agents/evenements', {
     type: 'resultat_tache', objet: `tache:${tache.cle_idempotence}`.slice(0, 200), tache: id,
-    resume: assainir(`${tache.type} faite par ${sortie.moteur} en ${Math.round((maintenant() - debut) / 1000)} s : ${resumeDe(verdict.resultat)}`, 200),
+    resume: assainir(`${tache.type} faite par ${sortie.moteur} en ${Math.round((maintenant() - debut) / 1000)} s${inventes.length ? ` (${inventes.length} chiffre(s) non sourcé(s))` : ''} : ${resumeDe(verdict.resultat.replace(/^> \*\*Chiffres absents[^\n]*\n\n/, ''))}`, 200),
   })
   // La route rend l'identifiant nu (ops_evenement_ajouter) ; l'ancienne forme { id } se lit aussi.
   const evId = Number.isInteger(ev.json) ? ev.json : ev.json?.id
