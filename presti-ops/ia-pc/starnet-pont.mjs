@@ -112,27 +112,33 @@ async function sidecarCourt() { if (!sidecarCache || Date.now() - sidecarLe > 60
 async function refleterEvenement(s, e) {
   const id = ID_STARNET[e.agent] || e.agent
   const consigne = `Tu viens de travailler dans l'usine Presti. Evenement reel releve dans la base : type « ${e.type} », resume « ${String(e.resume).slice(0, 160)} », a ${e.le}. Ecris UNE ligne courte en francais qui dit ce que tu viens de faire, en reprenant ces faits tels quels, sans rien inventer. N'appelle aucun outil.`
+  const debut = Date.now()
   const r = await fetch(`http://127.0.0.1:${s.port}/api/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: JSON.stringify({ agentId: id, provider: 'custom', model: 'auto', baseUrl: BASE_CUSTOM, isTask: true, messages: [{ role: 'user', content: consigne }] }), signal: AbortSignal.timeout(90_000) })
   const texte = await r.text()
-  refleterEvenement.dernierRunId = /"runId"\s*:\s*"([0-9a-f-]{36})"/.exec(texte)?.[1] ?? null
-  // la réponse ne porte pas toujours l'identifiant : on le lit dans l'historique des courses de CET agent (la plus récente, terminée après l'appel)
-  if (!refleterEvenement.dernierRunId && r.ok) {
+  // le runId de CETTE course (rendu par valeur : plusieurs agents sont reflétés en parallèle, aucune variable partagée)
+  let runId = /"runId"\s*:\s*"([0-9a-f-]{36})"/.exec(texte)?.[1] ?? null
+  if (!runId && r.ok) {
     try {
-      const h = await (await fetch(`http://127.0.0.1:${s.port}/api/runs?agent=${encodeURIComponent(id)}&limit=3&since=${Date.now() - 120_000}`, { headers: { 'x-starnet-token': s.jeton }, signal: AbortSignal.timeout(15_000) })).json()
-      refleterEvenement.dernierRunId = (h.runs || []).find((x) => x && x.reason === 'done')?.runId ?? null
+      const h = await (await fetch(`http://127.0.0.1:${s.port}/api/runs?agent=${encodeURIComponent(id)}&limit=3&since=${debut - 5_000}`, { headers: { 'x-starnet-token': s.jeton }, signal: AbortSignal.timeout(15_000) })).json()
+      runId = (h.runs || []).find((x) => x && x.reason === 'done')?.runId ?? null
     } catch { /* pas d'XP cette fois : jamais bloquant */ }
   }
-  return r.ok
+  return { ok: r.ok, runId }
 }
 
 // ── quêtes et XP RÉELS (05/10 nuit, demande de Benj : « les niveaux, l'XP qui suivent les tâches et les quêtes »).
-// Règles de StarNet respectées : une quête ne donne jamais d'XP ; l'XP naît seulement d'un retour « excellent » sur un travail RENDU (/api/growth/ratings),
-// que le serveur valide (course réelle, terminée, non interne ; delta fixé par lui). Ici : tâche PRISE sur le bus = quête ouverte pour l'agent ;
-// tâche FAITE avec preuve jointe = quête terminée avec preuve, et un seul retour « excellent » sur le passage qui vient d'être écrit. Jamais pour un échec.
+// Règles de StarNet respectées : une quête ne donne jamais d'XP ; l'XP naît seulement d'un retour « excellent » sur une course RENDUE (/api/growth/ratings),
+// que le serveur valide (course réelle, terminée, non interne ; delta fixé par lui). Ici le retour est posé au nom du fondateur par le pont, sur le reflet d'un fait
+// RÉEL du journal du bus (jamais pour un échec, jamais pour l'agent « systeme »). Deux sources :
+//   · tâche PRISE sur le bus = quête ouverte (titre UNIQUE : l'identifiant de l'évènement) ; tâche FAITE avec preuve = quête terminée + XP ;
+//   · tout autre travail réel (passage, bilan, cycle terminé…) = quête « Journée <agent> » : étape 1 au premier fait du jour, terminée avec preuve au 3e ; XP au plus toutes les 20 minutes par agent.
 const ICI = path.dirname(fileURLToPath(import.meta.url))
 const FICHIER_QUETES = path.join(ICI, 'starnet-pont-quetes.json')
-const lireQuetes = () => { try { return JSON.parse(fs.readFileSync(FICHIER_QUETES, 'utf8')) } catch { return { ouvertes: {} } } }
+const lireQuetes = () => { try { const q = JSON.parse(fs.readFileSync(FICHIER_QUETES, 'utf8')); q.ouvertes ||= {}; q.jour ||= {}; q.xp ||= {}; return q } catch { return { ouvertes: {}, jour: {}, xp: {} } } }
 const ecrireQuetes = (q) => { try { fs.writeFileSync(FICHIER_QUETES, JSON.stringify(q)) } catch { /* disque : pas bloquant */ } }
+const JOUR_PARIS = new Intl.DateTimeFormat('fr-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' })
+const NEGATIF = /echec|erreur|pause|disjonct|refus|alerte|battement|reprise|retard|muet|expir|annul|rejet/i
+const INTERVALLE_XP_MS = 20 * 60_000
 async function appelSn(s, methode, chemin, corps) {
   const r = await fetch(`http://127.0.0.1:${s.port}${chemin}`, { method: methode, headers: { 'content-type': 'application/json', 'x-starnet-token': s.jeton }, body: corps ? JSON.stringify(corps) : undefined, signal: AbortSignal.timeout(30_000) })
   let j = null; try { j = await r.json() } catch { /* corps vide */ }
@@ -145,19 +151,20 @@ async function epoque(s) {
   epoqueCache = { v: Math.max(1, Math.floor(Number(j?.save?.agent?.createdAt) || 1)), le: Date.now() }
   return epoqueCache.v
 }
-async function noterTravail(s, agentSn, runId) {
+async function noterTravail(s, agentSn, runId, quoi) {
   const corps = { runId, verdict: 'great', epoch: await epoque(s), entries: [{ agentId: agentSn, id: 'work:' + runId, runId, delta: 3, reason: 'work_great' }] }
   const { statut, j } = await appelSn(s, 'POST', '/api/growth/ratings', corps)
-  console.log(`${new Date().toISOString()} XP ${agentSn} : retour « excellent » sur la tâche faite → HTTP ${statut}${j?.ok ? (j.duplicate ? ' (déjà noté)' : ' (XP posé)') : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+  console.log(`${new Date().toISOString()} XP ${agentSn} : retour « excellent » sur ${quoi} → HTTP ${statut}${j?.ok ? (j.duplicate ? ' (déjà noté)' : ' (XP posé)') : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+  return !!j?.ok
 }
-async function queteEvenement(s, e, runId) {
+async function queteTache(s, e, runId) {
   const agentSn = ID_STARNET[e.agent] || e.agent
   const etat = lireQuetes()
   const typeTache = /tâche (\S+)/.exec(String(e.resume))?.[1] ?? 'tâche'
   if (e.type === 'tache_prise') {
-    const { statut, j } = await appelSn(s, 'POST', '/api/quests/mint', { title: `Tâche ${typeTache} · ${e.agent}`, desc: `${String(e.resume).slice(0, 140)} (évènement ${e.id})`, kind: 'work', agentId: agentSn, contract: { type: 'attest', key: '' }, steps: ['prise', 'faite'] })
+    const { statut, j } = await appelSn(s, 'POST', '/api/quests/mint', { title: `Tâche ${typeTache} · ${e.agent} · n°${e.id}`, desc: `${String(e.resume).slice(0, 140)} (évènement ${e.id})`, kind: 'work', agentId: agentSn, contract: { type: 'attest', key: '' }, steps: ['prise', 'faite'] })
     if (j?.ok && j.id) { (etat.ouvertes[e.agent] ||= []).push({ id: j.id, ev: e.id }); if (etat.ouvertes[e.agent].length > 20) etat.ouvertes[e.agent].shift(); ecrireQuetes(etat) }
-    console.log(`${new Date().toISOString()} quête ${e.agent} : ouverte pour « ${typeTache} » → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+    console.log(`${new Date().toISOString()} quête ${e.agent} : ouverte pour « ${typeTache} » n°${e.id} → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
   } else if (e.type === 'tache_faite') {
     const q = (etat.ouvertes[e.agent] || []).shift()
     if (q) {
@@ -167,8 +174,36 @@ async function queteEvenement(s, e, runId) {
       const { statut, j } = await appelSn(s, 'POST', '/api/quests/report', { id: q.id, evidence: `${String(e.resume).slice(0, 120)} · évènement ${e.id} du ${e.le} (preuve jointe au bus)` })
       console.log(`${new Date().toISOString()} quête ${e.agent} : terminée avec preuve → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
     }
-    if (runId) await noterTravail(s, agentSn, runId)
+    if (runId) await noterTravail(s, agentSn, runId, 'la tâche faite')
   }
+}
+// Le travail réel des agents qui ne passent pas par des tâches (recenseur, juge, rédacteur, facteur, vigie, chef…) : une quête par jour, de l'XP à la cadence.
+async function queteJournee(s, e, runId) {
+  if (e.agent === 'systeme' || NEGATIF.test(String(e.type))) return
+  const agentSn = ID_STARNET[e.agent] || e.agent
+  const etat = lireQuetes()
+  const date = JOUR_PARIS.format(new Date(e.le))
+  let q = etat.jour[e.agent]
+  if (!q || q.date !== date) {
+    const { statut, j } = await appelSn(s, 'POST', '/api/quests/mint', { title: `Journée ${e.agent} · ${date}`, desc: `Travail réel de ${e.agent} le ${date} : au moins 3 faits avec preuve au journal du bus.`, kind: 'work', agentId: agentSn, contract: { type: 'attest', key: '' }, steps: ['premier', 'troisieme'] })
+    q = { date, id: j?.ok && j.id ? j.id : null, n: 0, fini: false }
+    etat.jour[e.agent] = q
+    console.log(`${new Date().toISOString()} quête ${e.agent} : « Journée ${date} » ouverte → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+  }
+  q.n++
+  if (q.id && !q.fini) {
+    if (q.n === 1) await appelSn(s, 'POST', '/api/quests/update', { id: q.id, op: 'tick', stepKey: 'premier', note: String(e.resume).slice(0, 100) })
+    if (q.n === 3) {
+      await appelSn(s, 'POST', '/api/quests/update', { id: q.id, op: 'tick', stepKey: 'troisieme', note: String(e.resume).slice(0, 100) })
+      const { statut, j } = await appelSn(s, 'POST', '/api/quests/report', { id: q.id, evidence: `3 faits réels au journal du bus le ${date}, dont « ${String(e.type)} » : ${String(e.resume).slice(0, 100)} (évènement ${e.id})` })
+      q.fini = !!j?.ok
+      console.log(`${new Date().toISOString()} quête ${e.agent} : « Journée ${date} » terminée avec preuve → HTTP ${statut}${j?.ok ? '' : ' ' + String(j?.error ?? '').slice(0, 90)}`)
+    }
+  }
+  if (runId && Date.now() - (etat.xp[e.agent] || 0) > INTERVALLE_XP_MS) {
+    if (await noterTravail(s, agentSn, runId, `le fait « ${String(e.type)} »`)) etat.xp[e.agent] = Date.now()
+  }
+  ecrireQuetes(etat)
 }
 async function suivre() {
   for (;;) {
@@ -179,15 +214,17 @@ async function suivre() {
       const nouveaux = liste.filter((e) => e.id > dernierId)
       if (nouveaux.length) {
         dernierId = nouveaux[nouveaux.length - 1].id
-        const parAgent = new Map(); for (const e of nouveaux) if (!/^tache_(prise|faite)$/.test(e.type)) parAgent.set(e.agent, e) // le plus récent par agent
+        const estTache = (x) => /^tache_(prise|faite)$/.test(x.type)
+        const parAgent = new Map(); for (const e of nouveaux) if (!estTache(e)) parAgent.set(e.agent, e) // le plus récent par agent
         const s = await sidecarCourt()
         // les tâches prises et faites : une à une, dans l'ordre, chacune avec SA quête (et son XP si elle est faite)
-        for (const e of nouveaux.filter((x) => /^tache_(prise|faite)$/.test(x.type))) {
-          try { const ok = await refleterEvenement(s, e); await queteEvenement(s, e, ok ? refleterEvenement.dernierRunId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
+        for (const e of nouveaux.filter(estTache)) {
+          try { const r = await refleterEvenement(s, e); await queteTache(s, e, r.ok ? r.runId : null); parAgent.set(e.agent, e) } catch (err) { console.log(`${new Date().toISOString()} quête/XP ${e.agent} : ${String(err.message).slice(0, 90)}`) }
         }
-        const generaux = [...parAgent.values()].filter((e) => !/^tache_(prise|faite)$/.test(e.type))
-        const resultats = await Promise.all(generaux.map((e) => refleterEvenement(s, e).catch(() => false)))
-        if (generaux.length && !resultats.some(Boolean)) console.log(`${new Date().toISOString()} ALERTE : StarNet a refusé les ${generaux.length} passage(s) (réglage Custom ? relais 3001 ?) : rien n'est allumé`)
+        const generaux = [...parAgent.values()].filter((e) => !estTache(e))
+        const resultats = await Promise.all(generaux.map((e) => refleterEvenement(s, e).catch(() => ({ ok: false, runId: null }))))
+        if (generaux.length && !resultats.some((r) => r.ok)) console.log(`${new Date().toISOString()} ALERTE : StarNet a refusé les ${generaux.length} passage(s) (réglage Custom ? relais 3001 ?) : rien n'est allumé`)
+        for (let i = 0; i < generaux.length; i++) { try { if (resultats[i].ok) await queteJournee(s, generaux[i], resultats[i].runId) } catch (err) { console.log(`${new Date().toISOString()} quête du jour ${generaux[i].agent} : ${String(err.message).slice(0, 90)}`) } }
         console.log(`${new Date().toISOString()} activité : ${parAgent.size} agent(s) allumé(s) [${[...parAgent.keys()].join(', ')}]`)
       }
     } catch (e) { sidecarCache = null }
