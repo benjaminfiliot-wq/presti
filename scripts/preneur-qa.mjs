@@ -63,7 +63,13 @@ async function doublures({ jeton, taches = [], ollama = 'ok', prendre = null }) 
     return json(rep, 404, { error: 'inconnu' })
   })
   const o = await lancerServeur((req, rep, corps) => {
-    modele.appels.push({ chemin: req.url, modele: corps?.model, utilisateur: String(corps?.messages?.[1]?.content ?? ''), systeme: String(corps?.messages?.[0]?.content ?? '') })
+    modele.appels.push({ chemin: req.url, modele: corps?.model, stream: corps?.stream, utilisateur: String(corps?.messages?.[1]?.content ?? ''), systeme: String(corps?.messages?.[0]?.content ?? '') })
+    // 06/10 : une réponse diffusée (une ligne JSON par morceau), avec des chiffres inventés et un chiffre présent dans la consigne (« trois » n'est pas un chiffre ; 3 fois l'est)
+    if (ollama === 'chiffres') {
+      rep.writeHead(200, { 'content-type': 'application/x-ndjson' })
+      rep.end(['Résumé : la stratégie retenue\\n\\n1. Les vidéos courtes génèrent 3x plus d', 'engagement.\\n2. Les comparaisons augmentent la conversion de +20 %.\\n3. Budget de test : 800 €.'].map((x, i) => JSON.stringify({ message: { content: JSON.parse(`"${x}"`) }, done: i === 1 })).join('\n'))
+      return
+    }
     if (ollama === 'panne') return json(rep, 500, { error: 'panne' })
     const contenu = ollama === 'impossible' ? 'IMPOSSIBLE : je ne vois aucun fichier du dépôt.'
       : ollama === 'secret' ? `Résumé du travail fait\n\nLa clé trouvée est ${['sk', 'live', 'abcdefghijklmnopqrstuvwx'].join('_')} et il faut la changer sans tarder, voilà.`
@@ -336,6 +342,17 @@ fs.writeFileSync(path.join(sortie, 'statut.txt'), '${statut}\\n')
       if ((c.dbl.modele.appels[0]?.utilisateur ?? '').includes('<donnees_savoir>')) d.push('outil en panne : un bloc <donnees_savoir> est parti quand même')
     })
   }],
+  'PN-18': ['garde des nombres (06/10) : les chiffres absents des sources sont listés en tête du résultat et signalés dans l\'événement, la tâche reste faite ; Ollama est appelé en diffusion et le flux est recollé', async (racine, d) => scenario(racine, 'pn18', { taches: [tacheOk()], ollama: 'chiffres' }, async (c) => {
+    const r = await c.lancer()
+    if (r.code !== 0 || c.dbl.bus.rendues[0]?.resultat !== 'faite') d.push(`tâche ${c.dbl.bus.rendues[0]?.resultat ?? 'non rendue'} (faite attendue)`)
+    if (c.dbl.modele.appels[0]?.stream !== true) d.push(`Ollama appelé avec stream=${c.dbl.modele.appels[0]?.stream}`)
+    const f = fichiersDe(path.join(c.travail, 'resultats'))
+    const texte = f.length ? fs.readFileSync(f[0], 'utf8') : ''
+    if (!/Chiffres absents des sources : 3x, \+20 %, 800 €/.test(texte)) d.push(`bandeau absent ou incomplet : ${court(texte.split('\n').find((l) => /Chiffres/.test(l)) ?? texte.slice(0, 160), 200)}`)
+    if (!/3x plus dengagement\.\n2\. Les comparaisons/.test(texte)) d.push('le flux n\'est pas recollé (le texte des deux morceaux manque)')
+    const ev = c.dbl.bus.evenements.find((e) => e.type === 'resultat_tache')
+    if (!/3 chiffre\(s\) non sourcé\(s\)/.test(ev?.resume ?? '')) d.push(`événement sans le signalement : ${court(ev?.resume ?? '', 160)}`)
+  })],
   'PN-17': ['au plus 5 passages de 700 signes : le Savoir ne gonfle pas la requête', async (racine, d) => scenario(racine, 'pn17', { taches: [tacheOk()] }, async (c) => {
     const neuf = Array.from({ length: 9 }, (_, i) => ({ extrait: 'x'.repeat(3000), source: { chemin: `docs/p${i}.md`, debut: 1, fin: 2, classe: 'interne' } }))
     const bin = fauxSavoir(c.travail, neuf)
@@ -391,6 +408,9 @@ const SABOTAGES = [
   ['PN-16', 'scripts/usine/preneur.mjs', "if (o.savoir) { try {", "if (true) { try {"],
   ['PN-17', 'scripts/usine/preneur.mjs', "export const MAX_PASSAGES = 5", "export const MAX_PASSAGES = 50"],
   ['PN-17', 'scripts/usine/preneur.mjs', ".slice(0, MAX_EXTRAIT)", ".slice(0, 5000)"],
+  ['PN-18', 'scripts/usine/preneur.mjs', "  if (inventes.length) {\n    verdict.resultat =", "  if (false) {\n    verdict.resultat ="],
+  ['PN-18', 'scripts/usine/preneur.mjs', "body: JSON.stringify({ model: m.modele, stream: true,", "body: JSON.stringify({ model: m.modele, stream: false,"],
+  ['PN-18', 'scripts/usine/preneur.mjs', "    if (!new RegExp(", "    if (false && !new RegExp("],
 ]
 
 function copierRacine(nom, fichiers) {
