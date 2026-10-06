@@ -47,3 +47,14 @@ Aucun lot test : on **liste d'abord sur eBay, on commande chez le fournisseur se
 1. Les agents de veille relèvent, sur les sources publiques, les vidéos TikTok de ces 6 catégories (vues, date, commentaires) et classent les produits qui passent le critère 1.
 2. Dès l'accès aux prix vendus eBay (API) ou à Apify, les critères 2 à 5 sont calculés produit par produit.
 3. Pour chaque produit retenu : 3 scripts de vidéos de 20 secondes pour Brico Travaux (accroche, démonstration, appel à l'achat sans promesse mensongère), puis l'annonce eBay (titre, description, photos générées).
+
+## Relevé eBay.fr du 06/10 (≈4 h 30 Paris) — annonces à prix fixe EN VENTE (pas des prix vendus), 1 crédit Firecrawl chacun
+
+| Recherche | Annonces | Prix médian | Min | Max |
+|---|---|---|---|---|
+| tournevis électrique sans fil usb | 79 | 49,99 € | 6,52 € | 172,24 € |
+| kit tournevis précision | 64 | 17,99 € | 3,65 € | 156,99 € |
+| niveau laser croix | 60 | 68,30 € | 13,90 € | 449,90 € |
+| kit accrochage tableau sans perçage | 22 | 28,50 € | 11,95 € | 235,27 € |
+
+Limites : prix demandés, pas vendus ; aucun compteur de ventes sur la page ; AUCUNE marge calculée (pas de prix fournisseur réel). Le min/max mélange lots, pièces détachées et marques pro : seul le médian est indicatif.

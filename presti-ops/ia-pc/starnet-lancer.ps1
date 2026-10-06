@@ -19,7 +19,7 @@ else {
 if (Ecoute 3101) { Write-Host 'tunnel freellmapi : déjà en ligne (3101)' }
 else {
   Start-Sleep 2
-  $cle2 = Join-Path $env:USERPROFILE '.sshpresti-usine'
+  $cle2 = Join-Path $env:USERPROFILE '.ssh\presti-usine'
   $p2 = Start-Process -FilePath ssh -ArgumentList '-N', '-o', 'ExitOnForwardFailure=yes', '-o', 'ServerAliveInterval=30', '-o', 'BatchMode=yes', '-L', '3101:127.0.0.1:3001', '-i', $cle2, 'usine@88.96.53.3' -WindowStyle Hidden -PassThru
   Write-Host "tunnel freellmapi : lancé, PID $($p2.Id)"
   Start-Sleep 3
