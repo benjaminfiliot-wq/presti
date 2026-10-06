@@ -18,6 +18,7 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import { compacterEntree } from '../modele/chef-leger-entree.mjs'
 
 export const MINUTE = 60_000
 export const HEURE = 60 * MINUTE
@@ -179,6 +180,17 @@ export function fetchLocal(url, init = {}) {
   })
 }
 
+/**
+ * Pour un moteur LOCAL (sans GPU), le fichier d'état du cycle (`…entree.md`) est compacté par la même fonction que celle du modèle maison
+ * (scripts/modele/chef-leger-entree.mjs) : mesuré le 06/10 sur l'usine, le 4 B lit alors l'état en 167 à 226 s au lieu de dépasser 480 s.
+ * Un fichier qui ne se compacte pas (pas de bloc <donnees_etat>) est laissé tel quel. Les moteurs distants reçoivent l'état brut. Pure.
+ */
+export function compacterPourLocal(utilisateur, compacter = compacterEntree) {
+  return String(utilisateur).replace(/<fichier nom="([^"]*entree[^"]*)">\n([\s\S]*?)\n<\/fichier>/g, (tout, nom, texte) => {
+    try { return `<fichier nom="${nom}">\n${compacter(texte)}\n</fichier>` } catch { return tout }
+  })
+}
+
 /** Le texte d'une réponse Ollama /api/chat, diffusée (une ligne JSON par morceau) ou non (un seul objet) : les `message.content` mis bout à bout ; null si rien n'est lisible. Pure. */
 export function texteOllama(brut) {
   let texte = '', lu = false
@@ -195,7 +207,7 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null
   const controleur = new AbortController()
   const minuteur = setTimeout(() => controleur.abort(), delaiMs)
   try {
-    const messages = [{ role: 'system', content: prompt.systeme }, { role: 'user', content: prompt.utilisateur }]
+    const messages = [{ role: 'system', content: prompt.systeme }, { role: 'user', content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur }]
     const entetes = { 'content-type': 'application/json' }
     if (moteur.api !== 'ollama' && cle) entetes.authorization = `Bearer ${cle}`
     const corpsDe = () => (moteur.api === 'ollama'
