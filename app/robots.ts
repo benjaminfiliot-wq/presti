@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
         // Toute la console privée. Ces pages redirigent vers /login côté client : rien ne fuit,
         // mais elles n'ont rien à faire dans un index — et la liste doit suivre les pages ajoutées.
         disallow: [
-          '/dashboard', '/devis', '/factures', '/abonnement', '/outils', '/onboarding', '/controle', '/direction',
+          '/dashboard', '/devis', '/factures', '/chiffres', '/abonnement', '/outils', '/onboarding', '/controle', '/direction',
           '/messages', '/profil', '/parametres', '/plateforme', '/tarifs', '/inventaire',
           '/a/', '/login', '/signup', '/reset-password', '/api/',
         ],

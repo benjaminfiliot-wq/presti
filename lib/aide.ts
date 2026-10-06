@@ -222,6 +222,27 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'essentiel',
   },
 
+  // source: app/chiffres/page.tsx (lecture seule, filtrée sur votre compte) ; lib/tableau-de-bord/calculer.ts (règles de calcul) ; app/chiffres/Tableau.tsx (affichage)
+  {
+    id: 'chiffres',
+    page: '/chiffres',
+    titre: 'Mes chiffres : l’argent et l’activité en un coup d’œil',
+    aQuoiCaSert:
+      'Cet écran additionne pour vous ce qui est déjà dans Presti : vos factures, vos devis et vos demandes. ' +
+      'Vous y voyez ce que vous avez facturé ce mois-ci, le mois dernier et dans l’année, ce qui est encaissé, ' +
+      'en attente ou en retard, le taux d’acceptation de vos devis, les devis à relancer et d’où viennent vos demandes. ' +
+      'Il ne demande aucune saisie et ne modifie rien : il lit seulement.',
+    commentOnSenSert: [
+      'Regardez les quatre chiffres du haut : facturé ce mois, mois dernier, depuis janvier, et ce qui est en retard.',
+      'Ouvrez « Devis à relancer » : un devis envoyé depuis plus de 7 jours sans réponse y apparaît, avec son montant. Touchez la ligne pour l’ouvrir.',
+      'Pour qu’une facture compte comme encaissée, marquez-la « payée » dans Factures. Sinon elle reste en attente, puis en retard une fois l’échéance dépassée.',
+    ],
+    pourVosClients: 'Rien : vos clients ne voient jamais cet écran, il n’est visible que de vous.',
+    credits: 'Aucun — c’est un calcul sur vos données, sans appel à l’IA.',
+    reglagesLies: ['/factures', '/devis'],
+    disponibleAvec: 'essentiel',
+  },
+
   // source: app/inventaire/page.tsx:9-213 ; app/api/inventaire/route.ts:11-26 (réservé Studio/Signature)
   {
     id: 'inventaire',
