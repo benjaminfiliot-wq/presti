@@ -21,7 +21,12 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { createRequire } from 'node:module'
 import { ICI, RACINE_DEPOT, outils, envEnfant, lancer, sonder, rapatrier, preparer } from './outils.mjs'
-import { CONSTRUCTEURS, transition, mots } from './plans.mjs'
+import { CONSTRUCTEURS as CLASSIQUES, transition as transitionClassique, mots } from './plans.mjs'
+import { CONSTRUCTEURS as KEYNOTE, transition as transitionKeynote } from './plans-keynote.mjs'
+
+/** Styles d'animation : « classique » (rubans, coupes balayées) ou « keynote » (whip, cartes 3D, morph, pilule). */
+export const STYLES = { classique: { constructeurs: CLASSIQUES, transition: transitionClassique }, keynote: { constructeurs: KEYNOTE, transition: transitionKeynote } }
+const CONSTRUCTEURS = CLASSIQUES
 import { choisirFournisseur, produireVoix, transcrire, ressemblance } from './voix.mjs'
 import { choisirPiste, grille as grilleDe, lireManifeste, defautsLicence } from './musique.mjs'
 import { pisteVoix, pisteVoixMusique, poserSon, extraireSon, mesurerNiveau, silences } from './son.mjs'
@@ -104,7 +109,8 @@ const ENTREES = ['balaye', 'flash', 'balaye-g', 'monte', 'coupe', 'balaye', 'fla
  * Chaque plan commence sur un temps fort et dure assez de temps pour sa réplique (voix + souffle).
  * G.t(k) = instant du k-ième temps fort. Les mots affichés reçoivent les instants où la voix les dit.
  */
-function decouper(L, produit, V, G) {
+function decouper(L, produit, V, G, style = 'classique') {
+  const keynote = style === 'keynote'
   const imgP = produit.imagePrincipale
   const plans = []
   const poses = []
@@ -129,7 +135,8 @@ function decouper(L, produit, V, G) {
     pousser(P, temps(b, t0 + r.duree + SOUFFLE, min), T)
   }
   const rev = { ...(produit.revelation || {}), ...(L.revelation || {}) }
-  simple(V.revelation, { type: 'produit', image: rev.image || imgP, texte: V.revelation.texte, motFond: produit.motFond, entree: 'zoom' })
+  // keynote : la révélation (point lumineux → produit) prend deux temps de plus, ceux du plan d'appel supprimé.
+  simple(V.revelation, { type: 'produit', revelation: true, image: rev.image || imgP, texte: V.revelation.texte, motFond: produit.motFond, entree: 'zoom' }, keynote ? 4 : 2)
   let nProduit = 0
   L.gestes.forEach((g, k) => simple(V[`geste${k}`], {
     miroir: g.miroir ?? (g.plan === 'produit' && nProduit++ % 2 === 0),
@@ -147,8 +154,13 @@ function decouper(L, produit, V, G) {
   pousser({ type: 'benefice', image: L.imageBenefice || imgP, texte: B.parties[1], variante: 1, entree: 'coupe' }, nB - m1, tB.slice(B.coupe))
 
   const appelTxt = V.appel.texte
-  simple(V.appel, { type: 'appel', image: L.imageAppel || imgP, texte: appelTxt, variante: 0, motFond: produit.motFond, entree: 'flash' })
-  pousser({ type: 'appel', image: L.imageAppel || imgP, texte: appelTxt, variante: 1, marque: produit.marque || 'Brico Travaux', entree: 'monte' }, 3)
+  if (keynote) {
+    // Une seule fois « Lien dans la bio » : dans la clôture (pilule + phrase dite), assez longue pour se poser.
+    simple(V.appel, { type: 'appel', image: L.imageAppel || imgP, texte: appelTxt, variante: 1, marque: produit.marque || 'Brico Travaux', entree: 'flash' }, 4)
+  } else {
+    simple(V.appel, { type: 'appel', image: L.imageAppel || imgP, texte: appelTxt, variante: 0, motFond: produit.motFond, entree: 'flash' })
+    pousser({ type: 'appel', image: L.imageAppel || imgP, texte: appelTxt, variante: 1, marque: produit.marque || 'Brico Travaux', entree: 'monte' }, 3)
+  }
 
   plans.forEach((P, i) => {
     P.i = i; P.id = `p${i}`
@@ -208,8 +220,10 @@ function commandeHyperframes(O) {
 
 // ───────────────────────────── Une vidéo ─────────────────────────────
 
-export async function produire(fichierLigne, { sortie, travail, cache, brouillon = false, sansRendu = false, journal = console.log } = {}) {
+export async function produire(fichierLigne, { sortie, travail, cache, brouillon = false, sansRendu = false, style: styleOpt, journal = console.log } = {}) {
   const L = typeof fichierLigne === 'string' ? lireJSON(fichierLigne) : fichierLigne
+  const style = styleOpt || L.style || process.env.TIKTOK_STYLE || 'keynote'
+  if (!STYLES[style]) throw new Error(`style inconnu « ${style} » (${Object.keys(STYLES).join(', ')})`)
   const produit = chargerProduit(L.produit)
   valider(L, produit)
   const O = outils()
@@ -218,7 +232,7 @@ export async function produire(fichierLigne, { sortie, travail, cache, brouillon
   // 1. Musique (seulement une piste licenciée du manifeste) et grille des temps forts.
   const piste = choisirPiste(L)
   const G = grilleDe(piste, L.bpm || 128)
-  journal(`[${L.id}] grille : ${G.source}`)
+  journal(`[${L.id}] grille : ${G.source} ; style : ${style}`)
 
   // 2. Voix : fournisseur décidé par la garde du dépôt, puis répliques (cache clé sur le texte) écoutées une à une.
   const R = repliquesDe(L, produit)
@@ -228,7 +242,7 @@ export async function produire(fichierLigne, { sortie, travail, cache, brouillon
   const V = Object.fromEntries(R.map((r) => [r.cle, r]))
 
   // 3. Plans calés sur la grille, assez longs pour leur réplique.
-  const { plans, poses, bpm, temps, duree } = decouper(L, produit, V, G)
+  const { plans, poses, bpm, temps, duree } = decouper(L, produit, V, G, style)
 
   const projet = path.join(travail, L.id)
   fs.rmSync(projet, { recursive: true, force: true })
@@ -238,15 +252,17 @@ export async function produire(fichierLigne, { sortie, travail, cache, brouillon
   const images = await preparerImages(O, produit, [...noms], path.join(projet, 'assets'), cache)
   fs.copyFileSync(cheminGsap(), path.join(projet, 'assets', 'gsap.min.js'))
 
+  const S = STYLES[style]
   const ctx = {
-    js: [], bpm,
+    js: [], defs: [], bpm, style,
     img: (n) => { if (!images[n]) throw new Error(`image ${n} non préparée`); return images[n] },
     point: (n, p) => { const v = images[n]?.points?.[p]; if (!v) throw new Error(`point ${p} absent de l'image ${n}`); return v },
   }
   const blocs = []
   plans.forEach((P, i) => {
-    blocs.push(CONSTRUCTEURS[P.type](ctx, P))
-    if (i > 0) transition(ctx, plans[i - 1], P)
+    if (style === 'keynote') P.derive = ctx.js // chaque plan dérive (aucun plan figé)
+    blocs.push(S.constructeurs[P.type](ctx, P))
+    if (i > 0) S.transition(ctx, plans[i - 1], P)
   })
   const gabarit = fs.readFileSync(path.join(ICI, 'gabarit.html'), 'utf8')
   const html = gabarit
@@ -254,7 +270,7 @@ export async function produire(fichierLigne, { sortie, travail, cache, brouillon
     .replaceAll('{{DUREE}}', String(duree))
     .replace('{{PLANS}}', () => blocs.join('\n'))
     .replace('{{SCRIPT}}', () => ctx.js.map((l) => '      ' + l).join('\n'))
-  fs.writeFileSync(path.join(projet, 'index.html'), html)
+  fs.writeFileSync(path.join(projet, 'index.html'), html.replace('{{DEFS}}', () => ctx.defs.join('')).replace('data-composition-id="main"', `data-composition-id="main" data-style="${style}"`))
   fs.writeFileSync(path.join(projet, 'hyperframes.json'), JSON.stringify({
     $schema: 'https://hyperframes.heygen.com/schema/hyperframes.json',
     paths: { blocks: 'compositions', components: 'compositions/components', assets: 'assets' },
@@ -319,6 +335,7 @@ export async function produire(fichierLigne, { sortie, travail, cache, brouillon
   verif.voix = { fournisseur: F.fournisseur, voix: F.voix, vitesse: F.vitesse, manifeste: F.manifeste, repliques: R.map((x) => ({ cle: x.cle, texte: x.texte, entendu: x.transcription, ressemblance: x.ressemblance, duree: x.duree })) }
   verif.musique = piste ? { id: piste.id, titre: piste.titre, artiste: piste.artiste, music_id: piste.licence.music_id, bpm: piste.bpm } : null
   verif.grille = G.source
+  verif.style = style
   verif.sorties = sorties
   verif.notes = notesHonnetete(L, produit)
   fs.writeFileSync(path.join(dossierVerif, 'rapport.json'), JSON.stringify(verif, null, 2))
@@ -439,7 +456,7 @@ async function principal() {
   const cache = process.env.TIKTOK_CACHE || path.join(ICI, 'cache')
   let echecs = 0
   for (const e of entrees) {
-    try { await produire(e, { sortie, travail, cache, brouillon: !!opt.brouillon, sansRendu: !!opt['sans-rendu'] }) }
+    try { await produire(e, { sortie, travail, cache, brouillon: !!opt.brouillon, sansRendu: !!opt['sans-rendu'], style: typeof opt.style === 'string' ? opt.style : undefined }) }
     catch (err) { echecs++; console.error(`[${path.basename(e)}] ${err.message}`) }
   }
   return echecs ? 1 : 0

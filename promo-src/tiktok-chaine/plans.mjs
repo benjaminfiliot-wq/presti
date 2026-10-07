@@ -6,9 +6,9 @@
 //   rien d'important au-dessus de y = 120, en dessous de y = 1700, ni à droite de x = 900.
 
 export const ZONE = { gauche: 60, droite: 900, haut: 140, bas: 1690 }
-const JAUNE = '#FFC400'
+export const JAUNE = '#FFC400'
 
-const n3 = (x) => Math.round(x * 1000) / 1000
+export const n3 = (x) => Math.round(x * 1000) / 1000
 const J = (x) => JSON.stringify(x)
 export const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
@@ -25,7 +25,7 @@ export function mots(texte) {
 }
 
 /** Taille de police qui fait tenir des mots Anton majuscules dans `largeur` sur `lignesMax` lignes. */
-function ajuster(listeMots, { max, min = 64, largeur = 840, lignesMax = 3, pad = 0, ecart = 26, interligne = 1.12, hauteurMax = Infinity }) {
+export function ajuster(listeMots, { max, min = 64, largeur = 840, lignesMax = 3, pad = 0, ecart = 26, interligne = 1.12, hauteurMax = Infinity }) {
   const larg = (m, t) => m.length * t * 0.5 + pad
   for (let t = max; t >= min; t -= 4) {
     if (listeMots.some((m) => larg(m, t) > largeur)) continue
@@ -45,15 +45,19 @@ function ajuster(listeMots, { max, min = 64, largeur = 840, lignesMax = 3, pad =
 const instant = (motsT, k, t0, defaut) => (motsT && motsT[k] != null ? n3(Math.max(t0 + 0.02, motsT[k] - 0.04)) : defaut)
 
 /** Sous-titres mot à mot : chaque mot apparaît quand la voix le dit, le mot « dit » passe en jaune. */
-function sousTitres(ctx, id, texte, t0, d, { top = 1290, max = 112, hauteurMax = 400, motsT } = {}) {
+export function sousTitres(ctx, id, texte, t0, d, { top = 1290, max = 112, hauteurMax = 400, motsT, lettres = false } = {}) {
   const liste = mots(texte)
   if (!liste.length) return ''
   const { taille } = ajuster(liste, { max, hauteurMax })
   const pas = Math.min(0.2, (d * 0.6) / liste.length)
   let html = `<div class="sous" id="${id}" style="top:${top}px">`
   liste.forEach((m, k) => {
-    html += `<span class="mot" id="${id}-${k}" style="font-size:${taille}px">${esc(m)}</span>`
     const t = instant(motsT, k, t0, n3(t0 + 0.04 + k * pas))
+    if (lettres) {
+      // Le mot s'écrit lettre à lettre à partir de l'instant où la voix le dit.
+      html += `<span class="mot" id="${id}-${k}" style="font-size:${taille}px">${[...m].map((c, j) => `<span class="lettre" id="${id}-${k}-${j}">${esc(c)}</span>`).join('')}</span>`
+      ;[...m].forEach((_, j) => ctx.js.push(`tl.fromTo("#${id}-${k}-${j}", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.08, ease: "power2.out" }, ${n3(t + 0.06 + j * 0.035)});`))
+    } else html += `<span class="mot" id="${id}-${k}" style="font-size:${taille}px">${esc(m)}</span>`
     ctx.js.push(`tl.fromTo("#${id}-${k}", { opacity: 0, scale: 0.45, y: 34 }, { opacity: 1, scale: 1, y: 0, duration: 0.14, ease: "back.out(2.6)" }, ${t});`)
     ctx.js.push(`tl.set("#${id}-${k}", { color: "${JAUNE}" }, ${t});`)
     if (k > 0) ctx.js.push(`tl.set("#${id}-${k - 1}", { color: "#ffffff" }, ${t});`)
@@ -62,7 +66,7 @@ function sousTitres(ctx, id, texte, t0, d, { top = 1290, max = 112, hauteurMax =
 }
 
 /** Ruban d'accroche : des étiquettes de chantier, plein écran. */
-function ruban(ctx, id, texte, t0, { top, hauteur, max = 190, pas = 0.12, styles, motsT } = {}) {
+export function ruban(ctx, id, texte, t0, { top, hauteur, max = 190, pas = 0.12, styles, motsT } = {}) {
   const liste = mots(texte)
   const { taille } = ajuster(liste, { max, pad: 52, ecart: 18, lignesMax: 4, interligne: 1.22, hauteurMax: hauteur, largeur: 840 })
   let html = `<div class="ruban" id="${id}" style="top:${top}px;height:${hauteur}px">`
@@ -78,21 +82,21 @@ function ruban(ctx, id, texte, t0, { top, hauteur, max = 190, pas = 0.12, styles
 // ───────────────────────────── Produit détouré ─────────────────────────────
 
 /** Place une image dans une boîte (centre cx, cy ; largeur/hauteur max) ; renvoie la géométrie affichée. */
-function placer(img, cx, cy, lmax, hmax) {
+export function placer(img, cx, cy, lmax, hmax) {
   const s = Math.min(lmax / img.largeur, hmax / img.hauteur)
   const l = Math.round(img.largeur * s), h = Math.round(img.hauteur * s)
   return { s, l, h, x: Math.round(cx - l / 2), y: Math.round(cy - h / 2) }
 }
 /** Variété de pose sans retoucher la photo : le produit vu en miroir autour de l'axe de la zone sûre. */
-function miroir(oui, html) {
+export function miroir(oui, html) {
   return oui ? `<div class="abs" style="left:0;top:0;width:960px;height:1920px;transform:scaleX(-1)">${html}</div>` : html
 }
-function imgDecoupe(P, id, img, g, extra = '') {
+export function imgDecoupe(P, id, img, g, extra = '') {
   return `<img class="decoupe${img.fondu ? ' fondu' : ''}" id="${id}" src="${img.fichier}" alt="" data-start="${P.t0}" data-duration="${P.d}" style="left:${g.x}px;top:${g.y}px;width:${g.l}px;height:${g.h}px;${extra}" />`
 }
 
 /** Lignes de mots géants en contour qui défilent derrière le produit (parallaxe). */
-function fondMots(ctx, P, texte) {
+export function fondMots(ctx, P, texte) {
   const t = (String(texte || 'BRICO TRAVAUX').toUpperCase() + ' · ').repeat(4)
   let html = '<div class="fond-mots">'
   for (let k = 0; k < 6; k++) {
@@ -106,7 +110,7 @@ function fondMots(ctx, P, texte) {
 // ───────────────────────────── Scènes dessinées ─────────────────────────────
 
 /** Tapis de sol et miettes. mode "chute" (accroche) ou "aspire" (avant/après avec l'aspirateur). */
-function sceneMiettes(ctx, P, { mode, outil, t, d }) {
+export function sceneMiettes(ctx, P, { mode, outil, t, d }) {
   const r = graine(P.id + 'mie')
   let html = '<div class="sc-habitacle"></div><div class="tapis"></div>'
   const bande = mode === 'aspire' ? { y0: 760, y1: 1180 } : { y0: 680, y1: 1820 }
@@ -195,7 +199,7 @@ function tagsAvantApres(ctx, P, top, tAvant, tApres) {
   return `<span class="tag avant" id="${P.id}-ta" style="left:120px;top:${top}px">Avant</span><span class="tag apres" id="${P.id}-tp" style="left:600px;top:${top}px">Après</span>`
 }
 
-function sceneTerrasse(ctx, P, { t, d, fin, tags = true }) {
+export function sceneTerrasse(ctx, P, { t, d, fin, tags = true }) {
   let html = '<div class="sc-jardin"></div>' + dallesHTML(P, false) + dallesHTML(P, true)
   const X0 = 1040, X1 = 520
   const jet = balayageJet(ctx, P, { t, d, X0, X1, Sy: -470, fin })
@@ -208,7 +212,7 @@ function sceneTerrasse(ctx, P, { t, d, fin, tags = true }) {
 }
 
 /** Vélo dessiné couvert de boue ; le jet fait sauter chaque paquet quand il passe dessus. */
-function sceneVelo(ctx, P, { t, d, fin }) {
+export function sceneVelo(ctx, P, { t, d, fin }) {
   const r = graine(P.id + 'velo')
   const ox = 40, oy = 820 // origine du dessin (1000 × 640)
   const R = (a, b, c, e) => `<line x1="${a}" y1="${b}" x2="${c}" y2="${e}" />`
@@ -242,7 +246,7 @@ function sceneVelo(ctx, P, { t, d, fin }) {
 }
 
 /** Boîte à gants dessinée ; l'aspirateur en sort au deuxième temps. */
-function sceneBoite(ctx, P, { outil, t1, d2 }) {
+export function sceneBoite(ctx, P, { outil, t1, d2 }) {
   const g = placer(outil, 540, 0, 560, 460)
   let html = '<div class="sc-tableau"></div><div class="bg-fond" id="' + P.id + '-bf"></div>'
   html += `<img class="decoupe" id="${P.id}-asp" src="${outil.fichier}" alt="" data-start="${P.t0}" data-duration="${P.d}" style="left:${g.x}px;top:1150px;width:${g.l}px;height:${g.h}px;z-index:2" />`
@@ -256,7 +260,13 @@ function sceneBoite(ctx, P, { outil, t1, d2 }) {
 
 // ───────────────────────────── Les plans ─────────────────────────────
 
-function section(P, contenu, fond = '#111') {
+export function section(P, contenu, fond = '#111') {
+  if (P.derive) {
+    // Rien n'est jamais figé : un léger travelling sur tout le plan (dérive + roulis), sous les animations du plan.
+    const r = graine(P.id + 'derive'), a = Math.round(10 + r() * 10) * (r() < 0.5 ? -1 : 1), b = Math.round(8 + r() * 8)
+    P.derive.push(`tl.fromTo("#${P.id}-dv", { x: ${-a}, y: ${b}, rotation: ${r() < 0.5 ? -0.5 : 0.5}, scale: 1.04 }, { x: ${a}, y: ${-b}, rotation: 0, scale: 1.075, duration: ${P.d}, ease: "sine.inOut" }, ${P.t0});`)
+    contenu = `<div class="derive" id="${P.id}-dv">${contenu}</div>`
+  }
   return `      <section class="clip" id="${P.id}" data-start="${P.t0}" data-duration="${P.d}" data-track-index="${P.i % 2}">
         <div class="plan" id="${P.id}-w" style="background:${fond}">${contenu}</div>
       </section>`

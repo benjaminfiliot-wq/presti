@@ -5,7 +5,7 @@
   "produit": "aspirateur",
   "accroche": "Ta voiture est pleine | de miettes ?",
   "probleme": "miettes",
-  "revelation": { "image": "noir", "texte": "L'aspirateur sans fil" },
+  "revelation": { "image": "noir", "texte": "Un aspirateur sans fil" },
   "gestes": [
     { "plan": "avant-apres", "scene": "miettes", "outil": "noir", "texte": "Tu passes, plus de miettes" },
     { "plan": "photo", "image": "console", "mouvement": "zoom", "texte": "Même dans les recoins" },

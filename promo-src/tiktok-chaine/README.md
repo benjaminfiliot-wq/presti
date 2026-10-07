@@ -51,6 +51,22 @@ Sur l'usine, mode file (même code) : `generer.mjs --file` vide `~/travail/tikto
 5. **Écoute de la vidéo finale** (pas des fichiers intermédiaires) : niveau, aucun silence de plus de 0,8 s au début,
    transcription comparée au texte affiché (≥ 0,85). La vidéo est refusée sinon.
 
+## Style d'animation « keynote » (par défaut depuis le 07/10)
+
+Repris de la référence de Benj (une démo produit façon keynote, @tonytuyisenge), à la charte noir / jaune, dans `plans-keynote.mjs` :
+
+1. **Ouverture** : la vidéo OUVRE sur le point lumineux. L'accroche est lisible dès la 1ʳᵉ image (étiquettes affichées d'avance, le mot dit s'allume), sur la scène du problème assombrie ; la comète tourne autour du texte, se pose au centre et grossit ; au plan suivant elle s'ouvre en cercle sur le produit (morph) et son nom s'écrit **lettre à lettre** au rythme de la voix.
+2. **Coupes « whip »** : glissé rapide avec **flou de mouvement directionnel** (filtre SVG propre à chaque coupe, posé seulement pendant la coupe) ; **éclair lumineux** (bloom) sur les coupes « flash ».
+3. **Cartes en perspective 3D** : les photos et les fiches produit entrent de biais et en profondeur, en décalé, puis flottent (ombres portées, reflet qui passe).
+4. **Trait de lumière** : il dessine un arc puis devient la barre jaune qui porte le bénéfice.
+5. **Mouvement continu** : chaque plan dérive légèrement (travelling, roulis) : rien n'est jamais figé.
+6. **Clôture** : une pilule BRICO TRAVAUX, des bulles en parallaxe, la phrase d'appel dessous, dite et calée sur la voix. « Lien dans la bio » n'apparaît qu'une fois (ici) ; le temps gagné va à la révélation du produit.
+
+Retiré après revue du 07/10 : le texte géant qui défilait en fond (« SANS FIL · ») se lisait tronqué ou collé (« EMUTS », « SANFIL ») : fond sombre et lueur à la place. Prononciation : Kokoro dit bien « sans fil », mais après « L'aspirateur » Whisper entend « s'en file » : la révélation dit « Un aspirateur sans fil ».
+
+`--style=classique` (ou `"style": "classique"` dans la ligne, ou `TIKTOK_STYLE`) rend l'ancien style. Pas encore fait : l'animation incrustée dans l'écran d'un téléphone posé dans un vrai décor (il faut une photo de décor à la licence prouvée).
+Piège HyperFrames : trop de surcouches lourdes (flou CSS, dégradé radial, clip-path) font sortir des images noires ; `hyperframes lint` les compte (avertissement `composition_heavy_overlay_count_high`) : préférer les dégradés linéaires et l'opacité.
+
 ## Musique : la règle
 
 **Jamais un son protégé incrusté** (contrefaçon : TikTok coupe le son ou retire la vidéo).
@@ -86,9 +102,13 @@ ajouté par-dessus (deux musiques). `reperes.txt` donne le tempo à viser et la 
 `juge.mjs` écoute et mesure lui-même chaque vidéo livrée, sans croire le rapport :
 J1 voix présente, J2 texte dit = texte affiché (transcription de la vidéo comparée à la ligne), J3 sous-titres calés sur la
 voix réelle (médiane ≤ 0,25 s, pire ≤ 0,7 s), J4 -14 LUFS ± 1,5, J5 aucun silence > 0,8 s au début, J6 aucune piste sans
-preuve de licence au manifeste (et la version musique nomme une piste utilisable), J7 le son couvre la vidéo.
+preuve de licence au manifeste (et la version musique nomme une piste utilisable), J7 le son couvre la vidéo,
+J8 au moins une coupe à flou directionnel (mesuré sur l'image : à la coupe, le rapport des contrastes horizontal / vertical
+s'effondre par rapport au milieu des plans), J9 au moins un plan en perspective 3D, J10 aucun passage figé de plus de 0,8 s, J11 aucun mot tronqué ou collé à l'écran (OCR tesseract de 3 images au-dessus des sous-titres : tout mot lu avec assurance doit être un mot de la ligne ou de la marque ; tesseract est sur l'usine, pas sur le PC)
+(différence d'images à 10 i/s).
 `--sabotages` fabrique des copies cassées (muette, voix d'une autre vidéo, -10 dB, 1,5 s de silence en tête, piste sans preuve,
-sous-titres décalés de 0,8 s) : chacune doit être refusée, sinon le juge échoue.
+sous-titres décalés de 0,8 s, coupes cherchées hors des whips, perspective retirée, 1,2 s d'image figée, « EMUTS SANFIL » incrusté) : chacune doit être
+refusée, sinon le juge échoue. Le juge demande le style keynote (J8, J9) : une vidéo du style classique est refusée.
 
 ## Installer la voix
 
