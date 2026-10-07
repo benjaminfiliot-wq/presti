@@ -58,7 +58,8 @@ function muter(racine, fichier, avant, apres) {
 function lancerEnfant(racine) {
   const tous = []
   for (const executer of EXECUTERS) {
-    const r = spawnSync(process.execPath, ['--experimental-strip-types', '--import', pathToFileURL(LOADER).href, executer, racine], { cwd: racine, encoding: 'utf8', timeout: 180_000, windowsHide: true, maxBuffer: 1 << 24 })
+    // 07/10 : 420 s (180 avant) : RC-13b, RC-14 et RC-15 lancent chef-modele.mjs de bout en bout ; l'enfant du chef prend ~100 s seul, davantage sous charge (sabotage 21 coupé à 180 s).
+    const r = spawnSync(process.execPath, ['--experimental-strip-types', '--import', pathToFileURL(LOADER).href, executer, racine], { cwd: racine, encoding: 'utf8', timeout: 420_000, windowsHide: true, maxBuffer: 1 << 24 })
     const m = /@@RESULTATS@@(.*)/.exec(r.stdout || '')
     if (!m) return { erreur: `${path.basename(executer)} n'a rien rendu (code ${r.status}) : ${String(r.stderr || r.stdout).replace(/\s+/g, ' ').slice(-500)}` }
     tous.push(...JSON.parse(m[1]).resultats)
@@ -172,8 +173,15 @@ const SABOTAGES = [
   { nom: "chef : le moteur local reçoit l'état brut (lecture trop longue pour finir le plan)",
     mutations: [['scripts/usine/relais-chef.mjs', "content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur", "content: prompt.utilisateur"]],
     rouges: ['RC-10d'] },
-  { nom: "chef : le modèle maison reçoit aussi les plans de cycle plein (hors de son entraînement)",
-    mutations: [['scripts/usine/relais-chef.mjs', "if (!/plan du cycle leger\\b/.test(u)) return null", "if (!/plan du cycle \\w+\\b/.test(u)) return null"]],
+  // 07/10 : le modèle maison écrit aussi les pleins (depuis l'entrée du léger) ; ce sabotage-ci lui ouvre toute demande (la réunion comprise).
+  { nom: "chef : le modèle maison reçoit toute demande, la réunion comprise (hors de son entraînement)",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (!/plan du cycle (?:leger|plein)\\b/.test(u)) return null", "if (false) return null"]],
+    rouges: ['RC-10e'] },
+  { nom: "chef : le plan léger du modèle maison n'est pas réétiqueté pour un cycle plein (refusé par le validateur du plein)",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (maison && cycleDemande(prompt.utilisateur) === 'plein' && essai.cycle === 'leger') essai.cycle = 'plein'", '']],
+    rouges: ['RC-10e'] },
+  { nom: "chef : le réétiquetage léger → plein vaut pour tout moteur (un moteur libre rendrait un plein amputé)",
+    mutations: [['scripts/usine/relais-chef.mjs', "if (maison && cycleDemande(prompt.utilisateur) === 'plein' && essai.cycle === 'leger') essai.cycle = 'plein'", "if (cycleDemande(prompt.utilisateur) === 'plein' && essai.cycle === 'leger') essai.cycle = 'plein'"]],
     rouges: ['RC-10e'] },
   { nom: "chef : le modèle maison reçoit le prompt générique au lieu de l'entrée de son entraînement",
     mutations: [['scripts/usine/relais-chef.mjs', "const messages = maison ?? [", "const messages = null ?? ["]],
@@ -191,7 +199,7 @@ const SABOTAGES = [
     mutations: [['scripts/usine/relais-chef.mjs', ' || !sousUnPermis(complet)) continue', ') continue']],
     rouges: ['RC-10'] },
   { nom: "chef : le validateur du plan n'est pas branché (un plan refusé en bloc par le cycle serait écrit)",
-    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]\n', '']],
+    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet), ...consignes(objet)]\n', '']],
     rouges: ['RC-7'] },
   { nom: "chef : les écarts du validateur ne sont pas rendus au modèle (pas de correction)",
     mutations: [['scripts/usine/relais-chef.mjs', 'if (!ecarts.length) { objet = essai; break }', '{ objet = essai; break }']],
@@ -250,7 +258,7 @@ const SABOTAGES = [
     rouges: ['RC-13'] },
   // ── 07/10 : le cap de Benj (garde de pertinence) et les moteurs locaux des cycles pleins ──
   { nom: "cap : la garde de pertinence n'est pas dans le validateur du relais (un plan tout hors du cap est écrit)",
-    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]\n', '      valider = (objet) => validerPlan(objet, cycle)\n']],
+    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet), ...consignes(objet)]\n', '      valider = (objet) => [...validerPlan(objet, cycle), ...consignes(objet)]\n']],
     rouges: ['RC-14'], verts: ['RC-7'] },
   { nom: "cap : un plan de Codex tout hors du cap compte comme écrit (le moteur suivant ne prend pas la demande)",
     mutations: [['scripts/usine/chef-modele.mjs', 'if (plan && pertinence(plan).length) return false', 'if (false) return false']],
@@ -282,6 +290,15 @@ const SABOTAGES = [
   { nom: "chef : un plan plein est demandé en entier au moteur local (aucune consigne de plan court)",
     mutations: [['scripts/usine/relais-chef.mjs', "/plan du cycle plein\\b/.test(String(prompt.utilisateur)) ? `\\n\\n${CONSIGNE_LOCALE_PLEIN}` : ''", "false ? '' : ''"]],
     rouges: ['RC-9e'] },
+  { nom: "consignes : le relais ne vérifie pas consignes_lues contre le bloc <consignes_benj> (le fil refuse le plan après coup, cycle de 09:05 UTC)",
+    mutations: [['scripts/usine/chef-modele.mjs', '...pertinence(objet), ...consignes(objet)]', '...pertinence(objet)]']],
+    rouges: ['RC-15'] },
+  { nom: "consignes : les lignes d'ids inconnus ne sont jamais retirées (le plan de la maison est perdu)",
+    mutations: [['scripts/usine/chef-modele.mjs', '  if (!reduire && reduirePlan) reduire = reduirePlan', '  if (false) reduire = reduirePlan']],
+    rouges: ['RC-15'] },
+  { nom: "consignes : le retrait garde aussi les ids inconnus et les doublons",
+    mutations: [['scripts/chef/commun.mjs', 'if (attendus.has(l?.id) && !vus.has(l.id)) {', 'if (true) {']],
+    rouges: ['RC-15'] },
   { nom: "réunion : le délai par défaut retombe à 600 s (555 s au relais : réunion du 06/10 « modele_muet »)",
     mutations: [['scripts/chef/reunion.mjs', "delai: '1200',", "delai: '600',"]],
     rouges: ['RC-13b'] },
