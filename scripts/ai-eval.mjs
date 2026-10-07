@@ -39,7 +39,7 @@ const { detecterCapacitesNonDeclarees, detecterPrixChiffres } = await import('..
 const { compterQuestions } = await import('../lib/ai/playbooks.ts')
 const { profilMetier } = await import('../lib/ai/metiers.ts')
 
-const MODEL = { standard: 'claude-haiku-4-5', pro: 'claude-sonnet-5', expert: 'claude-opus-5' }
+const MODEL = { standard: 'claude-haiku-5-5', pro: 'claude-sonnet-5', expert: 'claude-opus-5' }
 const green = (s) => `\x1b[32m${s}\x1b[0m`, red = (s) => `\x1b[31m${s}\x1b[0m`, dim = (s) => `\x1b[2m${s}\x1b[0m`
 const ok = (c) => (c ? green('✓') : red('✗'))
 let appels = 0
