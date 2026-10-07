@@ -34,6 +34,17 @@ async function occupation() {
   }
   return octets
 }
+/**
+ * La fin du lien : 21 jours après maintenant, mais jamais après la fin de la maquette elle-même. La base l'exige
+ * (`maquettes_21_jours` : expire_le ≤ cree_le + 21 jours) ; le lien se crée toujours une passe ou plus après la maquette,
+ * et « maintenant + 21 jours » faisait échouer chaque lien (503 à l'étape lien_maquette, essai du 07/10).
+ */
+function expirationDuLien(maintenant: number, m: { expire_le?: string | null; cree_le?: string | null }): string {
+  const voulue = Date.parse(expiration(maintenant))
+  const creee = Date.parse(String(m.cree_le ?? ''))
+  const plafonds = [Date.parse(String(m.expire_le ?? '')), Number.isFinite(creee) ? creee + 21 * 86_400_000 : NaN].filter(Number.isFinite)
+  return new Date(Math.min(voulue, ...plafonds)).toISOString()
+}
 function adresse(p: ProspectReserve): string | null {
   return p.canaux?.find((c) => c.canal === 'email_sollicite' && c.nature === 'donnee_par_la_personne')?.valeur ?? null
 }
@@ -95,7 +106,7 @@ export async function POST(req: Request) {
     }
     // Les jetons en clair ne vivent qu'ici, le temps de la requête : la base ne reçoit que leur empreinte, la réponse ne les porte jamais.
     etape = 'redaction'
-    const jeton = creerJeton(), jetonRdv = creerJeton(), expireLe = expiration(maintenant)
+    const jeton = creerJeton(), jetonRdv = creerJeton(), expireLe = expirationDuLien(maintenant, m)
     const resultat = await preparerMessageLien(p, { lien: `https://prestiapp.fr/maquette/${jeton}`, paiement: 'https://prestiapp.fr/site/acheter', rendez_vous: `https://prestiapp.fr/rendez-vous/${jetonRdv}`, date_fin: expireLe, canal, destinataire, preuve_demande: preuve, fil_envoi_id: filEnvoi, conversation_id: conversationId, adresseReponse, drapeaux: { siteAchatPublic: actif('siteAchatPublic') } }, { magasin: magasinSupabase, horloge: { maintenant: () => maintenant, attendre: async () => {} } })
     if (!resultat.ok) return repondre({ ok: false, raison: resultat.raison === 'modele_inconnu' ? 'modele_non_approuve' : resultat.raison })
     // Le lien existe en base AVANT que le message qui le porte soit préparé : jamais un message avec un lien mort.
