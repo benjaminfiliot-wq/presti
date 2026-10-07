@@ -1,39 +1,136 @@
 {
+  "version": 2,
   "metier": "peintre",
+  "da": "peintre",
   "libelles": {
-    "sur": "Peinture",
-    "alt_heros": "Détail d’un travail de peinture",
-    "alt_atelier": "Nuanciers et préparation",
-    "reperes": ["Repère des finitions", "Repère des chantiers", "Repère de proximité"]
+    "metier": "Peintre",
+    "activite": "peinture"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Peinture à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, peinture à {ville}.",
-      "h1": "Peinture à {ville}",
-      "h1Ligne": "Les couleurs prennent vie",
-      "chapeau": "Une page pour présenter les travaux de peinture et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "Les teintes et les finitions",
-          "blocs": [
-            { "type": "p", "texte": "Revêtements muraux, enduits et ravalements peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Peintre à {ville} — {entreprise}",
+    "description": "{entreprise}, peintre à {ville} : murs et plafonds, enduits, boiseries, papiers peints et façades, avec des supports préparés avant de peindre.",
+    "h1": "Peintre à {ville}",
+    "h1Ligne": "La couleur se pose",
+    "chapeau": "Murs, plafonds, boiseries et façades, préparés avant la première couche."
+  },
+  "prestations": {
+    "h2": "Préparer, puis peindre",
+    "intro": "La peinture tient à ce qu’il y a dessous : chaque chantier commence par le support.",
+    "items": [
+      {
+        "titre": "Murs et plafonds",
+        "texte": "Murs et plafonds lessivés, rebouchés, poncés puis peints au rouleau, avec une finition mate, veloutée ou satinée choisie selon la pièce et la lumière qu’elle reçoit.",
+        "photo": "salon"
+      },
+      {
+        "titre": "Préparation des supports",
+        "texte": "Rebouchage des fissures, ratissage, ponçage et sous-couche adaptée, pour que la peinture accroche et que la lumière rasante ne trahisse rien.",
+        "photo": "preparation"
+      },
+      {
+        "titre": "Enduits décoratifs",
+        "texte": "Enduit lissé, badigeon à la chaux ou béton ciré sur mur, posés à la lisseuse en plusieurs passes pour donner de la matière et de la profondeur à une pièce.",
+        "photo": "enduit"
+      },
+      {
+        "titre": "Boiseries et rechampis",
+        "texte": "Portes, plinthes, moulures et rechampis égrenés puis peints au pinceau, avec des filets nets à la rencontre de deux teintes et des chants sans coulure.",
+        "photo": "rechampi"
+      },
+      {
+        "titre": "Façades et volets",
+        "texte": "Nettoyage, traitement des fissures et peinture de façade, de volets et de boiseries extérieures, avec un produit adapté au support et au temps qu’il fait.",
+        "photo": null
+      },
+      {
+        "titre": "Papiers peints",
+        "texte": "Dépose des anciens papiers, rebouchage et préparation du mur, puis pose de papier peint ou de toile à peindre, lés d’aplomb et raccords alignés.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Tout se joue avant",
+    "phrase": "Bâcher, protéger, reboucher, poncer : l’essentiel d’un chantier de peinture se fait avant d’ouvrir le premier pot.",
+    "photo": "preparation"
+  },
+  "realisations": {
+    "h2": "Pièces repeintes",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le chantier."
+  },
+  "etapes": {
+    "h2": "Les étapes du chantier",
+    "intro": "Du choix des teintes au dernier coup de pinceau, le chantier suit toujours le même ordre.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez les pièces ou la façade, l’état des murs et les teintes envisagées, photos à l’appui si possible."
+      },
+      {
+        "titre": "Visite et nuancier",
+        "texte": "Examen des supports, de l’humidité et des anciennes peintures, puis choix des teintes et des finitions sur le nuancier."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez le détail des surfaces, des préparations et des produits prévus, pièce par pièce."
+      },
+      {
+        "titre": "Chantier et nettoyage",
+        "texte": "Protection des sols et des meubles, préparation, peinture, puis retrait des protections et pièce rendue propre."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Faut-il vider entièrement la pièce ?",
+        "reponse": "Pas forcément. Les bibelots et la décoration sont à retirer ; les gros meubles sont regroupés au centre et protégés."
+      },
+      {
+        "question": "Mat, velours ou satiné : que choisir ?",
+        "reponse": "Le mat cache mieux les défauts mais se lave moins bien. Le velours convient aux pièces de vie, le satiné aux cuisines et aux salles d’eau."
+      },
+      {
+        "question": "Combien de couches faut-il prévoir ?",
+        "reponse": "En général, une sous-couche puis deux couches de finition. Cela dépend du support et de l’écart entre l’ancienne et la nouvelle teinte."
+      },
+      {
+        "question": "Peut-on peindre sur du papier peint ?",
+        "reponse": "C’est possible s’il est bien collé et prévu pour, mais le résultat est rarement net. La dépose donne un mur plus propre : cela se décide à la visite."
+      },
+      {
+        "question": "Quand repeindre une façade ?",
+        "reponse": "Par temps sec, hors gel et hors forte chaleur, sur un support propre et sain. Le printemps et le début de l’automne s’y prêtent souvent bien."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de vos murs",
+    "texte": "Décrivez les pièces ou la façade en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Peinture intérieure",
+      "Façade",
+      "Boiseries et volets",
+      "Enduit décoratif",
+      "Papier peint",
+      "Autre projet"
+    ],
+    "message": "Vos pièces, en quelques mots"
   },
   "photos": {
     "demo": "peintre",
-    "fichiers": ["hero-960.webp", "enduit-720.webp"]
+    "heros": "hero",
+    "atelier": "preparation",
+    "galerie": [
+      "salon-spacieux",
+      "salon",
+      "rechampi",
+      "enduit"
+    ]
   }
 }

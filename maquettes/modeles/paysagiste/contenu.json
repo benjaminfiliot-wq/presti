@@ -1,40 +1,122 @@
 {
+  "version": 2,
   "metier": "paysagiste",
+  "da": "paysagiste",
   "libelles": {
-    "sur": "Paysagisme",
-    "alt_heros": "Détail d’un aménagement extérieur",
-    "alt_atelier": "Végétaux et minéraux",
-    "reperes": ["Repère des jardins", "Repère des aménagements", "Repère de proximité"],
-    "illustration": "Photos d'illustration, à remplacer par celles de vos chantiers"
+    "metier": "Paysagiste",
+    "activite": "aménagement de jardins"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Paysagiste à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, paysagiste à {ville}.",
-      "h1": "Paysagiste à {ville}",
-      "h1Ligne": "Le jardin prend forme",
-      "chapeau": "Une page pour présenter les aménagements extérieurs et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La nature et les espaces",
-          "blocs": [
-            { "type": "p", "texte": "Plantations, haies et engazonnement peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Paysagiste à {ville} — {entreprise}",
+    "description": "{entreprise}, paysagiste à {ville} : création de jardins, plantations, haies, terrasses, allées, gazon et entretien au fil des saisons.",
+    "h1": "Paysagiste à {ville}",
+    "h1Ligne": "Le jardin prend forme",
+    "chapeau": "Plantations, terrasses, allées et entretien, pensés pour le terrain et la saison."
   },
-  "photos": {
-    "demo": "menuisier",
-    "fichiers": ["hero-960.webp", "bibliotheque-720.webp"]
-  }
+  "prestations": {
+    "h2": "Du terrain au jardin",
+    "intro": "Les aménagements et l’entretien d’un jardin, de la haie à la création complète.",
+    "items": [
+      {
+        "titre": "Création de jardin",
+        "texte": "Lecture du terrain, de l’exposition et du sol, puis plan des massifs, des pelouses et des circulations, pour savoir où va chaque chose avant la première plantation.",
+        "photo": null
+      },
+      {
+        "titre": "Plantations et haies",
+        "texte": "Arbres, arbustes, vivaces et haies choisis pour le sol, l’ombre et le climat, plantés à la bonne saison, tuteurés si besoin et paillés au pied pour garder la fraîcheur.",
+        "photo": null
+      },
+      {
+        "titre": "Terrasses et allées",
+        "texte": "Terrasses en bois ou en pierre, allées en dalles, en graviers ou en pas japonais, posées sur un fond décaissé et préparé qui draine l’eau sans former de flaques.",
+        "photo": null
+      },
+      {
+        "titre": "Gazon et pelouse",
+        "texte": "Désherbage et préparation du sol, nivellement, semis ou gazon en rouleaux, puis conseils d’arrosage et de première tonte pour une pelouse qui s’installe bien.",
+        "photo": null
+      },
+      {
+        "titre": "Taille et entretien",
+        "texte": "Taille des haies et des arbustes, tonte, désherbage des massifs et ramassage des feuilles, au fil des saisons ou ponctuellement, avec l’évacuation des déchets verts.",
+        "photo": null
+      },
+      {
+        "titre": "Clôtures et murets",
+        "texte": "Clôtures, brise-vue, bordures et petits murets en pierre sèche, pour délimiter le terrain, tenir les terres d’un talus et donner une structure au jardin.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Le terrain décide",
+    "phrase": "On regarde le sol, l’ombre et l’eau avant de choisir une plante : un jardin qui dure est d’abord un jardin adapté à son terrain.",
+    "photo": null
+  },
+  "realisations": {
+    "h2": "Jardins aménagés",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les jardins de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le jardin."
+  },
+  "etapes": {
+    "h2": "Du croquis au jardin",
+    "intro": "De la première visite aux premiers arrosages, le jardin se construit dans l’ordre.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le terrain, ce que vous aimez et l’usage voulu : potager, jeux, coin ombragé, jardin facile à entretenir."
+      },
+      {
+        "titre": "Visite du terrain",
+        "texte": "Relevé des surfaces, de l’exposition, de la nature du sol, des pentes et des accès pour le matériel."
+      },
+      {
+        "titre": "Plan et proposition",
+        "texte": "Vous recevez un plan d’aménagement, la liste des végétaux et des matériaux, et le détail des travaux."
+      },
+      {
+        "titre": "Travaux et plantation",
+        "texte": "Préparation du sol, travaux de structure, plantations à la bonne saison, puis conseils pour les premiers arrosages."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Quelle est la meilleure saison pour planter ?",
+        "reponse": "L’automne, pour la plupart des arbres, arbustes et haies : les racines s’installent avant l’été. Les plantes en pot se plantent presque toute l’année, hors gel et fortes chaleurs."
+      },
+      {
+        "question": "Comment avoir un jardin facile à entretenir ?",
+        "reponse": "En choisissant des plantes adaptées au sol et au climat, en paillant les massifs et en limitant les surfaces de gazon à tondre."
+      },
+      {
+        "question": "Faut-il une autorisation pour une clôture ou un abattage ?",
+        "reponse": "Selon la commune, une clôture peut demander une déclaration préalable et certains arbres sont protégés. Le point se fait en mairie avant les travaux."
+      },
+      {
+        "question": "Peut-on aménager le jardin en plusieurs fois ?",
+        "reponse": "Oui. Un plan d’ensemble permet de commencer par la structure, terrasse ou allées, puis d’ajouter les plantations ensuite."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre jardin",
+    "texte": "Décrivez le terrain et vos envies en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Création de jardin",
+      "Plantations et haies",
+      "Terrasse ou allée",
+      "Entretien régulier",
+      "Taille",
+      "Autre projet"
+    ],
+    "message": "Votre jardin, en quelques mots"
+  },
+  "photos": null
 }

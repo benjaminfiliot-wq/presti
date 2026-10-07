@@ -1,39 +1,132 @@
 {
+  "version": 2,
   "metier": "macon",
+  "da": "macon",
   "libelles": {
-    "sur": "Maçonnerie",
-    "alt_heros": "Détail d’un ouvrage de maçonnerie",
-    "alt_atelier": "Matériaux et fondations",
-    "reperes": ["Repère des fondations", "Repère des ouvrages", "Repère de proximité"]
+    "metier": "Maçon",
+    "activite": "maçonnerie"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Maçonnerie à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, maçonnerie à {ville}.",
-      "h1": "Maçonnerie à {ville}",
-      "h1Ligne": "Les murs prennent forme",
-      "chapeau": "Une page pour présenter les travaux de maçonnerie et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La pierre et le béton",
-          "blocs": [
-            { "type": "p", "texte": "Gros œuvre, extensions et aménagements extérieurs peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Maçon à {ville} — {entreprise}",
+    "description": "{entreprise}, maçon à {ville} : extensions, fondations, dalles, ouvertures dans les murs, murs de soutènement et parements en pierre.",
+    "h1": "Maçon à {ville}",
+    "h1Ligne": "Le mur monte droit",
+    "chapeau": "Murs, fondations, dalles et ouvertures, construits ou repris dans les règles de l’art."
+  },
+  "prestations": {
+    "h2": "Des fondations aux murs",
+    "intro": "Les travaux de maçonnerie d’une maison, de l’extension à la petite reprise.",
+    "items": [
+      {
+        "titre": "Extensions et agrandissements",
+        "texte": "Fondations, murs en blocs ou en briques, dalle, chaînages et linteaux, pour un agrandissement qui se raccorde proprement à la maison existante, sans fissure à la jonction.",
+        "photo": null
+      },
+      {
+        "titre": "Fondations et dalles",
+        "texte": "Terrassement, semelles armées, dalle sur terre-plein ou sur vide sanitaire, coulées après contrôle de la portance du sol, des niveaux et de l’écoulement des eaux.",
+        "photo": "fondations"
+      },
+      {
+        "titre": "Ouvertures dans les murs",
+        "texte": "Création ou agrandissement d’une porte, d’une fenêtre ou d’une baie, avec étaiement provisoire, linteau adapté à la charge du mur et reprise propre des tableaux.",
+        "photo": null
+      },
+      {
+        "titre": "Murs de soutènement",
+        "texte": "Murs pour retenir un talus ou tenir un terrain en pente, avec des fondations adaptées et un drainage à l’arrière pour que l’eau ne pousse pas l’ouvrage.",
+        "photo": "soutenement"
+      },
+      {
+        "titre": "Pierre et parements",
+        "texte": "Habillage en pierre ou en brique, rejointoiement d’un mur ancien à la chaux, reprise d’une façade abîmée en gardant l’appareillage et la teinte des joints d’origine.",
+        "photo": "parement"
+      },
+      {
+        "titre": "Chapes et terrasses",
+        "texte": "Chapes, terrasses, seuils et petites dalles coulées sur place, réglées au niveau ou en pente selon l’usage, puis protégées du soleil et de la pluie pendant le séchage.",
+        "photo": "coulage"
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "D’abord le sol",
+    "phrase": "Un mur ne vaut que ce qui le porte : on regarde le sol, les niveaux et l’eau avant de poser le premier bloc.",
+    "photo": "fondations"
+  },
+  "realisations": {
+    "h2": "Ouvrages montés",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le chantier."
+  },
+  "etapes": {
+    "h2": "Les étapes du chantier",
+    "intro": "De l’implantation au nettoyage, le chantier suit un ordre que vous connaissez dès le départ.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le projet : extension, ouverture, mur ou dalle, avec des photos ou un plan si vous en avez."
+      },
+      {
+        "titre": "Visite du terrain",
+        "texte": "Repérage du sol, des pentes, des accès pour les engins et du raccordement à l’existant, mesures à l’appui."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez la description de l’ouvrage, des matériaux et des démarches éventuelles en mairie, poste par poste."
+      },
+      {
+        "titre": "Chantier et réception",
+        "texte": "Implantation, fondations, élévation, puis nettoyage et visite de l’ouvrage terminé avec vous."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Faut-il une autorisation pour une extension ou un mur ?",
+        "reponse": "Souvent, oui : déclaration préalable ou permis de construire selon la surface et la commune. Le point se fait avant de lancer le chantier."
+      },
+      {
+        "question": "Peut-on ouvrir un mur porteur ?",
+        "reponse": "Oui, avec un étaiement provisoire et un linteau ou une poutre dimensionnés pour la charge. Selon le mur, une étude de structure peut être demandée."
+      },
+      {
+        "question": "Pourquoi mon mur de clôture se fissure-t-il ?",
+        "reponse": "Souvent à cause du sol qui bouge, de l’eau ou d’une fondation trop légère. La fissure se regarde sur place avant de choisir entre reprise et reconstruction."
+      },
+      {
+        "question": "Quand peut-on marcher sur une dalle neuve ?",
+        "reponse": "On peut souvent y marcher au bout de quelques jours, mais le béton continue de durcir pendant des semaines. Les charges lourdes attendent."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre projet",
+    "texte": "Décrivez l’ouvrage et le terrain en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Extension",
+      "Ouverture dans un mur",
+      "Dalle ou fondations",
+      "Mur ou clôture",
+      "Pierre et parement",
+      "Autre projet"
+    ],
+    "message": "Votre projet, en quelques mots"
   },
   "photos": {
     "demo": "macon",
-    "fichiers": ["hero-960.webp", "parement-720.webp"]
+    "heros": "hero",
+    "atelier": "fondations",
+    "galerie": [
+      "hero",
+      "soutenement",
+      "parement",
+      "coulage"
+    ]
   }
 }

@@ -61,7 +61,14 @@ const rel = (p) => path.relative(R, p).split(path.sep).join('/') || '.'
 const NOM = `${JUGE}${o.autoControle ? ' --auto-controle' : REEL ? ` --reel${BOUT ? ` --bout-en-bout --etape=${o.valeurs.etape}` : ''}` : ''}`
 const T0 = Date.parse('2026-10-14T08:00:00.000Z')
 const H_ = 3600_000
-const IDS = ['AM-1', 'AM-2', 'AM-3', 'AM-4', 'AM-5', 'AM-6', 'AM-7', 'AM-8', 'AM-9', 'AM-10', 'AM-11', 'AM-12']
+const IDS = ['AM-1', 'AM-2', 'AM-3', 'AM-4', 'AM-5', 'AM-6', 'AM-7', 'AM-8', 'AM-9', 'AM-10', 'AM-11', 'AM-12', 'AM-13', 'AM-14', 'AM-15']
+// AM-13 à AM-15 (07/10, accord de Benj pour la prospection en masse) : « les maquettes doivent être du niveau de l'exemple qu'on
+// propose sur le site (Lestraque), cohérentes avec leur métier », avec les photos du site de l'artisan quand il en a, et le dire.
+// Ils rendent de VRAIES maquettes (public/sites-demo/generer.mjs --maquette, hors réseau) sous .orchestre/travail/atelier-maquettes-qa/.
+const METIERS_NIVEAU = ['plombier', 'chauffagiste', 'electricien', 'menuisier', 'couvreur', 'macon', 'peintre', 'carreleur', 'serrurier', 'isolation']
+// le mot du métier que le h1 doit porter (le mot-clé « Menuisier à Rennes » de Lestraque)
+const MOT_H1 = { plombier: /plomb/i, chauffagiste: /chauff/i, electricien: /[ée]lectri/i, menuisier: /menuis/i, couvreur: /couvr|toit/i, macon: /ma[çc]on/i, peintre: /peint/i, carreleur: /carrel/i, serrurier: /serrur/i, isolation: /isol/i }
+const SCENES_LESTRAQUE = ['hero', 'plateau', 'prestations', 'atelier', 'realisations', 'communes', 'etapes', 'questions', 'contact']
 const EXPORTS_ROUTES = { travail: 'app/api/usine/atelier/travail/route.ts', depot: 'app/api/usine/atelier/depot/route.ts', maquette: 'app/api/usine/atelier/maquette/route.ts', lien: 'app/api/usine/atelier/lien/route.ts' }
 const FICHIER_MAGASIN_USINE = 'lib/agents/acquisition/magasinUsine.ts'
 const FICHIER_SCRIPT = 'scripts/agents/atelier-maquettes.mjs'
@@ -196,8 +203,10 @@ const C = {
     const e = []
     const CLES = ['entreprise', 'metier', 'ville', 'communes', 'modele', 'source_fait']
     for (const j of x.maquettesJson) {
-      const cles = Object.keys(j).sort()
-      if (json(cles) !== json([...CLES].sort())) e.push(`clés ${json(cles)}, exactement ${json(CLES)} attendues`)
+      // `photos_artisan` (07/10) : facultatif, { domaine, fichiers: [{ fichier, url, alt }] } relevés sur le site de l'artisan
+      const cles = Object.keys(j).filter((k) => k !== 'photos_artisan').sort()
+      if (json(cles) !== json([...CLES].sort())) e.push(`clés ${json(cles)}, exactement ${json(CLES)} attendues (plus photos_artisan, facultatif)`)
+      if ('photos_artisan' in j && (!j.photos_artisan || typeof j.photos_artisan.domaine !== 'string' || !Array.isArray(j.photos_artisan.fichiers) || !j.photos_artisan.fichiers.length || j.photos_artisan.fichiers.some((f) => !/^artisan\/\d+\.jpg$/.test(f?.fichier ?? '')))) e.push(`photos_artisan mal formé : ${court(json(j.photos_artisan), 80)}`)
       if (['photo', 'telephone', 'siren', 'email'].some((k) => k in j)) e.push('une clé interdite (photo, téléphone, siren ou e-mail) présente')
     }
     // « JJ/MM/AAAA » de la fiche est le gabarit d'une date : la phrase porte la date du passage, jamais les lettres du gabarit.
@@ -291,6 +300,54 @@ const C = {
     return e
   },
   'AM-9': (x) => (x.applicable && !x.ok ? [`vraie passe (generer.mjs --maquette) : ${x.detail}`] : []),
+  // AM-13 : le niveau Lestraque, mesuré sur le HTML rendu de chaque métier
+  'AM-13': (x) => {
+    const e = []
+    for (const m of METIERS_NIVEAU) {
+      const r = x.parMetier?.[m]
+      if (!r) { e.push(`${m} : non rendu`); continue }
+      if (r.code !== 0) { e.push(`${m} : la maquette ne se génère pas (${court(r.erreur || '', 90)})`); continue }
+      const manquantes = SCENES_LESTRAQUE.filter((sc) => !r.scenes.includes(sc))
+      if (manquantes.length) e.push(`${m} : scènes de Lestraque absentes : ${manquantes.join(', ')}`)
+      if (r.reveals < 12) e.push(`${m} : ${r.reveals} blocs animés (.reveal), 12 au moins`)
+      if (!r.kitJs) e.push(`${m} : site.js n'est pas le kit de Lestraque (dévoilement, formulaire de démonstration, questions)`)
+      if (!r.kitCss) e.push(`${m} : styles.css n'est pas le kit de Lestraque (scènes, mots masqués, travelling)`)
+      if (!r.police) e.push(`${m} : police de titre absente (fonts/ et @font-face)`)
+      if (!r.motH1) e.push(`${m} : le h1 ne dit pas le métier (« ${court(r.h1, 60)} »)`)
+      if (r.prestations < 5) e.push(`${m} : ${r.prestations} prestations (5 au moins)`)
+      if (!r.prestationsDuModele) e.push(`${m} : les prestations rendues ne sont pas celles du modèle du métier`)
+      if (!r.mentionLibre) e.push(`${m} : sans photo de l'artisan, la mention « photos d’illustration sous licence libre » manque`)
+      if (r.photosHorsMetier.length) e.push(`${m} : photo(s) d'une autre démo que celle du modèle : ${r.photosHorsMetier.join(', ')}`)
+      if (r.portfolioDemo) e.push(`${m} : une photo du portfolio du compte de démo`)
+    }
+    const rendus = Object.values(x.parMetier || {}).filter((r) => r.code === 0)
+    const distincts = new Set(rendus.map((r) => r.h1Ligne))
+    if (distincts.size < rendus.length) e.push(`${distincts.size} lignes de titre pour ${rendus.length} métiers rendus : un métier a reçu le texte d'un autre`)
+    return e
+  },
+  // AM-14 : les photos du site de l'artisan, en tête, et dites
+  'AM-14': (x) => {
+    const e = []
+    if (x.rendu?.code !== 0) return [`maquette avec photos de l'artisan : ne se génère pas (${court(x.rendu?.erreur || '', 90)})`]
+    if (!x.rendu.herosArtisan) e.push('le héros n’est pas une photo du site de l’artisan')
+    if (!x.rendu.mentionArtisan) e.push('la mention « photos reprises de votre site, à remplacer à votre convenance » manque')
+    if (!x.rendu.domaineAuPied) e.push('le pied ne dit pas de quel site viennent les photos')
+    if (x.rendu.photosArtisan < 2) e.push(`${x.rendu.photosArtisan} photo(s) de l'artisan affichée(s), 2 au moins attendues`)
+    if (x.rendu.metadonnees) e.push('une photo de l’artisan garde ses métadonnées (EXIF)')
+    if (!x.passe.photosDansJson) e.push('passeAtelier ne transmet pas les photos relevées (maquette.json → photos_artisan)')
+    if (x.passe.lectureSansDomaine) e.push('passeAtelier lit des photos pour un prospect sans domaine')
+    if (x.passe.echecBloque) e.push('une lecture de photos en échec arrête la maquette (repli sur les photos libres attendu)')
+    if (!x.releve.filtre) e.push(`le relevé garde un logo, une icône ou une image unie (${court(json(x.releve.detail), 90)})`)
+    return e
+  },
+  // AM-15 : les garde-fous du rendu prennent chaque sabotage du HTML
+  'AM-15': (x) => {
+    const e = []
+    if (!x.conformeAccepte) e.push(`la maquette conforme est refusée par verifierMaquette (${court(x.erreurConforme || '', 90)})`)
+    for (const [nom, pris] of Object.entries(x.sabotages || {})) if (!pris) e.push(`sabotage non pris : ${nom}`)
+    if (Object.keys(x.sabotages || {}).length < 8) e.push(`${Object.keys(x.sabotages || {}).length} sabotages éprouvés, 8 attendus`)
+    return e
+  },
   'AM-10': (x) => {
     const e = []
     for (const v of x.valeursCoffre) if (x.console.includes(v)) e.push(`la console contient une valeur du coffre (${court(v, 20)})`)
@@ -330,6 +387,9 @@ const DETAILS = {
   'AM-10': "la console ne contient aucune valeur du coffre, aucun jeton",
   'AM-11': "entrant à 2 h → messagerie ; à 30 h avec adresse → email_sollicite/gmail, preuve case_entrant ; sans adresse → aucune_adresse ; sans Gmail → en_attente_gmail ; froid oui → email_sollicite",
   'AM-12': "siteAchatPublic baissé → pas de lien de paiement, levé → présent ; lu dans le source",
+  'AM-13': "niveau Lestraque par métier : 10 modèles rendus, 9 scènes chacun, kit d'animation (kit.css + kit.js), police, ≥ 12 blocs animés, h1 qui dit le métier, prestations du modèle, mention des photos libres, photos de la démo du métier seulement",
+  'AM-14': "photos de l'artisan : héros pris sur son site, mention de provenance et domaine au pied, métadonnées ôtées ; passeAtelier transmet photos_artisan, ne lit rien sans domaine, se replie si la lecture échoue ; le relevé écarte logos, icônes, petites images et images unies",
+  'AM-15': "verifierMaquette prend 8 sabotages : scène retirée, mention de provenance retirée, héros libre malgré les photos de l'artisan, photo trois fois, apostrophe droite, « gratuit », emplacement {ville} oublié, noindex retiré",
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -602,6 +662,113 @@ ${cle}
     return { applicable: false, ok: true, detail: 'passe réelle non lancée par ce juge (coûteuse) : à vérifier lors de la mise en service (026-097)' }
   })
 
+  await tente('AM-13', async () => {
+    const parMetier = {}
+    const dJeux = dossierEssai('am-13')
+    fs.rmSync(dJeux, { recursive: true, force: true })
+    fs.mkdirSync(dJeux, { recursive: true })
+    for (const m of METIERS_NIVEAU) {
+      const jeu = path.join(dJeux, `${m}.json`), sortie = path.join(dJeux, m)
+      fs.writeFileSync(jeu, json({ entreprise: 'Entreprise Témoin Niveau', metier: m, ville: 'Rochefort', communes: ['Rochefort'], modele: m, source_fait: { fait: 'x', source: 'demande', repere: 'entrant', releve_le: '2026-10-14T08:00:00.000Z' } }))
+      const g = spawnSync(process.execPath, [path.join(RAC2, 'public', 'sites-demo', 'generer.mjs'), `--maquette=${jeu}`, `--sortie=${sortie}`], { cwd: RAC2, encoding: 'utf8', timeout: 120_000 })
+      if (g.status !== 0) { parMetier[m] = { code: g.status ?? 1, erreur: `${g.stderr || ''}${g.stdout || ''}` }; continue }
+      const html = fs.readFileSync(path.join(sortie, 'index.html'), 'utf8')
+      const css = fs.readFileSync(path.join(sortie, 'styles.css'), 'utf8'), js = fs.readFileSync(path.join(sortie, 'site.js'), 'utf8')
+      const modele = JSON.parse(fs.readFileSync(path.join(RAC2, 'maquettes', 'modeles', m, 'contenu.json'), 'utf8'))
+      const texte = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
+      const h1 = texte(/<h1\b[\s\S]*?<\/h1>/.exec(html)?.[0] || '')
+      const attributions = JSON.parse(fs.readFileSync(path.join(sortie, 'attributions.json'), 'utf8'))
+      const demo = modele.photos?.demo
+      const remplir = (t) => String(t).replace(/(\p{L})'(?=\p{L})/gu, '$1’').replaceAll('{ville}', 'Rochefort').replaceAll('{entreprise}', 'Entreprise Témoin Niveau')
+      parMetier[m] = {
+        code: 0,
+        scenes: [/class="hero hero--plein/.test(html) && 'hero', /<section class="plateau/.test(html) && 'plateau', ...['prestations', 'atelier', 'realisations', 'communes', 'etapes', 'questions', 'contact'].filter((id) => new RegExp(`id="${id}"`).test(html))].filter(Boolean),
+        reveals: (html.match(/class="[^"]*\breveal\b/g) || []).length,
+        kitJs: /\.reveal, \.etape/.test(js) && /form\[data-demo\]/.test(js) && /faq details/.test(js),
+        kitCss: /\.travelling/.test(css) && /\.ml__in/.test(css) && /\.scene--presta/.test(css),
+        police: /@font-face/.test(css) && fs.existsSync(path.join(sortie, 'fonts')) && fs.readdirSync(path.join(sortie, 'fonts')).some((f) => f.endsWith('.woff2')),
+        h1, h1Ligne: texte(/<span class="h1__ligne">[\s\S]*?<\/h1>/.exec(html)?.[0] || '').trim(), motH1: MOT_H1[m].test(h1),
+        prestations: (html.match(/class="presta__ligne/g) || []).length,
+        prestationsDuModele: modele.prestations.items.every((it) => texte(html).includes(remplir(it.titre))),
+        mentionLibre: texte(html).includes('photos d’illustration sous licence libre'),
+        photosHorsMetier: [...new Set(attributions.filter((a) => a.provenance === 'libre' && !String(a.base).startsWith(`libre-${demo}-`)).map((a) => a.base))],
+        portfolioDemo: attributions.some((a) => /portfolio|compte de d[ée]mo/i.test(`${a.source} ${a.legende}`)),
+      }
+    }
+    return { parMetier }
+  })
+
+  await tente('AM-14', async () => {
+    const d = dossierEssai('am-14')
+    fs.rmSync(d, { recursive: true, force: true })
+    fs.mkdirSync(path.join(d, 'artisan'), { recursive: true })
+    const sharp = (await import('sharp')).default
+    // trois « photos de chantier » d'un site témoin : des photos de démo ré-encodées en JPEG AVEC un EXIF (qui ne doit pas suivre)
+    const src = path.join(RAC2, 'public', 'sites-demo', 'macon', 'images')
+    const fichiers = []
+    for (const [i, f] of ['fondations-1600.webp', 'coulage-1600.webp', 'parement-1600.webp'].entries()) {
+      await sharp(path.join(src, f)).withExif({ IFD0: { Artist: 'Auteur Temoin EXIF', Copyright: 'Temoin' } }).jpeg().toFile(path.join(d, 'artisan', `${i + 1}.jpg`))
+      fichiers.push({ fichier: `artisan/${i + 1}.jpg`, url: `https://maconnerie-temoin.invalid/${i + 1}.jpg`, alt: '' })
+    }
+    const jeu = path.join(d, 'maquette.json')
+    fs.writeFileSync(jeu, json({ entreprise: 'Maçonnerie Témoin Photos', metier: 'macon', ville: 'Saintes', communes: ['Saintes'], modele: 'macon', source_fait: { fait: 'x', source: 'demande', repere: 'entrant', releve_le: '2026-10-14T08:00:00.000Z' }, photos_artisan: { domaine: 'maconnerie-temoin.invalid', fichiers } }))
+    const sortie = path.join(d, 'site')
+    const g = spawnSync(process.execPath, [path.join(RAC2, 'public', 'sites-demo', 'generer.mjs'), `--maquette=${jeu}`, `--sortie=${sortie}`], { cwd: RAC2, encoding: 'utf8', timeout: 120_000 })
+    let rendu = { code: g.status ?? 1, erreur: `${g.stderr || ''}${g.stdout || ''}` }
+    if (g.status === 0) {
+      const html = fs.readFileSync(path.join(sortie, 'index.html'), 'utf8'), texte = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
+      const debut = html.indexOf('<section class="hero'), hero = html.slice(debut, html.indexOf('</section>', debut))
+      const images = fs.readdirSync(path.join(sortie, 'images')).filter((f) => f.startsWith('artisan-'))
+      let metadonnees = false
+      for (const f of images) { const m = await sharp(path.join(sortie, 'images', f)).metadata(); if (m.exif || m.xmp || m.iptc) metadonnees = true }
+      rendu = { code: 0, herosArtisan: /images\/artisan-\d+-\d+\.webp/.test(hero), mentionArtisan: texte.includes('photos reprises de votre site, à remplacer à votre convenance'), domaineAuPied: /<footer[\s\S]*maconnerie-temoin\.invalid[\s\S]*<\/footer>/.test(html), photosArtisan: new Set(images.map((f) => f.replace(/-\d+\.webp$/, ''))).size, metadonnees }
+    }
+    // passeAtelier : la lecture des photos est injectée (aucun réseau)
+    const dp = dossierEssai('am-14-passe')
+    fs.rmSync(dp, { recursive: true, force: true })
+    const appels = []
+    const lirePhotos = async (domaine, dossier) => { appels.push(domaine); if (domaine === 'casse.invalid') throw new Error('lecture impossible'); fs.mkdirSync(path.join(dossier, 'artisan'), { recursive: true }); fs.copyFileSync(path.join(d, 'artisan', '1.jpg'), path.join(dossier, 'artisan', '1.jpg')); return { domaine, fichiers: [{ fichier: 'artisan/1.jpg', url: `https://${domaine}/1.jpg`, alt: '' }] } }
+    const magasinUsine = creerMagasinUsineFactice({ aFabriquer: [
+      { prospect_id: 'p1', cle: 'cle0000000000141', entreprise: 'Avec Site Témoin', metier: 'couvreur', ville: 'Royan', communes: ['Royan'], fait: null, entrant: true, domaine: 'avec-site.invalid' },
+      { prospect_id: 'p2', cle: 'cle0000000000142', entreprise: 'Sans Site Témoin', metier: 'plombier', ville: 'Royan', communes: ['Royan'], fait: null, entrant: true },
+      { prospect_id: 'p3', cle: 'cle0000000000143', entreprise: 'Site Cassé Témoin', metier: 'électricien', ville: 'Royan', communes: ['Royan'], fait: null, entrant: true, domaine: 'casse.invalid' },
+    ] })
+    const executer = creerExecuteurFactice({})
+    await mod.passeAtelier({ magasin: magasinUsine, executer, horloge: creerHorloge(T0), dossierSortie: dp, lirePhotos })
+    const jsons = fs.existsSync(dp) ? fs.readdirSync(dp, { recursive: true }).filter((f) => String(f).endsWith('maquette.json')).map((f) => JSON.parse(fs.readFileSync(path.join(dp, f), 'utf8'))) : []
+    const avec = jsons.find((j) => j.entreprise === 'Avec Site Témoin'), casse = jsons.find((j) => j.entreprise === 'Site Cassé Témoin')
+    const passe = { photosDansJson: avec?.photos_artisan?.fichiers?.length === 1, lectureSansDomaine: appels.length !== 2, echecBloque: !casse || 'photos_artisan' in casse }
+    // le relevé : un logo, une icône, une petite image et une image unie sont écartés, une vraie photo gardée
+    const { estUnePhoto, imagesDeLaPage } = await import(pathToFileURL(path.join(RAC2, 'scripts', 'agents', 'atelier-photos.mjs')).href)
+    const unie = await sharp({ create: { width: 1200, height: 800, channels: 3, background: '#d8d4cc' } }).jpeg().toBuffer()
+    const vraie = await sharp(path.join(src, 'coulage-1600.webp')).jpeg().toBuffer()
+    const petite = await sharp(path.join(src, 'coulage-1600.webp')).resize(300).jpeg().toBuffer()
+    const urls = imagesDeLaPage('<img src="/wp-content/uploads/logo-entreprise.png"><img src="/img/icon-tel.svg"><img src="/photos/chantier-1.jpg" alt="Dalle"><img srcset="/a-480.jpg 480w, /a-1600.jpg 1600w">', 'https://x.invalid/')
+    const releve = { filtre: !(await estUnePhoto(unie)) && !!(await estUnePhoto(vraie)) && !(await estUnePhoto(petite)) && urls.length === 2 && urls.some((u) => u.url.endsWith('/a-1600.jpg')), detail: { urls: urls.map((u) => u.url) } }
+    return { rendu, passe, releve }
+  })
+
+  await tente('AM-15', async () => {
+    const { verifierMaquette } = await import(pathToFileURL(path.join(RAC2, 'maquettes', 'rendu.mjs')).href)
+    const html = fs.readFileSync(path.join(dossierEssai('am-14'), 'site', 'index.html'), 'utf8')
+    const opts = { entreprise: 'Maçonnerie Témoin Photos', artisan: 3 }
+    let conformeAccepte = true, erreurConforme = ''
+    try { verifierMaquette(html, opts) } catch (e) { conformeAccepte = false; erreurConforme = premiereLigne(e) }
+    const pris = (h, o = opts) => { try { verifierMaquette(h, o); return false } catch { return true } }
+    const uneImage = /<picture>[\s\S]*?<\/picture>/.exec(html.slice(html.indexOf('id="realisations"')))?.[0] || ''
+    const sabotages = {
+      'scène des étapes retirée': pris(html.replace(/<section class="section section--noir" id="etapes"[\s\S]*?<\/section>/, '')),
+      'mention de provenance retirée': pris(html.split('photos reprises de votre site, à remplacer à votre convenance').join('photos')),
+      'héros pris dans les photos libres malgré celles de l’artisan': pris(html.replace(/<section class="hero[\s\S]*?<\/section>/, (h) => h.replace(/images\/artisan-\d+-/g, 'images/libre-macon-hero-'))),
+      'une photo affichée trois fois': pris(html.replace('</main>', `${uneImage}${uneImage}</main>`)),
+      'apostrophe droite': pris(html.replace('</h3>', " l'essai</h3>")),
+      '« gratuit » dans le texte': pris(html.replace('</h3>', ' gratuit</h3>')),
+      'emplacement {ville} oublié': pris(html.replace('</h3>', ' {ville}</h3>')),
+      'noindex retiré': pris(html.replace(/noindex, nofollow, noarchive/g, 'index, follow')),
+    }
+    return { conformeAccepte, erreurConforme, sabotages }
+  })
+
   await tente('AM-10', async () => {
     const dossier = dossierEssai('am-10')
     fs.rmSync(dossier, { recursive: true, force: true })
@@ -646,6 +813,9 @@ function obsBase() {
     'AM-10': { console: 'atelier : 3 maquette(s) fabriquée(s)\n', valeursCoffre: ['JETON-SECRET-TEMOIN'] },
     'AM-11': { metaRecent: { canal: 'messagerie', modele: 'lien_maquette_entrant_meta_v1' }, emailAncien: { canal: 'email_sollicite', envoyeur: 'gmail', modele: 'lien_maquette_entrant_email_v1', preuveType: 'case_entrant' }, sansAdresse: { raison: 'aucune_adresse', jetonCree: false }, sansGmail: { raison: 'en_attente_gmail', rienCree: true }, froidOui: { canal: 'email_sollicite', preuveEstOui: true, envoyeur: 'gmail', destinataireEstExpediteur: true, filEstEnvoi: true }, froidOuiMeta: { canal: 'messagerie', destinataireEstMetaId: true, conversationEstLaSienne: true }, mentionneBoite: false },
     'AM-12': { baisse: { contientPaiement: false, modele: 'lien_maquette_email_rdv_v1' }, leve: { contientPaiement: true }, litActif: true },
+    'AM-13': { parMetier: Object.fromEntries(METIERS_NIVEAU.map((m, i) => [m, { code: 0, scenes: [...SCENES_LESTRAQUE], reveals: 30, kitJs: true, kitCss: true, police: true, h1: `${{ plombier: 'Plombier', chauffagiste: 'Chauffagiste', electricien: 'Électricien', menuisier: 'Menuisier', couvreur: 'Couvreur', macon: 'Maçon', peintre: 'Peintre', carreleur: 'Carreleur', serrurier: 'Serrurier', isolation: 'Isolation' }[m]} à Rochefort`, h1Ligne: `ligne ${i}`, motH1: true, prestations: 6, prestationsDuModele: true, mentionLibre: true, photosHorsMetier: [], portfolioDemo: false }])) },
+    'AM-14': { rendu: { code: 0, herosArtisan: true, mentionArtisan: true, domaineAuPied: true, photosArtisan: 3, metadonnees: false }, passe: { photosDansJson: true, lectureSansDomaine: false, echecBloque: false }, releve: { filtre: true, detail: {} } },
+    'AM-15': { conformeAccepte: true, sabotages: Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map((k) => [k, true])) },
   }
 }
 function muter(base, id, m) { const x = JSON.parse(JSON.stringify(base[id])); m(x); return x }
@@ -663,6 +833,9 @@ function echantillons() {
     'AM-10': [['conforme', b['AM-10'], false], ['une valeur du coffre dans la console', muter(b, 'AM-10', (x) => { x.console += 'JETON-SECRET-TEMOIN\n' }), true]],
     'AM-11': [['conforme', b['AM-11'], false], ['jeton créé sans adresse', muter(b, 'AM-11', (x) => { x.sansAdresse.jetonCree = true }), true], ['une route mentionne une boîte', muter(b, 'AM-11', (x) => { x.mentionneBoite = true }), true], ['sur Meta, la conversation prise pour destinataire', muter(b, 'AM-11', (x) => { x.froidOuiMeta.destinataireEstMetaId = false }), true]],
     'AM-12': [['conforme', b['AM-12'], false], ['paiement présent malgré le drapeau baissé', muter(b, 'AM-12', (x) => { x.baisse.contientPaiement = true }), true]],
+    'AM-13': [['conforme', b['AM-13'], false], ['scène atelier absente (couvreur)', muter(b, 'AM-13', (x) => { x.parMetier.couvreur.scenes = x.parMetier.couvreur.scenes.filter((s) => s !== 'atelier') }), true], ["l'ancienne page sans kit (plombier)", muter(b, 'AM-13', (x) => { x.parMetier.plombier.kitJs = false; x.parMetier.plombier.reveals = 0 }), true], ['h1 sans le métier (peintre)', muter(b, 'AM-13', (x) => { x.parMetier.peintre.motH1 = false }), true], ['texte du plombier sur le chauffagiste', muter(b, 'AM-13', (x) => { x.parMetier.chauffagiste.h1Ligne = x.parMetier.plombier.h1Ligne }), true], ['photo de menuisier sur un couvreur', muter(b, 'AM-13', (x) => { x.parMetier.couvreur.photosHorsMetier = ['libre-menuisier-bibliotheque'] }), true], ['un métier qui ne se génère plus', muter(b, 'AM-13', (x) => { x.parMetier.serrurier = { code: 1, erreur: 'modèle absent' } }), true], ['portfolio du compte de démo', muter(b, 'AM-13', (x) => { x.parMetier.macon.portfolioDemo = true }), true]],
+    'AM-14': [['conforme', b['AM-14'], false], ['héros libre malgré les photos du site', muter(b, 'AM-14', (x) => { x.rendu.herosArtisan = false }), true], ['provenance tue', muter(b, 'AM-14', (x) => { x.rendu.mentionArtisan = false }), true], ['EXIF gardé', muter(b, 'AM-14', (x) => { x.rendu.metadonnees = true }), true], ['photos non transmises', muter(b, 'AM-14', (x) => { x.passe.photosDansJson = false }), true], ['un échec de lecture bloque', muter(b, 'AM-14', (x) => { x.passe.echecBloque = true }), true], ['un logo gardé', muter(b, 'AM-14', (x) => { x.releve.filtre = false }), true]],
+    'AM-15': [['conforme', b['AM-15'], false], ['un sabotage non pris', muter(b, 'AM-15', (x) => { x.sabotages.a = false }), true], ['conforme refusé', muter(b, 'AM-15', (x) => { x.conformeAccepte = false }), true], ['trop peu de sabotages', muter(b, 'AM-15', (x) => { delete x.sabotages.h; delete x.sabotages.g }), true]],
   }
 }
 
@@ -690,7 +863,7 @@ if (o.autoControle) {
         compte[rouge ? 'fautifs' : 'conformes']++
       }
     }
-    s.juger('AC-3', e, `${compte.fautifs} échantillons fautifs repérés et ${compte.conformes} conformes acceptés par les contrôles AM-2 à AM-12`)
+    s.juger('AC-3', e, `${compte.fautifs} échantillons fautifs repérés et ${compte.conformes} conformes acceptés par les contrôles AM-2 à AM-15`)
   } catch (e) { s.echoue('AC-3', `interrompu : ${premiereLigne(e)}`) }
 } else {
   const fScript = path.join(RAC, FICHIER_SCRIPT)

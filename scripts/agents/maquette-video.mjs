@@ -4,6 +4,7 @@ import path from 'node:path'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
+import sharp from 'sharp'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const LIMITE = 3 * 1024 * 1024
@@ -64,8 +65,10 @@ export async function fabriquerVideo({ dossierSite, sortie, duree = 18, lancerNa
   let dossier
   try { dossier = await fs.realpath(dossierSite) } catch { throw new ErreurVideo(2, 'dossier absent') }
   if (!(await fs.stat(dossier)).isDirectory()) throw new ErreurVideo(2, 'dossier absent')
-  const sortieTemporaire = `${cible}.capture.png`
-  let serveur, navigateur
+  const sortieTemporaire = `${cible}.capture.jpg`
+  // 540 px de large et 24 images par seconde : une page de neuf scènes tient sous 3 Mo
+  const LARGE = 540
+  let serveur, navigateur, hauteurCapture = 0
   try {
     await fs.mkdir(path.dirname(cible), { recursive: true })
     serveur = await servir(dossier)
@@ -77,13 +80,38 @@ export async function fabriquerVideo({ dossierSite, sortie, duree = 18, lancerNa
     })
     await page.goto(serveur.adresse, { waitUntil: 'load', timeout: 30000 })
     await page.addStyleTag({ content: '* { animation: none !important; transition: none !important; scroll-behavior: auto !important; }' })
+    // La maquette au niveau Lestraque (07/10) dévoile ses blocs au défilement (.reveal → .vu, kit.js) et épingle sa galerie : sur
+    // une capture pleine page, tout ce qui n'a pas été vu restait à opacité 0 et le travelling occupait trois écrans de noir.
+    await page.addStyleTag({ content: 'html.js .reveal, html.js .etape, .reveal, .etape { opacity: 1 !important; transform: none !important; } .travelling { height: auto !important; } .travelling__epingle { position: static !important; height: auto !important; } .galerie--scene { transform: none !important; } html.tuile-suivante .nav, html.tuile-suivante .apercu { visibility: hidden !important; }' })
+    await page.evaluate(() => document.querySelectorAll('.reveal, .etape').forEach((e) => e.classList.add('vu')))
     await page.evaluate(async () => {
       await document.fonts.ready
-      await Promise.all([...document.images].map((image) => image.decode().catch(() => {})))
+      // les photos « lazy » sous la ligne de flottaison ne se chargeraient jamais : decode() attendait sans fin (07/10, maquette v2)
+      for (const image of document.images) image.loading = 'eager'
+      await Promise.race([Promise.all([...document.images].map((image) => image.decode().catch(() => {}))), new Promise((r) => setTimeout(r, 15000))])
     })
     const hauteur = await page.evaluate(() => Math.max(document.documentElement.scrollHeight, document.body.scrollHeight))
     if (hauteur < 1200) throw new ErreurVideo(3, 'page trop courte')
-    await page.screenshot({ path: sortieTemporaire, fullPage: true, animations: 'disabled' })
+    // Écran par écran, puis bout à bout : une capture « pleine page » agrandit la fenêtre à la hauteur de la page, et les scènes en
+    // 100svh (héros, bande, contact) devenaient des aplats de plusieurs milliers de pixels (07/10). La nav et la mention d'aperçu
+    // ne figurent que sur le premier écran.
+    // Chaque écran est ramené à LARGE px dès sa capture et posé dans UN JPEG : l'assemblage en PNG plein format puis sa réduction
+    // prenaient 54 s (07/10).
+    const echelle = LARGE / 390
+    const tuiles = []
+    for (let y = 0; y < hauteur; y += 844) {
+      // le dernier écran ne peut pas descendre plus bas que la page : on y prend seulement ce qui manque, à son décalage réel
+      const reel = await page.evaluate((yy) => { window.scrollTo(0, yy); document.documentElement.classList.toggle('tuile-suivante', yy > 0); return window.scrollY }, y)
+      await page.waitForTimeout(300)
+      const decalage = Math.max(0, Math.round(y - reel))
+      const reste = Math.floor(Math.min(844 - decalage, hauteur - y))
+      if (reste < 2) break
+      const brut = await page.screenshot({ type: 'jpeg', quality: 92, animations: 'disabled', clip: { x: 0, y: decalage, width: 390, height: reste } })
+      tuiles.push({ input: await sharp(brut).resize({ width: LARGE, height: Math.max(1, Math.round(reste * echelle)), fit: 'fill' }).toBuffer(), left: 0, top: Math.round(y * echelle) })
+    }
+    hauteurCapture = Math.ceil(hauteur * echelle) + 2
+    await sharp({ create: { width: LARGE, height: hauteurCapture, channels: 3, background: '#000' }, limitInputPixels: false })
+      .composite(tuiles).jpeg({ quality: 86 }).toFile(sortieTemporaire)
     await page.close()
   } finally {
     if (navigateur) await navigateur.close()
@@ -91,11 +119,20 @@ export async function fabriquerVideo({ dossierSite, sortie, duree = 18, lancerNa
   }
   try {
     await fs.mkdir(path.dirname(cible), { recursive: true })
-    const hauteurCapture = (await lireDimensionsPng(sortieTemporaire)).hauteur
-    const fenetre = 844 * 2
-    const mouvement = `crop=in_w:${fenetre}:0:'(in_h-out_h)*min(1,max(0,(t-1.5)/(${duree}-3)))',scale=720:-2,fps=30,format=yuv420p`
+    // La page entière d'une maquette v2 fait 8 000 à 9 000 px de haut : l'image réduite est recadrée image par image
+    const reduite = sortieTemporaire
+    const infos = { height: hauteurCapture }
+    const fenetre = Math.round((844 * LARGE) / 390 / 2) * 2
+    // un écran après l'autre : chaque écran reste posé (65 % de son temps) puis glisse au suivant en douceur — un défilement continu
+    // de 8 000 px en 15 s ne se lisait pas et ne se compressait pas
+    const ecrans = Math.max(1, Math.ceil((infos.height - fenetre) / fenetre))
+    const parEcran = (duree - 3) / ecrans
+    // l'image est décodée UNE fois (filtre loop) puis recadrée : « -loop 1 » la redécodait à chacune des 540 images (230 s, 07/10)
+    const u = `max(0\,t-1.5)`
+    const glisse = `clip((mod(${u}\,${parEcran.toFixed(4)})/${parEcran.toFixed(4)}-0.65)/0.35\,0\,1)`
+    const mouvement = `loop=loop=-1:size=1:start=0,setpts=N/24/TB,crop=in_w:${fenetre}:0:'(in_h-out_h)/${ecrans}*min(${ecrans}\,floor(${u}/${parEcran.toFixed(4)})+st(1\,${glisse})*0+ld(1)*ld(1)*(3-2*ld(1)))',format=yuv420p`
     for (const crf of [28, 30, 32]) {
-      await executer(ffmpeg, ['-y', '-v', 'error', '-loop', '1', '-framerate', '30', '-i', sortieTemporaire, '-t', String(duree), '-vf', mouvement, '-c:v', 'libx264', '-preset', 'slow', '-crf', String(crf), '-movflags', '+faststart', '-an', '-map_metadata', '-1', cible])
+      await executer(ffmpeg, ['-y', '-v', 'error', '-i', reduite, '-vf', mouvement, '-t', String(duree), '-r', '24', '-c:v', 'libx264', '-preset', 'medium', '-crf', String(crf), '-movflags', '+faststart', '-an', '-map_metadata', '-1', cible])
       const poids = (await fs.stat(cible)).size
       if (poids <= LIMITE) return { code: 0, duree, poids, hauteur: hauteurCapture }
     }

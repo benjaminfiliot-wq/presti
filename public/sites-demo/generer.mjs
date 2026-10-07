@@ -1023,7 +1023,17 @@ function sortieMaquettePermise(valeur) {
   return sortie
 }
 
-function genererMaquette(fichier, valeurSortie) {
+// Depuis le 07/10, la maquette est rendue au niveau de la démo Lestraque, par métier, avec les photos du site de l'artisan
+// (maquettes/rendu.mjs). L'ancienne page de 35 lignes de CSS (genererMaquetteV1, ci-dessous) ne sert plus qu'aux modèles v1.
+async function genererMaquette(fichier, valeurSortie) {
+  const sortie = sortieMaquettePermise(valeurSortie)
+  if (!sortie) { console.error('La maquette exige --sortie hors de public/ et sous .orchestre/travail/ si elle reste dans le dépôt.'); process.exit(2) }
+  const { rendreMaquette } = await import(pathToFileURL(path.resolve(ICI, '..', '..', 'maquettes', 'rendu.mjs')).href)
+  const r = await rendreMaquette(fichier, sortie)
+  console.log(`Maquette privée v2 (${r.modele}) : ${sortie} — ${r.photos_artisan} photo(s) du site de l’artisan, ${r.photos_libres} sous licence libre`)
+}
+// eslint-disable-next-line no-unused-vars
+function genererMaquetteV1(fichier, valeurSortie) {
   const sortie = sortieMaquettePermise(valeurSortie)
   if (!sortie) { console.error('La maquette exige --sortie hors de public/ et sous .orchestre/travail/ si elle reste dans le dépôt.'); process.exit(2) }
   const entree = JSON.parse(fs.readFileSync(path.resolve(fichier), 'utf8'))
@@ -1076,7 +1086,7 @@ const args = process.argv.slice(2)
 const valeurSource = args.find((a) => a.startsWith('--source='))?.slice('--source='.length)
 const valeurMaquette = args.find((a) => a.startsWith('--maquette='))?.slice('--maquette='.length)
 if (valeurMaquette !== undefined) {
-  try { genererMaquette(valeurMaquette, args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)) }
+  try { await genererMaquette(valeurMaquette, args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)) }
   catch (erreur) { console.error(`Maquette : ${erreur.message}`); process.exitCode = 1 }
 } else {
 if (valeurSource !== undefined) {

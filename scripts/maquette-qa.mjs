@@ -1010,7 +1010,18 @@ function mq10({ racine, ex, generes }) {
     let sortie = generes.get(m)
     if (!sortie) {
       const jeu = path.join(dJeux, `${m}.json`)
-      fs.writeFileSync(jeu, `${JSON.stringify({ ...ex, _: `Copie de scripts/fixtures/025/maquette-exemple.json par ${JUGE} (MQ-10) pour le modèle ${m}.`, metier: m, modele: m }, null, 1)}\n`)
+      // Un modèle sans photo libre cohérente (« photos »: null, le paysagiste depuis le 07/10) ne se fabrique qu'avec les photos
+      // du site de l'artisan : le jeu lui en donne trois (photos de démo recopiées, vues comme celles d'un site)
+      let photosArtisan = null
+      try {
+        const modele = JSON.parse(fs.readFileSync(path.join(racine, 'maquettes', 'modeles', m, 'contenu.json'), 'utf8'))
+        if (modele.photos === null) {
+          const src = path.join(racine, 'public', 'sites-demo', 'couvreur', 'images')
+          fs.mkdirSync(path.join(dJeux, `${m}-photos`), { recursive: true })
+          photosArtisan = { domaine: 'essai.invalid', fichiers: ['hero-1600.webp', 'charpente-1600.webp', 'faitage-1600.webp'].map((f, i) => { fs.copyFileSync(path.join(src, f), path.join(dJeux, `${m}-photos`, `${i + 1}.webp`)); return { fichier: `${m}-photos/${i + 1}.webp`, url: `https://essai.invalid/${i + 1}.webp` } }) }
+        }
+      } catch { /* modèle illisible : vu par motsDesMetiers */ }
+      fs.writeFileSync(jeu, `${JSON.stringify({ ...ex, _: `Copie de scripts/fixtures/025/maquette-exemple.json par ${JUGE} (MQ-10) pour le modèle ${m}.`, metier: m, modele: m, ...(photosArtisan ? { photos_artisan: photosArtisan } : {}) }, null, 1)}\n`)
       sortie = exigerSousTravail(path.join(TRAVAIL, JUGE, 'mq10', m))
       fs.rmSync(sortie, { recursive: true, force: true })
       const g = generer(racine, jeu, sortie)
