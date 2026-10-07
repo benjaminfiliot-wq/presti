@@ -12,13 +12,13 @@ export { routerModele, type Routage } from './ai/routage'
 // ⚙️ Modèle par défaut pour rédiger les réponses aux prospects.
 // Haiku = rapide + très économique, parfait pour des réponses courtes en volume.
 // Les routes passent un vrai modèle (haiku/sonnet/opus) via resolveModel selon le plan.
-const AI_MODEL = 'claude-haiku-4-5'
+const AI_MODEL = 'claude-haiku-5-5'
 
 // Lit automatiquement ANTHROPIC_API_KEY depuis .env.local (côté serveur uniquement).
 const client = new Anthropic()
 
 // Modèles qui supportent le "thinking adaptatif" (raisonnement profond auto-dosé) : 4.6+ et 5-series.
-// Haiku 4.5 (Standard) reste sur la voie rapide, sans thinking.
+// Haiku 5.5 (Standard, sorti le 07/10/2026) reste sur la voie rapide, sans thinking.
 function supportsThinking(model: string): boolean {
   return /claude-(opus|sonnet|fable)-(5($|-)|4-[6-9])/.test(model)
 }
