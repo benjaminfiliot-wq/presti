@@ -57,6 +57,8 @@ const GROUPES = Object.freeze({
   vigile: { copier: ['presti-vigile*'], activer: ['presti-vigile*.timer'] },
   preneur: { copier: ['presti-preneur*'], activer: ['presti-preneur*.timer'] },
   videos: { copier: ['presti-videos*'], activer: ['presti-videos*.timer'] },
+  // 07/10 : la chaîne TikTok Brico Travaux (promo-src/tiktok-chaine, --file) : une ligne déposée dans ~agents/travail/tiktok/a-produire/ → une vidéo.
+  tiktok: { copier: ['presti-tiktok*'], activer: ['presti-tiktok*.timer'] },
 })
 
 class Arret extends Error {
