@@ -1,0 +1,188 @@
+{
+  "regle": "Un plan ne vient que d'ici. Rushes = vidéos du FOURNISSEUR mises à disposition des revendeurs (jamais un créateur TikTok/YouTube tiers). Chaque rush : source, identifiant, licence relevée, modèle vérifié à l'image, plages écartées (avec la raison). Les fichiers sont dans cache/ (non versionnés) ; node v2/rushes.mjs les rapatrie et vérifie l'empreinte.",
+  "releve_le": "2026-10-07",
+  "rushes": [
+    {
+      "id": "cj-asp-1",
+      "produit": "aspirateur",
+      "source": "cj_queryVideosByProductId",
+      "pid": "2082406046851715074",
+      "videoId": "3013032db0ed71f180096723b78e0102",
+      "nom_cj": "CJSD3017781-1",
+      "fiche_cj": "4in1 13000Pa Cordless Mini Handheld Vacuum Cleaner Wet & Dry Battery Car Office Home DE (SKU CJSD3017781, fournisseur « dbjjj »)",
+      "fichier": "cj-2082406046851715074-3013032d.mp4",
+      "sha256": "7b190d7f8b9b6604f0370fc8f9a37692e73ea54418f81879337609afbac24ab1",
+      "duree": 20.52,
+      "taille": [
+        540,
+        960
+      ],
+      "licence": {
+        "api": "POST https://developers.cjdropshipping.com/api2.0/v1/product/queryVideosByProductId (doc CJ 6.1)",
+        "isFree": "1",
+        "copyright": "1",
+        "copyrightBuyType": 1,
+        "videoState": "ON_STATE",
+        "lecture": "vidéo produit gratuite de CJ (isFree = 1 ; copyrightBuyType 1 = « non acheté / gratuit »), fournie aux revendeurs du produit ; la doc demande de la télécharger et de l'héberger soi-même (Referer du portail développeur)."
+      },
+      "modele_verifie": "Vu à l'image le 07/10 : même aspirateur que le produit VENDU (pid 2039611415532191746, même titre « 4in1 13000Pa », même corps noir à bagues dorées, bac transparent, embouts noirs). La fiche vendue n'a pas de vidéo chez CJ ; celle-ci vient de la fiche jumelle d'un autre fournisseur CJ.",
+      "cadre_utile": [
+        0,
+        170,
+        540,
+        650
+      ],
+      "cadre_note": "y 100-160 : bandeau rouge « 4-in-1 Car vacuum cleaner » ; y 830-870 : sous-titres anglais : tous deux hors du cadre utile.",
+      "plans_ecartes": [
+        [
+          0,
+          2.45
+        ],
+        [
+          15.3,
+          19
+        ]
+      ],
+      "ecartes_pourquoi": "0-2,45 : boîte blanche du fournisseur (le colis livré peut différer) ; 15,3-19 : gonflage d'une bouée et mise sous vide, fonctions absentes de la fiche vendue."
+    },
+    {
+      "id": "cj-asp-2",
+      "produit": "aspirateur",
+      "source": "cj_queryVideosByProductId",
+      "pid": "2082406046851715074",
+      "videoId": "e0818063b0ed71f1b3cb6733a68f0102",
+      "nom_cj": "CJSD3017781-2",
+      "fiche_cj": "4in1 13000Pa Cordless Mini Handheld Vacuum Cleaner Wet & Dry Battery Car Office Home DE (SKU CJSD3017781)",
+      "fichier": "cj-2082406046851715074-e0818063.mp4",
+      "sha256": "7eb3b6d105e398ea1baae1c149bbeee4ce5661fd5345d8b61ca785177e2d743a",
+      "duree": 55.22,
+      "taille": [
+        720,
+        960
+      ],
+      "licence": {
+        "api": "POST https://developers.cjdropshipping.com/api2.0/v1/product/queryVideosByProductId (doc CJ 6.1)",
+        "isFree": "1",
+        "copyright": "1",
+        "copyrightBuyType": 1,
+        "videoState": "ON_STATE",
+        "lecture": "vidéo produit gratuite de CJ, sans aucun texte incrusté."
+      },
+      "modele_verifie": "Vu à l'image le 07/10 : même aspirateur (corps noir, bagues dorées/rosées, bac transparent, embouts) ; tournée en voiture, sur table, canapé.",
+      "cadre_utile": [
+        0,
+        100,
+        720,
+        760
+      ],
+      "plans_ecartes": [
+        [
+          0,
+          2.6
+        ],
+        [
+          7,
+          9.2
+        ],
+        [
+          19,
+          25.6
+        ],
+        [
+          47,
+          52.85
+        ]
+      ],
+      "ecartes_pourquoi": "0-2,45 : boîte de marque (le colis livré peut différer) ; 7-8,95 : bouteille comprimée ; 19-25,4 : gonflage d'une bouée et mise sous vide ; 47-52,45 : sachets sous vide : fonctions absentes de la fiche vendue. Bornes repoussées de 0,15 à 0,4 s : l'image change environ 0,3 s après l'instant lu sur une planche à 2 i/s (vu le 07/10 : une image de sachet sous vide passait au début d'un plan pris à 52,6 s).",
+      "cadre_note": "image utile y 96-864 (mesurée par la netteté des lignes) : au-dessus et au-dessous, des bandes floues de remplissage."
+    }
+  ],
+  "photos": [
+    {
+      "id": "net-colis",
+      "produit": "nettoyeur",
+      "fichier": "net-batteries.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S79938bf61af84519ace66990f2bd57c54.jpg",
+      "sha256": "ba1c8108b72cd6f25cbef6aa48ed4225c65855717631744e83656f3833168c9b",
+      "nature": "photo détourée du contenu du colis (fiche AliExpress 1005009522003959). Le pot à mousse qu'elle montre n'est PAS dans la liste écrite du colis : jamais montré."
+    },
+    {
+      "id": "net-buses",
+      "produit": "nettoyeur",
+      "fichier": "net-eventail.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S8107428322a941cda3d88295ba5eb75aM.jpg",
+      "sha256": "1f2218af43d229e89b6375ae757326d025a8a62d0d0c8df902c6856114811ffc",
+      "nature": "illustration du fournisseur : jet des deux buses (rendu retouché, pas une mesure)"
+    },
+    {
+      "id": "net-piscine",
+      "produit": "nettoyeur",
+      "fichier": "net-piscine.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A47d3134672f84a1781fc0a61c95969328.jpg",
+      "sha256": "fed102c0387854f306f3471b3217546120ac89ed96ee91ba1db0a883f99329d1",
+      "nature": "illustration du fournisseur : le tuyau et sa crépine plongés dans l'eau (montage)"
+    },
+    {
+      "id": "net-pistolet",
+      "produit": "nettoyeur",
+      "fichier": "net-pistolet.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/Sda62cd9bdf3b43e89fe961cda0542878e.jpg",
+      "sha256": "939226f26138fe81e49ba36e447b1961232984b7d6a00d07c3d1937b7fc8eaa8",
+      "nature": "photo produit avec cotes dessinées (recadrer sans les cotes)"
+    },
+    {
+      "id": "net-seau",
+      "produit": "nettoyeur",
+      "fichier": "net-seau.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S7288c29be7b5413ca186d671da10d631K.jpg",
+      "sha256": "1b38d7f075fb670940ba9ca1f9c12cb6eff74a9bd6b09778247fb04090927ff1",
+      "nature": "illustration du fournisseur : pistolet, tuyau dans un seau, voiture en fond (montage)"
+    },
+    {
+      "id": "net-mur",
+      "produit": "nettoyeur",
+      "fichier": "net-terrasse.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A726bb8cdcc344538b26d02bd38e34f21P.jpg",
+      "sha256": "2f4fafb1ef4b33106b9f379cd8586d42116c77892332757c7f27ace2ad85b9ea",
+      "nature": "illustration du fournisseur : lavage d'un mur (rendu retouché)"
+    },
+    {
+      "id": "net-scenes",
+      "produit": "nettoyeur",
+      "fichier": "net-velo.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/A511e14aae202447daa91f5b147fcdbfc4.jpg",
+      "sha256": "545a78d6355901df0bacd06152be5dfd521089783431ce774bddf8fe04a6aad2",
+      "nature": "planche « Multi-scenario » du fournisseur : six scènes vraisemblablement GÉNÉRÉES (texte illisible sur la vitre) : illustrations, jamais présentées comme un test"
+    },
+    {
+      "id": "net-voiture",
+      "produit": "nettoyeur",
+      "fichier": "net-voiture.jpg",
+      "url": "https://ae-pic-a1.aliexpress-media.com/kf/S381fe8eaad26495aa74bed0f57c1264b1.jpg",
+      "sha256": "e973582a79f94620319a84555e3e453640a0cccb15fa8eaacdf0960d8c57ea87",
+      "nature": "illustration du fournisseur : lavage d'une voiture (rendu retouché)"
+    }
+  ],
+  "cherches_et_refuses": [
+    {
+      "ou": "CJ product/query pid 2039611415532191746 (aspirateur vendu)",
+      "resultat": "productVideo nul, queryVideosByProductId vide : aucune vidéo sur la fiche vendue"
+    },
+    {
+      "ou": "CJ pid 2093705332092755970 (pistolet laveur, même coque d'usine que le nôtre sur les photos)",
+      "resultat": "REFUSÉ : sa seule vidéo montre un autre pistolet (blanc, marque MDHL)"
+    },
+    {
+      "ou": "CJ pid 1570592516880216064 (pistolet laveur)",
+      "resultat": "REFUSÉ : compilation de plusieurs machines différentes, slogans faux (« German craftsmanship, won't break for 10 years »), sous-titres coréens repris d'ailleurs"
+    },
+    {
+      "ou": "AliExpress 1005009522003959 (nettoyeur vendu)",
+      "resultat": "aucune vidéo dans la galerie (vu dans la page le 07/10)"
+    },
+    {
+      "ou": "AliExpress, autres annonces du même pistolet (1005007709740110, 1005013028043183, 1005013028561266, 1005013138630877)",
+      "resultat": "NON VÉRIFIÉ : vérification « robot » d'AliExpress hors du Chrome connecté (jamais contournée) et onglets du Chrome connecté gelés (Chrome partagé avec une autre session) ; à reprendre quand Chrome est libre"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "releve_le": "2026-10-07T11:37:05.436Z",
+  "api": "POST /tiktok/v1/creator/music/unlimited/search/list/?aid=1988",
+  "son": {
+    "music_id": "6618871733141113604",
+    "id_str": "6618871733141113604",
+    "title": "Sunrise",
+    "author": "Official Sound Studio",
+    "duration_precision": 31,
+    "is_commerce_music": true,
+    "is_commerce_music_strict": true,
+    "commercial_right_type": 2,
+    "has_commerce_right": true,
+    "is_unlimited_music": true,
+    "has_human_voice": false,
+    "user_count": 22401942,
+    "create_time": 1541076166,
+    "prevent_download": false,
+    "play_url": {
+      "uri": "https://sf77-ies-music-sg.tiktokcdn.com/obj/tos-alisg-ve-2774/bb0b72d46f474ff090de9a6bbf33b8bf",
+      "url_list": [
+        "https://sf77-ies-music-sg.tiktokcdn.com/obj/tos-alisg-ve-2774/bb0b72d46f474ff090de9a6bbf33b8bf"
+      ]
+    },
+    "extra": {
+      "beats": {
+        "beats_tracker": [
+          80,
+          990,
+          1720,
+          2480,
+          3090,
+          3670,
+          4290,
+          4880,
+          5490,
+          6080,
+          6690,
+          7270,
+          7850,
+          8480,
+          9070,
+          9690,
+          10280,
+          10890,
+          11480,
+          12080,
+          12680,
+          13290,
+          13880,
+          14500,
+          15080,
+          15690,
+          16280,
+          16880,
+          17480,
+          18080,
+          18680,
+          19300,
+          19880,
+          20490,
+          21080,
+          21680,
+          22280,
+          22880,
+          23480,
+          24080,
+          24680,
+          25290,
+          25880,
+          26480,
+          27080,
+          27680,
+          28280,
+          28890
+        ],
+        "beats_tracker_source": "https://sf16-music.tiktokcdn-eu.com/obj/tos-alisg-v-2774/o8VSQNIhvnCVSFA4Ay8UAZlAFtSgEBSXQbbeeD"
+      }
+    }
+  }
+}

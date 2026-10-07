@@ -1,5 +1,11 @@
 # Chaîne TikTok « Brico Travaux »
 
+> **Depuis le 07/10 : méthode v2 (voir `METHODE-V2.md`).** Le style « keynote » ci-dessous (photos animées + voix
+> Kokoro) a été refusé par Benj. La v2 monte des **vidéos réelles du produit** (rushes du fournisseur, `v2/provenance.json`)
+> sur une musique licenciée de TikTok Studio, une structure différente par vidéo :
+> `node promo-src/tiktok-chaine/v2/rushes.mjs` (rushes), `node promo-src/tiktok-chaine/v2/monter.mjs --tout` (montage →
+> `sorties/v2/`), `node promo-src/tiktok-chaine/v2/juge.mjs [--sabotages]` (juge). Le reste de ce document décrit la v1.
+
 Une ligne du calendrier (`lignes/*.json`) devient une vidéo verticale 1080 × 1920 d'environ 16 s :
 les photos réelles du produit vendu, animées (HyperFrames), avec une **voix off française** calée mot à mot sur les sous-titres.
 Rien n'est publié par la chaîne : elle fabrique, le juge écoute, la publication reste un geste à part.

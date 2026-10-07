@@ -1,0 +1,290 @@
+{
+  "id": "n1-sans-prise",
+  "produit": "nettoyeur",
+  "structure": "choc : un mot énorme par temps fort, coupe sèche et éclair blanc à chaque image, aucune phrase longue",
+  "accroche": "« PAS DE PRISE. » plein écran dès la première image sur le tuyau plongé dans l'eau, éclair + poussée",
+  "musique": "tt-7171140178143266818",
+  "musique_debut": 1.22,
+  "style": {
+    "mode": "choc",
+    "police": "Anton",
+    "taille": 190,
+    "couleur": "#FFFFFF",
+    "accent": "#FFE600",
+    "contour": 10,
+    "ombre": 6,
+    "alignement": 5,
+    "pop": 135,
+    "espace": 2
+  },
+  "plans": [
+    {
+      "photo": "net-piscine",
+      "recadrage": [
+        650,
+        0,
+        731,
+        1300
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-seau",
+      "recadrage": [
+        300,
+        0,
+        844,
+        1500
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-seau",
+      "recadrage": [
+        300,
+        520,
+        560,
+        980
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "secousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        690,
+        170,
+        790,
+        730
+      ],
+      "masques": [
+        [
+          900,
+          612,
+          372,
+          88
+        ]
+      ],
+      "mode": "carte",
+      "fond_uni": "#FFE600",
+      "largeur_carte": 960,
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        555,
+        1150,
+        475,
+        235
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 980,
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-buses",
+      "recadrage": [
+        45,
+        135,
+        470,
+        420
+      ],
+      "mode": "carte",
+      "largeur_carte": 1000,
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-buses",
+      "recadrage": [
+        968,
+        590,
+        495,
+        410
+      ],
+      "mode": "carte",
+      "largeur_carte": 1000,
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-voiture",
+      "recadrage": [
+        620,
+        520,
+        551,
+        980
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-scenes",
+      "recadrage": [
+        812,
+        656,
+        750,
+        452
+      ],
+      "mode": "carte",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-scenes",
+      "recadrage": [
+        812,
+        1132,
+        750,
+        452
+      ],
+      "mode": "carte",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-seau",
+      "recadrage": [
+        300,
+        0,
+        844,
+        1500
+      ],
+      "mode": "plein",
+      "temps": 4,
+      "effet": "recul"
+    }
+  ],
+  "textes": [
+    {
+      "temps": [
+        0,
+        2
+      ],
+      "texte": "Pas de|prise.",
+      "accent": [
+        "PRISE"
+      ]
+    },
+    {
+      "temps": [
+        2,
+        4
+      ],
+      "texte": "Pas de|robinet.",
+      "accent": [
+        "ROBINET"
+      ]
+    },
+    {
+      "temps": [
+        4,
+        6
+      ],
+      "texte": "Un seau|suffit.",
+      "accent": [
+        "SEAU"
+      ]
+    },
+    {
+      "temps": [
+        6,
+        8
+      ],
+      "texte": "Sans|fil.",
+      "accent": [
+        "FIL"
+      ],
+      "couleur": "#111111"
+    },
+    {
+      "temps": [
+        8,
+        10
+      ],
+      "texte": "Deux|batteries",
+      "accent": [
+        "DEUX"
+      ]
+    },
+    {
+      "temps": [
+        10,
+        12
+      ],
+      "texte": "Jet|droit",
+      "accent": [
+        "DROIT"
+      ]
+    },
+    {
+      "temps": [
+        12,
+        14
+      ],
+      "texte": "ou|éventail",
+      "accent": [
+        "ÉVENTAIL"
+      ]
+    },
+    {
+      "temps": [
+        14,
+        16
+      ],
+      "texte": "pour la|voiture",
+      "accent": [
+        "VOITURE"
+      ]
+    },
+    {
+      "temps": [
+        16,
+        18
+      ],
+      "texte": "la|terrasse",
+      "accent": [
+        "TERRASSE"
+      ]
+    },
+    {
+      "temps": [
+        18,
+        20
+      ],
+      "texte": "le|vélo",
+      "accent": [
+        "VÉLO"
+      ]
+    },
+    {
+      "temps": [
+        20,
+        24
+      ],
+      "texte": "Lien dans|la bio",
+      "accent": [
+        "BIO"
+      ]
+    }
+  ]
+}

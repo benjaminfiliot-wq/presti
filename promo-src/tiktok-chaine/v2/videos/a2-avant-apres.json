@@ -1,0 +1,182 @@
+{
+  "id": "a2-avant-apres",
+  "produit": "aspirateur",
+  "structure": "avant / après : trois manches, chacune une image figée « AVANT » (poussée lente) puis le geste réel « APRÈS » ; étiquettes rouge et verte, texte sur pavé blanc",
+  "accroche": "Un canapé couvert de miettes, étiquette AVANT rouge et question dès la première image ; le geste réel démarre à 0,5 s",
+  "musique": "tt-6693354155173481218",
+  "musique_debut": 16.75,
+  "style": {
+    "mode": "bandeau",
+    "police": "Archivo Black",
+    "taille": 86,
+    "couleur": "#111111",
+    "accent": "#E5262B",
+    "boite": true,
+    "fond_boite": "#FFFFFF",
+    "contour": 22,
+    "ombre": 0,
+    "alignement": 2,
+    "marge_bas": 560,
+    "pop": 108,
+    "police_etiquette": "Anton",
+    "taille_etiquette": 124
+  },
+  "plans": [
+    {
+      "rush": "cj-asp-2",
+      "de": 36.6,
+      "gel": true,
+      "temps": 1,
+      "x": 0.5,
+      "effet": "pousse"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 36.7,
+      "temps": 6,
+      "x": 0.5,
+      "vitesse": 1.15,
+      "effet": "main",
+      "flash": true
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 43.6,
+      "gel": true,
+      "temps": 2,
+      "x": 0.5,
+      "effet": "pousse"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 43.6,
+      "temps": 5,
+      "x": 0.5,
+      "vitesse": 1.1,
+      "effet": "main",
+      "flash": true
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 30.3,
+      "gel": true,
+      "temps": 2,
+      "x": 0.5,
+      "effet": "pousse"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 30.3,
+      "temps": 5,
+      "x": 0.5,
+      "vitesse": 0.96,
+      "effet": "main",
+      "flash": true
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 52.9,
+      "temps": 4,
+      "x": 0.5,
+      "effet": "main"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 3,
+      "temps": 5,
+      "x": 0.5,
+      "effet": "recul"
+    }
+  ],
+  "textes": [
+    {
+      "temps": [
+        0,
+        1
+      ],
+      "texte": "Un canapé plein|de miettes ?",
+      "accent": [
+        "MIETTES"
+      ],
+      "etiquette": {
+        "texte": "Avant",
+        "fond": "#E5262B"
+      }
+    },
+    {
+      "temps": [
+        1,
+        7
+      ],
+      "texte": "Aspiré.",
+      "etiquette": {
+        "texte": "Après",
+        "fond": "#18B85A"
+      }
+    },
+    {
+      "temps": [
+        7,
+        9
+      ],
+      "texte": "Le bas|de la portière",
+      "etiquette": {
+        "texte": "Avant",
+        "fond": "#E5262B"
+      }
+    },
+    {
+      "temps": [
+        9,
+        14
+      ],
+      "texte": "Soufflé,|pas frotté.",
+      "accent": [
+        "SOUFFLÉ"
+      ],
+      "etiquette": {
+        "texte": "Après",
+        "fond": "#18B85A"
+      }
+    },
+    {
+      "temps": [
+        14,
+        16
+      ],
+      "texte": "La fente|du siège",
+      "etiquette": {
+        "texte": "Avant",
+        "fond": "#E5262B"
+      }
+    },
+    {
+      "temps": [
+        16,
+        21
+      ],
+      "texte": "Aspirée.",
+      "etiquette": {
+        "texte": "Après",
+        "fond": "#18B85A"
+      }
+    },
+    {
+      "temps": [
+        21,
+        25
+      ],
+      "texte": "Aspirateur à main|sans fil"
+    },
+    {
+      "temps": [
+        25,
+        30
+      ],
+      "texte": "Lien dans la bio",
+      "accent": [
+        "BIO"
+      ]
+    }
+  ]
+}
