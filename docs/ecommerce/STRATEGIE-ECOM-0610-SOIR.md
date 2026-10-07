@@ -51,3 +51,14 @@ Vidéo sponsorisée pour une boutique IA concurrente de Shopify (nom mal prononc
 2. **Lots et ventes additionnelles.** eBay propose gratuitement la remise multi-achat (« achetez-en 2, -10 % »), à activer sur l'aspirateur (cadeau, deuxième voiture). Le lot nettoyeur + buse de rechange est à étudier quand le fournisseur aura confirmé le contenu du colis.
 3. **Toutes les images à partir d'une seule photo produit.** C'est déjà ce que fait la chaîne vidéo (produit détouré, loupe, avant/après) : on réutilise les mêmes plans pour les photos d'annonce eBay.
 L'écosystème suit ces mesures chaque jour (relevé de marché + compteurs TikTok) ; un test ne s'arrête que sur un chiffre lu, jamais sur une impression.
+
+## Vérification avant publication (06/10/2026, 23 h, sur les fiches et l'API, à la demande de Benj : produits d'Europe, bons produits, bons prix)
+| | Nettoyeur haute pression sans fil | Aspirateur de voiture sans fil |
+|---|---|---|
+| Fournisseur retenu | AliExpress, article 1005009522003959, variante « FR 6000mah-2 batteries » | CJ, pid 2039611415532191746, **entrepôt Allemagne** (34 en stock) |
+| D'où part le colis | **France** (livraison gratuite, reçu en 2 à 5 jours ; retour gratuit 15 j) | **Allemagne** (DHL DE→FR, 3 à 7 jours) |
+| Colis | pistolet 21 V + 2 batteries 6000 mAh (fiche) | aspirateur, 6 embouts, filtre, câble USB, notice ; sec et humide, souffle/aspire |
+| Coût livré | **21,76 € TTC** (prix lu sur la fiche, sans droits de douane) | **15 $ + 5,50 $ de port = 20,50 $** (≈ 17,5 à 18,5 € selon le cours) |
+| Prix de vente eBay | **34,90 €** livraison incluse (médiane vendue : 41,28 €) | **27,90 €** livraison incluse (médiane vendue : 27,91 €) ; à 24,90 € la marge tomberait à ≈ 3 € |
+| Marge nette (frais eBay ≈ 13 % + 0,35 €) | **≈ 8,25 €** | **≈ 5,50 à 6,50 €** |
+Abandonnés : l'aspirateur CJ expédié de Chine (pid 2602210241461612300) et tous les nettoyeurs CJ (aucune ligne de port vers la France, y compris depuis l'Allemagne et le Royaume-Uni : batterie).
