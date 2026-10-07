@@ -65,6 +65,11 @@ const CRITERES = [
   ["BP-14 l'atelier ne lit plus aucune des trois variables à la main (le refus `en_attente_gmail` ne dépend plus d'elles)", (s) => !VAR_A_LA_MAIN.test(s.atelier) && !VAR_A_LA_MAIN.test(s.avis)],
   ['BP-15 aucun fichier du chemin « demande entrante → maquette → e-mail » ne lit PROSPECTION_GMAIL_* ni ACQ_ADRESSE_REPONSE hors du module',
     (s) => CHEMIN_ENTRANT.every((f) => s[f] === null || !VAR_A_LA_MAIN.test(s[f]))],
+  // BP-16 (07/10) : l'essai en production a buté sur la contrainte `maquettes_21_jours` (expire_le ≤ cree_le + 21 j) : le lien,
+  // créé une passe après la maquette, demandait « maintenant + 21 j » et chaque lien répondait 503 (étape lien_maquette).
+  ["BP-16 l'atelier plafonne la fin du lien à celle de la maquette (expire_le, sinon cree_le + 21 j) et la passe au lien comme au rendez-vous",
+    (s) => /expireLe = expirationDuLien\(maintenant, m\)/.test(s.atelier) && /function expirationDuLien\([\s\S]{0,700}m\.expire_le[\s\S]{0,200}m\.cree_le|function expirationDuLien\([\s\S]{0,700}m\.cree_le[\s\S]{0,300}m\.expire_le/.test(s.atelier)
+      && /Math\.min\(voulue, \.\.\.plafonds\)/.test(s.atelier) && /creerLienMaquette\(p\.id, [^\n]*, expireLe\)/.test(s.atelier) && /creerLienRdv\(p\.id, [^\n]*, expireLe\)/.test(s.atelier)],
 ]
 const evaluer = (s) => CRITERES.filter(([, f]) => { try { return !f(s) } catch { return true } }).map(([nom]) => nom.split(' ')[0])
 for (const [nom, f] of CRITERES) { let v = false; try { v = f(SOURCES) } catch { v = false } ok(nom, v) }
@@ -80,6 +85,9 @@ const SABOTAGES = [
   ["l'avis juge J3 sans adresse (l'état d'avant le 07/10)", 'avis', (t) => remplacer(t, 'adresseReponse: adresseReponseProspection() || null', "adresseReponse: (process.env.ACQ_ADRESSE_REPONSE ?? '').trim() || null")],
   ["l'avis lit la variable par crochets", 'avis', (t) => remplacer(t, 'adresseReponse: adresseReponseProspection() || null', "adresseReponse: process.env['ACQ_ADRESSE_REPONSE'] || adresseReponseProspection() || null")],
   ['le facteur relit PROSPECTION_GMAIL_USER', 'facteur', (t) => remplacer(t, 'const boite = boiteProspection()', "const boite = process.env.PROSPECTION_GMAIL_USER ? null : boiteProspection()")],
+  ["l'atelier redemande « maintenant + 21 j » (l'état qui faisait échouer chaque lien le 07/10)", 'atelier', (t) => remplacer(t, 'expireLe = expirationDuLien(maintenant, m)', 'expireLe = expiration(maintenant)')],
+  ["l'atelier ignore le plafond de la maquette", 'atelier', (t) => remplacer(t, 'Math.min(voulue, ...plafonds)', 'voulue')],
+  ["le rendez-vous garde « maintenant + 21 j »", 'atelier', (t) => remplacer(t, 'hacherJeton(jetonRdv), expireLe)', 'hacherJeton(jetonRdv), expiration(maintenant))')],
   ['le module journalise la boîte', 'module', (t) => remplacer(t, 'const b = entreprise()', 'const b = entreprise(); console.log(b)')],
   ['la route du formulaire lit ACQ_ADRESSE_REPONSE', 'app/api/prospects/entrant/route.ts', (t) => remplacer(t, "export async function POST(req: Request) {", "export async function POST(req: Request) {\n  void process.env.ACQ_ADRESSE_REPONSE")],
   ['le rédacteur (module) lit PROSPECTION_GMAIL_PASS', 'lib/agents/acquisition/redacteur.ts', (t) => t + '\nexport const _x = process.env.PROSPECTION_GMAIL_PASS\n'],
@@ -93,5 +101,5 @@ for (const [nom, cle, muter] of SABOTAGES) {
 }
 if (manques) rouges.push(`${manques} sabotage(s) manqué(s)`)
 
-console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : `boite-prospection-qa : PASS (15 critères, ${SABOTAGES.length} sabotages vus)`)
+console.log(rouges.length ? `boite-prospection-qa : ÉCHEC (${rouges.join(', ')})` : `boite-prospection-qa : PASS (${6 + CRITERES.length} critères, ${SABOTAGES.length} sabotages vus)`)
 process.exitCode = rouges.length ? 1 : 0
