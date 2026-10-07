@@ -1,24 +1,53 @@
-# Vercel — les variables qui débloquent l'envoi de la prospection (06/10/2026)
+# Vercel — les variables de la prospection (mis à jour le 07/10/2026 après l'incident de la boîte personnelle)
 
-Pourquoi : chaque passage du facteur répond aujourd'hui `en_attente_gmail` et `en_attente_meta` (lu dans `net._http_response` le 06/10 à 12 h 50 UTC) : sans ces variables, **aucun message ne peut partir**, même quand l'envoi à froid sera ouvert. Les valeurs sont des mots de passe et des jetons : c'est Benj qui les colle, Claude ne les saisit pas.
+**Où :** https://vercel.com/presti1/presti/settings/environment-variables (projet de prestiapp.fr). Environnement : **Production** seulement. Les valeurs sont des mots de passe et des jetons : c'est Benj qui les colle, Claude ne les saisit pas.
 
-**Où :** https://vercel.com/presti1/presti/settings/environment-variables (projet de prestiapp.fr ; si le nom du projet diffère, Projets → presti → Settings → Environment Variables). Environnement : **Production** seulement.
+## 0. L'incident du 06/10 — à lire d'abord
 
-## 1. Gmail d'envoi (le facteur, le standardiste, le répondeur) — rien à créer
-La boîte `benjaminfiliot@gmail.com` a DÉJÀ un mot de passe d'application sur Vercel (`IMAP_USER` / `IMAP_PASS`, celle du Poste de contrôle). Il suffit de recopier :
-| Variable à ajouter | Valeur |
+- Ce qui s'est passé : le 06/10, la prospection a été branchée par défaut sur la boîte « de l'entreprise » (`IMAP_USER` / `IMAP_PASS`). Or cette boîte est **ton Gmail personnel**. Du 06/10 ~16 h UTC au 07/10 matin, le standardiste y a relevé plus d'un millier de messages personnels (aucun lié à la prospection), les a recopiés dans la table des réponses (`ops.reponses`), en a tiré 32 oppositions et 122 signaux STOP (comptes du 07/10 09 h UTC, après la dernière relève : 1 149 messages). **Aucune réponse automatique n'est partie** (aucun envoi préparé depuis ces messages : vérifié en base le 07/10).
+- Ce qui est fait (07/10, commit « repli sur la boîte de l'entreprise COUPÉ » + migration 0134) :
+  1. **Le repli est coupé** pour tous les usages de prospection (relève du standardiste, réponse du répondeur, envoi du facteur et du rédacteur, lien de l'atelier, avis du second juge). Sans les variables de la section 1, chaque route rend `en_attente_gmail` : rien n'est lu, rien ne part. La boîte personnelle n'est même plus ouverte.
+  2. Le répondeur ne répond plus qu'aux messages d'un fil ouvert par nous (un de nos envois cité, une conversation sur nos canaux, ou un prospect à qui nous avons déjà écrit).
+  3. Les lignes recopiées sont **neutralisées, pas supprimées** : classe `neutralisee` (la classe d'origine est gardée dans `classe_avant_neutralisation`), `neutralisee_le` posé ; les 32 oppositions sont échues (`expire_le` = le 07/10, `neutralisee_le` posé) ; les 122 signaux STOP sont passés en `stop_neutralise`. (Entre la migration et le déploiement, une dernière relève a réactivé 4 de ces oppositions et ajouté 2 messages et 2 STOP : neutralisés de même à 09 h UTC, après la première passe du standardiste en `en_attente_gmail`.) Aucun agent ne les classe, n'y répond ni n'en tire quoi que ce soit, et le pilotage ne les affiche plus.
+- Le juge qui le prouve : `node --import ./scripts/ts-loader.mjs scripts/boite-prospection-qa.mjs` (BP-17 à BP-25).
+
+## 1. TA DÉCISION n° 1 — créer une boîte Gmail DÉDIÉE à la prospection
+
+Tant que ce n'est pas fait, la prospection par courriel est à l'arrêt (c'est voulu). Ne mets **jamais** ton Gmail personnel ici.
+
+1. Crée un nouveau compte Gmail réservé à la prospection (ex. un nom au nom de Presti), active la validation en deux étapes, puis crée un **mot de passe d'application** (Compte Google → Sécurité → Mots de passe des applications).
+2. Sur Vercel, ajoute :
+
+| Variable | Valeur |
 |---|---|
-| `PROSPECTION_GMAIL_USER` | la même que `IMAP_USER` (`benjaminfiliot@gmail.com`) |
-| `PROSPECTION_GMAIL_PASS` | la même que `IMAP_PASS` (bouton « œil » sur `IMAP_PASS`, copier, coller ; les espaces du mot de passe Google sont retirés par le code) |
-| `ACQ_ADRESSE_REPONSE` | `benjaminfiliot@gmail.com` (là où arrivent les réponses des prospects) |
+| `PROSPECTION_GMAIL_USER` | l'adresse de la **nouvelle** boîte |
+| `PROSPECTION_GMAIL_PASS` | son mot de passe d'application (les espaces du mot de passe Google sont retirés par le code) |
+| `ACQ_ADRESSE_REPONSE` | l'adresse où les prospects répondent : la même nouvelle boîte |
 
-## 2. Messages Instagram / Facebook (facteur Meta)
+3. Dis « c'est posé » : Claude pousse un commit (Vercel ne lit une nouvelle variable qu'au déploiement suivant), attend l'état READY (`node scripts/deploiement-etat.mjs`), déclenche un passage du facteur et du standardiste et vérifie `"gmail":"ok"`.
+   - Note technique : le curseur de relève (`acq_curseur` « gmail ») garde la position de l'ancienne boîte ; à la première relève de la nouvelle boîte, Claude vérifie que la relève repart bien du début de la nouvelle boîte (l'identifiant UIDVALIDITY change) avant de laisser tourner.
+
+**À ne pas faire :** poser `PROSPECTION_AUTORISER_BOITE_ENTREPRISE=oui`. Cette variable rouvre le repli sur `IMAP_USER` (ton Gmail personnel) : elle n'existe que pour le jour où `IMAP_USER` serait une vraie boîte de travail. Aucun agent, aucun script ne la pose (le juge BP-24 le vérifie) : c'est ta décision seule.
+
+## 2. TA DÉCISION n° 2 — purger, ou non, les lignes neutralisées
+
+Elles ne gênent plus rien (aucun agent ne les lit), mais elles contiennent des copies de tes messages personnels dans la base. Les supprimer définitivement est **ta** décision ; Claude ne l'a pas fait. Si tu dis « purge », voici ce qui serait supprimé (et seulement cela) :
+
+- `ops.reponses` où `neutralisee_le is not null` (les messages recopiés) ;
+- `ops.opposition` où `neutralisee_le is not null and expire_le is not null` (les oppositions tirées de ces messages et toujours échues ; une vraie opposition reposée depuis sur la même clé a perdu sa marque et n'est pas touchée) ;
+- `ops.signaux` où `type = 'stop_neutralise'`.
+
+Les comptes se lisent avant : `select count(*) from ops.reponses where neutralisee_le is not null;` (idem pour les deux autres). Sans réponse de ta part, rien n'est supprimé.
+
+## 3. Messages Instagram / Facebook (facteur Meta) — inchangé
+
 | Variable | Où la trouver |
 |---|---|
 | `META_PAGE_TOKEN` | developers.facebook.com → Outils → Explorateur de l'API Graph → choisir l'application Presti → « Obtenir un jeton de page » pour la Page Presti, avec les droits `pages_messaging`, `instagram_basic`, `instagram_manage_messages` → puis le transformer en jeton longue durée (Outils → Débogueur de jeton d'accès → « Prolonger ») |
 | `META_IG_ID` | dans le même explorateur : requête `me/accounts?fields=instagram_business_account` avec le jeton de page → le nombre `instagram_business_account.id` (compte @prestiapp) |
-(Si la vérification d'identité Meta n'est pas terminée, cette partie attend : la partie Gmail suffit pour démarrer.)
 
-## 3. Après avoir collé
-1. Dire « c'est posé » : Claude pousse un commit (Vercel ne lit une nouvelle variable qu'au déploiement suivant), attend l'état READY (`node scripts/deploiement-etat.mjs`), déclenche un passage du facteur par la base (`net.http_get` avec le secret du coffre) et lit la réponse : elle doit dire `"gmail":"ok"` (et `"meta":"ok"` si la partie 2 est posée).
-2. L'envoi à froid reste fermé tant que Benj ne l'ouvre pas (`acq_envoi_froid_ouvrir`, migration 0131) ; les plafonds du palier P0 s'appliquent ensuite.
+(Si la vérification d'identité Meta n'est pas terminée, cette partie attend.)
+
+## 4. L'envoi à froid
+
+Il reste fermé tant que tu ne l'ouvres pas (`acq_envoi_froid_ouvrir`, migration 0131) ; les plafonds du palier P0 s'appliquent ensuite. Cet incident n'y a rien changé.
