@@ -32,7 +32,8 @@ Produits montrés (07/10, produits d'Europe) : l'aspirateur CJ 20396114155321917
 - **Cache de voix clé sur le texte**, jamais sur l'id d'une vidéo ; **chaque vidéo finale est transcrite** et refusée si elle ne dit pas son texte.
 - **Musique** : jamais un son protégé incrusté. Seules les pistes de TikTok Studio > « Sons libres de droits » entrent au manifeste `promo-src/tiktok-chaine/musique/manifeste.json`, avec la réponse de l'API qui prouve la licence commerciale. Les coupes tombent sur les temps forts de la piste ; la musique passe sous la voix (ducking) ; tout est à -14 LUFS.
 - **Deux rendus par vidéo** : `<id>-voix.mp4` (voix seule) et `<id>-voix-musique.mp4` (si une piste licenciée existe). Si le son « tendance » est ajouté dans l'appli au moment de publier (compte pro, bibliothèque commerciale), publier la **voix seule** : jamais deux musiques.
-- **Juge** : `node promo-src/tiktok-chaine/juge.mjs --sabotages` (voix présente, texte dit = texte affiché, sous-titres calés, -14 LUFS, pas de silence de tête, aucune piste sans licence).
+- **Animation « keynote »** (demande de Benj du 07/10, d'après sa référence) : point lumineux qui s'ouvre sur le produit et nom écrit lettre à lettre, coupes « whip » à flou directionnel et éclairs, photos en cartes 3D en perspective, trait de lumière qui devient la barre du bénéfice, dérive caméra continue, clôture en pilule BRICO TRAVAUX avec bulles (README de la chaîne).
+- **Juge** : `node promo-src/tiktok-chaine/juge.mjs --sabotages` (voix présente, texte dit = texte affiché, sous-titres calés, -14 LUFS, pas de silence de tête, aucune piste sans licence, au moins un whip à flou directionnel mesuré, un plan en perspective, aucun passage figé de plus de 0,8 s).
 
 ## 3. Calendrier — 7 jours (1 vidéo par produit et par jour)
 | Jour | Aspirateur (12 h 30) | Nettoyeur (19 h 00) |
