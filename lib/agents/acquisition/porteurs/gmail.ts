@@ -30,6 +30,8 @@ export interface OptionsCourriel {
   subject: string
   text: string
   messageId: string
+  /** 07/10 : mode « fil seul » — l'adresse « plus » du fil de prospection (boiteProspection.ts). */
+  replyTo?: string
   inReplyTo?: string
   references?: string[]
   attachments?: { filename: string; content: Uint8Array; contentType: string }[]
@@ -47,6 +49,8 @@ export interface OptionsPorteurGmail {
   /** Le mot de passe d'application Google, avec ou sans les espaces que Google affiche. */
   pass: string
   adresse: string
+  /** L'en-tête Reply-To (mode « fil seul » : l'adresse « plus » du fil) ; absent : aucun. */
+  repondreA?: string | null
   transport?: TransportSmtp | null
   /** Lecture injectée pour les bancs ; absente : pause générale réelle, fermée sur panne. */
   pauseGenerale?: () => Promise<{ active: boolean }>
@@ -108,6 +112,7 @@ async function transportParDefaut(user: string, pass: string): Promise<Transport
 export function creerPorteurGmail(options: OptionsPorteurGmail): Porteur {
   const pass = nettoyerMotDePasse(String(options.pass ?? ''))
   const adresse = String(options.adresse ?? '').trim()
+  const repondreA = String(options.repondreA ?? '').trim()
   const delai = options.delaiMs ?? DELAI_SMTP_MS
   const domaine = /^[^@\s]+@([A-Za-z0-9.-]{1,200})$/.exec(adresse)?.[1] ?? 'presti.invalid'
   let transport: TransportSmtp | null = options.transport ?? null
@@ -116,7 +121,7 @@ export function creerPorteurGmail(options: OptionsPorteurGmail): Porteur {
     canal: 'email_sollicite',
     async envoyer(m: MessageSortant): Promise<ResultatPorteur> {
       try {
-        if (!RE_ADRESSE.test(adresse) || !RE_ADRESSE.test(String(m?.a ?? '')) || typeof m.texte !== 'string' || !m.texte.trim()) {
+        if (!RE_ADRESSE.test(adresse) || (repondreA !== '' && !RE_ADRESSE.test(repondreA)) || !RE_ADRESSE.test(String(m?.a ?? '')) || typeof m.texte !== 'string' || !m.texte.trim()) {
           return { ok: false, erreur: 'refus', definitif: true }
         }
         const references = (Array.isArray(m.references) ? m.references : []).filter((r) => typeof r === 'string' && RE_MESSAGE_ID.test(r))
@@ -148,6 +153,7 @@ export function creerPorteurGmail(options: OptionsPorteurGmail): Porteur {
           subject: sansRetourLigne(m.objet ?? ''),
           text: m.texte,
           messageId,
+          ...(repondreA ? { replyTo: repondreA } : {}),
           ...(enReponseA ? { inReplyTo: enReponseA } : {}),
           ...(references.length || enReponseA ? { references: references.length ? references : [enReponseA as string] } : {}),
           ...(piece ? { attachments: [piece] } : {}),
@@ -313,7 +319,8 @@ export async function releverGmail(options: OptionsReleve): Promise<ResultatRele
   let imap: ClientImap | null = options.imap ?? null
   const adresse = String(options.adresse ?? '').trim().toLowerCase()
   try {
-    if (!adresse) return { erreur: 'injoignable' }
+    // Une seule adresse, sans guillemet ni espace (elle entre dans la recherche X-GM-RAW) : sinon rien n'est cherché.
+    if (!adresse || !/^[^\s"<>@,;]+@[^\s"<>@,;]+$/.test(adresse)) return { erreur: 'injoignable' }
     if (!imap) imap = options.identifiants ? await clientParDefaut(options.identifiants) : null
     if (!imap) return { erreur: 'injoignable' }
     if (typeof imap.connect === 'function') await imap.connect()
@@ -330,6 +337,9 @@ export async function releverGmail(options: OptionsReleve): Promise<ResultatRele
     const trouves = new Set<number>()
     for (const champ of ['to', 'cc'] as const) {
       const requete: Record<string, unknown> = { header: { [champ]: adresse } }
+      // 07/10 : ET la recherche de Gmail (X-GM-RAW) sur la même adresse exacte. Deux filtres côté serveur : aucun message hors du
+      // fil n'est rendu par la recherche, donc aucun n'est ouvert (mode « fil seul » : l'adresse « plus » du fil de prospection).
+      requete.gmraw = `${champ}:"${adresse}"`
       if (reprise) requete.since = new Date(maintenant - REPRISE_JOURS * 86_400_000)
       else requete.uid = `${curseur + 1}:*`
       const uids = await imap.search(requete, { uid: true })

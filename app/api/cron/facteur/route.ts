@@ -70,9 +70,10 @@ export async function GET(req: Request) {
     // La passe du soir n'a lieu qu'à 20 h de Paris : la planification tire à 18 h et à 19 h UTC, l'heure d'été ou d'hiver.
     if (passe === 'soir' && heureParis() !== 20) return NextResponse.json({ hors_heure: true })
 
-    // La boîte de prospection, sinon la boîte Gmail de l'entreprise déjà configurée (boiteProspection.ts, décision du 06/10).
+    // La boîte dédiée, sinon le mode « fil seul » de la boîte de l'entreprise (boiteProspection.ts, décision du 07/10) :
+    // envoi depuis la boîte, Reply-To = l'adresse « plus » du fil, seule adresse relevée.
     const boite = boiteProspection()
-    const gmail = boite ? creerPorteurGmail({ user: boite.user, pass: boite.pass, adresse: boite.adresse, lirePieceJointe }) : null
+    const gmail = boite ? creerPorteurGmail({ user: boite.user, pass: boite.pass, adresse: boite.expediteur, repondreA: boite.repondreA, lirePieceJointe }) : null
     const jeton = (process.env.META_PAGE_TOKEN ?? '').trim()
     const compte = (process.env.META_IG_ID ?? '').trim()
     const magasin = magasinDuFacteur()

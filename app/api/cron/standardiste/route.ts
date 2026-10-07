@@ -3,7 +3,7 @@ import { pauseGenerale } from '@/lib/agents/pause'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { executerStandardiste, estStop } from '@/lib/agents/acquisition/standardiste'
 import { releverGmail } from '@/lib/agents/acquisition/porteurs/gmail'
-import { boiteProspection } from '@/lib/agents/acquisition/boiteProspection'
+import { boiteProspection, adresseFil } from '@/lib/agents/acquisition/boiteProspection'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MESSAGERIES_GRATUITES } from '@/lib/agents/acquisition/contrat'
 import { enregistrerPassage } from '@/lib/alertes'
@@ -23,9 +23,11 @@ export async function GET(req: Request) {
   if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   const releve = { messages: 0, stop: 0, etat: 'en_attente_gmail' }
   try {
-    // La boîte de prospection, sinon la boîte Gmail de l'entreprise déjà configurée (boiteProspection.ts, décision du 06/10).
+    // La boîte dédiée, sinon le mode « fil seul » de la boîte de l'entreprise (boiteProspection.ts, décision du 07/10) : la
+    // relève ne cherche, côté serveur, QUE les messages adressés à l'adresse « plus » du fil ; jamais la boîte entière.
     const boite = boiteProspection()
-    const user = boite?.user, pass = boite?.pass, adresse = boite?.adresse
+    const filSeulSur = !boite || boite.source !== 'entreprise_fil_seul' || (boite.adresse === adresseFil(boite.user) && boite.adresse.includes('+'))
+    const user = filSeulSur ? boite?.user : undefined, pass = filSeulSur ? boite?.pass : undefined, adresse = filSeulSur ? boite?.adresse : undefined
     // 06/10 : après un refus d'identifiants (« auth »), on ne retente pas toutes les 5 minutes (Google bloque un compte qui insiste) : 6 h de pause.
     let refusRecent = false
     if (user && pass && adresse) {
