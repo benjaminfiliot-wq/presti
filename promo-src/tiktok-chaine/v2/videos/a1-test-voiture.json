@@ -1,0 +1,197 @@
+{
+  "id": "a1-test-voiture",
+  "produit": "aspirateur",
+  "structure": "test réel en voiture : une suite de gestes filmés, un endroit sale par plan, coupe à chaque phrase",
+  "accroche": "Les débris disparaissent dans le bac dès la première image + « Regarde les miettes »",
+  "musique": "tt-6756879114637934600",
+  "musique_debut": 3.45,
+  "style": {
+    "mode": "mot",
+    "police": "Poppins ExtraBold",
+    "taille": 116,
+    "couleur": "#FFFFFF",
+    "accent": "#FFE600",
+    "actif": "#FFE600",
+    "contour": 9,
+    "ombre": 3,
+    "alignement": 2,
+    "marge_bas": 600,
+    "pop": 112
+  },
+  "plans": [
+    {
+      "rush": "cj-asp-1",
+      "de": 2.5,
+      "temps": 3,
+      "x": 0.55,
+      "effet": "punch"
+    },
+    {
+      "rush": "cj-asp-1",
+      "de": 6,
+      "temps": 3,
+      "x": 0.4,
+      "effet": "punch"
+    },
+    {
+      "rush": "cj-asp-1",
+      "de": 12.9,
+      "temps": 4,
+      "x": 0.62,
+      "effet": "main"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 30,
+      "temps": 4,
+      "x": 0.5,
+      "effet": "punch"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 33.5,
+      "temps": 4,
+      "x": 0.35,
+      "effet": "main"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 43.6,
+      "temps": 4,
+      "x": 0.5,
+      "effet": "punch"
+    },
+    {
+      "rush": "cj-asp-1",
+      "de": 7.5,
+      "temps": 3,
+      "x": 0.45,
+      "vitesse": 0.7,
+      "effet": "secousse"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 13,
+      "temps": 4,
+      "x": 0.45,
+      "effet": "pousse"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 2.8,
+      "temps": 4,
+      "x": 0.5,
+      "effet": "main"
+    },
+    {
+      "rush": "cj-asp-2",
+      "de": 52.9,
+      "temps": 5,
+      "x": 0.5,
+      "vitesse": 0.95,
+      "effet": "recul"
+    }
+  ],
+  "textes": [
+    {
+      "temps": [
+        0,
+        3
+      ],
+      "texte": "Regarde|les miettes",
+      "accent": [
+        "MIETTES"
+      ]
+    },
+    {
+      "temps": [
+        3,
+        6
+      ],
+      "texte": "au fond du|porte-gobelet",
+      "accent": [
+        "PORTE-GOBELET"
+      ]
+    },
+    {
+      "temps": [
+        6,
+        10
+      ],
+      "texte": "le long|du siège",
+      "accent": [
+        "SIÈGE"
+      ]
+    },
+    {
+      "temps": [
+        10,
+        14
+      ],
+      "texte": "même dans|la fente",
+      "accent": [
+        "FENTE"
+      ]
+    },
+    {
+      "temps": [
+        14,
+        18
+      ],
+      "texte": "jusque dans|la portière",
+      "accent": [
+        "PORTIÈRE"
+      ]
+    },
+    {
+      "temps": [
+        18,
+        22
+      ],
+      "texte": "et en plus|il souffle",
+      "accent": [
+        "SOUFFLE"
+      ]
+    },
+    {
+      "temps": [
+        22,
+        25
+      ],
+      "texte": "la poussière|dehors",
+      "accent": [
+        "DEHORS"
+      ]
+    },
+    {
+      "temps": [
+        25,
+        29
+      ],
+      "texte": "six embouts|dans la boîte",
+      "accent": [
+        "SIX"
+      ]
+    },
+    {
+      "temps": [
+        29,
+        33
+      ],
+      "texte": "sans fil|recharge USB",
+      "accent": [
+        "USB"
+      ]
+    },
+    {
+      "temps": [
+        33,
+        38
+      ],
+      "texte": "lien dans|la bio",
+      "accent": [
+        "BIO"
+      ]
+    }
+  ]
+}

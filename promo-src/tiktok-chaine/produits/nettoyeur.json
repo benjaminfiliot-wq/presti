@@ -93,5 +93,6 @@
       "recadrage": [36, 186, 738, 440],
       "focale": [50, 50]
     }
-  }
+  },
+  "interdits_v2": ["mousse","mallette","bars","volts"]
 }

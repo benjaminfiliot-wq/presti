@@ -1,0 +1,349 @@
+{
+  "id": "n2-dans-le-colis",
+  "produit": "nettoyeur",
+  "structure": "inventaire coché : chaque pièce du colis arrive en carte et s'ajoute à une liste cochée qui reste à l'écran, puis trois usages",
+  "accroche": "« Tout ce qu'il y a dans le colis » sur le pistolet qui claque sur fond jaune, première coche à 1,8 s",
+  "musique": "tt-6765436950024292354",
+  "musique_debut": 1.29,
+  "liste_fin": 19,
+  "style": {
+    "mode": "liste",
+    "police": "Archivo Black",
+    "taille": 74,
+    "taille_haut": 78,
+    "couleur": "#FFFFFF",
+    "accent": "#FFE600",
+    "contour": 7,
+    "ombre": 2,
+    "alignement": 2,
+    "marge_bas": 560,
+    "marge_haut": 280,
+    "pop": 115,
+    "police_liste": "Archivo Black",
+    "taille_liste": 70,
+    "liste_x": 90,
+    "liste_y": 300,
+    "liste_pas": 92
+  },
+  "plans": [
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        690,
+        170,
+        790,
+        730
+      ],
+      "masques": [
+        [
+          900,
+          612,
+          372,
+          88
+        ]
+      ],
+      "mode": "carte",
+      "fond_uni": "#FFE600",
+      "largeur_carte": 940,
+      "dy": 200,
+      "temps": 3,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        690,
+        170,
+        790,
+        730
+      ],
+      "masques": [
+        [
+          900,
+          612,
+          372,
+          88
+        ]
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 780,
+      "dy": 430,
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": false
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        555,
+        1150,
+        475,
+        235
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 900,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        1140,
+        940,
+        320,
+        455
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 480,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        395,
+        570,
+        495,
+        335
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 820,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        25,
+        430,
+        235,
+        110
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 760,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        315,
+        1110,
+        135,
+        275
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 360,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        105,
+        1160,
+        120,
+        225
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 330,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-colis",
+      "recadrage": [
+        20,
+        180,
+        560,
+        125
+      ],
+      "mode": "carte",
+      "fond_uni": "#141414",
+      "largeur_carte": 980,
+      "dy": 460,
+      "temps": 2,
+      "effet": "punch-pousse"
+    },
+    {
+      "photo": "net-voiture",
+      "recadrage": [
+        620,
+        520,
+        551,
+        980
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-scenes",
+      "recadrage": [
+        812,
+        656,
+        750,
+        452
+      ],
+      "mode": "carte",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-mur",
+      "recadrage": [
+        330,
+        0,
+        540,
+        960
+      ],
+      "mode": "plein",
+      "temps": 2,
+      "effet": "punch-pousse",
+      "flash": true
+    },
+    {
+      "photo": "net-seau",
+      "recadrage": [
+        300,
+        0,
+        844,
+        1500
+      ],
+      "mode": "plein",
+      "temps": 3,
+      "effet": "recul"
+    }
+  ],
+  "textes": [
+    {
+      "temps": [
+        0,
+        3
+      ],
+      "texte": "Tout ce qu'il y a|dans le colis",
+      "accent": [
+        "COLIS"
+      ],
+      "hors_liste": true,
+      "style": "Haut",
+      "couleur": "#111111"
+    },
+    {
+      "temps": [
+        3,
+        5
+      ],
+      "texte": "le pistolet sans fil"
+    },
+    {
+      "temps": [
+        5,
+        7
+      ],
+      "texte": "deux batteries"
+    },
+    {
+      "temps": [
+        7,
+        9
+      ],
+      "texte": "le chargeur"
+    },
+    {
+      "temps": [
+        9,
+        11
+      ],
+      "texte": "le tuyau"
+    },
+    {
+      "temps": [
+        11,
+        13
+      ],
+      "texte": "deux buses"
+    },
+    {
+      "temps": [
+        13,
+        15
+      ],
+      "texte": "la crépine"
+    },
+    {
+      "temps": [
+        15,
+        17
+      ],
+      "texte": "le raccord"
+    },
+    {
+      "temps": [
+        17,
+        19
+      ],
+      "texte": "la rallonge"
+    },
+    {
+      "temps": [
+        19,
+        21
+      ],
+      "texte": "Tu t'en sers|pour la voiture",
+      "accent": [
+        "VOITURE"
+      ],
+      "hors_liste": true
+    },
+    {
+      "temps": [
+        21,
+        23
+      ],
+      "texte": "la terrasse",
+      "accent": [
+        "TERRASSE"
+      ],
+      "hors_liste": true
+    },
+    {
+      "temps": [
+        23,
+        25
+      ],
+      "texte": "les murs",
+      "accent": [
+        "MURS"
+      ],
+      "hors_liste": true
+    },
+    {
+      "temps": [
+        25,
+        28
+      ],
+      "texte": "Lien dans|la bio",
+      "accent": [
+        "BIO"
+      ],
+      "hors_liste": true
+    }
+  ]
+}

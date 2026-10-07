@@ -79,5 +79,6 @@
       "recadrage": [575, 60, 395, 560],
       "focale": [55, 45]
     }
-  }
+  },
+  "interdits_v2": ["allume-cigare","flaque","gonfle","gonfler","sous vide","pascals"]
 }
