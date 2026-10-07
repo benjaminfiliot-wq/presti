@@ -1,0 +1,16 @@
+promesses-qa — racine /home/usine/reprise-1001/vaisseau255-1007
+  · 628 fichiers .ts/.tsx lus sous app/ et lib/, 45969 unités de texte, 54233 phrases examinées
+  · relevé complet : .orchestre/travail/promesses-qa/releve.txt
+FAIL PR-1 — lib/crieur/faits.ts:15 [moins d’une minute] « | 1 | « Réponse en moins d’une minute » »
+PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 6 sondes
+PASS PR-3 — aucune des quatre formules (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 5 sondes
+PASS PR-4 — aucune réponse seule sans Studio ou Signature (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 13 sondes
+PASS PR-5 — titre (metadata.title.default) 48/70, app/layout.tsx metadata.description 129/160, app/page.tsx:93 description 129/160, app/page.tsx:95 description 13/160, app/manifest.ts:18 description 87/160, app/manifest.ts:42 description 17/160, app/manifest.ts:43 description 16/160, app/manifest.ts:44 description 31/160 ; détecteur éprouvé sur 8 sondes
+PASS PR-6 — identique à HEAD hors l’accroche de studio, inchangée (« L’assistant qui répond seul, jour et nuit. ») ; détecteur éprouvé sur 7 sondes
+PASS PR-7 — 12 fichier(s) de la landing (app/page.tsx, app/PublicNav.tsx, app/Marque.tsx, app/HeroApp.tsx, app/Motion.tsx, app/DemoSequence.tsx, app/DemoVideo.tsx, app/DemoSite.tsx, app/DemoChiffres.tsx, app/MaquetteForm.tsx, app/Comparatif.tsx, app/chiffres/Tableau.tsx) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (urgence, fuite, degat des eaux, inondation, gaz, assurance) jamais montrés sans l’alerte ; détecteur éprouvé sur 12 sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)
+PASS PR-8 — landingVideo = false et DemoVideo rendu(s) seulement sous landingVideo : vidéo(s) /demo/hero.mp4 non affichée(s) ; détecteur éprouvé sur 7 sondes (mutation : drapeau levé sans liste, texte « dans la seconde », sha256 périmé → vus)
+PASS PR-9 — 1 unité(s) de la FAQ (app/faq/page.tsx + lib/faq.ts) disent « 1 crédit = … » avec le coût Expert (3 crédits, lib/plans.ts) ; aucun autre coût Expert (app/faq/page.tsx, lib/faq.ts, app/page.tsx) ; détecteur éprouvé sur 3 sondes
+PASS PR-10 — 112 phrase(s) sur les relances dans app/ et lib/ : aucune « jusqu’à la réponse », nombre de relances = 3 (CADENCE_RELANCES) ; détecteur éprouvé sur 3 sondes
+PASS PR-11 — article « plateforme » : 2 texte(s) qui nomment le mode Automatique, chacun avec l’offre Studio (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes
+PASS PR-12 — 238 texte(s) des articles d’aide : 1 promesse(s) de suppression du site, chacune vers Paramètres → Données & confidentialité (site_supprimer proposé) ; détecteur éprouvé sur 3 sondes
+promesses-qa : FAIL — PR-1
