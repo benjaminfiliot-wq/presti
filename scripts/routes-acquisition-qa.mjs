@@ -42,6 +42,10 @@ const CLI = path.join(R, 'scripts', 'fixtures', '026-acquisition', 'cli')
 const TEMOIN = path.join(CLI, 'temoins', 'routes')
 const HOTE = 'prestiapp.fr', HOTE_IMAP = 'imap.gmail.com'
 const K = await import(pathToFileURL(path.join(R, 'lib', 'agents', 'acquisition', 'contrat.ts')).href)
+// 07/10/2026 : depuis 38fd687c, le standardiste prend sa boîte par lib/agents/acquisition/boiteProspection.ts ; le banc double
+// chaque import @/lib/… : sans comportement, boiteProspection() rendait undefined et RB-9..RB-11 jugeaient une route muette.
+// Le banc rejoue le VRAI module (importé avant le crochet), sur l'environnement du banc, sans aucune boîte d'entreprise.
+const BOITE = await import(pathToFileURL(path.join(R, 'lib', 'agents', 'acquisition', 'boiteProspection.ts')).href).catch(() => null)
 const GRATUITE = K.MESSAGERIES_GRATUITES.find((d) => d.startsWith('orange')) ?? K.MESSAGERIES_GRATUITES[1]
 const LOTS = {
   recensement: { prefixe: 'RA', n: 12, routes: [['recenseur', 'recenseur', 'acq-recenseur'], ['juge-faits', 'juge_faits', 'acq-juge-faits'], ['vigie-meta', 'vigie_meta', 'acq-vigie-meta']] },
@@ -791,11 +795,14 @@ function critereStandard() {
     const vus = new Set(rejoue ? MSGS.map((m) => m.id_externe) : [])
     return {
       comportements: {
+        boiteProspection: () => (BOITE ? BOITE.boiteProspection(process.env, () => null) : undefined),
         releverGmail: (o) => (D.adresseRecue = o?.adresse, releve === 'ok' ? { messages: MSGS.filter((m) => m.a === o?.adresse).map(({ a, ...m }) => (void a, m)), curseur_suivant: 45 } : releve === 'vide' ? { messages: [], curseur_suivant: 41 } : { erreur: releve }),
         reponseRecue: (r) => { const n = !vus.has(r?.id_externe); vus.add(r?.id_externe); return { id: crypto.randomUUID(), nouvelle: n, prospect: /reponse-2/.test(r?.id_externe ?? '') ? { id: 'p-2', siren: '123456782', domaine: 'menuiserie-essai.invalid' } : null } },
         estStop: (t) => /^\s*stop\b/i.test(String(t ?? '')),
         executerStandardiste: async () => ({ classees: 0 }), pauseGenerale: PAUSE(pause), enPause: () => false,
-        rpc: (fn, a) => (fn === 'acq_curseur_lire' ? { data: '41', error: null } : defautPour('lib/supabaseAdmin', 'rpc', [fn, a])),
+        // 07/10 : le curseur « gmail_refus » (06/10, 6 h de pause après un refus d'identifiants) est vide : « 41 » s'y lisait comme
+        // l'an 2041, un refus « récent », et la route ne relevait plus rien au banc.
+        rpc: (fn, a) => (fn === 'acq_curseur_lire' ? { data: a?.p_nom === 'gmail_refus' ? '' : '41', error: null } : defautPour('lib/supabaseAdmin', 'rpc', [fn, a])),
         curseurLire: () => '41', curseurPoser: () => undefined, opposer: () => undefined, signal: () => undefined, enregistrerPassage: () => undefined,
       },
     }
@@ -850,7 +857,8 @@ function critereStandard() {
       if (D.adresseRecue !== ADRESSE_PROSPECTION) e.push(`releverGmail reçoit l'adresse ${D.adresseRecue === AUTRE_ADRESSE ? 'de la boîte (une autre adresse)' : JSON.stringify(D.adresseRecue)}, ACQ_ADRESSE_REPONSE attendue`)
       if (appelsDe(a, 'reponseRecue').some((x) => x.args[0]?.id_externe === ailleurs.id_externe || x.json.includes('TEXTE-PIEGE-AILLEURS'))) e.push('un message adressé ailleurs atteint le magasin')
       const s = c.src.standardiste.nu
-      if (!/ACQ_ADRESSE_REPONSE/.test(s)) e.push('la route ne lit pas ACQ_ADRESSE_REPONSE')
+      // 07/10 : l'adresse peut venir du module boiteProspection() (qui lit ACQ_ADRESSE_REPONSE) ; le banc ci-dessus prouve la valeur reçue.
+      if (!/ACQ_ADRESSE_REPONSE/.test(s) && !/boiteProspection\(\)/.test(s)) e.push('la route ne lit pas ACQ_ADRESSE_REPONSE (ni le module boiteProspection)')
       if (/messages\s*\.\s*filter\s*\(/.test(s)) e.push('la route filtre les messages elle-même après coup')
       return [e, 'releverGmail reçoit ACQ_ADRESSE_REPONSE ; le message adressé ailleurs n\'atteint jamais reponseRecue ; la route ne filtre rien après coup']
     },
