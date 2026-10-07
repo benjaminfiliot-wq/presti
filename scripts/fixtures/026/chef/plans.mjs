@@ -15,6 +15,7 @@ export const ID_CONSIGNE_ORDINAIRE = 5120
 
 const copie = (v) => JSON.parse(JSON.stringify(v))
 
+// 07/10 : les trois tâches de plan-ok servent le cap de Benj (docs/agents/cap-benj.md) : vitrine Presti, fiches des deux produits.
 export function planOk() {
   return {
     cycle: 'plein',
@@ -29,19 +30,19 @@ export function planOk() {
     ],
     taches: [
       {
-        type: 'relecture', capacite: 'relecture', cle_idempotence: `chef:${DATE_CLE}:relire-page-tarifs`, objet: 'Relire la page tarifs et lister, ligne par ligne, ce qui est confus dans les trois offres et les délais',
-        charge: { titre: 'Relire la page tarifs', pourquoi: 'Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés.' },
+        type: 'relecture', capacite: 'relecture', cle_idempotence: `chef:${DATE_CLE}:relire-page-tarifs`, objet: 'Relire la page tarifs de la vitrine Presti et lister, ligne par ligne, ce qui est confus dans les trois offres et les délais',
+        charge: { titre: 'Relire la page tarifs de la vitrine Presti', pourquoi: 'Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés.' },
         sortante: false,
       },
       {
-        type: 'verification', capacite: 'verification', cle_idempotence: `chef:${DATE_CLE}:verifier-echecs-pont`,
-        objet: 'Lire les erreurs des deux tâches du pont en échec depuis hier et proposer un correctif en trois lignes',
-        charge: { titre: 'Comprendre les deux échecs du pont', pourquoi: 'Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif.' },
+        type: 'verification', capacite: 'verification', cle_idempotence: `chef:${DATE_CLE}:verifier-fiches-produits`,
+        objet: "Comparer les brouillons de fiche du nettoyeur et de l'aspirateur et proposer un correctif en trois lignes",
+        charge: { titre: "Comparer les fiches du nettoyeur et de l'aspirateur", pourquoi: 'Deux fiches à relire avant la mise en vente : proposer un correctif court.' },
         sortante: false,
       },
       {
         type: 'recherche', capacite: 'recherche', cle_idempotence: `chef:${DATE_CLE}:annuaires-artisans`,
-        objet: "Lister trois annuaires d'artisans gratuits, avec l'adresse du site et ce qu'on y trouve, sans rien envoyer",
+        objet: "Lister trois annuaires d'artisans gratuits où inscrire la vitrine Presti, avec l'adresse du site, sans rien envoyer",
         charge: { titre: "Lister trois annuaires d'artisans gratuits", pourquoi: "Élargir l'acquisition sans aucune dépense ; rien n'est envoyé." },
         sortante: false,
       },

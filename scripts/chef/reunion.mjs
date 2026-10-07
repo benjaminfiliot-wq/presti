@@ -3,7 +3,7 @@
 //
 //   node scripts/chef/reunion.mjs [--base=https://prestiapp.fr] [--jeton-env=PRESTI_JETON_CHEF] [--modele=gpt-6-sol]
 //        [--codex=codex] [--consigne=docs/agents/chef-reunion.md] [--schema=docs/agents/chef-reunion.schema.json]
-//        [--travail=<dossier>] [--delai=600] [--sec]
+//        [--travail=<dossier>] [--delai=1200] [--sec]
 //
 // Un seul appel au modèle, tout le reste est déterministe (plan §2.1 : « le déterministe d'abord », « séparer le lecteur de
 // l'acteur », comme appliquer.mjs, 026-105). Dans cet ordre :
@@ -33,12 +33,12 @@ const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 
 const WIN = process.platform === 'win32'
 const DEFAUTS = {
   base: 'https://prestiapp.fr', 'jeton-env': 'PRESTI_JETON_CHEF', modele: 'gpt-6-sol', codex: 'codex',
-  consigne: 'docs/agents/chef-reunion.md', schema: 'docs/agents/chef-reunion.schema.json', travail: '.orchestre/travail/reunion', delai: '600',
+  consigne: 'docs/agents/chef-reunion.md', schema: 'docs/agents/chef-reunion.schema.json', travail: '.orchestre/travail/reunion', delai: '1200', // 07/10 : 600 s ne laissaient que 555 s au relais, trop peu pour le 4 B local (réunion du 06/10 « modele_muet ») ; 1 200 s tiennent sous l'unité (25 min) et sous l'abandon de la base (30 min)
 }
 const USAGE = [
   'usage : node scripts/chef/reunion.mjs [--base=https://prestiapp.fr] [--jeton-env=PRESTI_JETON_CHEF] [--modele=gpt-6-sol]',
   '        [--codex=codex] [--consigne=docs/agents/chef-reunion.md] [--schema=docs/agents/chef-reunion.schema.json]',
-  '        [--travail=<dossier>] [--delai=600] [--sec]',
+  '        [--travail=<dossier>] [--delai=1200] [--sec]',
 ].join('\n')
 
 const DELAI_HTTP_MS = 20_000

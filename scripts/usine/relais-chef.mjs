@@ -23,6 +23,8 @@ import { schemaPlan } from '../modele/prompt-chef.mjs'
 
 export const MINUTE = 60_000
 export const HEURE = 60 * MINUTE
+/** Un moteur local fini en délai depuis moins de ce temps est sauté s'il en reste un après lui (voir relayer). */
+export const DELAI_RECENT_8B = 24 * HEURE
 
 const BASE_FREELLMAPI = 'http://127.0.0.1:3001/v1'
 const BASE_OLLAMA = 'http://127.0.0.1:11434'
@@ -40,7 +42,7 @@ export const CHAINE_SECOURS = Object.freeze([
   // toute autre demande lui est refusée sans appel (« hors domaine »), le moteur suivant la prend.
   Object.freeze({ id: 'ollama_maison', modele: 'presti-chef-leger:1.5b', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, maison: 'leger', budgetMs: 240_000 }),
   Object.freeze({ id: 'ollama_8b', modele: 'qwen3:8b-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 300_000 }),
-  Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 780_000 }) // 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
+  Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 1_100_000 }) // 07/10 : plafond porté à 1 100 s, le temps restant du relais reste la vraie borne (cycle plein de 19 min : ≈ 1 080 s ; plein du 06/10 à 20:05 UTC coupé à 780 s) ; 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
 ])
 
 // ── nature de la donnée ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -221,13 +223,20 @@ export function texteOllama(brut) {
   return lu ? texte : null
 }
 
+/** Ajoutée au message d'un moteur local pour un plan de cycle plein (voir appelDirect). */
+export const CONSIGNE_LOCALE_PLEIN = 'Tu tournes sur un processeur lent : pour ce cycle plein, écris AU PLUS 3 tâches et 1 décision, avec des textes courts. Le plan reste conforme au schéma.'
+
 export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null, ecrire = (f, t) => fs.writeFileSync(f, t), valider = null, reduire = null }) {
   const controleur = new AbortController()
   const minuteur = setTimeout(() => controleur.abort(), delaiMs)
   try {
     const maison = moteur.maison ? messagesMaison(prompt.utilisateur) : null
     if (moteur.maison && !maison) return { code: 0, sortie: 'hors domaine du modèle maison' } // code 0 sans plan : le relais passe au suivant sans mise de côté
+    // 07/10 : un plan PLEIN sur un moteur local (4 cœurs ARM) est demandé court — au plus 3 tâches et 1 décision, dans les plafonds — : aucun plein
+    // n'a fini le 06/10 (18:05, 20:05, 22:05 UTC), quand les cycles légers du même 4 B finissaient en 733 à 748 s.
+    const court = moteur.local && /plan du cycle plein\b/.test(String(prompt.utilisateur)) ? `\n\n${CONSIGNE_LOCALE_PLEIN}` : ''
     const messages = maison ?? [{ role: 'system', content: prompt.systeme }, { role: 'user', content: moteur.local ? compacterPourLocal(prompt.utilisateur) : prompt.utilisateur }]
+    if (!maison && court) messages[1].content += court
     const entetes = { 'content-type': 'application/json' }
     if (moteur.api !== 'ollama' && cle) entetes.authorization = `Bearer ${cle}`
     const corpsDe = () => (maison
@@ -399,7 +408,9 @@ export async function relayer(opts) {
     // jamais au 4 B de quoi finir. S'il a fini en délai il y a moins de 3 h ET qu'il ne reste pas de quoi donner leur budget aux deux, on le saute.
     const suivant = locaux[i + 1]
     const bout = etat.lire()[m.id]
-    const delaiRecent = bout && bout.raison === 'delai' && Date.parse(bout.vu) > maintenant() - 3 * HEURE
+    // 07/10 : la fenêtre passe de 3 h à 24 h. Le 8 B n'a JAMAIS fini un plan sur l'usine (délai à 300 s à chaque essai du 06/10) ; passé 3 h il était
+    // réessayé (plein de 22:05 UTC : 300 s perdues, le 4 B coupé à 540 s, plan absent). Sauté un jour entier, il laisse tout le temps au 4 B.
+    const delaiRecent = bout && bout.raison === 'delai' && Date.parse(bout.vu) > maintenant() - DELAI_RECENT_8B
     // 06/10 au soir : même avec ses 480 s sans coupure, le 4 B n'a pas fini derrière les 300 s perdues par le 8 B : un 8 B en délai récent est donc
     // TOUJOURS sauté, et le suivant reçoit tout le temps qui reste (jusqu'à 780 s).
     if (suivant && delaiRecent) { dire({ moteur: m.id, issue: 'saute', raison: 'delai_recent_temps_au_suivant' }); continue }

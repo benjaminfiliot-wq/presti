@@ -3,7 +3,7 @@
 // (le vrai : 026-105). Valide d'abord, en bloc ; poste ensuite, une requête à la fois ; bat enfin, une fois.
 import fs from 'node:fs'
 import path from 'node:path'
-import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, horodatage, ecrireJson, principal } from './commun.mjs'
+import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, validerPertinence, horsCap, horodatage, ecrireJson, principal } from './commun.mjs'
 
 principal(async () => {
   const fichier = positionnels()[0]
@@ -19,14 +19,18 @@ principal(async () => {
   let plan
   try { plan = JSON.parse(fs.readFileSync(fichier, 'utf8')) } catch { rapport.ecarts.push('plan illisible'); console.error('✗ plan illisible'); return finir(1) }
   const ecarts = validerPlan(plan, cycle)
+  ecarts.push(...validerPertinence(plan))
   if (ecarts.length) {
     rapport.ecarts = ecarts
     console.error(`✗ plan refusé en bloc (${ecarts.length} écart(s)) :\n  ${ecarts.join('\n  ')}`)
     return finir(1)
   }
 
+  const ecartees = plan.taches.map((t) => ({ cle: t.cle_idempotence, raison: horsCap(t) })).filter((e) => e.raison)
+  rapport.ecartees = ecartees
+  for (const e of ecartees) console.error(`· tâche écartée ${e.cle} : ${e.raison}`)
   const envois = [
-    ...plan.taches.map((t) => ({ genre: 'taches', cle: t.cle_idempotence, chemin: '/api/agents/taches', corps: { type: t.type, cle: t.cle_idempotence, capacite: t.capacite, charge: t.charge, ...('objet' in t ? { objet: t.objet } : {}) } })),
+    ...plan.taches.filter((t) => !horsCap(t)).map((t) => ({ genre: 'taches', cle: t.cle_idempotence, chemin: '/api/agents/taches', corps: { type: t.type, cle: t.cle_idempotence, capacite: t.capacite, charge: t.charge, ...('objet' in t ? { objet: t.objet } : {}) } })),
     ...plan.decisions.map((d) => ({ genre: 'decisions', cle: d.cle_idempotence, chemin: '/api/agents/decisions', corps: { question: d.question, contexte: d.contexte, options: d.options.map((o) => ({ cle: o.cle, libelle: o.libelle, recommandee: o.recommandee })), defaut: d.option_defaut, montant_cents: d.montant_cents, portee: d.portee, echeance: d.echeance, cle: d.cle_idempotence } })),
   ]
   for (const e of envois) {

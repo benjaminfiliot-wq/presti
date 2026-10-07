@@ -87,7 +87,9 @@ principal(async () => {
   const mode = option('mode')
   if (!['plein', 'leger'].includes(mode)) throw new Arret(2, '--mode=plein|leger')
   const base = option('base') ? baseSure(option('base')) : null
-  const minutes = Number(option('minutes', 15))
+  // 07/10 : le cycle plein a 19 min (unité : TimeoutStartSec=20min) : sans Codex ni moteur libre, seul le 4 B local l'écrit, et aucun plein n'a fini
+  // en 15 min le 06/10 ; le léger garde 15 min (le modèle maison le sert en ~75 s). Le prochain cycle (léger, H+1:05) n'est jamais chevauché.
+  const minutes = Number(option('minutes', mode === 'plein' ? 19 : 15))
   const reprise = args.includes('--reprise')
   const usine = process.env.PRESTI_HOTE === 'usine'
   const modele = mode === 'plein' ? 'gpt-6-sol' : 'gpt-6-luna'

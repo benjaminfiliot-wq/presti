@@ -54,6 +54,56 @@ export function filtrerTaches(plan) {
   }
   return { gardees, ecartees }
 }
+
+// ── Le cap de Benj (07/10/2026, docs/agents/cap-benj.md) ─────────────────────────────────────────────────────────────
+// Le cycle de 01:06 (modèle maison) a rendu un plan VALIDE mais hors sujet : « machine à baguettes » (produit inventé), « dix vidéos
+// d'affaire animée pour Presti », « relecture du brouillon de landing par défaut ». Benj n'a que deux activités : l'e-commerce Brico
+// Travaux (annonces eBay, vidéos TikTok des 2 produits, un 3e produit de bricolage) et Presti (prospection, refonte du site). Une tâche qui
+// ne s'y rattache par aucune ANCRE du cap est écartée avec son motif ; un plan dont TOUTES les tâches sont écartées est refusé
+// (validerPertinence), et le relais passe au moteur suivant. Les ancres sont celles de la ligne « Ancres » du cap (chef-qa CH-A16 vérifie
+// que le cap les nomme toutes). « vidéo », « produit », « site » seuls ne suffisent pas : c'est ce qui laissait passer les tâches de 01:06.
+const sansAccents = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’‘'`´]/g, ' ')
+export const ANCRES_CAP = ['ebay', 'annonce', 'tiktok', 'brico travaux', 'bricolage', 'nettoyeur', 'aspirateur', 'fournisseur', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'prospection', 'démarchage', 'refonte', 'vitrine', 'maquette', 'presti']
+const CAP_ANCRE = /\b(?:ebay|annonces?|tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|fournisseurs?|cj(?:dropshipping)?|aliexpress|dropshipping|e-?commerce|e-?com|prospect\w*|demarch\w*|refonte|vitrines?|maquettes?|prestiapp)\b/
+const CAP_PRESTI = /\bpresti\b/
+const CAP_PRESTI_SITE = /\b(?:sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo)\b/
+const CAP_VIDEO = /\b(?:videos?|clips?)\b/
+const CAP_VIDEO_PERMISE = /\b(?:tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|vitrines?|landing|refonte)\b/
+const CAP_INVENTE = /\b(?:produits?|clients?|marques?|entreprises?|machines?|exemples?)\s+(?:\w+\s+)?(?:inventee?s?|fictifs?|fictives?|imaginaires?)\b/
+const CAP_MAINTENANCE = /\b(?:preneur|disjonct\w*|orchestre|026-\d{3}|battements?|taches? (?:en file|en attente|echouees?|bloquees?))\b/
+/** Le motif qui met une tâche hors du cap de Benj, ou null. Lit l'objet et le titre (le « pourquoi » sert à justifier, pas à rattacher). Pure. */
+export function horsCap(t) {
+  if (!t || typeof t !== 'object') return 'hors du cap de Benj : tâche illisible'
+  if (typeof t.objet === 'string' && OBJET_REFERENCE.test(t.objet.trim())) return null // le bilan quotidien du Savoir (bilan.mjs) : une référence structurée, pas un sujet du Chef
+  const charge = t.charge && typeof t.charge === 'object' ? t.charge : {}
+  const texte = sansAccents([t.objet, charge.titre].filter((x) => typeof x === 'string').join('\n'))
+  const maint = CAP_MAINTENANCE.exec(texte)
+  if (maint) return `hors du cap de Benj : maintenance interne (« ${maint[0]} »)`
+  const invente = CAP_INVENTE.exec(texte)
+  if (invente) return `hors du cap de Benj : sujet inventé (« ${invente[0]} »)`
+  const ancre = CAP_ANCRE.exec(texte) || (CAP_PRESTI.test(texte) ? CAP_PRESTI_SITE.exec(texte) : null)
+  if (!ancre) return "hors du cap de Benj : ni l'e-commerce Brico Travaux (eBay, TikTok, nettoyeur, aspirateur, 3e produit de bricolage) ni Presti (prospection, site vitrine)"
+  const video = CAP_VIDEO.exec(texte)
+  if (video && !CAP_VIDEO_PERMISE.test(texte)) return `hors du cap de Benj : vidéo hors de la chaîne TikTok Brico Travaux (« ${video[0]} »)`
+  return null
+}
+/** Les tâches hors du cap : { gardees, ecartees: [{ cle, raison }] }. Pure. */
+export function filtrerCap(taches) {
+  const gardees = [], ecartees = []
+  for (const t of Array.isArray(taches) ? taches : []) {
+    const raison = horsCap(t)
+    if (raison) ecartees.push({ cle: String(t?.cle_idempotence ?? ''), raison }); else gardees.push(t)
+  }
+  return { gardees, ecartees }
+}
+/** Les écarts de pertinence d'un plan : vide sauf si TOUTES ses tâches (une au moins) sont hors du cap ; alors chaque motif. Pure. */
+export function validerPertinence(plan) {
+  const taches = Array.isArray(plan?.taches) ? plan.taches : []
+  if (!taches.length) return []
+  const motifs = taches.map((t) => horsCap(t))
+  if (!motifs.every(Boolean)) return []
+  return ['taches : toutes hors du cap de Benj (docs/agents/cap-benj.md) : chaque tâche doit servir l\'e-commerce Brico Travaux ou Presti', ...motifs.map((m, i) => `taches[${i}] : ${m}`)]
+}
 // Une référence structurée tient lieu d'objet pour le bilan quotidien du Savoir (026-229, objet « bilan:AAAA-MM-JJ », 16 signes) ; tout le reste doit être décrit (OBJET_MIN signes au moins).
 export const OBJET_REFERENCE = /^bilan:\d{4}-\d{2}-\d{2}$/
 
@@ -102,7 +152,7 @@ export function ecrireJson(f, v) { fs.mkdirSync(path.dirname(f), { recursive: tr
 export const idsDe = (v) => (Array.isArray(v) ? v : Array.isArray(v?.ids) ? v.ids : []).filter((x) => Number.isInteger(x))
 
 // Balises d'un bloc de données : toute ouverture ou fermeture venue des données est neutralisée.
-export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj)/g, '&lt;$1$2')
+export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj|cap_benj)/g, '&lt;$1$2')
 
 export function toutesLesChaines(v, out = []) {
   if (typeof v === 'string') out.push(v)
