@@ -66,7 +66,7 @@ const sansAccents = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').to
 export const ANCRES_CAP = ['ebay', 'annonce', 'tiktok', 'brico travaux', 'bricolage', 'nettoyeur', 'aspirateur', 'fournisseur', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'prospection', 'démarchage', 'refonte', 'vitrine', 'maquette', 'presti']
 const CAP_ANCRE = /\b(?:ebay|annonces?|tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|fournisseurs?|cj(?:dropshipping)?|aliexpress|dropshipping|e-?commerce|e-?com|prospect\w*|demarch\w*|refonte|vitrines?|maquettes?|prestiapp)\b/
 const CAP_PRESTI = /\bpresti\b/
-const CAP_PRESTI_SITE = /\b(?:sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo)\b/
+const CAP_PRESTI_SITE = /\b(?:sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo|compta[a-z]*|excel|tableaux? de bord|reddit|sirene|pubs?|google ads|meta ads|voix|videos?)\b/
 const CAP_VIDEO = /\b(?:videos?|clips?)\b/
 const CAP_VIDEO_PERMISE = /\b(?:tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|vitrines?|landing|refonte)\b/
 const CAP_INVENTE = /\b(?:produits?|clients?|marques?|entreprises?|machines?|exemples?)\s+(?:\w+\s+)?(?:inventee?s?|fictifs?|fictives?|imaginaires?)\b/
