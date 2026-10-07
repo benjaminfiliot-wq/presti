@@ -1,0 +1,15 @@
+$ node scripts/promesses-qa.mjs --critere=PR-1 && node scripts/crieur-qa.mjs --partie=composer
+# 2026-10-07T06:01:38Z · code 0 · 25s
+
+promesses-qa — racine C:\Users\benja\Documents\presti
+  · --critere : seulement PR-1
+  · 628 fichiers .ts/.tsx lus sous app/ et lib/, 45969 unités de texte, 54233 phrases examinées
+PASS PR-1 — « moins d’une minute » toujours avec « prête » ou « prépare » (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 21 sondes
+promesses-qa : PASS
+crieur-qa --partie=composer (026-119) — racine C:/Users/benja/Documents/presti
+PASS CR-1 — 13 faits, ids uniques, textes ≤ 220 signes, chaque preuve vérifiée
+PASS CR-2 — 13 texte(s) sans formule interdite
+PASS CR-3 — 5 état(s) jugés : quota et parutions à venir respectés, ≤ 3 publications, un canal par lot, limites de signes, visuel Instagram, faits récents/drapeau baissé exclus, chaque publication passe jugerPublication
+PASS CR-4 — déterminisme, cleSemaine (AAAA-Snn), horairesSemaine (lundi/mercredi/vendredi 12 h Paris, dans les 7 jours), horizonHeures=26 ne rend que le créneau du lundi
+PASS CR-NR — 4 fichier(s) hors périmètre du Crieur inchangé(s) (identiques à HEAD)
+crieur-qa : PASS
