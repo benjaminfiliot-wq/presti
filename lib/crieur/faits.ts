@@ -12,7 +12,7 @@ const TOUS: Canal[] = ['instagram', 'facebook', 'linkedin']
 
 /** Chaque formulation renvoie à une preuve vérifiable dans le dépôt. */
 export const FAITS: Fait[] = [
-  { id: 'reponse-rapide', texte: "La réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez.", preuve: { fichier: 'plans/promesses.md', motif: '| 1 | « Réponse en moins d\'une minute »' }, canaux: TOUS },
+  { id: 'reponse-rapide', texte: "La réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez.", preuve: { fichier: 'plans/promesses.md', motif: "`pilotage-e2e` **18/18 rejoué le 05/09** (mode assisté, prise de main, règles, flux SSE) | 05/09 | ✅ |" }, canaux: TOUS },
   { id: 'devis-prix', texte: "Presti prépare des devis chiffrés sur vos propres prix.", preuve: { fichier: 'plans/promesses.md', motif: '| 14 | « Devis chiffrés par l\'IA, sur vos prix »' }, canaux: TOUS },
   { id: 'factures', texte: 'Presti permet de créer des factures et des factures électroniques.', preuve: { fichier: 'plans/promesses.md', motif: '| 15 | « Factures + facture électronique »' }, canaux: TOUS },
   { id: 'relances', texte: 'Les relances peuvent partir après 2, 5 et 10 jours de silence du prospect.', preuve: { fichier: 'lib/relances.ts', motif: 'CADENCE_RELANCES = [2, 5, 10]' }, canaux: TOUS },
