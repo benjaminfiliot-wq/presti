@@ -33,6 +33,10 @@ Chaque mois, une nouvelle fiche du même modèle ajoute des entrées : elle n'en
 
 Décision du 29/09/2026 (`.orchestre/decisions.md`) : la cible du critère DL-1 est provisoirement de 12 citations réelles sur 3 métiers au moins (3 entrées au moins par métier couvert, 10 « tous » au plus). La complétion à 40 citations sur 8 métiers est la fiche de suite 026-254. Un nombre sous la cible fait toujours échouer le juge, comme une citation introuvable sur sa page.
 
+## Veille agrégée par thème (07/10/2026)
+
+Les entrées de cette bibliothèque sont aussi rangées par thème (devis sans suite, appels manqués, pas de site, impayés, administratif) avec les plaintes de la veille du 07/10 : `docs/agents/plaintes-par-theme.md` (agrégat régénéré par `scripts/veille-plaintes.mjs --agreger`, juge `scripts/veille-plaintes-qa.mjs`). Reddit et les avis Google n'y sont pas lus automatiquement : la raison et ce qu'il faudrait y sont écrits.
+
 ## Sources relues (relève du 2026-09-29)
 
 | Source | Page | Métier | Entrées |

@@ -208,6 +208,9 @@ export interface PatchProspect {
   technologie?: TechnologieFormulaire | null
   raison?: string
   raisons?: string[]
+  /** Score de douleur B2B 0-100 (scoreDouleur.ts, migration 0135) et son détail : codes et nombres seulement. */
+  score_douleur?: number
+  score_douleur_detail?: { version: string; signaux: { code: string; poids: number; n?: number }[] }
 }
 export interface ClesOpposition {
   siren?: string | null
