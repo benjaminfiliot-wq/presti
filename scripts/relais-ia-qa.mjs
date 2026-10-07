@@ -27,7 +27,7 @@ const GARDER = args.includes('--garder')
 const DEPUIS = Number((args.find((a) => a.startsWith('--depuis=')) ?? '').slice('--depuis='.length)) || 1 // pour développer le catalogue : ne rejoue que les sabotages n° DEPUIS et suivants (le rapport complet se lance sans option)
 
 const lire = (f) => fs.readFileSync(f, 'utf8')
-const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/chef/reunion-controle.mjs', 'scripts/chef/reunion.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs', 'scripts/modele/chef-leger-entree.mjs', 'scripts/modele/prompt-chef.mjs']
+const SOURCES = ['lib/agents/relais.ts', 'lib/agents/llm.ts', 'lib/agents/moteurs.ts', 'lib/agents/lecons.ts', 'lib/agents/bus.ts', 'lib/savoir/index.ts', 'scripts/usine/relais-chef.mjs', 'scripts/usine/chef-modele.mjs', 'scripts/chef/commun.mjs', 'scripts/usine/garde-prospects.mjs', 'scripts/chef/reunion-controle.mjs', 'scripts/chef/reunion.mjs', 'scripts/instantane-quotidien.mjs', 'scripts/fixtures/relais-ia/faux-codex-chef.mjs', 'scripts/modele/chef-leger-entree.mjs', 'scripts/modele/prompt-chef.mjs']
 for (const f of SOURCES) if (!fs.existsSync(path.join(DEPOT, f))) { console.error(`✗ préalable absent : ${f}`); process.exit(2) }
 
 /** Une racine minimale (de quoi résoudre « @/ ») : les cinq modules du relais, un stub de la base, rien d'autre. */
@@ -185,13 +185,13 @@ const SABOTAGES = [
     mutations: [['scripts/usine/relais-chef.mjs', "if (suivant && delaiRecent) {", "if (false && suivant && delaiRecent) {"]],
     rouges: ['RC-9c'] },
   { nom: "chef : le 4 B local retombe à 300 s (252 s ont fini en délai le 06/10)",
-    mutations: [['scripts/usine/relais-chef.mjs', "local: true, budgetMs: 780_000 })", "local: true, budgetMs: 300_000 })"]],
+    mutations: [['scripts/usine/relais-chef.mjs', "local: true, budgetMs: 1_100_000 })", "local: true, budgetMs: 300_000 })"]],
     rouges: ['RC-9b'] },
   { nom: "chef : l'appel direct lit un fichier hors des dossiers permis (fuite d'un fichier du compte)",
     mutations: [['scripts/usine/relais-chef.mjs', ' || !sousUnPermis(complet)) continue', ') continue']],
     rouges: ['RC-10'] },
   { nom: "chef : le validateur du plan n'est pas branché (un plan refusé en bloc par le cycle serait écrit)",
-    mutations: [['scripts/usine/chef-modele.mjs', "if (cycle && /plan/.test(path.basename(sortiePlan))) valider = (objet) => validerPlan(objet, cycle)", '']],
+    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]\n', '']],
     rouges: ['RC-7'] },
   { nom: "chef : les écarts du validateur ne sont pas rendus au modèle (pas de correction)",
     mutations: [['scripts/usine/relais-chef.mjs', 'if (!ecarts.length) { objet = essai; break }', '{ objet = essai; break }']],
@@ -248,9 +248,54 @@ const SABOTAGES = [
   { nom: 'réunion : reunion.mjs ne consigne plus le moteur de secours',
     mutations: [['scripts/chef/reunion.mjs', 'if (secours) noter(', 'if (false) noter(']],
     rouges: ['RC-13'] },
+  // ── 07/10 : le cap de Benj (garde de pertinence) et les moteurs locaux des cycles pleins ──
+  { nom: "cap : la garde de pertinence n'est pas dans le validateur du relais (un plan tout hors du cap est écrit)",
+    mutations: [['scripts/usine/chef-modele.mjs', '      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]\n', '      valider = (objet) => validerPlan(objet, cycle)\n']],
+    rouges: ['RC-14'], verts: ['RC-7'] },
+  { nom: "cap : un plan de Codex tout hors du cap compte comme écrit (le moteur suivant ne prend pas la demande)",
+    mutations: [['scripts/usine/chef-modele.mjs', 'if (plan && pertinence(plan).length) return false', 'if (false) return false']],
+    rouges: ['RC-14'], verts: ['RC-7'] },
+  { nom: "cap : validerPertinence ne refuse jamais (les tâches de 01:06 passent)",
+    mutations: [['scripts/chef/commun.mjs', '  if (!motifs.every(Boolean)) return []\n', '  return []\n']],
+    rouges: ['RC-14'] },
+  { nom: "cap : « vidéo » et « Presti » suffisent (les dix vidéos d'affaire de 01:06 passent)",
+    mutations: [['scripts/chef/commun.mjs', '  if (video && !CAP_VIDEO_PERMISE.test(texte)) return', '  if (false) return']],
+    rouges: ['RC-14'] },
+  { nom: "cap : un produit inventé passe dès qu'il porte une ancre",
+    mutations: [['scripts/chef/commun.mjs', '  if (invente) return', '  if (false) return']],
+    rouges: ['RC-14'] },
+  { nom: "cap : la maintenance interne passe dès qu'elle porte une ancre",
+    mutations: [['scripts/chef/commun.mjs', '  if (maint) return `hors du cap de Benj', '  if (false) return `hors du cap de Benj']],
+    rouges: ['RC-14'] },
+  { nom: "cap : un plan mélangé est refusé en bloc au lieu d'être filtré",
+    mutations: [['scripts/chef/commun.mjs', '  if (!motifs.every(Boolean)) return []\n', '  if (!motifs.some(Boolean)) return []\n']],
+    rouges: ['RC-14'] },
+  { nom: "cap : compacterEntree perd les blocs autres que l'état (le modèle maison ne voit plus le cap)",
+    mutations: [['scripts/modele/chef-leger-entree.mjs', "    if (b.nom === 'donnees_etat') continue", "    if (b.nom !== 'consignes_benj') continue"]],
+    rouges: ['RC-14'] },
+  { nom: "chef : le 8 B en délai depuis 4 h reprend 300 s au 4 B (fenêtre retombée à 3 h, plein du 06/10 à 22:05 UTC)",
+    mutations: [['scripts/usine/relais-chef.mjs', 'export const DELAI_RECENT_8B = 24 * HEURE', 'export const DELAI_RECENT_8B = 3 * HEURE']],
+    rouges: ['RC-9d'] },
+  { nom: "chef : le 4 B local replafonné à 780 s (plein du 06/10 à 20:05 UTC coupé à 780 s)",
+    mutations: [['scripts/usine/relais-chef.mjs', "local: true, budgetMs: 1_100_000 })", "local: true, budgetMs: 780_000 })"]],
+    rouges: ['RC-9d'] },
+  { nom: "chef : un plan plein est demandé en entier au moteur local (aucune consigne de plan court)",
+    mutations: [['scripts/usine/relais-chef.mjs', "/plan du cycle plein\\b/.test(String(prompt.utilisateur)) ? `\\n\\n${CONSIGNE_LOCALE_PLEIN}` : ''", "false ? '' : ''"]],
+    rouges: ['RC-9e'] },
+  { nom: "réunion : le délai par défaut retombe à 600 s (555 s au relais : réunion du 06/10 « modele_muet »)",
+    mutations: [['scripts/chef/reunion.mjs', "delai: '1200',", "delai: '600',"]],
+    rouges: ['RC-13b'] },
 ]
 
 if (!SEUL_TEMOIN && temoin) {
+  // 07/10 : la COPIE minimale non sabotée doit être verte. Sans scripts/usine/garde-prospects.mjs (importé par scripts/chef/commun.mjs), le validateur
+  // du chef ne se chargeait pas dans les copies : RC-7 y était rouge d'office et « attrapait » des sabotages qu'il ne voyait pas (n° 15, 29).
+  const copie = copieMinimale('copie-temoin')
+  const resCopie = lancerEnfant(copie)
+  const rougesCopie = resCopie.erreur ? ['(enfant)'] : resCopie.resultats.filter((x) => !x.ok).map((x) => x.id)
+  if (rougesCopie.length) { rouge = true; dire(`FAIL RI-C — la copie minimale non sabotée n'est pas verte : ${resCopie.erreur ?? rougesCopie.join(', ')}`) }
+  else dire("PASS RI-C — la copie minimale non sabotée est verte (aucun sabotage n'est attrapé d'office)")
+  if (!GARDER) fs.rmSync(copie, { recursive: true, force: true })
   let n = 0
   for (const s of SABOTAGES) {
     n++

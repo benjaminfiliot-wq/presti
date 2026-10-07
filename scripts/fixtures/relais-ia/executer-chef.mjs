@@ -687,4 +687,152 @@ await cas('RC-13', async () => {
   return e
 })
 
+// ── RC-13b (07/10) : reunion.mjs sans --delai donne au relais 1 200 s moins 45 (la réunion du 06/10 n'avait que 555 s : « modele_muet ») ──
+await cas('RC-13b', async () => {
+  const e = []
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'reunion-delai-'))
+  const wrapper = path.join(tmp, 'presti-chef-modele.mjs')
+  fs.writeFileSync(wrapper, [
+    "import fs from 'node:fs'", "import path from 'node:path'",
+    'const a = process.argv.slice(2); const o = a.indexOf("-o")',
+    'fs.writeFileSync(path.join(path.dirname(a[o + 1]), "faux-relais-argv.json"), JSON.stringify(a))',
+    `fs.writeFileSync(a[o + 1], ${JSON.stringify(JSON.stringify(planDe('conforme')))})`,
+  ].join('\n'))
+  const jeton = `jeton-essai-${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`
+  const bus = await BUS.demarrerFauxBus({ jeton, scenario: {} })
+  const travail = path.join(tmp, 'travail')
+  const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^PRESTI_/.test(k)))
+  env.PRESTI_JETON_CHEF = jeton
+  try {
+    await new Promise((ok2) => { const p = spawn(process.execPath, [path.join(racine, 'scripts', 'chef', 'reunion.mjs'), `--base=${bus.base}`, `--codex=${wrapper}`, `--consigne=${path.join(ICI, '..', '026-pilotage', 's', 'consigne-reunion-essai.md')}`, `--schema=${path.join(ICI, '..', '026-pilotage', 's', 'chef-reunion.schema.json')}`, `--travail=${travail}`], { cwd: racine, env, stdio: 'ignore' }); p.on('close', ok2); p.on('error', () => ok2(-1)) })
+  } finally { await bus.arreter() }
+  const argvVu = (() => { try { return JSON.parse(fs.readFileSync(path.join(travail, 'faux-relais-argv.json'), 'utf8')) } catch { return null } })()
+  if (!argvVu || argvVu[0] !== '--delai=1155') e.push(`reunion.mjs sans --delai : le relais reçoit ${JSON.stringify(argvVu?.[0])} (« --delai=1155 » attendu : 1 200 s moins 45)`)
+  return e
+})
+
+// ── RC-9d (07/10) : un 8 B fini en délai il y a moins de 24 h est sauté, et le 4 B reçoit tout le temps qui reste ────────────────
+// Plein du 06/10 à 22:05 UTC : le dernier délai du 8 B datait de 3 h 55 ; réessayé, il a pris 300 s et le 4 B a été coupé à 540 s (plan absent).
+// Plein de 20:05 : 8 B sauté, mais le 4 B plafonné à 780 s a fini en délai. Le cycle plein a désormais 19 min (relais : 1 095 s).
+await cas('RC-9d', async () => {
+  const e = []
+  const sc = { codex: '401', freellmapi_gemini: '429', freellmapi_mistral: '429', freellmapi: '429', ollama_cloud: 'cloud429', ollama_8b: 'ok', ollama_4b: 'ok', opts: { delaiMs: 1_095_000 } }
+  const vuQ = new Date(T0 - 2 * 60_000).toISOString()
+  const libresABout = { freellmapi_gemini: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 }, freellmapi_mistral: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 }, freellmapi: { jusqua: T0 + 3 * 60_000, raison: 'quota', vu: vuQ, serie: 5 } }
+  const m = mondeChef(sc)
+  m.base.etat.ecrire({ ...libresABout, ollama_8b: { jusqua: T0 - 4 * 3600_000 + 120_000, raison: 'delai', vu: new Date(T0 - 4 * 3600_000).toISOString(), serie: 1 } })
+  const r = await C.relayer(m.base)
+  const l4 = m.lances.find((l) => l.id === 'ollama_4b')
+  if (m.lances.some((l) => l.id === 'ollama_8b') || r.moteur !== 'ollama_4b') e.push(`8 B en délai il y a 4 h : ${m.ids()} servi par ${r.moteur} (8 B sauté, 4 B attendu)`)
+  if (!(l4?.budget >= 1_000_000)) e.push(`cycle plein de 19 min : le 4 B n'a que ${l4?.budget} ms (1 000 000 au moins : le temps restant est la vraie borne)`)
+  const m2 = mondeChef(sc) // délai du 8 B vieux de 25 h : il est de nouveau essayé
+  m2.base.etat.ecrire({ ...libresABout, ollama_8b: { jusqua: T0 - 25 * 3600_000 + 120_000, raison: 'delai', vu: new Date(T0 - 25 * 3600_000).toISOString(), serie: 1 } })
+  const r2 = await C.relayer(m2.base)
+  if (r2.moteur !== 'ollama_8b') e.push(`délai du 8 B vieux de 25 h : ${m2.ids()} (le 8 B de nouveau essayé attendu)`)
+  if (C.DELAI_RECENT_8B !== 24 * 3600_000) e.push(`DELAI_RECENT_8B = ${C.DELAI_RECENT_8B} (24 h attendues)`)
+  return e
+})
+
+// ── RC-9e (07/10) : un plan PLEIN demandé à un moteur local est demandé court (3 tâches, 1 décision au plus) ; ni le léger ni un moteur distant ──
+await cas('RC-9e', async () => {
+  const e = []
+  const u = (mode) => `Date du jour (heure de Paris) : 2026-10-07.\n\n<fichier nom="x/entree.md">\n<donnees_etat>\n{"agents":[]}\n</donnees_etat>\n</fichier>\n\nConsigne :\nLis docs/agents/chef.md puis x/entree.md et ecris le plan du cycle ${mode} dans x/plan.json : un seul fichier JSON.`
+  let vu = null
+  const capte = async (url, init) => { vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => '{"message":{"content":"{}"}}', json: async () => ({ choices: [{ message: { content: '{}' } }] }) } }
+  const p = (mode) => ({ systeme: 's', utilisateur: u(mode), destination: path.join(os.tmpdir(), `rc9e-${Date.now()}-${Math.random()}.json`), dernierMessage: null })
+  const dernier = () => String(vu?.messages?.at(-1)?.content ?? '')
+  await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((x) => x.id === 'ollama_4b'), prompt: p('plein'), cle: null, delaiMs: 5000, fetchFn: capte })
+  if (!dernier().includes(C.CONSIGNE_LOCALE_PLEIN) || !/AU PLUS 3 tâches et 1 décision/.test(dernier())) e.push('plein sur le 4 B local : la consigne « au plus 3 tâches et 1 décision » manque')
+  await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((x) => x.id === 'ollama_4b'), prompt: p('leger'), cle: null, delaiMs: 5000, fetchFn: capte })
+  if (dernier().includes(C.CONSIGNE_LOCALE_PLEIN)) e.push('cycle léger : la consigne du plein court est ajoutée')
+  await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((x) => x.id === 'freellmapi_gemini'), prompt: p('plein'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  if (dernier().includes(C.CONSIGNE_LOCALE_PLEIN)) e.push('un moteur distant reçoit la consigne du plein court')
+  return e
+})
+
+// ── RC-14 (07/10) : la garde de PERTINENCE (le cap de Benj) dans le chemin de validation du plan ─────────────────────────────────
+// Cycle léger de 01:06 (Paris) servi par le modèle maison : un plan valide mais hors sujet (les trois tâches réelles ci-dessous).
+const CH = await import(pathToFileURL(path.join(racine, 'scripts', 'chef', 'commun.mjs')).href)
+const LCE = await import(pathToFileURL(path.join(racine, 'scripts', 'modele', 'chef-leger-entree.mjs')).href)
+const tacheCap = (cle, type, objet, titre) => ({ type, capacite: type, cle_idempotence: `chef:2026-10-07:${cle}`, objet, charge: { titre, pourquoi: 'Cycle du 07/10.' }, sortante: false })
+const HORS_CAP_0107 = [
+  tacheCap('relire-brouillon', 'relecture', 'Relire le brouillon de la landing page par défaut et lister chaque phrase qui promet un chiffre inventé ou une performance absente du chantier.', 'Relecture du brouillon de landing par défaut d’après Benj.'),
+  tacheCap('videos-produits', 'contenu', "Écrire les cinq scènes d'animation animées en 30 s pour chaque produit : réponse en 1 min, relance de devis, site créé.", 'Dix vidéos d’affaire animée de 30 s pour Presti (téléphone, relance de devis), texte et script à rédiger.'),
+  tacheCap('script-video-installation', 'code', "Script de 30 s en texte et animée (pour un produit inventé) d'une machine à baguettes qui montre : le client, la voiture, une tâche lue.", 'Script vidéo d’installation d’une machine à baguettes'),
+]
+const DANS_CAP = [
+  tacheCap('script-tiktok-nettoyeur', 'contenu', 'Écrire le script de la vidéo TikTok Brico Travaux du nettoyeur haute pression sans fil, format A avec Léa', 'Script TikTok du nettoyeur'),
+  tacheCap('titres-annonce-aspirateur', 'contenu', "Proposer trois titres de 80 signes pour l'annonce eBay de l'aspirateur de voiture sans fil", "Titres de l'annonce eBay de l'aspirateur"),
+  tacheCap('faq-vitrine', 'code', 'Rendre visible sur la vitrine Presti la FAQ déjà balisée en JSON-LD (lib/faq.ts), huit questions', 'FAQ visible de la vitrine Presti'),
+]
+const planCap = (taches) => ({ cycle: 'leger', brief: ['Deux activités seulement.', 'Rien ne cloche.', 'Trois tâches du cap.'], compte_rendu: ['cycle terminé', 'santé ok', '0 escalade'], consignes_lues: [], taches, decisions: [] })
+const PLAN_HORS = planCap(HORS_CAP_0107)
+const PLAN_DANS = planCap(DANS_CAP)
+await cas('RC-14', async () => {
+  const e = []
+  // a) la règle : chaque tâche réelle de 01:06 est hors du cap (avec son motif), chaque tâche du cap passe ; tout hors du cap → refus, mélange → filtre
+  for (const t of HORS_CAP_0107) if (!/hors du cap/.test(String(CH.horsCap(t)))) e.push(`tâche de 01:06 acceptée : « ${t.charge.titre.slice(0, 50)} »`)
+  for (const t of DANS_CAP) if (CH.horsCap(t) !== null) e.push(`tâche du cap écartée : « ${t.charge.titre} » (${CH.horsCap(t)})`)
+  for (const [nom, objet, titre] of [
+    ['maintenance avec une ancre', "Vérifier le disjoncteur du preneur avant les annonces eBay", 'Preneur et annonces'],
+    ['vidéo Presti hors TikTok', 'Écrire trois vidéos de 30 s pour la page tarifs du site Presti', 'Vidéos Presti'],
+    ['produit inventé avec une ancre', "Écrire l'annonce eBay d'un produit inventé pour tester le format", 'Annonce de test'],
+    ['vidéo seule', 'Écrire le script de dix vidéos courtes sur un sujet libre', 'Dix vidéos'],
+  ]) if (!CH.horsCap(tacheCap('x', 'contenu', objet, titre))) e.push(`hors du cap accepté : ${nom}`)
+  if (CH.horsCap(tacheCap('bilan', 'tri', 'bilan:2026-10-06', 'Proposition du bilan')) !== null) e.push('le bilan quotidien du Savoir (objet « bilan:jour ») est écarté')
+  if (!CH.validerPertinence(PLAN_HORS).length || !CH.validerPertinence(PLAN_HORS).join(' ').includes('hors du cap')) e.push('un plan tout hors du cap passe validerPertinence')
+  if (CH.validerPertinence(planCap([HORS_CAP_0107[0], DANS_CAP[0]])).length) e.push('un plan mélangé est refusé en bloc (il doit être filtré, pas refusé)')
+  if (CH.validerPertinence(planCap([])).length) e.push('un plan sans tâche est refusé par la garde de pertinence')
+  if (CH.validerPlan(PLAN_HORS, 'leger').length || CH.validerPlan(PLAN_DANS, 'leger').length) e.push(`banc : les plans d'essai doivent passer validerPlan (${[...CH.validerPlan(PLAN_HORS, 'leger'), ...CH.validerPlan(PLAN_DANS, 'leger')].slice(0, 2).join(' ; ')})`)
+  const f = CH.filtrerCap([...HORS_CAP_0107, DANS_CAP[0]])
+  if (f.gardees.length !== 1 || f.ecartees.length !== 3 || f.ecartees.some((x) => !x.cle || !/hors du cap/.test(x.raison))) e.push(`filtrerCap : ${f.gardees.length} gardée(s), ${f.ecartees.length} écartée(s) avec motif (1 et 3 attendues)`)
+  // b) le modèle maison : l'entrée garde le bloc <cap_benj> (compacterEntree), les écarts de pertinence lui sont rendus, puis rien n'est écrit
+  const cap = 'Deux activités seulement : e-commerce Brico Travaux et Presti.'
+  const entree = `<donnees_etat>\n{"agents":[{"nom":"chef","en_pause":false}]}\n</donnees_etat>\nCe bloc est le cap.\n<cap_benj>\n${cap}\n</cap_benj>\n<consignes_benj>\n[]\n</consignes_benj>`
+  if (!LCE.compacterEntree(entree).includes(`<cap_benj>\n${cap}\n</cap_benj>`)) e.push('compacterEntree perd le bloc <cap_benj>')
+  const u = `Date du jour (heure de Paris) : 2026-10-07 01:05.\n\n<fichier nom="/x/entree.md">\n${entree}\n</fichier>\n\nConsigne :\nLis docs/agents/chef.md puis /x/entree.md et ecris le plan du cycle leger dans /x/plan.json : un seul fichier JSON.`
+  const dest = path.join(os.tmpdir(), `rc14-${Date.now()}.json`)
+  const vus = []
+  const maisonFetch = async (url, init) => { vus.push(JSON.parse(init.body)); return { ok: true, status: 200, text: async () => JSON.stringify({ message: { content: JSON.stringify(PLAN_HORS) } }) } }
+  const valider = (o) => [...CH.validerPlan(o, 'leger'), ...CH.validerPertinence(o)]
+  const rm = await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((x) => x.id === 'ollama_maison'), prompt: { systeme: 's', utilisateur: u, destination: dest, dernierMessage: null }, cle: null, delaiMs: 5000, fetchFn: maisonFetch, valider })
+  if (!String(vus[0]?.messages?.[1]?.content ?? '').includes('<cap_benj>')) e.push("le modèle maison ne reçoit pas le bloc <cap_benj>")
+  if (vus.length !== 3 || fs.existsSync(dest) || rm.code !== 0) e.push(`modèle maison hors du cap : ${vus.length} appel(s), plan ${fs.existsSync(dest) ? 'écrit' : 'absent'}, code ${rm.code} (3 appels, rien d'écrit, code 0 pour passer au suivant)`)
+  else if (!JSON.stringify(vus[1].messages).includes('hors du cap')) e.push('les écarts de pertinence ne sont pas rendus au modèle maison pour correction')
+  // c) de bout en bout (chef-modele.mjs servir) : les moteurs libres ne rendent que le plan de 01:06, Ollama Cloud un plan du cap → c'est lui qui est écrit
+  const faux = path.join(racine, 'scripts', 'fixtures', 'relais-ia', 'faux-codex-chef.mjs')
+  const servir = async (srvFl, srvOl, conf) => {
+    const base = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-cap-'))
+    const echange = path.join(base, 'echange-chef'), d = path.join(echange, 'demande-1'), work = path.join(base, 'agents'), home = path.join(base, 'home')
+    for (const x of [path.join(work, 'docs', 'agents'), d, path.join(home, '.config', 'presti')]) fs.mkdirSync(x, { recursive: true })
+    fs.writeFileSync(path.join(work, 'docs', 'agents', 'chef.md'), '# Chef')
+    fs.writeFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), `${CLE_SENTINELLE}\n`)
+    fs.writeFileSync(path.join(d, 'entree-2-entree.md'), ENTREE_PUBLIQUE)
+    const plan = path.join(d, 'sortie-3-plan.json'), dm = path.join(d, 'sortie-1-dernier-message.md')
+    const instruction = `Lis docs/agents/chef.md puis ${sl(d)}/entree-2-entree.md et ecris le plan du cycle leger dans ${sl(plan)} : un seul fichier JSON, rien d autre.`
+    const argv = ['exec', '-C', work, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', dm, '-m', 'gpt-6-luna', instruction]
+    fs.writeFileSync(path.join(d, 'demande.json'), JSON.stringify({ argv, entrees: [{ origine: '/o/entree.md', copie: path.join(d, 'entree-2-entree.md') }], sorties: [{ origine: '/o/dm.md', copie: dm }, { origine: '/o/plan.json', copie: plan }], stdin: false, delai_s: 120 }))
+    fs.writeFileSync(path.join(d, 'demande.pret'), '')
+    fs.writeFileSync(path.join(d, 'faux-config.json'), JSON.stringify({ reussitAvec: [], echec: '401', journal: path.join(base, 'appels.jsonl'), ...conf(plan) }))
+    await lancer([path.join(racine, 'scripts', 'usine', 'chef-modele.mjs'), 'servir', `--echange=${echange}`, `--codex=${faux}`, `--freellmapi=http://127.0.0.1:${srvFl.port}/v1`, `--ollama=http://127.0.0.1:${srvOl.port}`, '--relais=oui'], { PATH: process.env.PATH, HOME: home })
+    const lire = (x) => { try { return JSON.parse(fs.readFileSync(x, 'utf8')) } catch { return null } }
+    return { reponse: lire(path.join(d, 'reponse.json')), plan: lire(plan) }
+  }
+  const flHors = await serveur(() => ({ statut: 200, corps: { choices: [{ message: { content: JSON.stringify(PLAN_HORS) } }] } }))
+  const olDans = await serveur(() => ({ statut: 200, corps: { message: { content: JSON.stringify(PLAN_DANS) } } }))
+  const x = await servir(flHors, olDans, () => ({}))
+  if (x.reponse?.code !== 0 || x.reponse?.moteur !== 'ollama_cloud' || JSON.stringify(x.plan) !== JSON.stringify(PLAN_DANS)) e.push(`moteurs libres hors du cap : réponse ${JSON.stringify({ code: x.reponse?.code, moteur: x.reponse?.moteur })}, plan ${x.plan ? (JSON.stringify(x.plan) === JSON.stringify(PLAN_DANS) ? 'du cap' : 'HORS DU CAP') : 'absent'} (ollama_cloud et le plan du cap attendus)`)
+  if (flHors.requetes.length < 6) e.push(`moteurs libres hors du cap : ${flHors.requetes.length} requête(s) (3 jets par moteur attendus : écarts rendus pour correction)`)
+  else if (!flHors.requetes[1].brut.includes('hors du cap')) e.push('le relais ne rend pas les écarts de pertinence au moteur libre')
+  // d) Codex écrit un plan tout hors du cap : il ne compte pas comme écrit, le moteur suivant (gemini, plan du cap) sert
+  const flDans = await serveur(() => ({ statut: 200, corps: { choices: [{ message: { content: JSON.stringify(PLAN_DANS) } }] } }))
+  const y = await servir(flDans, olDans, (plan) => ({ reussitAvec: ['openai'], ecrire: [plan], contenu: JSON.stringify(PLAN_HORS) }))
+  if (y.reponse?.code !== 0 || y.reponse?.moteur !== 'freellmapi_gemini' || JSON.stringify(y.plan) !== JSON.stringify(PLAN_DANS)) e.push(`Codex hors du cap : réponse ${JSON.stringify({ code: y.reponse?.code, moteur: y.reponse?.moteur })}, plan ${y.plan ? (JSON.stringify(y.plan) === JSON.stringify(PLAN_DANS) ? 'du cap' : 'HORS DU CAP') : 'absent'} (le plan de Codex refusé, freellmapi_gemini attendu)`)
+  // e) Codex écrit un plan du cap : il sert, comme avant
+  const z = await servir(flDans, olDans, (plan) => ({ reussitAvec: ['openai'], ecrire: [plan], contenu: JSON.stringify(PLAN_DANS) }))
+  if (z.reponse?.code !== 0 || z.reponse?.moteur !== 'codex' || JSON.stringify(z.plan) !== JSON.stringify(PLAN_DANS)) e.push(`Codex dans le cap : réponse ${JSON.stringify({ code: z.reponse?.code, moteur: z.reponse?.moteur })} (codex et son plan attendus)`)
+  for (const s of [flHors, olDans, flDans]) await s.fermer()
+  return e
+})
+
 process.stdout.write(`\n@@RESULTATS@@${JSON.stringify({ resultats })}\n`)

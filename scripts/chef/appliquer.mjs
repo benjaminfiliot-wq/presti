@@ -2,7 +2,7 @@
 // Applique un plan validé, une requête à la fois, puis signale le battement du chef.
 import fs from 'node:fs'
 import path from 'node:path'
-import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, filtrerTaches, horodatage, ecrireJson, principal } from './commun.mjs'
+import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, validerPertinence, filtrerTaches, filtrerCap, horodatage, ecrireJson, principal } from './commun.mjs'
 
 principal(async () => {
   const fichier = positionnels()[0]
@@ -18,6 +18,8 @@ principal(async () => {
   let plan
   try { plan = JSON.parse(fs.readFileSync(fichier, 'utf8')) } catch { rapport.ecarts.push('plan illisible'); console.error('✗ plan illisible'); return finir(1) }
   const ecarts = validerPlan(plan, cycle)
+  // 07/10 : un plan dont TOUTES les tâches sont hors du cap de Benj (docs/agents/cap-benj.md) est refusé comme un plan invalide.
+  ecarts.push(...validerPertinence(plan))
   if (ecarts.length) {
     rapport.ecarts = ecarts
     console.error(`✗ plan refusé en bloc (${ecarts.length} écart(s)) :\n  ${ecarts.join('\n  ')}`)
@@ -25,7 +27,11 @@ principal(async () => {
   }
 
   // Les tâches libres qui ne peuvent pas aboutir (web, maintenance des agents, données de prospects) ne sont pas créées : voir tacheEcartee (commun.mjs).
-  const { gardees, ecartees } = filtrerTaches(plan)
+  // 07/10 : puis chaque tâche hors du cap (ni e-commerce Brico Travaux ni Presti) est écartée avec son motif ; les autres passent.
+  const filtre = filtrerTaches(plan)
+  const cap = filtrerCap(filtre.gardees)
+  const gardees = cap.gardees
+  const ecartees = [...filtre.ecartees, ...cap.ecartees]
   rapport.ecartees = ecartees
   for (const e of ecartees) console.error(`· tâche écartée ${e.cle} : ${e.raison}`)
   const envois = [

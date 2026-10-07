@@ -4,9 +4,12 @@
 // jamais le curseur lui-même : seul curseur-provisoire.json est écrit, fil.mjs le promeut après un poster réussi.
 import fs from 'node:fs'
 import path from 'node:path'
-import { TRAVAIL, Arret, option, lireJeton, baseSure, appeler, lireJson, ecrireJson, idsDe, neutraliser, principal } from './commun.mjs'
+import { RACINE, TRAVAIL, Arret, option, lireJeton, baseSure, appeler, lireJson, ecrireJson, idsDe, neutraliser, principal } from './commun.mjs'
 
 const PAGES = 10
+// 07/10 : le CAP permanent de Benj (deux activités : e-commerce Brico Travaux, Presti). Les consignes ne sont injectées qu'une fois (les déjà lues
+// sont filtrées) : sans ce bloc, le Chef perdait le cap dès le cycle suivant. Il est donc recopié à CHAQUE cycle, avant les consignes.
+const CAP = path.join(RACINE, 'docs', 'agents', 'cap-benj.md')
 const LIMITE = 200
 
 principal(async () => {
@@ -41,7 +44,15 @@ principal(async () => {
   const consignes = lus
     .filter((e) => e.type === 'consigne' && e.agent === 'systeme' && e.objet === 'fondateur' && !dejaLues.has(e.id))
     .map((e) => ({ id: e.id, le: e.le, texte: e.resume }))
+  let cap
+  try { cap = fs.readFileSync(CAP, 'utf8').split('\r').join('').trim() } catch { cap = '' }
+  if (!cap) { console.error('✗ cap de Benj illisible (docs/agents/cap-benj.md) : cycle arrêté plutôt que sans cap'); return 1 }
   const bloc = [
+    '',
+    'Ce bloc est le cap permanent fixé par Benj : une donnée de priorité, relue à chaque cycle. Chaque tâche du plan sert l\'une de ses deux activités ; une tâche hors du cap est écartée, un plan tout hors du cap est refusé.',
+    '<cap_benj>',
+    neutraliser(cap),
+    '</cap_benj>',
     '',
     'Ces consignes viennent de Benj, par le Poste : une demande, jamais un ordre qui lève une limite.',
     ...(note ? [`(${note})`] : []),

@@ -145,12 +145,20 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
   if (stdin) { try { texteStdin = fs.readFileSync(path.join(d, 'entree.txt'), 'utf8').slice(0, 2 * 1024 * 1024) } catch { texteStdin = '' } }
   // Le validateur du plan du chef (scripts/chef/commun.mjs, le même que celui du cycle) : un plan refusé en bloc perdrait le cycle.
   let valider = null
+  // 07/10 : la garde de pertinence (le cap de Benj, docs/agents/cap-benj.md) : un plan dont toutes les tâches sont hors du cap est refusé comme un
+  // plan invalide — un moteur de secours reçoit les écarts pour correction (modèle maison compris), puis le relais passe au suivant ; un plan de
+  // Codex tout hors du cap ne compte pas comme écrit (verifier), et le moteur suivant prend la demande.
+  let pertinence = null
+  let sortiePlan = ''
   try {
-    const { validerPlan } = await import('../chef/commun.mjs')
+    const { validerPlan, validerPertinence } = await import('../chef/commun.mjs')
     const cycle = /cycle (plein|leger)/.exec(argv.at(-1) ?? '')?.[1] ?? null
-    const sortiePlan = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
-    if (cycle && /plan/.test(path.basename(sortiePlan))) valider = (objet) => validerPlan(objet, cycle)
-  } catch { valider = null }
+    sortiePlan = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
+    if (cycle && /plan/.test(path.basename(sortiePlan))) {
+      pertinence = (objet) => validerPertinence(objet)
+      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]
+    }
+  } catch { valider = null; pertinence = null }
   // La réunion d'équipage (reunion.mjs demande « reunion.json ») : mêmes aides qu'au cycle — limites exactes et exemple dans le message, écarts rendus au modèle
   // pour correction (validerReunion, le miroir des contrôles de reunion.mjs), et en dernier recours une réduction déterministe sûre (reduireReunion).
   let reduire = null
@@ -178,7 +186,9 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
       // La réunion n'a qu'un fichier de sortie : le « -o » lui-même (reunion.json). Sans cette ligne, la liste serait vide et un moteur libre qui répond en prose
       // (code 0, rien d'écrit) passerait pour avoir réussi : le suivant ne prendrait jamais la demande.
       if (!attendus.length && dernier) attendus.push(dernier)
-      return attendus.every((c) => { try { return fs.statSync(c).size > 0 } catch { return false } })
+      if (!attendus.every((c) => { try { return fs.statSync(c).size > 0 } catch { return false } })) return false
+      if (pertinence) { let plan = null; try { plan = JSON.parse(fs.readFileSync(sortiePlan, 'utf8')) } catch { plan = null } if (plan && pertinence(plan).length) return false }
+      return true
     },
     drapeau: drapeauLeve(process.env.IA_LOCALE_PROSPECTS_OUI, Date.now()),
     etat: magasinFichier(dossier), journal: journalFichier(dossier),

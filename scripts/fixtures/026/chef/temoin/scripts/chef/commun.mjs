@@ -61,7 +61,30 @@ export function ecrireJson(f, v) { fs.mkdirSync(path.dirname(f), { recursive: tr
 export const idsDe = (v) => (Array.isArray(v) ? v : Array.isArray(v?.ids) ? v.ids : []).filter((x) => Number.isInteger(x))
 
 // Balises d'un bloc de données : toute ouverture ou fermeture venue des données est neutralisée.
-export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj)/g, '&lt;$1$2')
+export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj|cap_benj)/g, '&lt;$1$2')
+
+// Le cap de Benj (07/10, docs/agents/cap-benj.md) — écriture de référence, indépendante de scripts/chef/commun.mjs. Une tâche se rattache au
+// cap par une ancre forte, ou par « presti » ET un mot du site ; la maintenance interne, un sujet inventé et une vidéo hors TikTok l'en sortent.
+export const ANCRES_CAP = ['ebay', 'annonce', 'tiktok', 'brico travaux', 'bricolage', 'nettoyeur', 'aspirateur', 'fournisseur', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'prospection', 'démarchage', 'refonte', 'vitrine', 'maquette', 'presti']
+const plat = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’‘'`´]/g, ' ')
+const MOTS_FORTS = ['ebay', 'annonce', 'annonces', 'tiktok', 'tik tok', 'brico travaux', 'bricolage', 'nettoyeur', 'nettoyeurs', 'aspirateur', 'aspirateurs', 'fournisseur', 'fournisseurs', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'ecommerce', 'refonte', 'vitrine', 'maquette', 'maquettes']
+const contient = (texte, mot) => new RegExp(`\\b${mot.replace(/[-]/g, '\\-')}\\b`).test(texte)
+export function horsCap(t) {
+  if (!t || typeof t !== 'object') return 'hors du cap : tâche illisible'
+  if (typeof t.objet === 'string' && /^bilan:\d{4}-\d{2}-\d{2}$/.test(t.objet.trim())) return null
+  const texte = plat([t.objet, t.charge?.titre].filter((x) => typeof x === 'string').join(' '))
+  if (/\b(preneur|disjonct\w*|orchestre|026-\d{3}|battements?)\b|\btaches? (en file|en attente|echouees?|bloquees?)\b/.test(texte)) return 'hors du cap : maintenance interne'
+  if (/\b(produits?|clients?|marques?|entreprises?|machines?|exemples?)\s+(\w+\s+)?(inventee?s?|fictifs?|fictives?|imaginaires?)\b/.test(texte)) return 'hors du cap : sujet inventé'
+  const rattachee = MOTS_FORTS.some((m) => contient(texte, m)) || /\bprospect|\bdemarch/.test(texte) || (contient(texte, 'presti') && /\b(sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo)\b/.test(texte))
+  if (!rattachee) return 'hors du cap : ni e-commerce Brico Travaux ni Presti'
+  if (/\b(videos?|clips?)\b/.test(texte) && !/\b(tik ?toks?|brico travaux|bricolage|nettoyeurs?|aspirateurs?|vitrines?|landing|refonte)\b/.test(texte)) return 'hors du cap : vidéo hors de la chaîne TikTok Brico Travaux'
+  return null
+}
+export function validerPertinence(plan) {
+  const taches = Array.isArray(plan?.taches) ? plan.taches : []
+  const motifs = taches.map(horsCap)
+  return taches.length && motifs.every(Boolean) ? ['taches : toutes hors du cap de Benj', ...motifs.map((m, i) => `taches[${i}] : ${m}`)] : []
+}
 
 export function toutesLesChaines(v, out = []) {
   if (typeof v === 'string') out.push(v)

@@ -141,7 +141,7 @@ function planDuBilan(b, jour) {
 principal(async () => {
   if (option('mode') !== 'quotidien') throw new Arret(2, '--mode=quotidien')
   const base = baseSure(option('base'))
-  const minutes = Number(option('minutes', 12))
+  const minutes = Number(option('minutes', 14)) // 07/10 : 12 -> 14 min (unité : 15 min) ; le relais reçoit ce temps moins 45 s (voir plus bas)
   const reglages = lireJson(path.join(RACINE, 'docs', 'savoir', 'reglages.json'), {})
   if (reglages?.interrupteurs?.bilan_quotidien?.actif !== true) { console.log('bilan éteint'); return 0 }
   lireJeton()
@@ -175,7 +175,10 @@ principal(async () => {
   const argv = ['exec', '-C', RACINE, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', path.join(dossier, 'dernier-message.md'), '-m', MODELE, instruction]
   const env = {}
   for (const n of ['PATH', 'HOME', 'LANG']) if (process.env[n]) env[n] = process.env[n]
-  const m = await lancer(commande, [...avant, ...argv], { env, delaiMs: Math.round(minutes * 60_000) })
+  // 07/10 : comme le cycle, le relais de la file du chef reçoit le temps du bilan moins 45 s ; sans cela il gardait son défaut (1 200 s) et calculait encore
+  // après que le bilan l'avait tué (bilan du 06/10, 08:27 UTC), en tenant les 4 cœurs au cycle suivant.
+  const delaiFile = /presti-chef-modele$/.test(bin) ? [`--delai=${Math.max(60, Math.round(minutes * 60) - 45)}`] : []
+  const m = await lancer(commande, [...avant, ...delaiFile, ...argv], { env, delaiMs: Math.round(minutes * 60_000) })
   if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); journal('delai'); return 1 }
   if (m.code !== 0) { console.error(`✗ le modèle a échoué (code ${m.code})`); return journal(1) }
   let taille = 0
