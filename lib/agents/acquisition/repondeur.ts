@@ -319,6 +319,17 @@ async function filDe(ctx: Contexte, r: ReponseARepondre): Promise<string | null>
   return courriels[0]?.envoi_id ?? null
 }
 
+/**
+ * La réponse est-elle rattachée à notre prospection ? (07/10/2026) Sans cela, le répondeur reste muet.
+ * La règle stricte « fil ouvert par nous » (un prospect seul ne suffit pas : il faut qu'on lui ait déjà écrit) est tenue par
+ * la base, seule source du répondeur (acq_reponses_a_repondre, migration 0134). Ici, la seconde barrière : un message sans
+ * AUCUN rattachement (ni envoi cité, ni conversation, ni prospect) — exactement un courriel personnel — ne reçoit rien,
+ * même si une lecture de la base venait à le laisser passer.
+ */
+export function filInitieParNous(r: ReponseARepondre): boolean {
+  return !!r.envoi_id || !!r.conversation_id || !!r.prospect_id
+}
+
 async function traiterReponse(ctx: Contexte, r: ReponseARepondre): Promise<void> {
   const { deps, bilan } = ctx
   const magasin = deps.magasin
@@ -330,6 +341,11 @@ async function traiterReponse(ctx: Contexte, r: ReponseARepondre): Promise<void>
     bilan.sans_reponse++
     return
   }
+
+  // 07/10/2026 (incident de la boîte personnelle) : on ne répond QU'À un message rattaché à notre prospection (filInitieParNous :
+  // un de nos envois cité, une conversation sur nos canaux, un prospect ; la base exige en plus qu'on ait écrit à ce prospect).
+  // Un courriel arrivé dans la boîte sans aucun lien avec la prospection ne reçoit RIEN : rendu traité, sans envoi.
+  if (!filInitieParNous(r)) { await abandonner(ctx, r, 'fil_non_initie'); return }
 
   const prospectId = r.prospect_id ?? null
   const info = prospectId ? await lireInfo(ctx, prospectId) : null
