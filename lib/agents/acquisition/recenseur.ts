@@ -2,6 +2,7 @@ import { PROCHES } from './contrat'
 import type { CanalTrouve, DepsReseau, FicheSirene, LectureSite, MagasinSocle, PatchProspect, ProspectReserve } from './contrat'
 import { chercherEntreprise, ficheParSiren, retenir } from './sirene'
 import { lireSite } from './lecteurSite'
+import { detailStockable, scoreDouleur } from './scoreDouleur'
 
 interface Deps extends DepsReseau {
   magasin: MagasinSocle
@@ -112,7 +113,11 @@ async function traiter(candidat: ProspectReserve, deps: Deps, bilan: Bilan): Pro
     }
   }
   const faits = [...candidat.faits, ...(site?.faits ?? [])]
+  // Le score de douleur (0135) : signaux publics sur l'entreprise ; la file du premier contact passe par score décroissant.
+  const douleur = scoreDouleur({ domaine: candidat.domaine, faits, formulaire: site?.formulaire ?? null, verdict_formulaire: site?.verdict_formulaire ?? null, pages: site?.pages ?? [], site_lu: !!site })
   const patch: PatchProspect = {
+    score_douleur: douleur.score,
+    score_douleur_detail: detailStockable(douleur),
     siren: fiche.siren,
     cible: candidat.cible,
     naf: fiche.naf,
