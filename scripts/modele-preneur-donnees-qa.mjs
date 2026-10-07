@@ -83,7 +83,7 @@ export function juger(lignes, envois) {
     if (attendu === 'travail' && n.length) faute('sorties', `ligne ${i + 1} : nombre absent des sources (juge) : ${n.slice(0, 3).join(', ')}`)
     for (const [k, t] of [['entrée', `${msg[0].content}\n${msg[1].content}`], ['sortie', msg[2].content]]) { const a = identite(t); if (a) faute('identité', `ligne ${i + 1} (${k}) : ${a}`) }
     m.maxSignes = Math.max(m.maxSignes, [...(msg[0].content + msg[1].content + msg[2].content)].length)
-    if (attendu === 'impossible') m.impossibles++
+    if (attendu === 'impossible' || /^\s*IMPOSSIBLE\b/i.test(msg[2].content)) { m.impossibles++; faute('impossible', `ligne ${i + 1} : une réponse IMPOSSIBLE (la v1 en a appris à refuser des tâches faisables)`) }
     if (!nPassages) m.sansSavoir++
     if (/eBay|TikTok|acheteur|nettoyeur|aspirateur|souffleur/i.test(objet ?? '')) m.ecom++
     if (/Presti|artisan/i.test(objet ?? '')) m.presti++
@@ -108,10 +108,10 @@ ok('le JSONL des données existe', lignes.length > 0, `${fDonnees} vide ou absen
 ok('des envois au maître sont journalisés', envois.length > 0, `${F_ENVOIS} absent`)
 ok('les noms des prospects connus sont chargés (garde des noms active)', noms.length >= 50, `${noms.length} noms`)
 const { rouge, mesures } = juger(lignes, envois)
-for (const c of ['nombre', 'format', 'doublons', 'sorties', 'identité', 'envois', 'fuite', 'longueur']) ok(`données — ${c}`, !rouge.has(c), rouge.get(c))
+for (const c of ['nombre', 'format', 'doublons', 'sorties', 'identité', 'envois', 'fuite', 'longueur', 'impossible']) ok(`données — ${c}`, !rouge.has(c), rouge.get(c))
 console.log(`   ${mesures.n} paires · ${mesures.envois} envois relus · ${mesures.impossibles} IMPOSSIBLE · ${mesures.sansSavoir} sans Savoir · e-commerce ${mesures.ecom} · Presti ${mesures.presti} · ${mesures.maxSignes} signes au plus`)
 ok('couverture : e-commerce et Presti (40 paires chacun au moins)', mesures.ecom >= 40 && mesures.presti >= 40, `e-commerce ${mesures.ecom}, Presti ${mesures.presti}`)
-ok('couverture : des IMPOSSIBLE (5 au moins) et des entrées sans Savoir (20 au moins)', mesures.impossibles >= 5 && mesures.sansSavoir >= 20, `${mesures.impossibles} IMPOSSIBLE, ${mesures.sansSavoir} sans Savoir`)
+ok('couverture : des entrées sans Savoir (20 au moins)', mesures.sansSavoir >= 20, `${mesures.sansSavoir} sans Savoir`)
 
 // ── 2. l'épreuve est à part, et les données sont exactement ce que le générateur écrit depuis le cache ─────────────────
 const ep = construireEntrees({ epreuve: true }).entrees
@@ -149,6 +149,7 @@ if (lignes.length >= MIN_PAIRES + 1) {
     ['une ligne en double', 'doublons', [...lignes.slice(0, -1), lignes[0]], envois],
     [`${MIN_PAIRES - 1} paires seulement`, 'nombre', lignes.slice(0, MIN_PAIRES - 1), envois],
     ['une autre consigne système', 'format', changer(iT, (m) => { m[0].content = 'Tu es un assistant.' }), envois],
+    ["une paire IMPOSSIBLE (tâche du web) remise dans les données", 'impossible', (() => { const e = entrees.find((x) => x.attendu === 'impossible'); return [...lignes.slice(1), JSON.stringify({ messages: [{ role: 'system', content: e.systeme }, { role: 'user', content: e.utilisateur }, { role: 'assistant', content: 'IMPOSSIBLE : la tâche exige les chiffres du jour, absents des extraits.' }] })] })(), envois],
     ["une tâche de l'épreuve glissée dans les données", 'fuite', changer(iT2, (m) => { m[1].content = m[1].content.replace(/^Travail à faire : .*$/m, `Travail à faire : ${objetsEpreuve[2]}`) }), envois],
   ]
   for (const [nom, critere, l, e] of sabotages) {
