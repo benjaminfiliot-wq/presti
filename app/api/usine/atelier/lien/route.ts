@@ -46,6 +46,8 @@ export async function POST(req: Request) {
   let corps: { prospect_id?: string }
   try { corps = await req.json() } catch { return repondre({ erreur: 'corps' }, 400) }
   if (!corps.prospect_id || !/^[0-9a-f-]{36}$/i.test(corps.prospect_id)) return repondre({ erreur: 'entree' }, 400)
+  // L'étape atteinte : rendue avec un 503 (un nom d'étape, jamais une donnée) pour qu'un « indisponible » se diagnostique d'ici.
+  let etape = 'lecture'
   try {
     const maintenant = Date.now()
     const p = (await magasinSupabase.prospectsOui(100)).find((x) => x.id === corps.prospect_id)
@@ -86,19 +88,27 @@ export async function POST(req: Request) {
     const adresseReponse = adresseReponseProspection()
     if (canal === 'email_sollicite' && (!adresseReponse || !boiteProspection())) return repondre({ ok: false, raison: 'en_attente_gmail' })
     // Le stockage se mesure en dernier parmi les refus : un prospect sans adresse ou sans Gmail ne déclenche pas le parcours de tous les buckets.
+    etape = 'stockage'
     if (await occupation() > 0.6 * 1024 * 1024 ** 2) {
       await magasinSupabase.creerDecision({ type: 'stockage', prospect_id: p.id, resume: 'Stockage des maquettes au plafond.', options: [{ cle: 'liberer', libelle: 'Libérer du stockage', recommandee: true }, { cle: 'attendre', libelle: 'Attendre', recommandee: false }], defaut: 'attendre', cle_idempotence: `atelier:stockage:${new Date().toISOString().slice(0, 10)}` })
       return repondre({ ok: false, raison: 'stockage' }, 507)
     }
     // Les jetons en clair ne vivent qu'ici, le temps de la requête : la base ne reçoit que leur empreinte, la réponse ne les porte jamais.
+    etape = 'redaction'
     const jeton = creerJeton(), jetonRdv = creerJeton(), expireLe = expiration(maintenant)
     const resultat = await preparerMessageLien(p, { lien: `https://prestiapp.fr/maquette/${jeton}`, paiement: 'https://prestiapp.fr/site/acheter', rendez_vous: `https://prestiapp.fr/rendez-vous/${jetonRdv}`, date_fin: expireLe, canal, destinataire, preuve_demande: preuve, fil_envoi_id: filEnvoi, conversation_id: conversationId, adresseReponse, drapeaux: { siteAchatPublic: actif('siteAchatPublic') } }, { magasin: magasinSupabase, horloge: { maintenant: () => maintenant, attendre: async () => {} } })
     if (!resultat.ok) return repondre({ ok: false, raison: resultat.raison === 'modele_inconnu' ? 'modele_non_approuve' : resultat.raison })
     // Le lien existe en base AVANT que le message qui le porte soit préparé : jamais un message avec un lien mort.
+    etape = 'lien_maquette'
     await magasinSupabase.creerLienMaquette(p.id, m.objet ?? m.chemin, hacherJeton(jeton), expireLe)
+    etape = 'lien_rdv'
     await magasinSupabase.creerLienRdv(p.id, hacherJeton(jetonRdv), expireLe)
+    etape = 'envoi'
     const envoi = await magasinSupabase.preparerEnvoi(resultat)
     if (!envoi.ok) return repondre({ ok: false, raison: envoi.raison })
     return repondre({ ok: true })
-  } catch { return repondre({ ok: false, raison: 'indisponible' }, 503) }
+  } catch (e) {
+    console.error(`[atelier/lien] indisponible à l'étape ${etape} : ${(e instanceof Error ? e.message : String(e)).slice(0, 160)}`)
+    return repondre({ ok: false, raison: 'indisponible', etape }, 503)
+  }
 }
