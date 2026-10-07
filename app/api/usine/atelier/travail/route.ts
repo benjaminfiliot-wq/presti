@@ -13,7 +13,8 @@ const repondre = (corps: object, status = 200) => Response.json(corps, { status 
 const limite = (n: number) => Math.max(0, Math.floor(n))
 function projeter(p: ProspectReserve) {
   const fait = p.faits?.find((f) => f.verifie === 'ok') ?? p.faits?.[0]
-  return { prospect_id: p.id, cle: createHash('sha256').update(p.cle_dedup).digest('hex').slice(0, 16), entreprise: p.entreprise, metier: p.metier, ville: p.commune, communes: p.commune ? [p.commune] : [], fait: fait ? { extrait: fait.extrait, url: fait.url, id: fait.id, lu_le: fait.lu_le } : null, entrant: p.source === 'entrant' }
+  // `domaine` : l'Atelier y relit les photos de l'artisan pour SA maquette (07/10) — le site public de l'entreprise, déjà dans le prospect
+  return { prospect_id: p.id, cle: createHash('sha256').update(p.cle_dedup).digest('hex').slice(0, 16), entreprise: p.entreprise, metier: p.metier, ville: p.commune, communes: p.commune ? [p.commune] : [], fait: fait ? { extrait: fait.extrait, url: fait.url, id: fait.id, lu_le: fait.lu_le } : null, entrant: p.source === 'entrant', domaine: p.domaine ?? null }
 }
 export async function GET(req: Request) {
   if (!actif('busAgents')) return repondre({}, 404)

@@ -4,6 +4,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { modeleDuMetier } from '../../maquettes/rendu.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const ERREUR = (code, message) => Object.assign(new Error(message), { code })
@@ -62,21 +63,27 @@ function menage(dossierSortie) {
   }
 }
 
-export async function passeAtelier({ magasin, executer, horloge, dossierSortie }) {
+// lirePhotos(domaine, dossier) : les photos du site de l'artisan (atelier-photos.mjs), ou null ; facultatif (les juges s'en passent)
+export async function passeAtelier({ magasin, executer, horloge, dossierSortie, lirePhotos = null }) {
   dossierPermis(dossierSortie)
   menage(path.resolve(dossierSortie))
   const travail = await magasin.travail()
   if (travail?.pause) return { fabriques: 0, refuses: 0, liens: 0 }
   let fabriques = 0, refuses = 0, liens = 0
   for (const prospect of travail.a_fabriquer ?? []) {
-    if (!/^[a-z0-9_-]{1,80}$/i.test(prospect.cle) || !/^[a-z0-9_-]{1,80}$/i.test(prospect.metier)) { refuses++; continue }
-    if (!fs.existsSync(path.join(RACINE, 'maquettes', 'modeles', prospect.metier))) { refuses++; continue }
+    // le métier tel que la base l'écrit (« électricien », « carrelage », « maçonnerie ») est ramené à son modèle (maquettes/rendu.mjs)
+    const modele = modeleDuMetier(prospect.metier)
+    if (!/^[a-z0-9_-]{1,80}$/i.test(prospect.cle) || !modele) { refuses++; continue }
+    if (!fs.existsSync(path.join(RACINE, 'maquettes', 'modeles', modele))) { refuses++; continue }
     const dossier = path.join(path.resolve(dossierSortie), prospect.cle)
     fs.rmSync(dossier, { recursive: true, force: true })
     fs.mkdirSync(dossier, { recursive: true })
     const source = prospect.fait ? { fait: prospect.fait.extrait, source: prospect.fait.url, repere: prospect.fait.id, releve_le: prospect.fait.lu_le } : { fait: `Maquette demandée par l'entreprise le ${horodatage(horloge)}`, source: 'demande', repere: 'entrant', releve_le: new Date(horloge?.maintenant?.() ?? Date.now()).toISOString() }
     const json = path.join(dossier, 'maquette.json')
-    fs.writeFileSync(json, JSON.stringify({ entreprise: prospect.entreprise, metier: prospect.metier, ville: prospect.ville, communes: prospect.communes, modele: prospect.metier, source_fait: source }))
+    // Les photos de SON site d'abord (aperçu privé, la maquette le dit) ; une lecture qui échoue n'arrête rien : photos libres du métier
+    let photos = null
+    if (lirePhotos && prospect.domaine) { try { photos = await lirePhotos(prospect.domaine, dossier) } catch { photos = null } }
+    fs.writeFileSync(json, JSON.stringify({ entreprise: prospect.entreprise, metier: modele, ville: prospect.ville, communes: prospect.communes, modele, source_fait: source, ...(photos?.fichiers?.length ? { photos_artisan: photos } : {}) }))
     const site = path.join(dossier, 'site')
     const video = path.join(dossier, 'video.mp4')
     try {
@@ -85,7 +92,7 @@ export async function passeAtelier({ magasin, executer, horloge, dossierSortie }
         [path.join(RACINE, 'scripts/maquette-capturer.mjs'), site],
         [path.join(RACINE, 'scripts/agents/maquette-video.mjs'), site, `--sortie=${video}`],
       ]) {
-        const r = executer(process.execPath, args, { cwd: RACINE, encoding: 'utf8', timeout: 180_000, shell: false })
+        const r = executer(process.execPath, args, { cwd: RACINE, encoding: 'utf8', timeout: 420_000, shell: false })
         if (r.status !== 0) throw ERREUR(1, 'lanceur')
       }
       const fichiers = { 'capture-telephone.jpg': path.join(site, 'capture-telephone.jpg'), 'capture-ordinateur.jpg': path.join(site, 'capture-bureau.jpg'), 'video.mp4': video }
@@ -98,7 +105,9 @@ export async function passeAtelier({ magasin, executer, horloge, dossierSortie }
         empreintes[nom] = empreinte(octets)
         octetsDe[nom] = octets
       }
-      if (tailleDossier(dossier) > 6 * 1024 ** 2) throw ERREUR(1, 'dossier')
+      // la maquette au niveau Lestraque (07/10) : polices, styles, photos en plusieurs largeurs et celles du site de l'artisan ; seuls
+      // les trois fichiers ci-dessus partent au stockage, le dossier reste sur l'usine (ménage à trois jours)
+      if (tailleDossier(dossier) > 25 * 1024 ** 2) throw ERREUR(1, 'dossier')
       const objets = {}
       for (const [nom, octets] of Object.entries(octetsDe)) objets[nom] = await magasin.deposer(prospect.prospect_id, nom, octets)
       await magasin.maquettePrete(prospect.prospect_id, objets, empreintes)
@@ -143,7 +152,12 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const dossierSortie = path.join(os.homedir(), 'atelier/maquettes')
     liberer = prendreVerrou(dossierSortie)
     if (!liberer) console.log('atelier : une passe est déjà en cours')
-    else await passeAtelier({ magasin: magasinUsine(valeurs.PRESTI_URL, valeurs.PRESTI_JETON_ATELIER), executer: spawnSync, horloge: { maintenant: () => Date.now() }, dossierSortie })
+    else {
+      const { photosDuSite } = await import('./atelier-photos.mjs')
+      const lecteur = await import('../../lib/agents/acquisition/lecteurSite.ts')
+      const lirePhotos = (domaine, dossier) => photosDuSite(domaine, dossier, { recupererPoli: lecteur.recupererPoli, recuperateurReseau: lecteur.recuperateurReseau, hoteAutorise: lecteur.hoteAutorise, robotsAutorise: lecteur.robotsAutorise })
+      await passeAtelier({ magasin: magasinUsine(valeurs.PRESTI_URL, valeurs.PRESTI_JETON_ATELIER), executer: spawnSync, horloge: { maintenant: () => Date.now() }, dossierSortie, lirePhotos })
+    }
   } catch (e) { console.error('atelier : arrêt'); process.exitCode = e?.code === 3 ? 3 : e?.code === 2 ? 2 : 1 }
   finally { liberer?.() }
 }

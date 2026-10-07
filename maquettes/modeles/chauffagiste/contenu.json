@@ -1,39 +1,136 @@
 {
+  "version": 2,
   "metier": "chauffagiste",
+  "da": "chauffagiste",
   "libelles": {
-    "sur": "Chauffage",
-    "alt_heros": "Détail d’une installation de chauffage",
-    "alt_atelier": "Réseaux et équipements thermiques",
-    "reperes": ["Repère des installations", "Repère des équipements", "Repère de proximité"]
+    "metier": "Chauffagiste",
+    "activite": "chauffage"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Chauffage à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, chauffage à {ville}.",
-      "h1": "Chauffage à {ville}",
-      "h1Ligne": "Le confort thermique s'installe",
-      "chapeau": "Une page pour présenter les installations de chauffage et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "L'énergie et la chaleur",
-          "blocs": [
-            { "type": "p", "texte": "Pompes à chaleur, chaudières et réseaux thermiques peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Chauffagiste à {ville} — {entreprise}",
+    "description": "{entreprise}, chauffagiste à {ville} : pompes à chaleur, chaudières, radiateurs et planchers chauffants, installés, réglés et entretenus.",
+    "h1": "Chauffagiste à {ville}",
+    "h1Ligne": "La chaleur circule",
+    "chapeau": "Pompes à chaleur, chaudières, radiateurs et planchers chauffants, posés et réglés."
+  },
+  "prestations": {
+    "h2": "Du brûleur au radiateur",
+    "intro": "Les installations de chauffage d’une maison, du remplacement d’un appareil à l’entretien de chaque saison.",
+    "items": [
+      {
+        "titre": "Pompe à chaleur",
+        "texte": "Air-eau ou air-air, dimensionnée d’après les pièces, l’isolation et les émetteurs en place, avec l’unité extérieure posée là où elle gêne le moins.",
+        "photo": "pac"
+      },
+      {
+        "titre": "Remplacement de chaudière",
+        "texte": "Dépose de l’ancien appareil, raccordement du nouveau au réseau existant, réglage de la régulation et explications pour l’usage au quotidien.",
+        "photo": "hero"
+      },
+      {
+        "titre": "Plancher chauffant",
+        "texte": "Tubes posés sur un isolant avant la chape, boucles réparties et équilibrées pièce par pièce, pour une chaleur douce et régulière qui monte du sol sans radiateur visible.",
+        "photo": "plancher"
+      },
+      {
+        "titre": "Radiateurs et réseau",
+        "texte": "Ajout ou remplacement de radiateurs, reprise des tuyauteries, désembouage d’un réseau encrassé et équilibrage des circuits pour que chaque pièce chauffe autant.",
+        "photo": "radiateur"
+      },
+      {
+        "titre": "Régulation et thermostats",
+        "texte": "Thermostat d’ambiance, sonde extérieure, robinets thermostatiques et programmation : la bonne température dans chaque pièce, au bon moment, sans chauffer pour rien.",
+        "photo": "thermostat"
+      },
+      {
+        "titre": "Entretien et dépannage",
+        "texte": "Visite d’entretien de la chaudière ou de la pompe à chaleur, nettoyage, contrôle des sécurités et des pressions, recherche de la cause d’une panne ou d’un bruit inhabituel.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Réglé, pas seulement posé",
+    "phrase": "Une installation de chauffage se juge l’hiver : purger, équilibrer le réseau et régler la courbe de chauffe comptent autant que l’appareil.",
+    "photo": "cuivre"
+  },
+  "realisations": {
+    "h2": "Installations en service",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les installations de {entreprise}."
+  },
+  "zone": {
+    "h2": "Près de chez vous",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines, pour une installation neuve comme pour l’entretien."
+  },
+  "etapes": {
+    "h2": "Les étapes du chantier",
+    "intro": "Du premier échange à la mise en service, sans coupure de chauffage plus longue que nécessaire.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le logement, l’appareil en place et ce qui ne va pas : pièces froides, consommation, pannes répétées."
+      },
+      {
+        "titre": "Visite technique",
+        "texte": "Relevé des pièces, des émetteurs et de l’isolation, emplacement possible des appareils et état du réseau de chauffage."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez le matériel proposé et expliqué, la puissance retenue et le détail des travaux, poste par poste."
+      },
+      {
+        "titre": "Mise en service",
+        "texte": "Installation, remplissage et purge du réseau, réglages, puis prise en main de la régulation avec vous."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Une pompe à chaleur fonctionne-t-elle avec mes radiateurs actuels ?",
+        "reponse": "Cela dépend de leur taille et de la température d’eau dont ils ont besoin. Certains conviennent tels quels, d’autres demandent un changement : la visite le dit."
+      },
+      {
+        "question": "Quand faire entretenir sa chaudière ?",
+        "reponse": "Avant la saison de chauffe, de préférence à la fin de l’été. L’entretien annuel est obligatoire pour la plupart des chaudières et évite bien des pannes en plein hiver."
+      },
+      {
+        "question": "Pourquoi un radiateur reste-t-il froid en haut ?",
+        "reponse": "Le plus souvent, de l’air est resté dans le circuit. Une purge suffit parfois ; si le problème revient, l’équilibrage du réseau est à revoir."
+      },
+      {
+        "question": "Faut-il casser le sol pour un plancher chauffant ?",
+        "reponse": "En neuf ou en rénovation lourde, il est noyé dans la chape. En rénovation légère, des systèmes de faible épaisseur existent : cela se précise à la visite."
+      },
+      {
+        "question": "Peut-on garder la chaudière en appoint d’une pompe à chaleur ?",
+        "reponse": "Oui, c’est ce qu’on appelle une installation hybride. Elle se justifie selon le logement et l’état de la chaudière en place."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre chauffage",
+    "texte": "Décrivez le logement et l’installation actuelle, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Pompe à chaleur",
+      "Remplacement de chaudière",
+      "Plancher chauffant",
+      "Radiateurs",
+      "Entretien ou panne",
+      "Autre projet"
+    ],
+    "message": "Votre installation, en quelques mots"
   },
   "photos": {
     "demo": "chauffagiste",
-    "fichiers": ["hero-960.webp", "pac-720.webp"]
+    "heros": "plancher",
+    "atelier": "cuivre",
+    "galerie": [
+      "hero",
+      "pac",
+      "radiateur",
+      "per"
+    ]
   }
 }

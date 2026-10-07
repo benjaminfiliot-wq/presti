@@ -1,39 +1,136 @@
 {
+  "version": 2,
   "metier": "electricien",
+  "da": "electricien",
   "libelles": {
-    "sur": "Électricité",
-    "alt_heros": "Détail d’une installation électrique",
-    "alt_atelier": "Tableau et circuits électriques",
-    "reperes": ["Repère des circuits", "Repère des installations", "Repère de proximité"]
+    "metier": "Électricien",
+    "activite": "électricité"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Électricité à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, électricité à {ville}.",
-      "h1": "Électricité à {ville}",
-      "h1Ligne": "Chaque circuit a sa place",
-      "chapeau": "Une page pour présenter les installations électriques et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "Du tableau aux usages",
-          "blocs": [
-            { "type": "p", "texte": "Circuits, commandes et éclairage peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Électricien à {ville} — {entreprise}",
+    "description": "{entreprise}, électricien à {ville} : rénovation électrique, tableaux, mise en sécurité, éclairage et prises, avec un tableau repéré à la fin.",
+    "h1": "Électricien à {ville}",
+    "h1Ligne": "Chaque fil à sa place",
+    "chapeau": "Rénovation, mise en sécurité, tableaux et éclairage, pour une installation sûre."
+  },
+  "prestations": {
+    "h2": "Du tableau aux prises",
+    "intro": "Les travaux d’électricité courants, de la prise ajoutée à la rénovation complète d’un logement.",
+    "items": [
+      {
+        "titre": "Rénovation électrique",
+        "texte": "Reprise complète ou partielle de l’installation : nouveaux circuits, gaines encastrées quand c’est possible, prises et points lumineux placés selon l’usage des pièces.",
+        "photo": "cable"
+      },
+      {
+        "titre": "Tableau électrique",
+        "texte": "Remplacement d’un tableau ancien, protections différentielles adaptées, circuits repérés et étiquetés pour savoir ce que coupe chaque disjoncteur.",
+        "photo": "armoire"
+      },
+      {
+        "titre": "Mise en sécurité",
+        "texte": "Avant une vente, une location ou après un diagnostic : mise à la terre, protections, remplacement des éléments dangereux, sans forcément tout refaire.",
+        "photo": null
+      },
+      {
+        "titre": "Éclairage et luminaires",
+        "texte": "Spots, suspensions, rubans lumineux, appliques de façade et variateurs, posés pour éclairer là où on en a besoin, avec des commandes placées au bon endroit.",
+        "photo": "luminaires"
+      },
+      {
+        "titre": "Prises et interrupteurs",
+        "texte": "Ajout de prises, déplacement d’interrupteurs, commandes en va-et-vient dans un couloir ou un escalier, avec des boîtiers d’aplomb et une finition propre sur le mur.",
+        "photo": "interrupteur"
+      },
+      {
+        "titre": "Borne de recharge",
+        "texte": "Ligne dédiée depuis le tableau, protection adaptée et pose au garage ou sur le parking, après vérification de l’abonnement et de l’installation.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Un tableau lisible",
+    "phrase": "Des circuits repérés, des gaines rangées, des protections choisies pour chaque pièce : une installation se juge aussi le jour où l’on ouvre le tableau.",
+    "photo": "cable"
+  },
+  "realisations": {
+    "h2": "Installations terminées",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le chantier."
+  },
+  "etapes": {
+    "h2": "Étape par étape",
+    "intro": "Du premier appel à la remise sous tension, vous savez où en est le chantier.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le logement et le besoin : panne, rénovation, prises à ajouter, tableau ancien ou diagnostic à lever."
+      },
+      {
+        "titre": "Visite et diagnostic",
+        "texte": "Ouverture du tableau, contrôle de la terre et des protections, repérage des passages de câbles et des pièces à reprendre."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez les travaux poste par poste, en distinguant ce qui relève de la sécurité et ce qui relève du confort."
+      },
+      {
+        "titre": "Travaux et essais",
+        "texte": "Pose par zones pour limiter les coupures, essais de chaque circuit, puis remise du tableau repéré et expliqué."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Faut-il tout refaire dans une installation ancienne ?",
+        "reponse": "Pas toujours. Une mise en sécurité ciblée suffit parfois ; d’autres fois, les fils ou le tableau sont trop anciens pour être gardés. La visite permet de faire la part des choses."
+      },
+      {
+        "question": "Mon disjoncteur saute souvent, que faire ?",
+        "reponse": "Noter quand cela arrive : appareil en marche, temps de pluie, moment de la journée. Ces indices aident à trouver le circuit en défaut, que l’on contrôle ensuite sur place."
+      },
+      {
+        "question": "Peut-on rester dans le logement pendant les travaux ?",
+        "reponse": "Le plus souvent, oui, en travaillant pièce par pièce et en rétablissant le courant le soir. Cela se précise selon l’ampleur du chantier."
+      },
+      {
+        "question": "Les saignées dans les murs sont-elles obligatoires ?",
+        "reponse": "Non. Selon les murs et la finition voulue, les câbles passent en encastré, dans les doublages ou en moulure discrète. Le choix se fait ensemble à la visite."
+      },
+      {
+        "question": "Peut-on installer une borne de recharge sur une installation existante ?",
+        "reponse": "Souvent, si l’abonnement et le tableau le permettent. Une ligne dédiée est tirée depuis le tableau, avec sa propre protection."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre installation",
+    "texte": "Décrivez le logement et le besoin en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Rénovation électrique",
+      "Tableau électrique",
+      "Mise en sécurité",
+      "Éclairage",
+      "Borne de recharge",
+      "Autre projet"
+    ],
+    "message": "Votre installation, en quelques mots"
   },
   "photos": {
     "demo": "electricien",
-    "fichiers": ["hero-960.webp", "armoire-720.webp"]
+    "heros": "hero",
+    "atelier": "cable",
+    "galerie": [
+      "luminaires",
+      "armoire",
+      "interrupteur",
+      "variateur"
+    ]
   }
 }

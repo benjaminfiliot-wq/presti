@@ -1,39 +1,136 @@
 {
+  "version": 2,
   "metier": "couvreur",
+  "da": "couvreur",
   "libelles": {
-    "sur": "Couverture",
-    "alt_heros": "Détail d’un travail de couverture",
-    "alt_atelier": "Tuiles et éléments de toiture",
-    "reperes": ["Repère des toitures", "Repère des ouvrages", "Repère de proximité"]
+    "metier": "Couvreur",
+    "activite": "couverture"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Couverture à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, couverture à {ville}.",
-      "h1": "Couverture à {ville}",
-      "h1Ligne": "Le toit prend forme",
-      "chapeau": "Une page pour présenter les travaux de couverture et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La toiture et ses détails",
-          "blocs": [
-            { "type": "p", "texte": "Tuiles, faîtages et raccords peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Couvreur à {ville} — {entreprise}",
+    "description": "{entreprise}, couvreur à {ville} : réfection de toiture, réparation de fuites, zinguerie, charpente et démoussage, après une visite du toit.",
+    "h1": "Couvreur à {ville}",
+    "h1Ligne": "Le toit prend forme",
+    "chapeau": "Tuiles, ardoises, zinguerie et charpente : réparer, entretenir ou refaire le toit."
+  },
+  "prestations": {
+    "h2": "Toiture, pièce par pièce",
+    "intro": "Les travaux courants d’une toiture, de la tuile cassée à la réfection complète.",
+    "items": [
+      {
+        "titre": "Réfection de couverture",
+        "texte": "Dépose de l’ancienne couverture, contrôle de la charpente et remplacement des liteaux, pose d’un écran sous toiture puis de tuiles ou d’ardoises neuves, pan par pan.",
+        "photo": "tuiles"
+      },
+      {
+        "titre": "Réparation de fuites",
+        "texte": "Tuiles glissées ou cassées, solin fissuré, faîtage descellé, noue percée : la fuite se cherche souvent loin de la tache au plafond, en remontant le chemin de l’eau.",
+        "photo": null
+      },
+      {
+        "titre": "Faîtage et rives",
+        "texte": "Reprise des faîtages et des rives, au mortier ou en pose à sec ventilée, pour que le vent et la pluie ne trouvent plus de passage sous les tuiles du haut du toit.",
+        "photo": "faitage"
+      },
+      {
+        "titre": "Zinguerie et gouttières",
+        "texte": "Gouttières, descentes, noues, solins et abergements de cheminée en zinc, ajustés et soudés sur place pour conduire l’eau là où elle doit aller, loin des murs.",
+        "photo": null
+      },
+      {
+        "titre": "Charpente et liteaux",
+        "texte": "Contrôle des bois depuis les combles, remplacement de chevrons, de pannes ou de liteaux abîmés, traitement contre les insectes et les champignons quand c’est nécessaire.",
+        "photo": "charpente"
+      },
+      {
+        "titre": "Nettoyage et démoussage",
+        "texte": "Brossage des mousses et des lichens, traitement de la couverture et vérification des tuiles au passage, pour une toiture qui reste saine et qui sèche bien après la pluie.",
+        "photo": "nettoyage"
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Vu depuis le toit",
+    "phrase": "Avant de toucher une tuile, on monte voir : l’état des bois, des liteaux et des raccords dit ce qu’il faut vraiment refaire.",
+    "photo": "charpente"
+  },
+  "realisations": {
+    "h2": "Toitures refaites",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Les toits du secteur",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines, sur les maisons comme sur les dépendances."
+  },
+  "etapes": {
+    "h2": "Étape par étape",
+    "intro": "Du premier appel au démontage de l’échafaudage, chaque étape est annoncée.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le problème ou le projet : fuite, tuiles déplacées, toiture à refaire, avec des photos si vous en avez."
+      },
+      {
+        "titre": "Visite de la toiture",
+        "texte": "Inspection depuis les combles et depuis le toit : charpente, liteaux, zinguerie, accès et place pour l’échafaudage."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez la description des travaux, des matériaux et de l’installation de chantier, poste par poste."
+      },
+      {
+        "titre": "Chantier et contrôle",
+        "texte": "Pose de l’échafaudage, travaux par pans, nettoyage du chantier, puis tour de la toiture avec vous avant le départ."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Ma toiture fuit, faut-il tout refaire ?",
+        "reponse": "Rarement d’emblée. Une fuite vient souvent d’un point précis : tuile cassée, solin, noue ou faîtage. La visite dit si une réparation suffit."
+      },
+      {
+        "question": "Tuiles ou ardoises, comment choisir ?",
+        "reponse": "Le choix suit d’abord la région, la pente du toit et les règles d’urbanisme de la commune. Viennent ensuite le budget et l’aspect voulu."
+      },
+      {
+        "question": "Le démoussage abîme-t-il les tuiles ?",
+        "reponse": "Pas s’il est fait à la brosse avec un produit adapté. Le nettoyeur haute pression, lui, peut user la surface des tuiles anciennes."
+      },
+      {
+        "question": "Faut-il une autorisation pour refaire sa toiture ?",
+        "reponse": "Si l’aspect change (matériau, couleur, fenêtre de toit), une déclaration préalable en mairie est souvent demandée. À vérifier avant de commander les matériaux."
+      },
+      {
+        "question": "Peut-on rester chez soi pendant les travaux ?",
+        "reponse": "Oui, le plus souvent. Le travail avance par pans, et les parties ouvertes sont bâchées quand la pluie menace."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre toit",
+    "texte": "Décrivez la toiture et ce que vous avez remarqué, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Fuite ou réparation",
+      "Réfection de toiture",
+      "Zinguerie",
+      "Charpente",
+      "Démoussage",
+      "Autre projet"
+    ],
+    "message": "Votre toiture, en quelques mots"
   },
   "photos": {
     "demo": "couvreur",
-    "fichiers": ["hero-960.webp", "tuiles-720.webp"]
+    "heros": "hero",
+    "atelier": "charpente",
+    "galerie": [
+      "tuiles",
+      "faitage",
+      "ancienne",
+      "nettoyage"
+    ]
   }
 }

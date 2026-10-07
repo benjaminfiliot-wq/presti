@@ -1,0 +1,136 @@
+{
+  "version": 2,
+  "metier": "serrurier",
+  "da": "serrurier",
+  "libelles": {
+    "metier": "Serrurier",
+    "activite": "serrurerie"
+  },
+  "accueil": {
+    "title": "Serrurier à {ville} — {entreprise}",
+    "description": "{entreprise}, serrurier à {ville} : ouverture de porte, changement de serrure, portes blindées, ferronnerie et coffres-forts.",
+    "h1": "Serrurier à {ville}",
+    "h1Ligne": "La clé tourne juste",
+    "chapeau": "Serrures, portes blindées, ouvertures et ferronnerie, posées et réglées avec soin."
+  },
+  "prestations": {
+    "h2": "Serrures et ferronnerie",
+    "intro": "Les travaux courants de serrurerie, du cylindre à changer à la grille sur mesure.",
+    "items": [
+      {
+        "titre": "Ouverture de porte",
+        "texte": "Porte claquée, clé perdue ou cassée dans la serrure : ouverture en cherchant d’abord à préserver la serrure et la porte, avant d’envisager un remplacement.",
+        "photo": null
+      },
+      {
+        "titre": "Changement de serrure",
+        "texte": "Remplacement d’un cylindre ou d’une serrure complète après une perte de clés, un emménagement ou une tentative d’effraction, avec des clés neuves remises en main propre.",
+        "photo": "hero"
+      },
+      {
+        "titre": "Serrures multipoints",
+        "texte": "Pose d’une serrure à plusieurs points de fermeture sur une porte existante, en applique ou encastrée, avec réglage des gâches pour une fermeture souple.",
+        "photo": "gache"
+      },
+      {
+        "titre": "Portes blindées",
+        "texte": "Renfort d’une porte existante par blindage, ou pose d’un bloc-porte blindé complet, avec le cylindre, les cornières anti-pince et les paumelles adaptés.",
+        "photo": "verrou"
+      },
+      {
+        "titre": "Ferronnerie et grilles",
+        "texte": "Grilles de défense, garde-corps, portillons, heurtoirs et petites pièces de ferronnerie, fabriqués sur mesure ou restaurés quand l’ouvrage ancien mérite d’être gardé.",
+        "photo": "ornement"
+      },
+      {
+        "titre": "Pose de coffres-forts",
+        "texte": "Pose et scellement d’un coffre-fort au mur ou au sol, à l’abri des regards, puis ouverture et remise en état d’un coffre bloqué ou dont la combinaison est perdue.",
+        "photo": "coffre"
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Réglé au millimètre",
+    "phrase": "Une serrure bien posée se ferme sans forcer : on ajuste la gâche, le pêne et le jeu de la porte avant de partir.",
+    "photo": "gache"
+  },
+  "realisations": {
+    "h2": "Portes et ferronneries",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les interventions de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve la porte."
+  },
+  "etapes": {
+    "h2": "Comment ça se passe",
+    "intro": "Du premier appel à la remise des clés, chaque intervention est expliquée.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez la porte et la situation : clé perdue, serrure qui force, porte à renforcer, avec une photo si possible."
+      },
+      {
+        "titre": "Constat sur place",
+        "texte": "Examen de la porte, du cadre, de la serrure et du cylindre, pour savoir ce qui peut être gardé."
+      },
+      {
+        "titre": "Proposition claire",
+        "texte": "Vous connaissez le travail prévu et le matériel avant que l’intervention commence."
+      },
+      {
+        "titre": "Pose et essais",
+        "texte": "Pose, réglage de la fermeture, essais devant vous, puis remise des clés et de la carte de propriété quand le cylindre en a une."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Ma porte a claqué, faut-il changer la serrure ?",
+        "reponse": "Pas forcément. Une porte simplement claquée s’ouvre souvent sans casse. Si elle était fermée à clé, cela se précise sur place."
+      },
+      {
+        "question": "Faut-il changer la serrure après un emménagement ?",
+        "reponse": "C’est conseillé : on ne sait jamais combien de clés de l’ancien occupant circulent encore. Changer le cylindre suffit le plus souvent."
+      },
+      {
+        "question": "Ma clé force dans la serrure, que faire ?",
+        "reponse": "Ne pas forcer davantage. Un cylindre usé ou une porte qui a bougé en sont souvent la cause : un réglage ou un cylindre neuf règle le problème."
+      },
+      {
+        "question": "Peut-on blinder une porte existante ?",
+        "reponse": "Souvent, si la porte et le cadre sont en bon état. Sinon, un bloc-porte blindé complet est plus adapté : la visite permet de trancher."
+      },
+      {
+        "question": "À quoi sert une carte de propriété ?",
+        "reponse": "Elle accompagne certains cylindres et permet de faire refaire des clés seulement sur présentation. Elle se garde en lieu sûr."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre porte",
+    "texte": "Décrivez la porte et la situation en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Ouverture de porte",
+      "Changement de serrure",
+      "Porte blindée",
+      "Ferronnerie",
+      "Coffre-fort",
+      "Autre projet"
+    ],
+    "message": "Votre porte, en quelques mots"
+  },
+  "photos": {
+    "demo": "serrurier",
+    "heros": "ferronnerie",
+    "atelier": "gache",
+    "galerie": [
+      "ferronnerie",
+      "ornement",
+      "heurtoirs",
+      "coffre"
+    ]
+  }
+}
