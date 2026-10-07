@@ -485,7 +485,8 @@ await cas('RC-10d', async () => {
   return e
 })
 
-// ── RC-10e (06/10 au soir) : le modèle MAISON reçoit l'entrée de son entraînement, et seulement pour un plan de cycle léger ──
+// ── RC-10e (06/10 au soir, revu le 07/10) : le modèle MAISON reçoit l'entrée de son entraînement (« Cycle : leger. »), pour un plan de cycle léger
+// OU plein (le 4 B n'a fini aucun plein en 1 094 s le 07/10 à 08:05 UTC) ; le plan d'un plein est réétiqueté « plein » ; toute autre demande lui est refusée ──
 await cas('RC-10e', async () => {
   const e = []
   const maison = C.CHAINE_SECOURS.find((m) => m.id === 'ollama_maison')
@@ -496,14 +497,29 @@ await cas('RC-10e', async () => {
   const u = (mode) => `Date du jour (heure de Paris) : 2026-10-06 21:05.\n\n<fichier nom="/home/agents/travail/chef/x/entree.md">\n${entree}\n</fichier>\n\nConsigne :\nLis docs/agents/chef.md puis x/entree.md et ecris le plan du cycle ${mode} dans x/plan.json : un seul fichier JSON.`
   const m = C.messagesMaison(u('leger'))
   if (!m || m[0].content !== "Tu es Matt, chef d'opérations de Presti. Écris le plan JSON du cycle léger." || !/^Cycle : leger\. Date : 2026-10-06\.\n<donnees_etat>/.test(m[1].content) || /"en_pause":false/.test(m[1].content)) e.push('entrée du modèle maison différente de celle de l\'entraînement')
-  if (C.messagesMaison(u('plein')) !== null) e.push('un plan de cycle PLEIN est confié au modèle maison (hors de son domaine)')
+  if (JSON.stringify(C.messagesMaison(u('plein'))) !== JSON.stringify(m)) e.push("un plan de cycle PLEIN ne donne pas au modèle maison l'entrée exacte de son entraînement (celle du léger)")
+  const reunion = `Date du jour (heure de Paris) : 2026-10-06 16:00.\n\n<fichier nom="/x/reunion-entree.md">\n${entree}\n</fichier>\n\nConsigne :\nÉcris reunion.json.`
+  if (C.messagesMaison(reunion) !== null) e.push('une demande qui n\'est pas un plan de cycle (la réunion) est confiée au modèle maison')
   let appels = 0, vu = null
   const capte = async (url, init) => { appels++; vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => '{"message":{"content":"{}"}}' } }
   const p = (mode) => ({ systeme: 's', utilisateur: u(mode), destination: path.join(os.tmpdir(), `rc10e-${Date.now()}.json`), dernierMessage: null })
-  const r = await C.appelDirect({ moteur: maison, prompt: p('plein'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
+  const r = await C.appelDirect({ moteur: maison, prompt: { systeme: 's', utilisateur: reunion, destination: path.join(os.tmpdir(), `rc10e-r-${Date.now()}.json`), dernierMessage: null }, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
   if (appels !== 0 || r.code !== 0) e.push(`demande hors domaine : ${appels} appel(s), code ${r.code} (attendu : aucun appel, code 0 pour passer au suivant)`)
   await C.appelDirect({ moteur: maison, prompt: p('leger'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: capte })
   if (appels !== 1 || vu?.stream !== true || vu?.options?.num_ctx !== 4096 || typeof vu?.format !== 'object' || vu?.messages?.[0]?.content !== m?.[0]?.content) e.push('appel du modèle maison sans diffusion, sans schéma ou hors du contexte de sa mesure')
+  // un cycle plein : le plan léger rendu est réétiqueté « plein » AVANT le validateur du plein, puis écrit ; il tient dans ses plafonds
+  const CHm = await import(pathToFileURL(path.join(racine, 'scripts', 'chef', 'commun.mjs')).href)
+  const leger = { cycle: 'leger', brief: ['a', 'b', 'c'], compte_rendu: ['cycle terminé', 'santé ok', '0 escalade'], consignes_lues: [], taches: [{ type: 'contenu', capacite: 'contenu', cle_idempotence: 'chef:2026-10-07:script-tiktok', objet: 'Écrire le script de la vidéo TikTok Brico Travaux du nettoyeur sans fil', charge: { titre: 'Script TikTok', pourquoi: 'Cap.' }, sortante: false }], decisions: [] }
+  const rendLeger = async (url, init) => { appels++; vu = JSON.parse(init.body); return { ok: true, status: 200, text: async () => JSON.stringify({ message: { content: JSON.stringify(leger) } }) } }
+  const pp = p('plein')
+  const rp = await C.appelDirect({ moteur: maison, prompt: pp, cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: rendLeger, valider: (o) => CHm.validerPlan(o, 'plein') })
+  let ecrit = null
+  try { ecrit = JSON.parse(fs.readFileSync(pp.destination, 'utf8')) } catch { ecrit = null }
+  if (rp.code !== 0 || ecrit?.cycle !== 'plein' || JSON.stringify({ ...ecrit, cycle: 'leger' }) !== JSON.stringify(leger)) e.push(`cycle plein par le modèle maison : code ${rp.code}, plan ${ecrit ? `cycle ${ecrit.cycle}` : 'absent'} (le plan léger réétiqueté « plein », rien d'autre de touché, attendu)`)
+  if (!/^Cycle : leger\./.test(String(vu?.messages?.[1]?.content))) e.push('cycle plein : le modèle maison ne reçoit pas « Cycle : leger. »')
+  // le réétiquetage est réservé au modèle maison : un autre moteur qui rend un plan léger pour un plein est refusé par le validateur
+  const rp2 = await C.appelDirect({ moteur: C.CHAINE_SECOURS.find((x) => x.id === 'freellmapi_gemini'), prompt: p('plein'), cle: CLE_SENTINELLE, delaiMs: 5000, fetchFn: async () => ({ ok: true, status: 200, json: async () => ({ choices: [{ message: { content: JSON.stringify(leger) } }] }) }), valider: (o) => CHm.validerPlan(o, 'plein') })
+  if (!/refusée par le validateur/.test(String(rp2.sortie))) e.push(`un moteur libre qui rend un plan léger pour un plein le voit réétiqueté (${rp2.sortie})`)
   return e
 })
 
@@ -832,6 +848,54 @@ await cas('RC-14', async () => {
   const z = await servir(flDans, olDans, (plan) => ({ reussitAvec: ['openai'], ecrire: [plan], contenu: JSON.stringify(PLAN_DANS) }))
   if (z.reponse?.code !== 0 || z.reponse?.moteur !== 'codex' || JSON.stringify(z.plan) !== JSON.stringify(PLAN_DANS)) e.push(`Codex dans le cap : réponse ${JSON.stringify({ code: z.reponse?.code, moteur: z.reponse?.moteur })} (codex et son plan attendus)`)
   for (const s of [flHors, olDans, flDans]) await s.fermer()
+  return e
+})
+
+// ── RC-15 (07/10) : consignes_lues contre le bloc <consignes_benj> (la règle de fil.mjs verifier), dans le relais ───────────────────────────────
+// Cycle léger de 09:05 UTC : le modèle maison a cité la consigne 5047, qui n'existe pas ; le plan est passé au relais puis a été refusé par le fil.
+await cas('RC-15', async () => {
+  const e = []
+  const entreeC = `<donnees_etat>{"agents":[{"nom":"chef"}]}</donnees_etat>\n<consignes_benj>\n[\n  { "id": 7001, "le": "2026-10-07T06:00:00Z", "texte": "Priorité aux annonces eBay." }\n]\n</consignes_benj>`
+  const ids = CH.idsConsignesDeLEntree(entreeC)
+  if (JSON.stringify(ids) !== '[7001]') e.push(`idsConsignesDeLEntree : ${JSON.stringify(ids)} ([7001] attendu)`)
+  if (CH.idsConsignesDeLEntree('<donnees_etat>{}</donnees_etat>') !== null) e.push("sans bloc <consignes_benj>, idsConsignesDeLEntree n'est pas null (le contrôle doit se taire)")
+  const ligne = (id) => ({ id, suite: 'note', pourquoi: 'Priorité notée.' })
+  const avec = (cl) => ({ ...PLAN_DANS, consignes_lues: cl })
+  if (!CH.ecartsConsignesLues(avec([ligne(7001), ligne(5047)]), [7001]).some((x) => /5047/.test(x))) e.push("une consigne inconnue (5047) n'est pas relevée")
+  if (!CH.ecartsConsignesLues(avec([]), [7001]).some((x) => /7001/.test(x))) e.push("une consigne oubliée (7001) n'est pas relevée")
+  if (!CH.ecartsConsignesLues(avec([ligne(7001), ligne(7001)]), [7001]).length) e.push("un id en double n'est pas relevé")
+  if (CH.ecartsConsignesLues(avec([ligne(7001)]), [7001]).length) e.push('consignes_lues exactes refusées')
+  const red = CH.retirerConsignesInconnues(avec([ligne(5047), ligne(7001), ligne(7001)]), [7001])
+  if (JSON.stringify(red?.plan?.consignes_lues) !== JSON.stringify([ligne(7001)]) || !red.notes?.length) e.push(`retirerConsignesInconnues : ${JSON.stringify(red?.plan?.consignes_lues)} (la seule ligne 7001 attendue, avec une note)`)
+  if (CH.retirerConsignesInconnues(avec([]), [7001]) !== null) e.push('retirerConsignesInconnues ajoute ou invente quand il ne manque qu\'une ligne (null attendu : rien à retirer)')
+  // de bout en bout : un moteur qui cite 5047 voit l'écart, puis la ligne inconnue est retirée et le plan écrit ; un plan sans la ligne 7001 n'est jamais écrit
+  const faux = path.join(racine, 'scripts', 'fixtures', 'relais-ia', 'faux-codex-chef.mjs')
+  const servir = async (srvFl, srvOl) => {
+    const base = fs.mkdtempSync(path.join(os.tmpdir(), 'relais-consignes-'))
+    const echange = path.join(base, 'echange-chef'), d = path.join(echange, 'demande-1'), work = path.join(base, 'agents'), home = path.join(base, 'home')
+    for (const x of [path.join(work, 'docs', 'agents'), d, path.join(home, '.config', 'presti')]) fs.mkdirSync(x, { recursive: true })
+    fs.writeFileSync(path.join(work, 'docs', 'agents', 'chef.md'), '# Chef')
+    fs.writeFileSync(path.join(home, '.config', 'presti', 'freellmapi.key'), `${CLE_SENTINELLE}\n`)
+    fs.writeFileSync(path.join(d, 'entree-2-entree.md'), entreeC)
+    const plan = path.join(d, 'sortie-3-plan.json'), dm = path.join(d, 'sortie-1-dernier-message.md')
+    const instruction = `Lis docs/agents/chef.md puis ${sl(d)}/entree-2-entree.md et ecris le plan du cycle leger dans ${sl(plan)} : un seul fichier JSON, rien d autre.`
+    const argv = ['exec', '-C', work, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', dm, '-m', 'gpt-6-luna', instruction]
+    fs.writeFileSync(path.join(d, 'demande.json'), JSON.stringify({ argv, entrees: [{ origine: '/o/entree.md', copie: path.join(d, 'entree-2-entree.md') }], sorties: [{ origine: '/o/dm.md', copie: dm }, { origine: '/o/plan.json', copie: plan }], stdin: false, delai_s: 120 }))
+    fs.writeFileSync(path.join(d, 'demande.pret'), '')
+    fs.writeFileSync(path.join(d, 'faux-config.json'), JSON.stringify({ reussitAvec: [], echec: '401', journal: path.join(base, 'appels.jsonl') }))
+    await lancer([path.join(racine, 'scripts', 'usine', 'chef-modele.mjs'), 'servir', `--echange=${echange}`, `--codex=${faux}`, `--freellmapi=http://127.0.0.1:${srvFl.port}/v1`, `--ollama=http://127.0.0.1:${srvOl.port}`, '--relais=oui'], { PATH: process.env.PATH, HOME: home })
+    const lire = (x) => { try { return JSON.parse(fs.readFileSync(x, 'utf8')) } catch { return null } }
+    return { reponse: lire(path.join(d, 'reponse.json')), plan: lire(plan) }
+  }
+  const flInconnue = await serveur(() => ({ statut: 200, corps: { choices: [{ message: { content: JSON.stringify(avec([ligne(7001), ligne(5047)])) } }] } }))
+  const olBon = await serveur(() => ({ statut: 200, corps: { message: { content: JSON.stringify(avec([ligne(7001)])) } } }))
+  const a = await servir(flInconnue, olBon)
+  if (a.reponse?.code !== 0 || a.reponse?.moteur !== 'freellmapi_gemini' || JSON.stringify(a.plan?.consignes_lues) !== JSON.stringify([ligne(7001)])) e.push(`consigne inconnue : réponse ${JSON.stringify({ code: a.reponse?.code, moteur: a.reponse?.moteur })}, consignes_lues ${JSON.stringify(a.plan?.consignes_lues)} (freellmapi_gemini et la seule ligne 7001 attendus)`)
+  if (flInconnue.requetes.length !== 3 || !flInconnue.requetes[1].brut.includes('5047')) e.push(`consigne inconnue : ${flInconnue.requetes.length} requête(s) (3 jets, l'écart « 5047 » rendu au modèle, attendus)`)
+  const flOubli = await serveur(() => ({ statut: 200, corps: { choices: [{ message: { content: JSON.stringify(avec([])) } }] } }))
+  const b = await servir(flOubli, olBon)
+  if (b.reponse?.moteur !== 'ollama_cloud' || JSON.stringify(b.plan?.consignes_lues) !== JSON.stringify([ligne(7001)])) e.push(`consigne oubliée : réponse ${JSON.stringify({ code: b.reponse?.code, moteur: b.reponse?.moteur })} (le plan sans la ligne 7001 jamais écrit, ollama_cloud attendu)`)
+  for (const s of [flInconnue, olBon, flOubli]) await s.fermer()
   return e
 })
 

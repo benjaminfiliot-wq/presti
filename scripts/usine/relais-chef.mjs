@@ -40,6 +40,7 @@ export const CHAINE_SECOURS = Object.freeze([
   // 06/10 au soir : le modèle MAISON (Qwen2.5-1.5B affiné sur 323 plans légers, Kaggle) : 33 à 62 s par plan sur l'usine, 2 plans valides sur 3
   // entrées jamais vues (mesures.jsonl), contre 748 s pour le 4 B. Premier des locaux, et seulement pour un plan de cycle LÉGER (son domaine) :
   // toute autre demande lui est refusée sans appel (« hors domaine »), le moteur suivant la prend.
+  // 07/10 : il écrit aussi le plan d'un cycle PLEIN, depuis l'entrée du léger (voir messagesMaison) : le 4 B n'en finit aucun sur l'usine.
   Object.freeze({ id: 'ollama_maison', modele: 'presti-chef-leger:1.5b', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, maison: 'leger', budgetMs: 240_000 }),
   Object.freeze({ id: 'ollama_8b', modele: 'qwen3:8b-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 300_000 }),
   Object.freeze({ id: 'ollama_4b', modele: 'qwen3:4b-instruct-2507-q4_K_M', api: 'ollama', base: BASE_OLLAMA, cle: false, gratuit: false, local: true, budgetMs: 1_100_000 }) // 07/10 : plafond porté à 1 100 s, le temps restant du relais reste la vraie borne (cycle plein de 19 min : ≈ 1 080 s ; plein du 06/10 à 20:05 UTC coupé à 780 s) ; 06/10 : 252 s ne suffisaient pas (délai, 4 cœurs ARM sans GPU) ; 480 s tiennent avec le 8 B avant lui dans les 858 s du cycle,
@@ -200,11 +201,14 @@ export function compacterPourLocal(utilisateur, compacter = compacterEntree) {
 
 /**
  * Les messages du modèle MAISON (entrée identique à l'entraînement : la consigne d'une ligne, puis « Cycle : leger. Date : … » et l'état compacté),
- * ou null quand la demande n'est pas un plan de cycle léger avec son fichier d'état : le modèle maison ne sait faire que ça. Pure.
+ * ou null quand la demande n'est pas un plan de cycle (léger ou plein) avec son fichier d'état : le modèle maison ne sait faire que ça. Pure.
+ * 07/10 : un plan PLEIN reçoit la MÊME entrée que le léger (« Cycle : leger. », celle de l'entraînement) ; appelDirect réétiquette ensuite le plan
+ * rendu en « plein » (voir cycleDemande). Un plan léger (3 tâches, aucune décision) tient dans les plafonds du plein. Mesure du 07/10 à 08:05 UTC :
+ * le 4 B local n'a pas fini un plein en 1 094 s, même demandé court ; sans Codex ni moteur libre, aucun plein n'était plus écrit depuis le 06/10.
  */
 export function messagesMaison(utilisateur, maintenantMs = Date.now()) {
   const u = String(utilisateur ?? '')
-  if (!/plan du cycle leger\b/.test(u)) return null
+  if (!/plan du cycle (?:leger|plein)\b/.test(u)) return null
   const f = /<fichier nom="[^"]*entree[^"]*">\n([\s\S]*?)\n<\/fichier>/.exec(u)
   if (!f || !/<donnees_etat>/.test(f[1])) return null
   const date = /Date du jour \(heure de Paris\) : (\d{4}-\d{2}-\d{2})/.exec(u)?.[1] ?? new Date(maintenantMs).toISOString().slice(0, 10)
@@ -225,6 +229,9 @@ export function texteOllama(brut) {
 
 /** Ajoutée au message d'un moteur local pour un plan de cycle plein (voir appelDirect). */
 export const CONSIGNE_LOCALE_PLEIN = 'Tu tournes sur un processeur lent : pour ce cycle plein, écris AU PLUS 3 tâches et 1 décision, avec des textes courts. Le plan reste conforme au schéma.'
+
+/** Le cycle que la demande nomme (« plein » ou « leger »), ou null. Pure. */
+export const cycleDemande = (utilisateur) => /plan du cycle (leger|plein)\b/.exec(String(utilisateur ?? ''))?.[1] ?? null
 
 export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null, ecrire = (f, t) => fs.writeFileSync(f, t), valider = null, reduire = null }) {
   const controleur = new AbortController()
@@ -277,6 +284,8 @@ export async function appelDirect({ moteur, prompt, cle, delaiMs, fetchFn = null
       let essai
       try { essai = JSON.parse(sansCloture(texte)) } catch { return { code: 0, sortie: 'réponse non JSON' } }
       if (essai === null || typeof essai !== 'object') return { code: 0, sortie: 'réponse non objet' }
+      // le modèle maison n'écrit que des plans légers : pour un cycle plein, son plan est réétiqueté « plein » (rien d'autre n'est touché) avant le validateur
+      if (maison && cycleDemande(prompt.utilisateur) === 'plein' && essai.cycle === 'leger') essai.cycle = 'plein'
       const ecarts = typeof valider === 'function' ? valider(essai) : []
       if (!ecarts.length) { objet = essai; break }
       if (tour === 2) {

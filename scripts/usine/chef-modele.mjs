@@ -149,16 +149,21 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
   // plan invalide — un moteur de secours reçoit les écarts pour correction (modèle maison compris), puis le relais passe au suivant ; un plan de
   // Codex tout hors du cap ne compte pas comme écrit (verifier), et le moteur suivant prend la demande.
   let pertinence = null
+  let reduirePlan = null
   let sortiePlan = ''
   try {
-    const { validerPlan, validerPertinence } = await import('../chef/commun.mjs')
+    const { validerPlan, validerPertinence, idsConsignesDeLEntree, ecartsConsignesLues, retirerConsignesInconnues } = await import('../chef/commun.mjs')
     const cycle = /cycle (plein|leger)/.exec(argv.at(-1) ?? '')?.[1] ?? null
     sortiePlan = String((demande?.sorties ?? []).map((s) => s.copie).find((c) => !/dernier-message/.test(c)) ?? '')
     if (cycle && /plan/.test(path.basename(sortiePlan))) {
       pertinence = (objet) => validerPertinence(objet)
-      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet)]
+      // 07/10 : la règle de fil.mjs verifier (consignes_lues = les consignes du bloc, ni plus ni moins), sans quoi un plan passé ici est refusé après le relais
+      const ids = idsConsignesDeLEntree(texteEntree)
+      const consignes = (objet) => (ids ? ecartsConsignesLues(objet, ids) : [])
+      valider = (objet) => [...validerPlan(objet, cycle), ...pertinence(objet), ...consignes(objet)]
+      if (ids) reduirePlan = (objet) => retirerConsignesInconnues(objet, ids)
     }
-  } catch { valider = null; pertinence = null }
+  } catch { valider = null; pertinence = null; reduirePlan = null }
   // La réunion d'équipage (reunion.mjs demande « reunion.json ») : mêmes aides qu'au cycle — limites exactes et exemple dans le message, écarts rendus au modèle
   // pour correction (validerReunion, le miroir des contrôles de reunion.mjs), et en dernier recours une réduction déterministe sûre (reduireReunion).
   let reduire = null
@@ -175,6 +180,7 @@ async function servirAvecRelais(d, argv, stdin, delaiMs, demande) {
       complement = RC.limitesReunion(jour, Date.now())
     }
   } catch { reduire = null; complement = null }
+  if (!reduire && reduirePlan) reduire = reduirePlan // le plan du cycle : retirer les consignes_lues inconnues, jamais rien ajouter (revalidé par appelDirect)
   return relayer({
     texteEntree: texteEntree + texteStdin, delaiMs, cle,
     chaine: chaineAvecBases({ freellmapi: opts.freellmapi, ollama: opts.ollama }),

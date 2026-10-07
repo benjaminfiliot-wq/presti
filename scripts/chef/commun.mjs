@@ -104,6 +104,33 @@ export function validerPertinence(plan) {
   if (!motifs.every(Boolean)) return []
   return ['taches : toutes hors du cap de Benj (docs/agents/cap-benj.md) : chaque tâche doit servir l\'e-commerce Brico Travaux ou Presti', ...motifs.map((m, i) => `taches[${i}] : ${m}`)]
 }
+// ── consignes_lues contre le bloc <consignes_benj> de l'entrée (07/10) ─────────────────────────────────────────────────
+// Cycle léger de 09:05 UTC : le modèle maison a cité une consigne qui n'existe pas (5047, vue à l'entraînement) ; fil.mjs verifier a refusé le plan
+// APRÈS le relais, et le cycle était perdu. Le relais applique donc la même règle que fil.mjs (une ligne par consigne donnée, aucune autre, pas de
+// doublon) : les écarts sont rendus au moteur, et en dernier recours les lignes d'ids inconnus ou en double sont RETIRÉES (jamais une ligne inventée).
+/** Les ids des consignes du bloc <consignes_benj> d'une entrée, ou null si le bloc manque ou ne se lit pas. Pure. */
+export function idsConsignesDeLEntree(texte) {
+  const m = /<consignes_benj>\n?([\s\S]*?)\n?<\/consignes_benj>/.exec(String(texte ?? ''))
+  if (!m) return null
+  try { const v = JSON.parse(m[1].trim() || '[]'); return Array.isArray(v) ? v.map((c) => c?.id).filter((x) => Number.isInteger(x)) : null } catch { return null }
+}
+/** Les écarts de consignes_lues au regard des ids attendus (la règle de fil.mjs verifier). Pure. */
+export function ecartsConsignesLues(plan, ids) {
+  const attendus = new Set(ids), lignes = Array.isArray(plan?.consignes_lues) ? plan.consignes_lues : []
+  const cites = lignes.map((l) => l?.id), f = []
+  for (const id of attendus) if (!cites.includes(id)) f.push(`consignes_lues : la consigne ${id} n'a pas sa ligne`)
+  for (const id of new Set(cites)) if (!attendus.has(id)) f.push(`consignes_lues : l'id ${id} n'est pas une consigne du bloc <consignes_benj> (ids permis : ${[...attendus].join(', ') || 'aucun'})`)
+  if (new Set(cites).size !== cites.length) f.push('consignes_lues : un id en double')
+  return f
+}
+/** Retire de consignes_lues les lignes d'ids inconnus ou en double : { plan, notes } ou null s'il n'y a rien à retirer. N'ajoute jamais rien. Pure. */
+export function retirerConsignesInconnues(plan, ids) {
+  if (!plan || !Array.isArray(plan.consignes_lues)) return null
+  const attendus = new Set(ids), vus = new Set(), garde = [], retires = []
+  for (const l of plan.consignes_lues) { if (attendus.has(l?.id) && !vus.has(l.id)) { vus.add(l.id); garde.push(l) } else retires.push(l?.id) }
+  if (!retires.length) return null
+  return { plan: { ...plan, consignes_lues: garde }, notes: [`consignes_lues : ${retires.length} ligne(s) retirée(s), id inconnu ou en double (${retires.join(', ')})`] }
+}
 // Une référence structurée tient lieu d'objet pour le bilan quotidien du Savoir (026-229, objet « bilan:AAAA-MM-JJ », 16 signes) ; tout le reste doit être décrit (OBJET_MIN signes au moins).
 export const OBJET_REFERENCE = /^bilan:\d{4}-\d{2}-\d{2}$/
 
