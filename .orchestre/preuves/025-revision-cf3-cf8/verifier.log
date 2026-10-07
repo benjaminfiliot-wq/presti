@@ -1,0 +1,12 @@
+$ ssh -o BatchMode=yes -o ConnectTimeout=10 -i C:/Users/benja/.ssh/presti-usine usine@88.96.53.3 "cd /home/usine/presti/.orchestre/travail/revision-cf-1007 && node scripts/constructeur-ferme-qa.mjs --critere=CF-1,CF-2,CF-3,CF-4,CF-8"
+# 2026-10-07T12:50:53Z · code 0 · 7s
+
+constructeur-ferme-qa — racine /home/usine/presti/.orchestre/travail/revision-cf-1007
+  · --critere : seulement CF-1, CF-2, CF-3, CF-4, CF-8 (les autres critères ne sont pas jugés)
+  · base des diffs : 1620723 (fichier identique à HEAD) (git diff, lecture seule)
+PASS CF-1 — FLAGS.constructeurSite: false (ligne 19), commentaire daté qui dit ce qu'il ferme ; à l'exécution FLAGS.constructeurSite === false et actif('constructeurSite') === false
+PASS CF-2 — première instruction du POST (ligne 16) : if (!actif('constructeurSite')) return NextResponse.json(…, { status: 404 }) ; signalerPanneIA( et rendreCredit( toujours appelés ; diff contre 1620723 (fichier identique à HEAD) : 2 ligne(s) ajoutée(s), 0 retirée
+PASS CF-3 — semantique protections/FLAGS/gardes026/404/constructeur verifiee sans empreinte SHA
+PASS CF-4 — diff contre 1620723 (fichier identique à HEAD) : la ligne 48 seule remplacée par 1 ligne(s) ; « app/profil : plus d'éditeur de site ; le site à la demande reste proposé » exige SITE_A_LA_DEMANDE et refuse genererSite, site-tiers, StyleAvance, /api/site/generate (6 profils essayés)
+PASS CF-8 — npm run typecheck vert en 5.0 s : 850 fichiers de la racine vérifiés, dont les quatre de 025-05 ; tsc et types de ../../../node_modules ; aucun @ts-nocheck ni @ts-ignore ajouté ; tsconfig.json Next16 exact de 84322df0 ou extension audit attestee ; script typecheck celui de 1620723
+constructeur-ferme-qa : PASS
