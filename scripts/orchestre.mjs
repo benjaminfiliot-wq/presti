@@ -232,12 +232,14 @@ function ecrireLock(id, lock) {
   ecrire(cheminLock(id), lignes.join('\n') + '\n')
 }
 function trouver(id, dossiers = [D.enCours, D.fait, D.refuse, D.file]) {
-  for (const d of dossiers) {
-    const liste = taches(path.join(ORCH, d))
-    const f = liste.find((x) => x === `${id}.md`) || liste.find((x) => x.startsWith(`${id}-`) || x.startsWith(`${id}.`))
-    if (f) return { dossier: d, fichier: path.join(ORCH, d, f) }
-  }
-  return null
+  const candidats = dossiers.flatMap((dossier) => taches(path.join(ORCH, dossier))
+    .map((f) => ({ dossier, fichier: path.join(ORCH, dossier, f), nom: f })))
+  // Un identifiant exact dans un dossier l'emporte sur tout préfixe d'un autre dossier.
+  const exacts = candidats.filter((c) => c.nom === `${id}.md`)
+  const correspondances = exacts.length ? exacts : candidats.filter((c) => c.nom.startsWith(`${id}-`) || c.nom.startsWith(`${id}.`))
+  if (correspondances.length > 1) throw new Error(`identifiant ambigu « ${id} » : ${correspondances.map((c) => rel(c.fichier)).join(', ')} ; utiliser un identifiant exact unique`)
+  const cible = correspondances[0]
+  return cible ? { dossier: cible.dossier, fichier: cible.fichier } : null
 }
 
 const PIED_DE_TACHE = (id) => `Quand tu as fini :
