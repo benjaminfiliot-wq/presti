@@ -4,14 +4,18 @@
 # → import dans l'Ollama de l'usine par son API locale (/api/blobs puis /api/create avec files, gabarit de chat Qwen, consigne, paramètres) :
 # Ollama 0.34 ne quantifie pas en Q4_K_M à l'import, on lui donne le fichier déjà quantifié.
 # Réutilise le venv (torch CPU, transformers, peft) et llama.cpp (llama-quantize compilé) de ~/modele-fusion ; travaille dans ~/modele-fusion-preneur.
-# Prérequis : ~/modele-fusion-preneur/adaptateur (copié par scp) et ~/modele-fusion-preneur/systeme.txt (la consigne du preneur sans passages).
+# Prérequis : ~/modele-fusion-preneur/adaptateur (copié par scp) — ou directement presti-preneur-1.5b-q4_K_M.gguf rendu par Kaggle — et ~/modele-fusion-preneur/systeme.txt (la consigne du preneur sans passages).
 # Jamais entre H:05 et H:20 UTC (cycles du Chef) : le script attend la fin de la plage avant chaque étape lourde.
 set -euo pipefail
+# le nom du modèle dans Ollama (NOM=presti-preneur:1.5b-v2 bash fusion.sh pour installer une variante à côté de la première)
+export NOM="${NOM:-presti-preneur:1.5b}"
 cd ~/modele-fusion-preneur
 exec >> fusion.log 2>&1
 attendre_hors_cycle() { while m=$(date -u +%-M); [ "$m" -ge 5 ] && [ "$m" -le 20 ]; do echo "   pause (cycle du Chef, $(date -u +%T))"; sleep 60; done; }
 echo "== début $(date -u +%T)"
 . ~/modele-fusion/venv/bin/activate
+# Si Kaggle a déjà rendu le GGUF Q4_K_M (sa fusion a marché le 07/10), il est copié ici et l'on passe directement à l'import.
+if [ ! -s presti-preneur-1.5b-q4_K_M.gguf ]; then
 attendre_hors_cycle
 nice -n 19 python - <<'PY'
 import torch
@@ -27,9 +31,15 @@ PY
 echo "== fusion ok $(date -u +%T)"
 attendre_hors_cycle
 nice -n 19 python ~/modele-fusion/llama.cpp/convert_hf_to_gguf.py fusion --outfile f16.gguf --outtype f16
+# 07/10 : 7,3 Go libres sur l'usine ; fusion (3,1 Go) + f16 (3,1 Go) + Q4_K_M (1 Go) + blob Ollama (1 Go) n'y tiennent pas ensemble : on retire
+# chaque étape intermédiaire (la nôtre seulement) dès que la suivante est écrite.
+[ -s f16.gguf ] && rm -r fusion
 attendre_hors_cycle
 nice -n 19 ~/modele-fusion/llama.cpp/build/bin/llama-quantize f16.gguf presti-preneur-1.5b-q4_K_M.gguf Q4_K_M | tail -3
 ls -la presti-preneur-1.5b-q4_K_M.gguf
+[ -s presti-preneur-1.5b-q4_K_M.gguf ] && rm f16.gguf
+fi
+attendre_hors_cycle
 python - <<'PY'
 import hashlib, json, os, urllib.request
 B = "http://127.0.0.1:11434"
@@ -42,7 +52,7 @@ with open(p, "rb") as f:
     urllib.request.urlopen(urllib.request.Request(f"{B}/api/blobs/{d}", data=f, method="POST", headers={"content-length": str(os.path.getsize(p))}), timeout=3600).read()
 print("blob", p, os.path.getsize(p), d)
 corps = {
-  "model": "presti-preneur:1.5b",
+  "model": os.environ["NOM"],
   "files": {p: d},
   "template": "{{- if .System }}<|im_start|>system\n{{ .System }}<|im_end|>\n{{ end }}{{- range .Messages }}{{- if ne .Role \"system\" }}<|im_start|>{{ .Role }}\n{{ .Content }}<|im_end|>\n{{ end }}{{- end }}<|im_start|>assistant\n",
   "system": open("systeme.txt", encoding="utf-8").read().strip(),

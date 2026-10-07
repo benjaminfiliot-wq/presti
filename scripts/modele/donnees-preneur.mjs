@@ -35,6 +35,7 @@ const COFFRE_FL = path.resolve(DEPOT, '..', 'presti-secrets', 'freellmapi.txt')
 const BASE_FL = 'http://127.0.0.1:3001/v1'
 export const MIN_PAIRES = 200
 export const ESSAIS_MAX = 3
+export const IMPOSSIBLES_DANS_LES_DONNEES = false
 const ID_FIXE = '00000000-0000-4000-8000-000000000000'
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex')
 
@@ -125,6 +126,9 @@ export function construirePaires(entrees, cache) {
     }
     if (!gardee) { const k = String(derniere[0]).replace(/ : .*/, ''); rejets[k] = (rejets[k] || 0) + 1; continue }
     if (vus.has(e.utilisateur)) continue
+    // 07/10, mesure de la v1 : 11 paires IMPOSSIBLE sur 247 ont appris au modèle à refuser 4 tâches FAISABLES sur 12 (« aucune donnée… »). Le Chef écarte
+    // déjà en amont les tâches qui exigent le web (filtrerTaches) : les données n'en portent plus. Les réponses IMPOSSIBLE restent dans le cache, jugées.
+    if (!IMPOSSIBLES_DANS_LES_DONNEES && e.attendu === 'impossible') { rejets['IMPOSSIBLE écarté des données'] = (rejets['IMPOSSIBLE écarté des données'] || 0) + 1; continue }
     vus.add(e.utilisateur)
     paires.push({ messages: [{ role: 'system', content: e.systeme }, { role: 'user', content: e.utilisateur }, { role: 'assistant', content: mettreEnForme(gardee.sortie) }], _meta: { id: e.id, origine: e.origine, attendu: e.attendu, modele: gardee.modele } })
   }

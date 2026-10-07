@@ -35,3 +35,6 @@ Voir `docs/agents/modele-maison-mesures.md` : 2 paires propres en règle stricte
 
 ## Le premier modèle : « presti-chef-leger » (06/10/2026, soir)
 Voir `docs/agents/modele-maison-chef-leger.md` : 340 paires par distillation, jugées (vert) ; l'état compacté fait passer le 4 B non affiné sous 300 s mais sans plan valide ; l'entraînement sur Kaggle attend la vérification du compte par téléphone (sessions servies sans GPU ni internet). Rien d'installé ni de branché.
+
+## Le deuxième modèle : « presti-preneur » (07/10/2026)
+Voir `docs/agents/modele-maison-preneur.md` : 236 paires de rédaction interne distillées (maître Qwen3-32B sur Kaggle, freellmapi et Ollama Cloud étant à bout), juge vert ; deux versions entraînées et installées sur l'usine (`presti-preneur:1.5b`, `presti-preneur:1.5b-v2`), 6 fois plus rapides que le 4 B (médiane 25-27 s contre 167 s) mais moins justes sur le sens ; rien de branché.
