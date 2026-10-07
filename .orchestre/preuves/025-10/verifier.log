@@ -1,10 +1,35 @@
-promesses-qa — racine /home/usine/reprise-1001/vaisseau255-1007
-  · 628 fichiers .ts/.tsx lus sous app/ et lib/, 45969 unités de texte, 54233 phrases examinées
+promesses-qa : copie utile 4434 chemins, aucun .git/node_modules/.env
+
+$ node scripts/promesses-qa.mjs --racine=/home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa
+code=0
+promesses-qa — racine /home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa
+  · 625 fichiers .ts/.tsx lus sous app/ et lib/, 45830 unités de texte, 54081 phrases examinées
+PASS PR-1 — « moins d’une minute » toujours avec « prête » ou « prépare » (54081 phrases, 625 fichiers) ; détecteur éprouvé sur 21 sondes
+PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54081 phrases, 625 fichiers) ; détecteur éprouvé sur 6 sondes
+PASS PR-3 — aucune des quatre formules (54081 phrases, 625 fichiers) ; détecteur éprouvé sur 5 sondes
+PASS PR-4 — aucune réponse seule sans Studio ou Signature (54081 phrases, 625 fichiers) ; détecteur éprouvé sur 13 sondes
+PASS PR-5 — titre (metadata.title.default) 48/70, app/layout.tsx metadata.description 129/160, app/page.tsx:93 description 129/160, app/page.tsx:95 description 13/160, app/manifest.ts:18 description 87/160, app/manifest.ts:42 description 17/160, app/manifest.ts:43 description 16/160, app/manifest.ts:44 description 31/160 ; détecteur éprouvé sur 8 sondes
+PASS PR-6 — identique à HEAD hors l’accroche de studio, inchangée (« L’assistant qui répond seul, jour et nuit. ») ; détecteur éprouvé sur 7 sondes
+PASS PR-7 — 12 fichier(s) de la landing (app/page.tsx, app/PublicNav.tsx, app/Marque.tsx, app/HeroApp.tsx, app/Motion.tsx, app/DemoSequence.tsx, app/DemoVideo.tsx, app/DemoSite.tsx, app/DemoChiffres.tsx, app/MaquetteForm.tsx, app/Comparatif.tsx, app/chiffres/Tableau.tsx) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (urgence, fuite, degat des eaux, inondation, gaz, assurance) jamais montrés sans l’alerte ; détecteur éprouvé sur 12 sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)
+PASS PR-8 — landingVideo = false et DemoVideo rendu(s) seulement sous landingVideo : vidéo(s) /demo/hero.mp4 non affichée(s) ; détecteur éprouvé sur 7 sondes (mutation : drapeau levé sans liste, texte « dans la seconde », sha256 périmé → vus)
+PASS PR-9 — 1 unité(s) de la FAQ (app/faq/page.tsx + lib/faq.ts) disent « 1 crédit = … » avec le coût Expert (3 crédits, lib/plans.ts) ; aucun autre coût Expert (app/faq/page.tsx, lib/faq.ts, app/page.tsx) ; détecteur éprouvé sur 3 sondes
+PASS PR-10 — 112 phrase(s) sur les relances dans app/ et lib/ : aucune « jusqu’à la réponse », nombre de relances = 3 (CADENCE_RELANCES) ; détecteur éprouvé sur 3 sondes
+PASS PR-11 — article « plateforme » : 2 texte(s) qui nomment le mode Automatique, chacun avec l’offre Studio (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes
+PASS PR-12 — 238 texte(s) des articles d’aide : 1 promesse(s) de suppression du site, chacune vers Paramètres → Données & confidentialité (site_supprimer proposé) ; détecteur éprouvé sur 3 sondes
+promesses-qa : PASS
+
+
+promesses-qa-PR-M1 : copie utile 4434 chemins, aucun .git/node_modules/.env
+
+$ node scripts/promesses-qa.mjs --racine=/home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M1
+code=1
+promesses-qa — racine /home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M1
+  · 625 fichiers .ts/.tsx lus sous app/ et lib/, 45831 unités de texte, 54082 phrases examinées
   · relevé complet : .orchestre/travail/promesses-qa/releve.txt
-FAIL PR-1 — lib/crieur/faits.ts:15 [moins d’une minute] « | 1 | « Réponse en moins d’une minute » »
-PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 6 sondes
-PASS PR-3 — aucune des quatre formules (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 5 sondes
-PASS PR-4 — aucune réponse seule sans Studio ou Signature (54233 phrases, 628 fichiers) ; détecteur éprouvé sur 13 sondes
+FAIL PR-1 — app/manifest.ts:49 [moins d’une minute] « Presti répond en moins d’une minute. »
+PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 6 sondes
+PASS PR-3 — aucune des quatre formules (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 5 sondes
+PASS PR-4 — aucune réponse seule sans Studio ou Signature (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 13 sondes
 PASS PR-5 — titre (metadata.title.default) 48/70, app/layout.tsx metadata.description 129/160, app/page.tsx:93 description 129/160, app/page.tsx:95 description 13/160, app/manifest.ts:18 description 87/160, app/manifest.ts:42 description 17/160, app/manifest.ts:43 description 16/160, app/manifest.ts:44 description 31/160 ; détecteur éprouvé sur 8 sondes
 PASS PR-6 — identique à HEAD hors l’accroche de studio, inchangée (« L’assistant qui répond seul, jour et nuit. ») ; détecteur éprouvé sur 7 sondes
 PASS PR-7 — 12 fichier(s) de la landing (app/page.tsx, app/PublicNav.tsx, app/Marque.tsx, app/HeroApp.tsx, app/Motion.tsx, app/DemoSequence.tsx, app/DemoVideo.tsx, app/DemoSite.tsx, app/DemoChiffres.tsx, app/MaquetteForm.tsx, app/Comparatif.tsx, app/chiffres/Tableau.tsx) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (urgence, fuite, degat des eaux, inondation, gaz, assurance) jamais montrés sans l’alerte ; détecteur éprouvé sur 12 sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)
@@ -14,3 +39,70 @@ PASS PR-10 — 112 phrase(s) sur les relances dans app/ et lib/ : aucune « jusq
 PASS PR-11 — article « plateforme » : 2 texte(s) qui nomment le mode Automatique, chacun avec l’offre Studio (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes
 PASS PR-12 — 238 texte(s) des articles d’aide : 1 promesse(s) de suppression du site, chacune vers Paramètres → Données & confidentialité (site_supprimer proposé) ; détecteur éprouvé sur 3 sondes
 promesses-qa : FAIL — PR-1
+
+
+promesses-qa-PR-M2 : copie utile 4434 chemins, aucun .git/node_modules/.env
+
+$ node scripts/promesses-qa.mjs --racine=/home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M2
+code=1
+promesses-qa — racine /home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M2
+  · 625 fichiers .ts/.tsx lus sous app/ et lib/, 45831 unités de texte, 54082 phrases examinées
+  · relevé complet : .orchestre/travail/promesses-qa/releve.txt
+FAIL PR-1 — app/page.tsx:337 [moins d’une minute] « Presti répond en moins d’une minute. »
+PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 6 sondes
+PASS PR-3 — aucune des quatre formules (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 5 sondes
+PASS PR-4 — aucune réponse seule sans Studio ou Signature (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 13 sondes
+PASS PR-5 — titre (metadata.title.default) 48/70, app/layout.tsx metadata.description 129/160, app/page.tsx:93 description 129/160, app/page.tsx:95 description 13/160, app/manifest.ts:18 description 87/160, app/manifest.ts:42 description 17/160, app/manifest.ts:43 description 16/160, app/manifest.ts:44 description 31/160 ; détecteur éprouvé sur 8 sondes
+PASS PR-6 — identique à HEAD hors l’accroche de studio, inchangée (« L’assistant qui répond seul, jour et nuit. ») ; détecteur éprouvé sur 7 sondes
+PASS PR-7 — 12 fichier(s) de la landing (app/page.tsx, app/PublicNav.tsx, app/Marque.tsx, app/HeroApp.tsx, app/Motion.tsx, app/DemoSequence.tsx, app/DemoVideo.tsx, app/DemoSite.tsx, app/DemoChiffres.tsx, app/MaquetteForm.tsx, app/Comparatif.tsx, app/chiffres/Tableau.tsx) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (urgence, fuite, degat des eaux, inondation, gaz, assurance) jamais montrés sans l’alerte ; détecteur éprouvé sur 12 sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)
+PASS PR-8 — landingVideo = false et DemoVideo rendu(s) seulement sous landingVideo : vidéo(s) /demo/hero.mp4 non affichée(s) ; détecteur éprouvé sur 7 sondes (mutation : drapeau levé sans liste, texte « dans la seconde », sha256 périmé → vus)
+PASS PR-9 — 1 unité(s) de la FAQ (app/faq/page.tsx + lib/faq.ts) disent « 1 crédit = … » avec le coût Expert (3 crédits, lib/plans.ts) ; aucun autre coût Expert (app/faq/page.tsx, lib/faq.ts, app/page.tsx) ; détecteur éprouvé sur 3 sondes
+PASS PR-10 — 112 phrase(s) sur les relances dans app/ et lib/ : aucune « jusqu’à la réponse », nombre de relances = 3 (CADENCE_RELANCES) ; détecteur éprouvé sur 3 sondes
+PASS PR-11 — article « plateforme » : 2 texte(s) qui nomment le mode Automatique, chacun avec l’offre Studio (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes
+PASS PR-12 — 238 texte(s) des articles d’aide : 1 promesse(s) de suppression du site, chacune vers Paramètres → Données & confidentialité (site_supprimer proposé) ; détecteur éprouvé sur 3 sondes
+promesses-qa : FAIL — PR-1
+
+
+promesses-qa-PR-M3 : copie utile 4434 chemins, aucun .git/node_modules/.env
+
+$ node scripts/promesses-qa.mjs --racine=/home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M3
+code=1
+promesses-qa — racine /home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/promesses-qa-PR-M3
+  · 625 fichiers .ts/.tsx lus sous app/ et lib/, 45831 unités de texte, 54082 phrases examinées
+  · relevé complet : .orchestre/travail/promesses-qa/releve.txt
+PASS PR-1 — « moins d’une minute » toujours avec « prête » ou « prépare » (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 21 sondes
+PASS PR-2 — « dans la seconde » seulement aux deux exceptions (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 6 sondes
+FAIL PR-3 — lib/plans.ts:155 [Présence en ligne soignée] « Présence en ligne soignée »
+PASS PR-4 — aucune réponse seule sans Studio ou Signature (54082 phrases, 625 fichiers) ; détecteur éprouvé sur 13 sondes
+PASS PR-5 — titre (metadata.title.default) 48/70, app/layout.tsx metadata.description 129/160, app/page.tsx:93 description 129/160, app/page.tsx:95 description 13/160, app/manifest.ts:18 description 87/160, app/manifest.ts:42 description 17/160, app/manifest.ts:43 description 16/160, app/manifest.ts:44 description 31/160 ; détecteur éprouvé sur 8 sondes
+FAIL PR-6 — lib/plans.ts diffère de HEAD hors l’accroche de studio : 2 ligne(s), la première ligne 155 : « export const faute025 = 'Présence en ligne soignée' » au lieu de « (absente) »
+PASS PR-7 — 12 fichier(s) de la landing (app/page.tsx, app/PublicNav.tsx, app/Marque.tsx, app/HeroApp.tsx, app/Motion.tsx, app/DemoSequence.tsx, app/DemoVideo.tsx, app/DemoSite.tsx, app/DemoChiffres.tsx, app/MaquetteForm.tsx, app/Comparatif.tsx, app/chiffres/Tableau.tsx) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (urgence, fuite, degat des eaux, inondation, gaz, assurance) jamais montrés sans l’alerte ; détecteur éprouvé sur 12 sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)
+PASS PR-8 — landingVideo = false et DemoVideo rendu(s) seulement sous landingVideo : vidéo(s) /demo/hero.mp4 non affichée(s) ; détecteur éprouvé sur 7 sondes (mutation : drapeau levé sans liste, texte « dans la seconde », sha256 périmé → vus)
+PASS PR-9 — 1 unité(s) de la FAQ (app/faq/page.tsx + lib/faq.ts) disent « 1 crédit = … » avec le coût Expert (3 crédits, lib/plans.ts) ; aucun autre coût Expert (app/faq/page.tsx, lib/faq.ts, app/page.tsx) ; détecteur éprouvé sur 3 sondes
+PASS PR-10 — 112 phrase(s) sur les relances dans app/ et lib/ : aucune « jusqu’à la réponse », nombre de relances = 3 (CADENCE_RELANCES) ; détecteur éprouvé sur 3 sondes
+PASS PR-11 — article « plateforme » : 2 texte(s) qui nomment le mode Automatique, chacun avec l’offre Studio (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes
+PASS PR-12 — 238 texte(s) des articles d’aide : 1 promesse(s) de suppression du site, chacune vers Paramètres → Données & confidentialité (site_supprimer proposé) ; détecteur éprouvé sur 3 sondes
+promesses-qa : FAIL — PR-3, PR-6
+
+
+constructeur-ferme-qa : copie utile 4434 chemins, aucun .git/node_modules/.env
+
+$ node scripts/constructeur-ferme-qa.mjs --racine=/home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/constructeur-ferme-qa
+code=1
+constructeur-ferme-qa — racine /home/usine/reprise-1001/juges025-1007/.orchestre/travail/025-10/1791355495537-2393537/constructeur-ferme-qa
+  · base des diffs : 1620723 (fichier identique à HEAD) (git diff, lecture seule)
+PASS CF-1 — FLAGS.constructeurSite: false (ligne 19), commentaire daté qui dit ce qu'il ferme ; à l'exécution FLAGS.constructeurSite === false et actif('constructeurSite') === false
+PASS CF-2 — première instruction du POST (ligne 16) : if (!actif('constructeurSite')) return NextResponse.json(…, { status: 404 }) ; signalerPanneIA( et rendreCredit( toujours appelés ; diff contre 1620723 (fichier identique à HEAD) : 2 ligne(s) ajoutée(s), 0 retirée
+FAIL CF-3 — diff contre 1620723 (correction D30 et 8 ligne(s) des fiches 026 ôtée(s)) : 38 ligne(s) ajoutée(s), 2 retirée(s) — exactement une ligne ajoutée attendue (−85 « const DERRIERE_UN_DRAPEAU = [] » ; −164 « T('/onboarding répond (client : renvoie vers /login sans session)', o… » ; +11 « import './ts-loader.mjs' » ; +76 « // 29/09 (fiche 026-008) — douze routes du Poste livrées par les fich… ») ; git diff --numstat 1620723 : 382 ajout(s), 336 retrait(s) ; 12 et 1 attendus (correction D30 et 8 ligne(s) des fiches 026 comprise(s))
+FAIL CF-4 — git diff --numstat 1620723 : 61 ajout(s), 61 retrait(s) ; 1 et 1 attendus
+PASS CF-5 — aucun des 10 marqueurs de l'éditeur ni des 8 blocs retirés ; objet enregistré sans site_active, site_tier, site_contenu, site_layout, realisations, avant_apres ; SITE_A_LA_DEMANDE rendu hors condition (4 usage(s)), bouton sous actif('siteCommandeVente') ; « Supprimer le site » sous siteActiveEnregistre ; 10 champs gardés présents ; les 3 composants toujours là
+PASS CF-6 — entrée « profil » (ligne 268, 4 étape(s)) sans apparence, thème, réalisations, niveau ni « Rédiger ou régénérer le site » ; 70 bulles citées par app/, toutes dans lib/aide.ts (75 bulles)
+PASS CF-7 — 1 phrase(s) « moins d'une minute », chacune avec « prête » ou « prépare » : ligne 186 « Chaque contact arrive dans Presti, avec une réponse prête en moins d'une minute » ; PR-1 de promesses-qa.mjs vert sur app/profil/page.tsx (415 phrases)
+FAIL CF-8 — lib.es5.d.ts pris dans /home/usine/presti/node_modules/typescript/lib/lib.es5.d.ts, /home/usine/reprise-1001/juges025-1007/node_modules attendu ; tsconfig.json diffère de 1620723 (ligne 19 : « "jsx": "react-jsx", » au lieu de « "jsx": "preserve", ») : le typecheck ne se juge qu'avec la configuration d'origine
+PASS CF-9 — 4 usage(s) du bloc de vente dans app/profil/page.tsx (SITE_A_LA_DEMANDE.titre, SITE_A_LA_DEMANDE.phrases, SITE_A_LA_DEMANDE.lien, SITE_A_LA_DEMANDE.bouton), tous sous actif('siteCommandeVente'), et le prix 300 € écrit nulle part ailleurs ; mutation : SITE_A_LA_DEMANDE.titre ajouté hors garde → vu, sous garde → laissé
+PASS CF-10 — 4 lien(s) de app/parametres/page.tsx et 1 de lib/aide.ts vers des pages de app/ (42 pages), ancres de /profil présentes (donnees), aucune entrée vers un bloc retiré ; lib/aide.ts ne parle plus du niveau de site ; mutation : entrée « Apparence » vers /profil#sonde-absente → 2 défauts vus, « niveau de site » → vu
+PASS CF-11 — constructeurSite fermé : app/parametres/SectionDonnees.tsx (site publié) sans « Réinitialiser le site », avec « Supprimer le site » ; app/api/donnees/route.ts refuse site_reinitialiser en GET et POST sans rien écrire, récapitulatif de site_supprimer toujours servi ; mutation : « Réinitialiser le site » → vu
+constructeur-ferme-qa : FAIL — CF-3, CF-4, CF-8
+
+
+BLOCAGE : constructeur-ferme-qa : témoin non conforme ; aucune attribution causale aux mutations
