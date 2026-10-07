@@ -193,15 +193,26 @@ function memoire(fichier) {
 }
 
 // ── l'exécuteur « ollama » : appel direct, un moteur après l'autre, mémoire des moteurs à bout (relais-chef.mjs) ─────────────────
-const MOTEURS_OLLAMA = ['ollama_cloud', 'ollama_4b', 'ollama_8b'].map((id) => CHAINE_SECOURS.find((m) => m.id === id)).filter(Boolean)
+export const MODELE_MAISON = Object.freeze({ id: 'maison', modele: 'presti-preneur:1.5b-v2', budgetMs: 120_000 })
+const MOTEURS_OLLAMA = ['ollama_4b', 'ollama_cloud', 'ollama_8b'].map((id) => CHAINE_SECOURS.find((m) => m.id === id)).filter(Boolean)
 
-async function executerOllama({ consigne, o, etat, journal, maintenant = Date.now, fetchFn = fetch }) {
+/** Liste fermée : une rédaction interne courte, dans un des quatre formats connus. */
+export function tacheMaison(t) {
+  if (t?.type !== 'redaction_interne' || t.capacite !== 'redaction_interne' || typeof t.objet !== 'string') return false
+  const charge = t.charge && typeof t.charge === 'object' ? t.charge : {}
+  const texte = [t.objet, charge.titre, charge.pourquoi].filter((x) => typeof x === 'string').join(' ')
+  if (t.objet.length > 300 || texte.length > 600 || motifProspects(texte) || /\bprospect(?:s|ion)?\b/i.test(texte)) return false
+  if (/\b(?:web|internet|site|page|url|lien|recherch\w*|consult\w*|vérifi\w*|verifi\w*|source\w*|marché|marche|statistique\w*|chiffre\w*|prix|tarif\w*|coût\w*|cout\w*|budget|euros?)\b|€/i.test(texte)) return false
+  return /\b(?:réponse\s+(?:à\s+(?:un\s+|une\s+|l['’])?)?acheteur|répondre\s+à\s+(?:un\s+|une\s+|l['’])?acheteur|accroche|script\s+court|post\s+(?:court|linkedin|facebook|instagram|réseau|reseau))\b/i.test(t.objet)
+}
+
+export async function executerOllama({ consigne, tache, o, etat, journal, maintenant = Date.now, fetchFn = fetch }) {
   let derniere = 'aucun_moteur'
   const debut = maintenant()
-  for (const m of MOTEURS_OLLAMA) {
+  for (const m of tacheMaison(tache) ? [MODELE_MAISON, ...MOTEURS_OLLAMA] : MOTEURS_OLLAMA) {
     const reste = o.delaiMs - (maintenant() - debut)
     if (reste < 30_000) break
-    const bout = etat.lire()[m.id]
+    const bout = m.id === 'maison' ? null : etat.lire()[m.id]
     if (bout && bout.jusqua > maintenant()) { journal({ moteur: m.id, issue: 'saute', raison: bout.raison }); continue }
     const controleur = new AbortController()
     const minuteur = setTimeout(() => controleur.abort(), Math.min(reste, m.budgetMs ?? 150_000))
@@ -223,11 +234,26 @@ async function executerOllama({ consigne, o, etat, journal, maintenant = Date.no
       }
     } catch (e) { raison = classerSortie('ERROR: error sending request', maintenant(), e?.name === 'AbortError' || controleur.signal.aborted) }
     finally { clearTimeout(minuteur) }
+    if (sortie !== null && m.id === 'maison') {
+      const verdictMaison = controlerSortie(sortie)
+      const nombresMaison = verdictMaison.ok ? nombresNonSources(verdictMaison.resultat, consigne.systeme + '\n' + consigne.utilisateur) : []
+      if (!verdictMaison.ok || nombresMaison.length) {
+        const motif = verdictMaison.ok ? 'chiffres_non_sources' : verdictMaison.code
+        journal({ moteur: m.id, modele: m.modele, issue: 'bascule', raison: motif, ms: maintenant() - t0 })
+        derniere = motif
+        continue
+      }
+    }
     if (sortie !== null) {
       const courant = etat.lire()
       if (courant[m.id]) { delete courant[m.id]; etat.ecrire(courant) }
       journal({ moteur: m.id, modele: m.modele, issue: 'ok', ms: maintenant() - t0 })
       return { ok: true, brut: sortie, moteur: m.id }
+    }
+    if (m.id === 'maison') {
+      journal({ moteur: m.id, modele: m.modele, issue: 'bascule', raison: raison.raison, ms: maintenant() - t0 })
+      derniere = raison.raison
+      continue
     }
     const jusqua = echeanceDeMiseDeCote(m.id, raison.raison, maintenant(), raison.jusquaMs)
     const courant = etat.lire()

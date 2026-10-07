@@ -2,7 +2,7 @@
 
 Suite de `docs/agents/modele-maison-chef-leger.md` (même recette). Demande de Benj : un Qwen2.5-1.5B-Instruct affiné pour l'agent **preneur** de l'usine, sur ses tâches de **rédaction interne** (`redaction_interne` : annonces eBay, accroches et scripts TikTok, réponses aux acheteurs, textes Presti), à partir des passages du Savoir. Le preneur actuel tourne sur le 4 B local : lent, et il invente des chiffres (la garde `nombresNonSources` de `scripts/usine/preneur.mjs` les marque).
 
-**Le modèle est installé sur l'usine mais PAS branché dans `preneur.mjs`** : la décision revient à Benj, sur les mesures de la section 4.
+**Le modèle est installé sur l’usine.** Benj a validé son branchement limité le 07/10 (section Branchement).
 
 ## Les fichiers
 
@@ -69,7 +69,7 @@ Ce que les fichiers bruts montrent (`sortie-*.md`), et que les chiffres ne disen
 
 ## 5. Verdict honnête et ce qui reste
 
-- **Données : faites et prouvées** (236 paires, juge vert, rien d'identifiant parti chez un modèle gratuit, 405 envois relus). **Entraînement : fait** deux fois sur Kaggle gratuit (≈ 25 min chacun), GGUF fait sur Kaggle. **Installés** sur l'usine : `presti-preneur:1.5b` (v1) et `presti-preneur:1.5b-v2`. **Rien n'est branché.**
+- **Données : faites et prouvées** (236 paires, juge vert, rien d'identifiant parti chez un modèle gratuit, 405 envois relus). **Entraînement : fait** deux fois sur Kaggle gratuit (≈ 25 min chacun), GGUF fait sur Kaggle. **Installés** sur l'usine : `presti-preneur:1.5b` (v1) et `presti-preneur:1.5b-v2`. **Branchement limité dans le preneur : voir ci-dessous.**
 - **Pour décider** : le modèle maison est 6 fois plus rapide et passe plus souvent les gardes mécaniques (7/12 contre 3/12), mais il comprend moins bien la tâche qu'un 4 B ; la v1 refuse trop, la v2 n'ose plus refuser et peut inventer. Une bascule sans relecture n'est pas défendable ; deux usages raisonnables :
   1. le brancher en tête du preneur pour les seules tâches **courtes et cadrées** (réponses aux acheteurs, accroches, légendes, scripts courts), le 4 B gardant le reste ;
   2. ou d'abord une v3 (ci-dessous), puis la même épreuve.
@@ -88,3 +88,11 @@ scp -i ~/.ssh/presti-usine-gardien .orchestre/travail/modele-maison/preneur/sort
 ssh … 'cd ~/modele-fusion-preneur && mv preneur-fusion.sh fusion.sh && NOM=presti-preneur:1.5b bash fusion.sh'   # + systeme.txt déjà en place
 node scripts/modele/mesure-preneur.mjs --modele=presti-preneur:1.5b
 ```
+
+## Branchement (027-001, décision de Benj du 07/10)
+
+Le moteur local maison appelle `presti-preneur:1.5b-v2` par `/api/chat` sur `127.0.0.1`, en `stream: true` et via `fetchLocal`, avec un budget de **120 s**. La liste admise est fermée : `type = capacite = redaction_interne`, objet et contexte totalisant au plus 600 signes, et une demande explicite de **réponse à un acheteur**, **accroche**, **script court** ou **post court / LinkedIn / Facebook / Instagram / réseau**. Aucun autre type ou capacité n’y passe. La présence de prospect, web, site, recherche, vérification de source, statistique, chiffre de marché, prix, tarif, coût ou budget exclut ce moteur. Le contrôle des données personnelles et les passages du Savoir filtrés s’appliquent avant tout appel.
+
+Pour les autres tâches, `qwen3:4b-instruct-2507-q4_K_M` est essayé en premier. Si le moteur maison refuse, dépasse son délai, rend un texte vide, une sortie interdite ou un chiffre absent des sources, le preneur tente immédiatement le 4B. Le moteur maison n’est jamais mis de côté durablement pour ces échecs. Les secours Ollama Cloud et 8B restent disponibles après le 4B ; les contrôles finaux de sortie, de secrets et de chiffres restent en place. La sortie du modèle maison ne peut pas être publiée si la garde `nombresNonSources` relève un chiffre : elle passe au 4B.
+
+Le juge `scripts/preneur-qa.mjs` garde tous ses critères précédents et ajoute PN-19 à PN-22, avec sabotages : domaine admis, refus par une garde, exclusion web/prix/prospect, délai et repli.

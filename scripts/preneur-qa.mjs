@@ -14,12 +14,12 @@ import path from 'node:path'
 import http from 'node:http'
 import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ICI = path.dirname(fileURLToPath(import.meta.url))
 const DEPOT = path.resolve(ICI, '..')
 const TRAVAIL = path.join(DEPOT, '.orchestre', 'travail', 'preneur-qa')
-const COPIE = ['scripts/usine/preneur.mjs', 'scripts/usine/garde-prospects.mjs', 'scripts/usine/relais-chef.mjs', 'scripts/instantane-quotidien.mjs', 'package.json']
+const COPIE = ['scripts/usine/preneur.mjs', 'scripts/usine/garde-prospects.mjs', 'scripts/usine/relais-chef.mjs', 'scripts/modele/chef-leger-entree.mjs', 'scripts/modele/prompt-chef.mjs', 'scripts/instantane-quotidien.mjs', 'package.json']
 const args = process.argv.slice(2)
 for (const a of args) if (a !== '--preuve-echecs' && !a.startsWith('--racine=')) { console.error(`✗ option inconnue : ${a}`); process.exit(2) }
 const PREUVE = args.includes('--preuve-echecs')
@@ -64,17 +64,18 @@ async function doublures({ jeton, taches = [], ollama = 'ok', prendre = null }) 
   })
   const o = await lancerServeur((req, rep, corps) => {
     modele.appels.push({ chemin: req.url, modele: corps?.model, stream: corps?.stream, utilisateur: String(corps?.messages?.[1]?.content ?? ''), systeme: String(corps?.messages?.[0]?.content ?? '') })
+    const issue = typeof ollama === 'object' ? (ollama[corps?.model] ?? 'ok') : ollama
     // 06/10 : une réponse diffusée (une ligne JSON par morceau), avec des chiffres inventés et un chiffre présent dans la consigne (« trois » n'est pas un chiffre ; 3 fois l'est)
-    if (ollama === 'chiffres') {
+    if (issue === 'chiffres') {
       rep.writeHead(200, { 'content-type': 'application/x-ndjson' })
       rep.end(['Résumé : la stratégie retenue\\n\\n1. Les vidéos courtes génèrent 3x plus d', 'engagement.\\n2. Les comparaisons augmentent la conversion de +20 %.\\n3. Budget de test : 800 €.'].map((x, i) => JSON.stringify({ message: { content: JSON.parse(`"${x}"`) }, done: i === 1 })).join('\n'))
       return
     }
-    if (ollama === 'panne') return json(rep, 500, { error: 'panne' })
-    const contenu = ollama === 'impossible' ? 'IMPOSSIBLE : je ne vois aucun fichier du dépôt.'
-      : ollama === 'secret' ? `Résumé du travail fait\n\nLa clé trouvée est ${['sk', 'live', 'abcdefghijklmnopqrstuvwx'].join('_')} et il faut la changer sans tarder, voilà.`
-      : ollama === 'email' ? 'Résumé du travail fait\n\nÉcrire à quelqu.un@exemple-artisan.fr pour confirmer la date, puis relire le document en entier et noter les écarts.'
-      : ollama === 'vide' ? ' ' : 'Résumé : trois points à retenir sur les juges du chef\n\n1. Le disjoncteur se déclenche après trois échecs dans l\'heure.\n2. Les mutations sont lues avant relance.\n3. À vérifier : le détail des tentatives, que je ne vois pas d\'ici.'
+    if (issue === 'panne') return json(rep, 500, { error: 'panne' })
+    const contenu = issue === 'impossible' ? 'IMPOSSIBLE : je ne vois aucun fichier du dépôt.'
+      : issue === 'secret' ? `Résumé du travail fait\n\nLa clé trouvée est ${['sk', 'live', 'abcdefghijklmnopqrstuvwx'].join('_')} et il faut la changer sans tarder, voilà.`
+      : issue === 'email' ? 'Résumé du travail fait\n\nÉcrire à quelqu.un@exemple-artisan.fr pour confirmer la date, puis relire le document en entier et noter les écarts.'
+      : issue === 'vide' ? ' ' : 'Résumé : trois points à retenir sur les juges du chef\n\n1. Le disjoncteur se déclenche après trois échecs dans l\'heure.\n2. Les mutations sont lues avant relance.\n3. À vérifier : le détail des tentatives, que je ne vois pas d\'ici.'
     return json(rep, 200, { message: { content: contenu } })
   })
   return { bus, modele, portBus: b.port, portOllama: o.port, fermer: () => { b.s.close(); o.s.close() } }
@@ -364,6 +365,77 @@ fs.writeFileSync(path.join(sortie, 'statut.txt'), '${statut}\\n')
     if (plusLong > 700) d.push(`un passage de ${plusLong} signes (700 au plus)`)
     if (plusLong < 500) d.push('les passages ne sont pas arrivés (700 signes attendus)')
   })],
+  'PN-19': ['modèle maison seulement pour quatre formats de rédaction courte ; les autres tâches commencent par le 4B', async (racine, d) => {
+    for (const [nom, objet] of [
+      ['acheteur', 'Rédiger une réponse à un acheteur sur la disponibilité de cet article.'],
+      ['accroche', 'Écrire une accroche courte pour présenter ce produit.'],
+      ['script', 'Écrire un script court de vidéo pour présenter ce produit.'],
+      ['post', 'Rédiger un post LinkedIn court pour présenter ce produit.'],
+    ]) {
+      await scenario(racine, 'pn19-' + nom, { taches: [tacheOk({ type: 'redaction_interne', capacite: 'redaction_interne', objet, charge: { titre: 'Rédaction courte', pourquoi: 'Texte public et concis.' } })] }, async (c) => {
+        await c.lancer()
+        const appels = c.dbl.modele.appels
+        if (appels.length !== 1 || appels[0]?.modele !== 'presti-preneur:1.5b-v2' || appels[0]?.stream !== true) d.push(nom + ' : maison en premier, diffusé, attendu')
+        if (c.dbl.bus.rendues[0]?.resultat !== 'faite') d.push(nom + ' : tâche non faite')
+      })
+    }
+    await scenario(racine, 'pn19-hors-liste', { taches: [tacheOk()] }, async (c) => {
+      await c.lancer()
+      if (c.dbl.modele.appels[0]?.modele !== 'qwen3:4b-instruct-2507-q4_K_M') d.push('veille : le 4B doit être premier')
+    })
+    await scenario(racine, 'pn19-mauvais-type', { taches: [tacheOk({ objet: 'Ecrire une accroche courte pour cet article public.' })] }, async (c) => {
+      await c.lancer()
+      if (c.dbl.modele.appels[0]?.modele !== 'qwen3:4b-instruct-2507-q4_K_M') d.push('veille avec accroche : le 4B doit etre premier')
+    })
+    await scenario(racine, 'pn19-faux-titre', { taches: [tacheOk({ type: 'redaction_interne', capacite: 'redaction_interne', objet: 'Rediger une synthese detaillee des documents fournis.', charge: { titre: 'Accroche', pourquoi: 'Synthese interne.' } })] }, async (c) => {
+      await c.lancer()
+      if (c.dbl.modele.appels[0]?.modele !== 'qwen3:4b-instruct-2507-q4_K_M') d.push('titre seul : le 4B doit etre premier')
+    })
+  }],
+  'PN-20': ['sortie maison refusée ou chiffre non sourcé : repli immédiat sur le 4B, sans mise de côté durable', async (racine, d) => {
+    for (const faute of ['impossible', 'secret', 'vide', 'chiffres']) {
+      const tache = tacheOk({ type: 'redaction_interne', capacite: 'redaction_interne', objet: 'Écrire une accroche courte pour cet article en vente.', charge: { titre: 'Accroche produit', pourquoi: 'Un texte public court.' } })
+      await scenario(racine, 'pn20-' + faute, { taches: [tache], ollama: { 'presti-preneur:1.5b-v2': faute } }, async (c) => {
+        await c.lancer()
+        const appels = c.dbl.modele.appels.map((x) => x.modele)
+        if (appels.join(',') !== 'presti-preneur:1.5b-v2,qwen3:4b-instruct-2507-q4_K_M') d.push(faute + ' : repli maison → 4B absent')
+        if (c.dbl.bus.rendues[0]?.resultat !== 'faite') d.push(faute + ' : tâche non faite après repli')
+        const etat = path.join(c.travail, 'relais', 'etat-chef.json')
+        if (fs.existsSync(etat) && lire(etat).includes('"maison"')) d.push(faute + ' : maison mise de côté durablement')
+        const resultats = fichiersDe(path.join(c.travail, 'resultats'))
+        if (resultats.length !== 1 || (faute === 'chiffres' && /3x|800 €/.test(lire(resultats[0])))) d.push(faute + ' : sortie refusée écrite')
+      })
+    }
+  }],
+  'PN-21': ['web, prix, marché et prospects n’atteignent jamais le modèle maison', async (racine, d) => {
+    for (const [nom, objet] of [
+      ['web', 'Écrire un post court à partir du web sur les visites de la semaine.'],
+      ['prix', 'Écrire une accroche courte avec le prix de ce produit.'],
+      ['marche', 'Écrire une accroche courte avec un chiffre de marché.'],
+      ['prospect', 'Écrire une réponse à un acheteur prospect de notre liste.'],
+    ]) {
+      await scenario(racine, 'pn21-' + nom, { taches: [tacheOk({ type: 'redaction_interne', capacite: 'redaction_interne', objet, charge: { titre: 'Texte court', pourquoi: 'Contexte public.' } })] }, async (c) => {
+        await c.lancer()
+        if (c.dbl.modele.appels.some((x) => x.modele === 'presti-preneur:1.5b-v2')) d.push(nom + ' : maison appelé')
+        if (nom !== 'prospect' && c.dbl.modele.appels[0]?.modele !== 'qwen3:4b-instruct-2507-q4_K_M') d.push(nom + ' : 4B absent')
+      })
+    }
+  }],
+  'PN-22': ['délai du modèle maison : budget 120 s puis repli immédiat sur le 4B', async (racine, d) => {
+    const m = await import(pathToFileURL(path.join(racine, 'scripts/usine/preneur.mjs')).href + '?pn22=' + crypto.randomBytes(4).toString('hex'))
+    if (m.MODELE_MAISON?.budgetMs !== 120_000) d.push('budget maison différent de 120 s')
+    const tache = tacheOk({ type: 'redaction_interne', capacite: 'redaction_interne', objet: 'Écrire une accroche courte pour cet article.', charge: { titre: 'Accroche', pourquoi: 'Texte public.' } })
+    const appels = [], journal = [], etat = { lire: () => ({}), ecrire: () => {} }
+    const fetchFn = async (_, init) => {
+      const nom = JSON.parse(init.body).model
+      appels.push(nom)
+      if (nom === 'presti-preneur:1.5b-v2') throw Object.assign(new Error('délai'), { name: 'AbortError' })
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Résumé : une accroche claire pour cet article\n\nVoici une proposition courte qui décrit simplement le produit et invite à découvrir ses caractéristiques.' } }) }
+    }
+    const r = await m.executerOllama({ consigne: m.construireConsigne(tache), tache, o: { ollama: 'http://127.0.0.1:11434', delaiMs: 180_000 }, etat, journal: (x) => journal.push(x), fetchFn })
+    if (!r.ok || r.moteur !== 'ollama_4b' || appels.join(',') !== 'presti-preneur:1.5b-v2,qwen3:4b-instruct-2507-q4_K_M') d.push('délai : repli vers 4B absent')
+    if (!journal.some((x) => x.moteur === 'maison' && x.raison === 'delai')) d.push('délai maison non classé')
+  }],
 }
 
 async function juger(racine, ids = Object.keys(CRITERES)) {
@@ -411,6 +483,10 @@ const SABOTAGES = [
   ['PN-18', 'scripts/usine/preneur.mjs', "  if (inventes.length) {\n    verdict.resultat =", "  if (false) {\n    verdict.resultat ="],
   ['PN-18', 'scripts/usine/preneur.mjs', "body: JSON.stringify({ model: m.modele, stream: true,", "body: JSON.stringify({ model: m.modele, stream: false,"],
   ['PN-18', 'scripts/usine/preneur.mjs', "    if (!new RegExp(", "    if (false && !new RegExp("],
+  ['PN-19', 'scripts/usine/preneur.mjs', "if (t?.type !== 'redaction_interne' || t.capacite !== 'redaction_interne' || typeof t.objet !== 'string') return false", "if (false) return false"],
+  ['PN-20', 'scripts/usine/preneur.mjs', "if (!verdictMaison.ok || nombresMaison.length) {", "if (false) {"],
+  ['PN-21', 'scripts/usine/preneur.mjs', "if (/\\b(?:web|internet|site|page|url|lien|recherch", "if (false && /\\b(?:web|internet|site|page|url|lien|recherch"],
+  ['PN-22', 'scripts/usine/preneur.mjs', "budgetMs: 120_000", "budgetMs: 150_000"],
 ]
 
 function copierRacine(nom, fichiers) {
