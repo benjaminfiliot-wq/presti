@@ -1,0 +1,589 @@
+{
+  "date": "2026-10-08T19:45:38.562Z",
+  "remainingBefore": 220,
+  "remainingAfter": 202,
+  "artisans": [
+    {
+      "id": "804810323",
+      "nom": "MARTIN BRUNO",
+      "ville": "Bois",
+      "cp": "17240",
+      "tel": "06 42 25 37 61",
+      "metier": "Menuiserie (fenêtres, volets, portes)"
+    },
+    {
+      "id": "518912738",
+      "nom": "SARL BOYER JEAN-FRANCOIS",
+      "ville": "Chevanceaux",
+      "cp": "17210",
+      "tel": "05 46 04 62 82",
+      "metier": "Chauffage, PAC, Chaudières"
+    },
+    {
+      "id": "535088751",
+      "nom": "BROUCARET RODOLPHE",
+      "ville": "Gémozac",
+      "cp": "17260",
+      "tel": "06 71 04 45 30",
+      "metier": "Menuiserie, Isolation"
+    },
+    {
+      "id": "403811706",
+      "nom": "SARL JOUGOURD",
+      "ville": "Gémozac",
+      "cp": "17260",
+      "tel": "05 46 94 20 24",
+      "metier": "Électricité, Chauffage, Ventilation"
+    },
+    {
+      "id": "392532628",
+      "nom": "SOCIETE FERRARI-OSSATO",
+      "ville": "Gémozac",
+      "cp": "17260",
+      "tel": "05 46 94 67 42",
+      "metier": "Chauffage, PAC, Poêles bois"
+    },
+    {
+      "id": "449831346",
+      "nom": "COURPRON PASCAL",
+      "ville": "La Vallée",
+      "cp": "17250",
+      "tel": "05 46 95 01 96",
+      "metier": "Chauffage, PAC, Plomberie"
+    },
+    {
+      "id": "444566491",
+      "nom": "GUERINEAU JEAN",
+      "ville": "Marans",
+      "cp": "17230",
+      "tel": "05 46 01 19 59",
+      "metier": "Menuiserie extérieure"
+    },
+    {
+      "id": "392383956",
+      "nom": "ROYAN MENUISERIE 17",
+      "ville": "Royan",
+      "cp": "17200",
+      "tel": "05 46 05 82 50",
+      "metier": "Menuiserie extérieure"
+    },
+    {
+      "id": "377928742",
+      "nom": "SAS DELAGE",
+      "ville": "Royan",
+      "cp": "17200",
+      "tel": "05 46 38 42 93",
+      "metier": "Chauffage, PAC, Chaudières"
+    },
+    {
+      "id": "523902039",
+      "nom": "MOUGON STEPHANE",
+      "ville": "Saint-Médard-d'Aunis",
+      "cp": "17220",
+      "tel": "06 13 75 83 66",
+      "metier": "Électricité, Panneaux solaires"
+    }
+  ],
+  "results": [
+    {
+      "artisan": {
+        "id": "804810323",
+        "nom": "MARTIN BRUNO",
+        "ville": "Bois",
+        "cp": "17240",
+        "tel": "06 42 25 37 61",
+        "metier": "Menuiserie (fenêtres, volets, portes)"
+      },
+      "query": "MARTIN BRUNO Bois artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.facebook.com/entrepriselocale17240/",
+              "title": "Martin Bruno Menuiserie (@entrepriselocale17240) - Facebook",
+              "description": "Rating 5,0(6) Martin Bruno Menuiserie. 133 followers. MENUISERIE Aluminium, PVC et Bois. 06.42.25.37.61 @ : bruno.martin605@live. 17240 Details +33 6 42 25 37 bruno.martin ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/55563374",
+              "title": "Menuiserie Martin Bruno à Bois - Pages Jaunes",
+              "description": "25 Aug 2026 · Martin Bruno à Bois (17) Téléphone 06 42 25 37 ・ 9 rue Cave 17240 Bois - Y aller www.facebook.com ・ des services de menuiserie. Localisation ...",
+              "position": 2
+            },
+            {
+              "url": "https://m.facebook.com/public/Martin-Bruno/?locale=fr_FR",
+              "title": "Profils Martin-Bruno | Facebook",
+              "description": "Afficher les profils des personnes qui s'appellent Martin Bruno. Inscrivez-vous sur Facebook pour communiquer avec Martin Bruno et d'autres personnes que...",
+              "position": 3
+            },
+            {
+              "url": "https://www.houzz.fr/professionnels/artisan-menuisier-et-ebeniste/bois-9-bruno-martin-pfvwfr-pf~1388325326",
+              "title": "BOIS 9 / BRUNO MARTIN - Le Raincy, FR 93340 - Houzz",
+              "description": "Rating 4,7(13) BOIS 9 / Bruno Martin. Artisan menuisier-fabricant. Bruno Martin est issu d'une formation d'architecte diplômé d'état au sein de l'ENSA Paris-Belleville.",
+              "position": 4
+            },
+            {
+              "url": "https://www.pappers.fr/entreprise/martin-bruno-412473753",
+              "title": "MARTIN BRUNO (412473753) - Pappers",
+              "description": "Travaux de menuiserie bois et PVC. Effectif : 0 salarié (donnée 2021). Création : 07/07/1997. Dirigeant : MARTIN BRUNO. Informations juridiques de MARTIN BRUNO ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-9414-764b-b685-b3b94a72c3df"
+      }
+    },
+    {
+      "artisan": {
+        "id": "518912738",
+        "nom": "SARL BOYER JEAN-FRANCOIS",
+        "ville": "Chevanceaux",
+        "cp": "17210",
+        "tel": "05 46 04 62 82",
+        "metier": "Chauffage, PAC, Chaudières"
+      },
+      "query": "SARL BOYER JEAN-FRANCOIS Chevanceaux artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/sarl-boyer-jean-francois-518912738",
+              "title": "sarl boyer jean-francois - L'Annuaire des Entreprises - Data gouv",
+              "description": "Siège social de SARL BOYER JEAN-FRANCOIS ; Adresse. 8 ROUTE DE LA PIERRE FOLLE 17210 CHEVANCEAUX ; SIRET. 518 912 738 00011 ; Clef NIC. 00011 ; Activité principale ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.meilleur-artisan.com/annuaire/boyer-jean-francois.568601.html",
+              "title": "Boyer jean-francois à Chevanceaux 17210 - Meilleur-Artisan.com",
+              "description": "Contactez BOYER JEAN-FRANCOIS, chauffagiste à CHEVANCEAUX : Voir ses coordonnées, avis des clients, labels de qualité , prestations, domaine d'expertise.",
+              "position": 2
+            },
+            {
+              "url": "https://www.facebook.com/jfboyer/",
+              "title": "Jean-François Boyer (@jfboyer) - Facebook",
+              "description": "Jean-François Boyer est sur Facebook. Inscrivez-vous sur Facebook pour communiquer avec Jean-François Boyer et d'autres personnes que vous pouvez...",
+              "position": 3
+            },
+            {
+              "url": "https://www.qualit-enr.org/entreprises/sarl-boyer-jean-francois/",
+              "title": "SARL BOYER JEAN FRANCOIS - Qualit'EnR",
+              "description": "SARL BOYER JEAN FRANCOIS - CHEVANCEAUX (17). 8 Route de la Pierre Folle 17210 CHEVANCEAUX. Contacter l'entreprise : Afficher le téléphone. 05 46 04 62 82.",
+              "position": 4
+            },
+            {
+              "url": "https://www.pappers.fr/entreprise/sarl-boyer-jean-francois-518912738",
+              "title": "Société SARL BOYER JEAN-FRANCOIS - Pappers",
+              "description": "SARL BOYER JEAN-FRANCOIS ; 8 ROUTE DE LA PIERRE FOLLE, 17210 CHEVANCEAUX · Travaux d'installation d'eau et de gaz en tous locaux · Entre 3 et 5 salariés (donnée ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-9868-763e-909d-7b1f9020236c"
+      }
+    },
+    {
+      "artisan": {
+        "id": "535088751",
+        "nom": "BROUCARET RODOLPHE",
+        "ville": "Gémozac",
+        "cp": "17260",
+        "tel": "06 71 04 45 30",
+        "metier": "Menuiserie, Isolation"
+      },
+      "query": "BROUCARET RODOLPHE Gémozac artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.eldo.com/pro/broucaret_rodolphe/",
+              "title": "Avis, Photos et Devis sur BROUCARET RODOLPHE à ... - Eldo",
+              "description": "Consultez 0 Avis et 0 Photos sur BROUCARET RODOLPHE (Fenetrier Portes-et-ouvertures) à GEMOZAC, noté 0/5 par ses clients sur Eldo ... https://www.facebook.com/ ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/53488456",
+              "title": "Broucaret Rodolphe à Gémozac - Menuiserie (adresse, horaires)",
+              "description": "Broucaret Rodolphe à Gémozac (17) Numéro de Téléphone 06 71 04 45 30 … par mail Chadeniers 1 rue Champagne 17260 Gémozac",
+              "position": 2
+            },
+            {
+              "url": "https://www.societe.com/societe/monsieur-rodolphe-broucaret-535088751.html",
+              "title": "monsieur rodolphe broucaret - Societe.com",
+              "description": "1 RUE DE CHAMPAGNE CHADENIERS, 17260 GEMOZAC. Appeler. Dossier d'urbanisme. Dirigeants de MONSIEUR RODOLPHE BROUCARET. Rodolphe BROUCARET. Né en: 1972 (54 ans).",
+              "position": 3
+            },
+            {
+              "url": "https://fr.mappy.com/poi/50b04a3284aeaa03832462ca",
+              "title": "Broucaret Rodolphe - Entreprise de menuiserie, 1 r Champagne, 17260 ...",
+              "description": "Broucaret Rodolphe (1 r Champagne, 17260 Gémozac) Fermé actuellement Avec Horaires Du lundi au vendredi : de 8h à 12h et de 14h à 18h … 9 Rue des Grands Champs,",
+              "position": 4
+            },
+            {
+              "url": "https://www.facebook.com/Gemozac/",
+              "title": "Gémozac - Facebook",
+              "description": "Au programme : - exposition de créations à la salle des fêtes - présence du PsyPapote Tour - atelier mosaïque et réalisation d'une fresque participative ouverte ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-9d47-77fb-861e-113f6151f0cb"
+      }
+    },
+    {
+      "artisan": {
+        "id": "403811706",
+        "nom": "SARL JOUGOURD",
+        "ville": "Gémozac",
+        "cp": "17260",
+        "tel": "05 46 94 20 24",
+        "metier": "Électricité, Chauffage, Ventilation"
+      },
+      "query": "SARL JOUGOURD Gémozac artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.facebook.com/sarljougourd/?locale=fr_FR",
+              "title": "Ets Jougourd Pulsat | Gémozac",
+              "description": "Ets Jougourd Pulsat, Gémozac. 173 followers ・ l'électricité générale. 5 ZA Pied Sec, Gémozac, France, 17260 ・ +33 5 46 94 20 24 sarl.jougourd@wanadoo.fr",
+              "position": 1
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/00251312",
+              "title": "Pulsat - 5 ZART Pied Sec 17260 Gémozac",
+              "description": "Bienvenue dans votre magasin PULSAT à Gémozac. Pulsat est le spécialiste électroménager et multimédia et de l'électricité générale.",
+              "position": 2
+            },
+            {
+              "url": "https://jougourd.com/contact/",
+              "title": "Contact – Jougourd Pulsaat",
+              "description": "Besoin d'un électricien à Gémozac ? Contactez Jougourd Pulsaat pour vos installations, dépannages ou projets électriques ... sarl.jougourd@wanadoo.fr.",
+              "position": 3
+            },
+            {
+              "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/403811706",
+              "title": "Société JOUGOURD ET FILS SARL à 17260 GEMOZAC",
+              "description": "La société JOUGOURD ET FILS SARL a été créée le 1 janvier 1996, il y a 31 ans. Sa forme juridique est Société à responsabilité limitée (sans autre ...",
+              "position": 4
+            },
+            {
+              "url": "https://www.facebook.com/sarljougourd/mentions/",
+              "title": "Ets Jougourd Pulsat (@sarljougourd) - Mentions",
+              "description": "Ets Jougourd Pulsat, Gémozac. est le spécialiste électroménager, l'électricité générale. +33 5 46 94 20 24. SARL Renolleau in Virollet, France.",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-a182-74ff-aa93-763c0deaea97"
+      }
+    },
+    {
+      "artisan": {
+        "id": "392532628",
+        "nom": "SOCIETE FERRARI-OSSATO",
+        "ville": "Gémozac",
+        "cp": "17260",
+        "tel": "05 46 94 67 42",
+        "metier": "Chauffage, PAC, Poêles bois"
+      },
+      "query": "SOCIETE FERRARI-OSSATO Gémozac artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.facebook.com/p/SARL-FERRARI-OSSATO-100063035451423/",
+              "title": "SARL FERRARI-OSSATO | Gémozac - Facebook",
+              "description": "Entreprise basée à Gémozac (17260) et spécialisée dans l'installation et le dépannage en froid, chaud et électricité + plomberie pour Particuliers et ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.hellowatt.fr/artisans/ferrari-ossato/?srsltid=AU7gw4Vypne9BgaFqYP32SUh1On4DtO5NM2TY54T3XUwpJhxjxg7CpDi",
+              "title": "FERRARI OSSATO : contact et avis",
+              "description": "Rating 4,8(22 939) · Free À Gémozac (17260), l'entreprise Ferrari Ossato offre une gamme variée de solutions de chauffage. Ses multiples certifications QualiBOIS et QualiBAT ...",
+              "position": 2
+            },
+            {
+              "url": "https://mon-installateur.atlantic.fr/Societe/FERRARI-OSSATO",
+              "title": "FERRARI-OSSATO - Installateur à GEMOZAC",
+              "description": "Aujourd'hui, l'entreprise est gérée par Jérôme OSSATO. Nous avons plusieurs compétences à notre actif : chauffage, froid, électricité et plomberie. N'hésitez ...",
+              "position": 3
+            },
+            {
+              "url": "https://www.facebook.com/100063035451423/",
+              "title": "SARL FERRARI-OSSATO (@100063035451423) - Photos",
+              "description": "Entreprise basée à Gémozac (17260) et spécialisée dans l'installation et le dépannage en froid, chaud et électricité + plomberie pour Particuliers et ...",
+              "position": 4
+            },
+            {
+              "url": "https://www.ferrari-ossato.com/",
+              "title": "Ets FERRARI-OSSATO | Installations Frigorifiques, Thermiques et ...",
+              "description": "L'entreprise FERRARI-OSSATO est située à Gémozac en Charente-Maritime (17). Créée en 1993 et forte de ses 24 ans d'expérience dans son domaine d'activité ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-a9cf-71a8-ae96-53830fa0bf09"
+      }
+    },
+    {
+      "artisan": {
+        "id": "449831346",
+        "nom": "COURPRON PASCAL",
+        "ville": "La Vallée",
+        "cp": "17250",
+        "tel": "05 46 95 01 96",
+        "metier": "Chauffage, PAC, Plomberie"
+      },
+      "query": "COURPRON PASCAL La Vallée artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.courpron-pascal-plomberie-lpa.fr/",
+              "title": "Courpron Pascal",
+              "description": "Dépannage de Chauffe-Eau · Réparation fuite d'eau · Panne chauffe-eau · Panne ballon d'eau · Réparation cumulus · Réparation chaudière · Dépannage radiateur · Panne ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/09010650",
+              "title": "Courpron Pascal à La Vallée - Plombier (adresse, horaires, avis)",
+              "description": "Rating 5,0(1) Depuis plus de 10 ans, notre entreprise prend en charge tous vos travaux de plomberie et de chauffage. Que ce soit pour une installation ou un dépannage, ...",
+              "position": 2
+            },
+            {
+              "url": "https://www.qualit-enr.org/entreprises/courpron-pascal/",
+              "title": "COURPRON PASCAL - Qualit'EnR",
+              "description": "Certificats de qualification. Télécharger le certificat. Audit vert. COURPRON PASCAL - LA VALLEE (17). 15 rue les Alberts 17250 LA VALLEE. Contacter l' ...",
+              "position": 3
+            },
+            {
+              "url": "https://www.meilleur-artisan.com/annuaire/courpron-pascal.567715.html",
+              "title": "Courpron pascal à La vallee - Meilleur-Artisan.com",
+              "description": "Implantée à LA VALLEE (17250) dans le département Charente-Maritime, l'entreprise COURPRON PASCAL est spécialisée dans l'activité de Chauffagiste (Second ...",
+              "position": 4
+            },
+            {
+              "url": "https://www.eldo.com/pro/courpron_pascal/",
+              "title": "Avis, Photos et Devis sur COURPRON PASCAL à LA VALLEE - Eldo",
+              "description": "Consultez 0 Avis et 0 Photos sur COURPRON PASCAL (Chauffagiste) à LA VALLEE, noté 0/5 par ses clients sur Eldo. Demandez un devis gratuitement.",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-aeb1-743c-a9d7-d4e7c97a7316"
+      }
+    },
+    {
+      "artisan": {
+        "id": "444566491",
+        "nom": "GUERINEAU JEAN",
+        "ville": "Marans",
+        "cp": "17230",
+        "tel": "05 46 01 19 59",
+        "metier": "Menuiserie extérieure"
+      },
+      "query": "GUERINEAU JEAN Marans artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.pagesjaunes.fr/pros/50061474",
+              "title": "Guerineau Jean Yves à Marans - Menuiserie (adresse, horaires)",
+              "description": "Guerineau Jean Yves à Marans (17) 4 rue Tivoli 17230 Marans. Guerineau Jean Yves accompagne votre projet de menuiserie avec soin et savoir-faire. est ouvert : ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.eldo.com/pro/jean_yves_guerineau/",
+              "title": "Avis, Photos et Devis sur JEAN-YVES GUERINEAU à MARANS - Eldo",
+              "description": "JEAN-YVES GUERINEAU (Fenetrier Portes-et-ouvertures) à MARANS, Adresse 4 RUE DE TIVOLI 17230 … artisans https://www.facebook.com/eldo.saas/",
+              "position": 2
+            },
+            {
+              "url": "https://www.meilleur-artisan.com/annuaire/jean-yves-guerineau.625591.html",
+              "title": "Jean-yves guerineau à Marans 17230 - Meilleur Artisan",
+              "description": "Rating 4,7(2 063) JEAN-YVES GUERINEAU. Menuisier 21 ans d'expérience. Adresse 4 rue de tivoli 17230 Marans.",
+              "position": 3
+            },
+            {
+              "url": "https://www.societe.com/societe/monsieur-jean-guerineau-444566491.html",
+              "title": "monsieur jean guerineau - Societe.com",
+              "description": "MONSIEUR JEAN GUERINEAU à MARANS (444566491). 444 566 491 00015. Adresse 4 RUE TIVOLI, 17230 MARANS … depuis le 6 janvier 2003 (23 ans)",
+              "position": 4
+            },
+            {
+              "url": "https://www.facebook.com/groups/1151941005528938/posts/1943565066366524/",
+              "title": "Bonjour . - Facebook",
+              "description": "5 Apr 2026 · Bonjour . Je cherche une personne compétente pour un changement de fenêtre. Merci de me contacter en MP . Bonne journée a tous.",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-b2e8-7459-83af-368fc1aaf745"
+      }
+    },
+    {
+      "artisan": {
+        "id": "392383956",
+        "nom": "ROYAN MENUISERIE 17",
+        "ville": "Royan",
+        "cp": "17200",
+        "tel": "05 46 05 82 50",
+        "metier": "Menuiserie extérieure"
+      },
+      "query": "ROYAN MENUISERIE 17 Royan artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.facebook.com/yannolivier17200/",
+              "title": "ROYAN Menuiserie - Facebook",
+              "description": "Rating 2,3(3) ROYAN Menuiserie, Royan. 97 followers · +33 5 46 05 82 50 OuvertureS 11 sept. chez vous par un artisan expert de notre réseau.",
+              "position": 1
+            },
+            {
+              "url": "https://www.facebook.com/yannolivier17200/posts/1577096417545229/",
+              "title": "ROYAN Menuiserie - Facebook",
+              "description": "11 Sept 2026 · Ce que vous voyez ici, c'est une porte-fenêtre en train de naître. À Cambrai, nos équipes l'assemblent aux dimensions exactes d'un projet ...",
+              "position": 2
+            },
+            {
+              "url": "https://2rm17.fr/menuiserie-royan",
+              "title": "Menuiserie Royan | 2RM17 | Devis Gratuit 48h",
+              "description": "Rating 4,9(86) Menuiserie Royan — 2RM17, artisan indépendant avec 25 ans d'expérience. Fenêtres PVC & alu, volets, portes d'entrée, stores, portails.",
+              "position": 3
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/06819148",
+              "title": "Royan Menuiserie 17 - 32 rue Antoine de Lavoisier 17200 Royan",
+              "description": "Notre entreprise, spécialisée en travaux de menuiserie, propose diverses prestations pour la fabrication de fermetures en bois, aluminium et PVC pour votre ...",
+              "position": 4
+            },
+            {
+              "url": "https://www.eldo.com/classement/aquitaine-limousin-poitou-charentes/charente-maritime/royan/fenetres-et-portes/baie-vitree-pvc/",
+              "title": "Professionnels Fenêtres et Portes à Royan : Avis, photos et devis - Eldo",
+              "description": "Rating 4,9(8) SARL R.M. 17 ROYAN MENUISERIE. Fenêtres et Portes, ROYAN. 8. Photo de profil du ... https://www.facebook.com/eldo.saas/ · https://www.instagram.com ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-b73f-776e-b312-77ed46d8f9d7"
+      }
+    },
+    {
+      "artisan": {
+        "id": "377928742",
+        "nom": "SAS DELAGE",
+        "ville": "Royan",
+        "cp": "17200",
+        "tel": "05 46 38 42 93",
+        "metier": "Chauffage, PAC, Chaudières"
+      },
+      "query": "SAS DELAGE Royan artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.pagesjaunes.fr/pros/00895192",
+              "title": "Delage SAS à Royan - Plombier (adresse, horaires, avis)",
+              "description": "Rating 5,0(2) Nous pourrons conseiller, installer et maintenir tous vos systèmes de plomberie-sanitaire, chauffage, climatisation, rafraichissement, et ventilation afin que ...",
+              "position": 1
+            },
+            {
+              "url": "https://www.facebook.com/delagemenuiseries/",
+              "title": "Delage Menuiseries (@delagemenuiseries) - Facebook",
+              "description": "Rating 5,0(1) La SAS DELAGE Menuiseries est Assembleur – Fabricant – Poseur de Menuiseries extérieures PVC. Créée en 1953, la société Delage Menuiseries est située à ...",
+              "position": 2
+            },
+            {
+              "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/sas-delage-ets-delage-377928742",
+              "title": "Société SAS DELAGE (ETS DELAGE) à 17200 ROYAN - SIREN 377 928 ...",
+              "description": "La société SAS DELAGE (ETS DELAGE) a été créée le 1 janvier 1990, il y a 37 ans. Sa forme juridique est SAS, société par actions simplifiée. Son domaine d' ...",
+              "position": 3
+            },
+            {
+              "url": "https://www.facebook.com/moniquedelagedecoration/",
+              "title": "Monique Delage Décoration | Royan - Facebook",
+              "description": "Rating 4,4(7) Monique Delage Décoration, Royan. 349 J'aime · 5 personnes étaient ici. Architecture d'intérieur - Conseils en aménagement - Suivi de chantier -...",
+              "position": 4
+            },
+            {
+              "url": "https://fr.mappy.com/poi/510bf14284ae4f5692e03ab3",
+              "title": "Delage SAS - Plombier, 6 r Louis Lépine, 17200 Royan (France)",
+              "description": "Rating 5,0(2) entretien de chauffe-eau, installateur de cabine de douche, plomberie en cuivre, remplacement de chauffe-eau, rénovation de salle de bain, installation de ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-bbdc-702d-9829-0de40d57171c"
+      }
+    },
+    {
+      "artisan": {
+        "id": "523902039",
+        "nom": "MOUGON STEPHANE",
+        "ville": "Saint-Médard-d'Aunis",
+        "cp": "17220",
+        "tel": "06 13 75 83 66",
+        "metier": "Électricité, Panneaux solaires"
+      },
+      "query": "MOUGON STEPHANE Saint-Médard-d'Aunis artisan site facebook",
+      "search": {
+        "success": true,
+        "data": {
+          "web": [
+            {
+              "url": "https://www.facebook.com/mougon.stephane/",
+              "title": "Mougon & fils | Saint-Médard-d'Aunis - Facebook",
+              "description": "Mougon & fils, Saint-Médard-d'Aunis. 'Aunis, France, 17220. Mail : contact@mougon-electricite.fr. Téléphone : 05 46 68 81 82",
+              "position": 1
+            },
+            {
+              "url": "https://www.eldo.com/pro/stephane_mougon/",
+              "title": "Avis, Photos et Devis sur STEPHANE MOUGON à Saint-Médard-d'Aunis",
+              "description": "Rating 4,7(7) L'entreprise Stéphane Mougon a été créé en 2006, elle est spécialisée dans l'électricité générale. Mr Mougon attache une grande importance à travailler avec ...",
+              "position": 2
+            },
+            {
+              "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/stephane-mougon-523902039",
+              "title": "Société STEPHANE MOUGON à 17220 SAINT-MEDARD-D'AUNIS",
+              "description": "Siège social de STEPHANE MOUGON ; Adresse. ZA DE CROIX FORT 24 RUE DU SOLEIL 17220 SAINT-MEDARD-D'AUNIS ; SIRET. 523 902 039 00016 ; Clef NIC. 00016 ; Activité ...",
+              "position": 3
+            },
+            {
+              "url": "https://www.pagesjaunes.fr/pros/12198842",
+              "title": "Sarl Stéphane Mougon à Saint Médard d'Aunis - Pages Jaunes",
+              "description": "Rating 5,0 · Review by William La Sarl Stéphane Mougon offre des services complets en électricité générale pour les entreprises et se charge de la vente et l'installation de systèmes de ...",
+              "position": 4
+            },
+            {
+              "url": "https://www.pappers.fr/entreprise/stephane-mougon-523902039",
+              "title": "Société STEPHANE MOUGON : Chiffre d'affaires, statuts ... - Pappers",
+              "description": "STEPHANE MOUGON ; ZA DE CROIX FORT, 24 RUE DU SOLEIL, 17220 SAINT-MEDARD-D'AUNIS · Travaux d'installation électrique dans tous locaux · Entre 3 et 5 salariés ( ...",
+              "position": 5
+            }
+          ]
+        },
+        "creditsUsed": 2,
+        "id": "01a11d0c-c041-7364-b79f-352e6248a6ba"
+      }
+    }
+  ]
+}

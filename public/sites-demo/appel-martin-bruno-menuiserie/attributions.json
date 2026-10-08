@@ -1,0 +1,30 @@
+[
+  {
+    "fichier": "hero-1600.webp",
+    "base": "hero",
+    "largeur": 1280,
+    "hauteur": 853,
+    "legende": "Assemblage d'onglet avec clés de renfort, détail",
+    "alt": "Assemblage d'onglet avec clés de renfort, détail",
+    "auteur": "Steve Ryan",
+    "licence": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+    "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  },
+  {
+    "fichier": "detail-1600.webp",
+    "base": "hero",
+    "largeur": 1280,
+    "hauteur": 853,
+    "legende": "Assemblage d'onglet avec clés de renfort, détail",
+    "alt": "Assemblage d'onglet avec clés de renfort, détail",
+    "auteur": "Steve Ryan",
+    "licence": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+    "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  }
+]

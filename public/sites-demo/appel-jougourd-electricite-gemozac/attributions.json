@@ -1,0 +1,30 @@
+[
+  {
+    "fichier": "hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Borne de connexion rapide sur conducteur cuivre",
+    "alt": "Borne de connexion rapide sur conducteur cuivre",
+    "auteur": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+    "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  },
+  {
+    "fichier": "detail-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1069,
+    "legende": "Salle de bains avec double vasque et robinetterie posée",
+    "alt": "Salle de bains avec double vasque et robinetterie posée",
+    "auteur": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+    "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  }
+]
