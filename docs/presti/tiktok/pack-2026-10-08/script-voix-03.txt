@@ -1,0 +1,7 @@
+Que faire quand toutes les factures sont dans des fichiers Excel en vrac ?
+Ces chiffres sont répartis dans une dizaine de fichiers Excel, faits à différents moments, avec des colonnes qui ne correspondent pas.
+Au moment de faire le point avec son comptable, tout prend des heures à reconstituer.
+Presti trie automatiquement ces fichiers et les range dans un tableau de bord qui affiche le chiffre d’affaires, les impayés et les données utiles pour la compta.
+L’artisan vérifie le classement et valide les informations avant de s’y fier.
+Un essai gratuit est disponible, le lien est dans la bio.
+Et chez vous, comment sont organisés vos chiffres ?

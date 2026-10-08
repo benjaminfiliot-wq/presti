@@ -1,0 +1,14 @@
+{
+  "id": "presti-01-facebook-0910",
+  "reseau": "facebook",
+  "local": "2026-10-09T13:00:00+02:00",
+  "utc": "2026-10-09T11:00:00Z",
+  "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-facebook.mp4",
+  "sha256": "aeb5a65abf0175fc2c18911e1a9f98fcc6d96ebf7bea417283bf32b95c6cf4d9",
+  "legende": "Combien de devis attendent encore une relance ?\n\nUn devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.\nVous relisez, modifiez et validez.\n\nDécouvrir Presti : https://prestiapp.fr\nCombien de devis attendent une réponse chez vous ?\n\n#Artisan #Devis #Presti",
+  "commentaire_epingle": "Combien de devis attendent une réponse chez vous ?",
+  "statut": "PREPARE_NON_PROGRAMME",
+  "reserve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+  "qa_format": "PASS",
+  "musique": "aucune"
+}

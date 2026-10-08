@@ -1,0 +1,14 @@
+{
+  "id": "presti-01-tiktok-0910",
+  "reseau": "tiktok",
+  "local": "2026-10-09T13:00:00+02:00",
+  "utc": "2026-10-09T11:00:00Z",
+  "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-tiktok.mp4",
+  "sha256": "cc6844517711a1942b69986aa835a1bd09e10cbb202bda436a020798a60d7f3a",
+  "legende": "Combien de devis attendent encore une relance ?\n\nUn devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.\nVous relisez, modifiez et validez.\n\nDécouvrir Presti : lien dans la bio.\nCombien de devis attendent une réponse chez vous ?\n\n#Artisan #Devis #Presti",
+  "commentaire_epingle": "Combien de devis attendent une réponse chez vous ?",
+  "statut": "PREPARE_NON_PROGRAMME",
+  "reserve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+  "qa_format": "PASS",
+  "musique": "aucune"
+}

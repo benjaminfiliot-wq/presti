@@ -1,0 +1,14 @@
+{
+  "id": "presti-03-tiktok-0910",
+  "reseau": "tiktok",
+  "local": "2026-10-09T20:00:00+02:00",
+  "utc": "2026-10-09T18:00:00Z",
+  "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-03-tiktok.mp4",
+  "sha256": "20d10cd0438bb291151e51b81db77229e79b0477d2639b470140440f1f62bde5",
+  "legende": "Plusieurs fichiers Excel. Un point clair avec le comptable.\n\nDéposez vos classeurs Excel .xlsx ou CSV. Vérifiez les colonnes proposées, les doublons et les rejets, puis validez votre rangement. Exportez le journal détaillé pour préparer le point avec votre comptable.\nLes lignes validées restent sur votre navigateur. Recettes ≠ encaissements ; les impayés proviennent des statuts de vos fichiers.\n\nDécouvrir Presti : lien dans la bio.\nVos chiffres sont dans combien de fichiers aujourd’hui ?\n\n#Artisan #Devis #Presti",
+  "commentaire_epingle": "Vos chiffres sont dans combien de fichiers aujourd’hui ?",
+  "statut": "PREPARE_NON_PROGRAMME",
+  "reserve": "Comptabilité Excel implementée localement le08/10 ; QA ciblée PASS, parcours connecté/commit/déploiement encore à valider. Les imports restent dans ce navigateur et ne suivent pas un autre appareil.",
+  "qa_format": "PASS",
+  "musique": "aucune"
+}

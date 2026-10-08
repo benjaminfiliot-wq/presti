@@ -1,0 +1,295 @@
+{
+  "genere_le": "2026-10-08T18:58:00.088Z",
+  "statut": "PREPARE_NON_PROGRAMME",
+  "timezone": "Europe/Paris",
+  "jour": "2026-10-09",
+  "publication_api": false,
+  "musique": "Aucune : voix originale de Benjamin seule sur les trois réseaux.",
+  "limites": [
+    "9 publications = 3 créations adaptées aux3réseaux, pas9filmsdistincts.",
+    "Pas de confirmation production importExcel, ni validation humaine artistique finale."
+  ],
+  "films": [
+    {
+      "n": "01",
+      "heure": "13:00",
+      "titre": "Combien de devis attendent encore une relance ?",
+      "sujet": "Un devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.",
+      "question": "Combien de devis attendent une réponse chez vous ?",
+      "preuve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+      "source": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v3\\presti-01-final-upload.mp4",
+      "source_sha256": "680b4d9dc692fefd643b60b8153873364e1dafdb388d4c7b3b5e9a44d9b222cc",
+      "voix": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v2\\voix\\presti-01\\voix-benj-01.mp3",
+      "voix_sha256": "de04f25d945d6aea1e467a19da11bb7c4358bdb1749ddde7e4bec7b7ebe87276",
+      "master": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-voix-seule.mp4",
+      "sha256": "6f81f03d18c5d832816ee5ff5c638a6e2ef9acd296fae97ba84d75cdc53baad2",
+      "audio": {
+        "input_i": "-14.78",
+        "input_tp": "-4.41",
+        "input_lra": "3.10",
+        "input_thresh": "-25.28",
+        "output_i": "-14.17",
+        "output_tp": "-3.63",
+        "output_lra": "2.50",
+        "output_thresh": "-24.59",
+        "normalization_type": "dynamic",
+        "target_offset": "0.17"
+      },
+      "infos": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "40.033333",
+          "size": "7493860"
+        }
+      },
+      "coupes": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\presti-01-v6\\coupes.json"
+    },
+    {
+      "n": "02",
+      "heure": "16:00",
+      "titre": "Le chantier avance. Le client attend.",
+      "sujet": "Un client demande un devis alors que vous travaillez. Avec votre lien Presti, il vous transmet sa demande ; vous relisez et validez la réponse.",
+      "question": "Votre plus gros souci : répondre vite ou faire le devis ?",
+      "preuve": "Script presti-02/script.mjs ; demandes via le lien partagé, pas branchement automatique de Google/Facebook.",
+      "source": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v3\\presti-02-final-upload.mp4",
+      "source_sha256": "caf698815aff6fcb29bc7d3bebf46e92c533808b69fe3d0dc6e32854aaa68b0f",
+      "voix": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v2\\voix\\presti-02\\voix-benj-02.mp3",
+      "voix_sha256": "1d0c4e5367b9548781b6baaa8217410016fe4f77d6c1dc7a54216d5f817b1e66",
+      "master": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-02-voix-seule.mp4",
+      "sha256": "d6940393be6c5f3ce67c5647cb62536237a7e7b7bb8c019c27f0363865df038d",
+      "audio": {
+        "input_i": "-14.70",
+        "input_tp": "-4.35",
+        "input_lra": "2.20",
+        "input_thresh": "-25.11",
+        "output_i": "-14.07",
+        "output_tp": "-3.70",
+        "output_lra": "1.80",
+        "output_thresh": "-24.43",
+        "normalization_type": "dynamic",
+        "target_offset": "0.07"
+      },
+      "infos": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "33.433333",
+          "size": "7765512"
+        }
+      },
+      "coupes": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\presti-02\\coupes.json"
+    },
+    {
+      "n": "03",
+      "heure": "20:00",
+      "titre": "Plusieurs fichiers Excel. Un point clair avec le comptable.",
+      "sujet": "Déposez vos classeurs Excel .xlsx ou CSV. Vérifiez les colonnes proposées, les doublons et les rejets, puis validez votre rangement. Exportez le journal détaillé pour préparer le point avec votre comptable.",
+      "question": "Vos chiffres sont dans combien de fichiers aujourd’hui ?",
+      "preuve": "Comptabilité Excel implementée localement le08/10 ; QA ciblée PASS, parcours connecté/commit/déploiement encore à valider. Les imports restent dans ce navigateur et ne suivent pas un autre appareil.",
+      "source": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v3\\presti-03-final-upload.mp4",
+      "source_sha256": "5b263f055a403fc671f734d32a13f1427981a7bb25d997f05e2955ce007fd26e",
+      "voix": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\v2\\voix\\presti-03\\voix-benj-03.mp3",
+      "voix_sha256": "36c2b192f432105ee735bf5daff5da339117d09d3e5fc8749304de771aa8fb5a",
+      "master": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-03-voix-seule.mp4",
+      "sha256": "acc3725224a32c04e432cd3ec0021bfd82760e5e200665ec5f3d1793f95d0c2e",
+      "audio": {
+        "input_i": "-14.48",
+        "input_tp": "-4.41",
+        "input_lra": "1.50",
+        "input_thresh": "-24.83",
+        "output_i": "-14.02",
+        "output_tp": "-3.85",
+        "output_lra": "1.40",
+        "output_thresh": "-24.33",
+        "normalization_type": "dynamic",
+        "target_offset": "0.02"
+      },
+      "infos": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "30.900000",
+          "size": "8139116"
+        }
+      },
+      "coupes": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\presti-03\\coupes.json"
+    }
+  ],
+  "publications": [
+    {
+      "id": "presti-01-tiktok-0910",
+      "reseau": "tiktok",
+      "local": "2026-10-09T13:00:00+02:00",
+      "utc": "2026-10-09T11:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-tiktok.mp4",
+      "sha256": "cc6844517711a1942b69986aa835a1bd09e10cbb202bda436a020798a60d7f3a",
+      "legende": "Combien de devis attendent encore une relance ?\n\nUn devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.\nVous relisez, modifiez et validez.\n\nDécouvrir Presti : lien dans la bio.\nCombien de devis attendent une réponse chez vous ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Combien de devis attendent une réponse chez vous ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-01-instagram-0910",
+      "reseau": "instagram",
+      "local": "2026-10-09T13:00:00+02:00",
+      "utc": "2026-10-09T11:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-instagram.mp4",
+      "sha256": "4619f38e4b35cc1446dd3f44dbb5ecc73f562f57ba1b9c3d2de3ef58a5ea7719",
+      "legende": "Combien de devis attendent encore une relance ?\n\nUn devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.\nVous relisez, modifiez et validez.\n\nDécouvrir Presti : lien dans la bio.\nCombien de devis attendent une réponse chez vous ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Combien de devis attendent une réponse chez vous ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-01-facebook-0910",
+      "reseau": "facebook",
+      "local": "2026-10-09T13:00:00+02:00",
+      "utc": "2026-10-09T11:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-01-facebook.mp4",
+      "sha256": "aeb5a65abf0175fc2c18911e1a9f98fcc6d96ebf7bea417283bf32b95c6cf4d9",
+      "legende": "Combien de devis attendent encore une relance ?\n\nUn devis reste sans réponse pendant que vous êtes sur le chantier. Gardez vos demandes, vos devis et vos factures au même endroit.\nVous relisez, modifiez et validez.\n\nDécouvrir Presti : https://prestiapp.fr\nCombien de devis attendent une réponse chez vous ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Combien de devis attendent une réponse chez vous ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Scripts existants presti-01-v6/script.mjs ; vérifier en production la relance et l’import Excel avant diffusion.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-02-tiktok-0910",
+      "reseau": "tiktok",
+      "local": "2026-10-09T16:00:00+02:00",
+      "utc": "2026-10-09T14:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-02-tiktok.mp4",
+      "sha256": "13919d21cb630116bf76c495421ff4a1e767e2a964d1f01394506b800fa6b791",
+      "legende": "Le chantier avance. Le client attend.\n\nUn client demande un devis alors que vous travaillez. Avec votre lien Presti, il vous transmet sa demande ; vous relisez et validez la réponse.\nLa demande arrive par votre lien partagé ; vous gardez la main sur la réponse.\n\nDécouvrir Presti : lien dans la bio.\nVotre plus gros souci : répondre vite ou faire le devis ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Votre plus gros souci : répondre vite ou faire le devis ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Script presti-02/script.mjs ; demandes via le lien partagé, pas branchement automatique de Google/Facebook.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-02-instagram-0910",
+      "reseau": "instagram",
+      "local": "2026-10-09T16:00:00+02:00",
+      "utc": "2026-10-09T14:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-02-instagram.mp4",
+      "sha256": "7107f6bd626af0f8df147aff6cbaa6e12dc3f548e3969bc4eb6f1d1493c0a6dc",
+      "legende": "Le chantier avance. Le client attend.\n\nUn client demande un devis alors que vous travaillez. Avec votre lien Presti, il vous transmet sa demande ; vous relisez et validez la réponse.\nLa demande arrive par votre lien partagé ; vous gardez la main sur la réponse.\n\nDécouvrir Presti : lien dans la bio.\nVotre plus gros souci : répondre vite ou faire le devis ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Votre plus gros souci : répondre vite ou faire le devis ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Script presti-02/script.mjs ; demandes via le lien partagé, pas branchement automatique de Google/Facebook.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-02-facebook-0910",
+      "reseau": "facebook",
+      "local": "2026-10-09T16:00:00+02:00",
+      "utc": "2026-10-09T14:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-02-facebook.mp4",
+      "sha256": "e1d0c059e0a8a5c1eb3c453dcf8b22b92522bc7e88474c3d88ca2216d79d8df0",
+      "legende": "Le chantier avance. Le client attend.\n\nUn client demande un devis alors que vous travaillez. Avec votre lien Presti, il vous transmet sa demande ; vous relisez et validez la réponse.\nLa demande arrive par votre lien partagé ; vous gardez la main sur la réponse.\n\nDécouvrir Presti : https://prestiapp.fr\nVotre plus gros souci : répondre vite ou faire le devis ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Votre plus gros souci : répondre vite ou faire le devis ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Script presti-02/script.mjs ; demandes via le lien partagé, pas branchement automatique de Google/Facebook.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-03-tiktok-0910",
+      "reseau": "tiktok",
+      "local": "2026-10-09T20:00:00+02:00",
+      "utc": "2026-10-09T18:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-03-tiktok.mp4",
+      "sha256": "20d10cd0438bb291151e51b81db77229e79b0477d2639b470140440f1f62bde5",
+      "legende": "Plusieurs fichiers Excel. Un point clair avec le comptable.\n\nDéposez vos classeurs Excel .xlsx ou CSV. Vérifiez les colonnes proposées, les doublons et les rejets, puis validez votre rangement. Exportez le journal détaillé pour préparer le point avec votre comptable.\nLes lignes validées restent sur votre navigateur. Recettes ≠ encaissements ; les impayés proviennent des statuts de vos fichiers.\n\nDécouvrir Presti : lien dans la bio.\nVos chiffres sont dans combien de fichiers aujourd’hui ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Vos chiffres sont dans combien de fichiers aujourd’hui ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Comptabilité Excel implementée localement le08/10 ; QA ciblée PASS, parcours connecté/commit/déploiement encore à valider. Les imports restent dans ce navigateur et ne suivent pas un autre appareil.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-03-instagram-0910",
+      "reseau": "instagram",
+      "local": "2026-10-09T20:00:00+02:00",
+      "utc": "2026-10-09T18:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-03-instagram.mp4",
+      "sha256": "c91d1bec2fa5dfa10c4a0b8fab20520e05a671b081cbf9fea76bffb36829e0f9",
+      "legende": "Plusieurs fichiers Excel. Un point clair avec le comptable.\n\nDéposez vos classeurs Excel .xlsx ou CSV. Vérifiez les colonnes proposées, les doublons et les rejets, puis validez votre rangement. Exportez le journal détaillé pour préparer le point avec votre comptable.\nLes lignes validées restent sur votre navigateur. Recettes ≠ encaissements ; les impayés proviennent des statuts de vos fichiers.\n\nDécouvrir Presti : lien dans la bio.\nVos chiffres sont dans combien de fichiers aujourd’hui ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Vos chiffres sont dans combien de fichiers aujourd’hui ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Comptabilité Excel implementée localement le08/10 ; QA ciblée PASS, parcours connecté/commit/déploiement encore à valider. Les imports restent dans ce navigateur et ne suivent pas un autre appareil.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    },
+    {
+      "id": "presti-03-facebook-0910",
+      "reseau": "facebook",
+      "local": "2026-10-09T20:00:00+02:00",
+      "utc": "2026-10-09T18:00:00Z",
+      "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-03-facebook.mp4",
+      "sha256": "ec37a1b35bb560f65637e86dce1d68733966b040f7331eafa8c8438cf7eeb891",
+      "legende": "Plusieurs fichiers Excel. Un point clair avec le comptable.\n\nDéposez vos classeurs Excel .xlsx ou CSV. Vérifiez les colonnes proposées, les doublons et les rejets, puis validez votre rangement. Exportez le journal détaillé pour préparer le point avec votre comptable.\nLes lignes validées restent sur votre navigateur. Recettes ≠ encaissements ; les impayés proviennent des statuts de vos fichiers.\n\nDécouvrir Presti : https://prestiapp.fr\nVos chiffres sont dans combien de fichiers aujourd’hui ?\n\n#Artisan #Devis #Presti",
+      "commentaire_epingle": "Vos chiffres sont dans combien de fichiers aujourd’hui ?",
+      "statut": "PREPARE_NON_PROGRAMME",
+      "reserve": "Comptabilité Excel implementée localement le08/10 ; QA ciblée PASS, parcours connecté/commit/déploiement encore à valider. Les imports restent dans ce navigateur et ne suivent pas un autre appareil.",
+      "qa_format": "PASS",
+      "musique": "aucune"
+    }
+  ]
+}
