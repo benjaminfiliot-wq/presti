@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Tableau from './Tableau'
+import ComptaArtisan from './ComptaArtisan'
 import { calculer, type LigneDemande, type LigneDevis, type LigneFacture } from '@/lib/tableau-de-bord/calculer'
 
 // Tableau de bord de gestion : cette page LIT et ne fait rien d'autre. Chaque requête porte
@@ -31,7 +32,10 @@ export default function Chiffres() {
       if (!data.session) { router.replace('/login'); return }
       const uid = data.session.user.id
       const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()
+      if (!vivant) return
       if (!prof) { router.replace('/onboarding'); return }
+      // Le rangement CSV est local : il ne dépend pas du chargement des autres chiffres.
+      setArtisanId(uid)
       const [f, d, l] = await Promise.all([
         supabase.from('factures').select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de').eq('artisan_id', uid).order('date_emission', { ascending: false }).limit(LIMITE),
         supabase.from('devis').select('id, artisan_id, numero, client_nom, statut, date_emission, total_ttc, envoye_le, accepte_le, created_at, lead_id, validite_jours').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE),
@@ -42,7 +46,6 @@ export default function Chiffres() {
       const factures = (f.data ?? []) as LigneFacture[]
       const devis = (d.data ?? []) as LigneDevis[]
       const demandes = (l.data ?? []) as LigneDemande[]
-      setArtisanId(uid)
       setMaintenant(new Date())
       setCharge({ factures, devis, demandes, tronque: [factures, devis, demandes].some((x) => x.length >= LIMITE) })
     })
@@ -63,6 +66,7 @@ export default function Chiffres() {
       ) : (
         <Tableau i={indicateurs} tronque={charge.tronque} />
       )}
+      {artisanId && <ComptaArtisan artisanId={artisanId} />}
     </AppShell>
   )
 }

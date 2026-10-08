@@ -103,3 +103,66 @@
 @media (prefers-reduced-motion: reduce) {
   .tdb-chart .tdb-bar { animation: none }
 }
+
+/* Comptabilité importée : le rangement reste lisible avant tout engagement. */
+.ca { display: grid; gap: 16px; margin-top: 28px; min-width: 0; color: var(--ink) }
+.ca *, .ca *::before, .ca *::after { box-sizing: border-box }
+.ca .psh-panel { padding: 18px; min-width: 0 }
+.ca h2, .ca h3, .ca h4 { margin: 0 0 10px; color: var(--ink) }
+.ca h2 { font-size: clamp(23px, 3vw, 32px) }
+.ca h3 { font-size: 20px }
+.ca h4 { font-size: 15px }
+.ca p { line-height: 1.5 }
+.ca-eyebrow { margin: 0 0 5px; color: var(--accent-ink); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700 }
+.ca-intro, .ca-entete { display: flex; justify-content: space-between; align-items: start; gap: 18px }
+.ca-intro p { max-width: 60ch; margin: 0 0 8px }
+.ca-note { color: var(--muted); font-size: 12px; margin: 0 }
+.ca-depot, .ca-primaire { display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: #0A0C11; border: 0; border-radius: var(--radius-sm); padding: 11px 16px; font-weight: 700; cursor: pointer; white-space: nowrap }
+.ca-depot input { position: absolute; width: 1px; height: 1px; opacity: 0 }
+.ca-depot:focus-within, .ca button:focus-visible, .ca select:focus-visible, .ca textarea:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px }
+.ca-primaire:disabled { opacity: .45; cursor: not-allowed }
+.ca-secondaire { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); color: var(--ink); padding: 8px 10px; cursor: pointer }
+.ca-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end }
+.ca-message { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); margin: 0 }
+.ca-compteurs { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0 }
+.ca-compteurs span { padding: 8px 10px; background: var(--surface-2); border-radius: var(--radius-sm); font-size: 13px }
+.ca-fichier { border-top: 1px solid var(--line); padding: 14px 0 }
+.ca-fichier > label { display: block; font-size: 13px; color: var(--muted) }
+.ca select { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 7px; max-width: 100% }
+.ca-colonnes { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 9px; margin-top: 13px }
+.ca-colonnes label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere }
+.ca-erreur { color: var(--crit) }
+.ca-defile { overflow-x: auto; max-height: 330px; overflow-y: auto }
+.ca table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px }
+.ca th, .ca td { padding: 8px; border-bottom: 1px solid var(--line-2); text-align: left }
+.ca th { color: var(--muted) }
+.ca-apercu { margin-bottom: 12px }
+.ca-rangement ul { padding-left: 20px; color: var(--crit); font-size: 13px }
+.ca-tableau { display: grid; gap: 14px }
+.ca-exemple { border: 1px dashed var(--line); border-radius: var(--radius); padding: 15px }
+.ca-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px }
+.ca-kpis article { min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 15px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius) }
+.ca-kpis span { color: var(--muted); font-size: 12px }
+.ca-kpis b { font-family: var(--font-display); font-size: clamp(19px, 2vw, 28px); overflow-wrap: anywhere }
+.ca-kpis small { color: var(--muted) }
+.ca-kpis .ca-impaye { border-color: color-mix(in srgb, var(--crit) 40%, var(--line)) }
+.ca-impaye b, .ca-impayes-liste strong { color: var(--crit) }
+.ca-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+.ca-impayes-liste, .ca-categories { list-style: none; margin: 0; padding: 0 }
+.ca-impayes-liste li, .ca-categories li { display: flex; gap: 10px; align-items: center; justify-content: space-between; border-top: 1px solid var(--line-2); padding: 10px 0 }
+.ca-impayes-liste li > div { display: grid; min-width: 0 }
+.ca-impayes-liste small { color: var(--muted) }
+.ca-impayes-liste strong { white-space: nowrap }
+.ca-mois { display: grid; gap: 12px }
+.ca-mois-ligne { display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: 12px; font-size: 12px }
+.ca-mois-ligne small { color: var(--muted) }
+.ca-barres { display: grid; gap: 3px }
+.ca-barres span { display: block; height: 7px; background: var(--accent); border-radius: 4px; transform-origin: left; animation: ca-monter .5s var(--ease-apple, ease-out) both }
+.ca-barres span + span { background: var(--warn) }
+.ca-impaye, .ca-impayes-liste strong { animation: ca-rouge .5s ease-out both }
+@keyframes ca-monter { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+@keyframes ca-rouge { from { opacity: .55 } to { opacity: 1 } }
+.ca-brouillon textarea { display: block; width: 100%; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px; font: inherit }
+@media (max-width: 900px) { .ca-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) } .ca-grille { grid-template-columns: 1fr } }
+@media (max-width: 600px) { .ca-intro, .ca-entete { flex-direction: column } .ca-depot { white-space: normal } .ca-mois-ligne { grid-template-columns: 1fr } .ca-impayes-liste li { flex-wrap: wrap } }
+@media (prefers-reduced-motion: reduce) { .ca-barres span, .ca-impaye, .ca-impayes-liste strong { animation: none } }
