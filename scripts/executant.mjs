@@ -22,6 +22,7 @@ import path from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { PROMPT } from './antigravity.mjs'
+import { executerHaiku } from './haiku-agent.mjs'
 // Sans conversation persistante, le duo (plans/duo-antigravity.md) se joue en pas successifs : « pas » rejoue le fichier de prompt.
 const PROMPT_DUO = (agent, tache) => PROMPT(agent, tache) + '\nMode duo : fais seulement le pas 1 — lis la tâche, lance sa commande verifier UNE fois (--statique si c’est site-qa), note les lignes ÉCHEC — puis rends compte en trois lignes et arrête-toi : Claude Code dicte le pas suivant.'
 
@@ -47,6 +48,9 @@ const MOTEURS = {
   // Modèle par défaut gpt-6-sol (« workhorse model for coding and everyday work »). Tâches légères et répétitives
   // (tri, relances, veille) : --model=gpt-6-luna (« fast and affordable ») ; très gros chantier : --model=gpt-6-astra.
   codex: { paquet: null, modele: 'gpt-6-sol', cle: null, auth: /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i },
+  'codex-gratuit': { paquet: null, modele: 'gpt-oss:120b-cloud', cle: null, auth: /401 Unauthorized|403 Forbidden/i },
+  antigravity: { paquet: null, modele: 'flash', cle: null, auth: /RESOURCE_EXHAUSTED|quota/i },
+  haiku: { paquet: null, modele: 'claude-haiku-5-5', cle: null, auth: /authentication_error/i },
 }
 const args = process.argv.slice(2)
 const commande = args[0]
@@ -108,17 +112,29 @@ function argvCodex(dernier, modele, instruction) {
   return ['exec', '-C', RACINE, ...(vault ? ['--add-dir', vault] : []), ...(src ? ['--add-dir', src] : []), '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true', '--color', 'never', '-o', dernier, ...(modele ? ['-m', modele] : []), ...(effortCodex() ? ['-c', 'model_reasoning_effort=' + effortCodex()] : []), instruction]
 }
 
+function argvCodexGratuit(dernier, modele, instruction) {
+  const base = process.env.PRESTI_CODEX_GRATUIT_URL
+  if (!base || !/^https?:\/\//.test(base)) throw new Error('PRESTI_CODEX_GRATUIT_URL absent ou invalide')
+  if (!process.env.PRESTI_CODEX_GRATUIT_CLE) throw new Error('clé du fournisseur gratuit absente du coffre')
+  return [...argvCodex(dernier, modele, instruction).slice(0, -1),
+    '-c', 'model_provider=presti_gratuit', '-c', 'model_providers.presti_gratuit.name="presti_gratuit"',
+    '-c', `model_providers.presti_gratuit.base_url=${JSON.stringify(base)}`,
+    '-c', 'model_providers.presti_gratuit.env_key=PRESTI_CODEX_GRATUIT_CLE',
+    '-c', 'model_providers.presti_gratuit.wire_api=responses', instruction]
+}
+
 // Lance le CLI en mode sans les mains : -p (prompt) + --yolo (outils auto-approuvés), dans le dépôt. Le prompt long vit dans un
 // fichier : on ne passe à la ligne de commande qu'une phrase sans guillemets (Windows + shell:true n'aiment ni les retours
 // à la ligne ni les backticks).
 function executer(moteur, instruction, modele, journal, delaiMs) {
+  if (moteur === 'haiku') return executerHaiku({ racine: RACINE, instruction, journal, delaiMs })
   const m = MOTEURS[moteur]
-  const codex = moteur === 'codex'
+  const codex = moteur === 'codex' || moteur === 'codex-gratuit'
   // Codex : binaire lancé sans shell (les arguments passent tels quels, retours à la ligne compris) ; son dernier message va
   // dans un fichier à côté du journal, relu à la fin pour y trouver la ligne de verdict.
   const dernier = journal.replace(/\.log$/, '') + '.dernier-message.md'
   const argv = codex
-    ? argvCodex(dernier, modele, instruction)
+    ? (moteur === 'codex-gratuit' ? argvCodexGratuit(dernier, modele, instruction) : argvCodex(dernier, modele, instruction))
     : ['-y', m.paquet, '-p', `"${instruction.replace(/"/g, '')}"`, '--yolo', ...(modele ? ['-m', modele] : [])]
   return new Promise((resolve) => {
     const debut = Date.now()
@@ -195,10 +211,10 @@ function noterQuota(moteur, agent, tache, sortie) {
   return jusqua
 }
 // Codex vient de répondre : si c'est « hit your usage limit », on note le quota, on rend la tâche et on sort en code 3.
-function signalerQuota(agent, tache, sortie) {
-  if (!/hit your usage limit/i.test(sortie)) return false
-  const jusqua = noterQuota('codex', agent, tache, sortie)
-  console.log(`\n✗ codex : quota de l'abonnement épuisé, à sec jusqu'au ${dateLisible(jusqua)}. ${tache} est rendue à la file : node scripts/antigravity.mjs lancer ag-<n> --tache=${tache} pour la confier à Antigravity (le choix reste à Claude Code).`)
+function signalerQuota(agent, tache, sortie, moteur = 'codex') {
+  if (!/hit your usage limit|rate limit exceeded|quota exceeded|RESOURCE_EXHAUSTED/i.test(sortie)) return false
+  const jusqua = noterQuota(moteur, agent, tache, sortie)
+  console.log(`\n✗ ${moteur} : quota épuisé jusqu'au ${dateLisible(jusqua)}. ${tache} est rendue à la file.`)
   process.exitCode = 3
   return true
 }
@@ -235,7 +251,7 @@ function verifierHorsBac(tache) {
   return { pass: r.status === 0 && new RegExp(`${tache}\\s*:\\s*PASS`).test(sortie), sortie }
 }
 
-async function boucleCodex(agent, tache, modele, fPrompt, journal) {
+async function boucleCodex(agent, tache, modele, fPrompt, journal, moteur = 'codex') {
   const tours = Math.max(1, Number(option('boucle', '3')) || 3)
   const minutes = Number(option('minutes', '40')) * 60_000
   const relPrompt = path.relative(RACINE, fPrompt).split(path.sep).join('/')
@@ -243,12 +259,12 @@ async function boucleCodex(agent, tache, modele, fPrompt, journal) {
     const instruction = tour === 1
       ? `Lis le fichier ${relPrompt} du depot et fais exactement ce qu il dit, du debut a la fin.`
       : `Relis le fichier ${relPrompt} du depot : sa derniere section contient le retour du verificateur lance hors bac a sable. Corrige ce qui echoue, dans le perimetre de la tache ${tache}, puis termine par la ligne ${tache} : PRÊT.`
-    const r = await executer('codex', instruction, modele, journal, minutes)
+    const r = await executer(moteur, instruction, modele, journal, minutes)
     if (r.auth) { console.log('\n✗ codex : pas authentifié (voir sonde)'); process.exit(1) }
     // Quota de l'abonnement ChatGPT épuisé (vu le 14/09/2026 à 22 h 16 : « You've hit your usage limit … try again at Sep 15th,
     // 2026 2:17 AM ») : les tours suivants échoueraient en une seconde chacun. On s'arrête, on note l'échéance dans
     // quotas.json et on rend la tâche à la file (026-115 : elle ne reste plus verrouillée, comme le 17/09).
-    if (signalerQuota(agent, tache, r.sortie)) return
+    if (signalerQuota(agent, tache, r.sortie, moteur)) return
     const enCours = path.join(ORCH, 'en-cours', `${tache}.md`)
     if (!fs.existsSync(enCours)) { console.log(`\n✗ tour ${tour} : ${tache} n'est pas dans en-cours/ (Codex ne l'a pas prise ?) · journal ${path.relative(RACINE, journal)}`); process.exit(1) }
     const v = verifierHorsBac(tache)
@@ -275,20 +291,26 @@ async function lancer(agent, tache, moteur, modele) {
   if (option('a-blanc')) {
     const journal = path.join(TRAVAIL, `${tache}-${horodatage()}.log`)
     const dernier = journal.replace(/\.log$/, '') + '.dernier-message.md'
-    const argv = moteur === 'codex'
-      ? argvCodex(dernier, modele, '<prompt de la tâche>')
+    const argv = moteur === 'codex' || moteur === 'codex-gratuit'
+      ? (moteur === 'codex-gratuit' ? argvCodexGratuit(dernier, modele, '<prompt de la tâche>') : argvCodex(dernier, modele, '<prompt de la tâche>'))
       : ['-y', MOTEURS[moteur].paquet, '-p', '"<prompt de la tâche>"', '--yolo', ...(modele ? ['-m', modele] : [])]
     console.log(JSON.stringify({ moteur, argv, cwd: RACINE }))
     process.exit(0)
   }
   if (refuserSiQuota(moteur, tache)) return
+  if (moteur === 'antigravity') {
+    const r = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'antigravity.mjs'), 'lancer', agent, `--tache=${tache}`, `--model=${modele || 'flash'}`], { cwd: RACINE, encoding: 'utf8', windowsHide: true })
+    process.stdout.write(r.stdout || '')
+    if (r.status !== 0) throw new Error('Antigravity indisponible')
+    return
+  }
   const prompt = (option('duo') ? PROMPT_DUO(agent, tache) : PROMPT(agent, tache)) + (moteur === 'codex' && !option('duo') ? SUPPLEMENT_CODEX(tache) : '')
   const fPrompt = path.join(TRAVAIL, `${tache}.prompt.md`)
   fs.writeFileSync(fPrompt, `# Tâche ${tache} — agent ${agent} — ${maintenant()}\n\n${prompt}\n`)
   const journal = path.join(TRAVAIL, `${tache}-${horodatage()}.log`)
   fs.appendFileSync(AGENTS, JSON.stringify({ agent, tache, modele: `${moteur}:${modele || 'défaut'}`, conversationId: `executant-${path.basename(journal, '.log')}`, date: maintenant() }) + '\n')
   console.log(`✓ ${agent} → ${tache} lancé (${moteur}${modele ? ' ' + modele : ''}) · prompt ${path.relative(RACINE, fPrompt)} · journal ${path.relative(RACINE, journal)}`)
-  if (moteur === 'codex' && !option('duo')) return boucleCodex(agent, tache, modele, fPrompt, journal)
+  if ((moteur === 'codex' || moteur === 'codex-gratuit' || moteur === 'haiku') && !option('duo')) return boucleCodex(agent, tache, modele, fPrompt, journal, moteur)
   const r = await executer(moteur, `Lis le fichier ${path.relative(RACINE, fPrompt).split(path.sep).join('/')} du depot et fais exactement ce qu il dit, du debut a la fin.`, modele, journal, Number(option('minutes', '40')) * 60_000)
   if (r.auth) { console.log(`\n✗ ${moteur} : pas authentifié (voir sonde)`); process.exit(1) }
   if (moteur === 'codex' && signalerQuota(agent, tache, r.sortie)) return
@@ -321,7 +343,14 @@ if (estPrincipal) {
   const moteur = option('moteur', 'codex')
   if (!MOTEURS[moteur]) { console.error(`moteur inconnu : ${moteur} (codex)`); process.exit(2) }
   switch (commande) {
-    case 'sonde': process.exit(await sonde(moteur))
+    case 'sonde': {
+      if (moteur === 'antigravity') {
+        const r = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'antigravity.mjs'), 'sonde', '--model=flash_lite'], { cwd: RACINE, encoding: 'utf8', windowsHide: true })
+        process.stdout.write(r.stdout || '')
+        process.exitCode = r.status === 0 ? 0 : 1
+      } else process.exitCode = await sonde(moteur)
+      break
+    }
     case 'lancer': if (!positionnels[0]) { console.error('lancer <agent> --tache=<id> [--moteur=codex] [--model=…] [--duo]'); process.exit(2) } await lancer(positionnels[0], option('tache'), moteur, option('model', MOTEURS[moteur].modele)); break
     case 'pas': if (positionnels.length < 2) { console.error('pas <agent> --tache=<id> <message…>'); process.exit(2) } await pas(positionnels[0], option('tache'), positionnels.slice(1).join(' '), moteur, option('model', MOTEURS[moteur].modele)); break
     case 'etat': etat(); break
