@@ -27,7 +27,7 @@ export type Action =
   // Livraison et retouche du pack pubs locales : 'pack_livre' et 'pack_refaire'.
   | 'pack_livre' | 'pack_refaire'
   | 'pause_generale'
-  | 'decision_tranchee' | 'appel_rendu' | 'agent_pause' | 'consigne_transmise'
+  | 'decision_tranchee' | 'appel_rendu' | 'agent_pause' | 'consigne_transmise' | 'demande_creee'
   | 'envoi_froid_ouvert' | 'technologie_reprise' | 'canal_rouvert' | 'modele_leve' | 'palier_plafond'
 
 export type Entree = {
