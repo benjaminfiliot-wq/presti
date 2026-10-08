@@ -1,0 +1,57 @@
+{
+  "artisan": "GB Unergy 16",
+  "siren": "105592232",
+  "date": "2026-10-08T19:00:02.729Z",
+  "firecrawl": [
+    {
+      "id": "105592232",
+      "query": "GB UNERGY 16 Mouthiers sur Boeme site Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://www.facebook.com/mouthiersunavenircitoyen/",
+            "title": "Mouthiers, un Avenir Citoyen - Facebook",
+            "description": "Citoyennes et citoyens engagés pour Mouthiers, nous voulons mettre notre énergie et nos compétences au service de notre village. Issus d'horizons divers, ...",
+            "position": 1
+          },
+          {
+            "url": "https://www.facebook.com/p/Pr%C3%A9servons-Mouthiers-100086141532940/",
+            "title": "Préservons Mouthiers | Mouthiers-sur-Boëme - Facebook",
+            "description": "Rating 5,0(2) Bonjour à toutes et tous, Nous avons le plaisir de vous inviter le vendredi 19 septembre 2025 à partir de 18H30 à la salle polyvalente Gilles Ploquin de ...",
+            "position": 2
+          },
+          {
+            "url": "https://www.mouthiers-sur-boeme.fr/",
+            "title": "Mouthiers sur Boëme | Pour un Avenir Citoyen",
+            "description": "Rendez-vous à 16h pour la fête de fin d'année de la GRS ! Au programme : démonstration du travail réalisé tout au long de l'année, suivie d'un spectacle festif ...",
+            "position": 3
+          },
+          {
+            "url": "https://www.facebook.com/mouthiersunavenircitoyen/videos/murielle-sengage-pour-les-%C3%A9lections-municipales-%C3%A0-mouthiers-sur-bo%C3%ABme/2082122755942717/",
+            "title": "Murielle s'engage pour les élections municipales à Mouthiers sur Boëme",
+            "description": "19 Jan 2026 · Murielle s'engage pour Mouthiers Elle fait partie de la liste \"Mouthiers, un Avenir Citoyen\", née d'un collectif pour porter une nouvelle ...",
+            "position": 4
+          },
+          {
+            "url": "https://www.doctrine.fr/directories/enterprises/DIR2E3BF69DD62F69AB74AF",
+            "title": "Entreprises MOUTHIERS SUR BOEME (16440) - Doctrine",
+            "description": "A.B. ELEC/ENERGIE · GB UNERGY 16. 105 592 232 • MOUTHIERS-SUR-BOEME • Travaux d'installation d'équipements thermiques et de climatisation • Etablissement non ...",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": null,
+    "status": "Aucun compte attribuable avec certitude dans les recherches. Les homonymes hors commune sont exclus ; absence non démontrée."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}

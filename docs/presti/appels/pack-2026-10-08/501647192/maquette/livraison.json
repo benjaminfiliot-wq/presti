@@ -1,0 +1,174 @@
+{
+  "date": "2026-10-08T19:03:08.095Z",
+  "generated": 10,
+  "browser_verified": 10,
+  "desktop_mobile_captures": 20,
+  "axe_violations": 0,
+  "external_messages_sent": 0,
+  "firecrawl_credits_used": 23,
+  "unpublished": true,
+  "artisans": [
+    {
+      "id": "501647192",
+      "slug": "appel-aclimat-palluas",
+      "name": "ACLIMAT Palluas",
+      "siret": "50164719200019",
+      "phone": "0613088952",
+      "qa": "docs/presti/appels/pack-2026-10-08/501647192/maquette/qa.json",
+      "photo_origin": "site_officiel_droits_a_confirmer",
+      "hashes": {
+        "index.html": "e70e3fbc1e06a648e1cb4deab5ccb9664d01b4ffb338581ad8ff0797b575b829",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "015f97ad30055921d30862c62bb115b61a2b26157746a2c004bcbd91989d978f",
+        "provenance-officiel.json": "0021372bd9c61ecb3c9d4504b53ce6371d854b9c42c0ad14d2ca990523f2cdcd",
+        "photo-publiee.jpg": "833beb4481bb43d137811e6ca636e11edb1b1141bab89023d8d034e80015dcc6"
+      }
+    },
+    {
+      "id": "892085838",
+      "slug": "appel-barreau-plomberie",
+      "name": "Barreau Plomberie Chauffage",
+      "siret": "89208583800019",
+      "phone": "0678215202",
+      "qa": "docs/presti/appels/pack-2026-10-08/892085838/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "f8760b67be14f200e4ab1163a7342bef08de4fba6cd1ae016b1d3de425ecf0c2",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "af309b17f50434e17b7cc6cd59f0174634c6cac7c2e7039da72bb67edc97f7cc"
+      }
+    },
+    {
+      "id": "105592232",
+      "slug": "appel-gb-unergy-16",
+      "name": "GB Unergy 16",
+      "siret": "10559223200018",
+      "phone": "0666105489",
+      "qa": "docs/presti/appels/pack-2026-10-08/105592232/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "c1ff7f8f2a7b90fae21a9c473f4817c41e439733b0b98fc722994408f6f4030f",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "015f97ad30055921d30862c62bb115b61a2b26157746a2c004bcbd91989d978f"
+      }
+    },
+    {
+      "id": "800052888",
+      "slug": "appel-jp-plomberie-chasnais",
+      "name": "JP Plomberie",
+      "siret": "80005288800016",
+      "phone": "0677411517",
+      "qa": "docs/presti/appels/pack-2026-10-08/800052888/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "0a34001bc234e1f8dd4b666636f52cd321d6f9a93e7aaba0be3b85d1f316e50c",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "93e595d59548c3305a7a5634b6ee7770e7f3c6931e2240900fc3a12a726ddc66"
+      }
+    },
+    {
+      "id": "490868874",
+      "slug": "appel-rochereau-electricite",
+      "name": "Jean-François Rochereau",
+      "siret": "49086887400028",
+      "phone": "0619631862",
+      "qa": "docs/presti/appels/pack-2026-10-08/490868874/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "848bf143fb535fcb3e6e9730bda89d5a89371584c2156c4be7413b61fee8ce44",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "13d1dd7c8dfc87997707d8b98dedb48561823bf6bd107491e512cdeab0ed031a"
+      }
+    },
+    {
+      "id": "515093748",
+      "slug": "appel-sb-clim-montmoreau",
+      "name": "S.B Clim",
+      "siret": "51509374800017",
+      "phone": "0620372613",
+      "qa": "docs/presti/appels/pack-2026-10-08/515093748/maquette/qa.json",
+      "photo_origin": "site_officiel_droits_a_confirmer",
+      "hashes": {
+        "index.html": "34d2795fb6d84db2c10aeb42ebad8414142684032282af53dbff246a6cff6356",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "015f97ad30055921d30862c62bb115b61a2b26157746a2c004bcbd91989d978f",
+        "provenance-officiel.json": "3dc664f9e1c89ee82ecc8b0c1e19cdcfd801c5d06f4715f996cb6670d1007256",
+        "photo-publiee.webp": "d2d853a4e40c6d00bbec405672eb0c8602fde342de5f9c2b0315cb51b3843dcd"
+      }
+    },
+    {
+      "id": "749948725",
+      "slug": "appel-pereira-jose-brie",
+      "name": "Pereira José",
+      "siret": "74994872500017",
+      "phone": "0689440047",
+      "qa": "docs/presti/appels/pack-2026-10-08/749948725/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "2a9151f6d5b797e96cc4c191790e01f84c160da537e410f67cf7c0e07f601711",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "af309b17f50434e17b7cc6cd59f0174634c6cac7c2e7039da72bb67edc97f7cc"
+      }
+    },
+    {
+      "id": "930701495",
+      "slug": "appel-vallot-thomas",
+      "name": "Thomas Vallot",
+      "siret": "93070149500010",
+      "phone": "0620044530",
+      "qa": "docs/presti/appels/pack-2026-10-08/930701495/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "42a4a8907ff67118724add90e606c121e1218661022d323b9cf0615cb6eb99af",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "13d1dd7c8dfc87997707d8b98dedb48561823bf6bd107491e512cdeab0ed031a"
+      }
+    },
+    {
+      "id": "842319873",
+      "slug": "appel-zen-et-eau",
+      "name": "Zen & Eau",
+      "siret": "84231987300019",
+      "phone": "0788029127",
+      "qa": "docs/presti/appels/pack-2026-10-08/842319873/maquette/qa.json",
+      "photo_origin": "commons_illustration",
+      "hashes": {
+        "index.html": "5c4f4eb887d8e7b804ab54f7fb0c6ad26ebb4e966dc977eaac80ea68ba36d59a",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "93e595d59548c3305a7a5634b6ee7770e7f3c6931e2240900fc3a12a726ddc66"
+      }
+    },
+    {
+      "id": "897457594",
+      "slug": "appel-3e-energies-landeronde",
+      "name": "3E Énergies",
+      "siret": "89745759400025",
+      "phone": "0252430932",
+      "qa": "docs/presti/appels/pack-2026-10-08/897457594/maquette/qa.json",
+      "photo_origin": "site_officiel_droits_a_confirmer",
+      "hashes": {
+        "index.html": "d06f7cf42f77595b453439de7ddcf1f929ba719e8fc637b4f190dc7930f1ed62",
+        "style.css": "624cee9d9fc8798b9ce1d2733e05b82371c99e5ba86ff743552def9a1d9cf8d6",
+        "site.js": "2535d289c396f218b6aac6526cb0256d075ddf768c9872001e787243624ff476",
+        "attributions.json": "015f97ad30055921d30862c62bb115b61a2b26157746a2c004bcbd91989d978f",
+        "provenance-officiel.json": "7ecb8c8df48f9b4a48c9bc6d25916742a0b69c85085c8fc5d901b44cc1ce2fd7",
+        "photo-publiee.webp": "72e74597a80ab83c03c2a9a2e71ce289bea538f36fa210d4148d9b76f1b58c43"
+      }
+    }
+  ],
+  "limits": [
+    "7 propositions conservent des illustrations Commons ; photos propres de ces artisans non accessibles ou non identifiées.",
+    "3 propositions utilisent un visuel publié sur le site officiel, auteur et droits non identifiés ; diffusion interdite avant accord.",
+    "Facebook/Instagram bloquent la lecture de certaines pages : publications non vérifiées, aucun contournement.",
+    "SB Clim : 70 pages publiques contrôlées, menus centraux complets mais nombreuses variantes locales non exhaustives."
+  ]
+}

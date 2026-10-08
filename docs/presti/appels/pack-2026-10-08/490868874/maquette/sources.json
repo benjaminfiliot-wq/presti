@@ -1,0 +1,57 @@
+{
+  "artisan": "Jean-François Rochereau",
+  "siren": "490868874",
+  "date": "2026-10-08T19:00:03.047Z",
+  "firecrawl": [
+    {
+      "id": "490868874",
+      "query": "ROCHEREAU Jean Francois Talmont Saint Hilaire electricite Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://www.facebook.com/electricite.rochereau/",
+            "title": "SARL Rochereau Jean-françois, Electricité Générale - Facebook",
+            "description": "SARL Rochereau Jean-françois, Electricité Générale. Professionnel de l'électricité de la maison et du professionnel (ateliers, commerces), j'assure ...",
+            "position": 1
+          },
+          {
+            "url": "https://www.pagesjaunes.fr/pros/09656727",
+            "title": "Rochereau Jean-François à Talmont Saint Hilaire - Pages Jaunes",
+            "description": "Rating 5,0 · Review by Hulotte15 Professionnel de l'électricité de la maison et du professionnel (ateliers, commerces), j'assure une intervention rapide et un dépannage en toute sécurité.",
+            "position": 2
+          },
+          {
+            "url": "https://fr.mappy.com/poi/510e926284aeea724eba8112",
+            "title": "Rochereau Jean-François - Entreprise d'électricité générale, 415 r ...",
+            "description": "415 r Artisans, 85440 Talmont Saint Hilaire ... Professionnel de l'électricité de la maison et du professionnel (ateliers, commerces), j'assure une intervention ...",
+            "position": 3
+          },
+          {
+            "url": "https://www.118712.fr/professionnels/X0tXW1FSHwY",
+            "title": "Rochereau Jean-François à Talmont Saint Hilaire - 118712",
+            "description": "415 r Artisans 85440 Talmont Saint Hilaire. Facebook. Fermé. Horaires d'ouverture. Lundi: 08:00-12:30 14:00-17:30. Mardi: 08:00-12:30 14:00-17:30. Mercredi: 08: ...",
+            "position": 4
+          },
+          {
+            "url": "https://www.facebook.com/VilleTalmontSaintHilaire/posts/1534125458743470/",
+            "title": "Talmont Saint Hilaire - Facebook",
+            "description": "17 Sept 2026 · ... Rochereau Jean-françois, Electricité Générale / La Compagnie des Déboucheurs / Talmont Auto / Bélier Mickaël Façadier / Paysages Verts 85 ...",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": "https://www.facebook.com/electricite.rochereau/",
+    "status": "Page SARL Rochereau Jean-François liée par annuaires et indexée. Lecture publique throttled ; publications et droits photographiques non vérifiés."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}

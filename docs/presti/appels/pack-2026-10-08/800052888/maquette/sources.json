@@ -1,0 +1,57 @@
+{
+  "artisan": "JP Plomberie",
+  "siren": "800052888",
+  "date": "2026-10-08T19:00:02.896Z",
+  "firecrawl": [
+    {
+      "id": "800052888",
+      "query": "JP PLOMBERIE Chasnais site Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://fr.mappy.com/poi/56b6772a9191b067244bef68",
+            "title": "JP Plomberie - Plombier, 2 lot Bois des Glands, 85400 Chasnais ...",
+            "description": "Découvrez JP Plomberie (2 lot Bois des Glands, 85400 Chasnais) avec toutes les photos du quartier, le plan d'accès, les avis et les infos pratiques ...",
+            "position": 1
+          },
+          {
+            "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/jp-plomberie-800052888",
+            "title": "Société JP PLOMBERIE à 85400 CHASNAIS - SIREN 800 052 888",
+            "description": "La société JP PLOMBERIE a été créée le 1 février 2014, il y a 13 ans. Sa forme juridique est Société à responsabilité limitée (sans autre indication).",
+            "position": 2
+          },
+          {
+            "url": "https://www.pagesjaunes.fr/pros/56315610",
+            "title": "JP Plomberie à Chasnais - Plombier (adresse, horaires, avis)",
+            "description": "Rating 5,0 · Review by sg2m Experts en installation et vente de chauffe-eau, notamment thermodynamiques, nous vous aidons à réaliser des économies d'énergie durables. Certifiée Qualibat ...",
+            "position": 3
+          },
+          {
+            "url": "https://www.meilleur-artisan.com/annuaire/jp-plomberie.640514.html",
+            "title": "Jp plomberie à Chasnais 85400 - Meilleur-Artisan.com",
+            "description": "Créée le 01/02/2014, notre entreprise bénéficie d'une solide expérience dans le domaine de la plomberie. Nous mettons un point d'honneur à fournir un travail de ...",
+            "position": 4
+          },
+          {
+            "url": "https://www.facebook.com/p/JP-Plomberie-100087772126933/",
+            "title": "JP Plomberie | Saint-Pierre-Quiberon - Facebook",
+            "description": "JP Plomberie , Saint-Pierre-Quiberon. 28 likes. JP Plomberie propose une large gamme de services pour répondre à vos besoins en plomberie et cl...",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": null,
+    "status": "Aucun compte attribuable avec certitude dans les recherches. Les homonymes hors commune sont exclus ; absence non démontrée."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}

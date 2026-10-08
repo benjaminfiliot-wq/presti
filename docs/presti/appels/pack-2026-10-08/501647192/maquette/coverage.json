@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-08T19:02:36.687Z",
+  "generated": 10,
+  "verified": 10,
+  "results": [
+    {
+      "id": "501647192",
+      "slug": "appel-aclimat-palluas",
+      "artisan": "ACLIMAT Palluas",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "892085838",
+      "slug": "appel-barreau-plomberie",
+      "artisan": "Barreau Plomberie Chauffage",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "105592232",
+      "slug": "appel-gb-unergy-16",
+      "artisan": "GB Unergy 16",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "800052888",
+      "slug": "appel-jp-plomberie-chasnais",
+      "artisan": "JP Plomberie",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "490868874",
+      "slug": "appel-rochereau-electricite",
+      "artisan": "Jean-François Rochereau",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "515093748",
+      "slug": "appel-sb-clim-montmoreau",
+      "artisan": "S.B Clim",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "749948725",
+      "slug": "appel-pereira-jose-brie",
+      "artisan": "Pereira José",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "930701495",
+      "slug": "appel-vallot-thomas",
+      "artisan": "Thomas Vallot",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "842319873",
+      "slug": "appel-zen-et-eau",
+      "artisan": "Zen & Eau",
+      "valid": true,
+      "violations": []
+    },
+    {
+      "id": "897457594",
+      "slug": "appel-3e-energies-landeronde",
+      "artisan": "3E Énergies",
+      "valid": true,
+      "violations": []
+    }
+  ]
+}

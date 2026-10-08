@@ -1,0 +1,94 @@
+{
+  "artisan": "Thomas Vallot",
+  "slug": "appel-vallot-thomas",
+  "date": "2026-10-08T19:02:26.892Z",
+  "checks": [
+    {
+      "mode": "bureau",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "state": {
+        "h1": 1,
+        "overflow": false,
+        "photos": true,
+        "noindex": true,
+        "tel": true,
+        "targets": true
+      },
+      "form": {
+        "invalidBlocked": true,
+        "success": true,
+        "noInjection": true,
+        "edit": true,
+        "networkPosts": 0
+      },
+      "errors": [],
+      "bad": [],
+      "axeViolations": [],
+      "screenshotBytes": 2098759,
+      "valid": true
+    },
+    {
+      "mode": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "state": {
+        "h1": 1,
+        "overflow": false,
+        "photos": true,
+        "noindex": true,
+        "tel": true,
+        "targets": true
+      },
+      "form": {
+        "invalidBlocked": true,
+        "success": true,
+        "noInjection": true,
+        "edit": true,
+        "networkPosts": 0
+      },
+      "errors": [],
+      "bad": [],
+      "axeViolations": [],
+      "screenshotBytes": 702361,
+      "valid": true
+    }
+  ],
+  "assets": [
+    {
+      "fichier": "hero-1600.webp",
+      "base": "cuivre",
+      "largeur": 1600,
+      "hauteur": 2133,
+      "legende": "Raccordements cuivre d'une chaudière",
+      "alt": "Raccordements cuivre d'une chaudière",
+      "auteur": "PeterEastern",
+      "licence": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+      "titre_commons": "File:Ecodan outdoor unit Internal view.jpg",
+      "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+      "modification": "Recadrage CSS uniquement",
+      "sha256": "4f22f292dcca387bda53a83732c5df1e5356e83f49e5d15d27b43f2f91959206"
+    },
+    {
+      "fichier": "detail-1600.webp",
+      "base": "plancher",
+      "largeur": 1600,
+      "hauteur": 1200,
+      "legende": "Plancher chauffant, boucles posées avant chape",
+      "alt": "Plancher chauffant, boucles posées avant chape",
+      "auteur": "Viii23dawari",
+      "licence": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+      "titre_commons": "File:Underfloor heating pipes 1.jpg",
+      "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+      "modification": "Recadrage CSS uniquement",
+      "sha256": "2bec1d40a2f75d86b6748c153f6189f93167cce14febe81ec457b37d6b044f19"
+    }
+  ],
+  "valid": true
+}

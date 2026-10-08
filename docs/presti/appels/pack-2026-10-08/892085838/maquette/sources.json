@@ -1,0 +1,57 @@
+{
+  "artisan": "Barreau Plomberie Chauffage",
+  "siren": "892085838",
+  "date": "2026-10-08T19:00:02.513Z",
+  "firecrawl": [
+    {
+      "id": "892085838",
+      "query": "BARREAU PLOMBERIE CHAUFFAGE Saint Bonnet Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://www.facebook.com/barreaukevin/",
+            "title": "Kevin Barreau (@barreaukevin) - Facebook",
+            "description": "Habite à Saint-Bonnet, Poitou-Charentes, France ; artisan plombier-chauffagiste, à plombier chauffagiste ; A étudié à college andre malraux ; A étudié à CFA cognac ...",
+            "position": 1
+          },
+          {
+            "url": "https://www.effy.fr/artisans/pro/805-barreau-plomberie-chauffage",
+            "title": "BARREAU PLOMBERIE CHAUFFAGE - Effy",
+            "description": "Rating 4,9(18) · Free Travaux proposés par BARREAU PLOMBERIE CHAUFFAGE · Chaudière gaz à condensation · Insert à bois · Chaudière fioul à condensation.",
+            "position": 2
+          },
+          {
+            "url": "https://www.pagesjaunes.fr/pros/55986728",
+            "title": "Barreau Kévin à Saint Bonnet - Plombier (adresse, horaires)",
+            "description": "Barreau Kévin propose des solutions complètes pour votre confort thermique et votre eau chaude. Que ce soit pour installer ou entretenir vos chaudières (gaz ...",
+            "position": 3
+          },
+          {
+            "url": "https://annuaire-entreprises.data.gouv.fr/entreprise/barreau-plomberie-chauffage-892085838",
+            "title": "barreau plomberie chauffage - L'Annuaire des Entreprises",
+            "description": "La société BARREAU PLOMBERIE CHAUFFAGE a été créée le 31 décembre ... Son siège social est domicilié au 23 CHEMIN DE CHEZ MAITRE EMBOIS 16300 SAINT-BONNET.",
+            "position": 4
+          },
+          {
+            "url": "https://www.societe.com/societe/barreau-plomberie-chauffage-892085838.html",
+            "title": "barreau plomberie chauffage - Societe.com",
+            "description": "23 CHEMIN DE CHEZ MAITRE EMBOIS, 16300 SAINT-BONNET. DIRIGEANTS: Kevin BARREAU. SOURCES & MISES À JOUR LE 10/09/2026: Insee RNE. Mentions légales. Statuts à ...",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": "https://www.facebook.com/barreaukevin/",
+    "status": "Profil candidat Kevin Barreau indexé, lecture publique throttled. Activité professionnelle, identité et publications non vérifiées."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}

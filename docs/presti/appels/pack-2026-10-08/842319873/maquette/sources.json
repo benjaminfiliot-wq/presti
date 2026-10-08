@@ -1,0 +1,57 @@
+{
+  "artisan": "Zen & Eau",
+  "siren": "842319873",
+  "date": "2026-10-08T19:00:03.860Z",
+  "firecrawl": [
+    {
+      "id": "842319873",
+      "query": "ZEN EAU La Reorthe plomberie Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://www.pagesjaunes.fr/pros/60489231",
+            "title": "Zen et eau à La Réorthe - Plombier (adresse, horaires) - Pages Jaunes",
+            "description": "Zen et eau accompagne les particuliers dans leurs projets de plomberie et chauffage avec des solutions adaptées à chaque foyer. Vente et installation de ...",
+            "position": 1
+          },
+          {
+            "url": "https://www.facebook.com/chantonnay85111/posts/coupure-deauune-intervention-est-actuellement-en-cours-sur-la-conduite-deau-reli/1131784339122315/",
+            "title": "Coupure d'eau Une intervention est actuellement en cours sur la ...",
+            "description": "14 Nov 2025 · ⛔ Une coupure d'eau est à prévoir le temps des travaux. La société SUEZ est mobilisée et fait le nécessaire pour rétablir la situation au ...",
+            "position": 2
+          },
+          {
+            "url": "https://fr.mappy.com/poi/5f9bec1d76d0477f004ab27e",
+            "title": "Zen et eau - Plombier, 108 Rue de la Poirasse, 85210 La Réorthe (France)",
+            "description": "Activités : plombiers, vente, installation de chauffe-eau, vente, installation de chauffage. Position sur la carte, horaires, adresse, téléphone.",
+            "position": 3
+          },
+          {
+            "url": "https://www.facebook.com/p/Zen-et-eau-100063538450175/",
+            "title": "Zen et eau - Facebook",
+            "description": "Zen et eau. 77 followers. Entreprise de plomberie, chauffage, dépannage. ... Zen et eau. Entreprise de plomberie, chauffage, dépannage. Plumbing Service. Follow.",
+            "position": 4
+          },
+          {
+            "url": "https://www.ou-plombier.fr/a/zen-et-eau/",
+            "title": "Zen et eau : Plombier 108 Rue de la Poirasse La Réorthe",
+            "description": "Dirigée par Mathieu Lesage, elle offre une gamme complète de services, incluant l'installation, l'entretien et le dépannage des systèmes d'eau et de gaz.",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": "https://www.facebook.com/p/Zen-et-eau-100063538450175/",
+    "status": "Page candidate Zen et eau indexée. Lecture publique renvoie temporairement bloqué / connexion. Identité finale et publications non inspectées."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}

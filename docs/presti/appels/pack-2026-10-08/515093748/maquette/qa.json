@@ -1,0 +1,94 @@
+{
+  "artisan": "S.B Clim",
+  "slug": "appel-sb-clim-montmoreau",
+  "date": "2026-10-08T19:02:17.790Z",
+  "checks": [
+    {
+      "mode": "bureau",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "state": {
+        "h1": 1,
+        "overflow": false,
+        "photos": true,
+        "noindex": true,
+        "tel": true,
+        "targets": true
+      },
+      "form": {
+        "invalidBlocked": true,
+        "success": true,
+        "noInjection": true,
+        "edit": true,
+        "networkPosts": 0
+      },
+      "errors": [],
+      "bad": [],
+      "axeViolations": [],
+      "screenshotBytes": 1803610,
+      "valid": true
+    },
+    {
+      "mode": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "state": {
+        "h1": 1,
+        "overflow": false,
+        "photos": true,
+        "noindex": true,
+        "tel": true,
+        "targets": true
+      },
+      "form": {
+        "invalidBlocked": true,
+        "success": true,
+        "noInjection": true,
+        "edit": true,
+        "networkPosts": 0
+      },
+      "errors": [],
+      "bad": [],
+      "axeViolations": [],
+      "screenshotBytes": 679757,
+      "valid": true
+    }
+  ],
+  "assets": [
+    {
+      "fichier": "hero-1600.webp",
+      "base": "pac",
+      "largeur": 1600,
+      "hauteur": 1114,
+      "legende": "Unité extérieure de pompe à chaleur",
+      "alt": "Unité extérieure de pompe à chaleur",
+      "auteur": "Tony Webster",
+      "licence": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+      "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg",
+      "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+      "modification": "Recadrage CSS uniquement",
+      "sha256": "30b7d656896e75a948915f735c94bc733c0ad7f4a8b8be24a2d46afa4d461c2d"
+    },
+    {
+      "fichier": "detail-1600.webp",
+      "base": "plancher",
+      "largeur": 1600,
+      "hauteur": 1200,
+      "legende": "Plancher chauffant, boucles posées avant chape",
+      "alt": "Plancher chauffant, boucles posées avant chape",
+      "auteur": "Viii23dawari",
+      "licence": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+      "titre_commons": "File:Underfloor heating pipes 1.jpg",
+      "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+      "modification": "Recadrage CSS uniquement",
+      "sha256": "2bec1d40a2f75d86b6748c153f6189f93167cce14febe81ec457b37d6b044f19"
+    }
+  ],
+  "valid": true
+}

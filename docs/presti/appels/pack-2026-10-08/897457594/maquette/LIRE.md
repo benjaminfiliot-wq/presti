@@ -1,0 +1,18 @@
+# 3E Énergies — démonstration
+
+URL locale : /sites-demo/appel-3e-energies-landeronde/index.html
+
+Ouvrir après avoir servi public/ avec un serveur HTTP local. Rien n’est envoyé par le formulaire ; les liens téléphoniques et e-mail sont des contacts réels à déclencher manuellement.
+
+Direction : #21492d (encre), #97601b (accent), #f2f6f7 (fond), #ffffff (papier), #455962 (texte secondaire). Typographies locales Space Grotesk / IBM Plex Sans avec licence OFL. Signature : une photographie technique en perspective légère, contrepoint du titre très lisible ; composition texte puis plein cadre technique. Mouvement progressif, neutralisé si reduced-motion.
+
+Source : https://www.3e-energies.com/
+Site : Site officiel existant, lu publiquement.
+Social : Aucun compte social officiel attribué avec certitude dans les recherches ; ne pas conclure à l’absence de compte.
+Photos : illustrations Commons sans rapport avec les chantiers de l’artisan. Attribution et provenance : public/sites-demo/appel-3e-energies-landeronde/attributions.json. Les recadrages CSS ne modifient pas le fichier image.
+
+Validation navigateur PASS bureau 1440×1000 et mobile 390×844 : un H1, zéro débordement, images chargées, liens internes/téléphone valides, formulaire requis/récapitulatif/modification/XSS neutralisé, zéro POST, zéro violation axe WCAG AA. Détail : qa.json.
+
+## Photographie du site officiel
+
+Une photographie publiée sur https://www.3e-energies.com/ est intégrée à la proposition locale. Source exacte, empreinte, dimensions et restriction de diffusion : public/sites-demo/appel-3e-energies-landeronde/provenance-officiel.json. Auteur et licence non identifiés : ce visuel n’est pas déclaré libre de droits et doit être autorisé avant toute publication. Aucune affirmation de réalisation de chantier n’est ajoutée.

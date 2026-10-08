@@ -1,0 +1,30 @@
+[
+  {
+    "fichier": "hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 2133,
+    "legende": "Chaufferie : collecteurs, vannes et manomètres",
+    "alt": "Chaufferie : collecteurs, vannes et manomètres",
+    "auteur": "Wolfmann",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+    "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  },
+  {
+    "fichier": "detail-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1069,
+    "legende": "Salle de bains avec double vasque et robinetterie posée",
+    "alt": "Salle de bains avec double vasque et robinetterie posée",
+    "auteur": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+    "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg",
+    "usage": "Photo illustrative indépendante ; aucun chantier de cette entreprise",
+    "modification": "Recadrage CSS uniquement"
+  }
+]

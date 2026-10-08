@@ -1,0 +1,57 @@
+{
+  "artisan": "Pereira José",
+  "siren": "749948725",
+  "date": "2026-10-08T19:00:03.484Z",
+  "firecrawl": [
+    {
+      "id": "749948725",
+      "query": "PEREIRA JOSE Brie 16590 plomberie Facebook",
+      "success": true,
+      "data": {
+        "web": [
+          {
+            "url": "https://www.pagesjaunes.fr/pros/51181889",
+            "title": "PEREIRA à Brie - Plombier (adresse, horaires) - Pages Jaunes",
+            "description": "PEREIRA à Brie (16) Plombiers. Téléphone 06 89 44 00 47 ・ 200 allée Chateleaux 16590 Brie ・ services d'électricité générale, de plomberie et d'entretien de ...",
+            "position": 1
+          },
+          {
+            "url": "https://fr.mappy.com/poi/53c835e5e4b05c124b454e7f",
+            "title": "Pereira - Plombier, 200 Allée des Châteleaux, 16590 Brie (France)",
+            "description": "Située à Brie, Pereira José est votre entreprise qui vous présente ses services d'électricité générale, de plomberie et d'entretien de chaudières.",
+            "position": 2
+          },
+          {
+            "url": "https://pereira-brie.site-solocal.com/",
+            "title": "Pereira José",
+            "description": "Pereira José plombiers Brie 0631755218. Contact 200 all Chateleaux , Brie, 16590 16590, FR 0631755218",
+            "position": 3
+          },
+          {
+            "url": "https://www.ou-plombier.fr/a/sarl-pereira-jose/",
+            "title": "Sarl Pereira Jose : Plombier 200 All. des Chateleaux Brie",
+            "description": "Depuis 2012, la SARL Pereira José, située à Brie (16590), met son expertise au service de vos projets de plomberie, d'électricité générale et de chauffage.",
+            "position": 4
+          },
+          {
+            "url": "https://www.facebook.com/p/Pereira-Plomberie-100090896401629/",
+            "title": "Pereira Plomberie - Facebook",
+            "description": "Pereira Plomberie . 83 sukaan. Plombier certifié. Installations plomberie, chauffage et climatisation. 0658920276 📧 davidpereira3392@gmail.com",
+            "position": 5
+          }
+        ]
+      }
+    }
+  ],
+  "social": {
+    "url": null,
+    "status": "Aucun compte attribuable avec certitude dans les recherches. Les homonymes hors commune sont exclus ; absence non démontrée."
+  },
+  "website": null,
+  "limits": {
+    "facebook": "Aucune connexion, aucun contournement ; posts non accessibles restent non vérifiés",
+    "photos": "3 sites officiels ont un visuel repris en proposition locale privée, droits à confirmer. 7 autres conservent des illustrations Commons.",
+    "scope": "Les menus des 3 sites officiels sont lus. SB Clim : pages locales bornées à 70 ; collecte totale non exhaustive.",
+    "ademe": "site_internet vide ne démontre pas absence de site"
+  }
+}
