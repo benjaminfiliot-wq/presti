@@ -1,10 +1,10 @@
 // app/api/usine/porteur/travail/route.ts — ce que le porteur du formulaire prend, sur l'usine (fiche 026-095).
 //
 // GET  → { envois: [{ id, texte, objet, reference, technologie, formulaire }], adresse } : les formulaires que le Facteur a
-//        approuvés (trois verdicts, puis l'accord individuel de Benj), réservés au porteur par un bail de 15 min. Rien
+//        approuvés (trois verdicts ; aucun accord individuel depuis 0124), réservés au porteur par un bail de 15 min. Rien
 //        d'autre : aucune adresse de prospect, aucun autre champ.
 // GET ?verifier=<envoi_id> → { ok, raison?, empreinte_texte? } : la relecture, juste avant de soumettre, de la pause, du
-//        statut de l'envoi, de l'opposition du prospect et de l'accord de Benj (lecture seule). Un doute vaut un refus.
+//        statut de l'envoi et de l'opposition du prospect (lecture seule). Un doute vaut un refus.
 //
 // Le jeton est celui de l'agent `facteur_usine`, derrière le drapeau `busAgents` (404 sinon). Chaque appel authentifié bat
 // (`ops_battement`). Rien ne sort : pause générale active, hors lundi-vendredi 8 h-18 h de Paris, relève du Gmail aveugle
@@ -15,6 +15,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authAgent, estRefusAgent, reponseRefusAgent } from '@/lib/agents/garde'
 import { ops_battement } from '@/lib/agents/bus'
 import { pauseGenerale } from '@/lib/agents/pause'
+import { adresseReponseProspection } from '@/lib/agents/acquisition/boiteProspection'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -85,7 +86,9 @@ export async function GET(req: Request) {
   if (!fenetreOuverte(new Date(maintenant))) return rien()
   const etat = await etatEnvoi()
   if (!etat || !releveFrais(etat.releve_gmail_le, maintenant) || futur(etat.formulaire_coupe_jusqua, maintenant)) return rien()
-  const adresse = (process.env.ACQ_ADRESSE_REPONSE ?? '').trim()
+  // La même adresse que le rédacteur écrit dans le message (boîte dédiée, ou adresse « plus » du mode fil seul) : lire ACQ_ADRESSE_REPONSE seule
+  // laissait le porteur sans rien à prendre dans le mode fil seul, où cette variable doit rester absente (panne du 08/10).
+  const adresse = adresseReponseProspection().trim()
   if (!adresse) return rien() // sans adresse de réponse, le formulaire ne promet rien qu'on puisse tenir : rien n'est réservé
 
   let lignes: unknown
