@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { exporterCsv, formatEuros, type ChampCanonique, type Ligne, type Sens } from '@/lib/comptaImport'
-import { calculerVue, exporterJournal, preparerRelance, rangerFichiers, type FichierCompta } from '@/lib/comptaArtisan'
+import { calculerVue, exporterJournal, lignesStockeesValides, preparerRelance, rangerFichiers, type FichierCompta } from '@/lib/comptaArtisan'
 import { lireClasseur } from '@/lib/comptaClasseur'
 
 const CHAMPS: { valeur: ChampCanonique | ''; nom: string }[] = [
@@ -26,12 +26,15 @@ function enregistrerCsv(contenu: string, nom = 'comptabilite-tableau-de-bord.csv
 export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
   const [fichiers, setFichiers] = useState<FichierCompta[]>([])
   const [validees, setValidees] = useState<Ligne[] | null>(null)
+  const [compteCharge, setCompteCharge] = useState(artisanId)
   const [message, setMessage] = useState('')
   const [brouillon, setBrouillon] = useState<string | null>(null)
   const [lecture, setLecture] = useState(false)
   const cleStockage = `presti-compta-artisan:${artisanId}`
 
   useEffect(() => {
+    setValidees(null)
+    setCompteCharge(artisanId)
     setFichiers([])
     setMessage('')
     setBrouillon(null)
@@ -39,12 +42,13 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
       const brut = localStorage.getItem(cleStockage)
       if (!brut) { setValidees(null); return }
       const lignes = JSON.parse(brut) as unknown
-      if (Array.isArray(lignes) && lignes.every((l) => typeof l === 'object' && l !== null && typeof l.date === 'string' && typeof l.montant === 'number' && (l.sens === 'recette' || l.sens === 'depense'))) setValidees(lignes as Ligne[])
+      if (!lignesStockeesValides(lignes)) throw new Error('Lignes enregistrées invalides')
+      setValidees(lignes)
     } catch { setMessage('Les données enregistrées dans ce navigateur sont illisibles. Réimportez vos CSV.') }
   }, [cleStockage])
 
-  const rangement = useMemo(() => rangerFichiers(fichiers), [fichiers])
-  const vue = useMemo(() => validees ? calculerVue(validees) : null, [validees])
+  const rangement = useMemo(() => rangerFichiers(compteCharge === artisanId ? fichiers : []), [fichiers, compteCharge, artisanId])
+  const vue = useMemo(() => validees && compteCharge === artisanId ? calculerVue(validees) : null, [validees, compteCharge, artisanId])
   const exemple = useMemo(() => calculerVue(rangerFichiers([{ nom: 'exemple.csv', texte: EXEMPLE, sensParDefaut: 'recette' }]).lignes), [])
 
   async function charger(selection: FileList | null) {
@@ -99,7 +103,7 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
     <p className="ca-note">Chaque feuille remplie du classeur .xlsx apparaît séparément : retirez les feuilles de synthèse pour éviter de compter les totaux deux fois. Les formules utilisent seulement leur résultat enregistré dans Excel ; aucune formule ni macro n’est exécutée. Les données validées ne sont pas synchronisées sur vos autres appareils.</p>
     {message && <p role="status" className="ca-message">{message}</p>}
 
-    {fichiers.length > 0 && <section className="psh-panel ca-rangement" data-compta-rangement aria-labelledby="ca-rangement-titre">
+    {compteCharge === artisanId && fichiers.length > 0 && <section className="psh-panel ca-rangement" data-compta-rangement aria-labelledby="ca-rangement-titre">
       <div className="ca-entete"><div><p className="ca-eyebrow">Avant validation</p><h3 id="ca-rangement-titre">Rangement proposé</h3></div><button type="button" className="ca-secondaire" onClick={() => setFichiers([])}>Annuler</button></div>
       <div className="ca-compteurs"><span><b data-compta-retenues>{rangement.lignes.length}</b> lignes reconnues</span><span><b data-compta-doublons>{rangement.doublons}</b> doublons retirés</span><span><b data-compta-rejets>{rangement.rejets.length}</b> lignes rejetées</span></div>
       {rangement.fichiers.map(({ nom, rapport }, i) => <div key={`${nom}-${i}`} className="ca-fichier">
@@ -125,6 +129,6 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
       <section className="psh-panel"><h4>Chiffres par mois</h4><div className="ca-mois">{affichage.tableaux.parMois.map((m) => <div className="ca-mois-ligne" key={m.mois}><b>{m.mois}</b><div className="ca-barres"><span style={{ width: `${m.recettes / maximum * 100}%` }} title={`Recettes ${formatEuros(m.recettes)}`} /><span style={{ width: `${m.depenses / maximum * 100}%` }} title={`Dépenses ${formatEuros(m.depenses)}`} /></div><small>Recettes {formatEuros(m.recettes)} · Dépenses {formatEuros(m.depenses)}</small></div>)}</div></section>
       <p className="ca-note">Ces recettes incluent les impayés : elles ne représentent pas les sommes encaissées. Le statut vient de vos fichiers ; un statut absent reste « non renseigné ». Un nouveau rangement validé remplace le précédent.</p>
     </section>
-    {brouillon && <section className="psh-panel ca-brouillon" data-compta-brouillon><h4>Brouillon de relance à relire</h4><p>Rien n’a été envoyé. Vérifiez les informations avant de copier ce texte.</p><textarea value={brouillon} onChange={(e) => setBrouillon(e.target.value)} aria-label="Brouillon de relance" rows={7} /></section>}
+    {compteCharge === artisanId && brouillon && <section className="psh-panel ca-brouillon" data-compta-brouillon><h4>Brouillon de relance à relire</h4><p>Rien n’a été envoyé. Vérifiez les informations avant de copier ce texte.</p><textarea value={brouillon} onChange={(e) => setBrouillon(e.target.value)} aria-label="Brouillon de relance" rows={7} /></section>}
   </section>
 }

@@ -1,8 +1,18 @@
-import { lireCsv, nettoyerTableur, tableauxDeBord, type ChampCanonique, type Ligne, type Rapport, type Sens } from './comptaImport.ts'
+import { lireCsv, lireDate, nettoyerTableur, tableauxDeBord, type ChampCanonique, type Ligne, type Rapport, type Sens } from './comptaImport.ts'
 
 export type FichierCompta = { nom: string; texte: string; sensParDefaut: Sens; colonnes?: Partial<Record<number, ChampCanonique | null>>; calendrier1904?: boolean; erreursLecture?: string[] }
 export type FichierRange = { nom: string; rapport: Rapport }
 export type Rangement = { fichiers: FichierRange[]; lignes: Ligne[]; rejets: { fichier: string; ligne: number; raison: string }[]; doublons: number }
+
+export function lignesStockeesValides(valeur: unknown): valeur is Ligne[] {
+  return Array.isArray(valeur) && valeur.every((l) => typeof l === 'object' && l !== null
+    && typeof l.date === 'string' && lireDate(l.date) === l.date
+    && Number.isSafeInteger(l.montant) && l.montant >= 0
+    && Number.isSafeInteger(l.ligne) && l.ligne > 0
+    && ['libelle', 'tiers', 'categorie', 'source'].every((cle) => typeof l[cle] === 'string')
+    && (l.sens === 'recette' || l.sens === 'depense')
+    && (l.statut === 'paye' || l.statut === 'impaye' || l.statut === 'non_renseigne'))
+}
 
 // Une seule clé pour les doublons entre fichiers. Les doublons internes sont déjà retirés par le moteur.
 function cle(l: Ligne): string {
