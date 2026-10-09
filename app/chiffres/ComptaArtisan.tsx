@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { exporterCsv, formatEuros, type ChampCanonique, type Ligne, type Sens } from '@/lib/comptaImport'
 import { calculerVue, exporterJournal, lignesStockeesValides, preparerRelance, rangerFichiers, type FichierCompta } from '@/lib/comptaArtisan'
 import { lireClasseur } from '@/lib/comptaClasseur'
@@ -30,9 +30,14 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
   const [message, setMessage] = useState('')
   const [brouillon, setBrouillon] = useState<string | null>(null)
   const [lecture, setLecture] = useState(false)
+  const compteActif = useRef(artisanId)
+  const generationLecture = useRef(0)
+  compteActif.current = artisanId
   const cleStockage = `presti-compta-artisan:${artisanId}`
 
   useEffect(() => {
+    generationLecture.current++
+    setLecture(false)
     setValidees(null)
     setCompteCharge(artisanId)
     setFichiers([])
@@ -40,11 +45,13 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
     setBrouillon(null)
     try {
       const brut = localStorage.getItem(cleStockage)
-      if (!brut) { setValidees(null); return }
-      const lignes = JSON.parse(brut) as unknown
-      if (!lignesStockeesValides(lignes)) throw new Error('Lignes enregistrées invalides')
-      setValidees(lignes)
-    } catch { setMessage('Les données enregistrées dans ce navigateur sont illisibles. Réimportez vos CSV.') }
+      if (brut) {
+        const lignes = JSON.parse(brut) as unknown
+        if (!lignesStockeesValides(lignes)) throw new Error('Lignes enregistrées invalides')
+        setValidees(lignes)
+      }
+    } catch { setMessage('Les données enregistrées dans ce navigateur sont illisibles. Réimportez vos fichiers Excel ou CSV.') }
+    return () => { generationLecture.current++ }
   }, [cleStockage])
 
   const rangement = useMemo(() => rangerFichiers(compteCharge === artisanId ? fichiers : []), [fichiers, compteCharge, artisanId])
@@ -53,6 +60,9 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
 
   async function charger(selection: FileList | null) {
     if (!selection || lecture) return
+    const compte = artisanId
+    const generation = ++generationLecture.current
+    const encoreValide = () => generation === generationLecture.current && compte === compteActif.current
     setLecture(true)
     const ajouts: FichierCompta[] = []
     try {
@@ -62,13 +72,14 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
         if (/\.xlsx$/i.test(fichier.name)) ajouts.push(...await lireClasseur(await fichier.arrayBuffer(), fichier.name))
         else ajouts.push({ nom: fichier.name, texte: await fichier.text(), sensParDefaut: 'recette' })
       }
+      if (!encoreValide()) return
       setFichiers((precedents) => [...precedents, ...ajouts])
       setMessage('')
       setBrouillon(null)
     } catch (erreur) {
-      setMessage(erreur instanceof Error ? erreur.message : 'Fichier illisible. Aucun nouveau fichier ajouté.')
+      if (encoreValide()) setMessage(erreur instanceof Error ? erreur.message : 'Fichier illisible. Aucun nouveau fichier ajouté.')
     } finally {
-      setLecture(false)
+      if (encoreValide()) setLecture(false)
     }
   }
 
@@ -98,13 +109,13 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
         <p>Déposez vos fichiers Excel ou CSV de recettes et dépenses. Presti propose un rangement que vous vérifiez avant de le valider.</p>
         <p className="ca-note">Le fichier est lu ici, dans votre navigateur. Aucun envoi. Après validation, les lignes restent dans ce navigateur, pour ce compte.</p>
       </div>
-      <label className="ca-depot">{lecture ? 'Lecture des fichiers…' : 'Choisir des fichiers Excel ou CSV'}<input type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" multiple disabled={lecture} data-compta-fichier onChange={(e) => { void charger(e.target.files); e.target.value = '' }} /></label>
+      <label className="ca-depot">{compteCharge === artisanId && lecture ? 'Lecture des fichiers…' : 'Choisir des fichiers Excel ou CSV'}<input type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" multiple disabled={compteCharge === artisanId && lecture} data-compta-fichier onChange={(e) => { void charger(e.target.files); e.target.value = '' }} /></label>
     </div>
     <p className="ca-note">Chaque feuille remplie du classeur .xlsx apparaît séparément : retirez les feuilles de synthèse pour éviter de compter les totaux deux fois. Les formules utilisent seulement leur résultat enregistré dans Excel ; aucune formule ni macro n’est exécutée. Les données validées ne sont pas synchronisées sur vos autres appareils.</p>
-    {message && <p role="status" className="ca-message">{message}</p>}
+    {compteCharge === artisanId && message && <p role="status" className="ca-message">{message}</p>}
 
     {compteCharge === artisanId && fichiers.length > 0 && <section className="psh-panel ca-rangement" data-compta-rangement aria-labelledby="ca-rangement-titre">
-      <div className="ca-entete"><div><p className="ca-eyebrow">Avant validation</p><h3 id="ca-rangement-titre">Rangement proposé</h3></div><button type="button" className="ca-secondaire" onClick={() => setFichiers([])}>Annuler</button></div>
+      <div className="ca-entete"><div><p className="ca-eyebrow">Avant validation</p><h3 id="ca-rangement-titre">Rangement proposé</h3></div><button type="button" className="ca-secondaire" onClick={() => { generationLecture.current++; setLecture(false); setFichiers([]) }}>Annuler</button></div>
       <div className="ca-compteurs"><span><b data-compta-retenues>{rangement.lignes.length}</b> lignes reconnues</span><span><b data-compta-doublons>{rangement.doublons}</b> doublons retirés</span><span><b data-compta-rejets>{rangement.rejets.length}</b> lignes rejetées</span></div>
       {rangement.fichiers.map(({ nom, rapport }, i) => <div key={`${nom}-${i}`} className="ca-fichier">
         <h4>{nom}</h4><button type="button" className="ca-secondaire" onClick={() => setFichiers((avant) => avant.filter((_, j) => j !== i))}>Retirer cette feuille ou ce fichier</button>

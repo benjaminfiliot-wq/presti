@@ -87,7 +87,7 @@ try {
     globalThis.ReactClient = require('client')
   }, modules)
   const composant = ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/ComptaArtisan.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
-  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useState}=React;\n' + sources.join('\n') + '\n' + composant + '\nglobalThis.monter=(id)=>{globalThis.racineReact??=globalThis.ReactClient.createRoot(document.getElementById("root"));globalThis.racineReact.render(React.createElement(ComptaArtisan,{artisanId:id}))};globalThis.monter("fictif-a");' })
+  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composant + '\nglobalThis.rendusAvantEffet=[];function ObserverCompte({id}){React.useLayoutEffect(()=>{globalThis.rendusAvantEffet.push({id,recettes:document.querySelector("[data-compta-recettes]")?.textContent})},[id]);return React.createElement(ComptaArtisan,{artisanId:id})}globalThis.monter=(id)=>{globalThis.racineReact??=globalThis.ReactClient.createRoot(document.getElementById("root"));globalThis.racineReact.render(React.createElement(ObserverCompte,{id}))};globalThis.monter("fictif-a");' })
   await page.locator('[data-compta-fichier]').waitFor()
   const importer = () => page.locator('[data-compta-fichier]').setInputFiles([
     { name: 'test.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: Buffer.from(classeur()) },
@@ -132,5 +132,24 @@ try {
   await page.waitForTimeout(200)
   assert.equal(await page.getByText('Aperçu avec données fictives', { exact: true }).count(), 1, 'stockage invalide compteB ne conserve jamais chiffres compteA')
   assert.match(await page.getByRole('status').textContent(), /illisibles/)
+  await page.evaluate(() => globalThis.monter('fictif-a'))
+  await page.getByText('Vos chiffres importés', { exact: true }).waitFor()
+  await page.evaluate(() => {
+    globalThis.textOriginal = File.prototype.text
+    File.prototype.text = function () {
+      if (this.name === 'differe.csv') return new Promise((resolve) => { globalThis.terminerFichier = resolve })
+      return globalThis.textOriginal.call(this)
+    }
+  })
+  await page.locator('[data-compta-fichier]').setInputFiles({ name: 'differe.csv', mimeType: 'text/csv', buffer: Buffer.from('Date;Montant\n15/03/2026;999,99') })
+  await page.waitForFunction(() => typeof globalThis.terminerFichier === 'function')
+  await page.evaluate(() => globalThis.monter('fictif-c'))
+  await page.getByText('Aperçu avec données fictives', { exact: true }).waitFor()
+  await page.evaluate(() => { globalThis.terminerFichier('Date;Montant\n15/03/2026;999,99'); File.prototype.text = globalThis.textOriginal })
+  await page.waitForTimeout(200)
+  assert.equal(await page.locator('[data-compta-rangement]').count(), 0, 'import lancé par A abandonné lors du passage à C')
+  assert.equal(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-c')), null)
+  assert.equal(await page.evaluate(() => globalThis.rendusAvantEffet.some((r) => (r.id === 'fictif-b' || r.id === 'fictif-c') && r.recettes?.includes('120,50'))), false, 'layout du nouveau compte ne montre jamais chiffres A avant useEffect')
+  console.log('PASS isolation compte : stockage corrompu refusé, chiffres A invisibles dès layout B/C avant effet, lecture File différée A annulée sans rangement ni stockage dans C.')
   console.log('PASS UI React réelle isolée : import Excel+CSV, mapping bloquant/modifiable, dédup, aucun stockage avant validation, sommes, export téléchargement, compteA/B séparés, quota navigateur explicite et retourcompteA conservé. Aucunbackend.')
 } finally { await navigateur.close() }
