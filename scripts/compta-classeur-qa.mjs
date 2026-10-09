@@ -125,5 +125,12 @@ try {
   await page.getByText('Vos chiffres importés', { exact: true }).waitFor()
   assert.match(await page.locator('[data-compta-recettes]').textContent(), /120,50/)
   assert.equal(await page.locator('[data-compta-rangement]').count(), 0, 'brouillon autre compte effacé')
+  await page.evaluate(() => {
+    localStorage.setItem('presti-compta-artisan:fictif-b', JSON.stringify([{ date: 'illisible', montant: 120, sens: 'invalide' }]))
+    globalThis.monter('fictif-b')
+  })
+  await page.waitForTimeout(200)
+  assert.equal(await page.getByText('Aperçu avec données fictives', { exact: true }).count(), 1, 'stockage invalide compteB ne conserve jamais chiffres compteA')
+  assert.match(await page.getByRole('status').textContent(), /illisibles/)
   console.log('PASS UI React réelle isolée : import Excel+CSV, mapping bloquant/modifiable, dédup, aucun stockage avant validation, sommes, export téléchargement, compteA/B séparés, quota navigateur explicite et retourcompteA conservé. Aucunbackend.')
 } finally { await navigateur.close() }
