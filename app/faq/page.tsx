@@ -35,6 +35,7 @@ export default function FaqPage() {
           au parseur HTML. On échappe `<`, `>` et `&` — le sens des données ne change pas. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') }} />
       <Breadcrumb label="FAQ" path="/faq" />
+      <span className="legal-kick">Aide</span>
       <h1>Questions fréquentes</h1>
       <div className="legal-updated">Tout ce qu’il faut savoir sur Presti</div>
 

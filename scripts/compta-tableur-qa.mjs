@@ -54,6 +54,12 @@ function controlerCalculs(r) {
   assert.deepEqual(r.categories, ATTENDU.categories, 'dépenses par catégorie')
   assert.deepEqual(r.clients, ATTENDU.clients, 'recettes par client')
 }
+// L'export des totaux ne déduit aucun régime de TVA : ni « TVA collectée » chiffrée, ni franchise affirmée.
+function controlerCsv(csv) {
+  assert.match(csv, /^Recettes \(€\);4290,50$/m, 'recettes au centime dans l’export')
+  assert.match(csv, /^TVA;Non calculée/m, 'TVA déclarée non calculée')
+  assert.doesNotMatch(csv, /TVA collectée|293 B|franchise/i, 'aucun régime de TVA affirmé dans l’export')
+}
 function controlerClasseur(octets) {
   const parties = unzipSync(octets)
   // CRC : relu dans le répertoire central et comparé à zlib.
@@ -82,7 +88,7 @@ try {
   const page = await navigateur.newPage()
   await page.route('http://compta.test/**', (route) => route.fulfill({ contentType: 'text/html', body: '<!doctype html><div id="root"></div>' }))
   await page.goto('http://compta.test/')
-  await page.addScriptTag({ type: 'module', content: sources.join('\n') + '\nglobalThis.compta = { rangerFichiers, totaux, recapMensuel, recapCategories, recapClients, filtrer, trier, modifier, ajouter, lignesStockeesValides, classeurCompta, ecrireClasseur, lireClasseur };' })
+  await page.addScriptTag({ type: 'module', content: sources.join('\n') + '\nglobalThis.compta = { rangerFichiers, totaux, recapMensuel, recapCategories, recapClients, filtrer, trier, modifier, ajouter, lignesStockeesValides, classeurCompta, ecrireClasseur, lireClasseur, tableauxDeBord, exporterCsv };' })
   await page.waitForFunction(() => !!globalThis.compta)
 
   const r = await page.evaluate(async (csv) => {
@@ -104,7 +110,7 @@ try {
       lignes, intacte: JSON.stringify(lignes) === copie, modifiee: modifiees[0].statut, autres: modifiees.slice(1).every((l, i) => l === lignes[i + 1]),
       totaux: c.totaux(lignes), mois: c.recapMensuel(lignes), categories: c.recapCategories(lignes), clients: c.recapClients(lignes),
       filtreTexte, filtreMois, triMontant, triTiers, refusDate, refusMontant, ajout: ajout.lignes.at(-1), ajoutValide: c.lignesStockeesValides(ajout.lignes),
-      octets: Array.from(octets), nomsFeuilles: feuilles.map((f) => f.nom), relu,
+      octets: Array.from(octets), nomsFeuilles: feuilles.map((f) => f.nom), relu, csvTotaux: c.exporterCsv(c.tableauxDeBord(lignes)),
     }
   }, CSV)
 
@@ -124,6 +130,7 @@ try {
   assert.equal(r.relu.rejets.length, 0, 'Journal réimporté sans rejet')
   const sansNumero = (ls) => ls.map(({ ligne, source, ...reste }) => reste).sort((a, b) => a.date.localeCompare(b.date))
   assert.deepEqual(sansNumero(r.relu.lignes), sansNumero(r.lignes), 'aller-retour Excel : mêmes lignes au centime')
+  controlerCsv(r.csvTotaux)
   console.log('PASS calculs au centime (totaux, mois + cumul, catégories, clients), filtres, tri stable, modification pure, saisie contrôlée, .xlsx valide (CRC zlib, SOMME + résultats, texte inerte) et réimporté à l’identique.')
 
   // — Sabotages : chaque contrôle doit refuser une sortie faussée. —
@@ -133,6 +140,8 @@ try {
     ['un impayé oublié', () => controlerCalculs({ ...r, clients: r.clients.map((c) => ({ ...c, impayes: 0 })) })],
     ['un résultat de SOMME faux', () => { const z = unzipSync(Uint8Array.from(r.octets)); const s = strFromU8(z['xl/worksheets/sheet2.xml']).replace('<v>4290.5</v>', '<v>4290.6</v>'); controlerClasseur(rezipper({ ...z, 'xl/worksheets/sheet2.xml': new TextEncoder().encode(s) })) }],
     ['un texte devenu formule', () => { const z = unzipSync(Uint8Array.from(r.octets)); const s = strFromU8(z['xl/worksheets/sheet1.xml']).replace('<is><t xml:space="preserve">=HYPERLINK', '<f>HYPERLINK</f><is><t xml:space="preserve">=HYPERLINK'); controlerClasseur(rezipper({ ...z, 'xl/worksheets/sheet1.xml': new TextEncoder().encode(s) })) }],
+    ['une TVA collectée chiffrée à 0', () => controlerCsv(r.csvTotaux.replace(/^TVA;.*$/m, 'TVA collectée (€);0,00'))],
+    ['une franchise affirmée', () => controlerCsv(r.csvTotaux.replace(/^TVA;(.*)$/m, 'TVA;Non calculée (franchise en base, art. 293 B)'))],
     ['un CRC corrompu', () => { const o = Uint8Array.from(r.octets); const v = Buffer.from(o.buffer); const fin = v.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06])); const p = v.readUInt32LE(fin + 16); v.writeUInt32LE((v.readUInt32LE(p + 16) ^ 1) >>> 0, p + 16); controlerClasseur(o) }],
   ]
   for (const [nom, essai] of sabotages) assert.throws(essai, undefined, `sabotage non détecté : ${nom}`)
