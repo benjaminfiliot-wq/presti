@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import AuthCadre from '@/app/AuthCadre'
 
 // Métadonnées de /login. Elles vivent ici et pas dans page.tsx parce que la page est un
 // composant client ('use client') : Next refuse d'y exporter `metadata`. Sans ce fichier, la
@@ -20,5 +21,5 @@ export const metadata: Metadata = {
 }
 
 export default function LoginLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>
+  return <AuthCadre>{children}</AuthCadre>
 }

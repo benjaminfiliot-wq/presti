@@ -87,7 +87,9 @@ principal(async () => {
   const mode = option('mode')
   if (!['plein', 'leger'].includes(mode)) throw new Arret(2, '--mode=plein|leger')
   const base = option('base') ? baseSure(option('base')) : null
-  const minutes = Number(option('minutes', 15))
+  // 07/10 : le cycle plein a 19 min (unité : TimeoutStartSec=20min) : sans Codex ni moteur libre, seul le 4 B local l'écrit, et aucun plein n'a fini
+  // en 15 min le 06/10 ; le léger garde 15 min (le modèle maison le sert en ~75 s). Le prochain cycle (léger, H+1:05) n'est jamais chevauché.
+  const minutes = Number(option('minutes', mode === 'plein' ? 19 : 15))
   const reprise = args.includes('--reprise')
   const usine = process.env.PRESTI_HOTE === 'usine'
   const modele = mode === 'plein' ? 'gpt-6-sol' : 'gpt-6-luna'
@@ -117,13 +119,16 @@ principal(async () => {
 
     const bin = process.env.ORCHESTRE_CODEX_BIN || 'codex'
     const [commande, avant] = /\.m?js$/.test(bin) ? [process.execPath, [bin]] : [bin, []]
-    const instruction = `Lis docs/agents/chef.md puis ${entree} et ecris le plan du cycle ${mode} dans ${plan} : un seul fichier JSON conforme a docs/agents/chef-plan.schema.json, rien d autre.`
+    const instruction = `Lis docs/agents/chef.md puis ${entree} et ecris le plan du cycle ${mode} dans ${plan} : un seul fichier JSON conforme a docs/agents/chef-plan.schema.json, rien d autre. Chaque tache du plan porte un objet precis de 20 a 200 signes (quoi faire, sur quoi, resultat attendu), jamais vide ni deux fois le meme : sinon tout le plan est refuse.`
     const argv = ['exec', '-C', RACINE, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '--skip-git-repo-check', '--color', 'never', '-o', path.join(dossier, 'dernier-message.md'), '-m', modele, instruction]
-    const m = await lancer(commande, [...avant, ...argv], { env: environnementDuModele(), delaiMs: minutes * 60_000 })
+    // Le relais de la file (chef-modele) partage le temps du cycle entre ses moteurs : il doit finir AVANT que le cycle ne tue son attente.
+    const delaiFile = /presti-chef-modele$/.test(bin) ? [`--delai=${Math.max(60, minutes * 60 - 45)}`] : []
+    const m = await lancer(commande, [...avant, ...delaiFile, ...argv], { env: environnementDuModele(), delaiMs: minutes * 60_000 })
     if (m.delai) { console.error(`✗ le modèle a dépassé ${minutes} min : arbre tué, rien d'appliqué`); journal('delai'); return 1 }
-    if (/hit your usage limit/i.test(m.sortie)) { noterQuota(m.sortie); console.error('✗ quota Codex atteint'); journal('quota'); return 3 }
     let taille = 0
     try { taille = fs.statSync(plan).size } catch { taille = 0 }
+    // Le texte « usage limit » de Codex peut rester sur la sortie quand le relais a pris le relais et écrit un plan : un plan présent (puis validé par fil.mjs) n'est pas un quota.
+    if (!taille && /hit your usage limit/i.test(m.sortie)) { noterQuota(m.sortie); console.error('✗ quota Codex atteint'); journal('quota'); return 3 }
     if (!taille) { console.error('✗ plan absent ou vide : rien d\'appliqué'); journal(1); return 1 }
 
     const v = await node('fil.mjs', ['verifier', plan, `--consignes=${path.join(TRAVAIL, 'consignes.json')}`])
@@ -135,7 +140,9 @@ principal(async () => {
     ligne.taches = rapport.taches ?? 0
     ligne.decisions = rapport.decisions ?? 0
     if (a.code !== 0) { console.error(a.sortie.trim()); journal(a.code); return a.code }
-    const f = await node('fil.mjs', ['poster', plan, `--modele=${modele}`, ...b])
+    // Le relais de la file du chef (chef-modele.mjs) dit sur la sortie d'erreur quel moteur de secours a servi : le fil le consigne.
+    const secours = /\[relais\] moteur=([a-z0-9_]{2,40})/.exec(m.sortie)?.[1]
+    const f = await node('fil.mjs', ['poster', plan, `--modele=${modele}`, ...(secours ? [`--moteur=${secours}`] : []), ...b])
     const derniere = f.sortie.trim().split(/\r?\n/).reverse().find((l) => l.startsWith('{"evenements"'))
     try { ligne.evenements = JSON.parse(derniere).evenements } catch { ligne.evenements = [] }
     journal(f.code)

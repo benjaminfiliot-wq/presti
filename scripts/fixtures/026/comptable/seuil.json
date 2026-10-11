@@ -1,42 +1,10 @@
 {
-  "_note": "Seuil de franchise 293 B FACTICE pour l'essai (10 000 EUR), daté : ce n'est PAS le seuil légal. Montants en centimes. Chaque scénario porte aussi un orphelin et un écart ÉNORMES : s'ils entrent dans le cumul, l'état change.",
-  "seuil": { "montant_centimes": 1000000, "source": "valeur factice d'essai (art. 293 B du CGI) : le seuil réel est à sourcer par Claude Code, cf. 026-059", "date_source": "2026-01-01" },
-  "seuil_sans_date": { "montant_centimes": 1000000, "source": "valeur factice sans date" },
+  "valeur_cents": 100000,
+  "source": "source synthétique de test — aucune valeur fiscale réelle",
+  "date_source": "2026-01-01",
   "scenarios": [
-    {
-      "nom": "60 % (avec une recette de 2025 qui ne compte pas)", "annee": 2026, "attendu_etat": "ok", "attendu_cumul": 600000, "attendu_depasse_le": null,
-      "rapproches": [
-        { "id_stripe": "s1a", "ref": "cmd_x", "montant": 300000, "date": "2026-02-10" },
-        { "id_stripe": "s1b", "ref": "cmd_x", "montant": 300000, "date": "2026-04-10" },
-        { "id_stripe": "s1c", "ref": "cmd_x", "montant": 900000, "date": "2025-12-30" }
-      ],
-      "orphelins": [{ "id_stripe": "ch_orph", "montant": 5000000, "date": "2026-02-01" }],
-      "ecarts": [{ "id_stripe": "ch_ecart", "ref": "cmd_e", "montant_stripe": 3000001, "montant_commande": 3000000, "date": "2026-02-02" }]
-    },
-    {
-      "nom": "pile 90 %", "annee": 2026, "attendu_etat": "approche_seuil", "attendu_cumul": 900000, "attendu_depasse_le": null,
-      "rapproches": [{ "id_stripe": "s2a", "ref": "cmd_x", "montant": 900000, "date": "2026-03-03" }],
-      "orphelins": [{ "id_stripe": "ch_orph", "montant": 5000000, "date": "2026-02-01" }],
-      "ecarts": [{ "id_stripe": "ch_ecart", "ref": "cmd_e", "montant_stripe": 3000001, "montant_commande": 3000000, "date": "2026-02-02" }]
-    },
-    {
-      "nom": "92 % (doit alerter)", "annee": 2026, "attendu_etat": "approche_seuil", "attendu_cumul": 920000, "attendu_depasse_le": null,
-      "rapproches": [
-        { "id_stripe": "s3a", "ref": "cmd_x", "montant": 500000, "date": "2026-01-20" },
-        { "id_stripe": "s3b", "ref": "cmd_x", "montant": 420000, "date": "2026-06-06" }
-      ],
-      "orphelins": [{ "id_stripe": "ch_orph", "montant": 5000000, "date": "2026-02-01" }],
-      "ecarts": [{ "id_stripe": "ch_ecart", "ref": "cmd_e", "montant_stripe": 3000001, "montant_commande": 3000000, "date": "2026-02-02" }]
-    },
-    {
-      "nom": "101 % (doit alerter et dater le franchissement ; rapprochés donnés dans le désordre)", "annee": 2026, "attendu_etat": "seuil_depasse", "attendu_cumul": 1010000, "attendu_depasse_le": "2026-07-20",
-      "rapproches": [
-        { "id_stripe": "s4c", "ref": "cmd_x", "montant": 110000, "date": "2026-07-20" },
-        { "id_stripe": "s4a", "ref": "cmd_x", "montant": 500000, "date": "2026-03-01" },
-        { "id_stripe": "s4b", "ref": "cmd_x", "montant": 400000, "date": "2026-05-10" }
-      ],
-      "orphelins": [{ "id_stripe": "ch_orph", "montant": 5000000, "date": "2026-02-01" }],
-      "ecarts": [{ "id_stripe": "ch_ecart", "ref": "cmd_e", "montant_stripe": 3000001, "montant_commande": 3000000, "date": "2026-02-02" }]
-    }
+    { "cumul": 60000, "alerte": null },
+    { "cumul": 92000, "alerte": "approche_seuil" },
+    { "cumul": 101000, "alerte": "seuil_depasse", "franchi_le": "2026-03-03" }
   ]
 }

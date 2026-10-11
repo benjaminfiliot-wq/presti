@@ -49,6 +49,25 @@ ajouter('socle','socle','SO-4','scripts/usine/socle.sh','sudo -n usermod --shell
 ajouter('socle','socle','SO-5',A,'npm ci --ignore-scripts','npm ci', 'scripts npm autorisés')
 ajouter('socle','socle','SO-6',A,"    'for f in $sources; do',","    'scp ./scripts/usine/systemd/presti-atelier.service usine:/etc/systemd/system/',\n    'for f in $sources; do',", 'unités copiées du poste')
 ajouter('socle','socle','SO-8','scripts/usine/presti-journal.sh','  config-codex)\n','  coffre) fichier="$HOME/.config/presti/agents.env" ;;\n  config-codex)\n', 'journal lit le coffre')
+// Les passes du SAV et du Contrôleur qualité (SO-11, 05/10/2026) : unités, sources, passes jouées contre un faux bus.
+{
+  const SU = 'scripts/usine/systemd/', SP = 'scripts/agents/sav-passe.mjs', CQ = 'scripts/agents/controleur-qualite.mjs'
+  ajouter('socle','socle','SO-11',`${SU}presti-sav.service`,'Nice=10\n','Nice=10\nEnvironmentFile=/home/agents/.config/presti/agents.env\n', 'unité SAV : tout le coffre chargé')
+  ajouter('socle','socle','SO-11',`${SU}presti-sav.service`,'avec-coffre.mjs PRESTI_JETON_SAV --','avec-coffre.mjs PRESTI_JETON_SAV PRESTI_JETON_CHEF --', 'unité SAV : le jeton du chef demandé en plus')
+  ajouter('socle','socle','SO-11',`${SU}presti-qualite.service`,'NoNewPrivileges=yes\n','', 'unité qualité : NoNewPrivileges retiré')
+  ajouter('socle','socle','SO-11',`${SU}presti-qualite.service`,'User=agents','User=root', 'unité qualité : lancée en root')
+  ajouter('socle','socle','SO-11',`${SU}presti-sav.timer`,'OnCalendar=*:7/15','OnCalendar=*:7/30', 'minuteur SAV : une passe toutes les 30 min, hors de la période déclarée (15)')
+  ajouter('socle','socle','SO-11',SP,"import path from 'node:path'\n","import fs from 'node:fs'\nimport path from 'node:path'\n", 'SAV : importe fs')
+  ajouter('socle','socle','SO-11',SP,'  const appeler = appelDe(base, jeton)',"  const secrets = '/home/agents/.config/presti/agents.env'\n  const appeler = appelDe(base, jeton)", 'SAV : nomme le coffre')
+  ajouter('socle','socle','SO-11',SP,"    const r = await appeler('POST', '/api/usine/sav/brouillon', { message_id: id })","    await appeler('POST', '/api/messages', { texte: m.texte })\n    const r = await appeler('POST', '/api/usine/sav/brouillon', { message_id: id })", 'SAV : écrit à un client (route messages)')
+  ajouter('socle','socle','SO-11',SP,'  if (e.statut === 423) return 0',"  await appeler('POST', '/api/agents/evenements', { type: TYPE_EVENEMENT, resume })\n  if (e.statut === 423) return 0", 'SAV : deux événements par passe')
+  ajouter('socle','socle','SO-11',SP,'{ message_id: id })','{ message_id: id, texte: m.texte })', 'SAV : le texte du client repart dans le dépôt')
+  ajouter('socle','socle','SO-11',SP,"console.log('sav : en pause, rien à faire'); return 0 }","console.log('sav : en pause, rien à faire'); return 1 }", 'SAV : la pause rend le code 1')
+  ajouter('socle','socle','SO-11',CQ,"export const TYPE_EVENEMENT = 'qualite_passe'","export const TYPE_EVENEMENT = 'qualite_passe'\nconst COFFRE = '.config/presti/agents.env'", 'qualité : nomme le coffre')
+  ajouter('socle','socle','SO-11',CQ,"await appelBus(reglages, '/api/agents/evenements', 'POST', { type: TYPE_EVENEMENT, resume })",'void 0', 'qualité : aucun événement de passe')
+  ajouter('socle','socle','SO-11',CQ,'process.exitCode = await principal()','process.exit(await principal())', 'qualité : process.exit à la place de process.exitCode')
+  ajouter('socle','socle','SO-11',CQ,"(base.protocol !== 'https:' && !(base.protocol === 'http:' && boucle))",'false', 'qualité : une URL http hors boucle locale acceptée')
+}
 // Surveillance, décision hebdomadaire et confidentialité.
 ajouter('socle','surveillance','SV-4',S,'tableau[Math.ceil(tableau.length * 0.95) - 1]','tableau.reduce((a, b) => a + b, 0) / tableau.length', 'moyenne au lieu de p95')
 ajouter('socle','surveillance','SV-5',S,"plusGrand < 22 ? 'danger'","plusGrand < 20 ? 'danger'", 'seuil danger abaissé')
@@ -148,7 +167,7 @@ async function principal() {
     }
     for (const commande of commandes) {
       const m = retenues.find(x => commandeDe(x) === commande), dir = copies.get(m.juge)
-      const r = await lancer(commande.replace('{racine}', dir), dir, 240000)
+      const r = await lancer(commande.replace('{racine}', dir.split(path.sep).join('/')), dir, 240000)
       console.log(`TÉMOIN ${m.juge}/${m.groupe || m.critere} : ${r.code} (${r.duree_s.toFixed(1)} s)`)
       if (r.code !== 0) defauts.push(`TÉMOIN ${commande} : code ${r.code} ; ${r.sortie.slice(-500)}`)
     }
@@ -158,7 +177,7 @@ async function principal() {
       if (occurrences !== 1) { defauts.push(`${m.critere} ${m.nom} : texte avant présent ${occurrences} fois`); continue }
       ecrire(fichier, original.replace(m.avant, () => m.apres))
       let r
-      try { r = await lancer(commandeDe(m).replace('{racine}', dir), dir, 240000) }
+      try { r = await lancer(commandeDe(m).replace('{racine}', dir.split(path.sep).join('/')), dir, 240000) }
       finally { ecrire(fichier, original) }
       const extrait = verdict(r.sortie, m.critere)
       const ok = r.code === 1 && !r.expire && extrait

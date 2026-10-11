@@ -167,6 +167,30 @@
    "type": "premier_contact",
    "modele_id": "formulaire_B_v1",
    "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « artisan à Nantes ». D'ailleurs, que pensez-vous de la nouvelle réglementation sur les chaudières au fioul ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "p22-pression",
+   "code": "pression",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « devis gratuit sous 48h ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "p23-pression",
+   "code": "pression",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « artisan certifié RGE ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "p24-pression",
+   "code": "pression",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « devis gratuit et sans obligation de suite ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
   }
  ],
  "conformes": [
@@ -197,13 +221,6 @@
    "type": "premier_contact",
    "modele_id": "formulaire_B_v1",
    "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, votre site n'a pas de version adaptée au téléphone. Sur un téléphone, combien de temps met votre site actuel à s'ouvrir ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
-  },
-  {
-   "id": "c05-conforme",
-   "canal": "formulaire_site",
-   "type": "premier_contact",
-   "modele_id": "formulaire_B_v1",
-   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « devis gratuit sous 48h ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
   },
   {
    "id": "c06-conforme",
@@ -248,13 +265,6 @@
    "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « intervention le jour même ». Sur un téléphone, combien de temps met votre site actuel à s'ouvrir ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
   },
   {
-   "id": "c12-conforme",
-   "canal": "formulaire_site",
-   "type": "premier_contact",
-   "modele_id": "formulaire_B_v1",
-   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « artisan certifié RGE ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
-  },
-  {
    "id": "c13-conforme",
    "canal": "formulaire_site",
    "type": "premier_contact",
@@ -297,18 +307,32 @@
    "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « intervention à domicile ». Sur un téléphone, combien de temps met votre site actuel à s'ouvrir ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
   },
   {
-   "id": "c19-conforme",
-   "canal": "formulaire_site",
-   "type": "premier_contact",
-   "modele_id": "formulaire_B_v1",
-   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « devis gratuit et sans obligation de suite ». Le temps de répondre à un devis, combien de clients ont déjà rappelé ailleurs ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
-  },
-  {
    "id": "c20-conforme",
    "canal": "formulaire_site",
    "type": "premier_contact",
    "modele_id": "formulaire_B_v1",
    "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « artisan à Nantes depuis 2005 ». Vos photos de chantier, où les gens peuvent-ils vraiment les voir aujourd'hui ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "c21-conforme",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « devis gratuit et sans engagement ». Vos devis, combien de temps passez-vous à les rédiger ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "c22-conforme",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « artisan à Vannes depuis 2009 ». Le temps passé sur la paperasse, à quel moment de la semaine le prenez-vous ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
+  },
+  {
+   "id": "c23-conforme",
+   "canal": "formulaire_site",
+   "type": "premier_contact",
+   "modele_id": "formulaire_B_v1",
+   "texte": "Message commercial de Presti, rédigé et envoyé par l'assistant IA de Presti. Ce n'est pas une demande de devis.\nBonjour, sur votre site, « chauffagiste agréé ». Quand un client vous demande un second devis, comment retrouvez-vous le premier ?\nJe peux vous préparer gratuitement une maquette privée de la page d'accueil d'un nouveau site à votre nom. Si ça vous intéresse, écrivez à prospection.temoin@exemple.invalid.\nBenjamin Filiot, Presti.\nVotre site figure dans la liste publique des entreprises RGE de l'ADEME. Vos données : https://presti-temoin.github.io/notice/\nPour ne plus rien recevoir : écrivez STOP à prospection.temoin@exemple.invalid.\nRéf. PI34GE"
   }
  ]
 }

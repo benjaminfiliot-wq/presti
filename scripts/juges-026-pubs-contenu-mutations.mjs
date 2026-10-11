@@ -1,327 +1,387 @@
 #!/usr/bin/env node
-// scripts/juges-026-pubs-contenu-mutations.mjs — contre-vérification indépendante des juges du domaine « pubs et
-// contenu » (fiche 026-159). Un juge qu'on n'a jamais vu échouer sur une vraie faute ne prouve rien : pour chaque
-// juge, une copie du dépôt reçoit UNE faute plantée (un remplacement de texte exact, jamais l'arbre réel), le juge
-// est relancé sur la copie et doit sortir en code 1 en nommant le critère visé ; un témoin intact doit passer.
+// 026-159 : catalogue fermé du contrat ; aucun PASS si une faute reste non préparée.
 //
-// Contrat du rapport lu par le méta-juge scripts/juges-026-mutations-preuve.mjs (--rapport) :
-//   { "mutations": [{ juge, commande, fichier, avant, apres, critere, extrait, duree_s }] }
-// `commande` écrit la copie {racine}. Le méta-juge relance la commande sur SA copie (sans .git, sans .orchestre/preuves) :
-// la commande passe donc par le relais de ce script (`--relais=<groupe>`), qui prépare la copie puis lance le juge.
+// Contre-vérifie les dix juges du domaine pubs et contenu : sur une COPIE du dépôt (jamais en place), le juge est lancé intact (témoin :
+// code 0 attendu) puis une faute réelle posée dans la copie (code 1 attendu, avec « FAIL <critère> — » une seule fois et le bilan qui
+// nomme le critère). La faute est ôtée octet pour octet après chaque lancement. Les juges tournent depuis la racine du dépôt, sur la copie
+// passée par --racine (le méta-juge 026-001 rejoue la commande écrite dans le rapport).
 //
-// Le relais fabrique ce que l'arbre réel porte et que la copie n'a pas (il n'écrit JAMAIS hors de la copie) :
-//   - un dépôt git dans la copie dont HEAD est l'état d'AVANT les ajouts que plusieurs juges relisent par `git diff HEAD`
-//     (dashboard, journal.ts, page du Poste, cron des relances) : ces juges sont écrits pour un arbre non encore commité ;
-//     sur un arbre commité leur diff est vide et ils échoueraient sur le témoin. Le texte retiré est celui des commits
-//     026-144, 026-137, 026-147 et 026-149 (voir BASES) ; si un retrait ne s'applique plus, le relais s'arrête (code 2) ;
-//   - le compte rendu d'essai à sec de 026-114 (.orchestre/preuves/026-114/essai-a-sec.txt), relu par pack-pub-base-qa PB-8.
+// Quatre issues par faute : DÉTECTÉE · NON ATTRAPÉE (le juge a fini et laisse passer la faute : découverte, rapport en tête, code 1,
+// aucun juge corrigé ici) · NON JUGÉE (délai, sortie vide) · AUTRE CRITÈRE. Code 0 seulement si toutes sont DÉTECTÉES et tous les témoins verts.
 //
-// NON COUVERT (relevé du 04/10, cloud Linux ; aucune mutation inventée sans l'avoir vue mordre) :
-//   - studio-garde-qa : scripts/studio/garde.mjs, docs/studio/modeles-messages.md et seance.md absents (fiche 026-155 non faite) ;
-//   - pub-qa, socle-pubs-qa (donc video-qa et visages-qa mutés eux-mêmes) : le témoin se fabrique avec PowerShell/SAPI (Windows) ;
-//   - pub-locale-qa --partie=gabarit|complet (PL-G3 à G5, PL-3, PL-7, PL-12) et pack-pub-livraison-qa --partie=depot (LV-1, LV-10) :
-//     hyperframes charge gsap depuis cdn.jsdelivr.net (refusé par l'accès réseau de l'environnement) et PL-8 exige faster-whisper ;
-//   - PL-T5 : « âge » dans la fiche ne peut pas rougir, la condition de pub-locale-qa.mjs:353-355 a un corps vide ;
-//   - crieur-qa --partie=route : le témoin est rouge (CR-17) depuis que la route du Crieur n'appelle plus pauseGenerale ; CR-5, CR-7 et
-//     CR-16 y sont écrits et pris sur l'ancienne base, mais le témoin intact échoue.
-// Usage :
-//   node scripts/juges-026-pubs-contenu-mutations.mjs [--seul=<motif>] [--garder] [--liste]
-//   node scripts/juges-026-pubs-contenu-mutations.mjs --relais=<groupe> --racine=<copie>     (interne)
-// Code 0 : chaque témoin passe et chaque mutation échoue sur son critère. Code 1 sinon (mutation non prise, témoin rouge,
-// juge injouable ici). Code 3 : --seul (sélection partielle, jamais une preuve).
-// N'écrit que sous .orchestre/travail/026-159/ et .orchestre/preuves/026-159/.
+// Options : --lister (préflight : chaque ancre présente une seule fois) · --temoins (témoins seulement) · --groupe=<juge> · --partie=<p> ·
+// --cas=<média> · --critere=<ID> · --sauf=<juge[:partie],…> · --pool=1|2 · --reprendre (reprend un rapport précédent : jamais le méta-juge) ·
+// --minutes=<n> (budget global, 48 par défaut) · --garder · --recuperer-medias (pose une fois les entrées publiques des fautes média).
+// Écrit sous .orchestre/preuves/026-159/ (mutations.json lu par le méta-juge, mutations.md, un journal par lancement) et sous
+// .orchestre/travail/026-159/ (copies, supprimées en fin de lancement, jonction node_modules retirée par unlink).
 import fs from 'node:fs'
 import path from 'node:path'
-import { spawn, spawnSync } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
-
-const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const FICHE = '026-159'
-const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', FICHE)
-const PREUVES = path.join(RACINE, '.orchestre', 'preuves', FICHE)
-const argv = process.argv.slice(2)
-const option = (nom) => argv.find((x) => x.startsWith(`--${nom}=`))?.slice(nom.length + 3)
-const GARDER = argv.includes('--garder')
-const SEUL = option('seul')
-const RELAIS = option('relais')
-const SELF = 'scripts/juges-026-pubs-contenu-mutations.mjs'
-
-// ── Les groupes : un juge, une partie, une copie partagée entre ses mutations ─────────────────────────────────────────
-const GROUPES = {
-  base: { juge: 'scripts/pack-pub-base-qa.mjs', args: [] },
-  'paiement-noyau': { juge: 'scripts/pack-pub-paiement-qa.mjs', args: ['--partie=noyau'] },
-  'paiement-route': { juge: 'scripts/pack-pub-paiement-qa.mjs', args: ['--partie=route'] },
-  cgu: { juge: 'scripts/cgu-pack-pub-qa.mjs', args: [] },
-  'dossier-api': { juge: 'scripts/pack-pub-dossier-qa.mjs', args: ['--partie=api'] },
-  'dossier-page': { juge: 'scripts/pack-pub-dossier-qa.mjs', args: ['--partie=page'] },
-  // crieur-qa : le dépôt tel quel pour git (CR-NR compare quatre fichiers à HEAD, dont le cron des relances : pas de base reculée)
-  // PUBLORA_API_KEY : la sonde de CR-7 lance publora.ts avec l'environnement ambiant et la clé y est exigée ; valeur d'essai, rien de réel.
-  'crieur-composer': { juge: 'scripts/crieur-qa.mjs', args: ['--partie=composer'], base: false },
-  'crieur-route': { juge: 'scripts/crieur-qa.mjs', args: ['--partie=route'], base: false, env: { PUBLORA_API_KEY: 'cle-essai-du-juge' } },
-  'crieur-horloge': { juge: 'scripts/crieur-qa.mjs', args: ['--partie=horloge'], base: false },
-  'locale-textes': { juge: 'scripts/pub-locale-qa.mjs', args: ['--partie=textes'] },
-  'livraison-route': { juge: 'scripts/pack-pub-livraison-qa.mjs', args: ['--partie=route'] },
-  'livraison-poste': { juge: 'scripts/pack-pub-livraison-qa.mjs', args: ['--partie=poste'] },
-  'livraison-purge': { juge: 'scripts/pack-pub-livraison-qa.mjs', args: ['--partie=purge'] },
+import {fileURLToPath} from 'node:url'
+import {spawn,spawnSync} from 'node:child_process'
+import crypto from 'node:crypto'
+const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..')
+const PROOF=path.join(ROOT,'.orchestre/preuves/026-159'),WORK=path.join(ROOT,'.orchestre/travail/026-159')
+const options=process.argv.slice(2)
+// Ces commutateurs appartiennent au fabricant de contre-exemples, jamais aux juges.
+const MEDIA = {
+  gps: false,
+  photo: false,
+  mentionPack: false,
+  age: false,
+  mentionStudio: false,
+  filigrane: false,
+  recommandation: false,
+  produit: false,
+  plan: false,
 }
-
-// ── Les mutations : { groupe, critere, fichier, avant, apres, nom } — `avant` présent une seule fois dans `fichier` ──────
-const mutations = []
-const muter = (groupe, critere, fichier, avant, apres, nom) => mutations.push({ groupe, critere, fichier, avant, apres, nom })
-
-const MIG = 'supabase/migrations/0102_packs_pubs.sql'
-const NU = 'supabase/migrations/_A_COLLER_sql_editor_0102_NU.sql'
-// pack-pub-base-qa (026-114)
-muter('base', 'PB-3', MIG,
-  'create policy "packs pubs : l artisan lit ses packs" on public.packs_pubs for select using (auth.uid() = artisan_id);',
-  'create policy "packs pubs : l artisan lit ses packs" on public.packs_pubs for select using (auth.uid() = artisan_id);\ncreate policy "packs pubs : ecriture" on public.packs_pubs for insert with check (auth.uid() = artisan_id);',
-  'politique d’écriture ajoutée')
-muter('base', 'PB-3', MIG, 'revoke all on public.packs_pubs from public, anon, authenticated;\n', '', 'revoke retiré')
-muter('base', 'PB-4', MIG,
-  "values ('packs-pubs', 'packs-pubs', false, 20971520)\non conflict (id) do update set public = false, file_size_limit = 20971520;",
-  "values ('packs-pubs', 'packs-pubs', true, 20971520)\non conflict (id) do update set public = true, file_size_limit = 20971520;",
-  'bucket rendu public')
-muter('base', 'PB-2', MIG, "check (etat in ('brouillon', 'payee', 'fabriquee', 'livree'))", "check (etat in ('brouillon', 'payee', 'fabriquee'))", "'livree' retiré de la contrainte d’état")
-muter('base', 'PB-8', NU, 'artisan_id uuid references public.artisans(id) on delete set null,', 'artisan_id uuid references public.artisans(id)  on delete set null,', 'jumeau nu changé d’un caractère après l’essai à sec')
-
-// pack-pub-paiement-qa (026-112 noyau, 026-118 route)
-const PUB = 'lib/packPub.ts'
-muter('paiement-noyau', 'PP-3', 'lib/stripeAiguillage.ts', "if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {", "if (s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {", 'aiguiller rend pack_pub en mode abonnement')
-muter('paiement-noyau', 'PP-4', 'app/api/stripe/webhook/route.ts', 'throw new Error(`paiement de pack pubs sans dossier : session ${s.id}`)', 'console.error(`paiement de pack pubs sans dossier : session ${s.id}`)', 'throw retiré sur introuvable')
-muter('paiement-noyau', 'PP-5', 'lib/packPubServeur.ts', ".update(maj).eq('id', packId).eq('etat', 'brouillon').select('id')", ".update(maj).eq('id', packId).select('id')", ".eq('etat', 'brouillon') retiré d’encaisserPackPub")
-muter('paiement-noyau', 'PP-6', PUB, "    invoice_creation: { enabled: true, invoice_data: { description: 'Pack pubs locales — Presti', ...(taxeAuto ? {} : { footer: mentionFranchise('auto') }) } },\n", '', 'invoice_creation retiré')
-muter('paiement-noyau', 'PP-6', PUB, 'payment_intent_data: { metadata: { ...metadata } },', 'payment_intent_data: {},', 'métadonnées absentes de payment_intent_data')
-muter('paiement-noyau', 'PP-7', 'lib/stripe.ts', 'return !enBase || enBase === evenement', 'return !enBase || enBase === evenement || false', 'une ligne changée dans lib/stripe.ts')
-muter('paiement-route', 'PP-9', 'lib/flags.ts', '  packPub: false,', '  packPub: true,', 'packPub levé (true)')
-
-// cgu-pack-pub-qa (026-131)
-muter('cgu', 'CG-3', 'app/cgu/page.tsx', 'signalée « Voix générée par IA » à l’écran pendant toute la vidéo.', 'signalée à l’écran pendant toute la vidéo.', '« Voix générée par IA » retirée')
-muter('cgu', 'CG-4', 'app/cgu/page.tsx', 'Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers.', 'Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers ; résultats assurés.', '« résultats assurés » ajouté')
-muter('cgu', 'CG-2', 'app/cgu/page.tsx', 'Les textes et photos qu’il fournit restent les siens', 'Les textes et photos qu’il fournit restent les leurs', 'un mot du 3 bis changé')
-
-// pack-pub-dossier-qa (026-135 api, 026-144 page)
-const DOS = 'lib/packPubDossier.ts'
-muter('dossier-api', 'PD-1', DOS, '/storage/v1/object/public/artisan-media/${contexte.uid}/`', '/storage/v1/object/public/artisan-media/`', 'photo d’un autre artisan acceptée')
-muter('dossier-api', 'PD-1', DOS, "    if (personnes && !accord_personnes) erreur(`${champ}.accord_personnes`, 'L’accord des personnes visibles est nécessaire.')\n", '', 'contrôle de l’accord des personnes retiré')
-muter('dossier-api', 'PD-1', DOS, "    if (/\\d/.test(texte_voix)) erreur('texte_voix', 'Écrivez les nombres en lettres.')\n", '', 'chiffres admis dans texte_voix')
-muter('dossier-page', 'PD-5', 'app/pubs/commander/page.tsx', '<p><b>{PRIX_PACK_PUB_TEXTE}</b> une fois,', '<p><b>149 €</b> une fois,', '« 149 € » écrit en dur dans la page')
-muter('dossier-page', 'PD-7', 'app/dashboard/page.tsx', "{actif('packPubVente') && <CartePackPub />}", '<CartePackPub />', 'carte rendue hors drapeau')
-
-// pack-pub-livraison-qa (026-137 route, 026-147 poste, 026-149 purge)
-const ROUTE_PACKS = 'app/api/controle/packs/[id]/route.ts'
-muter('livraison-route', 'LV-3', 'lib/packPubLivraison.ts', 'export const DUREE_LIEN_S = 2592000', 'export const DUREE_LIEN_S = 5184000', 'DUREE_LIEN_S à 60 jours')
-muter('livraison-route', 'LV-4', ROUTE_PACKS, "    const refus = await exigerReconfirmation(req, f.uid, 'artisan')\n    if (refus) return refus\n", '', 'reconfirmation retirée de livrer')
-muter('livraison-route', 'LV-4', ROUTE_PACKS, '  const maintenant = new Date()\n', "  const maintenant = new Date()\n  await supabaseAdmin.from('packs_pubs').update({ modifie_le: maintenant.toISOString() }).eq('id', id)\n", 'mise à jour écrite avant le journal')
-muter('livraison-poste', 'LV-8', 'app/controle/page.tsx', "import Sites from './Sites'", "import Sites from './Sites' // modifié", 'une ligne de plus changée dans app/controle/page.tsx')
-// Le simple élargissement de l'état (['livree', 'fabriquee']) n'est PAS pris : le jeu purge/fabriquee.json porte lien_expire_le = null,
-// que le test « lien_expire_le !== null » écarte seul. La mutation retire donc aussi ce test, sans quoi elle ne mordrait pas.
-muter('livraison-purge', 'LV-12', 'lib/packPubPurge.ts', ".filter((pack) => pack.etat === 'livree'\n      && pack.fichiers_effaces_le === null\n      && pack.lien_expire_le !== null\n", ".filter((pack) => pack.fichiers_effaces_le === null\n", 'purge qui retient aussi un pack fabriquee (filtres d’état et de lien retirés)')
-muter('livraison-purge', 'LV-13', 'lib/packPubPurge.ts', '    bilan.erreurs.push(`purge : ${e instanceof Error ? e.message : String(e)}`)', '    throw e', 'purge qui lève au lieu de compter')
-
-// pub-locale-qa --partie=textes (026-126) : la fabrique réelle scripts/pack-pub/textes.mjs écrit textes.md et la fiche
-muter('locale-textes', 'PL-T4', 'scripts/pack-pub/textes.mjs', 'const cta = faits.cta === \'appel\' && telephone ? `Appelez le ${telephone}`', 'const cta = faits.cta === \'appel\' && telephone ? `Appelez le ${telephone}, entreprise RGE`', '« RGE » dans textes.md')
-// Non retenue : « âge » dans la fiche avec le statut oui (PL-T5) — la condition de pub-locale-qa.mjs:353-355 a un corps vide, elle ne peut pas rougir.
-// muter('locale-textes', 'PL-T5', 'scripts/pack-pub/textes.mjs', 'Ne réglez ni l’âge ni le genre.', 'Ciblez par âge.', '« âge » dans la fiche, statut oui')
-
-// crieur-qa (026-116 ; 026-119 composer, 026-122 route, 026-134 horloge). La fiche nomme CR-10 « battement appelé en mode à sec » :
-// dans le juge actuel CR-10 est l'unicité du numéro de migration, le battement est jugé par CR-16 — les deux sont éprouvés.
-muter('crieur-composer', 'CR-1', 'lib/crieur/faits.ts', "motif: 'CADENCE_RELANCES = [2, 5, 10]'", "motif: 'CADENCE_RELANCES = [2, 5, 11]'", 'un fait dont le motif n’existe pas')
-muter('crieur-composer', 'CR-2', 'lib/crieur/faits.ts', "texte: 'Exportez vos données depuis Presti.'", "texte: 'Presti répond à vos prospects.'", '« Presti répond » seul dans un fait')
-muter('crieur-composer', 'CR-3', 'lib/crieur/composer.ts', '  return resultat\n}', '  return [...resultat, ...resultat.slice(0, 1)]\n}', 'composerLot rend 4 publications')
-muter('crieur-route', 'CR-5', 'app/api/cron/crieur/route.ts', "  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })\n", '', 'route sans contrôle du jeton')
-muter('crieur-route', 'CR-7', 'lib/crieur/publora.ts', 'const corps = { content: publication.contenu,', 'const corps = { scheduledTime: new Date().toISOString(), content: publication.contenu,', 'scheduledTime dans le corps envoyé')
-muter('crieur-route', 'CR-16', 'app/api/cron/crieur/route.ts', "    if (aSec) return NextResponse.json({ semaine, lot })", "    if (aSec) { await ops_battement({ p_nom: 'crieur' }); return NextResponse.json({ semaine, lot }) }", 'battement crieur appelé aussi en mode à sec')
-muter('crieur-horloge', 'CR-10', 'supabase/migrations/0104_crieur.sql', '-- Rejouable : la table et les index en `if not exists`,', '-- [DOUBLON-0104] Rejouable : la table et les index en `if not exists`,', 'deux migrations portent le numéro 0104 (le relais crée le doublon)')
-muter('crieur-horloge', 'CR-11', 'supabase/migrations/0104_crieur.sql', 'revoke all on public.crieur_posts from public, anon, authenticated;', 'revoke all on public.crieur_posts from public, anon, authenticated;\ncreate policy "crieur : lecture" on public.crieur_posts for select using (true);', 'politique ajoutée à crieur_posts')
-muter('crieur-horloge', 'CR-12', 'supabase/migrations/0104_crieur.sql', "'Bearer ' || v_secret", "'Bearer abcdefghijklmnopqrstuvwxyz012345'", 'jeton en clair dans l’appel planifié')
-
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// Utilitaires
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-const lire = (p) => fs.readFileSync(p, 'utf8')
-const ecrire = (p, s) => { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, s) }
-const court = (t, n = 200) => { const x = String(t ?? '').replace(/\s+/g, ' ').trim(); return x.length > n ? `${x.slice(0, n - 1)}…` : x }
-const JONCTIONS = ['node_modules', 'public']
-const DOSSIERS_COPIE = ['app', 'lib', 'scripts', 'supabase', 'docs', '.github', 'gabarits-pubs', '.orchestre/brouillons-ecosysteme']
-const FICHIERS_RACINE = ['package.json', 'tsconfig.json', 'next.config.mjs', 'next-env.d.ts', 'vercel.json', 'proxy.ts', 'middleware.ts']
-
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// Le relais : prépare la copie (git de référence, compte rendu d'essai à sec) puis lance le juge
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-const sansLigne = (texte, morceau) => {
-  const lignes = texte.split('\n')
-  const k = lignes.map((l, i) => (l.includes(morceau) ? i : -1)).filter((i) => i >= 0)
-  if (k.length !== 1) throw new Error(`« ${court(morceau, 60)} » présent sur ${k.length} ligne(s), une seule attendue`)
-  lignes.splice(k[0], 1)
-  return lignes.join('\n')
+if(options.some(a=>a.startsWith('--produire-media=')||a.startsWith('--juger-media='))){
+  try { await mediaMode(options); } catch(e) { console.error('Fabrication média refusée : '+e.message); process.exitCode=2; }
+  process.exit(process.exitCode??0)
 }
-const remplacerUne = (texte, avant, apres) => {
-  const n = texte.split(avant).length - 1
-  if (n !== 1) throw new Error(`« ${court(avant, 60)} » présent ${n} fois, une seule attendue`)
-  return texte.replace(avant, () => apres)
+// --recuperer-medias : pose, une fois, les deux jeux d'entrées publics des fautes média sous .orchestre/preuves/026-159/entrees/
+// (le pack témoin fabriqué par fixtures/026-pubs-contenu/pack/fabriquer-temoin.mjs ; l'échantillon témoin (marque fictive) de
+// pub-qa --temoin) et écrit recuperation-medias.json (groupe, fichier, sha256, taille) que --juger-media relit : une entrée altérée
+// est refusée. Refuse d'écraser des entrées existantes. Marque et produit fictifs, aucune donnée réelle.
+if(options.includes('--recuperer-medias')){
+  try{
+    // La marque fictive du témoin de pub-qa n'est jamais écrite ici : studio-garde-qa (SG-5) refuse son nom hors des jeux d'essai.
+    const tm=path.join(ROOT,'.orchestre/travail/pub-qa/temoin'),marque=fs.existsSync(tm)?fs.readdirSync(tm).find(n=>fs.existsSync(path.join(tm,n,'echantillon-1'))):null
+    const sources={pack:path.join(ROOT,'.orchestre/travail/026-pubs-contenu/pack-temoin'),studio:path.join(tm,marque??'absente')}
+    const base=path.join(PROOF,'entrees'),manifeste=[],hashF=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex')
+    if(fs.existsSync(base)||fs.existsSync(path.join(PROOF,'recuperation-medias.json')))throw Error('entrées déjà posées : rien n’est écrasé')
+    const parcourir=(source,dest,groupe,racine)=>{fs.mkdirSync(dest,{recursive:true});for(const n of fs.readdirSync(source).sort()){
+      const f=path.join(source,n),d=path.join(dest,n),st=fs.lstatSync(f)
+      if(st.isSymbolicLink())throw Error('lien refusé : '+f)
+      if(st.isDirectory()){if(n==='_snap-visuel')continue;parcourir(f,d,groupe,racine);continue}
+      if(!/\.(json|jpg|html|mp3|mp4|md|txt)$/i.test(n)||/secret|\.env|token|password/i.test(n)||!st.size)continue
+      fs.copyFileSync(f,d);manifeste.push({groupe,fichier:path.relative(racine,d).split(path.sep).join('/'),sha256:hashF(d),taille:fs.statSync(d).size})}}
+    for(const [g,src] of Object.entries(sources)){if(!fs.existsSync(src))throw Error('source absente : '+path.relative(ROOT,src));parcourir(src,path.join(base,g),g,path.join(base,g))}
+    fs.writeFileSync(path.join(PROOF,'recuperation-medias.json'),JSON.stringify(manifeste,null,2)+'\n')
+    console.log('Entrées posées : '+manifeste.length+' fichiers ('+manifeste.filter(e=>e.groupe==='pack').length+' pack, '+manifeste.filter(e=>e.groupe==='studio').length+' studio)')
+  }catch(e){console.error('Récupération refusée : '+e.message);process.exitCode=2}
+  process.exit(process.exitCode??0)
 }
-/** L'état d'AVANT les ajouts des fiches 026-144, 026-137, 026-147 et 026-149 : ce que `git diff HEAD` doit montrer. */
-const BASES = {
-  'app/dashboard/page.tsx': (t) => sansLigne(sansLigne(t, "import CartePackPub from '@/app/pubs/CartePackPub'"), '<CartePackPub />'),
-  'lib/direction/journal.ts': (t) => sansLigne(sansLigne(t, "// Livraison et retouche du pack pubs locales"), "| 'pack_livre' | 'pack_refaire'"),
-  'app/controle/page.tsx': (t) => {
-    let x = sansLigne(t, "import Packs from './Packs'")
-    x = sansLigne(x, "...(actif('packPub') ? (['packs'] as const) : []),")
-    x = sansLigne(x, "{ id: 'packs', label: 'Packs pubs'")
-    x = sansLigne(x, "onglet === 'packs' ? <Packs")
-    x = remplacerUne(x, " | 'demandes' | 'packs'", " | 'demandes'")
-    return remplacerUne(x, ", packs: 'Packs pubs' }", ' }')
-  },
-  'app/api/cron/relances/route.ts': (t) => {
-    const bloc = "  try {\n    const r = await purgerPacksExpires()\n    await enregistrerPassage('purge-packs', r, r.erreurs.length === 0)\n  } catch (e) {\n    await enregistrerPassage('purge-packs', { erreur: e instanceof Error ? e.message : String(e) }, false)\n  }\n\n"
-    return sansLigne(remplacerUne(t, bloc, ''), "import { purgerPacksExpires } from '@/lib/packPubPurge'")
-  },
+if(options.some(a=>!/^(?:--lister|--temoins|--garder|--groupe=[a-z-]+|--groupes=[a-z-]+,[a-z-]+|--partie=[a-z]+|--cas=[a-zA-Z]+|--minutes=[0-9]+|--pool=[12]|--reprendre|--critere=[A-Z0-9-]+|--sauf=[a-z:,-]+)$/.test(a))){console.error('Options : --lister, --temoins, --garder, --groupe=<juge>, --groupes=<deux juges>, --partie=<partie>, --cas=<cas>');process.exit(2)}
+const ONLY=options.find(a=>a.startsWith('--groupe='))?.slice(9),LIST=options.includes('--lister'),WITNESS=options.includes('--temoins'),KEEP=options.includes('--garder')
+const MULTI=options.find(a=>a.startsWith('--groupes='))?.slice(10).split(',')
+if(MULTI&&(ONLY||new Set(MULTI).size!==2)){console.error('--groupes attend deux groupes distincts, sans --groupe');process.exit(2)}
+// Budget global : 48 min (la série complète dure bien plus de 20 min : voir mutations.md, « Durée »). Le méta-juge (MP-1) ne laisse que
+// 20 min au script, sauf dérogation par fiche (comme 026-091) : sans elle il coupe avant la fin et le verdict est un délai.
+const LIMIT=(Number(options.find(a=>a.startsWith('--minutes='))?.slice(10))||48)*60_000, catalogue=[]
+const SAUF=(options.find(a=>a.startsWith('--sauf='))?.slice(7)??'').split(',').filter(Boolean)
+const POOL=Number(options.find(a=>a.startsWith('--pool='))?.slice(7)||2),RESUME=options.includes('--reprendre'),CRIT=options.find(a=>a.startsWith('--critere='))?.slice(10)
+const add=(g,c,f,re,transform,nom,opts=[])=>catalogue.push({n:catalogue.length+1,g,juge:`scripts/${g}-qa.mjs`,critere:c,fichier:f,re,transform,nom,opts})
+const replace=(g,c,f,re,after,nom,opts)=>add(g,c,f,re,()=>after,nom,opts)
+const pending=(g,c,nom,raison)=>catalogue.push({n:catalogue.length+1,g,juge:`scripts/${g}-qa.mjs`,critere:c,nom,pending:raison})
+const media=(g,c,cas,nom)=>{add(g,c,'scripts/juges-026-pubs-contenu-mutations.mjs',new RegExp('  '+cas+': false,'),a=>a.replace('false','true'),nom,['--juger-media='+(cas==='age'?cas:g==='pub'?'studio':'pack')]);catalogue.at(-1).media=cas}
+// Écarts entre la liste de la fiche et les juges tels qu'ils sont aujourd'hui (écrits dans mutations.md, jamais cachés).
+const ECARTS=[
+  "CR-10 : la fiche nomme CR-10 « le battement crieur appelé aussi en mode à sec » ; 026-122 l’a renommé CR-16 (CR-10 est devenu « un seul *_crieur.sql, numéro unique », partie horloge). La faute est jugée sur CR-16 ; une faute sur CR-10 ne s’écrit pas comme un remplacement de texte (elle exige un second fichier de migration). La liste du méta-juge (« CR-10 ») est périmée.",
+  "PQ-9 : la fiche parle d’un regard.json d’une autre planche ; PQ-9 ne lit plus de regard.json (réécrit le 25/09, 026-128) et mesure que chaque plan est une transformation de produit.jpg. La faute jugée est un plan où le produit est remplacé par un aplat de 4 à 9 s.",
+  "PB-8 : la fiche parle de la migration changée d’un caractère après l’essai à sec ; PB-8 relit l’empreinte du jumeau nu que l’essai à sec a exécuté (la migration seule est la faute de PB-5, aussi mutée).",
+  "SG-4 : la faute est la permutation réelle des étapes 9 (Benj regarde) et 11 (envoi) de docs/studio/seance.md.",
+  "SP-2 et SP-4 : video-qa.mjs et visages-qa.mjs sont mutés eux-mêmes, dans la copie ; une seule entrée par faute (les deux entrées « explicites » du premier jet étaient des doublons exacts).",
+]
+const SQL='supabase/migrations/0102_packs_pubs.sql',CGU='app/cgu/page.tsx',PACK='lib/packPub.ts',P='app/api/controle/packs/[id]/route.ts'
+add('pack-pub-base','PB-3',SQL,/revoke all on public\.packs_pubs from public, anon, authenticated;/,a=>a+'\ncreate policy "mutation ecriture" on public.packs_pubs for insert with check (true);','politique écriture ajoutée')
+add('pack-pub-base','PB-4',SQL,/values \('packs-pubs', 'packs-pubs', false, 20971520\)/,a=>a.replace('false','true'),'bucket public')
+replace('pack-pub-base','PB-3',SQL,/revoke all on public\.packs_pubs from public, anon, authenticated;/,'','revoke retiré')
+add('pack-pub-base','PB-2',SQL,/check \(etat in \('brouillon', 'payee', 'fabriquee', 'livree'\)\)/,a=>a.replace(", 'livree'",''),'état livree retiré')
+// PB-8 relit l'empreinte du JUMEAU NU que l'essai à sec a exécuté (pas celle de la migration, que PB-5 lie au jumeau) :
+// changer d'un caractère le texte exécuté par l'essai le rend périmé ; changer la migration seule est la faute de PB-5.
+add('pack-pub-base','PB-8','supabase/migrations/_A_COLLER_sql_editor_0102_NU.sql',/check \(prix_cents > 0\)/,a=>a.replace('>','>='),'jumeau nu changé après essai à sec')
+add('pack-pub-base','PB-5',SQL,/check \(prix_cents > 0\)/,a=>a.replace('>','>='),'migration changée, jumeau inchangé')
+add('pack-pub-paiement','PP-3','lib/stripeAiguillage.ts',/s\.mode === 'payment' && s\.metadata\?\.type === 'pack_pub' && s\.metadata\?\.pack_id/,a=>a.replace("s.mode === 'payment' && ",''),'pack en mode abonnement',['--partie=noyau'])
+replace('pack-pub-paiement','PP-4','app/api/stripe/webhook/route.ts',/        if \(r === 'introuvable'\) throw new Error\(`paiement de pack pubs sans dossier : session \$\{s\.id\}`\)/,'','introuvable avalé',['--partie=noyau'])
+add('pack-pub-paiement','PP-5','lib/packPubServeur.ts',/\.update\(maj\)\.eq\('id', packId\)\.eq\('etat', 'brouillon'\)/,a=>a.replace(".eq('etat', 'brouillon')",''),'garde brouillon retirée',['--partie=noyau'])
+replace('pack-pub-paiement','PP-6',PACK,/    invoice_creation: \{[^\r\n]+\},/,'','facture absente',['--partie=noyau'])
+replace('pack-pub-paiement','PP-6',PACK,/    payment_intent_data: \{ metadata: \{ \.\.\.metadata \} \},/,'    payment_intent_data: {},','metadata paiement absentes',['--partie=noyau'])
+replace('pack-pub-paiement','PP-9','lib/flags.ts',/packPub:\s*false/,'packPub: true','drapeau levé',['--partie=route'])
+add('pack-pub-paiement','PP-7','lib/stripe.ts',/import Stripe from 'stripe'/,a=>a+'\n// mutation NR159','Stripe changé',['--partie=noyau'])
+replace('cgu-pack-pub','CG-3',CGU,/signalée « Voix générée par IA » à l’écran pendant toute la vidéo/,'signalée à l’écran','mention IA retirée')
+add('cgu-pack-pub','CG-4',CGU,/Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers\./,a=>a+' Résultats assurés.','résultats assurés')
+add('cgu-pack-pub','CG-2',CGU,/Le site vitrine n’est pas compris dans les abonnements\./,a=>a.replace('vitrine','commercial'),'3 bis modifié')
+replace('pack-pub-dossier','PD-1','lib/packPubDossier.ts',/if \(!adresseAutorisee\(url, contexte\)\)/,'if (false)','photo autre artisan acceptée',['--partie=api'])
+replace('pack-pub-dossier','PD-1','lib/packPubDossier.ts',/if \(personnes && !accord_personnes\)/,'if (false)','accord personnes ignoré',['--partie=api'])
+replace('pack-pub-dossier','PD-1','lib/packPubDossier.ts',/if \(\/\\d\/\.test\(texte_voix\)\)/,'if (false)','chiffres voix acceptés',['--partie=api'])
+replace('pack-pub-dossier','PD-5','app/pubs/commander/page.tsx',/<b>\{PRIX_PACK_PUB_TEXTE\}<\/b>/,'<b>149 €</b>','prix page figé',['--partie=page'])
+replace('pack-pub-dossier','PD-7','app/dashboard/page.tsx',/actif\('packPubVente'\) && <CartePackPub \/>/,'true && <CartePackPub />','carte hors drapeau',['--partie=page'])
+add('pack-pub-livraison','LV-1','scripts/pack-pub/deposer.mjs',/const juge = spawnSync\(/,a=>"if (!process.env.SUPABASE_SERVICE_ROLE_KEY) { console.error('configuration Supabase absente'); process.exit(1) }\n"+a,'environnement avant juge',['--partie=depot'])
+replace('pack-pub-livraison','LV-4',P,/const refus = await exigerReconfirmation\(req, f\.uid, 'artisan'\)/,'const refus = null','reconfirmation retirée',['--partie=route'])
+add('pack-pub-livraison','LV-4',P,/  const journalise = await journaliser\(\{/,a=>"  await supabaseAdmin.from('packs_pubs').update({ etat: vers }).eq('id', id)\n"+a,'écriture avant journal',['--partie=route'])
+replace('pack-pub-livraison','LV-3','lib/packPubLivraison.ts',/DUREE_LIEN_S = 2592000/,'DUREE_LIEN_S = 5184000','lien soixante jours',['--partie=route'])
+add('pack-pub-livraison','LV-8','app/controle/page.tsx',/\{ id: 'visiteurs', label: 'Visiteurs',/,a=>a.replace("label: 'Visiteurs'","label: 'Clients'"),'contrôle changé hors packs',['--partie=poste'])
+add('pack-pub-livraison','LV-10','scripts/pack-pub/exporter.mjs',/JSON\.stringify\(\{ pack_id: packId, matiere: ligne\.matiere, site \}/,a=>a.replace('site }','site, email: ligne.email }'),'courriel exporté',['--partie=depot'])
+replace('pack-pub-livraison','LV-12','lib/packPubPurge.ts',/pack\.etat === 'livree'/,"['livree', 'fabriquee'].includes(pack.etat)",'purge fabriquee',['--partie=purge'])
+replace('pack-pub-livraison','LV-13','lib/packPubPurge.ts',/if \(error\) \{ bilan\.erreurs\.push\(`lecture : \$\{error\.message\}`\); return bilan \}/,'if (error) throw new Error(error.message)','erreur purge levée',['--partie=purge'])
+add('socle-pubs','SP-2','scripts/video-qa.mjs',/a\.meta\.largeur === 1080 && a\.meta\.hauteur === 1920/,a=>a.replace('a.meta.hauteur === 1920','[1920, 1350].includes(a.meta.hauteur)'),'format pub trop permissif')
+replace('socle-pubs','SP-5','scripts/visages-qa.mjs',/seuil = 0\.9, ips/,'seuil = 0.5, ips','seuil YuNet abaissé')
+replace('socle-pubs','SP-4','scripts/visages-qa.mjs',/if \(empreinteReelle !== EMPREINTE\)/,'if (false)','empreinte juge non vérifiée')
+replace('socle-pubs','SP-3','scripts/video-qa.mjs',/POIDS_MAX: 1_500_000/,'POIDS_MAX: 1','profil landing changé')
+// (Les mutations « juge vidéo » et « juge visages » du socle sont SP-2 et SP-4 ci-dessus : video-qa.mjs et visages-qa.mjs sont mutés eux-mêmes.)
+add('pub-locale','PL-G3','gabarits-pubs/locale/artisan-ville/index.html',/<img id="img1" class="abs" src="\{\{photo:0\}\}"/,a=>a.replace('{{photo:0}}','https://fautif.invalid/photo.jpg'),'image distante',['--partie=gabarit'])
+replace('pub-locale','PL-G4','gabarits-pubs/locale/artisan-ville/index.html',/<div id="mention-ia"[^\r\n]+<\/div>/,'','mention IA retirée',['--partie=gabarit'])
+replace('pub-locale','PL-G5','gabarits-pubs/locale/artisan-ville/index.html',/#accroche \{ top: 20%;/,'#accroche { top: 2%;','texte dans zone haute',['--partie=gabarit'])
+media('pub-locale','PL-3','gps','GPS remis dans photo')
+media('pub-locale','PL-3','photo','photo remplacée manifeste inchangé')
+media('pub-locale','PL-7','mentionPack','mention vidéo masquée de cinq à huit secondes')
+media('pub-locale','PL-T5','age','âge et logement oui')
+// Le contrat 159 autorise --dossier : conserver tous les critères du juge original,
+// dont le vrai fabricant appelé sur jeu-visage, sans refabriquer les trois jeux de 156.
+replace('pub-locale','PL-12','scripts/pack-pub/fabriquer.mjs',/const aVerifier = bruts\.filter\(\(p\) => !p\.personnes\)/,'const aVerifier = []','jeu visage accepté',['--juger-media=pack'])
+catalogue.at(-1).media='visage'
+replace('pub-locale','PL-T4','scripts/pack-pub/textes.mjs',/const introduction = amorces\[accroche\] \?\? `Un projet de \$\{metier\} à \$\{ville\} \?`/,"const introduction = 'RGE. ' + (amorces[accroche] ?? `Un projet de ${metier} à ${ville} ?`)",'RGE dans textes',['--partie=textes'])
+replace('studio-garde','SG-1','scripts/studio/garde.mjs',/  exigerLigne\(prealables, 'Activité déclarée le'\)/,'','activité déclarée non contrôlée')
+add('studio-garde','SG-3','docs/studio/modeles-messages.md',/Texte seul, sans lien, pièce jointe, prix ou affirmation qu’un essai existe déjà\./,a=>a.replace('sans lien','avec le lien https://fautif.invalid/essai'),'adresse web message un')
+add('studio-garde','SG-3','docs/studio/modeles-messages.md',/Texte seul, sans lien, pièce jointe, prix ou affirmation qu’un essai existe déjà\./,a=>a+' Premier message : j’ai préparé votre essai.','essai préparé message un')
+// SG-4 : permutation réelle des étapes 9 (« Benj regarde ») et 11 (« envoie ») de la séance : Benj regarde alors après l'envoi.
+add('studio-garde','SG-4','docs/studio/seance.md',/9\. Benj regarde[^\n]*\n10\. [^\n]*\n11\. [^\n]*/,bloc=>{const [regard,depot,envoi]=bloc.split('\n').map(l=>l.replace(/^\d+\. /,''));return ['9. '+depot,'10. '+envoi,'11. '+regard].join('\n')},'Benj regarde après l’envoi')
+media('pub','PQ-2','mentionStudio','mention absente première seconde')
+media('pub','PQ-3','filigrane','filigrane masqué trois secondes')
+media('pub','PQ-6','recommandation','je recommande ajouté')
+media('pub','PQ-7','produit','photo produit remplacée')
+// PQ-9 ne lit plus de regard.json (réécrit par la contre-revue du 25/09, fiche 026-128) : il mesure que chaque plan reste
+// une transformation de produit.jpg. La faute réelle est donc un plan où le produit est remplacé (aplat posé sur lui de 4 à 9 s).
+media('pub','PQ-9','plan','plan du produit remplacé par un aplat de 4 à 9 s')
+add('crieur','CR-16','app/api/cron/crieur/route.ts',/if \(aSec\) return NextResponse\.json\(\{ semaine, lot \}\)/,a=>a.replace('return NextResponse','{ await ops_battement({ p_nom: \'crieur\' }); return NextResponse')+' }','battement aussi à sec',['--partie=route'])
+replace('crieur','CR-1','lib/crieur/faits.ts',/motif: '\| 15 \| « Factures \+ facture électronique »'/,"motif: 'preuve-fautive-introuvable'",'motif inconnu',['--partie=composer'])
+replace('crieur','CR-2','lib/crieur/faits.ts',/texte: 'Presti permet de créer des factures et des factures électroniques\.'/,"texte: 'Presti répond.'",'Presti répond seul',['--partie=composer'])
+replace('crieur','CR-3','lib/crieur/composer.ts',/  return resultat\b/,'  return [...resultat, ...resultat.slice(0, 1)]','quatre publications',['--partie=composer'])
+add('crieur','CR-7','lib/crieur/publora.ts',/const corps = \{ content: publication\.contenu, platforms: publication\.plateformes,/,a=>a+" scheduledTime: '2030-01-01T00:00:00Z',",'scheduledTime envoyé',['--partie=route'])
+replace('crieur','CR-5','app/api/cron/crieur/route.ts',/  if \(!secret \|\| req\.headers\.get\('authorization'\) !== `Bearer \$\{secret\}`\) return NextResponse\.json\(\{ error: 'unauthorized' \}, \{ status: 401 \}\)/,'','jeton non contrôlé',['--partie=route'])
+add('crieur','CR-11','supabase/migrations/0104_crieur.sql',/revoke all on public\.crieur_posts from public, anon, authenticated;/,a=>a+'\ncreate policy "fautif" on public.crieur_posts for insert with check (true);','politique Crieur ajoutée',['--partie=horloge'])
+replace('crieur','CR-12','supabase/migrations/0104_crieur.sql',/'Bearer ' \|\| v_secret/,"'Bearer jeton-fautif-en-clair'",'jeton appel en clair',['--partie=horloge'])
+
+const PARTIE=options.find(a=>a.startsWith('--partie='))?.slice(9)
+const CAS=options.find(a=>a.startsWith('--cas='))?.slice(6)
+const selected=catalogue.filter(m=>(!ONLY||m.g===ONLY)&&(!MULTI||MULTI.includes(m.g))&&(!PARTIE||m.opts?.includes('--partie='+PARTIE))&&(!CAS||m.media===CAS)&&(!CRIT||m.critere===CRIT)&&!SAUF.some(x=>x===m.g||x===m.g+':'+(m.opts?.find(o=>o.startsWith('--partie='))?.slice(9)??'')))
+const errors=[],prepared=[]
+if(!selected.length)errors.push('groupe inconnu : '+ONLY)
+for(const m of selected){try{if(m.pending)throw Error(m.pending);const text=fs.readFileSync(path.join(ROOT,m.fichier),'utf8'),hits=[...text.matchAll(new RegExp(m.re.source,'g'))];if(hits.length!==1)throw Error('ancre présente '+hits.length+' fois');const avant=hits[0][0],apres=m.transform(avant);if(avant===apres)throw Error('aucun changement');prepared.push({...m,avant,apres,ligne:text.slice(0,hits[0].index).split('\n').length})}catch(e){errors.push(m.critere+' — '+m.nom+' : '+e.message)}}
+if(LIST){const groupes=new Map();for(const m of prepared){const key=m.juge+' '+m.opts.join(' ');if(!groupes.has(key))groupes.set(key,{juge:m.juge,opts:m.opts,fautes:0});groupes.get(key).fautes++}console.log(JSON.stringify({catalogue:catalogue.length,selection:selected.length,prepares:prepared.length,budget_global_ms:LIMIT,timeout_processus_ms:'6 min ; 15 min gabarit ; 12 min pack complet et dépôt',groupes:[...groupes.values()],criteres:[...new Set(catalogue.map(m=>m.critere))],ancres:prepared.map(m=>({juge:m.juge,critere:m.critere,fichier:m.fichier,ligne:m.ligne,nom:m.nom})),erreurs:errors},null,2));process.exit(errors.length?1:0)}
+const erreursFixes=[...errors],report={mutations:[],temoins:[],erreurs:[],survivants:[],indetermines:[],autres:[]},start=Date.now(),run=path.join(WORK,String(Date.now())+'-'+process.pid)
+fs.mkdirSync(PROOF,{recursive:true});fs.mkdirSync(run,{recursive:true})
+// Quatre issues par faute : détectée (code 1 ET « FAIL <critère> — » une seule fois ET bilan qui le nomme) ; non attrapée (le juge a fini
+// et reste vert : c'est la découverte que cette fiche cherche) ; non jugée (délai, sortie vide) ; attrapée par un autre critère.
+const detectees=new Map(),survivants=new Map(),indetermines=new Map(),autres=new Map(),rang=new Map(),cle=m=>[m.juge,m.opts.join(' '),m.critere,m.nom].join('|')
+const parRang=(x,y)=>(rang.get(x[0])??0)-(rang.get(y[0])??0)
+const rebuild=()=>{
+  const v=map=>[...map.entries()].sort(parRang).map(e=>e[1])
+  report.mutations=v(detectees);report.survivants=v(survivants);report.indetermines=v(indetermines);report.autres=v(autres)
+  report.erreurs=[...erreursFixes,...report.survivants.map(x=>'MUTATION NON ATTRAPÉE : '+x.critere+' '+x.nom+' — '+x.verdict),...report.indetermines.map(x=>'non jugée : '+x.critere+' '+x.nom+' — '+x.raison),...report.autres.map(x=>x.critere+' '+x.nom+' non attrapée sur son critère — '+x.verdict)]
 }
-function gitCopie(racine, args) {
-  return spawnSync('git', ['-c', 'user.email=juge@exemple.invalid', '-c', 'user.name=juge', '-c', 'commit.gpgsign=false', '-c', 'core.autocrlf=false', '-c', 'core.safecrlf=false', ...args], { cwd: racine, encoding: 'utf8', maxBuffer: 1 << 28 })
+const save=()=>{rebuild();const name=WITNESS?'temoins':'mutations';fs.writeFileSync(path.join(PROOF,name+'.json'),JSON.stringify(report,null,2)+'\n')
+  const L=['# 026-159 — '+(WITNESS?'témoins seulement':'contre-mutations des juges pubs et contenu'),'']
+  if(report.survivants.length)L.push('## MUTATIONS NON ATTRAPÉES : le juge reste vert sur une vraie faute','','Aucun juge n’a été corrigé ici (règle de la fiche) : chaque ligne rouvre la fiche du juge concerné.','',...report.survivants.map(x=>'- **'+x.critere+'** '+x.nom+' ('+x.juge+', '+x.fichier+') : '+x.commande+' ; verdict réel : '+x.verdict),'')
+  if(report.indetermines.length)L.push('## Non jugées (délai ou sortie vide : ni attrapées ni survivantes)','',...report.indetermines.map(x=>'- '+x.critere+' '+x.nom+' : '+x.commande+' ; '+x.raison),'')
+  if(report.autres.length)L.push('## Échecs sur un autre critère que celui attendu (non comptés)','',...report.autres.map(x=>'- '+x.critere+' '+x.nom+' : '+x.commande+' ; '+x.verdict),'')
+  if(erreursFixes.length)L.push('## Autres erreurs','',...erreursFixes.map(e=>'- NON VALIDÉ : '+e),'')
+  L.push('## Écarts entre la fiche et les juges actuels','',...ECARTS.map(e=>'- '+e),'')
+  if(report.video_original)L.push('- A1 juge original : '+report.video_original.commande+' ; code '+report.video_original.code+' ; '+JSON.stringify(report.video_original.format),'')
+  L.push('## Témoins (copie intacte : code 0 attendu)','',...report.temoins.map(t=>'- Témoin '+t.commande+' : code '+t.code+', '+t.duree_s+' s'+(t.repris?' (repris d’un lancement précédent)':'')),'','## Mutations attrapées (code ≠ 0 sur le critère attendu)','',...report.mutations.map(m=>'- '+m.critere+' '+m.nom+' : '+m.commande+' ; '+m.extrait))
+  fs.writeFileSync(path.join(PROOF,name+'.md'),L.join('\n')+'\n')}
+const git=(args)=>{const r=spawnSync('git',args,{cwd:ROOT,encoding:'utf8',maxBuffer:64<<20});if(r.status!==0)throw Error('Git authentique indisponible : '+args[0]);return r.stdout}
+const files=git(['ls-files','--cached','--others','--exclude-standard','-z']).split('\0').filter(f=>f&&!/^\.orchestre\//.test(f)&&!/(^|\/)(?:\.env(?:\.|$)|id_rsa|id_ed25519)/.test(f)&&!/\.(?:key|pem)$/i.test(f)&&(/^(?:app|lib|components|scripts|supabase|docs\/agents|docs\/studio|docs\/pubs|gabarits-pubs|public|plans|\.github)\//.test(f)||/^(?:package.*\.json|tsconfig\.json|next-env\.d\.ts|next\.config\.[^/]+|proxy\.ts|vercel\.json)$/.test(f)))
+function cleanup(dir){const rel=path.relative(run,dir);if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel))throw Error('cleanup hors copie');if(!fs.existsSync(dir))return;for(const n of fs.readdirSync(dir)){const p=path.join(dir,n),st=fs.lstatSync(p);if(st.isSymbolicLink())fs.unlinkSync(p);else if(st.isDirectory())cleanup(p);else fs.unlinkSync(p)}fs.rmdirSync(dir)}
+// Windows : un antivirus ou un autre agent verrouille parfois une source (« UNKNOWN: unknown error, copyfile ») ; on réessaie.
+function copyFile(source,destination){for(let essai=1;;essai++){try{fs.copyFileSync(source,destination);return}catch(e){if(essai>=8||!/^(?:UNKNOWN|EBUSY|EPERM|EACCES|EMFILE)$/.test(e.code??''))throw e;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,150*essai)}}}
+function copy(dir){fs.mkdirSync(dir,{recursive:true});for(const f of files){const p=path.join(ROOT,f);if(!fs.existsSync(p))continue;const st=fs.lstatSync(p);if(st.isSymbolicLink())throw Error('source lien refusée : '+f);if(st.isFile()){const d=path.join(dir,f);fs.mkdirSync(path.dirname(d),{recursive:true});copyFile(p,d)}}for(const f of ['.orchestre/preuves/026-114/essai-a-sec.txt','.orchestre/preuves/026-134/essai-a-sec.txt'])if(fs.existsSync(path.join(ROOT,f))){const d=path.join(dir,f);fs.mkdirSync(path.dirname(d),{recursive:true});fs.copyFileSync(path.join(ROOT,f),d)}if(fs.existsSync(path.join(ROOT,'tsconfig.tsbuildinfo')))copyFile(path.join(ROOT,'tsconfig.tsbuildinfo'),path.join(dir,'tsconfig.tsbuildinfo'));if(fs.existsSync(path.join(ROOT,'node_modules')))fs.symlinkSync(path.join(ROOT,'node_modules'),path.join(dir,'node_modules'),process.platform==='win32'?'junction':'dir')}
+// Délai d'UN lancement de juge, selon sa partie : un pack complet (films, transcription, hyperframes) dépasse trois minutes
+// même sur un poste libre (186 s mesurés en 026-126) ; les parties de lecture de texte tiennent en quelques secondes.
+const delaiDe=m=>m.opts.includes('--juger-media=pack')||m.opts.includes('--partie=depot')?12*60_000:m.opts.includes('--partie=gabarit')?15*60_000:m.opts.includes('--juger-media=studio')||m.opts.includes('--partie=noyau')||m.g==='socle-pubs'?6*60_000:6*60_000
+const command=m=>['node',m.media?'scripts/juges-026-pubs-contenu-mutations.mjs':m.juge,...m.opts,'--racine={racine}'].join(' ')
+async function judge(m,dir){const remain=LIMIT-(Date.now()-start);if(remain<=0)throw Error('budget global atteint');const begin=Date.now(),env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!/(SECRET|KEY|TOKEN|PASSWORD|PASSWD|STRIPE|SUPABASE|RESEND|ANTHROPIC|OPENAI|VERCEL|DATABASE|DIRECT_URL|EMAIL_ENTREPRISE|CRON|WEBHOOK)/i.test(k)));return new Promise(resolve=>{let sortie='',expired=false;const child=spawn(process.execPath,[m.media?'scripts/juges-026-pubs-contenu-mutations.mjs':m.juge,...m.opts,...(m.noRacine?[]:['--racine='+dir])],{cwd:ROOT,env:{...env,NO_COLOR:'1',FORCE_COLOR:'0'},detached:process.platform!=='win32',windowsHide:true});child.stdout.on('data',d=>sortie+=d);child.stderr.on('data',d=>sortie+=d);const timer=setTimeout(()=>{expired=true;if(process.platform==='win32')spawnSync('taskkill',['/PID',String(child.pid),'/T','/F'],{windowsHide:true});else try{process.kill(-child.pid,'SIGKILL')}catch{}},Math.min(remain,delaiDe(m)));child.on('error',e=>{clearTimeout(timer);resolve({code:127,sortie:sortie+'\n'+e.message,duree_s:(Date.now()-begin)/1000,expired})});child.on('close',(code,signal)=>{clearTimeout(timer);resolve({code,signal,sortie:sortie.replace(/\u001b\[[0-9;]*m/g,''),duree_s:(Date.now()-begin)/1000,expired})})})}
+function strict(out,c){const lines=out.split(/\r?\n/),named=lines.filter(l=>new RegExp('^(PASS|FAIL|SAUTE) '+c+'(?: — |$)').test(l));const end=lines.map(l=>/^([a-z][a-z0-9-]*(?: --[a-z0-9-]+=[^\s]+)*) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1);return named.length===1&&named[0].startsWith('FAIL '+c+' — ')&&end?.[2]==='FAIL'&&(end[3]??'').split(/,\s*/).includes(c)&&!/^\s+at .*:\d+:\d+/m.test(out)?named[0]:null}
+// Deux groupes au plus ; les chemins fixes des juges déterminent les exclusions.
+function ressources(entries) {
+  const m=entries[0]
+  if(m.g==='pub-locale') {
+    if(m.opts.includes('--juger-media=pack')||m.opts.includes('--partie=complet'))return ['pack-snapshot']
+    if(m.opts.includes('--partie=gabarit')||m.opts.includes('--partie=textes'))return ['pack-base']
+  }
+  if(m.g==='pack-pub-livraison'&&m.opts.includes('--partie=depot'))return ['pack-snapshot']
+  return [m.juge]
 }
-const PREUVES_A_COPIER = ['026-114', '026-134'] // les comptes rendus d'essai à sec relus par pack-pub-base-qa (PB-8) et crieur-qa (CR-13)
-const MARQUE_DOUBLON = '[DOUBLON-0104]' // voir le groupe crieur-horloge : la marque demande au relais de créer un second fichier de migration 0104
-function preparerCopie(racine, g) {
-  if (!fs.existsSync(path.join(racine, '.git'))) {
-    const vrais = new Map()
-    if (g.base !== false) {
-      for (const [f, reverser] of Object.entries(BASES)) {
-        const p = path.join(racine, f)
-        if (!fs.existsSync(p)) throw new Error(`${f} absent de la copie`)
-        const ici = lire(p)
-        vrais.set(p, ici)
-        fs.writeFileSync(p, reverser(ici))
+// Coût relatif d'un groupe (typecheck, hyperframes, ffmpeg) : les groupes sont lancés du moins cher au plus cher, de sorte qu'un
+// balayage interrompu ait déjà rendu le plus de verdicts possible.
+function priorite(entries) {
+  const m=entries[0],o=m.opts
+  const cout=o.includes('--juger-media=pack')?7:o.includes('--partie=depot')?6:o.includes('--partie=gabarit')?5:o.includes('--juger-media=studio')?4:['--partie=noyau','--partie=api','--partie=page','--partie=route','--partie=poste','--partie=purge'].some(x=>o.includes(x))&&/^(pack-pub|cgu)/.test(m.g)?3:m.g==='cgu-pack-pub'?3:m.g==='socle-pubs'?2:1
+  return -cout
+}
+async function poolGroupes(jobs,exec,maximum=2) {
+  if(maximum!==1&&maximum!==2)throw Error('pool doit rester limité à deux groupes')
+  const queue=[...jobs],running=new Set(),locks=new Set();let fatal
+  while(queue.length||running.size){
+    while(!fatal&&running.size<maximum){
+      const i=queue.findIndex(j=>j.ressources.every(r=>!locks.has(r)))
+      if(i<0)break
+      const j=queue.splice(i,1)[0];for(const r of j.ressources)locks.add(r)
+      let work;work=Promise.resolve().then(()=>exec(j)).catch(e=>{fatal??=e}).finally(()=>{for(const r of j.ressources)locks.delete(r);running.delete(work)})
+      running.add(work)
+    }
+    if(!running.size)break
+    await Promise.race(running)
+  }
+  if(fatal)throw fatal
+  if(queue.length)throw Error('verrous de groupes incohérents')
+}
+const ligneNommee=(sortie,c)=>{const l=sortie.split(/\r?\n/).filter(x=>new RegExp('^(PASS|FAIL|SAUTE) '+c+'(?: — |$)').test(x));return l.length===1?l[0]:null}
+const verdictDe=(sortie,c)=>{const l=sortie.split(/\r?\n/),n=l.find(x=>new RegExp('^(PASS|FAIL|SAUTE) '+c+'(?: — |$)').test(x)),bilan=l.filter(x=>/^[a-z][a-z0-9-]*(?: --[a-z0-9-]+=[^\s]+)* : (PASS|FAIL)/.test(x)).at(-1);return [n,bilan].filter(Boolean).join(' | ').slice(0,400)||'sortie sans verdict'}
+const optsDe=commande=>(commande.match(/ (--[a-z-]+=[^\s{]+)/g)??[]).map(t=>t.trim()).filter(t=>!t.startsWith('--racine')).join(' ')
+try {
+  if(errors.length){save();throw Error('préflight incomplet : aucun test lancé')}
+  const groups=new Map(),ordinal=new Map(prepared.map(m=>[m,m.n]))
+  for(const m of catalogue)rang.set(cle(m),m.n)
+  for(const m of prepared){const key=m.juge+' '+m.opts.join(' ');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(m)}
+  // --reprendre : reprend le rapport d'un lancement précédent (fautes déjà jugées et témoins verts) ; jamais utilisé par le méta-juge.
+  let precedent=null
+  if(RESUME&&!WITNESS){try{precedent=JSON.parse(fs.readFileSync(path.join(PROOF,'mutations.json'),'utf8'))}catch{}}
+  const presents=new Set(catalogue.map(cle))
+  if(precedent){
+    // Les juges médias n'ont pas de « juge » propre dans leur commande : la clé reprend celle du catalogue (juge + options du groupe).
+    const optsGroupe=new Map(catalogue.map(m=>[m.juge+'|'+m.critere+'|'+m.nom,m.opts.join(' ')]))
+    const clePrec=x=>[x.juge,optsGroupe.get(x.juge+'|'+x.critere+'|'+x.nom)??optsDe(x.commande),x.critere,x.nom].join('|')
+    for(const x of precedent.mutations??[]){const k=clePrec(x);if(presents.has(k))detectees.set(k,x)}
+    for(const x of precedent.survivants??[]){const k=clePrec(x);if(presents.has(k))survivants.set(k,x)}
+    if(precedent.video_original)report.video_original=precedent.video_original
+    report.temoins=(precedent.temoins??[]).filter(t=>t.code===0)
+  }
+  save()
+  const jobs=[...groups].map(([key,entries],group)=>({key,entries,group,ressources:ressources(entries)})).sort((a,b)=>priorite(b.entries)-priorite(a.entries)||a.group-b.group)
+  const witnesses=[],libres=Array.from({length:POOL},(_,i)=>i),pretes=new Set();let actifs=0
+  const nettoyerMedia=d=>{const w=path.join(d,'.orchestre/travail/026-159-media');if(fs.existsSync(w))cleanup(w)}
+  report.scheduler={maximum:POOL,pic_groupes:0,groupes:jobs.map(j=>({groupe:j.group,commande:j.key,ressources:j.ressources})),evenements:[]}
+  await poolGroupes(jobs,async ({key,entries,group})=>{
+    const aFaire=entries.filter(m=>!detectees.has(cle(m))&&!survivants.has(cle(m)))
+    if(!aFaire.length&&!WITNESS){console.log('REPRIS '+key+' : toutes les fautes déjà jugées');return}
+    actifs++;report.scheduler.pic_groupes=Math.max(report.scheduler.pic_groupes,actifs)
+    report.scheduler.evenements.push({groupe:group,action:'debut',ms:Date.now()-start})
+    try {
+    // Une copie du dépôt par place du pool (deux au plus), réutilisée : chaque faute est posée puis ôtée octet pour octet, la copie
+    // revient intacte pour la suivante. Recopier 120 Mo pour chacune des fautes dépassait le budget.
+    const place=libres.shift(),dir=path.join(run,'copie-'+place);let witness
+    try{
+    if(!pretes.has(place)){copy(dir);pretes.add(place)}
+    const commandeT=command(entries[0]),repris=precedent?.temoins?.find(t=>t.commande===commandeT&&t.code===0)
+    if(repris){witnesses[group]={...repris,repris:true};console.log('TÉMOIN '+key+' : code 0 (repris)')}
+    else{
+      nettoyerMedia(dir);witness=await judge(entries[0],dir)
+      // Un juge court qui regarde l'état git du dépôt PARTAGÉ (SG-2) rougit si une autre session y écrit pendant ses deux secondes :
+      // trois essais au plus, pour les seuls juges qui finissent en moins d'une minute.
+      let essais=1;while(witness.code!==0&&!witness.expired&&!witness.signal&&witness.duree_s<60&&essais<3){essais++;nettoyerMedia(dir);witness=await judge(entries[0],dir)}
+      witnesses[group]={commande:commandeT,code:witness.code,duree_s:witness.duree_s,log:'temoin-'+group+'.log',...(essais>1?{essais}:{})}
+      fs.writeFileSync(path.join(PROOF,'temoin-'+group+'.log'),witness.sortie)
+      console.log('TÉMOIN '+key+' : code '+witness.code)
+    }
+    report.temoins=witnesses.filter(Boolean);save()
+    if(witness&&(witness.code!==0||witness.expired||witness.signal)){erreursFixes.push('témoin rouge : '+key+(witness.expired?' (délai dépassé)':''));save();return}
+    if(WITNESS)return
+    if(entries[0].g==='socle-pubs'&&!report.video_original?.format){
+      const args=['--profil=pub-locale','--json',path.join(ROOT,'.orchestre/travail/socle/mutation-format.mp4')],a=await judge({juge:'scripts/video-qa.mjs',opts:args,noRacine:true},ROOT)
+      let format;try{format=JSON.parse(a.sortie)[0]?.tests?.find(t=>!t.passe&&t.nom==='Format 1080×1920 (pub locale)'&&t.mesure==='1080×1350')}catch{}
+      report.video_original={commande:['node','scripts/video-qa.mjs',...args].join(' '),code:a.code,duree_s:a.duree_s,format:format??null}
+      fs.writeFileSync(path.join(PROOF,'video-original-format.log'),a.sortie)
+      if(a.code!==1||a.expired||a.signal||!format)erreursFixes.push('A1 : vidéo 1080×1350 non refusée par le juge original sur son format')
+      save()
+    }
+    for(const m of aFaire){
+      const index=ordinal.get(m),d=dir,target=path.join(d,m.fichier),original=fs.readFileSync(target,'utf8'),k=cle(m)
+      try {
+        if(original.split(m.avant).length!==2)throw Error('ancre copie non unique')
+        fs.writeFileSync(target,original.replace(m.avant,()=>m.apres))
+        nettoyerMedia(d)
+        const r=await judge(m,d),extrait=strict(r.sortie,m.critere),commande=command(m)
+        fs.writeFileSync(path.join(PROOF,index+'-'+m.critere+'.log'),r.sortie)
+        let issue
+        if(r.code===1&&!r.expired&&!r.signal&&extrait){detectees.set(k,{juge:m.juge,commande,fichier:m.fichier,avant:m.avant,apres:m.apres,critere:m.critere,extrait,duree_s:r.duree_s,nom:m.nom});indetermines.delete(k);issue='DÉTECTÉE'}
+        else if(r.expired||r.signal||!r.sortie.trim()){indetermines.set(k,{juge:m.juge,commande,critere:m.critere,nom:m.nom,raison:'délai ou sortie vide (code '+r.code+(r.expired?', délai dépassé':'')+')',duree_s:r.duree_s});issue='NON JUGÉE'}
+        else if(r.code===0||ligneNommee(r.sortie,m.critere)?.startsWith('PASS ')){survivants.set(k,{juge:m.juge,commande,fichier:m.fichier,avant:m.avant,apres:m.apres,critere:m.critere,nom:m.nom,verdict:verdictDe(r.sortie,m.critere),duree_s:r.duree_s});indetermines.delete(k);issue='NON ATTRAPÉE'}
+        else{autres.set(k,{juge:m.juge,commande,critere:m.critere,nom:m.nom,verdict:'code '+r.code+' : '+verdictDe(r.sortie,m.critere),duree_s:r.duree_s});indetermines.delete(k);issue='AUTRE CRITÈRE'}
+        console.log(issue+' '+m.critere+' '+m.nom+' ('+r.duree_s.toFixed(0)+' s)');save()
+      }finally{
+        // La faute est ôtée dans tous les cas ; une copie qui ne revient pas à l'original est une erreur, jamais ignorée.
+        fs.writeFileSync(target,original)
+        if(fs.readFileSync(target,'utf8')!==original)throw Error('copie non restaurée : '+m.fichier)
       }
     }
-    for (const etape of [['init', '-q'], ['add', '-A'], ['commit', '-q', '-m', g.base !== false ? 'base : avant les ajouts des fiches 026-144, 026-137, 026-147, 026-149' : 'base : le dépôt tel quel']]) {
-      const r = gitCopie(racine, etape)
-      if (r.status !== 0) throw new Error(`git ${etape[0]} : ${court(r.stderr || r.stdout, 200)}`)
-    }
-    for (const [p, ici] of vrais) fs.writeFileSync(p, ici)
-  }
-  // Les comptes rendus d'essai à sec : cherchés en remontant vers le dépôt qui porte la copie.
-  for (const fiche of PREUVES_A_COPIER) {
-    const cible = path.join(racine, '.orchestre', 'preuves', fiche, 'essai-a-sec.txt')
-    if (fs.existsSync(cible)) continue
-    let d = path.dirname(racine)
-    for (let i = 0; i < 8 && d !== path.dirname(d); i++, d = path.dirname(d)) {
-      const s = path.join(d, '.orchestre', 'preuves', fiche, 'essai-a-sec.txt')
-      if (fs.existsSync(s)) { fs.mkdirSync(path.dirname(cible), { recursive: true }); fs.copyFileSync(s, cible); break }
-    }
-  }
-  // plans/promesses.md : preuve de plusieurs faits du Crieur (CR-1), absent de la copie du méta-juge.
-  for (const rel of ['plans/promesses.md']) {
-    const cible = path.join(racine, rel)
-    if (fs.existsSync(cible)) continue
-    let d = path.dirname(racine)
-    for (let i = 0; i < 8 && d !== path.dirname(d); i++, d = path.dirname(d)) {
-      if (fs.existsSync(path.join(d, rel))) { fs.mkdirSync(path.dirname(cible), { recursive: true }); fs.copyFileSync(path.join(d, rel), cible); break }
-    }
-  }
-  // Mutation « deux migrations portent le numéro 0104 » : un remplacement de texte ne crée pas de fichier ; la marque posée
-  // dans 0104_crieur.sql demande donc au relais de copier la migration sous un second nom (le juge doit le refuser, CR-10).
-  const crieur = path.join(racine, 'supabase', 'migrations', '0104_crieur.sql')
-  const doublon = path.join(racine, 'supabase', 'migrations', '0104_crieur_doublon.sql')
-  if (fs.existsSync(crieur) && lire(crieur).includes(MARQUE_DOUBLON)) fs.copyFileSync(crieur, doublon)
-  else if (fs.existsSync(doublon)) fs.unlinkSync(doublon)
-}
-if (RELAIS) {
-  const g = GROUPES[RELAIS]
-  const racine = option('racine') && path.resolve(option('racine'))
-  if (!g || !racine || !fs.existsSync(racine)) { console.error(`relais : groupe ou --racine invalide (${RELAIS})`); process.exit(2) }
-  try { preparerCopie(racine, g) } catch (e) { console.error(`relais : préparation de la copie impossible — ${e.message}`); process.exit(2) }
-  const r = spawnSync(process.execPath, [path.join(racine, g.juge), ...g.args, `--racine=${racine}`], { cwd: racine, stdio: 'inherit', env: { ...process.env, ...(g.env || {}), FORCE_COLOR: '0', NO_COLOR: '1' } })
-  process.exit(r.status ?? 128)
-}
+    }finally{libres.push(place)}
+    }finally{actifs--;report.scheduler.evenements.push({groupe:group,action:'fin',ms:Date.now()-start});save()}
+  },POOL)
+}catch(e){if(!erreursFixes.includes(e.message))erreursFixes.push(e.message)}finally{if(!KEEP)cleanup(run);save()}
+console.log('juges-026-pubs-contenu-mutations : '+(report.erreurs.length?'FAIL':'PASS')+' — '+(WITNESS?report.temoins.length+' témoins, aucune mutation exécutée':report.mutations.length+'/'+selected.length+' fautes détectées, '+report.survivants.length+' non attrapée(s), '+report.indetermines.length+' non jugée(s), '+report.autres.length+' sur un autre critère'))
+process.exitCode=report.erreurs.length?1:0
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// Le jugement des mutations
-// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-function retirerCopie(dir) {
-  if (!fs.existsSync(dir)) return
-  const rel = path.relative(TRAVAIL, dir)
-  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) throw new Error('suppression hors de .orchestre/travail/026-159 refusée')
-  for (const j of JONCTIONS) { try { if (fs.lstatSync(path.join(dir, j)).isSymbolicLink()) fs.unlinkSync(path.join(dir, j)) } catch { /* absent */ } }
-  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
-}
-function copier(dir) {
-  fs.mkdirSync(dir, { recursive: true })
-  const liste = spawnSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', ...DOSSIERS_COPIE], { cwd: RACINE, encoding: 'utf8', maxBuffer: 1 << 28 })
-  if (liste.status !== 0) throw new Error(`git ls-files : ${court(liste.stderr, 200)}`)
-  for (const f of [...liste.stdout.split('\0').filter(Boolean), ...FICHIERS_RACINE]) {
-    const s = path.join(RACINE, f)
-    let st
-    try { st = fs.lstatSync(s) } catch { continue }
-    if (!st.isFile()) continue
-    fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true })
-    fs.copyFileSync(s, path.join(dir, f))
-  }
-  for (const j of JONCTIONS) if (fs.existsSync(path.join(RACINE, j))) fs.symlinkSync(path.join(RACINE, j), path.join(dir, j), 'junction')
-}
-const commandeDe = (cle) => `node ${SELF} --relais=${cle} --racine={racine}`
-function lancer(commande, cwd, delaiMs) {
-  return new Promise((resoudre) => {
-    const enfant = spawn('bash', ['-c', commande], { cwd, detached: true, env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1' } })
-    let sortie = '', expire = false
-    const minuterie = setTimeout(() => { expire = true; try { process.kill(-enfant.pid, 'SIGKILL') } catch { /* déjà mort */ } }, delaiMs)
-    for (const flux of [enfant.stdout, enfant.stderr]) flux.on('data', (d) => { if (sortie.length < 4_000_000) sortie += d.toString() })
-    const debut = Date.now()
-    enfant.on('close', (code) => { clearTimeout(minuterie); resoudre({ code: expire ? 124 : code ?? 128, sortie, duree_s: (Date.now() - debut) / 1000, expire }) })
-    enfant.on('error', (e) => { clearTimeout(minuterie); resoudre({ code: 127, sortie: `${sortie}${e.message}`, duree_s: (Date.now() - debut) / 1000, expire }) })
-  })
-}
-/** La ligne « FAIL <critere> — … » (une seule) et le bilan « <juge> : FAIL — ids » qui nomme le critère : la même lecture que le méta-juge. */
-function verdict(sortie, critere) {
-  const L = sortie.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '').split(/\r?\n/)
-  const siennes = L.map((l) => ({ l, m: /^(PASS|FAIL|SAUTE) (\S+)(?: — |$)/.exec(l) })).filter((x) => x.m && x.m[2] === critere)
-  const bilan = L.map((l) => /^(\S+(?: --\S+)*) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1)
-  if (siennes.length !== 1 || !siennes[0].l.startsWith(`FAIL ${critere} — `)) return null
-  if (!bilan || bilan[2] !== 'FAIL' || !(bilan[3] || '').split(/,\s*/).map((x) => x.trim()).includes(critere)) return null
-  return siennes[0].l
-}
-const cles = (m) => [m.groupe, m.critere, m.nom].join(' ')
-
-async function principal() {
-  fs.mkdirSync(PREUVES, { recursive: true })
-  fs.mkdirSync(TRAVAIL, { recursive: true })
-  const retenues = SEUL ? mutations.filter((m) => cles(m).includes(SEUL)) : mutations
-  if (argv.includes('--liste')) { for (const m of mutations) console.log(`${m.groupe} ${m.critere} ${m.nom}`); return }
-  const groupes = [...new Set(retenues.map((m) => m.groupe))]
-  const lignes = [], rapport = [], defauts = []
-  try {
-    for (const cle of groupes) {
-      const dir = path.join(TRAVAIL, cle)
-      retirerCopie(dir)
-      copier(dir)
-      const commande = commandeDe(cle).replace('{racine}', dir)
-      const t = await lancer(commande, dir, 12 * 60_000)
-      const brut = t.sortie.split(/\r?\n/).filter(Boolean)
-      console.log(`TÉMOIN ${GROUPES[cle].juge} ${GROUPES[cle].args.join(' ')} : code ${t.code} (${t.duree_s.toFixed(1)} s)`)
-      if (t.code !== 0) { defauts.push(`TÉMOIN ${cle} en code ${t.code}${t.expire ? ' (délai dépassé)' : ''} : ${court(brut.filter((l) => /FAIL|✗|Error/.test(l)).slice(0, 4).join(' | ') || brut.at(-1), 400)}`); continue }
-      for (const m of retenues.filter((x) => x.groupe === cle)) {
-        const fichier = path.join(dir, m.fichier)
-        if (!fs.existsSync(fichier)) { defauts.push(`${m.critere} ${m.nom} : ${m.fichier} introuvable dans la copie`); continue }
-        const original = lire(fichier)
-        const n = original.split(m.avant).length - 1
-        if (n !== 1) { defauts.push(`${m.critere} ${m.nom} : texte « avant » présent ${n} fois dans ${m.fichier}`); continue }
-        fs.writeFileSync(fichier, original.replace(m.avant, () => m.apres))
-        let r
-        try { r = await lancer(commande, dir, 12 * 60_000) } finally { fs.writeFileSync(fichier, original) }
-        const extrait = verdict(r.sortie, m.critere)
-        const ok = r.code === 1 && !r.expire && extrait && extrait.trim().length >= 20
-        const ligne = `${ok ? 'PASS' : 'FAIL'} ${m.critere} — ${m.nom} ; ${m.fichier} ; ${ok ? extrait : `code ${r.code}, ${court(r.sortie.split(/\r?\n/).filter((l) => /FAIL|PASS|✗/.test(l)).join(' | ') || r.sortie.slice(-300), 500)}`}`
-        lignes.push(ligne); console.log(court(ligne, 400))
-        if (!ok) defauts.push(ligne)
-        else rapport.push({ juge: GROUPES[cle].juge, commande: commandeDe(cle), fichier: m.fichier, avant: m.avant, apres: m.apres, critere: m.critere, extrait: extrait.trim(), duree_s: Number(r.duree_s.toFixed(1)) })
-      }
+async function mediaMode(args){
+  const mode=args.find(a=>a.startsWith('--produire-media='))?'produire':'juger'
+  const values=Object.fromEntries(args.map(a=>{const i=a.indexOf('=');if(i<0)throw Error('option média invalide');return [a.slice(2,i),a.slice(i+1)]}))
+  const allowed=mode==='produire'?['produire-media','base','destination']:['juger-media','racine']
+  if(Object.keys(values).some(k=>!allowed.includes(k)))throw Error('option média inconnue')
+  const demande=values[mode+'-media'],ensembles={pack:['gps','photo','mentionPack'],studio:['mentionStudio','filigrane','recommandation','produit','plan']}
+  if(!Object.hasOwn(MEDIA,demande)&&!Object.hasOwn(ensembles,demande))throw Error('cas média inconnu')
+  const selection=(ensembles[demande]??[demande]).filter(c=>MEDIA[c]);if(selection.length>1)throw Error('plus d’une faute média : isolation rompue')
+  const cas=selection[0]??ensembles[demande]?.[0]??demande
+  const groupe=['gps','photo','mentionPack','age'].includes(cas)?'pack':'studio'
+  const hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex')
+  function publicCopy(source,dest){
+    if(!fs.statSync(source).isDirectory())throw Error('entrée média absente')
+    fs.mkdirSync(dest,{recursive:true});for(const item of fs.readdirSync(source)){
+      const f=path.join(source,item),d=path.join(dest,item),s=fs.lstatSync(f)
+      if(s.isSymbolicLink())throw Error('lien média refusé')
+      if(s.isDirectory())publicCopy(f,d);else if(s.isFile()){if(!/\.(json|jpg|html|mp3|mp4|md|txt)$/i.test(item)||/secret|\.env|token|password/i.test(item))throw Error('entrée média non publique');fs.copyFileSync(f,d)}
     }
-    ecrire(path.join(PREUVES, 'mutations.md'), `${defauts.length ? `# ÉCHECS (${defauts.length})\n${defauts.map((d) => `- ${d}`).join('\n')}\n\n` : ''}# Mutations prises (${rapport.length})\n${lignes.join('\n')}\n`)
-    if (!SEUL) ecrire(path.join(PREUVES, 'mutations.json'), `${JSON.stringify({ mutations: rapport }, null, 2)}\n`)
-    console.log(`${FICHE} : ${defauts.length ? 'FAIL' : 'PASS'} — ${rapport.length}/${retenues.length} mutations prises`)
-    process.exitCode = defauts.length ? 1 : SEUL ? 3 : 0
-  } finally {
-    if (!GARDER) for (const cle of groupes) retirerCopie(path.join(TRAVAIL, cle))
   }
+  const invoke=(bin,argv,cwd,delai=180000)=>{const r=spawnSync(bin,argv,{cwd,encoding:'utf8',timeout:delai,maxBuffer:32<<20,windowsHide:true});if(r.error||r.signal||r.status===null)throw Error('processus média interrompu : '+(r.error?.message??r.signal));return r}
+  if(mode==='juger'){
+    const racine=path.resolve(values.racine??'');if(!values.racine||racine===ROOT)throw Error('copie indépendante requise')
+    const base=path.join(PROOF,'entrees',groupe),destination=path.join(racine,'.orchestre/travail/026-159-media',cas)
+    const manifeste=JSON.parse(fs.readFileSync(path.join(PROOF,'recuperation-medias.json'),'utf8').replace(/^\uFEFF/,''))
+    const entrees=manifeste.filter(e=>e.groupe===groupe);if(!entrees.length)throw Error('manifeste des entrées absent')
+    for(const e of entrees){const f=path.resolve(base,e.fichier),r=path.relative(base,f);if(r.startsWith('..')||path.isAbsolute(r)||hash(f)!==e.sha256.toLowerCase()||fs.statSync(f).size!==e.taille)throw Error('entrée publique altérée : '+e.fichier)}
+    // Le fabricant EST celui de la copie mutée : le méta-juge peut refaire ce remplacement.
+    const fab=invoke(process.execPath,[path.join(racine,'scripts/juges-026-pubs-contenu-mutations.mjs'),'--produire-media='+demande,'--base='+base,'--destination='+destination],ROOT)
+    if(fab.status!==0){process.stdout.write(fab.stdout);process.stderr.write(fab.stderr);process.exitCode=fab.status;return}
+    const judgeArgs=groupe==='pack'?['scripts/pub-locale-qa.mjs','--partie='+ (cas==='age'?'textes':'complet'),'--dossier='+destination,'--meta-logement=oui','--racine='+racine]:['scripts/pub-qa.mjs',path.join(destination,'echantillon-1'),'--racine='+racine]
+    const r=invoke(process.execPath,judgeArgs,ROOT,11*60_000);process.stdout.write(r.stdout);process.stderr.write(r.stderr);process.exitCode=r.status;return
+  }
+  const base=path.resolve(values.base??''),destination=path.resolve(values.destination??'')
+  const work=path.join(ROOT,'.orchestre/travail/026-159-media'),rel=path.relative(work,destination)
+  if(!values.base||!values.destination||!rel||rel.startsWith('..')||path.isAbsolute(rel)||fs.existsSync(destination))throw Error('destination média non neuve ou hors copie')
+  publicCopy(base,destination)
+  const trace={cas,groupe,faute:MEDIA[cas],actions:[]}
+  if(MEDIA[cas]){
+    const sharp=(await import('sharp')).default
+    const rewrite=async(f,make)=>{const before=hash(f),buf=await make(fs.readFileSync(f));fs.writeFileSync(f,buf);trace.actions.push({fichier:path.relative(destination,f),avant_sha256:before,apres_sha256:hash(f)});if(before===hash(f))throw Error('transformation média sans effet')}
+    if(cas==='gps'){
+      const f=path.join(destination,'photos/01.jpg')
+      await rewrite(f,p=>sharp(p).withExif({IFD3:{GPSLatitudeRef:'N',GPSLatitude:'48/1 51/1 0/1',GPSLongitudeRef:'E',GPSLongitude:'2/1 21/1 0/1'}}).jpeg().toBuffer())
+      const meta=await sharp(fs.readFileSync(f)).metadata();if(!meta.exif)throw Error('EXIF non produit')
+      // Empreinte mise à jour : l'échec attendu est bien l'EXIF/GPS, pas un simple manifeste périmé.
+      const mf=path.join(destination,'manifeste-entrees.json'),j=JSON.parse(fs.readFileSync(mf,'utf8')),photo=j.photos.find(p=>p.fichier.endsWith('01.jpg'));if(!photo)throw Error('photo absente manifeste');photo.sha256=hash(f);fs.writeFileSync(mf,JSON.stringify(j,null,2))
+      trace.actions.at(-1).exif_octets=meta.exif.length
+    }else if(cas==='photo'){
+      const f=path.join(destination,'photos/01.jpg');await rewrite(f,p=>sharp(p).modulate({brightness:0.3}).jpeg().toBuffer())
+      // Le manifeste reste strictement inchangé.
+    }else if(cas==='mentionPack'||cas==='mentionStudio'||cas==='filigrane'){
+      const isPack=cas==='mentionPack',f=path.join(destination,isPack?'sortie/video-2.mp4':'echantillon-1/sortie/echantillon.mp4'),temp=f+'.nouveau.mp4'
+      let zone,enable
+      if(isPack){zone={x:0,y:1450,largeur:1080,hauteur:470};enable='between(t,5,8)'}
+      else{const c=JSON.parse(fs.readFileSync(path.join(ROOT,'gabarits-pubs/studio/contrat-habillage.json'),'utf8'));zone=cas==='filigrane'?c.zone_filigrane:c.zone_mention;enable=cas==='filigrane'?'between(t,6,9)':'lt(t,1)'}
+      const before=hash(f),filter=`drawbox=x=${zone.x}:y=${zone.y}:w=${zone.largeur}:h=${zone.hauteur}:color=white:t=fill:enable='${enable}'`
+      const r=invoke('ffmpeg',['-y','-v','error','-threads','2','-i',f,'-vf',filter,'-c:v','libx264','-threads','2','-preset','veryfast','-b:v','3600k','-minrate','3600k','-maxrate','3600k','-bufsize','1800k','-x264-params','nal-hrd=cbr:force-cfr=1','-c:a','copy',temp],ROOT)
+      if(r.status!==0)throw Error('masque ffmpeg : '+r.stderr.slice(0,400));fs.renameSync(temp,f);trace.actions.push({fichier:path.relative(destination,f),avant_sha256:before,apres_sha256:hash(f),filtre:filter})
+    }else if(cas==='age'){
+      const f=path.join(destination,'sortie/fiche-10-min.md');fs.appendFileSync(f,'\nCiblez les personnes de trente à cinquante ans : réglez l’âge et le genre.\n');trace.actions.push({fichier:path.relative(destination,f),texte:'âge et genre',meta_logement:'oui'})
+    }else if(cas==='recommandation'){
+      const f=path.join(destination,'echantillon-1/script.json'),j=JSON.parse(fs.readFileSync(f,'utf8'));j.lignes.push('Je recommande ce produit.');fs.writeFileSync(f,JSON.stringify(j,null,2));trace.actions.push({fichier:path.relative(destination,f),ligne:j.lignes.at(-1)})
+    }else if(cas==='produit'){
+      const f=path.join(destination,'produit.jpg');await rewrite(f,p=>sharp(p).negate().jpeg().toBuffer())
+    }else if(cas==='plan'){
+      const f=path.join(destination,'echantillon-1/sortie/echantillon.mp4'),temp=f+'.nouveau.mp4',before=hash(f),filter="drawbox=x=140:y=500:w=800:h=900:color=0x2040a0:t=fill:enable='between(t,4,9)'"
+      const r=invoke('ffmpeg',['-y','-v','error','-threads','2','-i',f,'-vf',filter,'-c:v','libx264','-threads','2','-preset','veryfast','-b:v','3600k','-minrate','3600k','-maxrate','3600k','-bufsize','1800k','-x264-params','nal-hrd=cbr:force-cfr=1','-c:a','copy',temp],ROOT)
+      if(r.status!==0)throw Error('aplat ffmpeg : '+r.stderr.slice(0,400));fs.renameSync(temp,f);trace.actions.push({fichier:path.relative(destination,f),avant_sha256:before,apres_sha256:hash(f),filtre:filter})
+    }
+  }
+  fs.writeFileSync(path.join(destination,'inspection-mutation.json'),JSON.stringify(trace,null,2)+'\n')
+  console.log('Fixture publique réelle : '+destination)
 }
-principal().catch((e) => { console.error(e.stack || e); process.exitCode = 1 })

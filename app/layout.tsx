@@ -98,7 +98,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    url: 'https://prestiapp.fr',
+    // Pas d'`url` ici : posée au niveau racine, elle donnait og:url = l'accueil à TOUTES les pages (audit du 11/10).
     siteName: 'Presti',
   },
   twitter: { card: 'summary_large_image' },

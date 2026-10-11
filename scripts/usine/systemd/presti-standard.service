@@ -1,0 +1,12 @@
+[Unit]
+Description=Classement des réponses Presti par le Standard sur l'usine
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele
+Environment=IA_LOCALE_PROSPECTS_OUI=2026-10-05
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_STANDARDISTE -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/agents/passes-modele.mjs --agent=standardiste
+TimeoutStartSec=4min
+MemoryMax=512M

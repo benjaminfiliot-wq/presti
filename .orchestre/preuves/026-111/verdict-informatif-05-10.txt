@@ -1,0 +1,80 @@
+· usine executer : paquet de 333 fichier(s), 4,2 Mo, sur c4aa8d41 (HEAD du PC), construit en 10,1 s
+  ne part pas (2810) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-verif-111-05-10.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .orchestre/preuves/026-143/avant.txt  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-143/decisions-avant.md  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-143/geste-de-benj.md  (preuves d'autres tâches ; absent du bac)
+    … et 1516 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 8 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac verif-111-05-10 sur usine@88.96.53.3, délai 30 min : bash scripts/essai-bac-111.sh
+· usine executer : bac verif-111-05-10 monté en 2499 ms : c4aa8d417 + paquet, 333 écart(s) ; délai 1800 s
+banc : racine /tmp/racine-111-891925, base c4aa8d4173414fe0747c10340a66ca6e65e84e7e
+pilotage-ecran-qa --partie=station — racine /tmp/racine-111-891925 — banc (racine lue au drapeau levé, servie sur 127.0.0.1) — base c4aa8d4 — graine 1923442238 — 4 scénario(s) à la fois
+✅ ST-1 les 15 fichiers de app/controle/station/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : le rôle sur /api/controle/journal?limite=1) ; ni fetch(, ni .from(, ni .rpc(, ni supabase hors supabase.auth.getSession dans page.tsx
+✅ ST-2 drapeau baissé (racine telle quelle) : /controle/station → 404, aucun lien vers la station ; levé : premier lien du rail → /controle/station, onglet=pilotage&decision=<uuid> → /controle/station?decision=<uuid>, un faux UUID abandonné
+✅ ST-3 colonnes : barre 80 px (36 + 44) en haut, équipage au-dessus d’Attention dans 300 px à gauche, Commandement au-dessus du journal dans 340 px à droite, carte en plein cadre sous les colonnes, sans backdrop-filter, bandeau de 44 px en bas ; 1280×800 : 280 et 320 px ; flottante : Attention à droite sous la barre, Commandement fermé, ⚑ l’ouvre
+✅ ST-4 ENCAISSÉ, DÉPENSÉ, MARGE · MOIS = 7 073,89 €, 28,00 €, 7 045,89 € (tirés) ; compteurs dans l’ordre servi, muets sans chiffre ; AUTO éteint comme servi ; cloche, JOUR, lune, version (absente du HTML sans session), santé, heure de Paris ; trésorerie en panne → « — » et la panne ; santé en manque → « — » ; hors périmètre → « — · hors périmètre »
+✅ ST-5 15 agents dans l’ordre servi : point, activité, cadence, coût, 📍 et plaque de la salle, ancienneté (relTime), ⚠ avec le titre de SA carte ; [data-commandant] ; un appui pose ?agent= sans changer de page ; « ◄ » → rail de 44 px, gardé au rechargement ; localStorage qui lève sans casse
+✅ ST-6 attention-ordre.json : 7 cartes dans l’ordre et les couleurs servis, orchestre visible, « 5 autres » ; attention-vide.json : la phrase exacte
+✅ ST-7 objectif « PAR LE CHEF », missions au texte servi, LV. et dernier succès, compte rendu de 1 à 3 lignes
+✅ ST-8 bandeau : les éléments servis, six entrées (chacune pose son ?vue= sans changer de page), pastille = ENCAISSÉ · MOIS et SITES EN LIGNE, toast masqué jusqu’au compte suivant ; rien ne tourne 3 s après le chargement ; un élément nouveau entre une fois (animation vue à l’entrée) puis tout s’arrête ; mouvement réduit : aucune animation
+✅ ST-9 direct-503.json : l’équipage dit « … ne répond pas : pilotage_agents injoignable (délai dépassé) », sans chiffre ni carte ; Attention, Commandement et bandeau rendus
+✅ ST-10 390×844 : barre compacte de 88 px (MISSION CONTROL, point d’état, cloche, AUTO ; ENCAISSÉ · MOIS, ENVOIS DU JOUR, CHEF DANS), feuille « Tous les compteurs » complète et opaque, onglets en bas (Attention ouvert), Plus → Succès, Réglages, Aide, Poste ; chaque compteur de la ligne 2 entier (dans 0..390 et dans sa ligne, elementFromPoint au centre et aux deux bords) ; sur chaque onglet et sur la feuille : rien hors de 0..390, rien de rogné par un cadre « overflow: hidden », aucun défilement horizontal, boutons ≥ 44 px, textes ≥ 12 px
+✅ ST-11 jetons --mc- déclarés sur .mc dans station.css seulement ; aucune couleur hexadécimale ajoutée hors de station.css et moteur/ ; globals.css et base.css inchangés ; gardes prefers-reduced-motion ; réglage de néon posé sur .mc seulement ; --accent #D97757 sur /controle?onglet=aujourdhui
+✅ ST-12 bureau.jpg 1440×900, 153 Ko, écart type 26.5 ; telephone.jpg 390×844, 29 Ko, écart type 24.1 — prises par le juge, différentes entre elles et des autres parties
+✅ ST-13 chaque lien de la station en /controle…, /controle/station… ou /parametres ; aucun « Envoyer », « Copier », « Relayer » ; aucune requête du navigateur hors de la page servie sur les 26 pages ouvertes
+✅ ST-14 60 s page visible : 3 direct, 3 trésorerie, 13 fil (apres=50 après la première), 1 réglages (404 → défauts, sans panne)
+✅ ST-15 rôle lecture : station entière, « lecture seule », aucun geste ni entrée Réglages ; partenaire (403) : renvoyé à /dashboard
+✅ ST-16 bureau, 3 s après le chargement, sans événement : data-images 0, 1 empreinte(s) du canevas, aucune animation en cours ; 2 lectures identiques de vue=direct (horloge de la page avancée de 32 s) : aucun texte des zones, du journal ni des compteurs n’a changé ([data-heure] retiré, âges relatifs ramenés) ; l’événement injecté (« Maquette plombier, Lyon ») se voit dans l’équipage en 1.0 s d’horloge
+✅ ST-17 diff de app/controle/page.tsx limité à l’entrée Station et à la redirection (le typecheck se juge sur la racine réelle)
+❌ ST-18 le paquet de la page contient un module phaser
+✅ ST-19 chaque [data-modele] visible porte le modèle servi (dont « sans IA ») ; Equipage.tsx n’écrit aucun modèle
+pilotage-ecran-qa --partie=station : FAIL — ST-18
+code du juge au banc : 1
+> presti@0.1.0 typecheck
+> tsc --noEmit
+
+code du typecheck : 0
+· usine executer : commande finie en 44 s sur l’usine, code 1 (seule)
+· usine executer : code 1 · paquet 10,1 s · envoi et bac 3,4 s · commande 44,8 s · total 58,3 s

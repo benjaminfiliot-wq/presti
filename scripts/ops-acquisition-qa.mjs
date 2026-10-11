@@ -95,8 +95,8 @@ const AGENTS = [
 const PARAMS_AGENT = ['p_nom', 'p_libelle', 'p_capacites', 'p_types_crees', 'p_tables', 'p_periode_minutes', 'p_debit_minute', 'p_quota_creations_jour', 'p_plafond_euros_jour']
 // 026-136 §1 et §2 : les dix tâches HTTP et la tâche SQL.
 const TACHES_HTTP = [
-  ['acq-vigie-meta', '10 5-8 * * *', 'vigie-meta'], ['acq-recenseur', '*/10 5-19 * * *', 'recenseur'], ['acq-rge', '15 2 * * *', 'recenseur?passe=rge'],
-  ['acq-juge-faits', '35 6-19 * * *', 'juge-faits'], ['acq-redacteur', '0 5,12 * * *', 'redacteur'], ['acq-standardiste', '*/5 * * * *', 'standardiste'],
+  ['acq-vigie-meta', '10 * * * *', 'vigie-meta'], ['acq-recenseur', '*/10 * * * *', 'recenseur'], ['acq-rge', '15 2 * * *', 'recenseur?passe=rge'],
+  ['acq-juge-faits', '35 * * * *', 'juge-faits'], ['acq-redacteur', '0 * * * *', 'redacteur'], ['acq-standardiste', '*/5 * * * *', 'standardiste'],
   ['acq-maquettes-purge', '20 2 * * *', 'maquettes-purge'], ['acq-facteur', '*/15 * * * *', 'facteur'], ['acq-facteur-soir', '0 18,19 * * *', 'facteur?passe=soir'],
   ['acq-repondeur', '*/15 * * * *', 'repondeur'],
 ]
@@ -1281,7 +1281,7 @@ const SABOTAGES = {
   ],
   planification: [
     ['AC-PG-1A', 'PG-1', 'une tâche acq-facteur-pause', { fichier: M3, remplacer: (t) => t.replace("select cron.schedule('acq-repondeur'", `select cron.schedule('acq-facteur-pause', '* * * * *', $$ select net.http_get(url := 'https://${HOTE}/api/cron/facteur?passe=pause', headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), timeout_milliseconds := 60000) $$);\nselect cron.schedule('acq-repondeur'`) }],
-    ['AC-PG-1B', 'PG-1', 'acq-recenseur toutes les heures', { fichier: M3, remplacer: (t) => t.replace("'*/10 5-19 * * *'", "'0 5-19 * * *'") }],
+    ['AC-PG-1B', 'PG-1', 'acq-recenseur toutes les heures', { fichier: M3, remplacer: (t) => t.replace("'*/10 * * * *'", "'0 * * * *'") }],
     ['AC-PG-1C', 'PG-1', 'la purge sans acq_echanges_purger', { fichier: M3, remplacer: (t) => t.replace(' select public.acq_echanges_purger();', '') }],
     ['AC-PG-2A', 'PG-2', 'un jeton littéral', { fichier: M3, remplacer: (t) => t.replace("'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')", `'Bearer ${'sb_' + 'essai0123456789abcdefXYZ'}'`) }],
     ['AC-PG-2B', 'PG-2', 'timeout de 5 s', { fichier: M3, remplacer: (t) => t.replace('timeout_milliseconds := 60000', 'timeout_milliseconds := 5000') }],

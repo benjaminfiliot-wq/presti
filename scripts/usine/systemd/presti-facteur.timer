@@ -1,0 +1,10 @@
+[Unit]
+Description=Passage du Facteur toutes les 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+Unit=presti-facteur.service
+
+[Install]
+WantedBy=timers.target

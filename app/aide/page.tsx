@@ -20,6 +20,7 @@ const GROUPES: { id: string; titre: string; pages: string[] }[] = [
   { id: 'messages', titre: 'Messages', pages: ['/messages', '/messages/canaux'] },
   { id: 'devis', titre: 'Devis', pages: ['/devis', '/devis/[id]'] },
   { id: 'factures', titre: 'Factures', pages: ['/factures'] },
+  { id: 'chiffres', titre: 'Mes chiffres', pages: ['/chiffres'] },
   { id: 'tarifs', titre: 'Mes tarifs', pages: ['/tarifs'] },
   { id: 'inventaire', titre: 'Inventaire', pages: ['/inventaire'] },
   { id: 'profil', titre: 'Ma page', pages: ['/profil'] },

@@ -1,0 +1,18 @@
+{
+  "id": "j1-aspirateur",
+  "jour": 1,
+  "heure": "12:30",
+  "produit": "aspirateur",
+  "accroche": "Ta voiture est pleine | de miettes ?",
+  "probleme": "miettes",
+  "revelation": { "image": "noir", "texte": "Un aspirateur sans fil" },
+  "gestes": [
+    { "plan": "avant-apres", "scene": "miettes", "outil": "noir", "texte": "Tu passes, plus de miettes" },
+    { "plan": "photo", "image": "console", "mouvement": "zoom", "texte": "Même dans les recoins" },
+    { "plan": "produit", "image": "embouts", "fond": "sombre", "motFond": "Embouts", "texte": "Six embouts et le câble USB" },
+    { "plan": "photo", "image": "siege", "mouvement": "recul", "texte": "Le long des sièges" },
+    { "plan": "photo", "image": "voiture", "mouvement": "gauche", "texte": "Il aspire, et il souffle" }
+  ],
+  "benefice": "Fini les miettes | dans la voiture",
+  "appel": "Lien dans la bio"
+}

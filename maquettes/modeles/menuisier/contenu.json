@@ -1,39 +1,132 @@
 {
+  "version": 2,
   "metier": "menuisier",
+  "da": "menuisier",
   "libelles": {
-    "sur": "Menuiserie",
-    "alt_heros": "Détail d’un ouvrage de menuiserie",
-    "alt_atelier": "Réalisation en bois dans l’atelier",
-    "reperes": ["Repère de l’atelier", "Repère des ouvrages", "Repère de proximité"]
+    "metier": "Menuisier",
+    "activite": "menuiserie"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Menuiserie à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, menuiserie à {ville}.",
-      "h1": "Menuiserie à {ville}",
-      "h1Ligne": "Le bois prend forme",
-      "chapeau": "Une page pour présenter les ouvrages en bois et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La matière et les formes",
-          "blocs": [
-            { "type": "p", "texte": "Escaliers, rangements et aménagements intérieurs peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Menuisier à {ville} — {entreprise}",
+    "description": "{entreprise}, menuisier à {ville} : escaliers, placards, bibliothèques et portes sur mesure, du relevé de cotes à la pose chez vous.",
+    "h1": "Menuisier à {ville}",
+    "h1Ligne": "Le bois prend sa place",
+    "chapeau": "Escaliers, placards et bibliothèques, dessinés pour la pièce où ils vont."
+  },
+  "prestations": {
+    "h2": "Le bois, sur mesure",
+    "intro": "De la menuiserie intérieure sur mesure, du relevé de cotes à la pose.",
+    "items": [
+      {
+        "titre": "Escaliers sur mesure",
+        "texte": "Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hêtre, dessinés d’après les cotes de la trémie, avec garde-corps et main courante assortis.",
+        "photo": "escalier-tournant"
+      },
+      {
+        "titre": "Placards et dressings",
+        "texte": "Sous les combles, sous l’escalier ou dans une alcôve : des rangements dessinés au centimètre, avec des façades qui suivent le reste de la pièce.",
+        "photo": null
+      },
+      {
+        "titre": "Bibliothèques murales",
+        "texte": "Ensembles muraux en bois massif ou en panneau plaqué, tablettes réglables ou fixes, niches pour un bureau ou une télévision, montés du sol au plafond si la pièce s’y prête.",
+        "photo": "bibliotheque"
+      },
+      {
+        "titre": "Mobilier sur mesure",
+        "texte": "Lits, têtes de lit, bancs et meubles de rangement, dessinés pour une pièce précise, assemblés à l’atelier et finis à l’huile ou au vernis selon l’usage.",
+        "photo": "lit"
+      },
+      {
+        "titre": "Portes et verrières",
+        "texte": "Portes intérieures pleines ou vitrées, verrières en bois pour séparer sans assombrir, moulures et chambranles refaits au profil d’origine dans une maison ancienne.",
+        "photo": null
+      },
+      {
+        "titre": "Parquets et habillages",
+        "texte": "Parquet massif cloué ou collé, poncé puis huilé ou vitrifié, habillage de marches existantes, plinthes et chambranles ajustés à la main sur place.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Tracé, assemblé, ajusté",
+    "phrase": "Chaque pièce est tracée et assemblée à l’atelier, puis ajustée sur place, parce qu’aucun mur n’est tout à fait droit.",
+    "photo": "escalier-colimacon"
+  },
+  "realisations": {
+    "h2": "Ouvrages posés",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les ouvrages de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve la pièce à aménager."
+  },
+  "etapes": {
+    "h2": "Les étapes d’un ouvrage",
+    "intro": "Chaque ouvrage suit le même chemin, de la première idée à la dernière vis.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez la pièce, l’usage et le bois qui vous plaît, avec une photo de l’endroit si vous en avez une."
+      },
+      {
+        "titre": "Relevé sur place",
+        "texte": "Prise de cotes, contrôle des aplombs et des niveaux, repérage des plinthes, des gaines et des accès pour livrer."
+      },
+      {
+        "titre": "Plan et proposition",
+        "texte": "Vous recevez un plan coté, le choix des essences et des finitions, et le détail des travaux à valider."
+      },
+      {
+        "titre": "Fabrication et pose",
+        "texte": "Les pièces sont fabriquées à l’atelier, puis posées et ajustées chez vous à la date convenue ensemble."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Quel bois choisir pour un escalier ?",
+        "reponse": "Une essence dure, comme le chêne ou le frêne, pour des marches qui s’usent. Le hêtre convient aussi, avec une finition adaptée au passage."
+      },
+      {
+        "question": "Pourquoi un relevé sur place avant de fabriquer ?",
+        "reponse": "Parce qu’aucun mur n’est droit. Le relevé montre les faux aplombs, les plinthes et les gaines avant qu’une seule pièce soit coupée."
+      },
+      {
+        "question": "Peut-on adapter un meuble ou une porte existante ?",
+        "reponse": "Souvent, oui : reprise d’une porte, rallonge d’une bibliothèque, moulure refaite à l’identique. Cela se juge sur pièce."
+      },
+      {
+        "question": "Comment entretenir un ouvrage en bois massif ?",
+        "reponse": "Une finition huilée se ravive avec un peu d’huile de temps en temps. Un vernis se nettoie au chiffon légèrement humide, sans produit abrasif."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre pièce",
+    "texte": "Décrivez la pièce et l’usage voulu, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Escalier",
+      "Placard ou dressing",
+      "Bibliothèque",
+      "Mobilier sur mesure",
+      "Porte ou verrière",
+      "Autre projet"
+    ],
+    "message": "Votre pièce, en quelques mots"
   },
   "photos": {
     "demo": "menuisier",
-    "fichiers": ["hero-960.webp", "bibliotheque-720.webp"]
+    "heros": "hero",
+    "atelier": "escalier-colimacon",
+    "galerie": [
+      "escalier-tournant",
+      "bibliotheque",
+      "lit",
+      "escalier-colimacon"
+    ]
   }
 }

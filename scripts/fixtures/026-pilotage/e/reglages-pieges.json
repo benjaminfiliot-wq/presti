@@ -1,0 +1,20 @@
+{
+ "_": "CE-16 : un texte `<img src=x onerror=alert(1)>` dans un nom d'agent réglé et une plaque réglée, plus une bulle du fil, doit s'afficher TEL QUEL partout (miroir et info-bulle compris) ; aucun élément img, aucune boîte de dialogue.",
+ "_piege": "<img src=x onerror=alert(1)>",
+ "equipage": {
+  "facteur": {
+   "nom": "<img src=x onerror=alert(1)>"
+  }
+ },
+ "salles": {
+  "radar": {
+   "plaque": "<img src=x onerror=alert(1)>"
+  }
+ },
+ "bulle": {
+  "agent": "facteur",
+  "pastille": "FACTEUR",
+  "type": "envoi",
+  "texte": "<img src=x onerror=alert(1)>"
+ }
+}

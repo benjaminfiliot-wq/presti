@@ -1,0 +1,16 @@
+station-themes-qa --theme=vaisseau — racine .
+✅ TH-7 public/station/themes/vaisseau/theme.json conforme au schéma de 026-170 (schéma et contraintes hors schéma), 21 emplacements dont l'unique réservé « ecommerce » sans poste, 20 avec un poste, bloc portrait de 21 emplacements
+✅ TH-8 validerDisposition accepte les defauts du thème vaisseau au bureau et en portrait ; les 20 portes ordinaires touchent le graphe du Commandement (calcul du juge) ; tapis continu sur 42 points
+✅ TH-9 poids : 4 fichiers, 59 Kio, 0.13 Mio avec l'autre thème, fond 3 Kio (700 Kio le thème, 1,5 Mio les deux, 200 Kio le fond) ; un atlas et un fond présents
+✅ TH-10 licence.json : 4 pack(s) du lot A, 2 image(s) comparée(s) aux empreintes des feuilles (~/station-assets relu (787 fichiers)), toutes du lot A, CC0, avec auteur, adresse et date, aucune feuille brute
+✅ TH-12 aucun champ de code, aucune adresse (http, data, //), aucun balisage, aucun « starnet », aucun fichier hors json et images
+✅ TH-11 17 pièges refusés avec leur raison (sans-licence → TH-10, atlas-800-ko → TH-9, feuille-brute-de-pack → TH-10, reservee-avec-un-poste → TH-7, reservee-en-deux-exemplaires → TH-7, sans-portrait → TH-7, vingt-emplacements-seulement → TH-7, hors-du-lot-a → TH-10, licence-non-cc0 → TH-10, licence-sans-auteur → TH-10, licence-sans-date → TH-10, adresse-http-dans-le-theme → TH-12, starnet-dans-le-nom → TH-12, champ-de-code → TH-12, fichier-executable → TH-12, sans-fond → TH-9, fond-trop-lourd → TH-9)
+station-themes-qa --theme=vaisseau : PASS
+station-claw3d-qa --partie=pixel,grille — racine .
+✅ CL-15 astar2D joint depuis le Commandement la porte et le poste de chacune des 20 salles (40 chemins continus), le tapis est continu, l'emplacement réservé n'a ni poste ni destination et aucune de ses cases n'est joignable
+✅ CL-13 grille 448 × 208 : 1 → k = 1 (448×208, CSS 448.00) ; 2 → k = 3 (1344×624, CSS 672.00) ; 2.625 → k = 4 (1792×832, CSS 682.67) ; 3 → k = 4 (1792×832, CSS 597.33) ; pixelArt: true, antialias: false, roundPixels: true dans le jeu en marche
+station-claw3d-qa --partie=pixel,grille : PASS
+station-ecran-qa --partie=themes — racine .
+✅ CE-1 app/controle/station/moteur/ porte 28 source(s) dont entree.tsx ; Carte.tsx lit actif('stationCarte') et charge ./moteur/ ; lib/flags.ts présent (le juge lève pilotage et stationCarte dans une COPIE)
+✅ CE-17 station : canevas = grille × 2, 21 zones posées, bureau-station.jpg, telephone-station.jpg ; vaisseau : canevas = grille × 1, 21 zones posées, bureau-vaisseau.jpg, telephone-vaisseau.jpg
+station-ecran-qa --partie=themes : PASS

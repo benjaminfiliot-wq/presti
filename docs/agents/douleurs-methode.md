@@ -33,6 +33,10 @@ Chaque mois, une nouvelle fiche du même modèle ajoute des entrées : elle n'en
 
 Décision du 29/09/2026 (`.orchestre/decisions.md`) : la cible du critère DL-1 est provisoirement de 12 citations réelles sur 3 métiers au moins (3 entrées au moins par métier couvert, 10 « tous » au plus). La complétion à 40 citations sur 8 métiers est la fiche de suite 026-254. Un nombre sous la cible fait toujours échouer le juge, comme une citation introuvable sur sa page.
 
+## Veille agrégée par thème (07/10/2026)
+
+Les entrées de cette bibliothèque sont aussi rangées par thème (devis sans suite, appels manqués, pas de site, impayés, administratif) avec les plaintes de la veille du 07/10 : `docs/agents/plaintes-par-theme.md` (agrégat régénéré par `scripts/veille-plaintes.mjs --agreger`, juge `scripts/veille-plaintes-qa.mjs`). Reddit et les avis Google n'y sont pas lus automatiquement : la raison et ce qu'il faudrait y sont écrits.
+
 ## Sources relues (relève du 2026-09-29)
 
 | Source | Page | Métier | Entrées |
@@ -45,3 +49,31 @@ Décision du 29/09/2026 (`.orchestre/decisions.md`) : la cible du critère DL-1 
 | volta-electricite.info | sujet 12472 « Méthode de devis » | électricien | 2 |
 
 Les deux robots.txt ont été lus le 2026-09-29 : aucune de ces pages n'y est interdite. La sortie du juge, page par page (code HTTP, « retrouvée » ou « absente »), est dans `.orchestre/preuves/026-073/relecture-detail.log` (une ligne par entrée) ; le verdict du juge est dans `verifier.log` et les quatre sabotages dans `sabotages.log`.
+
+## Sources relues (relève du 2026-10-04, fiche 026-254)
+
+La complétion à la cible d'origine (40 citations au moins, 8 métiers au moins) ajoute 29 entrées, toutes à `approuve: false`, sans toucher aux 14 de la relève du 2026-09-29. Les pages sont des fils de forum lisibles sans compte, en UTF-8, où un artisan parle de son propre travail ; la page source est celle du fil, jamais celle d'un auteur.
+
+| Source | Page | Métier | Entrées |
+|---|---|---|---|
+| forum.copaindescopeaux.fr (forum de menuiserie) | sujet 1803 « L'auto-entrepreneur. », page 6 | menuisier | 5 |
+| droit-finances.commentcamarche.com (forum questions-réponses) | fil « Peintre en bâtiment. auto entreprise. » (5608476) | peintre | 1 |
+| droit-finances.commentcamarche.com | fil « Peintre en bâtiment » (5290239) | peintre | 1 |
+| droit-finances.commentcamarche.com | fil « Tarif peintre auto entrepreneur » (7133099) | peintre | 1 |
+| droit-finances.commentcamarche.com | fil « Litige client / artisan » (9197577) | peintre | 1 |
+| droit-finances.commentcamarche.com | fil « Comment calculer un devis peinture ou tapisse » (5162892) | peintre | 1 |
+| droit-finances.commentcamarche.com | fil « Tarification plaquiste » (6922149) | plaquiste | 1 |
+| droit-finances.commentcamarche.com | fil « TARIFICATION POUR PLAQUISTE » (4288161) | plaquiste | 2 |
+| droit-finances.commentcamarche.com | fil « Un client doit il payer » (5224679) | maçon | 3 |
+| droit-finances.commentcamarche.com | fil « Artisan maçon en liquidation judiciaire » (5266639) | maçon | 1 |
+| droit-finances.commentcamarche.com | fil « Tarif couvreur-couverture » (4322786) | couvreur | 3 |
+| droit-finances.commentcamarche.com | fil « Facturation main d'oeuvre » (4095722) | couvreur | 1 |
+| droit-finances.commentcamarche.com | fil « Demarcher des clients dans le batiment » (5346622) | plombier | 1 |
+| droit-finances.commentcamarche.com | fil « Artisan impayé chantier » (8177234) | tous | 1 |
+| droit-finances.commentcamarche.com | fil « Abandon de chantier par auto entrepreneur » (6542707) | tous | 1 |
+| plombiers-reunis.com (forum de plombiers et chauffagistes) | fil « Grosse baisse d'activité au mois de mars » (topic8140) | plombier | 1 |
+| plombiers-reunis.com | fil « A mon compte comment trouver des clients ? » (topic8995) | plombier | 1 |
+| plombiers-reunis.com | fil « Des conseils pour un début d'activité ? comment trouver des chantiers? » (topic3385) | plombier | 1 |
+| volta-electricite.info (forum d'électriciens) | sujet 1382 « COMMENT CE FAIRE CONNAITRE? » | électricien | 2 |
+
+Les robots.txt de ces quatre hôtes ont été lus le 2026-10-04 : aucune de ces pages n'y est interdite (copaindescopeaux.fr n'en sert aucun). Les fils de CCM ont été repérés dans le plan de site public du forum puis par recherche ciblée, et lus à une requête par seconde. Pages écartées : forumconstruire.com et forums.futura-sciences.com (ISO-8859-1 : leurs accents ne se retrouveraient pas), le fil « Couvreurs : vous gérez comment vos clients qui paient en retard ? » de monbatiment.fr (une étude de marché posée par l'éditeur d'un outil, pas un artisan) et le sujet 78208 de volta-electricite.info (la promotion d'un outil de devis). La sortie du juge de cette relève, page par page, est dans `.orchestre/preuves/026-254/verifier.log` ; les sabotages sont dans `.orchestre/preuves/026-254/contre-verif-29-09.md`.

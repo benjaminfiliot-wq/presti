@@ -6,82 +6,93 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-30T19:48:37Z
+# Digest — 2026-10-05T00:07:18Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 166 tâche(s) PASS, 207699 ligne(s) · faites par Claude Code : 96 tâche(s) PASS, 81823 ligne(s).
-**État** — file : 39 · en cours : 0 · faites : 257 · refusées : 1
+**Mesure** — déléguées (antigravity, codex) : 196 tâche(s) PASS, 226026 ligne(s) · faites par Claude Code : 104 tâche(s) PASS, 91457 ligne(s).
+**État** — file : 2 · en cours : 7 · faites : 345 · refusées : 6
 
-## Attention (7)
-- 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
-- 026-156 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-156 --forcer`
-- 026-254 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-254 --forcer`
-- 026-103 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-103 --forcer`
-- 026-122 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-122 --forcer`
-- 026-227 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-227 --forcer`
-- 026-087 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-087 --forcer`
+## Attention (1)
+- 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-091 | test | file | usine-codex-672 | — | Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-096 | feature | file | claude-code | — | Créer lib/agents/acquisition/repondeur.ts et la route app/api/cron/repondeur : le Répondeur prépare, par les seuls modèles approuvés et sans modèle de langage, la réponse privée à chaque commentaire « SITE » et la réponse à chaque message classé (question tirée de la FAQ, prix, appel, confirmation d'un STOP, accusé d'une demande RGPD, questions à un entrant, suite du Studio pour une marque), par le Gmail de prospection dans le fil avec sa preuve de demande ou dans la conversation Meta, et la seule relance après un lien de maquette resté sans réponse, annoncée comme l'assistant IA de Presti, avec le lien de rendez-vous ou de paiement qui passe la main à Benj, sans jamais négocier, promettre hors de la liste, ni répondre à un cas sensible ou hostile ; le Facteur l'envoie après les juges |
-| 026-157 | feature | file | codex | — | Écrire scripts/pack-pub/exporter.mjs (une ligne packs_pubs payée devient un dossier pack.json local, sans courriel, et signale la voix à produire) et scripts/pack-pub/deposer.mjs (juge local vert d'abord, puis dépôt de sortie/ dans le bucket privé packs-pubs avec une marge de 400 Mo et passage payee → fabriquee) |
-| 026-156 | feature | file | antigravity | — | Écrire scripts/pack-pub/fabriquer.mjs qui, depuis un dossier de pack, prépare les photos (octets vérifiés, sans métadonnées), refuse une personne sans accord, écrit le manifeste des entrées, instancie et rend les trois films et les trois visuels avec HyperFrames en local, puis appelle textes.mjs, pour produire un sortie/ que pub-locale-qa accepte sur les trois jeux d'essai |
-| 026-209 | feature | file | codex | — | C06 — fabrique de vidéos sur l’usine, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
-| 026-084 | feature | file | codex | — | Créer la page de rendez-vous maison (décision R14, 0 €) : lib/agents/acquisition/rendezVous.ts (disponibilités de Benj, créneaux libres de 15 min, validation d'une réservation) et la route app/rendez-vous/[jeton]/route.ts qui sert, sans traçage ni script, une page privée noindex où le prospect choisit un créneau et laisse son numéro, réserve sans double réservation, crée la carte « À appeler » et prévient Benj par une notification sans donnée personnelle, avec la même 404 pour un lien inconnu, mal formé ou expiré |
-| 026-215 | feature | file | codex | — | C12 — veille des tendances et laboratoire des accroches, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
-| 026-224 | feature | file | codex | — | Fish Audio sous garde de licence et quota selon la relecture de complétude du 27/09 |
-| 026-073 | contenu | file | codex | — | Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
-| 026-207 | feature | file | codex | — | C04 — garde des lignes et pont avec le Crieur, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
-| 026-235 | feature | file | usine-codex-133 | — | Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
-| 026-208 | feature | file | antigravity | — | C05 — cinq gabarits vidéo et un carrousel HyperFrames, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
-| 026-253 | feature | file | claude-code | — | Adapter scripts/budget-perf.mjs à la sortie de build de Next 16 --webpack (le fichier .next/app-build-manifest.json qu'il lisait a disparu), en gardant la même mesure honnête du poids réellement transféré pour /site/[slug] et /p/[slug], jusqu'au vert de next16-qa --groupe=dependances (N16-1 à N16-7) |
-| 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
-| 026-047 | feature | file | codex | — | Écrire le veilleur A0 lib/agents/veilleur.ts (agent muet, panne de plus de 2 h, usine Oracle injoignable, disjoncteur, jeton externe à J-7, stockage au-delà de 60 %, argent bloqué, cartes des disjoncteurs du formulaire, du Gmail de prospection et de Meta tenus par la base (technologie en pause, canal arrêté, Gmail bloqué, modèle suspendu, changer de message), de la notice périmée, du bilan et du rappel Vercel Pro, coupe-circuit à 150 € sans recette, lignes d'Attention colorées et ordonnées, digest de 7 h 30 et 18 h 30 heure de Paris, 3 notifications par jour au plus hors urgences) sur les tuyaux de lib/alertes.ts, et ajouter à lib/alertes.ts ses motifs, la surveillance du tic et le digest hebdomadaire en repli seulement |
-| 026-141 | feature | file | codex | — | Brancher la livraison sur l'horloge du bus : la route tic de 026-horloge-bus appelle tourLivraison toutes les 15 min, l'interrupteur de pause du bus arrête retraits et générations distantes, tourLivraison consomme la sortie que le livreur de l'usine a déposée (relue, décodée, copiée dans le bucket sites, commande passée à generee, dossier usine effacé, jamais une tâche d'essai), la tâche livrer_site:<commande> du bus est close par ops_tache_clore quand la commande atteint generee, et le livreur bat à chaque tour |
-| 026-064 | feature | file | usine-codex-114 | — | Créer lib/agents/acquisition/jauges.ts (la liste fermée des jauges de quota : formulaires du jour au plafond du palier, état de chaque technologie de formulaire, e-mails sollicités du jour, réponses privées et messagerie Meta, API Instagram, bibliothèque publicitaire, Publora ; calculerJauges qui rend pour chacune utilisé, plafond, part et état ok, attention à 75 % ou plein à 100 %, et consommerJauge qui refuse un appel au-delà du plafond) et la route de lecture GET /api/controle/jauges réservée à un fondateur, sans aucune donnée de prospect |
-| 026-154 | contenu | file | codex | — | Écrire scripts/pack-pub/textes.mjs qui produit, sans modèle d'IA et à partir des seuls faits du pack, sortie/textes.md (trois variantes d'annonce aux longueurs Meta) et sortie/fiche-10-min.md (lancer la pub pas à pas, catégorie Logement selon docs/pubs/meta-logement.json), et refuse d'écrire la fiche tant que la catégorie n'est pas vérifiée |
-| 026-118 | feature | file | codex | — | Ajouter la route POST /api/pubs/commander, qui ouvre un Checkout Stripe à paiement unique avec facture pour le pack pubs à partir de parametresCheckoutPack, derrière le nouveau drapeau packPub baissé, avec packPubVente baissé aussi |
-| 026-230 | feature | file | codex | — | Écrire scripts/savoir/exporter.mjs (liste fermée de docs/savoir/sources.json, exclusions avant toute ouverture, secrets écartés, classes public, interne et prospects, caviardage, manifestes, sortie hors dépôt), scripts/savoir/envoyer.mjs (deux archives vers le dépôt /srv/presti-savoir/depot de l'usine par ssh, sous l'interrupteur envoi) et scripts/savoir/synchroniser.mjs (les deux à la suite, pour la tâche Windows), jusqu'au vert de scripts/savoir-socle-qa.mjs --partie=export,envoi |
-| 026-155 | feature | file | usine-codex-112 | — | Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
-| 026-082 | feature | file | usine-codex-109 | — | Créer lib/agents/acquisition/maquettesLien.ts (jeton de 43 signes, empreinte SHA-256, expiration à 21 jours, servirMaquette et executerPurge purs), la route app/maquette/[jeton]/[[...fichier]]/route.ts qui sert une page privée noindex, sans traçage ni écriture, avec la capture et la vidéo de 15 à 20 s (lecture par plages pour les téléphones), 404 identique pour un lien inconnu, mal formé ou expiré, et la route app/api/cron/maquettes-purge |
-| 026-153 | feature | file | ag-026-153 | — | Créer le gabarit HyperFrames du pack pubs (trois films 1080×1920 de 15 s avant-apres, chantier et artisan-ville, et un visuel 1080×1080) fait seulement de photos de l'artisan et de textes à marques, et scripts/pack-pub/instancier.mjs qui remplit les marques depuis un pack.json |
-| 026-149 | feature | file | usine-codex-94 | — | Écrire lib/packPubPurge.ts (packsAPurger pur, purgerPacksExpires borné et sans exception) et l'appeler chaque jour depuis la tâche des relances, pour effacer du bucket packs-pubs les fichiers d'un pack livré dont le lien de 30 jours a expiré, comme le promet l'article 3 ter des CGU |
-| 026-074 | feature | file | codex | — | Créer les cinq routes d'écriture du Pilotage (trancher une décision avec reconfirmation quand elle engage, et rendre aux agents une réponse tranchée ; marquer rendu un appel, réservation ou réponse ; mettre un agent en pause sous reconfirmation securite ; transmettre une consigne à l'équipage ; les cinq gestes du fondateur sur l'envoi sous reconfirmation securite), fermées par le drapeau pilotage, gardées par estDirection, journalisées avant d'agir, branchées sur les seules fonctions des propriétaires du bus, de l'acquisition et de la station, et sans aucune route d'envoi |
-| 026-137 | feature | file | usine-codex-93 | — | Écrire lib/packPubLivraison.ts (courriel de livraison pur, lien de 30 jours) et les routes du Poste GET /api/controle/packs (liste, aperçus signés de 600 s) et POST /api/controle/packs/[id] (livrer sous reconfirmation artisan, ou refaire avec une consigne), journal d'abord et état conditionnel |
-| 026-075 | feature | file | usine-codex-89 | — | Écrire scripts/agents/maquette-video.mjs, qui fabrique sur l'usine, à partir du dossier d'une maquette générée, une vidéo verticale de 15 à 20 s qui fait défiler la page d'accueil de haut en bas (capture pleine page par Chromium, panoramique par ffmpeg), en H.264, sans son, de 3 Mo au plus, lisible en continu sur un téléphone, déterministe, sans aucune ressource d'un autre hôte |
-| 026-068 | feature | file | codex | — | Créer GET /api/controle/pilotage?bloc=decider\|appeler\|envois\|entonnoir\|agents\|code (404 tant que le nouveau drapeau pilotage est baissé, garde fondateur, chaque bloc sourcé et lu seulement par les fonctions pilotage_* et la logique de lib/pilotage ; le bloc envois montre les envois des agents en lecture seule, sans texte ni destinataire, par envoisDesAgents de lib/pilotage/envois.ts) et lib/pilotage/blocs.ts, et inscrire le drapeau dans la carte de scripts/fermeture-e2e.mjs |
-| 026-049 | feature | file | usine-codex-66 | — | Créer la route GET /api/agents/tic, fermée par le drapeau busAgents et par CRON_SECRET comme les routes cron, qui enchaîne sous un budget de 25 s les baux expirés, le balayage des commandes payées, la file de l'argent et, une fois par créneau de 5 min, le veilleur A0, puis note son passage tic dans passages_cron et répond 500 si une étape a échoué |
-| 026-056 | feature | file | usine-codex-64 | — | Créer les routes POST /api/agents/usine/entree et /api/agents/usine/depot derrière le drapeau busAgents, gardées par authAgent et exigerTable('taches'), qui ne signent d'URL (lecture 15 min, dépôt) dans le bucket privé usine que pour la tâche que l'agent tient sous bail (ops_tache_detenue), dans les limites de sa capacité lues dans lib/agents/usineLimites.json, et refusent tout dépôt quand le stockage dépasse 60 % ou ne se mesure pas, avec lib/agents/usineDepot.ts, jusqu'au vert de scripts/usine-routes-qa.mjs |
-| 026-046 | feature | file | usine-codex-62 | — | Écrire lib/agents/fileArgent.ts qui met chaque commande de site payée dans la file argent (une fois par commande), traite la file sous un budget de temps avec un registre fermé de gestionnaires idempotents (commande_payee crée la tâche livrer_site puis dépose, sans jamais bloquer l'argent, son entrée pour le livreur de l'usine ; essai_e2e), ne marque un message fait qu'après succès et alerte sur un type inconnu, sans jamais écrire dans Stripe ni dans sites_commandes |
-| 026-059 | feature | file | usine-codex-60 | — | Créer GET /api/controle/tresorerie et la tuile Argent (encaissé du jour, 7 jours et mois, abonnement mensuel récurrent, sites vendus, dépenses, marge, seuil de TVA) calculées uniquement par lib/direction/stripe.ts et lib/direction/tresorerie.ts, montrée en tête de Comptabilité, plus une veille hebdomadaire du seuil de TVA |
-| 026-168 | test | file | claude-code | — | Écrire le juge de la planche station-planche-qa (--partie=planche : il lance lui-même, sur l'usine, l'atelier ~/claw3d-pixel sur 127.0.0.1 avec une liste blanche fermée, capture lui-même la planche des 20 salles et de la salle réservée dans la vraie mise en page à 1440×900, 1280×800 et 390×844, et juge grille entière, palette, licences du lot A, absence de donnée et poids) et le lot p de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-035 | feature | file | usine-codex-59 | — | Écrire les écrans de l'achat public derrière siteAchatPublic (page /site/acheter à quatre champs et case CGU, page /site/commander/merci avec renvoi du lien, mode « compléter mon dossier » de /site/commander avec l'étape Vos prestations, paramètre suite sûr de /onboarding) |
-| 026-033 | feature | file | usine-codex-58 | — | Écrire scripts/commande-exporter.mjs, qui transforme une commande payée au dossier complet en dossier source pour generer.mjs --source (commande.json au contrat de 025-03, photos de l'artisan seulement, vérifiées, sans métadonnées, en webp et avif, attributions crédibles) hors de public/, sans afficher aucune donnée personnelle |
-| 026-042 | feature | file | usine-codex-57 | — | Créer les 7 fichiers de routes /api/agents/* du bus (créer, prendre et rendre une tâche, écrire et lire des événements, créer une décision et relire ses décisions tranchées, battement, état) derrière le drapeau busAgents baissé, chacune gardée par authAgent, limitée aux types et tables de l'agent et branchée sur une seule fonction de lib/agents/bus.ts, sans aucune route qui tranche, approuve ou change un interrupteur |
-| 026-031 | feature | file | usine-codex-56 | — | Tenir l'article 3 bis des CGU : dater la suppression du compte sur ses sites en ligne quand la purge réussit et prévenir l'artisan, puis douze mois plus tard envoyer le lien du dossier, passer la commande à retiree, détacher le domaine et purger les fichiers à l'expiration, le tout dans tourLivraison |
-| 026-030 | feature | file | usine-codex-55 | — | Permettre de compléter le dossier d'une commande déjà payée et pas encore générée (GET/PUT /api/site/commander/complement, qui rattache d'abord la commande par l'adresse de la session), et ajouter au dossier la liste des prestations, exigée avant la fabrication par erreursFabrication sans toucher aux règles du paiement |
-| 026-240 | test | file | codex | — | Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
-| 026-176 | feature | fait | codex | PASS | 2026-09-30T19:48:37Z · 0s · 0 l. |
-| 026-171 | test | fait | claude-code | PASS | 2026-09-30T18:49:06Z · 283s · 0 l. |
-| 026-170 | test | fait | claude-code | PASS | 2026-09-30T18:39:48Z · 1387s · 0 l. |
-| 026-194 | test | fait | claude-code | PASS | 2026-09-30T15:24:53Z · 8s · 142 l. |
-| 026-134 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 0s · 0 l. |
-| 026-175 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 1s · 0 l. |
-| 026-217 | feature | fait | claude-code | PASS | 2026-09-30T13:43:35Z · 2s · 0 l. |
-| 026-210 | feature | fait | claude-code | PASS | 2026-09-30T13:43:25Z · 2s · 394 l. |
+| 026-099 | test | en-cours | claude-code | — | depuis 2026-10-04T23:29:49Z · Écrire scripts/juges-026-envoi-mutations.mjs, qui prouve sur des copies que les huit juges de l'envoi automatique, de l'entrant et de la fabrication (disjoncteurs-qa, jauges-qa, facteur-qa, meta-webhooks-qa, repondeur-qa, rendez-vous-qa, maquette-video-qa, douleurs-qa) échouent chacun sur de vraies fautes avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-240 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:42Z · Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 026-152 | test | en-cours | claude-code | — | depuis 2026-10-05T00:07:16Z · Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
+| 026-101 | test | en-cours | claude-code | — | depuis 2026-10-04T22:52:08Z · Écrire scripts/juges-026-acquisition-mutations.mjs, qui prouve sur des copies que chaque juge du domaine acquisition passe sur l'arbre réel et échoue, sur le critère nommé, pour chacune des mutations imposées par cette fiche, et qui sort en code 0 seulement si toutes échouent |
+| 026-161 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:35Z · Écrire scripts/juges-026-mutations.mjs, qui prouve sur des copies que les juges qu'aucune fiche de mutations de domaine ne contre-vérifie (agents-llm-qa, ops-acquisition-qa, les deux juges 025 adaptés à Next 16, webhook-muet-qa amendé par 026-108, pont-orchestre-qa et prospects-entrant-qa de 026-142, et juges-026-preuve lui-même) échouent sur une vraie faute avec le critère nommé et passent sur l'arbre intact, puis que chaque juge de la série a au moins une mutation attrapée dans un rapport ; code 0 seulement si tout est pris |
+| 026-186 | feature | en-cours | claude-code | — | depuis 2026-10-04T23:46:55Z · Donner à la carte sa forme de téléphone : un cadre de 358 px en vue d'ensemble ou sur la grille portrait du thème, le pincement dans le cadre seulement, +, − et ⊞ de 44 px, les plaques à partir du zoom ×2, touch-action: none, gesturestart bloqué sous Safari, la perte de contexte rattrapée, et scrollWidth ≤ 390, jusqu'au vert de station-ecran-qa (webkit) et de station-claw3d-qa (contexte) |
+| 026-250 | test | en-cours | claude-code | — | depuis 2026-10-04T23:19:19Z · Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 023-03 | test | file | claude-code | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 025-10 | test | file | claude-code | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-159 | test | fait | codex | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
+| 026-123 | feature | fait | claude-code | PASS | 2026-10-04T21:50:27Z · 519s · 1760 l. |
+| 026-172 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 131 min |
+| 026-170 | test | fait | claude-code | FAIL | ✅ JA-1 référence 1c87006 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (5823 fichiers), ancêtre de HEAD, sans app/c |
+| 026-094 | feature | fait | codex | PASS | 2026-10-04T21:19:18Z · 129s · 0 l. |
+| 026-179 | feature | fait | codex | PASS | 2026-10-04T20:58:45Z · 313s · 0 l. |
+| 026-130 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 130 min |
+| 026-200 | feature | fait | codex | PASS | 2026-10-04T20:40:29Z · 46s · 0 l. |
+| 026-185 | feature | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 136 min |
+| 026-249 | feature | fait | claude-code | PASS | 2026-10-04T20:10:21Z · 247s · 1850 l. |
+| 026-097 | feature | fait | claude-code | PASS | 2026-10-04T19:56:14Z · 70s · 3225 l. |
+| 026-162 | feature | fait | claude-code | PASS | 2026-10-04T19:33:49Z · 4s · 0 l. |
+| 026-227 | feature | fait | codex | PASS | 2026-10-04T19:07:25Z · 83s · 0 l. |
+| 026-226 | feature | fait | claude-code | PASS | 2026-10-04T18:58:26Z · 87s · 737 l. |
+| 026-247 | feature | fait | claude-code | PASS | 2026-10-04T18:44:43Z · 71s · 1076 l. |
+| 026-201 | feature | fait | codex | PASS | 2026-10-04T18:38:51Z · 57s · 0 l. |
+| 026-245 | feature | fait | codex | PASS | 2026-10-04T18:27:19Z · 14s · 0 l. |
+| 026-178 | feature | fait | claude-code | PASS | 2026-10-04T18:16:47Z · 199s · 1074 l. |
+| 026-243 | feature | fait | claude-code | PASS | 2026-10-04T18:14:08Z · 18s · 1018 l. |
+| 026-136 | feature | fait | claude-code | PASS | 2026-10-04T18:05:49Z · 29s · 822 l. |
+| 026-199 | test | fait | claude-code | PASS | 2026-10-04T17:46:01Z · 145s · 4915 l. |
+| 026-254 | contenu | fait | claude-code | PASS | 2026-10-04T17:38:09Z · 174s · 545 l. |
+| 026-138 | audit | fait | claude-code | PASS | 2026-10-04T17:20:48Z · 5s · 491 l. |
+| 026-138-juge-pages | test | fait | claude-code | PASS | 2026-10-04T17:13:01Z · 68s · 741 l. |
+| 026-150 | test | fait | claude-code | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
+| 026-156 | feature | fait | antigravity | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
+| 026-103 | feature | fait | codex | PASS | 2026-10-04T16:38:31Z · 22s · 0 l. |
+| 026-092 | feature | fait | claude-code | PASS | 2026-10-04T16:24:36Z · 390s · 532 l. |
+| 026-244 | test | fait | claude-code | PASS | 2026-10-04T16:24:33Z · 31s · 0 l. |
+| 026-246 | test | fait | claude-code | PASS | 2026-10-04T16:18:22Z · 43s · 2506 l. |
+| 026-221 | feature | fait | codex | PASS | 2026-10-04T16:13:17Z · 1s · 0 l. |
+| 026-177 | feature | fait | usine-codex-1465 | PASS | 2026-10-04T15:39:40Z · 246s · 695 l. |
+| 026-120 | feature | fait | ag-026-120 | EXPIRÉE | bail expiré : ag-026-120 silencieux depuis 133 min |
+| 026-087 | feature | fait | claude-code | PASS | 2026-10-04T13:49:51Z · 161s · 939 l. |
+| 026-096 | feature | fait | codex | PASS | 2026-10-04T13:26:50Z · 101s · 0 l. |
+| 026-195 | feature | fait | codex | PASS | 2026-10-04T13:16:06Z · 99s · 0 l. |
+| 026-174 | feature | fait | codex | PASS | 2026-10-04T13:02:58Z · 90s · 0 l. |
+| 026-237 | feature | fait | claude-code | PASS | 2026-10-04T13:02:11Z · 115s · 0 l. |
+| 026-083 | feature | fait | claude-code | PASS | 2026-10-04T12:53:56Z · 70s · 0 l. |
+| 026-173 | feature | fait | codex | PASS | 2026-10-04T12:53:17Z · 45s · 0 l. |
+| 026-242 | test | fait | claude-code | PASS | 2026-10-04T12:45:45Z · 81s · 0 l. |
+| 026-171 | test | fait | claude-code | PASS | 2026-10-04T11:36:10Z · 728s · 0 l. |
+| 026-175 | feature | fait | claude-code | PASS | 2026-10-04T11:17:24Z · 55s · 0 l. |
+| 026-134 | feature | fait | claude-code | PASS | 2026-10-04T11:15:52Z · 45s · 0 l. |
+| 026-217 | feature | fait | claude-code | PASS | 2026-10-04T11:14:35Z · 40s · 0 l. |
+| 026-151 | test | fait | codex | DISJONCTÉE | bail expiré : usine-codex-126 silencieux depuis 135 min \| bail expiré : codex-mutations-151 silencieux depuis 2125 min \| decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
+| 026-194 | test | fait | claude-code | PASS | 2026-10-04T11:09:44Z · 138s · 0 l. |
+| 026-111 | feature | fait | antigravity | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
+| 026-176 | feature | fait | codex | PASS | 2026-10-04T11:03:54Z · 43s · 0 l. |
+| 026-117 | feature | fait | antigravity | PASS | 2026-10-02T18:21:46Z · 143s · 2092 l. |
+| 026-113 | feature | fait | antigravity | PASS | 2026-10-02T08:48:16Z · 100s · 1491 l. |
+| 026-122 | feature | fait | codex | PASS | 2026-09-30T15:47:04Z · 28s · 0 l. |
+| 026-259 | feature | fait | codex-rearmement-259 | PASS | 2026-09-30T15:30:32Z · 15s · 516 l. |
+| 026-167 | test | fait | codex-reprise-167 | PASS | 2026-09-30T15:26:36Z · 276s · 806 l. |
+| 026-258 | feature | fait | antigravity | PASS | 2026-09-30T10:57:29Z · 3s · 0 l. |
+| 026-257 | feature | fait | codex-relais-compat-0930 | PASS | 2026-09-30T10:52:08Z · 119s · 445 l. |
+| 026-225 | test | fait | codex-relais-0930 | PASS | 2026-09-30T10:23:11Z · 0s · 744 l. |
 | 026-133 | test | fait | codex | PASS | 2026-09-30T08:24:52Z · 617s · 0 l. |
 | 026-091 | test | fait | usine-codex-672 | PASS | 2026-09-30T04:00:24Z · 560s · 1682 l. |
 | 026-145 | feature | fait | usine-codex-506 | PASS | 2026-09-30T01:29:21Z · 35s · 519 l. |
 | 026-239 | feature | fait | usine-codex-503 | PASS | 2026-09-30T01:22:15Z · 41s · 1050 l. |
 | 026-008 | feature | fait | claude-code | PASS | 2026-09-29T21:35:24Z · 444s · 825 l. |
-| 026-162 | feature | fait | claude-code | PASS | 2026-09-29T21:19:32Z · 8s · 0 l. |
 | 026-166 | feature | fait | claude-code | PASS | 2026-09-29T21:11:44Z · 10s · 7 l. |
 | 026-095 | feature | fait | codex | PASS | 2026-09-29T20:47:05Z · 147s · 0 l. |
 | 026-157 | feature | fait | codex | PASS | 2026-09-29T20:43:52Z · 182s · 0 l. |
 | 026-213 | feature | fait | codex | PASS | 2026-09-29T20:02:17Z · 9s · 0 l. |
-| 026-122 | feature | fait | usine-codex-196 | DISJONCTÉE | bail expiré : usine-codex-166 silencieux depuis 61 min \| bail expiré : usine-codex-184 silencieux depuis 61 min \| bail expiré : usine-codex-196 silencieux depuis 63 min |
 | 026-218 | feature | fait | codex | PASS | 2026-09-29T19:19:13Z · 140s · 0 l. |
 | 026-214 | feature | fait | codex | PASS | 2026-09-29T19:17:34Z · 21s · 0 l. |
 | 026-212 | feature | fait | codex | PASS | 2026-09-29T19:14:45Z · 44s · 0 l. |
@@ -105,24 +116,5 @@
 | 026-206 | feature | fait | claude-code | PASS | 2026-09-29T12:13:36Z · 0s · 2334 l. |
 | 026-253 | feature | fait | claude-code | PASS | 2026-09-29T12:08:44Z · 419s · 0 l. |
 | 026-158 | feature | fait | antigravity | PASS | 2026-09-29T11:51:24Z · 425s · 0 l. |
-| 026-006 | feature | fait | claude-code | PASS | 2026-09-29T11:47:23Z · 381s · 9610 l. |
-| 026-211 | feature | fait | claude-code | PASS | 2026-09-29T11:46:52Z · 1s · 473 l. |
-| 026-205 | feature | fait | claude-code | PASS | 2026-09-29T11:22:24Z · 2s · 1053 l. |
-| 026-045 | test | fait | claude-code | PASS | 2026-09-29T11:01:29Z · 206s · 0 l. |
-| 026-231 | feature | fait | codex | PASS | 2026-09-29T10:58:48Z · 53s · 0 l. |
-| 026-047 | feature | fait | codex | PASS | 2026-09-29T10:55:47Z · 509s · 0 l. |
-| 026-079 | feature | fait | claude-code | PASS | 2026-09-29T10:48:36Z · 24s · 0 l. |
-| 026-238 | test | fait | claude-code | PASS | 2026-09-29T10:28:24Z · 565s · 0 l. |
-| 026-129 | feature | fait | usine-codex-118 | PASS | 2026-09-29T10:07:47Z · 219s · 937 l. |
-| 026-141 | feature | fait | codex | PASS | 2026-09-29T10:01:36Z · 221s · 0 l. |
-| 026-064 | feature | fait | usine-codex-114 | PASS | 2026-09-29T09:54:39Z · 41s · 612 l. |
-| 026-026 | test | fait | claude-code | PASS | 2026-09-29T09:48:57Z · 1084s · 0 l. |
-| 026-127 | feature | fait | usine-codex-117 | PASS | 2026-09-29T09:48:36Z · 74s · 584 l. |
-| 026-154 | contenu | fait | codex | PASS | 2026-09-29T09:31:12Z · 2s · 0 l. |
-| 026-115 | feature | fait | claude-code | PASS | 2026-09-29T09:31:04Z · 81s · 438 l. |
-| 026-118 | feature | fait | codex | PASS | 2026-09-29T09:19:28Z · 219s · 0 l. |
-| 026-063 | feature | fait | claude-code | PASS | 2026-09-29T09:12:19Z · 382s · 0 l. |
-| 026-119 | feature | fait | codex | PASS | 2026-09-29T08:49:29Z · 6s · 0 l. |
-| 026-230 | feature | fait | codex | PASS | 2026-09-29T08:45:37Z · 292s · 0 l. |
 
-… 197 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 260 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

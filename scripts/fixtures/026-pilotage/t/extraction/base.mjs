@@ -55,6 +55,9 @@ const BANS = [
 const ABUS = [
   { ip: '203.0.113.20', raison: 'trop de leads', at: '2026-09-30T09:30:00Z' }, { ip: '203.0.113.20', raison: 'trop de leads', at: '2026-09-30T09:31:00Z' },
   { ip: '203.0.113.21', raison: 'sondage', at: '2026-09-30T09:40:00Z' }, { ip: '203.0.113.22', raison: 'ancien', at: '2026-09-28T09:40:00Z' },
+  // 04/10 (contre-vérif de 026-174) : 31 IP distinctes de plus dans les 24 h. Avec trois IP seulement, le plafond de 30 de la liste
+  // `abus24h` (lib/controle/lectures/bans.ts, .slice(0, 30)) ne se voyait pas : un plafond ramené à 29 passait XT-2.
+  ...Array.from({ length: 31 }, (_, i) => ({ ip: `198.51.100.${i + 1}`, raison: 'sondage de masse', at: `2026-09-30T08:${String(i).padStart(2, '0')}:00Z` })),
 ]
 const ALERTES = [{ id: 1, acquittee_le: null }, { id: 2, acquittee_le: null }, { id: 3, acquittee_le: '2026-09-29T00:00:00Z' }]
 const COURRIERS = [{ id: 1, statut: 'a_traiter' }, { id: 2, statut: 'traite' }]

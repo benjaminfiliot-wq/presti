@@ -1,21 +1,9 @@
-// lib/contenu/lignes.ts — la garde des lignes éditoriales et le pont avec le Crieur (fiche 026-207, C04), écrit par
-// Claude Code. Fonctions PURES : rien n'écrit, rien ne publie ; la seule E/S est l'appel local `jev noul --provider
-// laya` (lib/agents/llm.ts `vraisemblance`, déjà PASS), jamais un repli hébergé. Le verdict est fermé :
-// `publier` ou `refuser` + un motif français. Tout ce qui manque, est invalide ou lève une exception REFUSE : une
-// entrée absente ne devient jamais une valeur par défaut flatteuse.
-//
-// Décision du chef d'entreprise du 27/09 (R24 = la règle de Benj, permanente) :
-//  - `publier` exige un accord individuel : une décision `tranchee`, choix `accorder`, visant EXACTEMENT ce post, sur
-//    EXACTEMENT cette version du texte. Un accord pour A n'autorise jamais B ; une ligne approuvée, un score de Laya
-//    ou une échéance passée n'autorisent rien.
-//  - un post venu de `crieur_posts` n'est JAMAIS publié ici : le Crieur dépose un brouillon dans Publora et Benj
-//    l'accorde en le programmant lui-même. Ce module ne s'en sert que pour la cadence, le plafond Publora
-//    (15 par mois, 3 à venir) et les doublons.
-//
-// Verdict de `verdictPublication`, dans l'ordre : entrée valide → origine (Crieur) → ligne L1..L5 approuvée et non
-// suspendue → canal (celui de la ligne ET du cadre) → drapeaux → gabarit → doublon → cadence → plafond du jour →
-// chiffres (Laya, seuil 0,5, source obligatoire) → accord individuel.
+// Garde automatique des lignes éditoriales, décision du 30/09.
+// Pause fail-closed, STOP/opposition, coût explicite nul, faits/drapeaux, cadence,
+// doublons et chaque affirmation chiffrée contrôlée : aucun accord individuel requis.
+// Les posts Crieur restent sur leur propre voie réservée pour éviter le double envoi.
 import { vraisemblance, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
 
 // ── types ────────────────────────────────────────────────────────────────────────────────────────────────────────
 export type Canal = 'tiktok' | 'instagram' | 'facebook' | 'linkedin'
@@ -86,7 +74,7 @@ export type Verdict =
   | { decision: 'publier'; preuves: PreuveChiffre[] }
   | { decision: 'refuser'; motif: string; preuves: PreuveChiffre[] }
 
-export type DepsLignes = DepsLecteur
+export type DepsLignes = DepsLecteur & { coutEuros?: unknown; opposition?: boolean }
 
 // ── le cadre L1–L5 (docs/marketing/lignes/README.md) ─────────────────────────────────────────────────────────────
 export const CADRE: Readonly<Record<string, { canaux: readonly string[]; gabarits: readonly string[] }>> = Object.freeze({
@@ -100,7 +88,7 @@ export const CADRE: Readonly<Record<string, { canaux: readonly string[]; gabarit
 export const PLAFOND_PUBLORA_MOIS = 15
 export const PLAFOND_PUBLORA_A_VENIR = 3
 export const SEUIL_LAYA = 0.5
-export const MOTIF_CRIEUR = "l'accord d'un post du Crieur se donne dans Publora"
+export const MOTIF_CRIEUR = 'un post du Crieur passe par sa route réservée et ses garde-fous automatiques'
 const VALIDITE_ACCORD_MS = 7 * 24 * 3600 * 1000
 
 // ── petites mains ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -147,8 +135,11 @@ function cibleVise(cible: unknown, postId: string): boolean {
   return cible.startsWith(prefixe) && /^[0-9a-f]{8,64}$/.test(cible.slice(prefixe.length))
 }
 
-/** Le SEUL chemin d'autorisation : décision tranchée, choix `accorder`, cible exacte, même version du texte, portée
- *  sécurité si elle est renseignée, ni expirée ni vieille de plus de 7 jours. */
+/** Lecture d'une ancienne carte d'accord : décision tranchée, choix `accorder`, cible exacte, même version du texte, portée
+ *  sécurité si elle est renseignée, ni expirée ni vieille de plus de 7 jours. Depuis la décision du 30/09 (confirmée le 04/10),
+ *  ce n'est plus le chemin d'autorisation des publications Instagram/Facebook : `verdictPublication` les ouvre par les contrôles
+ *  automatiques. Seul le chemin TikTok (scripts/contenu/publier-tiktok.mjs) l'exige encore.
+ *  @deprecated la voie automatique ne l'appelle plus. */
 export function accordValide(decision: DecisionAccord, postId: string, version: string, maintenantMs: number): { ok: true } | { ok: false; motif: string } {
   if (!decision || typeof decision !== 'object') return { ok: false, motif: 'accord individuel de Benj absent : aucune publication sans lui' }
   if (decision.statut !== 'tranchee') return { ok: false, motif: `décision « ${decision.statut} » (attendu tranchee ; une échéance passée applique le défaut « refuser »)` }
@@ -245,6 +236,9 @@ export async function verdictPublication(post: Post, ligne: Ligne | null, deps: 
 
 async function juger(post: Post, ligne: Ligne | null, deps: DepsLignes): Promise<Verdict> {
   const t = maintenant(deps)
+  if (!(await sortiePermise()).permise) return refuser('pause générale : aucune publication')
+  if (deps.opposition === true) return refuser('STOP ou opposition : aucune publication')
+  if (deps.coutEuros !== 0) return refuser('coût inconnu ou positif : publication refusée')
   // 1. entrée valide
   if (!post || typeof post !== 'object') return refuser('post absent')
   if (!estTexte(post.id)) return refuser('post sans identifiant')
@@ -317,6 +311,7 @@ async function juger(post: Post, ligne: Ligne | null, deps: DepsLignes): Promise
   for (const texte of textesVisibles(post)) {
     if (!porteUneAffirmationChiffree(texte)) continue
     if (!estTexte(post.source)) return refuser('affirmation chiffrée sans source : renvoyée à Benj', preuves)
+    if (!(await sortiePermise()).permise) return refuser('pause générale : aucun appel au modèle', preuves)
     const r = await vraisemblance(texte, {}, deps)
     if (r === null) {
       preuves.push({ texte, source: post.source, p: null, verdict: 'indisponible', le: dateIso(t) })
@@ -327,8 +322,6 @@ async function juger(post: Post, ligne: Ligne | null, deps: DepsLignes): Promise
     if (!passe) return refuser(`score de vérité insuffisant (p=${r.p} < ${SEUIL_LAYA}) : renvoyé à Benj`, preuves)
   }
 
-  // 10. l'accord individuel, en dernier, jamais déduit d'un score
-  const a = accordValide(post.decision, post.id, versionTexte(post), t)
-  if (!a.ok) return refuser(a.motif, preuves)
+  // Décision du 30/09 : les contrôles automatiques remplacent l'accord individuel.
   return { decision: 'publier', preuves }
 }

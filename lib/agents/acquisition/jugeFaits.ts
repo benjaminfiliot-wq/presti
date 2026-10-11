@@ -311,7 +311,7 @@ export async function executerJugeFaits(deps: Deps) {
   const metaBilan = metaEtats.get(deps);
   await deps.magasin.evenement({
      agent: 'juge_faits',
-     type: 'j1',
+     type: 'passage_juge',
      resume: metaBilan ? `meta: '${metaBilan}'` : 'ok'
   });
   

@@ -64,7 +64,11 @@ export async function juger(x) {
   const filFixe = (bulles = BULLES) => (a) => reponseFil(a, bulles)
   const base = (plus = {}) => ({ direct: D, fil: filFixe(), tresorerie: T, reglages: J('reglages.json'), ...(MODE === 'vivant' ? {} : { journal: J('role-direction.json') }), ...plus })
   const J_ = '[data-station-journal]'
-  const pret = async (page, n = 1) => { await page.waitForFunction(([s, k]) => document.querySelectorAll(`${s} [data-bulle-fil]`).length >= k, [J_, n], { timeout: 15_000 }).catch(() => {}); await attendre(200) }
+  // `pret` attend que les n bulles attendues soient rendues. Le délai est un délai de CHARGEMENT (D-0410-9, 04/10) : en racine
+  // réelle la page appelle pour de vrai la route du rôle avant d'afficher la station, et sur un PC saturé elle a mis plus de
+  // 45 s (« Vérification de l'accès… », « transmettre » interrompu à froid). Il passe de 15 s à 90 s ; il ne juge rien : rendu
+  // plus tôt, la suite part tout de suite, et des bulles qui ne viennent jamais restent un échec du critère qui les mesure.
+  const pret = async (page, n = 1) => { await page.waitForFunction(([s, k]) => document.querySelectorAll(`${s} [data-bulle-fil]`).length >= k, [J_, n], { timeout: 90_000 }).catch(() => {}); await attendre(200) }
   const bulle = (b, decal) => ({ id: b.id, heure: heureParis(Date.parse(b.le) + decal) })
   const idsRendus = (page) => page.$$eval(`${J_} [data-bulle-fil]`, (l) => l.map((e) => Number(e.getAttribute('data-bulle-fil'))))
   const champ = `${J_} [data-transmettre] input, ${J_} [data-transmettre] textarea, [data-transmettre] input, [data-transmettre] textarea`
@@ -72,6 +76,13 @@ export async function juger(x) {
   const cliquerTransmettre = (page) => page.evaluate(() => { const f = document.querySelector('[data-transmettre]'); const b = f && ([...f.querySelectorAll('button')].find((y) => /Transmettre/i.test(y.textContent ?? '')) ?? f.querySelector('button[type="submit"]')); b?.click() })
 
   const srv = await demarrer({ critere: 'FL-2' })
+  // Chauffer la route (décision du chef D-0410-9, 04/10) : sur un `next dev` à froid, la première navigation compile la page et
+  // ses couches ; sur un PC chargé cela dépasse le délai de 60 s de ouvrir() et interrompait « injection » (FL-3). Une requête
+  // de Node, au plus 180 s, fait la compilation AVANT les scénarios. C'est un délai, pas un seuil de vérité : sa réponse n'est
+  // jamais lue, aucun critère n'en dépend, et un échec ou un dépassement ne change rien (les scénarios jugent ce qu'ils voient).
+  // La route du rôle (/api/controle/journal, la seule que la page appelle pour de vrai) est chauffée de même : sans session elle
+  // répond 401 une fois compilée ; sur un PC saturé, sa compilation à froid laissait la page à « Vérification de l'accès… ».
+  if (MODE === 'vivant') for (const chemin of ['/controle/station', '/api/controle/journal?limite=1']) await fetch(`${srv.base}${chemin}`, { signal: AbortSignal.timeout(180_000), redirect: 'manual' }).then((r) => r.arrayBuffer()).catch(() => {})
   const captures = {}
   const file = []
   const scenario = (ids, nom, f) => { file.push({ ids, nom, f }) }
@@ -110,7 +121,7 @@ export async function juger(x) {
   // FL-2 : aucune bulle → « Rien au journal pour l'instant. »
   scenario(['FL-2'], 'fil vide', async () => {
     const { page, fermer } = await ouvrir('/controle/station', base({ fil: filFixe([]) }))
-    await page.waitForSelector(J_, { timeout: 15_000 }).catch(() => {})
+    await page.waitForSelector(J_, { timeout: 60_000 }).catch(() => {})
     await attendre(800)
     const t = apos(await page.evaluate((s) => window.__JUGE__.texte(s), J_))
     if (!t.includes('Rien au journal pour l\'instant.')) faute('FL-2', `fil vide : « ${court(t, 70)} », « Rien au journal pour l'instant. » attendu`)
@@ -270,7 +281,7 @@ export async function juger(x) {
   // FL-8 et la capture du téléphone : onglet Journal à 390×844.
   scenario(['FL-8', 'FL-11'], 'téléphone', async () => {
     const { page, fermer } = await ouvrir('/controle/station', base(), { largeur: 390, hauteur: 844, mobile: true })
-    await page.waitForSelector('[data-onglet-tel="journal"]', { timeout: 15_000 }).catch(() => {})
+    await page.waitForSelector('[data-onglet-tel="journal"]', { timeout: 60_000 }).catch(() => {})
     await page.click('[data-onglet-tel="journal"]').catch((e) => faute('FL-8', `onglet Journal introuvable (${court(e.message, 50)})`))
     await pret(page, BULLES.length)
     const m = await page.evaluate((c) => { const e = document.querySelector(c); if (!e) return null; const r = e.getBoundingClientRect(); const cx = r.left + r.width / 2, cy = r.top + r.height / 2; const au = document.elementFromPoint(cx, cy); const onglets = [...document.querySelectorAll('[data-onglet-tel]')].map((o) => o.getBoundingClientRect().top); return { vis: !!au && (au === e || e.contains(au)), police: parseFloat(getComputedStyle(e).fontSize), bas: r.bottom, ongletsHaut: onglets.length ? Math.min(...onglets) : 844, deb: window.__JUGE__.debordements(390), petits: window.__JUGE__.petitsBoutons(44) } }, champ)
@@ -322,9 +333,31 @@ export async function juger(x) {
     await fermer()
   })
   // FL-14 : mise en page flottante, repli gardé, localStorage qui lève.
+  // Le « localStorage qui lève » (décision du chef D-0410-9, 04/10) ne lève que pour les clés PROPRES AU JOURNAL, jamais pour la
+  // session de Supabase : en racine réelle, `supabase.auth.getSession()` lit la session dans localStorage ; un stockage fermé
+  // en bloc la fait disparaître, la page part en /login et le Journal n'existe plus, ce qui ne dit rien du Journal. Les clés
+  // du Journal ne sont pas écrites en dur : le juge les OBSERVE (celles que ▼ écrit dans localStorage, hors `sb-…`), puis,
+  // dans le troisième passage, fait lever getItem/setItem/removeItem pour elles seules et COMPTE les levées : un piège qui
+  // n'a jamais levé ne prouve rien et fait échouer le critère. Le critère garde sa force : un Journal qui lit ou écrit son
+  // pli sans try/catch plante au montage (le ▼ n'existe plus) ou lève dans le gestionnaire (erreur de la page).
+  const ENREGISTRER_ECRITURES = String.raw`(function () {
+  var cles = window.__JUGE_CLES_ECRITES__ = [], set = Storage.prototype.setItem
+  Storage.prototype.setItem = function (k) { try { if (this === window.localStorage) cles.push(String(k)) } catch (e) {} return set.apply(this, arguments) }
+})()`
+  const piegeCles = (cles) => String.raw`(function () {
+  var K = ${JSON.stringify(cles)}, P = Storage.prototype
+  window.__JUGE_PIEGE__ = { leves: 0, cles: [] }
+  ;['getItem', 'setItem', 'removeItem'].forEach(function (nom) {
+    var o = P[nom]
+    P[nom] = function (k) {
+      if (this === window.localStorage && K.indexOf(String(k)) >= 0) { window.__JUGE_PIEGE__.leves++; if (window.__JUGE_PIEGE__.cles.indexOf(String(k)) < 0) window.__JUGE_PIEGE__.cles.push(String(k)); throw new Error('stockage fermé (piège du juge, clé du Journal « ' + k + ' »)') }
+      return o.apply(this, arguments)
+    }
+  })
+})()`
   scenario(['FL-14'], 'flottante', async () => {
-    const { page, erreurs, fermer } = await ouvrir('/controle/station', base({ reglages: J('reglages-flottante.json') }))
-    await page.waitForFunction(() => document.querySelector('.mc[data-station]')?.getAttribute('data-mise-en-page') === 'flottante', null, { timeout: 8000 }).catch(() => {})
+    const { page, erreurs, fermer } = await ouvrir('/controle/station', base({ reglages: J('reglages-flottante.json') }), { avantNavigation: (p) => p.addInitScript(ENREGISTRER_ECRITURES) })
+    await page.waitForFunction(() => document.querySelector('.mc[data-station]')?.getAttribute('data-mise-en-page') === 'flottante', null, { timeout: 30_000 }).catch(() => {})
     await pret(page, BULLES.length)
     const g = await page.evaluate((s) => ({ j: window.__JUGE__.rect(s), c: window.__JUGE__.rect('[data-station-carte]') }), J_)
     if (!g.j || !g.c) faute('FL-14', 'flottante : le journal ou le cadre de la carte est absent')
@@ -333,25 +366,31 @@ export async function juger(x) {
       if (!(cxJ < cxC && cyJ > cyC && g.j.b <= g.c.b + 2 && g.j.x >= g.c.x - 2)) faute('FL-14', `flottante : le journal ${JSON.stringify({ x: Math.round(g.j.x), y: Math.round(g.j.y), b: Math.round(g.j.b) })} n'est pas en bas à gauche du cadre de la carte ${JSON.stringify({ x: Math.round(g.c.x), y: Math.round(g.c.y), b: Math.round(g.c.b), l: Math.round(g.c.l) })}`)
     }
     const hauteurs = () => page.evaluate((s) => ({ j: window.__JUGE__.rect(s)?.h ?? null, t: window.__JUGE__.rect('[data-transmettre]')?.h ?? null }), J_)
+    await page.evaluate(() => { (window.__JUGE_CLES_ECRITES__ ?? []).length = 0 }).catch(() => {})
     await page.click('[data-replier-journal]').catch((e) => faute('FL-14', `▼ [data-replier-journal] introuvable (${court(e.message, 50)})`))
     await attendre(250)
+    // Les clés que ▼ vient d'écrire dans localStorage (la session de Supabase, `sb-…`, n'est jamais une clé du Journal).
+    const clesJournal = [...new Set(await page.evaluate(() => window.__JUGE_CLES_ECRITES__ ?? []).catch(() => []))].filter((k) => !/^sb-/.test(k))
+    if (!clesJournal.length) faute('FL-14', 'flottante : ▼ n’écrit aucune clé dans localStorage : le pli ne peut pas être gardé dans ce navigateur')
     const h1 = await hauteurs()
     if (!(h1.j !== null && h1.t !== null && h1.j <= h1.t + 64)) faute('FL-14', `▼ : le journal replié mesure ${h1.j} px, le champ ${h1.t} px (la hauteur doit tomber à celle du champ)`)
     await page.reload({ waitUntil: 'domcontentloaded' })
-    await page.waitForSelector(J_, { timeout: 15_000 }).catch(() => {})
+    await page.waitForSelector(J_, { timeout: 60_000 }).catch(() => {})
     await attendre(800)
     const h2 = await hauteurs()
     if (!(h2.j !== null && h2.t !== null && h2.j <= h2.t + 64)) faute('FL-14', `après rechargement, le journal n'est plus replié (${h2.j} px)`)
     for (const m of erreurs) faute('FL-14', `erreur de la page : ${court(m, 80)}`)
     await fermer()
-    const r3 = await ouvrir('/controle/station', base({ reglages: J('reglages-flottante.json') }), { localStorageQuiLeve: true })
+    if (!clesJournal.length) { DETAILS['FL-14'] = 'localStorage qui lève : non éprouvé (aucune clé du Journal observée)'; return }
+    const r3 = await ouvrir('/controle/station', base({ reglages: J('reglages-flottante.json') }), { avantNavigation: (p) => p.addInitScript(piegeCles(clesJournal)) })
     await pret(r3.page, BULLES.length)
-    await r3.page.click('[data-replier-journal]').catch((e) => faute('FL-14', `localStorage qui lève : ▼ inopérant (${court(e.message, 50)})`))
+    await r3.page.click('[data-replier-journal]').catch((e) => faute('FL-14', `localStorage qui lève sur ${clesJournal.join(', ')} (clé(s) du Journal) : ▼ inopérant (${court(e.message, 50)})`))
     await attendre(250)
-    const h3 = await r3.page.evaluate((s) => ({ j: window.__JUGE__.rect(s)?.h ?? null, t: window.__JUGE__.rect('[data-transmettre]')?.h ?? null, erreur: !!document.querySelector('[data-banc-erreur]') }), J_)
-    if (h3.erreur || !(h3.j !== null && h3.t !== null && h3.j <= h3.t + 64)) faute('FL-14', `localStorage qui lève : le journal ${h3.erreur ? 'casse la page' : `ne se replie pas (${h3.j} px)`}`)
-    for (const m of r3.erreurs) faute('FL-14', `localStorage qui lève : erreur de la page (${court(m, 80)})`)
-    DETAILS['FL-14'] = 'colonnes : le journal sous le Commandement ; flottante : en bas à gauche du cadre de la carte, ▼ le replie jusqu’au champ, gardé au rechargement ; un localStorage qui lève ne casse rien'
+    const h3 = await r3.page.evaluate((s) => ({ j: window.__JUGE__.rect(s)?.h ?? null, t: window.__JUGE__.rect('[data-transmettre]')?.h ?? null, erreur: !!document.querySelector('[data-banc-erreur]'), piege: window.__JUGE_PIEGE__ ?? { leves: 0, cles: [] } }), J_)
+    if (!h3.piege.leves) faute('FL-14', `localStorage qui lève : le piège n’a jamais levé (clé(s) ${clesJournal.join(', ')}) : le Journal ne touche pas à ses clés, rien n’est éprouvé`)
+    if (h3.erreur || !(h3.j !== null && h3.t !== null && h3.j <= h3.t + 64)) faute('FL-14', `localStorage qui lève sur ${clesJournal.join(', ')} (clé(s) du Journal) : le journal ${h3.erreur ? 'casse la page' : `ne se replie pas (${h3.j} px)`}`)
+    for (const m of r3.erreurs) faute('FL-14', `localStorage qui lève sur ${clesJournal.join(', ')} (clé(s) du Journal) : erreur de la page (${court(m, 80)})`)
+    DETAILS['FL-14'] = `colonnes : le journal sous le Commandement ; flottante : en bas à gauche du cadre de la carte, ▼ le replie jusqu’au champ, gardé au rechargement ; un localStorage qui lève pour la clé du Journal (${clesJournal.join(', ')}, observée, ${h3.piege.leves} levée(s) comptée(s)) ne casse rien, la session de Supabase restant lisible`
     await r3.fermer()
   })
 

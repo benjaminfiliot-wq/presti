@@ -66,15 +66,15 @@ export const COUT_VOIE_EUROS: Readonly<Record<string, number>> = Object.freeze({
 function coutDeVoieParDefaut(id: string): number | undefined {
   return Object.prototype.hasOwnProperty.call(COUT_VOIE_EUROS, id) ? COUT_VOIE_EUROS[id] : undefined
 }
-const coutValide = (c: unknown): c is number => typeof c === 'number' && Number.isFinite(c) && c >= 0
+export const coutValide = (c: unknown): c is number => typeof c === 'number' && Number.isFinite(c) && c >= 0
 /** La base dit oui (true) ou non ; une panne, un retour inattendu ou une exception REFUSENT : jamais « au mieux ». */
-async function verifierPlafondReel(agent: string, coutPrevuEuros: number): Promise<boolean> {
+export async function verifierPlafondReel(agent: string, coutPrevuEuros: number): Promise<boolean> {
   try {
     const r = await ops_cout_autoriser({ p_agent: agent, p_montant_eur: coutPrevuEuros })
     return r.ok === true && r.data === true
   } catch { return false }
 }
-async function plafondAutorise(verifier: NonNullable<DepsLecteur['verifierPlafond']>, agent: string, cout: number): Promise<boolean> {
+export async function plafondAutorise(verifier: NonNullable<DepsLecteur['verifierPlafond']>, agent: string, cout: number): Promise<boolean> {
   try { return (await verifier(agent, cout)) === true } catch { return false }
 }
 
@@ -130,23 +130,25 @@ function urlLocale(valeur: string | undefined): string | null {
     return u.hostname === '127.0.0.1' || u.hostname === 'localhost' ? valeur : null
   } catch { return null }
 }
-const lireCodexLanceur = (env: NodeJS.ProcessEnv) => accessible(env.CODEX_LANCEUR, fs.constants.X_OK)
+export const lireCodexLanceur = (env: NodeJS.ProcessEnv) => accessible(env.CODEX_LANCEUR, fs.constants.X_OK)
+/** La valeur brute du lanceur (relais.ts s'en sert pour reconnaître l'usine sans citer la variable : CODEX_LANCEUR reste isolé ici, LL-10). */
+export const valeurLanceurCodex = (env: NodeJS.ProcessEnv): string => env.CODEX_LANCEUR ?? ''
 const lireFreellmapiUrl = (env: NodeJS.ProcessEnv) => urlLocale(env.FREELLMAPI_URL)
 const lireOllamaUrl = (env: NodeJS.ProcessEnv) => urlLocale(env.OLLAMA_URL)
 const lireJevChemin = (env: NodeJS.ProcessEnv) => accessible(env.JEV_CHEMIN, fs.constants.R_OK)
 
 /** Le « oui » daté de Benj : une date AAAA-MM-JJ, non future. Toute autre valeur éteint le drapeau (§5 de 026-041). */
-function estDrapeauLeve(valeur: string | undefined, maintenantMs: number): boolean {
+export function estDrapeauLeve(valeur: string | undefined, maintenantMs: number): boolean {
   if (!valeur || !/^\d{4}-\d{2}-\d{2}$/.test(valeur)) return false
   const ts = Date.parse(`${valeur}T00:00:00Z`)
   return Number.isFinite(ts) && ts <= maintenantMs
 }
 
-function attendreReel(ms: number): Promise<void> {
+export function attendreReel(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms))
 }
 
-async function enregistrerCoutReel(agent: string, montant: number, detail: Record<string, unknown>): Promise<RetourCout> {
+export async function enregistrerCoutReel(agent: string, montant: number, detail: Record<string, unknown>): Promise<RetourCout> {
   if (typeof montant !== 'number' || !Number.isFinite(montant) || montant < 0) return { coupe: true } // un coût inconnu n'est pas un coût nul
   const fournisseur = typeof detail?.moteur === 'string' ? String(detail.moteur) : 'inconnu'
   const r = await ops_cout_ajouter({ p_agent: agent, p_fournisseur: fournisseur, p_montant_eur: montant, p_detail: detail, p_tache: null })
@@ -154,7 +156,7 @@ async function enregistrerCoutReel(agent: string, montant: number, detail: Recor
   return { ok: true }
 }
 
-function tuerProcessus(enfant: ChildProcess): void {
+export function tuerProcessus(enfant: ChildProcess): void {
   try { enfant.kill('SIGKILL') } catch { /* déjà mort */ }
 }
 
@@ -172,12 +174,12 @@ function ecrireCompteurSiBesoin(env: NodeJS.ProcessEnv, ligne: { agent: string; 
 }
 
 // ── JSON strict ───────────────────────────────────────────────────────────────────────────────────────────────────
-function parserJsonStrict(texte: string): unknown {
+export function parserJsonStrict(texte: string): unknown {
   try { return JSON.parse(texte.trim()) } catch { throw new Error('réponse non JSON') }
 }
 
 // ── erreurs de moteur : P (panne ponctuelle, on passe à la voie suivante) ou Q (quota, à sec jusqu'à une échéance) ───
-class ErreurMoteur extends Error {
+export class ErreurMoteur extends Error {
   type: 'P' | 'Q'
   echeanceTexte?: string
   /** Un 429 avec `Retry-After` : l'attente demandée par la voie, en ms (les lecteurs patients s'en servent). */
@@ -192,7 +194,7 @@ class ErreurMoteur extends Error {
 /** « sinon 15 minutes » (§4 de 026-041) : l'échéance lue dans le message si elle est bien après le moment de la marque,
  *  sinon un plancher de 15 minutes à partir de la marque (le message ne porte que l'heure à la minute : un arrondi
  *  défavorable ne doit jamais réduire la fenêtre en dessous de ce plancher). */
-function calculerEcheanceMs(texteEcheance: string | undefined, marqueMs: number): number {
+export function calculerEcheanceMs(texteEcheance: string | undefined, marqueMs: number): number {
   const QUINZE_MIN = 15 * 60 * 1000
   if (texteEcheance) {
     const parsed = Date.parse(`${texteEcheance.replace(' ', 'T')}:00Z`)
@@ -255,7 +257,7 @@ async function appelerHttpCompatibleOpenAI(opts: {
 }
 
 // ── appel Codex (moteur `codex`, LL-5) ───────────────────────────────────────────────────────────────────────────────
-async function appelerCodex(opts: {
+export async function appelerCodex(opts: {
   lancer: typeof spawn
   chemin: string
   modele: string
@@ -281,7 +283,11 @@ async function appelerCodex(opts: {
   }
 
   let stderr = ''
+  let stdout = ''
   enfant.stderr?.on('data', (d: Buffer) => { stderr += d.toString('utf8') })
+  // Le lanceur de la file IA (presti-ia-modele) rend la sortie de Codex, erreurs comprises, sur la sortie standard : sans elle un quota
+  // ou un 401 y passait pour une panne anonyme. Lue seulement quand le lanceur sort en erreur (jamais pour une réponse réussie).
+  enfant.stdout?.on('data', (d: Buffer) => { if (stdout.length < 65_536) stdout += d.toString('utf8') })
   try { enfant.stdin?.write(`${opts.systeme}\n${opts.emballage}`) } catch { /* le lanceur peut avoir déjà fermé */ }
   try { enfant.stdin?.end() } catch { /* idem */ }
 
@@ -297,22 +303,23 @@ async function appelerCodex(opts: {
   try { fs.rmSync(dirTmp, { recursive: true, force: true }) } catch { /* rien à faire */ }
 
   if (code === 124) throw new ErreurMoteur('P', 'délai dépassé')
-  if (/usage limit/i.test(stderr)) {
-    const m = /try again at (\d{4}-\d{2}-\d{2} \d{2}:\d{2})/.exec(stderr)
+  const sortieErreur = code !== 0 ? `${stderr}\n${stdout}` : stderr
+  if (/usage limit/i.test(sortieErreur)) {
+    const m = /try again at (\d{4}-\d{2}-\d{2} \d{2}:\d{2})/.exec(sortieErreur)
     throw new ErreurMoteur('Q', 'limite atteinte', m ? m[1] : undefined)
   }
-  if (/401/.test(stderr)) throw new ErreurMoteur('P', 'non autorisé')
+  if (/401|Unauthorized/.test(sortieErreur)) throw new ErreurMoteur('P', 'non autorisé')
   if (code !== 0 || !texte) throw new ErreurMoteur('P', `code de sortie ${code}`)
   return texte
 }
 
 // ── modèle choisi selon la voie et le travail ────────────────────────────────────────────────────────────────────────
-function modeleCodexPour(entree: EntreeMoteur, options: OptionsLecteur): string {
+export function modeleCodexPour(entree: EntreeMoteur, options: OptionsLecteur): string {
   if (options.modele === 'rejuge') return MODELE_REJUGE
   if (options.modele === 'leger' && entree.leger) return entree.leger
   return entree.modele
 }
-const TRAVAUX_OLLAMA_8B = new Set(['prospect_redaction', 'texte_vendu', 'raisonnement'])
+export const TRAVAUX_OLLAMA_8B = new Set(['prospect_redaction', 'texte_vendu', 'raisonnement'])
 function modeleOllamaPour(travail: string): string {
   return TRAVAUX_OLLAMA_8B.has(travail) ? MODELES_LOCAUX[1] : MODELES_LOCAUX[0]
 }
@@ -323,7 +330,7 @@ function leconsAllumees(reglages: unknown): boolean {
   return r?.interrupteurs?.lecons_dans_consignes?.actif === true
 }
 /** Les leçons de l'agent, ou [] : interrupteur éteint, lecture impossible ou aucune leçon. Ne lève jamais. */
-function leconsDeLAgent(agent: string, deps: DepsLecteur): Lecon[] {
+export function leconsDeLAgent(agent: string, deps: DepsLecteur): Lecon[] {
   try {
     const reglages = deps.reglages !== undefined ? deps.reglages : JSON.parse(fs.readFileSync(path.join(process.cwd(), 'docs', 'savoir', 'reglages.json'), 'utf8'))
     if (!leconsAllumees(reglages)) return []
@@ -411,6 +418,7 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
       const { texte, fournisseurReel } = await appelerHttpCompatibleOpenAI({
         fetchFn, urlBase, modele: modeleEnvoye, systeme, corpsDonnees: emballerDonnees(donneesMasquees),
         maxTokens: PLAFONDS.jetonsSortie, delaiMs: delaiPour(id), attendreFn,
+        cle: id === 'freellmapi' && typeof env.FL_KEY === 'string' && env.FL_KEY.trim() ? env.FL_KEY.trim() : undefined,
       })
       if (fournisseurReel) detail.fournisseur_reel = fournisseurReel
       if (id === 'freellmapi') ecrireCompteurSiBesoin(env, { agent, moteur: 'freellmapi', modele: modeleRegistre, fournisseur_reel: fournisseurReel })
@@ -562,7 +570,7 @@ export async function demanderConseil(
   for (const modele of conseillers) {
     let resultat: { texte: string; fournisseurReel?: string }
     try {
-      resultat = await appelerHttpCompatibleOpenAI({ fetchFn, urlBase, modele, systeme, corpsDonnees, maxTokens, delaiMs, attendreFn })
+      resultat = await appelerHttpCompatibleOpenAI({ fetchFn, urlBase, modele, systeme, corpsDonnees, maxTokens, delaiMs, attendreFn, cle: !estD1 && typeof env.FL_KEY === 'string' && env.FL_KEY.trim() ? env.FL_KEY.trim() : undefined })
     } catch {
       continue
     }

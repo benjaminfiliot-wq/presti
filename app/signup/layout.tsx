@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import AuthCadre from '@/app/AuthCadre'
 
 // Métadonnées de /signup — voir app/login/layout.tsx pour le détail : page cliente, donc
 // `metadata` ne peut pas être exporté depuis page.tsx ; sans ce fichier elle portait le titre
@@ -15,5 +16,5 @@ export const metadata: Metadata = {
 }
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>
+  return <AuthCadre>{children}</AuthCadre>
 }

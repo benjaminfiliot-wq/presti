@@ -10,8 +10,9 @@
 //   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, Chromium et WebKit
 //   node scripts/usine.mjs preparer --dependances    → les bibliothèques système de Playwright, par le compte gardien (clé du poste ; usine n'a plus de sudo)
 //   node scripts/usine.mjs paquet <id>               → construit et contrôle le paquet sans rien prendre ni envoyer (essai à sec)
-//   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40] [--fournisseur=ol|fl] [--croise] [--a-sec]
+//   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40] [--fournisseur=ol|fl|claude] [--croise] [--a-sec]
 //        --fournisseur : voie libre, le relais commence à Ollama Cloud (ol) ou freellmapi (fl) ; refus net pour une fiche de prospects
+//                        claude : Claude Code (Sonnet, abonnement de Benj) exécute à la place de Codex (quota ChatGPT épuisé), sans relais ; voir docs/agents/usine-claude.md
 //        --croise : rédaction croisée d'une fiche claude-code (migration, ou juge de fiches antigravity) ; --a-sec : l'admission seule
 //   node scripts/usine.mjs recuperer <id> [--attendre[=60]] [--forcer]   → rapatrie, applique, fiche en fait/, verdict du PC
 //   node scripts/usine.mjs nettoyer <id> [--forcer]  → retire le worktree et le dossier de la tâche sur l'usine
@@ -264,9 +265,28 @@ function construirePaquet(id) {
   const env = { GIT_INDEX_FILE: index, GIT_LITERAL_PATHSPECS: '1' }
   try {
     git(['read-tree', 'HEAD'], { env })
-    if (retenus.length) {
-      fs.writeFileSync(liste, retenus.map((r) => r.chemin).join('\0') + '\0')
-      git(['add', `--pathspec-from-file=${liste}`, '--pathspec-file-nul'], { env })
+    // Les suppressions (statut D) se retirent de l'index temporaire avec `git rm --cached`, jamais avec `git add` : un chemin supprimé
+    // ET ignoré par .gitignore (04/10 : 723 fichiers de docs/contexte-cloud/…/prospection retirés du suivi, règles ajoutées au
+    // .gitignore dans la même opération) fait échouer `git add` (« paths are ignored… ») et bloquait tout `executer` et tout `lancer`.
+    const ajouts = retenus.filter((r) => r.statut !== 'D')
+    const retraits = retenus.filter((r) => r.statut === 'D')
+    if (ajouts.length) {
+      // 04/10 : un fichier peut disparaître entre l'inventaire et le `git add` (sabotage réversible d'un autre agent, ménage) ;
+      // `git add` en chemins littéraux échouait alors (« construction du paquet : Command failed », code 125 compté comme un FAIL du juge :
+      // 3 passages = la fiche partait en refuse/). On retire les disparus et on recommence, quatre fois au plus.
+      let aAjouter = ajouts
+      for (let essai = 0; ; essai++) {
+        fs.writeFileSync(liste, aAjouter.map((r) => r.chemin).join('\0') + '\0')
+        try { git(['add', `--pathspec-from-file=${liste}`, '--pathspec-file-nul'], { env }); break } catch (e) {
+          const restants = aAjouter.filter((r) => { try { fs.lstatSync(path.join(RACINE, r.chemin)); return true } catch { exclus.push({ ...r, raison: 'disparu entre-temps' }); return false } })
+          if (essai >= 4 || restants.length === aAjouter.length) throw e
+          aAjouter = restants
+        }
+      }
+    }
+    if (retraits.length) {
+      fs.writeFileSync(liste, retraits.map((r) => r.chemin).join('\0') + '\0')
+      git(['rm', '--cached', '-q', '--ignore-unmatch', `--pathspec-from-file=${liste}`, '--pathspec-file-nul'], { env })
     }
     const patch = git(['diff', '--cached', '--binary', '--no-renames', 'HEAD'], { env, binaire: true })
     const noms = nomStatut(git(['diff', '--cached', '--name-status', '--no-renames', '-z', 'HEAD'], { env }))
@@ -338,7 +358,10 @@ function controlerPaquet(p) {
   }
   // Arbre propre (paquet vide) : rien à contrôler. Sans cette garde, check-ignore reçoit une entrée vide, refuse
   // (« empty string is not a valid pathspec ») et executer rendait 125 depuis un dépôt entièrement commité (27/09).
-  const ignores = chemins.length ? spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: chemins.join('\0') + '\0', encoding: 'utf8', windowsHide: true }) : { status: 1, stdout: '', stderr: '' }
+  // Une suppression (statut D) n'envoie aucun contenu : un fichier retiré du suivi ET ajouté au .gitignore (04/10, données de
+  // prospects de docs/contexte-cloud/) n'est pas « un chemin ignoré qui part » ; seuls les ajouts et modifications sont contrôlés.
+  const aEnvoyer = p.noms.filter((n) => n.statut !== 'D').map((n) => n.chemin)
+  const ignores = aEnvoyer.length ? spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: aEnvoyer.join('\0') + '\0', encoding: 'utf8', windowsHide: true }) : { status: 1, stdout: '', stderr: '' }
   if (ignores.status > 1) problemes.push(`git check-ignore a échoué : ${String(ignores.stderr).trim().slice(0, 200)}`)
   for (const c of String(ignores.stdout || '').split('\0').filter(Boolean)) problemes.push(`${c} : chemin ignoré par git`)
   for (const t of p.secrets.filter((s) => !s.ecarte)) problemes.push(`${t.chemin}:${t.ligne} : motif ${t.motif}`)
@@ -373,15 +396,16 @@ function paquetControle(id, { afficherTout = true } = {}) {
 }
 
 // ── le prompt : celui d'antigravity.mjs, plus ce qui change sur l'usine ─────────────────────────────────────────
-const SUPPLEMENT_USINE = (id, arbre) => `
+const SUPPLEMENT_USINE = (id, arbre, claude = false) => `
 
-Particularité de ton environnement (Codex sur l'usine : serveur Linux d'Oracle, sans écran, allumé 24 h/24) :
+Particularité de ton environnement (${claude ? 'Claude Code (Sonnet), lancé par `claude -p`' : 'Codex'} sur l'usine : serveur Linux d'Oracle, sans écran, allumé 24 h/24) :
 - Le dépôt presti est ici une copie jetable : le dossier courant, ${arbre}. Partout où ce prompt dit C:/Users/benja/Documents/presti, lis ce dossier-ci.
 - Le vault SaaS n'est pas sur cette machine : saute SaaS/CLAUDE.md et SaaS/Produit/Carte-du-code.md.
 - Aucun secret ici (ni .env.local, ni clé, ni base de production). Si la tâche en a besoin, écris .orchestre/en-cours/${id}.question.md (étape 4) puis arrête-toi : la question remonte au PC, personne ne te répondra dans cette session. Ne contourne jamais.
 - node_modules est déjà installé (liens physiques vers celui de ~/presti, partagé par toutes les tâches) : ne lance ni npm install ni npm ci, et n'y modifie aucun fichier. Chromium et WebKit sont installés pour Playwright : ne change pas PLAYWRIGHT_BROWSERS_PATH. Tu peux lancer node, npx, Playwright et \`node scripts/orchestre.mjs verifier ${id}\` autant que nécessaire.
 - Ne déplace pas la tâche vers fait/ : l'usine lance le vérificateur hors bac à sable juste après toi et la déplace si c'est vert ; sinon sa sortie est ajoutée à la fin de ce fichier et tu es relancé pour corriger.
-- Tu ne commites rien et tu ne pousses rien. Tes fichiers reviennent au PC de Benj par un patch limité au \`perimetre\` de la tâche et à .orchestre/preuves/${id}/ : tout le reste est jeté.
+- Tu ne commites rien et tu ne pousses rien. Tes fichiers reviennent au PC de Benj par un patch limité au \`perimetre\` de la tâche et à .orchestre/preuves/${id}/ : tout le reste est jeté.${claude ? `
+- Tu es lancé sans personne pour répondre à une demande d'autorisation : une commande refusée par les permissions (écriture hors du dossier courant, git push/commit, accès réseau, lecture des secrets de l'usine) ne sera jamais approuvée ; n'insiste pas, trouve une autre voie dans le périmètre. Aucun CLAUDE.md n'est chargé : ton contrat est ce prompt et AGENTS.md.` : ''}
 Termine par une seule ligne : \`${id} : PRÊT — <ce que tu as fait>\`.`
 
 // La consigne d'une rédaction croisée (lancer --croise) : la phrase de la décision (CONSIGNE_CROISEE, usine-repartition.mjs),
@@ -402,6 +426,7 @@ printf 'charge    %s (sur %s coeurs)\\n' "$(cut -d' ' -f1-3 /proc/loadavg)" "$(n
 free -m | awk '/^Mem:/ {printf "memoire   %d Mo pris sur %d Mo, %d Mo disponibles\\n", $3, $2, $7}'
 df -h "$HOME" | awk 'NR==2 {printf "disque    %s pris sur %s (%s)\\n", $3, $2, $5}'
 printf 'codex     %s\\n' "$(codex login status 2>&1 | head -1)"
+printf 'claude    %s\\n' "$("$HOME/.local/bin/claude" auth status 2>&1 | grep -E '"(loggedIn|subscriptionType)"' | tr -d ' \\n')"
 if [ -d "$HOME/presti/.git" ]; then
   nm="absent : preparer"
   if [ -f "$HOME/presti/node_modules/.usine-lock" ]; then
@@ -498,11 +523,14 @@ async function lancer(id) {
   // L'admission (28/09, juges croisés et voie libre) : tout se décide ici, sans réseau et avant toute prise ; --a-sec s'arrête après.
   const fournisseur = option('fournisseur')
   const croise = !!option('croise')
-  if (fournisseur && !FOURNISSEURS.some((x) => x.nom === fournisseur && x.nom !== 'chatgpt')) { console.error(`✗ --fournisseur=${fournisseur} : ol (Ollama Cloud) ou fl (freellmapi)`); process.exit(2) }
+  if (fournisseur && !FOURNISSEURS.some((x) => x.nom === fournisseur && x.nom !== 'chatgpt')) { console.error(`✗ --fournisseur=${fournisseur} : ol (Ollama Cloud), fl (freellmapi), fm (freellmapi Mistral) ou claude (abonnement Claude, Sonnet)`); process.exit(2) }
+  const exec = fournisseur ? FOURNISSEURS.find((x) => x.nom === fournisseur) : null
+  const surClaude = !!exec?.claude
   if (fournisseur && croise) { console.error('✗ --croise et --fournisseur ensemble : une rédaction croisée part sur l\'abonnement ChatGPT seulement'); process.exit(2) }
   if (fournisseur) {
     // RÈGLE DE BENJ : une donnée de prospect ne part JAMAIS vers une IA gratuite ni un modèle :cloud. Refus net, rien n'est pris.
-    const prospects = motifProspects(fs.readFileSync(fiche, 'utf8'))
+    // Claude (abonnement payant, comme ChatGPT) n'est pas visé : la fiche part, et tourner() ne la relaie jamais vers une IA gratuite.
+    const prospects = payant(exec) ? null : motifProspects(fs.readFileSync(fiche, 'utf8'))
     if (prospects) { console.error(`✗ ${id} touche des données de prospects (${prospects}) : --fournisseur=${fournisseur} refusé — jamais d'IA gratuite ni de modèle :cloud ; elle attend Codex sur l'abonnement`); process.exit(1) }
   }
   let croisement = null
@@ -521,13 +549,18 @@ async function lancer(id) {
   const horsDepot = f.perimetre.filter((p) => p.startsWith('../') || p.startsWith('SaaS/'))
   if (horsDepot.length) { console.error(`✗ périmètre hors du dépôt (${horsDepot.join(', ')}) : le vault SaaS n'est pas sur l'usine`); process.exit(1) }
   if (option('a-sec')) {
-    console.log(`✓ ${id} admise${croisement ? ` en rédaction croisée (${croisement}) par Codex sur l'usine` : ''}${fournisseur ? ` sur la voie libre (le relais commence à ${FOURNISSEURS.find((x) => x.nom === fournisseur).libelle})` : ''} — à sec : rien n'est pris ni envoyé`)
+    console.log(`✓ ${id} admise${croisement ? ` en rédaction croisée (${croisement}) par Codex sur l'usine` : ''}${fournisseur ? (surClaude ? ` sur Claude Code (${exec.libelle}, aucun relais ; une fiche de prospects est admise : abonnement payant)` : ` sur la voie libre (le relais commence à ${exec.libelle})`) : ''} — à sec : rien n'est pris ni envoyé`)
     if (consigneCroisee) console.log(`  consigne ajoutée :${consigneCroisee.replace(/\n/g, '\n  ')}`)
     process.exit(0)
   }
-  const tete = git(['rev-parse', 'HEAD']).trim()
+  let tete = git(['rev-parse', 'HEAD']).trim()
   let origine = ''
   try { origine = git(['rev-parse', 'origin/main']).trim() } catch { /* pas de origin/main */ }
+  // 04/10 : plusieurs IA commitent à la minute et le pousseur ne passe que toutes les 2 minutes : presque chaque lancement tombait sur
+  // « HEAD ≠ origin/main ». Un push simple (jamais forcé) ferme l'écart tout de suite ; si HEAD a encore bougé, le refus reste.
+  if (tete !== origine) {
+    try { git(['push', 'origin', 'main']); origine = git(['rev-parse', 'origin/main']).trim(); tete = git(['rev-parse', 'HEAD']).trim() } catch { /* le refus ci-dessous le dit */ }
+  }
   if (tete !== origine) { console.error(`✗ HEAD du PC (${tete.slice(0, 8)}) ≠ origin/main (${origine.slice(0, 8) || '?'}) : pousse d'abord — l'usine part de origin/main et le paquet ne porte que le non-commité`); process.exit(1) }
   const modele = option('model', MODELE)
   const effort = option('effort', 'medium')
@@ -553,7 +586,7 @@ o=$(git rev-parse origin/main)
 [ "$o" = "$SHA" ] || { echo "✗ origin/main vu de l usine ($o) ≠ HEAD du PC ($SHA) : pousse d abord (ou tire, si le PC est en retard)"; exit 4; }
 [ -f node_modules/.usine-lock ] || { echo "✗ node_modules absent sur l usine : node scripts/usine.mjs preparer"; exit 3; }
 [ "$(cat node_modules/.usine-lock)" = "$(git show "$SHA:package-lock.json" | sha256sum | cut -d' ' -f1)" ] || { echo "✗ node_modules de l usine date d un autre package-lock.json : node scripts/usine.mjs preparer"; exit 3; }
-${fournisseur ? '# voie libre : Codex parle à Ollama Cloud ou à freellmapi, la connexion ChatGPT ne sert pas' : 'case "$(codex login status 2>&1 || true)" in "Logged in"*) ;; *) echo "✗ codex n est pas connecté sur l usine (codex login --device-auth, code validé par Benj)"; exit 3;; esac'}
+${surClaude ? 'claude="$HOME/.local/bin/claude"; [ -x "$claude" ] || { echo "✗ claude absent de l usine ($claude)"; exit 3; }; "$claude" auth status 2>&1 | grep -Eq \'"loggedIn":[[:space:]]*true\' || { echo "✗ claude n est pas connecté sur l usine (claude auth login, geste de Benj)"; exit 3; }' : fournisseur ? '# voie libre : Codex parle à Ollama Cloud ou à freellmapi, la connexion ChatGPT ne sert pas' : 'case "$(codex login status 2>&1 || true)" in "Logged in"*) ;; *) echo "✗ codex n est pas connecté sur l usine (codex login --device-auth, code validé par Benj)"; exit 3;; esac'}
 echo "HOME=$HOME"
 `, { timeout: 180_000 })
   if (injoignable(pret)) process.exit(5)
@@ -572,11 +605,11 @@ echo "HOME=$HOME"
   }
 
   // 3. La prise SUR LE PC : inscription au registre « un agent, une tâche », puis `prochaine` — aucun autre exécutant ne la prendra.
-  const numeros = fs.existsSync(AGENTS) ? fs.readFileSync(AGENTS, 'utf8').split(/\r?\n/).map((l) => { try { return JSON.parse(l).agent } catch { return null } }).map((a) => Number((String(a).match(/^usine-codex-(\d+)$/) || [])[1] || 0)) : []
-  const agent = `usine-codex-${Math.max(0, ...numeros) + 1}`
+  const numeros = fs.existsSync(AGENTS) ? fs.readFileSync(AGENTS, 'utf8').split(/\r?\n/).map((l) => { try { return JSON.parse(l).agent } catch { return null } }).map((a) => Number((String(a).match(/^usine-(?:codex|claude)-(\d+)$/) || [])[1] || 0)) : []
+  const agent = `usine-${surClaude ? 'claude' : 'codex'}-${Math.max(0, ...numeros) + 1}`
   const conversation = `usine-${id}-${horodatage()}`
-  const libelleModele = fournisseur ? `codex:${fournisseur}:${FOURNISSEURS.find((x) => x.nom === fournisseur).modele(f.perimetre.some((x) => CODE.test(x)))}` : `codex:${modele}`
-  fs.appendFileSync(AGENTS, JSON.stringify({ agent, tache: id, modele: libelleModele, conversationId: conversation, date: maintenant(), usine: HOTE, ...(croisement ? { croise: croisement } : {}), ...(fournisseur ? { voie: 'libre' } : {}) }) + '\n')
+  const libelleModele = surClaude ? `claude:${exec.modele()}` : fournisseur ? `codex:${fournisseur}:${exec.modele(f.perimetre.some((x) => CODE.test(x)))}` : `codex:${modele}`
+  fs.appendFileSync(AGENTS, JSON.stringify({ agent, tache: id, modele: libelleModele, conversationId: conversation, date: maintenant(), usine: HOTE, ...(croisement ? { croise: croisement } : {}), ...(fournisseur ? { voie: surClaude ? 'claude' : 'libre' } : {}) }) + '\n')
   if (croisement) {
     // Une fiche claude-code : l'orchestre ne la donne qu'à l'agent « claude-code » ; le verrou nomme ensuite le vrai rédacteur.
     const { prendreCroisee } = await import('./usine-repartition.mjs')
@@ -594,7 +627,7 @@ echo "HOME=$HOME"
     const { PROMPT } = await import('./antigravity.mjs')
     fs.writeFileSync(path.join(ici, 'paquet.patch'), p.patch)
     fs.writeFileSync(path.join(ici, 'paquet.liste.txt'), `# paquet ${id} — ${maintenant()} — base ${tete}\n# statut chemin (taille) ; exclus : ${p.exclus.length}\n${lignes.join('\n')}\n`)
-    fs.writeFileSync(path.join(ici, 'prompt.md'), `# Tâche ${id} — agent ${agent} — ${maintenant()} (usine)\n\n${PROMPT(agent, id)}${consigneCroisee}${SUPPLEMENT_USINE(id, arbre)}\n`)
+    fs.writeFileSync(path.join(ici, 'prompt.md'), `# Tâche ${id} — agent ${agent} — ${maintenant()} (usine)\n\n${PROMPT(agent, id)}${consigneCroisee}${SUPPLEMENT_USINE(id, arbre, surClaude)}\n`)
     fs.writeFileSync(path.join(ici, 'config.json'), JSON.stringify({ id, agent, modele, effort, tours, minutes, base: tete, lance: maintenant(), fournisseur: fournisseur || null, croise: croisement }, null, 2))
     fs.copyFileSync(CE_FICHIER, path.join(ici, 'usine.mjs'))
     const mk = distant(`mkdir -p "$HOME/taches/"${q(id)}`)
@@ -640,7 +673,7 @@ echo "· tourneur détaché, pid $(cat "$T/pid")"
     spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'liberer', id], { cwd: RACINE, stdio: 'inherit', windowsHide: true })
     process.exit(1)
   }
-  console.log(`✓ ${agent} → ${id} lancé sur l'usine (${fournisseur ? `voie libre : ${libelleModele.slice(6)}, relais depuis ${fournisseur}` : `codex ${modele}, effort ${effort}`}${croisement ? `, rédaction croisée ${croisement}` : ''}, ${tours} tour(s) au plus, ${minutes} min par tour) en ${Math.round((Date.now() - debut) / 1000)} s`)
+  console.log(`✓ ${agent} → ${id} lancé sur l'usine (${fournisseur ? (surClaude ? `Claude Code ${exec.modele()}, aucun relais` : `voie libre : ${libelleModele.slice(6)}, relais depuis ${fournisseur}`) : `codex ${modele}, effort ${effort}`}${croisement ? `, rédaction croisée ${croisement}` : ''}, ${tours} tour(s) au plus, ${minutes} min par tour) en ${Math.round((Date.now() - debut) / 1000)} s`)
   console.log(`  suivi : node scripts/usine.mjs etat · résultat : node scripts/usine.mjs recuperer ${id} [--attendre]`)
 }
 
@@ -807,8 +840,8 @@ git -c core.quotepath=false diff --cached --name-status --no-renames -z "$(cat "
   const preuves = `.orchestre/preuves/${id}/`
   for (const c of changes) {
     if (c.chemin.startsWith(preuves)) {
-      // avant.txt et verifier.log de l'usine décrivent SON arbre : le PC a les siens (prise, verdict). Rapatriés à part.
-      if (c.chemin === `${preuves}avant.txt` || c.chemin === `${preuves}verifier.log`) interne.push(c)
+      // avant.txt, verifier.log et decisions-avant.md de l'usine décrivent SON arbre : le PC a les siens (prise, verdict). Rapatriés à part.
+      if (c.chemin === `${preuves}avant.txt` || c.chemin === `${preuves}verifier.log` || c.chemin === `${preuves}decisions-avant.md`) interne.push(c) // decisions-avant.md : le cliché de la prise sur le PC (une fiche neuve, jamais lancée : le patch l'ajoutait, git apply --check refusait « already exists », 05/10)
       else garder.push(c)
     } else if (perimetre.some((re) => re.test(c.chemin))) {
       if (interdit.some((re) => re.test(c.chemin))) hors.push({ ...c, raison: 'interdit' }); else garder.push(c)
@@ -940,8 +973,94 @@ const FOURNISSEURS = [
   // 29/09 au soir : dernier recours quand gemini-3-flash-preview est lui aussi à bout. ministral-14b (clé Mistral de freellmapi)
   // tient la boucle d'outils de Codex : essai réel sur l'usine, a.txt → b.txt, une ligne exec, code 0 (mistral-code : aucun exec).
   { nom: 'fm', libelle: 'freellmapi (Mistral)', modele: () => 'ministral-14b', config: 'model_providers.fm={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
+  // 05/10/2026 (ordre de Benj : quota ChatGPT épuisé jusqu'au 9/10 21 h 15) : Claude Code (Sonnet) sur l'usine, connecté au compte de
+  // Benj, exécute la fiche à la place de Codex. claude: true → codexExec lance `claude -p` (pas `codex exec`) ; horsRelais : on n'y
+  // arrive QUE par un départ explicite (lancer --fournisseur=claude) — basculer() ne mène jamais à Claude, et Claude, abonnement PAYANT
+  // comme ChatGPT, n'est jamais suivi d'un relais gratuit : quota épuisé → code 3, la fiche attend. La règle « donnée de prospect
+  // jamais vers une IA gratuite ni un modèle :cloud » ne l'interdit donc pas (voir `payant`), contrairement à ol/fl/fm.
+  { nom: 'claude', libelle: 'abonnement Claude (Sonnet)', modele: () => 'sonnet', claude: true, horsRelais: true },
 ]
+// Un abonnement payant (ChatGPT, Claude) peut servir une fiche de prospects ; une IA gratuite ou :cloud (ol, fl, fm), jamais.
+const payant = (fr) => fr.nom === 'chatgpt' || !!fr.claude
 const lireCleFL = () => { try { return fs.readFileSync(path.join(os.homedir(), '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { return null } }
+
+// ── Claude Code comme exécutant (05/10/2026) ──────────────────────────────────────────────────────────────────────
+// `claude -p` à la place de `codex exec` : même arbre jetable (cwd), même instruction, même sortie attendue (le message final dans
+// `dernier`). Jamais --dangerously-skip-permissions. Ce qui garde Claude dans l'arbre, vérifié sur l'usine le 05/10 :
+// - --permission-mode acceptEdits + AUCUN Edit/Write/Read dans --allowedTools : les éditions sont acceptées DANS le dossier courant
+//   seulement (un Write « nu » dans la liste écrivait n'importe où : /home/usine/hors2.txt) ; --permission-prompts none : tout ce
+//   qui demanderait une approbation est refusé d'office (personne ne répondrait) ;
+// - --safe-mode : ni CLAUDE.md (le rôle de Claude Code sur le PC, pas celui d'un exécutant ; le contrat est le prompt + AGENTS.md),
+//   ni hooks du dépôt (read-garde, contexte-fond), ni plugins, skills, serveurs MCP : l'authentification, le modèle, les outils et
+//   les permissions restent ceux du CLI ;
+// - une liste de commandes Bash explicite (git en lecture seule, jamais push ni commit), et --disallowedTools (qui l'emporte sur
+//   --allowedTools : vérifié) pour les écritures git et la lecture des secrets de l'usine (~/.claude, ~/.codex, ~/.config/presti, ~/.ssh).
+// LIMITE ASSUMÉE : node et bash sont autorisés (les juges en ont besoin), donc ce n'est pas un bac à sable comme celui de Codex : c'est
+// un garde-fou contre l'accident, pas contre une consigne hostile. L'usine ne porte aucun secret de l'application ; git push y est refusé.
+const BASH = (...p) => p.map((x) => `Bash(${x}:*)`)
+const CLAUDE_AUTORISES = BASH('node', 'npx tsc', 'npx tsx', 'npx playwright',
+  'git status', 'git diff', 'git log', 'git show', 'git ls-files', 'git grep', 'git rev-parse', 'git blame', 'git mv',
+  'ls', 'cat', 'cp', 'mv', 'rm', 'mkdir', 'touch', 'sha256sum', 'grep', 'sed', 'awk', 'head', 'tail', 'wc', 'diff', 'sort', 'uniq', 'cut', 'tr', 'jq',
+  'find', 'date', 'echo', 'printf', 'pwd', 'bash', 'timeout')
+const claudeInterdits = () => {
+  const h = os.homedir().replace(/\\/g, '/').replace(/^\/+/, '')
+  return [...BASH('git push', 'git commit', 'git reset', 'git clean', 'git checkout', 'git restore', 'git stash', 'git rebase', 'git merge'),
+    ...['.claude', '.codex', '.config/presti', '.ssh'].map((d) => `Read(//${h}/${d}/**)`)]
+}
+const claudeBinaire = () => process.env.PRESTI_CLAUDE_BIN || [path.join(os.homedir(), '.local', 'bin', 'claude')].find((b) => fs.existsSync(b)) || 'claude'
+// Épuisé : l'abonnement n'a plus de quota (5 h, semaine, crédits). Textes réels de `claude -p` : « You've hit your limit · resets 3pm »,
+// « 5-hour limit reached ∙ resets … », « Weekly limit reached », « Credit balance is too low », « API Error: 429 … rate_limit_error ».
+const CLAUDE_A_BOUT = /usage limit|limit reached|hit your (?:\w+ )?limit|rate.?limit|credit balance|out of (?:extra )?usage|resets? (?:at )?\d/i
+const CLAUDE_DECONNECTE = /not logged in|please run \/login|invalid api key|oauth token (?:has )?expired|authentication_error|invalid authentication credentials|\b401\b/i
+const coupe = (s, n) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n) + '…' : t }
+// Un événement du flux --output-format stream-json (une ligne JSON) → les lignes lisibles du journal ; `e` accumule ce qu'il faut
+// pour juger le tour (le résultat final, la limite refusée). Une ligne qui n'est pas du JSON est recopiée telle quelle.
+function lireEvenementClaude(ligne, e) {
+  let o = null
+  try { o = JSON.parse(ligne) } catch { /* recopiée */ }
+  if (!o || typeof o !== 'object') return ligne.trim() ? [ligne] : []
+  const texteDe = (c) => (typeof c === 'string' ? c : JSON.stringify(c))
+  if (o.type === 'system') return o.subtype === 'init' ? [`claude : session ${o.session_id}, modèle ${o.model || '?'}`] : []
+  if (o.type === 'assistant') {
+    const sortie = []
+    for (const c of o.message?.content || []) {
+      if (c.type === 'text' && String(c.text || '').trim()) sortie.push(`claude : ${coupe(c.text, 600)}`)
+      else if (c.type === 'tool_use') sortie.push(c.name === 'Bash' ? `exec\n${coupe(c.input?.command, 400)}` : `outil ${c.name} ${coupe(c.input?.file_path || c.input?.path || c.input?.pattern || '', 200)}`)
+    }
+    return sortie
+  }
+  if (o.type === 'user') return (o.message?.content || []).filter((c) => c?.type === 'tool_result' && c.is_error).map((c) => `  ↳ refusé ou en erreur : ${coupe(texteDe(c.content), 200)}`)
+  if (o.type === 'rate_limit_event') {
+    const i = o.rate_limit_info || {}
+    if (i.status === 'rejected') e.rejetee = i
+    const cle = `${i.status}/${i.rateLimitType}`
+    if (i.status === 'allowed' || e.limitesVues?.has(cle)) return []
+    ;(e.limitesVues ||= new Set()).add(cle)
+    return [`quota Claude : ${i.status} (${i.rateLimitType || '?'}${i.utilization != null ? `, ${Math.round(i.utilization * 100)} % utilisé` : ''}${i.resetsAt ? `, reprend ${new Date(i.resetsAt * 1000).toISOString().slice(0, 16)}Z` : ''})`]
+  }
+  if (o.type === 'result') {
+    e.resultat = o
+    return [`résultat : ${o.subtype || '?'}${o.is_error ? ' (ERREUR)' : ''}, ${o.num_turns ?? '?'} tour(s), ${Math.round((o.duration_ms || 0) / 1000)} s${o.total_cost_usd ? `, ${Number(o.total_cost_usd).toFixed(2)} $ au tarif API (abonnement : rien n'est facturé)` : ''}`, ...(o.is_error ? [`claude (erreur) : ${coupe(o.result, 400)}`] : [])]
+  }
+  return []
+}
+// Le texte d'erreur d'un tour de Claude : le résultat final s'il est en erreur (ou si le code est ≠ 0), sinon les dernières lignes non
+// vides de sa sortie. Jamais un tour arrêté par le délai, jamais un tour sorti en 0 : le message final d'une fiche qui parle de quotas
+// ne vaut pas un quota.
+function erreurDeClaude(r) {
+  if (r.tue || r.code === 0) return ''
+  const res = r.claude?.resultat
+  if (res) return String(res.result ?? '')
+  return String(r.propre || '').replace(/\r/g, '').split('\n').filter((l) => l.trim()).slice(-3).join('\n')
+}
+const claudeAuthPerdue = (r) => CLAUDE_DECONNECTE.test(erreurDeClaude(r))
+function claudeEpuise(r) {
+  if (r.tue || r.code === 0) return null
+  const rej = r.claude?.rejetee
+  const t = erreurDeClaude(r)
+  if (rej || CLAUDE_A_BOUT.test(t)) return `quota de l'abonnement Claude épuisé — ${coupe(t, 160) || `${rej?.rateLimitType || 'limite'} refusée`}${rej?.resetsAt ? ` (reprend ${new Date(rej.resetsAt * 1000).toISOString().slice(0, 16)}Z)` : ''}`
+  return null
+}
 // Épuisé ? Pour les trois fournisseurs, les mêmes exigences (contre-vérification du 27/09) :
 // 1. Codex sorti en erreur (un vrai quota rend 1 : codex.log de 026-105), et pas tué par le délai du tourneur ;
 // 2. seulement la FIN de sa sortie propre (finDeCodex) : les lignes d'erreur qu'il écrit LUI-MÊME tout en bas, d'affilée
@@ -969,6 +1088,7 @@ function finDeCodex(propre, message) {
 }
 // r : ce que rend codexExec ({ code, propre, message, tue }).
 function fournisseurEpuise(fr, r) {
+  if (fr.claude) return claudeEpuise(r) // jamais « inerte » : sa sortie n'a pas de lignes exec ni ERROR: (voir claudeEpuise)
   // Inerte (29/09/2026) : Ollama Cloud (gpt-oss:120b-cloud) écrit parfois l'appel d'outil en TEXTE au lieu de le faire exécuter
   // (essai réel : 1 tour sur 3) ; Codex sort en code 0 sans avoir lancé une seule commande (aucune ligne « exec »), le
   // vérificateur rend rouge et le tour suivant recommence pareil. Un fournisseur libre qui n'a rien exécuté est rejoué sur le
@@ -1033,7 +1153,53 @@ function lireFin(fichier, n) {
     try { const t = fs.fstatSync(fd).size; const l = Math.min(n, t); const b = Buffer.alloc(l); fs.readSync(fd, b, 0, l, t - l); return b.toString('utf8') } finally { fs.closeSync(fd) }
   } catch { return '' }
 }
+// Un tour de Claude Code (voir le bloc « Claude Code comme exécutant » plus haut). Rend la même forme que codexExec, plus
+// `claude` : { resultat (l'événement « result »), rejetee (rate_limit_event refusé) } pour fournisseurEpuise et l'AUTH.
+// Le message final (resultat.result) est écrit dans `dernier`, comme le fait `codex exec -o`.
+function claudeExec(arbre, instruction, cfg, journal, dernier, fr) {
+  const modele = fr.modele(true)
+  const argv = ['-p', instruction, '--model', modele, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--safe-mode',
+    '--output-format', 'stream-json', '--verbose', '--allowedTools', ...CLAUDE_AUTORISES, '--disallowedTools', ...claudeInterdits()]
+  // L'abonnement de Benj, rien d'autre : une clé d'API dans l'environnement le ferait facturer au jeton ; FL_KEY n'est pas pour Claude.
+  const env = { ...process.env, DISABLE_AUTOUPDATER: '1' }
+  for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_BASE_URL', 'FL_KEY']) delete env[k]
+  const [cmd, avant] = commandePour(claudeBinaire())
+  return new Promise((resoudre) => {
+    const debut = Date.now()
+    let sortie = ''
+    let propre = ''
+    let message = ''
+    let tue = false
+    let reste = ''
+    const e = { resultat: null, rejetee: null }
+    const flux = fs.createWriteStream(journal, { flags: 'a' })
+    flux.write(`\n=== ${maintenant()} claude ${modele} par ${fr.libelle} (fournisseur ${fr.nom}) : ${instruction}\n`)
+    const ecrire = (l) => { const s = l + '\n'; sortie += s; propre += s; flux.write(s) }
+    const traiter = (ligne) => { for (const l of lireEvenementClaude(ligne, e)) ecrire(l) }
+    const enfant = spawn(cmd, [...avant, ...argv], { cwd: arbre, env, detached: true, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
+    codexEnCours = enfant
+    enfant.stdout.on('data', (b) => { reste += b.toString(); const lignes = reste.split('\n'); reste = lignes.pop(); for (const l of lignes) traiter(l) })
+    enfant.stderr.on('data', (b) => { const s = b.toString(); sortie += s; propre += s; flux.write(s) })
+    const minuteur = setTimeout(() => { tue = true; flux.write(`\n[délai de ${cfg.minutes} min dépassé : arrêt]\n`); tuerGroupe(enfant) }, cfg.minutes * 60_000)
+    const fin = (code) => {
+      clearTimeout(minuteur)
+      codexEnCours = null
+      if (reste.trim()) { traiter(reste); reste = '' }
+      if (e.resultat && typeof e.resultat.result === 'string') {
+        message = e.resultat.result
+        try { fs.writeFileSync(dernier, message) } catch { /* le message reste dans le journal */ }
+        sortie += '\n' + message
+        flux.write(`\n--- dernier message de Claude ---\n${message}\n`)
+      }
+      flux.write(`=== claude fini, code ${code}, ${Math.round((Date.now() - debut) / 1000)} s\n`)
+      flux.end(() => resoudre({ code, sortie, propre, message, tue, claude: e }))
+    }
+    enfant.on('close', (code) => fin(code ?? 1))
+    enfant.on('error', (err) => { sortie += String(err.message); propre += String(err.message); fin(127) })
+  })
+}
 function codexExec(arbre, instruction, cfg, journal, dernier, fr = FOURNISSEURS[0], ficheCode = true) {
+  if (fr.claude) return claudeExec(arbre, instruction, cfg, journal, dernier, fr)
   // PRESTI_CODEX_BIN : la doublure du banc d'essai (scripts/fixtures/usine-relais/faux-codex.mjs) ; absente sur l'usine.
   const binaire = process.env.PRESTI_CODEX_BIN || [path.join(os.homedir(), '.local', 'bin', 'codex')].find((b) => fs.existsSync(b)) || 'codex'
   const modele = fr.nom === 'chatgpt' ? cfg.modele : fr.modele(ficheCode)
@@ -1118,8 +1284,10 @@ async function tourner(dossier) {
   let iFournisseur = 0
   const basculer = (tour, raison) => {
     const de = FOURNISSEURS[iFournisseur]
+    if (de.horsRelais) return null // Claude : aucun relais depuis lui (un abonnement payant n'est jamais suivi d'une IA gratuite)
     let j = iFournisseur + 1
-    while (j < FOURNISSEURS.length && FOURNISSEURS[j].cle && !lireCleFL()) { noter(`· ${FOURNISSEURS[j].libelle} sauté : clé absente (~/.config/presti/freellmapi.key)`); j++ }
+    // Les fournisseurs « horsRelais » (Claude) ne se servent que sur un départ explicite : le relais les saute, sans un mot.
+    while (j < FOURNISSEURS.length && (FOURNISSEURS[j].horsRelais || (FOURNISSEURS[j].cle && !lireCleFL()))) { if (!FOURNISSEURS[j].horsRelais) noter(`· ${FOURNISSEURS[j].libelle} sauté : clé absente (~/.config/presti/freellmapi.key)`); j++ }
     if (j >= FOURNISSEURS.length) return null
     iFournisseur = j
     const vers = FOURNISSEURS[j]
@@ -1134,11 +1302,14 @@ async function tourner(dossier) {
   if (cfg.fournisseur) {
     const i = FOURNISSEURS.findIndex((x) => x.nom === cfg.fournisseur)
     if (i < 1) finir(5, 'ERREUR', `fournisseur de départ inconnu : ${cfg.fournisseur}`)
-    if (toucheProspects()) finir(3, 'QUOTA', `voie libre refusée : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
+    // Claude est un abonnement payant comme ChatGPT : la règle ne vise que les IA gratuites et :cloud (payant).
+    if (!payant(FOURNISSEURS[i]) && toucheProspects()) finir(3, 'QUOTA', `voie libre refusée : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
     if (FOURNISSEURS[i].cle && !lireCleFL()) finir(3, 'QUOTA', `voie libre sur ${FOURNISSEURS[i].libelle} impossible : clé absente (~/.config/presti/freellmapi.key)`)
     iFournisseur = i
     poser({ fournisseur: FOURNISSEURS[i].nom, modeleServi: FOURNISSEURS[i].modele(ficheCode) })
-    noter(`=== ${maintenant()} voie libre : le relais commence à ${FOURNISSEURS[i].libelle} (${FOURNISSEURS[i].modele(ficheCode)}), sans l'abonnement ChatGPT`)
+    noter(FOURNISSEURS[i].claude
+      ? `=== ${maintenant()} départ sur ${FOURNISSEURS[i].libelle} (${FOURNISSEURS[i].modele(ficheCode)}) : aucun relais (quota épuisé → code 3, la fiche attend), sans l'abonnement ChatGPT`
+      : `=== ${maintenant()} voie libre : le relais commence à ${FOURNISSEURS[i].libelle} (${FOURNISSEURS[i].modele(ficheCode)}), sans l'abonnement ChatGPT`)
   }
   // L'entraide : après un tour rouge, une autre IA relit le verdict, la fin de codex.log et la fiche (node ~/veille/conseil.mjs ;
   // PRESTI_CONSEIL_BIN : la doublure du banc d'essai). --prive si la fiche touche des prospects : Qwen3 LOCAL, et la clé
@@ -1215,27 +1386,29 @@ async function tourner(dossier) {
     for (let rejeu = false; ; rejeu = true) {
       const fr = FOURNISSEURS[iFournisseur]
       // Un fournisseur gratuit ou :cloud ne sert JAMAIS une fiche de prospects, même si elle n'en parlait pas au départ.
-      if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3, 'QUOTA', `relais arrêté : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
+      if (!payant(fr) && toucheProspects()) finir(3, 'QUOTA', `relais arrêté : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
       const reprise = !rejeu ? '' : `\n\nReprise sur un autre modele (${fr.libelle}) : le precedent s est arrete sur un quota pendant ce tour ; ce qu il a deja ecrit est dans le depot, continue a partir de la.${fs.existsSync(fiche('en-cours')) ? ` La tache ${id} est deja prise (.orchestre/en-cours/${id}.md) : ne relance pas prochaine, lis-la et fais le travail.` : ''}`
       r = await codexExec(arbre, instruction + reprise, cfg, journal, dernier, fr, ficheCode)
       r.question = fs.existsSync(path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)) // une question posée n'est pas de l'inertie
       etatT.codes.push(r.code); poser()
       if (fr.nom === 'chatgpt' && r.code !== 0 && /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i.test(r.sortie)) finir(6, 'AUTH', 'codex n est pas connecté (codex login --device-auth, code validé par Benj)')
+      if (fr.claude && claudeAuthPerdue(r)) finir(6, 'AUTH', "claude n'est pas connecté sur l'usine (claude auth login, geste de Benj)")
       // Seulement les lignes d'erreur de Codex tout en bas de sa sortie, Codex sorti en erreur (fournisseurEpuise) : le 27/09,
       // une fiche qui parlait de quotas (« usage limit », « try again at ») a fait croire à un quota épuisé.
       const epuise = fournisseurEpuise(fr, r)
       if (!epuise) break
+      if (fr.claude) finir(3, 'QUOTA', `${epuise} ; aucun relais depuis Claude : la fiche attend (ni IA gratuite ni :cloud)`)
       if (toucheProspects()) finir(3, 'QUOTA', `${epuise} ; pas de relais : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
-      if (!basculer(tour, epuise)) finir(3, 'QUOTA', `tous les fournisseurs épuisés (${FOURNISSEURS.map((f) => f.libelle).join(' → ')}) — ${epuise}`)
+      if (!basculer(tour, epuise)) finir(3, 'QUOTA', `tous les fournisseurs épuisés (${FOURNISSEURS.filter((f) => !f.horsRelais).map((f) => f.libelle).join(' → ')}) — ${epuise}`)
     }
     const qf = path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)
-    if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md')) && FOURNISSEURS[iFournisseur].nom !== 'chatgpt' && questionsEcartees < 2 && tour < cfg.tours) {
+    if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md')) && !payant(FOURNISSEURS[iFournisseur]) && questionsEcartees < 2 && tour < cfg.tours) {
       questionsEcartees++
       try { fs.copyFileSync(qf, path.join(dossier, `question-${tour}.md`)); fs.rmSync(qf) } catch { /* la copie échoue : la question reste posée, code 7 */ }
       noter(`=== ${maintenant()} question écartée (voie libre, ${questionsEcartees}/2, tour ${tour}) : ${FOURNISSEURS[iFournisseur].libelle} a posé une question au lieu de travailler ; copie dans question-${tour}.md ; le tour suivant lui ordonne de décider seul`)
       relanceQuestion = `\n\nTu as pose une question au lieu de travailler. Personne ne repondra : decide seul, prends l option la plus complete qui respecte le perimetre et le verificateur de la tache ${id}, ecris le code et les preuves, puis termine par la ligne ${id} : PRÊT. Ne pose plus de question.`
     }
-    if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md'))) finir(7, 'QUESTION', `Codex a posé une question (.orchestre/en-cours/${id}.question.md)`)
+    if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md'))) finir(7, 'QUESTION', `${FOURNISSEURS[iFournisseur].claude ? 'Claude' : 'Codex'} a posé une question (.orchestre/en-cours/${id}.question.md)`)
     // Un tour précédent vert en fait/ puis rouge au final a envoyé la fiche en refuse/ : dans cette copie jetable, on la remet en en-cours/.
     if (fs.existsSync(fiche('refuse')) && !fs.existsSync(fiche('en-cours')) && !fs.existsSync(fiche('fait'))) fs.renameSync(fiche('refuse'), fiche('en-cours'))
     let v

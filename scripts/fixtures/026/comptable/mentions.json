@@ -1,6 +1,4 @@
 {
-  "_note": "Les trois emplacements de la mention de franchise en base : ils ne changent qu'ENSEMBLE (mémoire presti-facturation-tva, jamais par un agent). Le juge exige que les trois portent le motif, ou qu'aucun ne le porte. 'proteges' : ce que le module ne doit jamais modifier (empreintes avant/après).",
-  "motif": "non applicable, art\\. 293 B",
-  "trois": ["lib/facturation.ts", "app/cgu/page.tsx", "app/mentions-legales/page.tsx"],
+  "_note": "Emplacements de la mention de franchise en base (art. 293 B) et gabarits légaux voisins. Les trois changements qui en dépendent (mention sur facture, taux, CGV) n'arrivent qu'ENSEMBLE, le jour de l'immatriculation, par Benj ou Claude Code, jamais par un agent. Le Comptable n'en touche aucun : le juge en prend l'empreinte avant et après l'exercice du module, par quelque moyen qu'il écrive.",
   "proteges": ["lib/facturation.ts", "lib/legalArtisan.ts", "lib/DevisPDF.tsx", "app/cgu", "app/mentions-legales"]
 }

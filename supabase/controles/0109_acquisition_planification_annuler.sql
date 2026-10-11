@@ -1,0 +1,11 @@
+select cron.unschedule('acq-vigie-meta');
+select cron.unschedule('acq-recenseur');
+select cron.unschedule('acq-rge');
+select cron.unschedule('acq-juge-faits');
+select cron.unschedule('acq-redacteur');
+select cron.unschedule('acq-standardiste');
+select cron.unschedule('acq-maquettes-purge');
+select cron.unschedule('acq-facteur');
+select cron.unschedule('acq-facteur-soir');
+select cron.unschedule('acq-repondeur');
+select cron.unschedule('acq-purge-prospects');

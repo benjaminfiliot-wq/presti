@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti, Vigile : relevé de sécurité quotidien en lecture seule (026-249)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_VIGILE -- /usr/bin/node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/vigile/releve.mjs --base=https://prestiapp.fr --depot=/srv/presti-agents
+TimeoutStartSec=10min
+NoNewPrivileges=yes

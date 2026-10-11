@@ -1,0 +1,17 @@
+{
+  "id": "j2-nettoyeur",
+  "jour": 2,
+  "heure": "19:00",
+  "produit": "nettoyeur",
+  "accroche": "Vélo plein de boue ? | Un coup de pression.",
+  "probleme": "velo",
+  "gestes": [
+    { "plan": "photo", "image": "velo", "mouvement": "zoom", "texte": "Même le vélo" },
+    { "plan": "photo", "image": "jet", "mouvement": "zoom", "texte": "Buse rouge pour la boue" },
+    { "plan": "photo", "image": "eventail", "mouvement": "zoom", "texte": "Buse blanche pour le rinçage" },
+    { "plan": "photo", "image": "seau", "mouvement": "recul", "texte": "Il pompe l'eau d'un seau" },
+    { "plan": "avant-apres", "scene": "terrasse", "texte": "Tu passes, et c'est propre" }
+  ],
+  "benefice": "Deux batteries | dans la boîte",
+  "appel": "Lien dans la bio"
+}

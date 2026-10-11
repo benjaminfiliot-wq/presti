@@ -29,7 +29,7 @@ export function quota(part: number | null | undefined) { return part == null || 
 type Canal = { canal?: string; plafond?: number | null; utilises?: number | null; palier?: string | null }
 export function envoisBarre(parCanal: readonly Canal[] | null, palier: string | null): string {
   const ligne = parCanal?.find(x => x.canal === 'formulaire_site')
-  return ligne && (ligne.plafond ?? 0) > 0 && palier ? `${ligne.utilises ?? 0}/${ligne.plafond} · ${palier}` : '— · formulaire fermé (12/10 au plus tôt)'
+  return ligne && (ligne.plafond ?? 0) > 0 && palier ? `${ligne.utilises ?? 0}/${ligne.plafond} · ${palier}` : '— · formulaire fermé'
 }
 export function agentsActifs(cartes: readonly { point?: string }[] | null) { const total = cartes?.length ?? 0; const actifs = cartes?.filter(x => x.point === 'cyan').length ?? 0; return { actifs, total, texte: `AGENTS ${actifs}/${total} ACTIFS` } }
 export function jour(lancement: string | null, maintenant: Date): string {

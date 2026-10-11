@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
@@ -18,7 +18,10 @@ const STATUTS: { value: string; label: string; pill: string }[] = [
   { value: 'gagne', label: 'Gagné 🎉', pill: 'ok' },
   { value: 'perdu', label: 'Perdu', pill: 'muted' },
 ]
-const statutMeta = (v: string | null) => STATUTS.find((s) => s.value === v) ?? { value: v ?? '', label: v ?? '—', pill: 'muted' }
+// « devis » est posé par le serveur quand un devis est préparé pour la demande (lib/devisAuto.ts) :
+// il s'affiche, mais ne se choisit pas dans la liste — l'artisan ne le pose pas à la main.
+const AFFICHES = [...STATUTS, { value: 'devis', label: 'Devis préparé', pill: 'info' }]
+const statutMeta = (v: string | null) => AFFICHES.find((s) => s.value === v) ?? { value: v ?? '', label: v ?? '—', pill: 'muted' }
 
 function formatDate(iso: string) {
   try { return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) } catch { return iso }
@@ -46,9 +49,12 @@ export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [replies, setReplies] = useState<Record<string, string>>({})
   const [open, setOpen] = useState<string | null>(null)
+  // Une lecture qui échoue se dit : « Aucune demande » sur une panne réseau était un mensonge (audit du 11/10).
+  const [erreur, setErreur] = useState<string | null>(null)
 
   async function loadLeads(artisanId: string) {
-    const { data: ls } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
+    const { data: ls, error: eLeads } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
+    if (eLeads) throw eLeads
     setLeads((ls as Lead[]) ?? [])
     // `.is('etat', null)` : une proposition en attente porte `etat: 'proposition'`, une proposition
     // refusée `etat: 'rejete'` — ni l'une ni l'autre n'est jamais partie chez le client. Sans ce
@@ -63,20 +69,29 @@ export default function Dashboard() {
     setReplies(map)
   }
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
+  const charger = useCallback(async () => {
+    setErreur(null)
+    try {
+      const { data } = await supabase.auth.getSession()
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof, error: eProf } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      if (eProf) throw eProf
       if (!prof) { router.replace('/onboarding'); return }
       setArtisan(prof as Artisan)
       await loadLeads((prof as Artisan).id)
-      setReady(true)
-    })
+    } catch {
+      setErreur('Vos demandes n’ont pas pu être chargées. Vérifiez votre connexion, puis réessayez.')
+    }
+    setReady(true)
   }, [router])
 
+  useEffect(() => { void charger() }, [charger])
+
   async function changeStatut(leadId: string, statut: string) {
+    const avant = leads
     setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, statut } : l)))
-    await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
+    const { error } = await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
+    if (error) { setLeads(avant); setErreur('Le statut n’a pas été enregistré. Réessayez.') }
   }
 
   function copyLink() {
@@ -93,6 +108,7 @@ export default function Dashboard() {
 
   return (
     <AppShell active="dashboard" title={ready && prenom ? `Bonjour ${prenom}` : 'Tableau de bord'} crumb={artisan?.metier || 'Votre espace'}>
+      {erreur && <div className="msg err" role="alert" style={{ display: 'flex', gap: '.8rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>{erreur}<button type="button" className="btn" style={{ width: 'auto', margin: 0 }} onClick={() => { setReady(false); void charger() }}>Réessayer</button></div>}
       {!ready ? (
         <p className="muted">Chargement…</p>
       ) : (
@@ -136,7 +152,7 @@ export default function Dashboard() {
               {nouveaux > 0 && <span className="tag"><span className="pill warn"><span className="pdot" />{nouveaux} nouvelle{nouveaux > 1 ? 's' : ''}</span></span>}
             </header>
 
-            {leads.length === 0 && (
+            {leads.length === 0 && !erreur && (
               <div className="psh-empty">Aucune demande pour l’instant. Dès qu’un client remplira votre lien, elle apparaîtra ici.</div>
             )}
 
@@ -145,26 +161,29 @@ export default function Dashboard() {
               const isOpen = open === l.id
               const isMail = typeof l.contact === 'string' && l.contact.includes('@')
               return (
-                <div key={l.id} className="psh-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                <div key={l.id} className={`psh-item lead${isOpen ? ' ouvert' : ''}`} style={{ flexDirection: 'column', alignItems: 'stretch', gap: '.5rem' }}>
+                  <div className="lead-ligne">
                     <span className="psh-iava">{initials(l.nom_prospect)}</span>
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                    <div className="lead-corps">
+                      <div className="lead-tete">
                         <b>{l.nom_prospect || 'Client'}</b>
-                        <span className="time" style={{ marginLeft: 'auto', fontSize: '.72rem', color: 'var(--faint)', fontFamily: 'var(--font-mono)' }}>{formatDate(l.created_at)}</span>
+                        <span className="lead-date">{formatDate(l.created_at)}</span>
                       </div>
-                      <div style={{ fontSize: '.86rem' }}>
+                      <div className="lead-contact">
                         {isMail
-                          ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>
-                          : <a href={`tel:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>}
+                          ? <a href={`mailto:${l.contact}`}>{l.contact}</a>
+                          : <a href={`tel:${l.contact}`}>{l.contact}</a>}
                       </div>
+                      {l.message && !isOpen ? <p className="lead-apercu">{l.message}</p> : null}
                     </div>
-                    <span className={`pill ${meta.pill}`}><span className="pdot" />{meta.label}</span>
+                    <div className="lead-cote">
+                      <span className={`pill ${meta.pill}`}><span className="pdot" />{meta.label}</span>
+                      <button type="button" className="lead-voir" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : l.id)}>
+                        {isOpen ? 'Masquer' : 'Détail'}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                      </button>
+                    </div>
                   </div>
-
-                  <button type="button" onClick={() => setOpen(isOpen ? null : l.id)} style={{ background: 'transparent', color: 'var(--muted)', border: 'none', padding: 0, fontSize: '.83rem', cursor: 'pointer', width: 'auto', margin: 0, textAlign: 'left', fontWeight: 600 }}>
-                    {isOpen ? '▾ Masquer le détail' : '▸ Voir le détail'}
-                  </button>
 
                   {isOpen && (
                     <div style={{ borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
@@ -176,6 +195,7 @@ export default function Dashboard() {
                         : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse envoyée pour cette demande.</p>}
                       <label style={{ fontSize: '.8rem' }}>Statut <Info cle="dashboard.statut" /></label>
                       <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)} style={{ maxWidth: '16rem' }}>
+                        {STATUTS.some((s) => s.value === (l.statut ?? 'nouveau')) ? null : <option value={l.statut ?? ''} disabled>{meta.label}</option>}
                         {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </div>

@@ -10,13 +10,14 @@
 //   --temoin         non-régression seulement tant que 026-195 n'est pas dans fait/ (package.json et lock identiques à HEAD,
 //                    typecheck vert) ; une fois livrée, le juge tourne pour de vrai ;
 //   --reel           PT-R (026-196) : l'usine et la production, en lecture ; jamais de /pause en production ;
-//   --preuve-echecs  sur l'arbre courant : code ≠ 0 avec PT-1 en échec en premier, puis --temoin en code 0 ; écrit sa section
-//                    d'echecs-attendus.md (026-194).
+//   --preuve-echecs  sur un arbre témoin VIDE (aucun fichier du pont ; l'arbre courant les contient depuis 026-195) : code ≠ 0 avec PT-1 en
+//                    échec en premier, puis --temoin en code 0 ; écrit sa section d'echecs-attendus.md (026-194).
 // Sortie : `PASS|FAIL|SAUTE <critère> — …`, puis « pont-telegram-qa : PASS|FAIL — … ». Code 0 (tout vert), 1 (un critère en échec),
 // 2 (appel invalide, préalable manquant). N'écrit que sous .orchestre/travail/ et .orchestre/preuves/026-194/ ; aucun réseau hors
 // 127.0.0.1 sans --reel ; aucun jeton réel (les jetons sont tirés au hasard à chaque passage).
 process.env.TZ = 'UTC'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { creerRapport } from './lib/sql-essai.mjs'
@@ -85,7 +86,8 @@ function pt14(s) {
 
 // ── --reel (026-196) ────────────────────────────────────────────────────────────────────────────────────────────────
 async function ptR(s) {
-  const cle = path.join(process.env.HOME ?? '', '.ssh', 'presti-usine')
+  // os.homedir() et non process.env.HOME : HOME n'existe pas sous Windows (le poste), la clé y serait cherchée dans le dossier courant (PT-R, 04/10)
+  const cle = path.join(os.homedir(), '.ssh', 'presti-usine')
   if (!existe(cle)) { s.echoue('PT-R', 'préalable : ~/.ssh/presti-usine absent (poste seulement)'); return }
   const hote = process.env.PRESTI_USINE ?? 'usine@88.96.53.3'
   const e = []
@@ -132,21 +134,27 @@ async function juger() {
 // ── --preuve-echecs ─────────────────────────────────────────────────────────────────────────────────────────────────
 function preuveEchecs() {
   const sortie = (a) => { const r = lancer(process.execPath, [CE, ...a], { timeout: 900_000 }); return { ...r, texte: `${r.stdout}${r.stderr}` } }
-  const ref = sortie(['--racine=' + R])
+  // L'arbre de référence des échecs est un arbre TÉMOIN VIDE (aucun fichier du pont), pas l'arbre courant : écrite avant 026-195, la preuve
+  // jugeait l'arbre courant tant qu'il n'avait pas le pont ; depuis que 026-195 l'a livré, l'arbre courant LE CONTIENT et le juge y passe
+  // PT-1 — comme il doit. Le juge est le même, l'attente est la même (code 1, « FAIL PT-1 » en premier) ; seule la source ne dépend plus de
+  // l'avancement de la production. Le dossier est un frère de TRAVAIL/<juge> (que le juge efface à chaque passage).
+  const vide = path.join(TRAVAIL, `${NOM}-arbre-vide`)
+  fs.rmSync(vide, { recursive: true, force: true }); fs.mkdirSync(vide, { recursive: true })
+  const ref = sortie(['--racine=' + vide])
   const premiere = ref.texte.split('\n').find((l) => /^(PASS|FAIL|SAUTE) PT-/.test(l)) ?? ''
   const e = []
-  if (ref.code !== 1) e.push(`arbre courant : code ${ref.code}, 1 attendu`)
-  if (!premiere.startsWith('FAIL PT-1 ')) e.push(`arbre courant : première ligne « ${court(premiere, 100)} », « FAIL PT-1 … » attendu`)
+  if (ref.code !== 1) e.push(`arbre témoin vide : code ${ref.code}, 1 attendu`)
+  if (!premiere.startsWith('FAIL PT-1 ')) e.push(`arbre témoin vide : première ligne « ${court(premiere, 100)} », « FAIL PT-1 … » attendu`)
   const t = sortie(['--temoin'])
   if (t.code !== 0) e.push(`--temoin : code ${t.code} — ${court(t.texte.split('\n').filter((l) => /^FAIL|non-régression/.test(l)).join(' ; '), 200)}`)
   const lignes = ['## pont-telegram-qa', '', `Écrit par \`node scripts/pont-telegram-qa.mjs --preuve-echecs\` le ${new Date().toISOString().replace(/\.\d+Z$/, 'Z')}.`, '',
     '| Passage | Code | Extrait réel de la sortie |', '|---|---|---|',
-    `| arbre courant (aucun fichier du pont) | ${ref.code} | ${premiere.replace(/\|/g, '\\|')} |`,
+    `| arbre témoin vide (aucun fichier du pont) | ${ref.code} | ${premiere.replace(/\|/g, '\\|')} |`,
     `| \`--temoin\` (non-régression) | ${t.code} | ${(t.texte.split('\n').find((l) => /^pont-telegram-qa : /.test(l)) ?? '').replace(/\|/g, '\\|')} |`]
   const f = ecrireSectionEchecs('pont-telegram-qa', lignes)
   for (const l of [premiere, ...t.texte.split('\n').filter((x) => /^pont-telegram-qa : /.test(x))]) if (l && !lire(f).includes(l.replace(/\|/g, '\\|'))) e.push(`l’extrait « ${court(l, 60)} » n’a pas été retrouvé dans ${path.relative(R, f)}`)
   console.log(`${NOM} --preuve-echecs`)
-  console.log(`${e.length ? 'FAIL' : 'PASS'} PE-1 — ${e.length ? e.join(' ; ') : `arbre courant : code ${ref.code}, « ${premiere} » ; --temoin : code ${t.code} ; section écrite dans ${path.relative(R, f)}`}`)
+  console.log(`${e.length ? 'FAIL' : 'PASS'} PE-1 — ${e.length ? e.join(' ; ') : `arbre témoin vide : code ${ref.code}, « ${premiere} » ; --temoin : code ${t.code} ; section écrite dans ${path.relative(R, f)}`}`)
   console.log(`${NOM} --preuve-echecs : ${e.length ? 'FAIL — PE-1' : 'PASS'}`)
   return e.length ? 1 : 0
 }

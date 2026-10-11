@@ -24,7 +24,8 @@
 //   UD-R   (--reel, sur le poste) : l'usine, en lecture seule ; préalable manquant (clé absente, hôte injoignable) → code 2.
 //   --temoin         non-régression seulement tant que 026-197 n'est pas dans fait/ (package.json et lock identiques à HEAD, typecheck vert) ;
 //                    une fois livrée, le juge tourne pour de vrai ;
-//   --preuve-echecs  sur l'arbre courant : code ≠ 0 avec UD-1 en échec en premier, puis --temoin en code 0 ; écrit sa section d'echecs-attendus.md.
+//   --preuve-echecs  sur un arbre témoin VIDE (aucun durcir.sh ; l'arbre courant l'a depuis 026-197) : code ≠ 0 avec UD-1 en échec en premier, puis
+//                    --temoin en code 0 ; écrit sa section d'echecs-attendus.md.
 // Sortie : `PASS|FAIL|SAUTE <critère> — …`, puis « usine-durcie-qa : PASS|FAIL — … ». Code 0 (tout vert), 1 (un critère en échec),
 // 2 (appel invalide, préalable manquant). N'écrit que sous .orchestre/travail/usine-durcie-qa/ et .orchestre/preuves/026-194/ ; aucun réseau
 // hors --reel ; aucune clé réelle (les clés publiques d'essai sont tirées au hasard à chaque passage).
@@ -450,21 +451,27 @@ async function juger() {
 // ── --preuve-echecs ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 function preuveEchecs() {
   const sortie = (a) => { const r = lancer(process.execPath, [CE, ...a], { timeout: 900_000 }); return { ...r, texte: `${r.stdout}${r.stderr}` } }
-  const ref = sortie(['--racine=' + R])
+  // L'arbre de référence des échecs est un arbre TÉMOIN VIDE (aucun durcir.sh), pas l'arbre courant : écrite avant 026-197, la preuve jugeait
+  // l'arbre courant tant qu'il n'avait pas le script ; depuis que l'arbre courant LE CONTIENT, le juge y passe UD-1 — comme il doit. Même juge,
+  // même attente (code 1, « FAIL UD-1 » en premier) ; la source ne dépend plus de l'avancement de la production. Le dossier est un frère de
+  // TRAVAIL/<juge> (que le juge efface à chaque passage).
+  const vide = path.join(TRAVAIL, `${NOM}-arbre-vide`)
+  fs.rmSync(vide, { recursive: true, force: true }); fs.mkdirSync(vide, { recursive: true })
+  const ref = sortie(['--racine=' + vide])
   const premiere = ref.texte.split('\n').find((l) => /^(PASS|FAIL|SAUTE) UD-/.test(l)) ?? ''
   const e = []
-  if (ref.code !== 1) e.push(`arbre courant : code ${ref.code}, 1 attendu`)
-  if (!premiere.startsWith('FAIL UD-1 ')) e.push(`arbre courant : première ligne « ${court(premiere, 100)} », « FAIL UD-1 … » attendu`)
+  if (ref.code !== 1) e.push(`arbre témoin vide : code ${ref.code}, 1 attendu`)
+  if (!premiere.startsWith('FAIL UD-1 ')) e.push(`arbre témoin vide : première ligne « ${court(premiere, 100)} », « FAIL UD-1 … » attendu`)
   const t = sortie(['--temoin'])
   if (t.code !== 0) e.push(`--temoin : code ${t.code} — ${court(t.texte.split('\n').filter((l) => /^FAIL|non-régression/.test(l)).join(' ; '), 200)}`)
   const lignes = ['## usine-durcie-qa', '', `Écrit par \`node scripts/usine-durcie-qa.mjs --preuve-echecs\` le ${new Date().toISOString().replace(/\.\d+Z$/, 'Z')}.`, '',
     '| Passage | Code | Extrait réel de la sortie |', '|---|---|---|',
-    `| arbre courant (aucun durcir.sh) | ${ref.code} | ${premiere.replace(/\|/g, '\\|')} |`,
+    `| arbre témoin vide (aucun durcir.sh) | ${ref.code} | ${premiere.replace(/\|/g, '\\|')} |`,
     `| \`--temoin\` (non-régression) | ${t.code} | ${(t.texte.split('\n').find((l) => /^usine-durcie-qa : /.test(l)) ?? '').replace(/\|/g, '\\|')} |`]
   const f = ecrireSectionEchecs('usine-durcie-qa', lignes)
   for (const l of [premiere, ...t.texte.split('\n').filter((x) => /^usine-durcie-qa : /.test(x))]) if (l && !lire(f).includes(l.replace(/\|/g, '\\|'))) e.push(`l’extrait « ${court(l, 60)} » n’a pas été retrouvé dans ${path.relative(R, f)}`)
   console.log(`${NOM} --preuve-echecs`)
-  console.log(`${e.length ? 'FAIL' : 'PASS'} PE-1 — ${e.length ? e.join(' ; ') : `arbre courant : code ${ref.code}, « ${premiere} » ; --temoin : code ${t.code} ; section écrite dans ${path.relative(R, f)}`}`)
+  console.log(`${e.length ? 'FAIL' : 'PASS'} PE-1 — ${e.length ? e.join(' ; ') : `arbre témoin vide : code ${ref.code}, « ${premiere} » ; --temoin : code ${t.code} ; section écrite dans ${path.relative(R, f)}`}`)
   console.log(`${NOM} --preuve-echecs : ${e.length ? 'FAIL — PE-1' : 'PASS'}`)
   return e.length ? 1 : 0
 }

@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { reseauIp } from '@/lib/audienceServeur'
 
 // Système anti-hacker : bannissement d'IP + auto-ban sur abus répété.
 // Utilisé côté serveur uniquement (service_role). Fail-open : en cas d'erreur DB,
@@ -9,9 +10,12 @@ const AUTO_BAN_SEUIL = 12          // abus sur la fenêtre → ban automatique
 const AUTO_BAN_FENETRE_MIN = 30    // minutes
 const AUTO_BAN_DUREE_H = 24        // durée du ban auto
 
-/** Extrait l'IP demandeuse (Vercel pose x-forwarded-for). */
+/** Extrait l'IP demandeuse (Vercel pose x-forwarded-for). Une adresse IPv6 est ramenée à son réseau /64 :
+ *  n'importe quel serveur loué dispose d'un /64 entier, et des limites ou des bannissements posés sur
+ *  l'adresse exacte se contournaient en changeant le dernier groupe (audit offensif du 11/10, M1). */
 export function getIp(req: Request): string {
-  return (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown'
+  const brute = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim()
+  return brute ? reseauIp(brute).slice(0, 100) : 'unknown'
 }
 
 /** true si l'IP est bannie (ban permanent ou non expiré). */

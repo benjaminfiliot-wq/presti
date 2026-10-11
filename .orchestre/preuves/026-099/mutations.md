@@ -1,0 +1,63 @@
+# Mutations de 026-099
+
+- FA-2 · scripts/facteur-qa.mjs · avis approuvé sans lecteur · FAIL FA-2 — un lecteur null a quand même rendu un avis ; lecteur null : aucun événement second_juge_indisponible
+- FA-14 · scripts/facteur-qa.mjs · avis ok sans rejouer J3 · FAIL FA-14 — avis « ok » sur un texte que J3 refuse : statut approuve, annule attendu (J3 non rejoué par jugerAvecAvis) ; avis « ok » sur un texte que J3 refuse : raisons [], un motif j3:… attendu ; avis « ok » sur un texte que J3 refuse : le bilan j3 ne porte aucun refus
+- FA-13 · scripts/facteur-qa.mjs · destinataire rendu au second juge · FAIL FA-13 — GET travail rend les champs « canal,destinataire,empreinte,id,modele_id,texte,type », attendus : canal, empreinte, id, modele_id, texte, type ; GET travail laisse passer la chaîne piégée adresse-piege@temoin.invalid
+- FA-12 · scripts/facteur-qa.mjs · jeton facteur_usine accepté par avis · FAIL FA-12 — avis : jeton de facteur_usine → 500, 403 attendu ; avis : battement écrit pour l'agent facteur_usine
+- FA-3 · scripts/facteur-qa.mjs · envoi préparé traversant la garde · FAIL FA-3 — envoi préparé : 1 réservation(s), 0 transport(s), zéro attendu
+- FA-4 · scripts/facteur-qa.mjs · In-Reply-To omis · FAIL FA-4 — In-Reply-To absent ou différent du fil reçu
+- FA-5 · scripts/facteur-qa.mjs · refus Gmail sans signal · FAIL FA-5 — auth : signal gmail_refus absent ; quota : signal gmail_refus absent
+- FA-6 · scripts/facteur-qa.mjs · tag HUMAN_AGENT ajouté · FAIL FA-6 — une requête Meta porte tag ou HUMAN_AGENT
+- FA-8 · scripts/facteur-qa.mjs · route lit une variable au lieu de la pause générale · FAIL FA-8 — PAUSE_GENERALE=1 : 500 {"error":"échec"}, { pause: true } attendu
+- FA-9 · scripts/facteur-qa.mjs · adresse en console · FAIL FA-9 — l’adresse de réponse apparaît dans la console
+- FA-10 · scripts/facteur-qa.mjs · Facteur lit la file formulaire · FAIL FA-10 — le Facteur prend la file formulaire_site réservée au porteur
+- PF-3 · scripts/facteur-qa.mjs · reCAPTCHA ignoré · FAIL PF-3 — 18 pages d'abandon passées par le vrai script : chacune à sa raison exacte, définitive, aucune soumission — 1 requête(s) de soumission sur des pages d'abandon ; recaptcha_v2 : raison « formulaire_change », « captcha » attendue ; captcha_script_seul : rendu {"envoi_id":"6908bcf4-37f0-4f48-960d-724859394443","ok":true,"preuve":{"code_http":200,"empreinte_texte":"ab9e8a07ff3923, échec définitif attendu
+- PF-8 · scripts/facteur-qa.mjs · verrou existant traité comme acquis · FAIL PF-8 — deux passages lancés ensemble sur le même envoi : un seul POST, un seul rendu ; une passe tardive ne resoumet jamais — 2 requête(s) de soumission, 1 attendue ; 2 rendu(s), 1 attendu ; une passe tardive a resoumis (3 POST)
+- PF-11 · scripts/facteur-qa.mjs · route travail sans garde de la relève du Gmail · FAIL PF-11 — route travail : relève du Gmail à 16 min, nulle, formulaire coupé, état illisible → rien et aucun appel à acq_formulaires_a_porter ; relève à 4 min → le travail ; technologie en pause écartée — relève à 16 min : du travail rendu ou acq_formulaires_a_porter appelé ; relève nulle : du travail rendu ou acq_formulaires_a_porter appelé
+- PF-6 · scripts/facteur-qa.mjs · route travail sans calendrier (le samedi, à 18 h : du travail rendu) · FAIL PF-6 — route travail : le travail un lundi 10 h, rien en pause / le samedi / à 7 h 59 / à 18 h, jamais plus que la base, ?verifier= { ok: false } pour un opposé, un battement par appel, jeton absent 401, autre agent 403, drapeau baissé 404 — samedi 10 h : du travail rendu ou réservé ; lundi 7 h 59 : du travail rendu ou réservé ; lundi 18 h 00 : du travail rendu ou réservé
+- PF-12 · scripts/facteur-qa.mjs · capture de la page entière · FAIL PF-12 — l'adresse, le lien mailto:, le numéro et le lien tel: du formulaire sont de la couleur du masque ; locator + mask avant chaque screenshot, jamais la page entière — la zone « tel » n'est pas de la couleur du masque (255,255,255) ; la zone « mail » n'est pas de la couleur du masque (255,255,255) ; page.screenshot( ou fullPage dans le script ; un screenshot( ne part pas d'un locator
+- PF-13 · scripts/facteur-qa.mjs · JPEG sur un abandon · FAIL PF-13 — chaque abandon : aucun JPEG ; abandon.json = la raison et une empreinte SHA-256 de 64 signes, rien d'autre — 18 image(s) écrite(s) sur des abandons
+- GM-2 · scripts/facteur-qa.mjs · espaces du mot de passe conservés · FAIL GM-2 — envoi refusé : {"ok":false,"erreur":"auth","definitif":false} ; mot de passe transmis : « abcd efgh ijkl mnop », « abcdefghijklmnop » attendu (sans espaces) ; MAIL FROM : null, contact.presti@presti-prospection.invalid attendu ; RCPT TO : [], un seul destinataire attendu ; en-tête From absent ; en-tête To absent ; … (10 défauts)
+- GM-4 · scripts/facteur-qa.mjs · recherche IMAP sans adresse · FAIL GM-4 — le message adressé à l'autre boîte (uid 105) a été lu
+- DL-2 · scripts/douleurs-qa.mjs · question sans point d’interrogation · FAIL DL-2 — plombier-plateforme-meme-demande : question "Quand une même demande est vendue à plusieurs entreprises, …" ne finit pas par « ? » ; plombier-plateforme-meme-demande : le texte a changé depuis son approbation (l'empreinte d'approbation.txt n'est plus la sienne)
+- DL-2 · scripts/douleurs-qa.mjs · approbation sans trace · FAIL DL-2 — plombier-manque-clientele : approuve vaut true sans ligne d'approbation (approbation.txt de 026-083)
+- DL-3 · scripts/douleurs-qa.mjs · pseudo ajouté à la citation · FAIL DL-3 — plombier-plateforme-meme-demande : citation : pseudo u/…
+- DL-4 · scripts/douleurs-qa.mjs · citation changée · FAIL DL-4 — en échec — plombier-plateforme-meme-demande : code 200, absente
+- DL-5 · scripts/douleurs-qa.mjs · promesse sans engagement · FAIL DL-5 — plombier-plateforme-meme-demande : question : terme interdit « sans engagement »
+- MV-2 · scripts/maquette-video-qa.mjs · piste audio ajoutée à la vidéo · FAIL MV-2 — une piste audio est présente, aucune attendue
+- MV-2 · scripts/maquette-video-qa.mjs · durée de la vidéo portée à 24 secondes · FAIL MV-2 — durée 24 s, 15 à 20 s attendue
+- MV-3 · scripts/maquette-video-qa.mjs · défilement figé · FAIL MV-3 — 0 paire(s) différente(s) sur 9, 7 au moins attendues ; la première et la dernière image sont identiques
+- MV-5 · scripts/maquette-video-qa.mjs · requête externe autorisée · FAIL MV-5 — requête autre hôte : [{"url":"http://autre-hote-mv5.invalid/interdit.png","externe":true,"action":"continue"}], exactement un abort attendu
+- MV-7 · scripts/maquette-video-qa.mjs · ffmpeg lancé dans un shell · FAIL MV-7 — shell: true dans le source
+- DJ-2 · scripts/disjoncteurs-qa.mjs · acq_signal sans security definer · FAIL DJ-2 — acq_signal : security definer absent
+- DJ-2 · scripts/disjoncteurs-qa.mjs · acq_signal accessible à authenticated · FAIL DJ-2 — acq_signal : grant hors service_role
+- DJ-3 · scripts/disjoncteurs-qa.mjs · pause après quatre échecs · FAIL DJ-3 — seuil de coupure des échecs consécutifs incorrect
+- DJ-3 · scripts/disjoncteurs-qa.mjs · P4 à 60 envois par jour · FAIL DJ-3 — palier P4 : graine non retrouvée avec par_jour=40, jours=null
+- DJ-4 · scripts/disjoncteurs-qa.mjs · acq_palier_appliquer ouvre le froid · FAIL DJ-4 — acq_palier_appliquer : écriture interdite dans ops.interrupteurs
+- DJ-7 · scripts/disjoncteurs-qa.mjs · technologie en pause acceptée · FAIL DJ-7 — technologie en pause : {"ok":true}, raison technologie_en_pause attendue ; formulaire coupé : {"ok":false,"raison":"technologie_en_pause"}, raison formulaire_coupe attendue ; notice périmée, formulaire : {"ok":false,"raison":"technologie_en_pause"}, raison notice_perimee attendue ; cas conforme refusé : {"ok":false,"raison":"technologie_en_pause"}
+- DJ-7 · scripts/disjoncteurs-qa.mjs · URL du prospect dans la carte · FAIL DJ-7 — carte disjoncteur_technologie : le résumé privé du prospect influence la sortie
+- RP-2 · scripts/repondeur-qa.mjs · classe sensible reçoit une réponse · FAIL RP-2 — sensible : cette classe n'est pas lisible par reponsesARepondre (hors CLASSES_A_REPONDRE du magasin partagé) ; elle ne doit pas tenter une préparation même si une lecture large la renvoie
+- RP-3 · scripts/repondeur-qa.mjs · mention IA retirée · FAIL RP-3 — un modèle sans mention IA a atteint preparerEnvoi
+- RP-5 · scripts/repondeur-qa.mjs · réponse privée sans contrôle de la fin de fenêtre (le huitième jour part) · FAIL RP-5 — une préparation a été tentée après la fenêtre de sept jours
+- RP-6 · scripts/repondeur-qa.mjs · second STOP contourne le type protégé · FAIL RP-6 — le refus du second STOP a été contourné par une préparation de type reponse
+- RP-7 · scripts/repondeur-qa.mjs · jeton en clair au magasin · FAIL RP-7 — rdvParJeton(hacherJeton du jeton d'essai) : aucun lien retrouvé (le jeton en clair n'a pas dû être passé à creerLienRdv)
+- RP-8 · scripts/repondeur-qa.mjs · modèle non approuvé préparé · FAIL RP-8 — un modèle explicitement non approuvé a atteint preparerEnvoi ; modèles non approuvés (modèles réels passés) : un envoi a quand même été préparé ; modèles non approuvés : la réponse a été marquée traitée (repondue) ; elle doit rester à traiter
+- RP-9 · scripts/repondeur-qa.mjs · route cron sans jeton · FAIL RP-9 — sans jeton : statut 200, 401 attendu
+- MW-2 · scripts/meta-webhooks-qa.mjs · comparaison de signature variable · FAIL MW-2 — verifierSignature : timingSafeEqual absent (comparaison en temps constant attendue)
+- MW-3 · scripts/meta-webhooks-qa.mjs · abonnement sans vérification du jeton · FAIL MW-3 — mauvais jeton : statut 200, 403 attendu
+- MW-4 · scripts/meta-webhooks-qa.mjs · JSON.parse avant signature · FAIL MW-4 — JSON.parse semble précéder verifierSignature dans le source
+- MW-5 · scripts/meta-webhooks-qa.mjs · « Joli site, bravo » accepté · FAIL MW-5 — estAimant("Joli site, bravo") = true, false attendu ; estAimant("sites web pas chers") = true, false attendu
+- MW-7 · scripts/meta-webhooks-qa.mjs · STOP sans opposition · FAIL MW-7 — « STOP » : aucune opposition posée (meta_id attendu dans le même appel)
+- MW-8 · scripts/meta-webhooks-qa.mjs · profil complet rangé · FAIL MW-8 — champ non attendu rangé dans la conversation (hors du profil pseudo/suit_le_compte/abonnes) : nom
+- RV-2 · scripts/rendez-vous-qa.mjs · samedi proposé · FAIL RV-2 — 40 créneau(x) un samedi ou un dimanche
+- RV-3 · scripts/rendez-vous-qa.mjs · jeton expiré distingué · FAIL RV-3 — inconnu (GET) : statut 410, 404 (celui du jeton malformé) attendu ; inconnu (GET) : réponse différente de celle du jeton malformé ; expiré (GET) : statut 410, 404 (celui du jeton malformé) attendu ; expiré (GET) : réponse différente de celle du jeton malformé ; déjà réservé (GET) : statut 410, 404 (celui du jeton malformé) attendu ; déjà réservé (GET) : réponse différente de celle du jeton malformé ; … (8 défauts)
+- RV-4 · scripts/rendez-vous-qa.mjs · métier non échappé · FAIL RV-4 — la page contient <b> NON échappé (injection HTML)
+- RV-5 · scripts/rendez-vous-qa.mjs · Origin non contrôlé · FAIL RV-5 — Origin étrangère : statut 200, 1 appel(s) au magasin (403 et 0 attendus)
+- RV-5 · scripts/rendez-vous-qa.mjs · jeton en clair au magasin · FAIL RV-5 — réservation conforme : reserverRdv non appelé avec une empreinte SHA-256 (jamais le jeton en clair)
+- RV-6 · scripts/rendez-vous-qa.mjs · numéro dans l’alerte · FAIL RV-6 — le numéro de téléphone apparaît dans une alerte
+- JG-2 · scripts/jauges-qa.mjs · jauge Publora supprimée · FAIL JG-2 — identifiant publora absent de JAUGES
+- JG-3 · scripts/jauges-qa.mjs · seuil attention porté à 80 % · FAIL JG-3 — 75 % → attention : état ok, attention attendu (utilisé 30/40)
+- JG-4 · scripts/jauges-qa.mjs · période calculée en UTC · FAIL JG-4 — un appel au plafond horaire est accepté ; un appel refusé a quand même écrit dans le magasin ; au plafond connu, le module tente quand même une consommation dans le magasin ; heure d'hiver : 23 h 59 Paris (22:59Z) devrait tomber sur la période 2026-12-14T23, au plafond ; heure d'hiver : 0 h 00 Paris (23:00Z) devrait ouvrir une nouvelle période
+- JG-4 · scripts/jauges-qa.mjs · écriture même à jauge pleine · FAIL JG-4 — au plafond connu, le module tente quand même une consommation dans le magasin
+- JG-6 · scripts/jauges-qa.mjs · lecture de process.env · FAIL JG-6 — jauges.ts lit process.env
+- PG-4 · scripts/prospection-sql-qa.mjs · second formulaire à la même entreprise accepté (le refus ops:formulaire_deja n’est plus levé) · FAIL PG-4 — code(s) jamais levé(s) par un raise : ops:formulaire_deja

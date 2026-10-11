@@ -12,7 +12,7 @@ export default function Breadcrumb({ label, path }: { label: string; path: strin
   }
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       <nav aria-label="Fil d'Ariane" className="crumb">
         <Link href="/">Accueil</Link>
         <span aria-hidden="true">›</span>

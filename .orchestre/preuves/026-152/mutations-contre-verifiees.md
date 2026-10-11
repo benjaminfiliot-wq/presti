@@ -1,10 +1,10 @@
 # Contre-mutations du méta-juge — 026-152
 
-> Écrit par `node scripts/juges-026-mutations-preuve.mjs --fiche=026-152 --script=scripts/juges-026-lt-mutations.mjs --rapport=.orchestre/preuves/026-152/mutations.json` le 2026-10-04T09:25:56.573Z.
+> Écrit par `node scripts/juges-026-mutations-preuve.mjs --fiche=026-152 --script=scripts/juges-026-lt-mutations.mjs --rapport=.orchestre/preuves/026-152/mutations.json` le 2026-10-05T07:54:00.094Z.
 > Chaque mutation ci-dessous a été refaite par le méta-juge sur sa propre copie ; l'extrait est la ligne en échec qu'il a lue lui-même.
 
-Graine : 243670808 (rejouer : `--graine=243670808`).
+Graine : 783211361 (rejouer : `--graine=783211361`).
 
-- 1. entrée 35 · `scripts/livrer-site-qa.mjs` · CH-11 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL CH-11 — --usine : code 1, 0 attendu — depot : code 1 | Dépôt échoué ; site-deposer.mjs (piège) lancé en --usine »
-- 2. entrée 11 · `scripts/livraison-tour-qa.mjs` · TL-4 · code intact 1 · code muté — · NON PRISE (copie intacte en code 1 : livraison-tour-qa : FAIL — TL-8) · extrait : « — »
-- 3. entrée 37 · `scripts/generation-actions-qa.mjs` · GA-2 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL GA-2 — timeout-minutes = 60, un nombre ≤ 20 attendu »
+- 1. entrée 37 · `scripts/bus-livraison-qa.mjs` · BL-1 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL BL-1 — ops_tache_clore appelée 0 fois, une attendue (appels : ops_interrupteur, ops_tache_rendre, ops_battement, ops_battement) »
+- 2. entrée 19 · `scripts/tresorerie-qa.mjs` · TR-2 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL TR-2 — « pile au seuil » : depasse = false, true attendu »
+- 3. entrée 24 · `scripts/livraison-tour-qa.mjs` · TL-5 · code intact 0 · code muté 1 · attrapée · extrait : « FAIL TL-5 — envoi 1 : critique = undefined, true attendu ; envoi 2 : critique = undefined, true attendu »

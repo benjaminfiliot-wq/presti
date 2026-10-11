@@ -1,12 +1,177 @@
 {
- "_": "Noms attendus des unités systemd de l'usine, par groupe de `usine-agents.mjs installer|arreter <groupe>` (026-048, SO-6 ; les unités elles-mêmes sont écrites par 026-053, 026-057, 026-129, 026-094 et 026-095). Le juge vérifie que les motifs du script d'un groupe couvrent chacune de ses unités et aucune de celles des autres groupes, et que les minuteurs (et presti-surveillance.service, qui n'en a pas) sont activés puis désactivés. Groupe `modeles` : contre-revue du 25/09 au soir (B1, 026-050).",
- "groupes": {
-  "surveillance": { "motifs": ["presti-surveillance*"], "unites": ["presti-surveillance.service"], "a_activer": ["presti-surveillance.service"] },
-  "atelier": { "motifs": ["presti-atelier*"], "unites": ["presti-atelier.service", "presti-atelier.timer"], "a_activer": ["presti-atelier.timer"] },
-  "livreur": { "motifs": ["presti-livreur*"], "unites": ["presti-livreur.service", "presti-livreur.timer"], "a_activer": ["presti-livreur.timer"] },
-  "chef": { "motifs": ["presti-chef*"], "unites": ["presti-chef-leger.service", "presti-chef-leger.timer", "presti-chef-plein.service", "presti-chef-plein.timer", "presti-chef-reunion.service", "presti-chef-reunion.timer", "presti-chef-modele.service", "presti-chef-modele.path"], "a_activer": ["presti-chef-leger.timer", "presti-chef-plein.timer", "presti-chef-reunion.timer"] },
-  "porteur": { "motifs": ["presti-porteur*", "presti-export-nuit*"], "unites": ["presti-porteur.service", "presti-porteur.timer", "presti-export-nuit.service", "presti-export-nuit.timer"], "a_activer": ["presti-porteur.timer", "presti-export-nuit.timer"] },
-  "modeles": { "motifs": ["presti-standard*", "presti-facteur*"], "unites": ["presti-standard.service", "presti-standard.timer", "presti-facteur.service", "presti-facteur.timer", "presti-facteur-soir.service", "presti-facteur-soir.timer"], "a_activer": ["presti-standard.timer", "presti-facteur.timer", "presti-facteur-soir.timer"] }
- },
- "groupes_refuses": ["tout", "presti", "surveillance;id", "../chef", "chefs", "telegram", "pubs", ""]
+  "_": "Noms attendus des unités systemd de l'usine, par groupe de `usine-agents.mjs installer|arreter <groupe>` (026-048, SO-6 ; les unités elles-mêmes sont écrites par 026-053, 026-057, 026-129, 026-094 et 026-095). Le juge vérifie que les motifs du script d'un groupe couvrent chacune de ses unités et aucune de celles des autres groupes, et que les minuteurs (et presti-surveillance.service, qui n'en a pas) sont activés puis désactivés. Groupe `modeles` : contre-revue du 25/09 au soir (B1, 026-050).",
+  "groupes": {
+    "surveillance": {
+      "motifs": [
+        "presti-surveillance*"
+      ],
+      "unites": [
+        "presti-surveillance.service"
+      ],
+      "a_activer": [
+        "presti-surveillance.service"
+      ]
+    },
+    "atelier": {
+      "motifs": [
+        "presti-atelier*"
+      ],
+      "unites": [
+        "presti-atelier.service",
+        "presti-atelier.timer"
+      ],
+      "a_activer": [
+        "presti-atelier.timer"
+      ]
+    },
+    "livreur": {
+      "motifs": [
+        "presti-livreur*"
+      ],
+      "unites": [
+        "presti-livreur.service",
+        "presti-livreur.timer"
+      ],
+      "a_activer": [
+        "presti-livreur.timer"
+      ]
+    },
+    "chef": {
+      "motifs": [
+        "presti-chef*"
+      ],
+      "unites": [
+        "presti-chef-leger.service",
+        "presti-chef-leger.timer",
+        "presti-chef-plein.service",
+        "presti-chef-plein.timer",
+        "presti-chef-reunion.service",
+        "presti-chef-reunion.timer",
+        "presti-chef-modele.service",
+        "presti-chef-modele.path"
+      ],
+      "a_activer": [
+        "presti-chef-leger.timer",
+        "presti-chef-plein.timer",
+        "presti-chef-reunion.timer"
+      ]
+    },
+    "porteur": {
+      "motifs": [
+        "presti-porteur*",
+        "presti-export-nuit*"
+      ],
+      "unites": [
+        "presti-porteur.service",
+        "presti-porteur.timer",
+        "presti-export-nuit.service",
+        "presti-export-nuit.timer"
+      ],
+      "a_activer": [
+        "presti-porteur.timer",
+        "presti-export-nuit.timer"
+      ]
+    },
+    "modeles": {
+      "motifs": [
+        "presti-standard*",
+        "presti-facteur*"
+      ],
+      "unites": [
+        "presti-standard.service",
+        "presti-standard.timer",
+        "presti-facteur.service",
+        "presti-facteur.timer",
+        "presti-facteur-soir.service",
+        "presti-facteur-soir.timer"
+      ],
+      "a_activer": [
+        "presti-standard.timer",
+        "presti-facteur.timer",
+        "presti-facteur-soir.timer"
+      ]
+    },
+    "preneur": {
+      "motifs": [
+        "presti-preneur*"
+      ],
+      "unites": [
+        "presti-preneur.service",
+        "presti-preneur.timer"
+      ],
+      "a_activer": [
+        "presti-preneur.timer"
+      ]
+    },
+    "sav": {
+      "motifs": [
+        "presti-sav*"
+      ],
+      "unites": [
+        "presti-sav.service",
+        "presti-sav.timer"
+      ],
+      "a_activer": [
+        "presti-sav.timer"
+      ]
+    },
+    "qualite": {
+      "motifs": [
+        "presti-qualite*"
+      ],
+      "unites": [
+        "presti-qualite.service",
+        "presti-qualite.timer"
+      ],
+      "a_activer": [
+        "presti-qualite.timer"
+      ]
+    },
+    "vigile": {
+      "motifs": [
+        "presti-vigile*"
+      ],
+      "unites": [
+        "presti-vigile.service",
+        "presti-vigile.timer"
+      ],
+      "a_activer": [
+        "presti-vigile.timer"
+      ]
+    },
+    "videos": {
+      "motifs": [
+        "presti-videos*"
+      ],
+      "unites": [
+        "presti-videos.service",
+        "presti-videos.timer"
+      ],
+      "a_activer": [
+        "presti-videos.timer"
+      ]
+    },
+    "tiktok": {
+      "unites": [
+        "presti-tiktok.service",
+        "presti-tiktok.timer"
+      ],
+      "motifs": [
+        "presti-tiktok*"
+      ],
+      "a_activer": [
+        "presti-tiktok.timer"
+      ]
+    }
+  },
+  "groupes_refuses": [
+    "tout",
+    "presti",
+    "surveillance;id",
+    "../chef",
+    "chefs",
+    "telegram",
+    "pubs",
+    ""
+  ]
 }

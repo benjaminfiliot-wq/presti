@@ -13,11 +13,11 @@
 const MDP = 'mot-de-passe-du-juge'
 const MOTS_INTERDITS = ['envoyer', 'envoyé', 'copier', 'sauter', 'relayer']
 const PHRASES = {
-  date: 'Pas avant le lundi 12/10.',
   mesure: 'La mesure à sec n\'a pas réussi.',
-  epreuve: 'L\'épreuve de bout en bout n\'a pas encore réussi.',
+  // 05/10/2026 soir (0131) : l'épreuve n'empêche plus l'ouverture (palier P0) ; l'écran la dit comme une NOTE qui conditionne la montée de palier.
+  epreuve: 'L\'épreuve de bout en bout n\'a pas encore réussi : elle n\'empêche pas l\'ouverture (palier P0, 5 par jour), elle conditionne la montée de palier.',
   notice: 'La notice en ligne n\'est pas vérifiée.',
-  confirmation: 'Ouvrir l\'envoi à froid ? Les agents rempliront les formulaires de contact des artisans dès lundi, 8 h.',
+  confirmation: 'Ouvrir l\'envoi à froid ? Les agents rempliront les formulaires de contact des artisans dès 8 h, au prochain jour ouvré.',
   plafond: 'Au-delà de 40 par jour, c\'est ta décision : les agents ne montent jamais seuls au-dessus.',
 }
 const ROUTES = ['/api/controle/pilotage?bloc=decider', '/api/controle/pilotage?bloc=appeler', '/api/controle/pilotage/decisions/', '/api/controle/pilotage/appels/', '/api/controle/pilotage/agents/', '/api/controle/pilotage/gestes', '/api/controle/pilotage/consignes', '/api/controle/pause']
@@ -342,7 +342,8 @@ export async function juger(x) {
     DETAILS['EG-15'] = `✉ ≥ 44 px sur chaque carte d'agent ; un appui ouvre le champ sans boîte ni ?agent= ; « ${texte} » → un POST { texte, agent: '${nom}' } sans en-tête ; 201 signes ne partent pas ; le texte piégé rendu ne crée aucune image`
     await fermer()
   })
-  // EG-13 : les gestes du fondateur sur l'envoi, à date figée.
+  // EG-13 : les gestes du fondateur sur l'envoi. Plus aucune date d'ouverture (décision du 05/10/2026) : la seule chose qui compte est
+  // l'état servi (mesure à sec, épreuve, notice) ; la date figée ne sert qu'à prouver qu'elle n'y change rien.
   scenario(['EG-13', 'EG-12'], 'gestes envoi', async () => {
     const jour = (iso) => PARIS(iso)
     const variante = (f) => (a) => { const j = jeu('salle-envois-gestes.json'); f?.(j.reponse.valeur); void a; return { statut: 200, reponse: j.reponse } }
@@ -355,27 +356,36 @@ export async function juger(x) {
       return { ...o, rep }
     }
     const etatOuverture = (page) => page.evaluate((p) => { const b = document.querySelector(`${p} [data-geste="ouvrir_envoi_froid"]`); return { bouton: !!b, inactif: b ? b.disabled || b.getAttribute('aria-disabled') === 'true' : null, texte: (document.querySelector(`${p} [data-gestes-envoi]`)?.innerText ?? '').replace(/[’‘]/g, '\'').replace(/[  ]/g, ' ') } }, PAN)
+    // Le dernier élément dit si le bouton d'ouverture doit être inactif : la mesure à sec et la notice l'empêchent ; l'épreuve de bout
+    // en bout (décision du 05/10/2026 soir, 0131) ne l'empêche PLUS : elle s'affiche en note (`[data-note-epreuve]`) tant qu'elle n'a pas réussi,
+    // et seulement alors. Le bouton reste actif quand elle seule manque (palier P0).
     const cas = [
-      ['2026-10-11T12:00:00+02:00', null, PHRASES.date, 'le 11/10'],
-      ['2026-10-12T10:00:00+02:00', (v) => { v.gestes.mesure_a_sec = false }, PHRASES.mesure, 'le 12/10, mesure à sec ratée'],
-      ['2026-10-12T10:00:00+02:00', (v) => { v.gestes.epreuve_passee = false }, PHRASES.epreuve, 'le 12/10, épreuve ratée'],
-      ['2026-10-12T10:00:00+02:00', (v) => { v.gestes.notice_verifiee_le = new Date(Date.parse(MAINTENANT_JEUX) - 8 * 86_400_000).toISOString() }, PHRASES.notice, 'le 12/10, notice de 8 jours'],
+      ['2026-10-06T12:00:00+02:00', (v) => { v.gestes.mesure_a_sec = false; v.gestes.epreuve_passee = false; v.gestes.notice_verifiee_le = null }, PHRASES.mesure, 'le 06/10, rien de prouvé : la mesure à sec d\'abord', true, true],
+      ['2030-03-04T10:00:00+01:00', (v) => { v.gestes.epreuve_passee = false }, PHRASES.epreuve, 'en 2030, épreuve seule ratée : elle n\'empêche plus l\'ouverture', false, true],
+      ['2026-10-06T10:00:00+02:00', (v) => { v.gestes.mesure_a_sec = false }, PHRASES.mesure, 'le 06/10, mesure à sec ratée', true, false],
+      ['2026-10-06T10:00:00+02:00', (v) => { v.gestes.epreuve_passee = false }, PHRASES.epreuve, 'le 06/10, épreuve seule ratée : bouton actif et note de montée de palier', false, true],
+      ['2026-10-06T10:00:00+02:00', (v) => { v.gestes.notice_verifiee_le = new Date(Date.parse(MAINTENANT_JEUX) - 8 * 86_400_000).toISOString() }, PHRASES.notice, 'le 06/10, notice de 8 jours', true, false],
     ]
-    for (const [h, v, phrase, quoi] of cas) {
+    for (const [h, v, phrase, quoi, inactifAttendu, noteAttendue] of cas) {
       const o = await ouvrirEnvois(h, v)
       const e = await etatOuverture(o.page)
-      if (!e.bouton || !e.inactif) faute('EG-13', `${quoi} : « Ouvrir l'envoi à froid » ${e.bouton ? 'actif' : 'absent'}, inactif attendu`)
+      if (!e.bouton || e.inactif !== inactifAttendu) faute('EG-13', `${quoi} : « Ouvrir l'envoi à froid » ${e.bouton ? (e.inactif ? 'inactif' : 'actif') : 'absent'}, ${inactifAttendu ? 'inactif' : 'actif'} attendu`)
       if (!e.texte.includes(phrase)) faute('EG-13', `${quoi} : « ${phrase} » absent (« ${court(e.texte, 80)} »)`)
-      await o.page.click(`${PAN} [data-geste="ouvrir_envoi_froid"]`, { force: true, timeout: 1000 }).catch(() => {})
-      await attendre(300)
-      if (o.rep.posts.length) faute('EG-13', `${quoi} : l'appui envoie ${o.rep.posts.length} POST`)
+      if (e.texte.includes(PHRASES.epreuve) !== noteAttendue) faute('EG-13', `${quoi} : la note de l'épreuve de bout en bout est ${noteAttendue ? 'absente' : 'présente alors que l\'épreuve a réussi'}`)
+      if (/12\/10|pas avant|lundi/i.test(e.texte)) faute('EG-13', `${quoi} : l'écran parle encore d'une date d'ouverture (« ${court(e.texte, 80)} »)`)
+      if (inactifAttendu) {
+        await o.page.click(`${PAN} [data-geste="ouvrir_envoi_froid"]`, { force: true, timeout: 1000 }).catch(() => {})
+        await attendre(300)
+        if (o.rep.posts.length) faute('EG-13', `${quoi} : l'appui envoie ${o.rep.posts.length} POST`)
+      }
       await o.fermer()
     }
-    // Tout est prêt le 12/10 : confirmation écrite, puis la boîte securite, puis UN POST { geste: 'ouvrir_envoi_froid' }.
+    // Tout est prêt SAUF l'épreuve de bout en bout (ouverture au palier P0, décision du 05/10/2026 soir) : confirmation écrite, puis la boîte securite, puis UN POST { geste: 'ouvrir_envoi_froid' }.
     {
-      const o = await ouvrirEnvois('2026-10-12T10:00:00+02:00', null)
+      const o = await ouvrirEnvois('2026-10-06T10:00:00+02:00', (v) => { v.gestes.epreuve_passee = false })
       const e = await etatOuverture(o.page)
-      if (!e.bouton || e.inactif) faute('EG-13', `le 12/10, tout prêt : « Ouvrir l'envoi à froid » ${e.bouton ? 'inactif' : 'absent'}`)
+      if (/12\/10|pas avant|lundi/i.test(e.texte)) faute('EG-13', `tout prêt : l'écran parle encore d'une date d'ouverture (« ${court(e.texte, 80)} »)`)
+      if (!e.bouton || e.inactif) faute('EG-13', `le 06/10, mesure et notice prêtes, épreuve non passée : « Ouvrir l'envoi à froid » ${e.bouton ? 'inactif' : 'absent'}`)
       else {
         await o.page.click(`${PAN} [data-geste="ouvrir_envoi_froid"]`)
         await attendre(250)
@@ -433,14 +443,16 @@ export async function juger(x) {
     }
     // envoi_froid vrai → aucun bouton d'ouverture ; rôle lecture → aucun [data-geste].
     {
-      const o = await ouvrirEnvois('2026-10-13T10:00:00+02:00', (v) => { v.gestes.envoi_froid = true })
+      const o = await ouvrirEnvois('2026-10-13T10:00:00+02:00', (v) => { v.gestes.envoi_froid = true; v.gestes.epreuve_passee = false })
       if (await o.page.$(`${PAN} [data-geste="ouvrir_envoi_froid"]`)) faute('EG-13', 'envoi_froid vrai : le bouton d’ouverture reste')
+      // Ouvert au palier P0, l'épreuve de bout en bout manque encore : la note de montée de palier reste affichée.
+      if (!(await etatOuverture(o.page)).texte.includes(PHRASES.epreuve)) faute('EG-13', 'envoi_froid vrai, épreuve non passée : la note « conditionne la montée de palier » a disparu')
       await o.fermer()
       const l = await ouvrirEnvois('2026-10-13T10:00:00+02:00', null, { journal: J('role-lecture.json') })
       if (await l.page.$(`${PAN} [data-geste]`)) faute('EG-13', 'rôle lecture : un [data-geste] est rendu dans la Salle des envois')
       await l.fermer()
     }
-    DETAILS['EG-13'] = 'date figée : le 11/10 « Pas avant le lundi 12/10. » ; le 12/10 : mesure, épreuve, notice de 8 jours → leur phrase, bouton inactif ; tout prêt → confirmation écrite, boîte securite, puis un POST { geste: ouvrir_envoi_froid } ; reprendre une technologie et rouvrir un canal : boîte puis leur corps ; plafond 301 refusé sans envoi, 60 → la phrase ; envoi_froid vrai → pas de bouton ; ni rouvrir_boite ; rôle lecture → aucun geste'
+    DETAILS['EG-13'] = 'aucune date d\'ouverture : rien de prouvé → la phrase de la mesure ; mesure ou notice de 8 jours → leur phrase, bouton inactif ; l\'épreuve de bout en bout seule (même en 2030) → bouton ACTIF et la note « conditionne la montée de palier » (jamais quand elle a réussi, toujours quand l\'envoi est ouvert sans elle) ; jamais « 12/10 », « pas avant » ni « lundi » ; mesure et notice prêtes, épreuve non passée → confirmation écrite, boîte securite, puis un POST { geste: ouvrir_envoi_froid } ; reprendre une technologie et rouvrir un canal : boîte puis leur corps ; plafond 301 refusé sans envoi, 60 → la phrase ; envoi_froid vrai → pas de bouton ; ni rouvrir_boite ; rôle lecture → aucun geste'
   })
   // EG-14 : sept options au téléphone.
   scenario(['EG-14'], 'sept options', async () => {

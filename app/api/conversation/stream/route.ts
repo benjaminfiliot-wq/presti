@@ -66,6 +66,12 @@ export async function POST(req: Request) {
       await recordAbuse(ip, 'flood /api/conversation/stream')
       return NextResponse.json({ error: 'Un instant — laissez-moi le temps de vous répondre 🙂' }, { status: 429 })
     }
+    // Au-delà d'une conversation : plafonds par adresse (/64 en IPv6) et par artisan. Sans eux, ouvrir N demandes
+    // puis écrire en boucle sur chacune faisait générer sans fin aux frais de l'artisan (audit offensif du 11/10, E3).
+    if (!(await consommerLimite(`conv:ip:${ip}`, 30, 10 * 60)) || !(await consommerLimite(`conv:artisan:${lead.artisan_id}`, 60, 10 * 60))) {
+      await recordAbuse(ip, 'flood /api/conversation/stream (plafond adresse ou artisan)')
+      return NextResponse.json({ error: 'Beaucoup de messages en ce moment. Réessayez dans quelques minutes.' }, { status: 429 })
+    }
 
     // Le message entrant est tracé AVANT toute génération : jamais perdu.
     await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })

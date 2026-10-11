@@ -1,0 +1,14 @@
+{
+  "id": "presti-02-facebook-0910",
+  "reseau": "facebook",
+  "local": "2026-10-09T16:00:00+02:00",
+  "utc": "2026-10-09T14:00:00Z",
+  "fichier": "C:\\Users\\benja\\Documents\\presti\\promo-src\\tiktok-chaine\\sorties\\pack-2026-10-08\\presti-02-facebook.mp4",
+  "sha256": "e1d0c059e0a8a5c1eb3c453dcf8b22b92522bc7e88474c3d88ca2216d79d8df0",
+  "legende": "Le chantier avance. Le client attend.\n\nUn client demande un devis alors que vous travaillez. Avec votre lien Presti, il vous transmet sa demande ; vous relisez et validez la réponse.\nLa demande arrive par votre lien partagé ; vous gardez la main sur la réponse.\n\nDécouvrir Presti : https://prestiapp.fr\nVotre plus gros souci : répondre vite ou faire le devis ?\n\n#Artisan #Devis #Presti",
+  "commentaire_epingle": "Votre plus gros souci : répondre vite ou faire le devis ?",
+  "statut": "PREPARE_NON_PROGRAMME",
+  "reserve": "Script presti-02/script.mjs ; demandes via le lien partagé, pas branchement automatique de Google/Facebook.",
+  "qa_format": "PASS",
+  "musique": "aucune"
+}

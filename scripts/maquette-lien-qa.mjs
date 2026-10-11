@@ -116,7 +116,8 @@ const C = {
   'ML-3': (x) => {
     const e = []
     const ref = json({ corps: x.malforme.corps, entetes: x.malforme.entetes })
-    for (const [nom, r] of [['inconnu', x.inconnu], ['expire', x.expire], ['purgee', x.purgee], ['traversee', x.traversee]]) {
+    for (const [nom, r] of [['inconnu', x.inconnu], ['expire', x.expire], ['purgee', x.purgee], ['traversee', x.traversee], ['expiree_servie_par_le_magasin', x.expireeHostile], ['purgee_servie_par_le_magasin', x.purgeeHostile], ['purgee_le_servie_par_le_magasin', x.purgeeLeHostile], ['sans_expiration_servie_par_le_magasin', x.sansExpirationHostile]]) {
+      if (!r) { e.push(`${nom} : observation absente`); continue }
       if (r.statut !== 404) e.push(`${nom} : statut ${r.statut}, 404 attendu`)
       if (json({ corps: r.corps, entetes: r.entetes }) !== ref) e.push(`${nom} : réponse différente du 404 du jeton malformé`)
     }
@@ -177,7 +178,7 @@ const C = {
 }
 const DETAILS = {
   'ML-2': '1000 jetons distincts de 43 signes base64url ; hacherJeton = SHA-256 recalculé ; expiration = 21 jours pile',
-  'ML-3': 'jeton malformé, inconnu, expiré, purgé, et fichier ../x → quatre 404 identiques (corps et en-têtes)',
+  'ML-3': 'jeton malformé, inconnu, expiré, purgé, fichier ../x, et ligne expirée / purgée / sans date de fin rendue telle quelle par un magasin hostile → des 404 identiques (corps et en-têtes)',
   'ML-4': "lien valide : entreprise échappée, « Rien n'est publié », date de fin, <video playsinline> ; capture.jpg exacte ; sans vidéo : page sans <video, video.mp4 → 404",
   'ML-5': "noindex, private/no-store, no-referrer sur chaque 200/206 ; CSP default-src 'none' + media-src 'self' ; aucun <script, aucun lien hors d'elle-même",
   'ML-6': 'zéro écriture du magasin factice pendant 20 consultations',
@@ -217,7 +218,20 @@ async function observer(mod, RAC2) {
     const { M: M3, S: S3, jeton: j3 } = await scene({ purgee: true })
     const purgee = await servir({ magasin: M3, stockage: S3 }, j3, undefined)
     const traversee = await servir(deps, jeton, '../x')
-    return { malforme, inconnu, expire, purgee, traversee }
+    // 05/10/2026 (D-0510-A3, trou de juge vu par 026-101) : le magasin factice (comme acq_maquette_par_jeton) écarte déjà l'expirée et la purgée AVANT le
+    // module : sans lui, un module qui oublierait sa propre vérification d'expiration restait invisible. Un magasin HOSTILE rend ici la ligne telle quelle,
+    // expirée (par l'horloge réelle, celle que le module lit), purgée, ou sans date de fin : le module doit répondre le même 404.
+    const hostile = async (modifier) => {
+      const sc = await scene()
+      const brut = sc.M
+      const magasin = { ...brut, maquetteParJeton: async (h) => { const r = await brut.maquetteParJeton(h); return r ? modifier(r) : r } }
+      return servir({ magasin, stockage: sc.S }, sc.jeton, undefined)
+    }
+    const expireeHostile = await hostile((r) => ({ ...r, expire_le: new Date(Date.now() - J).toISOString() }))
+    const purgeeHostile = await hostile((r) => ({ ...r, etat: 'purgee' }))
+    const purgeeLeHostile = await hostile((r) => ({ ...r, purgee_le: new Date(Date.now() - J).toISOString() }))
+    const sansExpirationHostile = await hostile((r) => ({ ...r, expire_le: null }))
+    return { malforme, inconnu, expire, purgee, traversee, expireeHostile, purgeeHostile, purgeeLeHostile, sansExpirationHostile }
   })
 
   await tente('ML-4', async () => {
@@ -330,7 +344,7 @@ function obsBase() {
   const entetesOk = { 'x-robots-tag': 'noindex, nofollow, noarchive', 'cache-control': 'private, no-store', 'referrer-policy': 'no-referrer' }
   return {
     'ML-2': { jetons: Array.from({ length: 50 }, () => crypto.randomBytes(32).toString('base64url')), hachesOk: true, joursExpiration: 21 },
-    'ML-3': { malforme: { statut: 404, corps: '404', entetes: entetesOk }, inconnu: { statut: 404, corps: '404', entetes: entetesOk }, expire: { statut: 404, corps: '404', entetes: entetesOk }, purgee: { statut: 404, corps: '404', entetes: entetesOk }, traversee: { statut: 404, corps: '404', entetes: entetesOk } },
+    'ML-3': { malforme: { statut: 404, corps: '404', entetes: entetesOk }, inconnu: { statut: 404, corps: '404', entetes: entetesOk }, expire: { statut: 404, corps: '404', entetes: entetesOk }, purgee: { statut: 404, corps: '404', entetes: entetesOk }, traversee: { statut: 404, corps: '404', entetes: entetesOk }, expireeHostile: { statut: 404, corps: '404', entetes: entetesOk }, purgeeHostile: { statut: 404, corps: '404', entetes: entetesOk }, purgeeLeHostile: { statut: 404, corps: '404', entetes: entetesOk }, sansExpirationHostile: { statut: 404, corps: '404', entetes: entetesOk } },
     'ML-4': { page: { contientEntrepriseEchappee: true, contientEntrepriseBrute: false, contientRienPublie: true, contientDateFin: true, video: true }, capture: { type: 'image/jpeg', octetsIdentiques: true }, sansVideo: { contientVideo: false, statutVideoMp4: 404 } },
     'ML-5': { entetes: { page: entetesOk, capture: entetesOk, video: entetesOk }, cspHtml: "Content-Security-Policy: default-src 'none'; img-src 'self'; media-src 'self'", html: '<html><body>Maquette</body></html>' },
     'ML-6': { ecrituresPendant: 0, consultations: 20 },
@@ -344,7 +358,7 @@ function echantillons() {
   const b = obsBase()
   return {
     'ML-2': [['conforme', b['ML-2'], false], ['jetons en double', muter(b, 'ML-2', (x) => { x.jetons[1] = x.jetons[0] }), true], ['expiration à 20 jours', muter(b, 'ML-2', (x) => { x.joursExpiration = 20 }), true]],
-    'ML-3': [['conforme', b['ML-3'], false], ['réponses différentes', muter(b, 'ML-3', (x) => { x.inconnu.corps = 'autre' }), true], ['statut 200 pour un jeton inconnu', muter(b, 'ML-3', (x) => { x.inconnu.statut = 200 }), true]],
+    'ML-3': [['conforme', b['ML-3'], false], ['réponses différentes', muter(b, 'ML-3', (x) => { x.inconnu.corps = 'autre' }), true], ['statut 200 pour un jeton inconnu', muter(b, 'ML-3', (x) => { x.inconnu.statut = 200 }), true], ['expirée servie 410 par le module (magasin hostile)', muter(b, 'ML-3', (x) => { x.expireeHostile.statut = 410 }), true], ['purgée servie par le module (magasin hostile)', muter(b, 'ML-3', (x) => { x.purgeeHostile.statut = 200 }), true], ['sans date de fin servie (magasin hostile)', muter(b, 'ML-3', (x) => { x.sansExpirationHostile.statut = 200 }), true], ['observation hostile absente', muter(b, 'ML-3', (x) => { delete x.purgeeLeHostile }), true]],
     'ML-4': [['conforme', b['ML-4'], false], ['entreprise non échappée', muter(b, 'ML-4', (x) => { x.page.contientEntrepriseBrute = true }), true], ['<video encore présent sans vidéo', muter(b, 'ML-4', (x) => { x.sansVideo.contientVideo = true }), true]],
     'ML-5': [['conforme', b['ML-5'], false], ['<script présent', muter(b, 'ML-5', (x) => { x.html += '<script>1</script>' }), true], ['CSP sans none', muter(b, 'ML-5', (x) => { x.cspHtml = "media-src 'self'" }), true]],
     'ML-6': [['conforme', b['ML-6'], false], ['une écriture', muter(b, 'ML-6', (x) => { x.ecrituresPendant = 1 }), true]],

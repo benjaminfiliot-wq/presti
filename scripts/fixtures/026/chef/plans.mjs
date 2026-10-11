@@ -15,6 +15,7 @@ export const ID_CONSIGNE_ORDINAIRE = 5120
 
 const copie = (v) => JSON.parse(JSON.stringify(v))
 
+// 07/10 : les trois tâches de plan-ok servent le cap de Benj (docs/agents/cap-benj.md) : vitrine Presti, fiches des deux produits.
 export function planOk() {
   return {
     cycle: 'plein',
@@ -29,17 +30,19 @@ export function planOk() {
     ],
     taches: [
       {
-        type: 'relecture', capacite: 'relecture', cle_idempotence: `chef:${DATE_CLE}:relire-page-tarifs`, objet: 'page tarifs',
-        charge: { titre: 'Relire la page tarifs', pourquoi: 'Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés.' },
+        type: 'relecture', capacite: 'relecture', cle_idempotence: `chef:${DATE_CLE}:relire-page-tarifs`, objet: 'Relire la page tarifs de la vitrine Presti et lister, ligne par ligne, ce qui est confus dans les trois offres et les délais',
+        charge: { titre: 'Relire la page tarifs de la vitrine Presti', pourquoi: 'Le fondateur la trouve confuse : vérifier les trois offres et les délais annoncés.' },
         sortante: false,
       },
       {
-        type: 'verification', capacite: 'verification', cle_idempotence: `chef:${DATE_CLE}:verifier-echecs-pont`,
-        charge: { titre: 'Comprendre les deux échecs du pont', pourquoi: 'Deux tâches en échec depuis hier : lire les erreurs et proposer un correctif.' },
+        type: 'verification', capacite: 'verification', cle_idempotence: `chef:${DATE_CLE}:verifier-fiches-produits`,
+        objet: "Comparer les brouillons de fiche du nettoyeur et de l'aspirateur et proposer un correctif en trois lignes",
+        charge: { titre: "Comparer les fiches du nettoyeur et de l'aspirateur", pourquoi: 'Deux fiches à relire avant la mise en vente : proposer un correctif court.' },
         sortante: false,
       },
       {
         type: 'recherche', capacite: 'recherche', cle_idempotence: `chef:${DATE_CLE}:annuaires-artisans`,
+        objet: "Lister trois annuaires d'artisans gratuits où inscrire la vitrine Presti, avec l'adresse du site, sans rien envoyer",
         charge: { titre: "Lister trois annuaires d'artisans gratuits", pourquoi: "Élargir l'acquisition sans aucune dépense ; rien n'est envoyé." },
         sortante: false,
       },
@@ -87,7 +90,7 @@ export function reunionOk() {
   }
 }
 
-const cloneTache = (plan, n) => ({ ...copie(plan.taches[1]), cle_idempotence: `chef:${DATE_CLE}:tache-essai-${String(n).padStart(2, '0')}` })
+const cloneTache = (plan, n) => ({ ...copie(plan.taches[1]), cle_idempotence: `chef:${DATE_CLE}:tache-essai-${String(n).padStart(2, '0')}`, objet: `Tâche d'essai numéro ${n} : lire les erreurs du pont et proposer un correctif` })
 const cloneDecision = (plan, n) => ({ ...copie(plan.decisions[0]), cle_idempotence: `chef:${DATE_CLE}:decision-essai-${n}` })
 
 // Les plans fautifs de la fiche : nom de fichier → un seul écart appliqué à plan-ok.
@@ -100,6 +103,12 @@ export const PLANS_FAUTIFS = {
   'plan-defaut-couteux': (p) => { p.decisions[0].options[0].engage_cents = 1500; p.decisions[0].option_defaut = 'relancer_mardi' },
   'plan-secret': (p) => { p.taches[1].charge.pourquoi = 'Clé trouvée dans le journal du pont : {{SECRET_ESSAI}}' },
   'plan-email': (p) => { p.taches[0].charge.pourquoi = 'Écrire à prospect.temoin@exemple.fr au sujet de la page tarifs.' },
+  // 05/10/2026 : 20 tâches à objet vide, sans preneur (les trois écarts : absent, vide, trop court ; et le doublon, qui ferait taire la seconde tâche au bus).
+  'plan-objet-absent': (p) => { delete p.taches[1].objet },
+  'plan-objet-vide': (p) => { p.taches[1].objet = '' },
+  'plan-objet-blanc': (p) => { p.taches[1].objet = ' '.repeat(30) },
+  'plan-objet-court': (p) => { p.taches[1].objet = 'veille juges' },
+  'plan-objet-double': (p) => { p.taches[2].objet = p.taches[1].objet },
   'plan-sans-compte-rendu': (p) => { delete p.compte_rendu },
   'plan-compte-rendu-4-lignes': (p) => { p.compte_rendu.push('une ligne de trop') },
   'plan-compte-rendu-point-median': (p) => { p.compte_rendu[1] = 'santé · ok' },
@@ -111,8 +120,9 @@ export const PLANS_FAUTIFS = {
 // Valides au schéma, attrapés ailleurs (écart noté dans echecs-attendus.md) :
 //  - plan-consigne-oubliee : par fil.mjs verifier (CH-F1), comme le dit la fiche ;
 //  - plan-defaut-couteux : un JSON Schema ne sait pas relier la valeur d'option_defaut à l'engage_cents de l'option
-//    qui porte cette clé ; c'est appliquer.mjs qui le refuse (CH-A6).
-export const VALIDES_AU_SCHEMA = ['plan-consigne-oubliee', 'plan-defaut-couteux']
+//    qui porte cette clé ; c'est appliquer.mjs qui le refuse (CH-A6) ;
+//  - plan-objet-double : l'unicité des objets entre tâches ne s'écrit pas en JSON Schema ; c'est appliquer.mjs (CH-A15).
+export const VALIDES_AU_SCHEMA = ['plan-consigne-oubliee', 'plan-defaut-couteux', 'plan-objet-double']
 
 export const REUNIONS_FAUTIVES = {
   'reunion-6-lignes': (r) => { r.lignes = [...r.lignes, 'Quatrième ligne témoin.', 'Cinquième ligne témoin.', 'Sixième ligne de trop.'] },

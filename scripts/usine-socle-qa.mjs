@@ -74,7 +74,7 @@ const WIN = process.platform === 'win32'
 const MINUTE = 60_000
 const JOUR = 24 * 60 * MINUTE
 const HOTE_ESSAI = 'essai@192.0.2.10' // TEST-NET-1 : jamais une vraie machine
-const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE']
+const NOMS_PERMIS = ['PRESTI_JETON_CHEF', 'PRESTI_JETON_USINE', 'PRESTI_JETON_ATELIER', 'PRESTI_JETON_LIVREUR_USINE', 'PRESTI_JETON_FACTEUR_USINE', 'PRESTI_JETON_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'PRESTI_JETON_STANDARDISTE', 'PRESTI_JETON_FACTEUR', 'TELEGRAM_CODE_APPAIRAGE', 'PRESTI_JETON_STUDIO', 'PRESTI_JETON_SAV', 'PRESTI_JETON_QUALITE', 'PRESTI_JETON_VIGILE', 'FIRECRAWL_API_KEY', 'APIFY_TOKEN', 'PRESTI_JETON_PRENEUR']
 const PASSANTS = ['PATH', 'HOME', 'LANG', 'TZ', 'USER', 'PRESTI_HOTE', 'ORCHESTRE_CODEX_BIN', 'PLAYWRIGHT_BROWSERS_PATH', 'PRESTI_URL']
 // Variables que libuv ajoute d'office à l'environnement d'un enfant sous Windows (src/win/process.c, required_vars).
 const LIBUV_WIN = ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'PATH', 'SYSTEMDRIVE', 'SYSTEMROOT', 'TEMP', 'USERDOMAIN', 'USERNAME', 'USERPROFILE', 'WINDIR']
@@ -655,6 +655,8 @@ function reglesReference(nom, v) {
   if (nom === 'TELEGRAM_BOT_TOKEN') return /^\d{6,12}:[A-Za-z0-9_-]{30,}$/.test(v)
   if (nom === 'TELEGRAM_CHAT_ID') return /^-?\d{5,15}$/.test(v) || v === 'aucun'
   if (nom === 'TELEGRAM_CODE_APPAIRAGE') return /^[A-HJ-NP-Z2-9]{8}$/.test(v) || v === 'epuise'
+  if (nom === 'APIFY_TOKEN') return /^apify_api_[A-Za-z0-9]{36}$/.test(v)
+  if (nom === 'FIRECRAWL_API_KEY') return /^fc-[A-Za-z0-9]{32}$/.test(v)
   if (!RE_GENERIQUE.test(v)) return false
   if (nom.startsWith('PRESTI_JETON_') && /^(sk-|eyJ)/.test(v)) return false
   return true
@@ -763,7 +765,7 @@ async function groupeCoffre(R) {
     }
     // Chaque nom de la liste fermée est accepté (la liste est exactement celle-ci).
     for (const nom of NOMS_PERMIS) {
-      const v = nom === 'TELEGRAM_BOT_TOKEN' ? `${aleatoire('chiffres', 10)}:${aleatoire('alnum', 35)}` : nom === 'TELEGRAM_CHAT_ID' ? aleatoire('chiffres', 10) : nom === 'TELEGRAM_CODE_APPAIRAGE' ? aleatoire('code', 8) : lettres(30)
+      const v = nom === 'TELEGRAM_BOT_TOKEN' ? `${aleatoire('chiffres', 10)}:${aleatoire('alnum', 35)}` : nom === 'TELEGRAM_CHAT_ID' ? aleatoire('chiffres', 10) : nom === 'TELEGRAM_CODE_APPAIRAGE' ? aleatoire('code', 8) : nom === 'FIRECRAWL_API_KEY' ? `fc-${aleatoire('alnum', 32)}` : nom === 'APIFY_TOKEN' ? `apify_api_${aleatoire('alnum', 36)}` : lettres(30)
       SECRETS.push(v)
       const f2 = path.join(T, 'cf2', `permis-${nom}.env`)
       const r = await poserBash(f2, nom, `${v}\n`)
@@ -1226,7 +1228,7 @@ async function groupeCoffre(R) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// Groupe socle (026-050) : SO-1 à SO-10
+// Groupe socle (026-050) : SO-1 à SO-11 (SO-11 : les passes du SAV et du Contrôleur qualité, 05/10/2026)
 // ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 const MOTIFS_INTEGRES = [ // copie des motifs de scripts/usine.mjs (026-002) ; ceux de instantane-quotidien.mjs s'y ajoutent s'il existe
   { nom: 'sk_ (clé secrète Stripe ou autre)', re: /\b([sr]k_(?:live|test)_[0-9A-Za-z]{8,}|sk_[0-9A-Za-z_]{20,})/ },
@@ -1777,6 +1779,260 @@ async function groupeSocle(R) {
     const r2 = await lancerAg(['socle'], 'injoignable')
     if (r2.code !== 5) D.push(`socle avec ssh en 255 : code ${r2.code} (5 attendu)`)
     return `${fichiers.length} fichiers sans aucune chaîne de clé (${source}) ; ${tousAppels.length} appels ssh, tous en -o BatchMode=yes avec la clé ~/.ssh/presti-usine, par PRESTI_SSH_BIN ; ssh en 255 → code 5`
+  })
+
+  // ── SO-11 : les passes du SAV et du Contrôleur qualité (05/10/2026, fiches 026-245, 026-247, 026-251) ───────────────────
+  // Deux agents avaient du code livré et aucun lanceur. Ce critère juge LE LANCEUR : les unités (compte agents, un seul nom du
+  // coffre, jamais d'EnvironmentFile=, durcissement, minuteur dans la période déclarée dans ops.agents), le source de chaque point
+  // d'entrée (aucune lecture du coffre : le jeton arrive par avec-coffre.mjs ; que les routes permises ; aucune route ni primitive
+  // d'envoi ; un seul événement par passe) et, surtout, les deux passes JOUÉES contre un faux bus : rien à traiter, pause générale,
+  // agent en pause, route en panne, jeton ou URL absents, import sans effet, un message à lire. Ajouts seulement : rien d'un critère
+  // existant n'a été assoupli.
+  await juger(R, 'SO-11', async (D) => {
+    const POSTES = [
+      { g: 'sav', jeton: 'PRESTI_JETON_SAV', script: 'scripts/agents/sav-passe.mjs', evenement: 'sav_passe', periode: 15, loader: false,
+        routes: ['/api/usine/sav/travail', '/api/usine/sav/brouillon', '/api/agents/evenements'] },
+      { g: 'qualite', jeton: 'PRESTI_JETON_QUALITE', script: 'scripts/agents/controleur-qualite.mjs', evenement: 'qualite_passe', periode: 1440, loader: true,
+        routes: ['/api/usine/qualite/travail', '/api/usine/qualite/rapport', '/api/agents/evenements'] },
+    ]
+    const ini = (texte) => {
+      const sections = {}
+      let cur = null
+      for (const brute of lf(texte).split('\n')) {
+        const l = brute.trim()
+        if (!l || l.startsWith('#') || l.startsWith(';')) continue
+        const s = /^\[(.+)\]$/.exec(l)
+        if (s) { cur = s[1]; sections[cur] ||= []; continue }
+        const k = /^([A-Za-z]+)=(.*)$/.exec(l)
+        if (k && cur) sections[cur].push([k[1], k[2]])
+      }
+      return sections
+    }
+    const vals = (s, sec, cle) => (s[sec] || []).filter(([k]) => k === cle).map(([, v]) => v)
+    /** Le source sans ses commentaires, chaînes laissées intactes (un « /* » dans une chaîne n'ouvre rien). */
+    const sansCommentaires = (src) => {
+      let o = '', i = 0, etat = 'code', q = ''
+      while (i < src.length) {
+        const c = src[i], d = src[i + 1]
+        if (etat === 'code') {
+          if (c === '/' && d === '/') { while (i < src.length && src[i] !== '\n') i++; continue }
+          if (c === '/' && d === '*') { const f = src.indexOf('*/', i + 2); i = f < 0 ? src.length : f + 2; continue }
+          if (c === "'" || c === '"' || c === '`') { etat = 'chaine'; q = c }
+          o += c; i++; continue
+        }
+        if (c === '\\') { o += c + (d ?? ''); i += 2; continue }
+        if (c === q) etat = 'code'
+        o += c; i++
+      }
+      return o
+    }
+    const periodeDe = (cal) => {
+      let m = /^\*:(\d{1,2})\/(\d{1,2})$/.exec(cal)
+      if (m) return Number(m[2])
+      m = /^\*:(\d{1,2})(?::00)?$/.exec(cal)
+      return m ? 60 : null
+    }
+    const ENVOI_11 = /\bsendMail\b|\bsendMessage\b|\bsendgrid\b|\.send\s*\(|\benvoyer\w*\s*\(|\bexpedier\w*\s*\(|facteur|expediteur|porteur|publora|gmail|mailer|resend|smtp|twilio|nodemailer|mailto:/i
+    const SECRETS_UNITE = /JETON|TOKEN|SECRET|PASSWORD|API_KEY|ANTHROPIC|OPENAI|SERVICE_ROLE|STRIPE|CODEX_LANCEUR|OLLAMA|FREELLMAPI|FL_KEY/i
+
+    for (const p of POSTES) {
+      // ── les unités ──
+      const fSvc = R_(`scripts/usine/systemd/presti-${p.g}.service`), fTim = R_(`scripts/usine/systemd/presti-${p.g}.timer`)
+      if (!existe(fSvc)) D.push(`presti-${p.g}.service absent : le groupe ${p.g} n'a aucun lanceur`)
+      else {
+        const s = ini(lire(fSvc))
+        const un = (cle) => vals(s, 'Service', cle)
+        const nom = `presti-${p.g}.service`
+        if (un('Type').join() !== 'oneshot') D.push(`${nom} : Type=${un('Type').join() || 'absent'} (oneshot : une passe, aucune boucle)`)
+        if (un('User').join() !== 'agents') D.push(`${nom} : User=${un('User').join() || 'absent'} (agents, le seul compte des services)`)
+        if (un('WorkingDirectory').join() !== '/srv/presti-agents') D.push(`${nom} : WorkingDirectory=${un('WorkingDirectory').join() || 'absent'} (/srv/presti-agents)`)
+        if (un('NoNewPrivileges').join() !== 'yes') D.push(`${nom} : NoNewPrivileges=yes absent`)
+        if (!/^\d+[MG]$/.test(un('MemoryMax').join())) D.push(`${nom} : MemoryMax absent ou illisible`)
+        if (!un('TimeoutStartSec').length) D.push(`${nom} : TimeoutStartSec absent (une passe qui pend doit être coupée)`)
+        for (const interdite of ['EnvironmentFile', 'ExecStartPre', 'ExecStartPost', 'ExecStop', 'ExecReload']) if (un(interdite).length) D.push(`${nom} : ${interdite}= (le coffre ne se charge jamais en bloc, aucune commande annexe)`)
+        const envs = un('Environment')
+        if (!envs.includes('PRESTI_URL=https://prestiapp.fr')) D.push(`${nom} : Environment=PRESTI_URL=https://prestiapp.fr absent (la variable passante vient de l'unité, pas du coffre)`)
+        for (const e of envs) if (SECRETS_UNITE.test(e.split('=')[0])) D.push(`${nom} : Environment=${e.split('=')[0]}=… (aucun secret, aucun moteur dans l'unité)`)
+        const ex = un('ExecStart')
+        const attendu = ['/usr/bin/node', 'scripts/usine/avec-coffre.mjs', p.jeton, '--', '/usr/bin/node', ...(p.loader ? ['--import', './scripts/ts-loader.mjs'] : []), p.script, '--une-passe']
+        if (ex.length !== 1) D.push(`${nom} : ${ex.length} ExecStart (un seul attendu)`)
+        else if (ex[0].split(/\s+/).join(' ') !== attendu.join(' ')) D.push(`${nom} : ExecStart « ${court(ex[0], 160)} » (attendu : ${attendu.join(' ')} : seul ${p.jeton} est demandé au coffre)`)
+      }
+      if (!existe(fTim)) D.push(`presti-${p.g}.timer absent`)
+      else {
+        const s = ini(lire(fTim))
+        const nom = `presti-${p.g}.timer`
+        const cal = vals(s, 'Timer', 'OnCalendar')
+        const per = cal.length === 1 ? periodeDe(cal[0]) : null
+        if (per === null) D.push(`${nom} : OnCalendar « ${cal.join(' ; ') || 'absent'} » non reconnu (une seule ligne, *:m/n ou *:m)`)
+        else if (per > p.periode) D.push(`${nom} : une passe toutes les ${per} min, plus que la période déclarée dans ops.agents pour ${p.g === 'qualite' ? 'qualite_sites' : p.g} (${p.periode} min) : le veilleur le dirait muet`)
+        if (vals(s, 'Timer', 'Unit').join() !== `presti-${p.g}.service`) D.push(`${nom} : Unit=${vals(s, 'Timer', 'Unit').join() || 'absent'} (presti-${p.g}.service)`)
+        if (vals(s, 'Timer', 'Persistent').join() !== 'false') D.push(`${nom} : Persistent=false attendu (aucun rattrapage en rafale après une panne)`)
+        if (vals(s, 'Install', 'WantedBy').join() !== 'timers.target') D.push(`${nom} : WantedBy=timers.target absent`)
+      }
+
+      // ── le source du point d'entrée ──
+      const fSrc = R_(p.script)
+      if (!existe(fSrc)) { D.push(`${p.script} absent : ${p.g} n'a pas de point d'entrée --une-passe`); continue }
+      const src = sansCommentaires(lire(fSrc))
+      if (!/--une-passe/.test(src)) D.push(`${p.script} : aucun --une-passe`)
+      if (!/import\.meta\.url/.test(src)) D.push(`${p.script} : pas de garde « import.meta.url » : un import ne doit rien lancer`)
+      if (/from\s*['"](?:node:)?fs(?:\/promises)?['"]|require\s*\(\s*['"](?:node:)?fs/.test(src)) D.push(`${p.script} : importe fs : un point d'entrée qui ne lit aucun fichier ne peut pas lire le coffre`)
+      if (/agents\.env|\.config\/presti|homedir\s*\(|PRESTI_COFFRE_FICHIER/.test(src)) D.push(`${p.script} : lit ou nomme le coffre (le jeton et PRESTI_URL arrivent par l'environnement, posés par avec-coffre.mjs : sa lecture directe est refusée, leçon de l'atelier du 05/10)`)
+      if (/child_process|(?<![.\w])(?:spawn|spawnSync|execSync|execFile|execFileSync|fork)\s*\(/.test(src)) D.push(`${p.script} : lance un processus`)
+      if (/\bprocess\.exit\s*\(/.test(src)) D.push(`${p.script} : process.exit( (Node 24 sous Windows plante après un fetch : process.exitCode)`)
+      for (const m of src.matchAll(/process\.env(?!\.(?:PRESTI_URL|PRESTI_JETON_SAV|PRESTI_JETON_QUALITE)\b)/g)) { D.push(`${p.script} : process.env hors PRESTI_URL et ${p.jeton} (« ${court(src.slice(m.index, m.index + 40), 40)} »)`); break }
+      if (!src.includes(`process.env.${p.jeton}`) || !src.includes('process.env.PRESTI_URL')) D.push(`${p.script} : ne lit pas ${p.jeton} et PRESTI_URL dans l'environnement`)
+      const apis = [...src.matchAll(/['"`](\/api\/[^'"`]*)['"`]/g)].map((m) => m[1])
+      for (const a of apis) {
+        const [base, requete] = a.split('?')
+        if (!p.routes.includes(base)) D.push(`${p.script} : appelle ${a}, hors de ses routes (${p.routes.join(', ')})`)
+        if (requete !== undefined && requete !== 'battement=1') D.push(`${p.script} : paramètre « ${requete} » hors de ?battement=1`)
+      }
+      if (apis.filter((a) => a === '/api/agents/evenements').length !== 1) D.push(`${p.script} : l'événement de passe doit être posé en UN seul endroit (/api/agents/evenements)`)
+      const ty = /TYPE_EVENEMENT\s*=\s*'([^']*)'/.exec(src)
+      if (!ty || ty[1] !== p.evenement) D.push(`${p.script} : TYPE_EVENEMENT « ${ty ? ty[1] : 'absent'} » (${p.evenement} attendu : lettres et _ seulement)`)
+      if (ENVOI_11.test(src)) D.push(`${p.script} : une primitive ou une route d'envoi est nommée (« ${ENVOI_11.exec(src)[0]} ») : cette passe ne sort jamais vers un client ni un prospect`)
+      if (/['"`](?:PUT|DELETE|PATCH)['"`]/.test(src)) D.push(`${p.script} : méthode d'écriture PUT, DELETE ou PATCH`)
+    }
+    if (D.length) return
+
+    // ── les passes jouées contre un faux bus ──
+    const fauxBus = async (scenario) => {
+      const requetes = []
+      const s = http.createServer((req, res) => {
+        const morceaux = []
+        req.on('data', (d) => morceaux.push(d))
+        req.on('end', () => {
+          const [route, requete = ''] = String(req.url).split('?')
+          const q = { methode: req.method, route, requete, auth: req.headers.authorization, corps: Buffer.concat(morceaux).toString('utf8') }
+          requetes.push(q)
+          const r = scenario(q) || [404, {}]
+          res.writeHead(r[0], { 'content-type': 'application/json' }); res.end(JSON.stringify(r[1]))
+        })
+      })
+      await new Promise((r) => s.listen(0, '127.0.0.1', r))
+      return { url: `http://127.0.0.1:${s.address().port}`, requetes, fermer: () => new Promise((r) => { s.closeAllConnections?.(); s.close(() => r()) }) }
+    }
+    const UUID_11 = '3f2b8c1e-5d4a-4e7b-9c60-1a2b3c4d5e6f'
+    const MARQUE = `MESSAGE-${lettres(10)}`
+    const evenementOk = (q) => (q.methode === 'POST' && q.route === '/api/agents/evenements' ? [200, { id: 1 }] : null)
+    const travailRien = (p) => (q) => {
+      if (q.methode === 'GET' && q.route === p.routes[0]) return p.g === 'sav' ? [200, { pause: false, moteur: {}, messages: [], reglees_en_code: 0, erreurs: 0 }] : [200, q.requete === 'battement=1' ? { ok: true } : { sites: [] }]
+      return evenementOk(q)
+    }
+    const jouer = async (p, scenario, { env = {}, sansJeton = false, args = ['--une-passe'] } = {}) => {
+      const bus = await fauxBus(scenario)
+      const jeton = `jeton-essai-${aleatoire('alnum', 24, true)}`
+      const node = [...(p.loader ? ['--import', pathToFileURL(R_('scripts/ts-loader.mjs')).href] : []), R_(p.script), ...args]
+      const r = await lancer(process.execPath, node, { cwd: RACINE, env: envDe({ HOME: versSlash(path.join(T, 'home')), PRESTI_URL: bus.url, ...(sansJeton ? {} : { [p.jeton]: jeton }), ...env }), delaiMs: 90_000 })
+      await bus.fermer()
+      const requetes = bus.requetes
+      const defauts = []
+      if (r.expire) defauts.push('la passe ne finit pas (coupée à 90 s)')
+      for (const q of requetes) {
+        if (q.auth !== `Bearer ${jeton}`) defauts.push(`${q.methode} ${q.route} sans le jeton de l'agent en Bearer`)
+        if (!p.routes.includes(q.route)) defauts.push(`${q.methode} ${q.route} : route hors de la liste permise`)
+      }
+      if (`${r.sortie}${r.erreur}`.includes(jeton)) defauts.push('le jeton est écrit dans la sortie')
+      return { ...r, requetes, jeton, defauts }
+    }
+    const evenements = (r) => r.requetes.filter((q) => q.methode === 'POST' && q.route === '/api/agents/evenements')
+    const posts = (r) => r.requetes.filter((q) => q.methode === 'POST')
+    const dis = (p, nom, r, defauts) => { for (const d of [...r.defauts, ...defauts]) D.push(`${p.g} · ${nom} : ${d}`) }
+    for (const p of POSTES) {
+      // rien à traiter : un résultat normal
+      let r = await jouer(p, travailRien(p))
+      let d = []
+      if (r.code !== 0) d.push(`code ${r.code} (0 attendu : « rien à traiter » est un résultat normal) — ${court(r.erreur || r.sortie, 120)}`)
+      const ev = evenements(r)
+      if (ev.length !== 1) d.push(`${ev.length} événement(s) de passe (un seul attendu)`)
+      else {
+        let c = null
+        try { c = JSON.parse(ev[0].corps) } catch { d.push('événement : corps non JSON') }
+        if (c) {
+          if (c.type !== p.evenement) d.push(`événement : type « ${c.type} » (${p.evenement} attendu)`)
+          if (!/^[a-z_]{2,40}$/.test(String(c.type))) d.push('événement : type hors de [a-z_]{2,40}')
+          if (typeof c.resume !== 'string' || !c.resume.length || c.resume.length > 200) d.push('événement : résumé absent ou de plus de 200 signes')
+          else if (/@|\d{9,}/.test(c.resume)) d.push('événement : le résumé porte un @ ou un long numéro')
+          for (const k of Object.keys(c)) if (!['type', 'objet', 'resume', 'tache'].includes(k)) d.push(`événement : clé « ${k} » hors de type, objet, resume, tache`)
+        }
+      }
+      if (posts(r).length !== ev.length) d.push('un POST hors de l\'événement de passe sur une passe sans rien à traiter (aucun rapport, aucun brouillon, aucune écriture)')
+      if (!r.requetes.some((q) => q.methode === 'GET' && q.route === p.routes[0])) d.push('la route de travail n\'est pas lue')
+      if (p.g === 'qualite') {
+        const bat = r.requetes.filter((q) => q.requete === 'battement=1')
+        if (bat.length !== 1) d.push(`${bat.length} battement(s) posé(s) (un seul attendu, par ${p.routes[0]}?battement=1)`)
+      }
+      if (r.requetes.length && r.requetes.at(-1).route !== '/api/agents/evenements') d.push('l\'événement de passe n\'est pas la dernière requête')
+      dis(p, 'rien à traiter', r, d)
+
+      // sous la pause générale, puis agent en pause : code 0, aucune écriture
+      for (const [nom, rep] of [['pause générale', () => [200, { pause: true, messages: [], sites: [] }]], ['agent en pause (423)', () => [423, { error: 'pause' }]]]) {
+        r = await jouer(p, (q) => (q.methode === 'GET' ? rep() : evenementOk(q)))
+        d = []
+        if (r.code !== 0) d.push(`code ${r.code} (0 attendu : une pause n'est pas une panne) — ${court(r.erreur || r.sortie, 120)}`)
+        if (posts(r).length) d.push(`${posts(r).length} écriture(s) sous la pause (aucune attendue)`)
+        dis(p, nom, r, d)
+      }
+
+      // route en panne : le code le dit, aucun événement n'est inventé
+      r = await jouer(p, (q) => (q.methode === 'GET' ? [500, { error: 'panne' }] : evenementOk(q)))
+      d = []
+      if (r.code !== 1) d.push(`code ${r.code} (1 attendu : la route de travail est en panne)`)
+      if (posts(r).length) d.push('une écriture alors que la route de travail est en panne')
+      dis(p, 'route en panne', r, d)
+
+      // jeton absent, URL non sûre, argument inconnu : aucune requête
+      r = await jouer(p, travailRien(p), { sansJeton: true })
+      d = []
+      if (r.code !== 3) d.push(`code ${r.code} (3 attendu sans ${p.jeton})`)
+      if (r.requetes.length) d.push('une requête sans jeton')
+      dis(p, 'sans jeton', r, d)
+      r = await jouer(p, travailRien(p), { env: { PRESTI_URL: 'http://exemple.test' } })
+      d = []
+      if (r.code !== 3) d.push(`code ${r.code} (3 attendu : PRESTI_URL en http hors de la boucle locale)`)
+      if (r.requetes.length) d.push('une requête vers une URL non sûre')
+      dis(p, 'URL non sûre', r, d)
+      r = await jouer(p, travailRien(p), { args: [] })
+      d = []
+      if (r.code !== 2) d.push(`code ${r.code} (2 attendu sans --une-passe)`)
+      if (r.requetes.length) d.push('une requête sans --une-passe')
+      dis(p, 'sans argument', r, d)
+
+      // l'import est sans effet
+      const importeur = path.join(T, `importe-${p.g}.mjs`)
+      fs.writeFileSync(importeur, `await import(process.argv[2])\nconsole.log('importé')\n`)
+      const busI = await fauxBus(travailRien(p))
+      const ri = await lancer(process.execPath, [...(p.loader ? ['--import', pathToFileURL(R_('scripts/ts-loader.mjs')).href] : []), importeur, pathToFileURL(R_(p.script)).href], { cwd: RACINE, env: envDe({ HOME: versSlash(path.join(T, 'home')), PRESTI_URL: busI.url, [p.jeton]: 'jeton-essai-import' }), delaiMs: 60_000 })
+      await busI.fermer()
+      d = []
+      if (ri.code !== 0 || !ri.sortie.includes('importé')) d.push(`l'import rend le code ${ri.code} : ${court(ri.erreur || ri.sortie, 120)}`)
+      if (busI.requetes.length) d.push(`l'import fait ${busI.requetes.length} requête(s) (aucune attendue)`)
+      for (const x of d) D.push(`${p.g} · import : ${x}`)
+    }
+
+    // le SAV avec un message à lire : seul l'identifiant repart, le texte du client ne sort pas
+    const sav = POSTES[0]
+    const r = await jouer(sav, (q) => {
+      if (q.methode === 'GET' && q.route === sav.routes[0]) return [200, { pause: false, moteur: {}, messages: [{ id: UUID_11, consigne: 'consigne', texte: MARQUE, types: ['facture'] }, { id: 'pas-un-identifiant', texte: MARQUE }], reglees_en_code: 1, erreurs: 0 }]
+      if (q.methode === 'POST' && q.route === sav.routes[1]) return [200, { ok: true, decision: 'escalade_benj' }]
+      return evenementOk(q)
+    })
+    const d = []
+    if (r.code !== 0) d.push(`code ${r.code} (0 attendu) — ${court(r.erreur || r.sortie, 120)}`)
+    const bro = r.requetes.filter((q) => q.methode === 'POST' && q.route === sav.routes[1])
+    if (bro.length !== 1) d.push(`${bro.length} dépôt(s) de brouillon (un seul : l'autre message n'a pas d'identifiant valide)`)
+    else {
+      let c = null
+      try { c = JSON.parse(bro[0].corps) } catch { d.push('le dépôt n\'est pas du JSON') }
+      if (c && (JSON.stringify(Object.keys(c)) !== '["message_id"]' || c.message_id !== UUID_11)) d.push(`le dépôt porte ${Object.keys(c).join(', ')} (message_id seul : ni texte, ni lecture de modèle)`)
+    }
+    if (r.requetes.some((q) => q.corps.includes(MARQUE)) || `${r.sortie}${r.erreur}`.includes(MARQUE)) d.push('le texte du client sort de la passe (requête ou sortie)')
+    if (evenements(r).length !== 1) d.push(`${evenements(r).length} événement(s) de passe (un seul attendu)`)
+    dis(sav, 'un message à lire', r, d)
+
+    return `unités presti-sav et presti-qualite (Type=oneshot, User=agents, un seul nom du coffre, aucun EnvironmentFile=, NoNewPrivileges, MemoryMax, minuteur dans la période déclarée : 15 et 1440 min) ; sources sans lecture du coffre, sans fs, sans route ni primitive d'envoi, un événement de passe ; passes jouées contre un faux bus : rien à traiter (code 0, un événement, aucune autre écriture), pause générale, agent en pause, route en panne (code 1), sans jeton ou en URL non sûre (code 3), sans --une-passe (code 2), import sans effet, un message à lire (seul son identifiant repart)`
   })
 }
 
@@ -2670,7 +2926,7 @@ async function preuveEchecs() {
       for (const [h, d2] of Object.entries(U.groupes)) if (h !== g) for (const u of d2.unites) if (def.motifs.some((m) => globRe(m).test(u))) D.push(`${g} : ses motifs prennent ${u} (${h})`)
       for (const u of def.a_activer) if (!def.unites.includes(u)) D.push(`${g} : ${u} à activer mais pas dans ses unités`)
     }
-    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles')
+    if (JSON.stringify(Object.keys(U.groupes)) !== JSON.stringify(['surveillance', 'atelier', 'livreur', 'chef', 'porteur', 'modeles', 'preneur', 'sav', 'qualite', 'vigile', 'videos', 'tiktok'])) D.push('les groupes ne sont pas surveillance, atelier, livreur, chef, porteur, modeles, preneur, sav, qualite, vigile, videos, tiktok')
     return `noms des unités de ${Object.keys(U.groupes).length} groupes, chacun couvert par ses seuls motifs`
   })
   await AT('AT-9', async (D) => {

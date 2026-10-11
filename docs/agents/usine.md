@@ -69,6 +69,13 @@ que des **clés plafonnées**, dans une liste fermée :
 | `TELEGRAM_BOT_TOKEN` | le jeton du bot Telegram |
 | `TELEGRAM_CHAT_ID` | la conversation Telegram (`aucun` tant qu'elle n'est pas appairée) |
 | `TELEGRAM_CODE_APPAIRAGE` | le code d'appairage à usage unique (`epuise` une fois servi) |
+| `PRESTI_JETON_SAV` | le SAV (agent `sav`, fiches 026-245, 026-251) : jeton posé le 05/10/2026 |
+| `PRESTI_JETON_QUALITE` | le Contrôleur qualité des sites (agent `qualite_sites`) |
+| `PRESTI_JETON_VIGILE` | le Vigile (agent `vigile`) |
+| `PRESTI_JETON_STUDIO` | le Studio pubs (agent `studio` : packs locaux et échantillons) |
+| `PRESTI_JETON_PRENEUR` | le preneur des tâches libres du bus (agent `preneur`, migration 0127 ; `docs/agents/preneur-libre.md`) |
+| `FIRECRAWL_API_KEY` | la lecture web du Savoir (`scripts/savoir/chercher.mjs --web`) : clé **plafonnée par crédits**, forme `fc-` + 32 signes ; voir « Firecrawl » ci-dessous |
+| `APIFY_TOKEN` | le relevé de marché quotidien (`scripts/usine/releve-marche.mjs`, unité `presti-preneur-marche`) : jeton d'un compte Apify **gratuit** (plafond de 5 $ par mois fixé par Apify, 0,15 $ par jour dans la liste de surveillance), forme `apify_api_` + 36 signes ; pas une clé de modèle |
 
 Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et surtout :
 
@@ -80,6 +87,15 @@ Chaque jeton d'agent est limité à ses types et à ses tables (026-040). Et sur
 Les formes connues de ces clés (un JWT, `sb_secret_`, `sk_live_`, `sk_test_`, `rk_live_`, `whsec_`, et toute valeur
 qui commence par `sk-ant-`) sont refusées **quel que soit le nom** sous lequel on essaie de les poser. `PRESTI_URL`
 n'est pas un secret : il se pose dans l'unité (`Environment=`), jamais au coffre.
+
+**Firecrawl (D-0510-I1, 05/10/2026).** `FIRECRAWL_API_KEY` n'est pas une clé de modèle : c'est une clé de lecture de pages
+publiques, plafonnée par les crédits du compte (1 000 par période, 282 restants le 05/10). Elle n'entre qu'avec sa forme
+propre (`fc-` puis 32 signes) : sous ce nom, une clé d'un autre fournisseur est refusée. Aucune unité systemd ne la reçoit
+encore : tant que l'interrupteur `recherche_web` de `docs/savoir/reglages.json` est éteint et que la garde de dépense
+(`lib/agents/depense.mjs`, plafond de 0 € par agent, `firecrawl` hors de la liste `GRATUITS`) refuse l'appel, un service
+qui la recevrait ne pourrait pas s'en servir. Le jour où le chef allume la recherche web, seul le service qui lance
+`chercher.mjs --web` la reçoit, par `avec-coffre.mjs FIRECRAWL_API_KEY …`, avec `reserve_credits` de `reglages.json` au plus
+égal au solde restant. Détail : `docs/agents/firecrawl.md`.
 
 **Poser une clé** — dans son propre terminal, jamais dans une conversation :
 
@@ -154,13 +170,34 @@ et active les minuteurs du groupe ; `arreter <groupe>` les désactive.
 | `presti-atelier.service` | `presti-atelier.timer`, toutes les 15 min | agents | `PRESTI_JETON_ATELIER` | atelier | 026-097, 026-057 |
 | `presti-livreur.service` | `presti-livreur.timer`, toutes les 10 min | agents | `PRESTI_JETON_LIVREUR_USINE` | livreur | 026-057 |
 | `presti-chef-leger.service`, `presti-chef-plein.service`, `presti-chef-reunion.service` | `presti-chef-leger.timer`, `presti-chef-plein.timer`, `presti-chef-reunion.timer` | agents | `PRESTI_JETON_CHEF` | chef | 026-129, 026-148 |
+| `presti-chef-savoir-recevoir.service` (déclenché par `.path`), `presti-chef-savoir-index.service` (déclenché par `.path`), `presti-chef-bilan.service` | `presti-chef-bilan.timer` (7 h 35, Paris) | agents | aucune variable pour la réception et l'index ; `PRESTI_JETON_CHEF` pour le bilan | chef | 026-241 (**installés le 05/10/2026** par gardien : les deux `.path` et le minuteur de 7 h 35 sont actifs ; le bilan reste éteint par `bilan_quotidien` ; le premier envoi attend le plafond du contrat, voir le dépôt ci-dessous) |
 | `presti-porteur.service`, `presti-export-nuit.service` | `presti-porteur.timer` (15 min), `presti-export-nuit.timer` (3 h 30, Paris) | agents | `PRESTI_JETON_FACTEUR_USINE` | porteur | 026-095, 026-143 |
 | `presti-standard.service`, `presti-facteur.service`, `presti-facteur-soir.service` | `presti-standard.timer` (5 min), `presti-facteur.timer` (15 min), `presti-facteur-soir.timer` (20 h 05) | agents | `PRESTI_JETON_STANDARDISTE`, `PRESTI_JETON_FACTEUR` | modeles | 026-094, 026-148 |
+| `presti-vigile.service` | `presti-vigile.timer` (6 h 50, Paris) | agents | `PRESTI_JETON_VIGILE` | vigile | 026-249, 026-251 (migration 0115 appliquée le 05/10/2026 ; jeton posé et minuteur installé par gardien le 05/10/2026 ; première passe en lecture seule le même jour, section `conseiller` mesurée) |
+| `presti-preneur.service` | `presti-preneur.timer` (toutes les 10 min, une tâche par passage) | agents | `PRESTI_JETON_PRENEUR` | preneur | `docs/agents/preneur-libre.md` (groupe `preneur`) |
+| `presti-videos.service` | `presti-videos.timer` (toutes les 10 min ; une analyse de vidéo à la fois, verrou) | agents | aucune variable : l'analyste n'a aucune clé (tout est local, Ollama sur 127.0.0.1) | videos | `docs/agents/analyste-videos.md` (groupe `videos`) |
+| `presti-tiktok.service` | `presti-tiktok.timer` (H:22 et H:38 ; jamais pendant la fenêtre du Chef H:05-H:20 ; une vidéo à la fois, verrou) | agents | aucune clé : voix locale Kokoro (venv `/home/agents/venv-voix`), musique seulement depuis le manifeste licencié | tiktok | `promo-src/tiktok-chaine/README.md` (groupe `tiktok`) |
+| `presti-sav.service` | `presti-sav.timer` (15 min, période déclarée 15) | agents | `PRESTI_JETON_SAV` | sav | 026-245, 026-251 (jeton posé le 05/10/2026 ; **une passe** : `node scripts/agents/sav-passe.mjs --une-passe` ; voir « Les deux passes du 05/10 » ci-dessous) |
+| `presti-qualite.service` | `presti-qualite.timer` (toutes les heures, période déclarée 1440) | agents | `PRESTI_JETON_QUALITE` | qualite | 026-247, 026-251 (jeton posé le 05/10/2026 ; **une passe** : `controleur-qualite.mjs --une-passe`, Chromium seulement s'il y a un site à auditer) |
 | `presti-telegram.service` | aucun : service permanent (long polling) | agents | `TELEGRAM_BOT_TOKEN`, `PRESTI_JETON_TELEGRAM`, `TELEGRAM_CHAT_ID`, `TELEGRAM_CODE_APPAIRAGE` | aucun : sa propre mise en service | 026-195 |
 
 Le groupe `chef` copie aussi `presti-chef-modele.service` et active `presti-chef-modele.path` (026-148) : le modèle du
 chef tourne sous son propre compte, `chef-modele`, qui ne lit pas le coffre (026-129). Le détail de chaque service
 (son script, ses routes, ses limites) est dans sa fiche.
+
+## Les deux passes du 05/10 (SAV et Contrôleur qualité)
+
+`presti-sav` et `presti-qualite` n'ont aucune boucle : un minuteur lance **une passe** (`--une-passe`) qui lit l'état réel par les routes du bus avec le jeton de son agent, fait son travail, pose son battement et **un seul événement** (`sav_passe` ou `qualite_passe`, des nombres seulement), puis sort. « Rien à traiter » (aucun client payant, aucun site en ligne) est un résultat normal : code 0, une lecture, un événement.
+
+- **Le jeton et `PRESTI_URL` arrivent par l'environnement**, posés par `avec-coffre.mjs` (le jeton) et l'unité (`Environment=PRESTI_URL=https://prestiapp.fr`). Aucune des deux passes ne lit le coffre : il porte d'autres jetons que le sien et sa lecture directe est refusée (leçon de l'atelier, 05/10). Sans jeton ou sans URL : code 3, aucune requête.
+- **Le SAV ne sort jamais vers un client.** Il lit `GET /api/usine/sav/travail` (la route bat pour lui, règle en code les cas sans client rattaché, de remboursement, de litige ou sensibles) puis, pour chaque message qu'un modèle devrait lire, demande à `POST /api/usine/sav/brouillon` de décider : brouillon d'un gabarit **approuvé** ou carte pour Benj. Aucun gabarit n'est approuvé (`APPROUVES_SAV` est vide) et `MOTEUR_DE` n'a pas d'entrée `sav` : tout message d'un client payant finit donc en carte « aucun modèle approuvé » pour Benj, rien d'autre. Aucune route d'envoi n'est appelée.
+- **Le Contrôleur qualité ne touche à aucun site** (lecture seule, aucun formulaire soumis) : `GET /api/usine/qualite/travail`, audit des sites à contrôler, `POST …/rapport` pour chaque audit, battement par `?battement=1`. Chromium ne démarre qu'à la première page à ouvrir. L'agent est déclaré à 1440 min ; le minuteur passe toutes les heures pour auditer un site neuf dans l'heure, le battement tombe donc toujours dans la période (le veilleur dit « muet » au-delà de deux périodes).
+- Sous la pause générale ou la pause de l'agent (le bus répond 423), la passe sort 0 sans événement.
+- Juge : `usine-socle-qa --groupe=socle`, critère **SO-11** (unités, sources des deux passes, passes jouées contre un faux bus).
+
+## Le dépôt du savoir (026-241)
+
+`/srv/presti-savoir/depot` (`agents:agents`, 2770, posé par `gardien` le 05/10/2026 ; `usine` y dépose parce qu'il est dans le groupe `agents`, aucune ACL, aucune règle sudoers de plus) reçoit le savoir envoyé du poste (`node scripts/savoir/synchroniser.mjs`, tâche Windows `Presti savoir` toutes les 2 h : script écrit dans `.orchestre/preuves/026-241/tache-windows-presti-savoir.ps1`, **pas encore créée**) ; la réception et l'index le prennent par `.path`. `/home/agents/travail/savoir` existe (agents, 700). Reprise : réenvoyer depuis le poste. Interrupteurs : `docs/savoir/reglages.json` (tous éteints : le premier export dépasse le plafond de 80 Mo du contrat `sources.json` à cause de `docs/contexte-cloud/**`, voir `.orchestre/preuves/026-241/mise-en-service-05-10.md`).
 
 ## La surveillance
 
@@ -190,6 +227,7 @@ variables d'environnement utilisateur Windows posées par `poser-jeton-agent …
   (avec `PRESTI_JETON_LIVREUR_USINE`), ou GitHub Actions (026-106) ;
 - **le porteur, le Standard, le Facteur et le pont Telegram** : la commande de reprise est dans leur fiche (026-095,
   026-094, 026-195) ;
+- **le SAV et le Contrôleur qualité** : `node scripts/agents/sav-passe.mjs --une-passe` (avec `PRESTI_JETON_SAV`) et `node --import ./scripts/ts-loader.mjs scripts/agents/controleur-qualite.mjs --une-passe` (avec `PRESTI_JETON_QUALITE`), `PRESTI_URL=https://prestiapp.fr` dans les deux cas ; ni l'un ni l'autre ne lit un coffre ;
 - **la surveillance** n'a pas de reprise : c'est le veilleur qui voit l'usine tomber.
 
 ## Pièges

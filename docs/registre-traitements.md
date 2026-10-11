@@ -152,3 +152,20 @@ personne nous donne elle-même en nous écrivant.
 **Droits des personnes.** Les artisans exercent leurs droits depuis Paramètres → Données (export complet, suppression du compte avec 30 jours de grâce). Les fondateurs sont les seules personnes concernées par le journal de direction ; l'adresse IP y est une preuve d'action, conservée 24 mois puis effacée. Toute demande peut être adressée par le formulaire de contact du site.
 
 **À revoir au prochain jalon.** J3 (messagerie de l'entreprise : emails reçus, conservation, assignation), J4 (comptabilité : factures fournisseurs, relevés du partenaire), — le mode support est traité au § 10.
+
+## 12. Le savoir des agents *(couche Savoir, 05 octobre 2026 ; en vigueur à la mise en service, 026-241)*
+
+Les agents de l'usine reçoivent le savoir de Presti (ses documents de travail) pour répondre juste. **Tant que le premier envoi n'est pas
+fait (interrupteur `envoi` de `docs/savoir/reglages.json` éteint), aucune donnée ne part.**
+
+| | |
+|---|---|
+| **Finalité** | Donner aux agents de Presti le savoir de l'entreprise (documents internes, leçons tirées des essais), pour qu'ils travaillent juste |
+| **Base légale** | Intérêt légitime (RGPD art. 6.1.f), comme la prospection du § 11 |
+| **Personnes** | Les associés (contrats, notes), les prospects des listes de travail (compartiment à part) |
+| **Données** | Documents internes caviardés (secrets écartés par chemin) ; les listes de prospects et les contrats des associés dans un compartiment à part, que seuls les scripts des agents lisent |
+| **Durée** | Chaque synchronisation remplace la précédente ; une copie précédente est gardée |
+| **Destinataires** | L'usine Oracle de Presti ; Codex sur l'abonnement ChatGPT de Presti (entraînement coupé depuis le 25/09/2026) ; modèles locaux. **Aucune IA gratuite** ne reçoit ces données |
+| **Où** | `/home/agents/travail/savoir/` (usine), `scripts/savoir/`, `lib/savoir/` |
+| **Droits** | Écrire au responsable ; la demande d'effacement d'un prospect s'applique au compartiment à la synchronisation suivante |
+

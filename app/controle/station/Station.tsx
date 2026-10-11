@@ -298,7 +298,7 @@ export default function Station({ role, decision, prenom }: Props) {
   const journal = <Journal bulles={bulles} role={role} equipage={direct?.equipage ?? null} agentsActifs={agentsActifs} />
 
   return (
-    <div className={`mc ${enBureau ? 'mc-bureau' : 'mc-tel'}`} data-station data-mise-en-page={miseEnPage} data-role={role} data-decision={decision} data-cmd-ouvert={cmdOuvert ? 'oui' : 'non'}>
+    <div className={`mc ${enBureau ? 'mc-bureau' : 'mc-tel'}${enBureau && repliG ? ' mc-repli-g' : ''}${enBureau && repliD ? ' mc-repli-d' : ''}`} data-station data-mise-en-page={miseEnPage} data-role={role} data-decision={decision} data-cmd-ouvert={cmdOuvert ? 'oui' : 'non'}>
       {large === null ? null : enBureau ? (
         <>
           <Barre role={role} barre={barre} erreurVue={erreurDirect} tresorerie={tresorerie} erreurTresorerie={erreurTresorerie} titre={titre} maintenant={maintenant} ariane={ariane} poser={poser} onMissions={onMissions} />

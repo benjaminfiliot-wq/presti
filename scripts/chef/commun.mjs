@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chercherSecrets } from '../instantane-quotidien.mjs'
+import { motifProspects } from '../usine/garde-prospects.mjs'
 
 export const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', 'chef')
@@ -13,6 +14,125 @@ const CLE_RE = /^chef:\d{4}-\d{2}-\d{2}:[a-z0-9-]{3,80}$/
 const CLE_IDEE_RE = /^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$/
 const CLE_OPTION_RE = /^[a-z_]{2,30}$/
 const HEURE = 3_600_000
+export const OBJET_MIN = 20
+// Les mots qui disent « il faut lire le web » (le preneur de tâches libres n'a ni web ni navigateur : voir validerPlan).
+// 06/10 : la maintenance des agents (preneur, disjoncteurs, tâches de l'orchestre 026-xxx) revient à la supervision et à Claude Code, jamais au preneur de tâches libres : le Chef y a dépensé tout son quota de la nuit (60 tâches).
+export const MAINTENANCE_AGENTS = /\b(preneur|disjonct\w*|orchestre|026-\d{3})\b/i
+export const BESOIN_WEB = /\b(ebay|aliexpress|alibaba|tiktok|amazon|youtube|instagram|facebook|google|annonces?|sites? (?:web|concurrents?)|en temps r[ée]el|sur le web|en ligne|prix (?:vendus|actuels|du march[ée]))\b/i
+
+const TYPES_LECTURE = ['veille', 'recherche', 'verification', 'tri']
+const TYPES_LIBRES = ['veille', 'recherche', 'verification', 'tri', 'relecture', 'redaction_interne']
+/**
+ * 06/10 : pourquoi un FILTRE à la création et non un refus du plan. Les règles ci-dessous, d'abord posées dans validerPlan, faisaient refuser le plan entier :
+ * les modèles gratuits ne savaient pas se corriger, le relais enchaînait les moteurs jusqu'au délai et le cycle sortait vide (« plan absent ou vide », 09:52).
+ * Une tâche libre qui ne peut pas aboutir (le preneur n'a ni web ni fichiers) est donc ÉCARTÉE au moment de la créer ; le reste du plan passe. Rend la raison, ou null.
+ *   · motif de la garde des données de prospects (prospect, SIREN, téléphone, adresse e-mail) : le preneur la refuserait (donnees_personnelles) ;
+ *   · lecture qui exige du web (veille, recherche, vérification, tri) : il répondrait « impossible » et son disjoncteur s'ouvrirait ;
+ *   · maintenance des agents (preneur, disjoncteur, orchestre, 026-xxx) : revient à la supervision (le Chef y a dépensé 60 tâches en une nuit).
+ * Les tâches de code et de contenu (Claude Code, Codex) ne sont jamais écartées ici.
+ */
+export function tacheEcartee(t) {
+  if (!t || typeof t !== 'object' || !TYPES_LIBRES.includes(t.type)) return null
+  const charge = t.charge && typeof t.charge === 'object' ? t.charge : {}
+  const objetTitre = [t.objet, charge.titre].filter((x) => typeof x === 'string').join('\n')
+  const maint = MAINTENANCE_AGENTS.exec(objetTitre)
+  if (maint) return `la maintenance des agents n'est pas une tâche libre (« ${maint[0]} »)`
+  if (TYPES_LECTURE.includes(t.type)) {
+    const web = BESOIN_WEB.exec(objetTitre)
+    if (web) return `exige du web, que le preneur n'a pas (« ${web[0]} »)`
+  }
+  const motif = motifProspects([t.objet, charge.titre, charge.pourquoi].filter((x) => typeof x === 'string').join('\n'))
+  if (motif) return `le texte contient « ${motif} » : la garde des données de prospects la refuserait`
+  return null
+}
+/** Sépare les tâches d'un plan : { gardees, ecartees: [{ cle, raison }] }. Pure : le plan n'est pas modifié. */
+export function filtrerTaches(plan) {
+  const gardees = [], ecartees = []
+  for (const t of Array.isArray(plan?.taches) ? plan.taches : []) {
+    const raison = tacheEcartee(t)
+    if (raison) ecartees.push({ cle: String(t?.cle_idempotence ?? ''), raison }); else gardees.push(t)
+  }
+  return { gardees, ecartees }
+}
+
+// ── Le cap de Benj (07/10/2026, docs/agents/cap-benj.md) ─────────────────────────────────────────────────────────────
+// Le cycle de 01:06 (modèle maison) a rendu un plan VALIDE mais hors sujet : « machine à baguettes » (produit inventé), « dix vidéos
+// d'affaire animée pour Presti », « relecture du brouillon de landing par défaut ». Benj n'a que deux activités : l'e-commerce Brico
+// Travaux (annonces eBay, vidéos TikTok des 2 produits, un 3e produit de bricolage) et Presti (prospection, refonte du site). Une tâche qui
+// ne s'y rattache par aucune ANCRE du cap est écartée avec son motif ; un plan dont TOUTES les tâches sont écartées est refusé
+// (validerPertinence), et le relais passe au moteur suivant. Les ancres sont celles de la ligne « Ancres » du cap (chef-qa CH-A16 vérifie
+// que le cap les nomme toutes). « vidéo », « produit », « site » seuls ne suffisent pas : c'est ce qui laissait passer les tâches de 01:06.
+const sansAccents = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’‘'`´]/g, ' ')
+export const ANCRES_CAP = ['ebay', 'annonce', 'tiktok', 'brico travaux', 'bricolage', 'nettoyeur', 'aspirateur', 'fournisseur', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'prospection', 'démarchage', 'refonte', 'vitrine', 'maquette', 'presti']
+const CAP_ANCRE = /\b(?:ebay|annonces?|tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|fournisseurs?|cj(?:dropshipping)?|aliexpress|dropshipping|e-?commerce|e-?com|prospect\w*|demarch\w*|refonte|vitrines?|maquettes?|prestiapp)\b/
+const CAP_PRESTI = /\bpresti\b/
+const CAP_PRESTI_SITE = /\b(?:sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo|compta[a-z]*|excel|tableaux? de bord|reddit|sirene|pubs?|google ads|meta ads|voix|videos?)\b/
+const CAP_VIDEO = /\b(?:videos?|clips?)\b/
+const CAP_VIDEO_PERMISE = /\b(?:tik ?toks?|brico ?travaux|bricolage|nettoyeurs?|aspirateurs?|vitrines?|landing|refonte)\b/
+const CAP_INVENTE = /\b(?:produits?|clients?|marques?|entreprises?|machines?|exemples?)\s+(?:\w+\s+)?(?:inventee?s?|fictifs?|fictives?|imaginaires?)\b/
+const CAP_MAINTENANCE = /\b(?:preneur|disjonct\w*|orchestre|026-\d{3}|battements?|taches? (?:en file|en attente|echouees?|bloquees?))\b/
+/** Le motif qui met une tâche hors du cap de Benj, ou null. Lit l'objet et le titre (le « pourquoi » sert à justifier, pas à rattacher). Pure. */
+export function horsCap(t) {
+  if (!t || typeof t !== 'object') return 'hors du cap de Benj : tâche illisible'
+  if (typeof t.objet === 'string' && OBJET_REFERENCE.test(t.objet.trim())) return null // le bilan quotidien du Savoir (bilan.mjs) : une référence structurée, pas un sujet du Chef
+  const charge = t.charge && typeof t.charge === 'object' ? t.charge : {}
+  const texte = sansAccents([t.objet, charge.titre].filter((x) => typeof x === 'string').join('\n'))
+  const maint = CAP_MAINTENANCE.exec(texte)
+  if (maint) return `hors du cap de Benj : maintenance interne (« ${maint[0]} »)`
+  const invente = CAP_INVENTE.exec(texte)
+  if (invente) return `hors du cap de Benj : sujet inventé (« ${invente[0]} »)`
+  const ancre = CAP_ANCRE.exec(texte) || (CAP_PRESTI.test(texte) ? CAP_PRESTI_SITE.exec(texte) : null)
+  if (!ancre) return "hors du cap de Benj : ni l'e-commerce Brico Travaux (eBay, TikTok, nettoyeur, aspirateur, 3e produit de bricolage) ni Presti (prospection, site vitrine)"
+  const video = CAP_VIDEO.exec(texte)
+  if (video && !CAP_VIDEO_PERMISE.test(texte)) return `hors du cap de Benj : vidéo hors de la chaîne TikTok Brico Travaux (« ${video[0]} »)`
+  return null
+}
+/** Les tâches hors du cap : { gardees, ecartees: [{ cle, raison }] }. Pure. */
+export function filtrerCap(taches) {
+  const gardees = [], ecartees = []
+  for (const t of Array.isArray(taches) ? taches : []) {
+    const raison = horsCap(t)
+    if (raison) ecartees.push({ cle: String(t?.cle_idempotence ?? ''), raison }); else gardees.push(t)
+  }
+  return { gardees, ecartees }
+}
+/** Les écarts de pertinence d'un plan : vide sauf si TOUTES ses tâches (une au moins) sont hors du cap ; alors chaque motif. Pure. */
+export function validerPertinence(plan) {
+  const taches = Array.isArray(plan?.taches) ? plan.taches : []
+  if (!taches.length) return []
+  const motifs = taches.map((t) => horsCap(t))
+  if (!motifs.every(Boolean)) return []
+  return ['taches : toutes hors du cap de Benj (docs/agents/cap-benj.md) : chaque tâche doit servir l\'e-commerce Brico Travaux ou Presti', ...motifs.map((m, i) => `taches[${i}] : ${m}`)]
+}
+// ── consignes_lues contre le bloc <consignes_benj> de l'entrée (07/10) ─────────────────────────────────────────────────
+// Cycle léger de 09:05 UTC : le modèle maison a cité une consigne qui n'existe pas (5047, vue à l'entraînement) ; fil.mjs verifier a refusé le plan
+// APRÈS le relais, et le cycle était perdu. Le relais applique donc la même règle que fil.mjs (une ligne par consigne donnée, aucune autre, pas de
+// doublon) : les écarts sont rendus au moteur, et en dernier recours les lignes d'ids inconnus ou en double sont RETIRÉES (jamais une ligne inventée).
+/** Les ids des consignes du bloc <consignes_benj> d'une entrée, ou null si le bloc manque ou ne se lit pas. Pure. */
+export function idsConsignesDeLEntree(texte) {
+  const m = /<consignes_benj>\n?([\s\S]*?)\n?<\/consignes_benj>/.exec(String(texte ?? ''))
+  if (!m) return null
+  try { const v = JSON.parse(m[1].trim() || '[]'); return Array.isArray(v) ? v.map((c) => c?.id).filter((x) => Number.isInteger(x)) : null } catch { return null }
+}
+/** Les écarts de consignes_lues au regard des ids attendus (la règle de fil.mjs verifier). Pure. */
+export function ecartsConsignesLues(plan, ids) {
+  const attendus = new Set(ids), lignes = Array.isArray(plan?.consignes_lues) ? plan.consignes_lues : []
+  const cites = lignes.map((l) => l?.id), f = []
+  for (const id of attendus) if (!cites.includes(id)) f.push(`consignes_lues : la consigne ${id} n'a pas sa ligne`)
+  for (const id of new Set(cites)) if (!attendus.has(id)) f.push(`consignes_lues : l'id ${id} n'est pas une consigne du bloc <consignes_benj> (ids permis : ${[...attendus].join(', ') || 'aucun'})`)
+  if (new Set(cites).size !== cites.length) f.push('consignes_lues : un id en double')
+  return f
+}
+/** Retire de consignes_lues les lignes d'ids inconnus ou en double : { plan, notes } ou null s'il n'y a rien à retirer. N'ajoute jamais rien. Pure. */
+export function retirerConsignesInconnues(plan, ids) {
+  if (!plan || !Array.isArray(plan.consignes_lues)) return null
+  const attendus = new Set(ids), vus = new Set(), garde = [], retires = []
+  for (const l of plan.consignes_lues) { if (attendus.has(l?.id) && !vus.has(l.id)) { vus.add(l.id); garde.push(l) } else retires.push(l?.id) }
+  if (!retires.length) return null
+  return { plan: { ...plan, consignes_lues: garde }, notes: [`consignes_lues : ${retires.length} ligne(s) retirée(s), id inconnu ou en double (${retires.join(', ')})`] }
+}
+// Une référence structurée tient lieu d'objet pour le bilan quotidien du Savoir (026-229, objet « bilan:AAAA-MM-JJ », 16 signes) ; tout le reste doit être décrit (OBJET_MIN signes au moins).
+export const OBJET_REFERENCE = /^bilan:\d{4}-\d{2}-\d{2}$/
 
 export class Arret extends Error { constructor(code, message) { super(message); this.code = code } }
 
@@ -59,7 +179,7 @@ export function ecrireJson(f, v) { fs.mkdirSync(path.dirname(f), { recursive: tr
 export const idsDe = (v) => (Array.isArray(v) ? v : Array.isArray(v?.ids) ? v.ids : []).filter((x) => Number.isInteger(x))
 
 // Balises d'un bloc de données : toute ouverture ou fermeture venue des données est neutralisée.
-export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj)/g, '&lt;$1$2')
+export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj|cap_benj)/g, '&lt;$1$2')
 
 export function toutesLesChaines(v, out = []) {
   if (typeof v === 'string') out.push(v)
@@ -102,17 +222,21 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
     if (!chaine(c.pourquoi, 1, 140)) f.push(`consignes_lues[${i}].pourquoi : 1 à 140 signes`)
   })
   const vues = new Set()
+  const objets = new Set()
   if (!Array.isArray(plan.taches)) f.push('taches : liste attendue')
   else {
     if (plan.taches.length > plafond.taches) f.push(`taches : ${plafond.taches} au plus en cycle ${cycle || plan.cycle}`)
     plan.taches.forEach((t, i) => {
       const ou = `taches[${i}]`
-      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'charge', 'sortante'], ou, f)) return
+      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ou, f)) return
       if (!TYPES.includes(t.type)) f.push(`${ou}.type hors de la liste permise`)
       if (!TYPES.includes(t.capacite)) f.push(`${ou}.capacite hors de la liste permise`)
       if (typeof t.cle_idempotence !== 'string' || !CLE_RE.test(t.cle_idempotence)) f.push(`${ou}.cle_idempotence : chef:<date>:<mot-clé>`)
       else if (vues.has(t.cle_idempotence)) f.push(`${ou}.cle_idempotence en double`); else vues.add(t.cle_idempotence)
-      if ('objet' in t && !chaine(t.objet, 1, 200)) f.push(`${ou}.objet : 200 signes au plus`)
+      // L'objet dit CE QUE la tâche doit faire (le preneur n'a que lui et la charge) : vide ou trop court, le plan entier est refusé (05/10 : 20 tâches sans objet).
+      if (!(chaine(typeof t.objet === 'string' ? t.objet.trim() : t.objet, OBJET_MIN, 200) || (typeof t.objet === 'string' && OBJET_REFERENCE.test(t.objet.trim())))) f.push(`${ou}.objet : obligatoire, ${OBJET_MIN} à 200 signes (ce que la tâche doit faire, précisément)`)
+      else if (OBJET_REFERENCE.test(t.objet.trim())) { /* le bilan quotidien porte plusieurs propositions sous le même objet « bilan:jour » : leurs clés d'idempotence les distinguent */ }
+      else if (objets.has(t.objet.trim())) f.push(`${ou}.objet en double (une seule tâche ouverte par objet)`); else objets.add(t.objet.trim())
       if (cles(t.charge, ['titre', 'pourquoi'], ['titre', 'pourquoi'], `${ou}.charge`, f)) {
         if (!chaine(t.charge.titre, 1, 120)) f.push(`${ou}.charge.titre : 120 signes au plus`)
         if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)

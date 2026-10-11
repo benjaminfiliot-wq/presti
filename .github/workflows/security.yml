@@ -1,7 +1,15 @@
 name: Security Review
 
+# Contrôle de sécurité de chaque PR, sans aucun crédit IA (décision de Benj du 11/10/2026 :
+# « je veux pas que ça dépense de crédit »). Il remplace la revue Claude payante, qui exigeait le
+# secret CLAUDE_API_KEY — et les clés Anthropic restent volontairement hors de GitHub.
+#  • Semgrep (open source) : règles publiques JavaScript, TypeScript, React et secrets. Seuls les
+#    défauts AJOUTÉS par la PR font échouer le contrôle (--baseline-commit) : l'existant ne bloque pas.
+#  • Gitleaks : aucun secret dans les commits de la PR.
+#  • npm audit : aucune dépendance de production avec une faille connue de niveau élevé (audit du 11/10).
+# Le job garde le nom « security » pour que le contrôle attendu sur les PR ne change pas de nom.
+
 permissions:
-  pull-requests: write # Nécessaire pour commenter les PR
   contents: read
 
 on:
@@ -10,13 +18,31 @@ on:
 jobs:
   security:
     runs-on: ubuntu-latest
+    env:
+      BASE: ${{ github.event.pull_request.base.sha }}
+      TETE: ${{ github.event.pull_request.head.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 2
+          fetch-depth: 0
 
-      - uses: anthropics/claude-code-security-review@main
+      - uses: actions/setup-python@v5
         with:
-          comment-pr: true
-          claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
+          python-version: '3.12'
+
+      - name: Dépendances (failles connues, niveau élevé ou critique)
+        # Lit le package-lock.json contre la base d'avis publique de npm : gratuit, sans installer quoi que ce soit.
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Semgrep (défauts ajoutés par la PR)
+        run: |
+          pip install --quiet semgrep
+          semgrep scan --metrics=off --error \
+            --config p/javascript --config p/typescript --config p/react --config p/secrets \
+            --baseline-commit "$BASE"
+
+      - name: Gitleaks (secrets dans les commits de la PR)
+        run: |
+          VERSION=8.21.2
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" | tar -xz gitleaks
+          ./gitleaks git --redact --exit-code 1 --log-opts="$BASE..$TETE" .

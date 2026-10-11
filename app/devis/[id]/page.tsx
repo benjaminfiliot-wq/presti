@@ -124,7 +124,7 @@ export default function DevisEditor() {
   }
 
   async function chiffrerIA() {
-    if (!description.trim()) { setMsg({ type: 'err', text: 'Décris le chantier pour que l\'IA le chiffre.' }); return }
+    if (!description.trim()) { setMsg({ type: 'err', text: 'Décrivez le chantier pour que l\'IA le chiffre.' }); return }
     setGenerating(true); setMsg(null); setAiNote('')
     const { data } = await supabase.auth.getSession()
     const res = await fetch('/api/devis/generer', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ description, model: tier }) })
@@ -162,12 +162,12 @@ export default function DevisEditor() {
   }
 
   async function downloadPdf() {
-    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de télécharger le PDF.' }); return }
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de télécharger le PDF.' }); return }
     if (estNatif()) return partagerPdf() // la coque : pas d'onglet ni de dossier Téléchargements — la feuille de partage (Fichiers, Mail…)
     const win = window.open('', '_blank') // dans le geste utilisateur (anti-blocage, mobile)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (!res.ok) { win?.close(); setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
+    if (!res.ok) { win?.close(); setMsg({ type: 'err', text: 'PDF indisponible, réessayez.' }); return }
     const url = URL.createObjectURL(await res.blob())
     if (win) win.location.href = url
     else { const a = document.createElement('a'); a.href = url; a.download = `${numero || 'devis'}.pdf`; a.click() }
@@ -176,18 +176,18 @@ export default function DevisEditor() {
 
   /** Partager le PDF (v9 J3) : feuille native dans l'app (WhatsApp, Mail, AirDrop…), Web Share sur téléphone, sinon téléchargement. */
   async function partagerPdf() {
-    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de le partager.' }); return }
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de le partager.' }); return }
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (!res.ok) { setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
+    if (!res.ok) { setMsg({ type: 'err', text: 'PDF indisponible, réessayez.' }); return }
     const resultat = await partagerFichier(`${numero || 'devis'}.pdf`, await res.blob(), { titre: `Devis ${numero || ''}`.trim(), texte: 'Votre devis, en pièce jointe.' })
     if (resultat === 'natif' || resultat === 'web') void vibrer('leger')
     if (resultat === 'aucun') setMsg({ type: 'err', text: 'Partage impossible sur cet appareil : téléchargez le PDF.' })
   }
 
   async function envoyer() {
-    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de l\'envoyer.' }); return }
-    if (!clientEmail.trim()) { setMsg({ type: 'err', text: 'Renseigne l\'email du client pour l\'envoyer.' }); return }
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de l\'envoyer.' }); return }
+    if (!clientEmail.trim()) { setMsg({ type: 'err', text: 'Renseignez l\'email du client pour l\'envoyer.' }); return }
     setSaving(true); setMsg(null)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}/envoyer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
@@ -197,7 +197,7 @@ export default function DevisEditor() {
   }
 
   async function creerFacture() {
-    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de créer la facture.' }); return }
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de créer la facture.' }); return }
     setSaving(true); setMsg(null)
     const { data } = await supabase.auth.getSession()
     const res = await fetch('/api/factures', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ devis_id: savedId }) })

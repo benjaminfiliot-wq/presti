@@ -99,7 +99,9 @@ export const FLAGS = {
    *  continue d'effacer ce qui a été écrit (lib/purgesRgpd.ts, étape 8, hors drapeau). */
   audience: true,
   /** 24/09 — Pilotage (Mission Control), premier onglet du Poste. Baissé : GET /api/controle/pilotage répond 404 et l'onglet n'existe pas. Levé par la fiche 026-140, après la recette et l'accord de Benj. */
-  pilotage: false,
+  pilotage: true, // levé le 2026-10-05 sur la demande de Benj (il ne pouvait pas accéder à la station), après la livraison de la série 026 ; recette 026-140 : voir .orchestre/preuves/026-140/
+  /** 026-179 — carte Claw3D de la station, levée par 026-193 après sa recette. Baissé : la page de la station garde son cadre d'attente et la liste des salles, et le moteur (Phaser) n'est jamais chargé. */
+  stationCarte: true, // levé le 2026-10-05 sur la demande de Benj (la station était vide) ; recette 026-193 : voir .orchestre/preuves/026-193/
   /** 026-118 — le pack pubs locales : le dossier (/pubs/commander, /api/pubs/commander/brouillon) et le paiement
    *  (POST /api/pubs/commander). Baissé : les routes répondent 404. À lever sur décision de Benj, seulement après
    *  l'application de 0102, le PASS des fiches 05 (CGU 3 ter, lues par Benj), 12, 15 et 24 (effacement des fichiers
@@ -112,13 +114,15 @@ export const FLAGS = {
    *  qu'elle n'est pas appliquée, les routes répondent 503 (fail-closed, voulu). Baissé : 404 partout, l'onglet n'existe pas. */
   demandesEcosysteme: true,
   /** Ferme la route de la demande entrante ; lever prospectsEntrant quand le formulaire de la landing v2 existe, sur décision de Benj. */
-  prospectsEntrant: false,
+  prospectsEntrant: true, // levé le 2026-10-07 sur la décision de Benj (06/10) : le formulaire de la vitrine existe (app/MaquetteForm.tsx, section #maquette)
   /** 25/09 — Aimant "Commente SITE" du Crieur. Baissé : aucune publication ne promet la maquette.
    * Levé par Claude Code quand les webhooks Meta (026-090) et le Répondeur (026-096) sont déployés
    * et qu'un entrant d'essai a été servi de bout en bout. */
   aimantSite: false,
   /** Branche réservée par Benj le 25/09 : rien n’est construit ; elle attend ses trois vidéos sources. */
   ecommerce: false,
+  /** 026-143 — la page d'essai du porteur du formulaire (026-095) : /essai-formulaire et son action /essai-formulaire/envoi, un formulaire de contact ordinaire qui ne garde que l'empreinte SHA-256 du message (un événement du journal, 20 par jour au plus). Baissé : les deux répondent 404. */
+  essaiFormulaire: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

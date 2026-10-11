@@ -1,0 +1,75 @@
+### node scripts/pilotage-sql-qa.mjs --migration=postes --reel
+pilotage-sql-qa : appel refusé — --migration=lecture|echanges|station|reglages attendu
+### code=2
+### node scripts/usine-socle-qa.mjs --groupe=coffre,socle
+usine-socle-qa --groupe=coffre,socle
+PASS CF-1 — poser crée le coffre et son dossier, écrit exactement une ligne NOM=valeur, remplace la ligne de même nom à sa place, ajoute un nom nouveau à la fin, laisse les autres lignes (et un commentaire) dans leur ordre ; valeur jamais sur la sortie ni l'erreur
+PASS CF-2 — 16 noms hors liste (dont SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, ANTHROPIC_API_KEY, ANTHROPIC_AGENTS_KEY, NEXT_PUBLIC_SUPABASE_URL, presti_jeton_chef) → code 2, coffre identique à l'octet ; les 11 noms de la liste fermée acceptés
+PASS CF-3 — 52 cas de cas-valeurs.json rejoués contre presti-coffre.sh et contre coffre-regles.mjs : chaque verdict est celui attendu, refus = code 2 et coffre inchangé, valeur jamais répétée ; les formes refusées quel que soit le nom écrites dans les deux
+PASS CF-4 — lu instruction par instruction (196) : set -euo pipefail puis umask 077 en tête ; valeur par IFS= read -r valeur ; mktemp dans le dossier du coffre (tmp), mv -f atomique sous flock ; aucune redirection vers le coffre, aucun echo/printf de la valeur, ni eval ni source ; chemin par défaut $HOME/.config/presti/agents.env vérifié en vrai
+  · CF-5 : sur le poste, le mode NTFS n'a pas de sens : seule la forme de « etat » est jugée ici (la valeur se juge en --reel, RS-2)
+PASS CF-5 — noms imprime les noms seuls, triés, sans « = » ; etat imprime une ligne mode=<octal> proprietaire=<compte> noms=3 ; aucune valeur
+PASS CF-6 — retirer ôte la seule ligne visée (les autres dans leur ordre) ; nom absent → code 0, « absent », coffre intact ; toute autre sous-commande → code 2
+  · CF-7 : sous Windows, libuv ajoute d'office HOMEDRIVE, HOMEPATH, LOGONSERVER, PATH, SYSTEMDRIVE, SYSTEMROOT, TEMP, USERDOMAIN, USERNAME, USERPROFILE, WINDIR : tolérées sur le poste seulement
+PASS CF-7 — l'enfant voit exactement PATH, HOME, LANG, TZ, USER, PRESTI_HOTE, ORCHESTRE_CODEX_BIN, PLAYWRIGHT_BROWSERS_PATH, PRESTI_URL, PRESTI_JETON_CHEF, PRESTI_JETON_USINE, les deux valeurs venant du coffre (empreintes égales) ; aucune des dix variables du parent (dont SUPABASE_SERVICE_ROLE_KEY et un PRESTI_JETON_CHEF du parent)
+  · CF-8 : sur le poste (NTFS), le contrôle du mode 600 est sauté ; il se juge sur un système POSIX
+PASS CF-8 — nom absent → 3, hors liste → 2, sans « -- » → 2, un nom commenté est absent (3), une ligne mal formée n'empêche pas de lire les autres ; jamais d'enfant lancé sur un refus
+  · CF-9 : sous Windows, le relais de SIGTERM est lu dans le source ; l'arrêt de l'enfant en 2 s se mesure sur un système POSIX
+PASS CF-9 — le code de l'enfant est rendu tel quel (0, 7, 1) ; ni shell ni exec ni eval ; relais de SIGTERM ; aucune valeur sur la sortie ni l'erreur d'avec-coffre
+FAIL CF-10 — NOMS_PERMIS de coffre-regles.mjs ≠ la liste fermée (["PRESTI_JETON_CHEF","PRESTI_JETON_USINE","PRESTI_JETON_ATELIER","PRESTI_JETON_LIVREUR_USINE","PRESTI_JETON_STUDIO","PR…)
+PASS CF-11 — 28 poses valides : argv avec -o BatchMode=yes, la clé presti-usine, l'hôte de PRESTI_USINE et « sudo -n -u agents /usr/local/bin/presti-coffre poser <NOM> », jamais la valeur ; la valeur sur l'entrée standard, une fois, suivie d'un retour à la ligne
+PASS CF-12 — tout argument hors grammaire (dont --valeur= et une valeur en argument) → code 2 sans ssh ; noms, retirer <NOM> et etat relayés tels quels ; ssh en 255 → code 5, « usine injoignable »
+PASS CF-13 — poser-jeton-agent chef : le jeton de la doublure part au faux ssh (… presti-coffre poser PRESTI_JETON_CHEF, entrée standard) et à la doublure de powershell (entrée standard, PRESTI_JETON_CHEF dans l'argv) ; jamais dans un argv, une sortie ni un fichier d'essai ; doublure en échec → 1 sans ssh ; nom hors liste → 2 sans doublure
+PASS SO-1 — socle --a-sec imprime le script sans appeler ssh ; socle passe « bash -s » au faux ssh, ~/.profile chargé puis le script de socle.sh sur l'entrée standard, jamais bash -l
+PASS SO-2 — set -euo pipefail ; agents créé s'il manque (--create-home, /usr/sbin/nologin), dans aucun groupe sudo, adm ni admin ; /home/agents, .config/presti et travail en 700, propriété d'agents ; joué sur le banc : un useradd agents si le compte manque, aucun s'il existe, code 0 les deux fois
+PASS SO-3 — le sudoers passe par un temporaire contrôlé par visudo -cf avant install -m 440 dans /etc/sudoers.d/presti-agents ; exactement les deux règles presti-coffre et presti-journal ; ni SETENV, ni env_keep, ni ALL en commande
+PASS SO-4 — presti-coffre et presti-journal installés depuis /srv/presti-agents/scripts/usine/*.sh en root:root 755 ; /srv/presti-agents = worktree détaché de ~/presti sur origin/main, usine:agents (chown -R, exécuté sur le banc aux deux passages), sans écriture pour le groupe ni les autres ; travail et quotas.json liés vers /home/agents/travail ; ni ufw, ni iptables, ni bubblewrap, ni sshd
+PASS SO-5 — maj : git fetch, arbre avancé sur origin/main, HUSKY=0 npm ci --ignore-scripts seulement si package-lock.json change, Playwright dans /srv/playwright lisible par agents, droits réappliqués, refus si un service presti-* est actif (sauf --forcer), commit déployé imprimé ; joué sur le banc : services en marche → code 1 sans toucher l'arbre, au repos → 0 et arbre avancé, --forcer → 0 et arbre avancé
+FAIL SO-6 — la liste des groupes n'est pas fermée : 6 essai(s) hors des 6 groupes (surveillance, atelier, livreur, chef, porteur, modeles) sans code 2 ou avec un appel ssh — arreter « qualite » : code 0, 1 appel(s) ssh ; arreter « sav » : code 0, 1 appel(s) ssh ; arreter « vigile » : code 0, 1 appel(s) ssh ; installer « qualite » : code 0, 1 appel(s) ssh ; installer « sav » : code 0, 1 appel(s) ssh ; install…
+PASS SO-7 — etat lit le compte agents, les minuteurs presti-*, les noms du coffre (presti-coffre noms), le commit déployé face à origin/main, la mémoire et le disque ; une sortie de l'usine avec des valeurs n'est jamais réimprimée
+PASS SO-8 — presti-journal lit les n dernières lignes (50 par défaut, 500 au plus) des journaux fixés, et pour config-codex les seules lignes model, sandbox_mode et network_access ; tout autre argument → code 2 ; ni agents.env ni auth.json nommés ni imprimés ; un journal lien physique vers le coffre ou lien symbolique vers ~/.codex/auth.json → refus, rien d'imprimé
+FAIL SO-9 — « Les services », ligne « presti-vigile.service » : PRESTI_JETON_VIGILE en variables du coffre, hors de la liste fermée
+  ✗ SO-9 « Les services », ligne « presti-qualite, presti-sav » : PRESTI_JETON_QUALITE en variables du coffre, hors de la liste fermée
+  ✗ SO-9 « Les services », ligne « presti-qualite, presti-sav » : PRESTI_JETON_SAV en variables du coffre, hors de la liste fermée
+PASS SO-10 — 66 fichiers sans aucune chaîne de clé (scripts/instantane-quotidien.mjs) ; 24 appels ssh, tous en -o BatchMode=yes avec la clé ~/.ssh/presti-usine, par PRESTI_SSH_BIN ; ssh en 255 → code 5
+usine-socle-qa --groupe=coffre,socle : FAIL — CF-10, SO-6, SO-9
+### code=1
+### node --import ./scripts/ts-loader.mjs scripts/station-logique-qa.mjs --partie=modules
+station-logique-qa --partie=modules — racine C:\Users\benja\Documents\presti — racine réelle : typecheck compris
+✅ SM-1 sept modules présents et importés par ts-loader (barre, equipage, attention, fil, tapis, missions, experience) ; imports limités à lib/pilotage/ (et @/lib/agents/moteurs pour equipage.ts) ; ni Date.now(, ni new Date(), ni Math.random, ni fetch(
+✅ BA-1 97 min → « 1 h 37 », 12 min, 30 s → « maintenant », −5 min → « en retard de 5 min », null → « — » ; heureParis juste de part et d’autre du changement d’heure du 25/10
+✅ BA-2 7 cas : aujourd’hui 18 h tant qu’aucune réunion n’est close ni abandonnée ce jour-là, sinon demain 18 h ; 25/10 à 17:00Z (heure d’hiver) ; « en retard de 5 min » à 18 h 05
+✅ BA-3 ordre agents → chef → modele_chef → cycles → reunion → quota_claude → quota_codex → envois → experience ; « AGENTS 12/15 ACTIFS » par agentsActifs(equipage(jeu)) ; EXPÉRIENCE seulement en cours ; quota nul « non mesuré », 0,76 alerte ; « 12/20 · P2 » et formulaire fermé ; cloche 9 ; pause → AUTO éteint ; source absente → « — » muet
+✅ BA-4 JOUR 12, JOUR 1, « — » ; nuit vraie à 20:00 et 06:59 de Paris, fausse à 07:00 et 19:59, juste autour du 25/10
+✅ EQ-1 vingt salles et leurs genres, ecommerce réservée hors SALLES, CLES_SALLE = 20 + ecommerce ; vingt-huit titulaires (les vingt-cinq du 27/09 plus sav, qualite_sites, vigile), avatar = nom technique, aucun sprite ; 15 cartes = les agents reçus, dans l’ordre des salles ; inconnu → machines, avatar defaut
+✅ EQ-2 six états → cyan, jaune, jaune, rouge, rouge, gris ; cadences « cycle dans 1 h 38 », « toutes les 15 min », « toutes les 6 h », « sur demande »
+✅ EQ-3 pause → Repos (une seule marche, un événement pendant la pause ne le déplace pas) ; panne → sa salle ; réunion ouverte → tous en réunion sauf pause et panne ; close ou abandonnée → retour ; battements seuls → porte, jamais le Repos
+✅ EQ-4 repli = positions sur les 60 événements et sur 200 listes tirées au hasard (graine 20261023) ; rejeu, battement et agent absent sans effet ; entrée gelée non modifiée
+✅ EQ-5 3280 positions examinées (jeu, pièges « salle: ecommerce », agent inconnu, 200 listes) : aucune en ecommerce, chacune dans SALLES
+✅ EQ-6 vu dans les 7 jours (Codex ou freellmapi · gratuit), sinon le prévu de MOTEUR_DE, sinon « sans IA » ; chaque carte porte modeleAffiche de sa ligne ; aucun nom de modèle écrit dans equipage.ts
+✅ AT-1 200 jeux de sources (graine 20261024) : ordre rouge, orange, jaune, bleu puis nombre puis ancienneté, 7 cartes au plus, total = sources non nulles ; sans source, « Rien pour toi. L’équipage tourne. »
+✅ AT-2 29 motifs à leur couleur ; aucun motif retiré (boîtes, séquenceur, crédit) ; inconnu → jaune ; pause générale rouge en tête ; envoi_sans_verdicts rouge
+✅ AT-3 1353 cartes : aucun titre d’envoi, de copie ni de relais ; gestes decisions, appels ou ouvrir vers la liste fermée
+✅ AT-4 une seule carte appel, orange, qui compte les rendez-vous réservés et les réponses « appel » ; « 1 appel à rendre » ; geste { type: appels }
+✅ AT-5 chaque carte porte agent (le nom de la source, sinon null) ; son titre est titreCarte(cle, source), la seule fonction qui l’écrit
+✅ FI-1 les 10 pièges d’evenements.json masqués ([adresse], [numéro], [lien], [nom]) ; idempotent ; 200 signes au plus
+✅ FI-2 45 bulles : ni battement ni doublon, par id ; un compte rendu de cinq lignes en une bulle ; filtre par agent ; consignes « BENJ » ; aucun piège dans la sortie
+✅ FI-3 bandeau : les 10 derniers commande_payee, pack_paye, reponse_oui, masqués ; derniereBulle : par agent, le dernier texte masqué hors battement
+✅ FI-4 consigne adressée : cible facteur, cibleLibelle FACTEUR ; à tout l’équipage : cible null ; nom hors d’EQUIPAGE : le nom brut, sans erreur
+✅ TA-1 huit étapes dans l’ordre, absente à 0 « absente » ; +1 en contacte → un carré ; identiques → rien ; baisse → remise à zéro sans carré ; premier relevé → rien
+✅ TA-2 contenu, sites et packs dans l’ordre de 026-070 ; étape sans source à 0 « absente » ; mouvements par ligne comme le tapis
+✅ MI-1 « 300 € encaissés », « 10 oui », « 100 contacts froids (bilan du 02/11) », « 1er site en ligne » ; « 41/100 » ; niveau sur l’encaissé seul, seuils 0, 300, 1 000, 3 000, 10 000 ; « PAR LE CHEF » ; 3 lignes ; dernier succès dans l’ordre
+✅ MI-2 la date du bilan vient de la base (« bilan du 02/11 », sinon « bilan non daté, formulaire fermé », 0 sur 100) ; P3 débloque « Bilan passé » ; aucune date écrite, plus de « jalon »
+✅ MI-3 quatre succès, datés ou à venir (le: null) ; l’XP ne suit que l’encaissé ; paliers de l’Usine 1, 10, 50 ; radar sans palier ; envois suit le palier servi
+✅ XP-1 les six phrases exactes ; barre seulement en cours (« J6/30 · 0 € ») ; jour 31 affiché 30
+✅ SM-2 30 appels à entrées vides ou nulles sans NaN, Infinity ni undefined ; entrées gelées non modifiées ; tsc --noEmit vert sur C:\Users\benja\Documents\presti en 131 s
+station-logique-qa --partie=modules : PASS
+### code=0
+### node scripts/vigile-qa.mjs --reel
+PASS VG-R1
+PASS VG-R2
+PASS VG-R3
+PASS VG-R4
+vigile-qa --reel : PASS
+### code=0
+FINI

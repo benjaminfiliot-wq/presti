@@ -1,0 +1,26 @@
+// public/temoin-e/telephone.js — le TÉLÉPHONE du témoin du lot e (fiche 026-172) : sous 1024 px, un cadre de 358 px ouvert en vue
+// d'ensemble, touch-action: none sur le cadre, gesturestart et gesturechange bloqués dans le cadre (Safari zoomerait toute la page), +, − et ⊞
+// de 44 px, les plaques seulement à partir du zoom ×2, aucun défilement horizontal. Le pincement ne se prouve pas par un juge.
+export function monterTelephone(T) {
+  const cadre = T.cadre
+  const petit = () => window.innerWidth < 1024
+  const style = document.createElement('style')
+  T.calque.append(style)
+  function appliquer() {
+    const tel = petit()
+    cadre.dataset.telephone = tel ? 'oui' : 'non'
+    Object.assign(cadre.style, tel ? { width: '358px', maxWidth: '100%', margin: '0 auto', touchAction: 'none', overflow: 'hidden' } : { width: '', maxWidth: '', margin: '', touchAction: '', overflow: '' })
+    style.textContent = tel
+      ? `[data-camera] button{width:44px!important;height:44px!important}${T.vue.zoom < 2 ? '[data-calque] [data-plaque]{display:none}' : ''}`
+      : ''
+    T.reveiller()
+  }
+  T.crochets.taille.push(appliquer)
+  T.crochets.theme.push(appliquer)
+  const bloquer = (ev) => { if (petit() && ev.cancelable) ev.preventDefault() }
+  for (const type of ['gesturestart', 'gesturechange', 'gestureend', 'touchmove']) T.sur(cadre, type, bloquer, { passive: false })
+  T.sur(window, 'resize', appliquer)
+  const o = new MutationObserver(appliquer)
+  o.observe(cadre, { attributes: true, attributeFilter: ['data-zoom'] })
+  T.nettoyages.push(() => o.disconnect())
+}

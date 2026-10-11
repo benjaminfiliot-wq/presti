@@ -82,12 +82,15 @@
     "tache": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "capacite", "cle_idempotence", "charge", "sortante"],
+      "required": ["type", "capacite", "cle_idempotence", "objet", "charge", "sortante"],
       "properties": {
         "type": { "$ref": "#/$defs/type_permis" },
         "capacite": { "$ref": "#/$defs/type_permis" },
         "cle_idempotence": { "$ref": "#/$defs/cle_cycle" },
-        "objet": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 1, "maxLength": 200 },
+        "objet": {
+          "description": "Obligatoire : ce que la tâche doit faire, précisément (le preneur n'a que lui et la charge). Une tâche sans objet, ou de moins de 20 signes, fait refuser tout le plan (05/10 : 20 tâches à objet vide sans preneur). Unique parmi les tâches du plan : une seule tâche ouverte par objet au bus (la règle d'unicité n'est tenue que par appliquer.mjs).",
+          "allOf": [{ "$ref": "#/$defs/texte" }], "maxLength": 200, "anyOf": [{ "minLength": 20, "pattern": "\\S[\\s\\S]{18,}\\S" }, { "pattern": "^bilan:\\d{4}-\\d{2}-\\d{2}$" }]
+        },
         "charge": {
           "type": "object",
           "additionalProperties": false,

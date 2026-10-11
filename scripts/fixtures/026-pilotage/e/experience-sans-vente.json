@@ -1,0 +1,18 @@
+{
+ "_": "CE-13 : carte.experience avant la première vente (etatExperience(null) de 026-070 : pas de barre, pas de statut) ; l'écran dit « FERMÉE · R13 ».",
+ "experience": {
+  "valeur": {
+   "barre": null,
+   "titre": "Expérience",
+   "texte": "Aucune expérience avant la première vente (décision R13).",
+   "jour": 1,
+   "sur": 30,
+   "gains": 0,
+   "budget": 0,
+   "statut": null
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,10 @@
+ 09:07:44 up 9 days, 10:17, 10 users,  load average: 5.57, 8.58, 12.92
+station-claw3d-qa --partie=contexte — racine .
+✅ CL-14 perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s et redessine un nouvel état (étape « pause »), 15 personnages au miroir
+station-claw3d-qa --partie=contexte : PASS
+ 09:09:29 up 9 days, 10:18, 12 users,  load average: 7.88, 8.16, 12.28
+== sabotage : le reveil d'une scene detruite retire celui de la scene rebatie (le defaut que la verification a fait apparaitre)
+1
+station-claw3d-qa --partie=contexte — racine ../bst-clr-s0
+✅ CL-14 perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s et redessine un nouvel état (étape « pause »), 15 personnages au miroir
+station-claw3d-qa --partie=contexte : PASS

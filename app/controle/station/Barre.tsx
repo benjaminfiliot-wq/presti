@@ -80,12 +80,37 @@ export function Sante({ barre, erreurVue, court = false }: { barre: Env<BarreDon
   return <span data-sante data-etat={etat ?? 'inconnu'} className="mc-sante" title={titre} aria-label={`État de la station : ${texte}`}>{court ? '' : texte}</span>
 }
 
-/** Le bouton AUTO : en lecture ici (le geste vit dans une autre fiche) ; vert si et seulement si l'envoi autonome est actif. */
-export function Auto({ barre }: { barre: Env<BarreDonnees> | null }) {
+/** La raison d'un état qui n'est pas « en ligne », écrite dans la barre (et plus seulement au survol) : quelle lecture est dégradée. */
+export function RaisonSante({ barre }: { barre: Env<BarreDonnees> | null }) {
+  const b = lire(barre)
+  const s = b.etat === 'ok' ? lire(b.valeur.sante) : null
+  if (s?.etat !== 'ok' || s.valeur.etat === 'en ligne' || !s.valeur.raison) return null
+  return <span className="mc-sante-raison" data-sante-raison title={s.valeur.raison}>{s.valeur.raison}</span>
+}
+
+import { InterrupteurAuto } from './Gestes'
+
+/** Le bouton AUTO : rendu par InterrupteurAuto (en lecture seule pour le rôle lecture). */
+export function Auto({ barre, role = 'direction' }: { barre: Env<BarreDonnees> | null; role?: Role }) {
   const b = lire(barre)
   const auto = b.etat === 'ok' ? b.valeur.auto : null
-  return <span data-auto data-actif={auto?.actif ? 'oui' : 'non'} title={auto?.actif ? 'Envoi autonome actif' : 'Envoi autonome éteint'}>{auto?.texte ?? 'AUTO'}</span>
+  const [estLecture, setEstLecture] = useState(role === 'lecture')
+
+  useEffect(() => {
+    if (role === 'lecture') { setEstLecture(true); return }
+    const verifier = () => {
+      if (document.querySelector('.mc[data-role="lecture"], .mc-lecture, [data-lecture-seule]')) {
+        setEstLecture(true)
+      }
+    }
+    verifier()
+    const timer = setInterval(verifier, 100)
+    return () => clearInterval(timer)
+  }, [role])
+
+  return <InterrupteurAuto auto={auto} role={estLecture ? 'lecture' : role} />
 }
+
 
 export function Cloche({ barre }: { barre: Env<BarreDonnees> | null }) {
   const b = lire(barre)
@@ -137,6 +162,7 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
         <span className="mc-titre" data-titre>{titre}</span>
         {version?.etat === 'ok' ? <span className="mc-version" data-version>{version.valeur}</span> : null}
         <Sante barre={barre} erreurVue={erreurVue} />
+        <RaisonSante barre={barre} />
         <span className="mc-ariane" data-ariane>{ariane}</span>
         {role === 'lecture' ? <span className="mc-lecture">lecture seule</span> : null}
         <span className="mc-temps">
@@ -152,7 +178,7 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
           </button>
         ) : null}
         <Cloche barre={barre} />
-        <Auto barre={barre} />
+        <Auto barre={barre} role={role} />
       </div>
       <div className="mc-ligne2" data-barre-ligne="2">
         {compteurs.map((c) => <Compteur key={c.cle} c={c} />)}
@@ -160,3 +186,4 @@ export default function Barre({ role, barre, erreurVue, tresorerie, erreurTresor
     </header>
   )
 }
+

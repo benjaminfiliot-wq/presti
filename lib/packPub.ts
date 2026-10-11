@@ -24,7 +24,7 @@ export const TRANSITIONS_PACK: Record<EtatPack, EtatPack[]> = {
 export const transitionPackValide = (de: EtatPack, vers: EtatPack): boolean => TRANSITIONS_PACK[de]?.includes(vers) ?? false
 export const LIBELLE_ETAT_PACK: Record<EtatPack, string> = {
   brouillon: 'Dossier en cours',
-  payee: 'Payé — en fabrication',
+  payee: 'Payé, en fabrication',
   fabriquee: 'Prêt — en livraison',
   livree: 'Livré',
 }

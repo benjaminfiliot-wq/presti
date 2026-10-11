@@ -1,0 +1,83 @@
+[
+  {
+    "nom": "arbre sans module",
+    "id": "SC-1",
+    "ok": true,
+    "detail": "FAIL SC-1 — module/exports/appel du tour absent | search-console-qa : FAIL — SC-1"
+  },
+  {
+    "nom": "courant avant201",
+    "ok": true,
+    "id": "SC-1"
+  },
+  {
+    "nom": "faux Google (auto-contrôle)",
+    "id": "SC-2",
+    "ok": true,
+    "detail": "{\"verdict\":\"PASS\",\"appels\":12,\"rsa_2048_rs256_verifie\":true,\"assertion_invalide_refusee\":true,\"quatre_claims_fautifs_signes_refuses\":true,\"jeton_invalide_refuse\":true,\"panne_503_reelle\":true,\"journal_sans_secret\":true,\"uniquement_loopback\":true}"
+  },
+  {
+    "nom": "témoin causal",
+    "ok": true
+  },
+  {
+    "nom": "scope",
+    "id": "SC-2",
+    "ok": true,
+    "detail": "signature/claims/échange OAuth refusé par faux Google"
+  },
+  {
+    "nom": "date avant refus",
+    "id": "SC-3",
+    "ok": true,
+    "detail": "ordre/date incorrect"
+  },
+  {
+    "nom": "bucket supplémentaire",
+    "id": "SC-4",
+    "ok": true,
+    "detail": "écriture bucket supplémentaire/incorrecte"
+  },
+  {
+    "nom": "sans objet ignoré",
+    "id": "SC-5",
+    "ok": true,
+    "detail": "absence de domaine/déjà soumis non classé sans_objet"
+  },
+  {
+    "nom": "jeton journalisé",
+    "id": "SC-7",
+    "ok": true,
+    "detail": "secret en console/erreur rendue"
+  },
+  {
+    "nom": "quatre commandes",
+    "id": "SC-6",
+    "ok": true,
+    "detail": "trois commandes par tour non respectées"
+  },
+  {
+    "nom": "quatrième essai",
+    "id": "SC-6",
+    "ok": true,
+    "detail": "quatrième essai après trois échecs"
+  },
+  {
+    "nom": "pause ignorée",
+    "id": "SC-6",
+    "ok": true,
+    "detail": "appel sous pause"
+  },
+  {
+    "nom": "compteur perdu",
+    "id": "SC-6",
+    "ok": true,
+    "detail": "compteur/par commande ou autres vérifications perdus"
+  },
+  {
+    "nom": "non-régression réelle",
+    "id": "SC-8",
+    "ok": true,
+    "detail": "package identique ; typecheck réel vert"
+  }
+]

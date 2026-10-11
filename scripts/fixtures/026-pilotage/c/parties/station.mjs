@@ -54,7 +54,9 @@ export async function juger(x) {
       if (f === `${ST}/moteur/theme/charger.ts`) continue
       let s = code(f) ?? ''
       if (f === `${ST}/page.tsx`) s = s.replace(/import\s*\{\s*supabase\s*\}\s*from\s*['"]@\/lib\/supabaseClient['"]/g, '').replace(/supabase\.auth\.getSession/g, '')
-      for (const [re, quoi] of [[/\bfetch\(/, 'fetch('], [/\.from\(/, '.from('], [/\.rpc\(/, '.rpc('], [/supabase/i, 'supabase']]) if (re.test(s)) e.push(`${f} contient ${quoi}`)
+      // D-0510-10 (05/10) : `.from(` vise l'accès aux données d'un client (client.from('table')) ; `Array.from(` (026-187, Reglages.tsx : les 24 heures) n'en est pas un et
+      // faisait échouer ST-1, donc non jugés tous les critères de la partie. Tout autre `x.from(` reste refusé.
+      for (const [re, quoi] of [[/\bfetch\(/, 'fetch('], [/(?<!\bArray)\.from\(/, '.from('], [/\.rpc\(/, '.rpc('], [/supabase/i, 'supabase']]) if (re.test(s)) e.push(`${f} contient ${quoi}`)
     }
     S.juger('ST-1', e, `les ${FICHIERS_111.length} fichiers de ${ST}/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : le rôle sur /api/controle/journal?limite=1) ; ni fetch(, ni .from(, ni .rpc(, ni supabase hors supabase.auth.getSession dans page.tsx`)
     if (e.length) { S.nonJuges(x.P.ids.filter((i) => i !== 'ST-1'), 'ST-1 en échec : la station n’existe pas, aucun navigateur n’est lancé'); return }
@@ -278,7 +280,10 @@ export async function juger(x) {
     if (rs.salle !== sal || rs.marque !== 'juge' || rs.chemin !== '/controle/station') faute('ST-18', `un appui sur ${sal} donne ${rs.chemin}?salle=${rs.salle}, ?salle=${sal} sans changer de page attendu`)
     const phaser = (SERVEUR_REQUETES(srv)).filter((u) => /phaser/i.test(u))
     if (phaser.length) faute('ST-18', `/controle/station demande ${phaser.length} fichier(s) portant « phaser » (${court(phaser[0], 60)})`)
-    if (srv.mode === 'banc' && srv.banc.paquets.station?.modules.some((m) => /phaser/i.test(m))) faute('ST-18', 'le paquet de la page contient un module phaser')
+    // D-0510-5 (correction du chef, 05/10) : 026-179 charge le moteur (donc phaser) par next/dynamic, un chunk à part. Le critère juge le paquet INITIAL de
+    // la page (modules atteints par des arêtes statiques seulement, banc.mjs : initiaux) : un phaser importé statiquement, même de loin, y reste refusé ;
+    // sans le champ `initiaux` (banc plus ancien), c'est la liste entière qui est jugée, comme avant.
+    if (srv.mode === 'banc') { const q = srv.banc.paquets.station; const jugés = q?.initiaux ?? q?.modules ?? []; if (jugés.some((m) => /phaser/i.test(m))) faute('ST-18', 'le paquet initial de la page contient un module phaser') }
     const vuesDom = await page.$('[data-vue]')
     if (vuesDom) faute('ST-18', 'une vue est ouverte sans ?vue= dans l’adresse')
     // ST-12 : la capture du bureau (panneau fermé).

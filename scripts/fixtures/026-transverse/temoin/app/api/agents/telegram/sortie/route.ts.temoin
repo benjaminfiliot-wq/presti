@@ -1,0 +1,72 @@
+// GET /api/agents/telegram/sortie — ce que le pont Telegram pousse vers le téléphone de Benj (fiche 026-195).
+// TÉMOIN de 026-194 : une mise en œuvre de référence, jamais le livrable de 026-195.
+//
+// Derrière busAgents et le jeton de l'agent pont_telegram. Deux sources, jamais de donnée de prospect :
+//   - les alertes de public.alertes dont le motif est dans MOTIFS_POUSSES : la route ne lit QUE id, motif et cree_le ; le texte
+//     est le titre et la ligne de chargeFondateur(motif), rien de la ligne (sujet, corps) ;
+//   - les événements du Chef consigne_lue, cycle_termine et reunion_compte_rendu, passés par masquer.
+// ?apres_alerte=<cree_le> et ?apres_evenement=<id> : rien d'avant les curseurs ; 20 messages au plus, alertes d'abord, les plus
+// anciennes d'abord ; la réponse porte les nouveaux curseurs. Un curseur absent = amorçage : aucun message, le curseur est
+// posé sur le dernier élément existant (un premier lancement ne rejoue pas l'histoire).
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, estRefusAgent, reponseRefusAgent } from '@/lib/agents/garde'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { MOTIFS_POUSSES, chargeFondateur } from '@/lib/pilotage/notifications'
+import { masquer } from '@/lib/pilotage/fil'
+import { AGENT, EVENEMENTS_POUSSES, MAX_MESSAGES } from '@/lib/agents/telegram'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const erreur = (status: number, code: string) => NextResponse.json({ error: code, code }, { status, headers: { 'cache-control': 'no-store' } })
+
+export async function GET(req: Request) {
+  if (!actif('busAgents')) return erreur(404, 'introuvable')
+  const agent = await authAgent(req)
+  if (estRefusAgent(agent)) return reponseRefusAgent(agent)
+  if (agent.nom !== AGENT) return erreur(403, 'agent')
+
+  const q = new URL(req.url).searchParams
+  const aA = q.get('apres_alerte'), aE = q.get('apres_evenement')
+  if (aA !== null && !Number.isFinite(Date.parse(aA))) return erreur(400, 'apres_alerte')
+  if (aE !== null && !/^\d{1,15}$/.test(aE)) return erreur(400, 'apres_evenement')
+
+  const messages: { texte: string }[] = []
+  let curseurAlerte: string | null = aA
+  let curseurEvenement: number | null = aE === null ? null : Number(aE)
+
+  // ── les alertes ──────────────────────────────────────────────────────────────────────────────────────────────────
+  const motifs = [...MOTIFS_POUSSES]
+  if (aA === null) {
+    const d = await supabaseAdmin.from('alertes').select('id, motif, cree_le').in('motif', motifs).order('cree_le', { ascending: false }).limit(1)
+    if (d.error) return erreur(503, 'base')
+    curseurAlerte = d.data?.[0]?.cree_le ?? new Date().toISOString()
+  } else {
+    const d = await supabaseAdmin.from('alertes').select('id, motif, cree_le').in('motif', motifs).gt('cree_le', aA).order('cree_le', { ascending: true }).limit(MAX_MESSAGES)
+    if (d.error) return erreur(503, 'base')
+    for (const a of d.data ?? []) {
+      const c = chargeFondateur(String(a.motif))
+      if (!c) continue
+      messages.push({ texte: `${c.titre}\n${c.ligne}` })
+      curseurAlerte = a.cree_le
+    }
+  }
+
+  // ── les événements du Chef ───────────────────────────────────────────────────────────────────────────────────────
+  const places = MAX_MESSAGES - messages.length
+  if (aE === null || places > 0) {
+    const e = await supabaseAdmin.rpc('pilotage_evenements', { p_apres: aE === null ? null : Number(aE), p_limite: aE === null ? 1 : places, p_agent: 'chef', p_types: [...EVENEMENTS_POUSSES] })
+    if (e.error) return erreur(503, 'base')
+    const lignes: { id: number; type: string; resume: string | null }[] = Array.isArray(e.data) ? e.data : []
+    if (aE === null) curseurEvenement = lignes.length ? Math.max(...lignes.map((x) => Number(x.id))) : 0
+    else {
+      for (const x of lignes) {
+        const texte = masquer(x.resume)
+        if (texte) messages.push({ texte })
+        curseurEvenement = Number(x.id)
+      }
+    }
+  }
+  return NextResponse.json({ messages, apres_alerte: curseurAlerte, apres_evenement: curseurEvenement }, { headers: { 'cache-control': 'no-store' } })
+}

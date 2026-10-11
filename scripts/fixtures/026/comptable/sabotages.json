@@ -1,105 +1,23 @@
 [
-  {
-    "id": "ecriture-stripe", "critere": "CPT-1",
-    "quoi": "le module appelle stripe.refunds.create (écriture Stripe)",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "  const evenements = await stripe.evenements.lister()", "par": "  const evenements = await stripe.evenements.lister()\n  await stripe.refunds.create({ charge: 'ch_01' })" }]
-  },
-  {
-    "id": "declarer-par-reseau", "critere": "CPT-4",
-    "quoi": "une fonction « declarerTva » dépose par un appel réseau",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "const GABARIT_LIBELLE", "par": "export async function declarerTva(periode) { return await fetch('https://impots.example.invalid/depot', { method: 'POST', body: periode }) }\nconst GABARIT_LIBELLE" }]
-  },
-  {
-    "id": "payer-impur", "critere": "CPT-4",
-    "quoi": "une fonction « payerEcheance » modifie son entrée (effet de bord)",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "const GABARIT_LIBELLE", "par": "export function payerEcheance(periode, resultat) { resultat.paye = true; return 0 }\nconst GABARIT_LIBELLE" }]
-  },
-  {
-    "id": "tva-non-nulle", "critere": "CPT-4",
-    "quoi": "preparerDeclaration rend une TVA calculée au lieu de 0",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "    tva: 0,", "par": "    tva: Math.round(recettesDe(resultat, periode) * 0.2)," }]
-  },
-  {
-    "id": "double-comptage", "critere": "CPT-2",
-    "quoi": "un paiement dupliqué (même id Stripe) est compté deux fois",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "if (vus.has(ev.id_stripe)) { doublons++; continue } // @@DEDOUBLONNAGE", "par": "// dédoublonnage retiré" }]
-  },
-  {
-    "id": "ecart-absorbe", "critere": "CPT-2",
-    "quoi": "l'écart d'un centime est absorbé : le paiement est compté comme rapproché",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "vente.montant !== ev.montant", "par": "false" }]
-  },
-  {
-    "id": "commande-corrigee-seule", "critere": "CPT-2",
-    "quoi": "l'écart est « corrigé » en réécrivant la commande",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "if (vente.montant !== ev.montant) {", "par": "if (vente.montant !== ev.montant && (vente.montant = ev.montant, false)) {" }]
-  },
-  {
-    "id": "orphelin-en-recette", "critere": "CPT-2",
-    "quoi": "un paiement orphelin est aussi compté en recette rapprochée",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "if (!vente) { orphelins.push({ id_stripe: ev.id_stripe, montant: ev.montant, date: ev.date }); continue }", "par": "if (!vente) { orphelins.push({ id_stripe: ev.id_stripe, montant: ev.montant, date: ev.date }); rapproches.push({ id_stripe: ev.id_stripe, ref: null, montant: ev.montant, date: ev.date }); continue }" }]
-  },
-  {
-    "id": "seuil-sans-alerte", "critere": "CPT-3",
-    "quoi": "le seuil est dépassé sans aucune alerte (état toujours « ok »)",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "const etat = depasse_le ? 'seuil_depasse' : cumul >= seuil.montant_centimes * 0.9 ? 'approche_seuil' : 'ok'", "par": "const etat = 'ok'" }]
-  },
-  {
-    "id": "alerte-trop-tardive", "critere": "CPT-3",
-    "quoi": "l'alerte d'approche ne se déclenche plus qu'à 99 % au lieu de 90 %",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "seuil.montant_centimes * 0.9", "par": "seuil.montant_centimes * 0.99" }]
-  },
-  {
-    "id": "seuil-sans-date", "critere": "CPT-3",
-    "quoi": "un seuil sans source datée est accepté",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": " || !seuil.date_source", "par": "" }]
-  },
-  {
-    "id": "libelle-gratuit", "critere": "CPT-6",
-    "quoi": "la demande de libellé désigne le moteur gratuit freellmapi",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "agent: 'comptable', tache: 'libelle'", "par": "agent: 'comptable', moteur: 'freellmapi', tache: 'libelle'" }]
-  },
-  {
-    "id": "libelle-bloquant", "critere": "CPT-6",
-    "quoi": "plus de délai de garde : un moteur muet bloque le libellé",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "new Promise((res) => setTimeout(() => res(null), DELAI_LIBELLE_MS).unref())", "par": "new Promise(() => {})" }]
-  },
-  {
-    "id": "table-moteur-cloud", "critere": "CPT-6",
-    "quoi": "MOTEUR_DE.comptable passe de codex à freellmapi",
-    "remplacements": [{ "fichier": "lib/agents/moteurs.mjs", "de": "moteur: 'codex'", "par": "moteur: 'freellmapi'" }]
-  },
-  {
-    "id": "deux-chemins-deux-totaux", "critere": "CPT-7",
-    "quoi": "le total de la tuile ajoute les orphelins, celui de la déclaration non",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "  return recettesDe(resultat, periode)\n}", "par": "  return recettesDe(resultat, periode) + somme(resultat.orphelins.filter((o) => o.date.startsWith(String(periode).slice(0, 4))))\n}" }]
-  },
-  {
-    "id": "mention-changee-seule", "critere": "CPT-5",
-    "quoi": "la mention des CGU est changée seule : les deux autres emplacements gardent l'ancienne",
-    "remplacements": [{ "fichier": "app/cgu/page.tsx", "de": "TVA non applicable, art. 293 B du CGI", "par": "TVA au taux de 20 %" }]
-  },
-  {
-    "id": "mention-facture-seule", "critere": "CPT-5",
-    "quoi": "la mention du gabarit de facture est changée seule",
-    "remplacements": [{ "fichier": "lib/facturation.ts", "de": "TVA non applicable, art. 293 B du CGI.", "par": "TVA au taux de 20 %." }]
-  },
-  {
-    "id": "ecriture-gabarit", "critere": "CPT-5",
-    "quoi": "le module réécrit le gabarit de facture (mention de TVA modifiée par un agent)",
-    "remplacements": [
-      { "fichier": "lib/direction/comptable.mjs", "de": "// @@SABOTAGE-IMPORTS", "par": "import { writeFileSync } from 'node:fs'\nfunction ecrireMention() { writeFileSync(new URL('../facturation.ts', import.meta.url), \"export const MENTION = 'TVA au taux de 20 %'\\n\") }" },
-      { "fichier": "lib/direction/comptable.mjs", "de": "  const evenements = await stripe.evenements.lister()", "par": "  ecrireMention()\n  const evenements = await stripe.evenements.lister()" }
-    ]
-  },
-  {
-    "id": "journal-non-idempotent", "critere": "CPT-8",
-    "quoi": "un second passage sur le même jeu duplique les lignes du journal",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "if (!deja.has(l.cle)) journal.ecrire(l) // @@IDEMPOTENCE", "par": "journal.ecrire(l)" }]
-  },
-  {
-    "id": "journal-numero-carte", "critere": "CPT-8",
-    "quoi": "un numéro de carte se retrouve dans la ligne de journal",
-    "remplacements": [{ "fichier": "lib/direction/comptable.mjs", "de": "periode: trimestre(r.date), montant: r.montant, id_stripe: r.id_stripe }", "par": "periode: trimestre(r.date), montant: r.montant, id_stripe: r.id_stripe, moyen: '4242424242424242' }" }]
-  }
+ {"nom":"stripe-ecriture","critere":"CPT-1","avant":"const vus = new Set(), recettes = [], orphelins = [], ecarts = []","apres":"d.stripe.charges.create({amount:1}); const vus = new Set(), recettes = [], orphelins = [], ecarts = []"},
+ {"nom":"double-compte","critere":"CPT-2","avant":"if (vus.has(p.id)) continue","apres":"if (false) continue"},
+ {"nom":"ecart-absorbe","critere":"CPT-2","avant":"if (vente.prix_cents !== p.amount) { ecarts.push(p); continue }","apres":"if (false) { ecarts.push(p); continue }"},
+ {"nom":"orphelin-en-recette","critere":"CPT-2","avant":"if (!vente) { orphelins.push(p); continue }","apres":"if (!vente) { orphelins.push(p); recettes.push({ id: p.id, montant: p.amount, date: p.created }); continue }"},
+ {"nom":"remboursement-ignore","critere":"CPT-2","avant":"const rembourse = d.evenements.filter(e => e.type === 'remboursement' && e.charge === p.id).reduce((s, e) => s + e.amount, 0)","apres":"const rembourse = 0"},
+ {"nom":"seuil-silencieux","critere":"CPT-3","avant":"alerte: cumul > d.seuil.valeur_cents ? 'seuil_depasse' : cumul >= d.seuil.valeur_cents * .9 ? 'approche_seuil' : null","apres":"alerte: null"},
+ {"nom":"alerte-tardive","critere":"CPT-3","avant":"cumul >= d.seuil.valeur_cents * .9 ?","apres":"cumul >= d.seuil.valeur_cents * .99 ?"},
+ {"nom":"seuil-sans-date","critere":"CPT-3","avant":"if (!d.seuil.source || !d.seuil.date_source) throw Error('source datée requise')","apres":""},
+ {"nom":"declaration-reseau","critere":"CPT-4","avant":"tva: 0","apres":"tva: fetch('https://depot.test.invalid')"},
+ {"nom":"preparation-impure","critere":"CPT-4","avant":"return { periode, recettes: totalRecettes(periode, d), tva: 0","apres":"d.journal.ajouter({cle:'fautif',type:'declaration',montant:1}); return { periode, recettes: totalRecettes(periode, d), tva: 0"},
+ {"nom":"tva-non-nulle","critere":"CPT-4","avant":"tva: 0,","apres":"tva: 20,"},
+ {"nom":"declarer-par-reseau","critere":"CPT-4","avant":"export function recettesTuile(periode, d) {","apres":"export async function declarerTva(periode) { return await fetch('https://depot.test.invalid/declaration', { method: 'POST', body: periode }) }\nexport function recettesTuile(periode, d) {"},
+ {"nom":"payer-impur","critere":"CPT-4","avant":"export function recettesTuile(periode, d) {","apres":"export function payerEcheance(periode, d) { d.journal.ajouter({ cle: 'paye', type: 'paiement', montant: 1 }); return 0 }\nexport function recettesTuile(periode, d) {"},
+ {"nom":"mention-tva","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs.writeFileSync('lib/facturation.ts','TVA 20%') } catch {}"},
+ {"nom":"mention-seule","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs.appendFileSync('app/cgu/page.tsx','mention changée seule') } catch {}"},
+ {"nom":"mention-obfusquee","critere":"CPT-5","avant":"// Auto-contrôle indépendant ; ce témoin n'est jamais installé dans lib/.","apres":"import fs from 'node:fs'; try { fs['open' + 'Sync']('app/cgu/page.tsx', 'w') } catch {}"},
+ {"nom":"modele-cloud","critere":"CPT-6","avant":"if (cfg?.personnelles === true && (cfg.moteur === 'codex' || cfg.moteur === 'ollama_local') && !cfg.modele.includes(':cloud'))","apres":"if (cfg?.personnelles === true)"},
+ {"nom":"libelle-gratuit","critere":"CPT-6","avant":"(cfg.moteur === 'codex' || cfg.moteur === 'ollama_local')","apres":"(cfg.moteur === 'codex' || cfg.moteur === 'ollama_local' || cfg.moteur === 'freellmapi')"},
+ {"nom":"totaux-differents","critere":"CPT-7","avant":"return totalRecettes(periode, d) }","apres":"return totalRecettes(periode, d) + 1 }"},
+ {"nom":"journal-absent","critere":"CPT-8","avant":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant })","apres":"void recette"},
+ {"nom":"journal-fuite","critere":"CPT-8","avant":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant })","apres":"d.journal.ajouter({ cle: `${periode}:${p.id}`, type: 'rapprochement', montant: recette.montant, brut: JSON.stringify(d.evenements[0]) })"}
 ]

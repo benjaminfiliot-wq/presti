@@ -421,7 +421,7 @@ const { creerFauxFetch, lireConnexionsPublora } = await import(${JSON.stringify(
 process.env.PUBLORA_API_KEY = 'cle-essai-hors-ligne'
 let mod, erreur = null
 try { mod = await import(pathToFileURL(path.join(R, 'lib/crieur/publora.ts')).href) } catch (e) { erreur = String((e && e.stack) || e) }
-const out = { erreur, appels: [], connexions: null, refusScheduledTime: null, refusProgrammeePour: null }
+const out = { erreur, appels: [], connexions: null, refusScheduledTime: null, refusProgrammeePour: null, programmation: null }
 if (mod) {
   const conn = lireConnexionsPublora()
   const { fetch, requetes } = creerFauxFetch({ 'https://api.publora.com/api/v1/create-post': { corps: { success: true, postGroupId: 'pg-essai-0001' } }, 'https://api.publora.com/api/v1/platform-connections': { corps: conn } })
@@ -438,6 +438,33 @@ if (mod) {
   try {
     if (typeof mod.creerPublication === 'function') { await mod.creerPublication({ contenu: 'x', plateformes: ['linkedin-essai'], programmeePour: '2030-01-01T00:00:00Z' }, fetch); out.refusProgrammeePour = 'accepte' }
   } catch (e) { out.refusProgrammeePour = 'refuse:' + String((e && e.message) || e) }
+  // CR-7BIS (04/10/2026, décision « tout est automatique », D-0410-1) : programmer n'est plus interdit, c'est un geste séparé du dépôt
+  // et SOUS COÛT NUL STRICT. programmerPublication ne doit RIEN envoyer tant que le coût n'est pas exactement le nombre 0, ni sans clé
+  // idempotente du Crieur, ni vers un créneau passé, et doit refuser une réponse qui ne confirme pas le statut et l'heure demandés.
+  try {
+    if (typeof mod.programmerPublication !== 'function') out.programmation = { absente: true }
+    else {
+      const futur = '2030-01-01T12:00:00.000Z', maintenant = new Date('2029-12-31T12:00:00.000Z')
+      const bonne = { defaut: { corps: { success: true, postGroup: { status: 'scheduled', scheduledTime: futur } } } }
+      const p = { absente: false, coutAccepte: [], appelsAvantRefus: 0, cout0: null, cleInvalide: 'accepte', creneauPasse: 'accepte', nonConfirme: 'accepte' }
+      for (const cout of [undefined, null, '0', -1, 1, 0.01, NaN]) {
+        const faux = creerFauxFetch(bonne)
+        try { await mod.programmerPublication('pub-essai', futur, 'crieur-essai', cout, faux.fetch, maintenant); p.coutAccepte.push(String(cout)) } catch {}
+        p.appelsAvantRefus += faux.requetes.length
+      }
+      const f0 = creerFauxFetch(bonne)
+      try { await mod.programmerPublication('pub-essai', futur, 'crieur-essai', 0, f0.fetch, maintenant); p.cout0 = { ok: true, requetes: f0.requetes } } catch (e) { p.cout0 = { ok: false, erreur: String((e && e.message) || e) } }
+      const fc = creerFauxFetch(bonne)
+      try { await mod.programmerPublication('pub-essai', futur, 'cle-sans-prefixe', 0, fc.fetch, maintenant); p.cleInvalide = 'accepte' } catch { p.cleInvalide = 'refuse' }
+      if (fc.requetes.length) p.cleInvalide = 'appel'
+      const fp = creerFauxFetch(bonne)
+      try { await mod.programmerPublication('pub-essai', '2029-12-30T12:00:00.000Z', 'crieur-essai', 0, fp.fetch, maintenant); p.creneauPasse = 'accepte' } catch { p.creneauPasse = 'refuse' }
+      if (fp.requetes.length) p.creneauPasse = 'appel'
+      const fn = creerFauxFetch({ defaut: { corps: { success: true, postGroup: { status: 'draft', scheduledTime: futur } } } })
+      try { await mod.programmerPublication('pub-essai', futur, 'crieur-essai', 0, fn.fetch, maintenant); p.nonConfirme = 'accepte' } catch { p.nonConfirme = 'refuse' }
+      out.programmation = p
+    }
+  } catch (e) { out.programmation = { erreur: String((e && e.message) || e) } }
   try { out.connexions = typeof mod.connexions === 'function' ? await mod.connexions(fetch) : '(absente)' } catch (e) { out.connexions = 'exception:' + String((e && e.message) || e) }
 }
 console.log('SONDE_PUBLORA_JSON ' + JSON.stringify(out))
@@ -447,7 +474,11 @@ function lancerSondePublora() {
   const dossier = dossierTravail('crieur-qa')
   const fichier = path.join(dossier, 'sonde-publora.mjs')
   fs.writeFileSync(fichier, construireSondePublora())
-  const r = lancer(process.execPath, ['--experimental-strip-types', '--no-warnings', '--import', pathToFileURL(TS_LOADER).href, fichier], { cwd: racine, timeout: 60_000, env: {} })
+  // 04/10/2026 (CR-7 non hermétique, audit C §5.8) : lib/crieur/publora.ts lève sans PUBLORA_API_KEY et commun.mjs hérite de
+  // l'environnement de la machine ({ ...process.env, ...env }) : le PASS dépendait de qui rendait le verdict. Le juge pose lui-même une
+  // clé FACTICE (la sonde n'appelle que le faux fetch, jamais le réseau) et neutralise le coût déclaré : même verdict partout.
+  const env = { PUBLORA_API_KEY: 'cle-factice-crieur-qa-sans-valeur', PUBLORA_COUT_PAR_PUBLICATION_EUR: '' }
+  const r = lancer(process.execPath, ['--experimental-strip-types', '--no-warnings', '--import', pathToFileURL(TS_LOADER).href, fichier], { cwd: racine, timeout: 60_000, env })
   const ligne = r.stdout.split(/\r?\n/).find((l) => l.startsWith('SONDE_PUBLORA_JSON '))
   if (!ligne) return { erreur: `la sonde n'a rendu aucun résultat (code ${r.code}${r.signal ? ` signal ${r.signal}` : ''}) : ${court(r.sortie, 300)}` }
   try { return { r: JSON.parse(ligne.slice('SONDE_PUBLORA_JSON '.length)) } } catch { return { erreur: 'résultat de la sonde illisible (JSON invalide)' } }
@@ -489,8 +520,61 @@ function jugerCR7(s) {
   const routeTxt = lireSi(ch('app/api/cron/crieur/route.ts'))
   if (publoraTxt !== null && /CRIEUR_PUBLIE_SEUL/.test(publoraTxt)) s.echoue('CR-7BIS', 'lib/crieur/publora.ts lit CRIEUR_PUBLIE_SEUL (supprimé le 27/09)')
   if (routeTxt !== null && /CRIEUR_PUBLIE_SEUL/.test(routeTxt)) s.echoue('CR-7BIS', 'la route lit CRIEUR_PUBLIE_SEUL (supprimé le 27/09)')
-  if (routeTxt !== null && /statut\s*:\s*['"]programmee['"]/.test(routeTxt)) s.echoue('CR-7BIS', "la route écrit le statut 'programmee' (interdit depuis le 27/09, seul 'brouillon_publora')")
-  if (!s.enEchec('CR-7BIS')) s.passe('CR-7BIS', 'ni publora.ts ni la route ne lisent CRIEUR_PUBLIE_SEUL ; scheduledTime et programmeePour toujours refusés ; jamais le statut programmee')
+  // Correction du 04/10/2026 (décision D-0410-1 de Benj, « tout doit être auto », confirmant celle du 30/09 ; audit C §5.3/§5.4) : la route
+  // écrit désormais 'programmee' — c'est légitime, mais SEULEMENT sous les garde-fous que l'ancienne interdiction totale garantissait
+  // par défaut. Ce critère ne s'assouplit donc pas, il change d'objet : il attrape une programmation sans pause relue, sans coût nul
+  // exact, sans suspension à la pause générale, ou un statut 'programmee' inséré d'emblée à la réservation.
+  const prog = r.programmation
+  if (prog && prog.erreur) s.echoue('CR-7BIS', `la sonde de programmerPublication a levé : ${court(prog.erreur, 160)}`)
+  else if (prog && prog.absente) {
+    if (routeTxt !== null && /statut\s*:\s*['"]programmee['"]/.test(routeTxt)) s.echoue('CR-7BIS', "la route écrit 'programmee' mais lib/crieur/publora.ts n'exporte pas programmerPublication")
+  } else if (prog) {
+    if (prog.coutAccepte.length) s.echoue('CR-7BIS', `programmerPublication accepte un coût qui n'est pas exactement le nombre 0 : ${prog.coutAccepte.join(', ')}`)
+    if (prog.appelsAvantRefus) s.echoue('CR-7BIS', `programmerPublication appelle Publora (${prog.appelsAvantRefus} appel(s)) avant de refuser un coût inconnu ou positif`)
+    if (!prog.cout0 || prog.cout0.ok !== true) s.echoue('CR-7BIS', `programmerPublication(coût 0) refusée à tort : ${court(prog.cout0 && prog.cout0.erreur, 140)}`)
+    else {
+      const [a, ...autres] = prog.cout0.requetes
+      if (autres.length || !a || a.methode !== 'PUT' || a.url !== 'https://api.publora.com/api/v1/update-post/pub-essai' || a.corps?.status !== 'scheduled' || typeof a.corps?.scheduledTime !== 'string' || !a.entetes?.['x-publora-key']) {
+        s.echoue('CR-7BIS', `programmerPublication : appel attendu = un seul PUT /update-post/<id>, x-publora-key, corps { status: 'scheduled', scheduledTime } (reçu : ${court(JSON.stringify(prog.cout0.requetes), 200)})`)
+      }
+    }
+    if (prog.cleInvalide !== 'refuse') s.echoue('CR-7BIS', `programmerPublication sans clé idempotente « crieur-… » : ${prog.cleInvalide === 'appel' ? 'appelle Publora' : 'acceptée'}`)
+    if (prog.creneauPasse !== 'refuse') s.echoue('CR-7BIS', `programmerPublication vers un créneau passé : ${prog.creneauPasse === 'appel' ? 'appelle Publora' : 'acceptée'}`)
+    if (prog.nonConfirme !== 'refuse') s.echoue('CR-7BIS', "programmerPublication accepte une réponse qui ne confirme pas le statut 'scheduled'")
+  } else s.echoue('CR-7BIS', 'programmerPublication non testée (sonde en échec)')
+  if (routeTxt !== null) jugerProgrammationRoute(s, routeTxt)
+  if (!s.enEchec('CR-7BIS')) s.passe('CR-7BIS', "ni publora.ts ni la route ne lisent CRIEUR_PUBLIE_SEUL ; scheduledTime/programmeePour refusés au dépôt ; programmation sous coût nul strict, pause relue entre le dépôt et l'inscription, suspension à chaque pause, jamais 'programmee' à la réservation")
+}
+
+// CR-7BIS, côté route (04/10/2026) : le statut 'programmee' n'est légitime que sous les garde-fous de la programmation automatique.
+// Texte seulement : le comportement réel de la route est jugé par scripts/crieur-route-qa.mjs et scripts/crieur-suspension-qa.mjs.
+function jugerProgrammationRoute(s, routeTxt) {
+  const get = extraireFonction(routeTxt, 'GET')
+  if (!get) return // jugerRouteTexte le signale déjà (CR-5…)
+  const iIns = get.indexOf('.insert(')
+  if (iIns >= 0) {
+    const fin = get.indexOf('.select(', iIns)
+    if (/statut\s*:\s*['"]programmee['"]/.test(get.slice(iIns, fin > iIns ? fin : iIns + 800))) s.echoue('CR-7BIS', "la réservation insère d'emblée le statut 'programmee' (elle doit rester 'erreur', puis brouillon_publora, puis programmee après confirmation)")
+  }
+  const posEcr = get.search(/statut\s*:\s*['"]programmee['"]/)
+  if (posEcr < 0) return // aucune programmation écrite : brouillons seuls, rien d'autre à garder
+  const posCout = get.search(/PUBLORA_COUT_PAR_PUBLICATION_EUR\s*!==\s*['"]0['"]/)
+  const posCree = get.search(/creerPublication\s*\(/)
+  const posProg = get.search(/programmerPublication\s*\(/)
+  const posIntention = get.search(/programmation_en_cours/)
+  if (posProg < 0 || posProg > posEcr) s.echoue('CR-7BIS', "la route écrit 'programmee' sans avoir appelé programmerPublication( avant")
+  if (posCout < 0) s.echoue('CR-7BIS', "la route programme sans exiger PUBLORA_COUT_PAR_PUBLICATION_EUR !== '0' (coût nul non attesté)")
+  else if (posCree >= 0 && posCout > posCree) s.echoue('CR-7BIS', 'le coût nul est exigé APRÈS creerPublication( : un brouillon partirait déjà sans coût attesté')
+  if (posCree < 0 || (posProg >= 0 && posCree > posProg)) s.echoue('CR-7BIS', "programmerPublication( n'est pas précédée du dépôt creerPublication(")
+  if (!/programmerPublication\s*\(\s*[^()]*?,\s*[^()]*?,\s*[^()]*?,\s*0\s*\)/.test(get)) s.echoue('CR-7BIS', 'programmerPublication( ne reçoit pas le coût littéral 0 en 4e argument')
+  if (posIntention < 0 || (posProg >= 0 && posIntention > posProg)) s.echoue('CR-7BIS', "l'intention 'programmation_en_cours' n'est pas inscrite AVANT l'appel de programmation (une pause ne retrouverait pas une programmation incertaine)")
+  if (posProg >= 0 && posCree >= 0 && posCree < posProg && !/sortiePermise\s*\(/.test(get.slice(posCree, posProg))) s.echoue('CR-7BIS', 'la pause générale (sortiePermise) n\'est pas relue entre le dépôt Publora et la demande de programmation')
+  if (posProg >= 0 && posProg < posEcr && !/sortiePermise\s*\(/.test(get.slice(posProg, posEcr))) s.echoue('CR-7BIS', "la pause générale (sortiePermise) n'est pas relue entre la demande de programmation et l'écriture de 'programmee'")
+  if (!/import\s*\{[^}]*\bsignalerProgrammees\b[^}]*\}\s*from\s*['"]@\/lib\/crieur\/pauseProgrammees['"]/.test(routeTxt)) s.echoue('CR-7BIS', "signalerProgrammees n'est pas importée de @/lib/crieur/pauseProgrammees (la pause doit suspendre les publications programmées)")
+  for (const m of get.matchAll(/sortiePermise\s*\(/g)) {
+    if (!/signalerProgrammees\s*\(/.test(get.slice(m.index, m.index + 260))) { s.echoue('CR-7BIS', "une lecture de la pause (sortiePermise) n'est pas suivie de signalerProgrammees( : la pause générale ne suspendrait pas ce qui est programmé"); break }
+  }
+  if (!/suspendrePublication\s*\(/.test(get)) s.echoue('CR-7BIS', "suspendrePublication( absente : un registre qui échoue après la programmation laisserait une publication programmée sans suivi")
 }
 
 function jugerRouteTexte(s) {
@@ -507,23 +591,26 @@ function jugerRouteTexte(s) {
   if (!/CRON_SECRET/.test(get)) s.echoue('CR-5', 'CRON_SECRET introuvable dans GET')
   if (!/401/.test(get)) s.echoue('CR-5', 'aucune réponse 401 dans GET')
   const posAuth = get.search(/CRON_SECRET/)
-  // La pause se lit par `sortiePermise` (@/lib/agents/sortie, décision d'automatisme du 30/09 : pause générale ET doute sur sa lecture) ou, comme avant, par `pauseGenerale`.
-  const posPause = get.search(/(?:sortiePermise|pauseGenerale)\s*\(/)
+  const posPause = get.search(/sortiePermise\s*\(/)
   if (posAuth < 0) s.echoue('CR-5', 'CRON_SECRET introuvable')
   if (!s.enEchec('CR-5')) s.passe('CR-5', 'CRON_SECRET vérifié, 401 en cas de jeton absent ou faux')
 
-  // CR-17 : pauseGenerale juste après le contrôle du jeton, avant toute lecture de crieur_posts / appel à publora
-  const importePause = /import\s*\{[^}]*\bpauseGenerale\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/pause['"]/.test(texte) || /import\s*\{[^}]*\bsortiePermise\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/sortie['"]/.test(texte)
-  if (!importePause) s.echoue('CR-17', "ni pauseGenerale (@/lib/agents/pause) ni sortiePermise (@/lib/agents/sortie) ne sont importées")
-  if (posPause < 0) s.echoue('CR-17', 'pauseGenerale( ou sortiePermise( introuvable dans GET')
+  // CR-17 : la pause générale, lue par sortiePermise() de lib/agents/sortie.ts (porte FAIL-CLOSED : seule la valeur exacte `active: false`
+  // ouvre ; une lecture qui lève ou rend autre chose ferme), juste après le contrôle du jeton, avant toute lecture de crieur_posts / appel à
+  // publora. Correction du 04/10/2026 : la route passait par pauseGenerale() de lib/agents/pause.ts, qui ouvrait en cas de doute ; elle
+  // utilise sortiePermise depuis 0ac78df0. Le critère exige la porte fail-closed (plus stricte) et que son résultat COMMANDE le passage.
+  if (!/import\s*\{[^}]*\bsortiePermise\b[^}]*\}\s*from\s*['"]@\/lib\/agents\/sortie['"]/.test(texte)) s.echoue('CR-17', "sortiePermise n'est pas importée de @/lib/agents/sortie")
+  if (/from\s*['"]@\/lib\/agents\/pause['"]/.test(texte)) s.echoue('CR-17', "la route lit encore la pause par @/lib/agents/pause (qui ouvre en cas de doute) : seule la porte fail-closed @/lib/agents/sortie est permise")
+  if (!/\(\s*await\s+sortiePermise\s*\(\s*\)\s*\)\s*\.permise/.test(get)) s.echoue('CR-17', 'le résultat de sortiePermise() ne commande pas la sortie ((await sortiePermise()).permise attendu)')
+  if (posPause < 0) s.echoue('CR-17', 'sortiePermise( introuvable dans GET')
   else {
     const posPosts = get.search(/crieur_posts/)
     const posPublora = get.search(/creerPublication\s*\(/)
-    if (posAuth >= 0 && posPause < posAuth) s.echoue('CR-17', "pauseGenerale( est appelée avant le contrôle de CRON_SECRET")
-    if (posPosts >= 0 && posPosts < posPause) s.echoue('CR-17', 'crieur_posts est lu avant pauseGenerale(')
-    if (posPublora >= 0 && posPublora < posPause) s.echoue('CR-17', 'creerPublication( est appelée avant pauseGenerale(')
+    if (posAuth >= 0 && posPause < posAuth) s.echoue('CR-17', 'sortiePermise( est appelée avant le contrôle de CRON_SECRET')
+    if (posPosts >= 0 && posPosts < posPause) s.echoue('CR-17', 'crieur_posts est lu avant sortiePermise(')
+    if (posPublora >= 0 && posPublora < posPause) s.echoue('CR-17', 'creerPublication( est appelée avant sortiePermise(')
   }
-  if (!s.enEchec('CR-17')) s.passe('CR-17', 'la pause (pauseGenerale ou sortiePermise) est importée, appelée juste après le contrôle du jeton, avant crieur_posts et creerPublication')
+  if (!s.enEchec('CR-17')) s.passe('CR-17', 'sortiePermise (porte fail-closed) importée de @/lib/agents/sortie, appelée juste après le contrôle du jeton, avant crieur_posts et creerPublication ; son résultat commande la sortie')
 
   // CR-6 : ?a_sec=1 rend le lot en JSON avant toute écriture/appel Publora
   if (!/a_sec/.test(get)) s.echoue('CR-6', 'a_sec introuvable dans GET')

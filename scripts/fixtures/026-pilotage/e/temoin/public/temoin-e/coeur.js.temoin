@@ -1,0 +1,289 @@
+// public/temoin-e/coeur.js — le COEUR du témoin du lot e (fiche 026-172). Ce n'est PAS le moteur de la carte (026-179 à 026-186) :
+// il ne fait que ce que station-ecran-qa mesure pour `verite` et `themes` — le thème chargé, une toile à l'échelle entière, une boucle
+// qui dort, les acteurs posés d'après les positions servies, le miroir, la bulle, « Zz », le halo, l'étincelle, l'antenne, la nuit.
+// Il n'utilise pas Phaser (absent de node_modules avant 026-179) : le faux jeu `__stationGame` ne porte que ce que le juge lit
+// (loop.frame, canvas, textures « decor »). Aucun hasard, aucune horloge : tout vient des données servies.
+export const RADAR = new Set(['recenseur', 'vigie_meta', 'veilleur'])
+export const lire = (e) => (e && typeof e === 'object' && 'valeur' in e ? e.valeur : null)
+export const el = (tag, attrs = {}, style = {}) => {
+  const n = document.createElement(tag)
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v)
+  Object.assign(n.style, style)
+  return n
+}
+const SR = { position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', margin: '-1px' }
+const VITESSE = 80 // pixels logiques par SECONDE : une seule vitesse, la distance fait la durée (jamais le nombre d'images : sous charge la marche dure autant)
+const TOUR_MS = 2000 // un tour d'antenne
+
+export function creer(racine) {
+  const T = {
+    racine, props: null, theme: null, cle: null, vue: { zoom: 1, x: 0, y: 0 }, k: 1, dpr: 1, acteurs: new Map(), signature: '', premier: true,
+    maxBulle: null, nuit: null, antenne: { fin: 0 }, derniere: 0, detruit: false, lire,
+    reduit: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    crochets: { props: [], theme: [], dessiner: [], avancer: [], taille: [], placer: [] }, ecouteurs: [], nettoyages: [],
+    decor: document.createElement('canvas'),
+  }
+  Object.assign(racine.style, { position: 'relative' })
+  T.scene = el('div', { 'data-scene': '' }, { position: 'relative', lineHeight: '0', margin: '0 auto', overflow: 'hidden', cursor: 'crosshair', userSelect: 'none' })
+  T.toile = el('canvas', {}, { display: 'block' })
+  T.calque = el('div', { 'data-calque': '' }, { position: 'absolute', inset: '0', pointerEvents: 'none', overflow: 'hidden', lineHeight: 'normal' })
+  T.miroir = el('ul', { 'data-miroir': '' }, SR)
+  T.scene.append(T.toile, T.calque)
+  racine.append(T.scene, T.miroir)
+  T.ctx = T.toile.getContext('2d')
+  T.cadre = racine.closest('[data-station-carte]') || racine
+
+  const jeu = {
+    loop: { frame: 0 }, canvas: T.toile, config: { pixelArt: true, antialias: false, roundPixels: true },
+    textures: { exists: (n) => n === 'decor', get: () => ({ getSourceImage: () => T.decor }) }, destroy() { T.detruit = true },
+  }
+  globalThis.__stationGame = jeu
+
+  // ── La grille, la vue, les emplacements ────────────────────────────────────────────────────────────────────────────────
+  T.emplDe = (salle) => {
+    const reglee = T.props?.reglages?.reglages?.salles?.[salle]?.emplacement
+    const defaut = T.theme?.defauts?.find((d) => d.salle === salle)?.emplacement
+    return T.theme?.emplacements?.find((e) => e.cle === (reglee || defaut || salle)) ?? null
+  }
+  T.fenetre = () => {
+    const g = T.theme.grille, z = T.vue.zoom
+    return { l: T.vue.x - g.largeur / (2 * z), t: T.vue.y - g.hauteur / (2 * z), s: T.k * z }
+  }
+  T.css = (x, y) => { const { l, t, s } = T.fenetre(); return { x: ((x - l) * s) / T.dpr, y: ((y - t) * s) / T.dpr } }
+  T.dimensionner = () => {
+    if (!T.theme) return
+    const g = T.theme.grille
+    T.dpr = window.devicePixelRatio || 1
+    const cadre = Math.max(1, racine.clientWidth || 358)
+    T.k = Math.max(1, Math.floor((cadre * T.dpr) / g.largeur))
+    T.toile.width = g.largeur * T.k
+    T.toile.height = g.hauteur * T.k
+    T.scene.style.width = T.toile.style.width = `${T.toile.width / T.dpr}px`
+    T.scene.style.height = T.toile.style.height = `${T.toile.height / T.dpr}px`
+    for (const f of T.crochets.taille) f()
+    T.reveiller()
+  }
+
+  // ── Le décor : peint une fois, sans aucune donnée ; redessiné seulement quand le thème ou la nuit changent ────────────────
+  const forme = (c, f) => {
+    c.beginPath()
+    if (f.type === 'polygone') f.points.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)))
+    else c.rect(f.x, f.y, f.l, f.h)
+    c.closePath()
+  }
+  T.dessinerDecor = () => {
+    if (!T.theme) return
+    const g = T.theme.grille, c = T.decor.getContext('2d'), p = T.theme.palette || {}
+    T.decor.width = g.largeur
+    T.decor.height = g.hauteur
+    c.fillStyle = T.nuit ? '#05070b' : p['--mc-fond'] || '#101418'
+    c.fillRect(0, 0, g.largeur, g.hauteur)
+    for (const e of T.theme.emplacements) {
+      forme(c, e.forme)
+      c.fillStyle = T.nuit ? '#10141c' : e.teinte
+      c.fill()
+      c.strokeStyle = e.reservee ? '#8a8f98' : p['--mc-mur'] || '#596673'
+      c.stroke()
+      c.fillStyle = p['--mc-porte'] || '#c8d0d8'
+      c.fillRect(e.porte.x - 2, e.porte.y - 1, 4, 2)
+    }
+    T.cadre.dataset.nuit = T.nuit ? 'oui' : 'non'
+    T.reveiller()
+  }
+
+  // ── La boucle : elle dort dès que plus rien ne bouge (loop.frame cesse de croître) ─────────────────────────────────────────
+  const antenneZone = () => { const g = T.theme.grille; return { x: g.largeur - 64, y: 0, l: 24, h: 12 } }
+  T.antenneZone = antenneZone
+  let enMarche = false
+  T.reveiller = () => { if (!enMarche && !T.detruit) { enMarche = true; T.derniere = performance.now(); requestAnimationFrame(pas) } }
+  function pas() {
+    jeu.loop.frame++
+    const maintenant = performance.now(), dt = Math.min(0.1, Math.max(0, (maintenant - T.derniere) / 1000))
+    T.derniere = maintenant
+    let actif = avancerActeurs(dt)
+    for (const f of T.crochets.avancer) actif = f(dt) || actif
+    const tourne = T.antenne.fin > maintenant
+    actif = actif || tourne // la dernière image, bras au repos, est dessinée dans le même pas que la fin du tour
+    const etat = tourne ? 'tourne' : 'fixe'
+    if (T.elAntenne.dataset.etat !== etat) T.elAntenne.dataset.etat = etat
+    dessiner(maintenant)
+    T.placerCalque()
+    if (actif && !T.detruit) requestAnimationFrame(pas); else enMarche = false
+  }
+  function dessiner(maintenant) {
+    if (!T.theme) return
+    const c = T.ctx, { l, t, s } = T.fenetre()
+    c.setTransform(1, 0, 0, 1, 0, 0)
+    c.fillStyle = T.nuit ? '#020305' : '#06080c'
+    c.fillRect(0, 0, T.toile.width, T.toile.height)
+    c.setTransform(s, 0, 0, s, -l * s, -t * s)
+    c.imageSmoothingEnabled = false
+    c.drawImage(T.decor, 0, 0)
+    const z = antenneZone(), ax = z.x + 12, ay = z.y + 6, ang = T.antenne.fin > maintenant ? ((TOUR_MS - (T.antenne.fin - maintenant)) / TOUR_MS) * Math.PI * 4 : 0
+    c.fillStyle = '#9aa3b2'; c.fillRect(ax - 1, ay - 1, 2, 2)
+    c.strokeStyle = '#e8ecf5'; c.lineWidth = 1; c.beginPath(); c.moveTo(ax, ay)
+    c.lineTo(ax + Math.cos(ang) * 5, ay + Math.sin(ang) * 5); c.stroke()
+    for (const a2 of T.acteurs.values()) {
+      if (!a2.pos) continue
+      if (a2.motif === 'tache') { c.fillStyle = 'rgba(232, 176, 74, 0.35)'; c.fillRect(a2.pos.x - 5, a2.pos.y + 2, 10, 4) }
+      c.fillStyle = a2.couleur; c.fillRect(Math.round(a2.pos.x) - 3, Math.round(a2.pos.y) - 3, 6, 6)
+      if (a2.motif === 'panne') { c.fillStyle = '#ffe14a'; c.fillRect(Math.round(a2.pos.x) + 3, Math.round(a2.pos.y) - 6, 2, 2) }
+    }
+    for (const f of T.crochets.dessiner) f(c)
+  }
+  T.placerCalque = () => {
+    if (!T.theme) return
+    for (const a of T.acteurs.values()) {
+      if (!a.pos) continue
+      const p = T.css(a.pos.x, a.pos.y)
+      if (a.elBulle) Object.assign(a.elBulle.style, { left: `${p.x}px`, top: `${p.y - 22}px` })
+      if (a.elZz) Object.assign(a.elZz.style, { left: `${p.x + 6}px`, top: `${p.y - 14}px` })
+    }
+    const z = antenneZone(), p = T.css(z.x, z.y), s = T.fenetre().s / T.dpr
+    if (T.elAntenne) Object.assign(T.elAntenne.style, { left: `${p.x}px`, top: `${p.y}px`, width: `${z.l * s}px`, height: `${z.h * s}px` })
+    for (const f of T.crochets.placer) f()
+  }
+  T.elAntenne = el('div', { 'data-antenne': '', 'data-etat': 'fixe' }, { position: 'absolute' })
+  T.calque.append(T.elAntenne)
+
+  // ── Les acteurs : positions servies → miroir → marche (une seule fois par vrai changement) ─────────────────────────────────
+  const cibleDe = (salle, motif) => {
+    const e = T.emplDe(salle)
+    if (!e) return null
+    const fin = motif === 'porte' || !e.poste ? e.porte : e.poste
+    return { porte: e.porte, fin }
+  }
+  function majLi(a) {
+    const d = a.li.dataset
+    d.salle = a.salle; d.motif = a.motif; d.etat = a.etat; d.x = String(Math.round(a.pos.x)); d.y = String(Math.round(a.pos.y)); d.halo = a.motif === 'tache' ? 'oui' : 'non'
+  }
+  function majTextes(a) {
+    a.li.textContent = `${a.libelle}, ${a.salle}, ${a.motif}`
+    if (a.bulle) {
+      a.elBulle ??= T.calque.appendChild(el('span', { 'data-bulle': a.nom }, { position: 'absolute', whiteSpace: 'nowrap', color: '#fff', background: 'rgba(0,0,0,.6)', padding: '0 3px' }))
+      a.elBulle.textContent = a.bulle
+    } else if (a.elBulle) { a.elBulle.remove(); a.elBulle = null }
+  }
+  function majZz(a) {
+    const veut = a.motif === 'pause' && a.etat === 'arrive'
+    if (veut && !a.elZz) { a.elZz = T.calque.appendChild(el('span', { 'data-zz': a.nom }, { position: 'absolute', color: '#9fd0ff' })); a.elZz.textContent = 'Zz' }
+    if (!veut && a.elZz) { a.elZz.remove(); a.elZz = null }
+  }
+  function marcher(a) {
+    const b = cibleDe(a.salle, a.motif)
+    if (!b) return
+    if (T.reduit || !a.pos) { a.pos = { ...b.fin }; a.chemin = []; a.etat = 'arrive'; a.salleVue = a.salle; majLi(a); majZz(a); return }
+    const pts = []
+    if (a.salleVue !== a.salle) { const d = cibleDe(a.salleVue, 'porte'); if (d) pts.push({ ...d.porte }); pts.push({ ...b.porte }) }
+    pts.push({ ...b.fin })
+    a.chemin = pts.filter((p, i) => i === 0 ? (p.x !== a.pos.x || p.y !== a.pos.y) : (p.x !== pts[i - 1].x || p.y !== pts[i - 1].y))
+    a.salleVue = a.salle
+    a.etat = a.chemin.length ? 'marche' : 'arrive'
+    majLi(a); majZz(a)
+  }
+  function avancerActeurs(dt) {
+    let actif = false
+    const pas = VITESSE * dt
+    for (const a of T.acteurs.values()) {
+      if (!a.chemin || !a.chemin.length) continue
+      const p = a.chemin[0], dx = p.x - a.pos.x, dy = p.y - a.pos.y, d = Math.hypot(dx, dy)
+      if (d <= pas) { a.pos = { x: p.x, y: p.y }; a.chemin.shift() } else a.pos = { x: a.pos.x + (dx / d) * pas, y: a.pos.y + (dy / d) * pas }
+      if (!a.chemin.length) a.etat = 'arrive'
+      majLi(a); majZz(a)
+      actif = actif || a.chemin.length > 0
+    }
+    return actif
+  }
+  const couleurDe = (a) => T.theme?.avatars?.find((v) => v.cle === a.avatar)?.couleur ?? T.theme?.avatars?.[0]?.couleur ?? '#E8B04A'
+  function majActeurs(p) {
+    const eq = lire(p.equipage)
+    if (!eq || !T.theme) return
+    const derniere = new Map()
+    for (const b of p.bulles || []) { const d = derniere.get(b.agent); if (!d || b.id > d.id) derniere.set(b.agent, b) }
+    const liste = (eq.agents || []).filter((a) => a.position && a.position.salle).map((a) => ({
+      nom: a.nom, libelle: a.libelle, role: a.role || '', modele: a.modele?.texte ?? '', avatar: a.avatar, salle: a.position.salle, motif: a.position.motif, bulle: derniere.get(a.nom)?.texte ?? '',
+    }))
+    const signature = JSON.stringify(liste)
+    if (signature === T.signature) return
+    T.signature = signature
+    for (const nom of [...T.acteurs.keys()]) if (!liste.some((a) => a.nom === nom)) { const a = T.acteurs.get(nom); a.li.remove(); a.elBulle?.remove(); a.elZz?.remove(); T.acteurs.delete(nom) }
+    for (const n of liste) {
+      let a = T.acteurs.get(n.nom)
+      if (!a) {
+        a = { ...n, pos: null, chemin: [], etat: 'arrive', salleVue: n.salle, couleur: '#E8B04A', li: el('li', { 'data-personnage': n.nom }) }
+        T.miroir.append(a.li)
+        T.acteurs.set(n.nom, a)
+        a.couleur = couleurDe(n)
+        marcher(a)
+      } else {
+        const bouge = a.salle !== n.salle || a.motif !== n.motif
+        Object.assign(a, { libelle: n.libelle, role: n.role, modele: n.modele, avatar: n.avatar, salle: n.salle, motif: n.motif, bulle: n.bulle, couleur: couleurDe(n) })
+        if (bouge) marcher(a)
+      }
+      majTextes(a)
+      majZz(a)
+    }
+    T.premier = false
+    T.reveiller()
+  }
+  T.refaireActeurs = () => { for (const a of T.acteurs.values()) { a.pos = null; marcher(a) } T.reveiller() }
+
+  // ── L'antenne, la nuit : à chaque lecture, d'après les données servies seulement ────────────────────────────────────────────
+  function majAntenneEtNuit(p) {
+    const bulles = p.bulles || []
+    const plusGrand = bulles.reduce((m, b) => Math.max(m, b.id), 0)
+    if (T.maxBulle === null) T.maxBulle = plusGrand
+    else {
+      const nouvelles = bulles.filter((b) => b.id > T.maxBulle)
+      T.maxBulle = Math.max(T.maxBulle, plusGrand)
+      if (!T.reduit && nouvelles.some((b) => RADAR.has(b.agent))) { T.antenne.fin = performance.now() + TOUR_MS; T.reveiller() }
+    }
+    const nuit = lire(lire(p.carte)?.nuit) === true
+    if (T.nuit !== nuit) { const premiere = T.nuit === null; T.nuit = nuit; if (!premiere || nuit) T.dessinerDecor() }
+  }
+
+  // ── Les données et le thème ────────────────────────────────────────────────────────────────────────────────────────────────
+  T.surProps = () => {
+    const p = window.__stationProps
+    if (!p) return
+    T.props = p
+    const cle = p.reglages?.reglages?.theme || 'station'
+    if (cle !== T.cle) { T.chargerTheme(cle); return }
+    if (!T.theme) return
+    majAntenneEtNuit(p); majActeurs(p)
+    for (const f of T.crochets.props) f(p)
+  }
+  T.chargerTheme = async (cle) => {
+    T.cle = cle
+    let t = null
+    try { const r = await fetch(`/station/themes/${encodeURIComponent(cle)}/theme.json`); if (r.ok) t = await r.json() } catch { /* thème illisible : rien ne se dessine */ }
+    if (!t || T.cle !== cle || T.detruit) return
+    T.theme = t
+    T.vue = { zoom: 1, x: t.grille.largeur / 2, y: t.grille.hauteur / 2 }
+    T.signature = ''
+    for (const a of T.acteurs.values()) { a.li.remove(); a.elBulle?.remove(); a.elZz?.remove() }
+    T.acteurs.clear()
+    T.nuit = null
+    T.maxBulle = null
+    T.dessinerDecor()
+    T.dimensionner()
+    for (const f of T.crochets.theme) f(t)
+    if (T.props) { majAntenneEtNuit(T.props); majActeurs(T.props); for (const f of T.crochets.props) f(T.props) }
+  }
+  T.sur = (cible, type, fn, opts) => { cible.addEventListener(type, fn, opts); T.ecouteurs.push([cible, type, fn, opts]) }
+  T.demarrer = () => {
+    T.sur(window, 'station:props', T.surProps)
+    T.observeur = new ResizeObserver(() => T.dimensionner())
+    T.observeur.observe(racine)
+    T.surProps()
+  }
+  T.detruire = () => {
+    T.detruit = true
+    for (const [c, ty, f, o] of T.ecouteurs) c.removeEventListener(ty, f, o)
+    T.observeur?.disconnect()
+    for (const f of T.nettoyages) f()
+    racine.replaceChildren()
+    if (globalThis.__stationGame === jeu) delete globalThis.__stationGame
+  }
+  return T
+}

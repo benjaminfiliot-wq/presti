@@ -1,0 +1,83 @@
+{
+  "lignes": [
+    "Activité stable sur les fronts clés : le preneur a finalisé 5 tâches aujourd'hui, signe d'une bonne cadence sur les demandes urgentes.",
+    "Aucun blocage majeur signalé, mais la file du chef reste à 2 tâches en attente, à prioriser avant la fin de journée.",
+    "Coûts maîtrisés : aucun dépassement journalier, mais vigilance sur les agents en pause prolongée (contenu, expérience, livreur) pour éviter les retards en cascade."
+  ],
+  "objectif": {
+    "libelle": "Maintenir la cadence sur les demandes urgentes et réduire la file du chef à zéro d’ici demain",
+    "mesure": "taches_faites",
+    "cible": 10
+  },
+  "idees": [
+    {
+      "cle_idempotence": "chef:2026-10-05:idee-priorisation",
+      "question": "Faut-il lancer un atelier de priorisation quotidienne pour les tâches du chef, ou reporter à une analyse hebdomadaire ?",
+      "contexte": "La file du chef stagne à 2 tâches depuis plusieurs jours. Un atelier de 30 minutes par jour pourrait clarifier les urgences, mais cela mobiliserait des ressources. À tester sur une semaine pour mesurer l'impact sur le temps de traitement.",
+      "options": [
+        {
+          "cle": "lancer",
+          "libelle": "Lancer un atelier de priorisation quotidienne de 30 minutes avec le chef et le preneur pour clarifier les urgences",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "reporter",
+          "libelle": "Reporter la décision et observer l'évolution naturelle de la file sur 7 jours avant toute action",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "reporter",
+      "portee": "aucune",
+      "montant_cents": 0,
+      "echeance": "2026-10-12T18:00:00Z"
+    },
+    {
+      "cle_idempotence": "chef:2026-10-05:idee-agents-pause",
+      "question": "Faut-il relancer les agents en pause prolongée (contenu, expérience, livreur) ou attendre leur retour spontané ?",
+      "contexte": "Trois agents (contenu, expérience, livreur) n'ont pas battu depuis plus de 24 heures. Une relance pourrait éviter des retards, mais leur absence actuelle n'impacte pas encore les objectifs critiques. À évaluer en fonction de leur rôle dans les tâches en file.",
+      "options": [
+        {
+          "cle": "lancer",
+          "libelle": "Relancer individuellement les agents en pause avec un rappel des priorités et un délai de réponse sous 24h",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "reporter",
+          "libelle": "Maintenir le statu quo et surveiller leur retour naturel, sans intervention directe",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "reporter",
+      "portee": "aucune",
+      "montant_cents": 0,
+      "echeance": "2026-10-06T18:00:00Z"
+    },
+    {
+      "cle_idempotence": "chef:2026-10-05:idee-objectif-cible",
+      "question": "Faut-il ajuster l'objectif actuel pour inclure une cible sur les tâches traitées par le chef, ou se concentrer uniquement sur l'encaissement ?",
+      "contexte": "L'objectif actuel est centré sur l'encaissement, mais la file du chef et les tâches en attente montrent un goulot d'étranglement. Une cible sur le nombre de tâches traitées pourrait mieux refléter l'efficacité opérationnelle, tout en gardant l'encaissement comme priorité absolue.",
+      "options": [
+        {
+          "cle": "lancer",
+          "libelle": "Ajouter une cible secondaire de 10 tâches traitées par le chef cette semaine, sans modifier l'objectif principal d'encaissement",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "reporter",
+          "libelle": "Conserver l'objectif actuel et évaluer l'impact de la file du chef sur l'encaissement après 7 jours",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "reporter",
+      "portee": "aucune",
+      "montant_cents": 0,
+      "echeance": "2026-10-12T18:00:00Z"
+    }
+  ]
+}

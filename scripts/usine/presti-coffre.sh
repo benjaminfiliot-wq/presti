@@ -40,7 +40,8 @@ nom_permis() {
   case "$1" in
     PRESTI_JETON_CHEF | PRESTI_JETON_USINE | PRESTI_JETON_ATELIER | PRESTI_JETON_LIVREUR_USINE | PRESTI_JETON_FACTEUR_USINE) return 0 ;;
     PRESTI_JETON_TELEGRAM | TELEGRAM_BOT_TOKEN | TELEGRAM_CHAT_ID | PRESTI_JETON_STANDARDISTE | PRESTI_JETON_FACTEUR) return 0 ;;
-    TELEGRAM_CODE_APPAIRAGE) return 0 ;;
+    TELEGRAM_CODE_APPAIRAGE | PRESTI_JETON_STUDIO) return 0 ;;
+    PRESTI_JETON_SAV | PRESTI_JETON_QUALITE | PRESTI_JETON_VIGILE | FIRECRAWL_API_KEY | PRESTI_JETON_PRENEUR | APIFY_TOKEN) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -63,6 +64,8 @@ valeur_permise() {
   local re_bot='^[0-9]{6,12}:[A-Za-z0-9_-]{30,}$'
   local re_chat='^-?[0-9]{5,15}$'
   local re_code='^[A-HJ-NP-Z2-9]{8}$'
+  local re_firecrawl='^fc-[A-Za-z0-9]{32}$'
+  local re_apify='^apify_api_[A-Za-z0-9]{36}$'
   case "$nom" in
     TELEGRAM_BOT_TOKEN)
       if [[ $v =~ $re_bot ]]; then return 0; fi
@@ -73,6 +76,12 @@ valeur_permise() {
     TELEGRAM_CODE_APPAIRAGE)
       if [[ $v =~ $re_code ]] || [ "$v" = epuise ]; then return 0; fi
       raison="TELEGRAM_CODE_APPAIRAGE : 8 signes de [A-HJ-NP-Z2-9], ou « epuise »"; return 1 ;;
+    APIFY_TOKEN)
+      if [[ $v =~ $re_apify ]]; then return 0; fi
+      raison="APIFY_TOKEN : « apify_api_ » puis 36 signes de [A-Za-z0-9]"; return 1 ;;
+    FIRECRAWL_API_KEY)
+      if [[ $v =~ $re_firecrawl ]]; then return 0; fi
+      raison="FIRECRAWL_API_KEY : « fc- » puis 32 signes de [A-Za-z0-9]"; return 1 ;;
   esac
   # Tout autre nom : 20 à 256 signes de [A-Za-z0-9._~+/=-] (LC_ALL=C : un octet par signe, aucun accent dans les plages).
   local re_signes='^[A-Za-z0-9._~+/=-]+$'

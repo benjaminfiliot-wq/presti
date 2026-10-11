@@ -1,0 +1,19 @@
+{
+  "_lisez_moi": "Ce que les fournisseurs d'IA ont ANNONCÉ, daté et sourcé. Lu par releve-quotas.mjs. Une échéance passée devient « à revérifier » : ce fichier ne dit jamais « disponible ». Mettre à jour dès qu'un message de quota est vu (Codex : « You've hit your usage limit »).",
+  "codex": {
+    "etat": "epuise",
+    "jusqua": "2026-10-09T21:15:00+02:00",
+    "jusqua_texte": "9/10 vers 21 h 15",
+    "vu": "2026-10-05T10:00:00+02:00",
+    "source": "message du fournisseur relayé par Benj"
+  },
+  "ollama_cloud": {
+    "etat": "epuise",
+    "vu": "2026-10-05T10:00:00+02:00",
+    "source": "Free usage limit"
+  },
+  "claude": {
+    "etat": "abonnement",
+    "vu": "2026-10-05T12:00:00+02:00"
+  }
+}

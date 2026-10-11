@@ -1,0 +1,10 @@
+[Unit]
+Description=Rejugement du Facteur à 20 h 05 de Paris
+
+[Timer]
+OnCalendar=*-*-* 20:05:00 Europe/Paris
+Persistent=true
+Unit=presti-facteur-soir.service
+
+[Install]
+WantedBy=timers.target

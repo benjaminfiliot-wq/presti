@@ -1,7 +1,8 @@
 # Voix de Presti
 
 Statut : **proposée le 2026-09-29, à approuver par Benj** (un seul geste pour la voix et les cinq lignes). Rien ici n'est un
-texte publié : un texte de publication garde son accord individuel.
+texte publié : un texte de publication passe, lui, les contrôles automatiques de la ligne (plus d'accord individuel depuis la
+décision du 30/09, confirmée le 04/10).
 
 ## Qui parle
 

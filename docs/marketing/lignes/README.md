@@ -1,8 +1,10 @@
 # Les cinq lignes éditoriales
 
 Créée le 2026-09-29 d'après `Ecosysteme-Marketing-Reel-2026-09-25.md` §4 bis. Statut de chacune : **proposée, suspendue,
-non approuvée par Benj**. Benj l'approuve une fois, avec la voix. Approuver une ligne n'autorise **aucune publication** : R24
-reste ouverte, chaque publication attend l'accord de Benj sur son média et son texte exacts. Une ligne suspendue ne publie rien.
+non approuvée par Benj**. Benj l'approuve une fois, avec la voix. Approuver une ligne n'autorise **aucune publication** à elle
+seule : depuis la décision du 30/09 (confirmée par Benj le 04/10), il n'y a plus d'accord individuel par publication, les
+contrôles automatiques de la ligne (juges, pause générale, plafonds, doublons, chiffres vérifiés, coût nul) le remplacent.
+Une ligne suspendue ne publie rien.
 
 Chaque ligne ci-dessous a la même fiche : matière, gabarit, faits autorisés, canaux, cadence, appel à l'action, plafond, mention.
 Un fait cité renvoie au dépôt (la clé « fait » de la fiche, suivie d'un chemin qui existe). Rien ne s'invente : une phrase qui n'est ni un fait ni une
@@ -80,9 +82,11 @@ une fois par semaine) ; elle n'est pas décrite ici tant qu'il ne la demande pas
 - fait: lib/crieur/faits.ts
 - canaux : instagram, facebook, linkedin
 - cadence : par le Crieur via Publora Starter, un texte par semaine et par réseau (Instagram le lundi, Facebook le mercredi,
-  LinkedIn le vendredi, à 12 h) dans le quota de Publora ; le Crieur dépose un brouillon et Benj le programme lui-même.
-- plafond : le quota de Publora Starter et le juge du Crieur (`lib/crieur/juge.ts`) ; jamais de programmation sans l'accord de
-  Benj sur la version exacte.
+  LinkedIn le vendredi, à 12 h) dans le quota de Publora ; le Crieur dépose un brouillon puis le programme lui-même, sous
+  contrôles automatiques (décision du 30/09, confirmée par Benj le 04/10 : plus d'accord individuel).
+- plafond : le quota de Publora Starter et le juge du Crieur (`lib/crieur/juge.ts`) ; jamais de programmation sous pause
+  générale, sans coût nul exact (`PUBLORA_COUT_PAR_PUBLICATION_EUR` = `0`) ni sans passer le juge ; la pause suspend les
+  publications déjà programmées (`lib/crieur/pauseProgrammees.ts`).
 - appel_action : « Commente SITE » sur Instagram et Facebook, **seulement drapeau `aimantSite` levé** ; sur LinkedIn, jamais
   (personne n'y répond).
 - mention : aucune ; les adresses autres que prestiapp.fr sont refusées par le juge du Crieur.

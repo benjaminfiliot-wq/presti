@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Doublure de useradd pour usine-durcie-qa (026-194) : consigne ses arguments dans $JUGE_JOURNAL, rien de plus que ce qu ecrit le juge.
+set -u
+journal() { local o="$1"; shift; { printf "%s" "$o"; for a in "$@"; do printf " %s" "$a"; done; printf "\n"; } >> "$JUGE_JOURNAL"; }
+journal useradd "$@"
+nom="${!#}"
+if grep -q "^$nom:" "$JUGE_SYSTEME/etc/passwd"; then echo "useradd : l'utilisateur « $nom » existe déjà" >&2; exit 9; fi
+printf '%s:x:1099:1099::/home/%s:/bin/bash\n' "$nom" "$nom" >> "$JUGE_SYSTEME/etc/passwd"
+for a in "$@"; do case "$a" in -m|--create-home) mkdir -p "$JUGE_SYSTEME/home/$nom" ;; esac; done
+exit 0

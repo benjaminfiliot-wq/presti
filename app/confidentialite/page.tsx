@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
+import PublicPied from '@/app/PublicPied'
 import NePasCompter from './NePasCompter'
 import { actif } from '@/lib/flags'
 import { MOIS_AUDIENCE } from '@/lib/audience'
@@ -17,12 +18,12 @@ const Back = () => <Breadcrumb label="Confidentialité" path="/confidentialite" 
 
 export default function Confidentialite() {
   return (
-    <>
+    <div className="pub">
     <PublicNav />
     <main className="legal-wrap">
       <Back />
       <h1>Politique de confidentialité</h1>
-      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '27 septembre 2026' : '27 septembre 2026'} · Conforme au RGPD</div>
+      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '4 octobre 2026' : '4 octobre 2026'} · Conforme au RGPD</div>
 
       <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
 
@@ -100,6 +101,7 @@ export default function Confidentialite() {
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
-    </>
+    <PublicPied />
+    </div>
   )
 }

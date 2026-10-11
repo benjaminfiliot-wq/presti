@@ -1,211 +1,263 @@
+#!/usr/bin/env node
+// Contre-épreuves de 026-099. Chaque faute est un remplacement unique sur une copie.
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { spawn, spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 
-// 026-099 : copies isolées, fautes réelles, verdicts nommés. Aucun juge ni témoin n'est corrigé ici.
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const args = process.argv.slice(2)
-const known = /^(?:--lister|--garder|--seul=[A-Z0-9-]+)$/
-if (args.some(a => !known.test(a))) { console.error('Options : --lister, --garder, --seul=<critere>'); process.exit(2) }
-const KEEP = args.includes('--garder'), LIST = args.includes('--lister'), ONLY = args.find(a=>a.startsWith('--seul='))?.slice(7)
-const PROOF = path.join(ROOT,'.orchestre/preuves/026-099')
-const WORK = path.join(ROOT,'.orchestre/travail/026-099',String(process.pid))
-const LIMIT = 19 * 60_000, start = Date.now()
-const catalogue = []
-const src = f => fs.readFileSync(path.join(ROOT,f),'utf8')
-function add(juge, options, critere, fichier, regex, transformer, nom) {
-  catalogue.push({juge:`scripts/${juge}-qa.mjs`,options,critere,fichier,regex,transformer,nom})
-}
-const F='lib/agents/acquisition/facteur.ts',G='lib/agents/acquisition/porteurs/gmail.ts',E='lib/agents/acquisition/envoiMeta.ts'
-const D='lib/agents/acquisition/disjoncteurs.ts',J='lib/agents/acquisition/jauges.ts',M='lib/agents/acquisition/metaWebhooks.ts',R='lib/agents/acquisition/repondeur.ts'
-const SQL='supabase/migrations/0111_acquisition_envoi.sql',P='scripts/agents/porteur-formulaire.mjs',T='app/api/usine/porteur/travail/route.ts',V='scripts/agents/maquette-video.mjs'
-const reg=(j,o,c,f,r,a,n)=>add(j,o,c,f,r,()=>a,n)
-// Disjoncteurs : deux fautes droits, deux seuils, ouverture interdite et deux fuites/logiques.
-add('disjoncteurs','--partie=sql','DJ-2',SQL,/create or replace function public\.acq_signal\([^\n]+/,a=>a.replace('security definer','security invoker'),'fonction exposée sans security definer')
-add('disjoncteurs','--partie=sql','DJ-2',SQL,/grant execute on function public\.acq_signal\([^;]+;/,a=>a.replace('service_role','authenticated'),'grant authenticated')
-add('disjoncteurs','--partie=sql','DJ-3',SQL,/if v_echecs\s*>=\s*3 then/,a=>a.replace('3','4'),'quatrième échec au lieu du troisième')
-add('disjoncteurs','--partie=sql','DJ-3',SQL,/\('P4',40,null,[^\n]+/,a=>a.replace("'P4',40","'P4',60"),'P4 à soixante')
-add('disjoncteurs','--partie=sql','DJ-4',SQL,/create or replace function public\.acq_palier_appliquer\(\)[\s\S]*?\bbegin\b/,a=>a+"\n update ops.interrupteurs set actif=true where nom='envoi_froid';",'palier ouvre le froid')
-reg('disjoncteurs','--partie=logique','DJ-7',D,/    if \(envoi\.technologie[^\n]+technologie_en_pause[^\n]+/,'','technologie en pause acceptée')
-add('disjoncteurs','--partie=logique','DJ-7',D,/return cartes\[evenement\.type\] \?\? [^\n]+/,a=>a.replace("titre: 'Signal d’envoi'","titre: evenement.resume ?? 'Signal d’envoi'"),'donnée prospect dans carte')
-// Jauges : omission, seuil, fuseau, écriture au plafond, environnement impur.
-reg('jauges','','JG-2',J,/  definition\(\{ id: 'publora'[^\n]+/,'','jauge Publora omise')
-add('jauges','','JG-3',J,/part >= 0\.75/,a=>a.replace('0.75','0.80'),'attention retardée')
-add('jauges','','JG-4',J,/timeZone: 'Europe\/Paris'/,a=>a.replace('Europe/Paris','UTC'),'période UTC')
-reg('jauges','','JG-4',J,/  if \(utilise \+ n > plafond\) return false/,'','jauge consommée malgré plafond')
-add('jauges','','JG-6',J,/export const JAUGES:/,a=>"const environnementFautif = process.env.PATH\n"+a,'process.env dans module pur')
-// Facteur et porteurs.
-reg('facteur','--partie=facteur','FA-2',F,/if \(typeof lecteur !== 'function'\) \{[^\n]+return rendus \}/,"if (typeof lecteur !== 'function') return [{ envoi_id: travail.envois[0]?.id, empreinte: travail.envois[0]?.empreinte, j2: { verdict: 'ok', raisons: [] }, j2_version: 'fautive' }]",'lecteur absent rend avis approuvant')
-reg('facteur','--partie=facteur','FA-2',F,/const j3 = jugerMessage\(entree\)/,"const j3 = { ok: true, raisons: [] }",'J3 non rejoué')
-reg('facteur','--partie=facteur','FA-14','app/api/usine/facteur/avis/route.ts',/  if \(typeof corps\.j2_version[^\n]+return null/,'','version du second juge non validée')
-add('facteur','--partie=facteur','FA-13','app/api/usine/facteur/travail/route.ts',/empreinte: e\.empreinte \}\)\)/,a=>a.replace('empreinte: e.empreinte','empreinte: e.empreinte, destinataire: e.destinataire'),'adresse du destinataire exposée')
-add('facteur','--partie=facteur','FA-12','app/api/usine/facteur/avis/route.ts',/const AGENT = 'facteur'/,a=>a.replace("'facteur'","'facteur_usine'"),'jeton du mauvais agent accepté')
-reg('facteur','--partie=facteur','FA-3',F,/  if \(brut\.statut !== undefined && brut\.statut !== 'approuve'\) return 'statut'/,'','envois prepare traités comme approuvés')
-reg('facteur','--partie=facteur','FA-4',G,/\.\.\.\(enReponseA \? \{ inReplyTo: enReponseA \} : \{\}\),/,'','In-Reply-To omis')
-reg('facteur','--partie=facteur','FA-5',F,/await magasin\.signal\(\{ type: 'gmail_refus'[^\n]+\}\)/,'void 0','refus SMTP sans signal')
-add('facteur','--partie=facteur','FA-6',F,/!\(jusqua > maintenant\) \|\| dejaFaite/,a=>a.replace('jusqua > maintenant','jusqua + 86400_000 > maintenant'),'réponse privée valable huit jours')
-add('facteur','--partie=facteur','FA-6',E,/messaging_type: 'RESPONSE', message: \{ text: texte \}/,a=>a.replace("messaging_type: 'RESPONSE',","messaging_type: 'RESPONSE', tag: 'HUMAN_AGENT',"),'tag humain interdit')
-reg('facteur','--partie=facteur','FA-8','app/api/cron/facteur/route.ts',/  if \(!pause \|\| pause\.active\) return NextResponse\.json\(\{ pause: true \}\)/,'','route ignore pause')
-add('facteur','--partie=facteur','FA-9',F,/const bilan: BilanFacteur =/,a=>"console.log(deps.adresseReponse)\n  "+a,'adresse dans journal')
-add('facteur','--partie=facteur','FA-10',F,/const envois = await magasin\.envoisApprouves\('email_sollicite', ENVOIS_MAX_PAR_CANAL\)/,a=>a.replace('email_sollicite','formulaire_site'),'Facteur porte formulaires')
-reg('facteur','--partie=porteur --ici','PF-3','lib/agents/acquisition/porteurFormulaire.ts',/  if \(\/recaptcha[^\n]+raison: 'captcha'[^\n]+/,'','captcha soumis')
-reg('facteur','--partie=porteur --ici','PF-8',P,/if \(verrou === 'occupe'\) return 'passe'/,'','verrou envoi_id omis')
-reg('facteur','--partie=porteur --ici','PF-6',T,/[^\n]*acq_porteur_verifier[^\n]*/,"      const data = { ok: true, empreinte_texte: '0'.repeat(64) }, error = null",'relecture opposition supprimée')
-reg('facteur','--partie=porteur --ici','PF-6',T,/  if \(!fenetreOuverte\(new Date\(maintenant\)\)\) return rien\(\)/,'','hors heures ouvrées accepté')
-add('facteur','--partie=porteur --ici','PF-11',T,/const releveFrais = [^\n]+/,()=>"const releveFrais = (_iso, _maintenant) => true",'relève Gmail ignorée')
-add('facteur','--partie=porteur --ici','PF-12',P,/return cible\.screenshot\(\{[^\n]+/,a=>a.replace('cible.screenshot','page.screenshot').replace("{ type:","{ fullPage: true, type:"),'capture entière page')
-add('facteur','--partie=porteur --ici','PF-13',P,/async function abandonner\([^\n]+\{/,a=>a+"\n  dossier0700(dossierEnvoi); ecrire0600(path.join(dossierEnvoi, 'avant.jpg'), Buffer.from('capture fautive'))",'capture sur abandon')
-reg('facteur','--partie=gmail','GM-4',G,/if \(destinataires\.length > 0 && !destinataires\.includes\(adresse\)\) continue/,'','message autre boîte relevé')
-add('facteur','--partie=gmail','GM-2',G,/export const nettoyerMotDePasse = [^\n]+/,()=>"export const nettoyerMotDePasse = (p: string): string => p",'espaces mot de passe conservés')
-// SQL garde : seconde soumission à vie.
-reg('prospection-sql','--sans-essai','PG-4','supabase/migrations/0099_ops_garde_envois.sql',/raise exception using message = 'ops:formulaire_deja', errcode = 'P0001';/,'null;','second formulaire même entreprise accepté')
-// Webhooks Meta : signature, jeton, ordre, aimant, STOP, profil.
-reg('meta-webhooks','','MW-2',M,/crypto\.timingSafeEqual\(propose, attendu\)/,"propose.toString('hex') === attendu.toString('hex')",'comparaison signature non constante')
-reg('meta-webhooks','','MW-3','app/api/webhooks/meta/route.ts',/ \|\| jeton === null \|\| !memeChaine\(jeton, attendu\)/,'','challenge sans jeton vérifié')
-add('meta-webhooks','','MW-4','app/api/webhooks/meta/route.ts',/if \(!verifierSignature\(brut,[^\n]+/,a=>"JSON.parse(new TextDecoder().decode(brut))\n  "+a,'JSON analysé avant signature')
-reg('meta-webhooks','','MW-5',M,/return [^\n]+(?:site|SITE)[^\n]+/,"return String(texte).toLowerCase().includes('site')",'site accepté en sous-chaîne')
-reg('meta-webhooks','','MW-7',M,/await magasin\.opposer\(cles, 'stop', 'webhook_meta'\)/,'void 0','STOP sans opposition')
-add('meta-webhooks','','MW-8',M,/const rempli: ConversationPartielle = \{[^\n]+/,a=>a.replace('{ ...c,','{ ...c, ...profil,'),'profil entier rangé')
-// Répondeur : classes, identitéIA, fenêtre, STOP, empreinte, modèles et route.
-add('repondeur','','RP-2',R,/const CLASSES_AVEC_REPONSE:[^\n]+/,a=>a.replace("['question'","['sensible', 'question'"),'sensible reçoit une réponse')
-reg('repondeur','','RP-3',R,/const IA = "assistant IA de Presti"/,"const IA = 'Presti'",'mention IA supprimée')
-add('repondeur','','RP-5',R,/!\(jusqua > deps\.horloge\.maintenant\(\)\)/,a=>a.replace('jusqua > deps.horloge.maintenant()','jusqua + 86400_000 > deps.horloge.maintenant()'),'huitième jour accepté')
-add('repondeur','','RP-6',R,/const r = await deps\.magasin\.preparerEnvoi\(envoi\)/,a=>a+"\n  if (!r.ok && d.type === 'confirmation_stop') { const bis = await deps.magasin.preparerEnvoi({ ...envoi, type: 'reponse' }); if (bis.ok) return { etat: 'ok', envoi_id: bis.id } }",'second STOP contourne refus avec une réponse')
-reg('repondeur','','RP-7',R,/\(ctx\.deps\.hacherJeton \?\? hacherJetonReel\)\(jeton\)/,'jeton','jeton rendez-vous brut')
-reg('repondeur','','RP-8',R,/  if \(modele\.approuve === false\) return [^\n]+/,'','modèle non approuvé utilisé')
-reg('repondeur','','RP-9','app/api/cron/repondeur/route.ts',/if \([^\n]+(?:CRON_SECRET|secret|jeton)[^\n]+(?:401|403)[^\n]*/,'','route sans authentification cron')
-// Rendez-vous.
-reg('rendez-vous','','RV-2','lib/agents/acquisition/rendezVous.ts',/jours: Object\.freeze\(\[1, 2, 3, 4, 5\]\)/,'jours: Object.freeze([1, 2, 3, 4, 5, 6])','créneau samedi')
-add('rendez-vous','','RV-3','app/rendez-vous/[jeton]/route.ts',/!lien\.expire_le \|\| Date\.parse\(lien\.expire_le\) <= Date\.now\(\)/,a=>a.replace('Date.parse(lien.expire_le) <= Date.now()','false'),'jeton expiré actif')
-reg('rendez-vous','','RV-4','lib/agents/acquisition/rendezVous.ts',/\$\{echapper\(metier\)\}/,'${metier}','métier non échappé')
-reg('rendez-vous','','RV-5','app/rendez-vous/[jeton]/route.ts',/  if \(req\.headers\.get\('origin'\)[^\n]+/,'','Origin non vérifié')
-reg('rendez-vous','','RV-5','app/rendez-vous/[jeton]/route.ts',/magasinSupabase\.reserverRdv\(empreinte, valide\.creneau, valide\.telephone\)/,'magasinSupabase.reserverRdv(jeton, valide.creneau, valide.telephone)','jeton brut à la réservation')
-add('rendez-vous','','RV-6','app/rendez-vous/[jeton]/route.ts',/corps: 'Le numéro est dans le Poste, carte « À appeler »\.'/ ,()=>"corps: `Téléphone : ${valide.telephone}`",'téléphone dans alerte')
-// Vidéo : audio lavfi réelle, durée, mouvement, autre hôte, shell.
-add('maquette-video','','MV-2',V,/\['-y', '-v', 'error', '-loop', '1',[^\n]+cible\]/,a=>a.replace("'-i', sortieTemporaire,","'-i', sortieTemporaire, '-f', 'lavfi', '-i', 'sine=frequency=440',").replace("'-an',","'-c:a', 'aac', '-shortest',"),'piste audio ajoutée')
-reg('maquette-video','','MV-2',V,/'-t', String\(duree\)/,"'-t', '25'",'durée vingt-cinq secondes')
-reg('maquette-video','','MV-3',V,/\(in_h-out_h\)\*min\(1,max\(0,\(t-1\.5\)\/\(\$\{duree\}-3\)\)\)/,'0','défilement supprimé')
-reg('maquette-video','','MV-5',V,/return demande\.origin === serveur\.adresse \? route\.continue\(\) : route\.abort\(\)/,'return route.continue()','requêtes autre hôte autorisées')
-add('maquette-video','','MV-7',V,/stdio: 'ignore', windowsHide: true/,a=>a+', shell: true','shell actif ffmpeg')
-// Douleurs toujours en dernier, jamais parallélisées.
-const DL='lib/agents/acquisition/douleurs.ts'
-add('douleurs','','DL-2',DL,/question: "Quand une même demande[^"\n]+\?"/,a=>a.replace(' ?"','"'),'question sans interrogation')
-add('douleurs','','DL-2',DL,/\{ id: "plombier-manque-clientele"[^\n]+/,a=>a.replace('approuve: false','approuve: true'),'douleur approuvée sans décision')
-add('douleurs','','DL-3',DL,/citation: "la plateforme vens[^"\n]+"/,a=>a.replace('citation: "','citation: "u/personne-fictive '),'pseudo dans citation')
-add('douleurs','','DL-4',DL,/citation: "la plateforme vens[^"\n]+"/,a=>a.replace('plateforme','aubergine'),'citation ne correspond plus à sa source')
-add('douleurs','','DL-5',DL,/question: "Quand une même demande[^"\n]+\?"/,a=>a.replace(' ?"',' sans engagement ?"'),'promesse sans engagement')
+const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const TRAVAIL = path.join(RACINE, '.orchestre/travail/026-099')
+const PREUVES = path.join(RACINE, '.orchestre/preuves/026-099')
+const optionsCli = process.argv.slice(2)
+const garder = optionsCli.includes('--garder')
+const seul = optionsCli.find((x) => x.startsWith('--seul='))?.slice(7) ?? null
+const enfant = optionsCli.find((x) => x.startsWith('--enfant='))?.slice(9) ?? null
+const jugesChoisis = optionsCli.find((x) => x.startsWith('--juges='))?.slice(8).split(',') ?? null
+const sequentiel = optionsCli.includes('--sequentiel')
+if (optionsCli.some((x) => x !== '--garder' && x !== '--valider' && x !== '--sequentiel' && !x.startsWith('--seul=') && !x.startsWith('--enfant=') && !x.startsWith('--juges='))) { console.error('usage : node scripts/juges-026-envoi-mutations.mjs [--garder] [--seul=ID] [--valider] [--sequentiel] [--juges=dj,jg,…]'); process.exit(2) }
 
-function prepare(spec) {
- const text=src(spec.fichier),matches=[...text.matchAll(new RegExp(spec.regex.source,'g'))]
- if(matches.length!==1)throw Error(`${spec.critere} ${spec.nom}: ancre présente ${matches.length} fois dans ${spec.fichier}`)
- const avant=matches[0][0],apres=spec.transformer(avant)
- if(avant===apres)throw Error(`${spec.critere}: mutation sans changement (${spec.nom})`)
- return {...spec,avant,apres}
+const J = {
+  dj: 'scripts/disjoncteurs-qa.mjs', jg: 'scripts/jauges-qa.mjs', fa: 'scripts/facteur-qa.mjs',
+  pg: 'scripts/prospection-sql-qa.mjs', mw: 'scripts/meta-webhooks-qa.mjs', rp: 'scripts/repondeur-qa.mjs',
+  rv: 'scripts/rendez-vous-qa.mjs', mv: 'scripts/maquette-video-qa.mjs', dl: 'scripts/douleurs-qa.mjs',
 }
-const selected=catalogue.filter(m=>!ONLY||m.critere===ONLY),mutations=[],failures=[]
-for(const s of selected){try{mutations.push(prepare(s))}catch(e){failures.push(e.message)}}
-fs.mkdirSync(PROOF,{recursive:true})
-if(LIST){console.log(JSON.stringify({catalogue:catalogue.length,prepared:mutations.length,criteres:[...new Set(catalogue.map(m=>m.critere))],erreurs:failures},null,2));process.exit(failures.length?1:0)}
-const report={mutations:[],temoins:[],erreurs:failures}
-function save(){fs.writeFileSync(path.join(PROOF,'mutations.json'),JSON.stringify(report,null,2));fs.writeFileSync(path.join(PROOF,'mutations.md'),'# Contre-vérification026-099\n\n'+(report.erreurs.length?'## Échecs\n'+report.erreurs.map(e=>'- '+e).join('\n')+'\n\n':'')+report.mutations.map(m=>`- ${m.critere} : ${m.nom} ; ${m.extrait}`).join('\n')+'\n')}
-function erase(dir){const rel=path.relative(WORK,dir);if(!rel||rel.startsWith('..')||path.isAbsolute(rel))throw Error('suppression hors travail');for(const n of fs.readdirSync(dir)){const f=path.join(dir,n),st=fs.lstatSync(f);if(st.isSymbolicLink())fs.unlinkSync(f);else if(st.isDirectory())erase(f);else fs.unlinkSync(f)}fs.rmdirSync(dir)}
-let archiveBase = null, overlays = null
-function git(argv){const r=spawnSync('git',argv,{cwd:ROOT,encoding:'utf8',maxBuffer:32*1024*1024});if(r.status!==0)throw Error(`git ${argv[0]}: ${r.stderr}`);return r.stdout}
-function base(){
- if(archiveBase)return
- archiveBase=path.join(WORK,'base-HEAD.tar')
- git(['archive','--format=tar',`--output=${archiveBase}`,'HEAD'])
- const changed=git(['diff','--name-only','HEAD','-z']).split('\0')
- const added=git(['ls-files','--others','--exclude-standard','-z']).split('\0')
- overlays=[...new Set([...changed,...added])].filter(f=>f&&!f.startsWith('.orchestre/')&&!f.startsWith('.media-travail/')&&!f.startsWith('node_modules/')&&!f.startsWith('public/')&&!/(^|\/)\.env(?:\.|$)/.test(f))
+const F = {
+  sql: 'supabase/migrations/0111_acquisition_envoi.sql', d: 'lib/agents/acquisition/disjoncteurs.ts',
+  j: 'lib/agents/acquisition/jauges.ts', f: 'lib/agents/acquisition/facteur.ts',
+  gt: 'app/api/usine/facteur/travail/route.ts', ga: 'app/api/usine/facteur/avis/route.ts',
+  gc: 'lib/agents/acquisition/porteurs/gmail.ts', p: 'lib/agents/acquisition/porteurFormulaire.ts',
+  ps: 'scripts/agents/porteur-formulaire.mjs', pt: 'app/api/usine/porteur/travail/route.ts',
+  me: 'lib/agents/acquisition/metaWebhooks.ts', mr: 'app/api/webhooks/meta/route.ts',
+  r: 'lib/agents/acquisition/repondeur.ts', rr: 'app/api/cron/repondeur/route.ts',
+  rdv: 'lib/agents/acquisition/rendezVous.ts', rdvr: 'app/rendez-vous/[jeton]/route.ts',
+  video: 'scripts/agents/maquette-video.mjs', douleur: 'lib/agents/acquisition/douleurs.ts',
 }
-function copy(dir){
- base();fs.mkdirSync(dir,{recursive:true})
- const extracted=spawnSync('tar',['-xf',archiveBase,'-C',dir],{cwd:ROOT,encoding:'utf8',maxBuffer:1024*1024})
- if(extracted.status!==0)throw Error(`archive HEAD: ${extracted.stderr}`)
- // HEAD sert de baseline ; les fichiers modifiés/ajoutés du chantier recouvrent cette copie, jamais le dépôt source.
- for(const f of new Set([...overlays,...catalogue.map(m=>m.fichier)])){
-  const source=path.join(ROOT,f),target=path.join(dir,f)
-  const rel=path.relative(dir,target);if(!rel||rel.startsWith('..')||path.isAbsolute(rel))throw Error('overlay hors copie')
-  if(!fs.existsSync(source)){if(fs.existsSync(target)&&fs.lstatSync(target).isFile())fs.unlinkSync(target);continue}
-  const st=fs.lstatSync(source);if(!st.isFile())continue
-  fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(source,target)
- }
- for(const n of ['node_modules','public']){
-  const target=path.join(dir,n)
-  if(fs.existsSync(target)){if(fs.lstatSync(target).isSymbolicLink())fs.unlinkSync(target);else erase(target)}
-  if(fs.existsSync(path.join(ROOT,n)))fs.symlinkSync(path.join(ROOT,n),target,process.platform==='win32'?'junction':'dir')
- }
+const mutations = []
+function m(juge, critere, fichier, avant, apres, args = '', description = '') {
+  mutations.push({ juge: J[juge], critere, fichier: F[fichier] ?? fichier, avant, apres, args, description: description || `${avant} → ${apres}` })
 }
-function command(m){return `node --import ./scripts/ts-loader.mjs ${m.juge}${m.options?' '+m.options:''} --racine={racine}`}
-async function run(m,dir){
- if(Date.now()-start>=LIMIT)throw Error('budget global19minutes dépassé')
- const at=Date.now(),opts=m.options?m.options.split(' '):[]
- return await new Promise(resolve=>{
-  const child=spawn(process.execPath,['--import','./scripts/ts-loader.mjs',m.juge,...opts,`--racine=${dir}`],{cwd:dir,detached:process.platform!=='win32',env:{...process.env,FORCE_COLOR:'0',NO_COLOR:'1'}})
-  let sortie='',expired=false
-  const timer=setTimeout(()=>{expired=true;if(process.platform==='win32')spawnSync('taskkill',['/PID',String(child.pid),'/T','/F']);else try{process.kill(-child.pid,'SIGKILL')}catch{}},Math.min(180000,LIMIT-(Date.now()-start)))
-  for(const stream of [child.stdout,child.stderr])stream.on('data',d=>{if(sortie.length<8*1024*1024)sortie+=d.toString()})
-  child.on('error',e=>{clearTimeout(timer);resolve({code:2,sortie,error:e.message,duree_s:(Date.now()-at)/1000})})
-  child.on('close',code=>{clearTimeout(timer);resolve({code:expired?124:code,sortie,error:expired?'delai':null,duree_s:(Date.now()-at)/1000})})
- })
+
+// Disjoncteurs : droits, paliers, fermeture et carte d'attention.
+m('dj','DJ-2','sql','create or replace function public.acq_signal(p jsonb) returns jsonb language plpgsql security definer','create or replace function public.acq_signal(p jsonb) returns jsonb language plpgsql','--partie=sql','acq_signal sans security definer')
+m('dj','DJ-2','sql','grant execute on function public.acq_signal(jsonb) to service_role;','grant execute on function public.acq_signal(jsonb) to service_role, authenticated;','--partie=sql','acq_signal accessible à authenticated')
+m('dj','DJ-3','sql','if v_echecs>=3 then','if v_echecs>=4 then','--partie=sql','pause après quatre échecs')
+m('dj','DJ-3','sql',"('P3',30,5,'5 jours au vert'),('P4',40,null,'plafond des agents : au-delà, seul Benj')","('P3',30,5,'5 jours au vert'),('P4',60,null,'plafond des agents : au-delà, seul Benj')",'--partie=sql','P4 à 60 envois par jour')
+m('dj','DJ-4','sql'," select actif into ouvert from ops.interrupteurs where nom='envoi_froid';"," update ops.interrupteurs set actif=true where nom='envoi_froid';\n select actif into ouvert from ops.interrupteurs where nom='envoi_froid';",'--partie=sql','acq_palier_appliquer ouvre le froid')
+// Décision du 05/10/2026 (plus de date d'ouverture du froid) : 0129 remplace acq_envoi_froid_ouvrir sans date, 0130 ferme la porte générique.
+// Décision du 05/10/2026 soir (« B ») : 0131 retire l'épreuve de bout en bout de l'OUVERTURE (palier P0) et la place sur la MONTÉE de palier
+// (acq_palier_evaluer, DJ-12). Chaque garde qui reste (fondateur, mesure à sec, notice < 7 jours, ordre avant l'écriture, porte unique) et chaque
+// garde de la montée (épreuve PASS < 30 jours, envoi à froid ouvert, bilan P2 → P3, types d'événements valides, droits) est saboté ici.
+const OUV = 'supabase/migrations/0131_froid_p0_sans_epreuve.sql', PORTE = 'supabase/migrations/0130_froid_porte_unique.sql'
+m('dj','DJ-3',OUV," if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'"," if (ops.maintenant() at time zone 'Europe/Paris')::date<'2026-10-12'::date then raise exception 'ops:trop_tot'; end if;\n if not exists(select 1 from ops.evenements where agent='systeme' and type='mesure_a_sec'",'--partie=sql','la date du 12/10 revient dans acq_envoi_froid_ouvrir')
+m('dj','DJ-10',OUV,"then raise exception 'ops:mesure_absente'","then null",'--partie=sql','ouverture sans la mesure à sec')
+m('dj','DJ-10',OUV,"resume like 'PASS%') then raise exception 'ops:mesure_absente'","resume like '%') then raise exception 'ops:mesure_absente'",'--partie=sql','mesure à sec acceptée même en échec')
+m('dj','DJ-10',OUV,"then raise exception 'ops:notice_absente'","then null",'--partie=sql','ouverture sans la notice vérifiée')
+m('dj','DJ-10',OUV,"v_notice<ops.maintenant()-interval '7 days'","v_notice<ops.maintenant()-interval '700 days'",'--partie=sql','notice périmée acceptée')
+m('dj','DJ-10',OUV," if p_auteur is null or not exists(select 1 from public.artisans where id=p_auteur and is_founder) then raise exception 'ops:auteur'; end if;\n"," if p_auteur is null then raise exception 'ops:auteur'; end if;\n",'--partie=sql','ouverture sans contrôle du fondateur')
+m('dj','DJ-10',OUV," update ops.interrupteurs set actif=true,motif='Ouverture par le fondateur'"," update ops.etat_envoi set palier='P1' where id;\n update ops.interrupteurs set actif=true,motif='Ouverture par le fondateur'",'--partie=sql','l\'ouverture saute le palier P0 (P1 dès l\'ouverture)')
+m('dj','DJ-10',PORTE,"  if p_nom = 'envoi_froid' and p_actif then\n    raise exception using message = 'ops:envoi_froid_par_geste', errcode = 'P0001';\n  end if;\n","",'--partie=sql','porte générique : envoi_froid ouvrable sans preuve')
+m('dj','DJ-10',PORTE,"grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role;","grant execute on function public.ops_interrupteur_poser(text, boolean, text, uuid) to service_role, authenticated;",'--partie=sql','porte générique ouverte à authenticated')
+// La montée de palier (0131, DJ-12) : acq_palier_evaluer est la seule fonction qui écrit le palier.
+m('dj','DJ-12',OUV,"verts>=5 and coalesce(froid_ouvert,false) and epreuve_ok then","verts>=5 and coalesce(froid_ouvert,false) then",'--partie=sql','montée P0/P1/P3 sans l\'épreuve de bout en bout')
+m('dj','DJ-12',OUV,"verts>=5 and coalesce(froid_ouvert,false) and epreuve_ok then","verts>=5 and epreuve_ok then",'--partie=sql','montée de palier alors que l\'envoi à froid est fermé')
+m('dj','DJ-12',OUV,"   if epreuve_ok then\n    update ops.etat_envoi set palier='P3'","   if true then\n    update ops.etat_envoi set palier='P3'",'--partie=sql','bilan P2 → P3 sans l\'épreuve de bout en bout')
+m('dj','DJ-12',OUV,"type='epreuve_bout_en_bout' and resume like 'PASS%'","type='epreuve_bout_en_bout' and resume like '%'",'--partie=sql','épreuve de bout en bout acceptée même en échec')
+m('dj','DJ-12',OUV,"le>=ops.maintenant()-interval '30 days');","le>=ops.maintenant()-interval '3000 days');",'--partie=sql','épreuve de bout en bout périmée acceptée')
+m('dj','DJ-12',OUV,"values('systeme','bilan_favorable'","values('systeme','bilan_p3'",'--partie=sql','type d\'événement avec un chiffre : l\'évaluation échouerait (evenements_type_check)')
+m('dj','DJ-12',OUV,"select 'systeme','palier_attente_epreuve','Montée de palier retenue : l''épreuve de bout en bout n''a pas réussi (moins de 30 jours)'\n   where not exists(select 1 from ops.evenements where type='palier_attente_epreuve' and le::date=j);\n elsif v.palier='P2'","select 'systeme','alerte_message','x' where false;\n elsif v.palier='P2'",'--partie=sql','la montée retenue n\'écrit plus son événement')
+m('dj','DJ-12',OUV," perform public.acq_palier_appliquer();\n return public.acq_etat_envoi();"," update ops.interrupteurs set actif=true where nom='envoi_froid';\n perform public.acq_palier_appliquer();\n return public.acq_etat_envoi();",'--partie=sql','acq_palier_evaluer ouvre l\'envoi à froid')
+m('dj','DJ-12',OUV,"grant execute on function public.acq_palier_evaluer() to service_role;","grant execute on function public.acq_palier_evaluer() to service_role, authenticated;",'--partie=sql','acq_palier_evaluer ouverte à authenticated')
+m('dj','DJ-12',OUV,"revoke all on function public.acq_palier_evaluer() from public,anon,authenticated;","",'--partie=sql','droits publics de acq_palier_evaluer non retirés')
+m('dj','DJ-7','d',"if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'pause'))","if (envoi.technologie && etat.technologies.some(t => t.technologie === envoi.technologie && t.etat === 'active'))",'--partie=logique','technologie en pause acceptée')
+m('dj','DJ-7','d',"palier_attente_epreuve: { couleur: 'jaune'","palier_attente_epreuve: { couleur: 'rouge'",'--partie=logique','la carte de la montée retenue faute d\'épreuve change de couleur')
+m('dj','DJ-7','d',"bilan_favorable: { couleur: 'bleu'","bilan_favorable_x: { couleur: 'bleu'",'--partie=logique','le bilan favorable (type écrit par 0131) n\'a plus sa carte')
+m('dj','DJ-7','d',"const technologie = evenement.technologie ?? 'inconnue'","const technologie = evenement.resume ?? evenement.technologie ?? 'inconnue'",'--partie=logique','URL du prospect dans la carte')
+
+// Jauges : définition, seuil, fuseau, consommation, dépendance interdite.
+m('jg','JG-2','j',"definition({ id: 'publora', libelle: 'Publora', fournisseur: 'publora', periode: 'mois', plafond: 15, source: 'base' }),",'', '', 'jauge Publora supprimée')
+m('jg','JG-3','j',"part >= 0.75 ? 'attention'","part >= 0.80 ? 'attention'",'', 'seuil attention porté à 80 %')
+m('jg','JG-4','j',"timeZone: 'Europe/Paris', year: 'numeric'","timeZone: 'UTC', year: 'numeric'",'', 'période calculée en UTC')
+m('jg','JG-4','j','if (utilise + n > plafond) return false','if (utilise + n > plafond) return magasin.jaugeConsommer(fournisseur, n)','','écriture même à jauge pleine')
+m('jg','JG-6','j',"const definition = (j: Definition): Definition => Object.freeze(j)","const definition = (j: Definition): Definition => { void process.env.ACQ_JAUGE; return Object.freeze(j) }",'', 'lecture de process.env')
+
+// Facteur : deux jugements, transport et routes de l'usine.
+m('fa','FA-2','f',"if (typeof lecteur !== 'function') { await ecrire('second_juge_indisponible', 'Aucun moteur ne répond : rien n\\'est jugé.'); return rendus }","if (typeof lecteur !== 'function') { return [{ envoi_id: travail.envois[0].id, empreinte: 'a'.repeat(64), j2: { verdict: 'ok', raisons: [] }, j2_version: 'faux' }] }",'--partie=facteur','avis approuvé sans lecteur')
+m('fa','FA-14','f','const j3 = jugerMessage(entree)','const j3 = { ok: true, raisons: [] } as ReturnType<typeof jugerMessage>','--partie=facteur','avis ok sans rejouer J3')
+m('fa','FA-13','gt','texte: e.texte, empreinte: e.empreinte','texte: e.texte, destinataire: e.destinataire, empreinte: e.empreinte','--partie=facteur','destinataire rendu au second juge')
+m('fa','FA-12','ga',"if (agent.nom !== AGENT) return erreur(403, 'agent')","if (agent.nom !== AGENT && agent.nom !== 'facteur_usine') return erreur(403, 'agent')",'--partie=facteur','jeton facteur_usine accepté par avis')
+m('fa','FA-3','f',"      const refus = approuveVraiment(x)\n      if (refus) { compter(bilan.retenus, `non_approuve_${refus}`);","      const refus = approuveVraiment(x)\n      if (false && refus) { compter(bilan.retenus, `non_approuve_${refus}`);",'--partie=facteur','envoi préparé traversant la garde')
+m('fa','FA-4','f','texte: x.texte, enReponseA, references','texte: x.texte, enReponseA: null, references','--partie=facteur','In-Reply-To omis')
+m('fa','FA-5','f',"await magasin.signal({ type: 'gmail_refus', envoyeur: 'gmail', envoi_id: x.id, modele_id: x.modele_id })","void 0",'--partie=facteur','refus Gmail sans signal')
+m('fa','FA-6','lib/agents/acquisition/envoiMeta.ts',"messaging_type: 'RESPONSE', message: { text: texte }","messaging_type: 'HUMAN_AGENT', message: { text: texte }",'--partie=facteur','tag HUMAN_AGENT ajouté')
+m('fa','FA-8','app/api/cron/facteur/route.ts','await pauseGenerale()','{ active: process.env.PRESTI_PAUSE_AGENTS === \'1\' }','--partie=facteur','route lit une variable au lieu de la pause générale')
+m('fa','FA-9','f',"const { magasin, gmail, horloge } = deps","console.log(deps.adresseReponse); const { magasin, gmail, horloge } = deps",'--partie=facteur','adresse en console')
+m('fa','FA-10','f',"await envoyerMeta(deps, bilan)","await envoyerMeta(deps, bilan)\n    await deps.magasin.envoisApprouves('formulaire_site', 1)",'--partie=facteur','Facteur lit la file formulaire')
+
+// Porteur et Gmail. --ici exerce le vrai navigateur et l'essai de bout en bout.
+m('fa','PF-3','p',"if (/recaptcha|hcaptcha|h-captcha|turnstile|friendly.?captcha|frc-captcha|grecaptcha|captcha/i.test(html))","if (/hcaptcha|h-captcha|turnstile|friendly.?captcha|frc-captcha/i.test(html))",'--partie=porteur --ici','reCAPTCHA ignoré')
+m('fa','PF-8','ps',"if (e?.code !== 'EEXIST') throw e","if (e?.code === 'EEXIST') return 'pris'; if (e?.code !== 'EEXIST') throw e",'--partie=porteur --ici','verrou existant traité comme acquis')
+m('fa','PF-11','pt',"if (!etat || !releveFrais(etat.releve_gmail_le, maintenant) || futur(etat.formulaire_coupe_jusqua, maintenant)) return rien()","if (!etat || futur(etat.formulaire_coupe_jusqua, maintenant)) return rien()",'--partie=porteur --ici','route travail sans garde de la relève du Gmail')
+m('fa','PF-6','pt',"if (!fenetreOuverte(new Date(maintenant))) return rien()","if (false) return rien()",'--partie=porteur --ici','route travail sans calendrier (le samedi, à 18 h : du travail rendu)')
+m('fa','PF-12','ps','return cible.screenshot({ type:',"return page.screenshot({ fullPage: true, type:",'--partie=porteur --ici','capture de la page entière')
+m('fa','PF-13','ps',"ecrire0600(path.join(dossierEnvoi, 'abandon.json'), JSON.stringify({ raison, empreinte_html: htmlEmpreinte }))","ecrire0600(path.join(dossierEnvoi, 'abandon.json'), JSON.stringify({ raison, empreinte_html: htmlEmpreinte })); ecrire0600(path.join(dossierEnvoi, 'avant.jpg'), Buffer.from([255, 216]))",'--partie=porteur --ici','JPEG sur un abandon')
+m('fa','GM-2','gc',"p.trim().replace(/ /g, '')","p.trim()",'--partie=gmail','espaces du mot de passe conservés')
+m('fa','GM-4','gc',"const requete: Record<string, unknown> = { header: { [champ]: adresse } }","const requete: Record<string, unknown> = { all: true }",'--partie=gmail','recherche IMAP sans adresse')
+
+// La base : un seul premier formulaire à vie pour l'entreprise.
+m('pg','PG-4','supabase/migrations/0099_ops_garde_envois.sql',"raise exception using message = 'ops:formulaire_deja', errcode = 'P0001';","null;",'--sans-essai','second formulaire à la même entreprise accepté (le refus ops:formulaire_deja n\u2019est plus levé)')
+
+// Webhooks Meta : signature, abonnement, ordre, amorce, STOP et profil.
+m('mw','MW-2','me','return crypto.timingSafeEqual(propose, attendu)','return propose.toString() === attendu.toString()','','comparaison de signature variable')
+m('mw','MW-3','mr','|| !memeChaine(jeton, attendu)','', '', 'abonnement sans vérification du jeton')
+m('mw','MW-4','mr','if (!verifierSignature(brut, req.headers.get(\'x-hub-signature-256\'), secret)) return new Response(null, { status: 401 })','JSON.parse(new TextDecoder().decode(brut))\n  if (!verifierSignature(brut, req.headers.get(\'x-hub-signature-256\'), secret)) return new Response(null, { status: 401 })','','JSON.parse avant signature')
+m('mw','MW-5','me',"return t === 'site' || (/^site\\s/.test(t) && t.length <= 20)","return t.includes('site')",'', '« Joli site, bravo » accepté')
+m('mw','MW-7','me',"await magasin.opposer(cles, 'stop', 'webhook_meta')","void cles",'', 'STOP sans opposition')
+m('mw','MW-8','me',"pseudo: profil.pseudo.slice(0, 60), suit_le_compte: profil.suit_le_compte","pseudo: profil.pseudo.slice(0, 60), nom: profil.pseudo, suit_le_compte: profil.suit_le_compte",'', 'profil complet rangé')
+
+// Répondeur : classe sensible, transparence, temps, unicité, jeton, approbation, cron.
+m('rp','RP-2','r',"'entrant', 'oui'])","'entrant', 'oui', 'sensible'])",'', 'classe sensible reçoit une réponse')
+m('rp','RP-3','r',"const IA = \"assistant IA de Presti\"","const IA = \"Presti\"",'', 'mention IA retirée')
+m('rp','RP-5','r',"|| !(jusqua > deps.horloge.maintenant())","",'','réponse privée sans contrôle de la fin de fenêtre (le huitième jour part)')
+m('rp','RP-6','r',"type = 'confirmation_stop' }","type = infoDuFil?.envois?.some(e => e.type === 'confirmation_stop') ? 'reponse' : 'confirmation_stop' }",'', 'second STOP contourne le type protégé')
+m('rp','RP-7','r','creerLienRdv(prospectId, (ctx.deps.hacherJeton ?? hacherJetonReel)(jeton),','creerLienRdv(prospectId, jeton,','','jeton en clair au magasin')
+m('rp','RP-8','r','if (modele.approuve === false) return','if (false && modele.approuve === false) return','','modèle non approuvé préparé')
+m('rp','RP-9','rr',"if (!secret || auth !== `Bearer ${secret}`)","if (false)",'','route cron sans jeton')
+
+// Rendez-vous : calendrier, indistinction, échappement, origine, empreinte, alerte.
+m('rv','RV-2','rdv','jours: Object.freeze([1, 2, 3, 4, 5])','jours: Object.freeze([1, 2, 3, 4, 5, 6])','','samedi proposé')
+m('rv','RV-3','rdvr',"Date.parse(lien.expire_le) <= Date.now()) return { erreur: introuvable() }","Date.parse(lien.expire_le) <= Date.now()) return { erreur: texte('Lien expiré.', 410) }",'', 'jeton expiré distingué')
+m('rv','RV-4','rdv','${echapper(metier)} à ${echapper(commune)}','${metier} à ${echapper(commune)}','','métier non échappé')
+m('rv','RV-5','rdvr',"if (req.headers.get('origin') !== 'https://prestiapp.fr') return texte('Origine refusée.', 403)",'','', 'Origin non contrôlé')
+m('rv','RV-5','rdvr','reserverRdv(empreinte, valide.creneau, valide.telephone)','reserverRdv(jeton, valide.creneau, valide.telephone)','','jeton en clair au magasin')
+m('rv','RV-6','rdvr',"corps: 'Le numéro est dans le Poste, carte « À appeler ».'","corps: `Numéro : ${valide.telephone}`",'', 'numéro dans l’alerte')
+
+// Vidéo : mesures réelles par ffprobe/ffmpeg et navigateur.
+m('mv','MV-2','video',"'-an', '-map_metadata'","'-filter_complex', 'anullsrc=r=44100:cl=mono[a]', '-map', '0:v', '-map', '[a]', '-c:a', 'aac', '-shortest', '-map_metadata'",'','piste audio ajoutée à la vidéo')
+m('mv','MV-2','video',"'-t', String(duree)","'-t', String(duree + 6)",'','durée de la vidéo portée à 24 secondes')
+m('mv','MV-3','video',"(t-1.5)/(${duree}-3)","0*(${duree}-3)",'','défilement figé')
+m('mv','MV-5','video','route.continue() : route.abort()','route.continue() : route.continue()','','requête externe autorisée')
+m('mv','MV-7','video',"{ stdio: 'ignore', windowsHide: true }","{ stdio: 'ignore', windowsHide: true, shell: true }",'', 'ffmpeg lancé dans un shell')
+
+// Douleurs : réseau en dernier, une mutation à la fois.
+m('dl','DL-2','douleur','comment faites-vous pour que le client vous choisisse ?','comment faites-vous pour que le client vous choisisse ','','question sans point d’interrogation')
+m('dl','DL-2','douleur','id: "plombier-manque-clientele", metier: "plombier", citation: "je suis plombiers de métier et j\'ai presque 20 ans d\'expérience, ce qui me manque c\'est la clientèle pour démarrer", source_url: "https://plombiers-reunis.com/topic8048-que-pensez-vous-des-plateformes-de-mise-en-relation.html", relevee_le: \'2026-09-29\', mots_cles: ["clientele", "demarrage", "installation"], question: "Quand on se lance à son compte, comment vos premiers clients vous trouvent-ils ?", accroche_objet: "Comment vos premiers clients vous trouvent ?", approuve: false','id: "plombier-manque-clientele", metier: "plombier", citation: "je suis plombiers de métier et j\'ai presque 20 ans d\'expérience, ce qui me manque c\'est la clientèle pour démarrer", source_url: "https://plombiers-reunis.com/topic8048-que-pensez-vous-des-plateformes-de-mise-en-relation.html", relevee_le: \'2026-09-29\', mots_cles: ["clientele", "demarrage", "installation"], question: "Quand on se lance à son compte, comment vos premiers clients vous trouvent-ils ?", accroche_objet: "Comment vos premiers clients vous trouvent ?", approuve: true','','approbation sans trace')
+m('dl','DL-3','douleur','citation: "la plateforme vens la meme proposition','citation: "u/pseudo la plateforme vens la meme proposition','','pseudo ajouté à la citation')
+m('dl','DL-4','douleur','citation: "la plateforme vens la meme proposition','citation: "la plateforme vend la meme proposition','','citation changée')
+m('dl','DL-5','douleur','comment faites-vous pour que le client vous choisisse ?','comment faites-vous sans engagement pour que le client vous choisisse ?','','promesse sans engagement')
+
+function copier(source, cible) {
+  fs.mkdirSync(path.dirname(cible), { recursive: true })
+  fs.cpSync(source, cible, { recursive: true, filter: (x) => !['node_modules', '.git', '.next', '.orchestre'].includes(path.basename(x)) })
 }
-function verdict(text,id){const lines=text.replace(/\x1b\[[0-9;]*m/g,'').split(/\r?\n/),proper=lines.filter(l=>l.startsWith(`FAIL ${id} — `)),bilan=lines.filter(l=>/ : FAIL — /.test(l)).at(-1);return proper.length===1&&bilan?.split(' — ').at(-1).split(/,\s*/).includes(id)?proper[0]:null}
-// Deux groupes au plus, chacun possède sa copie ; jamais deux mutations sur une même copie.
-// Le navigateur long commence en premier. Douleurs conserve sa séquence finale exclusive.
-async function pool(groupes, faire) {
- let suivant=0
- const travailleur=async()=>{
-  while(suivant<groupes.length){
-   const groupe=groupes[suivant++]
-   try{await faire(groupe)}catch(e){report.erreurs.push(e.message);save()}
+function preparation(nom) {
+  const copie = path.join(TRAVAIL, nom.replace(/[^a-z0-9-]/gi, '-'))
+  fs.rmSync(copie, { recursive: true, force: true })
+  fs.mkdirSync(copie, { recursive: true })
+  for (const d of ['app', 'lib', 'components', 'plans', 'scripts', 'supabase', 'docs']) if (fs.existsSync(path.join(RACINE, d))) copier(path.join(RACINE, d), path.join(copie, d))
+  for (const f of ['package.json', 'tsconfig.json', 'next-env.d.ts', 'next.config.mjs', 'proxy.ts', 'middleware.ts']) if (fs.existsSync(path.join(RACINE, f))) fs.copyFileSync(path.join(RACINE, f), path.join(copie, f))
+  fs.symlinkSync(path.join(RACINE, 'node_modules'), path.join(copie, 'node_modules'), 'dir')
+  return copie
+}
+function lancer(juge, args, copie) {
+  const options = ['--import', './scripts/ts-loader.mjs', juge, ...args.split(' ').filter(Boolean), `--racine=${copie}`]
+  const debut = Date.now()
+  const x = spawnSync(process.execPath, options, { cwd: RACINE, encoding: 'utf8', timeout: 180_000, maxBuffer: 16 * 1024 * 1024, env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1' } })
+  return { code: x.status ?? (x.error ? 124 : 128), sortie: `${x.stdout ?? ''}\n${x.stderr ?? ''}`, duree_s: (Date.now() - debut) / 1000, erreur: x.error?.message ?? null }
+}
+function ligneVerifiee(sortie, critere) {
+  const lignes = sortie.split(/\r?\n/)
+  const propres = lignes.filter((l) => l.startsWith(`FAIL ${critere} — `))
+  const bilan = lignes.filter((l) => / : FAIL — /.test(l)).at(-1) ?? ''
+  return propres.length === 1 && bilan.split(' — ')[1]?.split(/,\s*/).includes(critere) ? propres[0] : null
+}
+function remplacer(copie, mutation) {
+  const cible = path.join(copie, mutation.fichier)
+  const original = fs.readFileSync(cible, 'utf8')
+  const n = original.split(mutation.avant).length - 1
+  if (n !== 1 || mutation.avant === mutation.apres) throw new Error(`${mutation.critere} : ${mutation.fichier}, avant trouvé ${n} fois ou remplacement identique`)
+  fs.writeFileSync(cible, original.replace(mutation.avant, mutation.apres))
+  return () => fs.writeFileSync(cible, original)
+}
+function ecrireRapports(resultats, problemes) {
+  fs.mkdirSync(PREUVES, { recursive: true })
+  fs.writeFileSync(path.join(PREUVES, 'mutations.json'), JSON.stringify({ mutations: resultats }, null, 2) + '\n')
+  const lignes = ['# Mutations de 026-099', '', ...problemes.map((p) => `ÉCHEC — ${p}`), ...resultats.map((r) => `- ${r.critere} · ${r.juge} · ${r.description} · ${r.extrait}`)]
+  fs.writeFileSync(path.join(PREUVES, 'mutations.md'), lignes.join('\n') + '\n')
+}
+
+const groupes = new Map()
+async function parallele() {
+  const cles = Object.keys(J).filter((k) => jouees.some((x) => x.juge === J[k]))
+  const poids = Object.fromEntries(cles.map((k) => [k, jouees.filter((x) => x.juge === J[k]).length * ({ fa: 12, dl: 8, mv: 4 }[k] ?? 1)]))
+  cles.sort((a, b) => poids[b] - poids[a])
+  fs.mkdirSync(TRAVAIL, { recursive: true }); fs.mkdirSync(PREUVES, { recursive: true }); fs.rmSync(path.join(PREUVES, 'echec.log'), { force: true })
+  const file = [...cles]
+  const FAIT = {}
+  const lancerEnfant = (k) => new Promise((fin) => {
+    const e = spawn(process.execPath, [fileURLToPath(import.meta.url), `--enfant=${k}`, ...(garder ? ['--garder'] : [])], { cwd: RACINE, env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1' }, windowsHide: true })
+    let tampon = ''
+    const sortir = (d) => { tampon += d; let i; while ((i = tampon.indexOf('\n')) >= 0) { console.log(`[${k}] ${tampon.slice(0, i)}`); tampon = tampon.slice(i + 1) } }
+    e.stdout.on('data', sortir); e.stderr.on('data', sortir)
+    e.on('close', (code) => { if (tampon) console.log(`[${k}] ${tampon}`); FAIT[k] = code; fin() })
+  })
+  const ouvriers = Array.from({ length: Math.min(3, cles.length) }, async () => { while (file.length) await lancerEnfant(file.shift()) })
+  await Promise.all(ouvriers)
+  for (const k of cles) {
+    let part = null
+    try { part = JSON.parse(fs.readFileSync(path.join(TRAVAIL, `partiel-${k}.json`), 'utf8')) } catch { problemes.push(`témoin ${k} : aucun résultat rendu par le passage du juge (code ${FAIT[k]})`) }
+    if (part) { resultats.push(...part.resultats); problemes.push(...part.problemes) }
   }
- }
- await Promise.all([travailleur(),travailleur()])
+  ecrireRapports(resultats, problemes)
+  if (!garder) fs.rmSync(TRAVAIL, { recursive: true, force: true })
 }
-try{
- if(failures.length)throw Error('préflight incomplet : aucun juge lancé')
- fs.mkdirSync(WORK,{recursive:true});const groupes=new Map()
- for(const [index,m] of mutations.entries()){
-  const key=m.juge+' '+m.options
-  if(!groupes.has(key))groupes.set(key,{key,dir:path.join(WORK,String(groupes.size)),cas:[]})
-  groupes.get(key).cas.push({m,index})
- }
- const tous=[...groupes.values()]
- const douleurs=tous.filter(g=>g.cas[0].m.juge==='scripts/douleurs-qa.mjs')
- const ordinaires=tous.filter(g=>!douleurs.includes(g)).sort((a,b)=>Number(b.cas[0].m.options.includes('--ici'))-Number(a.cas[0].m.options.includes('--ici')))
- // Toutes les copies sont préparées avant de lancer les processus : overlay immuable.
- for(const g of tous)copy(g.dir)
- const temoin=async g=>{
-  const m=g.cas[0].m,r=await run(m,g.dir)
-  console.log(`TÉMOIN ${g.key}: code ${r.code}, ${r.duree_s.toFixed(1)} s`)
-  report.temoins.push({commande:command(m),code:r.code,duree_s:r.duree_s})
-  if(r.code!==0)report.erreurs.push(`témoin ${g.key}: code${r.code}: ${r.sortie.slice(-500)}`)
-  save()
-  return r.code===0
- }
- const muter=async g=>{
-  for(const {m,index} of g.cas){
-   const passage=index+1,file=path.join(g.dir,m.fichier),original=fs.readFileSync(file,'utf8')
-   let result
-   const occurrences=original.split(m.avant).length-1
-   if(occurrences!==1)throw Error('ancre copie '+m.critere+': '+occurrences+' occurrences')
-   try{fs.writeFileSync(file,original.replace(m.avant,()=>m.apres));result=await run(m,g.dir)}
-   finally{fs.writeFileSync(file,original)}
-   const extrait=verdict(result.sortie,m.critere)
-   console.log(`${extrait&&result.code===1&&!result.error?'DÉTECTÉE':'NON DÉTECTÉE'} ${passage}/${mutations.length} ${m.critere} ${m.nom}: code ${result.code}, ${result.duree_s.toFixed(1)} s`)
-   fs.writeFileSync(path.join(PROOF,`${passage}-${m.critere}.log`),result.sortie)
-   if(result.code!==1||result.error||!extrait)report.erreurs.push(`non détectée ${m.critere} ${m.nom}: code${result.code}; ${result.sortie.slice(-300)}`)
-   else report.mutations.push({juge:m.juge,commande:command(m),fichier:m.fichier,avant:m.avant,apres:m.apres,critere:m.critere,extrait,duree_s:result.duree_s,nom:m.nom})
-   save()
+if (optionsCli.includes('--valider')) {
+  let erreurs = 0
+  for (const x of mutations) {
+    try {
+      const n = fs.readFileSync(path.join(RACINE, x.fichier), 'utf8').split(x.avant).length - 1
+      if (n !== 1 || x.avant === x.apres) { console.log(`${x.critere} ${x.description} : avant ${n} fois${x.avant === x.apres ? ', remplacement identique' : ''}`); erreurs++ }
+    } catch (e) { console.log(`${x.critere} ${x.description} : ${e.message}`); erreurs++ }
   }
- }
- // Le contrat impose un témoin avant les fautes de CE juge, sans barrière globale.
- // Un témoin rouge interdit toutes les mutations de son groupe, jamais masqué par les autres.
- const verifierGroupe=async g=>{if(await temoin(g))await muter(g)}
- await pool(ordinaires,verifierGroupe)
- for(const g of douleurs)await verifierGroupe(g)
-}catch(e){report.erreurs.push(e.message)}finally{save();if(!KEEP&&fs.existsSync(WORK))for(const f of fs.readdirSync(WORK)){const item=path.join(WORK,f);if(fs.lstatSync(item).isDirectory())erase(item);else fs.unlinkSync(item)}}
-console.log(`juges-026-envoi-mutations : ${report.erreurs.length?'FAIL':'PASS'} — ${report.mutations.length}/${mutations.length} fautes détectées`)
-process.exitCode=report.erreurs.length?1:0
+  console.log(`ancres : ${mutations.length - erreurs}/${mutations.length}`)
+  process.exit(erreurs ? 1 : 0)
+}
+const jouees = mutations.filter((x) => (!seul || x.critere === seul) && (!enfant || x.juge === J[enfant]) && (!jugesChoisis || jugesChoisis.some((k) => J[k] === x.juge)))
+for (const x of jouees) {
+  const cle = `${x.juge} ${x.args}`
+  if (!groupes.has(cle)) groupes.set(cle, [])
+  groupes.get(cle).push(x)
+}
+const resultats = [], problemes = []
+const noter = (r, pb) => { if (enfant) { fs.mkdirSync(TRAVAIL, { recursive: true }); fs.writeFileSync(path.join(TRAVAIL, `partiel-${enfant}.json`), JSON.stringify({ resultats: r, problemes: pb })) } else ecrireRapports(r, pb) }
+if (!enfant && (seul || sequentiel || new Set(jouees.map((x) => x.juge)).size < 2)) noter(resultats, problemes)
+if (!enfant && !seul && !sequentiel && new Set(jouees.map((x) => x.juge)).size > 1) await parallele()
+else try {
+  for (const [groupe, liste] of groupes) {
+    const premier = liste[0]
+    const copie = preparation(groupe)
+    const temoin = lancer(premier.juge, premier.args, copie)
+    console.log(`TÉMOIN ${groupe} : ${temoin.code} (${temoin.duree_s.toFixed(1)} s)`)
+    if (temoin.code !== 0) { problemes.push(`témoin ${groupe} : code ${temoin.code} — ${temoin.sortie.trim().split('\n').at(-1)}`); break }
+    for (const x of liste) {
+      let restaurer
+      try {
+        restaurer = remplacer(copie, x)
+        const r = lancer(x.juge, x.args, copie)
+        const extrait = ligneVerifiee(r.sortie, x.critere)
+        console.log(`${x.critere} ${x.description} : ${r.code} (${r.duree_s.toFixed(1)} s)${extrait ? ` — ${extrait}` : ''}`)
+        if (r.code === 0 || !extrait || r.erreur) { fs.appendFileSync(path.join(PREUVES, 'echec.log'), `\n===== ${x.critere} ${x.description}\n${r.sortie}`); problemes.push(`${x.critere} ${x.description} : code ${r.code}, ${r.erreur ?? 'critère non attrapé'} — ${r.sortie.trim().split('\n').slice(-3).join(' | ')}`); noter(resultats, problemes); continue }
+        const commande = `node --import ./scripts/ts-loader.mjs ${x.juge}${x.args ? ` ${x.args}` : ''} --racine={racine}`
+        resultats.push({ juge: x.juge, commande, fichier: x.fichier, avant: x.avant, apres: x.apres, critere: x.critere, extrait, duree_s: r.duree_s, description: x.description })
+        noter(resultats, problemes)
+      } catch (e) { problemes.push(`${x.critere} ${x.description} : ${e.message}`); continue }
+      finally { if (restaurer) restaurer() }
+    }
+    if (!garder) fs.rmSync(copie, { recursive: true, force: true })
+    if (problemes.some((x) => x.startsWith('témoin '))) break
+  }
+} finally {
+  if (!enfant && !(!seul && !sequentiel && new Set(jouees.map((x) => x.juge)).size > 1)) { ecrireRapports(resultats, problemes); if (!garder) fs.rmSync(TRAVAIL, { recursive: true, force: true }) }
+  else if (enfant) noter(resultats, problemes)
+}
+console.log(`juges-026-envoi-mutations${enfant ? ` (${enfant})` : ''} : ${problemes.length ? 'FAIL' : 'PASS'} — ${resultats.length}/${jouees.length} mutation(s) attrapée(s)${problemes.length ? ` ; ${problemes[0]}` : ''}`)
+process.exit(problemes.length ? 1 : 0)

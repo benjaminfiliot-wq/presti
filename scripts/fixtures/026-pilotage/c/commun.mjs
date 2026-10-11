@@ -95,6 +95,12 @@ export function hasard(graine = crypto.randomInt(1, 2 ** 31 - 1)) {
 
 // ── La copie au drapeau levé ─────────────────────────────────────────────────────────────────────────────────────────────
 const MOTIF_BAISSE = 'pilotage: false,', MOTIF_LEVE = 'pilotage: true,'
+// D-0510-D2 (correction du chef, 05/10, 026-117 et 026-120) : le drapeau `pilotage` est LEVÉ en production depuis 026-140 (Benj, 05/10) : le juge exigeait encore exactement un
+// `pilotage: false,` dans lib/flags.ts et refusait toute racine réelle. Il accepte désormais l'UN des deux états, exactement une fois : baissé (levé dans la copie, comme avant)
+// ou déjà levé (copie telle quelle). Rien d'assoupli : absent, doublé, ou `false` et `true` ensemble restent refusés ; la copie doit finir levée ; la source ne doit pas bouger.
+const compter = (t, m) => t.split(m).length - 1
+const etatDrapeau = (t) => { const b = compter(t, MOTIF_BAISSE), l = compter(t, MOTIF_LEVE); return b === 1 && l === 0 ? 'baisse' : b === 0 && l === 1 ? 'leve' : null }
+const refusDrapeau = (t) => `lib/flags.ts porte « ${MOTIF_BAISSE} » ${compter(t, MOTIF_BAISSE)} fois et « ${MOTIF_LEVE} » ${compter(t, MOTIF_LEVE)} fois : exactement un des deux, une seule fois, est attendu (le drapeau ne peut pas être levé dans la copie)`
 export const erreurCritere = (critere, m) => { const e = new Error(`${critere} : ${m}`); e.critere = critere; return e }
 // Une jonction (node_modules, public) se retire SEULE, jamais par un rm récursif qui la suivrait jusqu'au vrai dossier.
 function retirerJonctions(dest) {
@@ -122,8 +128,8 @@ export function copieDrapeau(racine, { critere, jonctions = false, nom = `copie-
   if (!tete) throw erreurCritere(critere, `ni proxy.ts ni middleware.ts dans ${racine} : la copie n'aurait pas de garde`)
   const flags = lireOuNull(path.join(racine, 'lib', 'flags.ts'))
   if (flags === null) throw erreurCritere(critere, 'lib/flags.ts absent de la racine')
-  const n = flags.split(MOTIF_BAISSE).length - 1
-  if (n !== 1) throw erreurCritere(critere, `« ${MOTIF_BAISSE} » figure ${n} fois dans lib/flags.ts, exactement 1 attendue : le drapeau ne peut pas être levé dans la copie`)
+  const etat = etatDrapeau(flags)
+  if (!etat) throw erreurCritere(critere, refusDrapeau(flags))
   const empreinteRacine = sha256(Buffer.from(flags))
   supprimerCopie(dest)
   fs.mkdirSync(dest, { recursive: true })
@@ -136,7 +142,7 @@ export function copieDrapeau(racine, { critere, jonctions = false, nom = `copie-
     else if (f !== 'next-env.d.ts') throw erreurCritere(critere, `${f} absent de la racine`)
   }
   if (jonctions) for (const j of ['node_modules', 'public']) { const cible = path.join(R, j); if (fs.existsSync(cible)) fs.symlinkSync(cible, path.join(dest, j), 'junction') }
-  fs.writeFileSync(path.join(dest, 'lib', 'flags.ts'), flags.replace(MOTIF_BAISSE, () => MOTIF_LEVE))
+  fs.writeFileSync(path.join(dest, 'lib', 'flags.ts'), (etat === 'baisse' ? flags.replace(MOTIF_BAISSE, () => MOTIF_LEVE) : flags))
   if (fs.existsSync(path.join(dest, '.env.local'))) throw erreurCritere(critere, '.env.local dans la copie')
   const copie = fs.readFileSync(path.join(dest, 'lib', 'flags.ts'), 'utf8')
   return { dest, tete, empreinteRacine, leveDansCopie: copie.includes(MOTIF_LEVE) && !copie.includes(MOTIF_BAISSE), baisseDansRacine: (lireOuNull(path.join(racine, 'lib', 'flags.ts')) ?? '').includes(MOTIF_BAISSE) }
@@ -152,9 +158,9 @@ export function vueDrapeau(racine, { critere } = {}) {
   const f = path.join(racine, 'lib', 'flags.ts')
   const flags = lireOuNull(f)
   if (flags === null) throw erreurCritere(critere, 'lib/flags.ts absent de la racine')
-  const n = flags.split(MOTIF_BAISSE).length - 1
-  if (n !== 1) throw erreurCritere(critere, `« ${MOTIF_BAISSE} » figure ${n} fois dans lib/flags.ts, exactement 1 attendue : le drapeau ne peut pas être levé dans la copie`)
-  const leve = flags.replace(MOTIF_BAISSE, () => MOTIF_LEVE)
+  const etat = etatDrapeau(flags)
+  if (!etat) throw erreurCritere(critere, refusDrapeau(flags))
+  const leve = etat === 'baisse' ? flags.replace(MOTIF_BAISSE, () => MOTIF_LEVE) : flags
   return { racine, tete, remplacements: new Map([[path.resolve(f), leve]]), leveDansCopie: leve.includes(MOTIF_LEVE) && !leve.includes(MOTIF_BAISSE) }
 }
 

@@ -1,0 +1,15 @@
+/* Le cadre de l'hôte Phaser : à la place des classes Tailwind de Claw3D (h-full w-full overflow-hidden rounded-lg), absentes de Presti. */
+.cadre {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  /* Le canevas est centré, et reste centré s'il déborde un peu (jusqu'à 8 %) : seul le centrage flex rogne des DEUX côtés, margin:auto ne le fait pas. */
+  display: flex;
+  justify-content: center;
+}
+
+.cadre canvas {
+  flex: none;
+  display: block;
+  image-rendering: pixelated;
+}

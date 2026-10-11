@@ -85,6 +85,19 @@ export async function juger(x) {
   cv.prs = { ouvertes: H.entre(1, 9), texte: '' }; cv.prs.texte = `${cv.prs.ouvertes} PR ouverte${cv.prs.ouvertes > 1 ? 's' : ''}`
   const base = (plus = {}) => ({ direct: D, fil: J('vues/fil.json'), tresorerie: T, reglages: J('reglages.json'), 'bloc:entonnoir': { statut: 200, reponse: ENT.reponse }, 'fil:crieur': { statut: 200, reponse: FILC.reponse }, 'salle:envois': { statut: 200, reponse: ENV.reponse }, packs: { statut: 200, reponse: PACKS.reponse }, 'bloc:code': { statut: 200, reponse: CODE.reponse }, 'salle:recettes': J('vues/salle-recettes.json'), 'salle:usine': J('vues/salle-usine.json'), 'agent:livreur': J('vues/agent-livreur.json'), ...(MODE === 'vivant' ? {} : { journal: J('role-direction.json') }), ...plus })
   const PAN = (c) => `[data-salle-panneau="${c}"]`
+  // D-0510-2 (correction du chef, 05/10) : « Fermer » et Échap passent par router.replace de Next, qui prend plus de 250 ms sur un
+  // PC chargé ; le geste était relu 250 ms après. Le juge attend désormais que le panneau soit fermé, au plus 6 s (horloge de la page
+  // avancée par petits pas quand elle est installée) ; la condition reste exigée par le même critère : un panneau qui ne se ferme
+  // jamais échoue toujours, une adresse qui garde ?salle= aussi.
+  const attendreFermeture = async (page, { horloge = false } = {}) => {
+    const fin = Date.now() + 6000
+    while (Date.now() < fin) {
+      if (horloge) await page.clock.runFor(50).catch(() => {})
+      const ferme = await page.evaluate(() => !document.querySelector('[data-salle-panneau]') && !new URL(location.href).searchParams.has('salle')).catch(() => false)
+      if (ferme) return
+      await attendre(50)
+    }
+  }
   const pret = async (page, sel) => { await page.waitForSelector(sel, { timeout: 15_000 }).catch(() => {}); await page.waitForFunction((s) => { const e = document.querySelector(s); return !!e && !/Chargement/.test(e.innerText) }, sel, { timeout: 8000 }).catch(() => {}); await attendre(300) }
   /** Le texte d'un panneau, sans le résumé de salle commun ni la ligne de synchro (jugés en SA-19). */
   const texteNu = (page, sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) return null; const c = e.cloneNode(true); c.querySelectorAll('[data-resume-salle], [data-synchro]').forEach((y) => y.remove()); document.body.appendChild(c); c.style.position = 'absolute'; c.style.left = '-9999px'; const t = c.innerText.replace(/[  ]/g, ' ').replace(/synchro il y a \d+ s · auto \d+ (s|min)/g, ''); c.remove(); return t }, sel)
@@ -115,7 +128,7 @@ export async function juger(x) {
     captures.bureau = await capturer(page, x.cheminCapture('bureau.jpg'))
     await page.evaluate(() => { window.__marque = 'juge' })
     await page.click(`${PAN('radar')} [data-fermer], ${PAN('radar')} button:has-text("Fermer")`).catch(() => {})
-    await attendre(250)
+    await attendreFermeture(page)
     const r = await page.evaluate(() => ({ salle: new URL(location.href).searchParams.get('salle'), ouvert: !!document.querySelector('[data-salle-panneau]'), marque: window.__marque }))
     if (r.salle !== null || r.ouvert || r.marque !== 'juge') faute('SB-2', `Radar, « Fermer » : ?salle=${r.salle}${r.ouvert ? ', panneau ouvert' : ''}`)
     DETAILS['SB-3a'] = `Radar : ${attendus.length} nombres tirés (tapis et entonnoir 7 et 30 jours, chauds à part), aucun autre`
@@ -148,7 +161,7 @@ export async function juger(x) {
     if (!p.texteHtml) faute('SB-6', 'Crieur : la bulle « <img src=x onerror=alert(1)> » ne s’affiche pas telle quelle')
     for (const g of await x.gestesInterdits(page, PAN('crieur'), INTERDITS)) faute('SB-6', `Crieur : bouton ou lien « ${court(g, 40)} »`)
     for (const d of dialogues) faute('SB-6', `boîte ouverte par la page : ${d}`)
-    await page.keyboard.press('Escape'); await attendre(250)
+    await page.keyboard.press('Escape'); await attendreFermeture(page)
     if (await page.$(PAN('crieur')) || new URL(page.url()).searchParams.has('salle')) faute('SB-2', 'Crieur : Échap ne ferme pas le panneau')
     await fermer()
     const o2 = await ouvrir('/controle/station?salle=crieur', base({ 'fil:crieur': { statut: 200, reponse: { ...FILC.reponse, valeur: { bulles: [], dernier_id: 0 } } } }))
@@ -202,11 +215,13 @@ export async function juger(x) {
     await o2.fermer()
     DETAILS['SB-3c'] = `Chantier : file, en cours, verrous, derniers, PR (${cv.prs.texte}, tiré), attention, « relevé ${age} », aucun autre nombre ; périmé : la phrase servie`
   })
-  // SB-2 : Commandement garde la liste de ses agents ; les panneaux de 026-120 s'ouvrent comme avant.
+  // SB-2 : Commandement ouvre son panneau (026-188 l'a livré : « toutes les salles ont leur panneau », la liste d'agents n'est plus
+  // que le repli d'une salle future ; critère actualisé D-0510-2, 05/10, avec la même exigence que pour les quatre autres salles) ;
+  // les panneaux de 026-120 s'ouvrent comme avant.
   scenario(['SB-2'], 'salles de 026-120', async () => {
     const { page, fermer } = await ouvrir('/controle/station?salle=commandement', base())
-    await pret(page, '[data-salle-agents="commandement"]')
-    if (!(await page.$('[data-salle-agents="commandement"]'))) faute('SB-2', '?salle=commandement n’ouvre plus la liste de ses agents')
+    await pret(page, PAN('commandement'))
+    if (!(await page.$(PAN('commandement'))) || await page.$('[data-salle-agents="commandement"]')) faute('SB-2', '?salle=commandement n’ouvre pas [data-salle-panneau="commandement"] (ou ouvre encore la liste des agents)')
     for (const c of ['recettes', 'usine']) {
       await page.goto(`${srv.base}/controle/station?salle=${c}`, { waitUntil: 'domcontentloaded' })
       await pret(page, PAN(c))
@@ -221,6 +236,9 @@ export async function juger(x) {
       const { page, s, fermer } = await ouvrir(`/controle/station?salle=${cle}`, base(), { horloge: Date.now() })
       await page.clock.runFor(300); await pret(page, PAN(cle))
       const n = () => s.journal.filter((a) => a.cle === source).length
+      // D-0510-2 : la lecture d'ouverture part quand la page a hydraté, parfois après « pret » sur un PC chargé. Le juge la guette au
+      // plus 20 s (horloge de la page avancée par petits pas) avant de poser la ligne de départ ; jamais lue, n0 reste 0 et le critère échoue.
+      for (const fin = Date.now() + 20_000; n() < 1 && Date.now() < fin;) { await page.clock.runFor(50).catch(() => {}); await attendre(50) }
       const n0 = n()
       const duree = 2 * minutes * 60_000
       await avancer(page, duree, minutes === 5 ? 30_000 : 10_000)
@@ -229,7 +247,7 @@ export async function juger(x) {
       if (lues > 2) faute('SB-5', `${cle} : ${lues} lectures de ${source} en ${2 * minutes} min, 2 au plus (toutes les ${minutes} min)`)
       // Borne basse (contre-vérification) : lu à l'ouverture puis plus jamais, le panneau est figé.
       if (lues < 1) faute('SB-5', `${cle} : aucune relecture de ${source} en ${2 * minutes} min d’horloge (toutes les ${minutes} min attendu) — un panneau figé`)
-      await page.keyboard.press('Escape'); await page.clock.runFor(200); await attendre(200)
+      await page.keyboard.press('Escape'); await page.clock.runFor(200); await attendre(200); await attendreFermeture(page, { horloge: true })
       const f0 = n()
       await avancer(page, duree, minutes === 5 ? 60_000 : 20_000)
       if (n() > f0) faute('SB-5', `${cle} fermé : ${n() - f0} lecture(s) de ${source}`)
@@ -254,7 +272,7 @@ export async function juger(x) {
   }
   if (MODE === 'vivant') { const t = O.typecheck(RAC, 'pilotage-ecran-qa'); if (!t.ok) faute('SB-8', t.detail); else DETAILS['SB-8'] = `aucune couleur en hexadécimal ni mouvement sans garde dans les quatre composants ; ${DETAILS['SB-8b']} ; ${t.detail}` }
   else DETAILS['SB-8'] = `aucune couleur en hexadécimal ni mouvement sans garde dans les quatre composants ; ${DETAILS['SB-8b']} (le typecheck se juge sur la racine réelle)`
-  DETAILS['SB-2'] = 'radar, crieur, studio et chantier → [data-salle-panneau], plus la liste des agents ; « Fermer » et Échap ferment ; commandement garde sa liste ; recettes et usine s’ouvrent comme avant'
+  DETAILS['SB-2'] = 'radar, crieur, studio et chantier → [data-salle-panneau], plus la liste des agents ; « Fermer » et Échap ferment ; commandement ouvre son panneau (026-188) ; recettes et usine s’ouvrent comme avant'
   DETAILS['SB-3'] = [DETAILS['SB-3a'], DETAILS['SB-3b'], DETAILS['SB-3c']].filter(Boolean).join(' ; ') + ' ; un manque servi tel quel, jamais « 0 »'
   DETAILS['SB-5'] = Object.keys(RYTHME).map((k) => DETAILS[`SB-5-${k}`]).filter(Boolean).join(' ; ')
   DETAILS['SB-6'] = 'aucun « Envoyer », « Copier », « Sauter », « Relayer » ni « Publier » dans les quatre panneaux ; aucun champ _piege ; la bulle piégée du Crieur affichée telle quelle, aucune image ni boîte'

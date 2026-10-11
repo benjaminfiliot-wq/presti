@@ -1,0 +1,22 @@
+# sha256 de la production avant : app/api/usine/atelier/maquette/route.ts 7b5c22d8c3538e7ce661472a89b525c8f1f779025ed0e65d3e99019e785e56dd ; app/api/usine/atelier/lien/route.ts 7804fd5ae031825a359727abc180d6e2126b4f5128df8bd31f1a52ae2647965b ; app/api/usine/atelier/travail/route.ts f6d26b4e6fc1d54d7df26fd710b5e50d98820c91d80988a3c590f3d90f18e37a ; app/api/usine/atelier/depot/route.ts b1c3ebb21b63e34887ff629fd4464eac0f1a27843d31878d518c6e1d3bfafa90 ; scripts/agents/atelier-maquettes.mjs 5d80ef938771e420892daf21a5145f2b3c1aac3976ec3b2cc98e1959a8ba7685 ; lib/agents/acquisition/magasinUsine.ts 992f735f0cf4e5a9537296c07bfa2c2c5e9e3f590002077845602df035cb8bb9
+témoin (production corrigée) : code 0, rouges [] — atelier-maquettes-qa : PASS
+S1 app/api/usine/atelier/maquette/route.ts : enregistrerMaquettePrete ne reçoit plus la table des objets (la page privée ne retrouverait aucun fichier)
+    → rouges [AM-7] (attendu AM-7) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S2 app/api/usine/atelier/lien/route.ts : creerLienMaquette reçoit le jeton en clair au lieu de son empreinte
+    → rouges [AM-8] (attendu AM-8) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S3 app/api/usine/atelier/travail/route.ts : le plafond du jour des entrants (5) n'est plus appliqué
+    → rouges [AM-6] (attendu AM-6) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S4 scripts/agents/atelier-maquettes.mjs : une capture dont les données compressées sont uniformes (structure JPEG intacte) est acceptée
+    → rouges [AM-4] (attendu AM-4) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S5 app/api/usine/atelier/lien/route.ts : le drapeau siteAchatPublic n'est plus lu : le lien de paiement part toujours
+    → rouges [AM-12] (attendu AM-12) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S6 app/api/usine/atelier/maquette/route.ts : la route maquette accepte le jeton d'un autre agent
+    → rouges [AM-5] (attendu AM-5) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S7 scripts/agents/atelier-maquettes.mjs : un coffre complet qui porte en plus une clé interdite (service Supabase, Stripe) est accepté
+    → rouges [AM-3] (attendu AM-3) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S8 app/api/usine/atelier/lien/route.ts : le lien se crée sans mesurer l'occupation du stockage (plafond de 60 %)
+    → rouges [AM-8] (attendu AM-8) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+S9 app/api/usine/atelier/lien/route.ts : sur Meta, l'identifiant de la conversation est pris pour destinataire à la place de l'identifiant Meta de la personne
+    → rouges [AM-11] (attendu AM-11) : PRIS · code 1 · fichier restauré, sha256 identique : oui
+# sha256 de la production après : identiques à ceux d'avant, pour les six fichiers
+témoin après restauration : code 0, rouges [] — atelier-maquettes-qa : PASS

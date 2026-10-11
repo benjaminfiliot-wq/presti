@@ -30,7 +30,8 @@
 //         (rien n'est écrit dans la racine) : chaque .ts et .tsx de app/ et lib/ de la racine, route.ts et
 //         lib/stripeAiguillage.ts compris, doit figurer parmi les fichiers vérifiés (un script typecheck qui ne vérifie rien,
 //         ou un projet vide, ne passe pas) ; ni @ts-nocheck, ni plus de @ts-ignore / @ts-expect-error qu'à 1620723 dans ces deux
-//         fichiers, et tsconfig.json et le script typecheck ceux de 1620723 (commun.mjs defautsTypecheck ; relecture du 24/09).
+//         fichiers ; configuration de 1620723 avec uniquement JSX react-jsx et types dev de Next 16 admis,
+//         script typecheck inchangé (commun.mjs defautsTypecheck ; relecture du 01/10).
 //   WM-5  (fiche 025-22, défaut D04 de la relecture du 25/09) payé d'abord : une session n'est encaissée (commande de site) ou
 //         servie (abonnement) que si payment_status le dit, et les paiements différés sont écoutés. Ajouté le 25/09 par Claude
 //         Code (WM-3 existait déjà : la fiche disait « WM-3 », c'est WM-5).
@@ -437,6 +438,20 @@ export function casAiguillage() {
     { nom: 'session réduite à {}', attendu: 'orphelin', session: {} },
   ]
 }
+/** 05/10/2026 (D-0510-A4, trou de juge vu par 026-161) : la branche pack_pub de lib/stripeAiguillage.ts (fiche 026-112 : paiement unique, metadata.type = pack_pub ET pack_id)
+ *  n'était jouée par aucun cas : on pouvait la rendre orpheline (« if (false) ») sans que WM-1 le voie, et chaque paiement d'un pack pubs aurait levé une alerte
+ *  d'orphelin au lieu d'être servi. Ces cas ne valent que pour l'aiguillage RÉEL du dépôt : le témoin de 025 (scripts/fixtures/025/temoins/) date d'avant 026-112. */
+export function casPackPub() {
+  const pack = crypto.randomUUID(), uid = crypto.randomUUID()
+  const base = (x) => ({ id: `cs_test_${hasard(24)}`, object: 'checkout.session', amount_total: 1000 + crypto.randomInt(98_000), currency: 'eur', customer: null, client_reference_id: null, payment_status: 'paid', status: 'complete', ...x })
+  return [
+    { nom: 'pack pubs payé (paiement, metadata.type = pack_pub, pack_id)', attendu: 'pack_pub', session: base({ mode: 'payment', metadata: { type: 'pack_pub', pack_id: pack } }) },
+    { nom: 'pack pubs payé, avec uid (l\'artisan) en plus', attendu: 'pack_pub', session: base({ mode: 'payment', metadata: { uid, type: 'pack_pub', pack_id: pack } }) },
+    { nom: 'pack pubs, prélèvement en cours (unpaid)', attendu: 'en_attente', session: base({ mode: 'payment', payment_status: 'unpaid', metadata: { type: 'pack_pub', pack_id: pack } }) },
+    { nom: 'pack pubs sans pack_id (paiement forgé à la main : jamais un vrai pack)', attendu: 'orphelin', session: base({ mode: 'payment', metadata: { type: 'pack_pub' } }) },
+    { nom: 'pack pubs avec pack_id en mode abonnement (la voie exige un paiement unique)', attendu: 'orphelin', session: base({ mode: 'subscription', metadata: { type: 'pack_pub', pack_id: pack } }) },
+  ]
+}
 const evenement = (session, type = 'checkout.session.completed') => ({ id: `evt_juge_${hasard(20)}`, object: 'event', type, livemode: false, created: Math.floor(Date.now() / 1000), data: { object: session } })
 /** Les scénarios de la sonde de route (WM-2 : orphelin, pack_pub, force ; WM-3 : introuvable, payee, abonnement). */
 /** Le montant (centimes) est-il écrit dans `t` : « 12345 », « 123.45 » ou « 123,45 », sans chiffre collé avant ni après ? */
@@ -510,7 +525,7 @@ export function casPaiement() {
 }
 
 // ── WM-1 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-export function jugerAiguillage(racine, dossier) {
+export function jugerAiguillage(racine, dossier, { packPub = true } = {}) {
   const echecs = []
   const fin = (resume) => ({ ok: echecs.length === 0, echecs, resume })
   const f = path.join(racine, AIGUILLAGE)
@@ -518,7 +533,7 @@ export function jugerAiguillage(racine, dossier) {
   if (!fs.readFileSync(f, 'utf8').trim()) { echecs.push(`${AIGUILLAGE} vide`); return fin('') }
   const g = grapheExecution(racine, f)
   for (const d of g.defauts) echecs.push(`impur : ${d}`)
-  const cas = casAiguillage()
+  const cas = [...casAiguillage(), ...(packPub ? casPackPub() : [])]
   const s = lancerSonde(racine, path.join(dossier, 'sonde-aiguillage.mjs'), SONDE_AIGUILLAGE, { module: f, cas: cas.map(({ nom, session }) => ({ nom, session })) })
   if (!s.ok) { echecs.push(s.erreur); return fin('') }
   const r = s.res
@@ -534,9 +549,9 @@ export function jugerAiguillage(racine, dossier) {
     if (x.promesse) echecs.push(`« ${c.nom} » : aiguiller rend une promesse, une chaîne attendue tout de suite`)
     if (x.sortie !== c.attendu) { echecs.push(`« ${c.nom} » : ${x.sortie === null ? `${x.type}` : `« ${x.sortie} »`}, « ${c.attendu} » attendu`); return }
     if (x.seconde !== x.sortie) { echecs.push(`« ${c.nom} » : second appel « ${x.seconde} », le premier « ${x.sortie} »`); return }
-    compte[c.attendu]++
+    compte[c.attendu] = (compte[c.attendu] ?? 0) + 1
   })
-  return fin(`aiguiller exporté ; ${cas.length} sessions aux identifiants tirés au hasard (${VOIES.map((v) => `${v} ${compte[v]}`).join(', ')}) ; réponse synchrone, stable, session gelée intacte ; aucun fetch ; graphe d'exécution : ${g.locaux.length} fichier(s) local(aux), paquets ${g.externes.length ? g.externes.join(', ') : 'aucun'}`)
+  return fin(`aiguiller exporté ; ${cas.length} sessions aux identifiants tirés au hasard (${Object.keys(compte).map((v) => `${v} ${compte[v]}`).join(', ')}) ; réponse synchrone, stable, session gelée intacte ; aucun fetch ; graphe d'exécution : ${g.locaux.length} fichier(s) local(aux), paquets ${g.externes.length ? g.externes.join(', ') : 'aucun'}`)
 }
 
 // ── WM-2 et WM-3 (route) ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -738,6 +753,11 @@ export function sondesPaiement(base = R) {
   return { echecs, faits }
 }
 /** WM-3, fichiers : lib/stripe.ts et lib/abonnementSync.ts identiques à HEAD (ou au commit de l'arbre) et à 1620723. */
+export function identiquesHorsCRLF(a, b) {
+  // Le bac Linux peut conserver les CRLF d'un export Windows. Aucune autre
+  // normalisation (espaces, commentaires ou code) n'est autorisée.
+  return Buffer.from(a).toString('latin1').replace(/\r\n/g, '\n') === Buffer.from(b).toString('latin1').replace(/\r\n/g, '\n')
+}
 export function jugerInchanges(racine) {
   const echecs = [], faits = []
   const depot = estRacineGit(racine)
@@ -757,7 +777,10 @@ export function jugerInchanges(racine) {
     for (const [rev, nom] of revs) {
       const t = lsTree(depotGit, rev, rel).get(rel)
       if (!t) echecs.push(`${rel} absent de ${nom}`)
-      else if (t.sha !== blob) echecs.push(`${rel} diffère de ${nom}`)
+      else if (t.sha !== blob) {
+        const reference = git(['cat-file', 'blob', t.sha], { cwd: depotGit, binaire: true })
+        if (reference.code !== 0 || !identiquesHorsCRLF(fs.readFileSync(f), reference.stdout)) echecs.push(`${rel} diffère de ${nom}`)
+      }
     }
     if (depot) {
       const d = git(['diff', '--quiet', 'HEAD', '--', rel], { cwd: racine })
@@ -769,6 +792,29 @@ export function jugerInchanges(racine) {
 }
 
 // ── WM-4 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+// Next 16 écrit ces deux adaptations ; toutes les autres options restent figées.
+export function configurationNextCompatible(texte, reference) {
+  let a, b
+  try { a = JSON.parse(reference); b = JSON.parse(texte) } catch { return false }
+  if (b.compilerOptions?.jsx === 'react-jsx' && a.compilerOptions?.jsx === 'preserve') b.compilerOptions.jsx = 'preserve'
+  const supplement = '.next/dev/types/**/*.ts'
+  if (Array.isArray(a.include) && Array.isArray(b.include) && !a.include.includes(supplement)) {
+    if (b.include.filter(x => x === supplement).length > 1) return false
+    b.include = b.include.filter(x => x !== supplement)
+  }
+  const exA = Array.isArray(a.exclude) ? a.exclude : [], exB = Array.isArray(b.exclude) ? b.exclude : []
+  const admis = ['scripts/fixtures/**/temoins', 'scripts/fixtures/**/temoin']
+  if (exA.some(x => !exB.includes(x)) || exB.some(x => !exA.includes(x) && !admis.includes(x))) return false
+  return JSON.stringify({ ...a, exclude: null }) === JSON.stringify({ ...b, exclude: null })
+}
+export function defautsTypecheckNext(racine, fichiersJuges = []) {
+  const defauts = defautsTypecheck(racine, fichiersJuges)
+  const ref = git(['show', `${REFERENCE_COMMIT}:tsconfig.json`])
+  const texte = lireOuNull(path.join(racine, 'tsconfig.json'))
+  if (ref.code !== 0 || !texte || !configurationNextCompatible(texte.toString('utf8'), ref.stdout)) return defauts
+  // Ne retirer que le diagnostic d'écart de configuration : script et exemptions restent jugés.
+  return defauts.filter(x => !x.startsWith(`tsconfig.json diffère de ${REFERENCE_COMMIT} (`))
+}
 export function jugerTypecheck(racine) {
   const echecs = []
   const fin = (resume) => ({ ok: echecs.length === 0, echecs, resume })
@@ -797,8 +843,8 @@ export function jugerTypecheck(racine) {
   const nomme = [ROUTE, AIGUILLAGE].filter((rel) => attendus.includes(rel) && !manquants.includes(rel)).map((rel) => path.basename(rel))
   // un typecheck vert ne prouve rien si la route ou l'aiguillage s'en exemptent (@ts-nocheck, @ts-ignore ajoutés) ou si la
   // configuration a été assouplie (relecture du 24/09 : une route en @ts-nocheck avec une erreur de type passait)
-  for (const x of defautsTypecheck(racine, [ROUTE, AIGUILLAGE])) echecs.push(x)
-  return fin(`npm run typecheck en code 0 (${duree} s) ; ${attendus.length} fichiers .ts/.tsx de app/ et lib/ vérifiés, dont ${nomme.join(' et ')} (${vus.size} fichiers au total avec les déclarations) ; ni @ts-nocheck ni @ts-ignore ajouté dans ${path.basename(ROUTE)} et ${path.basename(AIGUILLAGE)}, tsconfig.json et script typecheck de ${REFERENCE_COMMIT}`)
+  for (const x of defautsTypecheckNext(racine, [ROUTE, AIGUILLAGE])) echecs.push(x)
+  return fin(`npm run typecheck en code 0 (${duree} s) ; ${attendus.length} fichiers .ts/.tsx de app/ et lib/ vérifiés, dont ${nomme.join(' et ')} (${vus.size} fichiers au total avec les déclarations) ; ni @ts-nocheck ni @ts-ignore ajouté dans ${path.basename(ROUTE)} et ${path.basename(AIGUILLAGE)}, configuration de ${REFERENCE_COMMIT} avec adaptations Next 16 limitées (react-jsx et types dev), script typecheck inchangé`)
 }
 
 // ── Témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -836,7 +882,7 @@ async function principal() {
       s.note(`témoin : ${t.copies.join(', ')} copiés depuis ${o.racine} ; superposés depuis ${posix(path.relative(R, TEMOIN_SOURCES))} : ${t.superposes.join(', ')}`)
     }
     const dossier = dossierTravail(JUGE, `sonde-${empreinte(cleChemin(racine))}`)
-    if (veut('WM-1')) s.resultat('WM-1', jugerAiguillage(racine, dossier))
+    if (veut('WM-1')) s.resultat('WM-1', jugerAiguillage(racine, dossier, { packPub: !o.temoin }))
     const route = veut('WM-2') || veut('WM-3') || veut('WM-5') ? jugerRoute(racine, dossier) : null
     if (veut('WM-2')) s.resultat('WM-2', route.wm2)
     if (veut('WM-3')) {

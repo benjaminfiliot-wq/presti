@@ -12,9 +12,7 @@ type Geste = 'ouvrir_envoi_froid' | 'reprendre_technologie' | 'rouvrir_canal' | 
 const GESTES: readonly Geste[] = ['ouvrir_envoi_froid', 'reprendre_technologie', 'rouvrir_canal', 'lever_modele', 'palier_plafond']
 const ACTIONS: Record<Geste, Action> = { ouvrir_envoi_froid: 'envoi_froid_ouvert', reprendre_technologie: 'technologie_reprise', rouvrir_canal: 'canal_rouvert', lever_modele: 'modele_leve', palier_plafond: 'palier_plafond' }
 const REFUS: Record<string, string> = {
-  'ops:trop_tot': 'Pas avant le lundi 12/10/2026 : envoi_froid reste fermé.',
   'ops:mesure_absente': "La mesure à sec n'a pas réussi (026-165) : envoi_froid reste fermé.",
-  'ops:epreuve_absente': "L'épreuve de bout en bout n'a pas encore réussi (026-163) : envoi_froid reste fermé.",
   'ops:notice_absente': "La notice en ligne n'est pas vérifiée depuis 7 jours (026-162) : envoi_froid reste fermé.",
 }
 

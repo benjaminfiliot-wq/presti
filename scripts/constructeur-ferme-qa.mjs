@@ -552,7 +552,7 @@ function baseCf3(racine) {
   if (estRacineGit(racine)) { const b = blobGit(racine, REFERENCE_COMMIT, F.fermeture); return { texte: b ? b.toString('utf8') : null, nom: REFERENCE_COMMIT, rev: REFERENCE_COMMIT, git: true } }
   return baseDe(racine, F.fermeture, null)
 }
-function cf3(racine) {
+function cf3Historique(racine) {
   const f = path.join(racine, F.fermeture), src = lireTexte(f)
   if (!src || !src.trim()) return ko(`${F.fermeture} absent ou vide`)
   const echecs = []
@@ -618,6 +618,111 @@ function casCF4(racine) {
   for (const mot of ['genererSite', 'site-tiers', 'StyleAvance', '/api/site/generate']) cas.push({ nom: `avec « ${mot} »`, profil: `${conforme}\n${mot}\n`, attendu: false })
   return cas
 }
+
+// CANDIDAT V2 OPS : historique seulement apres construction authentifiee en memoire.
+let CF_HIST_AUTH=null
+const CF_CLOSE_SHA='0fff652424082035ff17db2389bf317f9bfc943c0ee3465ffd65f8bd832f5fd7'
+const CF_PROTECTIONS=[["'/api/account/slug'","'GET'"],["'/api/account/slug'","'POST'"],["'/api/canaux/relever'","'POST'"],["'/api/controle/etat'","'GET'"],["'/api/controle/chiffres'","'GET'"],["'/api/controle/a-faire'","'GET'"],["'/api/controle/fil'","'GET'"],["'/api/controle/journal'","'GET'"],["'/api/controle/reconfirmer'","'POST'"],["'/api/controle/securite/bans'","'POST'"],["'/api/controle/barre'","'GET'"],["'/api/controle/recherche'","'GET'"],["`/api/controle/alertes/${id}/acquitter`","'POST'"],["`/api/controle/apports/${id}/statut`","'POST'"],["`/api/controle/clients/${id}`","'GET'"],["`/api/controle/clients/${id}/action`","'POST'"],["`/api/controle/courriers/${id}`","'GET'"],["`/api/controle/courriers/${id}/action`","'POST'"],["'/api/controle/courriers/relever'","'POST'"],["'/api/controle/crons/relances/relancer'","'POST'"],["'/api/controle/apports'","'GET'"],["'/api/controle/apports'","'POST'"],["'/api/controle/clients'","'GET'"],["'/api/controle/courriers'","'GET'"],["'/api/controle/compta'","'GET'"],["'/api/controle/compta'","'POST'"],["'/api/controle/reglages'","'GET'"],["'/api/controle/reglages'","'POST'"],["'/api/controle/releve'","'GET'"],["'/api/controle/releve'","'POST'"],["'/api/controle/crons/relances/relancer'","'POST'"],["'/api/support/demande'","'POST'"],["'/api/securite/acces-support'","'GET'"],["'/api/controle/support/lire'","'GET'"],["'/api/controle/support/demander'","'POST'"],["'/api/controle/support?artisan=00000000-0000-0000-0000-000000000000'","'GET'"],["'/api/controle/audience'","'GET'"],["'/api/controle/audience?historique=1'","'GET'"],["'/api/controle/sites'","'GET'"],["`/api/controle/sites/${id}`","'POST'"],["'/api/controle/cerveaux'","'GET'"],["'/api/devis/auto'","'POST'"],["'/api/inventaire/recherche'","'POST'"],["'/api/inventaire/recherche/retenir'","'POST'"],["'/api/plateforme/apparence'","'GET'"],["'/api/plateforme/apparence'","'POST'"],["'/api/stripe/portail'","'GET'"],["'/api/stripe/portail'","'POST'"],["`/api/devis/${id}/envoyer`","'POST'"],["`/api/devis/${id}/pdf`","'GET'"],["`/api/factures/${id}/avoir`","'POST'"],["`/api/factures/${id}/facturx`","'GET'"],["`/api/factures/${id}/pdf`","'GET'"],["'/api/leads/photos'","'POST'"],["'/api/controle/demandes'","'GET'"],["'/api/controle/demandes'","'POST'"],["'/api/controle/jauges'","'GET'"],["'/api/controle/packs'","'GET'"],["`/api/controle/packs/${id}`","'POST'"],["'/api/controle/pause'","'GET'"],["'/api/controle/pause'","'POST'"],["'/api/controle/pilotage'","'GET'"],["'/api/controle/station'","'GET'"],["`/api/controle/pilotage/agents/${id}`","'POST'"],["`/api/controle/pilotage/appels/${id}`","'POST'"],["'/api/controle/pilotage/consignes'","'POST'"],["`/api/controle/pilotage/decisions/${id}`","'POST'"],["'/api/controle/pilotage/gestes'","'POST'"],["'/api/controle/tresorerie'","'GET'"]]
+const CF_CARTES=[{"drapeau":"aimantSite","valeurs":["lu"]},{"drapeau":"busAgents","valeurs":["route","/api/agents/etat","GET","app/api/agents/taches/route.ts","app/api/agents/taches/prendre/route.ts","app/api/agents/taches/[id]/rendre/route.ts","app/api/agents/evenements/route.ts","app/api/agents/decisions/route.ts","app/api/agents/battement/route.ts","app/api/agents/etat/route.ts","app/api/agents/tic/route.ts","app/api/agents/telegram/sortie/route.ts","app/api/agents/telegram/entree/route.ts"]},{"drapeau":"constructeurSite","valeurs":["route","/api/site/generate","POST","app/api/site/generate/route.ts"]},{"drapeau":"codeEmail","valeurs":["route","/api/auth/code","POST","app/api/auth/code/route.ts"]},{"drapeau":"pushWeb","valeurs":["route","/api/push/abonner","POST","app/api/push/abonner/route.ts"]},{"drapeau":"direction","valeurs":["route","/api/controle/etat","GET","lib/direction/garde.ts"]},{"drapeau":"apports","valeurs":["route","/api/controle/apports","GET","app/api/controle/apports/route.ts"]},{"drapeau":"actionsArtisan","valeurs":["route","__expr__:`/api/controle/clients/${id}/action`","POST","app/api/controle/clients/[id]/action/route.ts"]},{"drapeau":"messagerie","valeurs":["route","/api/controle/courriers","GET","app/api/controle/courriers/route.ts"]},{"drapeau":"comptabilite","valeurs":["route","/api/controle/compta","GET","app/api/controle/compta/route.ts","app/api/controle/releve/route.ts"]},{"drapeau":"inventaireRecherche","valeurs":["route","/api/inventaire/recherche","POST","app/api/inventaire/recherche/route.ts"]},{"drapeau":"pushNatif","valeurs":["lu"]},{"drapeau":"mfa","valeurs":["lu"]},{"drapeau":"plateformeRegles","valeurs":["lu"]},{"drapeau":"aideVisites","valeurs":["lu"]},{"drapeau":"aideCentre","valeurs":["lu"]},{"drapeau":"landingVideo","valeurs":["lu"]},{"drapeau":"landingDemoSite","valeurs":["lu"]},{"drapeau":"siteCommande","valeurs":["route","/api/site/commander/brouillon","GET","app/api/site/commander/brouillon/route.ts","app/api/site/commander/route.ts","app/site/commander/page.tsx"]},{"drapeau":"siteCommandeVente","valeurs":["lu"]},{"drapeau":"siteAchatPublic","valeurs":["route","/api/site/commander/public","POST","app/api/site/commander/public/route.ts","app/api/site/commander/public/renvoyer/route.ts"]},{"drapeau":"supportArtisan","valeurs":["route","/api/controle/support/demander","POST","app/api/controle/support/demander/route.ts"]},{"drapeau":"audience","valeurs":["route","/api/audience","POST","app/api/audience/route.ts","app/api/controle/audience/route.ts"]},{"drapeau":"pilotage","valeurs":["route","/api/controle/pilotage","GET","app/api/controle/pilotage/route.ts","app/api/controle/pilotage/decisions/[id]/route.ts","app/api/controle/pilotage/appels/[id]/route.ts","app/api/controle/pilotage/agents/[nom]/route.ts","app/api/controle/pilotage/consignes/route.ts","app/api/controle/pilotage/gestes/route.ts","app/api/controle/station/route.ts","app/api/controle/station/reglages/route.ts","app/api/agents/reunion/route.ts","app/api/agents/reunion/chiffres/route.ts"]},{"drapeau":"stationCarte","valeurs":["lu"]},{"drapeau":"demandesEcosysteme","valeurs":["route","/api/controle/demandes","GET","app/api/controle/demandes/route.ts","app/api/agents/demandes/route.ts","app/api/agents/demandes/[id]/route.ts"]},{"drapeau":"prospectsEntrant","valeurs":["route","/api/prospects/entrant","POST","app/api/prospects/entrant/route.ts"]},{"drapeau":"packPub","valeurs":["route","/api/pubs/commander/brouillon","GET","app/api/pubs/commander/brouillon/route.ts","app/api/pubs/commander/route.ts"]},{"drapeau":"packPubVente","valeurs":["lu"]},{"drapeau":"essaiFormulaire","valeurs":["route","/essai-formulaire/envoi","POST","app/essai-formulaire/envoi/route.ts","app/essai-formulaire/page.tsx"]},{"drapeau":"ecommerce","valeurs":["note","branche réservée : rien n’est construit, attend les trois vidéos sources de Benj"]},{"drapeau":"inventaireOcr","valeurs":["note","rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)"]},{"drapeau":"canauxWhatsapp","valeurs":["lu"]},{"drapeau":"canauxReseaux","valeurs":["lu"]},{"drapeau":"plateformePersona","valeurs":["lu"]}]
+const CF_CONFIG_BASE={"compilerOptions":{"target":"ES2022","lib":["dom","dom.iterable","webworker","esnext"],"allowJs":true,"skipLibCheck":true,"strict":true,"noEmit":true,"esModuleInterop":true,"module":"esnext","moduleResolution":"bundler","resolveJsonModule":true,"isolatedModules":true,"jsx":"react-jsx","incremental":true,"plugins":[{"name":"next"}],"paths":{"@/*":["./*"]},"allowImportingTsExtensions":true},"include":["**/*.ts","**/*.tsx",".next/types/**/*.ts","next-env.d.ts",".next-prod/types/**/*.ts",".next/dev/types/**/*.ts"],"exclude":["node_modules","mobile","scripts/fixtures/**/temoins","scripts/fixtures/**/temoin"]}
+const CF_CONFIG_AUDIT={"compilerOptions":{"target":"ES2022","lib":["dom","dom.iterable","webworker","esnext"],"allowJs":true,"skipLibCheck":true,"strict":true,"noEmit":true,"esModuleInterop":true,"module":"esnext","moduleResolution":"bundler","resolveJsonModule":true,"isolatedModules":true,"jsx":"react-jsx","incremental":true,"plugins":[{"name":"next"}],"paths":{"@/*":["./*"]},"allowImportingTsExtensions":true},"include":["**/*.ts","**/*.tsx",".next/types/**/*.ts","next-env.d.ts",".next-prod/types/**/*.ts",".next/dev/types/**/*.ts",".audit-chiffres-next/types/**/*.ts",".audit-chiffres-next/dev/types/**/*.ts"],"exclude":["node_modules","mobile","scripts/fixtures/**/temoins","scripts/fixtures/**/temoin"]}
+function estHistorique(racine){return CF_HIST_AUTH!==null && path.resolve(racine)===CF_HIST_AUTH}
+function defautsConfigNext(racine){
+ let c;try{c=JSON.parse(lireTexte(path.join(racine,'tsconfig.json')))}catch{return ['tsconfig JSON invalide']}
+ const d=[];const b=JSON.stringify(c)===JSON.stringify(CF_CONFIG_BASE),a=JSON.stringify(c)===JSON.stringify(CF_CONFIG_AUDIT)
+ if(!b&&!a)d.push('configuration Next16 exacte ou extension audit exacte requise')
+ if(c.compilerOptions?.strict!==true||c.compilerOptions?.jsx!=='react-jsx')d.push('strict=true et jsx=react-jsx requis')
+ if(a&&!b){
+  const extras=CF_CONFIG_AUDIT.include.filter(x=>!CF_CONFIG_BASE.include.includes(x))
+  if(extras.join('|')!=='.audit-chiffres-next/types/**/*.ts|.audit-chiffres-next/dev/types/**/*.ts'||JSON.stringify({...c,include:CF_CONFIG_BASE.include})!==JSON.stringify(CF_CONFIG_BASE))d.push('extension audit ne peut qu ajouter les deux types generes declares')
+  // Globs supplementaires seulement : dossiers absents permis par TypeScript ; compatibilite comparee dans runner.
+ }
+ return d
+}
+function declaration(sf,nom){let result=null;parcourir(sf,n=>{if(ts.isVariableDeclaration(n)&&n.name.getText(sf)===nom)result=n.initializer});return result}
+function cf3Semantique(racine){
+ const src=lireTexte(path.join(racine,F.fermeture)),d=[];if(!src)return ko('fermeture absente')
+ const sf=analyser(src,F.fermeture),arr=declaration(sf,'PROTEGEES')
+ const protegees=arr&&ts.isArrayLiteralExpression(arr)?arr.elements.filter(ts.isArrayLiteralExpression).map(x=>x.elements.slice(0,2).map(y=>y.getText(sf))):[]
+ for(const pair of CF_PROTECTIONS)if(!protegees.some(x=>JSON.stringify(x)===JSON.stringify(pair)))d.push('protection requise absente '+pair.join(' '))
+ const lignes=lignesDe(src),carte=blocCarte(lignes),flags=drapeauxDeFlags(lireTexte(path.join(racine,F.flags)))
+ if(!carte)d.push('CARTE absente');if(!flags)d.push('FLAGS absent')
+ for(const attendu of CF_CARTES){
+  const objet=declaration(sf,'CARTE');const entries=objet&&ts.isObjectLiteralExpression(objet)?objet.properties.filter(ts.isPropertyAssignment).filter(x=>nomPropriete(x)===attendu.drapeau).map(x=>({valeurs:ts.isArrayLiteralExpression(x.initializer)?x.initializer.elements.map(y=>ts.isStringLiteral(y)?y.text:'__expr__:'+y.getText(sf)):null})):[]
+  if(entries.length!==1){d.push('CARTE '+attendu.drapeau+' doit etre unique');continue}
+  const values=entries[0].valeurs
+  if(JSON.stringify(values)!==JSON.stringify(attendu.valeurs))d.push('CARTE '+attendu.drapeau+' differe de la liste fermee')
+  if(flags&&!flags.has(attendu.drapeau))d.push('drapeau absent de FLAGS '+attendu.drapeau)
+  const historique=CARTE_026.find(x=>x.drapeau===attendu.drapeau)
+  if(historique)for(const e of defautsLigne026(historique,values,racine))d.push(e)
+  if(values[0]==='route')for(const fi of values.slice(3)){
+   if(!/^(app|lib)\//.test(fi)||fi.includes('..')){d.push('chemin interdit '+fi);continue}
+   const route=lireTexte(path.join(racine,fi));if(route===null){d.push('route absente '+fi);continue}
+   // Les gardes ajoutees par026 sont controlees, y compris les regles historiques exactes.
+   if((historique||['demandesEcosysteme','packPub'].includes(attendu.drapeau))&&!new RegExp("actif\\(['\"\x60]"+attendu.drapeau+"['\"\x60]\\)").test(route))d.push('garde '+attendu.drapeau+' absente de '+fi)
+  }
+ }
+ let baisse=null;parcourir(sf,n=>{if(ts.isPropertyAssignment(n)&&nomPropriete(n)==='baisse')baisse=n.initializer})
+ const ds=declaration(sf,'DERRIERE_UN_DRAPEAU'),tol=declaration(sf,'toleree');let assertion=null
+ parcourir(sf,n=>{if(ts.isCallExpression(n)&&n.expression.getText(sf)==='T'&&n.arguments.length>=2&&n.arguments[0].getText(sf).includes('chemin.replace(id'))assertion=n.arguments[1]})
+ if(!baisse||!ds||!tol||!assertion)d.push('controle 404 semantique introuvable')
+ else try{
+  const evaluer=(expr,scope)=>requireModule.createRequire(import.meta.url)('node:vm').runInNewContext('('+expr.getText(sf)+')',scope,{timeout:100})
+  for(const leve of [false,true])for(const status of [200,401,403,404]){
+   const baisseVue=evaluer(baisse,{F:{pilotage:leve}})
+   const liste=evaluer(ds,{DERRIERE_LE_DRAPEAU_PILOTAGE:[{prefixe:'/api/controle/pilotage',baisse:baisseVue,lit:true}]})
+   const toleree=evaluer(tol,{DERRIERE_UN_DRAPEAU:liste,chemin:'/api/controle/pilotage'})
+   const accepte=evaluer(assertion,{toleree,r:{status}}),attendu=[401,403].includes(status)||(!leve&&status===404)
+   if(accepte!==attendu)d.push('controle 404 incorrect : flag='+leve+' status='+status+' accepte='+accepte)
+  }
+ }catch(e){d.push('controle 404 interrompu '+premiereLigne(e))}
+ const constructeur=cf2(racine);if(!constructeur.ok)d.push(...constructeur.echecs.map(x=>'constructeur : '+x))
+ return {ok:!d.length,echecs:d,resume:'semantique protections/FLAGS/gardes026/404/constructeur verifiee sans empreinte SHA'}
+}
+function cf3(racine){
+ if(estHistorique(racine))return cf3Historique(racine)
+ const result=cf3Semantique(racine),src=lireTexte(path.join(racine,F.fermeture))||''
+ if(crypto.createHash('sha256').update(src.replace(/\r\n/g,'\n')).digest('hex')!==CF_CLOSE_SHA)result.echecs.push('inventaire ferme fermeture differe de84322df0')
+ result.ok=!result.echecs.length;return result
+}
+function cf8Historique(racine) {
+  const echecs = []
+  const nm = nodeModulesAtteignable(racine)
+  if (!nm) return ko(`aucun node_modules/typescript dans ${racine} ni ses parents : npm run typecheck ne peut pas tourner`)
+  let script = null
+  try { script = JSON.parse(lireTexte(path.join(racine, 'package.json')) || '{}').scripts?.typecheck ?? null } catch (e) { return ko(`package.json illisible : ${premiereLigne(e)}`) }
+  if (!script || !/\btsc\b/.test(script)) return ko(`script typecheck « ${script} » : tsc attendu`)
+  if (!fichierNonVide(path.join(racine, 'tsconfig.json'))) return ko('tsconfig.json absent ou vide')
+  const D = exigerSousTravail(path.join(TRAVAIL, JUGE, 'tsc'))
+  fs.mkdirSync(D, { recursive: true })
+  const info = path.join(D, `${sha256(Buffer.from(path.resolve(racine).toLowerCase())).slice(0, 16)}.tsbuildinfo`)
+  const t0 = Date.now()
+  // Une seule chaîne de commande : shell: true pour npm.cmd sous Windows, et des arguments séparés déclencheraient DEP0190.
+  const r = lancer(`npm run typecheck -- --tsBuildInfoFile "${info}" --listFiles`, [], { cwd: racine, shell: true, timeout: 900_000 })
+  const duree = ((Date.now() - t0) / 1000).toFixed(1)
+  const lignes = `${r.stdout}\n${r.stderr}`.split(/\r?\n/)
+  const erreurs = lignes.filter((l) => /error TS\d+/.test(l))
+  if (r.code !== 0 || erreurs.length) echecs.push(`npm run typecheck en code ${r.code}${r.erreur ? ` (${r.erreur})` : ''}, ${erreurs.length} erreur(s) TS : ${erreurs.slice(0, 3).map((l) => court(l, 140)).join(' | ') || court(r.derniereLigne, 140)}`)
+  const fichiers = lignes.map((l) => l.trim()).filter((l) => /\.(?:d\.)?[cm]?tsx?$/.test(l) && path.isAbsolute(l))
+  const dansRacine = fichiers.filter((x) => sous(racine, x) && !/[\\/]node_modules[\\/]/.test(x))
+  const cle = (p) => path.resolve(p).toLowerCase()
+  const vus = new Set(fichiers.map(cle))
+  if (dansRacine.length < 100) echecs.push(`${dansRacine.length} fichier(s) de la racine dans le programme vérifié (--listFiles), 100 au moins attendus`)
+  for (const x of [F.flags, F.route, F.profil, F.aide]) if (!vus.has(cle(path.join(racine, x)))) echecs.push(`${x} absent du programme vérifié (--listFiles)`)
+  const es5 = fichiers.find((x) => /typescript[\\/]lib[\\/]lib\.es5\.d\.ts$/i.test(x))
+  if (!es5 || !sous(nm, es5)) echecs.push(`lib.es5.d.ts ${es5 ? `pris dans ${es5}` : 'absent'}, ${nm} attendu`)
+  for (const x of [F.flags, F.route, F.profil, F.aide]) {
+    const t = lireTexte(path.join(racine, x)) ?? ''
+    if (/@ts-nocheck/.test(t)) echecs.push(`${x} porte @ts-nocheck`)
+    const n = (s) => (s.match(/@ts-(?:ignore|expect-error)/g) || []).length
+    const base = baseDe(racine, x, t)
+    if (base.texte !== null && n(t) > n(base.texte)) echecs.push(`${x} : ${n(t)} @ts-ignore/@ts-expect-error, ${n(base.texte)} dans ${base.nom}`)
+  }
+  for (const x of defautsTypecheck(racine)) echecs.push(x)
+  return { ok: !echecs.length, echecs, resume: `npm run typecheck vert en ${duree} s : ${dansRacine.length} fichiers de la racine vérifiés, dont les quatre de 025-05 ; tsc et types de ${rel(nm)} ; aucun @ts-nocheck ni @ts-ignore ajouté ; tsconfig.json et script typecheck ceux de ${REFERENCE_COMMIT}` }
+}
+function cf8(racine){return estHistorique(racine)?cf8Historique(racine):cf8Courant(racine)}
+
 function cf4(racine) {
   const f = path.join(racine, F.sorti), src = lireTexte(f)
   if (!src || !src.trim()) return ko(`${F.sorti} absent ou vide`)
@@ -842,7 +947,7 @@ function nodeModulesAtteignable(racine) {
     if (path.dirname(d) === d) return null
   }
 }
-function cf8(racine) {
+function cf8Courant(racine) {
   const echecs = []
   const nm = nodeModulesAtteignable(racine)
   if (!nm) return ko(`aucun node_modules/typescript dans ${racine} ni ses parents : npm run typecheck ne peut pas tourner`)
@@ -875,8 +980,8 @@ function cf8(racine) {
     const base = baseDe(racine, x, t)
     if (base.texte !== null && n(t) > n(base.texte)) echecs.push(`${x} : ${n(t)} @ts-ignore/@ts-expect-error, ${n(base.texte)} dans ${base.nom}`)
   }
-  for (const x of defautsTypecheck(racine)) echecs.push(x)
-  return { ok: !echecs.length, echecs, resume: `npm run typecheck vert en ${duree} s : ${dansRacine.length} fichiers de la racine vérifiés, dont les quatre de 025-05 ; tsc et types de ${rel(nm)} ; aucun @ts-nocheck ni @ts-ignore ajouté ; tsconfig.json et script typecheck ceux de ${REFERENCE_COMMIT}` }
+  const configDefauts=defautsConfigNext(racine);for(const x of configDefauts)echecs.push(x);for(const x of defautsTypecheck(racine))if(!(configDefauts.length===0&&x.startsWith('tsconfig.json diffère de')))echecs.push(x)
+  return { ok: !echecs.length, echecs, resume: `npm run typecheck vert en ${duree} s : ${dansRacine.length} fichiers de la racine vérifiés, dont les quatre de 025-05 ; tsc et types de ${rel(nm)} ; aucun @ts-nocheck ni @ts-ignore ajouté ; tsconfig.json Next16 exact de 84322df0 ou extension audit attestee ; script typecheck celui de ${REFERENCE_COMMIT}` }
 }
 
 // ── CF-9 : le prix du site n'est montré que si la vente est ouverte (relecture à froid du 24/09, M5) ────────────────────────
@@ -1059,7 +1164,8 @@ async function cf11(racine) {
 // ── L'arbre témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin() {
   const ref = extraireReference()
-  const dest = preparerTemoin(JUGE, { base: ref.dest, copier: TEMOIN_COPIER, superposer: null })
+  const copier= TEMOIN_COPIER.map(p=>p===FICHIER_PROXY?(fs.existsSync(path.join(ref.dest,'proxy.ts'))?'proxy.ts':'middleware.ts'):p)
+  const dest = preparerTemoin(JUGE, { base: ref.dest, copier, superposer: null })
   if (path.resolve(dest) !== path.resolve(TEMOIN_DOSSIER)) throw new Error(`témoin préparé dans ${dest}, ${TEMOIN_DOSSIER} attendu`)
   const poses = []
   for (const r of [...listerFichiers(TEMOIN_FIXTURES)].sort()) {
@@ -1074,6 +1180,7 @@ function construireTemoin() {
   const attendus = Object.values(F).sort()
   if (poses.sort().join('|') !== attendus.join('|')) throw new Error(`fichiers témoins : ${poses.join(', ') || 'aucun'} ; ${attendus.join(', ')} attendus`)
   fs.writeFileSync(`${dest}.json`, `${JSON.stringify({ commit: ref.commit, base: rel(ref.dest), fichiers: poses, par: 'scripts/constructeur-ferme-qa.mjs --temoin' }, null, 1)}\n`)
+  CF_HIST_AUTH=path.resolve(dest)
   return { dest, commit: ref.commit, poses, reutilise: ref.reutilise }
 }
 
@@ -1104,7 +1211,7 @@ async function principal() {
   })
 }
 
-export { cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, cf11, construireTemoin, baseDe }
+export { cf3Semantique, defautsConfigNext, cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, cf11, construireTemoin, baseDe }
 
 const pareil = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b)
 if (process.argv[1] && pareil(path.resolve(process.argv[1]), fileURLToPath(import.meta.url))) await principal()

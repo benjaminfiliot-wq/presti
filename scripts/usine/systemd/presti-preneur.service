@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti — le preneur des tâches libres du bus (agent preneur : veille, recherche, tri, relecture, vérification, rédaction interne)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_PRENEUR -- /usr/bin/node scripts/usine/preneur.mjs --une-passe --savoir --base=https://prestiapp.fr --travail=/home/agents/travail/preneur
+TimeoutStartSec=25min
+MemoryMax=1G
+Nice=10

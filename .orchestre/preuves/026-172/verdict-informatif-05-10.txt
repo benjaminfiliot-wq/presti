@@ -1,0 +1,68 @@
+· usine executer : paquet de 337 fichier(s), 4,3 Mo, sur 9b4ec726 (HEAD du PC), construit en 8,7 s
+  ne part pas (2811) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-026-172.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .orchestre/preuves/026-111/avant.txt  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-111/contre-verif-04-10-e944df7e-resultats.json  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/026-111/contre-verif-04-10.mjs  (preuves d'autres tâches ; absent du bac)
+    … et 1517 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 8 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac 026-172 sur usine@88.96.53.3, délai 30 min : node scripts/juges-026-pilotage-preuve.mjs --lot=e
+· usine executer : bac 026-172 monté en 5160 ms : 9b4ec7262 + paquet, 337 écart(s) ; délai 1800 s
+juges-026-pilotage-preuve --lot=e — lot scripts/fixtures/026-pilotage/e/lot.mjs
+✅ JA-1 référence 16be91f extraite par git archive sous .orchestre/travail/juges-026-pilotage/reference (5918 fichiers), ancêtre de HEAD, sans app/controle/station/moteur/, public/station/ ; station-ecran-qa --partie=verite → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=camera,webkit → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=acteurs → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=calque → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=themes,reglages → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=salles2 --lot=a → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-ecran-qa --partie=salles2 --lot=b → code 1, « ❌ CE-1 app/controle/station/moteur/ n'existe pas sous /home/usine/bac… » ; station-recette → code 1, « ❌ RK-0 app/controle/station/moteur/claw3d/LICENSE-claw3d.txt absent d… » ; extraits recopiés dans .orchestre/preuves/026-172/echecs-attendus.md, relus et retrouvés dans les sorties
+❌ JA-2 station-ecran-qa --partie=verite --temoin : code 1, ❌ CE-3 la carte bouge sans événement : mesure insuffisante (2 relevé(s)) — images 2, 1 empreinte(s) du canevas, aucune animation en cours ;… ; station-ecran-qa --partie=camera,webkit --temoin : code 1, ❌ CE-11 un clic sur crieur ne pose pas ?salle=crieur (rien)
+✅ JA-3 controleJeux : 11 jeux JSON identiques à fabriquer() ; trois thèmes valides (schéma et contraintes hors schéma) ; 9 étapes d'événements rejouées sur les réponses, toutes conformes au contrat des vues (s/contrat-vues.mjs) ; fil historique de 100 bulles dont 30 du Radar, nuit, pièges, hors périmètre, modèles et douze versions conformes ; controleTemoin : 13 fichiers dont 11 de code, chacun de 300 lignes au plus, ni Claw3D, ni Phaser, ni image ; flags.ts et Carte.tsx du témoin : ceux de la référence, aux lignes ajoutées près ; 52 attributs data-* lus par le juge, tous dans CONTRAT.md
+✅ JA-4 piège réseau prouvé : un fetch et un https.get vers exemple.invalid consignés et refusés, 127.0.0.1 laissé passer ; controleSecrets : 13 sources lus (station-ecran-qa, juge-*, captures, commun, jeux, controles, lot) : aucune lecture de .env.local ni de presti-secrets, aucune clé réelle, aucune adresse distante hors 127.0.0.1 ; station-recette ne charge .env.local qu'après le choix d'un mode réel ; le juge et la recette (référence, témoin, sans option) tournent sous un piège des lectures sans le toucher ; 77 lancements sous le piège (juges sur la référence, en témoin, sur l'implémentation de référence et ses sabotages, contrôles du lot, copies de JA-6, autotests de JA-10) : aucun accès au réseau hors 127.0.0.1
+✅ JA-5 git status --porcelain identique avant et après (205 entrée(s) hors .orchestre/travail/ et .orchestre/preuves/ et le reste de .orchestre/ sauf .orchestre/decisions.md, taille et date de chacune comprises)
+✅ JA-6 scripts/fixtures/026-pilotage/e/lot.mjs lisible : fiche 026-172, référence 16be91f, 8 juge(s), 4 contrôle(s) propre(s) au lot, témoin ./temoin ; controleCLI : 5 appels refusés en code 2 (partie inconnue, --lot hors salles2 ou autre que a|b, critère d'une autre partie, option inconnue) ; sur la référence : chacune des 8 parties sort en 1 ou 2 avec ❌ CE-1 en premier et « moteur absent » pour les critères de rendu, sans build ni navigateur (JE-1) ; station-recette : ❌ RK-0 en premier sur la référence (code 1), sans option RK-0 puis « préalable » (code 2), --temoin quatre critères verts (code 0), cinq appels refusés (code 2) ; chaque image écrite sort du seul page.screenshot({ path }) de prendre(), l'image d'avant effacée au même chemin (JE-3) ; copies sous .orchestre/travail/juges-026-pilotage/ja6-e : sans fiche → ❌ JA-6, fiche « 26-012 » → ❌ JA-6, copie intacte → ✅ JA-6 ; section « lot e » écrite dans .orchestre/preuves/026-172/echecs-attendus.md (dossier de preuves de 026-172)
+❌ JA-7 station-ecran-qa --partie=verite sur le témoin : code 1, 0 attendu ; station-ecran-qa --partie=verite sur le témoin : 3 critère(s) en échec (CE-3, CE-6, CE-27), dont « ❌ CE-3 la carte bouge sans événement : mesure insuffisante (2 relevé(s)) — images 2, 1 empreinte(s) du canevas, aucune animation en cours ; après l'événement l… »
+❌ JA-8 station-ecran-qa --partie=salles2 --lot=b, sabotage « panneau-hors-ecran » (public/temoin-e/salles.js) : code 0, 1 (ou 2) attendu — le juge ne voit pas la faute ; station-ecran-qa --partie=salles2 --lot=b : 1 critère(s) distinct(s) tué(s) par un sabotage de contenu (premier critère CE-1 resté vert), 2 au moins — un juge qui ne regarde que la présence des fichiers passerait
+❌ JA-9 station-ecran-qa --partie=verite : 8 critère(s) vert(s) distinct(s) sur le témoin (CE-1, CE-2, CE-4, CE-5, CE-7, CE-8, CE-25, CE-26), 11 exigé(s) par le lot
+✅ JA-10 la preuve relancée sur les quatre lots factices de scripts/fixtures/026-pilotage/_autotest (JUGES_026_PILOTAGE_AUTOTEST=1) : conforme → code 0, ✅ JA-1 ✅ JA-7 ✅ JA-8 ✅ JA-9 ; toujours-rouge → code 1, ✅ JA-1 ❌ JA-7 ❌ JA-8 ❌ JA-9 ; toujours-vert → code 1, ❌ JA-1 ✅ JA-7 ❌ JA-8 ❌ JA-9 ; presence-seule → code 1, ✅ JA-1 ✅ JA-7 ❌ JA-8 ❌ JA-9
+juges-026-pilotage-preuve --lot=e : FAIL — JA-2, JA-7, JA-8, JA-9
+· usine executer : commande finie en 1284 s sur l’usine, code 1 (seule)
+· usine executer : rapatrié 1 fichier(s), 5249 octets (5 Ko), sous .orchestre/preuves/026-172
+    .orchestre/preuves/026-172/echecs-attendus.md  5249 octets
+· usine executer : code 1 · paquet 8,7 s · envoi et bac 6,0 s · commande 1284,3 s · rapatriement 2,1 s · total 1301,1 s
+code=1

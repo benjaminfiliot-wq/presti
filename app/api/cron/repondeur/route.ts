@@ -15,6 +15,7 @@ import { enregistrerPassage } from '@/lib/alertes'
 import { actif } from '@/lib/flags'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { executerRepondeur } from '@/lib/agents/acquisition/repondeur'
+import { adresseReponseProspection } from '@/lib/agents/acquisition/boiteProspection'
 import type { OffreLue } from '@/lib/agents/acquisition/repondeur'
 
 export const runtime = 'nodejs'
@@ -58,7 +59,7 @@ export async function GET(req: Request) {
       horloge,
       echeance: Date.now() + BUDGET_MS,
       drapeaux: { siteAchatPublic: actif('siteAchatPublic') },
-      adresseReponse: (process.env.ACQ_ADRESSE_REPONSE ?? '').trim() || null,
+      adresseReponse: adresseReponseProspection() || null,
       offre,
       lienCommandeStudio,
     })

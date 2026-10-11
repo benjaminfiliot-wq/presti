@@ -201,12 +201,15 @@ function lireTache(fichier) {
 // ── Chevauchement de périmètres : la partie littérale avant le premier joker ──────────────────────
 const prefixe = (g) => String(g).replace(/\\/g, '/').split(/[*?{]/)[0]
 const chevauche = (a, b) => { const pa = prefixe(a), pb = prefixe(b); return pa.startsWith(pb) || pb.startsWith(pa) }
+// 04/10/2026 (chef, demande de Benj : toutes les fiches en parallèle) : seules les tâches témoins posées par init() (000-test, 001-test-echec) se sérialisent ; les fiches de juges
+// d'un projet (type: test, ids numérotés) ne partagent le digest qu'au sens où deux fiches feature le partagent déjà ; leurs périmètres, eux, se chevauchent toujours.
+const TEMOIN = /^00[01]-/
 function conflit(t, enCours) {
   for (const autre of enCours) {
     // Deux tâches témoins (type: test — 000-test / 001-test-echec, posées par init()) partagent le même
     // digest.md et le même verdicts.jsonl : les laisser actives ensemble mélangerait leurs compteurs
     // dans le prochain digest. Une seule à la fois, même si leurs périmètres ne se chevauchent pas.
-    if (t.entete.type === 'test' && autre.entete.type === 'test') return `${autre.entete.id} (tâches témoins : une seule à la fois)`
+    if (t.entete.type === 'test' && autre.entete.type === 'test' && TEMOIN.test(String(t.entete.id)) && TEMOIN.test(String(autre.entete.id))) return `${autre.entete.id} (tâches témoins : une seule à la fois)`
     for (const p of t.entete.perimetre) for (const q of autre.entete.perimetre) {
       if (chevauche(p, q)) return `${autre.entete.id} (${q} ↔ ${p})`
     }
@@ -229,12 +232,14 @@ function ecrireLock(id, lock) {
   ecrire(cheminLock(id), lignes.join('\n') + '\n')
 }
 function trouver(id, dossiers = [D.enCours, D.fait, D.refuse, D.file]) {
-  for (const d of dossiers) {
-    const liste = taches(path.join(ORCH, d))
-    const f = liste.find((x) => x === `${id}.md`) || liste.find((x) => x.startsWith(`${id}-`) || x.startsWith(`${id}.`))
-    if (f) return { dossier: d, fichier: path.join(ORCH, d, f) }
-  }
-  return null
+  const candidats = dossiers.flatMap((dossier) => taches(path.join(ORCH, dossier))
+    .map((f) => ({ dossier, fichier: path.join(ORCH, dossier, f), nom: f })))
+  // Un identifiant exact dans un dossier l'emporte sur tout préfixe d'un autre dossier.
+  const exacts = candidats.filter((c) => c.nom === `${id}.md`)
+  const correspondances = exacts.length ? exacts : candidats.filter((c) => c.nom.startsWith(`${id}-`) || c.nom.startsWith(`${id}.`))
+  if (correspondances.length > 1) throw new Error(`identifiant ambigu « ${id} » : ${correspondances.map((c) => rel(c.fichier)).join(', ')} ; utiliser un identifiant exact unique`)
+  const cible = correspondances[0]
+  return cible ? { dossier: cible.dossier, fichier: cible.fichier } : null
 }
 
 const PIED_DE_TACHE = (id) => `Quand tu as fini :

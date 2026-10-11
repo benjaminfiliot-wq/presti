@@ -22,8 +22,10 @@ import { NOMS_PERMIS } from './coffre-regles.mjs'
 // Les variables de passage : des réglages que l'unité pose (Environment=), aucune n'est un secret. CODEX_LANCEUR (le
 // lanceur de la file IA, /usr/local/bin/presti-ia-modele) s'ajoute à la liste de la fiche : les unités du livreur, du
 // Standard, du Facteur et des pubs le posent pour lib/agents/llm.ts (026-057, 026-094, 026-200) ; filtré ici, llm.ts
-// rendrait null en silence et ces agents tourneraient sans modèle.
-const PASSANTS = ['PATH', 'HOME', 'LANG', 'TZ', 'USER', 'PRESTI_HOTE', 'ORCHESTRE_CODEX_BIN', 'CODEX_LANCEUR', 'PLAYWRIGHT_BROWSERS_PATH', 'PRESTI_URL']
+// rendrait null en silence et ces agents tourneraient sans modèle. Les réglages du relais d'IA (lib/agents/relais.ts) passent de même :
+// OLLAMA_URL (local seulement, validé par le relais), IA_LOCALE_PROSPECTS_OUI (le « oui » daté de Benj, une date), IA_RELAIS_DOSSIER (où
+// le relais mémorise les moteurs à bout). Jamais FL_KEY ni FREELLMAPI_URL : un service de prospects n'a aucune voie vers l'IA gratuite.
+const PASSANTS = ['PATH', 'HOME', 'LANG', 'TZ', 'USER', 'PRESTI_HOTE', 'ORCHESTRE_CODEX_BIN', 'CODEX_LANCEUR', 'PLAYWRIGHT_BROWSERS_PATH', 'PRESTI_URL', 'OLLAMA_URL', 'IA_LOCALE_PROSPECTS_OUI', 'IA_RELAIS_DOSSIER']
 const LIGNE = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/
 
 function sortir(code, message) {

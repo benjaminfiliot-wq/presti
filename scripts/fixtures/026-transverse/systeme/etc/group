@@ -1,0 +1,7 @@
+root:x:0:
+adm:x:4:ubuntu
+sudo:x:27:ubuntu,usine
+docker:x:999:usine
+agents:x:1001:
+usine:x:1002:
+chef-modele:x:1003:

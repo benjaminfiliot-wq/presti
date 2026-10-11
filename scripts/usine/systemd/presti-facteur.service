@@ -1,0 +1,11 @@
+[Unit]
+Description=Second juge du Facteur sur l'usine
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=CODEX_LANCEUR=/usr/local/bin/presti-ia-modele
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_FACTEUR -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/agents/passes-modele.mjs --agent=facteur
+TimeoutStartSec=14min
+MemoryMax=512M

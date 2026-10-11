@@ -1,0 +1,11 @@
+/* Le cadre de l'hôte Phaser : à la place des classes Tailwind de Claw3D (h-full w-full overflow-hidden rounded-lg), absentes de Presti. */
+.cadre {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.cadre canvas {
+  display: block;
+  image-rendering: pixelated;
+}

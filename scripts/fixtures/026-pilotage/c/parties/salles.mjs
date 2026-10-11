@@ -10,7 +10,7 @@
 // panneau en entier) ; `[data-jour]` (Recettes), `[data-pause-agent]` et `[data-modele]` (fiche d'agent),
 // `[data-gestes-envoi]` (Salle des envois), `[data-ia-fournisseur]`, `[data-ia-bascule]`, `[data-ia-cout]` (Salle des
 // machines). Les montants, compteurs et textes des vues sont tirés au hasard à chaque passage.
-import { CLES_SALLES } from '../../s/contrat-vues.mjs'
+import { CLES_SALLES, CLES_SALLE } from '../../s/contrat-vues.mjs'
 
 const FICHIERS = ['Panneaux.tsx', 'salles/Recettes.tsx', 'salles/Tresorerie.tsx', 'salles/Usine.tsx', 'salles/Atelier.tsx', 'salles/Reunion.tsx', 'salles/Envois.tsx', 'salles/Standard.tsx', 'salles/Redaction.tsx', 'salles/Machines.tsx', 'salles/FicheAgent.tsx', 'salles/Experience.tsx', 'salles/Resume.tsx', 'salles/salles.css']
 const DE_120 = FICHIERS.filter((f) => /\.tsx$/.test(f) && f !== 'Panneaux.tsx')
@@ -181,7 +181,9 @@ export async function juger(x) {
     await page.evaluate(() => { window.__marque = 'juge' })
     await page.click(`${PAN('tresorerie')} [data-resume-salle] button:has-text("GÉRER")`).catch((e) => faute('SA-19', `GÉRER introuvable (${court(e.message, 40)})`))
     await attendre(300)
-    const ag = await page.evaluate(() => ({ agent: new URL(location.href).searchParams.get('agent'), marque: window.__marque }))
+    // D-0510-D4 : sur une machine saturée, `router.replace` (racine réelle, next dev) pose le paramètre plus de 300 ms après l'appui : l'adresse est relue jusqu'à ce qu'il y soit (au plus 12 s) ; passé ce délai, ce qui est lu est jugé comme avant.
+    let ag = await page.evaluate(() => ({ agent: new URL(location.href).searchParams.get('agent'), marque: window.__marque }))
+    for (const t0 = Date.now(); !ag.agent && Date.now() - t0 < 12_000;) { await attendre(150); ag = await page.evaluate(() => ({ agent: new URL(location.href).searchParams.get('agent'), marque: window.__marque })) }
     if (!titulaires.includes(ag.agent) || ag.marque !== 'juge') faute('SA-19', `GÉRER pose ?agent=${ag.agent}, un titulaire (${titulaires.join(', ')}) attendu sans changer de page`)
     // Fermé : plus aucune minuterie de plus qu'avant l'ouverture, aucune animation en cours.
     await page.keyboard.press('Escape'); await attendre(200)
@@ -226,13 +228,15 @@ export async function juger(x) {
     await page.evaluate(() => { window.__marque = 'juge' })
     await page.click(`${PAN('recettes')} [data-fermer], ${PAN('recettes')} button:has-text("Fermer")`).catch(() => {})
     await attendre(300)
-    let r = await page.evaluate(() => ({ salle: new URL(location.href).searchParams.get('salle'), ouvert: !!document.querySelector('[data-salle-panneau]'), marque: window.__marque }))
+    // D-0510-D4 : « Fermer » et Échap retirent `?salle=` par `router.replace` : sur une machine saturée (racine réelle) l'adresse change plus de 300 ms après le geste ; elle est relue jusqu'à la fermeture (au plus 12 s), puis jugée comme avant.
+    const lireFerme = async () => { const lire1 = () => page.evaluate(() => ({ salle: new URL(location.href).searchParams.get('salle'), ouvert: !!document.querySelector('[data-salle-panneau]'), marque: window.__marque })); let v = await lire1(); for (const t0 = Date.now(); (v.salle !== null || v.ouvert) && Date.now() - t0 < 12_000;) { await attendre(150); v = await lire1() } return v }
+    let r = await lireFerme()
     if (r.salle !== null || r.ouvert || r.marque !== 'juge') faute('SA-2', `« Fermer » : ?salle=${r.salle}${r.ouvert ? ', panneau ouvert' : ''}${r.marque ? '' : ' (page rechargée)'}`)
     await sansBrutFrais(page, 'la station sans panneau')
     await page.click('[data-liste-salles] [data-salle="recettes"]').catch(() => {})
     await pret(page, PAN('recettes'))
     await page.keyboard.press('Escape'); await attendre(300)
-    r = await page.evaluate(() => ({ salle: new URL(location.href).searchParams.get('salle'), ouvert: !!document.querySelector('[data-salle-panneau]'), marque: window.__marque }))
+    r = await lireFerme()
     if (r.salle !== null || r.ouvert || r.marque !== 'juge') faute('SA-2', `Échap : ?salle=${r.salle}${r.ouvert ? ', panneau ouvert' : ''}`)
     for (const c of ['tresorerie', 'usine', 'machines', 'envois']) {
       await page.click(`[data-liste-salles] [data-salle="${c}"]`).catch(() => {})
@@ -466,29 +470,44 @@ export async function juger(x) {
     await l.fermer()
     DETAILS['SA-9'] = 'chef, facteur, facteur_usine, repondeur, livreur : libellé, rôle, état, cadence, [data-modele] et sa date, tâches et pastilles ; consignes (et « reçue ») du Chef, technologies des facteurs, réponses exactes du Répondeur ; [data-pause-agent] pour la direction, absent pour la lecture'
   })
-  // L'adresse (SA-2) : une salle sans panneau, les salles sans agent, la réservée.
+  // L'adresse (SA-2) : une salle sans panneau (s'il en reste), puis chaque salle a le sien.
+  // D-0510-D4 (correction du chef, 05/10, 026-120) : ce scénario supposait que `commandement`, `repos` et `ecommerce` n'avaient pas de panneau et ouvraient la liste de leurs
+  // agents. 026-188 et 026-189 leur ont donné leur panneau (Panneaux.tsx : SALLES_SANS_PANNEAU est vide), la liste d'agents n'est plus que le repli d'une salle future : le juge
+  // lit cette liste dans le source. Pour chaque salle SANS panneau il joue l'ancien contrôle (liste d'agents, un bouton par agent, la fiche, « Aucun agent… ») ; pour chacune des
+  // AUTRES (les vingt et une salles du contrat) il exige que `?salle=<clé>` ouvre `[data-salle-panneau="<clé>"]` en `dialog`, et jamais la liste de repli. Plus de salles
+  // contrôlées qu'avant, aucune retirée ; un source illisible reste rouge.
   scenario(['SA-2'], 'salles sans panneau', async () => {
-    const aRadar = existe(`${ST}/salles/Radar.tsx`)
-    const cle = aRadar ? 'commandement' : 'radar'
-    const siens = AGENTS.filter((a) => a.salle === cle)
-    const { page, fermer } = await ouvrir(`/controle/station?salle=${cle}`, base())
-    await pret(page, `[data-salle-agents="${cle}"]`)
-    const r = await page.evaluate((c) => [...document.querySelectorAll(`[data-salle-agents="${c}"] button`)].filter((b) => !b.hasAttribute('data-fermer')).map((b) => b.textContent.trim()), cle)
-    if (!(await page.$(`[data-salle-agents="${cle}"]`))) faute('SA-2', `?salle=${cle} n'ouvre pas [data-salle-agents="${cle}"]`)
-    for (const a of siens) if (!r.some((t) => t.includes(a.libelle))) faute('SA-2', `?salle=${cle} : pas de bouton pour ${a.libelle}`)
-    if (siens.length) {
-      await page.click(`[data-salle-agents="${cle}"] button:has-text("${siens[0].libelle}")`).catch(() => {})
-      await pret(page, `[data-fiche-agent="${siens[0].nom}"]`)
-      if (!(await page.$(`[data-fiche-agent="${siens[0].nom}"]`))) faute('SA-2', `?salle=${cle} : l'appui sur ${siens[0].libelle} n'ouvre pas sa fiche`)
-    }
-    for (const c of ['repos', 'ecommerce']) {
-      await page.goto(`${srv.base}/controle/station?salle=${c}`, { waitUntil: 'domcontentloaded' })
-      await pret(page, `[data-salle-agents="${c}"]`)
-      const t = (await texte(page, `[data-salle-agents="${c}"]`) ?? '').replace(/[’]/g, '\'')
-      if (!t.includes('Aucun agent dans cette salle pour l\'instant.')) faute('SA-2', `?salle=${c} : « Aucun agent dans cette salle pour l'instant. » absent`)
-    }
-    DETAILS['SA-2'] = `?salle=recettes → [data-salle-panneau="recettes"] (dialog), « Fermer » et Échap retirent ?salle= ; ?agent=chef → sa fiche ; ?salle=${cle} → [data-salle-agents] avec un bouton par agent servi, qui ouvre sa fiche ; repos et ecommerce → « Aucun agent… » ; un bouton de la liste des salles ouvre le même panneau que l’adresse`
-    await fermer()
+    const m = (lire(`${ST}/Panneaux.tsx`) ?? '').match(/SALLES_SANS_PANNEAU\s*:\s*string\[\]\s*=\s*\[([^\]]*)\]/)
+    if (!m) { faute('SA-2', 'SALLES_SANS_PANNEAU introuvable dans Panneaux.tsx : le repli des salles sans panneau ne se juge pas'); return }
+    const sans = [...m[1].matchAll(/['"]([\w-]+)['"]/g)].map((q) => q[1])
+    const { page, fermer } = await ouvrir('/controle/station', base())
+    try {
+      for (const cle of sans) {
+        const siens = AGENTS.filter((a) => a.salle === cle)
+        await page.goto(`${srv.base}/controle/station?salle=${cle}`, { waitUntil: 'domcontentloaded' })
+        await pret(page, `[data-salle-agents="${cle}"]`)
+        const r = await page.evaluate((c) => [...document.querySelectorAll(`[data-salle-agents="${c}"] button`)].filter((b) => !b.hasAttribute('data-fermer')).map((b) => b.textContent.trim()), cle)
+        if (!(await page.$(`[data-salle-agents="${cle}"]`))) faute('SA-2', `?salle=${cle} n'ouvre pas [data-salle-agents="${cle}"]`)
+        for (const a of siens) if (!r.some((t) => t.includes(a.libelle))) faute('SA-2', `?salle=${cle} : pas de bouton pour ${a.libelle}`)
+        if (siens.length) {
+          await page.click(`[data-salle-agents="${cle}"] button:has-text("${siens[0].libelle}")`).catch(() => {})
+          await pret(page, `[data-fiche-agent="${siens[0].nom}"]`)
+          if (!(await page.$(`[data-fiche-agent="${siens[0].nom}"]`))) faute('SA-2', `?salle=${cle} : l'appui sur ${siens[0].libelle} n'ouvre pas sa fiche`)
+        } else {
+          const t = (await texte(page, `[data-salle-agents="${cle}"]`) ?? '').replace(/[’]/g, '\'')
+          if (!t.includes('Aucun agent dans cette salle pour l\'instant.')) faute('SA-2', `?salle=${cle} : « Aucun agent dans cette salle pour l'instant. » absent`)
+        }
+      }
+      for (const cle of CLES_SALLE.filter((c) => !sans.includes(c))) {
+        await page.goto(`${srv.base}/controle/station?salle=${cle}`, { waitUntil: 'domcontentloaded' })
+        await pret(page, PAN(cle))
+        const o = await page.evaluate(([c]) => { const e = document.querySelector(`[data-salle-panneau="${c}"]`); return { panneau: !!e, role: e?.getAttribute('role') ?? null, repli: !!document.querySelector(`[data-salle-agents="${c}"]`) } }, [cle])
+        if (!o.panneau) faute('SA-2', `?salle=${cle} n'ouvre pas ${PAN(cle)}`)
+        else if (o.role !== 'dialog') faute('SA-2', `${PAN(cle)} : role « ${o.role} », dialog attendu`)
+        if (o.repli) faute('SA-2', `?salle=${cle} : la liste de repli [data-salle-agents] s'affiche à côté du panneau`)
+      }
+    } finally { await fermer() }
+    DETAILS['SA-2'] = `?salle=recettes → [data-salle-panneau="recettes"] (dialog), « Fermer » et Échap retirent ?salle= ; ?agent=chef → sa fiche ; salles sans panneau (${sans.length ? sans.join(', ') : 'aucune : SALLES_SANS_PANNEAU est vide'}) → liste d'agents ; les ${CLES_SALLE.length - sans.length} autres salles → leur panneau en dialog, jamais la liste de repli ; un bouton de la liste des salles ouvre le panneau`
   })
   // Le rythme (SA-10) : horloge de la page avancée par le juge.
   scenario(['SA-10'], 'rythme', async () => {

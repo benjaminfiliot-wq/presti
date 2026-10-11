@@ -38,9 +38,7 @@ const ECRITURES = { decisions: ['ops_decision_trancher'], appels: ['acq_rdv_appe
 const RPC_PERMIS = ['pilotage_decision', 'ops_decision_trancher', 'acq_reponse_reclasser', 'ops_agent_pause', 'acq_reponse_appel_rendu', 'acq_rdv_appel_rendu', 'station_consigne_transmettre', ...Object.values(GESTES)]
 const NEUF = ['decision_tranchee', 'appel_rendu', 'agent_pause', 'consigne_transmise', 'envoi_froid_ouvert', 'technologie_reprise', 'canal_rouvert', 'modele_leve', 'palier_plafond']
 const PHRASES = {
-  'ops:trop_tot': 'Pas avant le lundi 12/10/2026 : envoi_froid reste fermé.',
   'ops:mesure_absente': "La mesure à sec n'a pas réussi (026-165) : envoi_froid reste fermé.",
-  'ops:epreuve_absente': "L'épreuve de bout en bout n'a pas encore réussi (026-163) : envoi_froid reste fermé.",
   'ops:notice_absente': "La notice en ligne n'est pas vérifiée depuis 7 jours (026-162) : envoi_froid reste fermé.",
 }
 const PARAMS_GESTES = { ouvrir_envoi_froid: {}, reprendre_technologie: { technologie: 'contact_form_7' }, rouvrir_canal: { canal: 'formulaire_site' }, lever_modele: { modele: 'gpt_6_luna' }, palier_plafond: { palier: 'P1', par_jour: 50 } }
@@ -151,6 +149,14 @@ async function enfant(RAC) {
       const c = await jouer('gestes', URL_G, { geste: 'ouvrir_envoi_froid' }, null, { rpc: () => erreur(code) })
       if (c.status !== 409 || c.j?.error !== phrase) e.push(`${code} → ${c.status} « ${court(c.j?.error, 50)} », 409 et sa phrase exacte attendus`)
     }
+    // Plus de date (05/10/2026) : ops:trop_tot n'existe plus. S'il remontait quand même, la route ne dit plus « pas avant le lundi » :
+    // elle répond « rien n'a été fait » (503), comme pour tout refus inconnu ; et son source ne porte plus ni date ni ce code.
+    // Décision du 05/10/2026 soir (0131) : l'épreuve de bout en bout n'est plus une condition d'OUVERTURE (elle conditionne la montée de palier) :
+    // ops:epreuve_absente n'est plus un refus connu de la route, qui répond « rien n'a été fait » (503) sans parler d'épreuve ; ses deux refus (mesure, notice) restent 409.
+    const ep = await jouer('gestes', URL_G, { geste: 'ouvrir_envoi_froid' }, null, { rpc: () => erreur('ops:epreuve_absente') })
+    if (ep.status !== 503 || /épreuve|bout en bout|026-163/i.test(String(ep.j?.error ?? ''))) e.push(`ops:epreuve_absente → ${ep.status} « ${court(ep.j?.error, 50)} », 503 sans phrase d'épreuve attendu (l'épreuve n'est plus un refus d'ouverture)`)
+    const tt = await jouer('gestes', URL_G, { geste: 'ouvrir_envoi_froid' }, null, { rpc: () => erreur('ops:trop_tot') })
+    if (tt.status !== 503 || /12\/10|lundi|trop_tot|pas avant/i.test(String(tt.j?.error ?? ''))) e.push(`ops:trop_tot → ${tt.status} « ${court(tt.j?.error, 50)} », 503 sans date attendu`)
     for (const [code, st] of [['ops:borne', 400], ['ops:auteur', 403]]) { const c = await jouer('gestes', URL_G, { geste: 'palier_plafond', palier: 'P1', par_jour: 50 }, null, { rpc: () => erreur(code) }); if (c.status !== st) e.push(`${code} → ${c.status}, ${st} attendu`) }
     const f = await jouer('gestes', URL_G, { geste: 'ouvrir_envoi_froid' }, null, { drapeaux: { pilotage: true, siteAchatPublic: false } })
     if (f.status !== 409 || f.appels.some((x) => x.f === 'exigerReconfirmation') || f.rpc.length) e.push(`achat public fermé : ${f.status}, ${f.suite.join(' → ') || 'rien'} ; 409 sans reconfirmation ni rpc( attendu`)
@@ -251,7 +257,11 @@ const indice = (s, x) => (s ?? '').indexOf(x)
     if (!/\/\^\[a-z0-9_\]\{2,40\}\$\//.test(s)) e.push('le nom n’est pas filtré par ^[a-z0-9_]{2,40}$')
   }
   for (const [k, c] of Object.entries(CODE)) if (c && /ops_interrupteur_poser/.test(c)) e.push(`${k} appelle ops_interrupteur_poser`)
-  S.juger('GE-3', e, "exigerReconfirmation(req, f.uid, 'securite') avant tout rpc(, sans condition sur pause ; nom filtré par ^[a-z0-9_]{2,40}$ ; pas d'ops_interrupteur_poser")
+  // Plus de date (05/10/2026) : la route des gestes ne porte plus ni le 12/10 ni ops:trop_tot (le 503 « rien n'a été fait » est joué par GE-13).
+  if (SRC.gestes && /12\/10|2026-10-12|trop_tot/.test(SRC.gestes)) e.push('la route des gestes porte encore la date du 12/10 ou ops:trop_tot')
+  // Décision du 05/10/2026 soir (0131) : l'épreuve de bout en bout ne ferme plus l'ouverture ; la route ne la nomme plus.
+  if (SRC.gestes && /epreuve_absente|026-163|[ée]preuve/i.test(SRC.gestes)) e.push("la route des gestes nomme encore l'épreuve de bout en bout (ops:epreuve_absente) : elle ne conditionne plus l'ouverture, seulement la montée de palier")
+  S.juger('GE-3', e, "exigerReconfirmation(req, f.uid, 'securite') avant tout rpc(, sans condition sur pause ; nom filtré par ^[a-z0-9_]{2,40}$ ; pas d'ops_interrupteur_poser ; aucune date d'ouverture ni refus d'épreuve dans la route des gestes")
 }
 // GE-4
 {
@@ -358,7 +368,7 @@ const actions = (src) => { const s = sansCommentaires(src ?? ''); const i = s.in
     const detail = {
       'GE-11': 'par doublures : un journaliser( sans le texte puis un station_consigne_transmettre (p_auteur = uid), 200 ; journal refusé → 503 sans rpc( ; quota 429, auteur 403, texte 400, autre 503 ; texte absent des console. ; appel rendu true 200 / false 404 ; décision dans l’ordre de GE-2',
       'GE-12': 'par doublures : source=rdv → journal rendez_vous puis un acq_rdv_appel_rendu { p_id } ; false → 404 ; sans source → acq_reponse_appel_rendu seul ; source=autre → 400 sans rpc(',
-      'GE-13': 'par doublures, pour les cinq gestes : reconfirmation securite → journal (reconfirme) → un rpc( de 0111 avec p_auteur ; sans reconfirmation → refus sans rpc( ; les quatre refus d’ouverture en 409 avec leur phrase, borne 400, auteur 403 ; achat public fermé → 409 sans reconfirmation ; les cinq fonctions citées nulle part ailleurs',
+      'GE-13': 'par doublures, pour les cinq gestes : reconfirmation securite → journal (reconfirme) → un rpc( de 0111 avec p_auteur ; sans reconfirmation → refus sans rpc( ; les deux refus d’ouverture (mesure, notice) en 409 avec leur phrase, ops:epreuve_absente devenu inconnu (503 sans phrase d’épreuve), ops:trop_tot disparu (503 sans date), borne 400, auteur 403 ; achat public fermé → 409 sans reconfirmation ; les cinq fonctions citées nulle part ailleurs',
       'GE-14': 'par doublures : carte acq:reponse:… → ops_decision_trancher puis acq_reponse_reclasser { p_decision, p_par: benj } ; déjà tranchée → 409 et reclassée ; chef:… → rien ; reclasser en erreur → « rappuie » ; rien de lib/agents/acquisition/',
       'GE-15': 'par doublures : agent facteur → p_agent facteur et journal apres.agent ; sans agent → null ; inconnu, radar, ecommerce → 400 avec la liste, sans journal ni rpc( ; EQUIPAGE importé, aucun nom recopié',
     }

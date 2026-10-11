@@ -1,0 +1,124 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=routes --racine={racine}",
+      "fichier": "lib/agents/telegram.ts",
+      "avant": "export const COMMANDES = Object.freeze(['pause', 'etat', 'consigne'] as const)",
+      "apres": "export const COMMANDES = Object.freeze(['pause', 'etat', 'consigne', 'reprise'] as const)",
+      "critere": "PT-7",
+      "extrait": "FAIL PT-7 — COMMANDES = [\"pause\",\"etat\",\"consigne\",\"reprise\"] : [\"pause\",\"etat\",\"consigne\"] attendu (aucune reprise, aucune levée) ; commande « reprise » : statut 200, 2 appel(s) à la base : 400 sans appel attendu",
+      "duree_s": 0.9
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=routes --racine={racine}",
+      "fichier": "app/api/agents/telegram/entree/route.ts",
+      "avant": "rpc('station_pause_par_agent', { p_agent: AGENT, p_motif: motifPause(corps.motif) })",
+      "apres": "rpc('ops_interrupteur_poser', { p_nom: 'pause_generale', p_actif: false, p_agent: AGENT })",
+      "critere": "PT-4",
+      "extrait": "FAIL PT-4 — pause, motif piégé : statut 503, appels à la base : ops_interrupteur_poser — 200 et un seul appel station_pause_par_agent attendus ; pause, motif de 400 signes : statut 503, appels à la base : ops_interrupteur_poser — 200 et un seul appel station_pause_par_agent attendus ; pause, avec des champs de reprise en plus : statut 503, appels à la base : ops_interrupteur_poser — 200 et un seul appel station_pause_par_agent attendus ; pause déjà active : statut 503, 1 appel(s) : 200 et un seul appel attendus (et 5 autre(s))",
+      "duree_s": 1.1
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=routes --racine={racine}",
+      "fichier": "app/api/agents/telegram/sortie/route.ts",
+      "avant": "messages.push({ id: `a-${l.id}`, texte: m.texte })",
+      "apres": "messages.push({ id: `a-${l.id}`, texte: `${m.texte} ${String((l as unknown as Record<string, unknown>).sujet ?? '')}` })",
+      "critere": "PT-3",
+      "extrait": "FAIL PT-3 — app/api/agents/telegram/sortie/route.ts nomme « sujet » ou « corps » (source, commentaires ôtés)",
+      "duree_s": 1.1
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "import crypto from 'node:crypto'",
+      "apres": "import crypto from 'node:crypto'\nimport http from 'node:http'\nhttp.createServer((_req, res) => res.end('ok')).listen(0, '127.0.0.1')",
+      "critere": "PT-11",
+      "extrait": "FAIL PT-11 — le source contient createServer, listen( (hors commentaires) : aucun serveur attendu ; socket TCP en écoute : port 33671 (passage commandes, processus A)",
+      "duree_s": 27.8
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "process.on('exit', libererVerrou)",
+      "apres": "process.on('exit', libererVerrou)\nconsole.log(`${new Date().toISOString()} telegram : jeton ${JETON_BOT}`)",
+      "critere": "PT-10",
+      "extrait": "FAIL PT-10 — fuite : jeton du bot dans la sortie standard de A (passage commandes) ; jeton du bot dans la sortie standard de A (passage limite) ; jeton du bot dans la sortie standard de A (passage aucun-base) ; jeton du bot dans la sortie standard de A (passage sortie) (+11)",
+      "duree_s": 24.5
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "{ chat_id: chat, text: t, disable_web_page_preview: true }",
+      "apres": "{ chat_id: chat, text: t, disable_web_page_preview: true, parse_mode: 'HTML' }",
+      "critere": "PT-9",
+      "extrait": "FAIL PT-9 — 55 sendMessage portent parse_mode (« HTML », passage commandes) : aucune mise en forme attendue",
+      "duree_s": 26.6
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "if (!egaux(message.text.slice('/start '.length), CODE_ENV)) return",
+      "apres": "if (false) return",
+      "critere": "PT-15",
+      "extrait": "FAIL PT-15 — une conversation étrangère qui écrit la première a reçu 1 réponse(s) (3700066916 « appairé : Claude Code termine ») ; journal : ligne(s) qui portent l'identifiant d'une conversation étrangère ou un appairage : 2026-06-01T12:00:00.000Z telegram : appairage : chat 3700066916 | 2026-06-01T12:00:00.000Z telegram : appairage : chat 3700066916 ; /start <code juste> à 9 min : 0 réponse(s) («  »), une réponse « appairé : … » attendue ; /start <code juste> à 9 min : 1 ligne(s) « appairage : chat … » (3700066916), une seule, pour 945152481, attendue",
+      "duree_s": 42.7
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "const FENETRE_APPAIRAGE_MS = 10 * 60_000",
+      "apres": "const FENETRE_APPAIRAGE_MS = 1000 * 60_000",
+      "critere": "PT-15",
+      "extrait": "FAIL PT-15 — le code juste à 11 min a été accepté ou journalisé : 1 réponse(s), lignes « 2026-06-01T12:11:00.000Z telegram : appairage : chat 951960321 » (aucune attendue)",
+      "duree_s": 23.7
+    },
+    {
+      "juge": "scripts/pont-telegram-qa.mjs",
+      "commande": "node scripts/pont-telegram-qa.mjs --partie=usine --racine={racine}",
+      "fichier": "scripts/usine/telegram.mjs",
+      "avant": "if (!Number.isSafeInteger(id) || id < etat.offset) return // déjà acquitté (même rejoué) : jamais un second effet",
+      "apres": "if (!Number.isSafeInteger(id)) return // acquittement retiré",
+      "critere": "PT-16",
+      "extrait": "FAIL PT-16 — update_id déjà acquitté rejoué : 1 appel(s) et 1 envoi(s) de trop (au plus le /etat sentinelle) ; relance sur le même etat.json : 1 appel(s) et 1 envoi(s) de trop pour l'update_id rejoué",
+      "duree_s": 21.3
+    },
+    {
+      "juge": "scripts/usine-durcie-qa.mjs",
+      "commande": "node scripts/usine-durcie-qa.mjs --racine={racine}",
+      "fichier": "scripts/usine/durcir.sh",
+      "avant": "for g in sudo docker; do",
+      "apres": "$SUDO rm -f \"$SD/presti-agents\"\nfor g in sudo docker; do",
+      "critere": "UD-2",
+      "extrait": "FAIL UD-2 — sous-critère(s) en échec : UD-2c, UD-2h",
+      "duree_s": 1.9
+    },
+    {
+      "juge": "scripts/usine-durcie-qa.mjs",
+      "commande": "node scripts/usine-durcie-qa.mjs --racine={racine}",
+      "fichier": "scripts/usine/durcir.sh",
+      "avant": "# rpcbind : coupé seulement si aucun partage NFS n'est monté.",
+      "apres": "$SUDO ufw enable\n# rpcbind : coupé seulement si aucun partage NFS n'est monté.",
+      "critere": "UD-2",
+      "extrait": "FAIL UD-2 — sous-critère(s) en échec : UD-2f",
+      "duree_s": 1.4
+    },
+    {
+      "juge": "scripts/usine-durcie-qa.mjs",
+      "commande": "node scripts/usine-durcie-qa.mjs --racine={racine}",
+      "fichier": "scripts/usine.mjs",
+      "avant": "v=$(node -p \"require('./node_modules/playwright/package.json').version\")",
+      "apres": "sudo -n true\nv=$(node -p \"require('./node_modules/playwright/package.json').version\")",
+      "critere": "UD-3",
+      "extrait": "FAIL UD-3 — sous-critère(s) en échec : UD-3a, UD-3c",
+      "duree_s": 2.3
+    }
+  ]
+}

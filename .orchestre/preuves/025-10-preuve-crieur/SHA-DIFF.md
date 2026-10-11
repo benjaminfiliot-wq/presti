@@ -1,0 +1,3 @@
+Avant SHA256 1149afcd1e1bfe46fe1503090a8d9663e7212fcc9780e164da5d262fa5d4004c
+Après SHA256 a83625a7e2bdccfcbfd3c8a90325c6c22d7945ec72118c8d33f5fb7093333fc0
+Modification unique de preuve.motif du fait reponse-rapide ; texte et autres faits conservés.

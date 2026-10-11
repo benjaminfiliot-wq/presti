@@ -1,39 +1,136 @@
 {
+  "version": 2,
   "metier": "plombier",
+  "da": "plombier",
   "libelles": {
-    "sur": "Plomberie",
-    "alt_heros": "Détail d’une installation de plomberie",
-    "alt_atelier": "Équipement sanitaire et robinetterie",
-    "reperes": ["Repère des installations", "Repère des équipements", "Repère de proximité"]
+    "metier": "Plombier",
+    "activite": "plomberie"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Plomberie à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, plomberie à {ville}.",
-      "h1": "Plomberie à {ville}",
-      "h1Ligne": "L’eau trouve sa place",
-      "chapeau": "Une page pour présenter les installations de plomberie et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "Des réseaux aux équipements",
-          "blocs": [
-            { "type": "p", "texte": "Alimentations, évacuations et équipements sanitaires peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Plombier à {ville} — {entreprise}",
+    "description": "{entreprise}, plombier à {ville} : salles de bains, réseaux d’eau, robinetterie et dépannages, avec une visite avant chaque chantier.",
+    "h1": "Plombier à {ville}",
+    "h1Ligne": "L’eau trouve son chemin",
+    "chapeau": "Salles de bains, réseaux d’eau et dépannages, faits proprement et expliqués."
+  },
+  "prestations": {
+    "h2": "Du compteur au robinet",
+    "intro": "Les travaux courants d’une maison, du mitigeur à remplacer à la salle de bains complète.",
+    "items": [
+      {
+        "titre": "Salle de bains complète",
+        "texte": "Dépose de l’ancienne installation, reprise des arrivées et des évacuations, pose de la douche ou de la baignoire, du meuble vasque et des toilettes.",
+        "photo": "douches"
+      },
+      {
+        "titre": "Robinetterie et sanitaires",
+        "texte": "Mitigeurs, colonnes de douche, éviers, lavabos et toilettes suspendues, posés d’aplomb et bien fixés, avec des raccords qui restent accessibles pour l’entretien.",
+        "photo": "robinetterie"
+      },
+      {
+        "titre": "Réseaux d’eau",
+        "texte": "Création ou remplacement des alimentations en cuivre ou en multicouche, tracés au plus court, avec des vannes d’arrêt placées là où on peut les atteindre sans démonter.",
+        "photo": "reseau"
+      },
+      {
+        "titre": "Fuites et dépannages",
+        "texte": "Recherche de la fuite à partir des traces et des compteurs, réparation du raccord ou du tronçon en cause, et contrôle du reste du réseau tant que tout est ouvert.",
+        "photo": "canalisations"
+      },
+      {
+        "titre": "Évacuations et débouchage",
+        "texte": "Débouchage des éviers, des douches et des toilettes, puis reprise des pentes et des siphons quand l’eau s’écoule mal de façon répétée ou que les odeurs remontent.",
+        "photo": null
+      },
+      {
+        "titre": "Chauffe-eau et ballon",
+        "texte": "Remplacement d’un ballon électrique ou thermodynamique, détartrage de la cuve, changement du groupe de sécurité et réglage de la température de l’eau chaude.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Avant de couper l’eau",
+    "phrase": "Repérer les vannes, protéger les sols, remettre en pression et vérifier chaque raccord avant de refermer le mur.",
+    "photo": "canalisations"
+  },
+  "realisations": {
+    "h2": "Salles d’eau terminées",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le chantier."
+  },
+  "etapes": {
+    "h2": "Comment ça se passe",
+    "intro": "Du premier appel à la remise en eau, chaque étape est annoncée.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez le problème ou le projet, avec une photo si possible : fuite, salle de bains à refaire, appareil à remplacer."
+      },
+      {
+        "titre": "Visite sur place",
+        "texte": "Repérage des arrivées, des évacuations, des pentes et des vannes d’arrêt avant de proposer une solution."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez le détail des travaux et des fournitures, poste par poste, avant toute intervention."
+      },
+      {
+        "titre": "Travaux et contrôle",
+        "texte": "Le chantier se fait dans une pièce protégée, puis le réseau est remis en pression et chaque raccord contrôlé devant vous."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Faut-il couper l’eau de toute la maison pendant les travaux ?",
+        "reponse": "Le plus souvent, seulement la partie concernée, si les vannes d’arrêt sont en bon état. Sinon, la coupure générale est courte et annoncée à l’avance."
+      },
+      {
+        "question": "Peut-on remplacer une baignoire par une douche de plain-pied ?",
+        "reponse": "Souvent, oui. Tout dépend de la pente possible pour l’évacuation et de la nature du plancher : c’est ce que la visite permet de vérifier."
+      },
+      {
+        "question": "Mon chauffe-eau fait du bruit, faut-il le changer ?",
+        "reponse": "Pas forcément : un détartrage ou le remplacement d’une pièce suffit parfois. L’âge de l’appareil et l’état de la cuve aident à trancher sur place."
+      },
+      {
+        "question": "Qui s’occupe du carrelage dans une salle de bains ?",
+        "reponse": "Cela se précise selon le chantier. La plomberie se fait avant, et le carrelage peut être confié à un carreleur avec qui le planning est calé."
+      },
+      {
+        "question": "Que faire en attendant, en cas de fuite ?",
+        "reponse": "Fermer la vanne d’arrêt la plus proche ou le robinet général près du compteur, couper l’électricité si l’eau approche d’une prise, puis appeler."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre projet",
+    "texte": "Décrivez la pièce ou le problème en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Salle de bains",
+      "Fuite ou dépannage",
+      "Chauffe-eau",
+      "Robinetterie et sanitaires",
+      "Évacuation bouchée",
+      "Autre projet"
+    ],
+    "message": "Votre projet, en quelques mots"
   },
   "photos": {
     "demo": "plombier",
-    "fichiers": ["hero-960.webp", "robinetterie-720.webp"]
+    "heros": "hero",
+    "atelier": "canalisations",
+    "galerie": [
+      "douches",
+      "lavabo",
+      "colonne",
+      "reseau"
+    ]
   }
 }

@@ -1,25 +1,35 @@
 {
-  "_note": "Cinq commandes livrées FACTICES (026-246) : aucune donnée réelle, hôtes en .invalid, SIREN fictifs. Le serveur factice et le juge lisent ce même fichier.",
+  "_note": "Cinq commandes livrées FACTICES (026-246). Ce que rend la route travail de 026-247 (sans filtrage : le module doit se défendre lui-même) = tout sauf la clé `serveur`, qui n'est que la panne que le serveur factice sert pour cet hôte. Données inventées ; domaines en .test.",
   "commandes": [
     {
-      "id": "cmd-0001", "slug": "aubier", "statut_site": "en_ligne", "url_en_ligne": "https://aubier.exemple.invalid/",
-      "artisan": { "nom": "Atelier Fictif Aubier", "siren": "000000011", "adresse": "1 rue de l'Essai, 00000 Ville-Fictive", "forme_juridique": "EURL" }
+      "commande_id": "cmd-martin", "etat": "en_ligne", "domaine": "martin-plomberie.test", "url_en_ligne": "https://martin-plomberie.test/",
+      "en_ligne_le": "2026-09-20T08:00:00Z", "compte_supprime_le": null, "retiree_le": null,
+      "mentions_attendues": { "nom_artisan": "Martin Plomberie", "siren": "123456782", "adresse": "12 rue des Lilas, 69003 Lyon", "forme_juridique": "SARL" },
+      "serveur": { "pannes": [] }
     },
     {
-      "id": "cmd-0002", "slug": "vallon", "statut_site": "en_ligne", "url_en_ligne": "https://vallon.exemple.invalid/",
-      "artisan": { "nom": "Plomberie Fictive du Vallon", "siren": "000000029", "adresse": "2 chemin du Test, 00000 Bourg-Fictif", "forme_juridique": "SARL" }
+      "commande_id": "cmd-dubois", "etat": "en_ligne", "domaine": "dubois-electricite.test", "url_en_ligne": "https://dubois-electricite.test/",
+      "en_ligne_le": "2025-11-02T08:00:00Z", "compte_supprime_le": "2026-02-10T09:00:00Z", "retiree_le": null,
+      "mentions_attendues": { "nom_artisan": "Dubois Électricité", "siren": "987654321", "adresse": "4 impasse du Moulin, 31000 Toulouse", "forme_juridique": "EURL" },
+      "serveur": { "pannes": ["http_500"] }
     },
     {
-      "id": "cmd-0003", "slug": "ancien", "statut_site": "programme_retrait", "retrait_programme_le": "2027-09-01", "url_en_ligne": "https://ancien.exemple.invalid/",
-      "artisan": { "nom": "Menuiserie Fictive Ancienne", "siren": "000000037", "adresse": "3 impasse du Vieux-Test, 00000 Val-Fictif", "forme_juridique": "SAS" }
+      "commande_id": "cmd-leroy", "etat": "validee", "domaine": null, "url_en_ligne": null,
+      "en_ligne_le": null, "compte_supprime_le": null, "retiree_le": null,
+      "mentions_attendues": { "nom_artisan": "Leroy Menuiserie", "siren": "552100554", "adresse": "8 chemin des Vignes, 33000 Bordeaux", "forme_juridique": "SAS" },
+      "serveur": { "pannes": [] }
     },
     {
-      "id": "cmd-0004", "slug": "sansurl", "statut_site": "livre", "url_en_ligne": null,
-      "artisan": { "nom": "Peinture Fictive Sans-Adresse", "siren": "000000045", "adresse": "4 place de l'Essai, 00000 Port-Fictif", "forme_juridique": "EI" }
+      "commande_id": "cmd-garcia", "etat": "en_ligne", "domaine": "garcia-peinture.test", "url_en_ligne": "https://garcia-peinture.test/",
+      "en_ligne_le": "2026-08-14T08:00:00Z", "compte_supprime_le": null, "retiree_le": null,
+      "mentions_attendues": { "nom_artisan": "Garcia Peinture", "siren": "443061841", "adresse": "27 avenue Foch, 13001 Marseille", "forme_juridique": "SARL" },
+      "serveur": { "pannes": ["lien_mort"] }
     },
     {
-      "id": "cmd-0005", "slug": "clair", "statut_site": "en_ligne", "url_en_ligne": "http://clair.exemple.invalid/",
-      "artisan": { "nom": "Carrelage Fictif Clair", "siren": "000000052", "adresse": "5 avenue du Faux, 00000 Mont-Fictif", "forme_juridique": "SASU" }
+      "commande_id": "cmd-petit", "etat": "en_ligne", "domaine": "petit-carrelage.test", "url_en_ligne": "http://petit-carrelage.test/",
+      "en_ligne_le": "2026-09-01T08:00:00Z", "compte_supprime_le": null, "retiree_le": null,
+      "mentions_attendues": { "nom_artisan": "Petit Carrelage", "siren": "775665912", "adresse": "3 place de la Mairie, 59000 Lille", "forme_juridique": "EI" },
+      "serveur": { "pannes": ["http_simple"] }
     }
   ]
 }

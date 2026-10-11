@@ -19,7 +19,8 @@ const jeton = process.env[agent === 'standardiste' ? 'PRESTI_JETON_STANDARDISTE'
 const llm = await import('../../lib/agents/llm.ts').catch(() => null)
 const lanceur = process.env.CODEX_LANCEUR
 if (!lanceur || !fs.existsSync(lanceur)) { journal({ etat: 'modele_absent' }); process.exit(0) }
-const modele = soir ? 'gpt-6-sol' : 'gpt-6-luna'
+// Un seul modèle pour les trois passes, `--soir` compris : l'étalonné (D-0410-3), jamais gpt-6-sol.
+const modele = 'gpt-6-luna'
 function lire(systeme, donnees) {
   const sortie = path.join(os.tmpdir(), `passe-${crypto.randomBytes(6).toString('hex')}.txt`)
   const argv = ['exec', '--model', modele, '--sandbox', 'read-only', '--skip-git-repo-check', '--output-last-message', sortie, '-']
@@ -52,7 +53,11 @@ if (agent === 'standardiste') {
   for (const e of (t?.envois ?? []).slice(0, 20)) {
     const brut = lire('juge du ton', { texte: e.texte })
     if (brut === null) continue
-    await appel('/api/usine/facteur/avis', { method: 'POST', body: JSON.stringify({ envoi_id: e.id, empreinte: e.empreinte, j2: brut, j2_version: modele, passe: soir ? 'soir' : 'envoi' }) })
+    // comme le vrai script (executerJuge) : l'avis n'est rendu que si le lanceur a rendu exactement { verdict, raisons }
+    let j2 = null
+    try { j2 = JSON.parse(brut) } catch { j2 = null }
+    if (!j2 || (j2.verdict !== 'ok' && j2.verdict !== 'refus') || !Array.isArray(j2.raisons)) continue
+    await appel('/api/usine/facteur/avis', { method: 'POST', body: JSON.stringify({ envoi_id: e.id, empreinte: e.empreinte, j2, j2_version: modele, ...(soir ? { passe: 'soir' } : {}) }) })
     rendus++
   }
   journal({ etat: 'fini', recus: t?.envois?.length ?? 0, rendus })

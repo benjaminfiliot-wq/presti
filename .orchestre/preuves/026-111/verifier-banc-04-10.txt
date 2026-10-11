@@ -1,0 +1,37 @@
+$ node scripts/usine.mjs executer --nom=banc-111 -- bash scripts/essai-banc-111.sh   (juge au BANC, sur une copie de l'arbre propre de HEAD 4102dd2f, sur l'usine ; puis npm run typecheck)
+# 2026-10-04 · racine propre = git worktree detache a HEAD (aucun travail non commite d'une autre fiche) · sans .env.local, sans compte, sans reseau
+
+  ne part pas (2) — le bac n'a PAS la version du PC de ces fichiers (liste entière : 
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec 
+· usine executer : bac banc-111 sur usine@88.96.53.3, délai 30 min : bash scripts/essai-banc-111.sh
+· usine executer : bac banc-111 monté en 5762 ms : 4102dd2f + paquet, 4 écart(s) ; délai 1800 s
+banc : racine /tmp/racine-111-487163 (copie de /home/usine/bacs/banc-111 sans node_modules), base 4102dd2f5ad2e17d2225538c7cc1dcc9d26926e4
+pilotage-ecran-qa --partie=station — racine /tmp/racine-111-487163 — banc (racine lue au drapeau levé, servie sur 127.0.0.1) — base 4102dd2 — graine 1855080275 — 4 scénario(s) à la fois
+✅ ST-1 les 15 fichiers de app/controle/station/ du périmètre sont là ; layout.tsx : actif('pilotage') → notFound(), police pixel par next/font, aucune adresse https:// ; données par apiDirection( sur vue=, /tresorerie et /station/reglages (page.tsx : le rôle sur /api/controle/journal?limite=1) ; ni fetch(, ni .from(, ni .rpc(, ni supabase hors supabase.auth.getSession dans page.tsx
+✅ ST-2 drapeau baissé (racine telle quelle) : /controle/station → 404, aucun lien vers la station ; levé : premier lien du rail → /controle/station, onglet=pilotage&decision=<uuid> → /controle/station?decision=<uuid>, un faux UUID abandonné
+✅ ST-3 colonnes : barre 80 px (36 + 44) en haut, équipage au-dessus d’Attention dans 300 px à gauche, Commandement au-dessus du journal dans 340 px à droite, carte en plein cadre sous les colonnes, sans backdrop-filter, bandeau de 44 px en bas ; 1280×800 : 280 et 320 px ; flottante : Attention à droite sous la barre, Commandement fermé, ⚑ l’ouvre
+✅ ST-4 ENCAISSÉ, DÉPENSÉ, MARGE · MOIS = 3 820,69 €, 366,35 €, 3 454,34 € (tirés) ; compteurs dans l’ordre servi, muets sans chiffre ; AUTO vert comme servi ; cloche, JOUR, lune, version (absente du HTML sans session), santé, heure de Paris ; trésorerie en panne → « — » et la panne ; santé en manque → « — » ; hors périmètre → « — · hors périmètre »
+✅ ST-5 15 agents dans l’ordre servi : point, activité, cadence, coût, 📍 et plaque de la salle, ancienneté (relTime), ⚠ avec le titre de SA carte ; [data-commandant] ; un appui pose ?agent= sans changer de page ; « ◄ » → rail de 44 px, gardé au rechargement ; localStorage qui lève sans casse
+✅ ST-6 attention-ordre.json : 7 cartes dans l’ordre et les couleurs servis, orchestre visible, « 5 autres » ; attention-vide.json : la phrase exacte
+✅ ST-7 objectif « PAR LE CHEF », missions au texte servi, LV. et dernier succès, compte rendu de 1 à 3 lignes
+✅ ST-8 bandeau : les éléments servis, six entrées (chacune pose son ?vue= sans changer de page), pastille = ENCAISSÉ · MOIS et SITES EN LIGNE, toast masqué jusqu’au compte suivant ; rien ne tourne 3 s après le chargement ; un élément nouveau entre une fois (animation vue à l’entrée) puis tout s’arrête ; mouvement réduit : aucune animation
+✅ ST-9 direct-503.json : l’équipage dit « … ne répond pas : pilotage_agents injoignable (délai dépassé) », sans chiffre ni carte ; Attention, Commandement et bandeau rendus
+✅ ST-10 390×844 : barre compacte de 88 px (MISSION CONTROL, point d’état, cloche, AUTO ; ENCAISSÉ · MOIS, ENVOIS DU JOUR, CHEF DANS), feuille « Tous les compteurs » complète et opaque, onglets en bas (Attention ouvert), Plus → Succès, Réglages, Aide, Poste ; chaque compteur de la ligne 2 entier (dans 0..390 et dans sa ligne, elementFromPoint au centre et aux deux bords) ; sur chaque onglet et sur la feuille : rien hors de 0..390, rien de rogné par un cadre « overflow: hidden », aucun défilement horizontal, boutons ≥ 44 px, textes ≥ 12 px
+✅ ST-11 jetons --mc- déclarés sur .mc dans station.css seulement ; aucune couleur hexadécimale ajoutée hors de station.css et moteur/ ; globals.css et base.css inchangés ; gardes prefers-reduced-motion ; réglage de néon posé sur .mc seulement ; --accent #D97757 sur /controle?onglet=aujourdhui
+✅ ST-12 bureau.jpg 1440×900, 132 Ko, écart type 24.7 ; telephone.jpg 390×844, 29 Ko, écart type 25.0 — prises par le juge, différentes entre elles et des autres parties
+✅ ST-13 chaque lien de la station en /controle…, /controle/station… ou /parametres ; aucun « Envoyer », « Copier », « Relayer » ; aucune requête du navigateur hors de la page servie sur les 26 pages ouvertes
+✅ ST-14 60 s page visible : 3 direct, 3 trésorerie, 13 fil (apres=50 après la première), 1 réglages (404 → défauts, sans panne)
+✅ ST-15 rôle lecture : station entière, « lecture seule », aucun geste ni entrée Réglages ; partenaire (403) : renvoyé à /dashboard
+✅ ST-16 bureau, 3 s après le chargement, sans événement : data-images 0, 1 empreinte(s) du canevas, aucune animation en cours ; 2 lectures identiques de vue=direct (horloge de la page avancée de 32 s) : aucun texte des zones, du journal ni des compteurs n’a changé ([data-heure] retiré, âges relatifs ramenés) ; l’événement injecté (« Maquette plombier, Lyon ») se voit dans l’équipage en 1.0 s d’horloge
+✅ ST-17 diff de app/controle/page.tsx limité à l’entrée Station et à la redirection (le typecheck se juge sur la racine réelle)
+✅ ST-18 liste des salles : les 20 clés de SALLES avec leur plaque, ≥ 44 px, E-commerce réservée désactivée, un appui pose ?salle= sans changer de page ; <Carte carte={…}> tel quel ; Vues.tsx et Habillage.tsx ; aucune vue sans ?vue= ; carte montée après le premier 200 (retard de 2 s) ; sans session → /login ; aucun phaser demandé
+✅ ST-19 chaque [data-modele] visible porte le modèle servi (dont « sans IA ») ; Equipage.tsx n’écrit aucun modèle
+pilotage-ecran-qa --partie=station : PASS
+code du juge au banc : 0
+> presti@0.1.0 typecheck
+> tsc --noEmit
+code du typecheck : 0
+· usine executer : commande finie en 113 s sur l’usine, code 0 (seule)
+· usine executer : rapatrié 2 fichier(s), 164506 octets (161 Ko), sous .orchestre/travail/pilotage-ecran/captures
+· usine executer : code 0 · paquet 2,1 s · envoi et bac 7,3 s · commande 113,1 s · rapatriement 3,4 s · total 125,9 s
+fin code 0

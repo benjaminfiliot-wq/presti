@@ -1,0 +1,22 @@
+/* Fiche 026-182 (K4a) : l'habillage de la caméra et des zones de la carte. Aucune animation ni transition : la carte ne bouge que sur un
+   geste de Benj (molette, glissé, clic), au repos la boucle de Phaser dort. */
+
+/* La croix sur le vide, la main sur une salle, la main fermée pendant un glissé. */
+[data-station-carte] canvas { cursor: crosshair; touch-action: none; }
+[data-station-carte] [data-glisse] canvas,
+[data-station-carte] [data-glisse] [data-zone-salle] { cursor: grabbing; }
+
+.mc-zones { position: absolute; z-index: 1; pointer-events: none; }
+.mc-zones [data-zone-salle] { position: absolute; box-sizing: border-box; cursor: pointer; pointer-events: auto; background: transparent; outline: none; }
+.mc-zones [data-zone-salle][data-survol="oui"] { background: rgba(255, 255, 255, 0.1); }
+/* La salle choisie est encadrée de BLANC, et d'elle seule. */
+.mc-zones [data-zone-salle][data-selectionnee="oui"] { outline: 2px solid #ffffff; outline-offset: -2px; }
+.mc-zones [data-zone-salle]:focus-visible { outline: 2px dashed #ffffff; outline-offset: -2px; }
+
+/* L'étiquette à pointe qui apparaît au survol d'une salle : le nom de la salle, une pointe qui la désigne. */
+.mc-etiquette { position: absolute; z-index: 3; pointer-events: none; padding: 2px 8px; background: var(--mc-fond, #0b0418); color: var(--mc-texte, #fff4f0); border: 1px solid var(--mc-accent, #c949ba); white-space: nowrap; font-family: var(--mc-police-pixel, ui-monospace), ui-monospace, monospace; font-size: 12px; line-height: 14px; }
+.mc-etiquette[hidden] { display: none; }
+.mc-etiquette [data-pointe] { position: absolute; top: 100%; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--mc-accent, #c949ba); }
+
+/* La salle survolée n'a qu'UNE étiquette : celle qui paraît au-dessus d'elle ; sa plaque s'efface le temps du survol (pas de doublon). */
+[data-station-carte] [data-plaque][data-allumee] { visibility: hidden; }

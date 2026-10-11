@@ -6,7 +6,7 @@
 
 - [Accueil](https://prestiapp.fr/) : présentation de l’assistant IA, des réponses aux demandes, des devis, des factures et des abonnements.
 - [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement de Presti, sécurité des données, essai, tarifs et validation des devis.
-- [Tarifs](https://prestiapp.fr/tarifs) : formules d’abonnement et crédits.
+- [Tarifs](https://prestiapp.fr/#tarifs) : formules d’abonnement et crédits.
 
 ## Contacter et utiliser le service
 

@@ -1,89 +1,70 @@
-// scripts/fixtures/026/sav/lecteur-factice.mjs — le lecteur factice du juge sav-qa (fiche 026-244), écrit par Claude Code.
+// scripts/fixtures/026/sav/lecteur-factice.mjs — le lecteur factice du SAV (sav-qa, fiche 026-244), écrit AVANT le module qu'il juge
+// (lib/agents/sav/repondeurClient.ts, fiche 026-245). Même contrat que celui du Standard (026-080) : un `Lecteur` est une fonction
+// `(entree, cfg) => Promise<unknown>` qui enregistre chaque appel (`.appels`) et rend une lecture réglable.
 //
-// Il joue le modèle que le SAV appelle (par deps.appeler). Il ne fait aucun appel réseau, ne lit rien hors de son argument,
-// et se règle par un MODE :
-//   honnete            rend un objet conforme : { classe, certitude, extrait, faq }. Sur un message d'injection il répond
-//                      « autre » : un lecteur honnête reconnaît l'injection et ne classe pas la question qu'elle contient.
-//   obeissant          OBÉIT à chaque injection (même contrat que le lecteur de 026-080) : il rend une classe « faq » avec la
-//                      FAQ la plus ouverte, des clés en trop (decision, envoyer, rembourser, destinataire) et un texte libre
-//                      (texte_reponse) qui promet un prix, un délai et un remboursement. Le juge prouve ensuite que, obéi, il
-//                      ne fait sortir aucun geste hors des trois bornés.
-//   cles_en_trop       honnête, plus des clés que le contrat ne prévoit pas.
-//   classe_inconnue    une classe hors liste.
-//   extrait_hors_texte un extrait qui n'est pas dans le message.
-//   menteur_faq        répond toujours « faq / acces_poste » avec certitude 1, même à un remboursement (le code doit escalader).
-//   non_json           une chaîne qui n'est pas du JSON.
-//   erreur             lève une exception.
+//   creerLecteur(fn)            lecteur générique : `fn(entree, n)` calcule la sortie du nème appel
+//   creerLecteurFixe(valeur)    rend toujours la même valeur (ou lève si `valeur` est une Error)
+//   creerLecteurConforme()      la lecture CORRECTE de chaque message du corpus (champ `lecture`)
+//   creerLecteurObeissant()     OBÉIT à chaque injection du corpus (champ `obei`), jamais l'acteur : ce sont le module et son
+//                               validateur qui doivent tenir. Conforme pour tout message qui n'est pas une injection.
+//   creerLecteurScenario(nom)   la lecture conforme dégradée : cles_en_trop, classe_inconnue, extrait_hors_texte, texte_brut, panne
 //
-// Contrat de l'appel reçu : { agent, moteur, modele, personnelles, consignes, donnees: { message } } ; `message` est le texte
-// du client entre [MESSAGE_CLIENT] et [/MESSAGE_CLIENT].
-export const SENTINELLE_TEXTE = 'SENTINELLE-TEXTE-LIBRE-SAV'
-export const ADRESSE_PIEGE = 'pirate.sav@exemple.invalid'
-export const CLASSES = ['faq', 'modification', 'facture', 'poste', 'remboursement', 'litige', 'hors_sujet', 'autre']
-export const MODES = ['honnete', 'obeissant', 'cles_en_trop', 'classe_inconnue', 'extrait_hors_texte', 'menteur_faq', 'non_json', 'erreur']
+// Le lecteur reconnaît un message par son texte : `entree.texte` exact, sinon les 24 premiers caractères du texte retrouvés dans
+// l'entrée sérialisée (le module peut entourer le texte de balises, mais ne doit pas le transformer : CONTRAT.md).
+import fs from 'node:fs'
 
-const sa = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+const CORPUS = JSON.parse(fs.readFileSync(new URL('./messages/corpus.json', import.meta.url), 'utf8'))
+export const MESSAGES = Object.freeze([...CORPUS.ordinaires, ...CORPUS.injections, ...CORPUS.remboursements, ...CORPUS.hors_sujet, ...CORPUS.sans_identifiant])
+const PREFIXE = 24
 
-export const RE_REMBOURSEMENT = /rembours|plainte|avocat|litige|annul|conteste|dgccrf/
-export const RE_INJECTION = /ignore tes consignes|autre e-?mail|\[\/message_client\]|nouvelle consigne|mot de passe|agent admin|a ma place|virement va sur|\bconsigne\b/
-const RE_HORS_SUJET = /pizza|meteo/
-
-/** Le texte du client, sans le balisage. */
-export function texteClient(message) {
-  return String(message ?? '').replace(/^\s*\[MESSAGE_CLIENT\]/, '').replace(/\[\/MESSAGE_CLIENT\]\s*$/, '').trim()
-}
-export const estInjection = (texte) => RE_INJECTION.test(sa(texte))
-export const estRemboursement = (texte) => RE_REMBOURSEMENT.test(sa(texte))
-
-/** La classe qu'un lecteur honnête donne à un texte. → { classe, faq } */
-export function classerHonnete(texte) {
-  const t = sa(texte)
-  if (RE_INJECTION.test(t) && !RE_REMBOURSEMENT.test(t)) return { classe: 'autre', faq: null }
-  if (RE_REMBOURSEMENT.test(t)) return { classe: /litige|plainte|avocat|conteste|dgccrf|annul/.test(t) ? 'litige' : 'remboursement', faq: null }
-  if (RE_HORS_SUJET.test(t)) return { classe: 'hors_sujet', faq: null }
-  if (/copie (?:de )?(?:la |ma |sa )?facture/.test(t)) return { classe: 'faq', faq: 'copie_facture' }
-  if (/acced/.test(t) && /poste/.test(t)) return { classe: 'faq', faq: 'acces_poste' }
-  if (/facture/.test(t)) return { classe: 'facture', faq: null }
-  if (/modifi|changer|ajouter|remplacer/.test(t)) return { classe: 'modification', faq: null }
-  if (/poste/.test(t)) return { classe: 'poste', faq: null }
-  return { classe: 'autre', faq: null }
+/** Le message du corpus dont `entree` porte le texte, ou null. */
+export function messageDe(entree) {
+  const direct = entree && typeof entree.texte === 'string' ? MESSAGES.find(m => m.texte === entree.texte) : null
+  if (direct) return direct
+  const brut = JSON.stringify(entree ?? null)
+  let trouve = null
+  for (const m of MESSAGES) if (brut.includes(JSON.stringify(m.texte.slice(0, PREFIXE)).slice(1, -1))) trouve = m
+  return trouve
 }
 
-/** La sortie d'un lecteur qui obéit à l'injection du texte. */
-export function sortieObeissante(texte) {
-  return {
-    classe: 'faq',
-    faq: 'acces_poste',
-    certitude: 1,
-    extrait: texte.slice(0, 80),
-    decision: 'automatique_faq',
-    envoyer: true,
-    rembourser: true,
-    destinataire: ADRESSE_PIEGE,
-    texte_reponse: `${SENTINELLE_TEXTE} Remboursement accordé, délai de 48 heures, prix de 90 euros, gratuit à vie.`,
-  }
-}
-
-/** → { appeler(appel), appels } ; `appels` consigne chaque appel reçu (pour les critères D1 du juge). */
-export function creerLecteur(mode = 'honnete') {
-  if (!MODES.includes(mode)) throw new Error(`mode inconnu : ${mode}`)
+export function creerLecteur(reponseFn) {
   const appels = []
-  async function appeler(appel) {
-    appels.push(appel)
-    const texte = texteClient(appel?.donnees?.message)
-    const h = classerHonnete(texte)
-    const honnete = { classe: h.classe, certitude: 0.9, extrait: texte.slice(0, 80), faq: h.faq }
-    switch (mode) {
-      case 'honnete': return honnete
-      case 'obeissant': return estInjection(texte) ? sortieObeissante(texte) : honnete
-      case 'cles_en_trop': return { ...honnete, decision: 'automatique_faq', envoyer: true, note: 'clé hors contrat' }
-      case 'classe_inconnue': return { ...honnete, classe: 'classe_inventee', faq: null }
-      case 'extrait_hors_texte': return { ...honnete, extrait: 'Un texte que le client n\'a jamais écrit.' }
-      case 'menteur_faq': return { classe: 'faq', faq: 'acces_poste', certitude: 1, extrait: texte.slice(0, 80) }
-      case 'non_json': return 'ceci n\'est pas un objet JSON'
-      case 'erreur': throw new Error('lecteur factice en panne')
-      default: return honnete
-    }
+  const lecteur = async (entree, cfg) => {
+    appels.push({ entree: JSON.parse(JSON.stringify(entree ?? null)), cfg: cfg === undefined ? null : JSON.parse(JSON.stringify(cfg)) })
+    return typeof reponseFn === 'function' ? reponseFn(entree, appels.length) : reponseFn
   }
-  return { appeler, appels, mode }
+  lecteur.appels = appels
+  return lecteur
+}
+export function creerLecteurFixe(valeur) {
+  return creerLecteur(() => { if (valeur instanceof Error) throw valeur; return structuredClone(valeur) })
+}
+
+const lectureConforme = m => (m ? structuredClone(m.lecture) : { classe: 'question_autre', type_question: null, certitude: 0.5, extrait: '', demande_sensible: false })
+export function creerLecteurConforme() { return creerLecteur(entree => lectureConforme(messageDe(entree))) }
+
+/**
+ * Le lecteur obéissant : pour toute injection du corpus (corpus.json → `obei`), il fait ce que le texte lui demande — classe
+ * forcée, destinataire ou action en trop, réponse libre, classe inventée, drapeau de sensibilité masqué. Ce que le texte ne
+ * demande pas, il le lit correctement.
+ */
+export function creerLecteurObeissant() {
+  return creerLecteur(entree => {
+    const m = messageDe(entree)
+    return m && m.obei ? structuredClone(m.obei) : lectureConforme(m)
+  })
+}
+
+/** La lecture conforme, dégradée d'une façon précise (ST-4 du Standard, repris) ; `panne` lève. */
+export function creerLecteurScenario(nom) {
+  return creerLecteur(entree => {
+    const m = messageDe(entree)
+    const l = lectureConforme(m)
+    if (nom === 'cles_en_trop') return { ...l, action: 'envoyer', destinataire: 'x@exemple.invalid' }
+    if (nom === 'classe_inconnue') return { ...l, classe: 'urgence_maximale' }
+    if (nom === 'extrait_hors_texte') return { ...l, extrait: 'une phrase qui ne figure pas dans le message' }
+    if (nom === 'texte_brut') return 'question_faq'
+    if (nom === 'panne') throw Error('lecteur indisponible')
+    throw Error(`scénario inconnu : ${nom}`)
+  })
 }

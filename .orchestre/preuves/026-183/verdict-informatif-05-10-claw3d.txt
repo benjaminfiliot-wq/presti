@@ -1,0 +1,64 @@
+· station-claw3d-qa : ce poste (LAPTOP-6KDEHT8P) n'est pas l'usine ; les parties de rendu (CL-5, CL-7, CL-8) sont relancées par scripts/usine.mjs executer
+· usine executer : paquet de 290 fichier(s), 3,9 Mo, sur ddc49bca (HEAD du PC), construit en 5,5 s
+  ne part pas (2792) — le bac n'a PAS la version du PC de ces fichiers (liste entière : .orchestre/travail/usine/executer-claw3d.ne-part-pas.txt) :
+    M  .orchestre/brouillons-ecosysteme/026/026-151.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-228.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-231.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/brouillons-ecosysteme/026/026-248.md  (.orchestre/brouillons-ecosysteme/ ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/couverture.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-001/meta-juge-autotest.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-029/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-037/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-062/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-066/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-069/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-112/contre-verif-28-09.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-126/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-170/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-171/echecs-attendus.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-174/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-176/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-181/bureau.jpg  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-181/telephone.jpg  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/contre-verif-04-10.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-195/verifier.log  (preuves d'autres tâches ; le bac garde la version du commit)
+    M  .orchestre/preuves/026-217/decisions-avant.md  (preuves d'autres tâches ; le bac garde la version du commit)
+    A  .claude/skills/captions-overlay/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/SKILL.md  (.claude/ ; absent du bac)
+    A  .claude/skills/changelog-video/assets/bg-pattern.mp4  (.claude/ ; absent du bac)
+    … et 932 autre(s) non suivi(s), « .claude/ » : absents du bac
+    A  .orchestre/a-decider/026-094.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-097.md  (.orchestre/a-decider/ ; absent du bac)
+    A  .orchestre/a-decider/026-099.md  (.orchestre/a-decider/ ; absent du bac)
+    … et 44 autre(s) non suivi(s), « .orchestre/a-decider/ » : absents du bac
+    A  .orchestre/a-relire/traitees/026-134.md  (.orchestre/a-relire/ ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-bureau-bloc.png  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-bureau-haut.png  (preuves d'autres tâches ; absent du bac)
+    A  .orchestre/preuves/018-01/landing-mobile-bloc.png  (preuves d'autres tâches ; absent du bac)
+    … et 1496 autre(s) non suivi(s), « preuves d'autres tâches » : absents du bac
+    A  promo-src/assets-b64.json  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-brouillon.png  (promo-src/ ; absent du bac)
+    A  promo-src/captures/console-devis-liste.png  (promo-src/ ; absent du bac)
+    … et 263 autre(s) non suivi(s), « promo-src/ » : absents du bac
+    A  public/promo/facebook-couverture-1640x856.png  (public/promo/ ; absent du bac)
+    A  public/promo/facebook-couverture-GUIDE.png  (public/promo/ ; absent du bac)
+    A  public/promo/presti-carre-miniature.jpg  (public/promo/ ; absent du bac)
+    … et 16 autre(s) non suivi(s), « public/promo/ » : absents du bac
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .codex/agents/presti-animateur.toml:14, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : .orchestre/fait/026-148.md:91, motif nom sensible : valeur (JSON, YAML, minuscules)
+  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : scripts/juges-026-acquisition-mutations.mjs:170, motif nom sensible : valeur (JSON, YAML, minuscules)
+  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans 4 fichier(s) binaire(s) lus en entier (11 + 2 motifs)
+· usine executer : bac claw3d sur usine@88.96.53.3, délai 30 min : node scripts/station-claw3d-qa.mjs --partie=verite
+· usine executer : bac claw3d monté en 4865 ms : ddc49bca + paquet, 290 écart(s) ; délai 1800 s
+station-claw3d-qa --partie=verite — racine .
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+❌ CL-5 étape « reprise » : les chemins diffèrent d'une page à l'autre (recenseur : 5 positions et 11 ; « 344,152 348,172 348,188 332,188 316,188 » contre « 344,152 348,172 348,188 332,188 316,188 300,188 284,188 268… »)
+❌ CL-7 étape « reprise » : recenseur marche encore
+❌ CL-8 jeu « vide » : 0 écran(s) [data-ecran], 20 attendu(s) (un par salle non réservée) ; jeu « videAutre » : 0 écran(s) [data-ecran], 20 attendu(s) (un par salle non réservée) ; jeu « chargeA » : 0 écran(s) [data-ecran], 20 attendu(s) (un par salle non réservée) ; jeu « chargeB » : 0 écran(s) [data-ecran], 20 attendu(s) (un par salle non réservée)
+station-claw3d-qa --partie=verite : FAIL — CL-5, CL-7, CL-8
+· usine executer : commande finie en 214 s sur l’usine, code 1 (seule)
+· usine executer : code 1 · paquet 5,5 s · envoi et bac 8,6 s · commande 213,9 s · total 228,0 s
+code 1

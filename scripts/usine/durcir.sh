@@ -74,7 +74,7 @@ else
 fi
 
 printf '%s\n' "$LIGNE_GARDIEN" >"$T/presti-gardien"
-if [ -f "$FG" ] && [ "$($SUDO cat "$FG")" = "$LIGNE_GARDIEN" ]; then
+if $SUDO test -f "$FG" && [ "$($SUDO cat "$FG")" = "$LIGNE_GARDIEN" ]; then
   note "règle presti-gardien déjà en place"
 else
   poser_sudoers "$T/presti-gardien" "$FG"
@@ -94,7 +94,7 @@ if [ -z "$R" ] && [ "$(id -un)" != gardien ]; then
 fi
 
 # ── 3. le retrait des droits de usine ──────────────────────────────────────────────────────────────────────────
-if [ -f "$F90" ] && $SUDO grep -qxF "$LIGNE_USINE" "$F90"; then
+if $SUDO test -f "$F90" && $SUDO grep -qxF "$LIGNE_USINE" "$F90"; then
   $SUDO grep -vxF "$LIGNE_USINE" "$F90" >"$T/90" || true
   poser_sudoers "$T/90" "$F90"
   change "90-cloud-init-users : la ligne « $LIGNE_USINE » retirée (les autres lignes intactes)"

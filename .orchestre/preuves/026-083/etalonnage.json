@@ -1,0 +1,28 @@
+{
+ "version": "3f1b657f168b1203",
+ "mode_lecteur": "facteur",
+ "lecteur": "codex:gpt-6-luna",
+ "lecteurs": {
+  "agents": "codex:gpt-6-luna",
+  "rejuge": "codex:gpt-6-sol"
+ },
+ "sha_corpus": "5f648d988ffef760bc989ade094dacb2864071136ad8863eeaeab48011c26e79",
+ "sha_consignes": "3f1b657f168b12037dddd57c54324b88d2048749a5c4c122df72fdaa29a8f276",
+ "pieges": 24,
+ "conformes": 20,
+ "taux": {
+  "agents": {
+   "pieges_refuses": 1,
+   "conformes_acceptes": 1,
+   "total": 44
+  },
+  "rejuge": {
+   "pieges_refuses": 1,
+   "conformes_acceptes": 1,
+   "total": 44
+  }
+ },
+ "lecteurs_indisponibles": 0,
+ "total": 44,
+ "date": "2026-10-04T10:55:02.990Z"
+}

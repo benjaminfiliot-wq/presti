@@ -59,13 +59,20 @@ export default function InventairePage() {
   const jeton = async () => (await supabase.auth.getSession()).data.session?.access_token
 
   const charger = useCallback(async (recherche = '') => {
-    const t = await jeton()
-    // La liste vient de la route v2 : mêmes articles, avec la fiche complète (photo, prix d'achat, prix vu).
-    const r = await fetch(`/api/inventaire/materiaux${recherche ? `?q=${encodeURIComponent(recherche)}` : ''}`, { headers: { Authorization: `Bearer ${t}` } })
-    const d = await r.json().catch(() => ({}))
-    if (r.status === 403) { setBloque(d.error); return }
-    setBloque(null)
-    setMateriaux(d.materiaux ?? []); setAlertes(d.alertes ?? [])
+    try {
+      const t = await jeton()
+      // La liste vient de la route v2 : mêmes articles, avec la fiche complète (photo, prix d'achat, prix vu).
+      const r = await fetch(`/api/inventaire/materiaux${recherche ? `?q=${encodeURIComponent(recherche)}` : ''}`, { headers: { Authorization: `Bearer ${t}` } })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) {
+        setBloque(d.error || (r.status === 401 ? 'Session expirée, reconnecte-toi.' : 'Lecture de l’inventaire impossible. Réessayez dans un instant.'))
+        return
+      }
+      setBloque(null)
+      setMateriaux(d.materiaux ?? []); setAlertes(d.alertes ?? [])
+    } catch {
+      setBloque('Connexion interrompue. Réessayez dans un instant.')
+    }
   }, [])
 
   const chargerFournisseurs = useCallback(async () => {

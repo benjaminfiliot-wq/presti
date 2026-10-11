@@ -68,7 +68,10 @@ function OnboardingContenu() {
       })
     setLoading(false)
     if (error) {
-      setErr(error.message)
+      // Jamais le message brut de la base devant l'artisan (« duplicate key… ») : on dit quoi faire (audit du 11/10).
+      setErr(error.code === '23505' ? 'Ce profil existe déjà, ou cette adresse de page est prise : modifiez le nom de l’entreprise et réessayez.'
+        : error.code === '23514' ? 'Un champ n’a pas le bon format : vérifiez le nom, le métier et le téléphone.'
+        : 'Enregistrement impossible pour le moment. Réessayez dans un instant.')
       return
     }
     // L'entreprise apprend qu'un artisan vient de s'inscrire (sprint J-1 §15). Sans attendre,
@@ -85,23 +88,23 @@ function OnboardingContenu() {
     <main className="wrap">
       <div className="card">
         <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
-        <h1>Ton profil</h1>
-        <p className="muted">Ça sert à personnaliser tes réponses et à créer ton lien de contact.</p>
+        <h1>Votre profil</h1>
+        <p className="muted">Ça sert à personnaliser vos réponses et à créer votre lien de contact.</p>
         <form onSubmit={handleSubmit}>
-          <label>Ton nom (ou nom de l'entreprise)</label>
+          <label>Votre nom (ou nom de l'entreprise)</label>
           <input value={nom} onChange={(e) => setNom(e.target.value)} required maxLength={120} placeholder="Ex : Dupont Plomberie" />
-          <label>Ton métier</label>
+          <label>Votre métier</label>
           <select value={metier} onChange={(e) => setMetier(e.target.value)}>
             {METIERS.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
           {metier === 'Autre' && (
-            <input value={metierAutre} onChange={(e) => setMetierAutre(e.target.value)} required maxLength={60} placeholder="Précise ton métier (ex : Cordiste, Enduiseur, Cheministe…)" style={{ marginTop: '.5rem' }} />
+            <input value={metierAutre} onChange={(e) => setMetierAutre(e.target.value)} required maxLength={60} placeholder="Précisez votre métier (ex : Cordiste, Enduiseur, Cheministe…)" style={{ marginTop: '.5rem' }} />
           )}
-          <label>Ton téléphone</label>
+          <label>Votre téléphone</label>
           <input value={tel} onChange={(e) => setTel(e.target.value)} type="tel" inputMode="tel" maxLength={30} pattern="[0-9 .+()\-]*" title="Chiffres, espaces, points, tirets, parenthèses et + seulement" placeholder="06 12 34 56 78" />
-          <label htmlFor="origine">Comment as-tu connu Presti ?</label>
+          <label htmlFor="origine">Comment avez-vous connu Presti ?</label>
           <select id="origine" value={origine} onChange={(e) => setOrigine(e.target.value)} required>
-            <option value="" disabled>Choisis une réponse</option>
+            <option value="" disabled>Choisissez une réponse</option>
             <option value="google">Recherche Google</option>
             <option value="reseaux">Réseaux sociaux</option>
             <option value="bouche_a_oreille">Bouche-à-oreille</option>
@@ -110,9 +113,9 @@ function OnboardingContenu() {
           </select>
           {origine === 'presente' && (
             <input value={origineNom} onChange={(e) => setOrigineNom(e.target.value)} required maxLength={120}
-              placeholder="Qui te l’a présenté ? (son nom)" style={{ marginTop: '.5rem' }} />
+              placeholder="Qui vous l’a présenté ? (son nom)" style={{ marginTop: '.5rem' }} />
           )}
-          <label>Le ton de tes réponses (l'IA s'en inspirera)</label>
+          <label>Le ton de vos réponses (l'IA s'en inspirera)</label>
           <textarea value={ton} onChange={(e) => setTon(e.target.value)} rows={3} style={{ width: '100%', padding: '.7rem .8rem', border: '1px solid var(--line)', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
           <button disabled={loading}>{loading ? '…' : 'Enregistrer et continuer'}</button>
         </form>

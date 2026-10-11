@@ -234,7 +234,7 @@ async function enfantDoublures(RAC, partie) {
         const m2 = (b.j?.valeur?.commandement?.valeur?.missions ?? []).find((x) => x.cle === 'contacts_froids')
         if (!/bilan du 02\/11/.test(m2?.libelle ?? '')) e.push(`bilan_le 2026-11-02 : mission « ${m2?.libelle} », « bilan du 02/11 » attendu`)
         const c = await jouer('vue=salle&salle=envois', { surcharges: { rpc: { pilotage_envois_du_jour: [], pilotage_compteurs_du_jour: [{ canal: 'formulaire_site', palier: null, plafond: 0, utilises: 0 }] } } })
-        const phrase = "Aucun envoi à froid : le canal formulaire s'ouvre au plus tôt le 12/10, après la mesure à sec, l'épreuve de bout en bout et l'ouverture par Benj."
+        const phrase = "Aucun envoi à froid : le canal formulaire s'ouvre après la mesure à sec et l'ouverture par Benj (palier P0) ; l'épreuve de bout en bout conditionne la montée de palier."
         if (c.j?.valeur?.vide !== phrase) e.push(`salle=envois sans envoi froid : vide « ${c.j?.valeur?.vide} », la phrase exacte de 026-015 attendue`)
         if (/parBoite|boites_pause/.test(c.t)) e.push('salle=envois porte parBoite ou boites_pause')
         return 'doublures : bilan non daté si la date est nulle, « bilan du 02/11 » sinon ; salle=envois : la phrase vide exacte, ni parBoite ni boites_pause'
@@ -250,7 +250,12 @@ async function enfantDoublures(RAC, partie) {
       })
       await critere('SV-16', async (e) => {
         const a = await jouer('vue=direct', { verdict: VERDICTS.sante_sans_comptabilite })
-        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!(c === 'direct.carte.paliers.commandement' && ch(a.j, c) === null) && !estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
+        // Le palier du Commandement est une valeur brute (pas une enveloppe) : une absence reste une absence (null), mais SEULEMENT
+        // si la même route, sous le verdict fondateur, la rend déjà nulle ; un palier servi au fondateur doit devenir « hors
+        // périmètre » exact sous « santé sans comptabilité » (jamais null, jamais un zéro : 04/10, SV-16 aligné sur `trier`).
+        const brute = await jouer('vue=direct', { verdict: VERDICTS.fondateur })
+        const absenceNative = (c) => c === 'direct.carte.paliers.commandement' && ch(brute.j, c) === null && ch(a.j, c) === null
+        for (const c of [...ARGENT_DIRECT, ...CLIENTS_DIRECT]) if (!absenceNative(c) && !estHors(ch(a.j, c))) e.push(`route, « santé sans comptabilité » : ${c} = ${JSON.stringify(ch(a.j, c))?.slice(0, 50)}, « hors périmètre » attendu`)
         for (const k of ['barre', 'equipage', 'attention', 'commandement', 'tapis', 'carte']) if (estHors(a.j?.valeur?.[k])) e.push(`route, « santé sans comptabilité » : direct.${k} entière refusée`)
         const d = validerVue(a.j, { vue: 'direct', verdict: VERDICTS.sante_sans_comptabilite })
         if (d.length) e.push(`route, « santé sans comptabilité » : hors contrat (${d.slice(0, 2).join(' ; ')})`)
@@ -395,7 +400,20 @@ async function enfantDoublures(RAC, partie) {
       })
       await critere('SL-3', async (e) => {
         const s = ch(direct.j, 'direct.barre.sante')
-        if (!egal(s?.valeur, jeuS('base-essai.json').lectures.santeService)) e.push(`direct.barre.sante = ${JSON.stringify(s)?.slice(0, 80)}, la sortie de santeService() attendue`)
+        // 04/10 : santeService() rend un Sourcee { valeur: { etat: 'ok'|'degrade'|'incident', detail } } (lib/controle/lectures/sante.ts), pas le
+        // verdict de l'écran : la doublure rend maintenant la forme réelle, et la sous-partie porte le vocabulaire de l'écran (en ligne, dégradée,
+        // hors ligne), la raison (le détail, sauf « en ligne ») et les battements de l'agent usine et de a0.
+        const ECRAN = { ok: 'en ligne', degrade: 'dégradée', incident: 'hors ligne' }, AG = jeuS('agents.json').agents
+        const bat = { usine: AG.find((x) => x.nom === 'usine')?.battement_le ?? null, a0: AG.find((x) => x.nom === 'a0')?.battement_le ?? null }
+        const brut = jeuS('base-essai.json').lectures.santeService.valeur
+        if (!egal(s?.valeur, { etat: ECRAN[brut.etat], raison: brut.etat === 'ok' ? null : brut.detail, battements: bat })) e.push(`direct.barre.sante = ${JSON.stringify(s)?.slice(0, 120)}, le verdict de santeService() (${brut.etat}) traduit attendu`)
+        for (const [etat, detail] of [['degrade', 'Resend en retard'], ['incident', 'Stripe injoignable']]) {
+          const d = await jouer('vue=direct', { surcharges: { lectures: { santeService: { valeur: { etat, detail }, source: 'app', a: M_ISO, cache: false } } } })
+          if (!egal(ch(d.j, 'direct.barre.sante')?.valeur, { etat: ECRAN[etat], raison: detail, battements: bat })) e.push(`santeService ${etat} : ${JSON.stringify(ch(d.j, 'direct.barre.sante')?.valeur)?.slice(0, 120)}, « ${ECRAN[etat]} » avec la raison « ${detail} » attendus`)
+        }
+        const inc = await jouer('vue=direct', { surcharges: { lectures: { santeService: { valeur: null, source: 'app', a: M_ISO, cache: false, erreur: 'état 503' } } } })
+        const si = ch(inc.j, 'direct.barre.sante')
+        if (!(si?.valeur === null && si?.erreur) || inc.j?.valeur?.barre?.valeur === null) e.push('santeService rend une erreur (Sourcee sans valeur) : sante doit porter l’erreur, jamais « en ligne » par défaut, et la barre rester servie')
         if (!direct.appels.some((x) => x.f === 'santeService')) e.push('santeService() n’est pas appelée')
         const p = await jouer('vue=direct', { pannes: ['lecture:santeService'] })
         const sp = ch(p.j, 'direct.barre.sante')
@@ -413,7 +431,7 @@ async function enfantDoublures(RAC, partie) {
         return `doublures : ACTIVE AUJ. de chaque salle = pilotage_activite_salles(${MIN_PARIS})`
       })
       await critere('SL-5', async (e) => {
-        const pieges = [...jeuS('departements.json').pieges, ...jeuS('tickets.json').pieges, 'Toitures Témoin', 'Menuiserie Témoin', 'Maçonnerie Témoin', 'Plomberie Témoin', 'abonne.temoin@exemple.invalid', 'Jean Témoin']
+        const pieges = [...jeuS('departements.json').pieges, ...jeuS('tickets.json').pieges, 'Toitures Témoin', 'Menuiserie Témoin', 'Maçonnerie Témoin', 'Plomberie Témoin', 'abonne.temoin@exemple.invalid', 'Jean Témoin', '192.0.2.10', '192.0.2.11', '192.0.2.12']
         for (const [s, r] of Object.entries(vues)) for (const p of pieges) if (r.t.includes(p)) e.push(`salle=${s} porte « ${p} »`)
         for (const p of pieges) if (direct.t.includes(p)) e.push(`direct porte « ${p} »`)
         for (const d of vues.observatoire.j?.valeur?.departements ?? []) { const k = Object.keys(d).sort().join(','); if (k !== 'contactes,departement,oui,trouves') { e.push(`observatoire : colonnes ${k}, agrégées seulement attendues`); break } }
@@ -436,12 +454,20 @@ async function enfantDoublures(RAC, partie) {
         for (const s of CLES_SALLES) { const r = s in vues ? vues[s] : await jouer(`vue=salle&salle=${s}`); if (r.j?.manque === ARRIVE || r.j?.valeur === null) e.push(`salle=${s} rend encore ${r.j?.manque ? `« ${r.j.manque} »` : 'une valeur nulle'}`) }
         for (const c of ['direct.barre.sante', 'direct.carte.egaliseur', 'direct.carte.departements']) if (ch(direct.j, c)?.manque === ARRIVE) e.push(`${c} rend encore « ${ARRIVE} »`)
         if (vues.tresorerie.j?.valeur?.parNature?.manque === ARRIVE) e.push('salle=tresorerie : parNature rend encore « arrive avec sa fiche »')
+        // 04/10 : le contenu de parNature se juge aussi (une table fermée mal remplie ne se verrait pas) : codex et freellmapi sont du texte, fish_audio de la voix.
+        const pn = vues.tresorerie.j?.valeur?.parNature?.valeur
+        if (!(pn && pn.texte === 0 && pn.image === 0 && pn.video === 0 && pn.voix === 1.5)) e.push(`salle=tresorerie : parNature ${JSON.stringify(pn)}, { texte: 0, image: 0, video: 0, voix: 1.5 } attendu (codex et freellmapi : texte, fish_audio : voix)`)
         return 'doublures : plus aucune des 20 salles, ni la santé de la barre, ni l’égaliseur, ni les départements, ni la répartition par nature ne rend « arrive avec sa fiche »'
       })
       await critere('SL-9', async (e) => {
         const B = jeuS('base-essai.json')
         const c = direct.j?.valeur?.carte?.valeur ?? {}
-        if (!egal(c.egaliseur?.valeur, B.rpc.pilotage_radar.egaliseur)) e.push(`carte.egaliseur ${JSON.stringify(c.egaliseur?.valeur)}, les 12 valeurs de pilotage_radar() attendues`)
+        // 04/10 : pilotage_radar() rend { annonceurs_du_jour, requetes_mesurees, requetes_meta_par_heure: [{ heure, requetes }] } (0113), pas une
+        // clé « egaliseur » : la doublure rend la forme réelle ; les 12 valeurs sont les requêtes de chaque heure.
+        if (!egal(c.egaliseur?.valeur, B.rpc.pilotage_radar.requetes_meta_par_heure.map((x) => x.requetes))) e.push(`carte.egaliseur ${JSON.stringify(c.egaliseur?.valeur)}, les 12 requêtes horaires de pilotage_radar() attendues`)
+        const nm = await jouer('vue=direct', { surcharges: { rpc: { pilotage_radar: { ...B.rpc.pilotage_radar, requetes_mesurees: false } } } })
+        const en = nm.j?.valeur?.carte?.valeur?.egaliseur
+        if (!(en?.valeur === null && en?.manque && en.manque !== ARRIVE)) e.push(`vigie sans mesure : carte.egaliseur ${JSON.stringify(en)?.slice(0, 80)}, null avec un manque (pas douze zéros, pas « ${ARRIVE} ») attendu`)
         const dep = jeuS('departements.json').departements.map((d) => ({ departement: d.departement, trouves: d.trouves, contactes: d.contactes, oui: d.oui }))
         if (!egal(c.departements?.valeur, dep)) e.push('carte.departements ≠ les lignes agrégées de pilotage_prospects_departements()')
         const et = (l, k) => (c.lignes?.valeur?.[l]?.valeur?.etapes ?? []).find((x) => x.cle === k)
@@ -995,4 +1021,8 @@ async function vivant() {
   }
 }
 if (VIVANT) await vivant()
-process.exit(S.finir())
+// 04/10 : sous Windows, Node 24 plante (libuv async.c:94, code 3221226505) quand process.exit() tombe pendant qu'un fetch (serveur, comptes
+// d'essai) se referme : le verdict est écrit, puis le code de sortie est celui d'un plantage, et un PASS passe pour un FAIL (systématique sous
+// charge). Le code est posé, le processus s'arrête de lui-même ; le filet ne sert que s'il reste une poignée ouverte. Le verdict est inchangé.
+process.exitCode = S.finir()
+setTimeout(() => process.exit(process.exitCode), 30_000).unref()

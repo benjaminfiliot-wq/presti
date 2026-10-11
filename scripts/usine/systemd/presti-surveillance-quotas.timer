@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti — relevé des quotas d'IA, toutes les 15 minutes (un événement n'est posé que si son texte change)
+
+[Timer]
+OnCalendar=*:07,22,37,52
+Persistent=true
+Unit=presti-surveillance-quotas.service
+
+[Install]
+WantedBy=timers.target

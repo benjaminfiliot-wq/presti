@@ -1,0 +1,2 @@
+# Les dependances apt de Playwright, une commande exacte (25/09/2026). Fixture de 026-194.
+usine ALL=(root) NOPASSWD: /usr/bin/sh -c apt-get update&& apt-get install --no-install-recommends -y libnss3

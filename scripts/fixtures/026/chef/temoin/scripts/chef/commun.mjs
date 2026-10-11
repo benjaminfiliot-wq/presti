@@ -14,6 +14,7 @@ const CLE_RE = /^chef:\d{4}-\d{2}-\d{2}:[a-z0-9-]{3,80}$/
 const CLE_IDEE_RE = /^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$/
 const CLE_OPTION_RE = /^[a-z_]{2,30}$/
 const HEURE = 3_600_000
+export const OBJET_MIN = 20
 
 export class Arret extends Error { constructor(code, message) { super(message); this.code = code } }
 
@@ -60,7 +61,30 @@ export function ecrireJson(f, v) { fs.mkdirSync(path.dirname(f), { recursive: tr
 export const idsDe = (v) => (Array.isArray(v) ? v : Array.isArray(v?.ids) ? v.ids : []).filter((x) => Number.isInteger(x))
 
 // Balises d'un bloc de données : toute ouverture ou fermeture venue des données est neutralisée.
-export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj)/g, '&lt;$1$2')
+export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj|cap_benj)/g, '&lt;$1$2')
+
+// Le cap de Benj (07/10, docs/agents/cap-benj.md) — écriture de référence, indépendante de scripts/chef/commun.mjs. Une tâche se rattache au
+// cap par une ancre forte, ou par « presti » ET un mot du site ; la maintenance interne, un sujet inventé et une vidéo hors TikTok l'en sortent.
+export const ANCRES_CAP = ['ebay', 'annonce', 'tiktok', 'brico travaux', 'bricolage', 'nettoyeur', 'aspirateur', 'fournisseur', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'prospection', 'démarchage', 'refonte', 'vitrine', 'maquette', 'presti']
+const plat = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’‘'`´]/g, ' ')
+const MOTS_FORTS = ['ebay', 'annonce', 'annonces', 'tiktok', 'tik tok', 'brico travaux', 'bricolage', 'nettoyeur', 'nettoyeurs', 'aspirateur', 'aspirateurs', 'fournisseur', 'fournisseurs', 'cj', 'aliexpress', 'dropshipping', 'e-commerce', 'ecommerce', 'refonte', 'vitrine', 'maquette', 'maquettes']
+const contient = (texte, mot) => new RegExp(`\\b${mot.replace(/[-]/g, '\\-')}\\b`).test(texte)
+export function horsCap(t) {
+  if (!t || typeof t !== 'object') return 'hors du cap : tâche illisible'
+  if (typeof t.objet === 'string' && /^bilan:\d{4}-\d{2}-\d{2}$/.test(t.objet.trim())) return null
+  const texte = plat([t.objet, t.charge?.titre].filter((x) => typeof x === 'string').join(' '))
+  if (/\b(preneur|disjonct\w*|orchestre|026-\d{3}|battements?)\b|\btaches? (en file|en attente|echouees?|bloquees?)\b/.test(texte)) return 'hors du cap : maintenance interne'
+  if (/\b(produits?|clients?|marques?|entreprises?|machines?|exemples?)\s+(\w+\s+)?(inventee?s?|fictifs?|fictives?|imaginaires?)\b/.test(texte)) return 'hors du cap : sujet inventé'
+  const rattachee = MOTS_FORTS.some((m) => contient(texte, m)) || /\bprospect|\bdemarch/.test(texte) || (contient(texte, 'presti') && /\b(sites?|landing|pages?|accueil|tarifs?|formulaires?|artisans?|seo)\b/.test(texte))
+  if (!rattachee) return 'hors du cap : ni e-commerce Brico Travaux ni Presti'
+  if (/\b(videos?|clips?)\b/.test(texte) && !/\b(tik ?toks?|brico travaux|bricolage|nettoyeurs?|aspirateurs?|vitrines?|landing|refonte)\b/.test(texte)) return 'hors du cap : vidéo hors de la chaîne TikTok Brico Travaux'
+  return null
+}
+export function validerPertinence(plan) {
+  const taches = Array.isArray(plan?.taches) ? plan.taches : []
+  const motifs = taches.map(horsCap)
+  return taches.length && motifs.every(Boolean) ? ['taches : toutes hors du cap de Benj', ...motifs.map((m, i) => `taches[${i}] : ${m}`)] : []
+}
 
 export function toutesLesChaines(v, out = []) {
   if (typeof v === 'string') out.push(v)
@@ -103,17 +127,20 @@ export function validerPlan(plan, cycle, maintenant = new Date()) {
     if (!chaine(c.pourquoi, 1, 140)) f.push(`consignes_lues[${i}].pourquoi : 1 à 140 signes`)
   })
   const vues = new Set()
+  const objets = new Set()
   if (!Array.isArray(plan.taches)) f.push('taches : liste attendue')
   else {
     if (plan.taches.length > plafond.taches) f.push(`taches : ${plafond.taches} au plus en cycle ${cycle || plan.cycle}`)
     plan.taches.forEach((t, i) => {
       const ou = `taches[${i}]`
-      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'charge', 'sortante'], ou, f)) return
+      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ou, f)) return
       if (!TYPES.includes(t.type)) f.push(`${ou}.type hors de la liste permise`)
       if (!TYPES.includes(t.capacite)) f.push(`${ou}.capacite hors de la liste permise`)
       if (typeof t.cle_idempotence !== 'string' || !CLE_RE.test(t.cle_idempotence)) f.push(`${ou}.cle_idempotence : chef:<date>:<mot-clé>`)
       else if (vues.has(t.cle_idempotence)) f.push(`${ou}.cle_idempotence en double`); else vues.add(t.cle_idempotence)
-      if ('objet' in t && !chaine(t.objet, 1, 200)) f.push(`${ou}.objet : 200 signes au plus`)
+      // L'objet dit CE QUE la tâche doit faire (le preneur n'a que lui et la charge) : vide ou trop court, le plan entier est refusé (05/10 : 20 tâches sans objet).
+      if (!chaine(typeof t.objet === 'string' ? t.objet.trim() : t.objet, OBJET_MIN, 200)) f.push(`${ou}.objet : obligatoire, ${OBJET_MIN} à 200 signes (ce que la tâche doit faire, précisément)`)
+      else if (objets.has(t.objet.trim())) f.push(`${ou}.objet en double (une seule tâche ouverte par objet)`); else objets.add(t.objet.trim())
       if (cles(t.charge, ['titre', 'pourquoi'], ['titre', 'pourquoi'], `${ou}.charge`, f)) {
         if (!chaine(t.charge.titre, 1, 120)) f.push(`${ou}.charge.titre : 120 signes au plus`)
         if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)

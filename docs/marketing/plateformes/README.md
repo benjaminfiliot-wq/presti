@@ -7,7 +7,7 @@ Source, sauf mention contraire : `Ecosysteme-Marketing-Reel-2026-09-25.md`, §4 
 
 ## Ce qui vaut pour tous les réseaux
 
-- Outils gratuits seulement ; aucune publicité payante ; R24 : l'accord de Benj sur chaque publication (média et texte exacts).
+- Outils gratuits seulement ; aucune publicité payante ; chaque publication passe les contrôles automatiques de sa ligne sur son média et son texte exacts (plus d'accord individuel depuis le 30/09, confirmé par Benj le 04/10).
 - **Lien en bio unique** : TikTok et Instagram n'offrent qu'un lien, dans la bio, donc pas de code d'apport par ligne ; une
   vente ne peut pas être rattachée à une ligne avec certitude (voir `../mesure/README.md`). **Liens cliquables** : seulement dans
   les textes où le réseau les rend cliquables (Facebook, LinkedIn : à vérifier réseau par réseau) ; le juge du Crieur n'admet que

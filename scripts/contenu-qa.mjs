@@ -18,9 +18,9 @@
 //   geste        (026-217, GE)  geste d'accord de Benj sur chaque publication — lib/contenu/accord.ts
 //   couts        (026-218, CO)  relevé des jetons par agent et par IA — lib/contenu/couts.ts
 //
-// Les deux invariants transversaux de 026-204 traversent la plupart des parties : (1) aucune publication sans un
-// accord `tranchee`/`accorder` visant EXACTEMENT la cible et la version de texte publiées (une ligne accordée
-// n'autorise jamais une publication seule) ; (2) toute affirmation chiffrée passe par `vraisemblance()` (jev noul,
+// Décision du 30/09 : LN/MP/GE vérifient l'automatisme sans accord individuel,
+// sous pause fail-closed, opposition et coût explicitement nul. Les clauses des autres
+// parties hors de ce lot doivent être alignées séparément. Toute affirmation chiffrée passe par `vraisemblance()` (jev noul,
 // lib/agents/llm.ts, déjà PASS) — score < 0,5, source absente ou Laya indisponible bloquent, ne serait-ce qu'une
 // fois, jamais un passage automatique. Le code jugé n'est JAMAIS réimplémenté ici : chaque critère de code appelle,
 // dans un enfant Node isolé (scripts/fixtures/contenu/lib/{executer,executer-meta,executer-exports}.mjs, via
@@ -53,6 +53,45 @@ import {
 } from './fixtures/contenu/lib/commun.mjs'
 
 const JUGE = 'contenu-qa'
+
+// Les scénarios positifs gardent la vraie porte de sortie : seule la lecture
+// d'interrupteur est inactive dans les enfants. Une pause coupe le vrai faux-jev.
+async function pauseContenu(ctx, partie) {
+  const post={id:'pause-post',ligne:'L1',canal:'instagram',texte:'10 clients',legende:'20 devis',source:'preuve-essai'}
+  const cas={
+    lignes:[['lib/contenu/lignes','verdictPublication',[post,{id:'L1',canaux:['instagram']}],true]],
+    geste:[['lib/contenu/accord','controlerPublicationAutomatique',[post,{id:'L1',canaux:['instagram']}],true]],
+    mesure:[['lib/contenu/mesure','verdictFormulePublique',['10 clients','preuve-essai',false],false]],
+    boucle:[['lib/contenu/boucle','recommander',[{id:'pause-post',texte:'contenu public',provenance:'preuve',mesures:[{fenetre:'J+7',disponible:true,valeur:1200}]}],false]],
+    veille:[['lib/contenu/accroches','classerAccroche',['Accroche ambiguë'],false],['lib/contenu/accroches','scoreIdee',['idée','source','jour'],false]],
+    meta:[['lib/contenu/metaPublier','controlerAvantPublication',[{...post,bucket:'prive-026',cle:'v.mp4'},{bucketAttendu:'prive-026',decision:null,ligneAccordee:true}],true]],
+  }[partie]
+  const echecs=[]
+  for(const [moduleRel,fonction,args,boucle] of cas){
+    const jouer=pauseScenario=>appelerFonction({racineEff:ctx.racineEff,moduleRel,fonction,args,env:envJev({reponse:{p:0.9,niveau:4,distribution:{},choix:'question'}}),extra:{pauseScenario}})
+    const positif=await jouer('inactive')
+    if(!positif.ok||positif.erreurImport||positif.exception||!positif.appelsCout?.length)echecs.push(`${fonction} : voie active non démontrée`)
+    for(const scenario of ['active','doute','throw']){
+      const r=await jouer(scenario)
+      if(!r.ok||r.erreurImport||r.exception||r.appelsCout?.length!==0||!(r.pausesLues>0))echecs.push(`${fonction} : ${scenario} ne coupe pas le modèle`)
+    }
+    if(boucle){const r=await jouer('apres-premier-modele');if(!r.ok||r.exception||r.appelsCout?.length!==1||r.pausesLues<2)echecs.push(`${fonction} : pause entre textes ne coupe pas le deuxième appel`)}
+  }
+  if(partie==='meta'){
+    for(const extra of [{coutEuros:null},{coutEuros:'0'},{coutEuros:1},{opposition:true}]){
+      const r=await appelerMeta({racineEff:ctx.racineEff,variante:VARIANTE_OK,ctx:{bucketAttendu:'prive-026'},extra})
+      if(!r.ok||r.exception||r.valeur?.ok!==false||r.appelsReseau?.creerConteneur!==0||r.appelsReseau?.publier!==0)echecs.push('coût inconnu/non nul ou opposition : Graph appelé')
+    }
+    for(const [pauseScenario,reseauScenario,creer] of [['active','ok',0],['inactive','pause-apres-conteneur',1]]){
+      const r=await appelerMeta({racineEff:ctx.racineEff,variante:VARIANTE_OK,ctx:{bucketAttendu:'prive-026',decision:DECISION_OK,ligneAccordee:true},pauseScenario,reseauScenario})
+      if(!r.ok||r.exception||r.valeur?.ok!==false||r.appelsReseau?.creerConteneur!==creer||r.appelsReseau?.publier!==0)echecs.push('Graph : pause avant/après conteneur laisse publier')
+    }
+  }
+  return echecs.length?fail(echecs,'pause contenu'):ok('pause active/doute/panne : zéro modèle ; voies positives actives ; relecture entre étapes')
+}
+
+// Les appels enfants se jouent UN À LA FOIS (PC de 8 Go saturé, usine à 2 cœurs) : chaque critère est une liste de fonctions, jamais de promesses déjà lancées.
+async function serie(...fonctions) { const sorties = []; for (const f of fonctions) sorties.push(await f()); return sorties }
 
 // ── options ──────────────────────────────────────────────────────────────────────────────────────────────────────
 function lireOptions(argv, { connues }) {
@@ -148,33 +187,41 @@ function sq4(ctx) {
 
 // ── geste (026-217, GE) — lib/contenu/accord.ts ─────────────────────────────────────────────────────────────────
 async function ge1(ctx) {
-  const r = await appelerExports({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/accord', noms: ['OPTIONS_DECISION', 'DEFAUT', 'PORTEE'] })
-  return depuisAppel(r, 'lib/contenu/accord', (v) => {
-    const echecs = []
-    const cles = (v?.OPTIONS_DECISION || []).map((o) => o.cle)
-    if (!cles.includes('accorder')) echecs.push('option « accorder » absente')
-    if (!cles.includes('refuser')) echecs.push('option « refuser » absente')
-    if (v?.DEFAUT !== 'refuser') echecs.push(`défaut « ${v?.DEFAUT} » (attendu refuser)`)
-    if (v?.PORTEE !== 'securite') echecs.push(`portée « ${v?.PORTEE} » (attendu securite)`)
-    return echecs.length ? fail(echecs, 'geste d’accord mal cadré') : ok('accorder/refuser, défaut refuser, portée sécurité')
-  })
+  const r=await appelerFonction({racineEff:ctx.racineEff,moduleRel:'lib/contenu/accord',fonction:'controlerPublicationAutomatique',args:[{id:'p1',ligne:'L1',canal:'instagram',texte:'Voir la démo'},{id:'L1',canaux:['instagram']} ]})
+  return depuisAppel(r,'lib/contenu/accord',v=>v?.ok===true?ok('sans décision individuelle, contrôles automatiques validés'):fail(['publication conforme bloquée par un accord individuel'],'GE-1'))
 }
 async function ge2(ctx) {
-  const r1 = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/accord', fonction: 'verdictAccord', args: [{ statut: 'ouverte', cible: 'p1' }, 'p1', 'texte'] })
-  const r2 = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/accord', fonction: 'verdictAccord', args: [{ statut: 'tranchee', choix: 'accorder', cible: 'AUTRE', texte_version: 'texte' }, 'p1', 'texte'] })
-  return fusionEtats(
-    depuisAppel(r1, 'lib/contenu/accord', (v) => (v?.ok === false ? ok('décision ouverte refusée') : fail(['décision ouverte acceptée'], 'GE-2'))),
-    depuisAppel(r2, 'lib/contenu/accord', (v) => (v?.ok === false ? ok('cible différente refusée') : fail(['un accord pour une autre cible a été accepté'], 'GE-2'))),
-  )
+  // 05/10/2026 (D-0510-A1) : le refus doit venir de la BONNE garde. Un refus quelconque (ligne, canal, chiffre) masquerait une garde
+  // sabotée ; on exige donc le motif (STOP/opposition ou coût) ET on interroge deux fois : par accord.ts et directement par lignes.ts
+  // (le seul module qui porte les gardes — accord.ts l'importe avec l'alias `@/`, que la racine jugée doit résoudre chez elle).
+  const echecs=[]
+  const post={id:'p1',ligne:'L1',canal:'instagram',texte:'Voir la démo'}, ligne={id:'L1',canaux:['instagram']}
+  const cas=[
+    ['coût inconnu',{coutEuros:null},/co[uû]t/i],
+    ['coût positif',{coutEuros:1},/co[uû]t/i],
+    ['coût donné en texte',{coutEuros:'0'},/co[uû]t/i],
+    ['opposition connue',{opposition:true},/STOP|opposition/i],
+  ]
+  const voies=[
+    ['accord',{moduleRel:'lib/contenu/accord',fonction:'controlerPublicationAutomatique'},(v)=>v?.ok===false?{refuse:true,motif:v.motif}:{refuse:false}],
+    ['lignes',{moduleRel:'lib/contenu/lignes',fonction:'verdictPublication'},(v)=>v?.decision==='refuser'?{refuse:true,motif:v.motif}:{refuse:false}],
+  ]
+  for(const [nomVoie,cible,lireVerdict] of voies){
+    for(const [nom,extra,motif] of cas){
+      const r=await appelerFonction({racineEff:ctx.racineEff,...cible,args:[post,ligne],extra})
+      if(!r.ok||r.exception||r.erreurImport){echecs.push(`${nomVoie} : ${nom} : appel en échec (${String(r.erreur||r.erreurImport||r.exception).slice(0,120)})`);continue}
+      const v=lireVerdict(r.valeur)
+      if(!v.refuse)echecs.push(`${nomVoie} : ${nom} accepté (la publication part)`)
+      else if(!motif.test(String(v.motif||'')))echecs.push(`${nomVoie} : ${nom} refusé pour une autre raison que la garde visée (« ${String(v.motif||'').slice(0,80)} »)`)
+    }
+  }
+  return echecs.length?fail(echecs,'GE-2'):ok('coût inconnu/positif/en texte et opposition refusés automatiquement, pour le bon motif, par accord.ts et par lignes.ts')
 }
 async function ge3(ctx) {
-  const decision = { statut: 'tranchee', choix: 'accorder', cible: 'p1', texte_version: 'Version A' }
-  const rMeme = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/accord', fonction: 'accordEncoreValable', args: [decision, 'Version A'] })
-  const rRetouche = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/accord', fonction: 'accordEncoreValable', args: [decision, 'Version B (retouchée)'] })
-  return fusionEtats(
-    depuisAppel(rMeme, 'lib/contenu/accord', (v) => (v === true ? ok('texte inchangé : accord toujours valable') : fail([`accord invalidé à tort (${JSON.stringify(v)})`], 'GE-3'))),
-    depuisAppel(rRetouche, 'lib/contenu/accord', (v) => (v === false ? ok('texte retouché : accord caduc') : fail([`accord encore valable après retouche (${JSON.stringify(v)})`], 'GE-3'))),
-  )
+  const args=[{id:'p1',ligne:'L1',canal:'instagram',texte:'10 clients',source:'preuve'}, {id:'L1',canaux:['instagram']}]
+  const bon=await appelerFonction({racineEff:ctx.racineEff,moduleRel:'lib/contenu/accord',fonction:'controlerPublicationAutomatique',args,env:envJev({reponse:{p:0.9}})})
+  const mauvais=await appelerFonction({racineEff:ctx.racineEff,moduleRel:'lib/contenu/accord',fonction:'controlerPublicationAutomatique',args,env:envJev({reponse:{p:0.1}})})
+  return fusionEtats(depuisAppel(bon,'lib/contenu/accord',v=>v?.ok===true?ok('texte exact contrôlé automatiquement'):fail(['score bon refusé'],'GE-3')),depuisAppel(mauvais,'lib/contenu/accord',v=>v?.ok===false?ok('texte retouché rechiffre contrôlé et refusé'):fail(['score faible accepté'],'GE-3')))
 }
 
 // ── lignes (026-207, LN) — lib/contenu/lignes.ts ────────────────────────────────────────────────────────────────
@@ -199,8 +246,22 @@ async function ln3(ctx) {
   return depuisAppel(r, 'lib/contenu/lignes', (v) => (v?.decision === 'refuser' ? ok('plafond du jour refusé') : fail(['plafond du jour dépassé accepté'], 'LN-3')))
 }
 async function ln4(ctx) {
-  const r = await appelLignes(ctx, { id: 'p1', ligne: 'L1', canal: 'tiktok', texte: 'Devis en 24h', source: 'mesure.md', decision: ACCORD_P1('Devis en 24h') }, { id: 'L1', suspendue: false, canaux: ['tiktok'] }, envJev({ reponse: { p: 0.1 } }))
-  return depuisAppel(r, 'lib/contenu/lignes', (v) => (v?.decision === 'refuser' ? ok('affirmation chiffrée sous le seuil refusée') : fail(['affirmation chiffrée sous le seuil acceptée'], 'LN-4')))
+  const post = { id: 'p1', ligne: 'L1', canal: 'tiktok', texte: 'Devis en 24h', source: 'mesure.md', decision: ACCORD_P1('Devis en 24h') }
+  const ligne = { id: 'L1', suspendue: false, canaux: ['tiktok'] }
+  const [bas, presque, pile, seuil] = await serie(
+    () => appelLignes(ctx, post, ligne, envJev({ reponse: { p: 0.1 } })),
+    () => appelLignes(ctx, post, ligne, envJev({ reponse: { p: 0.495 } })),
+    () => appelLignes(ctx, post, ligne, envJev({ reponse: { p: 0.5 } })),
+    () => appelerExports({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/lignes', noms: ['SEUIL_LAYA'] }),
+  )
+  // 05/10/2026 (D-0510-A1) : `vraisemblance()` (llm.ts) bloque déjà sous 0,5 : un seuil de lignes.ts abaissé à 0,49 ne change donc aucun
+  // verdict et seule la CONSTANTE le trahit. On juge les deux : le comportement aux bords (0,495 refusé, 0,5 accepté) et la valeur du seuil.
+  return fusionEtats(
+    depuisAppel(bas, 'lib/contenu/lignes', (v) => (v?.decision === 'refuser' ? ok('affirmation chiffrée sous le seuil refusée') : fail(['affirmation chiffrée sous le seuil acceptée'], 'LN-4'))),
+    depuisAppel(presque, 'lib/contenu/lignes', (v) => (v?.decision === 'refuser' ? ok('p=0,495 refusé') : fail(['p=0,495 (juste sous 0,5) accepté'], 'LN-4'))),
+    depuisAppel(pile, 'lib/contenu/lignes', (v) => (v?.decision === 'publier' ? ok('p=0,5 accepté (le seuil est inclus)') : fail([`p=0,5 refusé à tort (${v?.motif ?? v?.decision})`], 'LN-4'))),
+    depuisAppel(seuil, 'lib/contenu/lignes', (v) => (v?.SEUIL_LAYA === 0.5 ? ok('seuil de Laya exporté à 0,5') : fail([`SEUIL_LAYA vaut ${JSON.stringify(v?.SEUIL_LAYA)} (attendu 0,5 : le contrat de la série)`], 'LN-4'))),
+  )
 }
 async function ln5(ctx) {
   const post = { id: 'p1', ligne: 'L1', canal: 'tiktok', texte: 'Voir la démo', origine: 'crieur_posts', crieurStatut: 'brouillon_publora', decision: { statut: 'tranchee', choix: 'accorder', cible: 'p1', texte_version: 'Voir la démo' } }
@@ -212,7 +273,7 @@ async function ln6(ctx) {
   const sansAccord = await appelLignes(ctx, { id: 'p1', ligne: 'L1', canal: 'tiktok', texte: 'Voir la démo' }, ligne)
   const avecAccord = await appelLignes(ctx, { id: 'p1', ligne: 'L1', canal: 'tiktok', texte: 'Voir la démo', decision: { statut: 'tranchee', choix: 'accorder', cible: 'p1', texte_version: 'Voir la démo' } }, ligne)
   return fusionEtats(
-    depuisAppel(sansAccord, 'lib/contenu/lignes', (v) => (v?.decision === 'refuser' ? ok('accord manquant refusé') : fail(['post publié sans accord'], 'LN-6'))),
+    depuisAppel(sansAccord, 'lib/contenu/lignes', (v) => (v?.decision === 'publier' ? ok('publication conforme sans accord individuel') : fail(['accord individuel encore exigé'], 'LN-6'))),
     depuisAppel(avecAccord, 'lib/contenu/lignes', (v) => (v?.decision === 'publier' ? ok('accord valide accepté') : fail([`décision « ${v?.decision} » malgré un accord valide`], 'LN-6'))),
   )
 }
@@ -306,8 +367,24 @@ async function tt1(ctx) {
 }
 async function tt2(ctx) {
   const video = { id: 'v1', legende: 'Voir la démo', texteIncruste: '', tailleMo: 3 }
-  const r = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: M_TT, fonction: 'verdictPublicationTikTok', args: [video, { decision: null }] })
-  return depuisAppel(r, M_TT, (v) => (v?.ok === false ? ok('accord individuel manquant refusé') : fail(['publication sans accord acceptée'], 'TT-2')))
+  const accord = (extra = {}) => ({ statut: 'tranchee', choix: 'accorder', cible: 'v1', texte_version: 'Voir la démo', ...extra })
+  const jour = 24 * 3600 * 1000
+  const iso = (ms) => new Date(Date.now() + ms).toISOString()
+  const verdict = (decision) => () => appelerFonction({ racineEff: ctx.racineEff, moduleRel: M_TT, fonction: 'verdictPublicationTikTok', args: [video, { decision }] })
+  const [sans, valable, passee, illisible, ancienne] = await serie(
+    verdict(null), verdict(accord({ echeance: iso(30 * jour) })), verdict(accord({ echeance: '2020-01-01T00:00:00.000Z' })),
+    verdict(accord({ echeance: 'pas-une-date' })), verdict(accord({ le: iso(-30 * jour) })),
+  )
+  // 05/10/2026 (D-0510-A1) : une décision ÉCHUE, illisible ou vieille de plus de 7 jours n'autorise rien. Le cas « valable » (même décision,
+  // échéance future) prouve que ces refus viennent bien de la date et non d'un autre défaut de la vidéo ; le motif nomme la date.
+  const refuse = (r, motif, nom) => depuisAppel(r, M_TT, (v) => (v?.ok === false && (!motif || motif.test(String(v.motif || ''))) ? ok(nom) : fail([`${nom} : ${v?.ok === true ? 'publication permise' : `refus pour une autre raison (« ${String(v?.motif || '').slice(0, 80)} »)`}`], 'TT-2')))
+  return fusionEtats(
+    refuse(sans, null, 'accord individuel manquant refusé'),
+    depuisAppel(valable, M_TT, (v) => (v?.ok === true ? ok('accord à échéance future accepté') : fail([`accord valable refusé à tort (${String(v?.motif || '').slice(0, 80)})`], 'TT-2'))),
+    refuse(passee, /[ée]ch[ée]ance/i, 'décision à échéance passée refusée'),
+    refuse(illisible, /[ée]ch[ée]ance/i, 'échéance illisible refusée'),
+    refuse(ancienne, /7 jours|caduc/i, 'accord vieux de plus de 7 jours refusé'),
+  )
 }
 function tt3(ctx) {
   const p = path.join(ctx.racineEff, 'scripts/contenu/publier-tiktok.mjs')
@@ -359,9 +436,9 @@ async function mp2(ctx) {
 async function mp3(ctx) {
   const r = await appelerMeta({ racineEff: ctx.racineEff, variante: VARIANTE_OK, ctx: { bucketAttendu: 'prive-026', decision: null, ligneAccordee: true } })
   return depuisAppel(r, 'lib/contenu/metaPublier', (v, raw) => {
-    if (v?.ok !== false) return fail(['un accord de ligne seul a suffi à publier'], 'MP-3')
-    if ((raw.appelsReseau?.creerConteneur || 0) > 0) return fail(['un appel Graph a eu lieu malgré le refus'], 'MP-3')
-    return ok('accord de ligne seul insuffisant, aucun appel Graph')
+    if (v?.ok !== true) return fail(['publication conforme encore bloquée par accord individuel'], 'MP-3')
+    if (raw.appelsReseau?.creerConteneur!==1 || raw.appelsReseau?.publier!==1) return fail(['publication automatique simulée non démontrée'], 'MP-3')
+    return ok('publication conforme automatique sans décision individuelle, Graph simulé')
   })
 }
 async function mp4(ctx) {
@@ -382,17 +459,34 @@ async function me1(ctx) {
   const r = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/mesure', fonction: 'normaliserMesure', args: [{ erreur: true, source: 'ga4', le: '2026-09-20' }] })
   return depuisAppel(r, 'lib/contenu/mesure', (v) => ((v && v.disponible === false && v.valeur === null) ? ok('donnée en erreur reste non_mesure') : fail([`valeur inventée (${JSON.stringify(v)})`], 'ME-1')))
 }
+// 05/10/2026 (D-0510-A1) : jev répond p=0,9 dans ces deux critères. Sans réponse, `vraisemblance()` rend « Laya indisponible » et le libellé
+// est refusé de toute façon : une garde sabotée (mention « estimation », source obligatoire) restait invisible, masquée par ce refus.
+// Avec un modèle favorable, le SEUL motif de refus possible est la garde visée, et on exige son motif.
+const verdictMesure = (ctx, libelle, source, vente) => () => appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/mesure', fonction: 'verdictFormulePublique', args: [libelle, source, vente], env: envJev({ reponse: { p: 0.9 } }) })
 async function me2(ctx) {
-  const r1 = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/mesure', fonction: 'verdictFormulePublique', args: ['3 ventes attribuées à L1 cette semaine', 'mesure.md', true] })
-  const r2 = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/mesure', fonction: 'verdictFormulePublique', args: ['3 ventes (estimation) attribuées à L1 cette semaine', 'mesure.md', true], env: envJev({ reponse: { p: 0.9 } }) })
+  const [sans, avec, sansVente] = await serie(
+    verdictMesure(ctx, '3 ventes attribuées à L1 cette semaine', 'mesure.md', true),
+    verdictMesure(ctx, '3 ventes (estimation) attribuées à L1 cette semaine', 'mesure.md', true),
+    verdictMesure(ctx, 'Délai moyen 24h', 'mesure.md', false),
+  )
   return fusionEtats(
-    depuisAppel(r1, 'lib/contenu/mesure', (v) => (v?.ok === false ? ok('attribution sans « estimation » refusée') : fail(['attribution sans « estimation » acceptée'], 'ME-2'))),
-    depuisAppel(r2, 'lib/contenu/mesure', (v) => (v?.ok === true ? ok('attribution avec « estimation » acceptée') : fail(['attribution avec « estimation » refusée à tort'], 'ME-2'))),
+    depuisAppel(sans, 'lib/contenu/mesure', (v) => (v?.ok === false && /estimation/i.test(String(v.motif || '')) ? ok('attribution sans « estimation » refusée') : fail([v?.ok === true ? 'attribution sans « estimation » acceptée' : `attribution sans « estimation » refusée pour une autre raison (« ${String(v?.motif || '').slice(0, 80)} »)`], 'ME-2'))),
+    depuisAppel(avec, 'lib/contenu/mesure', (v) => (v?.ok === true ? ok('attribution avec « estimation » acceptée') : fail(['attribution avec « estimation » refusée à tort'], 'ME-2'))),
+    depuisAppel(sansVente, 'lib/contenu/mesure', (v) => (v?.ok === true ? ok('libellé sans attribution de vente : mention non exigée') : fail(['libellé sans attribution de vente refusé à tort'], 'ME-2'))),
   )
 }
 async function me3(ctx) {
-  const r = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/mesure', fonction: 'verdictFormulePublique', args: ['Délai moyen 24h', null, false] })
-  return depuisAppel(r, 'lib/contenu/mesure', (v) => (v?.ok === false ? ok('chiffre sans source refusé') : fail(['chiffre sans source accepté'], 'ME-3')))
+  const [sans, blanche, avec] = await serie(
+    verdictMesure(ctx, 'Délai moyen 24h', null, false),
+    verdictMesure(ctx, 'Délai moyen 24h', '   ', false),
+    verdictMesure(ctx, 'Délai moyen 24h', 'mesure.md', false),
+  )
+  const refus = (r, nom) => depuisAppel(r, 'lib/contenu/mesure', (v) => (v?.ok === false && /source/i.test(String(v.motif || '')) ? ok(nom) : fail([v?.ok === true ? `${nom} : accepté` : `${nom} : refusé pour une autre raison (« ${String(v?.motif || '').slice(0, 80)} »)`], 'ME-3')))
+  return fusionEtats(
+    refus(sans, 'chiffre sans source refusé'),
+    refus(blanche, 'source blanche refusée'),
+    depuisAppel(avec, 'lib/contenu/mesure', (v) => (v?.ok === true ? ok('chiffre avec source accepté') : fail(['chiffre avec source refusé à tort'], 'ME-3'))),
+  )
 }
 
 // ── boucle (026-214, BO) — lib/contenu/boucle.ts et brief.ts ────────────────────────────────────────────────────
@@ -402,12 +496,25 @@ async function bo1(ctx) {
 }
 async function bo2(ctx) {
   const candidat = { id: 'c1', texte: 'Test A', mesures: [{ fenetre: 'H+24', disponible: true }], provenance: 'campagne' }
-  const r = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/boucle', fonction: 'recommander', args: [candidat], env: envJev({ reponse: { niveau: 5, distribution: {} } }) })
-  return depuisAppel(r, 'lib/contenu/boucle', (v) => {
-    if (!v || !['refaire', 'suspendre', 'tendance', 'insuffisant'].includes(v.statut)) return fail([`statut hors liste fermée (${JSON.stringify(v)})`], 'BO-2')
-    if ('url' in v || 'publie' in v) return fail(['recommander a rendu un objet de publication'], 'BO-2')
-    return ok(`statut « ${v.statut} » — classement seul`)
+  const recommander = (cand, niveau) => () => appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/boucle', fonction: 'recommander', args: [cand], env: envJev({ reponse: { niveau, distribution: {} } }) })
+  const [haut, bas, fort] = await serie(
+    recommander(candidat, 5), recommander(candidat, 1),
+    recommander({ ...candidat, mesures: [{ fenetre: 'J+7', disponible: true, valeur: 1200 }] }, 5),
+  )
+  // 05/10/2026 (D-0510-A1) : ce candidat n'a AUCUNE vue (signal « inconnu ») ; le score de Laya seul, même à 5/5 ou à 1/5, ne fait ni
+  // « refaire » ni « suspendre » : au mieux « tendance ». Avant, tout statut de la liste fermée passait, y compris « refaire » : le score
+  // devenait une permission de republier à lui seul sans que le juge le voie. Le cas « vues fortes + score haut » garde « refaire » atteignable.
+  const sans = (r, nom) => depuisAppel(r, 'lib/contenu/boucle', (v) => {
+    if (!v || !['refaire', 'suspendre', 'tendance', 'insuffisant'].includes(v.statut)) return fail([`${nom} : statut hors liste fermée (${JSON.stringify(v)})`], 'BO-2')
+    if ('url' in v || 'publie' in v) return fail([`${nom} : recommander a rendu un objet de publication`], 'BO-2')
+    if (v.statut !== 'tendance') return fail([`${nom} : statut « ${v.statut} » sans aucune vue (attendu tendance : le score seul ne tranche jamais)`], 'BO-2')
+    return ok(`${nom} : « tendance », classement seul`)
   })
+  return fusionEtats(
+    sans(haut, 'score 5/5 sans vue'),
+    sans(bas, 'score 1/5 sans vue'),
+    depuisAppel(fort, 'lib/contenu/boucle', (v) => (v?.statut === 'refaire' ? ok('vues fortes + score haut : refaire reste atteignable') : fail([`vues fortes + score haut : statut « ${v?.statut} » (attendu refaire)`], 'BO-2'))),
+  )
 }
 async function bo3(ctx) {
   const r = await appelerFonction({ racineEff: ctx.racineEff, moduleRel: 'lib/contenu/brief', fonction: 'nouveauBrief', args: ['b1', 'L1', 'motif', 'c1'] })
@@ -457,17 +564,20 @@ async function co2(ctx) {
 const PARTIES = {
   connaissance: { fiche: '026-205', criteres: [['CN-1', 'mémoire marketing présente', cn1], ['CN-2', 'L1..L5 complètes', cn2], ['CN-3', 'références « fait: » vérifiées', cn3], ['CN-4', 'règles plateformes (CC BY-SA, mention IA)', cn4]] },
   sql: { fiche: '026-206', criteres: [['SQ-1', 'migration *_contenu.sql présente', sq1], ['SQ-2', '4 tables créées', sq2], ['SQ-3', 'statut fermé + accord exigé', sq3], ['SQ-4', 'RLS + lecture seule publique', sq4]] },
-  lignes: { fiche: '026-207', criteres: [['LN-1', 'ligne suspendue refusée', ln1], ['LN-2', 'canal non permis refusé', ln2], ['LN-3', 'plafond du jour refusé', ln3], ['LN-4', 'affirmation chiffrée contrôlée', ln4], ['LN-5', 'brouillon Publora du Crieur refusé ici', ln5], ['LN-6', 'accord individuel exigé pour publier', ln6]] },
+  lignes: { fiche: '026-207', criteres: [['LN-1', 'ligne suspendue refusée', ln1], ['LN-2', 'canal non permis refusé', ln2], ['LN-3', 'plafond du jour refusé', ln3], ['LN-4', 'affirmation chiffrée contrôlée', ln4], ['LN-5', 'brouillon Publora du Crieur refusé ici', ln5], ['LN-6', 'validation automatique sans accord individuel', ln6]] },
   gabarits: { fiche: '026-208', criteres: [['GA-1', 'gabarits bien formés, format vertical', ga1], ['GA-2', 'licence commerciale et crédit', ga2], ['GA-3', 'type hyperframes cohérent', ga3]] },
   fabrication: { fiche: '026-209', criteres: [['FA-1', 'ligne suspendue / texte libre non approuvé refusés', fa1], ['FA-2', 'idée dupliquée refusée', fa2], ['FA-3', 'phrase chiffrée contrôlée', fa3], ['FA-4', 'dépôt refusé (licence, audio, taille)', fa4]] },
   tiktok: { fiche: '026-210', criteres: [['TT-1', 'chiffres de la légende contrôlés', tt1], ['TT-2', 'accord individuel exact requis', tt2], ['TT-3', 'jamais TikTok Studio ni Creative Center', tt3], ['TT-4', 'taille et publication conforme', tt4]] },
   'profil-tiktok': { fiche: '026-211', criteres: [['PT-1', 'dossier de conversion complet', pt1], ['PT-2', 'geste de Benj rappelé', pt2]] },
-  meta: { fiche: '026-212', criteres: [['MP-1', 'bucket privé attendu', mp1], ['MP-2', 'chiffres contrôlés', mp2], ['MP-3', 'accord de ligne seul insuffisant', mp3], ['MP-4', 'idempotence par ID', mp4], ['MP-5', 'échec Graph remonté', mp5]] },
+  meta: { fiche: '026-212', criteres: [['MP-1', 'bucket privé attendu', mp1], ['MP-2', 'chiffres contrôlés', mp2], ['MP-3', 'publication automatique sous garde-fous', mp3], ['MP-4', 'idempotence par ID', mp4], ['MP-5', 'échec Graph remonté', mp5]] },
   mesure: { fiche: '026-213', criteres: [['ME-1', 'donnée indisponible jamais un zéro', me1], ['ME-2', 'attribution de vente = estimation', me2], ['ME-3', 'libellé chiffré sans source refusé', me3]] },
   boucle: { fiche: '026-214', criteres: [['BO-1', 'H+1 seul insuffisant', bo1], ['BO-2', 'jev score classe, ne publie jamais', bo2], ['BO-3', 'republier exige un nouveau brief', bo3]] },
   veille: { fiche: '026-215', criteres: [['VE-1', 'Firecrawl en lecture seule', ve1], ['VE-2', 'URL nominative refusée', ve2], ['VE-3', 'prospect jamais vers une IA gratuite ou :cloud', ve3], ['VE-4', 'jev decide/score ne rédigent ni ne publient', ve4]] },
-  geste: { fiche: '026-217', criteres: [['GE-1', 'accorder/refuser, défaut refuser, portée sécurité', ge1], ['GE-2', 'décision ouverte ou cible différente refusée', ge2], ['GE-3', 'retouche du texte invalide l’accord', ge3]] },
+  geste: { fiche: '026-217', criteres: [['GE-1', 'validation automatique sans accord individuel', ge1], ['GE-2', 'budget et opposition bloquent automatiquement', ge2], ['GE-3', 'texte exact recontrôlé sous seuil de qualité', ge3]] },
   couts: { fiche: '026-218', criteres: [['CO-1', 'montant absent reste non connu', co1], ['CO-2', 'appel Laya compté à part', co2]] },
+}
+for(const [partie,id] of [['lignes','LN-7'],['meta','MP-6'],['mesure','ME-4'],['boucle','BO-4'],['veille','VE-5'],['geste','GE-4']]) {
+  PARTIES[partie].criteres.push([id,'pause fail-closed avant modèles et sorties',ctx=>pauseContenu(ctx,partie)])
 }
 export { PARTIES }
 

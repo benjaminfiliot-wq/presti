@@ -59,8 +59,12 @@ export async function GET(req: Request) {
   ajouter('stripe', 'Stripe', st, (v: { disponible: number; livemode: boolean }) => ({ etat: 'ok', detail: `joignable · solde disponible ${v.disponible.toFixed(2).replace('.', ',')} € · ${v.livemode ? 'réel' : 'test'}` }))
   ajouter('resend', 'Emails (Resend)', resend, (v: { statut: string }) => ({ etat: v.statut === 'verified' ? 'ok' : 'warn', detail: `domaine prestiapp.fr : ${v.statut}` }))
   ajouter('crons', 'Tâches planifiées', cr, (v: { nom: string; dernier: string | null; reussi: boolean | null; enRetard: boolean }[]) => {
-    const retard = v.filter((x) => x.enRetard || x.reussi === false)
-    return { etat: retard.length === 0 ? 'ok' : retard.length >= 2 ? 'crit' : 'warn', detail: retard.length ? `en retard ou en échec : ${retard.map((x) => x.nom).join(', ')}` : `${v.length} tâches passées à l’heure` }
+    // Une tâche qui n'a JAMAIS passé n'est pas « en retard » (même règle que la ronde d'alertes, lib/alertes.ts : on ne peut pas dire
+    // qu'elle l'est) : elle n'est pas encore planifiée. Elle se dit dans le détail, sans colorer la santé du service.
+    const jamais = v.filter((x) => x.dernier === null)
+    const retard = v.filter((x) => x.dernier !== null && (x.enRetard || x.reussi === false))
+    const suffixe = jamais.length ? ` · jamais passées (pas encore planifiées) : ${jamais.map((x) => x.nom).join(', ')}` : ''
+    return { etat: retard.length === 0 ? 'ok' : retard.length >= 2 ? 'crit' : 'warn', detail: (retard.length ? `en retard ou en échec : ${retard.map((x) => x.nom).join(', ')}` : `${v.length - jamais.length} tâches passées à l’heure`) + suffixe }
   })
   if (cout.valeur === null && !cout.erreur) controles.push({ cle: 'ia', libelle: 'Facture Anthropic', etat: 'info', detail: 'non mesuré', manque: 'clé Anthropic Admin absente', source: 'anthropic', a: cout.a, cache: false })
   else ajouter('ia', 'Facture Anthropic', cout, (v: { euros: number; budget: number | null }) => ({ etat: v.budget ? (v.euros / v.budget >= 0.9 ? 'crit' : v.euros / v.budget >= 0.7 ? 'warn' : 'ok') : 'ok', detail: v.budget ? `${v.euros.toFixed(2).replace('.', ',')} € sur ${v.budget} €` : `${v.euros.toFixed(2).replace('.', ',')} € ce mois (aucun budget posé)` }))

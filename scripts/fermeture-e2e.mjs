@@ -189,7 +189,7 @@ const onb = await page('/onboarding')
 // formulaire ou le renvoi vers /login n'existent plus qu'au client. On exige alors la coquille ET le script propre à la page /onboarding
 // (une route absente ou cassée n'a ni l'un ni l'autre : 404 ou page d'erreur).
 const onbCoquille = /BAILOUT_TO_CLIENT_SIDE_RENDERING/.test(onb.html) && /app\/onboarding\/page-[\w-]+\.js/.test(onb.html)
-T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && (/Ton profil|login/i.test(onb.html) || onbCoquille))
+T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && (/Votre profil|login/i.test(onb.html) || onbCoquille))
 const rp = await page('/reset-password')
 T('/reset-password présente le formulaire', rp.status === 200 && /mot de passe/i.test(rp.html))
 const demo = await page('/site/atelier-du-chene/infos-legales')
@@ -273,7 +273,9 @@ if (FLAGS) {
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
     // et les DEUX routes doivent lire le drapeau elles-mêmes.
     'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
-    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts', 'app/api/controle/station/route.ts', 'app/api/agents/reunion/route.ts', 'app/api/agents/reunion/chiffres/route.ts'],
+    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts', 'app/api/controle/station/route.ts', 'app/api/controle/station/reglages/route.ts', 'app/api/agents/reunion/route.ts', 'app/api/agents/reunion/chiffres/route.ts'],
+    // 026-179 — la carte Claw3D de la station : lue par app/controle/station/Carte.tsx (baissé : le cadre d'attente et la liste des salles, aucun morceau de Phaser).
+    'stationCarte': ['lu'],
     // 29/09 — les demandes de Benj à l'écosystème : la route du Poste et les deux routes du bus lisent ce drapeau (les routes du bus lisent AUSSI busAgents).
     'demandesEcosysteme': ['route', '/api/controle/demandes', 'GET', 'app/api/controle/demandes/route.ts', 'app/api/agents/demandes/route.ts', 'app/api/agents/demandes/[id]/route.ts'],
     'prospectsEntrant': ['route', '/api/prospects/entrant', 'POST', 'app/api/prospects/entrant/route.ts'],
@@ -281,6 +283,7 @@ if (FLAGS) {
     // du tableau de bord (app/dashboard/page.tsx) lit `packPubVente`.
     'packPub': ['route', '/api/pubs/commander/brouillon', 'GET', 'app/api/pubs/commander/brouillon/route.ts', 'app/api/pubs/commander/route.ts'],
     'packPubVente': ['lu'],
+    'essaiFormulaire': ['route', '/essai-formulaire/envoi', 'POST', 'app/essai-formulaire/envoi/route.ts', 'app/essai-formulaire/page.tsx'],
     'ecommerce': ['note', 'branche réservée : rien n’est construit, attend les trois vidéos sources de Benj'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index

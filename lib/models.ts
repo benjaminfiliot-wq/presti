@@ -4,7 +4,7 @@ export type Tier = 'standard' | 'pro' | 'expert'
 import { planConf } from './plans'
 
 const MODEL_BY_TIER: Record<Tier, string> = {
-  standard: 'claude-haiku-4-5',
+  standard: 'claude-haiku-5-5',
   pro: 'claude-sonnet-5',
   expert: 'claude-opus-5',
 }

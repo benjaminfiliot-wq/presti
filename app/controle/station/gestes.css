@@ -1,0 +1,320 @@
+/* app/controle/station/gestes.css — Règles CSS des gestes et des feuilles (fiche 026-117)
+   Zéro couleur en hexadécimal (interdit absolu EG-12).
+   Gardes prefers-reduced-motion obligatoires. */
+
+.mc .mc-feuille {
+  position: fixed;
+  top: 84px;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(680px, calc(100vw - 32px));
+  z-index: 55;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: rgb(10, 12, 17);
+  border: 1px solid var(--mc-neon-2);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+  padding: 16px;
+  color: var(--mc-texte);
+  box-sizing: border-box;
+}
+
+.mc .mc-feuille-tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--mc-bord);
+}
+
+.mc .mc-feuille-tete h2 {
+  font-family: var(--font-display, system-ui), system-ui, sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: var(--mc-neon-1);
+}
+
+.mc .mc-feuille-tete button[data-fermer] {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--mc-neon-1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc .mc-carte-decision {
+  border: 1px solid var(--mc-bord);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: rgba(10, 12, 17, 0.6);
+  box-sizing: border-box;
+}
+
+.mc .mc-carte-decision[data-epinglee] {
+  outline: 2px solid var(--mc-neon-1);
+  box-shadow: 0 0 12px rgba(108, 140, 255, 0.35);
+}
+
+.mc .mc-choix {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+@media (min-width: 600px) {
+  .mc .mc-choix {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.mc .mc-choix button[data-choix] {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--mc-bord);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+}
+
+.mc .mc-choix button[data-choix]:hover {
+  background: var(--mc-survol);
+  border-color: var(--mc-neon-1);
+}
+
+.mc .mc-choix button[data-choix][data-recommandee] {
+  background: var(--mc-actif);
+  color: rgb(10, 12, 17);
+  border-color: var(--mc-actif);
+  font-weight: 700;
+}
+
+.mc [data-appel-rendu] {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--mc-ok);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mc-ok);
+  cursor: pointer;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc [data-appeler] {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--mc-neon-1);
+  border-radius: 8px;
+  color: var(--mc-neon-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  margin-right: 8px;
+}
+
+.mc [data-consigne-agent] {
+  min-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--mc-bord);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc [data-pause-agent] {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--mc-bord);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc .mc-agent-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.mc .mc-consigne-bloc,
+.mc .mc-motif-bloc,
+.mc .mc-gestes-envoi form,
+.mc [data-confirmation] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mc .mc-motif-bloc input,
+.mc .mc-consigne-bloc input,
+.mc [data-gestes-envoi] input,
+.mc [data-gestes-envoi] select {
+  font-size: 16px;
+  min-height: 44px;
+  background: rgba(108, 140, 255, 0.08);
+  color: var(--mc-texte);
+  border: 1px solid var(--mc-bord);
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+.mc .mc-motif-actions,
+.mc .mc-consigne-actions,
+.mc [data-confirmation] div {
+  display: flex;
+  gap: 8px;
+}
+
+.mc .mc-motif-actions button,
+.mc .mc-consigne-actions button,
+.mc [data-confirmation] button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--mc-bord);
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc [data-gestes-envoi] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--mc-bord);
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.mc [data-gestes-envoi] button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-neon-1);
+  background: transparent;
+  color: var(--mc-texte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc [data-gestes-envoi] button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--mc-texte-doux);
+}
+
+.mc .dir-voile {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 12, 17, 0.88);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.mc [data-reconfirmer] {
+  background: rgb(10, 12, 17);
+  border: 1px solid var(--mc-neon-1);
+  border-radius: 12px;
+  padding: 20px;
+  width: min(440px, calc(100vw - 32px));
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.mc [data-reconfirmer] input[type="password"] {
+  font-size: 16px;
+  width: 100%;
+  min-height: 44px;
+  background: rgba(108, 140, 255, 0.08);
+  color: var(--mc-texte);
+  border: 1px solid var(--mc-bord);
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  margin: 10px 0;
+}
+
+.mc [data-reconfirmer] button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc [data-reconfirmer] .dir-modale-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.mc.mc-tel .mc-feuille {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  border-radius: 0;
+  border: 0;
+  z-index: 60;
+  padding: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-feuille,
+  .mc .mc-feuille *,
+  .mc .dir-voile,
+  .mc .dir-voile * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

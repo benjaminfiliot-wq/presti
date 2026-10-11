@@ -1,0 +1,26 @@
+1
+1
+== ref
+ 08:34:07 up 9 days,  9:43, 13 users,  load average: 17.16, 20.00, 17.58
+station-claw3d-qa --partie=verite — racine ../bst-cl-ref
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+❌ CL-5 étape « reunion » : l'empreinte du canevas diffère d'une page à l'autre (e0bfbd3db3438bb7 et 8260ff11954f883b)
+❌ CL-7 étape « tache » : marchent recenseur, personne attendu(s) (un agent ne bouge que sur un vrai événement) ; étape « reunion » : a0 : machines/porte, reunion/reunion attendu ; étape « reunion » : agent_temoin_inconnu : machines/porte, reunion/reunion attendu ; étape « reunion » : atelier_maquettes : atelier/t
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle e
+station-claw3d-qa --partie=verite : FAIL — CL-5, CL-7
+== s1
+ 08:37:56 up 9 days,  9:47, 13 users,  load average: 7.06, 13.34, 15.46
+station-claw3d-qa --partie=verite — racine ../bst-cl-s1
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+❌ CL-5 étape « reunion » : les chemins diffèrent d'une page à l'autre (a0 : 3 positions et 28 ; « 408,112 404,124 388,124 » contre « 408,112 404,124 388,124 372,124 356,124 340,124 324,124 308… »)
+❌ CL-7 étape « tache » : marchent recenseur, personne attendu(s) (un agent ne bouge que sur un vrai événement) ; étape « reunion » : a0 : machines/porte, reunion/reunion attendu ; étape « reunion » : agent_temoin_inconnu : machines/porte, reunion/reunion attendu ; étape « reunion » : atelier_maquettes : atelier/t
+✅ CL-8 quatre pages (jeu vide, jeu vide autre, deux jeux chargés aux chiffres et textes tous différents) : chaque écran [data-ecran] dit « — » (l’Expérience seule peut dire aussi « FERMÉE · R13 » ou la barre servie), et les images sont identiques deux à deux ; la texture du décor (clé « decor », quand elle e
+station-claw3d-qa --partie=verite : FAIL — CL-5, CL-7
+== s2
+ 08:42:50 up 9 days,  9:52, 16 users,  load average: 26.82, 17.78, 16.36
+station-claw3d-qa --partie=verite — racine ../bst-cl-s2
+✅ CL-6 26 source(s) de moteur/ lus (commentaires ôtés) : ni Math.random, ni Between, ni RND, ni GetRandom, ni Shuffle, ni horloge (Date.now, performance.now, new Date), ni setInterval, ni addEvent en boucle, ni tween infini ; seed: ['station']
+✅ CL-5 7 étapes de evenements.json rejouées sur deux pages neuves : mêmes chemins (positions successives de chaque personnage relevées dans le miroir : 529 pas) et même empreinte du canevas à chaque étape (6 images distinctes, chacune figée)
+❌ CL-7 étape « tache » : marchent recenseur, personne attendu(s) (un agent ne bouge que sur un vrai événement)
+❌ CL-8 jeu « vide » : l'écran de recettes dit « FERMÉE · R13 » au lieu de « — » (1 écran(s) parlent) ; jeu « videAutre » : l'écran de recettes dit « FERMÉE · R13 » au lieu de « — » (1 écran(s) parlent) ; jeu « chargeA » : l'écran de recettes dit « FERMÉE · R13 » au lieu de « — » (1 écran(s) 
+station-claw3d-qa --partie=verite : FAIL — CL-7, CL-8

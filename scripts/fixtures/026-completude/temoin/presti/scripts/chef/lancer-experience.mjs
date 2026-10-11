@@ -4,17 +4,21 @@
 //
 // Règles tenues : aucun lancement avant un ENCAISSEMENT confirmé et sourcé (ni devis, ni commande en attente, ni
 // événement de test) ; cadre complet avant le premier événement ; accord de Benj sur l'objectif exact, sinon l'expérience
-// reste « proposée » ; le froid reste fermé avant le 12/10 ; un id = une expérience ; un objectif modifié exige un nouvel
+// reste « proposée » ; le froid reste fermé tant que l'interrupteur envoi_froid n'est pas ouvert (froid_ouvert() === true) ; un id = une expérience ; un objectif modifié exige un nouvel
 // accord ; une mesure absente conclut « non mesuré », jamais un succès ; le bilan ne bascule aucun drapeau.
 
-export const OUVERTURE_FROID = Date.UTC(2026, 9, 12)
 const CHAMPS = ['id', 'version', 'source', 'objectif', 'population', 'seuil_arret']
+
+// Le froid n'est ouvert que si le service rend EXACTEMENT true ; absent, faux, non booléen ou en panne : fermé.
+async function froidOuvert(deps) {
+  try { return typeof deps.froid_ouvert === 'function' && (await deps.froid_ouvert()) === true } catch { return false }
+}
 
 export async function lancerExperience(d, deps) {
   for (const c of CHAMPS) if (!d?.[c]) return { refus: 'cadre', raison: `${c} manquant` }
   if (!d.metrique?.nom || !(Number(d.horizon_jours) > 0) || typeof d.cout_max_eur !== 'number') return { refus: 'cadre', raison: 'métrique, horizon ou coût maximum manquant' }
   if (!/^douleurs-\d{4}-\d{2}$/.test(d.source) && d.source !== 'decision-benj') return { refus: 'cadre', raison: 'hypothèse sans source' }
-  if ((d.touche || []).includes('froid') && deps.horloge.maintenant() < OUVERTURE_FROID) return { refus: 'froid_ferme' }
+  if ((d.touche || []).includes('froid') && !(await froidOuvert(deps))) return { refus: 'froid_ferme' }
 
   const ventes = await deps.ventes()
   const vente = (ventes || []).find((v) => v?.statut === 'encaisse' && v.confirme === true && v.test === false && v.source)

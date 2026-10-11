@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti — l'analyste de vidéos (vide la file ~/travail/videos/a-analyser/ : yt-dlp, images, modèle de vision local, synthèse ; une analyse à la fois ; aucune clé)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node scripts/usine/analyse-video.mjs --une-passe
+TimeoutStartSec=150min
+MemoryMax=1G
+Nice=10

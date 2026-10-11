@@ -1,20 +1,13 @@
-// lib/contenu/metaPublier.ts — C09 (fiche 026-212) : la publication des Reels Instagram et des vidéos Facebook par
-// l'API Graph de Meta, sous accord INDIVIDUEL de Benj.
-//
-// Règles (26-204, contrat transversal ; R24 ouverte ; R6 conditionne tout geste Meta) :
-//  - une ligne éditoriale accordée n'autorise JAMAIS une publication : chaque Reel ou vidéo Facebook exige son propre accord
-//    (décision `tranchee`, choix `accorder`, cible exacte, même version du texte — `accordValide` de ./lignes) ;
-//  - toute affirmation chiffrée passe par `jev noul --provider laya` (seuil 0,5, source obligatoire, panne = blocage) ;
-//  - le média est une CLÉ du bucket privé attendu, jamais une URL arbitraire ;
-//  - un post déjà publié ne relance aucun appel Graph (idempotence par ID de post) ;
-//  - un timeout ambigu se RÉCONCILIE (on retrouve la publication côté Graph) avant toute nouvelle tentative ;
-//  - le module ne lit ni jeton ni variable d'environnement : le client Graph, l'horloge et la signature d'URL sont INJECTÉS.
-// Un brouillon, une démonstration ou un score de Laya ne valent pas publication : sans accord, le post reste en attente.
+// Publication Graph automatique sous garde-fous (décision du 30/09).
+// Pause fail-closed relue avant chaque sortie, STOP/opposition, coût explicite nul,
+// média privé, chiffres contrôlés, idempotence et réconciliation des délais ambigus.
+// Le transport, jeton et signature sont injectés ; aucun accord individuel requis.
 import {
   SEUIL_LAYA, accordValide, porteUneAffirmationChiffree, textesVisibles, verdictPublication, versionTexte,
   type ContexteLignes, type DecisionAccord, type Ligne, type Post,
 } from './lignes'
 import { vraisemblance, type DepsLecteur } from '@/lib/agents/llm'
+import { sortiePermise } from '@/lib/agents/sortie'
 
 // ── types ────────────────────────────────────────────────────────────────────────────────────────────────────────
 export type CanalMeta = 'instagram' | 'facebook'
@@ -36,9 +29,9 @@ export type Variante = {
 
 export type ContexteMeta = {
   bucketAttendu: string
-  decision: DecisionAccord
+  decision?: DecisionAccord
   /** L'accord de LIGNE : lu, jamais utilisé comme permission. */
-  ligneAccordee: boolean
+  ligneAccordee?: boolean
   dejaPublie?: boolean
   /** Pause générale des agents (ops.interrupteurs) : vrai = rien ne part. */
   pause?: boolean
@@ -65,7 +58,7 @@ export type ResultatMeta =
   | { ok: true; url?: string; id_externe?: string; idempotent?: boolean; reconcilie?: boolean }
   | { ok: false; motif: string; reessayable?: boolean; etape?: string }
 
-type DepsMeta = DepsLecteur
+type DepsMeta = DepsLecteur & { coutEuros?: unknown; opposition?: boolean }
 
 const CLE_MEDIA = /^(?!.*\.\.)[A-Za-z0-9][A-Za-z0-9._/-]{0,199}$/
 const refus = (motif: string, plus: { reessayable?: boolean; etape?: string } = {}): ResultatMeta => ({ ok: false, motif, ...plus })
@@ -87,6 +80,9 @@ const estErreur = (v: unknown): v is ErreurGraph => !!v && typeof v === 'object'
 // ── le contrôle avant tout appel réseau ──────────────────────────────────────────────────────────────────────────
 /** Toutes les vérifications qui précèdent un appel Graph. Rend `null` quand tout est en règle, sinon le refus. */
 export async function controlerAvantPublication(variante: Variante, ctx: ContexteMeta, deps: DepsMeta = {}): Promise<ResultatMeta | null> {
+  if (!(await sortiePermise()).permise) return refus('pause générale : aucune publication')
+  if (deps.opposition === true) return refus('STOP ou opposition : aucune publication')
+  if (deps.coutEuros !== 0) return refus('coût inconnu ou positif : publication refusée')
   if (!variante || typeof variante !== 'object') return refus('variante absente')
   if (!estTexte(variante.id)) return refus('variante sans identifiant')
   if (!estTexte(variante.texte)) return refus('variante sans texte visible')
@@ -103,7 +99,7 @@ export async function controlerAvantPublication(variante: Variante, ctx: Context
   const visibles = textesVisibles(variante)
   const version = versionTexte(variante)
 
-  // Contrôle complet quand le post et sa ligne sont fournis : drapeaux, plafonds, doublons, chiffres, accord.
+  // Contrôle complet quand le post et sa ligne sont fournis : drapeaux, plafonds, doublons, chiffres (aucun accord individuel : les contrôles automatiques le remplacent).
   if (ctx.post) {
     if (ctx.post.id !== variante.id) return refus(`le post fourni (« ${ctx.post.id} ») n'est pas la variante « ${variante.id} »`)
     const verdict = await verdictPublication({ ...ctx.post, contexte: ctx.contexteLignes ?? ctx.post.contexte, decision: ctx.decision ?? ctx.post.decision }, ctx.ligne ?? null, deps)
@@ -111,17 +107,16 @@ export async function controlerAvantPublication(variante: Variante, ctx: Context
     return null
   }
 
-  // Contrôle minimal : les chiffres, puis l'accord individuel (jamais déduit de la ligne, jamais d'un score).
+  // Contrôle minimal : chiffres et garde-fous automatiques, sans accord individuel.
   for (const texte of visibles) {
     if (!porteUneAffirmationChiffree(texte)) continue
     if (!estTexte(variante.source)) return refus('affirmation chiffrée sans source : renvoyée à Benj')
+    if (!(await sortiePermise()).permise) return refus('pause générale : aucun appel au modèle')
     const r = await vraisemblance(texte, {}, deps)
     if (r === null) return refus('Laya indisponible (jev absent ou en panne) : bloqué, renvoyé à Benj')
     if (r.bloque || !Number.isFinite(r.p) || r.p < SEUIL_LAYA) return refus(`score de vérité insuffisant (p=${r.p} < ${SEUIL_LAYA}) : renvoyé à Benj`)
   }
-  // L'accord de LIGNE (ctx.ligneAccordee) n'entre jamais dans ce calcul.
-  const a = accordValide(ctx.decision, variante.id, version, t)
-  if (!a.ok) return refus(`accord individuel requis : ${a.motif}`)
+  // Aucun accord individuel : décision du 30/09, validation automatique ci-dessus.
   return null
 }
 
@@ -133,6 +128,7 @@ export async function attendreConteneurPret(reseau: ReseauGraph, conteneurId: st
   const pause = Number.isFinite(ctx.pauseEtatMs) && (ctx.pauseEtatMs as number) >= 0 ? (ctx.pauseEtatMs as number) : 3000
   const attendre = deps.attendre ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)))
   for (let i = 0; i < essais; i++) {
+    if (!(await sortiePermise()).permise) return refus('pause générale : aucun appel Graph', { etape: 'etat_conteneur' })
     const e = await reseau.etatConteneur(conteneurId)
     if (estErreur(e)) {
       const c = classerErreurGraph(e)
@@ -148,7 +144,7 @@ export async function attendreConteneurPret(reseau: ReseauGraph, conteneurId: st
 }
 
 /**
- * Publie un Reel Instagram ou une vidéo Facebook par Graph. Rien ne part sans accord individuel exact. Chaque chemin de
+ * Publie un Reel Instagram ou une vidéo Facebook par Graph. Rien ne part sans validation automatique des garde-fous. Chaque chemin de
  * sortie est explicite : `ok:true` avec l'URL publique, `ok:true` idempotent, ou `ok:false` avec le motif (et si un nouvel
  * essai a un sens). Une exception d'un service injecté devient un refus, jamais une publication.
  */
@@ -160,6 +156,7 @@ export async function publierMeta(variante: Variante, ctx: ContexteMeta, reseau:
     if (!reseau || typeof reseau.creerConteneur !== 'function' || typeof reseau.publier !== 'function') return refus('client Graph absent : rien n\'est publié')
 
     const legende = [variante.legende, variante.texte].find(estTexte)
+    if (!(await sortiePermise()).permise) return refus('pause générale : aucun appel Graph')
     const conteneur = await reseau.creerConteneur({ bucket: variante.bucket, cle: variante.cle, canal: variante.canal, legende })
     if (estErreur(conteneur)) {
       const c = classerErreurGraph(conteneur)
@@ -170,11 +167,13 @@ export async function publierMeta(variante: Variante, ctx: ContexteMeta, reseau:
     const pret = await attendreConteneurPret(reseau, conteneur.id, ctx, deps)
     if (pret) return pret
 
+    if (!(await sortiePermise()).permise) return refus('pause générale : aucune publication Graph', { etape: 'publication' })
     const p = await reseau.publier(conteneur.id)
     if (estErreur(p)) {
       const c = classerErreurGraph(p)
       // Timeout ou 5xx : la publication a peut-être eu lieu. On la retrouve avant de dire qu'elle a échoué (jamais un 2e envoi).
       if (c.reessayable && reseau.retrouver) {
+        if (!(await sortiePermise()).permise) return refus('pause générale : réconciliation différée', { etape: 'reconciliation', reessayable: false })
         const deja = await reseau.retrouver(conteneur.id)
         if (deja && !estErreur(deja)) return { ok: true, url: deja.url, id_externe: deja.id, reconcilie: true }
         if (estErreur(deja)) return refus(`Graph (publication) : ${c.motif} ; réconciliation impossible : ${deja.erreur}`, { reessayable: false, etape: 'reconciliation' })
@@ -203,6 +202,8 @@ export function majApresPublication(resultat: ResultatMeta, deps: DepsMeta = {})
 
 // ── le client Graph (injecté : jamais de jeton lu ici) ───────────────────────────────────────────────────────────
 export type OptionsClientGraph = {
+  coutEuros?: unknown
+  opposition?: boolean
   jeton: string | null | undefined
   /** Droits accordés au jeton (ex. `instagram_content_publish`, `pages_manage_posts`) : sans eux, le client refuse. */
   capacites: readonly string[]
@@ -222,6 +223,7 @@ export const CAPACITE_FACEBOOK = 'pages_manage_posts'
 
 /** Fabrique le faux ou le vrai `ReseauGraph` : refuse sans jeton ni capacité de publication. Aucun appel à la création. */
 export function creerClientGraph(o: OptionsClientGraph, canal: CanalMeta): { ok: true; reseau: ReseauGraph } | { ok: false; motif: string } {
+  if (o.coutEuros !== 0 || o.opposition === true) return { ok: false, motif: 'coût inconnu/positif ou opposition : voie Graph fermée' }
   if (!estTexte(o.jeton)) return { ok: false, motif: 'aucun jeton Graph (R6 non levée) : voie fermée' }
   const besoin = canal === 'instagram' ? CAPACITE_INSTAGRAM : CAPACITE_FACEBOOK
   if (!Array.isArray(o.capacites) || !o.capacites.includes(besoin)) return { ok: false, motif: `le jeton n'a pas la capacité « ${besoin} » : voie fermée` }
@@ -231,6 +233,7 @@ export function creerClientGraph(o: OptionsClientGraph, canal: CanalMeta): { ok:
   const jeton = o.jeton
   const appeler = async (chemin: string, methode: 'GET' | 'POST', champs: Record<string, string>): Promise<Record<string, unknown> | ErreurGraph> => {
     try {
+      if (!(await sortiePermise()).permise) return { erreur: 'pause générale : aucun appel Graph', status: 403 }
       const url = new URL(`${base}/${chemin}`)
       const corps = new URLSearchParams({ ...champs, access_token: jeton })
       if (methode === 'GET') for (const [k, v] of corps) url.searchParams.set(k, v)

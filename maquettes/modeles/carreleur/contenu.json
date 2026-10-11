@@ -1,39 +1,132 @@
 {
+  "version": 2,
   "metier": "carreleur",
+  "da": "carreleur",
   "libelles": {
-    "sur": "Carrelage",
-    "alt_heros": "Détail d’une pose de carrelage",
-    "alt_atelier": "Carreaux et joints",
-    "reperes": ["Repère des finitions", "Repère des ouvrages", "Repère de proximité"]
+    "metier": "Carreleur",
+    "activite": "carrelage"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Carrelage à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, carrelage à {ville}.",
-      "h1": "Carrelage à {ville}",
-      "h1Ligne": "Les surfaces prennent forme",
-      "chapeau": "Une page pour présenter les poses de carrelage et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La faïence et la céramique",
-          "blocs": [
-            { "type": "p", "texte": "Salles de bains, sols intérieurs et terrasses peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Carreleur à {ville} — {entreprise}",
+    "description": "{entreprise}, carreleur à {ville} : carrelage de sol, faïence, douches à l’italienne, mosaïque et terrasses, posés sur un support préparé.",
+    "h1": "Carreleur à {ville}",
+    "h1Ligne": "Joint après joint",
+    "chapeau": "Sols, murs, douches et terrasses, carrelés sur un support préparé et de niveau."
+  },
+  "prestations": {
+    "h2": "Sols et murs carrelés",
+    "intro": "Le carrelage se pose sur un support sain : chaque chantier commence par là.",
+    "items": [
+      {
+        "titre": "Carrelage de sol",
+        "texte": "Grands formats, carreaux de ciment ou terre cuite, posés sur une chape de niveau, avec un calepinage choisi avant la première coupe et des joints réguliers.",
+        "photo": "dallage"
+      },
+      {
+        "titre": "Faïence murale",
+        "texte": "Crédences de cuisine, murs de salle de bains et de toilettes, posés d’aplomb, avec des coupes nettes autour des prises, des niches et des arrivées d’eau.",
+        "photo": "faience"
+      },
+      {
+        "titre": "Douche à l’italienne",
+        "texte": "Forme de pente, étanchéité sous carrelage, siphon ou caniveau de sol, pour une douche de plain-pied où l’eau s’écoule sans stagner ni passer sous les carreaux.",
+        "photo": "douche"
+      },
+      {
+        "titre": "Mosaïque et frises",
+        "texte": "Mosaïque en sol ou en mur, en plaques ou posée à l’unité, pour un motif, une frise, un tapis dans une entrée ou le fond d’une niche de douche.",
+        "photo": null
+      },
+      {
+        "titre": "Terrasses et extérieurs",
+        "texte": "Dallage en pierre ou en grès cérame, sur plots ou collé sur dalle, avec des carreaux adaptés au gel et les pentes nécessaires pour que l’eau s’écoule.",
+        "photo": null
+      },
+      {
+        "titre": "Rénovation et ragréage",
+        "texte": "Dépose de l’ancien carrelage, ou pose sur l’existant quand c’est possible, ragréage du sol pour le remettre à niveau et reprise des joints fatigués ou noircis.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "Le calepinage d’abord",
+    "phrase": "Avant de coller un seul carreau, on trace le calepinage : les coupes tombent là où on ne les voit pas et les joints restent alignés.",
+    "photo": "ceramique"
+  },
+  "realisations": {
+    "h2": "Sols et murs posés",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve le chantier."
+  },
+  "etapes": {
+    "h2": "Les étapes du chantier",
+    "intro": "Du choix du carreau au dernier joint, chaque étape vient dans son ordre.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez la pièce, la surface à couvrir et le carreau envisagé, avec des photos du sol ou des murs actuels."
+      },
+      {
+        "titre": "Visite et mesures",
+        "texte": "Contrôle de la planéité, de l’humidité et de l’ancien revêtement, prise de mesures et premier calepinage."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez le détail de la préparation, de la pose et des fournitures, avec la quantité de carreaux à prévoir."
+      },
+      {
+        "titre": "Pose et joints",
+        "texte": "Préparation du support, pose, joints et nettoyage du chantier, puis tour de la pièce avec vous."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Peut-on poser du carrelage sur un ancien carrelage ?",
+        "reponse": "Souvent, si l’ancien est bien adhérent et plan, avec un primaire adapté. Il faut aussi vérifier la hauteur des portes et des seuils."
+      },
+      {
+        "question": "Quels carreaux choisir pour une douche à l’italienne ?",
+        "reponse": "Des carreaux antidérapants au sol, souvent de petit format pour suivre la pente. Les murs acceptent presque tous les formats."
+      },
+      {
+        "question": "Pourquoi prévoir plus de carreaux que la surface ?",
+        "reponse": "Pour les coupes, la casse et les réparations futures. La marge dépend du format et du motif de pose."
+      },
+      {
+        "question": "Quand peut-on marcher sur un carrelage neuf ?",
+        "reponse": "Cela dépend de la colle et du joint utilisés. Le délai précis se donne à la fin du chantier, selon les produits posés."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre projet",
+    "texte": "Décrivez la pièce et le carrelage envisagé, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Carrelage de sol",
+      "Faïence murale",
+      "Douche à l’italienne",
+      "Terrasse",
+      "Rénovation de carrelage",
+      "Autre projet"
+    ],
+    "message": "Votre pièce, en quelques mots"
   },
   "photos": {
     "demo": "carreleur",
-    "fichiers": ["images/hero-960.webp", "images/faience-720.webp"]
+    "heros": "hero",
+    "atelier": "ceramique",
+    "galerie": [
+      "douche",
+      "dallage",
+      "faience",
+      "hero"
+    ]
   }
 }

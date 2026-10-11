@@ -66,6 +66,7 @@
 .mc-temps { font-family: var(--mc-mono); color: var(--mc-texte); }
 .mc-nuit { color: var(--mc-neon-2); }
 .mc-sante { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; letter-spacing: 0.08em; }
+.mc-sante-raison { flex: 0 1 auto; min-width: 0; max-width: 62ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: var(--mc-warn); }
 .mc-sante::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--mc-texte-doux); }
 .mc-sante[data-etat="en ligne"]::before { background: var(--mc-ok); box-shadow: 0 0 8px var(--mc-ok); }
 .mc-sante[data-etat="dégradée"]::before { background: var(--mc-warn); }
@@ -114,15 +115,24 @@
 .mc-flot-cmd { top: 92px; right: 12px; z-index: 8; width: var(--mc-col-d); max-height: calc(100% - 92px - 56px); overflow-y: auto; background: var(--mc-panneau); border: 1px solid var(--mc-bord); border-radius: 10px; box-shadow: 0 0 24px rgba(138, 107, 255, 0.22); }
 .mc-flot-journal { left: 12px; bottom: 56px; z-index: 6; width: calc(var(--mc-col-g) - 12px); height: 200px; overflow-y: auto; background: var(--mc-panneau); border: 1px solid var(--mc-bord); border-radius: 10px; }
 
-/* ── La carte : plein cadre entre la barre et le bandeau, SOUS les colonnes ─────────────────────────────────────────── */
+/* ── La carte : la zone du centre, ENTRE les deux colonnes (sa barre de défilement se voit, elle ne passe plus dessous) ─────────────────
+   Pas de marge sur les côtés : chaque pixel de largeur compte pour l'échelle entière du pixel art (×2 dès 800 px, ×3 dès 1 200 px, moteur/claw3d/).
+   La gouttière du défilement est réservée : la largeur mesurée par le moteur ne bouge pas quand la liste des salles apparaît ou disparaît.
+   Une colonne repliée (44 px) rend sa place à la carte (--mc-cg, --mc-cd). */
+.mc.mc-bureau { --mc-cg: var(--mc-col-g); --mc-cd: var(--mc-col-d); }
+.mc.mc-repli-g { --mc-cg: 44px; }
+.mc.mc-repli-d { --mc-cd: 44px; }
 .mc-bureau [data-station-carte] {
-  position: fixed; left: 0; right: 0; top: 80px; bottom: 44px; z-index: 1; overflow-y: auto; overflow-x: hidden;
-  padding: 16px calc(var(--mc-col-d) + 16px) 16px calc(var(--mc-col-g) + 16px);
+  position: fixed; left: var(--mc-cg); right: var(--mc-cd); top: 80px; bottom: 44px; z-index: 1; overflow-y: auto; overflow-x: hidden;
+  scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--mc-bord) transparent;
+  padding: 12px 0 16px;
   background:
     radial-gradient(ellipse at 30% 20%, rgba(108, 140, 255, 0.10), transparent 60%),
     radial-gradient(ellipse at 75% 80%, rgba(138, 107, 255, 0.10), transparent 60%),
     var(--mc-fond);
 }
+.mc-bureau [data-station-carte] .mc-carte-attente,
+.mc-bureau [data-station-carte] .mc-salles { margin-inline: 12px; }
 .mc-carte-attente { margin-bottom: 14px; color: var(--mc-texte-doux); font-family: var(--mc-police-pixel, var(--font-mono, ui-monospace)), monospace; font-size: 14px; }
 .mc-salles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
 .mc-salles button { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--mc-bord); border-radius: 8px; background: rgba(10, 12, 17, 0.6); font-family: var(--mc-police-pixel, var(--font-body, system-ui)), system-ui, sans-serif; font-size: 14px; transition: background 0.15s, border-color 0.15s; }
@@ -163,6 +173,7 @@ a.mc-att { transition: background 0.15s; }
 a.mc-att:hover { background: color-mix(in srgb, var(--c) 22%, rgba(10, 12, 17, 0.9)); }
 .mc-att-nombre { flex: 0 0 auto; min-width: 22px; font-family: var(--mc-mono); font-size: 16px; font-weight: 700; color: var(--c); text-align: center; }
 .mc-att-titre { overflow-wrap: anywhere; }
+.mc-att-doublon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .mc-autres { margin-top: 4px; color: var(--mc-texte-doux); }
 
 /* ── Commandement ──────────────────────────────────────────────────────────────────────────────────────────────────── */

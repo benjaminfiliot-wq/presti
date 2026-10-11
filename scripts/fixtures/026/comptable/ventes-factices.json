@@ -1,20 +1,16 @@
 {
-  "_note": "Ventes FACTICES (jamais de donnée réelle). Montants en centimes. cmd_006 vaut 12000 là où Stripe dit 12001 (écart). cmd_009 : commande sans paiement reçu. cmd_010 : marquée payée mais jamais rapprochée d'un paiement Stripe.",
   "commandes": [
-    { "ref": "cmd_001", "montant": 15000, "statut": "payee" },
-    { "ref": "cmd_002", "montant": 24000, "statut": "payee" },
-    { "ref": "cmd_003", "montant": 9000, "statut": "payee" },
-    { "ref": "cmd_004", "montant": 31000, "statut": "payee" },
-    { "ref": "cmd_005", "montant": 18000, "statut": "payee" },
-    { "ref": "cmd_006", "montant": 12000, "statut": "payee" },
-    { "ref": "cmd_007", "montant": 22000, "statut": "payee" },
-    { "ref": "cmd_008", "montant": 6000, "statut": "payee" },
-    { "ref": "cmd_009", "montant": 8000, "statut": "en_attente" },
-    { "ref": "cmd_010", "montant": 4000, "statut": "payee" }
+    { "id": "vente_0", "paiement_id": "ch_0", "prix_cents": 10000 },
+    { "id": "vente_1", "paiement_id": "ch_1", "prix_cents": 10000 },
+    { "id": "vente_2", "paiement_id": "ch_2", "prix_cents": 10000 },
+    { "id": "vente_3", "paiement_id": "ch_3", "prix_cents": 10000 },
+    { "id": "vente_4", "paiement_id": "ch_4", "prix_cents": 10000 },
+    { "id": "vente_5", "paiement_id": "ch_5", "prix_cents": 10000 },
+    { "id": "vente_6", "paiement_id": "ch_6", "prix_cents": 10000 },
+    { "id": "vente_7", "paiement_id": "ch_7", "prix_cents": 10000 },
+    { "id": "payee_non_rapprochee", "paiement_id": "ch_8", "prix_cents": 10000 },
+    { "id": "vente_ecart", "paiement_id": "ecart", "prix_cents": 10000 },
+    { "id": "sans_paiement", "paiement_id": "absent", "prix_cents": 50000 }
   ],
-  "abonnements": [
-    { "ref": "abo_001", "montant": 2900, "statut": "actif" },
-    { "ref": "abo_002", "montant": 2900, "statut": "actif" },
-    { "ref": "abo_003", "montant": 2900, "statut": "annule" }
-  ]
+  "abonnements": [{ "id": "abonnement_9", "paiement_id": "ch_9", "prix_cents": 10000 }]
 }

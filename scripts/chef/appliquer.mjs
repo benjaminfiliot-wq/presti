@@ -2,7 +2,7 @@
 // Applique un plan validé, une requête à la fois, puis signale le battement du chef.
 import fs from 'node:fs'
 import path from 'node:path'
-import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, horodatage, ecrireJson, principal } from './commun.mjs'
+import { TRAVAIL, Arret, option, positionnels, lireJeton, baseSure, appeler, validerPlan, validerPertinence, filtrerTaches, filtrerCap, horodatage, ecrireJson, principal } from './commun.mjs'
 
 principal(async () => {
   const fichier = positionnels()[0]
@@ -11,21 +11,31 @@ principal(async () => {
   if (!['plein', 'leger'].includes(cycle)) throw new Arret(2, '--cycle : plein ou leger')
   const base = baseSure(option('base'))
   const jeton = lireJeton()
-  const rapport = { le: new Date().toISOString(), cycle, taches: 0, decisions: 0, deja: 0, requetes: [], ecarts: [], code: null }
+  const rapport = { le: new Date().toISOString(), cycle, taches: 0, decisions: 0, deja: 0, requetes: [], ecarts: [], ecartees: [], code: null }
   const fRapport = path.join(TRAVAIL, `appliquer-${horodatage()}.json`)
   const finir = (code) => { rapport.code = code; ecrireJson(fRapport, rapport); return code }
 
   let plan
   try { plan = JSON.parse(fs.readFileSync(fichier, 'utf8')) } catch { rapport.ecarts.push('plan illisible'); console.error('✗ plan illisible'); return finir(1) }
   const ecarts = validerPlan(plan, cycle)
+  // 07/10 : un plan dont TOUTES les tâches sont hors du cap de Benj (docs/agents/cap-benj.md) est refusé comme un plan invalide.
+  ecarts.push(...validerPertinence(plan))
   if (ecarts.length) {
     rapport.ecarts = ecarts
     console.error(`✗ plan refusé en bloc (${ecarts.length} écart(s)) :\n  ${ecarts.join('\n  ')}`)
     return finir(1)
   }
 
+  // Les tâches libres qui ne peuvent pas aboutir (web, maintenance des agents, données de prospects) ne sont pas créées : voir tacheEcartee (commun.mjs).
+  // 07/10 : puis chaque tâche hors du cap (ni e-commerce Brico Travaux ni Presti) est écartée avec son motif ; les autres passent.
+  const filtre = filtrerTaches(plan)
+  const cap = filtrerCap(filtre.gardees)
+  const gardees = cap.gardees
+  const ecartees = [...filtre.ecartees, ...cap.ecartees]
+  rapport.ecartees = ecartees
+  for (const e of ecartees) console.error(`· tâche écartée ${e.cle} : ${e.raison}`)
   const envois = [
-    ...plan.taches.map((t) => ({ genre: 'taches', cle: t.cle_idempotence, chemin: '/api/agents/taches', corps: { type: t.type, cle: t.cle_idempotence, capacite: t.capacite, charge: t.charge, ...('objet' in t ? { objet: t.objet } : {}) } })),
+    ...gardees.map((t) => ({ genre: 'taches', cle: t.cle_idempotence, chemin: '/api/agents/taches', corps: { type: t.type, cle: t.cle_idempotence, capacite: t.capacite, charge: t.charge, ...('objet' in t ? { objet: t.objet } : {}) } })),
     ...plan.decisions.map((d) => ({ genre: 'decisions', cle: d.cle_idempotence, chemin: '/api/agents/decisions', corps: { question: d.question, contexte: d.contexte, options: d.options.map((o) => ({ cle: o.cle, libelle: o.libelle, recommandee: o.recommandee })), defaut: d.option_defaut, montant_cents: d.montant_cents, portee: d.portee, echeance: d.echeance, cle: d.cle_idempotence } })),
   ]
   for (const e of envois) {
@@ -39,6 +49,6 @@ principal(async () => {
   const b = await appeler(base, jeton, 'POST', '/api/agents/battement')
   rapport.requetes.push({ genre: 'battement', statut: b.statut || b.erreur })
   if (b.statut < 200 || b.statut > 299) { console.error(`✗ battement refusé (HTTP ${b.statut || b.erreur})`); return finir(b.statut === 429 ? 3 : 1) }
-  console.log(`✓ plan appliqué : ${rapport.taches} tâche(s), ${rapport.decisions} décision(s), ${rapport.deja} déjà là`)
+  console.log(`✓ plan appliqué : ${rapport.taches} tâche(s), ${rapport.decisions} décision(s), ${rapport.deja} déjà là${ecartees.length ? `, ${ecartees.length} écartée(s)` : ''}`)
   return finir(0)
 })

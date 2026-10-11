@@ -1,0 +1,12 @@
+diff --git a/scripts/usine/coffre-regles.mjs b/scripts/usine/coffre-regles.mjs
+index 5f28ffa2..4f877c91 100644
+--- a/scripts/usine/coffre-regles.mjs
++++ b/scripts/usine/coffre-regles.mjs
+@@ -16,6 +16,7 @@ export const NOMS_PERMIS = Object.freeze([
+   'PRESTI_JETON_USINE',
+   'PRESTI_JETON_ATELIER', // l'agent atelier_maquettes (026-097 réécrite)
+   'PRESTI_JETON_LIVREUR_USINE',
++  'PRESTI_JETON_STUDIO', // le Studio pubs : packs locaux et échantillons (026-175, 026-200)
+   'PRESTI_JETON_FACTEUR_USINE', // le porteur du formulaire (026-095, voie gratuite du 25/09)
+   'PRESTI_JETON_TELEGRAM', // le pont Telegram (026-195)
+   'TELEGRAM_BOT_TOKEN',

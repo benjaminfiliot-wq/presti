@@ -1,0 +1,1185 @@
+M .gitignore
+ M .orchestre/agents.jsonl
+ M .orchestre/brouillons-ecosysteme/026/026-151.md
+ M .orchestre/brouillons-ecosysteme/026/026-231.md
+ M .orchestre/brouillons-ecosysteme/026/026-248.md
+ M .orchestre/contexte.md
+ M .orchestre/digest.md
+A  .orchestre/fait/026-083.md
+ D .orchestre/fait/026-099.md
+ D .orchestre/fait/026-170.md
+ D .orchestre/fait/026-173.md
+ D .orchestre/fait/026-174.md
+ D .orchestre/file/026-006.md
+ D .orchestre/file/026-030.md
+ D .orchestre/file/026-031.md
+ D .orchestre/file/026-033.md
+ D .orchestre/file/026-035.md
+ D .orchestre/file/026-042.md
+ D .orchestre/file/026-046.md
+ D .orchestre/file/026-047.md
+ D .orchestre/file/026-049.md
+ D .orchestre/file/026-056.md
+ D .orchestre/file/026-059.md
+ D .orchestre/file/026-064.md
+ D .orchestre/file/026-068.md
+ D .orchestre/file/026-073.md
+ D .orchestre/file/026-074.md
+ D .orchestre/file/026-075.md
+ D .orchestre/file/026-082.md
+ D .orchestre/file/026-084.md
+ D .orchestre/file/026-091.md
+ D .orchestre/file/026-096.md
+ D .orchestre/file/026-118.md
+ D .orchestre/file/026-120.md
+ D .orchestre/file/026-137.md
+ D .orchestre/file/026-141.md
+ D .orchestre/file/026-149.md
+ D .orchestre/file/026-153.md
+ D .orchestre/file/026-154.md
+D  .orchestre/file/026-155.md
+ D .orchestre/file/026-156.md
+ D .orchestre/file/026-157.md
+ D .orchestre/file/026-159.md
+ D .orchestre/file/026-168.md
+ D .orchestre/file/026-207.md
+ D .orchestre/file/026-208.md
+ D .orchestre/file/026-209.md
+ D .orchestre/file/026-215.md
+ D .orchestre/file/026-224.md
+ D .orchestre/file/026-230.md
+ D .orchestre/file/026-235.md
+ D .orchestre/file/026-240.md
+ D .orchestre/file/026-253.md
+ M .orchestre/preuves/026-001/couverture.md
+ M .orchestre/preuves/026-001/meta-juge-autotest.md
+ M .orchestre/preuves/026-029/echecs-attendus.md
+ M .orchestre/preuves/026-037/echecs-attendus.md
+ M .orchestre/preuves/026-062/echecs-attendus.md
+ M .orchestre/preuves/026-066/echecs-attendus.md
+ M .orchestre/preuves/026-069/contre-verif-28-09.md
+ M .orchestre/preuves/026-069/echecs-attendus.md
+A  .orchestre/preuves/026-083/blocage-reprise-30-09.md
+A  .orchestre/preuves/026-083/contre-verif-04-10.md
+M  .orchestre/preuves/026-083/decisions-avant.md
+A  .orchestre/preuves/026-083/diagnostic-04-10.md
+A  .orchestre/preuves/026-083/etalonnage.json
+A  .orchestre/preuves/026-083/validation-hors-jeu-04-10.json
+ M .orchestre/preuves/026-112/contre-verif-28-09.md
+ M .orchestre/preuves/026-126/echecs-attendus.md
+ M .orchestre/preuves/026-170/decisions-avant.md
+ M .orchestre/preuves/026-170/echecs-attendus.md
+ M .orchestre/preuves/026-171/decisions-avant.md
+ M .orchestre/preuves/026-171/echecs-attendus.md
+ M .orchestre/preuves/026-173/decisions-avant.md
+ M .orchestre/preuves/026-174/decisions-avant.md
+ M .orchestre/preuves/026-176/decisions-avant.md
+ M .orchestre/preuves/026-194/decisions-avant.md
+ M .orchestre/preuves/026-194/echecs-attendus.md
+ M .orchestre/preuves/026-195/verifier.log
+ M .orchestre/preuves/026-217/decisions-avant.md
+A  .orchestre/preuves/reglages-0410/garde-imports.md
+ M .orchestre/verdicts.jsonl
+ M AGENTS.md
+ M CLAUDE.md
+ M README.md
+ M app/api/cron/contenu/route.ts
+ M app/api/usine/porteur/rendu/route.ts
+ M app/api/usine/porteur/travail/route.ts
+ M app/controle/station/Attention.tsx
+ M app/controle/station/Barre.tsx
+ M app/controle/station/Equipage.tsx
+ M app/controle/station/Journal.tsx
+ M app/controle/station/Panneaux.tsx
+ M app/controle/station/Vues.tsx
+D  docs/contexte-cloud/SaaS/Prospection/Brief-Alexandre-Artisans.md
+D  docs/contexte-cloud/SaaS/Prospection/Email-artisans-2026-09-15.md
+D  docs/contexte-cloud/SaaS/Prospection/FB-10-electriciens-a-coller.md
+D  docs/contexte-cloud/SaaS/Prospection/Guide-Presti-Demarchage.md
+D  docs/contexte-cloud/SaaS/Prospection/Kit-Alexandre.md
+D  docs/contexte-cloud/SaaS/Prospection/Lot-20x20-2026-09-14.md
+D  docs/contexte-cloud/SaaS/Prospection/Lot-Insta-FB-2026-09-10.md
+D  docs/contexte-cloud/SaaS/Prospection/Objections-reponses.md
+D  docs/contexte-cloud/SaaS/Prospection/Publications-Presti-2026-09.md
+D  docs/contexte-cloud/SaaS/Prospection/cibles-instagram-2026-09-15.INVENTEES-refusees.json
+D  docs/contexte-cloud/SaaS/Prospection/cibles-instagram-2026-09-15.json
+D  docs/contexte-cloud/SaaS/Prospection/corbeille-gmail-2026-09-15.md
+D  docs/contexte-cloud/SaaS/Prospection/deja-contactes-email.txt
+D  docs/contexte-cloud/SaaS/Prospection/deja-contactes-instagram.txt
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/brouillons-2026-09-15.md
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/envoi-2026-09-15.csv
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/envois-2026-09-15.md
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/liste-validee.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-16.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-17-finitions.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-17-gros-oeuvre.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-17-plomberie-elec.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-79.json
+D  docs/contexte-cloud/SaaS/Prospection/emails-artisans/lot-85.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/LISEZ-MOI-AVANT-D-APPELER.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/data/01-rge-brut.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/data/02-entreprises.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/data/03-entreprises-actives.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/data/04-entreprises-classees.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/liste-resume.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/liste.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/01-avipur/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/01-avipur/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/02-rateau-chauffage/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/02-rateau-chauffage/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/03-sapian/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/03-sapian/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/04-eurl-batireno-v-17/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/04-eurl-batireno-v-17/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/05-lorit-nicolas/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/05-lorit-nicolas/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/06-jp-plomberie/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/06-jp-plomberie/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/07-ldbp-renovation/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/07-ldbp-renovation/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/08-solution-toiture/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/08-solution-toiture/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/09-les-couvreurs-charentais/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/09-les-couvreurs-charentais/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/10-guillon-cpp/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/10-guillon-cpp/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/11-courants-rochelais/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/11-courants-rochelais/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/12-decoratherm/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/12-decoratherm/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/13-itreco/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/13-itreco/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/14-ivan-billard-sas/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/14-ivan-billard-sas/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/15-watt-co-energie/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/15-watt-co-energie/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/16-menuiserie-electricite-gounord/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/16-menuiserie-electricite-gounord/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/17-gay-anthony/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/17-gay-anthony/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/18-adrien-mercier/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/18-adrien-mercier/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/19-energie-solaire-85/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/19-energie-solaire-85/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/20-huguet-ingenierie/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/20-huguet-ingenierie/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/21-janus-energie/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/21-janus-energie/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/22-poupard-menard-sarl/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/22-poupard-menard-sarl/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/23-sarl-vequaud-dubois/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/23-sarl-vequaud-dubois/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/24-serrurerie-sud-vendee/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/24-serrurerie-sud-vendee/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/25-thermique-sud-vendee/capture-bureau.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/25-thermique-sud-vendee/capture-telephone.jpg
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/maquettes/manifeste.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/01-fetch-rge.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/02-dedupe.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/03-enrichir.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/04-verifier-sites.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/05-construire-liste.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/06-regenerer-isolation.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/outils/_contenu-isolation-locale.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-26-marans/script-appel.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/LISEZMOI-liste.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/liste-2026-09-27.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/01-bertrand-paysage/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/01-bertrand-paysage/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/01-bertrand-paysage/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/02-paysages-pepinieres-bonneau/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/02-paysages-pepinieres-bonneau/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/02-paysages-pepinieres-bonneau/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/03-eurl-nettoyage-entretien-luconnais/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/03-eurl-nettoyage-entretien-luconnais/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/03-eurl-nettoyage-entretien-luconnais/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/04-les-jardins-et-clotures-du-sud-ouest/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/04-les-jardins-et-clotures-du-sud-ouest/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/04-les-jardins-et-clotures-du-sud-ouest/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/05-eurl-saint-max-carrelage/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/05-eurl-saint-max-carrelage/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/05-eurl-saint-max-carrelage/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/06-borget-ludovic/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/06-borget-ludovic/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/06-borget-ludovic/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/07-mt-bat/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/07-mt-bat/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/07-mt-bat/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/08-carrelage-et-moquette-de-l-ocean/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/08-carrelage-et-moquette-de-l-ocean/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/08-carrelage-et-moquette-de-l-ocean/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/09-electric-moteur/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/09-electric-moteur/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/09-electric-moteur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/10-etablissements-videau-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/10-etablissements-videau-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/10-etablissements-videau-et-fils/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/11-noureau-gendry/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/11-noureau-gendry/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/11-noureau-gendry/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/12-etablissements-lafargue/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/12-etablissements-lafargue/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/12-etablissements-lafargue/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/13-sarl-cyril-gosse/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/13-sarl-cyril-gosse/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/13-sarl-cyril-gosse/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/14-quere-david/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/14-quere-david/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/14-quere-david/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/15-gilbert-bois/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/15-gilbert-bois/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/15-gilbert-bois/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/16-etablissements-lapassouse/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/16-etablissements-lapassouse/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/16-etablissements-lapassouse/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/17-sylvain-mella-constructions/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/17-sylvain-mella-constructions/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/17-sylvain-mella-constructions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/18-sarl-pailler-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/18-sarl-pailler-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/18-sarl-pailler-et-fils/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/19-ceme-atlantique/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/19-ceme-atlantique/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/19-ceme-atlantique/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/20-bouhier/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/20-bouhier/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/20-bouhier/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/21-morisson/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/21-morisson/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/21-morisson/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/22-sarl-p-f-b-du-batiment/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/22-sarl-p-f-b-du-batiment/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/22-sarl-p-f-b-du-batiment/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/23-plomberie-pajot/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/23-plomberie-pajot/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/23-plomberie-pajot/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/24-rouvereau-peinture/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/24-rouvereau-peinture/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/24-rouvereau-peinture/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/25-lls/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/25-lls/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/25-lls/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/26-entreprise-largeau-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/26-entreprise-largeau-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/26-entreprise-largeau-et-fils/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/27-aubineau-associes/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/27-aubineau-associes/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/27-aubineau-associes/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/28-isolation-thermique-niortaise/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/28-isolation-thermique-niortaise/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/28-isolation-thermique-niortaise/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/29-elyclim/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/29-elyclim/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/29-elyclim/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/30-stephane-penacq/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/30-stephane-penacq/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/30-stephane-penacq/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/KIT-APPEL.avant-mentions.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/KIT-APPEL.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/LISEZMOI.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/capturer.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/generer.py.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/manifeste.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/suivi-appels.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/telephones-trouves.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/amorce-generateur/images/robinetterie-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/fonts/manrope-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/images/canalisations-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/images/colonne-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/images/douches-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/images/lavabo-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/plombier-dompierre-sur-mer/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/plombier-la-rochelle/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/plombier-puilboreau/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/01-societe-percot-et-fils/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/amorce-generateur/images/bibliotheque-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/fonts/fraunces-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/images/bibliotheque-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/images/escalier-colimacon-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/images/escalier-tournant-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/images/lit-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/menuisier-fontenay-le-comte/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/menuisier-l-orbrie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/menuisier-saint-michel-le-cloucq/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/02-sarl-cyril-gosse/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/carreleur-chasnais/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/carreleur-lucon/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/carreleur-sainte-gemme-la-plaine/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/fonts/manrope-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/images/ceramique-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/images/dallage-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/images/douche-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/images/faience-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/03-borget-ludovic/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/fonts/archivo-narrow-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/fonts/ibm-plex-sans-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/images/coulage-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/images/fondations-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/images/parement-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/images/soutenement-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/macon-chasnais/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/macon-les-magnils-reigniers/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/macon-sainte-gemme-la-plaine/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/04-etablissements-videau-et-fils/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/carreleur-aytre/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/carreleur-lagord/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/carreleur-puilboreau/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/fonts/manrope-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/images/ceramique-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/images/dallage-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/images/douche-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/images/faience-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/05-carrelage-et-moquette-de-l-ocean/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/amorce-generateur/images/bibliotheque-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/fonts/fraunces-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/images/bibliotheque-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/images/escalier-colimacon-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/images/escalier-tournant-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/images/lit-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/menuisier-cabariot/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/menuisier-moragne/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/menuisier-tonnay-charente/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/06-sarl-bouffet-olivier/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/amorce-generateur/images/bibliotheque-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/fonts/fraunces-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/images/bibliotheque-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/images/escalier-colimacon-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/images/escalier-tournant-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/images/lit-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/menuisier-cabariot/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/menuisier-lussant/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/menuisier-tonnay-charente/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/07-m-c-i-sarl/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/amorce-generateur/images/tuiles-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/couvreur-fouras/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/couvreur-rochefort/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/couvreur-yves/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/fonts/archivo-narrow-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/fonts/ibm-plex-sans-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/images/ancienne-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/images/ardoise-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/images/charpente-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/images/faitage-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/08-couverture-17/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/fonts/instrument-serif-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/fonts/manrope-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/images/enduit-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/images/preparation-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/images/rechampi-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/images/rouleau-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/peintre-la-reorthe/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/peintre-saint-aubin-la-plaine/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/peintre-saint-juire-champgillon/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/09-menanteau/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/amorce-generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/amorce-generateur/images/armoire-720.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/amorce-generateur/images/hero-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/amorce-generateur/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/amorce-generateur/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/maquette-amorce.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/electricien-fontenay-le-comte/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/electricien-l-orbrie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/electricien-longeves/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/fonts/ibm-plex-sans-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/fonts/space-grotesk-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/images/armoire-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/images/cable-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/images/interrupteur-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/images/luminaires-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/10-elec-technic/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/LISEZMOI.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/da.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/LISEZMOI.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/eclate.bureau.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/eclate.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/eclate.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/recit.bureau.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/recit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/recit.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/survol.bureau.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/survol.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/telephone.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/video.bureau.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/video.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/familles/video.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/formulaire.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/maquette.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/monogrammes/lestraque.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/relief-fil.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_kit/relief.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/archivo-narrow/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/fraunces/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/ibm-plex-sans/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/ibm-plex-sans/couverture.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/instrument-serif/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/lora/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/manrope/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/newsreader/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/space-grotesk/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/_polices/syne/OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/attributions.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/contenu.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/generer.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/liens-reseaux.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/references.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/references.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/contact/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/fonts/manrope-OFL.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/images/canalisations-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/images/colonne-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/images/douches-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/images/hero-1600.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/images/lavabo-960.webp
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/kit.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/kit.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/mentions/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/plombier-dompierre-sur-mer/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/plombier-la-rochelle/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/plombier-puilboreau/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/prestations/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/robots.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/site.js.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/_generateur/site/styles.css.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/capturer.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-sites-reference/construire.py.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/LISEZMOI-liste.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/liste-2026-09-27.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-h-t-climatisation/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-h-t-climatisation/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-h-t-climatisation/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-sarl-somebat/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-sarl-somebat/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/01-sarl-somebat/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-h-t-climatisation/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-h-t-climatisation/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-h-t-climatisation/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-raynal-elec/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-raynal-elec/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/02-raynal-elec/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-quali-chauffe/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-quali-chauffe/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-quali-chauffe/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-raynal-elec/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-raynal-elec/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/03-raynal-elec/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-sarl-guignet/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-sarl-guignet/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-sarl-guignet/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-smap-sarl/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-smap-sarl/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/04-smap-sarl/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-bgsols/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-bgsols/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-bgsols/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-valarti/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-valarti/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/05-valarti/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-frere/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-frere/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-frere/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-group-ecogie/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-group-ecogie/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/06-group-ecogie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-guinot/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-guinot/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-guinot/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-sarl-hugo/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-sarl-hugo/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/07-sarl-hugo/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-kvg/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-kvg/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-kvg/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-larnaud-paysage/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-larnaud-paysage/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/08-larnaud-paysage/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-gendet-platrerie-carrelage/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-gendet-platrerie-carrelage/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-gendet-platrerie-carrelage/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-paysage-robin/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-paysage-robin/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/09-paysage-robin/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-sl-paysage-services/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-sl-paysage-services/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-sl-paysage-services/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-tuile-zinc/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-tuile-zinc/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/10-tuile-zinc/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-d-c-agencements/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-d-c-agencements/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-d-c-agencements/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-eurl-lvp/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-eurl-lvp/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/11-eurl-lvp/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-amenagement/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-amenagement/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-amenagement/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-couverture/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-couverture/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/12-aunis-couverture/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-couverture-teixeira/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-couverture-teixeira/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-couverture-teixeira/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-smap-sarl/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-smap-sarl/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/13-smap-sarl/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-art-terra/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-art-terra/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-art-terra/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-valarti/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-valarti/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/14-valarti/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-group-ecogie/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-group-ecogie/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-group-ecogie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-passion-carrelage-17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-passion-carrelage-17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/15-passion-carrelage-17/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-gallard-peinture/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-gallard-peinture/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-gallard-peinture/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-sarl-hugo/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-sarl-hugo/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/16-sarl-hugo/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-3b-paysages/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-3b-paysages/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-3b-paysages/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-sl-paysage-services/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-sl-paysage-services/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/17-sl-paysage-services/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-boinot-et-fils/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-boinot-et-fils/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-boinot-et-fils/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-d-c-agencements/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-d-c-agencements/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/18-d-c-agencements/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-custom-renov/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-custom-renov/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-custom-renov/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-inove-facade/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-inove-facade/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/19-inove-facade/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-couverture-teixeira/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-couverture-teixeira/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-couverture-teixeira/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-covreor/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-covreor/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/20-covreor/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-gallard-peinture/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-gallard-peinture/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-gallard-peinture/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-qualirea/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-qualirea/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/21-qualirea/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-aunistel-17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-aunistel-17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-aunistel-17/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-bcd-serrurerie/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-bcd-serrurerie/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/22-bcd-serrurerie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-electrosolution/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-electrosolution/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-electrosolution/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-sarl-toutravaux/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-sarl-toutravaux/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/23-sarl-toutravaux/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-bcd-serrurerie/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-bcd-serrurerie/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-bcd-serrurerie/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-g-m-e-atlantique/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-g-m-e-atlantique/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/24-g-m-e-atlantique/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-dg17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-dg17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-dg17/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-leduc-alu/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-leduc-alu/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/25-leduc-alu/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/26-clim-co17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/26-clim-co17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/26-clim-co17/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/27-isol-habitat-ouest/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/27-isol-habitat-ouest/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/27-isol-habitat-ouest/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-ar-com/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-ar-com/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-ar-com/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-generation-renovation-17/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-generation-renovation-17/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/28-generation-renovation-17/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/29-brjs/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/29-brjs/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/29-brjs/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-couv-toit/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-couv-toit/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-couv-toit/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-eurl-les-peintures-d-allan/capture-bureau.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-eurl-les-peintures-d-allan/capture-telephone.png
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/30-eurl-les-peintures-d-allan/index.html.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/KIT-APPEL.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/LISEZMOI.md
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/capturer.mjs.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/generer.py.txt
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/manifeste.json
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/suivi-appels.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/maquettes-2026-09-27/telephones-trouves.csv
+D  docs/contexte-cloud/presti-ops/prospection/2026-09-27-vague2/siren-deja-contactes.txt
+D  docs/contexte-cloud/presti-secrets/prospection/linkedin-17-2026-09-09.md
+D  docs/contexte-cloud/presti-secrets/prospection/prospects-3-reseaux-2026-09-09.md
+D  docs/contexte-cloud/presti-secrets/prospection/prospects.json
+ M docs/marketing/README.md
+ M docs/marketing/offre/registre-promesses.md
+ M docs/marketing/voix/README.md
+ M lib/agents/acquisition/contrat.ts
+ M lib/agents/acquisition/facteur.ts
+ M lib/contenu/brief.ts
+ M lib/contenu/lignes.ts
+ M lib/contenu/metaPublier.ts
+ M plans/journal-publications.md
+ M scripts/achat-public-qa.mjs
+ M scripts/agents/porteur-formulaire.mjs
+ M scripts/chantier-qa.mjs
+ M scripts/commande-exporter-qa.mjs
+ M scripts/contenu/fabriquer.mjs
+ M scripts/crieur-qa.mjs
+M  scripts/deploiement-etat.mjs
+ M scripts/familles-socle-suite-qa.mjs
+ M scripts/fixtures/025/commun.mjs
+ M scripts/fixtures/026-livraison-tresor/commun.mjs
+ M scripts/fixtures/026-pilotage/a/commun.mjs
+M  scripts/garde-commit.mjs
+A  scripts/garde-imports-qa.mjs
+ M scripts/generation-actions-qa.mjs
+ M scripts/instantane-quotidien-qa.mjs
+ M scripts/juges-026-pubs-contenu-mutations.mjs
+A  scripts/lib/imports-orphelins.mjs
+ M scripts/livraison-tour-qa.mjs
+ M scripts/maquette-qa.mjs
+ M scripts/media-octets-qa.mjs
+ M scripts/next16-qa.mjs
+ M scripts/pack-pub-base-qa.mjs
+ M scripts/pub-locale-qa.mjs
+ M scripts/redacteur-qa.mjs
+ M scripts/redacteur-v2-qa.mjs
+ M scripts/retrait-site-qa.mjs
+ M scripts/revue-qa.mjs
+ M scripts/savoir-lecons-qa.mjs
+ M scripts/search-console-qa.mjs
+ M scripts/station-route-qa.mjs
+ M scripts/studio-garde-qa.mjs
+ M scripts/studio-offre-qa.mjs
+ M scripts/tuile-argent-qa.mjs
+MM scripts/usine-durcie-qa.mjs
+ M scripts/verrou-insertion-qa.mjs
+ M scripts/verrou-maj-qa.mjs
+ M scripts/webhook-muet-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .codex/
+?? .orchestre/a-decider/
+?? .orchestre/a-relire/
+?? .orchestre/archive/
+?? .orchestre/decisions-chef-0410.md
+?? .orchestre/en-cours/
+?? .orchestre/fait/020-03.md
+?? .orchestre/fait/021-03.md
+?? .orchestre/fait/021-04.md
+?? .orchestre/fait/021-06.md
+?? .orchestre/fait/021-10.md
+?? .orchestre/fait/021-13.md
+?? .orchestre/fait/021-17.md
+?? .orchestre/fait/021-18.md
+?? .orchestre/fait/021-22.md
+?? .orchestre/fait/021-23.md
+?? .orchestre/fait/022-02.md
+?? .orchestre/fait/022-04.md
+?? .orchestre/fait/023-01.md
+?? .orchestre/fait/023-04.md
+?? .orchestre/fait/026-064.question.md
+?? .orchestre/fait/026-089.md
+?? .orchestre/fait/026-096.md
+?? .orchestre/fait/026-113.md
+?? .orchestre/fait/026-117.md
+?? .orchestre/fait/026-237.md
+?? .orchestre/file/023-03.md
+?? .orchestre/file/025-10.md
+?? .orchestre/file/026-092.md
+?? .orchestre/file/026-099.md
+?? .orchestre/file/026-111.md
+?? .orchestre/file/026-123.md
+?? .orchestre/file/026-151.md
+?? .orchestre/file/026-170.md
+?? .orchestre/file/026-171.md
+?? .orchestre/file/026-172.md
+?? .orchestre/file/026-179.md
+?? .orchestre/file/026-194.md
+?? .orchestre/file/026-199.md
+?? .orchestre/preuves/018-01/landing-bureau-bloc.png
+?? .orchestre/preuves/018-01/landing-bureau-haut.png
+?? .orchestre/preuves/018-01/landing-mobile-bloc.png
+?? .orchestre/preuves/018-01/landing-mobile-haut.png
+?? .orchestre/preuves/018-03/avant.txt
+?? .orchestre/preuves/018-03/essai-42-bis/
+?? .orchestre/preuves/018-03/essai-7/
+?? .orchestre/preuves/018-09/essai-42-bis/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-F.jpg
+?? .orchestre/preuves/020-01/L2/travail/
+?? .orchestre/preuves/020-01/descente/
+?? .orchestre/preuves/020-03/
+?? .orchestre/preuves/020-11/
+?? .orchestre/preuves/020-12/
+?? .orchestre/preuves/020-13/
+?? .orchestre/preuves/021-00/cahier-vague-5.md
+?? .orchestre/preuves/021-00/existant.md
+?? .orchestre/preuves/021-00/recit/
+?? .orchestre/preuves/021-00/ref-recit.md
+?? .orchestre/preuves/021-00/ref-survol-objet.md
+?? .orchestre/preuves/021-00/ref-video-mesures.json
+?? .orchestre/preuves/021-00/ref-video.md
+?? .orchestre/preuves/021-00/survol-objet/
+?? .orchestre/preuves/021-01/
+?? .orchestre/preuves/021-02/
+?? .orchestre/preuves/021-03/
+?? .orchestre/preuves/021-04/
+?? .orchestre/preuves/021-04b/
+?? .orchestre/preuves/021-05/contestation/
+?? .orchestre/preuves/021-05/diagnostic-juge-copie.diff
+?? .orchestre/preuves/021-05/juge/
+?? .orchestre/preuves/021-06/
+?? .orchestre/preuves/021-10/
+?? .orchestre/preuves/021-13/
+?? .orchestre/preuves/021-14/
+?? .orchestre/preuves/021-15/
+?? .orchestre/preuves/021-16/
+?? .orchestre/preuves/021-17/
+?? .orchestre/preuves/021-18/
+?? .orchestre/preuves/021-20/
+?? .orchestre/preuves/021-22/
+?? .orchestre/preuves/021-23/
+?? .orchestre/preuves/022-02/
+?? .orchestre/preuves/022-04/
+?? .orchestre/preuves/022-05/
+?? .orchestre/preuves/023-01/
+?? .orchestre/preuves/023-03/
+?? .orchestre/preuves/023-04/
+?? .orchestre/preuves/024-01/
+?? .orchestre/preuves/024-02/
+?? .orchestre/preuves/025-10/
+?? .orchestre/preuves/026-027/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-087/
+?? .orchestre/preuves/026-089/
+?? .orchestre/preuves/026-092/
+?? .orchestre/preuves/026-096/
+?? .orchestre/preuves/026-099/
+?? .orchestre/preuves/026-103/
+?? .orchestre/preuves/026-111/avant.txt
+?? .orchestre/preuves/026-111/decisions-avant.md
+?? .orchestre/preuves/026-111/essai-bac-propre.sh
+?? .orchestre/preuves/026-113/
+?? .orchestre/preuves/026-117/
+?? .orchestre/preuves/026-120/
+?? .orchestre/preuves/026-121/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-123/
+?? .orchestre/preuves/026-134/avant.txt
+?? .orchestre/preuves/026-134/decisions-avant.md
+?? .orchestre/preuves/026-134/reponse-chef.md
+?? .orchestre/preuves/026-138/
+?? .orchestre/preuves/026-150/
+?? .orchestre/preuves/026-151/avant.txt
+?? .orchestre/preuves/026-151/contre-exhaustive-04-10.mjs
+?? .orchestre/preuves/026-151/decisions-avant.md
+?? .orchestre/preuves/026-151/mutations-contre-verifiees.md
+?? .orchestre/preuves/026-151/mutations.json
+?? .orchestre/preuves/026-151/mutations.md
+?? .orchestre/preuves/026-151/primary-avant-rejeu-04-10/
+?? .orchestre/preuves/026-151/reponse-chef.md
+?? .orchestre/preuves/026-152/
+?? .orchestre/preuves/026-156/
+?? .orchestre/preuves/026-159/
+?? .orchestre/preuves/026-172/
+?? .orchestre/preuves/026-175/avant.txt
+?? .orchestre/preuves/026-175/decisions-avant.md
+?? .orchestre/preuves/026-177/
+?? .orchestre/preuves/026-178/
+?? .orchestre/preuves/026-179/
+?? .orchestre/preuves/026-199/
+?? .orchestre/preuves/026-210/sabotages.md
+?? .orchestre/preuves/026-221/
+?? .orchestre/preuves/026-223/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-225/avant.txt
+?? .orchestre/preuves/026-225/decisions-avant.md
+?? .orchestre/preuves/026-225/reponse-chef.md
+?? .orchestre/preuves/026-226/
+?? .orchestre/preuves/026-227/
+?? .orchestre/preuves/026-237/
+?? .orchestre/preuves/026-240/
+?? .orchestre/preuves/026-243/
+?? .orchestre/preuves/026-244/
+?? .orchestre/preuves/026-252/
+?? .orchestre/preuves/026-254/
+?? .orchestre/preuves/026-257/avant.txt
+?? .orchestre/preuves/026-257/decisions-avant.md
+?? .orchestre/preuves/026-258/avant.txt
+?? .orchestre/preuves/026-258/decisions-avant.md
+?? .orchestre/preuves/reglages-0410/essai-0124.tpl.sql
+?? .orchestre/preuves/reglages-0410/sabotages-crieur-qa.mjs
+?? .orchestre/refuse/021-02.md
+?? .orchestre/refuse/021-14.md
+?? .orchestre/refuse/021-15.md
+?? .orchestre/refuse/021-16.md
+?? .orchestre/refuse/021-20.md
+?? .orchestre/refuse/026-087.md
+?? .orchestre/refuse/026-099.md
+?? .orchestre/refuse/026-103.md
+?? .orchestre/refuse/026-138.md
+?? .orchestre/refuse/026-156.md
+?? .orchestre/refuse/026-170.md
+?? .orchestre/refuse/026-173.md
+?? .orchestre/refuse/026-174.md
+?? .orchestre/refuse/026-221.md
+?? .orchestre/refuse/026-226.md
+?? .orchestre/refuse/026-227.md
+?? .orchestre/refuse/026-254.md
+?? .orchestre/scratch/couverture-avant.txt
+?? app/controle/station/Gestes.tsx
+?? app/controle/station/gestes.css
+?? app/controle/station/journal/
+?? app/controle/station/salles/
+?? app/controle/station/vues/
+?? docs/agents/douleurs-mensuelles.md
+?? fix_newline.mjs
+?? gen_026_120.py
+?? gen_salles.py
+?? generer_les_salles.py
+?? lib/agents/acquisition/redacteur.ts
+?? plans/publications-serie-2.md
+?? promo-src/assets-b64.json
+?? promo-src/captures/
+?? promo-src/crop-devis.png
+?? promo-src/crop-msg.png
+?? promo-src/crop-rep.png
+?? promo-src/crop-site.png
+?? promo-src/film.html
+?? promo-src/fonts/
+?? promo-src/hf/assets/
+?? promo-src/hf/hyperframes.json
+?? promo-src/hf/package.json
+?? promo-src/hf/pub-01-carre/
+?? promo-src/hf/pub-01-paysage/
+?? promo-src/hf/pub-01-vertical/
+?? promo-src/hf/pub-02-carre/
+?? promo-src/hf/pub-02-paysage/
+?? promo-src/hf/pub-02-vertical/
+?? promo-src/hf/pub-03-carre/
+?? promo-src/hf/pub-03-paysage/
+?? promo-src/hf/pub-03-vertical/
+?? promo-src/hf/pub-04-carre/
+?? promo-src/hf/pub-04-paysage/
+?? promo-src/hf/pub-04-vertical/
+?? promo-src/hf/pub-05-carre/
+?? promo-src/hf/pub-05-paysage/
+?? promo-src/hf/pub-05-vertical/
+?? promo-src/hf/pub-06-carre/
+?? promo-src/hf/pub-06-paysage/
+?? promo-src/hf/pub-06-vertical/
+?? promo-src/hf/pub-07-carre/
+?? promo-src/hf/pub-07-paysage/
+?? promo-src/hf/pub-07-vertical/
+?? promo-src/hf/pub-08-carre/
+?? promo-src/hf/pub-08-paysage/
+?? promo-src/hf/pub-08-vertical/
+?? promo-src/hf/pub-09-carre/
+?? promo-src/hf/pub-09-paysage/
+?? promo-src/hf/pub-09-vertical/
+?? promo-src/hf/pub-10-carre/
+?? promo-src/hf/pub-10-paysage/
+?? promo-src/hf/pub-10-vertical/
+?? promo-src/hf/pub-11-carre/
+?? promo-src/hf/pub-11-paysage/
+?? promo-src/hf/pub-11-vertical/
+?? promo-src/hf/pub-12-carre/
+?? promo-src/hf/pub-12-paysage/
+?? promo-src/hf/pub-12-vertical/
+?? promo-src/hf/pub-13-carre/
+?? promo-src/hf/pub-13-paysage/
+?? promo-src/hf/pub-13-vertical/
+?? promo-src/hf/pub-14-carre/
+?? promo-src/hf/pub-14-paysage/
+?? promo-src/hf/pub-14-vertical/
+?? promo-src/hf/pub-15-carre/
+?? promo-src/hf/pub-15-paysage/
+?? promo-src/hf/pub-15-vertical/
+?? promo-src/hf/pub-16-carre/
+?? promo-src/hf/pub-16-paysage/
+?? promo-src/hf/pub-16-vertical/
+?? promo-src/hf/pub-17-carre/
+?? promo-src/hf/pub-17-paysage/
+?? promo-src/hf/pub-17-vertical/
+?? promo-src/hf/pub-18-carre/
+?? promo-src/hf/pub-18-paysage/
+?? promo-src/hf/pub-18-vertical/
+?? promo-src/hf/pub-19-carre/
+?? promo-src/hf/pub-19-paysage/
+?? promo-src/hf/pub-19-vertical/
+?? promo-src/hf/pub-20-carre/
+?? promo-src/hf/pub-20-paysage/
+?? promo-src/hf/pub-20-vertical/
+?? promo-src/hf/voix/
+?? promo-src/marque.svg
+?? promo-src/musique/
+?? public/promo/facebook-couverture-1640x856.png
+?? public/promo/facebook-couverture-GUIDE.png
+?? public/promo/presti-carre-miniature.jpg
+?? public/promo/presti-carre.mp4
+?? public/promo/presti-paysage-miniature.jpg
+?? public/promo/presti-paysage.mp4
+?? public/promo/presti-vertical-miniature.jpg
+?? public/promo/presti-vertical.mp4
+?? public/promo/voix/
+?? rewrite.mjs
+?? scripts/agents-libres.mjs
+?? scripts/chef/douleurs.mjs
+?? scripts/fixtures/026-pilotage/k/commun.mjs
+?? scripts/fixtures/026-pilotage/k/pieges/
+?? scripts/fixtures/026-pilotage/k/temoin/app/controle/station/moteur/PROVENANCE.md.temoin
+?? scripts/fixtures/026-pilotage/k/temoin/app/controle/station/moteur/grille.ts.temoin
+?? scripts/fixtures/026-pilotage/k/temoin/lib/stationEssai.ts.temoin
+?? scripts/fixtures/026-pilotage/k/temoin/middleware.ts.temoin
+?? scripts/fixtures/026-transverse/doublures/
+?? scripts/fixtures/026-transverse/systeme/
+?? scripts/fixtures/026-transverse/temoin/
+?? scripts/fixtures/026-usine-pubs/
+?? scripts/juges-023-mutations.mjs
+?? scripts/juges-026-lt-mutations.mjs
+?? scripts/juges-026-orchestre-chef-mutations.mjs
+?? scripts/juges-026-securite-mutations.mjs
+?? scripts/pack-pub/fabriquer.mjs
+?? scripts/publications-serie2-qa.mjs
+?? scripts/sabotages-crieur-qa-0410.mjs
+?? scripts/usine/garde-prospects.mjs
+?? scripts/usine/meta-tache.mjs
+?? scripts/usine/openclaw/
+?? scripts/usine/relais-cle.mjs
+?? scripts/usine/systemd/presti-douleurs.service
+?? scripts/usine/systemd/presti-douleurs.timer
+?? videos/

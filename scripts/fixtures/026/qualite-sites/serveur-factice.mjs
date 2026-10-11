@@ -1,152 +1,174 @@
-// scripts/fixtures/026/qualite-sites/serveur-factice.mjs — le serveur factice des sites livrés (fiche 026-246).
-// Écoute sur 127.0.0.1, port éphémère, rien d'autre : aucun réseau externe, aucune donnée réelle. Chaque site est servi sous
-// /s/<slug>/… ; les hôtes publics factices (<slug>.exemple.invalid) sont ramenés ici par `resoudre(url)`. Pas de vrai TLS :
-// le protocole et le certificat « rendus » sont annoncés par l'en-tête x-simule-tls (valide | expire | aucun).
-// Les pannes se règlent par site : serveur.regler('vallon', ['http500', 'lien_mort', …]). Le serveur ENREGISTRE chaque requête
-// (méthode, chemin, instant) : c'est ce journal qui prouve qu'un contrôleur n'a jamais écrit ni soumis quoi que ce soit.
+// Serveur factice des sites livrés (fiche 026-246, jeu d'essai du juge qualite-sites-qa) : un seul serveur HTTP sur 127.0.0.1,
+// qui répond au nom de plusieurs « sites » (l'en-tête Host choisit le site) et dont chaque site porte des PANNES réglables,
+// chacune indépendante des autres. Aucun vrai TLS : le protocole logique (http/https) arrive dans l'en-tête x-factice-schema,
+// et un certificat expiré est un INDICATEUR (en-tête de réponse x-factice-certificat: expire), jamais un vrai certificat.
+//
+// Ce que le serveur journalise (c'est la preuve du juge, côté serveur, pas côté module) : chaque requête reçue, avec la méthode,
+// l'hôte, le chemin, la voie par laquelle elle est arrivée (x-factice-via : navigateur | recuperer | inconnu) et l'instant de
+// l'HORLOGE FACTICE du banc (jamais l'heure réelle : les attentes d'une seconde ne coûtent rien). Un site audité n'est jamais
+// écrit : toute méthode autre que GET/HEAD est refusée (405) ET consignée ; un POST sur /api/contact est de plus compté dans
+// `soumissions` (le formulaire d'un client ne reçoit jamais de faux message).
+//
+// Données synthétiques : noms, SIREN et adresses sont inventés ; les domaines sont en .test (réservé, jamais résolu).
 import http from 'node:http'
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import zlib from 'node:zlib'
 
-const ICI = path.dirname(fileURLToPath(import.meta.url))
-export const COMMANDES = JSON.parse(fs.readFileSync(path.join(ICI, 'sites-livres.json'), 'utf8')).commandes
-export const BUDGET_ESSAI = 3 * 1024 * 1024
+/** Budget de poids de la page d'accueil (QSI-3), en octets : 3 Mio. Au-delà (strictement) : poids_excessif. */
+export const BUDGET_POIDS_OCTETS = 3 * 1024 * 1024
 
-/** Pannes connues (liste fermée) : un nom inconnu est refusé, pour qu'une faute de frappe ne passe pas pour un site sain. */
-export const PANNES = [
-  'http500', 'certificat_expire', 'http_seulement', 'lourd', 'contraste', 'sans_alt',
-  'lien_mort', 'lien_redirige', 'lien_boucle', 'lien_lent', 'lien_500',
-  'sans_mentions', 'mentions_partielles', 'gabarit_court', 'sans_adresse',
-  'form_sans_action', 'form_absent', 'form_entree_500',
-]
-const pause = (ms) => new Promise((r) => setTimeout(r, ms))
-const echapper = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+/** Les pannes que ce serveur sait servir, chacune à poser seule sur un site sain. */
+export const PANNES = Object.freeze([
+  'http_500', 'injoignable', 'certificat_expire', 'http_simple', 'http_vers_https',
+  'poids_excessif', 'poids_limite', 'poids_gzip',
+  'contraste_faible', 'contraste_juste_ok', 'contraste_juste_ko', 'grand_texte_ok', 'petit_texte_ko', 'sans_alt',
+  'lien_mort', 'lien_500', 'lien_lent', 'lien_boucle', 'lien_redirige', 'lien_robots',
+  'mentions_absentes', 'mention_siren_absente',
+  'formulaire_absent', 'formulaire_sans_action', 'formulaire_point_entree_mort',
+])
 
-function pageAccueil(cmd, pannes) {
-  const a = cmd.artisan
-  const a_ = (p) => pannes.has(p)
-  const gabarit = a_('gabarit_court') ? 'nom,siren' : 'nom,siren,adresse,forme_juridique'
-  const css = [
-    'body{font-family:sans-serif;color:#1a1a1a;background:#ffffff}',
-    '.zq-note{color:#767676}',
-    '.zq-bandeau{background:#1b3a4b;color:#ffffff}',
-    '.zq-gros{color:#777777;font-size:24px}',
-    '.zq-carte{background:#1b3a4b;color:' + (a_('contraste') ? '#2a4a5b' : '#ffffff') + '}',
-    '.zq-pale{color:#cfd8dc;background:#eceff1}',
-    '.zq-faible{color:#777777}',
-    'footer{background:#f2f2f2;color:#222222}',
-  ].join('\n')
-  const liens = ['<a href="/realisations">Réalisations</a>', '<a href="/services">Services</a>', '<a href="/contact">Contact</a>',
-    '<a href="/prive/archives">Archives</a>', '<a href="https://externe.exemple.invalid/partenaire">Partenaire</a>']
-  if (a_('lien_boucle')) liens.push('<a href="/boucle-a">Ancien lien</a>')
-  if (a_('lien_lent')) liens.push('<a href="/lent">Galerie</a>')
-  if (a_('lien_500')) liens.push('<a href="/casse500">Brochure</a>')
-  const images = a_('sans_alt')
-    ? '<img src="/a.jpg"><img src="/b.jpg"><img src="/c.jpg" alt="Chantier">'
-    : '<img src="/a.jpg" alt="Atelier"><img src="/c.jpg" alt="Chantier">'
-  const pale = a_('contraste') ? '<p class="zq-pale">Texte trop pâle</p><p class="zq-faible">Texte gris moyen</p>' : ''
-  const action = a_('form_sans_action') ? '' : ' action="/contact/envoyer"'
-  const formulaire = a_('form_absent') ? '' :
-    `<form${action} method="post"><input name="nom"><input type="email" name="email"><textarea name="message"></textarea><button type="submit">Envoyer</button></form>`
-  let mentions = ''
-  if (!a_('sans_mentions')) {
-    const morceaux = [echapper(a.nom), echapper(a.forme_juridique)]
-    if (!a_('mentions_partielles')) morceaux.push('SIREN ' + a.siren)
-    if (!a_('sans_adresse')) morceaux.push(echapper(a.adresse))
-    mentions = `<section id="mentions-legales"><h2>Mentions légales</h2><p>${morceaux.join(' — ')}</p></section>`
-  }
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${echapper(a.nom)}</title>
-<meta name="mentions-attendues" content="${gabarit}">
-<style>
-${css}
-</style></head><body>
-<header class="zq-bandeau"><h1>${echapper(a.nom)}</h1></header>
-<nav>${liens.join(' ')}</nav>
-<main><p class="zq-note">Travail soigné, devis gratuit.</p><p class="zq-gros">Grand titre de section</p>
-<div class="zq-carte"><span>Texte sur carte</span></div>
-${pale}${images}
-${formulaire}</main>
-<footer>${mentions}</footer></body></html>`
+export const IDENTITE_PAR_DEFAUT = Object.freeze({
+  nom_artisan: 'Martin Plomberie', siren: '123456782', adresse: '12 rue des Lilas, 69003 Lyon', forme_juridique: 'SARL',
+})
+
+export const sirenAffiche = (s) => String(s ?? '').replace(/\D/g, '').replace(/^(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3')
+
+// ── couleurs de la ligne « #intro » selon la panne de contraste (les autres lignes sont toujours lisibles) ───────────────
+function styleIntro(pannes) {
+  if (pannes.has('contraste_faible')) return { couleur: '#aaaaaa', taille: 16 }
+  if (pannes.has('contraste_juste_ok')) return { couleur: '#767676', taille: 16 } // 4,54:1 — au-dessus du seuil AA
+  if (pannes.has('contraste_juste_ko')) return { couleur: '#777777', taille: 16 } // 4,48:1 — juste en dessous
+  if (pannes.has('grand_texte_ok')) return { couleur: '#949494', taille: 24 } // 3,03:1 — passe en GRAND texte seulement
+  if (pannes.has('petit_texte_ko')) return { couleur: '#949494', taille: 16 } // 3,03:1 en petit texte : insuffisant
+  return { couleur: '#333333', taille: 16 }
 }
 
-export async function demarrerServeur() {
-  const requetes = []
-  const config = new Map(COMMANDES.map((c) => [c.slug, new Set()]))
-  const octets = new Map()
-  const parSlug = new Map(COMMANDES.map((c) => [c.slug, c]))
+function pageAccueil(site, pannes, octetsCible) {
+  const id = site.identite
+  const intro = styleIntro(pannes)
+  const formulaire = pannes.has('formulaire_absent') ? '' :
+    `<form id="contact"${pannes.has('formulaire_sans_action') ? '' : ' action="/api/contact"'} method="post">` +
+    '<label>Nom <input name="nom" type="text"></label><label>Courriel <input name="email" type="email"></label>' +
+    '<label>Message <textarea name="message"></textarea></label><button type="submit">Envoyer</button></form>'
+  const images = `<img src="/img/logo.svg" alt="Logo ${id.nom_artisan}">` +
+    (pannes.has('sans_alt') ? '<img src="/img/chantier.jpg"><img src="/img/deco.svg" alt="">' : '')
+  const prive = pannes.has('lien_robots') ? ' <a href="/espace-prive/doc">Espace privé</a>' : ''
+  const avantPad = '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8"><title>' + id.nom_artisan + '</title></head>\n' +
+    '<body style="background:#ffffff;color:#222222">\n' +
+    `<h1 id="titre" style="color:#1a1a1a;background:#ffffff;font-size:32px">${id.nom_artisan}</h1>\n` +
+    `<p id="intro" style="color:${intro.couleur};background:#ffffff;font-size:${intro.taille}px">Dépannage, installation et entretien chez les particuliers.</p>\n` +
+    images + '\n' +
+    '<nav><a href="/">Accueil</a> <a href="/services">Services</a> <a href="/realisations">Réalisations</a> ' +
+    '<a href="/mentions-legales">Mentions légales</a> <a href="/services#tarifs">Tarifs</a> ' +
+    `<a href="mailto:contact@${site.hote}">Écrire</a> <a href="tel:+33400000000">Appeler</a> ` +
+    `<a href="https://annuaire-externe.test/fiche">Annuaire</a>${prive}</nav>\n` +
+    formulaire + '\n' +
+    `<footer id="pied" style="color:#444444;background:#f2f2f2;font-size:14px">© ${id.nom_artisan}</footer>\n`
+  const fin = '</body></html>\n'
+  if (!octetsCible) return avantPad + fin
+  const base = Buffer.byteLength(avantPad + fin)
+  const pad = octetsCible - base - 7 // « <!-- » + « --> » = 7 octets
+  if (pad < 0) throw new Error('cible de poids trop petite')
+  return avantPad + '<!--' + 'x'.repeat(pad) + '-->' + fin
+}
 
-  const serveur = http.createServer(async (req, res) => {
-    const u = new URL(req.url, 'http://127.0.0.1')
-    const m = /^\/s\/([a-z0-9-]+)(\/.*)?$/.exec(u.pathname)
-    const chemin = m ? (m[2] ?? '/') : u.pathname
-    const slug = m ? m[1] : null
-    requetes.push({ t: performance.now(), slug, methode: req.method, chemin })
-    req.resume()
-    const cmd = slug ? parSlug.get(slug) : null
-    if (!cmd) { res.writeHead(404); res.end('inconnu'); return }
-    const pannes = config.get(slug)
-    const tls = pannes.has('http_seulement') || cmd.url_en_ligne?.startsWith('http://') ? 'aucun' : pannes.has('certificat_expire') ? 'expire' : 'valide'
-    const entetes = (type, extra = {}) => ({ 'content-type': type, 'x-simule-tls': tls, ...extra })
-    const public_ = (p) => `https://${slug}.exemple.invalid${p}`
-    // Le serveur est inoffensif : il ne mémorise rien, mais journalise toute écriture (c'est ce que le juge relit).
-    if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(200, entetes('text/plain')); res.end('recu'); return }
-    const envoyer = (code, type, corps, extra) => {
-      res.writeHead(code, entetes(type, extra))
-      res.end(req.method === 'HEAD' ? undefined : corps)
+function pageMentions(site, pannes) {
+  const id = site.identite
+  const lignes = [`Éditeur : ${id.nom_artisan}`]
+  if (!pannes.has('mentions_absentes')) {
+    if (!pannes.has('mention_siren_absente')) lignes.push(`SIREN : ${sirenAffiche(id.siren)}`)
+    lignes.push(`Siège : ${id.adresse}`, `Forme juridique : ${id.forme_juridique}`)
+  }
+  return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Mentions légales</title></head><body>' +
+    `<h1>Mentions légales</h1>${lignes.map((l) => `<p>${l}</p>`).join('')}</body></html>`
+}
+
+const pageSimple = (titre) => `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${titre}</title></head><body><h1>${titre}</h1></body></html>`
+
+/**
+ * Démarre le serveur. `sites` : [{ hote, pannes: string[], identite? }]. `horloge` : { maintenant() } (l'horloge factice du banc).
+ * Rend { port, journal, soumissions, tailles, arreter() }. `tailles[hote]` : les octets DÉCODÉS de la page d'accueil servie.
+ */
+export async function demarrerServeur({ sites, horloge }) {
+  const journal = [], soumissions = [], tailles = {}, prises = new Set()
+  const parHote = new Map(sites.map((s) => [String(s.hote).toLowerCase(), { hote: String(s.hote).toLowerCase(), pannes: new Set(s.pannes ?? []), identite: { ...IDENTITE_PAR_DEFAUT, ...(s.identite ?? {}) } }]))
+  for (const s of parHote.values()) for (const p of s.pannes) if (!PANNES.includes(p)) throw new Error(`panne inconnue : ${p}`)
+
+  const envoyer = (res, methode, statut, entetes, corps) => {
+    const tampon = Buffer.isBuffer(corps) ? corps : Buffer.from(String(corps ?? ''))
+    const enTetes = { 'content-type': 'text/html; charset=utf-8', ...entetes }
+    if (!('transfer-encoding' in enTetes)) enTetes['content-length'] = String(tampon.length)
+    res.writeHead(statut, enTetes)
+    if (methode === 'HEAD') return res.end()
+    if ('transfer-encoding' in enTetes) { res.write(tampon); return res.end() }
+    return res.end(tampon)
+  }
+
+  const traiter = (req, res, corpsRecu) => {
+    const hote = String(req.headers.host ?? '').split(':')[0].toLowerCase()
+    const schema = req.headers['x-factice-schema'] === 'https' ? 'https' : 'http'
+    const via = String(req.headers['x-factice-via'] ?? 'inconnu')
+    const methode = String(req.method ?? 'GET').toUpperCase()
+    const url = new URL(req.url ?? '/', 'http://factice.test')
+    const chemin = url.pathname
+    journal.push({ t: horloge.maintenant(), via, schema, methode, hote, chemin: chemin + url.search })
+    const site = parHote.get(hote)
+    if (!site) return envoyer(res, methode, 404, {}, 'hôte inconnu')
+    const p = site.pannes
+    if (p.has('injoignable')) { req.socket.destroy(); return }
+    if (methode !== 'GET' && methode !== 'HEAD') {
+      if (chemin === '/api/contact') soumissions.push({ hote, methode, octets: corpsRecu.length })
+      return envoyer(res, methode, 405, { allow: 'GET, HEAD' }, 'un site audité ne reçoit aucune écriture')
     }
+    const html = (statut, corps, entetes = {}) => envoyer(res, methode, statut, entetes, corps)
+    const aller = (statut, vers) => envoyer(res, methode, statut, { location: vers }, '')
+
+    if (chemin === '/robots.txt') return envoyer(res, methode, 200, { 'content-type': 'text/plain; charset=utf-8' }, 'User-agent: *\nDisallow: /espace-prive/\n')
     if (chemin === '/') {
-      if (pannes.has('http500')) { envoyer(500, 'text/plain', 'Erreur interne'); return }
-      let corps = pageAccueil(cmd, pannes)
-      if (pannes.has('lourd')) {
-        const cible = BUDGET_ESSAI + 123_457
-        corps += '<!-- ' + 'x'.repeat(Math.max(0, cible - Buffer.byteLength(corps) - 9)) + ' -->'
+      if (schema === 'http' && p.has('http_vers_https')) return aller(301, `https://${hote}/`)
+      if (p.has('http_500')) return html(500, '<h1>Erreur interne</h1>')
+      const cible = p.has('poids_excessif') ? BUDGET_POIDS_OCTETS + 1 : p.has('poids_limite') ? BUDGET_POIDS_OCTETS : p.has('poids_gzip') ? BUDGET_POIDS_OCTETS + 700 : 0
+      const corps = Buffer.from(pageAccueil(site, p, cible))
+      tailles[hote] = corps.length
+      const entetes = {}
+      if (schema === 'https' && p.has('certificat_expire')) entetes['x-factice-certificat'] = 'expire'
+      if (p.has('poids_gzip')) { // Content-Length = les octets COMPRESSÉS : quelques ko, alors que la page décodée dépasse le budget
+        return html(200, zlib.gzipSync(corps, { level: 9 }), { ...entetes, 'content-encoding': 'gzip' })
       }
-      const tampon = Buffer.from(corps, 'utf8')
-      if (req.method === 'GET') octets.set(slug, tampon.length)
-      // En-tête d'estimation volontairement faux : un contrôleur qui s'y fie se trompe (le poids est celui des octets reçus).
-      res.writeHead(200, entetes('text/html; charset=utf-8', { 'x-poids-annonce': pannes.has('lourd') ? '1200' : '99999999' }))
-      if (req.method === 'HEAD') { res.end(); return }
-      for (let i = 0; i < tampon.length; i += 65536) res.write(tampon.subarray(i, i + 65536))
-      res.end()
-      return
+      if (cible) return html(200, corps, { ...entetes, 'transfer-encoding': 'chunked' })
+      return html(200, corps, entetes)
     }
-    if (chemin === '/robots.txt') { envoyer(200, 'text/plain', 'User-agent: *\nDisallow: /prive/\n'); return }
-    if (chemin === '/services') { pannes.has('lien_mort') ? envoyer(404, 'text/plain', 'absent') : envoyer(200, 'text/html', '<p>Services</p>'); return }
+    if (chemin === '/services') return html(200, pageSimple('Services'))
+    if (chemin === '/ancien') return aller(301, '/services')
+    if (chemin === '/boucle-a') return aller(302, '/boucle-b')
+    if (chemin === '/boucle-b') return aller(302, '/boucle-a')
     if (chemin === '/realisations') {
-      if (pannes.has('lien_redirige')) { envoyer(301, 'text/plain', '', { location: public_('/realisations-v2') }); return }
-      envoyer(200, 'text/html', '<p>Réalisations</p>'); return
+      if (p.has('lien_mort')) return html(404, pageSimple('Introuvable'))
+      if (p.has('lien_500')) return html(500, pageSimple('Erreur'))
+      if (p.has('lien_lent')) return // jamais de réponse : le délai du récupérateur tranche
+      if (p.has('lien_boucle')) return aller(302, '/boucle-a')
+      if (p.has('lien_redirige')) return aller(301, '/services')
+      return html(200, pageSimple('Réalisations'))
     }
-    if (chemin === '/realisations-v2') { envoyer(200, 'text/html', '<p>Réalisations</p>'); return }
-    if (chemin === '/contact') { envoyer(200, 'text/html', '<p>Contact</p>'); return }
-    if (chemin === '/contact/envoyer') { pannes.has('form_entree_500') ? envoyer(500, 'text/plain', 'panne') : envoyer(200, 'text/plain', 'formulaire'); return }
-    if (chemin === '/boucle-a') { envoyer(302, 'text/plain', '', { location: public_('/boucle-b') }); return }
-    if (chemin === '/boucle-b') { envoyer(302, 'text/plain', '', { location: public_('/boucle-a') }); return }
-    if (chemin === '/lent') { await pause(1500); try { envoyer(200, 'text/html', '<p>Lent</p>') } catch { /* client parti */ } return }
-    if (chemin === '/casse500') { envoyer(500, 'text/plain', 'panne'); return }
-    if (chemin === '/prive/archives') { envoyer(200, 'text/html', '<p>Privé</p>'); return }
-    envoyer(404, 'text/plain', 'absent')
+    if (chemin === '/mentions-legales') return html(200, pageMentions(site, p))
+    if (chemin === '/espace-prive/doc') return html(200, pageSimple('Espace privé'))
+    if (chemin === '/api/contact') {
+      if (p.has('formulaire_point_entree_mort')) return html(404, pageSimple('Introuvable'))
+      return html(405, 'Méthode non permise : ce point d’entrée ne reçoit que des POST', { allow: 'POST' })
+    }
+    if (chemin.startsWith('/img/')) return envoyer(res, methode, 200, { 'content-type': 'image/svg+xml' }, '<svg xmlns="http://www.w3.org/2000/svg"/>')
+    return html(404, pageSimple('Introuvable'))
+  }
+
+  const serveur = http.createServer((req, res) => {
+    const morceaux = []
+    req.on('data', (c) => morceaux.push(c))
+    req.on('end', () => { try { traiter(req, res, Buffer.concat(morceaux)) } catch (e) { try { res.statusCode = 500; res.end('erreur du serveur factice') } catch { /* socket fermée */ } } })
   })
-  await new Promise((ok, ko) => { serveur.once('error', ko); serveur.listen(0, '127.0.0.1', ok) })
+  serveur.on('connection', (s) => { prises.add(s); s.on('close', () => prises.delete(s)) })
+  await new Promise((ok) => serveur.listen(0, '127.0.0.1', ok))
   const port = serveur.address().port
   return {
-    port,
-    requetes,
-    regler(slug, liste = []) {
-      if (!config.has(slug)) throw new Error(`site inconnu : ${slug}`)
-      for (const p of liste) if (!PANNES.includes(p)) throw new Error(`panne inconnue : ${p}`)
-      config.set(slug, new Set(liste))
-    },
-    vider() { requetes.length = 0 },
-    requetesDe: (slug) => requetes.filter((r) => r.slug === slug),
-    octetsAccueil: (slug) => octets.get(slug) ?? null,
-    ecritures: () => requetes.filter((r) => r.methode !== 'GET' && r.methode !== 'HEAD'),
-    resoudre(url) {
-      const u = new URL(url)
-      const h = /^([a-z0-9-]+)\.exemple\.invalid$/.exec(u.hostname)
-      if (!h) throw new Error('hote_inconnu')
-      return `http://127.0.0.1:${port}/s/${h[1]}${u.pathname}${u.search}`
-    },
-    fermer: () => new Promise((ok) => { serveur.closeAllConnections?.(); serveur.close(() => ok()) }),
+    port, journal, soumissions, tailles,
+    arreter: () => new Promise((ok) => { for (const s of prises) s.destroy(); serveur.close(() => ok()) }),
   }
 }

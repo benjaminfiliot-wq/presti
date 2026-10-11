@@ -1,40 +1,135 @@
 {
+  "version": 2,
   "metier": "isolation",
+  "da": "couvreur",
   "libelles": {
-    "sur": "Isolation",
-    "alt_heros": "Détail d’un travail d'isolation",
-    "alt_atelier": "Matériaux isolants",
-    "reperes": ["Repère des combles", "Repère des ouvrages", "Repère de proximité"],
-    "illustration": "Photos d'illustration, à remplacer par celles de vos chantiers"
+    "metier": "Isolation",
+    "activite": "isolation"
   },
-  "pages": {
-    "/": {
-      "type": "accueil",
-      "title": "Isolation à {ville} — {entreprise}",
-      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, isolation à {ville}.",
-      "h1": "Isolation à {ville}",
-      "h1Ligne": "La chaleur reste",
-      "chapeau": "Une page pour présenter les travaux d'isolation et ouvrir la conversation autour de votre projet.",
-      "sections": [
-        {
-          "genre": "prestations",
-          "h2": "La performance thermique",
-          "blocs": [
-            { "type": "p", "texte": "Isolation des combles, murs et rampants peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
-          ]
-        },
-        {
-          "genre": "contact",
-          "h2": "Parlons de votre projet",
-          "blocs": [
-            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
-          ]
-        }
-      ]
-    }
+  "accueil": {
+    "title": "Isolation à {ville} — {entreprise}",
+    "description": "{entreprise}, isolation à {ville} : combles perdus, combles aménagés, rampants et toiture, avec une visite des combles avant tout chantier.",
+    "h1": "Isolation à {ville}",
+    "h1Ligne": "La chaleur reste dedans",
+    "chapeau": "Combles et rampants isolés : la chaleur reste l’hiver, la fraîcheur l’été."
+  },
+  "prestations": {
+    "h2": "Isoler par le haut",
+    "intro": "La chaleur monte et s’échappe par le toit : c’est souvent là que commence le chantier.",
+    "items": [
+      {
+        "titre": "Combles perdus",
+        "texte": "Isolant soufflé en vrac sur le plancher des combles, après repérage des spots, des gaines et des trappes, avec une épaisseur régulière partout.",
+        "photo": null
+      },
+      {
+        "titre": "Combles aménagés et rampants",
+        "texte": "Isolant posé entre et sous les chevrons, membrane d’étanchéité à l’air raccordée avec soin aux murs et aux fenêtres de toit, puis parement en plaques prêt à peindre.",
+        "photo": "charpente"
+      },
+      {
+        "titre": "Isolation de toiture extérieure",
+        "texte": "Lors d’une réfection de couverture, panneaux isolants posés sur les chevrons, sous les tuiles : les combles gardent tout leur volume et la charpente reste apparente.",
+        "photo": "tuiles"
+      },
+      {
+        "titre": "Étanchéité à l’air",
+        "texte": "Traitement des fuites d’air autour des trappes, des gaines, des conduits et des fenêtres de toit, qui comptent autant que l’épaisseur d’isolant pour le confort.",
+        "photo": null
+      },
+      {
+        "titre": "Remplacement d’un isolant",
+        "texte": "Retrait d’une laine tassée, humide ou abîmée par les rongeurs, nettoyage du plancher et contrôle de la charpente, puis pose d’un isolant neuf sur toute la surface.",
+        "photo": null
+      },
+      {
+        "titre": "Écran et ventilation",
+        "texte": "Pose ou reprise de l’écran sous toiture et des entrées d’air en bas de pente, pour que l’isolant reste sec, que la condensation s’évacue et que la charpente respire.",
+        "photo": null
+      }
+    ]
+  },
+  "atelier": {
+    "h2": "L’air ne passe plus",
+    "phrase": "Une isolation tient à ses jonctions : membranes raccordées, trappes et gaines traitées, sinon l’air froid trouve toujours son chemin.",
+    "photo": "charpente"
+  },
+  "realisations": {
+    "h2": "Toitures isolées",
+    "intro": "Les photos montrées ici sont des exemples, à remplacer par les chantiers de {entreprise}."
+  },
+  "zone": {
+    "h2": "Autour de {ville}",
+    "intro": "{entreprise} intervient à {ville} et dans les communes voisines : indiquez simplement où se trouve la maison."
+  },
+  "etapes": {
+    "h2": "Comment ça se passe",
+    "intro": "De la visite des combles au nettoyage final, chaque étape est annoncée.",
+    "items": [
+      {
+        "titre": "Premier échange",
+        "texte": "Vous décrivez la maison, les combles et ce que vous ressentez : pièces froides l’hiver, chambres étouffantes l’été."
+      },
+      {
+        "titre": "Visite des combles",
+        "texte": "Accès, état de l’isolant en place, de la charpente et de la ventilation, repérage des gaines, des spots et des conduits."
+      },
+      {
+        "titre": "Proposition détaillée",
+        "texte": "Vous recevez la solution retenue, l’isolant choisi et son épaisseur, et le détail des travaux à valider."
+      },
+      {
+        "titre": "Travaux et vérification",
+        "texte": "Protection des accès, pose de l’isolant et des membranes, puis contrôle des jonctions et nettoyage avant le départ."
+      }
+    ]
+  },
+  "faq": {
+    "h2": "Vos questions",
+    "items": [
+      {
+        "question": "Quelle différence entre combles perdus et combles aménagés ?",
+        "reponse": "Des combles perdus ne sont pas habitables : on isole le plancher. Des combles aménagés sont des pièces : on isole sous la toiture, entre et sous les chevrons."
+      },
+      {
+        "question": "Quel isolant choisir ?",
+        "reponse": "Laine minérale, ouate de cellulose, fibre de bois : chacun a ses qualités, notamment contre la chaleur de l’été. Le choix dépend des combles et de l’usage des pièces."
+      },
+      {
+        "question": "Faut-il vider les combles avant les travaux ?",
+        "reponse": "Pour des combles perdus, il faut surtout un accès dégagé. Pour des combles aménagés, les pièces doivent être vidées : cela se précise à la visite."
+      },
+      {
+        "question": "L’isolation suffit-elle contre la chaleur de l’été ?",
+        "reponse": "Elle aide beaucoup avec un isolant dense, comme la fibre de bois. Les volets, la ventilation et l’ombre sur les fenêtres de toit font le reste."
+      },
+      {
+        "question": "Existe-t-il des aides pour isoler ?",
+        "reponse": "Des aides publiques existent, sous conditions de travaux et de ressources, et leurs règles changent souvent. Le mieux est de vérifier sa situation sur les sites officiels avant de signer."
+      }
+    ]
+  },
+  "contact": {
+    "h2": "Parlons de votre maison",
+    "texte": "Décrivez la maison et les combles en quelques lignes, {entreprise} vous rappelle pour en parler.",
+    "projets": [
+      "Combles perdus",
+      "Combles aménagés",
+      "Isolation de toiture",
+      "Remplacement d’isolant",
+      "Autre projet"
+    ],
+    "message": "Vos combles, en quelques mots"
   },
   "photos": {
     "demo": "couvreur",
-    "fichiers": ["images/hero-960.webp", "images/tuiles-720.webp"]
+    "heros": "hero",
+    "atelier": "charpente",
+    "galerie": [
+      "tuiles",
+      "ardoise",
+      "ancienne",
+      "faitage"
+    ]
   }
 }

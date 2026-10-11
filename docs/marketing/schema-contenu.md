@@ -2,8 +2,9 @@
 
 Migration `supabase/migrations/0114_contenu.sql` (0113 est promis à N2). Source : `Ecosysteme-Marketing-Reel-2026-09-25.md`, §3.7
 (ligne C03) et §4 bis. Ce schéma range les lignes éditoriales, les publications, les mesures et les idées ; il ne publie rien.
-Un brouillon ou une démonstration ne vaut pas publication. **R24 reste ouverte** : chaque publication demande l'accord de Benj sur
-son média et son texte exacts.
+Un brouillon ou une démonstration ne vaut pas publication. **Plus d'accord individuel** (décision du 30/09, confirmée par Benj
+le 04/10) : chaque publication passe les contrôles automatiques de sa ligne (juges, pause générale, plafonds, doublons, chiffres
+vérifiés, coût nul) sur son média et son texte exacts.
 
 ## Les six tables
 

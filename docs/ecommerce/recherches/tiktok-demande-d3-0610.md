@@ -1,0 +1,3 @@
+# Repérage TikTok d3 (06/10, Hermes/gemini-3.8-flash)
+
+**STATUT : AUCUN RÉSULTAT.** Hermes n'a retrouvé aucune vidéo TikTok publique avec lien, date et vues (pages produits et tags seulement). Aucun produit ne passe le critère 1 (au moins 5 vidéos récentes à plus de 100 000 vues). d1 a échoué (délai dépassé), d2 était non fiable. Produits testés : télémètre laser, lampe de chantier magnétique, colle époxy en seringue, scie japonaise pliante, boîte à outils modulaire. Conclusion : la demande TikTok ne se mesure pas par la recherche web d'Hermes ; il faut un accès réel (Apify ou Chrome de Benj).

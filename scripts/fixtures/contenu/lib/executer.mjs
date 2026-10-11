@@ -9,9 +9,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { installerPause } from './pause.mjs'
 
 const [, , cfgPath] = process.argv
 const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
+const pause=installerPause(cfg)
 const sortie = { nonce: cfg.nonce, erreurImport: null, exception: null, valeur: null }
 
 function resoudre(racineEff, moduleRel) {
@@ -24,7 +26,7 @@ function resoudre(racineEff, moduleRel) {
 }
 
 const appels = []
-async function enregistrerCoutDoublure(agent, montant, detail) { appels.push({ agent, montant, detail }); return { ok: true } }
+async function enregistrerCoutDoublure(agent, montant, detail) { appels.push({ agent, montant, detail }); if(pause.scenario==='apres-premier-modele')pause.active=true; return { ok: true } }
 
 async function main() {
   const fichier = resoudre(cfg.racineEff, cfg.moduleRel)
@@ -38,7 +40,9 @@ async function main() {
   const env = {}
   for (const k of garder) if (process.env[k] !== undefined) env[k] = process.env[k]
   Object.assign(env, cfg.depsEnv || {})
-  const deps = { env, enregistrerCout: enregistrerCoutDoublure, maintenant: () => Date.now(), attendre: async () => {} }
+  // Ce juge teste le contenu ; le plafond est explicitement nul et autorisé
+  // dans la doublure, sans lecture du bus réel (jugé séparément).
+  const deps = { env, coutEuros: 'coutEuros' in cfg ? cfg.coutEuros : 0, opposition: cfg.opposition===true, enregistrerCout: enregistrerCoutDoublure, verifierPlafond: async () => true, maintenant: () => Date.now(), attendre: async () => {} }
 
   try {
     sortie.valeur = await fn(...(cfg.args || []), deps)
@@ -46,6 +50,7 @@ async function main() {
     sortie.exception = String(e?.stack || e?.message || e).slice(0, 2000)
   }
   sortie.appelsCout = appels
+  sortie.pausesLues = pause.lectures
   ecrire()
 }
 function ecrire() { fs.writeFileSync(cfg.sortie, JSON.stringify(sortie)) }

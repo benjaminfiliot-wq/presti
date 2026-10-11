@@ -1,0 +1,120 @@
+/* Refonte « futuriste » de la landing (11/10/2026), d'après les sites de référence (MotionSites, FIND, DRIP) :
+   un objet vivant en WebGL derrière le héros, une bande de mots géants qui glisse au défilement, des cartes qui
+   s'empilent, et des sections claires qui alternent avec le sombre. Ce fichier REMPLACE l'ancien décor (aurore,
+   bruit de points, sol en grille, orbes, projecteur flouté : supprimés de globals.css), il ne s'y ajoute pas.
+   Règle de coût inchangée : rien n'anime autre chose que transform ou opacity ; mouvement réduit = tout immobile. */
+
+.lp .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* — Héros : l'objet vivant — */
+.lp-objet{position:absolute;left:0;top:0;width:100%;height:min(100svh,980px);z-index:-2;display:block;opacity:0;transition:opacity 1.6s var(--ease-apple);pointer-events:none}
+.lp-objet.pret{opacity:1}
+/* Un voile sombre au centre (le texte reste lisible sur l'anneau) et un fondu vers le fond en bas. */
+.lp-objet-fondu{position:absolute;left:0;top:0;width:100%;height:min(100svh,980px);z-index:-1;pointer-events:none;background:radial-gradient(ellipse 40% 34% at 50% 50%,rgba(9,9,12,.78),rgba(9,9,12,.35) 55%,transparent 78%),linear-gradient(180deg,transparent 58%,var(--bg) 98%)}
+.lp-hero .lp-lede,.lp-hero .lp-trust{text-shadow:0 1px 14px rgba(9,9,12,.9)}
+.lp-objet--final{height:100%;opacity:0}
+.lp-objet--final.pret{opacity:.6}
+.lp-final .container{position:relative}
+
+/* — Bande de mots géants — */
+.lp-mots{position:relative;overflow:hidden;padding:clamp(2.2rem,6vw,4.5rem) 0;border-block:1px solid var(--line);--p:.5}
+.lp-mots-l{margin:0;width:max-content;white-space:nowrap;font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,10.5vw,9.5rem);line-height:1;letter-spacing:-.045em;will-change:transform}
+.lp-mots-l span{display:inline-flex;align-items:center}
+.lp-mots-l i{display:inline-block;flex:none;width:.2em;height:.2em;margin:0 .4em;border-radius:50%;background:var(--co);box-shadow:0 0 .5em var(--co-glow)}
+.lp-mots-l.l1{color:var(--ink);transform:translate3d(calc(-6% - var(--p) * 26%),0,0)}
+.lp-mots-l.l2{color:var(--co);transform:translate3d(calc(-32% + var(--p) * 26%),0,0)}
+.lp-mots-l.l2 i{background:var(--ink)}
+
+/* — La chaîne : cartes empilées — */
+.lp-pile{list-style:none;margin:clamp(2.2rem,5vw,3.6rem) auto 0;padding:0;max-width:1080px;display:grid;gap:clamp(1.6rem,5vh,3.2rem)}
+.lp-carte-pile{position:sticky;top:calc(92px + var(--i) * 22px);display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;min-height:min(60vh,500px);padding:clamp(1.6rem,4vw,3.2rem);border-radius:28px;background:linear-gradient(170deg,#1A1820,#0F0E13);border:1px solid var(--line);color:var(--ink);box-shadow:0 -24px 70px -34px rgba(0,0,0,.95),0 40px 110px -60px rgba(0,0,0,.9)}
+.lp-carte-pile:nth-child(2){background:linear-gradient(155deg,#E08463,#B45836);border-color:rgba(255,255,255,.18);color:#1B0F0A}
+.lp-carte-pile:nth-child(3){background:#F3EEE6;border-color:rgba(27,23,18,.1);color:#1B1712}
+.lp-cp-num{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.16em;opacity:.72}
+.lp-cp-heure{display:block;margin:.5rem 0 1.1rem;font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,7.4vw,6rem);line-height:.88;letter-spacing:-.055em;color:var(--co2)}
+.lp-carte-pile:nth-child(2) .lp-cp-heure{color:#1B0F0A}
+.lp-carte-pile:nth-child(3) .lp-cp-heure{color:#A4502F}
+.lp-carte-pile h3{font-size:clamp(1.55rem,3vw,2.35rem);letter-spacing:-.03em}
+.lp-cp-texte p{margin:.9rem 0 0;font-size:1.06rem;line-height:1.6;max-width:42ch;color:var(--ink2)}
+.lp-carte-pile:nth-child(2) .lp-cp-texte p{color:rgba(27,15,10,.82)}
+.lp-carte-pile:nth-child(3) .lp-cp-texte p{color:#4A4238}
+
+/* Fragments d'interface : toujours l'écran sombre de l'app, quelle que soit la couleur de la carte. */
+.lp-cpv{background:#0E0D12;color:#ECEAE6;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:clamp(1.1rem,2.4vw,1.6rem);box-shadow:0 34px 70px -34px rgba(0,0,0,.75);font-size:.95rem;line-height:1.55}
+.lp-cpv-chip{display:inline-block;margin-bottom:.9rem;padding:.3rem .65rem;border-radius:999px;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:#C7C2BA;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.lp-cpv-chip.ia{color:#F2B79B;background:rgba(217,119,87,.14);border-color:rgba(217,119,87,.35)}
+.lp-cpv p{margin:0;color:#ECEAE6}
+.lp-cpv-msg p{padding:.9rem 1rem;border-radius:16px 16px 16px 4px;background:#1B1A22}
+.lp-cpv-msg em{display:block;margin-top:.6rem;font-style:normal;font-size:.8rem;color:#8B867D}
+.lp-cpv-rep p{padding:.9rem 1rem;border-radius:16px 16px 4px 16px;background:rgba(217,119,87,.13);border:1px solid rgba(217,119,87,.25)}
+.lp-cpv-rep b{display:inline-block;margin-top:.9rem;padding:.55rem 1.1rem;border-radius:999px;background:#D97757;color:#1B0F0A;font-size:.88rem}
+.lp-curseur{display:inline-block;width:2px;height:1.05em;margin-left:3px;vertical-align:-.15em;background:#E8946F}
+.lp-cpv-devis ul{list-style:none;margin:0;padding:0;display:grid;gap:.65rem}
+.lp-cpv-devis li{display:flex;align-items:center;gap:.7rem;color:#C7C2BA}
+.lp-cpv-devis li i{flex:1;height:1px;border-bottom:1px dashed rgba(255,255,255,.16)}
+.lp-cpv-devis li i::after{content:"";display:block;width:3.2rem;height:.55rem;margin-left:auto;margin-top:-.3rem;border-radius:4px;background:rgba(255,255,255,.1)}
+.lp-cpv-devis > p{display:flex;justify-content:space-between;align-items:baseline;margin-top:1.1rem;padding-top:.9rem;border-top:1px solid rgba(255,255,255,.1)}
+.lp-cpv-devis > p b{font-family:var(--font-display);font-size:1.5rem;letter-spacing:-.02em;color:#F2B79B}
+.lp-cpv-fil ol{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.lp-cpv-fil li{display:flex;align-items:center;gap:.7rem;color:#8B867D}
+.lp-cpv-fil li::before{content:"";flex:none;width:1.15rem;height:1.15rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.22)}
+.lp-cpv-fil li.ok{color:#ECEAE6}
+.lp-cpv-fil li.ok::before{border-color:#D97757;background:#D97757 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B0F0A' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/70% no-repeat}
+
+/* — Sections claires (alternance avec le sombre) — */
+.lp-clair{--bg:#F3EEE6;--surf:#FBF8F3;--surf2:#EFE8DD;--elev:#E7DFD2;--ink:#1B1712;--ink2:#3D352C;--ink-soft:#4A4238;--muted:#5F574C;--faint:#6A6155;--line:rgba(27,23,18,.12);--line2:rgba(27,23,18,.07);background:var(--bg);color:var(--ink)}
+.lp-clair::before{display:none}
+.lp-clair .lp-kick{color:#A4502F}
+.lp-clair .lp-kick i{color:#A4502F;border-color:rgba(164,80,47,.35);background:rgba(217,119,87,.12)}
+.lp-clair .lp-cc{box-shadow:0 18px 40px -30px rgba(60,40,20,.35)}
+.lp-clair .lp-cc .i svg{stroke:#A4502F}
+/* Les écrans de l'app gardent leurs couleurs sombres, posés sur le clair. */
+.lp-clair .lp-chiffres-ecran,.lp-clair .lp-cpt-agent{--bg2:#0D0C11;--surf:#141319;--surf2:#1B1A22;--elev:#232029;--ink:#ECEAE6;--ink2:#C7C2BA;--ink-soft:#C3C8D4;--muted:#8B867D;--faint:#827D74;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.05);color:var(--ink)}
+.lp-clair .lp-chiffres-ecran{background:var(--bg2);box-shadow:0 50px 110px -50px rgba(60,35,15,.55)}
+
+/* — Compta : avant / l'agent range / après — */
+.lp-cpt-scene{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;align-items:start}
+.lp-cpt-avant{margin:0;min-width:0;background:#FFFDF8;border:1px solid var(--line);border-radius:20px;padding:1rem;box-shadow:0 24px 50px -34px rgba(60,40,20,.4)}
+.lp-cpt-avant figcaption{display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.lp-cpt-avant figcaption span{padding:.2rem .55rem;border-radius:999px;background:#1B1712;color:#F3EEE6;letter-spacing:.06em;text-transform:uppercase;font-size:.66rem}
+.lp-cpt-avant > p{margin:.75rem 0 0;font-size:.82rem;color:var(--muted)}
+.lp-cpt-brut{overflow-x:auto;border:1px solid var(--line2);border-radius:10px;font-family:var(--font-mono);font-size:.72rem;color:#3D352C}
+.lp-cpt-l{display:grid;grid-template-columns:2rem repeat(5,minmax(5.6rem,1fr));min-width:540px;border-bottom:1px solid var(--line2)}
+.lp-cpt-l:last-child{border-bottom:0}
+.lp-cpt-l b{display:grid;place-items:center;background:#EFE8DD;color:#6A6155;font-weight:600}
+.lp-cpt-l span{padding:.38rem .45rem;min-height:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp-cpt-l.titre span:first-of-type{font-weight:700;overflow:visible}
+.lp-cpt-l.entete span{font-weight:700;background:#F6F0E6}
+.lp-cpt-l.total span{background:rgba(212,90,70,.1);color:#9C3B2E;text-decoration:line-through}
+.lp-cpt-agent{position:relative;overflow:hidden;min-width:0;background:#0E0D12;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.1rem 1.25rem;box-shadow:0 40px 90px -50px rgba(60,35,15,.6)}
+.lp-cpt-agent header{display:flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-weight:700;font-size:1.05rem}
+.lp-cpt-pastille{width:.55rem;height:.55rem;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.lp-cpt-agent.actif .lp-cpt-pastille{background:var(--co);box-shadow:0 0 12px var(--co)}
+.lp-cpt-agent ol{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem;font-size:.86rem}
+.lp-cpt-bilan{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line);font-size:.9rem;line-height:1.55;opacity:.2;transition:opacity .7s var(--ease-apple)}
+.lp-cpt-bilan.pret{opacity:1}
+.lp-cpt-bilan p{margin:.35rem 0 0}
+.lp-cpt-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:0 0 1.2rem}
+.lp-cpt-kpis div{background:#FFFDF8;border:1px solid var(--line);border-radius:16px;padding:.95rem 1.1rem}
+.lp-cpt-kpis span{display:block;font-size:.8rem;color:var(--muted)}
+.lp-cpt-kpis b{display:block;margin-top:.25rem;font-family:var(--font-display);font-size:clamp(1.25rem,2.4vw,1.7rem);letter-spacing:-.02em}
+.lp-cpt-kpis .crit b{color:#B4483A}
+
+@media (prefers-reduced-motion:no-preference){
+  .lp-curseur{animation:lp-clignote 1.05s steps(1) infinite}
+  .lp-cpt-agent.actif::before{content:"";position:absolute;top:0;left:0;width:40%;height:2px;background:linear-gradient(90deg,transparent,var(--co),transparent);animation:lp-balaye 1.4s linear infinite}
+  .lp-cpt-agent.actif .lp-cpt-pastille{animation:lp-respire 1.2s ease-in-out infinite}
+}
+@keyframes lp-clignote{50%{opacity:0}}
+@keyframes lp-balaye{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+@keyframes lp-respire{50%{transform:scale(1.5);opacity:.6}}
+@media (prefers-reduced-motion:reduce){
+  .lp-objet,.lp-objet--final{transition:none}
+}
+
+@media (max-width:760px){
+  .lp-carte-pile{position:relative;top:auto;grid-template-columns:1fr;min-height:0;border-radius:22px}
+  .lp-cp-heure{margin-bottom:.7rem}
+  .lp-cpt-scene{grid-template-columns:1fr}
+  .lp-cpt-kpis{grid-template-columns:1fr 1fr}
+}

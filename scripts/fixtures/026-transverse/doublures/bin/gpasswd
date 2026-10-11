@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Doublure de gpasswd pour usine-durcie-qa (026-194) : consigne ses arguments dans $JUGE_JOURNAL, rien de plus que ce qu ecrit le juge.
+set -u
+journal() { local o="$1"; shift; { printf "%s" "$o"; for a in "$@"; do printf " %s" "$a"; done; printf "\n"; } >> "$JUGE_JOURNAL"; }
+journal gpasswd "$@"
+if [ "${1:-}" = "-d" ]; then
+  user="${2:-}"; group="${3:-}"; f="$JUGE_SYSTEME/etc/group"
+  ligne=$(grep "^$group:" "$f") || { echo "gpasswd : le groupe « $group » n'existe pas" >&2; exit 3; }
+  membres="${ligne##*:}"
+  case ",$membres," in *",$user,"*) ;; *) echo "gpasswd : l'utilisateur « $user » n'est pas membre de « $group »" >&2; exit 3 ;; esac
+  nouveaux=$(printf '%s' "$membres" | tr ',' '\n' | grep -vx "$user" | paste -sd, - || true)
+  sed -i "s/^\($group:[^:]*:[^:]*:\).*/\1$nouveaux/" "$f"
+fi
+exit 0

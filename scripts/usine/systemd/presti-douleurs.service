@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti — veille des douleurs, passe mensuelle (agent douleurs)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_DOULEURS -- /usr/bin/node scripts/chef/douleurs.mjs --une-passe --base=https://prestiapp.fr
+TimeoutStartSec=15min
+MemoryMax=1G
+Nice=10

@@ -1,0 +1,39 @@
+{
+  "tache": "026-136",
+  "migration": "0109_acquisition_planification.sql",
+  "statut": "execute",
+  "date": "2026-10-04T18:04:53.677Z",
+  "base": "Supabase gorcdvmueakcncsmrouo (production), connecteur execute_sql",
+  "methode": "un seul do $essai$ : execute du jumeau nu (_A_COLLER_sql_editor_0109_NU.sql, sans pied de controle), verifications sur cron.job, rejeu, execute du fichier d annulation, puis raise exception (tout annule)",
+  "empreinte_jumeau_nu": "7bcf6a90cd669ad4780757ee46afa00294192262eb31b001283886f005a9350f",
+  "empreinte_annulation": "08cf9a6fef89f5d3747376dd740ac5d1b350f388cc9ad4638dc7734ce70cc4ff",
+  "prealables": {
+    "extensions": "pg_cron, pg_net, supabase_vault presentes",
+    "cron_secret": "present (nom seulement lu, jamais la valeur)",
+    "fonctions_purge": "acq_purger et acq_echanges_purger presentes",
+    "taches_acq_avant": 0,
+    "taches_total_avant": 5
+  },
+  "resultat": {
+    "onze_taches": true,
+    "onze_calendriers_actifs": true,
+    "aucune_passe_pause": true,
+    "dix_http_vault_timeout": true,
+    "aucun_secret_en_clair": true,
+    "purge_sql_deux_fonctions": true,
+    "rge_passe_rge": true,
+    "facteur_passe_soir": true,
+    "net_http_get_accepte_timeout": true,
+    "en_tete_construit_depuis_vault": true,
+    "autres_taches_intactes": true,
+    "rejeu_sans_doublon": true,
+    "annulation_retire_les_onze": true,
+    "annulation_ne_touche_rien_d_autre": true
+  },
+  "exception_levee": "P0001 ESSAI_A_SEC (transaction annulee)",
+  "apres_coup": {
+    "taches_acq": 0,
+    "taches_total": 5,
+    "note": "aucune trace ; aucun appel reseau (net.http_get n est appele que par les taches planifiees, aucune n a survecu)"
+  }
+}
