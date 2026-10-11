@@ -242,3 +242,16 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
   purge de l'historique git des données de prospects (réécriture de main).
 - À retenir : un second facteur vérifié dans les routes Next ne protège rien si le front lit PostgREST : il faut une policy
   RESTRICTIVE. Toute clé de limite par IP doit passer par le /64.
+
+## 2026-10-11 (soir) — suite de l'audit d'attaque : E1 posé, historique purgé (accord écrit de Benj)
+- E1 : migration 0138 (garde RESTRICTIVE `garde_session` + trois gardes de suspension en écriture) sur les 63 tables à RLS
+  de production, 252 politiques. Mesuré avant : 0 des 38 sessions actives coupée. Vérifié après, sur jetons simulés en
+  transaction annulée : session passée par le code = ses 3 devis ; même compte au mot de passe seul = 0.
+- Réserve voulue : un compte jamais passé par le code (`connexion_verifiee_le` nul) garde sa session d'inscription,
+  sinon l'écran de premiers pas (upsert direct sur `artisans`) casse selon le réglage « confirmer l'email ».
+- Historique : `git filter-repo` sur presti et presti-sauvegarde (toutes branches) : prospection, presti-secrets,
+  docs/presti/appels, public/sites-demo/appel-*. Sauvegarde complète avant : /mnt/project-files/sauvegardes/*.bundle.
+- Reste : la clé Firebase `compte-de-service.json` était dans l'historique depuis le 30/09, à révoquer dans Google
+  Cloud ; GitHub garde les têtes de PR (refs/pull/*) tant que le support ne les purge pas (dépôt privé).
+- À retenir : (a) l'outil apply_migration du connecteur Supabase dépasse 60 s sur un bloc `do` qui boucle sur 63 tables ;
+  des instructions simples par lots de 16 tables passent ; (b) le proxy du conteneur refuse (403) toute poussée de tag.
