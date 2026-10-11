@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-10-11T13:23:11Z)
+# Carte du code — presti (2026-10-11T14:43:33Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -38,12 +38,13 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/studio` : commander/[jeton]
 - `/tarifs` : ·
 
-## API (166) — `app/api/**/route.ts`, préfixe `/api`
+## API (167) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
 - `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], reunion/chiffres [GET], reunion [POST], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], telegram/entree [POST], telegram/sortie [GET], tic [GET], usine/depot [POST], usine/entree [POST], vigile [GET]
 - `/audience` : · [POST]
 - `/auth` : code [POST GET], code/verifier [POST], lien [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
 - `/canaux` : relever [GET POST], · [GET POST DELETE]
+- `/compta` : assistant [POST]
 - `/contact` : · [POST]
 - `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], comptable [GET], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], demandes [POST GET], etat [GET], fil [GET], jauges [GET], journal [GET], packs/[id] [POST], packs [GET], pause [GET POST], pilotage/agents/[nom] [POST], pilotage/appels/[id] [POST], pilotage/consignes [POST], pilotage/decisions/[id] [POST], pilotage/gestes [POST], pilotage [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], station/reglages [GET PUT], station [GET], support/demander [POST], support/lire [GET], support [GET POST], tresorerie [GET]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
@@ -83,7 +84,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - capacités (24) : plateforme.conversation, plateforme.ia.auto, plateforme.ia.expert, plateforme.comptes_clients, plateforme.domaine_perso, plateforme.personnalisation_avancee, plateforme.regles, site.essentiel, site.pro, site.signature, site.slides3d, site.domaine_perso, devis.ia, devis.prix_artisan, factures, factures.electronique, inventaire.stock, inventaire.recherche_ia, canaux.email, canaux.whatsapp, canaux.reseaux, relances, export, support.prioritaire
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/**/*.ts` (250 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (252 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/agents/acquisition/affirmations.ts` (4) : Affirmation, AFFIRMATIONS_APPROUVEES, AFFIRMATIONS_PERMISES, AFFIRMATIONS_RETIREES
 - `lib/agents/acquisition/boiteProspection.ts` (6) : BoiteProspection, ETIQUETTE_FIL, filSeulAutorise, adresseFil, boiteProspection, adresseReponseProspection
@@ -138,6 +139,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/veilleur.ts` (7) : Couleur, URGENTS, COULEURS, AGENTS_DE_L_USINE, Ligne, creneauDigest, veilleur
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
 - `lib/ai/antiFabrication.ts` (12) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, MOTIFS_CAPACITE, RE_NEGATION, phrases, detecterCapacitesNonDeclarees, …
+- `lib/ai/compta.ts` (1) : demanderPlanCompta
 - `lib/ai/exemples.ts` (6) : ExempleDevis, ExemplesArtisan, EXEMPLES_VIDES, PLAFOND_EXEMPLES, chargerExemples, blocExemples
 - `lib/ai/metiers.ts` (9) : MetierId, ProfilMetier, PROFILS_METIER, PROFIL_GENERIQUE, detecterMetier, profilMetier, regleTva, blocMetierReponse, …
 - `lib/ai/outils.ts` (10) : MAX_TOURS_OUTILS, TIMEOUT_OUTILS_MS, ActionOutil, ArtisanOutils, ConversationOutils, ResultatOutils, Executeurs, executeursSupabase, …
@@ -152,10 +154,11 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/authArtisan.ts` (9) : Session, EchecAuth, ERREUR_MFA, ERREUR_SUSPENDU, ERREUR_CODE, authArtisan, revoquerSessions, estEchec, …
 - `lib/canaux.ts` (5) : devineFournisseur, ENTREPRISE_MAIL, boiteEntrepriseResolue, canalEntreprise, testerImap
 - `lib/clientAuth.ts` (7) : COOKIE_SESSION, ClientSession, creerLienMagique, consommerLien, sessionCourante, revoquerSession, cookieOptions
-- `lib/compta-exemple.ts` (1) : LIGNES_EXEMPLE
+- `lib/compta-exemple.ts` (3) : LIGNES_EXEMPLE, FICHIERS_DESORDRE, PLAN_IA_EXEMPLE
 - `lib/comptaArtisan.ts` (9) : FichierCompta, FichierRange, Rangement, lignesStockeesValides, rangerFichiers, calculerVue, auditerVue, preparerRelance, …
+- `lib/comptaAssistant.ts` (20) : CATEGORIES_DEPENSES, CategorieDepense, ChampPlan, PlanFeuille, Plan, FeuilleEchantillon, Echantillon, LIMITES_ECHANTILLON, …
 - `lib/comptaClasseur.ts` (1) : lireClasseur
-- `lib/comptaImport.ts` (18) : Sens, ChampCanonique, Statut, Ligne, Rejet, Colonne, Rapport, Options, …
+- `lib/comptaImport.ts` (20) : Sens, ChampCanonique, Statut, Ligne, Rejet, Colonne, Rapport, Options, …
 - `lib/comptaTableur.ts` (23) : ColonneJournal, Tri, Filtres, Totaux, RecapMois, RecapCategorie, RecapTiers, libelleStatut, …
 - `lib/comptaXlsx.ts` (8) : Cellule, Feuille, lettre, serieExcel, crc32, zipStocke, ecrireClasseur, classeurCompta
 - `lib/confidentialite/prospection.ts` (3) : SECTION_PROSPECTION, noticeHtml, mentionsHtml
@@ -338,7 +341,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 ## Migrations — `supabase/migrations` (135)
 - dernières : 0133_leads_ville.sql, 0134_neutralisation_boite_personnelle.sql, 0135_score_douleur.sql, 0136_prospects_a_noter.sql, 0137_premier_contact_formulaire_verifie.sql
 
-## Scripts — `scripts/` (449 .mjs, dont 78 suites e2e)
+## Scripts — `scripts/` (450 .mjs, dont 78 suites e2e)
 
 ## Orchestre — file : 2 · en cours : 7 · faites : 345 · refusées : 6
 
