@@ -577,8 +577,19 @@ RÈGLES (garde-fous) :
 
   // Historique → messages Anthropic (in=user, out=assistant), en fusionnant les
   // messages consécutifs de même rôle pour garantir l'alternance stricte exigée par l'API.
+  // Seuls les derniers échanges partent au modèle (16 messages, 12 000 caractères au plus) : la demande de départ
+  // est rappelée par le prompt, et un historique entier renvoyé à chaque message faisait grossir le coût sans
+  // borne (audit offensif du 11/10, E3).
+  const recents: typeof history = []
+  let reste = 12_000
+  for (const t of history.slice(-16).reverse()) {
+    const n = (t.contenu ?? '').length
+    if (recents.length && n > reste) break
+    reste -= n
+    recents.unshift(t)
+  }
   const msgs: { role: 'user' | 'assistant'; content: string }[] = []
-  for (const t of history) {
+  for (const t of recents) {
     const role: 'user' | 'assistant' = t.sens === 'in' ? 'user' : 'assistant'
     const contenu = (t.contenu ?? '').trim()
     if (!contenu) continue

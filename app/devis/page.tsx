@@ -27,23 +27,27 @@ export default function DevisList() {
   const [devis, setDevis] = useState<Devis[]>([])
   const [busy, setBusy] = useState<string | null>(null)
   const [filtre, setFiltre] = useState<string>('tous')
+  // Une lecture qui échoue se dit : « Aucun devis » sur une panne réseau était un mensonge (audit du 11/10).
+  const [erreur, setErreur] = useState(false)
 
   // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
   // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
   // fois. Deux verrous pour la même porte, parce que celui du navigateur se lit plus vite.
   async function load() {
-    const { data: ds } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').eq('artisan_id', (await supabase.auth.getUser()).data.user?.id ?? '').order('created_at', { ascending: false })
+    const { data: ds, error } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').eq('artisan_id', (await supabase.auth.getUser()).data.user?.id ?? '').order('created_at', { ascending: false })
+    if (error) throw error
     setDevis((ds as Devis[]) ?? [])
   }
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof } = await supabase.from('artisans').select('id').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof, error: eProf } = await supabase.from('artisans').select('id').eq('id', data.session.user.id).maybeSingle()
+      if (eProf) throw eProf
       if (!prof) { router.replace('/onboarding'); return }
       await load()
       setReady(true)
-    })
+    }).catch(() => { setErreur(true); setReady(true) })
   }, [router])
 
   async function supprimer(d: Devis) {
@@ -51,8 +55,8 @@ export default function DevisList() {
     setBusy(d.id)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${d.id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (res.ok) await load()
-    else alert('Suppression impossible. Réessaie dans un instant.')
+    if (res.ok) await load().catch(() => setErreur(true))
+    else alert('Suppression impossible. Réessayez dans un instant.')
     setBusy(null)
   }
 
@@ -72,6 +76,8 @@ export default function DevisList() {
     <AppShell active="devis" title="Devis" crumb="Vos documents" actions={nouveau}>
       {!ready ? (
         <p className="muted">Chargement…</p>
+      ) : erreur ? (
+        <div className="msg err" role="alert">Vos devis n’ont pas pu être chargés. Vérifiez votre connexion, puis <button type="button" className="btn" style={{ width: 'auto', margin: '0 0 0 .4rem', display: 'inline-block' }} onClick={() => window.location.reload()}>réessayez</button></div>
       ) : devis.length === 0 ? (
         <div className="psh-panel">
           <div className="psh-empty">Aucun devis pour l’instant.<br />Cliquez sur « Nouveau devis » : décrivez le chantier, l’IA le chiffre, vous ajustez, et vous envoyez un PDF conforme.</div>

@@ -1,9 +1,13 @@
 import '@/app/globals.css'
+import '@/app/accueil.css'
 import PublicPied from '@/app/PublicPied'
 import PublicNav from '@/app/PublicNav'
 import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
+import ObjetVivant from '@/app/ObjetVivant'
+import BandeMots from '@/app/BandeMots'
 import DemoSequence from '@/app/DemoSequence'
 import DemoVideo from '@/app/DemoVideo'
 import DemoSite from '@/app/DemoSite'
@@ -64,6 +68,36 @@ const POUR_QUI: { metier: string; demande: string; regle: string }[] = [
   },
 ]
 
+// « La chaîne complète » : quatre étapes, quatre cartes empilées. Les heures reprennent la démonstration plus bas
+// (« de 22 h 14 à 7 h 52 »). Les visuels sont des fragments d'interface en code, pas des captures : aucun montant
+// sauf celui de l'exemple fictif (M. Leroy, lib/compta-exemple.ts), et l'écran dit que c'est un exemple.
+const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }[] = [
+  {
+    heure: '22 h 14',
+    titre: 'La demande arrive.',
+    texte: 'Sur votre lien Google, Le Bon Coin ou Facebook. Le client écrit le soir, vous êtes encore sur le chantier : elle vous attend dans Presti.',
+    visuel: <div className="lp-cpv lp-cpv-msg"><span className="lp-cpv-chip">Nouvelle demande · exemple</span><p>Bonjour, mon chauffe-eau ne chauffe plus depuis hier soir. Vous pouvez passer cette semaine&nbsp;?</p><em>Mme Garnier</em></div>,
+  },
+  {
+    heure: '22 h 15',
+    titre: 'La réponse est prête.',
+    texte: "En moins d'une minute, dans votre ton. Elle pose les questions qui manquent, sans inventer de prix ni de créneau. Vous la relisez, vous l'envoyez.",
+    visuel: <div className="lp-cpv lp-cpv-rep"><span className="lp-cpv-chip ia">Préparée par l&apos;IA · à relire</span><p>Bonjour Madame Garnier, merci pour votre message. Pour bien préparer mon passage&nbsp;: de quelle marque est votre chauffe-eau, et quelle est sa capacité&nbsp;?<span className="lp-curseur" /></p><b>Envoyer</b></div>,
+  },
+  {
+    heure: '7 h 31',
+    titre: 'Le devis, sur vos prix.',
+    texte: "Presti le chiffre à partir de vos tarifs. Vous ajustez une ligne si besoin, le PDF conforme part au client, qui l'accepte en ligne.",
+    visuel: <div className="lp-cpv lp-cpv-devis"><span className="lp-cpv-chip">Devis · exemple fictif</span><ul><li><span>Chauffe-eau 200 L</span><i /></li><li><span>Groupe de sécurité</span><i /></li><li><span>Dépose de l&apos;ancien appareil</span><i /></li><li><span>Main-d&apos;œuvre</span><i /></li></ul><p><span>Total TTC</span><b>1 240,00 €</b></p></div>,
+  },
+  {
+    heure: 'Ensuite',
+    titre: 'Facture, relances, compta.',
+    texte: "La facture en un clic, trois relances prévues (J+2, J+5, J+10) pour qu'aucun client ne soit oublié, et vos fichiers de compta rangés par l'IA.",
+    visuel: <div className="lp-cpv lp-cpv-fil"><span className="lp-cpv-chip">Ce qui suit</span><ol><li className="ok">Facture émise</li><li className="ok">Relance J+2 planifiée</li><li className="ok">Relance J+5 planifiée</li><li>Relance J+10</li><li className="ok">Compta rangée</li></ol></div>,
+  },
+]
+
 export default function Home() {
   return (
     <div className="lp">
@@ -112,11 +146,6 @@ export default function Home() {
         }}
       />
 
-      <div className="lp-aurora" aria-hidden="true">
-        <span className="lp-glow a parallax" data-speed="-14" />
-        <span className="lp-glow b parallax" data-speed="10" />
-      </div>
-      <div className="lp-noise" aria-hidden="true" />
       <Motion />
 
       <PublicNav accueil />
@@ -124,9 +153,10 @@ export default function Home() {
       <main>
         {/* HERO */}
         <section className="lp-hero">
-          {/* Refonte du 11/10 : un sol en grille et deux orbes, en dégradés purs (aucun filtre flou à repeindre),
-              animés seulement par transform. Décor : masqué aux lecteurs d'écran. */}
-          <div className="lp-hero-decor" aria-hidden="true"><span className="lp-grille" /><span className="lp-orbe o1" /><span className="lp-orbe o2" /></div>
+          {/* L'objet vivant (refonte du 11/10, d'après les sites de référence) : un anneau de plasma en WebGL qui
+              respire, suit la souris et s'ouvre au défilement. Il démarre après le texte et se met en pause hors écran. */}
+          <ObjetVivant className="lp-objet" />
+          <span className="lp-objet-fondu" aria-hidden="true" />
           <div className="container">
             <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
             <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
@@ -144,8 +174,7 @@ export default function Home() {
           </div>
           <div className="container">
             <div className="lp-stage">
-              <span className="lp-beam" aria-hidden="true" />
-              <div className="lp-tilt"><div className="lp-float"><HeroApp /></div></div>
+              <div className="lp-tilt"><HeroApp /></div>
               {/* Ce qui suit la réponse, en étiquettes autour de la scène (bureau seulement). Aucun chiffre, aucune durée. */}
               <span className="lp-puce p1" aria-hidden="true"><i />Devis PDF prêt</span>
               <span className="lp-puce p2" aria-hidden="true"><i />Relance J+2 planifiée</span>
@@ -153,6 +182,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <BandeMots />
 
         {/* RÉASSURANCE */}
         <section className="lp-blk" style={{ paddingTop: '1rem' }}>
@@ -172,12 +203,33 @@ export default function Home() {
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
             <div>
             <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
-            <div className="src">Source : Harvard Business Review — « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
+            <div className="src">Source : Harvard Business Review, « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
             </div>
           </div>
         </section>
 
-        {/* FONCTIONNALITÉS — vitrine interactive (clique → la démo se joue) */}
+        {/* LA CHAÎNE — quatre cartes qui s'empilent au défilement (position: sticky, aucun script). Chaque étape dit
+            qui fait quoi : l'IA prépare, l'artisan relit et envoie (mode assisté par défaut, lib/plateformeConfig.ts). */}
+        <section className="lp-blk lp-chaine" id="comment">
+          <div className="container">
+            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, sans rien ressaisir.</h2><p>L&apos;IA prépare chaque étape. Vous relisez, vous envoyez.</p></div>
+            <ol className="lp-pile">
+              {CHAINE.map((e, i) => (
+                <li key={e.titre} className="lp-carte-pile" style={{ ['--i' as string]: i }}>
+                  <div className="lp-cp-texte">
+                    <span className="lp-cp-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="lp-cp-heure">{e.heure}</span>
+                    <h3>{e.titre}</h3>
+                    <p>{e.texte}</p>
+                  </div>
+                  <div className="lp-cp-visuel" aria-hidden="true">{e.visuel}</div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* FONCTIONNALITÉS : vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
             <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, le devis est prêt, il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
@@ -197,9 +249,9 @@ export default function Home() {
 
         {/* COMPTABILITÉ — le tableur façon Excel de /chiffres (PR #10, 11/10) : le vrai composant, en lecture seule,
             sur un plombier fictif (app/DemoCompta.tsx, lib/compta-exemple.ts). */}
-        <section className="lp-blk" id="compta">
+        <section className="lp-blk lp-clair" id="compta">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, comme dans Excel.</h2><p>Déposez vos fichiers Excel ou CSV : chaque ligne est rangée, triée, totalisée. Vous corrigez une cellule, les totaux suivent, et le classeur repart en .xlsx pour votre comptable.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, faite par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés.</p></div>
             <DemoCompta />
           </div>
         </section>
@@ -209,7 +261,7 @@ export default function Home() {
             entier en 390 px ; l'ordre de la stratégie (§5) met le produit montré tel quel juste après la promesse. */}
         <section className="lp-blk" id="pour-qui">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>04</i>Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types — écrites pour l&apos;exemple, pas des clients.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>04</i>Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types, écrites pour l&apos;exemple : ce ne sont pas des clients.</p></div>
             <ul className="lp-pq-rang reveal-kids">
               {POUR_QUI.map((c) => (
                 <li key={c.metier} className="lp-pq lp-spot">
@@ -225,17 +277,17 @@ export default function Home() {
         {/* CONFIANCE — ce qu'on s'interdit, et par quel mécanisme. Sous le même drapeau que la
             fonctionnalité : une promesse commerciale ne doit pas survivre à ce qui la tient. */}
         {FLAGS.supportArtisan ? (
-          <section className="lp-blk lp-conf" id="confiance">
+          <section className="lp-blk lp-conf lp-clair" id="confiance">
             <div className="container">
               <div className="lp-head2 c reveal">
                 <span className="lp-kick"><i>05</i>Et nous, on voit quoi&nbsp;?</span>
                 <h2>Rien. Sauf si vous ouvrez vous-même.</h2>
-                <p>Vos clients vous écrivent des choses qu&apos;ils ne diraient pas à un inconnu. Voilà ce que Presti s&apos;interdit — et comment.</p>
+                <p>Vos clients vous écrivent des choses qu&apos;ils ne diraient pas à un inconnu. Voilà ce que Presti s&apos;interdit, et comment.</p>
               </div>
               <div className="lp-conf-grid reveal-kids">
                 <div className="lp-cc lp-spot"><span className="i">{I.serrure}</span><b>La porte naît fermée</b><em>Pour qu&apos;on regarde un devis, il faut <b>votre</b> clic. Une heure, puis elle se referme seule. Personne chez Presti ne peut l&apos;ouvrir à votre place.</em></div>
                 <div className="lp-cc lp-spot"><span className="i">{I.oeilBarre}</span><b>La forme, jamais le fond</b><em>On voit qu&apos;un devis a sept lignes et un total. Jamais le nom de votre client, jamais vos échanges, jamais vos photos.</em></div>
-                <div className="lp-cc lp-spot"><span className="i">{I.registre}</span><b>Chaque coup d&apos;œil est écrit</b><em>Qui a regardé, quoi, à quelle minute. Dans <b>votre</b> espace, pas seulement dans le nôtre — et ça part avec vos données quand vous les exportez.</em></div>
+                <div className="lp-cc lp-spot"><span className="i">{I.registre}</span><b>Chaque coup d&apos;œil est écrit</b><em>Qui a regardé, quoi, à quelle minute. Dans <b>votre</b> espace, pas seulement dans le nôtre. Et ça part avec vos données quand vous les exportez.</em></div>
                 <div className="lp-cc lp-spot"><span className="i">{I.stop}</span><b>Un verrou, si vous préférez</b><em>«&nbsp;Ne plus jamais me demander.&nbsp;» Un bouton, et la demande n&apos;arrive même plus jusqu&apos;à vous.</em></div>
               </div>
               <p className="lp-conf-fin reveal">Ce n&apos;est pas un paragraphe dans des conditions générales.<b> C&apos;est du code, et il refuse.</b></p>
@@ -263,11 +315,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes — pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
+            <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes, pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
             <div className="lp-howcredits reveal-kids">
               <div className="lp-hc lp-spot"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse préparée pour un client, ou un devis chiffré par l&apos;IA.</span></div>
-              <div className="lp-hc lp-spot"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus — réservez-la aux gros chantiers.</span></div>
+              <div className="lp-hc lp-spot"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus : réservez-la aux gros chantiers.</span></div>
               <div className="lp-hc lp-spot"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
             </div>
 
@@ -331,7 +383,7 @@ export default function Home() {
 
         {/* CTA */}
         <section className="lp-blk lp-final reveal">
-          <div className="lp-hero-decor" aria-hidden="true"><span className="lp-grille" /></div>
+          <ObjetVivant className="lp-objet lp-objet--final" />
           <div className="container">
             <h2>Le prochain client qui vous cherche,<br /><span className="g">ne le laissez pas filer.</span></h2>
             <p>3 réponses ou devis offerts, sur vos vraies demandes, sans carte bancaire. Vous jugez la qualité avant de payer quoi que ce soit.</p>

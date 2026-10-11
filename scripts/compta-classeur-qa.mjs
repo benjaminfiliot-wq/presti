@@ -7,7 +7,7 @@ import { zipSync, strToU8 } from 'fflate'
 import { chromium } from 'playwright'
 
 const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur', 'comptaTableur', 'comptaXlsx'].map(async (nom) => {
+const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur', 'comptaTableur', 'comptaXlsx', 'comptaAssistant'].map(async (nom) => {
   const source = await fs.readFile(path.join(racine, 'lib', `${nom}.ts`), 'utf8')
   return ts.transpileModule(source.replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText.replace(/^export /gm, '')
 }))
@@ -88,25 +88,29 @@ try {
   }, modules)
   const tableur = ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/Tableur.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
   const composant = tableur + '\n' + ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/ComptaArtisan.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
-  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composant + '\nglobalThis.rendusAvantEffet=[];function ObserverCompte({id}){React.useLayoutEffect(()=>{globalThis.rendusAvantEffet.push({id,recettes:document.querySelector("[data-compta-recettes]")?.textContent})},[id]);return React.createElement(ComptaArtisan,{artisanId:id})}globalThis.monter=(id)=>{globalThis.racineReact??=globalThis.ReactClient.createRoot(document.getElementById("root"));globalThis.racineReact.render(React.createElement(ObserverCompte,{id}))};globalThis.monter("fictif-a");' })
+  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composant + '\nglobalThis.rendusAvantEffet=[];function ObserverCompte({id}){React.useLayoutEffect(()=>{globalThis.rendusAvantEffet.push({id,recettes:document.querySelector("[data-compta-recettes]")?.textContent})},[id]);return React.createElement(ComptaArtisan,{artisanId:id})}globalThis.monter=(id)=>{globalThis.racineReact??=globalThis.ReactClient.createRoot(document.getElementById("root"));globalThis.racineReact.render(React.createElement(ObserverCompte,{id}))};globalThis.monter("fictif-a");globalThis.monterIA=(id)=>{globalThis.racineReact.render(React.createElement(ComptaArtisan,{artisanId:id,obtenirJeton:async()=>"jeton-factice"}))};' })
   await page.locator('[data-compta-fichier]').waitFor()
   const importer = () => page.locator('[data-compta-fichier]').setInputFiles([
     { name: 'test.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: Buffer.from(classeur()) },
     { name: 'double.csv', mimeType: 'text/csv', buffer: Buffer.from('Client;Montant;Date;Statut\nClient A;120,50;15/03/2026;Impayé') },
   ])
   await importer()
-  await page.getByRole('heading', { name: 'test.xlsx · Achats', exact: true }).waitFor()
-  assert.equal(await page.locator('[data-compta-valider]').isDisabled(), true)
+  // Refonte du 11/10/2026 : l'assistant range seul. La feuille « Achats » (en-têtes Quand, Combien,
+  // Entreprise) n'est pas reconnue sans IA : elle est mise de côté, jamais comptée au hasard.
+  await page.getByRole('heading', { name: 'Rangement terminé', exact: true }).waitFor()
+  assert.match(await page.locator('[data-compta-agent]').textContent(), /1 doublon retiré/)
+  assert.match(await page.locator('[data-compta-agent]').textContent(), /test\.xlsx · Achats : mise de côté/)
+  assert.match(await page.locator('[data-compta-recettes]').textContent(), /120,50/)
+  assert.match(await page.locator('[data-compta-depenses]').textContent(), /^0,00/)
+  assert.equal(JSON.parse(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-a'))).length, 1, 'enregistré sans clic : l’IA fait le rangement')
+  // L'artisan peut quand même corriger une feuille mal lue : les colonnes se choisissent dans le détail.
+  await page.locator('[data-compta-detail] summary').click()
   await page.getByLabel('test.xlsx · Achats : Quand', { exact: true }).selectOption('date')
   await page.getByLabel('test.xlsx · Achats : Combien', { exact: true }).selectOption('montant')
   await page.getByLabel('test.xlsx · Achats : Entreprise', { exact: true }).selectOption('tiers')
-  await page.locator('.ca-fichier').nth(1).locator('select').first().selectOption('depense')
-  assert.equal(await page.evaluate(() => localStorage.length), 0, 'pas d’écriture avant accord')
-  assert.equal(await page.locator('[data-compta-doublons]').textContent(), '1')
-  await page.locator('[data-compta-valider]').click()
-  await page.getByRole('status').filter({ hasText: 'Rangement validé' }).waitFor()
   assert.match(await page.locator('[data-compta-recettes]').textContent(), /120,50/)
   assert.match(await page.locator('[data-compta-depenses]').textContent(), /20,25/)
+  assert.ok((await page.locator('[data-compta-bilan]').textContent()).includes('120,50'), 'le bilan en mots cite les vrais totaux')
   const stockageA = await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-a'))
   assert.equal(JSON.parse(stockageA).length, 2)
   const telechargement = page.waitForEvent('download')
@@ -115,17 +119,16 @@ try {
   assert.equal(journal.suggestedFilename(), 'comptabilite-journal-detaille.csv')
   await page.evaluate(() => globalThis.monter('fictif-b'))
   await page.getByText('Aperçu avec données fictives', { exact: true }).waitFor()
-  assert.equal(await page.locator('[data-compta-rangement]').count(), 0)
-  await page.locator('[data-compta-fichier]').setInputFiles({ name: 'quota.csv', mimeType: 'text/csv', buffer: Buffer.from('Date;Montant\n15/03/2026;15,50') })
+  assert.equal(await page.locator('[data-compta-agent]').count(), 0)
   await page.evaluate(() => { globalThis.setItemInitial = Storage.prototype.setItem; Storage.prototype.setItem = function () { throw new DOMException('Quota', 'QuotaExceededError') } })
-  await page.locator('[data-compta-valider]').click()
+  await page.locator('[data-compta-fichier]').setInputFiles({ name: 'quota.csv', mimeType: 'text/csv', buffer: Buffer.from('Date;Montant\n15/03/2026;15,50') })
   await page.getByRole('status').filter({ hasText: 'Enregistrement impossible' }).waitFor()
   assert.equal(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-b')), null)
   assert.equal(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-a')), stockageA)
   await page.evaluate(() => { Storage.prototype.setItem = globalThis.setItemInitial; globalThis.monter('fictif-a') })
   await page.getByText('Vos chiffres importés', { exact: true }).waitFor()
   assert.match(await page.locator('[data-compta-recettes]').textContent(), /120,50/)
-  assert.equal(await page.locator('[data-compta-rangement]').count(), 0, 'brouillon autre compte effacé')
+  assert.equal(await page.locator('[data-compta-agent]').count(), 0, 'journal de l’assistant d’un autre compte effacé')
   await page.evaluate(() => {
     localStorage.setItem('presti-compta-artisan:fictif-b', JSON.stringify([{ date: 'illisible', montant: 120, sens: 'invalide' }]))
     globalThis.monter('fictif-b')
@@ -148,9 +151,35 @@ try {
   await page.getByText('Aperçu avec données fictives', { exact: true }).waitFor()
   await page.evaluate(() => { globalThis.terminerFichier('Date;Montant\n15/03/2026;999,99'); File.prototype.text = globalThis.textOriginal })
   await page.waitForTimeout(200)
-  assert.equal(await page.locator('[data-compta-rangement]').count(), 0, 'import lancé par A abandonné lors du passage à C')
+  assert.equal(await page.locator('[data-compta-agent]').count(), 0, 'import lancé par A abandonné lors du passage à C')
   assert.equal(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-c')), null)
   assert.equal(await page.evaluate(() => globalThis.rendusAvantEffet.some((r) => (r.id === 'fictif-b' || r.id === 'fictif-c') && r.recettes?.includes('120,50'))), false, 'layout du nouveau compte ne montre jamais chiffres A avant useEffect')
   console.log('PASS isolation compte : stockage corrompu refusé, chiffres A invisibles dès layout B/C avant effet, lecture File différée A annulée sans rangement ni stockage dans C.')
-  console.log('PASS UI React réelle isolée : import Excel+CSV, mapping bloquant/modifiable, dédup, aucun stockage avant validation, sommes, export téléchargement, compteA/B séparés, quota navigateur explicite et retourcompteA conservé. Aucunbackend.')
+  // Le chemin IA, route simulée : la feuille « Achats » que les règles ne savent pas lire est
+  // comprise par l'IA. Ce qui part vers la route ne porte aucun chiffre en clair.
+  let corpsEnvoye = null
+  await page.route('http://compta.test/api/compta/assistant', async (route) => {
+    corpsEnvoye = route.request().postDataJSON()
+    await route.fulfill({ contentType: 'application/json', body: JSON.stringify({ ok: true, plan: {
+      feuilles: [
+        { role: 'donnees', ligneEntete: 0, colonnes: { date: 0, tiers: 1, montant: 2, statut: 3 }, montantSigne: false, sensParDefaut: 'recette', raison: 'Tes ventes.' },
+        { role: 'donnees', ligneEntete: 0, colonnes: { date: 0, montant: 2, tiers: 4 }, montantSigne: false, sensParDefaut: 'depense', raison: 'Tes achats : Quand, Combien, Entreprise.' },
+        { role: 'donnees', ligneEntete: 0, colonnes: { tiers: 0, montant: 1, date: 2, statut: 3 }, montantSigne: false, sensParDefaut: 'recette', raison: 'Doublon des ventes.' },
+      ],
+      categories: [{ valeur: 'Fournisseur', categorie: 'Matériaux et fournitures' }],
+    } }) })
+  })
+  await page.evaluate(() => globalThis.monterIA('fictif-ia'))
+  await page.getByText('Aperçu avec données fictives', { exact: true }).waitFor()
+  await importer()
+  await page.getByRole('heading', { name: 'Rangement terminé', exact: true }).waitFor()
+  assert.ok(corpsEnvoye && !/[0-8]/.test(JSON.stringify(corpsEnvoye.echantillon.feuilles.map((f) => [f.apercu, f.valeurs]))), 'aucun chiffre en clair envoyé à l’IA')
+  assert.match(await page.locator('[data-compta-agent]').textContent(), /L’IA a compris la structure/)
+  assert.match(await page.locator('[data-compta-depenses]').textContent(), /20,25/)
+  assert.match(await page.locator('[data-compta-tableau]').textContent(), /Matériaux et fournitures/)
+  await page.locator('[data-compta-annuler]').click()
+  await page.getByText('Aperçu avec données fictives', { exact: true }).waitFor()
+  assert.equal(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-ia')), null, 'annuler rend l’état d’avant')
+  console.log('PASS chemin IA (route simulée) : feuille illisible pour les règles comprise par l’IA, catégorie appliquée, aucun chiffre en clair envoyé, annulation complète.')
+  console.log('PASS UI React réelle isolée : dépôt Excel+CSV rangé seul (feuille illisible mise de côté, pas comptée), correction de colonnes, dédup, sommes, bilan en mots, export téléchargement, compteA/B séparés, quota navigateur explicite et retour compteA conservé. Aucun backend.')
 } finally { await navigateur.close() }

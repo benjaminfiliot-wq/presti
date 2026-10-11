@@ -92,6 +92,12 @@ const SYN_NORM: Record<ChampCanonique, string[]> = Object.fromEntries(
 
 /** Lit le texte d'un CSV. Le séparateur est celui qui apparaît le plus dans la première ligne. */
 export function lireCsv(texte: string): string[][] {
+  return lireCsvNumerote(texte).map((r) => r.cellules)
+}
+
+/** Comme lireCsv, mais chaque ligne garde son numéro dans le fichier (1 = première ligne, lignes vides comprises) :
+ *  c'est celui que l'artisan voit dans Excel, et celui qu'on lui cite quand une ligne est écartée. */
+export function lireCsvNumerote(texte: string): { cellules: string[]; ligne: number }[] {
   const t = texte.replace(/^\uFEFF/, '')
   const premiere = t.split(/\r?\n/, 1)[0] ?? ''
   const compte = (c: string) => premiere.split(c).length - 1
@@ -117,7 +123,7 @@ export function lireCsv(texte: string): string[][] {
     } else cellule += c
   }
   if (cellule !== '' || ligne.length > 0) { ligne.push(cellule); lignes.push(ligne) }
-  return lignes.filter((l) => l.some((c) => c.trim() !== ''))
+  return lignes.map((cellules, i) => ({ cellules, ligne: i + 1 })).filter((l) => l.cellules.some((c) => c.trim() !== ''))
 }
 
 const JOURS_MOIS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -189,7 +195,7 @@ export function lireStatut(v: string): Statut {
   return 'non_renseigne'
 }
 
-function formatEnTete(entete: string): ChampCanonique | null {
+export function formatEnTete(entete: string): ChampCanonique | null {
   const n = normaliser(entete)
   for (const c of Object.keys(SYN_NORM) as ChampCanonique[]) if (SYN_NORM[c].includes(n)) return c
   return null

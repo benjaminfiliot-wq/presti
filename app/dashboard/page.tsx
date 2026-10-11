@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
@@ -49,9 +49,12 @@ export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [replies, setReplies] = useState<Record<string, string>>({})
   const [open, setOpen] = useState<string | null>(null)
+  // Une lecture qui échoue se dit : « Aucune demande » sur une panne réseau était un mensonge (audit du 11/10).
+  const [erreur, setErreur] = useState<string | null>(null)
 
   async function loadLeads(artisanId: string) {
-    const { data: ls } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
+    const { data: ls, error: eLeads } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
+    if (eLeads) throw eLeads
     setLeads((ls as Lead[]) ?? [])
     // `.is('etat', null)` : une proposition en attente porte `etat: 'proposition'`, une proposition
     // refusée `etat: 'rejete'` — ni l'une ni l'autre n'est jamais partie chez le client. Sans ce
@@ -66,20 +69,29 @@ export default function Dashboard() {
     setReplies(map)
   }
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
+  const charger = useCallback(async () => {
+    setErreur(null)
+    try {
+      const { data } = await supabase.auth.getSession()
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof, error: eProf } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      if (eProf) throw eProf
       if (!prof) { router.replace('/onboarding'); return }
       setArtisan(prof as Artisan)
       await loadLeads((prof as Artisan).id)
-      setReady(true)
-    })
+    } catch {
+      setErreur('Vos demandes n’ont pas pu être chargées. Vérifiez votre connexion, puis réessayez.')
+    }
+    setReady(true)
   }, [router])
 
+  useEffect(() => { void charger() }, [charger])
+
   async function changeStatut(leadId: string, statut: string) {
+    const avant = leads
     setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, statut } : l)))
-    await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
+    const { error } = await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
+    if (error) { setLeads(avant); setErreur('Le statut n’a pas été enregistré. Réessayez.') }
   }
 
   function copyLink() {
@@ -96,6 +108,7 @@ export default function Dashboard() {
 
   return (
     <AppShell active="dashboard" title={ready && prenom ? `Bonjour ${prenom}` : 'Tableau de bord'} crumb={artisan?.metier || 'Votre espace'}>
+      {erreur && <div className="msg err" role="alert" style={{ display: 'flex', gap: '.8rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>{erreur}<button type="button" className="btn" style={{ width: 'auto', margin: 0 }} onClick={() => { setReady(false); void charger() }}>Réessayer</button></div>}
       {!ready ? (
         <p className="muted">Chargement…</p>
       ) : (
@@ -139,7 +152,7 @@ export default function Dashboard() {
               {nouveaux > 0 && <span className="tag"><span className="pill warn"><span className="pdot" />{nouveaux} nouvelle{nouveaux > 1 ? 's' : ''}</span></span>}
             </header>
 
-            {leads.length === 0 && (
+            {leads.length === 0 && !erreur && (
               <div className="psh-empty">Aucune demande pour l’instant. Dès qu’un client remplira votre lien, elle apparaîtra ici.</div>
             )}
 

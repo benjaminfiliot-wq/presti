@@ -56,7 +56,7 @@ export default function DemoSite() {
       </a>
       <p className="ds-credits">Photos de la démo : Wikimedia Commons, sous licences libres ; vidéo d&apos;atelier : Mixkit — <a href="/sites-demo/lestraque/mentions-legales/index.html#credits" target="_blank" rel="noopener">auteurs et licences</a></p>
       <p className="ds-lien"><a href={DEMO} target="_blank" rel="noopener">Voir le site de démonstration</a></p>
-      <p className="ds-prix">Le site, à la demande — {PRIX_SITE_TEXTE}, une fois.</p>
+      <p className="ds-prix">Le site, à la demande : {PRIX_SITE_TEXTE}, une fois.</p>
     </div>
   )
 }

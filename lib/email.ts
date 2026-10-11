@@ -47,6 +47,10 @@ export async function sendEmail(opts: {
    *  ouvre une conversation neuve chez le destinataire, et le fil se lit à trous des deux côtés. */
   entetes?: Record<string, string>
   critique?: boolean // alertes et notifications de l'entreprise : jamais bloquées par le plafond
+  /** Envoi déclenché par un visiteur anonyme (formulaire public) : il puise dans une part réservée du plafond
+   *  du jour et reste limité par destinataire. Sans cela, quelques IP vidaient les envois de la journée et plus
+   *  aucun devis d'artisan ne partait (audit offensif du 11/10, E2). */
+  anonyme?: boolean
 }): Promise<SendResult> {
   // Les suites de test créent des comptes en @presti-test.invalid : un envoi réel vers un TLD
   // réservé rebondit à coup sûr et 34 % de rebonds abîmaient la réputation du domaine
@@ -62,6 +66,14 @@ export async function sendEmail(opts: {
   // Plafond global quotidien (F, majeur 7) : l'offre Resend gratuite s'arrête à 100 envois/jour ;
   // sans borne, six prospects par IP suffisaient à l'épuiser en une heure et demie, et plus
   // aucune alerte ni réinitialisation ne partait. Les envois critiques passent toujours.
+  if (!opts.critique && opts.anonyme) {
+    const { consommerLimite, cleEmail } = await import('@/lib/limites')
+    if (!(await consommerLimite(cleEmail('emails:dest', opts.to), 3, 86_400))) return { ok: false, error: 'plafond par destinataire atteint' }
+    if (!(await consommerLimite('emails:anonymes:jour', Number(process.env.EMAILS_ANONYMES_PAR_JOUR) || 30, 86_400))) {
+      console.error('[email] part anonyme du plafond quotidien atteinte : envoi déclenché par un visiteur refusé')
+      return { ok: false, error: 'plafond quotidien des envois anonymes atteint' }
+    }
+  }
   if (!opts.critique) {
     const { consommerLimite } = await import('@/lib/limites')
     if (!(await consommerLimite('emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80, 86_400))) {

@@ -957,11 +957,6 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp .container{max-width:1140px;margin:0 auto;padding:0 1.5rem}
 
 /* aurore corail (calques parallax) */
-.lp-aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.lp-glow{position:absolute;border-radius:50%;filter:blur(100px);opacity:.42}
-.lp-glow.a{width:60vw;height:60vw;left:-12vw;top:-14vw;background:radial-gradient(circle,rgba(217,119,87,.55),transparent 62%)}
-.lp-glow.b{width:52vw;height:52vw;right:-14vw;top:26vw;background:radial-gradient(circle,rgba(232,148,111,.4),transparent 62%)}
-.lp-noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:radial-gradient(rgba(255,255,255,.85) .5px,transparent .5px);background-size:3px 3px}
 .lp>main,.lp>.lp-head,.lp>footer{position:relative;z-index:2}
 
 /* header */
@@ -1015,22 +1010,12 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* hero */
 .lp-hero{text-align:center;padding:clamp(3.5rem,8vw,6rem) 0 clamp(1.5rem,4vw,3rem)}
 .lp-hero h1{font-size:clamp(2.6rem,6.6vw,5.1rem);font-weight:800;margin:1.4rem auto 0;max-width:15ch}
-.lp-hero h1 .g{background:linear-gradient(120deg,var(--co2),var(--co));-webkit-background-clip:text;background-clip:text;color:transparent}
 .lp-lede{font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--muted);max-width:56ch;margin:1.5rem auto 0}
 .lp-cta{display:flex;gap:.8rem;justify-content:center;margin-top:2.1rem;flex-wrap:wrap}
 .lp-trust{margin-top:1.35rem;font-size:.86rem;color:var(--faint);font-family:var(--font-mono)}
 
-/* scène produit (projecteur corail + flottement) */
+/* scène produit : posée à plat, sans flottement ni projecteur flouté (refonte du 11/10) */
 .lp-stage{position:relative;margin:clamp(2.4rem,6vw,4.2rem) auto 0;max-width:960px;padding-bottom:1rem}
-.lp-beam{position:absolute;left:50%;top:6%;width:min(80%,660px);height:120%;transform:translateX(-50%);z-index:0;background:radial-gradient(ellipse 50% 42% at 50% 40%,rgba(232,148,111,.34),rgba(217,119,87,.2) 44%,transparent 72%);filter:blur(16px);animation:lp-pulse 6s ease-in-out infinite}
-@keyframes lp-pulse{50%{opacity:.72;transform:translateX(-50%) scale(1.04)}}
-.lp-float{position:relative;z-index:1;animation:lp-float 7s ease-in-out infinite}
-@keyframes lp-float{50%{transform:translateY(-13px)}}
-/* Ces deux boucles sont INFINIES : mesurées encore en cours cinq écrans plus bas (audit final G),
-   elles faisaient travailler le compositeur pour un contenu que personne ne regarde — et le
-   projecteur est un calque flouté, donc cher à recomposer. Motion.tsx pose .hors-champ dès que
-   la scène quitte le viewport ; la reprise est instantanée et au même point. */
-.lp-stage.hors-champ .lp-beam,.lp-stage.hors-champ .lp-float{animation-play-state:paused}
 
 /* fenêtre app (démo) */
 .lp-win{background:linear-gradient(180deg,var(--surf),#0b0a0e);border:1px solid var(--line);border-radius:20px;box-shadow:0 50px 120px -30px rgba(0,0,0,.85),0 12px 40px -12px rgba(0,0,0,.6);overflow:hidden}
@@ -1256,27 +1241,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
    toute boucle infinie est réservée au bureau et coupée par prefers-reduced-motion.
    ======================================================================= */
 
-/* — Héros : décor local — */
+/* — Héros : l'objet vivant (app/ObjetVivant.tsx) — */
 .lp-hero{position:relative;isolation:isolate}
-.lp-hero-decor{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.lp-grille{position:absolute;left:50%;bottom:-2%;width:240%;height:58%;transform:translateX(-50%) perspective(620px) rotateX(62deg);transform-origin:50% 100%;overflow:hidden;-webkit-mask-image:radial-gradient(ellipse 46% 80% at 50% 100%,#000 18%,transparent 72%);mask-image:radial-gradient(ellipse 46% 80% at 50% 100%,#000 18%,transparent 72%)}
-.lp-grille::before{content:"";position:absolute;left:0;right:0;top:-64px;bottom:0;background-image:linear-gradient(rgba(232,148,111,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(232,148,111,.2) 1px,transparent 1px);background-size:64px 64px;background-position:center top}
-.lp-orbe{position:absolute;left:50%;border-radius:50%}
-.lp-orbe.o1{width:760px;height:760px;top:-360px;margin-left:-640px;background:radial-gradient(circle,rgba(217,119,87,.26),rgba(217,119,87,.07) 45%,transparent 68%)}
-.lp-orbe.o2{width:600px;height:600px;top:40px;margin-left:140px;background:radial-gradient(circle,rgba(232,148,111,.16),rgba(232,148,111,.06) 42%,transparent 68%)}
-@media (min-width:900px) and (prefers-reduced-motion:no-preference){
-  .lp-grille::before{animation:lp-defile 3.6s linear infinite}
-  .lp-orbe.o1{animation:lp-derive 18s ease-in-out infinite alternate}
-  .lp-orbe.o2{animation:lp-derive 23s ease-in-out infinite alternate-reverse}
-  /* même règle que la scène : rien ne tourne quand le héros a quitté l'écran (Motion.tsx pose .hors-champ) */
-  .lp-hero:has(.lp-stage.hors-champ) .lp-grille::before,.lp-hero:has(.lp-stage.hors-champ) .lp-orbe{animation-play-state:paused}
-}
-@keyframes lp-defile{to{transform:translateY(64px)}}
-@keyframes lp-derive{to{transform:translate3d(70px,36px,0) scale(1.1)}}
-/* l'aurore fixe perd son flou de 100 px (repeint sur toute la fenêtre) : le dégradé seul suffit */
-.lp-glow{filter:none;opacity:.32}
-.lp-glow.a{background:radial-gradient(circle,rgba(217,119,87,.42),rgba(217,119,87,.08) 40%,transparent 66%)}
-.lp-glow.b{background:radial-gradient(circle,rgba(232,148,111,.3),rgba(232,148,111,.06) 40%,transparent 66%)}
 
 /* — Héros : titre et scène — */
 .lp-hero h1{font-size:clamp(2.7rem,7.2vw,5.9rem);max-width:14ch;letter-spacing:-.035em}
@@ -1334,7 +1300,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* — Têtes de section : le fil numéroté, des titres qui brillent un peu — */
 .lp-kick{display:inline-flex;align-items:center;gap:.6rem}
 .lp-kick i{font-style:normal;display:inline-grid;place-items:center;min-width:2.15rem;height:1.45rem;padding:0 .45rem;border-radius:999px;border:1px solid rgba(217,119,87,.35);background:rgba(217,119,87,.1);color:var(--co2);font-size:.66rem;letter-spacing:.04em}
-.lp-head2 h2{background:linear-gradient(180deg,#FFFFFF 25%,#CFC7BC 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
+.lp-head2 h2{color:var(--ink);padding-bottom:.06em}
 .lp-blk[id]::before{content:"";position:absolute;top:0;left:50%;width:min(1140px,92%);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.09) 30%,rgba(217,119,87,.28) 50%,rgba(255,255,255,.09) 70%,transparent)}
 
 /* — Cartes « projecteur » : halo et liseré qui suivent le pointeur (Motion.tsx pose --mx / --my) — */
@@ -1373,10 +1339,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 
 /* — Appel final — */
 .lp-final{isolation:isolate;overflow:hidden;padding:clamp(5rem,12vw,9rem) 0}
-.lp-final .lp-grille{height:75%;bottom:-8%}
-.lp-final .lp-grille::before{background-image:linear-gradient(rgba(232,148,111,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(232,148,111,.28) 1px,transparent 1px)}
 .lp-final h2{font-size:clamp(2.4rem,6vw,4.6rem);letter-spacing:-.035em}
-.lp-final h2 .g{background:linear-gradient(110deg,#F6C6A8,var(--co2) 40%,var(--co));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lp-final h2 .g{color:var(--co2)}
 
 /* — Pied de page — */
 .lp-foot{position:relative;overflow:hidden;border-top:1px solid var(--line);color:var(--faint);padding:clamp(3rem,6vw,4.5rem) 0 0;background:linear-gradient(180deg,transparent,rgba(217,119,87,.045))}
@@ -1404,7 +1368,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp.reveal-armed .reveal-kids.in>*{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   .lp.reveal-armed .reveal,.lp.reveal-armed .reveal-kids>*{opacity:1!important;transform:none!important;transition:none!important}
-  .lp-beam,.lp-float,.lp-typing i{animation:none!important}
+  .lp-typing i{animation:none!important}
   
 }
 
@@ -2467,9 +2431,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 
 /* ===== v8 A1.8 — téléphone : les calques décoratifs coûteux disparaissent (flous, grain, halos) ===== */
 @media (max-width:760px){
-  .lp-aurora,.lp-noise,.wrap::before{display:none}
   .lp-head{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(9,9,12,.96)}
-  .lp-beam{display:none}
 }
 
 /* ===== v8 A1 — reste du passage mobile (mesuré sur le build local) ===== */

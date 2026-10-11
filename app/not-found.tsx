@@ -43,7 +43,7 @@ export default function NotFound() {
           Cette page a filé sur un chantier.
         </h1>
         <p style={{ color: '#8B867D', fontSize: '1.05rem', margin: '1rem 0 2rem', lineHeight: 1.6 }}>
-          Le lien n&apos;existe pas ou a été déplacé. Pas de panique — voici par où repartir.
+          Le lien n&apos;existe pas ou a été déplacé. Pas de panique : voici par où repartir.
         </p>
         <div style={{ display: 'flex', gap: '.7rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/" style={{ ...link, background: 'linear-gradient(120deg,#E8946F,#D97757)', color: '#1a0f0a' }}>Retour à l&apos;accueil</Link>

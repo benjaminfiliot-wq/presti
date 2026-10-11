@@ -54,7 +54,7 @@ export default function FacturesList() {
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/factures/${f.id}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     setBusy(null)
-    if (!res.ok) { win?.close(); alert('Impossible d’ouvrir le PDF. Réessaie dans un instant.'); return }
+    if (!res.ok) { win?.close(); alert('Impossible d’ouvrir le PDF. Réessayez dans un instant.'); return }
     const url = URL.createObjectURL(await res.blob())
     if (win) win.location.href = url
     else { const a = document.createElement('a'); a.href = url; a.download = `${f.numero || 'facture'}.pdf`; a.click() }
@@ -85,7 +85,7 @@ export default function FacturesList() {
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/factures/${f.id}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     setBusy(null)
-    if (!res.ok) { alert('Impossible d’ouvrir le PDF. Réessaie dans un instant.'); return }
+    if (!res.ok) { alert('Impossible d’ouvrir le PDF. Réessayez dans un instant.'); return }
     const r = await partagerFichier(`${f.numero || 'facture'}.pdf`, await res.blob(), { titre: `Facture ${f.numero || ''}`.trim(), texte: 'Votre facture, en pièce jointe.' })
     if (r === 'natif' || r === 'web') void vibrer('leger')
     if (r === 'aucun') alert('Partage impossible sur cet appareil.')
@@ -95,7 +95,7 @@ export default function FacturesList() {
     setBusy(f.id)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/factures/${f.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ statut }) })
-    if (!res.ok) alert('Action impossible. Réessaie dans un instant.')
+    if (!res.ok) alert('Action impossible. Réessayez dans un instant.')
     await load(); setBusy(null)
   }
 
@@ -107,7 +107,7 @@ export default function FacturesList() {
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/factures/${f.id}/avoir`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: '{}' })
     const d = await res.json().catch(() => ({}))
-    if (!res.ok) alert(d.error || 'Avoir impossible. Réessaie dans un instant.')
+    if (!res.ok) alert(d.error || 'Avoir impossible. Réessayez dans un instant.')
     await load(); setBusy(null)
   }
 

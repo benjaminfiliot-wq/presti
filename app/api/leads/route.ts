@@ -62,6 +62,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
+    // Une adresse email bien formée, ou rien : un « contact » qui contient seulement un @ ne reçoit aucun envoi.
+    const contactEstEmail = typeof contact === 'string' && /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(contact)
     const ip = getIp(req)
 
     // Anti-hacker : IP bannie (manuelle ou auto) → on refuse tout, immédiatement.
@@ -229,6 +231,15 @@ export async function POST(req: Request) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
+      // L'artisan est quand même prévenu, une fois par fenêtre : sans cela, huit fausses demandes toutes les dix
+      // minutes suffisaient à lui cacher les vraies (audit offensif du 11/10, M2). Ni IA ni accusé de réception.
+      if (artisan.email && !deferContact && await consommerLimite(`leads:notif-groupee:${artisan.id}`, 1, 10 * 60)) {
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          leadId: lead.id,
+          subject: 'Plusieurs nouvelles demandes en peu de temps',
+          text: `Plusieurs demandes sont arrivées sur votre page en quelques minutes. Elles sont toutes enregistrées dans votre espace (Messages) ; par sécurité, aucune réponse automatique n'est partie pour celles-ci.\n\nDernière en date : ${nom_prospect || 'nom non précisé'}.`,
+        }).catch(() => {})
+      }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
     }
 
@@ -276,14 +287,17 @@ export async function POST(req: Request) {
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
         }).catch(() => {})
       }
-      if (!deferContact && typeof contact === 'string' && contact.includes('@')) {
+      if (!deferContact && contactEstEmail) {
         const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
         await sendEmail({
           to: contact,
           fromName: artisan.nom?.trim() || 'Votre artisan',
           subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
-          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
+          // Le message du visiteur n'est PAS recopié : sinon n'importe qui faisait porter son propre texte, sous le
+          // nom d'un artisan, à l'adresse de son choix (audit offensif du 11/10, E2).
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\nÀ très bientôt.`,
           replyTo: artisan.email ?? undefined,
+          anonyme: true,
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
@@ -301,14 +315,17 @@ export async function POST(req: Request) {
         }).catch(() => {})
       }
       // Accusé de réception au prospect (marque de l'artisan) — même en mode manuel.
-      if (!deferContact && typeof contact === 'string' && contact.includes('@')) {
+      if (!deferContact && contactEstEmail) {
         const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
         await sendEmail({
           to: contact,
           fromName: artisan.nom?.trim() || 'Votre artisan',
           subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
-          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
+          // Le message du visiteur n'est PAS recopié : sinon n'importe qui faisait porter son propre texte, sous le
+          // nom d'un artisan, à l'adresse de son choix (audit offensif du 11/10, E2).
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\nÀ très bientôt.`,
           replyTo: artisan.email ?? undefined,
+          anonyme: true,
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
@@ -354,7 +371,7 @@ export async function POST(req: Request) {
           contenu: reply,
         })
 
-        const isEmail = typeof contact === 'string' && contact.includes('@')
+        const isEmail = contactEstEmail
 
         // a) réponse instantanée au prospect (si son contact est un email).
         //    En mode différé (variante B), pas encore de contact → l'email partira à la capture.
@@ -365,6 +382,7 @@ export async function POST(req: Request) {
             subject: `Votre demande — ${artisan.nom?.trim() || 'Votre artisan'}`,
             text: reply,
             replyTo: artisan.email ?? undefined,
+            anonyme: true,
           })
         }
 
