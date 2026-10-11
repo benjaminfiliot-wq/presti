@@ -18,6 +18,7 @@ export default function Contact() {
     <PublicNav />
     <main className="legal-wrap">
       <Breadcrumb label="Nous écrire" path="/contact" />
+      <span className="legal-kick">Contact</span>
       <h1>Nous écrire</h1>
 
       <p className="ct-intro">

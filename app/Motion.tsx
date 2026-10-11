@@ -45,6 +45,17 @@ export default function Motion() {
       return () => { io.disconnect(); ioStageM?.disconnect(); clearTimeout(safetyM) }
     }
 
+    // Cartes « projecteur » (refonte du 11/10) : un halo corail suit le pointeur sur les cartes .lp-spot.
+    // Une seule écoute pour toute la page, posée seulement ici (bureau, souris) : rien sur écran tactile.
+    const projecteur = (e: PointerEvent) => {
+      const carte = (e.target as Element | null)?.closest<HTMLElement>('.lp-spot')
+      if (!carte) return
+      const r = carte.getBoundingClientRect()
+      carte.style.setProperty('--mx', `${Math.round(e.clientX - r.left)}px`)
+      carte.style.setProperty('--my', `${Math.round(e.clientY - r.top)}px`)
+    }
+    lp?.addEventListener('pointermove', projecteur as EventListener, { passive: true })
+
     let annule = false
     let revert: (() => void) | null = null
     const refreshes: ReturnType<typeof setTimeout>[] = []
@@ -94,7 +105,7 @@ export default function Motion() {
 
     // filet : après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet
     const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
-    return () => { annule = true; revert?.(); refreshes.forEach(clearTimeout); clearTimeout(safety); ioStage?.disconnect() }
+    return () => { annule = true; revert?.(); refreshes.forEach(clearTimeout); clearTimeout(safety); ioStage?.disconnect(); lp?.removeEventListener('pointermove', projecteur as EventListener) }
   }, [])
 
   return null
