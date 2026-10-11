@@ -358,7 +358,11 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
           </div>
         </div>
       ) : (
-        <div className="inbox-thread empty">{err ? <div className="msg err" role="alert">{err}</div> : null}<div className="inbox-placeholder muted">Sélectionnez une conversation pour la lire et y répondre.</div></div>
+        <div className="inbox-thread empty">{err ? <div className="msg err" role="alert">{err}</div> : null}<div className="inbox-placeholder">
+          <span className="inbox-ph-ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></svg></span>
+          <b>{nbValidation ? `${nbValidation} réponse${nbValidation > 1 ? 's' : ''} à valider` : 'Aucune conversation ouverte'}</b>
+          <span className="muted">{nbValidation ? 'Ouvrez la conversation à gauche : la réponse préparée par l’assistant n’attend que votre accord.' : 'Choisissez une conversation à gauche pour la lire et y répondre.'}</span>
+        </div></div>
       )}
     </div>
   )

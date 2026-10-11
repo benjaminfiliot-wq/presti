@@ -70,9 +70,12 @@ export default function Abonnement() {
 
           <div className="abo-grid">
             {OFFRES.map((o) => {
+              // Mis en avant : la formule en cours ; sans abonnement, Studio comme avant.
+              const abonne = OFFRES.some((x) => x.id === plan)
               const current = plan === o.id
               return (
-                <div key={o.id} className={`abo-card${o.id === 'studio' ? ' feat' : ''}`}>
+                <div key={o.id} className={`abo-card${current ? ' feat actuelle' : !abonne && o.id === 'studio' ? ' feat' : ''}`} aria-current={current ? 'true' : undefined}>
+                  {current && <span className="abo-tag">Votre formule</span>}
                   <div className="abo-name">{o.label}</div>
                   <div className="abo-price">{o.prix}€<small>/mois</small></div>
                   <div className="abo-credits">{o.credits} crédits / mois</div>
