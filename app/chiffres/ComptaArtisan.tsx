@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { exporterCsv, formatEuros, type ChampCanonique, type Ligne, type Sens } from '@/lib/comptaImport'
 import { calculerVue, exporterJournal, lignesStockeesValides, preparerRelance, rangerFichiers, type FichierCompta } from '@/lib/comptaArtisan'
 import { lireClasseur } from '@/lib/comptaClasseur'
+import Tableur from './Tableur'
 
 const CHAMPS: { valeur: ChampCanonique | ''; nom: string }[] = [
   { valeur: '', nom: 'Ignorer' }, { valeur: 'date', nom: 'Date' }, { valeur: 'libelle', nom: 'Libellé' },
@@ -56,7 +57,8 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
 
   const rangement = useMemo(() => rangerFichiers(compteCharge === artisanId ? fichiers : []), [fichiers, compteCharge, artisanId])
   const vue = useMemo(() => validees && compteCharge === artisanId ? calculerVue(validees) : null, [validees, compteCharge, artisanId])
-  const exemple = useMemo(() => calculerVue(rangerFichiers([{ nom: 'exemple.csv', texte: EXEMPLE, sensParDefaut: 'recette' }]).lignes), [])
+  const exempleLignes = useMemo(() => rangerFichiers([{ nom: 'exemple.csv', texte: EXEMPLE, sensParDefaut: 'recette' }]).lignes, [])
+  const exemple = useMemo(() => calculerVue(exempleLignes), [exempleLignes])
 
   async function charger(selection: FileList | null) {
     if (!selection || lecture) return
@@ -99,6 +101,16 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
     } catch { setMessage('Enregistrement impossible dans ce navigateur. Téléchargez votre export et vérifiez l’espace disponible.') }
   }
 
+  // Une cellule corrigée dans le tableur : même contrôle qu'au chargement, puis même stockage.
+  function enregistrerModifications(lignes: Ligne[]) {
+    if (!lignesStockeesValides(lignes)) { setMessage('Modification refusée : une ligne serait invalide.'); return }
+    try {
+      localStorage.setItem(cleStockage, JSON.stringify(lignes))
+      setValidees(lignes)
+      setBrouillon(null)
+    } catch { setMessage('Enregistrement impossible dans ce navigateur. Téléchargez votre export et vérifiez l’espace disponible.') }
+  }
+
   const affichage = vue ?? exemple
   const donneesExemple = vue === null
   const maximum = Math.max(1, ...affichage.tableaux.parMois.map((m) => Math.max(m.recettes, m.depenses)))
@@ -138,6 +150,7 @@ export default function ComptaArtisan({ artisanId }: { artisanId: string }) {
         <section className="psh-panel"><h4>Dépenses par catégorie</h4>{affichage.tableaux.depensesParCategorie.length ? <ul className="ca-categories">{affichage.tableaux.depensesParCategorie.map((c) => <li key={c.categorie}><span>{c.categorie}</span><b>{formatEuros(c.montant)}</b></li>)}</ul> : <p>Aucune dépense.</p>}</section>
       </div>
       <section className="psh-panel"><h4>Chiffres par mois</h4><div className="ca-mois">{affichage.tableaux.parMois.map((m) => <div className="ca-mois-ligne" key={m.mois}><b>{m.mois}</b><div className="ca-barres"><span style={{ width: `${m.recettes / maximum * 100}%` }} title={`Recettes ${formatEuros(m.recettes)}`} /><span style={{ width: `${m.depenses / maximum * 100}%` }} title={`Dépenses ${formatEuros(m.depenses)}`} /></div><small>Recettes {formatEuros(m.recettes)} · Dépenses {formatEuros(m.depenses)}</small></div>)}</div></section>
+      {donneesExemple ? <Tableur lignes={exempleLignes} /> : <Tableur lignes={validees ?? []} onChange={enregistrerModifications} />}
       <p className="ca-note">Ces recettes incluent les impayés : elles ne représentent pas les sommes encaissées. Le statut vient de vos fichiers ; un statut absent reste « non renseigné ». Un nouveau rangement validé remplace le précédent.</p>
     </section>
     {compteCharge === artisanId && brouillon && <section className="psh-panel ca-brouillon" data-compta-brouillon><h4>Brouillon de relance à relire</h4><p>Rien n’a été envoyé. Vérifiez les informations avant de copier ce texte.</p><textarea value={brouillon} onChange={(e) => setBrouillon(e.target.value)} aria-label="Brouillon de relance" rows={7} /></section>}

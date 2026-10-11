@@ -69,7 +69,7 @@ const MENTION_TVA = 'Franchise en base (art. 293 B du CGI) : aucune TVA facturé
 const SYNONYMES: Record<ChampCanonique, string[]> = {
   date: ['date', 'date facture', 'date de facture', 'date operation', 'jour', 'date paiement', 'date de paiement', 'date echeance'],
   libelle: ['libelle', 'description', 'objet', 'produit', 'prestation', 'designation', 'intitule', 'detail'],
-  tiers: ['client', 'nom client', 'nom', 'fournisseur', 'tiers', 'beneficiaire', 'nom du client', 'nom fournisseur'],
+  tiers: ['client', 'nom client', 'nom', 'fournisseur', 'client ou fournisseur', 'tiers', 'beneficiaire', 'nom du client', 'nom fournisseur'],
   montant: ['montant', 'montant ttc', 'ttc', 'total', 'total ttc', 'montant euros', 'somme', 'prix', 'montant eur'],
   sens: ['sens', 'type', 'nature', 'flux', 'mouvement'],
   categorie: ['categorie', 'rubrique', 'famille', 'poste'],
