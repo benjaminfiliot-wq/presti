@@ -20,12 +20,53 @@ button:disabled{opacity:.55;cursor:default}
 .msg{background:var(--accent-tint);border:1px solid var(--accent-tint-2);color:var(--ink-soft)}
 .msg.err{background:rgba(240,119,106,.12);border:1px solid rgba(240,119,106,.32);color:#F0A79E}
 .muted{color:var(--muted);font-size:.92rem}
-.msg{margin-top:1rem;padding:.8rem .95rem;border-radius:10px;background:var(--clay-050);color:#7A3E22;font-size:.9rem}
-.msg.err{background:#FBE9E7;color:#B23129}
+.msg{margin-top:1rem;padding:.8rem .95rem;border-radius:10px;font-size:.9rem}
 .brand{font-family:var(--font-display);font-weight:600;font-size:1.35rem;display:flex;align-items:center;gap:.5rem;letter-spacing:-.01em;color:var(--ink)}
 .back-link{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:1.1rem;text-decoration:none;transition:color .15s}
 @media (hover:hover) and (pointer:fine){.back-link:hover{color:var(--ink)}}
 .back-link svg{width:15px;height:15px}
+/* ── Cadre des pages d'accès (app/AuthCadre.tsx, refonte du 11/10) : panneau de marque à gauche dès 960 px,
+   formulaire centré à droite. Sur téléphone, seul le formulaire, en haut (le clavier ne doit rien recouvrir). ── */
+.auth{min-height:100dvh;display:grid;grid-template-columns:1fr;background:radial-gradient(90vw 60vw at 15% -10%,rgba(217,119,87,.14),transparent 65%)}
+.auth .card input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);vertical-align:-2px}
+.auth-cote{display:none}
+.auth-forme{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.auth-forme .wrap{width:100%}
+@media (min-width:960px){
+  .auth{grid-template-columns:minmax(0,1.08fr) minmax(0,1fr)}
+  .auth-forme .wrap{margin:3rem auto;max-width:28rem}
+  .auth-forme .wrap::before{display:none}
+  .auth{background:none}
+  .auth-forme .card .brand{display:none}
+  .auth-forme{background:radial-gradient(60% 50% at 70% 0%,rgba(217,119,87,.08),transparent 70%)}
+  .auth-cote{display:flex;position:relative;overflow:hidden;isolation:isolate;align-items:center;padding:clamp(2.5rem,5vw,4.5rem);border-right:1px solid var(--line);
+    background:radial-gradient(80% 60% at 20% 0%,rgba(217,119,87,.22),transparent 65%),radial-gradient(70% 55% at 100% 100%,rgba(232,148,111,.12),transparent 60%),linear-gradient(180deg,#0E0F15,#0A0B10)}
+  .auth-grille{position:absolute;inset:auto -20% -6% -20%;height:70%;z-index:-1;pointer-events:none;transform:perspective(700px) rotateX(62deg);transform-origin:50% 100%;
+    background-image:linear-gradient(rgba(232,148,111,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(232,148,111,.24) 1px,transparent 1px);background-size:56px 56px;
+    -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%)}
+  .auth-halo{position:absolute;width:30rem;height:30rem;left:-8rem;top:-10rem;z-index:-1;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(217,119,87,.28),transparent)}
+  .auth-cote-in{max-width:32rem}
+  .auth-marque{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-weight:600;font-size:1.3rem;color:var(--ink)}
+  .auth-titre{margin:2.2rem 0 1.6rem;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,3.2vw,2.9rem);line-height:1.06;letter-spacing:-.03em;color:var(--ink)}
+  .auth-titre span{display:block;background:linear-gradient(110deg,#F6C6A8,var(--accent-2) 40%,var(--accent) 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .auth-points{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+  .auth-points li{display:flex;gap:.75rem;align-items:flex-start;color:var(--ink-soft);font-size:.98rem;line-height:1.5}
+  .auth-points i{flex:none;width:1.25rem;height:1.25rem;margin-top:.12rem;border-radius:50%;background:var(--accent-tint);border:1px solid var(--accent-tint-2);position:relative}
+  .auth-points i::after{content:"";position:absolute;left:.4rem;top:.22rem;width:.3rem;height:.55rem;border:solid var(--accent-2);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .auth-fiche{margin:2.2rem 0 0;padding:.4rem 1.1rem;border-radius:16px;background:rgba(19,22,31,.78);border:1px solid var(--line);box-shadow:0 30px 70px -30px rgba(0,0,0,.9);max-width:27rem}
+  .auth-fiche-l{display:flex;justify-content:space-between;gap:1rem;padding:.75rem 0;font-size:.86rem}
+  .auth-fiche-l + .auth-fiche-l{border-top:1px solid var(--line-2)}
+  .auth-fiche-l b{color:var(--ink);font-weight:600;white-space:nowrap}
+  .auth-fiche-l em{font-style:normal;color:var(--muted);text-align:right}
+  .auth-fiche-l em.ok{color:var(--ok)}
+  .auth-pied{margin:2rem 0 0;font-size:.84rem;color:var(--faint)}
+}
+@media (min-width:960px) and (prefers-reduced-motion:no-preference){
+  .auth-cote-in{animation:auth-in .9s var(--ease-apple) both}
+  .auth-fiche{animation:auth-flotte 7s ease-in-out infinite}
+}
+@keyframes auth-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes auth-flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .pw-field{position:relative}
 .pw-field input{padding-right:2.9rem}
 .pw-eye{position:absolute;right:.45rem;top:50%;transform:translateY(-50%);width:auto;height:auto;margin:0;padding:.4rem;background:transparent;border:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;box-shadow:none}
@@ -428,7 +469,7 @@ button:disabled{opacity:.55;cursor:default}
   .psh-app.open .psh-side{transform:none}
   .psh-scrim{display:none;position:fixed;inset:0;background:rgba(20,24,31,.4);z-index:55}
   .psh-app.open .psh-scrim{display:block}
-  .psh-hamb{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--surface);cursor:pointer;padding:0}
+  .psh-hamb{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;padding:0;margin:0}
   .psh-back{width:44px;height:44px}
   .psh-top{padding-top:calc(13px + env(safe-area-inset-top))}
   .psh-content{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
@@ -2773,3 +2814,29 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .vis-onglets{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
 .dir-main .vis-onglets button{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;min-height:28px}
 .dir-main .vis-onglets button[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent-ink);border-color:transparent;font-weight:700}
+
+/* ── Console artisan : couche de finition (refonte du 11/10/2026). Uniquement de la peinture sur les classes du shell
+   (app/AppShell.tsx) et des écrans communs : aucune structure ne change. Mouvement limité à transform/opacity, coupé par
+   prefers-reduced-motion. ── */
+.psh-side{background:linear-gradient(180deg,#161922 0%,#12141B 55%,#0F1117 100%)}
+.psh-side::before{content:"";position:absolute;left:-40%;right:-40%;top:-18%;height:42%;pointer-events:none;background:radial-gradient(closest-side,rgba(217,119,87,.17),transparent)}
+.psh-side > *{position:relative}
+.psh-nav a.on{background:linear-gradient(90deg,rgba(217,119,87,.22),rgba(217,119,87,.05));box-shadow:inset 2px 0 0 var(--accent)}
+.psh-main{background:radial-gradient(60% 34rem at 62% -6rem,rgba(217,119,87,.075),transparent 70%)}
+.psh-top h1{font-family:var(--font-display);font-size:22px;letter-spacing:-.02em}
+.psh-kpi{background:linear-gradient(180deg,var(--surface-2),var(--surface))}
+.psh-kpi .lab svg{opacity:1;color:var(--accent-2)}
+.psh-kpi .val{font-size:32px}
+.psh-panel{background:linear-gradient(180deg,var(--surface),#11131A)}
+.psh-empty{padding:34px 22px;font-size:14px;line-height:1.6}
+.psh-empty::before{content:"";display:block;width:44px;height:44px;margin:0 auto 14px;border-radius:14px;background:var(--accent-tint) radial-gradient(circle at 50% 50%,var(--accent-2) 0 4px,transparent 5px);border:1px solid var(--accent-tint-2)}
+@media (prefers-reduced-motion:no-preference){
+  .psh-content{animation:psh-entree .45s var(--ease-apple) both}
+}
+@keyframes psh-entree{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.psh-back{margin:0}
+@media (max-width:860px){
+  .psh-top{gap:10px}
+  .psh-th{flex:1 1 0;min-width:0}
+  .psh-top h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
