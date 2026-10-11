@@ -121,6 +121,9 @@ const SUITES = [
   { nom: 'Messages — désactivation de l’automatique', cmd: 'node', args: ['scripts/messages-deauto-e2e.mjs'], cout: 'navigateur' },
   { nom: 'App de conversation de la plateforme', cmd: 'node', args: ['scripts/plateforme-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Écran « Ma plateforme → Intelligence »', cmd: 'node', args: ['scripts/plateforme-intelligence-e2e.mjs'], cout: 'navigateur' },
+  // Comptabilité de l'artisan : Chromium isolé, données fictives, ni serveur ni base.
+  { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
+  { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
   { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },

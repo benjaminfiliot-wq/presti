@@ -166,3 +166,47 @@
 @media (max-width: 900px) { .ca-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) } .ca-grille { grid-template-columns: 1fr } }
 @media (max-width: 600px) { .ca-intro, .ca-entete { flex-direction: column } .ca-depot { white-space: normal } .ca-mois-ligne { grid-template-columns: 1fr } .ca-impayes-liste li { flex-wrap: wrap } }
 @media (prefers-reduced-motion: reduce) { .ca-barres span, .ca-impaye, .ca-impayes-liste strong { animation: none } }
+
+/* Le tableur : un classeur, pas une carte. Quadrillage fin, en-têtes figés, chiffres alignés à
+   droite en chiffres tabulaires, onglets de feuilles en bas comme dans Excel. */
+.ct { display: grid; gap: 12px }
+.ct-barre { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap }
+.ct-filtres { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.ct-filtres select, .ct-filtres button, .ct-barre button { width: auto; flex: 0 0 auto; margin: 0 }
+.ct-filtres input { flex: 1 1 220px; min-width: 0; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 8px 10px; font: inherit; font-size: 13px }
+.ct-ajout { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 9px; align-items: end; padding: 12px; border: 1px dashed var(--line); border-radius: var(--radius-sm) }
+.ct-ajout label { display: grid; gap: 5px; color: var(--muted); font-size: 12px }
+.ct-ajout input { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 7px; font: inherit; min-width: 0 }
+.ct-ajout .ca-erreur { grid-column: 1 / -1; margin: 0 }
+.ct-grille { overflow: auto; max-height: 520px; border: 1px solid var(--line); border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--surface) }
+.ct-grille:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px }
+.ca .ct-table { min-width: 860px; border-collapse: separate; border-spacing: 0; font-size: 12.5px; font-variant-numeric: tabular-nums }
+.ca .ct-table th, .ca .ct-table td { padding: 0 8px; height: 32px; border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); white-space: nowrap; color: var(--ink) }
+.ct-table thead th { position: sticky; top: 0; z-index: 2; background: var(--surface-2); font-weight: 700 }
+.ct-table thead tr + tr th { top: 24px }
+.ca .ct-table .ct-lettres th { height: 24px; text-align: center; color: var(--faint, var(--muted)); font-weight: 600; font-size: 11px }
+.ct-table thead button { all: unset; cursor: pointer; display: block; width: 100%; color: var(--ink) }
+.ct-table thead button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px }
+.ct-table .ct-droite, .ct-table .ct-droite button { text-align: right }
+.ca .ct-table .ct-num, .ct-coin { position: sticky; left: 0; z-index: 1; width: 42px; min-width: 42px; text-align: center; background: var(--surface-2); color: var(--muted); font-weight: 600; font-size: 11px }
+.ct-table thead .ct-num, .ct-table thead .ct-coin { z-index: 3 }
+.ct-table tbody tr:hover td { background: color-mix(in srgb, var(--accent) 6%, transparent) }
+.ct-table tbody tr.ct-impaye td:nth-last-child(-n+3) { color: var(--crit) }
+.ct-table tfoot th, .ct-table tfoot td { position: sticky; bottom: 0; background: var(--surface-2); border-top: 2px solid var(--line) }
+.ct-date { color: var(--muted) }
+.ct-saisie { all: unset; box-sizing: border-box; width: 100%; min-width: 90px; height: 30px; padding: 0 4px; cursor: text; border: 1px solid transparent; border-radius: 3px }
+select.ct-saisie { cursor: pointer; appearance: auto; min-width: 130px }
+.ct-saisie:hover { border-color: var(--line) }
+.ct-saisie:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--surface-2) }
+.ct-suppr { all: unset; cursor: pointer; color: var(--muted); padding: 0 6px; font-size: 16px; line-height: 1 }
+.ct-suppr:hover, .ct-suppr:focus-visible { color: var(--crit) }
+.ct-neg, .ct-rouge { color: var(--crit) }
+.ct-vide { text-align: center; color: var(--muted); height: 64px }
+.ct-lien { all: unset; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line) }
+.ct-lien:hover, .ct-lien:focus-visible { text-decoration-color: var(--accent) }
+.ct-plus { justify-self: start }
+.ct-onglets { display: flex; gap: 2px; overflow-x: auto; margin-top: -12px; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--surface-2); padding: 0 6px }
+.ct-onglets button { all: unset; cursor: pointer; padding: 8px 14px; font-size: 12.5px; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap }
+.ct-onglets button.actif { color: var(--ink); background: var(--surface); border-bottom-color: var(--accent); font-weight: 700 }
+.ct-onglets button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: -2px }
+@media (max-width: 600px) { .ct-grille { max-height: 420px } }
