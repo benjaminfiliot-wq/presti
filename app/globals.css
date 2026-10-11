@@ -2840,3 +2840,99 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .psh-th{flex:1 1 0;min-width:0}
   .psh-top h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
+
+/* ===== Refonte 11/10/2026 — pages publiques hors accueil (FAQ, contact, pages légales) =====
+   Le cadre `.pub` porte la palette chaude de la landing (mêmes jetons que `.lp`) : avant, ces pages
+   restaient sur le gris froid de la console, et s'arrêtaient sans pied de page. Halo corail en tête,
+   grille effacée, deux colonnes sur grand écran (intro collante à gauche, contenu à droite). */
+.pub{
+  --co:#D97757; --co2:#E8946F; --co-deep:#B85C3C; --co-glow:rgba(217,119,87,.5);
+  --bg:#09090C; --surf:#141319; --surf2:#1B1A22;
+  --ink:#ECEAE6; --ink2:#C7C2BA; --ink-soft:#C7C2BA; --muted:#8B867D; --faint:#827D74;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.05); --surface:#141319;
+  position:relative;isolation:isolate;min-height:100dvh;background:var(--bg);color:var(--ink);overflow-x:clip
+}
+.pub::before{content:"";position:absolute;inset:0 0 auto;height:720px;z-index:-1;pointer-events:none;
+  background:radial-gradient(55% 60% at 18% 0%,rgba(217,119,87,.17),transparent 72%),radial-gradient(35% 45% at 92% 6%,rgba(217,119,87,.07),transparent 70%)}
+.pub::after{content:"";position:absolute;inset:0 0 auto;height:620px;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(65% 75% at 25% 0%,#000,transparent 78%);mask-image:radial-gradient(65% 75% at 25% 0%,#000,transparent 78%)}
+.pub .legal-wrap{position:relative}
+.pub-main{padding:clamp(2rem,5vw,4.2rem) 0 clamp(4rem,9vw,6.5rem)}
+.pub-grille{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.25fr);gap:clamp(2rem,5vw,4.5rem);align-items:start}
+.pub-cote{position:sticky;top:104px}
+.pub-titre{font-family:var(--font-display);font-weight:800;font-size:clamp(2.5rem,5.6vw,4.2rem);line-height:.98;letter-spacing:-.045em;margin:.55rem 0 0;color:var(--ink);text-wrap:balance}
+.pub-titre span{background:linear-gradient(100deg,var(--co2),var(--co) 60%,var(--co-deep));-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
+.pub-intro{color:var(--ink2);font-size:1.08rem;line-height:1.65;max-width:42ch;margin:1.1rem 0 1.8rem}
+.pub-carte{position:relative;border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.45rem;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),var(--surf);box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+.pub-carte::before{content:"";position:absolute;top:-1px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(232,148,111,.7),transparent)}
+.pub-carte > b{display:block;font-family:var(--font-display);font-size:1.15rem;color:var(--ink)}
+.pub-carte > p{color:var(--muted);margin:.35rem 0 0;line-height:1.55}
+.pub-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem}
+.pub-points{list-style:none;margin:0 0 1.6rem;padding:0;display:grid;gap:.8rem}
+.pub-points li{display:flex;gap:.75rem;align-items:flex-start;color:var(--ink2);line-height:1.5}
+.pub-points i{flex:none;width:1.25rem;height:1.25rem;margin-top:.12rem;border-radius:50%;background:rgba(217,119,87,.14);border:1px solid rgba(217,119,87,.32);position:relative}
+.pub-points i::after{content:"";position:absolute;left:.4rem;top:.22rem;width:.3rem;height:.55rem;border:solid var(--co2);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.pub-points a,.pub .legal-note a{color:var(--co2);text-decoration:underline;text-underline-offset:.15em}
+.pub .legal-note{background:rgba(255,255,255,.025);border-color:var(--line);color:var(--muted);margin:0}
+.pub .legal-note b{color:var(--ink)}
+.pub-forme{padding:clamp(1.3rem,3vw,2.1rem)}
+.pub-forme .ct-form{max-width:none}
+.pub-forme .ct-form .btn{align-self:stretch;margin-top:.3rem}
+
+/* FAQ : numéro, question, pastille « + » qui pivote ; ouverture animée là où le navigateur sait animer <details> */
+.pub .faq-item{background:var(--surf);border-color:var(--line);border-radius:16px;margin-bottom:.75rem}
+.pub .faq-item[open]{border-color:rgba(217,119,87,.34);background:linear-gradient(180deg,rgba(217,119,87,.075),transparent 70%),var(--surf)}
+.pub .faq-item summary{padding:1.15rem 1.25rem;gap:.8rem;font-size:1.04rem;line-height:1.35}
+.pub .faq-item summary::before{display:none}
+.pub .faq-item summary > span{flex:1;min-width:0}
+.faq-n{flex:none;width:1.6rem;font-style:normal;font-family:var(--font-mono);font-size:.74rem;color:var(--faint);letter-spacing:.04em}
+.pub .faq-item[open] .faq-n{color:var(--co2)}
+.faq-ic{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);position:relative;transition:transform .35s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s}
+.faq-ic::before,.faq-ic::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.6px;border-radius:2px;background:var(--co2);transform:translate(-50%,-50%)}
+.faq-ic::after{transform:translate(-50%,-50%) rotate(90deg)}
+.pub .faq-item[open] .faq-ic{transform:rotate(45deg);background:rgba(217,119,87,.14);border-color:rgba(217,119,87,.4)}
+@media (hover:hover) and (pointer:fine){.pub .faq-item:not([open]) summary:hover .faq-ic{border-color:rgba(217,119,87,.4)}}
+.pub .faq-item .faq-a{padding:0 1.25rem 1.25rem 3.65rem;color:var(--ink2)}
+@supports selector(::details-content){
+  @media (prefers-reduced-motion:no-preference){
+    .pub{interpolate-size:allow-keywords}
+    .pub .faq-item::details-content{block-size:0;overflow-y:clip;transition:block-size .38s cubic-bezier(.16,1,.3,1),content-visibility .38s allow-discrete}
+    .pub .faq-item[open]::details-content{block-size:auto}
+  }
+}
+@media (prefers-reduced-motion:no-preference){
+  .pub-cote,.pub-liste,.pub-forme{animation:pub-entree .6s cubic-bezier(.16,1,.3,1) both}
+  .pub-liste,.pub-forme{animation-delay:.08s}
+}
+@keyframes pub-entree{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (max-width:960px){
+  .pub-grille{grid-template-columns:minmax(0,1fr);gap:2rem}
+  .pub-cote{position:static}
+  .pub-intro{margin-bottom:1.4rem}
+}
+@media (max-width:600px){
+  .pub .faq-item summary{padding:1rem 1rem;font-size:1rem}
+  .pub .faq-item .faq-a{padding:0 1rem 1.1rem 1rem}
+  .faq-n{display:none}
+  .pub-actions .lp-btn{flex:1 1 auto;justify-content:center}
+}
+.pub-forme .ct-form .btn{min-height:48px;border-radius:12px;border:0;font-family:var(--font-body);font-weight:650;font-size:1rem;color:#1a0f0a;background:linear-gradient(120deg,var(--co2),var(--co));box-shadow:0 14px 32px -12px var(--co-glow)}
+.pub-forme .ct-form .btn:disabled{opacity:.6}
+/* Téléphone : les questions d'abord, la carte « Une autre question ? » après elles (et non avant). */
+@media (max-width:960px){
+  .pub-cote:has(+ .pub-liste){display:contents}
+  .pub-cote:has(+ .pub-liste) > *{order:1}
+  .pub-cote:has(+ .pub-liste) > .pub-carte{order:3}
+  .pub-liste{order:2}
+  .pub-grille:has(> .pub-cote + .pub-liste){row-gap:0}
+  .pub-cote:has(+ .pub-forme){display:contents}
+  .pub-cote:has(+ .pub-forme) > *{order:1}
+  .pub-cote:has(+ .pub-forme) > .legal-note{order:3;margin-top:1.6rem}
+  .pub-forme{order:2}
+  .pub-grille:has(> .pub-cote + .pub-forme){row-gap:0}
+  .pub-cote:has(+ .pub-forme) > .pub-points{margin-bottom:1.6rem}
+  .pub-cote:has(+ .pub-liste) > .pub-carte{margin-top:1.6rem}
+}
+.pub .legal-wrap h2{padding-top:1.7rem;border-top:1px solid var(--line2);margin-top:2.2rem}

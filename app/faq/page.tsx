@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
+import PublicPied from '@/app/PublicPied'
 import { FAQ } from '@/lib/faq'
 
 export const metadata = {
@@ -27,30 +28,40 @@ const schema = {
 
 export default function FaqPage() {
   return (
-    <>
+    <div className="pub">
     <PublicNav />
-    <main className="legal-wrap">
+    <main className="pub-main">
       {/* Les questions sont statiques aujourd'hui, mais le bloc est lu en texte brut jusqu'au
           premier « fin de balise script » : une réponse qui en contiendrait un livrerait la suite
           au parseur HTML. On échappe `<`, `>` et `&` — le sens des données ne change pas. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') }} />
-      <Breadcrumb label="FAQ" path="/faq" />
-      <span className="legal-kick">Aide</span>
-      <h1>Questions fréquentes</h1>
-      <div className="legal-updated">Tout ce qu’il faut savoir sur Presti</div>
+      <div className="container pub-grille">
+        <aside className="pub-cote">
+          <Breadcrumb label="FAQ" path="/faq" />
+          <span className="legal-kick">Aide</span>
+          <h1 className="pub-titre">Questions <span>fréquentes</span></h1>
+          <p className="pub-intro">Tout ce qu’il faut savoir sur Presti : comment ça marche, vos données, les tarifs, les devis.</p>
+          <div className="pub-carte">
+            <b>Une autre question ?</b>
+            <p>Écrivez-nous : on répond à chaque message.</p>
+            <div className="pub-actions">
+              <a className="lp-btn lp-btn--p" href="/contact">Nous écrire</a>
+              <a className="lp-btn lp-btn--g" href="/signup">Essayer gratuitement</a>
+            </div>
+          </div>
+        </aside>
 
-      {FAQ.map((f, i) => (
-        <details className="faq-item" key={i}>
-          <summary>{f.question}</summary>
-          <div className="faq-a">{f.reponse}</div>
-        </details>
-      ))}
-
-      <p style={{ marginTop: '2.4rem' }}>
-        Une autre question ? <a href="/contact">Écrivez-nous</a> — on répond à chaque message.
-      </p>
-      <p><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
+        <div className="pub-liste">
+          {FAQ.map((f, i) => (
+            <details className="faq-item" key={i}>
+              <summary><em className="faq-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</em><span>{f.question}</span><i className="faq-ic" aria-hidden="true" /></summary>
+              <div className="faq-a">{f.reponse}</div>
+            </details>
+          ))}
+        </div>
+      </div>
     </main>
-    </>
+    <PublicPied />
+    </div>
   )
 }

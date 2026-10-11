@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
+import PublicPied from '@/app/PublicPied'
 import Formulaire from '@/app/contact/Formulaire'
 
 export const metadata = {
@@ -14,28 +15,37 @@ export const metadata = {
 
 export default function Contact() {
   return (
-    <>
+    <div className="pub">
     <PublicNav />
-    <main className="legal-wrap">
-      <Breadcrumb label="Nous écrire" path="/contact" />
-      <span className="legal-kick">Contact</span>
-      <h1>Nous écrire</h1>
+    <main className="pub-main">
+      <div className="container pub-grille">
+        <aside className="pub-cote">
+          <Breadcrumb label="Nous écrire" path="/contact" />
+          <span className="legal-kick">Contact</span>
+          <h1 className="pub-titre">Nous <span>écrire</span></h1>
+          <p className="pub-intro">
+            Une question avant de vous abonner, un problème sur votre compte, une remarque : écrivez ici.
+          </p>
+          <ul className="pub-points">
+            <li><i /><span>Le message arrive directement chez nous.</span></li>
+            <li><i /><span>La réponse part sur l’adresse que vous indiquez.</span></li>
+            <li><i /><span>Une question courante ? <a href="/faq">Les questions fréquentes</a> y répondent peut-être déjà.</span></li>
+          </ul>
+          <div className="legal-note">
+            <p style={{ margin: 0 }}>
+              <b>Vous êtes un client d’un artisan ?</b> Presti n’est que l’outil que votre artisan
+              utilise. Pour votre devis, vos travaux ou votre rendez-vous, répondez directement au
+              message de l’artisan : c’est lui qui vous suit, et lui seul.
+            </p>
+          </div>
+        </aside>
 
-      <p className="ct-intro">
-        Une question avant de vous abonner, un problème sur votre compte, une remarque : écrivez ici.
-        Le message arrive directement chez nous, et la réponse part sur l’adresse que vous indiquez.
-      </p>
-
-      <Formulaire />
-
-      <div className="legal-note">
-        <p style={{ margin: 0 }}>
-          <b>Vous êtes un client d’un artisan ?</b> Presti n’est que l’outil que votre artisan
-          utilise. Pour votre devis, vos travaux ou votre rendez-vous, répondez directement au
-          message de l’artisan : c’est lui qui vous suit, et lui seul.
-        </p>
+        <div className="pub-carte pub-forme">
+          <Formulaire />
+        </div>
       </div>
     </main>
-    </>
+    <PublicPied />
+    </div>
   )
 }
