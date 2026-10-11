@@ -60,10 +60,12 @@ export type Tableaux = {
   sourcesClients: { source: string; nombre: number; montant: number }[]
   meilleursClients: { tiers: string; montant: number }[]
   parMois: { mois: string; recettes: number; depenses: number; benefice: number }[]
-  tva: { collectee: number; mention: string }
+  tva: { mention: string }
 }
 
-const MENTION_TVA = 'Franchise en base (art. 293 B du CGI) : aucune TVA facturée, rien à déduire. La colonne TVA d’un fichier n’entre dans aucun total.'
+// Le régime de TVA de l'artisan n'est pas connu ici : ni franchise ni TVA collectée ne sont affirmées. Écrire « TVA collectée 0 »
+// disait faux à tout artisan assujetti.
+const MENTION_TVA = 'Non calculée : les montants sont repris tels qu’importés, sans régime de TVA déduit. La colonne TVA d’un fichier n’entre dans aucun total.'
 
 // Les noms de colonnes qu'un artisan écrit réellement. Comparés sans accents ni casse.
 const SYNONYMES: Record<ChampCanonique, string[]> = {
@@ -311,7 +313,7 @@ export function tableauxDeBord(lignes: readonly Ligne[]): Tableaux {
     meilleursClients: [...clients.entries()].map(([tiers, montant]) => ({ tiers, montant })).sort((a, b) => b.montant - a.montant).slice(0, 5),
     parMois: [...mois.entries()].sort(([a], [b]) => (a < b ? -1 : 1))
       .map(([m, v]) => ({ mois: m, recettes: v.recettes, depenses: v.depenses, benefice: v.recettes - v.depenses })),
-    tva: { collectee: 0, mention: MENTION_TVA },
+    tva: { mention: MENTION_TVA },
   }
 }
 
@@ -332,7 +334,7 @@ export function exporterCsv(t: Tableaux): string {
     `Marge (%);${t.marge === null ? '' : String(t.marge).replace('.', ',')}`,
     `Factures impayées (nombre);${t.impayes.nombre}`,
     `Factures impayées (€);${e(t.impayes.montant)}`,
-    `TVA collectée (€);${e(t.tva.collectee)}`,
+    `TVA;${t.tva.mention}`,
     '',
     'Dépenses par catégorie;Montant (€)',
     ...t.depensesParCategorie.map((c) => `${c.categorie};${e(c.montant)}`),
