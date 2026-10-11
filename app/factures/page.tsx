@@ -14,12 +14,19 @@ const BADGE: Record<string, { label: string; pill: string }> = {
   annulee: { label: 'Annulée', pill: 'crit' },
 }
 const eur = (n: number) => `${(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
+const initiales = (n: string | null) => (n ? n.replace(/^(M\.|Mme|Mlle)\s+(et\s+(M\.|Mme)\s+)?/i, '').trim().split(/\s+/).slice(0, 2).map((x) => x[0]?.toUpperCase()).join('') : '?')
+const somme = (l: Facture[]) => l.reduce((t, f) => t + (f.total_ttc ?? 0), 0)
+// Les familles du résumé et des filtres. Un avoir et la facture qu'il annule sortent des deux montants :
+// l'argent n'est ni à encaisser ni encaissé.
+const famille = (f: Facture) => (f.avoir_de || f.statut === 'annulee' ? 'avoirs' : f.statut === 'payee' ? 'payees' : 'a_encaisser')
+const FILTRES: [string, string][] = [['a_encaisser', 'À encaisser'], ['payees', 'Payées'], ['avoirs', 'Avoirs et annulées']]
 
 export default function FacturesList() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const [factures, setFactures] = useState<Facture[]>([])
   const [busy, setBusy] = useState<string | null>(null)
+  const [filtre, setFiltre] = useState<string>('toutes')
 
   // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
   // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
@@ -104,6 +111,10 @@ export default function FacturesList() {
     await load(); setBusy(null)
   }
 
+  const aEncaisser = factures.filter((f) => famille(f) === 'a_encaisser')
+  const payees = factures.filter((f) => famille(f) === 'payees')
+  const vue = filtre !== 'toutes' && factures.some((f) => famille(f) === filtre) ? filtre : 'toutes'
+
   return (
     <AppShell active="factures" title="Factures" crumb="Vos documents">
       {!ready ? (
@@ -113,13 +124,41 @@ export default function FacturesList() {
           <div className="psh-empty">Aucune facture pour l’instant.<br />Ouvrez un devis et cliquez « Créer la facture » : Presti reprend les lignes, applique la bonne numérotation et sort un PDF conforme.</div>
         </div>
       ) : (
+        <>
+          {/* Le résumé se calcule sur la liste affichée ci-dessous : rien d'autre n'est lu. */}
+          <section className="docs-resume" aria-label="Résumé de vos factures">
+            <div className="docs-tuile">
+              <span className="lab">À encaisser</span>
+              <b className="tnum">{eur(somme(aEncaisser))}</b>
+              <span className="sub">{aEncaisser.length} facture{aEncaisser.length > 1 ? 's' : ''} · TTC</span>
+            </div>
+            <div className="docs-tuile ok">
+              <span className="lab">Encaissé</span>
+              <b className="tnum">{eur(somme(payees))}</b>
+              <span className="sub">{payees.length} facture{payees.length > 1 ? 's' : ''} payée{payees.length > 1 ? 's' : ''} · TTC</span>
+            </div>
+            <div className="docs-tuile">
+              <span className="lab">Pièces émises</span>
+              <b className="tnum">{factures.length}</b>
+              <span className="sub">factures et avoirs</span>
+            </div>
+          </section>
+
+          <div className="docs-filtres" role="group" aria-label="Filtrer les factures">
+            <button type="button" aria-pressed={vue === 'toutes'} onClick={() => setFiltre('toutes')}>Toutes <em>{factures.length}</em></button>
+            {FILTRES.filter(([f]) => factures.some((x) => famille(x) === f)).map(([f, libelle]) => (
+              <button type="button" key={f} aria-pressed={vue === f} onClick={() => setFiltre(f)}>{libelle} <em>{factures.filter((x) => famille(x) === f).length}</em></button>
+            ))}
+          </div>
+
         <div className="psh-panel">
-          <div className="doc-list">
-            {factures.map((f) => {
+          <div className="doc-list doc-list--grille doc-list--factures">
+            {factures.filter((f) => vue === 'toutes' || famille(f) === vue).map((f) => {
               const b = BADGE[f.statut ?? 'emise'] ?? BADGE.emise
               const active = f.statut !== 'annulee' && !f.avoir_de
               return (
                 <div className="doc-card" key={f.id}>
+                  <span className="dc-ava" aria-hidden="true">{initiales(f.client_nom)}</span>
                   <div className="dc-main" onClick={() => pdf(f)} title="Voir le PDF">
                     <div className="dc-top">
                       <span className="dc-num">{f.numero ?? '—'}</span>
@@ -149,6 +188,7 @@ export default function FacturesList() {
             })}
           </div>
         </div>
+        </>
       )}
     </AppShell>
   )
