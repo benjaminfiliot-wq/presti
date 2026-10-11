@@ -196,7 +196,7 @@ principal(async () => {
   const a = await lancer(process.execPath, [path.join(ICI, 'appliquer.mjs'), fPlan, '--cycle=leger', `--base=${base}`])
   if (a.code !== 0) { console.error(a.sortie.trim()); return journal(a.code) }
   const e = await appeler(base, lireJeton(), 'POST', '/api/agents/evenements', { type: 'bilan_quotidien', objet: MODELE, resume: plan.compte_rendu.join(' · ') })
-  if (e.statut !== 201) { console.error(`✗ événement bilan_quotidien refusé (HTTP ${e.statut || e.erreur})`); return journal(e.statut === 429 ? 3 : 1) }
+  if (e.statut !== 201 && e.statut !== 200) { console.error(`✗ événement bilan_quotidien refusé (HTTP ${e.statut || e.erreur})`); return journal(e.statut === 429 ? 3 : 1) }
   console.log(`✓ bilan du ${jour} : ${plan.taches.length} proposition(s) envoyée(s) au pont`)
   return journal(0)
 })

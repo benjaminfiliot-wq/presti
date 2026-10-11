@@ -88,7 +88,7 @@ export function resumeTiktok(items) {
 async function ebay(mot, cle, delaiMs = 60_000) {
   const url = `https://www.ebay.fr/sch/i.html?_nkw=${encodeURIComponent(mot)}&_sop=12&LH_BIN=1&LH_PrefLoc=3`
   const r = await fetch(FIRECRAWL, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${cle}` }, signal: AbortSignal.timeout(delaiMs),
-    body: JSON.stringify({ url, formats: ['markdown'], onlyMainContent: true, timeout: 45000, location: { country: 'FR', languages: ['fr-FR'] } }) })
+    body: JSON.stringify({ url, formats: ['markdown'], onlyMainContent: true, maxAge: 0, timeout: 45000, location: { country: 'FR', languages: ['fr-FR'] } }) })
   const j = await r.json().catch(() => ({}))
   if (!r.ok || !j?.data?.markdown) return { ok: false, statut: r.status }
   return { ok: true, resume: resumeEbay(annoncesEbay(j.data.markdown)) }
