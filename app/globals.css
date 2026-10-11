@@ -2936,3 +2936,61 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .pub-cote:has(+ .pub-liste) > .pub-carte{margin-top:1.6rem}
 }
 .pub .legal-wrap h2{padding-top:1.7rem;border-top:1px solid var(--line2);margin-top:2.2rem}
+
+/* ===== Refonte 11/10/2026 — intérieur de l'espace artisan : devis, factures, demandes ===== */
+/* La pastille « info » perdait son centrage vertical (place-items:normal) : le point flottait en haut. */
+.pill.info{align-items:center}
+/* Résumé en tête des listes de documents : trois tuiles calculées sur la liste affichée. */
+.docs-resume{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.docs-tuile{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:4px;padding:16px 18px;border-radius:14px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008)),var(--surface)}
+.docs-tuile::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--accent-2),var(--accent));opacity:.85}
+.docs-tuile.ok::before{background:linear-gradient(180deg,#5fdca4,var(--ok))}
+.docs-tuile .lab{font-size:12.5px;color:var(--muted);font-weight:600}
+.docs-tuile b{font-family:var(--font-display);font-size:26px;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.docs-tuile .sub{font-size:12px;color:var(--faint)}
+/* Filtres : des puces, la puce active en corail. */
+.docs-filtres{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.docs-filtres button{width:auto;margin:0;display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(255,255,255,.025);color:var(--ink-soft);font-size:13px;font-weight:600;font-family:var(--font-body);transition:background .15s,border-color .15s,color .15s}
+.docs-filtres button em{font-style:normal;font-family:var(--font-mono);font-size:11px;color:var(--faint);padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.05)}
+.docs-filtres button[aria-pressed="true"]{background:var(--accent-tint);border-color:var(--accent-tint-2);color:var(--ink)}
+.docs-filtres button[aria-pressed="true"] em{color:var(--accent-2);background:rgba(217,119,87,.16)}
+@media (hover:hover) and (pointer:fine){.docs-filtres button:hover{border-color:rgba(255,255,255,.18);color:var(--ink)}}
+/* Lignes de documents : initiales du client, et sur grand écran des colonnes alignées (montants les uns sous les autres). */
+.dc-ava{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--accent-2);background:var(--accent-tint);border:1px solid var(--accent-tint-2)}
+.dc-garde{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--faint);padding:0 .35rem}
+.dc-garde svg{width:13px;height:13px}
+@media (min-width:1100px){
+  .doc-list--grille .doc-card{display:grid;grid-template-columns:auto minmax(0,1fr) 9.5rem 12.5rem;align-items:center;gap:16px}
+  .doc-list--factures .doc-card{grid-template-columns:auto minmax(0,1fr) 9.5rem 24rem}
+  .doc-list--grille .dc-amt{margin:0;text-align:right;font-size:15px}
+  .doc-list--grille .dc-actions{justify-content:flex-end;flex-wrap:nowrap}
+}
+@media (max-width:760px){
+  .docs-resume{grid-template-columns:1fr 1fr}
+  .docs-resume .docs-tuile:last-child{grid-column:1/-1}
+  .docs-tuile b{font-size:22px}
+  .docs-filtres{flex-wrap:nowrap;overflow-x:auto;margin-inline:-4px;padding:0 4px 4px;scrollbar-width:none}
+  .docs-filtres button{flex:none}
+  .dc-ava{display:none}
+}
+/* Demandes du tableau de bord : date à côté du nom (elle ne danse plus avec la largeur du statut),
+   aperçu du message sur une ligne, statut et bouton « Détail » en colonne fixe à droite. */
+.lead-ligne{display:flex;align-items:flex-start;gap:12px}
+.lead-corps{flex:1;min-width:0}
+.lead-tete{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.lead-tete b{font-size:15px;color:var(--ink)}
+.lead-date{font-family:var(--font-mono);font-size:11.5px;color:var(--faint)}
+.lead-contact{font-size:13.5px;margin-top:1px}
+.lead-contact a{color:var(--accent-ink)}
+.lead-apercu{margin:6px 0 0;font-size:13.5px;color:var(--muted);line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62ch}
+.lead-cote{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.lead-voir{width:auto;margin:0;display:inline-flex;align-items:center;gap:4px;padding:5px 8px 5px 11px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink-soft);font-size:12.5px;font-weight:600;font-family:var(--font-body)}
+.lead-voir svg{width:15px;height:15px;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.lead-voir[aria-expanded="true"] svg{transform:rotate(180deg)}
+@media (hover:hover) and (pointer:fine){.lead-voir:hover{border-color:var(--accent-tint-2);color:var(--ink)}}
+.psh-item.lead.ouvert{background:linear-gradient(180deg,rgba(217,119,87,.05),transparent 60%)}
+@media (max-width:620px){
+  .lead-apercu{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
