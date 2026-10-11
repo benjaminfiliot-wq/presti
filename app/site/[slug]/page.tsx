@@ -178,7 +178,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   const showReal = realisations.length > 0 && tier >= 2
   const apropos = c?.apropos || a.bio
-  const showAbout = !!apropos
+  // Sans texte « à propos » dédié, la bio sert déjà d'accroche au hero : on ne la répète pas
+  // mot pour mot dans un second panneau (le visiteur lisait deux fois la même phrase).
+  const showAbout = !!apropos && apropos.trim() !== (c?.hero_lede || a.bio || '').trim()
   const showChannels = channels.length > 0
   // Mots-clés GÉANTS (inspiration sites cinématiques « FIND ») : d'abord ceux choisis par
   // l'IA (mots qui claquent, ancrés dans le geste), sinon repli sur prestations/spécialités.
@@ -243,6 +245,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           </div>
         ) : null}
         <div className="site-hero-in">
+          <div className="site-hero-txt">
           <span className="site-eyebrow site-reveal">{a.metier || 'Artisan'}{zone ? <> · {zone}</> : null}</span>
           <h1 className="site-reveal">{a.nom}</h1>
           {c?.hero_accroche ? <p className="site-tagline site-reveal">{c.hero_accroche}</p> : null}
@@ -251,6 +254,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             <a className="site-btn p" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
             {showReal ? <a className="site-btn g" href="#realisations">Voir mes réalisations</a> : null}
           </div>
+          </div>
+          {/* Fiche : en colonne à droite quand le hero est typographique sur grand écran (site.css). */}
+          <div className="site-hero-fiche">
           {/* Sans photo, l'espace est rempli par du VRAI contenu — les prestations réellement
               saisies par l'artisan — jamais par de la décoration ni une image inventée. */}
           {!heroShot && services.length > 0 ? (
@@ -265,6 +271,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
               {a.horaires ? <span>{IC.clock}{a.horaires}</span> : null}
             </div>
           ) : null}
+          </div>
         </div>
       </section>
       ),

@@ -115,7 +115,7 @@ html.lenis,html.lenis body{height:auto}
 /* a.site-nav-cta et pas .site-nav-cta : `.site a{color:inherit}` (0,1,1) l'emportait sur
    (0,1,0), donc le bouton héritait du gris de .site-links — texte gris foncé sur pastille
    presque noire, 2:1 de contraste. Illisible, et invisible dans les tests d'API. */
-.site a.site-nav-cta,.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
+.site a.site-nav-cta,.site-nav-cta{white-space:nowrap;flex:none;padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
 @media (hover:hover) and (pointer:fine){.site-nav-cta:hover{transform:translateY(-1px)}}
 @media(max-width:760px){.site-links a:not(.site-nav-cta){display:none}}
 
@@ -574,7 +574,61 @@ html.lenis,html.lenis body{height:auto}
   .site-nav a,.site-links a{display:inline-flex;align-items:center;min-height:44px}
   .site-nav-cta{min-height:44px}
   .site-brand{min-height:44px}
-  .site a[href^="tel:"],.site a[href^="mailto:"],.site-foot-legal{display:inline-block;padding:.7rem 0;margin:-.7rem 0}
+    /* :where() = spécificité nulle : la cible tactile ne doit pas écraser la mise en page propre
+     d'un lien (puces de contact, ligne d'infos du hero), qui perdaient leur rembourrage sur mobile. */
+  :where(.site a[href^="tel:"],.site a[href^="mailto:"]),.site-foot-legal{display:inline-block;padding:.7rem 0;margin:-.7rem 0}
+  .site-chan{margin:0;min-height:44px}
 }
 /* v8 A1 — le kicker du bloc « À propos » (panneau) prend l'encre secondaire, lisible sur son propre fond quel que soit le thème */
 .site-about .site-kick{color:var(--sink2)}
+
+/* Refonte (11/10) ─────────────────────────────────────────────────────────────
+   Hero sans photo, grand écran : la moitié droite restait vide. Les prestations et les
+   coordonnées (du contenu réel, rien d'inventé) passent dans une fiche à droite du titre.
+   Sous 1100 px, rien ne change : la fiche reste un simple bloc sous le bouton. */
+.site-hero-fiche:empty{display:none}
+@media (min-width:1100px){
+  .site-hero[data-hero="typo"] .site-hero-in:has(.site-hero-fiche:not(:empty)){
+    max-width:var(--swrap);width:100%;margin:0 auto;display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(300px,360px);column-gap:clamp(3rem,6vw,6rem);align-items:center;
+  }
+  .site-hero[data-hero="typo"] .site-hero-fiche{
+    position:relative;overflow:hidden;padding:1.7rem 1.7rem 1.5rem;border-radius:var(--srad-l);
+    background:color-mix(in srgb,var(--spanel) 82%,transparent);border:var(--sbw) solid var(--sline2);
+    box-shadow:0 30px 70px -40px color-mix(in srgb,var(--sink) 45%,transparent),0 0 0 1px color-mix(in srgb,var(--pc) 10%,transparent);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  }
+  /* Filet d'accent qui balaie le haut de la fiche, lentement : le seul mouvement du hero au repos. */
+  .site-hero[data-hero="typo"] .site-hero-fiche::before{
+    content:"";position:absolute;inset:0 0 auto;height:2px;
+    background:linear-gradient(90deg,transparent,var(--pc) 35%,var(--pc2) 50%,transparent 70%) 0 0/250% 100%;
+    animation:site-fiche-balaye 6s var(--se-io,ease-in-out) infinite alternate;
+  }
+  .site-hero[data-hero="typo"] .site-hero-fiche .site-hero-strip{
+    margin:0;flex-direction:column;gap:.85rem;font-size:.82rem;
+  }
+  .site-hero[data-hero="typo"] .site-hero-fiche .site-hero-strip li::before{
+    content:"";width:6px;height:6px;border-radius:50%;background:var(--pc);flex:none;
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--pc) 18%,transparent);
+  }
+  .site-hero[data-hero="typo"] .site-hero-fiche .site-hero-meta{
+    flex-direction:column;gap:.8rem;margin-top:0;font-size:.93rem;
+  }
+  .site-hero[data-hero="typo"] .site-hero-fiche .site-hero-strip + .site-hero-meta{
+    margin-top:1.4rem;padding-top:1.3rem;border-top:var(--sbw) solid var(--sline2);
+  }
+}
+@keyframes site-fiche-balaye{from{background-position:100% 0}to{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.site-hero-fiche::before{animation:none!important}}
+
+/* Panneau de contact : même largeur que les sections qu'il clôt. À 820 px sous un panneau
+   « À propos » de pleine largeur, les deux blocs sombres formaient un escalier. */
+.site-cta-block{max-width:var(--swrap);position:relative;isolation:isolate}
+.site-cta-block h2{max-width:20ch;margin-inline:auto}
+.site-cta-block::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 70% at 50% 0%,color-mix(in srgb,var(--pc) 20%,transparent),transparent 70%);
+}
+/* `.site-cta-block p` l'emportait sur `.site-cta-note` : la note collait au bouton, en grand corps. */
+.site-cta-block .site-cta-note{margin:1.1rem auto 0;font-size:.9rem;max-width:40ch}
+.site[data-theme="chantier"] .site-hero-fiche{border-radius:0}
