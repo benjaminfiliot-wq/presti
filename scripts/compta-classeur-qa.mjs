@@ -7,7 +7,7 @@ import { zipSync, strToU8 } from 'fflate'
 import { chromium } from 'playwright'
 
 const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur'].map(async (nom) => {
+const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur', 'comptaTableur', 'comptaXlsx'].map(async (nom) => {
   const source = await fs.readFile(path.join(racine, 'lib', `${nom}.ts`), 'utf8')
   return ts.transpileModule(source.replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText.replace(/^export /gm, '')
 }))
@@ -86,7 +86,8 @@ try {
     globalThis.React = require('react')
     globalThis.ReactClient = require('client')
   }, modules)
-  const composant = ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/ComptaArtisan.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
+  const tableur = ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/Tableur.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
+  const composant = tableur + '\n' + ts.transpileModule((await fs.readFile(path.join(racine, 'app/chiffres/ComptaArtisan.tsx'), 'utf8')).replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, jsx: ts.JsxEmit.React } }).outputText.replace(/^export default /gm, '')
   await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composant + '\nglobalThis.rendusAvantEffet=[];function ObserverCompte({id}){React.useLayoutEffect(()=>{globalThis.rendusAvantEffet.push({id,recettes:document.querySelector("[data-compta-recettes]")?.textContent})},[id]);return React.createElement(ComptaArtisan,{artisanId:id})}globalThis.monter=(id)=>{globalThis.racineReact??=globalThis.ReactClient.createRoot(document.getElementById("root"));globalThis.racineReact.render(React.createElement(ObserverCompte,{id}))};globalThis.monter("fictif-a");' })
   await page.locator('[data-compta-fichier]').waitFor()
   const importer = () => page.locator('[data-compta-fichier]').setInputFiles([
