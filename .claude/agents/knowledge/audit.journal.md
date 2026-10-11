@@ -216,3 +216,29 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
   - Pour tester « ce que l'écran dit vs ce qui est vrai » : lire l'état RÉEL par HTTP nu ou par la base au même instant que le libellé.
   - Playwright : `getByRole('button', {name})` peut résoudre un scrim `aria-label="Fermer le menu"` invisible ; viser la classe (`.pchat-burger`).
   - Un slug généré doit repasser par le validateur qui servira à le modifier (`problemeSlug`) — sinon l'utilisateur hérite d'une adresse « invalide ».
+
+## 2026-10-11 — presti-auditeur — Audit anti-vibecoding A–E avant clients (lecture seule)
+- Constat : 2 bloquants. (1) public/sites-demo/appel-* = 20 maquettes de prospects RÉELS (tél, SIRET, adresse) servies sur
+  prestiapp.fr alors que présentées « privées » ; (2) /site/commander (bouton de la landing) bloqué sur « Chargement… » sans session
+  (page.tsx `if (!t) return`, AppShell ne redirige pas). docs/presti/appels (141 fichiers) réintroduit après la règle du 04/10.
+  RLS 65+31 tables et 226 definer révoquées : sain. typecheck 0.
+- Corrigé le jour même (branche claude/refonte-comptabilite-ruda7g) : dossiers sortis du dépôt et de public/ (copie dans les fichiers
+  du projet), .gitignore ; redirection vers /login?retour= ; erreurs brutes de l'onboarding traduites ; faux « aucun devis / aucune
+  demande » remplacés par un état d'erreur ; /pubs/commander en 404 drapeau baissé ; og:url par page ; llms.txt ; npm audit en CI.
+- À retenir : (a) un robots.txt dans un sous-dossier de public/ n'a AUCUN effet et tout public/ est servi : « privé » = route à jeton ;
+  (b) une page client qui fait `if (!jeton) return` sans redirection reste bloquée pour un anonyme ; (c) une règle .gitignore n'agit
+  pas sur un fichier déjà suivi : vérifier avec `git ls-files` ; (d) les marqueurs « IA » se comptent dans le CSS (orbes, grille,
+  bruit, faisceau) et dans le texte une fois les commentaires retirés.
+
+## 2026-10-11 — presti-audit-attaque — Pentest statique avant démonstration (166 routes, 135 migrations, historique 1 398 commits)
+- Contexte : lecture seule, zéro requête prod, aucun exploit rejoué. typecheck vert.
+- Constat : 0 critique, 3 élevés : (E1) second facteur, suspension et révocation absents de la RLS, donc mot de passe seul =
+  PostgREST complet ; (E2) quota emails 80/j vidable anonymement + relais du message du prospect ; (E3) amplification IA sur
+  conversation (pas de limite IP/artisan, historique entier renvoyé, fondateur sans crédit). 6 moyens, 11 faibles.
+- Corrigé le jour même : E2 (message plus recopié, adresse validée, part anonyme du plafond + 3/jour par destinataire), E3 (plafonds
+  par adresse et par artisan, historique borné à 16 messages / 12 000 caractères), M1 (getIp ramène l'IPv6 au /64), M2 (notification
+  groupée même sous limite), M3 (bac à sable CSP sur /site-genere servi par un domaine Presti, jeton comparé en temps constant).
+- Reste, à décider par Benj : E1 (politique RESTRICTIVE aal2 / sessions_verifiees / suspension, migration en production), M4-M6,
+  purge de l'historique git des données de prospects (réécriture de main).
+- À retenir : un second facteur vérifié dans les routes Next ne protège rien si le front lit PostgREST : il faut une policy
+  RESTRICTIVE. Toute clé de limite par IP doit passer par le /64.

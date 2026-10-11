@@ -79,7 +79,8 @@ export async function POST(req: Request) {
           to: contact,
           fromName: artisan?.nom?.trim() || 'Votre artisan',
           subject: `Bien reçu — ${artisan?.nom || 'votre demande'}`,
-          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci ! ${artisan?.nom || 'Nous'} a bien vos coordonnées et revient vers vous très vite pour la suite.\n\n${lead.message ? `Votre besoin : ${lead.message}\n\n` : ''}À très bientôt.`,
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci ! ${artisan?.nom || 'Nous'} a bien vos coordonnées et revient vers vous très vite pour la suite.\n\nÀ très bientôt.`,
+          anonyme: true,
           replyTo: artisan?.email ?? undefined,
         }).catch(() => {})
       }

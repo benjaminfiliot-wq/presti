@@ -6,6 +6,7 @@
 //   • sinon : APERÇU PRIVÉ — il faut le jeton (`?apercu=<jeton>`, posé ensuite en cookie pour naviguer), la réponse
 //     porte `X-Robots-Tag: noindex` et n'est pas mise en cache. Sans jeton : 404 neutre, comme si rien n'existait.
 // Sur un hôte Presti (aperçu), les liens absolus du HTML/CSS sont réécrits pour rester sous /site-genere/<id>/.
+import { createHash, timingSafeEqual } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { cheminObjet, lireFichier, reecrireLiens } from '@/lib/sitesGeneres'
@@ -30,7 +31,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ commande: strin
     const cookie = req.headers.get('cookie') ?? ''
     const m = cookie.match(new RegExp(`(?:^|;\\s*)${nomCookie}=([^;]+)`))
     jetonRecu = url.searchParams.get('apercu') || (m ? decodeURIComponent(m[1]) : null)
-    if (!c.apercu_jeton || !jetonRecu || jetonRecu !== c.apercu_jeton) return introuvable()
+    if (!c.apercu_jeton || !jetonRecu || !memeJeton(jetonRecu, c.apercu_jeton)) return introuvable()
   }
   const cheminUrl = '/' + (chemin ?? []).join('/') + (url.pathname.endsWith('/') && (chemin ?? []).length ? '/' : '')
   const objet = cheminObjet(c.id, cheminUrl)
@@ -39,6 +40,10 @@ export async function GET(req: Request, ctx: { params: Promise<{ commande: strin
   if (!fichier) return introuvable()
 
   const entetes: Record<string, string> = { 'Content-Type': fichier.type }
+  // Servi sur un domaine Presti, le site généré partage l'origine de l'espace artisan (et sa session dans le
+  // stockage du navigateur). Le bac à sable lui donne une origine opaque : ses scripts tournent, mais ne
+  // lisent plus rien de prestiapp.fr (audit offensif du 11/10, M3). Sur le domaine de l'artisan : inchangé.
+  if (hotePresti(req.headers.get('host') ?? '')) entetes['Content-Security-Policy'] = 'sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation'
   let corps: ArrayBuffer | string = fichier.corps
   const texte = fichier.type.startsWith('text/html') || fichier.type.startsWith('text/css')
   if (texte && hotePresti(req.headers.get('host') ?? '')) corps = reecrireLiens(new TextDecoder().decode(fichier.corps), c.id, fichier.type)
@@ -51,4 +56,11 @@ export async function GET(req: Request, ctx: { params: Promise<{ commande: strin
     if (url.searchParams.get('apercu')) entetes['Set-Cookie'] = `${nomCookie}=${encodeURIComponent(jetonRecu ?? '')}; Path=/site-genere/${c.id}; HttpOnly; SameSite=Lax; Max-Age=86400${url.protocol === 'https:' ? '; Secure' : ''}`
   }
   return new NextResponse(corps, { status: 200, headers: entetes })
+}
+
+/** Comparaison en temps constant : la durée de la réponse ne dit rien du jeton attendu. */
+function memeJeton(recu: string, attendu: string): boolean {
+  const a = createHash('sha256').update(recu).digest()
+  const b = createHash('sha256').update(attendu).digest()
+  return timingSafeEqual(a, b)
 }

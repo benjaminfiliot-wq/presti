@@ -22,7 +22,7 @@ import { chromium } from 'playwright'
 
 const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const transpiler = (source, jsx = false) => ts.transpileModule(source.replace(/^import .*$/gm, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, ...(jsx ? { jsx: ts.JsxEmit.React } : {}) } }).outputText
-const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur', 'comptaTableur', 'comptaXlsx'].map(async (nom) => transpiler(await fs.readFile(path.join(racine, 'lib', `${nom}.ts`), 'utf8')).replace(/^export /gm, '')))
+const sources = await Promise.all(['comptaImport', 'comptaArtisan', 'comptaClasseur', 'comptaTableur', 'comptaXlsx', 'comptaAssistant'].map(async (nom) => transpiler(await fs.readFile(path.join(racine, 'lib', `${nom}.ts`), 'utf8')).replace(/^export /gm, '')))
 
 // Jeu fictif : 6 lignes sur 3 mois. Valeurs attendues calculées à la main ci-dessous.
 const CSV = [
@@ -169,8 +169,8 @@ try {
   await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composants.join('\n') + '\nglobalThis.ReactClient.createRoot(document.getElementById("root")).render(React.createElement(ComptaArtisan,{artisanId:"fictif-tableur"}));' })
   await page.locator('[data-compta-tableur]').waitFor()
   assert.equal(await page.locator('[data-compta-tableur] [data-compta-statut]').count(), 0, 'exemple en lecture seule')
+  // Depuis la refonte du 11/10/2026, le dépôt suffit : l'assistant range et enregistre seul.
   await page.locator('[data-compta-fichier]').setInputFiles({ name: 'fictif.csv', mimeType: 'text/csv', buffer: Buffer.from(CSV) })
-  await page.locator('[data-compta-valider]').click()
   await page.getByText('Vos chiffres importés', { exact: true }).waitFor()
   const lignesJournal = page.locator('[data-compta-journal] [data-compta-ligne]')
   assert.equal(await lignesJournal.count(), 6)

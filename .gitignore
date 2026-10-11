@@ -115,3 +115,9 @@ reprise-cloud/prospection/
 
 # 05/10 : entrées médias d essai de 026-159 (30 Mo) : jamais dans git
 .orchestre/preuves/026-159/entrees/
+
+# Données de prospects réels (audit du 11/10) : jamais dans public/ (tout public/ est servi sur prestiapp.fr,
+# un robots.txt de sous-dossier n'y change rien) ni dans le dépôt. Elles vivent dans presti-ops et les fichiers du projet.
+public/sites-demo/appel-*/
+docs/presti/appels/
+docs/contexte-cloud/presti-secrets/

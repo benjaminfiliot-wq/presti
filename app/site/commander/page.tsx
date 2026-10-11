@@ -91,7 +91,9 @@ function CommanderSite() {
 
   const charger = useCallback(async () => {
     const t = await jeton()
-    if (!t) return
+    // Un visiteur sans compte (le lien vient de la landing) : on le connecte d'abord, puis il revient ici.
+    // Sans cette redirection, l'écran restait sur « Chargement… » pour toujours (audit du 11/10).
+    if (!t) { router.replace(`/login?retour=${encodeURIComponent(`${window.location.pathname}${window.location.search}`)}`); return }
     const complement = await fetch('/api/site/commander/complement', { headers: { Authorization: `Bearer ${t}` } })
     if (complement.status === 409) {
       router.replace(`/onboarding?suite=${encodeURIComponent(`/site/commander?commande=${p_commande || ''}`)}`)
@@ -206,8 +208,9 @@ function CommanderSite() {
           return { ...b, matiere: { ...b.matiere, photos: [...cur, { url }] } }
         })
       }
-    } catch (e: any) {
-      alert(e.message)
+    } catch (e: unknown) {
+      console.error('photo', e)
+      alert('La photo n’a pas pu être envoyée. Vérifiez le format (JPEG, PNG ou WebP) et réessayez.')
     } finally {
       setBusy(false)
     }

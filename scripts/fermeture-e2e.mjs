@@ -189,7 +189,7 @@ const onb = await page('/onboarding')
 // formulaire ou le renvoi vers /login n'existent plus qu'au client. On exige alors la coquille ET le script propre à la page /onboarding
 // (une route absente ou cassée n'a ni l'un ni l'autre : 404 ou page d'erreur).
 const onbCoquille = /BAILOUT_TO_CLIENT_SIDE_RENDERING/.test(onb.html) && /app\/onboarding\/page-[\w-]+\.js/.test(onb.html)
-T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && (/Ton profil|login/i.test(onb.html) || onbCoquille))
+T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && (/Votre profil|login/i.test(onb.html) || onbCoquille))
 const rp = await page('/reset-password')
 T('/reset-password présente le formulaire', rp.status === 200 && /mot de passe/i.test(rp.html))
 const demo = await page('/site/atelier-du-chene/infos-legales')

@@ -17,6 +17,9 @@ import { calculer, type LigneDemande, type LigneDevis, type LigneFacture } from 
 // Un chargement raté n'affiche PAS des zéros : « 0 € facturé » sur une panne réseau est un mensonge.
 const LIMITE = 1000
 
+// Le jeton de session pour l'assistant comptable (route serveur) : relu à chaque dépôt, jamais gardé.
+const jetonSession = async () => (await supabase.auth.getSession()).data.session?.access_token ?? null
+
 type Charge = { factures: LigneFacture[]; devis: LigneDevis[]; demandes: LigneDemande[]; tronque: boolean }
 
 export default function Chiffres() {
@@ -66,7 +69,7 @@ export default function Chiffres() {
       ) : (
         <Tableau i={indicateurs} tronque={charge.tronque} />
       )}
-      {artisanId && <ComptaArtisan artisanId={artisanId} />}
+      {artisanId && <ComptaArtisan artisanId={artisanId} obtenirJeton={jetonSession} />}
     </AppShell>
   )
 }

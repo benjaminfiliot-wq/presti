@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Info from '@/app/Info'
+import { actif } from '@/lib/flags'
 
 // Messages → Canaux (v4 §B2). Voie IMAP/SMTP : marche avec N'IMPORTE QUELLE boîte email
 // (OVH, Gmail, Orange, Free…) sans dépendre d'une application OAuth tierce.
@@ -157,12 +158,13 @@ export default function CanauxPage() {
           )}
         </div>
 
-        <div className="tool-card">
+        {/* « Une fonctionnalité non finie n'apparaît pas » : ce bloc ne parle des autres canaux que lorsqu'ils existent. */}
+        {(actif('canauxWhatsapp') || actif('canauxReseaux')) && <div className="tool-card">
           <h2>Les autres canaux</h2>
           <p className="muted" style={{ margin: 0 }}>
-            WhatsApp Business, Instagram, Messenger et SMS demandent une <b>application déclarée</b> chez Meta ou un compte SMS facturé. On les branchera quand vous le déciderez — en attendant, l’email et votre plateforme couvrent l’essentiel.
+            WhatsApp Business, Instagram, Messenger et SMS se branchent depuis cet écran.
           </p>
-        </div>
+        </div>}
 
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}
       </div>

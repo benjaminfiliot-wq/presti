@@ -122,6 +122,7 @@ const SUITES = [
   { nom: 'App de conversation de la plateforme', cmd: 'node', args: ['scripts/plateforme-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Écran « Ma plateforme → Intelligence »', cmd: 'node', args: ['scripts/plateforme-intelligence-e2e.mjs'], cout: 'navigateur' },
   // Comptabilité de l'artisan : Chromium isolé, données fictives, ni serveur ni base.
+  { nom: 'Comptabilité — assistant IA : masquage, réponse de l’IA revalidée, fichiers en désordre rangés au centime', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/compta-assistant-qa.mjs'], cout: 'gratuit' },
   { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).

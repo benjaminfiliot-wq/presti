@@ -15,10 +15,10 @@ export const DELAI_TEXTE = `Livré sous ${DELAI_ANNONCE} après la validation hu
  *  drapeau `siteCommandeVente` est levé. Trois phrases, pas une promesse de classement, pas un délai autre que le
  *  nôtre. Le prix vient d'ici, comme partout. */
 export const SITE_A_LA_DEMANDE = {
-  titre: `Le site, à la demande — ${PRIX_SITE_TEXTE} une fois`,
+  titre: `Le site, à la demande : ${PRIX_SITE_TEXTE} une fois`,
   phrases: [
     'Un site à votre nom, avec une page par commune que vous servez vraiment : c’est ça, le référencement local bien fait.',
-    'Vos photos, votre métier, vos coordonnées — rien d’inventé — et votre page de conversation pour que la demande arrive chez vous.',
+    'Vos photos, votre métier, vos coordonnées (rien d’inventé) et votre page de conversation pour que la demande arrive chez vous.',
     `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). ${DELAI_TEXTE}`,
   ],
   bouton: 'Commander mon site',
@@ -38,9 +38,9 @@ export const TRANSITIONS: Record<EtatCommande, EtatCommande[]> = {
 export const transitionValide = (de: EtatCommande, vers: EtatCommande): boolean => TRANSITIONS[de]?.includes(vers) ?? false
 export const LIBELLE_ETAT: Record<EtatCommande, string> = {
   brouillon: 'Dossier en cours',
-  payee: 'Payée — en fabrication',
-  generee: 'Aperçu prêt — en relecture',
-  validee: 'Validée — mise en ligne en cours',
+  payee: 'Payée, en fabrication',
+  generee: 'Aperçu prêt, en relecture',
+  validee: 'Validée, mise en ligne en cours',
   en_ligne: 'En ligne',
 }
 
@@ -179,7 +179,7 @@ export function erreursAvantPaiement(b: Brouillon): string[] {
   }
   if (b.domaine_mode === 'existant' && !b.domaine) e.push('Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr).')
   if (!b.metier) e.push('Le métier principal manque.')
-  if (b.communes.length < 1) e.push('Indiquez au moins une commune réellement servie — c’est la matière du référencement local.')
+  if (b.communes.length < 1) e.push('Indiquez au moins une commune réellement servie : c’est la matière du référencement local.')
   const m = b.matiere
   const a = m.artisan
   if (!a) {
