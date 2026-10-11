@@ -315,7 +315,9 @@ html.lenis,html.lenis body{height:auto}
 /* ── Colonne des conversations */
 .pchat-side{width:274px;flex:none;display:flex;flex-direction:column;gap:.7rem;padding:1rem .85rem;border-right:1px solid var(--pl);background:color-mix(in srgb,var(--pi) 4%,var(--pb));z-index:3}
 .pchat-brand{display:flex;align-items:center;gap:.6rem;padding:.15rem .25rem .5rem}
-.pchat-brand span{display:flex;flex-direction:column;min-width:0}
+/* :not(.pchat-ava) : l'avatar est aussi un <span> ; la règle le passait en colonne et ses initiales
+   sortaient du rond (collées en haut à gauche). */
+.pchat-brand > span:not(.pchat-ava){display:flex;flex-direction:column;min-width:0}
 .pchat-brand b{font-size:.95rem;color:var(--pi);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pchat-brand small{font-size:.74rem;color:var(--pm)}
 /* Les initiales se lisaient à 3,6:1 sur la pastille teintée : l'accent brut sur un fond
@@ -396,8 +398,9 @@ html.lenis,html.lenis body{height:auto}
 
 /* ── Mobile : la colonne devient un tiroir */
 @media(max-width:860px){
-  .pchat-side{position:fixed;inset:0 auto 0 0;width:82vw;max-width:310px;transform:translateX(-102%);transition:transform .28s var(--pe);box-shadow:0 0 60px rgba(0,0,0,.28)}
-  .pchat.open .pchat-side{transform:none}
+  .pchat-side{position:fixed;inset:0 auto 0 0;width:82vw;max-width:310px;transform:translateX(-102%);transition:transform .28s var(--pe);box-shadow:none}
+  /* L'ombre seulement tiroir ouvert : fermé, elle débordait sur le bord gauche de l'écran. */
+  .pchat.open .pchat-side{transform:none;box-shadow:0 0 60px rgba(0,0,0,.28)}
   .pchat.open .pchat-scrim{display:block;position:fixed;inset:0;z-index:2;background:rgba(0,0,0,.42);border:none;padding:0}
   .pchat-burger{display:block}
   .pchat-bub{max-width:86%}
@@ -501,3 +504,23 @@ html.lenis,html.lenis body{height:auto}
   .pchat input,.pchat textarea,.plat-form input,.plat-form textarea,.pchat-capture input{font-size:16px;min-height:44px}
 }
 @media (max-width:1024px){.pchat-composer button[type=submit]{min-width:44px}.pchat-sugg button,.pchat-new,.pchat-conv,.pchat-compte-b{min-height:44px}.pchat-burger{min-width:44px;min-height:44px}}
+
+/* Refonte (11/10) ─────────────────────────────────────────────────────────────
+   Les boutons ne prenaient pas la police de la page : suggestions et « Nouvelle demande »
+   s'affichaient dans la police système, à côté du titre dans celle de l'artisan. */
+.pchat button{font-family:inherit}
+/* Accueil : l'avatar de l'entreprise porte un halo de son accent, puis le texte entre en cascade. */
+.pchat-hello .pchat-ava{width:56px;height:56px;font-size:1rem;
+  box-shadow:0 0 0 6px color-mix(in srgb,var(--pc) 12%,transparent),0 18px 40px -18px color-mix(in srgb,var(--pc) 70%,transparent)}
+@media (prefers-reduced-motion:no-preference){
+  .pchat-hello > *{animation:pchat-entree .6s var(--pe) backwards}
+  .pchat-hello > :nth-child(2){animation-delay:.08s}
+  .pchat-hello > :nth-child(3){animation-delay:.16s}
+  .pchat-hello .pchat-sugg button{animation:pchat-entree .5s var(--pe) backwards}
+  .pchat-hello .pchat-sugg button:nth-child(1){animation-delay:.26s}
+  .pchat-hello .pchat-sugg button:nth-child(2){animation-delay:.32s}
+  .pchat-hello .pchat-sugg button:nth-child(3){animation-delay:.38s}
+  .pchat-hello .pchat-sugg button:nth-child(n+4){animation-delay:.44s}
+  .pchat-row{animation:pchat-entree .32s var(--pe) backwards}
+}
+@keyframes pchat-entree{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
