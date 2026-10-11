@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
+import PublicPied from '@/app/PublicPied'
 import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
 import { DELAI_LIVRAISON_JOURS_OUVRES, PRIX_PACK_STUDIO_TEXTE, VIDEOS_PACK_STUDIO } from '@/lib/studio/offre'
 
@@ -15,7 +16,7 @@ const Back = () => <Breadcrumb label="Conditions générales" path="/cgu" />
 
 export default function CGU() {
   return (
-    <>
+    <div className="pub">
     <PublicNav />
     <main className="legal-wrap">
       <Back />
@@ -213,6 +214,7 @@ export default function CGU() {
 
       <p style={{ marginTop: '2.4rem' }}><a href="/confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
-    </>
+    <PublicPied />
+    </div>
   )
 }

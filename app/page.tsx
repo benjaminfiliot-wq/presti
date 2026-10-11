@@ -1,6 +1,6 @@
 import '@/app/globals.css'
+import PublicPied from '@/app/PublicPied'
 import PublicNav from '@/app/PublicNav'
-import Marque from './Marque'
 import type { Metadata } from 'next'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
@@ -341,22 +341,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="lp-foot">
-        <div className="container">
-          <div className="lp-foot-haut">
-            <div className="lp-foot-marque">
-              <span className="lp-brand"><i className="marque"><Marque size={22} /></i>Presti</span>
-              <p>L&apos;assistant des artisans du bâtiment : chaque demande a sa réponse prête, puis le devis, la facture et les relances.</p>
-              <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
-            </div>
-            <nav aria-label="Produit"><b>Produit</b><a href="#fonctionnalites">Fonctionnalités</a><a href="#chiffres">Vos chiffres</a><a href="#compta">Comptabilité</a><a href="#tarifs">Tarifs</a></nav>
-            <nav aria-label="Aide"><b>Aide</b><a href="/faq">Questions fréquentes</a><a href="/contact">Nous écrire</a><a href="/login">Se connecter</a></nav>
-            <nav aria-label="Informations légales"><b>Légal</b><a href="/cgu">Conditions générales</a><a href="/confidentialite">Confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav>
-          </div>
-          <div className="lp-foot-bas"><span>© 2026 Presti · Fait pour les artisans.</span></div>
-        </div>
-        <div className="lp-foot-mot" aria-hidden="true">Presti</div>
-      </footer>
+      <PublicPied accueil />
     </div>
   )
 }
