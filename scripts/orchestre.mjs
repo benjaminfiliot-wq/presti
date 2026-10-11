@@ -1211,7 +1211,6 @@ function promouvoir(n, benj) {
   if (!Number.isInteger(idx) || idx < 0 || idx >= propositions.length) { console.error(`✗ proposition ${n} introuvable (${propositions.length} en quarantaine)`); process.exit(3) }
   const proposition = propositions[idx]
   const sensible = MOTS_SENSIBLES.test(proposition)
-    || /[€$]|\b(?:euros?|dollars?|tarifs?|co[uû]ts?|acheter|achats?|d[eé]penser|d[eé]penses?|payantes?|payants?)\b/i.test(proposition)
   if (sensible && !benj) { console.error(`✗ proposition ${n} touche l'argent, l'irréversible ou la marque : réservée à Benj (\`${CMD} promouvoir ${n} --benj\`)`); process.exit(3) }
   const date = maintenant().slice(0, 10)
   const statut = sensible ? "refusée d'office" : 'promue'

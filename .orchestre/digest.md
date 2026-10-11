@@ -98,7 +98,9 @@
 | 026-212 | feature | fait | codex | PASS | 2026-09-29T19:14:45Z · 44s · 0 l. |
 | 026-090 | feature | fait | codex | PASS | 2026-09-29T18:58:19Z · 94s · 0 l. |
 | 026-088 | feature | fait | claude-code | PASS | 2026-09-29T17:57:02Z · 18s · 2310 l. |
+| 026-089 | feature | fait | codex | PASS | 2026-09-29T17:30:22Z · 74s · 0 l. |
 | 026-147 | feature | fait | antigravity | PASS | 2026-09-29T16:33:19Z · 185s · 0 l. |
+| 026-210 | feature | fait | claude-code | PASS | 2026-09-29T16:28:58Z · 12s · 695 l. |
 | 026-085 | feature | fait | claude-code | PASS | 2026-09-29T16:23:22Z · 56s · 1120 l. |
 | 026-209 | feature | fait | codex | PASS | 2026-09-29T15:13:06Z · 24s · 0 l. |
 | 026-236 | feature | fait | codex | PASS | 2026-09-29T15:03:52Z · 109s · 0 l. |

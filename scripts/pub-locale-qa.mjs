@@ -353,7 +353,7 @@ function verifierTextes(sortieDir, pack, contrat, statutMetaLogement) {
       // toléré seulement dans la phrase qui l'exclut explicitement — sinon c'est une consigne de ciblage interdite (le corps était vide : cette condition ne pouvait jamais rougir).
       // Une phrase qui parle d'âge, de genre ou de sexe doit EXCLURE ce ciblage (Meta le retire, aucune consigne, interdit…) ; sinon c'est une consigne de ciblage.
       for (const phrase of basFiche.split(/[.\n]+/)) {
-        if (/\bâge\b|\bgenre\b|\bsexe\b/.test(phrase) && !/\b(retire|retirer|retirent|exclut|exclure|aucune?|sans|interdit|interdite|interdits|pas de|n'est pas|ne peut pas|ne\\s+r[ée]glez\\s+ni|ni l[’']âge)\b/.test(phrase)) out['PL-T5'].push(`consigne de ciblage par âge, genre ou sexe : « ${phrase.trim().slice(0, 80)} » (statut oui)`)
+        if (/\bâge\b|\bgenre\b|\bsexe\b/.test(phrase) && !/\b(retire|retirer|retirent|exclut|exclure|aucune?|sans|interdit|interdite|interdits|pas de|n'est pas|ne peut pas|ne\s+r[ée]glez\s+ni|ni l[’']âge)\b/.test(phrase)) out['PL-T5'].push(`consigne de ciblage par âge, genre ou sexe : « ${phrase.trim().slice(0, 80)} » (statut oui)`)
       }
     } else if (statut === 'non') {
       if (basFiche.includes('logement')) out['PL-T5'].push('« Logement » présent alors que le statut est non')
