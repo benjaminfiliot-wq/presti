@@ -54,6 +54,8 @@ const TABLES = [
   'fournisseurs', 'materiaux', 'stock', 'mouvements_stock', 'listes_achat', 'lignes_achat', 'postes_types',
   'prix_artisan', 'prix_observations', 'recherche_cache',
   'limites', 'ip_abus', 'ip_bans', 'password_resets', 'app_errors', 'plat_events', 'passages_cron',
+  // 0150 — l'assistant de gestion (une table absente est signalée, pas une panne).
+  'assistant_conversations', 'assistant_journal',
 ]
 const BUCKETS = ['artisan-media', 'lead-media']
 

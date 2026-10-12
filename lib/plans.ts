@@ -20,6 +20,7 @@ export type Capacite =
   | 'inventaire.stock' | 'inventaire.recherche_ia'
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
+  | 'assistant'
 
 type Plan = {
   label: string
@@ -51,6 +52,8 @@ const SIGNATURE: Capacite[] = [
   ...STUDIO,
   'plateforme.ia.expert', 'plateforme.regles',
   'canaux.reseaux', 'support.prioritaire',
+  // 016 A1/A2 — l'assistant de gestion de la console (Signature, donc Business). Caché tant que le drapeau `assistant` est baissé.
+  'assistant',
 ]
 
 export const PLANS: Record<PlanId, Plan> = {

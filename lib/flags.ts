@@ -141,6 +141,13 @@ export const FLAGS = {
   /** 12/10/2026 — export mensuel automatique du journal des factures (CSV) à l'adresse du comptable. Mêmes conditions que
    *  comptaAlerteImpayes : 0140 appliquée, puis un export d'essai reçu et ouvert dans Excel. */
   comptaExportMensuel: false,
+  /** 12/10/2026 — l'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture seule et A2 brouillons) :
+   *  page /assistant, POST /api/assistant, entrée « Assistant » du menu. Offre Signature (capacité `assistant`, lib/plans.ts).
+   *  Baissé : la page et la route répondent 404, rien dans le menu, rien dans la grille des offres. Se lève après la migration
+   *  0150 appliquée (levé sans elle, la route refuse chaque tour : le plafond et le journal sont en base, fail-closed), puis la
+   *  recette A5 du plan (évaluation, audits sécurité et RGPD par des agents distincts, parcours réel sur un compte de test) et
+   *  l'accord de Benj. */
+  assistant: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

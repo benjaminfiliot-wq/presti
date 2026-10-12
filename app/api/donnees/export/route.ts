@@ -20,7 +20,7 @@ type Ligne = Record<string, unknown>
 const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'sans-numero').replace(/[^\w.-]+/g, '_')
 
 async function collecter(uid: string) {
-  const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils, direction, supportAcces, supportLectures] = await Promise.all([
+  const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils, direction, supportAcces, supportLectures, journalAssistant] = await Promise.all([
     supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),
     // Sans `ip` : donnée d'un tiers, finalité anti-abus, elle n'a rien à faire dans l'export de l'artisan (C7).
     supabaseAdmin.from('leads').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }).then((r) => ({ ...r, data: (r.data ?? []).map(({ ip: _ip, ...l }: Record<string, unknown>) => l) })),
@@ -44,6 +44,10 @@ async function collecter(uid: string) {
     supabaseAdmin.from('acces_support_lectures')
       .select('acces_id, vue, element_type, acteur_nom, lu_le')
       .eq('artisan_id', uid).order('lu_le', { ascending: true }).then((r) => r, () => ({ data: [] })),
+    // 0150 — ce que l'assistant de gestion a consulté ou préparé pour lui (table absente avant la migration : liste vide).
+    supabaseAdmin.from('assistant_journal')
+      .select('conversation_id, tour, outil, entrees, resultat, resume, objet_type, objet_id, cree_le')
+      .eq('artisan_id', uid).order('cree_le', { ascending: true }).then((r) => r, () => ({ data: [] })),
   ])
   // Messages de toutes ses conversations (par lots, pour ne pas charger l'univers).
   const ids = (leads.data ?? []).map((l) => l.id)
@@ -64,6 +68,7 @@ async function collecter(uid: string) {
     actions_de_direction: (direction.data ?? []) as Ligne[],
     acces_du_support: (supportAcces.data ?? []) as Ligne[],
     acces_du_support_consultations: (supportLectures.data ?? []) as Ligne[],
+    journal_de_l_assistant: (journalAssistant.data ?? []) as Ligne[],
   }
 }
 
