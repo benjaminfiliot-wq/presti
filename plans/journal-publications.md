@@ -28,3 +28,21 @@
 | 14/09 10 h 17 | pub-09, 10 | LinkedIn, Facebook | idem |
 
 Publora : Published 10, Failed 0. Pub-03 exclue (postée à la main par Benj). La tâche planifiée « Presti publications » est retirée : plus rien à programmer.
+| 2026-10-11 | 2026-09-16T17:30:00.000Z | facebook | 11 | A | 6aa9b20c7372422c2a3b7dd9 |
+
+> 2026-10-11 20 h 03 (Europe/Paris), publier-serie.mjs : pub-11 A facebook · parution orpheline `6aa9b20c7372422c2a3b7dd9` retrouvée par son texte, statut published, rattachée au journal sans recréation.
+
+| 2026-10-11 | 2026-09-17T10:30:00.000Z | instagram | 11 | B | 6aaa70c4c6e7fb26d1317f0d |
+
+> 2026-10-11 20 h 03 (Europe/Paris), publier-serie.mjs : pub-11 B instagram · parution orpheline `6aaa70c4c6e7fb26d1317f0d` retrouvée par son texte, statut published, rattachée au journal sans recréation.
+
+| 2026-10-11 | 2026-09-18T17:30:00.000Z | facebook | 12 | A | 6aab08d3202678283097a6e6 |
+
+> 2026-10-11 20 h 03 (Europe/Paris), publier-serie.mjs : pub-12 A facebook · parution orpheline `6aab08d3202678283097a6e6` retrouvée par son texte, statut published, rattachée au journal sans recréation.
+
+| 2026-10-11 | 2026-09-19T10:30:00.000Z | instagram | 12 | B | 6aaaf1056bf27f35d210fb9a |
+
+> 2026-10-11 20 h 03 (Europe/Paris), publier-serie.mjs : pub-12 B instagram · parution orpheline `6aaaf1056bf27f35d210fb9a` retrouvée par son texte, statut published, rattachée au journal sans recréation.
+
+> 2026-10-11 20 h 03 (Europe/Paris), publier-serie.mjs : pub-11 A facebook · visuel faux signalé : `6aa9b20c7372422c2a3b7dd9` (publiée ; visuel en ligne 1080×1920 jpeg ≠ publications/serie-2/pub-11-instagram.jpg 1080×1350 jpeg) ; l’ALERTE BENJ est transmise et ne sera plus répétée pour cet identifiant.
+
