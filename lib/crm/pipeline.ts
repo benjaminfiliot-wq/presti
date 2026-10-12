@@ -24,7 +24,7 @@ export const ETAPES = ['demande', 'devis_envoye', 'signe', 'chantier', 'a_factur
 export type Etape = (typeof ETAPES)[number]
 export type EtapeOuClasse = Etape | 'classe'
 export const LIBELLES_ETAPES: Record<EtapeOuClasse, string> = {
-  demande: 'Demande', devis_envoye: 'Devis envoyé', signe: 'Signé', chantier: 'Chantier', a_facturer: 'À facturer', paye: 'Payé', classe: 'Classé',
+  demande: 'Demande', devis_envoye: 'Devis envoyé', signe: 'Signé', chantier: 'Chantier', a_facturer: 'À facturer / encaisser', paye: 'Payé', classe: 'Classé',
 }
 
 export type Nombre = number | string | null | undefined

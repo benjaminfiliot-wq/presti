@@ -30,6 +30,8 @@ export async function PATCH(req: Request, ctx: Ctx) {
     if (error) {
       console.error('[crm/materiau] sortie :', error.message)
       if (/deja traitee/.test(error.message)) return erreur('Cette réservation est déjà sortie.', 409)
+      const manque = /stock insuffisant \(reste ([^)]*)\)/.exec(error.message)
+      if (manque) return erreur(`Il n’en reste que ${manque[1]} à cet endroit : enregistrez la livraison dans l’Inventaire avant de sortir ce matériau. Rien n’a été décompté.`, 409)
       if (/introuvable/i.test(error.message)) return erreur('Réservation introuvable.', 404)
       return erreur('La sortie de stock a échoué : rien n’a été décompté.', 500)
     }

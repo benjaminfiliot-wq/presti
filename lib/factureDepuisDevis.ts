@@ -12,7 +12,7 @@ export type LigneIn = { designation?: string; quantite?: number; unite?: string;
 
 export type ResultatFacture =
   | { ok: true; id: string; numero: string }
-  | { ok: false; status: 400 | 404 | 422 | 500; error: string; code?: 'mentions_manquantes' | 'client_incomplet'; manquantes?: string[]; lien?: string }
+  | { ok: false; status: 400 | 404 | 409 | 422 | 500; error: string; code?: 'mentions_manquantes' | 'client_incomplet'; manquantes?: string[]; lien?: string }
 
 export async function creerFacture(p: {
   artisanId: string
@@ -34,6 +34,21 @@ export async function creerFacture(p: {
     const { data: dl } = await supabaseAdmin.from('devis_lignes').select('*').eq('devis_id', devisId).order('ordre')
     src = devis
     lignes = (dl ?? []) as LigneIn[]
+    // Recette du 12/10 : un second POST (double clic, deuxième onglet) émettait une deuxième facture complète du même
+    // devis. Une facture d'acompte reste possible ; une facture complète, seulement si la précédente a été annulée par
+    // un avoir.
+    const estAcompte = typeof p.acomptePct === 'number' && p.acomptePct > 0 && p.acomptePct < 100
+    if (!estAcompte) {
+      const { data: deja } = await supabaseAdmin.from('factures').select('id, numero, avoir_de').eq('artisan_id', uid).eq('devis_id', devisId)
+      const emises = (deja ?? []).filter((f) => !f.avoir_de)
+      const annulees = new Set((deja ?? []).map((f) => f.avoir_de).filter(Boolean))
+      const restantes = emises.filter((f) => !annulees.has(f.id))
+      if (restantes.length) {
+        const { data: lf } = await supabaseAdmin.from('factures_lignes').select('facture_id, designation').in('facture_id', restantes.map((f) => f.id))
+        const completes = restantes.filter((f) => !(lf ?? []).filter((l) => l.facture_id === f.id).every((l) => /^Acompte /.test(String(l.designation ?? ''))))
+        if (completes.length) return { ok: false, status: 409, error: `Ce devis est déjà facturé (${completes[0].numero}). Pour refaire la facture, émettez d’abord un avoir.` }
+      }
+    }
   } else {
     src = p.corps ?? {}
     lignes = Array.isArray(src.lignes) ? (src.lignes as LigneIn[]) : []

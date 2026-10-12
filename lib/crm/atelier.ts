@@ -226,7 +226,8 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
     const retard = joursDeRetard(c, d.jour)
     const couleur = couleurEpingle(c, retard)
     const etat: EtatObjet = { aujourdhui: estAujourdhui(c, d.jour), retard: !!retard && retard > 0, aFacturer: c.etape === 'a_facturer' || c.statut === 'termine', stockBas: false }
-    const statutTxt = etat.aFacturer ? 'Terminé · à facturer' : etat.retard ? `En retard · ${retard} j` : c.statut === 'en_cours' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''}` : c.statut === 'planifie' ? 'Planifié' : c.statut === 'en_pause' ? 'En pause' : 'À démarrer'
+    // Recette du 12/10 : un chantier en cours déjà facturé s'affichait « Terminé · à facturer ».
+    const statutTxt = etat.aFacturer && c.statut !== 'termine' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''} · facturé` : etat.aFacturer ? 'Terminé · à facturer' : etat.retard ? `En retard · ${retard} j` : c.statut === 'en_cours' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''}` : c.statut === 'planifie' ? 'Planifié' : c.statut === 'en_pause' ? 'En pause' : 'À démarrer'
     const o = objet({ cle: `chantier:${c.id}`, type: 'chantier', ref: c.id, libelle: c.titre, detail: statutTxt, centre: [x, 0, z], hauteur: ht + 1.1 + 1.6, epingle: couleur, etat })
     posChantier.set(c.id, [x, 0, z])
     ajouter('box', [x, 0.03, z], [4.2, 0.06, 4.2], '#E9E1D3', o)

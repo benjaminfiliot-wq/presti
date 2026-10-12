@@ -175,7 +175,7 @@ const ENTREES = () => ({ artisanId: A, leads: LEADS, devis: DEVIS, factures: FAC
   const comptes = Object.fromEntries(p.colonnes.map((c) => [c.etape, c.cartes.length]))
   T('C15 colonnes : 2 · 1 · 3 · 3 · 3 · 1, et 3 classés', egal(comptes, { demande: 2, devis_envoye: 1, signe: 3, chantier: 3, a_facturer: 3, paye: 1 }) && p.classes === 3 && !p.vide, JSON.stringify(comptes) + ' classes=' + p.classes)
   T('C16 montant d’une colonne, au centime (Signé : 500 + 700 = 1 200 €)', p.colonnes.find((c) => c.etape === 'signe').montant === 120000 && p.colonnes.find((c) => c.etape === 'chantier').montant === 300000)
-  T('C17 l’ordre des colonnes est celui du plan', p.colonnes.map((c) => c.libelle).join(' → ') === 'Demande → Devis envoyé → Signé → Chantier → À facturer → Payé')
+  T('C17 l’ordre des colonnes est celui du plan', p.colonnes.map((c) => c.libelle).join(' → ') === 'Demande → Devis envoyé → Signé → Chantier → À facturer / encaisser → Payé') // 12/10 : la colonne contient aussi les factures émises non payées
   T('C18 compte vide : pipeline vide', P.pipeline({ artisanId: A, leads: [], devis: [], factures: [], chantiers: [], deplacements: [] }).vide)
   T('C19 artisanId vide : rien (jamais « tout le monde »)', P.cartes({ ...ENTREES(), artisanId: '' }).length === 0)
 }
