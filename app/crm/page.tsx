@@ -12,6 +12,7 @@ import ChantiersVue from './Chantiers'
 import ClientsVue from './Clients'
 import EquipeVue from './Equipe'
 import Atelier from './atelier/Atelier'
+import { DONNEES_EXEMPLE } from '@/lib/crm/exemple'
 
 // CRM « atelier vivant » — les vues 2D (jalon J2), utilisables sans la 3D (J3).
 //
@@ -32,6 +33,8 @@ const CLE_ONGLET = 'presti-crm-onglet'
 export default function Crm() {
   const router = useRouter()
   const [onglet, setOnglet] = useState<Onglet>('atelier')
+  // L'atelier d'exemple (données fictives, rien en base) : montré d'office tant que le compte n'a rien à mettre dans l'atelier.
+  const [exemple, setExemple] = useState<boolean | null>(null)
   const [vue, setVue] = useState<Vue | null>(null)
   const [erreur, setErreur] = useState<{ message: string; verrou: boolean } | null>(null)
   const [chargement, setChargement] = useState(true)
@@ -69,7 +72,7 @@ export default function Crm() {
   }
 
   return (
-    <AppShell active="crm" title="CRM atelier" crumb="Chantiers, clients, pipeline" wide>
+    <AppShell active="crm" title="CRM atelier" crumb="Offre Signature · chantiers, clients, pipeline" wide>
       {erreur ? (
         <div className="psh-panel crm-verrou" role={erreur.verrou ? 'status' : 'alert'}>
           <div className="psh-empty">
@@ -93,7 +96,23 @@ export default function Crm() {
           {vue.tronque && <p className="crm-note" role="note">Votre historique dépasse 2 000 pièces : seules les plus récentes sont comptées.</p>}
           <section id={`crm-vue-${onglet}`} role="tabpanel" aria-labelledby={`crm-onglet-${onglet}`} className="crm-vue">
             {/* La maquette n'est montée que sur son onglet : le morceau 3D n'est jamais chargé ailleurs. */}
-            {onglet === 'atelier' && <Atelier donnees={vue.atelier} onVue2D={(v) => { if (ONGLETS.some((o) => o.id === v)) choisir(v as Onglet) }} />}
+            {onglet === 'atelier' && (() => {
+              const a = vue.atelier
+              const vide = !a.chantiers.length && !a.materiaux.length && !a.vehicules.length && !a.membres.length && !a.demandes.length
+              const montrer = exemple ?? vide
+              return (
+                <>
+                  <div className="crm-note crm-exemple" role="note">
+                    {montrer
+                      ? <>Exemple : un atelier de plombier avec des données fictives, pour voir ce que donne le CRM. Rien n’est enregistré.{' '}<button type="button" className="psh-btn" onClick={() => setExemple(false)}>Voir mon atelier</button></>
+                      : <>{vide ? 'Votre atelier est encore vide : il se remplit avec vos devis signés, vos chantiers, votre stock et votre équipe.' : 'Votre atelier, d’après vos données.'}{' '}<button type="button" className="psh-btn" onClick={() => setExemple(true)}>Voir l’atelier d’exemple</button></>}
+                  </div>
+                  {montrer
+                    ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo />
+                    : <Atelier key="mien" donnees={a} onVue2D={(v) => { if (ONGLETS.some((o) => o.id === v)) choisir(v as Onglet) }} />}
+                </>
+              )
+            })()}
             {onglet === 'tableau' && <TableauCrmVue t={vue.tableau} />}
             {onglet === 'pipeline' && <PipelineVue p={vue.pipeline} onChange={charger} />}
             {onglet === 'chantiers' && <ChantiersVue chantiers={vue.chantiers} devisSignes={vue.devisSignesSansChantier} onChange={charger} />}

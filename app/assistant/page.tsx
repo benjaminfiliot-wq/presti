@@ -151,7 +151,7 @@ function Assistant() {
 
   const paliers = TIERS.filter((x) => plan === 'business' || tierAllowed(x.value, plan))
   return (
-    <AppShell active="assistant" title="Assistant de gestion" crumb="Lit vos données, prépare des brouillons : rien ne part sans vous" wide
+    <AppShell active="assistant" title="Assistant de gestion" crumb="Offre Signature · lit vos données, prépare des brouillons : rien ne part sans vous" wide
       actions={<button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={nouvelleConversation} disabled={enCours}>Nouvelle conversation</button>}>
       <div className="asst">
         <section className="psh-panel asst-panneau" aria-label="Conversation avec l’assistant">
