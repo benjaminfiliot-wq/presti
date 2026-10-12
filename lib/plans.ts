@@ -20,6 +20,7 @@ export type Capacite =
   | 'inventaire.stock' | 'inventaire.recherche_ia'
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
+  | 'crm'
 
 type Plan = {
   label: string
@@ -51,6 +52,9 @@ const SIGNATURE: Capacite[] = [
   ...STUDIO,
   'plateforme.ia.expert', 'plateforme.regles',
   'canaux.reseaux', 'support.prioritaire',
+  // CRM « atelier vivant » (0141) : Signature (et Business, qui reprend Signature) seulement. Contrôlé côté serveur par
+  // lib/crm/serveur.ts ; aucune ligne de la grille ne l'annonce tant que le drapeau `crm` est baissé.
+  'crm',
 ]
 
 export const PLANS: Record<PlanId, Plan> = {

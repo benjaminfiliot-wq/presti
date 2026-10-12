@@ -126,6 +126,15 @@ const SUITES = [
   { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableau de bord /chiffres : Presti + fichiers au centime, état vide sans exemple, parcours d’import, isolation', cmd: 'node', args: ['scripts/compta-tableau-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },
+  // CRM « atelier vivant » (0141, J1-J2). La première sans base ni réseau ; la deuxième joue 0141 dans un Postgres embarqué
+  // (PGlite, hors dépendances du projet : PGLITE_DIR, sinon « en attente ») ; la troisième, drapeau baissé, vérifie que chaque
+  // route répond 404 sur le serveur visé (TEST_BASE, sinon « en attente ») — son mode --drapeau=leve exige une base de TEST.
+  { nom: 'CRM — validation, accès, pipeline, tâches, tableau de bord, clients, code, rendu', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM — migration 0141 jouée (RLS, références croisées, journal, sortie de stock)', cmd: 'node', args: ['scripts/crm-sql-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM — drapeau baissé : chaque route et la page répondent 404', cmd: 'node', args: ['scripts/crm-e2e.mjs'], cout: 'gratuit' },
+  // L'atelier 3D sur la page de démonstration interne (données fictives) : performance, repli 2D, interactions, contrastes.
+  // Elle exige un serveur lancé avec PRESTI_DEMO_ATELIER=1 (TEST_BASE) ; sinon « en attente ».
+  { nom: 'CRM — atelier 3D : perf, repli 2D, interactions, contrastes, captures', cmd: 'node', args: ['scripts/crm-atelier-qa.mjs'], cout: 'navigateur' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
   { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },
