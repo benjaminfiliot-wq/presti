@@ -166,12 +166,17 @@ try {
     globalThis.ReactClient = require('client')
   }, modules)
   const composants = [transpiler(await fs.readFile(path.join(racine, 'app/chiffres/Tableur.tsx'), 'utf8'), true), transpiler(await fs.readFile(path.join(racine, 'app/chiffres/ComptaArtisan.tsx'), 'utf8'), true)].map((c) => c.replace(/^export default /gm, ''))
-  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composants.join('\n') + '\nglobalThis.ReactClient.createRoot(document.getElementById("root")).render(React.createElement(ComptaArtisan,{artisanId:"fictif-tableur"}));' })
-  await page.locator('[data-compta-tableur]').waitFor()
-  assert.equal(await page.locator('[data-compta-tableur] [data-compta-statut]').count(), 0, 'exemple en lecture seule')
-  // Depuis la refonte du 11/10/2026, le dépôt suffit : l'assistant range et enregistre seul.
+  await page.addScriptTag({ type: 'module', content: 'const React=globalThis.React; const {useEffect,useMemo,useRef,useState}=React;\n' + sources.join('\n') + '\n' + composants.join('\n') + '\nglobalThis.ReactClient.createRoot(document.getElementById("root")).render(React.createElement(ComptaArtisan,{artisanId:"fictif-tableur",onLignes:(e)=>{globalThis.etat=e}}));' })
+  await page.locator('[data-compta-fichier]').waitFor({ state: 'attached' })
+  // Refonte du 12/10/2026 : plus de tableur d'exemple. Sans fichier, aucun tableur n'est affiché.
+  assert.equal(await page.locator('[data-compta-tableur]').count(), 0, 'aucun tableur d’exemple avant le premier dépôt')
+  // Le dépôt est rangé seul et compté en aperçu ; l'artisan valide d'un clic, puis ouvre ses lignes.
   await page.locator('[data-compta-fichier]').setInputFiles({ name: 'fictif.csv', mimeType: 'text/csv', buffer: Buffer.from(CSV) })
-  await page.getByText('Vos chiffres importés', { exact: true }).waitFor()
+  await page.locator('[data-compta-valider]').click()
+  await page.locator('[data-compta-lignes] summary').click()
+  await page.locator('[data-compta-tableur]').waitFor()
+  // Ce que le tableau de bord de /chiffres compte (onLignes) : impayés et dépenses des lignes validées, en centimes.
+  const compte = (filtre) => page.evaluate((f) => globalThis.etat.lignes.filter((l) => (f === 'impaye' ? l.sens === 'recette' && l.statut === 'impaye' : l.sens === 'depense')).reduce((n, l) => n + l.montant, 0), filtre)
   const lignesJournal = page.locator('[data-compta-journal] [data-compta-ligne]')
   assert.equal(await lignesJournal.count(), 6)
   assert.match(await page.locator('[data-compta-total-recettes]').textContent(), /4\s290,50/)
@@ -186,10 +191,10 @@ try {
   assert.match(await page.locator('[data-compta-total-recettes]').textContent(), /^0,00/)
   await page.getByRole('button', { name: 'Effacer les filtres', exact: true }).click()
   // Statut corrigé dans la cellule : Client Gamma payé → impayés 640,00 € et stockage à jour.
-  assert.match(await page.locator('[data-compta-impayes]').textContent(), /3\s090,50/)
+  assert.equal(await compte('impaye'), 309050)
   await page.locator('[data-compta-chercher]').fill('gamma')
   await lignesJournal.first().locator('[data-compta-statut]').selectOption('paye')
-  assert.match(await page.locator('[data-compta-impayes]').textContent(), /640,00/)
+  assert.equal(await compte('impaye'), 64000, 'le statut corrigé dans la cellule change ce que compte le tableau de bord')
   const stock = JSON.parse(await page.evaluate(() => localStorage.getItem('presti-compta-artisan:fictif-tableur')))
   assert.equal(stock.find((l) => l.tiers === 'Client Gamma').statut, 'paye')
   await page.locator('[data-compta-chercher]').fill('')
@@ -205,7 +210,7 @@ try {
   await page.locator('[data-compta-saisie-ok]').click()
   await page.locator('[data-compta-saisie]').waitFor({ state: 'detached' })
   assert.equal(await lignesJournal.count(), 7)
-  assert.match(await page.locator('[data-compta-depenses]').textContent(), /347,80/)
+  assert.equal(await compte('depense'), 34780)
   // Feuille Par mois : avril apparaît, avec son cumul.
   await page.locator('[data-compta-onglet="mois"]').click()
   assert.equal(await page.locator('[data-compta-feuille-mois] tbody tr').count(), 4)
@@ -217,7 +222,7 @@ try {
   assert.match(fichier.suggestedFilename(), /^comptabilite-\d{4}-\d{2}-\d{2}\.xlsx$/)
   const journal = strFromU8(unzipSync(new Uint8Array(await fs.readFile(await fichier.path())))['xl/worksheets/sheet1.xml'])
   assert.ok(journal.includes('Autoroute Epsilon') && (journal.match(/<row /g) ?? []).length === 8, 'classeur téléchargé à jour (en-tête + 7 lignes)')
-  console.log('PASS écran réel : exemple en lecture seule, totaux du journal, tri, filtre, statut corrigé en cellule (impayés et stockage suivent), saisie refusée puis acceptée, feuille Par mois, .xlsx téléchargé à jour.')
+  console.log('PASS écran réel : aucun tableur d’exemple, dépôt validé d’un clic, totaux du journal, tri, filtre, statut corrigé en cellule (impayés et stockage suivent), saisie refusée puis acceptée, feuille Par mois, .xlsx téléchargé à jour.')
 } finally {
   await navigateur.close()
 }

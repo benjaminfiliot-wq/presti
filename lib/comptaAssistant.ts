@@ -306,6 +306,38 @@ export function fusionnerLignes(existantes: readonly Ligne[], nouvelles: readonl
   return { lignes, ajoutees, dejaLa }
 }
 
+// — La seule question qu'on pose à l'artisan : une colonne AMBIGUË. —
+// Deux colonnes qui peuvent l'une et l'autre être « la » date (Date facture, Date échéance), « le » montant
+// (Montant HT, Montant TTC, Total) ou « le » client : l'assistant en a choisi une, mais c'est un choix, pas
+// une lecture. On le montre et on laisse l'artisan trancher. Tout le reste est rangé sans lui demander.
+export type ChampAmbigu = 'date' | 'montant' | 'tiers'
+export type QuestionColonne = { feuille: number; nomFeuille: string; champ: ChampAmbigu; candidates: { colonne: number; entete: string }[]; choisie: number | null }
+const INDICES_CHAMP: Record<ChampAmbigu, RegExp> = {
+  date: /\bdate\b|\bjour\b/,
+  montant: /\bmontant\b|\btotal\b|\bprix\b|\bsomme\b|\bttc\b|\bht\b/,
+  tiers: /\bclient\b|\bfournisseur\b|\btiers\b|\bbeneficiaire\b/,
+}
+
+export function colonnesAmbigues(fichiers: readonly FichierCompta[], plan: Plan): QuestionColonne[] {
+  const questions: QuestionColonne[] = []
+  fichiers.forEach((f, i) => {
+    const p = plan.feuilles[i]
+    if (!p || p.role !== 'donnees' || p.ligneEntete < 0) return
+    // Débit / crédit : deux colonnes de montant voulues, pas une ambiguïté.
+    const avecDebitCredit = p.colonnes.debit !== undefined || p.colonnes.credit !== undefined
+    const entetes = (lireCsv(f.texte)[p.ligneEntete] ?? []).slice(0, LIMITES_ECHANTILLON.colonnes)
+    for (const champ of Object.keys(INDICES_CHAMP) as ChampAmbigu[]) {
+      if (champ === 'montant' && avecDebitCredit) continue
+      const autres = new Set(Object.entries(p.colonnes).filter(([c]) => c !== champ).map(([, n]) => n))
+      const candidates = entetes
+        .map((e, colonne) => ({ colonne, entete: e.trim() }))
+        .filter((c) => c.entete && !autres.has(c.colonne) && (INDICES_CHAMP[champ].test(normEntete(c.entete)) || champEntete(c.entete) === champ))
+      if (candidates.length >= 2) questions.push({ feuille: i, nomFeuille: f.nom, champ, candidates, choisie: p.colonnes[champ] ?? null })
+    }
+  })
+  return questions
+}
+
 const MOIS_NOMS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 const jourFr = (iso: string) => { const [a, m, j] = iso.split('-').map(Number); return `${j} ${MOIS_NOMS[m - 1]} ${a}` }
 

@@ -123,6 +123,17 @@ export const FLAGS = {
   ecommerce: false,
   /** 026-143 — la page d'essai du porteur du formulaire (026-095) : /essai-formulaire et son action /essai-formulaire/envoi, un formulaire de contact ordinaire qui ne garde que l'empreinte SHA-256 du message (un événement du journal, 20 par jour au plus). Baissé : les deux répondent 404. */
   essaiFormulaire: true,
+  /** 12/10/2026 — compta de l'artisan (/chiffres) : l'encaissé rangé au mois du RÈGLEMENT (factures.payee_le, posée par un
+   *  déclencheur de la migration 0139). Baissé : la route ne lit pas la colonne (elle n'existe pas avant 0139) et l'encaissé
+   *  est rangé au mois d'émission, ce que l'écran dit. À lever juste après l'application de 0139. */
+  comptaDateReglement: false,
+  /** 12/10/2026 — alerte e-mail à l'artisan quand une facture dépasse N jours d'impayé (lib/comptaAutomatisations.ts, passage
+   *  quotidien de /api/cron/relances, réglage dans /chiffres). Baissé : rien n'est lu ni envoyé, GET/PUT /api/compta/reglages
+   *  répondent 404 si l'export l'est aussi, et l'écran n'en parle pas. À lever après 0139 appliquée et une alerte d'essai reçue. */
+  comptaAlerteImpayes: false,
+  /** 12/10/2026 — export mensuel automatique du journal des factures (CSV) à l'adresse du comptable. Mêmes conditions que
+   *  comptaAlerteImpayes : 0139 appliquée, puis un export d'essai reçu et ouvert dans Excel. */
+  comptaExportMensuel: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

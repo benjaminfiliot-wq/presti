@@ -20,7 +20,7 @@ export function delai(heures: number): string {
   return `${nombre(Math.round(j * 10) / 10, Number.isInteger(Math.round(j * 10) / 10) ? 0 : 1)} j`
 }
 
-function Panneau({ titre, tag, children }: { titre: string; tag?: ReactNode; children: ReactNode }) {
+export function Panneau({ titre, tag, children }: { titre: string; tag?: ReactNode; children: ReactNode }) {
   return (
     <section className="psh-panel tdb-panel">
       <header>
@@ -70,7 +70,7 @@ function Barres({ nom, points }: { nom: string; points: Point[] }) {
 }
 
 /** Une répartition en liste : libellé, barre proportionnelle, effectif. */
-function Repartition({ comptes, vide }: { comptes: Compte[]; vide: string }) {
+export function Repartition({ comptes, vide }: { comptes: Compte[]; vide: string }) {
   if (comptes.length === 0) return <p className="tdb-vide">{vide}</p>
   return (
     <ul className="tdb-rep">

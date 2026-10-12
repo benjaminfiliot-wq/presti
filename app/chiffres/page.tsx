@@ -1,75 +1,122 @@
 'use client'
 
 import './chiffres.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
-import Tableau from './Tableau'
-import ComptaArtisan from './ComptaArtisan'
-import { calculer, type LigneDemande, type LigneDevis, type LigneFacture } from '@/lib/tableau-de-bord/calculer'
+import TableauCompta from './TableauCompta'
+import ComptaArtisan, { type EtatImport } from './ComptaArtisan'
+import Automatisations, { automatisationsVisibles } from './Automatisations'
+import { calculerCompta, PERIODE_PAR_DEFAUT, PERIODES, type DemandePresti, type DevisPresti, type FacturePresti, type Impaye, type PeriodeId } from '@/lib/comptaTableau'
+import { calculer } from '@/lib/tableau-de-bord/calculer'
+import { preparerRelance } from '@/lib/comptaArtisan'
 
-// Tableau de bord de gestion : cette page LIT et ne fait rien d'autre. Chaque requête porte
-// `.eq('artisan_id', …)` EN PLUS de la RLS (un fondateur voit les lignes de tous les artisans sous
-// RLS : sans ce filtre, son tableau additionnerait toute la base) ; le module de calcul écarte de
-// toute façon une ligne qui n'est pas la sienne. Jamais de clé de service ici, jamais d'écriture.
+// « Mes chiffres » : le tableau de bord comptable de l'artisan (refonte du 12/10/2026).
 //
-// Un chargement raté n'affiche PAS des zéros : « 0 € facturé » sur une panne réseau est un mensonge.
-const LIMITE = 1000
+// Source 1, sans import : les factures, devis et demandes du compte, lus CÔTÉ SERVEUR par GET /api/compta/tableau
+// (filtrés sur la session). Source 2 : les fichiers de l'artisan, rangés par l'assistant (ComptaArtisan), gardés dans
+// ce navigateur. Les deux sont additionnés par UN seul calcul (lib/comptaTableau.ts), qui dit d'où vient chaque chiffre.
+//
+// La page ne fait que lire. Une lecture ratée n'affiche PAS des zéros : « 0 € facturé » sur une panne est un mensonge.
+// Aucune donnée d'exemple : sans pièce ni fichier, l'écran dit ce qui va apparaître et comment commencer.
+type Charge = { factures: FacturePresti[]; devis: DevisPresti[]; demandes: DemandePresti[]; maintenant: Date; tronque: boolean }
+type Lu = { maintenant?: string; factures?: FacturePresti[]; devis?: DevisPresti[]; demandes?: DemandePresti[]; tronque?: boolean; error?: string }
+const CLE_PERIODE = 'presti-chiffres-periode'
 
-// Le jeton de session pour l'assistant comptable (route serveur) : relu à chaque dépôt, jamais gardé.
+// Le jeton de session : relu à chaque appel, jamais gardé.
 const jetonSession = async () => (await supabase.auth.getSession()).data.session?.access_token ?? null
-
-type Charge = { factures: LigneFacture[]; devis: LigneDevis[]; demandes: LigneDemande[]; tronque: boolean }
+const heure = (d: Date) => d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
 
 export default function Chiffres() {
   const router = useRouter()
-  const [charge, setCharge] = useState<Charge | null>(null)
-  const [erreur, setErreur] = useState(false)
-  const [maintenant, setMaintenant] = useState<Date | null>(null)
   const [artisanId, setArtisanId] = useState<string | null>(null)
+  const [charge, setCharge] = useState<Charge | null>(null)
+  const [erreur, setErreur] = useState('')
+  const [periode, setPeriode] = useState<PeriodeId>(PERIODE_PAR_DEFAUT)
+  const [importe, setImporte] = useState<EtatImport>({ artisanId: '', lignes: [], apercu: false, ajoutees: 0 })
+  const [brouillon, setBrouillon] = useState<string | null>(null)
 
   useEffect(() => {
-    let vivant = true
+    try { const p = localStorage.getItem(CLE_PERIODE); if (p && PERIODES.some((x) => x.id === p)) setPeriode(p as PeriodeId) } catch { /* préférence perdue : la période par défaut */ }
+  }, [])
+
+  const charger = useCallback(async (uid: string, vivant: () => boolean) => {
+    const jeton = await jetonSession()
+    if (!jeton) { router.replace('/login'); return }
+    const rep = await fetch('/api/compta/tableau', { headers: { Authorization: `Bearer ${jeton}` }, cache: 'no-store' }).catch(() => null)
+    const corps = rep ? await rep.json().catch(() => null) as Lu | null : null
+    if (!vivant()) return
+    if (!rep?.ok || !corps || !Array.isArray(corps.factures) || !Array.isArray(corps.devis) || !Array.isArray(corps.demandes)) {
+      setErreur(corps?.error ?? 'Vos chiffres n’ont pas pu être chargés. Rechargez la page dans un instant.')
+      return
+    }
+    const quand = corps.maintenant ? new Date(corps.maintenant) : new Date()
+    setErreur('')
+    setCharge({ factures: corps.factures, devis: corps.devis, demandes: corps.demandes, maintenant: Number.isNaN(quand.getTime()) ? new Date() : quand, tronque: !!corps.tronque })
+    setArtisanId(uid)
+  }, [router])
+
+  useEffect(() => {
+    let ouvert = true
+    const vivant = () => ouvert
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const uid = data.session.user.id
       const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()
-      if (!vivant) return
+      if (!vivant()) return
       if (!prof) { router.replace('/onboarding'); return }
-      // Le rangement CSV est local : il ne dépend pas du chargement des autres chiffres.
       setArtisanId(uid)
-      const [f, d, l] = await Promise.all([
-        supabase.from('factures').select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de').eq('artisan_id', uid).order('date_emission', { ascending: false }).limit(LIMITE),
-        supabase.from('devis').select('id, artisan_id, numero, client_nom, statut, date_emission, total_ttc, envoye_le, accepte_le, created_at, lead_id, validite_jours').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE),
-        supabase.from('leads').select('id, artisan_id, canal, statut, created_at, type_chantier, ville').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE),
-      ])
-      if (!vivant) return
-      if (f.error || d.error || l.error) { setErreur(true); return }
-      const factures = (f.data ?? []) as LigneFacture[]
-      const devis = (d.data ?? []) as LigneDevis[]
-      const demandes = (l.data ?? []) as LigneDemande[]
-      setMaintenant(new Date())
-      setCharge({ factures, devis, demandes, tronque: [factures, devis, demandes].some((x) => x.length >= LIMITE) })
+      await charger(uid, vivant)
     })
-    return () => { vivant = false }
-  }, [router])
+    // Revenir sur l'onglet relit les données : une facture payée entre-temps change le tableau sans recharger la page.
+    const revoir = () => { if (document.visibilityState === 'visible') supabase.auth.getSession().then(({ data }) => { if (data.session && vivant()) void charger(data.session.user.id, vivant) }) }
+    document.addEventListener('visibilitychange', revoir)
+    return () => { ouvert = false; document.removeEventListener('visibilitychange', revoir) }
+  }, [router, charger])
 
+  // Un brouillon de relance appartient au compte qui l'a préparé.
+  useEffect(() => { setBrouillon(null) }, [artisanId])
+
+  const choisirPeriode = (p: PeriodeId) => { setPeriode(p); try { localStorage.setItem(CLE_PERIODE, p) } catch { /* rien */ } }
+
+  // Les lignes importées ne comptent que pour le compte qui les a envoyées (jamais celles d'un compte précédent).
+  const importeDuCompte = importe.artisanId === artisanId ? importe : null
+  const vue = useMemo(
+    () => (charge && artisanId ? calculerCompta({ artisanId, factures: charge.factures, devis: charge.devis, demandes: charge.demandes, lignes: importeDuCompte?.lignes ?? [], periode, maintenant: charge.maintenant }) : null),
+    [charge, artisanId, importeDuCompte, periode],
+  )
+  // Les blocs « devis à relancer » et « vos chantiers » restent ceux du calcul de gestion (lib/tableau-de-bord/calculer.ts) ;
+  // aucun montant de chiffre d'affaires n'en est affiché ici : il n'y a qu'un chiffre d'affaires, celui de lib/comptaTableau.ts.
   const indicateurs = useMemo(
-    () => (charge && artisanId && maintenant ? calculer({ artisanId, factures: charge.factures, devis: charge.devis, demandes: charge.demandes, maintenant }) : null),
-    [charge, artisanId, maintenant],
+    () => (charge && artisanId ? calculer({ artisanId, factures: charge.factures, devis: charge.devis, demandes: charge.demandes, maintenant: charge.maintenant }) : null),
+    [charge, artisanId],
   )
 
+  function relancer(i: Impaye) {
+    setBrouillon(preparerRelance({ ligne: 1, date: i.emission.split('-').reverse().join('/'), libelle: i.origine === 'presti' ? `notre facture ${i.numero ?? ''}`.trim() : i.libelle, tiers: i.client, sens: 'recette', montant: i.montant, categorie: '', statut: 'impaye', source: i.ref }))
+    requestAnimationFrame(() => document.getElementById('cpt-brouillon')?.focus())
+  }
+
   return (
-    <AppShell active="chiffres" title="Mes chiffres" crumb="Tableau de bord de gestion">
+    <AppShell active="chiffres" title="Mes chiffres" crumb="Tableau de bord comptable">
       {erreur ? (
-        <div className="psh-panel"><div className="psh-empty" role="alert">Vos chiffres n’ont pas pu être chargés. Rechargez la page dans un instant.<br />Rien n’est affiché plutôt que des totaux faux.</div></div>
-      ) : !indicateurs || !charge ? (
-        <p className="muted">Chargement…</p>
+        <div className="psh-panel"><div className="psh-empty" role="alert">{erreur}<br />Rien n’est affiché plutôt que des totaux faux.</div></div>
+      ) : !vue || !charge ? (
+        <p className="muted" role="status">Lecture de vos factures, devis et demandes…</p>
       ) : (
-        <Tableau i={indicateurs} tronque={charge.tronque} />
+        <TableauCompta vue={vue} indicateurs={indicateurs} periode={periode} onPeriode={choisirPeriode} onRelance={relancer} majLe={heure(charge.maintenant)} apercu={importeDuCompte?.apercu ? importeDuCompte.ajoutees : 0} tronque={charge.tronque} />
       )}
-      {artisanId && <ComptaArtisan artisanId={artisanId} obtenirJeton={jetonSession} />}
+      {brouillon !== null && (
+        <section className="psh-panel cpt-brouillon" data-compta-brouillon aria-labelledby="cpt-brouillon-titre">
+          <div className="ca-entete"><h2 id="cpt-brouillon-titre">Brouillon de relance à relire</h2><button type="button" className="ca-secondaire" onClick={() => setBrouillon(null)}>Fermer</button></div>
+          <p className="cpt-note">Rien n’a été envoyé. Relisez, puis copiez ce texte dans votre e-mail ou votre SMS.</p>
+          <textarea id="cpt-brouillon" value={brouillon} onChange={(e) => setBrouillon(e.target.value)} aria-label="Brouillon de relance" rows={7} />
+          <div className="ca-actions ca-actions--gauche"><button type="button" className="ca-secondaire" onClick={() => { void navigator.clipboard?.writeText(brouillon) }}>Copier le texte</button></div>
+        </section>
+      )}
+      {artisanId && <ComptaArtisan artisanId={artisanId} obtenirJeton={jetonSession} onLignes={setImporte} />}
+      {artisanId && automatisationsVisibles() && <Automatisations obtenirJeton={jetonSession} />}
     </AppShell>
   )
 }

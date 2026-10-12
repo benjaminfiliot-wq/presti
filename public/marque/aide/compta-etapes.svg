@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="t d">
+  <title id="t">Exemple : la compta en trois étapes</title>
+  <desc id="d">Illustration marquée Exemple, sans aucune donnée réelle. Étape 1 : déposer ses fichiers Excel ou CSV. Étape 2 : vérifier le rangement de l'assistant et valider en un clic. Étape 3 : le tableau de bord se tient à jour tout seul, relié aux factures Presti.</desc>
+  <defs>
+    <linearGradient id="fond" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#13161F"/><stop offset="1" stop-color="#0A0C11"/></linearGradient>
+    <linearGradient id="corail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8946F"/><stop offset="1" stop-color="#D97757"/></linearGradient>
+    <pattern id="hachures" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="none"/><line x1="0" y1="0" x2="0" y2="10" stroke="#E4B45A" stroke-opacity=".10" stroke-width="4"/></pattern>
+  </defs>
+  <rect width="960" height="420" rx="18" fill="url(#fond)"/>
+  <rect width="960" height="420" rx="18" fill="url(#hachures)"/>
+  <rect x="1" y="1" width="958" height="418" rx="17" fill="none" stroke="#E4B45A" stroke-opacity=".55" stroke-width="2" stroke-dasharray="10 8"/>
+
+  <!-- Bandeau EXEMPLE -->
+  <g transform="translate(814 22)">
+    <rect width="122" height="34" rx="17" fill="#E4B45A"/>
+    <text x="61" y="23" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="800" letter-spacing="2.5" fill="#0A0C11">EXEMPLE</text>
+  </g>
+  <text x="32" y="44" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="21" font-weight="700" fill="#EDEFF4">Votre compta en trois étapes</text>
+  <text x="32" y="68" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13.5" fill="#8B93A2">Illustration seulement : aucune donnée réelle n’y figure.</text>
+
+  <g font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+    <!-- Étape 1 : déposer -->
+    <g transform="translate(32 96)">
+      <rect width="282" height="296" rx="14" fill="#13161F" stroke="#FFFFFF" stroke-opacity=".09"/>
+      <circle cx="30" cy="32" r="15" fill="url(#corail)"/><text x="30" y="37.5" text-anchor="middle" font-size="15" font-weight="800" fill="#0A0C11">1</text>
+      <text x="54" y="38" font-size="16" font-weight="700" fill="#EDEFF4">Déposez vos fichiers</text>
+      <!-- trois tableurs en vrac -->
+      <g transform="translate(34 70) rotate(-8)"><rect width="74" height="58" rx="6" fill="#1A1E29" stroke="#38CD8C" stroke-opacity=".7"/><path d="M0 16h74M0 30h74M0 44h74M24 0v58M49 0v58" stroke="#38CD8C" stroke-opacity=".45"/></g>
+      <g transform="translate(104 62) rotate(5)"><rect width="74" height="58" rx="6" fill="#1A1E29" stroke="#C3C8D4" stroke-opacity=".6"/><path d="M0 16h74M0 30h74M0 44h74M30 0v58" stroke="#C3C8D4" stroke-opacity=".35"/></g>
+      <g transform="translate(176 74) rotate(-3)"><rect width="74" height="58" rx="6" fill="#1A1E29" stroke="#E8946F" stroke-opacity=".7"/><path d="M0 16h74M0 30h74M0 44h74M20 0v58M45 0v58" stroke="#E8946F" stroke-opacity=".4"/></g>
+      <path d="M141 150v34m-11-11l11 11 11-11" fill="none" stroke="#E8946F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="22" y="196" width="238" height="74" rx="12" fill="#D97757" fill-opacity=".08" stroke="#D97757" stroke-opacity=".7" stroke-width="1.6" stroke-dasharray="7 6"/>
+      <text x="141" y="228" text-anchor="middle" font-size="14.5" font-weight="700" fill="#EDEFF4">Excel ou CSV, tels quels</text>
+      <text x="141" y="250" text-anchor="middle" font-size="12" fill="#8B93A2">même en désordre</text>
+    </g>
+
+    <!-- Étape 2 : vérifier, valider -->
+    <g transform="translate(339 96)">
+      <rect width="282" height="296" rx="14" fill="#13161F" stroke="#FFFFFF" stroke-opacity=".09"/>
+      <circle cx="30" cy="32" r="15" fill="url(#corail)"/><text x="30" y="37.5" text-anchor="middle" font-size="15" font-weight="800" fill="#0A0C11">2</text>
+      <text x="54" y="38" font-size="16" font-weight="700" fill="#EDEFF4">Vérifiez, validez</text>
+      <g font-size="13" fill="#C3C8D4">
+        <g transform="translate(24 70)"><circle cx="9" cy="9" r="9" fill="#38CD8C" fill-opacity=".18" stroke="#38CD8C"/><path d="M5 9l3 3 5-6" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="14">Feuilles lues</text></g>
+        <g transform="translate(24 102)"><circle cx="9" cy="9" r="9" fill="#38CD8C" fill-opacity=".18" stroke="#38CD8C"/><path d="M5 9l3 3 5-6" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="14">Colonnes reconnues</text></g>
+        <g transform="translate(24 134)"><circle cx="9" cy="9" r="9" fill="#38CD8C" fill-opacity=".18" stroke="#38CD8C"/><path d="M5 9l3 3 5-6" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="14">Dates et montants normalisés</text></g>
+        <g transform="translate(24 166)"><circle cx="9" cy="9" r="9" fill="#38CD8C" fill-opacity=".18" stroke="#38CD8C"/><path d="M5 9l3 3 5-6" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="14">Doublons et totaux retirés</text></g>
+      </g>
+      <rect x="24" y="214" width="138" height="42" rx="10" fill="#D97757"/>
+      <text x="93" y="240" text-anchor="middle" font-size="14.5" font-weight="800" fill="#0A0C11">Valider</text>
+      <text x="176" y="232" font-size="12" fill="#8B93A2">un seul clic</text>
+      <text x="176" y="248" font-size="12" fill="#8B93A2">pour garder</text>
+      <text x="24" y="276" font-size="11.5" fill="#8B93A2">Une question seulement si une</text><text x="24" y="290" font-size="11.5" fill="#8B93A2">colonne est ambiguë.</text>
+    </g>
+
+    <!-- Étape 3 : le tableau se tient à jour -->
+    <g transform="translate(646 96)">
+      <rect width="282" height="296" rx="14" fill="#13161F" stroke="#FFFFFF" stroke-opacity=".09"/>
+      <circle cx="30" cy="32" r="15" fill="url(#corail)"/><text x="30" y="37.5" text-anchor="middle" font-size="15" font-weight="800" fill="#0A0C11">3</text>
+      <text x="54" y="38" font-size="16" font-weight="700" fill="#EDEFF4">Il se tient à jour</text>
+      <!-- cartes sans chiffres -->
+      <g transform="translate(22 62)">
+        <rect width="74" height="44" rx="8" fill="#1A1E29"/><rect x="10" y="11" width="36" height="5" rx="2.5" fill="#8B93A2" fill-opacity=".6"/><rect x="10" y="24" width="50" height="9" rx="3" fill="#EDEFF4" fill-opacity=".8"/>
+        <rect x="82" width="74" height="44" rx="8" fill="#1A1E29"/><rect x="92" y="11" width="30" height="5" rx="2.5" fill="#8B93A2" fill-opacity=".6"/><rect x="92" y="24" width="44" height="9" rx="3" fill="#38CD8C" fill-opacity=".85"/>
+        <rect x="164" width="74" height="44" rx="8" fill="#1A1E29"/><rect x="174" y="11" width="34" height="5" rx="2.5" fill="#8B93A2" fill-opacity=".6"/><rect x="174" y="24" width="40" height="9" rx="3" fill="#F0776A" fill-opacity=".85"/>
+      </g>
+      <!-- histogramme -->
+      <g transform="translate(22 124)">
+        <line x1="0" y1="86" x2="150" y2="86" stroke="#FFFFFF" stroke-opacity=".12"/>
+        <rect x="6" y="52" width="14" height="34" rx="3" fill="#D97757"/><rect x="30" y="38" width="14" height="48" rx="3" fill="#D97757"/><rect x="54" y="58" width="14" height="28" rx="3" fill="#D97757"/>
+        <rect x="78" y="26" width="14" height="60" rx="3" fill="#D97757"/><rect x="102" y="40" width="14" height="46" rx="3" fill="#D97757"/><rect x="126" y="12" width="14" height="74" rx="3" fill="url(#corail)"/>
+        <path d="M13 66L37 54L61 70L85 42L109 50L133 26" fill="none" stroke="#38CD8C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- anneau -->
+      <g transform="translate(222 168)">
+        <circle r="30" fill="none" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="11"/>
+        <circle r="30" fill="none" stroke="#D97757" stroke-width="11" stroke-dasharray="90 98.5" transform="rotate(-90)"/>
+        <circle r="30" fill="none" stroke="#38CD8C" stroke-width="11" stroke-dasharray="52 136.5" stroke-dashoffset="-90" transform="rotate(-90)"/>
+        <circle r="30" fill="none" stroke="#E4B45A" stroke-width="11" stroke-dasharray="46.5 142" stroke-dashoffset="-142" transform="rotate(-90)"/>
+      </g>
+      <!-- relié à Presti -->
+      <g transform="translate(22 236)">
+        <rect width="238" height="38" rx="19" fill="#38CD8C" fill-opacity=".1" stroke="#38CD8C" stroke-opacity=".5"/>
+        <path d="M20 13a8 8 0 0 1 13 2m1 10a8 8 0 0 1-13-2" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round"/>
+        <path d="M33 10v5h-5M21 28v-5h5" fill="none" stroke="#38CD8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="46" y="24" font-size="12.5" font-weight="700" fill="#EDEFF4">Relié à vos factures Presti</text>
+      </g>
+    </g>
+
+    <path d="M318 244h17m-6-6l6 6-6 6M625 244h17m-6-6l6 6-6 6" fill="none" stroke="#E8946F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
