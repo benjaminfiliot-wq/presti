@@ -1,6 +1,6 @@
 -- 0150 · L'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture et A2 brouillons).
--- Écrite le 12/10/2026, NON APPLIQUÉE. Le drapeau `assistant` (lib/flags.ts) reste baissé jusqu'à son application, puis
--- jusqu'à la recette A5 : levé sans elle, POST /api/assistant refuse chaque tour (503, fail-closed), faute de plafond.
+-- Écrite le 12/10/2026, APPLIQUÉE en production le 12/10/2026 (connecteur Supabase) et contrôlée : RLS, politiques, fonctions réservées au service,
+-- essai sans trace du plafond (1, 2, -1, 1, -2 puis rollback ; 0 ligne restante). Le drapeau `assistant` reste baissé jusqu'à la recette A5.
 -- Numéro : 0150, choisi au-dessus de la plus haute migration du dépôt (0140) pour laisser 0141 et suivantes au chantier
 -- du CRM, mené en parallèle (sa 0141_crm_atelier.sql existe déjà dans sa copie).
 --
