@@ -1,4 +1,4 @@
--- 0139 · Compta de l'artisan (/chiffres) : date de règlement des factures, et réglages des automatisations.
+-- 0140 · Compta de l'artisan (/chiffres) : date de règlement des factures, et réglages des automatisations.
 -- Écrite le 12/10/2026, NON APPLIQUÉE. Les trois drapeaux qui s'en servent (lib/flags.ts : comptaDateReglement,
 -- comptaAlerteImpayes, comptaExportMensuel) restent baissés jusqu'à son application : levés sans elle, la route du
 -- tableau de bord lirait une colonne absente et les réglages une table absente (erreur franche, jamais un faux zéro).
@@ -16,7 +16,7 @@
 -- 1 ─ Date de règlement
 alter table public.factures add column if not exists payee_le date;
 comment on column public.factures.payee_le is
-  'Jour (Europe/Paris) du passage au statut payee, posé par le déclencheur factures_payee_le (0139). Null pour les factures payées avant 0139.';
+  'Jour (Europe/Paris) du passage au statut payee, posé par le déclencheur factures_payee_le (0140). Null pour les factures payées avant 0140.';
 
 create or replace function public.facture_payee_le() returns trigger
 language plpgsql set search_path = public as $$
