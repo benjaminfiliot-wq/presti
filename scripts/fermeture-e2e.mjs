@@ -205,6 +205,7 @@ if (peut) {
     'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit', 'site.domaine_perso': 'gratuit',
     'export': 'studio', 'plateforme.personnalisation_avancee': 'studio', 'inventaire.recherche_ia': 'studio', 'canaux.whatsapp': 'studio',
     'plateforme.ia.expert': 'signature', 'canaux.reseaux': 'signature', 'support.prioritaire': 'signature',
+    'assistant': 'signature',
   }
   const ORDRE = ['gratuit', 'essentiel', 'studio', 'signature']
   for (const [cap, min] of Object.entries(ATTENDU)) {
@@ -293,6 +294,8 @@ if (FLAGS) {
     'canauxWhatsapp': ['lu'],
     'canauxReseaux': ['lu'],
     'plateformePersona': ['lu'],
+    // 016 A1/A2 — l'assistant de gestion : la route et la page lisent le drapeau (baissé : 404), le menu aussi.
+    'assistant': ['route', '/api/assistant', 'POST', 'app/api/assistant/route.ts', 'app/assistant/page.tsx'],
   }
   const lus = ['app', 'lib', 'components'].filter((d) => fs.existsSync(d)).flatMap((d) =>
     fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f) && !/flags\.ts$/.test(f))

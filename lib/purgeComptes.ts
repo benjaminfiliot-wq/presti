@@ -43,6 +43,8 @@ const TABLES_A_VIDER = [
   'relances', 'leads', 'canaux', 'clients_plateforme', 'clients_liens', 'plateforme_config',
   'regles_automatisation', 'prix_artisan', 'prix_observations', 'materiaux', 'mouvements_stock',
   'fournisseurs', 'listes_achat',
+  // 0150 — le journal et les conversations de l'assistant de gestion (une table absente est tolérée ci-dessous).
+  'assistant_journal', 'assistant_conversations',
 ]
 
 async function annulerAbonnement(subscriptionId: string | null | undefined, id: string) {

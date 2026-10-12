@@ -15,6 +15,8 @@
 //     --metiers 8            nombre de métiers (défaut : 8 ; 4 = plombier, électricien, peintre, couvreur)
 //     --expert               ajoute 4 cas Expert (3 crédits chacun)
 //     --outils               ajoute 4 scénarios de l'assistant à outils (exécuteurs simulés, sans base)
+//     --assistant            24 scénarios de l'assistant de gestion de la console (016 A1/A2, scripts/ai-eval-assistant.mjs,
+//                            données simulées) ; seul, sans --tiers, il ne joue QUE ces scénarios (Standard)
 //     --avant                évalue la version de lib/ai.ts AVANT le sprint (copie HEAD dans le scratchpad)
 //     --tag nom              nom du rapport JSON (scratchpad/ai-eval-<tag>.json)
 //   Budget : 40 appels par niveau (8 métiers) — plus les régénérations anti-fabrication.
@@ -164,7 +166,8 @@ async function evalTier(tier, artisans, intentions = INTENTIONS) {
 }
 
 const listeMetiers = NB_METIERS >= 8 ? ARTISANS : ARTISANS.filter((a) => QUATRE.includes(a.nom)).slice(0, NB_METIERS)
-for (const tier of TIERS) await evalTier(tier, listeMetiers)
+const SEUL_ASSISTANT = flag('--assistant') && !process.argv.includes('--tiers')
+if (!SEUL_ASSISTANT) for (const tier of TIERS) await evalTier(tier, listeMetiers)
 if (flag('--expert')) {
   // 4 cas Expert (3 crédits chacun) : un par famille de difficulté.
   await evalTier('expert', [ARTISANS[0]], ['urgence'])
@@ -206,6 +209,14 @@ if (flag('--outils') && !flag('--avant')) {
   }
 }
 
+// ── L'assistant de gestion de la console (016 A1/A2) : 24 scénarios, vrai modèle, données simulées ──
+let assistant = null
+if (flag('--assistant') && !flag('--avant')) {
+  const { evaluerAssistant } = await import('./ai-eval-assistant.mjs')
+  assistant = await evaluerAssistant({ tiers: TIERS, MODEL })
+  appels += assistant.appels
+}
+
 // ── Synthèse ──
 console.log('\n★ Synthèse — % de cas qui passent, par niveau et par critère')
 const parTier = {}
@@ -225,5 +236,5 @@ console.log(`\nappels IA consommés : ${appels}`)
 
 fs.mkdirSync(SCRATCH, { recursive: true })
 const rapport = path.join(SCRATCH, `ai-eval-${TAG}.json`)
-fs.writeFileSync(rapport, JSON.stringify({ tag: TAG, date: new Date().toISOString(), tiers: TIERS, appels, resultats, outils }, null, 2))
+fs.writeFileSync(rapport, JSON.stringify({ tag: TAG, date: new Date().toISOString(), tiers: TIERS, appels, resultats, outils, assistant: assistant?.resultats ?? null }, null, 2))
 console.log(`rapport : ${rapport}`)

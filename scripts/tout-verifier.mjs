@@ -123,6 +123,7 @@ const SUITES = [
   { nom: 'Écran « Ma plateforme → Intelligence »', cmd: 'node', args: ['scripts/plateforme-intelligence-e2e.mjs'], cout: 'navigateur' },
   // Comptabilité de l'artisan : Chromium isolé, données fictives, ni serveur ni base.
   { nom: 'Comptabilité — assistant IA : masquage, réponse de l’IA revalidée, fichiers en désordre rangés au centime', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/compta-assistant-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Assistant de gestion (016 A1/A2) — outils stricts, boucle au faux modèle, journal, plafond, crédit, garde-fou des chiffres, drapeau', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/assistant-qa.mjs'], cout: 'gratuit' },
   { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableau de bord /chiffres : Presti + fichiers au centime, état vide sans exemple, parcours d’import, isolation', cmd: 'node', args: ['scripts/compta-tableau-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },

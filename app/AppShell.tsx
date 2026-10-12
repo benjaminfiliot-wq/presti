@@ -44,6 +44,8 @@ const NAV: { group: string; items: Nav[] }[] = [
     group: 'Outils IA',
     items: [
       { key: 'outils', label: 'Réponses instantanées', href: '/outils', icon: ic(<><path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7z" /><path d="m9 12 2 2 4-4" /></>) },
+      // 016 A1/A2 — l'assistant de gestion (Signature). Drapeau baissé : l'entrée n'existe pas.
+      ...(actif('assistant') ? [{ key: 'assistant', label: 'Assistant de gestion', href: '/assistant', icon: ic(<><path d="M4 5h16v10H9l-5 4z" /><path d="M8 9h8M8 12h5" /><path d="M17 3l.6 1.4L19 5l-1.4.6L17 7l-.6-1.4L15 5l1.4-.6z" /></>) }] : []),
     ],
   },
   // §4 B4 — le centre d'aide n'apparaît que lorsqu'il est fini (drapeau).
