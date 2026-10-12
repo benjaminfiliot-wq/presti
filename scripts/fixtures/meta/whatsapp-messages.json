@@ -1,0 +1,31 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "100000000000001",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": { "display_phone_number": "33100000000", "phone_number_id": "200000000000001" },
+            "contacts": [{ "profile": { "name": "Client Fictif" }, "wa_id": "33600000001" }],
+            "messages": [
+              { "from": "33600000001", "id": "wamid.FIXTURE.texte.0001==", "timestamp": "1791789240", "type": "text", "text": { "body": "Bonjour, j'ai une fuite sous l'évier, vous pouvez passer cette semaine ?" } },
+              { "from": "33600000001", "id": "wamid.FIXTURE.image.0002==", "timestamp": "1791789250", "type": "image", "image": { "id": "media-fixture", "mime_type": "image/jpeg", "caption": "la fuite" } },
+              { "from": "33600000001", "id": "wamid.FIXTURE.reaction.0003==", "timestamp": "1791789260", "type": "reaction", "reaction": { "message_id": "wamid.x", "emoji": "👍" } }
+            ]
+          }
+        },
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": { "display_phone_number": "33100000000", "phone_number_id": "200000000000001" },
+            "statuses": [{ "id": "wamid.FIXTURE.sortant", "status": "delivered", "timestamp": "1791789270", "recipient_id": "33600000001" }]
+          }
+        }
+      ]
+    }
+  ]
+}

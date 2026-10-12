@@ -8,6 +8,7 @@ import { resolveModel } from '@/lib/models'
 import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { planifierRelances } from '@/lib/relances'
+import { completerLeadCanal, envoyerReponseCanal, type IssueEnvoi } from '@/lib/canaux/serveur'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -20,6 +21,7 @@ export const maxDuration = 60
 type Lead = {
   id: string; artisan_id: string; nom_prospect: string | null
   contact: string | null; message: string | null; statut: string | null; prise_en_main: boolean | null
+  canal: string | null
 }
 
 async function authArtisan(req: Request) {
@@ -33,7 +35,7 @@ async function authArtisan(req: Request) {
 async function ownedLead(leadId: string, uid: string): Promise<Lead | null> {
   const { data } = await supabaseAdmin
     .from('leads')
-    .select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main')
+    .select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main, canal')
     .eq('id', leadId)
     .maybeSingle()
   const lead = (data as Lead) ?? null
@@ -49,6 +51,17 @@ async function history(leadId: string): Promise<ConvTurn[]> {
     .order('sent_at', { ascending: true })
     .limit(120)
   return ((data as { sens: 'in' | 'out'; contenu: string }[]) ?? []).map((m) => ({ sens: m.sens, contenu: m.contenu }))
+}
+
+/** Le message parti par un canal garde la trace de son canal et de son identifiant chez Meta. */
+function traceEnvoi(e: IssueEnvoi): { canal_id?: string; externe_id?: string } {
+  if (!e.traite || !e.ok) return {}
+  return { ...(e.canal_id ? { canal_id: e.canal_id } : {}), ...(e.externe_id ? { externe_id: e.externe_id } : {}) }
+}
+/** Ce que l'écran doit savoir : le canal, et pour Le Bon Coin le lien où coller la réponse. */
+function reponseCanal(e: IssueEnvoi): { canal?: string; lien?: string } {
+  if (!e.traite || !e.ok) return {}
+  return { canal: e.canal, ...(e.manuel ? { lien: e.manuel.lien } : {}) }
 }
 
 export async function POST(req: Request) {
@@ -91,11 +104,17 @@ export async function POST(req: Request) {
       // Valider = le message devient réel pour le client (etat null), à l'instant de la validation,
       // et part par email si le prospect en a un. Texte éventuellement retouché par l'artisan.
       const texte = typeof body?.message === 'string' && body.message.trim() ? body.message.trim().slice(0, 4000) : prop.contenu
-      await supabaseAdmin.from('messages').update({ etat: null, contenu: texte, sent_at: new Date().toISOString() }).eq('id', prop.id)
+      // WhatsApp, Messenger, Instagram : la réponse part par la Graph API AVANT d'être marquée envoyée ; refusée (hors des 24 h,
+      // jeton expiré…), la proposition reste en attente et l'artisan lit pourquoi. Le Bon Coin : pas d'API, il la colle lui-même.
+      const envoi = await envoyerReponseCanal(await completerLeadCanal(lead), texte)
+      if (envoi.traite && !envoi.ok) return NextResponse.json({ error: envoi.erreur, hors_fenetre: !!envoi.hors_fenetre }, { status: envoi.statut })
+      await supabaseAdmin.from('messages').update({ etat: null, contenu: texte, sent_at: new Date().toISOString(), ...traceEnvoi(envoi) }).eq('id', prop.id)
       // `repondu`, pas `en_discussion` : une réponse vient de partir au nom de l'artisan, la balle
       // est chez le prospect. C'est le parcours NORMAL de l'Essentiel (l'assistant prépare, l'artisan
       // valide) — et c'est ce statut que le cron des relances exige.
       await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'repondu', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id)
+      // Pas de relance automatique sur ces canaux : hors des 24 h, Meta la refuserait, et Le Bon Coin n'a pas d'API.
+      if (envoi.traite) return NextResponse.json({ ok: true, emailed: false, ...reponseCanal(envoi) })
       if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
       const { data: artisanV } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
       let emailed = false
@@ -146,7 +165,9 @@ export async function POST(req: Request) {
     const contenu = typeof body?.message === 'string' ? body.message.trim().slice(0, 4000) : ''
     if (!contenu) return NextResponse.json({ error: 'Message vide' }, { status: 400 })
 
-    await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'manuel', contenu })
+    const envoi = await envoyerReponseCanal(await completerLeadCanal(lead), contenu)
+    if (envoi.traite && !envoi.ok) return NextResponse.json({ error: envoi.erreur, hors_fenetre: !!envoi.hors_fenetre }, { status: envoi.statut })
+    await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'manuel', contenu, ...traceEnvoi(envoi) })
     // `repondu` : l'artisan vient de parler, la balle repasse au prospect. `en_discussion` dit
     // l'inverse (le prospect a parlé en dernier) et sert de condition d'ARRÊT au cron — le poser
     // ici revenait à éteindre les relances de sa propre réponse.
@@ -161,6 +182,7 @@ export async function POST(req: Request) {
 
     // La promesse « Relances automatiques » de la grille, vraie dès l'Essentiel : elle ne dépend
     // plus de l'assistant autonome (vendu à partir de Studio), mais du fait qu'une réponse est partie.
+    if (envoi.traite) return NextResponse.json({ ok: true, emailed: false, ...reponseCanal(envoi) })
     if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
 
     // Email au prospect si son contact est un email (sinon il verra la réponse sur la plateforme).

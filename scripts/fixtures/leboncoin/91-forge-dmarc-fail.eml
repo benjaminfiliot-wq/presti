@@ -1,0 +1,10 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=fail smtp.mailfrom=leboncoin.fr; dkim=none; dmarc=fail header.from=leboncoin.fr
+From: leboncoin <messagerie@leboncoin.fr>
+To: atelier.fictif@exemple-artisan.fr
+Subject: Nouveau message de Support
+Message-ID: <fixture-lbc-0091@faux.invalid>
+Date: Mon, 12 Oct 2026 10:00:00 +0200
+Content-Type: text/plain; charset=UTF-8
+
+Support vous a envoyé un message. Son message :
+Confirmez votre compte ici : https://faux-leboncoin.invalid/login

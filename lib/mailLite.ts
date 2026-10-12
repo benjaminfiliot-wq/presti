@@ -8,6 +8,10 @@ export type MailLu = {
   sujet: string
   texte: string
   date: Date | null
+  /** La première partie text/html décodée (brute, non rendue) : les liens d'une notification (lib/canaux/leboncoin.ts). '' si aucune. */
+  html: string
+  /** L'en-tête Authentication-Results tel quel, s'il existe (SPF/DKIM/DMARC vus par le serveur de l'artisan). */
+  authentification: string | null
 }
 
 /** Décode les en-têtes encodés RFC 2047 (=?UTF-8?B?...?=) — sinon les accents ressortent en charabia. */
@@ -76,6 +80,24 @@ function texteDe(entetes: Record<string, string>, corps: string, profondeur = 0)
   return clair
 }
 
+/** La première partie text/html, décodée mais pas détaguée (récursif dans les multipart). */
+function htmlDe(entetes: Record<string, string>, corps: string, profondeur = 0): string {
+  const ct = entetes['content-type'] || 'text/plain'
+  if (/^multipart\//i.test(ct) && profondeur < 4) {
+    const b = ct.match(/boundary="?([^";]+)"?/i)?.[1]
+    if (!b) return ''
+    for (const p of corps.split(new RegExp(`--${b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:--)?\\r?\\n`))) {
+      if (!p.trim()) continue
+      const sous = coupe(p)
+      const h = htmlDe(sous.entetes, sous.corps, profondeur + 1)
+      if (h) return h
+    }
+    return ''
+  }
+  if (!/^text\/html/i.test(ct)) return ''
+  return decodeCorps(corps, entetes['content-transfer-encoding'] || '7bit', ct.match(/charset="?([\w-]+)"?/i)?.[1] || 'utf-8')
+}
+
 /** Retire la citation du message précédent : on ne veut que ce que la personne vient d'écrire. */
 export function sansCitation(texte: string): string {
   const lignes = texte.split(/\r?\n/)
@@ -102,5 +124,7 @@ export function lireMail(brut: Buffer | string): MailLu {
     sujet: decodeEntete(entetes['subject'] || ''),
     texte: sansCitation(texteDe(entetes, corps)).slice(0, 8000),
     date: d && !isNaN(d.getTime()) ? d : null,
+    html: htmlDe(entetes, corps).slice(0, 300_000),
+    authentification: (entetes['authentication-results'] || '').trim() || null,
   }
 }

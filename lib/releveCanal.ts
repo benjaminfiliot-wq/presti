@@ -3,6 +3,10 @@ import { dechiffrer } from '@/lib/secretBox'
 import { lireMail } from '@/lib/mailLite'
 import { typeChantier } from '@/lib/qualification'
 import { villeDe } from '@/lib/ville'
+import { actif } from '@/lib/flags'
+import { contenuEntrantLeboncoin, lireNotificationLeboncoin } from '@/lib/canaux/leboncoin'
+import { rangerNotificationLeboncoin, type Range } from '@/lib/canaux/rangement'
+import { magasinCanaux, preparerReponseCanal } from '@/lib/canaux/serveur'
 
 // Relève d'une boîte email (v4 §B2) : on va chercher les nouveaux messages et on les
 // range dans la boîte de réception de l'artisan, à côté des demandes de sa plateforme.
@@ -20,6 +24,8 @@ export type Canal = {
 
 const AUTOMATIQUE = /^(no-?reply|ne-?pas-?repondre|donotreply|mailer-daemon|postmaster|notifications?|newsletter|bounce|noreply)[@.-]/i
 const INDESIRABLE = /(facture[s]? ?orange|newsletter|se désinscrire|unsubscribe|linkedin|no-reply)/i
+/** Réponses préparées par l'IA pour Le Bon Coin, par boîte et par passage : la relève de 50 boîtes tient en 60 s. */
+const MAX_PREPARATIONS_LBC = 2
 
 /** Un email ressemble-t-il à une vraie demande d'un humain ? */
 function estUneVraieDemande(deEmail: string | null, sujet: string, texte: string, adresseCanal: string): boolean {
@@ -43,6 +49,8 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
   let client: import('imapflow').ImapFlow | null = null
   let importes = 0
   let metier: string | null | undefined
+  // Le Bon Coin (drapeau canauxLeboncoin) : les conversations rangées pendant ce passage, préparées une fois la boîte refermée.
+  const leboncoin: { r: Range; avecIA: boolean }[] = []
 
   try {
     const { ImapFlow } = await import('imapflow')
@@ -67,6 +75,26 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
         if (importes >= 40) break // garde-fou : jamais un déluge en une passe
         const mail = lireMail(msg.source)
         if (!mail.messageId) continue
+
+        // Une notification Le Bon Coin vient d'un expéditeur automatique : elle est reconnue AVANT le filtre qui l'écarterait.
+        // Idempotente par Message-ID (canaux_evenements, 0139) ; le contact reste vide (l'adresse est celle de Le Bon Coin).
+        if (actif('canauxLeboncoin')) {
+          const lbc = lireNotificationLeboncoin(mail)
+          if (lbc) {
+            const issue = await rangerNotificationLeboncoin(
+              { ...lbc, texte: contenuEntrantLeboncoin(lbc) },
+              { id: canal.id, artisan_id: canal.artisan_id, type: 'email', actif: true },
+              mail.messageId, (mail.date || new Date()).toISOString(), magasinCanaux,
+            )
+            if (issue.etat === 'range') {
+              importes++
+              const avecIA = !!lbc.texte && leboncoin.filter((x) => x.avecIA).length < MAX_PREPARATIONS_LBC
+              leboncoin.push({ r: issue.r, avecIA })
+            }
+            continue
+          }
+        }
+
         if (!estUneVraieDemande(mail.de.email, mail.sujet, mail.texte, canal.adresse)) continue
 
         // Déjà importé ? (le Message-ID est stable, même si on relève deux fois)
@@ -115,6 +143,9 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
     } finally { lock.release() }
 
     await supabaseAdmin.from('canaux').update({ derniere_releve: new Date().toISOString(), derniere_erreur: null }).eq('id', canal.id)
+    // Une proposition (quand l'e-mail recopie le texte) et une notification par conversation ; sans le texte, l'artisan est
+    // seulement prévenu : l'IA ne répond pas à un message qu'elle n'a pas lu.
+    for (const { r, avecIA } of leboncoin) await preparerReponseCanal({ ...r, avecIA })
     return { importes }
   } catch (e) {
     const brut = (e instanceof Error ? e.message : String(e)).toLowerCase()

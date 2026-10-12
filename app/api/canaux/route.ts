@@ -28,7 +28,8 @@ export async function GET(req: Request) {
   if ('error' in a) return NextResponse.json({ error: a.error }, { status: a.status })
   const { data } = await supabaseAdmin.from('canaux')
     .select('id, type, libelle, adresse, imap_hote, imap_port, smtp_hote, smtp_port, actif, derniere_releve, derniere_erreur, cree_le')
-    .eq('artisan_id', a.uid).order('cree_le', { ascending: true })
+    // Les boîtes e-mail seulement : les comptes Meta reliés (0139) ont leur liste, GET /api/canaux/meta/liaison.
+    .eq('artisan_id', a.uid).eq('type', 'email').order('cree_le', { ascending: true })
   return NextResponse.json({ ok: true, canaux: data ?? [], chiffrement: chiffrementDisponible() })
 }
 

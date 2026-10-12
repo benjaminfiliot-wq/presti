@@ -1,0 +1,19 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=leboncoin.fr; dkim=pass header.d=leboncoin.fr
+From: "leboncoin" <messagerie@leboncoin.fr>
+To: plomberie.fictive@exemple-artisan.fr
+Subject: Vous avez =?UTF-8?B?cmXDp3U=?= un nouveau message
+Message-ID: <fixture-lbc-0002@leboncoin.fr>
+Date: Mon, 12 Oct 2026 18:40:00 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><body>
+<table><tr><td>
+<p>Bonjour,</p>
+<p>Message de Jean-Marc concernant votre annonce &laquo; D&eacute;pannage chauff=
+e-eau &raquo;.</p>
+<p>Connectez-vous pour lire et r&eacute;pondre au message.</p>
+<p><a href=3D"https://click.leboncoin.fr/track/abc?u=3Dfixture" style=3D"color:#f56b2a">Voir le message</a></p>
+</td></tr></table>
+</body></html>

@@ -1,0 +1,38 @@
+Return-Path: <bounce@mail.leboncoin.fr>
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=mail.leboncoin.fr; dkim=pass header.d=leboncoin.fr; dmarc=pass header.from=leboncoin.fr
+From: leboncoin <no-reply@messagerie.leboncoin.fr>
+To: atelier.fictif@exemple-artisan.fr
+Subject: =?UTF-8?Q?Nouveau_message_concernant_=C2=AB_Pose_de_carrelage_salle_de_bain_=C2=BB?=
+Message-ID: <fixture-lbc-0001@messagerie.leboncoin.fr>
+Date: Mon, 12 Oct 2026 09:14:00 +0200
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="frontiere-lbc-1"
+
+--frontiere-lbc-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Bonjour,
+
+Camille vous a envoy=C3=A9 un message au sujet de votre annonce =C2=AB Pose d=
+e carrelage salle de bain =C2=BB.
+
+Son message :
+Bonjour, je refais ma salle de bain (environ 6 m2) et je cherche quelqu'un =
+pour poser du carrelage au sol et en fa=C3=AFence. Vous seriez disponible e=
+n novembre ?
+
+R=C3=A9pondre au message : https://www.leboncoin.fr/messages/id/7f3c2a91-0b4e-4c1a-9d2f-fixture00001
+
+L'=C3=A9quipe leboncoin
+--frontiere-lbc-1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><body><p>Bonjour,</p><p><b>Camille</b> vous a envoy=C3=A9 un message =
+au sujet de votre annonce =C2=AB Pose de carrelage salle de bain =C2=BB.</p>=
+<p><a href=3D"https://www.leboncoin.fr/messages/id/7f3c2a91-0b4e-4c1a-9d2f-=
+fixture00001?utm_source=3Demail">R=C3=A9pondre</a></p>
+<p><a href=3D"https://phishing.exemple.invalid/leboncoin">Lien d'un autre d=
+omaine</a></p></body></html>
+--frontiere-lbc-1--

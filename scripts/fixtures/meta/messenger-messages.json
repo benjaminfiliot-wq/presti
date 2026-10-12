@@ -1,0 +1,15 @@
+{
+  "object": "page",
+  "entry": [
+    {
+      "id": "300000000000001",
+      "time": 1791789300000,
+      "messaging": [
+        { "sender": { "id": "4000000000000001" }, "recipient": { "id": "300000000000001" }, "timestamp": 1791789300000, "message": { "mid": "m_FIXTURE-messenger-0001", "text": "Bonjour, vous faites les devis pour une terrasse en bois ?" } },
+        { "sender": { "id": "300000000000001" }, "recipient": { "id": "4000000000000001" }, "timestamp": 1791789310000, "message": { "mid": "m_FIXTURE-echo-0002", "is_echo": true, "text": "réponse de la Page" } },
+        { "sender": { "id": "4000000000000001" }, "recipient": { "id": "300000000000001" }, "timestamp": 1791789320000, "read": { "watermark": 1791789310000 } },
+        { "sender": { "id": "4000000000000001" }, "recipient": { "id": "300000000000001" }, "timestamp": 1791789330000, "message": { "mid": "m_FIXTURE-photo-0003", "attachments": [{ "type": "image", "payload": { "url": "https://exemple.invalid/photo.jpg" } }] } }
+      ]
+    }
+  ]
+}
