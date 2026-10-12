@@ -319,7 +319,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   // 12/10 — l'essai par compte (lib/flags.ts ESSAIS) : enEssai AVANT la session, puis ouvertPour(uid) juste après elle, 404 sans corps.
   T('G5 la garde lit le drapeau AVANT la session, puis la liste d’essai sur l’uid, et répond 404 sans corps', garde.indexOf("enEssai('crm')") > 0 && garde.indexOf("enEssai('crm')") < garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") > garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") < garde.indexOf("from('artisans')") && /new NextResponse\(null, \{ status: 404/.test(garde))
   T('G6 drapeau `crm` baissé', /^\s*crm: false,/m.test(lire('lib/flags.ts')))
-  T('G7 menu : l’entrée CRM n’existe que drapeau levé ou compte en essai', /\.\.\.\(enEssai\('crm'\) \? \[\{ key: 'crm', essai: 'crm'/.test(lire('app/AppShell.tsx')) && /\.filter\(\(it\) => !it\.essai \|\| ouvertPour\(it\.essai, uid\)\)/.test(lire('app/AppShell.tsx')))
+  T('G7 menu : l’entrée CRM n’existe que drapeau levé ou compte en essai', /\.\.\.\(enEssai\('crm'\) \? \[\{ key: 'crm', essai: 'crm'/.test(lire('app/AppShell.tsx')) && /\.filter\(\(it\) => !it\.essai \|\| essais\[it\.essai\] === true\)/.test(lire('app/AppShell.tsx')))
   T('G8 page /crm : 404 serveur drapeau baissé sans essai (layout)', /if \(!enEssai\('crm'\)\) notFound\(\)/.test(lire('app/crm/layout.tsx')))
   T('G9 aucune page publique (Tarifs, landing, comparatif) ne parle du CRM', !['app/tarifs', 'app/page.tsx', 'app/Comparatif.tsx', 'app/abonnement'].some((p) => {
     const abs = path.join(RACINE, p)

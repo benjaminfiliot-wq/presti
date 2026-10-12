@@ -6,7 +6,7 @@ import '@/app/globals.css' // UI de l'espace connecté (toutes les pages console
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { actif, enEssai, ouvertPour, type Flag } from '@/lib/flags'
+import { actif, enEssai, type Flag } from '@/lib/flags'
 import AidePanneau, { articlePour } from '@/app/AidePanneau'
 import Visite, { VISITES, type Etape } from '@/app/Visite'
 // v9 §2 — l'app installable : invitation (Android/iOS) et service worker + bandeau de mise à jour.
@@ -106,6 +106,7 @@ export default function AppShell({
   const pathname = usePathname()
   const [a, setA] = useState<ArtisanInfo | null>(null)
   const [uid, setUid] = useState<string | null>(null)
+  const [essais, setEssais] = useState<Partial<Record<Flag, boolean>>>({})
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [open, setOpen] = useState(false)
   // v8 A1.2 — le tiroir se referme après une navigation (sinon il masque la page suivante sur mobile),
@@ -164,6 +165,11 @@ export default function AppShell({
         .maybeSingle()
       setUid(data.session.user.id)
       if (prof) setA(prof as ArtisanInfo)
+      // Fonctionnalités en essai (lib/flags.ts ESSAI) : le serveur dit si CE compte y a accès.
+      if (enEssai('crm') || enEssai('assistant')) {
+        fetch('/api/essais', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
+          .then((r) => (r.ok ? r.json() : {})).then((e) => setEssais(e as Partial<Record<Flag, boolean>>)).catch(() => {})
+      }
       // Première ouverture de la console : la visite guidée, une seule fois par artisan.
       if (prof && actif('aideVisites') && VISITES.console?.length) {
         const vues = (prof as ArtisanInfo).aide_vues
@@ -256,7 +262,7 @@ export default function AppShell({
           <div key={g.group}>
             <div className="psh-navlabel">{g.group}</div>
             <nav className="psh-nav">
-              {g.items.filter((it) => !it.essai || ouvertPour(it.essai, uid)).map((it) =>
+              {g.items.filter((it) => !it.essai || essais[it.essai] === true).map((it) =>
                 it.soon ? (
                   <a key={it.key} className={it.key === active ? 'on' : ''} aria-disabled="true" style={{ cursor: 'default', opacity: 0.6 }}>
                     {it.icon}{it.label}<span className="count">bientôt</span>

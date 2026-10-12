@@ -314,12 +314,36 @@ const deps = (sur = {}) => {
   await p.jouer((e) => evs.push(e))
   ok('journal en panne : crédit et tour rendus, message dédié', trace.includes('rendreCredit') && trace.includes('rendreTour') && evs.at(-1).message === tour.MESSAGE_JOURNAL_INDISPONIBLE)
 }
+// Audit d'attaque du 12/10 (H1) : couper la connexion ne doit plus rendre l'assistant gratuit.
+{
+  let panne = 0
+  const { d, trace } = deps({ executer: async () => { throw new boucle.TourEchoue('temps dépassé sans réponse', 3, true) }, signalerPanne: async () => { panne++ } })
+  const p = await tour.preparerTour(d)
+  const evs = []
+  await p.jouer((e) => evs.push(e))
+  ok('abandon du client après 3 appels facturés : rien rendu, aucune panne signalée', !trace.includes('rendreCredit') && !trace.includes('rendreTour') && panne === 0)
+}
+{
+  let panne = 0
+  const { d, trace } = deps({ executer: async () => { throw new boucle.TourEchoue('529', 2, false, new Error('529')) }, signalerPanne: async () => { panne++ } })
+  const p = await tour.preparerTour(d)
+  const evs = []
+  await p.jouer((e) => evs.push(e))
+  ok('panne après 2 appels facturés : crédit gardé, panne signalée, l’écran ne promet pas de remboursement', !trace.includes('rendreCredit') && panne === 1 && evs.at(-1).message === tour.MESSAGE_INTERROMPU && !/rendu/.test(evs.at(-1).message))
+}
+{
+  const { d, trace } = deps({ executer: async () => { throw new boucle.TourEchoue('529', 0, false, new Error('529')) } })
+  const p = await tour.preparerTour(d)
+  const evs = []
+  await p.jouer((e) => evs.push(e))
+  ok('panne avant tout appel abouti : crédit et tour rendus', egal(trace, ['prendre', 'debit', 'rendreCredit', 'rendreTour']))
+}
 
 console.log('\n── D. Le code')
 {
   const route = lire('app/api/assistant/route.ts')
   const corps = route.slice(route.indexOf('export async function POST'))
-  ok('route : le drapeau est lu AVANT la session (baissé = 404 pour tous)', corps.indexOf("actif('assistant')") > 0 && corps.indexOf("actif('assistant')") < corps.indexOf('authArtisan(req)'))
+  ok('route : le drapeau (ou l’essai) est lu AVANT la session, puis l’essai par compte juste après elle', corps.indexOf("enEssai('assistant')") > 0 && corps.indexOf("enEssai('assistant')") < corps.indexOf('authArtisan(req)') && corps.indexOf("ouvertPour('assistant', uid)") > corps.indexOf('authArtisan(req)'))
   ok('route : capacité `assistant` vérifiée, message de verrou', /peut\(art\.plan as string \| null, 'assistant'\)/.test(corps) && /messageVerrou\('assistant'\)/.test(corps))
   ok('route : crédit débité par consumeCredit et rendu par rendreCredit', /consumeCredit\(uid, routage\.tier, isFounder\)/.test(corps) && /rendreCredit\(uid, routage\.tier, isFounder\)/.test(corps))
   ok('route : plafond par la fonction SQL, PLAFOND_TOURS', /rpc\('assistant_prendre_tour'/.test(corps) && /p_max: PLAFOND_TOURS/.test(corps))
@@ -330,15 +354,16 @@ console.log('\n── D. Le code')
   ok('exécuteurs : stock, factures et chiffres passent par les gestionnaires de l’interface', /from '@\/app\/api\/inventaire\/route'/.test(ex) && /from '@\/app\/api\/compta\/tableau\/route'/.test(ex) && /from '@\/app\/api\/devis\/auto\/route'/.test(ex) && /from '@\/app\/api\/messages\/route'/.test(ex))
   ok('exécuteurs : chaque lecture PostgREST est filtrée sur le compte', (ex.match(/session\.from\('(devis|leads)'\)[\s\S]{0,200}?\.eq\('artisan_id', ctx\.uid\)/g) || []).length >= 3)
   ok('exécuteurs : réponse préparée — on n’écrase jamais une proposition en attente', /deja_preparee: true/.test(ex) && !/etat: 'rejete'/.test(ex))
-  ok('page : notFound() quand le drapeau est baissé', /if \(!actif\('assistant'\)\) notFound\(\)/.test(lire('app/assistant/page.tsx')))
-  ok('menu : l’entrée n’existe que drapeau levé', /\.\.\.\(actif\('assistant'\) \? \[\{ key: 'assistant'/.test(lire('app/AppShell.tsx')))
+  ok('page : notFound() sans drapeau ni essai, puis retour au tableau de bord si /api/essais refuse ce compte', /if \(!enEssai\('assistant'\)\) notFound\(\)/.test(lire('app/assistant/page.tsx')) && /essai\.assistant !== true/.test(lire('app/assistant/page.tsx')))
+  ok('menu : l’entrée n’existe que drapeau levé ou compte en essai (réponse de /api/essais)', /\.\.\.\(enEssai\('assistant'\) \? \[\{ key: 'assistant', essai: 'assistant'/.test(lire('app/AppShell.tsx')) && /essais\[it\.essai\] === true/.test(lire('app/AppShell.tsx')))
   ok('page : aucun bleu ni violet, jetons de la console', !/#[0-9a-f]{3,6}/i.test(lire('app/assistant/assistant.css')) && !/blue|violet|purple/i.test(lire('app/assistant/assistant.css')))
   ok('drapeau `assistant` baissé', FLAGS.assistant === false)
   ok('capacité : Signature et Business seulement, offre minimale Signature', ['signature', 'business'].every((p) => plans.peut(p, 'assistant')) && ['gratuit', 'essentiel', 'studio'].every((p) => !plans.peut(p, 'assistant')) && plans.offreMinimale('assistant') === 'signature')
   ok('Tarifs : la grille ne vend pas l’assistant', !plans.GRILLE.some((l) => /assistant de gestion|gère tout/i.test(l.label)))
   const sql = lire('supabase/migrations/0150_assistant.sql')
   const numeros = fs.readdirSync('supabase/migrations').map((f) => f.match(/^(\d{4})_/)?.[1]).filter(Boolean).map(Number)
-  ok('migration 0150 : la plus haute du dépôt, en-tête « NON APPLIQUÉE », requêtes de contrôle', Math.max(...numeros) === 150 && /NON APPLIQUÉE/.test(sql) && /Requêtes de contrôle/.test(sql))
+  // 0150 est appliquée depuis le 12/10 (0151 et 0152 sont venues après, pour le CRM) : l'en-tête dit son état.
+  ok('migration 0150 : en-tête qui dit son état d’application, requêtes de contrôle', Math.max(...numeros) >= 150 && /APPLIQUÉE/.test(sql) && /Requêtes de contrôle/.test(sql))
   ok('migration : RLS sur les deux tables, lecture seule par l’artisan, aucune politique d’écriture permissive', (sql.match(/enable row level security/g) || []).length === 2 && /assistant_journal_lecture on public\.assistant_journal for select/.test(sql) && !/for (insert|update|delete|all)\s+using \(auth\.uid\(\)/.test(sql))
   ok('migration : fonctions révoquées pour anon et authenticated, garde de session 0138 posée', /revoke all on function public\.assistant_prendre_tour\(uuid, uuid, integer\) from public, anon, authenticated/.test(sql) && /garde_session/.test(sql) && /jeton_session_valide/.test(sql))
   ok('lanceur : la suite est déclarée dans tout-verifier', /assistant-qa\.mjs/.test(lire('scripts/tout-verifier.mjs')))

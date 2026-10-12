@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
-import { enEssai, ouvertPour } from '@/lib/flags'
+import { enEssai } from '@/lib/flags'
 import { CREDIT_COST, messageVerrou, peut } from '@/lib/plans'
 import { TIERS, tierAllowed, type Tier } from '@/lib/models'
 import { LIBELLE_OUTIL, type NomOutil } from '@/lib/assistant/outils'
@@ -55,7 +55,10 @@ function Assistant() {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const id = data.session.user.id
-      if (!ouvertPour('assistant', id)) { router.replace('/dashboard'); return } // essai : compte hors liste
+      // Essai (lib/flags.ts ESSAI) : le serveur dit si CE compte y a accès ; sinon retour au tableau de bord.
+      const essai = await fetch('/api/essais', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
+        .then((r) => (r.ok ? r.json() : {})).catch(() => ({})) as { assistant?: boolean }
+      if (essai.assistant !== true) { router.replace('/dashboard'); return }
       setUid(id)
       const { data: art } = await supabase.from('artisans').select('plan, is_founder').eq('id', id).maybeSingle()
       const p = art?.is_founder ? 'business' : (art?.plan as string) || 'gratuit'

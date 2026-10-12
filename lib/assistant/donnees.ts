@@ -83,7 +83,7 @@ export function resumerDevis(lignes: readonly DevisLu[], entree: EntreesOutils['
     nb_rendus: Math.min(filtres.length, entree.limite),
     nb_correspondants: filtres.length,
     devis: filtres.slice(0, entree.limite).map((d) => ({
-      numero: texte(d.numero, 40), objet: texte(d.objet), client: texte(d.client_nom), statut: d.statut ?? null,
+      numero: texte(d.numero, 40), objet: texte(d.objet), client: encadrerClient(d.client_nom, 120), statut: d.statut ?? null,
       total_ttc_euros: nombre(d.total_ttc), date: jour(d.date_emission),
     })),
     a_savoir: 'Pour le montant des devis acceptés ou en attente sur une période, lire_chiffres donne le calcul de « Mes chiffres ».',
@@ -119,7 +119,7 @@ export function resumerFactures(t: TableauCompta, artisanId: string, entree: Ent
       })),
     },
     factures: entree.impayees_seulement ? [] : filtrees.slice(0, entree.limite).map((f) => ({
-      numero: texte(f.numero, 40), client: texte(f.client_nom), statut: f.avoir_de ? 'avoir' : f.statut ?? null,
+      numero: texte(f.numero, 40), client: encadrerClient(f.client_nom, 120), statut: f.avoir_de ? 'avoir' : f.statut ?? null,
       total_ttc_euros: nombre(f.total_ttc), emise_le: jour(f.date_emission), echeance: jour(f.date_echeance),
     })),
     filtre_statut: entree.statut,
@@ -141,7 +141,7 @@ export function resumerChiffres(t: TableauCompta, artisanId: string, entree: Ent
     devis_en_attente: { nombre: v.devis.enAttente.nombre, montant: enEuros(v.devis.enAttente.montant) },
     demandes_recues: { total: v.demandes.total, par_canal: v.demandes.parCanal.map((c) => ({ canal: c.libelle, nombre: c.nb })) },
     nb_clients_factures: v.cartes.clients,
-    meilleurs_clients: v.meilleursClients.map((c) => ({ client: c.nom, montant: enEuros(c.montant) })),
+    meilleurs_clients: v.meilleursClients.map((c) => ({ client: encadrerClient(c.nom, 120), montant: enEuros(c.montant) })),
     donnees_tronquees: !!t.tronque,
     a_savoir: "Calcul de l'écran « Mes chiffres » sur les factures, devis et demandes de Presti. Les dépenses et recettes importées depuis des fichiers restent dans le navigateur de l'artisan : elles ne sont pas comptées ici, donc ni bénéfice ni marge.",
   }
@@ -196,10 +196,11 @@ export function resumerConversations(leads: readonly LeadLu[], messages: readonl
         .sort((a, b) => String(b.sent_at ?? '').localeCompare(String(a.sent_at ?? '')))[0]
       return {
         conversation_id: l.id,
-        client: texte(l.nom_prospect, 80) ?? 'client sans nom',
+        // Audit d'attaque du 12/10 (M1) : le nom et le type viennent du formulaire du prospect — encadrés comme son message.
+        client: encadrerClient(l.nom_prospect, 80) ?? 'client sans nom',
         statut: l.statut ?? null,
         urgent: l.urgence === 'urgent',
-        type_chantier: texte(l.type_chantier, 80),
+        type_chantier: encadrerClient(l.type_chantier, 80),
         canal: texte(l.canal, 30),
         attend: attente ? LIBELLE_ATTENTE[attente] : null,
         vous_avez_la_main: !!l.prise_en_main,

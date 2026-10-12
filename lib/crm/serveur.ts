@@ -6,7 +6,8 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
-import { enEssai, ouvertPour } from '@/lib/flags'
+import { enEssai } from '@/lib/flags'
+import { ouvertPour } from '@/lib/essais'
 import { decisionAcces } from './acces'
 
 export const PAS_DE_CACHE = { 'Cache-Control': 'private, no-store' }

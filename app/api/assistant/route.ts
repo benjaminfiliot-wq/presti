@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
-import { enEssai, ouvertPour } from '@/lib/flags'
+import { enEssai } from '@/lib/flags'
+import { ouvertPour } from '@/lib/essais'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { messageVerrou, peut } from '@/lib/plans'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -37,6 +38,9 @@ export const maxDuration = 60
 const client = new Anthropic()
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const LIMITE_REQUETES = { max: 30, fenetreSec: 10 * 60 }
+// Audit d'attaque du 12/10 : le plafond de 20 tours est PAR conversation (identifiant choisi par l'écran), il ne borne
+// aucun coût à lui seul ; celui-ci borne la journée du compte.
+const LIMITE_JOUR = { max: 200, fenetreSec: 24 * 3600 }
 
 /** L'historique renvoyé par l'écran : forme stricte, derniers échanges seulement, borné en taille. */
 function lireHistorique(brut: unknown): EchangePasse[] {
@@ -89,6 +93,9 @@ export async function POST(req: Request) {
 
   if (!(await consommerLimite(`assistant:${uid}`, LIMITE_REQUETES.max, LIMITE_REQUETES.fenetreSec))) {
     return NextResponse.json({ error: 'Beaucoup de messages en peu de temps : reprenez dans quelques minutes.', code: 'debit' }, { status: 429 })
+  }
+  if (!(await consommerLimite(`assistant-jour:${uid}`, LIMITE_JOUR.max, LIMITE_JOUR.fenetreSec))) {
+    return NextResponse.json({ error: 'Limite de messages atteinte pour aujourd’hui : l’assistant revient demain.', code: 'debit' }, { status: 429 })
   }
 
   // Le palier, choisi comme partout (lib/ai/routage.ts) : Standard par défaut, Pro ou Expert sur demande, borné par l'offre.

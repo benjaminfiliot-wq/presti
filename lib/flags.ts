@@ -162,15 +162,10 @@ export type Flag = keyof typeof FLAGS
 export const actif = (f: Flag): boolean => FLAGS[f]
 
 /** 12/10/2026 — l'ESSAI avant l'ouverture générale (décision de Benj : il essaie d'abord sur son compte). Une
- *  fonctionnalité au drapeau baissé s'ouvre pour ces comptes seulement : les routes répondent 404 à tout autre compte,
- *  l'entrée de menu n'apparaît qu'à eux, la page renvoie les autres au tableau de bord. Versionné ici, comme les
- *  drapeaux (pas de variable d'environnement). À vider quand le drapeau passe à true.
- *  f5b463ec… = benjaminfiliot@gmail.com (fondateur) ; ef609e9b… = « Atelier du Chêne », compte de démonstration. */
-export const ESSAIS: Partial<Record<Flag, readonly string[]>> = {
-  crm: ['f5b463ec-3736-48e9-a66e-0d7387496fc1', 'ef609e9b-84c4-4298-8787-a10dc2320526'],
-  assistant: ['f5b463ec-3736-48e9-a66e-0d7387496fc1', 'ef609e9b-84c4-4298-8787-a10dc2320526'],
-}
+ *  fonctionnalité au drapeau baissé mais `true` ici s'ouvre pour les seuls comptes listés CÔTÉ SERVEUR dans
+ *  lib/essais.ts (jamais ici : ce fichier part dans le JavaScript public, audit d'attaque du 12/10, B1). Les routes
+ *  répondent 404 à tout autre compte, l'entrée de menu ne s'affiche qu'après réponse de /api/essais. À remettre à
+ *  false (et vider lib/essais.ts) quand le drapeau passe à true. */
+export const ESSAI: Partial<Record<Flag, boolean>> = { crm: true, assistant: true }
 /** La fonctionnalité existe pour au moins un compte (drapeau levé, ou essai en cours). */
-export const enEssai = (f: Flag): boolean => FLAGS[f] || (ESSAIS[f]?.length ?? 0) > 0
-/** La fonctionnalité est ouverte à CE compte. */
-export const ouvertPour = (f: Flag, uid: string | null | undefined): boolean => FLAGS[f] || (!!uid && (ESSAIS[f] ?? []).includes(uid))
+export const enEssai = (f: Flag): boolean => FLAGS[f] || !!ESSAI[f]

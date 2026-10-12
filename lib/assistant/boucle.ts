@@ -52,6 +52,20 @@ export type ResultatTour = {
   garde: { regenere: boolean; retires: string[] }
 }
 
+/**
+ * Le tour n'a rien rendu d'utile. `appelsAboutis` : appels au modèle qui ont abouti (donc facturés à Presti) avant
+ * l'échec ; `parClient` : l'écran a coupé la connexion. La route ne rend le crédit que si RIEN n'a été facturé et que
+ * ce n'est pas un abandon du client (audit d'attaque du 12/10, H1 : couper la connexion rendait l'assistant gratuit).
+ */
+export class TourEchoue extends Error {
+  readonly appelsAboutis: number
+  readonly parClient: boolean
+  readonly cause?: unknown
+  constructor(message: string, appelsAboutis: number, parClient: boolean, cause?: unknown) {
+    super(message); this.name = 'TourEchoue'; this.appelsAboutis = appelsAboutis; this.parClient = parClient; this.cause = cause
+  }
+}
+
 export class JournalIndisponible extends Error {
   constructor(cause: unknown) { super(`journal indisponible : ${cause instanceof Error ? cause.message : String(cause)}`); this.name = 'JournalIndisponible' }
 }
@@ -119,16 +133,19 @@ export async function executerTour(p: {
   let texteFinal = ''
   let dernierTexte = ''
   let brouillonsDuTour = 0
+  let appelsAboutis = 0
 
   const appelerModele = (extra: Partial<Anthropic.MessageCreateParamsNonStreaming> = {}) => {
     etapes++
-    return p.client.messages.create({ ...p.parametres, system: p.systeme, tools, messages, ...extra }, { signal: ac.signal })
+    return p.client.messages.create({ ...p.parametres, system: p.systeme, tools, messages, ...extra }, { signal: ac.signal }).then((r) => { appelsAboutis++; return r })
   }
 
   const executer = async (u: Anthropic.ToolUseBlock): Promise<Anthropic.ToolResultBlockParam> => {
     const reponse = (contenu: unknown, erreur = false): Anthropic.ToolResultBlockParam => {
       const json = JSON.stringify(contenu)
-      sources.push(json)
+      // Un nombre écrit par un client (entre [MESSAGE_CLIENT]) n'est pas une source : sinon « 4 850 € » glissé dans un nom de
+      // prospect passait pour un chiffre lu (audit d'attaque du 12/10, M1).
+      sources.push(json.replace(/\[MESSAGE_CLIENT\][\s\S]*?\[\/MESSAGE_CLIENT\]/g, ''))
       return { type: 'tool_result', tool_use_id: u.id, content: json, ...(erreur ? { is_error: true } : {}) }
     }
     outilsAppeles.push(u.name)
@@ -191,7 +208,7 @@ export async function executerTour(p: {
   } catch (e) {
     if (e instanceof JournalIndisponible) throw e
     const abandon = (e instanceof Error && (e.name === 'AbortError' || e.name === 'APIUserAbortError')) || ac.signal.aborted
-    if (!abandon) throw e
+    if (!abandon) throw new TourEchoue(e instanceof Error ? e.message : String(e), appelsAboutis, false, e)
     tronque = true
   } finally {
     clearTimeout(minuteur)
@@ -201,7 +218,7 @@ export async function executerTour(p: {
   let texte = brut(texteFinal || dernierTexte)
   if (!texte) {
     // Rien à dire et rien de fait : c'est une panne (la route rend le crédit). Un brouillon fait sans conclusion, lui, se dit.
-    if (!brouillons.length) throw new Error(tronque ? 'temps dépassé sans réponse' : 'réponse vide')
+    if (!brouillons.length) throw new TourEchoue(tronque ? 'temps dépassé sans réponse' : 'réponse vide', appelsAboutis, !!p.signal?.aborted)
     texte = 'Le brouillon est prêt : ouvrez-le avec le bouton ci-dessous pour le relire et le valider.'
   }
 
