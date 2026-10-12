@@ -19,7 +19,12 @@ export const maxDuration = 60
 type Ligne = Record<string, unknown>
 const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'sans-numero').replace(/[^\w.-]+/g, '_')
 
+// 0141 + 0150 — le CRM et les conversations de l'assistant (audit RGPD du 12/10 : l'export « complet » les oubliait).
+// Une table absente (migration pas encore passée) donne une liste vide.
+const TABLES_CRM = ['equipe_membres', 'vehicules', 'chantiers', 'chantier_equipe', 'chantier_taches', 'chantier_materiaux', 'crm_notes', 'crm_journal', 'assistant_conversations'] as const
+
 async function collecter(uid: string) {
+  const crm = await Promise.all(TABLES_CRM.map((t) => supabaseAdmin.from(t).select('*').eq('artisan_id', uid).then((r) => (r.data ?? []) as Ligne[], () => [] as Ligne[])))
   const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils, direction, supportAcces, supportLectures, journalAssistant] = await Promise.all([
     supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),
     // Sans `ip` : donnée d'un tiers, finalité anti-abus, elle n'a rien à faire dans l'export de l'artisan (C7).
@@ -69,6 +74,7 @@ async function collecter(uid: string) {
     acces_du_support: (supportAcces.data ?? []) as Ligne[],
     acces_du_support_consultations: (supportLectures.data ?? []) as Ligne[],
     journal_de_l_assistant: (journalAssistant.data ?? []) as Ligne[],
+    ...Object.fromEntries(TABLES_CRM.map((t, i) => [t, crm[i]])),
   }
 }
 
@@ -98,7 +104,7 @@ export async function GET(req: Request) {
       const nbDocs = d.devis.length + d.factures.length
       zip.ajouter('LISEZ-MOI.txt',
         `Export de vos données Presti — ${jour}\n\n` +
-        `donnees/ : vos tables au format JSON (profil, conversations, messages, devis, factures, clients, tarifs, inventaire).\n` +
+        `donnees/ : vos tables au format JSON (profil, conversations, messages, devis, factures, clients, tarifs, inventaire, équipe, véhicules, chantiers, notes et journal du CRM, journal et conversations de l'assistant).\n` +
         `devis/ et factures/ : vos documents en PDF, régénérés depuis la base (${nbDocs} document${nbDocs > 1 ? 's' : ''}).\n\n` +
         `Les devis envoyés et factures émises font partie de vos obligations de conservation (10 ans pour les pièces comptables).\n`)
       for (const [nom, valeur] of Object.entries(d)) zip.ajouter(`donnees/${nom}.json`, JSON.stringify(valeur, null, 2))

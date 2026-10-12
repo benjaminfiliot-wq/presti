@@ -6,7 +6,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
-import { actif } from '@/lib/flags'
+import { enEssai, ouvertPour } from '@/lib/flags'
 import { decisionAcces } from './acces'
 
 export const PAS_DE_CACHE = { 'Cache-Control': 'private, no-store' }
@@ -18,12 +18,14 @@ export type Garde = { uid: string; metier: string | null } | { reponse: NextResp
 
 export async function gardeCrm(req: Request): Promise<Garde> {
   // 1. Drapeau baissé : 404 sans corps, avant toute lecture (ni session, ni base).
-  if (!actif('crm')) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
+  if (!enEssai('crm')) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
   const session = await authArtisan(req)
   if (estEchec(session)) {
     const d = decisionAcces({ drapeau: true, session: { ok: false, statut: session.status, erreur: session.error, code: session.code }, plan: null })
     return { reponse: erreur(d.ok ? 'Non authentifié' : d.erreur ?? 'Non authentifié', d.ok ? 401 : d.statut, d.ok || !d.code ? {} : { code: d.code }) }
   }
+  // Essai (lib/flags.ts ESSAIS) : un compte hors de la liste ne sait pas que le CRM existe.
+  if (!ouvertPour('crm', session.uid)) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
   const { data: art, error } = await supabaseAdmin.from('artisans').select('plan, metier').eq('id', session.uid).maybeSingle()
   if (error) { console.error('[crm] lecture de l’offre :', error.message); return { reponse: erreur(INDISPONIBLE, 503) } }
   const d = decisionAcces({ drapeau: true, session: { ok: true }, plan: (art?.plan as string | null) ?? null })

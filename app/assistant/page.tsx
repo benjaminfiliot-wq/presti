@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
-import { actif } from '@/lib/flags'
+import { enEssai, ouvertPour } from '@/lib/flags'
 import { CREDIT_COST, messageVerrou, peut } from '@/lib/plans'
 import { TIERS, tierAllowed, type Tier } from '@/lib/models'
 import { LIBELLE_OUTIL, type NomOutil } from '@/lib/assistant/outils'
@@ -30,7 +30,7 @@ const heure = (iso: string) => new Date(iso).toLocaleString('fr-FR', { day: '2-d
 const libelleOutil = (o: string) => (o in LIBELLE_OUTIL ? LIBELLE_OUTIL[o as NomOutil] : o)
 
 export default function PageAssistant() {
-  if (!actif('assistant')) notFound()
+  if (!enEssai('assistant')) notFound()
   return <Assistant />
 }
 
@@ -55,6 +55,7 @@ function Assistant() {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const id = data.session.user.id
+      if (!ouvertPour('assistant', id)) { router.replace('/dashboard'); return } // essai : compte hors liste
       setUid(id)
       const { data: art } = await supabase.from('artisans').select('plan, is_founder').eq('id', id).maybeSingle()
       const p = art?.is_founder ? 'business' : (art?.plan as string) || 'gratuit'

@@ -49,6 +49,7 @@ export default function Crm() {
     if (!data.session) { router.replace('/login'); return }
     const r = await appel<Vue>('/api/crm/vue')
     setChargement(false)
+    if (!r.ok && r.status === 404) { router.replace('/dashboard'); return } // essai : compte hors liste
     if (!r.ok) { setErreur({ message: r.erreur, verrou: r.status === 403 && r.code === 'offre' }); return }
     setErreur(null)
     setVue(r.corps)

@@ -316,10 +316,11 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const devisLignesChantier = lire('app/api/crm/chantiers/route.ts')
   T('G4 création depuis un devis : le devis est relu pour la session et doit être signé avant tout', /from\('devis'\)\.select\('id, statut, objet, numero'\)\.eq\('id', champs\.devis_id\)\.eq\('artisan_id', g\.uid\)/.test(devisLignesChantier) && /statut !== 'accepte'/.test(devisLignesChantier))
   const garde = sansCommentaires(lire('lib/crm/serveur.ts'))
-  T('G5 la garde lit le drapeau AVANT la session, et répond 404 sans corps', garde.indexOf("actif('crm')") > 0 && garde.indexOf("actif('crm')") < garde.indexOf('authArtisan(req)') && /new NextResponse\(null, \{ status: 404/.test(garde))
+  // 12/10 — l'essai par compte (lib/flags.ts ESSAIS) : enEssai AVANT la session, puis ouvertPour(uid) juste après elle, 404 sans corps.
+  T('G5 la garde lit le drapeau AVANT la session, puis la liste d’essai sur l’uid, et répond 404 sans corps', garde.indexOf("enEssai('crm')") > 0 && garde.indexOf("enEssai('crm')") < garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") > garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") < garde.indexOf("from('artisans')") && /new NextResponse\(null, \{ status: 404/.test(garde))
   T('G6 drapeau `crm` baissé', /^\s*crm: false,/m.test(lire('lib/flags.ts')))
-  T('G7 menu : l’entrée CRM n’existe que drapeau levé', /\.\.\.\(actif\('crm'\) \? \[\{ key: 'crm'/.test(lire('app/AppShell.tsx')))
-  T('G8 page /crm : 404 serveur drapeau baissé (layout)', /if \(!actif\('crm'\)\) notFound\(\)/.test(lire('app/crm/layout.tsx')))
+  T('G7 menu : l’entrée CRM n’existe que drapeau levé ou compte en essai', /\.\.\.\(enEssai\('crm'\) \? \[\{ key: 'crm', essai: 'crm'/.test(lire('app/AppShell.tsx')) && /\.filter\(\(it\) => !it\.essai \|\| ouvertPour\(it\.essai, uid\)\)/.test(lire('app/AppShell.tsx')))
+  T('G8 page /crm : 404 serveur drapeau baissé sans essai (layout)', /if \(!enEssai\('crm'\)\) notFound\(\)/.test(lire('app/crm/layout.tsx')))
   T('G9 aucune page publique (Tarifs, landing, comparatif) ne parle du CRM', !['app/tarifs', 'app/page.tsx', 'app/Comparatif.tsx', 'app/abonnement'].some((p) => {
     const abs = path.join(RACINE, p)
     const fichiers = fs.statSync(abs).isDirectory() ? lister(p).filter((f) => /\.tsx?$/.test(f)) : [p]
@@ -335,7 +336,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   T('G13 fiche chantier : les trois boutons sont là ; « Facturer » appelle POST /api/factures, « Notifier » POST /api/messages (chemins existants)', /Fiche complète/.test(fiche) && /Notifier le client/.test(fiche) && /'Facturer'/.test(fiche) && /appel<[^>]*>\('\/api\/factures', \{ method: 'POST', body: \{ devis_id: d\.id \} \}\)/.test(fiche) && /'\/api\/messages', \{ method: 'POST', body: \{ action: 'reply'/.test(fiche) && fs.existsSync(path.join(RACINE, 'app/api/factures/route.ts')) && fs.existsSync(path.join(RACINE, 'app/api/messages/route.ts')))
   T('G14 boutons désactivés : ils disent pourquoi (infobulle + texte lu par les lecteurs d’écran)', /disabled=\{!f\.actions\.facturer\.actif/.test(fiche) && /title=\{f\.actions\.facturer\.raison/.test(fiche) && /id="crm-raison-facturer"/.test(fiche) && /id="crm-raison-notifier"/.test(fiche))
   const mig = lire('supabase/migrations/0141_crm_atelier.sql')
-  T('G15 migration : « NON APPLIQUÉE » en tête, contrôles avec résultat attendu, RLS sur les 8 tables', /NON APPLIQUÉE/.test(mig.slice(0, 400)) && (mig.match(/\[\d+\]|\[false\]/g) ?? []).length >= 6 && (mig.match(/enable row level security/g) ?? []).length === 8)
+  T('G15 migration : état d’application en tête, contrôles avec résultat attendu, RLS sur les 8 tables', /APPLIQUÉE en production/.test(mig.slice(0, 400)) && (mig.match(/\[\d+\]|\[false\]/g) ?? []).length >= 6 && (mig.match(/enable row level security/g) ?? []).length === 8)
   T('G16 le jumeau _A_COLLER_…_NU existe', fs.existsSync(path.join(RACINE, 'supabase/migrations/_A_COLLER_sql_editor_0141_NU.sql')))
 }
 

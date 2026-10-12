@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
-import { actif } from '@/lib/flags'
+import { enEssai, ouvertPour } from '@/lib/flags'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { messageVerrou, peut } from '@/lib/plans'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -63,11 +63,12 @@ async function rendreTour(uid: string, conversationId: string) {
 }
 
 export async function POST(req: Request) {
-  if (!actif('assistant')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
+  if (!enEssai('assistant')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
 
   const s = await authArtisan(req)
   if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
   const uid = s.uid
+  if (!ouvertPour('assistant', uid)) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
   const jeton = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
 
   // Le profil se lit comme l'écran le lit : sous la RLS, avec le jeton de l'artisan.
