@@ -168,7 +168,9 @@ function juger0102(s, texteM) {
   const b = buckets.find((x) => x.c.includes(`'${T.bucket.nom}'`))
   if (!b) s.echoue('PB-4', `insert into storage.buckets … values ('${T.bucket.nom}', …) : introuvable`)
   else {
-    if (!/public\s*=\s*false/.test(b.n) && !new RegExp(`values\\s*\\('${T.bucket.nom}'\\s*,\\s*'${T.bucket.nom}'\\s*,\\s*false`).test(b.n)) s.echoue('PB-4', `bucket ${T.bucket.nom} : public ≠ false (« ${court(b.n, 120)} »)`)
+    // On ne lit que l'INSERT : un `set public = false` de la clause `on conflict` ne rend pas privé un bucket inséré en `true`.
+    const insertSeul = b.n.split(/\bon\s+conflict\b/i)[0]
+    if (!new RegExp(`values\\s*\\('${T.bucket.nom}'\\s*,\\s*'${T.bucket.nom}'\\s*,\\s*false`).test(insertSeul)) s.echoue('PB-4', `bucket ${T.bucket.nom} : public ≠ false (« ${court(b.n, 120)} »)`)
     const mTaille = /file_size_limit[^,)]*/.exec(b.n)
     const mVal = new RegExp(`values\\s*\\([^)]*,\\s*(\\d+)\\s*\\)`).exec(b.n)
     const taille = mVal ? Number(mVal[1]) : (mTaille ? Number((/\d+/.exec(mTaille[0]) || [])[0]) : NaN)

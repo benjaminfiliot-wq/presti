@@ -417,6 +417,8 @@ import { pathToFileURL } from 'node:url'
 import path from 'node:path'
 const R = ${JSON.stringify(racine)}
 const { creerFauxFetch, lireConnexionsPublora } = await import(${JSON.stringify(pathToFileURL(path.join(R, 'scripts/fixtures/026-pubs-contenu/crieur/lire.mjs')).href)})
+// La sonde ne dépend pas de l'environnement ambiant : une clé d'essai, jamais une vraie, et le faux fetch ne sort pas du processus.
+process.env.PUBLORA_API_KEY = 'cle-essai-hors-ligne'
 let mod, erreur = null
 try { mod = await import(pathToFileURL(path.join(R, 'lib/crieur/publora.ts')).href) } catch (e) { erreur = String((e && e.stack) || e) }
 const out = { erreur, appels: [], connexions: null, refusScheduledTime: null, refusProgrammeePour: null, programmation: null }
