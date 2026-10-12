@@ -117,7 +117,7 @@
 .ca-intro, .ca-entete { display: flex; justify-content: space-between; align-items: start; gap: 18px }
 .ca-intro p { max-width: 60ch; margin: 0 0 8px }
 .ca-note { color: var(--muted); font-size: 12px; margin: 0 }
-.ca-primaire { display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: #0A0C11; border: 0; border-radius: var(--radius-sm); padding: 11px 16px; font-weight: 700; cursor: pointer; white-space: nowrap }
+.ca-primaire { display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: var(--paper); border: 0; border-radius: var(--radius-sm); padding: 11px 16px; font-weight: 700; cursor: pointer; white-space: nowrap }
 .ca-depot input { position: absolute; width: 1px; height: 1px; opacity: 0 }
 .ca-depot:focus-within, .ca button:focus-visible, .ca select:focus-visible, .ca textarea:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px }
 .ca-primaire:disabled { opacity: .45; cursor: not-allowed }
@@ -264,3 +264,208 @@ select.ct-saisie { cursor: pointer; appearance: auto; min-width: 130px }
 .ct-table tbody td:nth-child(3) .ct-saisie { min-width: 230px }
 .ct-table tbody td:nth-child(6) .ct-saisie { min-width: 180px }
 .ct-table tbody td:nth-child(5) select.ct-saisie { min-width: 104px }
+
+/* — Refonte du 12/10/2026 : le tableau de bord comptable (TableauCompta.tsx). Deux sources (Presti, vos fichiers),
+   un seul tableau ; il se lit sur un téléphone. Jetons de app/base.css seulement, aucune couleur en dur.
+   Corail = Presti, corail clair = vos fichiers, jaune = dépenses, vert = encaissé, rouge = retard. — */
+.cpt { display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+/* globals.css donne à tout bouton width:100% et une marge haute (formulaires de connexion) : ici, chaque bouton a sa taille. */
+.cpt button, .cpt-vide button, .cpt-modal button, .cpt-brouillon button, .cpt-auto button, .ca-valider button, .ca-agent .ca-actions button { width: auto; margin: 0 }
+.ca-valider .ca-primaire, .cpt-auto .ca-primaire { font-size: 14px }
+.cpt *, .cpt *::before, .cpt *::after, .cpt-modal *, .cpt-vide * { box-sizing: border-box }
+.cpt-barre { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap }
+.cpt-relie { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--muted); min-width: 0; flex: 1 1 280px; line-height: 1.4 }
+.cpt-relie b { color: var(--ink) }
+.cpt-relie .pdot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok-tint); animation: cpt-pouls 2.4s ease-out infinite }
+@keyframes cpt-pouls { 0% { box-shadow: 0 0 0 0 var(--ok-tint) } 70% { box-shadow: 0 0 0 7px transparent } 100% { box-shadow: 0 0 0 0 transparent } }
+.cpt-outils { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100% }
+.cpt-periodes { flex: 0 1 auto; display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); overflow-x: auto; min-width: 0; scrollbar-width: none }
+.cpt-periodes button { all: unset; cursor: pointer; padding: 7px 11px; min-height: 30px; border-radius: 7px; font-size: 12.5px; color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center }
+.cpt-periodes button:hover { color: var(--ink) }
+.cpt-periodes button.actif { background: var(--accent-tint); color: var(--accent-ink); font-weight: 700 }
+.cpt-periodes button:focus-visible, .cpt-aide:focus-visible, .cpt a:focus-visible, .cpt button:focus-visible, .cpt-vide a:focus-visible, .cpt-modal button:focus-visible, .cpt-brouillon textarea:focus-visible, .cpt-auto input:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px }
+.cpt-aide { display: inline-flex; align-items: center; gap: 7px; flex: none; min-height: 38px; padding: 0 12px 0 6px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--ink-soft); font: inherit; font-size: 12.5px; cursor: pointer }
+.cpt-aide > span:first-child { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-tint); color: var(--accent-ink); font-weight: 800 }
+.cpt-aide:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--ink) }
+.cpt-apercu { margin: 0; padding: 10px 13px; border: 1px dashed color-mix(in srgb, var(--accent) 50%, var(--line)); border-radius: var(--radius-sm); background: var(--accent-tint); font-size: 13.5px; color: var(--ink) }
+.cpt-apercu a { color: var(--accent-ink); font-weight: 700 }
+
+/* — Les cartes — */
+.cpt-cartes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px }
+.cpt-carte { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 14px 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 6px; min-width: 0; animation: cpt-entre .45s var(--ease-apple, ease-out) backwards }
+.cpt-carte:nth-child(2) { animation-delay: 40ms } .cpt-carte:nth-child(3) { animation-delay: 80ms } .cpt-carte:nth-child(4) { animation-delay: 120ms } .cpt-carte:nth-child(5) { animation-delay: 160ms } .cpt-carte:nth-child(6) { animation-delay: 200ms }
+.cpt-carte .lab { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .01em }
+.cpt-carte .val { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); overflow-wrap: anywhere }
+.cpt-carte .sub { font-size: 11.5px; color: var(--muted); line-height: 1.35; overflow-wrap: anywhere }
+.cpt-carte.ok .val { color: var(--ok) }
+.cpt-carte.crit { border-color: color-mix(in srgb, var(--crit) 38%, var(--line)) }
+.cpt-carte.crit .val { color: var(--crit) }
+@keyframes cpt-entre { from { opacity: 0; transform: translateY(6px) } }
+
+/* — Les panneaux — */
+.cpt-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start }
+.cpt-grille > .cpt-panel:first-child { grid-column: 1 / -1 }
+.cpt-panel { min-width: 0 }
+.cpt-body { padding: 14px 17px 16px; min-width: 0 }
+.cpt-note { margin: 10px 0 0; color: var(--faint); font-size: 12px; line-height: 1.5; max-width: 75ch }
+.cpt > .cpt-note { margin: 0 }
+.cpt-vide-txt { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.5 }
+.cpt-sous { margin: 16px 0 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted) }
+
+/* — Graphique mois par mois (SVG) — */
+.cpt-graph { display: block; width: 100%; height: auto; max-height: 260px; overflow: visible }
+.cpt-graph .axe { stroke: var(--line); stroke-width: 1 }
+.cpt-graph rect { transform-box: fill-box; transform-origin: bottom; animation: cpt-pousse .55s var(--ease-out, ease-out) backwards }
+.cpt-graph .b-presti, .cpt-legende .b-presti { fill: var(--accent); background: var(--accent) }
+.cpt-graph .b-fichiers, .cpt-legende .b-fichiers { fill: var(--accent-2); background: var(--accent-2); opacity: .55 }
+.cpt-graph .b-depenses, .cpt-legende .b-depenses { fill: var(--warn); background: var(--warn); opacity: .8 }
+.cpt-graph .courbe { stroke: var(--ok); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round }
+.cpt-graph .point { fill: var(--surface); stroke: var(--ok); stroke-width: 2 }
+.cpt-graph .hors rect { opacity: .3 }
+.cpt-graph .val { fill: var(--ink-soft); font-size: 11px; font-family: var(--font-mono); font-variant-numeric: tabular-nums }
+.cpt-graph .lab { fill: var(--muted); font-size: 11px }
+.cpt-graph .dans .lab { fill: var(--ink) }
+@keyframes cpt-pousse { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+.cpt-legende { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted) }
+.cpt-legende li { display: inline-flex; align-items: center; gap: 6px }
+.cpt-legende i { width: 10px; height: 10px; border-radius: 3px; display: inline-block }
+.cpt-legende i.courbe { height: 3px; border-radius: 2px; background: var(--ok) }
+
+/* — Impayés — */
+.cpt-pile { display: block; width: 100%; height: 10px; margin: 2px 0 10px }
+.cpt-pile .piste { fill: var(--line-2) }
+.cpt-pile .seg.a, .cpt-anc i.a { fill: var(--muted); background: var(--muted) }
+.cpt-pile .seg.r30, .cpt-anc i.r30 { fill: var(--warn); background: var(--warn) }
+.cpt-pile .seg.r60, .cpt-anc i.r60 { fill: color-mix(in srgb, var(--crit) 70%, var(--warn)); background: color-mix(in srgb, var(--crit) 70%, var(--warn)) }
+.cpt-pile .seg.rp, .cpt-anc i.rp { fill: var(--crit); background: var(--crit) }
+.cpt-anc { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 5px; font-size: 12.5px; color: var(--ink-soft) }
+.cpt-anc li { display: flex; align-items: center; gap: 8px }
+.cpt-anc i { width: 9px; height: 9px; border-radius: 50%; flex: none }
+.cpt-anc b { margin-left: auto; color: var(--ink) }
+.cpt-impayes { list-style: none; margin: 6px -17px -8px; padding: 0 }
+.cpt-impayes li { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 11px 17px; border-top: 1px solid var(--line-2); min-height: 52px }
+.cpt-impayes .qui { display: flex; flex-direction: column; gap: 3px; min-width: 0 }
+.cpt-impayes .qui b { font-size: 14px; color: var(--ink); overflow-wrap: anywhere }
+.cpt-impayes .qui small { font-size: 12px; color: var(--muted); line-height: 1.4 }
+.cpt-impayes .retard { color: var(--crit); font-weight: 600 }
+.cpt-src { align-self: flex-start; font-size: 10.5px; font-weight: 700; letter-spacing: .02em; padding: 2px 7px; border-radius: 10px; background: var(--accent-tint); color: var(--accent-ink); overflow-wrap: anywhere }
+.cpt-src.fichier { background: var(--line-2); color: var(--ink-soft) }
+.cpt-impayes .combien { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex: none }
+.cpt-impayes strong { font-size: 15px; color: var(--crit); white-space: nowrap }
+.cpt-gestes { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end }
+.cpt-gestes .ca-secondaire { font-size: 12.5px; min-height: 36px; display: inline-flex; align-items: center; text-decoration: none; white-space: nowrap }
+.cpt-suite summary { cursor: pointer; padding: 12px 0 2px; color: var(--accent-ink); font-weight: 600; font-size: 13px }
+
+/* — Sources des demandes : l'anneau — */
+.cpt-sources { display: grid; grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); gap: 16px; align-items: center }
+.cpt-anneau { display: block; width: 100%; max-width: 9rem; height: auto }
+.cpt-anneau circle { fill: none; stroke-width: 14 }
+.cpt-anneau .piste { stroke: var(--line-2) }
+.cpt-anneau .seg { transform: rotate(-90deg); transform-origin: 60px 60px; transition: stroke-dasharray .6s var(--ease-out, ease-out) }
+.cpt-anneau .nb { fill: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: 24px }
+.cpt-anneau .lib { fill: var(--muted); font-size: 10px }
+.s0 { stroke: var(--accent); background: var(--accent) } .s1 { stroke: var(--ok); background: var(--ok) } .s2 { stroke: var(--warn); background: var(--warn) }
+.s3 { stroke: var(--accent-2); background: var(--accent-2) } .s4 { stroke: var(--ink-soft); background: var(--ink-soft) } .s5 { stroke: var(--muted); background: var(--muted) }
+.cpt-sources-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; min-width: 0 }
+.cpt-sources-liste li { display: flex; align-items: center; gap: 8px; min-width: 0 }
+.cpt-sources-liste i { width: 9px; height: 9px; border-radius: 50%; flex: none }
+.cpt-sources-liste span { color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere }
+.cpt-sources-liste b { margin-left: auto; color: var(--ink); white-space: nowrap }
+.cpt-sources-liste small { color: var(--muted); font-weight: 400 }
+
+/* — Meilleurs clients — */
+.cpt-clients { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px }
+.cpt-clients li { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px }
+.cpt-clients .nom { display: flex; flex-direction: column; color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere }
+.cpt-clients .nom small { color: var(--muted); font-size: 11px }
+.cpt-clients .piste { height: 6px; border-radius: 4px; background: var(--line-2); overflow: hidden }
+.cpt-clients .piste i { display: block; height: 100%; border-radius: 4px; background: var(--accent) }
+.cpt-clients b { color: var(--ink); white-space: nowrap }
+
+/* — Devis — */
+.cpt-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px }
+.cpt-duo > div { display: flex; flex-direction: column; gap: 3px; min-width: 0 }
+.cpt-duo b { font-family: var(--font-display); font-size: 26px; letter-spacing: -.03em; line-height: 1; color: var(--ink) }
+.cpt-duo span { font-size: 12px; color: var(--muted) }
+.cpt-duo small { font-size: 13px; color: var(--ink-soft) }
+.cpt-relances { list-style: none; margin: 0 -17px -8px; padding: 0 }
+.cpt-relances li + li { border-top: 1px solid var(--line-2) }
+.cpt-relances a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 17px; color: inherit; text-decoration: none }
+.cpt-relances a:hover { background: var(--line-2) }
+.cpt-relances .qui, .cpt-relances .quand { display: flex; flex-direction: column; gap: 2px; min-width: 0 }
+.cpt-relances .quand { text-align: right; flex: none }
+.cpt-relances b { font-size: 14px; color: var(--ink) }
+.cpt-relances small { font-size: 12px; color: var(--muted) }
+
+/* — L'état vide : ce qui va apparaître, et comment commencer. Aucun chiffre. — */
+.cpt-vide { padding: 22px; display: grid; gap: 12px }
+.cpt-vide-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px }
+.cpt-vide h2 { margin: 0; font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); letter-spacing: -.03em; color: var(--ink) }
+.cpt-vide p { margin: 0; color: var(--ink-soft); line-height: 1.55; max-width: 64ch }
+.cpt-vide-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+.cpt-vide-liste li { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: var(--radius-sm); background: var(--surface-2) }
+.cpt-vide-liste b { color: var(--ink); font-size: 14px }
+.cpt-vide-liste span { color: var(--muted); font-size: 12.5px; line-height: 1.4 }
+.cpt-vide-etapes { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink-soft); font-size: 14px }
+.cpt-vide-etapes a { color: var(--accent-ink); font-weight: 700 }
+
+/* — La fenêtre d'aide (image marquée « Exemple ») — */
+.cpt-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(6px); animation: cpt-fondu .2s ease-out both }
+.cpt-modal-boite { width: 100%; max-width: 60rem; max-height: calc(100dvh - 32px); overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; animation: cpt-entre .3s var(--ease-apple, ease-out) both }
+.cpt-modal-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px }
+.cpt-modal-tete h2 { margin: 0; font-size: 17px; display: flex; align-items: center; gap: 8px; color: var(--ink) }
+.cpt-modal-tete .pill { color: var(--warn); background: var(--warn-tint); text-transform: uppercase; letter-spacing: .06em }
+.cpt-modal img { display: block; width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line-2) }
+.cpt-modal .cpt-note { margin: 0 }
+@keyframes cpt-fondu { from { opacity: 0 } }
+
+/* — Brouillon de relance, réglages — */
+.cpt-brouillon, .cpt-auto { margin-top: 14px; padding: 16px 18px; display: grid; gap: 10px }
+.cpt-brouillon h2, .cpt-auto h2 { margin: 0; font-size: 16px; color: var(--ink) }
+.cpt-brouillon textarea { display: block; width: 100%; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px; font: inherit; line-height: 1.5 }
+.cpt-auto-form { display: grid; gap: 14px }
+.cpt-auto fieldset { border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 12px 14px; display: grid; gap: 9px; margin: 0 }
+.cpt-auto legend { padding: 0 6px; font-weight: 700; color: var(--ink) }
+.cpt-auto label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 13.5px }
+.cpt-auto input[type=number] { width: 5.5rem }
+.cpt-auto input[type=email] { flex: 1 1 14rem; min-width: 0 }
+.cpt-auto input[type=number], .cpt-auto input[type=email] { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; font: inherit }
+
+/* — L'assistant d'import : la question, la validation, les lignes importées — */
+.ca-questions { margin-top: 12px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--line)); border-radius: var(--radius-sm); background: var(--warn-tint); display: grid; gap: 10px }
+.ca-question { display: grid; gap: 6px; font-size: 14px; color: var(--ink) }
+.ca-valider { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px }
+.ca-valider small { flex: 1 1 16rem; color: var(--muted); font-size: 12.5px }
+.ca-lignes summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline }
+.ca-lignes[open] summary { margin-bottom: 12px }
+.ca-actions--gauche { justify-content: flex-start; margin-bottom: 12px }
+.ca-primaire:focus-visible, .ca-lignes summary:focus-visible, .ca-detail summary:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px }
+
+@media (max-width: 1100px) { .cpt-cartes { grid-template-columns: repeat(3, minmax(0, 1fr)) } }
+@media (max-width: 900px) { .cpt-grille { grid-template-columns: minmax(0, 1fr) } .cpt-vide-liste { grid-template-columns: minmax(0, 1fr) } }
+@media (max-width: 600px) {
+  .cpt-cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+  .cpt-carte { padding: 11px 12px 10px }
+  .cpt-carte .val { font-size: 20px }
+  .cpt-body { padding: 12px 14px 14px }
+  .cpt-outils { width: 100% }
+  .cpt-periodes { flex: 1 1 auto; flex-wrap: wrap }
+  /* Le graphique rétrécit de moitié : un mois sur deux nommé (le mois en cours toujours), chiffres en clair dans les cartes. */
+  .cpt-graph .lab { font-size: 20px }
+  .cpt-graph .val { display: none }
+  .cpt-graph g:nth-last-of-type(even) .lab { display: none }
+  .cpt-aide-txt { display: none }
+  .cpt-aide { padding: 0 6px }
+  .cpt-impayes, .cpt-relances { margin-left: -14px; margin-right: -14px }
+  .cpt-impayes li { flex-wrap: wrap; padding-left: 14px; padding-right: 14px }
+  .cpt-impayes .combien { flex-direction: row; align-items: center; width: 100%; justify-content: space-between }
+  .cpt-relances a { padding-left: 14px; padding-right: 14px }
+  .cpt-sources { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr) }
+  .cpt-clients li { grid-template-columns: minmax(0, 1fr) auto }
+  .cpt-clients .piste { grid-column: 1 / -1; grid-row: 2 }
+  .cpt-vide { padding: 16px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cpt-carte, .cpt-graph rect, .cpt-modal, .cpt-modal-boite, .cpt-relie .pdot { animation: none }
+  .cpt-anneau .seg { transition: none }
+}

@@ -14,6 +14,7 @@ import { actif } from '@/lib/flags'
 import { tourLivraison } from '@/lib/siteLivraison'
 import { getPlateformeConfig, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { avecMentionAssistant } from '@/lib/mentionAssistant'
+import { tourCompta } from '@/lib/comptaAutomatisationsTour'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -207,6 +208,13 @@ export async function GET(req: Request) {
   try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
   catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
   if (!enPause && !interrompue) { try { await tourLivraison() } catch (e) { console.error('[cron/relances] livraison', e) } }
+  // Les automatisations de la compta de l'artisan (alerte impayés, export mensuel au comptable) : derrière leurs drapeaux
+  // (comptaAlerteImpayes, comptaExportMensuel), jamais sous pause. Baissés, tourCompta ne lit rien et rend « fermé ».
+  let compta: unknown = 'fermée'
+  if (!enPause && !interrompue && (actif('comptaAlerteImpayes') || actif('comptaExportMensuel'))) {
+    try { const r = await tourCompta(); compta = r; await enregistrerPassage('compta-artisans', r, r.erreurs.length === 0) }
+    catch (e) { compta = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] compta', e) }
+  }
   // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
@@ -224,5 +232,5 @@ export async function GET(req: Request) {
     due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers, compta })
 }

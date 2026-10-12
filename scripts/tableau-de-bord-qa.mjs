@@ -265,19 +265,20 @@ async function juger(racine, pref = '') {
     ok('TB-13 l\'écran vide dit qu\'il est vide ; aucun rendu ne contient NaN, undefined, Infinity ni null', aplatir(rendusPropres[1]).includes('apparaîtront') && rendusPropres.every((h) => !/NaN|undefined|Infinity|\bnull\b/.test(h)), rendusPropres.map((h) => h.match(/NaN|undefined|Infinity|\bnull\b/)?.[0]).join(','))
   }
 
-  // TB-14 : la page lit, filtre, n'écrit pas
+  // TB-14 : depuis la refonte du 12/10/2026, la page lit ses données par la route serveur GET /api/compta/tableau,
+  // qui filtre chaque requête sur la session ; la page, elle, n'écrit rien et ne tient aucune clé de service.
   {
-    const page = lire(path.join(racine, 'app/chiffres/page.tsx'))
-    const code = sansCommentaires(page)
+    const page = sansCommentaires(lire(path.join(racine, 'app/chiffres/page.tsx')))
+    const code = sansCommentaires(lire(path.join(racine, 'app/api/compta/tableau/route.ts')))
     const tables = ['factures', 'devis', 'leads']
-    const filtrees = tables.filter((t) => new RegExp(`supabase\\.from\\('${t}'\\)\\.select\\('[^']*'\\)\\.eq\\('artisan_id', uid\\)`).test(code))
-    const ecriture = code.match(/\.(insert|update|delete|upsert|rpc)\s*\(|supabaseAdmin|SERVICE_ROLE|service_role|createClient\s*\(/)
-    const selects = [...code.matchAll(/\.select\('([^']*)'\)/g)].map((m) => m[1]).join(',')
-    ok('TB-14 la page filtre CHACUNE de ses 3 requêtes (factures, devis, leads) sur .eq(\'artisan_id\', uid), l\'uid venant de la session', egal(filtrees, tables) && /const uid = data\.session\.user\.id/.test(code), `filtrées : ${filtrees.join(',')}`)
-    const selectLeads = code.match(/supabase\.from\('leads'\)\.select\('([^']*)'\)/)?.[1] ?? ''
-    ok('TB-14 les villes viennent des demandes : la requête des demandes lit `ville` (0133), et la page ne lit plus `clients`', selectLeads.split(/,\s*/).includes('ville') && !/from\('clients'\)/.test(code), selectLeads)
-    ok('TB-14 la page ne fait que lire : ni insert/update/delete/upsert/rpc, ni clé de service, ni client privilégié ; elle ne sélectionne ni total_tva ni total_ht', !ecriture && !/total_tva|total_ht/.test(selects), ecriture?.[0] || selects)
-    ok('TB-14 la page passe ses lignes à calculer() avec l\'identifiant de la session (le filtre est doublé dans le module)', /calculer\(\{ artisanId, factures/.test(code) && /setArtisanId\(uid\)/.test(code), 'appel à calculer introuvable')
+    const filtrees = tables.filter((t) => new RegExp(`supabaseAdmin\\.from\\('${t}'\\)\\.select\\([^)]*\\)\\.eq\\('artisan_id', uid\\)`).test(code))
+    const ecriture = code.match(/\.(insert|update|delete|upsert|rpc)\s*\(/) || page.match(/\.(insert|update|delete|upsert|rpc)\s*\(|supabaseAdmin|SERVICE_ROLE|service_role|createClient\s*\(/)
+    const selects = [...code.matchAll(/const COLONNES_[A-Z]+ = '([^']*)'/g)].map((m) => m[1]).join(',')
+    ok('TB-14 la route filtre CHACUNE de ses 3 requêtes (factures, devis, leads) sur .eq(\'artisan_id\', uid), l\'uid venant de la session vérifiée', egal(filtrees, tables) && /const uid = session\.uid/.test(code) && /await authArtisan\(req\)/.test(code), `filtrées : ${filtrees.join(',')}`)
+    const selectLeads = code.match(/const COLONNES_DEMANDES = '([^']*)'/)?.[1] ?? ''
+    ok('TB-14 les villes viennent des demandes : la requête des demandes lit `ville` (0133), et rien ne lit `clients`', selectLeads.split(/,\s*/).includes('ville') && !/from\('clients'\)/.test(code + page), selectLeads)
+    ok('TB-14 la route et la page ne font que lire : ni insert/update/delete/upsert/rpc ; la page sans clé de service ; ni total_tva ni total_ht sélectionnés', !ecriture && !/total_tva|total_ht/.test(selects), ecriture?.[0] || selects)
+    ok('TB-14 la page passe ses lignes à calculer() avec l\'identifiant de la session (le filtre est doublé dans le module)', /calculer\(\{ artisanId, factures/.test(page) && /setArtisanId\(uid\)/.test(page), 'appel à calculer introuvable')
   }
 
   // TB-15 : branché dans la navigation
@@ -305,7 +306,7 @@ async function juger(racine, pref = '') {
     const importsPage = [...lire(path.join(racine, 'app/chiffres/page.tsx')).matchAll(/^import .* from '([^']+)'/gm), ...lire(path.join(racine, 'app/chiffres/Tableau.tsx')).matchAll(/^import .* from '([^']+)'/gm)].map((m) => m[1])
     const permis = (s) => s === 'react' || s === 'next/navigation' || s.startsWith('@/') || s.startsWith('./')
     ok('TB-16 les graphiques sont des SVG (au moins 3), chacun avec role="img" et un aria-label qui énonce les valeurs ; aucune bibliothèque de graphiques', svgs.length >= 3 && svgs.every((s) => /role="img"/.test(s) && /aria-label="[^"]{12,}/.test(s)) && lourdes.length === 0 && importsPage.every(permis), JSON.stringify([svgs.length, lourdes, importsPage.filter((s) => !permis(s))]))
-    ok('TB-16 prefers-reduced-motion coupe l\'animation des barres, et elles sont visibles sans animation (animation « backwards », jamais d\'état initial caché)', /@media \(prefers-reduced-motion: reduce\)[^}]*\{[^}]*\.tdb-chart \.tdb-bar\s*\{\s*animation:\s*none/.test(css) && /animation:[^;]*backwards/.test(css) && !/\.tdb-bar\s*\{[^}]*opacity:\s*0[;\s}]/.test(css), 'css')
+    ok('TB-16 prefers-reduced-motion coupe l\'animation des barres, et elles sont visibles sans animation (animation « backwards », jamais d\'état initial caché)', /@media \(prefers-reduced-motion: reduce\)[^}]*\{[^}]*\.tdb-chart \.tdb-bar\s*\{\s*animation:\s*none/.test(css) && /\.tdb-chart \.tdb-bar \{[^}]*animation:[^;]*backwards/.test(css) && !/\.tdb-bar\s*\{[^}]*opacity:\s*0[;\s}]/.test(css), 'css')
     ok('TB-16 rendu téléphone : une colonne sous 900 px, jetons du thème (aucune couleur en dur), pas de largeur fixe qui déborde, cibles ≥ 44 px sur les lignes à toucher',
       /@media \(max-width: 900px\)[\s\S]*\.tdb-grid \{ grid-template-columns: minmax\(0, 1fr\) \}/.test(css) && /@media \(max-width: 480px\)/.test(css) && !/#[0-9a-fA-F]{3,8}\b/.test(css.replace(/\/\*[\s\S]*?\*\//g, '')) && /\.tdb-relances a \{[^}]*min-height: 52px/.test(css) && !/(?<![\w-])width:\s*\d{3,}px/.test(css),
       'css mobile')
@@ -320,9 +321,10 @@ async function juger(racine, pref = '') {
 
   // TB-18 : une panne n'est pas un zéro
   {
-    const code = sansCommentaires(lire(path.join(racine, 'app/chiffres/page.tsx')))
-    ok('TB-18 si une des 3 requêtes échoue, la page affiche une erreur et AUCUN total (jamais « 0 € » pour une panne) : toutes les erreurs testées avant setCharge, le message d\'erreur passe avant le tableau',
-      /if \(f\.error \|\| d\.error \|\| l\.error\) \{ setErreur\(true\); return \}/.test(code) && code.indexOf('setErreur(true)') < code.indexOf('setCharge(') && code.indexOf('erreur ? (') < code.indexOf('<Tableau'),
+    const code = sansCommentaires(lire(path.join(racine, 'app/api/compta/tableau/route.ts')))
+    const page = sansCommentaires(lire(path.join(racine, 'app/chiffres/page.tsx')))
+    ok('TB-18 si une des 3 requêtes échoue, la route rend 503 sans aucune donnée, et la page affiche l\'erreur et AUCUN total (jamais « 0 € » pour une panne)',
+      /if \(f\.error \|\| d\.error \|\| l\.error\) \{[\s\S]*?return NextResponse\.json\(\{ error: [^}]*\}, \{ status: 503 \}\)/.test(code) && code.indexOf('status: 503') < code.indexOf('maintenant: new Date()') && /setErreur\(corps\?\.error/.test(page) && page.indexOf('setErreur(corps') < page.indexOf('setCharge(') && page.indexOf('erreur ? (') < page.indexOf('<TableauCompta'),
       'gestion d\'erreur')
   }
 }
@@ -331,6 +333,7 @@ async function juger(racine, pref = '') {
 const C = 'lib/tableau-de-bord/calculer.ts'
 const T = 'app/chiffres/Tableau.tsx'
 const P = 'app/chiffres/page.tsx'
+const R = 'app/api/compta/tableau/route.ts'
 const SABOTAGES = [
   ['TB-2', C, '!f.avoir_de && !(f.id && annulees.has(f.id))', '!(f.id && annulees.has(f.id))'],          // les avoirs comptent
   ['TB-2', C, "if (f.avoir_de && typeof f.avoir_de === 'string') annulees.add(f.avoir_de)", 'void 0'],          // la facture visée par un avoir reste comptée
@@ -361,12 +364,16 @@ const SABOTAGES = [
   ['TB-13', T, "<Panneau titre=\"Votre argent\">", "<Panneau titre=\"Votre argent TTC\">"],
   ['TB-13', C, 'const c = centimes(f.total_ttc)', 'const c = centimes(f.total_ttc) + centimes((f as { total_tva?: Nombre }).total_tva)'],
   ['TB-13', T, "<Kpi lab=\"Mois dernier\"", "<Kpi lab=\"Mois dernier HT\""],
-  ['TB-14', P, ".select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de').eq('artisan_id', uid)", ".select('id, artisan_id, statut, date_emission, date_echeance, total_ttc, devis_id, avoir_de')"],
-  ['TB-14', P, ".select('id, artisan_id, canal, statut, created_at, type_chantier, ville').eq('artisan_id', uid)", ".select('id, artisan_id, canal, statut, created_at, type_chantier, ville')"],
-  ['TB-14', P, "type_chantier, ville')", "type_chantier')"],
   ['TB-9', C, 'if (dansFenetre(m, debutActivite) && d.ville) villes.push(d.ville)', 'if (d.ville) villes.push(d.ville)'],
-  ['TB-14', P, "import Tableau from './Tableau'", "import Tableau from './Tableau'\nimport { supabaseAdmin } from '@/lib/supabaseAdmin'"],
+  ['TB-14', R, ".select(colonnesFactures).eq('artisan_id', uid)", ".select(colonnesFactures)"],
+  ['TB-14', R, ".select(COLONNES_DEMANDES).eq('artisan_id', uid)", ".select(COLONNES_DEMANDES)"],
+  ['TB-14', R, "type_chantier, ville'", "type_chantier'"],
+  ['TB-14', P, "import TableauCompta from './TableauCompta'", "import TableauCompta from './TableauCompta'\nimport { supabaseAdmin } from '@/lib/supabaseAdmin'"],
   ['TB-14', P, "const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()", "await supabase.from('artisans').update({ aide_vues: [] }).eq('id', uid)\n      const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()"],
+  ['TB-14', R, "const [f, d, l] = await Promise.all([", "await supabaseAdmin.from('factures').update({ statut: 'payee' }).eq('artisan_id', uid)\n  const [f, d, l] = await Promise.all(["],
+  ['TB-18', R, 'if (f.error || d.error || l.error)', 'if (f.error || d.error)'],
+  ['TB-18', R, ", { status: 503 })", ", { status: 200 })"],
+  ['TB-18', P, "setErreur(corps?.error ?? 'Vos chiffres n’ont pas pu être chargés. Rechargez la page dans un instant.')", "void 0"],
   ['TB-15', 'app/AppShell.tsx', "href: '/chiffres'", "href: '/chiffre'"],
   ['TB-15', 'app/AppShell.tsx', "label: 'Mes chiffres'", "label: 'Gestion'"],
   ['TB-15', P, 'active="chiffres"', 'active="dashboard"'],
@@ -378,10 +385,8 @@ const SABOTAGES = [
   ['TB-16', 'app/chiffres/chiffres.css', '.tdb-grid { grid-template-columns: minmax(0, 1fr) }', '.tdb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) }'],
   ['TB-16', 'app/chiffres/chiffres.css', 'min-height: 52px', 'min-height: 30px'],
   ['TB-17', 'docs/produit/tableau-de-bord-artisan.md', 'DemoSequence', 'la démo'],
-  ['TB-18', P, 'if (f.error || d.error || l.error) { setErreur(true); return }', ''],
-  ['TB-18', P, 'if (f.error || d.error || l.error)', 'if (f.error || d.error)'],
 ]
-const FICHIERS = [...new Set([C, T, P, 'app/chiffres/chiffres.css', 'app/AppShell.tsx', 'app/robots.ts', 'lib/aide.ts', 'app/aide/page.tsx', 'package.json', 'docs/produit/tableau-de-bord-artisan.md'])]
+const FICHIERS = [...new Set([C, T, P, R, 'app/chiffres/chiffres.css', 'app/AppShell.tsx', 'app/robots.ts', 'lib/aide.ts', 'app/aide/page.tsx', 'package.json', 'docs/produit/tableau-de-bord-artisan.md'])]
 function copie(nom) {
   const d = path.join(TMP, nom)
   for (const f of FICHIERS) { if (!fs.existsSync(path.join(DEPOT, f))) continue; fs.mkdirSync(path.dirname(path.join(d, f)), { recursive: true }); fs.copyFileSync(path.join(DEPOT, f), path.join(d, f)) }

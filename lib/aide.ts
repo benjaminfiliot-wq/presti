@@ -226,25 +226,24 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'essentiel',
   },
 
-  // source: app/chiffres/page.tsx (lecture seule, filtrée sur votre compte) ; lib/tableau-de-bord/calculer.ts (règles de calcul) ; app/chiffres/Tableau.tsx (affichage)
+  // source: app/chiffres/page.tsx ; app/api/compta/tableau/route.ts (lecture serveur, filtrée sur votre compte) ; lib/comptaTableau.ts (règles de calcul) ; app/chiffres/TableauCompta.tsx (affichage) ; app/chiffres/ComptaArtisan.tsx (vos fichiers)
   {
     id: 'chiffres',
     page: '/chiffres',
-    titre: 'Mes chiffres : l’argent et l’activité en un coup d’œil',
+    titre: 'Mes chiffres : votre compta, tenue à jour toute seule',
     aQuoiCaSert:
-      'Cet écran additionne pour vous ce qui est déjà dans Presti : vos factures, vos devis et vos demandes. ' +
-      'Vous y voyez ce que vous avez facturé ce mois-ci, le mois dernier et dans l’année, ce qui est encaissé, ' +
-      'en attente ou en retard, le taux d’acceptation de vos devis, les devis à relancer et d’où viennent vos demandes : ' +
-      'ce tableau-là ne demande aucune saisie et se calcule sans IA. Sur le même écran, la partie Comptabilité est ' +
-      'différente : vous y déposez vos relevés et vos fichiers Excel, et l’IA en reconnaît les colonnes et classe les ' +
-      'lignes (1 crédit Standard par dépôt).',
+      'Cet écran additionne pour vous ce qui est déjà dans Presti : vos factures, vos devis et vos demandes, sans rien importer. ' +
+      'Vous y voyez votre chiffre d’affaires et l’encaissé mois par mois, les impayés et leur retard, vos meilleurs clients, ' +
+      'vos devis acceptés ou en attente et d’où viennent vos demandes. Chaque nouvelle facture change le tableau à la prochaine ouverture. ' +
+      'Vous pouvez y ajouter vos dépenses et vos ventes hors Presti en déposant vos fichiers Excel ou CSV : l’assistant les range, vous validez.',
     commentOnSenSert: [
-      'Regardez les quatre chiffres du haut : facturé ce mois, mois dernier, depuis janvier, et ce qui est en retard.',
-      'Ouvrez « Devis à relancer » : un devis envoyé depuis plus de 7 jours sans réponse y apparaît, avec son montant. Touchez la ligne pour l’ouvrir.',
-      'Pour qu’une facture compte comme encaissée, marquez-la « payée » dans Factures. Sinon elle reste en attente, puis en retard une fois l’échéance dépassée.',
+      'Choisissez la période en haut (ce mois, 3 mois, l’année…) : les cartes et le graphique suivent. Les impayés, eux, sont toujours ceux du jour.',
+      'Touchez « Préparer la relance » sur un impayé : un brouillon s’affiche, rien n’est envoyé sans vous.',
+      'Pour vos dépenses, déposez un relevé ou un fichier Excel dans « Vos fichiers » : l’assistant le range, le tableau le compte en aperçu, puis touchez « Valider ».',
+      'Pour qu’une facture compte comme encaissée, marquez-la « payée » dans Factures.',
     ],
     pourVosClients: 'Rien : vos clients ne voient jamais cet écran, il n’est visible que de vous.',
-    credits: 'Aucun pour le tableau de bord (un calcul sur vos données, sans IA) ; 1 crédit Standard par dépôt de fichiers dans la partie Comptabilité.',
+    credits: 'Aucun pour le tableau de bord. Un crédit Standard par dépôt de fichiers rangé par l’assistant.',
     reglagesLies: ['/factures', '/devis'],
     disponibleAvec: 'essentiel',
   },

@@ -124,6 +124,7 @@ const SUITES = [
   // Comptabilité de l'artisan : Chromium isolé, données fictives, ni serveur ni base.
   { nom: 'Comptabilité — assistant IA : masquage, réponse de l’IA revalidée, fichiers en désordre rangés au centime', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/compta-assistant-qa.mjs'], cout: 'gratuit' },
   { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
+  { nom: 'Comptabilité — tableau de bord /chiffres : Presti + fichiers au centime, état vide sans exemple, parcours d’import, isolation', cmd: 'node', args: ['scripts/compta-tableau-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
