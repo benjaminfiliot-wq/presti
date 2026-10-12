@@ -9,9 +9,17 @@ Un assistant qui peut **tout gérer et tout contrôler** pour l'artisan : invent
 (réponses aux clients), CRM (chantiers, équipe, véhicules), tarifs, et la totalité de son site (contenu,
 fonctionnement, référencement).
 
-## 2. Le principe qui ne bouge pas
-**L'assistant propose, l'artisan valide.** C'est déjà la promesse du produit (« L'IA prépare, l'artisan valide »)
-et elle vaut ici aussi.
+## 2. Validation ou automatique : c'est l'artisan qui règle
+**Décision de Benj (12/10) : par défaut l'assistant propose et l'artisan valide ; l'artisan peut passer chaque
+famille d'actions en automatique.** Même logique que le mode de réponse de la plateforme (assistée / automatique).
+- Un réglage par famille d'actions (e-mails aux clients, relances, devis envoyés, factures émises, prix, site,
+  commandes fournisseurs), chacun sur « Je valide » (défaut) ou « Automatique ».
+- En automatique, l'action part sans clic, mais elle reste au journal avec son avant/après (§5) et une
+  notification à l'artisan ; il peut repasser en « Je valide » à tout moment.
+- Toujours avec validation, quel que soit le réglage : supprimer quelque chose, et toute action que les garde-fous
+  de `lib/ai.ts` signalent comme incertaine (mot d'escalade, montant inhabituel, client mécontent).
+
+Par défaut donc :
 - **Libres, sans validation** : lire (stock, devis, factures, chiffres, conversations, pages du site) et écrire un
   **brouillon** (devis brouillon, réponse préparée, page de site en brouillon, liste de commande préparée).
 - **Validation obligatoire, un clic de l'artisan sur l'action exacte** : tout ce qui a un effet hors de la
@@ -75,9 +83,9 @@ de l'artisan ou d'un outil. S'il ne sait pas, il le dit et propose de demander �
 5. **A5 — Recette** : évaluation §7, audits sécurité et RGPD par des agents distincts, parcours complet en
    production sur un compte de test créé puis supprimé. Puis Benj valide → drapeau levé → Tarifs mis à jour.
 
-## 9. Ce que Benj doit décider
-1. Valider le principe §2 tel quel, ou autoriser certaines actions sans validation (ex. relances déjà
-   programmées) — proposition : tel quel.
-2. Le plafond par conversation (§6) — proposition : 20 tours, revu après un mois de mesures.
-3. L'ordre des jalons — proposition : A1 → A2 → A3 → A4, A4 (site) en dernier parce que c'est le plus visible
-   publiquement.
+## 9. Décisions de Benj (12/10)
+1. Validation par défaut, automatique au choix de l'artisan, famille par famille (§2).
+2. Plafond : 20 tours par conversation, revu après un mois de mesures (§6).
+3. Ordre des jalons laissé à mon jugement : A1 → A2 → A3 → A4, le site en dernier (le plus visible publiquement).
+
+Reste la condition du plan : le code ne commence qu'après la validation écrite des phases 1 à 4.

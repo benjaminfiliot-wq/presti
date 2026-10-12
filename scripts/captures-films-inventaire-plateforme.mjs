@@ -176,6 +176,26 @@ try {
   if (await conv.count()) { await conv.click(); await bureau.waitForTimeout(1800); await shot(bureau, 'plateforme-conversation-robin') }
   for (const v of ['reglages', 'apparence', 'automatisations']) { await aller(bureau, `/plateforme?volet=${v}`, 1800); await shot(bureau, `plateforme-${v}`) }
 
+  // La console sur téléphone (films verticaux 9:16, 12/10 après-midi) : même session, écran de 390 px, ×3.
+  // Chaque écran en vue fixe (m-*) et, quand il défile, en page entière (m-*-page) pour les plans qui la parcourent.
+  const mob = await navigateur.newContext({ storageState: await bureau.context().storageState(), viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true })
+  const m = await mob.newPage()
+  const shotPage = async (p, nom) => {
+    const f = path.join(OUT, `${nom}.png`)
+    await p.screenshot({ path: f, fullPage: true })
+    log(`📸 ${nom} (page entière) — ${(fs.statSync(f).size / 1024).toFixed(0)} Ko`)
+  }
+  await aller(m, '/inventaire', 2200); await shot(m, 'm-inventaire'); await shotPage(m, 'm-inventaire-page')
+  const ligneM = m.getByText('Charnière invisible 35 mm').first()
+  if (await ligneM.count()) { await ligneM.click(); await m.waitForTimeout(1800); await shot(m, 'm-inventaire-fiche'); await shotPage(m, 'm-inventaire-fiche-page') }
+  await aller(m, '/inventaire/fournisseurs', 1800); await shot(m, 'm-fournisseurs'); await shotPage(m, 'm-fournisseurs-page')
+  await aller(m, '/inventaire/recherche', 1500); await shot(m, 'm-recherche')
+  await aller(m, '/plateforme', 2000); await shot(m, 'm-plateforme'); await shotPage(m, 'm-plateforme-page')
+  const convM = m.getByText('Mme Robin').first()
+  if (await convM.count()) { await convM.click(); await m.waitForTimeout(1800); await shot(m, 'm-conversation-robin'); await shotPage(m, 'm-conversation-robin-page') }
+  for (const v of ['reglages', 'apparence', 'automatisations']) { await aller(m, `/plateforme?volet=${v}`, 1800); await shot(m, `m-plateforme-${v}`); await shotPage(m, `m-plateforme-${v}-page`) }
+  await mob.close()
+
   // La page publique, telle que le client la voit sur son téléphone (marque blanche)
   const tel = await navigateur.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true })
   await tel.goto(`${BASE}/p/atelier-du-chene`, { waitUntil: 'networkidle' }); await tel.waitForTimeout(1800)
