@@ -328,7 +328,11 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   }))
   const ui = [...lister('app/crm'), ...lister('lib/crm')].filter((f) => /\.(tsx?|css)$/.test(f))
   const exemples = ui.filter((f) => /exemple|fictif|fictive|lorem|démo\b|Dupont|Martin\b/i.test(sansCommentaires(lire(f))))
-  T('G10 aucune donnée d’exemple dans le code du CRM (écran ni calcul)', exemples.length === 0, exemples.join(' '))
+  // 12/10 — Benj a demandé l'atelier d'EXEMPLE directement dans le CRM : il vit dans lib/crm/exemple.ts SEULEMENT, la page ne
+  // fait que l'afficher, sous un bandeau qui dit « données fictives, rien n'est enregistré », et avec la maquette en mode démo.
+  const exemplesHors = exemples.filter((f) => !/lib[\/]crm[\/]exemple\.ts$/.test(f) && !/app[\/]crm[\/]page\.tsx$/.test(f))
+  const pageCrm = lire('app/crm/page.tsx')
+  T('G10 données d’exemple seulement dans lib/crm/exemple.ts, affichées sous un bandeau « fictives » et en mode démo', exemplesHors.length === 0 && /données fictives/.test(pageCrm) && /Rien n’est enregistré/.test(pageCrm) && /<Atelier key="exemple" donnees=\{DONNEES_EXEMPLE\} demo \/>/.test(pageCrm), exemplesHors.join(' '))
   const css = sansCommentaires(lire('app/crm/crm.css'))
   T('G11 CSS : jetons de la console seulement, aucun bleu ni violet, aucune couleur en dur', !/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|blue|purple|violet/i.test(css))
   T('G12 CSS : les transitions ne sont posées que hors « reduced-motion »', !/transition|animation/.test(css.split('@media (prefers-reduced-motion: no-preference)')[0]))
@@ -436,7 +440,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const scene3d = lire('app/crm/atelier/Scene3D.tsx'), atl = lire('app/crm/atelier/Atelier.tsx'), page = lire('app/crm/page.tsx')
   T('I22 la 3D est chargée à la demande (next/dynamic, ssr: false) et seule Scene3D.tsx importe three / @react-three', /dynamic\(\(\) => import\('\.\/Scene3D'\), \{\s*ssr: false/.test(atl) && /from '@react-three\/fiber'/.test(scene3d) && [...lister('app'), ...lister('lib')].filter((f) => /\.(tsx?|mjs)$/.test(f) && !f.endsWith('Scene3D.tsx')).every((f) => !/from ['"](three|@react-three\/[a-z]+|three-stdlib)['"]/.test(lire(f))))
   T('I23 repli 2D automatique : WebGL absent, réduire les animations, téléphone, batterie faible, erreur de rendu', /getContext\('webgl2'\)/.test(atl) && /prefers-reduced-motion: reduce/.test(atl) && /innerWidth < 760/.test(atl) && /getBattery/.test(atl) && /class GardeRendu/.test(atl))
-  T('I24 l’onglet Atelier est le seul à monter la maquette', /onglet === 'atelier' && <Atelier /.test(page))
+  T('I24 l’onglet Atelier est le seul à monter la maquette', /onglet === 'atelier' && \(\(\) => \{/.test(page) && (page.match(/<Atelier /g) ?? []).length === 2 && page.indexOf('<Atelier ') > page.indexOf("onglet === 'atelier'") && page.indexOf('<Atelier ') < page.indexOf("onglet === 'tableau'"))
   T('I25 un maillage instancié par forme (≤ 150 appels de dessin par construction)', /FORMES\.map\(\(f\) => \(\s*<Couche/.test(scene3d) && /<instancedMesh/.test(scene3d))
   const cssA = sansCommentaires(lire('app/crm/atelier/atelier.css'))
   T('I26 CSS de l’atelier : jetons seulement, ni bleu ni violet, transitions hors « reduced-motion » seulement', !/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|blue|purple|violet/i.test(cssA) && !/transition|animation:/.test(cssA.split('@media (prefers-reduced-motion: no-preference)')[0]))
