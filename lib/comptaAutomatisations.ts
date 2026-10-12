@@ -4,12 +4,12 @@
 //
 //  (b) Alerte impayé : un e-mail à l'artisan quand une facture reste impayée au-delà de N jours. « Jours
 //      d'impayé » = jours de retard après l'échéance quand la facture en a une, sinon jours depuis l'émission.
-//      Chaque facture n'est signalée qu'une fois (table compta_alertes_envoyees, migration 0139).
+//      Chaque facture n'est signalée qu'une fois (table compta_alertes_envoyees, migration 0140).
 //  (c) Export mensuel : le 1er jour où la tâche passe dans un mois, le journal des factures du mois précédent
 //      part en CSV à l'adresse que l'artisan a donnée (son comptable). Une seule fois par mois (dernier_export_mois).
 //
 // Les deux sont derrière un drapeau (lib/flags.ts : comptaAlerteImpayes, comptaExportMensuel), baissé tant que
-// la migration 0139 n'est pas appliquée et que l'envoi n'a pas été vu arriver. Baissés : rien n'est lu, rien ne part,
+// la migration 0140 n'est pas appliquée et que l'envoi n'a pas été vu arriver. Baissés : rien n'est lu, rien ne part,
 // et l'écran n'en parle pas.
 import { calculerCompta, centimes, decalerMois, euros, jourParis, type FacturePresti, type Impaye } from './comptaTableau.ts'
 

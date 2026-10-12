@@ -8,7 +8,7 @@ export const runtime = 'nodejs'
 
 // Les réglages des automatisations de la compta (alerte impayés, export mensuel au comptable).
 // Fermée (404) tant que les deux drapeaux sont baissés : rien dans l'interface n'y mène alors.
-// Lit et écrit la SEULE ligne du compte de la session (compta_reglages, migration 0139).
+// Lit et écrit la SEULE ligne du compte de la session (compta_reglages, migration 0140).
 const ouverte = () => actif('comptaAlerteImpayes') || actif('comptaExportMensuel')
 
 export async function GET(req: Request) {
