@@ -9,6 +9,7 @@ import { buildPdfData } from '@/lib/devisPdfData'
 import { renderPdfToBuffer } from '@/lib/renderPdf'
 import { sendEmail } from '@/lib/email'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { planifierRelances } from '@/lib/relances'
 import { OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -65,11 +66,25 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       fromName: artisan?.nom?.trim() || 'Votre artisan',
       replyTo: artisan?.email || undefined,
       attachments: [{ filename: `${devis.numero || 'devis'}.pdf`, content: base64 }],
+      transactionnel: true, // le geste de l'artisan : la pause des agents ne le coupe pas (lib/email.ts)
     })
     if (!r.ok) { console.error('[devis envoyer]', r.error); return NextResponse.json({ error: 'Envoi impossible pour le moment.' }, { status: 502 }) }
 
     await supabaseAdmin.from('devis').update({ statut: 'envoye', updated_at: new Date().toISOString() }).eq('id', id).eq('artisan_id', uid)
-    return NextResponse.json({ ok: true })
+
+    // Relances J+2 / J+5 / J+10 (audit des promesses du 12/10, hors site, ligne « code ») : un devis rattaché à une
+    // conversation arme les relances par le MÊME mécanisme qu'une réponse envoyée (lib/relances.ts) — la balle est chez le
+    // client, le cron le relance tant qu'il ne répond pas. Un devis créé seul (« Nouveau devis », sans conversation) n'a pas
+    // de fil auquel rattacher une relance : il n'en a pas, et la grille ne le promet plus (lib/plans.ts).
+    let relances = 0
+    if (devis.lead_id) {
+      const { data: lead } = await supabaseAdmin.from('leads').select('id, statut').eq('id', devis.lead_id).eq('artisan_id', uid).maybeSingle()
+      if (lead && lead.statut !== 'gagne' && lead.statut !== 'perdu') {
+        await supabaseAdmin.from('leads').update({ statut: 'repondu', updated_at: new Date().toISOString() }).eq('id', lead.id)
+        relances = await planifierRelances(lead.id)
+      }
+    }
+    return NextResponse.json({ ok: true, relances })
   } catch (e) {
     console.error('[devis envoyer] inattendu:', e)
     return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })

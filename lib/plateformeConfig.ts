@@ -84,6 +84,27 @@ export function personaDe(cfg: PlateformeConfig): Persona {
   }
 }
 
+// Le réglage « Ton » de Ma plateforme, en consigne pour le moteur de rédaction.
+export const TON_TEXTE: Record<PlateformeConfig['ton'], string> = {
+  sobre: 'sobre, factuel et précis',
+  chaleureux: 'professionnel, chaleureux et rassurant',
+  direct: 'direct et efficace, sans détour',
+}
+
+/**
+ * Le ton que l'assistant applique. Le réglage de Ma plateforme FAIT FOI (l'écran le promet : « ce que vous réglez ici fait
+ * foi ») : jusqu'au 12/10, le texte libre saisi à l'inscription (`artisans.ton_style`, toujours rempli) passait devant, et
+ * le choix Sobre / Chaleureux / Direct n'avait aucun effet (audit des promesses, produit, lignes 4 et 45). Ce texte reste
+ * utilisé, mais comme exemple de manière d'écrire seulement — l'inscription promet « l'IA s'en inspirera ».
+ */
+export function tonDeReponse(cfg: Pick<PlateformeConfig, 'ton'>, tonInscription?: string | null): string {
+  const base = TON_TEXTE[cfg.ton] ?? TON_TEXTE.chaleureux
+  const exemple = String(tonInscription ?? '').replace(/\s+/g, ' ').trim()
+  return exemple
+    ? `${base}. Pour la manière d'écrire seulement (jamais pour les faits, les délais ou les prix), inspire-toi aussi de ce message de l'artisan : « ${exemple.slice(0, 300)} »`
+    : base
+}
+
 /** Lit la configuration d'un artisan. Sans ligne : repli sur son réglage historique. */
 export async function getPlateformeConfig(artisanId: string): Promise<PlateformeConfig> {
   try {
@@ -133,9 +154,12 @@ export function iaDoitRepondre(
 ): { ok: true } | { ok: false; raison: Blocage; mot?: string } {
   if (ctx.pause) return { ok: false, raison: 'pause' }
   if (cfg.mode_reponse === 'manuelle') return { ok: false, raison: 'manuelle' }
-  if (cfg.mode_reponse === 'assistee') return { ok: false, raison: 'assistee' }
+  // Le mot d'escalade passe AVANT le mode assisté (audit des promesses du 12/10, produit, ligne 49) : l'aide promet
+  // « l'assistant se tait et vous recevez une alerte ». Testé après, il laissait le mode par défaut (Assistée, le seul
+  // possible en Essai et en Essentiel) rédiger une proposition — un crédit débité — sans que l'alerte parte.
   const mot = motEscalade(cfg, ctx.message)
   if (mot) return { ok: false, raison: 'escalade', mot }
+  if (cfg.mode_reponse === 'assistee') return { ok: false, raison: 'assistee' }
   if (ctx.nbReponsesIA >= (cfg.limite_messages ?? 8)) return { ok: false, raison: 'limite' }
   if (!dansLaPlage(cfg)) return { ok: false, raison: 'horaire' }
   return { ok: true }

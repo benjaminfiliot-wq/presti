@@ -153,16 +153,11 @@ export default function ProfilPage() {
     setTimeout(() => window.location.reload(), 1400)
   }
 
-  async function supprimerCompte() {
-    const t = prompt('Cette action est DÉFINITIVE : votre compte et toutes vos données (page, conversations, devis, factures) seront supprimés.\n\nTapez SUPPRIMER pour confirmer.')
-    if (t == null) return
-    if (t.trim().toUpperCase() !== 'SUPPRIMER') { setMsg({ type: 'err', text: 'Suppression annulée (confirmation incorrecte).' }); return }
-    const { data } = await supabase.auth.getSession()
-    const res = await fetch('/api/account/delete', { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (!res.ok) { setMsg({ type: 'err', text: 'Suppression impossible. Réessayez dans un instant.' }); return }
-    await supabase.auth.signOut()
-    router.replace('/')
-  }
+  // (12/10) La suppression du compte ne se lance plus d'ici. Ce bouton annonçait une suppression « DÉFINITIVE » et
+  // « irréversible », factures comprises, puis déconnectait l'artisan — alors que la demande ouvre 30 jours de grâce
+  // annulables et que les factures émises sont conservées dix ans (app/api/account/delete, lib/purgeComptes.ts) : il
+  // ne voyait jamais qu'il pouvait annuler (audit des promesses, produit, ligne 82). Il renvoie vers Paramètres → Données,
+  // qui montre d'abord ce qui disparaît et ce qui reste, et où l'on annule.
 
   // L'adresse publique — jamais « presti » dès qu'un domaine neutre ou perso existe (lib/urls).
   const adresse = { slug, domaine: domSaved, domaine_verifie: domStatus?.served ?? false }
@@ -183,7 +178,7 @@ export default function ProfilPage() {
         {/* Lien à partager */}
         <div className="tool-card">
           <h2>Votre lien à partager</h2>
-          <p className="muted" style={{ margin: '0 0 .7rem' }}>Collez-le dans votre bio (Facebook, Instagram, Le Bon Coin), votre signature mail, partout. Chaque contact arrive dans Presti, avec une réponse prête en moins d&apos;une minute.</p>
+          <p className="muted" style={{ margin: '0 0 .7rem' }}>Collez-le dans votre bio (Facebook, Instagram), sur votre fiche Google, dans votre signature mail. Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site. Chaque demande faite par ce lien arrive dans Presti, avec une réponse prête en moins d&apos;une minute.</p>
           <div className="prof-link">
             <span>{lien || 'Lien indisponible'}</span>
             {lien && <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => navigator.clipboard?.writeText('https://' + lien)}>Copier</button>}
@@ -333,8 +328,8 @@ export default function ProfilPage() {
             </button>
           </div>
           <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '1.2rem 0' }} />
-          <p className="muted" style={{ margin: '0 0 .8rem' }}>Supprimer votre <b>compte</b> efface définitivement votre page, vos conversations, devis et factures. Cette action est irréversible.</p>
-          <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={supprimerCompte}>Supprimer mon compte</button>
+          <p className="muted" style={{ margin: '0 0 .8rem' }}>Supprimer votre <b>compte</b> se fait dans Paramètres → Données : vous voyez d’abord ce qui disparaît et ce qui est conservé (les factures émises, dix ans, comme la loi l’impose), puis vous avez 30 jours pour changer d’avis.</p>
+          <a className="btn btn--ghost danger" style={{ width: 'auto' }} href="/parametres?onglet=donnees">Supprimer mon compte…</a>
         </div>
 
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}

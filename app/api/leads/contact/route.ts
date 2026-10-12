@@ -62,9 +62,10 @@ export async function POST(req: Request) {
     // Prévenir l'artisan (maintenant qu'il y a de quoi recontacter) + programmer les relances.
     try {
       const { data: artisan } = await supabaseAdmin
-        .from('artisans').select('email, nom').eq('id', lead.artisan_id).maybeSingle()
+        .from('artisans').select('email, nom, leads_pause').eq('id', lead.artisan_id).maybeSingle()
       const photoCount = Array.isArray(lead.photos) ? lead.photos.length : 0
-      if (artisan?.email) {
+      // En pause, rien ne part, notification comprise : la demande attend dans Messages (l'aide le dit).
+      if (artisan?.email && artisan.leads_pause !== true) {
         await notifierArtisan(lead.artisan_id, 'nouvelle_demande', artisan.email, {
           leadId: lead.id,
           subject: `Nouveau lead — ${nom_prospect || contact}`,
@@ -72,8 +73,9 @@ export async function POST(req: Request) {
           replyTo: contact.includes('@') ? contact : undefined,
         }).catch(() => {})
       }
-      // Accusé de réception au prospect (marque de l'artisan), maintenant qu'on a son email.
-      if (contact.includes('@')) {
+      // Accusé de réception au prospect (marque de l'artisan), maintenant qu'on a son email — sauf si l'artisan a mis ses
+      // demandes en pause : sa page « n'envoie plus rien automatiquement » (Ma plateforme ; audit des promesses du 12/10).
+      if (contact.includes('@') && artisan?.leads_pause !== true) {
         const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
         await sendEmail({
           to: contact,
@@ -81,6 +83,7 @@ export async function POST(req: Request) {
           subject: `Bien reçu — ${artisan?.nom || 'votre demande'}`,
           text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci ! ${artisan?.nom || 'Nous'} a bien vos coordonnées et revient vers vous très vite pour la suite.\n\nÀ très bientôt.`,
           anonyme: true,
+          transactionnel: true,
           replyTo: artisan?.email ?? undefined,
         }).catch(() => {})
       }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { getPlateformeConfig } from '@/lib/plateformeConfig'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -18,7 +19,11 @@ export async function POST(req: Request) {
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''
     if (!leadId) return NextResponse.json({ error: 'Conversation manquante' }, { status: 400 })
 
-    const r = await creerDevisBrouillonPourLead({ artisanId: session.uid, leadId, tier: body?.model, source: 'manuel' })
+    // Sans modèle demandé (le bouton de la boîte n'en envoie pas), celui de Ma plateforme : l'aide promet « selon le modèle
+    // réglé dans Ma plateforme », et jusqu'au 12/10 le devis partait en Standard quel que soit le réglage (audit des
+    // promesses, produit, ligne 7). Le débit suit le modèle servi (lib/devisAuto.ts, resolveModel puis consumeCredit).
+    const tier = typeof body?.model === 'string' && body.model ? body.model : ((await getPlateformeConfig(session.uid)).modele || undefined)
+    const r = await creerDevisBrouillonPourLead({ artisanId: session.uid, leadId, tier, source: 'manuel' })
     if (!r.ok) return NextResponse.json({ error: r.error, ...(r.outOfCredits ? { outOfCredits: true } : {}) }, { status: r.status })
     return NextResponse.json({ ok: true, id: r.id, numero: r.numero, note: r.note })
   } catch (e) {

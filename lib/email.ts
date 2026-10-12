@@ -51,6 +51,13 @@ export async function sendEmail(opts: {
    *  du jour et reste limité par destinataire. Sans cela, quelques IP vidaient les envois de la journée et plus
    *  aucun devis d'artisan ne partait (audit offensif du 11/10, E2). */
   anonyme?: boolean
+  /** E-mail du PRODUIT, dû à un client de Presti : réponse ou accusé à son client, devis, notification ou alerte de son
+   *  compte. Il ne passe pas par la pause générale des AGENTS (lib/agents/sortie.ts : l'arrêt d'urgence de la prospection et
+   *  des publications, fermé « dans le doute », donc aussi quand la base ne répond pas) et il puise dans SA part du plafond
+   *  du jour, que les autres envois ne peuvent pas vider. Jusqu'au 12/10, l'interrupteur des agents coupait les devis et les
+   *  notifications des artisans payants, et 80 envois par jour étaient partagés par tout le monde (audit des promesses,
+   *  produit, ligne 103). Les plafonds anti-abus des envois `anonyme` s'appliquent toujours. */
+  transactionnel?: boolean
 }): Promise<SendResult> {
   // Les suites de test créent des comptes en @presti-test.invalid : un envoi réel vers un TLD
   // réservé rebondit à coup sûr et 34 % de rebonds abîmaient la réputation du domaine
@@ -59,7 +66,7 @@ export async function sendEmail(opts: {
   if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
   // La pause générale ferme TOUTE sortie ordinaire, par quelque voie qu'elle arrive ici ; dans le doute (lecture en erreur, valeur
   // inattendue) elle reste fermée. Seuls les messages critiques passent : l'alerte au fondateur est ce qui lui dit que la pause est posée.
-  if (!opts.critique) {
+  if (!opts.critique && !opts.transactionnel) {
     const sortie = await sortiePermise()
     if (!sortie.permise) return { ok: false, error: `pause générale : rien ne part (${sortie.raison})` }
   }
@@ -76,7 +83,10 @@ export async function sendEmail(opts: {
   }
   if (!opts.critique) {
     const { consommerLimite } = await import('@/lib/limites')
-    if (!(await consommerLimite('emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80, 86_400))) {
+    const [cle, plafond] = opts.transactionnel
+      ? ['emails:produit:jour', Number(process.env.EMAILS_PRODUIT_PAR_JOUR) || 80]
+      : ['emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80]
+    if (!(await consommerLimite(cle, plafond, 86_400))) {
       // L'adresse ne va PAS dans le journal : deux chemins non critiques passent ici avec celle
       // d'un client d'artisan (le prospect qui vient d'écrire, la réponse de l'artisan). Le
       // domaine suffit à diagnostiquer un plafond ; l'adresse complète n'ajoute rien qu'un risque.

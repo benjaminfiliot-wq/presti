@@ -73,7 +73,7 @@ export const ARTICLES: Article[] = [
     aQuoiCaSert:
       "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager.",
     commentOnSenSert: [
-      'Copiez votre lien de contact et partagez-le (Le Bon Coin, Google, Facebook, signature mail…).',
+      'Copiez votre lien de contact et partagez-le (fiche Google, page Facebook, signature mail…). Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site.',
       'Repérez les demandes marquées « à répondre ».',
       'Cliquez « Voir le détail » pour lire le message du client et la réponse envoyée.',
       'Changez le statut (Nouveau, Répondu, Gagné, Perdu) au fil du suivi.',
@@ -92,13 +92,14 @@ export const ARTICLES: Article[] = [
     titre: "Ma plateforme : comment l'assistant se comporte avec vos clients",
     aQuoiCaSert:
       "C'est ici que vous réglez le comportement de l'assistant sur votre espace de conversation : mode de réponse, " +
-      'modèle, ton, horaires, devis et facture automatiques, mots qui déclenchent une alerte. Tout ce que vous réglez ici ' +
-      'est appliqué côté serveur — ce que vous voyez est ce qui se passe réellement.',
+      'modèle, ton, horaires, mots qui déclenchent une alerte, et sa façon d’écrire. Tout ce que vous réglez ici ' +
+      'est appliqué côté serveur, à la première réponse comme aux suivantes et aux relances. Le devis brouillon ' +
+      'créé par une règle (offre Signature) et la facture d’acompte se règlent dans l’onglet Automatisations.',
     commentOnSenSert: [
       'Choisissez le mode de réponse : Automatique (offre Studio et au-delà), Assistée (vous validez) ou Manuelle.',
       'Choisissez le modèle et le ton utilisés par l’assistant.',
       "Réglez les horaires : 24h/24 ou seulement sur une plage horaire.",
-      "Réglez le devis et la facture automatiques, ainsi que les mots qui coupent l'assistant et vous alertent.",
+      "Réglez les mots qui coupent l'assistant et vous alertent. Le devis brouillon créé par une règle (offre Signature) et la facture d’acompte : onglet Automatisations.",
       'Cliquez « Enregistrer ».',
     ],
     pourVosClients:
@@ -169,7 +170,9 @@ export const ARTICLES: Article[] = [
       "Envoyez-le au client ou téléchargez le PDF.",
     ],
     pourVosClients:
-      "Rien ne leur arrive tant que vous n'avez pas cliqué « Envoyer au client » depuis l'éditeur d'un devis.",
+      "Rien ne leur arrive tant que vous n'avez pas cliqué « Envoyer au client » depuis l'éditeur d'un devis — sauf " +
+      "deux cas : si vous passez vous-même son statut à « Envoyé », un devis rattaché à une conversation y devient visible " +
+      "pour le client ; et la règle « Tout auto » (offre Signature, onglet Automatisations) l'envoie seule dans la conversation.",
     credits: `La génération IA du chiffrage consomme un crédit — voir l'article « Éditeur de devis ».`,
     reglagesLies: ['/devis/nouveau', '/tarifs'],
     disponibleAvec: 'essentiel',
@@ -182,8 +185,8 @@ export const ARTICLES: Article[] = [
     titre: 'Éditeur de devis : chiffrer, personnaliser, envoyer',
     aQuoiCaSert:
       "Décrivez le chantier : l'IA propose des lignes chiffrées, en s'appuyant sur votre bibliothèque de tarifs quand " +
-      "elle existe. Vous ajustez chaque ligne, réglez la remise et l'acompte, et l'aperçu à droite montre le PDF " +
-      'exact qui sera envoyé, en direct.',
+      "elle existe. Vous ajustez chaque ligne, réglez la remise et l'acompte, et l'aperçu à droite montre, en direct, " +
+      'un rendu fidèle du PDF qui sera envoyé (la mise en page du PDF peut différer légèrement).',
     commentOnSenSert: [
       "Renseignez le client, l'adresse du chantier et l'objet.",
       "Décrivez le chantier et cliquez « Chiffrer avec l'IA ».",
@@ -193,7 +196,8 @@ export const ARTICLES: Article[] = [
       'Une fois le devis accepté, cliquez « Créer la facture » : elle reprend les lignes.',
     ],
     pourVosClients:
-      "Le client ne reçoit rien tant que vous n'avez pas cliqué « Envoyer au client ». Sur le PDF, il doit apposer la " +
+      "Le client ne reçoit rien tant que vous n'avez pas cliqué « Envoyer au client » (sauf statut passé à la main à « Envoyé » " +
+      "ou règle « Tout auto », voir l'article « Devis »). Sur le PDF, il doit apposer la " +
       'mention manuscrite « Devis reçu avant l’exécution des travaux » avant de signer.',
     credits: `« Chiffrer avec l'IA » consomme un crédit : ${creditsGeneration()}.`,
     reglagesLies: ['/tarifs', '/parametres?onglet=legal'],
@@ -207,14 +211,14 @@ export const ARTICLES: Article[] = [
     titre: 'Factures : émises, payées, jamais supprimées',
     aQuoiCaSert:
       'Une facture se crée depuis un devis, avec le bouton « Créer la facture » — jamais depuis zéro sur cet écran. ' +
-      'Elle liste vos factures avec leur statut. Une facture ne se supprime jamais : elle peut seulement être ' +
-      'annulée, la loi impose de la conserver.',
+      'Elle liste vos factures avec leur statut. Une facture ne se supprime jamais, la loi impose de la conserver : ' +
+      'en cas d’erreur, on émet un avoir qui l’annule.',
     commentOnSenSert: [
       'Ouvrez un devis accepté et cliquez « Créer la facture ».',
       'Revenez ici pour voir la liste de vos factures.',
       'Cliquez sur une ligne ou « PDF » pour ouvrir le document.',
       'Cliquez « Marquer payée » une fois réglée.',
-      'Cliquez « Annuler » en cas d’erreur — jamais « Supprimer », l’action n’existe pas.',
+      'En cas d’erreur, cliquez « Émettre un avoir » — il n’existe ni « Supprimer » ni « Annuler » : l’avoir est la façon légale d’annuler une facture.',
     ],
     pourVosClients: 'Le PDF de facture reprend automatiquement les lignes du devis accepté.',
     credits: 'Aucun — la facture reprend les lignes du devis, sans nouvel appel à l’IA.',
@@ -230,15 +234,17 @@ export const ARTICLES: Article[] = [
     aQuoiCaSert:
       'Cet écran additionne pour vous ce qui est déjà dans Presti : vos factures, vos devis et vos demandes. ' +
       'Vous y voyez ce que vous avez facturé ce mois-ci, le mois dernier et dans l’année, ce qui est encaissé, ' +
-      'en attente ou en retard, le taux d’acceptation de vos devis, les devis à relancer et d’où viennent vos demandes. ' +
-      'Il ne demande aucune saisie et ne modifie rien : il lit seulement.',
+      'en attente ou en retard, le taux d’acceptation de vos devis, les devis à relancer et d’où viennent vos demandes : ' +
+      'ce tableau-là ne demande aucune saisie et se calcule sans IA. Sur le même écran, la partie Comptabilité est ' +
+      'différente : vous y déposez vos relevés et vos fichiers Excel, et l’IA en reconnaît les colonnes et classe les ' +
+      'lignes (1 crédit Standard par dépôt).',
     commentOnSenSert: [
       'Regardez les quatre chiffres du haut : facturé ce mois, mois dernier, depuis janvier, et ce qui est en retard.',
       'Ouvrez « Devis à relancer » : un devis envoyé depuis plus de 7 jours sans réponse y apparaît, avec son montant. Touchez la ligne pour l’ouvrir.',
       'Pour qu’une facture compte comme encaissée, marquez-la « payée » dans Factures. Sinon elle reste en attente, puis en retard une fois l’échéance dépassée.',
     ],
     pourVosClients: 'Rien : vos clients ne voient jamais cet écran, il n’est visible que de vous.',
-    credits: 'Aucun — c’est un calcul sur vos données, sans appel à l’IA.',
+    credits: 'Aucun pour le tableau de bord (un calcul sur vos données, sans IA) ; 1 crédit Standard par dépôt de fichiers dans la partie Comptabilité.',
     reglagesLies: ['/factures', '/devis'],
     disponibleAvec: 'essentiel',
   },
@@ -303,7 +309,7 @@ export const ARTICLES: Article[] = [
       'Cliquez « Enregistrer ».',
     ],
     pourVosClients:
-      'Un devis ou une facture avec des mentions manquantes affiche « non communiqué » et n’est pas conforme.',
+      'Tant qu’il manque une mention bloquante (nom, forme juridique, SIRET, adresse, assurance décennale), un devis ne peut pas être envoyé et une facture ne peut pas être émise : Presti dit laquelle compléter. Sur votre site, une mention absente affiche « non communiqué ».',
     credits: 'Aucun',
     reglagesLies: ['/devis/nouveau', '/factures'],
     disponibleAvec: 'essentiel',
@@ -315,11 +321,13 @@ export const ARTICLES: Article[] = [
     page: '/parametres?onglet=notifications',
     titre: 'Notifications : sur votre téléphone et par email',
     aQuoiCaSert:
-      'Presti vous prévient quand un client vous écrit, quand l’assistant a préparé un devis à valider, et quand un ' +
-      'client répond à un devis. Par email, toujours ; sur votre téléphone aussi, si vous activez les notifications ' +
-      'sur l’appareil. Une notification ne contient jamais le contenu du message ni le nom du client : elle vous dit ' +
-      'qu’il s’est passé quelque chose et vous ouvre la conversation. Exemple : vous êtes sur un chantier, un client ' +
-      'écrit à 11 h 02 — à 11 h 02 votre téléphone vibre, vous répondez en trente secondes.',
+      'Presti vous prévient quand un client vous écrit (dès son premier message, même s’il n’a pas encore laissé ses ' +
+      'coordonnées), quand l’assistant a préparé un devis à valider, et quand un client répond à un devis. Par email ; ' +
+      'sur votre téléphone aussi, si vous activez les notifications sur l’appareil. Quand vos demandes sont en pause, ' +
+      'les nouveaux messages vous attendent dans Messages sans notification. Sur le téléphone, une notification ne contient ' +
+      'jamais le contenu du message ni le nom du client : elle vous dit qu’il s’est passé quelque chose et vous ouvre la ' +
+      'conversation. L’email, lui, reprend le nom et le message du client, pour que vous puissiez lui répondre d’un clic. ' +
+      'Exemple : vous êtes sur un chantier, un client écrit à 11 h 02 — votre téléphone vibre, vous répondez en trente secondes.',
     commentOnSenSert: [
       'Sur votre téléphone, ouvrez Presti puis Paramètres → Notifications.',
       'Touchez « Activer sur cet appareil » et acceptez la demande du navigateur.',
@@ -344,8 +352,9 @@ export const ARTICLES: Article[] = [
     titre: 'Sécurité : mot de passe, sessions et double authentification',
     aQuoiCaSert:
       'Changez votre mot de passe, stocké haché — personne, pas même Presti, ne peut le lire. Vous pouvez aussi ' +
-      'fermer toutes vos autres sessions ouvertes : elles sont réellement invalidées côté serveur, pas seulement ' +
-      'oubliées sur l’appareil. ' +
+      'fermer toutes vos autres sessions ouvertes : elles sont invalidées côté serveur, pas seulement oubliées sur ' +
+      'l’appareil — aussitôt pour toutes les actions de Presti ; une session déjà ouverte peut encore lire directement ' +
+      'certaines listes (devis, factures, demandes) pendant une heure au plus, le temps que son jeton expire. ' +
       'La double authentification ajoute un second verrou : à chaque connexion, en plus du mot de passe, Presti ' +
       'demande un code à 6 chiffres que votre téléphone affiche (application Google Authenticator, Microsoft ' +
       'Authenticator ou équivalent). Quelqu’un qui aurait deviné ou volé votre mot de passe ne pourrait rien en ' +
@@ -372,7 +381,7 @@ export const ARTICLES: Article[] = [
     titre: 'Données & confidentialité : exporter et supprimer',
     aQuoiCaSert:
       'Exportez toutes vos données en un seul fichier (profil, conversations, messages, devis, factures, clients), ' +
-      'ou supprimez une partie (site, plateforme, conversation) séparément, sans toucher au reste de votre compte. ' +
+      'ou supprimez une partie (site, plateforme) séparément, sans toucher au reste de votre compte. ' +
       'Les devis envoyés et factures émises ne sont jamais supprimables : la loi l’impose.',
     commentOnSenSert: [
       'Cliquez « Exporter toutes mes données » pour récupérer le fichier.',
@@ -424,7 +433,7 @@ export const ARTICLES: Article[] = [
       'Les jours ouvrés vont du lundi au vendredi, hors jours fériés ; un message envoyé le samedi compte à partir du lundi.',
       'Le délai porte sur la première réponse, pas sur la correction : elle dépend du problème, parfois d’un prestataire.',
       'Un problème de sécurité passe avant tout le reste, quelle que soit votre formule.',
-      'Si le délai n’est pas tenu, dites-le : vous pouvez résilier sans frais et le mois en cours est remboursé au prorata.',
+      'Si le délai n’est pas tenu, dites-le par écrit : votre demande passe en tête de file, et vous pouvez résilier sans frais (CGU, article 4).',
     ],
     pourVosClients: 'Aucun effet direct — vos clients écrivent à vous, jamais à Presti.',
     credits: 'Aucun',
@@ -507,7 +516,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/plateforme',
     label: 'Modèle utilisé',
     explication:
-      'Le modèle que l’assistant utilise pour répondre sur votre espace de conversation. Un modèle plus poussé n’est utilisable que si votre formule l’inclut, sinon Presti utilise le meilleur modèle disponible pour vous.',
+      'Le modèle que l’assistant utilise pour répondre sur votre espace de conversation, dès le premier message, et pour « Proposer une réponse » et « Devis auto ». « Par défaut » : le modèle Standard, inclus dans toutes les formules. Un modèle plus poussé n’est utilisable que si votre formule l’inclut, sinon Presti utilise le meilleur modèle disponible pour vous.',
     exemple: 'Vous réglez Expert alors que votre formule ne l’inclut pas : Presti rédige quand même, avec le meilleur modèle inclus dans votre formule.',
   },
   // source: app/plateforme/page.tsx:40-42, 155-158
@@ -515,7 +524,7 @@ export const INFOBULLES: InfoBulle[] = [
     cle: 'plateforme.ton',
     page: '/plateforme',
     label: 'Ton',
-    explication: 'Le style des réponses générées : Sobre, Chaleureux ou Direct.',
+    explication: 'Le style des réponses générées : Sobre, Chaleureux ou Direct. C’est ce réglage qui fait foi ; le message que vous avez écrit à l’inscription ne sert plus que d’exemple de votre manière d’écrire.',
     exemple: 'Vous choisissez Chaleureux : les réponses de l’assistant commencent par une formule accueillante plutôt qu’un ton neutre.',
   },
   // source: app/plateforme/page.tsx:160-172
@@ -527,29 +536,15 @@ export const INFOBULLES: InfoBulle[] = [
       'Hors de la plage choisie, l’assistant ne répond plus automatiquement — c’est vous qui répondez.',
     exemple: 'Vous réglez la plage 8h–20h : une demande reçue à 23 h attend votre réponse le lendemain.',
   },
-  // source: app/plateforme/page.tsx:174-186
-  {
-    cle: 'plateforme.devis_auto',
-    page: '/plateforme',
-    label: 'Devis automatique',
-    explication:
-      'Jamais : aucun devis n’est créé seul. Brouillon : un devis est préparé, vous le validez. Envoi auto sous un seuil : Presti l’envoie seul si le total reste sous le montant que vous fixez.',
-    exemple: 'Vous réglez un seuil à 500 € : un devis de 320 € part seul, un devis de 900 € attend votre validation.',
-  },
-  // source: app/plateforme/page.tsx:188-192
-  {
-    cle: 'plateforme.facture_auto',
-    page: '/plateforme',
-    label: 'Facture automatique',
-    explication: 'Jamais : vous créez la facture vous-même. À l’acceptation du devis : elle se crée dès que le client accepte.',
-    exemple: 'Le client répond « c’est bon pour moi » sur un devis : la facture correspondante est créée sans que vous ayez à cliquer.',
-  },
+  // (12/10) Les bulles « Devis automatique » (envoi sous un seuil) et « Facture automatique » (à l'acceptation) sont retirées :
+  // aucun écran ne les affichait, et elles décrivaient des réglages que le serveur ne lit nulle part (audit des promesses,
+  // produit, lignes 47 et 48). Le devis brouillon automatique et la facture d'acompte vivent dans l'onglet Automatisations.
   // source: app/plateforme/page.tsx:194-200
   {
     cle: 'plateforme.escalade_mots',
     page: '/plateforme',
     label: 'Mots qui coupent l’assistant et vous alertent',
-    explication: 'Si le client emploie l’un de ces mots, l’assistant se tait et vous recevez une alerte — c’est vous qui répondez.',
+    explication: 'Si le client emploie l’un de ces mots, l’assistant se tait (en mode Automatique comme en Assistée : aucune réponse n’est préparée, aucun crédit n’est pris) et vous recevez une alerte — c’est vous qui répondez.',
     exemple: 'Un client écrit « fuite » et « urgence » : l’assistant ne répond pas seul, vous êtes alerté pour traiter vous-même.',
   },
   // source: app/plateforme/page.tsx:202-206
@@ -832,104 +827,8 @@ export const INFOBULLES: InfoBulle[] = [
     exemple: 'Vous connectez mon-entreprise.fr, ajoutez les enregistrements DNS indiqués chez votre hébergeur, puis cliquez « Vérifier ».',
   },
 
-  // ── /profil → Réglages fins (StyleAvance.tsx) ───────────────────────────
-  // source: app/profil/StyleAvance.tsx:104-107
-  {
-    cle: 'profil.style.taille',
-    page: '/profil',
-    label: 'Taille du texte',
-    explication: 'La taille de base du texte sur votre site.',
-    exemple: 'Vous l’augmentez légèrement pour une clientèle plus âgée qui préfère un texte plus grand à lire.',
-  },
-  // source: app/profil/StyleAvance.tsx:108-111
-  {
-    cle: 'profil.style.echelle',
-    page: '/profil',
-    label: 'Taille des titres',
-    explication: 'Compacte, Normale ou Ample : la taille relative des titres par rapport au texte courant.',
-    exemple: 'En Ample, vos titres de section ressortent nettement plus que le texte qui les suit.',
-  },
-  // source: app/profil/StyleAvance.tsx:112-116
-  {
-    cle: 'profil.style.interlettrage',
-    page: '/profil',
-    label: 'Espacement des lettres, dans les titres',
-    explication: 'Resserre ou aère l’espace entre les lettres des titres.',
-    exemple: 'Un espacement aéré donne un rendu plus « affiche », resserré donne un rendu plus dense.',
-  },
-  // source: app/profil/StyleAvance.tsx:122-128
-  {
-    cle: 'profil.style.accent2',
-    page: '/profil',
-    label: 'Couleur secondaire',
-    explication:
-      'Une deuxième couleur pour votre site, en complément de votre couleur d’accent. Sans réglage, elle est dérivée automatiquement de votre accent.',
-    exemple: 'Vous laissez « dérivée de votre accent » : le site choisit seul une nuance cohérente avec votre couleur principale.',
-  },
-  // source: app/profil/StyleAvance.tsx:129-135
-  {
-    cle: 'profil.style.fond',
-    page: '/profil',
-    label: 'Fond de page',
-    explication: 'La couleur de fond de votre site. Presti vous avertit si le contraste avec le texte devient insuffisant.',
-    exemple: 'Vous choisissez un fond très clair : Presti indique si votre texte reste assez lisible dessus.',
-  },
-  // source: app/profil/StyleAvance.tsx:148-151
-  {
-    cle: 'profil.style.rayon',
-    page: '/profil',
-    label: 'Angles',
-    explication: 'Les angles des cadres et boutons de votre site : carrés, légèrement arrondis, ou très arrondis.',
-    exemple: 'Un métier « Chantier, industriel » va bien avec des angles carrés ; un rendu plus doux avec des angles très arrondis.',
-  },
-  // source: app/profil/StyleAvance.tsx:153-156
-  {
-    cle: 'profil.style.filet',
-    page: '/profil',
-    label: 'Épaisseur des traits',
-    explication: 'L’épaisseur des lignes et bordures affichées sur votre site.',
-    exemple: 'Des traits épais donnent un rendu plus franc et industriel qu’un trait fin.',
-  },
-  // source: app/profil/StyleAvance.tsx:158-161
-  {
-    cle: 'profil.style.bouton',
-    page: '/profil',
-    label: 'Boutons',
-    explication: 'Le style des boutons de votre site : plein (fond coloré), contour, ou souligné seulement.',
-    exemple: 'Un bouton « plein » attire davantage l’œil qu’un bouton « souligné », pour votre appel à contact.',
-  },
-  // source: app/profil/StyleAvance.tsx:167-170
-  {
-    cle: 'profil.style.rythme',
-    page: '/profil',
-    label: 'Hauteur des sections',
-    explication: 'L’espace vertical entre les sections de votre site : Serré, Normal ou Aéré.',
-    exemple: 'Un rythme Aéré donne un site plus posé et respirant, un rythme Serré tient plus de contenu à l’écran.',
-  },
-  // source: app/profil/StyleAvance.tsx:171-175
-  {
-    cle: 'profil.style.largeur',
-    page: '/profil',
-    label: 'Largeur du contenu',
-    explication: 'La largeur maximale du texte et des images sur grand écran.',
-    exemple: 'Une largeur étroite garde des lignes de texte courtes et faciles à lire sur un grand écran.',
-  },
-  // source: app/profil/StyleAvance.tsx:181-184
-  {
-    cle: 'profil.style.texture',
-    page: '/profil',
-    label: 'Texture de fond',
-    explication: 'Un effet de matière discret sur le fond de votre site : aucune, grain photo, papier, ou bruit fin.',
-    exemple: 'La texture « papier » donne un rendu plus artisanal qu’un fond uni.',
-  },
-  // source: app/profil/StyleAvance.tsx:185-191
-  {
-    cle: 'profil.style.texture_force',
-    page: '/profil',
-    label: 'Intensité',
-    explication: 'L’intensité de la texture de fond choisie, de discrète à marquée.',
-    exemple: 'À faible intensité, la texture papier se devine à peine ; à forte intensité, elle devient très visible.',
-  },
+  // (12/10) Les douze bulles « Réglages fins » du site (StyleAvance.tsx) sont retirées : cet écran n'est importé nulle part
+  // depuis la fermeture du constructeur (drapeau constructeurSite), elles décrivaient des réglages qu'aucun artisan ne voit.
 
   // ── /parametres ──────────────────────────────────────────────────────────
   // source: app/parametres/page.tsx:174-175

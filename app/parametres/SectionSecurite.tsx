@@ -124,7 +124,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
 
       <div className="tool-card">
         <h2>Sessions ouvertes</h2>
-        <p className="muted" style={{ margin: '0 0 .9rem' }}>Chaque appareil connecté à votre compte. Fermez ce que vous ne reconnaissez pas — c’est immédiat.</p>
+        <p className="muted" style={{ margin: '0 0 .9rem' }}>Chaque appareil connecté à votre compte. Fermez ce que vous ne reconnaissez pas : les actions qui passent par Presti lui sont refusées aussitôt ; la lecture directe de vos listes lui reste possible une heure au plus, le temps que son jeton expire.</p>
         {sessions === null ? <p className="muted">Chargement…</p>
           : erreurSessions ? <p className="muted">{erreurSessions}</p>
           : (
@@ -150,7 +150,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
             </ul>
           )}
         <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '1.2rem 0' }} />
-        <p className="muted" style={{ margin: '0 0 .7rem', fontSize: '.88rem' }}>Vous avez utilisé un ordinateur qui n’est pas le vôtre ? Fermez tout d’un coup — les sessions sont réellement invalidées, pas seulement oubliées.</p>
+        <p className="muted" style={{ margin: '0 0 .7rem', fontSize: '.88rem' }}>Vous avez utilisé un ordinateur qui n’est pas le vôtre ? Fermez tout d’un coup — les sessions sont invalidées côté serveur, pas seulement oubliées (la lecture directe de vos listes reste possible une heure au plus, le temps que les jetons expirent).</p>
         <button type="button" className="btn btn--ghost danger" disabled={!!busy} onClick={fermerToutes}>{busy === 'toutes' ? '…' : 'Fermer toutes mes sessions'}</button>
       </div>
 

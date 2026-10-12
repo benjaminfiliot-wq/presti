@@ -335,8 +335,9 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
         return
       }
       const rid = `r${Date.now()}`
-      setThinking(false)
-      setMsgs((m) => [...m, { id: rid, sens: 'out', contenu: '', type: 'reponse_auto', etat: 'envoye' }])
+      // La réponse arrive maintenant en UN fragment, une fois passée au garde-fou anti-prix et anti-créneau (lib/ai.ts,
+      // 12/10) : l'indicateur « en train d'écrire » reste affiché jusqu'à elle, au lieu d'une bulle vide pendant la rédaction.
+      let bulle = false
       const lecteur = res.body.getReader(); const dec = new TextDecoder(); let tampon = ''
       for (;;) {
         const { done, value } = await lecteur.read()
@@ -348,12 +349,15 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
           if (!ligne.startsWith('data:')) continue
           try {
             const o = JSON.parse(ligne.slice(5).trim())
-            if (o.t === 'delta') setMsgs((m) => m.map((x) => (x.id === rid ? { ...x, contenu: x.contenu + o.v } : x)))
+            if (o.t === 'delta') {
+              if (!bulle) { bulle = true; setThinking(false); setMsgs((m) => [...m, { id: rid, sens: 'out', contenu: String(o.v ?? ''), type: 'reponse_auto', etat: 'envoye' }]) }
+              else setMsgs((m) => m.map((x) => (x.id === rid ? { ...x, contenu: x.contenu + o.v } : x)))
+            }
             else if (o.t === 'error') setErr(o.v)
           } catch { /* fragment incomplet : on attend la suite */ }
         }
       }
-      setSending(false)
+      setSending(false); setThinking(false)
       // Si rien n'est arrivé (IA indisponible), on retire la bulle vide plutôt que de laisser un blanc.
       setMsgs((m) => m.filter((x) => !(x.id === rid && !x.contenu.trim())))
       lancerRegles(token)

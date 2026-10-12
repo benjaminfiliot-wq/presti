@@ -75,7 +75,8 @@ export async function notifierArtisan(
   if (!email) return { envoye: false, raison: 'sans_email', push }
   if (!notificationActive(prefs, type)) return { envoye: false, raison: 'desactive', push }
   try {
-    const r = await sendEmail({ ...courrier, to: email })
+    // Une notification à l'artisan est un e-mail du produit : la pause des agents ne la coupe pas (lib/email.ts).
+    const r = await sendEmail({ ...courrier, to: email, transactionnel: true })
     return r.ok ? { envoye: true, push } : { envoye: false, raison: 'erreur', push }
   } catch {
     return { envoye: false, raison: 'erreur', push }

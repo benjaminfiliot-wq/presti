@@ -12,6 +12,8 @@ import { sortiePermise } from '@/lib/agents/sortie'
 import { relever } from '@/lib/direction/courriers'
 import { actif } from '@/lib/flags'
 import { tourLivraison } from '@/lib/siteLivraison'
+import { getPlateformeConfig, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
+import { avecMentionAssistant } from '@/lib/mentionAssistant'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -81,13 +83,18 @@ export async function GET(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style, email, is_founder')
+      .select('nom, metier, ton_style, email, is_founder, leads_pause')
       .eq('id', lead.artisan_id)
       .maybeSingle()
 
     // Compte suspendu par la direction (v15 §5) : on n'écrit pas à ses prospects en son nom. La relance n'est pas
     // marquée envoyée : elle repart à la réactivation.
     if (await suspensionEnCours(lead.artisan_id)) { skipped++; continue }
+    // L'artisan a mis sa page en PAUSE (Ma plateforme : « n'envoie plus rien automatiquement ») : on n'écrit pas non plus à
+    // ses prospects en son nom. Jusqu'au 12/10, les relances partaient quand même — un artisan en congés continuait de
+    // relancer (audit des promesses, produit, ligne 51). Même règle que la suspension : la relance reste due et repart à la
+    // reprise (« rien n'est perdu »).
+    if (artisan?.leads_pause === true) { skipped++; continue }
 
     // Un prospect ne reçoit qu'une relance par passage ; la suivante reste due et repart demain.
     if (contactes.has(lead.id)) { skipped++; continue }
@@ -101,10 +108,13 @@ export async function GET(req: Request) {
     // Texte de relance : IA si possible, sinon modèle de secours
     let text = ''
     try {
+      // Le ton et la persona de Ma plateforme (vous/tu, longueur, émojis) : jusqu'au 12/10, les relances les ignoraient
+      // (audit des promesses, produit, ligne 54).
+      const cfg = await getPlateformeConfig(lead.artisan_id)
       text = await generateRelanceReply(
-        { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: artisan?.ton_style ?? null },
+        { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: tonDeReponse(cfg, artisan?.ton_style) },
         { nom_prospect: lead.nom_prospect, message: lead.message },
-        rang,
+        rang, undefined, personaDe(cfg),
       )
     } catch (e) {
       console.error('[cron/relances] IA indisponible, repli sur template:', e instanceof Error ? e.message : e)
@@ -131,9 +141,14 @@ export async function GET(req: Request) {
         // Le sujet retombait sur « — Presti » : le prospect d'un artisan recevait une
         // relance signée du nom de l'éditeur. Sans nom d'artisan, on n'écrit rien du tout.
         subject: artisan?.nom ? `Suite à votre demande — ${artisan.nom}` : 'Suite à votre demande',
-        text,
+        // Une relance part seule, sans relecture : elle dit qu'elle vient de l'assistant (règlement IA, art. 50 ;
+        // lib/mentionAssistant.ts). Le fil de la conversation garde le texte sans la mention, comme la page l'affiche.
+        text: avecMentionAssistant(text, artisan?.nom),
         fromName: artisan?.nom?.trim() || 'Votre artisan',
         replyTo: artisan?.email ?? undefined,
+        // Sa part du plafond est celle du produit ; la pause générale, elle, s'applique quand même — lue plus haut par ce
+        // passage (décision du 30/09 : l'arrêt d'urgence coupe aussi ce que l'IA écrit seule, sans geste de l'artisan).
+        transactionnel: true,
       })
       // Email refusé (plafond, Resend en panne) : la relance reste due, on réessaiera demain —
       // avant, elle était marquée envoyée et tracée dans le fil sans être partie (F, majeur 5).

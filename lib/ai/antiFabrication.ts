@@ -61,6 +61,23 @@ const VERBES =
   '(?:je|nous|on) (?:fais|faisons|fait|realise|realisons|propose|proposons|installe|installons|pose|posons|assure|assurons|m occupe|nous occupons|gere|gerons|prends en charge|prenons en charge|intervien\\w*|interviens|peux(?: aussi| egalement)? (?:faire|realiser|installer|poser|m occuper de|gerer|intervenir)|pouvons(?: aussi| egalement)? (?:faire|realiser|installer|poser|nous occuper de|gerer|intervenir))'
 const RE_PRESTATION = new RegExp(`\\b${VERBES}\\b[^.!?]{0,40}?\\b(${PRESTATIONS.join('|')})\\b`)
 
+// Créneau inventé (audit des promesses du 12/10, ligne 5 : « sans inventer de prix ni de créneau ») : un jour, une date ou
+// une heure que l'assistant propose au client (« je peux passer jeudi à 14 h », « rendez-vous le 16 octobre »). Rien dans le
+// profil ne lui donne l'agenda de l'artisan : seul l'artisan fixe un rendez-vous. Le texte est déjà normalisé (sans accents).
+const HEURE = '\\d{1,2} ?h(?: ?\\d{2}|eures?)?'
+const JOUR = '(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|apres demain|demain)'
+const MOIS = '(?:janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)'
+export const RE_CRENEAU = new RegExp(
+  `\\b(${JOUR}(?: \\d{1,2}(?:er)?(?: ${MOIS})?)?(?: prochain)? (?:matin|midi|apres midi|soir|(?:a |vers |des |entre )?${HEURE})` +
+  `|(?:a|vers|des|entre|de) ${HEURE}` +
+  `|(?:le|du|au) \\d{1,2}(?:er)? ${MOIS}` +
+  `|${JOUR} \\d{1,2}(?:er)?(?: ${MOIS})?` +
+  `|${JOUR} prochain)\\b`,
+)
+// Un jour ou une heure n'est un créneau proposé que si la phrase S'ENGAGE sur un rendez-vous : « votre chauffe-eau a lâché
+// lundi matin » ne promet rien, « je peux passer lundi matin » si.
+const RE_ENGAGEMENT_CRENEAU = /\b(passer|passage|passe|venir|viens|viendr\w*|intervenir|intervien\w*|intervention|rendez vous|rdv|rappel\w*|disponibl\w*|dispo|creneau|visite|libre|serai|serons|on se voit|je peux|nous pouvons|pourrai\w*|pourrions|propose|proposons|prevoir|prevu|bloquer|reserv\w*)\b/
+
 type Motif = { cle: string; label: string; re: RegExp; declare: (profil: string, extrait: string, phrase?: string) => boolean }
 
 const contient = (profil: string, ...cles: string[]) => cles.some((c) => profil.includes(c))
@@ -90,6 +107,13 @@ export const MOTIFS_CAPACITE: Motif[] = [
     label: 'délai précis non déclaré',
     re: /\b((?:sous|en|d ici|dans les|en moins de|sous les) ?\d{1,2} ?(?:h|heures?|jours?|j|semaines?)|des demain|demain matin|demain a la premiere heure|dans l heure|dans la demi heure|d ici ce soir|ce soir meme)\b/,
     declare: (p, extrait) => contient(p, extrait, extrait.replace(/\s+/g, '')),
+  },
+  {
+    cle: 'creneau',
+    label: 'créneau (jour, date ou heure) proposé sans l’agenda de l’artisan',
+    re: RE_CRENEAU,
+    // Légitime seulement si le profil le déclare tel quel (horaires « de 8 h à 18 h ») ; sans engagement, ce n'est pas un créneau.
+    declare: (p, extrait, phrase) => contient(p, ` ${extrait} `, extrait.replace(/\s+/g, '')) || !RE_ENGAGEMENT_CRENEAU.test(phrase ?? ''),
   },
   {
     cle: 'permanence',
@@ -214,5 +238,5 @@ export function rappelAntiFabrication(hits: CapaciteDetectee[], prix: string[] =
     ...hits.map((h) => `« ${h.extrait} » (${h.label})`),
     ...prix.map((p) => `« ${p} » (montant chiffré — interdit dans une réponse)`),
   ]
-  return `\n\nATTENTION — ta version précédente affirmait des choses que le profil de l'artisan NE DÉCLARE PAS : ${items.slice(0, 6).join(' ; ')}. Recommence SANS ces affirmations ni équivalent : ne promets aucun déplacement, atelier, délai chiffré, permanence, garantie, certification ou prestation qui ne figure pas dans le profil. En cas de doute, propose de vérifier avec l'artisan plutôt que d'affirmer.`
+  return `\n\nATTENTION — ta version précédente affirmait des choses que le profil de l'artisan NE DÉCLARE PAS : ${items.slice(0, 6).join(' ; ')}. Recommence SANS ces affirmations ni équivalent : aucun montant, et ne promets aucun déplacement, atelier, délai chiffré, créneau (jour, date ou heure de passage), permanence, garantie, certification ou prestation qui ne figure pas dans le profil. Pour un rendez-vous, demande au client ses disponibilités : c'est l'artisan qui fixera le créneau. En cas de doute, propose de vérifier avec l'artisan plutôt que d'affirmer.`
 }

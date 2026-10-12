@@ -335,7 +335,7 @@ async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   try {
     const r = al.a === 'entreprise'
       ? await notifierEntreprise(sujet, corps)
-      : await sendEmail({ to: al.a.email, subject: `Presti — ${sujet}`, text: corps, replyTo: EMAIL_ENTREPRISE })
+      : await sendEmail({ to: al.a.email, subject: `Presti — ${sujet}`, text: corps, replyTo: EMAIL_ENTREPRISE, transactionnel: true })
     // Le verrou quotidien est déjà pris : si l'email ne part pas, l'alerte serait perdue 24 h.
     // On la consigne dans app_errors — le digest et la ronde « erreurs » la reprendront (F, majeur 2).
     if (!r.ok) await enregistrerErreur(`alerte perdue : ${al.motif}`, new Error(`${sujet} — ${r.error ?? 'envoi refusé'}`))

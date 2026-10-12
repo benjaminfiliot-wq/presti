@@ -5,7 +5,7 @@ import { sendEmail } from '@/lib/email'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { resolveModel } from '@/lib/models'
-import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { planifierRelances } from '@/lib/relances'
 
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
       const { data: artisanV } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
       let emailed = false
       if (lead.contact && lead.contact.includes('@')) {
-        const r = await sendEmail({ to: lead.contact, fromName: artisanV?.nom?.trim() || 'Votre artisan', subject: `Réponse de ${artisanV?.nom ?? 'votre artisan'}`, text: `${texte}\n\n— ${artisanV?.nom ?? ''}`, replyTo: artisanV?.email ?? undefined }).catch(() => ({ ok: false }))
+        const r = await sendEmail({ to: lead.contact, fromName: artisanV?.nom?.trim() || 'Votre artisan', subject: `Réponse de ${artisanV?.nom ?? 'votre artisan'}`, text: `${texte}\n\n— ${artisanV?.nom ?? ''}`, replyTo: artisanV?.email ?? undefined, transactionnel: true }).catch(() => ({ ok: false }))
         emailed = !!r.ok
       }
       return NextResponse.json({ ok: true, emailed })
@@ -125,7 +125,7 @@ export async function POST(req: Request) {
       if (!turns.length) { await rendreCredit(uid, tier, !!artisan?.is_founder); return NextResponse.json({ error: 'Aucun message à traiter.' }, { status: 400 }) }
       try {
         const reply = await generateConversationReply(
-          { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: artisan?.ton_style ?? null },
+          { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: tonDeReponse(cfg, artisan?.ton_style) },
           { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
           turns,
           model,
@@ -172,6 +172,7 @@ export async function POST(req: Request) {
         subject: `Réponse de ${artisan?.nom ?? 'votre artisan'}`,
         text: `${contenu}\n\n— ${artisan?.nom ?? ''}`,
         replyTo: artisan?.email ?? undefined,
+        transactionnel: true,
       }).catch(() => ({ ok: false }))
       emailed = !!r.ok
     }

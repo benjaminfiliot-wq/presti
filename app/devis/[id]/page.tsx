@@ -327,7 +327,9 @@ export default function DevisEditor() {
 
           {/* ---------------- APERÇU LIVE (droite) ---------------- */}
           <div className="preview-wrap blueprint">
-            <div className="live-flag"><span className="b" />Aperçu en direct — conforme</div>
+            {/* « conforme » seulement quand rien ne manque pour émettre : jusqu'au 12/10 il s'affichait aussi à côté de « Manque pour
+                émettre », sur un devis que le serveur refusera d'envoyer (audit des promesses, produit, ligne 74). */}
+            <div className="live-flag"><span className="b" />{mentionsEmissionManquantes.length ? 'Aperçu en direct — mentions obligatoires manquantes' : 'Aperçu en direct — mentions obligatoires présentes'}</div>
             <div className="doc">
               <div className="doc-head">
                 <div className="doc-brand">

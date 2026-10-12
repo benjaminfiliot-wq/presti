@@ -10,7 +10,9 @@ export const dynamic = 'force-dynamic'
 
 const SUCCES = {
   ok: true,
-  message: "Merci : l'assistant IA de Presti vous écrira à cette adresse avec votre maquette, sous 48 h ouvrées.",
+  // Sans délai (audit des promesses du 12/10, site, ligne 54) : la maquette est fabriquée et envoyée par la chaîne de l'usine
+  // (recenseur, atelier, rédacteur, facteur), hors de cette application ; rien ici ne garantit ni ne mesure « 48 h ouvrées ».
+  message: "Merci : votre demande est enregistrée. L'assistant IA de Presti vous écrira à cette adresse avec votre maquette, sans délai garanti.",
 }
 
 const MESSAGES: Record<string, string> = {

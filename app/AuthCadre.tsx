@@ -12,7 +12,7 @@ const CONTENUS = {
   acces: {
     titre: <>Vos demandes, vos devis, vos factures. <span>Au même endroit.</span></>,
     points: [
-      'Chaque demande a sa réponse prête en moins d’une minute : vous l’envoyez.',
+      'Chaque demande faite par votre lien a sa réponse prête en moins d’une minute : vous l’envoyez.',
       'Le devis se prépare sur vos prix, en PDF conforme.',
       'Trois relances (J+2, J+5, J+10), puis la facture en un clic.',
     ],

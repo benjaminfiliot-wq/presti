@@ -202,7 +202,7 @@ export async function encaisserCommandeSite(s: Stripe.Checkout.Session): Promise
   const { data: a } = idArtisan ? await supabaseAdmin.from('artisans').select('nom, email, metier').eq('id', idArtisan).maybeSingle() : { data: null }
   await notifierEntreprise(
     `Commande de site — ${a?.nom || avant.entreprise || avant.email}`,
-    `Un site à la demande vient d'être payé.\n\n${avant.achat_public && !avant.artisan_id ? `Achat sans compte : ${avant.entreprise || '—'} — le compte se crée maintenant, le lien de connexion part à l'acheteur.\n` : `Artisan : ${a?.nom || '—'} (${a?.metier || '—'})\n`}Email : ${a?.email || maj.email}\nCommande : ${commandeId}\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}\n\nÉtat : payee — la génération peut démarrer (délai annoncé : 48 h ouvrées).`,
+    `Un site à la demande vient d'être payé.\n\n${avant.achat_public && !avant.artisan_id ? `Achat sans compte : ${avant.entreprise || '—'} — le compte se crée maintenant, le lien de connexion part à l'acheteur.\n` : `Artisan : ${a?.nom || '—'} (${a?.metier || '—'})\n`}Email : ${a?.email || maj.email}\nCommande : ${commandeId}\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}\n\nÉtat : payee — la génération peut démarrer (délai annoncé : 48 h ouvrées à compter du paiement).`,
   )
   console.log('[site commande] encaissée', commandeId)
   return 'encaissee'

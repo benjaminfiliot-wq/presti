@@ -138,7 +138,7 @@ export default function Dashboard() {
 
           <div className="tool-card">
             <h2>Votre lien de contact</h2>
-            <p className="muted" style={{ margin: '0 0 .6rem' }}>À coller sur Le Bon Coin, Google, Facebook, votre signature mail. Chaque demande arrive dans Presti. La réponse est prête en moins d’une minute : Presti la prépare dans votre ton, vous l’envoyez.</p>
+            <p className="muted" style={{ margin: '0 0 .6rem' }}>À mettre sur votre fiche Google, votre page Facebook, votre signature mail (pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site). Chaque demande faite par ce lien arrive dans Presti. La réponse est prête en moins d’une minute : Presti la prépare dans votre ton, vous l’envoyez.</p>
             <div className="linkbox">
               <span className="linkbox-url">{link}</span>
               <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>

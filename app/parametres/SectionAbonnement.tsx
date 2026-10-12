@@ -95,7 +95,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
               <span><b>{consommes}</b> consommé{consommes > 1 ? 's' : ''} sur <b>{inclus}</b> inclus</span>
               <span className="muted">{restants} restant{restants > 1 ? 's' : ''}{a.credits_reset_le ? ` · renouvelés le ${dateFr(a.credits_reset_le)}` : ''}</span>
             </div>
-            <p className="muted" style={{ fontSize: '.82rem', margin: '.5rem 0 0' }}>1 crédit = 1 génération IA (réponse, devis, relance) ; le modèle Expert en consomme 3.</p>
+            <p className="muted" style={{ fontSize: '.82rem', margin: '.5rem 0 0' }}>1 crédit = 1 génération IA (réponse, devis, dépôt de compta) ; une recherche fournisseurs en consomme 2, le modèle Expert 3. Les relances automatiques ne consomment rien.</p>
           </>
         )}
       </div>

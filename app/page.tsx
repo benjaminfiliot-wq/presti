@@ -75,13 +75,13 @@ const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }
   {
     heure: '22 h 14',
     titre: 'La demande arrive.',
-    texte: 'Sur votre lien Google, Le Bon Coin ou Facebook. Le client écrit le soir, vous êtes encore sur le chantier : elle vous attend dans Presti.',
+    texte: 'Par votre lien, sur votre fiche Google, votre page Facebook ou votre signature mail. Le client écrit le soir, vous êtes encore sur le chantier : elle vous attend dans Presti.',
     visuel: <div className="lp-cpv lp-cpv-msg"><span className="lp-cpv-chip">Nouvelle demande · exemple</span><p>Bonjour, mon chauffe-eau ne chauffe plus depuis hier soir. Vous pouvez passer cette semaine&nbsp;?</p><em>Mme Garnier</em></div>,
   },
   {
     heure: '22 h 15',
     titre: 'La réponse est prête.',
-    texte: "En moins d'une minute, dans votre ton. Elle pose les questions qui manquent, sans inventer de prix ni de créneau. Vous la relisez, vous l'envoyez.",
+    texte: "Prête en moins d'une minute, dans votre ton. Elle pose les questions qui manquent, sans inventer de prix ni de créneau. Vous la relisez, vous l'envoyez.",
     visuel: <div className="lp-cpv lp-cpv-rep"><span className="lp-cpv-chip ia">Préparée par l&apos;IA · à relire</span><p>Bonjour Madame Garnier, merci pour votre message. Pour bien préparer mon passage&nbsp;: de quelle marque est votre chauffe-eau, et quelle est sa capacité&nbsp;?<span className="lp-curseur" /></p><b>Envoyer</b></div>,
   },
   {
@@ -126,7 +126,7 @@ export default function Home() {
             operatingSystem: 'Web',
             url: 'https://prestiapp.fr',
             description:
-              "Chaque demande arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez.",
+              "Chaque demande faite par votre lien arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez.",
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: 'Essai gratuit' },
             provider: { '@type': 'Organization', name: 'Presti', url: 'https://prestiapp.fr' },
           }),
@@ -163,8 +163,8 @@ export default function Home() {
             {/* Deux versions de la même promesse : en 390 px, la longue faisait 6 lignes et repoussait l'appel à l'action
                 (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
             <p className="lp-lede">
-              <span className="lp-lede-court">Chaque demande Google ou Le Bon Coin a sa réponse prête : vous l&apos;envoyez.</span>
-              <span className="lp-lede-long">Votre lien sur Google, Le Bon Coin ou Facebook : chaque demande arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, la facture, et trois relances (J+2, J+5, J+10).</span>
+              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez.</span>
+              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, la facture, et trois relances (J+2, J+5, J+10).</span>
             </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
@@ -232,7 +232,7 @@ export default function Home() {
         {/* FONCTIONNALITÉS : vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, le devis est prêt, il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, vous lancez le devis d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé), il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
             {FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}
             {FLAGS.landingDemoSite ? <DemoSite /> : null}
           </div>
@@ -251,7 +251,7 @@ export default function Home() {
             sur un plombier fictif (app/DemoCompta.tsx, lib/compta-exemple.ts). */}
         <section className="lp-blk lp-clair" id="compta">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, faite par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, rangée par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés.</p></div>
             <DemoCompta />
           </div>
         </section>
@@ -298,7 +298,7 @@ export default function Home() {
         {/* TARIFS */}
         <section className="lp-blk" id="tarifs">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Simple : vous payez à l&apos;usage, en crédits.</h2><p>Chaque formule vous donne des crédits chaque mois. Vous montez en formule quand votre activité grandit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Simple : un forfait mensuel, avec des crédits inclus.</h2><p>Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité. Vous montez en formule quand votre activité grandit.</p></div>
 
             {/* Les prix d'abord : mesuré le 06/10 en 390 px, l'explication des crédits (529 px) passait
                 avant la première formule. Elle suit maintenant la grille. */}
@@ -318,7 +318,7 @@ export default function Home() {
             <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes, pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
             <div className="lp-howcredits reveal-kids">
-              <div className="lp-hc lp-spot"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse préparée pour un client, ou un devis chiffré par l&apos;IA.</span></div>
+              <div className="lp-hc lp-spot"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Chaque réponse préparée pour un client (une par message qu&apos;il vous écrit), un devis chiffré par l&apos;IA ou un dépôt de fichiers de compta. Une recherche chez vos fournisseurs : 2 crédits (3 avec Expert).</span></div>
               <div className="lp-hc lp-spot"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus : réservez-la aux gros chantiers.</span></div>
               <div className="lp-hc lp-spot"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
             </div>
@@ -331,7 +331,7 @@ export default function Home() {
                 <Comparatif />
               </details>
             </div>
-            <p className="lp-pnote">1 crédit = 1 génération · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
+            <p className="lp-pnote">1 crédit = 1 génération (réponse, devis, compta) · recherche fournisseurs = 2 crédits · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
             {actif('siteCommandeVente') && (
               <div className="lp-site reveal lp-spot">
                 <h3>{SITE_A_LA_DEMANDE.titre}</h3>
@@ -355,7 +355,7 @@ export default function Home() {
                 <div className="lp-mq-texte">
                   <span className="lp-kick">Pas encore prêt à essayer&nbsp;?</span>
                   <h2>Recevez la maquette de votre site.</h2>
-                  <p>Donnez votre activité et votre site actuel ou votre compte Instagram : l&apos;assistant IA de Presti prépare une maquette de site pour votre entreprise et vous l&apos;envoie à l&apos;adresse que vous indiquez. Gratuit, sans compte, sans carte.</p>
+                  <p>Donnez votre activité et votre site actuel ou votre compte Instagram : l&apos;assistant IA de Presti prépare une maquette de site pour votre entreprise et vous l&apos;envoie à l&apos;adresse que vous indiquez, sans délai garanti. Gratuit, sans compte, sans carte.</p>
                   <p className="lp-mq-note">Une seule demande par entreprise. Vous pouvez refuser toute suite en répondant STOP.</p>
                 </div>
                 <MaquetteForm metiers={METIERS.map((m) => ({ id: m.id, libelle: m.libelle }))} />

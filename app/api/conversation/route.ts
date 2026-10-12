@@ -7,7 +7,7 @@ import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
-import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
 
@@ -175,10 +175,13 @@ export async function POST(req: Request) {
     const cfg = await getPlateformeConfig(artisan.id)
     const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA: history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length, message })
     if (!decision.ok) {
-      if (artisan.email) {
+      // En pause, le message attend dans Messages sans notification — comme sur /stream (l'aide le dit).
+      if (artisan.email && decision.raison !== 'pause') {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           leadId: lead.id,
-          subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
+          subject: decision.raison === 'escalade'
+            ? `⚠️ Demande sensible (« ${decision.mot} ») — ${lead.nom_prospect || lead.contact || 'prospect'}`
+            : `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
           text: `Un prospect vous a écrit sur votre page Presti :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
         }).catch(() => {})
@@ -212,7 +215,7 @@ export async function POST(req: Request) {
         { sens: 'in' as const, contenu: message },
       ]
       reply = await generateConversationReply(
-        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+        { nom: artisan.nom, metier: artisan.metier, ton_style: tonDeReponse(cfg, artisan.ton_style), services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
         turns, modeleRegle, undefined, { persona: personaDe(cfg) },
       )

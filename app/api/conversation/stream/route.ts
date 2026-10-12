@@ -7,20 +7,13 @@ import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
-import { getPlateformeConfig, decisionReponse, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 
-// Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
-const TON: Record<PlateformeConfig['ton'], string> = {
-  sobre: 'sobre, factuel et précis',
-  chaleureux: 'professionnel, chaleureux et rassurant',
-  direct: 'direct et efficace, sans détour',
-}
-
-// Conversation en STREAMING (v4 §A2) : le prospect voit la réponse s'écrire au fil de
-// l'eau au lieu d'attendre un spinner opaque. Mêmes garde-fous que /api/conversation
-// (jeton secret, honeypot, anti-flood, plafond de tours, crédits, mode manuel).
-// Les erreurs AVANT le flux sortent en JSON classique ; ensuite tout passe en SSE.
+// Conversation en SSE (v4 §A2). Mêmes garde-fous que /api/conversation (jeton secret, honeypot, anti-flood, plafond de
+// tours, crédits, mode manuel). Les erreurs AVANT le flux sortent en JSON classique ; ensuite tout passe en SSE.
+// Depuis le 12/10, la réponse automatique n'est plus diffusée mot à mot : elle est générée, passée au garde-fou anti-prix
+// et anti-créneau (lib/ai.ts, garderAvantEnvoi), PUIS envoyée en un fragment. Le format des événements ne change pas.
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -128,7 +121,7 @@ export async function POST(req: Request) {
         try {
           const turns: ConvTurn[] = [...history.map((m) => ({ sens: m.sens, contenu: m.contenu })), { sens: 'in' as const, contenu: message }]
           const proposition = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: tonDeReponse(cfg, artisan.ton_style), services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns, model, undefined, { persona: personaDe(cfg) },
           )
@@ -162,11 +155,11 @@ export async function POST(req: Request) {
         let complet = ''
         try {
           complet = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: tonDeReponse(cfg, artisan.ton_style), services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns,
             modeleRegle, // le modèle réglé par l'artisan (audit v5 : Haiku était servi d'office), débité à son vrai tarif (M1)
-            (d) => { envoyer({ t: 'delta', v: d }) },
+            (d) => { envoyer({ t: 'delta', v: d }) }, // un seul fragment : le texte déjà filtré
             { persona: personaDe(cfg) }, // le TON réglé par l'artisan (§9 G2)
           )
         } catch (e) {

@@ -41,7 +41,7 @@ export default function AcheterSite() {
     <div className="card" style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)' }}>
       <h1>Commander votre site</h1>
       <p>Votre site : <strong>{PRIX_SITE_TEXTE}</strong>, paiement unique. TVA non applicable (art. 293 B du CGI).</p>
-      <p>En ligne sous {DELAI_ANNONCE} après validation par Presti.</p>
+      <p>Livré sous {DELAI_ANNONCE} après le paiement de votre dossier complet, avec une validation humaine par Presti.</p>
       <form onSubmit={envoyer} style={{ display: 'grid', gap: '1rem' }}>
         <label>E-mail<input name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} /></label>
         <label>Nom de l’entreprise<input name="entreprise" required minLength={2} maxLength={80} value={entreprise} onChange={e => setEntreprise(e.target.value)} /></label>

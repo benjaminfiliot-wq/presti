@@ -9,7 +9,12 @@ import { normalizeDomain } from '@/lib/vercelDomains'
 export const PRIX_SITE_CENTS = 30000
 export const PRIX_SITE_TEXTE = '300 €'
 export const DELAI_ANNONCE = '48 h ouvrées'
-export const DELAI_TEXTE = `Livré sous ${DELAI_ANNONCE} après la validation humaine de votre site par Presti.`
+// Le délai court à partir du PAIEMENT (audit des promesses du 12/10, site, ligne 53) : « livré sous 48 h ouvrées APRÈS la
+// validation » ne mesurait rien, puisque la validation met le site en ligne dans le même geste (app/api/controle/sites/[id]).
+// Du paiement d'un dossier complet à la mise en ligne, c'est ce que surveille lib/siteLivraison.ts (commandesEnRetard :
+// 24 h ouvrées pour la génération, 24 h pour la validation, alerte à l'entreprise au-delà ; un dossier incomplet n'est pas
+// décompté — d'où « dossier complet »).
+export const DELAI_TEXTE = `Livré sous ${DELAI_ANNONCE} après le paiement de votre dossier complet, avec une validation humaine par Presti.`
 
 /** Le bloc de vente (v15 §2.1), rendu par la landing et /abonnement HORS grille d'abonnement, uniquement quand le
  *  drapeau `siteCommandeVente` est levé. Trois phrases, pas une promesse de classement, pas un délai autre que le

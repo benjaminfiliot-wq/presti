@@ -58,7 +58,7 @@ export const PLANS: Record<PlanId, Plan> = {
   gratuit: { label: 'Essai', accroche: 'Pour juger sur vos vraies demandes, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
   essentiel: { label: 'Essentiel', accroche: 'Pour ne plus louper une demande.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
   studio: { label: 'Studio', accroche: 'L’assistant qui répond seul, jour et nuit.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
-  signature: { label: 'Signature', accroche: 'L’atelier à plein régime, image d’agence.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
+  signature: { label: 'Signature', accroche: 'L’atelier à plein régime : modèle Expert et règles d’automatisation.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Fondateurs : plan interne, illimité (jamais décompté).
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
 }
@@ -126,16 +126,23 @@ const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Plateforme', label: 'Personnalisation', cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
   { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Devis & factures', label: 'Factures + facture électronique', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Devis & factures', label: 'Relances automatiques', cellules: { essentiel: true, studio: true, signature: true } },
+  // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
+  // un fichier XML Factur-X (CII) à télécharger, non validé au Schematron officiel ni embarqué dans un PDF/A-3 (lib/facturx.ts).
+  { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', cellules: { essentiel: true, studio: true, signature: true } },
+  // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
+  // depuis la conversation. Rangées sous « Devis & factures », elles promettaient la relance d'un devis créé seul ou d'un
+  // impayé, qui n'existe pas (audit des promesses du 12/10).
+  { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', cellules: { essentiel: false, studio: true, signature: true } },
   { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', cellules: { essentiel: false, studio: 'Standard + Pro', signature: '+ Expert' }, flag: 'inventaireRecherche' },
   { groupe: 'Canaux', label: 'Votre boîte email branchée', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Canaux', label: 'WhatsApp', cellules: { essentiel: false, studio: true, signature: true }, flag: 'canauxWhatsapp' },
   { groupe: 'Canaux', label: 'Réseaux sociaux', cellules: { essentiel: false, studio: false, signature: true }, flag: 'canauxReseaux' },
   { groupe: 'Inclus', label: 'Crédits chaque mois', cellules: { essentiel: '80', studio: '250', signature: '600' } },
-  { groupe: 'Inclus', label: 'Export de vos données', cellules: { essentiel: false, studio: true, signature: true } },
-  { groupe: 'Inclus', label: 'Support prioritaire', cellules: { essentiel: false, studio: false, signature: true } },
+  // L'export est ouvert à TOUS (app/api/donnees/export, portabilité RGPD) : la grille le retirait à l'Essentiel.
+  { groupe: 'Inclus', label: 'Export de vos données', cellules: { essentiel: true, studio: true, signature: true } },
+  // Délais de première réponse des CGU (§4) ; la demande d'un Signature arrive marquée « prioritaire » (app/api/support/demande).
+  { groupe: 'Inclus', label: 'Support par écrit', cellules: { essentiel: '3 jours ouvrés', studio: '2 jours ouvrés', signature: 'Prioritaire · 1 jour ouvré' } },
 ]
 
 /** La grille telle qu'on a le droit de la montrer aujourd'hui. */

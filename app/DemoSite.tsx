@@ -47,7 +47,7 @@ export default function DemoSite() {
 
   return (
     <div className="ds reveal">
-      <div className="lp-head2 c"><span className="lp-kick">Et le site qui va avec</span><h2>Un site qui donne envie d&apos;appeler.</h2><p>Un artisan fictif, un vrai site : l&apos;escalier ouvre la visite, puis l&apos;atelier, les pièces livrées et le devis se découvrent au fil de la page.</p></div>
+      <div className="lp-head2 c"><span className="lp-kick">En option : le site</span><h2>Un site qui donne envie d&apos;appeler.</h2><p>Un artisan fictif, un vrai site : l&apos;escalier ouvre la visite, puis l&apos;atelier, les pièces livrées et le devis se découvrent au fil de la page.</p></div>
       <a className="ds-cadre" href={DEMO} target="_blank" rel="noopener" aria-label="Ouvrir le site de démonstration Atelier Lestraque dans un nouvel onglet">
         {reduit
           ? <img src={AFFICHE} alt="Le site de démonstration Atelier Lestraque : un escalier en bois en plein cadre sous le titre « Fait pour rester »" width={1280} height={720} loading="lazy" />

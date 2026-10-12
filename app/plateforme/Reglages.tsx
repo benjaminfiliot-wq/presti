@@ -154,7 +154,7 @@ export default function Reglages({ uid, plan, pause, onPause }: { uid: string; p
         <label className="pcfg-lab">Modèle utilisé <Info cle="plateforme.modele" /></label>
         <div className="pcfg-seg">
           {MODELES.map((m) => <button type="button" key={m.id} className={cfg.modele === m.id ? 'on' : ''} onClick={() => set('modele', m.id)}>{m.nom}</button>)}
-          <button type="button" className={!cfg.modele ? 'on' : ''} onClick={() => set('modele', null)}>Selon ma formule</button>
+          <button type="button" className={!cfg.modele ? 'on' : ''} onClick={() => set('modele', null)}>Par défaut (Standard)</button>
         </div>
 
         <label className="pcfg-lab">Ton <Info cle="plateforme.ton" /></label>
@@ -185,7 +185,7 @@ export default function Reglages({ uid, plan, pause, onPause }: { uid: string; p
           <input type="number" min={0} max={40} value={cfg.limite_messages} onChange={(e) => set('limite_messages', Number(e.target.value))} style={{ width: 90 }} />
           <span>réponses de l’assistant dans une même conversation</span>
         </div>
-        <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.8rem' }}>Le devis et la facture automatiques se règlent dans l’onglet <b>Automatisations</b>.</p>
+        <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.8rem' }}>Le devis brouillon automatique (offre Signature) et la facture d’acompte à l’acceptation se règlent dans l’onglet <b>Automatisations</b>.</p>
       </div>
 
       <div className="tool-card">

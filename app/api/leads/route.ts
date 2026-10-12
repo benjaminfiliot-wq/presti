@@ -3,7 +3,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
 import { generateConversationReply, generateLeadReply, qualifyLead } from '@/lib/ai'
 import { villeDe } from '@/lib/ville'
-import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
+import { avecMentionAssistant } from '@/lib/mentionAssistant'
 import { resolveModel } from '@/lib/models'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
@@ -134,6 +135,22 @@ export async function POST(req: Request) {
     // Compte suspendu par la direction (v15 §5) : le lien ne prend plus de demandes — refus neutre, sans trace.
     if (await suspensionEnCours(artisan.id)) return NextResponse.json({ error: MESSAGE_PUBLIC_INDISPONIBLE }, { status: 410 })
 
+    // Premier message écrit sur la page de conversation (PlatChat : `deferContact`) : le client n'a pas encore laissé ses
+    // coordonnées. Jusqu'au 12/10, l'artisan n'était prévenu de rien tant qu'il ne les avait pas laissées — sur le parcours
+    // principal, la première demande d'un client ne faisait vibrer aucun téléphone, alors que l'aide le promet (audit des
+    // promesses, produit, ligne 28). Il l'est désormais tout de suite, par un avis NEUTRE : ni le nom, ni le message, ni
+    // aucune donnée du client (elles sont dans son espace) ; l'avis détaillé suit quand le client laisse ses coordonnées
+    // (/api/leads/contact). Les plafonds anti-abus (par adresse, par artisan) s'appliquent avant : un robot ne peut pas l'inonder.
+    const artisanAvis = artisan
+    const prevenirSansCoordonnees = async (etat: string, leadIdAvis: string) => {
+      if (!deferContact || !artisanAvis.email) return
+      await notifierArtisan(artisanAvis.id, 'nouvelle_demande', artisanAvis.email, {
+        leadId: leadIdAvis,
+        subject: 'Nouvelle demande sur votre page',
+        text: `Un client vient d'écrire sur votre page de conversation.\n\n${etat}\n\nIl n'a pas encore laissé ses coordonnées : vous serez prévenu à nouveau s'il le fait. Lisez sa demande dans votre espace (Messages).`,
+      }).catch(() => {})
+    }
+
     // Qualification silencieuse (déterministe, 0 coût IA) : urgence + type de chantier → tri de l'inbox.
     const qualif = qualifyLead(message, artisan.metier)
 
@@ -233,7 +250,7 @@ export async function POST(req: Request) {
       }
       // L'artisan est quand même prévenu, une fois par fenêtre : sans cela, huit fausses demandes toutes les dix
       // minutes suffisaient à lui cacher les vraies (audit offensif du 11/10, M2). Ni IA ni accusé de réception.
-      if (artisan.email && !deferContact && await consommerLimite(`leads:notif-groupee:${artisan.id}`, 1, 10 * 60)) {
+      if (artisan.email && await consommerLimite(`leads:notif-groupee:${artisan.id}`, 1, 10 * 60)) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           leadId: lead.id,
           subject: 'Plusieurs nouvelles demandes en peu de temps',
@@ -259,7 +276,7 @@ export async function POST(req: Request) {
       if (credit.ok && message) {
         try {
           const proposition = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: tonDeReponse(cfgPlateforme, artisan.ton_style), services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect, contact, message },
             [{ sens: 'in', contenu: message }], model, undefined, { persona: personaDe(cfgPlateforme) },
           )
@@ -277,6 +294,7 @@ export async function POST(req: Request) {
         if (!proposee) await rendreCredit(artisan.id, tier, !!artisan.is_founder)
       }
 
+      await prevenirSansCoordonnees(proposee ? 'Une réponse est proposée : à valider avant qu’elle parte.' : 'Aucune réponse n’a été préparée : à vous de lui répondre.', lead.id)
       if (artisan.email && !deferContact) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           leadId: lead.id,
@@ -298,6 +316,7 @@ export async function POST(req: Request) {
           text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\nÀ très bientôt.`,
           replyTo: artisan.email ?? undefined,
           anonyme: true,
+          transactionnel: true,
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
@@ -306,10 +325,12 @@ export async function POST(req: Request) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
+      const sensible = decision.raison === 'escalade'
+      await prevenirSansCoordonnees(sensible ? `Demande sensible (« ${decision.mot} ») : l’assistant s’est tu, à vous de lui répondre.` : 'Aucune réponse n’a été préparée : à vous de lui répondre.', lead.id)
       if (artisan.email && !deferContact) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           leadId: lead.id,
-          subject: `Nouveau contact — ${nom_prospect || contact}`,
+          subject: sensible ? `⚠️ Demande sensible (« ${decision.mot} ») — ${nom_prospect || contact}` : `Nouveau contact — ${nom_prospect || contact}`,
           text: `Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
         }).catch(() => {})
@@ -326,6 +347,7 @@ export async function POST(req: Request) {
           text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\nÀ très bientôt.`,
           replyTo: artisan.email ?? undefined,
           anonyme: true,
+          transactionnel: true,
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
@@ -333,11 +355,23 @@ export async function POST(req: Request) {
 
     // Décompte d'un crédit pour la réponse auto. Si épuisé : le lead est TOUJOURS
     // sauvé (visible dans le dashboard), on coupe seulement la génération IA.
-    const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+    // Le modèle réglé dans Ma plateforme, débité à son vrai tarif : jusqu'au 12/10, ce premier message servait Standard quel
+    // que soit le réglage (audit des promesses, produit, ligne 44) — comme les deux routes de conversation, désormais.
+    const { model: modeleAuto, tier: tierAuto } = resolveModel(cfgPlateforme.modele || 'standard', artisan.plan)
+    const credit = await consumeCredit(artisan.id, tierAuto, !!artisan.is_founder)
     if (!credit.ok) {
       console.warn('[leads] crédits épuisés pour artisan', artisan.id, '— réponse auto coupée, lead conservé')
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      await prevenirSansCoordonnees('Vos crédits sont épuisés : aucune réponse n’a été préparée, à vous de lui répondre.', lead.id)
+      if (artisan.email && !deferContact) {
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          leadId: lead.id,
+          subject: `Nouveau contact — ${nom_prospect || contact}`,
+          text: `Nouveau contact via votre page Presti. Vos crédits sont épuisés : aucune réponse n'a été préparée, à vous de répondre.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
+          replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
+        }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, raison: 'credits' })
     }
@@ -357,10 +391,18 @@ export async function POST(req: Request) {
         })
       }
 
+      // Le ton, le modèle et la persona de Ma plateforme (formule d'ouverture, vous/tu, longueur, émojis) : jusqu'au 12/10,
+      // ce premier message les ignorait tous (audit des promesses, produit, lignes 44, 45, 54).
       const reply = await generateLeadReply(
-        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+        { nom: artisan.nom, metier: artisan.metier, ton_style: tonDeReponse(cfgPlateforme, artisan.ton_style), services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
         { nom_prospect, contact, message },
+        modeleAuto, undefined, personaDe(cfgPlateforme),
       )
+      // Le garde-fou a pu retirer tout le texte (il n'y avait qu'une phrase, fautive) : rien ne part, le crédit revient.
+      if (!reply) {
+        await rendreCredit(artisan.id, tierAuto, !!artisan.is_founder)
+        await prevenirSansCoordonnees('Aucune réponse n’a pu être préparée : à vous de lui répondre.', lead.id)
+      }
 
       if (reply) {
         replyText = reply
@@ -375,16 +417,23 @@ export async function POST(req: Request) {
 
         // a) réponse instantanée au prospect (si son contact est un email).
         //    En mode différé (variante B), pas encore de contact → l'email partira à la capture.
+        //    Elle part sans relecture : elle le DIT (règlement IA, art. 50 ; lib/mentionAssistant.ts). Et son résultat est lu :
+        //    jusqu'au 12/10, l'artisan lisait « envoyée au prospect » même quand l'envoi avait été refusé (plafond, panne).
+        let partie = false
         if (isEmail && !deferContact) {
-          await sendEmail({
+          const envoi = await sendEmail({
             to: contact,
             fromName: artisan.nom?.trim() || 'Votre artisan',
             subject: `Votre demande — ${artisan.nom?.trim() || 'Votre artisan'}`,
-            text: reply,
+            text: avecMentionAssistant(reply, artisan.nom),
             replyTo: artisan.email ?? undefined,
             anonyme: true,
-          })
+            transactionnel: true,
+          }).catch((e: unknown) => ({ ok: false, error: e instanceof Error ? e.message : 'erreur' }))
+          partie = envoi.ok
+          if (!envoi.ok) console.error('[leads] réponse automatique non partie :', envoi.error ?? 'envoi refusé')
         }
+        await prevenirSansCoordonnees('L’assistant lui a répondu sur votre page (mode automatique).', lead.id)
 
         // b) notification à l'artisan (différée aussi en variante B : rien à recontacter encore)
         if (artisan.email && !deferContact) {
@@ -394,7 +443,7 @@ Nom : ${nom_prospect || 'non précisé'}
 Contact : ${contact}
 Besoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}
 
-Réponse automatique ${isEmail ? 'envoyée au prospect' : '(prospect sans email — à rappeler)'} :
+${!isEmail ? 'Réponse automatique (prospect sans email — à rappeler)' : partie ? 'Réponse automatique envoyée au prospect par email' : 'Réponse automatique préparée, mais l’email au prospect N’EST PAS PARTI — recontactez-le vous-même'} :
 ---
 ${reply}`
           await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
@@ -432,7 +481,10 @@ ${reply}`
       // lead conservé en 'nouveau' — visible dans le dashboard, rien de perdu. L'entreprise est
       // prévenue et le crédit rendu si la réponse n'a pas été produite (audit final, E, M5).
       await signalerPanneIA('première réponse (/api/leads)', e)
-      if (!replyText) await rendreCredit(artisan.id, 'standard', !!artisan.is_founder)
+      if (!replyText) {
+        await rendreCredit(artisan.id, tierAuto, !!artisan.is_founder)
+        await prevenirSansCoordonnees('Aucune réponse n’a pu être préparée : à vous de lui répondre.', lead.id)
+      }
     }
 
     // On renvoie le jeton (pour ouvrir le fil de conversation côté prospect) et,

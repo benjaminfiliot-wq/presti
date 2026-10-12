@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { notifierEntreprise } from '@/lib/email'
 import { actif } from '@/lib/flags'
+import { peut } from '@/lib/plans'
 import crypto from 'node:crypto'
 
 export const runtime = 'nodejs'
@@ -40,8 +41,12 @@ export async function POST(req: Request) {
   const elId = typeof el?.id === 'string' && /^[0-9a-f-]{36}$/i.test(el.id) ? el.id : ''
   if (!!el && (!elType || !elId)) return NextResponse.json({ error: 'Élément inconnu.' }, { status: 400 })
 
-  const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', s.uid).maybeSingle()
+  const { data: a } = await supabaseAdmin.from('artisans').select('nom, email, plan').eq('id', s.uid).maybeSingle()
   const nom = a?.nom || a?.email || 'Un artisan'
+  // Le délai promis par les CGU (§4) et la grille (lib/plans.ts, « Support par écrit »), écrit EN TÊTE du sujet, là où la
+  // personne qui répond le lit : jusqu'au 12/10, rien dans le produit ne distinguait la demande d'un Signature (« tête de
+  // file ») de celle d'un essai (audit des promesses, site, ligne 47).
+  const marque = peut(a?.plan, 'support.prioritaire') ? '[Prioritaire · 1 jour ouvré]' : peut(a?.plan, 'plateforme.ia.auto') ? '[2 jours ouvrés]' : '[3 jours ouvrés]'
 
   // Le titre est résolu ICI, à partir de la base, et jamais recopié du navigateur : c'est ce que
   // l'artisan relira dans son écran de sécurité, et il doit venir de ses données, pas d'un champ.
@@ -66,7 +71,7 @@ export async function POST(req: Request) {
   const { data: c, error: eC } = await supabaseAdmin.rpc('enregistrer_courrier', {
     p_message_id: messageId, p_fil: messageId, p_sens: 'recu',
     p_email: a?.email ?? '', p_nom: nom,
-    p_sujet: sujet || 'Demande d’aide', p_corps: message,
+    p_sujet: `${marque} ${sujet || 'Demande d’aide'}`, p_corps: message,
     p_recu_le: new Date().toISOString(), p_boite: 'SUPPORT', p_uid: null,
   })
   if (eC) { console.error('[support] courrier :', eC.message); return NextResponse.json({ error: 'Votre message n’a pas pu être enregistré.', code: 'transaction' }, { status: 503 }) }
@@ -81,7 +86,7 @@ export async function POST(req: Request) {
 
   // On prévient, sans faire échouer la demande si l'email ne part pas : le message est DÉJÀ en base,
   // et le perdre parce qu'une notification a raté serait le pire des deux mondes.
-  await notifierEntreprise(`Demande d’aide — ${nom}`, `${nom}\n\n${message.slice(0, 2000)}`, a?.email ?? undefined)
+  await notifierEntreprise(`${marque} Demande d’aide — ${nom}`,`${nom}\n\n${message.slice(0, 2000)}`, a?.email ?? undefined)
     .catch(() => {})
 
   return NextResponse.json({
