@@ -70,6 +70,13 @@ export const FLAGS = {
   canauxWhatsapp: false,
   /** Canaux réseaux sociaux — idem. */
   canauxReseaux: false,
+  /** 12/10 — Le Bon Coin par l'e-mail de notification (lib/canaux/leboncoin.ts, reconnu dans la relève de la boîte branchée) :
+   *  pas d'API, l'artisan copie la réponse préparée et la colle dans Le Bon Coin. Construit, testé sur fixtures INVENTÉES.
+   *  Se lève après la migration 0139 appliquée ET un vrai e-mail de notification passé au parseur (caviardé). Baissé : la
+   *  relève ignore ces e-mails comme avant (expéditeur automatique), et rien n'en parle à l'écran.
+   *  canauxWhatsapp et canauxReseaux, eux, ouvrent les canaux Meta (app/api/canaux/meta, lib/canaux/meta.ts) : même ordre,
+   *  0139 d'abord, puis un vrai message reçu et une vraie réponse envoyée depuis l'application Meta de test. */
+  canauxLeboncoin: false,
   /** v15 §3 — le site à la demande : la page /site/commander, le dossier (api/site/commander/brouillon) et le
    *  paiement unique (api/site/commander). À lever dès que la migration 0088 est collée : levé sans la table,
    *  les routes répondent 503 (fail-closed, voulu) — d'où l'ordre : appliquer (Claude Code), puis lever. Baissé : 404. */

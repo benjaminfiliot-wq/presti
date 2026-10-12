@@ -124,6 +124,9 @@ const LIBELLES_CANAL: Record<string, string> = {
   email: 'E-mail',
   site: 'Site',
   whatsapp: 'WhatsApp',
+  messenger: 'Messenger',
+  instagram: 'Instagram',
+  leboncoin: 'Le Bon Coin',
   telephone: 'Téléphone',
   autre: 'Autre',
 }

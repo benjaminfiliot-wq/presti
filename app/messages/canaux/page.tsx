@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Info from '@/app/Info'
 import { actif } from '@/lib/flags'
+import CanauxMeta from './CanauxMeta'
 
 // Messages → Canaux (v4 §B2). Voie IMAP/SMTP : marche avec N'IMPORTE QUELLE boîte email
 // (OVH, Gmail, Orange, Free…) sans dépendre d'une application OAuth tierce.
@@ -159,10 +160,15 @@ export default function CanauxPage() {
         </div>
 
         {/* « Une fonctionnalité non finie n'apparaît pas » : ce bloc ne parle des autres canaux que lorsqu'ils existent. */}
-        {(actif('canauxWhatsapp') || actif('canauxReseaux')) && <div className="tool-card">
-          <h2>Les autres canaux</h2>
+        {(actif('canauxWhatsapp') || actif('canauxReseaux')) && <CanauxMeta />}
+
+        {actif('canauxLeboncoin') && <div className="tool-card">
+          <h2>Le Bon Coin</h2>
           <p className="muted" style={{ margin: 0 }}>
-            WhatsApp Business, Instagram, Messenger et SMS se branchent depuis cet écran.
+            Le Bon Coin ne permet à aucun logiciel de lire ou d’envoyer vos messages. Mais il vous prévient par e-mail à chaque nouveau message : connectez ci-dessus la boîte qui reçoit ces e-mails, et chaque message arrive dans votre boîte de réception avec une réponse préparée. Un clic la copie et ouvre la conversation sur Le Bon Coin : vous n’avez qu’à la coller.
+          </p>
+          <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.82rem' }}>
+            Quand l’e-mail ne recopie pas le texte du message, vous êtes prévenu et la conversation s’ouvre sur Le Bon Coin pour le lire.
           </p>
         </div>}
 
