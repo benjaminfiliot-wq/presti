@@ -1,0 +1,127 @@
+/* L'atelier vivant (/crm, onglet Atelier). La maquette est peinte par la scène (crème, ivoire, corail : lib/crm/atelier.ts) ;
+   tout ce qui l'entoure — barre, outils, panneaux, étiquettes — porte les jetons de la console (app/base.css), jamais une
+   couleur en dur, jamais de bleu ni de violet. Mouvement : seulement hors « réduire les animations ». */
+
+.atl { display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.atl * { box-sizing: border-box }
+.atl button { width: auto; margin: 0; font-family: var(--font-body) }
+.atl :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+
+/* — Barre du haut — */
+.atl-barre { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px }
+.atl-ensemble { background: var(--accent); color: var(--paper); border: 0; border-radius: 9px; padding: 7px 12px; font-weight: 700; font-size: 13px; cursor: pointer }
+.atl-live { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); background: var(--surface-2); border: 1px solid var(--line); border-radius: 20px; padding: 4px 10px }
+.atl-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok) }
+.atl-notif { background: var(--accent-tint); color: var(--accent-ink); border: 1px solid var(--accent-tint-2); border-radius: 20px; padding: 4px 10px; font-size: 12.5px; font-weight: 700; cursor: pointer }
+.atl-filtres { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto }
+.atl-filtres button, .atl-bascule { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer }
+.atl-filtres button span { color: var(--muted); margin-left: 3px }
+.atl-filtres button.on { background: var(--accent-tint); border-color: var(--accent); color: var(--ink) }
+.atl-filtres button.on span { color: var(--accent-ink) }
+.atl-bascule:disabled { opacity: .55; cursor: default }
+.atl-metier select { width: auto; padding: 6px 8px; font-size: 12.5px; border-radius: 9px; background: var(--surface-2) }
+
+.atl-aide { position: relative }
+.atl-aide summary { list-style: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); font-weight: 700; cursor: pointer }
+.atl-aide summary::-webkit-details-marker { display: none }
+.atl-aide-corps { position: absolute; z-index: 60; right: 0; top: 38px; width: min(380px, 86vw); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-lg); font-size: 13px; line-height: 1.5; color: var(--ink-soft) }
+.atl-aide-corps p { margin: 0 0 8px }
+.atl-aide-corps ul { margin: 0 0 8px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px }
+.atl-aide-corps b { color: var(--ink) }
+
+/* — Cadre de la maquette — */
+.atl-cadre { position: relative; min-height: min(72vh, 760px); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface) }
+.atl-toile { position: absolute; inset: 0 }
+.atl-charge { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px }
+.atl-outils { position: absolute; z-index: 30; left: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 5px; box-shadow: var(--shadow-sm) }
+.atl-outils button { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 0; background: transparent; color: var(--ink); font-size: 17px; cursor: pointer }
+.atl-outils button:hover { background: var(--surface-2) }
+.atl-sep { height: 1px; background: var(--line); margin: 3px 2px }
+
+.atl-scene { position: absolute; inset: 0 }
+/* Le calque des étiquettes : placé par une seule boucle (Projecteur), il laisse passer les clics vers la maquette. */
+.atl-etiquettes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 5 }
+.atl-etiquettes > * { position: absolute; left: 0; top: 0; will-change: transform; transform: translate3d(-999px, -999px, 0) }
+.atl-etiquettes > button { pointer-events: auto }
+.atl-bulle.cachee { visibility: hidden }
+/* Étiquettes posées sur la maquette (DOM) : sombres, lisibles sur la scène claire. */
+.atl-zone { display: inline-block; white-space: nowrap; font: 700 11px var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-hover); background: var(--paper); opacity: .78; padding: 2px 7px; border-radius: 6px }
+.atl-pastille { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font: 600 11.5px var(--font-body); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3px 9px 3px 6px; cursor: pointer; box-shadow: var(--shadow-sm) }
+.atl-pastille i { width: 9px; height: 9px; border-radius: 50% }
+.atl-pastille.estompe { opacity: .3 }
+.atl-pastille.choisie { border-color: var(--accent); background: var(--surface-2) }
+.atl-bulle { display: inline-flex; flex-direction: column; white-space: nowrap; font: 500 11.5px var(--font-body); color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: 9px; padding: 5px 9px; box-shadow: var(--shadow-sm) }
+.atl-bulle b { color: var(--ink); font-size: 12.5px }
+
+/* — Panneau latéral (le même en 3D et en 2D) — */
+.atl-panneau { position: absolute; z-index: 40; top: 10px; right: 10px; bottom: 10px; width: min(410px, calc(100% - 20px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden }
+.atl-panneau > header { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 13px 15px 11px; border-bottom: 1px solid var(--line-2) }
+.atl-panneau h2 { grid-column: 1; margin: 0; font-family: var(--font-display); font-size: 18px; letter-spacing: -.01em; overflow-wrap: anywhere }
+.atl-panneau h2:focus { outline: none }
+.atl-type { grid-column: 1; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent-ink) }
+.atl-fermer { grid-column: 2; grid-row: 1 / span 2; align-self: start; width: 30px; height: 30px; display: grid; place-items: center; padding: 0; line-height: 1; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font-size: 18px; cursor: pointer }
+.atl-panneau-corps { padding: 13px 15px 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px }
+.atl-panneau-corps .crm-fiche { gap: 10px }
+.atl-panneau-corps .crm-entete h2 { font-size: 17px }
+.atl-pile { display: flex; flex-direction: column; gap: 10px }
+.atl-statut { margin: 0; display: flex; align-items: center; gap: 8px; font-weight: 600 }
+.atl-statut i { width: 10px; height: 10px; border-radius: 50% }
+.atl-barre-progression, .atl-panneau-corps [role="progressbar"].atl-barre { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; padding: 0; border: 0 }
+.atl-panneau-corps [role="progressbar"].atl-barre > span { display: block; height: 100%; background: var(--accent) }
+.atl-dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: 13.5px }
+.atl-dl dt { color: var(--muted) }
+.atl-dl dd { margin: 0; text-align: right; overflow-wrap: anywhere }
+.atl-chiffres { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.atl-chiffres > div { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px }
+.atl-chiffres .lab { font-size: 11.5px; color: var(--muted) }
+.atl-chiffres b { font-family: var(--font-display); font-size: 22px }
+.atl-alerte { color: var(--accent-ink) }
+.atl-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column }
+.atl-liste li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; min-width: 0 }
+.atl-liste li > :first-child { min-width: 0; overflow-wrap: anywhere }
+.atl-liste li.bas b { color: var(--accent-ink) }
+.atl-liste a { color: var(--ink); font-weight: 600; text-decoration: none }
+.atl-qte { white-space: nowrap; text-align: right }
+.atl-qte small { display: block; color: var(--muted) }
+.atl-commande { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line-2); padding-top: 10px }
+.atl-commande-f { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px }
+.atl-commande-f h3 { margin: 0; font-size: 14px }
+.atl-commande-f ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
+.atl-commande-f label { display: grid; grid-template-columns: 1fr 74px auto; align-items: center; gap: 8px; font-size: 13px }
+.atl-commande-f input { padding: 4px 6px; font-size: 13px }
+
+/* — Repli 2D — */
+.atl-plan { padding: 14px; display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: auto }
+.atl-plan-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+.atl-plan-zone { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0 }
+.atl-plan-chantier { grid-column: 1 / -1 }
+.atl-plan-zone h3 { margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.atl-plan-zone ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px }
+.atl-plan-objet { width: 100% !important; text-align: left; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; min-height: 44px }
+.atl-plan-objet i { grid-row: 1 / span 2; width: 10px; height: 10px; border-radius: 50% }
+.atl-plan-nom { font-weight: 700; font-size: 13.5px; overflow-wrap: anywhere }
+.atl-plan-detail { grid-column: 2; font-size: 12px; color: var(--muted) }
+.atl-plan-objet:not(:has(i)) .atl-plan-nom, .atl-plan-objet:not(:has(i)) .atl-plan-detail { grid-column: 1 / -1 }
+.atl-plan-objet.estompe { opacity: .45 }
+.atl-plan-objet.choisi { border-color: var(--accent); background: var(--accent-tint) }
+.atl-liste-3d { position: absolute; z-index: 25; left: 58px; bottom: 10px; max-width: calc(100% - 80px); max-height: 60%; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 12.5px }
+.atl-liste-3d summary { cursor: pointer; padding: 6px 10px; color: var(--muted) }
+.atl-liste-3d:not([open]) { opacity: .92 }
+
+/* — Légende — */
+.atl-legende { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted) }
+.atl-legende span { display: inline-flex; align-items: center; gap: 6px }
+.atl-legende i { width: 9px; height: 9px; border-radius: 50% }
+.atl-hors { color: var(--warn) }
+
+@media (max-width: 760px) {
+  .atl[data-atelier-mode="2d"] .atl-cadre { min-height: 0 }
+  .atl[data-atelier-mode="3d"] .atl-cadre { min-height: 70vh }
+  .atl-panneau { position: fixed; inset: auto 0 0 0; width: 100%; max-height: 82vh; border-radius: var(--radius) var(--radius) 0 0 }
+  .atl-filtres { margin-left: 0 }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .atl-panneau { animation: atl-entre .22s var(--ease-out, ease-out) }
+  .atl-filtres button, .atl-plan-objet, .atl-pastille { transition: background-color .15s var(--ease-out, ease-out), border-color .15s var(--ease-out, ease-out), opacity .2s var(--ease-out, ease-out) }
+  @keyframes atl-entre { from { opacity: 0; transform: translateX(12px) } to { opacity: 1; transform: none } }
+}

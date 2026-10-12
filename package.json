@@ -13,6 +13,8 @@
     "@anthropic-ai/sdk": "^0.116.0",
     "@capacitor/core": "^8.5.1",
     "@react-pdf/renderer": "^4.8.1",
+    "@react-three/drei": "10.7.8",
+    "@react-three/fiber": "9.7.0",
     "@serwist/next": "^9.5.12",
     "@serwist/window": "^9.5.12",
     "@supabase/supabase-js": "^2.48.1",
@@ -26,6 +28,7 @@
     "react-dom": "^19.2.8",
     "serwist": "^9.5.12",
     "stripe": "^22.6.0",
+    "three": "0.185.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
@@ -34,6 +37,7 @@
     "@types/nodemailer": "^8.0.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
+    "@types/three": "0.185.4",
     "@types/web-push": "^3.6.4",
     "chrome-launcher": "^1.2.1",
     "fast-xml-parser": "^5.11.1",

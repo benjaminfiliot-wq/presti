@@ -148,6 +148,13 @@ export const FLAGS = {
    *  recette A5 du plan (évaluation, audits sécurité et RGPD par des agents distincts, parcours réel sur un compte de test) et
    *  l'accord de Benj. */
   assistant: false,
+  /** 12/10/2026 — CRM « atelier vivant » (offre Signature), jalons J1-J5 : migration 0141 (chantiers, tâches, matériaux
+   *  réservés, véhicules, équipe, notes, journal), routes /api/crm/*, page /crm (atelier 3D chargé à la demande avec repli 2D,
+   *  pipeline, tableau de bord, chantiers, fiche client, équipe). La page /atelier-demo (données fictives) est hors drapeau :
+   *  elle n'existe que sur un serveur lancé avec PRESTI_DEMO_ATELIER=1. Baissé : toutes les routes /api/crm/* et la page /crm répondent 404 avant toute lecture, rien dans le
+   *  menu, rien sur la page Tarifs. Se lève dans cet ordre : 0141 appliquée et contrôlée, scripts/crm-e2e.mjs vert contre une
+   *  base de test, recette J6 (plan 3.8) et accord de Benj. Levé sans 0141, les routes répondent 503 (tables absentes). */
+  crm: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

@@ -21,6 +21,7 @@ export type Capacite =
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
   | 'assistant'
+  | 'crm'
 
 type Plan = {
   label: string
@@ -54,6 +55,9 @@ const SIGNATURE: Capacite[] = [
   'canaux.reseaux', 'support.prioritaire',
   // 016 A1/A2 — l'assistant de gestion de la console (Signature, donc Business). Caché tant que le drapeau `assistant` est baissé.
   'assistant',
+  // CRM « atelier vivant » (0141) : Signature (et Business, qui reprend Signature) seulement. Contrôlé côté serveur par
+  // lib/crm/serveur.ts ; aucune ligne de la grille ne l'annonce tant que le drapeau `crm` est baissé.
+  'crm',
 ]
 
 export const PLANS: Record<PlanId, Plan> = {
