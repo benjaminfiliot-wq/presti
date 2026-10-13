@@ -153,8 +153,12 @@ export const FLAGS = {
    *  pipeline, tableau de bord, chantiers, fiche client, équipe). La page /atelier-demo (données fictives) est hors drapeau :
    *  elle n'existe que sur un serveur lancé avec PRESTI_DEMO_ATELIER=1. Baissé : toutes les routes /api/crm/* et la page /crm répondent 404 avant toute lecture, rien dans le
    *  menu, rien sur la page Tarifs. Se lève dans cet ordre : 0141 appliquée et contrôlée, scripts/crm-e2e.mjs vert contre une
-   *  base de test, recette J6 (plan 3.8) et accord de Benj. Levé sans 0141, les routes répondent 503 (tables absentes). */
-  crm: false,
+   *  base de test, recette J6 (plan 3.8) et accord de Benj. Levé sans 0141, les routes répondent 503 (tables absentes).
+   *  13/10/2026 soir — LEVÉ sur demande de Benj (« vérifie que le CRM fonctionne parfaitement et mets-le au grand public »).
+   *  Contrôlé avant : crm-qa 166/0, crm-sql-qa 64/0 (0141 rejouée, RLS des 8 tables), et en production les 8 tables ont
+   *  RLS + 5 politiques chacune, aucun droit pour anon. crm-e2e « levé » non joué : il exige une base de TEST distincte
+   *  (refuse la production) et il n'en existe pas ; Benj a utilisé le CRM en essai sur son compte. */
+  crm: true,
 } as const
 
 export type Flag = keyof typeof FLAGS
@@ -166,6 +170,6 @@ export const actif = (f: Flag): boolean => FLAGS[f]
  *  lib/essais.ts (jamais ici : ce fichier part dans le JavaScript public, audit d'attaque du 12/10, B1). Les routes
  *  répondent 404 à tout autre compte, l'entrée de menu ne s'affiche qu'après réponse de /api/essais. À remettre à
  *  false (et vider lib/essais.ts) quand le drapeau passe à true. */
-export const ESSAI: Partial<Record<Flag, boolean>> = { crm: true, assistant: true }
+export const ESSAI: Partial<Record<Flag, boolean>> = { assistant: true }
 /** La fonctionnalité existe pour au moins un compte (drapeau levé, ou essai en cours). */
 export const enEssai = (f: Flag): boolean => FLAGS[f] || !!ESSAI[f]

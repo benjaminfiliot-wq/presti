@@ -151,6 +151,8 @@ const GRILLE_COMPLETE: LigneGrille[] = [
   // depuis la conversation. Rangées sous « Devis & factures », elles promettaient la relance d'un devis créé seul ou d'un
   // impayé, qui n'existe pas (audit des promesses du 12/10).
   { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', cellules: { essentiel: true, studio: true, signature: true } },
+  // CRM « atelier vivant » (0141, lib/crm/) : Signature seulement (capacité `crm`) ; la ligne n'apparaît que drapeau levé.
+  { groupe: 'Devis & factures', label: 'CRM : pipeline, chantiers, tâches, équipe', cellules: { essentiel: false, studio: false, signature: true }, flag: 'crm' },
   { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', cellules: { essentiel: false, studio: true, signature: true } },
   { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', cellules: { essentiel: false, studio: 'Standard + Pro', signature: '+ Expert' }, flag: 'inventaireRecherche' },
   { groupe: 'Canaux', label: 'Votre boîte email branchée', cellules: { essentiel: true, studio: true, signature: true } },

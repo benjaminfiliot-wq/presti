@@ -106,7 +106,8 @@ var A_TEST = 'art-A'
   }
   for (const plan of ['signature', 'business']) T(`B6 offre ${plan} → accès`, decisionAcces({ drapeau: true, session: sOk, plan }).ok)
   T('B7 la capacité crm : Signature et Business seulement', Object.keys(PLANS).filter((p) => peut(p, 'crm')).sort().join(',') === 'business,signature')
-  T('B8 aucune ligne de la grille Tarifs ne parle du CRM', !GRILLE.some((l) => /crm|chantier|atelier vivant/i.test(l.label)))
+  // 13/10 soir — drapeau levé : la grille annonce le CRM, en Signature SEULEMENT (une ligne, Essentiel et Studio à « — »).
+  T('B8 la grille Tarifs annonce le CRM en Signature seulement', (() => { const l = GRILLE.filter((x) => /crm|chantier|atelier vivant/i.test(x.label)); return l.length === 1 && l[0].cellules.essentiel === false && l[0].cellules.studio === false && l[0].cellules.signature === true })())
 }
 
 // ═══════════════════════ C. Pipeline ═══════════════════════
@@ -354,7 +355,8 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const garde = sansCommentaires(lire('lib/crm/serveur.ts'))
   // 12/10 — l'essai par compte (lib/flags.ts ESSAIS) : enEssai AVANT la session, puis ouvertPour(uid) juste après elle, 404 sans corps.
   T('G5 la garde lit le drapeau AVANT la session, puis la liste d’essai sur l’uid, et répond 404 sans corps', garde.indexOf("enEssai('crm')") > 0 && garde.indexOf("enEssai('crm')") < garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") > garde.indexOf('authArtisan(req)') && garde.indexOf("ouvertPour('crm', session.uid)") < garde.indexOf("from('artisans')") && /new NextResponse\(null, \{ status: 404/.test(garde))
-  T('G6 drapeau `crm` baissé', /^\s*crm: false,/m.test(lire('lib/flags.ts')))
+  // 13/10 soir — drapeau LEVÉ sur décision de Benj : le CRM est ouvert au public (offre Signature), plus en essai par compte.
+  T('G6 drapeau `crm` levé, et plus dans ESSAI', /^\s*crm: true,/m.test(lire('lib/flags.ts')) && !/ESSAI[^\n]*crm: true/.test(lire('lib/flags.ts')))
   T('G7 menu : l’entrée CRM n’existe que drapeau levé ou compte en essai', /\.\.\.\(enEssai\('crm'\) \? \[\{ key: 'crm', essai: 'crm'/.test(lire('app/AppShell.tsx')) && /\.filter\(\(it\) => !it\.essai \|\| essais\[it\.essai\] === true\)/.test(lire('app/AppShell.tsx')))
   T('G8 page /crm : 404 serveur drapeau baissé sans essai (layout)', /if \(!enEssai\('crm'\)\) notFound\(\)/.test(lire('app/crm/layout.tsx')))
   T('G9 aucune page publique (Tarifs, landing, comparatif) ne parle du CRM', !['app/tarifs', 'app/page.tsx', 'app/Comparatif.tsx', 'app/abonnement'].some((p) => {
