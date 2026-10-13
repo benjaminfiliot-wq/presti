@@ -31,6 +31,8 @@ export async function GET(req: Request) {
     return NextResponse.json({
       abonnement: {
         statut: sub.status,
+        // Essai gratuit en cours : sa date de fin (null une fois payant). Sert à l'écran du compte : « Essai gratuit jusqu'au JJ/MM ».
+        essai_fin: sub.status === 'trialing' && sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null,
         fin_periode: fin ? new Date(fin * 1000).toISOString() : null,
         resiliation_prevue: !!sub.cancel_at_period_end,
         fin_prevue: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,

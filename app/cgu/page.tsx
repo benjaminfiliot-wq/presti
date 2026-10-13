@@ -3,6 +3,7 @@ import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
 import PublicPied from '@/app/PublicPied'
 import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
+import { ESSAI_JOURS } from '@/lib/plans'
 import { DELAI_LIVRAISON_JOURS_OUVRES, PRIX_PACK_STUDIO_TEXTE, VIDEOS_PACK_STUDIO } from '@/lib/studio/offre'
 
 export const metadata = {
@@ -39,6 +40,7 @@ export default function CGU() {
       <ul>
         <li>Le service s’adresse aux <strong>professionnels</strong> (artisans, entreprises du bâtiment et des services) agissant dans le cadre de leur activité. Il n’est pas destiné aux consommateurs.</li>
         <li>Presti propose une offre d’essai gratuite (limitée) et des abonnements payants fonctionnant à base de <strong>crédits</strong>. Les prix affichés sur la page <a href="/abonnement">Abonnement</a> sont exprimés en euros ; <strong>TVA non applicable, art. 293 B du CGI</strong> (franchise en base) : le montant affiché est le montant payé. Si Presti devient assujetti, les prix et la mention seront mis à jour avant tout prélèvement au nouveau régime.</li>
+        <li><strong>Essai gratuit sans carte</strong> : le premier abonnement payant (Essentiel, Studio, Signature) s’essaie gratuitement et sans carte bancaire, <strong>{ESSAI_JOURS.essentiel} jours</strong> en Essentiel, <strong>{ESSAI_JOURS.studio} jours</strong> en Studio, <strong>{ESSAI_JOURS.signature} jours</strong> en Signature, une seule fois par compte (et par adresse email). Les crédits de l’essai sont proportionnels à sa durée. À la fin de l’essai, si vous avez ajouté une carte, l’abonnement démarre et le premier prélèvement a lieu ce jour-là ; sans carte, l’abonnement s’arrête, rien n’est prélevé, et le compte repasse à l’offre d’essai, vos données restant en place.</li>
         <li>Les paiements sont traités par <strong>Stripe</strong>. Les abonnements sont sans engagement et résiliables à tout moment ; l’accès reste actif jusqu’à la fin de la période payée.</li>
         <li>Les crédits inclus dans un abonnement sont valables pour la période concernée et ne sont pas reportables sauf mention contraire.</li>
         <li>Sauf disposition légale impérative, les sommes versées ne sont pas remboursables une fois le service consommé.</li>

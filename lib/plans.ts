@@ -70,6 +70,17 @@ export const PLANS: Record<PlanId, Plan> = {
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
 }
 
+// ─── L'essai gratuit SANS CARTE des abonnements payants (décision de Benj, 13/10/2026) ──────────────
+// Une semaine d'Essentiel, deux de Studio, trois de Signature, sans saisir de carte. UNE SEULE constante pour les
+// durées : le Checkout (app/api/subscribe), le webhook, les textes et le juge (scripts/essais-gratuits-qa.mjs) la lisent.
+// Règles : lib/essaiGratuit.ts (pures) et lib/essaiGratuitServeur.ts (base + Stripe).
+export const ESSAI_JOURS: Record<PlanPayant, number> = { essentiel: 7, studio: 14, signature: 21 }
+
+/** Plafond de crédits d'un essai, tous plans confondus. Sans carte, rien n'engage l'artisan : le coût IA d'un essai doit rester
+ *  borné. La règle (lib/essaiGratuit.ts creditsEssai) : crédits du mois au prorata des jours d'essai sur 30, arrondis à
+ *  l'entier inférieur, puis plafonnés ici. → Essentiel 18 · Studio 116 · Signature 150 (au lieu de 420 au prorata pur). */
+export const ESSAI_CREDITS_PLAFOND = 150
+
 // Coût en crédits par niveau de modèle.
 export const CREDIT_COST: Record<Tier, number> = { standard: 1, pro: 1, expert: 3 }
 
