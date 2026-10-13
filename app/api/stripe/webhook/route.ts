@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe, concerneAbonnementCourant } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
+import { joursEssaiDeSession, creditsEssai, finEssai, finDEssaiSansPaiement, creditsApresEssaiPerdu, abonnementFerme, essaiDevenuPayant } from '@/lib/essaiGratuit'
+import { marquerEssai, alerteFinEssai } from '@/lib/essaiGratuitServeur'
 import { alignerSurAbonnement } from '@/lib/abonnementSync'
 import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
@@ -39,6 +41,51 @@ Mode : ${s.mode ?? '—'} · statut du paiement : ${s.payment_status ?? '—'}
 Métadonnées : ${JSON.stringify(s.metadata ?? {}).slice(0, 300)}
 Événement : ${idEvenement}`,
   }
+}
+
+// Fin d'un abonnement (customer.subscription.deleted, ou un statut qui ferme : canceled, incomplete_expired) : l'artisan retombe
+// sur l'offre d'Essai, sans rien perdre d'autre que les capacités payantes. Le contrôle d'ancienneté (concerneAbonnementCourant)
+// évite qu'un ancien abonnement rejoué rétrograde un abonné actif. Un essai gratuit qui finit SANS carte (Stripe l'annule
+// lui-même, essai gratuit du 13/10) ramène aussi les crédits au plus à ceux de l'offre d'Essai : les crédits de l'essai
+// ne survivent pas à l'essai.
+async function retourAGratuit(sub: Stripe.Subscription): Promise<void> {
+  const uid = (sub.metadata?.uid as string) || ''
+  if (!uid) return
+  const { data: enBase } = await supabaseAdmin.from('artisans').select('stripe_subscription_id, credits').eq('id', uid).maybeSingle()
+  if (!concerneAbonnementCourant(enBase?.stripe_subscription_id, sub.id)) {
+    console.log('[stripe webhook] fin d’un ancien abonnement ignorée', uid, sub.id)
+    return
+  }
+  const essaiPerdu = finDEssaiSansPaiement(sub)
+  const { error: eFin } = await supabaseAdmin.from('artisans').update({
+    plan: 'gratuit',
+    stripe_subscription_id: null,
+    ...(essaiPerdu ? { credits: creditsApresEssaiPerdu(enBase?.credits) } : {}),
+  }).eq('id', uid)
+  if (eFin) throw new Error(`retour à l'offre gratuite impossible : ${eFin.message}`)
+  const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
+  await notifierEntreprise(
+    essaiPerdu ? `Fin d’essai sans carte — ${a?.nom || uid}` : `Résiliation — ${a?.nom || uid}`,
+    essaiPerdu
+      ? `L’essai gratuit s’est terminé sans carte : l’abonnement est annulé, retour à la formule d’Essai (aucun prélèvement).\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}`
+      : `Abonnement Stripe résilié, retour à la formule gratuite.\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}`,
+  )
+}
+
+// L'essai devient un abonnement payé (carte ajoutée, premier prélèvement réussi) : le forfait du mois est servi en entier tout de
+// suite (sinon il n'arriverait qu'au premier rechargement paresseux), et un mois de crédits commence.
+async function essaiDevenuAbonnement(sub: Stripe.Subscription): Promise<void> {
+  const uid = (sub.metadata?.uid as string) || ''
+  if (!uid) return
+  const plan = (sub.metadata?.plan as string) || ''
+  const next = new Date(); next.setMonth(next.getMonth() + 1)
+  const { data: a } = await supabaseAdmin.from('artisans').select('credits, nom, email').eq('id', uid).maybeSingle()
+  const { error } = await supabaseAdmin.from('artisans').update({
+    credits: Math.max(a?.credits ?? 0, planConf(plan).creditsMois),
+    credits_reset_le: next.toISOString().slice(0, 10),
+  }).eq('id', uid)
+  if (error) throw new Error(`passage de l'essai à l'abonnement impossible : ${error.message}`)
+  await notifierEntreprise(`Conversion — ${a?.nom || uid} : l’essai ${planConf(plan).label} devient payant`, `Une carte a été ajoutée, l’abonnement court.\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}\nFormule : ${planConf(plan).label} — ${planConf(plan).prixMois} €/mois`).catch(() => {})
 }
 
 // Webhook Stripe : active/désactive l'abonnement de l'artisan (plan + crédits).
@@ -83,16 +130,29 @@ export async function POST(req: Request) {
         await envoyerCourrielsDus(commandeId).catch((e) => console.error('[stripe webhook] courriels de livraison', commandeId, e))
       } else if (voie === 'abonnement') {
         const conf = planConf(plan)
+        // Essai gratuit sans carte : la session le dit (essai_jours, posé par /api/subscribe) et la durée doit être celle de l'offre.
+        const joursEssai = joursEssaiDeSession(s.metadata as Record<string, string> | null, plan)
         const next = new Date(); next.setMonth(next.getMonth() + 1)
         const abo = typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null
         // Les crédits ne s'ÉCRASENT pas : un artisan à qui la direction vient d'offrir 200 crédits ne
         // doit pas les perdre à l'instant où il paie (revue du 07/09). On garde le plus favorable.
-        const { data: avant } = await supabaseAdmin.from('artisans').select('credits, stripe_subscription_id').eq('id', uid).maybeSingle()
+        const { data: avant } = await supabaseAdmin.from('artisans').select('credits, stripe_subscription_id, email').eq('id', uid).maybeSingle()
+        // Un seul essai par compte : un DEUXIÈME abonnement d'essai (deux onglets de Checkout ouverts en même temps) est annulé
+        // chez Stripe au lieu d'écraser le premier. L'événement de sa fin (deleted) est ignoré : ce n'est pas l'abonnement courant.
+        if (joursEssai && abo && avant?.stripe_subscription_id && avant.stripe_subscription_id !== abo) {
+          console.warn('[stripe webhook] deuxième essai pour un compte déjà abonné — annulé', uid, abo)
+          await stripe.subscriptions.cancel(abo).catch((e) => console.error('[stripe webhook] annulation du doublon d’essai', e))
+          await notifierEntreprise('Essai en double annulé', `Le compte ${uid} a ouvert un second abonnement d’essai (${abo}) alors qu’un abonnement court déjà (${avant.stripe_subscription_id}). Le second est annulé chez Stripe.`).catch(() => {})
+          return NextResponse.json({ received: true })
+        }
         // Rejeu du même événement : Stripe le fait, et il ne doit pas recharger un forfait déjà servi.
         const dejaServi = !!abo && avant?.stripe_subscription_id === abo
         const { error: eMaj } = await supabaseAdmin.from('artisans').update({
           plan,
-          ...(dejaServi ? {} : { credits: Math.max(avant?.credits ?? 0, conf.creditsMois), credits_reset_le: next.toISOString().slice(0, 10) }),
+          // Essai : crédits au prorata des jours (creditsEssai), remis à zéro le jour de la fin d'essai (rechargement paresseux).
+          ...(dejaServi ? {} : joursEssai
+            ? { credits: Math.max(avant?.credits ?? 0, creditsEssai(plan)), credits_reset_le: finEssai(new Date(), joursEssai) }
+            : { credits: Math.max(avant?.credits ?? 0, conf.creditsMois), credits_reset_le: next.toISOString().slice(0, 10) }),
           stripe_customer_id: typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null,
           stripe_subscription_id: abo,
         }).eq('id', uid)
@@ -101,7 +161,8 @@ export async function POST(req: Request) {
         // sur l'offre d'essai, la fiche affichait « aucun abonnement », et il pouvait même payer une
         // seconde fois (le garde-fou de /api/subscribe lit stripe_subscription_id, resté vide).
         if (eMaj) throw new Error(`écriture de l'abonnement impossible : ${eMaj.message}`)
-        console.log('[stripe webhook] abonnement activé', uid, plan)
+        console.log(joursEssai ? '[stripe webhook] essai gratuit démarré' : '[stripe webhook] abonnement activé', uid, plan, joursEssai || '')
+        if (joursEssai && !dejaServi) await marquerEssai({ uid, email: avant?.email, plan, jours: joursEssai, customerId: typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null, subscriptionId: abo })
         // Pied de page des factures Stripe à venir : la mention de franchise en base, tant que
         // l'entreprise n'est pas assujettie (audit final, B3). La première facture, déjà émise
         // au paiement, dépend du modèle de facture réglé dans le tableau de bord Stripe (H7).
@@ -112,8 +173,8 @@ export async function POST(req: Request) {
         // L'entreprise est prévenue (sprint J-1 §15) : un paiement, c'est un artisan qui a dit oui.
         const { data: a } = await supabaseAdmin.from('artisans').select('nom, email, metier').eq('id', uid).maybeSingle()
         await notifierEntreprise(
-          `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
-          `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
+          joursEssai ? `Essai gratuit — ${a?.nom || uid} démarre ${conf.label} (${joursEssai} jours)` : `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
+          `${joursEssai ? `Essai gratuit SANS carte de ${joursEssai} jours (${creditsEssai(plan)} crédits). Sans carte à la fin, l’abonnement est annulé et le compte revient à l’Essai.` : 'Abonnement activé via Stripe.'}\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
       } else if (voie === 'pack_pub') {
         // Paiement UNIQUE — le pack pubs locales (fiche 026-112). Même logique que commande_site : 'introuvable'
@@ -149,6 +210,20 @@ export async function POST(req: Request) {
       // autorise un, et rien ne l'appliquait en base (revue du 07/09). L'artisan payait un montant et
       // gardait les crédits d'un autre. Le montant facturé décide, jamais une métadonnée périmée.
       const sub = event.data.object as Stripe.Subscription
+      const statutAvant = (event.data as { previous_attributes?: { status?: string } }).previous_attributes?.status
+      // Un abonnement fermé (canceled, incomplete_expired) : retour à l'Essai, comme à customer.subscription.deleted.
+      if (abonnementFerme(sub.status)) {
+        await retourAGratuit(sub)
+        return NextResponse.json({ received: true })
+      }
+      // Pendant l'essai gratuit, l'offre et ses capacités sont celles posées au Checkout (comme un abonnement actif) ; on n'aligne
+      // PAS les crédits sur le montant (alignerSurAbonnement servirait le forfait entier pendant l'essai).
+      if (sub.status === 'trialing') {
+        console.log('[stripe webhook] essai gratuit en cours — rien à aligner', sub.id)
+        return NextResponse.json({ received: true })
+      }
+      // L'essai devient payant : le forfait du mois est servi en entier, tout de suite.
+      if (essaiDevenuPayant(statutAvant, sub.status)) await essaiDevenuAbonnement(sub)
       const client = stripe
       const r = await alignerSurAbonnement(sub, (id) => client.subscriptions.retrieve(id, {}, { timeout: 6000, maxNetworkRetries: 0 }))
       console.log('[stripe webhook] abonnement modifié —', r.raison)
@@ -163,19 +238,23 @@ export async function POST(req: Request) {
         ).catch(() => {})
       }
     } else if (event.type === 'customer.subscription.deleted') {
+      await retourAGratuit(event.data.object as Stripe.Subscription)
+    } else if (event.type === 'customer.subscription.trial_will_end') {
+      // Stripe prévient 3 jours avant la fin de l'essai. Pas de carte → l'artisan est prévenu de ce qu'il peut faire (une carte pour continuer) ;
+      // déjà une carte → rien à dire. Le message ne promet que ce qui est vrai : sans carte, retour à l'Essai, sans prélèvement.
       const sub = event.data.object as Stripe.Subscription
       const uid = (sub.metadata?.uid as string) || ''
-      const { data: enBase } = uid ? await supabaseAdmin.from('artisans').select('stripe_subscription_id').eq('id', uid).maybeSingle() : { data: null }
-      if (uid && !concerneAbonnementCourant(enBase?.stripe_subscription_id, sub.id)) {
-        console.log('[stripe webhook] fin d’un ancien abonnement ignorée', uid, sub.id)
-      } else if (uid) {
-        const { error: eFin } = await supabaseAdmin.from('artisans').update({ plan: 'gratuit', stripe_subscription_id: null }).eq('id', uid)
-        if (eFin) throw new Error(`retour à l'offre gratuite impossible : ${eFin.message}`)
-        const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
-        await notifierEntreprise(
-          `Résiliation — ${a?.nom || uid}`,
-          `Abonnement Stripe résilié, retour à la formule gratuite.\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}`,
-        )
+      if (uid && sub.trial_end) {
+        const { data: a } = await supabaseAdmin.from('artisans').select('id, email, nom, plan, stripe_subscription_id').eq('id', uid).maybeSingle()
+        if (a?.email && concerneAbonnementCourant(a.stripe_subscription_id, sub.id)) {
+          let aUneCarte = !!sub.default_payment_method
+          if (!aUneCarte && stripe) {
+            const clientId = typeof sub.customer === 'string' ? sub.customer : sub.customer?.id
+            const c = clientId ? await stripe.customers.retrieve(clientId).catch(() => null) : null
+            aUneCarte = !!(c && !('deleted' in c && c.deleted) && c.invoice_settings?.default_payment_method)
+          }
+          if (!aUneCarte) await envoyerAlertes(alerteFinEssai({ id: a.id, email: a.email, nom: a.nom }, a.plan || (sub.metadata?.plan as string) || '', new Date(sub.trial_end * 1000).toISOString()))
+        }
       }
     } else if (event.type === 'invoice.payment_failed') {
       // Un prélèvement qui échoue : l'artisan est prévenu (moyen de paiement à mettre à jour),

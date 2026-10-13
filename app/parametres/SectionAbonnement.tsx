@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { GRILLE, OFFRES, PLANS, planConf, type PlanPayant } from '@/lib/plans'
+import { GRILLE, OFFRES, PLANS, ESSAI_JOURS, planConf, type PlanPayant } from '@/lib/plans'
+import { creditsEssai } from '@/lib/essaiGratuit'
 import { api, dateFr, type SectionProps } from './commun'
 import { estNatif } from '@/lib/natif'
 
@@ -14,7 +15,7 @@ import { estNatif } from '@/lib/natif'
 //  • « ce qui se déverrouille » = les lignes de la grille (lib/plans.ts) qui changent entre
 //    l'offre actuelle et la cible. Même source que /abonnement et la landing.
 
-type Abo = { statut: string; fin_periode: string | null; resiliation_prevue: boolean; fin_prevue: string | null } | null
+type Abo = { statut: string; fin_periode: string | null; essai_fin?: string | null; resiliation_prevue: boolean; fin_prevue: string | null } | null
 
 /** L'offre de référence pour comparer : l'essai a les capacités de l'Essentiel, les fondateurs celles de Signature. */
 const reference = (plan: string | null): PlanPayant => (plan === 'studio' || plan === 'signature' ? plan : plan === 'business' ? 'signature' : 'essentiel')
@@ -35,10 +36,14 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
   const natif = estNatif()
   const [abo, setAbo] = useState<Abo>(null)
   const [busy, setBusy] = useState<string | null>(null)
+  // Droit à l'essai gratuit sans carte (GET /api/subscribe) : les boutons ne parlent d'essai que si c'est vrai pour ce compte.
+  const [essaiDispo, setEssaiDispo] = useState(false)
   const plan = a.plan ?? 'gratuit'
   const conf = planConf(plan)
   const illimite = !!a.is_founder || plan === 'business'
-  const inclus = conf.creditsMois
+  // Essai gratuit en cours (statut Stripe « trialing ») : la jauge compte les crédits de l'essai, pas ceux du mois.
+  const enEssai = abo?.statut === 'trialing' && !!abo.essai_fin
+  const inclus = enEssai ? creditsEssai(plan) : conf.creditsMois
   const restants = Math.max(0, a.credits ?? 0)
   const consommes = Math.max(0, Math.min(inclus, inclus - restants))
   const pct = inclus ? Math.round((consommes / inclus) * 100) : 0
@@ -50,6 +55,11 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
     if (!a.stripe_subscription_id) return
     api<{ abonnement: Abo }>('/api/stripe/portail').then((r) => { if (r.ok) setAbo(r.data.abonnement ?? null) })
   }, [a.stripe_subscription_id])
+
+  useEffect(() => {
+    if (a.stripe_subscription_id || a.is_founder) return
+    api<{ essai?: { disponible?: boolean } }>('/api/subscribe').then((r) => { if (r.ok) setEssaiDispo(!!r.data.essai?.disponible) })
+  }, [a.stripe_subscription_id, a.is_founder])
 
   async function portail() {
     if (busy) return
@@ -77,13 +87,14 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
         <div className="abo-etat">
           <div>
             <b>{illimite ? 'Fondateur · accès total' : conf.label}</b>
-            <span className="muted">{illimite ? 'Crédits jamais décomptés.' : conf.prixMois ? `${conf.prixMois} € par mois, sans engagement.` : 'Essai gratuit, sans carte.'}</span>
+            <span className="muted">{illimite ? 'Crédits jamais décomptés.' : enEssai ? `Essai gratuit jusqu’au ${dateFr(abo!.essai_fin!)}.` : conf.prixMois ? `${conf.prixMois} € par mois, sans engagement.` : 'Essai gratuit, sans carte.'}</span>
           </div>
-          {abo?.resiliation_prevue && abo.fin_prevue ? <span className="abo-pill warn">Résiliation le {dateFr(abo.fin_prevue)}</span>
+          {enEssai ? <span className="abo-pill" data-essai-gratuit-en-cours>Essai gratuit jusqu’au {dateFr(abo!.essai_fin!)}</span>
+            : abo?.resiliation_prevue && abo.fin_prevue ? <span className="abo-pill warn">Résiliation le {dateFr(abo.fin_prevue)}</span>
             : abo?.fin_periode ? <span className="abo-pill">Prochaine échéance le {dateFr(abo.fin_periode)}</span> : null}
         </div>
 
-        <h3 style={{ margin: '1.3rem 0 .3rem', fontSize: '1rem' }}>Crédits du mois</h3>
+        <h3 style={{ margin: '1.3rem 0 .3rem', fontSize: '1rem' }}>{enEssai ? 'Crédits de l’essai' : 'Crédits du mois'}</h3>
         {illimite ? (
           <p className="muted" style={{ margin: 0 }}>Illimités.</p>
         ) : (
@@ -93,7 +104,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
             </div>
             <div className="jauge-leg">
               <span><b>{consommes}</b> consommé{consommes > 1 ? 's' : ''} sur <b>{inclus}</b> inclus</span>
-              <span className="muted">{restants} restant{restants > 1 ? 's' : ''}{a.credits_reset_le ? ` · renouvelés le ${dateFr(a.credits_reset_le)}` : ''}</span>
+              <span className="muted">{restants} restant{restants > 1 ? 's' : ''}{a.credits_reset_le && !enEssai ? ` · renouvelés le ${dateFr(a.credits_reset_le)}` : ''}</span>
             </div>
             <p className="muted" style={{ fontSize: '.82rem', margin: '.5rem 0 0' }}>1 crédit = 1 génération IA (réponse, devis, dépôt de compta) ; une recherche fournisseurs en consomme 2, le modèle Expert 3. Les relances automatiques ne consomment rien.</p>
           </>
@@ -109,9 +120,10 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
           <h2>Paiements &amp; facturation</h2>
           <p className="muted" style={{ margin: '0 0 .9rem' }}>
             Vos reçus, votre moyen de paiement, le changement ou l’arrêt de votre abonnement : tout se gère dans votre portail Stripe, sécurisé.
-            {abo?.fin_periode && !abo.resiliation_prevue ? <> Si vous résiliez, votre formule reste active jusqu’au <b>{dateFr(abo.fin_periode)}</b>, puis vous repassez à l’essai.</> : null}
+            {enEssai ? <> <b>Pour continuer après l’essai, ajoutez une carte</b> dans le portail : l’abonnement {conf.label} ({conf.prixMois} € par mois) démarre alors le {dateFr(abo!.essai_fin!)}. Sans carte, rien n’est prélevé : l’abonnement s’arrête ce jour-là et vous repassez à l’offre d’Essai ({PLANS.gratuit.creditsMois} crédits) ; vos données restent en place.</> : null}
+            {!enEssai && abo?.fin_periode && !abo.resiliation_prevue ? <> Si vous résiliez, votre formule reste active jusqu’au <b>{dateFr(abo.fin_periode)}</b>, puis vous repassez à l’essai.</> : null}
           </p>
-          <button type="button" className="btn btn--primary" disabled={busy === 'portail'} onClick={portail}>{busy === 'portail' ? 'Ouverture…' : 'Ouvrir mon portail de facturation'}</button>
+          <button type="button" className="btn btn--primary" disabled={busy === 'portail'} onClick={portail}>{busy === 'portail' ? 'Ouverture…' : enEssai ? 'Ajouter une carte pour continuer' : 'Ouvrir mon portail de facturation'}</button>
         </div>
       ) : null}
 
@@ -129,7 +141,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
                   <p className="muted" style={{ margin: '.2rem 0 .6rem', fontSize: '.85rem' }}>{PLANS[id].accroche}</p>
                   <ul>{gains.map((g) => <li key={g}>{g}</li>)}</ul>
                   <button type="button" className={`btn ${id === 'studio' ? 'btn--primary' : 'btn--ghost'}`} disabled={!!busy} onClick={() => souscrire(id)}>
-                    {busy === id ? 'Redirection…' : a.stripe_subscription_id ? `Passer à ${o.label} (via Stripe)` : `Passer à ${o.label}`}
+                    {busy === id ? 'Redirection…' : a.stripe_subscription_id ? `Passer à ${o.label} (via Stripe)` : essaiDispo ? `Essayer ${o.label} ${ESSAI_JOURS[id]} jours gratuits, sans carte` : `Passer à ${o.label}`}
                   </button>
                 </div>
               )

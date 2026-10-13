@@ -17,7 +17,7 @@ import MaquetteForm from '@/app/MaquetteForm'
 import { METIERS } from '@/lib/agents/acquisition/contrat'
 import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
-import { OFFRES, pointsForts } from '@/lib/plans'
+import { OFFRES, ESSAI_JOURS, pointsForts } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
 
@@ -311,10 +311,11 @@ export default function Home() {
                   <div className="lp-pn">{o.label}</div>
                   <div className="lp-pp">{o.prix}€<small>par mois</small></div>
                   <div className="lp-credits"><b>{o.credits}</b>&nbsp;crédits / mois</div>
+                  <div className="lp-essai" data-essai-gratuit={o.id}><b>{ESSAI_JOURS[o.id]} jours gratuits, sans carte</b></div>
                   <div className="lp-tva">TVA non applicable, art. 293 B du CGI</div>
                   <div className="lp-for">{o.accroche}</div>
                   <ul className="lp-plist">{pointsForts(o.id).slice(0, 5).map((f) => <li key={f}>{f}</li>)}</ul>
-                  <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Choisir {o.label}</a>
+                  <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Essayer {ESSAI_JOURS[o.id]} jours gratuits</a>
                 </div>
               ))}
             </div>
@@ -334,7 +335,7 @@ export default function Home() {
                 <Comparatif />
               </details>
             </div>
-            <p className="lp-pnote">1 crédit = 1 génération (réponse, devis, compta) · recherche fournisseurs = 2 crédits · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
+            <p className="lp-pnote">1 crédit = 1 génération (réponse, devis, compta) · recherche fournisseurs = 2 crédits · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement · essai gratuit : une fois par compte, crédits de l’essai proportionnels à sa durée</p>
             {actif('siteCommandeVente') && (
               <div className="lp-site reveal lp-spot">
                 <h3>{SITE_A_LA_DEMANDE.titre}</h3>

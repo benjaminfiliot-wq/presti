@@ -74,10 +74,10 @@ export const encaisseDuMois = () => encaisseDepuis(debutDuMois(), 'stripe:encais
 export const encaisseDuJour = () => encaisseDepuis(minuit(), 'stripe:encaisse:jour')
 export const encaisseSur7Jours = () => encaisseDepuis(Math.floor(Date.now() / 1000) - 7 * 86400, 'stripe:encaisse:7j')
 
-/** Abonnements ACTIVÉS depuis minuit UTC : un checkout abandonné (incomplete) n'est pas une conversion. */
+/** Abonnements ACTIVÉS depuis minuit UTC : un checkout abandonné (incomplete) n'est pas une conversion, ni un essai gratuit sans carte qui commence (trialing : la conversion est la carte ajoutée). */
 export const conversionsDuJour = (): Promise<Sourcee<number>> => sourcer('stripe:conversions', 'stripe', async () => {
   const l = await client().subscriptions.list({ created: { gte: minuit() }, limit: 100 }, OPTIONS)
-  return l.data.filter((s) => ['active', 'trialing', 'past_due'].includes(s.status)).length
+  return l.data.filter((s) => ['active', 'past_due'].includes(s.status)).length
 }, TTL)
 
 export type Echec = { id: string; client: string | null; montant: number; depuis: string; tentatives: number; lien: string | null }

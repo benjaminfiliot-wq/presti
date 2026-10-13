@@ -11,7 +11,7 @@
 // Vouvoiement partout. Aucune promesse chiffrée non mesurée (pas de « en quelques
 // minutes », pas de pourcentages inventés).
 
-import { CREDIT_COST } from './plans'
+import { CREDIT_COST, ESSAI_JOURS } from './plans'
 
 export type Article = {
   id: string
@@ -406,9 +406,9 @@ export const ARTICLES: Article[] = [
       'à tout moment.',
     commentOnSenSert: [
       'Comparez les formules et ce qu’elles incluent.',
-      'Cliquez « S’abonner à … ».',
-      'Réglez le paiement sur la page Stripe sécurisée.',
-      'Vous êtes redirigé vers votre tableau de bord.',
+      `Cliquez « Essayer … jours gratuits » (${ESSAI_JOURS.essentiel} jours en Essentiel, ${ESSAI_JOURS.studio} en Studio, ${ESSAI_JOURS.signature} en Signature, sans carte, une fois par compte) ou, si votre essai n’est plus disponible, « S’abonner à … ».`,
+      'Renseignez votre adresse de facturation sur la page Stripe sécurisée ; pendant l’essai, aucune carte n’est demandée.',
+      'Vous êtes redirigé vers votre tableau de bord. À la fin de l’essai, ajoutez une carte pour continuer ; sans carte, rien n’est prélevé et vous repassez à l’offre d’Essai.',
     ],
     pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire).',
     credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',

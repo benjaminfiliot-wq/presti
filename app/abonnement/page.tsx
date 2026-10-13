@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Comparatif from '@/app/Comparatif'
-import { OFFRES, PLANS, pointsForts } from '@/lib/plans'
+import { OFFRES, PLANS, ESSAI_JOURS, pointsForts } from '@/lib/plans'
 import { estNatif } from '@/lib/natif'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { actif } from '@/lib/flags'
@@ -21,6 +21,8 @@ export default function Abonnement() {
   const [plan, setPlan] = useState('gratuit')
   const [busy, setBusy] = useState<string | null>(null)
   const [msg, setMsg] = useState<string | null>(null)
+  // Droit à l'essai gratuit sans carte (GET /api/subscribe) : « jours gratuits, sans carte » ne s'écrit que si c'est vrai pour CE compte.
+  const [essai, setEssai] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -28,6 +30,7 @@ export default function Abonnement() {
       const { data: a } = await supabase.from('artisans').select('plan').eq('id', data.session.user.id).maybeSingle()
       if (!a) { router.replace('/onboarding'); return }
       setPlan(a.plan ?? 'gratuit'); setReady(true)
+      fetch('/api/subscribe', { headers: { Authorization: `Bearer ${data.session.access_token}` } }).then((r) => r.json()).then((d) => setEssai(!!d?.essai?.disponible)).catch(() => {})
     })
   }, [router])
 
@@ -66,6 +69,7 @@ export default function Abonnement() {
           <p className="muted" style={{ margin: '0 0 1.3rem', maxWidth: '58ch' }}>
             Vous êtes en <b>{actuel?.label ?? 'Essai'}</b>{actuel?.creditsMois ? <> — {actuel.creditsMois} crédits chaque mois</> : null}.
             Chaque formule donne des crédits mensuels (1 crédit = 1 génération IA, le modèle Expert en consomme 3). Sans engagement.
+            {essai ? <> Premier abonnement : essai gratuit, sans carte ({ESSAI_JOURS.essentiel} jours en Essentiel, {ESSAI_JOURS.studio} en Studio, {ESSAI_JOURS.signature} en Signature). Les crédits de l’essai sont proportionnels à sa durée. Sans carte à la fin de l’essai, rien n’est prélevé : vous repassez à l’offre d’Essai.</> : null}
           </p>
 
           <div className="abo-grid">
@@ -79,12 +83,13 @@ export default function Abonnement() {
                   <div className="abo-name">{o.label}</div>
                   <div className="abo-price">{o.prix}€<small>/mois</small></div>
                   <div className="abo-credits">{o.credits} crédits / mois</div>
+                  {essai && !current ? <div className="abo-essai" data-essai-gratuit={o.id}><b>{ESSAI_JOURS[o.id]} jours gratuits, sans carte</b></div> : null}
                   <div className="abo-tva">TVA non applicable, art. 293 B du CGI</div>
                   <div className="abo-for">{o.accroche}</div>
                   <ul className="abo-list">{pointsForts(o.id).slice(0, 6).map((f) => <li key={f}>{f}</li>)}</ul>
                   {current
                     ? <button className="psh-btn ghost" disabled>Formule actuelle</button>
-                    : <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} disabled={busy === o.id} onClick={() => souscrire(o.id)}>{busy === o.id ? 'Redirection…' : `S’abonner à ${o.label}`}</button>}
+                    : <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} disabled={busy === o.id} onClick={() => souscrire(o.id)}>{busy === o.id ? 'Redirection…' : essai ? `Essayer ${ESSAI_JOURS[o.id]} jours gratuits` : `S’abonner à ${o.label}`}</button>}
                 </div>
               )
             })}
