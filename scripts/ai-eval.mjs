@@ -15,8 +15,10 @@
 //     --metiers 8            nombre de métiers (défaut : 8 ; 4 = plombier, électricien, peintre, couvreur)
 //     --expert               ajoute 4 cas Expert (3 crédits chacun)
 //     --outils               ajoute 4 scénarios de l'assistant à outils (exécuteurs simulés, sans base)
-//     --assistant            24 scénarios de l'assistant de gestion de la console (016 A1/A2, scripts/ai-eval-assistant.mjs,
-//                            données simulées) ; seul, sans --tiers, il ne joue QUE ces scénarios (Standard)
+//     --assistant            les scénarios de l'assistant de gestion de la console (016 A1/A2 + CRM du 13/10, au moins 10
+//                            par domaine, scripts/ai-eval-assistant.mjs, données simulées) ; seul, sans --tiers, il ne joue
+//                            QUE ces scénarios (Standard) ; --famille <stock|devis|factures|conversations|chiffres|crm|transverse>
+//                            n'en joue qu'un domaine
 //     --avant                évalue la version de lib/ai.ts AVANT le sprint (copie HEAD dans le scratchpad)
 //     --tag nom              nom du rapport JSON (scratchpad/ai-eval-<tag>.json)
 //   Budget : 40 appels par niveau (8 métiers) — plus les régénérations anti-fabrication.
@@ -209,11 +211,11 @@ if (flag('--outils') && !flag('--avant')) {
   }
 }
 
-// ── L'assistant de gestion de la console (016 A1/A2) : 24 scénarios, vrai modèle, données simulées ──
+// ── L'assistant de gestion de la console (016 A1/A2, CRM) : vrai modèle, données simulées ──
 let assistant = null
 if (flag('--assistant') && !flag('--avant')) {
   const { evaluerAssistant } = await import('./ai-eval-assistant.mjs')
-  assistant = await evaluerAssistant({ tiers: TIERS, MODEL })
+  assistant = await evaluerAssistant({ tiers: TIERS, MODEL, famille: arg('--famille', null) })
   appels += assistant.appels
 }
 

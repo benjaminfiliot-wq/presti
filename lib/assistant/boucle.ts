@@ -10,7 +10,7 @@
 // d'évaluation avec le vrai modèle et des données simulées (scripts/ai-eval.mjs --assistant).
 import type Anthropic from '@anthropic-ai/sdk'
 import { DUREE_TOUR_MS, ETAPES_MAX, chiffresNonSources, rappelChiffres, retirerChiffresNonSources } from './cadrage'
-import { OUTILS_BROUILLON, estNomOutil, outilsAssistant, validerEntree, type EntreesOutils, type NomOutil } from './outils'
+import { OUTILS_BROUILLON, OUTILS_CRM, estNomOutil, outilsAssistant, validerEntree, type EntreesOutils, type NomOutil } from './outils'
 import type { ObjetJournal, ResultatJournal } from './journal'
 
 export type Brouillon =
@@ -49,7 +49,8 @@ export type ResultatTour = {
   etapes: number
   /** Le tour s'est arrêté sur un plafond (étapes ou temps) : le texte est le dernier utile. */
   tronque: boolean
-  garde: { regenere: boolean; retires: string[] }
+  /** `signales` : les nombres sans source de la PREMIÈRE réponse (avant régénération) — pour l'évaluation. */
+  garde: { regenere: boolean; retires: string[]; signales: string[] }
 }
 
 /**
@@ -106,6 +107,8 @@ export async function executerTour(p: {
   executeurs: Executeurs
   /** Vrai seulement si l'artisan a demandé un brouillon dans CE message (cadrerDemande) : sinon ces outils n'existent pas pour le modèle. */
   brouillonsAutorises: boolean
+  /** Le compte a le CRM (drapeau ou essai, et capacité `crm`) : sinon ses outils n'existent pas pour le modèle. */
+  crm?: boolean
   journaliser: (a: AppelJournal) => Promise<void>
   /** Prévient l'écran qu'un outil est appelé (« l'assistant consulte : stock… »). */
   onOutil?: (nom: NomOutil) => void
@@ -116,7 +119,7 @@ export async function executerTour(p: {
   dureeMs?: number
 }): Promise<ResultatTour> {
   const etapesMax = p.etapesMax ?? ETAPES_MAX
-  const tools = outilsAssistant().filter((t) => p.brouillonsAutorises || !(OUTILS_BROUILLON as readonly string[]).includes(t.name))
+  const tools = outilsAssistant({ crm: !!p.crm }).filter((t) => p.brouillonsAutorises || !(OUTILS_BROUILLON as readonly string[]).includes(t.name))
   const messages: Anthropic.MessageParam[] = messagesDuTour(p.historique, p.message)
   if (!messages.length) throw new Error('message vide')
 
@@ -158,6 +161,11 @@ export async function executerTour(p: {
     if (!v.ok) {
       await journal({ nom, entree: u.input, resultat: 'refus', resume: `entrée refusée : ${v.erreur}` })
       return reponse({ erreur: `Entrée refusée : ${v.erreur}` }, true)
+    }
+    if (OUTILS_CRM.includes(nom) && !p.crm) {
+      // Défense en profondeur : l'outil n'a pas été proposé (compte sans CRM), mais un modèle peut halluciner un nom.
+      await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'CRM non ouvert sur ce compte' })
+      return reponse({ erreur: "Le CRM n'est pas ouvert sur ce compte : tu n'as aucune donnée de chantier, d'équipe ni de réservation. Dis-le à l'artisan." }, true)
     }
     if (OUTILS_BROUILLON.includes(nom)) {
       // Défense en profondeur : l'outil n'a pas été proposé, mais un modèle peut halluciner un nom.
@@ -224,6 +232,7 @@ export async function executerTour(p: {
 
   // Garde-fou des chiffres : une régénération avec le rappel nommé, puis on retire la phrase fautive.
   let fautifs = chiffresNonSources(texte, sources)
+  const signales = [...fautifs]
   let regenere = false
   if (fautifs.length && !ac.signal.aborted) {
     regenere = true
@@ -241,5 +250,5 @@ export async function executerTour(p: {
   const retires = [...fautifs]
   if (fautifs.length) texte = retirerChiffresNonSources(texte, fautifs)
 
-  return { texte, brouillons, outilsAppeles, etapes, tronque, garde: { regenere, retires } }
+  return { texte, brouillons, outilsAppeles, etapes, tronque, garde: { regenere, retires, signales } }
 }

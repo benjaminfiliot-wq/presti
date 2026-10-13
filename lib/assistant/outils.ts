@@ -4,8 +4,11 @@
 // l'exécution vit dans lib/assistant/executeurs.ts, qui appelle les mêmes routes et les mêmes lectures que l'interface,
 // avec la session de l'artisan.
 //
-// Deux familles, et rien d'autre dans ce lot :
+// Trois familles, et rien d'autre dans ce lot :
 //  • LIRE (A1) : stock et alertes, devis et statuts, factures et impayés, conversations en attente, chiffres.
+//  • LIRE LE CRM (13/10) : chantiers, équipe et camionnettes du jour, matériaux réservés, ce qui est à facturer. Proposés
+//    au modèle SEULEMENT si le compte a le CRM (drapeau ou essai, et capacité `crm` de lib/plans.ts : même décision que
+//    les routes /api/crm/*, lib/crm/acces.ts) ; lus sous la session de l'artisan (RLS), calculés par lib/crm/*.
 //  • PRÉPARER (A2) : un devis brouillon depuis une demande, une réponse préparée dans une conversation. Le brouillon est
 //    enregistré là où l'interface range déjà les siens (devis au statut « brouillon », message « proposition ») ; rien
 //    ne part chez le client, l'artisan valide dans l'écran habituel.
@@ -21,25 +24,43 @@ export const STATUTS_DEVIS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expir
 export const STATUTS_FACTURES = ['brouillon', 'emise', 'payee', 'annulee'] as const
 export const PERIODES_CHIFFRES = ['mois', 'trimestre', 'annee'] as const
 
+export const STATUTS_CHANTIER = ['a_planifier', 'planifie', 'en_cours', 'en_pause', 'termine', 'annule'] as const
+export const STATUTS_RESERVATION = ['reserve', 'sorti', 'tous'] as const
+
 export type StatutDevis = typeof STATUTS_DEVIS[number]
+export type StatutChantier = typeof STATUTS_CHANTIER[number]
+export type StatutReservation = typeof STATUTS_RESERVATION[number]
 export type StatutFacture = typeof STATUTS_FACTURES[number]
 export type PeriodeChiffres = typeof PERIODES_CHIFFRES[number]
 
 /** Les entrées, une fois validées. Chaque champ a une forme fermée : rien de libre ne passe tel quel. */
 export type EntreesOutils = {
   lire_stock: { recherche: string | null }
-  lire_devis: { statut: StatutDevis | null; limite: number }
-  lire_factures: { statut: StatutFacture | null; impayees_seulement: boolean; limite: number }
+  lire_devis: { statut: StatutDevis | null; client: string | null; recherche: string | null; limite: number }
+  lire_factures: { statut: StatutFacture | null; impayees_seulement: boolean; client: string | null; limite: number }
   lire_conversations: { en_attente_seulement: boolean; client: string | null; limite: number }
   lire_chiffres: { periode: PeriodeChiffres }
+  lire_chantiers: { statut: StatutChantier | null; ouverts_seulement: boolean; recherche: string | null; limite: number }
+  lire_equipe_du_jour: Record<string, never>
+  lire_materiaux_reserves: { statut: StatutReservation; recherche: string | null; limite: number }
+  lire_a_facturer: { limite: number }
   preparer_devis_brouillon: { conversation_id: string }
   preparer_reponse: { conversation_id: string }
 }
 export type NomOutil = keyof EntreesOutils
 
 export const OUTILS_LECTURE: readonly NomOutil[] = ['lire_stock', 'lire_devis', 'lire_factures', 'lire_conversations', 'lire_chiffres']
+export const OUTILS_CRM: readonly NomOutil[] = ['lire_chantiers', 'lire_equipe_du_jour', 'lire_materiaux_reserves', 'lire_a_facturer']
 export const OUTILS_BROUILLON: readonly NomOutil[] = ['preparer_devis_brouillon', 'preparer_reponse']
-export const NOMS_OUTILS: readonly NomOutil[] = [...OUTILS_LECTURE, ...OUTILS_BROUILLON]
+export const NOMS_OUTILS: readonly NomOutil[] = [...OUTILS_LECTURE, ...OUTILS_CRM, ...OUTILS_BROUILLON]
+
+/**
+ * Les valeurs fermées (statuts, périodes) : avec les UUID, les seules chaînes que le journal garde telles quelles. Un texte
+ * libre (nom de client cherché, mot de recherche) n'y est jamais écrit (RGPD, audit du 12/10).
+ */
+export const VALEURS_FERMEES: ReadonlySet<string> = new Set<string>([
+  ...STATUTS_DEVIS, ...STATUTS_FACTURES, ...PERIODES_CHIFFRES, ...STATUTS_CHANTIER, ...STATUTS_RESERVATION,
+])
 
 /** Ce que l'écran affiche pendant l'appel (« l'assistant consulte : stock… »). */
 export const LIBELLE_OUTIL: Record<NomOutil, string> = {
@@ -48,6 +69,10 @@ export const LIBELLE_OUTIL: Record<NomOutil, string> = {
   lire_factures: 'factures',
   lire_conversations: 'conversations',
   lire_chiffres: 'chiffres',
+  lire_chantiers: 'chantiers',
+  lire_equipe_du_jour: 'équipe du jour',
+  lire_materiaux_reserves: 'matériaux réservés',
+  lire_a_facturer: 'à facturer',
   preparer_devis_brouillon: 'devis brouillon',
   preparer_reponse: 'réponse préparée',
 }
@@ -80,6 +105,8 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
       type: 'object',
       properties: {
         statut: { type: 'string', enum: [...STATUTS_DEVIS], description: 'Filtre facultatif sur le statut.' },
+        client: { type: 'string', maxLength: RECHERCHE_MAX, description: 'Nom (ou partie du nom) du client : seulement ses devis.' },
+        recherche: { type: 'string', maxLength: RECHERCHE_MAX, description: 'Numéro de devis (ex. « DEV-2026-0011 ») ou mot de son objet.' },
         limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de devis rendus (défaut 20).' },
       },
       additionalProperties: false,
@@ -93,6 +120,7 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
       properties: {
         statut: { type: 'string', enum: [...STATUTS_FACTURES], description: 'Filtre facultatif sur le statut.' },
         impayees_seulement: { type: 'boolean', description: 'Vrai : seulement les impayés.' },
+        client: { type: 'string', maxLength: RECHERCHE_MAX, description: 'Nom (ou partie du nom) du client : seulement ses factures et ses impayés.' },
         limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de factures rendues (défaut 20).' },
       },
       additionalProperties: false,
@@ -120,6 +148,47 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
       additionalProperties: false,
     },
   },
+  lire_chantiers: {
+    name: 'lire_chantiers',
+    description: "Lit les chantiers du CRM de l'artisan (même lecture et mêmes calculs que l'écran CRM) : titre, client, statut, étape du pipeline, avancement des tâches (faites / total, en %), jours de retard sur la fin prévue, dates, équipe affectée, camionnette. Rend aussi les comptes : chantiers ouverts, en retard, sans date de fin, par statut. Par défaut, seulement les chantiers ouverts (ni terminés ni annulés).",
+    input_schema: {
+      type: 'object',
+      properties: {
+        statut: { type: 'string', enum: [...STATUTS_CHANTIER], description: 'Filtre facultatif sur le statut du chantier.' },
+        ouverts_seulement: { type: 'boolean', description: 'Vrai par défaut. Faux : aussi les chantiers terminés et annulés.' },
+        recherche: { type: 'string', maxLength: RECHERCHE_MAX, description: 'Mot du titre du chantier ou du nom du client.' },
+        limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de chantiers rendus (défaut 20).' },
+      },
+      additionalProperties: false,
+    },
+  },
+  lire_equipe_du_jour: {
+    name: 'lire_equipe_du_jour',
+    description: "Lit qui est sur quel chantier AUJOURD'HUI, et où sont les camionnettes, avec la règle de l'atelier du CRM : un chantier est « du jour » s'il est en cours, ou planifié et que ses dates encadrent aujourd'hui ; un membre de l'équipe affecté à un tel chantier y est compté, sinon il est « à l'atelier ». Ce sont les affectations notées dans le CRM, pas un pointage de présence.",
+    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  lire_materiaux_reserves: {
+    name: 'lire_materiaux_reserves',
+    description: "Lit les matériaux de l'inventaire réservés pour des chantiers dans le CRM (même lecture que la fiche chantier) : article, quantité, unité, lieu, chantier, et pour chaque article le total réservé et le stock total de l'inventaire. Par défaut les réservations en cours (pas encore sorties du stock).",
+    input_schema: {
+      type: 'object',
+      properties: {
+        statut: { type: 'string', enum: [...STATUTS_RESERVATION], description: 'reserve (défaut) : pas encore sorties ; sorti : déjà sorties du stock ; tous : les deux.' },
+        recherche: { type: 'string', maxLength: RECHERCHE_MAX, description: "Mot du nom de l'article ou du titre du chantier." },
+        limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de réservations rendues (défaut 30).' },
+      },
+      additionalProperties: false,
+    },
+  },
+  lire_a_facturer: {
+    name: 'lire_a_facturer',
+    description: "Lit la colonne « À facturer / encaisser » du pipeline du CRM (même calcul que l'écran) : les chantiers terminés pas encore facturés, et les dossiers déjà facturés dont le règlement est attendu, avec le montant TTC du devis et le total de la colonne. Pour le détail des factures impayées et des retards de paiement : lire_factures.",
+    input_schema: {
+      type: 'object',
+      properties: { limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de dossiers rendus (défaut 20).' } },
+      additionalProperties: false,
+    },
+  },
   preparer_devis_brouillon: {
     name: 'preparer_devis_brouillon',
     description: "Prépare un DEVIS BROUILLON à partir d'une conversation avec un client, par le même chemin que le bouton « Devis auto » de la boîte de réception (même chiffrage, mêmes crédits). Rien n'est envoyé : l'artisan relit et valide dans l'écran Devis. À n'appeler QUE si l'artisan le demande explicitement pour une conversation précise.",
@@ -132,9 +201,9 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
   },
 }
 
-/** Les outils proposés au modèle, dans l'ordre. */
-export function outilsAssistant(): Anthropic.Tool[] {
-  return NOMS_OUTILS.map((n) => DEFINITIONS_OUTILS[n])
+/** Les outils proposés au modèle, dans l'ordre. Ceux du CRM seulement si le compte a le CRM. */
+export function outilsAssistant(o: { crm?: boolean } = {}): Anthropic.Tool[] {
+  return NOMS_OUTILS.filter((n) => o.crm || !OUTILS_CRM.includes(n)).map((n) => DEFINITIONS_OUTILS[n])
 }
 
 // ── La validation : le modèle n'est jamais cru sur parole ──────────────────────────────────────────
@@ -143,10 +212,14 @@ export type Validation<N extends NomOutil> = { ok: true; entree: EntreesOutils[N
 
 const CLES: Record<NomOutil, readonly string[]> = {
   lire_stock: ['recherche'],
-  lire_devis: ['statut', 'limite'],
-  lire_factures: ['statut', 'impayees_seulement', 'limite'],
+  lire_devis: ['statut', 'client', 'recherche', 'limite'],
+  lire_factures: ['statut', 'impayees_seulement', 'client', 'limite'],
   lire_conversations: ['en_attente_seulement', 'client', 'limite'],
   lire_chiffres: ['periode'],
+  lire_chantiers: ['statut', 'ouverts_seulement', 'recherche', 'limite'],
+  lire_equipe_du_jour: [],
+  lire_materiaux_reserves: ['statut', 'recherche', 'limite'],
+  lire_a_facturer: ['limite'],
   preparer_devis_brouillon: ['conversation_id'],
   preparer_reponse: ['conversation_id'],
 }
@@ -191,17 +264,23 @@ export function validerEntree<N extends NomOutil>(nom: N, brut: unknown): Valida
     case 'lire_devis': {
       const statut = enumDe(o.statut, STATUTS_DEVIS)
       if (statut === undefined) return ko(`statut : une valeur parmi ${STATUTS_DEVIS.join(', ')}`)
+      const client = texteRecherche(o.client)
+      if (client === undefined) return ko(`client : texte de ${RECHERCHE_MAX} caractères au plus`)
+      const recherche = texteRecherche(o.recherche)
+      if (recherche === undefined) return ko(`recherche : texte de ${RECHERCHE_MAX} caractères au plus`)
       const limite = limiteDe(o.limite, 20)
       if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
-      return ok({ statut, limite } as EntreesOutils[N])
+      return ok({ statut, client, recherche, limite } as EntreesOutils[N])
     }
     case 'lire_factures': {
       const statut = enumDe(o.statut, STATUTS_FACTURES)
       if (statut === undefined) return ko(`statut : une valeur parmi ${STATUTS_FACTURES.join(', ')}`)
       if (o.impayees_seulement !== undefined && typeof o.impayees_seulement !== 'boolean') return ko('impayees_seulement : vrai ou faux')
+      const client = texteRecherche(o.client)
+      if (client === undefined) return ko(`client : texte de ${RECHERCHE_MAX} caractères au plus`)
       const limite = limiteDe(o.limite, 20)
       if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
-      return ok({ statut, impayees_seulement: o.impayees_seulement === true, limite } as EntreesOutils[N])
+      return ok({ statut, impayees_seulement: o.impayees_seulement === true, client, limite } as EntreesOutils[N])
     }
     case 'lire_conversations': {
       if (o.en_attente_seulement !== undefined && typeof o.en_attente_seulement !== 'boolean') return ko('en_attente_seulement : vrai ou faux')
@@ -215,6 +294,34 @@ export function validerEntree<N extends NomOutil>(nom: N, brut: unknown): Valida
       const periode = enumDe(o.periode, PERIODES_CHIFFRES)
       if (periode === undefined) return ko(`periode : une valeur parmi ${PERIODES_CHIFFRES.join(', ')}`)
       return ok({ periode: periode ?? 'mois' } as EntreesOutils[N])
+    }
+    case 'lire_chantiers': {
+      const statut = enumDe(o.statut, STATUTS_CHANTIER)
+      if (statut === undefined) return ko(`statut : une valeur parmi ${STATUTS_CHANTIER.join(', ')}`)
+      if (o.ouverts_seulement !== undefined && typeof o.ouverts_seulement !== 'boolean') return ko('ouverts_seulement : vrai ou faux')
+      const recherche = texteRecherche(o.recherche)
+      if (recherche === undefined) return ko(`recherche : texte de ${RECHERCHE_MAX} caractères au plus`)
+      const limite = limiteDe(o.limite, 20)
+      if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
+      // Un statut clos demandé explicitement l'emporte sur « ouverts seulement » (sinon la réponse serait toujours vide).
+      const ouverts = statut === 'termine' || statut === 'annule' ? false : o.ouverts_seulement !== false
+      return ok({ statut, ouverts_seulement: ouverts, recherche, limite } as EntreesOutils[N])
+    }
+    case 'lire_equipe_du_jour':
+      return ok({} as EntreesOutils[N])
+    case 'lire_materiaux_reserves': {
+      const statut = enumDe(o.statut, STATUTS_RESERVATION)
+      if (statut === undefined) return ko(`statut : une valeur parmi ${STATUTS_RESERVATION.join(', ')}`)
+      const recherche = texteRecherche(o.recherche)
+      if (recherche === undefined) return ko(`recherche : texte de ${RECHERCHE_MAX} caractères au plus`)
+      const limite = limiteDe(o.limite, 30)
+      if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
+      return ok({ statut: statut ?? 'reserve', recherche, limite } as EntreesOutils[N])
+    }
+    case 'lire_a_facturer': {
+      const limite = limiteDe(o.limite, 20)
+      if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
+      return ok({ limite } as EntreesOutils[N])
     }
     case 'preparer_devis_brouillon':
     case 'preparer_reponse': {

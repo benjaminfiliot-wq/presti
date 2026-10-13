@@ -1,65 +1,54 @@
+import crypto from 'node:crypto'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { enEssai } from '@/lib/flags'
 import { ouvertPour } from '@/lib/essais'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { messageVerrou, peut } from '@/lib/plans'
+import { decisionAcces } from '@/lib/crm/acces'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { consommerLimite } from '@/lib/limites'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { genParams } from '@/lib/ai'
 import { routerModele } from '@/lib/ai/routage'
-import { HISTORIQUE_CARACTERES_MAX, HISTORIQUE_MESSAGES_MAX, MESSAGE_MAX, PLAFOND_TOURS, cadrerDemande, systemeAssistant } from '@/lib/assistant/cadrage'
-import { executerTour, type EchangePasse } from '@/lib/assistant/boucle'
+import { MESSAGE_MAX, PLAFOND_TOURS, cadrerDemande, systemeAssistant } from '@/lib/assistant/cadrage'
+import { executerTour } from '@/lib/assistant/boucle'
 import { clientDeSession, executeursDeSession, journalEnBase } from '@/lib/assistant/executeurs'
 import { jourLisible } from '@/lib/assistant/donnees'
+import { cleHistorique, lireHistorique, signerReponse } from '@/lib/assistant/historique'
 import { preparerTour } from '@/lib/assistant/tour'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
-// L'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture et A2 brouillons).
+// L'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture et A2 brouillons ; outils CRM le 13/10).
 //
-// POST { conversation_id, message, historique?, modele? } → un flux NDJSON :
+// POST { conversation_id?, message, historique?, modele? } → un flux NDJSON :
+//   { e: 'conversation', id }   d'abord : l'identifiant de la conversation, GÉNÉRÉ ICI pour une nouvelle ;
 //   { e: 'consulte', outil, libelle }   pendant le tour, à chaque outil appelé (« l'assistant consulte : stock… ») ;
-//   { e: 'fin', texte, brouillons, consultes, tour, restants, palier }   à la fin ;
+//   { e: 'fin', texte, signature, brouillons, consultes, tour, restants, palier, conversation_id }   à la fin ;
 //   { e: 'erreur', message }   si le modèle ou le journal tombe (le crédit et le tour sont rendus : lib/assistant/tour.ts).
-// Les refus d'avant le tour (drapeau, session, offre, plafond, crédit) sont des réponses JSON ordinaires.
+// Les refus d'avant le tour (drapeau, session, offre, conversation, plafond, crédit) sont des réponses JSON ordinaires.
 //
 // Ordre des contrôles, et pourquoi :
 //  1. le drapeau (baissé : 404, la route n'existe pas) ;
 //  2. la session (authArtisan : révocation, suspension, double authentification, code par e-mail) ;
 //  3. l'offre, lue SOUS LA RLS avec le jeton de l'artisan : `assistant` (Signature, Business) ;
-//  4. le débit de requêtes, puis le PLAFOND de tours de la conversation (fonction SQL atomique, 0150 ; sans elle : refus) ;
-//  5. le crédit du tour au tarif du palier (consumeCredit), rendu si le modèle échoue.
-// Aucun outil ne touche la base avec la clé de service pour lire : voir lib/assistant/executeurs.ts.
+//  4. la conversation (audit d'attaque du 12/10, B2) : absente → un identifiant neuf, tiré ICI (crypto.randomUUID) ;
+//     fournie → elle doit déjà exister ET être à lui (lue sous la RLS). L'écran ne choisit plus d'identifiant : plus de
+//     squat d'un identifiant prévisible, plus de conversation « créée » par un identifiant inventé ;
+//  5. le débit de requêtes, puis le PLAFOND de tours de la conversation (fonction SQL atomique, 0150 ; sans elle : refus) ;
+//  6. le crédit du tour au tarif du palier (consumeCredit), rendu si le modèle échoue.
+// L'historique renvoyé par l'écran n'est cru que pour les réponses de l'assistant SIGNÉES par ce serveur (B3,
+// lib/assistant/historique.ts). Aucun outil ne touche la base avec la clé de service pour lire : lib/assistant/executeurs.ts.
 
 const client = new Anthropic()
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const LIMITE_REQUETES = { max: 30, fenetreSec: 10 * 60 }
-// Audit d'attaque du 12/10 : le plafond de 20 tours est PAR conversation (identifiant choisi par l'écran), il ne borne
-// aucun coût à lui seul ; celui-ci borne la journée du compte.
+// Audit d'attaque du 12/10 : le plafond de 20 tours est PAR conversation, il ne borne aucun coût à lui seul ; celui-ci
+// borne la journée du compte (une nouvelle conversation par message ne contourne donc rien).
 const LIMITE_JOUR = { max: 200, fenetreSec: 24 * 3600 }
-
-/** L'historique renvoyé par l'écran : forme stricte, derniers échanges seulement, borné en taille. */
-function lireHistorique(brut: unknown): EchangePasse[] {
-  if (!Array.isArray(brut)) return []
-  const propres = brut
-    .filter((e): e is { role: string; texte: string } => !!e && typeof e === 'object' && typeof (e as { texte?: unknown }).texte === 'string')
-    .filter((e) => e.role === 'artisan' || e.role === 'assistant')
-    .map((e) => ({ role: e.role as EchangePasse['role'], texte: e.texte.trim().slice(0, 4000) }))
-    .filter((e) => e.texte)
-    .slice(-HISTORIQUE_MESSAGES_MAX)
-  const gardes: EchangePasse[] = []
-  let reste = HISTORIQUE_CARACTERES_MAX
-  for (const e of propres.reverse()) {
-    if (e.texte.length > reste) break
-    reste -= e.texte.length
-    gardes.unshift(e)
-  }
-  return gardes
-}
 
 async function rendreTour(uid: string, conversationId: string) {
   const { error } = await supabaseAdmin.rpc('assistant_rendre_tour', { p_artisan: uid, p_conversation: conversationId })
@@ -84,12 +73,28 @@ export async function POST(req: Request) {
   }
 
   const b = await req.json().catch(() => null)
-  const conversationId = typeof b?.conversation_id === 'string' && UUID.test(b.conversation_id) ? b.conversation_id.toLowerCase() : ''
   const message = typeof b?.message === 'string' ? b.message.trim() : ''
-  if (!conversationId) return NextResponse.json({ error: 'Conversation manquante.' }, { status: 400 })
   if (!message) return NextResponse.json({ error: 'Message vide.' }, { status: 400 })
   if (message.length > MESSAGE_MAX) return NextResponse.json({ error: `Message trop long (${MESSAGE_MAX} caractères au plus).` }, { status: 400 })
-  const historique = lireHistorique(b?.historique)
+
+  // B2 — l'identifiant de conversation vient du serveur. Fourni par l'écran : il doit exister et être au compte (RLS).
+  const fourni = b?.conversation_id
+  let conversationId: string
+  let nouvelle = false
+  if (fourni === undefined || fourni === null || fourni === '') {
+    conversationId = crypto.randomUUID()
+    nouvelle = true
+  } else {
+    if (typeof fourni !== 'string' || !UUID.test(fourni)) return NextResponse.json({ error: 'Conversation introuvable : ouvrez une nouvelle conversation.', code: 'conversation' }, { status: 404 })
+    const { data: conv, error: eConv } = await clientDeSession(jeton).from('assistant_conversations').select('id').eq('id', fourni.toLowerCase()).eq('artisan_id', uid).maybeSingle()
+    if (eConv) { console.error('[assistant] conversation :', eConv.message); return NextResponse.json({ error: 'L’assistant est indisponible pour l’instant.', code: 'indisponible' }, { status: 503 }) }
+    if (!conv) return NextResponse.json({ error: 'Conversation introuvable : ouvrez une nouvelle conversation.', code: 'conversation' }, { status: 404 })
+    conversationId = fourni.toLowerCase()
+  }
+  // B3 — l'historique : les réponses de l'assistant ne sont gardées que signées par ce serveur, pour CETTE conversation.
+  const cle = cleHistorique()
+  const { historique, ecartees } = lireHistorique(b?.historique, { cle, uid, conversationId: nouvelle ? null : conversationId })
+  if (ecartees) console.warn(`[assistant] ${ecartees} réponse(s) d’historique sans signature valide écartée(s)`)
 
   if (!(await consommerLimite(`assistant:${uid}`, LIMITE_REQUETES.max, LIMITE_REQUETES.fenetreSec))) {
     return NextResponse.json({ error: 'Beaucoup de messages en peu de temps : reprenez dans quelques minutes.', code: 'debit' }, { status: 429 })
@@ -104,8 +109,10 @@ export async function POST(req: Request) {
   const jour = jourLisible(maintenant)
   const dernierAssistant = [...historique].reverse().find((e) => e.role === 'assistant')?.texte ?? null
   const cadrage = cadrerDemande(message, dernierAssistant)
-  const systeme = systemeAssistant({ nom: art.nom as string | null, metier: art.metier as string | null, jour }, cadrage)
-  const executeurs = executeursDeSession({ uid, jeton, origine: new URL(req.url).origin, isFounder })
+  // Le CRM : la décision même des routes /api/crm/* (lib/crm/acces.ts : drapeau ou essai du compte, puis capacité `crm`).
+  const crm = decisionAcces({ drapeau: ouvertPour('crm', uid), session: { ok: true }, plan: art.plan as string | null }).ok
+  const systeme = systemeAssistant({ nom: art.nom as string | null, metier: art.metier as string | null, jour, crm }, cadrage)
+  const executeurs = executeursDeSession({ uid, jeton, origine: new URL(req.url).origin, isFounder, crm, meilleursClients: cadrage.meilleursClients })
 
   // Plafond (atomique en base, fail-closed : sans la migration 0150, aucun tour ne part), puis crédit, puis le tour.
   let tourPris = 0
@@ -128,20 +135,26 @@ export async function POST(req: Request) {
       message,
       executeurs,
       brouillonsAutorises: cadrage.brouillon,
+      crm,
       journaliser: journalEnBase({ uid, conversationId, tour: tourPris }),
       onOutil,
       sourcesFixes: [jour, maintenant.toISOString().slice(0, 10)],
       signal: req.signal,
     }),
   })
-  if (!prep.ok) return NextResponse.json(prep.corps, { status: prep.status })
+  // Un refus d'avant le tour garde l'identifiant (déjà créé en base pour une nouvelle conversation) : l'écran le réutilise.
+  if (!prep.ok) return NextResponse.json({ ...prep.corps, ...(prep.corps.code === 'credit' ? { conversation_id: conversationId } : {}) }, { status: prep.status })
   tourPris = prep.tour
 
   const encodeur = new TextEncoder()
   const flux = new ReadableStream<Uint8Array>({
     async start(controller) {
       const envoyer = (o: unknown) => { try { controller.enqueue(encodeur.encode(JSON.stringify(o) + '\n')) } catch { /* client parti */ } }
-      try { await prep.jouer(envoyer) } finally { try { controller.close() } catch { /* déjà fermé */ } }
+      try {
+        envoyer({ e: 'conversation', id: conversationId })
+        // La réponse part signée (B3) : renvoyée dans l'historique du tour suivant, elle seule sera crue.
+        await prep.jouer((ev) => envoyer(ev.e === 'fin' ? { ...ev, conversation_id: conversationId, signature: signerReponse(cle, { uid, conversationId, texte: ev.texte }) } : ev))
+      } finally { try { controller.close() } catch { /* déjà fermé */ } }
     },
   })
   return new Response(flux, { headers: { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-store' } })

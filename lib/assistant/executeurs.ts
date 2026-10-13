@@ -12,6 +12,10 @@
 //    réponse »), puis la réponse est rangée comme les propositions du moteur (message `etat = 'proposition'`, écrit par
 //    le service comme partout : la table `messages` n'a pas de politique d'insertion pour les artisans), APRÈS avoir
 //    vérifié sous la RLS que la conversation est bien à lui.
+//  • CRM (chantiers, équipe du jour, matériaux réservés, à facturer) → des lectures PostgREST avec le jeton de
+//    l'artisan, sur les tables du CRM (0141 ; lecture seule sous la RLS depuis 0152), filtrées sur le compte, puis les
+//    calculs de lib/crm/* (lib/assistant/crm.ts). Les routes /api/crm/* lisent avec la clé de service : l'assistant,
+//    lui, ne lit qu'avec la session — mêmes calculs, même décision d'accès (lib/crm/acces.ts, posée par la route).
 // La clé de service ne sert ici qu'à ÉCRIRE : le journal et la proposition. Elle ne lit aucune donnée d'artisan.
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
@@ -22,6 +26,7 @@ import { GET as lireTableauCompta } from '@/app/api/compta/tableau/route'
 import { POST as devisAuto } from '@/app/api/devis/auto/route'
 import { POST as messagesBoite } from '@/app/api/messages/route'
 import { resumerChiffres, resumerConversations, resumerDevis, resumerFactures, resumerStock, type DevisLu, type LeadLu, type MessageLu, type TableauCompta } from './donnees'
+import { resumerAFacturer, resumerChantiers, resumerEquipeDuJour, resumerMateriauxReserves, type DossiersCrm } from './crm'
 import { ligneJournal } from './journal'
 import type { AppelJournal, Executeurs, ResultatExecution } from './boucle'
 
@@ -32,6 +37,55 @@ export type ContexteSession = {
   /** L'origine de la requête de l'assistant : les requêtes internes vers les gestionnaires y sont adressées. */
   origine: string
   isFounder: boolean
+  /** Le compte a le CRM (décidé par la route : drapeau ou essai, et capacité `crm`). */
+  crm: boolean
+  /** L'artisan a demandé ses meilleurs clients dans CE message (cadrerDemande) : sinon lire_chiffres ne les rend pas. */
+  meilleursClients: boolean
+}
+
+/** Les colonnes lues pour le CRM : le nécessaire aux calculs de lib/crm/*, rien d'autre (ni adresse, ni e-mail, ni notes). */
+export const COLONNES_CRM = {
+  chantiers: 'id, artisan_id, devis_id, client_nom, titre, statut, date_debut, date_fin_prevue, vehicule_id, cree_le',
+  taches: 'artisan_id, chantier_id, faite',
+  equipe: 'artisan_id, chantier_id, membre_id',
+  membres: 'id, artisan_id, nom, role, actif',
+  vehicules: 'id, artisan_id, nom, actif',
+  reservations: 'id, artisan_id, chantier_id, materiau_id, quantite, lieu, statut, sorti_le',
+  materiaux: 'id, artisan_id, nom, unite, categorie, seuil_alerte, stock(lieu, quantite)',
+  devis: 'id, artisan_id, lead_id, statut, numero, objet, client_nom, total_ttc, created_at, envoye_le, accepte_le',
+  factures: 'id, artisan_id, devis_id, statut, numero, total_ttc, avoir_de, date_emission, date_echeance, client_nom',
+  leads: 'id, artisan_id, statut, nom_prospect, type_chantier, canal, created_at',
+  deplacements: 'artisan_id, objet, objet_id, vers, etape_derivee, cree_le',
+} as const
+const LIMITE_CRM = 2000
+
+/** Tout ce que les outils CRM lisent, sous la session (RLS), filtré sur le compte. Une lecture en erreur fait tout échouer. */
+async function chargerCrm(session: SupabaseClient, uid: string): Promise<DossiersCrm> {
+  const lire = (table: string, cols: string, n = LIMITE_CRM) => session.from(table).select(cols).eq('artisan_id', uid).limit(n)
+  const [chantiers, taches, equipe, membres, vehicules, reservations, materiaux, devis, factures, leads, deplacements] = await Promise.all([
+    session.from('chantiers').select(COLONNES_CRM.chantiers).eq('artisan_id', uid).order('cree_le', { ascending: false }).limit(LIMITE_CRM),
+    lire('chantier_taches', COLONNES_CRM.taches, 20 * LIMITE_CRM),
+    lire('chantier_equipe', COLONNES_CRM.equipe, 20 * LIMITE_CRM),
+    session.from('equipe_membres').select(COLONNES_CRM.membres).eq('artisan_id', uid).order('nom').limit(200),
+    session.from('vehicules').select(COLONNES_CRM.vehicules).eq('artisan_id', uid).order('nom').limit(200),
+    session.from('chantier_materiaux').select(COLONNES_CRM.reservations).eq('artisan_id', uid).order('cree_le').limit(LIMITE_CRM),
+    lire('materiaux', COLONNES_CRM.materiaux),
+    session.from('devis').select(COLONNES_CRM.devis).eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE_CRM),
+    session.from('factures').select(COLONNES_CRM.factures).eq('artisan_id', uid).order('date_emission', { ascending: false }).limit(LIMITE_CRM),
+    session.from('leads').select(COLONNES_CRM.leads).eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE_CRM),
+    session.from('crm_journal').select(COLONNES_CRM.deplacements).eq('artisan_id', uid).eq('champ', 'etape').order('cree_le', { ascending: false }).limit(LIMITE_CRM),
+  ])
+  const toutes = [chantiers, taches, equipe, membres, vehicules, reservations, materiaux, devis, factures, leads, deplacements]
+  if (toutes.some((r) => r.error)) throw new Error('CRM illisible')
+  const l = <T>(r: { data: unknown }) => ((r.data ?? []) as T[])
+  const d: DossiersCrm = {
+    maintenant: new Date().toISOString(),
+    chantiers: l(chantiers), taches: l(taches), equipe: l(equipe), membres: l(membres), vehicules: l(vehicules),
+    reservations: l(reservations), materiaux: l(materiaux), devis: l(devis), factures: l(factures), leads: l(leads), deplacements: l(deplacements),
+    tronque: false,
+  }
+  d.tronque = [d.chantiers, d.reservations, d.materiaux, d.devis, d.factures, d.leads].some((x) => x.length >= LIMITE_CRM)
+  return d
 }
 
 /** Un client PostgREST qui porte le jeton de l'artisan : la RLS décide, comme dans son navigateur. */
@@ -66,6 +120,10 @@ export function executeursDeSession(ctx: ContexteSession): Executeurs {
   // Factures et chiffres lisent la même route : une seule lecture par tour.
   let tableau: Promise<{ status: number; json: Record<string, unknown> | null }> | null = null
   const lireTableau = () => (tableau ??= appeler(ctx, lireTableauCompta, '/api/compta/tableau'))
+  // Les quatre outils CRM lisent les mêmes lignes : une seule lecture par tour (une lecture ratée n'est pas gardée).
+  let crm: Promise<DossiersCrm> | null = null
+  const lireCrm = () => (crm ??= chargerCrm(session, ctx.uid).catch((e) => { crm = null; throw e }))
+  const sansCrm = (): ResultatExecution => refus("Le CRM n'est pas ouvert sur ce compte.", 'CRM non ouvert sur ce compte')
 
   return {
     async lire_stock(entree) {
@@ -94,8 +152,32 @@ export function executeursDeSession(ctx: ContexteSession): Executeurs {
     async lire_chiffres(entree) {
       const r = await lireTableau()
       if (r.status !== 200 || !r.json) return refus(erreurDe(r.json, 'Chiffres indisponibles.'), `refusé par Mes chiffres (${r.status})`)
-      const d = resumerChiffres(r.json as TableauCompta, ctx.uid, entree)
-      return { donnees: d, resume: `chiffres « ${d.periode.nom} »` }
+      const d = resumerChiffres(r.json as TableauCompta, ctx.uid, entree, { meilleursClients: ctx.meilleursClients })
+      return { donnees: d, resume: `chiffres « ${d.periode.nom} »${ctx.meilleursClients ? ', avec les meilleurs clients' : ''}` }
+    },
+
+    async lire_chantiers(entree) {
+      if (!ctx.crm) return sansCrm()
+      const d = resumerChantiers(await lireCrm(), ctx.uid, entree)
+      return { donnees: d, resume: `${d.nb_chantiers_total} chantier(s), ${d.nb_ouverts} ouvert(s), ${d.nb_rendus} rendu(s)` }
+    },
+
+    async lire_equipe_du_jour() {
+      if (!ctx.crm) return sansCrm()
+      const d = resumerEquipeDuJour(await lireCrm(), ctx.uid)
+      return { donnees: d, resume: `${d.nb_membres_actifs} membre(s), ${d.nb_sur_un_chantier} sur un chantier du jour` }
+    },
+
+    async lire_materiaux_reserves(entree) {
+      if (!ctx.crm) return sansCrm()
+      const d = resumerMateriauxReserves(await lireCrm(), ctx.uid, entree)
+      return { donnees: d, resume: `${d.nb_reservations} réservation(s) (${entree.statut}), ${d.nb_chantiers} chantier(s)` }
+    },
+
+    async lire_a_facturer(entree) {
+      if (!ctx.crm) return sansCrm()
+      const d = resumerAFacturer(await lireCrm(), ctx.uid, entree)
+      return { donnees: d, resume: `${d.nb_dossiers} dossier(s) à facturer ou encaisser` }
     },
 
     async lire_conversations(entree) {
@@ -165,7 +247,8 @@ export function executeursDeSession(ctx: ContexteSession): Executeurs {
       }
       return {
         donnees: { ok: true, client, a_savoir: "La réponse est rangée dans la conversation comme « réponse proposée ». Rien n'est envoyé : l'artisan la relit, la modifie s'il veut et l'envoie lui-même depuis Messages. Ne recopie pas le texte." },
-        resume: `réponse préparée pour ${client}`,
+        // RGPD : le journal ne nomme pas le client ; l'objet (la conversation) suffit, l'écran retrouve le nom.
+        resume: 'réponse préparée',
         brouillon: { type: 'reponse', conversation_id: cid, lien, libelle: `Réponse à ${client}` },
         objet: { type: 'conversation', id: cid },
       }
