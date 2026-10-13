@@ -1,4 +1,5 @@
--- 0154 · [ÉCRITE le 13/10/2026, PAS ENCORE APPLIQUÉE — essai à sec d'abord : bloc DO + EXECUTE + raise exception, puis les
+-- [APPLIQUÉE en production le 13/10/2026 ~09 h 45 : essai à sec (refus 50/3, sortie 2/3, journal 3), puis contrôle 3 fonctions à search_path vide, 2 déclencheurs, navigateur sans droit, 0 ligne]
+-- 0154 · [ÉCRITE le 13/10/2026, APPLIQUÉE le 13/10 (voir ligne 1) — essai à sec d'abord : bloc DO + EXECUTE + raise exception, puis les
 -- contrôles du bas] CRM : les fonctions `security definer` du CRM tournent avec `search_path = ''` et des noms qualifiés.
 --
 -- Audit d'attaque du 12/10/2026 (point restant) : crm_sortir_materiau (0141, refaite par 0153), crm_journal_chantier et
