@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estUuid, lireCorps, validerModificationReservation } from '@/lib/crm/valider'
 
 export const runtime = 'nodejs'
@@ -53,4 +53,26 @@ export async function DELETE(req: Request, ctx: Ctx) {
   if (error) { const s = statutErreurBase(error); console.error('[crm/materiau] annulation :', error.message); return erreur(s.message, s.status) }
   if (!data?.length) return erreur('Réservation introuvable ou déjà sortie.', 404)
   return json({ ok: true })
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function GET(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('PATCH, DELETE')
+}
+export async function POST(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('PATCH, DELETE')
+}
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('PATCH, DELETE')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('PATCH, DELETE')
 }

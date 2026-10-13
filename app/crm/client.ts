@@ -7,7 +7,16 @@ import { supabase } from '@/lib/supabaseClient'
 
 export type Reponse<T> = { ok: true; status: number; corps: T } | { ok: false; status: number; erreur: string; code?: string }
 
+// Mode EXEMPLE (app/crm/mode.tsx) : tant qu'il est posé, AUCUNE écriture ne part, quel que soit le bouton. C'est la
+// dernière barrière : les écrans de l'exemple n'appellent déjà rien, mais un bouton oublié s'arrête ici, avant le réseau.
+let ecrituresBloquees = false
+export const MESSAGE_ECRITURE_EXEMPLE = 'Dans l’exemple, rien n’est envoyé ni enregistré : sur vos données, ce bouton fait vraiment l’action.'
+export function bloquerEcritures(oui: boolean) { ecrituresBloquees = oui }
+/** Une réponse refusée par le mode exemple n'est pas une panne : l'écran l'affiche comme une information. */
+export const estErreur = (r: { code?: string }) => r.code !== 'exemple'
+
 export async function appel<T = Record<string, unknown>>(chemin: string, init: { method?: string; body?: unknown } = {}): Promise<Reponse<T>> {
+  if (ecrituresBloquees && (init.method ?? 'GET').toUpperCase() !== 'GET') return { ok: false, status: 0, erreur: MESSAGE_ECRITURE_EXEMPLE, code: 'exemple' }
   const jeton = (await supabase.auth.getSession()).data.session?.access_token ?? null
   if (!jeton) return { ok: false, status: 401, erreur: 'Session expirée : reconnectez-vous.' }
   const r = await fetch(chemin, {
@@ -21,6 +30,15 @@ export async function appel<T = Record<string, unknown>>(chemin: string, init: {
   if (!r.ok) return { ok: false, status: r.status, erreur: corps?.error ?? (r.status === 404 ? 'Introuvable.' : 'Le service ne répond pas. Réessayez dans un instant.'), code: corps?.code }
   return { ok: true, status: r.status, corps: (corps ?? {}) as T }
 }
+
+/** Sous chaque zone de texte libre du CRM (audit RGPD du 12/10, point d : minimisation, art. 5.1 c et 9). */
+export const AIDE_TEXTE_LIBRE = 'Pas de santé, d’opinion ni de jugement sur la personne.'
+
+/**
+ * Le lien « Itinéraire » d'une adresse de chantier : il ouvre l'application de navigation du téléphone (Google Maps,
+ * ou Plans sur iPhone, qui sait lire ce lien). Rien ne part tant que l'artisan ne touche pas le lien.
+ */
+export const itineraire = (adresse: string) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(adresse)}`
 
 /** « 1 240 € » ou « 1 240,50 € » depuis des centimes ; « — » pour null. */
 export function euros(c: number | null | undefined): string {

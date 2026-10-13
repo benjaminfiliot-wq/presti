@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chargerDossiers, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { chargerDossiers, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estEmpreinte, estUuid, lireCorps, validerCreationNote } from '@/lib/crm/valider'
 import { regrouperClients } from '@/lib/crm/clients'
+import { idClientPour } from '@/lib/crm/empreinte'
 
 export const runtime = 'nodejs'
 
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
   if ('client' in cible) {
     const d = await chargerDossiers(g.uid)
     if (!d.ok) return erreur(INDISPONIBLE, 503)
-    const existe = regrouperClients({ artisanId: g.uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet }).some((c) => c.id === cible.client)
+    const existe = regrouperClients({ artisanId: g.uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet, idDe: idClientPour(g.uid) }).some((c) => c.id === cible.client)
     if (!existe) return erreur('Client introuvable.', 404)
   } else {
     const [table, idCible] = 'chantier_id' in cible ? ['chantiers', cible.chantier_id] as const : ['leads', cible.lead_id] as const
@@ -52,4 +53,26 @@ export async function POST(req: Request) {
   const { data, error } = await supabaseAdmin.from('crm_notes').insert({ ...ligne, artisan_id: g.uid }).select('id').single()
   if (error || !data) { const s = statutErreurBase(error); console.error('[crm/notes] création :', error?.message); return erreur(s.message, s.status) }
   return json({ ok: true, id: data.id }, 201)
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function PATCH(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function DELETE(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
 }

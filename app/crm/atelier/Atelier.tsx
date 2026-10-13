@@ -21,13 +21,39 @@ const Scene3D = dynamic(() => import('./Scene3D'), {
   loading: () => <div className="atl-charge" role="status">Construction de la maquette…</div>,
 })
 
+/**
+ * Précharge le morceau 3D (sans le monter) quand l'appareil l'affichera : la page /crm l'appelle dès son ouverture, pour
+ * que le téléchargement de three se fasse PENDANT la lecture des données et non après (recette du 12/10 : premier
+ * affichage 3D à froid trop lent). Sur téléphone, sans WebGL ou en « moins d'animations », rien n'est téléchargé.
+ */
+// Mesuré le 13/10 (profil CPU, /crm à froid) : le test WebGL — le PREMIER contexte de la page — coûte 0,3 à 0,8 s de
+// calcul. Lancé tout de suite, il retardait d'autant le départ de la lecture des données. Donc : le morceau 3D part tout de
+// suite (simple téléchargement), le test WebGL 150 ms plus tard, quand la lecture voyage déjà ; l'atelier le retrouve fait.
+export function prechargerScene3D() {
+  try {
+    const etroit = window.innerWidth < 760 || (window.matchMedia?.('(pointer: coarse)').matches && window.innerWidth < 1024)
+    if (etroit || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    void import('./Scene3D')
+    window.setTimeout(() => { try { detecter() } catch { /* l'atelier refera le test */ } }, 150)
+  } catch { /* le chargement normal prendra le relais */ }
+}
+
 type Mode = '3d' | '2d'
 type Detection = { mode: Mode; raison: string | null; webgl: boolean }
 
+let webglConnu: boolean | null = null
 function detecter(): Detection {
   const raisons: string[] = []
-  let webgl = false
-  try { const c = document.createElement('canvas'); webgl = !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { webgl = false }
+  // Le test WebGL crée un contexte : une fois par page suffit (le préchargement et l'atelier le partagent).
+  if (webglConnu === null) {
+    try {
+      const c = document.createElement('canvas')
+      const gl = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null
+      webglConnu = !!gl
+      gl?.getExtension('WEBGL_lose_context')?.loseContext() // le contexte de test est rendu aussitôt
+    } catch { webglConnu = false }
+  }
+  const webgl = webglConnu
   if (!webgl) raisons.push('ce navigateur n’affiche pas la 3D (WebGL indisponible)')
   if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) raisons.push('vous avez demandé moins d’animations')
   const etroit = window.innerWidth < 760 || (window.matchMedia?.('(pointer: coarse)').matches && window.innerWidth < 1024)
@@ -64,6 +90,7 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
   const commandes = useRef<CommandesScene>(null)
 
   useEffect(() => {
+    if (mesure) (window as unknown as { __atelierMonte?: number }).__atelierMonte = performance.now()
     const d = detecter()
     setDetection(d)
     setMode(forcer ?? d.mode)

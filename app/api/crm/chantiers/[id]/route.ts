@@ -1,9 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estUuid, lireCorps, validerModificationChantier } from '@/lib/crm/valider'
-import { actionsChantier, avancement, joursDeRetard, messageNotification } from '@/lib/crm/chantier'
-import { etapeDevis } from '@/lib/crm/pipeline'
-import { facturesComptees, jourParis } from '@/lib/comptaTableau'
+import { construireFicheChantier, type DevisFiche, type EntreeJournal, type FactureFiche, type FicheChantier, type NoteCrm, type ReservationFiche, type TacheFiche } from '@/lib/crm/vue'
+import { jourParis } from '@/lib/comptaTableau'
 
 export const runtime = 'nodejs'
 type Ctx = { params: Promise<{ id: string }> }
@@ -34,35 +33,26 @@ export async function GET(req: Request, ctx: Ctx) {
   const enErreur = [devisR, tachesR, equipeR, materiauxR, notesR, journalR, vehiculeR].find((r) => r.error)
   if (enErreur?.error) { console.error('[crm/chantier] fiche :', enErreur.error.message); return erreur(INDISPONIBLE, 503) }
 
-  const devis = devisR.data as { id: string; numero: string | null; objet: string | null; statut: string | null; total_ttc: number | null; acompte_pct: number | null; accepte_le: string | null; envoye_le: string | null; client_nom: string | null; client_email: string | null; client_adresse: string | null; lead_id: string | null } | null
+  const devis = devisR.data as DevisFiche | null
   const [facturesR, leadR] = await Promise.all([
     devis ? supabaseAdmin.from('factures').select('id, artisan_id, devis_id, numero, statut, total_ttc, avoir_de, date_emission, acompte_pct').eq('devis_id', devis.id).eq('artisan_id', g.uid).order('date_emission') : Promise.resolve({ data: [], error: null }),
     devis?.lead_id ? supabaseAdmin.from('leads').select('id, statut').eq('id', devis.lead_id).eq('artisan_id', g.uid).maybeSingle() : Promise.resolve({ data: null, error: null }),
   ])
   if (facturesR.error || leadR.error) { console.error('[crm/chantier] factures :', (facturesR.error ?? leadR.error)?.message); return erreur(INDISPONIBLE, 503) }
-  const factures = (facturesR.data ?? []) as { id: string; artisan_id: string; devis_id: string; numero: string | null; statut: string | null; total_ttc: number | null; avoir_de: string | null; date_emission: string | null; acompte_pct: number | null }[]
+  const factures = (facturesR.data ?? []) as FactureFiche[]
   const leadStatut = (leadR.data as { statut?: string | null } | null)?.statut ?? null
-  const taches = tachesR.data ?? []
-  const av = avancement(taches)
-  const jour = jourParis(new Date())
 
-  return json({
-    chantier: c,
-    devis,
-    // Factures du devis : toutes (pour l'historique), avec celles qui COMPTENT marquées (ni annulée, ni avoir).
-    factures: factures.map((f) => ({ ...f, comptee: facturesComptees(factures).some((x) => x.id === f.id) })),
-    etape: devis ? etapeDevis({ ...devis, artisan_id: g.uid }, leadStatut ? { id: devis.lead_id!, statut: leadStatut } : null, facturesComptees(factures), c).etape : null,
-    taches,
-    avancement: av,
-    retard: joursDeRetard(c, jour),
-    equipe: (equipeR.data ?? []).map((e) => e.membre).filter(Boolean),
-    vehicule: vehiculeR.data,
-    materiaux: materiauxR.data ?? [],
-    notes: notesR.data ?? [],
-    journal: journalR.data ?? [],
-    actions: actionsChantier({ devis, factures, leadStatut }),
-    notificationPreparee: messageNotification({ titre: c.titre, statut: c.statut, avancementPct: av.pct, dateDebut: c.date_debut, dateFinPrevue: c.date_fin_prevue }),
-  })
+  // L'assemblage est celui de lib/crm/vue.ts (le même que la fiche de l'atelier d'exemple).
+  return json(construireFicheChantier({
+    uid: g.uid, chantier: c as FicheChantier['chantier'], devis, factures, leadStatut,
+    taches: (tachesR.data ?? []) as TacheFiche[],
+    equipe: (equipeR.data ?? []).map((e) => e.membre as unknown as { id: string; nom: string; role: string } | null).filter((m): m is { id: string; nom: string; role: string } => !!m),
+    vehicule: vehiculeR.data as FicheChantier['vehicule'],
+    materiaux: (materiauxR.data ?? []) as unknown as ReservationFiche[],
+    notes: (notesR.data ?? []) as NoteCrm[],
+    journal: (journalR.data ?? []) as EntreeJournal[],
+    maintenant: new Date(),
+  }))
 }
 
 // PATCH /api/crm/chantiers/[id] — modifier la fiche (statut, dates, adresse, camionnette, équipe…). Le devis ne change pas.
@@ -126,4 +116,21 @@ export async function DELETE(req: Request, ctx: Ctx) {
   if (error) { const s = statutErreurBase(error); console.error('[crm/chantier] suppression :', error.message); return erreur(s.message, s.status) }
   if (!data?.length) return erreur('Chantier introuvable.', 404)
   return json({ ok: true })
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function POST(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, PATCH, DELETE')
+}
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, PATCH, DELETE')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, PATCH, DELETE')
 }

@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from 'react'
 import { LIBELLES_STATUT_CHANTIER, type StatutChantier } from '@/lib/crm/valider'
-import { appel, dateFr, euros, enCentimes, TON_STATUT_CHANTIER } from './client'
+import { AIDE_TEXTE_LIBRE, appel, dateFr, estErreur, euros, enCentimes, itineraire, TON_STATUT_CHANTIER } from './client'
+import { Lien } from './mode'
 import type { ChantierListe, DevisSigne } from './types'
 
 // Les chantiers : la liste (statut, avancement, retard) et la création — depuis un devis SIGNÉ (le titre, le client et le
@@ -22,7 +23,7 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
     const body = mode === 'devis' ? { devis_id: devisId, generer_taches: taches } : { titre, ...(client.trim() ? { client_nom: client } : {}) }
     const r = await appel<{ id: string; taches: number; avertissements: string[] }>('/api/crm/chantiers', { method: 'POST', body })
     setEnvoi(false)
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
     window.location.href = `/crm/chantiers/${r.corps.id}`
   }
 
@@ -34,17 +35,18 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
           <div className="psh-empty">Aucun chantier pour l’instant. Créez-en un ci-dessous, depuis un devis signé ou pour un dépannage.</div>
         ) : (
           <div className="psh-tablewrap">
-            <table className="psh-dtable crm-table">
+            <table className="psh-dtable crm-table crm-table-cartes">
               <thead><tr><th>Chantier</th><th>Client</th><th>Statut</th><th>Avancement</th><th>Début</th><th>Fin prévue</th></tr></thead>
               <tbody>
                 {chantiers.map((c) => (
                   <tr key={c.id}>
-                    <td><a className="obj" href={`/crm/chantiers/${c.id}`}>{c.titre}</a>{c.devis_numero && <span className="num"> · {c.devis_numero}</span>}</td>
-                    <td>{c.client ?? '—'}</td>
-                    <td><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span></td>
-                    <td><Avancement pct={c.avancement.pct} faites={c.avancement.faites} total={c.avancement.total} /></td>
-                    <td className="tnum">{dateFr(c.date_debut)}</td>
-                    <td className="tnum">{dateFr(c.date_fin_prevue)}{c.retard ? <span className="pill crit crm-retard">{c.retard} j</span> : null}</td>
+                    <td className="crm-td-titre"><Lien className="obj" href={`/crm/chantiers/${c.id}`}>{c.titre}</Lien>{c.devis_numero && <span className="num"> · {c.devis_numero}</span>}
+                      {c.adresse && <Lien className="crm-itineraire" href={itineraire(c.adresse)} title={`Itinéraire vers ${c.adresse}`}>Itinéraire</Lien>}</td>
+                    <td data-label="Client">{c.client ?? '—'}</td>
+                    <td data-label="Statut"><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span></td>
+                    <td data-label="Avancement"><Avancement pct={c.avancement.pct} faites={c.avancement.faites} total={c.avancement.total} /></td>
+                    <td data-label="Début" className="tnum">{dateFr(c.date_debut)}</td>
+                    <td data-label="Fin prévue" className="tnum">{dateFr(c.date_fin_prevue)}{c.retard ? <span className="pill crit crm-retard">{c.retard} j</span> : null}</td>
                   </tr>
                 ))}
               </tbody>
@@ -79,6 +81,7 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
             <>
               <label className="crm-champ">Nature des travaux<input required maxLength={200} value={titre} onChange={(e) => setTitre(e.target.value)} /></label>
               <label className="crm-champ">Client (facultatif)<input maxLength={200} value={client} onChange={(e) => setClient(e.target.value)} /></label>
+              <p className="crm-aide">{AIDE_TEXTE_LIBRE}</p>
             </>
           )}
           {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role={message.erreur ? 'alert' : 'status'}>{message.texte}</p>}

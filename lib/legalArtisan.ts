@@ -140,7 +140,7 @@ export function versArtisanLegal(a: Record<string, unknown> | null | undefined):
 // deux d'un coup : le document et la base ne peuvent plus diverger.
 
 /** Clés des durées — sert à relier un traitement affiché à la purge qui l'applique. */
-export type CleDuree = 'conversation' | 'comptable' | 'anti_abus'
+export type CleDuree = 'conversation' | 'comptable' | 'anti_abus' | 'crm' | 'crm_journal' | 'equipe_inactif'
 
 export const DUREES_MOIS: Record<CleDuree, number> = {
   /** Conversation (lead + messages) sans nouvel échange. Purgée par `purgerConversationsSansSuite`. */
@@ -153,6 +153,13 @@ export const DUREES_MOIS: Record<CleDuree, number> = {
   comptable: 120,
   /** Anti-abus : empreintes d'IP, horodatages d'abus, bannissements expirés. */
   anti_abus: 12,
+  // CRM (audit RGPD du 12/10, point b) — appliquées par `purgerCrm` (lib/purgesRgpd.ts).
+  /** Chantiers (avec tâches, réservations, équipe et notes) et notes client : après la FIN (chantier clos, ou dernière pièce du client). */
+  crm: 36,
+  /** Journal du CRM (statuts, tâches cochées, sorties de stock, déplacements du pipeline) : à compter de l'écriture. */
+  crm_journal: 24,
+  /** Membre de l'équipe marqué inactif et rattaché à aucun chantier, aucune tâche, aucun véhicule : depuis sa dernière modification. */
+  equipe_inactif: 12,
 }
 
 /**

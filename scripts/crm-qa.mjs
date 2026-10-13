@@ -14,6 +14,9 @@
 //  G. CODE : chaque route /api/crm/* passe par gardeCrm en première instruction ; chaque lecture/écriture par la clé de
 //     service porte l'artisan de la session ; drapeau baissé partout (menu, page, Tarifs).
 //  H. RENDU (react-dom/server) : tableau de bord vide = des « — », aucun chiffre ; rempli = les bons chiffres ; pipeline.
+//  X. EXEMPLE (13/10) : l'atelier d'exemple couvre tout le CRM, ses vues sont cohérentes entre elles (calculées par
+//     lib/crm/vue.ts comme un vrai compte), ses données sont fictives et AUCUNE écriture ne peut partir en mode exemple.
+//  R. RGPD (audit du 12/10) : effacement d'une conversation dans le CRM, empreinte HMAC, durées et purges du CRM.
 //
 // Ce qu'il NE prouve PAS : la base réelle (voir scripts/crm-sql-qa.mjs pour la migration jouée dans un Postgres embarqué,
 // et scripts/crm-e2e.mjs pour les routes contre une base de TEST).
@@ -46,8 +49,13 @@ const { calculerTableauCrm } = await imp('lib/crm/tableau.ts')
 const { calculerCompta } = await imp('lib/comptaTableau.ts')
 const { calculer } = await imp('lib/tableau-de-bord/calculer.ts')
 const K = await imp('lib/crm/clients.ts')
+// L'empreinte client est un HMAC à secret serveur (lib/crm/empreinte.ts) : un secret de test, posé AVANT le calcul.
+process.env.PRESTI_SECRET_CRM = 'secret-de-test-crm-qa-'.padEnd(40, 'x')
+const Em = await imp('lib/crm/empreinte.ts')
+const idTest = (cle) => Em.empreinteClient(A_TEST, cle)
 
 const U = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
+var A_TEST = 'art-A'
 
 // ═══════════════════════ A. Validation ═══════════════════════
 {
@@ -178,6 +186,17 @@ const ENTREES = () => ({ artisanId: A, leads: LEADS, devis: DEVIS, factures: FAC
   T('C17 l’ordre des colonnes est celui du plan', p.colonnes.map((c) => c.libelle).join(' → ') === 'Demande → Devis envoyé → Signé → Chantier → À facturer / encaisser → Payé') // 12/10 : la colonne contient aussi les factures émises non payées
   T('C18 compte vide : pipeline vide', P.pipeline({ artisanId: A, leads: [], devis: [], factures: [], chantiers: [], deplacements: [] }).vide)
   T('C19 artisanId vide : rien (jamais « tout le monde »)', P.cartes({ ...ENTREES(), artisanId: '' }).length === 0)
+  // Recette du 12/10 : deux brouillons du même client (v1, v2) faisaient deux cartes et la colonne additionnait les deux.
+  const brouillons = [
+    dv('Bv1', 'brouillon', 3200, { lead_id: 'LB1', created_at: '2026-10-09T09:00:00Z' }), dv('Bv2', 'brouillon', 3450, { lead_id: 'LB1', created_at: '2026-10-11T09:00:00Z' }),
+    dv('Bm1', 'brouillon', 100, { client_nom: 'Client Mu', client_email: 'mu@test.invalid', created_at: '2026-10-01T09:00:00Z' }), dv('Bm2', 'brouillon', 150, { client_nom: 'C. Mu', client_email: 'MU@test.invalid', created_at: '2026-10-02T09:00:00Z' }),
+    dv('Bn1', 'brouillon', 10, { client_nom: 'Client Nu', created_at: '2026-10-01T09:00:00Z' }), dv('Bx', 'brouillon', 20, { client_nom: 'Client Xi', created_at: '2026-10-01T09:00:00Z' }),
+    dv('Be1', 'envoye', 500, { lead_id: 'LB2', envoye_le: '2026-10-05T09:00:00Z' }), dv('Be2', 'brouillon', 600, { lead_id: 'LB2', created_at: '2026-10-06T09:00:00Z' }),
+  ]
+  const pb = P.pipeline({ artisanId: A, leads: [], devis: brouillons, factures: [], chantiers: [], deplacements: [] })
+  const dem = pb.colonnes.find((c) => c.etape === 'demande')
+  T('C20 brouillons d’un même client (même demande, même e-mail) : une carte, la plus récente, comptée une fois', egal(dem.cartes.map((c) => c.id).sort(), ['Be2', 'Bm2', 'Bn1', 'Bv2', 'Bx']) && dem.montant === 345000 + 15000 + 1000 + 2000 + 60000 && dem.cartes.find((c) => c.id === 'Bv2').autresBrouillons === 1, JSON.stringify(dem.cartes.map((c) => [c.id, c.montant, c.autresBrouillons])))
+  T('C21 un devis ENVOYÉ compte toujours pour lui-même, à côté du brouillon suivant', pb.colonnes.find((c) => c.etape === 'devis_envoye').cartes.length === 1)
 }
 
 // ═══════════════════════ D. Tâches et chantier ═══════════════════════
@@ -260,20 +279,31 @@ const MATERIAUX = [
   ]
   const factures = [{ id: 'FA', artisan_id: A, devis_id: 'DA', client_nom: 'Client Alpha' }]
   const chantiers = [{ id: 'CB', artisan_id: A, devis_id: 'DB1' }]
-  const g = K.regrouperClients({ artisanId: A, devis, factures, leads, chantiers })
+  const g = K.regrouperClients({ artisanId: A, devis, factures, leads, chantiers, idDe: idTest })
   T('F1 une référence mal formée ne trouve rien', K.trouverGroupe(g, 'nimporte-quoi') === null && K.trouverGroupe(g, 'd-DA') === null && K.trouverGroupe(g, 'x'.repeat(64)) === null)
   const de = (id) => g.find((x) => x.devis.includes(id) || x.leads.includes(id))
   const A1 = de('DA')
   T('F2 Alpha = son devis, sa demande (lien), sa facture (lien), le devis au même e-mail (casse ignorée), la demande au même téléphone (+33)', A1 && egal(A1.devis, ['DA', 'DA2']) && egal(A1.leads, ['LA', 'LA2']) && egal(A1.factures, ['FA']), JSON.stringify(A1))
-  T('F3 clé = l’e-mail, identifiant = son empreinte sha-256 (jamais l’adresse en clair)', A1.cle === 'e:alpha@test.invalid' && /^[0-9a-f]{64}$/.test(A1.id) && A1.id === K.empreinte('e:alpha@test.invalid') && !A1.id.includes('alpha'))
+  const { createHash } = await import('node:crypto')
+  const ancien = createHash('sha256').update('presti-crm-client:e:alpha@test.invalid').digest('hex')
+  T('F3 clé = l’e-mail, identifiant = son empreinte HMAC (64 hex, jamais l’adresse en clair, plus le sha-256 à préfixe fixe)', A1.cle === 'e:alpha@test.invalid' && /^[0-9a-f]{64}$/.test(A1.id) && A1.id === Em.empreinteClient(A, 'e:alpha@test.invalid') && !A1.id.includes('alpha') && A1.id !== ancien)
+  T('F3b l’empreinte dépend de l’artisan et du secret serveur', Em.empreinteClient(A, 'e:x@y.fr') !== Em.empreinteClient(B, 'e:x@y.fr') && (() => { const avant = Em.empreinteClient(A, 'e:x@y.fr'); process.env.PRESTI_SECRET_CRM = 'un-autre-secret-de-test'.padEnd(40, 'y'); const apres = Em.empreinteClient(A, 'e:x@y.fr'); process.env.PRESTI_SECRET_CRM = 'secret-de-test-crm-qa-'.padEnd(40, 'x'); return avant !== apres })())
   const beta = de('DB1')
   T('F4 deux pièces sans e-mail au même nom (accents, espaces) : un seul client, avec son chantier', egal(beta.devis, ['DB1', 'DB2']) && egal(beta.chantiers, ['CB']) && beta.cle === 'n:client beta')
   T('F5 même nom, e-mails différents : deux clients ; le nom seul ne rejoint aucun des deux', de('DG') !== de('DG2') && de('DN') !== de('DG') && de('DN') !== de('DG2'))
   T('F6 une pièce sans nom ni contact n’a pas de fiche ; rien d’un autre compte', !g.some((x) => x.devis.includes('DX')) && !g.some((x) => x.devis.includes('DZ')) && g.length === 5, String(g.length))
   // Les références de pièce sont des uuid en vrai : on rejoue avec des uuid.
-  const g2 = K.regrouperClients({ artisanId: A, devis: [{ id: U(1), artisan_id: A, client_nom: 'Client Delta', client_email: 'delta@test.invalid' }], factures: [{ id: U(2), artisan_id: A, devis_id: U(1) }], leads: [], chantiers: [{ id: U(3), artisan_id: A, devis_id: U(1) }] })
+  const g2 = K.regrouperClients({ artisanId: A, devis: [{ id: U(1), artisan_id: A, client_nom: 'Client Delta', client_email: 'delta@test.invalid' }], factures: [{ id: U(2), artisan_id: A, devis_id: U(1) }], leads: [], chantiers: [{ id: U(3), artisan_id: A, devis_id: U(1) }], idDe: idTest })
   T('F8 retrouver par d-<uuid>, f-<uuid>, c-<uuid> et par l’empreinte', [`d-${U(1)}`, `f-${U(2)}`, `c-${U(3)}`, g2[0].id].every((r) => K.trouverGroupe(g2, r) === g2[0]) && K.trouverGroupe(g2, `l-${U(9)}`) === null)
   T('F9 téléphone : +33 et 0033 ramenés à 0 ; une adresse e-mail n’est pas un téléphone', K.cleTelephone('+33 6 12 34 56 78') === '0612345678' && K.cleTelephone('0033612345678') === '0612345678' && K.cleTelephone('a@b.fr') === null)
+  // Audit RGPD du 12/10 (e) : deux demandes effacées (« (client supprimé) ») ne font jamais un faux client commun.
+  const g3 = K.regrouperClients({ artisanId: A, devis: [], factures: [], chantiers: [], idDe: idTest, leads: [
+    { id: 'E1', artisan_id: A, nom_prospect: '(client supprimé)', contact: null }, { id: 'E2', artisan_id: A, nom_prospect: '(client supprimé)', contact: null },
+    { id: 'E3', artisan_id: A, nom_prospect: ' (client supprimé) ', contact: null },
+  ] })
+  T('F10 demandes effacées : aucune fiche, jamais regroupées entre elles', g3.length === 0 && K.cleNom('(client supprimé)') === null, JSON.stringify(g3))
+  const g4 = K.regrouperClients({ artisanId: A, idDe: idTest, factures: [], chantiers: [], devis: [{ id: 'DE', artisan_id: A, lead_id: 'E4', client_nom: 'Client Epsilon', client_email: 'eps@test.invalid' }], leads: [{ id: 'E4', artisan_id: A, nom_prospect: '(client supprimé)', contact: null }] })
+  T('F11 une demande effacée garde son devis envoyé (lien), sans que « (client supprimé) » devienne son nom', g4.length === 1 && egal(g4[0].leads, ['E4']) && g4[0].nom === 'Client Epsilon')
 }
 
 // ═══════════════════════ G. Code ═══════════════════════
@@ -288,13 +318,19 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   for (const f of routes) {
     const src = lire(f)
     exportes += (src.match(/export async function /g) ?? []).length
-    for (const m of src.replace(/\r\n/g, '\n').matchAll(/export async function (GET|POST|PATCH|DELETE|PUT)\(([^)]*)\)\s*\{\n([^\n]*)\n([^\n]*)/g)) {
+    for (const m of src.replace(/\r\n/g, '\n').matchAll(/export async function (GET|POST|PATCH|DELETE|PUT|OPTIONS)\(([^)]*)\)\s*\{\n([^\n]*)\n([^\n]*)/g)) {
       handlers++
       if (!/^\s*const g = await gardeCrm\(req\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
     }
     if (/export (const|let|function) (?!GET|POST|PATCH|DELETE|runtime|dynamic|maxDuration)/.test(src)) fautes.push(`${f} : export non permis`)
   }
   T(`G2 chaque gestionnaire (${handlers}) commence par gardeCrm (drapeau, session, offre) et s’arrête s’il refuse`, handlers === exportes && handlers >= 26 && fautes.length === 0, fautes.join(' · ') + ` (${handlers}/${exportes})`)
+  // Audit d'attaque du 12/10 : GET /api/crm/pipeline répondait 405 (Next.js, méthode absente) AVANT la garde, à un compte
+  // hors essai qui devait recevoir 404. Chaque route sert maintenant les six méthodes, toutes par la garde, puis 405.
+  const incompletes = routes.filter((f) => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'].some((m) => !lire(f).includes(`export async function ${m}(`)))
+  T('G2b chaque route sert GET, POST, PUT, PATCH, DELETE et OPTIONS : une méthode absente répond APRÈS la garde (404 hors essai, 405 sinon)', incompletes.length === 0 && /export const nonPermise = \(permises: string\) => new NextResponse\(null, \{ status: 405/.test(lire('lib/crm/serveur.ts')), incompletes.join(' '))
+  const gardeSrc = sansCommentaires(lire('lib/crm/serveur.ts'))
+  T('G2c limite de débit par compte dans la garde (consommerLimite « crm:<uid> »), après l’essai, 429 au-delà', gardeSrc.includes('consommerLimite(`crm:${session.uid}`, LIMITE_DEBIT.max, LIMITE_DEBIT.fenetreSec)') && gardeSrc.indexOf('consommerLimite(') > gardeSrc.indexOf("ouvertPour('crm', session.uid)") && /if \(!libre\) return \{ reponse: erreur\([^\n]*429/.test(gardeSrc))
   // Chaque appel à la clé de service porte l'artisan de la session. Exception documentée : devis_lignes n'a pas d'artisan_id ;
   // ses deux lectures prennent un devis_id déjà relu AVEC le filtre de session (chantiers/route.ts : devis vérifié ;
   // chantiers/[id]/taches : devis relu `.eq('artisan_id', g.uid)`).
@@ -327,12 +363,26 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
     return fichiers.some((f) => /\bCRM\b|\/crm\b/.test(sansCommentaires(lire(f))))
   }))
   const ui = [...lister('app/crm'), ...lister('lib/crm')].filter((f) => /\.(tsx?|css)$/.test(f))
-  const exemples = ui.filter((f) => /exemple|fictif|fictive|lorem|démo\b|Dupont|Martin\b/i.test(sansCommentaires(lire(f))))
-  // 12/10 — Benj a demandé l'atelier d'EXEMPLE directement dans le CRM : il vit dans lib/crm/exemple.ts SEULEMENT, la page ne
-  // fait que l'afficher, sous un bandeau qui dit « données fictives, rien n'est enregistré », et avec la maquette en mode démo.
-  const exemplesHors = exemples.filter((f) => !/lib[\/]crm[\/]exemple\.ts$/.test(f) && !/app[\/]crm[\/]page\.tsx$/.test(f))
-  const pageCrm = lire('app/crm/page.tsx')
-  T('G10 données d’exemple seulement dans lib/crm/exemple.ts, affichées sous un bandeau « fictives » et en mode démo', exemplesHors.length === 0 && /données fictives/.test(pageCrm) && /Rien n’est enregistré/.test(pageCrm) && /<Atelier key="exemple" donnees=\{DONNEES_EXEMPLE\} demo \/>/.test(pageCrm), exemplesHors.join(' '))
+  // 13/10 — l'EXEMPLE couvre tout le CRM (demande de Benj). Ses DONNÉES vivent dans lib/crm/exemple.ts SEULEMENT : aucun autre
+  // fichier du CRM ne contient un nom fictif, une adresse .invalid, un négoce, un numéro de pièce d'exemple ou un « lorem » ;
+  // seuls les écrans qui l'affichent l'importent ; le bandeau dit « données fictives, rien n'est enregistré » ; maquette en démo.
+  const donneesFictives = ui.filter((f) => !/lib[\/]crm[\/]exemple\.ts$/.test(f) && /(?<!données )fictif|\.invalid|Négoce|Grossiste|lorem|Dupont|Martin\b|EX-2026|AA-00\d-AA/i.test(sansCommentaires(lire(f))))
+  const importeurs = [...lister('app'), ...lister('lib')].filter((f) => /\.(tsx?|mjs)$/.test(f) && /from ['"](@\/lib\/crm\/exemple|\.\/exemple(\.ts)?)['"]/.test(lire(f)))
+  const permis = ['app/crm/page.tsx', 'app/crm/FicheChantier.tsx', 'app/crm/clients/[ref]/page.tsx', 'app/atelier-demo/Demo.tsx']
+  const pageCrm = lire('app/crm/page.tsx'), modeSrc = lire('app/crm/mode.tsx')
+  T('G10 données d’exemple seulement dans lib/crm/exemple.ts ; importées seulement par les écrans qui l’affichent ; bandeau « fictives, rien n’est enregistré » ; maquette en mode démo',
+    donneesFictives.length === 0 && importeurs.length === 4 && importeurs.every((f) => permis.includes(f)) && /Exemple : données fictives, rien n’est enregistré\./.test(modeSrc) && /\{BANDEAU_EXEMPLE\}/.test(pageCrm) && /<Atelier key="exemple" donnees=\{DONNEES_EXEMPLE\} demo onVue2D=\{versVue\}( mesure=\{mesure\})? \/>/.test(pageCrm),
+    [...donneesFictives, ...importeurs.filter((f) => !permis.includes(f)), `importeurs=${importeurs.length}`].join(' '))
+  // Aucune écriture possible en exemple : le seul chemin réseau du CRM est appel() (plus la vérification d'accès, en GET),
+  // et appel() refuse toute méthode autre que GET quand le mode est posé ; les pages le posent PENDANT le rendu.
+  const fetchs = lister('app/crm').filter((f) => /\.tsx?$/.test(f) && /\bfetch\(/.test(sansCommentaires(lire(f))))
+  const clientSrc = sansCommentaires(lire('app/crm/client.ts'))
+  const gardeEcriture = "if (ecrituresBloquees && (init.method ?? 'GET').toUpperCase() !== 'GET') return"
+  T('G10b le seul fetch du CRM est dans appel() (plus /api/essais en lecture) ; appel() refuse toute écriture en mode exemple AVANT le réseau ; les trois pages posent le mode pendant le rendu',
+    egal(fetchs.sort(), ['app/crm/client.ts', 'app/crm/mode.tsx']) && /fetch\('\/api\/essais', \{ headers: \{ Authorization/.test(modeSrc) && !/method:/.test(sansCommentaires(modeSrc))
+      && clientSrc.indexOf(gardeEcriture) > 0 && clientSrc.indexOf(gardeEcriture) < clientSrc.indexOf('await fetch(')
+      && /bloquerEcritures\(exemple\)/.test(pageCrm) && /bloquerEcritures\(exemple !== false\)/.test(lire('app/crm/chantiers/[id]/page.tsx')) && /bloquerEcritures\(exemple !== false\)/.test(lire('app/crm/clients/[ref]/page.tsx')),
+    fetchs.join(' '))
   const css = sansCommentaires(lire('app/crm/crm.css'))
   T('G11 CSS : jetons de la console seulement, aucun bleu ni violet, aucune couleur en dur', !/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|blue|purple|violet/i.test(css))
   T('G12 CSS : les transitions ne sont posées que hors « reduced-motion »', !/transition|animation/.test(css.split('@media (prefers-reduced-motion: no-preference)')[0]))
@@ -353,9 +403,12 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const transpiler = (rel, remplacer) => ts.transpileModule(lire(rel), { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX }, fileName: path.basename(rel) }).outputText
     .replace(/(from\s+)(['"])([^'"]+)\2/g, (m, a, q, spec) => `${a}${q}${remplacer(spec)}${q}`)
   // Le client navigateur de Supabase est remplacé par un objet vide : le rendu serveur n'appelle rien.
-  fs.writeFileSync(path.join(CACHE, 'supabase.mjs'), 'export const supabase = {}\n')
-  const libs = (spec) => spec === '@/lib/supabaseClient' ? './supabase.mjs' : spec.startsWith('@/lib/') ? versFichier(`${spec.slice(2)}.ts`) : spec === './client' ? './client.mjs' : spec
+  // Le client navigateur de Supabase : un faux qui rend une session, et un `fetch` espion (X : aucune écriture en exemple).
+  fs.writeFileSync(path.join(CACHE, 'supabase.mjs'), "export const supabase = { auth: { getSession: async () => ({ data: { session: { access_token: 'jeton-de-test' } } }) } }\n")
+  fs.writeFileSync(path.join(CACHE, 'navigation.mjs'), 'export const useRouter = () => ({ replace() {}, push() {} })\n')
+  const libs = (spec) => spec === '@/lib/supabaseClient' ? './supabase.mjs' : spec === 'next/navigation' ? './navigation.mjs' : spec.startsWith('@/lib/') ? versFichier(`${spec.slice(2)}.ts`) : spec === './client' ? './client.mjs' : spec === './mode' ? './mode.mjs' : spec
   fs.writeFileSync(path.join(CACHE, 'client.mjs'), transpiler('app/crm/client.ts', libs))
+  fs.writeFileSync(path.join(CACHE, 'mode.mjs'), transpiler('app/crm/mode.tsx', libs))
   fs.writeFileSync(path.join(CACHE, 'Tableau.mjs'), transpiler('app/crm/Tableau.tsx', libs))
   fs.writeFileSync(path.join(CACHE, 'Pipeline.mjs'), transpiler('app/crm/Pipeline.tsx', libs))
   const { renderToStaticMarkup } = require('react-dom/server')
@@ -379,6 +432,50 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const tp = aplatir(hpipe)
   T('H6 pipeline : six colonnes dans l’ordre, la carte déplacée le dit, les classés sont comptés', (hpipe.match(/<section class="crm-col"/g) ?? []).length === 6 && /Déplacé à la main · statuts réels : Signé/.test(tp) && /3 dossiers classés/.test(tp) && /data-crm-carte="devis:D4"/.test(hpipe))
   T('H7 pipeline : chaque carte a sa liste « Déplacer vers » étiquetée pour les lecteurs d’écran', (hpipe.match(/Déplacer vers…/g) ?? []).length === 13 && (hpipe.match(/class="crm-sr"/g) ?? []).length === 13)
+
+  // ═══════════════════════ X. Exemple : tout le CRM, cohérent, sans écriture possible ═══════════════════════
+  const E = await imp('lib/crm/exemple.ts')
+  const { construireVue } = await imp('lib/crm/vue.ts')
+  const V = E.VUE_EXEMPLE
+  const ids = (l) => l.map((x) => x.id).sort()
+  T('X1 l’exemple remplit chaque onglet : tableau, pipeline, chantiers, clients, équipe, atelier', V.tableau.signeMois?.nombre > 0 && !V.pipeline.vide && V.pipeline.colonnes.every((c) => c.cartes.length > 0) && V.chantiers.length >= 8 && V.clients.length >= 10 && E.EQUIPE_EXEMPLE.membres.length > 0 && E.EQUIPE_EXEMPLE.vehicules.length > 0 && V.atelier.materiaux.length > 0 && V.devisSignesSansChantier.length > 0,
+    JSON.stringify(V.pipeline.colonnes.map((c) => c.cartes.length)))
+  T('X2 cohérent entre les vues : l’atelier, la liste et le pipeline portent les MÊMES chantiers ; chaque chantier a sa fiche, chaque client la sienne',
+    egal(ids(V.atelier.chantiers), ids(V.chantiers)) && V.chantiers.every((c) => E.ficheChantierExemple(c.id)?.chantier.titre === c.titre) && V.clients.every((c) => E.ficheClientExemple(c.id)?.client.nom === c.nom)
+      && V.pipeline.colonnes.flatMap((c) => c.cartes).filter((k) => k.chantierId).every((k) => V.chantiers.some((c) => c.id === k.chantierId)))
+  const ficheA = E.ficheClientExemple(V.clients.find((c) => c.nom === 'Client fictif A').id)
+  const carteA = V.pipeline.colonnes.flatMap((c) => c.cartes).find((k) => k.client === 'Client fictif A')
+  T('X3 mêmes montants partout : le devis du client A vaut la même chose dans le pipeline, sa fiche client et sa fiche chantier', ficheA && carteA && ficheA.signe === carteA.montant && E.ficheChantierExemple(carteA.chantierId).devis.total_ttc * 100 === carteA.montant, JSON.stringify({ signe: ficheA?.signe, carte: carteA?.montant }))
+  T('X4 « deux chiffres, un écran » : le tableau de l’exemple est celui que calcule lib/crm/tableau.ts sur ses lignes : 4 devis signés en octobre (11 190 €), 2 chantiers en retard, 1 relance', V.tableau.signeMois.nombre === 4 && V.tableau.signeMois.montant === 1119000 && V.tableau.chantiers.enRetard.nombre === 2 && V.tableau.relancesDues.nombre === 1, JSON.stringify(V.tableau.signeMois))
+  T('X5 le pipeline de l’exemple montre le correctif des brouillons : deux versions pour « Prospect fictif 3 », une seule carte, un seul montant', (() => { const k = V.pipeline.colonnes[0].cartes.filter((c) => c.client === 'Prospect fictif 3'); return k.length === 1 && k[0].autresBrouillons === 1 && k[0].montant === 345000 })())
+  const json = JSON.stringify([V, E.EQUIPE_EXEMPLE, V.chantiers.map((c) => E.ficheChantierExemple(c.id)), V.clients.map((c) => E.ficheClientExemple(c.id))])
+  const courriels = [...json.matchAll(/[\w.+-]+@[\w.-]+/g)].map((m) => m[0])
+  const telephones = json.match(/(?<![0-9a-f-])0[1-9](?:[ .]?\d{2}){4}(?![0-9a-f])|\+33/g) ?? []
+  T('X6 données clairement fictives : chaque e-mail en .invalid, aucun numéro de téléphone, chaque client « fictif / fictive »', courriels.length > 0 && courriels.every((e) => e.endsWith('.invalid')) && telephones.length === 0 && V.clients.every((c) => /fictif|fictive/.test(c.nom)), [...courriels.filter((e) => !e.endsWith('.invalid')), ...telephones, ...V.clients.filter((c) => !/fictif|fictive/.test(c.nom)).map((c) => c.nom)].join(' '))
+  const recalculee = (await import(pathToFileURL(path.join(RACINE, 'lib/crm/exemple.ts')).href + '?bis')).VUE_EXEMPLE
+  const a7 = JSON.stringify(recalculee), b7 = JSON.stringify(V)
+  let i7 = 0; while (i7 < a7.length && a7[i7] === b7[i7]) i7++
+  T('X7 l’exemple est figé (12/10/2026, 10 h 30) : le recalculer donne la même vue, octet pour octet', typeof construireVue === 'function' && E.MAINTENANT_EXEMPLE === '2026-10-12T08:30:00.000Z' && V.tableau.jour === '2026-10-12' && a7 === b7, `${a7.slice(i7 - 80, i7 + 60)} ≠ ${b7.slice(i7 - 80, i7 + 60)}`)
+  // Aucune écriture : appel() en mode exemple ne touche jamais au réseau, quelle que soit la méthode.
+  const clientMod = await import(pathToFileURL(path.join(CACHE, 'client.mjs')).href)
+  const vrai = globalThis.fetch
+  const parties = []
+  globalThis.fetch = async (url, init) => { parties.push(`${init?.method ?? 'GET'} ${url}`); return new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json' } }) }
+  clientMod.bloquerEcritures(true)
+  const refus = []
+  for (const [m, url] of [['POST', '/api/crm/chantiers'], ['PATCH', '/api/crm/taches/x'], ['DELETE', '/api/crm/chantiers/x'], ['PUT', '/api/crm/vue'], ['post', '/api/factures'], ['POST', '/api/messages'], ['POST', '/api/crm/pipeline'], ['POST', '/api/crm/notes'], ['DELETE', '/api/crm/equipe/x']]) refus.push(await clientMod.appel(url, { method: m, body: {} }))
+  const lecture = await clientMod.appel('/api/crm/vue')
+  clientMod.bloquerEcritures(false)
+  const ecriture = await clientMod.appel('/api/crm/notes', { method: 'POST', body: {} })
+  globalThis.fetch = vrai
+  T('X8 mode exemple : POST, PUT, PATCH, DELETE (CRM, factures, messages) refusés AVANT le réseau, avec le message « rien n’est envoyé »', refus.every((r) => !r.ok && r.code === 'exemple' && /rien n’est envoyé/.test(r.erreur) && !clientMod.estErreur(r)) && egal(parties.slice(0, 1), ['GET /api/crm/vue']), parties.join(' | '))
+  T('X9 … la lecture reste possible, et hors exemple l’écriture repart normalement', lecture.ok && ecriture.ok && egal(parties, ['GET /api/crm/vue', 'POST /api/crm/notes']), parties.join(' | '))
+  // Rendu en exemple : les liens vers les écrans hors CRM sont inertes (ils ouvriraient les vraies données).
+  const modeMod = await import(pathToFileURL(path.join(CACHE, 'mode.mjs')).href)
+  const Tab = (await import(pathToFileURL(path.join(CACHE, 'Tableau.mjs')).href)).default
+  const hx = renderToStaticMarkup(createElement(modeMod.ModeExemple, { actif: true }, createElement(Tab, { t: V.tableau })))
+  T('X10 tableau de l’exemple : aucun lien vers /devis, /chiffres, /inventaire ; les retards mènent aux fiches d’exemple', !/href="\/(devis|chiffres|inventaire)/.test(hx) && /crm-lien-inerte/.test(hx) && /href="\/crm\/chantiers\/[0-9a-f-]{36}\?exemple=1"/.test(hx) && /de l’exemple/.test(aplatir(hx)))
+  T('X11 liens en exemple : une fiche CRM garde le mode, tout autre écran est fermé', modeMod.lienExemple('/crm/chantiers/abc') === '/crm/chantiers/abc?exemple=1' && modeMod.lienExemple('/crm?vue=clients') === '/crm?vue=clients&exemple=1' && [ '/devis/x', '/factures', '/messages', '/inventaire', 'https://www.google.com/maps/dir/?api=1&destination=x', '/crmx' ].every((h) => modeMod.lienExemple(h) === null))
   fs.rmSync(CACHE, { recursive: true, force: true })
 }
 
@@ -444,6 +541,49 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   T('I25 un maillage instancié par forme (≤ 150 appels de dessin par construction)', /FORMES\.map\(\(f\) => \(\s*<Couche/.test(scene3d) && /<instancedMesh/.test(scene3d))
   const cssA = sansCommentaires(lire('app/crm/atelier/atelier.css'))
   T('I26 CSS de l’atelier : jetons seulement, ni bleu ni violet, transitions hors « reduced-motion » seulement', !/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|blue|purple|violet/i.test(cssA) && !/transition|animation:/.test(cssA.split('@media (prefers-reduced-motion: no-preference)')[0]))
+}
+
+// ═══════════════════════ R. RGPD du CRM (audit du 12/10) et recette ═══════════════════════
+{
+  const Ef = await imp('lib/crm/effacement.ts')
+  const { DUREES_MOIS } = await imp('lib/legalArtisan.ts')
+  const idDe = (cle) => Em.empreinteClient(A, cle)
+  const devis = [
+    { id: 'Dr1', artisan_id: A, lead_id: 'Lr', statut: 'accepte', client_nom: 'Client Rho', client_email: 'rho@test.invalid' },
+    { id: 'Dr2', artisan_id: A, lead_id: null, statut: 'brouillon', client_nom: 'Client Rho', client_email: 'rho@test.invalid' },
+  ]
+  const leads = [{ id: 'Lr', artisan_id: A, nom_prospect: 'Client Rho', contact: 'rho@test.invalid' }, { id: 'Ls', artisan_id: A, nom_prospect: 'Client Sigma', contact: null }]
+  const chantiers = [
+    { id: 'Cr1', artisan_id: A, devis_id: 'Dr1', client_nom: 'Client Rho' },  // devis signé : le nom reste
+    { id: 'Cr2', artisan_id: A, devis_id: 'Dr2', client_nom: 'Client Rho' },  // devis brouillon : le nom part
+    { id: 'Cr3', artisan_id: A, devis_id: null, client_nom: 'client rho' },   // dépannage au même nom : le nom part
+    { id: 'Cr4', artisan_id: A, devis_id: null, client_nom: 'Client Tau' },   // un autre : intact
+  ]
+  const groupes = K.regrouperClients({ artisanId: A, devis, factures: [], leads, chantiers, idDe })
+  const choix = Ef.choisirEffacementCrm({ groupes, leadId: 'Lr', nomDemande: 'Client Rho', chantiers, devis })
+  T('R1 effacement : l’empreinte du client est calculée AVANT (celle de son groupe) ; nom effacé sur ses chantiers sans devis envoyé seulement', choix.cleClient === idDe('e:rho@test.invalid') && egal(choix.chantiersSansNom, ['Cr2', 'Cr3']), JSON.stringify(choix))
+  const route = sansCommentaires(lire('app/api/donnees/route.ts'))
+  const iPost = route.indexOf('export async function POST')
+  T('R2 la route d’effacement lit le CRM AVANT d’anonymiser, supprime les notes du client ET de la demande, efface les noms, et n’efface RIEN si le CRM est illisible',
+    route.indexOf('const crm = await impactCrm(uid, lead)', iPost) > 0 && route.indexOf('const crm = await impactCrm(uid, lead)', iPost) < route.indexOf("from('leads').update(", iPost)
+      && /from\('crm_notes'\)\.delete\(\)\.eq\('artisan_id', uid\)\.eq\('client_cle', crm\.cleClient\)/.test(route) && /from\('crm_notes'\)\.delete\(\)\.eq\('artisan_id', uid\)\.eq\('lead_id', leadId\)/.test(route)
+      && /from\('chantiers'\)\.update\(\{ client_nom: null/.test(route) && /if \(!crm\) return NextResponse\.json\(\{ error: 'Votre CRM n’a pas pu être lu : rien n’a été effacé/.test(route) && /nom_prospect: NOM_EFFACE/.test(route))
+  T('R3 le récapitulatif annonce les notes du CRM et les chantiers dont le nom part', /du CRM sur ce client/.test(route) && /sans devis envoyé \(le chantier reste, sans nom\)/.test(route))
+  T('R4 durées : journal du CRM 24 mois, chantiers et notes 36 mois après la fin, membres inactifs 12 mois', DUREES_MOIS.crm_journal === 24 && DUREES_MOIS.crm === 36 && DUREES_MOIS.equipe_inactif === 12)
+  const notes = [{ id: 'n1', client_cle: 'g1', cree_le: '2026-01-01' }, { id: 'n2', client_cle: 'g2', cree_le: '2020-01-01' }, { id: 'n3', client_cle: 'orph', cree_le: '2026-01-01' }, { id: 'n4', client_cle: 'g1', cree_le: '2020-01-01' }, { id: 'n5', client_cle: 'g3', cree_le: '2020-01-01', maj_le: '2026-02-01' }]
+  const grp = [{ id: 'g1', derniere: '2026-05-01' }, { id: 'g2', derniere: '2022-01-01' }, { id: 'g3', derniere: '2021-01-01' }]
+  const pur = Ef.notesClientAPurger(notes, grp, '2023-10-13T00:00:00.000Z')
+  T('R5 purge des notes client : orpheline → part ; client et note sans nouvelle depuis 36 mois → part ; client actif ou note récente → reste', egal(pur, { ids: ['n2', 'n3'], suspect: false }), JSON.stringify(pur))
+  T('R6 garde-fou : plus de la moitié de notes « orphelines » (empreinte changée ?) → rien n’est supprimé', egal(Ef.notesClientAPurger(notes, [], '2023-10-13'), { ids: [], suspect: true }))
+  const purges = sansCommentaires(lire('lib/purgesRgpd.ts'))
+  T('R7 la purge du CRM tourne chaque jour, hors drapeau : journal, chantiers finis, notes, membres inactifs rattachés à rien', /const r = await purgerCrm\(maintenant\)/.test(purges) && /supprimerAnciennes\('crm_journal', 'id', 'cree_le', seuilJournal/.test(purges) && /from\('chantiers'\)\.select\('id'\)\s*\.lt\('maj_le', seuilCrm\)/.test(purges) && /\.eq\('actif', false\)\.lt\('maj_le', seuilEquipe\)/.test(purges) && /chantier_equipe[\s\S]{0,200}chantier_taches[\s\S]{0,200}conducteur_id/.test(purges))
+  const equipe = lire('app/crm/Equipe.tsx')
+  T('R8 écran Équipe : « Informez votre équipe… », modèle de notice téléchargeable (durées réelles), « Téléphone professionnel »', /Informez votre équipe/.test(equipe) && /notice-information-equipe\.txt/.test(equipe) && /DUREES_MOIS\.equipe_inactif/.test(equipe) && /Téléphone professionnel \(facultatif\)/.test(equipe) && !/>Téléphone \(facultatif\)/.test(equipe))
+  const zones = ['app/crm/FicheChantier.tsx', 'app/crm/clients/[ref]/page.tsx', 'app/crm/Chantiers.tsx'].map((f) => [f, (lire(f).match(/<textarea|Nature des travaux<input/g) ?? []).length, (lire(f).match(/\{AIDE_TEXTE_LIBRE\}/g) ?? []).length])
+  T('R9 sous chaque zone de texte libre : « Pas de santé, d’opinion ni de jugement sur la personne »', /Pas de santé, d’opinion ni de jugement sur la personne\./.test(lire('app/crm/client.ts')) && zones.every(([, n, a]) => n > 0 && a >= n), JSON.stringify(zones))
+  T('R10 recette : la visite guidée ne part pas d’elle-même sur /crm, et un clic hors de sa carte la ferme', /!\/\^\\\/crm\(\\\/\|\$\)\/\.test\(window\.location\.pathname\)/.test(lire('app/AppShell.tsx')) && /className="visite-fond" aria-hidden="true" onClick=\{\(\) => fin\.current\(false\)\}/.test(lire('app/Visite.tsx')))
+  T('R11 recette : les six colonnes du pipeline tiennent dans 1 000 px (Payé n’est plus coupée à 1 440 px d’écran)', /\.crm-pipeline \{ display: grid; grid-template-columns: repeat\(6, minmax\(158px, 1fr\)\)/.test(lire('app/crm/crm.css')) && 6 * 158 + 5 * 10 <= 1000)
+  T('R12 recette : la maquette 3D se précharge pendant la lecture des données (même morceau que next/dynamic), et le test WebGL attend que la lecture soit partie', /export function prechargerScene3D\(\) \{[\s\S]{0,400}void import\('\.\/Scene3D'\)\s*window\.setTimeout\(\(\) => \{ try \{ detecter\(\) \}/.test(lire('app/crm/atelier/Atelier.tsx')) && /prechargerScene3D\(\)/.test(lire('app/crm/page.tsx')))
 }
 
 console.log(`\n${verts} vert(s), ${rouges.length} rouge(s)${rouges.length ? ' : ' + rouges.join(' · ') : ''}`)

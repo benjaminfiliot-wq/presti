@@ -113,6 +113,22 @@ const controle = jumeau.split(MARQUE_CONTROLE)[1] ?? ''
 const c = await service(controle)
 T('S1 le contrôle du jumeau rend ce qu’il annonce', c.ok && c.rows.every((r) => /attendu (\d+|false)\)/.test(r.quoi) && r.resultat === r.quoi.match(/attendu (\d+|false)\)/)[1]), c.erreur ?? JSON.stringify(c.rows))
 
+// ── S8 (13/10). 0153 (sortie sans stock négatif) puis 0154 (search_path vide, noms qualifiés) : les fonctions en service.
+//    Tout ce qui suit (S5 journal, S6 sortie) passe donc par les fonctions de 0154.
+for (const m of ['0153_crm_sortie_sans_stock_negatif.sql', '0154_crm_search_path_vide.sql']) {
+  let ok = { ok: true }
+  try { await db.exec(lire(`supabase/migrations/${m}`)); await db.exec(lire(`supabase/migrations/${m}`)) } catch (e) { ok = { ok: false, erreur: e.message } }
+  T(`S8 ${m.slice(0, 4)} s’applique et se rejoue`, ok.ok, ok.erreur)
+}
+const chemins = await service(`select proname, array_to_string(proconfig, ',') as cfg, prosecdef from pg_proc where pronamespace = 'public'::regnamespace and proname in ('crm_sortir_materiau', 'crm_journal_chantier', 'crm_journal_tache') order by 1`)
+T('S8 les trois fonctions security definer tournent avec search_path vide', chemins.rows.length === 3 && chemins.rows.every((r) => r.prosecdef && /^search_path=(""|)$/.test(r.cfg)), JSON.stringify(chemins.rows))
+const droitNav = await service(`select has_function_privilege('authenticated', 'public.crm_sortir_materiau(uuid, uuid)', 'execute') as d`)
+T('S8 la sortie reste refusée aux navigateurs', droitNav.rows[0]?.d === false, JSON.stringify(droitNav.rows))
+const jumeau154 = lire('supabase/migrations/_A_COLLER_sql_editor_0154_NU.sql')
+T('S8 le jumeau _NU de 0154 porte exactement le même SQL', noyau(jumeau154.split(MARQUE_CONTROLE)[0]) === noyau(lire('supabase/migrations/0154_crm_search_path_vide.sql')))
+const c154 = await service(jumeau154.split(MARQUE_CONTROLE)[1] ?? '')
+T('S8 le contrôle du jumeau de 0154 rend ce qu’il annonce', c154.ok && c154.rows.length === 3 && c154.rows.every((r) => r.resultat === r.quoi.match(/attendu (\d+|false)\)/)[1]), c154.erreur ?? JSON.stringify(c154.rows))
+
 // ── Données : deux artisans ─────────────────────────────────────────────────────────────────────────────────
 const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222'
 await service(`insert into artisans (id) values ($1), ($2)`, [A, B])

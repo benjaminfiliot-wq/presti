@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { actif } from '@/lib/flags'
 import { DUREES_MOIS } from '@/lib/legalArtisan'
 import { MOIS_AUDIENCE } from '@/lib/audience'
+import { notesClientAPurger } from '@/lib/crm/effacement'
 
 // Purges RGPD — appliquer les durées que les pages légales annoncent (audit final, auditeur B,
 // majeur C6).
@@ -71,6 +72,8 @@ export type BilanPurges = {
   jetons: number
   /** Mesure d'audience (0090, 0091) : empreintes effacées à la clôture des jours finis, créneaux de plafond terminés, vues de plus de MOIS_AUDIENCE mois. */
   audience: number
+  /** CRM (audit RGPD du 12/10, point b) : journal, chantiers clos, notes, membres inactifs (`purgerCrm`). */
+  crm: number
   /** Vrai si un plafond a été atteint : il reste des lignes à purger au prochain passage. */
   reste: boolean
   erreurs: string[]
@@ -223,7 +226,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   const seuilJetons = seuilJours(JOURS_GRACE_JETONS, maintenant)
 
   const bilan: BilanPurges = {
-    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0,
+    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0,
     reste: false, erreurs: [],
   }
   const noter = (r: Resultat): number => {
@@ -301,5 +304,135 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
     }
   }
 
+  // 9. CRM (0141). PAS derrière le drapeau : les comptes à l'essai ont des lignes, et elles doivent partir à l'heure dite.
+  {
+    const r = await purgerCrm(maintenant)
+    bilan.crm = r.n
+    if (r.plein) bilan.reste = true
+    bilan.erreurs.push(...r.erreurs)
+  }
+
   return bilan
+}
+
+// ── CRM (audit RGPD du 12/10, point b) ──────────────────────────────────────────────────────────────────────────────────
+// Ce qui part, et à quel moment (durées : DUREES_MOIS, affichées par lib/legalArtisan.ts) :
+//  · le journal du CRM au-delà de DUREES_MOIS.crm_journal (24 mois) ;
+//  · un chantier FINI depuis DUREES_MOIS.crm (36 mois) : fin réelle, sinon fin prévue, dépassée de 36 mois ET plus aucune
+//    modification depuis — avec ses tâches, réservations, équipe et notes (cascade de 0141). Le devis n'est pas touché ;
+//  · une note CLIENT dont le client n'a plus aucune pièce (orpheline), ou dont la dernière pièce ET la note ont 36 mois ;
+//  · une note de DEMANDE vieille de 36 mois, sur une demande sans échange depuis 36 mois ;
+//  · un membre de l'équipe inactif depuis DUREES_MOIS.equipe_inactif (12 mois) et rattaché à aucun chantier, aucune
+//    tâche, aucun véhicule.
+// Garde-fou : si plus de la moitié des notes client d'un artisan semblent orphelines, c'est que l'empreinte a changé
+// (secret serveur, lib/crm/empreinte.ts), pas que ses clients ont disparu : rien n'est supprimé, et l'erreur le dit.
+
+export async function purgerCrm(maintenant: Date = new Date()): Promise<{ n: number; plein: boolean; erreurs: string[] }> {
+  const erreurs: string[] = []
+  let n = 0, plein = false
+  const noter = (r: Resultat) => { if (r.erreur) erreurs.push(r.erreur); if (r.plein) plein = true; n += r.n }
+  const seuilJournal = seuilMois(DUREES_MOIS.crm_journal, maintenant)
+  const seuilCrm = seuilMois(DUREES_MOIS.crm, maintenant)
+  const jourCrm = seuilCrm.slice(0, 10)
+  const seuilEquipe = seuilMois(DUREES_MOIS.equipe_inactif, maintenant)
+
+  // 1. Journal.
+  noter(await supprimerAnciennes('crm_journal', 'id', 'cree_le', seuilJournal, PLAFOND_LIGNES))
+
+  // 2. Chantiers finis depuis 36 mois, et plus touchés depuis.
+  noter(await (async (): Promise<Resultat> => {
+    const { data, error } = await supabaseAdmin.from('chantiers').select('id')
+      .lt('maj_le', seuilCrm)
+      .or(`date_fin_reelle.lt.${jourCrm},and(date_fin_reelle.is.null,date_fin_prevue.lt.${jourCrm}),and(date_fin_reelle.is.null,date_fin_prevue.is.null)`)
+      .order('maj_le', { ascending: true }).limit(PLAFOND_LIGNES)
+    if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `chantiers (lecture) : ${error.message}` }
+    const ids = colonneTexte(data, 'id')
+    let k = 0
+    for (const lot of parLots(ids)) {
+      const { error: e } = await supabaseAdmin.from('chantiers').delete().in('id', lot)
+      if (e) return { n: k, plein: false, erreur: `chantiers (suppression) : ${e.message}` }
+      k += lot.length
+    }
+    return { n: k, plein: ids.length >= PLAFOND_LIGNES }
+  })())
+
+  // 3. Notes client : orphelines, ou client et note sans nouvelle depuis 36 mois. Un artisan à la fois (ses pièces
+  //    sont relues comme le CRM les lit), au plus 20 artisans par passage.
+  noter(await (async (): Promise<Resultat> => {
+    const { data, error } = await supabaseAdmin.from('crm_notes').select('id, artisan_id, client_cle, cree_le, maj_le')
+      .not('client_cle', 'is', null).order('artisan_id').limit(PLAFOND_LIGNES * 4)
+    if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `crm_notes (lecture) : ${error.message}` }
+    const parArtisan = new Map<string, { id: string; client_cle: string; cree_le: string; maj_le: string | null }[]>()
+    for (const l of (data ?? []) as { id: string; artisan_id: string; client_cle: string; cree_le: string; maj_le: string | null }[]) parArtisan.set(l.artisan_id, [...(parArtisan.get(l.artisan_id) ?? []), l])
+    const { chargerDossiers } = await import('@/lib/crm/serveur')
+    const { regrouperClients } = await import('@/lib/crm/clients')
+    const { idClientPour } = await import('@/lib/crm/empreinte')
+    let k = 0
+    for (const [uid, notes] of [...parArtisan].slice(0, 20)) {
+      const d = await chargerDossiers(uid)
+      if (!d.ok) { erreurs.push(`crm_notes (pièces de ${uid.slice(0, 8)}) : ${d.erreur.message}`); continue }
+      if (d.tronque) continue // historique coupé à 2 000 pièces : un client absent ne prouve rien
+      const groupes = regrouperClients({ artisanId: uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet, idDe: idClientPour(uid) })
+      const choix = notesClientAPurger(notes, groupes, seuilCrm)
+      if (choix.suspect) { erreurs.push(`crm_notes : plus de la moitié des notes client de ${uid.slice(0, 8)} sans client — empreinte changée ? Rien supprimé.`); continue }
+      for (const lot of parLots(choix.ids)) {
+        const { error: e } = await supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).in('id', lot)
+        if (e) return { n: k, plein: false, erreur: `crm_notes (suppression) : ${e.message}` }
+        k += lot.length
+      }
+    }
+    return { n: k, plein: parArtisan.size > 20 || (data ?? []).length >= PLAFOND_LIGNES * 4 }
+  })())
+
+  // 4. Notes de demande : la note et la demande ont 36 mois, et la demande n'a plus échangé depuis.
+  noter(await (async (): Promise<Resultat> => {
+    const { data, error } = await supabaseAdmin.from('crm_notes').select('id, lead_id, lead:leads(created_at)')
+      .not('lead_id', 'is', null).lt('maj_le', seuilCrm).order('maj_le', { ascending: true }).limit(PLAFOND_LIGNES)
+    if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `crm_notes demandes (lecture) : ${error.message}` }
+    const lignes = (data ?? []) as unknown as { id: string; lead_id: string; lead: { created_at: string | null } | null }[]
+    const candidates = lignes.filter((l) => !l.lead?.created_at || l.lead.created_at < seuilCrm)
+    const actifs = new Set<string>()
+    for (const lot of parLots([...new Set(candidates.map((l) => l.lead_id))])) {
+      const { data: recents, error: e } = await supabaseAdmin.from('messages').select('lead_id').in('lead_id', lot).gte('sent_at', seuilCrm)
+      if (e) return { n: 0, plein: false, erreur: `messages (lecture) : ${e.message}` }
+      for (const id of colonneTexte(recents, 'lead_id')) actifs.add(id)
+    }
+    const ids = candidates.filter((l) => !actifs.has(l.lead_id)).map((l) => l.id)
+    let k = 0
+    for (const lot of parLots(ids)) {
+      const { error: e } = await supabaseAdmin.from('crm_notes').delete().in('id', lot)
+      if (e) return { n: k, plein: false, erreur: `crm_notes demandes (suppression) : ${e.message}` }
+      k += lot.length
+    }
+    return { n: k, plein: lignes.length >= PLAFOND_LIGNES }
+  })())
+
+  // 5. Membres inactifs depuis 12 mois, rattachés à rien.
+  noter(await (async (): Promise<Resultat> => {
+    const { data, error } = await supabaseAdmin.from('equipe_membres').select('id')
+      .eq('actif', false).lt('maj_le', seuilEquipe).order('maj_le', { ascending: true }).limit(PLAFOND_LIGNES)
+    if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `equipe_membres (lecture) : ${error.message}` }
+    const ids = colonneTexte(data, 'id')
+    const rattaches = new Set<string>()
+    for (const lot of parLots(ids)) {
+      const [eq, ta, ve] = await Promise.all([
+        supabaseAdmin.from('chantier_equipe').select('membre_id').in('membre_id', lot),
+        supabaseAdmin.from('chantier_taches').select('membre_id').in('membre_id', lot),
+        supabaseAdmin.from('vehicules').select('conducteur_id').in('conducteur_id', lot),
+      ])
+      const e = eq.error ?? ta.error ?? ve.error
+      if (e) return { n: 0, plein: false, erreur: `equipe_membres (rattachements) : ${e.message}` }
+      for (const id of [...colonneTexte(eq.data, 'membre_id'), ...colonneTexte(ta.data, 'membre_id'), ...colonneTexte(ve.data, 'conducteur_id')]) rattaches.add(id)
+    }
+    const aEffacer = ids.filter((id) => !rattaches.has(id))
+    let k = 0
+    for (const lot of parLots(aEffacer)) {
+      const { error: e } = await supabaseAdmin.from('equipe_membres').delete().in('id', lot).eq('actif', false)
+      if (e) return { n: k, plein: false, erreur: `equipe_membres (suppression) : ${e.message}` }
+      k += lot.length
+    }
+    return { n: k, plein: ids.length >= PLAFOND_LIGNES }
+  })())
+
+  return { n, plein, erreurs }
 }

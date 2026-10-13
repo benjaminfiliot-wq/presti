@@ -3,6 +3,10 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 import { actif } from '@/lib/flags'
+import { chargerDossiers } from '@/lib/crm/serveur'
+import { regrouperClients, NOM_EFFACE } from '@/lib/crm/clients'
+import { idClientPour } from '@/lib/crm/empreinte'
+import { choisirEffacementCrm } from '@/lib/crm/effacement'
 
 // Données & suppressions granulaires (v4 §C3). Principe : CHAQUE brique se réinitialise ou
 // se supprime indépendamment, sans jamais toucher au compte Presti.
@@ -31,6 +35,29 @@ const compte = async (table: string, filtre: Record<string, string>) => {
   const { count } = await q
   return count ?? 0
 }
+
+/**
+ * Ce que l'effacement d'une conversation emporte aussi dans le CRM (audit RGPD du 12/10, point a) : les notes du client
+ * et de la demande, et le nom du client sur ses chantiers sans devis envoyé (lib/crm/effacement.ts). Calculé AVANT
+ * d'anonymiser la demande — après, on ne saurait plus à quel client elle appartenait. null : le CRM n'a pas pu être lu ;
+ * l'appelant n'efface alors RIEN (plutôt qu'un effacement à moitié fait présenté comme complet).
+ */
+async function impactCrm(uid: string, lead: { id: string; nom_prospect: string | null }) {
+  const d = await chargerDossiers(uid)
+  if (!d.ok) { console.error('[donnees] CRM illisible :', d.erreur.message); return null }
+  const groupes = regrouperClients({ artisanId: uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet, idDe: idClientPour(uid) })
+  const choix = choisirEffacementCrm({ groupes, leadId: lead.id, nomDemande: lead.nom_prospect, chantiers: d.chantiers, devis: d.devis })
+  const notes = async (col: 'client_cle' | 'lead_id', v: string | null) => {
+    if (!v) return 0
+    const { count, error } = await supabaseAdmin.from('crm_notes').select('id', { count: 'exact', head: true }).eq('artisan_id', uid).eq(col, v)
+    if (error) throw new Error(error.message)
+    return count ?? 0
+  }
+  try {
+    return { ...choix, notesClient: await notes('client_cle', choix.cleClient), notesDemande: await notes('lead_id', lead.id) }
+  } catch (e) { console.error('[donnees] notes CRM :', e instanceof Error ? e.message : e); return null }
+}
+const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`
 
 /** Fichiers de l'artisan dans le bucket média (un dossier par artisan). */
 async function fichiersArtisan(uid: string): Promise<string[]> {
@@ -77,9 +104,12 @@ export async function GET(req: Request) {
 
   // conversation_supprimer
   if (!leadId) return NextResponse.json({ error: 'Conversation manquante' }, { status: 400 })
-  const { data: lead } = await supabaseAdmin.from('leads').select('id, artisan_id, photos').eq('id', leadId).maybeSingle()
+  const { data: lead } = await supabaseAdmin.from('leads').select('id, artisan_id, photos, nom_prospect').eq('id', leadId).maybeSingle()
   if (!lead || lead.artisan_id !== uid) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
   const nbMsg = await compte('messages', { lead_id: leadId })
+  const crm = await impactCrm(uid, lead)
+  if (!crm) return NextResponse.json({ error: 'Le récapitulatif n’a pas pu lire votre CRM. Réessayez dans un instant : rien n’a été effacé.' }, { status: 503 })
+  const notesCrm = crm.notesClient + crm.notesDemande
   const { data: devisLies } = await supabaseAdmin.from('devis').select('id, statut').eq('lead_id', leadId)
   const aValeurLegale = (devisLies ?? []).filter((d) => d.statut !== 'brouillon')
   return NextResponse.json({
@@ -88,9 +118,11 @@ export async function GET(req: Request) {
       'Le nom et les coordonnées du client',
       `${nbMsg} message(s)`,
       Array.isArray(lead.photos) && lead.photos.length ? `${lead.photos.length} photo(s) de chantier` : null,
+      notesCrm ? `${pluriel(notesCrm, 'note')} du CRM sur ce client` : null,
+      crm.chantiersSansNom.length ? `Le nom du client sur ${pluriel(crm.chantiersSansNom.length, 'chantier')} sans devis envoyé (le chantier reste, sans nom)` : null,
     ].filter(Boolean),
     conserve: aValeurLegale.length
-      ? [`${aValeurLegale.length} devis déjà envoyé(s) — la loi impose de les conserver (ils sont archivés, pas supprimables)`]
+      ? [`${aValeurLegale.length} devis déjà envoyé(s) — la loi impose de les conserver (ils sont archivés, pas supprimables)`, 'Les chantiers liés à ces devis, avec leurs tâches']
       : ['Rien d’autre'],
   })
 }
@@ -134,8 +166,22 @@ export async function POST(req: Request) {
     //    chaîne comptable (un devis envoyé reste, rattaché à un client anonymisé).
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''
     if (!leadId) return NextResponse.json({ error: 'Conversation manquante' }, { status: 400 })
-    const { data: lead } = await supabaseAdmin.from('leads').select('id, artisan_id, photos').eq('id', leadId).maybeSingle()
+    const { data: lead } = await supabaseAdmin.from('leads').select('id, artisan_id, photos, nom_prospect').eq('id', leadId).maybeSingle()
     if (!lead || lead.artisan_id !== uid) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+
+    // CRM d'abord, calculé AVANT l'anonymisation (sinon on ne sait plus quel client c'était). Illisible : rien n'est fait.
+    const crm = await impactCrm(uid, lead)
+    if (!crm) return NextResponse.json({ error: 'Votre CRM n’a pas pu être lu : rien n’a été effacé. Réessayez dans un instant.' }, { status: 503 })
+    const etapes = [
+      crm.cleClient ? supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).eq('client_cle', crm.cleClient) : null,
+      supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).eq('lead_id', leadId),
+      crm.chantiersSansNom.length ? supabaseAdmin.from('chantiers').update({ client_nom: null, maj_le: new Date().toISOString() }).eq('artisan_id', uid).in('id', crm.chantiersSansNom) : null,
+    ]
+    for (const e of etapes) {
+      if (!e) continue
+      const { error } = await e
+      if (error) { console.error('[donnees] effacement CRM :', error.message); return NextResponse.json({ error: 'L’effacement n’a pas pu se faire jusqu’au bout. Relancez-le : il reprendra où il s’est arrêté.' }, { status: 500 }) }
+    }
 
     // Photos du chantier : suppression réelle des fichiers.
     if (Array.isArray(lead.photos) && lead.photos.length) {
@@ -147,11 +193,13 @@ export async function POST(req: Request) {
     await supabaseAdmin.from('messages')
       .update({ contenu: '(message supprimé à la demande du client)' }).eq('lead_id', leadId)
     await supabaseAdmin.from('leads').update({
-      nom_prospect: '(client supprimé)', contact: null, message: null, ip: null, photos: null,
+      nom_prospect: NOM_EFFACE, contact: null, message: null, ip: null, photos: null,
       urgence: null, type_chantier: null, updated_at: new Date().toISOString(),
     }).eq('id', leadId)
 
-    return NextResponse.json({ ok: true, message: 'Conversation anonymisée. Les documents déjà émis restent archivés, comme la loi l’exige.' })
+    const notesCrm = crm.notesClient + crm.notesDemande
+    const crmFait = [notesCrm ? `${pluriel(notesCrm, 'note')} du CRM supprimée${notesCrm > 1 ? 's' : ''}` : null, crm.chantiersSansNom.length ? `nom effacé sur ${pluriel(crm.chantiersSansNom.length, 'chantier')}` : null].filter(Boolean)
+    return NextResponse.json({ ok: true, message: `Conversation anonymisée${crmFait.length ? ` (${crmFait.join(', ')})` : ''}. Les documents déjà émis restent archivés, comme la loi l’exige.` })
   } catch (e) {
     console.error('[donnees] POST:', e)
     return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })

@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estUuid, lireCorps, validerReservation } from '@/lib/crm/valider'
 
 export const runtime = 'nodejs'
@@ -29,4 +29,31 @@ export async function POST(req: Request, ctx: Ctx) {
     .select('id').single()
   if (error || !data) { const s = statutErreurBase(error); console.error('[crm/materiaux] réservation :', error?.message); return erreur(s.message, s.status) }
   return json({ ok: true, id: data.id }, 201)
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function GET(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function PATCH(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function DELETE(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
 }

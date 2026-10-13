@@ -5,37 +5,37 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { LIBELLES_STATUT_CHANTIER, type StatutChantier } from '@/lib/crm/valider'
-import { appel, dateFr, dateHeureFr, enCentimes, euros, LIBELLES_DEMANDE, LIBELLES_DEVIS, LIBELLES_FACTURE, TON_STATUT_CHANTIER } from '../../client'
+import type { FicheClient as Fiche } from '@/lib/crm/vue'
+import { ficheClientExemple } from '@/lib/crm/exemple'
+import { AIDE_TEXTE_LIBRE, appel, bloquerEcritures, dateFr, dateHeureFr, enCentimes, estErreur, euros, LIBELLES_DEMANDE, LIBELLES_DEVIS, LIBELLES_FACTURE, TON_STATUT_CHANTIER } from '../../client'
+import { BandeauFicheExemple, Lien, ModeExemple, useModeFiche } from '../../mode'
 
 // La fiche client 360° : coordonnées, demandes, devis, factures, chantiers, notes, prochain rendez-vous. Le client est
 // reconstitué à partir des pièces (lib/crm/clients.ts) ; l'adresse de la page est son empreinte, ou une de ses pièces.
-type Fiche = {
-  client: { id: string; nom: string | null; email: string | null; telephone: string | null; adresse: string | null }
-  demandes: { id: string; statut: string | null; type_chantier: string | null; canal: string | null; ville: string | null; created_at: string | null }[]
-  devis: { id: string; numero: string | null; objet: string | null; statut: string | null; total_ttc: number | null; date_emission: string | null; accepte_le: string | null }[]
-  factures: { id: string; numero: string | null; statut: string | null; total_ttc: number | null; date_emission: string | null; date_echeance: string | null; avoir_de: string | null }[]
-  chantiers: { id: string; titre: string; statut: string; date_debut: string | null; date_fin_prevue: string | null }[]
-  notes: { id: string; texte: string; cree_le: string }[]
-  prochainRendezVous: null
-  prochainChantier: { id: string; titre: string; date_debut: string } | null
-  signe: number | null
+// La forme est celle de lib/crm/vue.ts (construireFicheClient). « ?exemple=1 » : un client de l'atelier d'exemple
+// (lib/crm/exemple.ts), sans lecture ni écriture.
+export default function FicheClientPage() {
+  const exemple = useModeFiche()
+  bloquerEcritures(exemple !== false)
+  return exemple === null ? null : <ModeExemple actif={exemple}><Contenu exemple={exemple} /></ModeExemple>
 }
 
-export default function FicheClientPage() {
+function Contenu({ exemple }: { exemple: boolean }) {
   const router = useRouter()
   const { ref } = useParams<{ ref: string }>()
-  const [f, setF] = useState<Fiche | null>(null)
-  const [erreur, setErreur] = useState('')
+  const [f, setF] = useState<Fiche | null>(() => (exemple ? ficheClientExemple(ref) : null))
+  const [erreur, setErreur] = useState(() => (exemple && !ficheClientExemple(ref) ? 'Ce client n’existe pas dans l’exemple.' : ''))
   const [texte, setTexte] = useState('')
   const [message, setMessage] = useState<{ texte: string; erreur: boolean } | null>(null)
 
   const charger = useCallback(async () => {
+    if (exemple) return
     const { data } = await supabase.auth.getSession()
     if (!data.session) { router.replace('/login'); return }
     const r = await appel<Fiche>(`/api/crm/clients?ref=${encodeURIComponent(ref)}`)
     if (!r.ok) { setErreur(r.erreur); return }
     setErreur(''); setF(r.corps)
-  }, [ref, router])
+  }, [ref, router, exemple])
   useEffect(() => { void charger() }, [charger])
 
   async function ajouterNote(e: FormEvent) {
@@ -43,19 +43,20 @@ export default function FicheClientPage() {
     if (!f) return
     setMessage(null)
     const r = await appel('/api/crm/notes', { method: 'POST', body: { texte, client: f.client.id } })
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
     setTexte(''); await charger()
   }
   async function supprimerNote(id: string) {
     if (!confirm('Supprimer cette note ?')) return
     const r = await appel(`/api/crm/notes/${id}`, { method: 'DELETE' })
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
     await charger()
   }
 
   return (
     <AppShell active="crm" title={f?.client.nom ?? 'Client'} crumb="CRM atelier · Fiche client" wide>
-      <p><a className="crm-retour" href="/crm?vue=clients">← Tous les clients</a></p>
+      {exemple && <BandeauFicheExemple />}
+      <p><Lien className="crm-retour" href="/crm?vue=clients">← Tous les clients</Lien></p>
       {erreur ? <div className="psh-panel"><div className="psh-empty" role="alert">{erreur}</div></div>
         : !f ? <p className="muted" role="status">Lecture de la fiche…</p>
           : (
@@ -69,22 +70,22 @@ export default function FicheClientPage() {
                   <div><span className="lab">Adresse</span><span>{f.client.adresse ?? '—'}</span></div>
                   <div><span className="lab">Total signé</span><span className="tnum">{euros(f.signe)}</span></div>
                   <div><span className="lab">Prochain rendez-vous</span><span title="Presti n’a pas encore d’agenda de rendez-vous pour vos clients.">—</span></div>
-                  <div><span className="lab">Prochain chantier</span><span>{f.prochainChantier ? <a href={`/crm/chantiers/${f.prochainChantier.id}`}>{dateFr(f.prochainChantier.date_debut)} · {f.prochainChantier.titre}</a> : '—'}</span></div>
+                  <div><span className="lab">Prochain chantier</span><span>{f.prochainChantier ? <Lien href={`/crm/chantiers/${f.prochainChantier.id}`}>{dateFr(f.prochainChantier.date_debut)} · {f.prochainChantier.titre}</Lien> : '—'}</span></div>
                 </div>
               </section>
 
               <div className="crm-grille2">
                 <Bloc titre="Demandes" vide="Aucune demande reçue de ce client." n={f.demandes.length}>
-                  {f.demandes.map((d) => <li key={d.id}><a href="/messages">{d.type_chantier ?? 'Demande'}{d.ville ? ` · ${d.ville}` : ''}</a><span className="muted">{dateFr(d.created_at)} · {LIBELLES_DEMANDE[d.statut ?? ''] ?? d.statut ?? '—'}</span></li>)}
+                  {f.demandes.map((d) => <li key={d.id}><Lien href="/messages">{d.type_chantier ?? 'Demande'}{d.ville ? ` · ${d.ville}` : ''}</Lien><span className="muted">{dateFr(d.created_at)} · {LIBELLES_DEMANDE[d.statut ?? ''] ?? d.statut ?? '—'}</span></li>)}
                 </Bloc>
                 <Bloc titre="Devis" vide="Aucun devis." n={f.devis.length}>
-                  {f.devis.map((d) => <li key={d.id}><a href={`/devis/${d.id}`}>{[d.numero, d.objet].filter(Boolean).join(' · ') || 'Devis'}</a><span className="tnum">{euros(enCentimes(d.total_ttc))} · {LIBELLES_DEVIS[d.statut ?? ''] ?? d.statut}</span></li>)}
+                  {f.devis.map((d) => <li key={d.id}><Lien href={`/devis/${d.id}`}>{[d.numero, d.objet].filter(Boolean).join(' · ') || 'Devis'}</Lien><span className="tnum">{euros(enCentimes(d.total_ttc))} · {LIBELLES_DEVIS[d.statut ?? ''] ?? d.statut}</span></li>)}
                 </Bloc>
                 <Bloc titre="Factures" vide="Aucune facture." n={f.factures.length}>
-                  {f.factures.map((x) => <li key={x.id}><a href="/factures">{x.numero ?? 'Facture'}{x.avoir_de ? ' (avoir)' : ''}</a><span className="tnum">{euros(enCentimes(x.total_ttc))} · {LIBELLES_FACTURE[x.statut ?? ''] ?? x.statut} · {dateFr(x.date_emission)}</span></li>)}
+                  {f.factures.map((x) => <li key={x.id}><Lien href="/factures">{x.numero ?? 'Facture'}{x.avoir_de ? ' (avoir)' : ''}</Lien><span className="tnum">{euros(enCentimes(x.total_ttc))} · {LIBELLES_FACTURE[x.statut ?? ''] ?? x.statut} · {dateFr(x.date_emission)}</span></li>)}
                 </Bloc>
                 <Bloc titre="Chantiers" vide="Aucun chantier." n={f.chantiers.length}>
-                  {f.chantiers.map((c) => <li key={c.id}><a href={`/crm/chantiers/${c.id}`}>{c.titre}</a><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span></li>)}
+                  {f.chantiers.map((c) => <li key={c.id}><Lien href={`/crm/chantiers/${c.id}`}>{c.titre}</Lien><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span></li>)}
                 </Bloc>
               </div>
 
@@ -98,7 +99,8 @@ export default function FicheClientPage() {
                     ))}</ul>
                   )}
                   <form className="crm-form" onSubmit={ajouterNote} aria-label="Ajouter une note sur ce client">
-                    <label className="crm-champ">Nouvelle note<textarea rows={3} maxLength={4000} value={texte} onChange={(e) => setTexte(e.target.value)} /></label>
+                    <label className="crm-champ">Nouvelle note<textarea rows={3} maxLength={4000} value={texte} onChange={(e) => setTexte(e.target.value)} aria-describedby="crm-aide-note-client" /></label>
+                    <p className="crm-aide" id="crm-aide-note-client">{AIDE_TEXTE_LIBRE}</p>
                     <div><button className="psh-btn ghost" type="submit" disabled={!texte.trim()}>Ajouter la note</button></div>
                   </form>
                 </div>

@@ -255,14 +255,19 @@ function Projecteur({ cibles }: { cibles: RefObject<Cible[]> }) {
   return null
 }
 
+// Les étapes du premier affichage (mesure seulement) : module chargé, scène montée, toile créée, première image.
+const ETAPES: Record<string, number> = { module: typeof performance !== 'undefined' ? performance.now() : 0 }
+const marquer = (k: string) => { if (!(k in ETAPES) && typeof performance !== 'undefined') ETAPES[k] = performance.now() }
+
 function Mesureur({ actif }: { actif: boolean }) {
   const { gl, scene } = useThree()
-  useEffect(() => { if (actif) (window as unknown as { __atelierRendu?: unknown }).__atelierRendu = { gl, scene } }, [actif, gl, scene])
+  useEffect(() => { if (actif) (window as unknown as { __atelierRendu?: unknown; __atelierEtapes?: unknown }).__atelierRendu = { gl, scene } }, [actif, gl, scene])
+  useEffect(() => { if (actif) (window as unknown as { __atelierEtapes?: unknown }).__atelierEtapes = ETAPES }, [actif])
   const etat = useRef({ images: 0, depuis: performance.now(), premiere: null as number | null })
   useFrame(() => {
     if (!actif) return
     const e = etat.current
-    if (e.premiere === null) e.premiere = performance.now()
+    if (e.premiere === null) { e.premiere = performance.now(); marquer('premiereImage') }
     e.images++
     const dt = performance.now() - e.depuis
     if (dt >= 1000) {
@@ -277,6 +282,7 @@ function Mesureur({ actif }: { actif: boolean }) {
 const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allumes, filtreActif, selection, onSelection, mesure = false, vueInitiale = 'ensemble' }, ref) {
   const controles = useRef<OrbitControlsImpl | null>(null)
   const [survol, setSurvol] = useState<number | null>(null)
+  marquer('sceneRendue')
   const apparition = useMemo(() => (mouvementReduit() ? null : { debut: performance.now(), centre: new THREE.Vector3(0, 0, 0) }), [scene])
   useEffect(() => { document.body.style.cursor = survol !== null ? 'pointer' : ''; return () => { document.body.style.cursor = '' } }, [survol])
 
@@ -307,6 +313,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       orthographic flat shadows="percentage" dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}
       camera={{ position: [40, 36, 40], zoom: 14, near: -500, far: 1000 }}
       onPointerMissed={() => onSelection(null)}
+      onCreated={() => marquer('toileCreee')}
       style={{ background: COULEURS.sol }}
       aria-hidden="true"
     >

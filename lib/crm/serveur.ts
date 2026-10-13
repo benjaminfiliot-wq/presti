@@ -8,6 +8,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { enEssai } from '@/lib/flags'
 import { ouvertPour } from '@/lib/essais'
+import { consommerLimite } from '@/lib/limites'
 import { decisionAcces } from './acces'
 
 export const PAS_DE_CACHE = { 'Cache-Control': 'private, no-store' }
@@ -16,6 +17,12 @@ export const erreur = (message: string, status: number, extra: Record<string, un
 export const INDISPONIBLE = 'Le CRM n’a pas pu lire vos données. Rechargez la page dans un instant.'
 
 export type Garde = { uid: string; metier: string | null } | { reponse: NextResponse }
+
+/** 120 requêtes par minute et par compte : un artisan qui coche vite ses tâches en fait une par seconde, au plus. */
+export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
+
+/** Méthode que la route ne sert pas — seulement APRÈS gardeCrm, pour qu'un compte hors essai reçoive 404 et non 405. */
+export const nonPermise = (permises: string) => new NextResponse(null, { status: 405, headers: { ...PAS_DE_CACHE, Allow: permises } })
 
 export async function gardeCrm(req: Request): Promise<Garde> {
   // 1. Drapeau baissé : 404 sans corps, avant toute lecture (ni session, ni base).
@@ -27,7 +34,14 @@ export async function gardeCrm(req: Request): Promise<Garde> {
   }
   // Essai (lib/flags.ts ESSAIS) : un compte hors de la liste ne sait pas que le CRM existe.
   if (!ouvertPour('crm', session.uid)) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
-  const { data: art, error } = await supabaseAdmin.from('artisans').select('plan, metier').eq('id', session.uid).maybeSingle()
+  // Limite de débit par compte (audit d'attaque du 12/10) : une lecture complète (chargerDossiers) coûte onze requêtes de
+  // 2 000 lignes ; sans plafond, un jeton volé ou une boucle mal écrite pouvait marteler la base. Lue en même temps que
+  // l'offre (aucune latence ajoutée) ; panne du compteur = on laisse passer (lib/limites.ts, fail-open assumé).
+  const [libre, { data: art, error }] = await Promise.all([
+    consommerLimite(`crm:${session.uid}`, LIMITE_DEBIT.max, LIMITE_DEBIT.fenetreSec),
+    supabaseAdmin.from('artisans').select('plan, metier').eq('id', session.uid).maybeSingle(),
+  ])
+  if (!libre) return { reponse: erreur('Trop de demandes d’un coup : patientez une minute, rien n’a été perdu.', 429, { code: 'debit' }) }
   if (error) { console.error('[crm] lecture de l’offre :', error.message); return { reponse: erreur(INDISPONIBLE, 503) } }
   const d = decisionAcces({ drapeau: true, session: { ok: true }, plan: (art?.plan as string | null) ?? null })
   if (!d.ok) return { reponse: erreur(d.erreur ?? 'Accès refusé.', d.statut, d.code ? { code: d.code } : {}) }

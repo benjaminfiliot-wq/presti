@@ -1,0 +1,334 @@
+--- a/lib/legalArtisan.ts
++++ b/lib/legalArtisan.ts
+@@ -176,9 +176,10 @@
+  * Écrits ici une fois pour toutes : l'artisan n'a pas à rédiger une politique de
+  * confidentialité, et surtout il ne doit pas avoir à deviner ce que l'outil collecte.
+  */
+-export const TRAITEMENTS: { cle: CleDuree; finalite: string; donnees: string; base: string; duree: string }[] = [
++export const TRAITEMENTS: { cle: CleDuree; finalite: string; personnes: string; donnees: string; base: string; duree: string }[] = [
+   {
+     cle: 'conversation',
++    personnes: 'Les personnes qui demandent un devis ou écrivent à l’entreprise',
+     finalite: 'Répondre à votre demande de devis et échanger avec vous',
+     donnees: 'Nom, coordonnées (email ou téléphone), description de votre projet, photos que vous envoyez, historique de la conversation',
+     base: 'Mesures précontractuelles prises à votre demande (RGPD art. 6.1.b)',
+@@ -186,6 +187,7 @@
+   },
+   {
+     cle: 'comptable',
++    personnes: 'Les clients de l’entreprise',
+     finalite: 'Établir un devis, puis une facture si les travaux sont réalisés',
+     donnees: 'Nom, adresse de facturation, adresse du chantier, détail des prestations et montants',
+     base: 'Exécution du contrat, puis obligation légale de conservation comptable',
+@@ -193,6 +195,7 @@
+   },
+   {
+     cle: 'anti_abus',
++    personnes: 'Les visiteurs du site et de la page de contact',
+     finalite: 'Protéger le service contre les abus (envois massifs, robots)',
+     // Cette ligne est rendue sur la page publique de chaque artisan, en face de la finalité
+     // anti-abus — or c'est exactement celle qui conserve l'adresse en clair (lib/security.ts).
+@@ -201,6 +204,23 @@
+     base: 'Intérêt légitime à préserver le service',
+     duree: libelleDuree(DUREES_MOIS.anti_abus),
+   },
++  // Audit RGPD du 12/10 (point f) : le CRM « atelier vivant » (lib/crm/*). Les durées sont celles que `purgerCrm` applique.
++  {
++    cle: 'crm',
++    personnes: 'Les clients de l’entreprise dont un chantier est organisé',
++    finalite: 'Organiser et suivre vos chantiers',
++    donnees: 'Nom repris du devis, de la facture ou de la demande, adresse du chantier, dates, avancement des tâches, matériel prévu, notes de suivi du chantier (jamais de santé, d’opinion ni d’appréciation sur la personne)',
++    base: 'Exécution du contrat conclu avec vous',
++    duree: `${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier ; l’historique des modifications, ${libelleDuree(DUREES_MOIS.crm_journal)}`,
++  },
++  {
++    cle: 'equipe_inactif',
++    personnes: 'Les membres de l’équipe de l’entreprise (salariés, apprentis, sous-traitants)',
++    finalite: 'Gestion de l’équipe',
++    donnees: 'Nom, rôle, téléphone professionnel s’il est donné, chantiers, tâches et véhicules confiés',
++    base: 'Exécution du contrat de travail ou de sous-traitance ; intérêt légitime de l’entreprise à organiser son activité',
++    duree: `${libelleDuree(DUREES_MOIS.equipe_inactif)} après le départ de l’équipe, si plus rien ne lui est rattaché`,
++  },
+ ]
+ 
+ /** Les sous-traitants réellement utilisés — ceux-là et pas d'autres. */
+@@ -208,7 +228,7 @@
+   { nom: 'Presti', role: 'Éditeur de l’outil : hébergement des demandes, rédaction assistée des réponses', lieu: 'France' },
+   { nom: 'Supabase', role: 'Base de données et stockage des photos', lieu: 'Union européenne (Francfort)' },
+   { nom: 'Vercel', role: 'Hébergement du site et de la plateforme', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
+-  { nom: 'Anthropic', role: 'Modèle d’intelligence artificielle qui aide à rédiger les réponses', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
++  { nom: 'Anthropic', role: 'Modèle d’intelligence artificielle qui aide à rédiger les réponses et les devis, et assistant de gestion qui lit, pour répondre à l’entreprise, ses factures, impayés, montants et noms de clients', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
+   { nom: 'Resend', role: 'Envoi des emails (réponses, relances, devis)', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
+ ]
+ 
+--- a/app/confidentialite/page.tsx
++++ b/app/confidentialite/page.tsx
+@@ -1,107 +1,108 @@
+-import '@/app/globals.css'
+-import Breadcrumb from '@/app/Breadcrumb'
+-import PublicNav from '@/app/PublicNav'
+-import PublicPied from '@/app/PublicPied'
+-import NePasCompter from './NePasCompter'
+-import { actif } from '@/lib/flags'
+-import { MOIS_AUDIENCE } from '@/lib/audience'
+-import { SECTION_PROSPECTION } from '@/lib/confidentialite/prospection'
+-
+-export const metadata = {
+-  title: 'Politique de confidentialité',
+-  // Sans cette ligne, la canonique du layout racine ('/') s'applique : la page se déclare
+-  // comme étant l'accueil, alors qu'elle figure au sitemap — donc jamais indexée.
+-  alternates: { canonical: '/confidentialite' },
+-}
+-
+-const Back = () => <Breadcrumb label="Confidentialité" path="/confidentialite" />
+-
+-export default function Confidentialite() {
+-  return (
+-    <div className="pub">
+-    <PublicNav />
+-    <main className="legal-wrap">
+-      <Back />
+-      <h1>Politique de confidentialité</h1>
+-      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '4 octobre 2026' : '4 octobre 2026'} · Conforme au RGPD</div>
+-
+-      <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
+-
+-      <h2>1. Responsable du traitement</h2>
+-      <p>Le responsable du traitement est <strong>Benjamin Filiot</strong> (Presti), 17230 Marans, France — joignable à <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a> ou par <a href="/contact">le formulaire de contact</a> (mêmes coordonnées complètes dans les <a href="/mentions-legales">mentions légales</a>).</p>
+-
+-      <h2>2. Données que nous collectons</h2>
+-      <ul>
+-        <li><strong>Compte</strong> : nom, adresse email, mot de passe (haché — personne ne peut le relire, pas même nous), métier, informations d’entreprise (SIRET, assurance, adresse) que vous saisissez.</li>
+-        <li><strong>Activité</strong> : demandes reçues, devis et factures créés, coordonnées de vos clients que vous renseignez.</li>
+-        <li><strong>Paiement</strong> : gérés par Stripe. <strong>Presti ne stocke jamais vos numéros de carte.</strong></li>
+-        <li><strong>Techniques</strong> : logs de connexion, données strictement nécessaires au fonctionnement.</li>
+-        <li><strong>Messagerie connectée</strong> (option, si vous reliez votre boîte email professionnelle) : vos identifiants de messagerie, chiffrés et jamais réaffichés, et les emails reçus sur cette boîte, relevés chaque jour et rangés dans votre boîte de réception Presti. Leur contenu est traité pour votre compte, jamais pour un autre usage ; vous coupez la relève à tout moment et les identifiants sont alors effacés.</li>
+-      </ul>
+-
+-      <h2>3. Finalités &amp; bases légales</h2>
+-      <ul>
+-        <li>Fournir le service (comptes, réponses, devis, factures) — <em>exécution du contrat</em>.</li>
+-        <li>Traiter les paiements et gérer les abonnements — <em>exécution du contrat / obligation légale</em>.</li>
+-        <li>Répondre à vos demandes et assurer le support — <em>intérêt légitime</em>.</li>
+-        <li>Améliorer le service — <em>intérêt légitime</em>.</li>
+-        {actif('audience') ? <li>Mesurer la fréquentation des pages publiques du site, sans cookie et en statistiques anonymes (voir <a href="#audience">§ 8</a>) — <em>intérêt légitime</em>.</li> : null}
+-        <li>Relever votre messagerie connectée pour vous présenter les demandes reçues par email — <em>exécution du contrat</em>, uniquement si vous avez relié la boîte.</li>
+-      </ul>
+-
+-      <h2>4. Sous-traitants &amp; destinataires</h2>
+-      <p>Nous faisons appel à des prestataires pour fournir le service. Chacun n’accède qu’aux données nécessaires :</p>
+-      <ul>
+-        <li><strong>Supabase</strong> — hébergement de la base de données et des photos — <em>Union européenne (Francfort)</em></li>
+-        <li><strong>Vercel</strong> — hébergement de l’application — <em>États-Unis</em></li>
+-        <li><strong>Stripe</strong> — traitement des paiements — <em>États-Unis</em></li>
+-        <li><strong>Resend</strong> — envoi des emails transactionnels — <em>États-Unis</em></li>
+-        <li><strong>Anthropic (Claude)</strong> — génération des réponses et devis par IA (le texte que vous soumettez est traité pour produire le résultat) — <em>États-Unis</em></li>
+-      </ul>
+-      <p>Les transferts hors Union européenne sont encadrés par les <strong>clauses contractuelles types</strong> de la Commission européenne (décision d’exécution (UE) 2021/914). Aucun de ces prestataires n’est autorisé à utiliser ces données pour son propre compte, ni à s’en servir pour entraîner ses modèles. Quand vous utilisez Presti pour vos propres clients, c’est vous le responsable du traitement et Presti votre sous-traitant : le contrat écrit qu’exige l’article 28 du RGPD est l’<a href="/cgu#sous-traitance">annexe des conditions générales</a>.</p>
+-
+-      <h2>5. Durée de conservation</h2>
+-      <p>Vos données sont conservées le temps de votre utilisation du service, puis supprimées ou anonymisées. Vous pouvez demander la suppression de votre compte à tout moment : un <strong>délai de grâce de 30 jours</strong> s’ouvre alors — vous pouvez annuler la demande et exporter l’ensemble de vos données depuis <strong>Paramètres → Données &amp; confidentialité</strong> — puis la purge est automatique. Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales) ; les traces techniques de protection contre les abus, <strong>12 mois</strong>{actif('audience') ? <> ; le détail des visites des pages publiques, <strong>{MOIS_AUDIENCE} mois</strong>, et les empreintes du jour qui servent à les compter, jusqu’au lendemain</> : null}.</p>
+-
+-      <h2>6. Vos droits</h2>
+-      <p>Conformément au RGPD, vous disposez des droits d’<strong>accès</strong>, de <strong>rectification</strong>, d’<strong>effacement</strong>, de <strong>portabilité</strong>, de <strong>limitation</strong> et d’<strong>opposition</strong>. Pour les exercer : <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a> ou <a href="/contact">le formulaire de contact</a>. Vous pouvez aussi exporter vos données et supprimer votre compte vous-même, depuis Paramètres → Données &amp; confidentialité.</p>
+-      <p>Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
+-
+-      <h2>7. Sécurité</h2>
+-      <p>Nous mettons en œuvre des mesures techniques et organisationnelles adaptées : mots de passe hachés et refusés s’ils figurent dans une fuite connue, double authentification disponible sur votre compte, cloisonnement des données par compte appliqué par la base elle-même (isolation stricte), connexions chiffrées (HTTPS), secrets stockés côté serveur uniquement, adresses IP pseudonymisées dans tout ce que vous pouvez consulter, et conservées en clair côté serveur uniquement pour bloquer une source d’abus et pour tracer les actions de nos fondateurs. Le détail des mesures et le sort des données en fin de contrat figurent dans l’<a href="/cgu#sous-traitance">annexe de sous-traitance</a> des conditions générales.</p>
+-
+-      <h2 id="audience">8. Cookies{actif('audience') ? ' et mesure d’audience' : ''}</h2>
+-      <p>Presti utilise uniquement des cookies strictement nécessaires au fonctionnement (session de connexion). Aucun cookie publicitaire n’est déposé{actif('audience') ? ', et aucun cookie ne sert à mesurer l’audience' : ''}.</p>
+-      {actif('audience') ? (
+-        <>
+-          <p>Sur les pages publiques de prestiapp.fr — accueil, FAQ, contact, connexion, inscription et pages légales — nous comptons les visites nous-mêmes, <strong>sans cookie, sans traceur et sans prestataire de mesure</strong>. Pour chaque page vue, nous enregistrons la page, le site d’où vous arrivez (son nom seulement, jamais l’adresse complète) ou la campagne de nos propres liens, le type d’appareil, la famille de navigateur et le pays déduit par notre hébergeur.</p>
+-          <p><strong>Votre adresse IP n’est pas enregistrée.</strong> Le temps de la requête, elle sert à calculer deux empreintes qui changent chaque jour : l’une, avec votre navigateur, pour compter les visiteurs du jour sans compter deux fois la même personne ; l’autre pour limiter les envois abusifs. Toutes deux sont effacées le lendemain. Ces statistiques ne servent qu’à Presti et ne sont jamais rapprochées de votre compte ni transmises à quiconque. Le détail des vues est supprimé au bout de {MOIS_AUDIENCE} mois ; seuls restent des totaux par jour (nombre de visiteurs et de pages vues), qui ne contiennent plus rien d’une visite.</p>
+-          <p>Cette mesure ne tourne ni dans votre espace, ni dans l’application mobile, ni sur les sites des artisans. Sur les pages de conversation des artisans, seules les ouvertures de page (une par session de navigateur), les demandes et les coordonnées envoyées sont comptées, en totaux, sans cookie ni identifiant.</p>
+-          <p>Vous pouvez vous y opposer : un navigateur qui envoie le signal « Global Privacy Control » ou « Do Not Track » n’est jamais compté, et ce bouton retire le vôtre.</p>
+-          <NePasCompter />
+-        </>
+-      ) : null}
+-
+-      <h2>9. Application mobile</h2>
+-      <p>L’application Presti (Android, iPhone) affiche la même console que le site, avec les mêmes données et les mêmes règles. Ce qu’elle fait de plus, et seulement sur votre geste :</p>
+-      <ul>
+-        <li><strong>Caméra et photos</strong> : pour photographier un chantier ou lire un code-barres. Les images sont traitées sur votre appareil ; seules celles que vous ajoutez à une fiche sont envoyées à Presti.</li>
+-        <li><strong>Déverrouillage biométrique</strong> (empreinte, visage) : vérifié par le système de votre téléphone. Presti ne reçoit jamais vos données biométriques, seulement le résultat « déverrouillé ou non ».</li>
+-        <li><strong>Notifications</strong> : si vous les activez, un jeton technique propre à votre appareil est conservé pour vous prévenir d’un nouveau message ou d’un devis accepté. Il est supprimé quand vous retirez l’appareil ou fermez votre compte. Le contenu du message ne transite jamais par la notification.</li>
+-        <li><strong>Session</strong> : votre connexion est gardée dans l’espace protégé de votre téléphone (Keychain, Keystore) et fermée si le déverrouillage échoue.</li>
+-        <li><strong>Rapports d’erreur</strong> : en cas de panne d’un écran, le chemin de la page (sans identifiant ni contenu) et le message technique nous sont envoyés pour corriger.</li>
+-      </ul>
+-      <p>Aucune mesure d’audience ni publicité n’est intégrée à l’application.</p>
+-
+-      <h2 id="prospection">{SECTION_PROSPECTION.titre}</h2>
+-      {SECTION_PROSPECTION.paragraphes.map((paragraphe) => <p key={paragraphe}>{paragraphe}</p>)}
+-      <ul>
+-        {SECTION_PROSPECTION.liste.map((element) => <li key={element}>{element}</li>)}
+-      </ul>
+-
+-      <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
+-    </main>
+-    <PublicPied />
+-    </div>
+-  )
+-}
++import '@/app/globals.css'
++import Breadcrumb from '@/app/Breadcrumb'
++import PublicNav from '@/app/PublicNav'
++import PublicPied from '@/app/PublicPied'
++import NePasCompter from './NePasCompter'
++import { actif } from '@/lib/flags'
++import { MOIS_AUDIENCE } from '@/lib/audience'
++import { SECTION_PROSPECTION } from '@/lib/confidentialite/prospection'
++
++export const metadata = {
++  title: 'Politique de confidentialité',
++  // Sans cette ligne, la canonique du layout racine ('/') s'applique : la page se déclare
++  // comme étant l'accueil, alors qu'elle figure au sitemap — donc jamais indexée.
++  alternates: { canonical: '/confidentialite' },
++}
++
++const Back = () => <Breadcrumb label="Confidentialité" path="/confidentialite" />
++
++export default function Confidentialite() {
++  return (
++    <div className="pub">
++    <PublicNav />
++    <main className="legal-wrap">
++      <Back />
++      <h1>Politique de confidentialité</h1>
++      <div className="legal-updated">Dernière mise à jour : 13 octobre 2026 · Conforme au RGPD</div>
++
++      <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
++
++      <h2>1. Responsable du traitement</h2>
++      <p>Le responsable du traitement est <strong>Benjamin Filiot</strong> (Presti), 17230 Marans, France — joignable à <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a> ou par <a href="/contact">le formulaire de contact</a> (mêmes coordonnées complètes dans les <a href="/mentions-legales">mentions légales</a>).</p>
++
++      <h2>2. Données que nous collectons</h2>
++      <ul>
++        <li><strong>Compte</strong> : nom, adresse email, mot de passe (haché — personne ne peut le relire, pas même nous), métier, informations d’entreprise (SIRET, assurance, adresse) que vous saisissez.</li>
++        <li><strong>Activité</strong> : demandes reçues, devis et factures créés, coordonnées de vos clients que vous renseignez.</li>
++        <li><strong>Suivi des chantiers et de l’équipe</strong> (CRM atelier, si votre offre le comprend) : vos chantiers (dates, adresse, avancement, matériel prévu, notes de suivi), les membres de votre équipe (nom, rôle, téléphone professionnel facultatif, chantiers et tâches confiés) et vos véhicules. Vous en êtes responsable pour vos clients et votre équipe ; Presti les traite pour votre compte (<a href="/cgu#sous-traitance">annexe des conditions générales</a>).</li>
++        <li><strong>Paiement</strong> : gérés par Stripe. <strong>Presti ne stocke jamais vos numéros de carte.</strong></li>
++        <li><strong>Techniques</strong> : logs de connexion, données strictement nécessaires au fonctionnement.</li>
++        <li><strong>Messagerie connectée</strong> (option, si vous reliez votre boîte email professionnelle) : vos identifiants de messagerie, chiffrés et jamais réaffichés, et les emails reçus sur cette boîte, relevés chaque jour et rangés dans votre boîte de réception Presti. Leur contenu est traité pour votre compte, jamais pour un autre usage ; vous coupez la relève à tout moment et les identifiants sont alors effacés.</li>
++      </ul>
++
++      <h2>3. Finalités &amp; bases légales</h2>
++      <ul>
++        <li>Fournir le service (comptes, réponses, devis, factures) — <em>exécution du contrat</em>.</li>
++        <li>Traiter les paiements et gérer les abonnements — <em>exécution du contrat / obligation légale</em>.</li>
++        <li>Répondre à vos demandes et assurer le support — <em>intérêt légitime</em>.</li>
++        <li>Améliorer le service — <em>intérêt légitime</em>.</li>
++        {actif('audience') ? <li>Mesurer la fréquentation des pages publiques du site, sans cookie et en statistiques anonymes (voir <a href="#audience">§ 8</a>) — <em>intérêt légitime</em>.</li> : null}
++        <li>Relever votre messagerie connectée pour vous présenter les demandes reçues par email — <em>exécution du contrat</em>, uniquement si vous avez relié la boîte.</li>
++      </ul>
++
++      <h2>4. Sous-traitants &amp; destinataires</h2>
++      <p>Nous faisons appel à des prestataires pour fournir le service. Chacun n’accède qu’aux données nécessaires :</p>
++      <ul>
++        <li><strong>Supabase</strong> — hébergement de la base de données et des photos — <em>Union européenne (Francfort)</em></li>
++        <li><strong>Vercel</strong> — hébergement de l’application — <em>États-Unis</em></li>
++        <li><strong>Stripe</strong> — traitement des paiements — <em>États-Unis</em></li>
++        <li><strong>Resend</strong> — envoi des emails transactionnels — <em>États-Unis</em></li>
++        <li><strong>Anthropic (Claude)</strong> — génération des réponses et devis par IA (le texte que vous soumettez est traité pour produire le résultat), et assistant de gestion : pour répondre à vos questions, il lit les factures, impayés, montants et noms de clients nécessaires — <em>États-Unis</em></li>
++      </ul>
++      <p>Les transferts hors Union européenne sont encadrés par les <strong>clauses contractuelles types</strong> de la Commission européenne (décision d’exécution (UE) 2021/914). Aucun de ces prestataires n’est autorisé à utiliser ces données pour son propre compte, ni à s’en servir pour entraîner ses modèles. Quand vous utilisez Presti pour vos propres clients, c’est vous le responsable du traitement et Presti votre sous-traitant : le contrat écrit qu’exige l’article 28 du RGPD est l’<a href="/cgu#sous-traitance">annexe des conditions générales</a>.</p>
++
++      <h2>5. Durée de conservation</h2>
++      <p>Vos données sont conservées le temps de votre utilisation du service, puis supprimées ou anonymisées. Vous pouvez demander la suppression de votre compte à tout moment : un <strong>délai de grâce de 30 jours</strong> s’ouvre alors — vous pouvez annuler la demande et exporter l’ensemble de vos données depuis <strong>Paramètres → Données &amp; confidentialité</strong> — puis la purge est automatique. Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales) ; les traces techniques de protection contre les abus, <strong>12 mois</strong> ; dans le CRM atelier, l’historique des modifications <strong>24 mois</strong>, les chantiers et leurs notes <strong>3 ans après la fin du chantier</strong>, les notes d’un client <strong>3 ans</strong> après sa dernière pièce, et la fiche d’un membre d’équipe inactif qui n’est plus rattaché à rien <strong>12 mois</strong>{actif('audience') ? <> ; le détail des visites des pages publiques, <strong>{MOIS_AUDIENCE} mois</strong>, et les empreintes du jour qui servent à les compter, jusqu’au lendemain</> : null}.</p>
++
++      <h2>6. Vos droits</h2>
++      <p>Conformément au RGPD, vous disposez des droits d’<strong>accès</strong>, de <strong>rectification</strong>, d’<strong>effacement</strong>, de <strong>portabilité</strong>, de <strong>limitation</strong> et d’<strong>opposition</strong>. Pour les exercer : <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a> ou <a href="/contact">le formulaire de contact</a>. Vous pouvez aussi exporter vos données et supprimer votre compte vous-même, depuis Paramètres → Données &amp; confidentialité.</p>
++      <p>Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
++
++      <h2>7. Sécurité</h2>
++      <p>Nous mettons en œuvre des mesures techniques et organisationnelles adaptées : mots de passe hachés et refusés s’ils figurent dans une fuite connue, double authentification disponible sur votre compte, cloisonnement des données par compte appliqué par la base elle-même (isolation stricte), connexions chiffrées (HTTPS), secrets stockés côté serveur uniquement, adresses IP pseudonymisées dans tout ce que vous pouvez consulter, et conservées en clair côté serveur uniquement pour bloquer une source d’abus et pour tracer les actions de nos fondateurs. Le détail des mesures et le sort des données en fin de contrat figurent dans l’<a href="/cgu#sous-traitance">annexe de sous-traitance</a> des conditions générales.</p>
++
++      <h2 id="audience">8. Cookies{actif('audience') ? ' et mesure d’audience' : ''}</h2>
++      <p>Presti utilise uniquement des cookies strictement nécessaires au fonctionnement (session de connexion). Aucun cookie publicitaire n’est déposé{actif('audience') ? ', et aucun cookie ne sert à mesurer l’audience' : ''}.</p>
++      {actif('audience') ? (
++        <>
++          <p>Sur les pages publiques de prestiapp.fr — accueil, FAQ, contact, connexion, inscription et pages légales — nous comptons les visites nous-mêmes, <strong>sans cookie, sans traceur et sans prestataire de mesure</strong>. Pour chaque page vue, nous enregistrons la page, le site d’où vous arrivez (son nom seulement, jamais l’adresse complète) ou la campagne de nos propres liens, le type d’appareil, la famille de navigateur et le pays déduit par notre hébergeur.</p>
++          <p><strong>Votre adresse IP n’est pas enregistrée.</strong> Le temps de la requête, elle sert à calculer deux empreintes qui changent chaque jour : l’une, avec votre navigateur, pour compter les visiteurs du jour sans compter deux fois la même personne ; l’autre pour limiter les envois abusifs. Toutes deux sont effacées le lendemain. Ces statistiques ne servent qu’à Presti et ne sont jamais rapprochées de votre compte ni transmises à quiconque. Le détail des vues est supprimé au bout de {MOIS_AUDIENCE} mois ; seuls restent des totaux par jour (nombre de visiteurs et de pages vues), qui ne contiennent plus rien d’une visite.</p>
++          <p>Cette mesure ne tourne ni dans votre espace, ni dans l’application mobile, ni sur les sites des artisans. Sur les pages de conversation des artisans, seules les ouvertures de page (une par session de navigateur), les demandes et les coordonnées envoyées sont comptées, en totaux, sans cookie ni identifiant.</p>
++          <p>Vous pouvez vous y opposer : un navigateur qui envoie le signal « Global Privacy Control » ou « Do Not Track » n’est jamais compté, et ce bouton retire le vôtre.</p>
++          <NePasCompter />
++        </>
++      ) : null}
++
++      <h2>9. Application mobile</h2>
++      <p>L’application Presti (Android, iPhone) affiche la même console que le site, avec les mêmes données et les mêmes règles. Ce qu’elle fait de plus, et seulement sur votre geste :</p>
++      <ul>
++        <li><strong>Caméra et photos</strong> : pour photographier un chantier ou lire un code-barres. Les images sont traitées sur votre appareil ; seules celles que vous ajoutez à une fiche sont envoyées à Presti.</li>
++        <li><strong>Déverrouillage biométrique</strong> (empreinte, visage) : vérifié par le système de votre téléphone. Presti ne reçoit jamais vos données biométriques, seulement le résultat « déverrouillé ou non ».</li>
++        <li><strong>Notifications</strong> : si vous les activez, un jeton technique propre à votre appareil est conservé pour vous prévenir d’un nouveau message ou d’un devis accepté. Il est supprimé quand vous retirez l’appareil ou fermez votre compte. Le contenu du message ne transite jamais par la notification.</li>
++        <li><strong>Session</strong> : votre connexion est gardée dans l’espace protégé de votre téléphone (Keychain, Keystore) et fermée si le déverrouillage échoue.</li>
++        <li><strong>Rapports d’erreur</strong> : en cas de panne d’un écran, le chemin de la page (sans identifiant ni contenu) et le message technique nous sont envoyés pour corriger.</li>
++      </ul>
++      <p>Aucune mesure d’audience ni publicité n’est intégrée à l’application.</p>
++
++      <h2 id="prospection">{SECTION_PROSPECTION.titre}</h2>
++      {SECTION_PROSPECTION.paragraphes.map((paragraphe) => <p key={paragraphe}>{paragraphe}</p>)}
++      <ul>
++        {SECTION_PROSPECTION.liste.map((element) => <li key={element}>{element}</li>)}
++      </ul>
++
++      <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
++    </main>
++    <PublicPied />
++    </div>
++  )
++}
+--- a/app/cgu/page.tsx
++++ b/app/cgu/page.tsx
+@@ -170,10 +170,10 @@
+       <h3>Objet, durée, nature et finalités</h3>
+       <ul>
+         {TRAITEMENTS.map((t) => (
+-          <li key={t.finalite}><strong>{t.finalite}</strong> — données : {t.donnees.toLowerCase()} ; durée : {t.duree}.</li>
++          <li key={t.finalite}><strong>{t.finalite}</strong> — personnes : {t.personnes.toLowerCase()} ; données : {t.donnees.toLowerCase()} ; base : {t.base.toLowerCase()} ; durée : {t.duree}.</li>
+         ))}
+       </ul>
+-      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée.</p>
++      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects et, si vous utilisez le CRM atelier, les membres de votre équipe. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée, organisation et suivi de vos chantiers et de votre équipe, et l’assistant de gestion qui lit vos factures, impayés, montants et noms de clients pour répondre à vos questions.</p>
+ 
+       {/* Art. 28.3 exige que le contrat dise OÙ, COMBIEN DE TEMPS, avec QUELLES mesures, et ce que
+           deviennent les données à la fin. Les trois premiers points étaient implicites ou éparpillés
+@@ -189,6 +189,7 @@
+         <li>Quand vous demandez la suppression du compte, un <strong>délai de grâce de 30 jours</strong> s’ouvre — vous pouvez revenir en arrière et exporter — puis la purge est automatique.</li>
+         <li>Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales), débarrassées des coordonnées qui ne sont pas nécessaires à leur valeur probante.</li>
+         <li>Les traces techniques de protection contre les abus (empreinte pseudonymisée de l’adresse IP, horodatages) : <strong>12 mois</strong>.</li>
++        <li>CRM atelier : l’historique des modifications, <strong>24 mois</strong> ; les chantiers, leurs tâches et leurs notes, <strong>3 ans après la fin du chantier</strong> ; les notes d’un client, 3 ans après sa dernière pièce, et aussitôt qu’il n’a plus aucune pièce ; la fiche d’un membre d’équipe inactif rattaché à rien, <strong>12 mois</strong>. L’effacement d’une conversation à la demande de votre client emporte aussi ses notes et son nom sur ses chantiers sans devis envoyé.</li>
+       </ul>
+ 
+       <h3>Engagements de Presti</h3>
+--- a/docs/registre-traitements.md
++++ b/docs/registre-traitements.md
+@@ -1,6 +1,6 @@
+ # Registre des traitements — l'entreprise Presti
+ 
+-> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 28 septembre 2026 (ajout du § 11, la prospection des professionnels).
++> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 28 septembre 2026 (ajout du § 11, la prospection des professionnels), puis le 13 octobre 2026 (ajout du § 13, le CRM atelier et l'assistant de gestion, pour le compte des artisans).
+ 
+ ## 1. Les comptes des artisans (clients de Presti)
+ 
+@@ -169,3 +169,19 @@
+ | **Où** | `/home/agents/travail/savoir/` (usine), `scripts/savoir/`, `lib/savoir/` |
+ | **Droits** | Écrire au responsable ; la demande d'effacement d'un prospect s'applique au compartiment à la synchronisation suivante |
+ 
++
++## 13. Pour le compte des artisans — CRM atelier, équipe et assistant de gestion *(art. 30.2 ; audit RGPD du 12 octobre 2026)*
++
++Ici Presti est **sous-traitant** : l'artisan est responsable de traitement (annexe art. 28 des conditions générales, liste
++`TRAITEMENTS` de `lib/legalArtisan.ts`). Fonctions sous drapeau (`crm`, `assistant`, `lib/flags.ts`), ouvertes à l'essai.
++
++| | |
++|---|---|
++| **Finalités** | Organiser et suivre les chantiers de l'artisan (chantiers, tâches, matériel réservé, notes, journal) ; gérer son équipe et ses véhicules ; l'assistant de gestion qui répond sur ses factures, impayés et devis |
++| **Personnes** | Les clients et prospects de l'artisan ; les membres de son équipe (salariés, apprentis, sous-traitants) |
++| **Données** | Clients : nom repris des devis, factures et demandes, adresse du chantier, notes de suivi (sans santé, opinion ni jugement : le dit sous chaque zone de texte). Équipe : nom, rôle, téléphone professionnel facultatif, affectations, tâches cochées. Assistant : montants, factures, impayés, noms de clients que l'artisan interroge |
++| **Base légale** | Celle de l'artisan : exécution du contrat avec son client ; exécution du contrat de travail et intérêt légitime pour l'équipe |
++| **Durée** | Journal du CRM 24 mois (`DUREES_MOIS.crm_journal`) ; chantiers, notes client 36 mois après la fin (`DUREES_MOIS.crm`) ; notes orphelines supprimées ; membres inactifs non rattachés 12 mois (`DUREES_MOIS.equipe_inactif`) — `purgerCrm` de `lib/purgesRgpd.ts`, chaque jour |
++| **Destinataires** | Supabase (UE) ; Vercel ; Anthropic (États-Unis, clauses contractuelles types) pour l'assistant de gestion, qui lit les factures, impayés, montants et noms de clients nécessaires à la réponse, sans entraînement de modèle |
++| **Effacement** | L'effacement d'une conversation emporte les notes du client et de la demande, et le nom du client sur ses chantiers sans devis envoyé (`app/api/donnees/route.ts`, `lib/crm/effacement.ts`) |
++| **Où** | `supabase/migrations/0141`, `0151` à `0154`, `lib/crm/`, `app/api/crm/`, `app/crm/`, `lib/crm/empreinte.ts` (identifiant client : HMAC à secret serveur, jamais l'adresse en clair) |

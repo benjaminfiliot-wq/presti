@@ -122,7 +122,8 @@ export default function Visite({
 
   return (
     <div className={`visite${visible ? ' on' : ''}`}>
-      <div className="visite-fond" aria-hidden="true" />
+      {/* Un clic hors de la carte ferme la visite (comme « Plus tard ») : elle ne bloque jamais l'écran (recette du 12/10). */}
+      <div className="visite-fond" aria-hidden="true" onClick={() => fin.current(false)} />
       <div className="visite-spot" style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }} aria-hidden="true" />
       <div
         ref={carteRef}

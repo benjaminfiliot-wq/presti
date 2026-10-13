@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { COLONNES, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { COLONNES, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { lireCorps, validerCreationChantier } from '@/lib/crm/valider'
 import { tachesDepuisDevis } from '@/lib/crm/chantier'
 
@@ -68,4 +68,26 @@ export async function POST(req: Request) {
     }
   }
   return json({ ok: true, id: cree.id, taches, avertissements: suites }, 201)
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function PATCH(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function DELETE(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('GET, POST')
 }
