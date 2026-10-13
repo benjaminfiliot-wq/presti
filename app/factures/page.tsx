@@ -70,7 +70,7 @@ export default function FacturesList() {
     setBusy(null)
     if (!res.ok) {
       const corps = await res.json().catch(() => ({} as { error?: string }))
-      alert(corps.error ?? 'Impossible de produire la facture électronique pour l’instant.')
+      alert(corps.error ?? 'Impossible de produire le fichier XML Factur-X pour l’instant.')
       return
     }
     const url = URL.createObjectURL(await res.blob())
@@ -174,7 +174,7 @@ export default function FacturesList() {
                         permettait de l'obtenir. Seulement sur une facture émise : un brouillon
                         n'a pas de pièce électronique à produire. */}
                     {f.statut && f.statut !== 'brouillon'
-                      ? <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => facturx(f)} title="Facture électronique (Factur-X), pour votre comptable ou un donneur d'ordre public">XML</button>
+                      ? <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => facturx(f)} title="Fichier XML Factur-X à télécharger, pour votre comptable ou un donneur d'ordre public">XML</button>
                       : null}
                     {active && f.statut !== 'payee' && (
                       <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button>

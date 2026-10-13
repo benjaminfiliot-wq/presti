@@ -1,8 +1,7 @@
 # Audit des promesses — octobre 2026 (plan d'action §4)
 
 Production lue : `origin/main` = 5f183802 (11/10). Audit fait le 12/10 de nuit par **trois sous-agents auditeurs, en lecture seule, distincts de ceux qui corrigent**. Aucune suite lancée : une « preuve » est une suite lue qui assertionne la promesse, pas une exécution.
-⚠ Ce fichier n'est pas commité : le clone n'est pas réaligné (HEAD ≠ origin/main), rien ne part avant le geste de Benj (`presti-ops
-ealigner-presti.cmd`).
+Commité le 12/10 (510cc782) après le réalignement du clone. Les corrections sont suivies plus bas, section « Suivi des corrections » ; les tableaux A, B et C gardent le verdict de l'audit tel qu'il a été rendu.
 
 ## Les chiffres (comptés par script sur les tableaux ci-dessous)
 
@@ -13,12 +12,124 @@ ealigner-presti.cmd`).
 | Hors site (démarchage, maquettes, publications, vidéos) | 70 | 52 | — | 1 | 17 |
 | **Total** | **234** | **123** | **45** | **22** | **44** |
 
-Corrigées à ce jour : **3**, toutes hors du dépôt, donc sans commit :
-- le « créneau de rappel préféré » des maquettes et de la stratégie de démarchage ;
-- la réponse impossible dans le film Plateforme ;
-- les règles d'automatisation et le chantier-lieu dans les deux films, relevés par le juge vidéo.
+La nuit du 12/10, avant tout commit, **3** corrections avaient été faites hors du dépôt : le « créneau de rappel préféré » des maquettes et de la stratégie de démarchage ; la réponse impossible dans le film Plateforme ; les règles d'automatisation et le chantier-lieu dans les deux films. La suite est dans la section suivante.
 
-Retirées du texte dans le dépôt : **0**. Corrigées dans le code : **0**. Les deux sont bloquées par le réalignement.
+## Suivi des corrections (12 et 13/10)
+
+Les 66 lignes « À corriger dans le code » (22) ou « À retirer du texte » (44) des tableaux A (15), B (33) et C (18), et ce qu'elles sont devenues. Le 12/10 vers 11 h, un premier agent a traité les 48 lignes de A et B (commit efce9ca6, fusionné). Le 13/10 de nuit (branche `promesses-suite`, non commitée), les lignes de A et B ont été revérifiées dans le code, complétées là où un texte faux restait ailleurs, et les 18 lignes de C ont été traitées dans `presti-ops`.
+
+Statuts :
+- **CORRIGÉE DANS LE CODE** : le produit fait maintenant ce que le texte annonce.
+- **RETIRÉE DU TEXTE** : la phrase fausse n'est plus dite.
+- **REFORMULÉE** : le texte dit exactement ce que fait le produit.
+- **RESTE** : pas fait, avec la raison (souvent une décision de Benj, notée dans `presti-ops\JOURNAL-PLAN.md`, « À décider par Benj au réveil »).
+
+Décompte, sorti par `node scripts/promesses-suite-qa.mjs --compter` (lit les tableaux ci-dessous et vérifie qu'ils couvrent exactement les lignes à corriger ou à retirer de A, B et C) — relancer la commande plutôt que de se fier au tableau :
+
+| Partie | Lignes | Corrigées dans le code | Retirées du texte | Reformulées | Restent |
+|---|---|---|---|---|---|
+| A. Site public | 15 | 3 | 1 | 11 | 0 |
+| B. Produit | 33 | 14 | 5 | 14 | 0 |
+| C. Hors site | 18 | 1 | 2 | 10 | 5 |
+| **Total** | **66** | **18** | **8** | **35** | **5** |
+
+Tests qui portent ces corrections :
+- `scripts/garde-fou-envoi-qa.mjs` (12/10, hors ligne) : 31/31 le 13/10. GF-1 à GF-7 : créneau inventé, filtre profil vide, mode automatique filtré avant envoi, première réponse et relances filtrées avec la persona, ton qui fait foi, escalade avant le mode assisté, mention de l'assistant.
+- `scripts/promesses-suite-qa.mjs` (13/10, hors ligne) : 10/10 sur le disque. PS-1 à PS-10 reprennent les textes corrigés. **Il peut rougir** : `--ref=efce9ca6^` (avant le 12/10) donne 0 vert / 10 rouges, `--ref=HEAD` (avant le 13/10) 5 rouges (PS-3, PS-4, PS-5, PS-6, PS-10).
+- `scripts/promesses-qa.mjs` : PASS (PR-1 à PR-12) le 13/10. `scripts/crieur-qa.mjs --partie=composer` : PASS (CR-1 vérifie la nouvelle preuve du fait « factures »).
+
+### Suivi A — site public
+
+| Ligne | Verdict de l'audit | Statut | Quand | Preuve |
+|---|---|---|---|---|
+| A2 | À CORRIGER DANS LE CODE | REFORMULÉE | 12/10, 13/10 | « Chaque demande faite par votre lien » : app/page.tsx:168-169, app/layout.tsx:47, lib/faq.ts:2-3, app/AuthCadre.tsx:15, app/PublicPied.tsx:14 ; 13/10 : lib/agents/acquisition/plaintes.ts:44, :53 (Presti ne capte pas les appels). PS-2, PS-5. Préparer une réponse aux e-mails de la boîte branchée : non fait (canal Le Bon Coin construit, drapeau `canauxLeboncoin` baissé). |
+| A3 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | Plus de Le Bon Coin sur la vitrine ni dans la FAQ (app/page.tsx:78, lib/faq.ts:3) ; l'espace connecté dit que ses règles l'interdisent (app/dashboard/page.tsx:141, app/profil/page.tsx:181, lib/aide.ts:76). PS-1. |
+| A5 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Filtre anti-prix et anti-créneau sur tout texte écrit au nom de l'artisan, profil vide compris, avant l'envoi en mode automatique : lib/ai.ts:468 (`garderAvantEnvoi`), lib/ai/antiFabrication.ts:70 (`RE_CRENEAU`). garde-fou-envoi-qa GF-1 à GF-4. |
+| A14 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | « Votre compta, rangée par l'IA » : app/page.tsx:257 ; 13/10, titre de l'aide « tableau de bord comptable » : lib/aide.ts:235. PS-10. |
+| A16 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | L'écran Automatisations suit le serveur (règles réservées à Signature) : app/plateforme/Automatisations.tsx:20 ; textes : app/DemoSequence.tsx:29, app/page.tsx:238. regles-verrou-e2e.mjs:41 (« Studio n'a pas les règles »). |
+| A18 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « En option, à part de l'abonnement (300 €, une fois) » : app/DemoSequence.tsx:33 ; « En option : le site » : app/DemoSite.tsx:50. |
+| A29 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Un forfait mensuel, avec des crédits inclus », pas de recharge à l'unité : app/page.tsx:304. PS-9. |
+| A30 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Compta et recherche fournisseurs comptées : app/page.tsx:324, :337 ; lib/faq.ts:7. PS-9. |
+| A42 | À CORRIGER DANS LE CODE | REFORMULÉE | 12/10, 13/10 | Grille « Factures + export XML Factur-X » : lib/plans.ts:138 ; 13/10 : fait du crieur (publications) lib/crieur/faits.ts:19, bouton XML app/factures/page.tsx:73, :177. PS-3, crieur-qa CR-1. Finir le Factur-X (Schematron, PDF/A-3, plateforme agréée) : non fait, c'est un chantier. |
+| A46 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Export coché pour les trois offres : lib/plans.ts:150. |
+| A47 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | La demande d'aide porte son délai en tête de sujet, « Prioritaire · 1 jour ouvré » pour Signature : app/api/support/demande/route.ts:49 ; grille « Support par écrit » avec les délais des CGU : lib/plans.ts:152. PS-8 (texte), pas de test d'exécution. |
+| A48 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « L'atelier à plein régime : modèle Expert et règles d'automatisation » : lib/plans.ts:68. |
+| A53 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Délai compté à partir du paiement d'un dossier complet : lib/siteCommande.ts:17, app/cgu/page.tsx:60. PS-7. Les textes de l'écosystème (lib/agents/acquisition/affirmations.ts:21, :27, faq.ts:27-28, modeles.ts:85) disent encore « après validation » : écosystème en pause, à reprendre avant de le relancer (À décider). |
+| A54 | À CORRIGER DANS LE CODE | REFORMULÉE | 12/10 | « Sans délai garanti » : app/api/prospects/entrant/route.ts:15, app/page.tsx:361. |
+| A60 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Les droits décrits au lieu de « conforme au RGPD » : lib/faq.ts:4. |
+
+### Suivi B — produit
+
+| Ligne | Verdict de l'audit | Statut | Quand | Preuve |
+|---|---|---|---|---|
+| B4 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Le ton de Ma plateforme fait foi (lib/plateformeConfig.ts:100, `tonDeReponse`), le modèle et la persona aussi au premier message (app/api/leads/route.ts:360, :399) ; devis et facture automatiques renvoyés vers Automatisations dans l'aide. GF-4, GF-5. |
+| B7 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | « Devis auto » prend le modèle de Ma plateforme : app/api/devis/auto/route.ts:25. Pas de test. |
+| B12 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Les deux exceptions dites (statut « Envoyé », règle « Tout auto ») : lib/aide.ts:173. |
+| B14 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Un rendu fidèle du PDF » : lib/aide.ts:189. |
+| B16 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Émettre un avoir » : lib/aide.ts:221. |
+| B20 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | Article réécrit avec la compta (dépôt de fichiers, crédit) : lib/aide.ts:235 et suivantes ; 13/10 : titre « tableau de bord comptable ». PS-10. |
+| B24 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | « Un devis ne peut pas être envoyé » : lib/aide.ts:313 ; 13/10, même chose sur l'écran Entreprise & légal : app/parametres/SectionLegal.tsx:83. PS-6. |
+| B27 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Jamais le contenu » réservé au téléphone ; l'e-mail reprend le nom et le message : lib/aide.ts:328. |
+| B28 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Avis neutre à l'artisan dès le premier message, sans coordonnées : app/api/leads/route.ts:145. Pas de test hors ligne (push-e2e couvre le chemin avec contact). |
+| B33 | À CORRIGER DANS LE CODE | REFORMULÉE | 12/10 | La limite d'une heure est dite : app/parametres/SectionSecurite.tsx:127, lib/aide.ts (Sécurité). La rendre vraie (révoquer les lectures directes) : non fait, pas un petit changement. |
+| B37 | À CORRIGER DANS LE CODE | RETIRÉE DU TEXTE | 12/10 | « Conversation » retirée des suppressions séparées : lib/aide.ts:385. |
+| B41 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | Plus de remboursement au prorata ; « tête de file » et résiliation sans frais (CGU art. 4) : lib/aide.ts:437. |
+| B44 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Premier message au modèle réglé, débité à son tarif : app/api/leads/route.ts:360 ; bouton « Par défaut (Standard) » : app/plateforme/Reglages.tsx:157. GF-4. |
+| B45 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | lib/plateformeConfig.ts:100 ; bulle : lib/aide.ts:528. GF-5. |
+| B47 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | Bulle « Devis automatique » retirée : lib/aide.ts:540 (commentaire). |
+| B48 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | Bulle « Facture automatique » retirée : lib/aide.ts:540 (commentaire). |
+| B49 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Le mot d'escalade passe avant le mode assisté : lib/plateformeConfig.ts:161. GF-6. |
+| B51 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | En pause : relances suspendues (app/api/cron/relances/route.ts:98), ni notification ni accusé à la capture du contact (app/api/leads/contact/route.ts:68), rien au premier message (app/api/leads/route.ts:233). Pas de test hors ligne. |
+| B54 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Persona au premier message (app/api/leads/route.ts:399) et aux relances (app/api/cron/relances/route.ts:118). GF-4. |
+| B60 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | Les douze bulles « Réglages fins » retirées : lib/aide.ts:831 (commentaire). |
+| B64 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Automatiquement (dès l'offre Studio) » : app/Visite.tsx:26. |
+| B65 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Sur vos prix dès que votre bibliothèque est remplie », acceptation en ligne depuis une conversation : app/Visite.tsx:27. |
+| B67 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Mention de l'assistant sur la réponse automatique et les relances envoyées par e-mail : lib/mentionAssistant.ts:20, app/api/leads/route.ts, app/api/cron/relances/route.ts:147. GF-7. |
+| B69 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | app/plateforme/Automatisations.tsx:20. regles-verrou-e2e.mjs:41. |
+| B72 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Une réponse à valider, ou en direct si vous l'avez réglé en Automatique (dès l'offre Studio) » : app/plateforme/Conversations.tsx:279. |
+| B74 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | « Conforme » seulement si rien ne manque : app/devis/[id]/page.tsx:332. |
+| B82 | À RETIRER DU TEXTE | CORRIGÉE DANS LE CODE | 12/10 | Le bouton « DÉFINITIVE » est remplacé par un lien vers Paramètres → Données (récapitulatif, 30 jours pour annuler) : app/profil/page.tsx:332. |
+| B83 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Les relances automatiques ne consomment rien » : app/parametres/SectionAbonnement.tsx:98. |
+| B89 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | Comme A42 : lib/plans.ts:138, lib/crieur/faits.ts:19, app/factures/page.tsx:177. PS-3. |
+| B90 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | Grille « Relances automatiques des conversations (J+2, J+5, J+10) », rangée sous Plateforme : lib/plans.ts:142 ; 13/10 : le fil de la vitrine ne montre plus une relance après « Facture émise » (app/page.tsx:98-100), connexion et FAQ disent « après la réponse au client » (app/AuthCadre.tsx:17, lib/faq.ts:2), réponses de la veille des plaintes sans relance d'impayé (lib/agents/acquisition/plaintes.ts:33, :64, docs/agents/plaintes-par-theme.md). PS-4. |
+| B91 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Comme A46 : lib/plans.ts:150. |
+| B96 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Le récapitulatif dit « N'EST PAS PARTI » quand l'envoi a échoué : app/api/leads/route.ts:446. |
+| B103 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | E-mails du produit hors de la pause des agents, plafond séparé : lib/email.ts:60, :87. |
+
+### Suivi C — hors site (fichiers de `presti-ops`, hors dépôt sauf mention)
+
+| Ligne | Verdict de l'audit | Statut | Quand | Preuve |
+|---|---|---|---|---|
+| C5 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | STRATEGIE-DEMARCHAGE.md:36 « le délai souhaité » (plus de créneau de rappel). |
+| C6 | À RETIRER DU TEXTE | REFORMULÉE | 12/10, 13/10 | « Rien n'est perdu » retiré le 12/10 ; 13/10 : STRATEGIE-DEMARCHAGE.md:48 ne dit plus « il vous évite de perdre ceux qui vous appellent » (une demande écrite au lieu d'un message sur le répondeur). Sauvegarde `.avant-1013`. |
+| C19 | À RETIRER DU TEXTE | REFORMULÉE | 13/10 | Les deux KIT-APPEL.md (2026-09-27-liste et -vague2) : « 48 h ouvrées à compter du paiement du dossier complet, avec une validation humaine du contenu par Presti », 31 + 31 occurrences. Sauvegardes `.avant-1013`. |
+| C22 | À RETIRER DU TEXTE | REFORMULÉE | 13/10 | MESSAGES-A-ENVOYER.md:31 : Presti fait le 3 « pour les demandes écrites (son formulaire de contact et sa boîte e-mail ; pas les appels ni les SMS) ». |
+| C28 | À RETIRER DU TEXTE | REFORMULÉE | 13/10 | MESSAGES-A-ENVOYER.md:72 : le périmètre en clair (page de contact et boîte e-mail branchée ; ni appels, ni SMS, ni réseaux). |
+| C31 | À RETIRER DU TEXTE | REFORMULÉE | 13/10 | Angle d'appel sans la réponse préparée (payante au mois) : fusion.py:44-46 (le générateur), A-APPELER-TOUS.md et .csv (58 + 25 fiches chacun), top20\TOP-20.csv (20). Le Carnet d'appels (artefact) garde l'ancien angle : À décider. |
+| C32 | À RETIRER DU TEXTE | REFORMULÉE | 13/10 | Même correction que C31 (angle « devis », 25 fiches). |
+| C33 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | generer_v4.py et toutes les maquettes : « Délai souhaité » ; 0 occurrence de « créneau de rappel » dans les index.html de prospection le 13/10. |
+| C38 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 13/10 | Le lot du 16/09 est parti ; la phrase est bannie des prochains lots : STRATEGIE-DEMARCHAGE.md §4, « Phrases à ne jamais écrire ». |
+| C42 | À RETIRER DU TEXTE | RESTE | — | `presti\videos\inventaire\sortie\LEGENDES-PUBLICATION.md:19` dit encore « prévient sous le seuil ». Fichier du clone principal, hors de ma copie : texte à mettre « le signale dans « À racheter » » (À décider). |
+| C49 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | Réponse de l'IA remplacée dans les films Plateforme et mème. Vérifié le 13/10 : plus de « jeudi à 8 h » ; la seule bulle « jeudi matin » (videos\plateforme\construire.mjs:234) est l'exemple de style écrit par l'artisan. |
+| C56 | À RETIRER DU TEXTE | REFORMULÉE | 12/10 | « Et le devis » retiré : TEXTES-PUBLICATION.md:4, :7. Reste la 1re personne (« Mon logiciel… ») : À décider. |
+| C57 | À RETIRER DU TEXTE | RETIRÉE DU TEXTE | 12/10 | « Rien ne part sans vous » retiré : TEXTES-PUBLICATION.md. |
+| C59 | À RETIRER DU TEXTE | RESTE | — | Vidéo 1 publiée (« Google ou Leboncoin… quelques secondes ») : dépublier ou refaire = décision de Benj. Phrases marquées NO-GO et texte de remplacement dans le dépôt : docs/presti/tiktok/pack-2026-10-08/LISEZ-MOI.md (section « Promesses fausses »), docs/presti/tiktok/video-01-devis-qui-dorment.md:3. |
+| C60 | À CORRIGER DANS LE CODE | CORRIGÉE DANS LE CODE | 12/10 | Un devis rattaché à une conversation arme les relances à l'envoi : app/api/devis/[id]/envoyer/route.ts:84. Un devis créé seul n'en a pas, et plus aucun texte ne le promet (B90, PS-4). La phrase de la vidéo 1 reste NO-GO (C59). |
+| C64 | À RETIRER DU TEXTE | RESTE | — | « Quelques secondes » dans la vidéo 02 enregistrée (script-voix-02.txt:4) et dans `presti\docs\presti\tiktok\TEXTES-A-DIRE.md:22` (non suivi par git, hors de ma copie). Texte de remplacement écrit (LISEZ-MOI du pack) ; publier ou non = Benj. |
+| C65 | À RETIRER DU TEXTE | RESTE | — | « La main sur chaque message » : même vidéo 02 (script-voix-02.txt:5), même situation que C64. |
+| C66 | À RETIRER DU TEXTE | RESTE | — | Vidéo C, `presti\docs\presti\tiktok\TEXTES-A-DIRE.md:44` (hors de ma copie) : « avant tout paiement… rien n'est mis en ligne sans son accord ». À remplacer par « il voit d'abord la maquette ; le site est mis en ligne après la validation de Presti ». |
+
+### Relevé en passant le 13/10 (hors des tableaux), traité
+
+- Fait du crieur « factures électroniques » (publications automatiques) : lib/crieur/faits.ts:19, et `scripts/juges-026-pubs-contenu-mutations.mjs:147-148` suit le nouveau texte.
+- Veille des plaintes : quatre « réponses de Presti » fausses (relance automatique des devis et des impayés, « chaque demande » face aux appels manqués) : lib/agents/acquisition/plaintes.ts:33, :44, :53, :64 ; docs/agents/plaintes-par-theme.md:43-46 (même texte que le générateur ; veille-plaintes-qa VP-1 « doc à jour » vert).
+- Vitrine : le fil « Ensuite » montrait une relance après « Facture émise » (app/page.tsx:98-100) ; « puis la facture » sur l'écran de connexion (app/AuthCadre.tsx:17) — la remarque « hors périmètre » de la partie B.
+
+### Reste à faire (hors de ces lignes)
+
+- `lib/agents/acquisition` (affirmations.ts, faq.ts, modeles.ts) et les jeux d'essai des juges 026 disent « en ligne sous 48 h ouvrées après validation » : à réaligner sur `DELAI_TEXTE` avant toute relance de l'écosystème (en pause depuis le 11/10).
+- La facture d'acompte par règle s'applique en Essentiel (remarque « hors périmètre » de B, ligne 71) : l'écran Automatisations le dit, la grille range les règles en Signature. Cohérent à l'écran, à trancher sur le fond.
+- Les verdicts « TENUE SANS PREUVE » (45) n'ont pas été repris.
 
 ## À traiter en premier (gravité)
 

@@ -78,7 +78,9 @@ export default function SectionLegal({ a, patch, signaler }: SectionProps) {
         <div className="par-manque">
           <b>Il vous manque {manquantes.length} mention{manquantes.length > 1 ? 's' : ''} obligatoire{manquantes.length > 1 ? 's' : ''}</b>
           <span>{manquantes.join(' · ')}</span>
-          <em>Sans elles, vos devis et factures ne sont pas conformes (amende de 15 € par mention manquante), et vos mentions légales affichent « non communiqué ».</em>
+          {/* (13/10) Le produit fait plus que « pas conforme » : sans les mentions bloquantes (lib/legalArtisan.ts, MENTIONS_EMISSION),
+              un devis ne part pas et une facture n'est pas émise (audit des promesses, produit, ligne 24). */}
+          <em>Sans elles, vos devis et factures ne sont pas conformes (sur une facture, amende de 15 € par mention manquante). Tant que manque la dénomination, la forme juridique, le SIRET, l’adresse ou l’assurance professionnelle (décennale), Presti n’envoie pas de devis et n’émet pas de facture. Sur votre site, une mention absente affiche « non communiqué ».</em>
         </div>
       ) : null}
       <label>SIRET <Info cle="parametres.siret" /></label>

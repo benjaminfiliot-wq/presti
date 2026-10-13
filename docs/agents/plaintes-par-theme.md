@@ -40,10 +40,10 @@ La veille ne consomme AUCUN crédit payant : lecture directe polie. Apify et Fir
 
 | Thème | Citations | Approuvées | Pages sources | Ce que Presti y répond |
 |---|---|---|---|---|
-| Devis non relancés, sans réponse ou jamais signés | 6 | 2 | 4 | Presti relance automatiquement les devis restés sans réponse. |
-| Appels manqués, téléphone impossible à tenir sur le chantier | 4 | 1 | 3 | Chaque demande arrive dans Presti et la réponse est prête en moins d’une minute, même pendant le chantier. |
-| Pas de site, site obsolète, invisible sur internet | 11 | 1 | 9 | Presti livre un site d’artisan à jour et lisible sur téléphone, d’où chaque demande arrive dans Presti. |
-| Impayés, retards de paiement, relances de factures | 10 | 0 | 7 | Presti fait la facture depuis le devis et relance automatiquement (« Relances automatiques » des offres). |
+| Devis non relancés, sans réponse ou jamais signés | 6 | 2 | 4 | Un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail. |
+| Appels manqués, téléphone impossible à tenir sur le chantier | 4 | 1 | 3 | Chaque demande écrite faite par le lien de contact arrive dans Presti, avec une réponse prête en moins d’une minute, même pendant le chantier (pas les appels). |
+| Pas de site, site obsolète, invisible sur internet | 11 | 1 | 9 | Presti livre un site d’artisan à jour et lisible sur téléphone, dont le formulaire envoie chaque demande dans Presti. |
+| Impayés, retards de paiement, relances de factures | 10 | 0 | 7 | Presti fait la facture depuis le devis, liste les impayés dans « Mes chiffres » et prépare un brouillon de relance que l’artisan envoie lui-même. |
 | Temps perdu en administratif : devis, factures, paperasse le soir | 14 | 3 | 9 | Presti prépare le devis puis la facture à partir de la demande du client. |
 
 ### Devis non relancés, sans réponse ou jamais signés
