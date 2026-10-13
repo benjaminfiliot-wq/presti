@@ -16,7 +16,9 @@ import type { Brouillon } from '@/lib/assistant/boucle'
 // par les mêmes chemins que les écrans, et ne fait rien partir : un brouillon s'ouvre dans l'écran habituel (Devis,
 // Messages), où l'artisan le relit et le valide lui-même.
 
-type Bulle = { role: 'artisan' | 'assistant'; texte: string; brouillons?: Brouillon[]; consultes?: string[]; erreur?: boolean }
+// `signature` : posée par le serveur sur chaque réponse de l'assistant, renvoyée telle quelle dans l'historique (sans
+// elle, le serveur écarte la réponse : audit d'attaque du 12/10, B3).
+type Bulle = { role: 'artisan' | 'assistant'; texte: string; signature?: string | null; brouillons?: Brouillon[]; consultes?: string[]; erreur?: boolean }
 type LigneJournal = { id: string; cree_le: string; outil: string; resultat: string; resume: string; objet_type: string | null; objet_id: string | null }
 
 const EXEMPLES = [
@@ -25,7 +27,11 @@ const EXEMPLES = [
   'Qui attend une réponse de ma part ?',
   'Où en est mon chiffre du mois ?',
 ]
-const nouvelId = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : '00000000-0000-4000-8000-' + Math.random().toString(16).slice(2, 14).padEnd(12, '0'))
+const EXEMPLES_CRM = [
+  'Où en sont mes chantiers ?',
+  'Qui est sur quel chantier aujourd’hui ?',
+  'Qu’est-ce qui est à facturer ?',
+]
 const heure = (iso: string) => new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
 const libelleOutil = (o: string) => (o in LIBELLE_OUTIL ? LIBELLE_OUTIL[o as NomOutil] : o)
 
@@ -41,7 +47,10 @@ function Assistant() {
   const [bloque, setBloque] = useState<string | null>(null)
   const [plan, setPlan] = useState('gratuit')
   const [tier, setTier] = useState<Tier>('standard')
-  const [conversation, setConversation] = useState(nouvelId)
+  const [crm, setCrm] = useState(false)
+  // L'identifiant de la conversation est donné par le SERVEUR au premier message (audit d'attaque du 12/10, B2) : null
+  // tant qu'aucun échange n'a eu lieu.
+  const [conversation, setConversation] = useState<string | null>(null)
   const [bulles, setBulles] = useState<Bulle[]>([])
   const [saisie, setSaisie] = useState('')
   const [enCours, setEnCours] = useState(false)
@@ -49,6 +58,8 @@ function Assistant() {
   const [restants, setRestants] = useState(PLAFOND_TOURS)
   const [journal, setJournal] = useState<LigneJournal[] | null>(null)
   const [journalErreur, setJournalErreur] = useState(false)
+  // Le journal ne garde que l'identifiant de l'objet (RGPD) : les noms se relisent ici, sous la RLS, à l'affichage.
+  const [nomsObjets, setNomsObjets] = useState<Record<string, string>>({})
   const filRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -57,12 +68,14 @@ function Assistant() {
       const id = data.session.user.id
       // Essai (lib/flags.ts ESSAI) : le serveur dit si CE compte y a accès ; sinon retour au tableau de bord.
       const essai = await fetch('/api/essais', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
-        .then((r) => (r.ok ? r.json() : {})).catch(() => ({})) as { assistant?: boolean }
+        .then((r) => (r.ok ? r.json() : {})).catch(() => ({})) as { assistant?: boolean; crm?: boolean }
       if (essai.assistant !== true) { router.replace('/dashboard'); return }
       setUid(id)
       const { data: art } = await supabase.from('artisans').select('plan, is_founder').eq('id', id).maybeSingle()
       const p = art?.is_founder ? 'business' : (art?.plan as string) || 'gratuit'
       setPlan(p)
+      // Les exemples CRM ne s'affichent que si le CRM est ouvert au compte (la route décide seule de ses outils).
+      setCrm(essai.crm === true && peut((art?.plan as string) || 'gratuit', 'crm'))
       if (!art?.is_founder && !peut(p, 'assistant')) setBloque(`L’assistant de gestion n’est pas dans votre offre. ${messageVerrou('assistant')}`)
       setReady(true)
     })
@@ -77,13 +90,26 @@ function Assistant() {
       .select('id, cree_le, outil, resultat, resume, objet_type, objet_id')
       .eq('artisan_id', uid).order('cree_le', { ascending: false }).limit(30)
     setJournalErreur(!!error)
-    setJournal((data as LigneJournal[] | null) ?? [])
+    const lignes = (data as LigneJournal[] | null) ?? []
+    setJournal(lignes)
+    const ids = (t: string) => [...new Set(lignes.filter((l) => l.objet_type === t && l.objet_id).map((l) => l.objet_id as string))]
+    const [convs, devis] = await Promise.all([
+      ids('conversation').length ? supabase.from('leads').select('id, nom_prospect').eq('artisan_id', uid).in('id', ids('conversation')) : Promise.resolve({ data: [] }),
+      ids('devis').length ? supabase.from('devis').select('id, numero, client_nom').eq('artisan_id', uid).in('id', ids('devis')) : Promise.resolve({ data: [] }),
+    ])
+    const noms: Record<string, string> = {}
+    for (const l of (convs.data ?? []) as { id: string; nom_prospect: string | null }[]) if (l.nom_prospect?.trim()) noms[l.id] = l.nom_prospect.trim()
+    for (const d of (devis.data ?? []) as { id: string; numero: string | null; client_nom: string | null }[]) {
+      const n = [d.numero, d.client_nom?.trim()].filter(Boolean).join(' · ')
+      if (n) noms[d.id] = n
+    }
+    setNomsObjets(noms)
   }, [uid])
 
   const envoyer = async (texte: string) => {
     const message = texte.trim()
     if (!message || enCours) return
-    const historique = bulles.filter((b) => !b.erreur).slice(-HISTORIQUE_MESSAGES_MAX).map((b) => ({ role: b.role, texte: b.texte }))
+    const historique = bulles.filter((b) => !b.erreur).slice(-HISTORIQUE_MESSAGES_MAX).map((b) => ({ role: b.role, texte: b.texte, ...(b.role === 'assistant' && b.signature ? { signature: b.signature } : {}) }))
     setBulles((x) => [...x, { role: 'artisan', texte: message }])
     setSaisie('')
     setEnCours(true)
@@ -95,11 +121,14 @@ function Assistant() {
       const r = await fetch('/api/assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-        body: JSON.stringify({ conversation_id: conversation, message, historique, modele: tier }),
+        body: JSON.stringify({ ...(conversation ? { conversation_id: conversation } : {}), message, historique, modele: tier }),
       })
       if (!r.ok || !r.body || !(r.headers.get('content-type') || '').includes('ndjson')) {
         const d = await r.json().catch(() => ({}))
         if (d?.code === 'plafond') setRestants(0)
+        // Conversation inconnue du serveur (expirée, autre compte) : la prochaine question en ouvre une nouvelle.
+        if (d?.code === 'conversation') setConversation(null)
+        if (typeof d?.conversation_id === 'string') setConversation(d.conversation_id)
         ajouterAssistant({ texte: d?.error || 'L’assistant est indisponible pour l’instant.', erreur: true })
         return
       }
@@ -115,13 +144,14 @@ function Assistant() {
         reste = lignes.pop() ?? ''
         for (const l of lignes) {
           if (!l.trim()) continue
-          let ev: { e?: string; libelle?: string; texte?: string; brouillons?: Brouillon[]; consultes?: string[]; restants?: number; message?: string }
+          let ev: { e?: string; id?: string; libelle?: string; texte?: string; signature?: string | null; brouillons?: Brouillon[]; consultes?: string[]; restants?: number; message?: string }
           try { ev = JSON.parse(l) } catch { continue }
-          if (ev.e === 'consulte' && ev.libelle) { consultes.push(ev.libelle); setConsulte(ev.libelle) }
+          if (ev.e === 'conversation' && typeof ev.id === 'string') setConversation(ev.id)
+          else if (ev.e === 'consulte' && ev.libelle) { consultes.push(ev.libelle); setConsulte(ev.libelle) }
           else if (ev.e === 'fin') {
             fini = true
             if (typeof ev.restants === 'number') setRestants(ev.restants)
-            ajouterAssistant({ texte: ev.texte || '', brouillons: ev.brouillons ?? [], consultes: ev.consultes ?? consultes })
+            ajouterAssistant({ texte: ev.texte || '', signature: ev.signature ?? null, brouillons: ev.brouillons ?? [], consultes: ev.consultes ?? consultes })
           } else if (ev.e === 'erreur') {
             fini = true
             ajouterAssistant({ texte: ev.message || 'L’assistant n’a pas pu répondre.', erreur: true })
@@ -138,7 +168,7 @@ function Assistant() {
     }
   }
 
-  const nouvelleConversation = () => { setConversation(nouvelId()); setBulles([]); setRestants(PLAFOND_TOURS) }
+  const nouvelleConversation = () => { setConversation(null); setBulles([]); setRestants(PLAFOND_TOURS) }
 
   if (!ready) return <AppShell active="assistant" title="Assistant de gestion"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
   if (bloque) {
@@ -151,7 +181,7 @@ function Assistant() {
 
   const paliers = TIERS.filter((x) => plan === 'business' || tierAllowed(x.value, plan))
   return (
-    <AppShell active="assistant" title="Assistant de gestion" crumb="Offre Signature · lit vos données, prépare des brouillons : rien ne part sans vous" wide
+    <AppShell active="assistant" title="Assistant de gestion" crumb="Offre Signature · assistant IA (Claude, Anthropic) · lit vos données, prépare des brouillons : rien ne part sans vous" wide
       actions={<button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={nouvelleConversation} disabled={enCours}>Nouvelle conversation</button>}>
       <div className="asst">
         <section className="psh-panel asst-panneau" aria-label="Conversation avec l’assistant">
@@ -159,9 +189,9 @@ function Assistant() {
             {bulles.length === 0 ? (
               <div className="asst-accueil">
                 <p className="asst-accueil-titre">Posez une question sur votre activité.</p>
-                <p className="muted">Stock et alertes, devis, factures et impayés, conversations en attente, chiffres du mois. Il peut aussi préparer un devis brouillon ou une réponse à un client, que vous relisez et validez dans l’écran habituel.</p>
+                <p className="muted">Stock et alertes, devis, factures et impayés, conversations en attente, chiffres du mois{crm ? ', et dans votre CRM : chantiers, équipe du jour, matériaux réservés, ce qui est à facturer' : ''}. Il peut aussi préparer un devis brouillon ou une réponse à un client, que vous relisez et validez dans l’écran habituel.</p>
                 <div className="asst-exemples">
-                  {EXEMPLES.map((e) => <button key={e} type="button" className="asst-exemple" onClick={() => void envoyer(e)}>{e}</button>)}
+                  {[...EXEMPLES, ...(crm ? EXEMPLES_CRM : [])].map((e) => <button key={e} type="button" className="asst-exemple" onClick={() => void envoyer(e)}>{e}</button>)}
                 </div>
               </div>
             ) : bulles.map((b, i) => (
@@ -199,6 +229,8 @@ function Assistant() {
               <button type="submit" className="btn btn--primary" style={{ width: 'auto' }} disabled={enCours || !saisie.trim() || restants <= 0}>{enCours ? '…' : 'Envoyer'}</button>
             </div>
             <p className="asst-note muted">Un devis brouillon ou une réponse préparée consomment aussi leurs crédits, comme les boutons « Devis auto » et « Proposer une réponse ».</p>
+            {/* Transparence (audit RGPD du 12/10) : dire qui génère les réponses et ce qui lui est transmis. */}
+            <p className="asst-note asst-ia muted">Assistant IA (Claude, Anthropic) : vos questions et les données de votre compte utiles à la réponse lui sont transmises pour la rédiger ; les e-mails et téléphones de vos clients sont masqués avant l’envoi. Vérifiez les chiffres importants dans l’écran concerné.</p>
           </form>
         </section>
 
@@ -215,7 +247,7 @@ function Assistant() {
                       <span className="asst-j-date">{heure(l.cree_le)}</span>
                       <span className="asst-j-outil">{libelleOutil(l.outil)}</span>
                       <span className={`pill ${l.resultat === 'ok' ? 'ok' : l.resultat === 'refus' ? 'warn' : 'crit'}`}>{l.resultat}</span>
-                      <span className="asst-j-resume">{l.resume}</span>
+                      <span className="asst-j-resume">{l.resume}{l.objet_id && nomsObjets[l.objet_id] ? ` · ${nomsObjets[l.objet_id]}` : ''}</span>
                       {l.objet_type === 'devis' && l.objet_id ? <a href={`/devis/${l.objet_id}`}>Ouvrir</a> : l.objet_type === 'conversation' && l.objet_id ? <a href={`/messages?lead=${l.objet_id}`}>Ouvrir</a> : null}
                     </li>
                   ))}

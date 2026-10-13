@@ -89,3 +89,14 @@ de l'artisan ou d'un outil. S'il ne sait pas, il le dit et propose de demander �
 3. Ordre des jalons laissé à mon jugement : A1 → A2 → A3 → A4, le site en dernier (le plus visible publiquement).
 
 Reste la condition du plan : le code ne commence qu'après la validation écrite des phases 1 à 4.
+
+## 10. Améliorations du 13/10 (branche assistant-ameliorations)
+- **CRM en lecture** : `lire_chantiers`, `lire_equipe_du_jour`, `lire_materiaux_reserves`, `lire_a_facturer`. Proposés
+  seulement si le compte a le CRM (même décision que /api/crm/*, `lib/crm/acces.ts`) ; lus sous la session (RLS 0152) ;
+  calculés par `lib/crm/*` (pipeline, tableau, chantier, scène de l'atelier) dans `lib/assistant/crm.ts`.
+- **RGPD** : extraits de messages clients envoyés au modèle seulement pour un client précis ou 5 conversations au plus ;
+  e-mails et téléphones masqués avant l'envoi ; « meilleurs clients » seulement sur demande ; journal sans texte libre ni
+  nom (l'écran relit le nom sous la RLS) ; « assistant IA (Claude, Anthropic) » écrit sur /assistant.
+- **Audit d'attaque** : identifiant de conversation tiré par le serveur (B2) ; réponses de l'assistant signées (HMAC) et
+  seules crues dans l'historique renvoyé (B3, `lib/assistant/historique.ts`) — l'historique stocké en base reste à faire
+  (table, rétention, purge, export) ; crédit rendu d'un coup par `rendre_credit` (migration 0155, repli tant qu'absente).
