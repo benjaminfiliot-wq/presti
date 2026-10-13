@@ -14,7 +14,7 @@ const CONTENUS = {
     points: [
       'Chaque demande faite par votre lien a sa réponse prête en moins d’une minute : vous l’envoyez.',
       'Le devis se prépare sur vos prix, en PDF conforme.',
-      'Trois relances (J+2, J+5, J+10), puis la facture en un clic.',
+      'Trois relances (J+2, J+5, J+10) après la réponse au client, et la facture en un clic.',
     ],
     fiche: [
       { b: 'Demande entrante', em: 'Mme Garnier · robinets', ok: false },

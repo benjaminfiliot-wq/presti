@@ -1,4 +1,6 @@
 # Vidéo TikTok Presti n°1 — « Les devis qui dorment » (script de Perplexity, 07/10/2026)
+**Audit des promesses du 12/10** (`plans/promesses-2026-10.md`, partie C, lignes 59 et 60) : les lignes 10,8 s, 12,9 s et 15,6 s ci-dessous sont **NO-GO** (Le Bon Coin, « quelques secondes », « il relance tout seul »). La vidéo publiée les porte : la dépublier ou la refaire est une décision de Benj. Texte de remplacement : `pack-2026-10-08/LISEZ-MOI.md`, section « Promesses fausses ».
+
 Statut : BROUILLON à valider par Benj. Chaîne décidée par Benj : (1) IA d'écriture (Perplexity/ChatGPT) → hook + texte ; (2) le texte part vers l'application de voix → fichier audio ; (3) montage ; (4) vérification. Les plans « écran du produit » = vraies captures de Presti ; aucun chiffre de résultat affiché.
 
 Hook retenu : « Combien de devis t'as laissés sans relance ce mois-ci ? » (4 autres hooks et 5 variantes de 1re seconde : voir la réponse conservée dans .orchestre/travail/script-tiktok-perplexity.md).

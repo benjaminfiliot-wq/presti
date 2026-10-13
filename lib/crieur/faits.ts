@@ -14,7 +14,9 @@ const TOUS: Canal[] = ['instagram', 'facebook', 'linkedin']
 export const FAITS: Fait[] = [
   { id: 'reponse-rapide', texte: "La réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez.", preuve: { fichier: 'plans/promesses.md', motif: "`pilotage-e2e` **18/18 rejoué le 05/09** (mode assisté, prise de main, règles, flux SSE) | 05/09 | ✅ |" }, canaux: TOUS },
   { id: 'devis-prix', texte: "Presti prépare des devis chiffrés sur vos propres prix.", preuve: { fichier: 'plans/promesses.md', motif: '| 14 | « Devis chiffrés par l\'IA, sur vos prix »' }, canaux: TOUS },
-  { id: 'factures', texte: 'Presti permet de créer des factures et des factures électroniques.', preuve: { fichier: 'plans/promesses.md', motif: '| 15 | « Factures + facture électronique »' }, canaux: TOUS },
+  // (13/10) « factures électroniques » laissait croire à une facture conforme à la réforme, transmise par une plateforme agréée :
+  // Presti fournit un fichier XML Factur-X à télécharger (lib/facturx.ts ; audit des promesses, site, ligne 42).
+  { id: 'factures', texte: 'Presti permet de créer des factures et d’en exporter le fichier XML Factur-X.', preuve: { fichier: 'lib/plans.ts', motif: 'Factures + export XML Factur-X' }, canaux: TOUS },
   { id: 'relances', texte: 'Les relances peuvent partir après 2, 5 et 10 jours de silence du prospect.', preuve: { fichier: 'lib/relances.ts', motif: 'CADENCE_RELANCES = [2, 5, 10]' }, canaux: TOUS },
   { id: 'stock', texte: 'Suivez votre stock par lieu, avec scan et seuils.', preuve: { fichier: 'plans/promesses.md', motif: '| 17 | « Stock par lieu, scan, seuils »' }, canaux: TOUS },
   { id: 'fournisseurs', texte: 'Recherchez des prix chez vos fournisseurs avec l’aide de l’IA.', preuve: { fichier: 'plans/promesses.md', motif: '| 18 | « Recherche IA chez vos fournisseurs »' }, canaux: TOUS },

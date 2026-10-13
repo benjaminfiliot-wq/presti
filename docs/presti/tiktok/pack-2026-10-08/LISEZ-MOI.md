@@ -21,3 +21,15 @@ La vidéo 03 promet l’import Excel : implementation et tests locaux réels liv
 Les planches ont été vues. Une écoute humaine finale des trois masters reste nécessaire pour la validation artistique. Aucun verdict global 028-014 ni appel de publication. Le pack ne contient pas de produits TikTok Shop.
 
 HyperFrames local indisponible (`npx --no-install`, CLI absent) : usage inconnu, aucune installation ni modification de composition. Reproduction locale : `node docs/presti/tiktok/pack-2026-10-08/preparer-pack.mjs`.
+
+## Promesses fausses (audit du 12/10, `plans/promesses-2026-10.md`, partie C, lignes 59, 60, 64, 65)
+
+Les fichiers `script-voix-01.txt` et `script-voix-02.txt` restent tels qu'ils ont été enregistrés (ils décrivent l'audio publié). Ces phrases sont **NO-GO** : ne plus les réenregistrer, ne pas republier la vidéo qui les porte sans décision de Benj (dépublier ou refaire : `presti-ops\JOURNAL-PLAN.md`, « À décider »).
+
+| Script | Phrase enregistrée | Pourquoi c'est faux | Texte à dire à la place |
+|---|---|---|---|
+| 01, l. 5 | « Un client t'écrit sur Google ou Leboncoin ? » | Aucun branchement à Google ni à Le Bon Coin ; les règles de Le Bon Coin interdisent le lien dans une annonce. | « Un client t'écrit par ton lien Presti ? » |
+| 01, l. 6 | « Réponse en quelques secondes » | Rien ne mesure ni ne garantit des secondes ; la génération est bornée à 60 s (`app/api/leads/route.ts`, `maxDuration`). | « Ta réponse est prête en moins d'une minute, avec ta façon de parler. » |
+| 01, l. 7 | « Un devis reste sans réponse ? Il relance tout seul. » | Seul un devis envoyé depuis une conversation arme les relances (`app/api/devis/[id]/envoyer/route.ts`) ; un devis créé seul n'en a pas. | « Ton client ne répond plus ? Il est relancé à J+2, J+5 et J+10. » |
+| 02, l. 4 | « Presti répond en quelques secondes » | Même raison que 01, l. 6. | « Presti prépare la réponse en moins d'une minute, dans le ton de l'artisan… » |
+| 02, l. 5 | « il garde donc la main sur chaque message » | Les relances J+2, J+5, J+10 partent seules (`app/api/cron/relances/route.ts`), avec la mention de l'assistant. | « …il garde donc la main sur ses réponses. » |

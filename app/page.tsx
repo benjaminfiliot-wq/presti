@@ -92,9 +92,12 @@ const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }
   },
   {
     heure: 'Ensuite',
-    titre: 'Facture, relances, compta.',
-    texte: "La facture en un clic, trois relances prévues (J+2, J+5, J+10) pour qu'aucun client ne soit oublié, et vos fichiers de compta rangés par l'IA.",
-    visuel: <div className="lp-cpv lp-cpv-fil"><span className="lp-cpv-chip">Ce qui suit</span><ol><li className="ok">Facture émise</li><li className="ok">Relance J+2 planifiée</li><li className="ok">Relance J+5 planifiée</li><li>Relance J+10</li><li className="ok">Compta rangée</li></ol></div>,
+    // (13/10) Les relances sont celles de la CONVERSATION (lib/relances.ts) : armées par la réponse envoyée ou le devis envoyé
+    // depuis la conversation (app/api/messages, app/api/devis/[id]/envoyer). Le fil montrait « Facture émise » puis « Relance J+2 » : il
+    // laissait croire à des relances de facture impayée, qui n'existent pas (audit des promesses, produit, ligne 90).
+    titre: 'Relances, facture, compta.',
+    texte: "Trois relances prévues (J+2, J+5, J+10) après la réponse au client, la facture en un clic quand il accepte, et vos fichiers de compta rangés par l'IA.",
+    visuel: <div className="lp-cpv lp-cpv-fil"><span className="lp-cpv-chip">Ce qui suit</span><ol><li className="ok">Relances J+2, J+5, J+10 planifiées</li><li className="ok">Devis accepté</li><li className="ok">Facture émise</li><li className="ok">Compta rangée</li></ol></div>,
   },
 ]
 
@@ -164,7 +167,7 @@ export default function Home() {
                 (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
             <p className="lp-lede">
               <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez.</span>
-              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, la facture, et trois relances (J+2, J+5, J+10).</span>
+              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture.</span>
             </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>

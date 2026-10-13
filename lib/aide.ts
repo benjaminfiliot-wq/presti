@@ -230,7 +230,9 @@ export const ARTICLES: Article[] = [
   {
     id: 'chiffres',
     page: '/chiffres',
-    titre: 'Mes chiffres : votre compta, tenue à jour toute seule',
+    // (13/10) « votre compta, tenue à jour toute seule » : l'écran est un tableau de bord calculé sur vos données, pas une
+    // comptabilité (ni journal, ni déclaration) — même correction que la vitrine (audit des promesses, site, ligne 14).
+    titre: 'Mes chiffres : votre tableau de bord comptable, à jour tout seul',
     aQuoiCaSert:
       'Cet écran additionne pour vous ce qui est déjà dans Presti : vos factures, vos devis et vos demandes, sans rien importer. ' +
       'Vous y voyez votre chiffre d’affaires et l’encaissé mois par mois, les impayés et leur retard, vos meilleurs clients, ' +

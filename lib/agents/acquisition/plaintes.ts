@@ -29,7 +29,8 @@ export const THEMES: readonly Theme[] = Object.freeze([
   {
     id: 'devis_sans_suite',
     libelle: 'Devis non relancés, sans réponse ou jamais signés',
-    reponse_presti: 'Presti relance automatiquement les devis restés sans réponse.',
+    // (13/10) Les relances sont celles de la conversation (lib/relances.ts) : un devis créé seul n'en a pas (audit des promesses, C60).
+    reponse_presti: 'Un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail.',
     familles: Object.freeze([
       f(/\bdevis\b/),
       f(/sans (suite|reponse|retour|nouvelles?)/, /pas (de|d'un|un) (retour|reponse|nouvelles?|appel|signe)/, /(aucun|aucune|jamais de) (retour|reponse|nouvelles?|suite)/,
@@ -39,7 +40,8 @@ export const THEMES: readonly Theme[] = Object.freeze([
   {
     id: 'appels_manques',
     libelle: 'Appels manqués, téléphone impossible à tenir sur le chantier',
-    reponse_presti: 'Chaque demande arrive dans Presti et la réponse est prête en moins d’une minute, même pendant le chantier.',
+    // (13/10) Presti ne capte ni les appels ni les SMS : seulement les demandes écrites (audit des promesses, site 2, hors site 6 et 22).
+    reponse_presti: 'Chaque demande écrite faite par le lien de contact arrive dans Presti, avec une réponse prête en moins d’une minute, même pendant le chantier (pas les appels).',
     familles: Object.freeze([
       f(/telephone/, /\bappels?\b/, /\bappelle/, /repondeur/, /decroch/, /rappel(er|le|e)/, /\btel\b/, /portable/),
       f(/manque/, /rate/, /pas le temps/, /sur (le|les|un) chantiers?/, /en chantier/, /impossible/, /sonne/, /toute la journee/, /pas (pu|eu le temps de) repondre/, /repondre/, /messages?/),
@@ -48,7 +50,7 @@ export const THEMES: readonly Theme[] = Object.freeze([
   {
     id: 'site_absent',
     libelle: 'Pas de site, site obsolète, invisible sur internet',
-    reponse_presti: 'Presti livre un site d’artisan à jour et lisible sur téléphone, d’où chaque demande arrive dans Presti.',
+    reponse_presti: 'Presti livre un site d’artisan à jour et lisible sur téléphone, dont le formulaire envoie chaque demande dans Presti.',
     familles: Object.freeze([
       f(/site (internet|web)/, /\bsite\b/, /internet/, /google/, /referencement/, /en ligne/, /visibilite/, /\bweb\b/),
       f(/pas de site/, /n'ai (pas|aucun) (de )?site/, /sans site/, /(vieux|ancien|obsolete|date|depasse)/, /personne ne (me |nous )?trouve/, /(invisible|pas visible|introuvable)/,
@@ -58,7 +60,8 @@ export const THEMES: readonly Theme[] = Object.freeze([
   {
     id: 'impayes',
     libelle: 'Impayés, retards de paiement, relances de factures',
-    reponse_presti: 'Presti fait la facture depuis le devis et relance automatiquement (« Relances automatiques » des offres).',
+    // (13/10) Il n'existe aucune relance automatique d'impayé (audit des promesses, produit, ligne 90) : un brouillon, envoyé par l'artisan.
+    reponse_presti: 'Presti fait la facture depuis le devis, liste les impayés dans « Mes chiffres » et prépare un brouillon de relance que l’artisan envoie lui-même.',
     familles: Object.freeze([
       f(/impaye/, /pas (ete )?paye/, /(me|nous) payer/, /payent pas/, /paie pas/, /paye pas/, /reglement/, /regler/, /\bsolde\b/, /retard de paiement/, /recouvrement/, /facture/, /tresorerie/, /creances?/),
       f(/impaye/, /pas (ete )?paye/, /retard/, /attend/, /toujours pas/, /refuse/, /relanc/, /mois/, /injonction/, /huissier/, /tresorerie/, /\bdoit\b/, /jamais/, /poirot/, /traine/),
