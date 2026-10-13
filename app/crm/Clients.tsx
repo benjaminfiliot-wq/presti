@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { dateFr } from './client'
 import type { ClientListe } from './types'
+import { Lien } from './mode'
 
 // Les clients : regroupés à partir des pièces (devis, factures, demandes, chantiers), lib/crm/clients.ts. Chaque ligne
 // ouvre la fiche 360°.
@@ -24,15 +25,15 @@ export default function ClientsVue({ clients }: { clients: ClientListe[] }) {
         <div className="psh-empty">Aucun client ne correspond.</div>
       ) : (
         <div className="psh-tablewrap">
-          <table className="psh-dtable crm-table">
+          <table className="psh-dtable crm-table crm-table-cartes">
             <thead><tr><th>Client</th><th>Contact</th><th className="r">Demandes</th><th className="r">Devis</th><th className="r">Factures</th><th className="r">Chantiers</th><th>Dernière pièce</th></tr></thead>
             <tbody>
               {filtres.map((c) => (
                 <tr key={c.id}>
-                  <td><a className="obj" href={`/crm/clients/${c.id}`}>{c.nom ?? 'Client sans nom'}</a></td>
-                  <td className="crm-contact">{c.email ?? c.telephone ?? '—'}</td>
-                  <td className="r tnum">{c.demandes}</td><td className="r tnum">{c.devis}</td><td className="r tnum">{c.factures}</td><td className="r tnum">{c.chantiers}</td>
-                  <td className="tnum">{dateFr(c.derniere)}</td>
+                  <td className="crm-td-titre"><Lien className="obj" href={`/crm/clients/${c.id}`}>{c.nom ?? 'Client sans nom'}</Lien></td>
+                  <td data-label="Contact" className="crm-contact">{c.email ?? c.telephone ?? '—'}</td>
+                  <td data-label="Demandes" className="r tnum">{c.demandes}</td><td data-label="Devis" className="r tnum">{c.devis}</td><td data-label="Factures" className="r tnum">{c.factures}</td><td data-label="Chantiers" className="r tnum">{c.chantiers}</td>
+                  <td data-label="Dernière pièce" className="tnum">{dateFr(c.derniere)}</td>
                 </tr>
               ))}
             </tbody>

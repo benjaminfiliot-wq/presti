@@ -170,8 +170,10 @@ export default function AppShell({
         fetch('/api/essais', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
           .then((r) => (r.ok ? r.json() : {})).then((e) => setEssais(e as Partial<Record<Flag, boolean>>)).catch(() => {})
       }
-      // Première ouverture de la console : la visite guidée, une seule fois par artisan.
-      if (prof && actif('aideVisites') && VISITES.console?.length) {
+      // Première ouverture de la console : la visite guidée, une seule fois par artisan. Jamais lancée d'elle-même sur le
+      // CRM (recette du 12/10) : elle montre le menu, pas le CRM, et recouvrait l'atelier à la première visite. Elle
+      // reste rejouable depuis le panneau « ? », et partira à la prochaine page de la console.
+      if (prof && actif('aideVisites') && VISITES.console?.length && !/^\/crm(\/|$)/.test(window.location.pathname)) {
         const vues = (prof as ArtisanInfo).aide_vues
         const deja = (Array.isArray(vues) ? vues : lireLocal()).includes('visite:console')
         if (!deja) setTimeout(() => setVisite(true), 700)

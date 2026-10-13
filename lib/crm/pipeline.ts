@@ -18,7 +18,13 @@
 // statuts donnaient à cet instant. Il ne vaut que tant que ces statuts n'ont pas bougé : dès que la colonne déduite change
 // (devis signé, facture payée…), la réalité reprend la main. Jamais l'inverse : un geste à la main ne masque pas un
 // paiement arrivé depuis.
+//
+// Recette du 12/10 : deux devis BROUILLONS pour le même client (la v1 puis la v2 d'un même chiffrage) faisaient deux cartes
+// et la colonne Demande additionnait les deux montants. Les brouillons d'un même client (même demande, sinon même e-mail,
+// sinon même nom) ne font plus qu'UNE carte : le plus récent, qui dit combien de brouillons plus anciens il cache. Un devis
+// ENVOYÉ, lui, compte toujours pour lui-même.
 import { facturesComptees, type FacturePresti } from '../comptaTableau.ts'
+import { cleEmail, cleNom } from './clients.ts'
 
 export const ETAPES = ['demande', 'devis_envoye', 'signe', 'chantier', 'a_facturer', 'paye'] as const
 export type Etape = (typeof ETAPES)[number]
@@ -31,7 +37,7 @@ export type Nombre = number | string | null | undefined
 export type LeadP = { id: string; artisan_id?: string | null; statut?: string | null; nom_prospect?: string | null; type_chantier?: string | null; created_at?: string | null }
 export type DevisP = {
   id: string; artisan_id?: string | null; lead_id?: string | null; statut?: string | null; numero?: string | null; objet?: string | null
-  client_nom?: string | null; total_ttc?: Nombre; created_at?: string | null; envoye_le?: string | null; accepte_le?: string | null
+  client_nom?: string | null; client_email?: string | null; total_ttc?: Nombre; created_at?: string | null; envoye_le?: string | null; accepte_le?: string | null
 }
 export type FactureP = FacturePresti
 export type ChantierP = { id: string; artisan_id?: string | null; devis_id?: string | null; statut?: string | null; titre?: string | null; client_nom?: string | null; cree_le?: string | null }
@@ -66,6 +72,8 @@ export type Carte = {
   chantierId: string | null
   /** Le dernier fait daté du dossier (ISO) ; sert au tri dans la colonne. */
   depuis: string | null
+  /** Brouillons plus anciens du même client, cachés derrière cette carte (comptés une seule fois). */
+  autresBrouillons: number
 }
 
 export type Colonne = { etape: Etape; libelle: string; cartes: Carte[]; montant: number }
@@ -153,9 +161,9 @@ export function cartes(e: EntreesPipeline): Carte[] {
   const leadsAvecDevis = new Set(devis.map((d) => d.lead_id).filter((x): x is string => !!x))
 
   const sortie: Carte[] = []
-  const pousser = (c: Omit<Carte, 'etape' | 'manuel'>) => {
+  const pousser = (c: Omit<Carte, 'etape' | 'manuel' | 'autresBrouillons'>) => {
     const manuel = c.etapeDerivee === 'classe' ? null : deplacementEnVigueur(c.objet, c.id, c.etapeDerivee, deplacements)
-    sortie.push({ ...c, etape: manuel ?? c.etapeDerivee, manuel: manuel !== null && manuel !== c.etapeDerivee })
+    sortie.push({ ...c, etape: manuel ?? c.etapeDerivee, manuel: manuel !== null && manuel !== c.etapeDerivee, autresBrouillons: 0 })
   }
 
   for (const d of devis) {
@@ -190,7 +198,27 @@ export function cartes(e: EntreesPipeline): Carte[] {
       montant: null, etapeDerivee: etape, preuve, devisId: null, leadId: null, chantierId: c.id, depuis: c.cree_le ?? null,
     })
   }
-  return sortie
+  return regrouperBrouillons(sortie, new Map(devis.map((d) => [d.id, d])))
+}
+
+/** Les brouillons d'un même client (en colonne Demande, non déplacés à la main) : une carte, la plus récente. */
+function regrouperBrouillons(toutes: Carte[], devisParId: Map<string, DevisP>): Carte[] {
+  const groupes = new Map<string, Carte[]>()
+  for (const c of toutes) {
+    if (c.objet !== 'devis' || c.preuve !== 'devis_brouillon' || c.etape !== 'demande' || c.manuel) continue
+    const d = devisParId.get(c.id)
+    const em = cleEmail(d?.client_email), nom = cleNom(c.client)
+    const k = d?.lead_id ? `l:${d.lead_id}` : em ? `e:${em}` : nom ? `n:${nom}` : null
+    if (k) groupes.set(k, [...(groupes.get(k) ?? []), c])
+  }
+  const caches = new Set<string>()
+  for (const g of groupes.values()) {
+    if (g.length < 2) continue
+    const [recent, ...anciens] = [...g].sort((a, b) => String(b.depuis ?? '').localeCompare(String(a.depuis ?? '')) || b.cle.localeCompare(a.cle))
+    recent.autresBrouillons = anciens.length
+    for (const a of anciens) caches.add(a.cle)
+  }
+  return toutes.filter((c) => !caches.has(c.cle))
 }
 
 export function pipeline(e: EntreesPipeline): Pipeline {

@@ -4,21 +4,26 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
-import { appel, dateHeureFr } from './client'
+import { appel, bloquerEcritures, dateHeureFr } from './client'
 import type { Vue } from './types'
 import TableauCrmVue from './Tableau'
 import PipelineVue from './Pipeline'
 import ChantiersVue from './Chantiers'
 import ClientsVue from './Clients'
 import EquipeVue from './Equipe'
-import Atelier from './atelier/Atelier'
-import { DONNEES_EXEMPLE } from '@/lib/crm/exemple'
+import Atelier, { prechargerScene3D } from './atelier/Atelier'
+import { BANDEAU_EXEMPLE, ecrireChoix, lireChoix, ModeExemple } from './mode'
+import { DONNEES_EXEMPLE, EQUIPE_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE } from '@/lib/crm/exemple'
 
-// CRM « atelier vivant » — les vues 2D (jalon J2), utilisables sans la 3D (J3).
+// CRM « atelier vivant ».
 //
-// Une seule lecture (GET /api/crm/vue) alimente le tableau de bord, le pipeline, les chantiers et les clients : tout est
-// calculé côté serveur par lib/crm/* à partir des VRAIES pièces du compte. Une lecture ratée n'affiche pas des zéros : elle
-// affiche l'erreur. Aucune donnée d'exemple.
+// Une seule lecture (GET /api/crm/vue) alimente le tableau de bord, le pipeline, les chantiers, les clients et l'atelier :
+// tout est calculé côté serveur par lib/crm/vue.ts à partir des VRAIES pièces du compte. Une lecture ratée n'affiche pas
+// des zéros : elle affiche l'erreur.
+//
+// L'EXEMPLE (13/10, demande de Benj) : un seul interrupteur en haut du CRM, « Voir l'exemple / Voir mes données », d'office
+// sur l'exemple quand le compte est vide. En exemple, TOUS les onglets montrent lib/crm/exemple.ts (calculé par le même
+// lib/crm/vue.ts), rien de réel ne s'y mêle, et aucune écriture ne part (app/crm/mode.tsx, app/crm/client.ts).
 const ONGLETS = [
   { id: 'atelier', label: 'Atelier' },
   { id: 'tableau', label: 'Tableau de bord' },
@@ -30,21 +35,31 @@ const ONGLETS = [
 type Onglet = (typeof ONGLETS)[number]['id']
 const CLE_ONGLET = 'presti-crm-onglet'
 
+/** Le compte n'a encore rien que le CRM sache montrer. */
+const compteVide = (v: Vue) => v.pipeline.vide && !v.chantiers.length && !v.clients.length
+  && !v.atelier.materiaux.length && !v.atelier.vehicules.length && !v.atelier.membres.length
+
 export default function Crm() {
   const router = useRouter()
   const [onglet, setOnglet] = useState<Onglet>('atelier')
-  // L'atelier d'exemple (données fictives, rien en base) : montré d'office tant que le compte n'a rien à mettre dans l'atelier.
-  const [exemple, setExemple] = useState<boolean | null>(null)
+  // Le choix explicite de l'artisan (retenu pour cet onglet du navigateur) ; null = la règle : exemple si le compte est vide.
+  const [choix, setChoix] = useState<'exemple' | 'donnees' | null>(null)
   const [vue, setVue] = useState<Vue | null>(null)
   const [erreur, setErreur] = useState<{ message: string; verrou: boolean } | null>(null)
   const [chargement, setChargement] = useState(true)
+  // « ?mesure=1 » : la maquette publie ses mesures (première image, images/s) pour scripts/crm-exemple-qa.mjs.
+  const [mesure, setMesure] = useState(false)
 
   useEffect(() => {
-    const depuisUrl = new URLSearchParams(window.location.search).get('vue')
+    const p = new URLSearchParams(window.location.search)
+    setMesure(p.get('mesure') === '1')
     let memo: string | null = null
-    try { memo = localStorage.getItem(CLE_ONGLET) } catch { /* préférence perdue : le tableau de bord */ }
-    const choisi = [depuisUrl, memo].find((x) => ONGLETS.some((o) => o.id === x))
+    try { memo = localStorage.getItem(CLE_ONGLET) } catch { /* préférence perdue : l'atelier */ }
+    const choisi = [p.get('vue'), memo].find((x) => ONGLETS.some((o) => o.id === x))
     if (choisi) setOnglet(choisi as Onglet)
+    setChoix(p.get('exemple') === '1' ? 'exemple' : lireChoix())
+    // La maquette 3D se télécharge PENDANT la lecture des données, pas après (recette du 12/10 : premier affichage lent).
+    if (!choisi || choisi === 'atelier') prechargerScene3D()
   }, [])
 
   const charger = useCallback(async () => {
@@ -68,8 +83,18 @@ export default function Crm() {
   const choisir = (o: Onglet) => {
     setOnglet(o)
     try { localStorage.setItem(CLE_ONGLET, o) } catch { /* rien */ }
-    const u = new URL(window.location.href); u.searchParams.set('vue', o); window.history.replaceState(null, '', u)
+    const u = new URL(window.location.href); u.searchParams.set('vue', o); u.searchParams.delete('exemple'); window.history.replaceState(null, '', u)
   }
+  const basculer = (v: 'exemple' | 'donnees') => {
+    setChoix(v); ecrireChoix(v)
+    const u = new URL(window.location.href); u.searchParams.delete('exemple'); window.history.replaceState(null, '', u)
+  }
+
+  const vide = vue ? compteVide(vue) : false
+  const exemple = !!vue && (choix ? choix === 'exemple' : vide)
+  // Posé pendant le rendu, avant tout clic possible : en exemple, app/crm/client.ts refuse toute écriture.
+  bloquerEcritures(exemple)
+  const v = exemple ? VUE_EXEMPLE : vue
 
   return (
     <AppShell active="crm" title="CRM atelier" crumb="Offre Signature · chantiers, clients, pipeline" wide>
@@ -80,10 +105,23 @@ export default function Crm() {
             {erreur.verrou ? <a className="psh-btn primary" href="/abonnement">Voir les offres</a> : <p className="muted">Rien n’est affiché plutôt que des chiffres faux.</p>}
           </div>
         </div>
-      ) : chargement || !vue ? (
+      ) : chargement || !v ? (
         <p className="muted" role="status">Lecture de vos demandes, devis, factures et chantiers…</p>
       ) : (
-        <>
+        <ModeExemple actif={exemple}>
+          <div className={`crm-mode${exemple ? ' exemple' : ''}`} role="note" data-crm-mode={exemple ? 'exemple' : 'donnees'}>
+            {exemple ? (
+              <>
+                <p><b>{BANDEAU_EXEMPLE}</b> Un plombier imaginaire, au {JOUR_EXEMPLE.split('-').reverse().join('/')} : tous les onglets montrent les mêmes chantiers, clients et montants. Les boutons disent ce qu’ils feraient, sans rien envoyer.{vide ? ' Votre CRM se remplira avec vos demandes, devis, factures et chantiers.' : ''}</p>
+                <button type="button" className="psh-btn primary" onClick={() => basculer('donnees')}>Voir mes données</button>
+              </>
+            ) : (
+              <>
+                <p>{vide ? 'Votre CRM est encore vide : il se remplit avec vos demandes, vos devis signés, vos chantiers, votre stock et votre équipe.' : 'Vos données, lues à l’instant.'}</p>
+                <button type="button" className="psh-btn ghost" onClick={() => basculer('exemple')}>Voir l’exemple</button>
+              </>
+            )}
+          </div>
           <div className="crm-onglets" role="tablist" aria-label="Vues du CRM">
             {ONGLETS.map((o) => (
               <button key={o.id} type="button" role="tab" id={`crm-onglet-${o.id}`} aria-selected={onglet === o.id} aria-controls={`crm-vue-${o.id}`}
@@ -91,35 +129,24 @@ export default function Crm() {
                 {o.label}
               </button>
             ))}
-            <span className="crm-maj" aria-live="polite">Lu à {dateHeureFr(vue.maintenant).slice(-5)}</span>
+            <span className="crm-maj" aria-live="polite">{exemple ? 'Exemple' : `Lu à ${dateHeureFr(v.maintenant).slice(-5)}`}</span>
           </div>
-          {vue.tronque && <p className="crm-note" role="note">Votre historique dépasse 2 000 pièces : seules les plus récentes sont comptées.</p>}
+          {v.tronque && <p className="crm-note" role="note">Votre historique dépasse 2 000 pièces : seules les plus récentes sont comptées.</p>}
           <section id={`crm-vue-${onglet}`} role="tabpanel" aria-labelledby={`crm-onglet-${onglet}`} className="crm-vue">
-            {/* La maquette n'est montée que sur son onglet : le morceau 3D n'est jamais chargé ailleurs. */}
+            {/* La maquette n'est montée que sur son onglet : le morceau 3D n'est chargé qu'ici (et préchargé pendant la lecture). */}
             {onglet === 'atelier' && (() => {
-              const a = vue.atelier
-              const vide = !a.chantiers.length && !a.materiaux.length && !a.vehicules.length && !a.membres.length && !a.demandes.length
-              const montrer = exemple ?? vide
-              return (
-                <>
-                  <div className="crm-note crm-exemple" role="note">
-                    {montrer
-                      ? <>Exemple : un atelier de plombier avec des données fictives, pour voir ce que donne le CRM. Rien n’est enregistré.{' '}<button type="button" className="psh-btn" onClick={() => setExemple(false)}>Voir mon atelier</button></>
-                      : <>{vide ? 'Votre atelier est encore vide : il se remplit avec vos devis signés, vos chantiers, votre stock et votre équipe.' : 'Votre atelier, d’après vos données.'}{' '}<button type="button" className="psh-btn" onClick={() => setExemple(true)}>Voir l’atelier d’exemple</button></>}
-                  </div>
-                  {montrer
-                    ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo />
-                    : <Atelier key="mien" donnees={a} onVue2D={(v) => { if (ONGLETS.some((o) => o.id === v)) choisir(v as Onglet) }} />}
-                </>
-              )
+              const versVue = (x: string) => { if (ONGLETS.some((o) => o.id === x)) choisir(x as Onglet) }
+              return exemple
+                ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo onVue2D={versVue} mesure={mesure} />
+                : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} />
             })()}
-            {onglet === 'tableau' && <TableauCrmVue t={vue.tableau} />}
-            {onglet === 'pipeline' && <PipelineVue p={vue.pipeline} onChange={charger} />}
-            {onglet === 'chantiers' && <ChantiersVue chantiers={vue.chantiers} devisSignes={vue.devisSignesSansChantier} onChange={charger} />}
-            {onglet === 'clients' && <ClientsVue clients={vue.clients} />}
-            {onglet === 'equipe' && <EquipeVue />}
+            {onglet === 'tableau' && <TableauCrmVue t={v.tableau} />}
+            {onglet === 'pipeline' && <PipelineVue p={v.pipeline} onChange={charger} />}
+            {onglet === 'chantiers' && <ChantiersVue chantiers={v.chantiers} devisSignes={v.devisSignesSansChantier} onChange={charger} />}
+            {onglet === 'clients' && <ClientsVue clients={v.clients} />}
+            {onglet === 'equipe' && <EquipeVue key={exemple ? 'exemple' : 'mien'} donnees={exemple ? EQUIPE_EXEMPLE : undefined} />}
           </section>
-        </>
+        </ModeExemple>
       )}
     </AppShell>
   )

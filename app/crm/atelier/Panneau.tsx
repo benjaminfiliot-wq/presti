@@ -5,13 +5,16 @@ import { LIBELLES_ROLE, LIBELLES_STATUT_CHANTIER, type RoleMembre, type StatutCh
 import { preparerCommande, texteCommande, chantierVisible, type DonneesAtelier, type ObjetScene } from '@/lib/crm/atelier'
 import { dateFr, euros, enCentimes } from '../client'
 import FicheChantier from '../FicheChantier'
+import { Lien, useExemple } from '../mode'
 
 // Le panneau qui s'ouvre au clic sur un objet de la maquette — le MÊME en 3D et dans le repli 2D (mêmes données, mêmes
 // actions). Chaque action passe par un chemin qui existe déjà :
 //   • chantier   → la fiche chantier (app/crm/FicheChantier.tsx) : tâches, matériel réservé / sortie, Notifier, Facturer ;
 //   • catégorie  → l'inventaire de la catégorie et « Préparer la commande » (une liste à relire, copier, envoyer soi-même) ;
 //   • véhicule, membre, accueil, bureau → leurs fiches et les liens vers les écrans existants.
-// En page de démonstration (`demo`), rien n'est lu ni écrit : les actions sont désactivées et le disent.
+// En page de démonstration (`demo`, /atelier-demo), rien n'est lu ni écrit : les actions sont désactivées et le disent.
+// Dans l'EXEMPLE du CRM (app/crm/mode.tsx), la fiche chantier s'ouvre sur ses données fictives, ses boutons ne font rien
+// partir, et les liens vers les écrans hors CRM sont inertes.
 export default function Panneau({ objet, donnees, demo, onFermer, onVue2D }: {
   objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; onFermer: () => void; onVue2D: (vue: string) => void
 }) {
@@ -52,6 +55,7 @@ export default function Panneau({ objet, donnees, demo, onFermer, onVue2D }: {
 }
 
 function PanneauChantier({ objet, donnees, demo }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean }) {
+  const exemple = useExemple()
   const c = donnees.chantiers.find((x) => x.id === objet.ref)
   const [complet, setComplet] = useState(false)
   if (!c) return <p className="crm-vide">Ce chantier n’est plus dans vos données.</p>
@@ -69,14 +73,14 @@ function PanneauChantier({ objet, donnees, demo }: { objet: ObjetScene; donnees:
         <dt>Camionnette</dt><dd>{vehicule ? `${vehicule.nom}${vehicule.immatriculation ? ` · ${vehicule.immatriculation}` : ''}` : '—'}</dd>
         <dt>Équipe</dt><dd>{equipe.length ? equipe.map((m) => m.nom).join(', ') : '—'}</dd>
       </dl>
-      {demo ? (
+      {demo && !exemple ? (
         <p className="crm-note">Démonstration : la fiche complète, les tâches, le matériel, « Notifier le client » et « Facturer » s’ouvrent ici sur un vrai compte.</p>
       ) : complet ? (
         <FicheChantier id={c.id} compacte />
       ) : (
         <div className="crm-boutons">
           <button type="button" className="psh-btn primary" onClick={() => setComplet(true)}>Tâches, matériel et actions</button>
-          <a className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Fiche complète</a>
+          <Lien className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Fiche complète</Lien>
         </div>
       )}
     </div>
@@ -113,7 +117,7 @@ function PanneauInventaire({ objet, donnees, demo }: { objet: ObjetScene; donnee
       </ul>
       <div className="crm-boutons">
         <button type="button" className="psh-btn primary" disabled={!alertes.length} title={alertes.length ? 'Une liste à relire avant tout envoi' : 'Aucun matériau sous son seuil dans cette catégorie'} onClick={() => setCommande(true)}>Préparer la commande</button>
-        {!demo && <a className="psh-btn ghost" href="/inventaire">Ouvrir l’inventaire</a>}
+        {!demo && <Lien className="psh-btn ghost" href="/inventaire">Ouvrir l’inventaire</Lien>}
       </div>
       {commande && <Commandes donnees={donnees} materiaux={alertes} />}
     </div>
@@ -176,7 +180,7 @@ function PanneauVehicule({ objet, donnees }: { objet: ObjetScene; donnees: Donne
         <dt>Entretien</dt><dd>{echeance(v.entretien_le)}</dd>
         <dt>Aujourd’hui</dt><dd>{objet.etat.aujourdhui ? objet.detail.split('→ ').pop() : 'Au dépôt'}</dd>
       </dl>
-      {chantiers.length > 0 && <><h3 className="crm-sous">Chantiers affectés</h3><ul className="atl-liste">{chantiers.map((c) => <li key={c.id}><a href={`/crm/chantiers/${c.id}`}>{c.titre}</a><span className="muted">{dateFr(c.date_debut)}</span></li>)}</ul></>}
+      {chantiers.length > 0 && <><h3 className="crm-sous">Chantiers affectés</h3><ul className="atl-liste">{chantiers.map((c) => <li key={c.id}><Lien href={`/crm/chantiers/${c.id}`}>{c.titre}</Lien><span className="muted">{dateFr(c.date_debut)}</span></li>)}</ul></>}
     </div>
   )
 }
@@ -190,7 +194,7 @@ function PanneauMembre({ objet, donnees }: { objet: ObjetScene; donnees: Donnees
       <dl className="atl-dl"><dt>Rôle</dt><dd>{LIBELLES_ROLE[m.role as RoleMembre] ?? m.role}</dd><dt>Aujourd’hui</dt><dd>{objet.detail}</dd></dl>
       <h3 className="crm-sous">Planning</h3>
       {planning.length === 0 ? <p className="crm-vide">Affecté à aucun chantier ouvert.</p> : (
-        <ul className="atl-liste">{planning.map((c) => <li key={c.id}><a href={`/crm/chantiers/${c.id}`}>{c.titre}</a><span className="muted tnum">{dateFr(c.date_debut)} → {dateFr(c.date_fin_prevue)}</span></li>)}</ul>
+        <ul className="atl-liste">{planning.map((c) => <li key={c.id}><Lien href={`/crm/chantiers/${c.id}`}>{c.titre}</Lien><span className="muted tnum">{dateFr(c.date_debut)} → {dateFr(c.date_fin_prevue)}</span></li>)}</ul>
       )}
     </div>
   )
@@ -203,7 +207,7 @@ function PanneauAccueil({ donnees }: { donnees: DonneesAtelier }) {
       {donnees.demandes.map((dm) => (
         <li key={dm.id}>
           <span><b>{dm.titre}</b><br /><span className="muted">{dm.client ?? 'Sans nom'} · {dateFr(dm.recue_le)}{dm.recue_le === donnees.jour ? ' · aujourd’hui' : ''}</span></span>
-          <span className="crm-actions-ligne"><a className="psh-btn ghost" href="/messages">Répondre</a><a className="psh-btn ghost" href={`/devis/nouveau?lead=${dm.id}`}>Créer le devis</a></span>
+          <span className="crm-actions-ligne"><Lien className="psh-btn ghost" href="/messages">Répondre</Lien><Lien className="psh-btn ghost" href={`/devis/nouveau?lead=${dm.id}`}>Créer le devis</Lien></span>
         </li>
       ))}
     </ul>

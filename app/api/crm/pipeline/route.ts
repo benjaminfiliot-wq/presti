@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chargerDossiers, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase } from '@/lib/crm/serveur'
+import { chargerDossiers, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { cartes } from '@/lib/crm/pipeline'
 import { lireCorps, validerDeplacement } from '@/lib/crm/valider'
 
@@ -32,4 +32,31 @@ export async function POST(req: Request) {
   })
   if (error) { const s = statutErreurBase(error); console.error('[crm/pipeline] journal :', error.message); return erreur(s.message, s.status) }
   return json({ ok: true, etape: v.valeur.vers, etapeDerivee: carte.etapeDerivee, manuel: v.valeur.vers !== carte.etapeDerivee })
+}
+
+// Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.
+export async function GET(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function PUT(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function PATCH(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function DELETE(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req)
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
 }

@@ -5,64 +5,56 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { LIBELLES_STATUT_CHANTIER, STATUTS_CHANTIER, type StatutChantier } from '@/lib/crm/valider'
 import { LIBELLES_ETAPES, type EtapeOuClasse } from '@/lib/crm/pipeline'
-import type { ActionsChantier } from '@/lib/crm/chantier'
-import { appel, dateFr, dateHeureFr, enCentimes, euros, LIBELLES_DEVIS, LIBELLES_FACTURE, TON_STATUT_CHANTIER } from './client'
+import { avancement as calculerAvancement } from '@/lib/crm/chantier'
+import type { EntreeJournal, FicheChantier as Fiche } from '@/lib/crm/vue'
+import { EQUIPE_EXEMPLE, ficheChantierExemple, INVENTAIRE_EXEMPLE } from '@/lib/crm/exemple'
+import { AIDE_TEXTE_LIBRE, appel, dateFr, dateHeureFr, enCentimes, estErreur, euros, itineraire, LIBELLES_DEVIS, LIBELLES_FACTURE, TON_STATUT_CHANTIER } from './client'
+import { Lien, useExemple } from './mode'
 import { Avancement } from './Chantiers'
 import type { Membre, Vehicule } from './types'
 
 // La fiche chantier (plan 3.4) : client, adresse, nature des travaux, devis lié (TTC, statut, signé le), acompte,
 // avancement, tâches cochables, équipe, camionnette, dates, matériaux réservés, notes, historique — et trois boutons qui
 // n'appellent que des chemins EXISTANTS (lib/crm/chantier.ts, actionsChantier) : désactivés, ils disent pourquoi.
-type Tache = { id: string; libelle: string; quantite: number | null; unite: string | null; ordre: number; faite: boolean; faite_le: string | null; membre_id: string | null; devis_ligne_id: string | null }
-type Reservation = { id: string; materiau_id: string; quantite: number; lieu: string; statut: string; sorti_le: string | null; note: string | null; materiau: { id: string; nom: string; unite: string } | null }
-type Entree = { id: string; objet: string; champ: string; de: string | null; vers: string | null; origine: string; etape_derivee: string | null; note: string | null; cree_le: string }
-type Note = { id: string; texte: string; cree_le: string }
-type Fiche = {
-  chantier: { id: string; titre: string; statut: StatutChantier; client_nom: string | null; adresse: string | null; code_postal: string | null; ville: string | null; date_debut: string | null; date_fin_prevue: string | null; date_fin_reelle: string | null; vehicule_id: string | null; notes: string | null; devis_id: string | null }
-  devis: { id: string; numero: string | null; objet: string | null; statut: string | null; total_ttc: number | null; acompte_pct: number | null; accepte_le: string | null; client_nom: string | null; client_email: string | null; client_adresse: string | null; lead_id: string | null } | null
-  factures: { id: string; numero: string | null; statut: string | null; total_ttc: number | null; date_emission: string | null; acompte_pct: number | null; comptee: boolean }[]
-  etape: EtapeOuClasse | null
-  taches: Tache[]
-  avancement: { pct: number | null; faites: number; total: number }
-  retard: number | null
-  equipe: { id: string; nom: string; role: string }[]
-  vehicule: { id: string; nom: string; immatriculation: string | null } | null
-  materiaux: Reservation[]
-  notes: Note[]
-  journal: Entree[]
-  actions: ActionsChantier
-  notificationPreparee: string
-}
+// La forme de la fiche est celle de lib/crm/vue.ts (construireFicheChantier), pour un vrai chantier comme pour l'exemple.
+// En mode EXEMPLE (app/crm/mode.tsx) : la fiche vient de lib/crm/exemple.ts, rien n'est lu au serveur, et chaque bouton
+// répond « Dans l'exemple, rien n'est envoyé » (app/crm/client.ts refuse l'écriture avant le réseau).
 type MateriauInv = { id: string; nom: string; unite: string; stock: { lieu: string; quantite: number }[]; quantite_totale: number }
 
 // Utilisée telle quelle par la page /crm/chantiers/[id] et, en colonne (compacte), par le panneau de l'atelier 3D.
 export default function FicheChantier({ id, compacte = false, onTitre }: { id: string; compacte?: boolean; onTitre?: (titre: string) => void }) {
   const router = useRouter()
-  const [fiche, setFiche] = useState<Fiche | null>(null)
-  const [erreur, setErreur] = useState('')
+  const exemple = useExemple()
+  const [ficheExemple] = useState(() => (exemple ? ficheChantierExemple(id) : null))
+  const [fiche, setFiche] = useState<Fiche | null>(ficheExemple)
+  const [erreur, setErreur] = useState(exemple && !ficheExemple ? 'Ce chantier n’existe pas dans l’exemple.' : '')
   const [message, setMessage] = useState<{ texte: string; erreur: boolean; lien?: { href: string; label: string } } | null>(null)
-  const [membres, setMembres] = useState<Membre[]>([])
-  const [vehicules, setVehicules] = useState<Vehicule[]>([])
-  const [inventaire, setInventaire] = useState<MateriauInv[] | null>(null)
+  const [membres, setMembres] = useState<Membre[]>(exemple ? EQUIPE_EXEMPLE.membres : [])
+  const [vehicules, setVehicules] = useState<Vehicule[]>(exemple ? EQUIPE_EXEMPLE.vehicules : [])
+  const [inventaire, setInventaire] = useState<MateriauInv[] | null>(exemple ? INVENTAIRE_EXEMPLE : null)
+
+  useEffect(() => { if (ficheExemple) onTitre?.(ficheExemple.chantier.titre) }, [ficheExemple, onTitre])
 
   const charger = useCallback(async () => {
+    if (exemple) return
     const { data } = await supabase.auth.getSession()
     if (!data.session) { router.replace('/login'); return }
     const r = await appel<Fiche>(`/api/crm/chantiers/${encodeURIComponent(id)}`)
     if (!r.ok) { setErreur(r.erreur); return }
     setErreur(''); setFiche(r.corps); onTitre?.(r.corps.chantier.titre)
-  }, [id, router, onTitre])
+  }, [id, router, onTitre, exemple])
   useEffect(() => {
+    if (exemple) return
     void charger()
     void appel<{ membres: Membre[] }>('/api/crm/equipe').then((r) => { if (r.ok) setMembres(r.corps.membres) })
     void appel<{ vehicules: Vehicule[] }>('/api/crm/vehicules').then((r) => { if (r.ok) setVehicules(r.corps.vehicules) })
     void appel<{ materiaux: MateriauInv[] }>('/api/inventaire').then((r) => setInventaire(r.ok ? r.corps.materiaux : []))
-  }, [charger])
+  }, [charger, exemple])
 
   async function agir(chemin: string, method: string, body: unknown, ok: string | null) {
     setMessage(null)
     const r = await appel(chemin, { method, body })
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return false }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return false }
     if (ok) setMessage({ texte: ok, erreur: false })
     await charger(); return true
   }
@@ -70,6 +62,19 @@ export default function FicheChantier({ id, compacte = false, onTitre }: { id: s
   return erreur ? <div className="psh-panel"><div className="psh-empty" role="alert">{erreur}</div></div>
     : !fiche ? <p className="muted" role="status">Lecture du chantier…</p>
       : <Contenu f={fiche} compacte={compacte} membres={membres} vehicules={vehicules} inventaire={inventaire} agir={agir} message={message} setMessage={setMessage} recharger={charger} />
+}
+
+/** Cocher une tâche répond tout de suite (sur le chantier, d'une main) ; si la base refuse, la case revient et le dit. */
+function useTachesInstantanees(f: Fiche, setMessage: (m: { texte: string; erreur: boolean } | null) => void) {
+  const [locales, setLocales] = useState<Record<string, boolean>>({})
+  useEffect(() => { setLocales({}) }, [f])
+  const taches = f.taches.map((t) => (t.id in locales ? { ...t, faite: locales[t.id] } : t))
+  async function cocher(id: string, faite: boolean) {
+    setLocales((l) => ({ ...l, [id]: faite })); setMessage(null)
+    const r = await appel(`/api/crm/taches/${id}`, { method: 'PATCH', body: { faite } })
+    if (!r.ok) { setLocales((l) => { const n = { ...l }; delete n[id]; return n }); setMessage({ texte: r.erreur, erreur: estErreur(r) }) }
+  }
+  return { taches, avancement: calculerAvancement(taches), cocher }
 }
 
 function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, setMessage, recharger }: {
@@ -80,6 +85,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
   recharger: () => Promise<void>
 }) {
   const c = f.chantier, d = f.devis
+  const { taches, avancement: av, cocher } = useTachesInstantanees(f, setMessage)
   const base = `/api/crm/chantiers/${c.id}`
   const client = d?.client_nom ?? c.client_nom
   const refClient = d ? `d-${d.id}` : `c-${c.id}`
@@ -94,7 +100,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
     setEnvoi('facturer'); setMessage(null)
     const r = await appel<{ id: string; numero: string }>('/api/factures', { method: 'POST', body: { devis_id: d.id } })
     setEnvoi(null)
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
     setMessage({ texte: `Facture ${r.corps.numero} créée.`, erreur: false, lien: { href: '/factures', label: 'Voir les factures' } })
     await recharger()
   }
@@ -103,7 +109,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
     setEnvoi('notifier'); setMessage(null)
     const r = await appel<{ emailed?: boolean; canal?: string; lien?: string }>('/api/messages', { method: 'POST', body: { action: 'reply', lead_id: d.lead_id, message: notif } })
     setEnvoi(null)
-    if (!r.ok) { setMessage({ texte: r.erreur, erreur: true }); return }
+    if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
     // On répète ce que la route a réellement fait : écrit dans la conversation, et envoyé par e-mail seulement si elle le dit.
     setMessage({ texte: r.corps.emailed ? 'Message écrit dans la conversation et envoyé par e-mail au client.' : r.corps.lien ? 'Message préparé : collez-le dans la conversation du canal d’origine.' : 'Message écrit dans la conversation du client.', erreur: false, ...(r.corps.lien ? { lien: { href: r.corps.lien, label: 'Ouvrir la conversation' } } : {}) })
     setNotif(null)
@@ -111,18 +117,19 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
 
   return (
     <div className="crm-fiche">
-      {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role={message.erreur ? 'alert' : 'status'}>{message.texte}{message.lien && <> · <a href={message.lien.href}>{message.lien.label}</a></>}</p>}
+      {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role={message.erreur ? 'alert' : 'status'}>{message.texte}{message.lien && <> · <Lien href={message.lien.href}>{message.lien.label}</Lien></>}</p>}
 
       <section className="psh-panel crm-entete" aria-labelledby="crm-fiche-titre">
         <div className="crm-entete-haut">
           <div>
             <h2 id="crm-fiche-titre">{c.titre}</h2>
-            <p className="muted">{client ? <a href={`/crm/clients/${refClient}`}>{client}</a> : 'Client sans nom'}{adresse ? ` · ${adresse}` : ''}</p>
+            <p className="muted">{client ? <Lien href={`/crm/clients/${refClient}`}>{client}</Lien> : 'Client sans nom'}{adresse ? ` · ${adresse}` : ''}</p>
+            {adresse && <Lien className="psh-btn ghost crm-itineraire-bouton" href={itineraire(adresse)} title={`Ouvrir l’itinéraire vers ${adresse}`}>Itinéraire</Lien>}
           </div>
-          <span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut]}</span>
+          <span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span>
         </div>
         <div className="crm-entete-chiffres">
-          <div><span className="lab">Avancement</span><Avancement {...f.avancement} /></div>
+          <div><span className="lab">Avancement</span><Avancement {...av} /></div>
           <div><span className="lab">Devis</span>{d ? <span className="tnum">{euros(ttc)} · {LIBELLES_DEVIS[d.statut ?? ''] ?? d.statut}</span> : <span>—</span>}</div>
           <div><span className="lab">Signé le</span><span className="tnum">{dateFr(d?.accepte_le)}</span></div>
           <div><span className="lab">Acompte</span><span className="tnum">{acompte !== null ? `${Number(d!.acompte_pct)} % · ${euros(acompte)}` : '—'}</span></div>
@@ -131,8 +138,8 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
         </div>
         <div className="crm-boutons">
           {/* Dans le panneau de l'atelier, « Fiche complète » ouvre la fiche chantier en pleine page ; sur cette page, le devis. */}
-          {compacte ? <a className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Fiche complète</a>
-            : d ? <a className="psh-btn ghost" href={`/devis/${d.id}`} title="Ouvre le devis complet">Fiche complète</a>
+          {compacte ? <Lien className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Fiche complète</Lien>
+            : d ? <Lien className="psh-btn ghost" href={`/devis/${d.id}`} title="Ouvre le devis complet">Fiche complète</Lien>
             : <button type="button" className="psh-btn ghost" disabled title="Ce chantier n’a pas de devis lié." aria-describedby="crm-raison-fiche">Fiche complète</button>}
           <button type="button" className="psh-btn ghost" disabled={!f.actions.notifier.actif || envoi !== null} title={f.actions.notifier.raison ?? 'Préparer un message au client'} aria-describedby={f.actions.notifier.raison ? 'crm-raison-notifier' : undefined}
             onClick={() => setNotif(f.notificationPreparee)}>Notifier le client</button>
@@ -149,6 +156,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
             <label className="crm-champ">Message au client (rien n’est envoyé avant « Envoyer »)
               <textarea rows={7} maxLength={4000} value={notif} onChange={(e) => setNotif(e.target.value)} />
             </label>
+            <p className="crm-aide">{AIDE_TEXTE_LIBRE}</p>
             <div className="crm-boutons">
               <button type="button" className="psh-btn primary" disabled={envoi !== null || !notif.trim()} onClick={() => void notifier()}>{envoi === 'notifier' ? 'Envoi…' : 'Envoyer au client'}</button>
               <button type="button" className="psh-btn ghost" onClick={() => setNotif(null)}>Annuler</button>
@@ -158,7 +166,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
       </section>
 
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>
-        <Taches f={f} base={base} membres={membres} agir={agir} />
+        <Taches f={f} taches={taches} faites={av.faites} cocher={cocher} base={base} membres={membres} agir={agir} />
         <div className="crm-pile">
           <Organisation key={JSON.stringify([c.statut, c.date_debut, c.date_fin_prevue, c.adresse, c.code_postal, c.ville, c.vehicule_id, f.equipe.map((m) => m.id)])} f={f} membres={membres} vehicules={vehicules} agir={agir} />
           <Materiaux f={f} base={base} inventaire={inventaire} agir={agir} />
@@ -194,7 +202,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
   )
 }
 
-function phrase(j: Entree): string {
+function phrase(j: EntreeJournal): string {
   const st = (s: string | null) => (s && s in LIBELLES_STATUT_CHANTIER ? LIBELLES_STATUT_CHANTIER[s as StatutChantier] : s ?? '—')
   if (j.objet === 'chantier' && j.champ === 'creation') return `Chantier créé (${st(j.vers)})`
   if (j.objet === 'chantier' && j.champ === 'statut') return `Statut : ${st(j.de)} → ${st(j.vers)}`
@@ -206,10 +214,10 @@ function phrase(j: Entree): string {
 
 type Agir = (chemin: string, method: string, body: unknown, ok: string | null) => Promise<boolean>
 
-function Taches({ f, base, membres, agir }: { f: Fiche; base: string; membres: Membre[]; agir: Agir }) {
+function Taches({ f, taches, faites, cocher, base, membres, agir }: { f: Fiche; taches: Fiche['taches']; faites: number; cocher: (id: string, faite: boolean) => void; base: string; membres: Membre[]; agir: Agir }) {
   const [libelle, setLibelle] = useState('')
   const [occupe, setOccupe] = useState(false)
-  const lignesDevis = f.taches.filter((t) => t.devis_ligne_id).length
+  const lignesDevis = taches.filter((t) => t.devis_ligne_id).length
   async function ajouter(e: FormEvent) {
     e.preventDefault(); setOccupe(true)
     if (await agir(`${base}/taches`, 'POST', { libelle }, null)) setLibelle('')
@@ -217,14 +225,14 @@ function Taches({ f, base, membres, agir }: { f: Fiche; base: string; membres: M
   }
   return (
     <section className="psh-panel" aria-labelledby="crm-taches">
-      <header><h2 id="crm-taches">Tâches</h2><span className="tag tnum">{f.avancement.faites} / {f.avancement.total}</span></header>
+      <header><h2 id="crm-taches">Tâches</h2><span className="tag tnum">{faites} / {taches.length}</span></header>
       <div className="crm-corps">
-        {f.taches.length === 0 ? <p className="crm-vide">Aucune tâche. {f.devis ? 'Générez-les depuis les lignes du devis, ou ajoutez-les à la main.' : 'Ajoutez-les à la main.'}</p> : (
+        {taches.length === 0 ? <p className="crm-vide">Aucune tâche. {f.devis ? 'Générez-les depuis les lignes du devis, ou ajoutez-les à la main.' : 'Ajoutez-les à la main.'}</p> : (
           <ul className="crm-taches">
-            {f.taches.map((t) => (
+            {taches.map((t) => (
               <li key={t.id} className={t.faite ? 'faite' : ''}>
                 <label className="crm-coche">
-                  <input type="checkbox" checked={t.faite} onChange={(e) => void agir(`/api/crm/taches/${t.id}`, 'PATCH', { faite: e.target.checked }, null)} />
+                  <input type="checkbox" checked={t.faite} onChange={(e) => cocher(t.id, e.target.checked)} />
                   <span>{t.libelle}{t.quantite !== null ? <span className="muted tnum"> · {t.quantite} {t.unite ?? ''}</span> : null}</span>
                 </label>
                 <span className="crm-actions-ligne">
@@ -254,7 +262,7 @@ function Taches({ f, base, membres, agir }: { f: Fiche; base: string; membres: M
 
 function Organisation({ f, membres, vehicules, agir }: { f: Fiche; membres: Membre[]; vehicules: Vehicule[]; agir: Agir }) {
   const c = f.chantier
-  const [statut, setStatut] = useState<StatutChantier>(c.statut)
+  const [statut, setStatut] = useState<StatutChantier>(c.statut as StatutChantier)
   const [debut, setDebut] = useState(c.date_debut ?? '')
   const [fin, setFin] = useState(c.date_fin_prevue ?? '')
   const [adresse, setAdresse] = useState(c.adresse ?? '')
@@ -318,7 +326,7 @@ function Materiaux({ f, base, inventaire, agir }: { f: Fiche; base: string; inve
   }
   return (
     <section className="psh-panel" aria-labelledby="crm-materiaux">
-      <header><h2 id="crm-materiaux">Matériaux réservés</h2><a className="tag" href="/inventaire">Inventaire</a></header>
+      <header><h2 id="crm-materiaux">Matériaux réservés</h2><Lien className="tag" href="/inventaire">Inventaire</Lien></header>
       <div className="crm-corps">
         {f.materiaux.length === 0 ? <p className="crm-vide">Rien de réservé.</p> : (
           <ul className="crm-liste">
@@ -371,7 +379,8 @@ function Notes({ f, agir }: { f: Fiche; agir: Agir }) {
           ))}</ul>
         )}
         <form className="crm-form" onSubmit={ajouter} aria-label="Ajouter une note">
-          <label className="crm-champ">Nouvelle note<textarea rows={3} maxLength={4000} value={texte} onChange={(e) => setTexte(e.target.value)} /></label>
+          <label className="crm-champ">Nouvelle note<textarea rows={3} maxLength={4000} value={texte} onChange={(e) => setTexte(e.target.value)} aria-describedby="crm-aide-note-chantier" /></label>
+          <p className="crm-aide" id="crm-aide-note-chantier">{AIDE_TEXTE_LIBRE}</p>
           <div><button className="psh-btn ghost" type="submit" disabled={!texte.trim()}>Ajouter la note</button></div>
         </form>
       </div>
