@@ -21,7 +21,7 @@ const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'san
 
 // 0141 + 0150 — le CRM et les conversations de l'assistant (audit RGPD du 12/10 : l'export « complet » les oubliait).
 // Une table absente (migration pas encore passée) donne une liste vide.
-const TABLES_CRM = ['equipe_membres', 'vehicules', 'chantiers', 'chantier_equipe', 'chantier_taches', 'chantier_materiaux', 'crm_notes', 'crm_journal', 'assistant_conversations'] as const
+const TABLES_CRM = ['equipe_membres', 'vehicules', 'chantiers', 'chantier_equipe', 'chantier_taches', 'chantier_materiaux', 'crm_notes', 'crm_journal', 'assistant_conversations', 'assistant_actions'] as const
 
 async function collecter(uid: string) {
   const crm = await Promise.all(TABLES_CRM.map((t) => supabaseAdmin.from(t).select('*').eq('artisan_id', uid).then((r) => (r.data ?? []) as Ligne[], () => [] as Ligne[])))

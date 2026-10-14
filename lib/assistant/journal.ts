@@ -9,9 +9,10 @@
 // devient « (texte non conservé) ». Le résumé ne nomme personne : seul l'IDENTIFIANT de l'objet est écrit, et l'écran
 // /assistant retrouve le nom à l'affichage, sous la RLS (supprimé chez lui, il disparaît aussi du journal).
 import { VALEURS_FERMEES, type NomOutil } from './outils'
+import { TYPES_OBJET, type TypeObjet } from './cartes'
 
 export type ResultatJournal = 'ok' | 'refus' | 'erreur'
-export type ObjetJournal = { type: 'devis' | 'conversation'; id: string } | null
+export type ObjetJournal = { type: TypeObjet; id: string } | null
 
 export type LigneJournal = {
   artisan_id: string
@@ -21,11 +22,13 @@ export type LigneJournal = {
   entrees: Record<string, string | number | boolean | null>
   resultat: ResultatJournal
   resume: string
-  objet_type: 'devis' | 'conversation' | null
+  objet_type: TypeObjet | null
   objet_id: string | null
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+/** Un numéro de pièce (DEV-2026-0011, FAC-2026-0004) n'est pas une donnée personnelle : le journal le garde. */
+const NUMERO_PIECE = /^(DEV|FAC)-\d{4}-\d{1,6}$/
 export const RESUME_MAX = 300
 export const TEXTE_NON_CONSERVE = '(texte non conservé)'
 
@@ -40,7 +43,7 @@ export function resumerEntrees(entree: unknown): LigneJournal['entrees'] {
     else if (typeof v === 'number') out[k] = Number.isFinite(v) ? v : null
     else if (typeof v === 'string') {
       const t = v.trim()
-      out[k] = UUID.test(t) ? t.toLowerCase() : VALEURS_FERMEES.has(t) ? t : t ? TEXTE_NON_CONSERVE : ''
+      out[k] = UUID.test(t) ? t.toLowerCase() : VALEURS_FERMEES.has(t) || NUMERO_PIECE.test(t) ? t : t ? TEXTE_NON_CONSERVE : ''
     } else out[k] = '(valeur non simple)'
   }
   return out
@@ -51,7 +54,7 @@ export function ligneJournal(p: {
   artisanId: string; conversationId: string; tour: number
   nom: NomOutil | string; entree: unknown; resultat: ResultatJournal; resume: string; objet?: ObjetJournal
 }): LigneJournal {
-  const objet = p.objet && UUID.test(p.objet.id) ? p.objet : null
+  const objet = p.objet && UUID.test(p.objet.id) && TYPES_OBJET.includes(p.objet.type) ? p.objet : null
   return {
     artisan_id: p.artisanId,
     conversation_id: p.conversationId,

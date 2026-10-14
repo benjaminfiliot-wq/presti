@@ -45,6 +45,8 @@ const TABLES_A_VIDER = [
   'fournisseurs', 'listes_achat',
   // 0150 — le journal et les conversations de l'assistant de gestion (une table absente est tolérée ci-dessous).
   'assistant_journal', 'assistant_conversations',
+  // 0157 — les cartes et actions de l'assistant de gestion (textes d'e-mails, lignes de devis : données du compte).
+  'assistant_actions',
   // 0141 — le CRM « atelier vivant » (audit RGPD du 12/10 : l'anonymisation laissait équipe, chantiers et notes).
   'crm_notes', 'crm_journal', 'chantier_materiaux', 'chantier_taches', 'chantier_equipe', 'chantiers', 'vehicules', 'equipe_membres',
 ]

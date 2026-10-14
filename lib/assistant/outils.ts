@@ -19,6 +19,7 @@
 // Aucun identifiant de compte ne vient du modèle : l'artisan est celui de la session. Les seuls identifiants acceptés
 // sont des conversations (UUID), revérifiées par la route appelée (la conversation doit être à lui).
 import type Anthropic from '@anthropic-ai/sdk'
+import { DEFINITIONS_ACTIONS, LIBELLE_ACTION, MOUVEMENTS_STOCK, NOMS_ACTIONS, ROLES_EQUIPE, STATUTS_CHANTIER_ACTION, STATUTS_DEMANDE, TONS_RELANCE, TYPES_FACTURE, estActionCrm, estNomAction, validerAction, type EntreeAction, type NomAction } from './outils-actions'
 
 export const STATUTS_DEVIS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expire'] as const
 export const STATUTS_FACTURES = ['brouillon', 'emise', 'payee', 'annulee'] as const
@@ -33,8 +34,8 @@ export type StatutReservation = typeof STATUTS_RESERVATION[number]
 export type StatutFacture = typeof STATUTS_FACTURES[number]
 export type PeriodeChiffres = typeof PERIODES_CHIFFRES[number]
 
-/** Les entrées, une fois validées. Chaque champ a une forme fermée : rien de libre ne passe tel quel. */
-export type EntreesOutils = {
+/** Les entrées des outils de LECTURE et de BROUILLON, une fois validées. Chaque champ a une forme fermée : rien de libre ne passe tel quel. */
+export type EntreesLecture = {
   lire_stock: { recherche: string | null }
   lire_devis: { statut: StatutDevis | null; client: string | null; recherche: string | null; limite: number }
   lire_factures: { statut: StatutFacture | null; impayees_seulement: boolean; client: string | null; limite: number }
@@ -44,15 +45,23 @@ export type EntreesOutils = {
   lire_equipe_du_jour: Record<string, never>
   lire_materiaux_reserves: { statut: StatutReservation; recherche: string | null; limite: number }
   lire_a_facturer: { limite: number }
+  lire_tarifs: { recherche: string | null; limite: number }
+  briefing_du_matin: Record<string, never>
   preparer_devis_brouillon: { conversation_id: string }
   preparer_reponse: { conversation_id: string }
 }
+/** Toutes les entrées : lecture, brouillons et actions (SPEC de outils-actions.ts : champs validés, typés au niveau de l'exécuteur). */
+export type EntreesOutils = EntreesLecture & { [A in NomAction]: EntreeAction }
 export type NomOutil = keyof EntreesOutils
 
-export const OUTILS_LECTURE: readonly NomOutil[] = ['lire_stock', 'lire_devis', 'lire_factures', 'lire_conversations', 'lire_chiffres']
+export const OUTILS_LECTURE: readonly NomOutil[] = ['lire_stock', 'lire_devis', 'lire_factures', 'lire_conversations', 'lire_chiffres', 'lire_tarifs', 'briefing_du_matin']
 export const OUTILS_CRM: readonly NomOutil[] = ['lire_chantiers', 'lire_equipe_du_jour', 'lire_materiaux_reserves', 'lire_a_facturer']
 export const OUTILS_BROUILLON: readonly NomOutil[] = ['preparer_devis_brouillon', 'preparer_reponse']
-export const NOMS_OUTILS: readonly NomOutil[] = [...OUTILS_LECTURE, ...OUTILS_CRM, ...OUTILS_BROUILLON]
+/** Les actions (directes et à confirmer) : outils-actions.ts. */
+export const OUTILS_ACTION: readonly NomOutil[] = NOMS_ACTIONS
+/** Les outils de CRM, en lecture ET en écriture : proposés seulement si le compte a le CRM. */
+export const OUTILS_CRM_TOUS: readonly NomOutil[] = [...OUTILS_CRM, ...NOMS_ACTIONS.filter(estActionCrm)]
+export const NOMS_OUTILS: readonly NomOutil[] = [...OUTILS_LECTURE, ...OUTILS_CRM, ...OUTILS_BROUILLON, ...OUTILS_ACTION]
 
 /**
  * Les valeurs fermées (statuts, périodes) : avec les UUID, les seules chaînes que le journal garde telles quelles. Un texte
@@ -60,6 +69,7 @@ export const NOMS_OUTILS: readonly NomOutil[] = [...OUTILS_LECTURE, ...OUTILS_CR
  */
 export const VALEURS_FERMEES: ReadonlySet<string> = new Set<string>([
   ...STATUTS_DEVIS, ...STATUTS_FACTURES, ...PERIODES_CHIFFRES, ...STATUTS_CHANTIER, ...STATUTS_RESERVATION,
+  ...STATUTS_DEMANDE, ...STATUTS_CHANTIER_ACTION, ...MOUVEMENTS_STOCK, ...TONS_RELANCE, ...TYPES_FACTURE, ...ROLES_EQUIPE,
 ])
 
 /** Ce que l'écran affiche pendant l'appel (« l'assistant consulte : stock… »). */
@@ -73,6 +83,9 @@ export const LIBELLE_OUTIL: Record<NomOutil, string> = {
   lire_equipe_du_jour: 'équipe du jour',
   lire_materiaux_reserves: 'matériaux réservés',
   lire_a_facturer: 'à facturer',
+  lire_tarifs: 'tarifs',
+  briefing_du_matin: 'briefing du matin',
+  ...LIBELLE_ACTION,
   preparer_devis_brouillon: 'devis brouillon',
   preparer_reponse: 'réponse préparée',
 }
@@ -88,7 +101,7 @@ const RECHERCHE_MAX = 60
 
 const conversationId = { type: 'string', description: 'Identifiant (UUID) d’une conversation, tel que rendu par lire_conversations. Jamais inventé.' } as const
 
-export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
+export const DEFINITIONS_LECTURE: Record<keyof EntreesLecture, Anthropic.Tool> = {
   lire_stock: {
     name: 'lire_stock',
     description: "Lit l'inventaire de l'artisan (même lecture que l'écran Inventaire) : articles, quantité par lieu, seuil d'alerte, fournisseur préféré noté, dernier prix noté, et la liste des alertes (ce qui est sous le seuil). Ne connaît aucun prix de fournisseur ni aucune disponibilité chez un fournisseur.",
@@ -189,6 +202,23 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
       additionalProperties: false,
     },
   },
+  lire_tarifs: {
+    name: 'lire_tarifs',
+    description: "Lit la bibliothèque de TARIFS de l'artisan (ses prix réels : désignation, unité, prix HT, TVA, fournisseur, date du prix) et rend l'identifiant (tarif_id) de chaque ligne, à utiliser dans les lignes de creer_devis, modifier_tarif, supprimer_tarif. C'est la seule source de prix pour chiffrer : si le tarif cherché n'y est pas, dis-le et demande le prix à l'artisan.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        recherche: { type: 'string', maxLength: RECHERCHE_MAX, description: 'Mot de la désignation (ex. « carrelage », « pose »). Absent : les tarifs les plus récents.' },
+        limite: { type: 'integer', minimum: 1, maximum: LIMITE_MAX, description: 'Nombre de lignes rendues (défaut 20).' },
+      },
+      additionalProperties: false,
+    },
+  },
+  briefing_du_matin: {
+    name: 'briefing_du_matin',
+    description: "Rassemble en UNE lecture le point de la journée de l'artisan : conversations qui attendent, devis envoyés sans réponse, factures échues, stock bas, et (avec le CRM) chantiers du jour, en retard, équipe. Les nombres sont comptés par le code. À appeler pour « briefing du matin », « point du jour », « qu'est-ce que je dois faire aujourd'hui ». Ne propose que des actions dont l'artisan décide.",
+    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+  },
   preparer_devis_brouillon: {
     name: 'preparer_devis_brouillon',
     description: "Prépare un DEVIS BROUILLON à partir d'une conversation avec un client, par le même chemin que le bouton « Devis auto » de la boîte de réception (même chiffrage, mêmes crédits). Rien n'est envoyé : l'artisan relit et valide dans l'écran Devis. À n'appeler QUE si l'artisan le demande explicitement pour une conversation précise.",
@@ -201,16 +231,26 @@ export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = {
   },
 }
 
-/** Les outils proposés au modèle, dans l'ordre. Ceux du CRM seulement si le compte a le CRM. */
-export function outilsAssistant(o: { crm?: boolean } = {}): Anthropic.Tool[] {
-  return NOMS_OUTILS.filter((n) => o.crm || !OUTILS_CRM.includes(n)).map((n) => DEFINITIONS_OUTILS[n])
+export const DEFINITIONS_OUTILS: Record<NomOutil, Anthropic.Tool> = { ...DEFINITIONS_LECTURE, ...DEFINITIONS_ACTIONS } as Record<NomOutil, Anthropic.Tool>
+
+/**
+ * Les outils proposés au modèle, dans l'ordre. Ceux du CRM (lecture et écriture) seulement si le compte a le CRM ; les actions
+ * seulement si `actions` (défaut : oui — la route les retire quand la table des actions n'est pas là). Le dernier outil porte
+ * le point de cache : la liste (stable d'un appel à l'autre d'un tour) n'est facturée en plein qu'une fois.
+ */
+export function outilsAssistant(o: { crm?: boolean; actions?: boolean } = {}): Anthropic.Tool[] {
+  const liste = NOMS_OUTILS
+    .filter((n) => o.crm || !OUTILS_CRM_TOUS.includes(n))
+    .filter((n) => o.actions !== false || !OUTILS_ACTION.includes(n))
+    .map((n) => DEFINITIONS_OUTILS[n])
+  return liste.map((t, i) => (i === liste.length - 1 ? { ...t, cache_control: { type: 'ephemeral' as const } } : t))
 }
 
 // ── La validation : le modèle n'est jamais cru sur parole ──────────────────────────────────────────
 
 export type Validation<N extends NomOutil> = { ok: true; entree: EntreesOutils[N] } | { ok: false; erreur: string }
 
-const CLES: Record<NomOutil, readonly string[]> = {
+const CLES: Record<keyof EntreesLecture, readonly string[]> = {
   lire_stock: ['recherche'],
   lire_devis: ['statut', 'client', 'recherche', 'limite'],
   lire_factures: ['statut', 'impayees_seulement', 'client', 'limite'],
@@ -220,6 +260,8 @@ const CLES: Record<NomOutil, readonly string[]> = {
   lire_equipe_du_jour: [],
   lire_materiaux_reserves: ['statut', 'recherche', 'limite'],
   lire_a_facturer: ['limite'],
+  lire_tarifs: ['recherche', 'limite'],
+  briefing_du_matin: [],
   preparer_devis_brouillon: ['conversation_id'],
   preparer_reponse: ['conversation_id'],
 }
@@ -248,10 +290,14 @@ function enumDe<T extends string>(v: unknown, valeurs: readonly T[]): T | null |
  */
 export function validerEntree<N extends NomOutil>(nom: N, brut: unknown): Validation<N> {
   const ko = (erreur: string): Validation<N> => ({ ok: false, erreur })
+  if (estNomAction(nom)) {
+    const v = validerAction(nom, brut)
+    return v.ok ? { ok: true, entree: v.entree as EntreesOutils[N] } : { ok: false, erreur: v.erreur }
+  }
   if (brut === undefined || brut === null) brut = {}
   if (typeof brut !== 'object' || Array.isArray(brut)) return ko('entrée attendue : un objet')
   const o = brut as Record<string, unknown>
-  const inconnues = Object.keys(o).filter((k) => !CLES[nom].includes(k))
+  const inconnues = Object.keys(o).filter((k) => !CLES[nom as keyof EntreesLecture].includes(k))
   if (inconnues.length) return ko(`champ inconnu : ${inconnues.slice(0, 3).join(', ')}`)
   const ok = (entree: EntreesOutils[N]): Validation<N> => ({ ok: true, entree })
 
@@ -323,6 +369,15 @@ export function validerEntree<N extends NomOutil>(nom: N, brut: unknown): Valida
       if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
       return ok({ limite } as EntreesOutils[N])
     }
+    case 'lire_tarifs': {
+      const recherche = texteRecherche(o.recherche)
+      if (recherche === undefined) return ko(`recherche : texte de ${RECHERCHE_MAX} caractères au plus`)
+      const limite = limiteDe(o.limite, 20)
+      if (limite === null) return ko(`limite : entier de 1 à ${LIMITE_MAX}`)
+      return ok({ recherche, limite } as EntreesOutils[N])
+    }
+    case 'briefing_du_matin':
+      return ok({} as EntreesOutils[N])
     case 'preparer_devis_brouillon':
     case 'preparer_reponse': {
       if (typeof o.conversation_id !== 'string' || !UUID.test(o.conversation_id.trim())) return ko('conversation_id : identifiant de conversation (UUID) attendu, tel que rendu par lire_conversations')

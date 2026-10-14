@@ -16,7 +16,7 @@ import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
-import { COULEURS, FORMES, melanger, type Forme, type Inst, type Scene } from '@/lib/crm/atelier'
+import { COULEURS, FORMES, initiales, melanger, styleAvatar, type Forme, type Inst, type Scene } from '@/lib/crm/atelier'
 
 export type CommandesScene = {
   zoomer: (facteur: number) => void
@@ -147,7 +147,7 @@ function Pulse({ insts, visible }: { insts: Inst[]; visible: boolean }) {
 
 // ── La caméra : vues enregistrées, rotation par quarts, glissements doux ──────────────────────────────────────
 type But = { pos: THREE.Vector3; cible: THREE.Vector3; zoom: number }
-const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<OrbitControlsImpl | null>; selection: number | null; vueInitiale: NomVue }>(function Regie({ scene, controles, selection, vueInitiale }, ref) {
+const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<OrbitControlsImpl | null>; selection: number | null; vueInitiale: NomVue; zoomEnsemble: RefObject<number> }>(function Regie({ scene, controles, selection, vueInitiale, zoomEnsemble }, ref) {
   const { camera, size } = useThree()
   const anim = useRef<{ de: But; vers: But; debut: number; duree: number } | null>(null)
   const azimut = useRef(AZIMUT_DEFAUT)
@@ -156,6 +156,7 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
     // En vue isométrique, l'emprise au sol occupe ≈ (lx + lz)·0,71 en largeur et la moitié en hauteur.
     return Math.max(6, Math.min(size.width / ((lx + lz) * 0.56), size.height / ((lx + lz) * 0.36)))
   }, [scene.bornes, size.width, size.height])
+  zoomEnsemble.current = zoomAjuste
   const butPour = (nom: NomVue, az = azimut.current): But => {
     const polaire = nom === 'dessus' ? 0.12 : 0.96
     const dist = 60
@@ -233,12 +234,16 @@ function OmbresFigees({ version, dureeMs }: { version: unknown; dureeMs: number 
 // boucle les replace, et seulement quand la caméra ou la taille ont changé : translate3d sur des éléments déjà composés,
 // rien d'autre. (Le composant Html de drei, une instance par étiquette, faisait tomber la rotation à ~20 i/s : mesuré.)
 type Cible = { el: HTMLElement | null; p: THREE.Vector3 }
-function Projecteur({ cibles }: { cibles: RefObject<Cible[]> }) {
+// `racine` porte data-niveau : « loin » (cartes réduites au nom et aux alertes) tant que la caméra est près de la vue d'ensemble ET que la
+// ville est dense (plus de 6 chantiers) ; « pres » sinon (équipe, tâches, détail). Le CSS fait le reste, aucun rendu React.
+function Projecteur({ cibles, racine, zoomEnsemble, dense }: { cibles: RefObject<Cible[]>; racine: RefObject<HTMLDivElement | null>; zoomEnsemble: RefObject<number>; dense: boolean }) {
   const { camera, size } = useThree()
   const avant = useRef<number[]>([])
   const listeAvant = useRef<Cible[] | null>(null)
   const v = useMemo(() => new THREE.Vector3(), [])
   useFrame(() => {
+    const niveau = dense && (camera as THREE.OrthographicCamera).zoom < zoomEnsemble.current * 1.5 ? 'loin' : 'pres'
+    if (racine.current && racine.current.dataset.niveau !== niveau) racine.current.dataset.niveau = niveau
     const e = camera.matrixWorld.elements, q = camera.projectionMatrix.elements
     const cle = [...e, q[0], q[5], size.width, size.height, cibles.current?.length ?? 0]
     // Rien à faire si ni la caméra, ni la taille, ni les étiquettes (nouvelle liste à chaque rendu React) n'ont changé.
@@ -250,6 +255,7 @@ function Projecteur({ cibles }: { cibles: RefObject<Cible[]> }) {
       v.copy(c.p).project(camera)
       const x = (v.x * 0.5 + 0.5) * size.width, y = (-v.y * 0.5 + 0.5) * size.height
       c.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`
+      c.el.style.zIndex = String(Math.round(y)) // plus bas à l'écran = plus près : la carte du devant passe devant
     }
   })
   return null
@@ -283,7 +289,11 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
   const controles = useRef<OrbitControlsImpl | null>(null)
   const [survol, setSurvol] = useState<number | null>(null)
   marquer('sceneRendue')
-  const apparition = useMemo(() => (mouvementReduit() ? null : { debut: performance.now(), centre: new THREE.Vector3(0, 0, 0) }), [scene])
+  // L'apparition en cascade ne se joue qu'à la PREMIÈRE image : quand les données se renouvellent en direct, la ville ne se reconstruit pas.
+  const apparition = useMemo(() => (mouvementReduit() ? null : { debut: performance.now(), centre: new THREE.Vector3(0, 0, 0) }), [])
+  const racine = useRef<HTMLDivElement | null>(null)
+  const zoomEnsemble = useRef(14)
+  const nbChantiers = useMemo(() => scene.objets.filter((o) => o.type === 'chantier').length, [scene])
   useEffect(() => { document.body.style.cursor = survol !== null ? 'pointer' : ''; return () => { document.body.style.cursor = '' } }, [survol])
 
   const couleur = (it: Inst): string => {
@@ -337,22 +347,32 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
         ref={controles} makeDefault enableDamping dampingFactor={0.12} target={CIBLE}
         minPolarAngle={0.05} maxPolarAngle={1.2} minZoom={4} maxZoom={110} screenSpacePanning={false}
       />
-      <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} />
+      <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />
       <OmbresFigees version={scene} dureeMs={apparition ? 1100 : 0} />
       <Mesureur actif={mesure} />
-      <Projecteur cibles={cibles} />
+      <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} />
     </Canvas>
     {/* Le calque des étiquettes (DOM, aucun appel de dessin). */}
-    <div className="atl-etiquettes">
+    <div className="atl-etiquettes" ref={racine} data-niveau="pres">
       {etiquettes.map((e, k) => {
         const lier = (el: HTMLElement | null) => { if (cibles.current[k]) cibles.current[k].el = el }
         if (e.zone) return <span key={e.cle} ref={lier} className="atl-zone">{e.zone}</span>
         const o = scene.objets[e.i]
+        const t = o.info?.taches ?? null
+        const pct = t && t.total ? Math.round((t.faites / t.total) * 100) : null
+        const equipe = o.info?.equipe ?? []
+        const critique = o.badges.some((b) => b.gravite === 'critique')
         return (
           <button key={e.cle} ref={lier} type="button" tabIndex={-1}
-            className={`atl-pastille${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}${selection === e.i ? ' choisie' : ''}`}
+            className={`atl-carte${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}${selection === e.i ? ' choisie' : ''}${critique ? ' urgente' : ''}`}
             onClick={() => onSelection(e.i)}>
-            <i style={{ background: o.epingle ?? COULEURS.gris }} aria-hidden="true" />{o.detail}
+            <span className="atl-carte-tete"><i style={{ background: o.epingle ?? COULEURS.gris }} aria-hidden="true" /><b>{o.libelle}</b></span>
+            <span className="atl-carte-ligne">{o.detail}</span>
+            {pct !== null && <span className="atl-carte-barre" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>}
+            <span className="atl-carte-pied">
+              {equipe.length > 0 && <span className="atl-carte-equipe" title={equipe.map((m) => m.nom).join(', ')}>{equipe.slice(0, 4).map((m) => <i key={m.id} className="atl-av" style={styleAvatar(m.role)}>{initiales(m.nom)}</i>)}{equipe.length > 4 && <em>+{equipe.length - 4}</em>}</span>}
+              {o.badges.map((b) => <span key={b.type} className={`atl-badge g-${b.gravite}`}>{b.libelle}</span>)}
+            </span>
           </button>
         )
       })}

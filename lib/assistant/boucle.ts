@@ -10,7 +10,9 @@
 // d'évaluation avec le vrai modèle et des données simulées (scripts/ai-eval.mjs --assistant).
 import type Anthropic from '@anthropic-ai/sdk'
 import { DUREE_TOUR_MS, ETAPES_MAX, chiffresNonSources, rappelChiffres, retirerChiffresNonSources } from './cadrage'
-import { OUTILS_BROUILLON, OUTILS_CRM, estNomOutil, outilsAssistant, validerEntree, type EntreesOutils, type NomOutil } from './outils'
+import { OUTILS_ACTION, OUTILS_BROUILLON, OUTILS_CRM_TOUS, estNomOutil, outilsAssistant, validerEntree, type EntreesOutils, type NomOutil } from './outils'
+import { ACTIONS_PAR_TOUR_MAX, estNomAction, type NomAction } from './outils-actions'
+import { nombresSansSource, verifierSources, type CarteAction } from './cartes'
 import type { ObjetJournal, ResultatJournal } from './journal'
 
 export type Brouillon =
@@ -26,6 +28,8 @@ export type ResultatExecution = {
   resultat?: Exclude<ResultatJournal, 'erreur'>
   brouillon?: Brouillon
   objet?: ObjetJournal
+  /** La carte d'une action : à confirmer (en attente) ou faite (annulable). L'écran la montre sous la réponse. */
+  carte?: CarteAction
 }
 
 export type Executeurs = { [N in NomOutil]: (entree: EntreesOutils[N]) => Promise<ResultatExecution> }
@@ -45,6 +49,8 @@ export type EchangePasse = { role: 'artisan' | 'assistant'; texte: string }
 export type ResultatTour = {
   texte: string
   brouillons: Brouillon[]
+  /** Les cartes d'action du tour : à confirmer, ou faites. */
+  cartes: CarteAction[]
   outilsAppeles: string[]
   etapes: number
   /** Le tour s'est arrêté sur un plafond (étapes ou temps) : le texte est le dernier utile. */
@@ -109,6 +115,12 @@ export async function executerTour(p: {
   brouillonsAutorises: boolean
   /** Le compte a le CRM (drapeau ou essai, et capacité `crm`) : sinon ses outils n'existent pas pour le modèle. */
   crm?: boolean
+  /**
+   * Les outils d'ACTION existent pour ce tour : l'artisan a demandé une action dans CE message (cadrerDemande) ET la table des
+   * actions est là (migration 0157). Sinon ils ne sont même pas proposés au modèle — un message de client lu dans les données
+   * ne peut donc rien déclencher, et une question de lecture ne modifie jamais rien.
+   */
+  actions?: boolean
   journaliser: (a: AppelJournal) => Promise<void>
   /** Prévient l'écran qu'un outil est appelé (« l'assistant consulte : stock… »). */
   onOutil?: (nom: NomOutil) => void
@@ -119,7 +131,7 @@ export async function executerTour(p: {
   dureeMs?: number
 }): Promise<ResultatTour> {
   const etapesMax = p.etapesMax ?? ETAPES_MAX
-  const tools = outilsAssistant({ crm: !!p.crm }).filter((t) => p.brouillonsAutorises || !(OUTILS_BROUILLON as readonly string[]).includes(t.name))
+  const tools = outilsAssistant({ crm: !!p.crm, actions: !!p.actions }).filter((t) => p.brouillonsAutorises || !(OUTILS_BROUILLON as readonly string[]).includes(t.name))
   const messages: Anthropic.MessageParam[] = messagesDuTour(p.historique, p.message)
   if (!messages.length) throw new Error('message vide')
 
@@ -130,6 +142,8 @@ export async function executerTour(p: {
 
   const sources: string[] = [p.message, ...p.historique.map((h) => h.texte), ...(p.sourcesFixes ?? [])]
   const brouillons: Brouillon[] = []
+  const cartes: CarteAction[] = []
+  let actionsDuTour = 0
   const outilsAppeles: string[] = []
   let etapes = 0
   let tronque = false
@@ -162,10 +176,35 @@ export async function executerTour(p: {
       await journal({ nom, entree: u.input, resultat: 'refus', resume: `entrée refusée : ${v.erreur}` })
       return reponse({ erreur: `Entrée refusée : ${v.erreur}` }, true)
     }
-    if (OUTILS_CRM.includes(nom) && !p.crm) {
+    if (OUTILS_CRM_TOUS.includes(nom) && !p.crm) {
       // Défense en profondeur : l'outil n'a pas été proposé (compte sans CRM), mais un modèle peut halluciner un nom.
       await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'CRM non ouvert sur ce compte' })
       return reponse({ erreur: "Le CRM n'est pas ouvert sur ce compte : tu n'as aucune donnée de chantier, d'équipe ni de réservation. Dis-le à l'artisan." }, true)
+    }
+    if (OUTILS_ACTION.includes(nom)) {
+      // Défense en profondeur : l'outil n'a pas été proposé (pas de demande d'action dans ce message), mais un modèle peut halluciner un nom.
+      if (!p.actions) {
+        await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'action non demandée par l’artisan dans ce message' })
+        return reponse({ erreur: "L'artisan n'a demandé aucune action dans ce message : propose-la-lui, ne la fais pas." }, true)
+      }
+      if (actionsDuTour >= ACTIONS_PAR_TOUR_MAX) {
+        await journal({ nom, entree: v.entree, resultat: 'refus', resume: `plafond de ${ACTIONS_PAR_TOUR_MAX} actions par message` })
+        return reponse({ erreur: `Plafond de ${ACTIONS_PAR_TOUR_MAX} actions par message atteint : dis à l'artisan ce qui reste à faire, il le redemandera.` }, true)
+      }
+      // Un prix, un pourcentage ou une quantité de stock doit venir de l'artisan (ou d'une donnée lue) : jamais du modèle seul.
+      const sansSource = estNomAction(nom) ? verifierSources(nom as NomAction, v.entree as Record<string, unknown>, sources) : null
+      if (sansSource) {
+        await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'nombre sans source refusé (prix, pourcentage ou quantité)' })
+        return reponse({ erreur: sansSource }, true)
+      }
+      if (nom === 'repondre_client') {
+        const fautifs = nombresSansSource(String((v.entree as Record<string, unknown>).texte ?? ''), sources)
+        if (fautifs.length) {
+          await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'nombre sans source dans le message au client' })
+          return reponse({ erreur: `Ton message cite des nombres qui ne viennent ni de l'artisan ni de ses données (${fautifs.slice(0, 4).join(', ')}) : un client ne reçoit jamais un prix ou un délai inventé. Réécris sans eux, ou demande-les à l'artisan.` }, true)
+        }
+      }
+      actionsDuTour++
     }
     if (OUTILS_BROUILLON.includes(nom)) {
       // Défense en profondeur : l'outil n'a pas été proposé, mais un modèle peut halluciner un nom.
@@ -189,6 +228,7 @@ export async function executerTour(p: {
     }
     await journal({ nom, entree: v.entree, resultat: r.resultat ?? 'ok', resume: r.resume, objet: r.objet ?? null })
     if (r.brouillon) brouillons.push(r.brouillon)
+    if (r.carte) cartes.push(r.carte)
     return reponse(r.donnees)
   }
   const journal = async (a: AppelJournal) => {
@@ -250,5 +290,5 @@ export async function executerTour(p: {
   const retires = [...fautifs]
   if (fautifs.length) texte = retirerChiffresNonSources(texte, fautifs)
 
-  return { texte, brouillons, outilsAppeles, etapes, tronque, garde: { regenere, retires, signales } }
+  return { texte, brouillons, cartes, outilsAppeles, etapes, tronque, garde: { regenere, retires, signales } }
 }

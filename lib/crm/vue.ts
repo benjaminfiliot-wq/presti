@@ -7,6 +7,7 @@
 // le vrai CRM ne saurait pas calculer, et ses vues restent cohérentes entre elles (mêmes chantiers, clients, montants).
 import { cartes, etapeDevis, pipeline, type DeplacementP, type EtapeOuClasse, type Pipeline } from './pipeline.ts'
 import { assemblerAtelier, type DonneesAtelier, type MembreA, type VehiculeA } from './atelier.ts'
+import type { CommandeA } from './commandes.ts'
 import { calculerTableauCrm, type TableauCrm } from './tableau.ts'
 import { actionsChantier, avancement, joursDeRetard, messageNotification, type ActionsChantier } from './chantier.ts'
 import { regrouperClients, type ClientCarnet, type GroupeClient } from './clients.ts'
@@ -31,7 +32,13 @@ export type MateriauLigne = {
 }
 export type DossiersCrm = {
   devis: readonly DevisLigne[]; factures: readonly FactureLigne[]; leads: readonly LeadLigne[]; chantiers: readonly ChantierLigne[]
-  taches: readonly { chantier_id: string; faite: boolean | null }[]; materiaux: readonly MateriauLigne[]
+  taches: readonly { id?: string; chantier_id: string; faite: boolean | null; libelle?: string | null; faite_le?: string | null; membre_id?: string | null; ordre?: number | null }[]; materiaux: readonly MateriauLigne[]
+  /** Matériaux réservés pour un chantier (chantier_materiaux) : sert à rattacher un stock insuffisant à son chantier. */
+  reservations?: readonly { chantier_id: string; materiau_id: string; quantite: Nb; statut?: string | null }[]
+  /** Commandes fournisseur (table commandes_fournisseur, migration 0158). Absentes : aucune livraison en retard n'est inventée. */
+  commandes?: readonly CommandeA[]
+  /** Faux si la table n'existe pas encore sur la base : l'écran le dit au lieu de laisser croire qu'il n'y a aucune commande. */
+  commandesDisponibles?: boolean
   deplacements: readonly (DeplacementP & { artisan_id?: string | null })[]; carnet: readonly ClientCarnet[]
   vehicules: readonly VehiculeA[]; membres: readonly MembreA[]; equipe: readonly { chantier_id: string; membre_id: string }[]
   tronque: boolean
@@ -77,7 +84,7 @@ export function construireVue(p: { uid: string; metier: string | null; d: Dossie
     tronque: d.tronque,
     pipeline: pipeline(entreesPipeline),
     // La maquette de l'atelier (J3) : les mêmes lignes, mises en scène par lib/crm/atelier.ts.
-    atelier: assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: cartes(entreesPipeline), taches: d.taches, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres }),
+    atelier: assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: cartes(entreesPipeline), taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres }),
     tableau: calculerTableauCrm({ artisanId: uid, devis: d.devis, factures: d.factures, demandes: d.leads, chantiers: d.chantiers, materiaux: d.materiaux, maintenant }),
     chantiers: d.chantiers.map((c) => {
       const dv = c.devis_id ? devisParId.get(c.devis_id) : undefined

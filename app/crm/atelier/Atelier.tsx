@@ -3,12 +3,14 @@
 import { Component, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import {
-  COULEURS, compteFiltres, construireScene, FILTRES, LIBELLES_FILTRE, LIBELLES_PREREGLAGE, objetsAllumes, PREREGLAGES, prereglageDe,
+  chiffresFiltres, COULEURS, construireScene, FILTRES, LIBELLES_FILTRE, LIBELLES_PREREGLAGE, objetsAllumes, PREREGLAGES, prereglageDe,
   type DonneesAtelier, type Filtre, type Prereglage,
 } from '@/lib/crm/atelier'
+import { calculerAlertes, construireBriefing, urgencesDuJour, type EtapeBriefing, type Urgence } from '@/lib/crm/alertes'
 import type { CommandesScene, NomVue } from './Scene3D'
 import Plan2D from './Plan2D'
 import Panneau from './Panneau'
+import Urgences from './Urgences'
 import './atelier.css'
 
 // « L'atelier vivant » (plan 3.3) : la maquette 3D générée depuis les données, ou son repli 2D.
@@ -16,6 +18,10 @@ import './atelier.css'
 // Le morceau 3D (three + React Three Fiber + drei) n'est chargé qu'ici, à la demande, et seulement si la 3D est choisie.
 // Repli 2D AUTOMATIQUE (plan 3.2) : téléphone, WebGL absent, « réduire les animations », batterie faible — ou une erreur
 // de rendu. Le repli montre les mêmes objets et ouvre les mêmes panneaux ; l'artisan peut toujours basculer à la main.
+//
+// 15/10 — la carte est la vue PRINCIPALE du CRM : elle occupe presque tout l'écran, les chantiers du compte y portent leur équipe,
+// leurs tâches et leurs alertes, et un clic ouvre le panneau du chantier (urgences, tâches ouvertes, relance du fournisseur…).
+// Elle se met à jour toute seule (temps réel, app/crm/useTempsReel.ts) : la sélection et la caméra restent où elles sont.
 const Scene3D = dynamic(() => import('./Scene3D'), {
   ssr: false,
   loading: () => <div className="atl-charge" role="status">Construction de la maquette…</div>,
@@ -69,8 +75,17 @@ class GardeRendu extends Component<{ onErreur: () => void; children: ReactNode }
 }
 
 const heureParis = () => new Date().toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+/** L'horloge a son propre état : elle bat chaque seconde sans refaire le rendu de la carte, du panneau ni des urgences. */
+function Horloge() {
+  const [heure, setHeure] = useState<string | null>(null)
+  useEffect(() => { setHeure(heureParis()); const t = setInterval(() => setHeure(heureParis()), 1000); return () => clearInterval(t) }, [])
+  return <time className="tnum" aria-hidden="true">{heure ?? '—'}</time>
+}
 
-export default function Atelier({ donnees, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer }: {
+const LIBELLE_LIEN = { connexion: 'Connexion…', direct: 'En direct', coupe: 'Hors ligne · relu chaque minute' } as const
+const calme = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+export default function Atelier({ donnees, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier }: {
   donnees: DonneesAtelier
   demo?: boolean
   mesure?: boolean
@@ -80,13 +95,22 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
   filtreInitial?: Filtre | null
   /** Page de démonstration : impose le mode (captures et mesures). */
   forcer?: Mode
+  /** Une action du panneau a changé une donnée : l'écran relit tout de suite (le temps réel le ferait aussi, un peu après). */
+  onChange?: () => void
+  /** État de la liaison temps réel (absent : exemple et démonstration, rien à écouter). */
+  lien?: 'connexion' | 'direct' | 'coupe'
+  /** Le dernier évènement reçu : « Mis à jour : Tâche ». */
+  dernier?: { libelle: string; a: number } | null
 }) {
   const [detection, setDetection] = useState<Detection | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
   const [filtre, setFiltre] = useState<Filtre | null>(filtreInitial ?? null)
-  const [selection, setSelection] = useState<number | null>(null)
+  // La sélection est une CLÉ d'objet (« chantier:<id> »), pas une position : quand les données se renouvellent en direct, l'objet
+  // choisi reste le même même si la liste a changé de forme.
+  const [cleSel, setCleSel] = useState<string | null>(null)
   const [prereglage, setPrereglage] = useState<Prereglage>(prereglageInitial ?? prereglageDe(donnees.metier))
-  const [heure, setHeure] = useState<string | null>(null)
+  const [visite, setVisite] = useState<{ etapes: EtapeBriefing[]; i: number; auto: boolean } | null>(null)
+  const [flash, setFlash] = useState<string | null>(null)
   const commandes = useRef<CommandesScene>(null)
 
   useEffect(() => {
@@ -101,31 +125,66 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
         if (b.level < 0.2 && !b.charging) { setDetection({ ...d, mode: '2d', raison: 'Plan 2D affiché : batterie faible.' }); setMode('2d') }
       }).catch(() => {})
     }
-  }, [forcer])
-  useEffect(() => { setHeure(heureParis()); const t = setInterval(() => setHeure(heureParis()), 1000); return () => clearInterval(t) }, [])
+  }, [forcer, mesure])
 
   const scene = useMemo(() => construireScene(donnees, prereglage), [donnees, prereglage])
+  const resume = useMemo(() => calculerAlertes(donnees), [donnees])
+  const urgences = useMemo(() => urgencesDuJour(donnees, resume), [donnees, resume])
   const allumes = useMemo(() => objetsAllumes(scene.objets, filtre), [scene, filtre])
-  const comptes = useMemo(() => compteFiltres(scene.objets), [scene])
+  const comptes = useMemo(() => chiffresFiltres(scene, donnees), [scene, donnees])
+  const indexDe = useCallback((cle: string | null) => { const i = cle ? scene.objets.findIndex((o) => o.cle === cle) : -1; return i >= 0 ? i : null }, [scene])
+  const selection = indexDe(cleSel)
   const choisi = selection !== null ? scene.objets[selection] ?? null : null
-  useEffect(() => { setSelection(null) }, [prereglage])
-  const fermer = useCallback(() => setSelection(null), [])
+  useEffect(() => { setCleSel(null) }, [prereglage])
+  const fermer = useCallback(() => setCleSel(null), [])
   const vers2D = useCallback((v: string) => onVue2D?.(v), [onVue2D])
+  const choisirIndex = useCallback((i: number | null) => { setVisite(null); setCleSel(i === null ? null : scene.objets[i]?.cle ?? null) }, [scene])
   const annonce = filtre ? `${comptes[filtre]} élément${comptes[filtre] > 1 ? 's' : ''} : ${LIBELLES_FILTRE[filtre].toLowerCase()}` : `${scene.objets.length} éléments`
 
+  // « Mis à jour : Tâche » : une phrase qui s'efface, dite aussi aux lecteurs d'écran (aria-live polite).
+  useEffect(() => {
+    if (!dernier) return
+    setFlash(`Mis à jour : ${dernier.libelle.toLowerCase()}`)
+    const t = setTimeout(() => setFlash(null), 4500)
+    return () => clearTimeout(t)
+  }, [dernier])
+
+  // ── Le briefing du matin : la caméra va de chantier en chantier, la carte dit ce qui s'y passe ──────────────────
+  const etape = visite ? visite.etapes[visite.i] ?? null : null
+  const focus = etape?.objetCle ? indexDe(etape.objetCle) : null
+  useEffect(() => { if (visite && focus === null) commandes.current?.recentrer() }, [visite, focus])
+  useEffect(() => {
+    if (!visite || !visite.auto) return
+    const t = setTimeout(() => setVisite((v) => (v && v.i < v.etapes.length - 1 ? { ...v, i: v.i + 1 } : null)), 9000)
+    return () => clearTimeout(t)
+  }, [visite])
+  const lancerBriefing = () => {
+    const etapes = construireBriefing(donnees, (k) => scene.objets.some((o) => o.cle === k))
+    setCleSel(null); setFiltre(null)
+    setVisite({ etapes, i: 0, auto: !calme() })
+  }
+  const ouvrirUrgence = (u: Urgence) => {
+    setVisite(null)
+    const cle = u.objetCle && scene.objets.some((o) => o.cle === u.objetCle) ? u.objetCle : null
+    if (cle) setCleSel(cle)
+  }
+
+  const marque = selection ?? focus
   return (
     <div className={`atl${choisi ? ' avec-panneau' : ''}`} data-atelier-mode={mode ?? 'attente'}>
       <div className="atl-barre" role="toolbar" aria-label="Atelier">
-        <button type="button" className="atl-ensemble" onClick={() => { setFiltre(null); setSelection(null); commandes.current?.recentrer() }}>Vue d’ensemble</button>
-        <span className="atl-live" aria-label={heure ? `Heure : ${heure}` : undefined}><i aria-hidden="true" />Live <time className="tnum">{heure ?? '—'}</time></span>
+        <button type="button" className="atl-ensemble" onClick={() => { setFiltre(null); setCleSel(null); setVisite(null); commandes.current?.recentrer() }}>Vue d’ensemble</button>
+        <span className={`atl-live${lien ? ` ${lien}` : ''}`} role="status" aria-label={lien ? LIBELLE_LIEN[lien] : 'En direct'}><i aria-hidden="true" />{lien ? LIBELLE_LIEN[lien] : 'Live'} <Horloge /></span>
+        <button type="button" className="atl-briefing" onClick={lancerBriefing} aria-pressed={!!visite}>Briefing du matin</button>
         {donnees.demandes.length > 0 && (
-          <button type="button" className="atl-notif" onClick={() => setSelection(scene.objets.findIndex((o) => o.type === 'accueil'))}>
+          <button type="button" className="atl-notif" onClick={() => choisirIndex(scene.objets.findIndex((o) => o.type === 'accueil'))}>
             {donnees.demandes.length} nouvelle{donnees.demandes.length > 1 ? 's' : ''} demande{donnees.demandes.length > 1 ? 's' : ''}
           </button>
         )}
         <div className="atl-filtres" role="group" aria-label="Filtrer la maquette">
           {FILTRES.map((f) => (
-            <button key={f} type="button" aria-pressed={filtre === f} className={filtre === f ? 'on' : ''} onClick={() => setFiltre(filtre === f ? null : f)} data-atelier-filtre={f}>
+            <button key={f} type="button" aria-pressed={filtre === f} className={filtre === f ? 'on' : ''} onClick={() => setFiltre(filtre === f ? null : f)} data-atelier-filtre={f}
+              title={f === 'stock_bas' ? 'Nombre de matériaux sous leur seuil (comme le tableau de bord)' : f === 'livraison' ? 'Commandes fournisseur dont la livraison annoncée est dépassée' : undefined}>
               {LIBELLES_FILTRE[f]} <span className="tnum">{comptes[f]}</span>
             </button>
           ))}
@@ -139,25 +198,24 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
         <details className="atl-aide">
           <summary aria-label="Aide : lire la maquette">?</summary>
           <div className="atl-aide-corps">
-            <p><b>La maquette est faite de vos données</b>, rien n’y est dessiné à l’avance.</p>
+            <p><b>La maquette est faite de vos données</b>, rien n’y est dessiné à l’avance, et elle se met à jour toute seule.</p>
             <ul>
-              <li><b>Accueil</b> : un colis par nouvelle demande, en corail si elle est arrivée aujourd’hui.</li>
+              <li><b>Chantiers</b> : une maison par chantier ouvert, avec son équipe, la barre des tâches faites et ses alertes (retard, livraison, stock). Le terrain pulse en cas d’urgence.</li>
               <li><b>Dépôt</b> : un rayonnage par catégorie d’inventaire ; il pulse en corail quand un matériau passe sous son seuil.</li>
-              <li><b>Parking</b> : une camionnette par véhicule. <b>Équipe</b> : un personnage par membre, sur son chantier du jour.</li>
-              <li><b>Chantiers</b> : une maison par chantier ouvert ; l’épingle donne son état (voir la légende).</li>
-              <li><b>Bureau</b> : ouvre le tableau de bord, le pipeline et les clients.</li>
+              <li><b>Accueil</b> : un colis par nouvelle demande. <b>Parking</b> : une camionnette par véhicule. <b>Bureau</b> : ouvre le tableau de bord, le pipeline et les clients.</li>
+              <li><b>Briefing du matin</b> : la caméra passe de chantier en chantier et lit ce qui s’y passe.</li>
             </ul>
             <p>Cliquez un objet pour ouvrir sa fiche. Glissez pour tourner, molette ou pincement pour zoomer, clic droit pour déplacer. Les filtres allument ce qui vous concerne et estompent le reste. Au clavier, ouvrez « Liste des éléments » ou passez au plan 2D.</p>
           </div>
         </details>
         {detection && (
           <button type="button" className="atl-bascule" disabled={mode === '2d' && !detection.webgl} title={!detection.webgl ? 'WebGL indisponible sur ce navigateur' : undefined}
-            onClick={() => { setSelection(null); setMode(mode === '3d' ? '2d' : '3d') }}>
+            onClick={() => { setCleSel(null); setMode(mode === '3d' ? '2d' : '3d') }}>
             {mode === '3d' ? 'Plan 2D' : 'Maquette 3D'}
           </button>
         )}
       </div>
-      <p className="crm-sr" aria-live="polite">{annonce}</p>
+      <p className="crm-sr" aria-live="polite">{flash ?? annonce}</p>
 
       <div className="atl-cadre">
         {mode === '3d' && (
@@ -175,26 +233,59 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
             </div>
             <div className="atl-toile">
               <GardeRendu onErreur={() => { setDetection((d) => d && { ...d, raison: 'Plan 2D affiché : la maquette 3D n’a pas pu s’afficher sur cet appareil.' }); setMode('2d') }}>
-                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={selection} onSelection={setSelection} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} />
+                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} />
               </GardeRendu>
             </div>
+            <Urgences urgences={urgences} variante="carte" actif={choisi?.cle ?? etape?.objetCle ?? null} onChoisir={ouvrirUrgence} />
+            {flash && <p className="atl-flash" aria-hidden="true">{flash}</p>}
+            {etape && visite && <CarteBriefing etape={etape} i={visite.i} n={visite.etapes.length} auto={visite.auto}
+              onPrecedent={() => setVisite({ ...visite, i: Math.max(0, visite.i - 1) })} onSuivant={() => setVisite(visite.i < visite.etapes.length - 1 ? { ...visite, i: visite.i + 1 } : null)}
+              onAuto={() => setVisite({ ...visite, auto: !visite.auto })} onOuvrir={() => { if (etape.objetCle) { setCleSel(etape.objetCle); setVisite(null) } }} onArreter={() => setVisite(null)} />}
             {/* Ce que la 3D montre, lisible sans elle : la liste des objets reste atteignable au clavier. */}
             <details className="atl-liste-3d">
               <summary>Liste des éléments de la maquette</summary>
-              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={selection} onSelection={setSelection} raison={null} />
+              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={null} />
             </details>
           </>
         )}
-        {mode === '2d' && <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={selection} onSelection={setSelection} raison={detection?.raison ?? null} />}
+        {mode === '2d' && (
+          <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null}
+            avant={<>
+              <Urgences urgences={urgences} variante="liste" actif={choisi?.cle ?? null} onChoisir={ouvrirUrgence} />
+              {etape && visite && <CarteBriefing etape={etape} i={visite.i} n={visite.etapes.length} auto={false}
+                onPrecedent={() => setVisite({ ...visite, i: Math.max(0, visite.i - 1) })} onSuivant={() => setVisite(visite.i < visite.etapes.length - 1 ? { ...visite, i: visite.i + 1 } : null)}
+                onAuto={() => {}} onOuvrir={() => { if (etape.objetCle) { setCleSel(etape.objetCle); setVisite(null) } }} onArreter={() => setVisite(null)} />}
+            </>} />
+        )}
         {mode === null && <div className="atl-charge" role="status">Préparation de l’atelier…</div>}
-        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} onFermer={fermer} onVue2D={vers2D} />}
+        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} />}
       </div>
-      <Legende horsScene={scene.horsScene} />
+      <Legende horsScene={scene.horsScene} sansCommandes={donnees.commandesDisponibles === false} />
     </div>
   )
 }
 
-function Legende({ horsScene }: { horsScene: { chantiers: number; categories: number; vehicules: number; demandes: number } }) {
+function CarteBriefing({ etape, i, n, auto, onPrecedent, onSuivant, onAuto, onOuvrir, onArreter }: {
+  etape: EtapeBriefing; i: number; n: number; auto: boolean
+  onPrecedent: () => void; onSuivant: () => void; onAuto: () => void; onOuvrir: () => void; onArreter: () => void
+}) {
+  return (
+    <section className={`atl-brief g-${etape.gravite}`} aria-label="Briefing du matin" aria-live="polite" data-atelier-briefing>
+      <p className="atl-brief-pas tnum">Briefing · {i + 1}/{n}</p>
+      <h2>{etape.titre}</h2>
+      <p>{etape.texte}</p>
+      <div className="crm-boutons">
+        <button type="button" className="psh-btn ghost" onClick={onPrecedent} disabled={i === 0}>Précédent</button>
+        <button type="button" className="psh-btn primary" onClick={onSuivant}>{i < n - 1 ? 'Suivant' : 'Terminer'}</button>
+        {etape.objetCle && <button type="button" className="psh-btn ghost" onClick={onOuvrir}>Ouvrir la fiche</button>}
+        {!calme() && <button type="button" className="psh-btn ghost" onClick={onAuto} aria-pressed={auto}>{auto ? 'Pause' : 'Lecture'}</button>}
+        <button type="button" className="psh-btn ghost" onClick={onArreter}>Arrêter</button>
+      </div>
+    </section>
+  )
+}
+
+function Legende({ horsScene, sansCommandes }: { horsScene: { chantiers: number; categories: number; vehicules: number; demandes: number }; sansCommandes: boolean }) {
   const hors = [
     horsScene.chantiers && `${horsScene.chantiers} chantier${horsScene.chantiers > 1 ? 's' : ''}`,
     horsScene.vehicules && `${horsScene.vehicules} véhicule${horsScene.vehicules > 1 ? 's' : ''}`,
@@ -206,9 +297,11 @@ function Legende({ horsScene }: { horsScene: { chantiers: number; categories: nu
       <span><i style={{ background: COULEURS.ambre }} />Planifié</span>
       <span><i style={{ background: COULEURS.corail }} />En cours</span>
       <span><i style={{ background: COULEURS.corailFonce }} />En retard</span>
-      <span><i style={{ background: COULEURS.vert }} />À facturer</span>
-      <span><i style={{ background: COULEURS.corail, opacity: 0.45 }} />Stock bas (rayonnage qui pulse)</span>
-      {hors.length > 0 && <span className="atl-hors">Hors maquette (place limitée) : {hors.join(', ')} — ils restent dans les onglets Chantiers, Pipeline et dans l’Inventaire.</span>}
+      <span><i style={{ background: COULEURS.vert }} />À facturer · tâches faites</span>
+      <span><i style={{ background: COULEURS.corail, opacity: 0.45 }} />Terrain ou rayonnage qui pulse : urgence ou stock bas</span>
+      <span><i style={{ background: COULEURS.bois, opacity: 0.6 }} />Palette pâle : livraison attendue, pas encore là</span>
+      {sansCommandes && <span className="atl-hors">Suivi des commandes pas encore installé sur cette base : aucune livraison ne peut être signalée en retard.</span>}
+      {hors.length > 0 && <span className="atl-hors">Hors maquette (place limitée) : {hors.join(', ')} — ils restent dans les onglets Chantiers, Pipeline et dans l’Inventaire, et dans les urgences.</span>}
     </div>
   )
 }

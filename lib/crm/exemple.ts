@@ -11,6 +11,7 @@
 import { construireFicheChantier, construireFicheClient, construireVue, type ChantierLigne, type DevisLigne, type DossiersCrm, type EntreeJournal, type FactureLigne, type FicheChantier, type FicheClient, type LeadLigne, type MateriauLigne, type Membre, type NoteCrm, type ReservationFiche, type TacheFiche, type Vehicule, type Vue } from './vue.ts'
 import { regrouperClients, trouverGroupe } from './clients.ts'
 import type { DonneesAtelier } from './atelier.ts'
+import type { CommandeA } from './commandes.ts'
 
 const ID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
 const ART = ID(999)
@@ -161,12 +162,22 @@ const LISTES_TACHES: Record<number, [string, boolean, number | null][]> = {
 const TACHES: (TacheFiche & { chantier_id: string })[] = Object.entries(LISTES_TACHES).flatMap(([c, liste]) =>
   liste.map(([libelle, faite, membre], i) => ({
     id: ID(1000 + Number(c) * 20 + i), chantier_id: ID(Number(c)), libelle, quantite: null, unite: null, ordre: i, faite,
-    faite_le: faite ? T('2026-10-08') : null, membre_id: membre ? ID(membre) : null, devis_ligne_id: null,
+    // Une tâche cochée CE MATIN sur le chantier 1 : la carte du chantier montre « faite aujourd'hui » (sur place, 9 h 10 à Paris).
+    faite_le: faite ? (Number(c) === 1 && i === 2 ? T('2026-10-12', '07:10') : T('2026-10-08')) : null, membre_id: membre ? ID(membre) : null, devis_ligne_id: null,
   })))
 const RESERVATIONS: (ReservationFiche & { chantier_id: string })[] = [
   { id: ID(701), chantier_id: ID(1), materiau_id: ID(321), quantite: 1, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(321), nom: 'Mitigeur douche', unite: 'u' } },
   { id: ID(702), chantier_id: ID(1), materiau_id: ID(301), quantite: 10, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-06'), note: null, materiau: { id: ID(301), nom: 'Raccord PER 16', unite: 'u' } },
   { id: ID(703), chantier_id: ID(2), materiau_id: ID(322), quantite: 1, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(322), nom: 'Siphon', unite: 'u' } },
+  // Trois manchons réservés pour la rénovation, deux en stock : « stock insuffisant » sur ce chantier (rien n'est commandé).
+  { id: ID(704), chantier_id: ID(6), materiau_id: ID(303), quantite: 3, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(303), nom: 'Manchon 32', unite: 'u' } },
+]
+// Les commandes passées chez les fournisseurs (au 12/10) : une livraison EN RETARD pour la salle de bain (annoncée le 9), une à l'heure.
+const COMMANDES: CommandeA[] = [
+  { id: ID(901), fournisseur: NORD.nom, contact: NORD.contact, reference: 'CMD-2026-41', statut: 'commandee', commandee_le: '2026-10-05', livraison_prevue: '2026-10-09', recue_le: null, chantier_id: ID(1), relances: 0, relance_le: null, note: null,
+    lignes: [{ materiau_id: ID(300), nom: 'Raccord laiton 20/27', quantite: 50, unite: 'u' }, { materiau_id: ID(311), nom: 'Tube PER 16', quantite: 60, unite: 'm' }] },
+  { id: ID(902), fournisseur: SUD.nom, contact: null, reference: null, statut: 'commandee', commandee_le: '2026-10-10', livraison_prevue: '2026-10-14', recue_le: null, chantier_id: null, relances: 0, relance_le: null, note: null,
+    lignes: [{ materiau_id: ID(321), nom: 'Mitigeur douche', quantite: 4, unite: 'u' }] },
 ]
 const NOTES_CHANTIER: (NoteCrm & { chantier_id: string })[] = [
   { id: ID(801), chantier_id: ID(1), texte: 'Accès par la cour ; prévenir la veille de l’arrivée du camion.', cree_le: T('2026-10-04', '16:00') },
@@ -187,7 +198,8 @@ const journalDe = (c: ChantierLigne): EntreeJournal[] => {
 // ── Assemblage : les mêmes fonctions que pour un vrai compte ────────────────────────────────────────────────────────────
 const DOSSIERS: DossiersCrm = {
   devis: DEVIS, factures: FACTURES, leads: LEADS, chantiers: CHANTIERS,
-  taches: TACHES.map((t) => ({ chantier_id: t.chantier_id, faite: t.faite })), materiaux: MATERIAUX, deplacements: [], carnet: [],
+  taches: TACHES.map((t) => ({ id: t.id, chantier_id: t.chantier_id, faite: t.faite, libelle: t.libelle, faite_le: t.faite_le, membre_id: t.membre_id, ordre: t.ordre })), materiaux: MATERIAUX, deplacements: [], carnet: [],
+  reservations: RESERVATIONS.map((r) => ({ chantier_id: r.chantier_id, materiau_id: r.materiau_id, quantite: r.quantite, statut: r.statut })), commandes: COMMANDES, commandesDisponibles: true,
   vehicules: VEHICULES.map(({ notes: _n, ...v }) => v), membres: MEMBRES.map(({ telephone: _t, ...m }) => m), equipe: EQUIPE, tronque: false,
 }
 const maintenant = () => new Date(MAINTENANT_EXEMPLE)

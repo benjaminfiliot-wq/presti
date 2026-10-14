@@ -153,6 +153,9 @@ const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', cellules: { essentiel: true, studio: true, signature: true } },
   // CRM « atelier vivant » (0141, lib/crm/) : Signature seulement (capacité `crm`) ; la ligne n'apparaît que drapeau levé.
   { groupe: 'Devis & factures', label: 'CRM : pipeline, chantiers, tâches, équipe', cellules: { essentiel: false, studio: false, signature: true }, flag: 'crm' },
+  // L'assistant de gestion (016, jalon A3) : Signature seulement (capacité `assistant`, vérifiée côté serveur par lib/assistant/acces.ts) ;
+  // la ligne n'apparaît que drapeau levé (lib/flags.ts) — c'est-à-dire après 0157 appliquée, la recette et l'accord de Benj.
+  { groupe: 'Devis & factures', label: 'Assistant de gestion : devis, factures, stock, tarifs et CRM pilotés par la conversation (vous confirmez ce qui part chez un client)', cellules: { essentiel: false, studio: false, signature: true }, flag: 'assistant' },
   { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', cellules: { essentiel: false, studio: true, signature: true } },
   { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', cellules: { essentiel: false, studio: 'Standard + Pro', signature: '+ Expert' }, flag: 'inventaireRecherche' },
   { groupe: 'Canaux', label: 'Votre boîte email branchée', cellules: { essentiel: true, studio: true, signature: true } },

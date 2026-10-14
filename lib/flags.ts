@@ -141,13 +141,17 @@ export const FLAGS = {
   /** 12/10/2026 — export mensuel automatique du journal des factures (CSV) à l'adresse du comptable. Mêmes conditions que
    *  comptaAlerteImpayes : 0140 appliquée, puis un export d'essai reçu et ouvert dans Excel. */
   comptaExportMensuel: false,
-  /** 12/10/2026 — l'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture seule et A2 brouillons) :
+  /** 15/10/2026 — A3 : l'assistant AGIT (devis, factures, tarifs, stock, CRM, messages ; cartes à confirmer pour tout ce qui part chez un
+   *  client, journal des actions annulables) — migration 0157 ÉCRITE, NON APPLIQUÉE. Pour ouvrir à tous les comptes Signature, dans cet
+   *  ordre : 0157 appliquée et contrôlée → scripts/assistant-qa.mjs vert → accord de Benj → `assistant: true` ici, `ESSAI` vidé (ci-dessous)
+   *  et lib/essais.ts vidé. La grille des offres (lib/plans.ts) gagne seule sa ligne. Sans 0157, l'assistant ne propose aucun outil d'action.
+   *  12/10/2026 — l'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture seule et A2 brouillons) :
    *  page /assistant, POST /api/assistant, entrée « Assistant » du menu. Offre Signature (capacité `assistant`, lib/plans.ts).
    *  Baissé : la page et la route répondent 404, rien dans le menu, rien dans la grille des offres. Se lève après la migration
    *  0150 appliquée (levé sans elle, la route refuse chaque tour : le plafond et le journal sont en base, fail-closed), puis la
    *  recette A5 du plan (évaluation, audits sécurité et RGPD par des agents distincts, parcours réel sur un compte de test) et
    *  l'accord de Benj. */
-  assistant: false,
+  assistant: true,
   /** 12/10/2026 — CRM « atelier vivant » (offre Signature), jalons J1-J5 : migration 0141 (chantiers, tâches, matériaux
    *  réservés, véhicules, équipe, notes, journal), routes /api/crm/*, page /crm (atelier 3D chargé à la demande avec repli 2D,
    *  pipeline, tableau de bord, chantiers, fiche client, équipe). La page /atelier-demo (données fictives) est hors drapeau :
@@ -170,6 +174,6 @@ export const actif = (f: Flag): boolean => FLAGS[f]
  *  lib/essais.ts (jamais ici : ce fichier part dans le JavaScript public, audit d'attaque du 12/10, B1). Les routes
  *  répondent 404 à tout autre compte, l'entrée de menu ne s'affiche qu'après réponse de /api/essais. À remettre à
  *  false (et vider lib/essais.ts) quand le drapeau passe à true. */
-export const ESSAI: Partial<Record<Flag, boolean>> = { assistant: true }
+export const ESSAI: Partial<Record<Flag, boolean>> = {}
 /** La fonctionnalité existe pour au moins un compte (drapeau levé, ou essai en cours). */
 export const enEssai = (f: Flag): boolean => FLAGS[f] || !!ESSAI[f]

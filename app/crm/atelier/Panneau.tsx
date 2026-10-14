@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { LIBELLES_ROLE, LIBELLES_STATUT_CHANTIER, type RoleMembre, type StatutChantier } from '@/lib/crm/valider'
-import { preparerCommande, texteCommande, chantierVisible, type DonneesAtelier, type ObjetScene } from '@/lib/crm/atelier'
-import { dateFr, euros, enCentimes } from '../client'
+import { chantierVisible, initiales, styleAvatar, type DonneesAtelier, type ObjetScene } from '@/lib/crm/atelier'
+import { estStockBas, type Alerte, type ResumeAlertes } from '@/lib/crm/alertes'
+import { enCours, libelleCommande, type CommandeA } from '@/lib/crm/commandes'
+import { appel, dateFr, enCentimes, estErreur, euros } from '../client'
 import FicheChantier from '../FicheChantier'
 import { Lien, useExemple } from '../mode'
+import { DialogueRelance, FicheCommande, PreparerCommande } from './Commande'
 
 // Le panneau qui s'ouvre au clic sur un objet de la maquette — le MÊME en 3D et dans le repli 2D (mêmes données, mêmes
 // actions). Chaque action passe par un chemin qui existe déjà :
@@ -15,8 +18,8 @@ import { Lien, useExemple } from '../mode'
 // En page de démonstration (`demo`, /atelier-demo), rien n'est lu ni écrit : les actions sont désactivées et le disent.
 // Dans l'EXEMPLE du CRM (app/crm/mode.tsx), la fiche chantier s'ouvre sur ses données fictives, ses boutons ne font rien
 // partir, et les liens vers les écrans hors CRM sont inertes.
-export default function Panneau({ objet, donnees, demo, onFermer, onVue2D }: {
-  objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; onFermer: () => void; onVue2D: (vue: string) => void
+export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2D, onChange }: {
+  objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onFermer: () => void; onVue2D: (vue: string) => void; onChange: () => void
 }) {
   const titre = useRef<HTMLHeadingElement>(null)
   // Le focus va au titre du panneau qui s'ouvre (lecteur d'écran et clavier) ; Échap le ferme.
@@ -34,8 +37,8 @@ export default function Panneau({ objet, donnees, demo, onFermer, onVue2D }: {
         <button type="button" className="atl-fermer" onClick={onFermer} aria-label="Fermer le panneau">×</button>
       </header>
       <div className="atl-panneau-corps">
-        {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} />}
-        {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} />}
+        {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} />}
+        {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} onChange={onChange} />}
         {objet.type === 'vehicule' && <PanneauVehicule objet={objet} donnees={donnees} />}
         {objet.type === 'membre' && <PanneauMembre objet={objet} donnees={donnees} />}
         {objet.type === 'accueil' && <PanneauAccueil donnees={donnees} />}
@@ -54,29 +57,110 @@ export default function Panneau({ objet, donnees, demo, onFermer, onVue2D }: {
   )
 }
 
-function PanneauChantier({ objet, donnees, demo }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean }) {
+const ICONES: Record<Alerte['type'], string> = { retard: '⏱', livraison: '🚚', attendue: '📦', stock: '▦', facturer: '€', sans_equipe: '👷' }
+
+function PanneauChantier({ objet, donnees, demo, resume, onChange }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onChange: () => void }) {
   const exemple = useExemple()
   const c = donnees.chantiers.find((x) => x.id === objet.ref)
   const [complet, setComplet] = useState(false)
+  const [commande, setCommande] = useState<{ id: string; vue: 'fiche' | 'relance' } | null>(null)
+  const [preparer, setPreparer] = useState<string[] | null>(null)
+  const [faites, setFaites] = useState<Set<string>>(() => new Set())
+  const [message, setMessage] = useState<{ texte: string; erreur: boolean } | null>(null)
+  // Un autre chantier choisi : ce qui était ouvert dans le panneau se referme.
+  useEffect(() => { setComplet(false); setCommande(null); setPreparer(null); setFaites(new Set()); setMessage(null) }, [objet.cle])
   if (!c) return <p className="crm-vide">Ce chantier n’est plus dans vos données.</p>
   const vehicule = donnees.vehicules.find((v) => v.id === c.vehicule_id)
-  const equipe = donnees.membres.filter((m) => c.equipe.includes(m.id))
+  const equipe = donnees.membres.filter((m) => c.equipe.includes(m.id) && m.actif)
+  const alertes = resume.parChantier.get(c.id) ?? []
+  const t = c.taches
+  const ouvertes = (t?.ouvertes ?? []).filter((x) => !faites.has(x.id))
+  const resteOuvert = t ? t.total - t.faites - faites.size : 0
+  const surPlace = !!objet.info?.surPlace
+
+  async function cocher(id: string) {
+    setMessage(null)
+    setFaites((s) => new Set(s).add(id))
+    const r = await appel(`/api/crm/taches/${id}`, { method: 'PATCH', body: { faite: true } })
+    if (!r.ok) { setFaites((s) => { const n = new Set(s); n.delete(id); return n }); setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
+    onChange()
+  }
+  const commandeOuverte = commande ? (donnees.commandes ?? []).find((x) => x.id === commande.id) ?? null : null
+
   return (
     <div className="atl-pile">
       <p className="atl-statut"><i style={{ background: objet.epingle ?? undefined }} aria-hidden="true" />{objet.detail}</p>
       {c.avancement !== null && <div className="atl-barre" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={c.avancement} aria-label="Avancement des tâches"><span style={{ width: `${c.avancement}%` }} /></div>}
+
+      <h3 className="crm-sous">{surPlace ? 'Sur place aujourd’hui' : 'Équipe affectée'}{equipe.length ? <span className="tnum"> · {equipe.length}</span> : null}</h3>
+      {equipe.length === 0 ? <p className="crm-vide">{surPlace ? 'Personne n’est affecté à ce chantier.' : 'Aucune équipe affectée pour le moment.'}</p> : (
+        <ul className="atl-gens">
+          {equipe.map((m) => (
+            <li key={m.id}><i style={styleAvatar(m.role)} aria-hidden="true">{initiales(m.nom)}</i><span><b>{m.nom}</b><small>{LIBELLES_ROLE[m.role as RoleMembre] ?? m.role}</small></span></li>
+          ))}
+        </ul>
+      )}
+
+      <h3 className="crm-sous">Urgences et alertes{alertes.length ? <span className="tnum"> · {alertes.length}</span> : null}</h3>
+      {alertes.length === 0 ? <p className="crm-vide">Rien à signaler sur ce chantier.</p> : (
+        <ul className="atl-alertes">
+          {alertes.map((a) => {
+            const cmd = a.commandeId ? (donnees.commandes ?? []).find((x) => x.id === a.commandeId) ?? null : null
+            return (
+              <li key={a.cle} className={`atl-alerte-carte g-${a.gravite}`}>
+                <p className="atl-alerte-titre"><span aria-hidden="true">{ICONES[a.type]}</span> <b>{a.titre}</b></p>
+                <p className="atl-alerte-detail">{a.detail}</p>
+                <div className="crm-boutons">
+                  {cmd && <button type="button" className="psh-btn primary" onClick={() => setCommande({ id: cmd.id, vue: 'relance' })}>Relancer le fournisseur</button>}
+                  {cmd && <button type="button" className="psh-btn ghost" onClick={() => setCommande({ id: cmd.id, vue: 'fiche' })}>Ouvrir la commande</button>}
+                  {a.type === 'stock' && <button type="button" className="psh-btn primary" onClick={() => setPreparer(a.materiauIds)}>Préparer la commande</button>}
+                  {(a.type === 'retard' || a.type === 'facturer') && !demo && <button type="button" className="psh-btn ghost" onClick={() => setComplet(true)}>{a.type === 'retard' ? 'Ouvrir le chantier' : 'Ouvrir pour facturer'}</button>}
+                  {a.type === 'sans_equipe' && <Lien className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Affecter l’équipe</Lien>}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+      {commandeOuverte && commande && (
+        commande.vue === 'relance'
+          ? <DialogueRelance commande={commandeOuverte} jour={donnees.jour} signature={null} onFermer={() => setCommande(null)} onChange={onChange} />
+          : <FicheCommande commande={commandeOuverte} donnees={donnees} onChange={onChange} onRelancer={() => setCommande({ id: commandeOuverte.id, vue: 'relance' })} />
+      )}
+      {commande && !commandeOuverte && <p className="crm-message" role="status">Cette commande n’est plus en attente : elle a été clôturée.</p>}
+      {preparer && (
+        <PreparerCommande donnees={donnees} materiaux={donnees.materiaux.filter((m) => preparer.includes(m.id) && estStockBas(m))} onChange={onChange} />
+      )}
+
+      <h3 className="crm-sous">Tâches ouvertes{t && t.total ? <span className="tnum"> · {Math.max(0, resteOuvert)}</span> : null}</h3>
+      {!t || t.total === 0 ? <p className="crm-vide">Aucune tâche sur ce chantier : elles se créent depuis les lignes du devis, dans la fiche.</p> : ouvertes.length === 0 && resteOuvert <= 0 ? <p className="crm-vide">Toutes les tâches sont faites.</p> : (
+        <ul className="atl-taches">
+          {ouvertes.map((x) => {
+            const m = x.membre_id ? donnees.membres.find((y) => y.id === x.membre_id) : null
+            return (
+              <li key={x.id}>
+                <button type="button" className="atl-coche" aria-label={`Marquer faite : ${x.libelle}`} onClick={() => void cocher(x.id)}><span aria-hidden="true" /></button>
+                <span>{x.libelle}{m ? <small> · {m.nom}</small> : null}</span>
+              </li>
+            )
+          })}
+          {resteOuvert > ouvertes.length && <li className="atl-plus">+ {resteOuvert - ouvertes.length} autre{resteOuvert - ouvertes.length > 1 ? 's' : ''} dans la fiche du chantier</li>}
+        </ul>
+      )}
+      {t && t.total > 0 && <p className="atl-faites"><b className="tnum">{t.faites + faites.size}</b> tâche{t.faites + faites.size > 1 ? 's' : ''} terminée{t.faites + faites.size > 1 ? 's' : ''} sur <span className="tnum">{t.total}</span>{t.faitesAujourdhui + faites.size > 0 ? <> · <span className="tnum">{t.faitesAujourdhui + faites.size}</span> aujourd’hui</> : null}</p>}
+      {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role="status">{message.texte}</p>}
+
       <dl className="atl-dl">
         <dt>Client</dt><dd>{c.client ?? '—'}</dd>
         <dt>Statut</dt><dd>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</dd>
         <dt>Début</dt><dd>{dateFr(c.date_debut)}</dd>
         <dt>Fin prévue</dt><dd>{dateFr(c.date_fin_prevue)}</dd>
         <dt>Camionnette</dt><dd>{vehicule ? `${vehicule.nom}${vehicule.immatriculation ? ` · ${vehicule.immatriculation}` : ''}` : '—'}</dd>
-        <dt>Équipe</dt><dd>{equipe.length ? equipe.map((m) => m.nom).join(', ') : '—'}</dd>
       </dl>
       {demo && !exemple ? (
         <p className="crm-note">Démonstration : la fiche complète, les tâches, le matériel, « Notifier le client » et « Facturer » s’ouvrent ici sur un vrai compte.</p>
       ) : complet ? (
-        <FicheChantier id={c.id} compacte />
+        <FicheChantier key={`${t?.faites ?? 0}/${t?.total ?? 0}/${c.statut}`} id={c.id} compacte />
       ) : (
         <div className="crm-boutons">
           <button type="button" className="psh-btn primary" onClick={() => setComplet(true)}>Tâches, matériel et actions</button>
@@ -87,15 +171,20 @@ function PanneauChantier({ objet, donnees, demo }: { objet: ObjetScene; donnees:
   )
 }
 
-function PanneauInventaire({ objet, donnees, demo }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean }) {
+function PanneauInventaire({ objet, donnees, demo, onChange }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; onChange: () => void }) {
   const ms = useMemo(() => {
     const autres = objet.ref === 'Autres catégories'
     return donnees.materiaux.filter((m) => {
       const k = (m.categorie ?? '').trim() || 'Sans catégorie'
       return autres ? !objetsCategories(donnees).slice(0, 9).includes(k) : k === objet.ref
-    }).sort((a, b) => Number(b.seuil > 0 && b.reste <= b.seuil) - Number(a.seuil > 0 && a.reste <= a.seuil) || a.nom.localeCompare(b.nom, 'fr'))
+    }).sort((a, b) => Number(estStockBas(b)) - Number(estStockBas(a)) || a.nom.localeCompare(b.nom, 'fr'))
   }, [objet.ref, donnees])
-  const alertes = ms.filter((m) => m.seuil > 0 && m.reste <= m.seuil)
+  const alertes = ms.filter(estStockBas)
+  const attendu = useMemo(() => {
+    const m = new Map<string, CommandeA>()
+    for (const c of enCours(donnees.commandes ?? [])) for (const l of c.lignes) if (l.materiau_id && !m.has(l.materiau_id)) m.set(l.materiau_id, c)
+    return m
+  }, [donnees.commandes])
   const [commande, setCommande] = useState(false)
   return (
     <div className="atl-pile">
@@ -105,65 +194,29 @@ function PanneauInventaire({ objet, donnees, demo }: { objet: ObjetScene; donnee
       </div>
       <ul className="atl-liste">
         {ms.map((m) => {
-          const bas = m.seuil > 0 && m.reste <= m.seuil
+          const bas = estStockBas(m)
           const vieux = m.prix_vu_le ? (Date.parse(donnees.jour) - Date.parse(m.prix_vu_le)) / 86_400_000 > 30 : false
+          const cmd = attendu.get(m.id)
           return (
             <li key={m.id} className={bas ? 'bas' : ''}>
-              <span><b>{m.nom}</b><br /><span className="muted">{m.fournisseur ?? 'Sans fournisseur'}{m.prix_vu_ht !== null ? ` · vu ${euros(enCentimes(m.prix_vu_ht))} HT le ${dateFr(m.prix_vu_le)}${vieux ? ' (à revérifier)' : ''}` : ''}</span></span>
+              <span><b>{m.nom}</b><br /><span className="muted">{m.fournisseur ?? 'Sans fournisseur'}{m.prix_vu_ht !== null ? ` · vu ${euros(enCentimes(m.prix_vu_ht))} HT le ${dateFr(m.prix_vu_le)}${vieux ? ' (à revérifier)' : ''}` : ''}</span>
+                {cmd && <><br /><span className="atl-commandee">Commandé · {cmd.livraison_prevue < donnees.jour ? `livraison en retard (annoncée le ${dateFr(cmd.livraison_prevue)})` : `livraison le ${dateFr(cmd.livraison_prevue)}`} · {libelleCommande(cmd)}</span></>}</span>
               <span className="tnum atl-qte">{m.reste} {m.unite}{m.seuil > 0 ? <small> / seuil {m.seuil}</small> : null}</span>
             </li>
           )
         })}
       </ul>
+      {donnees.commandesDisponibles === false && <p className="crm-note" role="note">Le suivi des commandes n’est pas encore installé sur cette base : vous pouvez préparer une commande, pas l’enregistrer.</p>}
       <div className="crm-boutons">
         <button type="button" className="psh-btn primary" disabled={!alertes.length} title={alertes.length ? 'Une liste à relire avant tout envoi' : 'Aucun matériau sous son seuil dans cette catégorie'} onClick={() => setCommande(true)}>Préparer la commande</button>
         {!demo && <Lien className="psh-btn ghost" href="/inventaire">Ouvrir l’inventaire</Lien>}
       </div>
-      {commande && <Commandes donnees={donnees} materiaux={alertes} />}
+      {commande && <PreparerCommande donnees={donnees} materiaux={alertes} onChange={onChange} />}
     </div>
   )
 }
 
 const objetsCategories = (d: DonneesAtelier) => [...new Set(d.materiaux.map((m) => (m.categorie ?? '').trim() || 'Sans catégorie'))].sort((a, b) => a.localeCompare(b, 'fr'))
-
-/** J4 — la commande fournisseur : regroupée par fournisseur, quantités proposées et modifiables, texte à copier. Rien ne part d'ici. */
-function Commandes({ donnees, materiaux }: { donnees: DonneesAtelier; materiaux: DonneesAtelier['materiaux'] }) {
-  const commandes = useMemo(() => preparerCommande(materiaux, donnees.jour), [materiaux, donnees.jour])
-  const [qte, setQte] = useState<Record<string, number>>({})
-  const [copie, setCopie] = useState<string | null>(null)
-  return (
-    <div className="atl-commande" aria-label="Commande préparée">
-      <p className="crm-note">Quantités proposées : de quoi revenir au double du seuil. Changez-les, puis copiez le texte pour votre fournisseur : rien n’est envoyé d’ici.</p>
-      {commandes.map((c) => {
-        const texte = texteCommande(c, qte, null)
-        const mail = c.contact && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.contact) ? c.contact : null
-        return (
-          <section key={c.fournisseur} className="atl-commande-f">
-            <h3>{c.fournisseur}</h3>
-            <ul>
-              {c.lignes.map((l) => (
-                <li key={l.materiau_id}>
-                  <label>
-                    <span>{l.nom} <span className="muted">(reste {l.reste} {l.unite})</span></span>
-                    <input type="number" min={1} step={1} inputMode="numeric" aria-label={`Quantité de ${l.nom}`} value={qte[l.materiau_id] ?? l.quantite}
-                      onChange={(e) => setQte({ ...qte, [l.materiau_id]: Math.max(1, Math.round(Number(e.target.value) || 1)) })} />
-                    <span className="muted">{l.unite}</span>
-                  </label>
-                  {l.prix_vu_ht !== null && <small className="muted">Prix vu {euros(enCentimes(l.prix_vu_ht))} HT le {dateFr(l.prix_vu_le)}{l.prixAVerifier ? ' — à revérifier' : ''}</small>}
-                </li>
-              ))}
-            </ul>
-            <div className="crm-boutons">
-              <button type="button" className="psh-btn ghost" onClick={() => { void navigator.clipboard?.writeText(texte).then(() => setCopie(c.fournisseur), () => setCopie(null)) }}>Copier la commande</button>
-              {mail && <a className="psh-btn ghost" href={`mailto:${mail}?subject=${encodeURIComponent('Commande')}&body=${encodeURIComponent(texte)}`}>Ouvrir dans ma messagerie</a>}
-            </div>
-            {copie === c.fournisseur && <p className="crm-message" role="status">Commande copiée. Collez-la dans votre e-mail ou votre espace fournisseur.</p>}
-          </section>
-        )
-      })}
-    </div>
-  )
-}
 
 function PanneauVehicule({ objet, donnees }: { objet: ObjetScene; donnees: DonneesAtelier }) {
   const v = donnees.vehicules.find((x) => x.id === objet.ref)

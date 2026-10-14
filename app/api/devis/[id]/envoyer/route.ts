@@ -10,6 +10,7 @@ import { renderPdfToBuffer } from '@/lib/renderPdf'
 import { sendEmail } from '@/lib/email'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { planifierRelances } from '@/lib/relances'
+import { mailDevis } from '@/lib/devisMail'
 import { OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -57,10 +58,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const base64 = Buffer.from(buffer).toString('base64')
 
     const nomEnt = artisan?.nom || 'votre artisan'
+    const mail = mailDevis(devis, nomEnt)
     const r = await sendEmail({
       to: devis.client_email,
-      subject: `Votre devis ${devis.numero || ''} — ${nomEnt}`,
-      text: `Bonjour ${devis.client_nom || ''},\n\nVeuillez trouver ci-joint votre devis${devis.objet ? ` pour : ${devis.objet}` : ''}. Il est valable ${devis.validite_jours || 90} jours.\n\nN'hésitez pas à me contacter pour toute question.\n\nBien à vous,\n${nomEnt}`,
+      subject: mail.subject,
+      text: mail.text,
       // Marque blanche : le client final doit voir le nom de SON artisan comme expéditeur,
       // pas « Presti ». Sans fromName, lib/email.ts retombe sur la marque de l'éditeur.
       fromName: artisan?.nom?.trim() || 'Votre artisan',

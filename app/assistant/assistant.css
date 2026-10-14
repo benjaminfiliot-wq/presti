@@ -57,3 +57,74 @@
   .asst-bulle { max-width: 100% }
   .asst-restants { margin-left: 0; flex-basis: 100% }
 }
+
+/* ── Poste de commande (jalon A3) : conversation à gauche, poste à droite. Densité d'un outil de travail (comme app/controle). ── */
+.asst { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start }
+@media (min-width: 1080px) { .asst { grid-template-columns: minmax(0, 1fr) 390px } .asst-poste { position: sticky; top: 12px; max-height: calc(100dvh - 40px) } }
+
+.asst-groupe { margin: 8px 0 0; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint) }
+.asst-briefing { align-self: flex-start; margin-top: 2px }
+.asst-exemple { width: auto }
+.asst-exemple.action { border-style: dashed; color: var(--accent-ink) }
+.asst-exemple.action:hover, .asst-exemple.action:focus-visible { color: var(--ink) }
+.asst-barre .asst-exemple { width: auto; padding: 6px 12px; font-size: 13px }
+.asst-barre .asst-exemple:disabled { opacity: .5; cursor: default }
+
+.asst-cartes { display: flex; flex-direction: column; gap: 10px; margin-top: 10px }
+
+.asst-poste { display: flex; flex-direction: column; min-height: 320px }
+.asst-onglets { display: flex; border-bottom: 1px solid var(--line-2); padding: 0 6px }
+.asst-onglet { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font: inherit; font-size: 13.5px; font-weight: 600; padding: 13px 12px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: color .15s ease, border-color .15s ease }
+.asst-onglet:hover { color: var(--ink) }
+.asst-onglet.actif { color: var(--ink); border-bottom-color: var(--accent) }
+.asst-onglet:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: 6px }
+.asst-compte { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 19px; padding: 1px 6px; border-radius: 999px; background: var(--line-2); color: var(--ink-soft); text-align: center }
+.asst-compte.alerte { background: var(--accent); color: var(--paper) }
+.asst-poste-corps { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 0 }
+.asst-vide { margin: 8px 4px; font-size: 13.5px; line-height: 1.55 }
+.asst-annonce { margin: 0; padding: 0 12px 8px; min-height: 1px; font-size: 12px; color: var(--faint) }
+
+/* La carte d'action : ce que l'artisan lit avant de cliquer. */
+.asst-carte { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); padding: 12px; display: flex; flex-direction: column; gap: 9px; min-width: 0 }
+.asst-carte.en_attente { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: color-mix(in srgb, var(--warn-tint) 40%, var(--paper)) }
+.asst-carte.executee { border-left: 3px solid var(--ok) }
+.asst-carte.echec { border-color: color-mix(in srgb, var(--crit) 45%, var(--line)) }
+.asst-carte.refusee, .asst-carte.annulee, .asst-carte.expiree { opacity: .78 }
+.asst-carte-tete { display: flex; align-items: center; gap: 8px; flex-wrap: wrap }
+.asst-carte-outil { font-size: 12px; color: var(--muted); font-weight: 600 }
+.asst-carte-date { margin-left: auto; font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums }
+.asst-carte-titre { margin: 0; font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); line-height: 1.3; overflow-wrap: anywhere }
+.asst-carte-lignes { margin: 0; display: flex; flex-direction: column; gap: 3px }
+.asst-carte-lignes > div { display: grid; grid-template-columns: minmax(7ch, 30%) 1fr; gap: 8px; font-size: 13px }
+.asst-carte-lignes dt { color: var(--muted); margin: 0 }
+.asst-carte-lignes dd { margin: 0; color: var(--ink); overflow-wrap: anywhere }
+.asst-carte-avap { list-style: none; margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--surface-2); display: flex; flex-direction: column; gap: 4px; font-size: 13px }
+.asst-carte-avap li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px }
+.asst-carte-avap li > span:first-child { color: var(--muted); flex-basis: 100% }
+.asst-carte-avap s { color: var(--faint) }
+.asst-carte-avap b { color: var(--ink) }
+.asst-carte-msg { border-left: 3px solid var(--accent-tint-2); background: var(--surface-2); border-radius: 0 8px 8px 0; padding: 9px 11px }
+.asst-carte-msg-tete { font-size: 12px; color: var(--muted); margin-bottom: 5px; overflow-wrap: anywhere }
+.asst-carte-msg p { margin: 0; white-space: pre-wrap; font-size: 13.5px; line-height: 1.55; color: var(--ink); overflow-wrap: anywhere }
+.asst-carte-alertes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px }
+.asst-carte-alertes li { font-size: 12.5px; line-height: 1.45; color: var(--warn); padding-left: 16px; position: relative }
+.asst-carte-alertes li::before { content: '!'; position: absolute; left: 3px; font-weight: 800 }
+.asst-carte-resultat { margin: 0; font-size: 12.5px; color: var(--ink-soft) }
+.asst-carte-erreur { margin: 0; font-size: 12.5px; color: var(--crit) }
+.asst-carte-pied { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px }
+.asst-carte-pied .btn { padding: 8px 14px }
+.asst-carte-note { flex-basis: 100%; font-size: 12px; color: var(--muted) }
+.asst-carte-lien { color: var(--accent-ink); font-weight: 600; font-size: 13px; text-decoration: none; margin-left: auto }
+.asst-carte-lien:hover { text-decoration: underline }
+.asst-carte button:focus-visible, .asst-carte-lien:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+
+.asst-journal-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
+.asst-journal-liste li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; font-size: 12.5px; color: var(--ink-soft); border-bottom: 1px solid var(--line-2); padding-bottom: 6px }
+.asst-journal-liste a { color: var(--accent-ink); font-weight: 600; text-decoration: none }
+
+@media (max-width: 640px) {
+  .asst-carte-lignes > div { grid-template-columns: 1fr; gap: 0 }
+  .asst-carte-date { margin-left: 0 }
+  .asst-poste-corps { padding: 10px }
+}
+@media (prefers-reduced-motion: reduce) { .asst-onglet { transition: none } }

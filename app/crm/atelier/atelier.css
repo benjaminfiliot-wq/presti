@@ -12,6 +12,11 @@
 .atl-ensemble { background: var(--accent); color: var(--paper); border: 0; border-radius: 9px; padding: 7px 12px; font-weight: 700; font-size: 13px; cursor: pointer }
 .atl-live { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); background: var(--surface-2); border: 1px solid var(--line); border-radius: 20px; padding: 4px 10px }
 .atl-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok) }
+.atl-live.connexion i { background: var(--warn) }
+.atl-live.coupe { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)) }
+.atl-live.coupe i { background: var(--warn) }
+.atl-briefing { background: var(--surface-2); color: var(--ink); border: 1px solid var(--accent-tint-2); border-radius: 9px; padding: 6px 11px; font-size: 12.5px; font-weight: 700; cursor: pointer }
+.atl-briefing[aria-pressed="true"] { background: var(--accent-tint); border-color: var(--accent) }
 .atl-notif { background: var(--accent-tint); color: var(--accent-ink); border: 1px solid var(--accent-tint-2); border-radius: 20px; padding: 4px 10px; font-size: 12.5px; font-weight: 700; cursor: pointer }
 .atl-filtres { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto }
 .atl-filtres button, .atl-bascule { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer }
@@ -29,8 +34,9 @@
 .atl-aide-corps ul { margin: 0 0 8px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px }
 .atl-aide-corps b { color: var(--ink) }
 
-/* — Cadre de la maquette — */
-.atl-cadre { position: relative; min-height: min(72vh, 760px); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface) }
+/* — Cadre de la maquette : la carte est la vue principale, elle prend presque toute la hauteur de l'écran — */
+.atl-cadre { position: relative; height: clamp(560px, calc(100dvh - 292px), 1200px); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface) }
+.atl[data-atelier-mode="2d"] .atl-cadre { height: auto; min-height: 0; overflow: visible }
 .atl-toile { position: absolute; inset: 0 }
 .atl-charge { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px }
 .atl-outils { position: absolute; z-index: 30; left: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 5px; box-shadow: var(--shadow-sm) }
@@ -46,15 +52,11 @@
 .atl-bulle.cachee { visibility: hidden }
 /* Étiquettes posées sur la maquette (DOM) : sombres, lisibles sur la scène claire. */
 .atl-zone { display: inline-block; white-space: nowrap; font: 700 11px var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-hover); background: var(--paper); opacity: .78; padding: 2px 7px; border-radius: 6px }
-.atl-pastille { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font: 600 11.5px var(--font-body); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3px 9px 3px 6px; cursor: pointer; box-shadow: var(--shadow-sm) }
-.atl-pastille i { width: 9px; height: 9px; border-radius: 50% }
-.atl-pastille.estompe { opacity: .3 }
-.atl-pastille.choisie { border-color: var(--accent); background: var(--surface-2) }
 .atl-bulle { display: inline-flex; flex-direction: column; white-space: nowrap; font: 500 11.5px var(--font-body); color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: 9px; padding: 5px 9px; box-shadow: var(--shadow-sm) }
 .atl-bulle b { color: var(--ink); font-size: 12.5px }
 
 /* — Panneau latéral (le même en 3D et en 2D) — */
-.atl-panneau { position: absolute; z-index: 40; top: 10px; right: 10px; bottom: 10px; width: min(410px, calc(100% - 20px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden }
+.atl-panneau { position: absolute; z-index: 40; top: 10px; right: 10px; bottom: 10px; width: min(450px, calc(100% - 20px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden }
 .atl-panneau > header { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 13px 15px 11px; border-bottom: 1px solid var(--line-2) }
 .atl-panneau h2 { grid-column: 1; margin: 0; font-family: var(--font-display); font-size: 18px; letter-spacing: -.01em; overflow-wrap: anywhere }
 .atl-panneau h2:focus { outline: none }
@@ -90,6 +92,111 @@
 .atl-commande-f label { display: grid; grid-template-columns: 1fr 74px auto; align-items: center; gap: 8px; font-size: 13px }
 .atl-commande-f input { padding: 4px 6px; font-size: 13px }
 
+/* — 15/10 : cartes des chantiers posées sur la maquette (équipe, tâches, alertes), urgences, briefing — */
+.atl-etiquettes > .atl-carte { pointer-events: auto }
+.atl-carte { display: flex; flex-direction: column; gap: 3px; align-items: stretch; text-align: left; min-width: 132px; max-width: 190px; padding: 6px 9px 6px 8px; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 11px; box-shadow: var(--shadow-sm); cursor: pointer; font: 600 11.5px var(--font-body) }
+.atl-carte.urgente { border-color: color-mix(in srgb, var(--crit) 55%, var(--line)) }
+.atl-carte.choisie { border-color: var(--accent); background: var(--surface-2) }
+.atl-carte.estompe { opacity: .3 }
+.atl-carte-tete { display: flex; align-items: center; gap: 6px; min-width: 0 }
+.atl-carte-tete i { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50% }
+.atl-carte-tete b { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.atl-carte-ligne { color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.atl-carte-barre { display: block; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden }
+.atl-carte-barre > span { display: block; height: 100%; background: var(--ok) }
+.atl-carte-pied { display: flex; flex-wrap: wrap; align-items: center; gap: 4px }
+.atl-carte-equipe { display: inline-flex; align-items: center }
+.atl-carte-equipe em { font-style: normal; font-size: 10.5px; color: var(--muted); margin-left: 3px }
+.atl-av { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: -4px; border-radius: 50%; border: 1.5px solid var(--paper); color: var(--paper); font: 700 8.5px var(--font-body); font-style: normal }
+.atl-carte-equipe .atl-av:last-of-type { margin-right: 0 }
+.atl-badge { display: inline-block; padding: 1px 6px; border-radius: 20px; font: 700 10.5px var(--font-body); white-space: nowrap; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line) }
+.atl-badge.g-critique { background: var(--crit-tint); color: var(--crit); border-color: color-mix(in srgb, var(--crit) 40%, var(--line)) }
+.atl-badge.g-attention { background: var(--warn-tint); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--line)) }
+.atl-badge.g-info { color: var(--ok) }
+/* Ville dense et caméra éloignée : la carte se réduit au nom et aux alertes (data-niveau posé par Projecteur, sans rendu React). */
+.atl-etiquettes[data-niveau="loin"] .atl-carte { min-width: 0; max-width: 128px; padding: 3px 7px 3px 6px; gap: 2px }
+.atl-etiquettes[data-niveau="loin"] .atl-carte-ligne, .atl-etiquettes[data-niveau="loin"] .atl-carte-barre, .atl-etiquettes[data-niveau="loin"] .atl-carte-equipe, .atl-etiquettes[data-niveau="loin"] .atl-badge.g-info { display: none }
+.atl-etiquettes[data-niveau="loin"] .atl-carte-tete b { font-size: 11px }
+
+/* Urgences du jour : posées sur la carte (colonne de gauche, sous les outils), en tête de liste sur téléphone. */
+.atl-urg { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); font-size: 12.5px }
+.atl-urg.carte { position: absolute; z-index: 28; left: 58px; top: 10px; width: min(318px, calc(100% - 78px)); max-height: 46%; display: flex; flex-direction: column; overflow: hidden }
+.atl-urg.carte details { display: flex; flex-direction: column; min-height: 0 }
+.atl-urg.carte ul { overflow: auto }
+.atl-urg summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 11px; cursor: pointer; font-weight: 700; color: var(--ink); list-style: none }
+.atl-urg summary::-webkit-details-marker { display: none }
+.atl-urg-n { min-width: 22px; text-align: center; padding: 1px 7px; border-radius: 20px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12px }
+.atl-urg-n.critique { background: var(--crit-tint); color: var(--crit); border-color: color-mix(in srgb, var(--crit) 40%, var(--line)) }
+.atl-urg ul { list-style: none; margin: 0; padding: 0 6px 6px; display: flex; flex-direction: column; gap: 4px }
+.atl-urg .crm-vide { padding: 0 11px 10px; font-size: 12.5px }
+.atl-urg li button { width: 100% !important; display: grid; grid-template-columns: auto 1fr; gap: 8px; text-align: left; padding: 7px 9px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 9px; cursor: pointer }
+.atl-urg li button i { width: 8px; align-self: stretch; border-radius: 4px; background: var(--muted) }
+.atl-urg li button.g-critique i { background: var(--crit) }
+.atl-urg li button.g-attention i { background: var(--warn) }
+.atl-urg li button.g-info i { background: var(--ok) }
+.atl-urg li button.choisie { border-color: var(--accent); background: var(--accent-tint) }
+.atl-urg li b { display: block; font-size: 12.5px; overflow-wrap: anywhere }
+.atl-urg li small { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.4; overflow-wrap: anywhere }
+.atl-urg.liste { position: static }
+
+.atl-flash { position: absolute; z-index: 29; right: 12px; bottom: 12px; margin: 0; padding: 5px 11px; border-radius: 20px; background: var(--surface); border: 1px solid var(--accent-tint-2); color: var(--accent-ink); font-size: 12px; font-weight: 700; box-shadow: var(--shadow-sm); pointer-events: none }
+.avec-panneau .atl-flash { right: min(468px, 46%) }
+
+/* Le briefing : une carte au bas de la maquette, la caméra fait le trajet. */
+.atl-brief { position: absolute; z-index: 36; left: 58px; bottom: 12px; width: min(560px, calc(100% - 78px)); display: flex; flex-direction: column; gap: 6px; padding: 12px 15px; background: var(--surface); border: 1px solid var(--accent-tint-2); border-left: 4px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow-lg) }
+.avec-panneau .atl-brief { width: min(560px, calc(100% - 520px)) }
+.atl-brief.g-critique { border-left-color: var(--crit) }
+.atl-brief.g-attention { border-left-color: var(--warn) }
+.atl-brief h2 { margin: 0; font-family: var(--font-display); font-size: 17px; letter-spacing: -.01em }
+.atl-brief p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft) }
+.atl-brief .atl-brief-pas { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink) }
+.atl-plan .atl-brief { position: static; width: auto }
+
+/* Panneau du chantier : l'équipe, les alertes à actions, les tâches à cocher. */
+.atl-gens { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px }
+.atl-gens li { display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 22px; font-size: 12.5px }
+.atl-gens i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; color: var(--paper); font: 700 10.5px var(--font-body); font-style: normal }
+.atl-gens span { display: flex; flex-direction: column; line-height: 1.25 }
+.atl-gens small { color: var(--muted); font-size: 11px }
+.atl-alertes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px }
+.atl-alerte-carte { padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 10px; display: flex; flex-direction: column; gap: 6px }
+.atl-alerte-carte.g-critique { border-left-color: var(--crit); background: color-mix(in srgb, var(--crit) 7%, var(--surface-2)) }
+.atl-alerte-carte.g-attention { border-left-color: var(--warn) }
+.atl-alerte-carte.g-info { border-left-color: var(--ok) }
+.atl-alerte-titre, .atl-alerte-detail { margin: 0 }
+.atl-alerte-titre { font-size: 13.5px }
+.atl-alerte-detail { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); overflow-wrap: anywhere }
+.atl-taches { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column }
+.atl-taches li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; overflow-wrap: anywhere }
+.atl-taches small { color: var(--muted) }
+.atl-taches .atl-plus { color: var(--muted); font-size: 12px }
+.atl-coche { flex: 0 0 auto; width: 22px !important; height: 22px; min-height: 0 !important; min-width: 0 !important; padding: 0; display: grid; place-items: center; background: var(--surface-2); border: 1.5px solid var(--muted); border-radius: 6px; cursor: pointer }
+.atl-coche span { width: 10px; height: 10px; border-radius: 3px; background: transparent }
+.atl-coche:hover span { background: var(--ok) }
+.atl-faites { margin: 0; font-size: 12.5px; color: var(--muted) }
+.atl-faites b { color: var(--ok) }
+.atl-commandee { color: var(--warn); font-size: 12px }
+.atl-statut.retard b { color: var(--crit) }
+.atl-lien-bouton { align-self: flex-start; background: none; border: 0; padding: 4px 0; color: var(--muted); font-size: 12.5px; text-decoration: underline; cursor: pointer }
+.atl-commande-fiche, .atl-relance { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px }
+.atl-relance h3 { margin: 0; font-size: 14px }
+.atl-texte { width: 100%; resize: vertical; font: 13px/1.5 var(--font-body); padding: 8px 10px; border-radius: 8px }
+.atl-enregistrer { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin: 0; padding: 8px 10px 10px; border: 1px solid var(--line); border-radius: 10px }
+.atl-enregistrer legend { padding: 0 6px; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.atl-enregistrer label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted) }
+.atl-enregistrer input[type="date"], .atl-enregistrer input[type="text"] { padding: 5px 7px; font-size: 13px }
+.atl-enregistrer .atl-case { flex-direction: row; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 12.5px }
+.atl-plan-pied { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 4px }
+.atl-plan-pied .atl-av { margin-right: 0 }
+.atl-plan .atl-urg.liste { grid-column: 1 / -1 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .atl-brief { animation: atl-monte .25s var(--ease-out, ease-out) }
+  .atl-flash { animation: atl-monte .2s var(--ease-out, ease-out) }
+  .atl-carte, .atl-urg li button, .atl-coche span { transition: border-color .15s var(--ease-out, ease-out), background-color .15s var(--ease-out, ease-out), opacity .2s var(--ease-out, ease-out) }
+  @keyframes atl-monte { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+}
+
 /* — Repli 2D — */
 .atl-plan { padding: 14px; display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: auto }
 .atl-plan-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
@@ -116,12 +223,13 @@
 
 @media (max-width: 760px) {
   .atl[data-atelier-mode="2d"] .atl-cadre { min-height: 0 }
-  .atl[data-atelier-mode="3d"] .atl-cadre { min-height: 70vh }
+  .atl[data-atelier-mode="3d"] .atl-cadre { height: 70dvh; min-height: 420px }
+  .atl-urg.carte { display: none }
   .atl-panneau { position: fixed; inset: auto 0 0 0; width: 100%; max-height: 82vh; border-radius: var(--radius) var(--radius) 0 0 }
   .atl-filtres { margin-left: 0 }
 }
 @media (prefers-reduced-motion: no-preference) {
   .atl-panneau { animation: atl-entre .22s var(--ease-out, ease-out) }
-  .atl-filtres button, .atl-plan-objet, .atl-pastille { transition: background-color .15s var(--ease-out, ease-out), border-color .15s var(--ease-out, ease-out), opacity .2s var(--ease-out, ease-out) }
+  .atl-filtres button, .atl-plan-objet { transition: background-color .15s var(--ease-out, ease-out), border-color .15s var(--ease-out, ease-out), opacity .2s var(--ease-out, ease-out) }
   @keyframes atl-entre { from { opacity: 0; transform: translateX(12px) } to { opacity: 1; transform: none } }
 }

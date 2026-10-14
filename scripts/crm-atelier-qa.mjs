@@ -167,9 +167,10 @@ async function octetsThree(url, options = {}) {
   await page.locator('[data-atelier-objet="categorie:Raccords"]').click()
   T('I3 clic sur un rayonnage → panneau Inventaire, titre focalisé', (await page.locator('[data-atelier-panneau="categorie"] h2').innerText()) === 'Raccords' && await page.evaluate(() => document.activeElement?.id === 'atl-panneau-titre'))
   await page.getByRole('button', { name: 'Préparer la commande' }).click()
-  const qLaiton = await page.getByLabel('Quantité de Raccord laiton 20/27').inputValue()
+  // 15/10 : les raccords laiton sont déjà COMMANDÉS (CMD-2026-41, livraison en retard) : ils ne sont pas proposés une seconde fois.
+  const qLaiton = await page.getByLabel('Quantité de Raccord laiton 20/27').count()
   const qManchon = await page.getByLabel('Quantité de Manchon 32').inputValue()
-  T('I4 « Préparer la commande » : 16 raccords laiton (4 en stock, seuil 10), 6 manchons (2, seuil 4), rien d’envoyé', qLaiton === '16' && qManchon === '6' && /rien n’est envoyé d’ici/.test(await page.locator('.atl-commande').innerText()), `${qLaiton} ${qManchon}`)
+  T('I4 « Préparer la commande » : 6 manchons (2 en stock, seuil 4) ; les raccords laiton, déjà commandés, ne sont pas reproposés ; rien d’envoyé', qLaiton === 0 && qManchon === '6' && /déjà en commande/.test(await page.locator('.atl-commande').innerText()) && /rien n’est envoyé d’ici/.test(await page.locator('.atl-commande').innerText()), `${qLaiton} ${qManchon}`)
   await page.keyboard.press('Escape')
   T('I5 Échap ferme le panneau', (await page.locator('.atl-panneau').count()) === 0)
   // Clavier seul : Tab jusqu'au premier objet du plan, Entrée.
@@ -189,14 +190,14 @@ async function octetsThree(url, options = {}) {
   // 3D : la pastille d'un chantier ouvre le même panneau.
   await page.goto(`${DEMO}?mode=3d&mesure=1`, { waitUntil: 'load' })
   await pret3D(page)
-  await page.locator('.atl-pastille').first().click()
+  await page.locator('.atl-carte').first().click()
   T('I9 en 3D, cliquer l’épingle d’un chantier ouvre le même panneau', (await page.locator('[data-atelier-panneau="chantier"]').count()) === 1)
   if (CAPTURES) { await page.waitForTimeout(900); await page.screenshot({ path: path.join(CAPTURES, 'atelier-3d-panneau-chantier.png') }) }
   await page.keyboard.press('Escape')
   await page.locator('[data-atelier-filtre="stock_bas"]').click()
   await page.waitForTimeout(600)
   if (CAPTURES) await page.screenshot({ path: path.join(CAPTURES, 'atelier-3d-filtre-stock-bas.png') })
-  T('I10 en 3D, le filtre « Stock bas » se presse et compte 5 rayonnages', (await page.locator('[data-atelier-filtre="stock_bas"]').innerText()).trim().endsWith('5'))
+  T('I10 en 3D, le filtre « Stock bas » se presse et compte 6 MATÉRIAUX sous leur seuil (le chiffre du tableau de bord)', (await page.locator('[data-atelier-filtre="stock_bas"]').innerText()).trim().endsWith('6'))
 
   // ═══════════════════════ C. Contrastes ═══════════════════════
   const contrastes = async () => page.evaluate(() => {

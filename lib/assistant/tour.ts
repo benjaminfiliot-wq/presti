@@ -8,10 +8,11 @@
 import { REFUS_CREDIT, REFUS_PANNE, REFUS_PLAFOND, verdictTour } from './cadrage'
 import { JournalIndisponible, TourEchoue, type ResultatTour } from './boucle'
 import { LIBELLE_OUTIL, type NomOutil } from './outils'
+import type { CarteAction } from './cartes'
 
 export type EvenementTour =
   | { e: 'consulte'; outil: NomOutil; libelle: string }
-  | { e: 'fin'; texte: string; brouillons: ResultatTour['brouillons']; consultes: string[]; tour: number; restants: number; palier: string; chiffres_retires: number }
+  | { e: 'fin'; texte: string; brouillons: ResultatTour['brouillons']; cartes: CarteAction[]; consultes: string[]; tour: number; restants: number; palier: string; chiffres_retires: number }
   | { e: 'erreur'; message: string }
 
 export type DependancesTour = {
@@ -51,7 +52,7 @@ export async function preparerTour(d: DependancesTour): Promise<Preparation> {
       try {
         const r = await d.executer((nom) => envoyer({ e: 'consulte', outil: nom, libelle: LIBELLE_OUTIL[nom] }))
         const consultes = [...new Set(r.outilsAppeles.filter((o): o is NomOutil => o in LIBELLE_OUTIL).map((o) => LIBELLE_OUTIL[o]))]
-        envoyer({ e: 'fin', texte: r.texte, brouillons: r.brouillons, consultes, tour: v.tour, restants: v.restants, palier: d.palier, chiffres_retires: r.garde.retires.length })
+        envoyer({ e: 'fin', texte: r.texte, brouillons: r.brouillons, cartes: r.cartes, consultes, tour: v.tour, restants: v.restants, palier: d.palier, chiffres_retires: r.garde.retires.length })
       } catch (e) {
         // Abandon du client : ni panne signalée (elle masquerait une vraie panne une heure), ni crédit rendu.
         // Appels au modèle déjà facturés : le crédit et le tour restent pris. Sinon (panne avant tout appel abouti,

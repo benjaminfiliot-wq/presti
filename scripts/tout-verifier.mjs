@@ -125,7 +125,7 @@ const SUITES = [
   { nom: 'Écran « Ma plateforme → Intelligence »', cmd: 'node', args: ['scripts/plateforme-intelligence-e2e.mjs'], cout: 'navigateur' },
   // Comptabilité de l'artisan : Chromium isolé, données fictives, ni serveur ni base.
   { nom: 'Comptabilité — assistant IA : masquage, réponse de l’IA revalidée, fichiers en désordre rangés au centime', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/compta-assistant-qa.mjs'], cout: 'gratuit' },
-  { nom: 'Assistant de gestion (016 A1/A2) — outils stricts, boucle au faux modèle, journal, plafond, crédit, garde-fou des chiffres, drapeau', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/assistant-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Assistant de gestion (016 A1-A3) — outils de lecture et 28 actions (directes / à confirmer), cartes, confirmation atomique, tarifs de l’artisan, offre Signature, migration 0157 rejouée (PGlite si PGLITE_DIR) ; --live = comptes de test, --ia = vrai modèle (hors lanceur)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/assistant-qa.mjs'], cout: 'gratuit' },
   { nom: 'Comptabilité — import des classeurs Excel et CSV', cmd: 'node', args: ['scripts/compta-classeur-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableau de bord /chiffres : Presti + fichiers au centime, état vide sans exemple, parcours d’import, isolation', cmd: 'node', args: ['scripts/compta-tableau-qa.mjs'], cout: 'navigateur' },
   { nom: 'Comptabilité — tableur, totaux au centime et export .xlsx réimporté', cmd: 'node', args: ['scripts/compta-tableur-qa.mjs'], cout: 'navigateur' },
@@ -138,6 +138,9 @@ const SUITES = [
   // L'atelier 3D sur la page de démonstration interne (données fictives) : performance, repli 2D, interactions, contrastes.
   // Elle exige un serveur lancé avec PRESTI_DEMO_ATELIER=1 (TEST_BASE) ; sinon « en attente ».
   { nom: 'CRM — atelier 3D : perf, repli 2D, interactions, contrastes, captures', cmd: 'node', args: ['scripts/crm-atelier-qa.mjs'], cout: 'navigateur' },
+  // Temps réel du CRM (migration 0158) : deux comptes de test créés puis supprimés, un client écrit, l'autre reçoit l'évènement,
+  // aucune fuite entre comptes. Migration non appliquée : code 2 = « en attente » (jamais un faux vert).
+  { nom: 'CRM — temps réel : deux clients, l’un écrit, l’autre reçoit ; isolation entre comptes', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-temps-reel-qa.mjs'], cout: 'navigateur' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
   { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },

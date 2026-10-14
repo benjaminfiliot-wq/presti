@@ -107,7 +107,7 @@ var A_TEST = 'art-A'
   for (const plan of ['signature', 'business']) T(`B6 offre ${plan} → accès`, decisionAcces({ drapeau: true, session: sOk, plan }).ok)
   T('B7 la capacité crm : Signature et Business seulement', Object.keys(PLANS).filter((p) => peut(p, 'crm')).sort().join(',') === 'business,signature')
   // 13/10 soir — drapeau levé : la grille annonce le CRM, en Signature SEULEMENT (une ligne, Essentiel et Studio à « — »).
-  T('B8 la grille Tarifs annonce le CRM en Signature seulement', (() => { const l = GRILLE.filter((x) => /crm|chantier|atelier vivant/i.test(x.label)); return l.length === 1 && l[0].cellules.essentiel === false && l[0].cellules.studio === false && l[0].cellules.signature === true })())
+  T('B8 la grille Tarifs annonce le CRM en Signature seulement', (() => { const l = GRILLE.filter((x) => x.flag !== 'assistant' && /crm|chantier|atelier vivant/i.test(x.label)); return l.length === 1 && l[0].cellules.essentiel === false && l[0].cellules.studio === false && l[0].cellules.signature === true })())
 }
 
 // ═══════════════════════ C. Pipeline ═══════════════════════
@@ -313,7 +313,7 @@ const sansCommentaires = (s) => s.replace(/^\s*\/\/.*$/gm, '').replace(/(^|[^:'"
 const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: true }).flatMap((e) => e.isDirectory() ? lister(path.join(dir, e.name)) : [path.join(dir, e.name).replace(/\\/g, '/')])
 {
   const routes = lister('app/api/crm').filter((f) => f.endsWith('route.ts'))
-  T('G1 les routes attendues existent', ['vue', 'pipeline', 'chantiers', 'chantiers/[id]', 'chantiers/[id]/taches', 'chantiers/[id]/materiaux', 'taches/[id]', 'materiaux/[id]', 'vehicules', 'vehicules/[id]', 'equipe', 'equipe/[id]', 'notes', 'notes/[id]', 'clients'].every((r) => routes.includes(`app/api/crm/${r}/route.ts`)), routes.join(' '))
+  T('G1 les routes attendues existent', ['vue', 'pipeline', 'chantiers', 'chantiers/[id]', 'chantiers/[id]/taches', 'chantiers/[id]/materiaux', 'taches/[id]', 'materiaux/[id]', 'vehicules', 'vehicules/[id]', 'equipe', 'equipe/[id]', 'notes', 'notes/[id]', 'clients', 'commandes', 'commandes/[id]', 'commandes/[id]/relancer'].every((r) => routes.includes(`app/api/crm/${r}/route.ts`)), routes.join(' '))
   const fautes = []
   let handlers = 0, exportes = 0
   for (const f of routes) {
@@ -325,7 +325,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
     }
     if (/export (const|let|function) (?!GET|POST|PATCH|DELETE|runtime|dynamic|maxDuration)/.test(src)) fautes.push(`${f} : export non permis`)
   }
-  T(`G2 chaque gestionnaire (${handlers}) commence par gardeCrm (drapeau, session, offre) et s’arrête s’il refuse`, handlers === exportes && handlers >= 26 && fautes.length === 0, fautes.join(' · ') + ` (${handlers}/${exportes})`)
+  T(`G2 chaque gestionnaire (${handlers}) commence par gardeCrm (drapeau, session, offre) et s’arrête s’il refuse`, handlers === exportes && handlers >= 44 && fautes.length === 0, fautes.join(' · ') + ` (${handlers}/${exportes})`)
   // Audit d'attaque du 12/10 : GET /api/crm/pipeline répondait 405 (Next.js, méthode absente) AVANT la garde, à un compte
   // hors essai qui devait recevoir 404. Chaque route sert maintenant les six méthodes, toutes par la garde, puis 405.
   const incompletes = routes.filter((f) => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'].some((m) => !lire(f).includes(`export async function ${m}(`)))
@@ -344,7 +344,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
       const bloc = src.slice(m.index, Math.min(fin, m.index + 700))
       const table = m[2] ?? m[3]
       if (table === 'devis_lignes') { if (!/\.eq\('devis_id', (devis\.id|champs\.devis_id)\)/.test(bloc)) sansFiltre.push(`${f} devis_lignes`) ; return }
-      if (table === 'artisans') { if (!/\.eq\('id', session\.uid\)/.test(bloc)) sansFiltre.push(`${f} artisans`); return }
+      if (table === 'artisans') { if (!/\.eq\('id', (session|g)\.uid\)/.test(bloc)) sansFiltre.push(`${f} artisans`); return }
       if (m[3]) { if (!/p_artisan: g\.uid/.test(bloc)) sansFiltre.push(`${f} rpc ${table}`); return }
       if (!/\.eq\('artisan_id', (g\.)?uid\)|artisan_id: g\.uid/.test(bloc)) sansFiltre.push(`${f} ${table}@${m.index}`)
     })
@@ -503,7 +503,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   T('I1 un bâtiment par chantier ouvert ou à facturer ; ni annulé ni payé', egal(par('chantier').map((o) => o.ref), ['c1', 'c2', 'c3', 'c6']))
   T('I2 une camionnette par véhicule ACTIF, un personnage par membre ACTIF', egal(par('vehicule').map((o) => o.ref), ['v1']) && egal(par('membre').map((o) => o.ref), ['m1', 'm2']))
   T('I3 un rayonnage par catégorie (sans catégorie comprise), triés', egal(par('categorie').map((o) => o.ref), ['Raccords', 'Sans catégorie', 'Tubes']))
-  T('I4 un rayonnage sous son seuil pulse ; seuil 0 = pas suivi', sc.pulse.length === 2 && par('categorie').find((o) => o.ref === 'Tubes').etat.stockBas === false && par('categorie').find((o) => o.ref === 'Raccords').etat.stockBas)
+  T('I4 un rayonnage sous son seuil pulse ; seuil 0 = pas suivi', sc.pulse.filter((p) => sc.objets[p.o]?.type === 'categorie').length === 2 && par('categorie').find((o) => o.ref === 'Tubes').etat.stockBas === false && par('categorie').find((o) => o.ref === 'Raccords').etat.stockBas)
   T('I5 accueil : un colis par demande, celle du jour allume « Aujourd’hui »', par('accueil')[0].etat.aujourdhui && /2 nouvelles demandes/.test(par('accueil')[0].detail))
   const c1 = par('chantier').find((o) => o.ref === 'c1')
   T('I6 chantier en retard : épingle corail foncé, « En retard · 2 j », allumé « Aujourd’hui » et « En retard »', c1.epingle === At.COULEURS.corailFonce && /En retard · 2 j/.test(c1.detail) && c1.etat.retard && c1.etat.aujourdhui)
@@ -586,6 +586,266 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   T('R10 recette : la visite guidée ne part pas d’elle-même sur /crm, et un clic hors de sa carte la ferme', /!\/\^\\\/crm\(\\\/\|\$\)\/\.test\(window\.location\.pathname\)/.test(lire('app/AppShell.tsx')) && /className="visite-fond" aria-hidden="true" onClick=\{\(\) => fin\.current\(false\)\}/.test(lire('app/Visite.tsx')))
   T('R11 recette : les six colonnes du pipeline tiennent dans 1 000 px (Payé n’est plus coupée à 1 440 px d’écran)', /\.crm-pipeline \{ display: grid; grid-template-columns: repeat\(6, minmax\(158px, 1fr\)\)/.test(lire('app/crm/crm.css')) && 6 * 158 + 5 * 10 <= 1000)
   T('R12 recette : la maquette 3D se précharge pendant la lecture des données (même morceau que next/dynamic), et le test WebGL attend que la lecture soit partie', /export function prechargerScene3D\(\) \{[\s\S]{0,400}void import\('\.\/Scene3D'\)\s*window\.setTimeout\(\(\) => \{ try \{ detecter\(\) \}/.test(lire('app/crm/atelier/Atelier.tsx')) && /prechargerScene3D\(\)/.test(lire('app/crm/page.tsx')))
+}
+
+// ═══════════════════════ J. Alertes, urgences, briefing (lib/crm/alertes.ts) — 15/10 ═══════════════════════
+const Al = await imp('lib/crm/alertes.ts')
+const Co = await imp('lib/crm/commandes.ts')
+const Tr = await imp('lib/crm/tempsReel.ts')
+const Pg = await imp('lib/crm/pages.ts')
+const Vu = await imp('lib/crm/vue.ts')
+const At2 = await imp('lib/crm/atelier.ts')
+{
+  const J = '2026-10-12'
+  const tch = (total, faites, ouvertes = []) => ({ total, faites, faitesAujourdhui: 0, ouvertes })
+  const chA = (id, statut, etape, extra = {}) => ({ id, titre: `Chantier ${id}`, client: null, statut, etape, avancement: null, date_debut: null, date_fin_prevue: null, vehicule_id: null, equipe: ['m1'], ...extra })
+  const matA = (id, reste, seuil, extra = {}) => ({ id, nom: `Mat ${id}`, unite: 'u', categorie: 'Cat', reste, seuil, fournisseur: null, fournisseur_contact: null, prix_vu_ht: null, prix_vu_le: null, ...extra })
+  const cmd = (id, statut, livraison, lignes, extra = {}) => ({ id, fournisseur: 'Négoce', contact: 'cmd@negoce.test', reference: `CMD-${id}`, statut, commandee_le: '2026-10-01', livraison_prevue: livraison, recue_le: statut === 'recue' ? '2026-10-05' : null, chantier_id: null, lignes: lignes.map((m) => ({ materiau_id: m, nom: `Mat ${m}`, quantite: 5, unite: 'u' })), relances: 0, relance_le: null, note: null, ...extra })
+  const D = {
+    jour: J, metier: null,
+    chantiers: [
+      chA('c1', 'en_cours', 'chantier', { date_fin_prevue: '2026-10-10', avancement: 25, taches: tch(4, 1, [{ id: 't1', libelle: 'Poser', membre_id: null }]) }), // retard 2
+      chA('c2', 'en_cours', 'chantier', { date_fin_prevue: '2026-10-20', equipe: [] }),                                                                // sans équipe
+      chA('c3', 'termine', 'a_facturer'),                                                                                                               // à facturer
+      chA('c4', 'en_cours', 'paye', { date_fin_prevue: '2026-10-09' }),                                                                                // payé mais EN COURS et en retard (3 j) : doit rester visible
+      chA('c5', 'termine', 'paye'), chA('c6', 'annule', 'classe'),                                                                                      // invisibles
+      chA('c7', 'planifie', 'signe', { date_debut: '2026-10-12' }),
+    ],
+    materiaux: [matA('a', 1, 4), matA('b', 10, 4), matA('d', 0, 2), matA('e', 3, 3), matA('f', 9, 0)],
+    reservations: [{ chantier_id: 'c1', materiau_id: 'a', quantite: 3 }, { chantier_id: 'c2', materiau_id: 'b', quantite: 2 }, { chantier_id: 'c7', materiau_id: 'd', quantite: 1 }],
+    commandes: [cmd('K1', 'commandee', '2026-10-09', ['d'], { chantier_id: 'c7' }), cmd('K2', 'commandee', J, ['e']), cmd('K3', 'recue', '2026-10-01', ['a']), cmd('K4', 'annulee', '2026-10-01', ['a'])],
+    commandesDisponibles: true,
+    vehicules: [], membres: [{ id: 'm1', nom: 'Marc', role: 'artisan', actif: true }],
+    demandes: [{ id: 'l1', titre: 'D1', client: null, recue_le: J }, { id: 'l2', titre: 'D2', client: null, recue_le: '2026-10-01' }],
+  }
+  const R = Al.calculerAlertes(D)
+  const cles = R.alertes.map((a) => a.cle)
+  T('J1 alertes : retard (même règle que le tableau), livraison en retard, stock insuffisant, à facturer, sans équipe, attendue — dans l’ordre de gravité puis d’ancienneté',
+    egal(cles, ['livraison:K1', 'retard:c4', 'retard:c1', 'stock:c1', 'facturer:c3', 'sans_equipe:c2', 'attendue:K2']), cles.join(' '))
+  T('J2 un chantier PAYÉ mais encore EN COURS et en retard reste visible et compté (il l’est au tableau de bord) ; terminé-payé et annulé : non',
+    Al.chantierVisible({ statut: 'en_cours', etape: 'paye' }) && !Al.chantierVisible({ statut: 'termine', etape: 'paye' }) && !Al.chantierVisible({ statut: 'annule', etape: 'classe' }) && R.alertes.some((a) => a.cle === 'retard:c4' && a.jours === 3))
+  T('J3 les chiffres du jour : 2 retards, 1 livraison en retard, 1 attendue, 3 matériaux sous le seuil, 1 à facturer, 1 sans équipe, 4 urgences critiques, 2 demandes dont 1 du jour',
+    egal(R.chiffres, { retards: 2, livraisonsEnRetard: 1, livraisonsAttendues: 1, stockBas: 3, aFacturer: 1, sansEquipe: 1, demandes: 2, demandesDuJour: 1, critiques: 4 }), JSON.stringify(R.chiffres))
+  const sc = R.alertes.find((a) => a.cle === 'stock:c1')
+  T('J4 stock insuffisant : le matériau réservé (reste 1 < réservé 3) est critique et nommé ; un matériau déjà COMMANDÉ n’est pas relancé deux fois (d : commande K1 en cours)', sc?.gravite === 'critique' && /Mat a : reste 1 u \(seuil 4\), réservé 3/.test(sc.detail) && !R.alertes.some((a) => a.cle === 'stock:c7') && !R.alertes.some((a) => a.cle === 'stock:c2'))
+  const k1 = R.alertes.find((a) => a.cle === 'livraison:K1')
+  T('J5 livraison en retard : rattachée au chantier de la commande, 3 jours, commande identifiée ; recue / annulée : jamais d’alerte ; attendue aujourd’hui : info', k1?.chantierIds.join() === 'c7' && k1.jours === 3 && k1.commandeId === 'K1' && !cles.some((c) => /K3|K4/.test(c)) && R.alertes.find((a) => a.cle === 'attendue:K2')?.gravite === 'info')
+  const sansReserv = Al.calculerAlertes({ ...D, reservations: [], commandes: [cmd('K1', 'commandee', '2026-10-09', ['d'])] })
+  T('J6 une commande sans chantier ni matériau réservé n’est rattachée à aucun chantier mais reste une urgence', sansReserv.alertes.find((a) => a.cle === 'livraison:K1')?.chantierIds.length === 0 && Al.urgencesDuJour({ ...D, reservations: [], commandes: [cmd('K1', 'commandee', '2026-10-09', ['d'])] }).some((u) => u.type === 'livraison'))
+  const sans = Al.calculerAlertes({ ...D, commandes: undefined, reservations: undefined })
+  T('J7 sans commande enregistrée ni réservation : aucune livraison en retard ni stock de chantier n’est inventé', !sans.alertes.some((a) => ['livraison', 'attendue', 'stock'].includes(a.type)) && sans.chiffres.livraisonsEnRetard === 0)
+  const relancee = Al.calculerAlertes({ ...D, commandes: [cmd('K1', 'commandee', '2026-10-09', ['d'], { chantier_id: 'c7', relances: 2, relance_le: '2026-10-11T22:30:00.000Z' })] }).alertes.find((a) => a.cle === 'livraison:K1')
+  T('J7b une livraison déjà relancée le dit : « Relancé 2 fois, dernière relance le 12/10/2026 » (jour de Paris : 22 h 30 UTC le 11 = le 12)', /Relancé 2 fois, dernière relance le 12\/10\/2026/.test(relancee?.detail ?? ''), relancee?.detail)
+  const U = Al.urgencesDuJour(D, R)
+  const g = U.find((u) => u.type === 'stock_global'), dm = U.find((u) => u.type === 'demandes')
+  T('J8 urgences du jour : les alertes, puis « 3 matériaux sous le seuil (dont 2 déjà commandés) » et « 2 nouvelles demandes » ; la plus grave d’abord ; chaque ligne dit où aller',
+    U.length === R.alertes.length + 2 && /^3 matériaux sous le seuil/.test(g?.titre) && /2 déjà commandés/.test(g.detail) && /^2 nouvelles demandes/.test(dm?.titre) && U[0].gravite === 'critique' && U.slice(0, 4).every((u) => u.gravite === 'critique')
+      && U.find((u) => u.cle === 'retard:c1').objetCle === 'chantier:c1' && dm.objetCle === 'accueil' && g.objetCle === 'categorie:Cat', JSON.stringify(U.map((u) => [u.cle, u.gravite])))
+  const B = Al.construireBriefing(D)
+  T('J9 briefing : un résumé de la journée, puis chaque chantier qui demande de l’attention (urgents d’abord), le dépôt, l’accueil ; mêmes données = même briefing',
+    B[0].cle === 'resume' && /4 urgences/.test(B[0].texte) && egal(B.slice(1, 6).map((e) => e.cle).sort(), ['chantier:c1', 'chantier:c2', 'chantier:c3', 'chantier:c4', 'chantier:c7']) && B.at(-2).cle === 'depot' && B.at(-1).cle === 'accueil' && B.slice(1, 4).every((e) => e.gravite === 'critique') && egal(B, Al.construireBriefing(D)), B.map((e) => e.cle).join(' '))
+  T('J10 briefing : un objet absent de la maquette n’est pas visé (la caméra ne bouge pas), le texte est quand même lu', Al.construireBriefing(D, () => false).every((e) => e.objetCle === null) && Al.construireBriefing(D, () => false)[1].texte.length > 10)
+  // La maquette porte ces alertes : badges, équipe, terrain qui pulse, palette de livraison attendue.
+  const scene = At2.construireScene(D)
+  const o = (k) => scene.objets.find((x) => x.cle === k)
+  T('J11 maquette : les badges du chantier viennent des alertes (c1 : retard + stock + tâches 1/4) ; l’équipe est celle des membres actifs affectés', egal(o('chantier:c1').badges.map((b) => b.libelle), ['Retard 2 j', 'Stock à compléter', '1/4 tâches']) && egal(o('chantier:c1').info.equipe.map((m) => m.nom), ['Marc']) && o('chantier:c2').info.equipe.length === 0 && o('chantier:c2').badges.some((b) => b.type === 'sans_equipe'))
+  T('J12 maquette : le chantier payé-en-cours (c4) est posé et en retard ; terminé-payé et annulé ne le sont pas', !!o('chantier:c4')?.etat.retard && !o('chantier:c5') && !o('chantier:c6') && o('chantier:c3').etat.aFacturer && o('chantier:c3').detail === 'Terminé · à facturer')
+  const ligne = (k) => scene.instances.box.filter((b) => b.o === scene.objets.findIndex((x) => x.cle === k)).length
+  T('J13 maquette : la palette de livraison attendue ne se pose que sur le chantier en retard de livraison (c7) ; le terrain pulse sous une urgence (c1, c4, c7), pas sous un chantier calme',
+    ligne('chantier:c7') > ligne('chantier:c3') + 4 && scene.pulse.filter((p) => scene.objets[p.o]?.type === 'chantier').map((p) => scene.objets[p.o].ref).sort().join() === 'c1,c4,c7')
+  T('J14 maquette : « Livraisons » allume c7 seulement ; les chiffres des filtres sont ceux des urgences (retard 2, livraisons 1, à facturer 1, stock bas 3 = MATÉRIAUX et non rayonnages)',
+    egal([...At2.objetsAllumes(scene.objets, 'livraison')].map((i) => scene.objets[i].cle), ['chantier:c7']) && egal(At2.chiffresFiltres(scene, D), { aujourdhui: At2.compteFiltres(scene.objets).aujourdhui, retard: 2, livraison: 1, a_facturer: 1, stock_bas: 3 }))
+  const roads = scene.instances.box.filter((b) => b.o === -1 && b.c === '#DDD5C7').length
+  T('J15 maquette : des routes entre les parcelles, mais le cadrage de la caméra ne dépend que de ce qui est posé (la ville décorative n’élargit pas les bornes)', roads > 20 && scene.bornes.min[0] > -30 && scene.bornes.max[0] < 60, `${roads} routes ; bornes ${JSON.stringify(scene.bornes)}`)
+}
+
+// ═══════════════════════ K. Commandes fournisseur (lib/crm/commandes.ts + routes) — 15/10 ═══════════════════════
+{
+  const J = '2026-10-12'
+  const c = (statut, liv, extra = {}) => ({ id: 'x', fournisseur: 'F', contact: null, reference: 'R1', statut, commandee_le: '2026-10-01', livraison_prevue: liv, recue_le: null, chantier_id: null, lignes: [{ materiau_id: null, nom: 'Tube', quantite: 12.5, unite: 'm' }], relances: 0, relance_le: null, note: null, ...extra })
+  T('K1 retard : « commandée » + livraison STRICTEMENT passée ; aujourd’hui = attendue, pas en retard ; reçue, annulée ou à venir : jamais',
+    Co.retardLivraison(c('commandee', '2026-10-09'), J) === 3 && Co.retardLivraison(c('commandee', J), J) === 0 && Co.attendueAujourdhui(c('commandee', J), J) && Co.retardLivraison(c('recue', '2026-10-01'), J) === 0 && Co.retardLivraison(c('annulee', '2026-10-01'), J) === 0 && Co.retardLivraison(c('commandee', '2026-10-13'), J) === 0 && Co.enRetard(c('commandee', '2026-10-11'), J) && Co.retardLivraison(c('commandee', '2026-09-30'), J) === 12)
+  const ok = Co.validerCommande({ fournisseur: ' Négoce Nord ', contact: 'cmd@negoce.test', livraison_prevue: '2026-10-20', lignes: [{ nom: 'Tube', quantite: '12,5', unite: 'm', materiau_id: U(7) }] }, J)
+  T('K2 création : valeurs nettoyées (« 12,5 » lu 12.5, fournisseur sans espaces), date de commande par défaut = jour', ok.ok && ok.valeur.fournisseur_nom === 'Négoce Nord' && ok.valeur.lignes[0].quantite === 12.5 && ok.valeur.commandee_le === null && ok.valeur.livraison_prevue === '2026-10-20', JSON.stringify(ok))
+  const bad = (b) => !Co.validerCommande(b, J).ok
+  const ligne1 = [{ nom: 'Tube', quantite: 1 }]
+  T('K3 création refusée (pas corrigée) : champ inconnu, sans livraison, livraison avant la commande, 0 ou 51 lignes, quantité 0, matériau mal formé, date inexistante, artisan_id',
+    bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: ligne1, artisan_id: U(1) }) && bad({ fournisseur: 'F', lignes: ligne1 }) && bad({ fournisseur: 'F', livraison_prevue: '2026-10-05', lignes: ligne1 }) && bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', commandee_le: '2026-10-25', lignes: ligne1 })
+      && bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: [] }) && bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: Array.from({ length: 51 }, () => ligne1[0]) }) && Co.validerCommande({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: Array.from({ length: 50 }, () => ligne1[0]) }, J).ok
+      && bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: [{ nom: 'T', quantite: 0 }] }) && bad({ fournisseur: 'F', livraison_prevue: '2026-10-20', lignes: [{ nom: 'T', quantite: 1, materiau_id: "1' or '1'='1" }] }) && bad({ fournisseur: 'F', livraison_prevue: '2026-02-31', lignes: ligne1 }) && bad({ fournisseur: '', livraison_prevue: '2026-10-20', lignes: ligne1 }))
+  const m = Co.validerModificationCommande
+  T('K4 modification : UNE chose (reçue avec ou sans stock, annuler, nouvelle date) ; combinaison, action inconnue, champ inconnu, date inexistante : refusés',
+    egal(m({ action: 'recue' }).valeur, { action: 'recue', entrer_en_stock: false }) && egal(m({ action: 'recue', entrer_en_stock: true }).valeur, { action: 'recue', entrer_en_stock: true }) && m({ action: 'annuler' }).ok && egal(m({ livraison_prevue: '2026-10-30' }).valeur, { livraison_prevue: '2026-10-30' })
+      && !m({ action: 'annuler', livraison_prevue: '2026-10-30' }).ok && !m({ action: 'supprimer' }).ok && !m({ statut: 'recue' }).ok && !m({ livraison_prevue: '2026-13-01' }).ok && !m({ action: 'recue', entrer_en_stock: 'oui' }).ok && !m({}).ok)
+  const rl = Co.validerRelance
+  T('K5 relance : SANS `confirmer: true` rien ne part ; message obligatoire, 2 000 caractères au plus ; champ inconnu refusé', !rl({ message: 'x' }).ok && !rl({ message: 'x', confirmer: 'true' }).ok && rl({ message: 'x', confirmer: true }).ok && !rl({ message: '', confirmer: true }).ok && !rl({ message: 'x'.repeat(2001), confirmer: true }).ok && !rl({ message: 'x', confirmer: true, to: 'a@b.fr' }).ok)
+  const t = Co.texteRelance(c('commandee', '2026-10-09'), J, null)
+  T('K6 message de relance préparé : la commande, la date annoncée, le retard, les lignes ; aucun prix, aucune promesse, aucune donnée de client', /commande R1 passée le 01\/10\/2026/.test(t) && /annoncée pour le 09\/10\/2026/.test(t) && /3 jours de retard/.test(t) && /- 12,5 m · Tube/.test(t) && !/€|prix|remise|client/i.test(t) && /Pouvez-vous me confirmer la date de livraison/.test(t))
+  T('K7 adresse e-mail plausible ou téléphone plausible dans le contact libre ; sinon rien (aucun envoi sans adresse)', Co.adresseMail(' cmd@negoce.test ') === 'cmd@negoce.test' && Co.adresseMail('02 40 00 00 00') === null && Co.adresseMail('a@b') === null && Co.telephone('02 40 00 00 00') === '02 40 00 00 00' && Co.telephone('cmd@negoce.test') === null)
+  const lig = Co.commandeDeLigne({ id: 'i', statut: 'commandee', livraison_prevue: '2026-10-09', fournisseur_nom: 'F', lignes: [{ nom: 'A', quantite: '2' }, { nom: '', quantite: 1 }, { nom: 'B', quantite: 0 }, 'x', { nom: 'C', quantite: 3, unite: 'm', materiau_id: 'm1' }], relances: '2' })
+  T('K8 lecture de la base : une ligne illisible est écartée (jamais devinée), un statut inconnu ne donne aucune commande', lig.lignes.length === 2 && lig.lignes[0].unite === 'u' && lig.lignes[1].materiau_id === 'm1' && lig.relances === 2 && Co.commandeDeLigne({ id: 'i', statut: 'perdue', livraison_prevue: '2026-10-09', fournisseur_nom: 'F' }) === null)
+  // Le code : les routes, la confirmation, l'atomicité.
+  const rl_ = sansCommentaires(lire('app/api/crm/commandes/[id]/relancer/route.ts')), pa_ = sansCommentaires(lire('app/api/crm/commandes/[id]/route.ts')), po_ = sansCommentaires(lire('app/api/crm/commandes/route.ts'))
+  T('K9 la route de relance : message et confirmation validés AVANT toute lecture ; commande relue pour la session ; sans adresse → 422 ; une relance par heure (prise conditionnelle AVANT l’envoi, rendue si l’envoi échoue) ; le texte envoyé est celui de la requête',
+    rl_.indexOf('validerRelance(corps.valeur)') > 0 && rl_.indexOf('validerRelance(corps.valeur)') < rl_.indexOf("from('commandes_fournisseur')") && /\.eq\('id', id\)\.eq\('artisan_id', g\.uid\)\.maybeSingle\(\)/.test(rl_) && /status|422/.test(rl_) && /code: 'sans_adresse'/.test(rl_)
+      && rl_.indexOf(".or(`relance_le.is.null,relance_le.lt.") > 0 && rl_.indexOf(".or(`relance_le.is.null,relance_le.lt.") < rl_.indexOf('await sendEmail(') && /text: v\.valeur\.message/.test(rl_) && /relances: c\.relances, relance_le: c\.relance_le/.test(rl_) && /transactionnel: true/.test(rl_) && /consommerLimite\(`crm-relance:\$\{g\.uid\}`, 10, 86_400\)/.test(rl_))
+  T('K10 réception : la commande est PRISE sous condition de statut (une seule ligne mise à jour) avant l’entrée en stock, qui passe par appliquer_mouvement du compte ; aucune autre route n’appelle l’envoi',
+    pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") > 0 && pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") < pa_.indexOf("rpc('appliquer_mouvement'") && /p_artisan: g\.uid/.test(pa_) && /p_type: 'entree'/.test(pa_) && !/sendEmail/.test(pa_) && !/sendEmail/.test(po_) && lister('app/api/crm').filter((f) => /sendEmail/.test(sansCommentaires(lire(f)))).join() === 'app/api/crm/commandes/[id]/relancer/route.ts')
+  T('K11 création : le chantier, le fournisseur et chaque matériau sont relus POUR LA SESSION avant l’insertion ; table absente → message clair (503), jamais un faux « aucune commande »',
+    /chantierDe\(g\.uid, c\.chantier_id\)/.test(po_) && /from\('fournisseurs'\)\.select\('id'\)\.eq\('id', c\.fournisseur_id\)\.eq\('artisan_id', g\.uid\)/.test(po_) && /from\('materiaux'\)\.select\('id'\)\.in\('id', ids\)\.eq\('artisan_id', g\.uid\)/.test(po_) && /MANQUE_MIGRATION/.test(po_)
+      && /tableAbsente/.test(lire('lib/crm/serveur.ts')) && /commandesDisponibles: !tableAbsente/.test(lire('lib/crm/serveur.ts')))
+  const ui = lire('app/crm/atelier/Commande.tsx')
+  T('K12 écran : « Relancer le fournisseur » prépare un message modifiable ; l’e-mail ne part qu’au clic « Envoyer l’e-mail à … » (corps `confirmer: true`) ; sans adresse : copier le message, jamais d’envoi ; c’est le seul appel de /relancer',
+    /Envoyer l’e-mail à \$\{mail\}/.test(ui) && /body: \{ message, confirmer: true \}/.test(ui) && /\{mail && <button[^>]*onClick=\{\(\) => void envoyer\(\)\}/.test(ui) && /Aucune adresse e-mail enregistrée pour ce fournisseur : copiez le message/.test(ui) && /<textarea/.test(ui)
+      && [...lister('app/crm'), ...lister('lib/crm')].filter((f) => /\/relancer/.test(sansCommentaires(lire(f))) && /\.(tsx?|ts)$/.test(f)).join() === 'app/crm/atelier/Commande.tsx', '')
+  const pan = lire('app/crm/atelier/Panneau.tsx')
+  T('K13 panneau du chantier : « Relancer le fournisseur » et « Ouvrir la commande » sur une livraison en retard ; « Préparer la commande » sur un stock à compléter ; tâches ouvertes cochables (PATCH /api/crm/taches/[id]) ; équipe sur place ; urgences et alertes',
+    /Relancer le fournisseur/.test(pan) && /Ouvrir la commande/.test(pan) && /Préparer la commande/.test(pan) && /\/api\/crm\/taches\/\$\{id\}`, \{ method: 'PATCH', body: \{ faite: true \}/.test(pan) && /Sur place aujourd’hui/.test(pan) && /Urgences et alertes/.test(pan) && /Tâches ouvertes/.test(pan))
+}
+
+// ═══════════════════════ L. « Deux chiffres, un écran » : le même calcul partout, sur 300 comptes tirés au hasard ═══════════════════════
+{
+  const prng = (graine) => () => { graine |= 0; graine = (graine + 0x6D2B79F5) | 0; let t = Math.imul(graine ^ (graine >>> 15), 1 | graine); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+  const MAINT = new Date('2026-10-12T08:30:00.000Z'), JOUR = '2026-10-12'
+  const jourDec = (n) => { const d = new Date(Date.UTC(2026, 9, 12 + n)); return d.toISOString().slice(0, 10) }
+  const generer = (graine) => {
+    const r = prng(graine), pick = (l) => l[Math.floor(r() * l.length)], ent = (a, b) => a + Math.floor(r() * (b - a + 1)), uid = 'U'
+    const devis = Array.from({ length: ent(0, 14) }, (_, i) => {
+      const statut = pick(['brouillon', 'envoye', 'accepte', 'accepte', 'accepte', 'refuse', 'expire'])
+      const mois = pick([JOUR, '2026-10-03', '2026-09-20', '2026-08-15'])
+      return { id: `D${i}`, artisan_id: uid, lead_id: null, statut, numero: `D-${i}`, objet: `Objet ${i}`, client_nom: `Client ${ent(1, 6)}`, client_email: null, client_adresse: null, total_ttc: ent(100, 9000) + (r() < 0.5 ? 0.5 : 0), acompte_pct: 0, date_emission: mois, envoye_le: `${mois}T09:00:00.000Z`, accepte_le: statut === 'accepte' ? `${mois}T09:00:00.000Z` : null, created_at: `${mois}T08:00:00.000Z`, validite_jours: 30 }
+    })
+    const factures = devis.filter((d) => d.statut === 'accepte').flatMap((d, i) => Array.from({ length: ent(0, 2) }, (_, k) => ({ id: `F${i}-${k}`, artisan_id: uid, devis_id: d.id, numero: `F-${i}-${k}`, statut: pick(['emise', 'payee', 'annulee', 'brouillon']), total_ttc: r() < 0.5 ? d.total_ttc : Math.round(d.total_ttc * 30) / 100, avoir_de: null, date_emission: '2026-10-05', date_echeance: null, client_nom: d.client_nom })))
+    const leads = Array.from({ length: ent(0, 8) }, (_, i) => ({ id: `L${i}`, artisan_id: uid, statut: pick(['nouveau', 'repondu', 'en_discussion', 'gagne', 'perdu']), nom_prospect: `Prospect ${i}`, contact: null, canal: 'page', type_chantier: `Travaux ${i}`, ville: null, created_at: `${pick([JOUR, '2026-10-10', '2026-09-01'])}T07:00:00.000Z` }))
+    const chantiers = []
+    devis.filter((d) => d.statut === 'accepte').forEach((d, i) => { if (r() < 0.75) chantiers.push({ id: `C${i}`, artisan_id: uid, devis_id: d.id, client_nom: null, titre: `Chantier ${i}`, adresse: null, code_postal: null, ville: null, statut: pick(['a_planifier', 'planifie', 'en_cours', 'en_cours', 'en_pause', 'termine', 'annule']), date_debut: r() < 0.8 ? jourDec(ent(-12, 4)) : null, date_fin_prevue: r() < 0.8 ? jourDec(ent(-8, 12)) : null, date_fin_reelle: null, vehicule_id: null, notes: null, cree_le: '2026-09-01T09:00:00.000Z', maj_le: '2026-09-01T09:00:00.000Z' }) })
+    for (let i = 0; i < ent(0, 2); i++) chantiers.push({ id: `S${i}`, artisan_id: uid, devis_id: null, client_nom: `Client sans devis ${i}`, titre: `Dépannage ${i}`, adresse: null, code_postal: null, ville: null, statut: pick(['a_planifier', 'en_cours', 'termine', 'annule']), date_debut: null, date_fin_prevue: r() < 0.5 ? jourDec(ent(-5, 5)) : null, date_fin_reelle: null, vehicule_id: null, notes: null, cree_le: '2026-09-02T09:00:00.000Z', maj_le: '2026-09-02T09:00:00.000Z' })
+    const taches = chantiers.flatMap((c) => Array.from({ length: ent(0, 11) }, (_, k) => { const faite = r() < 0.5; return { id: `T${c.id}-${k}`, chantier_id: c.id, faite, libelle: `Tâche ${k}`, faite_le: faite ? `${pick([JOUR, '2026-10-08'])}T07:00:00.000Z` : null, membre_id: null, ordre: k } }))
+    const materiaux = Array.from({ length: ent(0, 12) }, (_, i) => ({ id: `M${i}`, artisan_id: uid, nom: `Matériau ${i}`, unite: 'u', categorie: pick(['A', 'B', null, 'C']), seuil_alerte: r() < 0.5 ? 0 : ent(1, 10), fournisseur_prefere: null, prix_vu_ht: null, prix_vu_le: null, stock: Array.from({ length: ent(0, 2) }, () => ({ lieu: pick(['atelier', 'camion']), quantite: ent(0, 12) + (r() < 0.3 ? 0.25 : 0) })), fournisseur: null }))
+    const reservations = chantiers.flatMap((c) => materiaux.filter(() => r() < 0.2).map((m) => ({ chantier_id: c.id, materiau_id: m.id, quantite: ent(1, 6), statut: 'reserve' })))
+    const commandes = Array.from({ length: ent(0, 4) }, (_, i) => ({ id: `K${i}`, fournisseur: 'F', contact: null, reference: null, statut: pick(['commandee', 'commandee', 'recue', 'annulee']), commandee_le: '2026-09-25', livraison_prevue: jourDec(ent(-6, 6)), recue_le: null, chantier_id: null, lignes: materiaux.slice(0, ent(1, 3)).map((m) => ({ materiau_id: m.id, nom: m.nom, quantite: 5, unite: 'u' })), relances: 0, relance_le: null, note: null }))
+    const membres = Array.from({ length: ent(0, 5) }, (_, i) => ({ id: `Mb${i}`, nom: `Membre ${i}`, role: pick(['artisan', 'compagnon', 'apprenti']), actif: r() < 0.85 }))
+    const equipe = chantiers.flatMap((c) => membres.filter(() => r() < 0.3).map((m) => ({ chantier_id: c.id, membre_id: m.id })))
+    return { devis, factures, leads, chantiers, taches, materiaux, deplacements: [], carnet: [], vehicules: [], membres, equipe, reservations, commandes, commandesDisponibles: true, tronque: false }
+  }
+  const mauvais = []
+  let comptes = 0, avecRetardPaye = 0, avecLivraison = 0
+  for (let graine = 1; graine <= 300; graine++) {
+    const d = generer(graine)
+    const v = Vu.construireVue({ uid: 'U', metier: 'plombier', d, maintenant: MAINT, idDe: (k) => k })
+    const a = v.atelier, R = Al.calculerAlertes(a), sc = At2.construireScene(a)
+    const e = (msg) => mauvais.push(`#${graine} ${msg}`)
+    comptes++
+    // 1. Retards : le tableau de bord et la carte comptent les mêmes chantiers.
+    const tRetard = v.tableau.chantiers?.enRetard?.nombre ?? 0
+    if (R.chiffres.retards !== tRetard) e(`retards carte ${R.chiffres.retards} ≠ tableau ${tRetard}`)
+    // 2. Stock bas : même règle (seuil > 0 et quantité totale ≤ seuil).
+    if (R.chiffres.stockBas !== (v.tableau.stockBas?.nombre ?? 0)) e(`stock bas carte ${R.chiffres.stockBas} ≠ tableau ${v.tableau.stockBas?.nombre ?? 0}`)
+    // 3. Tâches : la liste des chantiers et la carte portent les mêmes comptes.
+    for (const c of v.chantiers) {
+      const x = a.chantiers.find((y) => y.id === c.id)
+      if (!x || x.avancement !== c.avancement.pct || x.taches.faites !== c.avancement.faites || x.taches.total !== c.avancement.total) e(`avancement ${c.id}`)
+      else if (x.taches.ouvertes.length !== Math.min(8, x.taches.total - x.taches.faites)) e(`tâches ouvertes ${c.id}: ${x.taches.ouvertes.length}`)
+    }
+    // 4. La carte pose TOUT chantier ouvert (jusqu'à la limite de la maquette).
+    const ouverts = a.chantiers.filter((c) => c.statut !== 'termine' && c.statut !== 'annule').length
+    const poses = sc.objets.filter((o) => o.type === 'chantier')
+    if (poses.length !== Math.min(30, a.chantiers.filter(At2.chantierVisible).length)) e(`chantiers posés ${poses.length}`)
+    if (poses.filter((o) => a.chantiers.find((c) => c.id === o.ref && c.statut !== 'termine')).length < Math.min(30, ouverts)) e('un chantier ouvert manque à la carte')
+    // 5. À facturer : ce que dit la colonne du pipeline.
+    const colonne = v.pipeline.colonnes.find((c) => c.etape === 'a_facturer').cartes.filter((k) => k.chantierId && a.chantiers.some((c) => c.id === k.chantierId && At2.chantierVisible(c))).length
+    if (R.chiffres.aFacturer !== colonne) e(`à facturer carte ${R.chiffres.aFacturer} ≠ pipeline ${colonne}`)
+    // 6. Demandes : la colonne « Demande » du pipeline (demandes sans devis).
+    const dem = v.pipeline.colonnes.find((c) => c.etape === 'demande').cartes.filter((k) => k.objet === 'lead').length
+    if (a.demandes.length !== dem) e(`demandes ${a.demandes.length} ≠ pipeline ${dem}`)
+    // 7. Montants signés ce mois : recalcul indépendant sur les lignes brutes, en centimes.
+    const sign = d.devis.filter((x) => x.statut === 'accepte' && String(x.accepte_le).slice(0, 7) === '2026-10')
+    const attendu = sign.reduce((s, x) => s + Math.round(x.total_ttc * 100), 0)
+    if (d.devis.length && (v.tableau.signeMois.nombre !== sign.length || v.tableau.signeMois.montant !== attendu)) e(`signé du mois ${v.tableau.signeMois.nombre}/${v.tableau.signeMois.montant} ≠ ${sign.length}/${attendu}`)
+    // 8. Devis signés sans chantier : la liste proposée par « Créer un chantier ».
+    const sansCh = d.devis.filter((x) => x.statut === 'accepte' && !d.chantiers.some((c) => c.devis_id === x.id)).length
+    if (v.devisSignesSansChantier.length !== sansCh) e(`signés sans chantier ${v.devisSignesSansChantier.length} ≠ ${sansCh}`)
+    // 9. Livraisons : une alerte par commande EN ATTENTE dont la date est passée, pas une de plus.
+    const retardsCmd = d.commandes.filter((c) => c.statut === 'commandee' && c.livraison_prevue < JOUR).length
+    if (R.chiffres.livraisonsEnRetard !== retardsCmd) e(`livraisons ${R.chiffres.livraisonsEnRetard} ≠ ${retardsCmd}`)
+    // 10. Une alerte ne cite qu'un chantier visible de la carte, et toute urgence critique est au-dessus des autres.
+    for (const al of R.alertes) for (const id of al.chantierIds) if (!a.chantiers.some((c) => c.id === id && At2.chantierVisible(c))) e(`alerte ${al.cle} sur un chantier invisible`)
+    const U = Al.urgencesDuJour(a, R)
+    if (U.some((u, i) => i > 0 && ['critique', 'attention', 'info'].indexOf(u.gravite) < ['critique', 'attention', 'info'].indexOf(U[i - 1].gravite))) e('urgences mal triées')
+    // 11. Déterministe : mêmes lignes → même vue (un évènement temps réel ne peut pas faire diverger deux lectures).
+    if (JSON.stringify(Vu.construireVue({ uid: 'U', metier: 'plombier', d: JSON.parse(JSON.stringify(d)), maintenant: MAINT, idDe: (k) => k })) !== JSON.stringify(v)) e('vue non déterministe')
+    // 12. Les badges de la carte sont les alertes (aucune pastille sans alerte, aucune alerte sans pastille).
+    for (const o of poses) { const nb = (R.parChantier.get(o.ref) ?? []).length; if (o.badges.filter((b) => b.type !== 'taches').length !== nb) e(`badges ${o.ref}`) }
+    avecRetardPaye += a.chantiers.some((c) => c.etape === 'paye' && c.statut !== 'termine' && c.statut !== 'annule') ? 1 : 0
+    avecLivraison += retardsCmd > 0 ? 1 : 0
+  }
+  T(`L1 « deux chiffres, un écran » sur ${comptes} comptes tirés au hasard : retards, stock bas, tâches, chantiers posés, à facturer, demandes, montant signé du mois, devis signés sans chantier, livraisons, urgences — la carte et les autres écrans disent la même chose`, mauvais.length === 0, mauvais.slice(0, 6).join(' | '))
+  T('L2 le tirage couvre les cas qui piégeaient : des comptes avec un chantier payé mais encore en cours, des comptes avec une livraison en retard', avecRetardPaye >= 5 && avecLivraison >= 20, `${avecRetardPaye} / ${avecLivraison}`)
+}
+
+// ═══════════════════════ M. Temps réel (lib/crm/tempsReel.ts, app/crm/useTempsReel.ts, migration 0158) — 15/10 ═══════════════════════
+{
+  const uid = U(42)
+  const ab = Tr.abonnements(uid)
+  T('M1 un abonnement par table, chacun filtré sur LE compte de la session (`artisan_id=eq.<uid>`), tous les évènements d’écriture', ab.length === Tr.TABLES_TEMPS_REEL.length && ab.every((x) => x.schema === 'public' && x.event === '*' && x.filter === `artisan_id=eq.${uid}`) && new Set(ab.map((x) => x.table)).size === ab.length)
+  T('M2 un identifiant qui n’est pas un uuid ne fabrique AUCUN filtre (injection de filtre) ; la casse est normalisée', Tr.abonnements("x,artisan_id=neq.1").length === 0 && Tr.abonnements('').length === 0 && Tr.abonnements(uid.toUpperCase())[0].filter === `artisan_id=eq.${uid}` && Tr.filtreCompte("00000000-0000-4000-8000-000000000001 or 1=1") === null)
+  const mig = lire('supabase/migrations/0158_crm_commandes_temps_reel.sql')
+  const migSql = mig.replace(/^\s*--.*$/gm, '')
+  const liste = (migSql.match(/foreach t in array array\[([^\]]+)\]/)?.[1] ?? '').split(',').map((x) => x.replace(/['\s]/g, '')).filter(Boolean)
+  T('M3 la publication `supabase_realtime` de la migration 0158 écoute EXACTEMENT les tables du code (rien de plus, rien de moins)', egal([...liste].sort(), [...Tr.TABLES_TEMPS_REEL].sort()) && liste.length === 12, liste.join())
+  const tout = fs.readdirSync(path.join(RACINE, 'supabase/migrations')).filter((f) => /^\d{4}_.*\.sql$/.test(f)).map((f) => lire(`supabase/migrations/${f}`)).join('\n')
+  const sansArtisan = Tr.TABLES_TEMPS_REEL.filter((t) => { const m = tout.match(new RegExp(`create table (?:if not exists )?public\\.${t}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i')); return !m || !/\bartisan_id\b/.test(m[1]) })
+  T('M4 chaque table écoutée porte une colonne artisan_id (le filtre en a besoin) ; `stock`, qui n’en a pas, n’est PAS écoutée (ses variations passent par mouvements_stock)', sansArtisan.length === 0 && !Tr.TABLES_TEMPS_REEL.includes('stock') && /mouvements_stock/.test(migSql), sansArtisan.join())
+  T('M5 migration 0158 : RLS activée, lecture de SES lignes, garde de session et de suspension, aucun droit d’écriture direct, rien pour anon, déclencheur anti-référence croisée',
+    /alter table public\.commandes_fournisseur enable row level security/.test(migSql) && /create policy commandes_fournisseur_lecture on public\.commandes_fournisseur for select to authenticated\s+using \(\(select auth\.uid\(\)\) = artisan_id\)/.test(migSql)
+      && /create policy garde_session on public\.commandes_fournisseur as restrictive/.test(migSql) && (migSql.match(/as restrictive/g) ?? []).length === 4 && /revoke all on public\.commandes_fournisseur from anon/.test(migSql) && /revoke insert, update, delete on public\.commandes_fournisseur from authenticated/.test(migSql)
+      && /crm : chantier d un autre artisan/.test(migSql) && /crm : fournisseur d un autre artisan/.test(migSql) && /crm : materiau d un autre artisan/.test(migSql))
+  T('M6 migration 0158 : état d’application en tête (non appliquée), contrôles avec résultat attendu, aucun DELETE écouté (non filtrable : fuite d’identifiant), jumeau _NU présent', /NON APPLIQUÉE/.test(mig.slice(0, 400)) && (mig.match(/\[(12|5|false|true)\]/g) ?? []).length >= 5 && /DELETE/.test(mig) && fs.existsSync(path.join(RACINE, 'supabase/migrations/_A_COLLER_sql_editor_0158_NU.sql')))
+  const nu = lire('supabase/migrations/_A_COLLER_sql_editor_0158_NU.sql').replace(/^\s*--.*$/gm, '').replace(/\s+/g, ' ').trim()
+  T('M7 le jumeau _NU porte le même SQL que la migration (hors commentaires)', nu === migSql.replace(/\s+/g, ' ').trim(), `${nu.length} ≠ ${migSql.replace(/\s+/g, ' ').trim().length}`)
+  // La rafale : dix évènements d'affilée = une seule relecture.
+  const horloge = { t: 0, file: [] }
+  const minuteur = { set: (f, ms) => { const id = horloge.file.length; horloge.file.push({ id, a: horloge.t + ms, f, vivant: true }); return id }, clear: (id) => { const x = horloge.file.find((y) => y.id === id); if (x) x.vivant = false } }
+  const avance = (ms) => { const fin = horloge.t + ms; for (;;) { const p = horloge.file.filter((x) => x.vivant && x.a <= fin).sort((a, b) => a.a - b.a)[0]; if (!p) break; p.vivant = false; horloge.t = p.a; p.f() } horloge.t = fin }
+  let appels = 0
+  const rafale = Tr.creerRafale(() => { appels++ }, 400, 2500, minuteur, () => horloge.t)
+  for (let i = 0; i < 10; i++) { rafale.signaler(); avance(50) }
+  T('M8 rafale : dix évènements en 500 ms = UNE relecture, 400 ms après le dernier', appels === 0 && rafale.enAttente() && (avance(349), appels === 0) && (avance(2), appels === 1) && !rafale.enAttente())
+  appels = 0
+  for (let i = 0; i < 80; i++) { rafale.signaler(); avance(100) } // un flux continu de 8 s
+  T('M9 rafale : un flux continu ne repousse pas la mise à jour sans fin (au moins une relecture toutes les 2,5 s)', appels >= 3 && appels <= 4, String(appels))
+  appels = 0; rafale.signaler(); rafale.annuler(); avance(5000)
+  T('M10 rafale : annulée (écran fermé), rien ne part', appels === 0 && !rafale.enAttente())
+  const hook = sansCommentaires(lire('app/crm/useTempsReel.ts')), page_ = sansCommentaires(lire('app/crm/page.tsx'))
+  T('M11 le hook : un canal par compte, les abonnements de lib/crm/tempsReel (donc filtrés), nettoyage à la fermeture, relecture de rattrapage après une coupure, filet d’une minute ; AUCUN DELETE non filtré',
+    /supabase\.channel\(`crm:\$\{uid\}`\)/.test(hook) && /abonnements\(uid\)/.test(hook) && /on\('postgres_changes', \{ event: a\.event, schema: a\.schema, table: a\.table, filter: a\.filter \}/.test(hook) && /removeChannel\(canal\)/.test(hook) && /aEteCoupe/.test(hook) && /60_000/.test(hook) && !/DELETE/.test(hook) && !/filter: undefined/.test(hook))
+  T('M12 la page : relit la MÊME vue serveur à chaque évènement (aucun chiffre recomposé dans le navigateur), n’écoute rien en exemple, ne redessine pas si rien n’a changé, garde la sélection par clé',
+    /useTempsReel\(\{ uid, actif: !!vue && !exemple, surChangement: charger \}\)/.test(page_) && /JSON\.stringify\(\{ \.\.\.r\.corps, maintenant: '' \}\)/.test(page_) && /if \(sans !== empreinte\.current\)/.test(page_) && /lien=\{lien\} dernier=\{dernier\}/.test(page_) && /cleSel/.test(sansCommentaires(lire('app/crm/atelier/Atelier.tsx'))) && !/postgres_changes/.test(page_))
+  const s3d = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx'))
+  T('M13 la ville ne se reconstruit pas à chaque évènement : l’apparition en cascade ne se joue qu’à la première image ; reduced-motion respecté (pas d’apparition, pas de pulsation vive, glissés instantanés)', /const apparition = useMemo\(\(\) => \(mouvementReduit\(\) \? null : \{[^}]*\}\), \[\]\)/.test(s3d) && /calme\.current \? 0\.22/.test(s3d) && /if \(mouvementReduit\(\)\) \{ anim\.current/.test(s3d))
+}
+
+// ═══════════════════════ N. Lecture par pages (lib/crm/pages.ts) — 15/10 ═══════════════════════
+{
+  const lignes = (n) => Array.from({ length: n }, (_, i) => ({ id: i }))
+  const lecteur = (total, cap = 1000) => { const appels = []; return { appels, lire: async (de, a) => { appels.push([de, a]); return { data: lignes(total).slice(de, Math.min(a + 1, de + cap)), error: null } } } }
+  const a = lecteur(2500), ra = await Pg.lirePages(a.lire, 2000)
+  T('N1 plus de 1 000 lignes : lues par pages jusqu’au plafond (2 000), sans doublon ni trou', ra.data.length === 2000 && new Set(ra.data.map((x) => x.id)).size === 2000 && egal(a.appels, [[0, 999], [1000, 1999]]), JSON.stringify(a.appels))
+  const b = lecteur(37), rb = await Pg.lirePages(b.lire, 2000)
+  T('N2 un petit compte : UNE seule requête (pas de page vide en plus)', rb.data.length === 37 && b.appels.length === 1)
+  const e = await Pg.lirePages(async (de) => (de === 0 ? { data: lignes(1000), error: null } : { data: null, error: { code: 'X', message: 'panne' } }), 5000)
+  T('N3 une page en erreur fait échouer toute la lecture : jamais une table à moitié lue présentée comme complète', e.data === null && e.error?.message === 'panne')
+  const srv = sansCommentaires(lire('lib/crm/serveur.ts'))
+  T('N4 chargerDossiers lit CHAQUE table par pages (aucun `.limit(` seul qui serait coupé à 1 000 par PostgREST), avec un second tri sur la clé', !/\.limit\(/.test(srv.slice(srv.indexOf('export async function chargerDossiers'), srv.indexOf('/** Le chantier de l'))) && (srv.match(/lirePages\(\(de, a\) =>/g) ?? []).length === 13 && (srv.match(/\.range\(de, a\)/g) ?? []).length === 13)
+}
+
+// ═══════════════════════ O. L'exemple montre ce que le vrai CRM saurait montrer (15/10) ═══════════════════════
+{
+  const E = await imp('lib/crm/exemple.ts')
+  const a = E.VUE_EXEMPLE.atelier
+  const R = Al.calculerAlertes(a)
+  T('O1 l’exemple porte une livraison en retard (salle de bain, 3 jours), un stock insuffisant (rénovation) et une tâche faite aujourd’hui — comme la vidéo de référence', R.alertes.some((x) => x.type === 'livraison' && x.jours === 3 && x.chantierIds.length === 1) && R.alertes.some((x) => x.type === 'stock' && x.gravite === 'critique') && a.chantiers.some((c) => c.taches.faitesAujourdhui === 1), R.alertes.map((x) => x.cle).join(' '))
+  T('O2 l’exemple : la carte et le tableau de bord disent la même chose (2 chantiers en retard, 6 matériaux sous le seuil)', R.chiffres.retards === E.VUE_EXEMPLE.tableau.chantiers.enRetard.nombre && R.chiffres.retards === 2 && R.chiffres.stockBas === E.VUE_EXEMPLE.tableau.stockBas.nombre && R.chiffres.stockBas === 6, JSON.stringify(R.chiffres))
 }
 
 console.log(`\n${verts} vert(s), ${rouges.length} rouge(s)${rouges.length ? ' : ' + rouges.join(' · ') : ''}`)

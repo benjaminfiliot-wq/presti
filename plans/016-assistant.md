@@ -100,3 +100,30 @@ Reste la condition du plan : le code ne commence qu'après la validation écrite
 - **Audit d'attaque** : identifiant de conversation tiré par le serveur (B2) ; réponses de l'assistant signées (HMAC) et
   seules crues dans l'historique renvoyé (B3, `lib/assistant/historique.ts`) — l'historique stocké en base reste à faire
   (table, rétention, purge, export) ; crédit rendu d'un coup par `rendre_credit` (migration 0155, repli tant qu'absente).
+
+## 11. A3 — l'assistant AGIT (15/10/2026, branche de travail, rien de déployé)
+**Ce que Benj a demandé** : un assistant qui peut tout faire sur la plateforme (devis, factures, inventaire, tarifs, CRM, clients,
+relances, briefing du matin), réservé à l'offre Signature. Les jalons A1/A2 (lecture, brouillons) restent ; A3 ajoute 28 actions.
+- **Deux sortes d'outils** (`lib/assistant/outils-actions.ts`, table `SPEC`, un seul descriptif pour le schéma et la validation) :
+  *directs* (écriture interne qui se défait : brouillon de devis, tarif, stock, tâche, note, statut — exécutés, inscrits à la table
+  des actions, annulables d'un clic) et *à confirmer* (envoi d'un devis, relance, message à un client, facture créée = émise et
+  scellée, encaissement, suppression, lot de prix) : l'outil du modèle ne fait que PROPOSER une carte (texte exact, avant/après) ;
+  seul le clic de l'artisan l'exécute (`POST /api/assistant/actions`, `lib/assistant/confirmation.ts`, réclamation atomique, 24 h).
+- **Aucun SQL de métier dupliqué** (`lib/assistant/actions-serveur.ts`) : chaque action appelle la route ou la fonction de l'interface,
+  avec la session de l'artisan (devis, tarifs, inventaire, CRM, messages ; `creerFacture` pour les factures : mentions, numérotation,
+  TVA / franchise 293 B, scellement ; `lib/devisMail.ts` : le texte de l'e-mail d'un devis est écrit une fois, la carte l'affiche tel quel).
+- **Jamais de prix ni de délai inventés** : chaque ligne de devis s'appuie sur un tarif de l'artisan (`lire_tarifs`) ; un prix, un
+  pourcentage ou une quantité de stock qui ne figure ni dans ce que l'artisan a écrit ni dans une donnée lue est REFUSÉ par le code
+  (`cartes.ts verifierSources`) ; les textes de relance sont fixes (deux tons), le modèle n'y écrit rien ; un message à un client
+  qui cite un nombre sans source est refusé.
+- **Désignation** : devis et factures par leur NUMÉRO, chantiers / articles / membres / tâches par leur NOM, retrouvés dans les données
+  du compte ; ambigu → refus qui liste les candidats. Aucun identifiant de compte ne vient du modèle.
+- **Outils d'écriture absents tant que l'artisan ne demande pas d'action dans CE message** (`cadrerDemande.actionDemandee`) et tant que
+  la table des actions n'existe pas (migration 0157, **non appliquée**) : un message de client lu dans les données ne peut rien déclencher.
+- **Plafonds** : 8 appels au modèle par tour, 12 actions par message, 200 actions et 30 envois par jour et par compte, 20 tours par
+  conversation, 200 messages par jour (existants), crédit du tour (Pro par défaut : même crédit que Standard).
+- **Offre Signature côté serveur** : `lib/assistant/acces.ts` (décision pure) + `garde.ts`, pour les deux routes ; pas de passe-droit fondateur.
+- **Mise en service** (inchangée) : 0157 appliquée et contrôlée → `scripts/assistant-qa.mjs` (+ `--live`) vert → accord de Benj →
+  `assistant: true` dans `lib/flags.ts`, `ESSAI` et `lib/essais.ts` vidés ; la ligne de la grille des offres apparaît seule.
+- **Tests** : `node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/assistant-qa.mjs [--live] [--ia]`
+  (parties E à K hors ligne dont la migration jouée dans PGlite ; L = comptes de test sur la base réelle ; M = vrai modèle).

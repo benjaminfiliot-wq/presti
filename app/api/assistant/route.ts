@@ -1,11 +1,6 @@
 import crypto from 'node:crypto'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
-import { enEssai } from '@/lib/flags'
-import { ouvertPour } from '@/lib/essais'
-import { authArtisan, estEchec } from '@/lib/authArtisan'
-import { messageVerrou, peut } from '@/lib/plans'
-import { decisionAcces } from '@/lib/crm/acces'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { consommerLimite } from '@/lib/limites'
 import { signalerPanneIA } from '@/lib/alerteService'
@@ -15,6 +10,9 @@ import { routerModele } from '@/lib/ai/routage'
 import { MESSAGE_MAX, PLAFOND_TOURS, cadrerDemande, systemeAssistant } from '@/lib/assistant/cadrage'
 import { executerTour } from '@/lib/assistant/boucle'
 import { clientDeSession, executeursDeSession, journalEnBase } from '@/lib/assistant/executeurs'
+import { gardeAssistant } from '@/lib/assistant/garde'
+import { actionsDeSession } from '@/lib/assistant/actions-serveur'
+import { actionsDisponibles, magasinSupabase } from '@/lib/assistant/magasin'
 import { jourLisible } from '@/lib/assistant/donnees'
 import { cleHistorique, lireHistorique, signerReponse } from '@/lib/assistant/historique'
 import { preparerTour } from '@/lib/assistant/tour'
@@ -56,21 +54,11 @@ async function rendreTour(uid: string, conversationId: string) {
 }
 
 export async function POST(req: Request) {
-  if (!enEssai('assistant')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
-
-  const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
-  const uid = s.uid
-  if (!ouvertPour('assistant', uid)) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
-  const jeton = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
-
-  // Le profil se lit comme l'écran le lit : sous la RLS, avec le jeton de l'artisan.
-  const { data: art } = await clientDeSession(jeton).from('artisans').select('nom, metier, plan, is_founder').eq('id', uid).maybeSingle()
-  if (!art) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
-  const isFounder = !!art.is_founder
-  if (!isFounder && !peut(art.plan as string | null, 'assistant')) {
-    return NextResponse.json({ error: `L’assistant n’est pas dans votre offre. ${messageVerrou('assistant')}`, code: 'offre' }, { status: 403 })
-  }
+  // 1-3. Drapeau, session, essai, offre : la décision pure de lib/assistant/acces.ts (404 / 401 / 403), côté SERVEUR.
+  const g = await gardeAssistant(req)
+  if ('reponse' in g) return g.reponse
+  const { uid, jeton, isFounder } = g
+  const art = { nom: g.nom, metier: g.metier, plan: g.plan }
 
   const b = await req.json().catch(() => null)
   const message = typeof b?.message === 'string' ? b.message.trim() : ''
@@ -104,18 +92,24 @@ export async function POST(req: Request) {
   }
 
   // Le palier, choisi comme partout (lib/ai/routage.ts) : Standard par défaut, Pro ou Expert sur demande, borné par l'offre.
-  const routage = routerModele({ plan: art.plan as string | null, demande: typeof b?.modele === 'string' ? b.modele : null })
+  // Un agent qui AGIT : Pro par défaut (1 crédit, comme Standard), Expert (3 crédits) sur demande de l'artisan.
+  const routage = routerModele({ plan: art.plan, demande: typeof b?.modele === 'string' ? b.modele : 'pro' })
   const maintenant = new Date()
   const jour = jourLisible(maintenant)
   const dernierAssistant = [...historique].reverse().find((e) => e.role === 'assistant')?.texte ?? null
   const cadrage = cadrerDemande(message, dernierAssistant)
   // Le CRM : la décision même des routes /api/crm/* (lib/crm/acces.ts : drapeau ou essai du compte, puis capacité `crm`).
-  const crm = decisionAcces({ drapeau: ouvertPour('crm', uid), session: { ok: true }, plan: art.plan as string | null }).ok
-  const systeme = systemeAssistant({ nom: art.nom as string | null, metier: art.metier as string | null, jour, crm }, cadrage)
-  const executeurs = executeursDeSession({ uid, jeton, origine: new URL(req.url).origin, isFounder, crm, meilleursClients: cadrage.meilleursClients })
+  const crm = g.crm
+  // Les actions n'existent que si leur table (journal et cartes, migration 0157) est là : sans elle, l'assistant lit et prépare des
+  // brouillons comme avant. Fail-closed : jamais d'action sans carte ni journal.
+  const actionsOk = await actionsDisponibles()
+  let tourPris = 0
+  const systeme = systemeAssistant({ nom: art.nom, metier: art.metier, jour, crm, actions: actionsOk }, cadrage)
+  const ctxSession = { uid, jeton, origine: new URL(req.url).origin, isFounder, crm, meilleursClients: cadrage.meilleursClients }
+  const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase() }) : undefined
+  const executeurs = executeursDeSession(ctxSession, actionsSrv)
 
   // Plafond (atomique en base, fail-closed : sans la migration 0150, aucun tour ne part), puis crédit, puis le tour.
-  let tourPris = 0
   const prep = await preparerTour({
     palier: routage.tier,
     prendreTour: async () => {
@@ -136,6 +130,8 @@ export async function POST(req: Request) {
       executeurs,
       brouillonsAutorises: cadrage.brouillon,
       crm,
+      // Les outils d'écriture n'existent que si l'artisan demande une action dans CE message (et si la table des actions est là).
+      actions: actionsOk && cadrage.actionDemandee,
       journaliser: journalEnBase({ uid, conversationId, tour: tourPris }),
       onOutil,
       sourcesFixes: [jour, maintenant.toISOString().slice(0, 10)],

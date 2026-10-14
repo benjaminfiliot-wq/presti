@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
@@ -13,6 +13,7 @@ import ClientsVue from './Clients'
 import EquipeVue from './Equipe'
 import Atelier, { prechargerScene3D } from './atelier/Atelier'
 import { BANDEAU_EXEMPLE, ecrireChoix, lireChoix, ModeExemple } from './mode'
+import { useTempsReel } from './useTempsReel'
 import { DONNEES_EXEMPLE, EQUIPE_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE } from '@/lib/crm/exemple'
 
 // CRM « atelier vivant ».
@@ -23,7 +24,11 @@ import { DONNEES_EXEMPLE, EQUIPE_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE } from '@/li
 //
 // L'EXEMPLE (13/10, demande de Benj) : un seul interrupteur en haut du CRM, « Voir l'exemple / Voir mes données », d'office
 // sur l'exemple quand le compte est vide. En exemple, TOUS les onglets montrent lib/crm/exemple.ts (calculé par le même
-// lib/crm/vue.ts), rien de réel ne s'y mêle, et aucune écriture ne part (app/crm/mode.tsx, app/crm/client.ts).
+// lib/crm/vue.ts), // lignes fictives, rien de réel ne s'y mêle, et aucune écriture ne part (app/crm/mode.tsx, app/crm/client.ts).
+//
+// TEMPS RÉEL (15/10) : quand une donnée du compte change (dossier déplacé, devis signé, tâche cochée, stock modifié, chantier mis à
+// jour…), Supabase Realtime le dit (app/crm/useTempsReel.ts, filtré sur le compte) et l'écran RELIT la même vue — le même calcul serveur,
+// jamais un chiffre recomposé dans le navigateur. Une relecture qui ne change rien ne redessine rien (même contenu : même objet).
 const ONGLETS = [
   { id: 'atelier', label: 'Atelier' },
   { id: 'tableau', label: 'Tableau de bord' },
@@ -45,6 +50,9 @@ export default function Crm() {
   // Le choix explicite de l'artisan (retenu pour cet onglet du navigateur) ; null = la règle : exemple si le compte est vide.
   const [choix, setChoix] = useState<'exemple' | 'donnees' | null>(null)
   const [vue, setVue] = useState<Vue | null>(null)
+  const [uid, setUid] = useState<string | null>(null)
+  const [luA, setLuA] = useState<string | null>(null)
+  const empreinte = useRef('')
   const [erreur, setErreur] = useState<{ message: string; verrou: boolean } | null>(null)
   const [chargement, setChargement] = useState(true)
   // « ?mesure=1 » : la maquette publie ses mesures (première image, images/s) pour scripts/crm-exemple-qa.mjs.
@@ -65,12 +73,16 @@ export default function Crm() {
   const charger = useCallback(async () => {
     const { data } = await supabase.auth.getSession()
     if (!data.session) { router.replace('/login'); return }
+    setUid(data.session.user.id)
     const r = await appel<Vue>('/api/crm/vue')
     setChargement(false)
     if (!r.ok && r.status === 404) { router.replace('/dashboard'); return } // essai : compte hors liste
     if (!r.ok) { setErreur({ message: r.erreur, verrou: r.status === 403 && r.code === 'offre' }); return }
     setErreur(null)
-    setVue(r.corps)
+    // Même contenu qu'à la lecture précédente (hors l'heure de lecture) : on garde l'objet, rien ne se redessine ni ne se recalcule.
+    const sans = JSON.stringify({ ...r.corps, maintenant: '' })
+    if (sans !== empreinte.current) { empreinte.current = sans; setVue(r.corps) }
+    setLuA(r.corps.maintenant)
   }, [router])
 
   useEffect(() => {
@@ -92,6 +104,8 @@ export default function Crm() {
 
   const vide = vue ? compteVide(vue) : false
   const exemple = !!vue && (choix ? choix === 'exemple' : vide)
+  // En exemple, rien ne change jamais : aucune écoute.
+  const { lien, dernier } = useTempsReel({ uid, actif: !!vue && !exemple, surChangement: charger })
   // Posé pendant le rendu, avant tout clic possible : en exemple, app/crm/client.ts refuse toute écriture.
   bloquerEcritures(exemple)
   const v = exemple ? VUE_EXEMPLE : vue
@@ -109,6 +123,7 @@ export default function Crm() {
         <p className="muted" role="status">Lecture de vos demandes, devis, factures et chantiers…</p>
       ) : (
         <ModeExemple actif={exemple}>
+         <div className={`crm-racine${onglet === 'atelier' ? ' crm-plein' : ''}`}>
           <div className={`crm-mode${exemple ? ' exemple' : ''}`} role="note" data-crm-mode={exemple ? 'exemple' : 'donnees'}>
             {exemple ? (
               <>
@@ -129,7 +144,7 @@ export default function Crm() {
                 {o.label}
               </button>
             ))}
-            <span className="crm-maj" aria-live="polite">{exemple ? 'Exemple' : `Lu à ${dateHeureFr(v.maintenant).slice(-5)}`}</span>
+            <span className="crm-maj">{exemple ? 'Exemple' : `Lu à ${dateHeureFr(luA ?? v.maintenant).slice(-5)}`}</span>
           </div>
           {v.tronque && <p className="crm-note" role="note">Votre historique dépasse 2 000 pièces : seules les plus récentes sont comptées.</p>}
           <section id={`crm-vue-${onglet}`} role="tabpanel" aria-labelledby={`crm-onglet-${onglet}`} className="crm-vue">
@@ -138,7 +153,7 @@ export default function Crm() {
               const versVue = (x: string) => { if (ONGLETS.some((o) => o.id === x)) choisir(x as Onglet) }
               return exemple
                 ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo onVue2D={versVue} mesure={mesure} />
-                : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} />
+                : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} onChange={() => void charger()} lien={lien} dernier={dernier} />
             })()}
             {onglet === 'tableau' && <TableauCrmVue t={v.tableau} />}
             {onglet === 'pipeline' && <PipelineVue p={v.pipeline} onChange={charger} />}
@@ -146,6 +161,7 @@ export default function Crm() {
             {onglet === 'clients' && <ClientsVue clients={v.clients} />}
             {onglet === 'equipe' && <EquipeVue key={exemple ? 'exemple' : 'mien'} donnees={exemple ? EQUIPE_EXEMPLE : undefined} />}
           </section>
+         </div>
         </ModeExemple>
       )}
     </AppShell>

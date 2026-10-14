@@ -59,6 +59,9 @@ const lecturesCrm = [] // toute lecture /api/crm/* autre que la vue initiale
 const erreursConsole = []
 async function preparer(ctx, { delaiVue = 0 } = {}) {
   await ctx.addInitScript(([cle, s]) => { try { localStorage.setItem(cle, s) } catch { /* rien */ } }, [CLE_SESSION, JSON.stringify(SESSION)])
+  // Temps réel (15/10) : sur « Voir mes données », l'écran ouvre une liaison Supabase Realtime (WebSocket) que `route` n'intercepte pas.
+  // Le juge la ferme aussitôt : rien ne sort de la machine, et l'écran retombe sur sa relecture d'une minute.
+  await ctx.routeWebSocket(/realtime/, (ws) => { void ws.close() })
   await ctx.route('**/*', async (route) => {
     const req = route.request()
     const u = new URL(req.url())

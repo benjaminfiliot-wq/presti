@@ -14,12 +14,30 @@
 
 import { joursDeRetard } from './chantier.ts'
 import { jourParis } from '../comptaTableau.ts'
+import { calculerAlertes, chantierVisible, estAujourdhui, estStockBas, aEncaisser, type Gravite, type TypeAlerte } from './alertes.ts'
+import type { CommandeA } from './commandes.ts'
+
+// Les règles « chantier visible » et « prévu aujourd'hui » vivent dans alertes.ts (une seule écriture, partagée avec les urgences).
+export { chantierVisible, estAujourdhui }
 
 // ── Entrées ──────────────────────────────────────────────────────────────────────────────────────────────────
+/** Les tâches d'un chantier, telles que le panneau les montre : tout est compté sur les VRAIES lignes de chantier_taches. */
+export type TachesA = {
+  total: number; faites: number
+  /** Faites AUJOURD'HUI (jour de Paris, d'après faite_le). */
+  faitesAujourdhui: number
+  /** Les premières tâches à faire (8 au plus, dans l'ordre du chantier) ; `total - faites` dit combien il y en a en tout. */
+  ouvertes: { id: string; libelle: string; membre_id: string | null }[]
+}
 export type ChantierA = {
   id: string; titre: string; client: string | null; statut: string; etape: string | null
   avancement: number | null; date_debut: string | null; date_fin_prevue: string | null; vehicule_id: string | null; equipe: string[]
+  /** Absent des jeux de données anciens : l'écran retombe alors sur `avancement` seul. */
+  taches?: TachesA
+  adresse?: string | null
 }
+/** Un matériau réservé pour un chantier (chantier_materiaux, statut « réservé » : pas encore sorti du stock). */
+export type ReservationA = { chantier_id: string; materiau_id: string; quantite: number }
 export type MateriauA = { id: string; nom: string; unite: string; categorie: string | null; reste: number; seuil: number; fournisseur: string | null; fournisseur_contact: string | null; prix_vu_ht: number | null; prix_vu_le: string | null }
 export type VehiculeA = { id: string; nom: string; immatriculation: string | null; conducteur_id: string | null; controle_technique_le: string | null; entretien_le: string | null; actif: boolean }
 export type MembreA = { id: string; nom: string; role: string; actif: boolean }
@@ -32,6 +50,12 @@ export type DonneesAtelier = {
   vehicules: VehiculeA[]
   membres: MembreA[]
   demandes: DemandeA[]
+  /** Matériaux réservés non sortis (pour rattacher un stock insuffisant à un chantier). Absent : aucune alerte de ce genre. */
+  reservations?: ReservationA[]
+  /** Les commandes fournisseur enregistrées (lib/crm/commandes.ts). Absent : aucune « livraison en retard » n'est inventée. */
+  commandes?: CommandeA[]
+  /** Faux tant que la table des commandes n'existe pas sur la base (migration 0158 non appliquée) : l'écran le dit. */
+  commandesDisponibles?: boolean
 }
 
 // ── Sorties ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -41,12 +65,25 @@ export type V3 = [number, number, number]
 /** Une instance : centre, échelle (la forme unitaire fait 1 × 1 × 1), rotation (radians), couleur, objet porteur (-1 = décor). */
 export type Inst = { p: V3; s: V3; r: V3; c: string; o: number }
 export type TypeObjet = 'chantier' | 'categorie' | 'vehicule' | 'membre' | 'accueil' | 'bureau'
-export type EtatObjet = { aujourdhui: boolean; retard: boolean; aFacturer: boolean; stockBas: boolean }
+export type EtatObjet = { aujourdhui: boolean; retard: boolean; aFacturer: boolean; stockBas: boolean; livraison: boolean }
+/** Une pastille d'alerte posée sur un objet de la maquette (retard, livraison, stock, tâches faites…). */
+export type BadgeObjet = { type: TypeAlerte | 'demandes' | 'taches'; libelle: string; gravite: Gravite }
+/** Ce que la carte d'un chantier montre sans l'ouvrir : l'équipe, les tâches, le client. Tout vient des données. */
+export type InfoChantier = {
+  equipe: { id: string; nom: string; role: string }[]
+  /** Faux si le chantier n'est pas prévu aujourd'hui : l'équipe est alors celle AFFECTÉE, pas celle présente. */
+  surPlace: boolean
+  taches: { faites: number; total: number; faitesAujourdhui: number } | null
+  client: string | null
+}
 export type ObjetScene = {
   cle: string; type: TypeObjet; ref: string; libelle: string; detail: string
   centre: V3; hauteur: number; etat: EtatObjet
   /** Couleur de l'épingle / de la pastille (chantiers seulement). */
   epingle: string | null
+  /** Les alertes de l'objet, la plus grave d'abord. */
+  badges: BadgeObjet[]
+  info: InfoChantier | null
 }
 export type Scene = {
   instances: Record<Forme, Inst[]>
@@ -70,6 +107,19 @@ const CARTONS = ['#D9C3A0', '#C9A27E', '#B9B2A6', '#E2D2B8', '#A89F92', '#D6B898
 const MURS_MAISON = ['#F3EDE2', '#EADFCF', '#E6E0D6', '#EFE6D8']
 const TOITS = ['#C98B6B', '#B9A58E', '#D2A383', '#BF9479']
 const ROLES: Record<string, string> = { artisan: COULEURS.corail, compagnon: '#6F6A64', apprenti: COULEURS.ambre, salarie: '#8C857C', sous_traitant: '#A89F92', autre: '#B9B2A6' }
+
+/** La couleur d'un membre d'équipe (le personnage de la maquette et sa pastille sur la carte du chantier). */
+export const couleurRole = (role: string): string => ROLES[role] ?? ROLES.autre
+/** Le style d'une pastille de membre : la couleur de son rôle, et le texte (clair ou sombre) qui s'y lit à 4,5:1 au moins. */
+export function styleAvatar(role: string): { background: string; color: string } {
+  const fond = couleurRole(role)
+  const lum = (h: string) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] }
+  const L = lum(fond), contraste = (l2: number) => (Math.max(L, l2) + 0.05) / (Math.min(L, l2) + 0.05)
+  const clair = '#FFFFFF', sombre = '#17140F'
+  return { background: fond, color: contraste(lum(clair)) >= contraste(lum(sombre)) ? clair : sombre }
+}
+/** « Compagnon 2 » → « C2 », « Marie Dupont » → « MD » : les deux premières initiales. */
+export const initiales = (nom: string): string => nom.trim().split(/s+/).slice(0, 2).map((s) => (s[0] ?? '').toUpperCase()).join('') || '?'
 
 /** La couleur d'épingle d'un chantier : à démarrer · en cours · en retard · terminé à facturer. */
 export function couleurEpingle(c: { statut: string; etape: string | null }, retard: number | null): string {
@@ -122,13 +172,6 @@ export function emplacementsChantiers(n: number): V3[] {
   return cases.sort((a, b) => d(a) - d(b) || Math.atan2(a[2], a[0]) - Math.atan2(b[2], b[0])).slice(0, n)
 }
 
-const estAujourdhui = (c: ChantierA, jour: string): boolean => {
-  if (c.statut === 'termine' || c.statut === 'annule') return false
-  if (c.statut === 'en_cours') return true
-  return !!c.date_debut && c.date_debut <= jour && (!c.date_fin_prevue || c.date_fin_prevue >= jour)
-}
-/** Les chantiers que la maquette montre : ouverts, ou terminés et encore à facturer. Annulés et payés : non. */
-export const chantierVisible = (c: ChantierA): boolean => c.statut !== 'annule' && c.etape !== 'paye' && (c.statut !== 'termine' || c.etape === 'a_facturer' || c.etape === null)
 
 export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage): Scene {
   const prereglage = prereglageForce ?? prereglageDe(d.metier)
@@ -137,7 +180,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   const objets: ObjetScene[] = []
   const zones: Scene['zones'] = []
   const ajouter = (f: Forme, p: V3, s: V3, c: string, o = -1, r: V3 = [0, 0, 0]) => { instances[f].push({ p, s, r, c, o }) }
-  const objet = (o: Omit<ObjetScene, 'etat'> & { etat?: Partial<EtatObjet> }) => { objets.push({ ...o, etat: { aujourdhui: false, retard: false, aFacturer: false, stockBas: false, ...o.etat } }); return objets.length - 1 }
+  const objet = (o: Omit<ObjetScene, 'etat' | 'badges' | 'info'> & { etat?: Partial<EtatObjet>; badges?: BadgeObjet[]; info?: InfoChantier | null }) => { objets.push({ ...o, badges: o.badges ?? [], info: o.info ?? null, etat: { aujourdhui: false, retard: false, aFacturer: false, stockBas: false, livraison: false, ...o.etat } }); return objets.length - 1 }
 
   // — Sol, dalle du dépôt, murs bas à bandeau corail, porte au milieu de la façade —
   ajouter('box', [(DEPOT.x0 + DEPOT.x1) / 2, 0.02, 0], [DEPOT.x1 - DEPOT.x0, 0.04, DEPOT.z1 - DEPOT.z0], COULEURS.dalle)
@@ -216,19 +259,34 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   for (const a of accessoires(prereglage)) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
 
   // — Chantiers : la petite ville autour du dépôt —
+  const resume = calculerAlertes(d)
   const visibles = d.chantiers.filter(chantierVisible)
   const places = emplacementsChantiers(Math.min(visibles.length, LIMITES.chantiers))
   const posChantier = new Map<string, V3>()
+  const membreParId = new Map(d.membres.map((m) => [m.id, m]))
   visibles.slice(0, places.length).forEach((c, i) => {
     const [x, , z] = places[i]
     const h = hacher(c.id)
     const w = 2.2 + h * 0.8, dd = 2.2 + ((h * 7) % 1) * 0.8, ht = 1.4 + ((h * 13) % 1) * 1.3
     const retard = joursDeRetard(c, d.jour)
     const couleur = couleurEpingle(c, retard)
-    const etat: EtatObjet = { aujourdhui: estAujourdhui(c, d.jour), retard: !!retard && retard > 0, aFacturer: c.etape === 'a_facturer' || c.statut === 'termine', stockBas: false }
+    const alertes = resume.parChantier.get(c.id) ?? []
+    const encaisser = aEncaisser(c)
+    const etat: EtatObjet = {
+      aujourdhui: estAujourdhui(c, d.jour), retard: !!retard && retard > 0, aFacturer: encaisser,
+      stockBas: alertes.some((a) => a.type === 'stock'), livraison: alertes.some((a) => a.type === 'livraison'),
+    }
     // Recette du 12/10 : un chantier en cours déjà facturé s'affichait « Terminé · à facturer ».
-    const statutTxt = etat.aFacturer && c.statut !== 'termine' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''} · facturé` : etat.aFacturer ? 'Terminé · à facturer' : etat.retard ? `En retard · ${retard} j` : c.statut === 'en_cours' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''}` : c.statut === 'planifie' ? 'Planifié' : c.statut === 'en_pause' ? 'En pause' : 'À démarrer'
-    const o = objet({ cle: `chantier:${c.id}`, type: 'chantier', ref: c.id, libelle: c.titre, detail: statutTxt, centre: [x, 0, z], hauteur: ht + 1.1 + 1.6, epingle: couleur, etat })
+    const statutTxt = encaisser && c.statut !== 'termine' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''} · facturé` : encaisser ? 'Terminé · à facturer' : c.statut === 'termine' ? 'Terminé' : etat.retard ? `En retard · ${retard} j` : c.statut === 'en_cours' ? `En cours${c.avancement !== null ? ` · ${c.avancement} %` : ''}` : c.statut === 'planifie' ? 'Planifié' : c.statut === 'en_pause' ? 'En pause' : 'À démarrer'
+    const t = c.taches ?? null
+    const badges: BadgeObjet[] = alertes.map((a) => ({ type: a.type, gravite: a.gravite, libelle: a.type === 'retard' ? `Retard ${a.jours} j` : a.type === 'livraison' ? 'Livraison en retard' : a.type === 'attendue' ? 'Livraison aujourd’hui' : a.type === 'stock' ? 'Stock à compléter' : a.type === 'facturer' ? 'À facturer' : 'Sans équipe' }))
+    if (t && t.total) badges.push({ type: 'taches', gravite: 'info', libelle: `${t.faites}/${t.total} tâches` })
+    const info: InfoChantier = {
+      equipe: c.equipe.map((id) => membreParId.get(id)).filter((m): m is MembreA => !!m && m.actif).map((m) => ({ id: m.id, nom: m.nom, role: m.role })),
+      surPlace: estAujourdhui(c, d.jour), client: c.client,
+      taches: t ? { faites: t.faites, total: t.total, faitesAujourdhui: t.faitesAujourdhui } : null,
+    }
+    const o = objet({ cle: `chantier:${c.id}`, type: 'chantier', ref: c.id, libelle: c.titre, detail: statutTxt, centre: [x, 0, z], hauteur: ht + 1.1 + 1.6, epingle: couleur, etat, badges, info })
     posChantier.set(c.id, [x, 0, z])
     ajouter('box', [x, 0.03, z], [4.2, 0.06, 4.2], '#E9E1D3', o)
     ajouter('box', [x, ht / 2 + 0.06, z], [w, ht, dd], MURS_MAISON[Math.floor(h * MURS_MAISON.length)], o)
@@ -243,6 +301,22 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
     const yEp = ht + 1.1 + 0.95
     ajouter('cone', [x, yEp, z], [0.42, 0.75, 0.42], couleur, o, [Math.PI, 0, 0])
     ajouter('sph', [x, yEp + 0.55, z], [0.62, 0.62, 0.62], couleur, o)
+    // Les tâches : une barre au sol devant la maison — le fond gris, la part FAITE en vert (les chiffres exacts sont sur la carte).
+    if (t && t.total > 0) {
+      const part = Math.min(1, t.faites / t.total), lf = 3.4 * part
+      ajouter('box', [x, 0.07, z + 2.95], [3.4, 0.06, 0.26], COULEURS.pierre, o)
+      if (lf > 0.01) ajouter('box', [x - 1.7 + lf / 2, 0.1, z + 2.95], [lf, 0.08, 0.26], COULEURS.vert, o)
+    }
+    // Une urgence : le terrain pulse (calque à part, une seule matière animée).
+    if (alertes.some((a) => a.gravite === 'critique')) pulse.push({ p: [x, 0.09, z], s: [5.1, 0.05, 5.1], r: [0, 0, 0], c: COULEURS.corailFonce, o })
+    // Une livraison en retard : la palette ATTENDUE, en teinte pâle (elle n'est pas là), un fanion corail foncé planté dessus.
+    if (etat.livraison) {
+      const px = x - 2.7, pz = z + 0.9
+      ajouter('box', [px, 0.08, pz], [1.2, 0.16, 1.2], melanger(COULEURS.bois, COULEURS.sol, 0.5), o)
+      for (const [dx, dz, hh] of [[-0.28, -0.28, 0.5], [0.28, -0.28, 0.4], [-0.28, 0.28, 0.4], [0.28, 0.28, 0.55]] as const) ajouter('box', [px + dx, 0.16 + hh / 2, pz + dz], [0.5, hh, 0.5], melanger(CARTONS[Math.floor(hacher(`${c.id}${dx}${dz}`) * CARTONS.length)], COULEURS.sol, 0.55), o)
+      ajouter('cyl', [px + 0.5, 0.95, pz - 0.5], [0.07, 1.8, 0.07], COULEURS.ardoise, o)
+      ajouter('box', [px + 0.72, 1.62, pz - 0.5], [0.46, 0.3, 0.05], COULEURS.corailFonce, o)
+    }
   })
 
   // — Parking : une camionnette par véhicule actif —
@@ -289,12 +363,49 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   const min: V3 = [Infinity, 0, Infinity], max: V3 = [-Infinity, 0, -Infinity]
   for (const it of tout) { min[0] = Math.min(min[0], it.p[0] - it.s[0] / 2); min[2] = Math.min(min[2], it.p[2] - it.s[2] / 2); max[0] = Math.max(max[0], it.p[0] + it.s[0] / 2); max[2] = Math.max(max[2], it.p[2] + it.s[2] / 2); max[1] = Math.max(max[1], it.p[1] + it.s[1] / 2) }
 
+  // — La ville : routes entre les parcelles, parcs et terrains vides sur les parcelles libres. Décor pur (aucun objet cliquable,
+  //   rien de vos données) : ajouté APRÈS le calcul des bornes, le cadrage de la caméra ne dépend que de ce qui est posé. —
+  decorVille(ajouter, places.length)
+
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
     horsScene: {
       chantiers: Math.max(0, visibles.length - places.length), categories: catsHors,
       vehicules: Math.max(0, d.vehicules.filter((v) => v.actif).length - vehicules.length), demandes: Math.max(0, d.demandes.length - demandes.length),
     },
+  }
+}
+
+type Ajouter = (f: Forme, p: V3, s: V3, c: string, o?: number, r?: V3) => void
+const ROUTE = '#DDD5C7'
+/**
+ * La ville autour du dépôt : une trame de routes entre les parcelles (coupée autour du dépôt et du parking), et sur chaque
+ * parcelle que PERSONNE n'occupe — un parc, des arbres, ou rien. Stable : tout se tire d'un hachage de la position, jamais du hasard.
+ */
+function decorVille(ajouter: Ajouter, utilises: number) {
+  const r1 = (v: number) => Math.round(v * 10) / 10
+  const xs: number[] = [], zs: number[] = []
+  for (let x = -33.6; x <= 39.2; x += 5.6) xs.push(r1(x))
+  for (let z = -28; z <= 30.8; z += 5.6) zs.push(r1(z))
+  const x0 = r1(xs[0] - 2.8), x1 = r1(xs[xs.length - 1] + 2.8), z0 = r1(zs[0] - 2.8), z1 = r1(zs[zs.length - 1] + 2.8)
+  const campus = { x0: DEPOT.x0 - 1.8, x1: PARKING.x1 + 1.8, z: 11.6 }
+  const segH = (z: number, a: number, b: number) => { if (b - a > 0.5) ajouter('box', [(a + b) / 2, 0.03, z], [b - a, 0.03, 1.1], ROUTE) }
+  const segV = (x: number, a: number, b: number) => { if (b - a > 0.5) ajouter('box', [x, 0.03, (a + b) / 2], [1.1, 0.03, b - a], ROUTE) }
+  for (const z of [r1(zs[0] - 2.8), ...zs.map((v) => r1(v + 2.8))]) {
+    if (Math.abs(z) < campus.z) { segH(z, x0, campus.x0); segH(z, campus.x1, x1) } else segH(z, x0, x1)
+  }
+  for (const x of [r1(xs[0] - 2.8), ...xs.map((v) => r1(v + 2.8))]) {
+    if (x > campus.x0 && x < campus.x1) { segV(x, z0, -campus.z); segV(x, campus.z, z1) } else segV(x, z0, z1)
+  }
+  for (const [x, , z] of emplacementsChantiers(100000).slice(utilises)) {
+    const h = hacher(`ville:${x}:${z}`)
+    const arbre = (dx: number, dz: number, k: number) => {
+      ajouter('cyl', [x + dx, 0.4 * k, z + dz], [0.18, 0.8 * k, 0.18], COULEURS.tronc)
+      ajouter('sph', [x + dx, 1.25 * k, z + dz], [1.15 * k, 1.15 * k, 1.15 * k], COULEURS.sauge)
+    }
+    if (h < 0.42) arbre(0, 0, 0.8 + ((h * 9) % 1) * 0.5)
+    else if (h < 0.62) { arbre(-0.9, -0.7, 0.9); arbre(0.9, 0.8, 0.75) }
+    else if (h < 0.78) { ajouter('box', [x, 0.035, z], [3.8, 0.05, 3.8], melanger(COULEURS.sauge, COULEURS.sol, 0.55)); arbre(0.5, 0.3, 0.85) }
   }
 }
 
@@ -363,9 +474,9 @@ export function accessoires(p: Prereglage): Acc[] {
 }
 
 // ── Filtres de la barre du haut ──────────────────────────────────────────────────────────────────────────────
-export const FILTRES = ['aujourdhui', 'retard', 'a_facturer', 'stock_bas'] as const
+export const FILTRES = ['aujourdhui', 'retard', 'livraison', 'a_facturer', 'stock_bas'] as const
 export type Filtre = (typeof FILTRES)[number]
-export const LIBELLES_FILTRE: Record<Filtre, string> = { aujourdhui: 'Aujourd’hui', retard: 'En retard', a_facturer: 'À facturer', stock_bas: 'Stock bas' }
+export const LIBELLES_FILTRE: Record<Filtre, string> = { aujourdhui: 'Aujourd’hui', retard: 'En retard', livraison: 'Livraisons', a_facturer: 'À facturer', stock_bas: 'Stock bas' }
 /** Les objets qu'un filtre allume (les autres s'estompent). Sans filtre : tous. */
 export function objetsAllumes(objets: readonly ObjetScene[], filtre: Filtre | null): Set<number> {
   const s = new Set<number>()
@@ -373,14 +484,24 @@ export function objetsAllumes(objets: readonly ObjetScene[], filtre: Filtre | nu
     const garde = !filtre ? true
       : filtre === 'aujourdhui' ? o.etat.aujourdhui
         : filtre === 'retard' ? o.etat.retard
-          : filtre === 'a_facturer' ? o.etat.aFacturer
-            : o.etat.stockBas
+          : filtre === 'livraison' ? o.etat.livraison
+            : filtre === 'a_facturer' ? o.etat.aFacturer
+              : o.etat.stockBas
     if (garde) s.add(i)
   })
   return s
 }
 export function compteFiltres(objets: readonly ObjetScene[]): Record<Filtre, number> {
   return Object.fromEntries(FILTRES.map((f) => [f, objetsAllumes(objets, f).size])) as Record<Filtre, number>
+}
+/**
+ * Les chiffres des boutons de la barre. « Deux chiffres, un écran » : ce sont ceux du TABLEAU DE BORD (retards, stock bas) et de
+ * la commande fournisseur, pas un décompte d'objets de la maquette — un rayonnage peut porter cinq matériaux sous leur seuil, et
+ * un chantier hors des 30 emplacements reste en retard. Seul « Aujourd'hui » compte des objets posés.
+ */
+export function chiffresFiltres(scene: Scene, d: DonneesAtelier): Record<Filtre, number> {
+  const c = calculerAlertes(d).chiffres
+  return { aujourdhui: compteFiltres(scene.objets).aujourdhui, retard: c.retards, livraison: c.livraisonsEnRetard, a_facturer: c.aFacturer, stock_bas: c.stockBas }
 }
 
 /** Mélange une couleur vers une autre (t = 0 → a, 1 → b). « #rrggbb » seulement. */
@@ -436,7 +557,11 @@ export function assemblerAtelier(e: {
   chantiers: readonly { id: string; titre: string; statut: string; date_debut: string | null; date_fin_prevue: string | null; vehicule_id: string | null; client_nom?: string | null; devis_id?: string | null }[]
   /** Les cartes du pipeline (lib/crm/pipeline.ts) : l'étape de chaque chantier et les demandes sans devis. */
   cartes: readonly { objet: string; id: string; etape: string; titre: string; client: string | null; chantierId: string | null; depuis: string | null }[]
-  taches: readonly { chantier_id: string; faite: boolean | null }[]
+  taches: readonly { id?: string; chantier_id: string; faite: boolean | null; libelle?: string | null; faite_le?: string | null; membre_id?: string | null; ordre?: number | null }[]
+  /** Les matériaux réservés (chantier_materiaux) ; seules les réservations au statut « reserve » comptent. */
+  reservations?: readonly { chantier_id: string; materiau_id: string; quantite?: Nb; statut?: string | null }[]
+  commandes?: readonly CommandeA[]
+  commandesDisponibles?: boolean
   equipe: readonly { chantier_id: string; membre_id: string }[]
   materiaux: readonly { id: string; nom: string; unite?: string | null; categorie?: string | null; seuil_alerte?: Nb; stock?: { quantite?: Nb }[] | null; fournisseur_prefere?: string | null; fournisseur?: Four | Four[] | null; prix_vu_ht?: Nb; prix_vu_le?: string | null }[]
   vehicules: readonly VehiculeA[]
@@ -445,8 +570,16 @@ export function assemblerAtelier(e: {
   const etapeChantier = new Map<string, string>()
   const clientChantier = new Map<string, string | null>()
   for (const c of e.cartes) if (c.chantierId) { etapeChantier.set(c.chantierId, c.etape); clientChantier.set(c.chantierId, c.client) }
-  const taches = new Map<string, { t: number; f: number }>()
-  for (const t of e.taches) { const x = taches.get(t.chantier_id) ?? { t: 0, f: 0 }; x.t++; if (t.faite) x.f++; taches.set(t.chantier_id, x) }
+  const taches = new Map<string, { t: number; f: number; auj: number; ouvertes: { id: string; libelle: string; membre_id: string | null; ordre: number }[] }>()
+  for (const t of e.taches) {
+    const x = taches.get(t.chantier_id) ?? { t: 0, f: 0, auj: 0, ouvertes: [] }
+    x.t++
+    if (t.faite) {
+      x.f++
+      if (t.faite_le && !Number.isNaN(Date.parse(t.faite_le)) && jourParis(new Date(t.faite_le)) === e.jour) x.auj++
+    } else if (t.id) x.ouvertes.push({ id: t.id, libelle: (t.libelle ?? '').trim() || 'Tâche', membre_id: t.membre_id ?? null, ordre: Number.isFinite(Number(t.ordre)) ? Number(t.ordre) : 0 })
+    taches.set(t.chantier_id, x)
+  }
   const equipe = new Map<string, string[]>()
   for (const l of e.equipe) equipe.set(l.chantier_id, [...(equipe.get(l.chantier_id) ?? []), l.membre_id])
   return {
@@ -457,6 +590,10 @@ export function assemblerAtelier(e: {
         id: c.id, titre: c.titre, client: clientChantier.get(c.id) ?? c.client_nom ?? null, statut: c.statut, etape: etapeChantier.get(c.id) ?? null,
         avancement: t && t.t ? Math.round((t.f / t.t) * 100) : null, date_debut: c.date_debut, date_fin_prevue: c.date_fin_prevue,
         vehicule_id: c.vehicule_id, equipe: equipe.get(c.id) ?? [],
+        taches: {
+          total: t?.t ?? 0, faites: t?.f ?? 0, faitesAujourdhui: t?.auj ?? 0,
+          ouvertes: [...(t?.ouvertes ?? [])].sort((a, b) => a.ordre - b.ordre || a.id.localeCompare(b.id)).slice(0, 8).map(({ id, libelle, membre_id }) => ({ id, libelle, membre_id })),
+        },
       }
     }),
     materiaux: e.materiaux.map((m) => ({
@@ -465,6 +602,9 @@ export function assemblerAtelier(e: {
       fournisseur: unSeul(m.fournisseur)?.nom ?? m.fournisseur_prefere ?? null, fournisseur_contact: unSeul(m.fournisseur)?.contact ?? null,
       prix_vu_ht: m.prix_vu_ht === null || m.prix_vu_ht === undefined ? null : nb(m.prix_vu_ht), prix_vu_le: m.prix_vu_le ?? null,
     })),
+    reservations: (e.reservations ?? []).filter((r) => r.statut === undefined || r.statut === null || r.statut === 'reserve').map((r) => ({ chantier_id: r.chantier_id, materiau_id: r.materiau_id, quantite: nb(r.quantite) })).filter((r) => r.quantite > 0),
+    commandes: [...(e.commandes ?? [])],
+    commandesDisponibles: e.commandesDisponibles ?? true,
     vehicules: [...e.vehicules],
     membres: [...e.membres],
     demandes: e.cartes.filter((c) => c.objet === 'lead' && c.etape === 'demande').map((c) => ({ id: c.id, titre: c.titre, client: c.client, recue_le: c.depuis && !Number.isNaN(Date.parse(c.depuis)) ? jourParis(new Date(c.depuis)) : null })),

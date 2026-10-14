@@ -1,6 +1,7 @@
 'use client'
 
-import type { Scene, TypeObjet } from '@/lib/crm/atelier'
+import type { ReactNode } from 'react'
+import { initiales, styleAvatar, type Scene, type TypeObjet } from '@/lib/crm/atelier'
 
 // Le repli 2D de l'atelier : les MÊMES objets que la maquette 3D (lib/crm/atelier.ts, construireScene), rangés par zone, et
 // les MÊMES actions (chaque bouton ouvre le même panneau). Pensé pour le téléphone, le clavier et les lecteurs d'écran :
@@ -15,12 +16,15 @@ const ZONES: { type: TypeObjet; titre: string; vide: string }[] = [
   { type: 'bureau', titre: 'Bureau', vide: '' },
 ]
 
-export default function Plan2D({ scene, allumes, filtreActif, selection, onSelection, raison }: {
+export default function Plan2D({ scene, allumes, filtreActif, selection, onSelection, raison, avant }: {
   scene: Scene; allumes: Set<number>; filtreActif: boolean; selection: number | null; onSelection: (i: number) => void; raison: string | null
+  /** Ce qui se pose en tête du plan (urgences, briefing) : sur téléphone, c'est la première chose lue. */
+  avant?: ReactNode
 }) {
   return (
     <div className="atl-plan" data-atelier-plan>
       {raison && <p className="crm-note" role="note">{raison}</p>}
+      {avant}
       <div className="atl-plan-grille">
         {ZONES.map((z) => {
           const objets = scene.objets.map((o, i) => ({ o, i })).filter((x) => x.o.type === z.type)
@@ -39,6 +43,13 @@ export default function Plan2D({ scene, allumes, filtreActif, selection, onSelec
                           {o.epingle && <i style={{ background: o.epingle }} aria-hidden="true" />}
                           <span className="atl-plan-nom">{o.libelle}</span>
                           <span className="atl-plan-detail" id={`atl-d-${i}`}>{o.detail}{filtreActif && !allume ? ' · hors du filtre' : ''}</span>
+                          {o.type === 'chantier' && (o.badges.length > 0 || (o.info?.equipe.length ?? 0) > 0) && (
+                            <span className="atl-plan-pied">
+                              {(o.info?.equipe ?? []).slice(0, 4).map((m) => <i key={m.id} className="atl-av" style={styleAvatar(m.role)} title={m.nom}>{initiales(m.nom)}</i>)}
+                              {(o.info?.equipe.length ?? 0) > 4 && <span className="muted">+{(o.info?.equipe.length ?? 0) - 4}</span>}
+                              {o.badges.map((b) => <span key={b.type} className={`atl-badge g-${b.gravite}`}>{b.libelle}</span>)}
+                            </span>
+                          )}
                         </button>
                       </li>
                     )

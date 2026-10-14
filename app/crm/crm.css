@@ -177,3 +177,9 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
   .crm-kpi, .crm-carte, .crm-onglets button { transition: border-color .15s var(--ease-out, ease-out), background-color .15s var(--ease-out, ease-out), color .15s var(--ease-out, ease-out) }
   .crm-barre > span { transition: width .3s var(--ease-out, ease-out) }
 }
+
+/* — 15/10 : l'onglet Atelier occupe presque tout l'écran (la carte est la vue principale du CRM) — */
+.crm-racine { display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.psh-content:has(.crm-plein) { max-width: none; padding-top: 14px; padding-bottom: 28px; gap: 12px }
+.crm-plein .crm-mode { padding: 7px 12px; font-size: 12.5px }
+@media (max-width: 760px) { .psh-content:has(.crm-plein) { padding-inline: 12px } }
