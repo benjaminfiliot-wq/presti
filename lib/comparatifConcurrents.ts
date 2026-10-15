@@ -6,20 +6,25 @@
 //    elle a été lue (`url`) ;
 //  • ce que l'éditeur ne dit pas sur ses pages s'écrit « Non indiqué » — jamais « Non » (on n'affirme pas une absence) ;
 //  • la colonne Presti est CALCULÉE depuis le code (prix et essais : lib/plans.ts ; offre qui débloque : offreMinimale) ou
-//    décrit une fonction qui existe — et dit aussi ce que Presti ne fait pas (facture électronique, impayés) ;
+//    décrit une fonction qui existe — et dit aussi ce que Presti ne fait pas (facture électronique) ;
+//  • « Ce que Presti fait de plus » (AVANTAGES) : chaque avantage cite UN critère du tableau et au moins une PREUVE dans le code
+//    (fichier + motif que scripts/comparatif-qa.mjs retrouve). Pas de superlatif invérifiable : « aucun des quatre éditeurs lus
+//    ne l'indique » n'est écrit que si les quatre cellules du critère disent « Non indiqué » (le juge le recompte) ;
 //  • seules des fonctions que Presti a réellement sont comparées (pas de planning, pas de comptabilité, pas de paie).
 //
 // Pour mettre à jour : relire les pages de SOURCES, changer les cellules ET COMPARATIF_DATE ensemble. Un comparatif plus vieux que
 // 6 mois fait échouer scripts/comparatif-qa.mjs : il faut le relire, pas l'oublier.
 import { ESSAI_JOURS, OFFRES, offreMinimale, PLANS } from './plans'
-import { FLAGS } from './flags'
+import { FLAGS, type Flag } from './flags'
+import { DELAI_TEXTE, PRIX_SITE_TEXTE } from './siteCommande'
+import { JOURS_PAR_DEFAUT } from './relancesImpayes'
 
 /** Jour de la lecture des sites des éditeurs (JJ/MM/AAAA). */
 export const COMPARATIF_DATE = '15/10/2026'
 export const COMPARATIF_DATE_ISO = '2026-10-15'
 
 export type CritereId =
-  | 'prix' | 'essai' | 'devis_factures' | 'facture_electronique' | 'ia_reponse' | 'ia_devis' | 'assistant' | 'crm' | 'stock' | 'relances'
+  | 'prix' | 'essai' | 'devis_factures' | 'facture_electronique' | 'ia_reponse' | 'ia_devis' | 'assistant' | 'crm' | 'stock' | 'relances' | 'site'
 
 export type CelluleConcurrent = {
   /** Le texte affiché. « Non indiqué » quand le site ne dit rien. */
@@ -37,7 +42,7 @@ export type Concurrent = {
   cellules: Record<CritereId, CelluleConcurrent>
 }
 
-export const CRITERES: { id: CritereId; libelle: string; flag?: 'assistant' | 'crm' }[] = [
+export const CRITERES: { id: CritereId; libelle: string; flag?: Flag }[] = [
   { id: 'prix', libelle: 'Prix du forfait payant le plus bas, par mois' },
   { id: 'essai', libelle: 'Essai gratuit' },
   { id: 'devis_factures', libelle: 'Devis et factures' },
@@ -48,6 +53,7 @@ export const CRITERES: { id: CritereId; libelle: string; flag?: 'assistant' | 'c
   { id: 'crm', libelle: 'Suivi des chantiers, clients, équipe', flag: 'crm' },
   { id: 'stock', libelle: 'Gestion de stock' },
   { id: 'relances', libelle: 'Relances automatiques' },
+  { id: 'site', libelle: 'Site vitrine pour l’artisan', flag: 'siteCommandeVente' },
 ]
 
 const NI = 'Non indiqué'
@@ -84,6 +90,7 @@ export const CONCURRENTS: Concurrent[] = [
       crm: { t: 'En partie : suivi commercial des devis, tableaux de bord ; chantiers : non indiqué', url: H },
       stock: { t: NI, url: H },
       relances: { t: 'Impayés : automatiques en VIP (59 € HT), manuelles sinon', url: H },
+      site: { t: NI, url: H },
     },
   },
   {
@@ -104,6 +111,7 @@ export const CONCURRENTS: Concurrent[] = [
       crm: { t: 'Oui : fiches et planning de chantier, tâches, suivi des temps (selon la formule)', url: O },
       stock: { t: 'Oui, simplifiée', url: O },
       relances: { t: 'Relances de paiement listées ; automatiques ou non : non précisé', url: O },
+      site: { t: NI, url: O },
     },
   },
   {
@@ -117,13 +125,14 @@ export const CONCURRENTS: Concurrent[] = [
       prix: { t: '25 € HT (19 € HT facturé à l’année) ; offre unique', url: T },
       essai: { t: '30 jours, sans engagement ; carte : non indiqué', url: T_FE },
       devis_factures: { t: 'Oui', url: T_FO },
-      facture_electronique: { t: 'Oui : plateforme agréée intégrée pour l’émission', url: T_FE },
+      facture_electronique: { t: 'Oui : plateforme agréée annoncée « directement intégrée » pour l’émission ; réception via Pennylane, incluse', url: T_FE },
       ia_reponse: { t: NI, url: T_FO },
       ia_devis: { t: NI, url: T_FO },
       assistant: { t: NI, url: T_FO },
       crm: { t: 'En partie : clients, statuts, tableau de bord ; chantiers : non indiqué', url: T_FO },
       stock: { t: NI, url: T },
       relances: { t: NI, url: T_FO },
+      site: { t: NI, url: T_FO },
     },
   },
   {
@@ -144,6 +153,7 @@ export const CONCURRENTS: Concurrent[] = [
       crm: { t: 'Oui : suivi de chantier, tâches, planning (offre Artisan)', url: B },
       stock: { t: 'Oui (offre Artisan)', url: B },
       relances: { t: 'Suivi des impayés et relance depuis l’écran ; automatique ou non : non précisé', url: B_FO },
+      site: { t: NI, url: B_FO },
     },
   },
 ]
@@ -163,7 +173,11 @@ export const PRESTI: Record<CritereId, string> = {
   assistant: `Oui, offre ${dès('assistant')} : devis, factures, stock, tarifs et CRM par la conversation ; vous confirmez ce qui part chez un client`,
   crm: `Oui, offre ${dès('crm')} : pipeline, chantiers, équipe et carte Atelier en temps réel`,
   stock: `Oui, dès ${dès('inventaire.stock')} : stock par lieu, scan, seuils`,
-  relances: 'Conversations : J+2, J+5, J+10 ; pas de relance automatique des impayés',
+  // Impayés : seulement ce qui est livré (drapeau relancesImpayes, migration 0159). Baissé, la ligne redit ce qui manque.
+  relances: FLAGS.relancesImpayes
+    ? `Impayés : relances automatiques à cocher (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} réglables), dès ${dès('factures.relances')} ; relance préparée par l’assistant (${dès('assistant')}) ; conversations : J+2, J+5, J+10`
+    : 'Conversations : J+2, J+5, J+10 ; pas de relance automatique des impayés',
+  site: `Oui, à la demande : ${PRIX_SITE_TEXTE} une fois, sans abonnement ; une page par commune servie`,
 }
 
 /** Les critères montrés aujourd'hui : ceux dont la fonction est livrée (drapeaux de lib/flags.ts). */
@@ -172,4 +186,72 @@ export const CRITERES_VISIBLES = CRITERES.filter((c) => !c.flag || FLAGS[c.flag]
 /** Les phrases de transparence, uniques : la page et le juge les lisent ici. */
 export const COMPARATIF_MENTION = `Comparatif établi le ${COMPARATIF_DATE} d’après les sites des éditeurs.`
 export const COMPARATIF_PRECAUTION = 'Offres, prix et fonctions évoluent : vérifiez sur le site de chaque éditeur. « Non indiqué » signifie que l’information n’a pas été trouvée sur les pages lues, pas que la fonction n’existe pas. Prix des concurrents en € hors taxes, tels qu’affichés ; Presti ne facture pas de TVA (art. 293 B du CGI). Les noms cités appartiennent à leurs propriétaires ; Presti n’a aucun lien avec eux.'
-export const COMPARATIF_LIMITES = 'Là où les autres sont devant : la facturation électronique par une plateforme agréée intégrée, le planning de chantier (Obat, Batappli) et, chez Henrri, une formule gratuite.'
+/** Court et neutre, APRÈS les avantages : ce que les autres font et que Presti ne fait pas. */
+export const COMPARATIF_LIMITES_TITRE = 'Là où les autres sont devant'
+export const COMPARATIF_LIMITES_LIGNES = [
+  'La facturation électronique par une plateforme agréée : les quatre éditeurs la proposent ; Presti exporte aujourd’hui un fichier Factur-X, sans plateforme agréée intégrée.',
+  'Le planning de chantier : Obat et Batappli.',
+  'Une formule gratuite : Henrri.',
+] as const
+export const COMPARATIF_LIMITES = `${COMPARATIF_LIMITES_TITRE} : ${COMPARATIF_LIMITES_LIGNES.map((l) => l.replace(/\.$/, '')).join(' ; ')}.`
+
+// ─── Ce que Presti fait de plus ─────────────────────────────────────────────────────────────────────────────────────────
+// Chaque avantage : un critère du tableau, un texte affirmatif et factuel, et des PREUVES dans le code (fichier + motif, relus par
+// scripts/comparatif-qa.mjs). `autres` : 'aucun' n'est accepté que si les quatre cellules du critère sont « Non indiqué » ; sinon une
+// phrase factuelle dont chaque mot-clé `motsCellule` figure dans la cellule de l'éditeur nommé ; null : aucune comparaison avancée.
+export type Avantage = {
+  id: string
+  critere: CritereId
+  titre: string
+  texte: string
+  autres: 'aucun' | null | { phrase: string; motsCellule: { editeur: string; mot: string }[] }
+  preuves: { fichier: string; motif: string }[]
+  flag?: Flag
+}
+
+const prix = (id: 'essentiel' | 'studio' | 'signature') => PLANS[id].prixMois
+/** La phrase de comparaison d'un avantage, ou null. 'aucun' : valable seulement si les quatre éditeurs disent « Non indiqué » (le juge le recompte). */
+export const phraseAutres = (a: Avantage): string | null =>
+  a.autres === null ? null : a.autres === 'aucun' ? 'Aucun des quatre éditeurs lus ne l’indique sur ses pages.' : a.autres.phrase
+
+export const AVANTAGES: Avantage[] = [
+  {
+    id: 'reponse', critere: 'ia_reponse', titre: 'Chaque demande a déjà sa réponse',
+    texte: 'Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la relisez, vous l’envoyez.',
+    autres: 'aucun',
+    preuves: [{ fichier: 'lib/ai.ts', motif: 'generateLeadReply' }, { fichier: 'lib/platStats.ts', motif: 'median < 60' }],
+  },
+  {
+    id: 'assistant', critere: 'assistant', flag: 'assistant', titre: 'Un assistant qui fait le travail de gestion',
+    texte: `Une phrase suffit : il prépare le devis ou la facture, relance un impayé, met à jour le stock, les tarifs ou le CRM. Tout ce qui part chez un client attend votre confirmation, et chaque action est consignée dans un journal. Offre ${dès('assistant')}.`,
+    autres: 'aucun',
+    preuves: [{ fichier: 'lib/assistant/actions-serveur.ts', motif: 'R\\.relancer_facture' }, { fichier: 'lib/assistant/cartes.ts', motif: 'texteRelanceFacture' }, { fichier: 'lib/assistant/acces.ts', motif: "peut\\(p\\.plan, 'assistant'\\)" }],
+  },
+  {
+    id: 'impayes', critere: 'relances', flag: 'relancesImpayes', titre: 'Les impayés se relancent, et s’arrêtent à temps',
+    texte: `Une case à cocher : jusqu’à trois relances par e-mail après l’échéance (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} par défaut), dans un texte que vous avez relu. Elles s’arrêtent dès que la facture est payée ou annulée, ou que le client répond ; chaque relance est notée sur la facture. Dès l’offre ${dès('factures.relances')} (${prix('essentiel')} € par mois).`,
+    autres: { phrase: 'Chez Henrri, les impayés sont automatiques dans la formule VIP, à 59 € HT par mois.', motsCellule: [{ editeur: 'henrri', mot: 'VIP' }, { editeur: 'henrri', mot: '59' }] },
+    preuves: [{ fichier: 'lib/relancesImpayes.ts', motif: 'JOURS_PAR_DEFAUT' }, { fichier: 'lib/relancesImpayesTour.ts', motif: 'reponseClient' }, { fichier: 'app/factures/RelancesAuto.tsx', motif: 'Relancer automatiquement mes factures échues' }],
+  },
+  {
+    id: 'crm', critere: 'crm', flag: 'crm', titre: 'Vos chantiers sur une carte, en temps réel',
+    texte: `Les demandes, les chantiers, l’équipe et les véhicules au même endroit, et la carte Atelier qui se met à jour seule : retards, livraisons, stock bas. Dans le même outil que vos devis et vos factures. Offre ${dès('crm')}.`,
+    autres: null,
+    preuves: [{ fichier: 'app/crm/useTempsReel.ts', motif: 'postgres_changes' }, { fichier: 'lib/crm/tempsReel.ts', motif: 'supabase_realtime' }, { fichier: 'supabase/migrations/0158_crm_commandes_temps_reel.sql', motif: 'supabase_realtime' }],
+  },
+  {
+    id: 'site', critere: 'site', flag: 'siteCommandeVente', titre: 'Un site à votre nom, une page par commune',
+    texte: `${PRIX_SITE_TEXTE} une fois, sans abonnement : un site avec une page pour chaque commune que vous servez, relié à votre page de conversation pour que la demande arrive chez vous. ${DELAI_TEXTE}`,
+    autres: 'aucun',
+    preuves: [{ fichier: 'lib/siteCommande.ts', motif: 'PRIX_SITE_TEXTE' }, { fichier: 'lib/siteCommande.ts', motif: 'une page par commune' }],
+  },
+  {
+    id: 'un_outil', critere: 'prix', titre: 'Tout dans le même outil, pour un abonnement',
+    texte: `Dès l’offre ${PLANS.essentiel.label} (${prix('essentiel')} € par mois, TVA non applicable) : la demande, la réponse, le devis chiffré sur vos prix, la facture et les relances. Le stock arrive avec ${dès('inventaire.stock')} (${prix('studio')} €), le CRM et l’assistant avec ${dès('assistant')} (${prix('signature')} €).`,
+    autres: null,
+    preuves: [{ fichier: 'lib/plans.ts', motif: "'devis.ia'" }, { fichier: 'lib/plans.ts', motif: "'inventaire.stock'" }],
+  },
+]
+
+/** Les avantages montrés aujourd'hui : drapeau levé, et critère lui-même visible. */
+export const AVANTAGES_VISIBLES = AVANTAGES.filter((a) => (!a.flag || FLAGS[a.flag]) && CRITERES_VISIBLES.some((c) => c.id === a.critere))

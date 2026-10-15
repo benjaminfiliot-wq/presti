@@ -7,6 +7,8 @@ import { pathToFileURL } from 'node:url'
 
 const RACINE = process.cwd()
 const C = await import(pathToFileURL(path.join(RACINE, 'lib/comparatifConcurrents.ts')).href)
+const F = await import(pathToFileURL(path.join(RACINE, 'lib/flags.ts')).href)
+const P = await import(pathToFileURL(path.join(RACINE, 'lib/plans.ts')).href)
 const echecs = []; let n = 0
 const ok = (c, m) => { n++; if (!c) echecs.push(m) }
 
@@ -41,7 +43,53 @@ for (const k of ['COMPARATIF_MENTION', 'COMPARATIF_PRECAUTION', 'Sources du comp
 ok(/<ComparatifConcurrents\b/.test(fs.readFileSync(path.join(RACINE, 'app/page.tsx'), 'utf8')), 'la landing ne rend pas le comparatif')
 // Presti honnête : la colonne dit ce qu'elle ne fait pas.
 ok(/pas de plateforme agréée/.test(C.PRESTI.facture_electronique), 'Presti doit dire qu\'il n\'a pas de plateforme agréée intégrée')
-ok(/pas de relance automatique des impayés/.test(C.PRESTI.relances), 'Presti doit dire qu\'il ne relance pas les impayés tout seul')
+// Les relances d'impayés : la ligne dit ce qui est livré, ni plus ni moins (drapeau lib/flags.ts relancesImpayes).
+if (F.FLAGS.relancesImpayes) ok(/relances automatiques à cocher/.test(C.PRESTI.relances) && /J\+3, J\+10, J\+21/.test(C.PRESTI.relances) && /assistant/.test(C.PRESTI.relances), "Presti : relances automatiques d'impayés (à cocher) ET relance préparée par l'assistant")
+else ok(/pas de relance automatique des impayés/.test(C.PRESTI.relances), "drapeau relancesImpayes baissé : Presti doit dire qu'il ne relance pas les impayés tout seul")
+ok(!/pas de relance automatique des impayés/.test(C.PRESTI.relances) || !F.FLAGS.relancesImpayes, "la phrase « pas de relance automatique » ne reste pas quand la fonction est livrée")
+
+// ─── Ce que Presti fait de plus : chaque avantage cite un critère et une preuve dans le code ───────────────────────────────
+const A = C.AVANTAGES
+ok(C.AVANTAGES_VISIBLES.length >= 4 && C.AVANTAGES_VISIBLES.length <= 6, `4 à 6 avantages montrés (${C.AVANTAGES_VISIBLES.length})`)
+const SUPERLATIFS = /(le meilleur|la meilleure|les meilleurs|meilleur(e|s)? que|n°\s?1|numéro 1|numero 1|incomparable|imbattable|révolutionn|le seul|la seule|les seuls|seul logiciel|seul outil|unique sur le marché|sans équivalent|aucun concurrent|tous les autres|moins cher que|plus rapide que|plus complet)/i
+const NEGATIFS_AUTRES = /(les autres (sont|font) (mal|mauvais)|ne savent pas|incapables?)/i
+const ids = new Set()
+for (const av of A) {
+  ok(!ids.has(av.id), `avantage ${av.id} en double`); ids.add(av.id)
+  ok(C.CRITERES.some((c) => c.id === av.critere), `avantage ${av.id} : critère ${av.critere} absent du tableau`)
+  ok(av.preuves.length >= 1, `avantage ${av.id} : au moins une preuve dans le code`)
+  for (const pr of av.preuves) {
+    const fp = path.join(RACINE, pr.fichier)
+    const existe = fs.existsSync(fp)
+    ok(existe, `avantage ${av.id} : fichier de preuve introuvable ${pr.fichier}`)
+    if (existe) ok(new RegExp(pr.motif).test(fs.readFileSync(fp, 'utf8')), `avantage ${av.id} : le motif /${pr.motif}/ est absent de ${pr.fichier}`)
+  }
+  const tout = [av.titre, av.texte, C.phraseAutres(av) ?? ''].join(' ')
+  ok(!SUPERLATIFS.test(tout), `avantage ${av.id} : superlatif invérifiable (${tout.match(SUPERLATIFS)?.[0]})`)
+  ok(!MOTS_DENIGRANT.test(tout) && !NEGATIFS_AUTRES.test(tout), `avantage ${av.id} : terme dénigrant`)
+  ok(av.titre.length >= 12 && av.texte.length >= 80 && av.texte.length <= 520, `avantage ${av.id} : texte trop court ou trop long`)
+  // La comparaison avec les éditeurs : 'aucun' seulement si les quatre cellules du critère sont « Non indiqué ».
+  if (av.autres === 'aucun') ok(C.CONCURRENTS.every((c) => /^Non indiqué$/.test(c.cellules[av.critere].t)), `avantage ${av.id} : « aucun des quatre éditeurs » faux — une cellule du critère ${av.critere} dit autre chose que « Non indiqué »`)
+  else if (av.autres) for (const m of av.autres.motsCellule) ok(C.CONCURRENTS.find((c) => c.id === m.editeur)?.cellules[av.critere].t.includes(m.mot), `avantage ${av.id} : « ${m.mot} » absent de la cellule ${m.editeur}/${av.critere}`)
+}
+// Les offres citées viennent de lib/plans.ts (jamais retapées) : si une offre change, le texte suit — le juge relit les prix.
+const impayes = A.find((x) => x.id === 'impayes')
+if (impayes && F.FLAGS.relancesImpayes) ok(impayes.texte.includes(`${P.PLANS.essentiel.prixMois} €`) && impayes.texte.includes(P.PLANS[P.offreMinimale('factures.relances')].label), "avantage impayés : l'offre et le prix viennent de lib/plans.ts")
+// Un avantage dont la fonction n'est pas livrée (drapeau baissé) ne s'affiche pas.
+ok(C.AVANTAGES_VISIBLES.every((x) => !x.flag || F.FLAGS[x.flag]), 'aucun avantage dont le drapeau est baissé')
+ok(C.AVANTAGES_VISIBLES.every((x) => C.CRITERES_VISIBLES.some((c) => c.id === x.critere)), 'aucun avantage rattaché à un critère masqué')
+// La transparence reste : la ligne facture électronique est là et les limites suivent les avantages, courtes et neutres.
+ok(C.COMPARATIF_LIMITES_LIGNES.length >= 2 && C.COMPARATIF_LIMITES_LIGNES.length <= 4, 'les limites tiennent en 2 à 4 lignes')
+ok(C.COMPARATIF_LIMITES_LIGNES.some((l) => /plateforme agréée/.test(l) && /Factur-X/.test(l)), 'les limites disent la facture électronique (plateforme agréée, Factur-X)')
+ok(C.COMPARATIF_LIMITES_LIGNES.every((l) => l.length <= 190 && !MOTS_DENIGRANT.test(l)), 'limites courtes et neutres')
+ok(C.CRITERES_VISIBLES.some((c) => c.id === 'facture_electronique'), 'la ligne « Facture électronique » reste dans le tableau')
+ok(C.COMPARATIF_LIMITES.startsWith(C.COMPARATIF_LIMITES_TITRE), 'COMPARATIF_LIMITES est construit depuis les mêmes lignes')
+// Composant : les avantages viennent AVANT les limites, qui viennent AVANT la mention ; rien n'est retapé.
+{
+  const i1 = comp.indexOf('Ce que Presti fait de plus'), i2 = comp.indexOf('COMPARATIF_LIMITES_TITRE}</h3>'), i3 = comp.indexOf('<p className="cc-mention">')
+  ok(i1 > 0 && i2 > i1 && i3 > i2, 'ordre de la page : tableau, « Ce que Presti fait de plus », « Là où les autres sont devant », mention')
+  ok(/AVANTAGES_VISIBLES\.map/.test(comp) && /phraseAutres/.test(comp), 'le composant rend AVANTAGES_VISIBLES')
+}
 
 if (echecs.length) { console.log(`❌ comparatif-qa : ${echecs.length} échec(s) sur ${n}`); for (const e of echecs) console.log('  - ' + e); process.exit(1) }
 console.log(`✅ comparatif-qa : ${n}/${n} contrôles — ${C.CONCURRENTS.length} éditeurs, ${C.CRITERES_VISIBLES.length} critères, daté du ${C.COMPARATIF_DATE}`)

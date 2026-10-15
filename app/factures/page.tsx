@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { estNatif, partagerFichier, vibrer } from '@/lib/natif'
+import { actif as drapeau } from '@/lib/flags'
+import { etatPourEcran, type FactureRelancable } from '@/lib/relancesImpayes'
+import RelancesAuto, { type DonneesRelances } from './RelancesAuto'
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -27,6 +30,9 @@ export default function FacturesList() {
   const [factures, setFactures] = useState<Facture[]>([])
   const [busy, setBusy] = useState<string | null>(null)
   const [filtre, setFiltre] = useState<string>('toutes')
+  // Relances automatiques des impayés : null tant que le serveur ne répond pas (drapeau, offre, migration) — alors rien n'est montré.
+  const [rel, setRel] = useState<DonneesRelances | null>(null)
+  const [nomArtisan, setNomArtisan] = useState<string | null>(null)
 
   // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
   // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
@@ -36,12 +42,28 @@ export default function FacturesList() {
     setFactures((fs as Facture[]) ?? [])
   }
 
+  const jeton = async () => (await supabase.auth.getSession()).data.session?.access_token ?? null
+  async function chargerRelances() {
+    if (!drapeau('relancesImpayes')) return
+    const t = await jeton()
+    const rep = t ? await fetch('/api/factures/relances-auto', { headers: { Authorization: `Bearer ${t}` }, cache: 'no-store' }).catch(() => null) : null
+    setRel(rep?.ok ? ((await rep.json().catch(() => null)) as DonneesRelances | null) : null)
+  }
+  async function arretRelances(f: Facture, action: 'arreter' | 'reprendre') {
+    setBusy(f.id)
+    const t = await jeton()
+    const rep = t ? await fetch('/api/factures/relances-auto', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` }, body: JSON.stringify({ facture_id: f.id, action }) }).catch(() => null) : null
+    if (!rep?.ok) alert('Action impossible. Réessayez dans un instant.')
+    await chargerRelances(); setBusy(null)
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const { data: prof } = await supabase.from('artisans').select('id').eq('id', data.session.user.id).maybeSingle()
       if (!prof) { router.replace('/onboarding'); return }
-      await load()
+      setNomArtisan(((await supabase.from('artisans').select('nom').eq('id', data.session.user.id).maybeSingle()).data as { nom?: string | null } | null)?.nom ?? null)
+      await Promise.all([load(), chargerRelances()])
       setReady(true)
     })
   }, [router])
@@ -111,6 +133,24 @@ export default function FacturesList() {
     await load(); setBusy(null)
   }
 
+  /** Ce que le journal des relances dit de cette facture, et le geste d'arrêt ou de reprise. */
+  function ligneRelance(f: Facture) {
+    const a = rel!.arrets.find((x) => x.facture_id === f.id && !x.reprise_le) ?? null
+    const fr: FactureRelancable = { id: f.id, artisan_id: '', numero: f.numero, statut: f.statut, avoir_de: f.avoir_de, date_echeance: f.date_echeance, total_ttc: f.total_ttc, client_nom: f.client_nom, client_email: null }
+    const texte = etatPourEcran({ facture: fr, reglages: rel!.reglages, journal: rel!.journal.filter((j) => j.facture_id === f.id), arret: a, maintenant: new Date() })
+    const relancable = f.statut === 'emise' && !f.avoir_de
+    if (!texte && !relancable) return null
+    if (!texte && !(rel!.reglages.actif)) return null
+    return (
+      <span className="dc-relance" data-relance-facture={f.id}>
+        {texte ?? 'Relances automatiques : aucune relance prévue pour le moment'}
+        {relancable && (a
+          ? <button type="button" className="rel-lien" disabled={busy === f.id} onClick={(e) => { e.stopPropagation(); void arretRelances(f, 'reprendre') }}>Reprendre les relances</button>
+          : rel!.reglages.actif && <button type="button" className="rel-lien" disabled={busy === f.id} onClick={(e) => { e.stopPropagation(); void arretRelances(f, 'arreter') }}>Arrêter les relances</button>)}
+      </span>
+    )
+  }
+
   const aEncaisser = factures.filter((f) => famille(f) === 'a_encaisser')
   const payees = factures.filter((f) => famille(f) === 'payees')
   const vue = filtre !== 'toutes' && factures.some((f) => famille(f) === filtre) ? filtre : 'toutes'
@@ -120,11 +160,15 @@ export default function FacturesList() {
       {!ready ? (
         <p className="muted">Chargement…</p>
       ) : factures.length === 0 ? (
+        <>
+        {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
         <div className="psh-panel">
           <div className="psh-empty">Aucune facture pour l’instant.<br />Ouvrez un devis et cliquez « Créer la facture » : Presti reprend les lignes, applique la bonne numérotation et sort un PDF conforme.</div>
         </div>
+        </>
       ) : (
         <>
+          {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
           {/* Le résumé se calcule sur la liste affichée ci-dessous : rien d'autre n'est lu. */}
           <section className="docs-resume" aria-label="Résumé de vos factures">
             <div className="docs-tuile">
@@ -166,6 +210,7 @@ export default function FacturesList() {
                     </div>
                     <span className="dc-cli">{f.client_nom || 'Client'}</span>
                     <span className="dc-obj">{f.objet || 'Sans objet'}</span>
+                    {rel && ligneRelance(f)}
                   </div>
                   <span className="dc-amt">{eur(f.total_ttc ?? 0)}</span>
                   <div className="dc-actions">

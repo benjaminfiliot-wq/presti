@@ -1,4 +1,4 @@
-import { CONCURRENTS, CRITERES_VISIBLES, PRESTI, COMPARATIF_MENTION, COMPARATIF_PRECAUTION, COMPARATIF_LIMITES, COMPARATIF_DATE_ISO } from '@/lib/comparatifConcurrents'
+import { AVANTAGES_VISIBLES, CONCURRENTS, CRITERES, CRITERES_VISIBLES, PRESTI, COMPARATIF_MENTION, COMPARATIF_PRECAUTION, COMPARATIF_LIMITES_LIGNES, COMPARATIF_LIMITES_TITRE, COMPARATIF_DATE_ISO, phraseAutres } from '@/lib/comparatifConcurrents'
 
 // Comparatif honnête avec les autres logiciels de devis et factures pour artisans (publicité comparative, art. L122-1 du Code de la
 // consommation). TOUT vient de lib/comparatifConcurrents.ts : faits lus sur les sites des éditeurs, datés, mêmes critères pour tous.
@@ -33,7 +33,27 @@ export default function ComparatifConcurrents() {
           </tbody>
         </table>
       </div>
-      <p className="cc-mention"><b>{COMPARATIF_MENTION}</b> {COMPARATIF_LIMITES}</p>
+      <section className="cc-plus" aria-labelledby="cc-plus-titre">
+        <h3 id="cc-plus-titre">Ce que Presti fait de plus</h3>
+        <ul className="cc-plus-liste">
+          {AVANTAGES_VISIBLES.map((a) => {
+            const autres = phraseAutres(a)
+            return (
+              <li key={a.id} className="cc-plus-carte" data-avantage={a.id}>
+                <span className="cc-plus-critere">{CRITERES.find((c) => c.id === a.critere)?.libelle}</span>
+                <h4>{a.titre}</h4>
+                <p>{a.texte}</p>
+                {autres && <p className="cc-plus-autres">{autres}</p>}
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+      <section className="cc-devant" aria-labelledby="cc-devant-titre">
+        <h3 id="cc-devant-titre">{COMPARATIF_LIMITES_TITRE}</h3>
+        <ul>{COMPARATIF_LIMITES_LIGNES.map((l) => <li key={l}>{l}</li>)}</ul>
+      </section>
+      <p className="cc-mention"><b>{COMPARATIF_MENTION}</b></p>
       <p className="cc-precaution">{COMPARATIF_PRECAUTION}</p>
       <details className="cc-sources">
         <summary>Sources du comparatif</summary>

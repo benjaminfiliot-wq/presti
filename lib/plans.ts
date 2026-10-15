@@ -16,7 +16,7 @@ export type Capacite =
   | 'plateforme.conversation' | 'plateforme.ia.auto' | 'plateforme.ia.expert' | 'plateforme.comptes_clients'
   | 'plateforme.domaine_perso' | 'plateforme.personnalisation_avancee' | 'plateforme.regles'
   | 'site.essentiel' | 'site.pro' | 'site.signature' | 'site.slides3d' | 'site.domaine_perso'
-  | 'devis.ia' | 'devis.prix_artisan' | 'factures' | 'factures.electronique'
+  | 'devis.ia' | 'devis.prix_artisan' | 'factures' | 'factures.electronique' | 'factures.relances'
   | 'inventaire.stock' | 'inventaire.recherche_ia'
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
@@ -41,6 +41,9 @@ const BASE: Capacite[] = [
   'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso',
   'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous. Le site vitrine, lui, est sorti des formules (v15 §2.1)
   'devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',
+  // 15/10 — relances automatiques des factures impayées (opt-in, J+3/J+10/J+21 par défaut). Un e-mail, aucun crédit d'IA : dans toutes les offres,
+  // comme les relances de conversation (`relances`). Pour la réserver à Studio, la déplacer dans STUDIO : la grille suit seule.
+  'factures.relances',
   'canaux.email', 'relances',
 ]
 const STUDIO: Capacite[] = [
@@ -181,6 +184,8 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
   // un fichier XML Factur-X (CII) à télécharger, non validé au Schematron officiel ni embarqué dans un PDF/A-3 (lib/facturx.ts).
   { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', capacites: ['factures', 'factures.electronique'], cellules: dePlan('factures') },
+  // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
+  { groupe: 'Devis & factures', label: 'Relances automatiques des factures impayées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
   // CRM « atelier vivant » (0141/0158, lib/crm/) : Signature seulement (capacité `crm`, vérifiée côté serveur par lib/crm/acces.ts) ;
   // les lignes n'apparaissent que drapeau levé. Chaque ligne décrit ce que le code fait, pas plus.
   { groupe: 'CRM', label: 'Pipeline des demandes et fiches clients', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },

@@ -163,6 +163,12 @@ export const FLAGS = {
    *  RLS + 5 politiques chacune, aucun droit pour anon. crm-e2e « levé » non joué : il exige une base de TEST distincte
    *  (refuse la production) et il n'en existe pas ; Benj a utilisé le CRM en essai sur son compte. */
   crm: true,
+  /** 15/10/2026 — relances AUTOMATIQUES des factures impayées (lib/relancesImpayes.ts, passage quotidien de /api/cron/relances, réglage
+   *  et journal dans Factures, GET/PUT /api/factures/relances-auto). Désactivées par défaut pour chaque artisan (opt-in). Migration 0159
+   *  ÉCRITE, NON APPLIQUÉE : à ne DÉPLOYER qu'après son application — sans elle, la route répond 503, l'écran n'affiche pas la section
+   *  et le passage quotidien note l'erreur sans rien envoyer (fail-closed). Offre : capacité `factures.relances` (lib/plans.ts).
+   *  La grille des offres, le comparatif de la landing et la page Tarifs gagnent seuls leur ligne. Baissé : tout cela disparaît. */
+  relancesImpayes: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

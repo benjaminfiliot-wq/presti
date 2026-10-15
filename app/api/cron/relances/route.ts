@@ -15,6 +15,8 @@ import { tourLivraison } from '@/lib/siteLivraison'
 import { getPlateformeConfig, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { avecMentionAssistant } from '@/lib/mentionAssistant'
 import { tourCompta } from '@/lib/comptaAutomatisationsTour'
+import { tourRelancesImpayes } from '@/lib/relancesImpayesTour'
+import { magasinSupabase } from '@/lib/relancesImpayesMagasin'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -215,6 +217,19 @@ export async function GET(req: Request) {
     try { const r = await tourCompta(); compta = r; await enregistrerPassage('compta-artisans', r, r.erreurs.length === 0) }
     catch (e) { compta = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] compta', e) }
   }
+  // Les relances automatiques des factures impayées (opt-in de chaque artisan, drapeau relancesImpayes, migration 0159) : jamais sous
+  // pause générale, jamais deux fois (prise avant l'envoi), plafonnées par compte et par jour. Une erreur ne fait pas échouer le reste.
+  let impayes: unknown = 'fermées'
+  if (!enPause && !interrompue && actif('relancesImpayes')) {
+    try {
+      const r = await tourRelancesImpayes({
+        actif: true, magasin: magasinSupabase, sortiePermise: async () => (await sortiePermise()).permise,
+        envoyer: (m) => sendEmail({ to: m.to, subject: m.subject, text: m.text, fromName: m.fromName, replyTo: m.replyTo, transactionnel: true }),
+      })
+      impayes = r
+      await enregistrerPassage('relances-impayes', r, r.erreurs.length === 0)
+    } catch (e) { impayes = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] impayés', e); await enregistrerPassage('relances-impayes', { erreur: String(impayes) }, false) }
+  }
   // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
@@ -232,5 +247,5 @@ export async function GET(req: Request) {
     due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers, compta })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers, compta, impayes })
 }
