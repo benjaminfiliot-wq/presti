@@ -3030,3 +3030,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .cc-devant ul{margin:0;padding-left:1.1rem;font-size:.84rem;line-height:1.55;color:var(--ink2);display:flex;flex-direction:column;gap:.25rem}
 .cc-hint{display:none;margin:.3rem 0 0;font-size:.75rem;text-align:center;color:var(--ink2);opacity:.8}
 @media (max-width:820px){.cc-hint{display:block}.cc-table th[scope="row"]{min-width:8.5rem;max-width:8.5rem}.cc-table .cmp-txt{max-width:22ch}}
+
+/* 15/10 — comparatif : niveau d'automatisation selon l'offre */
+.cc-auto { margin: 28px auto 0; max-width: 860px; padding: 18px 22px; border: 1px solid rgba(217,119,87,.35); border-radius: 14px; background: rgba(217,119,87,.06); }
+.cc-auto-titre { margin: 0 0 10px; font-size: 1.05rem; }
+.cc-auto-liste { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: var(--muted, #8B93A2); }
+.cc-auto-liste b { color: var(--ink, #EDEFF4); }

@@ -146,7 +146,7 @@ const tailleMo = (mo: number): string => (mo >= 1024 ? `${String(mo / 1024).repl
 
 export type CelluleGrille = boolean | string
 export type LigneGrille = {
-  groupe: 'Plateforme' | 'Site' | 'Devis & factures' | 'CRM' | 'Assistant de gestion' | 'Inventaire' | 'Canaux' | 'Inclus'
+  groupe: 'Automatisation' | 'Plateforme' | 'Site' | 'Devis & factures' | 'CRM' | 'Assistant de gestion' | 'Inventaire' | 'Canaux' | 'Inclus'
   label: string
   cellules: Record<PlanPayant, CelluleGrille>
   /** Les capacités (lib/plans.ts) que cette ligne annonce. Vide : ligne de chiffres (crédits, plafonds). */
@@ -167,25 +167,35 @@ const texteSi = (cap: Capacite, t: Record<PlanPayant, string>): Record<PlanPayan
  *  vérification ne les confonde pas avec un oubli. */
 export const CAPACITES_HORS_FORMULES: Capacite[] = ['site.essentiel', 'site.pro', 'site.signature', 'site.slides3d']
 
+/** 15/10 (Benj) : le niveau d'automatisation de chaque offre, une seule écriture (grille des offres ET comparatif de l'accueil).
+ *  L'automatisation commence avec Studio (l'IA répond seule) et devient complète avec Signature (règles + assistant de gestion). */
+export const AUTOMATISATION: Record<PlanPayant, string> = {
+  essentiel: 'l’IA prépare vos réponses et vos devis, vous validez et envoyez ; seules les relances partent seules',
+  studio: 'l’automatisation commence : l’IA répond seule à vos clients, jour et nuit',
+  signature: 'automatisation complète : réponses selon vos règles, et l’assistant gère devis, factures, stock, tarifs et CRM (vous confirmez ce qui part chez un client)',
+}
+
 export const GRILLE_COMPLETE: LigneGrille[] = [
+  { groupe: 'Automatisation', label: 'Niveau d’automatisation', capacites: [], cellules: AUTOMATISATION },
   { groupe: 'Plateforme', label: 'Page de conversation à votre marque', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation') },
-  { groupe: 'Plateforme', label: 'Assistant IA', capacites: ['plateforme.ia.auto', 'plateforme.ia.expert', 'plateforme.regles'], cellules: {
-    essentiel: 'Standard · vous validez chaque réponse',
-    studio: 'Standard + Pro · répond seul ou vous validez',
-    signature: FLAGS.plateformeRegles ? 'Standard, Pro + Expert · règles d’automatisation' : 'Standard, Pro + Expert',
+  // 15/10 (Benj) : dire pour chaque offre ce qui est AUTOMATIQUE et ce que l'artisan valide lui-même.
+  { groupe: 'Plateforme', label: 'Réponse aux demandes de vos clients', capacites: ['plateforme.ia.auto', 'plateforme.ia.expert', 'plateforme.regles'], cellules: {
+    essentiel: 'préparée par l’IA (modèle Standard) : vous la validez et l’envoyez',
+    studio: 'automatique : l’IA répond seule, jour et nuit, ou vous validez (modèles Standard + Pro)',
+    signature: FLAGS.plateformeRegles ? 'automatique, avec vos règles d’automatisation (modèles Standard, Pro + Expert)' : 'automatique (modèles Standard, Pro + Expert)',
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', capacites: ['plateforme.comptes_clients'], cellules: dePlan('plateforme.comptes_clients') },
-  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
+  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée : polices, fond, avatar, amorces' }, flag: 'plateformePersona' },
   // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
   // depuis la conversation (audit des promesses du 12/10).
-  { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', capacites: ['relances'], cellules: dePlan('relances') },
+  { groupe: 'Plateforme', label: 'Relances des conversations, automatiques (J+2, J+5, J+10)', capacites: ['relances'], cellules: dePlan('relances') },
   { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', capacites: ['site.domaine_perso', 'plateforme.domaine_perso'], cellules: dePlan('site.domaine_perso') },
-  { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', capacites: ['devis.ia', 'devis.prix_artisan'], cellules: dePlan('devis.ia') },
+  { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA sur vos prix : vous relisez et envoyez', capacites: ['devis.ia', 'devis.prix_artisan'], cellules: dePlan('devis.ia') },
   // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
   // un fichier XML Factur-X (CII) à télécharger, non validé au Schematron officiel ni embarqué dans un PDF/A-3 (lib/facturx.ts).
   { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', capacites: ['factures', 'factures.electronique'], cellules: dePlan('factures') },
   // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
-  { groupe: 'Devis & factures', label: 'Relances automatiques des factures impayées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
+  { groupe: 'Devis & factures', label: 'Relances des factures impayées, automatiques une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
   // CRM « atelier vivant » (0141/0158, lib/crm/) : Signature seulement (capacité `crm`, vérifiée côté serveur par lib/crm/acces.ts) ;
   // les lignes n'apparaissent que drapeau levé. Chaque ligne décrit ce que le code fait, pas plus.
   { groupe: 'CRM', label: 'Pipeline des demandes et fiches clients', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
@@ -246,7 +256,9 @@ export function detailOffre(id: PlanPayant): { precedente: PlanPayant | null; li
     const t = texteCellule(l, l.cellules[id])
     if (!t) continue
     const avant = prec ? texteCellule(l, l.cellules[prec]) : null
-    lignes.push({ groupe: l.groupe, texte: t, nouveau: !!prec && avant === null })
+    // 15/10 : une ligne dont le texte change d'une offre à l'autre (ex. la réponse qui devient AUTOMATIQUE en Studio) est aussi
+    // « en plus » : sans cela, l'offre du dessus ne montrait pas ce qui s'automatise.
+    lignes.push({ groupe: l.groupe, texte: t, nouveau: !!prec && avant !== t })
   }
   return { precedente: prec, lignes }
 }

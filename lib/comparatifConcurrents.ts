@@ -24,7 +24,7 @@ export const COMPARATIF_DATE = '15/10/2026'
 export const COMPARATIF_DATE_ISO = '2026-10-15'
 
 export type CritereId =
-  | 'prix' | 'essai' | 'devis_factures' | 'facture_electronique' | 'ia_reponse' | 'ia_devis' | 'assistant' | 'crm' | 'stock' | 'relances' | 'site'
+  | 'prix' | 'essai' | 'automatisation' | 'devis_factures' | 'facture_electronique' | 'ia_reponse' | 'ia_devis' | 'assistant' | 'crm' | 'stock' | 'relances' | 'site'
 
 export type CelluleConcurrent = {
   /** Le texte affiché. « Non indiqué » quand le site ne dit rien. */
@@ -45,6 +45,8 @@ export type Concurrent = {
 export const CRITERES: { id: CritereId; libelle: string; flag?: Flag }[] = [
   { id: 'prix', libelle: 'Prix du forfait payant le plus bas, par mois' },
   { id: 'essai', libelle: 'Essai gratuit' },
+  // 15/10 (Benj) : Presti automatise réellement le travail ; le critère le montre, avec les mêmes règles de preuve que les autres.
+  { id: 'automatisation', libelle: 'Automatisation : ce que le logiciel fait seul' },
   { id: 'devis_factures', libelle: 'Devis et factures' },
   { id: 'facture_electronique', libelle: 'Facture électronique (réforme)' },
   { id: 'ia_reponse', libelle: 'IA qui prépare la réponse aux demandes des clients' },
@@ -82,6 +84,7 @@ export const CONCURRENTS: Concurrent[] = [
     cellules: {
       prix: { t: 'Formule Pro gratuite ; Expert 19 € HT, sans engagement (17 € HT facturé à l’année)', url: H },
       essai: { t: 'Pas d’essai indiqué (formule Pro gratuite)', url: H },
+      automatisation: { t: 'En partie : relance automatique des impayés en VIP (59 € HT) ; réponse aux clients : non indiqué', url: H },
       devis_factures: { t: 'Oui', url: H },
       facture_electronique: { t: 'Oui : « solution compatible », via des plateformes agréées partenaires, incluse', url: H_FE },
       ia_reponse: { t: NI, url: H_SUP },
@@ -103,6 +106,7 @@ export const CONCURRENTS: Concurrent[] = [
     cellules: {
       prix: { t: '32 € HT (grille micro-entreprise ; 49 € HT en artisan seul), sans engagement', url: O },
       essai: { t: '14 jours, sans carte bancaire', url: O_ACC },
+      automatisation: { t: NI, url: O },
       devis_factures: { t: 'Oui', url: O },
       facture_electronique: { t: 'Oui : via Iopole, plateforme agréée', url: O },
       ia_reponse: { t: NI, url: O },
@@ -124,6 +128,7 @@ export const CONCURRENTS: Concurrent[] = [
     cellules: {
       prix: { t: '25 € HT (19 € HT facturé à l’année) ; offre unique', url: T },
       essai: { t: '30 jours, sans engagement ; carte : non indiqué', url: T_FE },
+      automatisation: { t: NI, url: T },
       devis_factures: { t: 'Oui', url: T_FO },
       facture_electronique: { t: 'Oui : plateforme agréée annoncée « directement intégrée » pour l’émission ; réception via Pennylane, incluse', url: T_FE },
       ia_reponse: { t: NI, url: T_FO },
@@ -145,6 +150,7 @@ export const CONCURRENTS: Concurrent[] = [
     cellules: {
       prix: { t: '39 € HT (Batappli Devis, 1 utilisateur)', url: B },
       essai: { t: '10 jours, sans engagement ; carte : non indiqué', url: B },
+      automatisation: { t: NI, url: B },
       devis_factures: { t: 'Oui', url: B },
       facture_electronique: { t: 'Oui : plateforme agréée eFacture incluse', url: B_FO },
       ia_reponse: { t: NI, url: B_IA },
@@ -165,6 +171,7 @@ const jours = Object.values(ESSAI_JOURS)
 export const PRESTI: Record<CritereId, string> = {
   prix: `${Math.min(...OFFRES.map((o) => o.prix))} € par mois (${PLANS.essentiel.label}), TVA non applicable ; ${PLANS.studio.label} ${PLANS.studio.prixMois} €, ${PLANS.signature.label} ${PLANS.signature.prixMois} €`,
   essai: `${Math.min(...jours)} à ${Math.max(...jours)} jours selon l’offre, sans carte`,
+  automatisation: `Oui : dès ${PLANS.studio.label} l’IA répond seule à vos clients, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques dès ${PLANS.essentiel.label}`,
   devis_factures: 'Oui',
   // Honnête : un fichier XML Factur-X à télécharger, pas une plateforme agréée (lib/facturx.ts, lib/plans.ts).
   facture_electronique: 'Export XML Factur-X ; pas de plateforme agréée intégrée',
@@ -216,6 +223,12 @@ export const phraseAutres = (a: Avantage): string | null =>
 
 export const AVANTAGES: Avantage[] = [
   {
+    id: 'automatisation', critere: 'automatisation', titre: 'Presti fait le travail à votre place',
+    texte: `Ce n’est pas qu’un outil où l’on saisit ses devis : dès l’offre ${PLANS.studio.label} (${prix('studio')} €), l’IA répond seule à vos clients, jour et nuit, et l’automatisation devient complète avec ${PLANS.signature.label} (${prix('signature')} €) : vos règles, et un assistant qui prépare devis, factures, relances, stock, tarifs et CRM. Vous gardez la main sur ce qui part chez un client.`,
+    autres: { phrase: 'Parmi les quatre éditeurs lus, seul Henrri indique une automatisation, limitée à la relance des impayés (formule VIP).', motsCellule: [{ editeur: 'henrri', mot: 'relance automatique' }] },
+    preuves: [{ fichier: 'lib/ai/routage.ts', motif: 'plateforme\.ia\.auto' }, { fichier: 'lib/plateformeConfig.ts', motif: "'auto'" }],
+  },
+  {
     id: 'reponse', critere: 'ia_reponse', titre: 'Chaque demande a déjà sa réponse',
     texte: 'Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la relisez, vous l’envoyez.',
     autres: 'aucun',
@@ -244,12 +257,6 @@ export const AVANTAGES: Avantage[] = [
     texte: `${PRIX_SITE_TEXTE} une fois, sans abonnement : un site avec une page pour chaque commune que vous servez, relié à votre page de conversation pour que la demande arrive chez vous. ${DELAI_TEXTE}`,
     autres: 'aucun',
     preuves: [{ fichier: 'lib/siteCommande.ts', motif: 'PRIX_SITE_TEXTE' }, { fichier: 'lib/siteCommande.ts', motif: 'une page par commune' }],
-  },
-  {
-    id: 'un_outil', critere: 'prix', titre: 'Tout dans le même outil, pour un abonnement',
-    texte: `Dès l’offre ${PLANS.essentiel.label} (${prix('essentiel')} € par mois, TVA non applicable) : la demande, la réponse, le devis chiffré sur vos prix, la facture et les relances. Le stock arrive avec ${dès('inventaire.stock')} (${prix('studio')} €), le CRM et l’assistant avec ${dès('assistant')} (${prix('signature')} €).`,
-    autres: null,
-    preuves: [{ fichier: 'lib/plans.ts', motif: "'devis.ia'" }, { fichier: 'lib/plans.ts', motif: "'inventaire.stock'" }],
   },
 ]
 

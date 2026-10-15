@@ -1,4 +1,5 @@
 import { AVANTAGES_VISIBLES, CONCURRENTS, CRITERES, CRITERES_VISIBLES, PRESTI, COMPARATIF_MENTION, COMPARATIF_PRECAUTION, COMPARATIF_LIMITES_LIGNES, COMPARATIF_LIMITES_TITRE, COMPARATIF_DATE_ISO, phraseAutres } from '@/lib/comparatifConcurrents'
+import { AUTOMATISATION, PLANS } from '@/lib/plans'
 
 // Comparatif honnête avec les autres logiciels de devis et factures pour artisans (publicité comparative, art. L122-1 du Code de la
 // consommation). TOUT vient de lib/comparatifConcurrents.ts : faits lus sur les sites des éditeurs, datés, mêmes critères pour tous.
@@ -33,6 +34,14 @@ export default function ComparatifConcurrents() {
           </tbody>
         </table>
       </div>
+      <section className="cc-auto" aria-label="Niveau d’automatisation selon l’offre">
+        <p className="cc-auto-titre"><b>L’automatisation commence avec {PLANS.studio.label} et devient complète avec {PLANS.signature.label}.</b></p>
+        <ul className="cc-auto-liste">
+          {(['essentiel', 'studio', 'signature'] as const).map((id) => (
+            <li key={id}><b>{PLANS[id].label} ({PLANS[id].prixMois} €)</b> : {AUTOMATISATION[id]}.</li>
+          ))}
+        </ul>
+      </section>
       <section className="cc-plus" aria-labelledby="cc-plus-titre">
         <h3 id="cc-plus-titre">Ce que Presti fait de plus</h3>
         <ul className="cc-plus-liste">
