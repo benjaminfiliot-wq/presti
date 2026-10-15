@@ -23,7 +23,7 @@ export const SITE_A_LA_DEMANDE = {
   titre: `Le site, à la demande : ${PRIX_SITE_TEXTE} une fois`,
   phrases: [
     'Un site à votre nom, avec une page par commune que vous servez vraiment : c’est ça, le référencement local bien fait.',
-    'Vos photos, votre métier, vos coordonnées (rien d’inventé) et votre page de conversation pour que la demande arrive chez vous.',
+    'Vos photos, votre métier, vos coordonnées (rien d’inventé) et un formulaire de contact pour que la demande arrive chez vous (avec la plateforme, dès l’offre Studio : votre page de conversation).',
     `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). ${DELAI_TEXTE}`,
   ],
   bouton: 'Commander mon site',

@@ -44,7 +44,7 @@ const lora = Lora({ subsets: ['latin'], weight: ['400', '500', '600', '700'], st
 
 const TITLE = "Presti — Une réponse prête en moins d'une minute"
 const DESC =
-  "Chaque demande faite par votre lien arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez."
+  "Dès l'offre Studio, chaque demande faite par votre lien arrive dans Presti : la réponse est prête en moins d'une minute, dans votre ton. Vous l'envoyez."
 
 // ICÔNES — elles n'apparaissent pas dans l'objet ci-dessous, et c'est la bonne façon de faire.
 // Next les découvre par convention de fichier : app/icon.svg (onglets modernes),

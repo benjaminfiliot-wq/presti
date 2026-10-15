@@ -15,6 +15,7 @@ import { consommerLimite } from '@/lib/limites'
 import { porteMonnaieConversation } from '@/lib/quotaMedia'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
+import { MESSAGE_PUBLIC_SANS_PLATEFORME, plateformeOuverte } from '@/lib/plateformeAcces'
 
 // 025-18 : la route rédige la proposition de réponse (IA) avant de répondre au prospect. Sans ce plafond, la limite par
 // défaut de Vercel pouvait couper la fonction en pleine rédaction : crédit non rendu, artisan non prévenu, prospect qui
@@ -135,6 +136,17 @@ export async function POST(req: Request) {
     // Compte suspendu par la direction (v15 §5) : le lien ne prend plus de demandes — refus neutre, sans trace.
     if (await suspensionEnCours(artisan.id)) return NextResponse.json({ error: MESSAGE_PUBLIC_INDISPONIBLE }, { status: 410 })
 
+    // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme. » La page de conversation ne prend plus de demande d'un artisan dont l'offre
+    // n'a pas la plateforme (Studio et au-dessus) : rien n'est enregistré (ni demande, ni message, ni photo, ni relance), aucun crédit n'est touché,
+    // aucune réponse IA ne part. Refus neutre pour le client, sans détail sur l'offre.
+    // Seule exception : le FORMULAIRE d'un site commandé (public/sites-demo/_kit/formulaire.js : `commande` renseignée). Le site vitrine s'achète à
+    // part, ce n'est pas la plateforme, et son formulaire doit continuer d'arriver : la demande est enregistrée et l'artisan prévenu par e-mail,
+    // sans IA, sans crédit, sans relance, sans accusé (voir plus bas, après l'enregistrement).
+    const plateforme = plateformeOuverte(artisan)
+    if (!plateforme && !commandeDonnee) {
+      return NextResponse.json({ error: MESSAGE_PUBLIC_SANS_PLATEFORME, code: 'plateforme' }, { status: 403, headers: { 'Cache-Control': 'no-store' } })
+    }
+
     // Premier message écrit sur la page de conversation (PlatChat : `deferContact`) : le client n'a pas encore laissé ses
     // coordonnées. Jusqu'au 12/10, l'artisan n'était prévenu de rien tant qu'il ne les avait pas laissées — sur le parcours
     // principal, la première demande d'un client ne faisait vibrer aucun téléphone, alors que l'aide le promet (audit des
@@ -226,6 +238,28 @@ export async function POST(req: Request) {
       } catch (e) {
         console.warn('[leads] photos ignorées (upload échoué):', e)
       }
+    }
+
+    // Sans plateforme (formulaire d'un site commandé seulement, voir plus haut) : la demande est gardée — elle s'affichera dans Messages avec la
+    // plateforme — et l'artisan la reçoit par e-mail. Ni IA, ni crédit, ni relance, ni accusé de réception : rien d'autre ne part.
+    if (!plateforme) {
+      if (message) await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      if (artisan.email && artisan.leads_pause !== true && await consommerLimite(`leads:site-sans-plateforme:${artisan.id}`, MAX_LEADS_PAR_ARTISAN, 10 * 60)) {
+        // E-mail seul (pas notifierArtisan) : sa notification poussée mènerait à Messages, qui n'est pas dans cette offre.
+        await sendEmail({
+          to: artisan.email, transactionnel: true,
+          subject: `Nouveau contact depuis votre site — ${nom_prospect || contact}`,
+          text: `Quelqu'un vous a écrit depuis le formulaire de votre site.
+
+Nom : ${nom_prospect || 'non précisé'}
+Contact : ${contact}
+Besoin : ${message || 'non précisé'}
+
+Répondez-lui directement. Sa demande est aussi conservée dans Presti ; elle s'affichera dans vos messages avec la plateforme (offre Studio).`,
+          replyTo: contactEstEmail ? contact! : undefined,
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, sansPlateforme: true, reply: null })
     }
 
     // Mode PAUSE : l'artisan a suspendu l'accueil des demandes. Le lead est TOUJOURS sauvé

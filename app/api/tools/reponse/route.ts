@@ -5,6 +5,8 @@ import { resolveModel } from '@/lib/models'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { decisionEcran } from '@/lib/accesOffre'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 
 // Modèle Expert (opus) possible → au-delà du timeout Vercel par défaut (10 s).
 export const runtime = 'nodejs'
@@ -30,6 +32,12 @@ export async function POST(req: Request) {
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
+    // 15/10 (Benj) : « Réponses instantanées » (la réponse préparée par l'IA à une demande) fait partie de la plateforme : Studio et
+    // au-dessus. 403 avant tout crédit et tout appel au modèle.
+    if (!plateformeOuverte(artisan)) {
+      const d = decisionEcran(artisan.plan, 'plateforme.conversation', 'L’écran « Réponses instantanées »')
+      if (!d.ok) return NextResponse.json({ error: d.erreur, code: d.code, offre: d.offre }, { status: d.statut, headers: { 'Cache-Control': 'no-store' } })
+    }
 
     const body = await req.json()
     const message = typeof body?.message === 'string' ? body.message.trim().slice(0, 4000) : ''

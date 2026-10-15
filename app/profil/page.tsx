@@ -163,9 +163,10 @@ export default function ProfilPage() {
   const adresse = { slug, domaine: domSaved, domaine_verifie: domStatus?.served ?? false }
   const lien = slug ? afficher(urlPlateforme(adresse)) : ''
 
+  const avecPlateforme = peut(plan, 'plateforme.conversation')
   const actions = (
     <>
-      {slug && <a className="psh-btn ghost" href={urlPlateforme(adresse)} target="_blank" rel="noopener">Voir ma page ↗</a>}
+      {slug && avecPlateforme && <a className="psh-btn ghost" href={urlPlateforme(adresse)} target="_blank" rel="noopener">Voir ma page ↗</a>}
       <button className="psh-btn primary" disabled={saving} onClick={save}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )
@@ -173,21 +174,30 @@ export default function ProfilPage() {
   if (!ready) return <AppShell active="profil" title="Ma page" crumb="Plateforme"><p className="muted">Chargement…</p></AppShell>
 
   return (
-    <AppShell active="profil" title="Ma page" crumb="Votre plateforme de contact" actions={actions}>
+    <AppShell active="profil" title="Ma page" crumb={avecPlateforme ? 'Votre plateforme de contact' : 'Votre présentation et vos coordonnées'} actions={actions}>
       <div className="prof">
-        {/* Lien à partager */}
-        <div className="tool-card">
-          <h2>Votre lien à partager</h2>
-          <p className="muted" style={{ margin: '0 0 .7rem' }}>Collez-le dans votre bio (Facebook, Instagram), sur votre fiche Google, dans votre signature mail. Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site. Chaque demande faite par ce lien arrive dans Presti, avec une réponse prête en moins d&apos;une minute.</p>
-          <div className="prof-link">
-            <span>{lien || 'Lien indisponible'}</span>
-            {lien && <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => navigator.clipboard?.writeText('https://' + lien)}>Copier</button>}
+        {/* Lien à partager — la plateforme (page de conversation) commence avec Studio (15/10, Benj) : sans elle, ni lien ni interrupteur. */}
+        {avecPlateforme ? (
+          <div className="tool-card">
+            <h2>Votre lien à partager</h2>
+            <p className="muted" style={{ margin: '0 0 .7rem' }}>Collez-le dans votre bio (Facebook, Instagram), sur votre fiche Google, dans votre signature mail. Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site. Chaque demande faite par ce lien arrive dans Presti, avec une réponse prête en moins d&apos;une minute.</p>
+            <div className="prof-link">
+              <span>{lien || 'Lien indisponible'}</span>
+              {lien && <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => navigator.clipboard?.writeText('https://' + lien)}>Copier</button>}
+            </div>
+            <label className="prof-toggle">
+              <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
+              <span>Ma page est <b>{active ? 'active' : 'désactivée'}</b> {active ? '— les clients peuvent me contacter' : '— la page est fermée'}</span>
+            </label>
           </div>
-          <label className="prof-toggle">
-            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
-            <span>Ma page est <b>{active ? 'active' : 'désactivée'}</b> {active ? '— les clients peuvent me contacter' : '— la page est fermée'}</span>
-          </label>
+
+        ) : (
+        <div className="tool-card" data-sans-plateforme="1">
+          <h2>Votre page de conversation</h2>
+          <p className="muted" style={{ margin: '0 0 .7rem' }}>La plateforme — la page de conversation à votre marque, l’assistant qui répond à vos clients, leurs comptes — commence avec l’offre Studio. Avec votre offre, un client qui ouvre votre adresse voit seulement vos coordonnées publiques (téléphone, e-mail), à renseigner plus bas.</p>
+          <a className="btn btn--primary" href="/abonnement" style={{ display: 'inline-block', width: 'auto' }}>Voir l’offre Studio</a>
         </div>
+        )}
 
         {/* Identité */}
         <div className="tool-card">
@@ -239,7 +249,7 @@ export default function ProfilPage() {
           </div>
         </div>
 
-        {/* Réponse automatique */}
+        {avecPlateforme && (
         <div className="tool-card">
           <h2>Réponses aux demandes</h2>
           <p className="muted" style={{ margin: '0 0 .7rem' }}>Quand un client vous écrit sur votre page, choisissez comment il reçoit sa première réponse. Dans tous les cas, la conversation arrive dans votre boîte de réception.</p>
@@ -250,6 +260,7 @@ export default function ProfilPage() {
             <p className="muted" style={{ margin: 0 }}>Avec votre offre, l’assistant prépare chaque réponse et vous la validez dans <a href="/messages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Messages</a>. Les réglages de l’assistant (réponse automatique, ton, apparence de la page) se trouvent dans « Ma plateforme », à partir de l’<a href="/abonnement" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>offre Studio</a>.</p>
           )}
         </div>
+        )}
 
         {/* Site web */}
         <div className="tool-card">
@@ -264,7 +275,8 @@ export default function ProfilPage() {
             </>
           )}
 
-          {/* Domaine personnalisé — dans TOUTES les formules, essai compris.
+          {/* Domaine personnalisé — 15/10 : sur la page de conversation, donc avec la plateforme (Studio et au-dessus). Avant : toutes les formules (décision du 04/09).
+              Ancien commentaire : dans TOUTES les formules, essai compris.
               ⚠️ Ce bloc était conditionné à `siteMax >= 3` (Signature). C'était en contradiction
               avec lib/plans.ts:38, qui met `site.domaine_perso` dans BASE depuis la décision du
               04/09 (« l'adresse sans presti est pour tous »), et avec app/api/domain/route.ts:33
@@ -276,7 +288,7 @@ export default function ProfilPage() {
             <div className="site-domain">
               <div className="site-domain-h">
                 <b>Votre nom de domaine <Info cle="profil.domaine" /></b>
-                <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Compris dans toutes les formules, essai inclus. Le nom de domaine s’achète chez un hébergeur et reste à vous.</span>
+                <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Compris dans l’offre Studio et au-dessus. Le nom de domaine s’achète chez un hébergeur et reste à vous.</span>
               </div>
               <div className="site-domain-row">
                 <input value={domaine} onChange={(e) => setDomaine(e.target.value)} placeholder="mon-entreprise.fr" spellCheck={false} disabled={domBusy} />
@@ -312,7 +324,9 @@ export default function ProfilPage() {
                 </div>
               ) : null}
             </div>
-          ) : null}
+          ) : (
+            <p className="muted" style={{ margin: '1rem 0 0', fontSize: '.88rem' }}>Votre propre nom de domaine sur la page de conversation fait partie de la plateforme, à partir de l’offre Studio.</p>
+          )}
         </div>
 
         {/* Données & suppressions — chaque brique indépendamment (§C3) */}

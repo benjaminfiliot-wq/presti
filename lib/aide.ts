@@ -42,7 +42,7 @@ const creditsGeneration = (): string => {
 }
 
 export const ARTICLES: Article[] = [
-  // source: app/outils/page.tsx:56-88 ; app/api/tools/reponse/route.ts:1-40 (aucun verrou de plan)
+  // source: app/outils/page.tsx ; app/api/tools/reponse/route.ts (15/10 : fait partie de la plateforme, verrou `plateforme.conversation` : Studio et au-dessus)
   {
     id: 'outils',
     page: '/outils',
@@ -50,7 +50,7 @@ export const ARTICLES: Article[] = [
     aQuoiCaSert:
       "Vous collez la demande d'un client, Presti rédige une réponse dans votre ton. " +
       'La réponse reste modifiable avant que vous la copiiez. Rien ne part tout seul depuis cet écran : ' +
-      "c'est vous qui la collez où vous voulez (SMS, email, Le Bon Coin…).",
+      "c'est vous qui la collez où vous voulez (SMS, email, Le Bon Coin…). Cet outil fait partie de la plateforme, à partir de l’offre Studio.",
     commentOnSenSert: [
       "Collez la demande de votre client dans le champ prévu.",
       'Indiquez son nom si vous le connaissez (facultatif).',
@@ -62,16 +62,16 @@ export const ARTICLES: Article[] = [
       "Le client ne reçoit rien automatiquement : la réponse générée ici est à copier-coller vous-même où vous le souhaitez.",
     credits: creditsGeneration(),
     reglagesLies: ['/abonnement'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'studio'
   },
 
   // source: app/dashboard/page.tsx:84-180 (KPI, lien de contact, liste des demandes, changement de statut)
   {
     id: 'dashboard',
     page: '/dashboard',
-    titre: 'Votre tableau de bord : demandes reçues et lien de contact',
+    titre: 'Votre tableau de bord : demandes reçues et lien de contact (plateforme, dès Studio)',
     aQuoiCaSert:
-      "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager.",
+      "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager. La plateforme (le lien, les demandes, les réponses de l'assistant) commence avec l'offre Studio : avec l'offre Essentiel, cet écran se réduit à vos raccourcis (devis, factures, tarifs).",
     commentOnSenSert: [
       'Copiez votre lien de contact et partagez-le (fiche Google, page Facebook, signature mail…). Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site.',
       'Repérez les demandes marquées « à répondre ».',
@@ -130,7 +130,7 @@ export const ARTICLES: Article[] = [
       "Rien ne part automatiquement depuis cet écran : chaque envoi (réponse, devis) est un geste que vous faites vous-même.",
     credits: `« Proposer une réponse » et « Devis auto » consomment chacun un crédit : ${creditsGeneration()}, selon le modèle réglé dans Ma plateforme.`,
     reglagesLies: ['/messages/canaux', '/plateforme'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'studio'
   },
 
   // source: app/messages/canaux/page.tsx:1-171 ; app/api/canaux/route.ts:1-40 (chiffrement + test avant enregistrement)
@@ -152,7 +152,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: "Rien de visible pour eux — c'est un canal de réception supplémentaire pour vous.",
     credits: 'Aucun',
     reglagesLies: ['/messages'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'studio'
   },
 
   // source: app/devis/page.tsx:19-93 (liste, statuts, suppression)
@@ -280,7 +280,7 @@ export const ARTICLES: Article[] = [
     titre: 'Ma page : votre plateforme de contact',
     aQuoiCaSert:
       'Vous présentez votre activité, vos prestations et vos coordonnées sur la page que vous partagez avec vos clients. ' +
-      'Vous pouvez aussi connecter votre nom de domaine.',
+      'Avec l’offre Studio et au-dessus, vous pouvez aussi connecter votre nom de domaine à votre page de conversation.',
     commentOnSenSert: [
       'Complétez votre présentation, votre zone d’intervention, vos disponibilités et vos prestations.',
       'Ajoutez les coordonnées que vous souhaitez afficher, puis cliquez « Enregistrer ».',
@@ -288,7 +288,7 @@ export const ARTICLES: Article[] = [
       'Pour supprimer un site existant : Paramètres → « Données & confidentialité ».',
     ],
     pourVosClients:
-      'Votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire.',
+      'Avec la plateforme (offre Studio et au-dessus), votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire. Avec l’offre Essentiel, il n’y a pas de plateforme : ils voient seulement vos coordonnées publiques.',
     credits: 'Aucun — modifier votre profil ne consomme pas de crédit.',
     reglagesLies: ['/plateforme', '/parametres?onglet=legal', '/abonnement'],
     disponibleAvec: 'essentiel',
@@ -510,7 +510,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/plateforme',
     label: 'Mode de réponse',
     explication:
-      'Automatique : l’assistant répond tout de suite, en direct (offre Studio et au-delà — en Essai et Essentiel, ce mode est verrouillé et l’assistant prépare pour que vous validiez). Assistée : il prépare, vous validez ; le client voit « votre message est bien reçu ». Manuelle : rien n’est préparé, aucun crédit, vous écrivez tout. Et sur n’importe quel fil, « je prends la main » fait taire l’assistant jusqu’à « rendre la main ». Le choix s’enregistre au clic ; la ligne « mode appliqué par le serveur » dit ce qui est réellement en vigueur.',
+      'Automatique : l’assistant répond tout de suite, en direct (offre Studio et au-delà ; la plateforme n’existe pas en Essai ni en Essentiel). Assistée : il prépare, vous validez ; le client voit « votre message est bien reçu ». Manuelle : rien n’est préparé, aucun crédit, vous écrivez tout. Et sur n’importe quel fil, « je prends la main » fait taire l’assistant jusqu’à « rendre la main ». Le choix s’enregistre au clic ; la ligne « mode appliqué par le serveur » dit ce qui est réellement en vigueur.',
     exemple: 'En Assistée, un client écrit à 22 h ; vous voyez la réponse proposée le lendemain matin et l’envoyez d’un clic.',
   },
   // source: app/plateforme/page.tsx:43, 147-153 ; lib/models.ts:10-15
@@ -820,13 +820,13 @@ export const INFOBULLES: InfoBulle[] = [
     explication: 'L’adresse visible par vos clients sur votre page. Laissez vide pour ne pas l’afficher.',
     exemple: 'Un client préfère écrire plutôt qu’appeler : il utilise l’adresse affichée ici.',
   },
-  // source: app/profil/page.tsx:549-559 (toutes les offres)
+  // source: app/profil/page.tsx (15/10 : à partir de Studio, `site.domaine_perso`)
   {
     cle: 'profil.domaine',
     page: '/profil',
     label: 'Votre nom de domaine',
     explication:
-      'Votre propre adresse (ex : mon-entreprise.fr) sert votre site s’il est publié, sinon votre page de contact — inclus dans toutes les offres.',
+      'Votre propre adresse (ex : mon-entreprise.fr) sert votre site s’il est publié, sinon votre page de contact — à partir de l’offre Studio, avec la plateforme.',
     exemple: 'Vous connectez mon-entreprise.fr, ajoutez les enregistrements DNS indiqués chez votre hébergeur, puis cliquez « Vérifier ».',
   },
 

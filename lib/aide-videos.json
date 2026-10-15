@@ -30,7 +30,7 @@
       "id": "messages",
       "titre": "Messages",
       "route": "/messages",
-      "offre": "essentiel",
+      "offre": "studio",
       "resume": "Retrouver toutes les conversations avec vos clients et valider les réponses préparées.",
       "etapes": [
         "Toutes vos conversations sont ici, les plus récentes en premier.",
@@ -54,7 +54,7 @@
       "id": "outils",
       "titre": "Réponses instantanées",
       "route": "/outils",
-      "offre": "essentiel",
+      "offre": "studio",
       "resume": "Coller la demande d’un client et obtenir une réponse rédigée dans votre ton, à copier où vous voulez.",
       "etapes": [
         "Collez la demande de votre client dans le grand champ.",

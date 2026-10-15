@@ -330,7 +330,7 @@ function doublures(W) {
   }
 }
 function monde(sc, cout) {
-  const artisan = { id: ART, slug: 'essai-pq-025-18', slugs_anciens: [], nom: 'Atelier Essai PQ', metier: 'plombier', ton_style: null, email: 'atelier-pq@exemple.invalid', is_founder: false, leads_pause: false, services: [], zone_intervention: 'Rennes', bio: null, tva_regime: null, assurance_nom: null, plan: 'essentiel', credits: sc.solde, suppression_demandee_le: null, notifications: null, domaine: null, domaine_verifie: false, ...(sc.artisan || {}) }
+  const artisan = { id: ART, slug: 'essai-pq-025-18', slugs_anciens: [], nom: 'Atelier Essai PQ', metier: 'plombier', ton_style: null, email: 'atelier-pq@exemple.invalid', is_founder: false, leads_pause: false, services: [], zone_intervention: 'Rennes', bio: null, tva_regime: null, assurance_nom: null, plan: 'studio', credits: sc.solde, suppression_demandee_le: null, notifications: null, domaine: null, domaine_verifie: false, ...(sc.artisan || {}) }
   const base = { artisans: [artisan], leads: [], messages: [], relances: [], plateforme_config: sc.config ? [{ artisan_id: ART, ...sc.config }] : [] }
   const W = {
     marque: `PQ${hasard(6)}`, base, sb: fauxSupabase(base), cout,
@@ -376,14 +376,15 @@ async function jouer({ racine, source, sc, cout }) {
 // ── Les scénarios ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 // attendu : proposition | echec | sans_credit | auto | silence | pause ; tier/modele : ce que resolveModel sert (PQ-1, PQ-2).
 export const SCENARIOS = [
-  { id: 'PQ-1', nom: 'Essentiel, réglage par défaut (assistée, sans ligne de configuration)', solde: 10, attendu: 'proposition', tier: 'standard' },
-  { id: 'PQ-1', nom: 'Essentiel qui a choisi « auto » (verrou d’offre : servi en assistée), contact par téléphone', solde: 10, config: { mode_reponse: 'auto' }, contact: 'telephone', attendu: 'proposition', tier: 'standard' },
+  // 15/10 (Benj) : la plateforme commence avec Studio — les comptes de ces scénarios sont en Studio par défaut (il n'y a plus d'Essentiel avec la plateforme,
+  // donc plus de scénario « Essentiel qui a choisi auto » : le refus d'un compte sans plateforme est jugé par scripts/plateforme-formulaire-qa.mjs).
+  { id: 'PQ-1', nom: 'Studio, réglage par défaut (assistée, sans ligne de configuration)', solde: 10, attendu: 'proposition', tier: 'standard' },
   { id: 'PQ-1', nom: 'Signature en assistée, modèle Expert', solde: 10, artisan: { plan: 'signature' }, config: { mode_reponse: 'assistee', modele: 'expert' }, attendu: 'proposition', tier: 'expert', modele: 'expert' },
   { id: 'PQ-1', nom: 'premier message de la page /p (PlatChat : variante B, coordonnées différées)', solde: 10, differe: true, attendu: 'proposition', tier: 'standard' },
   { id: 'PQ-2', nom: 'l’IA lève une erreur', solde: 10, ia: 'leve', attendu: 'echec', tier: 'standard', panne: true },
   { id: 'PQ-2', nom: 'l’IA rend un texte vide', solde: 10, ia: 'vide', attendu: 'echec', tier: 'standard' },
   { id: 'PQ-2', nom: 'panne en Expert (Signature)', solde: 10, ia: 'leve', artisan: { plan: 'signature' }, config: { mode_reponse: 'assistee', modele: 'expert' }, attendu: 'echec', tier: 'expert', panne: true },
-  { id: 'PQ-3', nom: 'solde 0 (Essentiel, assistée)', solde: 0, attendu: 'sans_credit' },
+  { id: 'PQ-3', nom: 'solde 0 (Studio, assistée)', solde: 0, attendu: 'sans_credit' },
   { id: 'PQ-3', nom: 'solde 2 pour un modèle Expert à 3 (Signature)', solde: 2, artisan: { plan: 'signature' }, config: { mode_reponse: 'assistee', modele: 'expert' }, attendu: 'sans_credit' },
   { id: 'PQ-4', nom: 'auto (Studio)', solde: 10, artisan: { plan: 'studio' }, config: { mode_reponse: 'auto' }, attendu: 'auto' },
   { id: 'PQ-4', nom: 'manuel', solde: 10, config: { mode_reponse: 'manuelle' }, attendu: 'silence' },
@@ -617,8 +618,8 @@ export async function jugerComportement({ racine, source = null, ids = ['PQ-1', 
   for (const sc of SCENARIOS.filter((s) => ids.includes(s.id))) {
     const cible = res.get(sc.id)
     const attendu = { ...sc }
-    if (sc.modele) attendu.modeleServi = ref.resolveModel(sc.modele, sc.artisan?.plan || 'essentiel').model
-    if (sc.tier && sc.modele) { const r = ref.resolveModel(sc.modele, sc.artisan?.plan || 'essentiel'); if (r.tier !== sc.tier) throw new Error(`référentiel : resolveModel(${sc.modele}, ${sc.artisan?.plan}) rend ${r.tier}, le scénario attend ${sc.tier}`) }
+    if (sc.modele) attendu.modeleServi = ref.resolveModel(sc.modele, sc.artisan?.plan || 'studio').model
+    if (sc.tier && sc.modele) { const r = ref.resolveModel(sc.modele, sc.artisan?.plan || 'studio'); if (r.tier !== sc.tier) throw new Error(`référentiel : resolveModel(${sc.modele}, ${sc.artisan?.plan}) rend ${r.tier}, le scénario attend ${sc.tier}`) }
     let x
     try { x = await jouer({ racine, source, sc, cout: ref.cout }) } catch (e) { cible.echecs.push(`« ${sc.nom} » : route non chargée (${premiereLigne(e)})`); continue }
     const d = JUGES[sc.attendu](x, sc, attendu)

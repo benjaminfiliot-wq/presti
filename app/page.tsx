@@ -44,6 +44,8 @@ const I = {
 
 // 15/10 (Benj) : « Mes chiffres » (et sa compta) commencent avec une offre — la landing la nomme, lue dans lib/plans.ts, jamais recopiée.
 const OFFRE_CHIFFRES = (() => { const o = offreMinimale('chiffres'); return o ? PLANS[o].label : '' })()
+// 15/10 (Benj) : « La plateforme n'est disponible qu'à partir de Studio » — la landing nomme l'offre, lue dans lib/plans.ts, jamais recopiée.
+const OFFRE_PLATEFORME = (() => { const o = offreMinimale('plateforme.conversation'); return o ? PLANS[o].label : '' })()
 // Le prix d'appel se lit dans la grille (lib/plans.ts), jamais recopié à la main.
 const PRIX_MIN = Math.min(...OFFRES.map((o) => o.prix))
 
@@ -134,7 +136,7 @@ export default function Home() {
             operatingSystem: 'Web',
             url: 'https://prestiapp.fr',
             description:
-              "Chaque demande faite par votre lien arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez.",
+              "Dès l'offre Studio, chaque demande faite par votre lien arrive dans Presti : la réponse est prête en moins d'une minute, dans votre ton. Vous l'envoyez.",
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: 'Essai gratuit' },
             provider: { '@type': 'Organization', name: 'Presti', url: 'https://prestiapp.fr' },
           }),
@@ -171,8 +173,8 @@ export default function Home() {
             {/* Deux versions de la même promesse : en 390 px, la longue faisait 6 lignes et repoussait l'appel à l'action
                 (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
             <p className="lp-lede">
-              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez.</span>
-              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture.</span>
+              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}).</span>
+              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture. La plateforme de conversation commence avec l&apos;offre {OFFRE_PLATEFORME} ; le devis chiffré par l&apos;IA et la facture sont dès l&apos;offre {PLANS.essentiel.label}.</span>
             </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
@@ -197,7 +199,7 @@ export default function Home() {
         <section className="lp-blk" style={{ paddingTop: '1rem' }}>
           <div className="container">
             <div className="lp-reassure reveal-kids">
-              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : vous l&apos;envoyez</em></div></div>
+              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : vous l&apos;envoyez (dès {OFFRE_PLATEFORME})</em></div></div>
               <div className="lp-rc"><span className="i">{I.badge}</span><div><b>Fiable</b><em>Devis conformes, dans votre ton</em></div></div>
               <div className="lp-rc"><span className="i">{I.shield}</span><div><b>Sécurisé</b><em>Vos données isolées, chiffrées</em></div></div>
               <div className="lp-rc"><span className="i">{I.wallet}</span><div><b>Sans carte</b><em>Essai offert, résiliable</em></div></div>
@@ -210,7 +212,7 @@ export default function Home() {
           <div className="container lp-proof-in">
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
             <div>
-            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
+            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Avec la plateforme (dès l&apos;offre {OFFRE_PLATEFORME}), Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
             <div className="src">Source : Harvard Business Review, « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
             </div>
           </div>
@@ -220,7 +222,7 @@ export default function Home() {
             qui fait quoi : l'IA prépare, l'artisan relit et envoie (mode assisté par défaut, lib/plateformeConfig.ts). */}
         <section className="lp-blk lp-chaine" id="comment">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, sans rien ressaisir.</h2><p>L&apos;IA prépare chaque étape. Vous relisez, vous envoyez.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, sans rien ressaisir.</h2><p>L&apos;IA prépare chaque étape. Vous relisez, vous envoyez. La plateforme (la demande qui arrive, la réponse prête, les relances) commence avec l&apos;offre {OFFRE_PLATEFORME} ; le devis et la facture, dès {PLANS.essentiel.label}.</p></div>
             <ol className="lp-pile">
               {CHAINE.map((e, i) => (
                 <li key={e.titre} className="lp-carte-pile" style={{ ['--i' as string]: i }}>
@@ -240,7 +242,7 @@ export default function Home() {
         {/* FONCTIONNALITÉS : vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, vous lancez le devis d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé), il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, vous lancez le devis d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé), il l&apos;accepte. Des scènes prises sur le vrai produit. La plateforme de conversation commence avec l&apos;offre {OFFRE_PLATEFORME}.</p></div>
             {FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}
             {FLAGS.assistant && FLAGS.crm ? <DemoGestion /> : null}
             {FLAGS.landingDemoSite ? <DemoSite /> : null}
@@ -325,7 +327,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes, pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
+            <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 devis chiffrés par l&apos;IA sur vos prix) pour juger la qualité avant de payer. Sans carte. L&apos;essai n&apos;inclut pas la plateforme de conversation, qui commence avec l&apos;offre {OFFRE_PLATEFORME}.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
             <div className="lp-howcredits reveal-kids">
               <div className="lp-hc lp-spot"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Chaque réponse préparée pour un client (une par message qu&apos;il vous écrit), un devis chiffré par l&apos;IA ou un dépôt de fichiers de compta. Une recherche chez vos fournisseurs : 2 crédits (3 avec Expert).</span></div>
@@ -405,7 +407,7 @@ export default function Home() {
           <ObjetVivant className="lp-objet lp-objet--final" />
           <div className="container">
             <h2>Le prochain client qui vous cherche,<br /><span className="g">ne le laissez pas filer.</span></h2>
-            <p>3 réponses ou devis offerts, sur vos vraies demandes, sans carte bancaire. Vous jugez la qualité avant de payer quoi que ce soit.</p>
+            <p>3 devis offerts, chiffrés par l&apos;IA sur vos prix, sans carte bancaire. Vous jugez la qualité avant de payer quoi que ce soit.</p>
             <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
             {actif('prospectsEntrant') ? <p className="lp-final-alt"><a href="#maquette">Ou recevoir d&apos;abord la maquette de mon site</a></p> : null}
           </div>

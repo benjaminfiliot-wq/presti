@@ -30,7 +30,7 @@ export const THEMES: readonly Theme[] = Object.freeze([
     id: 'devis_sans_suite',
     libelle: 'Devis non relancés, sans réponse ou jamais signés',
     // (13/10) Les relances sont celles de la conversation (lib/relances.ts) : un devis créé seul n'en a pas (audit des promesses, C60).
-    reponse_presti: 'Un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail.',
+    reponse_presti: 'Avec la plateforme (dès l’offre Studio), un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail.',
     familles: Object.freeze([
       f(/\bdevis\b/),
       f(/sans (suite|reponse|retour|nouvelles?)/, /pas (de|d'un|un) (retour|reponse|nouvelles?|appel|signe)/, /(aucun|aucune|jamais de) (retour|reponse|nouvelles?|suite)/,
@@ -41,7 +41,7 @@ export const THEMES: readonly Theme[] = Object.freeze([
     id: 'appels_manques',
     libelle: 'Appels manqués, téléphone impossible à tenir sur le chantier',
     // (13/10) Presti ne capte ni les appels ni les SMS : seulement les demandes écrites (audit des promesses, site 2, hors site 6 et 22).
-    reponse_presti: 'Chaque demande écrite faite par le lien de contact arrive dans Presti, avec une réponse prête en moins d’une minute, même pendant le chantier (pas les appels).',
+    reponse_presti: 'Avec la plateforme (dès l’offre Studio), chaque demande écrite faite par le lien de contact arrive dans Presti, avec une réponse prête en moins d’une minute, même pendant le chantier (pas les appels).',
     familles: Object.freeze([
       f(/telephone/, /\bappels?\b/, /\bappelle/, /repondeur/, /decroch/, /rappel(er|le|e)/, /\btel\b/, /portable/),
       f(/manque/, /rate/, /pas le temps/, /sur (le|les|un) chantiers?/, /en chantier/, /impossible/, /sonne/, /toute la journee/, /pas (pu|eu le temps de) repondre/, /repondre/, /messages?/),

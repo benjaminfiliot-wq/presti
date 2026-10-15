@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { cleEmail, consommerLimite } from '@/lib/limites'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { COOKIE_SESSION, cookieOptions, consommerLien, creerLienMagique, revoquerSession, sessionCourante } from '@/lib/clientAuth'
 
 // Connexion des CLIENTS de la plateforme par lien magique (v4 §6/§D2).
@@ -53,9 +54,10 @@ export async function POST(req: Request) {
       if (!(await consommerLimite(cleEmail('lien:email', email), 3, 15 * 60))) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
 
       const { data: artisan } = await supabaseAdmin
-        .from('artisans').select('id, nom, slug, email, plateforme_active, domaine, domaine_verifie').eq('slug', slug).maybeSingle()
+        .from('artisans').select('id, nom, slug, email, plateforme_active, domaine, domaine_verifie, plan, is_founder').eq('slug', slug).maybeSingle()
       // Réponse IDENTIQUE même si l'artisan n'existe pas → aucune énumération possible.
-      if (artisan && artisan.plateforme_active !== false) {
+      // 15/10 (Benj) : les comptes clients font partie de la plateforme (Studio et au-dessus). Réponse identique, aucun e-mail ne part.
+      if (artisan && artisan.plateforme_active !== false && plateformeOuverte(artisan)) {
         const jeton = await creerLienMagique(artisan.id, email, ip)
         // `lib/urls.ts` existe pour ça, et le dit en tête : UN seul endroit qui les construit. En
         // dur, un client venu de mondomaine.fr recevait un lien vers prestiapp.fr — il apprenait

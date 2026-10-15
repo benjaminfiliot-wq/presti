@@ -6,7 +6,7 @@ import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { resolveModel } from '@/lib/models'
 import { getPlateformeConfig, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
-import { getUserRevocable } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { planifierRelances } from '@/lib/relances'
 import { completerLeadCanal, envoyerReponseCanal, type IssueEnvoi } from '@/lib/canaux/serveur'
 
@@ -24,12 +24,12 @@ type Lead = {
   canal: string | null
 }
 
-async function authArtisan(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return { error: NextResponse.json({ error: 'Non authentifié' }, { status: 401 }) }
-  const { data, error } = await getUserRevocable(token)
-  if (error || !data?.user) return { error: NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 }) }
-  return { uid: data.user.id }
+// 15/10 (Benj) : « Messages » fait partie de la plateforme, qui commence avec Studio. Session valide d'abord (révocation, suspension, double
+// authentification), puis l'offre lue en base : 403 { code: 'offre' } sans rien lire ni écrire, aucun crédit touché.
+async function gardeMessages(req: Request) {
+  const g = await exigerCapacite(req, 'plateforme.conversation', 'L’écran « Messages »')
+  if ('reponse' in g) return { error: g.reponse }
+  return { uid: g.uid }
 }
 
 async function ownedLead(leadId: string, uid: string): Promise<Lead | null> {
@@ -66,7 +66,7 @@ function reponseCanal(e: IssueEnvoi): { canal?: string; lien?: string } {
 
 export async function POST(req: Request) {
   try {
-    const auth = await authArtisan(req)
+    const auth = await gardeMessages(req)
     if ('error' in auth) return auth.error
     const uid = auth.uid
 
@@ -110,8 +110,8 @@ export async function POST(req: Request) {
       if (envoi.traite && !envoi.ok) return NextResponse.json({ error: envoi.erreur, hors_fenetre: !!envoi.hors_fenetre }, { status: envoi.statut })
       await supabaseAdmin.from('messages').update({ etat: null, contenu: texte, sent_at: new Date().toISOString(), ...traceEnvoi(envoi) }).eq('id', prop.id)
       // `repondu`, pas `en_discussion` : une réponse vient de partir au nom de l'artisan, la balle
-      // est chez le prospect. C'est le parcours NORMAL de l'Essentiel (l'assistant prépare, l'artisan
-      // valide) — et c'est ce statut que le cron des relances exige.
+      // est chez le prospect. C'est le parcours de l'assistant en mode « assistée » (il prépare, l'artisan
+      // valide ; Studio et au-dessus depuis le 15/10) — et c'est ce statut que le cron des relances exige.
       await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'repondu', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id)
       // Pas de relance automatique sur ces canaux : hors des 24 h, Meta la refuserait, et Le Bon Coin n'a pas d'API.
       if (envoi.traite) return NextResponse.json({ ok: true, emailed: false, ...reponseCanal(envoi) })
@@ -180,8 +180,8 @@ export async function POST(req: Request) {
       })
       .eq('id', lead.id)
 
-    // La promesse « Relances automatiques » de la grille, vraie dès l'Essentiel : elle ne dépend
-    // plus de l'assistant autonome (vendu à partir de Studio), mais du fait qu'une réponse est partie.
+    // La promesse « Relances des conversations » de la grille (Studio et au-dessus, comme toute la plateforme) : elle ne dépend
+    // pas de l'assistant autonome, mais du fait qu'une réponse est partie.
     if (envoi.traite) return NextResponse.json({ ok: true, emailed: false, ...reponseCanal(envoi) })
     if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
 

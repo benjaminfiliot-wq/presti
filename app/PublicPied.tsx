@@ -11,7 +11,7 @@ export default function PublicPied({ accueil = false }: { accueil?: boolean }) {
         <div className="lp-foot-haut">
           <div className="lp-foot-marque">
             <span className="lp-brand"><i className="marque"><Marque size={22} /></i>Presti</span>
-            <p>L&apos;assistant des artisans du bâtiment : chaque demande faite par votre lien a sa réponse prête, puis le devis, la facture et les relances.</p>
+            <p>L&apos;assistant des artisans du bâtiment : des devis chiffrés par l&apos;IA et des factures, et avec la plateforme (dès l&apos;offre Studio), chaque demande faite par votre lien a sa réponse prête.</p>
             <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
           </div>
           <nav aria-label="Produit"><b>Produit</b><a href={ancre('fonctionnalites')}>Fonctionnalités</a><a href={ancre('chiffres')}>Vos chiffres</a><a href={ancre('compta')}>Comptabilité</a><a href={ancre('tarifs')}>Tarifs</a></nav>

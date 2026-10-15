@@ -21,9 +21,9 @@ export type Etape = {
 
 export const VISITES: Record<string, Etape[]> = {
   console: [
-    { cible: 'sidebar', menu: true, titre: 'Tout est dans ce menu', texte: 'Vos demandes, vos messages, vos devis et factures, votre page et votre plateforme : chaque outil a son entrée ici.' },
-    { cible: 'nav-outils', menu: true, titre: 'Réponses instantanées', texte: 'Collez la demande d’un client : Presti rédige la réponse dans votre ton. Vous la relisez, puis vous la copiez où vous voulez.' },
-    { cible: 'nav-plateforme', menu: true, titre: 'Ma plateforme', texte: 'Dès l’offre Studio : réglez comment l’assistant répond à vos clients (après votre validation, jamais, ou automatiquement) et l’apparence de votre page.' },
+    { cible: 'sidebar', menu: true, titre: 'Tout est dans ce menu', texte: 'Vos devis et factures, vos tarifs, votre page, et — dès l’offre Studio — la plateforme avec vos demandes et vos messages : chaque outil a son entrée ici.' },
+    { cible: 'nav-outils', menu: true, titre: 'Réponses instantanées', texte: 'Dès l’offre Studio : collez la demande d’un client, Presti rédige la réponse dans votre ton. Vous la relisez, puis vous la copiez où vous voulez.' },
+    { cible: 'nav-plateforme', menu: true, titre: 'Ma plateforme', texte: 'La plateforme commence avec l’offre Studio : réglez comment l’assistant répond à vos clients (après votre validation, jamais, ou automatiquement) et l’apparence de votre page.' },
     { cible: 'nav-devis', menu: true, titre: 'Devis', texte: 'Décrivez le chantier, l’IA propose un chiffrage, sur vos prix dès que votre bibliothèque de tarifs est remplie. Vous ajustez, vous envoyez ; un devis envoyé depuis une conversation, le client l’accepte en ligne.' },
     { cible: 'aide', titre: 'Un doute ? Ce bouton', texte: 'Sur chaque écran, il explique à quoi sert la page et comment s’en servir. Vous y retrouverez aussi cette visite.' },
   ],

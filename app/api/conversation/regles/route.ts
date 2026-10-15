@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { declencherRegles } from '@/lib/reglesServeur'
+import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 // Déclenchement DÉTERMINISTE des règles d'automatisation (v5 §9), appelé par le navigateur du
 // client une fois la réponse de l'assistant terminée. Pourquoi une route à part : chiffrer
@@ -29,6 +30,9 @@ export async function POST(req: Request) {
     const { data: lead } = await supabaseAdmin.from('leads')
       .select('id, artisan_id, nom_prospect, contact, message, type_chantier, photos, prise_en_main').eq('token', token).maybeSingle()
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
     // Une conversation ne déclenche pas ses règles plus de 6 fois par heure (le chiffrage coûte).
     if (!(await consommerLimite(`regles:${lead.id}`, 6, 3600))) return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' })
 

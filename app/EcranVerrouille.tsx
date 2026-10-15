@@ -3,18 +3,23 @@ import { PLANS, planConf } from '@/lib/plans'
 import { actif } from '@/lib/flags'
 
 // L'écran affiché à la place d'un écran réservé à une offre (15/10, Benj : « Ma plateforme » et « Mes chiffres » commencent avec
-// Studio, pour tous les comptes, Essentiel existants compris). Il dit quoi, pourquoi, ce qui RESTE inclus dans l'offre actuelle,
-// et mène à /abonnement. Rendu par app/plateforme/page.tsx et app/chiffres/page.tsx quand la matrice (lib/plans.ts) refuse l'écran
+// Studio, pour tous les comptes, Essentiel existants compris ; la plateforme n'existe pas en Essentiel). Il dit quoi, pourquoi, ce qui RESTE
+// inclus dans l'offre actuelle, et mène à /abonnement. Rendu par app/plateforme, app/messages, app/outils et app/chiffres quand la matrice (lib/plans.ts) refuse l'écran
 // — le serveur refuse de toute façon (403, lib/accesOffreServeur.ts) : cet écran n'est que l'explication.
+const SANS_PLATEFORME = 'La plateforme (la page de conversation à votre marque, l’assistant qui répond à vos clients, les comptes clients et votre nom de domaine) commence avec Studio. Votre offre reste faite pour chiffrer vos devis avec l’IA sur vos prix, les envoyer par e-mail et facturer.'
 const RESTE: Record<Ecran, string> = {
-  plateforme: 'Votre lien de conversation reste actif, et l’IA continue de préparer les réponses : vous les relisez et les envoyez depuis Messages. Les comptes clients et votre nom de domaine restent aussi inclus.',
+  plateforme: SANS_PLATEFORME,
+  messages: SANS_PLATEFORME,
+  outils: SANS_PLATEFORME,
   chiffres: 'Vos devis et vos factures restent dans Devis et Factures, avec l’export de vos données. Seul le tableau de bord comptable passe en Studio.',
 }
 // Ce que Signature ajoute : dit seulement si c'est livré (règles : drapeau plateformeRegles ; compta : drapeaux de la migration 0140).
 const plus = (ecran: Ecran): string | null =>
   ecran === 'plateforme'
     ? (actif('plateformeRegles') ? 'Avec Signature, vos règles d’automatisation créent et envoient le devis à votre place, selon vos réglages.' : null)
-    : (actif('comptaAlerteImpayes') || actif('comptaExportMensuel') ? 'Avec Signature, les automatisations de ce tableau (alerte sur les impayés, export mensuel à votre comptable) travaillent à votre place.' : null)
+    : ecran === 'chiffres'
+      ? (actif('comptaAlerteImpayes') || actif('comptaExportMensuel') ? 'Avec Signature, les automatisations de ce tableau (alerte sur les impayés, export mensuel à votre comptable) travaillent à votre place.' : null)
+      : null
 
 export default function EcranVerrouille({ ecran, plan }: { ecran: Ecran; plan: string | null }) {
   const e = ECRANS[ecran]

@@ -5,6 +5,7 @@ import { creerFacture } from '@/lib/factureDepuisDevis'
 import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
+import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 // Carte Devis dans la conversation (v4 §A3) : le client ACCEPTE ou DEMANDE UNE MODIFICATION
 // depuis le fil. L'acceptation est horodatée et journalisée (IP + canal) — valeur probante.
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
     const { data: lead } = await supabaseAdmin
       .from('leads').select('id, artisan_id, nom_prospect, contact, statut').eq('token', token).maybeSingle()
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
 
     // Le devis visible du fil : jamais un brouillon.
     const { data: devis } = await supabaseAdmin

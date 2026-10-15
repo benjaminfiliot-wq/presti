@@ -299,7 +299,8 @@ ok(F.FLAGS.relancesImpayes === true && typeof F.FLAGS.relancesImpayes === 'boole
 for (const id of ['studio', 'signature', 'business']) ok(P.peut(id, 'factures.relances') === true, `l’offre ${id} a la capacité factures.relances`)
 for (const id of ['gratuit', 'essentiel']) ok(P.peut(id, 'factures.relances') === false, `l’offre ${id} n’a PAS la capacité factures.relances`)
 ok(P.offreMinimale('factures.relances') === 'studio', 'capacité factures.relances : dès Studio')
-ok(P.peut('essentiel', 'relances') === true, 'les relances de CONVERSATION restent dans toutes les offres')
+// 15/10 (Benj, « Dans Essentiel il n'y a PAS de plateforme ») : les relances de CONVERSATION (J+2, J+5, J+10) font partie de la plateforme, dès Studio.
+ok(P.peut('essentiel', 'relances') === false && P.peut('gratuit', 'relances') === false && P.peut('studio', 'relances') === true && P.offreMinimale('relances') === 'studio', 'les relances de CONVERSATION (plateforme) sont dès Studio')
 const ligne = P.GRILLE_COMPLETE.find((l) => l.capacites.includes('factures.relances'))
 ok(!!ligne && ligne.flag === 'relancesImpayes' && /impayées/.test(ligne.label), 'la grille des offres annonce les relances d’impayés (une ligne, drapeau relancesImpayes)')
 ok(P.GRILLE.some((l) => l === ligne), 'la ligne est visible drapeau levé')

@@ -7,14 +7,14 @@ import Marque from '@/app/Marque'
 // est centré à droite. Sur téléphone, le panneau disparaît : le formulaire reste seul, en haut, prêt au clavier.
 // Le panneau est décoratif pour la saisie : rien d'interactif, aucun script, rendu serveur.
 // Variante « profil » (premiers pas après l'inscription, /onboarding) : même cadre, mais le panneau
-// dit où l'on en est (le profil d'abord, le lien de contact juste après) et vouvoie, comme la page.
+// dit où l'on en est (le profil d'abord, le premier devis juste après ; le lien de contact est celui de la plateforme, dès Studio) et vouvoie, comme la page.
 const CONTENUS = {
   acces: {
     titre: <>Vos demandes, vos devis, vos factures. <span>Au même endroit.</span></>,
     points: [
-      'Chaque demande faite par votre lien a sa réponse prête en moins d’une minute : vous l’envoyez.',
+      'Avec l’offre Studio, chaque demande faite par votre lien a sa réponse prête en moins d’une minute : vous l’envoyez.',
       'Le devis se prépare sur vos prix, en PDF conforme.',
-      'Trois relances (J+2, J+5, J+10) après la réponse au client, et la facture en un clic.',
+      'Avec la plateforme (dès Studio), trois relances (J+2, J+5, J+10) après la réponse au client ; la facture en un clic.',
     ],
     fiche: [
       { b: 'Demande entrante', em: 'Mme Garnier · robinets', ok: false },
@@ -24,16 +24,16 @@ const CONTENUS = {
     pied: 'Vos données sont isolées et chiffrées. Personne chez Presti n’ouvre un devis sans votre clic.',
   },
   profil: {
-    titre: <>Votre profil d’abord. <span>Votre lien de contact juste après.</span></>,
+    titre: <>Votre profil d’abord. <span>Votre premier devis juste après.</span></>,
     points: [
-      'Votre nom et votre métier personnalisent chaque réponse.',
+      'Votre nom et votre métier personnalisent vos devis et vos factures.',
       'Le ton que vous écrivez ici, l’IA s’en inspire pour vous ressembler.',
-      'Une fois enregistré, votre lien de contact est prêt à coller partout.',
+      'Une fois enregistré, l’IA peut chiffrer votre premier devis sur vos prix. Votre lien de contact, lui, vient avec l’offre Studio.',
     ],
     fiche: [
       { b: '1 · Votre profil', em: 'en cours', ok: true },
-      { b: '2 · Votre lien de contact', em: 'juste après', ok: false },
-      { b: '3 · Votre première demande', em: 'dès qu’un client écrit', ok: false },
+      { b: '2 · Votre premier devis', em: 'juste après', ok: false },
+      { b: '3 · Votre lien de contact', em: 'avec l’offre Studio', ok: false },
     ],
     pied: 'Vos données sont isolées et chiffrées. Vous pourrez tout modifier ensuite dans vos paramètres.',
   },

@@ -10,6 +10,7 @@ import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
+import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 // Conversation publique côté prospect : il rouvre SON fil via un jeton secret (uuid
 // non devinable) et peut échanger avec l'artisan ; l'IA répond dans le fil. Aucun
@@ -61,6 +62,9 @@ export async function GET(req: Request) {
 
     const lead = await leadByToken(token)
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
@@ -128,6 +132,9 @@ export async function POST(req: Request) {
 
     const lead = await leadByToken(token)
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
 
     // Anti-flood au niveau de la conversation : trop de messages du prospect sur une
     // fenêtre courte → on ralentit (et on journalise, ce qui peut déclencher un auto-ban).

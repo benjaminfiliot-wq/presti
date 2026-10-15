@@ -472,7 +472,7 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
   const intrus = carte.filter((x) => !PERMIS.has(x.f))
   T('« sans carte » : uniquement dans les fichiers relus (offre d’Essai gratuite ou essai des abonnements)', intrus.length === 0, intrus.map((x) => `${x.f}:${x.n}`).join(', '))
   const gratuitSeul = carte.filter(({ f, l }) => ['app/page.tsx', 'lib/plans.ts', 'lib/crieur/faits.ts'].includes(f) && !/ESSAI_JOURS/.test(l))
-  const sansPreuve = gratuitSeul.filter(({ l }) => !(/3 crédits|Essai offert|Essai gratuit|vraies demandes|crédits offerts|3 réponses ou devis|maquette/i.test(l) || /Sans carte<\/b>/.test(l)))
+  const sansPreuve = gratuitSeul.filter(({ l }) => !(/3 crédits|Essai offert|Essai gratuit|vraies demandes|crédits offerts|3 réponses ou devis|3 devis offerts|juger les devis chiffrés|maquette/i.test(l) || /Sans carte<\/b>/.test(l)))
   T('« sans carte » hors ESSAI_JOURS : seulement l’offre d’Essai (3 crédits) ou la maquette — jamais une offre payante', sansPreuve.length === 0, sansPreuve.map((x) => `${x.f}:${x.n} ${x.l.trim().slice(0, 90)}`).join(' | '))
   T('les CGU disent l’essai, une fois par compte, sans prélèvement sans carte', /Essai gratuit sans carte/.test(lire('app/cgu/page.tsx')) && /une seule fois par compte/.test(lire('app/cgu/page.tsx')))
 }

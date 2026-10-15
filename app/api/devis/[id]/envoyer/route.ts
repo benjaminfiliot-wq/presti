@@ -10,6 +10,7 @@ import { renderPdfToBuffer } from '@/lib/renderPdf'
 import { sendEmail } from '@/lib/email'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { planifierRelances } from '@/lib/relances'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { mailDevis } from '@/lib/devisMail'
 import { OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
@@ -79,7 +80,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // client, le cron le relance tant qu'il ne répond pas. Un devis créé seul (« Nouveau devis », sans conversation) n'a pas
     // de fil auquel rattacher une relance : il n'en a pas, et la grille ne le promet plus (lib/plans.ts).
     let relances = 0
-    if (devis.lead_id) {
+    // 15/10 (Benj) : les relances de conversation font partie de la plateforme (Studio et au-dessus) : une offre sans plateforme n'en arme pas.
+    if (devis.lead_id && plateformeOuverte(artisan ?? {})) {
       const { data: lead } = await supabaseAdmin.from('leads').select('id, statut').eq('id', devis.lead_id).eq('artisan_id', uid).maybeSingle()
       if (lead && lead.statut !== 'gagne' && lead.statut !== 'perdu') {
         await supabaseAdmin.from('leads').update({ statut: 'repondu', updated_at: new Date().toISOString() }).eq('id', lead.id)

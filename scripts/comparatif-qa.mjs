@@ -100,5 +100,15 @@ ok(C.COMPARATIF_LIMITES.startsWith(C.COMPARATIF_LIMITES_TITRE), 'COMPARATIF_LIMI
   ok(!/dès Essentiel/.test(C.PRESTI.automatisation.replace(/relances automatiques dès Essentiel/, '')), "l'automatisation ne commence pas avec Essentiel (hors les relances)")
 }
 
+// 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme ». La réponse préparée aux demandes des clients (critère « IA qui prépare la réponse ») est celle
+// de la plateforme : le comparatif dit « dès Studio » (et son prix), jamais « dès Essentiel ». L'IA qui chiffre le devis, elle, reste dès Essentiel.
+{
+  ok(/dès l’offre Studio/.test(C.PRESTI.ia_reponse) && !/Essentiel/.test(C.PRESTI.ia_reponse), 'ia_reponse doit dire « dès l’offre Studio » et ne pas nommer Essentiel')
+  ok(C.PRESTI.ia_reponse.includes('59 €'), 'ia_reponse : le prix de Studio (lib/plans.ts) est écrit')
+  ok(/dès Essentiel/.test(C.PRESTI.ia_devis), 'ia_devis : le devis chiffré par l’IA reste dès Essentiel')
+  const rep = C.AVANTAGES.find((a) => a.id === 'reponse')
+  ok(rep && /dès l’offre Studio/.test(rep.texte) && !/Essentiel/.test(rep.texte), 'avantage « Chaque demande a déjà sa réponse » : dit « dès l’offre Studio », sans Essentiel')
+}
+
 if (echecs.length) { console.log(`❌ comparatif-qa : ${echecs.length} échec(s) sur ${n}`); for (const e of echecs) console.log('  - ' + e); process.exit(1) }
 console.log(`✅ comparatif-qa : ${n}/${n} contrôles — ${C.CONCURRENTS.length} éditeurs, ${C.CRITERES_VISIBLES.length} critères, daté du ${C.COMPARATIF_DATE}`)

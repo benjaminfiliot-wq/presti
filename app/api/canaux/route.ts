@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { chiffrementDisponible, chiffrer } from '@/lib/secretBox'
 import { devineFournisseur, testerImap } from '@/lib/canaux'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 
 // Canaux de l'artisan (v4 §B2) — voie IMAP/SMTP, universelle (OVH, Gmail, Orange…),
 // sans dépendre d'une application OAuth tierce.
@@ -36,8 +37,10 @@ export async function GET(req: Request) {
 // ── POST : brancher (ou re-tester) un canal email.
 export async function POST(req: Request) {
   try {
-    const a = await auth(req)
-    if ('error' in a) return NextResponse.json({ error: a.error }, { status: a.status })
+    // 15/10 (Benj) : la boîte e-mail branchée (les demandes arrivent dans Messages) fait partie de la plateforme : Studio et au-dessus.
+    const g = await exigerCapacite(req, 'canaux.email', 'La boîte e-mail branchée')
+    if ('reponse' in g) return g.reponse
+    const a = { uid: g.uid }
     if (!chiffrementDisponible()) {
       // On refuse plutôt que de stocker un mot de passe en clair.
       return NextResponse.json({ error: 'Stockage sécurisé indisponible côté serveur. Canal non enregistré.' }, { status: 503 })

@@ -3,6 +3,7 @@ import { enregistrerPassage } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { releverCanal, type Canal } from '@/lib/releveCanal'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 
 // Relève des boîtes email (v4 §B2).
 // Deux entrées : l'artisan qui clique « Relever maintenant » (POST avec son jeton),
@@ -27,7 +28,12 @@ export async function GET(req: Request) {
   // pouvaient échouer sans que rien ne l'annonce : la surveillance disait « ça tourne » pendant
   // qu'aucun message n'arrivait plus chez aucun artisan.
   const echecs: string[] = []
-  for (const c of (data ?? []) as Canal[]) {
+  // 15/10 (Benj) : la boîte e-mail branchée fait partie de la plateforme (Studio et au-dessus). Les boîtes d'un compte sans plateforme ne sont
+  // plus relevées : rien n'est importé, rien n'est lu. Les boîtes restent enregistrées (rien n'est effacé).
+  const ids = Array.from(new Set(((data ?? []) as Canal[]).map((c) => c.artisan_id)))
+  const { data: comptes } = ids.length ? await supabaseAdmin.from('artisans').select('id, plan, is_founder').in('id', ids) : { data: [] }
+  const ouverts = new Set((comptes ?? []).filter((a) => plateformeOuverte(a)).map((a) => a.id as string))
+  for (const c of ((data ?? []) as Canal[]).filter((x) => ouverts.has(x.artisan_id))) {
     const r = await releverCanal(c)
     total += r.importes
     if (r.erreur) echecs.push(`${c.id}: ${r.erreur}`.slice(0, 120))
@@ -47,6 +53,8 @@ export async function POST(req: Request) {
     const { data: u, error } = await getUserRevocable(token)
     if (error || !u?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
 
+    const { data: compte } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', u.user.id).maybeSingle()
+    if (!compte || !plateformeOuverte(compte)) return NextResponse.json({ error: 'La boîte e-mail branchée n’est pas dans votre offre. Disponible avec l’offre Studio.', code: 'offre', offre: 'studio' }, { status: 403 })
     const { data } = await supabaseAdmin.from('canaux').select(CHAMPS)
       .eq('artisan_id', u.user.id).eq('actif', true).eq('type', 'email')
     const canaux = (data ?? []) as Canal[]

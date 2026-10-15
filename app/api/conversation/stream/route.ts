@@ -9,6 +9,7 @@ import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
+import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 // Conversation en SSE (v4 §A2). Mêmes garde-fous que /api/conversation (jeton secret, honeypot, anti-flood, plafond de
 // tours, crédits, mode manuel). Les erreurs AVANT le flux sortent en JSON classique ; ensuite tout passe en SSE.
@@ -51,6 +52,9 @@ export async function POST(req: Request) {
 
     const lead = await leadByToken(token)
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
 
     const history = await loadHistory(lead.id)
     // Même compteur atomique que /api/conversation (clé partagée : les deux routes

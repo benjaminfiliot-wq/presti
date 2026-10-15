@@ -7,6 +7,7 @@ import AppShell from '@/app/AppShell'
 import { urlPlateforme } from '@/lib/urls'
 import Info from '@/app/Info'
 import CartePackPub from '@/app/pubs/CartePackPub'; import { actif } from '@/lib/flags'
+import { peut } from '@/lib/plans'
 
 type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
 type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
@@ -49,6 +50,8 @@ export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [replies, setReplies] = useState<Record<string, string>>({})
   const [open, setOpen] = useState<string | null>(null)
+  // 15/10 (Benj) : la plateforme (lien de conversation, demandes, réponses de l'IA) commence avec Studio. Offre sans plateforme : tableau de bord réduit.
+  const [plan, setPlan] = useState<string | null>(null)
   // Une lecture qui échoue se dit : « Aucune demande » sur une panne réseau était un mensonge (audit du 11/10).
   const [erreur, setErreur] = useState<string | null>(null)
 
@@ -74,11 +77,13 @@ export default function Dashboard() {
     try {
       const { data } = await supabase.auth.getSession()
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof, error: eProf } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof, error: eProf } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie, plan').eq('id', data.session.user.id).maybeSingle()
       if (eProf) throw eProf
       if (!prof) { router.replace('/onboarding'); return }
       setArtisan(prof as Artisan)
-      await loadLeads((prof as Artisan).id)
+      const planCompte = ((prof as { plan?: string | null }).plan ?? null)
+      setPlan(planCompte)
+      if (peut(planCompte, 'plateforme.conversation')) await loadLeads((prof as Artisan).id)
     } catch {
       setErreur('Vos demandes n’ont pas pu être chargées. Vérifiez votre connexion, puis réessayez.')
     }
@@ -105,12 +110,30 @@ export default function Dashboard() {
   const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
   const gagnes = leads.filter((l) => l.statut === 'gagne').length
   const repondus = Object.keys(replies).length
+  const sansPlateforme = ready && !peut(plan, 'plateforme.conversation')
 
   return (
     <AppShell active="dashboard" title={ready && prenom ? `Bonjour ${prenom}` : 'Tableau de bord'} crumb={artisan?.metier || 'Votre espace'}>
       {erreur && <div className="msg err" role="alert" style={{ display: 'flex', gap: '.8rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>{erreur}<button type="button" className="btn" style={{ width: 'auto', margin: 0 }} onClick={() => { setReady(false); void charger() }}>Réessayer</button></div>}
       {!ready ? (
         <p className="muted">Chargement…</p>
+      ) : sansPlateforme ? (
+        <>
+          <div className="tool-card" data-sans-plateforme="1">
+            <h2>Ce que fait votre offre</h2>
+            <p className="muted" style={{ margin: '0 0 .8rem' }}>L’IA chiffre vos devis sur vos prix ; vous les relisez, les envoyez par e-mail et facturez, avec l’export Factur-X. Vos clients, vos tarifs et vos crédits sont dans votre espace.</p>
+            <div style={{ display: 'flex', gap: '.6rem', flexWrap: 'wrap' }}>
+              <a className="btn btn--primary" style={{ width: 'auto' }} href="/devis">Nouveau devis</a>
+              <a className="btn btn--ghost" style={{ width: 'auto' }} href="/factures">Factures</a>
+              <a className="btn btn--ghost" style={{ width: 'auto' }} href="/tarifs">Mes tarifs</a>
+            </div>
+          </div>
+          <div className="tool-card">
+            <h2>La plateforme commence avec l’offre Studio</h2>
+            <p className="muted" style={{ margin: '0 0 .8rem' }}>Votre page de conversation à votre marque, l’assistant qui répond à vos clients, leurs comptes et votre nom de domaine : tout cela se débloque avec Studio.</p>
+            <a className="btn btn--primary" style={{ width: 'auto' }} href="/abonnement">Voir l’offre Studio</a>
+          </div>
+        </>
       ) : (
         <>
           <section className="psh-kpis">

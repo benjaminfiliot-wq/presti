@@ -89,7 +89,7 @@ function OnboardingContenu() {
       <div className="card">
         <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
         <h1>Votre profil</h1>
-        <p className="muted">Ça sert à personnaliser vos réponses et à créer votre lien de contact.</p>
+        <p className="muted">Ça sert à personnaliser vos devis et vos factures et, avec l’offre Studio, à créer votre lien de contact.</p>
         <form onSubmit={handleSubmit}>
           <label>Votre nom (ou nom de l'entreprise)</label>
           <input value={nom} onChange={(e) => setNom(e.target.value)} required maxLength={120} placeholder="Ex : Dupont Plomberie" />

@@ -44,7 +44,7 @@ function tablesRelances(n, { memeLead = false } = {}) {
     relances.push({ id: `r${i}`, lead_id: lead, rang: memeLead ? i : 1, planifiee_le: PASSE, envoyee: false })
     if (!vus.has(lead)) { vus.add(lead); leads.push({ id: lead, nom_prospect: `Prospect ${lead}`, contact: `${lead}@exemple.test`, message: 'Besoin', statut: 'repondu', artisan_id: 'a1' }) }
   }
-  return { relances, leads, artisans: [{ id: 'a1', nom: 'Atelier Essai', metier: 'plombier', ton_style: null, email: 'artisan@exemple.test', is_founder: false }], messages: [] }
+  return { relances, leads, artisans: [{ id: 'a1', nom: 'Atelier Essai', metier: 'plombier', ton_style: null, email: 'artisan@exemple.test', is_founder: false, plan: 'studio' /* 15/10 : les relances de conversation font partie de la plateforme (Studio et au-dessus) */ }], messages: [] }
 }
 async function groupeRelances(racine) {
   process.env.CRON_SECRET = 'essai'

@@ -12,9 +12,10 @@ export type GardeOffre = { uid: string; plan: string | null } | { reponse: NextR
 export async function exigerCapacite(req: Request, capacite: Capacite, sujet: string): Promise<GardeOffre> {
   const s = await authArtisan(req)
   if (estEchec(s)) return { reponse: NextResponse.json({ error: s.error, code: s.code }, { status: s.status }) }
-  const { data, error } = await supabaseAdmin.from('artisans').select('plan').eq('id', s.uid).maybeSingle()
+  const { data, error } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', s.uid).maybeSingle()
   if (error) { console.error('[offre] lecture de l’offre :', error.message); return { reponse: NextResponse.json({ error: 'Votre offre n’a pas pu être lue. Réessayez dans un instant.' }, { status: 503 }) } }
-  const plan = (data?.plan as string | null | undefined) ?? null
+  // Un fondateur compte comme Business, comme partout ailleurs (app/api/leads).
+  const plan = data?.is_founder ? 'business' : ((data?.plan as string | null | undefined) ?? null)
   const d = decisionEcran(plan, capacite, sujet)
   if (!d.ok) return { reponse: NextResponse.json({ error: d.erreur, code: d.code, offre: d.offre }, { status: d.statut, headers: { 'Cache-Control': 'no-store' } }) }
   return { uid: s.uid, plan }

@@ -30,7 +30,7 @@ const NAV: { group: string; items: Nav[] }[] = [
     group: 'Pilotage',
     items: [
       { key: 'dashboard', label: 'Tableau de bord', href: '/dashboard', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>) },
-      { key: 'messages', label: 'Messages', href: '/messages', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>) },
+      { key: 'messages', label: 'Messages', href: '/messages', offre: 'Studio', cap: 'plateforme.conversation', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>) },
       { key: 'devis', label: 'Devis', href: '/devis', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h5" /></>) },
       { key: 'factures', label: 'Factures', href: '/factures', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 15h6" /></>) },
       { key: 'chiffres', label: 'Mes chiffres', href: '/chiffres', offre: 'Studio', cap: 'chiffres', icon: ic(<><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></>) },
@@ -47,7 +47,7 @@ const NAV: { group: string; items: Nav[] }[] = [
   {
     group: 'Outils IA',
     items: [
-      { key: 'outils', label: 'Réponses instantanées', href: '/outils', icon: ic(<><path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7z" /><path d="m9 12 2 2 4-4" /></>) },
+      { key: 'outils', label: 'Réponses instantanées', href: '/outils', offre: 'Studio', cap: 'plateforme.conversation', icon: ic(<><path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7z" /><path d="m9 12 2 2 4-4" /></>) },
       // 016 A1/A2 — l'assistant de gestion (Signature). Drapeau baissé : l'entrée n'existe pas.
       ...(enEssai('assistant') ? [{ key: 'assistant', essai: 'assistant' as Flag, offre: 'Signature', label: 'Assistant de gestion', href: '/assistant', icon: ic(<><path d="M4 5h16v10H9l-5 4z" /><path d="M8 9h8M8 12h5" /><path d="M17 3l.6 1.4L19 5l-1.4.6L17 7l-.6-1.4L15 5l1.4-.6z" /></>) }] : []),
     ],
@@ -275,7 +275,7 @@ export default function AppShell({
                 ) : (
                   <a key={it.key} className={it.key === active ? 'on' : ''} href={it.href} data-visite={`nav-${it.key}`}>
                     {it.icon}{it.label}
-                    {/* 15/10 : « Ma plateforme » et « Mes chiffres » commencent avec Studio — le badge n'apparaît que pour un compte qui n'a pas l'écran. */}
+                    {/* 15/10 : la plateforme (Ma plateforme, Messages, Réponses instantanées) et « Mes chiffres » commencent avec Studio — le badge n'apparaît que pour un compte qui n'a pas l'écran. */}
                     {it.offre && (!it.cap || (a && !peut(a.plan, it.cap))) && <span className="count" title={it.cap ? `Disponible avec l’offre ${it.offre}` : undefined}>{it.offre}</span>}
                     {it.key === 'messages' && unread > 0 && <span className="count alert">{unread}</span>}
                   </a>

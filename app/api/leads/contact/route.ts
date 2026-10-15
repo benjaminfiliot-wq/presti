@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 export const runtime = 'nodejs'
 
@@ -47,6 +48,9 @@ export async function POST(req: Request) {
       .eq('token', token)
       .maybeSingle()
     if (!lead) return NextResponse.json({ error: 'Lien expiré.' }, { status: 404 })
+    // 15/10 (Benj) : la plateforme commence avec Studio — l'artisan d'une offre sans plateforme ne reçoit plus rien ici, et aucun crédit n'est touché.
+    const ferme = await refusSiSansPlateforme(lead.artisan_id)
+    if (ferme) return ferme
 
     // Idempotent : si le contact est déjà là, on ne renvoie pas d'email en double.
     if (lead.contact) return NextResponse.json({ ok: true, already: true })

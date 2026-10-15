@@ -13,8 +13,8 @@
 | 6 | « Crédits rechargés chaque mois, non reportés » | tarifs | RPC `consume_credit` (0008 : reset paresseux non cumulatif), auditeur H §6 « reset paresseux sain » | 05/09 | ✅ |
 | 7 | « TVA non applicable, art. 293 B du CGI » | tarifs, CGU, mentions | `audit-final-e2e` (A4 : même référence partout), `facturation-e2e` | 05/09 | ✅ |
 | 8 | « Créez votre lien Presti en 2 minutes » | CTA | auditeur D : inscription → onboarding → lien, mobile et desktop ; `audit-final-e2e` (slug ≤ 40 valide) | 05/09 | ✅ |
-| 9 | « Page de conversation à votre marque » | grille | `seo-e2e` §5 white-label absolu, `legal-e2e`, `fermeture-e2e` §4 (« Presti » seulement dans la liste légale des sous-traitants) | 05/09 | ✅ (emails : From encore `contact@prestiapp.fr` → **H10**) |
-| 10 | « Assistant IA » (autonome dès Studio, « vous validez » en Essentiel) | grille | `audit-final-e2e` (E-M2 : verrou serveur `plateforme.ia.auto`), `regles-verrou-e2e` 8/8 | 05/09 | ✅ |
+| 9 | « Page de conversation à votre marque » | grille | `seo-e2e` §5 white-label absolu, `legal-e2e`, `fermeture-e2e` §4 (« Presti » seulement dans la liste légale des sous-traitants) | 05/09 | ✅ (emails : From encore `contact@prestiapp.fr` → **H10**) — **depuis le 15/10, dès Studio seulement** : voir la révision du 15/10 plus bas |
+| 10 | « Assistant IA » (autonome dès Studio ; pas de plateforme en Essentiel) | grille | `audit-final-e2e` (E-M2 : verrou serveur `plateforme.ia.auto`), `regles-verrou-e2e` 8/8 | 05/09 | ✅ |
 | 11 | « Comptes clients (lien magique, historique) » | grille | `comptes-clients-e2e`, auditeur D §3 (lien expiré annoncé depuis `23bfbef`) | 05/09 | ✅ |
 | 12 | « Site vitrine » (3 niveaux) | grille | `site-style-e2e`, `seo-e2e`, `slides-e2e` 14/14, `site-motion-e2e`, `a11y-e2e` 5/5 | 05/09 | ✅ |
 | 13 | « Votre nom de domaine (site et page de conversation) » | grille | **`domaine-perso-e2e`** (05/09) : `lib/urls`, liens internes, middleware exécuté, domaine non vérifié inerte, unicité (0061) ; ce que Vercel refuse sans DNS réel est dit dans le fichier | 05/09 | ✅ (preuve DNS réelle au premier artisan) |
@@ -73,3 +73,12 @@ changement non prouvé sur un chemin qui marche.
 | Vocabulaire du métier employé | 68 % |
 
 Le vocabulaire est le seul point bas, et il tombe à 0 % sur les demandes de rendez-vous : c'est attendu (on ne place pas de jargon pour fixer une heure), mais cela mérite un coup d'œil sur les demandes de prix, où il n'est employé qu'une fois sur deux.
+
+## Révision du 15/10 — la plateforme commence avec Studio
+
+Décision de Benj : « Dans Essentiel il n'y a PAS de plateforme. » La page de conversation publique, la réponse préparée par l'IA,
+les comptes clients, les relances de conversation (J+2, J+5, J+10), le nom de domaine sur la page, la boîte e-mail branchée, « Ma plateforme »,
+« Messages » et « Réponses instantanées » passent de la base (Essai, Essentiel) à Studio, **pour tous les comptes** (`lib/plans.ts`, bloc STUDIO).
+Les promesses 9, 10, 11, 13, 16 (relances de conversation) et 19 ne valent donc plus qu'à partir de Studio ; la page publique d'un compte sans
+plateforme est neutre et n'enregistre rien (`lib/plateformeAcces.ts`, `scripts/ecrans-offre-e2e.mjs`). Essentiel garde : clients, devis chiffrés
+par l'IA sur ses prix (14), factures + export Factur-X (15), tarifs, crédits, export de données, support.

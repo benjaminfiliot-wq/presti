@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
-import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { getPlateformeConfig } from '@/lib/plateformeConfig'
 
 export const runtime = 'nodejs'
@@ -12,8 +12,9 @@ export const maxDuration = 60
 export async function POST(req: Request) {
   try {
     // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
-    const session = await verifierSession(req)
-    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    // 15/10 (Benj) : le devis automatique part d'une conversation de la plateforme (Messages) : Studio et au-dessus.
+    const session = await exigerCapacite(req, 'plateforme.conversation', 'Le devis automatique depuis une conversation')
+    if ('reponse' in session) return session.reponse
 
     const body = await req.json().catch(() => ({}))
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''

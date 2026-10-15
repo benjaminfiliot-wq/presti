@@ -175,7 +175,8 @@ export const PRESTI: Record<CritereId, string> = {
   devis_factures: 'Oui',
   // Honnête : un fichier XML Factur-X à télécharger, pas une plateforme agréée (lib/facturx.ts, lib/plans.ts).
   facture_electronique: 'Export XML Factur-X ; pas de plateforme agréée intégrée',
-  ia_reponse: `Oui, dès ${dès('plateforme.conversation')} : la réponse est prête dans votre ton, vous l’envoyez (envoi automatique possible dès ${dès('plateforme.ia.auto')})`,
+  // 15/10 (Benj) : la plateforme n'existe pas en Essentiel — la réponse préparée est celle de la plateforme, dès Studio (prix et offre lus dans lib/plans.ts).
+  ia_reponse: `Oui, avec la plateforme dès l’offre ${dès('plateforme.conversation')} (${PLANS.studio.prixMois} € par mois) : la réponse est prête dans votre ton, vous l’envoyez, ou l’assistant l’envoie seul (réglable)`,
   ia_devis: `Oui, chiffré sur vos propres prix, dès ${dès('devis.ia')}`,
   assistant: `Oui, offre ${dès('assistant')} : devis, factures, stock, tarifs et CRM par la conversation ; vous confirmez ce qui part chez un client`,
   crm: `Oui, offre ${dès('crm')} : pipeline, chantiers, équipe et carte Atelier en temps réel`,
@@ -230,7 +231,7 @@ export const AVANTAGES: Avantage[] = [
   },
   {
     id: 'reponse', critere: 'ia_reponse', titre: 'Chaque demande a déjà sa réponse',
-    texte: 'Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la relisez, vous l’envoyez.',
+    texte: `Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la relisez, vous l’envoyez. C’est la plateforme, dès l’offre ${dès('plateforme.conversation')} (${prix('studio')} € par mois).`,
     autres: 'aucun',
     preuves: [{ fichier: 'lib/ai.ts', motif: 'generateLeadReply' }, { fichier: 'lib/platStats.ts', motif: 'median < 60' }],
   },
@@ -254,7 +255,7 @@ export const AVANTAGES: Avantage[] = [
   },
   {
     id: 'site', critere: 'site', flag: 'siteCommandeVente', titre: 'Un site à votre nom, une page par commune',
-    texte: `${PRIX_SITE_TEXTE} une fois, sans abonnement : un site avec une page pour chaque commune que vous servez, relié à votre page de conversation pour que la demande arrive chez vous. ${DELAI_TEXTE}`,
+    texte: `${PRIX_SITE_TEXTE} une fois, sans abonnement : un site avec une page pour chaque commune que vous servez, avec un formulaire de contact pour que la demande arrive chez vous (relié à votre page de conversation dès l’offre ${dès('plateforme.conversation')}). ${DELAI_TEXTE}`,
     autres: 'aucun',
     preuves: [{ fichier: 'lib/siteCommande.ts', motif: 'PRIX_SITE_TEXTE' }, { fichier: 'lib/siteCommande.ts', motif: 'une page par commune' }],
   },

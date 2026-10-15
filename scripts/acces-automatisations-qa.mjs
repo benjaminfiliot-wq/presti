@@ -54,7 +54,8 @@ const ATTENDU = {
 for (const [cap, parPlan] of Object.entries(ATTENDU)) for (const p of TOUS) ok(peut(p, cap) === parPlan[p], `${cap} : ${p} devrait être ${parPlan[p]}`)
 ok(offreMinimale('chiffres.auto') === 'signature' && offreMinimale('factures.relances') === 'studio', 'offres minimales : Signature pour chiffres.auto, Studio pour factures.relances')
 ok(PLANS.business.capacites.includes('chiffres.auto') && PLANS.business.capacites.includes('factures.relances'), 'Business reprend Signature')
-ok(peut('essentiel', 'relances') === true, 'les relances de CONVERSATION (J+2, J+5, J+10) restent dans Essentiel')
+// 15/10 (Benj) : les relances de CONVERSATION (J+2, J+5, J+10) font partie de la plateforme, qui commence avec Studio (pas de plateforme en Essentiel).
+ok(peut('essentiel', 'relances') === false && peut('studio', 'relances') === true, 'les relances de CONVERSATION (J+2, J+5, J+10) sont dès Studio, pas en Essentiel')
 ok(['chiffres.auto', 'factures.relances'].every((c) => PLANS.essentiel.capacites.filter((x) => x === c).length === 0), 'Essentiel ne liste aucune des deux capacités (ni doublon)')
 
 // ── 2. Les drapeaux ───────────────────────────────────────────────────────────────────────────────────────────────────────

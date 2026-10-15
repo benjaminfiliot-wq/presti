@@ -10,6 +10,7 @@ import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { chemins, modeDepuisHote, urlPlateforme } from '@/lib/urls'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { getPlateformeConfig } from '@/lib/plateformeConfig'
+import { MESSAGE_PUBLIC_SANS_PLATEFORME, plateformeOuverte } from '@/lib/plateformeAcces'
 import {
   ACCENT_DEFAUT, THEMES_PLAT, decoderApercu, fondEffectif, plateformeStyleToCss, plateformeStyleToData,
   resolvePlateformeStyle, type ApercuPayload,
@@ -32,13 +33,14 @@ type Artisan = {
   photo_url: string | null; logo_url: string | null; plateforme_active: boolean | null
   accent: string | null; theme: string | null; leads_pause: boolean | null
   domaine: string | null; domaine_verifie: boolean | null
+  plan: string | null; is_founder: boolean | null; tel_public: string | null; email_public: string | null
 }
 type Params = { params: Promise<{ slug: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, plateforme_active, accent, theme, leads_pause, domaine, domaine_verifie')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, plateforme_active, accent, theme, leads_pause, domaine, domaine_verifie, plan, is_founder, tel_public, email_public')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -50,7 +52,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Page inexistante : on écrase tout ce que le layout racine fournit (marque Presti).
   if (!a) return { title: { absolute: 'Page introuvable' }, description: 'Cette page n’existe pas.', applicationName: 'Page introuvable', authors: [], keywords: [], robots: { index: false, follow: false }, alternates: { canonical: undefined }, openGraph: { title: 'Page introuvable', description: 'Cette page n’existe pas.', siteName: ' ' }, twitter: { card: 'summary', title: 'Page introuvable', description: 'Cette page n’existe pas.' } }
   const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
-  const d = a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}. Décrivez votre besoin, réponse rapide.`
+  // Offre sans plateforme (15/10) : la page ne promet pas de « réponse rapide » à une demande qu'elle ne prend pas.
+  const d = !plateformeOuverte(a) ? (a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`) : a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}. Décrivez votre besoin, réponse rapide.`
   return {
     // Titre + OG ABSOLUS : marque de l'artisan seule.
     title: { absolute: t },
@@ -94,6 +97,32 @@ export default async function PlateformePage({ params, searchParams }: Params) {
   // Compte suspendu par la direction (v15 §5) : la même page neutre — le client d'un artisan n'a pas à savoir.
   if (await suspensionEnCours(a.id)) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>{MESSAGE_PUBLIC_INDISPONIBLE}</span></div></div></main>
+  }
+  // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme. » La page d'un artisan dont l'offre n'a pas la plateforme (Studio et au-dessus)
+  // ne casse pas : une page neutre et polie, ses coordonnées publiques s'il en a laissé, et rien ne se charge — pas de conversation, donc
+  // aucune demande enregistrée, aucun crédit consommé (les routes refusent de toute façon, lib/plateformeAccesServeur.ts). Aucune mention de Presti.
+  if (!plateformeOuverte(a)) {
+    const tel = (a.tel_public || '').trim()
+    const telChiffres = tel.replace(/[^0-9+]/g, '')
+    const mail = (a.email_public || '').trim()
+    return (
+      <main className="plat" data-sans-plateforme="1">
+        <div className="plat-mid">
+          <div className="plat-404">
+            <b>{a.nom || 'Cet artisan'}</b>
+            <span style={{ display: 'block' }}>{MESSAGE_PUBLIC_SANS_PLATEFORME}</span>
+            {tel || mail ? (
+              <span style={{ display: 'block', marginTop: '.8rem' }}>
+                Pour le joindre :{' '}
+                {tel && telChiffres ? <a href={`tel:${telChiffres}`}>{tel}</a> : null}
+                {tel && telChiffres && mail ? ' · ' : null}
+                {mail ? <a href={`mailto:${mail}`}>{mail}</a> : null}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </main>
+    )
   }
   if (a.plateforme_active === false) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>Ce lien de contact n&apos;est plus actif pour le moment.</span></div></div></main>

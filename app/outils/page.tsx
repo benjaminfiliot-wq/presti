@@ -7,6 +7,8 @@ import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
 import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
+import EcranVerrouille from '@/app/EcranVerrouille'
+import { peut } from '@/lib/plans'
 
 export default function Outils() {
   const router = useRouter()
@@ -59,6 +61,8 @@ export default function Outils() {
         <p className="muted">Chargement…</p>
       ) : (
         <>
+          {/* 15/10 (Benj) : la réponse préparée par l'IA à une demande fait partie de la plateforme, qui commence avec Studio. */}
+          {!peut(plan, 'plateforme.conversation') ? <EcranVerrouille ecran="outils" plan={plan} /> : (
           <div className="tool-card">
             <h2>Répondre à un client</h2>
             <p className="muted" style={{ margin: '0 0 .6rem' }}>Collez la demande de votre client — Presti rédige la réponse à envoyer, dans votre ton.</p>
@@ -77,6 +81,7 @@ export default function Outils() {
               </div>
             )}
           </div>
+          )}
 
           <a href="/devis" className="tool-card" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
             <h2>Créer un devis →</h2>

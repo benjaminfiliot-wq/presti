@@ -3,6 +3,7 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { enregistrerPassage, ronde } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours } from '@/lib/suspension'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { purgerComptes } from '@/lib/purgeComptes'
 import { purgerRgpd } from '@/lib/purgesRgpd'
 import { purgerPacksExpires } from '@/lib/packPubPurge'
@@ -86,9 +87,18 @@ export async function GET(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style, email, is_founder, leads_pause')
+      .select('nom, metier, ton_style, email, is_founder, leads_pause, plan')
       .eq('id', lead.artisan_id)
       .maybeSingle()
+
+    // 15/10 (Benj) : les relances de CONVERSATION font partie de la plateforme (Studio et au-dessus). Une offre sans plateforme n'en envoie
+    // aucune — ni e-mail, ni appel au modèle, ni crédit. La relance est ANNULÉE (marquée traitée) et non laissée due : sinon les relances
+    // des comptes Essentiel rempliraient le lot de chaque passage, et repartiraient en rafale, périmées, le jour d'un passage en Studio.
+    if (!artisan || !plateformeOuverte(artisan)) {
+      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
+      skipped++
+      continue
+    }
 
     // Compte suspendu par la direction (v15 §5) : on n'écrit pas à ses prospects en son nom. La relance n'est pas
     // marquée envoyée : elle repart à la réactivation.

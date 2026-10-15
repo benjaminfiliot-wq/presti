@@ -1068,12 +1068,14 @@ export function jugerReplisSansCoordonnees({ racine }) {
 const PURGE_ID = '00000000-0000-4000-8000-0000000251a1'
 const VIVANT_ID = '00000000-0000-4000-8000-0000000251b2'
 const PAUSE_ID = '00000000-0000-4000-8000-0000000251c3'
+// 15/10 (Benj) : la plateforme commence avec Studio — les comptes de ces bases sont en Studio : ce juge règle le routage par slug et par commande, pas l'offre
+// (le refus d'un compte Essai / Essentiel est jugé par scripts/plateforme-formulaire-qa.mjs).
 function baseSimulee() {
   return {
     artisans: [
       { id: PURGE_ID, slug: 'supprime-00000000', slugs_anciens: ['ancien-essai-025'], nom: 'Menuiserie Purgée (identité d’émetteur gardée)', metier: 'menuisier', email: 'supprime-00000000@supprime.invalid', email_public: null, tel_public: null, leads_pause: true, site_active: false, plateforme_active: false, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
-      { id: VIVANT_ID, slug: 'nouveau-essai-025', slugs_anciens: ['vieux-essai-025'], nom: 'Atelier Vivant', metier: 'menuisier', email: 'atelier@vivant.invalid', leads_pause: false, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
-      { id: PAUSE_ID, slug: 'pause-essai-025', slugs_anciens: [], nom: 'Atelier En Pause', metier: 'plombier', email: 'atelier@pause.invalid', leads_pause: true, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
+      { id: VIVANT_ID, slug: 'nouveau-essai-025', slugs_anciens: ['vieux-essai-025'], nom: 'Atelier Vivant', metier: 'menuisier', email: 'atelier@vivant.invalid', leads_pause: false, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'studio', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
+      { id: PAUSE_ID, slug: 'pause-essai-025', slugs_anciens: [], nom: 'Atelier En Pause', metier: 'plombier', email: 'atelier@pause.invalid', leads_pause: true, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'studio', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
     ],
     leads: [], messages: [],
   }
@@ -1325,7 +1327,7 @@ const A_SUPPRESSION = '00000000-0000-4000-8000-0000000252d4'
 const A_PAUSE = '00000000-0000-4000-8000-0000000252e5'
 const NOMS_ARTISANS = { [A_COMMANDE]: 'l’artisan de la commande', [A_PURGE]: 'le compte purgé', [A_REPRISE]: 'l’inconnu qui a repris l’adresse', [A_SUPPRESSION]: 'le compte en suppression', [A_PAUSE]: 'le compte en pause' }
 function baseCommandes() {
-  const art = (x) => ({ slugs_anciens: [], metier: 'plombier', email_public: null, tel_public: null, leads_pause: false, site_active: false, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false, credits: 0, ...x })
+  const art = (x) => ({ slugs_anciens: [], metier: 'plombier', email_public: null, tel_public: null, leads_pause: false, site_active: false, plateforme_active: true, suppression_demandee_le: null, plan: 'studio', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false, credits: 0, ...x })
   const cmd = (x) => ({ email: 'commande@exemple.invalid', domaine_mode: 'existant', metier: 'plombier', communes: ['Rennes'], prix_cents: 30000, ...x })
   return {
     artisans: [

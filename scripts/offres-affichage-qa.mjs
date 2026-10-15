@@ -7,6 +7,7 @@
 //   • une capacité du type `Capacite` n'est ni dans une offre ni déclarée « hors formules » ;
 //   • une cellule contredit PLANS (une ligne dit « — » alors que l'offre a la capacité, ou « oui » alors qu'elle ne l'a pas) ;
 //   • une ligne du CRM ou de l'assistant n'est pas dans la liste de Signature (ou apparaît chez Essentiel / Studio) ;
+//   • 15/10 : AUCUNE capacité de la plateforme (page de conversation, réponse, comptes clients, relances, domaine, boîte e-mail…) dans Essentiel ni l'Essai ;
 //   • 15/10 : « Ma plateforme » et « Mes chiffres » ne sont pas à Studio et au-dessus seulement (Essentiel et Essai exclus), ou l'automatique de
 //     « Mes chiffres » n'est pas Signature seulement, ou la carte Essentiel en annonce encore quelque chose ;
 //   • une page de vente recoupe la liste (.slice sur pointsForts), ne rend pas <OffreDetail />, ou recopie un prix en dur.
@@ -109,6 +110,27 @@ ok(detailOffre('studio').lignes.some((x) => x.nouveau && /Mes chiffres/.test(x.t
 // Un drapeau baissé ne fait rien annoncer : tant que 0140 n'est pas appliquée, aucune ligne d'automatisation de Mes chiffres n'est visible.
 ok(GRILLE.filter((l) => l.capacites.includes('chiffres.auto')).every((l) => l.flag && P.GRILLE.includes(l)), "une ligne d'automatisation de Mes chiffres est visible sans drapeau")
 
+// 5 ter. 15/10 (Benj) : « La plateforme n'est disponible qu'à partir de Studio. Dans Essentiel il n'y a PAS de plateforme. » Aucune ligne de la
+// grille qui annonce une capacité de la plateforme n'est ouverte à Essentiel ni à l'Essai ; la carte Essentiel n'en dit rien et dit ce qui RESTE.
+const CAPS_PLATEFORME = ['plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso', 'site.domaine_perso', 'relances', 'canaux.email', 'plateforme.ia.auto', 'plateforme.personnalisation_avancee', 'plateforme.gestion']
+for (const cap of CAPS_PLATEFORME) {
+  ok(PLANS.essentiel.capacites.includes(cap) === false && PLANS.gratuit.capacites.includes(cap) === false, `${cap} : Essentiel et Essai n'ont PAS la plateforme`)
+  ok(PLANS.studio.capacites.includes(cap), `${cap} : Studio a la plateforme`)
+  const lignes = GRILLE_COMPLETE.filter((l) => l.capacites.includes(cap))
+  ok(lignes.length >= 1, `aucune ligne de la grille n'annonce ${cap}`)
+  for (const l of lignes) ok(l.cellules.essentiel === false || l.cellules.essentiel === '', `« ${l.label} » : Essentiel ne devrait pas l'avoir (${cap})`)
+}
+{
+  // La ligne « Niveau d’automatisation » dit justement « pas de plateforme » : elle est vérifiée à part (AUTOMATISATION).
+  const lignesEssentiel = listes.essentiel.filter((t) => !/^Niveau d’automatisation/.test(t))
+  const intrus = lignesEssentiel.filter((t) => /plateforme|Page de conversation|conversations|nom de domaine|Comptes clients|boîte email|Réponse aux demandes|Personnalisation/i.test(t))
+  ok(intrus.length === 0, 'la carte Essentiel annonce encore un élément de la plateforme : ' + intrus.join(' | '))
+}
+ok(listes.essentiel.some((t) => /Devis chiffrés par l’IA/.test(t)) && listes.essentiel.some((t) => /Factur-X/.test(t)), 'la carte Essentiel doit garder les devis chiffrés par l’IA et les factures + Factur-X')
+ok(/pas de plateforme/i.test(P.AUTOMATISATION.essentiel) && /plateforme/i.test(P.AUTOMATISATION.studio) && !/plateforme/i.test(P.AUTOMATISATION.essentiel.replace(/pas de plateforme/i, '')), "AUTOMATISATION : Essentiel dit « pas de plateforme », Studio la nomme")
+ok(listes.studio.some((t) => /La plateforme : page de conversation/.test(t)) && detailOffre('studio').lignes.some((x) => x.nouveau && /La plateforme/.test(x.texte)), 'Studio doit montrer « La plateforme » comme NOUVELLE par rapport à Essentiel')
+ok(P.PLANS.gratuit.capacites.length === PLANS.essentiel.capacites.length, "l'Essai garde les mêmes capacités qu'Essentiel")
+
 // 6. Le juge se teste : ces mutations DOIVENT être vues.
 const clone = () => JSON.parse(JSON.stringify(PLANS))
 const m1 = clone(); m1.signature.capacites.push('site.slides3d')
@@ -125,6 +147,10 @@ const m5 = clone(); m5.studio.capacites.push('chiffres.auto')
 ok(GRILLE_COMPLETE.some((l) => l.capacites.includes('chiffres.auto') && l.cellules.studio === false && m5.studio.capacites.includes('chiffres.auto')), "mutation 5 non vue : Studio qui a l'automatique de Mes chiffres contredirait la cellule « — »")
 const m6 = clone(); m6.essentiel.capacites.push('plateforme.gestion')
 ok(m6.essentiel.capacites.includes('plateforme.gestion') && GRILLE_COMPLETE.filter((l) => l.capacites.includes('plateforme.gestion')).every((l) => l.cellules.essentiel === false), 'mutation 6 non vue')
+
+// 15/10 : Essentiel qui récupère la page de conversation → contredirait la cellule « — ».
+const m7 = clone(); m7.essentiel.capacites.push('plateforme.conversation')
+ok(m7.essentiel.capacites.includes('plateforme.conversation') && GRILLE_COMPLETE.filter((l) => l.capacites.includes('plateforme.conversation')).every((l) => l.cellules.essentiel === false), 'mutation 7 non vue : Essentiel qui a la page de conversation')
 
 if (echecs.length) {
   console.log(`❌ offres-affichage-qa : ${echecs.length} échec(s) sur ${n} contrôles`)

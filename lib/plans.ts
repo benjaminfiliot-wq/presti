@@ -15,9 +15,12 @@ export type PlanPayant = 'essentiel' | 'studio' | 'signature'
 export type Capacite =
   | 'plateforme.conversation' | 'plateforme.ia.auto' | 'plateforme.ia.expert' | 'plateforme.comptes_clients'
   | 'plateforme.domaine_perso' | 'plateforme.personnalisation_avancee' | 'plateforme.regles'
-  // 15/10 (Benj) : l'ÉCRAN « Ma plateforme » (réglages de l'assistant, apparence, règles) et l'écran « Mes chiffres » (la comptabilité)
-  // commencent avec Studio, pour TOUS les comptes. `chiffres.auto` : les automatisations de « Mes chiffres », Signature seulement.
-  // Le lien de conversation, la réponse préparée par l'IA, les comptes clients et le domaine restent dans toutes les offres.
+  // 15/10 (Benj) : « La plateforme n'est disponible qu'à partir de Studio. Dans Essentiel il n'y a PAS de plateforme. » Tout ce qui la
+  // compose commence avec Studio, pour TOUS les comptes (Essentiel existants compris) : la page de conversation publique, la réponse
+  // préparée par l'IA, les comptes clients, les relances de conversation (J+2/J+5/J+10), le nom de domaine sur la page, la boîte e-mail
+  // branchée, l'écran « Ma plateforme », « Messages » et « Réponses instantanées ». L'écran « Mes chiffres » (la comptabilité) aussi.
+  // `chiffres.auto` : les automatisations de « Mes chiffres », et `plateforme.regles` : les règles, Signature seulement.
+  // Essentiel garde ce qui n'est pas la plateforme : clients, devis chiffrés par l'IA sur ses prix, factures + Factur-X, tarifs, crédits.
   | 'plateforme.gestion' | 'chiffres' | 'chiffres.auto'
   | 'site.essentiel' | 'site.pro' | 'site.signature' | 'site.slides3d' | 'site.domaine_perso'
   | 'devis.ia' | 'devis.prix_artisan' | 'factures' | 'factures.electronique' | 'factures.relances'
@@ -42,19 +45,21 @@ type Plan = {
 
 // Les capacités s'empilent : chaque palier reprend le précédent et ajoute.
 const BASE: Capacite[] = [
-  'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso',
-  'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous. Le site vitrine, lui, est sorti des formules (v15 §2.1)
   'devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',
-  'canaux.email', 'relances',
 ]
 const STUDIO: Capacite[] = [
   ...BASE,
+  // 15/10 (Benj) : LA PLATEFORME commence avec Studio (« Dans Essentiel il n'y a PAS de plateforme »). Ce bloc est le seul endroit qui la définit.
+  'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.gestion',
+  'plateforme.domaine_perso',
+  'site.domaine_perso', // le nom de domaine sur la page de conversation (la décision du 04/09 « pour tous » est remplacée : Studio)
+  'canaux.email', 'relances', // la boîte e-mail branchée, et les relances de CONVERSATION (J+2/J+5/J+10, lib/relances.ts)
   'plateforme.ia.auto', 'plateforme.personnalisation_avancee',
   // 15/10 (Benj) : sinon « il n'y a pas d'intérêt à prendre la 2e ou la 3e offre, à part pour le CRM et l'assistant ».
-  'plateforme.gestion', 'chiffres',
+  'chiffres',
   // 15/10 (Benj, « En Studio ») — relances automatiques des factures impayées (opt-in, J+3/J+10/J+21 par défaut) : Studio et au-dessus.
-  // Les relances de conversation (`relances`, J+2/J+5/J+10) restent dans toutes les offres. Les comptes Essentiel qui avaient coché la case ne
-  // sont plus servis (route et passage quotidien refusent sur cette capacité) ; leurs réglages restent, rien n'est effacé.
+  // Les comptes Essentiel qui avaient coché la case ne sont plus servis (route et passage quotidien refusent sur cette capacité) ;
+  // leurs réglages restent, rien n'est effacé.
   'factures.relances',
   'inventaire.stock', 'inventaire.recherche_ia',
   'canaux.whatsapp', 'export',
@@ -72,10 +77,10 @@ const SIGNATURE: Capacite[] = [
 ]
 
 export const PLANS: Record<PlanId, Plan> = {
-  // L'essai = l'Essentiel avec 3 crédits, pour juger sur ses vraies demandes avant de payer.
-  gratuit: { label: 'Essai', accroche: 'Pour juger sur vos vraies demandes, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  essentiel: { label: 'Essentiel', accroche: 'Pour ne plus louper une demande.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  studio: { label: 'Studio', accroche: 'L’assistant qui répond seul, jour et nuit.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
+  // L'essai = l'Essentiel avec 3 crédits (mêmes capacités : BASE, donc sans plateforme), pour juger les devis chiffrés par l'IA avant de payer.
+  gratuit: { label: 'Essai', accroche: 'Pour juger les devis chiffrés par l’IA, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
+  essentiel: { label: 'Essentiel', accroche: 'Pour chiffrer vos devis avec l’IA et facturer.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
+  studio: { label: 'Studio', accroche: 'La plateforme de conversation, avec un assistant qui répond seul.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
   signature: { label: 'Signature', accroche: 'L’atelier à plein régime : modèle Expert et règles d’automatisation.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Fondateurs : plan interne, illimité (jamais décompté).
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
@@ -176,24 +181,25 @@ const texteSi = (cap: Capacite, t: Record<PlanPayant, string>): Record<PlanPayan
 export const CAPACITES_HORS_FORMULES: Capacite[] = ['site.essentiel', 'site.pro', 'site.signature', 'site.slides3d']
 
 /** 15/10 (Benj) : le niveau d'automatisation de chaque offre, une seule écriture (grille des offres ET comparatif de l'accueil).
- *  L'automatisation commence avec Studio (l'IA répond seule) et devient complète avec Signature (règles + assistant de gestion). */
+ *  Essentiel : pas de plateforme. L'automatisation commence avec Studio (la plateforme, l'IA répond seule) et devient complète avec
+ *  Signature (règles + assistant de gestion). */
 export const AUTOMATISATION: Record<PlanPayant, string> = {
-  essentiel: 'l’IA prépare vos réponses et vos devis, vous validez et envoyez ; seules les relances de vos conversations partent seules',
-  studio: 'l’automatisation commence : l’IA répond seule à vos clients, jour et nuit, et relance seule vos factures impayées (à cocher)',
+  essentiel: 'pas de plateforme : l’IA chiffre vos devis sur vos prix, vous les relisez, les envoyez et facturez vous-même',
+  studio: 'l’automatisation commence avec la plateforme : l’IA répond seule à vos clients, jour et nuit, et relance seule vos factures impayées (à cocher)',
   signature: 'automatisation complète : réponses selon vos règles, alerte e-mail sur les impayés et export mensuel à votre comptable, et l’assistant gère devis, factures, stock, tarifs et CRM (vous confirmez ce qui part chez un client)',
 }
 
 export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Automatisation', label: 'Niveau d’automatisation', capacites: [], cellules: AUTOMATISATION },
-  { groupe: 'Plateforme', label: 'Page de conversation à votre marque', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation') },
-  // 15/10 (Benj) : dire pour chaque offre ce qui est AUTOMATIQUE et ce que l'artisan valide lui-même.
+  { groupe: 'Plateforme', label: 'La plateforme : page de conversation à votre marque', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation') },
+  // 15/10 (Benj) : dire pour chaque offre ce qui est AUTOMATIQUE et ce que l'artisan valide lui-même. Essentiel : pas de plateforme, donc pas de réponse.
   { groupe: 'Plateforme', label: 'Réponse aux demandes de vos clients', capacites: ['plateforme.ia.auto', 'plateforme.ia.expert', 'plateforme.regles'], cellules: {
-    essentiel: 'préparée par l’IA (modèle Standard) : vous la validez et l’envoyez',
+    essentiel: false,
     studio: 'automatique : l’IA répond seule, jour et nuit, ou vous validez (modèles Standard + Pro)',
     signature: FLAGS.plateformeRegles ? 'automatique, avec vos règles d’automatisation (modèles Standard, Pro + Expert)' : 'automatique (modèles Standard, Pro + Expert)',
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', capacites: ['plateforme.comptes_clients'], cellules: dePlan('plateforme.comptes_clients') },
-  // 15/10 : l'écran « Ma plateforme » (réglages de l'assistant, apparence, règles) commence avec Studio, comptes Essentiel compris.
+  // 15/10 : l'écran « Ma plateforme » (réglages de l'assistant, apparence, règles) fait partie de la plateforme : Studio, comptes Essentiel compris.
   // Thème, couleur et le reste de la personnalisation s'y règlent : ils suivent l'écran.
   { groupe: 'Plateforme', label: 'Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page', capacites: ['plateforme.gestion'], cellules: dePlan('plateforme.gestion') },
   { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: texteSi('plateforme.personnalisation_avancee', { essentiel: '', studio: 'Thème, couleur, polices, fond, avatar, amorces', signature: 'Thème, couleur, polices, fond, avatar, amorces' }), flag: 'plateformePersona' },

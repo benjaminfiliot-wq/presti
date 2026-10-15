@@ -18,6 +18,7 @@ import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
 import { computeResponseDelay } from '@/lib/platStats'
+import { plateformeOuverte } from '@/lib/plateformeAcces'
 
 /**
  * Sérialise un bloc de données structurées pour l'injecter dans `<script type="application/ld+json">`.
@@ -40,7 +41,7 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown; site_style: unknown
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown; site_style: unknown; is_founder: boolean | null
   domaine: string | null; domaine_verifie: boolean | null
   avant_apres: { avant?: string; apres?: string; titre?: string }[] | null
 }
@@ -48,7 +49,7 @@ type Artisan = {
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, domaine, domaine_verifie, avant_apres')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, is_founder, domaine, domaine_verifie, avant_apres')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -157,7 +158,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     ...(r.site ? [{ href: r.site, label: 'Site', icon: IC.globe }] : []),
   ]
   const ext = (h: string) => /^https?:/i.test(h)
-  const plateformeActive = a.plateforme_active !== false && !!a.slug
+  // 15/10 : la plateforme commence avec Studio — sans elle, le site ne renvoie pas vers une page qui ne prend plus de demande.
+  const plateformeActive = a.plateforme_active !== false && !!a.slug && plateformeOuverte(a)
   // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
   const contactHref = plateformeActive ? ch.plateforme : (telDigits ? `tel:${telDigits}` : '#contact')
 

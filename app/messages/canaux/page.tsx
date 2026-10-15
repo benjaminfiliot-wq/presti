@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Info from '@/app/Info'
 import { actif } from '@/lib/flags'
+import EcranVerrouille from '@/app/EcranVerrouille'
+import { peut } from '@/lib/plans'
 import CanauxMeta from './CanauxMeta'
 
 // Messages → Canaux (v4 §B2). Voie IMAP/SMTP : marche avec N'IMPORTE QUELLE boîte email
@@ -22,6 +24,7 @@ type Canal = {
 export default function CanauxPage() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
+  const [plan, setPlan] = useState<string | null>(null)
   const [canaux, setCanaux] = useState<Canal[]>([])
   const [chiffrement, setChiffrement] = useState(true)
   const [adresse, setAdresse] = useState('')
@@ -43,7 +46,11 @@ export default function CanauxPage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
-      await charger()
+      // 15/10 (Benj) : les canaux (boîte e-mail, WhatsApp, réseaux) alimentent Messages : la plateforme commence avec Studio.
+      const { data: prof } = await supabase.from('artisans').select('plan').eq('id', data.session.user.id).maybeSingle()
+      const p = (prof?.plan as string | null | undefined) ?? null
+      setPlan(p)
+      if (peut(p, 'plateforme.conversation')) await charger()
       setReady(true)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,6 +92,10 @@ export default function CanauxPage() {
   }
 
   if (!ready) return <AppShell active="messages" title="Canaux"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+
+  if (ready && !peut(plan, 'plateforme.conversation')) {
+    return <AppShell active="messages" title="Canaux" crumb="Réservé à l’offre Studio et au-dessus"><EcranVerrouille ecran="messages" plan={plan} /></AppShell>
+  }
 
   return (
     <AppShell active="messages" title="Canaux" crumb="Messages" actions={<a className="btn btn--ghost" style={{ width: 'auto' }} href="/messages">← Boîte de réception</a>}>
