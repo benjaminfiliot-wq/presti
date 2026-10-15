@@ -74,7 +74,7 @@ for (const av of A) {
 }
 // Les offres citées viennent de lib/plans.ts (jamais retapées) : si une offre change, le texte suit — le juge relit les prix.
 const impayes = A.find((x) => x.id === 'impayes')
-if (impayes && F.FLAGS.relancesImpayes) ok(impayes.texte.includes(`${P.PLANS.essentiel.prixMois} €`) && impayes.texte.includes(P.PLANS[P.offreMinimale('factures.relances')].label), "avantage impayés : l'offre et le prix viennent de lib/plans.ts")
+if (impayes && F.FLAGS.relancesImpayes) ok(impayes.texte.includes(`${P.PLANS[P.offreMinimale('factures.relances')].prixMois} €`) && /Dès l’offre Studio/.test(impayes.texte) && impayes.texte.includes(P.PLANS[P.offreMinimale('factures.relances')].label), "avantage impayés : l'offre et le prix viennent de lib/plans.ts")
 // Un avantage dont la fonction n'est pas livrée (drapeau baissé) ne s'affiche pas.
 ok(C.AVANTAGES_VISIBLES.every((x) => !x.flag || F.FLAGS[x.flag]), 'aucun avantage dont le drapeau est baissé')
 ok(C.AVANTAGES_VISIBLES.every((x) => C.CRITERES_VISIBLES.some((c) => c.id === x.critere)), 'aucun avantage rattaché à un critère masqué')

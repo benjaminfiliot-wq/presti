@@ -88,6 +88,27 @@ try {
       if (!auto) T('Mes chiffres · écriture des réglages refusée (403)', rp.status === 403, `PUT ${rp.status}`)
     }
 
+    // Relances automatiques des factures impayées (15/10, « En Studio ») : refus 403 { code: 'offre', offre: 'studio' } pour Essai / Essentiel, sans rien écrire.
+    // Aucune relance n'est activée ici (actif: false) : aucun e-mail ne peut partir, et le compte de test n'a aucune facture.
+    {
+      const relances = peut(plan, 'factures.relances')
+      const gr = await appel('GET', '/api/factures/relances-auto')
+      const pr = await appel('PUT', '/api/factures/relances-auto', { actif: !relances ? true : false, jours: [3, 10, 21], textes: {} })
+      const po = await appel('POST', '/api/factures/relances-auto', { facture_id: crypto.randomUUID(), action: 'arreter' })
+      if (!FLAGS.relancesImpayes) T('Relances d’impayés · 404 drapeau baissé', gr.status === 404 && pr.status === 404 && po.status === 404, `GET ${gr.status}`)
+      else if (relances) {
+        T('Relances d’impayés · lecture → 200 (désactivées par défaut)', gr.status === 200 && gr.corps.reglages?.actif === false, `GET ${gr.status} ${JSON.stringify(gr.corps).slice(0, 120)}`)
+        T('Relances d’impayés · réglage enregistré (case décochée) → 200', pr.status === 200, `PUT ${pr.status}`)
+        T('Relances d’impayés · arrêt d’une facture inconnue → 404 (pas de fuite)', po.status === 404, `POST ${po.status}`)
+      } else {
+        T('Relances d’impayés · lecture → 403 offre Studio', gr.status === 403 && gr.corps.code === 'offre' && gr.corps.offre === 'studio' && /Disponible avec l’offre Studio/.test(gr.corps.error ?? '') && !('journal' in gr.corps), `GET ${gr.status} ${JSON.stringify(gr.corps).slice(0, 140)}`)
+        T('Relances d’impayés · écriture (case cochée) → 403', pr.status === 403 && pr.corps.code === 'offre', `PUT ${pr.status}`)
+        T('Relances d’impayés · arrêt d’une facture → 403', po.status === 403, `POST ${po.status}`)
+        const ligne = (await admin.from('relances_impayes_reglages').select('actif').eq('artisan_id', u.user.id).maybeSingle()).data
+        T('Relances d’impayés · rien n’a été enregistré en base pour ce compte', ligne === null, JSON.stringify(ligne))
+      }
+    }
+
     // Ma plateforme : config + apparence
     const c = await appel('GET', '/api/plateforme/config')
     const a = await appel('GET', '/api/plateforme/apparence')

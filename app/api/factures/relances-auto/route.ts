@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { actif } from '@/lib/flags'
-import { messageVerrou, peut } from '@/lib/plans'
+import { messageVerrou, offreMinimale, peut } from '@/lib/plans'
 import { jourParis } from '@/lib/comptaTableau'
 import { lireReglagesRelances, REGLAGES_RELANCES_PAR_DEFAUT } from '@/lib/relancesImpayes'
 import { reglagesDeLigne } from '@/lib/relancesImpayesMagasin'
@@ -15,10 +15,12 @@ export const runtime = 'nodejs'
 const ferme = () => !actif('relancesImpayes')
 const NON_MISE_EN_PLACE = { error: 'Les relances automatiques ne sont pas encore disponibles. Réessayez plus tard.' }
 
-async function disponible(uid: string): Promise<{ ok: true } | { ok: false; statut: number; erreur: string }> {
+async function disponible(uid: string): Promise<{ ok: true } | { ok: false; statut: number; erreur: string; code?: 'offre'; offre?: string | null }> {
   const { data, error } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', uid).maybeSingle()
   if (error || !data) return { ok: false, statut: 503, erreur: 'Compte illisible.' }
-  if (!data.is_founder && !peut(data.plan, 'factures.relances')) return { ok: false, statut: 403, erreur: `Les relances automatiques des factures ne sont pas dans votre offre. ${messageVerrou('factures.relances')}` }
+  // 15/10 (Benj, « En Studio ») : la capacité est celle de Studio et au-dessus. Même forme de refus que les écrans réservés (lib/accesOffre.ts) :
+  // { code: 'offre', offre } — l'écran Factures s'en sert pour montrer le réglage verrouillé.
+  if (!data.is_founder && !peut(data.plan, 'factures.relances')) return { ok: false, statut: 403, code: 'offre', offre: offreMinimale('factures.relances'), erreur: `Les relances automatiques des factures ne sont pas dans votre offre. ${messageVerrou('factures.relances')}` }
   return { ok: true }
 }
 
@@ -27,7 +29,7 @@ export async function GET(req: Request) {
   const session = await authArtisan(req)
   if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
   const dispo = await disponible(session.uid)
-  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur }, { status: dispo.statut })
+  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur, code: dispo.code, offre: dispo.offre }, { status: dispo.statut, headers: { 'Cache-Control': 'no-store' } })
   const [r, j, a] = await Promise.all([
     supabaseAdmin.from('relances_impayes_reglages').select('actif, jours, textes, actif_depuis').eq('artisan_id', session.uid).maybeSingle(),
     supabaseAdmin.from('relances_impayes').select('facture_id, rang, jour, statut, envoyee_le').eq('artisan_id', session.uid).order('jour', { ascending: false }).limit(2000),
@@ -46,7 +48,7 @@ export async function PUT(req: Request) {
   const session = await authArtisan(req)
   if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
   const dispo = await disponible(session.uid)
-  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur }, { status: dispo.statut })
+  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur, code: dispo.code, offre: dispo.offre }, { status: dispo.statut, headers: { 'Cache-Control': 'no-store' } })
   const lu = lireReglagesRelances(await req.json().catch(() => null))
   if (!lu.ok) return NextResponse.json({ error: lu.erreur }, { status: 400 })
   const avant = await supabaseAdmin.from('relances_impayes_reglages').select('actif, actif_depuis').eq('artisan_id', session.uid).maybeSingle()
@@ -67,7 +69,7 @@ export async function POST(req: Request) {
   const session = await authArtisan(req)
   if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
   const dispo = await disponible(session.uid)
-  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur }, { status: dispo.statut })
+  if (!dispo.ok) return NextResponse.json({ error: dispo.erreur, code: dispo.code, offre: dispo.offre }, { status: dispo.statut, headers: { 'Cache-Control': 'no-store' } })
   const b = (await req.json().catch(() => null)) as { facture_id?: unknown; action?: unknown } | null
   const id = typeof b?.facture_id === 'string' && /^[0-9a-f-]{36}$/i.test(b.facture_id) ? b.facture_id : null
   if (!id || (b?.action !== 'arreter' && b?.action !== 'reprendre')) return NextResponse.json({ error: 'Demande illisible.' }, { status: 400 })

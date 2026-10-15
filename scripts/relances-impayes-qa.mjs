@@ -282,16 +282,28 @@ const compte = (id, o = {}) => ({ id, reglages: REG(), ...o })
   ok(e.envois.length === 1 && e.envois[0].fromName === 'Dupont Rénovation' && m.rows.length === 1 && m.rows[0].artisan_id === B, 'fondateur, suspendu, en pause, sans e-mail : ignorés ; la panne d’un compte n’arrête pas les autres')
   ok(b.erreurs.some((x) => /panne/.test(x)), 'la panne d’un compte est notée dans le bilan')
 }
+// 15/10 (Benj, « En Studio ») : un compte Essentiel (ou en essai) qui avait coché la case ne reçoit plus rien ; un Studio, si.
+{
+  const m = monde({ comptes: [compte('ess', { plan: 'essentiel' }), compte('ess2', { plan: 'gratuit' }), compte('stu', { plan: 'studio' }), compte('sig', { plan: 'signature' })], factures: ['ess', 'ess2', 'stu', 'sig'].map((id) => facture(id)) }); const e = espion()
+  const b = await tour(m, e)
+  const aQui = new Set(m.rows.map((r) => r.artisan_id))
+  ok(e.envois.length === 2 && aQui.has('stu') && aQui.has('sig') && !aQui.has('ess') && !aQui.has('ess2'), 'Essentiel et Essai : aucune relance d’impayé ne part ; Studio et Signature : oui')
+  ok(m.rows.every((r) => r.statut === 'envoyee'), 'les relances des comptes servis sont confirmées')
+  ok(b.erreurs.length === 0, 'un compte non servi n’est pas une erreur')
+}
 ok(reseau === 0, `aucune tentative réseau pendant les tests (${reseau})`)
 
 // ─── 4. Les sources : offre, drapeau, cron, route, migration, écran, comparatif ───────────────────────────────────────────────
 ok(F.FLAGS.relancesImpayes === true && typeof F.FLAGS.relancesImpayes === 'boolean', 'drapeau relancesImpayes présent')
-for (const id of ['essentiel', 'studio', 'signature', 'business']) ok(P.peut(id, 'factures.relances') === true, `l’offre ${id} a la capacité factures.relances`)
-ok(P.offreMinimale('factures.relances') === 'essentiel', 'capacité factures.relances : dès Essentiel (comme les relances de conversation)')
+// 15/10 (Benj, « En Studio ») : Essai et Essentiel n'ont plus la capacité ; Studio, Signature et Business l'ont.
+for (const id of ['studio', 'signature', 'business']) ok(P.peut(id, 'factures.relances') === true, `l’offre ${id} a la capacité factures.relances`)
+for (const id of ['gratuit', 'essentiel']) ok(P.peut(id, 'factures.relances') === false, `l’offre ${id} n’a PAS la capacité factures.relances`)
+ok(P.offreMinimale('factures.relances') === 'studio', 'capacité factures.relances : dès Studio')
+ok(P.peut('essentiel', 'relances') === true, 'les relances de CONVERSATION restent dans toutes les offres')
 const ligne = P.GRILLE_COMPLETE.find((l) => l.capacites.includes('factures.relances'))
 ok(!!ligne && ligne.flag === 'relancesImpayes' && /impayées/.test(ligne.label), 'la grille des offres annonce les relances d’impayés (une ligne, drapeau relancesImpayes)')
 ok(P.GRILLE.some((l) => l === ligne), 'la ligne est visible drapeau levé')
-ok(P.pointsForts('essentiel').some((t) => /factures impayées/.test(t)) && P.pointsForts('signature').some((t) => /factures impayées/.test(t)), 'la ligne est dans les points forts de chaque offre payante')
+ok(!P.pointsForts('essentiel').some((t) => /factures impayées/.test(t)) && P.pointsForts('studio').some((t) => /factures impayées/.test(t)) && P.pointsForts('signature').some((t) => /factures impayées/.test(t)), 'la ligne est dans les points forts de Studio et de Signature, pas d’Essentiel')
 
 const cron = lire('app/api/cron/relances/route.ts')
 ok(/actif\('relancesImpayes'\)/.test(cron) && /tourRelancesImpayes\(/.test(cron), 'le cron appelle le passage derrière le drapeau')

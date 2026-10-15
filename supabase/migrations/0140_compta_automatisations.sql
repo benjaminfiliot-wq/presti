@@ -1,5 +1,6 @@
 -- 0140 · Compta de l'artisan (/chiffres) : date de règlement des factures, et réglages des automatisations.
--- Écrite le 12/10/2026, NON APPLIQUÉE. Les trois drapeaux qui s'en servent (lib/flags.ts : comptaDateReglement,
+-- Écrite le 12/10/2026, sections 1 à 3 appliquées le 12/10 (drapeaux restés baissés), section 4 (gardes) ajoutée et appliquée le 15/10/2026
+-- avec la levée des drapeaux. Les trois drapeaux qui s'en servent (lib/flags.ts : comptaDateReglement,
 -- comptaAlerteImpayes, comptaExportMensuel) restent baissés jusqu'à son application : levés sans elle, la route du
 -- tableau de bord lirait une colonne absente et les réglages une table absente (erreur franche, jamais un faux zéro).
 --
@@ -60,3 +61,23 @@ create table if not exists public.compta_alertes_envoyees (
 alter table public.compta_alertes_envoyees enable row level security;
 -- Aucune politique : seul le service (clé de service, tâche planifiée) y lit et y écrit.
 create index if not exists compta_alertes_envoyees_artisan on public.compta_alertes_envoyees (artisan_id);
+
+-- 4 ─ Ajout du 15/10 : gardes de session et de suspension (0138/0151) et rien pour anon, comme 0157-0159. Idempotent.
+--     compta_reglages : l'artisan lit et règle SA ligne (politique de la section 2) tant que sa session est valide et son compte non suspendu.
+--     compta_alertes_envoyees : service seulement (aucune politique) ; on retire en plus tout droit à anon et authenticated.
+do $$
+declare t text;
+begin
+  foreach t in array array['compta_reglages'] loop
+    execute format('revoke all on public.%I from anon', t);
+    execute format('drop policy if exists garde_session on public.%I', t);
+    execute format('create policy garde_session on public.%I as restrictive for all to authenticated using ((select public.jeton_session_valide())) with check ((select public.jeton_session_valide()))', t);
+    execute format('drop policy if exists garde_suspension_ins on public.%I', t);
+    execute format('create policy garde_suspension_ins on public.%I as restrictive for insert to authenticated with check ((select public.compte_non_suspendu()))', t);
+    execute format('drop policy if exists garde_suspension_maj on public.%I', t);
+    execute format('create policy garde_suspension_maj on public.%I as restrictive for update to authenticated using ((select public.compte_non_suspendu())) with check ((select public.compte_non_suspendu()))', t);
+    execute format('drop policy if exists garde_suspension_sup on public.%I', t);
+    execute format('create policy garde_suspension_sup on public.%I as restrictive for delete to authenticated using ((select public.compte_non_suspendu()))', t);
+  end loop;
+end $$;
+revoke all on public.compta_alertes_envoyees from anon, authenticated;

@@ -8,6 +8,8 @@ import { estNatif, partagerFichier, vibrer } from '@/lib/natif'
 import { actif as drapeau } from '@/lib/flags'
 import { etatPourEcran, type FactureRelancable } from '@/lib/relancesImpayes'
 import RelancesAuto, { type DonneesRelances } from './RelancesAuto'
+import RelancesVerrouillees from './RelancesVerrouillees'
+import type { PlanPayant } from '@/lib/plans'
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -33,6 +35,9 @@ export default function FacturesList() {
   // Relances automatiques des impayés : null tant que le serveur ne répond pas (drapeau, offre, migration) — alors rien n'est montré.
   const [rel, setRel] = useState<DonneesRelances | null>(null)
   const [nomArtisan, setNomArtisan] = useState<string | null>(null)
+  // 15/10 : les relances automatiques commencent avec Studio. Le serveur répond 403 { code: 'offre' } aux autres comptes — le réglage s'affiche verrouillé.
+  const [verrouRelances, setVerrouRelances] = useState<{ offre: PlanPayant | null } | null>(null)
+  const [plan, setPlan] = useState<string | null>(null)
 
   // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
   // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
@@ -47,7 +52,10 @@ export default function FacturesList() {
     if (!drapeau('relancesImpayes')) return
     const t = await jeton()
     const rep = t ? await fetch('/api/factures/relances-auto', { headers: { Authorization: `Bearer ${t}` }, cache: 'no-store' }).catch(() => null) : null
-    setRel(rep?.ok ? ((await rep.json().catch(() => null)) as DonneesRelances | null) : null)
+    const corps = rep ? await rep.json().catch(() => null) : null
+    if (rep?.status === 403 && (corps as { code?: string } | null)?.code === 'offre') { setRel(null); setVerrouRelances({ offre: ((corps as { offre?: PlanPayant | null }).offre) ?? null }); return }
+    setVerrouRelances(null)
+    setRel(rep?.ok ? (corps as DonneesRelances | null) : null)
   }
   async function arretRelances(f: Facture, action: 'arreter' | 'reprendre') {
     setBusy(f.id)
@@ -60,8 +68,9 @@ export default function FacturesList() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof } = await supabase.from('artisans').select('id').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof } = await supabase.from('artisans').select('id, plan').eq('id', data.session.user.id).maybeSingle()
       if (!prof) { router.replace('/onboarding'); return }
+      setPlan((prof as { plan?: string | null }).plan ?? null)
       setNomArtisan(((await supabase.from('artisans').select('nom').eq('id', data.session.user.id).maybeSingle()).data as { nom?: string | null } | null)?.nom ?? null)
       await Promise.all([load(), chargerRelances()])
       setReady(true)
@@ -162,6 +171,7 @@ export default function FacturesList() {
       ) : factures.length === 0 ? (
         <>
         {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
+        {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
         <div className="psh-panel">
           <div className="psh-empty">Aucune facture pour l’instant.<br />Ouvrez un devis et cliquez « Créer la facture » : Presti reprend les lignes, applique la bonne numérotation et sort un PDF conforme.</div>
         </div>
@@ -169,6 +179,7 @@ export default function FacturesList() {
       ) : (
         <>
           {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
+          {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
           {/* Le résumé se calcule sur la liste affichée ci-dessous : rien d'autre n'est lu. */}
           <section className="docs-resume" aria-label="Résumé de vos factures">
             <div className="docs-tuile">

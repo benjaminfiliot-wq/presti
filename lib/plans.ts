@@ -45,9 +45,6 @@ const BASE: Capacite[] = [
   'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso',
   'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous. Le site vitrine, lui, est sorti des formules (v15 §2.1)
   'devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',
-  // 15/10 — relances automatiques des factures impayées (opt-in, J+3/J+10/J+21 par défaut). Un e-mail, aucun crédit d'IA : dans toutes les offres,
-  // comme les relances de conversation (`relances`). Pour la réserver à Studio, la déplacer dans STUDIO : la grille suit seule.
-  'factures.relances',
   'canaux.email', 'relances',
 ]
 const STUDIO: Capacite[] = [
@@ -55,6 +52,10 @@ const STUDIO: Capacite[] = [
   'plateforme.ia.auto', 'plateforme.personnalisation_avancee',
   // 15/10 (Benj) : sinon « il n'y a pas d'intérêt à prendre la 2e ou la 3e offre, à part pour le CRM et l'assistant ».
   'plateforme.gestion', 'chiffres',
+  // 15/10 (Benj, « En Studio ») — relances automatiques des factures impayées (opt-in, J+3/J+10/J+21 par défaut) : Studio et au-dessus.
+  // Les relances de conversation (`relances`, J+2/J+5/J+10) restent dans toutes les offres. Les comptes Essentiel qui avaient coché la case ne
+  // sont plus servis (route et passage quotidien refusent sur cette capacité) ; leurs réglages restent, rien n'est effacé.
+  'factures.relances',
   'inventaire.stock', 'inventaire.recherche_ia',
   'canaux.whatsapp', 'export',
 ]
@@ -177,9 +178,9 @@ export const CAPACITES_HORS_FORMULES: Capacite[] = ['site.essentiel', 'site.pro'
 /** 15/10 (Benj) : le niveau d'automatisation de chaque offre, une seule écriture (grille des offres ET comparatif de l'accueil).
  *  L'automatisation commence avec Studio (l'IA répond seule) et devient complète avec Signature (règles + assistant de gestion). */
 export const AUTOMATISATION: Record<PlanPayant, string> = {
-  essentiel: 'l’IA prépare vos réponses et vos devis, vous validez et envoyez ; seules les relances partent seules',
-  studio: 'l’automatisation commence : l’IA répond seule à vos clients, jour et nuit',
-  signature: 'automatisation complète : réponses selon vos règles, et l’assistant gère devis, factures, stock, tarifs et CRM (vous confirmez ce qui part chez un client)',
+  essentiel: 'l’IA prépare vos réponses et vos devis, vous validez et envoyez ; seules les relances de vos conversations partent seules',
+  studio: 'l’automatisation commence : l’IA répond seule à vos clients, jour et nuit, et relance seule vos factures impayées (à cocher)',
+  signature: 'automatisation complète : réponses selon vos règles, alerte e-mail sur les impayés et export mensuel à votre comptable, et l’assistant gère devis, factures, stock, tarifs et CRM (vous confirmez ce qui part chez un client)',
 }
 
 export const GRILLE_COMPLETE: LigneGrille[] = [
@@ -207,8 +208,8 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
   { groupe: 'Devis & factures', label: 'Relances des factures impayées, automatiques une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
   // « Mes chiffres » (app/chiffres) : Studio et au-dessus. Les automatisations de cet écran (lib/comptaAutomatisations.ts) : Signature
-  // (capacité `chiffres.auto`, vérifiée par /api/compta/reglages et le passage quotidien). Elles n'apparaissent que drapeaux levés :
-  // tant que 0140 n'est pas appliquée, rien n'est annoncé.
+  // (capacité `chiffres.auto`, vérifiée par /api/compta/reglages et le passage quotidien). Drapeaux levés le 15/10 (migration 0140 en base) ;
+  // baissés, les lignes disparaîtraient de la grille.
   { groupe: 'Comptabilité', label: 'Écran « Mes chiffres » : chiffre d’affaires, impayés, devis à relancer, vos fichiers rangés par l’assistant', capacites: ['chiffres'], cellules: dePlan('chiffres') },
   { groupe: 'Comptabilité', label: 'Alerte e-mail quand une facture reste impayée, automatique une fois activée', capacites: ['chiffres.auto'], cellules: dePlan('chiffres.auto'), flag: 'comptaAlerteImpayes' },
   { groupe: 'Comptabilité', label: 'Export mensuel du journal des factures à votre comptable, automatique une fois activé', capacites: ['chiffres.auto'], cellules: dePlan('chiffres.auto'), flag: 'comptaExportMensuel' },

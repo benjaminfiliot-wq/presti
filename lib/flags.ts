@@ -132,15 +132,16 @@ export const FLAGS = {
   essaiFormulaire: true,
   /** 12/10/2026 — compta de l'artisan (/chiffres) : l'encaissé rangé au mois du RÈGLEMENT (factures.payee_le, posée par un
    *  déclencheur de la migration 0140). Baissé : la route ne lit pas la colonne (elle n'existe pas avant 0140) et l'encaissé
-   *  est rangé au mois d'émission, ce que l'écran dit. À lever juste après l'application de 0140. */
-  comptaDateReglement: false,
+   *  est rangé au mois d'émission, ce que l'écran dit. LEVÉ le 15/10/2026 (0140 en base, vérifiée). */
+  comptaDateReglement: true,
   /** 12/10/2026 — alerte e-mail à l'artisan quand une facture dépasse N jours d'impayé (lib/comptaAutomatisations.ts, passage
    *  quotidien de /api/cron/relances, réglage dans /chiffres). Baissé : rien n'est lu ni envoyé, GET/PUT /api/compta/reglages
-   *  répondent 404 si l'export l'est aussi, et l'écran n'en parle pas. À lever après 0140 appliquée et une alerte d'essai reçue. */
-  comptaAlerteImpayes: false,
+   *  répondent 404 si l'export l'est aussi, et l'écran n'en parle pas. LEVÉ le 15/10/2026 sur décision de Benj (0140 et ses gardes en base) ;
+   *  réservé à l'offre Signature (capacité `chiffres.auto`) côté serveur : route et passage quotidien. */
+  comptaAlerteImpayes: true,
   /** 12/10/2026 — export mensuel automatique du journal des factures (CSV) à l'adresse du comptable. Mêmes conditions que
-   *  comptaAlerteImpayes : 0140 appliquée, puis un export d'essai reçu et ouvert dans Excel. */
-  comptaExportMensuel: false,
+   *  comptaAlerteImpayes : LEVÉ le 15/10/2026 sur décision de Benj, offre Signature (`chiffres.auto`). */
+  comptaExportMensuel: true,
   /** 15/10/2026 — A3 : l'assistant AGIT (devis, factures, tarifs, stock, CRM, messages ; cartes à confirmer pour tout ce qui part chez un
    *  client, journal des actions annulables) — migration 0157 ÉCRITE, NON APPLIQUÉE. Pour ouvrir à tous les comptes Signature, dans cet
    *  ordre : 0157 appliquée et contrôlée → scripts/assistant-qa.mjs vert → accord de Benj → `assistant: true` ici, `ESSAI` vidé (ci-dessous)
@@ -165,8 +166,8 @@ export const FLAGS = {
   crm: true,
   /** 15/10/2026 — relances AUTOMATIQUES des factures impayées (lib/relancesImpayes.ts, passage quotidien de /api/cron/relances, réglage
    *  et journal dans Factures, GET/PUT /api/factures/relances-auto). Désactivées par défaut pour chaque artisan (opt-in). Migration 0159
-   *  ÉCRITE, NON APPLIQUÉE : à ne DÉPLOYER qu'après son application — sans elle, la route répond 503, l'écran n'affiche pas la section
-   *  et le passage quotidien note l'erreur sans rien envoyer (fail-closed). Offre : capacité `factures.relances` (lib/plans.ts).
+   *  appliquée (15/10). Offre : Studio et au-dessus (capacité `factures.relances`, lib/plans.ts, décision de Benj du 15/10) : la route et
+   *  le passage quotidien refusent les autres offres, l'écran Factures montre le réglage verrouillé avec renvoi vers /abonnement.
    *  La grille des offres, le comparatif de la landing et la page Tarifs gagnent seuls leur ligne. Baissé : tout cela disparaît. */
   relancesImpayes: true,
 } as const

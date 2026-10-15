@@ -114,7 +114,7 @@ critere('PS-4', 'relances : ni impayés ni devis seuls, pas de relance après «
   ...phrases(lire('lib/agents/acquisition/plaintes.ts'), /reponse_presti:.*relance automatiquement/i).map((p) => `plaintes.ts : « ${court(p)} »`),
   ...(/Facture émise<\/li>\s*<li[^>]*>Relance/.test(lire('app/page.tsx')) ? ['app/page.tsx : « Facture émise » suivie d’une relance planifiée'] : []),
   ...(/puis la facture en un clic/.test(lire('app/AuthCadre.tsx')) ? ['app/AuthCadre.tsx : « Trois relances…, puis la facture »'] : []),
-  ...(/groupe: ’Devis & factures’, label: ’Relances/.test(lire('lib/plans.ts')) ? ['lib/plans.ts : les relances rangées sous « Devis & factures »'] : []),
+  ...(/groupe: ’Devis & factures’, label: ’Relances(?! des factures impayées)/.test(lire('lib/plans.ts')) ? ['lib/plans.ts : les relances rangées sous « Devis & factures »'] : []),
 ])
 
 critere('PS-5', 'appels manqués : Presti ne capte pas les appels', ['lib/agents/acquisition/plaintes.ts'], () => {

@@ -171,7 +171,7 @@ const jours = Object.values(ESSAI_JOURS)
 export const PRESTI: Record<CritereId, string> = {
   prix: `${Math.min(...OFFRES.map((o) => o.prix))} € par mois (${PLANS.essentiel.label}), TVA non applicable ; ${PLANS.studio.label} ${PLANS.studio.prixMois} €, ${PLANS.signature.label} ${PLANS.signature.prixMois} €`,
   essai: `${Math.min(...jours)} à ${Math.max(...jours)} jours selon l’offre, sans carte`,
-  automatisation: `Oui : dès ${PLANS.studio.label} les réponses à vos clients partent sans vous, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques dès ${PLANS.essentiel.label}`,
+  automatisation: `Oui : dès ${PLANS.studio.label} les réponses à vos clients partent sans vous, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques des factures impayées dès ${dès('factures.relances')}, alerte e-mail sur les impayés et export mensuel de vos factures en ${dès('chiffres.auto')}`,
   devis_factures: 'Oui',
   // Honnête : un fichier XML Factur-X à télécharger, pas une plateforme agréée (lib/facturx.ts, lib/plans.ts).
   facture_electronique: 'Export XML Factur-X ; pas de plateforme agréée intégrée',
@@ -242,7 +242,7 @@ export const AVANTAGES: Avantage[] = [
   },
   {
     id: 'impayes', critere: 'relances', flag: 'relancesImpayes', titre: 'Les impayés se relancent, et s’arrêtent à temps',
-    texte: `Une case à cocher : jusqu’à trois relances par e-mail après l’échéance (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} par défaut), dans un texte que vous avez relu. Elles s’arrêtent dès que la facture est payée ou annulée, ou que le client répond ; chaque relance est notée sur la facture. Dès l’offre ${dès('factures.relances')} (${prix('essentiel')} € par mois).`,
+    texte: `Une case à cocher : jusqu’à trois relances par e-mail après l’échéance (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} par défaut), dans un texte que vous avez relu. Elles s’arrêtent dès que la facture est payée ou annulée, ou que le client répond ; chaque relance est notée sur la facture. Dès l’offre ${dès('factures.relances')} (${prix('studio')} € par mois).`,
     autres: { phrase: 'Chez Henrri, les impayés sont automatiques dans la formule VIP, à 59 € HT par mois.', motsCellule: [{ editeur: 'henrri', mot: 'VIP' }, { editeur: 'henrri', mot: '59' }] },
     preuves: [{ fichier: 'lib/relancesImpayes.ts', motif: 'JOURS_PAR_DEFAUT' }, { fichier: 'lib/relancesImpayesTour.ts', motif: 'reponseClient' }, { fichier: 'app/factures/RelancesAuto.tsx', motif: 'Relancer automatiquement mes factures échues' }],
   },

@@ -49,6 +49,7 @@ const SUITES = [
   // ── Sprint v5 (J-1 démo)
   // Essai gratuit sans carte (13/10) : Checkout par offre, un seul essai par compte, webhook (début, conversion, fin sans carte), textes ; 13 mutations
   { nom: 'Essai gratuit sans carte (Checkout, webhook, textes)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/essais-gratuits-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Accès aux automatisations (Mes chiffres : Signature ; relances d’impayés : dès Studio)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/acces-automatisations-qa.mjs'], cout: 'gratuit' },
   { nom: 'Offres = verrous (matrice)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/offres-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Limites atomiques', cmd: 'node', args: ['scripts/limites-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Plafond de réinitialisation', cmd: 'node', args: ['scripts/reset-plafond-e2e.mjs'], cout: 'gratuit' },
