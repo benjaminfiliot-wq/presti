@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { actif, enEssai, type Flag } from '@/lib/flags'
+import { peut, type Capacite } from '@/lib/plans'
 import AidePanneau, { articlePour } from '@/app/AidePanneau'
 import { videoPour } from '@/lib/aideVideos'
 import Visite, { VISITES, type Etape } from '@/app/Visite'
@@ -18,7 +19,7 @@ import { desabonnerCetAppareil } from '@/lib/pushClient'
 // v9 J3 — la coque native : écran de lancement, notifications natives, bouton retour, réseau. Inerte dans un navigateur.
 import NatifPont from '@/app/NatifPont'
 
-type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode; essai?: Flag; offre?: string }
+type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode; essai?: Flag; offre?: string; cap?: Capacite }
 
 const ic = (d: ReactNode) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
@@ -32,14 +33,14 @@ const NAV: { group: string; items: Nav[] }[] = [
       { key: 'messages', label: 'Messages', href: '/messages', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>) },
       { key: 'devis', label: 'Devis', href: '/devis', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h5" /></>) },
       { key: 'factures', label: 'Factures', href: '/factures', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 15h6" /></>) },
-      { key: 'chiffres', label: 'Mes chiffres', href: '/chiffres', icon: ic(<><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></>) },
+      { key: 'chiffres', label: 'Mes chiffres', href: '/chiffres', offre: 'Studio', cap: 'chiffres', icon: ic(<><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></>) },
       // CRM atelier (0141) : absent du menu tant que le drapeau `crm` est baissé.
       ...(enEssai('crm') ? [{ key: 'crm', essai: 'crm' as Flag, offre: 'Signature', label: 'CRM atelier', href: '/crm', icon: ic(<><path d="M3 21h18" /><path d="M5 21V9l7-5 7 5v12" /><path d="M9 21v-6h6v6" /></>) }] : []),
       { key: 'tarifs', label: 'Mes tarifs', href: '/tarifs', icon: ic(<><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h9z" /><circle cx="7.5" cy="7.5" r="1.4" /></>) },
       { key: 'inventaire', label: 'Inventaire', href: '/inventaire', icon: ic(<><path d="M3 7l9-4 9 4v10l-9 4-9-4z" /><path d="M3 7l9 4 9-4M12 11v10" /></>) },
       { key: 'profil', label: 'Ma page', href: '/profil', icon: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
       ...(actif('siteCommandeVente') ? [{ key: 'site', label: 'Commander mon site', href: '/site/commander', icon: ic(<><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><path d="M8 21h8M12 17v4" /></>) }] : []),
-      { key: 'plateforme', label: 'Ma plateforme', href: '/plateforme', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
+      { key: 'plateforme', label: 'Ma plateforme', href: '/plateforme', offre: 'Studio', cap: 'plateforme.gestion', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
       { key: 'abonnement', label: 'Abonnement', href: '/abonnement', icon: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
     ],
   },
@@ -274,7 +275,8 @@ export default function AppShell({
                 ) : (
                   <a key={it.key} className={it.key === active ? 'on' : ''} href={it.href} data-visite={`nav-${it.key}`}>
                     {it.icon}{it.label}
-                    {it.offre && <span className="count">{it.offre}</span>}
+                    {/* 15/10 : « Ma plateforme » et « Mes chiffres » commencent avec Studio — le badge n'apparaît que pour un compte qui n'a pas l'écran. */}
+                    {it.offre && (!it.cap || (a && !peut(a.plan, it.cap))) && <span className="count" title={it.cap ? `Disponible avec l’offre ${it.offre}` : undefined}>{it.offre}</span>}
                     {it.key === 'messages' && unread > 0 && <span className="count alert">{unread}</span>}
                   </a>
                 )

@@ -35,7 +35,7 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
     { id: 'abonnement', label: 'Abonnement & usage', detail: 'Formule, crédits, paiements', icone: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
   ] },
   { groupe: 'Vos outils', entrees: [
-    { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
+    { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main (dès l’offre Studio)', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
     { id: 'site', label: 'Site', detail: 'Votre nom de domaine', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
     { id: 'canaux', label: 'Canaux', detail: 'Votre boîte email branchée', href: '/messages/canaux', icone: ic(<><path d="M4 4h16v16H4z" /><path d="m4 7 8 6 8-6" /></>) },
   ] },

@@ -477,6 +477,26 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
   T('les CGU disent l’essai, une fois par compte, sans prélèvement sans carte', /Essai gratuit sans carte/.test(lire('app/cgu/page.tsx')) && /une seule fois par compte/.test(lire('app/cgu/page.tsx')))
 }
 
+// ── EG-6 (15/10) : ce que l'essai ouvre — « Ma plateforme » et « Mes chiffres » commencent avec Studio ──
+// L'essai sans carte sert le plan PAYANT lui-même (webhook : `plan` = celui de l'offre essayée), donc les capacités de l'offre : l'essai
+// de Studio ouvre « Ma plateforme » et « Mes chiffres », celui de Signature y ajoute leurs automatisations, celui d'Essentiel et l'Essai
+// (retour à `gratuit` à la fin d'un essai sans carte) n'ouvrent ni l'un ni l'autre. Une seule règle : lib/plans.ts.
+console.log("\n— EG-6 : l'essai et les écrans « Ma plateforme » / « Mes chiffres » —")
+{
+  const plansMod = await import(pathToFileURL(path.join(RACINE, 'lib/plans.ts')).href)
+  const { peut } = plansMod
+  const hook = lire('app/api/stripe/webhook/route.ts')
+  T("l'essai sert le plan payant lui-même (plan écrit tel quel, jamais « gratuit » avant la fin)", /^\s+plan,\s*$/m.test(hook))
+  T('un essai sans carte non converti ramène le compte à « gratuit »', /plan: 'gratuit'/.test(hook))
+  for (const [plan, ecrans, auto] of [['essentiel', false, false], ['studio', true, false], ['signature', true, true], ['gratuit', false, false]]) {
+    T(`essai ${plan} : « Ma plateforme » et « Mes chiffres » ${ecrans ? 'ouverts' : 'fermés'}, automatique de Mes chiffres ${auto ? 'ouvert' : 'fermé'}`,
+      peut(plan, 'plateforme.gestion') === ecrans && peut(plan, 'chiffres') === ecrans && peut(plan, 'chiffres.auto') === auto)
+  }
+  T("l'Essai (gratuit) n'a pas plus que l'Essentiel : mêmes capacités", JSON.stringify([...plansMod.PLANS.gratuit.capacites].sort()) === JSON.stringify([...plansMod.PLANS.essentiel.capacites].sort()))
+  const ev = lire('app/EcranVerrouille.tsx')
+  T("l'écran verrouillé parle de « votre essai » pour le plan gratuit", /votre essai/.test(ev))
+}
+
 // ── EG-5 : le juge sait rougir ──
 if (!args.includes('--sans-mutations')) {
   console.log('\n— EG-5 : 13 mutations, chacune doit être vue —')

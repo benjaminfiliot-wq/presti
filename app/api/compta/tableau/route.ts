@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { authArtisan, estEchec } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { actif } from '@/lib/flags'
+import { peut } from '@/lib/plans'
 
 export const runtime = 'nodejs'
 
@@ -20,9 +21,10 @@ const COLONNES_DEVIS = 'id, artisan_id, numero, client_nom, statut, date_emissio
 const COLONNES_DEMANDES = 'id, artisan_id, canal, statut, created_at, type_chantier, ville'
 
 export async function GET(req: Request) {
-  const session = await authArtisan(req)
-  if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
-  const uid = session.uid
+  // 15/10 (Benj) : « Mes chiffres » commence avec Studio, pour tous les comptes — Essentiel et Essai reçoivent 403, sans aucune donnée.
+  const garde = await exigerCapacite(req, 'chiffres', 'L’écran « Mes chiffres »')
+  if ('reponse' in garde) return garde.reponse
+  const uid = garde.uid
 
   const colonnesFactures = actif('comptaDateReglement') ? `${COLONNES_FACTURES}, payee_le` : COLONNES_FACTURES
   const [f, d, l] = await Promise.all([
@@ -38,7 +40,7 @@ export async function GET(req: Request) {
   const devis = d.data ?? []
   const demandes = l.data ?? []
   return NextResponse.json(
-    { maintenant: new Date().toISOString(), factures, devis, demandes, tronque: [factures, devis, demandes].some((x) => x.length >= LIMITE) },
+    { maintenant: new Date().toISOString(), automatisations: peut(garde.plan, 'chiffres.auto'), factures, devis, demandes, tronque: [factures, devis, demandes].some((x) => x.length >= LIMITE) },
     { headers: { 'Cache-Control': 'no-store' } },
   )
 }

@@ -7,6 +7,8 @@
 //   • une capacité du type `Capacite` n'est ni dans une offre ni déclarée « hors formules » ;
 //   • une cellule contredit PLANS (une ligne dit « — » alors que l'offre a la capacité, ou « oui » alors qu'elle ne l'a pas) ;
 //   • une ligne du CRM ou de l'assistant n'est pas dans la liste de Signature (ou apparaît chez Essentiel / Studio) ;
+//   • 15/10 : « Ma plateforme » et « Mes chiffres » ne sont pas à Studio et au-dessus seulement (Essentiel et Essai exclus), ou l'automatique de
+//     « Mes chiffres » n'est pas Signature seulement, ou la carte Essentiel en annonce encore quelque chose ;
 //   • une page de vente recoupe la liste (.slice sur pointsForts), ne rend pas <OffreDetail />, ou recopie un prix en dur.
 // Il s'attaque aussi lui-même : trois mutations de PLANS que le juge DOIT voir.
 //
@@ -88,6 +90,25 @@ for (const f of PAGES) {
 const comp = fs.readFileSync(path.join(RACINE, 'app/Comparatif.tsx'), 'utf8')
 ok(/GRILLE/.test(comp) && !/slice\(/.test(comp), 'app/Comparatif.tsx doit rendre toute la GRILLE')
 
+// 5 bis. 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio, pour TOUS les comptes ; l'automatique de « Mes chiffres »
+// n'est qu'en Signature. La grille le dit, ligne par ligne, depuis PLANS ; rien n'en est annoncé en Essentiel ni dans l'Essai.
+const DE = { gratuit: PLANS.gratuit, essentiel: PLANS.essentiel, studio: PLANS.studio, signature: PLANS.signature, business: PLANS.business }
+for (const [cap, attendu] of [['plateforme.gestion', { gratuit: 0, essentiel: 0, studio: 1, signature: 1, business: 1 }], ['chiffres', { gratuit: 0, essentiel: 0, studio: 1, signature: 1, business: 1 }], ['chiffres.auto', { gratuit: 0, essentiel: 0, studio: 0, signature: 1, business: 1 }]]) {
+  for (const [id, v] of Object.entries(attendu)) ok(DE[id].capacites.includes(cap) === !!v, `${cap} : ${id} ${v ? 'devrait' : 'ne devrait pas'} l'avoir`)
+}
+for (const cap of ['plateforme.gestion', 'chiffres', 'chiffres.auto']) {
+  const lignes = GRILLE_COMPLETE.filter((l) => l.capacites.includes(cap))
+  ok(lignes.length >= 1, `aucune ligne de la grille n'annonce ${cap}`)
+  for (const l of lignes) ok(l.cellules.essentiel === false, `« ${l.label} » : Essentiel ne devrait pas l'avoir (${cap})`)
+}
+for (const l of GRILLE_COMPLETE.filter((x) => x.capacites.includes('chiffres.auto'))) ok(l.cellules.studio === false && l.cellules.signature !== false, `« ${l.label} » : l'automatique de Mes chiffres est Signature seulement`)
+for (const l of GRILLE_COMPLETE.filter((x) => x.capacites.includes('plateforme.personnalisation_avancee'))) ok(l.cellules.essentiel === false || l.cellules.essentiel === '', `« ${l.label} » : la personnalisation de la plateforme n'est plus dans Essentiel`)
+ok(!listes.essentiel.some((t) => /Ma plateforme|Mes chiffres|Thème/.test(t)), 'la carte Essentiel annonce encore « Ma plateforme », « Mes chiffres » ou le thème')
+ok(listes.studio.some((t) => /Ma plateforme/.test(t)) && listes.studio.some((t) => /Mes chiffres/.test(t)), 'la carte Studio doit annoncer « Ma plateforme » et « Mes chiffres »')
+ok(detailOffre('studio').lignes.some((x) => x.nouveau && /Mes chiffres/.test(x.texte)) && detailOffre('studio').lignes.some((x) => x.nouveau && /Ma plateforme/.test(x.texte)), 'Studio doit montrer « Ma plateforme » et « Mes chiffres » comme NOUVEAUX par rapport à Essentiel')
+// Un drapeau baissé ne fait rien annoncer : tant que 0140 n'est pas appliquée, aucune ligne d'automatisation de Mes chiffres n'est visible.
+ok(GRILLE.filter((l) => l.capacites.includes('chiffres.auto')).every((l) => l.flag && P.GRILLE.includes(l)), "une ligne d'automatisation de Mes chiffres est visible sans drapeau")
+
 // 6. Le juge se teste : ces mutations DOIVENT être vues.
 const clone = () => JSON.parse(JSON.stringify(PLANS))
 const m1 = clone(); m1.signature.capacites.push('site.slides3d')
@@ -96,6 +117,14 @@ const m2 = clone(); m2.studio.capacites.push('crm')
 ok(m2.studio.capacites.includes('crm') && !GRILLE_COMPLETE.some((l) => l.capacites.includes('crm') && l.cellules.studio !== false), 'mutation 2 non vue : le CRM ouvert à Studio ne contredirait pas la grille')
 const sans = GRILLE_COMPLETE.filter((l) => !l.capacites.includes('assistant'))
 ok(nonAnnoncees(PLANS, sans).includes('signature:assistant'), 'mutation 3 non vue : ligne de l\'assistant retirée sans que le juge ne la réclame')
+
+// 7. Mutations 15/10 : Essentiel qui récupère « Mes chiffres » ou « Ma plateforme », Studio qui récupère l'automatique de Mes chiffres → vues.
+const m4 = clone(); m4.essentiel.capacites.push('chiffres')
+ok(GRILLE_COMPLETE.some((l) => l.capacites.includes('chiffres') && l.cellules.essentiel === false && m4.essentiel.capacites.includes('chiffres')), 'mutation 4 non vue : Essentiel qui a « Mes chiffres » contredirait la cellule « — »')
+const m5 = clone(); m5.studio.capacites.push('chiffres.auto')
+ok(GRILLE_COMPLETE.some((l) => l.capacites.includes('chiffres.auto') && l.cellules.studio === false && m5.studio.capacites.includes('chiffres.auto')), "mutation 5 non vue : Studio qui a l'automatique de Mes chiffres contredirait la cellule « — »")
+const m6 = clone(); m6.essentiel.capacites.push('plateforme.gestion')
+ok(m6.essentiel.capacites.includes('plateforme.gestion') && GRILLE_COMPLETE.filter((l) => l.capacites.includes('plateforme.gestion')).every((l) => l.cellules.essentiel === false), 'mutation 6 non vue')
 
 if (echecs.length) {
   console.log(`❌ offres-affichage-qa : ${echecs.length} échec(s) sur ${n} contrôles`)

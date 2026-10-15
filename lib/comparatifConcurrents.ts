@@ -171,7 +171,7 @@ const jours = Object.values(ESSAI_JOURS)
 export const PRESTI: Record<CritereId, string> = {
   prix: `${Math.min(...OFFRES.map((o) => o.prix))} € par mois (${PLANS.essentiel.label}), TVA non applicable ; ${PLANS.studio.label} ${PLANS.studio.prixMois} €, ${PLANS.signature.label} ${PLANS.signature.prixMois} €`,
   essai: `${Math.min(...jours)} à ${Math.max(...jours)} jours selon l’offre, sans carte`,
-  automatisation: `Oui : dès ${PLANS.studio.label} l’IA répond seule à vos clients, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques dès ${PLANS.essentiel.label}`,
+  automatisation: `Oui : dès ${PLANS.studio.label} les réponses à vos clients partent sans vous, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques dès ${PLANS.essentiel.label}`,
   devis_factures: 'Oui',
   // Honnête : un fichier XML Factur-X à télécharger, pas une plateforme agréée (lib/facturx.ts, lib/plans.ts).
   facture_electronique: 'Export XML Factur-X ; pas de plateforme agréée intégrée',
@@ -224,7 +224,7 @@ export const phraseAutres = (a: Avantage): string | null =>
 export const AVANTAGES: Avantage[] = [
   {
     id: 'automatisation', critere: 'automatisation', titre: 'Presti fait le travail à votre place',
-    texte: `Ce n’est pas qu’un outil où l’on saisit ses devis : dès l’offre ${PLANS.studio.label} (${prix('studio')} €), l’IA répond seule à vos clients, jour et nuit, et l’automatisation devient complète avec ${PLANS.signature.label} (${prix('signature')} €) : vos règles, et un assistant qui prépare devis, factures, relances, stock, tarifs et CRM. Vous gardez la main sur ce qui part chez un client.`,
+    texte: `Ce n’est pas qu’un outil où l’on saisit ses devis : dès l’offre ${PLANS.studio.label} (${prix('studio')} €), les réponses à vos clients partent sans vous, jour et nuit, et l’automatisation devient complète avec ${PLANS.signature.label} (${prix('signature')} €) : vos règles, et un assistant qui prépare devis, factures, relances, stock, tarifs et CRM. Vous gardez la main sur ce qui part chez un client.`,
     autres: { phrase: 'Parmi les quatre éditeurs lus, seul Henrri indique une automatisation, limitée à la relance des impayés (formule VIP).', motsCellule: [{ editeur: 'henrri', mot: 'relance automatique' }] },
     preuves: [{ fichier: 'lib/ai/routage.ts', motif: 'plateforme\.ia\.auto' }, { fichier: 'lib/plateformeConfig.ts', motif: "'auto'" }],
   },

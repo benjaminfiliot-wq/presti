@@ -1,7 +1,7 @@
 'use client'
 
-// Une entrée vidéo du centre d'aide : la capture de l'écran réel, les étapes écrites dessous (le même texte que les
-// sous-titres incrustés), l'offre qui donne accès à l'écran, et le lien vers l'écran. Le <video> n'est monté qu'à la
+// Une entrée vidéo du centre d'aide : la capture de l'écran réel, les étapes écrites dessous (le même texte que les cartons
+// d'étape de la vidéo), l'offre qui donne accès à l'écran, et le lien vers l'écran. Le <video> n'est monté qu'à la
 // première ouverture et reste en preload="none" : rien ne se télécharge tant que l'artisan n'appuie pas sur lecture.
 import { useState } from 'react'
 import { PLANS } from '@/lib/plans'

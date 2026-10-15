@@ -103,7 +103,7 @@ export default function RelancesAuto({ donnees, obtenirJeton, nomArtisan, apresE
           <button type="submit" className="btn" disabled={envoi}>Enregistrer</button>
           {etat && <span className={etat.erreur ? 'rel-erreur' : 'rel-ok'} role={etat.erreur ? 'alert' : 'status'}>{etat.texte}</span>}
         </div>
-        <p className="rel-note">Les factures échues depuis longtemps au moment où vous activez ne sont pas relancées en rafale : demandez leur relance à l’assistant, ou depuis « Mes chiffres ».</p>
+        <p className="rel-note">Les factures échues depuis longtemps au moment où vous activez ne sont pas relancées en rafale : demandez leur relance à l’assistant (offre Signature), ou depuis « Mes chiffres » (dès l’offre Studio).</p>
       </form>
     </section>
   )

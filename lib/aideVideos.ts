@@ -1,7 +1,7 @@
 // Vidéos d'explication du centre d'aide (/aide) : une capture de l'écran réel par fonctionnalité du menu.
 //
-// Source unique : lib/aide-videos.json. Les `etapes` sont À LA FOIS les sous-titres incrustés dans la vidéo
-// (scripts/aide-videos-capture.mjs) et la liste écrite sous elle dans le centre d'aide : un seul texte, jamais deux.
+// Source unique : lib/aide-videos.json. Les `etapes` sont À LA FOIS les cartons d'étape de la vidéo
+// (scripts/aide-videos-anime.mjs : motion design + voix) et la liste écrite sous elle dans le centre d'aide : un seul texte, jamais deux.
 // Les fichiers vivent dans public/aide-videos/<id>.mp4 + <id>.webp (affiche) ; scripts/aide-videos-qa.mjs vérifie le tout.
 // Règle de la vitrine (mémoire « Presti — règle vitrine ») : une fonctionnalité du menu sans vidéo fait échouer ce test.
 
@@ -21,6 +21,8 @@ export type AideVideo = {
   drapeau?: Flag
   resume: string
   etapes: string[]
+  /** Ce que dit la voix de la vidéo : une phrase d'intro, une par étape (écrite pour l'oreille), une de fin. */
+  voix?: { intro: string; etapes: string[]; fin: string }
   /** Durée du fichier, en secondes (écrite par le montage). */
   duree?: number
 }

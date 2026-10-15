@@ -12,6 +12,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { actif } from '@/lib/flags'
+import { peut } from '@/lib/plans'
 import { facturesASignaler, journalFacturesCsv, messageAlerte, moisAExporter, moisEnMots } from '@/lib/comptaAutomatisations'
 import type { FacturePresti } from '@/lib/comptaTableau'
 
@@ -34,8 +35,11 @@ export async function tourCompta(maintenant = new Date()): Promise<Bilan> {
   for (const r of reglages ?? []) {
     bilan.comptes++
     try {
-      const { data: artisan } = await supabaseAdmin.from('artisans').select('id, nom, email').eq('id', r.artisan_id).maybeSingle()
+      const { data: artisan } = await supabaseAdmin.from('artisans').select('id, nom, email, plan').eq('id', r.artisan_id).maybeSingle()
       if (!artisan) continue
+      // 15/10 (Benj) : l'automatisation de « Mes chiffres » est celle de l'offre Signature (capacité `chiffres.auto`). Un compte qui a réglé
+      // l'alerte ou l'export puis a changé d'offre n'est plus servi — ses réglages restent, rien n'est effacé.
+      if (!peut(artisan.plan, 'chiffres.auto')) continue
       const f = await supabaseAdmin.from('factures').select(COLONNES).eq('artisan_id', r.artisan_id).limit(2000)
       if (f.error) { bilan.erreurs.push(`factures : ${f.error.message}`.slice(0, 160)); continue }
       const factures = (f.data ?? []) as FacturePresti[]

@@ -5,6 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import EcranVerrouille from '@/app/EcranVerrouille'
+import { peut } from '@/lib/plans'
 import TableauCompta from './TableauCompta'
 import ComptaArtisan, { type EtatImport } from './ComptaArtisan'
 import Automatisations, { automatisationsVisibles } from './Automatisations'
@@ -21,7 +23,7 @@ import { preparerRelance } from '@/lib/comptaArtisan'
 // La page ne fait que lire. Une lecture ratée n'affiche PAS des zéros : « 0 € facturé » sur une panne est un mensonge.
 // Aucune donnée d'exemple : sans pièce ni fichier, l'écran dit ce qui va apparaître et comment commencer.
 type Charge = { factures: FacturePresti[]; devis: DevisPresti[]; demandes: DemandePresti[]; maintenant: Date; tronque: boolean }
-type Lu = { maintenant?: string; factures?: FacturePresti[]; devis?: DevisPresti[]; demandes?: DemandePresti[]; tronque?: boolean; error?: string }
+type Lu = { maintenant?: string; automatisations?: boolean; code?: string; offre?: string; factures?: FacturePresti[]; devis?: DevisPresti[]; demandes?: DemandePresti[]; tronque?: boolean; error?: string }
 const CLE_PERIODE = 'presti-chiffres-periode'
 
 // Le jeton de session : relu à chaque appel, jamais gardé.
@@ -33,6 +35,11 @@ export default function Chiffres() {
   const [artisanId, setArtisanId] = useState<string | null>(null)
   const [charge, setCharge] = useState<Charge | null>(null)
   const [erreur, setErreur] = useState('')
+  // 15/10 : « Mes chiffres » commence avec Studio. Le serveur répond 403 { code: 'offre' } aux autres comptes — l'écran l'explique.
+  const [verrou, setVerrou] = useState(false)
+  // Les automatisations de l'écran (alerte impayés, export mensuel) : Signature (`chiffres.auto`), dit par le serveur.
+  const [auto, setAuto] = useState(false)
+  const [plan, setPlan] = useState<string | null>(null)
   const [periode, setPeriode] = useState<PeriodeId>(PERIODE_PAR_DEFAUT)
   const [importe, setImporte] = useState<EtatImport>({ artisanId: '', lignes: [], apercu: false, ajoutees: 0 })
   const [brouillon, setBrouillon] = useState<string | null>(null)
@@ -47,12 +54,13 @@ export default function Chiffres() {
     const rep = await fetch('/api/compta/tableau', { headers: { Authorization: `Bearer ${jeton}` }, cache: 'no-store' }).catch(() => null)
     const corps = rep ? await rep.json().catch(() => null) as Lu | null : null
     if (!vivant()) return
+    if (rep?.status === 403 && corps?.code === 'offre') { setVerrou(true); return }
     if (!rep?.ok || !corps || !Array.isArray(corps.factures) || !Array.isArray(corps.devis) || !Array.isArray(corps.demandes)) {
       setErreur(corps?.error ?? 'Vos chiffres n’ont pas pu être chargés. Rechargez la page dans un instant.')
       return
     }
     const quand = corps.maintenant ? new Date(corps.maintenant) : new Date()
-    setErreur('')
+    setErreur(''); setAuto(corps.automatisations === true)
     setCharge({ factures: corps.factures, devis: corps.devis, demandes: corps.demandes, maintenant: Number.isNaN(quand.getTime()) ? new Date() : quand, tronque: !!corps.tronque })
     setArtisanId(uid)
   }, [router])
@@ -63,9 +71,12 @@ export default function Chiffres() {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const uid = data.session.user.id
-      const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()
+      const { data: prof } = await supabase.from('artisans').select('id, plan').eq('id', uid).maybeSingle()
       if (!vivant()) return
       if (!prof) { router.replace('/onboarding'); return }
+      setPlan((prof.plan as string | null) ?? null)
+      // L'offre ne donne pas l'écran : on l'explique tout de suite, sans lire ni monter quoi que ce soit (le serveur refuse aussi).
+      if (!peut(prof.plan as string | null, 'chiffres')) { setVerrou(true); return }
       setArtisanId(uid)
       await charger(uid, vivant)
     })
@@ -98,6 +109,10 @@ export default function Chiffres() {
     requestAnimationFrame(() => document.getElementById('cpt-brouillon')?.focus())
   }
 
+  if (verrou) {
+    return <AppShell active="chiffres" title="Mes chiffres" crumb="Réservé à l’offre Studio et au-dessus"><EcranVerrouille ecran="chiffres" plan={plan} /></AppShell>
+  }
+
   return (
     <AppShell active="chiffres" title="Mes chiffres" crumb="Tableau de bord comptable">
       {erreur ? (
@@ -116,7 +131,9 @@ export default function Chiffres() {
         </section>
       )}
       {artisanId && <ComptaArtisan artisanId={artisanId} obtenirJeton={jetonSession} onLignes={setImporte} />}
-      {artisanId && automatisationsVisibles() && <Automatisations obtenirJeton={jetonSession} />}
+      {artisanId && automatisationsVisibles() && (auto
+        ? <Automatisations obtenirJeton={jetonSession} />
+        : <section className="psh-panel cpt-auto" data-compta-automatisations-verrou><p className="ca-eyebrow">Automatisations</p><h2>Laissez Presti surveiller pour vous</h2><p className="cpt-note">L’alerte sur les impayés et l’export mensuel à votre comptable sont des automatisations de l’offre Signature. <a href="/abonnement">Voir les offres</a></p></section>)}
     </AppShell>
   )
 }

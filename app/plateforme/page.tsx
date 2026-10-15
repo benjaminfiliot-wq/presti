@@ -9,6 +9,8 @@ import Conversations from '@/app/plateforme/Conversations'
 import Automatisations from '@/app/plateforme/Automatisations'
 import Reglages from '@/app/plateforme/Reglages'
 import Apparence from '@/app/plateforme/Apparence'
+import EcranVerrouille from '@/app/EcranVerrouille'
+import { peut } from '@/lib/plans'
 import { afficher, urlPlateforme } from '@/lib/urls'
 
 // « Ma plateforme » = le poste de pilotage de l'artisan (v5 §9 G1), en trois volets :
@@ -65,6 +67,12 @@ function PlateformeInner() {
   ]
 
   if (!ready) return <AppShell active="plateforme" title="Ma plateforme"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+
+  // 15/10 (Benj) : l'écran « Ma plateforme » commence avec Studio, pour tous les comptes. Aucun volet n'est monté (donc aucune lecture) ;
+  // les routes /api/plateforme/* refusent de toute façon (403). Le lien de conversation du client, lui, n'en dépend pas.
+  if (!peut(plan, 'plateforme.gestion')) {
+    return <AppShell active="plateforme" title="Ma plateforme" crumb="Réservé à l’offre Studio et au-dessus"><EcranVerrouille ecran="plateforme" plan={plan} /></AppShell>
+  }
 
   return (
     <AppShell active="plateforme" title="Ma plateforme" wide

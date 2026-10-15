@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { authArtisan, estEchec } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { actif } from '@/lib/flags'
 import { lireReglages, REGLAGES_PAR_DEFAUT } from '@/lib/comptaAutomatisations'
 
@@ -13,8 +13,10 @@ const ouverte = () => actif('comptaAlerteImpayes') || actif('comptaExportMensuel
 
 export async function GET(req: Request) {
   if (!ouverte()) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
-  const session = await authArtisan(req)
-  if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
+  // 15/10 : les automatisations de « Mes chiffres » sont l'automatisation complète — Signature (capacité `chiffres.auto`).
+  const garde = await exigerCapacite(req, 'chiffres.auto', 'Les automatisations de « Mes chiffres »')
+  if ('reponse' in garde) return garde.reponse
+  const session = { uid: garde.uid }
   const { data, error } = await supabaseAdmin.from('compta_reglages')
     .select('alerte_impayes, alerte_jours, export_mensuel, export_email, dernier_export_mois').eq('artisan_id', session.uid).maybeSingle()
   if (error) { console.error('[compta/reglages] lecture', error.message); return NextResponse.json({ error: 'Réglages indisponibles.' }, { status: 503 }) }
@@ -23,8 +25,10 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   if (!ouverte()) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
-  const session = await authArtisan(req)
-  if (estEchec(session)) return NextResponse.json({ error: session.error, code: session.code }, { status: session.status })
+  // 15/10 : les automatisations de « Mes chiffres » sont l'automatisation complète — Signature (capacité `chiffres.auto`).
+  const garde = await exigerCapacite(req, 'chiffres.auto', 'Les automatisations de « Mes chiffres »')
+  if ('reponse' in garde) return garde.reponse
+  const session = { uid: garde.uid }
   const lu = lireReglages(await req.json().catch(() => null))
   if (!lu.ok) return NextResponse.json({ error: lu.erreur }, { status: 400 })
   // Un drapeau baissé ne s'active pas par la bande : sa case reste à false quoi que dise la requête.

@@ -107,7 +107,7 @@ export const ARTICLES: Article[] = [
       'sans votre validation. En Manuelle, vous répondez toujours vous-même.',
     credits: `Chaque réponse ou devis généré automatiquement consomme un crédit : ${creditsGeneration()}.`,
     reglagesLies: ['/messages', '/profil', '/abonnement'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'studio',
   },
 
   // source: app/messages/page.tsx:30-288 (boîte de réception unifiée, suggestion IA, devis auto)
@@ -247,7 +247,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Rien : vos clients ne voient jamais cet écran, il n’est visible que de vous.',
     credits: 'Aucun pour le tableau de bord. Un crédit Standard par dépôt de fichiers rangé par l’assistant.',
     reglagesLies: ['/factures', '/devis'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'studio',
   },
 
   // source: app/inventaire/page.tsx:9-213 ; app/api/inventaire/route.ts:11-26 (réservé Studio/Signature)

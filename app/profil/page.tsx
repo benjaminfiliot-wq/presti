@@ -243,7 +243,12 @@ export default function ProfilPage() {
         <div className="tool-card">
           <h2>Réponses aux demandes</h2>
           <p className="muted" style={{ margin: '0 0 .7rem' }}>Quand un client vous écrit sur votre page, choisissez comment il reçoit sa première réponse. Dans tous les cas, la conversation arrive dans votre boîte de réception.</p>
-          <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme?volet=reglages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
+          {peut(plan, 'plateforme.gestion') ? (
+            <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme?volet=reglages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
+          ) : (
+            // 15/10 : l'écran « Ma plateforme » commence avec Studio. Avec votre offre, l'IA prépare les réponses et vous les validez dans Messages.
+            <p className="muted" style={{ margin: 0 }}>Avec votre offre, l’assistant prépare chaque réponse et vous la validez dans <a href="/messages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Messages</a>. Les réglages de l’assistant (réponse automatique, ton, apparence de la page) se trouvent dans « Ma plateforme », à partir de l’<a href="/abonnement" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>offre Studio</a>.</p>
+          )}
         </div>
 
         {/* Site web */}

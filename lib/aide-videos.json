@@ -13,7 +13,18 @@
         "Cliquez « Détail » pour lire le message du client et la réponse envoyée.",
         "Faites avancer le statut (Nouveau, Répondu, Gagné, Perdu) au fil du suivi."
       ],
-      "duree": 36
+      "duree": 36,
+      "voix": {
+        "intro": "Le tableau de bord : toutes vos demandes, d’un seul coup d’œil.",
+        "etapes": [
+          "En haut, retrouvez vos demandes reçues, celles à traiter et les chantiers gagnés.",
+          "Copiez votre lien de contact en un clic, puis partagez-le à vos clients.",
+          "Plus bas, chaque demande arrive avec son statut.",
+          "Cliquez sur Détail pour lire le message du client et la réponse envoyée.",
+          "Faites avancer le statut au fil du suivi : nouveau, répondu, gagné ou perdu."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "messages",
@@ -27,7 +38,17 @@
         "Ouvrez une conversation : le message du client et la réponse proposée s’affichent.",
         "Relisez, modifiez si besoin, puis « Valider et envoyer » ; « Rejeter » écarte la réponse proposée."
       ],
-      "duree": 32
+      "duree": 32,
+      "voix": {
+        "intro": "Les messages : toutes vos conversations avec vos clients.",
+        "etapes": [
+          "Toutes vos conversations sont ici, les plus récentes en premier.",
+          "L’onglet À valider regroupe les réponses préparées qui attendent votre accord.",
+          "Ouvrez une conversation : le message du client et la réponse proposée s’affichent.",
+          "Relisez, modifiez si besoin, puis cliquez sur Valider et envoyer. Rejeter écarte la réponse."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "outils",
@@ -42,7 +63,18 @@
         "Cliquez « Générer la réponse » : Presti rédige la réponse dans votre ton.",
         "Relisez, modifiez si besoin, puis cliquez « Copier la réponse » et collez-la où vous voulez."
       ],
-      "duree": 45
+      "duree": 45,
+      "voix": {
+        "intro": "Les réponses instantanées : une réponse rédigée dans votre ton, en quelques secondes.",
+        "etapes": [
+          "Collez la demande de votre client dans le grand champ.",
+          "Indiquez son prénom ou son nom, c’est facultatif.",
+          "Choisissez le modèle : Standard suffit pour une demande simple.",
+          "Cliquez sur Générer la réponse : Presti rédige dans votre ton. La vidéo est accélérée.",
+          "Relisez, modifiez si besoin, puis cliquez sur Copier la réponse et collez-la où vous voulez."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "devis",
@@ -57,7 +89,18 @@
         "« Chiffrer avec l’IA » propose des lignes à partir de la description du chantier.",
         "« Enregistrer », puis « Envoyer au client » ou « Télécharger PDF »."
       ],
-      "duree": 40
+      "duree": 40,
+      "voix": {
+        "intro": "Les devis : retrouvez-les, modifiez-les, envoyez-les.",
+        "etapes": [
+          "Tous vos devis sont ici. Filtrez par statut : brouillons, envoyés ou acceptés.",
+          "Cliquez sur Ouvrir pour modifier un devis.",
+          "Vérifiez le client, puis les lignes : désignation, quantité et prix. Les totaux se calculent tout seuls.",
+          "Le bouton Chiffrer avec l’I.A. propose des lignes à partir de la description du chantier.",
+          "Enregistrez, puis envoyez le devis à votre client ou téléchargez le P.D.F."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "factures",
@@ -72,13 +115,24 @@
         "Le client a payé ? Cliquez « Marquer payée ».",
         "Une erreur ? « Émettre un avoir » : la facture d’origine n’est jamais supprimée, elle est conservée."
       ],
-      "duree": 37
+      "duree": 37,
+      "voix": {
+        "intro": "Les factures : suivez-les et marquez-les payées.",
+        "etapes": [
+          "Vos factures sont ici. Elles se créent depuis un devis accepté.",
+          "Filtrez : à encaisser, ou payées.",
+          "Téléchargez la facture en P.D.F., ou en X.M.L. pour la facture électronique.",
+          "Le client a payé ? Cliquez sur Marquer payée.",
+          "Une erreur ? Émettez un avoir : la facture d’origine n’est jamais supprimée."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "chiffres",
       "titre": "Mes chiffres",
       "route": "/chiffres",
-      "offre": "essentiel",
+      "offre": "studio",
       "resume": "Suivre votre chiffre d’affaires, ce qui est encaissé et ce qui reste impayé.",
       "etapes": [
         "Le chiffre d’affaires, l’encaissé et les impayés sont calculés à partir de vos factures.",
@@ -87,7 +141,18 @@
         "Les impayés sont listés ; « Préparer la relance » rédige le message pour votre client.",
         "Plus bas, importez vos dépenses (Excel ou CSV) pour connaître votre bénéfice."
       ],
-      "duree": 36
+      "duree": 36,
+      "voix": {
+        "intro": "Mes chiffres : votre activité, mesurée sur vos factures.",
+        "etapes": [
+          "Le chiffre d’affaires, l’encaissé et les impayés sont calculés à partir de vos factures.",
+          "Changez la période : ce mois, trois mois, cette année ou douze mois.",
+          "Le graphique montre, mois par mois, ce que vous avez facturé et encaissé.",
+          "Les impayés sont listés. Préparer la relance rédige le message pour votre client.",
+          "Plus bas, importez vos dépenses, en Excel ou en C.S.V., pour connaître votre bénéfice."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Studio."
+      }
     },
     {
       "id": "crm",
@@ -103,7 +168,18 @@
         "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
       ],
       "drapeau": "crm",
-      "duree": 47
+      "duree": 47,
+      "voix": {
+        "intro": "Le C.R.M. atelier : votre activité sur un plan vivant.",
+        "etapes": [
+          "Le C.R.M. atelier montre votre activité sur un plan vivant : accueil, atelier, dépôt.",
+          "Les urgences du jour sont listées : matériaux sous le seuil, nouvelles demandes.",
+          "Voir l’exemple affiche des chantiers fictifs, pour découvrir l’outil.",
+          "L’onglet Chantiers liste vos chantiers et leur avancement.",
+          "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
+        ],
+        "fin": "À vous de jouer ! Réservé à l’offre Signature."
+      }
     },
     {
       "id": "tarifs",
@@ -118,7 +194,18 @@
         "Retrouvez un prix avec le champ de recherche.",
         "Un prix n’est plus bon ? Retirez-le avec la croix."
       ],
-      "duree": 38
+      "duree": 38,
+      "voix": {
+        "intro": "Mes tarifs : vos prix, repris tels quels dans vos devis.",
+        "etapes": [
+          "Vos prix sont la base de vos devis : l’I.A. les reprend tels quels.",
+          "Ajoutez un prix à la main : désignation, prix hors taxes, unité, fournisseur, puis Ajouter.",
+          "Vous avez un tarif fournisseur ? Importez-le d’un coup, en fichier C.S.V. ou Excel.",
+          "Retrouvez un prix avec le champ de recherche.",
+          "Un prix n’est plus bon ? Retirez-le avec la croix."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "inventaire",
@@ -133,7 +220,18 @@
         "Ajustez les quantités avec + et −, au fil des sorties et des livraisons.",
         "Scanner, import CSV, fournisseurs : tout part de cette page."
       ],
-      "duree": 41
+      "duree": 41,
+      "voix": {
+        "intro": "L’inventaire : votre stock, par lieu, avec l’alerte de rachat.",
+        "etapes": [
+          "Le bandeau À racheter signale les articles passés sous leur seuil.",
+          "Ajoutez un article : nom, unité, seuil d’alerte, puis Ajouter.",
+          "Le stock se tient par lieu : l’atelier ou le camion.",
+          "Ajustez les quantités avec plus et moins, au fil des sorties et des livraisons.",
+          "Scanner, import C.S.V., fournisseurs : tout part de cette page."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Studio."
+      }
     },
     {
       "id": "profil",
@@ -148,7 +246,18 @@
         "Ajoutez vos prestations avec « + Ajouter une prestation ».",
         "Cliquez « Enregistrer » ; « Voir ma page » montre le résultat tel que vos clients le voient."
       ],
-      "duree": 34
+      "duree": 34,
+      "voix": {
+        "intro": "Ma page : la présentation de votre entreprise, pour vos clients.",
+        "etapes": [
+          "Voici votre lien à partager. Copiez-le, puis collez-le dans votre bio, votre fiche Google ou votre signature.",
+          "Présentez-vous : photo ou logo, nom, métier et présentation.",
+          "Indiquez votre zone d’intervention et vos disponibilités.",
+          "Ajoutez vos prestations avec Ajouter une prestation.",
+          "Cliquez sur Enregistrer. Voir ma page montre le résultat, tel que vos clients le voient."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "site",
@@ -165,13 +274,24 @@
       ],
       "note": "Le site se commande à part : il n’est inclus dans aucune formule.",
       "drapeau": "siteCommandeVente",
-      "duree": 48
+      "duree": 48,
+      "voix": {
+        "intro": "Commander mon site : six étapes, du nom de domaine jusqu’au paiement.",
+        "etapes": [
+          "Commander mon site : un parcours en six étapes, du nom de domaine jusqu’au paiement.",
+          "Étape un : votre nom de domaine. Pas encore décidé ? Choisissez Plus tard.",
+          "Étape deux : votre métier et les communes où vous travaillez vraiment.",
+          "Étapes trois à cinq : votre matière, votre parcours, vos prestations.",
+          "Dernière étape : le récapitulatif signale ce qui manque avant le paiement."
+        ],
+        "fin": "À vous de jouer ! Le site se commande à part."
+      }
     },
     {
       "id": "plateforme",
       "titre": "Ma plateforme",
       "route": "/plateforme",
-      "offre": "essentiel",
+      "offre": "studio",
       "resume": "Partager votre espace de conversation, suivre les demandes et régler ce que l’assistant fait seul.",
       "etapes": [
         "Ma plateforme est l’espace où vos clients vous écrivent. « Copier le lien » pour le partager.",
@@ -180,7 +300,18 @@
         "« Apparence » : le thème et les couleurs de votre espace de conversation.",
         "« Réglages » : mode de réponse (automatique, assistée, manuelle), modèle et ton."
       ],
-      "duree": 45
+      "duree": 45,
+      "voix": {
+        "intro": "Ma plateforme : l’espace où vos clients vous écrivent.",
+        "etapes": [
+          "Ma plateforme est l’espace où vos clients vous écrivent. Copier le lien pour le partager.",
+          "L’onglet Conversations : chaque demande, avec la réponse préparée par l’assistant.",
+          "Automatisations : choisissez ce que l’assistant fait seul, de Prudent à Tout auto.",
+          "Apparence : le thème et les couleurs de votre espace de conversation.",
+          "Réglages : mode de réponse automatique, assistée ou manuelle, modèle et ton de réponse."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Studio."
+      }
     },
     {
       "id": "abonnement",
@@ -194,7 +325,17 @@
         "Chaque carte liste ce que la formule inclut.",
         "Pour changer, choisissez l’essai gratuit de la formule voulue : sans carte."
       ],
-      "duree": 33
+      "duree": 33,
+      "voix": {
+        "intro": "L’abonnement : votre formule, vos crédits, et les offres.",
+        "etapes": [
+          "En haut : votre formule actuelle et les crédits qui vous restent chaque mois.",
+          "Comparez les trois formules : Essentiel, Studio et Signature.",
+          "Chaque carte liste ce que la formule inclut.",
+          "Pour changer, choisissez l’essai gratuit de la formule voulue, sans carte bancaire."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     },
     {
       "id": "assistant",
@@ -210,7 +351,18 @@
         "Cliquez « Ouvrir le devis » pour relire, corriger puis envoyer."
       ],
       "drapeau": "assistant",
-      "duree": 32
+      "duree": 32,
+      "voix": {
+        "intro": "L’assistant de gestion : dites ce qu’il y a à faire.",
+        "etapes": [
+          "Dites ce qu’il y a à faire, comme à un collègue : devis, relance, stock, tarifs.",
+          "Tapez votre demande, par exemple : fais le devis de Madame Martin pour douze mètres carrés de carrelage.",
+          "L’assistant lit vos tarifs et prépare le brouillon. La vidéo est accélérée.",
+          "Il vous répond avec ce qu’il a préparé. Rien ne part chez un client sans votre clic sur Confirmer.",
+          "Cliquez sur Ouvrir le devis pour le relire, le corriger, puis l’envoyer."
+        ],
+        "fin": "À vous de jouer ! Réservé à l’offre Signature."
+      }
     },
     {
       "id": "parametres",
@@ -225,7 +377,18 @@
         "Notifications et Sécurité : choisissez comment être prévenu, et protégez votre compte.",
         "Données & confidentialité : téléchargez une archive de vos données quand vous voulez."
       ],
-      "duree": 36
+      "duree": 36,
+      "voix": {
+        "intro": "Les paramètres : tout votre compte, rangé par thème.",
+        "etapes": [
+          "Les paramètres regroupent tout le compte, rangé par thème dans le menu de gauche.",
+          "Profil : votre nom affiché et votre photo, repris sur vos devis et vos factures.",
+          "Entreprise et légal : SIRET, adresse, TVA. Ces mentions figurent sur vos devis et vos factures.",
+          "Notifications et sécurité : choisissez comment être prévenu, et protégez votre compte.",
+          "Données et confidentialité : téléchargez une archive de vos données quand vous voulez."
+        ],
+        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+      }
     }
   ]
 }

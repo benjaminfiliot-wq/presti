@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { authArtisan } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { messageVerrou, peut } from '@/lib/plans'
 import { contrastRatio, lisibleSur } from '@/lib/contrast'
 import { getPlateformeConfig } from '@/lib/plateformeConfig'
@@ -11,7 +11,8 @@ import {
 
 // Apparence de la plateforme (sprint J-1 §9 G2). LE seul chemin d'écriture des colonnes
 // avancées (`apparence`, `avatar_url`, `amorces` — figées côté navigateur par 0053) :
-//  - thème + accent (colonnes `artisans`) : toutes les offres ;
+//  - tout passe d'abord par `plateforme.gestion` (Studio+, 15/10) ;
+//  - thème + accent (colonnes `artisans`) : toutes les offres qui ont l'écran ;
 //  - le reste : `peut(plan, 'plateforme.personnalisation_avancee')` (Studio+), sinon 403.
 // Contraste : un accent ou une couleur secondaire illisible est CORRIGÉ (lisibleSur) et
 // la correction est renvoyée — on ne publie pas une page où le texte de l'artisan disparaît.
@@ -29,8 +30,9 @@ async function charger(uid: string) {
 }
 
 export async function GET(req: Request) {
-  const s = await authArtisan(req)
-  if ('error' in s) return NextResponse.json({ error: s.error }, { status: s.status })
+  // 15/10 : l'écran « Ma plateforme » (donc son volet Apparence, thème et accent compris) commence avec Studio — 403 sinon.
+  const s = await exigerCapacite(req, 'plateforme.gestion', 'L’écran « Ma plateforme »')
+  if ('reponse' in s) return s.reponse
   const r = await charger(s.uid)
   if (!r) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
   const { a, cfg } = r
@@ -51,8 +53,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const s = await authArtisan(req)
-  if ('error' in s) return NextResponse.json({ error: s.error }, { status: s.status })
+  // 15/10 : l'écran « Ma plateforme » (donc son volet Apparence, thème et accent compris) commence avec Studio — 403 sinon.
+  const s = await exigerCapacite(req, 'plateforme.gestion', 'L’écran « Ma plateforme »')
+  if ('reponse' in s) return s.reponse
   const r = await charger(s.uid)
   if (!r) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
   const { a, cfg } = r

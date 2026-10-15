@@ -91,5 +91,14 @@ ok(C.COMPARATIF_LIMITES.startsWith(C.COMPARATIF_LIMITES_TITRE), 'COMPARATIF_LIMI
   ok(/AVANTAGES_VISIBLES\.map/.test(comp) && /phraseAutres/.test(comp), 'le composant rend AVANTAGES_VISIBLES')
 }
 
+// 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio. Le comparatif ne dit rien d'Essentiel qui ne l'est plus : aucune cellule
+// Presti ne nomme ces écrans ni leur personnalisation, et chaque niveau d'automatisation cité (dès Studio / complète en Signature) est celui de lib/plans.ts.
+{
+  const textes = [...Object.values(C.PRESTI), ...C.AVANTAGES.flatMap((a) => [a.titre, a.texte])].join(' ')
+  ok(!/Ma plateforme|Mes chiffres|compta/i.test(textes), 'le comparatif ne doit pas annoncer « Ma plateforme » ni « Mes chiffres » (écrans Studio) comme acquis à toutes les offres')
+  ok(C.PRESTI.automatisation.includes('dès Studio') && /complète en Signature/.test(C.PRESTI.automatisation), "la cellule d'automatisation doit dire « dès Studio » puis « complète en Signature »")
+  ok(!/dès Essentiel/.test(C.PRESTI.automatisation.replace(/relances automatiques dès Essentiel/, '')), "l'automatisation ne commence pas avec Essentiel (hors les relances)")
+}
+
 if (echecs.length) { console.log(`❌ comparatif-qa : ${echecs.length} échec(s) sur ${n}`); for (const e of echecs) console.log('  - ' + e); process.exit(1) }
 console.log(`✅ comparatif-qa : ${n}/${n} contrôles — ${C.CONCURRENTS.length} éditeurs, ${C.CRITERES_VISIBLES.length} critères, daté du ${C.COMPARATIF_DATE}`)

@@ -15,6 +15,10 @@ export type PlanPayant = 'essentiel' | 'studio' | 'signature'
 export type Capacite =
   | 'plateforme.conversation' | 'plateforme.ia.auto' | 'plateforme.ia.expert' | 'plateforme.comptes_clients'
   | 'plateforme.domaine_perso' | 'plateforme.personnalisation_avancee' | 'plateforme.regles'
+  // 15/10 (Benj) : l'ÉCRAN « Ma plateforme » (réglages de l'assistant, apparence, règles) et l'écran « Mes chiffres » (la comptabilité)
+  // commencent avec Studio, pour TOUS les comptes. `chiffres.auto` : les automatisations de « Mes chiffres », Signature seulement.
+  // Le lien de conversation, la réponse préparée par l'IA, les comptes clients et le domaine restent dans toutes les offres.
+  | 'plateforme.gestion' | 'chiffres' | 'chiffres.auto'
   | 'site.essentiel' | 'site.pro' | 'site.signature' | 'site.slides3d' | 'site.domaine_perso'
   | 'devis.ia' | 'devis.prix_artisan' | 'factures' | 'factures.electronique' | 'factures.relances'
   | 'inventaire.stock' | 'inventaire.recherche_ia'
@@ -49,12 +53,15 @@ const BASE: Capacite[] = [
 const STUDIO: Capacite[] = [
   ...BASE,
   'plateforme.ia.auto', 'plateforme.personnalisation_avancee',
+  // 15/10 (Benj) : sinon « il n'y a pas d'intérêt à prendre la 2e ou la 3e offre, à part pour le CRM et l'assistant ».
+  'plateforme.gestion', 'chiffres',
   'inventaire.stock', 'inventaire.recherche_ia',
   'canaux.whatsapp', 'export',
 ]
 const SIGNATURE: Capacite[] = [
   ...STUDIO,
   'plateforme.ia.expert', 'plateforme.regles',
+  'chiffres.auto', // les automatisations de « Mes chiffres » (alerte impayés, export mensuel au comptable) : Signature
   'canaux.reseaux', 'support.prioritaire',
   // 016 A1/A2 — l'assistant de gestion de la console (Signature, donc Business). Caché tant que le drapeau `assistant` est baissé.
   'assistant',
@@ -146,7 +153,7 @@ const tailleMo = (mo: number): string => (mo >= 1024 ? `${String(mo / 1024).repl
 
 export type CelluleGrille = boolean | string
 export type LigneGrille = {
-  groupe: 'Automatisation' | 'Plateforme' | 'Site' | 'Devis & factures' | 'CRM' | 'Assistant de gestion' | 'Inventaire' | 'Canaux' | 'Inclus'
+  groupe: 'Automatisation' | 'Plateforme' | 'Site' | 'Devis & factures' | 'Comptabilité' | 'CRM' | 'Assistant de gestion' | 'Inventaire' | 'Canaux' | 'Inclus'
   label: string
   cellules: Record<PlanPayant, CelluleGrille>
   /** Les capacités (lib/plans.ts) que cette ligne annonce. Vide : ligne de chiffres (crédits, plafonds). */
@@ -185,7 +192,10 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
     signature: FLAGS.plateformeRegles ? 'automatique, avec vos règles d’automatisation (modèles Standard, Pro + Expert)' : 'automatique (modèles Standard, Pro + Expert)',
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', capacites: ['plateforme.comptes_clients'], cellules: dePlan('plateforme.comptes_clients') },
-  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée : polices, fond, avatar, amorces' }, flag: 'plateformePersona' },
+  // 15/10 : l'écran « Ma plateforme » (réglages de l'assistant, apparence, règles) commence avec Studio, comptes Essentiel compris.
+  // Thème, couleur et le reste de la personnalisation s'y règlent : ils suivent l'écran.
+  { groupe: 'Plateforme', label: 'Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page', capacites: ['plateforme.gestion'], cellules: dePlan('plateforme.gestion') },
+  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: texteSi('plateforme.personnalisation_avancee', { essentiel: '', studio: 'Thème, couleur, polices, fond, avatar, amorces', signature: 'Thème, couleur, polices, fond, avatar, amorces' }), flag: 'plateformePersona' },
   // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
   // depuis la conversation (audit des promesses du 12/10).
   { groupe: 'Plateforme', label: 'Relances des conversations, automatiques (J+2, J+5, J+10)', capacites: ['relances'], cellules: dePlan('relances') },
@@ -196,6 +206,12 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', capacites: ['factures', 'factures.electronique'], cellules: dePlan('factures') },
   // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
   { groupe: 'Devis & factures', label: 'Relances des factures impayées, automatiques une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
+  // « Mes chiffres » (app/chiffres) : Studio et au-dessus. Les automatisations de cet écran (lib/comptaAutomatisations.ts) : Signature
+  // (capacité `chiffres.auto`, vérifiée par /api/compta/reglages et le passage quotidien). Elles n'apparaissent que drapeaux levés :
+  // tant que 0140 n'est pas appliquée, rien n'est annoncé.
+  { groupe: 'Comptabilité', label: 'Écran « Mes chiffres » : chiffre d’affaires, impayés, devis à relancer, vos fichiers rangés par l’assistant', capacites: ['chiffres'], cellules: dePlan('chiffres') },
+  { groupe: 'Comptabilité', label: 'Alerte e-mail quand une facture reste impayée, automatique une fois activée', capacites: ['chiffres.auto'], cellules: dePlan('chiffres.auto'), flag: 'comptaAlerteImpayes' },
+  { groupe: 'Comptabilité', label: 'Export mensuel du journal des factures à votre comptable, automatique une fois activé', capacites: ['chiffres.auto'], cellules: dePlan('chiffres.auto'), flag: 'comptaExportMensuel' },
   // CRM « atelier vivant » (0141/0158, lib/crm/) : Signature seulement (capacité `crm`, vérifiée côté serveur par lib/crm/acces.ts) ;
   // les lignes n'apparaissent que drapeau levé. Chaque ligne décrit ce que le code fait, pas plus.
   { groupe: 'CRM', label: 'Pipeline des demandes et fiches clients', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },

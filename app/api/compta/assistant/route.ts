@@ -5,6 +5,7 @@ import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { resolveModel } from '@/lib/models'
 import { demanderPlanCompta } from '@/lib/ai/compta'
+import { decisionPourEcran } from '@/lib/accesOffre'
 import { LIMITES_ECHANTILLON, validerPlanIA, type Echantillon } from '@/lib/comptaAssistant'
 
 export const runtime = 'nodejs'
@@ -62,6 +63,9 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', userData.user.id).maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
+    // 15/10 : le rangement des fichiers fait partie de « Mes chiffres », écran de l'offre Studio et au-dessus — avant tout crédit.
+    const acces = decisionPourEcran(artisan.plan, 'chiffres')
+    if (!acces.ok) return NextResponse.json({ error: acces.erreur, code: acces.code, offre: acces.offre }, { status: acces.statut })
 
     const credit = await consumeCredit(userData.user.id, 'standard', !!artisan.is_founder)
     if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })

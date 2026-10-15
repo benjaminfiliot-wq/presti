@@ -96,6 +96,8 @@
 //   PR-11 (D15) l'article d'aide « plateforme » (<racine>/lib/aide.ts, chargé) ne propose le mode Automatique qu'avec l'offre qui
 //         le permet : chaque texte qui nomme ce mode (« automatique », pas « automatiquement ») nomme aussi la première offre où
 //         peut(plan, 'plateforme.ia.auto') est vrai (<racine>/lib/plans.ts, chargé : « Studio »). Détecteur éprouvé.
+//         15/10 : les articles d'aide « plateforme » et « chiffres » disent (disponibleAvec) la première offre où plateforme.gestion / chiffres
+//         est permis (lib/plans.ts) — Studio : « Ma plateforme » et « Mes chiffres » ne sont plus dans Essentiel.
 //   PR-12 (D17) un texte de l'aide (ARTICLES de <racine>/lib/aide.ts) qui promet la suppression d'un site renvoie vers Paramètres →
 //         « Données & confidentialité », où app/parametres/SectionDonnees.tsx propose « Supprimer le site » sans condition (et ce
 //         bouton y est toujours) ; « Données & suppressions » (/profil) ne l'affiche que pour un site publié. Détecteur éprouvé.
@@ -1138,6 +1140,18 @@ function jugerPR10(corpus) {
 export function defautsModeAuto(textes, offre) {
   return textes.filter((t) => /(?<!\p{L})automatique(?!\p{L})/iu.test(t) && !new RegExp(`(?<!\\p{L})${offre}(?!\\p{L})`, 'u').test(t)).map((t) => `« ${court(t, 110)} » propose le mode Automatique sans dire qu’il faut l’offre ${offre}`)
 }
+/** PR-11 (15/10) : « Ma plateforme » et « Mes chiffres » commencent avec une offre (lib/plans.ts : plateforme.gestion, chiffres) ; l'article d'aide du même écran dit la MÊME offre (disponibleAvec) → liste de défauts (pur) */
+export function defautsOffreEcrans(articles, peutFn) {
+  const d = []
+  for (const [id, cap] of [['plateforme', 'plateforme.gestion'], ['chiffres', 'chiffres']]) {
+    const a = (articles || []).find((x) => x.id === id)
+    const offre = ['essentiel', 'studio', 'signature'].find((p) => { try { return peutFn(p, cap) === true } catch { return false } })
+    if (!a) d.push(`article d’aide « ${id} » absent`)
+    else if (!offre) d.push(`lib/plans.ts : aucune offre ne permet ${cap}`)
+    else if (a.disponibleAvec !== offre) d.push(`article d’aide « ${id} » : disponibleAvec « ${a.disponibleAvec} » alors que ${cap} commence avec l’offre « ${offre} » (lib/plans.ts)`)
+  }
+  return d
+}
 function jugerPR11(racine) {
   let aide, plans
   try { aide = chargerLib(racine, 'lib/aide.ts'); plans = chargerLib(racine, 'lib/plans.ts') } catch (e) { return { echecs: [`lib/aide.ts ou lib/plans.ts non chargé : ${premiereLigne(e)}`], faits: [] } }
@@ -1148,10 +1162,10 @@ function jugerPR11(racine) {
   const art = (aide.ARTICLES || []).find((a) => a.id === 'plateforme')
   if (!art) return { echecs: ['article d’aide « plateforme » absent'], faits: [] }
   const textes = textesDeValeur(art)
-  const echecs = defautsModeAuto(textes, offre)
-  const sondes = [defautsModeAuto(['Choisissez le mode de réponse : Automatique, Assistée ou Manuelle.'], offre).length === 1, !defautsModeAuto([`Automatique (${offre} et au-delà), Assistée ou Manuelle.`], offre).length, !defautsModeAuto(['Chaque devis généré automatiquement consomme un crédit.'], offre).length]
+  const echecs = [...defautsModeAuto(textes, offre), ...defautsOffreEcrans(aide.ARTICLES, plans.peut)]
+  const sondes = [defautsOffreEcrans([{ id: 'plateforme', disponibleAvec: 'essentiel' }, { id: 'chiffres', disponibleAvec: 'studio' }], (p, c) => p !== 'essentiel').length === 1, !defautsOffreEcrans([{ id: 'plateforme', disponibleAvec: 'studio' }, { id: 'chiffres', disponibleAvec: 'studio' }], (p, c) => p !== 'essentiel').length, defautsModeAuto(['Choisissez le mode de réponse : Automatique, Assistée ou Manuelle.'], offre).length === 1, !defautsModeAuto([`Automatique (${offre} et au-delà), Assistée ou Manuelle.`], offre).length, !defautsModeAuto(['Chaque devis généré automatiquement consomme un crédit.'], offre).length]
   if (sondes.some((x) => !x)) echecs.push('détecteur : sonde(s) mal jugée(s)')
-  return { echecs, faits: echecs.length ? [] : [`article « plateforme » : ${textes.filter((t) => /(?<!\p{L})automatique(?!\p{L})/iu.test(t)).length} texte(s) qui nomment le mode Automatique, chacun avec l’offre ${offre} (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes`] }
+  return { echecs, faits: echecs.length ? [] : [`article « plateforme » : ${textes.filter((t) => /(?<!\p{L})automatique(?!\p{L})/iu.test(t)).length} texte(s) qui nomment le mode Automatique, chacun avec l’offre ${offre} (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 5 sondes ; « Ma plateforme » et « Mes chiffres » : offre de l’article d’aide = celle de lib/plans.ts`] }
 }
 const RE_SUPPRIME_SITE = /supprim\p{L}*\s+(?:le|votre|un|du)\s+site|site[^.]{0,60}?supprim/iu
 /** PR-12 : les défauts de textes d'aide → liste (pur) */

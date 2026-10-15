@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { authArtisan, estEchec } from '@/lib/authArtisan'
+import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { getPlateformeConfig, modeEffectif } from '@/lib/plateformeConfig'
 import { offreMinimale } from '@/lib/plans'
 
@@ -10,8 +10,10 @@ import { offreMinimale } from '@/lib/plans'
 export const runtime = 'nodejs'
 
 export async function GET(req: Request) {
-  const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
+  // 15/10 (Benj) : l'écran « Ma plateforme » commence avec Studio, pour tous les comptes. Le lien de conversation et la réponse
+  // préparée par l'IA, eux, n'en dépendent pas (la page publique lit la config côté serveur, sans passer par ici).
+  const s = await exigerCapacite(req, 'plateforme.gestion', 'L’écran « Ma plateforme »')
+  if ('reponse' in s) return s.reponse
   const { data: a } = await supabaseAdmin.from('artisans').select('plan, leads_pause').eq('id', s.uid).maybeSingle()
   const cfg = await getPlateformeConfig(s.uid)
   const eff = modeEffectif(a?.plan, cfg)

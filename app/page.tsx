@@ -20,7 +20,7 @@ import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import ComparatifConcurrents from '@/app/ComparatifConcurrents'
 import OffreDetail from '@/app/OffreDetail'
-import { OFFRES, ESSAI_JOURS } from '@/lib/plans'
+import { OFFRES, ESSAI_JOURS, PLANS, offreMinimale } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
 
@@ -42,6 +42,8 @@ const I = {
   repeat: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m17 2 4 4-4 4" /><path d="M3 11v-1a4 4 0 0 1 4-4h14" /><path d="m7 22-4-4 4-4" /><path d="M21 13v1a4 4 0 0 1-4 4H3" /></svg>,
 }
 
+// 15/10 (Benj) : « Mes chiffres » (et sa compta) commencent avec une offre — la landing la nomme, lue dans lib/plans.ts, jamais recopiée.
+const OFFRE_CHIFFRES = (() => { const o = offreMinimale('chiffres'); return o ? PLANS[o].label : '' })()
 // Le prix d'appel se lit dans la grille (lib/plans.ts), jamais recopié à la main.
 const PRIX_MIN = Math.min(...OFFRES.map((o) => o.prix))
 
@@ -249,7 +251,7 @@ export default function Home() {
             nourri par le vrai calcul, sur un artisan fictif (app/DemoChiffres.tsx). */}
         <section className="lp-blk" id="chiffres">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>02</i>Fin de mois</span><h2>Vos chiffres, sans tableur.</h2><p>Ce que vous avez facturé, ce qui est encaissé, ce qui traîne, les devis à relancer. Calculé à partir de vos devis et de vos factures : rien à saisir.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>02</i>Fin de mois</span><h2>Vos chiffres, sans tableur.</h2><p>Ce que vous avez facturé, ce qui est encaissé, ce qui traîne, les devis à relancer. Calculé à partir de vos devis et de vos factures : rien à saisir. Dès l&apos;offre {OFFRE_CHIFFRES}.</p></div>
             <DemoChiffres />
           </div>
         </section>
@@ -258,7 +260,7 @@ export default function Home() {
             sur un plombier fictif (app/DemoCompta.tsx, lib/compta-exemple.ts). */}
         <section className="lp-blk lp-clair" id="compta">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, rangée par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, rangée par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés. Dès l&apos;offre {OFFRE_CHIFFRES}.</p></div>
             <DemoCompta />
           </div>
         </section>

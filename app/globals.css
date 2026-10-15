@@ -3036,3 +3036,14 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .cc-auto-titre { margin: 0 0 10px; font-size: 1.05rem; }
 .cc-auto-liste { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: var(--muted, #8B93A2); }
 .cc-auto-liste b { color: var(--ink, #EDEFF4); }
+
+/* 15/10 — écran réservé à une offre (app/EcranVerrouille.tsx) : « Ma plateforme » et « Mes chiffres » commencent avec Studio. */
+.verrou-offre{max-width:640px;margin:8px auto 0;padding:28px 26px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.verrou-offre-cadenas{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--accent-tint);color:var(--accent-ink,var(--accent))}
+.verrou-offre-cadenas svg{width:22px;height:22px}
+.verrou-offre-eyebrow{margin:6px 0 0;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.verrou-offre h2{margin:0;font-size:20px;line-height:1.25;font-weight:700}
+.verrou-offre p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink-soft,var(--ink))}
+.verrou-offre .verrou-offre-plus{font-size:13.5px;color:var(--muted)}
+.verrou-offre-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+@media (max-width:560px){.verrou-offre{padding:22px 18px}.verrou-offre-actions{flex-direction:column;align-items:stretch}.verrou-offre-actions .psh-btn{white-space:normal;justify-content:center;text-align:center}}
