@@ -1,8 +1,8 @@
 'use client'
 
 // Centre d'aide (sprint J-1 §4 B4) : recherche plein texte sur lib/aide.ts, articles groupés
-// par outil, chaque article affiché comme le panneau « C'est quoi ? ». Sans animations —
-// les GIF/WebM enregistrés au vrai produit sont reportés après la démo (plans/apres-demo.md).
+// par outil, chaque article affiché comme le panneau « C'est quoi ? ». En tête : une vidéo pas à pas par
+// fonctionnalité du menu (lib/aideVideos.ts, vraies captures d'écran), avec les mêmes étapes par écrit.
 // Masqué derrière le drapeau `aideCentre` : sans lui, la route répond 404.
 
 import { useEffect, useMemo, useState } from 'react'
@@ -12,6 +12,8 @@ import AppShell from '@/app/AppShell'
 import { ArticleCorps, libelle } from '@/app/AidePanneau'
 import { ARTICLES, chercher, type Article } from '@/lib/aide'
 import { actif } from '@/lib/flags'
+import { videosVisibles, type AideVideo } from '@/lib/aideVideos'
+import VideoAide from './VideoAide'
 
 // Ordre de lecture = ordre du menu de la console. Les articles dont la page n'est listée
 // nulle part tombent dans « Autres » : un nouvel article n'est jamais perdu.
@@ -48,6 +50,7 @@ export default function AidePage() {
   const [ready, setReady] = useState(false)
   const [q, setQ] = useState('')
   const [cible, setCible] = useState<string | null>(null)
+  const videos = useMemo(() => videosVisibles(), [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -60,11 +63,11 @@ export default function AidePage() {
   useEffect(() => {
     if (!ready) return
     const h = decodeURIComponent(window.location.hash.slice(1))
-    if (!h || !ARTICLES.some((a) => a.id === h)) return
+    if (!h || !(ARTICLES.some((a) => a.id === h) || videos.some((v) => `video-${v.id}` === h))) return
     setCible(h)
     const t = setTimeout(() => document.getElementById(h)?.scrollIntoView({ block: 'start' }), 60)
     return () => clearTimeout(t)
-  }, [ready])
+  }, [ready, videos])
 
   // Les articles dont le TITRE contient la requête passent devant : « devis » doit donner
   // « Devis » et « Éditeur de devis » avant un article qui ne fait que mentionner le mot.
@@ -75,6 +78,13 @@ export default function AidePage() {
     const r = chercher(q)
     return [...r.filter(dansTitre), ...r.filter((x) => !dansTitre(x))]
   }, [q])
+  // La recherche passe aussi par les vidéos : titre, résumé et étapes (mêmes mots, mêmes accents ignorés).
+  const videosTrouvees = useMemo(() => {
+    const n = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    const mots = n(q.trim()).split(/s+/).filter(Boolean)
+    if (!mots.length) return videos
+    return videos.filter((v: AideVideo) => { const t = n([v.titre, v.resume, ...v.etapes].join(' ')); return mots.every((m) => t.includes(m)) })
+  }, [q, videos])
   const groupes = useMemo(() => {
     const places = new Set<string>()
     const g = GROUPES.map((gr) => {
@@ -105,13 +115,14 @@ export default function AidePage() {
               aria-label="Rechercher dans l’aide"
               autoFocus
             />
-            {enRecherche && <span className="aide-rech-n" aria-live="polite">{resultats.length} {resultats.length > 1 ? 'articles' : 'article'}</span>}
+            {enRecherche && <span className="aide-rech-n" aria-live="polite">{resultats.length} {resultats.length > 1 ? 'articles' : 'article'} · {videosTrouvees.length} {videosTrouvees.length > 1 ? 'vidéos' : 'vidéo'}</span>}
           </div>
 
           {enRecherche ? (
-            resultats.length ? (
+            resultats.length || videosTrouvees.length ? (
               <div className="aide-grp">
                 <h2>Résultats pour « {q.trim()} »</h2>
+                {videosTrouvees.map((v) => <VideoAide key={v.id} video={v} ouvert={false} />)}
                 {resultats.map((a) => <ArticleDetails key={a.id} article={a} ouvert />)}
               </div>
             ) : (
@@ -120,8 +131,15 @@ export default function AidePage() {
           ) : (
             <>
               <nav className="aide-chips" aria-label="Aller à un outil">
+                {videos.length > 0 && <a href="#grp-videos">Vidéos pas à pas</a>}
                 {groupes.map((g) => <a key={g.id} href={`#grp-${g.id}`}>{g.titre}</a>)}
               </nav>
+              {videos.length > 0 && (
+                <section id="grp-videos" className="aide-grp" aria-labelledby="grp-videos-t">
+                  <h2 id="grp-videos-t">Vidéos pas à pas : chaque fonctionnalité, en images</h2>
+                  {videos.map((v) => <VideoAide key={v.id} video={v} ouvert={cible === `video-${v.id}`} />)}
+                </section>
+              )}
               {groupes.map((g) => (
                 <section key={g.id} id={`grp-${g.id}`} className="aide-grp">
                   <h2>{g.titre}</h2>

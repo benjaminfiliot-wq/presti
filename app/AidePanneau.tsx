@@ -8,6 +8,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { ARTICLES, type Article } from '@/lib/aide'
 import { PLANS } from '@/lib/plans'
 import { actif } from '@/lib/flags'
+import type { AideVideo } from '@/lib/aideVideos'
 
 // Libellés humains des chemins cités dans `reglagesLies` — l'artisan lit « Ma plateforme »,
 // pas « /plateforme ».
@@ -95,8 +96,11 @@ export default function AidePanneau({
   open,
   onClose,
   onRevoirVisite,
+  video,
 }: {
   article: Article | null
+  /** La vidéo pas à pas de l'écran courant (lib/aideVideos.ts), s'il y en a une. */
+  video?: AideVideo | null
   open: boolean
   onClose: () => void
   onRevoirVisite?: () => void
@@ -157,15 +161,18 @@ export default function AidePanneau({
           </button>
         </div>
         <div className="aide-pan-b">
-          {article ? <ArticleCorps article={article} /> : <p className="muted" style={{ padding: '14px 0' }}>Cet écran sera expliqué bientôt.</p>}
+          {article ? <ArticleCorps article={article} /> : <p className="muted" style={{ padding: '14px 0' }}>{video ? 'Une vidéo explique cet écran pas à pas.' : 'Cet écran sera expliqué bientôt.'}</p>}
         </div>
-        {(onRevoirVisite || actif('aideCentre')) && (
+        {(onRevoirVisite || actif('aideCentre') || video) && (
           <div className="aide-pan-f">
             {onRevoirVisite && (
               <button type="button" className="psh-btn ghost" onClick={onRevoirVisite}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
                 Revoir la visite
               </button>
+            )}
+            {actif('aideCentre') && video && (
+              <a className="psh-btn primary" href={`/aide#video-${video.id}`}>Voir la vidéo</a>
             )}
             {actif('aideCentre') && (
               <a className="psh-btn ghost" href={article ? `/aide#${article.id}` : '/aide'}>Tout le centre d’aide</a>

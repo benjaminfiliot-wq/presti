@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { actif, enEssai, type Flag } from '@/lib/flags'
 import AidePanneau, { articlePour } from '@/app/AidePanneau'
+import { videoPour } from '@/lib/aideVideos'
 import Visite, { VISITES, type Etape } from '@/app/Visite'
 // v9 §2 — l'app installable : invitation (Android/iOS) et service worker + bandeau de mise à jour.
 // Montés ICI, dans la console : jamais sur la landing ni sur une surface artisan (white-label).
@@ -129,6 +130,7 @@ export default function AppShell({
   const [recherche, setRecherche] = useState('')
   useEffect(() => { setRecherche(window.location.search) }, [pathname])
   const article = articlePour(pathname ?? '', recherche, active)
+  const video = videoPour(pathname ?? '')
   const fermerAide = useCallback(() => setAideOuverte(false), [])
 
   useEffect(() => {
@@ -339,7 +341,7 @@ export default function AppShell({
             <h1 tabIndex={-1}>{title}</h1>
           </div>
           {actions && <div className="psh-actions">{actions}</div>}
-          {article && (
+          {(article || (video && actif('aideCentre'))) && (
             <button type="button" className="psh-aide" data-visite="aide" onClick={() => setAideOuverte(true)} aria-label="C’est quoi, cet écran ?" title="C’est quoi, cet écran ?" aria-haspopup="dialog" aria-expanded={aideOuverte}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></svg>
             </button>
@@ -377,6 +379,7 @@ export default function AppShell({
 
       <AidePanneau
         article={article}
+        video={video}
         open={aideOuverte}
         onClose={fermerAide}
         onRevoirVisite={actif('aideVisites') && VISITES.console?.length ? () => { setAideOuverte(false); setTimeout(() => setVisite(true), 250) } : undefined}

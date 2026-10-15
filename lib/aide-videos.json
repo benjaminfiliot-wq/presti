@@ -1,0 +1,231 @@
+{
+  "videos": [
+    {
+      "id": "dashboard",
+      "titre": "Tableau de bord",
+      "route": "/dashboard",
+      "offre": "essentiel",
+      "resume": "Voir d’un coup d’œil les demandes reçues, copier votre lien de contact et suivre chaque demande.",
+      "etapes": [
+        "En haut : vos demandes reçues, celles à traiter, les chantiers gagnés.",
+        "Copiez votre lien de contact avec « Copier », puis partagez-le à vos clients.",
+        "Plus bas, chaque demande arrive avec son statut.",
+        "Cliquez « Détail » pour lire le message du client et la réponse envoyée.",
+        "Faites avancer le statut (Nouveau, Répondu, Gagné, Perdu) au fil du suivi."
+      ],
+      "duree": 36
+    },
+    {
+      "id": "messages",
+      "titre": "Messages",
+      "route": "/messages",
+      "offre": "essentiel",
+      "resume": "Retrouver toutes les conversations avec vos clients et valider les réponses préparées.",
+      "etapes": [
+        "Toutes vos conversations sont ici, les plus récentes en premier.",
+        "L’onglet « À valider » regroupe les réponses préparées qui attendent votre accord.",
+        "Ouvrez une conversation : le message du client et la réponse proposée s’affichent.",
+        "Relisez, modifiez si besoin, puis « Valider et envoyer » ; « Rejeter » écarte la réponse proposée."
+      ],
+      "duree": 32
+    },
+    {
+      "id": "outils",
+      "titre": "Réponses instantanées",
+      "route": "/outils",
+      "offre": "essentiel",
+      "resume": "Coller la demande d’un client et obtenir une réponse rédigée dans votre ton, à copier où vous voulez.",
+      "etapes": [
+        "Collez la demande de votre client dans le grand champ.",
+        "Indiquez son prénom ou son nom (facultatif).",
+        "Choisissez le modèle : Standard suffit pour une demande simple.",
+        "Cliquez « Générer la réponse » : Presti rédige la réponse dans votre ton.",
+        "Relisez, modifiez si besoin, puis cliquez « Copier la réponse » et collez-la où vous voulez."
+      ],
+      "duree": 45
+    },
+    {
+      "id": "devis",
+      "titre": "Devis",
+      "route": "/devis",
+      "offre": "essentiel",
+      "resume": "Retrouver vos devis, en ouvrir un, le modifier et l’envoyer à votre client.",
+      "etapes": [
+        "Tous vos devis sont ici. Filtrez par statut : brouillons, envoyés, acceptés.",
+        "Cliquez « Ouvrir » sur le devis à modifier.",
+        "Vérifiez le client, puis les lignes : désignation, quantité, prix. Les totaux se calculent seuls.",
+        "« Chiffrer avec l’IA » propose des lignes à partir de la description du chantier.",
+        "« Enregistrer », puis « Envoyer au client » ou « Télécharger PDF »."
+      ],
+      "duree": 40
+    },
+    {
+      "id": "factures",
+      "titre": "Factures",
+      "route": "/factures",
+      "offre": "essentiel",
+      "resume": "Suivre vos factures, les marquer payées et émettre un avoir en cas d’erreur.",
+      "etapes": [
+        "Vos factures sont ici ; elles se créent depuis un devis accepté.",
+        "Filtrez : « À encaisser » ou « Payées ».",
+        "Téléchargez la facture en PDF, ou en XML pour la facture électronique (Factur-X).",
+        "Le client a payé ? Cliquez « Marquer payée ».",
+        "Une erreur ? « Émettre un avoir » : la facture d’origine n’est jamais supprimée, elle est conservée."
+      ],
+      "duree": 37
+    },
+    {
+      "id": "chiffres",
+      "titre": "Mes chiffres",
+      "route": "/chiffres",
+      "offre": "essentiel",
+      "resume": "Suivre votre chiffre d’affaires, ce qui est encaissé et ce qui reste impayé.",
+      "etapes": [
+        "Le chiffre d’affaires, l’encaissé et les impayés sont calculés à partir de vos factures.",
+        "Changez la période : ce mois, 3 mois, cette année, 12 mois.",
+        "Le graphique montre, mois par mois, ce que vous avez facturé et encaissé.",
+        "Les impayés sont listés ; « Préparer la relance » rédige le message pour votre client.",
+        "Plus bas, importez vos dépenses (Excel ou CSV) pour connaître votre bénéfice."
+      ],
+      "duree": 36
+    },
+    {
+      "id": "crm",
+      "titre": "CRM atelier",
+      "route": "/crm",
+      "offre": "signature",
+      "resume": "Voir votre activité sur un plan d’atelier vivant, puis suivre chantiers, clients et équipe.",
+      "etapes": [
+        "Le CRM atelier montre votre activité sur un plan vivant : accueil, atelier, dépôt.",
+        "Les urgences du jour sont listées : matériaux sous le seuil, nouvelles demandes.",
+        "« Voir l’exemple » affiche des chantiers fictifs pour découvrir l’outil.",
+        "L’onglet « Chantiers » liste vos chantiers et leur avancement.",
+        "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
+      ],
+      "drapeau": "crm",
+      "duree": 47
+    },
+    {
+      "id": "tarifs",
+      "titre": "Mes tarifs",
+      "route": "/tarifs",
+      "offre": "essentiel",
+      "resume": "Enregistrer vos prix pour que vos devis les reprennent tels quels.",
+      "etapes": [
+        "Vos prix sont la base de vos devis : l’IA les reprend tels quels.",
+        "Ajoutez un prix à la main : désignation, prix HT, unité, fournisseur, puis « Ajouter ».",
+        "Vous avez un tarif fournisseur ? Importez-le d’un coup (fichier CSV ou Excel).",
+        "Retrouvez un prix avec le champ de recherche.",
+        "Un prix n’est plus bon ? Retirez-le avec la croix."
+      ],
+      "duree": 38
+    },
+    {
+      "id": "inventaire",
+      "titre": "Inventaire",
+      "route": "/inventaire",
+      "offre": "studio",
+      "resume": "Tenir votre stock par lieu, être prévenu quand il faut racheter.",
+      "etapes": [
+        "Le bandeau « À racheter » signale les articles passés sous leur seuil.",
+        "Ajoutez un article : nom, unité, seuil d’alerte, puis « Ajouter ».",
+        "Le stock se tient par lieu : atelier ou camion.",
+        "Ajustez les quantités avec + et −, au fil des sorties et des livraisons.",
+        "Scanner, import CSV, fournisseurs : tout part de cette page."
+      ],
+      "duree": 41
+    },
+    {
+      "id": "profil",
+      "titre": "Ma page",
+      "route": "/profil",
+      "offre": "essentiel",
+      "resume": "Compléter la page qui présente votre entreprise à vos clients.",
+      "etapes": [
+        "Votre lien à partager : « Copier », puis collez-le dans votre bio, votre fiche Google ou votre signature.",
+        "Présentez-vous : photo ou logo, nom, métier et présentation.",
+        "Indiquez votre zone d’intervention et vos disponibilités.",
+        "Ajoutez vos prestations avec « + Ajouter une prestation ».",
+        "Cliquez « Enregistrer » ; « Voir ma page » montre le résultat tel que vos clients le voient."
+      ],
+      "duree": 34
+    },
+    {
+      "id": "site",
+      "titre": "Commander mon site",
+      "route": "/site/commander",
+      "offre": "essentiel",
+      "resume": "Commander votre site vitrine en 6 étapes, du nom de domaine jusqu’au paiement.",
+      "etapes": [
+        "Commander mon site : un parcours en 6 étapes, du nom de domaine jusqu’au paiement.",
+        "Étape 1 : votre nom de domaine. Pas encore décidé ? Choisissez « Plus tard ».",
+        "Étape 2 : votre métier et les communes où vous travaillez vraiment.",
+        "Étapes 3 à 5 : votre matière (logo, photos, SIREN), votre parcours, vos prestations.",
+        "Dernière étape : le récapitulatif signale ce qui manque avant le paiement."
+      ],
+      "note": "Le site se commande à part : il n’est inclus dans aucune formule.",
+      "drapeau": "siteCommandeVente",
+      "duree": 48
+    },
+    {
+      "id": "plateforme",
+      "titre": "Ma plateforme",
+      "route": "/plateforme",
+      "offre": "essentiel",
+      "resume": "Partager votre espace de conversation, suivre les demandes et régler ce que l’assistant fait seul.",
+      "etapes": [
+        "Ma plateforme est l’espace où vos clients vous écrivent. « Copier le lien » pour le partager.",
+        "L’onglet « Conversations » : chaque demande, avec la réponse préparée par l’assistant.",
+        "« Automatisations » : choisissez ce que l’assistant fait seul, de « Prudent » à « Tout auto ».",
+        "« Apparence » : le thème et les couleurs de votre espace de conversation.",
+        "« Réglages » : mode de réponse (automatique, assistée, manuelle), modèle et ton."
+      ],
+      "duree": 45
+    },
+    {
+      "id": "abonnement",
+      "titre": "Abonnement",
+      "route": "/abonnement",
+      "offre": "essentiel",
+      "resume": "Voir votre formule et vos crédits, comparer les offres, essayer sans carte.",
+      "etapes": [
+        "En haut : votre formule actuelle et les crédits qui vous restent chaque mois.",
+        "Comparez les trois formules : Essentiel, Studio, Signature.",
+        "Chaque carte liste ce que la formule inclut.",
+        "Pour changer, choisissez l’essai gratuit de la formule voulue : sans carte."
+      ],
+      "duree": 33
+    },
+    {
+      "id": "assistant",
+      "titre": "Assistant de gestion",
+      "route": "/assistant",
+      "offre": "signature",
+      "resume": "Demander à l’assistant de préparer un devis, une relance ou une mise à jour du stock.",
+      "etapes": [
+        "Dites ce qu’il y a à faire, comme à un collègue : devis, relance, stock, tarifs…",
+        "Tapez votre demande, par exemple : « Fais le devis de Mme Martin pour 12 m² de carrelage ».",
+        "L’assistant lit vos tarifs et prépare le brouillon (vidéo accélérée).",
+        "Il vous répond avec ce qu’il a préparé. Rien ne part chez un client sans votre clic « Confirmer ».",
+        "Cliquez « Ouvrir le devis » pour relire, corriger puis envoyer."
+      ],
+      "drapeau": "assistant",
+      "duree": 32
+    },
+    {
+      "id": "parametres",
+      "titre": "Paramètres",
+      "route": "/parametres",
+      "offre": "essentiel",
+      "resume": "Régler votre compte : profil, mentions légales, notifications, sécurité et données.",
+      "etapes": [
+        "Les Paramètres regroupent tout le compte, rangé par thème dans le menu de gauche.",
+        "Profil : votre nom affiché et votre photo, repris sur vos devis et vos factures.",
+        "Entreprise & légal : SIRET, adresse, TVA… ces mentions figurent sur vos devis et factures.",
+        "Notifications et Sécurité : choisissez comment être prévenu, et protégez votre compte.",
+        "Données & confidentialité : téléchargez une archive de vos données quand vous voulez."
+      ],
+      "duree": 36
+    }
+  ]
+}
