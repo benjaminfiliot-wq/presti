@@ -2966,3 +2966,39 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .inbox-placeholder b{font-family:var(--font-display);font-size:1.05rem;color:var(--ink)}
 .inbox-placeholder .muted{font-size:.88rem;line-height:1.5}
 .inbox-ph-ico{display:grid;place-items:center;width:56px;height:56px;border-radius:16px;margin-bottom:.35rem;color:var(--accent-ink);background:var(--accent-tint);border:1px solid var(--accent-tint-2);box-shadow:0 18px 40px -22px var(--glow)}
+
+/* Détail complet d'une offre (app/OffreDetail.tsx) : groupes + lignes qui s'ajoutent à l'offre d'en dessous. */
+.od{margin:1rem 0 1.4rem;flex:1;text-align:left}
+.od-herite{font-size:.8rem;font-weight:600;color:var(--ink-soft,var(--ink2));margin:0 0 .6rem}
+.od-g{margin:0 0 .9rem}
+.od-gt{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--ink-soft,var(--ink2));opacity:.75;margin:0 0 .35rem}
+.od .lp-plist,.od .abo-list{margin:0;gap:.4rem;flex:none}
+.od-badge{display:inline-block;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;font-weight:800;padding:.08rem .38rem;margin-right:.45rem;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);vertical-align:.08em}
+
+/* Comparatif avec les autres logiciels (app/ComparatifConcurrents.tsx) */
+.cc{margin-top:1.6rem}
+.cc-table{min-width:880px}
+.cc-table th[scope="row"]{min-width:12rem}
+.cc-table td{vertical-align:top;font-size:.82rem;line-height:1.4;text-align:left}
+.cc-ni{opacity:.6;font-style:italic}
+.cc-mention,.cc-precaution{font-size:.82rem;line-height:1.5;max-width:70ch;margin:1rem auto 0;text-align:center;color:var(--ink2)}
+.cc-precaution{font-size:.76rem;opacity:.8}
+.cc-sources{max-width:70ch;margin:1rem auto 0;font-size:.82rem;color:var(--ink2)}
+.cc-sources summary{cursor:pointer;font-weight:600;text-align:center}
+.cc-sources ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:.4rem}
+.cc-sources a{text-decoration:underline;text-underline-offset:2px}
+.cc-table .cmp-txt{max-width:30ch}
+.cc-table th[scope="row"]{font-size:.82rem}
+.dg{margin-top:3.2rem}
+.dg-grille{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-top:1.8rem}
+.dg-carte{margin:0;display:flex;flex-direction:column;gap:.8rem}
+.dg-cadre{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line,rgba(255,255,255,.12));background:#0c0c0d;aspect-ratio:16/10;box-shadow:0 30px 70px -34px var(--glow,rgba(0,0,0,.6))}
+.dg-cadre video{display:block;width:100%;height:100%;object-fit:cover}
+.dg-lire{position:absolute;inset:auto .8rem .8rem auto;border:0;border-radius:999px;padding:.45rem .9rem;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:var(--accent,#d97757);color:#fff}
+.dg-carte h3{margin:.2rem 0 0;font-size:1.15rem}
+.dg-carte p{margin:0;font-size:.92rem;line-height:1.5;color:var(--ink2)}
+.dg-note{font-size:.76rem!important;opacity:.75}
+@media (max-width:820px){.dg-grille{grid-template-columns:1fr}}
+.cc-table th[scope="row"]{position:sticky;left:0;z-index:1;background:var(--bg,#0a0a0b)}
+.cc-hint{display:none;margin:.3rem 0 0;font-size:.75rem;text-align:center;color:var(--ink2);opacity:.8}
+@media (max-width:820px){.cc-hint{display:block}.cc-table th[scope="row"]{min-width:8.5rem;max-width:8.5rem}.cc-table .cmp-txt{max-width:22ch}}

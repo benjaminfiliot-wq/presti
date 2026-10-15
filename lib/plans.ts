@@ -120,64 +120,128 @@ export function messageVerrou(capacite: Capacite): string {
 export const OFFRES: { id: PlanPayant; label: string; prix: number; credits: number; accroche: string }[] =
   (['essentiel', 'studio', 'signature'] as const).map((id) => ({ id, label: PLANS[id].label, prix: PLANS[id].prixMois, credits: PLANS[id].creditsMois, accroche: PLANS[id].accroche }))
 
-// ─── La grille « qui a quoi », rendue telle quelle par la landing et /abonnement ─────────
+// ─── Plafonds qui dépendent de l'offre (une seule écriture : la grille ci-dessous, lib/quotaMedia.ts et lib/assistant/cadrage.ts les lisent ici) ───
+const MO = 1024 * 1024
+/** Espace d'images de l'artisan (logo, réalisations, avatars, photos d'inventaire), en Mo. Appliqué par lib/quotaMedia.ts. */
+export const PLAFOND_IMAGES_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 400, signature: 1024, business: 5120 }
+/** Espace des photos de chantier envoyées par les clients, en Mo. Appliqué par lib/quotaMedia.ts. */
+export const PLAFOND_PHOTOS_CLIENTS_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 250, signature: 500, business: 2048 }
+export const enOctets = (mo: Record<PlanId, number>): Record<PlanId, number> =>
+  Object.fromEntries(Object.entries(mo).map(([k, v]) => [k, v * MO])) as Record<PlanId, number>
+/** Messages au plus par conversation avec l'assistant de gestion (décision de Benj du 12/10, plan 016 §9.2). Appliqué par lib/assistant/cadrage.ts. */
+export const ASSISTANT_TOURS_MAX = 20
+const tailleMo = (mo: number): string => (mo >= 1024 ? `${String(mo / 1024).replace('.', ',')} Go` : `${mo} Mo`)
+
+// ─── La grille « qui a quoi », rendue telle quelle par la landing, /abonnement et les paramètres ─────────
 //
 // Une cellule = `true` (✅), `false` (—) ou un texte court. Une ligne portant un `flag`
 // n'apparaît que si le drapeau est levé : ce qui n'est pas livré n'est pas vendu.
+//
+// UN SEUL CALCUL : chaque ligne déclare les capacités qu'elle annonce (`capacites`), et ses cellules « oui / non » sont
+// CALCULÉES depuis PLANS[...].capacites (`dePlan`) — jamais retapées. scripts/offres-affichage-qa.mjs échoue si une
+// capacité d'une offre n'est annoncée par aucune ligne, ou si une cellule contredit la capacité.
 
 export type CelluleGrille = boolean | string
 export type LigneGrille = {
-  groupe: 'Plateforme' | 'Site' | 'Devis & factures' | 'Inventaire' | 'Canaux' | 'Inclus'
+  groupe: 'Plateforme' | 'Site' | 'Devis & factures' | 'CRM' | 'Assistant de gestion' | 'Inventaire' | 'Canaux' | 'Inclus'
   label: string
   cellules: Record<PlanPayant, CelluleGrille>
+  /** Les capacités (lib/plans.ts) que cette ligne annonce. Vide : ligne de chiffres (crédits, plafonds). */
+  capacites: Capacite[]
   flag?: Flag
 }
 
-const GRILLE_COMPLETE: LigneGrille[] = [
-  { groupe: 'Plateforme', label: 'Page de conversation à votre marque', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Plateforme', label: 'Assistant IA', cellules: {
+/** « oui / non » d'une capacité pour chaque offre payante, lu dans PLANS. */
+const dePlan = (cap: Capacite): Record<PlanPayant, boolean> =>
+  ({ essentiel: PLANS.essentiel.capacites.includes(cap), studio: PLANS.studio.capacites.includes(cap), signature: PLANS.signature.capacites.includes(cap) })
+/** Un texte par offre quand la capacité est présente, « — » (false) sinon : le « non » vient de PLANS, le texte de la ligne. */
+const texteSi = (cap: Capacite, t: Record<PlanPayant, string>): Record<PlanPayant, CelluleGrille> => {
+  const o = dePlan(cap)
+  return { essentiel: o.essentiel ? t.essentiel : false, studio: o.studio ? t.studio : false, signature: o.signature ? t.signature : false }
+}
+
+/** Capacités qu'aucune offre n'a (le site vitrine est sorti des formules, 13/09 : il se commande à part). Déclarées ici pour que la
+ *  vérification ne les confonde pas avec un oubli. */
+export const CAPACITES_HORS_FORMULES: Capacite[] = ['site.essentiel', 'site.pro', 'site.signature', 'site.slides3d']
+
+export const GRILLE_COMPLETE: LigneGrille[] = [
+  { groupe: 'Plateforme', label: 'Page de conversation à votre marque', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation') },
+  { groupe: 'Plateforme', label: 'Assistant IA', capacites: ['plateforme.ia.auto', 'plateforme.ia.expert', 'plateforme.regles'], cellules: {
     essentiel: 'Standard · vous validez chaque réponse',
     studio: 'Standard + Pro · répond seul ou vous validez',
     signature: FLAGS.plateformeRegles ? 'Standard, Pro + Expert · règles d’automatisation' : 'Standard, Pro + Expert',
   } },
-  { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Plateforme', label: 'Personnalisation', cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
-  { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', cellules: { essentiel: true, studio: true, signature: true } },
+  { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', capacites: ['plateforme.comptes_clients'], cellules: dePlan('plateforme.comptes_clients') },
+  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
+  // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
+  // depuis la conversation (audit des promesses du 12/10).
+  { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', capacites: ['relances'], cellules: dePlan('relances') },
+  { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', capacites: ['site.domaine_perso', 'plateforme.domaine_perso'], cellules: dePlan('site.domaine_perso') },
+  { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', capacites: ['devis.ia', 'devis.prix_artisan'], cellules: dePlan('devis.ia') },
   // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
   // un fichier XML Factur-X (CII) à télécharger, non validé au Schematron officiel ni embarqué dans un PDF/A-3 (lib/facturx.ts).
-  { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', cellules: { essentiel: true, studio: true, signature: true } },
-  // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
-  // depuis la conversation. Rangées sous « Devis & factures », elles promettaient la relance d'un devis créé seul ou d'un
-  // impayé, qui n'existe pas (audit des promesses du 12/10).
-  { groupe: 'Plateforme', label: 'Relances automatiques des conversations (J+2, J+5, J+10)', cellules: { essentiel: true, studio: true, signature: true } },
-  // CRM « atelier vivant » (0141, lib/crm/) : Signature seulement (capacité `crm`) ; la ligne n'apparaît que drapeau levé.
-  { groupe: 'Devis & factures', label: 'CRM : pipeline, chantiers, tâches, équipe', cellules: { essentiel: false, studio: false, signature: true }, flag: 'crm' },
-  // L'assistant de gestion (016, jalon A3) : Signature seulement (capacité `assistant`, vérifiée côté serveur par lib/assistant/acces.ts) ;
-  // la ligne n'apparaît que drapeau levé (lib/flags.ts) — c'est-à-dire après 0157 appliquée, la recette et l'accord de Benj.
-  { groupe: 'Devis & factures', label: 'Assistant de gestion : devis, factures, stock, tarifs et CRM pilotés par la conversation (vous confirmez ce qui part chez un client)', cellules: { essentiel: false, studio: false, signature: true }, flag: 'assistant' },
-  { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', cellules: { essentiel: false, studio: true, signature: true } },
-  { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', cellules: { essentiel: false, studio: 'Standard + Pro', signature: '+ Expert' }, flag: 'inventaireRecherche' },
-  { groupe: 'Canaux', label: 'Votre boîte email branchée', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Canaux', label: 'WhatsApp', cellules: { essentiel: false, studio: true, signature: true }, flag: 'canauxWhatsapp' },
-  { groupe: 'Canaux', label: 'Réseaux sociaux', cellules: { essentiel: false, studio: false, signature: true }, flag: 'canauxReseaux' },
-  { groupe: 'Inclus', label: 'Crédits chaque mois', cellules: { essentiel: '80', studio: '250', signature: '600' } },
-  // L'export est ouvert à TOUS (app/api/donnees/export, portabilité RGPD) : la grille le retirait à l'Essentiel.
-  { groupe: 'Inclus', label: 'Export de vos données', cellules: { essentiel: true, studio: true, signature: true } },
+  { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', capacites: ['factures', 'factures.electronique'], cellules: dePlan('factures') },
+  // CRM « atelier vivant » (0141/0158, lib/crm/) : Signature seulement (capacité `crm`, vérifiée côté serveur par lib/crm/acces.ts) ;
+  // les lignes n'apparaissent que drapeau levé. Chaque ligne décrit ce que le code fait, pas plus.
+  { groupe: 'CRM', label: 'Pipeline des demandes et fiches clients', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
+  { groupe: 'CRM', label: 'Chantiers : statuts, tâches, matériaux réservés', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
+  { groupe: 'CRM', label: 'Équipe et véhicules affectés aux chantiers', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
+  { groupe: 'CRM', label: 'Carte Atelier : chantiers, équipe et alertes (retards, livraisons, stock bas), en temps réel', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
+  // L'assistant de gestion (016) : Signature seulement (capacité `assistant`, vérifiée côté serveur par lib/assistant/acces.ts).
+  { groupe: 'Assistant de gestion', label: 'Devis, factures et relances menés par la conversation', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Stock, tarifs et CRM pilotés par la conversation', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Briefing du matin : urgences, retards, ce qui vous attend', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Vous confirmez ce qui part chez un client ; journal des actions, annulables', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Limites', capacites: ['assistant'], cellules: texteSi('assistant', {
+    essentiel: '', studio: '',
+    signature: `${ASSISTANT_TOURS_MAX} messages par conversation · ${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} avec le modèle Expert)`,
+  }), flag: 'assistant' },
+  { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', capacites: ['inventaire.stock'], cellules: dePlan('inventaire.stock') },
+  { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', capacites: ['inventaire.recherche_ia'], cellules: texteSi('inventaire.recherche_ia', { essentiel: '', studio: 'Standard + Pro', signature: 'Standard, Pro + Expert' }), flag: 'inventaireRecherche' },
+  { groupe: 'Canaux', label: 'Votre boîte email branchée', capacites: ['canaux.email'], cellules: dePlan('canaux.email') },
+  { groupe: 'Canaux', label: 'WhatsApp', capacites: ['canaux.whatsapp'], cellules: dePlan('canaux.whatsapp'), flag: 'canauxWhatsapp' },
+  { groupe: 'Canaux', label: 'Réseaux sociaux', capacites: ['canaux.reseaux'], cellules: dePlan('canaux.reseaux'), flag: 'canauxReseaux' },
+  { groupe: 'Inclus', label: 'Crédits chaque mois', capacites: [], cellules: { essentiel: String(PLANS.essentiel.creditsMois), studio: String(PLANS.studio.creditsMois), signature: String(PLANS.signature.creditsMois) } },
+  { groupe: 'Inclus', label: 'Espace pour vos images (logo, réalisations)', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_IMAGES_MO.essentiel), studio: tailleMo(PLAFOND_IMAGES_MO.studio), signature: tailleMo(PLAFOND_IMAGES_MO.signature) } },
+  { groupe: 'Inclus', label: 'Espace pour les photos de chantier envoyées par vos clients', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.essentiel), studio: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.studio), signature: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.signature) } },
+  // L'export est ouvert à TOUS (app/api/donnees/export, portabilité RGPD).
+  { groupe: 'Inclus', label: 'Export de vos données', capacites: ['export'], cellules: dePlan('export') },
   // Délais de première réponse des CGU (§4) ; la demande d'un Signature arrive marquée « prioritaire » (app/api/support/demande).
-  { groupe: 'Inclus', label: 'Support par écrit', cellules: { essentiel: '3 jours ouvrés', studio: '2 jours ouvrés', signature: 'Prioritaire · 1 jour ouvré' } },
+  { groupe: 'Inclus', label: 'Support par écrit', capacites: ['support.prioritaire'], cellules: { essentiel: '3 jours ouvrés', studio: '2 jours ouvrés', signature: 'Prioritaire · 1 jour ouvré' } },
 ]
 
 /** La grille telle qu'on a le droit de la montrer aujourd'hui. */
 export const GRILLE: LigneGrille[] = GRILLE_COMPLETE.filter((l) => !l.flag || FLAGS[l.flag])
 
-/** Les 4-5 points forts d'une offre, dérivés de la grille (pour les cartes courtes). */
+/** Ce que dit une cellule, en une ligne de liste (ou null si l'offre n'a pas cette ligne). */
+export function texteCellule(l: LigneGrille, c: CelluleGrille): string | null {
+  if (c === false || c === '') return null
+  if (c === true) return l.label
+  if (l.label === 'Crédits chaque mois') return `${c} crédits chaque mois`
+  if (l.label === 'Limites') return `Assistant de gestion : ${c}`
+  if (l.groupe === 'Inclus' && /^\d+([,.]\d+)? (Mo|Go)$/.test(c)) return `${l.label} : ${c}`
+  return `${l.label} — ${c}`
+}
+
+/** Les points forts d'une offre, dérivés de la grille (TOUTE la grille de l'offre : rien n'est coupé). */
 export function pointsForts(id: PlanPayant): string[] {
   const pts: string[] = []
-  for (const l of GRILLE) {
-    const c = l.cellules[id]
-    if (c === false) continue
-    pts.push(typeof c === 'string' && !/^\d+$/.test(c) ? `${l.label} — ${c}` : l.label === 'Crédits chaque mois' ? `${c} crédits chaque mois` : l.label)
-  }
+  for (const l of GRILLE) { const t = texteCellule(l, l.cellules[id]); if (t) pts.push(t) }
   return pts
+}
+
+export type LigneOffre = { groupe: LigneGrille['groupe']; texte: string; nouveau: boolean }
+const PRECEDENTE: Record<PlanPayant, PlanPayant | null> = { essentiel: null, studio: 'essentiel', signature: 'studio' }
+
+/** Le détail d'une offre pour les cartes : toutes ses lignes, avec `nouveau` quand la ligne n'existe pas dans l'offre d'en dessous. */
+export function detailOffre(id: PlanPayant): { precedente: PlanPayant | null; lignes: LigneOffre[] } {
+  const prec = PRECEDENTE[id]
+  const lignes: LigneOffre[] = []
+  for (const l of GRILLE) {
+    const t = texteCellule(l, l.cellules[id])
+    if (!t) continue
+    const avant = prec ? texteCellule(l, l.cellules[prec]) : null
+    lignes.push({ groupe: l.groupe, texte: t, nouveau: !!prec && avant === null })
+  }
+  return { precedente: prec, lignes }
 }

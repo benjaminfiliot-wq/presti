@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
-import { PLANS, planConf, type PlanId } from '@/lib/plans'
+import { PLANS, planConf, enOctets, PLAFOND_IMAGES_MO, PLAFOND_PHOTOS_CLIENTS_MO, type PlanId } from '@/lib/plans'
 
 // Quota de stockage par compte (audit final, auditeur F, majeur 4.3 et 4.4).
 //
@@ -44,25 +44,14 @@ const MO = 1024 * 1024
  * L'essai reste utilisable — logo + avatar + une dizaine de réalisations tiennent dans
  * 25 Mo — mais 40 comptes d'essai ne suffisent plus à remplir l'offre Supabase.
  */
-const PLAFOND_IMAGES: Record<PlanId, number> = {
-  gratuit: 25 * MO,
-  essentiel: 100 * MO,
-  studio: 400 * MO,
-  signature: 1024 * MO,
-  business: 5120 * MO, // fondateurs : jamais bloqués
-}
+// Les valeurs (en Mo) vivent dans lib/plans.ts : la grille des offres affichée au public lit les mêmes.
+const PLAFOND_IMAGES: Record<PlanId, number> = enOctets(PLAFOND_IMAGES_MO)
 
 /**
  * Plafond des photos de chantier envoyées par les PROSPECTS. Plus serré que les images de
  * l'artisan : il ne les choisit pas, et c'est la surface qu'un tiers peut remplir.
  */
-const PLAFOND_PHOTOS_CLIENTS: Record<PlanId, number> = {
-  gratuit: 25 * MO,
-  essentiel: 100 * MO,
-  studio: 250 * MO,
-  signature: 500 * MO,
-  business: 2048 * MO,
-}
+const PLAFOND_PHOTOS_CLIENTS: Record<PlanId, number> = enOctets(PLAFOND_PHOTOS_CLIENTS_MO)
 
 /**
  * Plafond par CONVERSATION. Une demande de devis, ce sont trois photos compressées

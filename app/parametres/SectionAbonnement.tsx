@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { GRILLE, OFFRES, PLANS, ESSAI_JOURS, planConf, type PlanPayant } from '@/lib/plans'
+import { GRILLE, OFFRES, PLANS, ESSAI_JOURS, planConf, texteCellule, type PlanPayant } from '@/lib/plans'
 import { creditsEssai } from '@/lib/essaiGratuit'
 import { api, dateFr, type SectionProps } from './commun'
 import { estNatif } from '@/lib/natif'
@@ -25,8 +25,8 @@ function deverrouille(actuel: PlanPayant, cible: PlanPayant): string[] {
   for (const l of GRILLE) {
     const de = l.cellules[actuel], vers = l.cellules[cible]
     if (de === vers || vers === false) continue
-    if (de === false) out.push(typeof vers === 'string' ? `${l.label} — ${vers}` : l.label)
-    else if (typeof vers === 'string') out.push(l.label === 'Crédits chaque mois' ? `${vers} crédits chaque mois (au lieu de ${de})` : `${l.label} — ${vers}`)
+    if (de === false) { const t = texteCellule(l, vers); if (t) out.push(t) }
+    else if (typeof vers === 'string') { const t = texteCellule(l, vers); if (t) out.push(l.label === 'Crédits chaque mois' ? `${t} (au lieu de ${de})` : t) }
   }
   return out
 }

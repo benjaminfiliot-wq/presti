@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Comparatif from '@/app/Comparatif'
-import { OFFRES, PLANS, ESSAI_JOURS, pointsForts } from '@/lib/plans'
+import OffreDetail from '@/app/OffreDetail'
+import { OFFRES, PLANS, ESSAI_JOURS } from '@/lib/plans'
 import { estNatif } from '@/lib/natif'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { actif } from '@/lib/flags'
@@ -86,7 +87,7 @@ export default function Abonnement() {
                   {essai && !current ? <div className="abo-essai" data-essai-gratuit={o.id}><b>{ESSAI_JOURS[o.id]} jours gratuits, sans carte</b></div> : null}
                   <div className="abo-tva">TVA non applicable, art. 293 B du CGI</div>
                   <div className="abo-for">{o.accroche}</div>
-                  <ul className="abo-list">{pointsForts(o.id).slice(0, 6).map((f) => <li key={f}>{f}</li>)}</ul>
+                  <OffreDetail id={o.id} classe="abo-list" />
                   {current
                     ? <button className="psh-btn ghost" disabled>Formule actuelle</button>
                     : <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} disabled={busy === o.id} onClick={() => souscrire(o.id)}>{busy === o.id ? 'Redirection…' : essai ? `Essayer ${ESSAI_JOURS[o.id]} jours gratuits` : `S’abonner à ${o.label}`}</button>}

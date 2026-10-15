@@ -107,7 +107,7 @@ var A_TEST = 'art-A'
   for (const plan of ['signature', 'business']) T(`B6 offre ${plan} → accès`, decisionAcces({ drapeau: true, session: sOk, plan }).ok)
   T('B7 la capacité crm : Signature et Business seulement', Object.keys(PLANS).filter((p) => peut(p, 'crm')).sort().join(',') === 'business,signature')
   // 13/10 soir — drapeau levé : la grille annonce le CRM, en Signature SEULEMENT (une ligne, Essentiel et Studio à « — »).
-  T('B8 la grille Tarifs annonce le CRM en Signature seulement', (() => { const l = GRILLE.filter((x) => x.flag !== 'assistant' && /crm|chantier|atelier vivant/i.test(x.label)); return l.length === 1 && l[0].cellules.essentiel === false && l[0].cellules.studio === false && l[0].cellules.signature === true })())
+  T('B8 la grille Tarifs annonce le CRM en Signature seulement (lignes de la capacité crm, cellules calculées depuis PLANS)', (() => { const l = GRILLE.filter((x) => x.capacites.includes('crm')); return l.length >= 1 && l.every((x) => x.flag === 'crm' && x.cellules.essentiel === false && x.cellules.studio === false && x.cellules.signature === true) })())
 }
 
 // ═══════════════════════ C. Pipeline ═══════════════════════

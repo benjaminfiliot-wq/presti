@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
-import { actif } from '@/lib/flags'
+import { actif, FLAGS } from '@/lib/flags'
 import { PRIX_SITE_TEXTE } from '@/lib/siteCommande'
 
 // La démo de la landing (v5 §5) : pas un catalogue, UN scénario — « Une demande arrive »,
-// en cinq scènes enchaînées. Chaque scène est une CAPTURE DU VRAI PRODUIT (Playwright, sur le
+// en scènes enchaînées. Chaque scène est une CAPTURE DU VRAI PRODUIT (Playwright, sur le
 // code de production, compte de démonstration détruit ensuite — scripts/demo-captures.mjs) :
 // ce qui est montré existe. Rien n'est dessiné à la main.
 //
@@ -28,11 +28,18 @@ const TOUTES_SCENES: Scene[] = [
   { heure: '22 h 14', titre: 'L’assistant répond seul (formule Studio)', texte: 'Avec Studio, l’assistant peut répondre seul, jour et nuit.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
   { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. D’un clic, le devis se chiffre sur vos prix, chaque ligne avec sa provenance. Avec Signature, une règle d’automatisation l’a déjà préparé.', appareil: 'ordinateur', image: '/demo/scene-3.webp', focus: '50% 0%' },
   { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone : acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.webp', focus: '50% 100%' },
+  // 15/10 — règle « vitrine » : l'assistant qui AGIT et le CRM (offre Signature) sont dans la démo, captures du vrai écran
+  // (scripts/demo-gestion-videos.mjs, compte de test jetable, aucune photo du portfolio CC BY-SA). Sous leurs drapeaux.
+  { heure: 'Avec Signature', titre: 'L’assistant fait le devis à votre place', texte: 'Vous tapez « Fais le devis de Mme Martin pour 12 m² de carrelage ». Il lit vos tarifs, prépare le brouillon ; ce qui part chez un client attend votre clic « Confirmer ».', appareil: 'ordinateur', image: '/demo/scene-6.webp', focus: '50% 0%' },
+  { heure: 'Avec Signature', titre: 'Le CRM : l’atelier sur une carte', texte: 'Vos chantiers, votre équipe et les alertes (retards, livraisons, stock bas) au même endroit, en temps réel. Ici sur des données d’exemple fictives.', appareil: 'ordinateur', image: '/demo/scene-7.webp', focus: '50% 0%' },
   // Relecture du 25/09 : le constructeur est fermé et le site ne se vend pas encore (siteCommandeVente) ; montrer ce
   // site comme « capture du produit réel » promettait ce qu'un nouvel inscrit ne peut pas obtenir. Il revient avec la vente.
   { heure: 'Votre site', titre: 'Tout ça, à votre marque', texte: `En option, à part de l’abonnement (${PRIX_SITE_TEXTE}, une fois) : le site qui amène la demande porte votre nom, votre adresse, vos réalisations. Jamais le nôtre.`, appareil: 'ordinateur', image: '/demo/scene-5.webp', focus: '50% 0%' },
 ]
-const SCENES = TOUTES_SCENES.filter((s) => s.image !== '/demo/scene-5.webp' || actif('siteCommandeVente'))
+const SCENES = TOUTES_SCENES.filter((s) =>
+  (s.image !== '/demo/scene-5.webp' || actif('siteCommandeVente'))
+  && (s.image !== '/demo/scene-6.webp' || FLAGS.assistant)
+  && (s.image !== '/demo/scene-7.webp' || FLAGS.crm))
 
 const DUREE = 4800
 

@@ -574,7 +574,7 @@ console.log('\n── D. Le code')
   ok('page : aucun bleu ni violet, jetons de la console', !/#[0-9a-f]{3,6}/i.test(lire('app/assistant/assistant.css')) && !/blue|violet|purple/i.test(lire('app/assistant/assistant.css')))
   ok('drapeau `assistant` levé (15/10, décision de Benj : ouvert à l’offre Signature)', FLAGS.assistant === true)
   ok('capacité : Signature et Business seulement, offre minimale Signature', ['signature', 'business'].every((p) => plans.peut(p, 'assistant')) && ['gratuit', 'essentiel', 'studio'].every((p) => !plans.peut(p, 'assistant')) && plans.offreMinimale('assistant') === 'signature')
-  ok('Tarifs : drapeau levé → la grille vend l’assistant, en Signature seulement', plans.GRILLE.some((l) => /assistant de gestion/i.test(l.label)) && /flag: 'assistant'/.test(lire('lib/plans.ts')) && /Assistant de gestion : devis, factures, stock, tarifs et CRM[^\n]*essentiel: false, studio: false, signature: true \}, flag: 'assistant'/.test(lire('lib/plans.ts')))
+  ok('Tarifs : drapeau levé → la grille vend l’assistant, en Signature seulement (lignes déclarées dans lib/plans.ts, cellules calculées depuis la capacité)', plans.GRILLE.some((l) => /assistant|conversation/i.test(l.label) && l.capacites.includes('assistant')) && plans.GRILLE_COMPLETE.filter((l) => l.capacites.includes('assistant')).every((l) => l.flag === 'assistant' && l.cellules.essentiel === false && l.cellules.studio === false && l.cellules.signature !== false))
   const sql = lire('supabase/migrations/0150_assistant.sql')
   const numeros = fs.readdirSync('supabase/migrations').map((f) => f.match(/^(\d{4})_/)?.[1]).filter(Boolean).map(Number)
   // 0150 est appliquée depuis le 12/10 (0151 et 0152 sont venues après, pour le CRM) : l'en-tête dit son état.

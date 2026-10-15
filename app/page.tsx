@@ -11,13 +11,16 @@ import BandeMots from '@/app/BandeMots'
 import DemoSequence from '@/app/DemoSequence'
 import DemoVideo from '@/app/DemoVideo'
 import DemoSite from '@/app/DemoSite'
+import DemoGestion from '@/app/DemoGestion'
 import DemoChiffres from '@/app/DemoChiffres'
 import DemoCompta from '@/app/DemoCompta'
 import MaquetteForm from '@/app/MaquetteForm'
 import { METIERS } from '@/lib/agents/acquisition/contrat'
 import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
-import { OFFRES, ESSAI_JOURS, pointsForts } from '@/lib/plans'
+import ComparatifConcurrents from '@/app/ComparatifConcurrents'
+import OffreDetail from '@/app/OffreDetail'
+import { OFFRES, ESSAI_JOURS } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
 
@@ -237,6 +240,7 @@ export default function Home() {
           <div className="container">
             <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, vous lancez le devis d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé), il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
             {FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}
+            {FLAGS.assistant && FLAGS.crm ? <DemoGestion /> : null}
             {FLAGS.landingDemoSite ? <DemoSite /> : null}
           </div>
         </section>
@@ -314,7 +318,7 @@ export default function Home() {
                   <div className="lp-essai" data-essai-gratuit={o.id}><b>{ESSAI_JOURS[o.id]} jours gratuits, sans carte</b></div>
                   <div className="lp-tva">TVA non applicable, art. 293 B du CGI</div>
                   <div className="lp-for">{o.accroche}</div>
-                  <ul className="lp-plist">{pointsForts(o.id).slice(0, 5).map((f) => <li key={f}>{f}</li>)}</ul>
+                  <OffreDetail id={o.id} classe="lp-plist" />
                   <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Essayer {ESSAI_JOURS[o.id]} jours gratuits</a>
                 </div>
               ))}
@@ -350,6 +354,15 @@ export default function Home() {
           </div>
         </section>
 
+        {/* COMPARATIF — Presti face aux autres logiciels de devis et factures : faits lus sur leurs sites, datés, mêmes critères
+            pour tous (lib/comparatifConcurrents.ts ; art. L122-1 du Code de la consommation ; scripts/comparatif-qa.mjs). */}
+        <section className="lp-blk" id="comparatif">
+          <div className="container">
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>07</i>Comparatif</span><h2>Presti et les autres logiciels de devis et factures.</h2><p>Les mêmes critères pour tous, lus sur le site de chaque éditeur. Les autres font très bien les devis et les factures ; Presti s&apos;occupe en plus de la demande qui arrive et de la gestion par la conversation.</p></div>
+            <div className="reveal"><ComparatifConcurrents /></div>
+          </div>
+        </section>
+
         {/* MAQUETTE — le formulaire d'entrée sans compte (décision 1 de Benj, 06/10 ; route 026-145, drapeau prospectsEntrant).
             Après les prix : pour l'artisan qui n'est pas prêt à créer un compte, une porte plus petite que l'essai. */}
         {actif('prospectsEntrant') ? (
@@ -372,7 +385,7 @@ export default function Home() {
             l'écran ce que le balisage décrit, et ce sont les objections qu'un artisan se pose avant d'essayer. */}
         <section className="lp-blk" id="questions">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>07</i>Avant d&apos;essayer</span><h2>Les questions qu&apos;on nous pose.</h2></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>08</i>Avant d&apos;essayer</span><h2>Les questions qu&apos;on nous pose.</h2></div>
             <div className="lp-faq">
               {FAQ.slice(0, 8).map((f) => (
                 <details className="faq-item" key={f.question}>

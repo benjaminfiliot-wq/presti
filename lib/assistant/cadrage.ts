@@ -8,9 +8,10 @@
 //  • le garde-fou des CHIFFRES : tout nombre de la réponse doit se trouver dans les données lues pendant le tour (ou
 //    dans ce que l'artisan a écrit). Un montant calculé ou deviné qui a l'air sourcé est pire qu'un montant absent.
 import { LIBELLE_OUTIL, OUTILS_CRM, type NomOutil } from './outils'
+import { ASSISTANT_TOURS_MAX } from '../plans'
 
-/** Décision de Benj du 12/10 (plan §9.2) : 20 tours par conversation, revu après un mois de mesures. */
-export const PLAFOND_TOURS = 20
+/** Décision de Benj du 12/10 (plan §9.2) : 20 tours par conversation, revu après un mois de mesures. La valeur vit dans lib/plans.ts (la grille des offres l'affiche). */
+export const PLAFOND_TOURS = ASSISTANT_TOURS_MAX
 /** Appels au modèle au plus DANS un tour (lectures, actions, conclusion) : borne le coût d'un tour. */
 export const ETAPES_MAX = 8
 /** Temps maximal d'un tour (maxDuration de la route = 60 s, il faut garder de la marge). */
