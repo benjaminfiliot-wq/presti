@@ -19,7 +19,7 @@ const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c)
 // @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
 // execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
 // client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
-const st = Date.now(), slug = `in-${st}`, email = `in.${st}@presti-test.invalid`, pw = 'Test123456!'
+const st = Date.now(), slug = `in-${st}`, email = `in.${st}@presti-test.invalid`, pw = 'Test123456!Aa9'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: true,

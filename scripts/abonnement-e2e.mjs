@@ -184,7 +184,8 @@ try {
   T('is_founder forcé à false', a1?.is_founder === false)
   T('aucun identifiant Stripe', !a1?.stripe_customer_id && !a1?.stripe_subscription_id)
   T('l’essai n’ouvre pas l’inventaire (🔒 Studio)', !peut('gratuit', 'inventaire.stock') && !peut('gratuit', 'plateforme.ia.auto'))
-  T('mais ouvre la plateforme et les devis IA', peut('gratuit', 'plateforme.conversation') && peut('gratuit', 'devis.ia'))
+  // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme » — l'Essai a les devis IA, pas la plateforme (qui commence avec Studio).
+  T('mais ouvre les devis IA, sans la plateforme (Studio)', !peut('gratuit', 'plateforme.conversation') && peut('gratuit', 'devis.ia'))
   // Le verrou serveur, pas seulement l'affichage :
   const rInv = await fetch(`${BASE}/api/inventaire`, { headers: { Authorization: `Bearer ${A.jeton}` } })
   T('GET /api/inventaire → 403 pour l’essai', rInv.status === 403, `HTTP ${rInv.status}${rInv.status === 403 ? '' : ' (IP bannie ? node scripts/purger-abus.mjs)'}`)
@@ -197,7 +198,7 @@ try {
   for (const o of OFFRES) {
     let s
     if (VIA_SERVEUR) {
-      const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${A.jeton}` }, body: JSON.stringify({ plan: o.id }) })
+      const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${A.jeton}` }, body: JSON.stringify({ plan: o.id, mode: 'payer' }) })   // 16/10 : le montant annoncé est celui du choix « payer » (le choix « essai » démarre à 0 €, jugé par essais-gratuits-qa.mjs)
       const d = await r.json().catch(() => ({}))
       T(`${o.label} · /api/subscribe rend une page de paiement`, r.ok && /^https:\/\/checkout\.stripe\.com\//.test(d.url ?? ''), `HTTP ${r.status} ${d.error ?? ''}`)
       const id = (d.url ?? '').match(/\/(cs_(?:test|live)_[A-Za-z0-9]+)/)?.[1]
@@ -311,7 +312,7 @@ try {
     const b7 = await lire(B.uid)
     T('plan = gratuit après résiliation', b7?.plan === 'gratuit', b7?.plan)
     T('l’abonnement est détaché, le client Stripe reste (réabonnement sans re-saisie)', b7?.stripe_subscription_id === null && b7?.stripe_customer_id === cus, JSON.stringify(b7))
-    T('les crédits restants ne sont pas effacés à la résiliation', Number(b7?.credits) === Number(b5?.credits), `${b7?.credits} vs ${b5?.credits}`)
+    T('les crédits restants ne sont pas effacés à la résiliation (ceux d’avant la résiliation : après le changement d’offre)', Number(b7?.credits) === Number(b6?.credits), `${b7?.credits} vs ${b6?.credits}`)
     const rInvB2 = await fetch(`${BASE}/api/inventaire`, { headers: { Authorization: `Bearer ${B.jeton}` } })
     T('l’inventaire se referme (403) mais ses données restent en base', rInvB2.status === 403, `HTTP ${rInvB2.status}`)
     E('un email d’annulation Presti part vers l’artisan (alertePaiement(\'annulation\'))', /alertePaiement\(\s*'annulation'/.test(routeWh))
@@ -402,7 +403,8 @@ try {
   console.log('\n── 7. Le prospect d’un artisan à 0 crédit n’est jamais bloqué (et l’IA n’est pas appelée)')
   // Un fil de conversation existant, l'artisan à sec avec une date de renouvellement FUTURE
   // (sinon le reset paresseux lui rendrait 3 crédits et la route appellerait l'IA).
-  await admin.from('artisans').update({ credits: 0, credits_reset_le: plusUnMois(), reponse_auto: true }).eq('id', C.uid)
+  // La plateforme (page de conversation) commence avec Studio depuis le 15/10 : l'artisan à sec est donc un Studio, sinon la conversation est refusée avant tout.
+  await admin.from('artisans').update({ plan: 'studio', credits: 0, credits_reset_le: plusUnMois(), reponse_auto: true }).eq('id', C.uid)
   const jetonConv = crypto.randomUUID()
   const { data: lead, error: eLead } = await admin.from('leads').insert({ artisan_id: C.uid, nom_prospect: 'Prospect test', contact: 'prospect@presti-test.invalid', message: 'Bonjour, une question', statut: 'nouveau', token: jetonConv }).select('id').single()
   T('un fil de conversation de test existe', !eLead && !!lead?.id, eLead?.message)

@@ -39,7 +39,7 @@ const contraste = (a, b) => { const [h, l] = lum(a) > lum(b) ? [lum(a), lum(b)] 
 // @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
 // execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
 // client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
-const st = Date.now(), slug = `pe-${st}`, email = `pe.${st}@presti-test.invalid`, pwd = 'Test123456!'
+const st = Date.now(), slug = `pe-${st}`, email = `pe.${st}@presti-test.invalid`, pwd = 'Test123456!Aa9'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pwd, email_confirm: true }) })).json()
 if (!u?.id) { console.error('création utilisateur impossible', u); process.exit(1) }
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({

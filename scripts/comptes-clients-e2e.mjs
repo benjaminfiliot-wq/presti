@@ -19,7 +19,7 @@ const mk = async (n) => {
 // execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
 // client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
   const email = `ca${n}.${st}@presti-test.invalid`, slug = `ca${n}-${st}`
-  const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
+  const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!Aa9', email_confirm: true }) })).json()
   await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: `Atelier ${n}`, metier: 'Menuisier', slug, plan: 'business', plateforme_active: true }) })
   return { id: u.id, slug }
 }

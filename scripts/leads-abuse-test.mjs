@@ -3,7 +3,7 @@ const env=Object.fromEntries(fs.readFileSync('.env.local','utf8').split(/\r?\n/)
 const SB=env.NEXT_PUBLIC_SUPABASE_URL,SVC=env.SUPABASE_SERVICE_ROLE_KEY
 const H={apikey:SVC,Authorization:`Bearer ${SVC}`,'Content-Type':'application/json'}
 const st=Date.now(),slug=`lead-${st}`,email=`l.${st}@example.com`
-const u=await(await fetch(`${SB}/auth/v1/admin/users`,{method:'POST',headers:H,body:JSON.stringify({email,password:'Test123456!',email_confirm:true})})).json()
+const u=await(await fetch(`${SB}/auth/v1/admin/users`,{method:'POST',headers:H,body:JSON.stringify({email,password:'Test123456!Aa9',email_confirm:true})})).json()
 await fetch(`${SB}/rest/v1/artisans`,{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({id:u.id,email,nom:'T',metier:'Plombier',ton_style:'pro',slug})})
 const post=(body,ip)=>fetch('http://localhost:3200/api/leads',{method:'POST',headers:{'Content-Type':'application/json','x-forwarded-for':ip},body:JSON.stringify(body)})
 const countLeads=async()=>(await(await fetch(`${SB}/rest/v1/leads?artisan_id=eq.${u.id}&select=id`,{headers:H})).json()).length

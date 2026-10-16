@@ -9,7 +9,7 @@ const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-o
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 
-const st = Date.now(), email = `inbox.${st}@example.com`, pw = 'Test123456!'
+const st = Date.now(), email = `inbox.${st}@example.com`, pw = 'Test123456!Aa9'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `inbox-${st}`, plan: 'business', tva_regime: 'franchise', accent: '#D97757' }) })
 

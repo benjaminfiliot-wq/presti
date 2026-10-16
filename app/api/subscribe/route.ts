@@ -52,7 +52,10 @@ export async function POST(req: Request) {
     }
     const origin = req.headers.get('origin') || 'https://prestiapp.fr'
     const decision = await evaluerEssai({ uid, email: artisan?.email ?? userData.user.email, stripeCustomerId: artisan?.stripe_customer_id, stripeSubscriptionId: artisan?.stripe_subscription_id })
-    const essai = champsCheckoutEssai(offre.id, decision.essai)
+    // Les DEUX choix de l'artisan (Benj, 16/10) : « essai » (défaut) = les semaines gratuites sans carte, quand le compte y a droit ;
+    // « payer » = s'abonner tout de suite, carte demandée au Checkout, sans essai (et sans consommer le droit à l'essai).
+    const payerTout = b?.mode === 'payer'
+    const essai = champsCheckoutEssai(offre.id, decision.essai && !payerTout)
 
     // La TVA n'est calculée que si Stripe Tax est configuré côté compte (adresse d'origine et
     // immatriculations renseignées). Tant que ce n'est pas fait, demander le calcul automatique

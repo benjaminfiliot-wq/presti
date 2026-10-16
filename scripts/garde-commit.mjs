@@ -20,6 +20,9 @@ const REGLES = [
   // du format légataire, et laissait passer un `sb_secret_…` copié dans un fichier. La garde
   // protégeait contre le format qu'on n'utilise plus.
   { re: /sb_secret_[A-Za-z0-9_-]{12,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé de service Supabase (format actuel) en clair dans le dépôt' },
+  // Simulation générale du 16/10 : la base refuse désormais un mot de passe de moins de 12 caractères (weak_password). Vingt-trois suites créaient
+  // leurs comptes avec « Test123456! » (11 caractères) : aucun compte ne naissait, la suite s'arrêtait avant son premier contrôle.
+  { re: /Test123456!['"`]/, ou: ['scripts'], quoi: 'mot de passe de compte de test de 11 caractères : la base en exige 12 au moins, la suite ne crée plus aucun compte (simulation générale, 16/10)' },
   { re: /rk_live_[A-Za-z0-9]{8,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé Stripe restreinte LIVE en clair dans le dépôt' },
 ]
 const EXT = new Set(['.ts', '.tsx', '.mjs', '.js', '.md', '.sql', '.json', '.yml'])

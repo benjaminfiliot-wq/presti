@@ -15,7 +15,7 @@ const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c)
 // execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
 // client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
 const st = Date.now(), slug = `ch-${st}`, email = `ch.${st}@presti-test.invalid`
-const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
+const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!Aa9', email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business', accent: '#C6853F', theme: 'atelier',
   plateforme_active: true, reponse_auto: false, // manuel → pas de coût IA pendant le test

@@ -324,6 +324,7 @@ export default function Home() {
                   <div className="lp-for">{o.accroche}</div>
                   <OffreDetail id={o.id} classe="lp-plist" />
                   <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Essayer {ESSAI_JOURS[o.id]} jours gratuits</a>
+                  <a className="lp-pay" href={`/signup?abonnement=${o.id}`} data-payer-direct={o.id}>Ou vous abonner directement, sans essai</a>
                 </div>
               ))}
             </div>

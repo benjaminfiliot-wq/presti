@@ -16,7 +16,7 @@ const rest = (p, o = {}, key = SVC) => fetch(`${SB}/rest/v1/${p}`, { ...o, heade
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
 const signin = async (email, pw) => { const j = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json(); await verifierSessionTest(j.access_token); return j.access_token }
-const st = Date.now(), email = `mx.${st}@example.com`, pw = 'Test123456!', slug = `mx-${st}`
+const st = Date.now(), email = `mx.${st}@example.com`, pw = 'Test123456!Aa9', slug = `mx-${st}`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Atelier Test', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: false }) })
 // lead avec un message entrant du prospect (contact = email pour tester la remise email)

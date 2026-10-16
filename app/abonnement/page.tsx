@@ -24,6 +24,9 @@ export default function Abonnement() {
   const [msg, setMsg] = useState<string | null>(null)
   // Droit à l'essai gratuit sans carte (GET /api/subscribe) : « jours gratuits, sans carte » ne s'écrit que si c'est vrai pour CE compte.
   const [essai, setEssai] = useState(false)
+  // Venu de « s'abonner directement » (/abonnement?offre=studio) : cette offre est mise en avant.
+  const [voulue, setVoulue] = useState<string | null>(null)
+  useEffect(() => { const o = new URLSearchParams(window.location.search).get('offre'); setVoulue(o === 'essentiel' || o === 'studio' || o === 'signature' ? o : null) }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -35,10 +38,10 @@ export default function Abonnement() {
     })
   }, [router])
 
-  async function souscrire(id: string) {
+  async function souscrire(id: string, mode: 'essai' | 'payer' = 'essai') {
     setBusy(id); setMsg(null)
     const { data } = await supabase.auth.getSession()
-    const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ plan: id }) })
+    const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ plan: id, mode }) })
     const d = await res.json().catch(() => ({}))
     if (res.status === 409 && d.portail) {
       // Déjà abonné : on l'emmène directement changer d'offre dans son portail de facturation.
@@ -79,7 +82,7 @@ export default function Abonnement() {
               const abonne = OFFRES.some((x) => x.id === plan)
               const current = plan === o.id
               return (
-                <div key={o.id} className={`abo-card${current ? ' feat actuelle' : !abonne && o.id === 'studio' ? ' feat' : ''}`} aria-current={current ? 'true' : undefined}>
+                <div key={o.id} className={`abo-card${current ? ' feat actuelle' : (voulue ? voulue === o.id : !abonne && o.id === 'studio') ? ' feat' : ''}`} aria-current={current ? 'true' : undefined}>
                   {current && <span className="abo-tag">Votre formule</span>}
                   <div className="abo-name">{o.label}</div>
                   <div className="abo-price">{o.prix}€<small>/mois</small></div>
@@ -90,7 +93,13 @@ export default function Abonnement() {
                   <OffreDetail id={o.id} classe="abo-list" />
                   {current
                     ? <button className="psh-btn ghost" disabled>Formule actuelle</button>
-                    : <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} disabled={busy === o.id} onClick={() => souscrire(o.id)}>{busy === o.id ? 'Redirection…' : essai ? `Essayer ${ESSAI_JOURS[o.id]} jours gratuits` : `S’abonner à ${o.label}`}</button>}
+                    : essai
+                      // Les DEUX choix, côte à côte (Benj, 16/10) : les semaines gratuites sans carte, ou payer tout de suite.
+                      ? <div className="abo-choix" data-abo-choix={o.id}>
+                          <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} data-abo-essai={o.id} disabled={busy === o.id} onClick={() => souscrire(o.id, 'essai')}>{busy === o.id ? 'Redirection…' : `Essayer ${ESSAI_JOURS[o.id]} jours gratuits`}</button>
+                          <button className="psh-btn ghost" data-abo-payer={o.id} disabled={busy === o.id} onClick={() => souscrire(o.id, 'payer')}>{`Payer maintenant — ${o.prix} €/mois`}</button>
+                        </div>
+                      : <button className={`psh-btn ${o.id === 'studio' ? 'primary' : 'ghost'}`} data-abo-payer={o.id} disabled={busy === o.id} onClick={() => souscrire(o.id, 'payer')}>{busy === o.id ? 'Redirection…' : `S’abonner à ${o.label}`}</button>}
                 </div>
               )
             })}

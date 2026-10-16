@@ -7,7 +7,7 @@ const APP = process.argv[2] || 'http://localhost:3400'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 
-const st = Date.now(), email = `mapi.${st}@example.com`, pw = 'Test123456!'
+const st = Date.now(), email = `mapi.${st}@example.com`, pw = 'Test123456!Aa9'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Test Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `mapi-${st}`, plan: 'business', is_founder: true }) })
 const [lead] = await (await rest('leads', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, nom_prospect: 'Paul Durand', contact: 'paul.durand@example.com', message: 'Installation de deux radiateurs dans le séjour, possible ?', statut: 'nouveau' }) })).json()

@@ -202,7 +202,9 @@ const { peut, offreMinimale } = await import('../lib/plans.ts').catch(() => ({})
 if (peut) {
   // L'essai (gratuit) = l'Essentiel avec 3 crédits (décision Benj 04/09) : le socle est ouvert à tous.
   const ATTENDU = {
-    'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit', 'site.domaine_perso': 'gratuit',
+    // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme » — comptes clients, boîte e-mail branchée et nom de domaine sur la page commencent avec Studio.
+    'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit',
+    'plateforme.comptes_clients': 'studio', 'canaux.email': 'studio', 'plateforme.domaine_perso': 'studio', 'site.domaine_perso': 'studio',
     'export': 'studio', 'plateforme.personnalisation_avancee': 'studio', 'inventaire.recherche_ia': 'studio', 'canaux.whatsapp': 'studio',
     'plateforme.ia.expert': 'signature', 'canaux.reseaux': 'signature', 'support.prioritaire': 'signature',
     'assistant': 'signature',

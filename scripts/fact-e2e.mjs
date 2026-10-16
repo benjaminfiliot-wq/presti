@@ -10,7 +10,7 @@ const env = Object.fromEntries(fs.readFileSync('C:/Users/benja/Documents/presti/
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const H = { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' }
 
-const st = Date.now(), email = `fact.${st}@example.com`, pass = 'Test123456!'
+const st = Date.now(), email = `fact.${st}@example.com`, pass = 'Test123456!Aa9'
 const u = await (await fetch(`${SB}/auth/v1/admin/users`, { method: 'POST', headers: H, body: JSON.stringify({ email, password: pass, email_confirm: true }) })).json()
 await fetch(`${SB}/rest/v1/artisans`, { method: 'POST', headers: { ...H, Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `fact-${st}`, tva_regime: 'reel', iban: 'FR76 3000 4000 0512 3456 7890 143', siret: '123 456 789 00012', adresse: '12 rue des Lilas', code_postal: '17230', ville: 'Marans', forme_juridique: 'SARL', assurance_nom: 'AXA France IARD', assurance_contrat: 'DEC-1001' })})
 

@@ -25,8 +25,10 @@ async function auth(req: Request) {
 
 // ── GET : la liste des canaux. Le secret n'est JAMAIS renvoyé.
 export async function GET(req: Request) {
-  const a = await auth(req)
-  if ('error' in a) return NextResponse.json({ error: a.error }, { status: a.status })
+  // Même verrou que le POST (Studio et au-dessus) : une offre sans plateforme ne lit pas non plus la liste (simulation générale du 16/10).
+  const g = await exigerCapacite(req, 'canaux.email', 'La boîte e-mail branchée')
+  if ('reponse' in g) return g.reponse
+  const a = { uid: g.uid }
   const { data } = await supabaseAdmin.from('canaux')
     .select('id, type, libelle, adresse, imap_hote, imap_port, smtp_hote, smtp_port, actif, derniere_releve, derniere_erreur, cree_le')
     // Les boîtes e-mail seulement : les comptes Meta reliés (0139) ont leur liste, GET /api/canaux/meta/liaison.

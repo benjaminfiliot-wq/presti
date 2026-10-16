@@ -12,7 +12,7 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 const shot = (label, c1, c2) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="675"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="900" height="675" fill="url(#g)"/><text x="450" y="350" font-family="Georgia, serif" font-size="34" fill="rgba(255,255,255,.7)" text-anchor="middle">${label}</text></svg>`)
 
 const st = Date.now(), email = `site.${st}@example.com`
-const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
+const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!Aa9', email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier ébéniste', slug: `site-${st}`, plan: 'business',
   accent: '#C6853F', site_active: true, site_tier: TIER, plateforme_active: true,

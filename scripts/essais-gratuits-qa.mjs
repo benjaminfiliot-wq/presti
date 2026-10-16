@@ -223,8 +223,8 @@ export async function resolve(spec, ctx, next) {
     subscribe = await import(url('app/api/subscribe/route.ts'))
     webhook = await import(url('app/api/stripe/webhook/route.ts'))
   } catch (e) { return fatal(e) }
-  const poster = async (plan, jeton = 'valide') => {
-    const res = await subscribe.POST(new Request('http://127.0.0.1/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${jeton}`, origin: 'http://127.0.0.1' }, body: JSON.stringify({ plan }) }))
+  const poster = async (plan, jeton = 'valide', mode = null) => {
+    const res = await subscribe.POST(new Request('http://127.0.0.1/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${jeton}`, origin: 'http://127.0.0.1' }, body: JSON.stringify({ plan, ...(mode ? { mode } : {}) }) }))
     return { status: res.status, corps: await res.json().catch(() => ({})) }
   }
   const lire = async () => { const res = await subscribe.GET(new Request('http://127.0.0.1/api/subscribe', { headers: { authorization: 'Bearer valide' } })); return { status: res.status, corps: await res.json().catch(() => ({})) } }
@@ -241,6 +241,16 @@ export async function resolve(spec, ctx, next) {
     T(`EG-2a ${o.id} métadonnées`, s?.metadata?.essai_jours === String(o.jours) && s?.metadata?.plan === o.id && s?.metadata?.uid === 'u-0001' && s?.subscription_data?.metadata?.plan === o.id && s?.subscription_data?.metadata?.uid === 'u-0001', j(s?.metadata))
     T(`EG-2a ${o.id} prix et adresse inchangés`, s?.mode === 'subscription' && s?.line_items?.[0]?.price_data?.unit_amount === o.prixCentimes && s?.billing_address_collection === 'required', `unit_amount = ${s?.line_items?.[0]?.price_data?.unit_amount}`)
     T(`EG-2a ${o.id} GET`, (await lire()).corps?.essai?.disponible === true, 'GET /api/subscribe doit annoncer l’essai disponible')
+    // EG-2d (16/10) : le DEUXIÈME choix, « payer » — même compte, même offre, mais carte demandée tout de suite, sans essai, et le droit à l'essai reste intact.
+    const ep = neuf()
+    const rp = await poster(o.id, 'valide', 'payer')
+    const sp = ep.sessions[0]
+    T(`EG-2d ${o.id} payer : session créée, au prix de la grille`, rp.status === 200 && ep.sessions.length === 1 && rp.corps.url && sp?.mode === 'subscription' && sp?.line_items?.[0]?.price_data?.unit_amount === o.prixCentimes, j(rp))
+    T(`EG-2d ${o.id} payer : aucun essai, carte demandée tout de suite`, sansEssai(sp), j(sp?.subscription_data))
+    T(`EG-2d ${o.id} payer : l'offre reste celle choisie (métadonnées sans essai_jours)`, sp?.metadata?.plan === o.id && sp?.metadata?.uid === 'u-0001' && !('essai_jours' in (sp?.metadata || {})), j(sp?.metadata))
+    T(`EG-2d ${o.id} payer : le droit à l'essai n'est pas consommé`, (await lire()).corps?.essai?.disponible === true)
+    const pm = neuf(); const rm = await poster(o.id, 'valide', 'essai')
+    T(`EG-2d ${o.id} mode « essai » explicite = l'essai`, rm.status === 200 && pm.sessions[0]?.subscription_data?.trial_period_days === o.jours, j(pm.sessions[0]?.subscription_data))
   }
   {
     const e = neuf({ registre: [{ email_hash: 'autre', artisan_id: 'u-0001', plan: 'essentiel', jours: 7 }] })
@@ -466,7 +476,17 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
   const dites = toutes.filter(({ l }) => /jours gratuits, sans carte/i.test(l))
   T('« jours gratuits, sans carte » seulement à côté de ESSAI_JOURS', dites.length >= 2 && dites.every(({ l }) => /ESSAI_JOURS/.test(l)), dites.filter((x) => !/ESSAI_JOURS/.test(x.l)).map((x) => `${x.f}:${x.n}`).join(', '))
   const abo = lire('app/abonnement/page.tsx')
-  T('/abonnement : l’essai ne s’affiche que si le serveur le confirme (GET /api/subscribe)', /essai\s*&&\s*!current\s*\?[^\n]*jours gratuits, sans carte/.test(abo) && /essai\s*\?\s*`Essayer/.test(abo) && /fetch\('\/api\/subscribe'/.test(abo))
+  T('/abonnement : l’essai ne s’affiche que si le serveur le confirme (GET /api/subscribe)', /essai\s*&&\s*!current\s*\?[^\n]*jours gratuits, sans carte/.test(abo) && /essai\s*(?:\/\/[^\n]*\n\s*)?\?\s*<div[^>]*abo-choix[\s\S]*?`Essayer \$\{ESSAI_JOURS/.test(abo) && /fetch\('\/api\/subscribe'/.test(abo))
+  // 16/10 (Benj : « pour chaque abonnement, deux options : soit tu paies, soit tu utilises des semaines gratuites ») : les DEUX choix existent,
+  // sur /abonnement, dans Paramètres et sur l'accueil, et « payer » désactive l'essai côté Checkout sans consommer le droit à l'essai.
+  const route = lire('app/api/subscribe/route.ts'), param = lire('app/parametres/SectionAbonnement.tsx')
+  T('/abonnement : le choix « essai » ET le choix « payer » sont côte à côte (le paiement existe aussi sans essai)', /data-abo-essai=\{o\.id\}/.test(abo) && /data-abo-payer=\{o\.id\}/.test(abo) && /souscrire\(o\.id, 'payer'\)/.test(abo) && /souscrire\(o\.id, 'essai'\)/.test(abo))
+  T('Paramètres : le choix « payer » existe à côté de l’essai', /souscrire\(id, 'payer'\)/.test(param) && /data-abo-payer=\{id\}/.test(param) && /mode\s*\}\)/.test(param))
+  T('accueil : chaque offre propose « s’abonner directement » en plus de l’essai', /data-payer-direct=\{o\.id\}/.test(lire('app/page.tsx')) && /abonnement=\$\{o\.id\}/.test(lire('app/page.tsx')))
+  const inscription = lire('app/signup/page.tsx'), suite = lire('lib/suiteSure.ts')
+  T('« s’abonner directement » (accueil) : l’inscription poursuit vers le paiement de CETTE offre, et seulement vers elle', /get\('abonnement'\)/.test(inscription) && /voulue === 'essentiel' \|\| voulue === 'studio' \|\| voulue === 'signature'/.test(inscription) && /\/onboarding\?suite=/.test(inscription)
+    && /\^\\\/abonnement\\\?offre=\(essentiel\|studio\|signature\)\$/.test(suite))
+  T('/api/subscribe : mode « payer » = Checkout sans essai (carte tout de suite), le droit à l’essai n’est pas consommé', /b\?\.mode === 'payer'/.test(route) && /champsCheckoutEssai\(offre\.id, decision\.essai && !payerTout\)/.test(route))
   const carte = toutes.filter(({ l }) => /sans carte/i.test(l))
   const PERMIS = new Set(['app/page.tsx', 'app/abonnement/page.tsx', 'app/cgu/page.tsx', 'app/parametres/SectionAbonnement.tsx', 'lib/aide.ts', 'lib/faq.ts', 'lib/plans.ts', 'lib/comparatifConcurrents.ts', 'lib/crieur/faits.ts', 'lib/essaiGratuitServeur.ts', 'app/api/stripe/webhook/route.ts'])
   const intrus = carte.filter((x) => !PERMIS.has(x.f))
@@ -502,6 +522,7 @@ if (!args.includes('--sans-mutations')) {
   console.log('\n— EG-5 : 13 mutations, chacune doit être vue —')
   const MUTATIONS = [
     { nom: 'la durée de Studio passe de 14 à 15 jours', fichier: 'lib/plans.ts', de: 'studio: 14,', vers: 'studio: 15,', attendu: 'EG-1a' },
+    { nom: 'le mode « payer » est ignoré (l’essai part quand même)', fichier: 'app/api/subscribe/route.ts', de: 'decision.essai && !payerTout', vers: 'decision.essai', attendu: 'EG-2d' },
     { nom: 'le Checkout redemande la carte', fichier: 'lib/essaiGratuit.ts', de: "payment_method_collection: 'if_required',\n    jours,", vers: "payment_method_collection: 'always',\n    jours,", attendu: 'EG-2a' },
     { nom: 'sans carte à la fin, Stripe ne résilie plus', fichier: 'lib/essaiGratuit.ts', de: "trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } },\n  }", vers: "trial_settings: { end_behavior: { missing_payment_method: 'create_invoice' } } },\n  }", attendu: 'EG-2a' },
     { nom: 'le Checkout oublie subscription_data de l’essai', fichier: 'app/api/subscribe/route.ts', de: '...(essai.subscription_data ?? {}) },', vers: '},', attendu: 'EG-2a' },

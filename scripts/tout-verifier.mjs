@@ -164,6 +164,10 @@ export const HORS_LANCEUR = {
   'purger-comptes-test.mjs': 'outil de ménage, pas un test',
   'purger-donnees-test.mjs': 'outil de ménage, pas un test',
   'lib/connexion-test.mjs': 'bibliothèque partagée par les suites, pas une suite',
+  'simulation-generale.mjs': 'simulation générale (16/10) : exige un build local (PRESTI_DIST=.next-simulation npm run build), lance son propre serveur, ses comptes et ses sessions Stripe de test ; à jouer à la main avant un lancement, pas dans la rafale',
+  'lib/sim-serveur.mjs': 'bibliothèque de simulation-generale.mjs (serveur local de production), pas une suite',
+  'lib/sim-ia-proxy.mjs': 'bibliothèque de simulation-generale.mjs (compteur d’appels IA), pas une suite',
+  'lib/sim-preload.cjs': 'bibliothèque de simulation-generale.mjs (interception des e-mails et journal Stripe), pas une suite',
   // Sondes de diagnostic : écrites pour répondre à UNE question un jour donné, gardées parce
   // qu'elles resservent. Elles ne s'exécutent pas la nuit — mais elles le disent ici, sinon on ne
   // distingue plus « écarté volontairement » de « oublié ».

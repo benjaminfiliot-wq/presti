@@ -10,7 +10,7 @@ const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const H = { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' }
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { ...H, ...(o.headers || {}) } })
 
-const st = Date.now(), email = `list.${st}@example.com`, pass = 'Test123456!'
+const st = Date.now(), email = `list.${st}@example.com`, pass = 'Test123456!Aa9'
 const u = await (await fetch(`${SB}/auth/v1/admin/users`, { method: 'POST', headers: H, body: JSON.stringify({ email, password: pass, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `list-${st}`, tva_regime: 'franchise' }) })
 const mkDevis = async (num, objet, cli, ttc, statut) => (await (await rest('devis?select=id', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, numero: num, objet, client_nom: cli, statut, total_ttc: ttc }) })).json())[0]

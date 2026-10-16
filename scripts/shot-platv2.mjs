@@ -11,7 +11,7 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 // Placeholder "photo" en SVG (dégradé + label), encodé en data URL.
 const shot = (label, c1, c2) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="600" height="450" fill="url(#g)"/><text x="300" y="235" font-family="sans-serif" font-size="30" fill="rgba(255,255,255,.85)" text-anchor="middle">${label}</text></svg>`)
 
-const st = Date.now(), email = `platv2.${st}@example.com`, pw = 'Test123456!'
+const st = Date.now(), email = `platv2.${st}@example.com`, pw = 'Test123456!Aa9'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Duval Rénovation', metier: 'Multiservices / Rénovation', slug: `platv2-${st}`, plan: 'business',

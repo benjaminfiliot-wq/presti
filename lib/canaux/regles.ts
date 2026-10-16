@@ -9,7 +9,7 @@ export const estCanalConversation = (x: unknown): x is CanalConversation => type
 
 const DRAPEAU: Record<CanalConversation, Flag> = { whatsapp: 'canauxWhatsapp', messenger: 'canauxReseaux', instagram: 'canauxReseaux', leboncoin: 'canauxLeboncoin' }
 // La grille (lib/plans.ts) : WhatsApp à partir de Studio, réseaux sociaux en Signature. Le Bon Coin passe par la boîte
-// e-mail branchée : il suit la capacité « canaux.email », ouverte à toutes les formules.
+// e-mail branchée : il suit la capacité « canaux.email » (Studio et au-dessus depuis le 15/10 : la boîte branchée fait partie de la plateforme).
 const CAPACITE: Record<CanalConversation, Capacite> = { whatsapp: 'canaux.whatsapp', messenger: 'canaux.reseaux', instagram: 'canaux.reseaux', leboncoin: 'canaux.email' }
 
 export const canalOuvert = (c: CanalConversation): boolean => actif(DRAPEAU[c])

@@ -10,7 +10,7 @@ const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, AN
 const H = { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' }
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { ...H, ...(o.headers || {}) } })
 
-const st = Date.now(), email = `pf.${st}@example.com`, pass = 'Test123456!'
+const st = Date.now(), email = `pf.${st}@example.com`, pass = 'Test123456!Aa9'
 const u = await (await fetch(`${SB}/auth/v1/admin/users`, { method: 'POST', headers: H, body: JSON.stringify({ email, password: pass, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `pf-${st}`, tva_regime: 'franchise' }) })
 const fac = (await (await rest('factures?select=id', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, numero: 'FAC-2026-0099', objet: 'Test annulation', client_nom: 'Marie Lefèvre', statut: 'emise', total_ttc: 968, date_echeance: '2026-09-27' }) })).json())[0]

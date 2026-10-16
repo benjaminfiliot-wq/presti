@@ -203,6 +203,9 @@ try {
       await artisanRefus('devis automatique depuis une conversation', 'POST', '/api/devis/auto', plateforme ? { lead_id: '' } : { lead_id: lead.id })
       await artisanRefus('brancher une boîte e-mail', 'POST', '/api/canaux', { adresse: 'pas-un-mail', mot_de_passe: 'x' })
       await artisanRefus('relever la boîte e-mail', 'POST', '/api/canaux/relever', {})
+      // 16/10 (simulation générale) : la LISTE des boîtes branchées (GET) est fermée comme le branchement (POST) — elle répondait 200 à toutes les offres.
+      const listeCanaux = await artisanRefus('lister les boîtes e-mail branchées', 'GET', '/api/canaux')
+      if (!plateforme) T('sans plateforme · la liste des boîtes e-mail ne contient aucune donnée', !('canaux' in listeCanaux.corps), JSON.stringify(listeCanaux.corps).slice(0, 100))
       if (!plateforme) {
         const d = await appel('POST', '/api/domain', { domaine: `ecrans-offre-${plan}-${horodatage}.test` })
         const dom = (await admin.from('artisans').select('domaine').eq('id', u.user.id).maybeSingle()).data?.domaine

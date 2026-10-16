@@ -70,7 +70,9 @@ export default function SignupPage() {
       return
     }
     if (data.session) {
-      router.push('/outils')
+      // Venu de l'offre « s'abonner directement » de l'accueil (?abonnement=studio) : on poursuit vers le paiement de CETTE offre.
+      const voulue = new URLSearchParams(window.location.search).get('abonnement')
+      router.push(voulue === 'essentiel' || voulue === 'studio' || voulue === 'signature' ? `/onboarding?suite=${encodeURIComponent(`/abonnement?offre=${voulue}`)}` : '/outils')
     } else {
       setMsg({
         type: 'ok',

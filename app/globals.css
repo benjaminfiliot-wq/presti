@@ -2357,6 +2357,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .abo-essai,.lp-essai{font-size:.8rem;margin:.55rem 0 0;color:var(--accent-ink)}
 .lp-essai{color:var(--co2)}
 .lp-tva{font-size:.72rem;color:var(--muted);margin-top:.2rem}
+/* Les deux choix d'une offre payante (16/10) : les semaines gratuites, ou payer tout de suite. */
+.abo-choix{display:flex;flex-direction:column;gap:.5rem}
+.lp-pay{display:block;margin-top:.6rem;text-align:center;font-size:.85rem;color:var(--co2);text-decoration:underline;text-underline-offset:3px;padding:.5rem 0;min-height:44px;line-height:1.6}
 
 /* ── Formulaire de contact public (/contact) ── */
 .ct-intro{color:var(--muted);max-width:52ch;margin:.2rem 0 1.6rem}

@@ -508,7 +508,7 @@ export async function partieVive({ ok, egal, ia }) {
       residus += count ?? 0
     }
     ok('nettoyage : les comptes de test et tout ce qui leur appartient sont supprimés (aucun résidu)', comptes.length > 0 && restes.length === 0 && residus === 0, `${restes.join(' | ')} résidus=${residus}`)
-    ok('le drapeau `assistant` du dépôt n’a pas bougé (la suite ne le lève que dans son processus)', ancienFlag === false && flags.FLAGS.assistant === false)
+    ok('le drapeau `assistant` du dépôt n’a pas bougé (la suite le lève ou le baisse dans son processus, puis le remet comme elle l’a trouvé : levé depuis le 15/10)', flags.FLAGS.assistant === ancienFlag)
   }
 }
 

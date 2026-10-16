@@ -49,7 +49,8 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
   const pct = inclus ? Math.round((consommes / inclus) * 100) : 0
   const ref = reference(plan)
   const ordre: PlanPayant[] = ['essentiel', 'studio', 'signature']
-  const superieures = ordre.filter((o) => ordre.indexOf(o) > ordre.indexOf(ref))
+  // L'Essai a les capacités de l'Essentiel (ref), mais Essentiel reste une offre à CHOISIR depuis l'Essai (3 crédits → 80) : les trois offres lui sont proposées.
+  const superieures = plan === 'gratuit' ? ordre : ordre.filter((o) => ordre.indexOf(o) > ordre.indexOf(ref))
 
   useEffect(() => {
     if (!a.stripe_subscription_id) return
@@ -70,11 +71,11 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
     window.location.href = r.data.url
   }
 
-  async function souscrire(id: PlanPayant) {
+  async function souscrire(id: PlanPayant, mode: 'essai' | 'payer' = 'essai') {
     if (busy) return
     if (a.stripe_subscription_id) { portail(); return } // déjà abonné : le changement passe par Stripe (prorata juste)
     setBusy(id)
-    const r = await api<{ url?: string }>('/api/subscribe', { method: 'POST', body: JSON.stringify({ plan: id }) })
+    const r = await api<{ url?: string }>('/api/subscribe', { method: 'POST', body: JSON.stringify({ plan: id, mode }) })
     setBusy(null)
     if (!r.ok || !r.data.url) { signaler({ type: 'err', text: r.data.error ?? 'Abonnement indisponible.' }); return }
     window.location.href = r.data.url
@@ -134,7 +135,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
           <div className="abo-deverr">
             {superieures.map((id) => {
               const o = OFFRES.find((x) => x.id === id)!
-              const gains = deverrouille(ref, id)
+              const gains = plan === 'gratuit' && id === 'essentiel' ? [`${o.credits} crédits chaque mois (au lieu de ${PLANS.gratuit.creditsMois} pendant l’essai)`] : deverrouille(ref, id)
               return (
                 <div key={id} className="abo-deverr-card">
                   <div className="abo-deverr-head"><b>{o.label}</b><span>{o.prix} €<small>/mois</small></span></div>
@@ -143,6 +144,12 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
                   <button type="button" className={`btn ${id === 'studio' ? 'btn--primary' : 'btn--ghost'}`} disabled={!!busy} onClick={() => souscrire(id)}>
                     {busy === id ? 'Redirection…' : a.stripe_subscription_id ? `Passer à ${o.label} (via Stripe)` : essaiDispo ? `Essayer ${o.label} ${ESSAI_JOURS[id]} jours gratuits, sans carte` : `Passer à ${o.label}`}
                   </button>
+                  {/* Les deux choix (Benj, 16/10) : les semaines gratuites ci-dessus, ou payer tout de suite. */}
+                  {essaiDispo && !a.stripe_subscription_id ? (
+                    <button type="button" className="btn btn--ghost" data-abo-payer={id} disabled={!!busy} onClick={() => souscrire(id, 'payer')} style={{ marginTop: '.5rem' }}>
+                      {`Payer maintenant — ${o.prix} €/mois`}
+                    </button>
+                  ) : null}
                 </div>
               )
             })}

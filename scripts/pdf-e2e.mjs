@@ -25,7 +25,7 @@ const logo = await pg.evaluate(() => {
 await b.close()
 
 const st = Date.now(), email = `pdf.${st}@example.com`
-const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
+const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!Aa9', email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `pdf-${st}`,
   forme_juridique: 'Auto-entreprise', adresse: '12 rue des Lilas', code_postal: '17230', ville: 'Marans', siret: '123 456 789 00012',
@@ -44,7 +44,7 @@ await rest('devis_lignes', { method: 'POST', headers: { Prefer: 'return=minimal'
 const fac = await (await rest('factures?select=id', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, numero: 'FAC-2026-0018', statut: 'emise', date_echeance: '2026-09-27', ...cli }) })).json()
 await rest('factures_lignes', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(lignes(fac[0].id, 'facture_id')) })
 
-const tok = (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: 'Test123456!' }) })).json()).access_token
+const tok = (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: 'Test123456!Aa9' }) })).json()).access_token
 await verifierSessionTest(tok)
 const save = async (url, name) => {
   const r = await fetch(BASE + url, { headers: { Authorization: `Bearer ${tok}` } })
