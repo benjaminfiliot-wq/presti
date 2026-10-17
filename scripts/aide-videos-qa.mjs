@@ -3,11 +3,15 @@
 // Règle de la vitrine appliquée à l'aide : une fonctionnalité du MENU sans vidéo fait échouer ce test.
 //  1. chaque entrée de menu de l'espace connecté (app/AppShell.tsx) a sa vidéo (le centre d'aide lui-même excepté) ;
 //  2. chaque entrée pointe vers une route qui existe (app/<route>/page.tsx) ;
-//  3. chaque fichier existe, pèse < 4 Mo, dure 20 à 120 s (ffprobe), est en H.264, SANS piste son, 1280×720 ou 1440×900 ;
+//  3. chaque fichier existe, pèse < 6 Mo, dure 20 à 120 s (ffprobe), est en H.264 1920×1200 avec une piste son AAC SILENCIEUSE (décision du
+//     fondateur, 17/10 : pas de voix, des sous-titres ; la piste silencieuse évite les lecteurs qui n'aiment pas l'absence de piste) ;
 //  4. chaque vidéo a son affiche, 3 à 6 étapes écrites, un résumé, une offre cohérente avec le code ;
 //  5. aucun fichier orphelin dans public/aide-videos/ ;
 //  6. le composant du centre d'aide est bien celui de l'accessibilité : contrôles natifs, preload="none", affiche,
-//     étapes en HTML (le même texte que les sous-titres incrustés), lien vers l'écran.
+//     étapes en HTML (le même texte que les cartons d'étape de la vidéo), lien vers l'écran ;
+//  7. les sous-titres : le texte (`voix` : intro, une phrase par étape, fin) existe, tient en 2 lignes, et chaque sous-titre (`sousTitres`,
+//     écrit par aide-videos-anime.mjs) reste affiché au moins 0,4 s par mot + 1,2 s, sans chevauchement ; une image prise au milieu de chaque
+//     sous-titre montre du texte clair dans la zone du bas, qui est vide avant l'intro.
 //
 // Usage : node scripts/aide-videos-qa.mjs     (aucun réseau, aucun compte : lecture de fichiers + ffprobe)
 import fs from 'node:fs'
@@ -20,7 +24,13 @@ const lire = (f) => fs.readFileSync(f, 'utf8')
 
 const VIDEOS = JSON.parse(lire('lib/aide-videos.json')).videos
 const DIR = 'public/aide-videos'
-const MAX_OCTETS = 4 * 1024 * 1024
+const MAX_OCTETS = 6 * 1024 * 1024
+// volume maximal de la piste son (dB) : une piste silencieuse donne ≈ −91 dB, une voix ou une musique donnerait > −30 dB
+const volumeMax = (f) => { const r = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', f, '-vn', '-af', 'volumedetect', '-f', 'null', '-'], { encoding: 'utf8', maxBuffer: 1 << 26 }); const m = (r.stderr || '').match(/max_volume:\s+(-?[\d.]+|-inf) dB/); return m ? (m[1] === '-inf' ? -Infinity : Number(m[1])) : null }
+// La zone des sous-titres (pile verticale du gabarit : 1042→1180 sur 1200 de haut) : combien de pixels clairs (le texte est blanc sur une pastille sombre) ?
+const ZONE = { x: 180, y: 1040, w: 1560, h: 140 }
+const pixelsClairs = (f, t) => { const r = spawnSync('ffmpeg', ['-v', 'error', '-ss', String(t), '-i', f, '-frames:v', '1', '-vf', `crop=${ZONE.w}:${ZONE.h}:${ZONE.x}:${ZONE.y},format=gray`, '-f', 'rawvideo', '-'], { maxBuffer: 1 << 26 }); if (r.status !== 0 || !r.stdout?.length) return null; let n = 0; for (const b of r.stdout) if (b > 200) n++; return n }
+const mots = (t) => t.trim().split(/\s+/).length
 
 console.log('── 1. Le menu : chaque fonctionnalité a sa vidéo')
 const shell = lire('app/AppShell.tsx')
@@ -54,10 +64,12 @@ for (const v of VIDEOS) {
   const s = sonde(f)
   const dur = s ? Number(s.format.duration) : NaN
   const video = s?.streams.find((x) => x.codec_type === 'video')
-  T(`${v.id} : < 4 Mo (${(o / 1048576).toFixed(2)} Mo)`, o > 10_000 && o < MAX_OCTETS)
+  T(`${v.id} : < 6 Mo (${(o / 1048576).toFixed(2)} Mo)`, o > 10_000 && o < MAX_OCTETS)
   T(`${v.id} : dure 20 à 120 s (${dur.toFixed(1)} s)`, dur >= 20 && dur <= 120)
-  T(`${v.id} : H.264, ${video?.width}×${video?.height}`, video?.codec_name === 'h264' && ((video.width === 1440 && video.height === 900) || (video.width === 1280 && video.height === 720)))
-  T(`${v.id} : sans piste son`, !s?.streams.some((x) => x.codec_type === 'audio'))
+  T(`${v.id} : H.264, ${video?.width}×${video?.height}`, video?.codec_name === 'h264' && (video.width === 1920 && video.height === 1200))
+  const son = s?.streams.find((x) => x.codec_type === 'audio')
+  T(`${v.id} : piste son AAC présente`, son?.codec_name === 'aac')
+  if (son) { const vm = volumeMax(f); T(`${v.id} : piste son silencieuse, pas de voix (volume max ${vm === null ? '?' : vm} dB)`, vm !== null && vm <= -60) }
   const a = path.join(DIR, `${v.id}.webp`)
   T(`${v.id} : affiche présente et non vide`, fs.existsSync(a) && fs.statSync(a).size > 5_000)
   if (v.duree) T(`${v.id} : durée du JSON (${v.duree} s) = durée du fichier`, Math.abs(v.duree - dur) <= 1.5)
@@ -77,18 +89,57 @@ for (const v of VIDEOS) {
 }
 for (const id of ['crm', 'assistant']) T(`${id} : annoncé Signature`, VIDEOS.find((v) => v.id === id)?.offre === 'signature')
 T('inventaire : annoncé Studio (lib/plans.ts : inventaire.stock)', VIDEOS.find((v) => v.id === 'inventaire')?.offre === 'studio')
+// 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio. L'offre annoncée par la vidéo est lue dans la MATRICE (lib/plans.ts :
+// BASE = toutes les offres, STUDIO = le tableau des capacités ajoutées par Studio), jamais retapée ici.
+{
+  const plansSrc = lire('lib/plans.ts')
+  const bloc = (nom) => { const d = plansSrc.indexOf('const ' + nom + ': Capacite[] = ['); return plansSrc.slice(d, plansSrc.indexOf('\n]', d)) }
+  const base = bloc('BASE'), studio = bloc('STUDIO')
+  for (const [id, cap] of [['plateforme', 'plateforme.gestion'], ['chiffres', 'chiffres']]) {
+    const dans = (b) => b.includes("'" + cap + "'")
+    const attendu = dans(base) ? 'essentiel' : dans(studio) ? 'studio' : 'signature'
+    T(id + ' : annoncé ' + attendu + ' (lib/plans.ts : ' + cap + ')', VIDEOS.find((v) => v.id === id)?.offre === attendu, 'vidéo : ' + VIDEOS.find((v) => v.id === id)?.offre)
+  }
+}
 T('le site : la mention « se commande à part » est écrite', /à part/.test(VIDEOS.find((v) => v.id === 'site')?.note ?? ''))
 // « votre ton » (le ton des réponses) est un nom, pas un tutoiement.
 const TUTOIEMENT = /(tu|tes|toi|ta)|(?<!votre |le |du |ce )ton/i
 const textes = VIDEOS.flatMap((v) => [v.titre, v.resume, ...v.etapes]).join('\n')
 T('vouvoiement partout (pas de « tu » / « ton » / « tes »)', !TUTOIEMENT.test(textes), (textes.match(TUTOIEMENT) || [])[0])
 
-// Les sous-titres incrustés = le texte écrit : la capture note ses étapes dans videos/aide-brut/<id>.marques.json.
+// Les cartons d'étape de la vidéo = le texte écrit : la capture note ses étapes dans videos/aide-brut/<id>.marques.json.
 for (const v of VIDEOS) {
   const f = path.join('videos', 'aide-brut', `${v.id}.marques.json`)
   if (!fs.existsSync(f)) continue
   const m = JSON.parse(lire(f))
-  T(`${v.id} : les sous-titres de la vidéo = les étapes écrites`, JSON.stringify(m._etapes) === JSON.stringify(v.etapes), m._etapes ? 'texte modifié depuis l’enregistrement : refaire la capture' : 'enregistrement sans trace du texte : refaire la capture')
+  T(`${v.id} : les cartons d'étape de la vidéo = les étapes écrites`, JSON.stringify(m._etapes) === JSON.stringify(v.etapes), m._etapes ? 'texte modifié depuis l’enregistrement : refaire la capture' : 'enregistrement sans trace du texte : refaire la capture')
+}
+
+console.log('\n── 4 bis. Les sous-titres : texte, temps de lecture, présence à l’image')
+for (const v of VIDEOS) {
+  const x = v.voix
+  T(`${v.id} : texte des sous-titres présent (intro, une phrase par étape, fin)`, !!x && typeof x.intro === 'string' && typeof x.fin === 'string' && Array.isArray(x.etapes) && x.etapes.length === v.etapes.length)
+  // 130 caractères : deux lignes de la pastille (1500 px à 40 px, ≈ 70 caractères par ligne) ; le plus long texte actuel en fait ~110
+  if (x) T(`${v.id} : chaque sous-titre fait 8 à 130 caractères (2 lignes au plus)`, [x.intro, ...x.etapes, x.fin].every((t) => t.trim().length >= 8 && t.length <= 130), [x.intro, ...x.etapes, x.fin].find((t) => t.length > 130))
+  // Le sous-titre de fin doit annoncer l'offre du JSON (si l'offre change, le sous-titre doit changer aussi, pas seulement la carte).
+  if (x && !v.note) T(`${v.id} : le sous-titre de fin dit l'offre « ${v.offre} » (texte = offre du JSON)`, x.fin.toLowerCase().includes(v.offre))
+  const f = path.join(DIR, `${v.id}.mp4`)
+  const sous = v.sousTitres
+  const attendu = x ? [x.intro, ...(x.etapes || []), x.fin] : []
+  T(`${v.id} : ${attendu.length || '?'} sous-titres inscrits (sousTitres), mêmes textes que voix, dans l'ordre`, Array.isArray(sous) && sous.length === attendu.length && attendu.length > 0 && sous.every((c, k) => c.texte === attendu[k]), 'relancer aide-videos-anime.mjs')
+  if (!Array.isArray(sous) || !sous.length) continue
+  const dur = fs.existsSync(f) ? Number(sonde(f)?.format.duration) : NaN
+  const marges = sous.map((c) => c.fin - c.debut - (0.4 * mots(c.texte) + 1.2))
+  const courts = marges.map((m, k) => ({ k, m })).filter((c) => !(c.m >= -0.01))
+  T(`${v.id} : chaque sous-titre reste affiché ≥ 0,4 s par mot + 1,2 s (marge la plus juste : ${Math.min(...marges).toFixed(2)} s)`, courts.length === 0, courts.map((c) => `#${c.k + 1} manque ${(-c.m).toFixed(2)} s`).join(', '))
+  T(`${v.id} : sous-titres ordonnés, sans chevauchement, dans la durée de la vidéo`, sous.every((c, k) => c.debut >= 0 && c.fin > c.debut && (k === 0 || c.debut >= sous[k - 1].fin)) && (!Number.isFinite(dur) || sous[sous.length - 1].fin <= dur + 0.05))
+  // Preuve par l'image : au milieu de chaque sous-titre, la zone du bas contient du texte clair ; avant l'intro, elle est vide.
+  if (fs.existsSync(f)) {
+    const vides = sous.map((c, k) => ({ k, n: pixelsClairs(f, ((c.debut + c.fin) / 2).toFixed(2)) })).filter((c) => c.n === null || c.n < 600)
+    T(`${v.id} : à l'image, chaque sous-titre est bien incrusté (texte clair dans la zone du bas)`, vides.length === 0, vides.map((c) => `#${c.k + 1} : ${c.n} px`).join(', '))
+    const avant = pixelsClairs(f, 0.1)
+    T(`${v.id} : zone des sous-titres vide avant le premier sous-titre (${avant} px)`, avant !== null && avant < 100)
+  }
 }
 
 console.log('\n── 5. Aucun fichier orphelin')

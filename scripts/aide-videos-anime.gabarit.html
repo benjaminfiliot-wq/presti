@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1200" />
+<title>Aide Presti : {{TITRE_PAGE}}</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face { font-family:'Hanken Grotesk'; src:url(assets/fonts/hg400.woff) format('woff'); font-weight:400; }
+  @font-face { font-family:'Hanken Grotesk'; src:url(assets/fonts/hg500.woff) format('woff'); font-weight:500 800; }
+  @font-face { font-family:'Bricolage Grotesque'; src:url(assets/fonts/bg700.woff) format('woff'); font-weight:500 800; }
+  :root { --paper:#0A0C11; --surface:#13161F; --surface-2:#1A1E29; --ink:#EDEFF4; --ink-soft:#C3C8D4; --muted:#8B93A2; --accent:#D97757; --accent-2:#E8946F; --line:rgba(255,255,255,.12); }
+  html, body { margin:0; background:var(--paper); }
+  body { font-family:'Hanken Grotesk', system-ui, sans-serif; color:var(--ink); }
+  #root { position:relative; width:100%; height:100%; overflow:hidden; background:var(--paper); }
+  #bg { position:absolute; inset:0; background:
+      radial-gradient(1300px 760px at 88% -12%, rgba(217,119,87,.17), transparent 62%),
+      radial-gradient(1000px 640px at -8% 112%, rgba(217,119,87,.09), transparent 60%),
+      linear-gradient(180deg, #0B0D13 0%, #0A0C11 100%); }
+  /* l'écran */
+  #card { position:absolute; left:256px; top:18px; width:1408px; height:880px; border-radius:22px; overflow:hidden; background:#0A0C11; border:1px solid var(--line); box-shadow:0 34px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4); opacity:0; }
+  #stage { position:absolute; left:0; top:0; width:2160px; height:1350px; transform-origin:0 0; }
+  #screen { position:absolute; left:0; top:0; width:2160px; height:1350px; display:block; }
+  .ring { position:absolute; border:5px solid var(--accent); border-radius:24px; background:rgba(217,119,87,.11); box-shadow:0 0 0 7px rgba(217,119,87,.20), 0 0 48px rgba(217,119,87,.42); opacity:0; pointer-events:none; }
+  .ripple { position:absolute; width:140px; height:140px; margin:-70px 0 0 -70px; border-radius:50%; border:6px solid var(--accent); background:rgba(217,119,87,.22); opacity:0; pointer-events:none; }
+  #cursor { position:absolute; left:0; top:0; width:0; height:0; opacity:0; pointer-events:none; }
+  #halo { position:absolute; left:-38px; top:-38px; width:76px; height:76px; border-radius:50%; background:radial-gradient(circle, rgba(217,119,87,.55), rgba(217,119,87,.0) 70%); }
+  #arrow { position:absolute; left:0; top:0; width:64px; height:64px; overflow:visible; filter:drop-shadow(0 6px 10px rgba(0,0,0,.55)); }
+  #x5 { position:absolute; right:26px; top:24px; padding:12px 22px 12px 18px; border-radius:999px; background:rgba(10,12,17,.9); border:1px solid rgba(217,119,87,.6); color:var(--accent-2); font:700 30px/1 'Hanken Grotesk',sans-serif; letter-spacing:.01em; opacity:0; display:flex; gap:12px; align-items:center; }
+  #x5 i { font-style:normal; display:inline-block; width:0; height:0; border-left:14px solid var(--accent); border-top:9px solid transparent; border-bottom:9px solid transparent; margin-right:6px; }
+  /* pile verticale (1200 px) : écran 18→898 · progression 906 · carton d'étape 926→1030 · sous-titre 1042→1180 */
+  /* progression sous l'écran */
+  #prog { position:absolute; left:256px; top:906px; width:1408px; height:5px; border-radius:3px; background:rgba(255,255,255,.09); opacity:0; }
+  #progfill { position:absolute; left:0; top:0; width:100%; height:100%; border-radius:3px; background:var(--accent); transform-origin:0 50%; transform:scaleX(0); }
+  .tick { position:absolute; top:-4px; width:13px; height:13px; margin-left:-6px; border-radius:50%; background:#2A2F3D; border:2px solid var(--paper); }
+  /* cartons d'étape */
+  #caps { position:absolute; left:256px; top:926px; width:1408px; height:104px; }
+  .cap { position:absolute; left:0; top:0; width:100%; height:104px; box-sizing:border-box; display:flex; align-items:center; gap:24px; padding:0 30px 0 20px; border-radius:24px; background:rgba(19,22,31,.96); border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.45); opacity:0; }
+  .cap .num { flex:none; width:64px; height:64px; border-radius:18px; background:var(--accent); color:#1a0f0a; display:grid; place-items:center; font:800 40px/1 'Bricolage Grotesque',sans-serif; }
+  .cap p { margin:0; font:600 33px/1.26 'Hanken Grotesk',sans-serif; color:var(--ink); }
+  .cap em { font-style:normal; color:var(--accent-2); font-weight:700; }
+  /* sous-titres : pastille sombre semi-opaque, texte blanc, 2 lignes au plus, collée en bas ; jamais sur l'écran ni sur le carton d'étape */
+  #subs { position:absolute; left:0; top:1042px; width:1920px; height:138px; display:grid; place-items:end center; pointer-events:none; }
+  .sub { grid-area:1/1; box-sizing:border-box; max-width:1500px; padding:16px 38px 17px; border-radius:24px; background:rgba(4,6,10,.88); border:1px solid rgba(255,255,255,.16); box-shadow:0 14px 40px rgba(0,0,0,.45); opacity:0; }
+  .sub p { margin:0; font:600 40px/1.27 'Hanken Grotesk',sans-serif; color:#fff; text-align:center; text-wrap:balance; }
+  /* intro et fin */
+  .plein { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 176px; box-sizing:border-box; opacity:0; }
+  .pill { display:inline-flex; align-items:center; gap:18px; align-self:flex-start; padding:12px 28px 12px 16px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); font:700 28px/1 'Hanken Grotesk',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+  .pill .logo { height:46px; width:34px; display:block; background:url(assets/logo.svg) center/contain no-repeat; }
+  h1, h2 { margin:0; font-family:'Bricolage Grotesque',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.02; }
+  h1 { font-size:132px; margin-top:40px; max-width:830px; }
+  h2 { font-size:210px; }
+  .barre { width:220px; height:10px; border-radius:6px; background:var(--accent); margin:34px 0 34px; transform-origin:0 50%; }
+  .resume { font:500 42px/1.32 'Hanken Grotesk',sans-serif; color:var(--ink-soft); max-width:800px; margin:0; }
+  #apercu { position:absolute; left:1050px; top:380px; width:700px; height:438px; border-radius:14px; background:#0A0C11 url(assets/apercu.jpg) center/cover no-repeat; border:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4); opacity:0; transform-origin:50% 50%; }
+  .offre { align-self:flex-start; margin-top:50px; padding:20px 40px; border-radius:999px; border:2px solid rgba(217,119,87,.7); background:rgba(217,119,87,.13); font:600 44px/1.1 'Hanken Grotesk',sans-serif; color:var(--ink); }
+  .offre strong { color:var(--accent-2); font-weight:800; }
+  .chemin { margin-top:34px; font:500 38px/1.3 'Hanken Grotesk',sans-serif; color:var(--muted); }
+  .chemin b { color:var(--ink-soft); font-weight:700; }
+  #fin .pill { margin-bottom:34px; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="aide" data-start="0" data-width="1920" data-height="1200" data-duration="{{DUREE}}" data-fps="30">
+  <div id="bg"></div>
+
+  <div id="intro" class="plein">
+    <span class="pill" id="i-pill"><span class="logo"></span>Centre d’aide</span>
+    <h1 id="i-titre">{{TITRE}}</h1>
+    <div class="barre" id="i-barre"></div>
+    <p class="resume" id="i-resume">{{RESUME}}</p>
+  </div>
+
+  <div id="apercu"></div>
+
+  <div id="card">
+    <div id="stage" data-layout-allow-overflow="true">
+      <video id="screen" src="assets/screen.mp4" muted playsinline data-start="{{I}}" data-duration="{{ECRAN}}" data-track-index="0"></video>
+      <div id="rings"></div>
+      <div id="cursor"><div id="halo"></div>
+        <svg id="arrow" viewBox="0 0 64 64"><path d="M5 4 L5 50 L17 39 L26 58 L35 54 L26 36 L43 36 Z" fill="#fff" stroke="#0A0C11" stroke-width="3.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div id="x5"><i></i>Vidéo accélérée</div>
+  </div>
+  <div id="prog"><div id="progfill"></div></div>
+
+  <div id="caps">
+      {{CAPS}}
+  </div>
+
+  <div id="subs">
+      {{SOUS}}
+  </div>
+
+  <div id="fin" class="plein">
+    <span class="pill"><span class="logo"></span>Presti</span>
+    <h2 id="f-titre">À vous !</h2>
+    <div class="barre" id="f-barre"></div>
+    <div class="offre" id="f-offre">{{OFFRE}}</div>
+    <div class="chemin" id="f-chemin">Dans le menu de gauche : <b>{{ROUTE}}</b></div>
+  </div>
+</div>
+
+<script>
+const D = {{DATA}};
+const P = D.plan, I = D.I, O = D.O, TOTAL = D.total, C = D.CARTE, K = D.BASE, DPR = P.dpr, SW = D.SRC_W, SH = D.SRC_H;
+const M = P.principal, FIN0 = I + M; // la fin commence ici
+const tl = gsap.timeline({ paused: true });
+const $ = (s) => document.querySelector(s);
+const el = (cls, css) => { const d = document.createElement('div'); d.className = cls; Object.assign(d.style, css); return d; };
+
+// ── intro ──
+tl.fromTo('#i-pill', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .6, ease: 'power3.out' }, .1);
+tl.set('#intro', { opacity: 1 }, 0);
+tl.fromTo('#i-titre', { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: .9, ease: 'power3.out' }, .22);
+tl.fromTo('#i-barre', { scaleX: 0 }, { scaleX: 1, duration: .8, ease: 'power3.inOut' }, .5);
+tl.fromTo('#i-resume', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .8, ease: 'power3.out' }, .7);
+tl.set('#apercu', { rotation: -3 }, 0);
+tl.fromTo('#apercu', { opacity: 0, x: 140 }, { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out' }, .45);
+tl.to('#intro', { opacity: 0, y: -26, duration: .5, ease: 'power2.in' }, I - .35);
+// l'aperçu devient l'écran : il grandit jusqu'à la taille de la carte, puis la vraie carte (avec la vidéo) prend le relais
+tl.to('#apercu', { x: (C.x + C.w / 2) - (1050 + 350), y: (C.y + C.h / 2) - (380 + 219), scale: C.w / 700, rotation: 0, duration: .95, ease: 'power3.inOut' }, I - .5);
+tl.to('#apercu', { opacity: 0, duration: .25, ease: 'none' }, I + .6);
+
+// ── l'écran : entrée, caméra ──
+const pose = (g) => { const s = g.s, sc = K * s; return { scale: sc, x: C.w / 2 - g.cx * DPR * sc, y: C.h / 2 - g.cy * DPR * sc }; };
+const PLEIN = { scale: K, x: 0, y: 0 };
+tl.set('#stage', { transformOrigin: '0 0', scale: K, x: 0, y: 0 }, 0);
+tl.fromTo('#card', { opacity: 0 }, { opacity: 1, duration: .3, ease: 'none' }, I + .5);
+tl.fromTo('#prog', { opacity: 0 }, { opacity: 1, duration: .5, ease: 'power2.out' }, I + .3);
+tl.fromTo('#progfill', { scaleX: 0 }, { scaleX: 1, duration: M, ease: 'none' }, I);
+for (const e of P.etapesF) { const t = el('tick', { left: (e.f0 / M * 100) + '%' }); $('#prog').appendChild(t); }
+let cur = PLEIN, prevEnd = I, holdEnd = I;
+const bouger = (to, start, dur) => { tl.fromTo('#stage', { scale: cur.scale, x: cur.x, y: cur.y }, { scale: to.scale, x: to.x, y: to.y, duration: dur, ease: 'power2.inOut', immediateRender: false }, start); cur = to; prevEnd = start + dur; };
+P.camera.forEach((g, k) => {
+  const cible = g.s === 1 ? PLEIN : pose(g);
+  const arrive = I + g.t0 - .1;
+  const start = Math.max(prevEnd, holdEnd - 0.01 > I ? holdEnd : I, arrive - 1.5);
+  const dur = Math.max(.8, Math.min(1.4, arrive - start));
+  if (Math.abs(cible.scale - cur.scale) > .001 || Math.abs(cible.x - cur.x) > 4 || Math.abs(cible.y - cur.y) > 4) bouger(cible, start, dur);
+  holdEnd = I + g.t1 + .4;
+  const suivant = P.camera[k + 1];
+  if (cur !== PLEIN && (!suivant || (I + suivant.t0 - 1.5) - holdEnd > 1.4)) { const s2 = Math.max(prevEnd, holdEnd); if (s2 + 1 < FIN0) bouger(PLEIN, s2, 1.1); }
+});
+if (cur !== PLEIN) bouger(PLEIN, Math.max(prevEnd, FIN0 - 1.2), 1.0);
+
+// ── curseur, surlignages, ondes de clic ──
+const c0 = P.cursor[0];
+if (c0) {
+  tl.set('#cursor', { x: c0.x0, y: c0.y0, opacity: 0 }, 0);
+  tl.to('#cursor', { opacity: 1, duration: .4, ease: 'power2.out' }, I + Math.max(0, c0.t0 - .35));
+  P.cursor.forEach((m) => tl.fromTo('#cursor', { x: m.x0, y: m.y0 }, { x: m.x1, y: m.y1, duration: m.t1 - m.t0, ease: 'power2.inOut', immediateRender: false }, I + m.t0));
+  tl.to('#cursor', { opacity: 0, duration: .5, ease: 'power2.in' }, FIN0 - .3);
+}
+P.rings.forEach((r) => {
+  const pad = 14, d = el('ring', { left: (r.rect.x * DPR - pad) + 'px', top: (r.rect.y * DPR - pad) + 'px', width: (r.rect.w * DPR + pad * 2 - 10) + 'px', height: (r.rect.h * DPR + pad * 2 - 10) + 'px', borderRadius: Math.min(40, 14 + r.rect.h * DPR * .18) + 'px' });
+  $('#rings').appendChild(d);
+  tl.fromTo(d, { opacity: 0, scale: 1.07 }, { opacity: 1, scale: 1, duration: .32, ease: 'power3.out', immediateRender: false }, I + r.t0 + .12);
+  tl.to(d, { opacity: 0, duration: .4, ease: 'power2.in' }, I + r.t1);
+});
+P.clics.forEach((c) => {
+  const d = el('ripple', { left: c.x + 'px', top: c.y + 'px' }); $('#rings').appendChild(d);
+  tl.fromTo(d, { opacity: .95, scale: .25 }, { opacity: 0, scale: 1.9, duration: .75, ease: 'power2.out', immediateRender: false }, I + c.t);
+  tl.fromTo('#halo', { scale: 1 }, { scale: .62, duration: .1, ease: 'power2.out', immediateRender: false }, I + c.t - .04);
+  tl.to('#halo', { scale: 1, duration: .35, ease: 'power2.out' }, I + c.t + .06);
+});
+P.accel.forEach((a) => { tl.to('#x5', { opacity: 1, duration: .35, ease: 'power2.out' }, I + a[0] + .1); tl.to('#x5', { opacity: 0, duration: .35, ease: 'power2.in' }, I + a[1] - .35); });
+
+// ── cartons d'étape ──
+P.etapesF.forEach((e, i) => {
+  const cap = $('#cap' + i), num = cap.querySelector('.num'), tIn = I + e.f0 + .02, tOut = I + e.f1 - .32;
+  tl.fromTo(cap, { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: .55, ease: 'power3.out', immediateRender: false }, tIn);
+  tl.fromTo(num, { scale: .55, rotation: -8 }, { scale: 1, rotation: 0, duration: .6, ease: 'back.out(1.7)', immediateRender: false }, tIn + .05);
+  tl.to(cap, { opacity: 0, y: -16, duration: .3, ease: 'power2.in' }, tOut);
+});
+
+// ── sous-titres : fondu de 0,2 s à l'entrée et à la sortie, comptés dans l'intervalle [t0, t1] du plan ──
+P.sous.forEach((c, k) => {
+  const d = $('#sub' + k);
+  tl.fromTo(d, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .2, ease: 'power2.out', immediateRender: false }, c.t0);
+  tl.to(d, { opacity: 0, duration: .2, ease: 'power1.in' }, c.t1 - .2);
+});
+
+// ── fin ──
+tl.to('#card', { opacity: 0, y: -20, scale: .975, duration: .65, ease: 'power2.inOut' }, FIN0 + .05);
+tl.to('#prog', { opacity: 0, duration: .4, ease: 'power2.in' }, FIN0 - .2);
+tl.set('#fin', { opacity: 1 }, FIN0 + .25);
+tl.fromTo('#fin .pill', { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .55, ease: 'power3.out' }, FIN0 + .3);
+tl.fromTo('#f-titre', { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: .9, ease: 'power3.out' }, FIN0 + .45);
+tl.fromTo('#f-barre', { scaleX: 0 }, { scaleX: 1, duration: .8, ease: 'power3.inOut' }, FIN0 + .75);
+tl.fromTo('#f-offre', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .75, ease: 'power3.out' }, FIN0 + 1.0);
+tl.fromTo('#f-chemin', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .7, ease: 'power3.out' }, FIN0 + 1.3);
+
+window.__timelines['aide'] = tl;
+</script>
+</body>
+</html>

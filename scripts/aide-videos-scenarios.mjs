@@ -129,12 +129,12 @@ export default {
     await page.mouse.wheel(0, 600); await sec(5000)
   },
 
-  async crm({ page, etape, sec, cliquer, survoler, ouvrir, demarrer }) {
+  async crm({ page, etape, glisser, sec, cliquer, survoler, ouvrir, demarrer }) {
     await ouvrir('/crm?vue=atelier', 'text=Vue d’ensemble')
     await sec(1500)
     demarrer(); await sec(800)
     await etape(0)
-    await page.mouse.move(700, 600); await page.mouse.move(950, 560, { steps: 30 }); await sec(3500)
+    await glisser(950, 560); await sec(3500)
     await etape(1)
     await survoler(T(page, 'Urgences du jour'), { pause: 2500 }); await sec(3000)
     await etape(2)
