@@ -4,6 +4,7 @@ import type { RappelLigne } from '@/lib/crm/rappels'
 import { estUuid, lireCorps, validerModificationChantier } from '@/lib/crm/valider'
 import { construireFicheChantier, type DevisFiche, type EntreeJournal, type FactureFiche, type FicheChantier, type NoteCrm, type ReservationFiche, type TacheFiche } from '@/lib/crm/vue'
 import { facturesComptees, jourParis } from '@/lib/comptaTableau'
+import { actif } from '@/lib/flags'
 import { deplacementEnVigueur, etapeChantierSeul, etapeDevis, type DeplacementP } from '@/lib/crm/pipeline'
 
 export const runtime = 'nodejs'
@@ -23,7 +24,7 @@ export async function GET(req: Request, ctx: Ctx) {
     c.devis_id
       ? supabaseAdmin.from('devis').select('id, numero, objet, statut, total_ttc, total_ht, acompte_pct, accepte_le, envoye_le, created_at, date_emission, client_nom, client_email, client_adresse, lead_id').eq('id', c.devis_id).eq('artisan_id', g.uid).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
-    supabaseAdmin.from('chantier_taches').select('id, libelle, quantite, unite, ordre, faite, faite_le, membre_id, devis_ligne_id').eq('chantier_id', id).eq('artisan_id', g.uid).order('ordre').order('cree_le'),
+    supabaseAdmin.from('chantier_taches').select(`id, libelle, quantite, unite, ordre, faite, faite_le, membre_id, devis_ligne_id${actif('crmPlan') ? ', piece' : ''}`) /* piece : 0166, drapeau crmPlan */.eq('chantier_id', id).eq('artisan_id', g.uid).order('ordre').order('cree_le'),
     supabaseAdmin.from('chantier_equipe').select('membre_id, membre:equipe_membres(id, nom, role, actif)').eq('chantier_id', id).eq('artisan_id', g.uid),
     supabaseAdmin.from('chantier_materiaux').select('id, materiau_id, quantite, lieu, statut, sorti_le, note, materiau:materiaux(id, nom, unite, prix_vu_ht)').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le'),
     supabaseAdmin.from('crm_notes').select('id, texte, cree_le, maj_le').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le', { ascending: false }).limit(200),
@@ -57,17 +58,17 @@ export async function GET(req: Request, ctx: Ctx) {
   if (rappelsR.error && !rappelsAbsents) { console.error('[crm/chantier] rappels :', rappelsR.error.message); return erreur(INDISPONIBLE, 503) }
 
   // L'assemblage est celui de lib/crm/vue.ts (le même que la fiche de l'atelier d'exemple).
-  return json(construireFicheChantier({
+  return json({ ...construireFicheChantier({
     rappels: (rappelsR.data ?? []) as unknown as RappelLigne[], rappelsDisponibles: !rappelsAbsents,
     uid: g.uid, chantier: c as FicheChantier['chantier'], devis, factures, leadStatut, lead, manuel: manuel && manuel !== derivee ? manuel : null,
-    taches: (tachesR.data ?? []) as TacheFiche[],
+    taches: (tachesR.data ?? []) as unknown as TacheFiche[], // colonnes choisies à l'exécution (piece, drapeau crmPlan)
     equipe: (equipeR.data ?? []).map((e) => e.membre as unknown as { id: string; nom: string; role: string } | null).filter((m): m is { id: string; nom: string; role: string } => !!m),
     vehicule: vehiculeR.data as FicheChantier['vehicule'],
     materiaux: (materiauxR.data ?? []) as unknown as ReservationFiche[],
     notes: (notesR.data ?? []) as NoteCrm[],
     journal: (journalR.data ?? []) as EntreeJournal[],
     maintenant: new Date(),
-  }))
+  }), metier: g.metier }) // le métier : le décor de la maquette du chantier (lot 5)
 }
 
 // PATCH /api/crm/chantiers/[id] — modifier la fiche (statut, dates, adresse, camionnette, équipe…). Le devis ne change pas.

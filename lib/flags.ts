@@ -179,6 +179,21 @@ export const FLAGS = {
    *  table crm_agenda, migration 0164 ; routes /api/crm/agenda et /api/agenda/<jeton>). Baissé : pas d'onglet, routes 404. Se lève
    *  après 0164 appliquée, scripts/crm-lot3-qa.mjs vert, et l'accord de Benj. */
   crmPlanning: false,
+  /** 19/10/2026 — CRM, lot 4 (n°7) : l'APRÈS-CHANTIER (demande d'avis, rappel d'entretien ; table crm_apres_chantier, migration 0165 ;
+   *  routes /api/crm/apres-chantier*, encart « Après le chantier » de la fiche, passage quotidien qui POSE des rappels). Désactivé
+   *  par défaut pour chaque artisan, et aucun message ne part sans sa confirmation. Baissé : routes 404, encart absent, aucun rappel
+   *  posé. Se lève après 0165 appliquée, scripts/crm-lot4-qa.mjs vert, audit de conformité (lien vers la fiche d'avis, durées
+   *  d'entretien) et accord de Benj. */
+  crmApresChantier: false,
+  /** 19/10/2026 — CRM, lot 5 (n°8, version 1) : le PLAN DU CHANTIER par pièce (schéma, pas plan à l'échelle) dans la fiche ; la pièce
+   *  de chaque tâche (chantier_taches.piece, migration 0166), devinée d'après le libellé, corrigeable. Baissé : pas de schéma, la
+   *  colonne n'est ni lue ni écrite (les routes refusent `piece`). Se lève après 0166 appliquée, scripts/crm-lot5-qa.mjs vert et
+   *  l'accord de Benj. */
+  crmPlan: false,
+  /** 19/10/2026 — CRM, lot 5 (n°8, version 3) : le LIEN DE SUIVI d'un chantier pour le client (page publique /suivi/<jeton>, lecture
+   *  seule, sans prix ni adresse ni nom ; table chantier_suivi, migration 0167 ; routes /api/crm/chantiers/<id>/suivi). Baissé : page et
+   *  routes 404, rien dans la fiche. Se lève après 0167 appliquée, scripts/crm-lot5-qa.mjs vert, audit de conformité et accord de Benj. */
+  crmSuivi: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

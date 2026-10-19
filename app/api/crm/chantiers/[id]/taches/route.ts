@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estUuid, lireCorps, validerCreationTache } from '@/lib/crm/valider'
-import { tachesDepuisDevis } from '@/lib/crm/chantier'
+import { tacheAInserer, tachesDepuisDevis } from '@/lib/crm/chantier'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 type Ctx = { params: Promise<{ id: string }> }
@@ -34,7 +35,7 @@ export async function POST(req: Request, ctx: Ctx) {
     if (elg) { console.error('[crm/taches] lignes :', elg.message); return erreur(INDISPONIBLE, 503) }
     const nouvelles = tachesDepuisDevis(lignes ?? [], existantes ?? [])
     if (!nouvelles.length) return json({ ok: true, creees: 0 })
-    const { error } = await supabaseAdmin.from('chantier_taches').insert(nouvelles.map((t) => ({ ...t, chantier_id: id, artisan_id: g.uid })))
+    const { error } = await supabaseAdmin.from('chantier_taches').insert(nouvelles.map((t) => ({ ...tacheAInserer(t, actif('crmPlan')), chantier_id: id, artisan_id: g.uid })))
     if (error) {
       const s = statutErreurBase(error)
       console.error('[crm/taches] génération :', error.message)
@@ -44,6 +45,8 @@ export async function POST(req: Request, ctx: Ctx) {
   }
 
   const t = v.valeur
+  // La pièce (0166) n'existe pour l'API que drapeau crmPlan levé.
+  if ('piece' in t && !actif('crmPlan')) return erreur('Champ inconnu : piece.', 400)
   if (t.membre_id) {
     const { data: m } = await supabaseAdmin.from('equipe_membres').select('id').eq('id', t.membre_id).eq('artisan_id', g.uid).maybeSingle()
     if (!m) return erreur('Membre de l’équipe introuvable.', 404)

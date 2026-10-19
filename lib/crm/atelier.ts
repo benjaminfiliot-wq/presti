@@ -126,7 +126,7 @@ export function styleAvatar(role: string): { background: string; color: string }
   return { background: fond, color: contraste(lum(clair)) >= contraste(lum(sombre)) ? clair : sombre }
 }
 /** « Compagnon 2 » → « C2 », « Marie Dupont » → « MD » : les deux premières initiales. */
-export const initiales = (nom: string): string => nom.trim().split(/s+/).slice(0, 2).map((s) => (s[0] ?? '').toUpperCase()).join('') || '?'
+export const initiales = (nom: string): string => nom.trim().split(/\s+/).slice(0, 2).map((s) => (s[0] ?? '').toUpperCase()).join('') || '?'
 
 /** La couleur d'épingle d'un chantier : à démarrer · en cours · en retard · terminé à facturer. */
 export function couleurEpingle(c: { statut: string; etape: string | null }, retard: number | null): string {

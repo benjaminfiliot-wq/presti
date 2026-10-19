@@ -2,10 +2,12 @@
 // Module pur (un seul import, pur aussi) : rejoué par scripts/crm-qa.mjs.
 import { centimes, facturesComptees, type FacturePresti } from '../comptaTableau.ts'
 import { argentDossier, estAcompte, type Argent, type FactureArgent } from './argent.ts'
+import { pieceDe } from './plan.ts'
 
 export type LigneDevis = { id: string; ordre?: number | null; designation?: string | null; quantite?: number | string | null; unite?: string | null }
 export type TacheExistante = { devis_ligne_id?: string | null; ordre?: number | null }
-export type NouvelleTache = { devis_ligne_id: string; libelle: string; quantite: number | null; unite: string | null; ordre: number }
+/** `piece` : celle que nomme la désignation (lib/crm/plan.ts), ou null ; écrite seulement drapeau crmPlan levé (colonne de 0166). */
+export type NouvelleTache = { devis_ligne_id: string; libelle: string; quantite: number | null; unite: string | null; ordre: number; piece: string | null }
 
 const LIBELLE_MAX = 300
 
@@ -26,10 +28,16 @@ export function tachesDepuisDevis(lignes: readonly LigneDevis[], existantes: rea
     if (!libelle) continue
     const q = typeof l.quantite === 'number' ? l.quantite : typeof l.quantite === 'string' ? Number(l.quantite.replace(',', '.')) : NaN
     const unite = typeof l.unite === 'string' && l.unite.trim() ? l.unite.trim().slice(0, 16) : null
-    sortie.push({ devis_ligne_id: l.id, libelle: [...libelle].slice(0, LIBELLE_MAX).join(''), quantite: Number.isFinite(q) && q > 0 ? Math.round(q * 100) / 100 : null, unite, ordre: ordre++ })
+    sortie.push({ devis_ligne_id: l.id, libelle: [...libelle].slice(0, LIBELLE_MAX).join(''), quantite: Number.isFinite(q) && q > 0 ? Math.round(q * 100) / 100 : null, unite, ordre: ordre++, piece: pieceDe(libelle) })
     deja.add(l.id)
   }
   return sortie
+}
+
+/** La ligne à insérer : la pièce n'est écrite que si la colonne existe et que le plan est ouvert (drapeau crmPlan, 0166). */
+export function tacheAInserer(t: NouvelleTache, avecPiece: boolean): Omit<NouvelleTache, 'piece'> & { piece?: string } {
+  const { piece, ...reste } = t
+  return avecPiece && piece ? { ...reste, piece } : reste
 }
 
 /** Avancement en % entier (tâches faites / tâches) ; null sans tâche — l'écran affiche « — », jamais un faux 0 %. */

@@ -20,6 +20,7 @@ import { tourCompta } from '@/lib/comptaAutomatisationsTour'
 import { tourRelancesImpayes } from '@/lib/relancesImpayesTour'
 import { magasinSupabase } from '@/lib/relancesImpayesMagasin'
 import { tourRappels } from '@/lib/crm/rappelsTour'
+import { tourApresChantier } from '@/lib/apresChantierTour'
 import { envoyerPushArtisan } from '@/lib/push'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
@@ -256,6 +257,42 @@ export async function GET(req: Request) {
       await enregistrerPassage('relances-impayes', r, r.erreurs.length === 0)
     } catch (e) { impayes = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] impayés', e); await enregistrerPassage('relances-impayes', { erreur: String(impayes) }, false) }
   }
+  // L'après-chantier (plan du 18/10, n°7, migration 0165, drapeau crmApresChantier) : pose les rappels « Demander un avis » et
+  // « Proposer l'entretien » des artisans qui l'ont activé. AUCUN message au client : l'artisan relit et confirme chacun. Avant le
+  // passage du matin, pour que sa notification les compte. Jamais sous pause ; une erreur ne fait pas échouer le passage.
+  let apresChantier: unknown = 'fermé'
+  if (!enPause && !interrompue && actif('crmApresChantier')) {
+    try {
+      const jour = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+      const r = await tourApresChantier(jour, {
+        lireReglages: async () => { const x = await supabaseAdmin.from('crm_apres_chantier').select('artisan_id, avis, entretien, texte_avis, texte_entretien, actif_depuis').or('avis.eq.true,entretien.eq.true').limit(5000); return { data: x.data, error: x.error } },
+        lirePlans: async (ids) => { const x = await supabaseAdmin.from('artisans').select('id, plan, is_founder').in('id', ids); return { data: x.data, error: x.error } },
+        lireChantiers: async (id, depuis) => {
+          const c = await supabaseAdmin.from('chantiers').select('id, titre, statut, date_fin_reelle, client_nom, devis_id').eq('artisan_id', id).eq('statut', 'termine').gte('date_fin_reelle', depuis).limit(1000)
+          if (c.error) return { data: null, error: c.error }
+          const devisIds = (c.data ?? []).map((x) => x.devis_id).filter(Boolean) as string[]
+          const [d, l] = devisIds.length
+            ? await Promise.all([
+                supabaseAdmin.from('devis').select('id, objet').eq('artisan_id', id).in('id', devisIds),
+                supabaseAdmin.from('devis_lignes').select('devis_id, designation').in('devis_id', devisIds).limit(5000),
+              ])
+            : [{ data: [], error: null }, { data: [], error: null }]
+          if (d.error || l.error) return { data: null, error: d.error ?? l.error }
+          const textes = new Map<string, string[]>()
+          for (const x of d.data ?? []) textes.set(x.id as string, [String(x.objet ?? '')])
+          for (const x of l.data ?? []) textes.get(x.devis_id as string)?.push(String(x.designation ?? '').slice(0, 200))
+          return { data: (c.data ?? []).map((x) => ({ id: x.id, titre: x.titre, statut: x.statut, date_fin_reelle: x.date_fin_reelle, client_nom: x.client_nom, textes: x.devis_id ? textes.get(x.devis_id) ?? [] : [] })), error: null }
+        },
+        lireCles: async (id) => { const x = await supabaseAdmin.from('crm_rappels').select('cle').eq('artisan_id', id).or('cle.like.avis:*,cle.like.entretien:*').limit(5000); return { data: x.data ? x.data.map((y) => String(y.cle)) : null, error: x.error } },
+        poser: async (id, lignes) => {
+          const x = await supabaseAdmin.from('crm_rappels').upsert(lignes.map((p) => ({ artisan_id: id, chantier_id: p.chantier_id, type: p.type, echeance: p.echeance, origine: 'systeme', cle: p.cle, texte: p.texte })), { onConflict: 'artisan_id,cle', ignoreDuplicates: true })
+          return { error: x.error }
+        },
+      })
+      apresChantier = r
+      if (r.installe) await enregistrerPassage('apres-chantier', r, r.erreurs.length === 0)
+    } catch (e) { apresChantier = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] après-chantier', e) }
+  }
   // Les rappels du CRM (plan du 18/10, n°1, migration 0162) : une notification du matin par artisan Signature dont des rappels sont
   // dus aujourd'hui ou en retard. Rien n'est envoyé au client. Jamais sous pause ; une erreur ne fait pas échouer le passage.
   let rappelsMatin: unknown = 'pause'
@@ -288,5 +325,5 @@ export async function GET(req: Request) {
     due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier })
 }

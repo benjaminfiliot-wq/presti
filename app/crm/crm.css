@@ -366,6 +366,7 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .crm-planning-liste ul li.conflit a { color: var(--crit) }
 .crm-pl-rdv { color: var(--accent-ink); font-weight: 600 }
 .crm-conflits .crm-liste li { flex-wrap: wrap }
+.crm-conflits ul.crm-liste { padding-inline: 16px }
 .crm-agenda-lien { display: flex; flex-direction: column; gap: 8px }
 .crm-agenda-lien input { font-family: var(--font-mono); font-size: 12px }
 .crm-aide-liste { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); line-height: 1.5 }
@@ -378,3 +379,52 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
   .crm-pl-barre > button, .crm-galerie-vue { transition: border-color .15s var(--ease-out, ease-out), transform .12s var(--ease-out, ease-out) }
   .crm-pl-barre > button:active { transform: scale(.98) }
 }
+
+/* ── Lot 4 (19/10) : l'après-chantier (demande d'avis, entretien) ───────────────────────────────────────────────────────── */
+.crm-apres-reglages { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px }
+.crm-apres-textes summary { cursor: pointer; font-weight: 600; font-size: 13px; color: var(--ink-soft) }
+.crm-apres-textes[open] { display: flex; flex-direction: column; gap: 10px }
+.crm-apres-etat, .crm-apres-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-soft) }
+.crm-apres-liste { margin-top: 10px }
+.crm-apres-liste li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2) }
+.crm-apres-liste li.retard { border-color: var(--warn) }
+.crm-apres-liste li.fait { opacity: .75 }
+.crm-apres-liste .crm-relance-dialogue { flex-basis: 100% }
+
+/* ── Lot 5 (19/10) : le plan du chantier par pièce (schéma) ─────────────────────────────────────────────────────────────── */
+.crm-plan-note { font-size: 12px }
+.crm-plan-grille { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px }
+.crm-plan-piece button { width: 100%; margin: 0; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 10px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; font: inherit; min-height: 96px }
+.crm-plan-piece .nom { font-weight: 700; font-size: 13.5px }
+.crm-plan-piece .pct { font-size: 20px; font-weight: 700; line-height: 1.1 }
+.crm-plan-piece .etat { font-size: 12px; color: var(--muted) }
+.crm-plan-piece .barre { display: block; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden }
+.crm-plan-piece .barre i { display: block; height: 100%; background: var(--muted) }
+.crm-plan-piece.e-en_cours button { border-color: var(--warn) }
+.crm-plan-piece.e-en_cours .barre i { background: var(--warn) }
+.crm-plan-piece.e-fini button { border-color: var(--ok, var(--accent)) }
+.crm-plan-piece.e-fini .barre i { background: var(--ok, var(--accent)) }
+.crm-plan-piece.choisie button { outline: 2px solid var(--accent); outline-offset: 1px }
+.crm-plan-piece button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.crm-plan-piece .equipe { display: flex; gap: 3px; margin-top: 2px }
+.crm-plan-piece .equipe i { font-style: normal; font-size: 10.5px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-tint-2, var(--line)); color: var(--ink) }
+.crm-plan-taches { margin-top: 12px }
+.crm-plan-taches[hidden] { display: none }
+.crm-plan-taches h3 { margin: 0 0 6px; font-size: 13.5px }
+.crm-plan-taches ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
+.crm-plan-taches li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px }
+.crm-plan-taches .crm-plan-deplacer select { font-size: 12.5px; width: auto; max-width: 190px; min-height: 0; padding: 5px 8px; margin: 0 }
+@media (max-width: 760px) { .crm-plan-taches li { display: grid; grid-template-columns: 1fr; gap: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--line) } .crm-plan-taches .crm-plan-deplacer select { max-width: 100% } }
+@media (max-width: 760px) { .crm-planning-barre h2 { font-size: 15px; flex: 1 1 0; min-width: 0 } }
+.crm-plan-vues { display: flex; gap: 6px; margin-bottom: 10px }
+.crm-plan-vues .psh-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--ink) }
+.crm-plan-grille[hidden] { display: none }
+.crm-maquette { position: relative; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line) }
+.crm-maquette > div:first-child { position: absolute; inset: 0 }
+.crm-maquette-etiquettes { position: absolute; inset: 0; pointer-events: none }
+.crm-maquette-etiquettes button { position: absolute; left: 0; top: 0; pointer-events: auto; margin: 0; width: auto; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 12px var(--font-body); white-space: nowrap; cursor: pointer }
+.crm-maquette-etiquettes button.e-en_cours { border-color: var(--warn) }
+.crm-maquette-etiquettes button.e-fini { border-color: var(--ok, var(--accent)) }
+.crm-maquette-etiquettes button.choisie { outline: 2px solid var(--accent); outline-offset: 1px }
+.crm-maquette-etiquettes button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.crm-maquette-attente { padding: 12px }
