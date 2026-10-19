@@ -10,6 +10,7 @@ import { OFFRES, PLANS, ESSAI_JOURS } from '@/lib/plans'
 import { estNatif } from '@/lib/natif'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { actif } from '@/lib/flags'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Abonnement — tout vient de la matrice de lib/plans.ts (v5 §3). Avant, cette page portait
 // sa propre liste de fonctionnalités, différente de la landing et des verrous serveur.
@@ -60,7 +61,7 @@ export default function Abonnement() {
 
   return (
     <AppShell active="abonnement" title="Abonnement" crumb="Votre formule">
-      {!ready ? <p className="muted">Chargement…</p> : natif ? (
+      {!ready ? <ChargementConsole /> : natif ? (
         <div className="tool-card" data-abonnement-natif>
           <h2>Votre formule</h2>
           <p className="muted" style={{ margin: 0 }}>
