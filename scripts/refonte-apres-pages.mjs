@@ -13,7 +13,7 @@ if (!/^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(BASE)) { console.error('TEST_BAS
 const SORTIE = path.resolve(process.argv[2] || path.join(process.cwd(), '..', 'presti-ops', 'refonte-1018', 'apres', 'public'))
 fs.mkdirSync(SORTIE, { recursive: true })
 const AXE = path.join(process.cwd(), 'node_modules', 'axe-core', 'axe.min.js')
-const PAGES = ['/offres', '/comparatif', '/outils/ui']
+const PAGES = (process.env.PAGES || '/offres,/comparatif,/outils/ui').split(',')
 let ko = 0
 const T = (n, c, d = '') => { console.log(`${c ? 'PASS' : 'FAIL'} ${n}${!c && d ? ' — ' + String(d).slice(0, 300) : ''}`); if (!c) ko++ }
 const nav = await chromium.launch()

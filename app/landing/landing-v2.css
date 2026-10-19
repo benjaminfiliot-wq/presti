@@ -117,3 +117,9 @@
   .lp2-bento .lp2-tuile-l{grid-column:auto}
 }
 @media (max-width:520px){.lp2-pastilles li{padding:.5rem .55rem;column-gap:.45rem}.lp2-pastilles .i{width:1.4rem;height:1.4rem}.lp2-pastilles em{font-size:.72rem}.lp2-lede{font-size:.98rem}}
+
+/* Performance (Lighthouse mobile du 19/10 : « Style & Layout » 2,5 s sur 4,7 s de travail du fil principal) : les sections sous
+   la ligne de flottaison ne sont mises en page qu'à l'approche de l'écran. « Comment ça marche » en est exclue (section
+   épinglée : sa hauteur commande le défilement). La taille réservée évite tout saut quand la section se dessine. */
+.lp2 main>section.lp2-fonc,.lp2 main>section.lp2-pourqui,.lp2 main>section.lp2-confiance,.lp2 main>section.lp2-tarifs,
+.lp2 main>section#maquette,.lp2 main>section#questions,.lp2 main>section.lp2-final{content-visibility:auto;contain-intrinsic-size:auto 900px}
