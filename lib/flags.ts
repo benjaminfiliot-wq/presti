@@ -184,7 +184,9 @@ export const FLAGS = {
    *  des composants /outils/ui. Baissé : la console actuelle, intacte ; /api/aujourdhui et /outils/ui répondent 404. En ESSAI
    *  (ci-dessous) pour les comptes de lib/essais.ts (le fondateur et le compte de démonstration) : ils voient la v2 avant tout
    *  le monde. Se lève sur l'accord de Benj, après les captures avant/après et le jury de design (PROMPT-BENJ §6). */
-  consoleV2: false,
+  // ⚠️ PRÉVISUALISATION SEULEMENT (19/10) : levé sur la branche refonte-1018 pour photographier la v2 sur le déploiement
+  // de prévisualisation. Ce commit se RETIRE (git revert) avant toute fusion : en production, consoleV2 reste false.
+  consoleV2: true,
   /** 19/10/2026 — REFONTE de la landing (piste B « Cinéma », 10 sections, /offres, /comparatif). Pas encore construite :
    *  le drapeau existe pour que la composition naisse derrière lui. Baissé : la landing actuelle. */
   landingV2: false,
