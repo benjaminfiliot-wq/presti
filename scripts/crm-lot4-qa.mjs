@@ -122,7 +122,8 @@ const { FLAGS } = await imp('lib/flags.ts')
 // ═══════════════════════ L. En vrai ═══════════════════════
 const BASE = (process.env.TEST_BASE || '').replace(/\/$/, '')
 if (!BASE) console.log('\n(L non joué : TEST_BASE absent)')
-else if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) T('L0 TEST_BASE doit être un serveur LOCAL', false, BASE)
+// Un serveur LOCAL, ou une prévisualisation Vercel du projet (déploiement de branche, jamais la production prestiapp.fr).
+else if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$|^https:\/\/presti-[a-z0-9-]+-presti1\.vercel\.app$/.test(BASE)) T('L0 TEST_BASE doit être un serveur local ou une prévisualisation Vercel', false, BASE)
 else {
   const sonde = await fetch(`${BASE}/api/crm/apres-chantier`).then((r) => r.status).catch(() => 0)
   if (sonde === 404) {

@@ -153,7 +153,8 @@ const EXE = new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0, 4, 0, 0, 0])
 // ═══════════════════════ L. En vrai ═══════════════════════
 const BASE = (process.env.TEST_BASE || '').replace(/\/$/, '')
 if (!BASE) console.log('\n(L non joué : TEST_BASE absent)')
-else if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) T('L0 TEST_BASE doit être un serveur LOCAL', false, BASE)
+// Un serveur LOCAL, ou une prévisualisation Vercel du projet (déploiement de branche, jamais la production prestiapp.fr).
+else if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$|^https:\/\/presti-[a-z0-9-]+-presti1\.vercel\.app$/.test(BASE)) T('L0 TEST_BASE doit être un serveur local ou une prévisualisation Vercel', false, BASE)
 else {
   // Le serveur dit lui-même si ses drapeaux sont levés : sans session, une route fermée répond 404, une route ouverte 401.
   // (Le dépôt garde crmPieces / crmPlanning baissés : on lève les drapeaux sur une COPIE locale, jamais dans le dépôt.)

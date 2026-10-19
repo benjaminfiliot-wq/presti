@@ -169,7 +169,8 @@ const REGLES_TACHE: Record<string, Regle> = {
   quantite: (v) => nombre(v, 'Quantité', 0, 1_000_000),
   unite: (v) => texte(v, 'Unité', 16),
   // 0166 (lot 5) : la pièce de la tâche ; refusée par les routes tant que le drapeau crmPlan est baissé.
-  piece: (v) => texte(v, 'Pièce', 40),
+  // Espaces resserrés (« Salle   d’eau » = « Salle d’eau ») : le schéma regroupe les tâches par nom de pièce exact.
+  piece: (v) => { const r = texte(v, 'Pièce', 40); return r.ok && r.valeur ? ok(r.valeur.replace(/\s+/g, ' ')) : r },
 }
 export function validerCreationTache(b: unknown): Resultat<EntreeTache | { depuis_devis: true }> {
   if (estObjet(b) && b.depuis_devis !== undefined) {
