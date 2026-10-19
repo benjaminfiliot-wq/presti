@@ -12,6 +12,7 @@ import Apparence from '@/app/plateforme/Apparence'
 import EcranVerrouille from '@/app/EcranVerrouille'
 import { peut } from '@/lib/plans'
 import { afficher, urlPlateforme } from '@/lib/urls'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // « Ma plateforme » = le poste de pilotage de l'artisan (v5 §9 G1), en trois volets :
 // Conversations (ce que voit le client, en miroir, plus ce qu'il ne voit pas),
@@ -66,7 +67,7 @@ function PlateformeInner() {
     { id: 'reglages', label: 'Réglages' },
   ]
 
-  if (!ready) return <AppShell active="plateforme" title="Ma plateforme"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="plateforme" title="Ma plateforme"><ChargementConsole carte /></AppShell>
 
   // 15/10 (Benj) : l'écran « Ma plateforme » commence avec Studio, pour tous les comptes. Aucun volet n'est monté (donc aucune lecture) ;
   // les routes /api/plateforme/* refusent de toute façon (403). Le lien de conversation du client, lui, n'en dépend pas.
