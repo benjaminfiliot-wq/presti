@@ -18,6 +18,9 @@ import MiseAJour from '@/app/MiseAJour'
 import { desabonnerCetAppareil } from '@/lib/pushClient'
 // v9 J3 — la coque native : écran de lancement, notifications natives, bouton retour, réseau. Inerte dans un navigateur.
 import NatifPont from '@/app/NatifPont'
+// Refonte 18/10 (étape 5.1) : la console v2, derrière le drapeau consoleV2 (essai : lib/essais.ts). Même chargement, autre coque.
+import CoqueV2 from '@/app/console/CoqueV2'
+import { essaisDuCompte, useConsoleV2 } from '@/lib/consoleV2Client'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode; essai?: Flag; offre?: string; cap?: Capacite }
 
@@ -107,6 +110,7 @@ export default function AppShell({
 }) {
   const router = useRouter()
   const pathname = usePathname()
+  const v2 = useConsoleV2()
   const [a, setA] = useState<ArtisanInfo | null>(null)
   const [uid, setUid] = useState<string | null>(null)
   const [essais, setEssais] = useState<Partial<Record<Flag, boolean>>>({})
@@ -170,9 +174,9 @@ export default function AppShell({
       setUid(data.session.user.id)
       if (prof) setA(prof as ArtisanInfo)
       // Fonctionnalités en essai (lib/flags.ts ESSAI) : le serveur dit si CE compte y a accès.
-      if (enEssai('crm') || enEssai('assistant')) {
-        fetch('/api/essais', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
-          .then((r) => (r.ok ? r.json() : {})).then((e) => setEssais(e as Partial<Record<Flag, boolean>>)).catch(() => {})
+      if (enEssai('crm') || enEssai('assistant') || enEssai('consoleV2')) {
+        // Une seule requête par page, partagée avec useConsoleV2 (lib/consoleV2Client.ts).
+        essaisDuCompte().then((e) => setEssais(e as Partial<Record<Flag, boolean>>)).catch(() => {})
       }
       // Première ouverture de la console : la visite guidée, une seule fois par artisan. Jamais lancée d'elle-même sur le
       // CRM (recette du 12/10) : elle montre le menu, pas le CRM, et recouvrait l'atelier à la première visite. Elle
@@ -235,6 +239,47 @@ export default function AppShell({
     if (error) { /* colonne pas encore migrée ou base muette : le repli localStorage suffit */ }
   }, [uid, a?.aide_vues])
   const etapeVisite = useCallback((e: Etape) => setOpen(!!e.menu), [])
+
+  // Refonte 18/10 — console v2 (drapeau consoleV2) : même chargement, même aide, même visite, même mode support ;
+  // seule la coque change (app/console/CoqueV2.tsx). Drapeau baissé et compte hors essai : la coque ci-dessous, intacte.
+  if (v2) {
+    const bandeaux = (
+      <>
+        {a?.suppression_demandee_le && active !== 'parametres' ? (
+          <a className="psh-grace" href="/parametres?onglet=donnees" role="status">
+            <b>Votre compte sera supprimé le {new Date(new Date(a.suppression_demandee_le).getTime() + 30 * 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</b>
+            <span>Annuler ou exporter vos données →</span>
+          </a>
+        ) : null}
+        {support && active !== 'parametres' ? (
+          <a className={`psh-support${support.etat === 'ouvert' ? ' ouvert' : ''}`} href="/parametres?onglet=securite" role="status">
+            {support.etat === 'ouvert'
+              ? <><b>Presti peut consulter {support.element_titre || 'élément de votre compte'}{support.expire_le ? ` jusqu’à ${new Date(support.expire_le).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : ''}.</b><span>Fermer maintenant →</span></>
+              : <><b>Presti demande à regarder {support.element_titre || 'un élément de votre compte'}.</b><span>Rien n’est visible tant que vous n’avez pas ouvert. Répondre →</span></>}
+          </a>
+        ) : null}
+        <InstallerApp />
+      </>
+    )
+    const boutonAide = (article || (video && actif('aideCentre'))) ? (
+      <button type="button" className="psh-aide" data-visite="aide" onClick={() => setAideOuverte(true)} aria-label="C’est quoi, cet écran ?" title="C’est quoi, cet écran ?" aria-haspopup="dialog" aria-expanded={aideOuverte}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></svg>
+      </button>
+    ) : null
+    const revoir = actif('aideVisites') && VISITES.console?.length ? () => { setAideOuverte(false); setTimeout(() => setVisite(true), 250) } : undefined
+    return (
+      <>
+        <CoqueV2 active={active} title={title} crumb={crumb} actions={actions} wide={wide} artisan={a} uid={uid} essais={essais} unread={unread}
+          bandeaux={bandeaux} aide={boutonAide} onRevoirVisite={revoir} onLogout={logout}>
+          {children}
+        </CoqueV2>
+        <AidePanneau article={article} video={video} open={aideOuverte} onClose={fermerAide} onRevoirVisite={revoir} />
+        {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
+        <MiseAJour />
+        <NatifPont />
+      </>
+    )
+  }
 
   return (
     <div className={`psh-app${open ? ' open' : ''}`}>
