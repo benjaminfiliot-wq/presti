@@ -14,7 +14,8 @@ import { jourParis } from '@/lib/tableau-de-bord/calculer'
 // Refonte 18/10 (étape 5.4, drapeau consoleV2) : la liste d'abord, les réglages des relances repliés dessous, un squelette
 // au chargement et un état vide qui dit le premier geste. Drapeau baissé : l'écran actuel, intact.
 import { useConsoleV2 } from '@/lib/consoleV2Client'
-import { EtatVide, Squelette } from '@/components/ui/base'
+import { EtatVide, Squelette, Statut } from '@/components/ui/base'
+import '@/app/devis/liste-v2.css' // le tableau de la console v2 (mêmes colonnes et même rythme que la liste des devis)
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -234,7 +235,38 @@ export default function FacturesList() {
             ))}
           </div>
 
-        <div className="psh-panel">
+        {v2 ? (
+          <div className="ui-carte dv2-cadre">
+            <table className="dv2-tab">
+              <thead><tr><th>Numéro</th><th>Client</th><th>Objet</th><th className="d">Montant TTC</th><th>Statut</th><th>Échéance</th><th className="d"><span className="ui-sr">Actions</span></th></tr></thead>
+              <tbody>
+                {factures.filter((f) => vue === 'toutes' || famille(f) === vue).map((f) => {
+                  const retard = estEnRetard(f, aujourdhui, annulees)
+                  const b = retard ? EN_RETARD : BADGE[f.statut ?? 'emise'] ?? BADGE.emise
+                  const ton = f.avoir_de ? 'neutre' : retard ? 'crit' : f.statut === 'payee' ? 'ok' : f.statut === 'annulee' ? 'crit' : 'accent'
+                  const active = f.statut !== 'annulee' && !f.avoir_de
+                  return (
+                    <tr key={f.id} style={{ cursor: 'default' }}>
+                      <td className="ui-mono"><button type="button" className="dv2-num fac-num" onClick={() => pdf(f)} title="Voir le PDF">{f.numero ?? '—'}</button></td>
+                      <td className="dv2-client">{f.client_nom || 'Client'}</td>
+                      <td className="dv2-objet">{f.objet || 'Sans objet'}{rel ? <span className="fac-rel">{ligneRelance(f)}</span> : null}</td>
+                      <td className="d ui-mono">{eur(f.total_ttc ?? 0)}</td>
+                      <td><Statut ton={ton}>{f.avoir_de ? 'Avoir' : b.label}</Statut></td>
+                      <td className="dv2-geste">{f.date_echeance ? new Date(`${f.date_echeance.slice(0, 10)}T12:00:00`).toLocaleDateString('fr-FR') : '—'}</td>
+                      <td className="d fac-actions">
+                        <button className="ui-btn ui-btn--g ui-btn--xs" disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
+                        {f.statut && f.statut !== 'brouillon' ? <button className="ui-btn ui-btn--g ui-btn--xs" disabled={busy === f.id} onClick={() => facturx(f)} title="Fichier XML Factur-X à télécharger, pour votre comptable ou un donneur d'ordre public">XML</button> : null}
+                        {active && f.statut !== 'payee' ? <button className="ui-btn ui-btn--s ui-btn--xs" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button> : null}
+                        {active ? <button className="ui-btn ui-btn--g ui-btn--xs fac-avoir" disabled={busy === f.id} onClick={() => annuler(f)}>Avoir</button> : null}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+        <div className={`psh-panel${v2 ? ' fac-cartes-telephone' : ''}`}>
           <div className="doc-list doc-list--grille doc-list--factures">
             {factures.filter((f) => vue === 'toutes' || famille(f) === vue).map((f) => {
               const b = estEnRetard(f, aujourdhui, annulees) ? EN_RETARD : BADGE[f.statut ?? 'emise'] ?? BADGE.emise

@@ -48,3 +48,13 @@
 .fac-reglages>summary::after{content:"";width:8px;height:8px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:rotate(45deg);margin-left:6px}
 .fac-reglages[open]>summary::after{transform:rotate(-135deg)}
 .fac-reglages[open]{padding-bottom:16px}
+/* Tableau des factures (console v2). */
+.fac-num{background:none!important;border:0;padding:0;margin:0;min-height:0!important;width:auto;font:500 13px var(--font-mono);color:var(--ink);cursor:pointer}
+.fac-num:hover{color:var(--accent-ink)}
+.fac-actions{display:flex;gap:4px;justify-content:flex-end;align-items:center;height:var(--ligne-tableau)}
+.fac-avoir{color:var(--crit)!important}
+.fac-rel{display:block;font-size:12px;color:var(--muted)}
+.fac-rel .rel-lien{font-size:12px}
+/* En v2, les cartes ne servent plus que sur téléphone (le tableau est masqué sous 900 px, liste-v2.css). */
+.fac-cartes-telephone{display:none}
+@media (max-width:900px){.fac-cartes-telephone{display:block}}
