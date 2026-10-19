@@ -11,6 +11,10 @@ import RelancesAuto, { type DonneesRelances } from './RelancesAuto'
 import RelancesVerrouillees from './RelancesVerrouillees'
 import type { PlanPayant } from '@/lib/plans'
 import { jourParis } from '@/lib/tableau-de-bord/calculer'
+// Refonte 18/10 (étape 5.4, drapeau consoleV2) : la liste d'abord, les réglages des relances repliés dessous, un squelette
+// au chargement et un état vide qui dit le premier geste. Drapeau baissé : l'écran actuel, intact.
+import { useConsoleV2 } from '@/lib/consoleV2Client'
+import { EtatVide, Squelette } from '@/components/ui/base'
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -34,6 +38,7 @@ const FILTRES: [string, string][] = [['a_encaisser', 'À encaisser'], ['payees',
 
 export default function FacturesList() {
   const router = useRouter()
+  const v2 = useConsoleV2()
   const [ready, setReady] = useState(false)
   const [factures, setFactures] = useState<Facture[]>([])
   const [busy, setBusy] = useState<string | null>(null)
@@ -170,25 +175,39 @@ export default function FacturesList() {
   const payees = factures.filter((f) => famille(f) === 'payees')
   const vue = filtre !== 'toutes' && factures.some((f) => famille(f) === filtre) ? filtre : 'toutes'
 
+  // v2 : les réglages des relances automatiques passent SOUS la liste, repliés : la liste est l'objet de l'écran (audit 18/10,
+  // défaut 2 : 2,7 écrans de réglages avant la première facture) ; le réglage reste à un clic, son état écrit dans le titre.
+  const reglagesRelances = (rel || verrouRelances) ? (
+    <details className="ui-carte fac-reglages">
+      <summary><b>Relances automatiques des impayés</b><span className="ui-mono">{rel ? (rel.reglages.actif ? 'activées' : 'désactivées') : 'avec l’offre supérieure'}</span></summary>
+      {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
+      {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
+    </details>
+  ) : null
   const aujourdhui = jourParis(new Date())
   const annulees = new Set(factures.map((x) => x.avoir_de).filter((x): x is string => !!x))
 
   return (
     <AppShell active="factures" title="Factures" crumb="Vos documents">
       {!ready ? (
-        <p className="muted">Chargement…</p>
+        v2 ? <Squelette variante="tableau" lignes={4} etiquette="Chargement de vos factures…" /> : <p className="muted">Chargement…</p>
       ) : factures.length === 0 ? (
         <>
-        {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
-        {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
+        {!v2 && rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
+        {!v2 && verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
+        {v2 ? (
+          <EtatVide icone="factures" titre="Aucune facture pour l’instant" texte="Ouvrez un devis accepté et cliquez « Créer la facture » : Presti reprend les lignes, applique la bonne numérotation et sort un PDF conforme." action={{ href: '/devis', libelle: 'Voir mes devis' }} />
+        ) : (
         <div className="psh-panel">
           <div className="psh-empty">Aucune facture pour l’instant.<br />Ouvrez un devis et cliquez « Créer la facture » : Presti reprend les lignes, applique la bonne numérotation et sort un PDF conforme.</div>
         </div>
+        )}
+        {v2 && reglagesRelances}
         </>
       ) : (
         <>
-          {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
-          {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
+          {!v2 && rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
+          {!v2 && verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
           {/* Le résumé se calcule sur la liste affichée ci-dessous : rien d'autre n'est lu. */}
           <section className="docs-resume" aria-label="Résumé de vos factures">
             <div className="docs-tuile">
@@ -253,6 +272,7 @@ export default function FacturesList() {
             })}
           </div>
         </div>
+        {v2 && reglagesRelances}
         </>
       )}
     </AppShell>

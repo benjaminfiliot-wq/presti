@@ -39,3 +39,12 @@
 .rel-case-verrou { cursor: not-allowed; opacity: .7 }
 .rel-verrou .rel-pied .psh-btn { width: auto }
 @media (max-width: 560px) { .rel-verrou .rel-pied { flex-direction: column; align-items: stretch } .rel-verrou .rel-pied .psh-btn { justify-content: center; text-align: center } }
+
+/* Refonte 18/10 (étape 5.4, console v2) : les réglages des relances, repliés sous la liste des factures. */
+.fac-reglages{padding:0 16px}
+.fac-reglages>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:52px;cursor:pointer}
+.fac-reglages>summary::-webkit-details-marker{display:none}
+.fac-reglages>summary span{margin-left:auto;font-size:12px;color:var(--muted)}
+.fac-reglages>summary::after{content:"";width:8px;height:8px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:rotate(45deg);margin-left:6px}
+.fac-reglages[open]>summary::after{transform:rotate(-135deg)}
+.fac-reglages[open]{padding-bottom:16px}
