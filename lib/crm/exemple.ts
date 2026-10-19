@@ -9,6 +9,7 @@
 // Noms clairement fictifs (« Client fictif A », « Négoce fictif Nord »), adresses e-mail en .invalid (domaine qui ne peut
 // exister), aucun téléphone, immatriculations AA-00x-AA.
 import { construireFicheChantier, construireFicheClient, construireVue, type ChantierLigne, type DevisLigne, type DossiersCrm, type EntreeJournal, type FactureLigne, type FicheChantier, type FicheClient, type LeadLigne, type MateriauLigne, type Membre, type NoteCrm, type ReservationFiche, type TacheFiche, type Vehicule, type Vue } from './vue.ts'
+import { actif } from '../flags.ts'
 import { regrouperClients, trouverGroupe } from './clients.ts'
 import type { DonneesAtelier } from './atelier.ts'
 import type { CommandeA } from './commandes.ts'
@@ -205,6 +206,9 @@ const RAPPELS: RappelLigne[] = [
   rappel(853, { chantier_id: ID(9) }, 'rappeler', '2026-10-12', '08:00', 'Prévenir le client de l’arrivée de l’équipe'),
   rappel(854, { chantier_id: ID(2) }, 'rappeler', '2026-10-10', null, 'Appeler le client pour la nouvelle date de fin'),
   rappel(855, { client_cle: idExemple('e:client-a@exemple.invalid') }, 'rendez_vous', '2026-10-16', '17:30', 'Réception des travaux'),
+  // L'après-chantier (0165) : le chauffe-eau est fini depuis le 2 : la demande d'avis attend l'artisan depuis le 4.
+  // (montrée seulement drapeau levé : sans l'encart de la fiche, l'artisan ne pourrait pas l'envoyer)
+  ...(actif('crmApresChantier') ? [rappel(856, { chantier_id: ID(3) }, 'demande_avis', '2026-10-04', null, 'Demander un avis à Client fictif C', 'systeme')] : []),
 ]
 const journalDe = (c: ChantierLigne): EntreeJournal[] => {
   const e: EntreeJournal[] = [{ id: `${c.id}-j0`, objet: 'chantier', champ: 'creation', de: null, vers: 'a_planifier', origine: 'artisan', etape_derivee: null, note: null, cree_le: c.cree_le }]

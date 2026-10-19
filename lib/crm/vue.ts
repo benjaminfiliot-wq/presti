@@ -158,7 +158,7 @@ export function construireVue(p: { uid: string; metier: string | null; d: Dossie
 }
 
 // ── La fiche chantier ───────────────────────────────────────────────────────────────────────────────────────────────────
-export type TacheFiche = { id: string; libelle: string; quantite: number | null; unite: string | null; ordre: number; faite: boolean; faite_le: string | null; membre_id: string | null; devis_ligne_id: string | null }
+export type TacheFiche = { id: string; libelle: string; quantite: number | null; unite: string | null; ordre: number; faite: boolean; faite_le: string | null; membre_id: string | null; devis_ligne_id: string | null; piece?: string | null }
 export type ReservationFiche = { id: string; materiau_id: string; quantite: number; lieu: string; statut: string; sorti_le: string | null; note: string | null; materiau: { id: string; nom: string; unite: string; prix_vu_ht?: Nb } | null }
 export type EntreeJournal = { id: string; objet: string; champ: string; de: string | null; vers: string | null; origine: string; etape_derivee: string | null; note: string | null; cree_le: string }
 export type NoteCrm = { id: string; texte: string; cree_le: string }
@@ -169,6 +169,8 @@ export type DevisFiche = {
 }
 export type FactureFiche = { id: string; artisan_id?: string; devis_id?: string | null; numero: string | null; objet?: string | null; statut: string | null; total_ttc: number | null; avoir_de?: string | null; date_emission: string | null; acompte_pct: number | null }
 export type FicheChantier = {
+  /** Le métier du compte (décor de la maquette du chantier, lot 5) ; absent dans l'exemple. */
+  metier?: string | null
   chantier: { id: string; titre: string; statut: string; client_nom: string | null; adresse: string | null; code_postal: string | null; ville: string | null; date_debut: string | null; date_fin_prevue: string | null; date_fin_reelle: string | null; vehicule_id: string | null; notes: string | null; devis_id: string | null }
   devis: DevisFiche | null
   factures: (FactureFiche & { comptee: boolean })[]

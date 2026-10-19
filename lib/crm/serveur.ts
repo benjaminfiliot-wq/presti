@@ -27,7 +27,7 @@ export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
 /** Méthode que la route ne sert pas — seulement APRÈS gardeCrm, pour qu'un compte hors essai reçoive 404 et non 405. */
 export const nonPermise = (permises: string) => new NextResponse(null, { status: 405, headers: { ...PAS_DE_CACHE, Allow: permises } })
 
-export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' } = {}): Promise<Garde> {
+export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' | 'crmApresChantier' | 'crmSuivi' } = {}): Promise<Garde> {
   // 1. Drapeau baissé : 404 sans corps, avant toute lecture (ni session, ni base). Une partie du CRM livrée sous son propre drapeau
   //    (18/10 : photos du chantier, planning) le vérifie ici aussi, AVANT la session : une route fermée ne dit rien.
   if (!enEssai('crm') || (opts.drapeau && !actif(opts.drapeau))) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }

@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { estUuid, lireCorps, validerModificationTache } from '@/lib/crm/valider'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 type Ctx = { params: Promise<{ id: string }> }
@@ -15,6 +16,8 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if (!corps.ok) return erreur(corps.erreur, corps.statut ?? 400)
   const v = validerModificationTache(corps.valeur)
   if (!v.ok) return erreur(v.erreur, 400)
+  // La pièce (0166) n'existe pour l'API que drapeau crmPlan levé.
+  if ('piece' in v.valeur && !actif('crmPlan')) return erreur('Champ inconnu : piece.', 400)
   if (v.valeur.membre_id) {
     const { data: m, error } = await supabaseAdmin.from('equipe_membres').select('id').eq('id', v.valeur.membre_id).eq('artisan_id', g.uid).maybeSingle()
     if (error) return erreur(INDISPONIBLE, 503)

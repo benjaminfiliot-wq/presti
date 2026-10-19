@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { COLONNES, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import { lireCorps, validerCreationChantier } from '@/lib/crm/valider'
-import { tachesDepuisDevis } from '@/lib/crm/chantier'
+import { tacheAInserer, tachesDepuisDevis } from '@/lib/crm/chantier'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
     const nouvelles = el ? [] : tachesDepuisDevis(lignes ?? [], [])
     if (el) suites.push('Les lignes du devis n’ont pas pu être lues : générez les tâches depuis la fiche.')
     if (nouvelles.length) {
-      const { error: et } = await supabaseAdmin.from('chantier_taches').insert(nouvelles.map((t) => ({ ...t, chantier_id: cree.id, artisan_id: g.uid })))
+      const { error: et } = await supabaseAdmin.from('chantier_taches').insert(nouvelles.map((t) => ({ ...tacheAInserer(t, actif('crmPlan')), chantier_id: cree.id, artisan_id: g.uid })))
       if (et) { console.error('[crm/chantiers] tâches :', et.message); suites.push('Les tâches n’ont pas pu être créées : générez-les depuis la fiche.') }
       else taches = nouvelles.length
     }

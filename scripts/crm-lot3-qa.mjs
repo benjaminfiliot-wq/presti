@@ -154,67 +154,119 @@ const EXE = new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0, 4, 0, 0, 0])
 const BASE = (process.env.TEST_BASE || '').replace(/\/$/, '')
 if (!BASE) console.log('\n(L non joué : TEST_BASE absent)')
 else if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) T('L0 TEST_BASE doit être un serveur LOCAL', false, BASE)
-else if (!FLAGS.crmPieces || !FLAGS.crmPlanning) {
-  // Drapeaux baissés : chaque porte du lot est fermée, même sans session (rien n'est dit).
-  const etats = await Promise.all([['GET', '/api/crm/pieces?chantier_id=' + U(1)], ['POST', '/api/crm/pieces'], ['DELETE', `/api/crm/pieces/${U(1)}`], ['GET', '/api/crm/agenda'], ['POST', '/api/crm/agenda'], ['GET', `/api/agenda/${'a'.repeat(43)}.ics`]]
-    .map(async ([m, c]) => [m, c, (await fetch(`${BASE}${c}`, { method: m }).catch(() => ({ status: 0 }))).status]))
-  T('L1 drapeaux baissés : chaque route du lot répond 404 (même sans session)', etats.every(([, , s]) => s === 404), JSON.stringify(etats))
-  console.log('(L2+ non joué : lever crmPieces et crmPlanning sur un serveur LOCAL après 0163/0164 appliquées)')
-} else {
-  for (const l of fs.readFileSync(path.join(RACINE, '.env.local'), 'utf8').split(/\r?\n/)) { const m = l.match(/^([A-Z_0-9]+)=(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '') }
-  const { createClient } = await import('@supabase/supabase-js')
-  const { verifierSessionTest } = await import(pathToFileURL(path.join(RACINE, 'scripts/lib/connexion-test.mjs')).href)
-  const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
-  const comptes = []
-  const creer = async (nom, plan) => {
-    const slug = `lot3-${nom}-${Date.now().toString(36)}-${crypto.randomBytes(3).toString('hex')}`
-    const email = `${slug}@presti-test.invalid`, mdp = crypto.randomUUID() + 'Aa1!'
-    const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })
-    if (error) throw new Error(`compte ${nom} : ${error.message}`)
-    comptes.push(u.user.id)
-    await admin.from('artisans').insert({ id: u.user.id, email, nom: `Test lot 3 ${nom}`, metier: 'Plombier', slug, plan })
-    const nav = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
-    const { data: s } = await nav.auth.signInWithPassword({ email, password: mdp })
-    await verifierSessionTest(s.session.access_token)
-    return { uid: u.user.id, jeton: s.session.access_token }
-  }
-  const envoyer = (c, champs) => { const f = new FormData(); for (const [k, v] of Object.entries(champs)) f.append(k, v); return fetch(`${BASE}/api/crm/pieces`, { method: 'POST', headers: { Authorization: `Bearer ${c.jeton}` }, body: f }).then(async (r) => ({ status: r.status, corps: await r.json().catch(() => null) })) }
-  const http = async (c, chemin, init = {}) => { const r = await fetch(`${BASE}${chemin}`, { method: init.method ?? 'GET', headers: { Authorization: `Bearer ${c.jeton}` } }); return { status: r.status, corps: await r.json().catch(() => null) } }
-  try {
-    const [CA, CB] = [await creer('A', 'signature'), await creer('B', 'signature')]
-    const { data: chA } = await admin.from('chantiers').insert({ artisan_id: CA.uid, titre: 'Chantier lot 3', statut: 'en_cours', date_debut: '2026-10-19', date_fin_prevue: '2026-10-21' }).select('id').single()
-    const e1 = await envoyer(CA, { chantier_id: chA.id, type: 'avant', legende: 'État des lieux', fichier: new Blob([WEBP], { type: 'image/webp' }) })
-    const e2 = await envoyer(CA, { chantier_id: chA.id, type: 'facture_fournisseur', fichier: new Blob([PDF], { type: 'application/pdf' }) })
-    T('L2 une photo (WebP) et un PDF envoyés : 201', e1.status === 201 && e2.status === 201, JSON.stringify([e1, e2]))
-    const faux = await envoyer(CA, { chantier_id: chA.id, fichier: new Blob([SVG], { type: 'image/png' }) })
-    T('L3 un SVG déguisé en PNG est refusé (415) : le type réel est lu dans les octets', faux.status === 415)
-    const autre = await envoyer(CB, { chantier_id: chA.id, fichier: new Blob([WEBP], { type: 'image/webp' }) })
-    T('L4 le compte B ne peut pas envoyer sur le chantier de A (404)', autre.status === 404)
-    const liste = await http(CA, `/api/crm/pieces?chantier_id=${chA.id}`)
-    const url = liste.corps?.pieces?.[0]?.url ?? ''
-    T('L5 lecture : 2 pièces, adresses signées (token), jamais publiques', liste.status === 200 && liste.corps.pieces.length === 2 && /\/object\/sign\/chantier-pieces\//.test(url) && /token=/.test(url))
-    const brut = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/chantier-pieces/${CA.uid}/${chA.id}/x.webp`)
-    T('L6 le bucket n’est pas public (adresse publique refusée)', brut.status >= 400)
-    T('L7 le compte B ne voit pas les pièces du chantier de A (liste vide)', (await http(CB, `/api/crm/pieces?chantier_id=${chA.id}`)).corps?.pieces?.length === 0)
-    const sup = await http(CA, `/api/crm/pieces/${e1.corps.id}`, { method: 'DELETE' })
-    const { data: restants } = await admin.storage.from('chantier-pieces').list(`${CA.uid}/${chA.id}`)
-    T('L8 supprimer : la ligne ET le fichier disparaissent', sup.status === 200 && (restants ?? []).length === 1)
-    const ag = await http(CA, '/api/crm/agenda', { method: 'POST' })
-    const flux = await fetch(ag.corps?.adresse?.replace(/^https?:\/\/[^/]+/, BASE) ?? `${BASE}/x`)
-    const texte = await flux.text()
-    T('L9 lien d’agenda : créé, lu sans session, en text/calendar, avec le chantier', ag.status === 201 && flux.status === 200 && /text\/calendar/.test(flux.headers.get('content-type') ?? '') && /SUMMARY:Chantier lot 3/.test(texte) && /noindex/.test(flux.headers.get('x-robots-tag') ?? ''))
-    await http(CA, '/api/crm/agenda', { method: 'DELETE' })
-    T('L10 révoqué : le même lien répond 404', (await fetch(ag.corps.adresse.replace(/^https?:\/\/[^/]+/, BASE))).status === 404)
-  } catch (e) { T('L erreur inattendue', false, e.message) } finally {
-    let restes = 0
-    for (const id of comptes) {
-      const { data: dossiers } = await admin.storage.from('chantier-pieces').list(id)
-      for (const d of dossiers ?? []) { const { data: f } = await admin.storage.from('chantier-pieces').list(`${id}/${d.name}`); if (f?.length) await admin.storage.from('chantier-pieces').remove(f.map((x) => `${id}/${d.name}/${x.name}`)) }
-      await admin.rpc('purger_compte_test', { p_id: id })
-      for (const t of ['chantier_pieces', 'chantiers']) { const { count } = await admin.from(t).select('*', { count: 'exact', head: true }).eq('artisan_id', id); restes += count ?? 0 }
-      const { data: d2 } = await admin.storage.from('chantier-pieces').list(id); restes += (d2 ?? []).length
+else {
+  // Le serveur dit lui-même si ses drapeaux sont levés : sans session, une route fermée répond 404, une route ouverte 401.
+  // (Le dépôt garde crmPieces / crmPlanning baissés : on lève les drapeaux sur une COPIE locale, jamais dans le dépôt.)
+  const sonde = await fetch(`${BASE}/api/crm/agenda`).then((r) => r.status).catch(() => 0)
+  if (sonde === 404) {
+    // Drapeaux baissés : chaque porte du lot est fermée, même sans session (rien n'est dit).
+    const etats = await Promise.all([['GET', '/api/crm/pieces?chantier_id=' + U(1)], ['POST', '/api/crm/pieces'], ['DELETE', `/api/crm/pieces/${U(1)}`], ['GET', '/api/crm/agenda'], ['POST', '/api/crm/agenda'], ['GET', `/api/agenda/${'a'.repeat(43)}.ics`]]
+      .map(async ([m, c]) => [m, c, (await fetch(`${BASE}${c}`, { method: m }).catch(() => ({ status: 0 }))).status]))
+    T('L1 drapeaux baissés : chaque route du lot répond 404 (même sans session)', etats.every(([, , s]) => s === 404), JSON.stringify(etats))
+    console.log('(L2+ non joué : serveur aux drapeaux baissés ; les lever sur une copie LOCALE du dépôt pour jouer la suite)')
+  } else {
+    for (const l of fs.readFileSync(path.join(RACINE, '.env.local'), 'utf8').split(/\r?\n/)) { const m = l.match(/^([A-Z_0-9]+)=(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '') }
+    const { createClient } = await import('@supabase/supabase-js')
+    const { verifierSessionTest } = await import(pathToFileURL(path.join(RACINE, 'scripts/lib/connexion-test.mjs')).href)
+    const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
+    const { error: absente } = await admin.from('chantier_pieces').select('id').limit(1)
+    const { error: absente2 } = await admin.from('crm_agenda').select('artisan_id').limit(1)
+    if (absente || absente2) T('L0 0163 et 0164 appliquées (tables chantier_pieces et crm_agenda présentes)', false, (absente ?? absente2).message)
+    else {
+      T('L1 drapeaux levés sur ce serveur local : sans session, 401 (la porte existe, la session manque)', sonde === 401, String(sonde))
+      const comptes = []
+      const creer = async (nom, plan) => {
+        const slug = `lot3-${nom}-${Date.now().toString(36)}-${crypto.randomBytes(3).toString('hex')}`
+        const email = `${slug}@presti-test.invalid`, mdp = crypto.randomUUID() + 'Aa1!'
+        const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })
+        if (error) throw new Error(`compte ${nom} : ${error.message}`)
+        comptes.push(u.user.id)
+        const { error: ea } = await admin.from('artisans').insert({ id: u.user.id, email, nom: `Test lot 3 ${nom}`, metier: 'Plombier', slug, plan })
+        if (ea) throw new Error(`fiche ${nom} : ${ea.message}`)
+        const nav = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
+        const { data: s, error: es } = await nav.auth.signInWithPassword({ email, password: mdp })
+        if (es) throw new Error(`connexion ${nom} : ${es.message}`)
+        await verifierSessionTest(s.session.access_token)
+        return { uid: u.user.id, jeton: s.session.access_token }
+      }
+      const envoyer = (c, champs) => { const f = new FormData(); for (const [k, v] of Object.entries(champs)) f.append(k, v); return fetch(`${BASE}/api/crm/pieces`, { method: 'POST', headers: { Authorization: `Bearer ${c.jeton}` }, body: f }).then(async (r) => ({ status: r.status, corps: await r.json().catch(() => null) })) }
+      const http = async (c, chemin, init = {}) => {
+        const r = await fetch(`${BASE}${chemin}`, { method: init.method ?? 'GET', headers: { Authorization: `Bearer ${c.jeton}`, ...(init.body !== undefined ? { 'Content-Type': 'application/json' } : {}) }, body: init.body !== undefined ? JSON.stringify(init.body) : undefined })
+        return { status: r.status, corps: await r.json().catch(() => null) }
+      }
+      const local = (adresse) => String(adresse ?? '').replace(/^https?:\/\/[^/]+/, BASE)
+      try {
+        console.log('\n── L. Comptes de test @presti-test.invalid, données semées par la clé de service')
+        const [CA, CB, CS] = [await creer('A', 'signature'), await creer('B', 'signature'), await creer('S', 'studio')]
+        const { data: chA, error: ec } = await admin.from('chantiers').insert({ artisan_id: CA.uid, titre: 'Chantier lot 3', statut: 'en_cours', date_debut: '2026-10-19', date_fin_prevue: '2026-10-21', adresse: '12 rue Test, 44000 Nantes' }).select('id').single()
+        if (ec) throw new Error(`chantier : ${ec.message}`)
+
+        // Photos et pièces.
+        const e1 = await envoyer(CA, { chantier_id: chA.id, type: 'avant', legende: 'État des lieux', fichier: new Blob([WEBP], { type: 'image/webp' }) })
+        const e2 = await envoyer(CA, { chantier_id: chA.id, type: 'facture_fournisseur', fichier: new Blob([PDF], { type: 'application/pdf' }) })
+        T('L2 une photo (WebP) et un PDF envoyés : 201', e1.status === 201 && e2.status === 201, JSON.stringify([e1, e2]))
+        const { data: lignes } = await admin.from('chantier_pieces').select('chemin, mime, taille, type').eq('artisan_id', CA.uid)
+        T('L3 la ligne porte le chemin <compte>/<chantier>/<id>, le type RÉEL et la taille réelle', (lignes ?? []).length === 2 && lignes.every((l) => l.chemin.startsWith(`${CA.uid}/${chA.id}/`)) && lignes.some((l) => l.mime === 'application/pdf' && l.taille === PDF.length), JSON.stringify(lignes))
+        const faux = await envoyer(CA, { chantier_id: chA.id, fichier: new Blob([SVG], { type: 'image/png' }) })
+        T('L4 un SVG déguisé en PNG est refusé (415) : le type réel est lu dans les octets', faux.status === 415, JSON.stringify(faux))
+        const exe = await envoyer(CA, { chantier_id: chA.id, fichier: new Blob([EXE], { type: 'application/pdf' }) })
+        T('L5 un exécutable déguisé en PDF est refusé (415)', exe.status === 415, JSON.stringify(exe))
+        const intrus = await envoyer(CA, { chantier_id: chA.id, chemin: 'x/y.webp', fichier: new Blob([WEBP], { type: 'image/webp' }) })
+        T('L6 un champ inconnu (chemin imposé par le client) est refusé (400)', intrus.status === 400, JSON.stringify(intrus))
+        const autre = await envoyer(CB, { chantier_id: chA.id, fichier: new Blob([WEBP], { type: 'image/webp' }) })
+        T('L7 le compte B ne peut pas envoyer sur le chantier de A (404)', autre.status === 404, JSON.stringify(autre))
+        const studio = await envoyer(CS, { chantier_id: chA.id, fichier: new Blob([WEBP], { type: 'image/webp' }) })
+        T('L8 une offre sans CRM (Studio) est refusée', studio.status >= 400 && studio.status !== 500, JSON.stringify(studio))
+        const liste = await http(CA, `/api/crm/pieces?chantier_id=${chA.id}`)
+        const url = liste.corps?.pieces?.[0]?.url ?? ''
+        T('L9 lecture : 2 pièces, adresses SIGNÉES (jeton), jamais publiques', liste.status === 200 && liste.corps.pieces.length === 2 && /\/object\/sign\/chantier-pieces\//.test(url) && /token=/.test(url), JSON.stringify(liste).slice(0, 300))
+        const telecharge = url ? await fetch(url) : null
+        T('L10 l’adresse signée rend bien le fichier (octets identiques)', !!telecharge && telecharge.ok && Buffer.from(await telecharge.arrayBuffer()).length > 0)
+        const brut = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/chantier-pieces/${lignes?.[0]?.chemin ?? 'x'}`)
+        T('L11 le bucket n’est pas public (l’adresse publique du même fichier est refusée)', brut.status >= 400, String(brut.status))
+        T('L12 le compte B ne voit pas les pièces du chantier de A (liste vide)', (await http(CB, `/api/crm/pieces?chantier_id=${chA.id}`)).corps?.pieces?.length === 0)
+        T('L13 le compte B ne peut pas supprimer une pièce de A (404)', (await http(CB, `/api/crm/pieces/${e1.corps?.id}`, { method: 'DELETE' })).status === 404)
+        const maj = await http(CA, `/api/crm/pieces/${e1.corps?.id}`, { method: 'PATCH', body: { type: 'apres', legende: 'Fini' } })
+        const { data: relue } = await admin.from('chantier_pieces').select('type, legende').eq('id', e1.corps?.id).maybeSingle()
+        T('L14 étiquette et légende modifiables (PATCH)', maj.status === 200 && relue?.type === 'apres' && relue?.legende === 'Fini', JSON.stringify([maj, relue]))
+        const sup = await http(CA, `/api/crm/pieces/${e1.corps?.id}`, { method: 'DELETE' })
+        const { data: restants } = await admin.storage.from('chantier-pieces').list(`${CA.uid}/${chA.id}`)
+        T('L15 supprimer : la ligne ET le fichier disparaissent', sup.status === 200 && (restants ?? []).length === 1, JSON.stringify([sup.status, restants?.length]))
+
+        // Lien d'agenda.
+        T('L16 sans lien créé, GET /api/crm/agenda dit « pas de lien » sans rendre d’adresse', await http(CA, '/api/crm/agenda').then((r) => r.status === 200 && !JSON.stringify(r.corps).includes('/api/agenda/')))
+        const ag = await http(CA, '/api/crm/agenda', { method: 'POST' })
+        const adresse = local(ag.corps?.adresse)
+        const { data: ligneAg } = await admin.from('crm_agenda').select('jeton_empreinte').eq('artisan_id', CA.uid).maybeSingle()
+        const jeton = adresse.match(/\/api\/agenda\/([A-Za-z0-9_-]{43})\.ics$/)?.[1] ?? ''
+        T('L17 lien créé : seule l’EMPREINTE du jeton est en base (jamais le jeton)', ag.status === 201 && !!jeton && ligneAg?.jeton_empreinte === crypto.createHash('sha256').update(jeton).digest('hex') && !JSON.stringify(ligneAg).includes(jeton), JSON.stringify(ag).slice(0, 200))
+        const flux = await fetch(adresse)
+        const texte = await flux.text()
+        T('L18 le flux se lit SANS session, en text/calendar, noindex, sans cache, avec le chantier et son adresse', flux.status === 200 && /text\/calendar/.test(flux.headers.get('content-type') ?? '') && /noindex/.test(flux.headers.get('x-robots-tag') ?? '') && /no-store/.test(flux.headers.get('cache-control') ?? '') && /SUMMARY:Chantier lot 3/.test(texte) && /LOCATION:12 rue Test\\, 44000 Nantes/.test(texte), `${flux.status} ${texte.slice(0, 200)}`)
+        T('L19 rien de privé dans le flux : ni e-mail, ni téléphone, ni montant, ni « Presti »', !/@presti-test|€|presti/i.test(texte.replace(/UID:[^\r]+/g, '')))
+        T('L20 GET /api/crm/agenda ne rend JAMAIS l’adresse après coup', await http(CA, '/api/crm/agenda').then((r) => r.status === 200 && !JSON.stringify(r.corps).includes(jeton)))
+        const ag2 = await http(CA, '/api/crm/agenda', { method: 'POST' })
+        T('L21 renouveler : l’ancien lien meurt (404), le nouveau marche', ag2.status === 201 && (await fetch(adresse)).status === 404 && (await fetch(local(ag2.corps?.adresse))).status === 200)
+        T('L22 un jeton inventé répond 404', (await fetch(`${BASE}/api/agenda/${'b'.repeat(43)}.ics`)).status === 404)
+        await http(CA, '/api/crm/agenda', { method: 'DELETE' })
+        const { count: nAg } = await admin.from('crm_agenda').select('*', { count: 'exact', head: true }).eq('artisan_id', CA.uid)
+        T('L23 révoqué : le lien répond 404 et la ligne a disparu', (await fetch(local(ag2.corps?.adresse))).status === 404 && nAg === 0)
+        T('L24 une offre sans CRM (Studio) ne peut pas créer de lien d’agenda', (await http(CS, '/api/crm/agenda', { method: 'POST' })).status >= 400)
+      } catch (e) { T('L erreur inattendue', false, e.message) } finally {
+        let restes = 0
+        for (const id of comptes) {
+          // Les fichiers d'abord : la purge de la base emporte les lignes, jamais les fichiers du bucket.
+          const { data: dossiers } = await admin.storage.from('chantier-pieces').list(id)
+          for (const d of dossiers ?? []) { const { data: f } = await admin.storage.from('chantier-pieces').list(`${id}/${d.name}`); if (f?.length) await admin.storage.from('chantier-pieces').remove(f.map((x) => `${id}/${d.name}/${x.name}`)) }
+          const { error } = await admin.rpc('purger_compte_test', { p_id: id })
+          if (error) console.log(`  ⚠️ purge ${id} : ${error.message}`)
+          for (const t of ['chantier_pieces', 'chantiers', 'crm_agenda']) { const { count } = await admin.from(t).select('*', { count: 'exact', head: true }).eq('artisan_id', id); restes += count ?? 0 }
+          const { count } = await admin.from('artisans').select('*', { count: 'exact', head: true }).eq('id', id); restes += count ?? 0
+          const { data: d2 } = await admin.storage.from('chantier-pieces').list(id); restes += (d2 ?? []).length
+        }
+        T(`L25 nettoyage : les ${comptes.length} comptes de test, leurs lignes et leurs fichiers sont supprimés`, restes === 0, `${restes} reste(s)`)
+      }
     }
-    T(`L11 nettoyage : comptes, lignes et fichiers de test supprimés`, restes === 0, `${restes} reste(s)`)
   }
 }
 

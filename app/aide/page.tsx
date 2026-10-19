@@ -81,7 +81,7 @@ export default function AidePage() {
   // La recherche passe aussi par les vidéos : titre, résumé et étapes (mêmes mots, mêmes accents ignorés).
   const videosTrouvees = useMemo(() => {
     const n = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-    const mots = n(q.trim()).split(/s+/).filter(Boolean)
+    const mots = n(q.trim()).split(/\s+/).filter(Boolean)
     if (!mots.length) return videos
     return videos.filter((v: AideVideo) => { const t = n([v.titre, v.resume, ...v.etapes].join(' ')); return mots.every((m) => t.includes(m)) })
   }, [q, videos])

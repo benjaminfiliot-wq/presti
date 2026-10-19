@@ -17,8 +17,9 @@ import { SEUIL_RELANCE_JOURS, VALIDITE_PAR_DEFAUT_JOURS } from '../tableau-de-bo
 // La liste des types vit dans lib/crm/valider.ts (validation des routes) : une seule écriture.
 export { TYPES_RAPPEL }
 export type TypeRappel = TypeRappelV
-export const LIBELLES_RAPPEL: Record<TypeRappel, string> = {
-  rappeler: 'Rappeler', relancer_devis: 'Relancer le devis', visite: 'Visite technique', metre: 'Métré', rendez_vous: 'Rendez-vous', autre: 'À faire',
+// demande_avis et entretien : posés par l'après-chantier (0165, lib/apresChantier.ts), jamais par le formulaire de l'artisan.
+export const LIBELLES_RAPPEL: Record<TypeRappel | 'demande_avis' | 'entretien', string> = {
+  rappeler: 'Rappeler', relancer_devis: 'Relancer le devis', visite: 'Visite technique', metre: 'Métré', rendez_vous: 'Rendez-vous', autre: 'À faire', demande_avis: 'Demander un avis', entretien: 'Proposer l’entretien',
 }
 /** Les types qui sont des RENDEZ-VOUS (la case « Prochain rendez-vous » de la fiche client). */
 export const TYPES_RENDEZ_VOUS: readonly TypeRappel[] = ['visite', 'metre', 'rendez_vous']

@@ -22,6 +22,8 @@ export const SLUGS_RESERVES = new Set([
   'www', 'qg', 'api', 'admin', 'app', 'mail', 'smtp', 'imap', 'ftp', 'ns1', 'ns2',
   'demande', 'site', 'p', 'login', 'signup', 'onboarding', 'contact', 'presti', 'prestiapp',
   'static', 'assets', 'infos-legales', 'cgu', 'mentions-legales', 'confidentialite', 'faq', 'aide', 'acheter', 'commander',
+  // 19/10 — la page de suivi d'un chantier pour le client (/suivi/<jeton>, CRM lot 5).
+  'suivi',
 ])
 
 /**

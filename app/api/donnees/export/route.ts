@@ -24,7 +24,9 @@ const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'san
 const TABLES_CRM = ['equipe_membres', 'vehicules', 'chantiers', 'chantier_equipe', 'chantier_taches', 'chantier_materiaux', 'crm_notes', 'crm_journal', 'assistant_conversations', 'assistant_actions',
   // 0162, 0163 — les rappels du CRM et la LISTE des photos et pièces du chantier (étiquette, légende, date ; les fichiers restent
   // téléchargeables depuis la fiche du chantier). crm_agenda n'y est pas : il ne contient qu'une empreinte de jeton, sans valeur pour l'artisan.
-  'crm_rappels', 'chantier_pieces'] as const
+  'crm_rappels', 'chantier_pieces',
+  // 0165 — les réglages de l'après-chantier (cases et textes de l'artisan).
+  'crm_apres_chantier'] as const
 
 async function collecter(uid: string) {
   const crm = await Promise.all(TABLES_CRM.map((t) => supabaseAdmin.from(t).select('*').eq('artisan_id', uid).then((r) => (r.data ?? []) as Ligne[], () => [] as Ligne[])))

@@ -15,6 +15,9 @@ import Frise from './Frise'
 import Indicateurs from './Indicateurs'
 import { ListeRappels, MeLeRappeler } from './Rappels'
 import Pieces from './Pieces'
+import ApresChantier from './ApresChantier'
+import PlanChantier from './PlanChantier'
+import SuiviClient from './SuiviClient'
 import { actif } from '@/lib/flags'
 import type { Membre, Vehicule } from './types'
 
@@ -171,6 +174,10 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
         )}
       </section>
 
+      {/* Lot 5 (plan du 18/10, n°8) : le plan du chantier par pièce, un schéma. */}
+      {actif('crmPlan') && <PlanChantier titre={c.titre} taches={taches} membres={membres} metier={f.metier ?? null} cocher={cocher} agir={agir} />}
+      {actif('crmSuivi') && c.statut !== 'annule' && <SuiviClient chantierId={c.id} />}
+
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>
         <Taches f={f} taches={taches} faites={av.faites} cocher={cocher} base={base} membres={membres} agir={agir} />
         <div className="crm-pile">
@@ -193,6 +200,9 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           )}
         </div>
       </section>
+
+      {/* Lot 4 (plan du 18/10, n°7) : l'après-chantier, demande d'avis et entretien, chaque envoi confirmé par l'artisan. */}
+      {actif('crmApresChantier') && <ApresChantier chantier={{ id: c.id, titre: c.titre, client, textes: [d?.objet ?? null] }} rappels={f.rappels} termine={c.statut === 'termine'} onChange={recharger} />}
 
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>
         <Notes f={f} agir={agir} />

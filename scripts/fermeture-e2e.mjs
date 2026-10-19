@@ -301,6 +301,13 @@ if (FLAGS) {
     // 18/10 — CRM lot 3 : photos du chantier (0163) et planning + lien d'agenda (0164). Chaque route lit son drapeau AVANT la session.
     'crmPieces': ['route', '/api/crm/pieces', 'GET', 'app/api/crm/pieces/route.ts', 'app/api/crm/pieces/[id]/route.ts'],
     'crmPlanning': ['route', '/api/crm/agenda', 'GET', 'app/api/crm/agenda/route.ts', 'app/api/agenda/[jeton]/route.ts'],
+    // 19/10 — CRM lot 4 : l'après-chantier (0165). Les deux routes et le passage quotidien lisent le drapeau.
+    'crmApresChantier': ['route', '/api/crm/apres-chantier', 'GET', 'app/api/crm/apres-chantier/route.ts', 'app/api/crm/apres-chantier/message/route.ts'],
+    // 19/10 — CRM lot 5 : le plan du chantier par pièce (0166). Aucune route à lui : lu par la fiche (schéma) et par les routes des
+    // tâches, qui refusent ou taisent la colonne `piece` tant qu'il est baissé.
+    'crmPlan': ['lu'],
+    // 19/10 — CRM lot 5 v3 : le lien de suivi du client (0167). La page publique et les routes de la fiche lisent le drapeau.
+    'crmSuivi': ['route', '/suivi/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'GET', 'app/suivi/[jeton]/route.ts', 'app/api/crm/chantiers/[id]/suivi/route.ts'],
   }
   const lus = ['app', 'lib', 'components'].filter((d) => fs.existsSync(d)).flatMap((d) =>
     fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f) && !/flags\.ts$/.test(f))

@@ -51,6 +51,10 @@ const TABLES_A_VIDER = [
   'crm_notes', 'crm_journal', 'chantier_materiaux', 'chantier_taches', 'chantier_equipe',
   // 0162 à 0164 — rappels du CRM, photos et pièces du chantier (les fichiers partent avec viderStockage), lien d'agenda.
   'crm_rappels', 'chantier_pieces', 'crm_agenda',
+  // 0165 — les réglages de l'après-chantier (textes de l'artisan).
+  'crm_apres_chantier',
+  // 0167 — les liens de suivi donnés aux clients (empreintes seulement) : plus aucun ne doit répondre.
+  'chantier_suivi',
   'chantiers', 'vehicules', 'equipe_membres',
 ]
 

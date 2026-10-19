@@ -160,7 +160,7 @@ function coherenceDates(v: EntreeChantier): Resultat<EntreeChantier> {
 }
 
 // ── Tâche ────────────────────────────────────────────────────────────────────────────────────────────────────
-export type EntreeTache = { libelle?: string; faite?: boolean; ordre?: number; membre_id?: string | null; quantite?: number | null; unite?: string | null }
+export type EntreeTache = { libelle?: string; faite?: boolean; ordre?: number; membre_id?: string | null; quantite?: number | null; unite?: string | null; piece?: string | null }
 const REGLES_TACHE: Record<string, Regle> = {
   libelle: (v) => texte(v, 'Tâche', 300, true),
   faite: (v) => booleen(v, 'Faite'),
@@ -168,6 +168,8 @@ const REGLES_TACHE: Record<string, Regle> = {
   membre_id: (v) => identifiant(v, 'Membre'),
   quantite: (v) => nombre(v, 'Quantité', 0, 1_000_000),
   unite: (v) => texte(v, 'Unité', 16),
+  // 0166 (lot 5) : la pièce de la tâche ; refusée par les routes tant que le drapeau crmPlan est baissé.
+  piece: (v) => texte(v, 'Pièce', 40),
 }
 export function validerCreationTache(b: unknown): Resultat<EntreeTache | { depuis_devis: true }> {
   if (estObjet(b) && b.depuis_devis !== undefined) {
