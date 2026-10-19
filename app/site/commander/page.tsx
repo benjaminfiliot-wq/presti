@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import AppShell from '@/app/AppShell'
 import { uploadArtisanMedia, preparerPhoto } from '@/lib/media'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 import {
   ArtisanSite, Brouillon, Commande, ChiffreArtisan,
   PRIX_SITE_TEXTE, DELAI_TEXTE,
@@ -216,7 +217,7 @@ function CommanderSite() {
     }
   }
 
-  if (!ready) return <AppShell active="site" title="Site"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="site" title="Site"><ChargementConsole carte /></AppShell>
 
   if (!commandeACompleter && (activeCmd || p_paiement === 'ok')) {
     const cmd = activeCmd || commandes[0]

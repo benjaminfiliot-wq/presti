@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Mes tarifs (v4 §8/F2) — la bibliothèque de prix réels de l'artisan.
 //
@@ -122,7 +123,7 @@ export default function TarifsPage() {
     await charger()
   }
 
-  if (!ready) return <AppShell active="tarifs" title="Mes tarifs"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="tarifs" title="Mes tarifs"><ChargementConsole carte /></AppShell>
 
   return (
     <AppShell active="tarifs" title="Mes tarifs" crumb={total ? `${total} prix enregistrés` : 'Vos prix réels'} wide>

@@ -12,6 +12,7 @@ import { PLAFOND_TOURS, MESSAGE_MAX, HISTORIQUE_MESSAGES_MAX } from '@/lib/assis
 import type { Brouillon } from '@/lib/assistant/boucle'
 import type { CarteAction, StatutAction } from '@/lib/assistant/cartes'
 import { CarteView, heure, libelleOutil, type Decision } from './CarteView'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // L'assistant de gestion — le POSTE DE COMMANDE (plans/016-assistant.md, jalon A3). L'artisan gère sa plateforme en parlant :
 // l'assistant lit, prépare et AGIT (devis, factures, tarifs, stock, CRM, messages). Trois zones :
@@ -251,7 +252,7 @@ function Assistant() {
   const aConfirmer = liste.filter((c) => c.statut === 'en_attente' && !(c.expire_le && Date.parse(c.expire_le) < maintenant))
   const faites = liste.filter((c) => c.statut !== 'en_attente' || (c.expire_le && Date.parse(c.expire_le) < maintenant))
 
-  if (!ready) return <AppShell active="assistant" title="Assistant de gestion"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="assistant" title="Assistant de gestion"><ChargementConsole carte /></AppShell>
   if (bloque) {
     return (
       <AppShell active="assistant" title="Assistant de gestion">

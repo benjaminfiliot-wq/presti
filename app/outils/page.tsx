@@ -9,6 +9,7 @@ import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 import EcranVerrouille from '@/app/EcranVerrouille'
 import { peut } from '@/lib/plans'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 export default function Outils() {
   const router = useRouter()
@@ -58,7 +59,7 @@ export default function Outils() {
   return (
     <AppShell active="outils" title="Réponses instantanées" crumb="Outils IA">
       {!ready ? (
-        <p className="muted">Chargement…</p>
+        <ChargementConsole />
       ) : (
         <>
           {/* 15/10 (Benj) : la réponse préparée par l'IA à une demande fait partie de la plateforme, qui commence avec Studio. */}
