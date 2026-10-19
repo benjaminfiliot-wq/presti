@@ -1,0 +1,45 @@
+/* Liste des devis, console v2 (refonte 18/10, étape 5.4) — piste A « Instrument ». */
+.dv2-resume{margin-bottom:2px}
+.dv2-resume>.ui-carte{padding:14px 16px}
+.dv2-barre{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.dv2-filtres{display:flex;gap:6px;flex-wrap:wrap}
+.dv2-pil{display:inline-flex;align-items:center;gap:6px;height:32px;min-height:0!important;padding:0 12px;margin:0;width:auto;border-radius:var(--r-sm);border:1px solid var(--bord-1);background:none;color:var(--ink-soft);font:500 13px var(--font-body);cursor:pointer;white-space:nowrap}
+.dv2-pil b{font-weight:500;font-size:12px;color:var(--muted)}
+.dv2-pil:hover{border-color:var(--bord-2);color:var(--ink);background:none}
+.dv2-pil[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.dv2-pil[aria-pressed="true"] b{color:#4a4f5c}
+.dv2-pil:focus-visible{outline:none;box-shadow:var(--lueur-focus)}
+.dv2-cherche{margin-left:auto;display:flex;align-items:center;gap:8px;height:34px;width:min(280px,100%);padding:0 10px;border:1px solid var(--bord-1);border-radius:var(--r-sm);color:var(--muted)}
+.dv2-cherche svg{width:15px;height:15px;flex:none}
+.dv2-cherche input{flex:1;min-width:0;background:none!important;border:0!important;box-shadow:none!important;color:var(--ink);font:14px var(--font-body);padding:0;margin:0;min-height:0!important;outline:none}
+.dv2-cherche:focus-within{box-shadow:var(--lueur-focus)}
+.dv2-cadre{padding:4px 6px}
+.dv2-tab{width:100%;border-collapse:collapse;font-size:14px}
+.dv2-tab th{text-align:left;font:500 10.5px var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--faint);padding:0 10px;height:36px;border-bottom:1px solid var(--bord-1)}
+.dv2-tab td{height:var(--ligne-tableau);padding:0 10px;border-bottom:1px solid var(--line-2)}
+.dv2-tab tbody tr{cursor:pointer;transition:background-color var(--d-court) ease}
+.dv2-tab tbody tr:hover td{background:rgba(255,255,255,.025)}
+.dv2-tab .d{text-align:right;white-space:nowrap}
+.dv2-num{color:var(--ink);text-decoration:none;font-size:13px}
+.dv2-num:hover{color:var(--accent-ink)}
+.dv2-num:focus-visible{outline:none;box-shadow:var(--lueur-focus);border-radius:4px}
+.dv2-client{font-weight:600}
+.dv2-objet{color:var(--ink-soft);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dv2-geste{color:var(--muted);font-size:13px;white-space:nowrap}
+.dv2-cartes{display:none;list-style:none;margin:0;padding:0}
+.dv2-rien{margin:14px 10px;color:var(--muted)}
+.dv2-aide{margin:0;color:var(--muted);font-size:12.5px}
+@media (max-width:900px){
+  .dv2-lib{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .dv2-filtres{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px;scrollbar-width:none}
+  .dv2-cherche{margin-left:0;width:100%}
+  .dv2-tab{display:none}
+  .dv2-cadre{border:0;background:none;padding:0}
+  .dv2-cartes{display:grid;gap:8px}
+  .dv2-carte{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:12px 14px;border:1px solid var(--bord-1);border-radius:var(--r-md);background:var(--elev-1);color:var(--ink);text-decoration:none}
+  .dv2-carte small{color:var(--muted);font-size:12.5px}
+  .dv2-m{text-align:right;font-weight:600}
+  .dv2-aide{display:none}
+  .dv2-resume{grid-template-columns:1fr 1fr}
+  .dv2-resume>.ui-carte:last-child{display:none}
+}

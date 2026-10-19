@@ -11,6 +11,10 @@ import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 import { mentionsManquantesEmission, OU_REMPLIR } from '@/lib/legalArtisan'
+// Refonte 18/10 (étape 5.4, drapeau consoleV2) : un devis parti s'ouvre en LECTURE (FicheLecture) ; l'éditeur reste à un clic.
+import { useConsoleV2 } from '@/lib/consoleV2Client'
+import { Squelette } from '@/components/ui/base'
+import FicheLecture from './FicheLecture'
 
 type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
 
@@ -25,6 +29,9 @@ export default function DevisEditor() {
   const rawId = String(params?.id ?? 'nouveau')
   const isNew = rawId === 'nouveau'
 
+  const v2 = useConsoleV2()
+  const [edition, setEdition] = useState(false)
+  const [dates, setDates] = useState<{ cree: string | null; envoye: string | null; accepte: string | null }>({ cree: null, envoye: null, accepte: null })
   const [ready, setReady] = useState(false)
   const [uid, setUid] = useState('')
   const [savedId, setSavedId] = useState<string | null>(isNew ? null : rawId)
@@ -97,6 +104,7 @@ export default function DevisEditor() {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
         if (d) {
           setNumero(d.numero); setStatut(d.statut ?? 'brouillon'); setStatutBase(d.statut ?? 'brouillon')
+          setDates({ cree: d.created_at ?? null, envoye: d.envoye_le ?? null, accepte: d.accepte_le ?? null })
           setClientNom(d.client_nom ?? ''); setClientEmail(d.client_email ?? ''); setClientAdresse(d.client_adresse ?? '')
           setObjet(d.objet ?? ''); setValidite(String(d.validite_jours ?? 90)); setRemise(String(d.remise_pct ?? 0)); setAcompte(String(d.acompte_pct ?? 0))
           const { data: ls } = await supabase.from('devis_lignes').select('*').eq('devis_id', rawId).order('ordre')
@@ -245,7 +253,29 @@ export default function DevisEditor() {
   const factureOuverte = !!savedId && statutBase === 'accepte'
   const raisonFacture = !savedId ? 'Enregistrez le devis, puis faites-le accepter par le client.' : 'On ne facture qu’un devis accepté : passez son statut à « Accepté » et enregistrez.'
 
-  if (!ready) return <AppShell active="devis" title="Devis" crumb="Chargement…"><p className="muted">Chargement…</p></AppShell>
+  if (!ready) return <AppShell active="devis" title="Devis" crumb="Chargement…">{v2 ? <Squelette variante="tableau" lignes={4} etiquette="Chargement du devis…" /> : <p className="muted">Chargement…</p>}</AppShell>
+
+  // v2 : un devis PARTI (envoyé, accepté, refusé, expiré) s'ouvre en lecture. « Modifier » rouvre l'éditeur ci-dessous.
+  if (v2 && savedId && statutBase !== 'brouillon' && !edition) {
+    const actionsLecture = (
+      <>
+        <button className="ui-btn ui-btn--g" onClick={partagerPdf} data-partager>Partager</button>
+        <button className="ui-btn ui-btn--s" onClick={downloadPdf}>Télécharger le PDF</button>
+        <button className="ui-btn ui-btn--s" onClick={() => setEdition(true)}>Modifier</button>
+        {statutBase === 'accepte'
+          ? <button className="ui-btn ui-btn--p" disabled={saving || !factureOuverte} onClick={creerFacture}>{saving ? 'Création…' : 'Créer la facture'}</button>
+          : statutBase === 'envoye' ? <button className="ui-btn ui-btn--p" disabled={saving} onClick={() => { if (confirm(`Renvoyer ce devis par e-mail à ${clientNom || 'votre client'} (${clientEmail || 'adresse manquante'}) ?`)) void envoyer() }}>{saving ? 'Envoi…' : 'Renvoyer au client'}</button> : null}
+      </>
+    )
+    return (
+      <AppShell active="devis" title={numero ? numero : 'Devis'} crumb="Devis" actions={actionsLecture} wide>
+        {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`} role={msg.type === 'err' ? 'alert' : 'status'} style={{ marginTop: 0 }}>{msg.text}</div>}
+        <FicheLecture statut={statutBase} objet={objet} client={{ nom: clientNom, email: clientEmail, adresse: clientAdresse }}
+          lignes={lignes} totaux={totals} remisePct={Number(remise) || 0} remiseMontant={remiseMontant} acomptePct={Number(acompte) || 0} acompteMontant={acompteMontant}
+          validiteJours={Number(validite) || 90} dates={dates} mentionTva={mentionTva} franchise={tvaRegime === 'franchise'} />
+      </AppShell>
+    )
+  }
 
   const actions = (
     <>

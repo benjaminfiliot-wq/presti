@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+// Refonte 18/10 (étape 5.4, drapeau consoleV2) : la liste v2 (ListeV2.tsx). Drapeau baissé : la liste ci-dessous, intacte.
+import { useConsoleV2 } from '@/lib/consoleV2Client'
+import DevisV2 from './ListeV2'
 
 type Devis = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_emission: string | null }
 
@@ -22,6 +25,11 @@ const statutDe = (d: Devis) => d.statut ?? 'brouillon'
 const FILTRES: [string, string][] = [['brouillon', 'Brouillons'], ['envoye', 'Envoyés'], ['accepte', 'Acceptés'], ['refuse', 'Refusés'], ['expire', 'Expirés']]
 
 export default function DevisList() {
+  const v2 = useConsoleV2()
+  return v2 ? <DevisV2 /> : <DevisListeActuelle />
+}
+
+function DevisListeActuelle() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const [devis, setDevis] = useState<Devis[]>([])

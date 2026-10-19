@@ -1,0 +1,30 @@
+/* Fiche d'un devis parti, en lecture (console v2, refonte 18/10 étape 5.4) — piste A « Instrument ». */
+.fl{display:flex;flex-direction:column;gap:14px}
+.fl-tete{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fl-tete h2{font-family:var(--font-display);font-size:var(--t-section);font-weight:600;margin:0;color:var(--ink-soft)}
+.fl-grille{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.fl-cote{display:flex;flex-direction:column;gap:16px}
+.fl-tab-cadre{overflow-x:auto}
+.fl-tab{width:100%;border-collapse:collapse;font-size:14px}
+.fl-tab th{text-align:left;font:500 10.5px var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--faint);padding:0 10px;height:34px;border-bottom:1px solid var(--bord-1)}
+.fl-tab td{height:var(--ligne-tableau);padding:0 10px;border-bottom:1px solid var(--line-2)}
+.fl-tab .d{text-align:right;white-space:nowrap}
+.fl-totaux{display:grid;grid-template-columns:1fr auto;gap:6px 24px;margin:14px 0 0 auto;width:min(320px,100%);font-size:14px}
+.fl-totaux dt{color:var(--ink-soft)}
+.fl-totaux dd{margin:0;text-align:right}
+.fl-totaux .fl-ttc{border-top:1px solid var(--bord-1);padding-top:10px;margin-top:4px;font-size:16px;color:var(--ink)}
+.fl-totaux dd.fl-ttc{font-size:20px;font-weight:600;color:var(--accent-ink)}
+.fl-mention{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.fl-meta{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13.5px}
+.fl-meta dt{color:var(--muted)}
+.fl-meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.fl-frise{list-style:none;margin:0;padding:0}
+.fl-frise li{position:relative;padding:0 0 14px 22px;font-size:13.5px}
+.fl-frise li::before{content:"";position:absolute;left:4px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.fl-frise li::after{content:"";position:absolute;left:7.5px;top:16px;bottom:0;width:1px;background:var(--bord-1)}
+.fl-frise li:last-child::after{display:none}
+.fl-frise li.fait::before{background:var(--accent)}
+.fl-frise li.ok::before{background:var(--ok)}
+.fl-frise li.crit::before{background:var(--crit)}
+.fl-frise time{display:block;font-size:11.5px;color:var(--faint)}
+@media (max-width:900px){.fl-grille{grid-template-columns:1fr}.fl-totaux{width:100%}}
