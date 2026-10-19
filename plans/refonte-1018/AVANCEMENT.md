@@ -39,6 +39,8 @@ Pas de `next build` local (vidéos en cours) : les builds se font sur Vercel (pr
 | TEMPORAIRE : consoleV2 levé sur la branche (prévisualisation) | **à retirer par `git revert 3abfb98a` avant fusion** | 3abfb98a |
 | Retouches + scripts/refonte-apres-console.mjs (captures après, contrôles) | fait, tout vert sur la prévisualisation | e90cc307 |
 | 6.2 juge des pages /offres et /comparatif | fait ; pages confiées à Codex (tâche R18-01, worktree `presti-refonte-pages`, branche `refonte-1018-pages`) | 6df36d21 |
+| 6.2 pages /offres et /comparatif (Codex, PASS 1er tour ; rejugé : 35/0, tsc vert, code relu) | fait, reprises sur refonte-1018 | 394da42d |
+| Planches avant/après + avancement | fait | 75b6fcc2 |
 
 Captures « après » : `presti-ops\refonte-1018\apres\` (relancer : voir l'en-tête de scripts/refonte-apres-console.mjs ;
 le jeton de partage Vercel est propre à CHAQUE déploiement : outil Vercel `get_access_to_vercel_url` sur l'URL du
