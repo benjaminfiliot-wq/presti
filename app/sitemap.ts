@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { actif } from '@/lib/flags'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
 export const revalidate = 3600 // le sitemap se rafraîchit au plus une fois par heure
@@ -15,6 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/contact', priority: 0.6 },
     { path: '/mentions-legales', priority: 0.4 },
   ]
+  if (actif('landingV2')) {
+    pages.push(
+      { path: '/offres', priority: 0.8 },
+      { path: '/comparatif', priority: 0.6 },
+    )
+  }
   const entries: MetadataRoute.Sitemap = pages.map((p) => ({
     url: `${base}${p.path}`, lastModified: now, changeFrequency: 'monthly', priority: p.priority,
   }))
