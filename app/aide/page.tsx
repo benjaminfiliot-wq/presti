@@ -14,6 +14,7 @@ import { ARTICLES, chercher, type Article } from '@/lib/aide'
 import { actif } from '@/lib/flags'
 import { videosVisibles, type AideVideo } from '@/lib/aideVideos'
 import VideoAide from './VideoAide'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Ordre de lecture = ordre du menu de la console. Les articles dont la page n'est listée
 // nulle part tombent dans « Autres » : un nouvel article n'est jamais perdu.
@@ -102,7 +103,7 @@ export default function AidePage() {
   return (
     <AppShell active="aide" title="Centre d’aide" crumb="Chaque outil, expliqué">
       {!ready ? (
-        <p className="muted">Chargement…</p>
+        <ChargementConsole />
       ) : (
         <>
           <div className="aide-rech">
