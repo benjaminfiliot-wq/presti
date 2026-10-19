@@ -1,0 +1,71 @@
+/* L'accueil « Aujourd'hui » de la console v2 (refonte 18/10, étape 5.2) — piste A « Instrument ».
+   L'aube (piste B) n'éclaire QUE le panneau « Découvrir » (décision de Benj, 19/10). */
+.aj{display:flex;flex-direction:column;gap:16px}
+.aj-bonjour h2{font-family:var(--font-display);font-size:26px;font-weight:600;letter-spacing:-.015em;margin:0}
+.aj-bonjour p{margin:2px 0 0;color:var(--muted)}
+.aj-erreur{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+.aj-prio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.aj-action{display:flex;flex-direction:column;gap:6px;padding:14px 16px;min-height:150px;background:var(--elev-1);border:1px solid var(--bord-1);border-left:2px solid var(--accent);
+  border-radius:var(--r-md);color:var(--ink);text-decoration:none;transition:border-color var(--d-court) ease,background-color var(--d-court) ease}
+a.aj-action:hover{border-color:rgba(217,119,87,.38);border-left-color:var(--accent);background:var(--elev-2)}
+a.aj-action:focus-visible{outline:none;box-shadow:var(--lueur-focus)}
+.aj-a-relance{border-left-color:var(--warn)}
+a.aj-a-relance:hover{border-left-color:var(--warn)}
+.aj-a-retard{border-left-color:var(--crit)}
+a.aj-a-retard:hover{border-left-color:var(--crit)}
+.aj-action.calme{border-left-color:var(--bord-2)}
+.aj-n{font-size:28px;font-weight:600;line-height:1.1}
+.aj-action.calme .aj-n{color:var(--faint)}
+.aj-t{font-weight:600}
+.aj-s{color:var(--muted);font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.aj-go{margin-top:auto;display:inline-flex;align-items:center;gap:6px;color:var(--accent-ink);font-size:13px;font-weight:600}
+.aj-go svg{width:15px;height:15px}
+.aj-action.calme .aj-go{color:var(--ink-soft)}
+
+.aj-grille{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.aj-barres{margin:16px 0 0}
+.aj-barres-zone{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;height:96px;border-bottom:1px solid var(--bord-1);padding-bottom:0}
+.aj-barre{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;height:100%;position:relative}
+.aj-barre span{display:block;background:rgba(255,255,255,.12);border-radius:3px 3px 0 0;min-height:2px}
+.aj-barre.on span{background:var(--accent)}
+.aj-barre small{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:10.5px;color:var(--faint)}
+.aj-chiffres .ui-tuiles{grid-template-columns:repeat(4,minmax(0,1fr))}
+.aj-chiffres{padding-bottom:30px}
+.aj-verrou{display:flex;gap:10px;align-items:center;margin:12px 0 0;font-size:13px}
+
+.aj-fil-liste{list-style:none;margin:0;padding:0}
+.aj-fil-liste li{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line-2);font-size:13.5px}
+.aj-fil-liste li:first-child{border-top:0;padding-top:0}
+.aj-fil-liste time{font-size:12px;color:var(--faint);padding-top:1px}
+.aj-fil-liste a{color:var(--ink);text-decoration:none;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.aj-fil-liste a span{color:var(--muted)}
+.aj-fil-liste a:hover b{color:var(--accent-ink)}
+
+.aj-decouvrir{background:var(--aube-forte),var(--elev-1);overflow:hidden}
+.aj-diapo{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:20px;align-items:center;min-height:170px}
+.aj-diapo-texte{display:grid;gap:8px;justify-items:start}
+.aj-diapo h3{font-family:var(--font-display);font-size:20px;font-weight:600;margin:2px 0 0}
+.aj-diapo p{margin:0;color:var(--ink-soft);font-size:14px;max-width:62ch}
+.aj-diapo-visuel{display:flex;gap:8px;padding:14px;border:1px solid var(--bord-1);border-radius:var(--r-md);background:rgba(10,12,17,.6)}
+.aj-diapo-visuel span{flex:1;text-align:center;font-family:var(--font-mono);font-size:11.5px;padding:8px 4px;border-radius:var(--r-sm);border:1px solid var(--bord-1);color:var(--muted)}
+.aj-diapo-visuel span.on{border-color:var(--accent-tint-2);background:var(--accent-tint);color:var(--accent-ink)}
+
+.aj-lien-rang{display:flex;gap:10px;align-items:center;padding:8px 8px 8px 12px;border:1px solid var(--bord-1);border-radius:var(--r-sm);background:var(--elev-0)}
+.aj-lien-rang code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.aj-lien-aide{margin:8px 0 0;color:var(--muted);font-size:12.5px}
+
+@media (max-width:1100px){.aj-chiffres .ui-tuiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .aj-bonjour h2{font-size:22px}
+  .aj-prio{grid-template-columns:1fr;gap:10px}
+  .aj-action{min-height:0;display:grid;grid-template-columns:auto 1fr auto;column-gap:12px;row-gap:2px;align-items:center;padding:12px 14px}
+  .aj-n{grid-row:span 2;font-size:24px;min-width:26px}
+  .aj-t{grid-column:2}
+  .aj-s{grid-column:2;-webkit-line-clamp:1}
+  .aj-go{grid-column:3;grid-row:1 / span 2;margin:0;font-size:0;gap:0}
+  .aj-go svg{width:18px;height:18px}
+  .aj-grille{grid-template-columns:1fr}
+  .aj-diapo{grid-template-columns:1fr;min-height:0}
+  .aj-lib-btn{display:none}
+}

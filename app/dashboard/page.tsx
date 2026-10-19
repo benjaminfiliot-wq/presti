@@ -8,6 +8,9 @@ import { urlPlateforme } from '@/lib/urls'
 import Info from '@/app/Info'
 import CartePackPub from '@/app/pubs/CartePackPub'; import { actif } from '@/lib/flags'
 import { peut } from '@/lib/plans'
+// Refonte 18/10 (étape 5.2) : l'accueil « Aujourd'hui » de la console v2, derrière consoleV2 (essai : lib/essais.ts).
+import { useConsoleV2 } from '@/lib/consoleV2Client'
+import Aujourdhui from './Aujourdhui'
 
 type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
 type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
@@ -43,6 +46,11 @@ function CountUp({ value }: { value: number }) {
 }
 
 export default function Dashboard() {
+  const v2 = useConsoleV2()
+  return v2 ? <Aujourdhui /> : <TableauDeBordV1 />
+}
+
+function TableauDeBordV1() {
   const router = useRouter()
   const [artisan, setArtisan] = useState<Artisan | null>(null)
   const [ready, setReady] = useState(false)
