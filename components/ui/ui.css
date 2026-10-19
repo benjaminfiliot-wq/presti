@@ -1,0 +1,197 @@
+/* components/ui/ui.css — Refonte 18/10, étape 4.2 : les composants de la console v2 (piste A « Instrument »).
+   Préfixe `ui-` : aucune règle existante ne porte ce nom, rien d'ancien ne bouge. Jetons : app/base.css (§ « Refonte 18/10 »).
+   Règles : un seul bouton principal par écran ; arêtes nettes ; une seule lueur (survol/focus) ; chiffres en JetBrains Mono ;
+   tout reste visible et utilisable sous prefers-reduced-motion (les durées passent à 0 dans les jetons). */
+
+/* ── Boutons (un principal, un secondaire, un discret) ─────────────────────────────────────────────── */
+.ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;margin:0;width:auto;
+  border-radius:var(--r-sm);border:1px solid transparent;font:600 14px/1 var(--font-body);cursor:pointer;white-space:nowrap;
+  text-decoration:none;transition:transform var(--d-court) var(--c-sortie),background-color var(--d-court) ease,border-color var(--d-court) ease,color var(--d-court) ease}
+.ui-btn:active{transform:scale(.97)}
+.ui-btn:focus-visible{outline:none;box-shadow:var(--lueur-focus)}
+.ui-btn svg{width:16px;height:16px;flex:none}
+.ui-btn--p{background:var(--accent);color:var(--on-accent)}
+.ui-btn--p:hover{background:var(--accent-2);color:var(--on-accent)}
+.ui-btn--s{background:var(--elev-2);border-color:var(--bord-1);color:var(--ink)}
+.ui-btn--s:hover{border-color:var(--bord-fort);color:var(--ink)}
+.ui-btn--g{background:none;color:var(--ink-soft)}
+.ui-btn--g:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.ui-btn--xs{height:30px;padding:0 10px;font-size:13px}
+.ui-btn[disabled],.ui-btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;transform:none}
+.ui-kbd{font-family:var(--font-mono);font-size:11px;line-height:18px;color:var(--muted);border:1px solid var(--bord-1);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:rgba(255,255,255,.02)}
+.ui-btn--p .ui-kbd{color:var(--on-accent);border-color:rgba(26,15,10,.35);background:none}
+.ui-mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.ui-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ── Carte ──────────────────────────────────────────────────────────────────────────────────────────── */
+.ui-carte{position:relative;background:var(--elev-1);border:1px solid var(--bord-1);border-radius:var(--r-md);padding:16px;min-width:0;
+  transition:border-color var(--d-court) ease}
+.ui-carte--lien:hover,.ui-carte--lien:focus-within{border-color:rgba(217,119,87,.38)}
+.ui-carte-t{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.ui-carte-t h2,.ui-carte-t h3{font-family:var(--font-display);font-size:var(--t-section);font-weight:600;margin:0;letter-spacing:-.005em}
+.ui-carte-t .ui-carte-act{margin-left:auto;color:var(--muted);font-size:13px;text-decoration:none}
+.ui-carte-t .ui-carte-act:hover{color:var(--accent-ink)}
+/* La bordure lumineuse existante (.sweepborder, globals.css) : seulement au survol, jamais en boucle à l'arrêt. */
+.ui-carte.sweepborder::before{opacity:0;animation-play-state:paused;transition:opacity var(--d-moyen) ease}
+@media (hover:hover) and (pointer:fine){.ui-carte.sweepborder:hover::before{opacity:1;animation-play-state:running}}
+@media (prefers-reduced-motion:reduce){.ui-carte.sweepborder:hover::before{opacity:0}}
+
+/* ── Tuile de chiffre ───────────────────────────────────────────────────────────────────────────────── */
+.ui-tuile{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ui-tuile small{color:var(--muted);font-size:12.5px}
+.ui-tuile b{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--t-chiffre);font-weight:600;letter-spacing:-.01em;color:var(--ink);line-height:1.2}
+.ui-tuile i{font-style:normal;font-size:12px;color:var(--muted)}
+.ui-tuile--ok i{color:var(--ok)} .ui-tuile--crit b,.ui-tuile--crit i{color:var(--crit)} .ui-tuile--warn i{color:var(--warn)}
+.ui-tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+
+/* ── Grille bento ───────────────────────────────────────────────────────────────────────────────────── */
+.ui-bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ui-bento>.ui-bento-l{grid-column:span 2}
+.ui-bento>.ui-bento-h{grid-row:span 2}
+@media (max-width:900px){.ui-bento{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.ui-bento{grid-template-columns:1fr}.ui-bento>.ui-bento-l{grid-column:auto}}
+
+/* ── Onglets (ARIA tablist) ─────────────────────────────────────────────────────────────────────────── */
+.ui-onglets-liste{display:flex;gap:4px;border-bottom:1px solid var(--bord-1);overflow-x:auto;scrollbar-width:none;margin-bottom:14px}
+.ui-onglets-liste::-webkit-scrollbar{display:none}
+.ui-onglet{flex:none;height:38px;padding:0 12px;margin:0 0 -1px;width:auto;background:none;border:0;border-bottom:2px solid transparent;
+  color:var(--ink-soft);font:500 14px var(--font-body);cursor:pointer;border-radius:0;min-height:0}
+.ui-onglet:hover{color:var(--ink);background:none}
+.ui-onglet[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.ui-onglet:focus-visible{outline:none;box-shadow:inset var(--lueur-focus)}
+.ui-onglet-panneau:focus-visible{outline:none;box-shadow:var(--lueur-focus);border-radius:var(--r-sm)}
+/* Sans JavaScript (et avant l'hydratation), tous les panneaux restent visibles, chacun sous son titre. */
+.ui-onglets:not(.ui-arme) .ui-onglets-liste{display:none}
+.ui-onglets:not(.ui-arme) .ui-onglet-panneau[hidden]{display:block}
+.ui-onglet-titre-repli{display:none}
+.ui-onglets:not(.ui-arme) .ui-onglet-titre-repli{display:block;font-family:var(--font-display);font-size:var(--t-section);margin:18px 0 8px}
+
+/* ── Accordéon (details natifs : lisible sans JS) ───────────────────────────────────────────────────── */
+.ui-accordeon{border-top:1px solid var(--bord-1)}
+.ui-accordeon details{border-bottom:1px solid var(--bord-1)}
+.ui-accordeon summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:48px;padding:10px 4px;cursor:pointer;font-weight:600}
+.ui-accordeon summary::-webkit-details-marker{display:none}
+.ui-accordeon summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:rotate(45deg);transition:transform var(--d-court) var(--c-sortie)}
+.ui-accordeon details[open] summary::after{transform:rotate(-135deg)}
+.ui-accordeon summary:focus-visible{outline:none;box-shadow:var(--lueur-focus);border-radius:var(--r-xs)}
+.ui-accordeon .ui-acc-corps{padding:0 4px 14px;color:var(--ink-soft);font-size:14px}
+
+/* ── Carrousel (pause, précédent, suivant ; jamais d'avance sans contrôle) ──────────────────────────── */
+.ui-carrousel{position:relative}
+.ui-carrousel-vue{overflow:hidden}
+.ui-carrousel-piste{display:flex;transition:transform var(--d-long) var(--c-sortie)}
+.ui-carrousel-piste>.ui-carrousel-diapo{flex:0 0 100%;min-width:0}
+.ui-carrousel-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
+.ui-carrousel-pts{display:flex;gap:6px;margin-right:auto;padding:0;list-style:none}
+.ui-carrousel-pts button{width:22px;height:20px;padding:0;margin:0;background:none;border:0;cursor:pointer;display:grid;place-items:center;min-height:0}
+.ui-carrousel-pts button::before{content:"";width:18px;height:3px;border-radius:2px;background:rgba(255,255,255,.16)}
+.ui-carrousel-pts button[aria-current="true"]::before{background:var(--accent)}
+.ui-carrousel-pts button:focus-visible{outline:none;box-shadow:var(--lueur-focus);border-radius:4px}
+.ui-ctl{width:32px;height:32px;min-height:0;padding:0;margin:0;border-radius:var(--r-sm);border:1px solid var(--bord-1);background:var(--elev-2);color:var(--ink-soft);display:grid;place-items:center;cursor:pointer}
+.ui-ctl:hover{color:var(--ink);border-color:var(--bord-fort)}
+.ui-ctl:focus-visible{outline:none;box-shadow:var(--lueur-focus)}
+.ui-ctl svg{width:15px;height:15px}
+.ui-carrousel:not(.ui-arme) .ui-carrousel-piste{flex-direction:column;gap:14px;transform:none!important}
+.ui-carrousel:not(.ui-arme) .ui-carrousel-nav{display:none}
+
+/* ── Slides épinglées (défilement → étapes) ─────────────────────────────────────────────────────────── */
+.ui-slides{position:relative}
+.ui-slides-scene{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:center}
+.ui-slides-etapes{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.ui-slides-etape{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:12px;border-radius:var(--r-md);color:var(--muted);cursor:pointer;text-align:left;background:none;border:0;width:100%;margin:0;font:inherit;min-height:0}
+.ui-slides-etape:focus-visible{outline:none;box-shadow:var(--lueur-focus)}
+.ui-slides-etape .ui-slides-sur{font-family:var(--font-mono);font-size:12.5px;padding-top:3px}
+.ui-slides-etape b{display:block;color:var(--ink-soft);font-family:var(--font-display);font-size:18px;font-weight:600}
+.ui-slides-etape p{margin:4px 0 0;font-size:14px;color:var(--ink-soft);display:none}
+.ui-slides-etape[aria-current="step"]{background:rgba(255,255,255,.05)}
+.ui-slides-etape[aria-current="step"] b{color:var(--ink)}
+.ui-slides-etape[aria-current="step"] p{display:block}
+.ui-slides-etape[aria-current="step"] .ui-slides-sur{color:var(--accent-ink)}
+.ui-slides-visuels{position:relative;min-height:280px}
+.ui-slides-visuel{transition:opacity var(--d-long) var(--c-sortie),transform var(--d-long) var(--c-sortie)}
+.ui-arme .ui-slides-visuel{position:absolute;inset:0;opacity:0;transform:translateY(10px);pointer-events:none}
+.ui-arme .ui-slides-visuel.on{opacity:1;transform:none;pointer-events:auto;position:relative}
+.ui-slides-nav{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--muted);font-size:12.5px}
+.ui-slides-progres{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+.ui-slides-progres i{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform var(--d-moyen) linear}
+/* Épinglé (ordinateur, mouvement permis) : la section devient haute, la scène colle en haut de l'écran. */
+.ui-slides.ui-epingle{height:calc(var(--n,4) * 70vh + 30vh)}
+.ui-slides.ui-epingle>.ui-slides-colle{position:sticky;top:max(64px,8vh)}
+/* Sans JS : la liste complète, chaque étape avec son visuel. */
+.ui-slides:not(.ui-arme) .ui-slides-etape p{display:block}
+.ui-slides:not(.ui-arme) .ui-slides-nav{display:none}
+@media (max-width:900px){
+  .ui-slides-scene{grid-template-columns:1fr;gap:16px}
+  .ui-arme .ui-slides-etapes{grid-auto-flow:column;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:6px}
+  .ui-arme .ui-slides-etape{grid-template-columns:1fr;gap:2px;padding:8px}
+  .ui-arme .ui-slides-etape b{font-size:13px}
+  .ui-arme .ui-slides-etape p{display:none!important}
+  .ui-slides-texte-m{display:block}
+}
+.ui-slides-texte-m{display:none;margin:0;color:var(--ink-soft)}
+@media (max-width:900px){.ui-arme .ui-slides-texte-m{display:block}}
+
+/* ── Palette de commandes (Ctrl+K) : AUCUNE animation d'ouverture (geste répété) ─────────────────────── */
+.ui-palette-voile{position:fixed;inset:0;z-index:200;background:rgba(5,6,9,.62);display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 16px}
+.ui-palette{width:min(620px,100%);background:var(--elev-2);border:1px solid var(--bord-2);border-radius:var(--r-lg);box-shadow:var(--ombre-flotte);overflow:hidden;display:flex;flex-direction:column;max-height:70vh}
+.ui-palette-champ{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bord-1)}
+.ui-palette-champ svg{width:16px;height:16px;color:var(--faint);flex:none}
+.ui-palette-champ input{flex:1;background:none;border:0;color:var(--ink);font:inherit;font-size:15px;padding:0;margin:0;min-height:0!important;outline:none}
+.ui-palette-liste{list-style:none;margin:0;padding:6px;overflow-y:auto}
+.ui-palette-groupe{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:10px 10px 4px}
+.ui-palette-item{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-soft);cursor:pointer}
+.ui-palette-item[aria-selected="true"]{background:var(--accent-tint);color:var(--ink)}
+.ui-palette-item svg{width:16px;height:16px;flex:none;opacity:.8}
+.ui-palette-item .ui-palette-indice{margin-left:auto;font-size:12px;color:var(--muted)}
+.ui-palette-vide{padding:18px 14px;color:var(--muted);font-size:14px;margin:0}
+.ui-palette-pied{display:flex;gap:14px;padding:8px 14px;border-top:1px solid var(--bord-1);color:var(--faint);font-size:12px}
+
+/* ── Barre d'état ───────────────────────────────────────────────────────────────────────────────────── */
+.ui-etat{display:inline-flex;align-items:center;height:30px;border:1px solid var(--bord-1);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.ui-etat>span{padding:0 10px;display:inline-flex;align-items:center;gap:6px}
+.ui-etat>span+span{border-left:1px solid var(--bord-1)}
+.ui-etat-pt{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-tint)}
+.ui-etat-pt.hors{background:var(--warn);box-shadow:0 0 0 3px var(--warn-tint)}
+.ui-etat b{color:var(--ink-soft);font-weight:500}
+
+/* ── Squelette ──────────────────────────────────────────────────────────────────────────────────────── */
+.ui-squelette{display:grid;gap:10px}
+.ui-sq{display:block;height:12px;border-radius:4px;background:linear-gradient(90deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.09) 40%,rgba(255,255,255,.05) 80%);background-size:300% 100%;animation:ui-sq 1.4s ease-in-out infinite}
+.ui-sq--titre{height:18px;width:40%}
+.ui-sq--chiffre{height:26px;width:60%}
+.ui-sq--ligne{height:var(--ligne-tableau);border-radius:var(--r-sm)}
+@keyframes ui-sq{0%{background-position:100% 0}100%{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.ui-sq{animation:none}}
+
+/* ── État vide ──────────────────────────────────────────────────────────────────────────────────────── */
+.ui-vide{display:grid;justify-items:center;text-align:center;gap:8px;padding:32px 16px;border:1px dashed var(--bord-2);border-radius:var(--r-md)}
+.ui-vide-ill{width:72px;height:56px;border:1.4px dashed var(--bord-fort);border-radius:var(--r-md);display:grid;place-items:center;color:var(--accent-ink)}
+.ui-vide-ill svg{width:24px;height:24px}
+.ui-vide h3{font-family:var(--font-display);font-size:17px;margin:4px 0 0}
+.ui-vide p{margin:0;color:var(--muted);max-width:44ch;font-size:14px}
+.ui-vide .ui-btn{margin-top:8px}
+
+/* ── Pastille d'offre ───────────────────────────────────────────────────────────────────────────────── */
+.ui-offre{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10.5px;color:var(--accent-ink);border:1px solid var(--accent-tint-2);border-radius:var(--r-pill);padding:1px 7px;white-space:nowrap;text-decoration:none}
+.ui-offre svg{width:11px;height:11px}
+.ui-offre--inclus{color:var(--ok);border-color:rgba(56,205,140,.35)}
+
+/* ── Pastilles de statut ────────────────────────────────────────────────────────────────────────────── */
+.ui-st{display:inline-flex;align-items:center;gap:6px;font:500 11.5px var(--font-mono);padding:2px 8px;border-radius:var(--r-xs);white-space:nowrap}
+.ui-st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.ui-st--neutre{color:var(--ink-soft);background:rgba(255,255,255,.06)}
+.ui-st--accent{color:var(--accent-ink);background:var(--accent-tint)}
+.ui-st--warn{color:var(--warn);background:var(--warn-tint)}
+.ui-st--ok{color:var(--ok);background:var(--ok-tint)}
+.ui-st--crit{color:var(--crit);background:var(--crit-tint)}
+
+/* ── Toasts ─────────────────────────────────────────────────────────────────────────────────────────── */
+.ui-toasts{position:fixed;right:16px;bottom:16px;z-index:210;display:grid;gap:8px;width:min(380px,calc(100vw - 32px));pointer-events:none}
+.ui-toast{pointer-events:auto;display:flex;align-items:flex-start;gap:10px;padding:12px 12px 12px 14px;background:var(--elev-3);border:1px solid var(--bord-2);border-left:3px solid var(--accent);border-radius:var(--r-md);box-shadow:var(--ombre-flotte);color:var(--ink);font-size:14px;
+  transition:opacity var(--d-moyen) var(--c-sortie),transform var(--d-moyen) var(--c-sortie)}
+@starting-style{.ui-toast{opacity:0;transform:translateY(8px)}}
+.ui-toast--ok{border-left-color:var(--ok)} .ui-toast--crit{border-left-color:var(--crit)}
+.ui-toast p{margin:0;flex:1}
+.ui-toast button{width:24px;height:24px;min-height:0!important;padding:0;margin:0;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:5px}
+.ui-toast button:hover{color:var(--ink)}
+@media (max-width:900px){.ui-toasts{left:16px;right:16px;bottom:calc(var(--haut-barre-bas) + 12px);width:auto}}
