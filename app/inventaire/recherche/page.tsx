@@ -10,6 +10,7 @@ import { messageVerrou, peut, COUT_RECHERCHE } from '@/lib/plans'
 import { TIERS, tierAllowed, type Tier } from '@/lib/models'
 import { ageLisible, aReverifier, type Fournisseur } from '@/lib/inventaire/types'
 import type { NonVu, ResultatRecherche } from '@/lib/recherche-fournisseurs'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // L'assistant de recherche chez les fournisseurs (§8 F3).
 //
@@ -135,7 +136,7 @@ export default function RecherchePage() {
     }
   }
 
-  if (!ready) return <AppShell active="inventaire" title="Recherche chez vos fournisseurs"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="inventaire" title="Recherche chez vos fournisseurs"><ChargementConsole carte /></AppShell>
 
   if (bloque) {
     return (

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { preparerPhoto, uploadArtisanMedia } from '@/lib/media'
 import { estNatif, prendrePhoto, vibrer } from '@/lib/natif'
 import { SOURCES_OBSERVATION, type Fournisseur, type Materiau, type Observation } from '@/lib/inventaire/types'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Fiche matériau (§8 F1) — dans le panneau latéral.
 //
@@ -165,7 +166,7 @@ export default function FicheMateriau({ id: idInitial, uid, fournisseurs, jeton,
     await charger(id)
   }
 
-  if (chargement) return <p className="muted">Chargement…</p>
+  if (chargement) return <ChargementConsole />
 
   return (
     <div className="inv-fiche">

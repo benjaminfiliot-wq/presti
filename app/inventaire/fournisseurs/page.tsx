@@ -7,6 +7,7 @@ import AppShell from '@/app/AppShell'
 import Panneau from '@/app/inventaire/Panneau'
 import { LISTE_DEPART } from '@/lib/inventaire/liste-depart'
 import { TYPES_FOURNISSEUR, type Fournisseur, type TypeFournisseur } from '@/lib/inventaire/types'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // « Mes fournisseurs » (§8 F2) — la liste des vendeurs chez qui l'artisan achète, dans
 // son ordre de préférence. C'est cette liste qui borne l'assistant de recherche (F3).
@@ -115,7 +116,7 @@ export default function FournisseursPage() {
 
   const manquants = LISTE_DEPART.filter((d) => !liste.some((f) => f.nom.toLowerCase() === d.nom.toLowerCase()))
 
-  if (!ready) return <AppShell active="inventaire" title="Mes fournisseurs"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="inventaire" title="Mes fournisseurs"><ChargementConsole carte /></AppShell>
 
   if (bloque) {
     return (

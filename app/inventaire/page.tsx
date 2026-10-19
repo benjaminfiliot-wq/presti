@@ -10,6 +10,7 @@ import FicheMateriau from '@/app/inventaire/FicheMateriau'
 import ImportCsv from '@/app/inventaire/ImportCsv'
 import type { Fournisseur } from '@/lib/inventaire/types'
 import { actif } from '@/lib/flags'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Inventaire (v4 §9) — ce que l'artisan a en stock, et ce qui va lui manquer.
 //
@@ -144,7 +145,7 @@ export default function InventairePage() {
     }
   }, [lieu, q, charger])
 
-  if (!ready) return <AppShell active="inventaire" title="Inventaire"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  if (!ready) return <AppShell active="inventaire" title="Inventaire"><ChargementConsole carte /></AppShell>
 
   if (bloque) {
     return (
