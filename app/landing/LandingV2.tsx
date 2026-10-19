@@ -170,7 +170,7 @@ export default function LandingV2() {
             <div className="lp2-hero-texte">
               <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
               <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
-              <p className="lp2-lede">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute, dans votre ton : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}). Puis le devis sur vos prix et la facture, dès l&apos;offre {PLANS.essentiel.label}.</p>
+              <p className="lp2-lede"><span className="lp2-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}).</span><span className="lp2-lede-long">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute, dans votre ton : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}). Puis le devis sur vos prix et la facture, dès l&apos;offre {PLANS.essentiel.label}.</span></p>
               <div className="lp2-cta">
                 <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
                 <a className="lp-btn lp-btn--g lp-btn--lg" href="#comment">Voir comment ça marche</a>

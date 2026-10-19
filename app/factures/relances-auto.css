@@ -52,9 +52,14 @@
 .fac-num{background:none!important;border:0;padding:0;margin:0;min-height:0!important;width:auto;font:500 13px var(--font-mono);color:var(--ink);cursor:pointer}
 .fac-num:hover{color:var(--accent-ink)}
 .fac-actions{display:flex;gap:4px;justify-content:flex-end;align-items:center;height:var(--ligne-tableau)}
-.fac-avoir{color:var(--crit)!important}
 .fac-rel{display:block;font-size:12px;color:var(--muted)}
 .fac-rel .rel-lien{font-size:12px}
 /* En v2, les cartes ne servent plus que sur téléphone (le tableau est masqué sous 900 px, liste-v2.css). */
 .fac-cartes-telephone{display:none}
 @media (max-width:900px){.fac-cartes-telephone{display:block}}
+.fac-actions{display:grid;grid-template-columns:auto auto 112px auto;gap:4px;justify-content:end}
+.fac-vide{display:block;width:112px}
+.fac-vide--avoir{width:56px}
+.fac-reg-t{display:grid;gap:2px}
+.fac-reg-t small{color:var(--muted);font-size:12.5px;font-weight:400}
+.fac-reglages>summary span.ui-st{margin-left:auto;font-size:11.5px}

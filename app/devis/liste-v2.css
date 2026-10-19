@@ -40,6 +40,8 @@
   .dv2-carte small{color:var(--muted);font-size:12.5px}
   .dv2-m{text-align:right;font-weight:600}
   .dv2-aide{display:none}
-  .dv2-resume{grid-template-columns:1fr 1fr}
-  .dv2-resume>.ui-carte:last-child{display:none}
+  .dv2-resume{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .dv2-resume>.ui-carte{padding:10px}
+  .dv2-resume .ui-tuile b{font-size:17px}
+  .dv2-resume .ui-tuile i{display:none}
 }

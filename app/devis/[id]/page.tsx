@@ -104,7 +104,7 @@ export default function DevisEditor() {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
         if (d) {
           setNumero(d.numero); setStatut(d.statut ?? 'brouillon'); setStatutBase(d.statut ?? 'brouillon')
-          setDates({ cree: d.created_at ?? null, envoye: d.envoye_le ?? null, accepte: d.accepte_le ?? null })
+          setDates({ cree: d.date_emission ?? d.created_at ?? null, envoye: d.envoye_le ?? null, accepte: d.accepte_le ?? null })
           setClientNom(d.client_nom ?? ''); setClientEmail(d.client_email ?? ''); setClientAdresse(d.client_adresse ?? '')
           setObjet(d.objet ?? ''); setValidite(String(d.validite_jours ?? 90)); setRemise(String(d.remise_pct ?? 0)); setAcompte(String(d.acompte_pct ?? 0))
           const { data: ls } = await supabase.from('devis_lignes').select('*').eq('devis_id', rawId).order('ordre')

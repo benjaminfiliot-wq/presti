@@ -15,7 +15,8 @@ const eur = (n: number) => `${(Number.isFinite(n) ? n : 0).toLocaleString('fr-FR
 const STATUTS: Record<string, { libelle: string; ton: 'neutre' | 'accent' | 'warn' | 'ok' | 'crit' }> = {
   envoye: { libelle: 'Envoyé', ton: 'accent' }, accepte: { libelle: 'Accepté', ton: 'ok' }, refuse: { libelle: 'Refusé', ton: 'crit' }, expire: { libelle: 'Expiré', ton: 'neutre' }, brouillon: { libelle: 'Brouillon', ton: 'neutre' },
 }
-const quand = (iso: string | null) => (iso ? new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null)
+// Une date seule (date_emission) s'affiche sans heure ; un horodatage avec l'heure.
+const quand = (iso: string | null) => (!iso ? null : iso.length === 10 ? new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR') : new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }))
 
 export default function FicheLecture({ statut, objet, client, lignes, totaux, remisePct, remiseMontant, acomptePct, acompteMontant, validiteJours, dates, mentionTva, franchise }: {
   statut: string; objet: string
@@ -26,6 +27,7 @@ export default function FicheLecture({ statut, objet, client, lignes, totaux, re
 }) {
   const s = STATUTS[statut] ?? STATUTS.brouillon
   const pleines = lignes.filter((l) => l.designation.trim())
+  const joursSansReponse = dates.envoye ? Math.floor((Date.now() - new Date(dates.envoye).getTime()) / 86_400_000) : null
   return (
     <div className="fl">
       <div className="fl-tete"><Statut ton={s.ton}>{s.libelle}</Statut>{objet ? <h2>{objet}</h2> : null}</div>
@@ -72,11 +74,14 @@ export default function FicheLecture({ statut, objet, client, lignes, totaux, re
           <section className="ui-carte" aria-label="Historique">
             <div className="ui-carte-t"><h3>Historique</h3></div>
             <ol className="fl-frise">
-              {dates.cree ? <li className="fait"><time className="ui-mono">{quand(dates.cree)}</time>Devis créé</li> : null}
-              {dates.envoye ? <li className="fait"><time className="ui-mono">{quand(dates.envoye)}</time>Envoyé à {client.nom || 'votre client'}</li> : null}
-              {dates.accepte ? <li className="fait ok"><time className="ui-mono">{quand(dates.accepte)}</time>Accepté par le client</li> : null}
+              {[
+                ...(dates.cree ? [{ d: dates.cree, t: 'Devis établi', c: 'fait' }] : []),
+                ...(dates.envoye ? [{ d: dates.envoye, t: `Envoyé à ${client.nom || 'votre client'}`, c: 'fait' }] : []),
+                ...(dates.accepte ? [{ d: dates.accepte, t: 'Accepté par le client', c: 'fait ok' }] : []),
+              ].sort((x, y) => (x.d < y.d ? -1 : 1)).map((e) => <li key={e.t} className={e.c}><time className="ui-mono">{quand(e.d)}</time>{e.t}</li>)}
               {statut === 'refuse' ? <li className="crit">Refusé</li> : null}
               {statut === 'expire' ? <li>Expiré</li> : null}
+              {statut === 'envoye' && joursSansReponse !== null && joursSansReponse > 7 ? <li className="a-venir"><time className="ui-mono">aujourd’hui</time>Sans réponse depuis {joursSansReponse} jours : une relance est conseillée.</li> : null}
             </ol>
           </section>
         </aside>

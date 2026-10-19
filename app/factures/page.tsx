@@ -180,7 +180,7 @@ export default function FacturesList() {
   // défaut 2 : 2,7 écrans de réglages avant la première facture) ; le réglage reste à un clic, son état écrit dans le titre.
   const reglagesRelances = (rel || verrouRelances) ? (
     <details className="ui-carte fac-reglages">
-      <summary><b>Relances automatiques des impayés</b><span className="ui-mono">{rel ? (rel.reglages.actif ? 'activées' : 'désactivées') : 'avec l’offre supérieure'}</span></summary>
+      <summary><span className="fac-reg-t"><b>Relances automatiques des impayés</b><small>{rel ? (rel.reglages.actif ? 'Activées : Presti relance seul vos factures échues, dans le texte que vous avez relu.' : 'Une case à cocher, et Presti relance seul vos factures échues (J+3, J+10, J+21), dans un texte que vous relisez.') : 'Disponible avec l’offre supérieure : vos factures échues relancées seules.'}</small></span><span className={`ui-st ${rel?.reglages.actif ? 'ui-st--ok' : 'ui-st--neutre'}`}>{rel ? (rel.reglages.actif ? 'Activées' : 'Désactivées') : 'Verrouillé'}</span></summary>
       {rel && <RelancesAuto donnees={rel} obtenirJeton={jeton} nomArtisan={nomArtisan} apresEnregistrement={chargerRelances} />}
       {verrouRelances && <RelancesVerrouillees plan={plan} offre={verrouRelances.offre} />}
     </details>
@@ -256,8 +256,8 @@ export default function FacturesList() {
                       <td className="d fac-actions">
                         <button className="ui-btn ui-btn--g ui-btn--xs" disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
                         {f.statut && f.statut !== 'brouillon' ? <button className="ui-btn ui-btn--g ui-btn--xs" disabled={busy === f.id} onClick={() => facturx(f)} title="Fichier XML Factur-X à télécharger, pour votre comptable ou un donneur d'ordre public">XML</button> : null}
-                        {active && f.statut !== 'payee' ? <button className="ui-btn ui-btn--s ui-btn--xs" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button> : null}
-                        {active ? <button className="ui-btn ui-btn--g ui-btn--xs fac-avoir" disabled={busy === f.id} onClick={() => annuler(f)}>Avoir</button> : null}
+                        {active && f.statut !== 'payee' ? <button className="ui-btn ui-btn--s ui-btn--xs" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button> : <span className="fac-vide" aria-hidden="true" />}
+                        {active ? <button className="ui-btn ui-btn--g ui-btn--xs" disabled={busy === f.id} onClick={() => annuler(f)} title="Émettre un avoir (annule la facture)">Avoir</button> : <span className="fac-vide fac-vide--avoir" aria-hidden="true" />}
                       </td>
                     </tr>
                   )

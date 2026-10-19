@@ -106,4 +106,10 @@
    pastilles semblaient sortir de la dernière carte, audit 18/10 défaut 3) ; la page défile, la liste suit. */
 @media (max-width:900px){.c2-app .inbox-list{max-height:none;overflow:hidden auto}}
 /* Téléphone : quand un écran a plusieurs actions (fiche d'un devis), elles passent sous le titre au lieu de déborder. */
-@media (max-width:900px){.c2-entete{flex-wrap:wrap}.c2-actions{flex-wrap:wrap;justify-content:flex-end;row-gap:8px}.c2-titre{flex:1 1 calc(100% - 120px)}}
+@media (max-width:900px){.c2-entete{flex-wrap:wrap}.c2-actions{flex-wrap:wrap;justify-content:flex-end;row-gap:8px}.c2-titre{flex:1 1 150px}}
+
+/* Retouches après le jury du 19/10 (écrans 05, 07, 10) */
+@media (max-width:900px){
+  .c2-cherche .ui-kbd{display:none}
+  .c2-voile{background:rgba(5,6,9,.72)}
+}
