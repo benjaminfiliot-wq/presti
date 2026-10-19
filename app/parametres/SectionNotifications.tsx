@@ -6,6 +6,7 @@ import { actif } from '@/lib/flags'
 import { TYPES_NOTIFICATION, notificationActive, pushActive, type Notifications, type TypeNotification } from '@/lib/notificationsTypes'
 import { api, dateFr, type SectionProps } from './commun'
 import { estNatif, plateforme, plugin } from '@/lib/natif'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Paramètres → Notifications (prompt v9 §3.4).
 //
@@ -227,7 +228,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
           {erreur ? <p className="notif-erreur" role="alert">{erreur}</p> : null}
 
           <h3 className="notif-h3">Appareils abonnés</h3>
-          {appareils === null ? <p className="muted">Chargement…</p>
+          {appareils === null ? <ChargementConsole />
             : appareils.length === 0 ? <p className="muted" data-appareils-vide>Aucun appareil pour l’instant.</p>
             : (
               <ul className="sess" data-appareils>

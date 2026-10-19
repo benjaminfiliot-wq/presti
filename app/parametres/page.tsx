@@ -13,6 +13,7 @@ import SectionAbonnement from './SectionAbonnement'
 import SectionSecurite from './SectionSecurite'
 import SectionDonnees from './SectionDonnees'
 import type { Artisan, Message } from './commun'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Paramètres (sprint J-1 §6) : une page, une navigation à gauche, l'URL qui suit (`?onglet=`).
 // Les anciens liens `?onglet=legal|securite|donnees` continuent de marcher.
@@ -77,7 +78,7 @@ function ParametresInner() {
     router.replace(`/parametres?onglet=${id}`, { scroll: false })
   }
 
-  const contenu = !a ? <div className="tool-card"><p className="muted">Chargement…</p></div>
+  const contenu = !a ? <ChargementConsole carte />
     : onglet === 'profil' ? <SectionProfil a={a} patch={patch} signaler={signaler} />
     : onglet === 'notifications' ? <SectionNotifications a={a} patch={patch} signaler={signaler} />
     : onglet === 'application' ? <SectionApplication a={a} patch={patch} signaler={signaler} />
@@ -120,5 +121,5 @@ function ParametresInner() {
 }
 
 export default function ParametresPage() {
-  return <Suspense fallback={<AppShell active="parametres" title="Paramètres"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>}><ParametresInner /></Suspense>
+  return <Suspense fallback={<AppShell active="parametres" title="Paramètres"><ChargementConsole carte /></AppShell>}><ParametresInner /></Suspense>
 }

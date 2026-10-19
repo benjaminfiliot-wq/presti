@@ -8,6 +8,7 @@ import Info from '@/app/Info'
 import CarteSupport from './CarteSupport'
 import { evaluerMotDePasse, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 import { api, dateFr, type SectionProps } from './commun'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Sécurité (sprint J-1 §6) : mot de passe (ancien + nouveau, politique renforcée),
 // sessions ouvertes avec fermeture unitaire, « fermer toutes mes sessions », et la
@@ -125,7 +126,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
       <div className="tool-card">
         <h2>Sessions ouvertes</h2>
         <p className="muted" style={{ margin: '0 0 .9rem' }}>Chaque appareil connecté à votre compte. Fermez ce que vous ne reconnaissez pas : les actions qui passent par Presti lui sont refusées aussitôt ; la lecture directe de vos listes lui reste possible une heure au plus, le temps que son jeton expire.</p>
-        {sessions === null ? <p className="muted">Chargement…</p>
+        {sessions === null ? <ChargementConsole />
           : erreurSessions ? <p className="muted">{erreurSessions}</p>
           : (
             <ul className="sess">
@@ -158,7 +159,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
         <div className="tool-card" data-appareils>
           <h2>Appareils de confiance <Info cle="securite.code_email" /></h2>
           <p className="muted" style={{ margin: '0 0 .9rem' }}>À chaque connexion depuis un appareil inconnu, un code vous est envoyé par email. Ceux-ci en sont dispensés pendant 30 jours — retirez ce que vous ne reconnaissez pas.</p>
-          {appareils === null ? <p className="muted">Chargement…</p>
+          {appareils === null ? <ChargementConsole />
             : appareils.length === 0 ? <p className="muted" data-appareils-vide>Aucun appareil enregistré : le code est demandé à chaque connexion.</p>
             : (
               <ul className="sess">
@@ -287,7 +288,7 @@ function DoubleAuth({ signaler }: { signaler: SectionProps['signaler'] }) {
     <div className="tool-card" data-mfa={m.etat}>
       <h2>Double authentification <Info cle="parametres.deux_facteurs" /></h2>
       <p className="muted" style={{ margin: '0 0 .9rem' }}>Un second verrou en plus du mot de passe : un code à 6 chiffres affiché par une application sur votre téléphone (Google Authenticator, Microsoft Authenticator…). Un mot de passe volé ne suffit plus.</p>
-      {m.etat === 'chargement' ? <p className="muted">Chargement…</p>
+      {m.etat === 'chargement' ? <ChargementConsole />
         : m.etat === 'inactive' ? (
           <div className="mfa-etat">
             <span className="mfa-pastille" aria-hidden="true" />

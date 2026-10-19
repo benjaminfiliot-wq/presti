@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { api, dateFr, type SectionProps } from './commun'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 // Accès du support (v11 §5) — l'écran où la porte s'ouvre, et le seul.
 //
@@ -109,7 +110,7 @@ export default function CarteSupport({ signaler }: { signaler: SectionProps['sig
     if (r.ok) charger()
   }
 
-  if (!e) return <div className="tool-card"><h2>Accès du support</h2><p className="muted">Chargement…</p></div>
+  if (!e) return <div className="tool-card"><h2>Accès du support</h2><ChargementConsole /></div>
 
   const attente = e.acces.filter((x) => x.etat === 'en_attente')
   const ouverts = e.acces.filter((x) => x.etat === 'ouvert')
