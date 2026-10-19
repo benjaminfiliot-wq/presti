@@ -101,3 +101,7 @@
   .c2-actions .psh-btn:not(.primary){display:none}
 }
 @media (prefers-reduced-motion:reduce){.c2-menu,.c2-voile{transition:none}}
+
+/* Messages (étape 5.4) : sur téléphone, la liste des conversations ne fait plus une zone de défilement dans la page (les
+   pastilles semblaient sortir de la dernière carte, audit 18/10 défaut 3) ; la page défile, la liste suit. */
+@media (max-width:900px){.c2-app .inbox-list{max-height:none;overflow:visible}}

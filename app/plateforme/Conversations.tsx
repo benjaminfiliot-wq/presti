@@ -1,5 +1,8 @@
 'use client'
 
+// Refonte 18/10 (étape 5.4, drapeau consoleV2) : un squelette au lieu de « Chargement… ».
+import { useConsoleV2 } from '@/lib/consoleV2Client'
+import { Squelette } from '@/components/ui/base'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -56,6 +59,7 @@ function etatDe(l: Lead, enAttente: Set<string>): { e: Etat; label: string } {
 }
 
 export default function Conversations({ onCompte }: { onCompte?: (nonLus: number) => void }) {
+  const v2 = useConsoleV2()
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const [leads, setLeads] = useState<Lead[]>([])
@@ -274,7 +278,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   const nbValidation = leads.filter((l) => enAttente.has(l.id)).length
   const nbUrgent = leads.filter((l) => l.urgence === 'urgent' && !clos(l)).length
 
-  if (!ready) return <p className="muted">Chargement…</p>
+  if (!ready) return v2 ? <Squelette variante="tableau" lignes={5} etiquette="Chargement des conversations…" /> : <p className="muted">Chargement…</p>
   if (leads.length === 0) return (
     <div className="psh-panel"><div className="psh-empty">Aucune conversation pour l’instant.<br />Partagez votre lien (onglet « Ma page ») : chaque contact démarre ici une conversation : l’assistant vous prépare une réponse à valider, ou répond en direct si vous l’avez réglé en Automatique (dès l’offre Studio).</div></div>
   )
