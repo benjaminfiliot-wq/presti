@@ -11,6 +11,7 @@ import { peut } from '@/lib/plans'
 import { afficher, urlPlateforme } from '@/lib/urls'
 import { actif } from '@/lib/flags'
 import { libelleDomaineActif, type SurfaceDomaine } from '@/lib/surfaceDomaine'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 type Service = { nom: string; description: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
@@ -171,7 +172,7 @@ export default function ProfilPage() {
     </>
   )
 
-  if (!ready) return <AppShell active="profil" title="Ma page" crumb="Plateforme"><p className="muted">Chargement…</p></AppShell>
+  if (!ready) return <AppShell active="profil" title="Ma page" crumb="Plateforme"><ChargementConsole /></AppShell>
 
   return (
     <AppShell active="profil" title="Ma page" crumb={avecPlateforme ? 'Votre plateforme de contact' : 'Votre présentation et vos coordonnées'} actions={actions}>
