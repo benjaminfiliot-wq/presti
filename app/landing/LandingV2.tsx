@@ -171,17 +171,17 @@ export default function LandingV2() {
               <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
               <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
               <p className="lp2-lede">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute, dans votre ton : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}). Puis le devis sur vos prix et la facture, dès l&apos;offre {PLANS.essentiel.label}.</p>
+              <div className="lp2-cta">
+                <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
+                <a className="lp-btn lp-btn--g lp-btn--lg" href="#comment">Voir comment ça marche</a>
+              </div>
+              <p className="lp-trust">3 crédits offerts · sans carte bancaire · ensuite dès {PRIX_MIN} € par mois, sans engagement</p>
               <ul className="lp2-pastilles" aria-label="En bref">
                 <li><span className="i">{I.zap}</span><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : vous l&apos;envoyez (dès {OFFRE_PLATEFORME})</em></li>
                 <li><span className="i">{I.badge}</span><b>Fiable</b><em>Devis conformes, dans votre ton</em></li>
                 <li><span className="i">{I.shield}</span><b>Sécurisé</b><em>Vos données isolées, chiffrées</em></li>
                 <li><span className="i">{I.wallet}</span><b>Sans carte</b><em>Essai offert, résiliable</em></li>
               </ul>
-              <div className="lp2-cta">
-                <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
-                <a className="lp-btn lp-btn--g lp-btn--lg" href="#comment">Voir comment ça marche</a>
-              </div>
-              <p className="lp-trust">3 crédits offerts · sans carte bancaire · ensuite dès {PRIX_MIN} € par mois, sans engagement</p>
               <p className="sr-only">Presti prépare la réponse, chiffre le devis, facture, relance le client et range la compta. Vous relisez avant d’envoyer.</p>
             </div>
             <div className="lp2-hero-scene">

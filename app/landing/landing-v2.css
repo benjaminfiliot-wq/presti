@@ -14,16 +14,19 @@
 .lp2-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,transparent,var(--bg));pointer-events:none;z-index:-1}
 .lp2-hero-in{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
 .lp2-hero-texte{text-align:left}
-.lp2-hero h1{font-family:var(--font-display);font-size:var(--lp-titre-xl);font-weight:800;line-height:1.02;letter-spacing:-.035em;margin:1.1rem 0 0;max-width:12ch}
+.lp2-hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,4.7vw,4.5rem);font-weight:800;line-height:1.02;letter-spacing:-.035em;margin:1.1rem 0 0;max-width:13ch}
 .lp2-hero h1 .g{background:linear-gradient(110deg,#F6C6A8 0%,var(--co2) 35%,var(--co) 70%,#C8623F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lp2-lede{margin:1.1rem 0 0;font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.6;color:var(--ink2);max-width:36em}
-.lp2-pastilles{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.lp2-pastilles{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
 .lp2-pastilles li{display:grid;grid-template-columns:auto 1fr;column-gap:.6rem;align-items:start;padding:.6rem .75rem;border:1px solid var(--line);border-radius:12px;background:rgba(9,9,12,.55)}
 .lp2-pastilles .i{grid-row:span 2;width:1.7rem;height:1.7rem;border-radius:8px;background:rgba(217,119,87,.14);display:grid;place-items:center}
 .lp2-pastilles .i svg{width:15px;height:15px;stroke:var(--co2);fill:none}
 .lp2-pastilles b{font-size:.92rem}
 .lp2-pastilles em{font-style:normal;font-size:.8rem;line-height:1.4;color:var(--muted)}
-.lp2-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.5rem}
+.lp2-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.4rem}
+.lp2-hero-scene .lp-puce.p1{left:-4%;top:-5%}
+.lp2-hero-scene .lp-puce.p3{left:-3%;bottom:-4%}
+.lp2-hero-scene .lp-puce.p2{right:-3%;bottom:6%}
 .lp2-hero .lp-trust{margin-top:.9rem;text-align:left}
 .lp2-hero-scene{min-width:0}
 .lp2-hero-scene .lp-stage{margin:0;max-width:none}
@@ -113,4 +116,4 @@
   .lp2-bento{grid-template-columns:1fr}
   .lp2-bento .lp2-tuile-l{grid-column:auto}
 }
-@media (max-width:520px){.lp2-pastilles{grid-template-columns:1fr}}
+@media (max-width:520px){.lp2-pastilles li{padding:.5rem .55rem;column-gap:.45rem}.lp2-pastilles .i{width:1.4rem;height:1.4rem}.lp2-pastilles em{font-size:.72rem}.lp2-lede{font-size:.98rem}}

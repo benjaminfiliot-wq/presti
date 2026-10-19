@@ -11,3 +11,20 @@ export const FAQ: { question: string; reponse: string }[] = [
   { question: 'L’intelligence artificielle peut-elle se tromper ?', reponse: 'Comme tout outil basé sur l’IA, les contenus proposés peuvent comporter des inexactitudes. Vous devez toujours les relire et les valider avant de les envoyer à un client. Voir nos conditions générales pour le détail.' },
   { question: 'Puis-je annuler à tout moment ?', reponse: 'Oui, les abonnements sont sans engagement et résiliables à tout moment. Votre accès reste actif jusqu’à la fin de la période déjà payée.' },
 ]
+
+/** Refonte 18/10 (étape 6.3, drapeau landingV2) : la FAQ complète de /faq, rangée par thème. Les questions ajoutées ne disent
+ *  RIEN de neuf : chacune reprend une phrase déjà publiée et auditée (plans/promesses-2026-10.md) — la landing actuelle,
+ *  le comparatif et la grille de lib/plans.ts. La landing v2 n'affiche que cinq questions et renvoie ici. */
+export const FAQ_COMPLEMENTS: { question: string; reponse: string }[] = [
+  { question: 'L’IA répond-elle à ma place ?', reponse: 'Par défaut, non : Presti prépare la réponse dans votre ton, vous la relisez, vous l’envoyez. Avec Studio ou Signature, l’assistant peut répondre seul, jour et nuit, si vous le réglez ainsi. Elle pose les questions qui manquent, sans inventer de prix ni de créneau.' },
+  { question: 'Comment marchent les crédits ?', reponse: 'Chaque formule donne des crédits chaque mois, sans recharge à l’unité. 1 crédit = 1 génération : une réponse préparée pour un client (une par message qu’il vous écrit), un devis chiffré par l’IA ou un dépôt de fichiers de compta. Une recherche chez vos fournisseurs coûte 2 crédits, et le modèle Expert 3 crédits. Les crédits se réinitialisent à chaque renouvellement, sans report au mois suivant.' },
+  { question: 'En quoi Presti est-il différent des autres logiciels de devis ?', reponse: 'Les autres font très bien les devis et les factures ; Presti s’occupe en plus de la demande qui arrive et de la gestion par la conversation. Le comparatif, avec les mêmes critères pour tous et ses sources, est sur la page Comparatif.' },
+]
+
+/** Les thèmes de /faq (v2) : chaque question de FAQ et de FAQ_COMPLEMENTS, par son intitulé exact. */
+export const THEMES_FAQ: { titre: string; questions: string[] }[] = [
+  { titre: 'Presti, en bref', questions: ['Qu’est-ce que Presti ?', 'Comment ça marche ?', 'L’IA répond-elle à ma place ?', 'En quoi Presti est-il différent des autres logiciels de devis ?'] },
+  { titre: 'Essai et prix', questions: ['Puis-je essayer gratuitement ?', 'Combien ça coûte ?', 'Comment marchent les crédits ?', 'Puis-je annuler à tout moment ?'] },
+  { titre: 'Vos données', questions: ['Est-ce que mes données sont en sécurité ?', 'Qui peut voir mes demandes et mes devis ?'] },
+  { titre: 'Devis et IA', questions: ['Les devis générés sont-ils valables ?', 'L’intelligence artificielle peut-elle se tromper ?'] },
+]
