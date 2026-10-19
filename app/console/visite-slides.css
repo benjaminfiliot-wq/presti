@@ -1,0 +1,18 @@
+/* La visite guidée en slides de la console v2 (refonte 18/10, étape 5.3). L'aube (piste B) éclaire ce moment de présentation. */
+.vs-voile{position:fixed;inset:0;z-index:220;background:rgba(5,6,9,.72);display:grid;place-items:center;padding:16px}
+.vs{width:min(640px,100%);background:var(--aube-forte),var(--elev-2);border:1px solid var(--bord-2);border-radius:var(--r-xl);box-shadow:var(--ombre-flotte);overflow:hidden;
+  transition:opacity var(--d-moyen) var(--c-sortie),transform var(--d-moyen) var(--c-sortie)}
+@starting-style{.vs{opacity:0;transform:translateY(10px) scale(.98)}}
+.vs-visuel{display:flex;gap:10px;padding:28px 28px 8px}
+.vs-visuel span{flex:1;text-align:center;font-family:var(--font-mono);font-size:12px;padding:14px 6px;border-radius:var(--r-md);border:1px solid var(--bord-1);background:rgba(10,12,17,.55);color:var(--muted)}
+.vs-visuel span.on{border-color:var(--accent-tint-2);background:var(--accent-tint);color:var(--accent-ink)}
+.vs-corps{padding:16px 28px 8px}
+.vs-sur{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.vs-corps h2{font-family:var(--font-display);font-size:24px;font-weight:600;letter-spacing:-.015em;margin:6px 0 8px}
+.vs-corps p{margin:0;color:var(--ink-soft);font-size:15px;line-height:1.55;min-height:4.6em}
+.vs-nav{display:flex;align-items:center;gap:8px;padding:16px 28px 24px}
+.vs-pts{display:flex;gap:6px;margin:0 auto 0 0;padding:0;list-style:none}
+.vs-pts li{width:18px;height:3px;border-radius:2px;background:rgba(255,255,255,.16)}
+.vs-pts li.vu{background:var(--accent-tint-2)}
+.vs-pts li.on{background:var(--accent)}
+@media (max-width:520px){.vs-visuel,.vs-corps,.vs-nav{padding-left:18px;padding-right:18px}.vs-corps h2{font-size:20px}.vs-nav{flex-wrap:wrap}}

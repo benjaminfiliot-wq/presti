@@ -20,6 +20,7 @@ import { desabonnerCetAppareil } from '@/lib/pushClient'
 import NatifPont from '@/app/NatifPont'
 // Refonte 18/10 (étape 5.1) : la console v2, derrière le drapeau consoleV2 (essai : lib/essais.ts). Même chargement, autre coque.
 import CoqueV2 from '@/app/console/CoqueV2'
+import VisiteSlides from '@/app/console/VisiteSlides'
 import { essaisDuCompte, useConsoleV2 } from '@/lib/consoleV2Client'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode; essai?: Flag; offre?: string; cap?: Capacite }
@@ -274,7 +275,8 @@ export default function AppShell({
           {children}
         </CoqueV2>
         <AidePanneau article={article} video={video} open={aideOuverte} onClose={fermerAide} onRevoirVisite={revoir} />
-        {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
+        {/* 5.3 : en v2, la visite guidée est un diaporama (app/console/VisiteSlides.tsx), même mémoire que l'ancienne. */}
+        {actif('aideVisites') && visite && !aideOuverte && <VisiteSlides onFin={finVisite} />}
         <MiseAJour />
         <NatifPont />
       </>

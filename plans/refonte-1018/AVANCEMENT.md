@@ -41,6 +41,17 @@ Pas de `next build` local (vidéos en cours) : les builds se font sur Vercel (pr
 | 6.2 juge des pages /offres et /comparatif | fait ; pages confiées à Codex (tâche R18-01, worktree `presti-refonte-pages`, branche `refonte-1018-pages`) | 6df36d21 |
 | 6.2 pages /offres et /comparatif (Codex, PASS 1er tour ; rejugé : 35/0, tsc vert, code relu) | fait, reprises sur refonte-1018 | 394da42d |
 | Planches avant/après + avancement | fait | 75b6fcc2 |
+| 6.1 Landing v2 « Cinéma » (10 sections) | fait | c16256c8 |
+| TEMPORAIRE : landingV2 levé sur la branche | **à retirer par `git revert dedfd033` avant fusion** | dedfd033 |
+| Correctif : « Lire la vidéo » encre sombre sur corail | fait | ec292f8b |
+| 6.3 /faq complète par thème + retouches du héros | fait | 17347fda |
+| 6.1 performance (content-visibility) + juge de l'inventaire | fait | 49f7bff8 |
+
+Mesures landing v2 (prévisualisation presti-m1agb2ezk, mouvement réduit comme la mesure « avant ») : 10 sections (15) ;
+1440 : 10 474 px = 11,6 écrans (23 113 px, 25,7 : −55 %) ; 390 : 14 483 px = 17,2 écrans (29 143 px, 34,5 : −50 %) ;
+« Essayer gratuitement » : 2 ; axe : 0 violation sur /, /faq, /offres, /comparatif (1440 et 390) ; inventaire : 513 blocs,
+481 retrouvés, 6 retraits justifiés, 0 perdu. Lighthouse (avant content-visibility) : mobile perf 68 / a11y 100,
+ordinateur perf 97 / a11y 100 ; SEO 0 sur la prévisualisation = en-tête noindex de Vercel (attendu).
 
 Captures « après » : `presti-ops\refonte-1018\apres\` (relancer : voir l'en-tête de scripts/refonte-apres-console.mjs ;
 le jeton de partage Vercel est propre à CHAQUE déploiement : outil Vercel `get_access_to_vercel_url` sur l'URL du
