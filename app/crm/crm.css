@@ -366,6 +366,7 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .crm-planning-liste ul li.conflit a { color: var(--crit) }
 .crm-pl-rdv { color: var(--accent-ink); font-weight: 600 }
 .crm-conflits .crm-liste li { flex-wrap: wrap }
+.crm-conflits ul.crm-liste { padding-inline: 16px }
 .crm-agenda-lien { display: flex; flex-direction: column; gap: 8px }
 .crm-agenda-lien input { font-family: var(--font-mono); font-size: 12px }
 .crm-aide-liste { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); line-height: 1.5 }
@@ -412,7 +413,9 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .crm-plan-taches h3 { margin: 0 0 6px; font-size: 13.5px }
 .crm-plan-taches ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
 .crm-plan-taches li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px }
-.crm-plan-deplacer select { font-size: 12.5px; max-width: 220px }
+.crm-plan-taches .crm-plan-deplacer select { font-size: 12.5px; width: auto; max-width: 190px; min-height: 0; padding: 5px 8px; margin: 0 }
+@media (max-width: 760px) { .crm-plan-taches li { display: grid; grid-template-columns: 1fr; gap: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--line) } .crm-plan-taches .crm-plan-deplacer select { max-width: 100% } }
+@media (max-width: 760px) { .crm-planning-barre h2 { font-size: 15px; flex: 1 1 0; min-width: 0 } }
 .crm-plan-vues { display: flex; gap: 6px; margin-bottom: 10px }
 .crm-plan-vues .psh-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--ink) }
 .crm-plan-grille[hidden] { display: none }
