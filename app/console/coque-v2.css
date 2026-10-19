@@ -104,4 +104,6 @@
 
 /* Messages (étape 5.4) : sur téléphone, la liste des conversations ne fait plus une zone de défilement dans la page (les
    pastilles semblaient sortir de la dernière carte, audit 18/10 défaut 3) ; la page défile, la liste suit. */
-@media (max-width:900px){.c2-app .inbox-list{max-height:none;overflow:visible}}
+@media (max-width:900px){.c2-app .inbox-list{max-height:none;overflow:hidden auto}}
+/* Téléphone : quand un écran a plusieurs actions (fiche d'un devis), elles passent sous le titre au lieu de déborder. */
+@media (max-width:900px){.c2-entete{flex-wrap:wrap}.c2-actions{flex-wrap:wrap;justify-content:flex-end;row-gap:8px}.c2-titre{flex:1 1 calc(100% - 120px)}}
