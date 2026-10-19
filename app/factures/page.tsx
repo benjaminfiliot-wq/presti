@@ -10,6 +10,7 @@ import { etatPourEcran, type FactureRelancable } from '@/lib/relancesImpayes'
 import RelancesAuto, { type DonneesRelances } from './RelancesAuto'
 import RelancesVerrouillees from './RelancesVerrouillees'
 import type { PlanPayant } from '@/lib/plans'
+import { jourParis } from '@/lib/tableau-de-bord/calculer'
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -18,6 +19,11 @@ const BADGE: Record<string, { label: string; pill: string }> = {
   payee: { label: 'Payée', pill: 'ok' },
   annulee: { label: 'Annulée', pill: 'crit' },
 }
+// 19/10 (refonte, audit défaut 2) : une facture émise dont l'échéance est passée s'affichait « Émise ». Même règle que
+// « En retard » de Mes chiffres (lib/tableau-de-bord/calculer.ts : émise, non annulée par un avoir, échéance < aujourd'hui,
+// jour de Paris) : l'écran et le chiffre disent la même chose.
+const EN_RETARD = { label: 'En retard', pill: 'crit' }
+const estEnRetard = (f: Facture, aujourdhui: string, annulees: Set<string>) => f.statut === 'emise' && !f.avoir_de && !annulees.has(f.id) && !!f.date_echeance && f.date_echeance.slice(0, 10) < aujourdhui
 const eur = (n: number) => `${(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
 const initiales = (n: string | null) => (n ? n.replace(/^(M\.|Mme|Mlle)\s+(et\s+(M\.|Mme)\s+)?/i, '').trim().split(/\s+/).slice(0, 2).map((x) => x[0]?.toUpperCase()).join('') : '?')
 const somme = (l: Facture[]) => l.reduce((t, f) => t + (f.total_ttc ?? 0), 0)
@@ -164,6 +170,9 @@ export default function FacturesList() {
   const payees = factures.filter((f) => famille(f) === 'payees')
   const vue = filtre !== 'toutes' && factures.some((f) => famille(f) === filtre) ? filtre : 'toutes'
 
+  const aujourdhui = jourParis(new Date())
+  const annulees = new Set(factures.map((x) => x.avoir_de).filter((x): x is string => !!x))
+
   return (
     <AppShell active="factures" title="Factures" crumb="Vos documents">
       {!ready ? (
@@ -209,7 +218,7 @@ export default function FacturesList() {
         <div className="psh-panel">
           <div className="doc-list doc-list--grille doc-list--factures">
             {factures.filter((f) => vue === 'toutes' || famille(f) === vue).map((f) => {
-              const b = BADGE[f.statut ?? 'emise'] ?? BADGE.emise
+              const b = estEnRetard(f, aujourdhui, annulees) ? EN_RETARD : BADGE[f.statut ?? 'emise'] ?? BADGE.emise
               const active = f.statut !== 'annulee' && !f.avoir_de
               return (
                 <div className="doc-card" key={f.id}>
