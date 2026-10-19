@@ -77,7 +77,7 @@ html.lenis,html.lenis body{height:auto}
   /* Encre posée sur le corail : 6,0:1 (le blanc fait 3,1:1, refusé) */
   --on-accent:#1A0F0A;
   /* Typographie : échelle unique de titres */
-  --t-page:clamp(22px,2.2vw,26px); --t-section:16px; --t-carte:14px; --t-chiffre:24px; --t-chiffre-xl:30px;
+  --t-page:clamp(22px,2.2vw,26px); --t-fort:20px; --t-section:16px; --t-carte:14px; --t-chiffre:24px; --t-chiffre-xl:30px;
   /* Densité */
   --ligne-tableau:48px; --cote-menu:244px; --cote-menu-replie:64px; --haut-barre-bas:64px;
   /* Mouvement : courtes, en sortie franche ; rien d'animé sur un geste clavier répété (Ctrl+K) */

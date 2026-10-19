@@ -167,7 +167,7 @@
 .ui-vide{display:grid;justify-items:center;text-align:center;gap:8px;padding:32px 16px;border:1px dashed var(--bord-2);border-radius:var(--r-md)}
 .ui-vide-ill{width:72px;height:56px;border:1.4px dashed var(--bord-fort);border-radius:var(--r-md);display:grid;place-items:center;color:var(--accent-ink)}
 .ui-vide-ill svg{width:24px;height:24px}
-.ui-vide h3{font-family:var(--font-display);font-size:17px;margin:4px 0 0}
+.ui-vide h3{font-family:var(--font-display);font-size:var(--t-section);margin:4px 0 0}
 .ui-vide p{margin:0;color:var(--muted);max-width:44ch;font-size:14px}
 .ui-vide .ui-btn{margin-top:8px}
 

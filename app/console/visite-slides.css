@@ -8,11 +8,11 @@
 .vs-visuel span.on{border-color:var(--accent-tint-2);background:var(--accent-tint);color:var(--accent-ink)}
 .vs-corps{padding:16px 28px 8px}
 .vs-sur{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
-.vs-corps h2{font-family:var(--font-display);font-size:24px;font-weight:600;letter-spacing:-.015em;margin:6px 0 8px}
+.vs-corps h2{font-family:var(--font-display);font-size:var(--t-fort);font-weight:600;letter-spacing:-.015em;margin:6px 0 8px}
 .vs-corps p{margin:0;color:var(--ink-soft);font-size:15px;line-height:1.55;min-height:4.6em}
 .vs-nav{display:flex;align-items:center;gap:8px;padding:16px 28px 24px}
 .vs-pts{display:flex;gap:6px;margin:0 auto 0 0;padding:0;list-style:none}
 .vs-pts li{width:18px;height:3px;border-radius:2px;background:rgba(255,255,255,.16)}
 .vs-pts li.vu{background:var(--accent-tint-2)}
 .vs-pts li.on{background:var(--accent)}
-@media (max-width:520px){.vs-visuel,.vs-corps,.vs-nav{padding-left:18px;padding-right:18px}.vs-corps h2{font-size:20px}.vs-nav{flex-wrap:wrap}}
+@media (max-width:520px){.vs-visuel,.vs-corps,.vs-nav{padding-left:18px;padding-right:18px}.vs-corps h2{font-size:var(--t-fort)}.vs-nav{flex-wrap:wrap}}
