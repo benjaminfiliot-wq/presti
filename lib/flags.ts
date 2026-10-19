@@ -179,6 +179,15 @@ export const FLAGS = {
    *  table crm_agenda, migration 0164 ; routes /api/crm/agenda et /api/agenda/<jeton>). Baissé : pas d'onglet, routes 404. Se lève
    *  après 0164 appliquée, scripts/crm-lot3-qa.mjs vert, et l'accord de Benj. */
   crmPlanning: false,
+  /** 19/10/2026 — REFONTE de la console (plans/refonte-1018/, piste A « Instrument » validée par Benj le 19/10) : menu groupé
+   *  et repliable, palette Ctrl+K, compteurs, barre du bas sur téléphone, accueil « Aujourd'hui » (GET /api/aujourdhui), atelier
+   *  des composants /outils/ui. Baissé : la console actuelle, intacte ; /api/aujourdhui et /outils/ui répondent 404. En ESSAI
+   *  (ci-dessous) pour les comptes de lib/essais.ts (le fondateur et le compte de démonstration) : ils voient la v2 avant tout
+   *  le monde. Se lève sur l'accord de Benj, après les captures avant/après et le jury de design (PROMPT-BENJ §6). */
+  consoleV2: false,
+  /** 19/10/2026 — REFONTE de la landing (piste B « Cinéma », 10 sections, /offres, /comparatif). Pas encore construite :
+   *  le drapeau existe pour que la composition naisse derrière lui. Baissé : la landing actuelle. */
+  landingV2: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
@@ -190,6 +199,6 @@ export const actif = (f: Flag): boolean => FLAGS[f]
  *  lib/essais.ts (jamais ici : ce fichier part dans le JavaScript public, audit d'attaque du 12/10, B1). Les routes
  *  répondent 404 à tout autre compte, l'entrée de menu ne s'affiche qu'après réponse de /api/essais. À remettre à
  *  false (et vider lib/essais.ts) quand le drapeau passe à true. */
-export const ESSAI: Partial<Record<Flag, boolean>> = {}
+export const ESSAI: Partial<Record<Flag, boolean>> = { consoleV2: true }
 /** La fonctionnalité existe pour au moins un compte (drapeau levé, ou essai en cours). */
 export const enEssai = (f: Flag): boolean => FLAGS[f] || !!ESSAI[f]

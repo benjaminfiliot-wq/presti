@@ -10,7 +10,7 @@ html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth iframe{pointer-events:none}
 
 :root{
-  /* ===== Presti · design system "Chantier Dark" : nuit graphite + bleu plan + jaune chantier ===== */
+  /* ===== Presti · design system : nuit graphite + corail (accent) + jaune chantier en étincelle. Aucun bleu, aucun violet. ===== */
   --paper:#0A0C11;                /* nuit graphite (fond) */
   --surface:#13161F;             /* panneaux */
   --surface-2:#1A1E29;           /* survol / inset (plus clair) */
@@ -49,8 +49,42 @@ html.lenis,html.lenis body{height:auto}
   --font-display:var(--f-display,'Bricolage Grotesque','Hanken Grotesk',system-ui,sans-serif);
   --font-body:var(--f-body,'Hanken Grotesk',system-ui,-apple-system,"Segoe UI",sans-serif);
   --font-mono:var(--f-mono,'JetBrains Mono',ui-monospace,monospace);
-  --grid:rgba(120,150,255,.06);
+  /* 19/10 (refonte) : la grille de fond était bleutée (rgba(120,150,255,.06)) — elle passe au blanc neutre, même densité perçue. */
+  --grid:rgba(255,255,255,.045);
 }
+
+/* ===== Refonte 18/10 — étape 4.1 : jetons de la console v2 (piste A « Instrument ») =====
+   Ils ÉTENDENT le socle : aucun jeton existant n'est renommé ni réaffecté (sauf --grid ci-dessus), donc aucune surface
+   actuelle ne change. Les composants v2 (components/ui/, app/ui.css) ne lisent que ceux-ci et ceux du socle.
+   Règles : une seule lueur (survol, focus) ; des élévations par la COULEUR de surface, pas par l'ombre ; chiffres en mono. */
+:root{
+  /* Rayons */
+  --r-xs:5px; --r-sm:7px; --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
+  /* Élévations (fonds de plus en plus clairs) et leurs bordures */
+  --elev-0:var(--paper); --elev-1:#10131A; --elev-2:#161A23; --elev-3:#1D222D;
+  --bord-1:rgba(255,255,255,.08); --bord-2:rgba(255,255,255,.12); --bord-fort:rgba(255,255,255,.2);
+  /* Ombres : réservées à ce qui FLOTTE au-dessus de la page (palette, toasts, menus) */
+  --ombre-flotte:0 24px 60px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);
+  /* Grille de fond (papier millimétré) */
+  --grille-trait:rgba(255,255,255,.028); --grille-pas:24px;
+  /* Lueurs : la seule lumière de l'instrument */
+  --lueur-survol:0 0 0 1px rgba(217,119,87,.38);
+  --lueur-focus:0 0 0 2px var(--paper),0 0 0 4px rgba(232,148,111,.8);
+  --lueur-active:0 0 0 1px rgba(217,119,87,.5),0 8px 24px -12px rgba(217,119,87,.55);
+  /* L'aube (piste B) : seulement « Découvrir », la visite guidée et le haut de l'accueil */
+  --aube:radial-gradient(900px 340px at 78% -30%,rgba(217,119,87,.22),transparent 65%);
+  --aube-forte:radial-gradient(700px 300px at 70% 120%,rgba(232,148,111,.30),transparent 70%);
+  /* Encre posée sur le corail : 6,0:1 (le blanc fait 3,1:1, refusé) */
+  --on-accent:#1A0F0A;
+  /* Typographie : échelle unique de titres */
+  --t-page:clamp(22px,2.2vw,26px); --t-section:16px; --t-carte:14px; --t-chiffre:24px; --t-chiffre-xl:30px;
+  /* Densité */
+  --ligne-tableau:48px; --cote-menu:244px; --cote-menu-replie:64px; --haut-barre-bas:64px;
+  /* Mouvement : courtes, en sortie franche ; rien d'animé sur un geste clavier répété (Ctrl+K) */
+  --d-court:160ms; --d-moyen:220ms; --d-long:320ms;
+  --c-sortie:cubic-bezier(.23,1,.32,1); --c-mouvement:cubic-bezier(.77,0,.175,1);
+}
+@media (prefers-reduced-motion:reduce){:root{--d-court:0ms;--d-moyen:0ms;--d-long:0ms}}
 
 html,body{margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}

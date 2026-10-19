@@ -940,7 +940,8 @@ console.log('\n── I. Le code des actions')
   ok('migration 0157 : les types d’objets (table des actions ET contrainte du journal) = TYPES_OBJET du code', types.length === 2 && types.every((t) => t === [...cartes.TYPES_OBJET].sort().join()), types.join(' | '))
   const m0150 = lire('supabase/migrations/0150_assistant.sql')
   ok('migration 0157 : la contrainte du journal rejouée est bien celle que 0150 a créée (même nom)', /objet_type\s+text check \(objet_type is null or objet_type in/.test(m0150) && /drop constraint if exists assistant_journal_objet_type_check/.test(corps))
-  ok('drapeau `assistant` levé et ESSAI vidé (0157 appliquée le 15/10, suite --live verte)', FLAGS.assistant === true && /ESSAI: Partial<Record<Flag, boolean>> = \{\}/.test(lire('lib/flags.ts')))
+  // 19/10 : ESSAI n'est plus vide (consoleV2 y entre) ; ce qui compte ici, c'est que l'assistant n'y soit plus.
+  ok('drapeau `assistant` levé et sorti d’ESSAI (0157 appliquée le 15/10, suite --live verte)', FLAGS.assistant === true && /export const ESSAI: Partial<Record<Flag, boolean>> = \{[^}]*\}/.test(lire('lib/flags.ts')) && !/export const ESSAI[^\n]*assistant: true/.test(lire('lib/flags.ts')))
 }
 
 console.log('\n── K. La migration 0157 jouée pour de vrai (Postgres embarqué PGlite, rien ne sort de la machine)')
