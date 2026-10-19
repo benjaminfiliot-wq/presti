@@ -6,6 +6,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { actif } from '@/lib/flags'
 import { ALERTE_JOURS_MAX, ALERTE_JOURS_MIN, REGLAGES_PAR_DEFAUT, type Reglages } from '@/lib/comptaAutomatisations'
+import ChargementConsole from '@/components/ui/ChargementConsole' // refonte 18/10 (5.4) : squelette en console v2
 
 export const automatisationsVisibles = () => actif('comptaAlerteImpayes') || actif('comptaExportMensuel')
 
@@ -46,7 +47,7 @@ export default function Automatisations({ obtenirJeton }: { obtenirJeton: () => 
     <section className="psh-panel cpt-auto" aria-labelledby="cpt-auto-titre" data-compta-automatisations>
       <p className="ca-eyebrow">Automatisations</p>
       <h2 id="cpt-auto-titre">Laissez Presti surveiller pour vous</h2>
-      {erreur ? <p role="alert">Réglages indisponibles pour le moment.</p> : !r ? <p className="muted">Chargement…</p> : (
+      {erreur ? <p role="alert">Réglages indisponibles pour le moment.</p> : !r ? <ChargementConsole /> : (
         <form onSubmit={enregistrer} className="cpt-auto-form">
           {alerte && <fieldset>
             <legend>Alerte impayés</legend>
