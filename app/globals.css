@@ -3029,7 +3029,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .dg-carte{margin:0;display:flex;flex-direction:column;gap:.8rem}
 .dg-cadre{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line,rgba(255,255,255,.12));background:#0c0c0d;aspect-ratio:16/10;box-shadow:0 30px 70px -34px var(--glow,rgba(0,0,0,.6))}
 .dg-cadre video{display:block;width:100%;height:100%;object-fit:cover}
-.dg-lire{position:absolute;inset:auto .8rem .8rem auto;border:0;border-radius:999px;padding:.45rem .9rem;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:var(--accent,#d97757);color:#fff}
+.dg-lire{position:absolute;inset:auto .8rem .8rem auto;border:0;border-radius:999px;padding:.45rem .9rem;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:var(--accent,#d97757);color:#1a0f0a}
 .dg-carte h3{margin:.2rem 0 0;font-size:1.15rem}
 .dg-carte p{margin:0;font-size:.92rem;line-height:1.5;color:var(--ink2)}
 .dg-note{font-size:.76rem!important;opacity:.75}
