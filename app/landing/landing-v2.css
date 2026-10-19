@@ -126,8 +126,6 @@
 
 /* Retouches après le jury du 19/10 (écrans 01 et 02) */
 .lp2-lede-court{display:none}
-.lp2-pastilles li{align-items:center}
-.lp2-pastilles .i{align-self:start}
 .lp2-hero-scene .lp-puce.p1{left:-7%;top:-10%}
 @media (max-width:900px){
   .lp2-lede-court{display:inline}.lp2-lede-long{display:none}
@@ -140,3 +138,16 @@
   .lp2-pastilles b{font-size:.78rem}
   .lp2-pastilles em{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
+
+/* Retouches après le tour 2 du jury (écran 01) : les quatre pastilles tiennent sur UNE ligne dans le premier écran
+   (icône + mot), la phrase reste dans la page pour les lecteurs d'écran ; barre : « Essayer » en couleur d'accent. */
+@media (min-width:901px){
+  .lp2-pastilles{grid-template-columns:repeat(4,minmax(0,1fr));gap:.45rem}
+  .lp2-pastilles li{grid-template-columns:auto 1fr;align-items:center;padding:.5rem .6rem}
+  .lp2-pastilles .i{grid-row:auto;width:1.5rem;height:1.5rem}
+  .lp2-pastilles b{font-size:.86rem;white-space:nowrap}
+  .lp2-pastilles em{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+.lp2 .lp-btn--essai{border-color:rgba(217,119,87,.55);color:var(--co2)}
+.lp2 .lp-btn--essai:hover{border-color:var(--co);color:var(--co2)}
+.lp2-hero-scene .lp-dbadge{flex-wrap:wrap;white-space:nowrap;row-gap:.15rem}

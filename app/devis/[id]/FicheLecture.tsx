@@ -6,6 +6,7 @@
 // L'éditeur reste à un clic (« Modifier ») : la logique métier et les routes ne changent pas.
 import '@/components/ui/ui.css'
 import './fiche-lecture.css'
+import type { ReactNode } from 'react'
 import { Statut } from '@/components/ui/base'
 
 type Ligne = { designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
@@ -18,16 +19,26 @@ const STATUTS: Record<string, { libelle: string; ton: 'neutre' | 'accent' | 'war
 // Une date seule (date_emission) s'affiche sans heure ; un horodatage avec l'heure.
 const quand = (iso: string | null) => (!iso ? null : iso.length === 10 ? new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR') : new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }))
 
-export default function FicheLecture({ statut, objet, client, lignes, totaux, remisePct, remiseMontant, acomptePct, acompteMontant, validiteJours, dates, mentionTva, franchise }: {
+export default function FicheLecture({ statut, objet, client, lignes, totaux, remisePct, remiseMontant, acomptePct, acompteMontant, validiteJours, dates, mentionTva, franchise, geste }: {
   statut: string; objet: string
   client: { nom: string; email: string; adresse: string }
   lignes: Ligne[]; totaux: Totaux; remisePct: number; remiseMontant: number; acomptePct: number; acompteMontant: number; validiteJours: number
   dates: { cree: string | null; envoye: string | null; accepte: string | null }
   mentionTva: string; franchise: boolean
+  /** Le geste utile à ce stade (relancer, créer la facture, modifier), fourni par la page qui en tient la logique. */
+  geste?: ReactNode
 }) {
   const s = STATUTS[statut] ?? STATUTS.brouillon
   const pleines = lignes.filter((l) => l.designation.trim())
   const joursSansReponse = dates.envoye ? Math.floor((Date.now() - new Date(dates.envoye).getTime()) / 86_400_000) : null
+  const qui = client.nom || 'votre client'
+  const etape = statut === 'envoye'
+    ? (joursSansReponse !== null && joursSansReponse > 7
+      ? `Sans réponse de ${qui} depuis ${joursSansReponse} jours : une relance est conseillée. La facture se crée dès qu’il accepte.`
+      : `En attente de la réponse de ${qui}. La facture se crée dès qu’il accepte.`)
+    : statut === 'accepte' ? `${qui} a accepté : la facture reprend ces lignes, en un clic.`
+    : statut === 'refuse' ? 'Refusé : modifiez-le pour proposer une autre version.'
+    : statut === 'expire' ? 'Expiré : modifiez-le pour le renvoyer avec une nouvelle date de validité.' : null
   return (
     <div className="fl">
       <div className="fl-tete"><Statut ton={s.ton}>{s.libelle}</Statut>{objet ? <h2>{objet}</h2> : null}</div>
@@ -63,12 +74,19 @@ export default function FicheLecture({ statut, objet, client, lignes, totaux, re
           {franchise ? <p className="fl-mention">{mentionTva}</p> : null}
         </section>
         <aside className="fl-cote">
+          {etape ? (
+            <section className="ui-carte fl-etape" aria-label="Prochaine étape">
+              <div className="ui-carte-t"><h3>Prochaine étape</h3></div>
+              <p>{etape}</p>
+              {geste ? <div className="fl-etape-act">{geste}</div> : null}
+            </section>
+          ) : null}
           <section className="ui-carte" aria-label="Client">
             <div className="ui-carte-t"><h3>Client</h3></div>
             <dl className="fl-meta">
               <dt>Nom</dt><dd>{client.nom || '—'}</dd>
               <dt>E-mail</dt><dd className="ui-mono">{client.email || '—'}</dd>
-              <dt>Chantier</dt><dd>{client.adresse || '—'}</dd>
+              {client.adresse ? <><dt>Chantier</dt><dd>{client.adresse}</dd></> : null}
             </dl>
           </section>
           <section className="ui-carte" aria-label="Historique">

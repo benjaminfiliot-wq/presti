@@ -85,7 +85,7 @@ export default function HeroApp() {
           <div className="lp-drow"><span>Groupe de sécurité</span><span className="p">84,00</span></div>
           <div className="lp-drow"><span>Main-d&apos;œuvre (2 h)</span><span className="p">90,00</span></div>
           <div className="lp-dtot"><span>Total TTC</span><span className="p">873,40 €</span></div>
-          <span className="lp-dbadge"><svg viewBox="0 0 24 24" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>PDF conforme · DEV-2026-0042</span>
+          <span className="lp-dbadge"><svg viewBox="0 0 24 24" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>PDF conforme<span className="lp-dbadge-n"> · DEV-2026-0042</span></span>
         </div>
       </div>
     </div>

@@ -75,7 +75,7 @@ export default function Aujourdhui() {
 
   return (
     <AppShell active="dashboard" title="Aujourd’hui" crumb={titreDate} wide
-      actions={<a className="ui-btn ui-btn--p" href="/devis/nouveau"><Icone nom="ajouter" /><span className="aj-lib-btn">Nouveau devis</span></a>}>
+      actions={<a className="ui-btn ui-btn--p" href="/devis/nouveau"><Icone nom="ajouter" /><span className="aj-lib-btn">Nouveau devis</span><span className="aj-lib-court" aria-hidden="true">Devis</span></a>}>
       {erreur ? (
         <div className="msg err aj-erreur" role="alert"><span>{erreur}</span><button type="button" className="ui-btn ui-btn--s" onClick={() => { setD(null); void charger() }}>Réessayer</button></div>
       ) : !d ? (

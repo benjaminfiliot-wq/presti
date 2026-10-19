@@ -27,6 +27,7 @@
 .dv2-objet{color:var(--ink-soft);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dv2-geste{color:var(--muted);font-size:13px;white-space:nowrap}
 .dv2-cartes{display:none;list-style:none;margin:0;padding:0}
+.dv2-lib-court{display:none}
 .dv2-rien{margin:14px 10px;color:var(--muted)}
 .dv2-aide{margin:0;color:var(--muted);font-size:12.5px}
 @media (max-width:900px){
@@ -44,4 +45,13 @@
   .dv2-resume>.ui-carte{padding:10px}
   .dv2-resume .ui-tuile b{font-size:17px}
   .dv2-resume .ui-tuile i{display:none}
+}
+/* Retouches après le tour 2 du jury (écran 07) : le geste utile sur la carte même, libellés courts. */
+@media (max-width:900px){
+  .dv2-lib-court{display:inline}
+  .dv2-kbd{display:none}
+  .dv2-carte-bloc{border:1px solid var(--bord-1);border-radius:var(--r-md);background:var(--elev-1);overflow:hidden}
+  .dv2-carte-bloc .dv2-carte{border:0;border-radius:0;background:none}
+  .dv2-carte-act{display:flex;justify-content:flex-end;padding:0 14px 12px;margin-top:-4px}
+  .dv2-resume .ui-tuile small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 }

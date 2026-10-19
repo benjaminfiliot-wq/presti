@@ -91,7 +91,7 @@ export default function DevisV2() {
     return (devis ?? []).filter((d) => (filtre === 'tous' || etat(d) === filtre) && (!m || `${d.numero ?? ''} ${d.client_nom ?? ''} ${d.objet ?? ''}`.toLowerCase().includes(m)))
   }, [devis, filtre, q, etat])
 
-  const nouveau = <a className="ui-btn ui-btn--p" href="/devis/nouveau"><Icone nom="ajouter" /><span className="dv2-lib">Nouveau devis</span> <span className="ui-kbd dv2-lib">N</span></a>
+  const nouveau = <a className="ui-btn ui-btn--p" href="/devis/nouveau"><Icone nom="ajouter" /><span className="dv2-lib">Nouveau devis</span><span className="dv2-lib-court" aria-hidden="true">Nouveau</span> <span className="ui-kbd dv2-lib">N</span></a>
 
   if (erreur) return (
     <AppShell active="devis" title="Devis" crumb="Vos documents" actions={nouveau}>
@@ -122,7 +122,7 @@ export default function DevisV2() {
     if (e === 'brouillon') return <a className="ui-btn ui-btn--s ui-btn--xs" href={`/devis/${d.id}`}>Relire</a>
     if (e === 'relancer') return <a className="ui-btn ui-btn--s ui-btn--xs" href={`/devis/${d.id}`}>Relancer</a>
     if (e === 'accepte' && !factures.has(d.id)) return <button type="button" className="ui-btn ui-btn--s ui-btn--xs" disabled={occupe === d.id} onClick={() => void facturer(d)}>{occupe === d.id ? 'Création…' : 'Facturer'}</button>
-    return <a className="ui-btn ui-btn--g ui-btn--xs" href={`/devis/${d.id}`}>Ouvrir</a>
+    return <a className="ui-btn ui-btn--s ui-btn--xs" href={`/devis/${d.id}`}>Ouvrir</a>
   }
 
   return (
@@ -138,7 +138,7 @@ export default function DevisV2() {
             <button key={f} type="button" className="dv2-pil" aria-pressed={filtre === f} onClick={() => setFiltre(f)}>{libelle} <b className="ui-mono">{f === 'tous' ? devis.length : compte(f)}</b></button>
           ))}
         </div>
-        <label className="dv2-cherche"><Icone nom="cherche" /><span className="ui-sr">Chercher un devis</span><input ref={champ} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Client, numéro, objet…" /><span className="ui-kbd">/</span></label>
+        <label className="dv2-cherche"><Icone nom="cherche" /><span className="ui-sr">Chercher un devis</span><input ref={champ} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Client, numéro, objet…" /><span className="ui-kbd dv2-kbd">/</span></label>
       </div>
       <div className="ui-carte dv2-cadre">
         <table className="dv2-tab">
@@ -164,11 +164,12 @@ export default function DevisV2() {
           {visibles.map((d) => {
             const s = STATUT[etat(d)] ?? STATUT.brouillon
             return (
-              <li key={d.id}>
+              <li key={d.id} className="dv2-carte-bloc">
                 <a href={`/devis/${d.id}`} className="dv2-carte">
                   <b>{d.client_nom || 'Client'}</b><span className="ui-mono dv2-m">{eur(d.total_ttc ?? 0)}</span>
                   <small>{d.numero ?? '—'} · {geste(d)}</small><Statut ton={s.ton}>{s.libelle}</Statut>
                 </a>
+                {['brouillon', 'relancer'].includes(etat(d)) || (etat(d) === 'accepte' && !factures.has(d.id)) ? <div className="dv2-carte-act">{action(d)}</div> : null}
               </li>
             )
           })}

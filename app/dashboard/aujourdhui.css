@@ -70,3 +70,5 @@ a.aj-a-retard:hover{border-left-color:var(--crit)}
   .aj-lib-btn{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
 @media (max-width:900px){.aj-fil-liste li:nth-child(n+6){display:none}}
+.aj-lib-court{display:none}
+@media (max-width:900px){.aj-lib-court{display:inline}}

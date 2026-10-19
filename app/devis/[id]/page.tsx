@@ -259,7 +259,7 @@ export default function DevisEditor() {
   if (v2 && savedId && statutBase !== 'brouillon' && !edition) {
     const actionsLecture = (
       <>
-        <button className="ui-btn ui-btn--g" onClick={partagerPdf} data-partager>Partager</button>
+        <button className="ui-btn ui-btn--s" onClick={partagerPdf} data-partager>Partager</button>
         <button className="ui-btn ui-btn--s" onClick={downloadPdf}>Télécharger le PDF</button>
         <button className="ui-btn ui-btn--s" onClick={() => setEdition(true)}>Modifier</button>
         {statutBase === 'accepte'
@@ -267,12 +267,18 @@ export default function DevisEditor() {
           : statutBase === 'envoye' ? <button className="ui-btn ui-btn--p" disabled={saving} onClick={() => { if (confirm(`Renvoyer ce devis par e-mail à ${clientNom || 'votre client'} (${clientEmail || 'adresse manquante'}) ?`)) void envoyer() }}>{saving ? 'Envoi…' : 'Renvoyer au client'}</button> : null}
       </>
     )
+    const relancer = () => { if (confirm(`Renvoyer ce devis par e-mail à ${clientNom || 'votre client'} (${clientEmail || 'adresse manquante'}) ?`)) void envoyer() }
+    const geste = statutBase === 'envoye'
+      ? <button className="ui-btn ui-btn--s" disabled={saving} onClick={relancer}>{saving ? 'Envoi…' : `Relancer ${clientNom || 'le client'}`}</button>
+      : statutBase === 'accepte'
+        ? <button className="ui-btn ui-btn--s" disabled={saving || !factureOuverte} title={factureOuverte ? undefined : raisonFacture} onClick={creerFacture}>Créer la facture</button>
+        : <button className="ui-btn ui-btn--s" onClick={() => setEdition(true)}>Modifier le devis</button>
     return (
       <AppShell active="devis" title={numero ? numero : 'Devis'} crumb="Devis" actions={actionsLecture} wide>
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`} role={msg.type === 'err' ? 'alert' : 'status'} style={{ marginTop: 0 }}>{msg.text}</div>}
         <FicheLecture statut={statutBase} objet={objet} client={{ nom: clientNom, email: clientEmail, adresse: clientAdresse }}
           lignes={lignes} totaux={totals} remisePct={Number(remise) || 0} remiseMontant={remiseMontant} acomptePct={Number(acompte) || 0} acompteMontant={acompteMontant}
-          validiteJours={Number(validite) || 90} dates={dates} mentionTva={mentionTva} franchise={tvaRegime === 'franchise'} />
+          validiteJours={Number(validite) || 90} dates={dates} mentionTva={mentionTva} franchise={tvaRegime === 'franchise'} geste={geste} />
       </AppShell>
     )
   }
