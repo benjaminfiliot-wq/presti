@@ -270,7 +270,7 @@ export default function AppShell({
     return (
       <>
         <CoqueV2 active={active} title={title} crumb={crumb} actions={actions} wide={wide} artisan={a} uid={uid} essais={essais} unread={unread}
-          bandeaux={bandeaux} aide={boutonAide} onRevoirVisite={revoir} onLogout={logout}>
+          bandeaux={bandeaux} aide={boutonAide} onRevoirVisite={revoir} onLogout={logout} tiroirExterne={visite ? open : undefined}>
           {children}
         </CoqueV2>
         <AidePanneau article={article} video={video} open={aideOuverte} onClose={fermerAide} onRevoirVisite={revoir} />

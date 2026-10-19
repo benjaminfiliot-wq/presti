@@ -67,5 +67,5 @@ a.aj-a-retard:hover{border-left-color:var(--crit)}
   .aj-go svg{width:18px;height:18px}
   .aj-grille{grid-template-columns:1fr}
   .aj-diapo{grid-template-columns:1fr;min-height:0}
-  .aj-lib-btn{display:none}
+  .aj-lib-btn{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }

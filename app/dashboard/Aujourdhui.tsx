@@ -138,7 +138,7 @@ function Contenu({ d, maintenant }: { d: Donnees; maintenant: Date }) {
             <div className="ui-tuiles">
               <TuileChiffre libelle="Facturé ce mois" valeur={c.caMois} format="euros" ton={c.variationMois !== null && c.variationMois >= 0 ? 'ok' : undefined}
                 sous={c.variationMois === null ? `vs ${c.moisPrecedentLibelle} : —` : `${c.variationMois >= 0 ? '+' : ''}${c.variationMois} % vs ${c.moisPrecedentLibelle}`} />
-              <TuileChiffre libelle="En attente" valeur={c.enAttente} format="euros" sous={`${c.nbEnAttente} ${pluriel(c.nbEnAttente, 'facture', 'factures')}`} />
+              <TuileChiffre libelle="En attente" valeur={c.enAttente} format="euros" sous={c.nbEnAttente ? `${c.nbEnAttente} ${pluriel(c.nbEnAttente, 'facture', 'factures')}` : 'aucune facture'} />
               <TuileChiffre libelle="En retard" valeur={c.enRetard} format="euros" ton={c.nbEnRetard > 0 ? 'crit' : undefined} sous={c.nbEnRetard ? `${c.nbEnRetard} ${pluriel(c.nbEnRetard, 'facture', 'factures')}` : 'aucune'} />
               <TuileChiffre libelle="Devis acceptés" valeur={c.tauxAcceptation} format="pourcent" sous={c.devisEnvoyes ? `sur ${c.devisEnvoyes} envoyés` : 'aucun devis envoyé'} />
             </div>

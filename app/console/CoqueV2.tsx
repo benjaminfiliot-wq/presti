@@ -73,10 +73,12 @@ async function lireCompteurs(uid: string): Promise<Compteurs | null> {
   return { devis: i.aRelancer.total, factures: i.argent.nbEnRetard }
 }
 
-export default function CoqueV2({ active, title, crumb, actions, wide, children, artisan, uid, essais, unread, bandeaux, aide, onRevoirVisite, onLogout }: {
+export default function CoqueV2({ active, title, crumb, actions, wide, children, artisan, uid, essais, unread, bandeaux, aide, onRevoirVisite, onLogout, tiroirExterne }: {
   active: string; title: string; crumb?: string; actions?: ReactNode; wide?: boolean; children: ReactNode
   artisan: ArtisanCoque | null; uid: string | null; essais: Partial<Record<Flag, boolean>>; unread: number
   bandeaux?: ReactNode; aide?: ReactNode; onRevoirVisite?: () => void; onLogout: () => void
+  /** La visite guidée ouvre le menu sur téléphone à l'étape qui le montre (app/Visite.tsx, `menu`). */
+  tiroirExterne?: boolean
 }) {
   const pathname = usePathname()
   const [replie, setReplie] = useState(false)
@@ -90,6 +92,7 @@ export default function CoqueV2({ active, title, crumb, actions, wide, children,
 
   useEffect(() => { try { setReplie(localStorage.getItem(CLE_REPLI) === '1') } catch { /* rien */ } }, [])
   useEffect(() => { setTiroir(false); setCompte(false) }, [pathname])
+  useEffect(() => { if (tiroirExterne !== undefined) setTiroir(tiroirExterne) }, [tiroirExterne])
   useEffect(() => { if (uid) void lireCompteurs(uid).then(setCompteurs).catch(() => setCompteurs(null)) }, [uid])
   useEffect(() => {
     const maj = () => setEnLigne(navigator.onLine)

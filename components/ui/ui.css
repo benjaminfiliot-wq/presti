@@ -136,7 +136,7 @@
 .ui-palette{width:min(620px,100%);background:var(--elev-2);border:1px solid var(--bord-2);border-radius:var(--r-lg);box-shadow:var(--ombre-flotte);overflow:hidden;display:flex;flex-direction:column;max-height:70vh}
 .ui-palette-champ{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bord-1)}
 .ui-palette-champ svg{width:16px;height:16px;color:var(--faint);flex:none}
-.ui-palette-champ input{flex:1;background:none;border:0;color:var(--ink);font:inherit;font-size:15px;padding:0;margin:0;min-height:0!important;outline:none}
+.ui-palette-champ input{flex:1;background:none!important;border:0!important;box-shadow:none!important;border-radius:0;color:var(--ink);font:inherit;font-size:15px;padding:0;margin:0;min-height:0!important;outline:none}
 .ui-palette-liste{list-style:none;margin:0;padding:6px;overflow-y:auto}
 .ui-palette-groupe{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:10px 10px 4px}
 .ui-palette-item{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-soft);cursor:pointer}
