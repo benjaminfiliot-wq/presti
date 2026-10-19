@@ -4,7 +4,7 @@
 // numérotation, lignes, puis SCELLEMENT (la pièce devient inaltérable).
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
-import { normalizeLigne } from '@/lib/lignes'
+import { normalizeLigne, type LigneNorm } from '@/lib/lignes'
 import { empreinte, sirenValide } from '@/lib/facturation'
 import { COLONNES_LEGALES, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
@@ -28,6 +28,8 @@ export async function creerFacture(p: {
 
   let src: Record<string, unknown> = {}
   let lignes: LigneIn[] = []
+  type LigneFacturee = { designation?: unknown; quantite?: unknown; prix_unitaire_ht?: unknown; tva_taux?: unknown }
+  let acomptesADeduire: { numero: string; date: string | null; lignes: LigneFacturee[] }[] = []
   if (devisId) {
     const { data: devis } = await supabaseAdmin.from('devis').select('*').eq('id', devisId).eq('artisan_id', uid).maybeSingle()
     if (!devis) return { ok: false, status: 404, error: 'Devis introuvable' }
@@ -39,14 +41,22 @@ export async function creerFacture(p: {
     // un avoir.
     const estAcompte = typeof p.acomptePct === 'number' && p.acomptePct > 0 && p.acomptePct < 100
     if (!estAcompte) {
-      const { data: deja } = await supabaseAdmin.from('factures').select('id, numero, avoir_de').eq('artisan_id', uid).eq('devis_id', devisId)
+      const { data: deja } = await supabaseAdmin.from('factures').select('id, numero, avoir_de, statut, date_emission').eq('artisan_id', uid).eq('devis_id', devisId)
       const emises = (deja ?? []).filter((f) => !f.avoir_de)
       const annulees = new Set((deja ?? []).map((f) => f.avoir_de).filter(Boolean))
       const restantes = emises.filter((f) => !annulees.has(f.id))
       if (restantes.length) {
-        const { data: lf } = await supabaseAdmin.from('factures_lignes').select('facture_id, designation').in('facture_id', restantes.map((f) => f.id))
-        const completes = restantes.filter((f) => !(lf ?? []).filter((l) => l.facture_id === f.id).every((l) => /^Acompte /.test(String(l.designation ?? ''))))
+        const { data: lf } = await supabaseAdmin.from('factures_lignes').select('facture_id, designation, quantite, prix_unitaire_ht, tva_taux').in('facture_id', restantes.map((f) => f.id))
+        const lignesDe = (id: string) => (lf ?? []).filter((l) => l.facture_id === id)
+        const completes = restantes.filter((f) => !lignesDe(f.id).every((l) => /^Acompte /.test(String(l.designation ?? ''))))
         if (completes.length) return { ok: false, status: 409, error: `Ce devis est déjà facturé (${completes[0].numero}). Pour refaire la facture, émettez d’abord un avoir.` }
+        // Audit de cohérence du 18/10, C3 : la facture complète d'un devis dont un acompte est DÉJÀ facturé reprenait 100 % du
+        // devis — 1 300 € facturés pour un devis de 1 000 € avec 300 € d'acompte, au client comme dans « Mes chiffres ». Elle
+        // devient une facture de SOLDE : les lignes du devis, puis la déduction de chaque acompte facturé (émis ou payé, non
+        // annulé par un avoir), à son taux de TVA. Ses totaux sont donc ceux du reste dû, et la TVA n'est pas facturée deux fois.
+        acomptesADeduire = restantes
+          .filter((f) => ['emise', 'payee'].includes(String(f.statut ?? '')) && lignesDe(f.id).length > 0)
+          .map((f) => ({ numero: String(f.numero ?? ''), date: typeof f.date_emission === 'string' ? f.date_emission : null, lignes: lignesDe(f.id) }))
       }
     }
   } else {
@@ -80,6 +90,12 @@ export async function creerFacture(p: {
       error: 'Impossible d’émettre cette facture : le nom du client est une mention obligatoire (art. 242 nonies A de l’annexe II au CGI). Renseignez-le sur le devis, puis réessayez.',
     }
   }
+  // Audit de cohérence du 18/10, C6 : « Créer la facture » marchait sur un BROUILLON et scellait une pièce comptable (numéro
+  // consommé pour toujours, séquence continue). On ne facture qu'un devis SIGNÉ — acompte compris : l'acceptation dans la
+  // conversation passe le devis à « accepte » AVANT de demander la facture d'acompte. Refusé avant le numéro.
+  if (devisId && src.statut !== 'accepte') {
+    return { ok: false, status: 409, error: `Ce devis n’est pas signé (statut : ${String(src.statut ?? 'brouillon')}) : on ne facture qu’un devis accepté. Passez son statut à « Accepté » une fois le client d’accord, puis créez la facture.` }
+  }
   const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
   const lignesDevis = lignes.map((l) => normalizeLigne(l, franchise))
   // Facture d'ACOMPTE (audit v5 du 04/09 : la facture « Acompte 30 % » recopiait les lignes et
@@ -99,6 +115,38 @@ export async function creerFacture(p: {
     }))
     remise = 0
   }
+  // Facture de SOLDE (C3, voir plus haut) : les lignes du devis restent telles quelles (le client voit tout le chantier), puis
+  // la remise du devis en ligne négative — elle ne doit pas s'appliquer aux déductions, qui portent déjà la leur — puis une
+  // ligne négative par acompte facturé et par taux, qui cite son numéro et sa date (BOFiP : la facture de solde fait référence
+  // aux factures d'acompte). Quantité −1 et prix positif : la norme EN 16931 refuse un prix net négatif (BR-27), pas une
+  // quantité négative. Les totaux sont alors ceux du reste dû, et la somme des factures du devis égale le devis.
+  const solde = acomptePct === null && acomptesADeduire.length > 0
+  if (solde) {
+    const numeroDevis = typeof src.numero === 'string' ? src.numero : ''
+    const dateFr = (d: string | null) => (d && /^\d{4}-\d{2}-\d{2}/.test(d) ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : '')
+    const lignesRemise: LigneNorm[] = []
+    if (remise > 0) {
+      const parTaux = new Map<number, number>()
+      for (const l of lignesDevis) parTaux.set(l.tva_taux, (parTaux.get(l.tva_taux) ?? 0) + l.quantite * l.prix_unitaire_ht)
+      for (const [taux, ht] of parTaux) {
+        const montant = Math.round(ht * remise) / 100
+        if (montant > 0) lignesRemise.push({ designation: `Remise ${remise} % du devis ${numeroDevis}`.trim() + (parTaux.size > 1 ? ` (part soumise à TVA ${taux} %)` : ''), quantite: -1, unite: 'forfait', prix_unitaire_ht: montant, tva_taux: taux })
+      }
+      remise = 0
+    }
+    const deductions: LigneNorm[] = acomptesADeduire.flatMap((a) => a.lignes.map((l) => {
+      const taux = franchise ? 0 : Number(l.tva_taux) || 0
+      const ht = Math.round((Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0) * 100) / 100
+      return {
+        designation: `Déduction de l’acompte facturé ${a.numero}${a.date ? ` du ${dateFr(a.date)}` : ''}${a.lignes.length > 1 ? ` (TVA ${taux} %)` : ''}`,
+        quantite: -1, unite: 'forfait', prix_unitaire_ht: ht, tva_taux: taux,
+      }
+    })).filter((l) => l.prix_unitaire_ht > 0)
+    eff = [...lignesDevis, ...lignesRemise, ...deductions]
+    if (computeTotals(eff, 0).total_ttc <= 0) {
+      return { ok: false, status: 409, error: `Les acomptes déjà facturés (${acomptesADeduire.map((a) => a.numero).join(', ')}) couvrent tout le devis : il ne reste pas de solde à facturer.` }
+    }
+  }
   const totals = computeTotals(eff, remise)
 
   // Le numéro est pris EN DERNIER : tout ce qui peut refuser la facture (mentions de
@@ -111,7 +159,9 @@ export async function creerFacture(p: {
   const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
   const numero = `FAC-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
   const echeance = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)
-  const acompte = typeof p.acomptePct === 'number' ? p.acomptePct : (Number(src.acompte_pct) || 0)
+  // Une facture de solde n'est pas une facture d'acompte : elle ne recopie pas le pourcentage du devis (lib/crm/argent.ts
+  // reconnaît un acompte à ce pourcentage ET à un total inférieur au devis — ce que le solde serait aussi).
+  const acompte = typeof p.acomptePct === 'number' ? p.acomptePct : solde ? 0 : (Number(src.acompte_pct) || 0)
   // SIREN du client et adresse de chantier : le déclencheur d'immuabilité les fige au
   // scellement, donc si on ne les recopie pas MAINTENANT elles sont perdues pour cette
   // pièce. Le SIREN n'est repris que s'il passe la clé de Luhn — un identifiant faux part
@@ -124,7 +174,7 @@ export async function creerFacture(p: {
     .from('factures')
     .insert({
       artisan_id: uid, devis_id: devisId ?? null, numero,
-      objet: acompte && typeof p.acomptePct === 'number' ? `Acompte ${acompte} % — ${s(src.objet, 260) ?? 'travaux'}` : s(src.objet, 300),
+      objet: acompte && typeof p.acomptePct === 'number' ? `Acompte ${acompte} % — ${s(src.objet, 260) ?? 'travaux'}` : solde ? `Solde — ${s(src.objet, 280) ?? 'travaux'}` : s(src.objet, 300),
       statut: 'emise', date_echeance: echeance,
       remise_pct: remise, acompte_pct: acompte,
       conditions: s(src.conditions, 4000), notes: s(src.notes, 4000),

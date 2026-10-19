@@ -28,6 +28,22 @@ export async function POST(req: Request) {
     const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
 
+    // C2 (audit de cohérence du 18/10) : le devis né d'une demande (« Créer un devis » depuis Messages ou le CRM, qui ouvrent
+    // /devis/nouveau?lead=…) lui est RATTACHÉ. Sans ce lien : deux cartes au pipeline, pas de relances J+2/5/10 à l'envoi, pas
+    // d'acceptation possible dans la conversation, demande jamais « gagnée ». La demande doit appartenir au compte de la
+    // session : la clé de service passe outre la RLS, ce contrôle est la barrière. Vérifié AVANT de consommer un numéro.
+    let leadId: string | null = null
+    if (b?.lead_id !== undefined && b?.lead_id !== null && b?.lead_id !== '') {
+      const brut = typeof b.lead_id === 'string' ? b.lead_id.trim().toLowerCase() : ''
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(brut)) {
+        return NextResponse.json({ error: 'Demande : identifiant invalide.' }, { status: 400 })
+      }
+      const { data: lead, error: lErr } = await supabaseAdmin.from('leads').select('id').eq('id', brut).eq('artisan_id', uid).maybeSingle()
+      if (lErr) { console.error('[devis] lecture de la demande :', lErr.message); return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 503 }) }
+      if (!lead) return NextResponse.json({ error: 'La demande d’origine est introuvable : le devis n’a pas été créé.' }, { status: 404 })
+      leadId = lead.id
+    }
+
     // Numéro en séquence continue
     const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'devis' })
     const numero = `DEV-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
@@ -37,6 +53,7 @@ export async function POST(req: Request) {
       .insert({
         artisan_id: uid,
         numero,
+        lead_id: leadId,
         objet: s(b?.objet, 300),
         statut: 'brouillon',
         validite_jours: Number(b?.validite_jours) || 90,

@@ -36,6 +36,14 @@ export type GroupeClient = {
   chantiers: string[]
   carnet: string[]
   derniere: string | null
+  /**
+   * Les empreintes des AUTRES clés de ce client (audit de cohérence du 18/10, C4) : ses autres e-mails et téléphones, et les
+   * noms de ses pièces. L'identifiant public (`id`) suit la clé la plus forte DU MOMENT : un client connu par son seul nom
+   * changeait d'identifiant le jour où on lui ajoutait son e-mail, et ses notes (crm_notes.client_cle) ne s'affichaient plus,
+   * puis la purge les supprimait comme « orphelines ». Les notes se lisent donc par `id` ET par ces anciennes clés
+   * (clesDesNotes), et la purge ne tient pour orpheline qu'une note qui ne se rattache à AUCUNE (rattacherCle).
+   */
+  anciens: string[]
 }
 
 /** Le nom posé par l'effacement d'une conversation (app/api/donnees) : jamais une clé de regroupement. */
@@ -124,6 +132,7 @@ export function regrouperClients(e: EntreesClients): GroupeClient[] {
     // de fiche (la pièce reste visible dans Devis / Factures / Messages).
     const cle = forts[0] ?? (noms[0] ? `n:${noms[0]}` : null)
     if (!cle) continue
+    const autres = [...new Set([...forts, ...noms.map((n) => `n:${n}`)])].filter((k) => k !== cle).sort()
     const plusRecent = [...membres].sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')))
     const ids = (t: Noeud['type']) => membres.filter((m) => m.type === t).map((m) => m.id).sort()
     sortie.push({
@@ -134,6 +143,7 @@ export function regrouperClients(e: EntreesClients): GroupeClient[] {
       adresse: plusRecent.find((m) => m.adresse)?.adresse ?? null,
       devis: ids('devis'), factures: ids('facture'), leads: ids('lead'), chantiers: ids('chantier'), carnet: ids('carnet'),
       derniere: plusRecent.find((m) => m.date)?.date ?? null,
+      anciens: autres.map((k) => e.idDe(k)),
     })
   }
   return sortie.sort((a, b) => String(b.derniere ?? '').localeCompare(String(a.derniere ?? '')) || a.id.localeCompare(b.id))
@@ -141,10 +151,34 @@ export function regrouperClients(e: EntreesClients): GroupeClient[] {
 
 /** Retrouver le groupe d'une fiche : par son identifiant public, ou par une de ses pièces (« d-<uuid> », « l-… », « c-… »). */
 export function trouverGroupe(groupes: readonly GroupeClient[], ref: string): GroupeClient | null {
-  if (/^[0-9a-f]{64}$/.test(ref)) return groupes.find((g) => g.id === ref) ?? null
+  if (/^[0-9a-f]{64}$/.test(ref)) return rattacherCle(groupes, ref)
   const m = /^([dlcf])-([0-9a-f-]{36})$/i.exec(ref)
   if (!m) return null
   const id = m[2].toLowerCase()
   const champ = { d: 'devis', l: 'leads', c: 'chantiers', f: 'factures' } as const
   return groupes.find((g) => g[champ[m[1].toLowerCase() as 'd' | 'l' | 'c' | 'f']].includes(id)) ?? null
+}
+
+/**
+ * Le client auquel se rattache une empreinte (une adresse de fiche, ou crm_notes.client_cle) : celui dont c'est l'identifiant
+ * ACTUEL d'abord ; sinon celui, s'il est SEUL, qui porte cette clé parmi ses anciennes (un e-mail ajouté depuis, deux pièces
+ * fusionnées). Une clé de nom partagée par deux clients (deux « M. Martin ») ne se rattache à aucun des deux : la note n'est
+ * montrée à personne plutôt qu'au mauvais client, et elle n'est pas pour autant orpheline (lib/crm/effacement.ts).
+ */
+type AvecCles = { id: string; anciens?: readonly string[] }
+export function rattacherCle<G extends AvecCles>(groupes: readonly G[], empreinte: string): G | null {
+  const actuel = groupes.find((g) => g.id === empreinte)
+  if (actuel) return actuel
+  const porteurs = groupes.filter((g) => (g.anciens ?? []).includes(empreinte))
+  return porteurs.length === 1 ? porteurs[0] : null
+}
+
+/** Une empreinte portée par un client, même sans s'y rattacher seule (clé de nom partagée) : la note n'est PAS orpheline. */
+export function clePortee(groupes: readonly AvecCles[], empreinte: string): boolean {
+  return groupes.some((g) => g.id === empreinte || (g.anciens ?? []).includes(empreinte))
+}
+
+/** Les empreintes sous lesquelles lire les notes d'UN client : la sienne, et ses anciennes qui se rattachent à lui seul. */
+export function clesDesNotes<G extends AvecCles>(groupes: readonly G[], g: G): string[] {
+  return [g.id, ...(g.anciens ?? []).filter((k) => rattacherCle(groupes, k) === g)]
 }

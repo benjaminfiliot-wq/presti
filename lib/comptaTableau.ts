@@ -169,6 +169,21 @@ function jourDe(v: unknown): string | null {
 const ecartJours = (a: string, b: string): number =>
   Math.round((Date.UTC(+a.slice(0, 4), +a.slice(5, 7) - 1, +a.slice(8, 10)) - Date.UTC(+b.slice(0, 4), +b.slice(5, 7) - 1, +b.slice(8, 10))) / 86_400_000)
 
+/**
+ * Un devis ENVOYÉ dont la validité est dépassée au jour `jour` (AAAA-MM-JJ, Paris). Une seule règle (« deux chiffres, un
+ * écran ») : la tuile « devis en attente » ci-dessous l'écarte, et le passage quotidien le passe à « expiré »
+ * (lib/devisExpiration.ts) — sans quoi la colonne « Devis envoyé » du pipeline le gardait pour toujours (audit du 18/10, C8).
+ * Point de départ : la date d'envoi, sinon d'émission, sinon de création ; validité du devis, 90 jours par défaut.
+ */
+export function devisDepasse(d: Pick<DevisPresti, 'statut' | 'envoye_le' | 'date_emission' | 'created_at' | 'validite_jours'>, jour: string): boolean {
+  if (d.statut !== 'envoye') return false
+  const envoye = jourDe(d.envoye_le) ?? jourDe(d.date_emission) ?? jourDe(d.created_at)
+  if (!envoye) return false
+  const validite = Number(d.validite_jours)
+  const limite = Number.isFinite(validite) && validite > 0 ? validite : VALIDITE_PAR_DEFAUT_JOURS
+  return ecartJours(jour, envoye) > limite
+}
+
 export function decalerMois(cle: string, n: number): string {
   const total = +cle.slice(0, 4) * 12 + (+cle.slice(5, 7) - 1) + n
   return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, '0')}`
@@ -338,11 +353,8 @@ export function calculerCompta(e: EntreesCompta): VueCompta {
       const m = (jourDe(d.accepte_le) ?? jourDe(d.date_emission) ?? jourDe(d.created_at))?.slice(0, 7)
       if (dansPeriode(m)) { acceptes.nombre++; acceptes.montant += centimes(d.total_ttc) }
     } else if (d.statut === 'envoye') {
-      const envoye = jourDe(d.envoye_le) ?? jourDe(d.date_emission) ?? jourDe(d.created_at)
-      if (!envoye) continue
-      const validite = Number(d.validite_jours)
-      const limite = Number.isFinite(validite) && validite > 0 ? validite : VALIDITE_PAR_DEFAUT_JOURS
-      if (ecartJours(jour, envoye) <= limite) { enAttente.nombre++; enAttente.montant += centimes(d.total_ttc) }
+      if (!(jourDe(d.envoye_le) ?? jourDe(d.date_emission) ?? jourDe(d.created_at))) continue
+      if (!devisDepasse(d, jour)) { enAttente.nombre++; enAttente.montant += centimes(d.total_ttc) }
     }
   }
 

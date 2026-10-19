@@ -270,7 +270,10 @@ async function socle(c, { ia }) {
   verifier(plan, 'devis : envoi au client (statut « envoyé », e-mail intercepté avec le PDF en pièce jointe)', env.status === 200 && dvApres?.statut === 'envoye' && !!mailDevis && (mailDevis.pj ?? []).some((p) => /\.pdf$/i.test(p.nom) && p.octets > 1500),
     'HTTP ' + env.status + ' ' + JSON.stringify(env.corps).slice(0, 140) + ' statut ' + dvApres?.statut + ' mails ' + mails.length)
 
-  // Factures : depuis le devis
+  // Factures : depuis le devis — SIGNÉ seulement (audit de cohérence du 18/10, C6) : un devis envoyé est refusé, puis le client signe.
+  const facNonSigne = K.devisId ? await http(c, 'POST', '/api/factures', { devis_id: K.devisId }) : { status: 0 }
+  verifier(plan, 'factures : un devis envoyé mais non signé ne se facture pas (409)', facNonSigne.status === 409, 'HTTP ' + facNonSigne.status)
+  if (K.devisId) await admin.from('devis').update({ statut: 'accepte' }).eq('id', K.devisId)
   const fac = K.devisId ? await http(c, 'POST', '/api/factures', { devis_id: K.devisId }) : { status: 0, corps: {} }
   K.factureId = fac.corps.id
   verifier(plan, 'factures : création depuis le devis (numéro FAC, lignes reprises)', fac.status === 200 && /^FAC-/.test(fac.corps.numero ?? '') && (await compter('factures_lignes', { facture_id: K.factureId })) === 2, 'HTTP ' + fac.status + ' ' + JSON.stringify(fac.corps).slice(0, 200))
@@ -460,6 +463,7 @@ async function gestion(c) {
   const rl = await http(c, 'PUT', '/api/factures/relances-auto', { actif: true, jours: [3, 10, 21], textes: {} })
   verifier(plan, 'relances d’impayés : l’artisan les active (opt-in)', rl.status === 200, 'HTTP ' + rl.status + ' ' + JSON.stringify(rl.corps).slice(0, 160))
   const dv = await http(c, 'POST', '/api/devis', { objet: 'Dépannage chauffe-eau', client_nom: 'Client Impayé', client_email: `impaye-${plan}-${HORO}@example.org`, lignes: [{ designation: 'Remplacement résistance', quantite: 1, unite: 'u', prix_unitaire_ht: 150, tva_taux: 10 }] })
+  if (dv.corps?.id) await admin.from('devis').update({ statut: 'accepte' }).eq('id', dv.corps.id) // on ne facture qu'un devis signé (C6)
   const fi = await http(c, 'POST', '/api/factures', { devis_id: dv.corps.id })
   const envois = []
   try {

@@ -7,6 +7,8 @@ import { estStockBas, type Alerte, type ResumeAlertes } from '@/lib/crm/alertes'
 import { enCours, libelleCommande, type CommandeA } from '@/lib/crm/commandes'
 import { appel, dateFr, enCentimes, estErreur, euros } from '../client'
 import FicheChantier from '../FicheChantier'
+import Frise from '../Frise'
+import Indicateurs from '../Indicateurs'
 import { Lien, useExemple } from '../mode'
 import { DialogueRelance, FicheCommande, PreparerCommande } from './Commande'
 
@@ -91,6 +93,9 @@ function PanneauChantier({ objet, donnees, demo, resume, onChange }: { objet: Ob
     <div className="atl-pile">
       <p className="atl-statut"><i style={{ background: objet.epingle ?? undefined }} aria-hidden="true" />{objet.detail}</p>
       {c.avancement !== null && <div className="atl-barre" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={c.avancement} aria-label="Avancement des tâches"><span style={{ width: `${c.avancement}%` }} /></div>}
+      {/* La frise du dossier et la colonne d'indicateurs (plan du 18/10, n°3 et n°2) : les mêmes que la fiche chantier. */}
+      {c.frise && <Frise frise={c.frise} onChange={onChange} sansAction={demo && !exemple} />}
+      {c.indicateurs && <Indicateurs ind={c.indicateurs} chantierId={c.id} dansLaFiche={false} />}
 
       <h3 className="crm-sous">{surPlace ? 'Sur place aujourd’hui' : 'Équipe affectée'}{equipe.length ? <span className="tnum"> · {equipe.length}</span> : null}</h3>
       {equipe.length === 0 ? <p className="crm-vide">{surPlace ? 'Personne n’est affecté à ce chantier.' : 'Aucune équipe affectée pour le moment.'}</p> : (

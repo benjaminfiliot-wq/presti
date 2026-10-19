@@ -10,6 +10,8 @@ import TableauCrmVue from './Tableau'
 import PipelineVue from './Pipeline'
 import ChantiersVue from './Chantiers'
 import ClientsVue from './Clients'
+import { actif } from '@/lib/flags'
+import PlanningVue from './Planning'
 import EquipeVue from './Equipe'
 import Atelier, { prechargerScene3D } from './atelier/Atelier'
 import { BANDEAU_EXEMPLE, ecrireChoix, lireChoix, ModeExemple } from './mode'
@@ -35,8 +37,12 @@ const ONGLETS = [
   { id: 'pipeline', label: 'Pipeline' },
   { id: 'chantiers', label: 'Chantiers' },
   { id: 'clients', label: 'Clients' },
+  // 18/10, lot 3 (plan du 18/10, n°6) : le planning de la semaine et le lien d'agenda.
+  { id: 'planning', label: 'Planning' },
   { id: 'equipe', label: 'Équipe & véhicules' },
 ] as const
+// Les onglets montrés : le planning n'apparaît qu'avec son drapeau (lib/flags.ts, crmPlanning).
+const ONGLETS_VISIBLES = ONGLETS.filter((o) => o.id !== 'planning' || actif('crmPlanning'))
 type Onglet = (typeof ONGLETS)[number]['id']
 const CLE_ONGLET = 'presti-crm-onglet'
 
@@ -63,7 +69,7 @@ export default function Crm() {
     setMesure(p.get('mesure') === '1')
     let memo: string | null = null
     try { memo = localStorage.getItem(CLE_ONGLET) } catch { /* préférence perdue : l'atelier */ }
-    const choisi = [p.get('vue'), memo].find((x) => ONGLETS.some((o) => o.id === x))
+    const choisi = [p.get('vue'), memo].find((x) => ONGLETS_VISIBLES.some((o) => o.id === x))
     if (choisi) setOnglet(choisi as Onglet)
     setChoix(p.get('exemple') === '1' ? 'exemple' : lireChoix())
     // La maquette 3D se télécharge PENDANT la lecture des données, pas après (recette du 12/10 : premier affichage lent).
@@ -105,7 +111,7 @@ export default function Crm() {
   const vide = vue ? compteVide(vue) : false
   const exemple = !!vue && (choix ? choix === 'exemple' : vide)
   // En exemple, rien ne change jamais : aucune écoute.
-  const { lien, dernier } = useTempsReel({ uid, actif: !!vue && !exemple, surChangement: charger })
+  const { lien, dernier } = useTempsReel({ uid, actif: !!vue && !exemple, surChangement: charger, sans: vue && vue.rappels && !vue.rappels.disponibles ? ['crm_rappels'] : [] })
   // Posé pendant le rendu, avant tout clic possible : en exemple, app/crm/client.ts refuse toute écriture.
   bloquerEcritures(exemple)
   const v = exemple ? VUE_EXEMPLE : vue
@@ -138,7 +144,7 @@ export default function Crm() {
             )}
           </div>
           <div className="crm-onglets" role="tablist" aria-label="Vues du CRM">
-            {ONGLETS.map((o) => (
+            {ONGLETS_VISIBLES.map((o) => (
               <button key={o.id} type="button" role="tab" id={`crm-onglet-${o.id}`} aria-selected={onglet === o.id} aria-controls={`crm-vue-${o.id}`}
                 className={onglet === o.id ? 'on' : ''} onClick={() => choisir(o.id)}>
                 {o.label}
@@ -150,15 +156,16 @@ export default function Crm() {
           <section id={`crm-vue-${onglet}`} role="tabpanel" aria-labelledby={`crm-onglet-${onglet}`} className="crm-vue">
             {/* La maquette n'est montée que sur son onglet : le morceau 3D n'est chargé qu'ici (et préchargé pendant la lecture). */}
             {onglet === 'atelier' && (() => {
-              const versVue = (x: string) => { if (ONGLETS.some((o) => o.id === x)) choisir(x as Onglet) }
+              const versVue = (x: string) => { if (ONGLETS_VISIBLES.some((o) => o.id === x)) choisir(x as Onglet) }
               return exemple
                 ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo onVue2D={versVue} mesure={mesure} />
                 : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} onChange={() => void charger()} lien={lien} dernier={dernier} />
             })()}
-            {onglet === 'tableau' && <TableauCrmVue t={v.tableau} />}
-            {onglet === 'pipeline' && <PipelineVue p={v.pipeline} onChange={charger} />}
+            {onglet === 'tableau' && <TableauCrmVue t={v.tableau} r={v.rappels} onChange={charger} />}
+            {onglet === 'pipeline' && <PipelineVue p={v.pipeline} onChange={charger} jour={v.tableau.jour} />}
             {onglet === 'chantiers' && <ChantiersVue chantiers={v.chantiers} devisSignes={v.devisSignesSansChantier} onChange={charger} />}
             {onglet === 'clients' && <ClientsVue clients={v.clients} />}
+            {onglet === 'planning' && actif('crmPlanning') && <PlanningVue atelier={v.atelier} rappels={v.rappels?.liste ?? []} jour={v.tableau.jour} onChange={charger} />}
             {onglet === 'equipe' && <EquipeVue key={exemple ? 'exemple' : 'mien'} donnees={exemple ? EQUIPE_EXEMPLE : undefined} />}
           </section>
          </div>

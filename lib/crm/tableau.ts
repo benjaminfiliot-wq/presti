@@ -22,6 +22,9 @@ export type TableauCrm = {
   relancesDues: { nombre: number; seuilJours: number } | null
   chantiers: { actifs: number; enRetard: { nombre: number; liste: { id: string; titre: string; jours: number }[] } | null; sansDate: number } | null
   stockBas: { nombre: number; liste: { id: string; nom: string; reste: number; seuil: number; unite: string }[] } | null
+  /** Reste à encaisser sur les dossiers (lib/crm/argent.ts, via les cartes du pipeline) : la somme exacte des restes des cartes,
+   *  donc des colonnes du pipeline (et des dossiers classés à qui il reste une facture à régler). null sans devis signé ni facture. */
+  aEncaisser: { montant: number; dossiers: number } | null
 }
 
 const num = (v: unknown): number => { const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v.replace(',', '.')) : NaN; return Number.isFinite(n) ? n : 0 }
@@ -34,6 +37,8 @@ export function calculerTableauCrm(e: {
   chantiers: readonly ChantierT[]
   materiaux: readonly MateriauT[]
   maintenant: Date
+  /** Les cartes du pipeline (lib/crm/pipeline.ts) : leur reste à encaisser fait la tuile « À encaisser ». */
+  cartes?: readonly { aEncaisser: number; devisId: string | null }[]
 }): TableauCrm {
   const jour = jourParis(e.maintenant)
   const mien = <T extends { artisan_id?: string | null }>(l: readonly T[]) => (Array.isArray(l) ? l : []).filter((x) => !!x && x.artisan_id === e.artisanId)
@@ -64,5 +69,11 @@ export function calculerTableauCrm(e: {
       ? { actifs: actifs.length, enRetard: !actifs.length ? { nombre: 0, liste: [] } : dates_ok.length ? { nombre: retards.length, liste: retards.slice(0, 5).map((x) => ({ id: x.c.id, titre: (x.c.titre ?? '').trim() || 'Chantier', jours: x.j })) } : null, sansDate: dates.length - dates_ok.length }
       : null,
     stockBas: suivis.length ? { nombre: bas.length, liste: bas.slice(0, 5) } : null,
+    aEncaisser: (() => {
+      const avecArgent = devis.some((d) => d.statut === 'accepte') || mien(e.factures).some((f) => !!f.devis_id)
+      if (!e.cartes || !avecArgent) return null
+      const dus = e.cartes.filter((c) => c.devisId && c.aEncaisser > 0)
+      return { montant: dus.reduce((s, c) => s + c.aEncaisser, 0), dossiers: dus.length }
+    })(),
   }
 }

@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { exigerCapacite } from '@/lib/accesOffreServeur'
 import { actif } from '@/lib/flags'
 import { peut } from '@/lib/plans'
+import { lirePages } from '@/lib/crm/pages'
 
 export const runtime = 'nodejs'
 
@@ -27,10 +28,14 @@ export async function GET(req: Request) {
   const uid = garde.uid
 
   const colonnesFactures = actif('comptaDateReglement') ? `${COLONNES_FACTURES}, payee_le` : COLONNES_FACTURES
+  // Audit de cohérence du 18/10, C7 : `.limit(2000)` ne rendait que 1 000 lignes (le serveur coupe chaque réponse à 1 000,
+  // sans erreur), et le drapeau `tronque` ne se levait qu'à 2 000 : un compte de 1 010 demandes en voyait 1 000 sans le savoir.
+  // Lecture PAR PAGES (le même lirePages que le CRM, lib/crm/pages.ts) jusqu'à LIMITE, avec un ordre total (id en second) pour
+  // qu'aucune ligne ne saute ni ne double d'une page à l'autre ; `tronque` dit vrai.
   const [f, d, l] = await Promise.all([
-    supabaseAdmin.from('factures').select(colonnesFactures).eq('artisan_id', uid).order('date_emission', { ascending: false }).limit(LIMITE),
-    supabaseAdmin.from('devis').select(COLONNES_DEVIS).eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE),
-    supabaseAdmin.from('leads').select(COLONNES_DEMANDES).eq('artisan_id', uid).order('created_at', { ascending: false }).limit(LIMITE),
+    lirePages((de, a) => supabaseAdmin.from('factures').select(colonnesFactures).eq('artisan_id', uid).order('date_emission', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => supabaseAdmin.from('devis').select(COLONNES_DEVIS).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => supabaseAdmin.from('leads').select(COLONNES_DEMANDES).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
   ])
   if (f.error || d.error || l.error) {
     console.error('[compta/tableau] lecture', f.error?.message ?? d.error?.message ?? l.error?.message)

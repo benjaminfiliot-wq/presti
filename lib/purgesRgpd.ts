@@ -317,9 +317,10 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
 
 // ── CRM (audit RGPD du 12/10, point b) ──────────────────────────────────────────────────────────────────────────────────
 // Ce qui part, et à quel moment (durées : DUREES_MOIS, affichées par lib/legalArtisan.ts) :
-//  · le journal du CRM au-delà de DUREES_MOIS.crm_journal (24 mois) ;
+//  · le journal du CRM au-delà de DUREES_MOIS.crm_journal (24 mois), et les rappels FAITS (0162) au-delà de la même durée ;
 //  · un chantier FINI depuis DUREES_MOIS.crm (36 mois) : fin réelle, sinon fin prévue, dépassée de 36 mois ET plus aucune
-//    modification depuis — avec ses tâches, réservations, équipe et notes (cascade de 0141). Le devis n'est pas touché ;
+//    modification depuis — avec ses tâches, réservations, équipe et notes (cascade de 0141), ses photos et pièces (0163 :
+//    les fichiers du bucket privé sont retirés AVANT la ligne). Le devis n'est pas touché ;
 //  · une note CLIENT dont le client n'a plus aucune pièce (orpheline), ou dont la dernière pièce ET la note ont 36 mois ;
 //  · une note de DEMANDE vieille de 36 mois, sur une demande sans échange depuis 36 mois ;
 //  · un membre de l'équipe inactif depuis DUREES_MOIS.equipe_inactif (12 mois) et rattaché à aucun chantier, aucune
@@ -338,6 +339,20 @@ export async function purgerCrm(maintenant: Date = new Date()): Promise<{ n: num
 
   // 1. Journal.
   noter(await supprimerAnciennes('crm_journal', 'id', 'cree_le', seuilJournal, PLAFOND_LIGNES))
+  // 1 bis. 0162 — les rappels FAITS (dont l'historique des relances de devis envoyées) au-delà de la même durée que le
+  //        journal. Un rappel ouvert ne part jamais : c'est un rendez-vous à venir ou en retard.
+  noter(await (async (): Promise<Resultat> => {
+    const { data, error } = await supabaseAdmin.from('crm_rappels').select('id').not('fait_le', 'is', null).lt('fait_le', seuilJournal).limit(PLAFOND_LIGNES)
+    if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `crm_rappels (lecture) : ${error.message}` }
+    const ids = colonneTexte(data, 'id')
+    let k = 0
+    for (const lot of parLots(ids)) {
+      const { error: e } = await supabaseAdmin.from('crm_rappels').delete().in('id', lot)
+      if (e) return { n: k, plein: false, erreur: `crm_rappels (suppression) : ${e.message}` }
+      k += lot.length
+    }
+    return { n: k, plein: ids.length >= PLAFOND_LIGNES }
+  })())
 
   // 2. Chantiers finis depuis 36 mois, et plus touchés depuis.
   noter(await (async (): Promise<Resultat> => {
@@ -349,6 +364,15 @@ export async function purgerCrm(maintenant: Date = new Date()): Promise<{ n: num
     const ids = colonneTexte(data, 'id')
     let k = 0
     for (const lot of parLots(ids)) {
+      // 0163 — les photos et pièces du chantier : la cascade emporte les LIGNES, jamais les FICHIERS du bucket privé.
+      // Ils sont retirés d'abord ; si le retrait échoue, le chantier reste (il sera repris au passage suivant).
+      const { data: pieces, error: ep } = await supabaseAdmin.from('chantier_pieces').select('chemin').in('chantier_id', lot)
+      if (ep && !tableAbsente(ep.message)) return { n: k, plein: false, erreur: `chantier_pieces (lecture) : ${ep.message}` }
+      const chemins = colonneTexte(pieces, 'chemin')
+      if (chemins.length) {
+        const { error: es } = await supabaseAdmin.storage.from('chantier-pieces').remove(chemins)
+        if (es) return { n: k, plein: false, erreur: `chantier-pieces (fichiers) : ${es.message}` }
+      }
       const { error: e } = await supabaseAdmin.from('chantiers').delete().in('id', lot)
       if (e) return { n: k, plein: false, erreur: `chantiers (suppression) : ${e.message}` }
       k += lot.length

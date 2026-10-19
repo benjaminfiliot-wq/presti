@@ -183,3 +183,198 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .psh-content:has(.crm-plein) { max-width: none; padding-top: 14px; padding-bottom: 28px; gap: 12px }
 .crm-plein .crm-mode { padding: 7px 12px; font-size: 12.5px }
 @media (max-width: 760px) { .psh-content:has(.crm-plein) { padding-inline: 12px } }
+
+/* — 18/10 : frise d'étapes du dossier (app/crm/Frise.tsx) — fait (vert), en cours (corail), à venir (gris), hors sujet (pointillés),
+   arrêté (rouge). Une ligne relie les pastilles ; elle passe au vert derrière une étape faite. — */
+.crm-frise-cadre { display: flex; flex-direction: column; gap: 8px; min-width: 0 }
+.crm-frise { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 }
+.crm-frise > li { position: relative; min-width: 0; display: flex; justify-content: center }
+.crm-frise > li::after { content: ''; position: absolute; top: 11px; left: calc(50% + 13px); right: calc(-50% + 13px); height: 2px; border-radius: 2px; background: var(--line) }
+.crm-frise > li:last-child::after { display: none }
+.crm-frise > li.e-fait::after { background: color-mix(in srgb, var(--ok) 55%, var(--line)) }
+.crm-frise button { width: 100%; margin: 0; padding: 0 2px; background: transparent; border: 0; color: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font: inherit; min-width: 0 }
+.crm-frise button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px }
+.crm-frise i { width: 24px; height: 24px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 800; line-height: 1; border: 2px solid var(--line); background: var(--surface-2); color: var(--paper) }
+.crm-frise .e-fait i { background: var(--ok); border-color: var(--ok) }
+.crm-frise .e-en_cours i { background: var(--accent-tint); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-tint) }
+.crm-frise .e-na i { background: transparent; border: 2px dashed var(--line) }
+.crm-frise .e-arrete i { background: var(--crit-tint); border-color: var(--crit); color: var(--crit) }
+.crm-frise .nom { font-size: 11.5px; font-weight: 600; color: var(--muted); text-align: center; line-height: 1.2; overflow-wrap: anywhere }
+.crm-frise .e-fait .nom, .crm-frise .e-en_cours .nom { color: var(--ink-soft) }
+.crm-frise .courante .nom { color: var(--ink); font-weight: 700 }
+.crm-frise .e-na .nom { color: var(--faint) }
+.crm-frise .quand { font-size: 10.5px; color: var(--faint) }
+.crm-frise button[aria-expanded="true"] .nom { color: var(--accent-ink) }
+.crm-frise-detail { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; font-size: 13px }
+.crm-frise-detail p { margin: 0 }
+.crm-frise-detail.e-fait { border-color: color-mix(in srgb, var(--ok) 35%, var(--line)) }
+.crm-frise-detail.e-en_cours { border-color: var(--accent-tint-2) }
+.crm-frise-detail.e-arrete { border-color: color-mix(in srgb, var(--crit) 40%, var(--line)) }
+.crm-frise-piece { color: var(--accent-ink); font-weight: 600; text-decoration: none; font-size: 12.5px; align-self: flex-start }
+.crm-frise-piece:hover { text-decoration: underline }
+.crm-frise-note { margin: 0; font-size: 12px; color: var(--accent-ink) }
+.crm-frise-action { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; font-size: 12.5px }
+.crm-frise-action .psh-btn { padding: 6px 12px; font-size: 13px }
+/* Mini-frise des cartes du pipeline : sept points, sans texte (les lecteurs d'écran lisent la phrase de l'étiquette). */
+.crm-frise.compacte { display: flex; gap: 3px; margin: 2px 0 1px }
+.crm-frise.compacte > li { flex: 1 1 0; display: block }
+.crm-frise.compacte > li::after { display: none }
+.crm-frise.compacte i { width: 100%; height: 5px; border-radius: 4px; border: 0; background: var(--line); box-shadow: none; display: block }
+.crm-frise.compacte .e-fait i { background: var(--ok) }
+.crm-frise.compacte .e-en_cours i { background: var(--accent) }
+.crm-frise.compacte .e-na i { background: transparent; outline: 1px dashed var(--line); outline-offset: -1px }
+.crm-frise.compacte .e-arrete i { background: var(--crit) }
+
+/* — 18/10 : colonne d'indicateurs du chantier (app/crm/Indicateurs.tsx) — */
+.crm-indic { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px }
+.crm-indic.compacte { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+.crm-indic-case { min-width: 0; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px }
+.crm-indic-case > .lien, .crm-indic-case:not(:has(> .lien)) { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px 10px; color: inherit; text-decoration: none; height: 100% }
+.crm-indic-case:has(> .lien:hover) { border-color: var(--accent-tint-2) }
+.crm-indic-case .lien:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px }
+.crm-indic-case .lab { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase }
+.crm-indic-case .val { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -.02em; color: var(--ink); line-height: 1.15; overflow-wrap: anywhere }
+.crm-indic-case .sub { font-size: 11.5px; color: var(--muted); line-height: 1.35 }
+.crm-indic-case.warn .val { color: var(--warn) }
+.crm-indic-case.crit { border-color: color-mix(in srgb, var(--crit) 38%, var(--line)) }
+.crm-indic-case.crit .val { color: var(--crit) }
+.crm-col-du { color: var(--warn) }
+/* Fiche client : un dossier = son titre et sa frise. */
+.crm-dossiers { list-style: none; margin: 0 }
+.crm-dossiers > li { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--line-2) }
+.crm-dossiers > li:last-child { border-bottom: 0; padding-bottom: 0 }
+.crm-dossier-titre { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 14px }
+@media (max-width: 520px) {
+  .crm-frise i { width: 21px; height: 21px; font-size: 11px }
+  .crm-frise > li::after { top: 10px; left: calc(50% + 11px); right: calc(-50% + 11px) }
+  .crm-frise .nom { font-size: 10px; letter-spacing: -.01em; overflow-wrap: normal; word-break: keep-all }
+  .crm-indic { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .crm-indic-case .val { font-size: 16px }
+}
+/* Mouvement de la frise : la pastille cède sous le doigt, le détail apparaît sans saut. Rien si « réduire les animations ». */
+@media (prefers-reduced-motion: no-preference) {
+  .crm-frise i { transition: transform .12s var(--ease-out, ease-out), background-color .2s var(--ease-out, ease-out), border-color .2s var(--ease-out, ease-out) }
+  .crm-frise button:active i { transform: scale(.92) }
+  .crm-frise-detail { transition: opacity .16s var(--ease-out, ease-out), transform .16s var(--ease-out, ease-out) }
+  @starting-style { .crm-frise-detail { opacity: 0; transform: translateY(-4px) } }
+  .crm-indic-case { transition: border-color .15s var(--ease-out, ease-out) }
+}
+.crm-indic-alerte { color: var(--warn); font-weight: 600 }
+
+/* — 18/10, lot 2 : rappels et rendez-vous (app/crm/Rappels.tsx), fil du client (app/crm/clients/[ref]/page.tsx) — */
+.crm-rappel-poser { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; min-width: 0 }
+.crm-rappel-poser.compact > .psh-btn { padding: 4px 9px; font-size: 12px }
+.crm-rappel-form { display: flex; flex-direction: column; gap: 10px; width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 12px }
+.crm-rappel-rapides { display: flex; flex-wrap: wrap; gap: 6px }
+.crm-rappel-rapides[hidden], .crm-rappel-form[hidden] { display: none }
+/* Fiche client : le bouton « + Rappel » reste dans la rangée d'actions, son panneau passe dessous, sur toute la largeur. */
+.crm-client-actions .crm-rappel-poser { display: contents }
+.crm-client-actions .crm-rappel-poser > :not(button) { order: 10; flex-basis: 100% }
+.crm-rappel-rapides .psh-btn { padding: 6px 10px; font-size: 12.5px }
+.crm-rappels { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column }
+.crm-rappels li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-2); flex-wrap: wrap }
+.crm-rappels li:last-child { border-bottom: 0 }
+.crm-rappels li.fait .crm-coche > span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--faint) }
+.crm-rappels li.retard .crm-rappel-quand { color: var(--crit) }
+.crm-rappel-quand { display: block; font-size: 12px; color: var(--muted); margin-top: 2px }
+.crm-rappel-cible { display: block; font-size: 12px; margin-top: 2px }
+.crm-rappel-cible a { color: var(--accent-ink); font-weight: 600; text-decoration: none }
+.crm-tag-retard { color: var(--crit) }
+.crm-carte-rappel { font-size: 11.5px; color: var(--accent-ink); font-weight: 600 }
+.crm-carte-rappel.retard { color: var(--crit) }
+.crm-carte .crm-rappel-poser .crm-rappel-form { padding: 8px }
+.crm-relance { flex-wrap: wrap }
+.crm-relance-dialogue { width: 100% }
+.crm-client-actions .psh-btn { padding: 7px 13px }
+.crm-client-actions .crm-rappel-poser.compact > .psh-btn { padding: 7px 13px; font-size: 13.5px }
+.crm-filtres-fil { display: flex; flex-wrap: wrap; gap: 6px }
+.crm-filtres-fil button { width: auto; margin: 0; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 20px; padding: 5px 11px; font: 600 12.5px var(--font-body); cursor: pointer }
+.crm-filtres-fil button span { color: var(--muted); margin-left: 3px }
+.crm-filtres-fil button.on { background: var(--accent-tint); border-color: var(--accent); color: var(--ink) }
+.crm-filtres-fil button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.crm-fil { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column }
+.crm-fil-jour { margin: 10px 0 4px; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.crm-fil li:first-child .crm-fil-jour { margin-top: 0 }
+.crm-fil-evt { display: grid; grid-template-columns: 14px 1fr; gap: 10px; padding: 6px 0; min-width: 0 }
+.crm-fil-evt > i { width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; background: var(--line) }
+.crm-fil .f-echanges i { background: var(--accent) }
+.crm-fil .f-argent i { background: var(--ok) }
+.crm-fil .f-chantiers i { background: var(--warn) }
+.crm-fil .f-notes i { background: var(--muted) }
+.crm-fil-titre { margin: 0; font-size: 13.5px; font-weight: 600; color: var(--ink); display: flex; flex-wrap: wrap; gap: 0 6px; align-items: baseline }
+.crm-fil-titre a { color: var(--ink); text-decoration: none }
+.crm-fil-titre a:hover { color: var(--accent-ink) }
+.crm-fil-titre time { margin-left: auto; font-size: 11.5px; font-weight: 400; color: var(--faint) }
+.crm-fil-detail { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; white-space: pre-wrap }
+.crm-pieces-type > summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); padding: 6px 0 }
+.crm-pieces-type[open] > summary { margin-bottom: 10px }
+@media (prefers-reduced-motion: no-preference) {
+  .crm-rappel-form { transition: opacity .16s var(--ease-out, ease-out), transform .16s var(--ease-out, ease-out) }
+  @starting-style { .crm-rappel-form { opacity: 0; transform: translateY(-4px) } }
+  .crm-filtres-fil button { transition: background-color .15s var(--ease-out, ease-out), border-color .15s var(--ease-out, ease-out) }
+}
+
+/* — 18/10, lot 3 : photos et pièces du chantier (app/crm/Pieces.tsx), planning de la semaine (app/crm/Planning.tsx) — */
+.crm-pieces-envoi { display: flex; flex-direction: column; gap: 10px }
+.crm-pieces-bouton { position: relative; align-self: flex-start; cursor: pointer }
+.crm-pieces-bouton.occupe { opacity: .7; cursor: progress }
+.crm-pieces-bouton:focus-within { outline: 2px solid var(--accent); outline-offset: 2px }
+.crm-galerie { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px }
+.crm-galerie > li { display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+.crm-galerie-vue { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); text-decoration: none; font-size: 12px }
+.crm-galerie-vue img { width: 100%; height: 100%; object-fit: cover; display: block }
+.crm-galerie-pdf { font: 800 18px var(--font-display); color: var(--accent-ink) }
+.crm-galerie-manque { color: var(--warn) }
+.crm-galerie-info { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px }
+.crm-galerie-info select { width: auto; padding: 3px 6px; font-size: 12px }
+.crm-galerie-info .psh-btn { padding: 2px 8px; margin-left: auto }
+.crm-galerie-legende { flex-basis: 100%; color: var(--ink-soft); overflow-wrap: anywhere }
+.crm-galerie-vue:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+
+.crm-planning { display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.crm-planning-barre { display: flex; align-items: center; gap: 8px; flex-wrap: wrap }
+.crm-planning-barre h2 { margin: 0; font-size: 16px; font-family: var(--font-display) }
+.crm-planning-grille { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow-x: auto }
+.crm-pl-ligne { display: grid; grid-template-columns: 170px repeat(7, minmax(92px, 1fr)); border-bottom: 1px solid var(--line-2); min-width: 820px }
+.crm-pl-ligne:last-child { border-bottom: 0 }
+.crm-pl-nom { padding: 9px 10px; font-size: 12.5px; font-weight: 700; color: var(--ink); border-right: 1px solid var(--line-2); overflow-wrap: anywhere }
+.crm-pl-entete .crm-pl-nom, .crm-pl-jour { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em }
+.crm-pl-jour { padding: 9px 8px; border-right: 1px solid var(--line-2) }
+.crm-pl-jour.auj { color: var(--accent-ink); background: var(--accent-tint) }
+.crm-pl-cellule { padding: 6px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--line-2); min-width: 0 }
+.crm-pl-epingle { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 6px; background: var(--accent-tint); color: var(--accent-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.crm-pl-epingle.t-rappeler, .crm-pl-epingle.t-relancer_devis, .crm-pl-epingle.t-autre { background: var(--surface-2); color: var(--ink-soft) }
+.crm-pl-piste { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(30px, auto); gap: 4px; padding: 6px; position: relative }
+.crm-pl-libre { grid-column: 1 / -1; color: var(--faint); font-size: 12px; align-self: center }
+.crm-pl-barre { position: relative; min-width: 0 }
+.crm-pl-barre > button { width: 100%; margin: 0; text-align: left; font: 600 12px var(--font-body); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 7px; padding: 5px 8px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.crm-pl-barre.s-planifie > button, .crm-pl-barre.s-a_planifier > button { border-left-color: var(--muted) }
+.crm-pl-barre.s-en_pause > button { border-left-color: var(--warn) }
+.crm-pl-barre.avant > button { border-top-left-radius: 0; border-bottom-left-radius: 0 }
+.crm-pl-barre.apres > button { border-top-right-radius: 0; border-bottom-right-radius: 0 }
+.crm-pl-barre.conflit > button { border-color: color-mix(in srgb, var(--crit) 60%, var(--line)); border-left-color: var(--crit); background: var(--crit-tint) }
+.crm-pl-barre > button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.crm-pl-actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px }
+.crm-pl-actions .psh-btn { padding: 3px 8px; font-size: 12px }
+.crm-planning-liste { display: none; list-style: none; margin: 0; padding: 0; flex-direction: column; gap: 10px }
+.crm-planning-liste > li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px }
+.crm-planning-liste > li.auj { border-color: var(--accent-tint-2) }
+.crm-planning-liste h3 { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--ink) }
+.crm-planning-liste ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px }
+.crm-planning-liste ul li { display: flex; flex-direction: column; gap: 1px }
+.crm-planning-liste ul li a { color: var(--ink); font-weight: 600; text-decoration: none }
+.crm-planning-liste ul li.conflit a { color: var(--crit) }
+.crm-pl-rdv { color: var(--accent-ink); font-weight: 600 }
+.crm-conflits .crm-liste li { flex-wrap: wrap }
+.crm-agenda-lien { display: flex; flex-direction: column; gap: 8px }
+.crm-agenda-lien input { font-family: var(--font-mono); font-size: 12px }
+.crm-aide-liste { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); line-height: 1.5 }
+@media (max-width: 760px) {
+  .crm-planning-grille { display: none }
+  .crm-planning-liste { display: flex }
+  .crm-galerie { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .crm-pl-barre > button, .crm-galerie-vue { transition: border-color .15s var(--ease-out, ease-out), transform .12s var(--ease-out, ease-out) }
+  .crm-pl-barre > button:active { transform: scale(.98) }
+}

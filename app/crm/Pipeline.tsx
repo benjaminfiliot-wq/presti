@@ -4,11 +4,14 @@ import { useState } from 'react'
 import { ETAPES, LIBELLES_ETAPES, LIBELLES_PREUVE, type Carte, type Pipeline } from '@/lib/crm/pipeline'
 import { appel, dateFr, estErreur, euros } from './client'
 import { Lien } from './mode'
+import Frise from './Frise'
+import { MeLeRappeler, type CibleRappel } from './Rappels'
+import { LIBELLES_RAPPEL, type TypeRappel } from '@/lib/crm/rappels'
 
 // Le pipeline : six colonnes, dérivées des VRAIS statuts (lib/crm/pipeline.ts). Déplacer une carte à la main est possible
 // (liste « Déplacer vers ») : le geste est journalisé, ne change aucun devis ni aucune facture, et cède la place dès que
 // les vrais statuts bougent. Une carte déplacée à la main le dit.
-export default function PipelineVue({ p, onChange }: { p: Pipeline; onChange: () => Promise<void> | void }) {
+export default function PipelineVue({ p, onChange, jour }: { p: Pipeline; onChange: () => Promise<void> | void; jour?: string }) {
   const [enCours, setEnCours] = useState<string | null>(null)
   const [message, setMessage] = useState<{ texte: string; erreur: boolean } | null>(null)
 
@@ -47,7 +50,7 @@ export default function PipelineVue({ p, onChange }: { p: Pipeline; onChange: ()
               <h2 id={`crm-col-${col.etape}`}>{col.libelle}</h2>
               <span className="crm-compte tnum" aria-label={`${col.cartes.length} dossier${col.cartes.length > 1 ? 's' : ''}`}>{col.cartes.length}</span>
             </header>
-            {col.montant > 0 && <p className="crm-col-total tnum">{euros(col.montant)}</p>}
+            {col.montant > 0 && <p className="crm-col-total tnum">{euros(col.montant)}{col.aEncaisser > 0 ? <span className="crm-col-du"> · {euros(col.aEncaisser)} à encaisser</span> : null}</p>}
             <ul>
               {col.cartes.length === 0 && <li className="crm-col-vide">—</li>}
               {col.cartes.map((c) => (
@@ -58,7 +61,10 @@ export default function PipelineVue({ p, onChange }: { p: Pipeline; onChange: ()
                     {c.montant !== null && <span className="tnum">{euros(c.montant)}</span>}
                     <span>{c.depuis ? dateFr(c.depuis) : ''}</span>
                   </span>
+                  <Frise frise={c.frise} compacte />
                   <span className="crm-carte-preuve">{c.manuel ? `Déplacé à la main · statuts réels : ${LIBELLES_ETAPES[c.etapeDerivee]}` : LIBELLES_PREUVE[c.preuve]}{c.autresBrouillons > 0 ? ` · ${c.autresBrouillons} brouillon${c.autresBrouillons > 1 ? 's' : ''} plus ancien${c.autresBrouillons > 1 ? 's' : ''}, non compté${c.autresBrouillons > 1 ? 's' : ''}` : ''}</span>
+                  {c.rappel && <span className={`crm-carte-rappel${c.rappel.retard ? ' retard' : ''}`}>⏰ {LIBELLES_RAPPEL[c.rappel.type as TypeRappel] ?? 'Rappel'} · {jour && c.rappel.echeance === jour ? 'aujourd’hui' : dateFr(c.rappel.echeance)}{c.rappel.heure ? ` ${c.rappel.heure.slice(0, 5)}` : ''}</span>}
+                  {jour && cibleCarte(c) && <MeLeRappeler cible={cibleCarte(c)!} jour={jour} onChange={onChange} compact libelle="Me le rappeler" />}
                   <label className="crm-deplacer">
                     <span className="crm-sr">Déplacer « {c.titre} » vers</span>
                     <select value="" disabled={enCours === c.cle} onChange={(e) => { if (e.target.value) void deplacer(c, e.target.value) }}>
@@ -75,6 +81,11 @@ export default function PipelineVue({ p, onChange }: { p: Pipeline; onChange: ()
       {p.classes > 0 && <p className="crm-note">{p.classes} dossier{p.classes > 1 ? 's' : ''} classé{p.classes > 1 ? 's' : ''} (devis refusé ou expiré, demande perdue, chantier annulé) hors du tableau.</p>}
     </div>
   )
+}
+
+/** La cible d'un rappel posé depuis une carte : le devis, sinon la demande, sinon le chantier. */
+function cibleCarte(c: Carte): CibleRappel | null {
+  return c.devisId ? { devis_id: c.devisId } : c.leadId ? { lead_id: c.leadId } : c.chantierId ? { chantier_id: c.chantierId } : null
 }
 
 function lienCarte(c: Carte): string {

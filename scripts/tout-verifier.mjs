@@ -134,6 +134,11 @@ const SUITES = [
   // (PGlite, hors dépendances du projet : PGLITE_DIR, sinon « en attente ») ; la troisième, drapeau baissé, vérifie que chaque
   // route répond 404 sur le serveur visé (TEST_BASE, sinon « en attente ») — son mode --drapeau=leve exige une base de TEST.
   { nom: 'CRM — validation, accès, pipeline, tâches, tableau de bord, clients, code, rendu', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-qa.mjs'], cout: 'gratuit' },
+  // 18/10 — améliorations du CRM (plans/crm-idees-twenty-1810.md) : lot 1 (frise, indicateurs, « Demander l'acompte ») et lot 2
+  // (rappels, relance d'un devis, chronologie du client). Partie pure toujours ; partie « en vrai » seulement avec TEST_BASE local.
+  { nom: 'CRM lot 1 — frise, argent du dossier, indicateurs, acompte', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot1-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM lot 2 — rappels, relance de devis, passage du matin, chronologie, migration 0162', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot2-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM lot 3 — photos et pièces du chantier, planning, lien d’agenda, migrations 0163 et 0164', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot3-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — migration 0141 jouée (RLS, références croisées, journal, sortie de stock)', cmd: 'node', args: ['scripts/crm-sql-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — drapeau baissé : chaque route et la page répondent 404', cmd: 'node', args: ['scripts/crm-e2e.mjs'], cout: 'gratuit' },
   // L'atelier 3D sur la page de démonstration interne (données fictives) : performance, repli 2D, interactions, contrastes.
@@ -157,6 +162,7 @@ export const HORS_LANCEUR = {
   'fact-e2e.mjs': 'exige un serveur local (BASE=localhost:3100 en dur) — l’audit tourne contre la production',
   'pdf-e2e.mjs': 'exige un serveur local (localhost:3100) : le rendu PDF passe par le bundler de développement',
   'smoke-test.mjs': 'test de fumée manuel après déploiement, joué à la main',
+  'crm-captures.mjs': 'outil de captures du CRM en mode exemple (bureau, téléphone, clair, sombre) pour REGARDER un lot : exige un serveur local (TEST_BASE)',
   'leads-abuse-test.mjs': 'génère du trafic d’abus : à jouer seul, jamais au milieu des autres',
   'stripe-session-test.mjs': 'ouvre une session de paiement Stripe — à la main, jamais en série',
   'stripe-verifier.mjs': 'inspection de compte Stripe, pas une suite de vérification',

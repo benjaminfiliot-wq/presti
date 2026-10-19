@@ -47,14 +47,14 @@ async function impactCrm(uid: string, lead: { id: string; nom_prospect: string |
   if (!d.ok) { console.error('[donnees] CRM illisible :', d.erreur.message); return null }
   const groupes = regrouperClients({ artisanId: uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet, idDe: idClientPour(uid) })
   const choix = choisirEffacementCrm({ groupes, leadId: lead.id, nomDemande: lead.nom_prospect, chantiers: d.chantiers, devis: d.devis })
-  const notes = async (col: 'client_cle' | 'lead_id', v: string | null) => {
+  const notes = async (col: 'client_cle' | 'lead_id', v: string | null, aussi: string[] = []) => {
     if (!v) return 0
-    const { count, error } = await supabaseAdmin.from('crm_notes').select('id', { count: 'exact', head: true }).eq('artisan_id', uid).eq(col, v)
+    const { count, error } = await supabaseAdmin.from('crm_notes').select('id', { count: 'exact', head: true }).eq('artisan_id', uid).in(col, [v, ...aussi])
     if (error) throw new Error(error.message)
     return count ?? 0
   }
   try {
-    return { ...choix, notesClient: await notes('client_cle', choix.cleClient), notesDemande: await notes('lead_id', lead.id) }
+    return { ...choix, notesClient: await notes('client_cle', choix.cleClient, choix.anciennesCles), notesDemande: await notes('lead_id', lead.id) }
   } catch (e) { console.error('[donnees] notes CRM :', e instanceof Error ? e.message : e); return null }
 }
 const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`
@@ -174,6 +174,8 @@ export async function POST(req: Request) {
     if (!crm) return NextResponse.json({ error: 'Votre CRM n’a pas pu être lu : rien n’a été effacé. Réessayez dans un instant.' }, { status: 503 })
     const etapes = [
       crm.cleClient ? supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).eq('client_cle', crm.cleClient) : null,
+      // C4 (audit du 18/10) : et celles posées sous une ancienne clé du même client (avant l'ajout de son e-mail…).
+      crm.anciennesCles.length ? supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).in('client_cle', crm.anciennesCles) : null,
       supabaseAdmin.from('crm_notes').delete().eq('artisan_id', uid).eq('lead_id', leadId),
       crm.chantiersSansNom.length ? supabaseAdmin.from('chantiers').update({ client_nom: null, maj_le: new Date().toISOString() }).eq('artisan_id', uid).in('id', crm.chantiersSansNom) : null,
     ]

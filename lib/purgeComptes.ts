@@ -48,8 +48,14 @@ const TABLES_A_VIDER = [
   // 0157 — les cartes et actions de l'assistant de gestion (textes d'e-mails, lignes de devis : données du compte).
   'assistant_actions',
   // 0141 — le CRM « atelier vivant » (audit RGPD du 12/10 : l'anonymisation laissait équipe, chantiers et notes).
-  'crm_notes', 'crm_journal', 'chantier_materiaux', 'chantier_taches', 'chantier_equipe', 'chantiers', 'vehicules', 'equipe_membres',
+  'crm_notes', 'crm_journal', 'chantier_materiaux', 'chantier_taches', 'chantier_equipe',
+  // 0162 à 0164 — rappels du CRM, photos et pièces du chantier (les fichiers partent avec viderStockage), lien d'agenda.
+  'crm_rappels', 'chantier_pieces', 'crm_agenda',
+  'chantiers', 'vehicules', 'equipe_membres',
 ]
+
+// 0163 — bucket PRIVÉ des photos et pièces du chantier, rangées en <compte>/<chantier>/<fichier>.
+const PIECES_BUCKET = 'chantier-pieces'
 
 async function annulerAbonnement(subscriptionId: string | null | undefined, id: string) {
   if (!subscriptionId || !stripe) return
@@ -62,6 +68,15 @@ async function viderStockage(id: string) {
   if (fichiers?.length) {
     const { error } = await supabaseAdmin.storage.from(MEDIA_BUCKET).remove(fichiers.map((f) => `${id}/${f.name}`))
     if (error) console.error('[purge-comptes] stockage', id, error.message)
+  }
+  // Les photos et pièces du chantier : un dossier par chantier sous le dossier du compte. La cascade de la base
+  // emporte les lignes, jamais les fichiers : ils sont retirés ici, avant. Bucket absent (avant 0163) : liste vide.
+  const { data: dossiers } = await supabaseAdmin.storage.from(PIECES_BUCKET).list(id, { limit: 1000 })
+  for (const d of dossiers ?? []) {
+    const { data: f } = await supabaseAdmin.storage.from(PIECES_BUCKET).list(`${id}/${d.name}`, { limit: 1000 })
+    if (!f?.length) continue
+    const { error } = await supabaseAdmin.storage.from(PIECES_BUCKET).remove(f.map((x) => `${id}/${d.name}/${x.name}`))
+    if (error) console.error('[purge-comptes] pièces du chantier', id, error.message)
   }
 }
 

@@ -298,6 +298,9 @@ if (FLAGS) {
     'plateformePersona': ['lu'],
     // 016 A1/A2 — l'assistant de gestion : la route et la page lisent le drapeau (baissé : 404), le menu aussi.
     'assistant': ['route', '/api/assistant', 'POST', 'app/api/assistant/route.ts', 'app/assistant/page.tsx'],
+    // 18/10 — CRM lot 3 : photos du chantier (0163) et planning + lien d'agenda (0164). Chaque route lit son drapeau AVANT la session.
+    'crmPieces': ['route', '/api/crm/pieces', 'GET', 'app/api/crm/pieces/route.ts', 'app/api/crm/pieces/[id]/route.ts'],
+    'crmPlanning': ['route', '/api/crm/agenda', 'GET', 'app/api/crm/agenda/route.ts', 'app/api/agenda/[jeton]/route.ts'],
   }
   const lus = ['app', 'lib', 'components'].filter((d) => fs.existsSync(d)).flatMap((d) =>
     fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f) && !/flags\.ts$/.test(f))
@@ -323,7 +326,7 @@ if (FLAGS) {
       for (const fichier of fichiers) {
         const source = fs.existsSync(fichier) ? fs.readFileSync(fichier, 'utf8') : ''
         T(`${fichier} lit lui-même « ${nom} » (le bouton caché ne ferme pas la porte)`,
-          new RegExp(`actif\\(['"\`]${nom}['"\`]\\)`).test(source), source ? 'le drapeau n’y est pas' : 'fichier introuvable')
+          new RegExp(`actif\\(['"\`]${nom}['"\`]\\)|gardeCrm\\(req, \\{ drapeau: ['"]${nom}['"] \\}\\)`).test(source), source ? 'le drapeau n’y est pas' : 'fichier introuvable')
       }
     } else if (nature === 'lu') {
       T(`${nom} est lu par le code`, estLu(nom))

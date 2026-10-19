@@ -1,8 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chantierDe, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
+import { chantierDe, COLONNES, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
+import type { RappelLigne } from '@/lib/crm/rappels'
 import { estUuid, lireCorps, validerModificationChantier } from '@/lib/crm/valider'
 import { construireFicheChantier, type DevisFiche, type EntreeJournal, type FactureFiche, type FicheChantier, type NoteCrm, type ReservationFiche, type TacheFiche } from '@/lib/crm/vue'
-import { jourParis } from '@/lib/comptaTableau'
+import { facturesComptees, jourParis } from '@/lib/comptaTableau'
+import { deplacementEnVigueur, etapeChantierSeul, etapeDevis, type DeplacementP } from '@/lib/crm/pipeline'
 
 export const runtime = 'nodejs'
 type Ctx = { params: Promise<{ id: string }> }
@@ -19,11 +21,11 @@ export async function GET(req: Request, ctx: Ctx) {
 
   const [devisR, tachesR, equipeR, materiauxR, notesR, journalR, vehiculeR] = await Promise.all([
     c.devis_id
-      ? supabaseAdmin.from('devis').select('id, numero, objet, statut, total_ttc, acompte_pct, accepte_le, envoye_le, client_nom, client_email, client_adresse, lead_id').eq('id', c.devis_id).eq('artisan_id', g.uid).maybeSingle()
+      ? supabaseAdmin.from('devis').select('id, numero, objet, statut, total_ttc, total_ht, acompte_pct, accepte_le, envoye_le, created_at, date_emission, client_nom, client_email, client_adresse, lead_id').eq('id', c.devis_id).eq('artisan_id', g.uid).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
     supabaseAdmin.from('chantier_taches').select('id, libelle, quantite, unite, ordre, faite, faite_le, membre_id, devis_ligne_id').eq('chantier_id', id).eq('artisan_id', g.uid).order('ordre').order('cree_le'),
     supabaseAdmin.from('chantier_equipe').select('membre_id, membre:equipe_membres(id, nom, role, actif)').eq('chantier_id', id).eq('artisan_id', g.uid),
-    supabaseAdmin.from('chantier_materiaux').select('id, materiau_id, quantite, lieu, statut, sorti_le, note, materiau:materiaux(id, nom, unite)').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le'),
+    supabaseAdmin.from('chantier_materiaux').select('id, materiau_id, quantite, lieu, statut, sorti_le, note, materiau:materiaux(id, nom, unite, prix_vu_ht)').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le'),
     supabaseAdmin.from('crm_notes').select('id, texte, cree_le, maj_le').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le', { ascending: false }).limit(200),
     supabaseAdmin.from('crm_journal').select('id, objet, champ, de, vers, origine, etape_derivee, note, cree_le').eq('chantier_id', id).eq('artisan_id', g.uid).order('cree_le', { ascending: false }).limit(200),
     c.vehicule_id
@@ -34,17 +36,30 @@ export async function GET(req: Request, ctx: Ctx) {
   if (enErreur?.error) { console.error('[crm/chantier] fiche :', enErreur.error.message); return erreur(INDISPONIBLE, 503) }
 
   const devis = devisR.data as DevisFiche | null
-  const [facturesR, leadR] = await Promise.all([
-    devis ? supabaseAdmin.from('factures').select('id, artisan_id, devis_id, numero, statut, total_ttc, avoir_de, date_emission, acompte_pct').eq('devis_id', devis.id).eq('artisan_id', g.uid).order('date_emission') : Promise.resolve({ data: [], error: null }),
-    devis?.lead_id ? supabaseAdmin.from('leads').select('id, statut').eq('id', devis.lead_id).eq('artisan_id', g.uid).maybeSingle() : Promise.resolve({ data: null, error: null }),
+  const [facturesR, leadR, deplacementsR] = await Promise.all([
+    devis ? supabaseAdmin.from('factures').select('id, artisan_id, devis_id, numero, objet, statut, total_ttc, avoir_de, date_emission, acompte_pct').eq('devis_id', devis.id).eq('artisan_id', g.uid).order('date_emission') : Promise.resolve({ data: [], error: null }),
+    devis?.lead_id ? supabaseAdmin.from('leads').select('id, statut, created_at').eq('id', devis.lead_id).eq('artisan_id', g.uid).maybeSingle() : Promise.resolve({ data: null, error: null }),
+    // Les déplacements manuels du dossier dans le pipeline (sa carte est celle du devis, ou du chantier s'il n'a pas de devis).
+    supabaseAdmin.from('crm_journal').select('objet, objet_id, vers, etape_derivee, cree_le').eq('artisan_id', g.uid).eq('champ', 'etape').eq('objet', devis ? 'devis' : 'chantier').eq('objet_id', devis ? devis.id : id).order('cree_le', { ascending: false }).limit(20),
   ])
-  if (facturesR.error || leadR.error) { console.error('[crm/chantier] factures :', (facturesR.error ?? leadR.error)?.message); return erreur(INDISPONIBLE, 503) }
+  if (facturesR.error || leadR.error || deplacementsR.error) { console.error('[crm/chantier] factures :', (facturesR.error ?? leadR.error ?? deplacementsR.error)?.message); return erreur(INDISPONIBLE, 503) }
   const factures = (facturesR.data ?? []) as FactureFiche[]
-  const leadStatut = (leadR.data as { statut?: string | null } | null)?.statut ?? null
+  const lead = leadR.data as { id: string; statut: string | null; created_at: string | null } | null
+  const leadStatut = lead?.statut ?? null
+  // La colonne que donnent les vrais statuts, puis le déplacement manuel encore en vigueur (lib/crm/pipeline.ts) : la frise le signale.
+  const derivee = devis ? etapeDevis({ ...devis, artisan_id: g.uid }, lead, facturesComptees(factures.map((f) => ({ ...f, artisan_id: g.uid }))), c).etape : etapeChantierSeul(c).etape
+  const manuel = derivee === 'classe' ? null : deplacementEnVigueur(devis ? 'devis' : 'chantier', devis ? devis.id : id, derivee, (deplacementsR.data ?? []) as DeplacementP[])
+
+  // Les rappels du chantier, de son devis et de sa demande (0162). Table absente : la fiche le dit, elle ne tombe pas.
+  const cibles = [`chantier_id.eq.${id}`, devis ? `devis_id.eq.${devis.id}` : '', devis?.lead_id ? `lead_id.eq.${devis.lead_id}` : ''].filter(Boolean).join(',')
+  const rappelsR = await supabaseAdmin.from('crm_rappels').select(COLONNES.rappels).eq('artisan_id', g.uid).or(cibles).order('echeance').limit(200)
+  const rappelsAbsents = !!rappelsR.error && ['42P01', 'PGRST205'].includes(String(rappelsR.error.code))
+  if (rappelsR.error && !rappelsAbsents) { console.error('[crm/chantier] rappels :', rappelsR.error.message); return erreur(INDISPONIBLE, 503) }
 
   // L'assemblage est celui de lib/crm/vue.ts (le même que la fiche de l'atelier d'exemple).
   return json(construireFicheChantier({
-    uid: g.uid, chantier: c as FicheChantier['chantier'], devis, factures, leadStatut,
+    rappels: (rappelsR.data ?? []) as unknown as RappelLigne[], rappelsDisponibles: !rappelsAbsents,
+    uid: g.uid, chantier: c as FicheChantier['chantier'], devis, factures, leadStatut, lead, manuel: manuel && manuel !== derivee ? manuel : null,
     taches: (tachesR.data ?? []) as TacheFiche[],
     equipe: (equipeR.data ?? []).map((e) => e.membre as unknown as { id: string; nom: string; role: string } | null).filter((m): m is { id: string; nom: string; role: string } => !!m),
     vehicule: vehiculeR.data as FicheChantier['vehicule'],

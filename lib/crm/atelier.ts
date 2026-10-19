@@ -16,6 +16,8 @@ import { joursDeRetard } from './chantier.ts'
 import { jourParis } from '../comptaTableau.ts'
 import { calculerAlertes, chantierVisible, estAujourdhui, estStockBas, aEncaisser, type Gravite, type TypeAlerte } from './alertes.ts'
 import type { CommandeA } from './commandes.ts'
+import type { Frise } from './pipeline.ts'
+import type { Indicateurs } from './chantier.ts'
 
 // Les règles « chantier visible » et « prévu aujourd'hui » vivent dans alertes.ts (une seule écriture, partagée avec les urgences).
 export { chantierVisible, estAujourdhui }
@@ -35,6 +37,9 @@ export type ChantierA = {
   /** Absent des jeux de données anciens : l'écran retombe alors sur `avancement` seul. */
   taches?: TachesA
   adresse?: string | null
+  /** La frise du dossier (sa carte du pipeline) et les indicateurs du chantier : posés par lib/crm/vue.ts, absents des jeux anciens. */
+  frise?: Frise
+  indicateurs?: Indicateurs
 }
 /** Un matériau réservé pour un chantier (chantier_materiaux, statut « réservé » : pas encore sorti du stock). */
 export type ReservationA = { chantier_id: string; materiau_id: string; quantite: number }
@@ -56,6 +61,8 @@ export type DonneesAtelier = {
   commandes?: CommandeA[]
   /** Faux tant que la table des commandes n'existe pas sur la base (migration 0158 non appliquée) : l'écran le dit. */
   commandesDisponibles?: boolean
+  /** Les rappels dus aujourd'hui et en retard (crm_rappels, 0162), pour le briefing du matin ; absent : rien n'est dit. */
+  rappels?: { aujourdhui: number; enRetard: number; premiers: string[] }
 }
 
 // ── Sorties ──────────────────────────────────────────────────────────────────────────────────────────────────

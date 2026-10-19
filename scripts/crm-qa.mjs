@@ -225,8 +225,10 @@ const ENTREES = () => ({ artisanId: A, leads: LEADS, devis: DEVIS, factures: FAC
   const signe = C.actionsChantier({ devis: { id: 'D4', statut: 'accepte', lead_id: 'L9' }, factures: [], leadStatut: 'gagne' })
   const acompte = C.actionsChantier({ devis: { id: 'D5', statut: 'accepte', lead_id: 'L9' }, factures: FACTURES, leadStatut: 'devis' })
   const annulee = C.actionsChantier({ devis: { id: 'D9', statut: 'accepte' }, factures: FACTURES, leadStatut: null })
-  T('D8 Facturer : désactivé sans devis, sur devis non signé, ou si une facture (acompte) existe — et dit pourquoi',
-    !sansDevis.facturer.actif && !envoye.facturer.actif && !acompte.facturer.actif && /acompte/.test(acompte.facturer.raison) && [sansDevis, envoye, acompte].every((a) => a.facturer.raison))
+  // 18/10 (audit de cohérence C3 corrigé) : après un acompte, le même chemin émet la facture du SOLDE (acomptes déduits).
+  const complete = C.actionsChantier({ devis: { id: 'D7', statut: 'accepte' }, factures: FACTURES, leadStatut: null })
+  T('D8 Facturer : désactivé sans devis, sur devis non signé, ou si une facture complète existe — et dit pourquoi ; après un acompte seul, actif pour le SOLDE',
+    !sansDevis.facturer.actif && !envoye.facturer.actif && !complete.facturer.actif && /déjà facturé/.test(complete.facturer.raison) && [sansDevis, envoye, complete].every((a) => a.facturer.raison) && acompte.facturer.actif && acompte.facturer.solde === true)
   T('D9 Facturer : actif sur devis signé sans facture ; une facture annulée par avoir ne bloque pas', signe.facturer.actif && signe.facturer.raison === null && annulee.facturer.actif)
   T('D10 Notifier : actif seulement si la demande est gagnée (sinon il relancerait un client signé)', signe.notifier.actif && !acompte.notifier.actif && /relancerait/.test(acompte.notifier.raison) && !sansDevis.notifier.actif)
   const msg = C.messageNotification({ titre: 'Salle de bain', statut: 'en_cours', avancementPct: 40, dateDebut: '2026-10-01', dateFinPrevue: '2026-10-20' })
@@ -321,7 +323,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
     exportes += (src.match(/export async function /g) ?? []).length
     for (const m of src.replace(/\r\n/g, '\n').matchAll(/export async function (GET|POST|PATCH|DELETE|PUT|OPTIONS)\(([^)]*)\)\s*\{\n([^\n]*)\n([^\n]*)/g)) {
       handlers++
-      if (!/^\s*const g = await gardeCrm\(req\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
+      if (!/^\s*const g = await gardeCrm\(req(, \{ drapeau: '(crmPieces|crmPlanning)' \})?\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
     }
     if (/export (const|let|function) (?!GET|POST|PATCH|DELETE|runtime|dynamic|maxDuration)/.test(src)) fautes.push(`${f} : export non permis`)
   }
@@ -345,6 +347,9 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
       const table = m[2] ?? m[3]
       if (table === 'devis_lignes') { if (!/\.eq\('devis_id', (devis\.id|champs\.devis_id)\)/.test(bloc)) sansFiltre.push(`${f} devis_lignes`) ; return }
       if (table === 'artisans') { if (!/\.eq\('id', (session|g)\.uid\)/.test(bloc)) sansFiltre.push(`${f} artisans`); return }
+      // 18/10 (chronologie du client) : `messages` et `relances` n'ont pas de colonne artisan_id ; elles se lisent par les demandes
+      // du client, elles-mêmes lues pour la session (chargerDossiers) : la borne est `.in('lead_id', c.leads)`.
+      if (table === 'messages' || table === 'relances') { if (!/\.in\('lead_id', c\.leads\)/.test(bloc)) sansFiltre.push(`${f} ${table}`); return }
       if (m[3]) { if (!/p_artisan: g\.uid/.test(bloc)) sansFiltre.push(`${f} rpc ${table}`); return }
       if (!/\.eq\('artisan_id', (g\.)?uid\)|artisan_id: g\.uid/.test(bloc)) sansFiltre.push(`${f} ${table}@${m.index}`)
     })
@@ -408,11 +413,13 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   // Le client navigateur de Supabase : un faux qui rend une session, et un `fetch` espion (X : aucune écriture en exemple).
   fs.writeFileSync(path.join(CACHE, 'supabase.mjs'), "export const supabase = { auth: { getSession: async () => ({ data: { session: { access_token: 'jeton-de-test' } } }) } }\n")
   fs.writeFileSync(path.join(CACHE, 'navigation.mjs'), 'export const useRouter = () => ({ replace() {}, push() {} })\n')
-  const libs = (spec) => spec === '@/lib/supabaseClient' ? './supabase.mjs' : spec === 'next/navigation' ? './navigation.mjs' : spec.startsWith('@/lib/') ? versFichier(`${spec.slice(2)}.ts`) : spec === './client' ? './client.mjs' : spec === './mode' ? './mode.mjs' : spec
+  const libs = (spec) => spec === '@/lib/supabaseClient' ? './supabase.mjs' : spec === 'next/navigation' ? './navigation.mjs' : spec.startsWith('@/lib/') ? versFichier(`${spec.slice(2)}.ts`) : spec === './client' ? './client.mjs' : spec === './mode' ? './mode.mjs' : spec === './Frise' ? './Frise.mjs' : spec === './Rappels' ? './Rappels.mjs' : spec
   fs.writeFileSync(path.join(CACHE, 'client.mjs'), transpiler('app/crm/client.ts', libs))
   fs.writeFileSync(path.join(CACHE, 'mode.mjs'), transpiler('app/crm/mode.tsx', libs))
   fs.writeFileSync(path.join(CACHE, 'Tableau.mjs'), transpiler('app/crm/Tableau.tsx', libs))
   fs.writeFileSync(path.join(CACHE, 'Pipeline.mjs'), transpiler('app/crm/Pipeline.tsx', libs))
+  fs.writeFileSync(path.join(CACHE, 'Frise.mjs'), transpiler('app/crm/Frise.tsx', libs))
+  fs.writeFileSync(path.join(CACHE, 'Rappels.mjs'), transpiler('app/crm/Rappels.tsx', libs))
   const { renderToStaticMarkup } = require('react-dom/server')
   const { createElement } = require('react')
   const rendre = async (fichier, props) => renderToStaticMarkup(createElement((await import(pathToFileURL(path.join(CACHE, fichier)).href)).default, props))
@@ -421,7 +428,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const vide = calculerTableauCrm({ artisanId: A, devis: [], factures: [], demandes: [], chantiers: [], materiaux: [], maintenant: MAINTENANT })
   const hv = await rendre('Tableau.mjs', { t: vide })
   const valeurs = [...hv.matchAll(/<span class="val tnum">([^<]*)<\/span>/g)].map((m) => m[1])
-  T('H1 tableau vide : les cinq cases affichent « — », aucun montant', valeurs.length === 5 && valeurs.every((v) => v === '—') && !/€/.test(aplatir(hv)), valeurs.join('|'))
+  T('H1 tableau vide : les six cases (dont « À encaisser », 18/10) affichent « — », aucun montant', valeurs.length === 6 && valeurs.every((v) => v === '—') && !/€/.test(aplatir(hv)), valeurs.join('|'))
   T('H2 tableau vide : pas un mot d’exemple, et il dit d’où viendront les chiffres', !/exemple|fictif|démo/i.test(hv) && /Aucun devis pour l’instant/.test(aplatir(hv)) && /Aucun chantier pour l’instant/.test(aplatir(hv)))
   const plein = calculerTableauCrm({ artisanId: A, devis: DEVIS, factures: FACTURES, demandes: LEADS, chantiers: CHANTIERS, materiaux: MATERIAUX, maintenant: MAINTENANT })
   const hp = aplatir(await rendre('Tableau.mjs', { t: plein }))
@@ -690,7 +697,7 @@ const At2 = await imp('lib/crm/atelier.ts')
     rl_.indexOf('validerRelance(corps.valeur)') > 0 && rl_.indexOf('validerRelance(corps.valeur)') < rl_.indexOf("from('commandes_fournisseur')") && /\.eq\('id', id\)\.eq\('artisan_id', g\.uid\)\.maybeSingle\(\)/.test(rl_) && /status|422/.test(rl_) && /code: 'sans_adresse'/.test(rl_)
       && rl_.indexOf(".or(`relance_le.is.null,relance_le.lt.") > 0 && rl_.indexOf(".or(`relance_le.is.null,relance_le.lt.") < rl_.indexOf('await sendEmail(') && /text: v\.valeur\.message/.test(rl_) && /relances: c\.relances, relance_le: c\.relance_le/.test(rl_) && /transactionnel: true/.test(rl_) && /consommerLimite\(`crm-relance:\$\{g\.uid\}`, 10, 86_400\)/.test(rl_))
   T('K10 réception : la commande est PRISE sous condition de statut (une seule ligne mise à jour) avant l’entrée en stock, qui passe par appliquer_mouvement du compte ; aucune autre route n’appelle l’envoi',
-    pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") > 0 && pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") < pa_.indexOf("rpc('appliquer_mouvement'") && /p_artisan: g\.uid/.test(pa_) && /p_type: 'entree'/.test(pa_) && !/sendEmail/.test(pa_) && !/sendEmail/.test(po_) && lister('app/api/crm').filter((f) => /sendEmail/.test(sansCommentaires(lire(f)))).join() === 'app/api/crm/commandes/[id]/relancer/route.ts')
+    pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") > 0 && pa_.indexOf(".eq('statut', 'commandee').select(COLONNES)") < pa_.indexOf("rpc('appliquer_mouvement'") && /p_artisan: g\.uid/.test(pa_) && /p_type: 'entree'/.test(pa_) && !/sendEmail/.test(pa_) && !/sendEmail/.test(po_) && lister('app/api/crm').filter((f) => /sendEmail/.test(sansCommentaires(lire(f)))).sort().join() === 'app/api/crm/commandes/[id]/relancer/route.ts,app/api/crm/relances/envoyer/route.ts') // 18/10 : + la relance d'un devis, confirmée
   T('K11 création : le chantier, le fournisseur et chaque matériau sont relus POUR LA SESSION avant l’insertion ; table absente → message clair (503), jamais un faux « aucune commande »',
     /chantierDe\(g\.uid, c\.chantier_id\)/.test(po_) && /from\('fournisseurs'\)\.select\('id'\)\.eq\('id', c\.fournisseur_id\)\.eq\('artisan_id', g\.uid\)/.test(po_) && /from\('materiaux'\)\.select\('id'\)\.in\('id', ids\)\.eq\('artisan_id', g\.uid\)/.test(po_) && /MANQUE_MIGRATION/.test(po_)
       && /tableAbsente/.test(lire('lib/crm/serveur.ts')) && /commandesDisponibles: !tableAbsente/.test(lire('lib/crm/serveur.ts')))
@@ -791,8 +798,12 @@ const At2 = await imp('lib/crm/atelier.ts')
   T('M2 un identifiant qui n’est pas un uuid ne fabrique AUCUN filtre (injection de filtre) ; la casse est normalisée', Tr.abonnements("x,artisan_id=neq.1").length === 0 && Tr.abonnements('').length === 0 && Tr.abonnements(uid.toUpperCase())[0].filter === `artisan_id=eq.${uid}` && Tr.filtreCompte("00000000-0000-4000-8000-000000000001 or 1=1") === null)
   const mig = lire('supabase/migrations/0158_crm_commandes_temps_reel.sql')
   const migSql = mig.replace(/^\s*--.*$/gm, '')
-  const liste = (migSql.match(/foreach t in array array\[([^\]]+)\]/)?.[1] ?? '').split(',').map((x) => x.replace(/['\s]/g, '')).filter(Boolean)
-  T('M3 la publication `supabase_realtime` de la migration 0158 écoute EXACTEMENT les tables du code (rien de plus, rien de moins)', egal([...liste].sort(), [...Tr.TABLES_TEMPS_REEL].sort()) && liste.length === 12, liste.join())
+  const liste0158 = (migSql.match(/foreach t in array array\[([^\]]+)\]/)?.[1] ?? '').split(',').map((x) => x.replace(/['\s]/g, '')).filter(Boolean)
+  // 18/10 : 0162 ajoute crm_rappels à la publication (une table, un `alter publication … add table`).
+  const sql0162 = lire('supabase/migrations/0162_crm_rappels.sql').replace(/^\s*--.*$/gm, '')
+  const ajouts0162 = [...sql0162.matchAll(/alter publication supabase_realtime add table public\.(\w+)/g)].map((m) => m[1])
+  const liste = [...liste0158, ...ajouts0162]
+  T('M3 la publication `supabase_realtime` (0158 + 0162) écoute EXACTEMENT les tables du code (rien de plus, rien de moins)', egal([...liste].sort(), [...Tr.TABLES_TEMPS_REEL].sort()) && liste0158.length === 12 && egal(ajouts0162, ['crm_rappels']), liste.join())
   const tout = fs.readdirSync(path.join(RACINE, 'supabase/migrations')).filter((f) => /^\d{4}_.*\.sql$/.test(f)).map((f) => lire(`supabase/migrations/${f}`)).join('\n')
   const sansArtisan = Tr.TABLES_TEMPS_REEL.filter((t) => { const m = tout.match(new RegExp(`create table (?:if not exists )?public\\.${t}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i')); return !m || !/\bartisan_id\b/.test(m[1]) })
   T('M4 chaque table écoutée porte une colonne artisan_id (le filtre en a besoin) ; `stock`, qui n’en a pas, n’est PAS écoutée (ses variations passent par mouvements_stock)', sansArtisan.length === 0 && !Tr.TABLES_TEMPS_REEL.includes('stock') && /mouvements_stock/.test(migSql), sansArtisan.join())
@@ -818,9 +829,9 @@ const At2 = await imp('lib/crm/atelier.ts')
   T('M10 rafale : annulée (écran fermé), rien ne part', appels === 0 && !rafale.enAttente())
   const hook = sansCommentaires(lire('app/crm/useTempsReel.ts')), page_ = sansCommentaires(lire('app/crm/page.tsx'))
   T('M11 le hook : un canal par compte, les abonnements de lib/crm/tempsReel (donc filtrés), nettoyage à la fermeture, relecture de rattrapage après une coupure, filet d’une minute ; AUCUN DELETE non filtré',
-    /supabase\.channel\(`crm:\$\{uid\}`\)/.test(hook) && /abonnements\(uid\)/.test(hook) && /on\('postgres_changes', \{ event: a\.event, schema: a\.schema, table: a\.table, filter: a\.filter \}/.test(hook) && /removeChannel\(canal\)/.test(hook) && /aEteCoupe/.test(hook) && /60_000/.test(hook) && !/DELETE/.test(hook) && !/filter: undefined/.test(hook))
+    /supabase\.channel\(`crm:\$\{uid\}`\)/.test(hook) && /abonnements\(uid, sansCle \?/.test(hook) && /on\('postgres_changes', \{ event: a\.event, schema: a\.schema, table: a\.table, filter: a\.filter \}/.test(hook) && /removeChannel\(canal\)/.test(hook) && /aEteCoupe/.test(hook) && /60_000/.test(hook) && !/DELETE/.test(hook) && !/filter: undefined/.test(hook))
   T('M12 la page : relit la MÊME vue serveur à chaque évènement (aucun chiffre recomposé dans le navigateur), n’écoute rien en exemple, ne redessine pas si rien n’a changé, garde la sélection par clé',
-    /useTempsReel\(\{ uid, actif: !!vue && !exemple, surChangement: charger \}\)/.test(page_) && /JSON\.stringify\(\{ \.\.\.r\.corps, maintenant: '' \}\)/.test(page_) && /if \(sans !== empreinte\.current\)/.test(page_) && /lien=\{lien\} dernier=\{dernier\}/.test(page_) && /cleSel/.test(sansCommentaires(lire('app/crm/atelier/Atelier.tsx'))) && !/postgres_changes/.test(page_))
+    /useTempsReel\(\{ uid, actif: !!vue && !exemple, surChangement: charger, sans: vue && vue\.rappels && !vue\.rappels\.disponibles \? \['crm_rappels'\] : \[\] \}\)/.test(page_) && /JSON\.stringify\(\{ \.\.\.r\.corps, maintenant: '' \}\)/.test(page_) && /if \(sans !== empreinte\.current\)/.test(page_) && /lien=\{lien\} dernier=\{dernier\}/.test(page_) && /cleSel/.test(sansCommentaires(lire('app/crm/atelier/Atelier.tsx'))) && !/postgres_changes/.test(page_))
   const s3d = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx'))
   T('M13 la ville ne se reconstruit pas à chaque évènement : l’apparition en cascade ne se joue qu’à la première image ; reduced-motion respecté (pas d’apparition, pas de pulsation vive, glissés instantanés)', /const apparition = useMemo\(\(\) => \(mouvementReduit\(\) \? null : \{[^}]*\}\), \[\]\)/.test(s3d) && /calme\.current \? 0\.22/.test(s3d) && /if \(mouvementReduit\(\)\) \{ anim\.current/.test(s3d))
 }
@@ -836,7 +847,7 @@ const At2 = await imp('lib/crm/atelier.ts')
   const e = await Pg.lirePages(async (de) => (de === 0 ? { data: lignes(1000), error: null } : { data: null, error: { code: 'X', message: 'panne' } }), 5000)
   T('N3 une page en erreur fait échouer toute la lecture : jamais une table à moitié lue présentée comme complète', e.data === null && e.error?.message === 'panne')
   const srv = sansCommentaires(lire('lib/crm/serveur.ts'))
-  T('N4 chargerDossiers lit CHAQUE table par pages (aucun `.limit(` seul qui serait coupé à 1 000 par PostgREST), avec un second tri sur la clé', !/\.limit\(/.test(srv.slice(srv.indexOf('export async function chargerDossiers'), srv.indexOf('/** Le chantier de l'))) && (srv.match(/lirePages\(\(de, a\) =>/g) ?? []).length === 13 && (srv.match(/\.range\(de, a\)/g) ?? []).length === 13)
+  T('N4 chargerDossiers lit CHAQUE table par pages (aucun `.limit(` seul qui serait coupé à 1 000 par PostgREST), avec un second tri sur la clé', !/\.limit\(/.test(srv.slice(srv.indexOf('export async function chargerDossiers'), srv.indexOf('/** Le chantier de l'))) && (srv.match(/lirePages\(\(de, a\) =>/g) ?? []).length === 14 && (srv.match(/\.range\(de, a\)/g) ?? []).length === 14) // 18/10 : + crm_rappels (0162)
 }
 
 // ═══════════════════════ O. L'exemple montre ce que le vrai CRM saurait montrer (15/10) ═══════════════════════

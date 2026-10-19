@@ -30,6 +30,10 @@ export default function DevisEditor() {
   const [savedId, setSavedId] = useState<string | null>(isNew ? null : rawId)
   const [numero, setNumero] = useState<string | null>(null)
   const [statut, setStatut] = useState('brouillon')
+  // Le statut ENREGISTRÉ (celui que le serveur connaît) : « Créer la facture » ne s'ouvre que sur un devis accepté (C6, audit du 18/10).
+  const [statutBase, setStatutBase] = useState('brouillon')
+  // La demande d'où vient ce devis (« Créer un devis » depuis Messages ou le CRM) : envoyée à la création pour RATTACHER le devis (C2).
+  const [leadId, setLeadId] = useState<string | null>(null)
   const [plan, setPlan] = useState('gratuit')
   const [tier, setTier] = useState<Tier>('standard')
 
@@ -92,7 +96,7 @@ export default function DevisEditor() {
       if (!isNew) {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
         if (d) {
-          setNumero(d.numero); setStatut(d.statut ?? 'brouillon')
+          setNumero(d.numero); setStatut(d.statut ?? 'brouillon'); setStatutBase(d.statut ?? 'brouillon')
           setClientNom(d.client_nom ?? ''); setClientEmail(d.client_email ?? ''); setClientAdresse(d.client_adresse ?? '')
           setObjet(d.objet ?? ''); setValidite(String(d.validite_jours ?? 90)); setRemise(String(d.remise_pct ?? 0)); setAcompte(String(d.acompte_pct ?? 0))
           const { data: ls } = await supabase.from('devis_lignes').select('*').eq('devis_id', rawId).order('ordre')
@@ -106,6 +110,7 @@ export default function DevisEditor() {
         if (leadId) {
           const { data: lead } = await supabase.from('leads').select('nom_prospect, contact, message').eq('id', leadId).maybeSingle()
           if (lead) {
+            setLeadId(leadId)
             setClientNom(lead.nom_prospect ?? '')
             if (lead.contact && lead.contact.includes('@')) setClientEmail(lead.contact)
             const { data: ms } = await supabase.from('messages').select('sens, contenu, sent_at').eq('lead_id', leadId).order('sent_at')
@@ -142,6 +147,9 @@ export default function DevisEditor() {
       objet, client_nom: clientNom, client_email: clientEmail, client_adresse: clientAdresse,
       validite_jours: Number(validite) || 90, remise_pct: Number(remise) || 0, acompte_pct: Number(acompte) || 0,
       statut: newStatut ?? statut,
+      // C2 (audit du 18/10) : sans ce lien, le devis né d'une demande restait détaché d'elle (deux cartes au pipeline, pas de
+      // relances J+2/5/10, pas d'acceptation possible dans la conversation). Seulement à la création : le serveur vérifie la demande.
+      ...(!savedId && leadId ? { lead_id: leadId } : {}),
       lignes: lignes.filter((l) => l.designation.trim()).map((l) => ({ designation: l.designation, quantite: Number(l.quantite) || 0, unite: l.unite, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })),
     }
     const { data } = await supabase.auth.getSession()
@@ -150,6 +158,7 @@ export default function DevisEditor() {
       const res = await fetch('/api/devis', { method: 'POST', headers, body: JSON.stringify(payload) })
       const d = await res.json().catch(() => ({})); setSaving(false)
       if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Erreur.' }); return }
+      setStatutBase('brouillon')
       setSavedId(d.id); setNumero(d.numero); router.replace(`/devis/${d.id}`)
       setMsg({ type: 'ok', text: `Devis ${d.numero} enregistré ✅` })
     } else {
@@ -157,6 +166,7 @@ export default function DevisEditor() {
       const d = await res.json().catch(() => ({})); setSaving(false)
       if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Erreur.' }); return }
       if (newStatut) setStatut(newStatut)
+      setStatutBase(payload.statut)
       setMsg({ type: 'ok', text: 'Devis enregistré ✅' })
     }
   }
@@ -193,7 +203,7 @@ export default function DevisEditor() {
     const res = await fetch(`/api/devis/${savedId}/envoyer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     const d = await res.json().catch(() => ({})); setSaving(false)
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Envoi échoué.' }); return }
-    setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' }); void vibrer('succes')
+    setStatut('envoye'); setStatutBase('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' }); void vibrer('succes')
   }
 
   async function creerFacture() {
@@ -231,6 +241,10 @@ export default function DevisEditor() {
   const today = new Date()
   const validiteDate = new Date(today.getTime() + (Number(validite) || 90) * 86400000)
 
+  // C6 (audit du 18/10) : une facture est scellée dès sa création — on ne la propose que sur un devis accepté ET enregistré.
+  const factureOuverte = !!savedId && statutBase === 'accepte'
+  const raisonFacture = !savedId ? 'Enregistrez le devis, puis faites-le accepter par le client.' : 'On ne facture qu’un devis accepté : passez son statut à « Accepté » et enregistrez.'
+
   if (!ready) return <AppShell active="devis" title="Devis" crumb="Chargement…"><p className="muted">Chargement…</p></AppShell>
 
   const actions = (
@@ -238,7 +252,7 @@ export default function DevisEditor() {
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={partagerPdf} data-partager>Partager</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
-      <button className="psh-btn ghost" onClick={creerFacture}>Créer la facture</button>
+      <button className="psh-btn ghost" onClick={creerFacture} disabled={!factureOuverte} title={factureOuverte ? undefined : raisonFacture}>Créer la facture</button>
       {savedId && <button className="psh-btn ghost danger" onClick={supprimerDevis}>Supprimer</button>}
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
@@ -306,6 +320,7 @@ export default function DevisEditor() {
                   <select id="dv-statut" value={statut} onChange={(e) => setStatut(e.target.value)}>
                     <option value="brouillon">Brouillon</option><option value="envoye">Envoyé</option><option value="accepte">Accepté</option><option value="refuse">Refusé</option><option value="expire">Expiré</option>
                   </select>
+                  {savedId && !factureOuverte && <p className="muted" data-raison-facture style={{ margin: '.35rem 0 0', fontSize: '.8rem' }}>{raisonFacture}</p>}
                 </div>
               </div>
             </div>

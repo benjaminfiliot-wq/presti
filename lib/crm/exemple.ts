@@ -12,6 +12,7 @@ import { construireFicheChantier, construireFicheClient, construireVue, type Cha
 import { regrouperClients, trouverGroupe } from './clients.ts'
 import type { DonneesAtelier } from './atelier.ts'
 import type { CommandeA } from './commandes.ts'
+import type { RappelLigne } from './rappels.ts'
 
 const ID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
 const ART = ID(999)
@@ -91,14 +92,15 @@ const LEADS: LeadLigne[] = [
 const devis = (n: number, numero: number, objet: string, client: string, statut: string, ttc: number, cree: string, envoye: string | null, accepte: string | null, extra: Partial<DevisLigne> = {}): DevisLigne => ({
   id: ID(n), artisan_id: ART, lead_id: null, statut, numero: `EX-2026-${String(numero).padStart(3, '0')}`, objet, client_nom: client,
   client_email: `${client.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}@exemple.invalid`,
-  client_adresse: 'Rue de l’Exemple, 00000 Ville fictive', total_ttc: ttc, acompte_pct: 0, date_emission: cree.slice(0, 10),
+  // HT : TVA de 10 % (travaux de rénovation d'un logement), pour la « marge sur matériaux, estimée » des indicateurs du chantier.
+  client_adresse: 'Rue de l’Exemple, 00000 Ville fictive', total_ttc: ttc, total_ht: Math.round((ttc / 1.1) * 100) / 100, acompte_pct: 0, date_emission: cree.slice(0, 10),
   envoye_le: envoye ? T(envoye) : null, accepte_le: accepte ? T(accepte) : null, created_at: T(cree), validite_jours: 30, ...extra,
 })
 const DEVIS: DevisLigne[] = [
   devis(501, 1, 'Salle de bain, étage', 'Client fictif A', 'accepte', 8400, '2026-09-14', '2026-09-15', '2026-09-25', { acompte_pct: 30, lead_id: ID(410), client_email: 'client-a@exemple.invalid' }),
   devis(502, 2, 'Cuisine ouverte', 'Client fictif B', 'accepte', 6200, '2026-09-02', '2026-09-03', '2026-09-15'),
   devis(503, 3, 'Chauffe-eau', 'Client fictif C', 'accepte', 1450, '2026-09-26', '2026-09-27', '2026-09-29'),
-  devis(504, 4, 'Réseau d’évacuation', 'Client fictif D', 'accepte', 3900, '2026-10-01', '2026-10-02', '2026-10-06'),
+  devis(504, 4, 'Réseau d’évacuation', 'Client fictif D', 'accepte', 3900, '2026-10-01', '2026-10-02', '2026-10-06', { acompte_pct: 30 }),
   devis(505, 5, 'Douche à l’italienne', 'Client fictif E', 'accepte', 4700, '2026-10-03', '2026-10-04', '2026-10-09'),
   devis(506, 6, 'Rénovation sanitaires', 'Client fictif F', 'accepte', 5300, '2026-09-20', '2026-09-21', '2026-09-30'),
   devis(507, 7, 'Mise aux normes gaz', 'Client fictif G', 'accepte', 2100, '2026-09-01', '2026-09-02', '2026-09-10'),
@@ -120,11 +122,11 @@ const facture = (n: number, numero: number, devisN: number, statut: string, ttc:
   return { id: ID(n), artisan_id: ART, devis_id: d.id, numero: `EX-F-2026-${String(numero).padStart(3, '0')}`, statut, total_ttc: ttc, avoir_de: null, date_emission: emise, date_echeance: null, client_nom: d.client_nom, client_email: d.client_email, client_id: null, acompte_pct: 0, ...extra }
 }
 const FACTURES: FactureLigne[] = [
-  facture(601, 1, 501, 'payee', 2520, '2026-09-26', { acompte_pct: 30 }),
+  facture(601, 1, 501, 'payee', 2520, '2026-09-26', { acompte_pct: 30, objet: 'Acompte 30 % — Salle de bain, étage' }),
   facture(602, 2, 507, 'emise', 2100, '2026-09-25', { date_echeance: '2026-10-25' }),
   facture(603, 3, 510, 'payee', 980, '2026-08-28'),
   facture(604, 4, 511, 'payee', 320, '2026-07-15'),
-  facture(605, 5, 508, 'payee', 5580, '2026-09-03', { acompte_pct: 30 }),
+  facture(605, 5, 508, 'payee', 5580, '2026-09-03', { acompte_pct: 30, objet: 'Acompte 30 % — Colonne d’immeuble' }),
 ]
 
 // ── Les chantiers, leurs tâches, leur équipe ────────────────────────────────────────────────────────────────────────────
@@ -168,6 +170,12 @@ const TACHES: (TacheFiche & { chantier_id: string })[] = Object.entries(LISTES_T
 const RESERVATIONS: (ReservationFiche & { chantier_id: string })[] = [
   { id: ID(701), chantier_id: ID(1), materiau_id: ID(321), quantite: 1, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(321), nom: 'Mitigeur douche', unite: 'u' } },
   { id: ID(702), chantier_id: ID(1), materiau_id: ID(301), quantite: 10, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-06'), note: null, materiau: { id: ID(301), nom: 'Raccord PER 16', unite: 'u' } },
+  // Sorties du stock (la « matière sortie » des indicateurs) : un mitigeur et un siphon pour la salle de bain, un chauffe-eau et
+  // son groupe de sécurité pour le chantier terminé (le groupe n'a pas de prix vu : la marge du chauffe-eau est « partielle »).
+  { id: ID(705), chantier_id: ID(1), materiau_id: ID(320), quantite: 1, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-07'), note: null, materiau: { id: ID(320), nom: 'Mitigeur lavabo', unite: 'u' } },
+  { id: ID(706), chantier_id: ID(1), materiau_id: ID(322), quantite: 2, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-07'), note: null, materiau: { id: ID(322), nom: 'Siphon', unite: 'u' } },
+  { id: ID(707), chantier_id: ID(3), materiau_id: ID(360), quantite: 1, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-01'), note: null, materiau: { id: ID(360), nom: 'Chauffe-eau 200 L', unite: 'u' } },
+  { id: ID(708), chantier_id: ID(3), materiau_id: ID(350), quantite: 1, lieu: 'atelier', statut: 'sorti', sorti_le: T('2026-10-01'), note: null, materiau: { id: ID(350), nom: 'Groupe de sécurité', unite: 'u' } },
   { id: ID(703), chantier_id: ID(2), materiau_id: ID(322), quantite: 1, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(322), nom: 'Siphon', unite: 'u' } },
   // Trois manchons réservés pour la rénovation, deux en stock : « stock insuffisant » sur ce chantier (rien n'est commandé).
   { id: ID(704), chantier_id: ID(6), materiau_id: ID(303), quantite: 3, lieu: 'atelier', statut: 'reserve', sorti_le: null, note: null, materiau: { id: ID(303), nom: 'Manchon 32', unite: 'u' } },
@@ -187,6 +195,17 @@ const NOTES_CHANTIER: (NoteCrm & { chantier_id: string })[] = [
 const NOTES_CLIENT: Record<string, NoteCrm[]> = {
   'e:client-a@exemple.invalid': [{ id: ID(811), texte: 'Préfère être appelée après 17 h.', cree_le: T('2026-09-15', '18:00') }],
 }
+// Les rappels et rendez-vous de l'exemple (crm_rappels, 0162) : un devis à relancer aujourd'hui, un métré mercredi, un client à
+// prévenir ce matin, un appel en retard sur la cuisine, la réception des travaux de la salle de bain.
+const rappel = (n: number, cible: Partial<RappelLigne>, type: string, echeance: string, heure: string | null, texte: string, origine = 'artisan'): RappelLigne =>
+  ({ id: ID(n), artisan_id: ART, client_cle: null, lead_id: null, devis_id: null, chantier_id: null, ...cible, type, echeance, heure, texte, fait_le: null, envoye_le: null, origine, cree_le: T('2026-10-09') })
+const RAPPELS: RappelLigne[] = [
+  rappel(851, { devis_id: ID(514) }, 'relancer_devis', '2026-10-12', null, 'Pas de réponse ? Relancer le devis', 'systeme'),
+  rappel(852, { lead_id: ID(403) }, 'metre', '2026-10-14', '10:00', 'Métré de la salle d’eau'),
+  rappel(853, { chantier_id: ID(9) }, 'rappeler', '2026-10-12', '08:00', 'Prévenir le client de l’arrivée de l’équipe'),
+  rappel(854, { chantier_id: ID(2) }, 'rappeler', '2026-10-10', null, 'Appeler le client pour la nouvelle date de fin'),
+  rappel(855, { client_cle: idExemple('e:client-a@exemple.invalid') }, 'rendez_vous', '2026-10-16', '17:30', 'Réception des travaux'),
+]
 const journalDe = (c: ChantierLigne): EntreeJournal[] => {
   const e: EntreeJournal[] = [{ id: `${c.id}-j0`, objet: 'chantier', champ: 'creation', de: null, vers: 'a_planifier', origine: 'artisan', etape_derivee: null, note: null, cree_le: c.cree_le }]
   if (c.statut !== 'a_planifier') e.push({ id: `${c.id}-j1`, objet: 'chantier', champ: 'statut', de: 'a_planifier', vers: c.statut, origine: 'artisan', etape_derivee: null, note: null, cree_le: T(c.date_debut ?? '2026-10-10', '07:30') })
@@ -201,6 +220,7 @@ const DOSSIERS: DossiersCrm = {
   taches: TACHES.map((t) => ({ id: t.id, chantier_id: t.chantier_id, faite: t.faite, libelle: t.libelle, faite_le: t.faite_le, membre_id: t.membre_id, ordre: t.ordre })), materiaux: MATERIAUX, deplacements: [], carnet: [],
   reservations: RESERVATIONS.map((r) => ({ chantier_id: r.chantier_id, materiau_id: r.materiau_id, quantite: r.quantite, statut: r.statut })), commandes: COMMANDES, commandesDisponibles: true,
   vehicules: VEHICULES.map(({ notes: _n, ...v }) => v), membres: MEMBRES.map(({ telephone: _t, ...m }) => m), equipe: EQUIPE, tronque: false,
+  rappels: RAPPELS, rappelsDisponibles: true,
 }
 const maintenant = () => new Date(MAINTENANT_EXEMPLE)
 
@@ -223,15 +243,17 @@ export function ficheChantierExemple(id: string): FicheChantier | null {
   return construireFicheChantier({
     uid: ART,
     chantier: { id: c.id, titre: c.titre, statut: c.statut, client_nom: c.client_nom, adresse: c.adresse, code_postal: c.code_postal, ville: c.ville, date_debut: c.date_debut, date_fin_prevue: c.date_fin_prevue, date_fin_reelle: c.date_fin_reelle, vehicule_id: c.vehicule_id, notes: c.notes, devis_id: c.devis_id },
-    devis: d ? { id: d.id, numero: d.numero, objet: d.objet, statut: d.statut, total_ttc: Number(d.total_ttc), acompte_pct: Number(d.acompte_pct), accepte_le: d.accepte_le, envoye_le: d.envoye_le, client_nom: d.client_nom, client_email: d.client_email, client_adresse: d.client_adresse, lead_id: d.lead_id } : null,
-    factures: d ? FACTURES.filter((f) => f.devis_id === d.id).map((f) => ({ id: f.id, devis_id: f.devis_id, numero: f.numero, statut: f.statut, total_ttc: Number(f.total_ttc), avoir_de: f.avoir_de, date_emission: f.date_emission, acompte_pct: Number(f.acompte_pct ?? 0) })) : [],
+    devis: d ? { id: d.id, numero: d.numero, objet: d.objet, statut: d.statut, total_ttc: Number(d.total_ttc), total_ht: d.total_ht ?? null, created_at: d.created_at, date_emission: d.date_emission, acompte_pct: Number(d.acompte_pct), accepte_le: d.accepte_le, envoye_le: d.envoye_le, client_nom: d.client_nom, client_email: d.client_email, client_adresse: d.client_adresse, lead_id: d.lead_id } : null,
+    factures: d ? FACTURES.filter((f) => f.devis_id === d.id).map((f) => ({ id: f.id, devis_id: f.devis_id, numero: f.numero, objet: f.objet ?? null, statut: f.statut, total_ttc: Number(f.total_ttc), avoir_de: f.avoir_de, date_emission: f.date_emission, acompte_pct: Number(f.acompte_pct ?? 0) })) : [],
     leadStatut,
+    lead: d?.lead_id ? (() => { const l = LEADS.find((x) => x.id === d.lead_id); return l ? { id: l.id, statut: l.statut, created_at: l.created_at } : null })() : null,
     taches: TACHES.filter((t) => t.chantier_id === c.id).map(({ chantier_id: _c, ...t }) => t),
     equipe: EQUIPE.filter((e) => e.chantier_id === c.id).map((e) => MEMBRES.find((m) => m.id === e.membre_id)!).map((m) => ({ id: m.id, nom: m.nom, role: m.role })),
     vehicule: vh ? { id: vh.id, nom: vh.nom, immatriculation: vh.immatriculation } : null,
-    materiaux: RESERVATIONS.filter((r) => r.chantier_id === c.id).map(({ chantier_id: _c, ...r }) => r),
+    materiaux: RESERVATIONS.filter((r) => r.chantier_id === c.id).map(({ chantier_id: _c, ...r }) => ({ ...r, materiau: r.materiau ? { ...r.materiau, prix_vu_ht: MATERIAUX.find((m) => m.id === r.materiau_id)?.prix_vu_ht ?? null } : null })),
     notes: NOTES_CHANTIER.filter((n) => n.chantier_id === c.id).map(({ chantier_id: _c, ...n }) => n),
     journal: journalDe(c),
+    rappels: RAPPELS,
     maintenant: maintenant(),
   })
 }
@@ -240,5 +262,5 @@ export function ficheChantierExemple(id: string): FicheChantier | null {
 export function ficheClientExemple(ref: string): FicheClient | null {
   const groupes = regrouperClients({ artisanId: ART, devis: DEVIS, factures: FACTURES, leads: LEADS, chantiers: CHANTIERS, idDe: idExemple })
   const g = trouverGroupe(groupes, ref)
-  return g ? construireFicheClient({ groupe: g, d: DOSSIERS, notes: NOTES_CLIENT[g.cle] ?? [], maintenant: maintenant() }) : null
+  return g ? construireFicheClient({ groupe: g, groupes, d: DOSSIERS, notes: NOTES_CLIENT[g.cle] ?? [], maintenant: maintenant(), rappels: RAPPELS }) : null
 }

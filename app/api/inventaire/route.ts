@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { messageVerrou, peut } from '@/lib/plans'
+import { lirePages } from '@/lib/crm/pages'
 
 // Inventaire (v4 §9) — le stock de l'artisan, et ce qu'il doit racheter.
 //
@@ -32,6 +33,8 @@ type Materiau = {
   prix_dernier_ht: number | null; seuil_alerte: number; stock: LigneStock[]
 }
 
+const LIMITE_INVENTAIRE = 5000
+
 // ── GET : l'inventaire, avec ce qui manque mis en avant.
 export async function GET(req: Request) {
   const a = await auth(req)
@@ -48,11 +51,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, materiau: data ?? null })
   }
 
-  let requete = supabaseAdmin.from('materiaux')
-    .select('id, nom, marque, reference, categorie, unite, code_barres, fournisseur_prefere, prix_dernier_ht, seuil_alerte, stock(lieu, quantite)')
-    .eq('artisan_id', a.uid)
-  if (q) requete = requete.ilike('nom', `%${q.replace(/[%_]/g, '').replace(/[\s-]+/g, '%')}%`)
-  const { data } = await requete.order('nom').limit(300)
+  // Une requête NEUVE par page : un constructeur de requête réutilisé accumulerait ses tris d'une page à l'autre.
+  const requete = () => {
+    const r = supabaseAdmin.from('materiaux')
+      .select('id, nom, marque, reference, categorie, unite, code_barres, fournisseur_prefere, prix_dernier_ht, seuil_alerte, stock(lieu, quantite)')
+      .eq('artisan_id', a.uid)
+    return q ? r.ilike('nom', `%${q.replace(/[%_]/g, '').replace(/[\s-]+/g, '%')}%`) : r
+  }
+  // C7 (audit du 18/10) : `.limit(300)` coupait l'inventaire sans le dire — et les alertes « stock bas » avec lui. Lecture par
+  // pages jusqu'à LIMITE_INVENTAIRE, `tronque` levé si on l'atteint.
+  const lu = await lirePages((de, fin) => requete().order('nom').order('id').range(de, fin), LIMITE_INVENTAIRE)
+  if (lu.error) { console.error('[inventaire] lecture :', lu.error.message); return NextResponse.json({ error: 'L’inventaire n’a pas pu être lu. Rechargez la page dans un instant.' }, { status: 503 }) }
+  const data = lu.data
 
   const materiaux = (data ?? []) as unknown as Materiau[]
   const total = (m: Materiau) => (m.stock ?? []).reduce((s, l) => s + Number(l.quantite), 0)
@@ -63,6 +73,7 @@ export async function GET(req: Request) {
     ok: true,
     materiaux: materiaux.map((m) => ({ ...m, quantite_totale: total(m) })),
     alertes: alertes.map((m) => ({ id: m.id, nom: m.nom, unite: m.unite, reste: total(m), seuil: Number(m.seuil_alerte) })),
+    tronque: materiaux.length >= LIMITE_INVENTAIRE,
   })
 }
 

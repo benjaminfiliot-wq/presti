@@ -142,6 +142,11 @@ const MO = 1024 * 1024
 export const PLAFOND_IMAGES_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 400, signature: 1024, business: 5120 }
 /** Espace des photos de chantier envoyées par les clients, en Mo. Appliqué par lib/quotaMedia.ts. */
 export const PLAFOND_PHOTOS_CLIENTS_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 250, signature: 500, business: 2048 }
+/**
+ * 18/10 — Photos et pièces des chantiers du CRM (bucket privé chantier-pieces, migration 0163) : le CRM n'existe qu'en Signature et
+ * Business (capacité `crm`), les autres offres n'ont donc rien. Pas de ligne dans la grille publique tant que le chantier n'est pas livré.
+ */
+export const PLAFOND_PIECES_CHANTIER_MO: Record<PlanId, number> = { gratuit: 0, essentiel: 0, studio: 0, signature: 2048, business: 5120 }
 export const enOctets = (mo: Record<PlanId, number>): Record<PlanId, number> =>
   Object.fromEntries(Object.entries(mo).map(([k, v]) => [k, v * MO])) as Record<PlanId, number>
 /** Messages au plus par conversation avec l'assistant de gestion (décision de Benj du 12/10, plan 016 §9.2). Appliqué par lib/assistant/cadrage.ts. */

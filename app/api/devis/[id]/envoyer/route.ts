@@ -12,6 +12,7 @@ import { getUserRevocable } from '@/lib/authArtisan'
 import { planifierRelances } from '@/lib/relances'
 import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { mailDevis } from '@/lib/devisMail'
+import { enregistrerEnvoi } from '@/lib/devisEnvoi'
 import { OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -73,7 +74,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     })
     if (!r.ok) { console.error('[devis envoyer]', r.error); return NextResponse.json({ error: 'Envoi impossible pour le moment.' }, { status: 502 }) }
 
-    await supabaseAdmin.from('devis').update({ statut: 'envoye', updated_at: new Date().toISOString() }).eq('id', id).eq('artisan_id', uid)
+    // C1 (audit du 18/10) : statut ET date d'envoi, par une seule écriture partagée avec le test de cohérence (lib/devisEnvoi.ts).
+    await enregistrerEnvoi(devis, uid)
 
     // Relances J+2 / J+5 / J+10 (audit des promesses du 12/10, hors site, ligne « code ») : un devis rattaché à une
     // conversation arme les relances par le MÊME mécanisme qu'une réponse envoyée (lib/relances.ts) — la balle est chez le

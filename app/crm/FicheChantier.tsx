@@ -11,6 +11,11 @@ import { EQUIPE_EXEMPLE, ficheChantierExemple, INVENTAIRE_EXEMPLE } from '@/lib/
 import { AIDE_TEXTE_LIBRE, appel, dateFr, dateHeureFr, enCentimes, estErreur, euros, itineraire, LIBELLES_DEVIS, LIBELLES_FACTURE, TON_STATUT_CHANTIER } from './client'
 import { Lien, useExemple } from './mode'
 import { Avancement } from './Chantiers'
+import Frise from './Frise'
+import Indicateurs from './Indicateurs'
+import { ListeRappels, MeLeRappeler } from './Rappels'
+import Pieces from './Pieces'
+import { actif } from '@/lib/flags'
 import type { Membre, Vehicule } from './types'
 
 // La fiche chantier (plan 3.4) : client, adresse, nature des travaux, devis lié (TTC, statut, signé le), acompte,
@@ -90,13 +95,11 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
   const client = d?.client_nom ?? c.client_nom
   const refClient = d ? `d-${d.id}` : `c-${c.id}`
   const adresse = [c.adresse, [c.code_postal, c.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ') || d?.client_adresse || null
-  const ttc = enCentimes(d?.total_ttc)
-  const acompte = d && Number(d.acompte_pct) > 0 && ttc !== null ? Math.round((ttc * Number(d.acompte_pct)) / 100) : null
   const [notif, setNotif] = useState<string | null>(null)
   const [envoi, setEnvoi] = useState<string | null>(null)
 
   async function facturer() {
-    if (!d || !confirm('Créer la facture de tout le devis ? Une facture émise ne se modifie plus (elle s’annule par un avoir).')) return
+    if (!d || !confirm(f.actions.facturer.solde ? 'Créer la facture du SOLDE (le devis, moins les acomptes déjà facturés) ? Une facture émise ne se modifie plus (elle s’annule par un avoir).' : 'Créer la facture de tout le devis ? Une facture émise ne se modifie plus (elle s’annule par un avoir).')) return
     setEnvoi('facturer'); setMessage(null)
     const r = await appel<{ id: string; numero: string }>('/api/factures', { method: 'POST', body: { devis_id: d.id } })
     setEnvoi(null)
@@ -128,14 +131,17 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           </div>
           <span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span>
         </div>
-        <div className="crm-entete-chiffres">
-          <div><span className="lab">Avancement</span><Avancement {...av} /></div>
-          <div><span className="lab">Devis</span>{d ? <span className="tnum">{euros(ttc)} · {LIBELLES_DEVIS[d.statut ?? ''] ?? d.statut}</span> : <span>—</span>}</div>
-          <div><span className="lab">Signé le</span><span className="tnum">{dateFr(d?.accepte_le)}</span></div>
-          <div><span className="lab">Acompte</span><span className="tnum">{acompte !== null ? `${Number(d!.acompte_pct)} % · ${euros(acompte)}` : '—'}</span></div>
-          <div><span className="lab">Pipeline</span><span>{f.etape ? LIBELLES_ETAPES[f.etape] : '—'}</span></div>
-          <div><span className="lab">Retard</span>{f.retard ? <span className="pill crit">{f.retard} j</span> : <span>{f.retard === 0 ? 'Aucun' : '—'}</span>}</div>
-        </div>
+        {/* La frise (où en est le dossier) remplace la ligne « Pipeline » ; les indicateurs disent l'argent et la matière. Dans le
+            panneau de l'atelier, qui les montre déjà au-dessus, la fiche compacte ne les répète pas. */}
+        {!compacte && <Frise frise={f.frise} onChange={recharger} ici={`/crm/chantiers/${c.id}`} />}
+        {!compacte && <Indicateurs ind={{ ...f.indicateurs, avancement: av }} chantierId={c.id} dansLaFiche />}
+        {compacte && (
+          <div className="crm-entete-chiffres">
+            <div><span className="lab">Avancement</span><Avancement {...av} /></div>
+            <div><span className="lab">Devis</span>{d ? <span className="tnum">{euros(enCentimes(d.total_ttc))} · {LIBELLES_DEVIS[d.statut ?? ''] ?? d.statut}</span> : <span>—</span>}</div>
+            <div><span className="lab">Retard</span>{f.retard ? <span className="pill crit">{f.retard} j</span> : <span>{f.retard === 0 ? 'Aucun' : '—'}</span>}</div>
+          </div>
+        )}
         <div className="crm-boutons">
           {/* Dans le panneau de l'atelier, « Fiche complète » ouvre la fiche chantier en pleine page ; sur cette page, le devis. */}
           {compacte ? <Lien className="psh-btn ghost" href={`/crm/chantiers/${c.id}`}>Fiche complète</Lien>
@@ -144,7 +150,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           <button type="button" className="psh-btn ghost" disabled={!f.actions.notifier.actif || envoi !== null} title={f.actions.notifier.raison ?? 'Préparer un message au client'} aria-describedby={f.actions.notifier.raison ? 'crm-raison-notifier' : undefined}
             onClick={() => setNotif(f.notificationPreparee)}>Notifier le client</button>
           <button type="button" className="psh-btn primary" disabled={!f.actions.facturer.actif || envoi !== null} title={f.actions.facturer.raison ?? 'Créer la facture du devis'} aria-describedby={f.actions.facturer.raison ? 'crm-raison-facturer' : undefined}
-            onClick={() => void facturer()}>{envoi === 'facturer' ? 'Création…' : 'Facturer'}</button>
+            onClick={() => void facturer()}>{envoi === 'facturer' ? 'Création…' : f.actions.facturer.solde ? 'Facturer le solde' : 'Facturer'}</button>
         </div>
         <ul className="crm-raisons">
           {!d && !compacte && <li id="crm-raison-fiche">Fiche complète : ce chantier n’a pas de devis lié.</li>}
@@ -172,6 +178,21 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           <Materiaux f={f} base={base} inventaire={inventaire} agir={agir} />
         </div>
       </div>
+
+      {/* Lot 3 (plan du 18/10, n°5) : les photos et pièces du chantier, privées. */}
+      {actif('crmPieces') && <Pieces chantierId={c.id} leadId={d?.lead_id ?? null} clos={c.statut === 'annule'} />}
+
+      <section className="psh-panel" aria-labelledby="crm-rappels-chantier">
+        <header><h2 id="crm-rappels-chantier">Rappels et rendez-vous</h2><span className="tag tnum">{f.rappels.filter((r) => !r.fait_le).length}</span></header>
+        <div className="crm-corps">
+          {!f.rappelsDisponibles ? <p className="crm-vide">Les rappels s’installent : ils apparaîtront ici dès la mise à jour de votre espace.</p> : (
+            <>
+              <ListeRappels rappels={f.rappels.filter((r) => !r.fait_le)} jour={f.jour} onChange={recharger} vide="Aucun rappel sur ce chantier." />
+              <MeLeRappeler cible={{ chantier_id: c.id }} jour={f.jour} onChange={recharger} libelle="+ Rappel ou rendez-vous" />
+            </>
+          )}
+        </div>
+      </section>
 
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>
         <Notes f={f} agir={agir} />

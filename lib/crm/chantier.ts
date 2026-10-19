@@ -1,6 +1,7 @@
 // CRM — ce qui se calcule sur UN chantier : tâches nées du devis, avancement, retard, et les trois boutons de la fiche.
 // Module pur (un seul import, pur aussi) : rejoué par scripts/crm-qa.mjs.
-import { facturesComptees, type FacturePresti } from '../comptaTableau.ts'
+import { centimes, facturesComptees, type FacturePresti } from '../comptaTableau.ts'
+import { argentDossier, estAcompte, type Argent, type FactureArgent } from './argent.ts'
 
 export type LigneDevis = { id: string; ordre?: number | null; designation?: string | null; quantite?: number | string | null; unite?: string | null }
 export type TacheExistante = { devis_ligne_id?: string | null; ordre?: number | null }
@@ -38,6 +39,55 @@ export function avancement(taches: readonly { faite?: boolean | null }[]): { pct
   return { pct: total ? Math.round((faites / total) * 100) : null, faites, total }
 }
 
+/**
+ * La colonne d'INDICATEURS d'un chantier (plan du 18/10, n°2) : l'argent du devis, la matière sortie du stock et l'avancement.
+ * L'argent vient de lib/crm/argent.ts (le même calcul que la frise et la colonne « à encaisser » du pipeline).
+ *
+ * La matière : les réservations SORTIES du stock, quantité × dernier prix vu HT du matériau (inventaire). Ce n'est pas le prix
+ * payé ce jour-là : l'écran dit « au dernier prix vu ». Une sortie dont le matériau n'a aucun prix connu n'est pas comptée, et
+ * elle est comptée à part (`sansPrix`).
+ *
+ * La « marge sur matériaux » : devis HT − matière sortie HT, rapportée au devis HT. Toujours dite ESTIMÉE, et SUR MATÉRIAUX :
+ * la main-d'œuvre, les déplacements et la matière achetée hors stock n'y sont pas — ce n'est pas un bénéfice. null (« — ») sans
+ * devis HT ou sans aucune sortie chiffrée (sinon elle vaudrait 100 %, ce qui est faux) ; `partielle` si des sorties n'ont pas
+ * de prix (elle est alors surestimée).
+ */
+export type Indicateurs = {
+  /** Le devis du chantier (la case « Devis » ouvre sa page) ; null sans devis. */
+  devisId: string | null
+  argent: Argent
+  /** HT du devis, en centimes ; null sans devis. */
+  devisHt: number | null
+  matiere: { sortie: number; lignes: number; sansPrix: number }
+  marge: { montant: number; pct: number; partielle: boolean } | null
+  avancement: { pct: number | null; faites: number; total: number }
+  retard: number | null
+}
+export function indicateurs(p: {
+  devis: { id?: string; statut?: string | null; total_ttc?: number | string | null; total_ht?: number | string | null; acompte_pct?: number | string | null } | null
+  factures: readonly FactureArgent[]
+  /** Les réservations du chantier ; seules les « sorti » comptent. */
+  materiaux: readonly { statut?: string | null; quantite?: number | string | null; prix_vu_ht?: number | string | null }[]
+  taches: readonly { faite?: boolean | null }[]
+  chantier: { statut?: string | null; date_fin_prevue?: string | null }
+  jour: string
+}): Indicateurs {
+  const argent = argentDossier(p.devis, p.factures)
+  const devisHt = p.devis && p.devis.total_ht !== null && p.devis.total_ht !== undefined && p.devis.total_ht !== '' ? centimes(p.devis.total_ht) : null
+  let sortie = 0, lignes = 0, sansPrix = 0
+  for (const m of p.materiaux) {
+    if (m.statut !== 'sorti') continue
+    const q = num(m.quantite)
+    const prix = m.prix_vu_ht === null || m.prix_vu_ht === undefined || m.prix_vu_ht === '' ? null : num(m.prix_vu_ht)
+    if (prix === null || !Number.isFinite(prix) || prix < 0) { sansPrix++; continue }
+    lignes++
+    sortie += Math.round(q * prix * 100)
+  }
+  const marge = devisHt && devisHt > 0 && lignes > 0 ? { montant: devisHt - sortie, pct: Math.round(((devisHt - sortie) / devisHt) * 100), partielle: sansPrix > 0 } : null
+  return { devisId: p.devis?.id ?? null, argent, devisHt, matiere: { sortie, lignes, sansPrix }, marge, avancement: avancement(p.taches), retard: joursDeRetard(p.chantier, p.jour) }
+}
+const num = (v: number | string | null | undefined): number => { const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v.replace(',', '.')) : NaN; return Number.isFinite(n) ? n : 0 }
+
 /** Jours de retard d'un chantier ouvert dont la fin prévue est STRICTEMENT passée (jour de Paris) ; 0 sinon, null sans date. */
 export function joursDeRetard(c: { statut?: string | null; date_fin_prevue?: string | null }, aujourdhui: string): number | null {
   if (!c.date_fin_prevue || !/^\d{4}-\d{2}-\d{2}$/.test(c.date_fin_prevue)) return null
@@ -47,34 +97,37 @@ export function joursDeRetard(c: { statut?: string | null; date_fin_prevue?: str
   return Math.round((j(aujourdhui) - j(c.date_fin_prevue)) / 86_400_000)
 }
 
-export type Bouton = { actif: boolean; raison: string | null }
+export type Bouton = { actif: boolean; raison: string | null; solde?: boolean }
 export type ActionsChantier = { facturer: Bouton; notifier: Bouton }
 
 /**
  * Les boutons « Facturer » et « Notifier le client » n'appellent que des chemins qui EXISTENT déjà, et seulement quand ce
  * chemin fait exactement ce que le bouton annonce. Sinon le bouton est désactivé et dit pourquoi (jamais un faux succès) :
  *
- *  • Facturer → POST /api/factures { devis_id } (lib/factureDepuisDevis.ts) : facture le devis ENTIER. Actif seulement
- *    pour un devis signé qui n'a encore AUCUNE facture comptée : s'il en a une (un acompte par exemple), ce chemin
- *    refacturerait la totalité au lieu du solde.
+ *  • Facturer → POST /api/factures { devis_id } (lib/factureDepuisDevis.ts) : facture le devis ENTIER, ou son SOLDE (acomptes
+ *    déduits) s'il n'a que des factures d'acompte. Actif pour un devis signé sans facture complète ni de solde.
  *  • Notifier le client → POST /api/messages { action: 'reply' } : la réponse dans la conversation de la demande, par son
  *    canal. Actif seulement si le devis vient d'une demande marquée GAGNÉE : pour toute autre demande, ce chemin la
  *    repasse « répondue » et programme les relances commerciales (J+2, J+5, J+10) — on ne relance pas un client signé.
  */
 export function actionsChantier(p: {
-  devis: { id: string; statut?: string | null; lead_id?: string | null } | null
-  factures: readonly FacturePresti[]
+  devis: { id: string; statut?: string | null; lead_id?: string | null; total_ttc?: number | string | null } | null
+  factures: readonly FactureArgent[]
   leadStatut: string | null
 }): ActionsChantier {
   const signe = p.devis?.statut === 'accepte'
-  const comptees = p.devis ? facturesComptees(p.factures.filter((f) => f.devis_id === p.devis!.id)) : []
+  const comptees = p.devis ? facturesComptees(p.factures.filter((f) => f.devis_id === p.devis!.id)) as FactureArgent[] : []
+  // Audit de cohérence du 18/10, C3 corrigé : sur un devis dont seuls des ACOMPTES sont facturés, le même chemin émet la facture
+  // du SOLDE (lignes du devis moins chaque acompte, lib/factureDepuisDevis.ts). Une facture complète ou de solde existe : désactivé.
+  const du = p.devis && p.devis.total_ttc !== undefined && p.devis.total_ttc !== null ? centimes(p.devis.total_ttc) : null
+  const completes = comptees.filter((f) => !estAcompte(f, du))
   const facturer: Bouton = !p.devis
     ? { actif: false, raison: 'Ce chantier n’a pas de devis : la facture se crée depuis l’écran Factures.' }
     : !signe
       ? { actif: false, raison: 'Le devis n’est pas signé.' }
-      : comptees.length
-        ? { actif: false, raison: 'Une facture existe déjà pour ce devis (acompte ou totale) : le solde se facture depuis l’écran Factures.' }
-        : { actif: true, raison: null }
+      : completes.length
+        ? { actif: false, raison: 'Ce devis est déjà facturé (facture complète ou de solde) : pour la refaire, émettez d’abord un avoir depuis l’écran Factures.' }
+        : comptees.length ? { actif: true, raison: null, solde: true } : { actif: true, raison: null }
   const notifier: Bouton = !p.devis?.lead_id
     ? { actif: false, raison: 'Ce chantier ne vient pas d’une demande reçue : aucune conversation où écrire au client.' }
     : p.leadStatut !== 'gagne'

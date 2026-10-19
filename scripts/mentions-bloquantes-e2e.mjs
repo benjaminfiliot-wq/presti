@@ -83,6 +83,8 @@ try {
   T('le devis est envoyé (200)', env2.status === 200 && j2.ok === true, `HTTP ${env2.status} ${JSON.stringify(j2).slice(0, 200)}`)
   const { data: d2 } = await admin.from('devis').select('statut').eq('id', dev.id).single()
   T('statut passé à « envoye »', d2.statut === 'envoye', d2.statut)
+  // On ne facture qu'un devis SIGNÉ (audit de cohérence du 18/10, C6) : le client accepte, puis la facture se crée.
+  await admin.from('devis').update({ statut: 'accepte' }).eq('id', dev.id)
   const fac2 = await fetch(`${BASE}/api/factures`, { method: 'POST', headers: H, body: JSON.stringify({ devis_id: dev.id }) })
   const f2 = await fac2.json().catch(() => ({}))
   T('la facture se crée (200)', fac2.status === 200 && !!f2.id, `HTTP ${fac2.status} ${JSON.stringify(f2).slice(0, 200)}`)

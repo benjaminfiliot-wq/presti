@@ -19,10 +19,12 @@ export async function appel<T = Record<string, unknown>>(chemin: string, init: {
   if (ecrituresBloquees && (init.method ?? 'GET').toUpperCase() !== 'GET') return { ok: false, status: 0, erreur: MESSAGE_ECRITURE_EXEMPLE, code: 'exemple' }
   const jeton = (await supabase.auth.getSession()).data.session?.access_token ?? null
   if (!jeton) return { ok: false, status: 401, erreur: 'Session expirée : reconnectez-vous.' }
+  // Un fichier (FormData, photos du chantier) part tel quel : le navigateur pose lui-même l'en-tête multipart et sa frontière.
+  const fichier = typeof FormData !== 'undefined' && init.body instanceof FormData
   const r = await fetch(chemin, {
     method: init.method ?? 'GET',
-    headers: { Authorization: `Bearer ${jeton}`, ...(init.body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
-    body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
+    headers: { Authorization: `Bearer ${jeton}`, ...(init.body !== undefined && !fichier ? { 'Content-Type': 'application/json' } : {}) },
+    body: fichier ? (init.body as FormData) : init.body !== undefined ? JSON.stringify(init.body) : undefined,
     cache: 'no-store',
   }).catch(() => null)
   if (!r) return { ok: false, status: 0, erreur: 'Pas de réseau : rien n’a été enregistré.' }

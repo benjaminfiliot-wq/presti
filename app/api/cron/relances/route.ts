@@ -7,6 +7,7 @@ import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { purgerComptes } from '@/lib/purgeComptes'
 import { purgerRgpd } from '@/lib/purgesRgpd'
 import { purgerPacksExpires } from '@/lib/packPubPurge'
+import { expirerDevisDepasses } from '@/lib/devisExpiration'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { sortiePermise } from '@/lib/agents/sortie'
@@ -18,6 +19,8 @@ import { avecMentionAssistant } from '@/lib/mentionAssistant'
 import { tourCompta } from '@/lib/comptaAutomatisationsTour'
 import { tourRelancesImpayes } from '@/lib/relancesImpayesTour'
 import { magasinSupabase } from '@/lib/relancesImpayesMagasin'
+import { tourRappels } from '@/lib/crm/rappelsTour'
+import { envoyerPushArtisan } from '@/lib/push'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -214,6 +217,19 @@ export async function GET(req: Request) {
     await enregistrerPassage('purge-packs', { erreur: e instanceof Error ? e.message : String(e) }, false)
   }
 
+  // Les devis envoyés dont la validité est dépassée passent à « expiré » (audit de cohérence du 18/10, C8 : la colonne « Devis
+  // envoyé » du pipeline les gardait pour toujours, la tuile « devis en attente » les écartait). N'envoie rien : tourne aussi
+  // sous pause, comme les purges. Une erreur ne bloque pas le reste du passage.
+  let expirations: Record<string, unknown> = {}
+  try {
+    const r = await expirerDevisDepasses()
+    expirations = { ...r }
+    await enregistrerPassage('expiration-devis', expirations, r.erreurs.length === 0)
+  } catch (e) {
+    expirations = { erreur: e instanceof Error ? e.message : String(e) }
+    await enregistrerPassage('expiration-devis', expirations, false)
+  }
+
   // La ronde des alertes (§6) vit ici : Vercel n'accorde que deux tâches planifiées à cette
   // formule. Elle ne fait jamais échouer les relances — une alerte qui rate est journalisée.
   let alertes: { envoyees: number; ignorees: number } | { erreur: string } = { envoyees: 0, ignorees: 0 }
@@ -240,6 +256,21 @@ export async function GET(req: Request) {
       await enregistrerPassage('relances-impayes', r, r.erreurs.length === 0)
     } catch (e) { impayes = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] impayés', e); await enregistrerPassage('relances-impayes', { erreur: String(impayes) }, false) }
   }
+  // Les rappels du CRM (plan du 18/10, n°1, migration 0162) : une notification du matin par artisan Signature dont des rappels sont
+  // dus aujourd'hui ou en retard. Rien n'est envoyé au client. Jamais sous pause ; une erreur ne fait pas échouer le passage.
+  let rappelsMatin: unknown = 'pause'
+  if (!enPause && !interrompue) {
+    try {
+      const jour = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+      const r = await tourRappels(jour, {
+        lireRappels: async (j) => { const x = await supabaseAdmin.from('crm_rappels').select('artisan_id, echeance').is('fait_le', null).lte('echeance', j).limit(5000); return { data: x.data, error: x.error } },
+        lirePlans: async (ids) => { const x = await supabaseAdmin.from('artisans').select('id, plan').in('id', ids); return { data: x.data, error: x.error } },
+        envoyer: (id, charge) => envoyerPushArtisan(id, charge),
+      })
+      rappelsMatin = r
+      if (r.installe) await enregistrerPassage('rappels-crm', r, r.erreurs.length === 0)
+    } catch (e) { rappelsMatin = { erreur: e instanceof Error ? e.message : String(e) }; console.error('[cron/relances] rappels', e) }
+  }
   // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
@@ -257,5 +288,5 @@ export async function GET(req: Request) {
     due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers, compta, impayes })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin })
 }

@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { lireCsv } from '@/lib/prix/csv'
+import { lirePages } from '@/lib/crm/pages'
 import { authInventaire, estRefus } from '@/lib/inventaire/auth'
 import { listerObservations } from '@/lib/inventaire/observations'
 import { aReverifier, COLONNES_MATERIAU, type Materiau, type MateriauEntree } from '@/lib/inventaire/types'
+
+const LIMITE_MATERIAUX = 5000
 
 // Fiche matériau complète (§8 F1) — GET liste/recherche/fiche, POST créer/mettre à jour/
 // importer un CSV, DELETE. Les mouvements de stock restent sur /api/inventaire.
@@ -55,12 +58,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, materiau, observations, prix_vu_a_reverifier: aReverifier(materiau.prix_vu_le) })
   }
 
-  let requete = supabaseAdmin.from('materiaux').select(COLONNES_MATERIAU).eq('artisan_id', a.uid)
-  if (q) {
+  // C7 (audit du 18/10) : `.limit(500)` coupait l'inventaire (et ses alertes « stock bas ») sans le dire. Lecture par pages,
+  // une requête neuve par page, `tronque` levé si la limite est atteinte.
+  const requete = () => {
+    const r = supabaseAdmin.from('materiaux').select(COLONNES_MATERIAU).eq('artisan_id', a.uid)
+    if (!q) return r
     const motif = `%${q.replace(/[%_,()]/g, '').replace(/[\s-]+/g, '%')}%`
-    requete = requete.or(`nom.ilike.${motif},marque.ilike.${motif},reference_fabricant.ilike.${motif},reference_fournisseur.ilike.${motif},categorie.ilike.${motif}`)
+    return r.or(`nom.ilike.${motif},marque.ilike.${motif},reference_fabricant.ilike.${motif},reference_fournisseur.ilike.${motif},categorie.ilike.${motif}`)
   }
-  const { data, error } = await requete.order('nom').limit(500)
+  const { data, error } = await lirePages((de, fin) => requete().order('nom').order('id').range(de, fin), LIMITE_MATERIAUX)
   if (error) { console.error('[inventaire/materiaux] GET:', error.message); return NextResponse.json({ error: 'Lecture impossible.' }, { status: 500 }) }
   const materiaux = ((data ?? []) as unknown as Brut[]).map(normaliser)
   const alertes = materiaux.filter((m) => Number(m.seuil_alerte) > 0 && m.quantite_totale <= Number(m.seuil_alerte))
@@ -68,6 +74,7 @@ export async function GET(req: Request) {
     ok: true,
     materiaux: materiaux.map((m) => ({ ...m, prix_vu_a_reverifier: aReverifier(m.prix_vu_le) })),
     alertes: alertes.map((m) => ({ id: m.id, nom: m.nom, unite: m.unite, reste: m.quantite_totale, seuil: Number(m.seuil_alerte) })),
+    tronque: materiaux.length >= LIMITE_MATERIAUX,
   })
 }
 

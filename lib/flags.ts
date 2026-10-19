@@ -170,6 +170,15 @@ export const FLAGS = {
    *  le passage quotidien refusent les autres offres, l'écran Factures montre le réglage verrouillé avec renvoi vers /abonnement.
    *  La grille des offres, le comparatif de la landing et la page Tarifs gagnent seuls leur ligne. Baissé : tout cela disparaît. */
   relancesImpayes: true,
+  /** 18/10/2026 — CRM, lot 3 (plans/crm-idees-twenty-1810.md, n°5) : PHOTOS et PIÈCES du chantier (bucket PRIVÉ chantier-pieces, table
+   *  chantier_pieces, migration 0163 ; routes /api/crm/pieces*, section « Photos et pièces » de la fiche chantier). Baissé : la section
+   *  n'existe pas et les routes répondent 404. Se lève dans cet ordre : 0163 appliquée et contrôlée, scripts/crm-lot3-qa.mjs vert
+   *  (partie « en vrai » comprise), relecture de conformité (intérieurs de particuliers, visages), accord de Benj. */
+  crmPieces: false,
+  /** 18/10/2026 — CRM, lot 3 (n°6) : onglet PLANNING de la semaine (conflits, décaler un chantier) et LIEN D'AGENDA privé (flux ICS,
+   *  table crm_agenda, migration 0164 ; routes /api/crm/agenda et /api/agenda/<jeton>). Baissé : pas d'onglet, routes 404. Se lève
+   *  après 0164 appliquée, scripts/crm-lot3-qa.mjs vert, et l'accord de Benj. */
+  crmPlanning: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

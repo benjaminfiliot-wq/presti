@@ -9,13 +9,15 @@
 // RLS de chaque table (lecture de SES lignes) limite ce qu'il a le droit de recevoir — voir la migration 0158.
 
 /**
- * Les tables que l'écran écoute. ⚠️ Identique à la liste de la publication `supabase_realtime` de la migration 0158 (scripts/crm-qa.mjs
+ * Les tables que l'écran écoute. ⚠️ Identique à la liste de la publication `supabase_realtime` des migrations 0158 et 0162 (scripts/crm-qa.mjs
  * compare les deux). Toutes portent `artisan_id`, condition du filtre. `stock` n'y est pas (pas d'artisan_id) : ses variations passent par
  * `mouvements_stock`.
  */
 export const TABLES_TEMPS_REEL = [
   'devis', 'factures', 'leads', 'chantiers', 'chantier_taches', 'chantier_equipe', 'chantier_materiaux',
   'materiaux', 'mouvements_stock', 'vehicules', 'equipe_membres', 'commandes_fournisseur',
+  // 18/10 : les rappels et rendez-vous (migration 0162, qui les ajoute à la publication).
+  'crm_rappels',
 ] as const
 export type TableTempsReel = (typeof TABLES_TEMPS_REEL)[number]
 
@@ -23,6 +25,7 @@ export type TableTempsReel = (typeof TABLES_TEMPS_REEL)[number]
 export const LIBELLE_TABLE: Record<TableTempsReel, string> = {
   devis: 'Devis', factures: 'Facture', leads: 'Demande', chantiers: 'Chantier', chantier_taches: 'Tâche', chantier_equipe: 'Équipe du chantier',
   chantier_materiaux: 'Matériel réservé', materiaux: 'Inventaire', mouvements_stock: 'Stock', vehicules: 'Véhicule', equipe_membres: 'Équipe', commandes_fournisseur: 'Commande',
+  crm_rappels: 'Rappel',
 }
 
 const RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -31,9 +34,13 @@ export type Abonnement = { schema: 'public'; table: TableTempsReel; event: '*'; 
 /** Le filtre d'un compte. Un identifiant qui n'est pas un uuid ne donne AUCUN abonnement (jamais un filtre fabriqué à partir de n'importe quoi). */
 export const filtreCompte = (uid: string): string | null => (RE_UUID.test(uid) ? `artisan_id=eq.${uid.toLowerCase()}` : null)
 
-export function abonnements(uid: string): Abonnement[] {
+/**
+ * Les abonnements d'un compte. `sans` : des tables encore ABSENTES de la base (une migration pas encore appliquée, comme 0162 pour
+ * crm_rappels) — s'abonner à une table qui n'existe pas fait échouer TOUT le canal, et l'écran perdrait son temps réel entier.
+ */
+export function abonnements(uid: string, sans: readonly TableTempsReel[] = []): Abonnement[] {
   const filter = filtreCompte(uid)
-  return filter ? TABLES_TEMPS_REEL.map((table) => ({ schema: 'public' as const, table, event: '*' as const, filter })) : []
+  return filter ? TABLES_TEMPS_REEL.filter((t) => !sans.includes(t)).map((table) => ({ schema: 'public' as const, table, event: '*' as const, filter })) : []
 }
 
 export type Minuteur = { set: (f: () => void, ms: number) => unknown; clear: (id: unknown) => void }

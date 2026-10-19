@@ -821,14 +821,17 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     const complete = vivantes.find((f) => !/^Acompte/i.test(f.objet ?? ''))
     if (!acompte && complete) return ko(`Ce devis est déjà facturé (${complete.numero}). Pour refaire la facture, il faut d'abord un avoir (écran Factures).`)
     const acomptes = vivantes.filter((f) => /^Acompte/i.test(f.objet ?? ''))
-    const montant = acompte ? Math.round(num(d.total_ttc) * acompte) / 100 : num(d.total_ttc)
+    // C3 (audit du 18/10) : la facture complète d'un devis dont un acompte est facturé est une facture de SOLDE, qui le déduit
+    // (lib/factureDepuisDevis.ts) : l'aperçu annonce le reste dû, pas le devis entier.
+    const dejaAcompte = acomptes.filter((f) => f.statut === 'emise' || f.statut === 'payee').reduce((s, f) => s + num(f.total_ttc), 0)
+    const montant = acompte ? Math.round(num(d.total_ttc) * acompte) / 100 : Math.round((num(d.total_ttc) - (acomptes.length ? dejaAcompte : 0)) * 100) / 100
     const alertes: string[] = ['Une facture est émise et scellée dès sa création : numéro définitif, plus modifiable (une erreur se corrige par un avoir).']
-    if (acomptes.length && !acompte) alertes.push(`Un acompte a déjà été facturé (${acomptes.map((f) => f.numero).join(', ')}) : cette facture porte 100 % du devis et n'en déduit PAS l'acompte. Presti ne fait pas de facture de solde avec déduction.`)
+    if (acomptes.length && !acompte) alertes.push(`Un acompte a déjà été facturé (${acomptes.map((f) => f.numero).join(', ')}) : ce sera la facture de SOLDE. Elle reprend les lignes du devis et déduit l'acompte (${fmtEuros(dejaAcompte)}) : le client ne paie que le reste.`)
     if (acompte && acomptes.length) alertes.push(`Un autre acompte existe déjà (${acomptes.map((f) => f.numero).join(', ')}).`)
     return {
       ok: true, entrees: { ...e }, objet: { type: 'devis', id: d.id },
-      apercu: apercu(acompte ? `Facture d’acompte ${fmtNombre(acompte)} % — devis ${d.numero}` : `Facture complète — devis ${d.numero}`, {
-        lignes: [{ label: 'Client', valeur: d.client_nom ?? '—' }, { label: 'Devis', valeur: `${d.numero} — ${d.objet ?? 'sans objet'}` }, { label: acompte ? 'Montant de l’acompte (environ)' : 'Montant TTC', valeur: fmtEuros(montant) }, { label: 'Échéance', valeur: '30 jours après l’émission' }],
+      apercu: apercu(acompte ? `Facture d’acompte ${fmtNombre(acompte)} % — devis ${d.numero}` : acomptes.length ? `Facture de solde — devis ${d.numero}` : `Facture complète — devis ${d.numero}`, {
+        lignes: [{ label: 'Client', valeur: d.client_nom ?? '—' }, { label: 'Devis', valeur: `${d.numero} — ${d.objet ?? 'sans objet'}` }, { label: acompte ? 'Montant de l’acompte (environ)' : acomptes.length ? 'Reste à payer TTC (acompte déduit)' : 'Montant TTC', valeur: fmtEuros(montant) }, { label: 'Échéance', valeur: '30 jours après l’émission' }],
         alertes, irreversible: true, lien: lienDe('devis', d.id),
       }),
     }

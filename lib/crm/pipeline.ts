@@ -23,8 +23,9 @@
 // et la colonne Demande additionnait les deux montants. Les brouillons d'un même client (même demande, sinon même e-mail,
 // sinon même nom) ne font plus qu'UNE carte : le plus récent, qui dit combien de brouillons plus anciens il cache. Un devis
 // ENVOYÉ, lui, compte toujours pour lui-même.
-import { facturesComptees, type FacturePresti } from '../comptaTableau.ts'
+import { facturesComptees, jourParis } from '../comptaTableau.ts'
 import { cleEmail, cleNom } from './clients.ts'
+import { argentDossier, estAcompte, type FactureArgent } from './argent.ts'
 
 export const ETAPES = ['demande', 'devis_envoye', 'signe', 'chantier', 'a_facturer', 'paye'] as const
 export type Etape = (typeof ETAPES)[number]
@@ -38,9 +39,13 @@ export type LeadP = { id: string; artisan_id?: string | null; statut?: string | 
 export type DevisP = {
   id: string; artisan_id?: string | null; lead_id?: string | null; statut?: string | null; numero?: string | null; objet?: string | null
   client_nom?: string | null; client_email?: string | null; total_ttc?: Nombre; created_at?: string | null; envoye_le?: string | null; accepte_le?: string | null
+  acompte_pct?: Nombre; date_emission?: string | null
 }
-export type FactureP = FacturePresti
-export type ChantierP = { id: string; artisan_id?: string | null; devis_id?: string | null; statut?: string | null; titre?: string | null; client_nom?: string | null; cree_le?: string | null }
+export type FactureP = FactureArgent
+export type ChantierP = {
+  id: string; artisan_id?: string | null; devis_id?: string | null; statut?: string | null; titre?: string | null; client_nom?: string | null; cree_le?: string | null
+  date_debut?: string | null; date_fin_reelle?: string | null
+}
 export type DeplacementP = { objet: string; objet_id: string; vers?: string | null; etape_derivee?: string | null; cree_le?: string | null }
 
 export type Preuve =
@@ -74,9 +79,19 @@ export type Carte = {
   depuis: string | null
   /** Brouillons plus anciens du même client, cachés derrière cette carte (comptés une seule fois). */
   autresBrouillons: number
+  /** Les sept pastilles du dossier (frise), calculées des mêmes statuts que la colonne. */
+  frise: Frise
+  /** Reste à encaisser sur ce dossier, en centimes (lib/crm/argent.ts) ; 0 sans devis. */
+  aEncaisser: number
+  /** Le prochain rappel ouvert du dossier (crm_rappels), posé par lib/crm/vue.ts ; absent sans rappel. */
+  rappel?: { echeance: string; heure: string | null; type: string; retard: number }
 }
 
-export type Colonne = { etape: Etape; libelle: string; cartes: Carte[]; montant: number }
+export type Colonne = {
+  etape: Etape; libelle: string; cartes: Carte[]; montant: number
+  /** Somme des restes à encaisser des cartes de la colonne (lib/crm/argent.ts). */
+  aEncaisser: number
+}
 export type Pipeline = { colonnes: Colonne[]; classes: number; vide: boolean }
 
 const centimes = (v: Nombre): number => {
@@ -92,8 +107,11 @@ export function etapeDevisSigne(totalTtc: Nombre, factures: readonly FactureP[],
   const du = centimes(totalTtc)
   let facture = 0, regle = 0
   for (const f of factures) { const c = centimes(f.total_ttc); facture += c; if (f.statut === 'payee') regle += c }
-  const couvre = du > 0 && facture >= du
-  if (couvre && regle >= du) return { etape: 'paye', preuve: 'paye' }
+  // Un centime d'écart par facture est toléré : l'arrondi de la TVA ligne à ligne (facture d'acompte puis de solde) peut laisser
+  // la somme à 0,01 € du devis, et le dossier resterait « à facturer 0,01 € » pour toujours (même règle : lib/crm/argent.ts).
+  const tol = factures.length
+  const couvre = du > 0 && facture >= du - tol
+  if (couvre && regle >= du - tol) return { etape: 'paye', preuve: 'paye' }
   if (couvre) return { etape: 'a_facturer', preuve: 'facture_impayee' }
   if (chantier && chantier.statut === 'termine') return { etape: 'a_facturer', preuve: 'chantier_termine' }
   if (chantier && chantier.statut !== 'annule') return { etape: 'chantier', preuve: 'chantier' }
@@ -161,9 +179,14 @@ export function cartes(e: EntreesPipeline): Carte[] {
   const leadsAvecDevis = new Set(devis.map((d) => d.lead_id).filter((x): x is string => !!x))
 
   const sortie: Carte[] = []
-  const pousser = (c: Omit<Carte, 'etape' | 'manuel' | 'autresBrouillons'>) => {
+  const pousser = (c: Omit<Carte, 'etape' | 'manuel' | 'autresBrouillons' | 'frise' | 'aEncaisser'>, f: EntreeFrise) => {
     const manuel = c.etapeDerivee === 'classe' ? null : deplacementEnVigueur(c.objet, c.id, c.etapeDerivee, deplacements)
-    sortie.push({ ...c, etape: manuel ?? c.etapeDerivee, manuel: manuel !== null && manuel !== c.etapeDerivee, autresBrouillons: 0 })
+    const estManuel = manuel !== null && manuel !== c.etapeDerivee
+    sortie.push({
+      ...c, etape: manuel ?? c.etapeDerivee, manuel: estManuel, autresBrouillons: 0,
+      frise: frise({ ...f, manuel: estManuel ? manuel : null }),
+      aEncaisser: f.devis ? argentDossier(f.devis, f.factures).resteAEncaisser : 0,
+    })
   }
 
   for (const d of devis) {
@@ -179,7 +202,7 @@ export function cartes(e: EntreesPipeline): Carte[] {
       montant: centimes(d.total_ttc), etapeDerivee: etape, preuve,
       devisId: d.id, leadId: d.lead_id ?? null, chantierId: chantier?.id ?? null,
       depuis: dates.sort().at(-1) ?? null,
-    })
+    }, { lead, devis: d, factures, chantier })
   }
   for (const l of leads) {
     if (leadsAvecDevis.has(l.id)) continue
@@ -188,7 +211,7 @@ export function cartes(e: EntreesPipeline): Carte[] {
       cle: `lead:${l.id}`, objet: 'lead', id: l.id,
       titre: texte(l.type_chantier) ?? 'Demande', client: texte(l.nom_prospect),
       montant: null, etapeDerivee: etape, preuve, devisId: null, leadId: l.id, chantierId: null, depuis: l.created_at ?? null,
-    })
+    }, { lead: l, devis: null, factures: [], chantier: null })
   }
   for (const c of chantiers) {
     if (c.devis_id && devis.some((d) => d.id === c.devis_id)) continue // déjà porté par la carte de son devis
@@ -196,7 +219,7 @@ export function cartes(e: EntreesPipeline): Carte[] {
     pousser({
       cle: `chantier:${c.id}`, objet: 'chantier', id: c.id, titre: texte(c.titre) ?? 'Chantier', client: texte(c.client_nom),
       montant: null, etapeDerivee: etape, preuve, devisId: null, leadId: null, chantierId: c.id, depuis: c.cree_le ?? null,
-    })
+    }, { lead: null, devis: null, factures: [], chantier: c })
   }
   return regrouperBrouillons(sortie, new Map(devis.map((d) => [d.id, d])))
 }
@@ -225,7 +248,144 @@ export function pipeline(e: EntreesPipeline): Pipeline {
   const toutes = cartes(e)
   const colonnes: Colonne[] = ETAPES.map((etape) => {
     const cs = toutes.filter((c) => c.etape === etape).sort((a, b) => String(b.depuis ?? '').localeCompare(String(a.depuis ?? '')) || a.cle.localeCompare(b.cle))
-    return { etape, libelle: LIBELLES_ETAPES[etape], cartes: cs, montant: cs.reduce((s, c) => s + (c.montant ?? 0), 0) }
+    return { etape, libelle: LIBELLES_ETAPES[etape], cartes: cs, montant: cs.reduce((s, c) => s + (c.montant ?? 0), 0), aEncaisser: cs.reduce((s, c) => s + c.aEncaisser, 0) }
   })
   return { colonnes, classes: toutes.filter((c) => c.etape === 'classe').length, vide: toutes.length === 0 }
+}
+
+// ── La FRISE d'un dossier : sept pastilles, Demande · Devis envoyé · Signé · Acompte · Chantier · Facturé · Payé ───────────
+// Calculée des MÊMES lignes et des mêmes règles que la colonne (etapeDevis, lib/crm/argent.ts) : jamais un champ « étape » à
+// tenir à jour. Les étapes ne sont pas strictement à la suite (un chantier commence parfois avant que l'acompte soit réglé) :
+// chacune dit son propre état. Le dossier « classé » (devis refusé ou expiré, demande perdue) s'arrête à l'étape où il a
+// cessé ; les suivantes ne s'appliquent plus. scripts/crm-qa.mjs vérifie que la frise et la colonne disent la même chose.
+export const ETAPES_FRISE = ['demande', 'devis', 'signe', 'acompte', 'chantier', 'facture', 'paye'] as const
+export type EtapeFrise = (typeof ETAPES_FRISE)[number]
+export const LIBELLES_FRISE: Record<EtapeFrise, string> = {
+  demande: 'Demande', devis: 'Devis envoyé', signe: 'Signé', acompte: 'Acompte', chantier: 'Chantier', facture: 'Facturé', paye: 'Payé',
+}
+/** fait (vert) · en_cours (corail) · a_venir (gris) · na (ne s'applique pas à ce dossier) · arrete (le dossier s'est arrêté là). */
+export type EtatPastille = 'fait' | 'en_cours' | 'a_venir' | 'na' | 'arrete'
+export type Pastille = {
+  etape: EtapeFrise; libelle: string; etat: EtatPastille
+  /** Le jour du fait (AAAA-MM-JJ, Paris), s'il est connu. */
+  date: string | null
+  /** Ce que l'artisan lit au toucher (sans la date, que l'écran ajoute). */
+  detail: string
+  /** La pièce derrière la pastille, sur un écran qui existe. */
+  piece: { libelle: string; href: string } | null
+}
+export type ActionFrise = { etape: EtapeFrise; libelle: string; href: string | null; acompte?: { devisId: string; pct: number; montant: number } }
+export type Frise = {
+  pastilles: Pastille[]
+  /** Le geste possible sur la première étape qui n'est pas faite (null : rien à faire, ou dossier classé). */
+  prochaine: ActionFrise | null
+  /** Déplacé à la main dans le pipeline : la frise suit quand même les vrais statuts, et le dit. */
+  manuel: Etape | null
+}
+export type EntreeFrise = {
+  lead: LeadP | null
+  devis: DevisP | null
+  /** Les factures DU devis (les non comptées sont écartées ici). */
+  factures: readonly FactureP[]
+  chantier: ChantierP | null
+  manuel?: Etape | null
+}
+
+/** « 2026-10-12 » depuis un jour ou un horodatage (jour de Paris) ; null sinon. */
+export function jourDe(v: string | null | undefined): string | null {
+  if (!v) return null
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v
+  const t = Date.parse(v)
+  return Number.isNaN(t) ? null : jourParis(new Date(t))
+}
+const euroTxt = (c: number) => `${(c / 100).toLocaleString('fr-FR', Number.isInteger(c / 100) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
+const derniere = (l: (string | null | undefined)[]): string | null => l.map(jourDe).filter((x): x is string => !!x).sort().at(-1) ?? null
+const LIBELLES_CHANTIER_OUVERT: Record<string, string> = { a_planifier: 'Chantier à planifier', planifie: 'Chantier planifié', en_cours: 'Chantier en cours', en_pause: 'Chantier en pause' }
+
+export function frise(e: EntreeFrise): Frise {
+  const { lead, devis, chantier } = e
+  const comptees = devis ? (facturesComptees(e.factures) as FactureP[]) : []
+  const a = argentDossier(devis, comptees)
+  const ds = devis ? (devis.statut ?? 'brouillon').toLowerCase() : null
+  const ls = (lead?.statut ?? '').toLowerCase()
+  const envoye = ds === 'envoye' || ds === 'accepte' || ds === 'refuse' || ds === 'expire'
+  const pDevis = devis ? { libelle: devis.numero ? `Devis ${devis.numero}` : 'Le devis', href: `/devis/${devis.id}` } : null
+  const pChantier = chantier ? { libelle: 'La fiche du chantier', href: `/crm/chantiers/${chantier.id}` } : null
+  const pFactures = { libelle: 'Les factures', href: '/factures' }
+  const P = (etape: EtapeFrise, etat: EtatPastille, date: string | null | undefined, detail: string, piece: Pastille['piece'] = null): Pastille =>
+    ({ etape, libelle: LIBELLES_FRISE[etape], etat, date: jourDe(date ?? null), detail, piece })
+
+  const p: Pastille[] = []
+  // 1. Demande
+  p.push(lead ? P('demande', 'fait', lead.created_at, 'Demande reçue', { libelle: 'La conversation', href: '/messages' })
+    : P('demande', 'na', null, devis ? 'Devis fait sans demande reçue' : 'Chantier ouvert sans demande reçue'))
+  // 2. Devis envoyé
+  let classe = false
+  if (!devis) {
+    if (chantier) p.push(P('devis', 'na', null, 'Petit chantier sans devis'))
+    else if (ls === 'perdu') { p.push(P('devis', 'arrete', null, 'Demande classée sans suite')); classe = true }
+    else if (ls === 'gagne') p.push(P('devis', 'na', null, 'Demande marquée gagnée, sans devis'))
+    else p.push(P('devis', 'a_venir', null, 'Pas encore de devis'))
+  } else if (envoye) p.push(P('devis', 'fait', devis.envoye_le ?? devis.date_emission ?? devis.created_at, 'Devis envoyé', pDevis))
+  else if (ls === 'perdu') { p.push(P('devis', 'arrete', null, 'Demande classée sans suite', pDevis)); classe = true }
+  else p.push(P('devis', 'en_cours', devis.created_at, 'Devis en brouillon, pas encore envoyé', pDevis))
+  // 3. Signé
+  if (classe) p.push(P('signe', 'na', null, 'Dossier classé'))
+  else if (!devis) p.push(chantier ? P('signe', 'na', null, 'Petit chantier sans devis') : ls === 'gagne' ? P('signe', 'fait', null, 'Demande marquée gagnée') : P('signe', 'a_venir', null, 'Pas encore signé'))
+  else if (ds === 'accepte') p.push(P('signe', 'fait', devis.accepte_le, 'Devis signé', pDevis))
+  else if (ds === 'refuse' || ds === 'expire') { p.push(P('signe', 'arrete', null, ds === 'refuse' ? 'Devis refusé' : 'Devis expiré', pDevis)); classe = true }
+  else if (ds === 'envoye') p.push(P('signe', 'en_cours', null, 'En attente de la réponse du client', pDevis))
+  else p.push(P('signe', 'a_venir', null, 'Le devis n’est pas encore envoyé'))
+  // 4. Acompte
+  const acomptes = comptees.filter((f) => estAcompte(f, a.devis))
+  if (classe) p.push(P('acompte', 'na', null, 'Dossier classé'))
+  else if (!devis) p.push(P('acompte', 'na', null, 'Sans devis, pas d’acompte'))
+  else if (a.acompte.factures > 0 && a.acompte.recu >= a.acompte.facture) p.push(P('acompte', 'fait', derniere(acomptes.map((f) => f.payee_le ?? f.date_emission)), `Acompte réglé : ${euroTxt(a.acompte.recu)}`, pFactures))
+  else if (a.acompte.factures > 0) p.push(P('acompte', 'en_cours', derniere(acomptes.map((f) => f.date_emission)), `Facture d’acompte émise (${euroTxt(a.acompte.facture)}), règlement attendu`, pFactures))
+  else if (a.acompte.pct === null) p.push(P('acompte', 'na', null, 'Pas d’acompte prévu au devis'))
+  else if (a.facture > 0) p.push(P('acompte', 'na', null, 'Facturé sans facture d’acompte'))
+  else p.push(P('acompte', 'a_venir', null, `Acompte de ${a.acompte.pct} % prévu au devis (${euroTxt(a.acompte.prevu ?? 0)}), pas encore demandé`, pDevis))
+  // 5. Chantier
+  if (classe) p.push(P('chantier', 'na', null, 'Dossier classé'))
+  else if (!chantier) p.push(P('chantier', 'a_venir', null, ds === 'accepte' || ls === 'gagne' ? 'Signé : le chantier reste à créer' : 'Pas encore de chantier'))
+  else if (chantier.statut === 'termine') p.push(P('chantier', 'fait', chantier.date_fin_reelle, 'Chantier terminé', pChantier))
+  else if (chantier.statut === 'annule') p.push(P('chantier', 'arrete', null, 'Chantier annulé', pChantier))
+  else p.push(P('chantier', 'en_cours', chantier.date_debut, LIBELLES_CHANTIER_OUVERT[chantier.statut ?? ''] ?? 'Chantier ouvert', pChantier))
+  // 6. Facturé — 7. Payé (seulement les factures du devis : celles d'un chantier sans devis ne lui sont pas rattachées)
+  const nonAcompte = comptees.filter((f) => !estAcompte(f, a.devis))
+  if (classe) { p.push(P('facture', 'na', null, 'Dossier classé')); p.push(P('paye', 'na', null, 'Dossier classé')) }
+  else if (!devis) {
+    const sans = chantier ? 'Chantier sans devis : sa facture se fait depuis l’écran Factures, sans lien avec le chantier' : 'Pas encore de devis'
+    p.push(P('facture', chantier ? 'na' : 'a_venir', null, sans)); p.push(P('paye', chantier ? 'na' : 'a_venir', null, sans))
+  } else {
+    const double = a.acompteDouble ? ` · attention : l’acompte (${euroTxt(a.acompteDouble)}) est aussi dans la facture du solde, à corriger par un avoir` : ''
+    if (a.couvre) p.push(P('facture', 'fait', derniere((nonAcompte.length ? nonAcompte : comptees).map((f) => f.date_emission)), `Facturé : ${euroTxt(a.facture)}${double}`, pFactures))
+    else if (a.facture > 0) p.push(P('facture', 'en_cours', derniere(comptees.map((f) => f.date_emission)), `${euroTxt(a.facture)} facturés sur ${euroTxt(a.devis ?? 0)}`, pFactures))
+    else p.push(P('facture', 'a_venir', null, 'Rien de facturé'))
+    if (a.regle) p.push(P('paye', 'fait', derniere(comptees.map((f) => f.payee_le)), 'Tout est réglé', pFactures))
+    else if (a.encaisse > 0) p.push(P('paye', 'en_cours', derniere(comptees.filter((f) => f.statut === 'payee').map((f) => f.payee_le)), `${euroTxt(a.encaisse)} encaissés sur ${euroTxt(Math.max(a.devis ?? 0, a.facture))}`, pFactures))
+    else p.push(P('paye', 'a_venir', null, a.facture > 0 ? 'Facturé, rien d’encaissé' : 'Rien d’encaissé'))
+  }
+  return { pastilles: p, prochaine: classe ? null : prochaineAction(p, e, a), manuel: e.manuel ?? null }
+}
+
+/** Le geste de la première étape qui n'est ni faite, ni hors sujet : il n'appelle qu'un écran ou un chemin qui existe. */
+function prochaineAction(p: Pastille[], e: EntreeFrise, a: ReturnType<typeof argentDossier>): ActionFrise | null {
+  const x = p.find((y) => y.etat === 'en_cours' || y.etat === 'a_venir')
+  if (!x) return null
+  const { lead, devis, chantier } = e
+  const vers = (libelle: string, href: string | null): ActionFrise => ({ etape: x.etape, libelle, href })
+  switch (x.etape) {
+    case 'devis': return x.etat === 'a_venir' ? (lead ? vers('Créer le devis', `/devis/nouveau?lead=${lead.id}`) : null) : devis ? vers('Ouvrir le brouillon', `/devis/${devis.id}`) : null
+    case 'signe': return devis ? vers(x.etat === 'en_cours' ? 'Voir le devis envoyé' : 'Envoyer le devis', `/devis/${devis.id}`) : null
+    case 'acompte':
+      if (x.etat === 'en_cours') return vers('Voir la facture d’acompte', '/factures')
+      return devis && devis.statut === 'accepte' && a.acompte.pct !== null && a.acompte.prevu !== null
+        ? { etape: 'acompte', libelle: 'Demander l’acompte', href: null, acompte: { devisId: devis.id, pct: a.acompte.pct, montant: a.acompte.prevu } }
+        : devis ? vers('Voir le devis', `/devis/${devis.id}`) : null
+    case 'chantier': return chantier ? vers('Ouvrir le chantier', `/crm/chantiers/${chantier.id}`) : vers('Créer le chantier', '/crm?vue=chantiers')
+    case 'facture': return chantier ? vers('Facturer depuis le chantier', `/crm/chantiers/${chantier.id}`) : devis ? vers('Facturer depuis le devis', `/devis/${devis.id}`) : null
+    case 'paye': return vers('Voir les factures', '/factures')
+    default: return null
+  }
 }

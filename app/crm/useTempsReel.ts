@@ -14,7 +14,9 @@ import { abonnements, creerRafale, LIBELLE_TABLE, type TableTempsReel } from '@/
 export type LienTempsReel = 'connexion' | 'direct' | 'coupe'
 export type Dernier = { table: TableTempsReel; libelle: string; a: number }
 
-export function useTempsReel({ uid, actif, surChangement }: { uid: string | null; actif: boolean; surChangement: () => void }): { lien: LienTempsReel; dernier: Dernier | null } {
+export function useTempsReel({ uid, actif, surChangement, sans = [] }: { uid: string | null; actif: boolean; surChangement: () => void; sans?: readonly TableTempsReel[] }): { lien: LienTempsReel; dernier: Dernier | null } {
+  // Les tables absentes de la base (migration pas encore appliquée) : jamais écoutées, sinon le canal entier tombe.
+  const sansCle = [...sans].sort().join(',')
   const [lien, setLien] = useState<LienTempsReel>('connexion')
   const [dernier, setDernier] = useState<Dernier | null>(null)
   // Le rappel le plus récent, sans réabonner le canal à chaque rendu.
@@ -23,7 +25,7 @@ export function useTempsReel({ uid, actif, surChangement }: { uid: string | null
 
   useEffect(() => {
     if (!uid || !actif) { setLien('connexion'); return }
-    const liste = abonnements(uid)
+    const liste = abonnements(uid, sansCle ? (sansCle.split(',') as TableTempsReel[]) : [])
     if (!liste.length) return
     const rafale = creerRafale(() => rappel.current())
     let aEteCoupe = false
@@ -45,7 +47,7 @@ export function useTempsReel({ uid, actif, surChangement }: { uid: string | null
     })
     const filet = setInterval(() => { if (document.visibilityState === 'visible') rafale.signaler() }, 60_000)
     return () => { clearInterval(filet); rafale.annuler(); void supabase.removeChannel(canal) }
-  }, [uid, actif])
+  }, [uid, actif, sansCle])
 
   return { lien, dernier }
 }

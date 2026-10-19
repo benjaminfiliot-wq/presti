@@ -1,12 +1,14 @@
 'use client'
 
 import type { TableauCrm } from '@/lib/crm/tableau'
+import type { VueRappels } from '@/lib/crm/vue'
 import { euros } from './client'
 import { Lien, useExemple } from './mode'
+import { AFaireAujourdhui, RelancesDevis } from './Rappels'
 
 // Le tableau de bord du CRM. Chaque case vient de lib/crm/tableau.ts (données réelles du compte) ; une case sans donnée
 // affiche « — » et dit pourquoi. Jamais un chiffre d'exemple.
-export default function TableauCrmVue({ t }: { t: TableauCrm }) {
+export default function TableauCrmVue({ t, r, onChange }: { t: TableauCrm; r?: VueRappels; onChange?: () => void | Promise<void> }) {
   const exemple = useExemple()
   const retard = t.chantiers?.enRetard ?? null
   const cases = [
@@ -26,7 +28,15 @@ export default function TableauCrmVue({ t }: { t: TableauCrm }) {
       cle: 'relances', label: 'Relances dues',
       val: t.relancesDues ? String(t.relancesDues.nombre) : '—',
       sub: t.relancesDues ? `Devis envoyés sans réponse depuis plus de ${t.relancesDues.seuilJours} jours` : 'Aucun devis pour l’instant',
-      href: '/chiffres', ton: t.relancesDues?.nombre ? 'warn' : '',
+      // 18/10 : la tuile devient actionnable — elle mène aux devis à relancer, juste dessous (préparer, relire, envoyer).
+      href: r ? '#crm-relances-dues' : '/chiffres', ton: t.relancesDues?.nombre ? 'warn' : '',
+    },
+    {
+      // Le reste à encaisser de chaque dossier (lib/crm/argent.ts) : la même somme que les colonnes du pipeline.
+      cle: 'encaisser', label: 'À encaisser',
+      val: t.aEncaisser ? euros(t.aEncaisser.montant) : '—',
+      sub: t.aEncaisser ? (t.aEncaisser.dossiers ? `Reste dû sur ${t.aEncaisser.dossiers} dossier${t.aEncaisser.dossiers > 1 ? 's' : ''} signé${t.aEncaisser.dossiers > 1 ? 's' : ''} ou facturé${t.aEncaisser.dossiers > 1 ? 's' : ''}` : 'Tout ce qui est signé est encaissé') : 'Aucun devis signé pour l’instant',
+      href: '/crm?vue=pipeline', ton: '',
     },
     {
       cle: 'retard', label: 'Chantiers en retard',
@@ -44,7 +54,13 @@ export default function TableauCrmVue({ t }: { t: TableauCrm }) {
   return (
     <div className="crm-tdb">
       <div className="crm-kpis">
-        {cases.map((c) => (
+        {cases.map((c) => c.href.startsWith('#') ? (
+          <a key={c.cle} className={`crm-kpi ${c.ton}`} href={c.href} data-crm-case={c.cle}>
+            <span className="lab">{c.label}</span>
+            <span className="val tnum">{c.val}</span>
+            <span className="sub">{c.sub}</span>
+          </a>
+        ) : (
           <Lien key={c.cle} className={`crm-kpi ${c.ton}`} href={c.href} data-crm-case={c.cle}>
             <span className="lab">{c.label}</span>
             <span className="val tnum">{c.val}</span>
@@ -52,6 +68,12 @@ export default function TableauCrmVue({ t }: { t: TableauCrm }) {
           </Lien>
         ))}
       </div>
+      {r && (
+        <div className="crm-grille2">
+          <AFaireAujourdhui a={r.aFaire} jour={t.jour} disponibles={r.disponibles} onChange={onChange} />
+          <RelancesDevis liste={r.devisARelancer} onChange={onChange} />
+        </div>
+      )}
       <div className="crm-grille2">
         <section className="psh-panel" aria-labelledby="crm-retards">
           <header><h2 id="crm-retards">Chantiers en retard</h2></header>

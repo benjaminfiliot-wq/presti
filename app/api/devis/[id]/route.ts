@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
+import { datesDuStatut } from '@/lib/devisStatut'
 import { authArtisan as verifierSession, estEchec, getUserRevocable } from '@/lib/authArtisan'
 
 const DEVIS_STATUTS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expire']
@@ -18,7 +19,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const uid = session.uid
 
     // Vérifier la propriété
-    const { data: owned } = await supabaseAdmin.from('devis').select('id').eq('id', id).eq('artisan_id', uid).maybeSingle()
+    const { data: owned } = await supabaseAdmin.from('devis').select('id, statut, envoye_le, accepte_le').eq('id', id).eq('artisan_id', uid).maybeSingle()
     if (!owned) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
 
     const b = await req.json()
@@ -45,7 +46,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       total_ttc: totals.total_ttc,
       updated_at: new Date().toISOString(),
     }
-    if (typeof b?.statut === 'string' && DEVIS_STATUTS.includes(b.statut)) patch.statut = b.statut
+    if (typeof b?.statut === 'string' && DEVIS_STATUTS.includes(b.statut)) {
+      patch.statut = b.statut
+      // C1 + C5 (audit du 18/10) : envoyé ou signé « à la main » (écran Devis, assistant) = la date du geste, comme l'envoi
+      // par e-mail et l'acceptation en ligne. Un seul calcul : lib/devisStatut.ts.
+      Object.assign(patch, datesDuStatut(owned, b.statut))
+    }
 
     const { error: upErr } = await supabaseAdmin.from('devis').update(patch).eq('id', id).eq('artisan_id', uid)
     if (upErr) { console.error('[devis PATCH]', upErr.message); return NextResponse.json({ error: 'Mise à jour impossible' }, { status: 500 }) }

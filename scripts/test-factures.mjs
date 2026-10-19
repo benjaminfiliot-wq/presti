@@ -2,6 +2,7 @@
 import fs from 'fs'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
+for (const [k, v] of Object.entries(env)) if (!process.env[k]) process.env[k] = v // verifierSessionTest lit process.env
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'http://localhost:3000'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
@@ -19,6 +20,10 @@ const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${tok.acc
 
 const dev = await (await fetch(`${APP}/api/devis`, { method: 'POST', headers: H, body: JSON.stringify({ objet: 'Test facture', client_nom: 'Client X', lignes: [{ designation: 'Pose chauffe-eau', quantite: 1, unite: 'u', prix_unitaire_ht: 620, tva_taux: 10 }] }) })).json()
 check('devis créé', !!dev.id, dev.numero || dev.error)
+// On ne facture qu'un devis SIGNÉ (audit de cohérence du 18/10, C6) : refus d'abord, puis signature et facture.
+const refus = await fetch(`${APP}/api/factures`, { method: 'POST', headers: H, body: JSON.stringify({ devis_id: dev.id }) })
+check('facture d’un devis non signé refusée (409)', refus.status === 409, `HTTP ${refus.status}`)
+await rest(`devis?id=eq.${dev.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ statut: 'accepte' }) })
 
 const fac = await (await fetch(`${APP}/api/factures`, { method: 'POST', headers: H, body: JSON.stringify({ devis_id: dev.id }) })).json()
 check('facture créée depuis le devis', !!fac.id, fac.numero || fac.error)

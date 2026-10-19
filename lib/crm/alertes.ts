@@ -213,6 +213,12 @@ export function construireBriefing(d: DonneesAtelier, existe: (objetCle: string)
     c.critiques ? `${pluriel(c.critiques, 'urgence')} : ${[c.retards && pluriel(c.retards, 'chantier en retard', 'chantiers en retard'), c.livraisonsEnRetard && pluriel(c.livraisonsEnRetard, 'livraison en retard', 'livraisons en retard'), (c.critiques - c.retards - c.livraisonsEnRetard) > 0 && 'un stock insuffisant'].filter(Boolean).join(', ')}.` : 'Aucune urgence.',
   ]
   etapes.push({ cle: 'resume', objetCle: null, gravite: c.critiques ? 'critique' : 'info', titre: 'Bonjour, voici la journée', texte: phrases.join(' ') })
+  // 18/10 — les rappels de l'artisan (lib/crm/rappels.ts) : « À faire aujourd'hui », le même compte que le tableau de bord.
+  const rp = d.rappels
+  if (rp && rp.aujourdhui + rp.enRetard > 0) {
+    const n = rp.aujourdhui + rp.enRetard
+    etapes.push({ cle: 'rappels', objetCle: null, gravite: rp.enRetard ? 'attention' : 'info', titre: 'À faire aujourd’hui', texte: `${pluriel(n, 'rappel')}${rp.enRetard ? `, dont ${rp.enRetard} en retard` : ''} : ${rp.premiers.slice(0, 3).join(' ; ')}${n > 3 ? '…' : ''}.` })
+  }
 
   const rang = (x: ChantierA) => Math.min(...(r.parChantier.get(x.id) ?? []).map((a) => ORDRE_GRAVITE[a.gravite]), 3)
   const ordre = visibles

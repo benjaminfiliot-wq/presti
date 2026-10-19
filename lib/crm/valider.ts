@@ -261,6 +261,57 @@ export function validerModificationNote(b: unknown): Resultat<{ texte: string }>
   return r.ok ? ok({ texte: r.valeur.texte as string }) : r
 }
 
+// ── Rappel (0162, crm_rappels) ────────────────────────────────────────────────────────────────────────────────
+export const TYPES_RAPPEL = ['rappeler', 'relancer_devis', 'visite', 'metre', 'rendez_vous', 'autre'] as const
+export type TypeRappelV = (typeof TYPES_RAPPEL)[number]
+export type CibleRappel = { client: string } | { lead_id: string } | { devis_id: string } | { chantier_id: string }
+export type EntreeRappel = { cible: CibleRappel; type: TypeRappelV; echeance: string; heure: string | null; texte: string | null }
+/** Une heure « HH:MM » qui existe (00:00 à 23:59) ; '' ou null → null. */
+export function heure(v: unknown, nom: string): Resultat<string | null> {
+  if (v === undefined || v === null || v === '') return ok(null)
+  if (typeof v !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(v)) return ko(`${nom} : heure attendue (HH:MM).`)
+  return ok(v)
+}
+export function validerCreationRappel(b: unknown): Resultat<EntreeRappel> {
+  if (!estObjet(b)) return ko('Corps de requête invalide.')
+  const permis = champsPermis(b, ['client', 'lead_id', 'devis_id', 'chantier_id', 'type', 'echeance', 'heure', 'texte'])
+  if (!permis.ok) return permis
+  const cibles = (['client', 'lead_id', 'devis_id', 'chantier_id'] as const).filter((k) => b[k] !== undefined && b[k] !== null && b[k] !== '')
+  if (cibles.length !== 1) return ko('Un rappel se rattache à UN client, UNE demande, UN devis ou UN chantier.')
+  const k = cibles[0]
+  let cible: CibleRappel
+  if (k === 'client') { if (!estEmpreinte(b.client)) return ko('Client : identifiant invalide.'); cible = { client: b.client } }
+  else {
+    const id = identifiant(b[k], ({ lead_id: 'Demande', devis_id: 'Devis', chantier_id: 'Chantier' } as const)[k], true)
+    if (!id.ok) return id
+    cible = { [k]: id.valeur as string } as CibleRappel
+  }
+  const type = b.type === undefined ? ok('rappeler' as TypeRappelV) : parmi(b.type, 'Type', TYPES_RAPPEL)
+  if (!type.ok) return type
+  const e = date(b.echeance, 'Échéance')
+  if (!e.ok) return e
+  if (!e.valeur) return ko('Échéance : obligatoire.')
+  const h = heure(b.heure, 'Heure')
+  if (!h.ok) return h
+  const t = texte(b.texte, 'Texte', 300)
+  if (!t.ok) return t
+  return ok({ cible, type: type.valeur, echeance: e.valeur, heure: h.valeur, texte: t.valeur })
+}
+/** Cocher (fait), décaler (échéance, heure), corriger (type, texte). La cible ne change pas. */
+export type ModificationRappel = { fait?: boolean; echeance?: string; heure?: string | null; texte?: string | null; type?: TypeRappelV }
+export function validerModificationRappel(b: unknown): Resultat<ModificationRappel> {
+  const r = appliquer(b, {
+    fait: (v) => booleen(v, 'Fait'),
+    echeance: (v) => { const d = date(v, 'Échéance'); return d.ok && !d.valeur ? ko('Échéance : obligatoire.') : d },
+    heure: (v) => heure(v, 'Heure'),
+    texte: (v) => texte(v, 'Texte', 300),
+    type: (v) => parmi(v, 'Type', TYPES_RAPPEL),
+  })
+  if (!r.ok) return r
+  if (!Object.keys(r.valeur).length) return ko('Rien à modifier.')
+  return ok(r.valeur as ModificationRappel)
+}
+
 // ── Déplacement manuel dans le pipeline ──────────────────────────────────────────────────────────────────────
 export const ETAPES_PIPELINE = ['demande', 'devis_envoye', 'signe', 'chantier', 'a_facturer', 'paye'] as const
 export type EtapePipeline = (typeof ETAPES_PIPELINE)[number]

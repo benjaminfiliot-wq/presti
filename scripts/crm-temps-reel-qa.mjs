@@ -61,7 +61,9 @@ const creer = async (nom) => {
 /** Abonne un compte exactement comme app/crm/useTempsReel.ts, et consigne chaque évènement reçu. */
 async function abonner(c) {
   const canal = c.client.channel(`crm:${c.uid}`)
-  for (const a of abonnements(c.uid)) {
+  // Une table encore absente de la base (0162 non appliquée : crm_rappels) n'est pas écoutée, comme à l'écran.
+  const { error: sansRappels } = await admin.from('crm_rappels').select('id').limit(1)
+  for (const a of abonnements(c.uid, sansRappels ? ['crm_rappels'] : [])) {
     canal.on('postgres_changes', { event: a.event, schema: a.schema, table: a.table, filter: a.filter }, (p) => c.evenements.push({ table: a.table, type: p.eventType, nouveau: p.new, ancien: p.old, a: Date.now() }))
   }
   await new Promise((resolve, reject) => {
