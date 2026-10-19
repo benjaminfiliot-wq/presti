@@ -189,7 +189,9 @@ export const FLAGS = {
   consoleV2: true,
   /** 19/10/2026 — REFONTE de la landing (piste B « Cinéma », 10 sections, /offres, /comparatif). Pas encore construite :
    *  le drapeau existe pour que la composition naisse derrière lui. Baissé : la landing actuelle. */
-  landingV2: false,
+  // ⚠️ PRÉVISUALISATION SEULEMENT (19/10) : levé sur la branche refonte-1018 pour photographier la landing v2. Ce commit se
+  // RETIRE (git revert) avant toute fusion, comme celui de consoleV2 : en production, landingV2 reste false.
+  landingV2: true,
 } as const
 
 export type Flag = keyof typeof FLAGS
