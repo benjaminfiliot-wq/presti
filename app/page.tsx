@@ -23,6 +23,8 @@ import OffreDetail from '@/app/OffreDetail'
 import { OFFRES, ESSAI_JOURS, PLANS, offreMinimale } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
+// Refonte 18/10 (étape 6.1) : la landing v2, derrière le drapeau landingV2. Baissé : la landing ci-dessous, intacte.
+import LandingV2 from '@/app/landing/LandingV2'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
@@ -109,6 +111,10 @@ const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }
 ]
 
 export default function Home() {
+  return actif('landingV2') ? <LandingV2 /> : <LandingActuelle />
+}
+
+function LandingActuelle() {
   return (
     <div className="lp">
       <script

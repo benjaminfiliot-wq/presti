@@ -1,0 +1,116 @@
+/* La landing v2 (refonte 18/10, étape 6.1) — piste B « Cinéma » : titres géants, aube corail, scènes en profondeur.
+   Préfixe lp2- ; les classes .lp-* existantes sont réutilisées telles quelles (boutons, cartes d'offre, confiance, FAQ, maquette).
+   Pas de verre sur les cartes de texte (contraste garanti) ; l'aube est un dégradé CSS (pas de WebGL). */
+.lp2{
+  /* Les composants de components/ui lisent les jetons du socle (gris froids) : sur la landing, on les fait pointer vers la
+     palette chaude de .lp, pour que les onglets et les slides parlent la même langue que le reste de la page. */
+  --ink-soft:var(--ink2); --elev-1:var(--surf); --elev-2:var(--surf2); --elev-3:var(--elev);
+  --bord-1:var(--line); --bord-2:rgba(255,255,255,.12); --accent-ink:var(--co2); --accent:var(--co);
+}
+.lp2 .lp-blk{padding:clamp(3.4rem,7vw,5.6rem) 0}
+
+/* ── L1 Héros ── */
+.lp2-hero{position:relative;isolation:isolate;padding:clamp(2.6rem,6vw,4.6rem) 0 clamp(2rem,4vw,3rem);background:var(--lp-aube);overflow:hidden}
+.lp2-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,transparent,var(--bg));pointer-events:none;z-index:-1}
+.lp2-hero-in{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
+.lp2-hero-texte{text-align:left}
+.lp2-hero h1{font-family:var(--font-display);font-size:var(--lp-titre-xl);font-weight:800;line-height:1.02;letter-spacing:-.035em;margin:1.1rem 0 0;max-width:12ch}
+.lp2-hero h1 .g{background:linear-gradient(110deg,#F6C6A8 0%,var(--co2) 35%,var(--co) 70%,#C8623F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lp2-lede{margin:1.1rem 0 0;font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.6;color:var(--ink2);max-width:36em}
+.lp2-pastilles{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.lp2-pastilles li{display:grid;grid-template-columns:auto 1fr;column-gap:.6rem;align-items:start;padding:.6rem .75rem;border:1px solid var(--line);border-radius:12px;background:rgba(9,9,12,.55)}
+.lp2-pastilles .i{grid-row:span 2;width:1.7rem;height:1.7rem;border-radius:8px;background:rgba(217,119,87,.14);display:grid;place-items:center}
+.lp2-pastilles .i svg{width:15px;height:15px;stroke:var(--co2);fill:none}
+.lp2-pastilles b{font-size:.92rem}
+.lp2-pastilles em{font-style:normal;font-size:.8rem;line-height:1.4;color:var(--muted)}
+.lp2-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.5rem}
+.lp2-hero .lp-trust{margin-top:.9rem;text-align:left}
+.lp2-hero-scene{min-width:0}
+.lp2-hero-scene .lp-stage{margin:0;max-width:none}
+.lp2-hero-scene .lp-tilt{transform:perspective(1600px) rotateY(-8deg) rotateX(3deg);transform-origin:50% 50%;filter:drop-shadow(0 50px 80px rgba(0,0,0,.6))}
+@media (prefers-reduced-motion:reduce){.lp2-hero-scene .lp-tilt{transform:none}}
+
+/* ── L2 Preuve ── */
+.lp2-preuve{padding:clamp(1.6rem,4vw,2.6rem) 0!important}
+
+/* ── L3 Comment ça marche ── */
+.lp2-scene-cadre{position:relative;margin-top:clamp(1.6rem,4vw,2.6rem);padding:clamp(1rem,2.6vw,2rem);border-radius:var(--lp-r-scene);border:1px solid var(--line);background:var(--lp-aube-sol),var(--surf);overflow:visible}
+.lp2-scene-cadre .ui-slides-etape b{font-size:1.15rem}
+.lp2-scene-cadre .ui-slides-etape p{font-size:.95rem;color:var(--ink2)}
+.lp2-scene-cadre .ui-slides-visuels{min-height:440px}
+.lp2-visuel{position:relative;display:grid;place-items:center;min-height:420px}
+.lp2-visuel .lp2-capture{margin:0;width:100%}
+.lp2-visuel .lp2-capture.tel{width:min(250px,60%)}
+.lp2-visuel .lp2-capture figcaption{display:none}
+.lp2-visuel .lp-cpv{position:absolute;left:0;bottom:0;max-width:min(330px,70%);font-size:.85rem}
+.lp2-note{display:block;margin-top:.9rem;color:var(--muted)}
+.lp2-capture img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,.08);box-shadow:var(--lp-ombre-scene)}
+.lp2-capture.tel img{border-radius:28px;aspect-ratio:780/1688;object-fit:cover;max-height:440px;width:auto;margin:0 auto}
+.lp2-capture figcaption{display:grid;gap:.2rem;margin-top:.7rem;font-size:.9rem;color:var(--ink2)}
+.lp2-capture figcaption b{color:var(--ink);font-size:1rem}
+.lp2-heure{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--co2)}
+
+/* ── L4 Fonctionnalités : onglets ── */
+.lp2-onglets .ui-onglets-liste{justify-content:center;border-bottom-color:var(--line);margin-bottom:1.6rem}
+.lp2-onglets .ui-onglet{font-size:15px;height:44px;color:var(--ink2)}
+.lp2-onglets .ui-onglet[aria-selected="true"]{color:var(--ink)}
+.lp2-onglet>.lp-head2{margin-bottom:1.4rem}
+.lp2-h3{font-family:var(--font-display);font-size:var(--lp-titre-l);font-weight:700;letter-spacing:-.02em;margin:.6rem 0 .5rem;line-height:1.1}
+.lp2-clair{border-radius:var(--lp-r-scene);padding:clamp(1.2rem,3vw,2.4rem)}
+.lp2-captures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem;margin-top:1.6rem}
+.lp2-captures.un{grid-template-columns:minmax(0,1fr);max-width:760px;margin-left:auto;margin-right:auto}
+
+/* ── L5 Pour qui : sélecteur en pastilles ── */
+.lp2-metiers .ui-onglets-liste{justify-content:center;gap:.5rem;border:0;flex-wrap:wrap;margin-bottom:1.2rem}
+.lp2-metiers .ui-onglet{height:40px;padding:0 1rem;border:1px solid var(--line);border-radius:999px;margin:0;color:var(--ink2)}
+.lp2-metiers .ui-onglet[aria-selected="true"]{background:var(--ink);color:#141319;border-color:var(--ink)}
+.lp2-metier{max-width:720px;margin:0 auto;text-align:center;padding:clamp(1.2rem,3vw,2rem);border:1px solid var(--line);border-radius:var(--lp-r-carte);background:var(--surf)}
+.lp2-metier-sur{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--co2)}
+.lp2-metier q{display:block;margin:.6rem 0 .8rem;font-family:var(--font-display);font-size:clamp(1.3rem,2.6vw,1.8rem);font-weight:600;line-height:1.25;color:var(--ink)}
+.lp2-metier p{margin:0;color:var(--ink2)}
+.ui-onglets:not(.ui-arme).lp2-metiers .ui-onglet-panneau{margin-bottom:1rem}
+
+/* ── L6 Confiance : bento ── */
+.lp2-bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.6rem}
+.lp2-bento .lp2-tuile-l{grid-column:span 2}
+.lp2-confiance .lp-conf-fin a{margin-left:.4rem;color:var(--co2);text-decoration:underline;text-underline-offset:3px}
+
+/* ── L7 Tarifs ── */
+.lp2-auto{margin:.6rem 0 0;font-size:.86rem;line-height:1.5;color:var(--ink2)}
+.lp2-auto b{color:var(--ink)}
+.lp2-detail{display:inline-block;margin:.7rem 0 1rem;font-size:.88rem;color:var(--co2);text-decoration:none}
+.lp2-detail:hover{text-decoration:underline}
+.lp2-plans .lp-plan{display:flex;flex-direction:column}
+.lp2-plans .lp-plan .lp-btn{margin-top:auto}
+.lp2-credits{margin-top:1.2rem;border:1px solid var(--line);border-radius:14px;padding:0 1rem;background:var(--surf)}
+.lp2-credits summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:600;list-style:none}
+.lp2-credits summary::-webkit-details-marker{display:none}
+.lp2-credits summary::after{content:"+";margin-left:auto;font-family:var(--font-mono);color:var(--co2)}
+.lp2-credits[open] summary::after{content:"–"}
+.lp2-credits .lp-howcredits{margin:0 0 1rem}
+.lp2-liens-tarifs{margin-top:1.6rem;text-align:center;scroll-margin-top:90px}
+.lp2-liens-tarifs p{max-width:640px;margin:0 auto .9rem;color:var(--ink2)}
+.lp2-liens-tarifs div{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+
+/* ── L10 Appel final : l'aube monte ── */
+.lp2-final{background:radial-gradient(900px 380px at 50% 110%,rgba(217,119,87,.32),transparent 70%)}
+
+/* ── Pied v2 ── */
+.lp-foot-essai{display:inline-block;margin-top:.9rem;color:var(--co2);font-weight:600;text-decoration:none}
+.lp-foot-essai:hover{text-decoration:underline}
+
+@media (max-width:900px){
+  .lp2-hero-in{grid-template-columns:1fr}
+  .lp2-hero h1{max-width:none}
+  .lp2-hero-scene .lp-tilt{transform:none;filter:none}
+  .lp2-cta{flex-direction:column}
+  .lp2-cta .lp-btn{justify-content:center;text-align:center}
+  .lp2-scene-cadre .ui-slides-visuels{min-height:0}
+  .lp2-visuel{min-height:0;display:block}
+  .lp2-visuel .lp2-capture.tel{width:62%;margin:0 auto}
+  .lp2-visuel .lp-cpv{position:relative;max-width:none;margin-top:-2.4rem}
+  .lp2-captures{grid-template-columns:1fr}
+  .lp2-bento{grid-template-columns:1fr}
+  .lp2-bento .lp2-tuile-l{grid-column:auto}
+}
+@media (max-width:520px){.lp2-pastilles{grid-template-columns:1fr}}

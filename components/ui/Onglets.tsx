@@ -10,8 +10,10 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode 
 
 export type Onglet = { id: string; libelle: ReactNode; contenu: ReactNode }
 
-export default function Onglets({ onglets, initial, ancres = false, etiquette, onChange }: {
+export default function Onglets({ onglets, initial, ancres = false, etiquette, onChange, className = '' }: {
   onglets: Onglet[]; initial?: string; ancres?: boolean; etiquette: string; onChange?: (id: string) => void
+  /** Variante d'habillage (ex. « ui-onglets--pastilles » pour un sélecteur en pastilles). */
+  className?: string
 }) {
   const base = useId()
   const [actif, setActif] = useState(initial ?? onglets[0]?.id)
@@ -40,7 +42,7 @@ export default function Onglets({ onglets, initial, ancres = false, etiquette, o
   }
 
   return (
-    <div className={`ui-onglets${arme ? ' ui-arme' : ''}`}>
+    <div className={`ui-onglets${arme ? ' ui-arme' : ''}${className ? ` ${className}` : ''}`}>
       <div className="ui-onglets-liste" role="tablist" aria-label={etiquette}>
         {onglets.map((o, i) => (
           <button key={o.id} ref={(el) => { refs.current[i] = el }} type="button" role="tab" className="ui-onglet"

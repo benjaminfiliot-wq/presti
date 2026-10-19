@@ -45,7 +45,7 @@ export default function OffresPage() {
 
             <div className="lp-plans">
               {OFFRES.map((o) => (
-                <div key={o.id} className={`lp-plan lp-spot${o.id === 'studio' ? ' lp-plan--feat' : ''}`}>
+                <div key={o.id} id={o.id} className={`lp-plan lp-spot${o.id === 'studio' ? ' lp-plan--feat' : ''}`}>
                   <div className="lp-pn">{o.label}</div>
                   <div className="lp-pp">{o.prix}€<small>par mois</small></div>
                   <div className="lp-credits"><b>{o.credits}</b>&nbsp;crédits / mois</div>

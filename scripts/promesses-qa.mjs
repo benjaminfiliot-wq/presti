@@ -133,7 +133,9 @@ export const SURVEILLES = [
 ]
 // Les sources de texte d'un fichier surveillé (000-geo-presti, 27/09) : le texte de la FAQ vit dans lib/faq.ts, lu par /faq et par le
 // FAQPage de l'accueil. Comptées avec le fichier seulement s'il les importe et s'en sert (sourcesUtilisees).
-export const SOURCES_DE_TEXTE = { 'app/faq/page.tsx': ['lib/faq.ts'] }
+// 19/10 (refonte) : les scènes de la démo ont quitté app/DemoSequence.tsx pour lib/demoScenes.ts (données partagées avec la
+// landing v2) ; leur prose reste jugée avec le fichier qui les affiche.
+export const SOURCES_DE_TEXTE = { 'app/faq/page.tsx': ['lib/faq.ts'], 'app/DemoSequence.tsx': ['lib/demoScenes.ts'] }
 /** Les sources de SOURCES_DE_TEXTE[chemin] que `source` importe (import de valeur) ET utilise hors de l'import → [chemins] */
 export function sourcesUtilisees(chemin, source) {
   const attendues = SOURCES_DE_TEXTE[chemin] || []

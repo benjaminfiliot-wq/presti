@@ -95,6 +95,8 @@ try {
   for (const [nomVue, vue] of VUES) {
     const ctx = await nav.newContext({ viewport: vue, deviceScaleFactor: 1, reducedMotion: 'reduce', locale: 'fr-FR' })
     const page = await ctx.newPage()
+    // Prévisualisation Vercel protégée : le lien de partage (propre au déploiement) pose le cookie d'accès.
+    if (process.env.VERCEL_SHARE) await page.goto(`${BASE}/?_vercel_share=${encodeURIComponent(process.env.VERCEL_SHARE)}`, { waitUntil: 'domcontentloaded', timeout: 90_000 })
     for (const chemin of PAGES) {
       const nom = chemin === '/' ? 'accueil' : chemin.replace(/^\//, '').replace(/[^a-z0-9]+/gi, '-')
       const rep = await page.goto(`${BASE}${chemin}`, { waitUntil: 'networkidle', timeout: 90_000 }).catch((e) => ({ status: () => 'ERR ' + e.message.slice(0, 80) }))
