@@ -189,6 +189,8 @@ export const HORS_LANCEUR = {
   'sonde-releve-erreur.mjs': 'sonde ponctuelle : reproduire une erreur de relève IMAP',
   'axe-noeuds.mjs': 'outil de diagnostic a11y ; le contrôle, lui, est dans accessibilite-e2e',
   'cle-produit.mjs': 'outil d’inventaire, pas une vérification',
+  'demo-crm-montage.mjs': 'outil de montage de la démo CRM de l’accueil (public/demo/crm-atelier.mp4), pas une vérification',
+  'aide-videos-crm-texte.mjs': 'outil : inscrit le texte de la vidéo d’aide CRM dans lib/aide-videos.json avant la capture, pas une vérification',
   'csp-smoke.mjs': 'N’ASSERTIONNE RIEN pour l’instant (trouvé le 08/09) : à réparer ou à supprimer, mais surtout à ne pas citer comme une preuve',
 }
 

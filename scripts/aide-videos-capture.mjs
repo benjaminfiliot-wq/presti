@@ -173,7 +173,8 @@ async function nettoyer() {
 
 try {
   await semer()
-  nav = await chromium.launch() // sans GL logiciel forcé : les captures en rafale y sont bien plus rapides
+  // sans GL logiciel forcé : les captures en rafale y sont bien plus rapides. La maquette 3D du CRM exige WebGL avec GPU (sinon elle bascule en plan 2D).
+  nav = await chromium.launch(/^(demo-)?crm$/.test(CIBLE) ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], channel: 'chromium' } : undefined)
 
   // Connexion hors enregistrement : la vidéo ne montre jamais l'e-mail ni le mot de passe du compte de test.
   const ctxLogin = await nav.newContext({ viewport: { width: 1440, height: 900 }, locale: 'fr-FR' })
@@ -218,7 +219,8 @@ try {
     }
     await ctx.close()
   } else {
-    const v = VIDEOS.find((x) => x.id === CIBLE)
+    // « demo-crm » : la démo de la page d'accueil (public/demo/crm-atelier.mp4), même capture, montée par scripts/demo-crm-montage.mjs.
+    const v = CIBLE === 'demo-crm' ? { id: 'demo-crm', etapes: [] } : VIDEOS.find((x) => x.id === CIBLE)
     if (!v) throw new Error(`vidéo inconnue : ${CIBLE}`)
     const scenarios = (await import('./aide-videos-scenarios.mjs')).default
     const sc = scenarios[v.id]
@@ -263,10 +265,13 @@ try {
     const glisser = async (x, y) => {
       const a = { ...pos }; const dist = Math.hypot(x - a.x, y - a.y)
       if (dist < 4) return
-      const dur = Math.max(380, Math.min(950, 260 + dist * 0.85)); const n = Math.max(8, Math.round(dur / 30)); const t1 = now()
-      for (let i = 1; i <= n; i++) {
-        const k = i / n; const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
-        await page.mouse.move(a.x + (x - a.x) * e, a.y + (y - a.y) * e); await page.waitForTimeout(dur / n)
+      const dur = Math.max(380, Math.min(950, 260 + dist * 0.85)); const t1 = now(); const debut = Date.now()
+      // Le trajet suit l'HORLOGE, pas un nombre d'étapes : sur une page lourde (maquette 3D) un déplacement de souris prend 100 à 200 ms et le geste durait 5 s.
+      for (;;) {
+        const k = Math.min(1, (Date.now() - debut) / dur); const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
+        await page.mouse.move(a.x + (x - a.x) * e, a.y + (y - a.y) * e)
+        if (k >= 1) break
+        await page.waitForTimeout(16)
       }
       evts.push({ k: 'move', t: t1, t1: now(), x0: a.x, y0: a.y, x1: x, y1: y }); pos = { x, y }
     }
@@ -300,6 +305,7 @@ try {
     try {
       await sc({ page, etape, glisser, marquer, sec, cliquer, survoler, saisir, ouvrir, demarrer, ecartVisite, BASE, v })
           const reste = MIN_ETAPE - (Date.now() - dernier); if (dernier && reste > 0) await sec(reste)
+    } catch (e) { await page.screenshot({ path: path.join(SORTIE, `_echec-${v.id}.png`) }).catch(() => {}); throw e // l'écran au moment de l'échec, pour comprendre
     } finally { enCours = false; depart(); await boucle; await ctx.close() }
 
     const liste = images.map((im, i) => `file '${im.f}'\nduration ${(((images[i + 1]?.t ?? im.t + 60) - im.t) / 1000).toFixed(3)}`).join('\n') + `\nfile '${images[images.length - 1].f}'\n`

@@ -8,6 +8,46 @@
 
 const T = (page, texte) => page.getByText(texte, { exact: false }).first()
 
+// Date du navigateur décalée à une heure de Paris donnée (seule Date change, pas les minuteries) : la maquette 3D suit l'heure de Paris
+// (jour, crépuscule, nuit) ; une vidéo tournée le soir serait sombre. Le CRM exige la vraie date du jour : on ne change que l'heure.
+const heureDeParis = async (page, hh) => {
+  const cible = new Date(Date.now()); const d = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(cible)
+  const g = (t) => Number(d.find((x) => x.type === t).value) % 24
+  const decalage = (hh * 3600 - (g('hour') * 3600 + g('minute') * 60 + g('second'))) * 1000
+  await page.addInitScript((off) => { const D = Date; class F extends D { constructor(...a) { if (a.length) super(...a); else super(D.now() + off) } static now() { return D.now() + off } } window.Date = F }, decalage)
+}
+
+// Les gestes communs sur la maquette 3D du CRM (scénarios « crm » et « demo-crm »).
+//  • objet3D(cle, k)   : un « faux locator » posé là où la maquette projette l'objet à l'écran (window.__atelierEcran, exposé par ?mesure=1) ;
+//  • sonder(cle, type) : AVANT de filmer, cherche la hauteur k où le clic ouvre bien le panneau attendu (un bâtiment peut cacher un objet) ;
+//  • fermer / recentrer : ouvrir ou fermer un panneau redimensionne la toile et décale le cadrage ; on recentre, puis on attend le mouvement.
+const maquette = ({ page, sec, cliquer, glisser }) => {
+  const point = (cle, k) => page.evaluate(([c, kk]) => (window.__atelierEcran ? window.__atelierEcran(c, kk) : null), [cle, k])
+  const m = {
+    objet3D: async (cle, k = 0.4) => {
+      const pt = await point(cle, k)
+      if (!pt) throw new Error('objet introuvable dans la maquette : ' + cle)
+      return { scrollIntoViewIfNeeded: async () => {}, boundingBox: async () => ({ x: pt.x - 14, y: pt.y - 14, width: 28, height: 28 }), click: async () => { await page.mouse.click(pt.x, pt.y) } }
+    },
+    // La clé d'un objet se lit dans la liste des éléments (toujours dans le DOM, même repliée) : 'chantier:<id>', 'categorie:<nom>', 'accueil', 'assistants'.
+    cleDe: (prefixe) => page.evaluate((p) => [...document.querySelectorAll('[data-atelier-objet]')].map((e) => e.getAttribute('data-atelier-objet')).find((k) => k === p || k.startsWith(p + ':')) ?? null, prefixe),
+    recentrer: async (vite = false) => { await sec(vite ? 150 : 400); const r = page.getByRole('button', { name: 'Recentrer' }); if (await r.count()) await r.first().click(); await sec(vite ? 700 : 1300) },
+    fermer: async (vite = false) => { const x = page.getByRole('button', { name: 'Fermer le panneau' }); if (await x.count()) await cliquer(x.first(), { pause: vite ? 200 : 400 }); await m.recentrer(vite) },
+    tourner: async (x0, y0, dx, dy) => { await glisser(x0, y0); await page.mouse.down(); await glisser(x0 + dx, y0 + dy); await page.mouse.up() },
+    sonder: async (cle, type) => {
+      for (const k of [0.4, 0.85, 0.2, 0.6, 0.95, 0.1, 0.7]) {
+        const pt = await point(cle, k); if (!pt) break
+        await page.mouse.click(pt.x, pt.y); await sec(700)
+        const ouvert = await page.evaluate(() => document.querySelector('[data-atelier-panneau]')?.getAttribute('data-atelier-panneau') ?? null)
+        const x = page.getByRole('button', { name: 'Fermer le panneau' }); if (await x.count()) await x.first().click(); await m.recentrer()
+        if (ouvert === type) { if (process.env.AIDE_DEBUG) console.log('sonder', cle, 'k =', k); return { cle, k } }
+      }
+      console.log('⚠️ aucun point de clic n’ouvre « ' + cle + ' » (panneau attendu : ' + type + ')'); return { cle, k: null }
+    },
+  }
+  return m
+}
+
 export default {
   async dashboard({ page, etape, sec, cliquer, survoler, ouvrir, demarrer }) {
     await ouvrir('/dashboard', 'text=Votre lien de contact')
@@ -129,25 +169,107 @@ export default {
     await page.mouse.wheel(0, 600); await sec(5000)
   },
 
+  // CRM « atelier vivant » (scénario v2, 20/10/2026) : six étapes sur l'EXEMPLE (un plombier fictif ; rien n'est lu, rien n'est écrit, rien ne part).
+  // La maquette est en 3D : on clique un objet là où l'artisan cliquerait, grâce à window.__atelierEcran (exposé par ?mesure=1, Scene3D.tsx).
+  // Le texte des six étapes est dans TEXTE_CRM (en bas de ce fichier) ; scripts/aide-videos-crm-texte.mjs l'inscrit dans lib/aide-videos.json.
+  // Navigateur avec GPU requis pour la 3D (aide-videos-capture.mjs le lance ainsi pour « crm ») : sans WebGL, la maquette passe en plan 2D.
   async crm({ page, etape, glisser, sec, cliquer, survoler, ouvrir, demarrer }) {
-    await ouvrir('/crm?vue=atelier', 'text=Vue d’ensemble')
-    await sec(1500)
-    demarrer(); await sec(800)
-    await etape(0)
-    await glisser(950, 560); await sec(3500)
-    await etape(1)
-    await survoler(T(page, 'Urgences du jour'), { pause: 2500 }); await sec(3000)
-    await etape(2)
-    await cliquer(page.getByRole('button', { name: 'Voir l’exemple' }), { pause: 700 })
+    await heureDeParis(page, 11) // plein jour : la maquette est lisible (elle suit l'heure de Paris)
+    await ouvrir('/crm?vue=atelier&mesure=1', 'text=Vue d’ensemble')
+    await page.getByRole('button', { name: 'Voir l’exemple' }).click()
     await page.waitForSelector('[data-crm-mode="exemple"]', { timeout: 30000 })
-    await sec(4500)
+    await page.waitForFunction(() => window.__atelier && window.__atelier.fps > 0 && window.__atelierEcran, null, { timeout: 120000 })
+    await sec(2500)
+    const m = maquette({ page, sec, cliquer, glisser })
+    // Repérage HORS FILM : le point de clic qui ouvre bien chaque objet (un autre bâtiment peut en cacher un).
+    const clic = { chantier: await m.sonder(await m.cleDe('chantier'), 'chantier'), assistants: await m.sonder('assistants', 'assistants'), rayon: await m.sonder('categorie:Raccords', 'categorie') }
+    demarrer(); await sec(800)
+    // 1. L'exemple (déjà affiché), puis la carte qui tourne (rotation de la caméra à la souris, zoom à la molette).
+    await etape(0)
+    await sec(2500)
+    await m.tourner(820, 520, -260, 40); await sec(1500)
+    await page.mouse.wheel(0, -400); await sec(2500)
+    await m.recentrer()
+    // 2. Un chantier : son panneau.
+    await etape(1)
+    await cliquer(await m.objet3D(clic.chantier.cle, clic.chantier.k), { pause: 800 })
+    await page.waitForSelector('[data-atelier-panneau="chantier"]', { timeout: 20000 })
+    await sec(5500)
+    await page.getByText('Tâches').first().scrollIntoViewIfNeeded().catch(() => {}); await sec(3500)
+    await m.fermer()
+    // 3. L'accueil : la salle d'attente en trois files, puis « Répondre » (dialogue d'exemple : la réponse proposée, JAMAIS envoyée).
+    await etape(2)
+    await cliquer(page.locator('button.atl-notif'), { pause: 800 }) // le bouton de la barre ouvre l'accueil (un bâtiment le cache parfois à l'écran)
+    await page.waitForSelector('[data-atelier-salle]', { timeout: 20000 })
+    await sec(3500)
+    await cliquer(page.locator('[data-atelier-action-exemple="Répondre"]').first(), { pause: 700 })
+    await page.waitForSelector('[data-atelier-dialogue]', { timeout: 10000 })
+    await sec(3500)
+    await survoler(page.getByRole('button', { name: 'Valider et envoyer' }), { pause: 1800 }) // on le montre, on ne le clique pas
+    await cliquer(page.getByRole('button', { name: 'Annuler' }), { pause: 600 }); await sec(600)
+    await m.fermer()
+    // 4. Le poste des assistants : « Ils préparent, vous validez ».
     await etape(3)
-    await cliquer(page.getByRole('tab', { name: 'Chantiers' }), { pause: 600 }); await sec(5000)
+    await cliquer(await m.objet3D('assistants', clic.assistants.k), { pause: 800 })
+    await page.waitForSelector('[data-atelier-assistants]', { timeout: 20000 })
+    await sec(3500)
+    await survoler(page.locator('[data-atelier-assistant="relanceur"]').first(), { pause: 2200 })
+    await survoler(page.locator('[data-atelier-assistant="encaissement"]').first(), { pause: 2200 })
+    await sec(1500)
+    await m.fermer()
+    // 5. Un rayonnage : le stock est l'inventaire ; on ajoute un article (exemple : « rien n'est enregistré ici »).
     await etape(4)
-    const lien = page.locator('a[href*="/crm/chantiers/"]').first()
-    await cliquer(lien, { pause: 700 })
-    await page.getByText('Tâches').first().waitFor({ timeout: 20000 })
-    await sec(6500)
+    await cliquer(await m.objet3D('categorie:Raccords', clic.rayon.k), { pause: 800 })
+    await page.waitForSelector('[data-atelier-panneau="categorie"]', { timeout: 20000 })
+    await sec(3000)
+    await cliquer(page.getByRole('button', { name: 'Ajouter un article' }), { pause: 700 })
+    const champ = page.locator('input[placeholder="ex. Sac de ciment 35 kg"]')
+    await champ.waitFor({ timeout: 10000 })
+    await cliquer(champ, { pause: 300 })
+    await page.keyboard.type('Joint de robinet', { delay: 60 }); await sec(900)
+    await cliquer(page.getByRole('button', { name: 'Ajouter à mon stock' }), { pause: 700 }); await sec(3500)
+    await m.fermer()
+    // 6. Les réglages : métier et lieu de travail, la maquette s'adapte.
+    await etape(5)
+    await cliquer(page.locator('details.atl-reglages summary'), { pause: 700 }); await sec(1800)
+    await page.locator('[data-atelier-metier]').selectOption({ label: 'Électricien' }); await sec(4500)
+    await page.locator('details.atl-reglages select').nth(1).selectOption('atelier'); await sec(5000)
+  },
+
+  // DÉMO de la page d'accueil (public/demo/crm-atelier.mp4, montée par scripts/demo-crm-montage.mjs) : mêmes gestes que « crm », en une
+  // douzaine de secondes, sans étape ni sous-titre. Un petit curseur est dessiné dans la page (la capture n'enregistre pas la souris).
+  // Usage : TEST_BASE=http://localhost:3057 node scripts/aide-videos-capture.mjs demo-crm
+  async 'demo-crm'({ page, glisser, sec, cliquer, ouvrir, demarrer }) {
+    await heureDeParis(page, 11)
+    await page.addInitScript(() => {
+      addEventListener('DOMContentLoaded', () => {
+        const c = document.createElement('div')
+        c.setAttribute('aria-hidden', 'true')
+        c.style.cssText = 'position:fixed;left:0;top:0;width:22px;height:22px;z-index:2147483647;pointer-events:none;transform:translate(-100px,-100px);background:url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'22\' height=\'22\' viewBox=\'0 0 22 22\'><path d=\'M3 2 L3 17 L7 13 L10 20 L13 19 L10 12 L16 12 Z\' fill=\'white\' stroke=\'black\' stroke-width=\'1.4\' stroke-linejoin=\'round\'/></svg>") no-repeat'
+        document.body.appendChild(c)
+        addEventListener('mousemove', (e) => { c.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)' }, true)
+      })
+    })
+    await ouvrir('/crm?vue=atelier&mesure=1', 'text=Vue d’ensemble')
+    await page.getByRole('button', { name: 'Voir l’exemple' }).click()
+    await page.waitForSelector('[data-crm-mode="exemple"]', { timeout: 30000 })
+    await page.waitForFunction(() => window.__atelier && window.__atelier.fps > 0 && window.__atelierEcran, null, { timeout: 120000 })
+    await sec(2500)
+    const m = maquette({ page, sec, cliquer, glisser })
+    const clic = { chantier: await m.sonder(await m.cleDe('chantier'), 'chantier'), assistants: await m.sonder('assistants', 'assistants') }
+    await glisser(900, 520)
+    demarrer(); await sec(1700) // la maquette seule : la base de l'entreprise, ses bâtiments, ses véhicules
+    await cliquer(page.locator('button.atl-notif'), { pause: 500 }) // le bouton de la barre ouvre l'accueil
+    await page.waitForSelector('[data-atelier-salle]', { timeout: 20000 })
+    await sec(2300) // l'accueil : la salle d'attente en trois files
+    await m.fermer(true)
+    await cliquer(await m.objet3D('assistants', clic.assistants.k), { pause: 300 })
+    await page.waitForSelector('[data-atelier-assistants]', { timeout: 20000 })
+    await sec(2500) // le poste des assistants : « Ils préparent, vous validez »
+    await m.fermer(true)
+    await cliquer(await m.objet3D(clic.chantier.cle, clic.chantier.k), { pause: 300 })
+    await page.waitForSelector('[data-atelier-panneau="chantier"]', { timeout: 20000 })
+    await sec(2300) // un clic sur un chantier : sa fiche
   },
 
   async tarifs({ page, etape, sec, cliquer, survoler, saisir, ouvrir, demarrer }) {
@@ -308,4 +430,22 @@ export default {
     await sec(3000)
     await etape(4); await sec(4000)
   },
+}
+
+// Le texte du scénario « crm » v2 (sans voix : les sous-titres sont calés sur le temps de lecture, aide-videos-anime.mjs). Contraintes de
+// scripts/aide-videos-qa.mjs : 3 à 6 étapes de 8 à 140 caractères, sous-titres de 8 à 130 caractères, vouvoiement, fin qui dit l'offre.
+// Inscrit dans lib/aide-videos.json par scripts/aide-videos-crm-texte.mjs AU MOMENT de refaire la capture, pas avant : l'étape écrite
+// sous la vidéo du centre d'aide doit toujours décrire la vidéo qui est en ligne.
+export const TEXTE_CRM = {
+  resume: 'Voir votre entreprise en maquette 3D vivante, puis ouvrir chantiers, demandes, assistants et stock d’un clic.',
+  etapes: [
+    'Voici l’exemple d’un plombier fictif : la carte 3D suit son métier, son lieu de travail, son statut et ses véhicules.',
+    'Cliquez un chantier : ses tâches, ses matériaux réservés et son équipe s’ouvrent dans un panneau, sans quitter la carte.',
+    'À l’accueil, la salle d’attente range tout en trois files ; Répondre ouvre une réponse proposée, que vous relisez avant l’envoi.',
+    'Le poste des assistants prépare relances, factures et rappels : ils préparent, vous validez. Rien ne part sans votre clic.',
+    'Cliquez un rayonnage du dépôt : c’est votre inventaire, vous y ajoutez un article ou une entrée de stock sans changer d’écran.',
+    'Dans Réglages de l’atelier, choisissez votre métier et votre lieu de travail : la maquette s’adapte aussitôt.',
+  ],
+  intro: 'Le CRM atelier : votre entreprise en maquette 3D, à jour toute seule.',
+  fin: 'À vous de jouer ! Réservé à l’offre Signature.',
 }

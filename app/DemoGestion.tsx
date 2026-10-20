@@ -35,7 +35,7 @@ const CLIPS: Clip[] = [
       'Le jour et la nuit suivent l’heure de Paris.',
     ],
     note: 'Offre Signature. Capture réelle de l’interface sur des données d’exemple fictives.',
-    alt: 'Capture animée du CRM : la maquette 3D de l’entreprise, puis l’ouverture de la fiche d’un élément de la maquette.',
+    alt: 'Capture animée du CRM : la maquette 3D de l’entreprise, puis l’ouverture de l’accueil et de sa salle d’attente, du poste des assistants et de la fiche d’un chantier.',
   },
 ]
 

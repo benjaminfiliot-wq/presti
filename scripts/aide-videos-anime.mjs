@@ -239,7 +239,7 @@ function rendre(projet, brut) {
 // ── encodage final : H.264 + piste AAC silencieuse (pas de voix, pas de musique ; une piste évite les lecteurs qui se plaignent), < 6 Mo ──────────────────────────────────────────────────────────────────────────────────────────
 function encoder(brut, dest, total) {
   const MAX = 5.7 * 1048576
-  for (const crf of [25, 27, 29, 31, 33]) {
+  for (const crf of [25, 27, 29, 31, 33, 35, 37]) {
     ff(['-i', brut, '-f', 'lavfi', '-i', 'anullsrc=r=48000:cl=mono', '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', String(crf), '-maxrate', '1500k', '-bufsize', '3000k', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-g', '60', '-c:a', 'aac', '-b:a', '32k', '-ar', '48000', '-ac', '1', '-t', total.toFixed(3), '-movflags', '+faststart', dest])
     if (fs.statSync(dest).size <= MAX) return crf
   }

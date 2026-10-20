@@ -376,61 +376,68 @@
       "titre": "CRM atelier",
       "route": "/crm",
       "offre": "signature",
-      "resume": "Voir votre activité sur un plan d’atelier vivant, puis suivre chantiers, clients et équipe.",
+      "resume": "Voir votre entreprise en maquette 3D vivante, puis ouvrir chantiers, demandes, assistants et stock d’un clic.",
       "etapes": [
-        "Le CRM atelier montre votre activité sur un plan vivant : accueil, atelier, dépôt.",
-        "Les urgences du jour sont listées : matériaux sous le seuil, nouvelles demandes.",
-        "« Voir l’exemple » affiche des chantiers fictifs pour découvrir l’outil.",
-        "L’onglet « Chantiers » liste vos chantiers et leur avancement.",
-        "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
+        "Voici l’exemple d’un plombier fictif : la carte 3D suit son métier, son lieu de travail, son statut et ses véhicules.",
+        "Cliquez un chantier : ses tâches, ses matériaux réservés et son équipe s’ouvrent dans un panneau, sans quitter la carte.",
+        "À l’accueil, la salle d’attente range tout en trois files ; Répondre ouvre une réponse proposée, que vous relisez avant l’envoi.",
+        "Le poste des assistants prépare relances, factures et rappels : ils préparent, vous validez. Rien ne part sans votre clic.",
+        "Cliquez un rayonnage du dépôt : c’est votre inventaire, vous y ajoutez un article ou une entrée de stock sans changer d’écran.",
+        "Dans Réglages de l’atelier, choisissez votre métier et votre lieu de travail : la maquette s’adapte aussitôt."
       ],
       "drapeau": "crm",
-      "duree": 65,
       "voix": {
-        "intro": "Le CRM atelier : votre activité sur un plan vivant.",
+        "intro": "Le CRM atelier : votre entreprise en maquette 3D, à jour toute seule.",
         "etapes": [
-          "Le CRM atelier montre votre activité sur un plan vivant : accueil, atelier, dépôt.",
-          "Les urgences du jour sont listées : matériaux sous le seuil, nouvelles demandes.",
-          "Voir l’exemple affiche des chantiers fictifs, pour découvrir l’outil.",
-          "L’onglet Chantiers liste vos chantiers et leur avancement.",
-          "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
+          "Voici l’exemple d’un plombier fictif : la carte 3D suit son métier, son lieu de travail, son statut et ses véhicules.",
+          "Cliquez un chantier : ses tâches, ses matériaux réservés et son équipe s’ouvrent dans un panneau, sans quitter la carte.",
+          "À l’accueil, la salle d’attente range tout en trois files ; Répondre ouvre une réponse proposée, que vous relisez avant l’envoi.",
+          "Le poste des assistants prépare relances, factures et rappels : ils préparent, vous validez. Rien ne part sans votre clic.",
+          "Cliquez un rayonnage du dépôt : c’est votre inventaire, vous y ajoutez un article ou une entrée de stock sans changer d’écran.",
+          "Dans Réglages de l’atelier, choisissez votre métier et votre lieu de travail : la maquette s’adapte aussitôt."
         ],
         "fin": "À vous de jouer ! Réservé à l’offre Signature."
       },
+      "duree": 93,
       "sousTitres": [
         {
           "debut": 0.4,
-          "fin": 6,
-          "texte": "Le CRM atelier : votre activité sur un plan vivant."
+          "fin": 7.2,
+          "texte": "Le CRM atelier : votre entreprise en maquette 3D, à jour toute seule."
         },
         {
-          "debut": 6.3,
-          "fin": 13.85,
-          "texte": "Le CRM atelier montre votre activité sur un plan vivant : accueil, atelier, dépôt."
+          "debut": 7.62,
+          "fin": 17.97,
+          "texte": "Voici l’exemple d’un plombier fictif : la carte 3D suit son métier, son lieu de travail, son statut et ses véhicules."
         },
         {
-          "debut": 14.55,
-          "fin": 25.11,
-          "texte": "Les urgences du jour sont listées : matériaux sous le seuil, nouvelles demandes."
+          "debut": 18.67,
+          "fin": 28.62,
+          "texte": "Cliquez un chantier : ses tâches, ses matériaux réservés et son équipe s’ouvrent dans un panneau, sans quitter la carte."
         },
         {
-          "debut": 25.81,
-          "fin": 36.99,
-          "texte": "Voir l’exemple affiche des chantiers fictifs, pour découvrir l’outil."
+          "debut": 29.32,
+          "fin": 46.43,
+          "texte": "À l’accueil, la salle d’attente range tout en trois files ; Répondre ouvre une réponse proposée, que vous relisez avant l’envoi."
         },
         {
-          "debut": 37.69,
-          "fin": 49.66,
-          "texte": "L’onglet Chantiers liste vos chantiers et leur avancement."
+          "debut": 47.13,
+          "fin": 60.52,
+          "texte": "Le poste des assistants prépare relances, factures et rappels : ils préparent, vous validez. Rien ne part sans votre clic."
         },
         {
-          "debut": 50.36,
-          "fin": 57.91,
-          "texte": "Ouvrez un chantier : avancement, tâches et organisation sont réunis sur une seule fiche."
+          "debut": 61.22,
+          "fin": 77.23,
+          "texte": "Cliquez un rayonnage du dépôt : c’est votre inventaire, vous y ajoutez un article ou une entrée de stock sans changer d’écran."
         },
         {
-          "debut": 58.61,
-          "fin": 63.81,
+          "debut": 77.93,
+          "fin": 86.68,
+          "texte": "Dans Réglages de l’atelier, choisissez votre métier et votre lieu de travail : la maquette s’adapte aussitôt."
+        },
+        {
+          "debut": 87.38,
+          "fin": 92.58,
           "texte": "À vous de jouer ! Réservé à l’offre Signature."
         }
       ]
