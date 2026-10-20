@@ -498,6 +498,46 @@ if (LEVE) {
       && /data-atelier-validation-auto/.test(ate) && /appel\('\/api\/crm\/reglages', \{ method: 'PUT'/.test(ate) && /if \(simule\) \{ setValidationAuto\(oui\); setNoteAuto\('Exemple : réglage simulé, rien n’est enregistré\.'\); return \}/.test(ate) && /if \(!simule\) \{\s*const r = 'action' in quoi/.test(ate) && /if \(exemple\) \{[\s\S]{0,300}return\s*\}/.test(fiche))
 }
 
+// ═══════════════════════ L. Lot 6 (20/10) : les étiquettes de la carte ne se chevauchent JAMAIS ═══════════════════════
+{
+  const E = await imp('lib/crm/etiquettes.ts')
+  // Trente chantiers SERRÉS : épingles sur une grille de 30 px (bien plus serrée qu'une étiquette de 150 × 46 px), priorités mêlées.
+  const PR = [E.PRIORITES.retard, E.PRIORITES.enCours, E.PRIORITES.aDemarrer, E.PRIORITES.fini]
+  const serres = (ecart = 30, n = 30) => Array.from({ length: n }, (_, i) => ({ cle: `c${String(i).padStart(2, '0')}`, priorite: PR[i % 4], epingle: { x: 760 + ((i % 6) - 2.5) * ecart, y: 470 + (Math.floor(i / 6) - 2) * ecart, l: 12, h: 18 }, taille: { l: 150, h: 46 }, pastille: { l: 40, h: 24 } }))
+  const ECRAN = { l: 1440, h: 900 }, OBST = [{ x: 0, y: 0, l: 320, h: 300 }]
+  const visibles = (s) => s.filter((x) => x.mode !== 'cachee')
+  const recouvrements = (s, entrees, obst = []) => {
+    const v = visibles(s); let n = 0
+    for (let i = 0; i < v.length; i++) for (let j = i + 1; j < v.length; j++) if (E.seCoupent(v[i], v[j])) n++
+    for (const x of v) { for (const e of entrees) if (e.cle !== x.cle && E.seCoupent(x, e.epingle)) n++; for (const o of obst) if (E.seCoupent(x, o)) n++; if (x.x < 0 || x.y < 0 || x.x + x.l > ECRAN.l || x.y + x.h > ECRAN.h) n++ }
+    return n
+  }
+  const s30 = serres(), p30 = E.placerEtiquettes(s30, ECRAN, OBST)
+  T('L1 30 chantiers serrés : AUCUN recouvrement (étiquette sur étiquette, sur l’épingle d’un voisin, sur l’interface posée sur la carte, hors écran) ; les sans-place se replient en pastille, plusieurs restent complètes',
+    recouvrements(p30, s30, OBST) === 0 && p30.filter((x) => x.mode === 'complete').length >= 6 && p30.filter((x) => x.mode === 'pastille').length >= 6, JSON.stringify(p30.reduce((m, x) => ({ ...m, [x.mode]: (m[x.mode] ?? 0) + 1 }), {})))
+  // La priorité : deux épingles collées, la place pour UNE carte complète seulement.
+  const duel = (pa, pb) => E.placerEtiquettes([{ cle: 'a', priorite: pa, epingle: { x: 100, y: 60, l: 10, h: 10 }, taille: { l: 180, h: 50 }, pastille: { l: 40, h: 24 } }, { cle: 'b', priorite: pb, epingle: { x: 112, y: 60, l: 10, h: 10 }, taille: { l: 180, h: 50 }, pastille: { l: 40, h: 24 } }], { l: 320, h: 90 })
+  const prio = E.placerEtiquettes(s30.map((x) => ({ ...x, priorite: x.cle === 'c14' ? E.PRIORITES.selection : x.priorite })), ECRAN, OBST)
+  const parMode = (m) => s30.filter((x, i) => p30[i].mode === m).map((x) => x.priorite)
+  T('L2 priorité respectée : sélectionné > en retard > en cours > à démarrer > fini — le sélectionné est toujours complet ; dans un duel, le plus prioritaire garde sa carte ; en moyenne les cartes complètes sont plus prioritaires que les pastilles',
+    E.PRIORITES.selection > E.PRIORITES.retard && E.PRIORITES.retard > E.PRIORITES.enCours && E.PRIORITES.enCours > E.PRIORITES.aDemarrer && E.PRIORITES.aDemarrer > E.PRIORITES.fini
+      && prio[14].mode === 'complete' && duel(50, 20)[0].mode === 'complete' && duel(20, 50)[1].mode === 'complete' && duel(20, 50)[0].mode !== 'complete'
+      && parMode('complete').reduce((a, b) => a + b, 0) / parMode('complete').length >= parMode('pastille').reduce((a, b) => a + b, 0) / Math.max(1, parMode('pastille').length))
+  const melange = [...s30].reverse()
+  const pm = E.placerEtiquettes(melange, ECRAN, OBST)
+  T('L3 DÉTERMINISTE : même entrée, même sortie ; l’ordre de la liste d’entrée ne change aucune place (seulement l’ordre de la sortie, qui suit l’entrée)',
+    egal(E.placerEtiquettes(s30, ECRAN, OBST), p30) && egal([...pm].sort((a, b) => (a.cle < b.cle ? -1 : 1)), [...p30].sort((a, b) => (a.cle < b.cle ? -1 : 1))) && egal(pm.map((x) => x.cle), melange.map((x) => x.cle)))
+  const completes = (ecart) => E.placerEtiquettes(serres(ecart), ECRAN, OBST).filter((x) => x.mode === 'complete').length
+  T('L4 au ZOOM avant (les épingles s’écartent : 30 → 60 → 120 → 200 px), de plus en plus d’étiquettes complètes ; toujours aucun recouvrement',
+    completes(30) < completes(60) && completes(60) < completes(120) && completes(120) <= completes(200) && [30, 60, 120, 200].every((e) => recouvrements(E.placerEtiquettes(serres(e), ECRAN, OBST), serres(e), OBST) === 0), [30, 60, 120, 200].map(completes).join(' → '))
+  const tracee = E.placerEtiquettes(serres(30), ECRAN, OBST).filter((x) => x.rappel)
+  T('L5 les places décalées portent un TRAIT DE RAPPEL vers leur épingle ; les quatre côtés directs n’en ont pas', tracee.length > 0 && tracee.every((x) => x.cote === 'decale') && E.placerEtiquettes(serres(200), ECRAN, OBST).filter((x) => x.mode === 'complete').every((x) => x.rappel === (x.cote === 'decale')))
+  const s3 = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx')), css = lire('app/crm/atelier/atelier.css')
+  T('L6 branché dans la scène : placement à chaque mouvement de caméra (et 4 fois par seconde pour les panneaux), priorité par l’épingle et la sélection, pastille (état + numéro) qui se déplie au survol et au clavier ; aucune couche 3D ajoutée (DOM seul) ; contraste : texte encre sur papier',
+    /const places = placerEtiquettes\(entrees, \{ l: size\.width, h: size\.height \}, obstacles\)/.test(s3) && /prioriteChantier\(o, COULEURS, selection === e\.i\)/.test(s3) && /maintenant - dernier\.current < 250/.test(s3) && /className="atl-pastille"/.test(s3)
+      && /\[data-mode="pastille"\]:hover/.test(css) && /\[data-mode="pastille"\]:focus-visible/.test(css) && (s3.match(/<Couche /g) ?? []).length === 2 && /\.atl-carte \{[^}]*background: var\(--paper\); color: var\(--ink\)/.test(css))
+}
+
 // ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════
 if (process.env.TEST_BASE) {
   const { createRequire } = await import('node:module')
@@ -568,11 +608,28 @@ if (process.env.TEST_BASE) {
     validation = { avant, surCarteAvant, bandeau, surCarteApres, revenu }
     await p6.close()
   }
+  // H7 (lot 6) : sur la démo CHARGÉE (12 et 30 chantiers), les rectangles DOM des étiquettes visibles ne se coupent jamais, à 1440 et 390 px.
+  const croisements = []
+  for (const vitrine of ['carte', 'serree']) for (const [l, h] of [[1440, 900], [390, 844]]) {
+    const ctx7 = await gpu.newContext({ viewport: { width: l, height: h }, ...(l < 500 ? { isMobile: true, hasTouch: true } : {}) })
+    const p7 = await ctx7.newPage()
+    await p7.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?vitrine=${vitrine}&mode=3d&mesure=1&heure=11`, { waitUntil: 'networkidle' })
+    await p7.waitForFunction(() => window.__atelier && window.__atelier.fps > 0, null, { timeout: 120000 })
+    await p7.waitForTimeout(3500)
+    croisements.push({ vitrine, l, ...(await p7.evaluate(() => {
+      const r = [...document.querySelectorAll('.atl-etiquettes > .atl-carte, .atl-etiquettes > .atl-zone')].filter((e) => getComputedStyle(e).visibility !== 'hidden' && e.dataset.mode !== 'cachee').map((e) => e.getBoundingClientRect()).filter((b) => b.width > 0 && b.right > 0 && b.bottom > 0 && b.left < innerWidth && b.top < innerHeight)
+      let n = 0
+      for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) { const a = r[i], b = r[j]; if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5) n++ }
+      return { visibles: r.length, intersections: n, fps: window.__atelier.fps, appels: window.__atelier.appels }
+    })) })
+    await ctx7.close()
+  }
   await gpu.close()
   await nav.close()
   T('H3 en entrepôt, un clic dans la 3D sur le camion benne ouvre SON panneau ; sur le camion de livraison, le panneau « Camion de livraison » (Playwright)', titreBenne !== null && /Camion benne/.test(titreBenne) && titreLivr === 'Camion de livraison', JSON.stringify({ titreBenne, titreLivr }))
   T('H4 la bande des indicateurs défile horizontalement ; « Réglages » et « Plan 2D » sont hors de la bande', bande?.defile === 'auto' && bande.reglagesHors && bande.planHors, JSON.stringify(bande))
   if (LEVE) T('H6 « Valider le chantier » (exemple, Playwright) : le bouton est dans le panneau du chantier terminé ; après le clic, le bandeau le dit et le bâtiment a QUITTÉ la carte ; « Remettre sur la carte » le fait revenir', !!validation && validation.avant && validation.surCarteAvant && validation.bandeau && !validation.surCarteApres && validation.revenu, JSON.stringify(validation))
+  T('H7 lot 6 — sur la démo chargée (12 et 30 chantiers), à 1440 et 390 px : 0 intersection entre les étiquettes visibles (rectangles DOM mesurés), toujours au plus 14 appels de dessin', croisements.length === 4 && croisements.every((x) => x.intersections === 0 && x.visibles > 3 && x.appels <= 14), JSON.stringify(croisements))
   T('H5 « Répondre » dans l’exemple ouvre un vrai dialogue (message du client, réponse proposée) ; « Valider et envoyer » montre l’effet sans rien envoyer', dialogue && envoye, JSON.stringify({ dialogue, envoye }))
   T('H1 la barre tient sur UNE ligne à 1280, 1440 et 1920 px, « Plan 2D » visible (Playwright)', res.every((r) => r.lignes === 1 && r.plan2d), JSON.stringify(res))
   T('H2 sur téléphone (390 px), les sélecteurs métier et lieu ne prennent aucune hauteur (rangés dans le menu fermé)', selectsVisibles === 0, String(selectsVisibles))

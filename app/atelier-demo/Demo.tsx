@@ -5,7 +5,7 @@ import '@/app/crm/crm.css'
 import { useEffect, useState } from 'react'
 import Atelier from '@/app/crm/atelier/Atelier'
 import { PREREGLAGES, FILTRES, type DonneesAtelier, type Filtre, type Prereglage } from '@/lib/crm/atelier'
-import { DONNEES_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineTypes } from '@/lib/crm/exemple'
+import { DONNEES_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineSerree, vitrineTypes } from '@/lib/crm/exemple'
 import { estTypeBat } from '@/lib/crm/carte'
 import type { NomVue } from '@/app/crm/atelier/Scene3D'
 import { actif } from '@/lib/flags'
@@ -20,6 +20,7 @@ import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type 
 // fictive (lib/crm/exemple.ts) est passée à l'atelier : salle d'attente et poste des assistants, avec leurs dialogues d'exemple.
 // Lot 5 (même drapeau) : &vitrine=etats&type=hotel (les quatre états d'un type), &vitrine=types (un chantier fini par type),
 // &vitrine=carte (douze chantiers à leur direction réelle), &sansbase=1 (la base de l'artisan n'est pas située : couronne de repli).
+// Lot 6 : &vitrine=serree (trente chantiers serrés : placement des étiquettes).
 const JOUR = JOUR_EXEMPLE
 const FICTIF = DONNEES_EXEMPLE
 const VIDE: DonneesAtelier = { jour: JOUR, metier: null, chantiers: [], materiaux: [], vehicules: [], membres: [], demandes: [] }
@@ -41,7 +42,7 @@ export default function Demo() {
   const metier3D = infra && (METIERS_3D as readonly string[]).includes(p.get('metier') ?? '') && !metier ? (p.get('metier') as Metier3D) : undefined
   const brut = p.get('vide') === '1' ? VIDE : base || statut || camion ? echantillonPourBase(FICTIF, base ?? 'entrepot', { statut, camion }) : FICTIF
   const vitrine = infra ? p.get('vitrine') : null
-  const avecVitrine = vitrine === 'etats' ? vitrineEtats(estTypeBat(p.get('type')) ? (p.get('type') as string) : 'maison') : vitrine === 'types' ? vitrineTypes() : vitrine === 'carte' ? vitrineCarte() : brut
+  const avecVitrine = vitrine === 'etats' ? vitrineEtats(estTypeBat(p.get('type')) ? (p.get('type') as string) : 'maison') : vitrine === 'types' ? vitrineTypes() : vitrine === 'carte' ? vitrineCarte() : vitrine === 'serree' ? vitrineSerree() : brut
   const sansBase = infra && p.get('sansbase') === '1' ? { ...avecVitrine, carte: undefined, chantiers: avecVitrine.chantiers.map((c) => ({ ...c, lat: null, lng: null })) } : avecVitrine
   const donnees = infra && p.get('stock') === 'vide' ? { ...sansBase, materiaux: [], reservations: [] } : sansBase
   return (

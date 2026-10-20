@@ -316,4 +316,12 @@ export function vitrineCarte(): DonneesAtelier {
   ]
   return { ...DONNEES_EXEMPLE, chantiers: l.map(([t, s, f, n, ty, e, no], i) => chantierVitrine(40 + i, t, s, f, n, { typeBatiment: ty, ...geo(e, no) })) }
 }
+/** Trente chantiers SERRÉS (de 0,3 à 6 km, états variés) : la carte la plus chargée, pour le placement des étiquettes (lot 6). */
+export function vitrineSerree(): DonneesAtelier {
+  const statuts: [string, number, number][] = [['en_cours', 1, 4], ['planifie', 0, 3], ['termine', 3, 3], ['en_cours', 3, 4], ['a_planifier', 0, 0], ['en_pause', 1, 5]]
+  return { ...DONNEES_EXEMPLE, chantiers: Array.from({ length: 30 }, (_, i) => {
+    const [s, f, n] = statuts[i % statuts.length], a = (i * 137.5 * Math.PI) / 180, km = 0.3 + (i % 10) * 0.6
+    return chantierVitrine(60 + i, `Chantier ${i + 1}`, s, f, n, { date_fin_prevue: i % 7 === 0 ? '2026-10-08' : '2026-10-30', ...geo(km * Math.cos(a), km * Math.sin(a)) })
+  }) }
+}
 type TypeBatV = NonNullable<DonneesAtelier['chantiers'][number]['typeBatiment']>

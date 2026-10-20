@@ -19,6 +19,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { COULEURS, FORMES, initiales, melanger, styleAvatar, type Forme, type Inst, type Scene } from '@/lib/crm/atelier'
 import { DUREE_CHUTE_MS, hauteurChute } from '@/lib/crm/accueil'
 import { ambiance, decalageMarche, dureeMarche, heureParis, type Fenetre, type Mobile } from '@/lib/crm/infrastructure'
+import { placerEtiquettes, prioriteChantier, PRIORITES, type EntreeEtiquette } from '@/lib/crm/etiquettes'
 
 export type CommandesScene = {
   zoomer: (facteur: number) => void
@@ -312,32 +313,98 @@ function OmbresFigees({ version, dureeMs, rafraichirA = null }: { version: unkno
   return null
 }
 
-// Les étiquettes (zones, pastilles des chantiers, bulle de survol) vivent dans UN calque DOM posé sur la toile. Une seule
-// boucle les replace, et seulement quand la caméra ou la taille ont changé : translate3d sur des éléments déjà composés,
-// rien d'autre. (Le composant Html de drei, une instance par étiquette, faisait tomber la rotation à ~20 i/s : mesuré.)
-type Cible = { el: HTMLElement | null; p: THREE.Vector3 }
+// Les étiquettes (zones, cartes des chantiers, bulle de survol) vivent dans UN calque DOM posé sur la toile. Une seule boucle les
+// replace, et seulement quand la caméra, la taille, la liste ou la sélection ont changé (et 4 fois par seconde pour suivre les panneaux
+// posés sur la carte) : translate3d sur des éléments déjà composés, aucun appel de dessin. (Le composant Html de drei, une instance par
+// étiquette, faisait tomber la rotation à ~20 i/s : mesuré.)
+// Lot 6 (Benj : « corrige le chevauchement des étiquettes ») : les cartes des chantiers et des zones sont PLACÉES (lib/crm/etiquettes.ts) —
+// par priorité, sans jamais se recouvrir ni cacher l'épingle d'un voisin ; sans place, une carte se replie en pastille (icône d'état +
+// numéro) qui se déplie au survol et au clic. La bulle de survol des autres objets reste centrée sur son objet (elle est passagère).
+type Cible = { el: HTMLElement | null; p: THREE.Vector3; cle?: string; sorte?: 'zone' | 'chantier' | 'poste'; priorite?: number; bas?: THREE.Vector3 }
+/** Les éléments posés SUR la carte, que les étiquettes évitent. */
+const OBSTACLES = '.atl-urg, .atl-outils, .atl-liste-3d, .atl-panneau, .atl-valide, .atl-brief, .atl-arrivee, .atl-flash'
+/** La taille d'une pastille repliée (fixée en CSS : .atl-etiquettes > [data-mode="pastille"]). */
+const PASTILLE = { l: 40, h: 24 } as const
 // `racine` porte data-niveau : « loin » (cartes réduites au nom et aux alertes) tant que la caméra est près de la vue d'ensemble ET que la
 // ville est dense (plus de 6 chantiers) ; « pres » sinon (équipe, tâches, détail). Le CSS fait le reste, aucun rendu React.
-function Projecteur({ cibles, racine, zoomEnsemble, dense }: { cibles: RefObject<Cible[]>; racine: RefObject<HTMLDivElement | null>; zoomEnsemble: RefObject<number>; dense: boolean }) {
+function Projecteur({ cibles, racine, zoomEnsemble, dense, selection }: { cibles: RefObject<Cible[]>; racine: RefObject<HTMLDivElement | null>; zoomEnsemble: RefObject<number>; dense: boolean; selection: number | null }) {
   const { camera, size } = useThree()
   const avant = useRef<number[]>([])
   const listeAvant = useRef<Cible[] | null>(null)
+  const tailles = useRef(new Map<HTMLElement, { l: number; h: number; niveau: string }>())
+  const dernier = useRef(0)
   const v = useMemo(() => new THREE.Vector3(), [])
   useFrame(() => {
     const niveau = dense && (camera as THREE.OrthographicCamera).zoom < zoomEnsemble.current * 1.5 ? 'loin' : 'pres'
-    if (racine.current && racine.current.dataset.niveau !== niveau) racine.current.dataset.niveau = niveau
+    const calque = racine.current
+    if (calque && calque.dataset.niveau !== niveau) calque.dataset.niveau = niveau
     const e = camera.matrixWorld.elements, q = camera.projectionMatrix.elements
-    const cle = [...e, q[0], q[5], size.width, size.height, cibles.current?.length ?? 0]
-    // Rien à faire si ni la caméra, ni la taille, ni les étiquettes (nouvelle liste à chaque rendu React) n'ont changé.
-    if (cibles.current === listeAvant.current && cle.length === avant.current.length && cle.every((x, i) => Math.abs(x - avant.current[i]) < 1e-6)) return
+    const cle = [...e, q[0], q[5], size.width, size.height, cibles.current?.length ?? 0, selection ?? -1]
+    const maintenant = performance.now()
+    // Rien à faire si ni la caméra, ni la taille, ni les étiquettes (nouvelle liste à chaque rendu React), ni la sélection n'ont changé —
+    // sauf toutes les 250 ms : un panneau posé sur la carte (urgences, fiche) a pu s'ouvrir ou se fermer.
+    const memes = cibles.current === listeAvant.current && cle.length === avant.current.length && cle.every((x, i) => Math.abs(x - avant.current[i]) < 1e-6)
+    if (memes && maintenant - dernier.current < 250) return
+    const listeChangee = cibles.current !== listeAvant.current
     avant.current = cle
     listeAvant.current = cibles.current
-    for (const c of cibles.current ?? []) {
+    dernier.current = maintenant
+    const liste = cibles.current ?? []
+    const z = (camera as THREE.OrthographicCamera).zoom
+    const ecran = (p: THREE.Vector3) => { v.copy(p).project(camera); return [(v.x * 0.5 + 0.5) * size.width, (-v.y * 0.5 + 0.5) * size.height] as const }
+    // 1. Les tailles des cartes complètes : mesurées à leur première apparition et quand le niveau de détail change (pas à chaque image).
+    for (const c of liste) {
+      if (!c.el || !c.sorte) continue
+      const t = tailles.current.get(c.el)
+      // (et au tic des 250 ms, caméra immobile : une police chargée après coup change la largeur d'une carte).
+      if (!t || t.niveau !== niveau || listeChangee || memes) {
+        const mode = c.el.dataset.mode
+        if (mode && mode !== 'complete') c.el.dataset.mode = 'complete'
+        tailles.current.set(c.el, { l: c.el.offsetWidth, h: c.el.offsetHeight, niveau })
+        if (mode && mode !== 'complete') c.el.dataset.mode = mode
+      }
+    }
+    // 2. Les épingles à l'écran, l'interface posée sur la carte, puis le placement (lib/crm/etiquettes.ts).
+    const boite = calque?.getBoundingClientRect()
+    const obstacles = calque && boite ? [...(calque.closest('.atl-cadre')?.querySelectorAll<HTMLElement>(OBSTACLES) ?? [])].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0).map((r) => ({ x: r.left - boite.left, y: r.top - boite.top, l: r.width, h: r.height })) : []
+    const entrees: EntreeEtiquette[] = []
+    const ancres: (readonly [number, number])[] = []
+    for (const c of liste) {
+      if (!c.el || !c.sorte || !c.cle) continue
+      const [x, y] = ecran(c.p)
+      ancres.push([x, y])
+      const [, yb] = c.bas ? ecran(c.bas) : [x, y]
+      const l = c.sorte === 'zone' ? 2 : Math.max(8, 0.72 * z)
+      const epingle = { x: x - l / 2, y: Math.min(y, yb), l, h: Math.max(2, Math.abs(yb - y)) }
+      const t = tailles.current.get(c.el) ?? { l: 120, h: 40 }
+      entrees.push({ cle: c.cle, priorite: c.priorite ?? 0, epingle, taille: { l: t.l, h: t.h }, ...(c.sorte === 'zone' ? {} : { pastille: PASTILLE }) })
+    }
+    const places = placerEtiquettes(entrees, { l: size.width, h: size.height }, obstacles)
+    // Mesure seulement (captures « avant / après » du lot 6) : les étiquettes centrées sur leur ancre, comme avant le placement.
+    const avantLot6 = (window as unknown as { __atelierEtiquettesAvant?: boolean }).__atelierEtiquettesAvant === true
+    let k = 0
+    for (const c of liste) {
       if (!c.el) continue
-      v.copy(c.p).project(camera)
-      const x = (v.x * 0.5 + 0.5) * size.width, y = (-v.y * 0.5 + 0.5) * size.height
-      c.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`
-      c.el.style.zIndex = String(Math.round(y)) // plus bas à l'écran = plus près : la carte du devant passe devant
+      if (!c.sorte || !c.cle || avantLot6) {
+        // La bulle de survol : centrée sur son objet, comme avant.
+        const [x, y] = ecran(c.p)
+        c.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`
+        continue
+      }
+      const p = places[k], en = entrees[k], [ax, ay] = [en.epingle.x + en.epingle.l / 2, en.epingle.y]
+      k++
+      if (c.el.dataset.mode !== p.mode) c.el.dataset.mode = p.mode
+      c.el.style.transform = p.mode === 'cachee' ? 'translate3d(-9999px, -9999px, 0)' : `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`
+      c.el.style.zIndex = String(Math.round(p.y + (p.mode === 'complete' ? 2000 : 0)))
+      // Le trait de rappel : du bord de l'étiquette le plus proche jusqu'au sommet de l'épingle.
+      const trait = c.el.querySelector<HTMLElement>(':scope > .atl-rappel')
+      if (trait) {
+        if (p.rappel && p.mode !== 'cachee') {
+          const bx = Math.min(Math.max(ax, p.x), p.x + p.l), by = Math.min(Math.max(ay, p.y), p.y + p.h)
+          const dx = ax - bx, dy = ay - by, lg = Math.hypot(dx, dy)
+          trait.style.cssText = `display:block;left:${(bx - p.x).toFixed(1)}px;top:${(by - p.y).toFixed(1)}px;width:${lg.toFixed(1)}px;transform:rotate(${Math.atan2(dy, dx).toFixed(3)}rad)`
+        } else if (trait.style.display !== 'none') trait.style.display = 'none'
+      }
     }
   })
   return null
@@ -429,14 +496,23 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
   }
   const objetSurvol = survol !== null ? scene.objets[survol] : null
   // Une cible par étiquette ; l'élément DOM est rattaché par ref, la position 3D est fixe (la maquette ne bouge pas).
-  const etiquettes = useMemo(() => [
-    ...scene.zones.map((z) => ({ cle: `zone:${z.libelle}`, p: new THREE.Vector3(...z.p), zone: z.libelle, i: -1 })),
-    ...scene.objets.flatMap((o, i) => (o.type === 'chantier' || o.type === 'assistants' ? [{ cle: o.cle, p: new THREE.Vector3(o.centre[0], o.hauteur + 0.6, o.centre[2]), zone: null, i }] : [])),
-  ], [scene])
+  // Lot 6 : chaque carte de chantier porte un NUMÉRO (son rang dans la liste des chantiers) — c'est lui que montre la pastille repliée.
+  // Son ancre est le SOMMET de l'épingle (hauteur − 0,1), son pied le bas du cône (hauteur − 1,15) : la zone qu'aucune autre ne couvre.
+  const etiquettes = useMemo(() => {
+    let n = 0
+    return [
+      ...scene.zones.map((z) => ({ cle: `zone:${z.libelle}`, p: new THREE.Vector3(...z.p), bas: null as THREE.Vector3 | null, zone: z.libelle, i: -1, numero: 0 })),
+      ...scene.objets.flatMap((o, i) => (o.type === 'chantier' || o.type === 'assistants' ? [{ cle: o.cle, p: new THREE.Vector3(o.centre[0], o.hauteur - 0.1, o.centre[2]), bas: new THREE.Vector3(o.centre[0], o.hauteur - 1.15, o.centre[2]), zone: null, i, numero: o.type === 'chantier' ? ++n : 0 }] : [])),
+    ]
+  }, [scene])
   const cibles = useRef<Cible[]>([])
   const bulle = useRef<HTMLSpanElement | null>(null)
   cibles.current = [
-    ...etiquettes.map((e, k) => ({ el: cibles.current[k]?.el ?? null, p: e.p })),
+    ...etiquettes.map((e, k) => {
+      const o = e.i >= 0 ? scene.objets[e.i] : null
+      const priorite = !o ? PRIORITES.zone : o.type === 'assistants' ? (selection === e.i ? PRIORITES.selection : PRIORITES.poste) : prioriteChantier(o, COULEURS, selection === e.i)
+      return { el: cibles.current[k]?.el ?? null, p: e.p, cle: e.cle, sorte: (e.zone ? 'zone' : o?.type === 'assistants' ? 'poste' : 'chantier') as Cible['sorte'], priorite, ...(e.bas ? { bas: e.bas } : {}) }
+    }),
     { el: bulle.current, p: objetSurvol ? new THREE.Vector3(objetSurvol.centre[0], objetSurvol.hauteur + 0.6, objetSurvol.centre[2]) : new THREE.Vector3(0, -999, 0) },
   ]
 
@@ -494,18 +570,20 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />
       <OmbresFigees version={infra ? versionOmbres : scene} dureeMs={apparition ? 1100 : 0} rafraichirA={marche ? marche.fin + 30 : null} />
       <Mesureur actif={mesure} moment={amb?.moment ?? null} objets={scene.objets} />
-      <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} />
+      <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} selection={selection} />
     </Canvas>
     {/* Le calque des étiquettes (DOM, aucun appel de dessin). */}
     <div className="atl-etiquettes" ref={racine} data-niveau="pres">
       {etiquettes.map((e, k) => {
         const lier = (el: HTMLElement | null) => { if (cibles.current[k]) cibles.current[k].el = el }
-        if (e.zone) return <span key={e.cle} ref={lier} className="atl-zone">{e.zone}</span>
+        if (e.zone) return <span key={e.cle} ref={lier} className="atl-zone" data-etiquette={e.cle}>{e.zone}</span>
         const o = scene.objets[e.i]
         // Le poste des assistants (drapeau crmAtelierVivant) : une pastille, son nom et le nombre de choses à valider.
         if (o.type === 'assistants') {
           return (
-            <button key={e.cle} ref={lier} type="button" tabIndex={-1} className={`atl-carte atl-poste${selection === e.i ? ' choisie' : ''}${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}`} onClick={() => onSelection(e.i)}>
+            <button key={e.cle} ref={lier} type="button" tabIndex={-1} className={`atl-carte atl-poste${selection === e.i ? ' choisie' : ''}${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}`} onClick={() => onSelection(e.i)} data-etiquette={e.cle}>
+              <span className="atl-rappel" aria-hidden="true" />
+              <span className="atl-pastille" aria-hidden="true"><i style={{ background: COULEURS.corail }} /><b>A</b></span>
               <span className="atl-carte-tete"><i style={{ background: COULEURS.corail }} aria-hidden="true" /><b>{o.libelle}</b></span>
               <span className="atl-carte-pied">{o.badges.map((b) => <span key={b.type} className="atl-badge atl-badge-valider">{b.libelle}</span>)}{o.badges.length === 0 && <span className="atl-carte-ligne">{o.detail}</span>}</span>
             </button>
@@ -518,8 +596,11 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
         return (
           <button key={e.cle} ref={lier} type="button" tabIndex={-1}
             className={`atl-carte${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}${selection === e.i ? ' choisie' : ''}${critique ? ' urgente' : ''}`}
-            onClick={() => onSelection(e.i)}>
-            <span className="atl-carte-tete"><i style={{ background: o.epingle ?? COULEURS.gris }} aria-hidden="true" /><b>{o.libelle}</b></span>
+            onClick={() => onSelection(e.i)} data-etiquette={e.cle} title={`${e.numero}. ${o.libelle} · ${o.detail}`}>
+            <span className="atl-rappel" aria-hidden="true" />
+            {/* Repliée (pas de place à l'écran) : l'état et le numéro ; elle se déplie au survol et au clic. */}
+            <span className="atl-pastille" aria-hidden="true"><i style={{ background: o.epingle ?? COULEURS.gris }} /><b className="tnum">{e.numero}</b></span>
+            <span className="atl-carte-tete"><i style={{ background: o.epingle ?? COULEURS.gris }} aria-hidden="true" /><b>{o.libelle}</b><em className="atl-carte-num tnum">{e.numero}</em></span>
             <span className="atl-carte-ligne">{o.detail}</span>
             {pct !== null && <span className="atl-carte-barre" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>}
             <span className="atl-carte-pied">

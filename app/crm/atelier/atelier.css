@@ -318,3 +318,19 @@
 .atl-coche-reglage { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--ink); cursor: pointer; padding-top: 6px; border-top: 1px solid var(--line-2) }
 .atl-coche-reglage input { margin-top: 2px; accent-color: var(--accent) }
 @media (max-width: 720px) { .atl-valide { flex-wrap: wrap; bottom: 8px } }
+
+/* ── Lot 6 : les étiquettes PLACÉES (lib/crm/etiquettes.ts) — jamais l'une sur l'autre ; sans place, une pastille (état + numéro) ── */
+.atl-carte-num { margin-left: auto; padding-left: 4px; font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--muted) }
+.atl-pastille { display: none }
+.atl-rappel { display: none; position: absolute; height: 1.5px; background: var(--ink-soft); transform-origin: 0 50%; pointer-events: none; opacity: .75 }
+.atl-etiquettes > .atl-carte[data-mode="pastille"] { width: 40px; height: 24px; min-width: 0; max-width: none; padding: 0 6px; gap: 0; flex-direction: row; align-items: center; justify-content: center; border-radius: 12px; overflow: visible }
+.atl-etiquettes > .atl-carte[data-mode="pastille"] > :not(.atl-pastille):not(.atl-rappel) { display: none }
+.atl-etiquettes > .atl-carte[data-mode="pastille"] > .atl-pastille { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 700; color: var(--ink) }
+.atl-pastille i { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto }
+/* Survolée ou atteinte au clavier, la pastille se déplie en carte complète, au-dessus de tout (passagère). */
+.atl-etiquettes > .atl-carte[data-mode="pastille"]:hover, .atl-etiquettes > .atl-carte[data-mode="pastille"]:focus-visible { width: auto; height: auto; min-width: 132px; max-width: 190px; padding: 6px 9px 6px 8px; gap: 3px; flex-direction: column; align-items: stretch; border-radius: 11px; z-index: 100000 !important; box-shadow: var(--shadow-lg) }
+.atl-etiquettes > .atl-carte[data-mode="pastille"]:hover > :not(.atl-pastille):not(.atl-rappel), .atl-etiquettes > .atl-carte[data-mode="pastille"]:focus-visible > :not(.atl-pastille):not(.atl-rappel) { display: flex }
+.atl-etiquettes > .atl-carte[data-mode="pastille"]:hover > .atl-carte-ligne, .atl-etiquettes > .atl-carte[data-mode="pastille"]:hover > .atl-carte-barre { display: block }
+.atl-etiquettes > .atl-carte[data-mode="pastille"]:hover > .atl-pastille, .atl-etiquettes > .atl-carte[data-mode="pastille"]:focus-visible > .atl-pastille { display: none }
+.atl-etiquettes > [data-mode="cachee"] { visibility: hidden }
+
