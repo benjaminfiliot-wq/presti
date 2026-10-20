@@ -145,6 +145,14 @@ export type PlanBase = {
   sortie: [number, number]
   /** La cible de la caméra pour la vue « atelier ». */
   cible: V3
+  /** Le mobilier du hall (allées marquées, zone de montage, chariot, poste, tri, extincteurs) : atelier et entrepôt. */
+  hall: Rect
+  /** Les bâtiments et structures de la base que la marche ne traverse jamais (scripts/crm-atelier3d-qa.mjs le vérifie). */
+  batiments: readonly Rect[]
+  /** Le chemin de sortie, du poste de repos à la rue (le dernier point est SUR la rue de ceinture, z = 14) ; `interne` : combien de
+   *  ses premiers tronçons restent à l'intérieur d'un bâtiment de la base (par ses portes). */
+  chemin: readonly [number, number][]
+  interne: number
 }
 
 export const PLANS: Record<Base, PlanBase> = {
@@ -157,6 +165,9 @@ export const PLANS: Record<Base, PlanBase> = {
     racks: { x0: 4.6, z: -3.4, pas: 2.2, max: 3 },
     interieur: { x0: 0.3, x1: 2.3, z0: -3.8, z1: 1.2 }, exterieur: { x0: 3.6, x1: 9.6, z0: -2.2, z1: 8.8 },
     repos: { x: -11.4, z: 2.3, cols: 2, dx: 0.7, dz: 0.75 }, sortie: [0.75, 9.6], cible: [-2, 0, 1],
+    hall: { x0: 0.3, x1: 2.3, z0: -3.8, z1: 1.2 },
+    batiments: [{ x0: -9, x1: -2.5, z0: -4, z1: 1.5 }, { x0: -2.5, x1: 2.5, z0: -4, z1: 1.5 }, { x0: 3.6, x1: 9.6, z0: -2.2, z1: 8.8 }],
+    chemin: [[-5.7, 8.6], [-5.7, 14]], interne: 0,
   },
   // L'atelier artisanal : bâtiment à gauche, bureau accolé encore à gauche, cour devant, structures du métier à droite, parking en façade de rue.
   atelier: {
@@ -167,16 +178,22 @@ export const PLANS: Record<Base, PlanBase> = {
     racks: { x0: -9.0, z: -1.9, pas: 2.2, max: 5 },
     interieur: { x0: -9.6, x1: 1.6, z0: -1.0, z1: 1.3 }, exterieur: { x0: 3.4, x1: 11.6, z0: -7.8, z1: 0.9 },
     repos: { x: -5.4, z: 2.6, cols: 3, dx: 0.9, dz: 0.8 }, sortie: [3.8, 2.8], cible: [-3, 0, -1],
+    hall: { x0: -9.8, x1: 2.0, z0: -6.4, z1: 1.4 },
+    batiments: [{ x0: -10, x1: 2, z0: -6.5, z1: 1.5 }, { x0: -13, x1: -10, z0: -3.5, z1: 1.5 }, { x0: 3.4, x1: 11.6, z0: -7.8, z1: 0.9 }],
+    chemin: [[-5.8, 4.4], [-5.8, 14]], interne: 0,
   },
   // La zone d'activité : hangar à bardage au fond, bureaux en étage devant à gauche, quais à droite, parking poids lourds et véhicules légers.
   entrepot: {
     base: 'entrepot', lot: { x0: -13, x1: 24, z0: -9, z1: 10 },
     places: [[12.4, 2.6, 'x'], [12.4, 5.4, 'x'], [12.4, 8.2, 'x'], [21.6, 2.6, 'x'], [21.6, 5.4, 'x'], [21.6, 8.2, 'x'], [16.9, 2.6, 'x'], [16.9, 5.4, 'x']],
-    placesCamion: [[15.6, -6.0, 'x'], [15.6, 0.0, 'x']],
+    placesCamion: [[15.6, 0.0, 'x'], [15.6, -6.0, 'x']],
     accueil: { x: -8.0, z: 8.7, l: 1.8 }, colis: { x: -12.5, z: 8.9 }, bureau: { x: -8, z: 6 }, poste: { x: -8.3, z: 2.6 },
     racks: { x0: -9.9, z: -3.6, pas: 2.2, max: 9 },
     interieur: { x0: -6.8, x1: 2.6, z0: -2.6, z1: 3.2 }, exterieur: { x0: -4.4, x1: 9.4, z0: 4.6, z1: 8.9 },
     repos: { x: 3.4, z: -0.6, cols: 4, dx: 1.15, dz: 1.2 }, sortie: [17, 10.2], cible: [0, 0, 2.5],
+    hall: { x0: -10.8, x1: 8.9, z0: -2.8, z1: 3.8 },
+    batiments: [{ x0: -11, x1: 9, z0: -8, z1: 4 }, { x0: -11, x1: -3.8, z0: 4, z1: 8 }, { x0: -4.4, x1: 9.4, z0: 4.6, z1: 8.9 }],
+    chemin: [[3.0, 3.4], [3.0, 4.3], [10.0, 4.3], [10.0, 9.6], [16, 9.6], [16, 14]], interne: 2,
   },
   // Sans local : un emplacement gravillonné dans un square, le camion-atelier ouvert au milieu, une table pliante pour bureau.
   camion: {
@@ -187,6 +204,9 @@ export const PLANS: Record<Base, PlanBase> = {
     racks: { x0: -2.2, z: -2.6, pas: 2.2, max: 3 },
     interieur: { x0: -1.6, x1: 1.8, z0: 2.0, z1: 3.6 }, exterieur: { x0: -8.6, x1: -4.4, z0: -4.6, z1: 0.2 },
     repos: { x: 5.6, z: 0.2, cols: 2, dx: 0.8, dz: 0.8 }, sortie: [0, 6.2], cible: [0, 0, 1],
+    hall: { x0: -1.6, x1: 1.8, z0: 2.0, z1: 3.6 },
+    batiments: [{ x0: -2.2, x1: 2.6, z0: -0.6, z1: 1.5 }, { x0: -8.6, x1: -4.4, z0: -4.6, z1: 0.2 }],
+    chemin: [[6.2, 14]], interne: 0,
   },
 }
 
@@ -239,7 +259,11 @@ export type AjoutI = (f: Forme, p: V3, s: V3, c: string, o?: number, r?: V3) => 
 export type Fenetre = Inst & { nuit: string }
 export type AjoutF = (p: V3, s: V3, jour: string, nuit: string, o?: number) => void
 /** Un morceau de personnage qui marche vers son chantier (la position posée est l'ARRIVÉE ; la scène 3D calcule le trajet). */
-export type Mobile = { forme: Forme; index: number; de: [number, number]; porte: [number, number]; vers: [number, number]; ordre: number }
+export type Mobile = {
+  forme: Forme; index: number; de: [number, number]; porte: [number, number]; vers: [number, number]; ordre: number
+  /** Le trajet complet par les allées et les rues (lot 3) : du poste de repos à l'arrivée. Absent : de → porte → vers. */
+  chemin?: [number, number][]
+}
 
 // ── Le pinceau : les gestes de construction communs (volumes, murs, toits, fenêtres, clôtures, arbres) ─────────
 function pinceau(add: AjoutI, addF: AjoutF, o = -1) {
@@ -499,6 +523,40 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     // Parking poids lourds : trois baies longues devant les quais ; un camion de livraison à quai s'il y a des commandes attendues.
     for (const zq of [-6, -3, 0]) for (const s of [-1.4, 1.4]) k.B(16.4, 0.045, zq + s, 11, 0.02, 0.08, P.blanc)
     faits.push('parking-poids-lourds')
+    // Un camion dans le parc d'un métier du bâtiment : une aire de lavage des engins (dalle, caniveau, lance) au fond du parking poids
+    // lourds. Le maçon y ajoute un pont-bascule sur l'allée du portail et un parc d'engins (mini-pelle, chargeuse). Tiré des données
+    // (gabarit « camion » dans le parc), jamais du hasard.
+    if (camion && (metier === 'macon' || metier === 'couvreur' || metier === 'general')) {
+      // L'aire de lavage des engins : dalle, caniveau, potence et lance, flaque.
+      k.vol(10.9, -8.6, 14.4, -6.7, 0.06, '#BFB7AA'); k.B(12.65, 0.07, -7.65, 3.0, 0.02, 0.18, P.ardoise)
+      k.B(14.2, 0.9, -8.4, 0.12, 1.8, 0.12, P.metal); k.B(13.9, 1.75, -8.4, 0.7, 0.1, 0.1, P.metal); k.Cy(12.2, 0.08, -7.3, 1.6, 0.02, 1.0, P.eau)
+      faits.push('aire-lavage')
+    }
+    if (camion && metier === 'macon') {
+      // Le pont-bascule sur l'allée du portail, et sa cabine de pesée.
+      k.vol(15.9, 6.2, 18.1, 9.4, 0.1, P.beton); for (const z of [6.25, 9.35]) k.B(17, 0.12, z, 2.2, 0.05, 0.1, P.ardoise)
+      k.vol(18.6, 6.6, 19.6, 7.6, 2.2, '#ECE6DA'); k.F(19.62, 1.5, 7.1, 0.03, 0.5, 0.7, P.vitreJour, P.lumiere); k.B(19.1, 2.25, 7.1, 1.2, 0.1, 1.2, P.ardoise)
+      faits.push('pont-bascule')
+      // La plateforme de stockage : trois grands boxes de béton (murs de 1,6 m), tas de sable, de gravier, de gravillons.
+      k.vol(18.2, -8.7, 23.8, -4.7, 0.08, P.beton)
+      k.B(21.0, 0.85, -8.55, 5.6, 1.6, 0.3, P.beton)
+      for (let i = 0; i < 4; i++) k.B(18.35 + i * 1.8, 0.85, -6.7, 0.3, 1.6, 3.6, P.beton)
+      ;[P.sable, P.granulat, '#B5AC9E'].forEach((c, i) => k.Co(19.25 + i * 1.8, 0.75, -6.9, 1.7, 1.5, 2.6, c))
+      faits.push('plateforme-stockage')
+      // Le parc d'engins : une mini-pelle et une chargeuse.
+      for (const dz of [-0.45, 0.45]) k.B(15.2, 0.22, -7.6 + dz, 1.8, 0.44, 0.4, P.ardoise)
+      k.B(15.2, 0.75, -7.6, 1.4, 0.6, 1.2, P.ambre); k.B(14.9, 1.3, -7.6, 0.8, 0.6, 0.9, P.vitre)
+      k.B(16.2, 1.4, -7.6, 1.5, 0.2, 0.2, P.ambre, [0, 0, 0.7]); k.B(16.9, 0.9, -7.6, 0.2, 1.1, 0.2, P.ambre, [0, 0, -0.3]); k.B(17.1, 0.35, -7.6, 0.5, 0.35, 0.6, P.ardoise)
+      faits.push('parc-engins')
+      // La grue à tour au-dessus de la plateforme : la silhouette qui se voit de loin.
+      k.vol(22.4, -8.2, 23.4, -7.2, 0.5, P.beton)
+      for (let y = 0.5; y < 11.5; y += 1.0) { k.B(22.9, y + 0.5, -7.7, 0.5, 0.06, 0.5, P.ambre); k.B(22.9, y + 0.5, -7.7, 0.06, 1.0, 0.06, P.ambre) }
+      for (const [dx, dz] of [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]]) k.B(22.9 + dx, 6.0, -7.7 + dz, 0.08, 11.0, 0.08, P.ambre)
+      k.B(17.4, 11.7, -7.7, 11.6, 0.4, 0.4, P.ambre); k.B(23.9, 11.7, -7.7, 2.0, 0.4, 0.4, P.ambre); k.B(24.2, 11.2, -7.7, 1.0, 0.9, 0.9, P.beton)
+      k.B(22.9, 12.4, -7.7, 0.12, 1.4, 0.12, P.ambre); k.B(22.4, 11.2, -7.7, 0.7, 0.7, 0.7, P.vitre)
+      k.B(15.0, 9.0, -7.7, 0.04, 5.0, 0.04, P.ardoise); k.B(15.0, 6.4, -7.7, 0.9, 0.3, 0.9, P.corail)
+      faits.push('grue-a-tour')
+    }
     if (profil.commandesEnCours > 0) {
       k.B(15.3, 1.95, -3, 8.6, 2.9, 2.4, '#ECE6DA'); k.B(15.3, 1.2, -1.79, 8.4, 0.18, 0.02, P.corail); k.B(15.3, 1.2, -4.21, 8.4, 0.18, 0.02, P.corail)
       k.B(20.6, 1.45, -3, 1.6, 2.1, 2.3, P.corail); k.F(21.42, 1.95, -3, 0.04, 0.6, 1.9, P.vitre, P.phare)
@@ -653,7 +711,7 @@ export const SIGNATURES: Record<Prereglage, string[]> = {
 type Module = { k: string; w: number; d: number; poser: (x0: number, z0: number) => void }
 
 /** Les structures et machines du métier, rangées dans les zones de la base (dehors puis dedans), sans chevauchement. */
-export function accessoiresBase(p: Prereglage, plan: PlanBase): Acc[] {
+export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: boolean } = {}): Acc[] {
   const a: Acc[] = []
   let kk = ''
   const b = (x: number, y: number, z: number, s: V3, c: string, r: V3 = [0, 0, 0]) => a.push({ f: 'box', p: [x, y, z], s, c, r, k: kk })
@@ -792,7 +850,8 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase): Acc[] {
     case 'macon':
       if (niv === 0) dehors.push(tasSable, betonniere, parpaings(1), sacs)
       else if (niv === 1) { dehors.push(boxesGranulats(2), siloMortier, parpaings(1), chargeuse); dedans.push(sacs) }
-      else { dehors.push(boxesGranulats(3), siloMortier, grue, parpaings(2)); dedans.push(sacs, chargeuse) }
+      // Avec un camion benne, la plateforme de stockage s'agrandit (quatre boxes) : le site d'une entreprise de gros œuvre.
+      else { dehors.push(boxesGranulats(opt.camion ? 4 : 3), siloMortier, grue, parpaings(opt.camion ? 1 : 2)); dedans.push(sacs, chargeuse) }
       break
     case 'couvreur':
       if (niv === 0) dehors.push(racksEchafaudage(2.6), tuiles(1), echelleAuSol(3.0))
@@ -824,7 +883,39 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase): Acc[] {
   }
   ranger(dehors, plan.exterieur)
   ranger(dedans, plan.interieur)
+  if (niv > 0) mobilierHall(plan, (k) => { kk = k }, b, cy)
   return a
+}
+
+/**
+ * Le mobilier du hall (atelier, entrepôt) : allées marquées au sol, zone de découpe et de montage, chariot, poste de travail, panneau
+ * d'outils, bacs de tri, extincteurs aux portes. Des boîtes et des cylindres de plus, AUCUN appel de dessin de plus.
+ */
+function mobilierHall(plan: PlanBase, quoi: (k: string) => void, b: (x: number, y: number, z: number, s: V3, c: string, r?: V3) => void, cy: (x: number, y: number, z: number, s: V3, c: string, r?: V3) => void) {
+  const ligne = (x0: number, z0: number, x1: number, z1: number) => b((x0 + x1) / 2, 0.065, (z0 + z1) / 2, [Math.max(0.08, Math.abs(x1 - x0)), 0.012, Math.max(0.08, Math.abs(z1 - z0))], P.ambre)
+  const table = (x: number, z: number) => { b(x, 0.85, z, [2.0, 0.08, 1.0], P.bois); for (const [dx, dz] of [[-0.9, -0.42], [0.9, -0.42], [-0.9, 0.42], [0.9, 0.42]]) b(x + dx, 0.42, z + dz, [0.07, 0.84, 0.07], P.metal); b(x - 0.2, 0.93, z, [1.2, 0.05, 0.7], '#D6B898'); b(x + 0.7, 0.95, z + 0.2, [0.3, 0.08, 0.12], P.corail) }
+  const chariot = (x: number, z: number) => { for (const y of [0.35, 0.8]) b(x, y, z, [0.9, 0.05, 0.55], P.corail); for (const [dx, dz] of [[-0.4, -0.22], [0.4, -0.22], [-0.4, 0.22], [0.4, 0.22]]) { b(x + dx, 0.45, z + dz, [0.04, 0.8, 0.04], P.metal); cy(x + dx, 0.06, z + dz, [0.12, 0.08, 0.12], P.ardoise, [Math.PI / 2, 0, 0]) } b(x - 0.45, 1.0, z, [0.04, 0.4, 0.5], P.metal); b(x, 0.88, z, [0.5, 0.1, 0.3], P.ardoise) }
+  const poste = (x: number, z: number) => { b(x, 0.74, z, [1.2, 0.05, 0.6], P.planche); for (const dx of [-0.55, 0.55]) b(x + dx, 0.37, z, [0.05, 0.74, 0.55], P.metal); b(x, 1.05, z - 0.18, [0.55, 0.36, 0.04], P.ardoise); b(x, 1.06, z - 0.155, [0.48, 0.28, 0.01], P.corailClair); cy(x, 0.25, z + 0.55, [0.42, 0.5, 0.42], P.ardoise) }
+  const tri = (x: number, z: number, axeX: boolean) => [P.vert, P.ambre, P.gris].forEach((c, i) => { const px = axeX ? x + i * 0.55 : x, pz = axeX ? z : z + i * 0.55; b(px, 0.4, pz, [0.48, 0.8, 0.48], c); b(px, 0.82, pz, [0.5, 0.05, 0.5], melange(c, '#000000', 0.2)) })
+  const panneau = (x: number, z: number, sur: 'z' | 'x') => { b(x, 1.55, z, sur === 'z' ? [2.0, 1.0, 0.05] : [0.05, 1.0, 2.0], P.planche); [P.ardoise, P.corail, P.ardoise, P.ambre, P.ardoise].forEach((c, i) => { const t = -0.8 + i * 0.4; b(sur === 'z' ? x + t : x + 0.04, 1.55, sur === 'z' ? z + 0.04 : z + t, sur === 'z' ? [0.1, 0.55 - (i % 2) * 0.15, 0.04] : [0.04, 0.55 - (i % 2) * 0.15, 0.1], c) }) }
+  const extincteur = (x: number, z: number) => { cy(x, 0.28, z, [0.2, 0.5, 0.2], P.corailFonce); cy(x, 0.58, z, [0.08, 0.1, 0.08], P.ardoise) }
+  if (plan.base === 'atelier') {
+    quoi('allees'); ligne(-9.8, -1.3, 1.8, -1.3); ligne(1.4, -6.3, 1.4, -1.3); ligne(-1.9, -5.9, 0.6, -5.9); ligne(-1.9, -3.9, 0.6, -3.9); ligne(-1.9, -5.9, -1.9, -3.9); ligne(0.6, -5.9, 0.6, -3.9)
+    quoi('zone-montage'); table(-0.65, -4.9)
+    quoi('chariot'); chariot(1.05, -3.1)
+    quoi('poste-travail'); poste(-1.3, -3.15)
+    quoi('tri'); tri(1.55, -6.0, false)
+    quoi('panneau-outils'); panneau(-0.6, -6.36, 'z')
+    quoi('extincteur'); extincteur(-6.25, 1.2); extincteur(1.7, -1.6)
+  } else if (plan.base === 'entrepot') {
+    quoi('allees'); ligne(-10.8, -2.75, 8.8, -2.75); ligne(-10.8, 3.6, 8.8, 3.6); ligne(2.95, -2.7, 2.95, 3.6)
+    quoi('zone-montage'); table(5.8, 3.0)
+    quoi('chariot'); chariot(8.1, 2.9)
+    quoi('poste-travail'); poste(7.9, -0.3)
+    quoi('tri'); tri(6.0, -2.2, true)
+    quoi('panneau-outils'); b(4.2, 0.75, -2.3, [0.06, 1.5, 0.06], P.metal); panneau(4.2, -2.3, 'z')
+    quoi('extincteur'); extincteur(1.15, 3.75); extincteur(-3.85, 3.75); extincteur(8.7, -1.3)
+  }
 }
 
 /** Range des modules dans un rectangle, en rangées (comme des livres sur une étagère) ; ce qui ne tient pas n'est pas posé. */
@@ -1111,12 +1202,74 @@ export function personnage(add: AjoutI, x: number, z: number, couleur: string, o
   ]
 }
 
+// ── Les rues : la marche les suit (lot 3 : « sans traverser une maison ni un bâtiment ») ───────────────────────────
+const r1 = (v: number) => Math.round(v * 10) / 10
+/** Les axes des rues de la ville (lib/crm/atelier.ts, decorVille) : entre les parcelles, tous les 5,6 m. */
+export const RUES_X: readonly number[] = Array.from({ length: 15 }, (_, i) => r1(-36.4 + i * 5.6))
+export const RUES_Z: readonly number[] = Array.from({ length: 12 }, (_, i) => r1(-30.8 + i * 5.6))
+/** L'enclos de la base, bordé par la rue de ceinture (x = −14 et 25,2 ; z = ±14) : aucune rue ne le traverse, aucun chantier n'y est posé. */
+export const ENCLOS = { x0: -14, x1: 25.2, z0: -14, z1: 14 } as const
+/** Une parcelle de chantier hors de l'enclos (avec l'infrastructure, la rangée qui touchait la base est laissée libre). */
+export const horsEnclos = (p: readonly number[]): boolean => !(p[0] > ENCLOS.x0 - 2.1 && p[0] < ENCLOS.x1 + 2.1 && p[2] > ENCLOS.z0 - 2.1 && p[2] < ENCLOS.z1 + 2.1)
+/** Un tronçon de rue est ouvert s'il ne passe pas DANS l'enclos (la rue de ceinture, elle, est ouverte). */
+function ouvert(a: readonly [number, number], b: readonly [number, number]): boolean {
+  const e = 1e-6
+  if (Math.abs(a[1] - b[1]) < e) return !(a[1] > ENCLOS.z0 + e && a[1] < ENCLOS.z1 - e && Math.max(a[0], b[0]) > ENCLOS.x0 + e && Math.min(a[0], b[0]) < ENCLOS.x1 - e)
+  return !(a[0] > ENCLOS.x0 + e && a[0] < ENCLOS.x1 - e && Math.max(a[1], b[1]) > ENCLOS.z0 + e && Math.min(a[1], b[1]) < ENCLOS.z1 - e)
+}
+/**
+ * Le plus court chemin PAR LES RUES entre deux points posés sur des rues (Dijkstra sur les carrefours ; les tronçons qui
+ * traverseraient l'enclos de la base sont fermés). Rend la suite des points, du départ à l'arrivée ; null si rien ne relie.
+ */
+export function cheminRues(de: [number, number], vers: [number, number]): [number, number][] | null {
+  const pts: [number, number][] = [de, vers]
+  for (const x of RUES_X) for (const z of RUES_Z) pts.push([x, z])
+  const sur = (v: number, w: number) => Math.abs(v - w) < 1e-6
+  const voisins: { j: number; d: number }[][] = pts.map(() => [])
+  const relier = (idx: number[], axe: 0 | 1) => {
+    idx.sort((a, b) => pts[a][axe] - pts[b][axe])
+    for (let k = 1; k < idx.length; k++) {
+      const a = idx[k - 1], b = idx[k]
+      if (!ouvert(pts[a], pts[b])) continue
+      const d = dist(pts[a], pts[b])
+      voisins[a].push({ j: b, d }); voisins[b].push({ j: a, d })
+    }
+  }
+  for (const z of RUES_Z) relier(pts.map((p, i) => (sur(p[1], z) ? i : -1)).filter((i) => i >= 0), 0)
+  for (const x of RUES_X) relier(pts.map((p, i) => (sur(p[0], x) ? i : -1)).filter((i) => i >= 0), 1)
+  const d = pts.map(() => Infinity), prec = pts.map(() => -1), fait = pts.map(() => false)
+  d[0] = 0
+  for (;;) {
+    let u = -1
+    for (let i = 0; i < pts.length; i++) if (!fait[i] && d[i] < Infinity && (u < 0 || d[i] < d[u])) u = i
+    if (u < 0 || u === 1) break
+    fait[u] = true
+    for (const v of voisins[u]) if (d[u] + v.d < d[v.j] - 1e-9) { d[v.j] = d[u] + v.d; prec[v.j] = u }
+  }
+  if (!Number.isFinite(d[1])) return null
+  const route: [number, number][] = []
+  for (let i = 1; i >= 0; i = prec[i]) route.unshift(pts[i])
+  return route
+}
+/**
+ * Le trajet d'un compagnon : du poste de repos, par le chemin de sortie de la base (ses portes et ses allées), puis par les rues
+ * jusqu'à la rue qui longe le devant de sa parcelle, et enfin à sa place devant la maison. `parcelle` : le centre de la parcelle.
+ */
+export function cheminVers(plan: PlanBase, de: [number, number], vers: [number, number], parcelle: [number, number]): [number, number][] {
+  const E = plan.chemin[plan.chemin.length - 1]
+  const A: [number, number] = [vers[0], r1(parcelle[1] + 2.8)]
+  const rues = cheminRues([E[0], E[1]], A) ?? [[E[0], E[1]], A]
+  const tout: [number, number][] = [de, ...plan.chemin.map((p) => [p[0], p[1]] as [number, number]), ...rues.slice(1), vers]
+  return tout.filter((p, i) => i === 0 || dist(p, tout[i - 1]) > 1e-6)
+}
+
 // ── La marche vers le chantier du jour (Scene3D l'anime ; rien ne bouge avec « réduire les animations ») ─────────
-/** 4,2 m de maquette par seconde ; départ 1,3 s après l'ouverture (l'apparition est finie) ; 0,35 s entre deux personnages. */
-export const MARCHE = { vitesse: 4.2, departMs: 1300, decalageMs: 350 } as const
-const dist = (a: readonly [number, number], b: readonly [number, number]) => Math.hypot(b[0] - a[0], b[1] - a[1])
-/** La longueur du trajet : du poste de repos à la sortie de la base, puis de la sortie au chantier. */
-export const longueurMarche = (m: Pick<Mobile, 'de' | 'porte' | 'vers'>): number => dist(m.de, m.porte) + dist(m.porte, m.vers)
+/** 6,5 m de maquette par seconde (le trajet suit les rues : plus long qu'à vol d'oiseau) ; départ 1,3 s après l'ouverture ; 0,35 s entre deux personnages. */
+export const MARCHE = { vitesse: 6.5, departMs: 1300, decalageMs: 350 } as const
+function dist(a: readonly number[], b: readonly number[]): number { return Math.hypot(b[0] - a[0], b[1] - a[1]) }
+const trace = (m: Pick<Mobile, 'de' | 'porte' | 'vers' | 'chemin'>): [number, number][] => m.chemin ?? [m.de, m.porte, m.vers]
+/** La longueur du trajet (le chemin par les rues, ou de → porte → vers). */
+export const longueurMarche = (m: Pick<Mobile, 'de' | 'porte' | 'vers' | 'chemin'>): number => trace(m).reduce((t, p, i, l) => (i ? t + dist(l[i - 1], p) : 0), 0)
 /** Combien de temps (ms, depuis l'ouverture) jusqu'à ce que le dernier personnage soit arrivé. */
 export function dureeMarche(mobiles: readonly Mobile[]): number {
   return mobiles.reduce((t, m) => Math.max(t, MARCHE.departMs + m.ordre * MARCHE.decalageMs + (longueurMarche(m) / MARCHE.vitesse) * 1000), 0)
@@ -1126,14 +1279,22 @@ export function dureeMarche(mobiles: readonly Mobile[]): number {
  * tour, sur le trajet ensuite (avec un léger rebond de pas), [0, 0, 0] une fois arrivé.
  */
 export function decalageMarche(m: Mobile, t: number): [number, number, number] {
-  const l1 = dist(m.de, m.porte), l2 = dist(m.porte, m.vers), L = l1 + l2
+  const l = trace(m), L = longueurMarche(m)
   const brut = Math.max(0, ((t - MARCHE.departMs - m.ordre * MARCHE.decalageMs) / 1000) * MARCHE.vitesse)
   if (brut >= L) return [0, 0, 0]
   // Départ et arrêt en douceur (easeInOutSine sur la progression, même durée totale) : pas d'à-coup au premier ni au dernier pas.
   const s = L * (0.5 - 0.5 * Math.cos(Math.PI * (brut / L)))
-  const [a, b, k] = s < l1 ? [m.de, m.porte, l1 ? s / l1 : 1] : [m.porte, m.vers, l2 ? (s - l1) / l2 : 1]
-  const x = a[0] + (b[0] - a[0]) * k, z = a[1] + (b[1] - a[1]) * k
-  return [x - m.vers[0], s > 0 ? 0.06 * Math.abs(Math.sin(s * 3.6)) : 0, z - m.vers[1]]
+  let reste = s
+  for (let i = 1; i < l.length; i++) {
+    const seg = dist(l[i - 1], l[i])
+    if (reste <= seg || i === l.length - 1) {
+      const k = seg ? Math.min(1, reste / seg) : 1
+      const x = l[i - 1][0] + (l[i][0] - l[i - 1][0]) * k, z = l[i - 1][1] + (l[i][1] - l[i - 1][1]) * k
+      return [x - m.vers[0], s > 0 ? 0.06 * Math.abs(Math.sin(s * 3.6)) : 0, z - m.vers[1]]
+    }
+    reste -= seg
+  }
+  return [0, 0, 0]
 }
 
 // ── 4. Jour et nuit ──────────────────────────────────────────────────────────────────────────────────────────
@@ -1161,8 +1322,11 @@ export type Ambiance = {
 export function ambiance(heure: number): Ambiance {
   const moment = momentDe(heure)
   if (moment === 'jour') return { moment, fond: P.sol, ciel: '#FFFDF8', terre: '#DCD0BE', hemi: 1.4, soleil: '#FFF3E2', intensite: 1.5, position: [-24, 44, 14], lumieres: false }
-  if (moment === 'crepuscule') return { moment, fond: '#E8D3BF', ciel: '#FFE4C8', terre: '#B9A48C', hemi: 1.05, soleil: '#FFB27A', intensite: 1.15, position: [-40, 18, 10], lumieres: true }
-  return { moment, fond: '#2B2723', ciel: '#9A9285', terre: '#463F37', hemi: 0.78, soleil: '#DCD3C5', intensite: 0.42, position: [-20, 40, -18], lumieres: true }
+  // Crépuscule : une lumière rasante dorée mais retenue (lot 3 : « moins orange saturé »).
+  if (moment === 'crepuscule') return { moment, fond: '#E7DCD2', ciel: '#F7E7DA', terre: '#B7A898', hemi: 1.15, soleil: '#F4C7A1', intensite: 1.05, position: [-40, 18, 10], lumieres: true }
+  // Nuit : ciel bleu nuit TRÈS désaturé (le bleu ne domine jamais : b − r < 25), lune froide et légère, sol encore lisible ;
+  // fenêtres et lampadaires chauds ressortent par contraste (lot 3 : « moins brun boueux »).
+  return { moment, fond: '#262A31', ciel: '#7E8796', terre: '#3B3732', hemi: 0.95, soleil: '#C9D1DB', intensite: 0.55, position: [-20, 40, -18], lumieres: true }
 }
 
 // ── Démonstration : un jeu de données fictives ramené au cas voulu (page /atelier-demo, drapeau levé) ─────────

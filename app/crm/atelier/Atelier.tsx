@@ -237,13 +237,15 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
   const marque = selection ?? focus
   return (
     <div className={`atl${choisi ? ' avec-panneau' : ''}`} data-atelier-mode={mode ?? 'attente'}>
-      <div className="atl-barre" role="toolbar" aria-label="Atelier">
+      {/* Infrastructure (drapeau crmAtelierVivant) : la barre tient sur UNE ligne de 1280 à 1920 px — libellés raccourcis sous 1600 px
+          (.atl-long), métier et lieu rangés dans le menu « Réglages de l’atelier », filtres qui défilent plutôt que de passer à la ligne. */}
+      <div className={`atl-barre${infra ? ' une-ligne' : ''}`} role="toolbar" aria-label="Atelier" data-atelier-barre>
         <button type="button" className="atl-ensemble" onClick={() => { setFiltre(null); setCleSel(null); setVisite(null); commandes.current?.recentrer() }}>Vue d’ensemble</button>
         <span className={`atl-live${lien ? ` ${lien}` : ''}`} role="status" aria-label={lien ? LIBELLE_LIEN[lien] : 'En direct'}><i aria-hidden="true" />{lien ? LIBELLE_LIEN[lien] : 'Live'} <Horloge /></span>
-        <button type="button" className="atl-briefing" onClick={lancerBriefing} aria-pressed={!!visite}>Briefing du matin</button>
+        <button type="button" className="atl-briefing" onClick={lancerBriefing} aria-pressed={!!visite}>Briefing<span className="atl-long"> du matin</span></button>
         {donnees.demandes.length > 0 && (
           <button type="button" className="atl-notif" onClick={() => choisirIndex(scene.objets.findIndex((o) => o.type === 'accueil'))}>
-            {donnees.demandes.length} nouvelle{donnees.demandes.length > 1 ? 's' : ''} demande{donnees.demandes.length > 1 ? 's' : ''}
+            {donnees.demandes.length} <span className="atl-long">nouvelle{donnees.demandes.length > 1 ? 's' : ''} </span>demande{donnees.demandes.length > 1 ? 's' : ''}
           </button>
         )}
         <div className="atl-filtres" role="group" aria-label="Filtrer la maquette">
@@ -254,22 +256,35 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
             </button>
           ))}
         </div>
-        <label className="atl-metier">
-          <span className="crm-sr">Préréglage de l’atelier</span>
-          <select value={prereglage} onChange={(e) => (infra ? regler({ metier: e.target.value as Prereglage }) : setPrereglage(e.target.value as Prereglage))}>
-            {PREREGLAGES.map((p) => <option key={p} value={p}>{LIBELLES_PREREGLAGE[p]}</option>)}
-          </select>
-        </label>
-        {infra && scene.infra && (
-          <label className="atl-metier" data-atelier-base={scene.infra.base}>
-            <span className="crm-sr">Votre lieu de travail</span>
-            <select value={base ?? ''} onChange={(e) => regler({ base: (e.target.value || null) as Base | null })} title="Le lieu se déduit de votre équipe, de vos véhicules, de votre stock et de votre statut ; vous pouvez le dire vous-même (gardé dans ce navigateur, rien n’est envoyé).">
-              <option value="">{`Automatique · ${LIBELLES_BASE[scene.infra.profil.baseDeduite]}`}</option>
-              {BASES.map((b) => <option key={b} value={b}>{LIBELLES_LIEU[b]}</option>)}
+        {!infra && (
+          <label className="atl-metier">
+            <span className="crm-sr">Préréglage de l’atelier</span>
+            <select value={prereglage} onChange={(e) => setPrereglage(e.target.value as Prereglage)}>
+              {PREREGLAGES.map((p) => <option key={p} value={p}>{LIBELLES_PREREGLAGE[p]}</option>)}
             </select>
-            {/* D'où vient le choix : dit en toutes lettres. */}
-            <span className="atl-origine" data-atelier-origine={scene.infra.auto ? 'deduit' : 'choisi'}>{scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'}</span>
           </label>
+        )}
+        {infra && scene.infra && (
+          <details className="atl-reglages" data-atelier-base={scene.infra.base}>
+            <summary title={`${LIBELLES_PREREGLAGE[prereglage]} · ${LIBELLES_BASE[scene.infra.base]}`}>Réglages<span className="atl-long"> de l’atelier</span></summary>
+            <div className="atl-reglages-corps">
+              <label className="atl-metier">
+                <span>Métier</span>
+                <select value={prereglage} onChange={(e) => regler({ metier: e.target.value as Prereglage })}>
+                  {PREREGLAGES.map((p) => <option key={p} value={p}>{LIBELLES_PREREGLAGE[p]}</option>)}
+                </select>
+              </label>
+              <label className="atl-metier">
+                <span>Lieu de travail</span>
+                <select value={base ?? ''} onChange={(e) => regler({ base: (e.target.value || null) as Base | null })} title="Le lieu se déduit de votre équipe, de vos véhicules, de votre stock et de votre statut ; vous pouvez le dire vous-même (gardé dans ce navigateur, rien n’est envoyé).">
+                  <option value="">{`Automatique · ${LIBELLES_BASE[scene.infra.profil.baseDeduite]}`}</option>
+                  {BASES.map((b) => <option key={b} value={b}>{LIBELLES_LIEU[b]}</option>)}
+                </select>
+              </label>
+              {/* D'où vient le choix : dit en toutes lettres. */}
+              <span className="atl-origine" data-atelier-origine={scene.infra.auto ? 'deduit' : 'choisi'}>{scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'}</span>
+            </div>
+          </details>
         )}
         <details className="atl-aide">
           <summary aria-label="Aide : lire la maquette">?</summary>

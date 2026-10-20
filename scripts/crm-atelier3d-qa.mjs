@@ -98,9 +98,9 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   const hors = []
   for (const p of At.PREREGLAGES) for (const b of I.BASES) {
     const pl = I.PLANS[b], dans = (r, x, z) => x >= r.x0 - 0.5 && x <= r.x1 + 0.5 && z >= r.z0 - 0.5 && z <= r.z1 + 0.5
-    for (const a of I.accessoiresBase(p, pl)) if (!dans(pl.interieur, a.p[0], a.p[2]) && !dans(pl.exterieur, a.p[0], a.p[2])) hors.push(`${p}/${b}:${a.k}@${a.p.map((v) => v.toFixed(1))}`)
+    for (const a of I.accessoiresBase(p, pl)) if (!dans(pl.interieur, a.p[0], a.p[2]) && !dans(pl.exterieur, a.p[0], a.p[2]) && !dans(pl.hall, a.p[0], a.p[2])) hors.push(`${p}/${b}:${a.k}@${a.p.map((v) => v.toFixed(1))}`)
   }
-  T('B4 tout le matériel reste dans ses zones (dedans : établi et machines ; dehors : structures) — rien sur les bureaux, les rayonnages ou les places', hors.length === 0, hors.slice(0, 5).join(' | '))
+  T('B4 tout le matériel reste dans ses zones (dedans : établi et machines ; hall : mobilier ; dehors : structures) — rien sur les bureaux, les rayonnages ou les places', hors.length === 0, hors.slice(0, 5).join(' | '))
   // — les chantiers —
   T('B5 les chantiers typiques changent avec le métier (immeubles et commerces pour l’électricien et le peintre, granges pour le couvreur, extensions pour le maçon, maisons en coupe pour le plombier et le carreleur) ; type stable par chantier',
     new Set(At.PREREGLAGES.map((p) => JSON.stringify(I.TYPES_CHANTIER[p]))).size >= 7 && I.TYPES_CHANTIER.electricien.includes('immeuble') && I.TYPES_CHANTIER.peintre.includes('commerce') && I.TYPES_CHANTIER.couvreur.includes('grange') && I.TYPES_CHANTIER.macon.includes('extension') && I.TYPES_CHANTIER.plombier.includes('coupe') && I.TYPES_CHANTIER.carreleur.includes('coupe') && I.typeChantier('macon', 0.37) === I.typeChantier('macon', 0.37))
@@ -233,6 +233,82 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   const css = sansCommentaires(lire('app/crm/atelier/atelier.css'))
   T('E12 CSS ajouté : jetons seulement (aucune couleur écrite en dur)', /\.atl-plan-base \{[^}]*var\(--accent-tint\)/.test(css) && !/\.atl-(plan-base|plan-profil|origine) \{[^}]*(#[0-9a-f]{3,8}\b|rgb\()/i.test(css))
 }
+
+// ═══════════════════════ G. Lot 3 (20/10) : nuit, hall, marche par les rues, maçons, barre d'outils ═══════════════════════
+{
+  const rgb = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+  const sat = (c) => { const v = rgb(c); return Math.max(...v) - Math.min(...v) }
+  const nuit = I.ambiance(23), soir = I.ambiance(19)
+  T('G1 nuit : ciel bleu nuit TRÈS désaturé (froid, mais b − r < 25), lune froide et légère, sol encore éclairé ; crépuscule peu saturé (écart des canaux < 70)',
+    rgb(nuit.fond)[2] > rgb(nuit.fond)[0] && rgb(nuit.fond)[2] - rgb(nuit.fond)[0] < 25 && rgb(nuit.soleil)[2] > rgb(nuit.soleil)[0] && nuit.intensite <= 0.6 && nuit.hemi >= 0.9 && sat(soir.fond) < 70 && sat(soir.soleil) < 90 && sat(soir.ciel) < 70, JSON.stringify([nuit, soir]))
+  const HALL = ['allees', 'zone-montage', 'chariot', 'poste-travail', 'tri', 'panneau-outils', 'extincteur']
+  const kinds = (p, b) => new Set(I.accessoiresBase(p, I.PLANS[b]).map((a) => a.k))
+  T('G2 le hall de l’atelier et de l’entrepôt se meuble (allées marquées, zone de montage, chariot, poste, tri, panneau d’outils, extincteurs) ; rien de tel chez soi ni dans le camion ; aucune forme nouvelle',
+    At.PREREGLAGES.every((p) => HALL.every((k) => kinds(p, 'atelier').has(k) && kinds(p, 'entrepot').has(k)) && !HALL.some((k) => kinds(p, 'legere').has(k) || kinds(p, 'camion').has(k))) && At.PREREGLAGES.every((p) => I.accessoiresBase(p, I.PLANS.entrepot).every((a) => At.FORMES.includes(a.f))))
+  // — la marche suit les rues et ne traverse rien —
+  const coupe = (a, b, r) => { // segment [a, b] contre rectangle r (ouvert) : échantillonnage fin, suffisant pour des segments de quelques mètres
+    const n = Math.max(2, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 0.05))
+    for (let i = 0; i <= n; i++) { const x = a[0] + (b[0] - a[0]) * i / n, z = a[1] + (b[1] - a[1]) * i / n; if (x > r.x0 + 1e-6 && x < r.x1 - 1e-6 && z > r.z0 + 1e-6 && z < r.z1 - 1e-6) return true }
+    return false
+  }
+  const fautes = [], durees = []
+  let marcheurs = 0
+  for (const b of I.BASES) for (const p of ['macon', 'electricien', 'plombier']) {
+    const d = b === 'entrepot' ? D : I.echantillonPourBase(D, b)
+    const s = scene(d, p, b), pl = I.PLANS[b]
+    const maisons = s.objets.filter((o) => o.type === 'chantier').map((o) => ({ x0: o.centre[0] - 1.95, x1: o.centre[0] + 1.95, z0: o.centre[2] - 1.95, z1: o.centre[2] + 1.95 }))
+    const vus = new Set()
+    for (const m of s.mobiles) {
+      const cle = m.chemin.join('|'); if (vus.has(cle)) continue; vus.add(cle); marcheurs++
+      if (!egal(m.chemin[0], m.de) || !egal(m.chemin[m.chemin.length - 1], m.vers)) fautes.push(`${b}/${p}: bouts`)
+      m.chemin.forEach((q, i) => { if (!i) return; const a = m.chemin[i - 1]
+        for (const r of maisons) if (coupe(a, q, r)) fautes.push(`${b}/${p}: traverse un chantier [${a}]→[${q}]`)
+        if (i > pl.interne) for (const r of pl.batiments) if (coupe(a, q, r)) fautes.push(`${b}/${p}: traverse la base [${a}]→[${q}]`)
+        // entre la sortie de la base et la parcelle : des tronçons de rue, parallèles aux axes
+        if (i > pl.chemin.length && i < m.chemin.length - 1 && Math.abs(a[0] - q[0]) > 1e-6 && Math.abs(a[1] - q[1]) > 1e-6) fautes.push(`${b}/${p}: tronçon en biais`)
+      })
+      durees.push(I.dureeMarche([m]))
+    }
+  }
+  T('G3 la marche suit les allées puis les RUES (tronçons parallèles aux axes, plus court chemin) et ne traverse AUCUNE maison de chantier ni aucun bâtiment de la base (hors ses portes), dans les quatre lieux',
+    marcheurs > 10 && fautes.length === 0, `${marcheurs} trajets · ` + fautes.slice(0, 4).join(' | '))
+  T('G4 la marche reste lisible : moins de 20 s pour le dernier arrivé ; départ et arrivée en douceur gardés (D5)', Math.max(...durees) < 20000, String(Math.max(...durees)))
+  const r = I.cheminRues([-2.8, 14], [-2.8, -14])
+  T('G5 plus court chemin : pour traverser, on fait le tour de la base par la rue de ceinture (aucun tronçon dans l’enclos)', !!r && r.every((q, i) => !i || !(Math.abs(q[0] - r[i - 1][0]) < 1e-6 && q[0] > -14 && q[0] < 25.2 && Math.min(q[1], r[i - 1][1]) < 14 && Math.max(q[1], r[i - 1][1]) > -14)) && Math.abs(r.reduce((t, q, i) => (i ? t + Math.hypot(q[0] - r[i - 1][0], q[1] - r[i - 1][1]) : 0), 0) - (11.2 + 28 + 11.2)) < 1e-6)
+  T('G6 aucune parcelle de chantier dans l’enclos de la base (la rangée qui touchait le lot est restée libre)', I.BASES.every((b) => scene(I.echantillonPourBase(D, b), 'general', b).objets.filter((o) => o.type === 'chantier').every((o) => I.horsEnclos(o.centre))))
+  // — les deux maçons en entrepôt —
+  const m1 = scene(D, 'macon', 'entrepot'), m2 = scene(I.echantillonPourBase(D, 'entrepot', { statut: 'societe', camion: true }), 'macon', 'entrepot')
+  const S1 = new Set(m1.infra.structures), S2 = new Set(m2.infra.structures)
+  const boxes = (s) => s.instances.cone.filter((x) => [I.P.sable, I.P.granulat, '#B5AC9E'].includes(x.c)).length
+  T('G7 maçon en entrepôt AVEC camion benne : pont-bascule, aire de lavage, parc d’engins, plateforme de stockage (trois grands boxes de plus, quatre dans la cour) et grue à tour ; sans camion, rien de cela (tiré des données, stable)',
+    ['pont-bascule', 'aire-lavage', 'parc-engins', 'plateforme-stockage', 'grue-a-tour', 'place-camion'].every((k) => S2.has(k) && !S1.has(k)) && boxes(m2) === 7 && boxes(m1) === 3 && JSON.stringify(m2) === JSON.stringify(scene(I.echantillonPourBase(D, 'entrepot', { statut: 'societe', camion: true }), 'macon', 'entrepot')), `${boxes(m1)} / ${boxes(m2)}`)
+  // — la barre d'outils —
+  const at = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), css = sansCommentaires(lire('app/crm/atelier/atelier.css'))
+  T('G8 barre d’outils (source) : sur une ligne avec l’infrastructure (classe une-ligne, nowrap, filtres qui défilent, libellés courts sous 1600 px), métier et lieu rangés dans « Réglages de l’atelier », « Plan 2D » toujours dans la barre',
+    at.includes("className={`atl-barre${infra ? ' une-ligne' : ''}`}") && /<details className="atl-reglages"/.test(at) && /\.atl-barre\.une-ligne \{ flex-wrap: nowrap \}/.test(css) && /@media \(max-width: 1599px\) \{ \.atl-barre\.une-ligne \.atl-long \{ display: none \} \}/.test(css) && /overflow-x: auto/.test(css) && at.indexOf('className="atl-bascule"') > at.indexOf('className="atl-reglages"'))
+}
+
+// ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════
+if (process.env.TEST_BASE) {
+  const { createRequire } = await import('node:module')
+  const { chromium } = createRequire(import.meta.url)('playwright')
+  const nav = await chromium.launch()
+  const res = []
+  for (const largeur of [1280, 1440, 1920]) {
+    const page = await nav.newPage({ viewport: { width: largeur, height: 900 } })
+    await page.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=macon&base=entrepot&mode=2d`, { waitUntil: 'networkidle' })
+    await page.waitForSelector('[data-atelier-barre]')
+    res.push(await page.evaluate((l) => { const b = document.querySelector('[data-atelier-barre]'); const centres = [...b.children].filter((c) => c.getBoundingClientRect().height > 0).map((c) => { const r = c.getBoundingClientRect(); return r.top + r.height / 2 }); const bascule = b.querySelector('.atl-bascule'); return { l, lignes: Math.max(...centres) - Math.min(...centres) < 12 ? 1 : 2, hauteur: Math.round(b.getBoundingClientRect().height), plan2d: !!bascule && bascule.getBoundingClientRect().right <= window.innerWidth } }, largeur))
+    await page.close()
+  }
+  const tel = await nav.newPage({ viewport: { width: 390, height: 844 }, isMobile: true })
+  await tel.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=macon&base=entrepot`, { waitUntil: 'networkidle' })
+  await tel.waitForSelector('[data-atelier-barre]')
+  const selectsVisibles = await tel.evaluate(() => [...document.querySelectorAll('[data-atelier-barre] select')].filter((s) => (s.checkVisibility ? s.checkVisibility() : s.getBoundingClientRect().height > 0)).length)
+  await nav.close()
+  T('H1 la barre tient sur UNE ligne à 1280, 1440 et 1920 px, « Plan 2D » visible (Playwright)', res.every((r) => r.lignes === 1 && r.plan2d), JSON.stringify(res))
+  T('H2 sur téléphone (390 px), les sélecteurs métier et lieu ne prennent aucune hauteur (rangés dans le menu fermé)', selectsVisibles === 0, String(selectsVisibles))
+} else console.log('SKIP H (navigateur) — TEST_BASE absent : la barre se juge sur un serveur lancé avec PRESTI_DEMO_ATELIER=1')
 
 // ═══════════════════════ F. Le lanceur ═══════════════════════
 {

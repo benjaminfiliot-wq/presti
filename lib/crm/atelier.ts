@@ -19,7 +19,7 @@ import type { CommandeA } from './commandes.ts'
 import type { Frise } from './pipeline.ts'
 import type { Indicateurs } from './chantier.ts'
 import {
-  accessoiresBase, avancementDessine, bureauInfra, camionnette, comptoirInfra, decorBase, maisonChantier, personnage, placeParking, placeRepos,
+  accessoiresBase, avancementDessine, bureauInfra, camionnette, cheminVers, comptoirInfra, decorBase, horsEnclos, maisonChantier, personnage, placeParking, placeRepos,
   PLANS, profilInfrastructure, rayonnageInfra, type AjoutF, type Base, type Fenetre, type Mobile, type PlanBase, type Profil,
 } from './infrastructure.ts'
 
@@ -337,14 +337,15 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   })
 
   // — Atelier : l'établi et les accessoires du métier —
-  const acc = plan ? accessoiresBase(prereglage, plan) : accessoires(prereglage)
+  const acc = plan ? accessoiresBase(prereglage, plan, { camion: !!profil?.gabarits.includes('camion') }) : accessoires(prereglage)
   for (const a of acc) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
   if (plan) for (const a of acc as ReturnType<typeof accessoiresBase>) if (!structures.includes(a.k)) structures.push(a.k)
 
   // — Chantiers : la petite ville autour du dépôt —
   const resume = calculerAlertes(d)
   const visibles = d.chantiers.filter(chantierVisible)
-  const places = emplacementsChantiers(Math.min(visibles.length, LIMITES.chantiers))
+  // Avec l'infrastructure, la rangée de parcelles qui touchait la base reste libre : une rue de ceinture fait le tour du site.
+  const places = plan ? emplacementsChantiers(100000).filter(horsEnclos).slice(0, Math.min(visibles.length, LIMITES.chantiers)) : emplacementsChantiers(Math.min(visibles.length, LIMITES.chantiers))
   const posChantier = new Map<string, V3>()
   const membreParId = new Map(d.membres.map((m) => [m.id, m]))
   visibles.slice(0, places.length).forEach((c, i) => {
@@ -456,7 +457,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
       // Un personnage affecté à un chantier du jour part de la base et marche jusqu'à lui (Scene3D anime le trajet ; la position posée
       // est l'arrivée). Il part d'une place de repos après celles des présents, pour ne croiser personne au départ.
       const morceaux = personnage(ajouter, x, z, ROLES[m.role] ?? ROLES.autre, o, m.role === 'artisan')
-      if (chantier) { const de = placeRepos(plan, membres.length + rang); const ordre = new Set(mobiles.map((mb) => mb.vers.join())).size; for (const mc of morceaux) mobiles.push({ ...mc, de, porte: plan.sortie, vers: [x, z], ordre }) }
+      if (chantier) { const de = placeRepos(plan, membres.length + rang); const pc = posChantier.get(chantier.id)!; const chemin = cheminVers(plan, de, [x, z], [pc[0], pc[2]]); const ordre = new Set(mobiles.map((mb) => mb.vers.join())).size; for (const mc of morceaux) mobiles.push({ ...mc, de, porte: plan.chemin[0] as [number, number], vers: [x, z], ordre, chemin }) }
       return
     }
     ajouter('cyl', [x, 0.55, z], [0.46, 1.1, 0.46], ROLES[m.role] ?? ROLES.autre, o)
@@ -475,7 +476,8 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
 
   // — La ville : routes entre les parcelles, parcs et terrains vides sur les parcelles libres. Décor pur (aucun objet cliquable,
   //   rien de vos données) : ajouté APRÈS le calcul des bornes, le cadrage de la caméra ne dépend que de ce qui est posé. —
-  decorVille(ajouter, places.length)
+  if (plan) decorVille(ajouter, places.length, { campusZ: 14, libres: emplacementsChantiers(100000).filter(horsEnclos).slice(places.length) })
+  else decorVille(ajouter, places.length)
 
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
@@ -494,13 +496,15 @@ const ROUTE = '#DDD5C7'
  * La ville autour du dépôt : une trame de routes entre les parcelles (coupée autour du dépôt et du parking), et sur chaque
  * parcelle que PERSONNE n'occupe — un parc, des arbres, ou rien. Stable : tout se tire d'un hachage de la position, jamais du hasard.
  */
-function decorVille(ajouter: Ajouter, utilises: number) {
+// `infra` (drapeau crmAtelierVivant) : la rue de ceinture (z = ±14) reste tracée autour de la base, et les parcelles libres sont celles
+// hors de l'enclos. Absent : la ville d'avant, à l'identique.
+function decorVille(ajouter: Ajouter, utilises: number, infra?: { campusZ: number; libres: V3[] }) {
   const r1 = (v: number) => Math.round(v * 10) / 10
   const xs: number[] = [], zs: number[] = []
   for (let x = -33.6; x <= 39.2; x += 5.6) xs.push(r1(x))
   for (let z = -28; z <= 30.8; z += 5.6) zs.push(r1(z))
   const x0 = r1(xs[0] - 2.8), x1 = r1(xs[xs.length - 1] + 2.8), z0 = r1(zs[0] - 2.8), z1 = r1(zs[zs.length - 1] + 2.8)
-  const campus = { x0: DEPOT.x0 - 1.8, x1: PARKING.x1 + 1.8, z: 11.6 }
+  const campus = { x0: DEPOT.x0 - 1.8, x1: PARKING.x1 + 1.8, z: infra ? infra.campusZ : 11.6 }
   const segH = (z: number, a: number, b: number) => { if (b - a > 0.5) ajouter('box', [(a + b) / 2, 0.03, z], [b - a, 0.03, 1.1], ROUTE) }
   const segV = (x: number, a: number, b: number) => { if (b - a > 0.5) ajouter('box', [x, 0.03, (a + b) / 2], [1.1, 0.03, b - a], ROUTE) }
   for (const z of [r1(zs[0] - 2.8), ...zs.map((v) => r1(v + 2.8))]) {
@@ -509,7 +513,7 @@ function decorVille(ajouter: Ajouter, utilises: number) {
   for (const x of [r1(xs[0] - 2.8), ...xs.map((v) => r1(v + 2.8))]) {
     if (x > campus.x0 && x < campus.x1) { segV(x, z0, -campus.z); segV(x, campus.z, z1) } else segV(x, z0, z1)
   }
-  for (const [x, , z] of emplacementsChantiers(100000).slice(utilises)) {
+  for (const [x, , z] of infra ? infra.libres : emplacementsChantiers(100000).slice(utilises)) {
     const h = hacher(`ville:${x}:${z}`)
     const arbre = (dx: number, dz: number, k: number) => {
       ajouter('cyl', [x + dx, 0.4 * k, z + dz], [0.18, 0.8 * k, 0.18], COULEURS.tronc)
