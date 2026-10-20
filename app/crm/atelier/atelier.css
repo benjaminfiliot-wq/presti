@@ -30,7 +30,39 @@
 .atl-barre.une-ligne .atl-filtres { flex: 0 1 auto; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none }
 .atl-barre.une-ligne .atl-filtres::-webkit-scrollbar { display: none }
 .atl-barre.une-ligne .atl-filtres button { flex: none; white-space: nowrap }
-@media (max-width: 1599px) { .atl-barre.une-ligne .atl-long { display: none } }
+/* Lot 4 : la BANDE des indicateurs défile (barre fine visible, molette, doigt), ombres de bord quand il y a plus ; libellés entiers, plus grands. */
+.atl-bande { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 3px 2px 7px; scrollbar-width: thin; scrollbar-color: var(--muted) transparent; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch }
+.atl-barre.une-ligne > .atl-bande { flex: 1 1 auto; min-width: 0 }
+.atl-bande::-webkit-scrollbar { height: 6px }
+.atl-bande::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 6px }
+.atl-bande > * { flex: none }
+.atl-barre.une-ligne .atl-bande .atl-filtres { flex: none; overflow: visible; margin-left: 0 }
+.atl-bande .atl-filtres button, .atl-bande .atl-briefing, .atl-bande .atl-notif { font-size: 13.5px; color: var(--ink) }
+.atl-bande .atl-filtres button span { color: var(--ink-soft); font-weight: 700 }
+.atl-bande[data-gauche="1"] { -webkit-mask-image: linear-gradient(to right, transparent, black 28px); mask-image: linear-gradient(to right, transparent, black 28px) }
+.atl-bande[data-droite="1"] { -webkit-mask-image: linear-gradient(to left, transparent, black 28px); mask-image: linear-gradient(to left, transparent, black 28px) }
+.atl-bande[data-gauche="1"][data-droite="1"] { -webkit-mask-image: linear-gradient(to right, transparent, black 28px, black calc(100% - 28px), transparent); mask-image: linear-gradient(to right, transparent, black 28px, black calc(100% - 28px), transparent) }
+.atl-bande:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+/* Le stock rempli sur place (./Stock.tsx) et les fiches des structures. */
+.atl-role { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5 }
+.atl-stock { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px }
+.atl-stock-vide p { margin: 0 0 6px; font-size: 13px; color: var(--ink-soft) }
+.atl-stock-puces { display: flex; flex-wrap: wrap; gap: 6px }
+.atl-stock-puces button { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; padding: 4px 10px; font-size: 12.5px; cursor: pointer }
+.atl-stock-form { display: flex; flex-direction: column; gap: 8px }
+.atl-stock-form label { display: flex; flex-direction: column; gap: 3px; margin: 0; font-size: 12px; font-weight: 600; color: var(--ink-soft) }
+.atl-stock-form input, .atl-stock-form select { padding: 7px 9px; font-size: 13px; border-radius: 9px }
+.atl-stock-ligne { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.atl-stock-erreur { color: var(--warn) }
+/* Le dialogue d'exemple (Répondre, et toute action qui sortirait des données fictives). */
+.atl-dialogue-fond { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: color-mix(in srgb, var(--ink) 35%, transparent); padding: 16px }
+.atl-dialogue { width: min(520px, 100%); max-height: 86vh; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px }
+.atl-dialogue h2 { margin: 0; font-size: 17px }
+.atl-bulle-client, .atl-bulle-reponse { margin: 0; padding: 10px 12px; border-radius: 12px; font-size: 13.5px; line-height: 1.5 }
+.atl-bulle-client { background: var(--surface-2); border: 1px solid var(--line); color: var(--ink) }
+.atl-bulle-reponse { background: var(--accent-tint); border: 1px solid var(--accent-tint-2); color: var(--ink) }
+.atl-dialogue textarea { width: 100%; min-height: 110px; font-size: 13.5px }
+.atl-exemple { align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-tint); border-radius: 6px; padding: 2px 7px }
 @media (max-width: 759px) { .atl-barre.une-ligne { flex-wrap: wrap } .atl-barre.une-ligne .atl-filtres { flex-wrap: wrap; overflow: visible } }
 .atl-reglages { position: relative }
 .atl-reglages summary { list-style: none; cursor: pointer; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 9px; padding: 6px 11px; font-size: 12.5px; font-weight: 700 }
@@ -272,3 +304,4 @@
   .atl-plan-objet.arrivee { border-color: var(--accent); background: var(--accent-tint); animation: atl-arrivee 1.1s var(--ease-out, ease-out) 3 }
   @keyframes atl-arrivee { from { box-shadow: 0 0 0 0 var(--accent-tint-2) } to { box-shadow: 0 0 0 10px transparent } }
 }
+.atl-lien { background: none; border: 0; padding: 0; color: var(--accent-ink); font-weight: 700; font-size: inherit; text-decoration: underline; cursor: pointer }

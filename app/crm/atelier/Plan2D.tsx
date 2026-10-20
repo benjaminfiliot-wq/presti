@@ -15,6 +15,8 @@ const ZONES: { type: TypeObjet; titre: string; vide: string }[] = [
   { type: 'vehicule', titre: 'Parking', vide: 'Aucun véhicule : ajoutez-les dans « Équipe & véhicules ».' },
   { type: 'membre', titre: 'Équipe', vide: 'Personne dans l’équipe pour l’instant.' },
   { type: 'bureau', titre: 'Bureau', vide: '' },
+  // Infrastructure (drapeau crmAtelierVivant) : bâtiments, installations et machines de la base, chacun avec son panneau.
+  { type: 'structure', titre: 'Installations', vide: '' },
   // Le poste des assistants (drapeau crmAtelierVivant) : sa zone n'est montrée que si l'objet existe dans la scène.
   { type: 'assistants', titre: 'Assistants', vide: '' },
 ]
@@ -40,7 +42,7 @@ export default function Plan2D({ scene, allumes, filtreActif, selection, onSelec
       <div className="atl-plan-grille">
         {ZONES.map((z) => {
           const objets = scene.objets.map((o, i) => ({ o, i })).filter((x) => x.o.type === z.type)
-          if (z.type === 'assistants' && objets.length === 0) return null
+          if ((z.type === 'assistants' || z.type === 'structure') && objets.length === 0) return null
           return (
             <section key={z.type} className={`atl-plan-zone atl-plan-${z.type}`} aria-labelledby={`atl-z-${z.type}`}>
               <h3 id={`atl-z-${z.type}`}>{z.titre}{objets.length > 1 ? <span className="tnum"> · {objets.length}</span> : null}</h3>

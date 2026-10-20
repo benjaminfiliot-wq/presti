@@ -255,3 +255,17 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
   Cloud ; GitHub garde les têtes de PR (refs/pull/*) tant que le support ne les purge pas (dépôt privé).
 - À retenir : (a) l'outil apply_migration du connecteur Supabase dépasse 60 s sur un bloc `do` qui boucle sur 63 tables ;
   des instructions simples par lots de 16 tables passent ; (b) le proxy du conteneur refuse (403) toute poussée de tag.
+
+## 2026-10-20 — presti-audit-attaque — Atelier vivant du CRM (diff 8f70fe19 + Stock/Structure/contexte, commits e3fcac3/8f70fe1)
+- Contexte : lecture seule imposée (aucune écriture prod, aucun compte créé) : preuves statiques au fichier:ligne, catalogue non lu (DIRECT_URL refusée : mot de passe).
+- Constat : 0 critique, 0 élevé. /api/crm/vue : uid de session seulement, 14 lectures `.eq('artisan_id', uid)` (lib/crm/serveur.ts:93-106), fiche par `.eq('id', uid)` (l.49),
+  `facturesEmises` refiltre par artisan (lib/crm/assistants.ts:24), aucun paramètre d'URL lu ; fournisseur imbriqué protégé par le déclencheur de 0048:123-134.
+  Aucun dangerouslySetInnerHTML/innerHTML ; liens construits sur des UUID ; localStorage revalidé par liste blanche + slice(60) (Atelier.tsx:96-103).
+  Opposition : garde + propriété sur rappel, chantier, devis ; upsert ignoreDuplicates (idempotent).
+  Moyen : « Ajouter un article » (Stock.tsx:51) sans référence → upsert onConflict (artisan_id, nom, reference) NULLS NOT DISTINCT (0040:31) qui ÉCRASE
+  une fiche homonyme (marque, photo, notes, tags, prix → null) via nettoyer() (materiaux/route.ts:104-127,187).
+  Faibles : comptage à 0 impossible (Stock.tsx:69 `!q`), sortie > stock → négatif (0040 appliquer_mouvement), seuil par GET+POST entier (perte de concurrence,
+  tags passés en minuscules), aucune limite de débit sur /api/inventaire*, metier3DDe : « Électricité » → façadier (`ite`), « espaces verts » → chauffagiste (`pac`).
+- Décision / action : rapport au dev principal ; aucun fichier modifié hors ce journal.
+- À retenir : un upsert sur une clé unique NULLS NOT DISTINCT dont la colonne n'est pas envoyée par le formulaire = écrasement silencieux d'un homonyme ;
+  une route « créer » doit faire insert + 409, pas upsert. Les regex de classement par sous-chaîne courte (`ite`, `pac`, `iti`) doivent être bornées par \b.

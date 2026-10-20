@@ -57,8 +57,8 @@ const vueMin = (par = {}, rappels = { liste: [], devisARelancer: [], aFaire: { e
   const colEx = (e) => VUE_EXEMPLE.pipeline.colonnes.find((c) => c.etape === e).cartes
   T('A2 les files sont celles des colonnes du pipeline (demande, devis_envoye, signe) : mêmes comptes, rien d’inventé', s.files[0].total === colEx('demande').length && s.files[1].total === colEx('devis_envoye').length && s.files[2].total === colEx('signe').length && s.files.every((f) => f.total >= 1), JSON.stringify(s.files.map((f) => f.total)))
   const dem = s.files[0].lignes
-  T('A3 nouvelle demande : client, type de chantier, « reçue il y a … » ; une demande sans devis → « Répondre » (conversation) ; un brouillon → son devis',
-    dem.some((l) => l.client === 'Prospect fictif 2' && l.detail === 'Remplacement WC' && l.quand === 'reçue il y a 35 min' && l.action.href === '/messages' && l.action.libelle === 'Répondre')
+  T('A3 nouvelle demande : client, type de chantier, « reçue il y a … » ; une demande sans devis → « Répondre » qui ouvre LA conversation (/messages?lead=<id>, lot 4) ; un brouillon → son devis',
+    dem.some((l) => l.client === 'Prospect fictif 2' && l.detail === 'Remplacement WC' && l.quand === 'reçue il y a 35 min' && l.action.href === `/messages?lead=${U(402)}` && l.action.libelle === 'Répondre')
     && dem.some((l) => l.cle.startsWith('devis:') && /devis en préparation/.test(l.detail) && l.action.href.startsWith('/devis/')), JSON.stringify(dem.slice(0, 2)))
   const dv = s.files[1].lignes
   const l514 = dv.find((l) => l.cle.endsWith('514')), l515 = dv.find((l) => l.cle.endsWith('515'))
@@ -214,7 +214,7 @@ const vueMin = (par = {}, rappels = { liste: [], devisARelancer: [], aFaire: { e
   const accueilAncien = panneau.slice(panneau.indexOf('function PanneauAccueil'))
   T('E8 panneau de l’accueil : sans Vue, c’est l’ancien (liste des demandes, « Répondre » vers /messages, « Créer le devis » vers /devis/nouveau?lead=, phrase des demandes absentes) — ancien code intact',
     panneau.includes('(vue ? <SalleAttentePanneau vue={vue} jour={donnees.jour} onVue2D={onVue2D} /> : <PanneauAccueil donnees={donnees} />)') && /Aucune nouvelle demande\. Elles arrivent ici depuis votre page de conversation et votre boîte e-mail\./.test(accueilAncien) && accueilAncien.includes('href="/messages">Répondre</Lien>') && accueilAncien.includes('href={`/devis/nouveau?lead=${dm.id}`}>Créer le devis</Lien>') && /\{objet\.type === 'assistants' && poste &&/.test(panneau))
-  T('E9 le plan 2D : la zone Assistants n’existe que si l’objet existe ; l’accueil surligné par la classe `arrivee`', plan.includes("if (z.type === 'assistants' && objets.length === 0) return null") && plan.includes("surligne === o.cle ? ' arrivee' : ''"))
+  T('E9 le plan 2D : la zone Assistants n’existe que si l’objet existe ; l’accueil surligné par la classe `arrivee`', plan.includes("if ((z.type === 'assistants' || z.type === 'structure') && objets.length === 0) return null") && plan.includes("surligne === o.cle ? ' arrivee' : ''"))
   // aucun envoi
   const neufs = ['lib/crm/accueil.ts', 'lib/crm/assistants.ts', 'app/crm/atelier/Vivant.tsx'].map((r) => [r, sansCommentaires(lire(r))])
   const interdit = /sendEmail|nodemailer|resend|fetch\s*\(|\bappel\s*\(|XMLHttpRequest|sendBeacon|supabase|method:\s*['"](POST|PUT|PATCH|DELETE)['"]|\.insert\(|\.update\(|\.upsert\(|\.delete\(/i
@@ -223,6 +223,48 @@ const vueMin = (par = {}, rappels = { liste: [], devisARelancer: [], aFaire: { e
   T('E11 les composants de l’atelier n’ont gagné ni appel réseau ni e-mail : seuls les appels déjà là (appel() des tâches et commandes du panneau) y sont', !/sendEmail|resend|nodemailer/i.test(diffAtelier) && !/fetch\s*\(/.test(diffAtelier) && (diffAtelier.match(/\bappel\s*[(<]/g) ?? []).length <= 4, String((diffAtelier.match(/\bappel\s*[(<]/g) ?? []).length))
   T('E12 le poste affiche la règle « Ils préparent, vous validez » et chaque assistant un lien (bouton d’onglet ou <Lien>), jamais un bouton qui envoie', neufs[2][1].includes('REGLE_ASSISTANTS') && neufs[2][1].includes('<Aller action={a.lien}') && !/onClick=\{\(\) => void/.test(neufs[2][1]))
   T('E13 white-label et sobriété : aucun « Presti » dans les textes ajoutés', neufs.every(([, s]) => !/presti/i.test(s.replace(/\/\/.*$/gm, ''))))
+}
+
+// ═══════════════════════ J. Lot 4 : le CRM est branché sur tout ce qui existait AVANT lui, et aucune action n'est morte ═══════════════════════
+{
+  const { construireVue } = await imp('lib/crm/vue.ts')
+  // « Avant le CRM » : un compte qui a reçu une demande sur sa page (/p), envoyé un devis, fait signer un autre (sans chantier), facturé un
+  // troisième — et rien créé dans le CRM. Données FICTIVES écrites ici.
+  const A = U(1), T0 = '2026-10-12T08:30:00.000Z'
+  const devis = (n, statut, envoye, accepte, extra = {}) => ({ id: U(n), artisan_id: A, lead_id: null, statut, numero: `D-${n}`, objet: `Travaux ${n}`, client_nom: `Client fictif ${n}`, client_email: `client-${n}@exemple.invalid`, client_adresse: null, total_ttc: 1200, total_ht: 1000, acompte_pct: 0, date_emission: '2026-10-01', envoye_le: envoye, accepte_le: accepte, created_at: '2026-10-01T09:00:00.000Z', validite_jours: 30, ...extra })
+  const d = {
+    leads: [{ id: U(10), artisan_id: A, statut: 'nouveau', nom_prospect: 'Prospect fictif page', contact: 'p@exemple.invalid', canal: 'page', type_chantier: 'Fuite', ville: 'Ville fictive', created_at: '2026-10-12T07:00:00.000Z' }],
+    devis: [devis(20, 'envoye', '2026-10-05T09:00:00.000Z', null), devis(21, 'accepte', '2026-10-02T09:00:00.000Z', '2026-10-06T09:00:00.000Z'), devis(22, 'accepte', '2026-09-20T09:00:00.000Z', '2026-09-25T09:00:00.000Z')],
+    factures: [{ id: U(30), artisan_id: A, devis_id: U(22), numero: 'F-30', statut: 'emise', total_ttc: 1200, avoir_de: null, date_emission: '2026-10-01', date_echeance: '2026-10-31', client_nom: 'Client fictif 22', client_email: 'client-22@exemple.invalid', client_id: null, acompte_pct: 0 }],
+    chantiers: [], taches: [], materiaux: [], deplacements: [], carnet: [], vehicules: [], membres: [], equipe: [], tronque: false, commandes: [], commandesDisponibles: true, rappels: [], rappelsDisponibles: true,
+  }
+  const v = construireVue({ uid: A, metier: 'Plombier', formeJuridique: 'EI', entreprise: { nom: 'Entreprise fictive', ville: 'Ville fictive' }, d, maintenant: new Date(T0), idDe: (c) => c })
+  const col = (e) => v.pipeline.colonnes.find((c) => c.etape === e).cartes
+  T('J1 ce qui existait AVANT le CRM est dans le pipeline sans rien ressaisir : la demande de la page (Demande), le devis envoyé (Devis envoyé), le devis signé sans chantier (Signé), le devis facturé (À facturer)',
+    col('demande').some((c) => c.leadId === U(10) || c.id === U(10)) && col('devis_envoye').some((c) => c.devisId === U(20)) && col('signe').some((c) => c.devisId === U(21)) && col('a_facturer').some((c) => c.devisId === U(22)), JSON.stringify(v.pipeline.colonnes.map((c) => [c.etape, c.cartes.length])))
+  const s = Acc.salleAttente(v, '2026-10-12')
+  T('J2 … et dans la salle d’attente : la demande (Répondre → /messages?lead=<id>), le devis envoyé, le devis signé dans « Signés, à planifier » (Créer le chantier)',
+    s.files[0].lignes.some((l) => l.action.href === `/messages?lead=${U(10)}`) && s.files[1].lignes.some((l) => l.cle.endsWith(U(20))) && s.files[2].lignes.some((l) => l.cle.endsWith(U(21)) && l.action.libelle === 'Créer le chantier'), JSON.stringify(s.files.map((f) => f.lignes.map((l) => [l.cle, l.action]))))
+  T('J3 … et dans l’atelier : la demande est un colis de l’accueil, le profil (métier, forme juridique, nom, ville) est repris de la fiche', v.atelier.demandes.some((x) => x.id === U(10)) && v.atelier.metier === 'Plombier' && v.atelier.formeJuridique === 'EI' && v.atelier.entreprise?.nom === 'Entreprise fictive' && v.devisSignesSansChantier.some((x) => x.id === U(21)))
+  // Tout est lu pour le compte connecté seulement : chaque lecture de chargerDossiers est filtrée par artisan_id = uid.
+  const srv = sansCommentaires(lire('lib/crm/serveur.ts'))
+  const corps = srv.slice(srv.indexOf('export async function chargerDossiers'), srv.indexOf('\n}\n', srv.indexOf('export async function chargerDossiers')))
+  const lectures = [...corps.matchAll(/supabaseAdmin\.from\('([a-z_]+)'\)\.select\([^)]*\)([^\n]*)/g)]
+  T('J4 chaque table lue par le CRM (devis, factures, demandes, chantiers, tâches, stock, équipe, véhicules, commandes, rappels…) est filtrée par .eq(\'artisan_id\', uid) : aucune donnée d’un autre compte', lectures.length >= 14 && lectures.every((m) => m[2].includes(".eq('artisan_id', uid)")), lectures.filter((m) => !m[2].includes(".eq('artisan_id', uid)")).map((m) => m[1]).join(','))
+  // Table de vérification « le CRM est connecté à tout » : source → où ça apparaît → preuve.
+  const branchements = [
+    ['devis', /from\('devis'\)/, 'pipeline, salle d’attente, chantiers (J1-J2)'], ['factures', /from\('factures'\)/, 'pipeline, poste Encaissement (J1, C*)'],
+    ['demandes de la page /p', /from\('leads'\)/, 'pipeline, salle d’attente, colis de l’accueil (J1-J3)'], ['inventaire', /from\('materiaux'\)/, 'rayonnages, structures, panneau stock (crm-atelier3d-qa I15)'],
+    ['équipe', /from\('equipe_membres'\)/, 'personnages, vestiaire'], ['véhicules', /from\('vehicules'\)/, 'camionnettes, garage'], ['rappels', /from\('crm_rappels'\)/, 'poste Agenda'], ['commandes', /from\('commandes_fournisseur'\)/, 'camion de livraison, quais'],
+  ]
+  T('J5 le CRM est branché sur chaque source (devis, factures, demandes, inventaire, équipe, véhicules, rappels, commandes) ; les messages s’ouvrent à la bonne conversation (?lead=) ; l’assistant lit le même inventaire (GET /api/inventaire)',
+    branchements.every(([, re]) => re.test(corps)) && lire('app/plateforme/Conversations.tsx').includes(".get('lead')") && /app\/api\/inventaire\/route\.ts/.test(lire('lib/assistant/executeurs.ts')), branchements.filter(([, re]) => !re.test(corps)).map(([n]) => n).join(','))
+  // Aucune action morte : sur un vrai compte un lien vers l'écran existant ; dans l'exemple (ou la démonstration) un dialogue.
+  const viv = sansCommentaires(lire('app/crm/atelier/Vivant.tsx'))
+  const toutes = [...Acc.salleAttente(VUE_EXEMPLE, JOUR_EXEMPLE).files.flatMap((f) => f.lignes.map((l) => l.action.href)), ...Pos.posteAssistants(VUE_EXEMPLE, JOUR_EXEMPLE).assistants.flatMap((a) => [a.lien.href, ...a.elements.map((e) => e.href).filter(Boolean)])]
+  const couvert = (h) => /^\/crm\?vue=/.test(h) || /^\/crm\/(chantiers|clients)\//.test(h) || /^\/messages|^\/devis\/nouveau|^\/devis\/|^\/factures/.test(h)
+  T('J6 AUCUNE action de la salle d’attente ni du poste n’est morte : onglet du CRM, fiche d’exemple, ou dialogue d’exemple (Répondre : message du client, réponse proposée, « Valider et envoyer » sans rien envoyer)',
+    toutes.length > 5 && toutes.every(couvert) && /if \(!sansEcriture \|\| lienExemple\(action\.href\)\) return <Lien/.test(viv) && viv.includes('Valider et envoyer') && viv.includes('Ici, rien n’est parti.') && viv.includes('Exemple · données fictives') && /<Aller action=\{\{ libelle: e\.libelle, href: e\.href \}\}/.test(viv), toutes.filter((h) => !couvert(h)).join(','))
 }
 
 // ═══════════════════════ F. Le lanceur ═══════════════════════

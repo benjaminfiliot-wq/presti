@@ -10,7 +10,8 @@ import { calculerAlertes, construireBriefing, urgencesDuJour, type EtapeBriefing
 import { actif } from '@/lib/flags'
 import { arriveesDe, nouvellesArrivees, texteArrivee, type Arrivee } from '@/lib/crm/accueil'
 import { posteAssistants } from '@/lib/crm/assistants'
-import { BASES, LIBELLES_BASE, LIBELLES_LIEU, type Base } from '@/lib/crm/infrastructure'
+import { BASES, LIBELLES_BASE, LIBELLES_LIEU, LIBELLES_METIER_3D, METIERS_REFERENCE, metier3DDe, PROCHE, type Base, type Metier3D } from '@/lib/crm/infrastructure'
+import { DemoAtelier } from './contexte'
 import type { Vue } from '@/lib/crm/vue'
 import type { CommandesScene, NomVue } from './Scene3D'
 import Plan2D from './Plan2D'
@@ -90,11 +91,15 @@ function Horloge() {
 // Le réglage de l'atelier (drapeau crmAtelierVivant) : le métier et la base que l'artisan a corrigés, gardés DANS CE NAVIGATEUR
 // seulement (aucune écriture serveur). Le stockage peut manquer (navigation privée, données effacées) : tout est sous try/catch.
 const CLE_REGLAGE = 'crm.atelier.reglage'
-type Reglage = { metier?: Prereglage; base?: Base | null }
+// `metierTexte` (lot 4) : le métier choisi dans la liste de Presti, ou écrit librement ; null = celui de la fiche artisan (automatique).
+type Reglage = { metier?: Prereglage; base?: Base | null; metierTexte?: string | null }
 function lireReglage(): Reglage {
   try {
     const r = JSON.parse(window.localStorage.getItem(CLE_REGLAGE) ?? '{}') as Reglage
-    return { metier: (PREREGLAGES as readonly string[]).includes(r.metier ?? '') ? r.metier : undefined, base: (BASES as readonly string[]).includes(r.base ?? '') ? r.base : null }
+    return {
+      metier: (PREREGLAGES as readonly string[]).includes(r.metier ?? '') ? r.metier : undefined, base: (BASES as readonly string[]).includes(r.base ?? '') ? r.base : null,
+      metierTexte: typeof r.metierTexte === 'string' && r.metierTexte.trim() ? r.metierTexte.trim().slice(0, 60) : null,
+    }
   } catch { return {} }
 }
 function ecrireReglage(r: Reglage) {
@@ -104,7 +109,7 @@ function ecrireReglage(r: Reglage) {
 const LIBELLE_LIEN = { connexion: 'Connexion…', direct: 'En direct', coupe: 'Hors ligne · relu chaque minute' } as const
 const calme = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-export default function Atelier({ donnees, vue, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier, baseInitiale, heure }: {
+export default function Atelier({ donnees, vue, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier, baseInitiale, heure, metierInitial }: {
   donnees: DonneesAtelier
   /** La Vue entière du CRM (page /crm) : lue SEULEMENT drapeau crmAtelierVivant levé (salle d'attente, poste des assistants). Absente : l'atelier d'avant. */
   vue?: Vue
@@ -125,6 +130,8 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
   /** Page de démonstration, drapeau crmAtelierVivant levé : la base imposée (`?base=`) et l'heure (`?heure=`). Ignorés drapeau baissé. */
   baseInitiale?: Base | null
   heure?: number | null
+  /** Page de démonstration, même drapeau : un métier 3D parmi tous ceux de Presti (`?metier=paysagiste`…). */
+  metierInitial?: Metier3D
 }) {
   const [detection, setDetection] = useState<Detection | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
@@ -164,16 +171,26 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
   // automatique). Pas besoin de la Vue : la démonstration la montre aussi. Baissé : l'appel d'avant, à l'identique.
   const infra = actif('crmAtelierVivant')
   const [base, setBase] = useState<Base | null>(baseInitiale ?? null)
+  // Le métier (lot 4) : TOUS ceux de Presti. Automatique = celui de la fiche artisan (artisans.metier, repris sans ressaisie) ; sinon celui
+  // que l'artisan a choisi dans la liste ou écrit lui-même, rattaché à un jeu de structures par mots-clés (metier3DDe).
+  const [metierTexte, setMetierTexte] = useState<string | null>(null)
+  const [libre, setLibre] = useState(false)
+  const metier3D: Metier3D = metierInitial ?? (prereglageInitial ? prereglageInitial : metier3DDe(metierTexte ?? donnees.metier))
   useEffect(() => {
-    if (!infra || prereglageInitial || baseInitiale) return
+    if (!infra || prereglageInitial || baseInitiale || metierInitial) return
     const r = lireReglage()
-    if (r.metier) setPrereglage(r.metier)
+    if (r.metierTexte) { setMetierTexte(r.metierTexte); setLibre(!METIERS_REFERENCE.some((g) => g.metiers.some((m) => m.libelle === r.metierTexte))) }
     if (r.base) setBase(r.base)
-  }, [infra, prereglageInitial, baseInitiale])
-  const regler = (r: Reglage) => { if (r.metier) setPrereglage(r.metier); if (r.base !== undefined) setBase(r.base); if (infra) ecrireReglage({ metier: r.metier ?? prereglage, base: r.base !== undefined ? r.base : base }) }
+  }, [infra, prereglageInitial, baseInitiale, metierInitial])
+  const regler = (r: Reglage) => {
+    if (r.metier) setPrereglage(r.metier)
+    if (r.base !== undefined) setBase(r.base)
+    if (r.metierTexte !== undefined) setMetierTexte(r.metierTexte)
+    if (infra) ecrireReglage({ metier: r.metier ?? prereglage, base: r.base !== undefined ? r.base : base, metierTexte: r.metierTexte !== undefined ? r.metierTexte : metierTexte })
+  }
   const scene = useMemo(() => (infra
-    ? construireScene(donnees, prereglage, { ...(total !== null ? { vivant: { assistants: total } } : {}), infra: { base } })
-    : construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base])
+    ? construireScene(donnees, PROCHE[metier3D], { ...(total !== null ? { vivant: { assistants: total } } : {}), infra: { base, metier: metier3D } })
+    : construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base, metier3D])
   const resume = useMemo(() => calculerAlertes(donnees), [donnees])
   const urgences = useMemo(() => urgencesDuJour(donnees, resume), [donnees, resume])
   const allumes = useMemo(() => objetsAllumes(scene.objets, filtre), [scene, filtre])
@@ -236,12 +253,14 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
 
   const marque = selection ?? focus
   return (
+    <DemoAtelier.Provider value={demo}>
     <div className={`atl${choisi ? ' avec-panneau' : ''}`} data-atelier-mode={mode ?? 'attente'}>
       {/* Infrastructure (drapeau crmAtelierVivant) : la barre tient sur UNE ligne de 1280 à 1920 px — libellés raccourcis sous 1600 px
           (.atl-long), métier et lieu rangés dans le menu « Réglages de l’atelier », filtres qui défilent plutôt que de passer à la ligne. */}
       <div className={`atl-barre${infra ? ' une-ligne' : ''}`} role="toolbar" aria-label="Atelier" data-atelier-barre>
         <button type="button" className="atl-ensemble" onClick={() => { setFiltre(null); setCleSel(null); setVisite(null); commandes.current?.recentrer() }}>Vue d’ensemble</button>
         <span className={`atl-live${lien ? ` ${lien}` : ''}`} role="status" aria-label={lien ? LIBELLE_LIEN[lien] : 'En direct'}><i aria-hidden="true" />{lien ? LIBELLE_LIEN[lien] : 'Live'} <Horloge /></span>
+        <Bande actif={infra}>
         <button type="button" className="atl-briefing" onClick={lancerBriefing} aria-pressed={!!visite}>Briefing<span className="atl-long"> du matin</span></button>
         {donnees.demandes.length > 0 && (
           <button type="button" className="atl-notif" onClick={() => choisirIndex(scene.objets.findIndex((o) => o.type === 'accueil'))}>
@@ -256,6 +275,7 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
             </button>
           ))}
         </div>
+        </Bande>
         {!infra && (
           <label className="atl-metier">
             <span className="crm-sr">Préréglage de l’atelier</span>
@@ -270,10 +290,23 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
             <div className="atl-reglages-corps">
               <label className="atl-metier">
                 <span>Métier</span>
-                <select value={prereglage} onChange={(e) => regler({ metier: e.target.value as Prereglage })}>
-                  {PREREGLAGES.map((p) => <option key={p} value={p}>{LIBELLES_PREREGLAGE[p]}</option>)}
+                <select data-atelier-metier value={libre ? '__libre' : metierTexte ?? ''} onChange={(e) => {
+                  const v = e.target.value
+                  if (v === '__libre') { setLibre(true); return }
+                  setLibre(false); regler({ metierTexte: v || null })
+                }}>
+                  <option value="">{`Automatique · ${donnees.metier ? donnees.metier : 'Tous corps d’état'}`}</option>
+                  {METIERS_REFERENCE.map((g) => <optgroup key={g.groupe} label={g.groupe}>{g.metiers.map((m) => <option key={m.libelle} value={m.libelle}>{m.libelle}</option>)}</optgroup>)}
+                  <option value="__libre">Écrire mon métier…</option>
                 </select>
               </label>
+              {libre && (
+                <label className="atl-metier">
+                  <span>Mon métier, en quelques mots</span>
+                  <input data-atelier-metier-libre value={metierTexte ?? ''} maxLength={60} placeholder="ex. poseur de parquet, élagueur…" onChange={(e) => regler({ metierTexte: e.target.value || null })} />
+                </label>
+              )}
+              <span className="atl-origine" data-atelier-structures={metier3D}>{`Structures : ${LIBELLES_METIER_3D[metier3D]}`}</span>
               <label className="atl-metier">
                 <span>Lieu de travail</span>
                 <select value={base ?? ''} onChange={(e) => regler({ base: (e.target.value || null) as Base | null })} title="Le lieu se déduit de votre équipe, de vos véhicules, de votre stock et de votre statut ; vous pouvez le dire vous-même (gardé dans ce navigateur, rien n’est envoyé).">
@@ -361,11 +394,42 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
             </>} />
         )}
         {mode === null && <div className="atl-charge" role="status">Préparation de l’atelier…</div>}
-        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} vue={vivant ? vue : undefined} poste={poste} />}
+        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} vue={vivant ? vue : undefined} poste={poste} {...(infra ? { metier: metier3D, onChoisir: (cle: string) => setCleSel(cle) } : {})} />}
       </div>
       <Legende horsScene={scene.horsScene} sansCommandes={donnees.commandesDisponibles === false} />
     </div>
+    </DemoAtelier.Provider>
   )
+}
+
+/**
+ * La BANDE des indicateurs (lot 4, Benj : « on la lit mal ») : briefing, demandes et filtres défilent horizontalement — barre de
+ * défilement fine visible, molette et doigt, ombres de bord quand il y a plus à voir. « Réglages », « ? » et « Plan 2D » restent fixes,
+ * hors de la bande. Sans l'infrastructure : les enfants tels quels (la barre d'avant).
+ */
+function Bande({ actif, children }: { actif: boolean; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [bords, setBords] = useState({ g: false, d: false })
+  useEffect(() => {
+    const el = ref.current
+    if (!actif || !el) return
+    const maj = () => setBords({ g: el.scrollLeft > 2, d: el.scrollLeft + el.clientWidth < el.scrollWidth - 2 })
+    // La molette verticale fait défiler la bande quand elle déborde (et seulement alors : sinon la page défile normalement).
+    const molette = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
+      const avant = el.scrollLeft
+      el.scrollLeft += e.deltaY
+      if (el.scrollLeft !== avant) e.preventDefault()
+    }
+    maj()
+    el.addEventListener('scroll', maj, { passive: true })
+    el.addEventListener('wheel', molette, { passive: false })
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(maj) : null
+    ro?.observe(el)
+    return () => { el.removeEventListener('scroll', maj); el.removeEventListener('wheel', molette); ro?.disconnect() }
+  }, [actif])
+  if (!actif) return <>{children}</>
+  return <div className="atl-bande" ref={ref} role="group" aria-label="Indicateurs du jour" data-atelier-bande data-gauche={bords.g ? '1' : '0'} data-droite={bords.d ? '1' : '0'} tabIndex={0}>{children}</div>
 }
 
 function CarteBriefing({ etape, i, n, auto, onPrecedent, onSuivant, onAuto, onOuvrir, onArreter }: {

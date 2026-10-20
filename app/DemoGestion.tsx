@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 // - prefers-reduced-motion : pas de lecture automatique, l'affiche reste et un bouton lance la lecture si on le veut.
 // Aucune photo du portfolio de démonstration (CC BY-SA) n'apparaît dans ces captures : le compte de test n'en a aucune.
 
-type Clip = { id: string; src: string; affiche: string; titre: string; texte: string; note: string; alt: string }
+type Clip = { id: string; src: string; affiche: string; titre: string; texte: string; points?: string[]; note: string; alt: string }
 
 const CLIPS: Clip[] = [
   {
@@ -25,10 +25,17 @@ const CLIPS: Clip[] = [
     id: 'crm',
     src: '/demo/crm-atelier.mp4',
     affiche: '/demo/crm-atelier-affiche.webp',
-    titre: 'La carte Atelier du CRM',
-    texte: 'Vos chantiers, votre équipe et vos alertes (retards, livraisons, stock bas) sur une seule carte, mise à jour en temps réel. Vous ouvrez un chantier : tâches, matériaux réservés, équipe.',
+    titre: 'Votre entreprise en 3D, à jour toute seule',
+    texte: 'Une maquette de votre entreprise, construite avec vos propres données : elle suit votre métier, votre lieu de travail (chez vous, atelier, entrepôt ou tout dans le camion), votre statut et vos véhicules. Un clic sur un objet ouvre sa fiche.',
+    points: [
+      'Une demande arrive : une bannière s’affiche et un colis tombe à l’accueil, en direct.',
+      'La salle d’attente range tout en trois files : nouvelles demandes, devis en attente du client, signés à planifier.',
+      'Le poste des assistants prépare vos relances de devis, factures échues, chantiers à facturer et rappels du jour. Ils préparent, vous validez : rien ne part sans votre clic.',
+      'Votre stock est celui de votre inventaire : vous le remplissez depuis la maquette.',
+      'Le jour et la nuit suivent l’heure de Paris.',
+    ],
     note: 'Offre Signature. Capture réelle de l’interface sur des données d’exemple fictives.',
-    alt: 'Capture animée du CRM : la carte Atelier avec les chantiers et l’équipe, puis l’ouverture de la fiche d’un chantier.',
+    alt: 'Capture animée du CRM : la maquette 3D de l’entreprise, puis l’ouverture de la fiche d’un élément de la maquette.',
   },
 ]
 
@@ -67,6 +74,7 @@ function Lecteur({ c }: { c: Clip }) {
       <figcaption>
         <h3>{c.titre}</h3>
         <p>{c.texte}</p>
+        {c.points ? <ul className="dg-points">{c.points.map((p) => <li key={p}>{p}</li>)}</ul> : null}
         <p className="dg-note">{c.note}</p>
       </figcaption>
     </figure>
@@ -76,7 +84,7 @@ function Lecteur({ c }: { c: Clip }) {
 export default function DemoGestion() {
   return (
     <div className="dg reveal" id="gestion">
-      <div className="lp-head2 c"><span className="lp-kick">Offre Signature</span><h2>L’assistant qui agit, le CRM qui voit tout.</h2><p>Deux captures de l’écran réel, rognées : une commande tapée en une phrase, et l’atelier sur une carte.</p></div>
+      <div className="lp-head2 c"><span className="lp-kick">Offre Signature</span><h2>L’assistant qui agit, le CRM qui voit tout.</h2><p>Deux captures de l’écran réel, rognées : une commande tapée en une phrase, et votre entreprise en maquette 3D.</p></div>
       <div className="dg-grille">{CLIPS.map((c) => <Lecteur key={c.id} c={c} />)}</div>
     </div>
   )

@@ -95,6 +95,16 @@ export async function POST(req: Request) {
       if (!['entree', 'sortie', 'inventaire', 'perte'].includes(String(m.type))) {
         return NextResponse.json({ error: 'Type de mouvement inconnu.' }, { status: 400 })
       }
+      // L'atelier du CRM demande `refuser_negatif` (audit du 20/10) : une sortie ou une perte plus grande que le stock est
+      // refusée, comme crm_sortir_materiau (0153). Les autres écrans gardent le comportement d'avant (stock non suivi).
+      if (m.refuser_negatif === true && ['sortie', 'perte'].includes(String(m.type))) {
+        const lieu = String(m.lieu || 'atelier').slice(0, 60)
+        const { data: mat } = await supabaseAdmin.from('materiaux').select('id').eq('id', m.materiau_id).eq('artisan_id', a.uid).maybeSingle()
+        if (!mat) return NextResponse.json({ error: 'Matériau introuvable.' }, { status: 404 })
+        const { data: st } = await supabaseAdmin.from('stock').select('quantite').eq('materiau_id', m.materiau_id).eq('lieu', lieu).maybeSingle()
+        const dispo = Number(st?.quantite ?? 0)
+        if (quantite > dispo) return NextResponse.json({ error: `Stock insuffisant : il en reste ${dispo}.` }, { status: 409 })
+      }
       const { data, error } = await supabaseAdmin.rpc('appliquer_mouvement', {
         p_artisan: a.uid, p_materiau: m.materiau_id, p_type: m.type, p_quantite: quantite,
         p_lieu: String(m.lieu || 'atelier').slice(0, 60),

@@ -43,7 +43,8 @@ export async function POST(req: Request) {
     supabaseAdmin.from('crm_rappels').update({ fait_le: maintenant, texte: 'Le client ne veut plus de messages d’après-chantier' }).eq('id', r.data.id).eq('artisan_id', g.uid),
     supabaseAdmin.from('crm_rappels').delete().eq('artisan_id', g.uid).eq('chantier_id', r.data.chantier_id).in('type', ['demande_avis', 'entretien']).is('fait_le', null).neq('id', r.data.id),
   ])
-  if (fait.error || autres.error) console.error('[crm/apres-chantier] opposition (rappels) :', (fait.error ?? autres.error)?.message)
+  // L'opposition est notée ; si les rappels n'ont pas pu suivre, on le dit plutôt que d'afficher un succès complet (audit du 20/10).
+  if (fait.error || autres.error) { console.error('[crm/apres-chantier] opposition (rappels) :', (fait.error ?? autres.error)?.message); return erreur('C’est noté pour ce client, mais ses rappels n’ont pas pu être mis à jour : rechargez la fiche.', 503) }
   return json({ ok: true, note: !!email }, 201)
 }
 

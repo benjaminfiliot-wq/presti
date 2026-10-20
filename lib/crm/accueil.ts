@@ -83,7 +83,8 @@ export function salleAttente(vue: EntreeAccueil, jour?: string): SalleAttente {
       detail: brouillon ? `${c.titre} · devis en préparation` : c.titre,
       quand: ilYa(c.depuis, vue.maintenant) ? `${brouillon ? 'dossier ouvert' : 'reçue'} ${ilYa(c.depuis, vue.maintenant)}` : null,
       relance: null,
-      action: brouillon && c.devisId ? { libelle: 'Ouvrir le brouillon', href: `/devis/${c.devisId}` } : { libelle: 'Répondre', href: '/messages' },
+      // « Répondre » ouvre LA conversation de ce prospect (app/plateforme/Conversations.tsx lit `?lead=` et la sélectionne), pas la boîte entière.
+      action: brouillon && c.devisId ? { libelle: 'Ouvrir le brouillon', href: `/devis/${c.devisId}` } : { libelle: 'Répondre', href: `/messages?lead=${encodeURIComponent(c.leadId ?? c.id)}` },
     }
   })
 

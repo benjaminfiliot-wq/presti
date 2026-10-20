@@ -152,8 +152,19 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = n
     insts.forEach((it, i) => mesh.setColorAt(i, tmp.c.set(couleur(it))))
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
   })
+  // Le maillage porte sa liste d'instances : un clic qui touche d'abord du décor (clôture, arbre, toit) va au premier objet CLIQUABLE
+  // derrière lui, dans n'importe quelle couche (lot 4 : « le raycast attrape le mauvais objet »).
+  useLayoutEffect(() => { if (ref.current) ref.current.userData.insts = insts }, [insts])
   if (!insts.length) return null
-  const objet = (e: ThreeEvent<PointerEvent | MouseEvent>) => (e.instanceId === undefined ? -1 : insts[e.instanceId]?.o ?? -1)
+  const objet = (e: ThreeEvent<PointerEvent | MouseEvent>) => {
+    for (const i of e.intersections) {
+      const l = (i.object as THREE.Object3D).userData?.insts as Inst[] | undefined
+      if (!l || i.instanceId === undefined) continue
+      const o = l[i.instanceId]?.o ?? -1
+      if (o >= 0) return o
+    }
+    return -1
+  }
   return (
     <instancedMesh
       ref={ref} args={[geo, undefined, insts.length]} castShadow={!lumiere} receiveShadow={!lumiere} frustumCulled={false}
@@ -325,9 +336,20 @@ function Projecteur({ cibles, racine, zoomEnsemble, dense }: { cibles: RefObject
 const ETAPES: Record<string, number> = { module: typeof performance !== 'undefined' ? performance.now() : 0 }
 const marquer = (k: string) => { if (!(k in ETAPES) && typeof performance !== 'undefined') ETAPES[k] = performance.now() }
 
-function Mesureur({ actif, moment = null }: { actif: boolean; moment?: string | null }) {
-  const { gl, scene } = useThree()
+function Mesureur({ actif, moment = null, objets = [] }: { actif: boolean; moment?: string | null; objets?: readonly { cle: string; centre: readonly number[]; hauteur: number }[] }) {
+  const { gl, scene, camera, size } = useThree()
   useEffect(() => { if (actif) (window as unknown as { __atelierRendu?: unknown; __atelierEtapes?: unknown }).__atelierRendu = { gl, scene } }, [actif, gl, scene])
+  // Mesure seulement (page de démonstration) : où tombe un objet à l'écran — les tests cliquent la maquette là où l'artisan cliquerait.
+  useEffect(() => {
+    if (!actif) return
+    ;(window as unknown as { __atelierEcran?: (cle: string, k?: number) => { x: number; y: number } | null }).__atelierEcran = (cle, k = 0.4) => {
+      const o = objets.find((x) => x.cle === cle)
+      if (!o) return null
+      const v = new THREE.Vector3(o.centre[0], Math.max(0.3, o.hauteur * k), o.centre[2]).project(camera)
+      const r = gl.domElement.getBoundingClientRect()
+      return { x: r.left + (v.x * 0.5 + 0.5) * size.width, y: r.top + (-v.y * 0.5 + 0.5) * size.height }
+    }
+  }, [actif, objets, camera, gl, size])
   useEffect(() => { if (actif) (window as unknown as { __atelierEtapes?: unknown }).__atelierEtapes = ETAPES }, [actif])
   const etat = useRef({ images: 0, depuis: performance.now(), premiere: null as number | null })
   useFrame(() => {
@@ -459,7 +481,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       />
       <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />
       <OmbresFigees version={infra ? versionOmbres : scene} dureeMs={apparition ? 1100 : 0} rafraichirA={marche ? marche.fin + 30 : null} />
-      <Mesureur actif={mesure} moment={amb?.moment ?? null} />
+      <Mesureur actif={mesure} moment={amb?.moment ?? null} objets={scene.objets} />
       <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} />
     </Canvas>
     {/* Le calque des étiquettes (DOM, aucun appel de dessin). */}

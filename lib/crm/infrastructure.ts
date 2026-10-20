@@ -120,6 +120,68 @@ export function resumeProfil(p: Profil): string {
   return `${statut} · ${gens} · ${vh} · ${st}`
 }
 
+// ── 1b. Les métiers : TOUS ceux de Presti (liste de l'inscription, app/onboarding/page.tsx), chacun rattaché à un jeu de
+//        structures 3D (un préréglage existant, ou l'un des neuf ajoutés au lot 4). Drapeau crmAtelierVivant seulement. ─────────
+/** Les neuf préréglages d'avant (lib/crm/atelier.ts, PREREGLAGES — recopiés : aucun import d'exécution, scripts/crm-atelier3d-qa.mjs compare). */
+export const METIERS_HISTORIQUES = ['plombier', 'electricien', 'menuisier', 'macon', 'couvreur', 'carreleur', 'peintre', 'chauffagiste', 'general'] as const
+/** Les groupes importants qui manquaient (lot 4, Benj) : leurs structures, leurs chantiers, leurs matières. */
+export const METIERS_EN_PLUS = ['paysagiste', 'serrurier', 'vitrier', 'plaquiste', 'facadier', 'charpentier', 'climaticien', 'piscinier', 'multiservice'] as const
+export type Metier3D = Prereglage | (typeof METIERS_EN_PLUS)[number]
+export const METIERS_3D: readonly Metier3D[] = [...METIERS_HISTORIQUES, ...METIERS_EN_PLUS]
+export const LIBELLES_METIER_3D: Record<Metier3D, string> = {
+  plombier: 'Plombier', electricien: 'Électricien', menuisier: 'Menuisier', macon: 'Maçon', couvreur: 'Couvreur', carreleur: 'Carreleur',
+  peintre: 'Peintre', chauffagiste: 'Chauffagiste', general: 'Tous corps d’état', paysagiste: 'Paysagiste', serrurier: 'Serrurier · métallier',
+  vitrier: 'Vitrier · fermetures', plaquiste: 'Plaquiste · plâtrier', facadier: 'Façadier · ravaleur', charpentier: 'Charpentier', climaticien: 'Climaticien · frigoriste',
+  piscinier: 'Pisciniste', multiservice: 'Multiservices · rénovation',
+}
+/** Le préréglage d'avant le plus proche (la scène sans infrastructure, les écrans qui ne connaissent que les neuf). */
+export const PROCHE: Record<Metier3D, Prereglage> = {
+  plombier: 'plombier', electricien: 'electricien', menuisier: 'menuisier', macon: 'macon', couvreur: 'couvreur', carreleur: 'carreleur', peintre: 'peintre',
+  chauffagiste: 'chauffagiste', general: 'general', paysagiste: 'general', serrurier: 'general', vitrier: 'menuisier', plaquiste: 'peintre',
+  facadier: 'peintre', charpentier: 'menuisier', climaticien: 'chauffagiste', piscinier: 'macon', multiservice: 'general',
+}
+/**
+ * La liste de référence des métiers de Presti, GROUPÉE (même libellés que l'inscription, app/onboarding/page.tsx, « Autre » excepté : il
+ * devient la saisie libre « Écrire mon métier »). scripts/crm-atelier3d-qa.mjs vérifie que rien ne manque.
+ */
+export const METIERS_REFERENCE: readonly { groupe: string; metiers: readonly { libelle: string; m3d: Metier3D }[] }[] = [
+  { groupe: 'Eau, chauffage, climatisation', metiers: [{ libelle: 'Plombier', m3d: 'plombier' }, { libelle: 'Chauffagiste', m3d: 'chauffagiste' }, { libelle: 'Climaticien / Frigoriste', m3d: 'climaticien' }, { libelle: 'Poêlier / Fumiste', m3d: 'chauffagiste' }, { libelle: 'Ramoneur', m3d: 'chauffagiste' }, { libelle: 'Pisciniste', m3d: 'piscinier' }] },
+  { groupe: 'Électricité', metiers: [{ libelle: 'Électricien', m3d: 'electricien' }, { libelle: 'Domoticien', m3d: 'electricien' }] },
+  { groupe: 'Gros œuvre et extérieurs', metiers: [{ libelle: 'Maçon', m3d: 'macon' }, { libelle: 'Terrassier / Maçon VRD', m3d: 'macon' }, { libelle: 'Façadier / Ravaleur', m3d: 'facadier' }, { libelle: 'Paysagiste', m3d: 'paysagiste' }] },
+  { groupe: 'Toiture et charpente', metiers: [{ libelle: 'Couvreur', m3d: 'couvreur' }, { libelle: 'Charpentier', m3d: 'charpentier' }, { libelle: 'Étancheur', m3d: 'couvreur' }] },
+  { groupe: 'Bois, fermetures, métal', metiers: [{ libelle: 'Menuisier', m3d: 'menuisier' }, { libelle: 'Ébéniste / Agenceur', m3d: 'menuisier' }, { libelle: 'Cuisiniste', m3d: 'menuisier' }, { libelle: 'Vitrier', m3d: 'vitrier' }, { libelle: 'Store & fermeture', m3d: 'vitrier' }, { libelle: 'Serrurier / Métallier', m3d: 'serrurier' }, { libelle: 'Ferronnier', m3d: 'serrurier' }] },
+  { groupe: 'Second œuvre et finitions', metiers: [{ libelle: 'Plaquiste / Plâtrier', m3d: 'plaquiste' }, { libelle: 'Isolation (ITE/ITI)', m3d: 'plaquiste' }, { libelle: 'Peintre', m3d: 'peintre' }, { libelle: 'Carreleur', m3d: 'carreleur' }, { libelle: 'Solier / Moquettiste', m3d: 'carreleur' }] },
+  { groupe: 'Rénovation', metiers: [{ libelle: 'Multiservices / Rénovation', m3d: 'multiservice' }, { libelle: 'Tous corps d’état', m3d: 'general' }] },
+]
+/**
+ * Un métier écrit librement (ou celui de la fiche artisan, artisans.metier) → son jeu de structures, par mots-clés (comme
+ * prereglageDe, lib/crm/atelier.ts, plus fin). Les plus précis d'abord ; inconnu → « tous corps d'état ».
+ */
+export function metier3DDe(texte: string | null | undefined): Metier3D {
+  const t = (texte ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const regles: [RegExp, Metier3D][] = [
+    [/climatis|climaticien|frigor|\bclim\b/, 'climaticien'], [/chauffag|pompe a chaleur|\bpac\b|poel|fumiste|ramon/, 'chauffagiste'],
+    [/piscin/, 'piscinier'], [/paysag|jardin|espaces? verts?|elag/, 'paysagiste'], [/serrur|metall|ferronn|soudeur|soudure/, 'serrurier'],
+    [/vitr|miroit|store|fermeture|volet/, 'vitrier'], [/plaqu|platr|plafond|isolation|\biti\b|cloison/, 'plaquiste'], [/facad|ravale|\bite\b|enduit/, 'facadier'],
+    [/charpent|ossature bois/, 'charpentier'], [/multi.?serv|toutes mains|bricol|renovation/, 'multiservice'], [/menuis|ebenist|agenc|cuisin/, 'menuisier'],
+    [/electric|domot|courant faible|borne de recharge/, 'electricien'], [/plomb|sanitaire/, 'plombier'], [/macon|gros oeuvre|beton|terrass|\bvrd\b/, 'macon'],
+    [/couvr|toitur|zingu|etanch/, 'couvreur'], [/carrel|faience|solier|moquet/, 'carreleur'], [/peint|decor/, 'peintre'], [/tous corps|\btce\b/, 'general'],
+  ]
+  return regles.find(([re]) => re.test(t))?.[1] ?? 'general'
+}
+/** Les catégories typiques du stock de chaque métier : proposées quand le stock est vide (« Ajouter mon premier article »). */
+export const CATEGORIES_TYPIQUES: Record<Metier3D, string[]> = {
+  plombier: ['Tubes', 'Raccords', 'Robinetterie', 'Sanitaires'], chauffagiste: ['Chaudières', 'Radiateurs', 'Tubes cuivre', 'Pièces détachées'],
+  electricien: ['Câbles', 'Appareillage', 'Tableaux', 'Gaines'], menuisier: ['Panneaux', 'Bois massif', 'Quincaillerie', 'Colles'],
+  macon: ['Liants', 'Granulats', 'Blocs', 'Aciers'], couvreur: ['Tuiles', 'Ardoises', 'Zinc', 'Écrans'], carreleur: ['Carrelage', 'Colles', 'Joints', 'Profilés'],
+  peintre: ['Peintures', 'Enduits', 'Protection', 'Outils'], general: ['Consommables', 'Quincaillerie', 'Outillage'],
+  paysagiste: ['Végétaux', 'Terre et paillage', 'Arrosage', 'Bordures'], serrurier: ['Profilés acier', 'Serrures', 'Visserie', 'Gaz de soudure'],
+  vitrier: ['Vitrages', 'Joints', 'Profilés', 'Mastics'], plaquiste: ['Plaques', 'Rails et montants', 'Isolants', 'Bandes et enduits'],
+  facadier: ['Enduits', 'Peintures façade', 'Treillis', 'Protection'], charpentier: ['Bois de charpente', 'Connecteurs', 'Visserie', 'Traitement'],
+  climaticien: ['Unités', 'Liaisons cuivre', 'Fluides', 'Supports'], piscinier: ['Produits de traitement', 'Filtration', 'Pièces', 'Liners'],
+  multiservice: ['Consommables', 'Quincaillerie', 'Peinture', 'Plomberie'],
+}
+
 // ── 2. Le plan de masse de chaque base (mètres de maquette ; la ville des chantiers autour garde sa grille) ─────
 export type Rect = { x0: number; x1: number; z0: number; z1: number }
 export type Place = [number, number, 'x' | 'z']
@@ -176,7 +238,7 @@ export const PLANS: Record<Base, PlanBase> = {
     placesCamion: [[-1.6, 5.6, 'x'], [19.4, -4.0, 'x']],
     accueil: { x: -11.5, z: 2.3, l: 1.8 }, colis: { x: -12.9, z: 3.3 }, bureau: { x: -11.5, z: -1 }, poste: { x: -8.0, z: 3.1 },
     racks: { x0: -9.0, z: -1.9, pas: 2.2, max: 5 },
-    interieur: { x0: -9.6, x1: 1.6, z0: -1.0, z1: 1.3 }, exterieur: { x0: 3.4, x1: 11.6, z0: -7.8, z1: 0.9 },
+    interieur: { x0: -8.9, x1: 1.6, z0: -1.0, z1: 1.3 }, exterieur: { x0: 3.4, x1: 11.6, z0: -7.8, z1: 0.9 },
     repos: { x: -5.4, z: 2.6, cols: 3, dx: 0.9, dz: 0.8 }, sortie: [3.8, 2.8], cible: [-3, 0, -1],
     hall: { x0: -9.8, x1: 2.0, z0: -6.4, z1: 1.4 },
     batiments: [{ x0: -10, x1: 2, z0: -6.5, z1: 1.5 }, { x0: -13, x1: -10, z0: -3.5, z1: 1.5 }, { x0: 3.4, x1: 11.6, z0: -7.8, z1: 0.9 }],
@@ -189,10 +251,10 @@ export const PLANS: Record<Base, PlanBase> = {
     placesCamion: [[15.6, 0.0, 'x'], [15.6, -6.0, 'x']],
     accueil: { x: -8.0, z: 8.7, l: 1.8 }, colis: { x: -12.5, z: 8.9 }, bureau: { x: -8, z: 6 }, poste: { x: -8.3, z: 2.6 },
     racks: { x0: -9.9, z: -3.6, pas: 2.2, max: 9 },
-    interieur: { x0: -6.8, x1: 2.6, z0: -2.6, z1: 3.2 }, exterieur: { x0: -4.4, x1: 9.4, z0: 4.6, z1: 8.9 },
+    interieur: { x0: -6.8, x1: 2.6, z0: -2.6, z1: 3.2 }, exterieur: { x0: -3.4, x1: 9.4, z0: 4.6, z1: 8.9 },
     repos: { x: 3.4, z: -0.6, cols: 4, dx: 1.15, dz: 1.2 }, sortie: [17, 10.2], cible: [0, 0, 2.5],
     hall: { x0: -10.8, x1: 8.9, z0: -2.8, z1: 3.8 },
-    batiments: [{ x0: -11, x1: 9, z0: -8, z1: 4 }, { x0: -11, x1: -3.8, z0: 4, z1: 8 }, { x0: -4.4, x1: 9.4, z0: 4.6, z1: 8.9 }],
+    batiments: [{ x0: -11, x1: 9, z0: -8, z1: 4 }, { x0: -11, x1: -3.8, z0: 4, z1: 8 }, { x0: -3.4, x1: 9.4, z0: 4.6, z1: 8.9 }],
     chemin: [[3.0, 3.4], [3.0, 4.3], [10.0, 4.3], [10.0, 9.6], [16, 9.6], [16, 14]], interne: 2,
   },
   // Sans local : un emplacement gravillonné dans un square, le camion-atelier ouvert au milieu, une table pliante pour bureau.
@@ -267,11 +329,14 @@ export type Mobile = {
 
 // ── Le pinceau : les gestes de construction communs (volumes, murs, toits, fenêtres, clôtures, arbres) ─────────
 function pinceau(add: AjoutI, addF: AjoutF, o = -1) {
-  const B = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('box', [x, y, z], [sx, sy, sz], c, o, r)
-  const Cy = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('cyl', [x, y, z], [sx, sy, sz], c, o, r)
-  const S = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string) => add('sph', [x, y, z], [sx, sy, sz], c, o)
-  const Co = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('cone', [x, y, z], [sx, sy, sz], c, o, r)
-  const F = (x: number, y: number, z: number, sx: number, sy: number, sz: number, jour: string, nuit: string) => addF([x, y, z], [sx, sy, sz], jour, nuit, o)
+  // Le propriétaire des formes : -1 (décor) ou l'objet cliquable en cours de dessin (`pour`).
+  let o_ = o
+  const pour = (n: number) => { o_ = n }
+  const B = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('box', [x, y, z], [sx, sy, sz], c, o_, r)
+  const Cy = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('cyl', [x, y, z], [sx, sy, sz], c, o_, r)
+  const S = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string) => add('sph', [x, y, z], [sx, sy, sz], c, o_)
+  const Co = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string, r: V3 = [0, 0, 0]) => add('cone', [x, y, z], [sx, sy, sz], c, o_, r)
+  const F = (x: number, y: number, z: number, sx: number, sy: number, sz: number, jour: string, nuit: string) => addF([x, y, z], [sx, sy, sz], jour, nuit, o_)
   /** Un volume posé : rectangle au sol, de y0 à y0 + h. */
   const vol = (x0: number, z0: number, x1: number, z1: number, h: number, c: string, y0 = 0) => B((x0 + x1) / 2, y0 + h / 2, (z0 + z1) / 2, x1 - x0, h, z1 - z0, c)
   /** Un mur d'épaisseur e entre deux points alignés (sur x ou sur z). */
@@ -335,7 +400,7 @@ function pinceau(add: AjoutI, addF: AjoutF, o = -1) {
   const arbre = (x: number, z: number, k = 1, c: string = P.sauge) => { Cy(x, 0.4 * k, z, 0.18, 0.8 * k, 0.18, P.tronc); S(x, 1.25 * k, z, 1.15 * k, 1.15 * k, 1.15 * k, c) }
   const haie = (x0: number, z0: number, x1: number, z1: number, h = 0.8) => vol(Math.min(x0, x1) - 0.25, Math.min(z0, z1) - 0.25, Math.max(x0, x1) + 0.25, Math.max(z0, z1) + 0.25, h, P.haie)
   const lampe = (x: number, z: number, h = 2.4) => { Cy(x, 0.12, z, 0.36, 0.24, 0.36, P.pierre); Cy(x, h / 2, z, 0.11, h, 0.11, P.gris); Cy(x, h + 0.08, z, 0.5, 0.14, 0.5, P.gris); F(x, h - 0.02, z, 0.3, 0.1, 0.3, P.ampouleJour, P.lumiere) }
-  return { B, Cy, S, Co, F, vol, mur, deuxPans, plat, fenetres, cloture, arbre, haie, lampe }
+  return { B, Cy, S, Co, F, vol, mur, deuxPans, plat, fenetres, cloture, arbre, haie, lampe, pour }
 }
 
 /**
@@ -343,7 +408,7 @@ function pinceau(add: AjoutI, addF: AjoutF, o = -1) {
  * le bardage bois du menuisier, les blocs du maçon, la toiture en tuiles du couvreur, le graphite de l'électricien… Teintes chaudes
  * ou neutres seulement.
  */
-export const MATIERES: Record<Prereglage, { mur: string; nervure: string; toit: string; bande: string }> = {
+export const MATIERES: Record<Metier3D, { mur: string; nervure: string; toit: string; bande: string }> = {
   menuisier: { mur: '#D9B48C', nervure: '#B98B62', toit: '#7E7166', bande: '#9C7552' },
   macon: { mur: '#BDB5A8', nervure: '#A39A8D', toit: '#9E958A', bande: '#7E766C' },
   couvreur: { mur: '#E8DDD0', nervure: '#D2C4B4', toit: '#C2734E', bande: '#B0603E' },
@@ -353,6 +418,15 @@ export const MATIERES: Record<Prereglage, { mur: string; nervure: string; toit: 
   peintre: { mur: '#F3E6D2', nervure: '#E8C9A8', toit: '#9E958A', bande: '#D97757' },
   carreleur: { mur: '#E6E0D6', nervure: '#CFC6B8', toit: '#8E847A', bande: '#8C9A82' },
   general: { mur: '#D8D2C7', nervure: '#C4BDB1', toit: '#A9A296', bande: '#D97757' },
+  paysagiste: { mur: '#D8DCC8', nervure: '#B9C4A8', toit: '#7E8A6E', bande: '#5E9E7E' },
+  serrurier: { mur: '#8E8A84', nervure: '#7A766F', toit: '#5E5A55', bande: '#C9A27E' },
+  vitrier: { mur: '#E9ECE6', nervure: '#D2D7CF', toit: '#9AA096', bande: '#7FA08E' },
+  plaquiste: { mur: '#F4F1EA', nervure: '#E2DED4', toit: '#B5AFA4', bande: '#C9A27E' },
+  facadier: { mur: '#EAD2B7', nervure: '#D9B996', toit: '#A08A74', bande: '#D08A66' },
+  charpentier: { mur: '#C8A27A', nervure: '#A9835C', toit: '#6E5E50', bande: '#8A6440' },
+  climaticien: { mur: '#EEF0EC', nervure: '#D9DCD6', toit: '#A6A9A3', bande: '#7FA6A0' },
+  piscinier: { mur: '#EFE8DA', nervure: '#DCD2C0', toit: '#A39A8D', bande: '#6FA79A' },
+  multiservice: { mur: '#DDD5C8', nervure: '#C8BFB1', toit: '#9E958A', bande: '#C9A27E' },
 }
 
 // ── 2b. Les bases : bâtiments, plan de masse, végétation. Chaque fonction rend la liste des structures qu'elle a posées. ──
@@ -364,7 +438,10 @@ export const BATIMENTS: Record<Base, string[]> = {
   camion: ['camion-atelier', 'emplacement', 'table-pliante'],
 }
 
-export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Profil, metier: Prereglage, zones: { libelle: string; p: V3 }[]): string[] {
+/** Crée l'objet cliquable d'une structure (clé du catalogue STRUCTURES, centre, hauteur de la carte) ; rend son rang. */
+export type ObjetStructure = (cle: string, centre: V3, hauteur: number) => number
+
+export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Profil, metier: Metier3D, zones: { libelle: string; p: V3 }[], objetS: ObjetStructure = () => -1): string[] {
   const k = pinceau(add, addF)
   const faits: string[] = []
   const { lot: L } = plan
@@ -400,6 +477,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     if (camion) faits.push('entree-large')
     // Le garage attenant, ouvert devant (un carport) : murs du fond et de droite, toit plat sur la moitié du fond, linteau devant.
     k.vol(-2.5, -4, 2.5, 1.5, 0.05, P.beton)
+    k.pour(objetS('garage', [0, 0, -1.2], 2.8))
     k.mur(-2.5, -4, 2.5, -4, 2.4, Mt.mur)
     k.mur(2.5, -4, 2.5, -1.2, 2.4, Mt.mur)
     for (let z = -3.8; z < -1.2; z += 0.45) k.B(2.62, 1.2, z, 0.06, 2.3, 0.1, Mt.nervure)
@@ -408,6 +486,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     k.B(0, 2.3, 1.5, 5.0, 0.22, 0.24, Mt.bande)
     k.B(2.5, 1.2, 1.5, 0.24, 2.4, 0.24, Mt.bande)
     k.B(0, 2.12, 1.32, 4.6, 0.14, 0.12, Mt.nervure) // la porte basculante, relevée
+    k.pour(-1)
     faits.push('garage-ouvert', 'maison')
     // Un banc, un potager (ou l'abri de jardin s'il y a du stock), des arbres fruitiers, une lampe de jardin.
     k.B(-10.9, 0.25, 6.8, 1.4, 0.08, 0.45, P.bois); for (const dx of [-0.55, 0.55]) k.B(-10.9 + dx, 0.12, 6.8, 0.08, 0.24, 0.4, P.boisFonce)
@@ -416,8 +495,10 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
       for (let i = 0; i < 4; i++) for (let j = 0; j < 7; j++) k.S(4.5 + j * 0.72, 0.24, -6.0 + i * 0.5, 0.36, 0.28, 0.36, P.sauge)
       faits.push('potager')
     } else {
+      k.pour(objetS('abri-jardin', [6.6, 0, -5.6], 2.6))
       k.vol(3.6, -6.8, 9.6, -4.4, 0.05, P.beton); k.mur(3.6, -6.8, 9.6, -6.8, 2.2, P.bois); k.mur(3.6, -6.8, 3.6, -4.4, 2.2, P.bois)
       k.B(6.6, 2.1, -5.7, 6.4, 0.08, 2.6, '#8E847A', [-0.18, 0, 0])
+      k.pour(-1)
       faits.push('abri-jardin')
     }
     for (const [x, z, s] of [[-10.6, -5.2, 1.0], [-8.2, 7.6, 0.9], [8.6, 8.4, 0.85], [-11.0, 0.4, 0.8], [8.8, -2.2, 0.8]] as const) k.arbre(x, z, s)
@@ -433,6 +514,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     if (camion) { k.vol(-4.4, 1.5, 2.8, L.z1, 0.045, P.asphalte); faits.push('entree-large') }
     // Le bâtiment d'atelier : dalle, murs du fond et de gauche pleins (fenêtres hautes), murs face caméra bas, grande porte sectionnelle.
     const H = 3.4
+    k.pour(objetS('batiment-atelier', [-4, 0, -4.6], H + 1.4))
     k.vol(-10, -6.5, 2, 1.5, 0.05, P.dalle)
     k.mur(-10, -6.5, 2, -6.5, H, Mt.mur); k.mur(-10, -6.5, -10, 1.5, H, Mt.mur)
     for (let x = -9.6; x < 2; x += 0.6) k.B(x, H / 2, -6.37, 0.1, H - 0.1, 0.06, Mt.nervure)
@@ -464,9 +546,10 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     // L'auvent au-dessus de la porte sectionnelle.
     k.B(-4.5, H + 0.25, 2.3, 5.2, 0.1, 1.7, Mt.bande, [0.12, 0, 0])
     for (const x of [-6.9, -2.1]) k.B(x, H + 0.05, 2.0, 0.08, 0.5, 1.2, P.ardoise, [0.6, 0, 0])
+    k.pour(-1)
     faits.push('auvent', 'bureau-accole')
     // Un vestiaire (équipe seulement), le long du mur de gauche, devant.
-    if (profil.equipe !== 'solo') { const n = Math.min(4, profil.membres); for (let i = 0; i < n; i++) k.B(-9.6, 0.9, -0.8 + i * 0.58, 0.5, 1.8, 0.52, i % 2 ? '#E3DDD2' : P.pierre); zones.push({ libelle: 'Vestiaire', p: [-8.6, 0.1, -0.4] }); faits.push('vestiaire') }
+    if (profil.equipe !== 'solo') { k.pour(objetS('vestiaire', [-9.6, 0, -0.1], 2.2)); const n = Math.min(4, profil.membres); for (let i = 0; i < n; i++) k.B(-9.6, 0.9, -0.8 + i * 0.58, 0.5, 1.8, 0.52, i % 2 ? '#E3DDD2' : P.pierre); k.pour(-1); zones.push({ libelle: 'Vestiaire', p: [-8.6, 0.1, -0.4] }); faits.push('vestiaire') }
     marquer(Math.max(1, profil.vehicules))
     for (const [x, z] of [[14, -7], [17, -5.5], [20.5, -7.4], [22.8, -3.2], [15.8, -1.6], [22, 1.6], [-12.6, -7.4]] as const) k.arbre(x, z, 0.9)
     k.haie(12.6, 9.4, 23.6, 9.4, 0.7)
@@ -483,6 +566,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     for (const x of [14.4, 19.7]) k.B(x, 1.0, 10, 0.3, 2.0, 0.3, P.ardoise)
     faits.push('cloture', 'portail')
     const H = 5.6
+    k.pour(objetS('hangar', [-1, 0, -6.2], H + 1.6))
     k.vol(-11, -8, 9, 4, 0.05, P.dalle)
     // Bardage nervuré sur les murs du fond et de gauche (pleine hauteur), bande de fenêtres hautes.
     k.mur(-11, -8, 9, -8, H, Mt.mur); k.mur(-11, -8, -11, 4, H, Mt.mur)
@@ -491,6 +575,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     k.B(-1, H + 0.04, -8, 20.2, 0.24, 0.3, Mt.bande); k.B(-11, H + 0.04, -2, 0.3, 0.24, 12.2, Mt.bande)
     k.B(-1, 1.2, -7.84, 20, 0.5, 0.06, Mt.bande)
     k.fenetres('z', -7.78, -10, 8, H - 0.9, 1, 1, 'hangar', () => true, 1.4, 0.5)
+    k.pour(-1)
     faits.push('hangar-bardage')
     // Portes multiples en façade (portiques corail et tabliers relevés), murs face caméra bas.
     const portesAvant: [number, number][] = [[-3.6, -0.4], [1.4, 4.6]]
@@ -499,6 +584,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     k.mur(xa, 4, 9, 4, 1.0, Mt.mur)
     faits.push('portes-multiples')
     // Les quais de chargement sur le mur de droite : trois portes, niveleurs, butoirs, sas d'étanchéité.
+    k.pour(objetS('quais', [10, 0, -3], 4.2))
     let za = -8
     for (const zq of [-6, -3, 0]) {
       k.mur(9, za, 9, zq - 1.2, 1.0, Mt.mur); za = zq + 1.2
@@ -509,6 +595,7 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
       k.B(9.0, 3.3, zq, 0.12, 0.6, 2.3, P.nervure)
     }
     k.mur(9, za, 9, 4, 1.0, Mt.mur)
+    k.pour(-1)
     faits.push('quais', 'bureaux-etage', 'escalier-exterieur')
     // Le toit : pan du fond en bac acier, portiques corail apparents au-dessus de l'atelier.
     const pente = 0.16, yF = H + 6 * Math.tan(pente)
@@ -528,43 +615,56 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
     // (gabarit « camion » dans le parc), jamais du hasard.
     if (camion && (metier === 'macon' || metier === 'couvreur' || metier === 'general')) {
       // L'aire de lavage des engins : dalle, caniveau, potence et lance, flaque.
+      k.pour(objetS('aire-lavage', [12.6, 0, -7.6], 2.2))
       k.vol(10.9, -8.6, 14.4, -6.7, 0.06, '#BFB7AA'); k.B(12.65, 0.07, -7.65, 3.0, 0.02, 0.18, P.ardoise)
       k.B(14.2, 0.9, -8.4, 0.12, 1.8, 0.12, P.metal); k.B(13.9, 1.75, -8.4, 0.7, 0.1, 0.1, P.metal); k.Cy(12.2, 0.08, -7.3, 1.6, 0.02, 1.0, P.eau)
+      k.pour(-1)
       faits.push('aire-lavage')
     }
     if (camion && metier === 'macon') {
       // Le pont-bascule sur l'allée du portail, et sa cabine de pesée.
+      k.pour(objetS('pont-bascule', [17.6, 0, 7.6], 2.6))
       k.vol(15.9, 6.2, 18.1, 9.4, 0.1, P.beton); for (const z of [6.25, 9.35]) k.B(17, 0.12, z, 2.2, 0.05, 0.1, P.ardoise)
       k.vol(18.6, 6.6, 19.6, 7.6, 2.2, '#ECE6DA'); k.F(19.62, 1.5, 7.1, 0.03, 0.5, 0.7, P.vitreJour, P.lumiere); k.B(19.1, 2.25, 7.1, 1.2, 0.1, 1.2, P.ardoise)
+      k.pour(-1)
       faits.push('pont-bascule')
+      k.pour(objetS('plateforme-stockage', [21, 0, -6.7], 2.2))
       // La plateforme de stockage : trois grands boxes de béton (murs de 1,6 m), tas de sable, de gravier, de gravillons.
       k.vol(18.2, -8.7, 23.8, -4.7, 0.08, P.beton)
       k.B(21.0, 0.85, -8.55, 5.6, 1.6, 0.3, P.beton)
       for (let i = 0; i < 4; i++) k.B(18.35 + i * 1.8, 0.85, -6.7, 0.3, 1.6, 3.6, P.beton)
       ;[P.sable, P.granulat, '#B5AC9E'].forEach((c, i) => k.Co(19.25 + i * 1.8, 0.75, -6.9, 1.7, 1.5, 2.6, c))
+      k.pour(-1)
       faits.push('plateforme-stockage')
       // Le parc d'engins : une mini-pelle et une chargeuse.
+      k.pour(objetS('parc-engins', [15.6, 0, -7.6], 2.2))
       for (const dz of [-0.45, 0.45]) k.B(15.2, 0.22, -7.6 + dz, 1.8, 0.44, 0.4, P.ardoise)
       k.B(15.2, 0.75, -7.6, 1.4, 0.6, 1.2, P.ambre); k.B(14.9, 1.3, -7.6, 0.8, 0.6, 0.9, P.vitre)
       k.B(16.2, 1.4, -7.6, 1.5, 0.2, 0.2, P.ambre, [0, 0, 0.7]); k.B(16.9, 0.9, -7.6, 0.2, 1.1, 0.2, P.ambre, [0, 0, -0.3]); k.B(17.1, 0.35, -7.6, 0.5, 0.35, 0.6, P.ardoise)
+      k.pour(-1)
       faits.push('parc-engins')
       // La grue à tour au-dessus de la plateforme : la silhouette qui se voit de loin.
+      k.pour(objetS('grue-a-tour', [22.9, 0, -7.7], 12.2))
       k.vol(22.4, -8.2, 23.4, -7.2, 0.5, P.beton)
       for (let y = 0.5; y < 11.5; y += 1.0) { k.B(22.9, y + 0.5, -7.7, 0.5, 0.06, 0.5, P.ambre); k.B(22.9, y + 0.5, -7.7, 0.06, 1.0, 0.06, P.ambre) }
       for (const [dx, dz] of [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]]) k.B(22.9 + dx, 6.0, -7.7 + dz, 0.08, 11.0, 0.08, P.ambre)
       k.B(17.4, 11.7, -7.7, 11.6, 0.4, 0.4, P.ambre); k.B(23.9, 11.7, -7.7, 2.0, 0.4, 0.4, P.ambre); k.B(24.2, 11.2, -7.7, 1.0, 0.9, 0.9, P.beton)
       k.B(22.9, 12.4, -7.7, 0.12, 1.4, 0.12, P.ambre); k.B(22.4, 11.2, -7.7, 0.7, 0.7, 0.7, P.vitre)
       k.B(15.0, 9.0, -7.7, 0.04, 5.0, 0.04, P.ardoise); k.B(15.0, 6.4, -7.7, 0.9, 0.3, 0.9, P.corail)
+      k.pour(-1)
       faits.push('grue-a-tour')
     }
     if (profil.commandesEnCours > 0) {
+      // Le camion du fournisseur, à quai : il porte les commandes attendues (cliquable : ce qu'il apporte, quand, pour quel stock).
+      k.pour(objetS('livraison', [16.2, 0, -3], 3.5))
       k.B(15.3, 1.95, -3, 8.6, 2.9, 2.4, '#ECE6DA'); k.B(15.3, 1.2, -1.79, 8.4, 0.18, 0.02, P.corail); k.B(15.3, 1.2, -4.21, 8.4, 0.18, 0.02, P.corail)
       k.B(20.6, 1.45, -3, 1.6, 2.1, 2.3, P.corail); k.F(21.42, 1.95, -3, 0.04, 0.6, 1.9, P.vitre, P.phare)
       for (const x of [12.0, 13.2, 17.4, 20.4]) for (const s of [-1.1, 1.1]) k.Cy(x, 0.45, -3 + s, 0.9, 0.3, 0.9, P.ardoise, [Math.PI / 2, 0, 0])
+      k.pour(-1)
       faits.push('livraison-a-quai')
     }
     // Le vestiaire (équipe), contre le mur de gauche à l'intérieur.
-    if (profil.equipe !== 'solo') { const n = Math.min(8, profil.membres); for (let i = 0; i < n; i++) k.B(-10.5, 0.9, -2.3 + i * 0.58, 0.5, 1.8, 0.52, i % 2 ? '#E3DDD2' : P.pierre); zones.push({ libelle: 'Vestiaire', p: [-9.6, 0.1, -2.9] }); faits.push('vestiaire') }
+    if (profil.equipe !== 'solo') { k.pour(objetS('vestiaire', [-10.5, 0, -0.3], 2.2)); const n = Math.min(8, profil.membres); for (let i = 0; i < n; i++) k.B(-10.5, 0.9, -2.3 + i * 0.58, 0.5, 1.8, 0.52, i % 2 ? '#E3DDD2' : P.pierre); k.pour(-1); zones.push({ libelle: 'Vestiaire', p: [-9.6, 0.1, -2.9] }); faits.push('vestiaire') }
     marquer(Math.max(1, profil.vehicules))
     // Mâts d'éclairage, quelques arbres le long de la clôture.
     for (const [x, z] of [[10.6, 9.2], [23, -8.2], [-12.2, -8.2]] as const) k.lampe(x, z, 5.2)
@@ -587,12 +687,17 @@ export function decorBase(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Pro
   if ((metier === 'electricien' || metier === 'plombier' || metier === 'chauffagiste') && (plan.base === 'atelier' || plan.base === 'entrepot')) faits.push('vitrine')
   // Le statut se voit : une société a son enseigne en totem à l'entrée ; un artisan à son compte, sa boîte aux lettres.
   if (profil.statut === 'societe') {
+    k.pour(objetS('totem', [plan.base === 'entrepot' ? 13.4 : plan.base === 'atelier' ? 3.6 : plan.base === 'legere' ? 3.4 : 8.4, 0, plan.base === 'entrepot' ? 10.6 : plan.base === 'atelier' ? 9.4 : plan.base === 'legere' ? 10.0 : 6.6], 2.8))
     const [x, z] = plan.base === 'entrepot' ? [13.4, 10.6] : plan.base === 'atelier' ? [3.6, 9.4] : plan.base === 'legere' ? [3.4, 10.0] : [8.4, 6.6]
     k.B(x, 1.3, z, 0.9, 2.6, 0.3, P.ardoise); k.B(x, 2.1, z + 0.16, 0.8, 0.7, 0.02, P.corail); k.B(x, 1.3, z + 0.16, 0.6, 0.12, 0.02, P.blanc)
+    k.pour(-1)
     faits.push('totem-societe')
   } else {
+    const [xb, zb] = plan.base === 'legere' ? [-6.7, 9.7] : plan.base === 'atelier' ? [-12.9, 9.4] : plan.base === 'entrepot' ? [12.9, 10.6] : [-7.5, 5.6]
+    k.pour(objetS('courrier', [xb, 0, zb], 1.4))
     const [x, z] = plan.base === 'legere' ? [-6.7, 9.7] : plan.base === 'atelier' ? [-12.9, 9.4] : plan.base === 'entrepot' ? [12.9, 10.6] : [-7.5, 5.6]
     k.Cy(x, 0.5, z, 0.08, 1.0, 0.08, P.ardoise); k.B(x, 1.1, z, 0.45, 0.32, 0.32, P.corail)
+    k.pour(-1)
     faits.push('boite-aux-lettres')
   }
   return faits
@@ -609,7 +714,7 @@ function pelouseVille(k: ReturnType<typeof pinceau>, x0: number, x1: number, z0:
 }
 
 /** Le Bureau, objet cliquable : la maison (base légère), le bureau accolé (atelier), le bloc de bureaux en étage (entrepôt), la table pliante (sans local). */
-export function bureauInfra(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Profil, metier: Prereglage, o: number): void {
+export function bureauInfra(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: Profil, metier: Metier3D, o: number): void {
   const k = pinceau(add, addF, o)
   const vitrine = metier === 'electricien' || metier === 'plombier' || metier === 'chauffagiste'
   if (plan.base === 'legere') {
@@ -627,7 +732,8 @@ export function bureauInfra(add: AjoutI, addF: AjoutF, plan: PlanBase, profil: P
     // Les panneaux posés à plat sur le pan avant (pente 45° : y = 2,45 + (1,5 − z)).
     if (metier === 'electricien' || metier === 'plombier') for (let i = 0; i < (metier === 'electricien' ? 6 : 2); i++) k.B(-8.2 + i * 0.95, 2.45 + (1.5 - 0.3) + 0.1, 0.3, 0.85, 0.05, 1.5, P.ardoise, [Math.PI / 4, 0, 0])
     if (metier === 'plombier') k.Cy(-5.0, 5.45, -1.25, 0.5, 1.2, 0.5, P.blanc, [0, 0, Math.PI / 2])
-    if (metier === 'chauffagiste') { k.B(-2.5 + 0.35, 0.5, -1.0, 0.45, 0.8, 1.0, '#ECE6DA'); k.Cy(-2.5 + 0.6, 0.5, -1.0, 0.55, 0.03, 0.55, P.ardoise, [0, 0, Math.PI / 2]) }
+    // La pompe à chaleur du chauffagiste, devant la maison (pas dans le garage).
+    if (metier === 'chauffagiste') { k.B(-8.5, 0.45, 2.05, 1.0, 0.8, 0.45, '#ECE6DA'); k.Cy(-8.68, 0.45, 2.29, 0.55, 0.03, 0.55, P.ardoise, [Math.PI / 2, 0, 0]) }
     if (metier === 'peintre') { k.B(-5.75, 0.45, 1.53, 6.5, 0.9, 0.02, '#D9A27E'); k.B(-5.75, 0.95, 1.535, 6.5, 0.1, 0.02, P.corail) }
     if (metier === 'carreleur') for (let i = 0; i < 18; i++) k.B(-8.6 + (i % 9) * 0.7, 0.08, 2.0 + Math.floor(i / 9) * 0.7, 0.66, 0.04, 0.66, i % 2 ? P.blanc : P.pierre)
     k.B(-5.7, 0.5, 1.53, 0.7, 1.0, 0.05, P.boisFonce)
@@ -697,7 +803,7 @@ export function rayonnageInfra(add: AjoutI, x: number, z: number, cartons: strin
 /** Une pièce du décor de métier ; `k` nomme la structure qu'elle compose (scripts/crm-atelier3d-qa.mjs vérifie les signatures). */
 export type Acc = { f: Forme; p: V3; s: V3; c: string; r: V3; k: string }
 /** Ce que chaque métier DOIT montrer dans un atelier et un entrepôt (structures et machines). */
-export const SIGNATURES: Record<Prereglage, string[]> = {
+export const SIGNATURES: Record<Metier3D, string[]> = {
   menuisier: ['hangar-bois', 'silo-copeaux', 'scie-format'],
   macon: ['boxes-granulats', 'silo-mortier', 'parpaings', 'chargeuse'],
   electricien: ['auvent-tourets', 'tableau'],
@@ -707,11 +813,20 @@ export const SIGNATURES: Record<Prereglage, string[]> = {
   peintre: ['cabine-peinture', 'echafaudage-roulant', 'pots'],
   carreleur: ['auvent-palettes', 'coupe-eau'],
   general: ['boxes-granulats', 'auvent-tourets', 'abri-tubes'],
+  paysagiste: ['serre', 'pepiniere', 'tas-terre'],
+  serrurier: ['racks-profiles', 'poste-soudure', 'portail-fabrication'],
+  vitrier: ['chevalets-vitrage', 'table-decoupe'],
+  plaquiste: ['plaques-platre', 'rails', 'echafaudage-roulant'],
+  facadier: ['echafaudage-facade', 'machine-enduit', 'sacs'],
+  charpentier: ['poutres', 'fermette'],
+  climaticien: ['pac-expo', 'abri-tubes', 'groupe-froid'],
+  piscinier: ['coques', 'local-filtration'],
+  multiservice: ['auvent-tourets', 'abri-tubes', 'pots'],
 }
 type Module = { k: string; w: number; d: number; poser: (x0: number, z0: number) => void }
 
 /** Les structures et machines du métier, rangées dans les zones de la base (dehors puis dedans), sans chevauchement. */
-export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: boolean } = {}): Acc[] {
+export function accessoiresBase(p: Metier3D, plan: PlanBase, opt: { camion?: boolean } = {}): Acc[] {
   const a: Acc[] = []
   let kk = ''
   const b = (x: number, y: number, z: number, s: V3, c: string, r: V3 = [0, 0, 0]) => a.push({ f: 'box', p: [x, y, z], s, c, r, k: kk })
@@ -839,6 +954,31 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: b
     for (let i = 0; i < n; i++) { const px = x - w / 2 + 0.85 + i * 1.35; palette(px, z - 0.2); b(px, 0.62, z - 0.2, [1.05, 0.95, 0.9], P.film); b(px, 0.62, z + 0.26, [1.0, 0.05, 0.02], P.corail) }
   })
 
+  // — les structures des métiers ajoutés au lot 4 —
+  const serre = (w: number) => M('serre', w, 2.4, (x, z) => {
+    for (const dx of [-w / 2 + 0.06, w / 2 - 0.06]) for (const dz of [-1.14, 1.14]) b(x + dx, 1.0, z + dz, [0.07, 2.0, 0.07], P.blanc)
+    b(x, 1.0, z - 1.16, [w, 2.0, 0.04], '#E4EADB'); b(x - w / 2 + 0.03, 1.0, z, [0.04, 2.0, 2.3], '#E4EADB')
+    for (const s of [1, -1]) b(x, 2.25, z + s * 0.6, [w + 0.1, 0.05, 1.45], '#E8EDE0', [s * 0.45, 0, 0])
+    for (let i = 0; i < Math.floor(w / 0.6); i++) for (const dz of [-0.6, 0.4]) { cy(x - w / 2 + 0.4 + i * 0.6, 0.5, z + dz, [0.3, 0.3, 0.3], P.tuileClair); sp(x - w / 2 + 0.4 + i * 0.6, 0.8, z + dz, [0.4, 0.4, 0.4], P.sauge) }
+  })
+  const pepiniere = (n: number) => M('pepiniere', 0.8 * n + 0.2, 1.6, (x, z) => { for (let i = 0; i < n * 2; i++) { const px = x - (0.8 * n) / 2 + 0.4 + (i % n) * 0.8, pz = z - 0.4 + Math.floor(i / n) * 0.8; cy(px, 0.2, pz, [0.4, 0.4, 0.4], P.tuile); sp(px, 0.65, pz, [0.6, 0.7, 0.6], i % 3 ? P.sauge : P.vert) } })
+  const tasTerre = M('tas-terre', 2.6, 1.8, (x, z) => { co(x - 0.6, 0.5, z, [1.5, 1.0, 1.4], '#8E7356'); co(x + 0.7, 0.4, z + 0.1, [1.2, 0.8, 1.2], '#A88B62') })
+  const tondeuse = M('tondeuse', 1.8, 1.1, (x, z) => { b(x, 0.45, z, [1.4, 0.35, 0.9], P.vert); b(x - 0.2, 0.8, z, [0.4, 0.4, 0.4], P.ardoise); b(x + 0.5, 0.75, z, [0.3, 0.3, 0.6], P.vert); for (const [dx, r] of [[-0.45, 0.6], [0.5, 0.4]]) for (const dz of [-0.48, 0.48]) cy(x + dx, r / 2, z + dz, [r, 0.16, r], P.ardoise, [DEMI, 0, 0]) })
+  const racksProfiles = (w: number) => M('racks-profiles', w, 1.0, (x, z) => { for (let dx = -w / 2 + 0.1; dx <= w / 2 - 0.05; dx += Math.max(0.9, (w - 0.2) / 3)) { b(x + dx, 1.1, z - 0.35, [0.12, 2.2, 0.12], P.ardoise); for (const y of [0.5, 1.1, 1.7]) b(x + dx, y, z, [0.08, 0.06, 0.7], P.ardoise) } for (let i = 0; i < 9; i++) b(x, 0.56 + Math.floor(i / 3) * 0.6, z - 0.2 + (i % 3) * 0.2, [w - 0.1, 0.07, 0.07], i % 2 ? P.metal : '#8A847C') })
+  const posteSoudure = M('poste-soudure', 1.3, 0.9, (x, z) => { b(x, 0.35, z, [1.0, 0.1, 0.6], P.ardoise); b(x + 0.2, 0.6, z, [0.5, 0.4, 0.4], P.ambre); for (const dx of [-0.35, -0.1]) cy(x + dx, 0.75, z - 0.1, [0.22, 1.2, 0.22], dx < -0.2 ? P.corailFonce : P.ardoise) })
+  const portailFab = M('portail-fabrication', 3.2, 1.2, (x, z) => { for (const dx of [-1.2, 1.2]) b(x + dx, 0.35, z, [0.5, 0.7, 0.9], P.boisFonce); b(x, 0.75, z, [2.9, 0.08, 1.0], P.metal); for (let i = 0; i < 9; i++) b(x - 1.3 + i * 0.32, 0.8, z, [0.05, 0.04, 0.95], '#7A766F') })
+  const chevalets = (n: number) => M('chevalets-vitrage', 1.4 * n, 1.4, (x, z) => { for (let i = 0; i < n; i++) { const px = x - (1.4 * n) / 2 + 0.7 + i * 1.4; b(px, 0.05, z, [1.2, 0.1, 1.2], P.ardoise); for (const s of [1, -1]) b(px, 0.9, z + s * 0.2, [1.1, 1.6, 0.06], P.ardoise, [s * 0.12, 0, 0]); for (let k = 0; k < 3; k++) b(px, 0.95, z + 0.32 + k * 0.05, [1.0, 1.4, 0.02], '#B9C2BE', [0.12, 0, 0]) } })
+  const tableDecoupe = M('table-decoupe', 2.6, 1.7, (x, z) => { b(x, 0.85, z, [2.4, 0.1, 1.5], '#BDB6AA'); for (const dx of [-1.0, 1.0]) for (const dz of [-0.6, 0.6]) b(x + dx, 0.42, z + dz, [0.08, 0.84, 0.08], P.metal); b(x, 0.91, z, [1.6, 0.02, 1.0], '#B9C2BE'); b(x, 0.95, z - 0.75, [2.4, 0.08, 0.06], P.ardoise) })
+  const plaques = (n: number) => M('plaques-platre', 1.4 * n, 1.4, (x, z) => { for (let j = 0; j < n; j++) { const px = x - (1.4 * n) / 2 + 0.7 + j * 1.4; b(px, 0.07, z, [1.3, 0.14, 1.3], P.bois); for (let i = 0; i < 8; i++) b(px, 0.18 + i * 0.07, z, [1.25, 0.06, 1.2], i % 2 ? '#F4F1EA' : '#E8E4DA') } })
+  const rails = M('rails', 2.6, 0.7, (x, z) => { for (let i = 0; i < 6; i++) b(x, 0.12 + Math.floor(i / 3) * 0.1, z - 0.2 + (i % 3) * 0.2, [2.5, 0.08, 0.12], P.metal) })
+  const echafaudageFacade = (w: number) => M('echafaudage-facade', w, 1.2, (x, z) => { for (let dx = -w / 2 + 0.1; dx <= w / 2 - 0.05; dx += 1.25) for (const dz of [-0.45, 0.45]) cy(x + dx, 2.4, z + dz, [0.07, 4.8, 0.07], P.ambre); for (const y of [1.6, 3.2, 4.8]) { b(x, y, z, [w, 0.05, 1.0], P.bois); b(x, y + 0.45, z + 0.45, [w, 0.04, 0.04], P.ambre) } b(x, 2.4, z - 0.5, [w, 4.8, 0.02], P.bache) })
+  const machineEnduit = M('machine-enduit', 1.3, 0.9, (x, z) => { b(x, 0.55, z, [1.0, 0.7, 0.6], P.corail); co(x, 1.05, z, [0.7, 0.3, 0.5], P.ardoise, [Math.PI, 0, 0]); for (const dx of [-0.35, 0.35]) cy(x + dx, 0.15, z + 0.35, [0.3, 0.1, 0.3], P.ardoise, [DEMI, 0, 0]); cy(x + 0.7, 0.3, z, [0.08, 0.6, 0.08], P.ardoise) })
+  const poutres = (w: number) => M('poutres', w, 1.2, (x, z) => { for (const dx of [-w / 2 + 0.4, 0, w / 2 - 0.4]) b(x + dx, 0.08, z, [0.15, 0.16, 1.1], P.boisFonce); for (let i = 0; i < 9; i++) b(x, 0.24 + Math.floor(i / 3) * 0.2, z - 0.36 + (i % 3) * 0.36, [w, 0.18, 0.24], i % 2 ? '#C29A6C' : P.bois) })
+  const fermette = M('fermette', 3.8, 0.9, (x, z) => { b(x, 0.12, z, [3.6, 0.14, 0.12], P.bois); for (const s of [1, -1]) b(x + s * 0.9, 0.95, z, [2.1, 0.14, 0.12], P.bois, [0, 0, -s * 0.72]); b(x, 0.95, z, [0.12, 1.6, 0.12], P.bois); for (const dx of [-1.6, 1.6]) b(x + dx, 0.06, z, [0.3, 0.12, 0.8], P.boisFonce) })
+  const groupeFroid = M('groupe-froid', 1.6, 1.0, (x, z) => { b(x, 0.6, z, [1.4, 1.1, 0.8], '#ECE6DA'); for (const dx of [-0.35, 0.35]) cy(x + dx, 1.17, z, [0.55, 0.04, 0.55], P.ardoise); b(x, 0.6, z + 0.41, [1.2, 0.8, 0.02], P.pierre) })
+  const coques = (n: number) => M('coques', 3.6, 2.0 * n, (x, z) => { for (let i = 0; i < n; i++) { const pz = z - n + 1 + i * 2.0; b(x, 0.35 + i * 0.05, pz, [3.4, 0.7, 1.8], '#ECE6DA'); b(x, 0.62 + i * 0.05, pz, [3.0, 0.08, 1.4], '#9FB3AA') } })
+  const localFiltration = M('local-filtration', 1.8, 1.6, (x, z) => { b(x, 0.9, z - 0.65, [1.8, 1.8, 0.1], P.bois); b(x, 1.85, z, [1.9, 0.08, 1.7], '#8E847A'); for (const dx of [-0.45, 0.35]) cy(x + dx, 0.5, z, [0.5, 1.0, 0.5], P.corailClair); b(x + 0.7, 0.3, z + 0.3, [0.35, 0.5, 0.35], P.ardoise) })
+
   // — chaque métier, ses structures (dehors) et ses machines (dedans), selon le niveau de la base —
   const niv = plan.base === 'entrepot' ? 2 : plan.base === 'atelier' ? 1 : 0
   const dehors: Module[] = [], dedans: Module[] = []
@@ -851,11 +991,12 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: b
       if (niv === 0) dehors.push(tasSable, betonniere, parpaings(1), sacs)
       else if (niv === 1) { dehors.push(boxesGranulats(2), siloMortier, parpaings(1), chargeuse); dedans.push(sacs) }
       // Avec un camion benne, la plateforme de stockage s'agrandit (quatre boxes) : le site d'une entreprise de gros œuvre.
-      else { dehors.push(boxesGranulats(opt.camion ? 4 : 3), siloMortier, grue, parpaings(opt.camion ? 1 : 2)); dedans.push(sacs, chargeuse) }
+      // Avec le camion, la grue à tour du dépôt remplace la petite grue de la cour (decorBase).
+      else { dehors.push(boxesGranulats(opt.camion ? 4 : 3), siloMortier, ...(opt.camion ? [] : [grue]), parpaings(1)); dedans.push(sacs, chargeuse) }
       break
     case 'couvreur':
       if (niv === 0) dehors.push(racksEchafaudage(2.6), tuiles(1), echelleAuSol(3.0))
-      else { dehors.push(hangarHaut, monteMateriaux, racksEchafaudage(3.4), tuiles(2)); dedans.push(echelleAuSol(3.0)); if (niv === 2) dedans.push(tuiles(1)) }
+      else { dehors.push(hangarHaut, monteMateriaux, racksEchafaudage(niv === 2 ? 2.6 : 3.4), tuiles(2)); dedans.push(echelleAuSol(3.0)); if (niv === 2) dedans.push(tuiles(1)) }
       break
     case 'electricien':
       if (niv === 0) { dedans.push(tourets(1, 'tourets-garage'), caisse); dehors.push(auventTourets(2)) }
@@ -877,6 +1018,43 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: b
       if (niv === 0) dehors.push(coupeEau, carreaux(2))
       else { dehors.push(auventPalettes(niv === 2 ? 5 : 3), coupeEau); dedans.push(carreaux(niv === 2 ? 2 : 1)) }
       break
+    // — Les neuf métiers ajoutés au lot 4 : leurs structures à eux —
+    case 'paysagiste':
+      if (niv === 0) dehors.push(serre(2.8), tasTerre, tondeuse)
+      else { dehors.push(serre(niv === 2 ? 4.4 : 3.6), pepiniere(niv === 2 ? 4 : 3), tasTerre, tondeuse); dedans.push(caisse) }
+      break
+    case 'serrurier':
+      if (niv === 0) dehors.push(racksProfiles(2.8), posteSoudure)
+      else { dehors.push(racksProfiles(niv === 2 ? 4.4 : 3.6), portailFab); dedans.push(posteSoudure); if (niv === 2) dehors.push(racksProfiles(3.0)) }
+      break
+    case 'vitrier':
+      if (niv === 0) dehors.push(chevalets(2), tableDecoupe)
+      else { dehors.push(chevalets(niv === 2 ? 4 : 3)); dedans.push(tableDecoupe) }
+      break
+    case 'plaquiste':
+      if (niv === 0) dehors.push(plaques(1), rails, echafaudageRoulant(1))
+      else { dehors.push(plaques(niv === 2 ? 3 : 2), rails, echafaudageRoulant(niv === 2 ? 2 : 1)); dedans.push(rails) }
+      break
+    case 'facadier':
+      if (niv === 0) dehors.push(echafaudageFacade(2.6), machineEnduit, sacs)
+      else { dehors.push(echafaudageFacade(niv === 2 ? 5.2 : 3.8), machineEnduit, sacs); dedans.push(pots(4)) }
+      break
+    case 'charpentier':
+      if (niv === 0) dehors.push(poutres(3.2), fermette)
+      else { dehors.push(poutres(niv === 2 ? 5.0 : 4.2), fermette); dedans.push(scieFormat); if (niv === 2) dehors.push(poutres(3.6)) }
+      break
+    case 'climaticien':
+      if (niv === 0) { dedans.push(groupeFroid); dehors.push(pacExpo(2), abriTubes(3.0, P.cuivre)) }
+      else { dehors.push(pacExpo(niv === 2 ? 4 : 3), abriTubes(niv === 2 ? 4.4 : 3.6, P.cuivre), groupeFroid); dedans.push(tubesRack(2.4, P.cuivre)) }
+      break
+    case 'piscinier':
+      if (niv === 0) dehors.push(coques(1), localFiltration)
+      else { dehors.push(coques(niv === 2 ? 2 : 1), localFiltration); dedans.push(sacs) }
+      break
+    case 'multiservice':
+      if (niv === 0) dehors.push(auventTourets(1), abriTubes(3.0, P.cuivre), pots(4))
+      else { dehors.push(auventTourets(1), abriTubes(3.2, P.cuivre), echelleAuSol(3.0)); dedans.push(pots(niv === 2 ? 8 : 4), caisse) }
+      break
     default:
       if (niv === 0) dehors.push(tasSable, auventTourets(1), tubesRack(2.4, P.cuivre))
       else { dehors.push(boxesGranulats(2), auventTourets(2), abriTubes(3.6, P.cuivre)); dedans.push(pots(niv === 2 ? 8 : 4)) }
@@ -885,6 +1063,141 @@ export function accessoiresBase(p: Prereglage, plan: PlanBase, opt: { camion?: b
   ranger(dedans, plan.interieur)
   if (niv > 0) mobilierHall(plan, (k) => { kk = k }, b, cy)
   return a
+}
+
+// ── 3a bis. Chaque structure visible est un objet CLIQUABLE et utile (lot 4) : un titre clair, à quoi elle sert, les données réelles
+//           qui s'y rattachent, une ou deux actions vers l'écran qui existe. Le décor pur (arbres, routes, clôtures, mobilier du hall) ne
+//           porte aucun objet : pas de main, pas de survol, pas de panneau. ───────────────────────────────────────────────────────────
+/** Le mobilier du hall : décor pur (ni main, ni panneau). */
+export const DECOR_PUR: readonly string[] = ['allees', 'zone-montage', 'chariot', 'poste-travail', 'tri', 'panneau-outils', 'extincteur']
+type Lien = 'stock' | 'equipe' | 'commandes' | 'accueil' | 'profil'
+/** Le catalogue : à quoi sert chaque structure, et ce qu'elle relie (stock d'une famille, véhicules, commandes, accueil, profil). */
+export const STRUCTURES: Record<string, { titre: string; role: string; lien: Lien; famille?: string; filtre?: RegExp }> = {
+  // bâtiments et installations de la base
+  garage: { titre: 'Garage', role: 'Le garage de la maison : la camionnette s’y range, l’outillage aussi.', lien: 'equipe' },
+  'abri-jardin': { titre: 'Abri de stockage', role: 'L’abri où vous rangez votre stock de matériaux.', lien: 'stock' },
+  'batiment-atelier': { titre: 'Atelier', role: 'Votre atelier : établi, machines et le stock rangé sur les rayonnages.', lien: 'stock' },
+  hangar: { titre: 'Dépôt', role: 'Le hangar de stockage : vos rayonnages et tout votre stock.', lien: 'stock' },
+  vestiaire: { titre: 'Vestiaire de l’équipe', role: 'Un casier par personne de l’équipe.', lien: 'equipe' },
+  quais: { titre: 'Quais de chargement', role: 'Les livraisons des fournisseurs arrivent ici.', lien: 'commandes' },
+  livraison: { titre: 'Camion de livraison', role: 'Le camion d’un fournisseur, à quai : il apporte vos commandes attendues.', lien: 'commandes' },
+  'aire-lavage': { titre: 'Aire de lavage des engins', role: 'Pour laver le camion et les engins en rentrant de chantier.', lien: 'equipe' },
+  'pont-bascule': { titre: 'Pont-bascule', role: 'Pèse le camion benne chargé (gravats, granulats) à l’entrée du site.', lien: 'equipe' },
+  'plateforme-stockage': { titre: 'Plateforme de stockage', role: 'Les grands boxes de granulats livrés en vrac par camion.', lien: 'stock', famille: 'Granulats', filtre: /granul|sable|gravi|gravier|cailloux|remblai/ },
+  'parc-engins': { titre: 'Parc d’engins', role: 'Mini-pelle et chargeuse rangées au dépôt entre deux chantiers.', lien: 'equipe' },
+  'grue-a-tour': { titre: 'Grue à tour', role: 'Lève les charges lourdes de la plateforme de stockage.', lien: 'equipe' },
+  totem: { titre: 'Votre entreprise', role: 'L’enseigne de votre société, à l’entrée.', lien: 'profil' },
+  courrier: { titre: 'Boîte aux lettres', role: 'Les nouvelles demandes de vos clients arrivent ici.', lien: 'accueil' },
+  // machines et stocks des métiers
+  etabli: { titre: 'Établi', role: 'Le poste de travail de l’atelier.', lien: 'equipe' },
+  parpaings: { titre: 'Palettes de parpaings', role: 'Les blocs béton en stock.', lien: 'stock', famille: 'Blocs', filtre: /parpaing|bloc|brique/ },
+  sacs: { titre: 'Sacs de ciment et d’enduit', role: 'Les liants en sacs.', lien: 'stock', famille: 'Liants', filtre: /ciment|chaux|mortier|enduit|liant|platre/ },
+  betonniere: { titre: 'Bétonnière', role: 'Pour gâcher le béton et le mortier.', lien: 'equipe' },
+  'tas-sable': { titre: 'Sable et gravier', role: 'Les granulats en vrac.', lien: 'stock', famille: 'Granulats', filtre: /granul|sable|gravi|gravier/ },
+  touret: { titre: 'Tourets de câble', role: 'Les bobines de câble électrique.', lien: 'stock', famille: 'Câbles', filtre: /cable|fil\b|gaine/ },
+  'tourets-garage': { titre: 'Tourets de câble', role: 'Les bobines de câble, rangées au garage.', lien: 'stock', famille: 'Câbles', filtre: /cable|fil\b|gaine/ },
+  tableau: { titre: 'Tableaux électriques', role: 'Tableaux et appareillage en stock.', lien: 'stock', famille: 'Tableaux', filtre: /tableau|disjonct|appareill|interrupt|prise/ },
+  ballons: { titre: 'Ballons d’eau chaude', role: 'Les chauffe-eau prêts à poser.', lien: 'stock', famille: 'Appareils', filtre: /ballon|chauffe|appareil/ },
+  chaudiere: { titre: 'Chaudières', role: 'Les chaudières en stock.', lien: 'stock', famille: 'Chaudières', filtre: /chaudi|appareil/ },
+  'pac-expo': { titre: 'Pompes à chaleur', role: 'Les unités extérieures exposées et en stock.', lien: 'stock', famille: 'Unités', filtre: /pac|pompe|unite|clim/ },
+  'scie-format': { titre: 'Scie à format', role: 'Pour débiter panneaux et bois.', lien: 'equipe' },
+  planches: { titre: 'Planches', role: 'Le bois massif en stock.', lien: 'stock', famille: 'Bois massif', filtre: /bois|planche|chevron|liteau/ },
+  tuiles: { titre: 'Palettes de tuiles et d’ardoises', role: 'La couverture en stock.', lien: 'stock', famille: 'Tuiles', filtre: /tuile|ardoise|couvert/ },
+  echelle: { titre: 'Échelle', role: 'L’échelle de chantier.', lien: 'equipe' },
+  pots: { titre: 'Pots de peinture', role: 'Les peintures et enduits en stock.', lien: 'stock', famille: 'Peintures', filtre: /peint|enduit|lasure|vernis/ },
+  escabeau: { titre: 'Escabeau', role: 'L’escabeau de l’atelier.', lien: 'equipe' },
+  'coupe-eau': { titre: 'Coupe-carreau à eau', role: 'Pour découper le carrelage sans poussière.', lien: 'equipe' },
+  carreaux: { titre: 'Palettes de carrelage', role: 'Le carrelage en stock.', lien: 'stock', famille: 'Carrelage', filtre: /carrel|carreau|faience|dalle/ },
+  'caisse-outils': { titre: 'Caisse à outils', role: 'L’outillage à main.', lien: 'equipe' },
+  tubes: { titre: 'Râtelier à tubes', role: 'Les tubes cuivre et PVC en stock.', lien: 'stock', famille: 'Tubes', filtre: /tube|cuivre|pvc|\bper\b|multicouche/ },
+  'hangar-bois': { titre: 'Hangar à bois', role: 'Le bois à l’abri : planches, panneaux, grumes.', lien: 'stock', famille: 'Bois massif', filtre: /bois|planche|panneau|grume/ },
+  'silo-copeaux': { titre: 'Silo à copeaux', role: 'Aspire et stocke les copeaux des machines (cyclone et gaine).', lien: 'equipe' },
+  grumes: { titre: 'Grumes', role: 'Le bois brut avant sciage.', lien: 'stock', famille: 'Bois massif', filtre: /bois|grume/ },
+  'boxes-granulats': { titre: 'Boxes de granulats', role: 'Sable, gravier, gravillons, chacun dans son box.', lien: 'stock', famille: 'Granulats', filtre: /granul|sable|gravi|gravier/ },
+  'silo-mortier': { titre: 'Silo à mortier', role: 'Le mortier en vrac, prêt à gâcher.', lien: 'stock', famille: 'Liants', filtre: /mortier|ciment|liant/ },
+  chargeuse: { titre: 'Chargeuse', role: 'Charge le camion benne et déplace les granulats.', lien: 'equipe' },
+  grue: { titre: 'Petite grue', role: 'Lève palettes et matériaux lourds.', lien: 'equipe' },
+  'hangar-haut': { titre: 'Hangar haut', role: 'Range la nacelle et les échafaudages.', lien: 'equipe' },
+  'racks-echafaudage': { titre: 'Racks d’échafaudage', role: 'Tubes, cadres et planchers d’échafaudage.', lien: 'stock', famille: 'Échafaudage', filtre: /echafaud|tube|plancher/ },
+  'monte-materiaux': { titre: 'Monte-matériaux', role: 'Monte les tuiles sur le toit.', lien: 'equipe' },
+  'auvent-tourets': { titre: 'Auvent à tourets', role: 'Les tourets de câble à l’abri.', lien: 'stock', famille: 'Câbles', filtre: /cable|fil\b|gaine/ },
+  'abri-tubes': { titre: 'Abri à tubes', role: 'Les tubes et liaisons cuivre à l’abri.', lien: 'stock', famille: 'Tubes', filtre: /tube|cuivre|pvc|\bper\b|liaison/ },
+  'cabine-peinture': { titre: 'Cabine de peinture', role: 'Pour peindre portes et volets à l’abri de la poussière (extraction sur le toit).', lien: 'stock', famille: 'Peintures', filtre: /peint|laque|vernis/ },
+  'echafaudage-roulant': { titre: 'Échafaudages roulants', role: 'Pour travailler en hauteur à l’intérieur.', lien: 'equipe' },
+  'auvent-palettes': { titre: 'Auvent à palettes filmées', role: 'Le carrelage et les colles livrés sur palettes.', lien: 'stock', famille: 'Carrelage', filtre: /carrel|carreau|colle|joint/ },
+  serre: { titre: 'Serre', role: 'Les jeunes plants à l’abri.', lien: 'stock', famille: 'Végétaux', filtre: /plant|vegetal|arbust|fleur/ },
+  pepiniere: { titre: 'Pépinière', role: 'Arbustes et plantes en godets.', lien: 'stock', famille: 'Végétaux', filtre: /plant|vegetal|arbust|arbre/ },
+  'tas-terre': { titre: 'Terre et paillage', role: 'Terre végétale et paillage en vrac.', lien: 'stock', famille: 'Terre et paillage', filtre: /terre|paill|compost|ecorce/ },
+  tondeuse: { titre: 'Tondeuse autoportée', role: 'Pour l’entretien des espaces verts.', lien: 'equipe' },
+  'racks-profiles': { titre: 'Racks de profilés', role: 'Tubes et profilés acier en stock.', lien: 'stock', famille: 'Profilés acier', filtre: /profil|acier|tube|fer/ },
+  'poste-soudure': { titre: 'Poste de soudure', role: 'Poste et bouteilles de gaz.', lien: 'stock', famille: 'Gaz de soudure', filtre: /gaz|soud|electrode|fil/ },
+  'portail-fabrication': { titre: 'Portail en fabrication', role: 'Un ouvrage métallique sur tréteaux.', lien: 'equipe' },
+  'chevalets-vitrage': { titre: 'Chevalets à vitrage', role: 'Les vitrages rangés debout.', lien: 'stock', famille: 'Vitrages', filtre: /vitr|verre|glace|miroir/ },
+  'table-decoupe': { titre: 'Table de découpe', role: 'Pour découper le verre à la mesure.', lien: 'equipe' },
+  'plaques-platre': { titre: 'Palettes de plaques', role: 'Les plaques de plâtre en stock.', lien: 'stock', famille: 'Plaques', filtre: /plaque|platre|ba13|placo/ },
+  rails: { titre: 'Rails et montants', role: 'L’ossature métallique des cloisons.', lien: 'stock', famille: 'Rails et montants', filtre: /rail|montant|fourrure|ossature/ },
+  'echafaudage-facade': { titre: 'Échafaudage de façade', role: 'Pour ravaler les façades.', lien: 'equipe' },
+  'machine-enduit': { titre: 'Machine à projeter', role: 'Projette l’enduit de façade.', lien: 'stock', famille: 'Enduits', filtre: /enduit|crepi|mortier/ },
+  poutres: { titre: 'Poutres', role: 'Le bois de charpente en stock.', lien: 'stock', famille: 'Bois de charpente', filtre: /poutre|bois|chevron|madrier/ },
+  fermette: { titre: 'Fermette en préparation', role: 'Une ferme de charpente assemblée au sol.', lien: 'equipe' },
+  'groupe-froid': { titre: 'Groupe froid', role: 'Un groupe frigorifique en stock.', lien: 'stock', famille: 'Unités', filtre: /groupe|unite|clim|froid/ },
+  coques: { titre: 'Coques de piscine', role: 'Les coques prêtes à poser.', lien: 'stock', famille: 'Coques', filtre: /coque|bassin|liner/ },
+  'local-filtration': { titre: 'Local de filtration', role: 'Filtres et pompes en stock.', lien: 'stock', famille: 'Filtration', filtre: /filtr|pompe|traitement/ },
+}
+export type ActionFiche = { libelle: string; href?: string; onglet?: string; objet?: string }
+export type FicheStructure = {
+  titre: string; role: string; lignes: string[]; actions: ActionFiche[]
+  /** Le stock rattaché (structure de stockage) : la famille proposée pour un ajout, le filtre des articles (null = tout le stock). */
+  stock?: { famille: string | null; filtre: string | null }
+}
+const jj = (iso: string | null | undefined) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : '—')
+const sansAccents = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+/** Les articles du stock qu'une structure regroupe (sa famille, par mots-clés sur la catégorie et le nom ; null = tout). */
+export function articlesDe(d: Pick<DonneesAtelier, 'materiaux'>, filtre: string | null): DonneesAtelier['materiaux'] {
+  if (!filtre) return d.materiaux
+  const re = new RegExp(filtre)
+  return d.materiaux.filter((m) => re.test(sansAccents(`${m.categorie ?? ''} ${m.nom}`)))
+}
+/** La fiche d'une structure : ce qui s'affiche quand on clique dessus. Pur ; tout vient des données du compte. */
+export function ficheStructure(cle: string, d: DonneesAtelier, profil: Profil, metier: Metier3D): FicheStructure {
+  const S = STRUCTURES[cle] ?? { titre: 'Installation', role: 'Une installation de votre base.', lien: 'equipe' as Lien }
+  const lignes: string[] = [], actions: ActionFiche[] = []
+  let stock: FicheStructure['stock']
+  if (S.lien === 'stock') {
+    const filtre = S.filtre ? S.filtre.source : null
+    const ms = articlesDe(d, filtre)
+    const bas = ms.filter((m) => m.seuil > 0 && m.reste <= m.seuil)
+    lignes.push(ms.length ? `${ms.length} article${ms.length > 1 ? 's' : ''} en stock${bas.length ? ` · ${bas.length} sous le seuil` : ''}` : S.famille ? `Aucun article « ${S.famille} » dans votre inventaire pour l’instant.` : 'Votre stock est vide pour l’instant.')
+    for (const m of ms.slice(0, 4)) lignes.push(`${m.nom} : ${m.reste} ${m.unite}${m.seuil > 0 ? ` (seuil ${m.seuil})` : ''}`)
+    stock = { famille: S.famille ?? CATEGORIES_TYPIQUES[metier][0] ?? null, filtre }
+    actions.push({ libelle: 'Ouvrir l’inventaire', href: '/inventaire' })
+  } else if (S.lien === 'commandes') {
+    const cs = (d.commandes ?? []).filter((c) => c.statut === 'commandee' && !c.recue_le)
+    lignes.push(cs.length ? `${cs.length} commande${cs.length > 1 ? 's' : ''} fournisseur attendue${cs.length > 1 ? 's' : ''}` : 'Aucune commande fournisseur attendue.')
+    for (const c of cs.slice(0, 4)) lignes.push(`${c.fournisseur} · livraison ${c.livraison_prevue < d.jour ? 'en retard, annoncée le' : 'le'} ${jj(c.livraison_prevue)}${c.reference ? ` · réf. ${c.reference}` : ''}`)
+    const premiere = cs.flatMap((c) => c.lignes ?? []).map((l) => d.materiaux.find((m) => m.id === l.materiau_id)).find(Boolean)
+    if (premiere) actions.push({ libelle: 'Voir le stock concerné', objet: `categorie:${(premiere.categorie ?? '').trim() || 'Sans catégorie'}` })
+    actions.push({ libelle: 'Ouvrir l’inventaire', href: '/inventaire' })
+  } else if (S.lien === 'equipe') {
+    const vs = d.vehicules.filter((v) => v.actif)
+    if (cle === 'vestiaire') { const ms = d.membres.filter((m) => m.actif); lignes.push(`${ms.length} personne${ms.length > 1 ? 's' : ''} dans l’équipe`); for (const m of ms.slice(0, 6)) lignes.push(`${m.nom} · ${m.role}`) }
+    else {
+      lignes.push(vs.length ? `${vs.length} véhicule${vs.length > 1 ? 's' : ''} suivi${vs.length > 1 ? 's' : ''}` : 'Aucun véhicule enregistré.')
+      for (const v of vs.slice(0, 4)) lignes.push(`${v.nom}${v.immatriculation ? ` (${v.immatriculation})` : ''} · contrôle technique ${jj(v.controle_technique_le)}`)
+      if (!['garage', 'aire-lavage', 'pont-bascule', 'parc-engins', 'grue-a-tour'].includes(cle)) lignes.push('Ce matériel n’est pas suivi dans votre espace : seuls vos véhicules et votre équipe le sont.')
+    }
+    actions.push({ libelle: 'Équipe & véhicules', onglet: 'equipe' })
+  } else if (S.lien === 'accueil') {
+    lignes.push(d.demandes.length ? `${d.demandes.length} nouvelle${d.demandes.length > 1 ? 's' : ''} demande${d.demandes.length > 1 ? 's' : ''}` : 'Aucune nouvelle demande.')
+    actions.push({ libelle: 'Ouvrir la salle d’attente', objet: 'accueil' })
+  } else {
+    const e = d.entreprise
+    if (e?.nom) lignes.push(e.nom)
+    lignes.push([profil.statut === 'societe' ? 'Société' : 'À son compte', d.formeJuridique ?? null, e?.ville ?? null].filter(Boolean).join(' · '))
+    lignes.push('Repris de votre profil : rien à ressaisir.')
+    actions.push({ libelle: 'Modifier mon profil', href: '/parametres' })
+  }
+  return { titre: S.titre, role: S.role, lignes, actions, ...(stock ? { stock } : {}) }
 }
 
 /**
@@ -930,9 +1243,9 @@ function ranger(mods: readonly Module[], r: Rect, jeu = 0.45): void {
 }
 
 // ── 3b. Le métier sur le chantier : le TYPE de bâtiment et l'avancement des travaux ───────────────────────────
-export type TypeBatiment = 'maison' | 'pavillon' | 'grange' | 'immeuble' | 'commerce' | 'extension' | 'coupe'
+export type TypeBatiment = 'maison' | 'pavillon' | 'grange' | 'immeuble' | 'commerce' | 'extension' | 'coupe' | 'jardin' | 'piscine'
 /** Les chantiers typiques de chaque métier ; le type d'UN chantier se tire de son identifiant (stable). */
-export const TYPES_CHANTIER: Record<Prereglage, TypeBatiment[]> = {
+export const TYPES_CHANTIER: Record<Metier3D, TypeBatiment[]> = {
   electricien: ['immeuble', 'commerce', 'immeuble', 'maison'],
   peintre: ['immeuble', 'commerce', 'maison', 'immeuble'],
   couvreur: ['grange', 'maison', 'grange', 'pavillon'],
@@ -942,8 +1255,17 @@ export const TYPES_CHANTIER: Record<Prereglage, TypeBatiment[]> = {
   chauffagiste: ['maison', 'pavillon', 'immeuble', 'maison'],
   menuisier: ['maison', 'pavillon', 'grange', 'maison'],
   general: ['maison', 'immeuble', 'commerce', 'extension'],
+  paysagiste: ['jardin', 'maison', 'jardin', 'pavillon'],
+  serrurier: ['maison', 'commerce', 'immeuble', 'maison'],
+  vitrier: ['commerce', 'immeuble', 'maison', 'commerce'],
+  plaquiste: ['coupe', 'coupe', 'immeuble', 'coupe'],
+  facadier: ['immeuble', 'maison', 'immeuble', 'commerce'],
+  charpentier: ['grange', 'maison', 'grange', 'pavillon'],
+  climaticien: ['immeuble', 'commerce', 'maison', 'maison'],
+  piscinier: ['piscine', 'piscine', 'maison', 'piscine'],
+  multiservice: ['maison', 'commerce', 'extension', 'coupe'],
 }
-export const typeChantier = (metier: Prereglage, h: number): TypeBatiment => TYPES_CHANTIER[metier][Math.floor(((h * 11) % 1) * 4)]
+export const typeChantier = (metier: Metier3D, h: number): TypeBatiment => TYPES_CHANTIER[metier][Math.floor(((h * 11) % 1) * 4)]
 
 export type Maison = {
   x: number; z: number; w: number; dd: number; ht: number
@@ -961,7 +1283,7 @@ export function avancementDessine(c: { statut: string; etape: string | null; ava
 }
 
 /** Dessine le chantier ; rend la hauteur de son sommet (l'épingle et la carte se posent au-dessus). */
-export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Prereglage): number {
+export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Metier3D): number {
   const k = pinceau(add, addF, m.o)
   const { x, z, h, id } = m
   const pct = m.termine ? 1 : m.pct, fini = pct >= 1
@@ -1017,8 +1339,8 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
     }
   }
   const neuve = PEINTURES[Math.floor(h3 * PEINTURES.length)]
-  const peint = metier === 'peintre' || metier === 'general'
-  const posees = metier === 'menuisier' || metier === 'general' ? (fini ? 99 : Math.round(7 * pct)) : 99
+  const peint = metier === 'peintre' || metier === 'general' || metier === 'facadier' || metier === 'multiservice'
+  const posees = metier === 'menuisier' || metier === 'general' || metier === 'vitrier' || metier === 'multiservice' ? (fini ? 99 : Math.round(7 * pct)) : 99
   const sensToit: 'x' | 'z' = h2 < 0.5 ? 'x' : 'z'
 
   switch (type) {
@@ -1033,7 +1355,10 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
     case 'commerce': {
       k.vol(x0, z0, x1, z1, ht, peint && !fini ? melange(murC, P.gris, 0.4) : murC, y0)
       if (peint && !fini && pct > 0) k.vol(x0 - 0.015, z0 - 0.015, x1 + 0.015, z1 + 0.015, ht * pct, neuve, y0)
-      k.F(xc, y0 + 0.55, z1 + 0.02, w - 0.6, 0.9, 0.03, P.vitreJour, P.lumiere) // la vitrine
+      // La vitrine ; le vitrier la pose au fil du chantier (la part non posée reste une baie sombre).
+      const pv = metier === 'vitrier' && !fini ? pct : 1, lv = (w - 0.6) * pv
+      if (lv > 0.02) k.F(xc - (w - 0.6) / 2 + lv / 2, y0 + 0.55, z1 + 0.02, lv, 0.9, 0.03, P.vitreJour, P.lumiere)
+      if (pv < 1) k.B(xc + lv / 2, y0 + 0.55, z1 + 0.015, w - 0.6 - lv, 0.9, 0.03, P.ardoise)
       k.B(xc, y0 + 1.22, z1 + 0.35, w - 0.3, 0.06, 0.8, hacher(`${id}:store`) < 0.5 ? P.corail : P.vert, [0.35, 0, 0]) // le store
       k.B(xc, y0 + 1.4, z1 + 0.02, w - 0.4, 0.22, 0.03, P.ardoise) // l'enseigne
       k.fenetres('z', z1, x0 + 0.2, x1 - 0.2, y0 + 1.75, 1, 1, `${id}:etage`, lumiere)
@@ -1043,16 +1368,17 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
     }
     case 'grange': case 'maison': case 'pavillon': {
       corps(ht, posees, peint ? neuve : null)
-      const couv = metier === 'couvreur' ? pct : 1
-      if (type === 'pavillon' && (metier !== 'couvreur' || fini)) {
+      // Le charpentier : la charpente nue tant que le chantier n'est pas fini (la couverture viendra après lui).
+      const couv = metier === 'couvreur' ? pct : metier === 'charpentier' ? (fini ? 1 : 0) : 1
+      if (type === 'pavillon' && ((metier !== 'couvreur' && metier !== 'charpentier') || fini)) {
         const s = Math.max(w, d) * 1.45
         add('toit', [xc, y0 + ht + 0.75, zc], [s, 1.5, s], toitC, m.o, [0, Math.PI / 4, 0])
         sommet = y0 + ht + 1.5
       } else sommet = k.deuxPans(x0, z0, x1, z1, y0 + ht, Math.PI / 4, metier === 'couvreur' && h3 < 0.4 ? P.ardoiseToit : toitC, { sens: type === 'grange' ? 'x' : sensToit, couv, pignon: murC })
       if (type === 'grange') k.B(xc, y0 + 0.75, z1 + 0.02, 1.4, 1.5, 0.04, P.bois)
-      if (!fini && (metier === 'couvreur' || peint)) echafaudage(x0 - 0.25, x1 + 0.25, z1, ht + (metier === 'couvreur' ? 0.1 : -0.2))
+      if (!fini && (metier === 'couvreur' || metier === 'charpentier' || peint)) echafaudage(x0 - 0.25, x1 + 0.25, z1, ht + (metier === 'couvreur' || metier === 'charpentier' ? 0.1 : -0.2))
       if (!fini && metier === 'couvreur') { palette(x - 1.55, z + 1.55, h3 < 0.4 ? P.ardoiseToit : P.tuile, 4); k.B(x1 + 0.05, (ht + 0.6) / 2, z1 + 0.75, 0.06, ht + 0.8, 0.06, P.bois, [-0.22, 0, 0]) }
-      if (metier === 'menuisier' && !fini) {
+      if ((metier === 'menuisier' || metier === 'charpentier') && !fini) {
         // L'ossature bois d'une avancée : les montants montent, le bardage suit.
         const n = 6
         for (let i = 0; i < n; i++) if (i < Math.max(1, Math.round(n * pct))) k.B(x1 + 0.3, y0 + ht * 0.45, z0 + 0.3 + i * (d - 0.6) / (n - 1), 0.08, ht * 0.9, 0.08, P.bois)
@@ -1089,6 +1415,35 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
       else { palette(x - 1.5, z + 1.6, P.parpaing, 3); k.Cy(x - 0.4, 0.45, z + 1.6, 0.6, 0.65, 0.6, P.corail, [0.55, 0, 0.3]); if (pct >= 0.45) echafaudage(ex0, ex1, ez1, Math.max(1.0, hb)) }
       break
     }
+    case 'jardin': {
+      // Le paysagiste : la maison au fond, le JARDIN qui se crée devant — pelouse posée par carrés, arbres plantés, bordures.
+      const jz1 = z0 + 1.3
+      k.vol(x0, z0, x1, jz1, ht, murC, y0)
+      sommet = k.deuxPans(x0, z0, x1, jz1, y0 + ht, Math.PI / 4, toitC, { pignon: murC })
+      k.fenetres('z', jz1, x0 + 0.2, x1 - 0.2, y0 + 0.6, 1, 1, `${id}:jardin`)
+      k.B(x, 0.07, z + 1.0, 3.8, 0.02, 2.0, '#B79E7E') // la terre préparée
+      const n = Math.round(10 * pct)
+      for (let i = 0; i < n; i++) k.B(x - 1.52 + (i % 5) * 0.76, 0.09, z + 0.55 + Math.floor(i / 5) * 0.9, 0.74, 0.03, 0.88, '#B5CC9E')
+      const arbres = fini ? 3 : Math.round(3 * pct)
+      for (let i = 0; i < arbres; i++) { k.Cy(x - 1.3 + i * 1.3, 0.35, z + 1.9, 0.12, 0.7, 0.12, P.tronc); k.S(x - 1.3 + i * 1.3, 0.95, z + 1.9, 0.75, 0.75, 0.75, P.sauge) }
+      if (pct >= 0.5) k.B(x, 0.12, z + 2.05, 3.8, 0.1, 0.08, P.pierre)
+      if (!fini) { k.Co(x + 1.6, 0.3, z - 1.6, 0.9, 0.6, 0.9, '#8E7356'); k.B(x - 1.6, 0.35, z - 1.6, 0.8, 0.3, 0.5, P.vert) }
+      break
+    }
+    case 'piscine': {
+      // Le pisciniste : la maison au fond à gauche, la PISCINE devant — fouille, parois, eau qui monte, margelles à la fin.
+      k.vol(x0, z0, x0 + 2.0, z0 + 1.6, ht, murC, y0)
+      sommet = k.deuxPans(x0, z0, x0 + 2.0, z0 + 1.6, y0 + ht, Math.PI / 4, toitC, { pignon: murC })
+      k.fenetres('z', z0 + 1.6, x0 + 0.2, x0 + 1.8, y0 + 0.6, 1, 1, `${id}:piscine`)
+      const px0 = x - 1.5, px1 = x + 1.5, pz0 = z - 0.2, pz1 = z + 1.7
+      k.vol(px0, pz0, px1, pz1, 0.03, '#6E655C', 0.06) // la fouille
+      const hp = 0.35
+      for (const [a0, b0, a1, b1] of [[px0, pz0, px1, pz0 + 0.12], [px0, pz1 - 0.12, px1, pz1], [px0, pz0, px0 + 0.12, pz1], [px1 - 0.12, pz0, px1, pz1]] as const) k.vol(a0, b0, a1, b1, pct > 0.2 || fini ? hp : 0.1, P.beton, 0.06)
+      if (pct >= 0.5) k.vol(px0 + 0.12, pz0 + 0.12, px1 - 0.12, pz1 - 0.12, Math.max(0.04, (hp - 0.05) * (fini ? 1 : (pct - 0.5) * 2)), '#9FB3AA', 0.09)
+      if (fini) for (const [a0, b0, a1, b1] of [[px0 - 0.15, pz0 - 0.15, px1 + 0.15, pz0], [px0 - 0.15, pz1, px1 + 0.15, pz1 + 0.15], [px0 - 0.15, pz0, px0, pz1], [px1, pz0, px1 + 0.15, pz1]] as const) k.vol(a0, b0, a1, b1, 0.06, P.blanc, 0.06 + hp)
+      else k.vol(x + 1.0, z - 1.9, x + 1.9, z - 1.0, 0.5, P.carton, 0.06)
+      break
+    }
     case 'coupe': {
       // La maison EN COUPE (plombier, carreleur) : murs du fond pleins, murs face à la caméra arasés, cloison, salle d'eau.
       k.vol(x0, z0, x1, z1, 0.08, P.planche, y0)
@@ -1098,7 +1453,16 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
       k.deuxPans(x0, z0, x1, z1, y0 + ht, 0.6, toitC, { part: 'arriere' })
       sommet = y0 + ht + (d / 2) * Math.tan(0.6) + 0.1
       const sol = y0 + 0.08
-      if (metier === 'carreleur') {
+      if (metier === 'plaquiste') {
+        // Les plaques se vissent sur les rails : la part posée suit l'avancement ; le reste montre l'ossature métallique.
+        const n = Math.round(8 * pct)
+        for (let i = 0; i < 8; i++) {
+          const t = x0 + 0.35 + i * (w - 0.5) / 8
+          if (i < n) k.B(t, y0 + ht * 0.45, z0 + 0.18, (w - 0.5) / 8 - 0.02, ht * 0.85, 0.03, '#F4F1EA')
+          else k.B(t, y0 + ht * 0.45, z0 + 0.18, 0.05, ht * 0.85, 0.05, P.metal)
+        }
+        if (!fini) { k.B(x + 1.6, 0.12, z + 1.45, 0.9, 0.14, 1.0, P.bois); for (let i = 0; i < 5; i++) k.B(x + 1.6, 0.22 + i * 0.06, z + 1.45, 0.85, 0.05, 0.95, '#F4F1EA') }
+      } else if (metier === 'carreleur') {
         // Le sol des deux pièces se carrelle (24 carreaux), la faïence monte sur le mur du fond.
         const n = Math.round(24 * pct)
         for (let i = 0; i < n; i++) k.B(x0 + 0.42 + (i % 6) * 0.47, sol + 0.02, z0 + 0.45 + Math.floor(i / 6) * 0.55, 0.44, 0.03, 0.5, i % 2 ? P.blanc : P.pierre)
@@ -1121,6 +1485,22 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
       break
     }
   }
+  // Le climaticien et le serrurier : sur tous les types de bâtiments (immeuble, commerce, maison).
+    if (metier === 'climaticien') {
+      // Les unités extérieures se posent sur la façade de droite au fil du chantier ; la goulotte cuivre les relie.
+      const n = fini ? 3 : Math.round(3 * pct)
+      for (let i = 0; i < n; i++) { const zu = z0 + 0.5 + i * (d - 0.8) / 2; k.B(x1 + 0.22, y0 + 0.9 + (i % 2) * 0.6, zu, 0.32, 0.5, 0.7, '#ECE6DA'); k.Cy(x1 + 0.39, y0 + 0.9 + (i % 2) * 0.6, zu, 0.36, 0.02, 0.36, P.ardoise, [0, 0, Math.PI / 2]) }
+      if (n > 0) k.B(x1 + 0.06, y0 + ht * 0.5, zc, 0.05, ht * 0.8, 0.08, P.cuivre)
+      if (!fini) { k.B(x - 1.4, 0.13, z + 1.5, 1.0, 0.14, 0.7, P.bois); k.B(x - 1.4, 0.55, z + 1.5, 0.9, 0.7, 0.6, P.carton) }
+    }
+    if (metier === 'serrurier') {
+      // Le garde-corps et le portail métallique avancent le long de la façade ; le portail se pose à la fin.
+      const n = fini ? 9 : Math.round(9 * pct)
+      for (let i = 0; i < n; i++) k.B(x - 1.9 + i * 0.4, 0.5, z + 2.0, 0.05, 0.9, 0.05, '#5E5A55')
+      if (n > 1) { k.B(x - 1.9 + (n - 1) * 0.2, 0.95, z + 2.0, (n - 1) * 0.4 + 0.05, 0.06, 0.06, '#5E5A55'); k.B(x - 1.9 + (n - 1) * 0.2, 0.2, z + 2.0, (n - 1) * 0.4 + 0.05, 0.05, 0.05, '#5E5A55') }
+      if (fini) k.B(x + 1.7, 0.6, z + 2.0, 0.9, 1.1, 0.06, '#5E5A55')
+      else { k.B(x - 1.5, 0.12, z + 1.4, 0.9, 0.06, 0.6, P.metal); k.B(x - 1.5, 0.2, z + 1.4, 0.85, 0.04, 0.55, '#8A847C') }
+    }
   // L'électricien : le touret et le câble déroulé vers le bâtiment ; le tableau posé à partir de la moitié.
   if (metier === 'electricien') {
     if (fini || pct >= 0.5) { k.B(x1 - 0.35, y0 + 0.9, z1 + 0.04, 0.4, 0.5, 0.06, P.ardoise); k.B(x1 - 0.35, y0 + 1.1, z1 + 0.075, 0.36, 0.06, 0.01, P.corail) }
@@ -1145,7 +1525,7 @@ export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Pre
  * Un véhicule à son gabarit, le long de x (au parking) ou de z (garé sur le côté d'un chantier). `ouvert` : le camion-atelier
  * (sans local) a sa porte latérale et ses portes arrière ouvertes sur ses rangements. L'échelle du toit pour les métiers qui en portent.
  */
-export function camionnette(add: AjoutI, addF: AjoutF, x: number, z: number, sens: 'x' | 'z', o: number, metier: Prereglage, gabarit: Gabarit = 'fourgonnette', ouvert = false): void {
+export function camionnette(add: AjoutI, addF: AjoutF, x: number, z: number, sens: 'x' | 'z', o: number, metier: Metier3D, gabarit: Gabarit = 'fourgonnette', ouvert = false): void {
   // Repère local : lx le long du véhicule (l'avant vers +lx), lz en travers (+lz : le côté vu par la caméra).
   const B = (lx: number, y: number, lz: number, sx: number, sy: number, sz: number, c: string, rx = 0) =>
     add('box', sens === 'x' ? [x + lx, y, z + lz] : [x - lz, y, z + lx], sens === 'x' ? [sx, sy, sz] : [sz, sy, sx], c, o, sens === 'x' ? [rx, 0, 0] : [0, 0, rx])

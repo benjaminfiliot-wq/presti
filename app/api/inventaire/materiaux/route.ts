@@ -171,6 +171,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, enregistrees: ecrites, ignorees: lu.ignorees })
     }
 
+    // ── Seuil d'alerte SEUL (atelier du CRM, audit du 20/10) : on ne touche qu'à cette colonne. Renvoyer la fiche entière
+    // écrasait une modification faite entre-temps dans l'Inventaire et normalisait tags et prix au passage.
+    if (b.id && Object.keys(b).every((k) => k === 'id' || k === 'seuil_alerte')) {
+      if (!UUID.test(String(b.id))) return NextResponse.json({ error: 'Matériau introuvable.' }, { status: 404 })
+      const seuil = Number(b.seuil_alerte)
+      if (!Number.isFinite(seuil) || seuil < 0 || seuil > 1_000_000) return NextResponse.json({ error: 'Seuil invalide.' }, { status: 400 })
+      const { data, error } = await supabaseAdmin.from('materiaux').update({ seuil_alerte: seuil, maj_le: new Date().toISOString() }).eq('id', b.id).eq('artisan_id', a.uid).select('id').maybeSingle()
+      if (error) { console.error('[inventaire/materiaux] seuil:', error.message); return NextResponse.json({ error: 'Enregistrement impossible.' }, { status: 500 }) }
+      if (!data) return NextResponse.json({ error: 'Matériau introuvable.' }, { status: 404 })
+      return NextResponse.json({ ok: true, id: data.id })
+    }
+
     // ── Fiche (rapide : nom + prix suffisent ; complète : tout le reste).
     const n = await nettoyer(a.uid, b as MateriauEntree)
     if ('error' in n) return NextResponse.json({ error: n.error }, { status: 400 })
@@ -184,8 +196,10 @@ export async function POST(req: Request) {
       if (!data) return NextResponse.json({ error: 'Matériau introuvable.' }, { status: 404 })
       return NextResponse.json({ ok: true, id: data.id })
     }
-    const { data, error } = await supabaseAdmin.from('materiaux').upsert(n.ligne, { onConflict: 'artisan_id,nom,reference' }).select('id').single()
-    if (error) { console.error('[inventaire/materiaux] insert:', error.message); return NextResponse.json({ error: 'Enregistrement impossible.' }, { status: 500 }) }
+    // Création : un INSERT, jamais un upsert (audit du 20/10) — l'upsert sur (artisan_id, nom, reference) réécrivait en silence
+    // la fiche d'un article du même nom (marque, photo, prix, notes passaient à vide). L'import en masse garde son upsert, voulu.
+    const { data, error } = await supabaseAdmin.from('materiaux').insert(n.ligne).select('id').single()
+    if (error) { console.error('[inventaire/materiaux] insert:', error.message); return NextResponse.json({ error: error.code === '23505' ? 'Un article porte déjà ce nom : modifiez-le plutôt, ou donnez-lui une référence.' : 'Enregistrement impossible.' }, { status: error.code === '23505' ? 409 : 500 }) }
     return NextResponse.json({ ok: true, id: data.id })
   } catch (e) {
     console.error('[inventaire/materiaux] POST:', e)

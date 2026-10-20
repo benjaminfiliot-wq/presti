@@ -140,8 +140,8 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   T('C1 SANS l’option `infra` (drapeau baissé) : la scène est octet pour octet celle d’avant (empreinte sha256 des 12 sorties)', sha(sorties) === EMPREINTE_AVANT, sha(sorties))
   T('C2 sans l’option : ni `infra`, ni `fenetres`, ni `mobiles` ; et l’exemple n’a pas de forme juridique (rien n’est lu drapeau baissé)', sorties.every((s) => !('infra' in s) && !('fenetres' in s) && !('mobiles' in s)) && !('formeJuridique' in D))
   const sans = At.construireScene(D, 'plombier'), avec = scene(D, 'plombier')
-  const vue = (s) => s.objets.map((o) => [o.cle, o.type, o.libelle, o.detail, o.badges, o.epingle, o.etat, o.info]).sort((a, b) => a[0].localeCompare(b[0]))
-  T('C3 avec l’infrastructure : les MÊMES objets cliquables (clés, détails, badges, états, cartes), seule la géométrie change', egal(vue(sans), vue(avec)) && egal(sans.horsScene, avec.horsScene))
+  const vue = (s) => s.objets.filter((o) => o.type !== 'structure').map((o) => [o.cle, o.type, o.libelle, o.detail, o.badges, o.epingle, o.etat, o.info]).sort((a, b) => a[0].localeCompare(b[0]))
+  T('C3 avec l’infrastructure : les MÊMES objets de données (clés, détails, badges, états, cartes) ; s’y ajoutent seulement les structures de la base (lot 4)', egal(vue(sans), vue(avec)) && egal(sans.horsScene, avec.horsScene) && avec.objets.some((o) => o.type === 'structure'))
   T('C4 la scène dit son profil, son lieu (déduit : l’exemple → entrepôt) ; un lieu déclaré l’emporte et se dit « choisi »', avec.infra.base === 'entrepot' && avec.infra.auto === true && scene(D, 'plombier', 'legere').infra.base === 'legere' && scene(D, 'plombier', 'legere').infra.auto === false)
   const S = (s) => new Set(s.infra.structures)
   const tous = (s, l) => l.every((k) => S(s).has(k))
@@ -222,9 +222,9 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   T('E5 lib/crm/infrastructure.ts est pur : aucun réseau, aucune base, aucun stockage, aucun three', !reseau.test(infra) && !/from ['"](three|@react-three)/.test(infra) && /^import type \{[^}]+\} from '\.\/atelier\.ts'$/m.test(infra))
   T('E6 Scene3D n’a gagné ni fetch ni écriture ; Atelier n’a gagné aucun appel réseau', !/fetch\s*\(|localStorage/.test(s3d) && !/fetch\s*\(/.test(at))
   T('E7 TOUT est derrière le drapeau : `infra = actif(\'crmAtelierVivant\')` ; drapeau baissé, l’appel à construireScene est celui d’avant, mot pour mot',
-    at.includes("const infra = actif('crmAtelierVivant')") && at.includes(': construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base])') && /\{infra && scene\.infra && \(/.test(at) && at.includes('heure={infra ? heure ?? null : null}'))
+    at.includes("const infra = actif('crmAtelierVivant')") && at.includes(': construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base, metier3D])') && /\{infra && scene\.infra && \(/.test(at) && at.includes('heure={infra ? heure ?? null : null}'))
   T('E8 la forme juridique n’est LUE (jamais écrite) que drapeau levé : colonnes de la fiche conditionnelles, champ absent sinon',
-    srv.includes("const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique' : 'plan, metier')") && srv.includes("...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null } : {})") && /select\(COLONNES_FICHE\(\)\)/.test(srv))
+    srv.includes("const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville' : 'plan, metier')") && srv.includes("...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null } } : {})") && /select\(COLONNES_FICHE\(\)\)/.test(srv))
   T('E9 la démonstration lit ?base= (dont camion), ?statut=, ?camion= et ?heure= drapeau levé seulement, et ramène les données fictives au cas demandé', /const infra = actif\('crmAtelierVivant'\)/.test(demo) && /const base = infra && /.test(demo) && /const statut = infra && /.test(demo) && /const camion = infra && /.test(demo) && demo.includes('echantillonPourBase(FICTIF, base ?? \'entrepot\', { statut, camion })') && demo.includes('baseInitiale={base} heure={heure}'))
   T('E10 l’écran dit d’où vient le lieu (« déduit de vos données » / « choisi par vous ») dans le menu de l’atelier et dans le plan 2D',
     at.includes("scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'") && plan.includes("scene.infra.auto ? ' · déduit de vos données' : ' · choisi par vous'") && at.includes('LIBELLES_LIEU[b]'))
@@ -285,7 +285,72 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   // — la barre d'outils —
   const at = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), css = sansCommentaires(lire('app/crm/atelier/atelier.css'))
   T('G8 barre d’outils (source) : sur une ligne avec l’infrastructure (classe une-ligne, nowrap, filtres qui défilent, libellés courts sous 1600 px), métier et lieu rangés dans « Réglages de l’atelier », « Plan 2D » toujours dans la barre',
-    at.includes("className={`atl-barre${infra ? ' une-ligne' : ''}`}") && /<details className="atl-reglages"/.test(at) && /\.atl-barre\.une-ligne \{ flex-wrap: nowrap \}/.test(css) && /@media \(max-width: 1599px\) \{ \.atl-barre\.une-ligne \.atl-long \{ display: none \} \}/.test(css) && /overflow-x: auto/.test(css) && at.indexOf('className="atl-bascule"') > at.indexOf('className="atl-reglages"'))
+    at.includes("className={`atl-barre${infra ? ' une-ligne' : ''}`}") && /<details className="atl-reglages"/.test(at) && /\.atl-barre\.une-ligne \{ flex-wrap: nowrap \}/.test(css) && /\.atl-bande \{[^}]*overflow-x: auto/.test(css) && at.indexOf('className="atl-bascule"') > at.indexOf('className="atl-reglages"'))
+}
+
+// ═══════════════════════ I. Lot 4 (20/10) : tous les métiers, tout est cliquable, le stock se remplit, une seule source ═══════════════════════
+{
+  // — I1-I3 : les métiers —
+  const onb = lire('app/onboarding/page.tsx')
+  const liste = [...onb.slice(onb.indexOf('const METIERS = ['), onb.indexOf(']', onb.indexOf('const METIERS = ['))).matchAll(/'([^']+)'/g)].map((m) => m[1]).filter((m) => m !== 'Autre')
+  const ref = I.METIERS_REFERENCE.flatMap((g) => g.metiers)
+  T('I1 le sélecteur propose TOUS les métiers de Presti (liste de l’inscription), groupés, plus « Écrire mon métier »', liste.length >= 28 && liste.every((m) => ref.some((r) => r.libelle === m)) && I.METIERS_REFERENCE.length >= 6 && lire('app/crm/atelier/Atelier.tsx').includes('Écrire mon métier…'), liste.filter((m) => !ref.some((r) => r.libelle === m)).join(', '))
+  T('I2 chaque métier de la liste est rattaché à SES structures (le libellé, passé par la correspondance par mots-clés, retombe sur le même jeu)', ref.every((r) => I.metier3DDe(r.libelle) === r.m3d), ref.filter((r) => I.metier3DDe(r.libelle) !== r.m3d).map((r) => `${r.libelle}→${I.metier3DDe(r.libelle)}≠${r.m3d}`).join(' | '))
+  const libres = [['élagueur', 'paysagiste'], ['Frigoriste', 'climaticien'], ['serrurier-métallier', 'serrurier'], ['ravalement de façades', 'facadier'], ['charpente traditionnelle', 'charpentier'], ['pose de piscines', 'piscinier'], ['homme toutes mains', 'multiservice'], ['poseur de cloisons', 'plaquiste'], ['installateur de volets', 'vitrier'], ['métier inconnu', 'general'], [null, 'general']]
+  T('I3 saisie libre : correspondance par mots-clés (élagueur → paysagiste, frigoriste → climaticien…), repli « tous corps d’état »', libres.every(([t, m]) => I.metier3DDe(t) === m), libres.filter(([t, m]) => I.metier3DDe(t) !== m).map(([t]) => t).join(', '))
+  T('I4 dix-huit jeux de structures (les neuf d’avant, recopiés à l’identique, et neuf nouveaux : paysagiste, serrurier, vitrier, plaquiste, façadier, charpentier, climaticien, piscinier, multiservice)', egal([...I.METIERS_HISTORIQUES], [...At.PREREGLAGES]) && I.METIERS_3D.length === 18 && I.METIERS_EN_PLUS.every((m) => I.SIGNATURES[m] && I.MATIERES[m] && I.TYPES_CHANTIER[m] && I.CATEGORIES_TYPIQUES[m]?.length))
+  const manque = []
+  for (const p of I.METIERS_EN_PLUS) for (const b of ['atelier', 'entrepot']) { const ks = new Set(I.accessoiresBase(p, I.PLANS[b]).map((a) => a.k)); for (const k of I.SIGNATURES[p]) if (!ks.has(k)) manque.push(`${p}/${b}:${k}`) }
+  T('I5 chaque nouveau métier montre ses structures (serre, pépinière ; racks de profilés, poste de soudure ; chevalets à vitrage ; plaques ; échafaudage de façade ; poutres et fermette ; PAC et groupe froid ; coques et filtration…)', manque.length === 0, manque.join(' | '))
+  const scenes18 = []
+  for (const m of I.METIERS_3D) for (const b of I.BASES) scenes18.push(sha(scene(I.echantillonPourBase(D, b), I.PROCHE[m], b, { infra: { base: b, metier: m } })))
+  T('I6 18 métiers × 4 lieux : 72 maquettes toutes différentes', new Set(scenes18).size === 72, String(new Set(scenes18).size))
+  const maison = (metier, pct) => { const box = [], fen = []; I.maisonChantier((f, p, s, c, o, r = [0, 0, 0]) => { box.push({ f, p, s, c, r }); return box.length - 1 }, (p, s, j, n) => fen.push({ p, s, j, n }), { x: 0, z: 0, w: 2.6, dd: 2.6, ht: 2.2, h: 0.37, id: 'chantier-fictif', pct, termine: pct >= 1, enCours: pct > 0 && pct < 1, o: 0 }, metier); return JSON.stringify({ box, fen }) }
+  T('I7 les chantiers des nouveaux métiers changent avec l’avancement (jardin qui se crée, piscine qui se remplit, plaques posées, garde-corps, unités de clim, charpente…)', I.METIERS_EN_PLUS.every((m) => new Set([0, 0.4, 0.8, 1].map((v) => maison(m, v))).size === 4))
+  // — I8-I11 : tout ce qui se voit est cliquable et utile —
+  const types = new Set(), sansPanneau = [], decorCliquable = []
+  const panneau = lire('app/crm/atelier/Panneau.tsx')
+  for (const b of I.BASES) for (const m of ['macon', 'plombier', 'paysagiste']) {
+    const d = b === 'entrepot' ? I.echantillonPourBase(D, b, { camion: true }) : I.echantillonPourBase(D, b)
+    const s = scene(d, I.PROCHE[m], b, { infra: { base: b, metier: m }, vivant: { assistants: 2 } })
+    for (const o of s.objets) {
+      types.add(o.type)
+      if (o.type === 'structure' && !(o.fiche && o.fiche.titre && o.fiche.role && (o.fiche.actions.length > 0 || o.fiche.stock))) sansPanneau.push(`${b}/${m}:${o.ref}`)
+    }
+    // Le mobilier du hall reste décor pur : aucune de ses formes n'a d'objet (pas de main, pas de survol).
+    const io = new Set(s.objets.filter((o) => o.type === 'structure').map((o) => o.ref))
+    for (const k of I.DECOR_PUR) if (io.has(k)) decorCliquable.push(k)
+  }
+  const cases = { chantier: "objet.type === 'chantier'", categorie: "objet.type === 'categorie'", vehicule: "objet.type === 'vehicule'", membre: "objet.type === 'membre'", accueil: "objet.type === 'accueil'", bureau: "objet.type === 'bureau'", assistants: "objet.type === 'assistants'", structure: "objet.type === 'structure'" }
+  T('I8 chaque TYPE d’objet de la scène a son panneau (chantier, catégorie, véhicule, compagnon, accueil, bureau, assistants, structure)', [...types].every((t) => cases[t] && panneau.includes(cases[t])) && types.has('structure'), [...types].join(','))
+  T('I9 chaque structure cliquable a une fiche explicite : titre, à quoi elle sert, données liées, au moins une action (ou le stock à remplir)', sansPanneau.length === 0, sansPanneau.slice(0, 5).join(' | '))
+  T('I10 le décor pur (allées, chariot, bacs de tri, extincteurs, panneau d’outils…) n’est PAS cliquable', decorCliquable.length === 0, decorCliquable.join(','))
+  const ent = scene(I.echantillonPourBase(D, 'entrepot', { camion: true }), 'macon', 'entrepot')
+  const cles = new Set(ent.objets.map((o) => o.cle))
+  const camionBenne = ent.objets.find((o) => o.type === 'vehicule' && /Camion benne/.test(o.libelle))
+  const livr = ent.objets.find((o) => o.cle === 'structure:livraison')
+  T('I11 en entrepôt : le camion benne (véhicule) et le camion de livraison (commandes attendues, stock concerné) sont des objets cliquables, comme le hangar, les quais, le pont-bascule, la grue, le parc d’engins, les boxes, le silo',
+    !!camionBenne && !!livr && livr.fiche.lignes[0].includes('commande') && livr.fiche.actions.some((a) => a.objet?.startsWith('categorie:') || a.href === '/inventaire') && ['hangar', 'quais', 'pont-bascule', 'grue-a-tour', 'parc-engins', 'plateforme-stockage', 'boxes-granulats', 'silo-mortier'].every((k) => cles.has(`structure:${k}`)), [...cles].filter((c) => c.startsWith('structure:')).join(','))
+  // — I12-I15 : le stock se remplit depuis l'atelier, par les routes d'inventaire existantes —
+  const stockSrc = sansCommentaires(lire('app/crm/atelier/Stock.tsx'))
+  T('I12 le panneau stock a ses actions : ajouter un article (nom, unité, catégorie, quantité, seuil, fournisseur), entrée / sortie / comptage, seuil ; état vide « Ajouter mon premier article » avec les catégories du métier ; exemple : rien n’est écrit, et c’est dit',
+    stockSrc.includes('Ajouter mon premier article') && stockSrc.includes('Fournisseur préféré') && stockSrc.includes('Seuil d’alerte') && /value="entree"[\s\S]*value="sortie"[\s\S]*value="inventaire"/.test(stockSrc) && /if \(sansEcriture\) \{ setNote/.test(stockSrc) && stockSrc.includes('rien n’est enregistré') && lire('app/crm/atelier/Panneau.tsx').includes('<StockRapide') && lire('app/crm/atelier/Structure.tsx').includes('<StockRapide'))
+  const routes = [...stockSrc.matchAll(/appel(?:<[^>]+>)?\(\s*[`'](\/api\/[^`'?$]+)/g)].map((m) => m[1])
+  T('I13 aucune route nouvelle : l’atelier écrit par /api/inventaire/materiaux (fiche) et /api/inventaire (mouvement) — celles de l’écran Inventaire', routes.length >= 4 && routes.every((r) => r === '/api/inventaire/materiaux' || r === '/api/inventaire') && fs.readdirSync(path.join(RACINE, 'app/api/inventaire')).sort().join() === 'fournisseurs,materiaux,observations,recherche,route.ts', routes.join(','))
+  const rInv = sansCommentaires(lire('app/api/inventaire/route.ts')), rMat = sansCommentaires(lire('app/api/inventaire/materiaux/route.ts')), sqlMvt = lire('supabase/migrations/0045_colonnes_figees.sql')
+  T('I14 les routes utilisées refusent un corps invalide (quantité négative ou non numérique, type inconnu, nom vide → 400) et un AUTRE compte (fiche : .eq(\'artisan_id\', a.uid) → 404 ; mouvement : la fonction SQL refuse un matériau d’un autre artisan)',
+    /quantite < 0[\s\S]{0,120}status: 400/.test(rInv) && /Type de mouvement inconnu\.' \}, \{ status: 400 \}/.test(rInv) && /p_artisan: a\.uid/.test(rInv) && /if \('error' in n\) return NextResponse\.json\(\{ error: n\.error \}, \{ status: 400 \}\)/.test(rMat) && /\.update\(maj\)\.eq\('id', b\.id\)\.eq\('artisan_id', a\.uid\)/.test(rMat) && /Matériau introuvable\.' \}, \{ status: 404 \}/.test(rMat) && /where id = p_materiau and artisan_id = v_artisan/.test(sqlMvt) && /estRefus\(a\)/.test(rMat))
+  // Une seule source : un article tel que la route l'écrit (materiaux + stock) est DANS la maquette ; la maquette n'a pas de stock à elle.
+  const lignesRoute = [{ id: U(7777), nom: 'Article saisi dans l’inventaire', unite: 'sac', categorie: 'Liants', seuil_alerte: 3, stock: [{ quantite: 2 }, { quantite: 1 }], fournisseur_prefere: null, prix_vu_ht: null, prix_vu_le: null }]
+  const da = At.assemblerAtelier({ jour: '2026-10-12', metier: 'Maçon', chantiers: [], cartes: [], taches: [], equipe: [], materiaux: lignesRoute, vehicules: [], membres: [] })
+  const sa = scene({ ...da, demandes: [] }, 'macon', 'atelier', { infra: { base: 'atelier', metier: 'macon' } })
+  const fiche = sa.objets.find((o) => o.cle === 'structure:sacs')?.fiche
+  T('I15 une seule source de vérité : un article écrit par la route d’inventaire (materiaux + stock) apparaît dans l’atelier (rayonnage de sa catégorie, fiche des sacs, 3 sac sous le seuil 3) ; le CRM lit les mêmes tables, filtrées par artisan_id',
+    da.materiaux.length === 1 && da.materiaux[0].reste === 3 && sa.objets.some((o) => o.type === 'categorie' && o.ref === 'Liants') && !!fiche && fiche.lignes.some((l) => l.includes('Article saisi dans l’inventaire : 3 sac (seuil 3)')) && /from\('materiaux'\)\.select\(COLONNES\.materiaux\)\.eq\('artisan_id', uid\)/.test(lire('lib/crm/serveur.ts')) && /COLONNES_MATERIAU\)\.eq\('artisan_id', a\.uid\)/.test(rMat), JSON.stringify(fiche?.lignes))
+  // — I16 : la bande des indicateurs —
+  const at = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), css = sansCommentaires(lire('app/crm/atelier/atelier.css'))
+  T('I16 la bande des indicateurs défile (barre fine visible, molette — écouteur non passif — et doigt), ombres de bord, libellés entiers ; « Réglages », « ? » et « Plan 2D » restent hors de la bande',
+    /function Bande\(/.test(at) && /addEventListener\('wheel', molette, \{ passive: false \}\)/.test(at) && /data-gauche=/.test(at) && /scrollbar-width: thin/.test(css) && /\.atl-bande\[data-gauche="1"\]\[data-droite="1"\]/.test(css) && !/@media \(max-width: 1599px\)/.test(css) && at.indexOf('</Bande>') < at.indexOf('className="atl-reglages"') && at.indexOf('</Bande>') < at.indexOf('className="atl-bascule"'))
 }
 
 // ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════
@@ -305,7 +370,43 @@ if (process.env.TEST_BASE) {
   await tel.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=macon&base=entrepot`, { waitUntil: 'networkidle' })
   await tel.waitForSelector('[data-atelier-barre]')
   const selectsVisibles = await tel.evaluate(() => [...document.querySelectorAll('[data-atelier-barre] select')].filter((s) => (s.checkVisibility ? s.checkVisibility() : s.getBoundingClientRect().height > 0)).length)
+  // H3-H5 (lot 4) : on CLIQUE la maquette là où l'artisan cliquerait — le camion benne, le camion de livraison — et le panneau s'ouvre ;
+  // le dialogue « Répondre » de l'exemple ; la bande des indicateurs.
+  const ent = scene(I.echantillonPourBase(D, 'entrepot', { camion: true }), 'macon', 'entrepot')
+  const cleBenne = ent.objets.find((o) => o.type === 'vehicule' && /Camion benne/.test(o.libelle))?.cle
+  const gpu = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], channel: 'chromium' }).catch(() => chromium.launch())
+  const p3 = await gpu.newPage({ viewport: { width: 1440, height: 900 } })
+  await p3.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=macon&base=entrepot&statut=societe&camion=1&mode=3d&mesure=1&heure=11`, { waitUntil: 'networkidle' })
+  await p3.waitForFunction(() => window.__atelier && window.__atelier.fps > 0 && window.__atelierEcran, null, { timeout: 120000 })
+  await p3.waitForTimeout(11000)
+  const cliquer = async (cle) => {
+    // Retour à la vue d'ensemble avant chaque clic : la sélection précédente a fait glisser la caméra.
+    await p3.keyboard.press('Escape').catch(() => {})
+    await p3.click('.atl-ensemble').catch(() => {})
+    await p3.waitForTimeout(1000)
+    const pt = await p3.evaluate((c) => window.__atelierEcran(c), cle)
+    if (!pt) return null
+    await p3.mouse.click(pt.x, pt.y)
+    await p3.waitForTimeout(500)
+    return p3.evaluate(() => document.querySelector('[data-atelier-panneau] h2')?.textContent ?? null)
+  }
+  const titreBenne = cleBenne ? await cliquer(cleBenne) : null
+  const titreLivr = await cliquer('structure:livraison')
+  const bande = await p3.evaluate(() => { const b = document.querySelector('[data-atelier-bande]'); const r = document.querySelector('.atl-reglages'); const pl = document.querySelector('.atl-bascule'); return b ? { defile: getComputedStyle(b).overflowX, reglagesHors: !!r && !b.contains(r), planHors: !!pl && !b.contains(pl) } : null })
+  // Le dialogue « Répondre » : l'accueil, puis la première demande sans devis.
+  await p3.keyboard.press('Escape').catch(() => {})
+  await p3.click('details.atl-liste-3d summary').catch(() => {})
+  await p3.click('[data-atelier-objet="accueil"]').catch(() => {})
+  await p3.waitForSelector('[data-atelier-salle]', { timeout: 10000 }).catch(() => {})
+  await p3.click('[data-atelier-action-exemple="Répondre"]').catch(() => {})
+  const dialogue = await p3.waitForSelector('[data-atelier-dialogue]', { timeout: 5000 }).then(() => true).catch(() => false)
+  await p3.click('[data-atelier-dialogue] button.primary').catch(() => {})
+  const envoye = await p3.waitForSelector('[data-atelier-envoye]', { timeout: 5000 }).then(() => true).catch(() => false)
+  await gpu.close()
   await nav.close()
+  T('H3 en entrepôt, un clic dans la 3D sur le camion benne ouvre SON panneau ; sur le camion de livraison, le panneau « Camion de livraison » (Playwright)', titreBenne !== null && /Camion benne/.test(titreBenne) && titreLivr === 'Camion de livraison', JSON.stringify({ titreBenne, titreLivr }))
+  T('H4 la bande des indicateurs défile horizontalement ; « Réglages » et « Plan 2D » sont hors de la bande', bande?.defile === 'auto' && bande.reglagesHors && bande.planHors, JSON.stringify(bande))
+  T('H5 « Répondre » dans l’exemple ouvre un vrai dialogue (message du client, réponse proposée) ; « Valider et envoyer » montre l’effet sans rien envoyer', dialogue && envoye, JSON.stringify({ dialogue, envoye }))
   T('H1 la barre tient sur UNE ligne à 1280, 1440 et 1920 px, « Plan 2D » visible (Playwright)', res.every((r) => r.lignes === 1 && r.plan2d), JSON.stringify(res))
   T('H2 sur téléphone (390 px), les sélecteurs métier et lieu ne prennent aucune hauteur (rangés dans le menu fermé)', selectsVisibles === 0, String(selectsVisibles))
 } else console.log('SKIP H (navigateur) — TEST_BASE absent : la barre se juge sur un serveur lancé avec PRESTI_DEMO_ATELIER=1')

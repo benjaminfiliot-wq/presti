@@ -12,6 +12,9 @@ import Indicateurs from '../Indicateurs'
 import { Lien, useExemple } from '../mode'
 import { DialogueRelance, FicheCommande, PreparerCommande } from './Commande'
 import { PosteAssistantsPanneau, SalleAttentePanneau } from './Vivant'
+import PanneauStructure from './Structure'
+import StockRapide from './Stock'
+import { CATEGORIES_TYPIQUES, metier3DDe, type Metier3D } from '@/lib/crm/infrastructure'
 import type { PosteAssistants } from '@/lib/crm/assistants'
 import type { Vue } from '@/lib/crm/vue'
 
@@ -23,10 +26,12 @@ import type { Vue } from '@/lib/crm/vue'
 // En page de démonstration (`demo`, /atelier-demo), rien n'est lu ni écrit : les actions sont désactivées et le disent.
 // Dans l'EXEMPLE du CRM (app/crm/mode.tsx), la fiche chantier s'ouvre sur ses données fictives, ses boutons ne font rien
 // partir, et les liens vers les écrans hors CRM sont inertes.
-export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2D, onChange, vue, poste }: {
+export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2D, onChange, vue, poste, metier, onChoisir }: {
   objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onFermer: () => void; onVue2D: (vue: string) => void; onChange: () => void
   /** Drapeau crmAtelierVivant levé seulement : la Vue (salle d'attente de l'accueil) et le poste des assistants. Absents : les panneaux d'avant. */
   vue?: Vue; poste?: PosteAssistants | null
+  /** Infrastructure (même drapeau) : le métier 3D de la maquette (stock : catégories typiques) et l'ouverture d'un autre objet par sa clé. */
+  metier?: Metier3D; onChoisir?: (cle: string) => void
 }) {
   const titre = useRef<HTMLHeadingElement>(null)
   // Le focus va au titre du panneau qui s'ouvre (lecteur d'écran et clavier) ; Échap le ferme.
@@ -39,19 +44,21 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
   return (
     <aside className="atl-panneau" aria-labelledby="atl-panneau-titre" data-atelier-panneau={objet.type}>
       <header>
-        <span className="atl-type">{({ chantier: 'Chantier', categorie: 'Inventaire', vehicule: 'Véhicule', membre: 'Équipe', accueil: 'Accueil', bureau: 'Bureau', assistants: 'Assistants' } as const)[objet.type]}</span>
+        <span className="atl-type">{({ chantier: 'Chantier', categorie: 'Inventaire', vehicule: 'Véhicule', membre: 'Équipe', accueil: 'Accueil', bureau: 'Bureau', assistants: 'Assistants', structure: 'Installation' } as const)[objet.type]}</span>
         <h2 id="atl-panneau-titre" ref={titre} tabIndex={-1}>{objet.libelle}</h2>
         <button type="button" className="atl-fermer" onClick={onFermer} aria-label="Fermer le panneau">×</button>
       </header>
       <div className="atl-panneau-corps">
         {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} />}
-        {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} onChange={onChange} />}
+        {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} onChange={onChange} metier={metier} />}
+        {objet.type === 'structure' && <PanneauStructure objet={objet} donnees={donnees} metier={metier ?? metier3DDe(donnees.metier)} onVue2D={onVue2D} onChoisir={onChoisir} onChange={onChange} />}
         {objet.type === 'vehicule' && <PanneauVehicule objet={objet} donnees={donnees} />}
         {objet.type === 'membre' && <PanneauMembre objet={objet} donnees={donnees} />}
         {objet.type === 'accueil' && (vue ? <SalleAttentePanneau vue={vue} jour={donnees.jour} onVue2D={onVue2D} /> : <PanneauAccueil donnees={donnees} />)}
         {objet.type === 'assistants' && poste && <PosteAssistantsPanneau poste={poste} onVue2D={onVue2D} />}
         {objet.type === 'bureau' && (
           <div className="atl-pile">
+            {donnees.entreprise?.nom && <p className="atl-role" data-atelier-entreprise><b>{donnees.entreprise.nom}</b>{donnees.entreprise.ville ? ` · ${donnees.entreprise.ville}` : ''}{donnees.formeJuridique ? ` · ${donnees.formeJuridique}` : ''}<br /><span className="muted">Repris de votre profil : rien à ressaisir.</span></p>}
             <p className="crm-vide">Le bureau ouvre les vues classiques du CRM, sur les mêmes données.</p>
             <div className="crm-boutons">
               {(['tableau', 'pipeline', 'chantiers', 'clients'] as const).map((v) => (
@@ -182,7 +189,7 @@ function PanneauChantier({ objet, donnees, demo, resume, onChange }: { objet: Ob
   )
 }
 
-function PanneauInventaire({ objet, donnees, demo, onChange }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; onChange: () => void }) {
+function PanneauInventaire({ objet, donnees, demo, onChange, metier }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; onChange: () => void; metier?: Metier3D }) {
   const ms = useMemo(() => {
     const autres = objet.ref === 'Autres catégories'
     return donnees.materiaux.filter((m) => {
@@ -223,6 +230,8 @@ function PanneauInventaire({ objet, donnees, demo, onChange }: { objet: ObjetSce
         {!demo && <Lien className="psh-btn ghost" href="/inventaire">Ouvrir l’inventaire</Lien>}
       </div>
       {commande && <PreparerCommande donnees={donnees} materiaux={alertes} onChange={onChange} />}
+      {/* Infrastructure (drapeau crmAtelierVivant) : remplir le stock de cette catégorie sur place (./Stock.tsx). */}
+      {metier && <StockRapide donnees={donnees} articles={ms} famille={objet.ref === 'Autres catégories' ? null : objet.ref} suggestions={CATEGORIES_TYPIQUES[metier]} onChange={onChange} />}
     </div>
   )
 }

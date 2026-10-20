@@ -20,9 +20,9 @@ export const erreur = (message: string, status: number, extra: Record<string, un
 export const INDISPONIBLE = 'Le CRM n’a pas pu lire vos données. Rechargez la page dans un instant.'
 
 /** Les colonnes lues sur la fiche : la forme juridique s'y ajoute drapeau crmAtelierVivant levé seulement (lecture, rien n'est écrit). */
-const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique' : 'plan, metier')
+const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville' : 'plan, metier')
 // formeJuridique : drapeau crmAtelierVivant seulement (statut « à son compte / société » de la maquette) ; absente drapeau baissé.
-export type Garde = { uid: string; metier: string | null; formeJuridique?: string | null } | { reponse: NextResponse }
+export type Garde = { uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null } } | { reponse: NextResponse }
 
 /** 120 requêtes par minute et par compte : un artisan qui coche vite ses tâches en fait une par seconde, au plus. */
 export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
@@ -50,10 +50,10 @@ export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'cr
   ])
   if (!libre) return { reponse: erreur('Trop de demandes d’un coup : patientez une minute, rien n’a été perdu.', 429, { code: 'debit' }) }
   if (error) { console.error('[crm] lecture de l’offre :', error.message); return { reponse: erreur(INDISPONIBLE, 503) } }
-  const fiche = art as { plan?: string | null; metier?: string | null; forme_juridique?: string | null } | null
+  const fiche = art as { plan?: string | null; metier?: string | null; forme_juridique?: string | null; nom?: string | null; ville?: string | null } | null
   const d = decisionAcces({ drapeau: true, session: { ok: true }, plan: fiche?.plan ?? null })
   if (!d.ok) return { reponse: erreur(d.erreur ?? 'Accès refusé.', d.statut, d.code ? { code: d.code } : {}) }
-  return { uid: session.uid, metier: fiche?.metier ?? null, ...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null } : {}) }
+  return { uid: session.uid, metier: fiche?.metier ?? null, ...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null } } : {}) }
 }
 
 /** Une erreur PostgREST/Postgres → statut HTTP honnête. Les messages des déclencheurs de 0141 commencent par « crm : ». */

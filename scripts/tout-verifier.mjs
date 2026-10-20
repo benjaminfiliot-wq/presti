@@ -163,6 +163,7 @@ const SUITES = [
  *  dans cet angle mort. Une suite qui n'est pas ici et pas dans SUITES est un oubli, et l'inventaire
  *  a le droit de le dire. */
 export const HORS_LANCEUR = {
+  'crm-stock-e2e.mjs': 'stock de l’atelier = inventaire, de bout en bout : exige une base de TEST dédiée (CRM_E2E_*) et un serveur branché dessus — refuse la production',
   'fact-e2e.mjs': 'exige un serveur local (BASE=localhost:3100 en dur) — l’audit tourne contre la production',
   'pdf-e2e.mjs': 'exige un serveur local (localhost:3100) : le rendu PDF passe par le bundler de développement',
   'smoke-test.mjs': 'test de fumée manuel après déploiement, joué à la main',

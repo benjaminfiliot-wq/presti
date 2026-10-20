@@ -20,7 +20,7 @@ import type { Frise } from './pipeline.ts'
 import type { Indicateurs } from './chantier.ts'
 import {
   accessoiresBase, avancementDessine, bureauInfra, camionnette, cheminVers, comptoirInfra, decorBase, horsEnclos, maisonChantier, personnage, placeParking, placeRepos,
-  PLANS, profilInfrastructure, rayonnageInfra, type AjoutF, type Base, type Fenetre, type Mobile, type PlanBase, type Profil,
+  PLANS, profilInfrastructure, rayonnageInfra, DECOR_PUR, ficheStructure, type AjoutF, type Base, type Fenetre, type FicheStructure, type Metier3D, type Mobile, type PlanBase, type Profil,
 } from './infrastructure.ts'
 
 // Les règles « chantier visible » et « prévu aujourd'hui » vivent dans alertes.ts (une seule écriture, partagée avec les urgences).
@@ -68,6 +68,9 @@ export type DonneesAtelier = {
   /** La forme juridique de la fiche artisan (artisans.forme_juridique), lue SEULEMENT drapeau crmAtelierVivant levé : le statut
    *  « à son compte / société » de l'infrastructure (lib/crm/infrastructure.ts). Absente : l'équipe tranche. */
   formeJuridique?: string | null
+  /** Le nom et la ville de la fiche artisan (artisans.nom, artisans.ville), lus SEULEMENT drapeau crmAtelierVivant levé : repris tels quels
+   *  dans la maquette (l'enseigne, le bureau), rien à ressaisir. Absents : rien n'est dit. */
+  entreprise?: { nom: string | null; ville: string | null }
   /** Les rappels dus aujourd'hui et en retard (crm_rappels, 0162), pour le briefing du matin ; absent : rien n'est dit. */
   rappels?: { aujourdhui: number; enRetard: number; premiers: string[] }
 }
@@ -79,7 +82,8 @@ export type V3 = [number, number, number]
 /** Une instance : centre, échelle (la forme unitaire fait 1 × 1 × 1), rotation (radians), couleur, objet porteur (-1 = décor). */
 export type Inst = { p: V3; s: V3; r: V3; c: string; o: number }
 // 'assistants' : le poste des assistants (drapeau crmAtelierVivant, lib/crm/assistants.ts) ; absent de la scène drapeau baissé.
-export type TypeObjet = 'chantier' | 'categorie' | 'vehicule' | 'membre' | 'accueil' | 'bureau' | 'assistants'
+// 'structure' : un bâtiment, une installation ou une machine de la base (infrastructure, lot 4) — un panneau qui dit à quoi elle sert.
+export type TypeObjet = 'chantier' | 'categorie' | 'vehicule' | 'membre' | 'accueil' | 'bureau' | 'assistants' | 'structure'
 export type EtatObjet = { aujourdhui: boolean; retard: boolean; aFacturer: boolean; stockBas: boolean; livraison: boolean }
 /** Une pastille d'alerte posée sur un objet de la maquette (retard, livraison, stock, tâches faites…). */
 export type BadgeObjet = { type: TypeAlerte | 'demandes' | 'taches' | 'valider'; libelle: string; gravite: Gravite }
@@ -99,6 +103,8 @@ export type ObjetScene = {
   /** Les alertes de l'objet, la plus grave d'abord. */
   badges: BadgeObjet[]
   info: InfoChantier | null
+  /** Structure seulement : sa fiche (lib/crm/infrastructure.ts, ficheStructure). */
+  fiche?: FicheStructure
 }
 export type Scene = {
   instances: Record<Forme, Inst[]>
@@ -115,7 +121,7 @@ export type Scene = {
   colis?: { id: string; index: number }[]
   /** Drapeau crmAtelierVivant seulement (lib/crm/infrastructure.ts) : le profil, la base dessinée (automatique ou choisie), la cible
    *  de la vue « atelier ». Absent drapeau baissé, comme `fenetres` et `mobiles`. */
-  infra?: { profil: Profil; base: Base; auto: boolean; cible: V3; structures: string[] }
+  infra?: { profil: Profil; base: Base; auto: boolean; cible: V3; structures: string[]; metier: Metier3D }
   /** Les fenêtres et les lampes : un calque à part (une seule matière, non éclairée), allumé le soir. */
   fenetres?: Fenetre[]
   /** Les morceaux des personnages qui partent de la base vers leur chantier du jour (la scène 3D les fait marcher). */
@@ -126,7 +132,7 @@ export type Scene = {
 export type OptionsScene = {
   vivant?: { assistants: number }
   /** L'infrastructure (même drapeau) : la base suit le profil de l'artisan (`base` absente ou null) ou celle qu'il a choisie. */
-  infra?: { base?: Base | null }
+  infra?: { base?: Base | null; metier?: Metier3D | null }
 }
 
 // ── Palette « maquette d'architecte » : crème, pierre, bois, corail. Ni bleu, ni rouge vif. ──────────────────
@@ -220,12 +226,19 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   const profil = options?.infra ? profilInfrastructure(d, options.infra.base ?? null) : null
   const plan: PlanBase | null = profil ? PLANS[profil.base] : null
   const structures: string[] = []
+  // Le métier 3D (lot 4 : tous les métiers de Presti, pas seulement les neuf préréglages) ; à défaut, le préréglage.
+  const metierI: Metier3D = options?.infra?.metier ?? prereglage
+  /** Une structure de la base devient un objet cliquable, avec sa fiche (à quoi elle sert, données liées, actions). */
+  const objetStructure = (cle: string, centre: V3, hauteur: number) => {
+    const f = ficheStructure(cle, d, profil!, metierI)
+    return objet({ cle: `structure:${cle}`, type: 'structure', ref: cle, libelle: f.titre, detail: f.role, centre, hauteur, epingle: null, fiche: f })
+  }
   const fenetres: Fenetre[] = [], mobiles: Mobile[] = []
   const ajouterFenetre: AjoutF = (p, s, jour, nuit, o = -1) => { fenetres.push({ p, s, r: [0, 0, 0], c: jour, o, nuit }) }
   const objet = (o: Omit<ObjetScene, 'etat' | 'badges' | 'info'> & { etat?: Partial<EtatObjet>; badges?: BadgeObjet[]; info?: InfoChantier | null }) => { objets.push({ ...o, badges: o.badges ?? [], info: o.info ?? null, etat: { aujourdhui: false, retard: false, aFacturer: false, stockBas: false, livraison: false, ...o.etat } }); return objets.length - 1 }
 
   // — Sol, dalle du dépôt, murs bas à bandeau corail, porte au milieu de la façade —
-  if (plan && profil) structures.push(...decorBase(ajouter, ajouterFenetre, plan, profil, prereglage, zones))
+  if (plan && profil) structures.push(...decorBase(ajouter, ajouterFenetre, plan, profil, metierI, zones, objetStructure))
   else {
   ajouter('box', [(DEPOT.x0 + DEPOT.x1) / 2, 0.02, 0], [DEPOT.x1 - DEPOT.x0, 0.04, DEPOT.z1 - DEPOT.z0], COULEURS.dalle)
   ajouter('box', [(PARKING.x0 + PARKING.x1) / 2, 0.015, 0], [PARKING.x1 - PARKING.x0, 0.03, PARKING.z1 - PARKING.z0], '#E7E0D3')
@@ -270,7 +283,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
 
   // — Bureau : le poste qui bascule vers les vues 2D —
   const oBureau = objet({ cle: 'bureau', type: 'bureau', ref: 'bureau', libelle: 'Bureau', detail: 'Tableau de bord, pipeline, clients', centre: plan ? [plan.bureau.x, 0, plan.bureau.z] : [-8.4, 0, 4.9], hauteur: 1.7, epingle: null })
-  if (plan && profil) bureauInfra(ajouter, ajouterFenetre, plan, profil, prereglage, oBureau)
+  if (plan && profil) bureauInfra(ajouter, ajouterFenetre, plan, profil, metierI, oBureau)
   else {
   ajouter('box', [-8.4, 0.4, 4.9], [2.6, 0.8, 1.2], COULEURS.planche, oBureau)
   ajouter('box', [-8.4, 1.22, 4.65], [1.3, 0.78, 0.08], COULEURS.ardoise, oBureau)
@@ -337,9 +350,22 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   })
 
   // — Atelier : l'établi et les accessoires du métier —
-  const acc = plan ? accessoiresBase(prereglage, plan, { camion: !!profil?.gabarits.includes('camion') }) : accessoires(prereglage)
-  for (const a of acc) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
-  if (plan) for (const a of acc as ReturnType<typeof accessoiresBase>) if (!structures.includes(a.k)) structures.push(a.k)
+  if (plan) {
+    // Infrastructure : chaque structure du métier (silo, hangar à bois, boxes…) est UN objet cliquable ; le mobilier du hall reste décor.
+    const acc = accessoiresBase(metierI, plan, { camion: !!profil?.gabarits.includes('camion') })
+    const parK = new Map<string, typeof acc>()
+    for (const a of acc) parK.set(a.k, [...(parK.get(a.k) ?? []), a])
+    for (const [k, morceaux] of parK) {
+      let o = -1
+      if (!DECOR_PUR.includes(k)) {
+        const xs = morceaux.flatMap((a) => [a.p[0] - a.s[0] / 2, a.p[0] + a.s[0] / 2]), zs = morceaux.flatMap((a) => [a.p[2] - a.s[2] / 2, a.p[2] + a.s[2] / 2])
+        const haut = Math.max(...morceaux.map((a) => a.p[1] + a.s[1] / 2))
+        o = objetStructure(k, [(Math.min(...xs) + Math.max(...xs)) / 2, 0, (Math.min(...zs) + Math.max(...zs)) / 2], haut + 0.4)
+      }
+      for (const a of morceaux) ajouter(a.f, a.p, a.s, a.c, o, a.r)
+      if (!structures.includes(k)) structures.push(k)
+    }
+  } else for (const a of accessoires(prereglage)) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
 
   // — Chantiers : la petite ville autour du dépôt —
   const resume = calculerAlertes(d)
@@ -375,7 +401,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
     // Avec l'infrastructure, la maison montre le TYPE de travaux du métier et leur avancement (lib/crm/infrastructure.ts).
     // Le sommet (l'épingle et la carte se posent au-dessus) : celui du bâtiment dessiné ; sans infrastructure, `ht + 1.1` comme avant.
     let sommet = ht + 1.1
-    if (plan) { sommet = maisonChantier(ajouter, ajouterFenetre, { x, z, w, dd, ht, h, id: c.id, pct: avancementDessine(c), termine: c.statut === 'termine' || c.etape === 'a_facturer', enCours: c.statut === 'en_cours', o, base: plan.base }, prereglage) + 0.15; objets[o].hauteur = sommet + 1.6 }
+    if (plan) { sommet = maisonChantier(ajouter, ajouterFenetre, { x, z, w, dd, ht, h, id: c.id, pct: avancementDessine(c), termine: c.statut === 'termine' || c.etape === 'a_facturer', enCours: c.statut === 'en_cours', o, base: plan.base }, metierI) + 0.15; objets[o].hauteur = sommet + 1.6 }
     else {
     ajouter('box', [x, 0.03, z], [4.2, 0.06, 4.2], '#E9E1D3', o)
     ajouter('box', [x, ht / 2 + 0.06, z], [w, ht, dd], MURS_MAISON[Math.floor(h * MURS_MAISON.length)], o)
@@ -430,7 +456,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
     if (plan) {
       const sens = garee ? 'z' : place![2], lg = gab === 'camion' ? 5.4 : 3.9, la = gab === 'camion' ? 2.9 : 2.6
       if (!garee && !atelierRoulant) ajouter('box', [x, 0.05, z], sens === 'x' ? [lg, 0.02, la] : [la, 0.02, lg], '#E1D9CB', o)
-      camionnette(ajouter, ajouterFenetre, x, z, sens, o, prereglage, gab, atelierRoulant)
+      camionnette(ajouter, ajouterFenetre, x, z, sens, o, metierI, gab, atelierRoulant)
       return
     }
     ajouter('box', [x, 0.05, z], [3.9, 0.02, 2.6], '#E1D9CB', o) // la place
@@ -482,7 +508,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
     ...(options?.vivant ? { colis } : {}),
-    ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures }, fenetres, mobiles } : {}),
+    ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures, metier: metierI }, fenetres, mobiles } : {}),
     horsScene: {
       chantiers: Math.max(0, visibles.length - places.length), categories: catsHors,
       vehicules: Math.max(0, d.vehicules.filter((v) => v.actif).length - vehicules.length), demandes: Math.max(0, d.demandes.length - demandes.length),
@@ -684,6 +710,8 @@ export function assemblerAtelier(e: {
   membres: readonly MembreA[]
   /** Drapeau crmAtelierVivant seulement (lib/crm/vue.ts) : la forme juridique de la fiche ; absente, rien n'est ajouté. */
   formeJuridique?: string | null
+  /** Même drapeau : le nom et la ville de la fiche. */
+  entreprise?: { nom: string | null; ville: string | null }
 }): DonneesAtelier {
   const etapeChantier = new Map<string, string>()
   const clientChantier = new Map<string, string | null>()
@@ -703,6 +731,7 @@ export function assemblerAtelier(e: {
   return {
     jour: e.jour, metier: e.metier,
     ...(e.formeJuridique !== undefined ? { formeJuridique: e.formeJuridique } : {}),
+    ...(e.entreprise !== undefined ? { entreprise: e.entreprise } : {}),
     chantiers: e.chantiers.map((c) => {
       const t = taches.get(c.id)
       return {

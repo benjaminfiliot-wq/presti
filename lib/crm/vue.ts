@@ -106,7 +106,7 @@ function indicateursParChantier(uid: string, d: DossiersCrm, jour: string): Map<
   return sortie
 }
 
-export function construireVue(p: { uid: string; metier: string | null; formeJuridique?: string | null; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string }): Vue {
+export function construireVue(p: { uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null }; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string }): Vue {
   const { uid, d, maintenant } = p
   const jour = jourParis(maintenant)
   const tachesPar = new Map<string, { faite: boolean | null }[]>()
@@ -123,7 +123,7 @@ export function construireVue(p: { uid: string; metier: string | null; formeJuri
   const pl = pipeline(entreesPipeline)
   const af = aFaire(rappels, jour)
   for (const col of pl.colonnes) col.cartes = col.cartes.map((c) => { const r = prochainDe(c); return r ? { ...c, rappel: { echeance: r.echeance, heure: r.heure, type: r.type, retard: r.retard } } : c })
-  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: toutes, taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres, ...(p.formeJuridique !== undefined ? { formeJuridique: p.formeJuridique } : {}) })
+  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: toutes, taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres, ...(p.formeJuridique !== undefined ? { formeJuridique: p.formeJuridique } : {}), ...(p.entreprise !== undefined ? { entreprise: p.entreprise } : {}) })
   // Le panneau de l'atelier montre la frise et les indicateurs du chantier : ceux de sa carte et de lib/crm/chantier.ts, les mêmes
   // que la fiche chantier (même fonction, mêmes lignes).
   const cartesChantier = new Map(toutes.filter((c) => c.chantierId).map((c) => [c.chantierId as string, c]))
