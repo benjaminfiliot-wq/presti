@@ -5,7 +5,8 @@ import '@/app/crm/crm.css'
 import { useEffect, useState } from 'react'
 import Atelier from '@/app/crm/atelier/Atelier'
 import { PREREGLAGES, FILTRES, type DonneesAtelier, type Filtre, type Prereglage } from '@/lib/crm/atelier'
-import { DONNEES_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE } from '@/lib/crm/exemple'
+import { DONNEES_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineTypes } from '@/lib/crm/exemple'
+import { estTypeBat } from '@/lib/crm/carte'
 import type { NomVue } from '@/app/crm/atelier/Scene3D'
 import { actif } from '@/lib/flags'
 import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type Statut } from '@/lib/crm/infrastructure'
@@ -17,6 +18,8 @@ import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type 
 // &camion=1 (le dernier véhicule devient un camion benne) et &heure=0..24 (jour, crépuscule, nuit). Drapeau baissé : ignorés.
 // Lot 4 (même drapeau) : ?metier= accepte tous les métiers 3D (paysagiste, serrurier…), &stock=vide montre un stock vide, et la Vue
 // fictive (lib/crm/exemple.ts) est passée à l'atelier : salle d'attente et poste des assistants, avec leurs dialogues d'exemple.
+// Lot 5 (même drapeau) : &vitrine=etats&type=hotel (les quatre états d'un type), &vitrine=types (un chantier fini par type),
+// &vitrine=carte (douze chantiers à leur direction réelle), &sansbase=1 (la base de l'artisan n'est pas située : couronne de repli).
 const JOUR = JOUR_EXEMPLE
 const FICTIF = DONNEES_EXEMPLE
 const VIDE: DonneesAtelier = { jour: JOUR, metier: null, chantiers: [], materiaux: [], vehicules: [], membres: [], demandes: [] }
@@ -37,7 +40,10 @@ export default function Demo() {
   const camion = infra && p.get('camion') === '1'
   const metier3D = infra && (METIERS_3D as readonly string[]).includes(p.get('metier') ?? '') && !metier ? (p.get('metier') as Metier3D) : undefined
   const brut = p.get('vide') === '1' ? VIDE : base || statut || camion ? echantillonPourBase(FICTIF, base ?? 'entrepot', { statut, camion }) : FICTIF
-  const donnees = infra && p.get('stock') === 'vide' ? { ...brut, materiaux: [], reservations: [] } : brut
+  const vitrine = infra ? p.get('vitrine') : null
+  const avecVitrine = vitrine === 'etats' ? vitrineEtats(estTypeBat(p.get('type')) ? (p.get('type') as string) : 'maison') : vitrine === 'types' ? vitrineTypes() : vitrine === 'carte' ? vitrineCarte() : brut
+  const sansBase = infra && p.get('sansbase') === '1' ? { ...avecVitrine, carte: undefined, chantiers: avecVitrine.chantiers.map((c) => ({ ...c, lat: null, lng: null })) } : avecVitrine
+  const donnees = infra && p.get('stock') === 'vide' ? { ...sansBase, materiaux: [], reservations: [] } : sansBase
   return (
     <main style={{ background: 'var(--paper)', minHeight: '100vh', padding: 16 }}>
       <p className="crm-note" style={{ marginBottom: 8 }}>Démonstration interne · données fictives · rien n’est lu ni écrit.</p>

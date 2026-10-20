@@ -31,6 +31,7 @@ const T = (nom, cond, detail = '') => { if (cond) { verts++; console.log(`PASS $
 const lire = (rel) => fs.readFileSync(path.join(RACINE, rel), 'utf8').replace(/\r\n/g, '\n')
 const imp = (rel) => import(pathToFileURL(path.join(RACINE, rel)).href)
 const egal = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: true }).flatMap((e) => e.isDirectory() ? lister(path.join(dir, e.name)) : [path.join(dir, e.name).replace(/\\/g, '/')])
 const sha = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex')
 const sansCommentaires = (s) => s.replace(/^\s*\/\/.*$/gm, '').replace(/(^|[^:'"`\\])\/\/.*$/gm, '$1').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
 
@@ -38,6 +39,7 @@ const { FLAGS } = await imp('lib/flags.ts')
 const LEVE = FLAGS.crmAtelierVivant === true
 console.log(`Drapeau crmAtelierVivant : ${LEVE ? 'LEVÉ' : 'baissé'}`)
 const I = await imp('lib/crm/infrastructure.ts')
+const C = await imp('lib/crm/carte.ts')
 const At = await imp('lib/crm/atelier.ts')
 const { DONNEES_EXEMPLE: D } = await imp('lib/crm/exemple.ts')
 const U = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
@@ -101,33 +103,79 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
     for (const a of I.accessoiresBase(p, pl)) if (!dans(pl.interieur, a.p[0], a.p[2]) && !dans(pl.exterieur, a.p[0], a.p[2]) && !dans(pl.hall, a.p[0], a.p[2])) hors.push(`${p}/${b}:${a.k}@${a.p.map((v) => v.toFixed(1))}`)
   }
   T('B4 tout le matériel reste dans ses zones (dedans : établi et machines ; hall : mobilier ; dehors : structures) — rien sur les bureaux, les rayonnages ou les places', hors.length === 0, hors.slice(0, 5).join(' | '))
-  // — les chantiers —
-  T('B5 les chantiers typiques changent avec le métier (immeubles et commerces pour l’électricien et le peintre, granges pour le couvreur, extensions pour le maçon, maisons en coupe pour le plombier et le carreleur) ; type stable par chantier',
-    new Set(At.PREREGLAGES.map((p) => JSON.stringify(I.TYPES_CHANTIER[p]))).size >= 7 && I.TYPES_CHANTIER.electricien.includes('immeuble') && I.TYPES_CHANTIER.peintre.includes('commerce') && I.TYPES_CHANTIER.couvreur.includes('grange') && I.TYPES_CHANTIER.macon.includes('extension') && I.TYPES_CHANTIER.plombier.includes('coupe') && I.TYPES_CHANTIER.carreleur.includes('coupe') && I.typeChantier('macon', 0.37) === I.typeChantier('macon', 0.37))
-  const maison = (metier, pct, o = {}) => {
+  // — les chantiers (lot 5) : le bâtiment suit le VRAI chantier (son type, lib/crm/carte.ts) ; les QUATRE états valent pour tous les types —
+  const dessin = (type, phaseOuPct, metier = 'plombier', variante) => {
     const box = [], fen = []
     const add = (f, p, s, c, oo = -1, r = [0, 0, 0]) => { box.push({ f, p, s, c, r }); return box.length - 1 }
     const addF = (p, s, jour, nuit) => { fen.push({ p, s, c: jour, nuit }) }
-    const sommet = I.maisonChantier(add, addF, { x: 0, z: 0, w: 2.6, dd: 2.6, ht: 2.2, h: 0.37, id: 'chantier-fictif', pct, termine: pct >= 1, enCours: pct > 0 && pct < 1, o: 0, ...o }, metier)
-    return { box, fen, sommet }
+    const pct = typeof phaseOuPct === 'number' ? phaseOuPct : { pas_commence: 0, en_cours: 0.4, presque_fini: 0.85, fini: 1 }[phaseOuPct]
+    const sommet = I.maisonChantier(add, addF, { x: 0, z: 0, h: 0.37, id: 'chantier-test', pct, termine: pct >= 1, enCours: pct > 0 && pct < 1, o: 0, type, variante }, metier)
+    return { box, fen, sommet, json: JSON.stringify({ box, fen }) }
   }
-  T('B6 chaque métier a SON chantier (à 40 %, neuf dessins différents) ; chacun change avec l’avancement (0 %, 40 %, 80 %, terminé : quatre dessins)', new Set(At.PREREGLAGES.map((p) => JSON.stringify(maison(p, 0.4)))).size === At.PREREGLAGES.length && At.PREREGLAGES.every((p) => new Set([0, 0.4, 0.8, 1].map((v) => JSON.stringify(maison(p, v)))).size === 4))
-  const hautMurs = (pct) => Math.max(0, ...maison('macon', pct).box.filter((x) => x.c === I.P.parpaing && x.s[1] > 0.2).map((x) => x.p[1] + x.s[1] / 2))
-  T('B7 maçon (extension) : les murs de parpaings montent avec l’avancement (20 % < 50 % < 90 %) ; terminée, l’extension est enduite (plus de parpaing nu)', hautMurs(0.2) < hautMurs(0.5) && hautMurs(0.5) < hautMurs(0.9) && hautMurs(1) === 0, [0.2, 0.5, 0.9, 1].map(hautMurs).join())
-  const couvert = (pct) => maison('couvreur', pct).box.filter((x) => Math.abs(Math.abs(x.r[0]) - Math.PI / 4) < 1e-9 && x.s[1] === 0.08 && x.c !== I.P.bois).reduce((s, x) => s + x.s[0], 0)
-  const chevrons = (pct) => maison('couvreur', pct).box.filter((x) => x.c === I.P.bois && Math.abs(Math.abs(x.r[0]) - Math.PI / 4) < 1e-9).length
-  T('B8 couvreur : le toit se couvre avec l’avancement (tuiles croissantes, chevrons à nu décroissants) ; échafaudage tant que ce n’est pas fini', couvert(0.2) < couvert(0.6) && couvert(0.6) < couvert(1) && chevrons(0.2) > chevrons(0.6) && chevrons(1) === 0 && maison('couvreur', 0.5).box.some((x) => x.f === 'cyl' && x.c === I.P.ambre) && !maison('couvreur', 1).box.some((x) => x.f === 'cyl' && x.c === I.P.ambre))
-  T('B9 menuisier : les fenêtres posées (vitres) augmentent avec l’avancement ; les baies non posées restent sombres', maison('menuisier', 0.2).fen.length < maison('menuisier', 0.6).fen.length && maison('menuisier', 0.6).fen.length < maison('menuisier', 1).fen.length && maison('menuisier', 0.2).box.filter((x) => x.c === I.P.ardoise).length > maison('menuisier', 1).box.filter((x) => x.c === I.P.ardoise).length)
-  const carreaux = (pct) => maison('carreleur', pct).box.filter((x) => x.s[0] === 0.44 && x.s[1] === 0.03).length
-  T('B10 carreleur (maison en coupe) : le sol se carrelle (0, 10, 24 carreaux à 0 %, 40 %, terminé)', carreaux(0) === 0 && carreaux(0.4) === 10 && carreaux(1) === 24, [0, 0.4, 1].map(carreaux).join())
-  const allumees = (pct) => maison('electricien', pct).fen.filter((f) => f.nuit === I.P.lumiere).length
-  T('B11 électricien (immeuble) : le soir, les pièces raccordées s’allument au fil du chantier (plus à 80 % qu’à 20 %)', allumees(0.2) < allumees(0.8), `${allumees(0.2)} / ${allumees(0.8)}`)
-  const peint = (pct) => Math.max(0, ...maison('peintre', pct).box.filter((x) => I.PEINTURES.includes(x.c) && x.s[1] > 0.1).map((x) => x.s[1]))
-  T('B12 peintre : la peinture neuve monte sur la façade avec l’avancement', peint(0.2) < peint(0.7))
-  const plomb = (pct) => maison('plombier', pct).box.filter((x) => x.c === I.P.blanc && x.s[0] >= 0.36).length
-  T('B13 plombier (maison en coupe) : les appareils de la salle d’eau se posent au fil du chantier ; l’immeuble monte plus haut qu’une maison', plomb(0.2) < plomb(0.8) && maison('electricien', 0.5).sommet > maison('menuisier', 0.5).sommet)
-  T('B14 l’avancement dessiné est la donnée elle-même (60 % → 0,6), 1 si terminé ou à facturer, 0 sans donnée',
-    I.avancementDessine({ statut: 'en_cours', etape: null, avancement: 60 }) === 0.6 && I.avancementDessine({ statut: 'termine', etape: null, avancement: 40 }) === 1 && I.avancementDessine({ statut: 'en_cours', etape: 'a_facturer', avancement: 10 }) === 1 && I.avancementDessine({ statut: 'planifie', etape: null, avancement: null }) === 0)
+  const TYPES = [...C.TYPES_BATIMENT], PH = [...C.PHASES]
+  const haut = (d) => Math.max(...d.box.map((x) => x.p[1] + x.s[1] / 2))
+  const echaf = (d) => d.box.some((x) => x.f === 'cyl' && x.c === I.P.ambre)
+  const benne = (d) => d.box.some((x) => x.c === I.P.corailFonce && Math.abs(x.s[0] - 1.2) < 1e-9 && Math.abs(x.s[1] - 0.6) < 1e-9)
+  const fautes5 = []
+  for (const t of TYPES) {
+    const [a, b, c, d] = PH.map((p) => dessin(t, p))
+    if (new Set([a, b, c, d].map((x) => x.json)).size !== 4) fautes5.push(`${t} : états non distincts`)
+    if (haut(a) > 1.2 || a.box.some((x) => x.f === 'toit') || a.fen.length) fautes5.push(`${t} : pas commencé trop haut, toit ou fenêtres (${haut(a).toFixed(2)})`)
+    if (t !== 'exterieur' && !a.box.some((x) => x.c === I.P.beton)) fautes5.push(`${t} : pas de fondations`)
+    if (t !== 'exterieur' && (!(b.sommet > a.sommet) || b.fen.length || !echaf(b))) fautes5.push(`${t} : en cours (${b.sommet.toFixed(2)}, ${b.fen.length} fen.)`)
+    if (t === 'exterieur' && !(b.box.length < d.box.length)) fautes5.push(`${t} : progression ${a.box.length}/${b.box.length}/${d.box.length}`)
+    if (!benne(c) || (t !== 'exterieur' && !echaf(c))) fautes5.push(`${t} : presque fini sans échafaudage ou benne`)
+    if (echaf(d) || benne(d)) fautes5.push(`${t} : fini encore en travaux`)
+    if (t !== 'exterieur' && (Math.abs(c.sommet - d.sommet) > 1e-9 || d.sommet < b.sommet - 1e-9 || !d.fen.length)) fautes5.push(`${t} : sommets ${b.sommet.toFixed(2)}/${c.sommet.toFixed(2)}/${d.sommet.toFixed(2)}`)
+  }
+  T('B5 13 types × 4 états : pas commencé = terrain piqueté + fondations (≤ 1,2 m, ni toit ni fenêtre) ; en cours = la structure monte (échafaudage, aucune fenêtre posée) ; presque fini = le bâtiment est là (échafaudage, benne) ; fini = ni échafaudage ni benne ; quatre dessins par type', fautes5.length === 0, fautes5.slice(0, 6).join(' | '))
+  const silhouette = (d) => { const xs = d.box.map((x) => [x.p[0] - x.s[0] / 2, x.p[0] + x.s[0] / 2]).flat(), zs = d.box.map((x) => [x.p[2] - x.s[2] / 2, x.p[2] + x.s[2] / 2]).flat(); return [Math.round(haut(d) * 10), Math.round((Math.max(...xs) - Math.min(...xs)) * 10), Math.round((Math.max(...zs) - Math.min(...zs)) * 10), ...At.FORMES.map((f) => d.box.filter((x) => x.f === f).length), d.fen.length].join() }
+  T('B6 treize types, treize SILHOUETTES (hauteur, emprise, nombre de formes et de vitrages : toutes différentes, une fois finis)', new Set(TYPES.map((t) => silhouette(dessin(t, 'fini')))).size === TYPES.length && new Set(TYPES.map((t) => dessin(t, 'fini').json)).size === TYPES.length)
+  T('B7 le bâtiment suit le CHANTIER, plus le métier : fini, le même type est dessiné à l’identique pour les 18 métiers ; pendant les travaux, les matériaux du métier se voient (au moins 12 dessins différents sur 18)',
+    ['maison', 'hotel', 'restaurant'].every((t) => new Set(I.METIERS_3D.map((m) => dessin(t, 'fini', m).json)).size === 1) && new Set(I.METIERS_3D.map((m) => dessin('maison', 'en_cours', m).json)).size >= 12)
+  // Le bug du lot 5 : un chantier PAS COMMENCÉ dessiné en maison entière. Causes : l'étape « À facturer » du pipeline (facturé d'avance)
+  // valait « terminé », et les dessins ignoraient l'avancement. Pas commencé = statut à planifier / planifié, avancement nul ou 0 %.
+  const pasCommence = [{ statut: 'a_planifier', etape: 'chantier', avancement: null }, { statut: 'planifie', etape: 'a_facturer', avancement: null }, { statut: 'planifie', etape: 'paye', avancement: 0 }, { statut: 'a_planifier', etape: null, avancement: 0 }]
+  T('B8 BUG « pas commencé dessiné fini » : à planifier / planifié, avancement nul ou 0 % — même facturé d’avance (étape « À facturer ») — donne un terrain et des fondations pour CHAQUE type (≤ 1,2 m)',
+    pasCommence.every((c) => C.avancementDessine(c) === 0 && C.phaseDe(C.avancementDessine(c), false) === 'pas_commence' && TYPES.every((t) => haut(dessin(t, C.avancementDessine(c))) <= 1.2)))
+  T('B9 l’avancement dessiné suit le TRAVAIL : 60 % → 0,6 ; terminé → 1 ; en cours sans tâche cochée → 0,05 (les premiers rangs) ; à facturer mais en cours à 10 % → 0,1 ; seuils 0 / 75 % / 100 %',
+    C.avancementDessine({ statut: 'en_cours', etape: null, avancement: 60 }) === 0.6 && C.avancementDessine({ statut: 'termine', etape: null, avancement: 40 }) === 1 && C.avancementDessine({ statut: 'en_cours', etape: null, avancement: 0 }) === 0.05
+      && C.avancementDessine({ statut: 'en_cours', etape: 'a_facturer', avancement: 10 }) === 0.1 && I.avancementDessine === C.avancementDessine
+      && C.phaseDe(0) === 'pas_commence' && C.phaseDe(0.05) === 'en_cours' && C.phaseDe(0.74) === 'en_cours' && C.phaseDe(0.75) === 'presque_fini' && C.phaseDe(0.99) === 'presque_fini' && C.phaseDe(1) === 'fini' && C.phaseDe(0.3, true) === 'fini')
+  const cas = [['Salle de bain, étage', 'maison'], ['Cuisine ouverte', 'maison'], ['Colonne d’immeuble', 'immeuble'], ['Rénovation de l’Hôtel des Pins', 'hotel'], ['Terrasse du restaurant', 'restaurant'], ['Brasserie du port', 'restaurant'],
+    ['Résidence Les Vergers', 'immeuble'], ['Copropriété, parties communes', 'immeuble'], ['Appartement T3', 'appartement'], ['Boutique centre-ville', 'commerce'], ['Magasin de chaussures', 'commerce'], ['Plateau de bureaux', 'bureaux'],
+    ['École maternelle', 'ecole'], ['Cabinet médical', 'sante'], ['Clinique vétérinaire', 'sante'], ['Gymnase municipal', 'equipement'], ['Salle des fêtes', 'equipement'], ['Piscine municipale', 'equipement'],
+    ['Piscine coque', 'exterieur'], ['Aménagement du jardin', 'exterieur'], ['Terrasse bois', 'exterieur'], ['Hangar agricole', 'agricole'], ['Grange', 'agricole'], ['Entrepôt logistique', 'entrepot'], ['Résidence secondaire', 'maison'], ['Remplacement chaudière', 'maison']]
+  const ratees = cas.filter(([t, ty]) => C.deduireType(t) !== ty)
+  T('B10 type DÉDUIT du titre et de l’objet du devis par mots-clés (hôtel, restaurant/brasserie, immeuble/copropriété/résidence, appartement, boutique/magasin, bureaux, école, cabinet/clinique, gymnase/salle, jardin/terrasse/piscine → extérieur, hangar/grange…), repli « maison » ; le type POSÉ prime, un type inconnu est ignoré',
+    ratees.length === 0 && C.deduireType(null, 'Rénovation des sanitaires de l’hôtel') === 'hotel' && C.typeDuChantier({ type_batiment: 'bureaux', titre: 'Salle de bain' }).type === 'bureaux' && C.typeDuChantier({ type_batiment: 'bureaux', titre: 'x' }).deduit === false
+      && C.typeDuChantier({ type_batiment: 'chateau', titre: 'Hôtel' }).type === 'hotel' && C.typeDuChantier({ titre: 'Salle de bain' }).deduit === true && C.varianteExterieur('Piscine coque') === 'piscine' && C.varianteExterieur('Pelouse et haie') === 'jardin' && C.varianteExterieur('Terrasse bois') === 'terrasse',
+    ratees.map(([t, ty]) => `${t} → ${C.deduireType(t)} (attendu ${ty})`).join(' | '))
+  const grue = (d) => d.box.some((x) => x.c === I.P.ambre && Math.abs(x.s[0] - 3.2) < 1e-9)
+  T('B11 la grue au-delà de deux étages pendant les travaux (appartement, immeuble, hôtel, bureaux), jamais pour une maison ni une fois fini', TYPES.every((t) => grue(dessin(t, 'en_cours')) === (I.GABARITS_BATIMENT[t].etages >= 3)) && TYPES.every((t) => !grue(dessin(t, 'fini'))))
+  const deborde = []
+  for (const t of TYPES) for (const p of PH) for (const m of ['plombier', 'electricien', 'couvreur', 'paysagiste', 'macon']) for (const x of dessin(t, p, m).box) {
+    const tourne = x.r.some((v) => Math.abs(v) > 1e-9)
+    const ex = tourne ? 0 : x.s[0] / 2, ez = tourne ? 0 : x.s[2] / 2
+    if (Math.abs(x.p[0]) + ex > 2.26 || Math.abs(x.p[2]) + ez > 2.26) { deborde.push(`${t}/${p}/${m}:${x.f}@${x.p.map((v) => v.toFixed(2))}`); break }
+  }
+  T('B12 tout reste SUR la parcelle (4,4 m entre deux rues) : aucun morceau ne déborde sur la chaussée, pour 13 types × 4 états × 5 métiers', deborde.length === 0, deborde.slice(0, 5).join(' | '))
+  const chevauche = []
+  for (const t of TYPES) for (const p of ['en_cours', 'presque_fini']) for (const m of I.METIERS_3D) {
+    const pal = dessin(t, p, m).box.find((x) => x.c === I.P.bois && Math.abs(x.s[0] - 0.6) < 1e-9 && Math.abs(x.s[1] - 0.1) < 1e-9 && Math.abs(x.s[2] - 0.45) < 1e-9)
+    if (!pal) continue
+    for (const r of I.emprisesChantier(t, 0, 0, p, 0.37)) if (pal.p[0] + pal.s[0] / 2 > r.x0 && pal.p[0] - pal.s[0] / 2 < r.x1 && pal.p[2] + pal.s[2] / 2 > r.z0 && pal.p[2] - pal.s[2] / 2 < r.z1) { chevauche.push(`${t}/${p}/${m}`); break }
+  }
+  const avecAccent = TYPES.filter((t) => dessin(t, 'en_cours', 'electricien').box.some((x) => x.c === I.P.bois && Math.abs(x.s[0] - 0.6) < 1e-9 && Math.abs(x.s[2] - 0.45) < 1e-9)).length
+  T('B13 les matériaux du métier se posent sur une place LIBRE (ni le bâtiment et son échafaudage, ni la grue, ni la terrasse ou la cour) ; posés sur au moins 10 types sur 13', chevauche.length === 0 && avecAccent >= 10, `${chevauche.slice(0, 4).join(' | ')} · posés : ${avecAccent}`)
+  if (LEVE) {
+    const sc = scene(D, 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+    const hautDe = (titre) => sc.objets.find((o) => o.type === 'chantier' && o.libelle === titre)?.hauteur ?? null
+    const pasC = D.chantiers.filter((c) => (c.statut === 'planifie' || c.statut === 'a_planifier') && !c.avancement).map((c) => c.titre)
+    T('B14 dans l’exemple : les chantiers planifiés / à planifier sans tâche faite sont des terrains (épingle basse : sommet 1,1 m) ; l’hôtel en travaux est plus haut ; les types choisis sont dessinés',
+      pasC.length >= 3 && pasC.every((t) => Math.abs(hautDe(t) - (1.1 + 0.15 + 1.6)) < 1e-9) && D.chantiers.some((c) => c.typeBatiment === 'hotel') && D.chantiers.filter((c) => c.typeBatiment).length >= 5, pasC.map((t) => `${t}:${hautDe(t)}`).join(' '))
+  }
+
 }
 
 // ═══════════════════════ C. La scène ═══════════════════════
@@ -224,7 +272,7 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   T('E7 TOUT est derrière le drapeau : `infra = actif(\'crmAtelierVivant\')` ; drapeau baissé, l’appel à construireScene est celui d’avant, mot pour mot',
     at.includes("const infra = actif('crmAtelierVivant')") && at.includes(': construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base, metier3D])') && /\{infra && scene\.infra && \(/.test(at) && at.includes('heure={infra ? heure ?? null : null}'))
   T('E8 la forme juridique n’est LUE (jamais écrite) que drapeau levé : colonnes de la fiche conditionnelles, champ absent sinon',
-    srv.includes("const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville' : 'plan, metier')") && srv.includes("...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null } } : {})") && /select\(COLONNES_FICHE\(\)\)/.test(srv))
+    srv.includes("const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville, adresse, code_postal' : 'plan, metier')") && srv.includes("...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null }, siege: { adresse: fiche?.adresse ?? null, code_postal: fiche?.code_postal ?? null, ville: fiche?.ville ?? null } } : {})") && /select\(COLONNES_FICHE\(\)\)/.test(srv))
   T('E9 la démonstration lit ?base= (dont camion), ?statut=, ?camion= et ?heure= drapeau levé seulement, et ramène les données fictives au cas demandé', /const infra = actif\('crmAtelierVivant'\)/.test(demo) && /const base = infra && /.test(demo) && /const statut = infra && /.test(demo) && /const camion = infra && /.test(demo) && demo.includes('echantillonPourBase(FICTIF, base ?? \'entrepot\', { statut, camion })') && demo.includes('baseInitiale={base} heure={heure}'))
   T('E10 l’écran dit d’où vient le lieu (« déduit de vos données » / « choisi par vous ») dans le menu de l’atelier et dans le plan 2D',
     at.includes("scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'") && plan.includes("scene.infra.auto ? ' · déduit de vos données' : ' · choisi par vous'") && at.includes('LIBELLES_LIEU[b]'))
@@ -298,15 +346,15 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   T('I2 chaque métier de la liste est rattaché à SES structures (le libellé, passé par la correspondance par mots-clés, retombe sur le même jeu)', ref.every((r) => I.metier3DDe(r.libelle) === r.m3d), ref.filter((r) => I.metier3DDe(r.libelle) !== r.m3d).map((r) => `${r.libelle}→${I.metier3DDe(r.libelle)}≠${r.m3d}`).join(' | '))
   const libres = [['élagueur', 'paysagiste'], ['Frigoriste', 'climaticien'], ['serrurier-métallier', 'serrurier'], ['ravalement de façades', 'facadier'], ['charpente traditionnelle', 'charpentier'], ['pose de piscines', 'piscinier'], ['homme toutes mains', 'multiservice'], ['poseur de cloisons', 'plaquiste'], ['installateur de volets', 'vitrier'], ['métier inconnu', 'general'], [null, 'general']]
   T('I3 saisie libre : correspondance par mots-clés (élagueur → paysagiste, frigoriste → climaticien…), repli « tous corps d’état »', libres.every(([t, m]) => I.metier3DDe(t) === m), libres.filter(([t, m]) => I.metier3DDe(t) !== m).map(([t]) => t).join(', '))
-  T('I4 dix-huit jeux de structures (les neuf d’avant, recopiés à l’identique, et neuf nouveaux : paysagiste, serrurier, vitrier, plaquiste, façadier, charpentier, climaticien, piscinier, multiservice)', egal([...I.METIERS_HISTORIQUES], [...At.PREREGLAGES]) && I.METIERS_3D.length === 18 && I.METIERS_EN_PLUS.every((m) => I.SIGNATURES[m] && I.MATIERES[m] && I.TYPES_CHANTIER[m] && I.CATEGORIES_TYPIQUES[m]?.length))
+  T('I4 dix-huit jeux de structures (les neuf d’avant, recopiés à l’identique, et neuf nouveaux : paysagiste, serrurier, vitrier, plaquiste, façadier, charpentier, climaticien, piscinier, multiservice)', egal([...I.METIERS_HISTORIQUES], [...At.PREREGLAGES]) && I.METIERS_3D.length === 18 && I.METIERS_EN_PLUS.every((m) => I.SIGNATURES[m] && I.MATIERES[m] && I.CATEGORIES_TYPIQUES[m]?.length))
   const manque = []
   for (const p of I.METIERS_EN_PLUS) for (const b of ['atelier', 'entrepot']) { const ks = new Set(I.accessoiresBase(p, I.PLANS[b]).map((a) => a.k)); for (const k of I.SIGNATURES[p]) if (!ks.has(k)) manque.push(`${p}/${b}:${k}`) }
   T('I5 chaque nouveau métier montre ses structures (serre, pépinière ; racks de profilés, poste de soudure ; chevalets à vitrage ; plaques ; échafaudage de façade ; poutres et fermette ; PAC et groupe froid ; coques et filtration…)', manque.length === 0, manque.join(' | '))
   const scenes18 = []
   for (const m of I.METIERS_3D) for (const b of I.BASES) scenes18.push(sha(scene(I.echantillonPourBase(D, b), I.PROCHE[m], b, { infra: { base: b, metier: m } })))
   T('I6 18 métiers × 4 lieux : 72 maquettes toutes différentes', new Set(scenes18).size === 72, String(new Set(scenes18).size))
-  const maison = (metier, pct) => { const box = [], fen = []; I.maisonChantier((f, p, s, c, o, r = [0, 0, 0]) => { box.push({ f, p, s, c, r }); return box.length - 1 }, (p, s, j, n) => fen.push({ p, s, j, n }), { x: 0, z: 0, w: 2.6, dd: 2.6, ht: 2.2, h: 0.37, id: 'chantier-fictif', pct, termine: pct >= 1, enCours: pct > 0 && pct < 1, o: 0 }, metier); return JSON.stringify({ box, fen }) }
-  T('I7 les chantiers des nouveaux métiers changent avec l’avancement (jardin qui se crée, piscine qui se remplit, plaques posées, garde-corps, unités de clim, charpente…)', I.METIERS_EN_PLUS.every((m) => new Set([0, 0.4, 0.8, 1].map((v) => maison(m, v))).size === 4))
+  const maison = (metier, pct, type = 'maison') => { const box = [], fen = []; I.maisonChantier((f, p, s, c, o, r = [0, 0, 0]) => { box.push({ f, p, s, c, r }); return box.length - 1 }, (p, s, j, n) => fen.push({ p, s, j, n }), { x: 0, z: 0, h: 0.37, id: 'chantier-test', pct, termine: pct >= 1, enCours: pct > 0 && pct < 1, o: 0, type }, metier); return JSON.stringify({ box, fen }) }
+  T('I7 les chantiers des nouveaux métiers changent avec l’avancement (lot 5 : quatre états, leurs matériaux pendant les travaux)', I.METIERS_EN_PLUS.every((m) => new Set([0, 0.4, 0.8, 1].map((v) => maison(m, v))).size === 4 && new Set([0, 0.4, 0.8, 1].map((v) => maison(m, v, 'exterieur'))).size === 4))
   // — I8-I11 : tout ce qui se voit est cliquable et utile —
   const types = new Set(), sansPanneau = [], decorCliquable = []
   const panneau = lire('app/crm/atelier/Panneau.tsx')
@@ -351,6 +399,103 @@ const scene = (d, p, base = null, o = {}) => At.construireScene(d, p, { infra: {
   const at = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), css = sansCommentaires(lire('app/crm/atelier/atelier.css'))
   T('I16 la bande des indicateurs défile (barre fine visible, molette — écouteur non passif — et doigt), ombres de bord, libellés entiers ; « Réglages », « ? » et « Plan 2D » restent hors de la bande',
     /function Bande\(/.test(at) && /addEventListener\('wheel', molette, \{ passive: false \}\)/.test(at) && /data-gauche=/.test(at) && /scrollbar-width: thin/.test(css) && /\.atl-bande\[data-gauche="1"\]\[data-droite="1"\]/.test(css) && !/@media \(max-width: 1599px\)/.test(css) && at.indexOf('</Bande>') < at.indexOf('className="atl-reglages"') && at.indexOf('</Bande>') < at.indexOf('className="atl-bascule"'))
+}
+
+// ═══════════════════════ K. Lot 5 (20/10, retours de Benj) : la CARTE — positions réelles, validation, type de bâtiment ═══════════════════════
+if (LEVE) {
+  const Ex = await imp('lib/crm/exemple.ts')
+  const G = await imp('lib/crm/geocodage.ts')
+  const V = await imp('lib/crm/valider.ts')
+  const Vue = await imp('lib/crm/vue.ts')
+  const CENTRE = [(I.ENCLOS.x0 + I.ENCLOS.x1) / 2, (I.ENCLOS.z0 + I.ENCLOS.z1) / 2], DEMI = [(I.ENCLOS.x1 - I.ENCLOS.x0) / 2, (I.ENCLOS.z1 - I.ENCLOS.z0) / 2]
+  const REPLI = At.emplacementsChantiers(100000).filter(I.horsEnclos).map((p) => [p[0], p[2]])
+  const placer = (base, chantiers) => C.placerChantiers({ base, chantiers, centre: CENTRE, demi: DEMI, libre: (x, z) => I.horsEnclos([x, 0, z]), repli: REPLI })
+  const BASE = { lat: 46, lng: 2 }
+  const pt = (est, nord) => ({ lat: BASE.lat + nord / 110.57, lng: BASE.lng + est / 77.33 })
+  // Un tirage stable (aucun hasard) : 30 chantiers de 0,1 à 120 km, dans toutes les directions, dont 6 sans position.
+  const tirage = Array.from({ length: 30 }, (_, i) => { const a = ((i * 137.5) % 360) * Math.PI / 180, km = 0.1 * Math.pow(1.27, i); return { id: U(100 + i), geo: i % 5 === 4 ? null : pt(km * Math.cos(a), km * Math.sin(a)) } })
+  const p1 = placer(BASE, tirage), p2 = placer(BASE, tirage)
+  T('K1 placement DÉTERMINISTE : mêmes chantiers, mêmes places (deux fois) ; l’ordre de la liste est gardé', egal(p1, p2) && p1.length === 30 && egal(p1.map((p) => p.id), tirage.map((c) => c.id)))
+  const cles = new Set(p1.map((p) => `${p.p[0]}:${p.p[1]}`))
+  let proches = 0
+  for (const a of p1) for (const b of p1) if (a !== b && Math.max(Math.abs(a.p[0] - b.p[0]), Math.abs(a.p[1] - b.p[1])) < 5.6 - 1e-6) proches++
+  T('K2 AUCUN chevauchement : une parcelle par chantier (30 chantiers), deux parcelles à 5,6 m au moins, toutes hors de l’enclos de la base', cles.size === 30 && proches === 0 && p1.every((p) => I.horsEnclos([p.p[0], 0, p.p[1]])), `${cles.size} parcelles, ${proches} trop proches`)
+  const dir = placer(BASE, [{ id: 'n', geo: pt(0, 6) }, { id: 'e', geo: pt(6, 0) }, { id: 's', geo: pt(0, -6) }, { id: 'o', geo: pt(-6, 0) }])
+  const P_ = Object.fromEntries(dir.map((p) => [p.id, p.p]))
+  const loin = placer(BASE, [1, 5, 20, 100].map((km, i) => ({ id: `k${i}`, geo: pt(km, 0.05 * i) }))).map((p) => p.p[0])
+  T('K3 la VRAIE direction depuis la base (nord en haut : z plus petit ; est : x plus grand…) et la distance comprimée (1, 5, 20, 100 km → de plus en plus loin, sans sortir de la carte)',
+    P_.n[1] < CENTRE[1] && Math.abs(P_.n[0] - CENTRE[0]) < 6 && P_.s[1] > CENTRE[1] && P_.e[0] > CENTRE[0] && P_.o[0] < CENTRE[0] && loin.every((x, i) => i === 0 || x > loin[i - 1]) && loin[3] - CENTRE[0] < 75, JSON.stringify({ P_, loin }))
+  const sansPos = jeu({ chantiers: D.chantiers.map((c) => ({ ...c, lat: null, lng: null })) })
+  const scSans = scene({ ...D, carte: undefined, chantiers: sansPos.chantiers }, 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const attendues = REPLI.slice(0, scSans.objets.filter((o) => o.type === 'chantier').length)
+  T('K4 sans position connue (adresse absente ou introuvable, base non située) : la COURONNE de repli d’avant, dans l’ordre d’avant', egal(scSans.objets.filter((o) => o.type === 'chantier').map((o) => [o.centre[0], o.centre[2]]), attendues) && scSans.carte.reels === 0)
+  const petit = scene({ ...D, chantiers: D.chantiers.slice(0, 3).map((c, i) => ({ ...c, ...pt(0.3 * (i + 1), 0.2) })) }, 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const grand = scene(Ex.vitrineCarte(), 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const aire = (s) => (s.carte.max[0] - s.carte.min[0]) * (s.carte.max[1] - s.carte.min[1])
+  const dedans = (s) => s.objets.filter((o) => o.type === 'chantier').every((o) => o.centre[0] > s.carte.min[0] && o.centre[0] < s.carte.max[0] && o.centre[2] > s.carte.min[1] && o.centre[2] < s.carte.max[1] && o.centre[0] >= s.bornes.min[0] && o.centre[0] <= s.bornes.max[0] && o.centre[2] >= s.bornes.min[2] && o.centre[2] <= s.bornes.max[2])
+  const s3d = lire('app/crm/atelier/Scene3D.tsx')
+  T('K5 la carte GRANDIT avec le nombre et l’étalement des chantiers (12 chantiers jusqu’à 40 km > 3 chantiers à moins d’un km) ; elle les contient tous ; la caméra vise le centre de ce qui est posé, le sol et les ombres couvrent la carte',
+    aire(grand) > 2 * aire(petit) && dedans(grand) && dedans(petit) && grand.carte.reels === 12 && /const cibleDe = \(scene: Scene\)/.test(s3d) && /target=\{cibleDe\(scene\)\}/.test(s3d) && /<planeGeometry args=\{sol\.taille\} \/>/.test(s3d) && /shadow-camera-left=\{-sol\.ombre\}/.test(s3d), `${aire(petit)} → ${aire(grand)}`)
+  // Les routes relient la base à CHAQUE chantier : une route (boîte couleur chaussée) passe devant chaque parcelle, et le chemin existe.
+  const routes = toutes(grand).filter((x) => x.c === '#DDD5C7')
+  const devant = grand.objets.filter((o) => o.type === 'chantier').every((o) => routes.some((r) => Math.abs(r.p[0] - o.centre[0]) <= r.s[0] / 2 + 1e-6 && Math.abs(r.p[2] - (o.centre[2] + 2.8)) <= r.s[2] / 2 + 1e-6))
+  T('K6 les ROUTES relient la base aux chantiers : une route passe devant chaque parcelle et le plus court chemin par la trame existe pour chacun (12 sur 12)', devant && grand.carte.routes === 12)
+  // Le chantier VALIDÉ quitte la scène, pas les données.
+  const valide = { ...D.chantiers[0], retireCarte: '2026-10-12T09:00:00.000Z' }
+  const dV = { ...D, chantiers: [valide, ...D.chantiers.slice(1)] }
+  const sV = scene(dV, 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const ligne = { ...Vue.construireVue({ uid: 'u', metier: null, d: { devis: [], factures: [], leads: [], chantiers: [{ id: U(1), artisan_id: 'u', devis_id: null, client_nom: null, titre: 'Chantier validé', adresse: null, code_postal: null, ville: null, statut: 'termine', date_debut: null, date_fin_prevue: null, date_fin_reelle: '2026-10-12', vehicule_id: null, notes: null, cree_le: '2026-10-01T00:00:00Z', maj_le: '2026-10-12T00:00:00Z', type_batiment: null, lat: null, lng: null, geocode_le: null, retire_carte_le: '2026-10-12T09:00:00Z' }], taches: [], materiaux: [], deplacements: [], carnet: [], vehicules: [], membres: [], equipe: [], tronque: false }, maintenant: new Date('2026-10-12T10:00:00Z'), idDe: (k) => k }) }
+  T('K7 retire_carte_le : le chantier validé est EXCLU de la scène (infrastructure) mais PRÉSENT dans la vue (liste des chantiers avec sa date, données de l’atelier, pipeline) ; drapeau baissé, la scène d’avant le garde',
+    !sV.objets.some((o) => o.ref === valide.id) && dV.chantiers.some((c) => c.id === valide.id) && At.construireScene(dV, 'plombier').objets.some((o) => o.ref === valide.id)
+      && ligne.chantiers[0]?.retireCarte === '2026-10-12T09:00:00Z' && ligne.atelier.chantiers[0]?.retireCarte === '2026-10-12T09:00:00Z' && ligne.pipeline.colonnes.some((c) => c.cartes.some((k) => k.chantierId === U(1))))
+  // Le géocodeur, SIMULÉ : ce qui part, combien de fois, ce qui s'écrit.
+  const appels = [], ecrits = []
+  const reponse = (lat, lng, score = 0.9) => ({ ok: true, status: 200, json: async () => ({ features: [{ geometry: { coordinates: [lng, lat] }, properties: { score } }] }) })
+  const fauxFetch = async (url) => { appels.push(String(url)); const q = new URL(url).searchParams.get('q'); if (/introuvable/.test(q)) return { ok: true, status: 200, json: async () => ({ features: [] }) }; if (/panne/.test(q)) throw new Error('réseau'); return reponse(46.1, 2.1) }
+  G.viderCacheBase()
+  const ch = Array.from({ length: 14 }, (_, i) => ({ id: U(300 + i), statut: 'en_cours', devis_id: null, client_nom: 'Client fictif Secret', adresse: i === 1 ? '1 rue introuvable' : i === 2 ? '2 rue en panne' : `${i} rue de l’Exemple`, code_postal: '00000', ville: 'Ville fictive', lat: null, lng: null, geocode_le: null, retire_carte_le: null }))
+  ch.push({ ...ch[3], id: U(399), geocode_le: '2026-10-01T00:00:00Z', lat: 46.2, lng: 2.2 }, { ...ch[4], id: U(398), retire_carte_le: '2026-10-01T00:00:00Z' }, { ...ch[5], id: U(397), statut: 'annule' })
+  const r1 = await G.preparerCarte({ uid: 'u', chantiers: ch, adressesDevis: new Map(), siege: { adresse: '3 place de l’Exemple', code_postal: '00000', ville: 'Ville fictive' }, fetchImpl: fauxFetch, ecrire: async (id, champs) => { ecrits.push({ id, ...champs }) } })
+  const qs = appels.map((u) => new URL(u))
+  T('K8 géocodage SIMULÉ : la Base Adresse Nationale (api-adresse.data.gouv.fr, limit=1) reçoit l’adresse, le code postal et la ville SEULEMENT — jamais le nom du client — et au plus 10 recherches par vue, base comprise',
+    qs.length === 10 && r1.recherches === 10 && qs.every((u) => u.host === 'api-adresse.data.gouv.fr' && u.searchParams.get('limit') === '1' && [...u.searchParams.keys()].join() === 'q,limit' && !/Secret|Client/.test(u.searchParams.get('q'))) && r1.base?.lat === 46.1, qs.map((u) => u.searchParams.get('q')).slice(0, 3).join(' | '))
+  T('K9 ce qui s’écrit : lat / lng / geocode_le pour une adresse trouvée ; geocode_le SEUL pour une introuvable (on ne redemande pas) ; RIEN sur une panne (on réessaiera) ; déjà situé, retiré de la carte ou annulé : aucune recherche',
+    ecrits.some((e) => e.id === U(300) && e.lat === 46.1 && e.geocode_le) && ecrits.some((e) => e.id === U(301) && e.lat === null && e.lng === null && e.geocode_le) && !ecrits.some((e) => e.id === U(302))
+      && !qs.some((u) => /^3 rue/.test(u.searchParams.get('q')) && false) && ![U(399), U(398), U(397)].some((id) => ecrits.some((e) => e.id === id)) && r1.positions.get(U(399))?.lat === 46.2 && r1.positions.get(U(300))?.lat === 46.1)
+  appels.length = 0
+  await G.preparerCarte({ uid: 'u', chantiers: [], adressesDevis: new Map(), siege: { adresse: '3 place de l’Exemple', code_postal: '00000', ville: 'Ville fictive' }, fetchImpl: fauxFetch, ecrire: async () => {} })
+  const lent = await C.chercherAdresse('5 rue lente 00000', (url, init) => new Promise((ok, ko) => { init.signal.addEventListener('abort', () => ko(new Error('abandon'))) }), 60)
+  T('K10 la base est gardée en mémoire (pas de seconde recherche) ; une BAN qui ne répond pas est abandonnée au délai (4 s en vrai) sans rien écrire ; score trop bas ou coordonnées absurdes → introuvable ; texte < 3 caractères → pas de requête',
+    appels.length === 0 && 'panne' in lent && C.BAN_DELAI_MS === 4000 && C.BAN_MAX_PAR_VUE === 10 && C.lireReponseBan({ features: [{ geometry: { coordinates: [2, 46] }, properties: { score: 0.2 } }] }) === null && C.lireReponseBan({ features: [{ geometry: { coordinates: [200, 46] }, properties: { score: 0.9 } }] }) === null
+      && C.requeteAdresse({ adresse: ' ', code_postal: '', ville: 'a' }) === null && C.requeteAdresse({ adresse: '1 rue A', code_postal: '00000', ville: 'Ville' }) === '1 rue A 00000 Ville')
+  // La validation : la règle pure et les routes.
+  T('K11 « Valider le chantier » s’offre quand TOUTES les tâches sont faites (au moins une) ou le chantier terminé ; jamais annulé ni déjà retiré ; la fin réelle déjà posée est gardée ; corps stricts (action valider / remettre ; validation_auto booléen seul)',
+    C.peutValider({ statut: 'en_cours', taches: { total: 3, faites: 3 } }) && !C.peutValider({ statut: 'en_cours', taches: { total: 3, faites: 2 } }) && !C.peutValider({ statut: 'en_cours', taches: { total: 0, faites: 0 } }) && C.peutValider({ statut: 'termine', taches: { total: 0, faites: 0 } })
+      && !C.peutValider({ statut: 'annule', taches: { total: 1, faites: 1 } }) && !C.peutValider({ statut: 'termine', taches: null, retire_carte_le: '2026-10-01' })
+      && egal(C.champsValidation({ date_fin_reelle: '2026-10-05' }, '2026-10-12', new Date('2026-10-12T10:00:00Z')), { statut: 'termine', date_fin_reelle: '2026-10-05', retire_carte_le: '2026-10-12T10:00:00.000Z' }) && C.champsValidation({ date_fin_reelle: null }, '2026-10-12', new Date()).date_fin_reelle === '2026-10-12'
+      && V.validerActionCarte({ action: 'valider' }).ok && V.validerActionCarte({ action: 'remettre' }).ok && !V.validerActionCarte({ action: 'supprimer' }).ok && !V.validerActionCarte({ action: 'valider', statut: 'termine' }).ok
+      && V.validerReglagesCrm({ validation_auto: true }).ok && !V.validerReglagesCrm({ validation_auto: 'oui' }).ok && !V.validerReglagesCrm({ validation_auto: true, artisan_id: 'x' }).ok
+      && V.validerModificationChantier({ type_batiment: 'hotel' }).ok && V.validerModificationChantier({ type_batiment: null }).ok && !V.validerModificationChantier({ type_batiment: 'chateau' }).ok && egal([...V.TYPES_BATIMENT], [...C.TYPES_BATIMENT]))
+  const rVal = sansCommentaires(lire('app/api/crm/chantiers/[id]/valider/route.ts')), rReg = sansCommentaires(lire('app/api/crm/reglages/route.ts')), rTache = sansCommentaires(lire('app/api/crm/taches/[id]/route.ts')), rCh = sansCommentaires(lire('app/api/crm/chantiers/[id]/route.ts')), rVue = sansCommentaires(lire('app/api/crm/vue/route.ts')), geoSrc = sansCommentaires(lire('lib/crm/geocodage.ts')), srvSrc = sansCommentaires(lire('lib/crm/serveur.ts'))
+  const eqUid = (src) => (src.match(/\.from\('[a-z_]+'\)/g) ?? []).length > 0 && (src.match(/\.from\('[a-z_]+'\)/g) ?? []).length <= (src.match(/\.eq\('artisan_id', (g\.uid|uid)\)|artisan_id: g\.uid/g) ?? []).length
+  T('K12 routes de la carte : POST /api/crm/chantiers/[id]/valider et GET/PUT /api/crm/reglages derrière gardeCrm (drapeau crmAtelierVivant) ; chaque lecture et écriture filtrée sur artisan_id = uid ; la validation vérifie les tâches AVANT d’écrire (409 sinon) et n’écrase pas un chantier déjà retiré',
+    /gardeCrm\(req, \{ drapeau: 'crmAtelierVivant' \}\)/.test(rVal) && /gardeCrm\(req, \{ drapeau: 'crmAtelierVivant' \}\)/.test(rReg) && eqUid(rVal) && /upsert\(\{ artisan_id: g\.uid, validation_auto/.test(rReg)
+      && rVal.indexOf('peutValider(') < rVal.indexOf("update({ ...champs") && /\.is\('retire_carte_le', null\)/.test(rVal) && /409/.test(rVal) && /validerActionCarte\(corps\.valeur\)/.test(rVal) && /validerReglagesCrm\(corps\.valeur\)/.test(rReg))
+  T('K13 validation AUTOMATIQUE par la route qui coche une tâche : seulement drapeau levé, réglage posé, la DERNIÈRE tâche cochée (toutes faites), chantier encore sur la carte ; tout filtré sur le compte ; la tâche cochée n’est jamais défaite par une panne',
+    /if \(data\[0\]\.faite && actif\('crmAtelierVivant'\)\) chantierValide = await validerSiFini\(g\.uid, data\[0\]\.chantier_id as string\)/.test(rTache) && /const reglages = await lireReglages\(uid\)\s*\n\s*if \(!reglages\.validationAuto\) return false/.test(rTache)
+      && /t\.total === 0 \|\| t\.faites < t\.total/.test(rTache) && /\.eq\('chantier_id', chantierId\)\.eq\('artisan_id', uid\)/.test(rTache) && /\.eq\('id', chantierId\)\.eq\('artisan_id', uid\)\.is\('retire_carte_le', null\)/.test(rTache) && /from\('crm_reglages'\)\.select\('validation_auto'\)\.eq\('artisan_id', uid\)/.test(srvSrc))
+  T('K14 fiche et modification : le type de bâtiment (13 valeurs, null = déduit) refusé drapeau baissé ; une adresse modifiée efface la position (lat, lng, geocode_le à NULL : elle sera cherchée de nouveau) ; un chantier rouvert revient sur la carte',
+    /if \('type_batiment' in v\.valeur && !actif\('crmAtelierVivant'\)\) return erreur\('Champ inconnu : type_batiment\.', 400\)/.test(rCh) && /Object\.assign\(carte, \{ lat: null, lng: null, geocode_le: null \}\)/.test(rCh) && /carte\.retire_carte_le = null/.test(rCh) && /\.update\(\{ \.\.\.champs, \.\.\.carte, maj_le/.test(rCh)
+      && /const carte = actif\('crmAtelierVivant'\) \? ficheCarte\(/.test(rCh) && /if \('type_batiment' in v\.valeur && !actif\('crmAtelierVivant'\)\)/.test(sansCommentaires(lire('app/api/crm/chantiers/route.ts'))))
+  T('K15 la vue géocode côté SERVEUR seulement drapeau levé (preparerCarte, au plus 10 recherches, adresse du siège sans nom) ; l’écriture est filtrée sur le compte et sur geocode_le IS NULL ; aucune autre source ne connaît l’adresse de la BAN ; les colonnes de la carte ne sont lues que drapeau levé',
+    /if \(actif\('crmAtelierVivant'\)\) \{[\s\S]*preparerCarte\(\{ uid: g\.uid/.test(rVue) && /\.eq\('id', id\)\.eq\('artisan_id', p\.uid\)\.is\('geocode_le', null\)/.test(geoSrc) && !/client_nom/.test(geoSrc)
+      && [...lister('app'), ...lister('lib')].filter((f) => /\.(tsx?)$/.test(f) && sansCommentaires(lire(f)).includes('api-adresse.data.gouv.fr')).every((f) => f === 'lib/crm/carte.ts') && /export const colonnesChantiers = \(\): string => \(actif\('crmAtelierVivant'\) \? `\$\{COLONNES\.chantiers\}, \$\{COLONNES_CARTE\}` : COLONNES\.chantiers\)/.test(srvSrc))
+  const reg = lire('docs/registre-traitements.md')
+  T('K16 le registre des traitements dit le géocodage : finalité, donnée envoyée (adresse, code postal, ville — pas le nom), destinataire (Base Adresse Nationale, api-adresse.data.gouv.fr)', /## 13\. Le géocodage des chantiers/.test(reg) && /\*\*Finalité\*\*/.test(reg.slice(reg.indexOf('## 13.'))) && /api-adresse\.data\.gouv\.fr/.test(reg) && /jamais le nom/.test(reg.slice(reg.indexOf('## 13.'))))
+  const ate = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), carteUi = sansCommentaires(lire('app/crm/atelier/Carte.tsx')), fiche = sansCommentaires(lire('app/crm/FicheChantier.tsx')), liste = sansCommentaires(lire('app/crm/Chantiers.tsx')), pan = sansCommentaires(lire('app/crm/atelier/Panneau.tsx'))
+  T('K17 l’écran : « Valider le chantier » dans le panneau de l’atelier et dans la fiche, « Remettre sur la carte », le sélecteur du type (fiche et panneau), « Voir les chantiers validés » dans la liste, le réglage « Valider automatiquement… » (PUT /api/crm/reglages) ; dans l’exemple et la démonstration, SIMULÉ (aucun appel)',
+    /data-atelier-valider/.test(carteUi) && /data-atelier-remettre/.test(carteUi) && /<CarteChantierPanneau c=\{c\} actions=\{carte\} \/>/.test(pan) && /data-crm-valider/.test(fiche) && /data-crm-remettre/.test(fiche) && /<ChoixTypeBatiment/.test(fiche) && /Voir les chantiers validés/.test(liste)
+      && /data-atelier-validation-auto/.test(ate) && /appel\('\/api\/crm\/reglages', \{ method: 'PUT'/.test(ate) && /if \(simule\) \{ setValidationAuto\(oui\); setNoteAuto\('Exemple : réglage simulé, rien n’est enregistré\.'\); return \}/.test(ate) && /if \(!simule\) \{\s*const r = 'action' in quoi/.test(ate) && /if \(exemple\) \{[\s\S]{0,300}return\s*\}/.test(fiche))
 }
 
 // ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════
@@ -402,10 +547,32 @@ if (process.env.TEST_BASE) {
   const dialogue = await p3.waitForSelector('[data-atelier-dialogue]', { timeout: 5000 }).then(() => true).catch(() => false)
   await p3.click('[data-atelier-dialogue] button.primary').catch(() => {})
   const envoye = await p3.waitForSelector('[data-atelier-envoye]', { timeout: 5000 }).then(() => true).catch(() => false)
+  // H6 (lot 5) : « Valider le chantier » dans l'exemple — le chantier terminé quitte la carte (simulé, rien d'écrit), « Remettre » le rend.
+  let validation = null
+  if (LEVE) {
+    const p6 = await gpu.newPage({ viewport: { width: 1440, height: 900 } })
+    await p6.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=plombier&mode=3d&mesure=1&heure=11`, { waitUntil: 'networkidle' })
+    await p6.waitForFunction(() => window.__atelier && window.__atelier.fps > 0 && window.__atelierEcran, null, { timeout: 120000 })
+    const cle = `chantier:${U(3)}`
+    await p6.click('details.atl-liste-3d summary').catch(() => {})
+    await p6.click(`[data-atelier-objet="${cle}"]`).catch(() => {})
+    const avant = await p6.waitForSelector('[data-atelier-valider]', { timeout: 8000 }).then(() => true).catch(() => false)
+    const surCarteAvant = await p6.evaluate((c) => window.__atelierEcran(c) !== null, cle)
+    await p6.click('[data-atelier-valider]').catch(() => {})
+    const bandeau = await p6.waitForSelector('[data-atelier-valide]', { timeout: 8000 }).then(() => true).catch(() => false)
+    await p6.waitForTimeout(400)
+    const surCarteApres = await p6.evaluate((c) => window.__atelierEcran(c) !== null, cle)
+    await p6.click('[data-atelier-remettre]').catch(() => {})
+    await p6.waitForTimeout(400)
+    const revenu = await p6.evaluate((c) => window.__atelierEcran(c) !== null, cle)
+    validation = { avant, surCarteAvant, bandeau, surCarteApres, revenu }
+    await p6.close()
+  }
   await gpu.close()
   await nav.close()
   T('H3 en entrepôt, un clic dans la 3D sur le camion benne ouvre SON panneau ; sur le camion de livraison, le panneau « Camion de livraison » (Playwright)', titreBenne !== null && /Camion benne/.test(titreBenne) && titreLivr === 'Camion de livraison', JSON.stringify({ titreBenne, titreLivr }))
   T('H4 la bande des indicateurs défile horizontalement ; « Réglages » et « Plan 2D » sont hors de la bande', bande?.defile === 'auto' && bande.reglagesHors && bande.planHors, JSON.stringify(bande))
+  if (LEVE) T('H6 « Valider le chantier » (exemple, Playwright) : le bouton est dans le panneau du chantier terminé ; après le clic, le bandeau le dit et le bâtiment a QUITTÉ la carte ; « Remettre sur la carte » le fait revenir', !!validation && validation.avant && validation.surCarteAvant && validation.bandeau && !validation.surCarteApres && validation.revenu, JSON.stringify(validation))
   T('H5 « Répondre » dans l’exemple ouvre un vrai dialogue (message du client, réponse proposée) ; « Valider et envoyer » montre l’effet sans rien envoyer', dialogue && envoye, JSON.stringify({ dialogue, envoye }))
   T('H1 la barre tient sur UNE ligne à 1280, 1440 et 1920 px, « Plan 2D » visible (Playwright)', res.every((r) => r.lignes === 1 && r.plan2d), JSON.stringify(res))
   T('H2 sur téléphone (390 px), les sélecteurs métier et lieu ne prennent aucune hauteur (rangés dans le menu fermé)', selectsVisibles === 0, String(selectsVisibles))

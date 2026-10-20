@@ -8,7 +8,7 @@
 //
 // Noms clairement fictifs (« Client fictif A », « Négoce fictif Nord »), adresses e-mail en .invalid (domaine qui ne peut
 // exister), aucun téléphone, immatriculations AA-00x-AA.
-import { construireFicheChantier, construireFicheClient, construireVue, type ChantierLigne, type DevisLigne, type DossiersCrm, type EntreeJournal, type FactureLigne, type FicheChantier, type FicheClient, type LeadLigne, type MateriauLigne, type Membre, type NoteCrm, type ReservationFiche, type TacheFiche, type Vehicule, type Vue } from './vue.ts'
+import { construireFicheChantier, construireFicheClient, construireVue, ficheCarte, type ChantierLigne, type DevisLigne, type DossiersCrm, type EntreeJournal, type FactureLigne, type FicheChantier, type FicheClient, type LeadLigne, type MateriauLigne, type Membre, type NoteCrm, type ReservationFiche, type TacheFiche, type Vehicule, type Vue } from './vue.ts'
 import { actif } from '../flags.ts'
 import { regrouperClients, trouverGroupe } from './clients.ts'
 import type { DonneesAtelier } from './atelier.ts'
@@ -137,8 +137,23 @@ const chantier = (n: number, devisN: number | null, titre: string, statut: strin
   id: ID(n), artisan_id: ART, devis_id: devisN ? ID(devisN) : null, client_nom: null, titre, adresse: null, code_postal: null, ville: null, statut,
   date_debut: debut, date_fin_prevue: fin, date_fin_reelle: null, vehicule_id: vehicule ? ID(vehicule) : null, notes: null,
   // Créé au plus tard la veille du jour de l'exemple : un chantier planifié pour demain n'a pas été créé demain.
-  cree_le: T(debut && debut < '2026-10-11' ? debut : '2026-10-11'), maj_le: T('2026-10-11'), ...extra,
+  cree_le: T(debut && debut < '2026-10-11' ? debut : '2026-10-11'), maj_le: T('2026-10-11'), ...carteDe(n), ...extra,
 })
+// ── La carte (drapeau crmAtelierVivant, lot 5) : la base FICTIVE de l'exemple et la place de ses chantiers, en kilomètres vers l'est et
+//    vers le nord depuis elle (positions de démonstration, aucune adresse réelle) ; et le type de bâtiment de quelques-uns, comme
+//    l'artisan l'aurait choisi (les autres sont déduits de leur titre). Drapeau baissé : rien de tout cela n'existe.
+const BASE_EXEMPLE = { lat: 46, lng: 2 }
+const geo = (est: number, nord: number) => ({ lat: Math.round((BASE_EXEMPLE.lat + nord / 110.57) * 1e6) / 1e6, lng: Math.round((BASE_EXEMPLE.lng + est / 77.33) * 1e6) / 1e6 })
+const CARTE: Record<number, { type: string | null; est: number; nord: number }> = {
+  1: { type: null, est: 1.2, nord: 2.0 }, 2: { type: 'appartement', est: -3.5, nord: 1.0 }, 3: { type: null, est: 0.6, nord: -0.8 },
+  4: { type: 'restaurant', est: 6.0, nord: -4.0 }, 5: { type: 'hotel', est: -12, nord: -6 }, 6: { type: 'ecole', est: 2.5, nord: 7.5 },
+  7: { type: 'commerce', est: -0.9, nord: -2.2 }, 8: { type: null, est: 9, nord: 3 }, 9: { type: null, est: -1.8, nord: 3.6 }, 10: { type: 'bureaux', est: 20, nord: -15 },
+}
+const carteDe = (n: number): Partial<ChantierLigne> => {
+  if (!actif('crmAtelierVivant') || !CARTE[n]) return {}
+  const { lat, lng } = geo(CARTE[n].est, CARTE[n].nord)
+  return { type_batiment: CARTE[n].type, lat, lng, geocode_le: T('2026-10-11'), retire_carte_le: null }
+}
 const CHANTIERS: ChantierLigne[] = [
   chantier(1, 501, 'Salle de bain, étage', 'en_cours', '2026-10-05', '2026-10-16', 101, { cree_le: T('2026-09-26') }),
   chantier(2, 502, 'Cuisine ouverte', 'en_cours', '2026-09-28', '2026-10-08', 102),
@@ -231,7 +246,7 @@ const DOSSIERS: DossiersCrm = {
 const maintenant = () => new Date(MAINTENANT_EXEMPLE)
 
 /** Toute la vue du CRM d'exemple (tableau de bord, pipeline, chantiers, clients, atelier). */
-export const VUE_EXEMPLE: Vue = construireVue({ uid: ART, metier: 'Plombier', d: DOSSIERS, maintenant: maintenant(), idDe: idExemple })
+export const VUE_EXEMPLE: Vue = construireVue({ uid: ART, metier: 'Plombier', d: DOSSIERS, maintenant: maintenant(), idDe: idExemple, ...(actif('crmAtelierVivant') ? { carte: { base: BASE_EXEMPLE, validationAuto: false } } : {}) })
 /** L'atelier d'exemple (maquette 3D / plan 2D) : celui de la vue, donc les mêmes chantiers que les autres onglets. */
 export const DONNEES_EXEMPLE: DonneesAtelier = VUE_EXEMPLE.atelier
 /** L'onglet Équipe & véhicules de l'exemple. */
@@ -246,7 +261,7 @@ export function ficheChantierExemple(id: string): FicheChantier | null {
   const d = c.devis_id ? DEVIS.find((x) => x.id === c.devis_id) ?? null : null
   const leadStatut = d?.lead_id ? LEADS.find((l) => l.id === d.lead_id)?.statut ?? null : null
   const vh = VEHICULES.find((v) => v.id === c.vehicule_id)
-  return construireFicheChantier({
+  const fiche = construireFicheChantier({
     uid: ART,
     chantier: { id: c.id, titre: c.titre, statut: c.statut, client_nom: c.client_nom, adresse: c.adresse, code_postal: c.code_postal, ville: c.ville, date_debut: c.date_debut, date_fin_prevue: c.date_fin_prevue, date_fin_reelle: c.date_fin_reelle, vehicule_id: c.vehicule_id, notes: c.notes, devis_id: c.devis_id },
     devis: d ? { id: d.id, numero: d.numero, objet: d.objet, statut: d.statut, total_ttc: Number(d.total_ttc), total_ht: d.total_ht ?? null, created_at: d.created_at, date_emission: d.date_emission, acompte_pct: Number(d.acompte_pct), accepte_le: d.accepte_le, envoye_le: d.envoye_le, client_nom: d.client_nom, client_email: d.client_email, client_adresse: d.client_adresse, lead_id: d.lead_id } : null,
@@ -262,6 +277,8 @@ export function ficheChantierExemple(id: string): FicheChantier | null {
     rappels: RAPPELS,
     maintenant: maintenant(),
   })
+  // La carte (drapeau crmAtelierVivant) : type de bâtiment et validation, simulés dans l'exemple (rien n'est écrit).
+  return actif('crmAtelierVivant') ? { ...fiche, carte: ficheCarte(c, d?.objet ?? null, TACHES.filter((t) => t.chantier_id === c.id), false) } : fiche
 }
 
 /** La fiche d'un client de l'exemple (par son identifiant ou une de ses pièces), ou null. */
@@ -270,3 +287,33 @@ export function ficheClientExemple(ref: string): FicheClient | null {
   const g = trouverGroupe(groupes, ref)
   return g ? construireFicheClient({ groupe: g, groupes, d: DOSSIERS, notes: NOTES_CLIENT[g.cle] ?? [], maintenant: maintenant(), rappels: RAPPELS }) : null
 }
+
+// ── Vitrines de la CARTE (page de démonstration /atelier-demo seulement, drapeau crmAtelierVivant) ─────────────────────────
+// Des jeux de chantiers fictifs pour MONTRER la carte du lot 5 : les quatre états d'un même type de bâtiment, un chantier par type,
+// et une carte de douze chantiers placés à leur direction réelle. Construits sur l'exemple (même base, même équipe, mêmes stocks).
+const chantierVitrine = (n: number, titre: string, statut: string, faites: number, total: number, extra: Partial<DonneesAtelier['chantiers'][number]> = {}): DonneesAtelier['chantiers'][number] => ({
+  id: ID(5000 + n), titre, client: `Client fictif ${n}`, statut, etape: statut === 'termine' ? 'a_facturer' : 'chantier',
+  avancement: total ? Math.round((faites / total) * 100) : null, date_debut: '2026-10-05', date_fin_prevue: '2026-10-30', vehicule_id: null, equipe: [],
+  taches: { total, faites, faitesAujourdhui: 0, ouvertes: [] }, typeBatiment: null, objet: null, lat: null, lng: null, retireCarte: null, ...extra,
+})
+/** Les quatre états (pas commencé, en cours, presque fini, fini) d'un type de bâtiment, côte à côte à l'est de la base. */
+export function vitrineEtats(type: string): DonneesAtelier {
+  const etats: [string, string, number, number][] = [['Pas commencé', 'planifie', 0, 4], ['En cours', 'en_cours', 1, 4], ['Presque fini', 'en_cours', 3, 4], ['Fini', 'termine', 4, 4]]
+  return { ...DONNEES_EXEMPLE, chantiers: etats.map(([t, s, f, n], i) => chantierVitrine(i, t, s, f, n, { typeBatiment: type as TypeBatV, ...geo(2, 1.5 - i) })) }
+}
+/** Un chantier FINI par type de bâtiment (les treize), autour de la base. */
+export function vitrineTypes(): DonneesAtelier {
+  const types: TypeBatV[] = ['maison', 'appartement', 'immeuble', 'hotel', 'restaurant', 'commerce', 'bureaux', 'entrepot', 'ecole', 'sante', 'equipement', 'exterieur', 'agricole']
+  return { ...DONNEES_EXEMPLE, chantiers: types.map((t, i) => chantierVitrine(20 + i, t, 'termine', 3, 3, { typeBatiment: t, ...geo(4 * Math.cos((i / types.length) * 2 * Math.PI), 4 * Math.sin((i / types.length) * 2 * Math.PI)) })) }
+}
+/** Douze chantiers, à leur direction réelle depuis la base (de 0,8 à 40 km), états et types variés : la carte grandit et se cadre. */
+export function vitrineCarte(): DonneesAtelier {
+  const l: [string, string, number, number, TypeBatV | null, number, number][] = [
+    ['Salle de bain, étage', 'en_cours', 2, 5, null, 0.8, 0.5], ['Cuisine du restaurant', 'en_cours', 4, 5, null, -2.5, 1.2], ['Hôtel des Tilleuls', 'planifie', 0, 6, null, 4, -3],
+    ['Plateau de bureaux', 'en_cours', 1, 4, null, -6, -5], ['Colonne d’immeuble', 'en_pause', 2, 5, null, 9, 6], ['Boutique centre-ville', 'termine', 3, 3, null, -1.5, -1.2],
+    ['École maternelle', 'en_cours', 3, 4, null, 15, -2], ['Cabinet médical', 'a_planifier', 0, 0, null, -18, 9], ['Gymnase municipal', 'en_cours', 2, 6, null, 3, 20],
+    ['Piscine coque', 'en_cours', 2, 4, null, -9, -16], ['Grange', 'planifie', 0, 3, null, 30, -25], ['Appartement T3', 'en_cours', 1, 3, 'appartement', -35, 12],
+  ]
+  return { ...DONNEES_EXEMPLE, chantiers: l.map(([t, s, f, n, ty, e, no], i) => chantierVitrine(40 + i, t, s, f, n, { typeBatiment: ty, ...geo(e, no) })) }
+}
+type TypeBatV = NonNullable<DonneesAtelier['chantiers'][number]['typeBatiment']>

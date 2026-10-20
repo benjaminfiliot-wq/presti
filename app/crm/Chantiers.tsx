@@ -16,6 +16,10 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
   const [taches, setTaches] = useState(true)
   const [envoi, setEnvoi] = useState(false)
   const [message, setMessage] = useState<{ texte: string; erreur: boolean } | null>(null)
+  // La carte (lot 5) : un chantier VALIDÉ a quitté la carte de l'atelier, pas la liste — il s'y retrouve par ce filtre.
+  const [voirValides, setVoirValides] = useState(false)
+  const valides = chantiers.filter((c) => c.retireCarte).length
+  const montres = voirValides ? chantiers : chantiers.filter((c) => !c.retireCarte)
 
   async function creer(e: FormEvent) {
     e.preventDefault()
@@ -31,6 +35,13 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
     <div className="crm-pile">
       <section className="psh-panel" aria-labelledby="crm-liste-chantiers">
         <header><h2 id="crm-liste-chantiers">Chantiers</h2><span className="tag">{chantiers.length}</span></header>
+        {valides > 0 && (
+          <label className="crm-filtre-valides" data-crm-filtre-valides>
+            <input type="checkbox" checked={voirValides} onChange={(e) => setVoirValides(e.target.checked)} />
+            <span>Voir les chantiers validés <span className="tnum">({valides})</span></span>
+            {!voirValides && <span className="muted"> · validés, ils ont quitté la carte de l’atelier ; ils restent dans vos chiffres et vos factures.</span>}
+          </label>
+        )}
         {chantiers.length === 0 ? (
           <div className="psh-empty">Aucun chantier pour l’instant. Créez-en un ci-dessous, depuis un devis signé ou pour un dépannage.</div>
         ) : (
@@ -38,12 +49,12 @@ export default function ChantiersVue({ chantiers, devisSignes, onChange }: { cha
             <table className="psh-dtable crm-table crm-table-cartes">
               <thead><tr><th>Chantier</th><th>Client</th><th>Statut</th><th>Avancement</th><th>Début</th><th>Fin prévue</th></tr></thead>
               <tbody>
-                {chantiers.map((c) => (
+                {montres.map((c) => (
                   <tr key={c.id}>
                     <td className="crm-td-titre"><Lien className="obj" href={`/crm/chantiers/${c.id}`}>{c.titre}</Lien>{c.devis_numero && <span className="num"> · {c.devis_numero}</span>}
                       {c.adresse && <Lien className="crm-itineraire" href={itineraire(c.adresse)} title={`Itinéraire vers ${c.adresse}`}>Itinéraire</Lien>}</td>
                     <td data-label="Client">{c.client ?? '—'}</td>
-                    <td data-label="Statut"><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span></td>
+                    <td data-label="Statut"><span className={`pill ${TON_STATUT_CHANTIER[c.statut] ?? 'muted'}`}>{LIBELLES_STATUT_CHANTIER[c.statut as StatutChantier] ?? c.statut}</span>{c.retireCarte && <span className="pill ok crm-valide" data-crm-valide title={`Validé le ${dateFr(c.retireCarte)} : retiré de la carte`}>Validé</span>}</td>
                     <td data-label="Avancement"><Avancement pct={c.avancement.pct} faites={c.avancement.faites} total={c.avancement.total} /></td>
                     <td data-label="Début" className="tnum">{dateFr(c.date_debut)}</td>
                     <td data-label="Fin prévue" className="tnum">{dateFr(c.date_fin_prevue)}{c.retard ? <span className="pill crit crm-retard">{c.retard} j</span> : null}</td>

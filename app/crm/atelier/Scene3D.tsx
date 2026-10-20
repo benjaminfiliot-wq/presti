@@ -46,6 +46,17 @@ type Props = {
 }
 
 const CIBLE: THREE.Vector3Tuple = [3, 0, 0]
+/**
+ * La carte (lot 5) : la caméra vise le CENTRE de ce qui est posé (la base et ses chantiers, à leur vraie place) ; sans carte (drapeau
+ * baissé), le point d'avant. Le sol et les ombres couvrent toute la carte, qui grandit avec les chantiers.
+ */
+const cibleDe = (scene: Scene): THREE.Vector3Tuple => (scene.carte ? [(scene.bornes.min[0] + scene.bornes.max[0]) / 2, 0, (scene.bornes.min[2] + scene.bornes.max[2]) / 2] : CIBLE)
+export function solDe(scene: Scene): { centre: THREE.Vector3Tuple; taille: [number, number]; ombre: number } {
+  if (!scene.carte) return { centre: [0, 0, 0], taille: [160, 160], ombre: 55 }
+  const { min, max } = scene.carte
+  const ombre = Math.max(55, Math.max(Math.abs(min[0]), Math.abs(max[0]), Math.abs(min[1]), Math.abs(max[1])) * 1.1 + 6)
+  return { centre: [(min[0] + max[0]) / 2, 0, (min[1] + max[1]) / 2], taille: [Math.max(160, max[0] - min[0] + 60), Math.max(160, max[1] - min[1] + 60)], ombre }
+}
 const AZIMUT_DEFAUT = Math.PI / 4
 
 function geometrie(f: Forme): THREE.BufferGeometry {
@@ -224,14 +235,14 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
     const polaire = nom === 'dessus' ? 0.12 : 0.96
     const dist = 60
     // La vue « atelier » vise la base dessinée quand la scène porte l'infrastructure (un petit bureau n'est pas au centre du dépôt).
-    const cible = new THREE.Vector3(...(nom === 'atelier' ? (scene.infra?.cible ?? [0, 0, -1]) as THREE.Vector3Tuple : CIBLE))
+    const cible = new THREE.Vector3(...(nom === 'atelier' ? (scene.infra?.cible ?? [0, 0, -1]) as THREE.Vector3Tuple : cibleDe(scene)))
     const pos = new THREE.Vector3(cible.x + dist * Math.sin(polaire) * Math.sin(az), dist * Math.cos(polaire), cible.z + dist * Math.sin(polaire) * Math.cos(az))
     const zoom = nom === 'atelier' ? zoomAjuste * 2.1 : nom === 'chantiers' ? zoomAjuste * 0.85 : nom === 'dessus' ? zoomAjuste * 0.82 : zoomAjuste
     return { pos, cible, zoom }
   }
   const aller = (vers: But, duree = 700) => {
     const c = controles.current
-    const de: But = { pos: camera.position.clone(), cible: c ? c.target.clone() : new THREE.Vector3(...CIBLE), zoom: (camera as THREE.OrthographicCamera).zoom }
+    const de: But = { pos: camera.position.clone(), cible: c ? c.target.clone() : new THREE.Vector3(...cibleDe(scene)), zoom: (camera as THREE.OrthographicCamera).zoom }
     if (mouvementReduit()) { anim.current = { de, vers, debut: performance.now() - duree, duree: 1 }; return }
     anim.current = { de, vers, debut: performance.now(), duree }
   }
@@ -266,7 +277,7 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
   useImperativeHandle(ref, () => ({
     zoomer: (f) => {
       const c = controles.current
-      aller({ pos: camera.position.clone(), cible: c ? c.target.clone() : new THREE.Vector3(...CIBLE), zoom: Math.min(110, Math.max(4, (camera as THREE.OrthographicCamera).zoom * f)) }, 300)
+      aller({ pos: camera.position.clone(), cible: c ? c.target.clone() : new THREE.Vector3(...cibleDe(scene)), zoom: Math.min(110, Math.max(4, (camera as THREE.OrthographicCamera).zoom * f)) }, 300)
     },
     tourner: (sens) => {
       const c = controles.current
@@ -383,6 +394,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
     return () => clearInterval(t)
   }, [infra, heure])
   const amb = infra ? ambiance(heure ?? heureReelle ?? 12) : null
+  const sol = useMemo(() => solDe(scene), [scene])
   const nuit = !!amb?.lumieres
   // La marche ne se joue, elle aussi, qu'à l'ouverture — et jamais avec « réduire les animations ».
   const departMarche = useMemo(() => (mouvementReduit() ? null : performance.now()), [])
@@ -446,7 +458,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
           <directionalLight
             castShadow position={amb.position} intensity={amb.intensite} color={amb.soleil}
             shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} shadow-normalBias={0.02} shadow-radius={3}
-            shadow-camera-left={-55} shadow-camera-right={55} shadow-camera-top={55} shadow-camera-bottom={-55} shadow-camera-near={1} shadow-camera-far={160}
+            shadow-camera-left={-sol.ombre} shadow-camera-right={sol.ombre} shadow-camera-top={sol.ombre} shadow-camera-bottom={-sol.ombre} shadow-camera-near={1} shadow-camera-far={105 + sol.ombre}
           />
         </>
       ) : (
@@ -460,8 +472,8 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
           />
         </>
       )}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow onClick={(e) => { if (e.delta <= 6) onSelection(null) }}>
-        <planeGeometry args={[160, 160]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={sol.centre} receiveShadow onClick={(e) => { if (e.delta <= 6) onSelection(null) }}>
+        <planeGeometry args={sol.taille} />
         <meshStandardMaterial color={COULEURS.sol} roughness={1} />
       </mesh>
       {FORMES.map((f) => (
@@ -476,7 +488,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       )}
       <Pulse insts={scene.pulse} visible={!filtreActif || scene.pulse.some((p) => allumes.has(p.o))} />
       <OrbitControls
-        ref={controles} makeDefault enableDamping dampingFactor={0.12} target={CIBLE}
+        ref={controles} makeDefault enableDamping dampingFactor={0.12} target={cibleDe(scene)}
         minPolarAngle={0.05} maxPolarAngle={1.2} minZoom={4} maxZoom={110} screenSpacePanning={false}
       />
       <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />

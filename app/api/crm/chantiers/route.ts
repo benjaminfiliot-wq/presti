@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   if (!corps.ok) return erreur(corps.erreur, corps.statut ?? 400)
   const v = validerCreationChantier(corps.valeur)
   if (!v.ok) return erreur(v.erreur, 400)
+  if ('type_batiment' in v.valeur && !actif('crmAtelierVivant')) return erreur('Champ inconnu : type_batiment.', 400)
   const { equipe, generer_taches, ...champs } = v.valeur
 
   let titre = champs.titre ?? null

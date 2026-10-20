@@ -12,6 +12,10 @@ import { arriveesDe, nouvellesArrivees, texteArrivee, type Arrivee } from '@/lib
 import { posteAssistants } from '@/lib/crm/assistants'
 import { BASES, LIBELLES_BASE, LIBELLES_LIEU, LIBELLES_METIER_3D, METIERS_REFERENCE, metier3DDe, PROCHE, type Base, type Metier3D } from '@/lib/crm/infrastructure'
 import { DemoAtelier } from './contexte'
+import { BandeauValide, type ActionsCarte, type QuoiCarte } from './Carte'
+import { appel } from '../client'
+import { useExemple } from '../mode'
+import type { TypeBat } from '@/lib/crm/carte'
 import type { Vue } from '@/lib/crm/vue'
 import type { CommandesScene, NomVue } from './Scene3D'
 import Plan2D from './Plan2D'
@@ -109,7 +113,7 @@ function ecrireReglage(r: Reglage) {
 const LIBELLE_LIEN = { connexion: 'Connexion…', direct: 'En direct', coupe: 'Hors ligne · relu chaque minute' } as const
 const calme = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-export default function Atelier({ donnees, vue, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier, baseInitiale, heure, metierInitial }: {
+export default function Atelier({ donnees: donneesSource, vue, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier, baseInitiale, heure, metierInitial }: {
   donnees: DonneesAtelier
   /** La Vue entière du CRM (page /crm) : lue SEULEMENT drapeau crmAtelierVivant levé (salle d'attente, poste des assistants). Absente : l'atelier d'avant. */
   vue?: Vue
@@ -133,6 +137,10 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
   /** Page de démonstration, même drapeau : un métier 3D parmi tous ceux de Presti (`?metier=paysagiste`…). */
   metierInitial?: Metier3D
 }) {
+  // La carte (lot 5, drapeau crmAtelierVivant) : ce qui a été validé, remis ou retypé DANS CETTE SESSION, appliqué par-dessus les données —
+  // simulé dans l'exemple et la démonstration (rien n'est écrit), optimiste sur un vrai compte (effacé à la relecture suivante).
+  const [simules, setSimules] = useState<Record<string, { retireCarte?: string | null; typeBatiment?: TypeBat | null }>>({})
+  const donnees = useMemo(() => (Object.keys(simules).length ? { ...donneesSource, chantiers: donneesSource.chantiers.map((c) => (simules[c.id] ? { ...c, ...simules[c.id] } : c)) } : donneesSource), [donneesSource, simules])
   const [detection, setDetection] = useState<Detection | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
   const [filtre, setFiltre] = useState<Filtre | null>(filtreInitial ?? null)
@@ -188,6 +196,40 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
     if (r.metierTexte !== undefined) setMetierTexte(r.metierTexte)
     if (infra) ecrireReglage({ metier: r.metier ?? prereglage, base: r.base !== undefined ? r.base : base, metierTexte: r.metierTexte !== undefined ? r.metierTexte : metierTexte })
   }
+  // ── La carte : valider un chantier (il quitte la carte), le remettre, corriger son type ; le réglage « valider automatiquement ».
+  const exemple = useExemple()
+  const simule = demo || exemple
+  useEffect(() => { if (!simule) setSimules({}) }, [donneesSource, simule])
+  const [validationAuto, setValidationAuto] = useState(donneesSource.carte?.validationAuto ?? false)
+  useEffect(() => { setValidationAuto(donneesSource.carte?.validationAuto ?? false) }, [donneesSource.carte?.validationAuto])
+  const [noteAuto, setNoteAuto] = useState<string | null>(null)
+  const [valide, setValide] = useState<{ id: string; titre: string; simule: boolean } | null>(null)
+  const agirCarte = useCallback(async (id: string, quoi: QuoiCarte): Promise<{ ok: boolean; texte: string }> => {
+    const c = donneesSource.chantiers.find((x) => x.id === id)
+    const titre = c?.titre ?? 'Chantier'
+    const poser = (champs: { retireCarte?: string | null; typeBatiment?: TypeBat | null }) => setSimules((s) => ({ ...s, [id]: { ...s[id], ...champs } }))
+    if (!simule) {
+      const r = 'action' in quoi
+        ? await appel(`/api/crm/chantiers/${encodeURIComponent(id)}/valider`, { method: 'POST', body: quoi })
+        : await appel(`/api/crm/chantiers/${encodeURIComponent(id)}`, { method: 'PATCH', body: { type_batiment: quoi.type } })
+      if (!r.ok) return { ok: false, texte: r.erreur }
+    }
+    if ('action' in quoi) {
+      poser({ retireCarte: quoi.action === 'valider' ? new Date().toISOString() : null })
+      if (quoi.action === 'valider') { setValide({ id, titre, simule }); setCleSel(null) } else setValide(null)
+    } else poser({ typeBatiment: quoi.type })
+    if (!simule) onChange?.()
+    const quoiTexte = 'action' in quoi ? (quoi.action === 'valider' ? 'validé : il quitte la carte' : 'remis sur la carte') : 'redessiné avec le type choisi'
+    return { ok: true, texte: simule ? `Exemple : le chantier est ${quoiTexte}. Rien n’est enregistré.` : `Chantier ${quoiTexte}.` }
+  }, [donneesSource, simule, onChange])
+  const reglerAuto = async (oui: boolean) => {
+    setNoteAuto(null)
+    if (simule) { setValidationAuto(oui); setNoteAuto('Exemple : réglage simulé, rien n’est enregistré.'); return }
+    const r = await appel('/api/crm/reglages', { method: 'PUT', body: { validation_auto: oui } })
+    if (!r.ok) { setNoteAuto(r.erreur); return }
+    setValidationAuto(oui); onChange?.()
+  }
+  const actionsCarte: ActionsCarte = { simule, validationAuto, agir: agirCarte }
   const scene = useMemo(() => (infra
     ? construireScene(donnees, PROCHE[metier3D], { ...(total !== null ? { vivant: { assistants: total } } : {}), infra: { base, metier: metier3D } })
     : construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base, metier3D])
@@ -316,6 +358,13 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
               </label>
               {/* D'où vient le choix : dit en toutes lettres. */}
               <span className="atl-origine" data-atelier-origine={scene.infra.auto ? 'deduit' : 'choisi'}>{scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'}</span>
+              {/* La carte (lot 5) : un chantier dont toutes les tâches sont cochées se valide tout seul (crm_reglages.validation_auto). */}
+              <label className="atl-coche-reglage">
+                <input type="checkbox" data-atelier-validation-auto checked={validationAuto} onChange={(e) => void reglerAuto(e.target.checked)} />
+                <span>Valider automatiquement quand toutes les tâches sont cochées</span>
+              </label>
+              {noteAuto && <span className="atl-origine" role="status">{noteAuto}</span>}
+              {scene.carte && <span className="atl-origine" data-atelier-carte-reels={scene.carte.reels}>{scene.carte.reels ? `${scene.carte.reels} chantier${scene.carte.reels > 1 ? 's' : ''} à leur vraie place (adresse)` : 'Chantiers en couronne : leurs adresses ne sont pas encore situées'}</span>}
             </div>
           </details>
         )}
@@ -394,7 +443,8 @@ export default function Atelier({ donnees, vue, demo = false, mesure = false, on
             </>} />
         )}
         {mode === null && <div className="atl-charge" role="status">Préparation de l’atelier…</div>}
-        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} vue={vivant ? vue : undefined} poste={poste} {...(infra ? { metier: metier3D, onChoisir: (cle: string) => setCleSel(cle) } : {})} />}
+        {infra && valide && <BandeauValide titre={valide.titre} simule={valide.simule} onFermer={() => setValide(null)} onRemettre={() => void agirCarte(valide.id, { action: 'remettre' })} />}
+        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} vue={vivant ? vue : undefined} poste={poste} {...(infra ? { metier: metier3D, onChoisir: (cle: string) => setCleSel(cle), carte: actionsCarte } : {})} />}
       </div>
       <Legende horsScene={scene.horsScene} sansCommandes={donnees.commandesDisponibles === false} />
     </div>

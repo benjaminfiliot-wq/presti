@@ -267,6 +267,42 @@ const vueMin = (par = {}, rappels = { liste: [], devisARelancer: [], aFaire: { e
     toutes.length > 5 && toutes.every(couvert) && /if \(!sansEcriture \|\| lienExemple\(action\.href\)\) return <Lien/.test(viv) && viv.includes('Valider et envoyer') && viv.includes('Ici, rien n’est parti.') && viv.includes('Exemple · données fictives') && /<Aller action=\{\{ libelle: e\.libelle, href: e\.href \}\}/.test(viv), toutes.filter((h) => !couvert(h)).join(','))
 }
 
+// ═══════════════════════ K. Lot 5 : la carte suit le vrai chantier — validation, retrait de la carte, positions réelles ═══════════════════════
+if (LEVE) {
+  const C = await imp('lib/crm/carte.ts')
+  const Vu = await imp('lib/crm/vue.ts')
+  const Ex = await imp('lib/crm/exemple.ts')
+  const Ta = await imp('lib/crm/tableau.ts')
+  // Un compte « avant le CRM » : un devis signé, son chantier terminé et VALIDÉ (retiré de la carte), une facture émise.
+  const art = 'artisan-k'
+  const lignes = (retire) => ({
+    devis: [{ id: U(801), artisan_id: art, lead_id: null, statut: 'accepte', numero: 'D-1', objet: 'Rénovation de l’hôtel', client_nom: 'Client K', client_email: null, client_adresse: null, total_ttc: 1200, total_ht: 1000, acompte_pct: 0, date_emission: '2026-09-01', envoye_le: '2026-09-02T00:00:00Z', accepte_le: '2026-09-03T00:00:00Z', created_at: '2026-09-01T00:00:00Z', validite_jours: 30 }],
+    factures: [{ id: U(802), artisan_id: art, devis_id: U(801), statut: 'emise', numero: 'F-1', objet: null, total_ttc: 1200, acompte_pct: 0, avoir_de: null, date_emission: '2026-10-10', date_echeance: '2026-11-10', client_nom: 'Client K', client_id: null }],
+    leads: [], chantiers: [{ id: U(803), artisan_id: art, devis_id: U(801), client_nom: null, titre: 'Rénovation de l’hôtel', adresse: null, code_postal: null, ville: null, statut: 'termine', date_debut: '2026-09-10', date_fin_prevue: '2026-10-01', date_fin_reelle: '2026-10-02', vehicule_id: null, notes: null, cree_le: '2026-09-05T00:00:00Z', maj_le: '2026-10-02T00:00:00Z', type_batiment: null, lat: null, lng: null, geocode_le: null, retire_carte_le: retire }],
+    taches: [{ id: U(804), chantier_id: U(803), faite: true }, { id: U(805), chantier_id: U(803), faite: true }], materiaux: [], deplacements: [], carnet: [], vehicules: [], membres: [], equipe: [], tronque: false,
+  })
+  const vue = (retire) => Vu.construireVue({ uid: art, metier: null, d: lignes(retire), maintenant: new Date('2026-10-12T10:00:00Z'), idDe: (k) => k })
+  const avant = vue(null), apres = vue('2026-10-12T09:00:00Z')
+  const sansRetrait = (v) => JSON.stringify({ ...v, chantiers: v.chantiers.map(({ retireCarte: _r, ...c }) => c), atelier: { ...v.atelier, chantiers: v.atelier.chantiers.map(({ retireCarte: _r, ...c }) => c) } })
+  T('K1 un chantier VALIDÉ reste PARTOUT ailleurs : liste des chantiers, pipeline, factures, tableau de bord et chiffres — la vue est la même à la date de retrait près',
+    sansRetrait(avant) === sansRetrait(apres) && apres.chantiers[0].retireCarte === '2026-10-12T09:00:00Z' && apres.pipeline.colonnes.find((c) => c.etape === 'a_facturer')?.cartes.length === 1 && egal(avant.tableau, apres.tableau))
+  const sc = (v) => At.construireScene(v.atelier, 'plombier', { infra: { base: null, metier: 'plombier' } })
+  T('K2 … et seulement la CARTE le perd : objet chantier présent avant, absent après la validation ; « Remettre sur la carte » (retire_carte_le vide) le fait revenir',
+    sc(avant).objets.some((o) => o.ref === U(803)) && !sc(apres).objets.some((o) => o.ref === U(803)) && sc(vue(null)).objets.some((o) => o.ref === U(803)))
+  const fc = Vu.ficheCarte({ statut: 'en_cours', titre: 'Rénovation de l’hôtel', type_batiment: null, retire_carte_le: null }, 'Rénovation de l’hôtel', [{ faite: true }, { faite: true }], true)
+  T('K3 la fiche dit la carte : type déduit (hôtel), aucun type choisi, validable quand toutes les tâches sont faites, réglage automatique repris ; pas validable avec une tâche ouverte ; un type CHOISI est rendu tel quel',
+    fc.type === null && fc.typeDeduit === 'hotel' && fc.validable && fc.validationAuto && !Vu.ficheCarte({ statut: 'en_cours', titre: 'x' }, null, [{ faite: true }, { faite: false }], false).validable && Vu.ficheCarte({ statut: 'en_cours', titre: 'x', type_batiment: 'ecole' }, null, [], false).type === 'ecole')
+  const fe = Ex.ficheChantierExemple(U(3)), fe1 = Ex.ficheChantierExemple(U(1))
+  T('K4 l’EXEMPLE : base située, 10 chantiers à leur vraie place, des types choisis (hôtel, école, restaurant…) ; la fiche d’un chantier terminé offre « Valider », celle d’un chantier en cours non',
+    !!DONNEES_EXEMPLE.carte?.base && DONNEES_EXEMPLE.chantiers.filter((c) => typeof c.lat === 'number').length === 10 && new Set(DONNEES_EXEMPLE.chantiers.map((c) => c.typeBatiment).filter(Boolean)).size >= 5 && fe?.carte?.validable === true && fe1?.carte?.validable === false && fe1?.carte?.typeDeduit === 'maison')
+  // La validation AUTOMATIQUE : la règle est celle de la route (lib/crm/carte.ts) — toutes les tâches faites, chantier sur la carte.
+  T('K5 validation automatique : la DERNIÈRE tâche cochée (3/3) valide, pas avant (2/3), pas un chantier sans tâche, pas un chantier annulé ni déjà retiré',
+    C.peutValider({ statut: 'en_cours', taches: { total: 3, faites: 3 } }) && !C.peutValider({ statut: 'en_cours', taches: { total: 3, faites: 2 } }) && !C.peutValider({ statut: 'en_cours', taches: { total: 0, faites: 0 } }) && !C.peutValider({ statut: 'annule', taches: { total: 1, faites: 1 } }) && !C.peutValider({ statut: 'en_cours', taches: { total: 1, faites: 1 }, retire_carte_le: 'x' }))
+  const e2e = lire('scripts/crm-carte-e2e.mjs'), lanceur = lire('scripts/tout-verifier.mjs')
+  T('K6 bout en bout (base de TEST, jamais la production) : scripts/crm-carte-e2e.mjs valide par la route (refus tant qu’une tâche reste, puis 200), retire de la carte sans retirer de la vue, remet sur la carte, valide AUTOMATIQUEMENT à la dernière tâche cochée, refuse un autre compte et un corps invalide ; déclaré hors lanceur avec sa raison',
+    /process\.exit\(2\)/.test(e2e) && /\/valider/.test(e2e) && /validation_auto: true/.test(e2e) && /chantierValide/.test(e2e) && /retireCarte/.test(e2e) && /'crm-carte-e2e\.mjs': '[^']+'/.test(lanceur.slice(lanceur.indexOf('export const HORS_LANCEUR'))))
+}
+
 // ═══════════════════════ F. Le lanceur ═══════════════════════
 {
   const lanceur = lire('scripts/tout-verifier.mjs')

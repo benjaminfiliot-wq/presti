@@ -23,6 +23,7 @@
 // ici (types seulement importés d'atelier.ts : aucun cycle de modules).
 
 import type { DonneesAtelier, Forme, Inst, Prereglage, V3 } from './atelier.ts'
+import { phaseDe, SEUIL_PRESQUE, type TypeBat, type VarianteExterieur } from './carte.ts'
 
 // ── 1. Le profil d'infrastructure ───────────────────────────────────────────────────────────────────────────────
 export type Equipe = 'solo' | 'petite' | 'equipe'
@@ -1242,282 +1243,427 @@ function ranger(mods: readonly Module[], r: Rect, jeu = 0.45): void {
   }
 }
 
-// ── 3b. Le métier sur le chantier : le TYPE de bâtiment et l'avancement des travaux ───────────────────────────
-export type TypeBatiment = 'maison' | 'pavillon' | 'grange' | 'immeuble' | 'commerce' | 'extension' | 'coupe' | 'jardin' | 'piscine'
-/** Les chantiers typiques de chaque métier ; le type d'UN chantier se tire de son identifiant (stable). */
-export const TYPES_CHANTIER: Record<Metier3D, TypeBatiment[]> = {
-  electricien: ['immeuble', 'commerce', 'immeuble', 'maison'],
-  peintre: ['immeuble', 'commerce', 'maison', 'immeuble'],
-  couvreur: ['grange', 'maison', 'grange', 'pavillon'],
-  macon: ['extension', 'extension', 'maison', 'extension'],
-  plombier: ['coupe', 'coupe', 'maison', 'coupe'],
-  carreleur: ['coupe', 'coupe', 'commerce', 'coupe'],
-  chauffagiste: ['maison', 'pavillon', 'immeuble', 'maison'],
-  menuisier: ['maison', 'pavillon', 'grange', 'maison'],
-  general: ['maison', 'immeuble', 'commerce', 'extension'],
-  paysagiste: ['jardin', 'maison', 'jardin', 'pavillon'],
-  serrurier: ['maison', 'commerce', 'immeuble', 'maison'],
-  vitrier: ['commerce', 'immeuble', 'maison', 'commerce'],
-  plaquiste: ['coupe', 'coupe', 'immeuble', 'coupe'],
-  facadier: ['immeuble', 'maison', 'immeuble', 'commerce'],
-  charpentier: ['grange', 'maison', 'grange', 'pavillon'],
-  climaticien: ['immeuble', 'commerce', 'maison', 'maison'],
-  piscinier: ['piscine', 'piscine', 'maison', 'piscine'],
-  multiservice: ['maison', 'commerce', 'extension', 'coupe'],
-}
-export const typeChantier = (metier: Metier3D, h: number): TypeBatiment => TYPES_CHANTIER[metier][Math.floor(((h * 11) % 1) * 4)]
+// ── 3b. Le chantier sur la carte : son TYPE de bâtiment (le VRAI, lib/crm/carte.ts) et son ÉTAT d'avancement ───────────
+// Lot 5 (retours de Benj) : le bâtiment ne se tire plus au hasard selon le métier — il suit le chantier (type_batiment posé,
+// sinon déduit du titre et de l'objet du devis). Chaque type a sa silhouette (hôtel à étages, enseigne et auvent ; restaurant
+// et sa terrasse à parasols ; immeuble à balcons ; commerce à vitrine ; bureaux vitrés ; école et sa cour…), et les QUATRE
+// états d'avancement valent pour tous : pas commencé (terrain piqueté et fondations), en cours (la structure monte, échafaudage,
+// grue au-delà de deux étages), presque fini (le bâtiment est là, échafaudage et benne encore sur place), fini (abords faits).
+// Le métier de l'artisan reste visible par ses matériaux sur la parcelle pendant les travaux (accentMetier).
+export { avancementDessine } from './carte.ts'
 
 export type Maison = {
-  x: number; z: number; w: number; dd: number; ht: number
-  /** Le hachage du chantier (formes, couleurs, fenêtres allumées le soir). */
+  x: number; z: number
+  /** Le hachage du chantier (couleurs, variantes, fenêtres allumées le soir). */
   h: number; id: string
-  /** L'avancement, 0 à 1 (la donnée `avancement` du chantier ; un chantier terminé vaut 1). */
+  /** L'avancement, 0 à 1 (lib/crm/carte.ts, avancementDessine) ; un chantier terminé vaut 1. */
   pct: number; termine: boolean; enCours: boolean; o: number
-  /** La base dessinée (le terrain : jardin pour la maison, pavé pour l'entrepôt). */
+  /** La base dessinée (gardée pour l'appelant ; le terrain suit désormais l'état du chantier). */
   base?: Base
+  /** Le type de bâtiment du chantier (choisi ou déduit, lib/crm/carte.ts) et la variante d'un extérieur. Absent : une maison. */
+  type?: TypeBat; variante?: VarianteExterieur
+  /** Anciennes dimensions tirées du hachage : ignorées depuis le lot 5 (chaque type a les siennes). */
+  w?: number; dd?: number; ht?: number
 }
-/** L'avancement à dessiner : la donnée elle-même (0 à 100 %), 1 si le chantier est terminé, 0 s'il n'est pas commencé. */
-export function avancementDessine(c: { statut: string; etape: string | null; avancement: number | null }): number {
-  if (c.statut === 'termine' || c.etape === 'a_facturer') return 1
-  return Math.min(1, Math.max(0, (c.avancement ?? 0) / 100))
+
+/** Les mesures de chaque type : emprise, décalage sur la parcelle, étages et hauteur d'étage, matière de la structure en cours. */
+type Gabarit3D = { w: number; d: number; dx: number; dz: number; etages: number; he: number; structure: 'parpaing' | 'poteaux' | 'ossature' }
+export const GABARITS_BATIMENT: Record<TypeBat, Gabarit3D> = {
+  maison: { w: 2.8, d: 2.3, dx: -0.1, dz: -0.2, etages: 1, he: 1.45, structure: 'parpaing' },
+  appartement: { w: 2.6, d: 2.3, dx: 0, dz: -0.3, etages: 3, he: 0.95, structure: 'parpaing' },
+  immeuble: { w: 3.4, d: 2.8, dx: 0, dz: -0.4, etages: 5, he: 0.95, structure: 'poteaux' },
+  hotel: { w: 2.6, d: 2.3, dx: -0.15, dz: -0.5, etages: 6, he: 0.92, structure: 'poteaux' },
+  restaurant: { w: 3.4, d: 1.9, dx: 0, dz: -1.05, etages: 1, he: 1.35, structure: 'parpaing' },
+  commerce: { w: 3.2, d: 2.5, dx: 0, dz: -0.35, etages: 2, he: 1.0, structure: 'parpaing' },
+  bureaux: { w: 3.4, d: 2.7, dx: 0, dz: -0.35, etages: 3, he: 0.98, structure: 'poteaux' },
+  entrepot: { w: 4.0, d: 3.0, dx: 0, dz: -0.4, etages: 1, he: 1.9, structure: 'ossature' },
+  ecole: { w: 3.8, d: 1.6, dx: 0, dz: -1.2, etages: 2, he: 0.98, structure: 'poteaux' },
+  sante: { w: 3.2, d: 2.3, dx: 0, dz: -0.45, etages: 2, he: 0.98, structure: 'poteaux' },
+  equipement: { w: 4.0, d: 3.0, dx: 0, dz: -0.35, etages: 1, he: 1.2, structure: 'ossature' },
+  exterieur: { w: 3.2, d: 2.0, dx: 0, dz: 0.2, etages: 1, he: 0.4, structure: 'parpaing' },
+  agricole: { w: 3.4, d: 2.6, dx: -0.35, dz: -0.3, etages: 1, he: 1.8, structure: 'ossature' },
 }
+const TERRE = '#CDBB9E', TERRE_FONCEE = '#8E7356', BOIS_GRANGE = '#A37C58', ZINC = '#A7A096'
 
 /** Dessine le chantier ; rend la hauteur de son sommet (l'épingle et la carte se posent au-dessus). */
 export function maisonChantier(add: AjoutI, addF: AjoutF, m: Maison, metier: Metier3D): number {
   const k = pinceau(add, addF, m.o)
   const { x, z, h, id } = m
-  const pct = m.termine ? 1 : m.pct, fini = pct >= 1
-  const type = typeChantier(metier, h)
+  const type: TypeBat = m.type ?? 'maison'
+  const variante: VarianteExterieur = m.variante ?? 'jardin'
+  const pct = m.termine ? 1 : Math.min(1, Math.max(0, m.pct))
+  const phase = phaseDe(pct, m.termine)
+  const g = GABARITS_BATIMENT[type]
   const y0 = 0.06
   const murC = MURS[Math.floor(((h * 17) % 1) * MURS.length)], toitC = TOITS[Math.floor(((h * 3) % 1) * TOITS.length)]
-  const h2 = (h * 29) % 1, h3 = (h * 41) % 1
-  // Le terrain : un jardin à haie pour la base légère, du pavé ailleurs.
-  k.B(x, 0.03, z, 4.2, 0.06, 4.2, m.base === 'legere' ? '#DCE2CC' : m.base === 'entrepot' ? '#E2DACC' : '#E9E1D3')
-  if (m.base === 'legere') { k.B(x - 2.0, 0.35, z, 0.2, 0.6, 4.0, P.haie); k.B(x, 0.35, z - 2.0, 4.0, 0.6, 0.2, P.haie) }
-  // Les dimensions selon le type (toutes tirées du hachage : même chantier, même bâtiment).
-  let w = m.w, d = m.dd, ht = m.ht
-  if (type === 'immeuble') { w = 2.8 + h2 * 0.5; d = 2.6 + h3 * 0.4; ht = 2.9 + Math.floor(h2 * 3) * 0.95 }
-  else if (type === 'commerce') { w = 3.1; d = 2.6 + h3 * 0.3; ht = 2.0 }
-  else if (type === 'grange') { w = 3.5; d = 2.4 + h3 * 0.4; ht = 1.5 + h2 * 0.4 }
-  else if (type === 'pavillon') { w = d = 2.9 + h2 * 0.3; ht = 1.4 + h3 * 0.3 }
-  else if (type === 'extension') { w = 2.2; d = 2.3; ht = 1.6 + h2 * 0.5 }
-  else if (type === 'coupe') { w = 3.2; d = 2.8; ht = 1.7 }
-  let xc = x, zc = z
-  if (type === 'extension') { xc = x - 0.75; zc = z - 0.7 }
-  if (metier === 'carreleur' && type !== 'coupe') { w = Math.min(w, 2.6); d = Math.min(d, 2.2); zc = z - 0.45 }
-  const x0 = xc - w / 2, x1 = xc + w / 2, z0 = zc - d / 2, z1 = zc + d / 2
-  const lumiere = (i: number, n: number) => (metier === 'electricien' && !fini ? i < Math.round(n * pct) : hacher(`${id}:f${i}`) < 0.6)
-  let sommet = y0 + ht
+  const h2 = (h * 29) % 1
+  const xc = x + g.dx, zc = z + g.dz
+  const x0 = xc - g.w / 2, x1 = xc + g.w / 2, z0 = zc - g.d / 2, z1 = zc + g.d / 2
+  const hTot = g.etages * g.he
+  const lumiere = (i: number) => hacher(`${id}:f${i}`) < 0.6
 
-  const echafaudage = (xa: number, xb: number, zf: number, haut: number) => {
+  // ── Le terrain : de la terre tant que le chantier n'est pas fini ; pavé ou jardin une fois les abords faits.
+  const terrain = phase === 'fini' ? (type === 'maison' || type === 'exterieur' || type === 'agricole' ? '#DCE2CC' : '#E6DFD3') : phase === 'presque_fini' ? '#D9CDB8' : TERRE
+  k.B(x, 0.03, z, 4.4, 0.06, 4.4, terrain)
+
+  // ── Les gestes communs du chantier ──
+  const piquets = () => {
+    // Les piquets à 25 cm de l'emprise, sans jamais sortir de la parcelle.
+    const a0 = Math.max(x - 2.12, x0 - 0.25), a1 = Math.min(x + 2.12, x1 + 0.25), b0 = Math.max(z - 2.12, z0 - 0.25), b1 = Math.min(z + 2.12, z1 + 0.25)
+    for (const [px, pz] of [[a0, b0], [a1, b0], [a0, b1], [a1, b1]] as const) k.B(px, 0.32, pz, 0.07, 0.64, 0.07, P.bois)
+    k.B((a0 + a1) / 2, 0.5, b0, a1 - a0, 0.02, 0.02, P.blanc); k.B((a0 + a1) / 2, 0.5, b1, a1 - a0, 0.02, 0.02, P.blanc)
+    k.B(a0, 0.5, (b0 + b1) / 2, 0.02, 0.02, b1 - b0, P.blanc); k.B(a1, 0.5, (b0 + b1) / 2, 0.02, 0.02, b1 - b0, P.blanc)
+  }
+  const fondations = () => {
+    const e = 0.24, hs = 0.2
+    k.vol(x0 - 0.12, z0 - 0.12, x1 + 0.12, z1 + 0.12, 0.02, TERRE_FONCEE, 0.06) // la fouille
+    k.vol(x0, z0, x1, z0 + e, hs, P.beton, 0.07); k.vol(x0, z1 - e, x1, z1, hs, P.beton, 0.07)
+    k.vol(x0, z0, x0 + e, z1, hs, P.beton, 0.07); k.vol(x1 - e, z0, x1, z1, hs, P.beton, 0.07)
+    for (const [px, pz] of [[x0 + 0.12, z0 + 0.12], [x1 - 0.12, z0 + 0.12], [x0 + 0.12, z1 - 0.12], [x1 - 0.12, z1 - 0.12]] as const) k.Cy(px, 0.47, pz, 0.04, 0.4, 0.04, P.metal) // les attentes
+  }
+  const panneau = () => {
+    k.B(x - 1.9, 0.45, z + 2.0, 0.06, 0.9, 0.06, P.bois); k.B(x - 1.3, 0.45, z + 2.0, 0.06, 0.9, 0.06, P.bois)
+    k.B(x - 1.6, 0.83, z + 2.02, 0.82, 0.46, 0.04, P.blanc); k.B(x - 1.6, 0.98, z + 2.045, 0.82, 0.1, 0.01, P.corail)
+  }
+  const echafaudage = (xa0: number, xb0: number, zf: number, haut: number) => {
+    // Jamais hors de la parcelle (les bâtiments larges : entrepôt, gymnase).
+    const xa = Math.max(x - 2.15, xa0), xb = Math.min(x + 2.15, xb0)
     const zA = zf + 0.22, zB = zf + 0.62
     for (const px of [xa, xb]) for (const pz of [zA, zB]) k.Cy(px, haut / 2, pz, 0.06, haut, 0.06, P.ambre)
     for (let y = 0.9; y <= haut + 0.01; y += 0.9) { k.B((xa + xb) / 2, y, (zA + zB) / 2, xb - xa + 0.1, 0.05, 0.44, P.bois); k.B((xa + xb) / 2, y + 0.42, zB, xb - xa, 0.04, 0.04, P.ambre) }
   }
-  const palette = (px: number, pz: number, c: string, couches: number) => { k.B(px, 0.13, pz, 0.9, 0.14, 0.8, P.bois); for (let i = 0; i < couches; i++) k.B(px, 0.26 + i * 0.12, pz, 0.8, 0.11, 0.7, i % 2 ? melange(c, '#FFFFFF', 0.15) : c) }
-  const buisson = () => { k.S(x - 1.55, 0.35, z + 1.55, 0.7, 0.6, 0.7, P.sauge); k.S(x + 1.6, 0.3, z - 1.5, 0.55, 0.5, 0.55, P.sauge) }
-  /** Le corps, la porte et les fenêtres ; `neuve` : la peinture (peintre, tous corps) monte avec l'avancement. */
-  const corps = (hh: number, posees = 99, neuve: string | null = null) => {
-    if (neuve && !fini) { k.vol(x0, z0, x1, z1, hh, melange(murC, P.gris, 0.4), y0); if (pct > 0) k.vol(x0 - 0.015, z0 - 0.015, x1 + 0.015, z1 + 0.015, hh * pct, neuve, y0) }
-    else k.vol(x0, z0, x1, z1, hh, neuve ?? murC, y0)
-    const av = neuve ? 0.016 : 0
-    k.B(xc, y0 + 0.45, z1 + 0.012 + av, 0.55, 0.9, 0.04, posees > 0 ? P.boisFonce : P.ardoise)
-    const etages = Math.max(1, Math.floor((hh - 0.3) / 0.95))
-    // Les baies non posées (menuisier) restent sombres : on les dessine comme des trous.
-    let i = 0
-    const posee = () => ++i <= posees - 1
-    for (let e = 0; e < etages; e++) for (const [fx, face] of [[x0 + 0.42, 'z'], [x1 - 0.42, 'z']] as const) {
-      const y = y0 + 0.6 + e * 0.95
-      if (posee()) { k.B(fx, y, z1 + 0.008 + av, 0.54, 0.5, 0.03, P.blanc); k.F(fx, y, z1 + 0.014 + av, 0.42, 0.38, 0.03, P.vitreJour, lumiere(i, 2 * etages + 2) ? P.lumiere : P.vitreNuit) }
-      else k.B(fx, y, z1 + 0.006 + av, 0.46, 0.4, 0.03, P.ardoise)
-      void face
-    }
-    for (const fz of [zc - d * 0.22, zc + d * 0.22]) {
-      const y = y0 + 0.6
-      if (posee()) { k.B(x1 + 0.008 + av, y, fz, 0.03, 0.5, 0.54, P.blanc); k.F(x1 + 0.014 + av, y, fz, 0.03, 0.38, 0.42, P.vitreJour, lumiere(i, 2 * etages + 2) ? P.lumiere : P.vitreNuit) }
-      else k.B(x1 + 0.006 + av, y, fz, 0.03, 0.4, 0.46, P.ardoise)
-    }
+  // La grue, au coin arrière gauche de la parcelle (hors de l'emprise) ; sa flèche passe au-dessus du chantier, rien ne déborde sur la rue.
+  const GRUE = { x: x - 1.95, z: z - 2.0 }
+  const grue = (haut: number) => {
+    const gx = GRUE.x, gz = GRUE.z
+    k.B(gx, 0.1, gz, 0.4, 0.2, 0.4, P.beton)
+    k.B(gx, haut / 2, gz, 0.2, haut, 0.2, P.ambre)
+    k.B(gx + 1.3, haut + 0.1, gz, 3.2, 0.12, 0.14, P.ambre) // la flèche, au-dessus du chantier
+    k.B(gx - 0.12, haut + 0.02, gz, 0.22, 0.3, 0.3, P.beton) // le contrepoids
+    k.B(gx, haut - 0.18, gz + 0.17, 0.26, 0.22, 0.14, P.blanc) // la cabine
+    k.B(gx + 2.5, haut - 0.6, gz, 0.02, 1.2, 0.02, P.ardoise)
   }
-  const neuve = PEINTURES[Math.floor(h3 * PEINTURES.length)]
-  const peint = metier === 'peintre' || metier === 'general' || metier === 'facadier' || metier === 'multiservice'
-  const posees = metier === 'menuisier' || metier === 'general' || metier === 'vitrier' || metier === 'multiservice' ? (fini ? 99 : Math.round(7 * pct)) : 99
-  const sensToit: 'x' | 'z' = h2 < 0.5 ? 'x' : 'z'
+  const benne = () => {
+    const bx = x - 1.45, bz = z + 1.6
+    k.B(bx, 0.36, bz, 1.2, 0.6, 0.65, P.corailFonce); k.B(bx, 0.68, bz, 1.0, 0.06, 0.5, P.granulat)
+  }
+  const betonniere = () => { k.Cy(x - 1.6, 0.55, z + 1.55, 0.6, 0.65, 0.6, P.corail, [0.55, 0, 0.3]); k.Cy(x - 1.6, 0.22, z + 1.55, 0.12, 0.44, 0.12, P.ardoise) }
+  const buissons = () => { k.S(x - 1.85, 0.32, z + 1.85, 0.6, 0.55, 0.6, P.sauge); k.S(x + 1.85, 0.3, z - 1.8, 0.55, 0.5, 0.55, P.sauge); k.S(x + 1.85, 0.3, z + 1.85, 0.5, 0.45, 0.5, P.haie) }
+  const allee = () => { if (z1 < z + 2.15) k.B(xc, 0.075, (z1 + z + 2.2) / 2, 0.7, 0.03, z + 2.2 - z1, P.gravier) }
 
-  switch (type) {
-    case 'immeuble': {
-      corps(ht, posees, peint ? neuve : null)
-      sommet = k.plat(x0, z0, x1, z1, y0 + ht, P.pierre)
-      k.vol(xc - 0.4, zc - 0.5, xc + 0.5, zc + 0.2, 0.6, P.pierre, sommet - 0.2)
-      for (let e = 1; e < Math.floor(ht / 0.95); e++) k.B(xc, y0 + e * 0.95 + 0.05, z1 + 0.25, w * 0.5, 0.06, 0.5, P.pierre) // les balcons
-      if (!fini && (peint || metier === 'electricien')) echafaudage(x0 - 0.25, x1 + 0.25, z1, Math.max(1.0, peint ? ht * 0.9 : 1.8))
-      break
-    }
-    case 'commerce': {
-      k.vol(x0, z0, x1, z1, ht, peint && !fini ? melange(murC, P.gris, 0.4) : murC, y0)
-      if (peint && !fini && pct > 0) k.vol(x0 - 0.015, z0 - 0.015, x1 + 0.015, z1 + 0.015, ht * pct, neuve, y0)
-      // La vitrine ; le vitrier la pose au fil du chantier (la part non posée reste une baie sombre).
-      const pv = metier === 'vitrier' && !fini ? pct : 1, lv = (w - 0.6) * pv
-      if (lv > 0.02) k.F(xc - (w - 0.6) / 2 + lv / 2, y0 + 0.55, z1 + 0.02, lv, 0.9, 0.03, P.vitreJour, P.lumiere)
-      if (pv < 1) k.B(xc + lv / 2, y0 + 0.55, z1 + 0.015, w - 0.6 - lv, 0.9, 0.03, P.ardoise)
-      k.B(xc, y0 + 1.22, z1 + 0.35, w - 0.3, 0.06, 0.8, hacher(`${id}:store`) < 0.5 ? P.corail : P.vert, [0.35, 0, 0]) // le store
-      k.B(xc, y0 + 1.4, z1 + 0.02, w - 0.4, 0.22, 0.03, P.ardoise) // l'enseigne
-      k.fenetres('z', z1, x0 + 0.2, x1 - 0.2, y0 + 1.75, 1, 1, `${id}:etage`, lumiere)
-      sommet = k.deuxPans(x0, z0, x1, z1, y0 + ht, Math.PI / 4, toitC, { pignon: murC })
-      if (!fini && peint) echafaudage(x0 - 0.25, x1 + 0.25, z1 + 0.6, 1.8)
-      break
-    }
-    case 'grange': case 'maison': case 'pavillon': {
-      corps(ht, posees, peint ? neuve : null)
-      // Le charpentier : la charpente nue tant que le chantier n'est pas fini (la couverture viendra après lui).
-      const couv = metier === 'couvreur' ? pct : metier === 'charpentier' ? (fini ? 1 : 0) : 1
-      if (type === 'pavillon' && ((metier !== 'couvreur' && metier !== 'charpentier') || fini)) {
-        const s = Math.max(w, d) * 1.45
-        add('toit', [xc, y0 + ht + 0.75, zc], [s, 1.5, s], toitC, m.o, [0, Math.PI / 4, 0])
-        sommet = y0 + ht + 1.5
-      } else sommet = k.deuxPans(x0, z0, x1, z1, y0 + ht, Math.PI / 4, metier === 'couvreur' && h3 < 0.4 ? P.ardoiseToit : toitC, { sens: type === 'grange' ? 'x' : sensToit, couv, pignon: murC })
-      if (type === 'grange') k.B(xc, y0 + 0.75, z1 + 0.02, 1.4, 1.5, 0.04, P.bois)
-      if (!fini && (metier === 'couvreur' || metier === 'charpentier' || peint)) echafaudage(x0 - 0.25, x1 + 0.25, z1, ht + (metier === 'couvreur' || metier === 'charpentier' ? 0.1 : -0.2))
-      if (!fini && metier === 'couvreur') { palette(x - 1.55, z + 1.55, h3 < 0.4 ? P.ardoiseToit : P.tuile, 4); k.B(x1 + 0.05, (ht + 0.6) / 2, z1 + 0.75, 0.06, ht + 0.8, 0.06, P.bois, [-0.22, 0, 0]) }
-      if ((metier === 'menuisier' || metier === 'charpentier') && !fini) {
-        // L'ossature bois d'une avancée : les montants montent, le bardage suit.
-        const n = 6
-        for (let i = 0; i < n; i++) if (i < Math.max(1, Math.round(n * pct))) k.B(x1 + 0.3, y0 + ht * 0.45, z0 + 0.3 + i * (d - 0.6) / (n - 1), 0.08, ht * 0.9, 0.08, P.bois)
-        k.B(x1 + 0.3, y0 + ht * 0.9, zc, 0.12, 0.1, d - 0.4, P.bois)
-        for (let i = 0; i < Math.min(2, 7 - posees); i++) k.B(x - 1.55 + i * 0.12, 0.42, z + 1.45 + i * 0.1, 0.62, 0.72, 0.05, P.bois, [-0.2, 0.3, 0])
+  // ── Le bâtiment terminé, type par type ; `fini` : les abords et les enseignes allumées (presque fini : tout est là, pas encore propre).
+  const porte = (px = xc, c: string = P.boisFonce, l = 0.55) => k.B(px, y0 + 0.45, z1 + 0.012, l, 0.9, 0.04, c)
+  const fenetresRdc = (yy = y0 + 0.6) => { for (const fx of [x0 + 0.5, x1 - 0.5]) { k.B(fx, yy, z1 + 0.008, 0.54, 0.5, 0.03, P.blanc); k.F(fx, yy, z1 + 0.014, 0.42, 0.38, 0.03, P.vitreJour, lumiere(fx > xc ? 1 : 0) ? P.lumiere : P.vitreNuit) } }
+  const fenetresCote = (etages: number, he: number, yy = y0 + 0.6) => k.fenetres('x', x1, z0 + 0.3, z1 - 0.3, yy, etages, he, `${id}:cote`, (i) => lumiere(40 + i))
+  const fenetresEtages = (de: number, a: number, he: number) => k.fenetres('z', z1, x0 + 0.25, x1 - 0.25, y0 + de * he + 0.55, a, he, `${id}:etages`, (i) => lumiere(10 + i))
+  /** Dessine le bâtiment complet ; rend son sommet. `couv` : la part de toiture posée (presque fini : pas tout à fait). */
+  const batiment = (fini: boolean, couv: number): number => {
+    switch (type) {
+      case 'maison': {
+        // Trois maisons possibles (stables) : à pignons, à quatre pans (pavillon), ou avec son garage accolé.
+        const v = Math.floor(h2 * 3)
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        porte(); fenetresRdc(); fenetresCote(1, 1)
+        let s: number
+        if (v === 1 && couv >= 1) { const t = Math.max(g.w, g.d) * 1.42; add('toit', [xc, y0 + hTot + 0.72, zc], [t, 1.44, t], toitC, m.o, [0, Math.PI / 4, 0]); s = y0 + hTot + 1.44 }
+        else s = k.deuxPans(x0, z0, x1, z1, y0 + hTot, Math.PI / 4, toitC, { sens: h2 < 0.5 ? 'x' : 'z', couv, pignon: murC })
+        k.B(x0 + 0.5, y0 + hTot + 0.9, zc - 0.3, 0.28, 0.9, 0.28, P.pierre) // la cheminée
+        if (v === 2) { k.vol(x1, z1 - 1.4, x1 + 0.82, z1, 1.0, melange(murC, '#FFFFFF', 0.2), y0); k.plat(x1, z1 - 1.4, x1 + 0.82, z1, y0 + 1.0, P.pierre); k.B(x1 + 0.41, y0 + 0.42, z1 + 0.012, 0.66, 0.82, 0.03, P.pierre) }
+        if (fini) { k.haie(x - 2.0, z - 2.0, x - 2.0, z + 0.5, 0.55); allee() }
+        return s
       }
-      if (metier === 'chauffagiste') {
-        k.Cy(x0 + 0.4, sommet + 0.2, zc - 0.3, 0.2, 1.0, 0.2, P.metal) // le conduit
-        if (fini || pct >= 0.6) { k.B(x1 + 0.3, 0.05, zc + 0.15, 0.42, 0.1, 0.95, P.ardoise); k.B(x1 + 0.3, 0.5, zc + 0.15, 0.4, 0.78, 1.0, '#ECE6DA'); k.Cy(x1 + 0.51, 0.5, zc - 0.02, 0.5, 0.03, 0.5, P.ardoise, [0, 0, Math.PI / 2]) }
-        else { k.B(x - 1.4, 0.13, z + 1.5, 1.0, 0.14, 0.7, P.bois); k.B(x - 1.4, 0.6, z + 1.5, 0.95, 0.8, 0.6, P.carton) }
-        if (!fini && pct > 0) k.B(x1 + 0.05, 0.35, z1 - (d * pct) / 2, 0.06, 0.06, d * pct, P.cuivre)
+      case 'appartement': {
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        porte(); fenetresEtages(0, g.etages, g.he); fenetresCote(g.etages, g.he)
+        // L'appartement du chantier : le premier étage, cadre corail et balcon fleuri.
+        const yA = y0 + g.he
+        k.B(xc, yA + g.he / 2, z1 + 0.004, g.w - 0.1, g.he - 0.12, 0.02, P.corailClair)
+        k.B(xc, yA + 0.05, z1 + 0.32, g.w * 0.62, 0.07, 0.6, P.pierre)
+        k.B(xc, yA + 0.38, z1 + 0.6, g.w * 0.62, 0.05, 0.04, P.ardoise)
+        for (const dx of [-0.45, 0, 0.45]) k.S(xc + dx, yA + 0.2, z1 + 0.55, 0.3, 0.22, 0.2, fini ? P.sauge : P.planche)
+        return k.plat(x0, z0, x1, z1, y0 + hTot, P.pierre)
       }
-      if (metier === 'carreleur') {
-        k.B(x, 0.085, z + 1.45, 3.0, 0.05, 0.9, P.beton)
-        const n = Math.round(14 * pct)
-        for (let i = 0; i < n; i++) k.B(x - 1.29 + (i % 7) * 0.43, 0.125, z + 1.24 + Math.floor(i / 7) * 0.43, 0.4, 0.04, 0.4, i % 2 ? P.planche : P.pierre)
+      case 'immeuble': {
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        k.vol(x0 - 0.02, z0 - 0.02, x1 + 0.02, z1 + 0.02, 0.5, P.pierre, y0) // le soubassement
+        porte(xc, P.ardoise, 0.7); k.B(xc, y0 + 1.0, z1 + 0.3, 1.1, 0.06, 0.6, P.ardoise) // l'auvent de l'entrée
+        fenetresEtages(1, g.etages - 1, g.he); fenetresCote(g.etages, g.he)
+        for (let e = 1; e < g.etages; e++) for (const bx of [x0 + 0.8, x1 - 0.8]) { k.B(bx, y0 + e * g.he + 0.04, z1 + 0.28, 1.1, 0.06, 0.55, P.pierre); k.B(bx, y0 + e * g.he + 0.36, z1 + 0.54, 1.1, 0.04, 0.04, P.ardoise) } // les balcons
+        const s = k.plat(x0, z0, x1, z1, y0 + hTot, P.pierre)
+        k.vol(xc - 0.45, zc - 0.6, xc + 0.45, zc + 0.1, 0.55, P.pierre, s - 0.22) // l'édicule
+        return s + 0.35
       }
-      if (fini) buisson()
-      break
+      case 'hotel': {
+        k.vol(x0, z0, x1, z1, hTot, '#EFE6D8', y0)
+        k.vol(x0 - 0.02, z0 - 0.02, x1 + 0.02, z1 + 0.02, 0.95, P.pierre, y0)
+        k.F(xc, y0 + 0.5, z1 + 0.015, 0.9, 0.85, 0.03, P.vitreJour, P.lumiere) // l'entrée vitrée
+        fenetresEtages(1, g.etages - 1, g.he); fenetresCote(g.etages - 1, g.he, y0 + g.he + 0.55)
+        // L'auvent, porté par deux poteaux, jusqu'au trottoir.
+        k.B(xc, y0 + 1.05, z1 + 0.6, 1.5, 0.08, 1.2, P.ardoise)
+        for (const px of [xc - 0.65, xc + 0.65]) k.Cy(px, y0 + 0.52, z1 + 1.12, 0.06, 1.04, 0.06, P.ardoise)
+        // L'enseigne en drapeau, sur l'angle, de haut en bas ; ses lettres sont des pavés clairs (allumés le soir, une fois fini).
+        k.B(x1 + 0.1, y0 + g.he * 3.4, z1 - 0.12, 0.12, g.he * 3.0, 0.5, P.corail)
+        for (let i = 0; i < 5; i++) { const yl = y0 + g.he * 2.2 + i * 0.5; if (fini) k.F(x1 + 0.17, yl, z1 - 0.12, 0.02, 0.3, 0.3, P.blanc, P.lumiere); else k.B(x1 + 0.17, yl, z1 - 0.12, 0.02, 0.3, 0.3, P.blanc) }
+        const s = k.plat(x0, z0, x1, z1, y0 + hTot, P.pierre)
+        k.B(xc, s + 0.25, z1 - 0.25, 1.6, 0.42, 0.08, P.corail) // l'enseigne du toit
+        for (const px of [x0 + 0.2, x0 + 0.5]) { k.Cy(px, 0.95, z1 + 1.3, 0.04, 1.9, 0.04, P.metal); k.B(px + 0.2, 1.65, z1 + 1.3, 0.38, 0.26, 0.02, px < x0 + 0.3 ? P.corail : P.ambre) } // les mâts
+        return s + 0.5
+      }
+      case 'restaurant': {
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        for (const fx of [x0 + 0.65, xc, x1 - 0.65]) { k.B(fx, y0 + 0.55, z1 + 0.008, 0.82, 0.8, 0.03, P.boisFonce); k.F(fx, y0 + 0.55, z1 + 0.014, 0.7, 0.68, 0.03, P.vitreJour, P.lumiere) }
+        // Le store rayé et l'enseigne.
+        for (let i = 0; i < 8; i++) k.B(x0 + 0.2 + (i + 0.5) * ((g.w - 0.4) / 8), y0 + 1.12, z1 + 0.32, (g.w - 0.4) / 8, 0.05, 0.62, i % 2 ? P.blanc : P.corail, [0.4, 0, 0])
+        k.B(xc, y0 + hTot - 0.12, z1 + 0.02, g.w * 0.55, 0.2, 0.04, P.ardoise); k.B(xc, y0 + hTot - 0.12, z1 + 0.045, g.w * 0.4, 0.05, 0.01, P.corail)
+        const s = k.deuxPans(x0, z0, x1, z1, y0 + hTot, Math.PI / 6, toitC, { sens: 'x', couv })
+        // La terrasse : un plancher bois, trois tables sous leurs parasols, des jardinières.
+        const tz0 = z1 + 0.15, tz1 = z + 2.15
+        k.vol(x0, tz0, x1, tz1, 0.06, P.planche, y0)
+        ;[x0 + 0.6, xc, x1 - 0.6].forEach((tx, i) => {
+          const tz = (tz0 + tz1) / 2
+          k.Cy(tx, y0 + 0.3, tz, 0.42, 0.04, 0.42, P.blanc); k.Cy(tx, y0 + 0.17, tz, 0.05, 0.3, 0.05, P.ardoise)
+          for (const dx of [-0.32, 0.32]) k.B(tx + dx, y0 + 0.17, tz, 0.16, 0.26, 0.16, P.bois)
+          if (fini) { k.Cy(tx, y0 + 0.7, tz, 0.04, 1.3, 0.04, P.metal); k.Co(tx, y0 + 1.42, tz, 1.05, 0.34, 1.05, i % 2 ? P.blanc : P.corail) }
+          else k.Cy(tx, y0 + 0.75, tz, 0.12, 1.3, 0.12, i % 2 ? P.blanc : P.corail) // parasols encore fermés
+        })
+        if (fini) for (const px of [x0 - 0.05, x1 + 0.05]) k.B(px, 0.3, (tz0 + tz1) / 2, 0.22, 0.4, tz1 - tz0, P.haie)
+        return Math.max(s, y0 + 1.6)
+      }
+      case 'commerce': {
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        k.B(xc, y0 + 0.5, z1 + 0.006, g.w - 0.2, 0.96, 0.02, P.ardoise) // le cadre de la devanture
+        k.F(xc - 0.25, y0 + 0.5, z1 + 0.02, g.w - 1.1, 0.8, 0.03, P.vitreJour, P.lumiere) // la vitrine
+        porte(x1 - 0.5, P.ardoise, 0.5)
+        k.B(xc, y0 + 1.05, z1 + 0.35, g.w - 0.3, 0.06, 0.75, hacher(`${id}:store`) < 0.5 ? P.corail : P.vert, [0.35, 0, 0]) // le store
+        k.B(xc, y0 + 1.22, z1 + 0.02, g.w - 0.4, 0.2, 0.04, P.ardoise); k.B(xc, y0 + 1.22, z1 + 0.045, g.w * 0.5, 0.06, 0.01, P.blanc) // l'enseigne
+        fenetresEtages(1, 1, g.he); fenetresCote(1, g.he, y0 + g.he + 0.55)
+        return k.deuxPans(x0, z0, x1, z1, y0 + hTot, Math.PI / 4, toitC, { couv, pignon: murC })
+      }
+      case 'bureaux': {
+        k.vol(x0, z0, x1, z1, hTot, '#D8D2C7', y0)
+        // Le mur-rideau : une trame serrée de grands vitrages, sur la façade et le côté ; une lisse par plancher.
+        k.fenetres('z', z1, x0 + 0.15, x1 - 0.15, y0 + 0.5, g.etages, g.he, `${id}:rideau`, (i) => lumiere(60 + i), 0.6, 0.74)
+        k.fenetres('x', x1, z0 + 0.15, z1 - 0.15, y0 + 0.5, g.etages, g.he, `${id}:rideau-cote`, (i) => lumiere(90 + i), 0.6, 0.74)
+        for (let e = 1; e < g.etages; e++) { k.B(xc, y0 + e * g.he, z1 + 0.03, g.w + 0.04, 0.08, 0.04, P.metal); k.B(x1 + 0.03, y0 + e * g.he, zc, 0.04, 0.08, g.d + 0.04, P.metal) }
+        k.vol(xc - 0.55, z1, xc + 0.55, z1 + 0.5, 0.9, P.metal, y0) // le sas d'entrée
+        k.F(xc, y0 + 0.45, z1 + 0.52, 0.9, 0.8, 0.03, P.vitreJour, P.lumiere)
+        const s = k.plat(x0, z0, x1, z1, y0 + hTot, P.gris)
+        for (const [bx, bz] of [[x0 + 0.7, zc - 0.4], [x0 + 1.4, zc - 0.4], [x1 - 0.8, zc + 0.3]] as const) k.B(bx, s - 0.05, bz, 0.5, 0.36, 0.5, ZINC) // la ventilation
+        return s + 0.15
+      }
+      case 'entrepot': {
+        k.vol(x0, z0, x1, z1, hTot, P.bardage, y0)
+        for (let t = x0 + 0.2; t < x1 - 0.05; t += 0.32) k.B(t, y0 + hTot / 2, z1 + 0.012, 0.04, hTot, 0.02, P.nervure)
+        for (let t = z0 + 0.2; t < z1 - 0.05; t += 0.32) k.B(x1 + 0.012, y0 + hTot / 2, t, 0.02, hTot, 0.04, P.nervure)
+        // Deux quais de chargement sous leur auvent, une porte de service.
+        for (const qx of [x0 + 0.9, x0 + 2.1]) { k.B(qx, y0 + 0.65, z1 + 0.02, 0.95, 1.1, 0.03, P.ardoise); k.B(qx, y0 + 0.12, z1 + 0.3, 1.0, 0.24, 0.55, P.beton) }
+        k.B(x0 + 1.5, y0 + 1.45, z1 + 0.4, 2.4, 0.06, 0.8, ZINC)
+        porte(x1 - 0.5, P.ardoise, 0.5)
+        k.B(x1 - 0.6, y0 + hTot - 0.25, z1 + 0.03, 0.9, 0.22, 0.02, P.corail) // la bande d'enseigne
+        k.fenetres('x', x1, z0 + 0.3, z1 - 0.3, y0 + hTot - 0.45, 1, 1, `${id}:jour`, (i) => lumiere(50 + i), 0.5, 0.26) // le bandeau vitré
+        return k.deuxPans(x0, z0, x1, z1, y0 + hTot, 0.18, P.ardoiseToit, { sens: 'x', couv })
+      }
+      case 'ecole': {
+        // Le bâtiment du fond et son aile à gauche, deux niveaux ; devant à droite, la cour marquée et le préau.
+        const ax1 = x0 + 1.3, az1 = z + 1.25
+        k.vol(x0, z0, x1, z1, hTot, murC, y0)
+        k.vol(x0, z1, ax1, az1, hTot, murC, y0)
+        k.fenetres('z', z1, ax1 + 0.2, x1 - 0.2, y0 + 0.55, g.etages, g.he, `${id}:classes`, (i) => lumiere(20 + i), 0.5, 0.5)
+        k.fenetres('x', ax1, z1 + 0.2, az1 - 0.2, y0 + 0.55, g.etages, g.he, `${id}:aile`, (i) => lumiere(30 + i))
+        k.B(x0 + 0.65, y0 + 0.45, az1 + 0.012, 0.6, 0.9, 0.04, P.boisFonce)
+        k.Cy(ax1 + 1.1, y0 + hTot - 0.3, z1 + 0.03, 0.42, 0.04, 0.42, P.blanc, [Math.PI / 2, 0, 0]); k.B(ax1 + 1.1, y0 + hTot - 0.24, z1 + 0.06, 0.03, 0.16, 0.01, P.ardoise) // l'horloge
+        const s = Math.max(k.plat(x0, z0, x1, z1, y0 + hTot, P.pierre), k.plat(x0, z1, ax1, az1, y0 + hTot, P.pierre))
+        // La cour : sol clair, un terrain tracé ; le préau sur quatre poteaux ; le mât à fanion.
+        k.B((ax1 + x + 2.15) / 2 + 0.05, 0.07, (z1 + z + 2.15) / 2, x + 2.15 - ax1 - 0.1, 0.02, z + 2.15 - z1 - 0.05, P.gravier)
+        const cx0 = ax1 + 0.35, cx1 = x + 1.95, cz0 = z1 + 0.35, cz1 = z + 1.95
+        k.B((cx0 + cx1) / 2, 0.085, cz0, cx1 - cx0, 0.01, 0.04, P.blanc); k.B((cx0 + cx1) / 2, 0.085, cz1, cx1 - cx0, 0.01, 0.04, P.blanc)
+        k.B(cx0, 0.085, (cz0 + cz1) / 2, 0.04, 0.01, cz1 - cz0, P.blanc); k.B(cx1, 0.085, (cz0 + cz1) / 2, 0.04, 0.01, cz1 - cz0, P.blanc)
+        for (const [px, pz] of [[x1 - 1.3, z1 + 0.15], [x1 - 0.1, z1 + 0.15], [x1 - 1.3, z1 + 0.95], [x1 - 0.1, z1 + 0.95]] as const) k.Cy(px, y0 + 0.55, pz, 0.07, 1.1, 0.07, P.ardoise)
+        k.B(x1 - 0.7, y0 + 1.12, z1 + 0.55, 1.45, 0.07, 1.0, P.ardoiseToit)
+        k.Cy(x - 1.95, 1.0, z + 2.0, 0.05, 2.0, 0.05, P.metal); k.B(x - 1.75, 1.8, z + 2.0, 0.38, 0.24, 0.02, P.corail)
+        return s
+      }
+      case 'sante': {
+        k.vol(x0, z0, x1, z1, hTot, P.blanc, y0)
+        // Les bandeaux vitrés, l'entrée sous auvent, la rampe ; la croix verte en façade et sur le totem.
+        for (let e = 0; e < g.etages; e++) k.F(xc + 0.35, y0 + e * g.he + 0.55, z1 + 0.015, g.w - 1.2, 0.42, 0.03, P.vitreJour, lumiere(70 + e) ? P.lumiere : P.vitreNuit)
+        fenetresCote(g.etages, g.he)
+        k.F(x0 + 0.55, y0 + 0.45, z1 + 0.015, 0.7, 0.85, 0.03, P.vitreJour, P.lumiere)
+        k.B(x0 + 0.55, y0 + 1.0, z1 + 0.4, 1.0, 0.06, 0.8, P.pierre)
+        k.B(x0 + 1.4, y0 + 0.1, z1 + 0.45, 0.6, 0.06, 0.85, P.beton, [0.18, 0, 0]) // la rampe
+        const croix = (cx: number, cy: number, cz: number, s2: number) => { k.B(cx, cy, cz, s2, s2 * 0.32, 0.03, P.vert); k.B(cx, cy, cz, s2 * 0.32, s2, 0.03, P.vert) }
+        k.B(x0 + 0.55, y0 + hTot - 0.35, z1 + 0.01, 0.62, 0.62, 0.02, P.blanc); croix(x0 + 0.55, y0 + hTot - 0.35, z1 + 0.03, 0.5)
+        k.Cy(x + 1.8, 0.6, z + 1.9, 0.07, 1.2, 0.07, P.metal); k.B(x + 1.8, 1.35, z + 1.9, 0.6, 0.6, 0.1, P.blanc); croix(x + 1.8, 1.35, z + 1.96, 0.46)
+        return k.plat(x0, z0, x1, z1, y0 + hTot, P.pierre)
+      }
+      case 'equipement': {
+        // Le gymnase : murs bas cerclés d'un bandeau, la voûte en zinc ; une verrière haute et l'entrée couverte.
+        k.vol(x0, z0, x1, z1, hTot, '#E6E0D6', y0)
+        k.B(xc, y0 + hTot - 0.1, z1 + 0.012, g.w, 0.14, 0.02, P.corail); k.B(x1 + 0.012, y0 + hTot - 0.1, zc, 0.02, 0.14, g.d, P.corail)
+        k.fenetres('z', z1, x0 + 0.3, x1 - 0.3, y0 + 0.75, 1, 1, `${id}:verriere`, (i) => lumiere(80 + i), 0.6, 0.32)
+        if (couv >= 1) add('cyl', [xc, y0 + hTot, zc], [g.d * 1.04, g.w + 0.1, g.d * 1.04], ZINC, m.o, [0, 0, Math.PI / 2])
+        else for (let t = x0 + 0.1; t <= x1 - 0.05; t += 0.5) add('cyl', [t, y0 + hTot, zc], [g.d * 1.02, 0.06, g.d * 1.02], P.metal, m.o, [0, 0, Math.PI / 2]) // les arcs, la couverture à venir
+        k.B(xc, y0 + 0.9, z1 + 0.45, 1.6, 0.07, 0.9, P.ardoise); porte(xc, P.ardoise, 0.9)
+        return y0 + hTot + g.d * 0.52
+      }
+      case 'exterieur': return exterieur(fini ? 1 : 0.9)
+      case 'agricole': {
+        k.vol(x0, z0, x1, z1, hTot, BOIS_GRANGE, y0)
+        for (let t = x0 + 0.15; t < x1; t += 0.28) k.B(t, y0 + hTot / 2, z1 + 0.012, 0.03, hTot, 0.02, melange(BOIS_GRANGE, '#000000', 0.15))
+        k.B(xc, y0 + 0.75, z1 + 0.03, 1.4, 1.5, 0.04, P.boisFonce) // la grande porte et sa croix
+        k.F(xc, y0 + hTot + 0.45, z1 + 0.02, 0.42, 0.36, 0.03, P.vitreJour, lumiere(55) ? P.lumiere : P.vitreNuit) // la lucarne du fenil
+        k.B(xc, y0 + 0.75, z1 + 0.055, 0.08, 1.95, 0.02, P.bois, [0, 0, 0.82]); k.B(xc, y0 + 0.75, z1 + 0.055, 0.08, 1.95, 0.02, P.bois, [0, 0, -0.82])
+        const s = k.deuxPans(x0, z0, x1, z1, y0 + hTot, Math.PI / 4, P.tuile, { sens: 'x', couv, pignon: BOIS_GRANGE })
+        k.Cy(x1 + 0.45, 1.35, zc - 0.4, 0.8, 2.7, 0.8, ZINC); k.Co(x1 + 0.45, 2.94, zc - 0.4, 0.84, 0.48, 0.84, P.metal) // le silo
+        if (fini) for (const [bx, bz] of [[x + 1.2, z + 1.6], [x + 1.85, z + 1.6], [x + 1.5, z + 1.6]] as const) k.Cy(bx, 0.32, bz, 0.6, 0.5, 0.6, P.sable, [Math.PI / 2, 0, 0]) // les balles de foin
+        return Math.max(s, 3.2)
+      }
     }
-    case 'extension': {
-      // La maison existante au fond à gauche ; l'extension (ou le garage) monte devant à droite, par rangs de parpaings.
-      k.vol(x0, z0, x1, z1, ht, murC, y0)
-      k.deuxPans(x0, z0, x1, z1, y0 + ht, Math.PI / 4, toitC, { sens: 'x', pignon: murC })
-      k.fenetres('z', z1, x0 + 0.2, x1 - 0.2, y0 + 0.6, 1, 1, `${id}:maison`)
-      sommet = y0 + ht + d / 2 + 0.1
-      const ex0 = x1, ex1 = x1 + 1.6, ez0 = z1 - 1.6, ez1 = z1 + 0.6
-      k.vol(ex0, ez0 - 0.15, ex1 + 0.15, ez1 + 0.15, 0.1, P.beton, y0)
-      const hb = fini ? ht * 0.85 : Math.max(0.22, ht * 0.85 * pct), e = 0.16
-      const murExt = fini ? murC : P.parpaing
-      k.vol(ex0, ez1 - e, ex1, ez1, hb, murExt, y0 + 0.1); k.vol(ex1 - e, ez0, ex1, ez1, hb, murExt, y0 + 0.1); k.vol(ex0, ez0, ex1, ez0 + e, hb, murExt, y0 + 0.1)
-      if (!fini) for (let y = 0.22; y < hb; y += 0.22) { k.B((ex0 + ex1) / 2, y0 + 0.1 + y, ez1 + 0.004, 1.6, 0.025, 0.012, P.joint); k.B(ex1 + 0.004, y0 + 0.1 + y, (ez0 + ez1) / 2, 0.012, 0.025, 2.2, P.joint) }
-      if (fini) { k.vol(ex0 - 0.05, ez0 - 0.05, ex1 + 0.05, ez1 + 0.05, 0.12, P.pierre, y0 + 0.1 + hb); k.B((ex0 + ex1) / 2, y0 + 0.6, ez1 + 0.01, 1.1, 1.0, 0.03, P.nervure) }
-      else { palette(x - 1.5, z + 1.6, P.parpaing, 3); k.Cy(x - 0.4, 0.45, z + 1.6, 0.6, 0.65, 0.6, P.corail, [0.55, 0, 0.3]); if (pct >= 0.45) echafaudage(ex0, ex1, ez1, Math.max(1.0, hb)) }
-      break
-    }
-    case 'jardin': {
-      // Le paysagiste : la maison au fond, le JARDIN qui se crée devant — pelouse posée par carrés, arbres plantés, bordures.
-      const jz1 = z0 + 1.3
-      k.vol(x0, z0, x1, jz1, ht, murC, y0)
-      sommet = k.deuxPans(x0, z0, x1, jz1, y0 + ht, Math.PI / 4, toitC, { pignon: murC })
-      k.fenetres('z', jz1, x0 + 0.2, x1 - 0.2, y0 + 0.6, 1, 1, `${id}:jardin`)
-      k.B(x, 0.07, z + 1.0, 3.8, 0.02, 2.0, '#B79E7E') // la terre préparée
-      const n = Math.round(10 * pct)
-      for (let i = 0; i < n; i++) k.B(x - 1.52 + (i % 5) * 0.76, 0.09, z + 0.55 + Math.floor(i / 5) * 0.9, 0.74, 0.03, 0.88, '#B5CC9E')
-      const arbres = fini ? 3 : Math.round(3 * pct)
-      for (let i = 0; i < arbres; i++) { k.Cy(x - 1.3 + i * 1.3, 0.35, z + 1.9, 0.12, 0.7, 0.12, P.tronc); k.S(x - 1.3 + i * 1.3, 0.95, z + 1.9, 0.75, 0.75, 0.75, P.sauge) }
-      if (pct >= 0.5) k.B(x, 0.12, z + 2.05, 3.8, 0.1, 0.08, P.pierre)
-      if (!fini) { k.Co(x + 1.6, 0.3, z - 1.6, 0.9, 0.6, 0.9, '#8E7356'); k.B(x - 1.6, 0.35, z - 1.6, 0.8, 0.3, 0.5, P.vert) }
-      break
-    }
-    case 'piscine': {
-      // Le pisciniste : la maison au fond à gauche, la PISCINE devant — fouille, parois, eau qui monte, margelles à la fin.
-      k.vol(x0, z0, x0 + 2.0, z0 + 1.6, ht, murC, y0)
-      sommet = k.deuxPans(x0, z0, x0 + 2.0, z0 + 1.6, y0 + ht, Math.PI / 4, toitC, { pignon: murC })
-      k.fenetres('z', z0 + 1.6, x0 + 0.2, x0 + 1.8, y0 + 0.6, 1, 1, `${id}:piscine`)
-      const px0 = x - 1.5, px1 = x + 1.5, pz0 = z - 0.2, pz1 = z + 1.7
+    return y0 + hTot
+  }
+  /** L'extérieur (jardin, terrasse, piscine) : `t` de 0 à 1 dit ce qui est fait ; rend le sommet. */
+  function exterieur(t: number): number {
+    const ex0 = x - 1.9, ex1 = x + 1.9, ez0 = z - 1.0, ez1 = z + 1.9
+    k.B(x, 0.3, z - 2.05, 4.3, 0.5, 0.18, P.pierre) // le muret du fond de parcelle
+    let s = 0.6
+    if (variante === 'piscine') {
+      const px0 = x - 1.4, px1 = x + 1.4, pz0 = z - 0.6, pz1 = z + 1.3, hp = 0.35
       k.vol(px0, pz0, px1, pz1, 0.03, '#6E655C', 0.06) // la fouille
-      const hp = 0.35
-      for (const [a0, b0, a1, b1] of [[px0, pz0, px1, pz0 + 0.12], [px0, pz1 - 0.12, px1, pz1], [px0, pz0, px0 + 0.12, pz1], [px1 - 0.12, pz0, px1, pz1]] as const) k.vol(a0, b0, a1, b1, pct > 0.2 || fini ? hp : 0.1, P.beton, 0.06)
-      if (pct >= 0.5) k.vol(px0 + 0.12, pz0 + 0.12, px1 - 0.12, pz1 - 0.12, Math.max(0.04, (hp - 0.05) * (fini ? 1 : (pct - 0.5) * 2)), '#9FB3AA', 0.09)
-      if (fini) for (const [a0, b0, a1, b1] of [[px0 - 0.15, pz0 - 0.15, px1 + 0.15, pz0], [px0 - 0.15, pz1, px1 + 0.15, pz1 + 0.15], [px0 - 0.15, pz0, px0, pz1], [px1, pz0, px1 + 0.15, pz1]] as const) k.vol(a0, b0, a1, b1, 0.06, P.blanc, 0.06 + hp)
-      else k.vol(x + 1.0, z - 1.9, x + 1.9, z - 1.0, 0.5, P.carton, 0.06)
-      break
-    }
-    case 'coupe': {
-      // La maison EN COUPE (plombier, carreleur) : murs du fond pleins, murs face à la caméra arasés, cloison, salle d'eau.
-      k.vol(x0, z0, x1, z1, 0.08, P.planche, y0)
-      k.vol(x0, z0, x1, z0 + 0.16, ht, murC, y0); k.vol(x0, z0, x0 + 0.16, z1, ht, murC, y0)
-      k.vol(x0, z1 - 0.16, x1, z1, 0.4, murC, y0); k.vol(x1 - 0.16, z0, x1, z1, 0.4, murC, y0)
-      k.vol(xc - 0.08, z0, xc + 0.08, zc + 0.4, ht * 0.85, murC, y0) // la cloison
-      k.deuxPans(x0, z0, x1, z1, y0 + ht, 0.6, toitC, { part: 'arriere' })
-      sommet = y0 + ht + (d / 2) * Math.tan(0.6) + 0.1
-      const sol = y0 + 0.08
-      if (metier === 'plaquiste') {
-        // Les plaques se vissent sur les rails : la part posée suit l'avancement ; le reste montre l'ossature métallique.
-        const n = Math.round(8 * pct)
-        for (let i = 0; i < 8; i++) {
-          const t = x0 + 0.35 + i * (w - 0.5) / 8
-          if (i < n) k.B(t, y0 + ht * 0.45, z0 + 0.18, (w - 0.5) / 8 - 0.02, ht * 0.85, 0.03, '#F4F1EA')
-          else k.B(t, y0 + ht * 0.45, z0 + 0.18, 0.05, ht * 0.85, 0.05, P.metal)
-        }
-        if (!fini) { k.B(x + 1.6, 0.12, z + 1.45, 0.9, 0.14, 1.0, P.bois); for (let i = 0; i < 5; i++) k.B(x + 1.6, 0.22 + i * 0.06, z + 1.45, 0.85, 0.05, 0.95, '#F4F1EA') }
-      } else if (metier === 'carreleur') {
-        // Le sol des deux pièces se carrelle (24 carreaux), la faïence monte sur le mur du fond.
-        const n = Math.round(24 * pct)
-        for (let i = 0; i < n; i++) k.B(x0 + 0.42 + (i % 6) * 0.47, sol + 0.02, z0 + 0.45 + Math.floor(i / 6) * 0.55, 0.44, 0.03, 0.5, i % 2 ? P.blanc : P.pierre)
-        if (pct > 0) k.B(xc - w / 4, y0 + (ht * 0.8 * pct) / 2, z0 + 0.17, w / 2 - 0.2, ht * 0.8 * pct, 0.02, P.blanc)
-        if (!fini) { k.B(x + 1.65, 0.1, z + 1.4, 0.5, 0.14, 0.9, P.boisFonce); for (let i = 0; i < 4; i++) k.B(x + 1.65, 0.22 + i * 0.08, z + 1.4, 0.44, 0.07, 0.84, i % 2 ? P.blanc : P.pierre) }
-      } else {
-        // La salle d'eau : baignoire, WC, lavabo, ballon — posés au fil du chantier ; le cuivre court sur le mur du fond.
-        const app = [
-          () => { k.B(x0 + 0.75, sol + 0.25, z0 + 0.6, 1.2, 0.5, 0.65, P.blanc); k.B(x0 + 0.75, sol + 0.42, z0 + 0.6, 1.0, 0.1, 0.45, P.pvc) },
-          () => { k.B(xc + 0.5, sol + 0.2, z0 + 0.35, 0.36, 0.4, 0.5, P.blanc); k.B(xc + 0.5, sol + 0.55, z0 + 0.22, 0.36, 0.4, 0.15, P.blanc) },
-          () => { k.B(x1 - 0.55, sol + 0.75, z0 + 0.3, 0.6, 0.12, 0.4, P.blanc); k.Cy(x1 - 0.55, sol + 0.38, z0 + 0.25, 0.12, 0.7, 0.12, P.blanc) },
-          () => { k.Cy(x0 + 0.4, sol + 0.65, zc + 0.4, 0.5, 1.2, 0.5, P.blanc) },
-        ]
-        const n = fini ? app.length : Math.round(app.length * pct)
-        app.slice(0, n).forEach((f) => f())
-        for (let i = n; i < Math.min(app.length, n + 2); i++) k.B(x + 1.6 - (i - n) * 0.7, 0.35, z + 1.55, 0.6, 0.6, 0.5, P.carton)
-        if (pct > 0) k.Cy(x0 + (w * pct) / 2, sol + 0.25, z0 + 0.2, 0.08, w * pct, 0.08, P.cuivre, [0, 0, Math.PI / 2])
+      const hm = t >= 0.5 ? hp : Math.max(0.1, hp * t * 2)
+      for (const [a0, b0, a1, b1] of [[px0, pz0, px1, pz0 + 0.12], [px0, pz1 - 0.12, px1, pz1], [px0, pz0, px0 + 0.12, pz1], [px1 - 0.12, pz0, px1, pz1]] as const) k.vol(a0, b0, a1, b1, hm, P.beton, 0.06)
+      if (t >= 0.6) k.vol(px0 + 0.12, pz0 + 0.12, px1 - 0.12, pz1 - 0.12, Math.max(0.04, (hp - 0.05) * Math.min(1, (t - 0.6) / 0.4)), '#9FB3AA', 0.09)
+      if (t >= 0.9) for (const [a0, b0, a1, b1] of [[px0 - 0.15, pz0 - 0.15, px1 + 0.15, pz0], [px0 - 0.15, pz1, px1 + 0.15, pz1 + 0.15], [px0 - 0.15, pz0, px0, pz1], [px1, pz0, px1 + 0.15, pz1]] as const) k.vol(a0, b0, a1, b1, 0.06, P.blanc, 0.06 + hp)
+      if (t >= 1) {
+        k.vol(x - 1.9, z - 1.9, x - 0.8, z - 1.0, 0.9, murC, y0); k.plat(x - 1.9, z - 1.9, x - 0.8, z - 1.0, y0 + 0.9, P.pierre) // le local technique
+        for (const lx of [x + 0.6, x + 1.2]) k.B(lx, 0.22, z - 1.35, 0.42, 0.12, 1.0, P.blanc, [0.12, 0, 0]) // les transats
+        k.Cy(x + 1.75, 0.7, z - 1.3, 0.04, 1.3, 0.04, P.metal); k.Co(x + 1.75, 1.4, z - 1.3, 1.0, 0.32, 1.0, P.corail)
+        s = 1.6
       }
-      if (fini) buisson()
-      break
+    } else if (variante === 'jardin') {
+      k.B(x, 0.07, (ez0 + ez1) / 2, ex1 - ex0, 0.02, ez1 - ez0, '#B79E7E') // la terre préparée
+      const n = Math.round(10 * t)
+      for (let i = 0; i < n; i++) k.B(ex0 + 0.38 + (i % 5) * 0.76, 0.09, ez0 + 0.5 + Math.floor(i / 5) * 1.4, 0.74, 0.03, 1.36, '#B5CC9E')
+      const arbres = Math.round(3 * t)
+      for (let i = 0; i < arbres; i++) { k.Cy(x - 1.3 + i * 1.3, 0.35, z - 1.5, 0.12, 0.7, 0.12, P.tronc); k.S(x - 1.3 + i * 1.3, 0.95, z - 1.5, 0.75 * (0.6 + 0.4 * t), 0.75 * (0.6 + 0.4 * t), 0.75 * (0.6 + 0.4 * t), P.sauge) }
+      if (t >= 0.5) k.B(x, 0.1, ez1 + 0.12, ex1 - ex0, 0.08, 0.08, P.pierre) // la bordure
+      if (t >= 1) { for (const [fx, c] of [[x - 1.5, P.corailClair], [x + 1.5, P.ambre]] as const) k.S(fx, 0.25, z + 0.3, 0.6, 0.35, 0.6, c); k.B(x, 0.25, z - 0.9, 1.0, 0.08, 0.35, P.bois); s = 1.5 }
+      else s = arbres ? 1.4 : 0.6
+    } else {
+      // La terrasse : les lambourdes, puis les lames ; la pergola ; la table et son parasol.
+      const tz0 = z - 1.0, tz1 = z + 1.6, tx0 = x - 1.8, tx1 = x + 1.8
+      k.vol(tx0, tz0, tx1, tz1, 0.04, P.beton, 0.06)
+      for (let lz = tz0 + 0.15; lz < tz1; lz += 0.5) k.B(x, 0.13, lz, tx1 - tx0, 0.06, 0.08, P.boisFonce)
+      const lames = Math.round(13 * t)
+      for (let i = 0; i < lames; i++) k.B(x, 0.17, tz0 + 0.1 + i * 0.2, tx1 - tx0, 0.03, 0.18, P.bois)
+      if (t >= 0.6) for (const [px, pz] of [[tx0 + 0.15, tz0 + 0.15], [tx1 - 0.15, tz0 + 0.15], [tx0 + 0.15, z + 0.4], [tx1 - 0.15, z + 0.4]] as const) k.B(px, 0.95, pz, 0.1, 1.6, 0.1, P.boisFonce)
+      if (t >= 0.9) for (let i = 0; i < 7; i++) k.B(tx0 + 0.15 + i * ((tx1 - tx0 - 0.3) / 6), 1.78, (tz0 + z + 0.4) / 2, 0.06, 0.08, z + 0.55 - tz0, P.boisFonce)
+      if (t >= 1) { k.Cy(x + 0.6, 0.45, z + 1.0, 0.7, 0.04, 0.7, P.blanc); k.Cy(x + 0.6, 0.3, z + 1.0, 0.06, 0.3, 0.06, P.ardoise); k.Cy(x + 0.6, 0.9, z + 1.0, 0.04, 1.3, 0.04, P.metal); k.Co(x + 0.6, 1.62, z + 1.0, 1.1, 0.34, 1.1, P.blanc); for (const jx of [x - 1.85, x + 1.85]) k.B(jx, 0.35, z + 1.0, 0.3, 0.5, 0.9, P.haie); s = 1.85 }
+      else s = t >= 0.6 ? 1.85 : 0.6
     }
+    return s
   }
-  // Le climaticien et le serrurier : sur tous les types de bâtiments (immeuble, commerce, maison).
-    if (metier === 'climaticien') {
-      // Les unités extérieures se posent sur la façade de droite au fil du chantier ; la goulotte cuivre les relie.
-      const n = fini ? 3 : Math.round(3 * pct)
-      for (let i = 0; i < n; i++) { const zu = z0 + 0.5 + i * (d - 0.8) / 2; k.B(x1 + 0.22, y0 + 0.9 + (i % 2) * 0.6, zu, 0.32, 0.5, 0.7, '#ECE6DA'); k.Cy(x1 + 0.39, y0 + 0.9 + (i % 2) * 0.6, zu, 0.36, 0.02, 0.36, P.ardoise, [0, 0, Math.PI / 2]) }
-      if (n > 0) k.B(x1 + 0.06, y0 + ht * 0.5, zc, 0.05, ht * 0.8, 0.08, P.cuivre)
-      if (!fini) { k.B(x - 1.4, 0.13, z + 1.5, 1.0, 0.14, 0.7, P.bois); k.B(x - 1.4, 0.55, z + 1.5, 0.9, 0.7, 0.6, P.carton) }
+
+  // ── Les quatre états ──
+  let sommet: number
+  if (phase === 'pas_commence') {
+    piquets(); panneau()
+    if (type === 'exterieur') { k.Co(x + 1.5, 0.3, z - 1.4, 1.0, 0.6, 1.0, TERRE_FONCEE); k.B(x, 0.075, z + 0.3, 3.2, 0.02, 2.2, TERRE_FONCEE) }
+    else { fondations(); k.Co(x + 1.6, 0.35, z - 1.6, 1.0, 0.7, 1.0, TERRE_FONCEE) }
+    sommet = 1.1
+  } else if (phase === 'en_cours') {
+    const kk = Math.min(1, pct / SEUIL_PRESQUE)
+    if (type === 'exterieur') { sommet = exterieur(Math.max(0.15, kk * 0.75)); k.B(x + 1.5, 0.35, z + 1.8, 0.8, 0.5, 0.5, P.ambre); k.B(x + 1.6, 0.75, z + 1.8, 0.1, 0.5, 0.1, P.ambre, [0, 0, -0.6]) } // la mini-pelle
+    else {
+      k.vol(x0 - 0.05, z0 - 0.05, x1 + 0.05, z1 + 0.05, 0.14, P.beton, y0) // la dalle
+      const yb = y0 + 0.14, hb = Math.max(0.35, hTot * kk)
+      if (g.structure === 'parpaing') {
+        k.vol(x0, z0, x1, z1, hb, P.parpaing, yb)
+        for (let y = 0.22; y < hb; y += 0.22) { k.B(xc, yb + y, z1 + 0.004, g.w, 0.025, 0.012, P.joint); k.B(x1 + 0.004, yb + y, zc, 0.012, 0.025, g.d, P.joint) }
+        for (let e = 0; e * g.he + 0.5 < hb; e++) for (const fx of [x0 + 0.55, x1 - 0.55]) k.B(fx, yb + e * g.he + 0.55, z1 + 0.006, 0.44, Math.min(0.4, hb - e * g.he - 0.35), 0.03, P.ardoise) // les baies, encore vides
+      } else if (g.structure === 'poteaux') {
+        const niveaux = Math.max(1, Math.ceil(hb / g.he - 1e-6))
+        for (let e = 1; e <= niveaux; e++) k.vol(x0 - 0.04, z0 - 0.04, x1 + 0.04, z1 + 0.04, 0.1, P.beton, yb + Math.min(hb, e * g.he) - 0.1)
+        for (const px of [x0 + 0.1, xc, x1 - 0.1]) for (const pz of [z0 + 0.1, z1 - 0.1]) k.B(px, yb + hb / 2, pz, 0.16, hb, 0.16, P.beton)
+        k.vol(x0, z0, x0 + 0.9, z0 + 0.9, hb, P.parpaing, yb) // la cage d'escalier, montée en premier
+      } else {
+        for (let t = x0 + 0.1; t <= x1 - 0.05; t += 0.8) for (const pz of [z0 + 0.08, z1 - 0.08]) k.B(t, yb + hb / 2, pz, 0.14, hb, 0.14, type === 'agricole' ? P.bois : P.metal)
+        if (kk >= 0.6) for (let t = x0 + 0.1; t <= x1 - 0.05; t += 0.8) k.B(t, yb + hb, zc, 0.1, 0.12, g.d, type === 'agricole' ? P.bois : P.metal)
+        k.vol(x0, z1 - 0.1, x1, z1, Math.min(hb, 0.5), P.parpaing, yb) // le soubassement
+      }
+      echafaudage(x0 - 0.25, x1 + 0.25, z1, Math.max(0.9, hb + 0.4))
+      if (g.etages >= 3) grue(Math.min(y0 + hTot - 0.3, hb + 1.5))
+      betonniere()
+      sommet = Math.max(1.3, yb + hb + 0.2, Math.max(0.9, hb + 0.4) + 0.1, g.etages >= 3 ? Math.min(y0 + hTot - 0.3, hb + 1.5) + 0.2 : 0)
     }
-    if (metier === 'serrurier') {
-      // Le garde-corps et le portail métallique avancent le long de la façade ; le portail se pose à la fin.
-      const n = fini ? 9 : Math.round(9 * pct)
-      for (let i = 0; i < n; i++) k.B(x - 1.9 + i * 0.4, 0.5, z + 2.0, 0.05, 0.9, 0.05, '#5E5A55')
-      if (n > 1) { k.B(x - 1.9 + (n - 1) * 0.2, 0.95, z + 2.0, (n - 1) * 0.4 + 0.05, 0.06, 0.06, '#5E5A55'); k.B(x - 1.9 + (n - 1) * 0.2, 0.2, z + 2.0, (n - 1) * 0.4 + 0.05, 0.05, 0.05, '#5E5A55') }
-      if (fini) k.B(x + 1.7, 0.6, z + 2.0, 0.9, 1.1, 0.06, '#5E5A55')
-      else { k.B(x - 1.5, 0.12, z + 1.4, 0.9, 0.06, 0.6, P.metal); k.B(x - 1.5, 0.2, z + 1.4, 0.85, 0.04, 0.55, '#8A847C') }
-    }
-  // L'électricien : le touret et le câble déroulé vers le bâtiment ; le tableau posé à partir de la moitié.
-  if (metier === 'electricien') {
-    if (fini || pct >= 0.5) { k.B(x1 - 0.35, y0 + 0.9, z1 + 0.04, 0.4, 0.5, 0.06, P.ardoise); k.B(x1 - 0.35, y0 + 1.1, z1 + 0.075, 0.36, 0.06, 0.01, P.corail) }
+  } else {
+    const fini = phase === 'fini'
+    sommet = batiment(fini, fini ? 1 : 0.8)
     if (!fini) {
-      for (const dx of [-0.22, 0.22]) k.Cy(x - 1.65 + dx, 0.42, z + 1.55, 0.84, 0.06, 0.84, P.bois, [0, 0, Math.PI / 2])
-      k.Cy(x - 1.65, 0.42, z + 1.55, 0.6, 0.4, 0.6, P.corail, [0, 0, Math.PI / 2])
-      const l = 1.6 * Math.max(0.08, pct)
-      k.B(x - 1.45 + l / 2, 0.08, z + 1.55, l, 0.05, 0.05, P.ardoise)
-    }
+      if (type !== 'exterieur') echafaudage(xc, x1 + 0.25, z1, Math.max(1.0, Math.min(sommet - 0.4, hTot)))
+      benne()
+    } else if (type !== 'exterieur') buissons()
   }
-  // Le plombier hors coupe : la tranchée de la rue au bâtiment, le tuyau y avance.
-  if (metier === 'plombier' && type !== 'coupe' && !fini) {
-    const za = z + 2.05, zb = z1 + 0.05, l = za - zb
-    k.B(xc + 0.75, 0.065, (za + zb) / 2, 0.34, 0.02, l, P.boisFonce)
-    if (pct > 0) k.Cy(xc + 0.75, 0.1, za - (l * pct) / 2, 0.12, l * pct, 0.12, P.cuivre, [Math.PI / 2, 0, 0])
+  // Les matériaux du métier : sur la première place LIBRE de la parcelle (ni l'emprise et son échafaudage, ni la grue, ni la benne, ni
+  // la terrasse ou la cour du bâtiment presque fini) ; sans place, ils ne sont pas posés plutôt que de chevaucher.
+  if (phase === 'en_cours' || phase === 'presque_fini') {
+    const pris: Rect[] = [...emprisesChantier(type, x, z, phase, h), { x0: x - 2.3, x1: x - 0.7, z0: z + 1.15, z1: z + 2.3 }]
+    const place = PLACES_ACCENT.map(([dx, dz]) => [x + dx, z + dz] as const).find(([ax, az]) => !pris.some((r) => ax + ACCENT.l / 2 > r.x0 && ax - ACCENT.l / 2 < r.x1 && az + ACCENT.p / 2 > r.z0 && az - ACCENT.p / 2 < r.z1))
+    if (place) accentMetier(k, metier, place[0], place[1])
   }
   return sommet
+}
+/** Les places essayées pour les matériaux du métier, dans l'ordre (à l'intérieur de la parcelle de 4,4 m). */
+const PLACES_ACCENT: readonly (readonly [number, number])[] = [[1.85, 1.97], [0.75, 1.97], [-0.2, 1.97], [1.85, -1.97], [-1.85, -1.97], [1.88, 0], [-1.88, 0.2]]
+/** La palette des matériaux du métier : 0,6 m de long, 0,45 m de large. */
+const ACCENT = { l: 0.6, p: 0.45 } as const
+/**
+ * Les emprises au sol d'un chantier (rectangles), pour poser sans chevaucher : le bâtiment (et son aile), l'échafaudage devant lui
+ * pendant les travaux, la grue au-delà de deux étages, et — une fois le bâtiment là — la terrasse du restaurant, la cour de l'école,
+ * le totem du cabinet. Lu par maisonChantier et par scripts/crm-atelier3d-qa.mjs (aucun chevauchement).
+ */
+export function emprisesChantier(type: TypeBat, x: number, z: number, phase: 'pas_commence' | 'en_cours' | 'presque_fini' | 'fini', h = 0): Rect[] {
+  const g = GABARITS_BATIMENT[type]
+  const xc = x + g.dx, zc = z + g.dz, x0 = xc - g.w / 2, x1 = xc + g.w / 2, z0 = zc - g.d / 2, z1 = zc + g.d / 2
+  const r: Rect[] = [{ x0: x0 - 0.15, x1: x1 + 0.15, z0: z0 - 0.15, z1: z1 + (phase === 'fini' ? 0.15 : 0.66) }]
+  // La maison à garage accolé (une sur trois) : le garage à droite.
+  if (type === 'maison' && Math.floor(((h * 29) % 1) * 3) === 2) r.push({ x0: x1, x1: x1 + 1.0, z0: z1 - 1.5, z1: z1 + 0.1 })
+  if (type === 'exterieur') return [{ x0: x - 1.95, x1: x + 1.95, z0: z - 2.2, z1: z + 1.95 }]
+  if (phase === 'en_cours' && g.etages >= 3) r.push({ x0: x - 2.2, x1: x - 1.7, z0: z - 2.25, z1: z - 1.75 })
+  if (phase === 'presque_fini' || phase === 'fini') {
+    if (type === 'restaurant') r.push({ x0, x1, z0: z1, z1: z + 2.2 })
+    if (type === 'ecole') r.push({ x0, x1: x + 2.2, z0: z1, z1: z + 2.2 })
+    if (type === 'sante') r.push({ x0: x + 1.45, x1: x + 2.15, z0: z + 1.55, z1: z + 2.2 })
+    if (type === 'hotel') r.push({ x0: xc - 0.8, x1: xc + 0.8, z0: z1, z1: z1 + 1.25 })
+    if (type === 'agricole') r.push({ x0: x1, x1: x1 + 0.9, z0: zc - 0.85, z1: zc + 0.05 })
+  }
+  return r
+}
+
+/** Les matériaux du MÉTIER sur la parcelle pendant les travaux : on reconnaît l'électricien à son touret, le couvreur à ses tuiles… */
+function accentMetier(k: ReturnType<typeof pinceau>, metier: Metier3D, ax: number, az: number): void {
+  // Tout tient dans la palette : 0,6 × 0,45 m (ACCENT).
+  k.B(ax, 0.08, az, ACCENT.l, 0.1, ACCENT.p, P.bois)
+  const pile = (c: string, n: number, e = 0.1) => { for (let i = 0; i < n; i++) k.B(ax, 0.17 + i * e, az, 0.54, e * 0.9, 0.4, i % 2 ? melange(c, '#FFFFFF', 0.15) : c) }
+  switch (metier) {
+    case 'electricien': for (const dz of [-0.12, 0.12]) k.Cy(ax, 0.38, az + dz, 0.5, 0.04, 0.5, P.bois, [Math.PI / 2, 0, 0]); k.Cy(ax, 0.38, az, 0.34, 0.22, 0.34, P.corail, [Math.PI / 2, 0, 0]); break
+    case 'plombier': case 'chauffagiste': case 'climaticien':
+      for (let i = 0; i < 4; i++) k.Cy(ax, 0.18 + (i % 2) * 0.08, az - 0.15 + i * 0.1, 0.07, 0.56, 0.07, P.cuivre, [0, 0, Math.PI / 2])
+      if (metier === 'chauffagiste') k.B(ax, 0.45, az, 0.36, 0.42, 0.3, '#ECE6DA')
+      if (metier === 'climaticien') { k.B(ax, 0.38, az, 0.46, 0.3, 0.3, '#ECE6DA'); k.Cy(ax + 0.08, 0.38, az + 0.16, 0.22, 0.02, 0.22, P.ardoise, [Math.PI / 2, 0, 0]) }
+      break
+    case 'couvreur': pile(P.tuile, 4); break
+    case 'peintre': case 'facadier': for (let i = 0; i < 4; i++) k.Cy(ax - 0.14 + (i % 2) * 0.28, 0.27, az - 0.1 + Math.floor(i / 2) * 0.2, 0.2, 0.22, 0.2, PEINTURES[(i + (metier === 'facadier' ? 1 : 0)) % PEINTURES.length]); break
+    case 'carreleur': pile(P.blanc, 4, 0.06); break
+    case 'menuisier': case 'charpentier': for (let i = 0; i < 4; i++) k.B(ax, 0.17 + i * 0.08, az, 0.58, 0.07, metier === 'charpentier' ? 0.16 : 0.1 + (i % 2) * 0.24, P.bois); break
+    case 'plaquiste': pile('#F4F1EA', 5, 0.045); break
+    case 'vitrier': for (let i = 0; i < 3; i++) k.B(ax - 0.15 + i * 0.1, 0.4, az, 0.03, 0.46, 0.38, P.vitreJour, [0, 0, 0.15]); break
+    case 'serrurier': for (let i = 0; i < 4; i++) k.B(ax, 0.17 + (i % 2) * 0.05, az - 0.15 + i * 0.1, 0.58, 0.04, 0.04, '#5E5A55'); break
+    case 'paysagiste': for (let i = 0; i < 4; i++) { const px = ax - 0.14 + (i % 2) * 0.28, pz = az - 0.1 + Math.floor(i / 2) * 0.2; k.Cy(px, 0.21, pz, 0.17, 0.14, 0.17, P.carton); k.S(px, 0.36, pz, 0.22, 0.22, 0.22, P.sauge) } break
+    case 'piscinier': pile(P.blanc, 3, 0.08); break
+    case 'macon': pile(P.parpaing, 3, 0.16); break
+    case 'multiservice': k.B(ax - 0.12, 0.27, az, 0.26, 0.28, 0.3, P.carton); k.B(ax + 0.15, 0.24, az, 0.22, 0.22, 0.26, P.ardoise); break
+    default: pile(P.sac, 3, 0.12)
+  }
 }
 
 // ── Les véhicules (à leur gabarit) et les personnages ─────────────────────────────────────────────────────
@@ -1587,6 +1733,8 @@ const r1 = (v: number) => Math.round(v * 10) / 10
 /** Les axes des rues de la ville (lib/crm/atelier.ts, decorVille) : entre les parcelles, tous les 5,6 m. */
 export const RUES_X: readonly number[] = Array.from({ length: 15 }, (_, i) => r1(-36.4 + i * 5.6))
 export const RUES_Z: readonly number[] = Array.from({ length: 12 }, (_, i) => r1(-30.8 + i * 5.6))
+/** Une trame de rues : les axes nord-sud (x) et est-ouest (z). Celle de la carte grandit avec les chantiers (lib/crm/carte.ts, etendueTrame). */
+export type Trame = { xs: readonly number[]; zs: readonly number[] }
 /** L'enclos de la base, bordé par la rue de ceinture (x = −14 et 25,2 ; z = ±14) : aucune rue ne le traverse, aucun chantier n'y est posé. */
 export const ENCLOS = { x0: -14, x1: 25.2, z0: -14, z1: 14 } as const
 /** Une parcelle de chantier hors de l'enclos (avec l'infrastructure, la rangée qui touchait la base est laissée libre). */
@@ -1601,9 +1749,11 @@ function ouvert(a: readonly [number, number], b: readonly [number, number]): boo
  * Le plus court chemin PAR LES RUES entre deux points posés sur des rues (Dijkstra sur les carrefours ; les tronçons qui
  * traverseraient l'enclos de la base sont fermés). Rend la suite des points, du départ à l'arrivée ; null si rien ne relie.
  */
-export function cheminRues(de: [number, number], vers: [number, number]): [number, number][] | null {
+export function cheminRues(de: [number, number], vers: [number, number], grille?: Trame | null): [number, number][] | null {
   const pts: [number, number][] = [de, vers]
-  for (const x of RUES_X) for (const z of RUES_Z) pts.push([x, z])
+  // La trame des rues : celle de la carte (lot 5 : elle grandit avec les chantiers), sinon la trame fixe d'avant.
+  const RX = grille?.xs ?? RUES_X, RZ = grille?.zs ?? RUES_Z
+  for (const x of RX) for (const z of RZ) pts.push([x, z])
   const sur = (v: number, w: number) => Math.abs(v - w) < 1e-6
   const voisins: { j: number; d: number }[][] = pts.map(() => [])
   const relier = (idx: number[], axe: 0 | 1) => {
@@ -1615,8 +1765,8 @@ export function cheminRues(de: [number, number], vers: [number, number]): [numbe
       voisins[a].push({ j: b, d }); voisins[b].push({ j: a, d })
     }
   }
-  for (const z of RUES_Z) relier(pts.map((p, i) => (sur(p[1], z) ? i : -1)).filter((i) => i >= 0), 0)
-  for (const x of RUES_X) relier(pts.map((p, i) => (sur(p[0], x) ? i : -1)).filter((i) => i >= 0), 1)
+  for (const z of RZ) relier(pts.map((p, i) => (sur(p[1], z) ? i : -1)).filter((i) => i >= 0), 0)
+  for (const x of RX) relier(pts.map((p, i) => (sur(p[0], x) ? i : -1)).filter((i) => i >= 0), 1)
   const d = pts.map(() => Infinity), prec = pts.map(() => -1), fait = pts.map(() => false)
   d[0] = 0
   for (;;) {
@@ -1635,24 +1785,26 @@ export function cheminRues(de: [number, number], vers: [number, number]): [numbe
  * Le trajet d'un compagnon : du poste de repos, par le chemin de sortie de la base (ses portes et ses allées), puis par les rues
  * jusqu'à la rue qui longe le devant de sa parcelle, et enfin à sa place devant la maison. `parcelle` : le centre de la parcelle.
  */
-export function cheminVers(plan: PlanBase, de: [number, number], vers: [number, number], parcelle: [number, number]): [number, number][] {
+export function cheminVers(plan: PlanBase, de: [number, number], vers: [number, number], parcelle: [number, number], grille?: Trame | null): [number, number][] {
   const E = plan.chemin[plan.chemin.length - 1]
   const A: [number, number] = [vers[0], r1(parcelle[1] + 2.8)]
-  const rues = cheminRues([E[0], E[1]], A) ?? [[E[0], E[1]], A]
+  const rues = cheminRues([E[0], E[1]], A, grille) ?? [[E[0], E[1]], A]
   const tout: [number, number][] = [de, ...plan.chemin.map((p) => [p[0], p[1]] as [number, number]), ...rues.slice(1), vers]
   return tout.filter((p, i) => i === 0 || dist(p, tout[i - 1]) > 1e-6)
 }
 
 // ── La marche vers le chantier du jour (Scene3D l'anime ; rien ne bouge avec « réduire les animations ») ─────────
 /** 6,5 m de maquette par seconde (le trajet suit les rues : plus long qu'à vol d'oiseau) ; départ 1,3 s après l'ouverture ; 0,35 s entre deux personnages. */
-export const MARCHE = { vitesse: 6.5, departMs: 1300, decalageMs: 350 } as const
+export const MARCHE = { vitesse: 6.5, departMs: 1300, decalageMs: 350, dureeMaxS: 8 } as const
+/** La vitesse d'un personnage : 6,5 m/s, plus vite sur une longue route (lot 5 : la carte grandit) — jamais plus de 8 s de trajet. */
+const vitesseDe = (m: Pick<Mobile, 'de' | 'porte' | 'vers' | 'chemin'>): number => Math.max(MARCHE.vitesse, longueurMarche(m) / MARCHE.dureeMaxS)
 function dist(a: readonly number[], b: readonly number[]): number { return Math.hypot(b[0] - a[0], b[1] - a[1]) }
 const trace = (m: Pick<Mobile, 'de' | 'porte' | 'vers' | 'chemin'>): [number, number][] => m.chemin ?? [m.de, m.porte, m.vers]
 /** La longueur du trajet (le chemin par les rues, ou de → porte → vers). */
 export const longueurMarche = (m: Pick<Mobile, 'de' | 'porte' | 'vers' | 'chemin'>): number => trace(m).reduce((t, p, i, l) => (i ? t + dist(l[i - 1], p) : 0), 0)
 /** Combien de temps (ms, depuis l'ouverture) jusqu'à ce que le dernier personnage soit arrivé. */
 export function dureeMarche(mobiles: readonly Mobile[]): number {
-  return mobiles.reduce((t, m) => Math.max(t, MARCHE.departMs + m.ordre * MARCHE.decalageMs + (longueurMarche(m) / MARCHE.vitesse) * 1000), 0)
+  return mobiles.reduce((t, m) => Math.max(t, MARCHE.departMs + m.ordre * MARCHE.decalageMs + (longueurMarche(m) / vitesseDe(m)) * 1000), 0)
 }
 /**
  * Le décalage [dx, dy, dz] d'un morceau de personnage par rapport à son ARRIVÉE, `t` ms après l'ouverture : au départ avant son
@@ -1660,7 +1812,7 @@ export function dureeMarche(mobiles: readonly Mobile[]): number {
  */
 export function decalageMarche(m: Mobile, t: number): [number, number, number] {
   const l = trace(m), L = longueurMarche(m)
-  const brut = Math.max(0, ((t - MARCHE.departMs - m.ordre * MARCHE.decalageMs) / 1000) * MARCHE.vitesse)
+  const brut = Math.max(0, ((t - MARCHE.departMs - m.ordre * MARCHE.decalageMs) / 1000) * vitesseDe(m))
   if (brut >= L) return [0, 0, 0]
   // Départ et arrêt en douceur (easeInOutSine sur la progression, même durée totale) : pas d'à-coup au premier ni au dernier pas.
   const s = L * (0.5 - 0.5 * Math.cos(Math.PI * (brut / L)))

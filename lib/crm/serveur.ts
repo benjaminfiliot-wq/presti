@@ -20,9 +20,14 @@ export const erreur = (message: string, status: number, extra: Record<string, un
 export const INDISPONIBLE = 'Le CRM n’a pas pu lire vos données. Rechargez la page dans un instant.'
 
 /** Les colonnes lues sur la fiche : la forme juridique s'y ajoute drapeau crmAtelierVivant levé seulement (lecture, rien n'est écrit). */
-const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville' : 'plan, metier')
+// Lot 5 (même drapeau) : l'adresse et le code postal du siège, pour placer la base sur la carte (lib/crm/geocodage.ts).
+const COLONNES_FICHE = (): string => (actif('crmAtelierVivant') ? 'plan, metier, forme_juridique, nom, ville, adresse, code_postal' : 'plan, metier')
 // formeJuridique : drapeau crmAtelierVivant seulement (statut « à son compte / société » de la maquette) ; absente drapeau baissé.
-export type Garde = { uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null } } | { reponse: NextResponse }
+export type Garde = {
+  uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null }
+  /** L'adresse du siège (drapeau crmAtelierVivant) : seule l'adresse, le code postal et la ville partent au géocodage. */
+  siege?: { adresse: string | null; code_postal: string | null; ville: string | null }
+} | { reponse: NextResponse }
 
 /** 120 requêtes par minute et par compte : un artisan qui coche vite ses tâches en fait une par seconde, au plus. */
 export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
@@ -30,7 +35,7 @@ export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
 /** Méthode que la route ne sert pas — seulement APRÈS gardeCrm, pour qu'un compte hors essai reçoive 404 et non 405. */
 export const nonPermise = (permises: string) => new NextResponse(null, { status: 405, headers: { ...PAS_DE_CACHE, Allow: permises } })
 
-export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' | 'crmApresChantier' | 'crmSuivi' } = {}): Promise<Garde> {
+export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' | 'crmApresChantier' | 'crmSuivi' | 'crmAtelierVivant' } = {}): Promise<Garde> {
   // 1. Drapeau baissé : 404 sans corps, avant toute lecture (ni session, ni base). Une partie du CRM livrée sous son propre drapeau
   //    (18/10 : photos du chantier, planning) le vérifie ici aussi, AVANT la session : une route fermée ne dit rien.
   if (!enEssai('crm') || (opts.drapeau && !actif(opts.drapeau))) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
@@ -50,10 +55,10 @@ export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'cr
   ])
   if (!libre) return { reponse: erreur('Trop de demandes d’un coup : patientez une minute, rien n’a été perdu.', 429, { code: 'debit' }) }
   if (error) { console.error('[crm] lecture de l’offre :', error.message); return { reponse: erreur(INDISPONIBLE, 503) } }
-  const fiche = art as { plan?: string | null; metier?: string | null; forme_juridique?: string | null; nom?: string | null; ville?: string | null } | null
+  const fiche = art as { plan?: string | null; metier?: string | null; forme_juridique?: string | null; nom?: string | null; ville?: string | null; adresse?: string | null; code_postal?: string | null } | null
   const d = decisionAcces({ drapeau: true, session: { ok: true }, plan: fiche?.plan ?? null })
   if (!d.ok) return { reponse: erreur(d.erreur ?? 'Accès refusé.', d.statut, d.code ? { code: d.code } : {}) }
-  return { uid: session.uid, metier: fiche?.metier ?? null, ...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null } } : {}) }
+  return { uid: session.uid, metier: fiche?.metier ?? null, ...(actif('crmAtelierVivant') ? { formeJuridique: fiche?.forme_juridique ?? null, entreprise: { nom: fiche?.nom ?? null, ville: fiche?.ville ?? null }, siege: { adresse: fiche?.adresse ?? null, code_postal: fiche?.code_postal ?? null, ville: fiche?.ville ?? null } } : {}) }
 }
 
 /** Une erreur PostgREST/Postgres → statut HTTP honnête. Les messages des déclencheurs de 0141 commencent par « crm : ». */
@@ -77,6 +82,16 @@ export const COLONNES = {
   clients: 'id, artisan_id, nom, email, tel, adresse, code_postal, ville',
   rappels: 'id, artisan_id, client_cle, lead_id, devis_id, chantier_id, type, echeance, heure, texte, fait_le, envoye_le, origine, cree_le',
 } as const
+/** Les colonnes de la carte (migration 0172) : lues drapeau crmAtelierVivant levé SEULEMENT (drapeau baissé, la lecture est celle d'avant). */
+export const COLONNES_CARTE = 'type_batiment, lat, lng, geocode_le, retire_carte_le'
+export const colonnesChantiers = (): string => (actif('crmAtelierVivant') ? `${COLONNES.chantiers}, ${COLONNES_CARTE}` : COLONNES.chantiers)
+
+/** Les réglages du CRM (crm_reglages, 0172) : `validation_auto` faux par défaut, et faux si la table manque (rien n'est validé tout seul). */
+export async function lireReglages(uid: string): Promise<{ validationAuto: boolean; disponible: boolean }> {
+  const { data, error } = await supabaseAdmin.from('crm_reglages').select('validation_auto').eq('artisan_id', uid).maybeSingle()
+  if (error) { if (!['42P01', 'PGRST205'].includes(String(error.code))) console.error('[crm] réglages :', error.message); return { validationAuto: false, disponible: !['42P01', 'PGRST205'].includes(String(error.code)) } }
+  return { validationAuto: data?.validation_auto === true, disponible: true }
+}
 
 /**
  * Tout ce que le pipeline, le tableau de bord et les fiches clients lisent, pour UN artisan. Chaque requête porte
@@ -93,7 +108,7 @@ export async function chargerDossiers(uid: string) {
     lirePages((de, a) => supabaseAdmin.from('devis').select(COLONNES.devis).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
     lirePages((de, a) => supabaseAdmin.from('factures').select(COLONNES.factures).eq('artisan_id', uid).order('date_emission', { ascending: false }).order('id').range(de, a), LIMITE),
     lirePages((de, a) => supabaseAdmin.from('leads').select(COLONNES.leads).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('chantiers').select(COLONNES.chantiers).eq('artisan_id', uid).order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => supabaseAdmin.from('chantiers').select(colonnesChantiers()).eq('artisan_id', uid).order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
     lirePages((de, a) => supabaseAdmin.from('chantier_taches').select('id, chantier_id, faite, libelle, faite_le, membre_id, ordre').eq('artisan_id', uid).order('id').range(de, a), 20 * LIMITE),
     lirePages((de, a) => supabaseAdmin.from('materiaux').select(COLONNES.materiaux).eq('artisan_id', uid).order('id').range(de, a), LIMITE),
     lirePages((de, a) => supabaseAdmin.from('crm_journal').select('artisan_id, objet, objet_id, vers, etape_derivee, cree_le').eq('artisan_id', uid).eq('champ', 'etape').order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
@@ -126,8 +141,14 @@ export async function chargerDossiers(uid: string) {
   return { ok: true as const, ...lignes, tronque }
 }
 
+/** Une ligne de chantier telle que lue (colonnes de la carte présentes drapeau crmAtelierVivant levé seulement). */
+export type ChantierLu = {
+  id: string; artisan_id: string; devis_id: string | null; client_nom: string | null; titre: string; adresse: string | null; code_postal: string | null; ville: string | null
+  statut: string; date_debut: string | null; date_fin_prevue: string | null; date_fin_reelle: string | null; vehicule_id: string | null; notes: string | null; cree_le: string; maj_le: string
+  type_batiment?: string | null; lat?: number | string | null; lng?: number | string | null; geocode_le?: string | null; retire_carte_le?: string | null
+}
 /** Le chantier de l'artisan, ou null. */
 export async function chantierDe(uid: string, id: string) {
-  const { data, error } = await supabaseAdmin.from('chantiers').select(COLONNES.chantiers).eq('id', id).eq('artisan_id', uid).maybeSingle()
-  return { chantier: data, error }
+  const { data, error } = await supabaseAdmin.from('chantiers').select(colonnesChantiers()).eq('id', id).eq('artisan_id', uid).maybeSingle()
+  return { chantier: data as unknown as ChantierLu | null, error }
 }

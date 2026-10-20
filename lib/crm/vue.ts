@@ -16,6 +16,7 @@ import { chronologie, type EntreesChrono, type Evenement } from './chronologie.t
 import { facturesComptees, jourParis, type FacturePresti } from '../comptaTableau.ts'
 import { actif } from '../flags.ts'
 import { facturesEmises, type FactureEmise } from './assistants.ts'
+import { peutValider, typeDuChantier, type PointGeo, type TypeBat } from './carte.ts'
 
 type Nb = number | string | null
 // ── Les lignes (colonnes de lib/crm/serveur.ts COLONNES) ─────────────────────────────────────────────────────────────
@@ -31,6 +32,8 @@ export type LeadLigne = { id: string; artisan_id: string; statut: string | null;
 export type ChantierLigne = {
   id: string; artisan_id: string; devis_id: string | null; client_nom: string | null; titre: string; adresse: string | null; code_postal: string | null; ville: string | null
   statut: string; date_debut: string | null; date_fin_prevue: string | null; date_fin_reelle: string | null; vehicule_id: string | null; notes: string | null; cree_le: string; maj_le: string
+  /** La carte (0172, drapeau crmAtelierVivant) : lues drapeau levé seulement. */
+  type_batiment?: string | null; lat?: number | string | null; lng?: number | string | null; geocode_le?: string | null; retire_carte_le?: string | null
 }
 export type MateriauLigne = {
   id: string; artisan_id: string; nom: string; unite: string | null; categorie: string | null; seuil_alerte: Nb; fournisseur_prefere: string | null
@@ -62,6 +65,8 @@ export type ChantierListe = {
   adresse: string | null
   avancement: { pct: number | null; faites: number; total: number }
   retard: number | null
+  /** Drapeau crmAtelierVivant (lot 5) : validé et retiré de la carte le… (le filtre « Voir les chantiers validés »). Absent drapeau baissé. */
+  retireCarte?: string | null
 }
 export type DevisSigne = { id: string; numero: string | null; objet: string | null; client_nom: string | null; total_ttc: number | string | null; accepte_le: string | null }
 export type ClientListe = { id: string; nom: string | null; email: string | null; telephone: string | null; demandes: number; devis: number; factures: number; chantiers: number; derniere: string | null }
@@ -106,7 +111,11 @@ function indicateursParChantier(uid: string, d: DossiersCrm, jour: string): Map<
   return sortie
 }
 
-export function construireVue(p: { uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null }; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string }): Vue {
+export function construireVue(p: {
+  uid: string; metier: string | null; formeJuridique?: string | null; entreprise?: { nom: string | null; ville: string | null }; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string
+  /** La carte (drapeau crmAtelierVivant, lot 5) : la base géocodée et le réglage « valider automatiquement ». */
+  carte?: { base: PointGeo | null; validationAuto: boolean }
+}): Vue {
   const { uid, d, maintenant } = p
   const jour = jourParis(maintenant)
   const tachesPar = new Map<string, { faite: boolean | null }[]>()
@@ -123,7 +132,9 @@ export function construireVue(p: { uid: string; metier: string | null; formeJuri
   const pl = pipeline(entreesPipeline)
   const af = aFaire(rappels, jour)
   for (const col of pl.colonnes) col.cartes = col.cartes.map((c) => { const r = prochainDe(c); return r ? { ...c, rappel: { echeance: r.echeance, heure: r.heure, type: r.type, retard: r.retard } } : c })
-  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: toutes, taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres, ...(p.formeJuridique !== undefined ? { formeJuridique: p.formeJuridique } : {}), ...(p.entreprise !== undefined ? { entreprise: p.entreprise } : {}) })
+  // La carte (drapeau levé) : chaque chantier porte l'objet de son devis — la déduction du type de bâtiment le lit avec le titre.
+  const chantiersAtelier = actif('crmAtelierVivant') ? d.chantiers.map((c) => ({ ...c, objet: c.devis_id ? devisParId.get(c.devis_id)?.objet ?? null : null })) : d.chantiers
+  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: chantiersAtelier, cartes: toutes, ...(p.carte ? { carte: p.carte } : {}), taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres, ...(p.formeJuridique !== undefined ? { formeJuridique: p.formeJuridique } : {}), ...(p.entreprise !== undefined ? { entreprise: p.entreprise } : {}) })
   // Le panneau de l'atelier montre la frise et les indicateurs du chantier : ceux de sa carte et de lib/crm/chantier.ts, les mêmes
   // que la fiche chantier (même fonction, mêmes lignes).
   const cartesChantier = new Map(toutes.filter((c) => c.chantierId).map((c) => [c.chantierId as string, c]))
@@ -144,6 +155,7 @@ export function construireVue(p: { uid: string; metier: string | null; formeJuri
         id: c.id, titre: c.titre, statut: c.statut, date_debut: c.date_debut, date_fin_prevue: c.date_fin_prevue,
         client: dv?.client_nom ?? c.client_nom ?? null, devis_numero: dv?.numero ?? null, adresse: adresseChantier(c, dv?.client_adresse),
         avancement: avancement(tachesPar.get(c.id) ?? []), retard: joursDeRetard(c, jour),
+        ...('retire_carte_le' in c ? { retireCarte: c.retire_carte_le ?? null } : {}),
       }
     }),
     // Les devis signés qui n'ont pas encore de chantier : ce que « Créer un chantier » propose.
@@ -200,6 +212,19 @@ export type FicheChantier = {
   rappelsDisponibles: boolean
   /** Le jour de la fiche (Paris) : les échéances rapides des rappels en partent. */
   jour: string
+  /** La carte (drapeau crmAtelierVivant, lot 5) : le type de bâtiment (choisi, ou null = déduit, et le type déduit), la validation
+   *  (possible ? déjà validé le… ?) et le réglage automatique. Absente drapeau baissé. */
+  carte?: FicheCarte
+}
+export type FicheCarte = { type: TypeBat | null; typeDeduit: TypeBat; retire: string | null; validable: boolean; validationAuto: boolean }
+/** La partie « carte » d'une fiche chantier : ce que le sélecteur de type et le bouton « Valider le chantier » lisent. */
+export function ficheCarte(c: { statut: string; titre: string; type_batiment?: string | null; retire_carte_le?: string | null }, objet: string | null, taches: readonly { faite: boolean | null }[], validationAuto: boolean): FicheCarte {
+  const t = typeDuChantier({ titre: c.titre, objet })
+  const choisi = typeDuChantier({ type_batiment: c.type_batiment, titre: c.titre, objet })
+  return {
+    type: choisi.deduit ? null : choisi.type, typeDeduit: t.type, retire: c.retire_carte_le ?? null, validationAuto,
+    validable: peutValider({ statut: c.statut, retire_carte_le: c.retire_carte_le ?? null, taches: { total: taches.length, faites: taches.filter((x) => x.faite).length } }),
+  }
 }
 
 export function construireFicheChantier(p: {

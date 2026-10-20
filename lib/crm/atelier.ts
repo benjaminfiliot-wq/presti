@@ -13,13 +13,14 @@
 // Rien n'est inventé : sans véhicule, le parking est vide ; sans inventaire, les rayonnages aussi.
 
 import { joursDeRetard } from './chantier.ts'
+import { estTypeBat, etendueTrame, placerChantiers, typeDuChantier, type PointGeo, type TypeBat } from './carte.ts'
 import { jourParis } from '../comptaTableau.ts'
 import { calculerAlertes, chantierVisible, estAujourdhui, estStockBas, aEncaisser, type Gravite, type TypeAlerte } from './alertes.ts'
 import type { CommandeA } from './commandes.ts'
 import type { Frise } from './pipeline.ts'
 import type { Indicateurs } from './chantier.ts'
 import {
-  accessoiresBase, avancementDessine, bureauInfra, camionnette, cheminVers, comptoirInfra, decorBase, horsEnclos, maisonChantier, personnage, placeParking, placeRepos,
+  accessoiresBase, avancementDessine, bureauInfra, camionnette, cheminRues, cheminVers, comptoirInfra, decorBase, ENCLOS, horsEnclos, maisonChantier, personnage, placeParking, placeRepos,
   PLANS, profilInfrastructure, rayonnageInfra, DECOR_PUR, ficheStructure, type AjoutF, type Base, type Fenetre, type FicheStructure, type Metier3D, type Mobile, type PlanBase, type Profil,
 } from './infrastructure.ts'
 
@@ -44,6 +45,13 @@ export type ChantierA = {
   /** La frise du dossier (sa carte du pipeline) et les indicateurs du chantier : posés par lib/crm/vue.ts, absents des jeux anciens. */
   frise?: Frise
   indicateurs?: Indicateurs
+  /** Drapeau crmAtelierVivant (migration 0172, lib/crm/carte.ts) : le type de bâtiment CHOISI par l'artisan (null = déduit), l'objet du
+   *  devis (la déduction le lit), la position géocodée de l'adresse, et la date de validation (retiré de la carte). Absents drapeau baissé. */
+  typeBatiment?: TypeBat | null
+  objet?: string | null
+  lat?: number | null
+  lng?: number | null
+  retireCarte?: string | null
 }
 /** Un matériau réservé pour un chantier (chantier_materiaux, statut « réservé » : pas encore sorti du stock). */
 export type ReservationA = { chantier_id: string; materiau_id: string; quantite: number }
@@ -73,6 +81,9 @@ export type DonneesAtelier = {
   entreprise?: { nom: string | null; ville: string | null }
   /** Les rappels dus aujourd'hui et en retard (crm_rappels, 0162), pour le briefing du matin ; absent : rien n'est dit. */
   rappels?: { aujourdhui: number; enRetard: number; premiers: string[] }
+  /** La carte (drapeau crmAtelierVivant, lot 5) : la position de la base de l'artisan (son adresse géocodée ; null = inconnue) et le
+   *  réglage « valider automatiquement ». Absente : la maquette place les chantiers en couronne, comme avant. */
+  carte?: { base: PointGeo | null; validationAuto: boolean }
 }
 
 // ── Sorties ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -126,6 +137,9 @@ export type Scene = {
   fenetres?: Fenetre[]
   /** Les morceaux des personnages qui partent de la base vers leur chantier du jour (la scène 3D les fait marcher). */
   mobiles?: Mobile[]
+  /** La carte (infrastructure, lot 5) : son emprise au sol (le sol et les ombres de la scène 3D la couvrent), combien de chantiers sont
+   *  posés à leur vraie place (adresse géocodée), combien de rues relient la base aux chantiers. Absente drapeau baissé. */
+  carte?: { min: [number, number]; max: [number, number]; reels: number; routes: number }
 }
 
 /** Les ajouts de l'atelier vivant (drapeau crmAtelierVivant). Absents : la scène est celle d'avant, à l'identique. */
@@ -369,12 +383,26 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
 
   // — Chantiers : la petite ville autour du dépôt —
   const resume = calculerAlertes(d)
-  const visibles = d.chantiers.filter(chantierVisible)
-  // Avec l'infrastructure, la rangée de parcelles qui touchait la base reste libre : une rue de ceinture fait le tour du site.
-  const places = plan ? emplacementsChantiers(100000).filter(horsEnclos).slice(0, Math.min(visibles.length, LIMITES.chantiers)) : emplacementsChantiers(Math.min(visibles.length, LIMITES.chantiers))
+  // Lot 5 (infrastructure seulement) : un chantier VALIDÉ est retiré de la carte — il reste partout ailleurs (liste, fiche, pipeline,
+  // factures, chiffres) ; « Remettre sur la carte » le fait revenir.
+  const visibles = d.chantiers.filter((c) => chantierVisible(c) && !(plan && c.retireCarte))
+  // Avec l'infrastructure, la rangée de parcelles qui touchait la base reste libre : une rue de ceinture fait le tour du site. Et chaque
+  // chantier prend la parcelle de sa VRAIE direction depuis la base (adresse géocodée, distance comprimée, lib/crm/carte.ts) ; sans
+  // position connue, la couronne de repli d'avant, dans l'ordre d'avant.
+  const placements = plan ? placerChantiers({
+    base: d.carte?.base ?? null,
+    chantiers: visibles.slice(0, LIMITES.chantiers).map((c) => ({ id: c.id, geo: typeof c.lat === 'number' && typeof c.lng === 'number' ? { lat: c.lat, lng: c.lng } : null })),
+    centre: [(ENCLOS.x0 + ENCLOS.x1) / 2, (ENCLOS.z0 + ENCLOS.z1) / 2], demi: [(ENCLOS.x1 - ENCLOS.x0) / 2, (ENCLOS.z1 - ENCLOS.z0) / 2],
+    libre: (x, z) => horsEnclos([x, 0, z]),
+    repli: emplacementsChantiers(100000).filter(horsEnclos).map((p) => [p[0], p[2]] as [number, number]),
+  }) : null
+  const places: V3[] = placements ? placements.map((p) => [p.p[0], 0, p.p[1]]) : emplacementsChantiers(Math.min(visibles.length, LIMITES.chantiers))
+  const poses = placements ? placements.map((p) => visibles.find((c) => c.id === p.id)!) : visibles.slice(0, places.length)
+  // La trame des rues de la carte : elle grandit avec le nombre et l'étalement des chantiers.
+  const trame = plan ? etendueTrame(places.map((p) => [p[0], p[2]] as [number, number]), ENCLOS) : null
   const posChantier = new Map<string, V3>()
   const membreParId = new Map(d.membres.map((m) => [m.id, m]))
-  visibles.slice(0, places.length).forEach((c, i) => {
+  poses.forEach((c, i) => {
     const [x, , z] = places[i]
     const h = hacher(c.id)
     const w = 2.2 + h * 0.8, dd = 2.2 + ((h * 7) % 1) * 0.8, ht = 1.4 + ((h * 13) % 1) * 1.3
@@ -401,7 +429,9 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
     // Avec l'infrastructure, la maison montre le TYPE de travaux du métier et leur avancement (lib/crm/infrastructure.ts).
     // Le sommet (l'épingle et la carte se posent au-dessus) : celui du bâtiment dessiné ; sans infrastructure, `ht + 1.1` comme avant.
     let sommet = ht + 1.1
-    if (plan) { sommet = maisonChantier(ajouter, ajouterFenetre, { x, z, w, dd, ht, h, id: c.id, pct: avancementDessine(c), termine: c.statut === 'termine' || c.etape === 'a_facturer', enCours: c.statut === 'en_cours', o, base: plan.base }, metierI) + 0.15; objets[o].hauteur = sommet + 1.6 }
+    // Lot 5 : le bâtiment est celui du VRAI chantier (type posé, sinon déduit du titre et de l'objet du devis) et son état suit le
+    // TRAVAIL (statut, tâches faites) — plus l'étape « À facturer » du pipeline, qui dessinait fini un chantier facturé d'avance.
+    if (plan) { const tb = typeDuChantier({ type_batiment: c.typeBatiment, titre: c.titre, objet: c.objet }); sommet = maisonChantier(ajouter, ajouterFenetre, { x, z, h, id: c.id, pct: avancementDessine(c), termine: c.statut === 'termine', enCours: c.statut === 'en_cours', o, base: plan.base, type: tb.type, variante: tb.variante }, metierI) + 0.15; objets[o].hauteur = sommet + 1.6 }
     else {
     ajouter('box', [x, 0.03, z], [4.2, 0.06, 4.2], '#E9E1D3', o)
     ajouter('box', [x, ht / 2 + 0.06, z], [w, ht, dd], MURS_MAISON[Math.floor(h * MURS_MAISON.length)], o)
@@ -483,7 +513,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
       // Un personnage affecté à un chantier du jour part de la base et marche jusqu'à lui (Scene3D anime le trajet ; la position posée
       // est l'arrivée). Il part d'une place de repos après celles des présents, pour ne croiser personne au départ.
       const morceaux = personnage(ajouter, x, z, ROLES[m.role] ?? ROLES.autre, o, m.role === 'artisan')
-      if (chantier) { const de = placeRepos(plan, membres.length + rang); const pc = posChantier.get(chantier.id)!; const chemin = cheminVers(plan, de, [x, z], [pc[0], pc[2]]); const ordre = new Set(mobiles.map((mb) => mb.vers.join())).size; for (const mc of morceaux) mobiles.push({ ...mc, de, porte: plan.chemin[0] as [number, number], vers: [x, z], ordre, chemin }) }
+      if (chantier) { const de = placeRepos(plan, membres.length + rang); const pc = posChantier.get(chantier.id)!; const chemin = cheminVers(plan, de, [x, z], [pc[0], pc[2]], trame); const ordre = new Set(mobiles.map((mb) => mb.vers.join())).size; for (const mc of morceaux) mobiles.push({ ...mc, de, porte: plan.chemin[0] as [number, number], vers: [x, z], ordre, chemin }) }
       return
     }
     ajouter('cyl', [x, 0.55, z], [0.46, 1.1, 0.46], ROLES[m.role] ?? ROLES.autre, o)
@@ -502,13 +532,20 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
 
   // — La ville : routes entre les parcelles, parcs et terrains vides sur les parcelles libres. Décor pur (aucun objet cliquable,
   //   rien de vos données) : ajouté APRÈS le calcul des bornes, le cadrage de la caméra ne dépend que de ce qui est posé. —
-  if (plan) decorVille(ajouter, places.length, { campusZ: 14, libres: emplacementsChantiers(100000).filter(horsEnclos).slice(places.length) })
-  else decorVille(ajouter, places.length)
+  // Avec l'infrastructure (lot 5) : la CARTE — la rue de ceinture, les rues qui mènent de la base à chaque chantier, et sur les
+  // parcelles libres de la trame, des champs, des bosquets, des parcs (décor pur).
+  let routes: [number, number][][] = []
+  if (plan && trame) {
+    const E = plan.chemin[plan.chemin.length - 1]
+    routes = places.map((p) => cheminRues([E[0], E[1]], [p[0], Math.round((p[2] + 2.8) * 10) / 10], trame) ?? [])
+    decorCarte(ajouter, trame, places, routes)
+  } else decorVille(ajouter, places.length)
 
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
     ...(options?.vivant ? { colis } : {}),
     ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures, metier: metierI }, fenetres, mobiles } : {}),
+    ...(plan && trame && placements ? { carte: { min: [trame.xs[0] - PAS_CARTE / 2, trame.zs[0] - PAS_CARTE / 2] as [number, number], max: [trame.xs[trame.xs.length - 1] + PAS_CARTE / 2, trame.zs[trame.zs.length - 1] + PAS_CARTE / 2] as [number, number], reels: placements.filter((p) => p.reel).length, routes: routes.filter((r) => r.length > 1).length } } : {}),
     horsScene: {
       chantiers: Math.max(0, visibles.length - places.length), categories: catsHors,
       vehicules: Math.max(0, d.vehicules.filter((v) => v.actif).length - vehicules.length), demandes: Math.max(0, d.demandes.length - demandes.length),
@@ -518,6 +555,51 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
 
 type Ajouter = (f: Forme, p: V3, s: V3, c: string, o?: number, r?: V3) => void
 const ROUTE = '#DDD5C7'
+const PAS_CARTE = 5.6
+const CHAMPS = ['#E3D6B5', '#D9DEC2', '#E8DCC0', '#DCD3B4']
+/**
+ * La CARTE autour de la base (infrastructure, lot 5) — inspirée des cartes d'entreprise de référence : la base au centre, sa rue de
+ * ceinture, et SEULEMENT les rues qui mènent à un chantier (le plus court chemin par la trame), comme des routes de campagne ; sur
+ * les parcelles libres, des champs à sillons, des bosquets, des parcs. Décor pur, stable (hachage de la position).
+ */
+function decorCarte(ajouter: Ajouter, trame: { xs: readonly number[]; zs: readonly number[] }, occupees: readonly V3[], routes: readonly (readonly [number, number])[][]) {
+  const r1 = (v: number) => Math.round(v * 10) / 10
+  const vus = new Set<string>()
+  const segment = (a: readonly [number, number], b: readonly [number, number]) => {
+    const k = [a, b].map((p) => `${r1(p[0])}:${r1(p[1])}`).sort().join('|')
+    if (vus.has(k)) return
+    vus.add(k)
+    const lx = Math.abs(b[0] - a[0]), lz = Math.abs(b[1] - a[1])
+    if (lx < 0.05 && lz < 0.05) return
+    ajouter('box', [(a[0] + b[0]) / 2, 0.03, (a[1] + b[1]) / 2], [lx > lz ? lx + 1.1 : 1.1, 0.03, lx > lz ? 1.1 : lz + 1.1], ROUTE)
+  }
+  // La rue de ceinture de la base, puis les routes vers les chantiers.
+  const E = ENCLOS
+  segment([E.x0, E.z0], [E.x1, E.z0]); segment([E.x0, E.z1], [E.x1, E.z1]); segment([E.x0, E.z0], [E.x0, E.z1]); segment([E.x1, E.z0], [E.x1, E.z1])
+  for (const r of routes) for (let i = 1; i < r.length; i++) segment(r[i - 1], r[i])
+  // Les parcelles libres de la trame : les plus proches d'une route reçoivent arbres et parcs, les autres des champs.
+  const prises = new Set(occupees.map((p) => `${r1(p[0])}:${r1(p[2])}`))
+  const pointsRoute = routes.flat()
+  for (let i = 0; i < trame.xs.length - 1; i++) for (let j = 0; j < trame.zs.length - 1; j++) {
+    const x = r1((trame.xs[i] + trame.xs[i + 1]) / 2), z = r1((trame.zs[j] + trame.zs[j + 1]) / 2)
+    if (prises.has(`${x}:${z}`) || !horsEnclos([x, 0, z])) continue
+    const h = hacher(`carte:${x}:${z}`)
+    const pres = pointsRoute.some((p) => Math.abs(p[0] - x) <= 3 && Math.abs(p[1] - z) <= 3)
+    const arbre = (dx: number, dz: number, k: number) => {
+      ajouter('cyl', [x + dx, 0.4 * k, z + dz], [0.18, 0.8 * k, 0.18], COULEURS.tronc)
+      ajouter('sph', [x + dx, 1.25 * k, z + dz], [1.15 * k, 1.15 * k, 1.15 * k], COULEURS.sauge)
+    }
+    if (!pres && h < 0.55) {
+      // Un champ : une pièce de terre et ses sillons, dans le sens tiré du hachage.
+      const c = CHAMPS[Math.floor(((h * 7) % 1) * CHAMPS.length)], sens = h < 0.27
+      ajouter('box', [x, 0.025, z], [4.5, 0.03, 4.5], c)
+      for (let s = -1.6; s <= 1.61; s += 0.8) ajouter('box', sens ? [x + s, 0.045, z] : [x, 0.045, z + s], sens ? [0.12, 0.02, 4.3] : [4.3, 0.02, 0.12], melanger(c, '#8E7356', 0.18))
+    } else if (h < 0.3) arbre(0, 0, 0.8 + ((h * 9) % 1) * 0.5)
+    else if (h < 0.55) { arbre(-0.9, -0.7, 0.9); arbre(0.9, 0.8, 0.75) }
+    else if (h < 0.75) { ajouter('box', [x, 0.035, z], [3.8, 0.05, 3.8], melanger(COULEURS.sauge, COULEURS.sol, 0.55)); arbre(0.5, 0.3, 0.85) }
+    else if (h < 0.85) { arbre(-1.1, 0.9, 0.7); arbre(0.2, -0.6, 0.95); arbre(1.2, 1.0, 0.8) }
+  }
+}
 /**
  * La ville autour du dépôt : une trame de routes entre les parcelles (coupée autour du dépôt et du parking), et sur chaque
  * parcelle que PERSONNE n'occupe — un parc, des arbres, ou rien. Stable : tout se tire d'un hachage de la position, jamais du hasard.
@@ -693,10 +775,15 @@ type Four = { nom?: string | null; contact?: string | null }
 // PostgREST rend une relation « plusieurs vers un » en objet ; sans schéma typé, le client la croit tableau : on accepte les deux.
 const unSeul = (f: Four | Four[] | null | undefined): Four | null => (Array.isArray(f) ? f[0] ?? null : f ?? null)
 const nb = (v: Nb): number => { const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v) : NaN; return Number.isFinite(n) ? n : 0 }
+const nbOuNull = (v: Nb): number | null => { const n = typeof v === 'number' ? v : typeof v === 'string' && v.trim() ? Number(v) : NaN; return Number.isFinite(n) ? n : null }
 export function assemblerAtelier(e: {
   jour: string
   metier: string | null
-  chantiers: readonly { id: string; titre: string; statut: string; date_debut: string | null; date_fin_prevue: string | null; vehicule_id: string | null; client_nom?: string | null; devis_id?: string | null }[]
+  chantiers: readonly {
+    id: string; titre: string; statut: string; date_debut: string | null; date_fin_prevue: string | null; vehicule_id: string | null; client_nom?: string | null; devis_id?: string | null
+    /** Drapeau crmAtelierVivant (0172) : présents seulement s'ils ont été lus — la sortie drapeau baissé ne change pas. */
+    type_batiment?: string | null; objet?: string | null; lat?: number | string | null; lng?: number | string | null; retire_carte_le?: string | null
+  }[]
   /** Les cartes du pipeline (lib/crm/pipeline.ts) : l'étape de chaque chantier et les demandes sans devis. */
   cartes: readonly { objet: string; id: string; etape: string; titre: string; client: string | null; chantierId: string | null; depuis: string | null }[]
   taches: readonly { id?: string; chantier_id: string; faite: boolean | null; libelle?: string | null; faite_le?: string | null; membre_id?: string | null; ordre?: number | null }[]
@@ -712,6 +799,8 @@ export function assemblerAtelier(e: {
   formeJuridique?: string | null
   /** Même drapeau : le nom et la ville de la fiche. */
   entreprise?: { nom: string | null; ville: string | null }
+  /** Même drapeau (lot 5) : la base géocodée et le réglage de validation automatique. */
+  carte?: { base: PointGeo | null; validationAuto: boolean }
 }): DonneesAtelier {
   const etapeChantier = new Map<string, string>()
   const clientChantier = new Map<string, string | null>()
@@ -732,9 +821,16 @@ export function assemblerAtelier(e: {
     jour: e.jour, metier: e.metier,
     ...(e.formeJuridique !== undefined ? { formeJuridique: e.formeJuridique } : {}),
     ...(e.entreprise !== undefined ? { entreprise: e.entreprise } : {}),
+    ...(e.carte !== undefined ? { carte: e.carte } : {}),
     chantiers: e.chantiers.map((c) => {
       const t = taches.get(c.id)
+      // La carte (0172) : seulement si la ligne porte ses colonnes (drapeau levé) ; sinon, l'objet d'avant à l'identique.
+      const carte = 'type_batiment' in c || 'retire_carte_le' in c || 'objet' in c ? {
+        typeBatiment: estTypeBat(c.type_batiment) ? c.type_batiment : null, objet: c.objet ?? null,
+        lat: nbOuNull(c.lat), lng: nbOuNull(c.lng), retireCarte: c.retire_carte_le ?? null,
+      } : {}
       return {
+        ...carte,
         id: c.id, titre: c.titre, client: clientChantier.get(c.id) ?? c.client_nom ?? null, statut: c.statut, etape: etapeChantier.get(c.id) ?? null,
         avancement: t && t.t ? Math.round((t.f / t.t) * 100) : null, date_debut: c.date_debut, date_fin_prevue: c.date_fin_prevue,
         vehicule_id: c.vehicule_id, equipe: equipe.get(c.id) ?? [],

@@ -15,6 +15,13 @@ export type StatutChantier = (typeof STATUTS_CHANTIER)[number]
 export const LIBELLES_STATUT_CHANTIER: Record<StatutChantier, string> = {
   a_planifier: 'À planifier', planifie: 'Planifié', en_cours: 'En cours', en_pause: 'En pause', termine: 'Terminé', annule: 'Annulé',
 }
+/** Les types de bâtiment de la carte (contrainte de chantiers.type_batiment, migration 0172) ; lib/crm/carte.ts les reprend. */
+export const TYPES_BATIMENT = [
+  'maison', 'appartement', 'immeuble', 'hotel', 'restaurant', 'commerce', 'bureaux', 'entrepot',
+  'ecole', 'sante', 'equipement', 'exterieur', 'agricole',
+] as const
+export type TypeBat = (typeof TYPES_BATIMENT)[number]
+export const estTypeBat = (v: unknown): v is TypeBat => typeof v === 'string' && (TYPES_BATIMENT as readonly string[]).includes(v)
 export const ROLES_MEMBRE = ['artisan', 'compagnon', 'apprenti', 'salarie', 'sous_traitant', 'autre'] as const
 export type RoleMembre = (typeof ROLES_MEMBRE)[number]
 export const LIBELLES_ROLE: Record<RoleMembre, string> = {
@@ -106,6 +113,8 @@ export type EntreeChantier = {
   adresse?: string | null; code_postal?: string | null; ville?: string | null
   statut?: StatutChantier; date_debut?: string | null; date_fin_prevue?: string | null; date_fin_reelle?: string | null
   vehicule_id?: string | null; notes?: string | null; equipe?: string[]; generer_taches?: boolean
+  /** La forme du bâtiment sur la carte (0172) ; null = déduite. Refusée par les routes drapeau crmAtelierVivant baissé. */
+  type_batiment?: TypeBat | null
 }
 
 function listeIdentifiants(v: unknown, nom: string, max: number): Resultat<string[]> {
@@ -131,6 +140,19 @@ const REGLES_CHANTIER: Record<string, Regle> = {
   notes: (v) => texte(v, 'Notes', 4000),
   equipe: (v) => listeIdentifiants(v, 'Équipe', 30),
   generer_taches: (v) => booleen(v, 'Générer les tâches'),
+  type_batiment: (v) => (v === null ? ok(null) : estTypeBat(v) ? ok(v) : ko('Type de bâtiment inconnu.')),
+}
+
+// ── La carte (lot 5, 0172) : valider un chantier, le remettre sur la carte ; le réglage « valider automatiquement » ────────
+/** Corps de POST /api/crm/chantiers/[id]/valider : `{ action: 'valider' }` ou `{ action: 'remettre' }`, rien d'autre. */
+export function validerActionCarte(b: unknown): Resultat<{ action: 'valider' | 'remettre' }> {
+  if (!estObjet(b) || Object.keys(b).length !== 1 || (b.action !== 'valider' && b.action !== 'remettre')) return ko('Action attendue : « valider » ou « remettre ».')
+  return ok({ action: b.action })
+}
+/** Corps de PUT /api/crm/reglages : `{ validation_auto: true | false }`, rien d'autre. */
+export function validerReglagesCrm(b: unknown): Resultat<{ validation_auto: boolean }> {
+  if (!estObjet(b) || Object.keys(b).length !== 1 || typeof b.validation_auto !== 'boolean') return ko('Réglage attendu : validation_auto (vrai ou faux).')
+  return ok({ validation_auto: b.validation_auto })
 }
 
 /** Création : un titre OU un devis (le titre se prend alors sur le devis). */

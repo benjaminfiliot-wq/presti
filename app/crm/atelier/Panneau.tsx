@@ -14,6 +14,7 @@ import { DialogueRelance, FicheCommande, PreparerCommande } from './Commande'
 import { PosteAssistantsPanneau, SalleAttentePanneau } from './Vivant'
 import PanneauStructure from './Structure'
 import StockRapide from './Stock'
+import { CarteChantierPanneau, type ActionsCarte } from './Carte'
 import { CATEGORIES_TYPIQUES, metier3DDe, type Metier3D } from '@/lib/crm/infrastructure'
 import type { PosteAssistants } from '@/lib/crm/assistants'
 import type { Vue } from '@/lib/crm/vue'
@@ -26,12 +27,14 @@ import type { Vue } from '@/lib/crm/vue'
 // En page de démonstration (`demo`, /atelier-demo), rien n'est lu ni écrit : les actions sont désactivées et le disent.
 // Dans l'EXEMPLE du CRM (app/crm/mode.tsx), la fiche chantier s'ouvre sur ses données fictives, ses boutons ne font rien
 // partir, et les liens vers les écrans hors CRM sont inertes.
-export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2D, onChange, vue, poste, metier, onChoisir }: {
+export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2D, onChange, vue, poste, metier, onChoisir, carte }: {
   objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onFermer: () => void; onVue2D: (vue: string) => void; onChange: () => void
   /** Drapeau crmAtelierVivant levé seulement : la Vue (salle d'attente de l'accueil) et le poste des assistants. Absents : les panneaux d'avant. */
   vue?: Vue; poste?: PosteAssistants | null
   /** Infrastructure (même drapeau) : le métier 3D de la maquette (stock : catégories typiques) et l'ouverture d'un autre objet par sa clé. */
   metier?: Metier3D; onChoisir?: (cle: string) => void
+  /** La carte (lot 5, même drapeau) : type de bâtiment et validation du chantier. Absente : le panneau d'avant. */
+  carte?: ActionsCarte
 }) {
   const titre = useRef<HTMLHeadingElement>(null)
   // Le focus va au titre du panneau qui s'ouvre (lecteur d'écran et clavier) ; Échap le ferme.
@@ -49,7 +52,7 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
         <button type="button" className="atl-fermer" onClick={onFermer} aria-label="Fermer le panneau">×</button>
       </header>
       <div className="atl-panneau-corps">
-        {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} />}
+        {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} carte={carte} />}
         {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} onChange={onChange} metier={metier} />}
         {objet.type === 'structure' && <PanneauStructure objet={objet} donnees={donnees} metier={metier ?? metier3DDe(donnees.metier)} onVue2D={onVue2D} onChoisir={onChoisir} onChange={onChange} />}
         {objet.type === 'vehicule' && <PanneauVehicule objet={objet} donnees={donnees} />}
@@ -74,7 +77,7 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
 
 const ICONES: Record<Alerte['type'], string> = { retard: '⏱', livraison: '🚚', attendue: '📦', stock: '▦', facturer: '€', sans_equipe: '👷' }
 
-function PanneauChantier({ objet, donnees, demo, resume, onChange }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onChange: () => void }) {
+function PanneauChantier({ objet, donnees, demo, resume, onChange, carte }: { objet: ObjetScene; donnees: DonneesAtelier; demo: boolean; resume: ResumeAlertes; onChange: () => void; carte?: ActionsCarte }) {
   const exemple = useExemple()
   const c = donnees.chantiers.find((x) => x.id === objet.ref)
   const [complet, setComplet] = useState(false)
@@ -165,6 +168,7 @@ function PanneauChantier({ objet, donnees, demo, resume, onChange }: { objet: Ob
           {resteOuvert > ouvertes.length && <li className="atl-plus">+ {resteOuvert - ouvertes.length} autre{resteOuvert - ouvertes.length > 1 ? 's' : ''} dans la fiche du chantier</li>}
         </ul>
       )}
+      {carte && <CarteChantierPanneau c={c} actions={carte} />}
       {t && t.total > 0 && <p className="atl-faites"><b className="tnum">{t.faites + faites.size}</b> tâche{t.faites + faites.size > 1 ? 's' : ''} terminée{t.faites + faites.size > 1 ? 's' : ''} sur <span className="tnum">{t.total}</span>{t.faitesAujourdhui + faites.size > 0 ? <> · <span className="tnum">{t.faitesAujourdhui + faites.size}</span> aujourd’hui</> : null}</p>}
       {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role="status">{message.texte}</p>}
 

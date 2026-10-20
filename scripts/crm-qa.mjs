@@ -323,7 +323,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
     exportes += (src.match(/export async function /g) ?? []).length
     for (const m of src.replace(/\r\n/g, '\n').matchAll(/export async function (GET|POST|PATCH|DELETE|PUT|OPTIONS)\(([^)]*)\)\s*\{\n([^\n]*)\n([^\n]*)/g)) {
       handlers++
-      if (!/^\s*const g = await gardeCrm\(req(, \{ drapeau: '(crmPieces|crmPlanning|crmApresChantier|crmSuivi)' \})?\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
+      if (!/^\s*const g = await gardeCrm\(req(, \{ drapeau: '(crmPieces|crmPlanning|crmApresChantier|crmSuivi|crmAtelierVivant)' \})?\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
     }
     if (/export (const|let|function) (?!GET|POST|PATCH|DELETE|runtime|dynamic|maxDuration)/.test(src)) fautes.push(`${f} : export non permis`)
   }

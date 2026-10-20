@@ -169,3 +169,19 @@ fait (interrupteur `envoi` de `docs/savoir/reglages.json` éteint), aucune donn�
 | **Où** | `/home/agents/travail/savoir/` (usine), `scripts/savoir/`, `lib/savoir/` |
 | **Droits** | Écrire au responsable ; la demande d'effacement d'un prospect s'applique au compartiment à la synchronisation suivante |
 
+
+## 13. Le géocodage des chantiers *(carte de l'atelier du CRM, lot 5, 20 octobre 2026 ; drapeau `crmAtelierVivant`)*
+
+Presti agit ici **pour le compte de l'artisan** (sous-traitant) : la carte de son atelier place chaque chantier dans sa vraie direction
+depuis sa base. Rien n'est envoyé tant que le drapeau est baissé.
+
+| | |
+|---|---|
+| **Finalité** | Situer les chantiers de l'artisan (et sa base) sur la carte de l'atelier du CRM : direction et distance comprimée depuis la base |
+| **Données envoyées** | L'adresse, le code postal et la ville du chantier (à défaut, l'adresse du client écrite sur le devis), et celles du siège de l'artisan — **jamais le nom du client**, ni aucune autre donnée (`lib/crm/carte.ts`, `requeteAdresse`) |
+| **Données gardées** | La latitude et la longitude trouvées, et la date de la recherche (`chantiers.lat`, `lng`, `geocode_le`, migration 0172) ; effacées quand l'adresse change ; la position du siège n'est gardée qu'en mémoire du serveur, 24 h |
+| **Base légale** | Exécution du contrat de l'artisan (le service CRM qu'il a choisi d'ouvrir) |
+| **Personnes** | Les clients des artisans (par l'adresse de leur chantier), les artisans (leur siège) |
+| **Durée** | Celle du chantier dans le CRM ; supprimée avec lui |
+| **Destinataire** | La Base Adresse Nationale, service public de l'État : `api-adresse.data.gouv.fr` (appel par le serveur de Presti, délai 4 s, au plus 10 recherches par chargement de la vue) |
+| **Où** | `lib/crm/geocodage.ts`, `lib/crm/carte.ts`, `app/api/crm/vue/route.ts`, `supabase/migrations/0172_crm_carte_chantiers.sql` |

@@ -19,6 +19,8 @@ import ApresChantier from './ApresChantier'
 import PlanChantier from './PlanChantier'
 import SuiviClient from './SuiviClient'
 import { actif } from '@/lib/flags'
+import { ChoixTypeBatiment } from './atelier/Carte'
+import type { TypeBat } from '@/lib/crm/carte'
 import type { Membre, Vehicule } from './types'
 
 // La fiche chantier (plan 3.4) : client, adresse, nature des travaux, devis lié (TTC, statut, signé le), acompte,
@@ -155,6 +157,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           <button type="button" className="psh-btn primary" disabled={!f.actions.facturer.actif || envoi !== null} title={f.actions.facturer.raison ?? 'Créer la facture du devis'} aria-describedby={f.actions.facturer.raison ? 'crm-raison-facturer' : undefined}
             onClick={() => void facturer()}>{envoi === 'facturer' ? 'Création…' : f.actions.facturer.solde ? 'Facturer le solde' : 'Facturer'}</button>
         </div>
+        {f.carte && !compacte && <CarteFiche f={f} agir={agir} />}
         <ul className="crm-raisons">
           {!d && !compacte && <li id="crm-raison-fiche">Fiche complète : ce chantier n’a pas de devis lié.</li>}
           {f.actions.notifier.raison && <li id="crm-raison-notifier">Notifier : {f.actions.notifier.raison}</li>}
@@ -229,6 +232,52 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
           if (await agir(base, 'DELETE', undefined, null)) window.location.href = '/crm?vue=chantiers'
         }}>Supprimer le chantier</button>
       </section>
+    </div>
+  )
+}
+
+/**
+ * La carte de l'atelier (lot 5, drapeau crmAtelierVivant) dans la fiche : le TYPE de bâtiment dessiné (déduit, ou choisi ici), et
+ * « Valider le chantier » quand toutes les tâches sont faites — il quitte la carte, il reste ici, dans la liste, le pipeline et les
+ * factures ; « Remettre sur la carte » le fait revenir. Dans l'exemple : simulé, rien n'est écrit.
+ */
+function CarteFiche({ f, agir }: { f: Fiche; agir: (chemin: string, method: string, body: unknown, ok: string | null) => Promise<boolean> }) {
+  const exemple = useExemple()
+  const carte = f.carte!
+  const [simule, setSimule] = useState<{ retire: string | null; type: TypeBat | null } | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+  const retire = simule ? simule.retire : carte.retire
+  const type = simule ? simule.type : carte.type
+  const base = `/api/crm/chantiers/${f.chantier.id}`
+  async function faire(quoi: { action: 'valider' | 'remettre' } | { type: TypeBat | null }) {
+    setNote(null)
+    if (exemple) {
+      setSimule({ retire: 'action' in quoi ? (quoi.action === 'valider' ? new Date().toISOString() : null) : retire, type: 'action' in quoi ? type : quoi.type })
+      setNote('Exemple : l’effet est montré, rien n’est enregistré.')
+      return
+    }
+    if ('action' in quoi) await agir(`${base}/valider`, 'POST', quoi, quoi.action === 'valider' ? 'Chantier validé : il a quitté la carte de l’atelier.' : 'Chantier remis sur la carte.')
+    else await agir(base, 'PATCH', { type_batiment: quoi.type }, 'Type de bâtiment enregistré : la carte le dessine.')
+  }
+  return (
+    <div className="crm-carte-fiche" data-crm-carte-fiche>
+      <label className="crm-champ crm-champ-court">Bâtiment sur la carte
+        <ChoixTypeBatiment valeur={type} deduit={carte.typeDeduit} onChange={(t) => void faire({ type: t })} />
+      </label>
+      {retire ? (
+        <p className="crm-carte-etat" data-crm-valide-le>
+          <span className="pill ok">Validé</span> le {dateFr(retire)} : retiré de la carte de l’atelier.
+          <button type="button" className="psh-btn ghost" data-crm-remettre onClick={() => void faire({ action: 'remettre' })}>Remettre sur la carte</button>
+        </p>
+      ) : carte.validable ? (
+        <p className="crm-carte-etat">
+          <button type="button" className="psh-btn primary" data-crm-valider onClick={() => void faire({ action: 'valider' })}>Valider le chantier</button>
+          <span className="muted"> Toutes les tâches sont faites : il quitte la carte, il reste ici et dans vos chiffres.</span>
+        </p>
+      ) : (
+        <p className="crm-carte-etat muted">« Valider le chantier » s’offre quand toutes ses tâches sont cochées.{carte.validationAuto ? ' Validation automatique activée : la dernière tâche cochée le validera.' : ''}</p>
+      )}
+      {note && <p className="crm-message" role="status">{note}</p>}
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { chantierDe, COLONNES, erreur, gardeCrm, INDISPONIBLE, json, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
+import { chantierDe, COLONNES, erreur, gardeCrm, INDISPONIBLE, json, lireReglages, statutErreurBase, nonPermise } from '@/lib/crm/serveur'
 import type { RappelLigne } from '@/lib/crm/rappels'
 import { estUuid, lireCorps, validerModificationChantier } from '@/lib/crm/valider'
-import { construireFicheChantier, type DevisFiche, type EntreeJournal, type FactureFiche, type FicheChantier, type NoteCrm, type ReservationFiche, type TacheFiche } from '@/lib/crm/vue'
+import { construireFicheChantier, ficheCarte, type DevisFiche, type EntreeJournal, type FactureFiche, type FicheChantier, type NoteCrm, type ReservationFiche, type TacheFiche } from '@/lib/crm/vue'
 import { facturesComptees, jourParis } from '@/lib/comptaTableau'
 import { actif } from '@/lib/flags'
 import { deplacementEnVigueur, etapeChantierSeul, etapeDevis, type DeplacementP } from '@/lib/crm/pipeline'
@@ -57,8 +57,10 @@ export async function GET(req: Request, ctx: Ctx) {
   const rappelsAbsents = !!rappelsR.error && ['42P01', 'PGRST205'].includes(String(rappelsR.error.code))
   if (rappelsR.error && !rappelsAbsents) { console.error('[crm/chantier] rappels :', rappelsR.error.message); return erreur(INDISPONIBLE, 503) }
 
+  // La carte (drapeau crmAtelierVivant, lot 5) : type de bâtiment, validation, réglage automatique.
+  const carte = actif('crmAtelierVivant') ? ficheCarte(c, devis?.objet ?? null, (tachesR.data ?? []) as unknown as { faite: boolean | null }[], (await lireReglages(g.uid)).validationAuto) : null
   // L'assemblage est celui de lib/crm/vue.ts (le même que la fiche de l'atelier d'exemple).
-  return json({ ...construireFicheChantier({
+  return json({ ...(carte ? { carte } : {}), ...construireFicheChantier({
     rappels: (rappelsR.data ?? []) as unknown as RappelLigne[], rappelsDisponibles: !rappelsAbsents,
     uid: g.uid, chantier: c as FicheChantier['chantier'], devis, factures, leadStatut, lead, manuel: manuel && manuel !== derivee ? manuel : null,
     taches: (tachesR.data ?? []) as unknown as TacheFiche[], // colonnes choisies à l'exécution (piece, drapeau crmPlan)
@@ -81,6 +83,8 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if (!corps.ok) return erreur(corps.erreur, corps.statut ?? 400)
   const v = validerModificationChantier(corps.valeur)
   if (!v.ok) return erreur(v.erreur, 400)
+  // Le type de bâtiment de la carte (0172) n'existe pour l'API que drapeau crmAtelierVivant levé.
+  if ('type_batiment' in v.valeur && !actif('crmAtelierVivant')) return erreur('Champ inconnu : type_batiment.', 400)
   const { chantier: c, error: el } = await chantierDe(g.uid, id)
   if (el) { console.error('[crm/chantier] lecture :', el.message); return erreur(INDISPONIBLE, 503) }
   if (!c) return erreur('Chantier introuvable.', 404)
@@ -92,6 +96,13 @@ export async function PATCH(req: Request, ctx: Ctx) {
   // Terminé : la fin réelle se pose seule si l'artisan ne l'a pas donnée ; rouvert : elle s'efface.
   if (champs.statut === 'termine' && !('date_fin_reelle' in champs) && !c.date_fin_reelle) champs.date_fin_reelle = jourParis(new Date())
   if (champs.statut && champs.statut !== 'termine' && c.statut === 'termine' && !('date_fin_reelle' in champs)) champs.date_fin_reelle = null
+  // La carte (drapeau crmAtelierVivant) : une adresse modifiée se cherche à nouveau (position effacée) ; un chantier rouvert revient sur la carte.
+  const carte: Record<string, unknown> = {}
+  if (actif('crmAtelierVivant')) {
+    const change = (k: 'adresse' | 'code_postal' | 'ville') => k in champs && (champs[k] ?? null) !== (c[k] ?? null)
+    if (change('adresse') || change('code_postal') || change('ville')) Object.assign(carte, { lat: null, lng: null, geocode_le: null })
+    if (champs.statut && champs.statut !== 'termine' && c.retire_carte_le) carte.retire_carte_le = null
+  }
   if (champs.vehicule_id) {
     const { data: vh } = await supabaseAdmin.from('vehicules').select('id').eq('id', champs.vehicule_id).eq('artisan_id', g.uid).maybeSingle()
     if (!vh) return erreur('Véhicule introuvable.', 404)
@@ -104,7 +115,7 @@ export async function PATCH(req: Request, ctx: Ctx) {
     }
   }
   if (Object.keys(champs).length) {
-    const { error } = await supabaseAdmin.from('chantiers').update({ ...champs, maj_le: new Date().toISOString() }).eq('id', id).eq('artisan_id', g.uid)
+    const { error } = await supabaseAdmin.from('chantiers').update({ ...champs, ...carte, maj_le: new Date().toISOString() }).eq('id', id).eq('artisan_id', g.uid)
     if (error) { const s = statutErreurBase(error); console.error('[crm/chantier] modification :', error.message); return erreur(s.message, s.status) }
   }
   if (equipe) {

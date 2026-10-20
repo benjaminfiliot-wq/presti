@@ -269,3 +269,19 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
 - Décision / action : rapport au dev principal ; aucun fichier modifié hors ce journal.
 - À retenir : un upsert sur une clé unique NULLS NOT DISTINCT dont la colonne n'est pas envoyée par le formulaire = écrasement silencieux d'un homonyme ;
   une route « créer » doit faire insert + 409, pas upsert. Les regex de classement par sous-chaîne courte (`ite`, `pac`, `iti`) doivent être bornées par \b.
+
+## 2026-10-20 — presti-audit-attaque — Lot 5 du CRM : carte, validation, géocodage BAN (non commité, migration 0172 en prod)
+- Contexte : lecture seule (aucun compte créé, aucune écriture) ; preuves statiques + sondes anon en prod (crm_reglages : 401/42501, chantiers : 401).
+- Constat : 0 critique, 0 élevé. Garde + propriété `artisan_id = uid` sur chaque lecture/écriture (valider/route.ts:17,25,31,36,45 ;
+  reglages/route.ts:12,19,25 ; taches/[id]/route.ts:93,109-110,117 ; geocodage.ts:46). Listes blanches exactes (valider.ts:304-312),
+  lat/lng/geocode_le/retire_carte_le hors de REGLES_CHANTIER, TYPES_BATIMENT = CHECK de 0172:18-21. SSRF impossible (carte.ts:212,230),
+  délai 4 s qui couvre aussi le corps (l.246-256), bornes lat/lng (l.237) + CHECK, ≤ 10 appels (geocodage.ts:57,69), aucun appel client.
+  /suivi lit des colonnes explicites (app/suivi/[jeton]/route.ts:47). Registre § 13 présent.
+  Moyen : aucune mémoire des pannes BAN — base puis chantiers EN SÉRIE (geocodage.ts:58 puis :72) = jusqu'à 8 s par vue et 10 appels
+  relancés à chaque chargement tant que la BAN est lente. Faibles : course adresse modifiée pendant la recherche (le filtre
+  `geocode_le IS NULL` ne protège pas un chantier jamais géocodé) ; validation auto qui re-retire un chantier « terminé » remis sur la
+  carte (peutValider vrai pour `termine`) ; CACHE_BASE sans plafond ; valider renvoie ok même si 0 ligne écrite (course).
+- Décision / action : rapport au dev principal ; aucun fichier modifié hors ce journal.
+- À retenir : un filtre d'écriture « encore vide » (`is(col, null)`) ne protège contre une course que si l'autre écrivain REMPLIT la
+  colonne ; s'il la remet à NULL, il faut comparer la valeur source (adresse, maj_le). Tout appel externe dans une route de lecture
+  doit avoir un coupe-circuit et ne jamais être en série avec un autre appel externe.
