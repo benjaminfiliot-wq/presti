@@ -24,6 +24,7 @@
 .atl-filtres button.on { background: var(--accent-tint); border-color: var(--accent); color: var(--ink) }
 .atl-filtres button.on span { color: var(--accent-ink) }
 .atl-bascule:disabled { opacity: .55; cursor: default }
+.atl-origine { display: block; margin-top: 2px; font-size: 11px; color: var(--muted); text-align: center }
 .atl-metier select { width: auto; padding: 6px 8px; font-size: 12.5px; border-radius: 9px; background: var(--surface-2) }
 
 .atl-aide { position: relative }
@@ -198,6 +199,8 @@
 }
 
 /* — Repli 2D — */
+.atl-plan-profil { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: var(--ink-soft) }
+.atl-plan-base { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--accent-tint); border: 1px solid var(--accent-tint-2); color: var(--ink); font-weight: 700; font-size: 12px }
 .atl-plan { padding: 14px; display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: auto }
 .atl-plan-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
 .atl-plan-zone { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0 }
@@ -232,4 +235,24 @@
   .atl-panneau { animation: atl-entre .22s var(--ease-out, ease-out) }
   .atl-filtres button, .atl-plan-objet { transition: background-color .15s var(--ease-out, ease-out), border-color .15s var(--ease-out, ease-out), opacity .2s var(--ease-out, ease-out) }
   @keyframes atl-entre { from { opacity: 0; transform: translateX(12px) } to { opacity: 1; transform: none } }
+}
+
+/* — 20/10 : l'atelier vivant (drapeau crmAtelierVivant) — l'arrivée en direct d'une demande, le poste des assistants, la salle d'attente.
+     Rien de tout cela n'est dans le DOM drapeau baissé ; mouvement seulement hors « réduire les animations ». — */
+.atl-arrivee-zone { position: absolute; z-index: 37; top: 10px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 140px); pointer-events: none }
+.atl-arrivee { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; background: var(--surface); border: 1px solid var(--accent-tint-2); border-left: 4px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow-lg); font-size: 13px; font-weight: 600; color: var(--ink) }
+.atl-arrivee > span { min-width: 0; overflow-wrap: anywhere }
+.atl-arrivee .psh-btn { padding: 5px 12px; font-size: 12.5px }
+.atl-arrivee-fermer { width: 28px !important; height: 28px; display: grid; place-items: center; padding: 0; line-height: 1; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font-size: 17px; cursor: pointer }
+.atl[data-atelier-mode="2d"] .atl-arrivee-zone { position: static; transform: none; width: auto; max-width: none; padding: 10px 14px 0 }
+.atl-carte.atl-poste { min-width: 0 }
+.atl-badge-valider { background: var(--accent-tint); color: var(--accent-ink); border-color: var(--accent-tint-2) }
+.atl-assistant { display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--line-2) }
+.atl-assistant:last-child { border-bottom: 0 }
+.atl-assistant .muted { margin: 0; font-size: 12.5px }
+@media (prefers-reduced-motion: no-preference) {
+  .atl-arrivee { animation: atl-monte .25s var(--ease-out, ease-out) }
+  /* L'accueil surligné quelques secondes en 2D (le colis qui tombe, lui, est dans la scène 3D). */
+  .atl-plan-objet.arrivee { border-color: var(--accent); background: var(--accent-tint); animation: atl-arrivee 1.1s var(--ease-out, ease-out) 3 }
+  @keyframes atl-arrivee { from { box-shadow: 0 0 0 0 var(--accent-tint-2) } to { box-shadow: 0 0 0 10px transparent } }
 }

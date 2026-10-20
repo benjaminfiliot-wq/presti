@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     // Jamais un tableau vide sur une panne : 503 et aucune donnée.
     return erreur(s.status === 503 ? s.message : INDISPONIBLE, 503)
   }
-  return json(construireVue({ uid: g.uid, metier: g.metier, d: d as unknown as DossiersCrm, maintenant: new Date(), idDe: idClientPour(g.uid) }))
+  return json(construireVue({ uid: g.uid, metier: g.metier, ...(g.formeJuridique !== undefined ? { formeJuridique: g.formeJuridique } : {}), d: d as unknown as DossiersCrm, maintenant: new Date(), idDe: idClientPour(g.uid) }))
 }
 
 // Méthodes non servies : la garde d'abord (drapeau, session, essai : 404 comme partout), puis 405 pour qui a accès.

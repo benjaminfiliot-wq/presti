@@ -141,6 +141,8 @@ const SUITES = [
   { nom: 'CRM lot 3 — photos et pièces du chantier, planning, lien d’agenda, migrations 0163 et 0164', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot3-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM lot 4 — après-chantier : demande d’avis, entretien, migration 0165', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot4-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM lot 5 — plan du chantier par pièce, migration 0166', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot5-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM atelier vivant — salle d’attente, arrivée en direct, poste des assistants, garde du drapeau (aucun envoi)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-vivant-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM atelier 3D — profil d’infrastructure (base légère, atelier, entrepôt), métier visible, avancement des chantiers, jour et nuit, garde du drapeau', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-atelier3d-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — migration 0141 jouée (RLS, références croisées, journal, sortie de stock)', cmd: 'node', args: ['scripts/crm-sql-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — drapeau baissé : chaque route et la page répondent 404', cmd: 'node', args: ['scripts/crm-e2e.mjs'], cout: 'gratuit' },
   // L'atelier 3D sur la page de démonstration interne (données fictives) : performance, repli 2D, interactions, contrastes.

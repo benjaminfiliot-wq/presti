@@ -156,10 +156,12 @@ export default function Crm() {
           <section id={`crm-vue-${onglet}`} role="tabpanel" aria-labelledby={`crm-onglet-${onglet}`} className="crm-vue">
             {/* La maquette n'est montée que sur son onglet : le morceau 3D n'est chargé qu'ici (et préchargé pendant la lecture). */}
             {onglet === 'atelier' && (() => {
+              // « Atelier vivant » (drapeau crmAtelierVivant) : l'atelier reçoit la Vue entière, l'exemple compris (mêmes données fictives, rien d'écrit).
+              const vivant = actif('crmAtelierVivant')
               const versVue = (x: string) => { if (ONGLETS_VISIBLES.some((o) => o.id === x)) choisir(x as Onglet) }
               return exemple
-                ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo onVue2D={versVue} mesure={mesure} />
-                : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} onChange={() => void charger()} lien={lien} dernier={dernier} />
+                ? <Atelier key="exemple" donnees={DONNEES_EXEMPLE} demo onVue2D={versVue} mesure={mesure} vue={vivant ? VUE_EXEMPLE : undefined} />
+                : <Atelier key="mien" donnees={v.atelier} onVue2D={versVue} mesure={mesure} onChange={() => void charger()} lien={lien} dernier={dernier} vue={vivant ? v : undefined} />
             })()}
             {onglet === 'tableau' && <TableauCrmVue t={v.tableau} r={v.rappels} onChange={charger} />}
             {onglet === 'pipeline' && <PipelineVue p={v.pipeline} onChange={charger} jour={v.tableau.jour} />}

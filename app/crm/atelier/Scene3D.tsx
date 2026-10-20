@@ -17,6 +17,8 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { COULEURS, FORMES, initiales, melanger, styleAvatar, type Forme, type Inst, type Scene } from '@/lib/crm/atelier'
+import { DUREE_CHUTE_MS, hauteurChute } from '@/lib/crm/accueil'
+import { ambiance, decalageMarche, dureeMarche, heureParis, type Fenetre, type Mobile } from '@/lib/crm/infrastructure'
 
 export type CommandesScene = {
   zoomer: (facteur: number) => void
@@ -25,7 +27,7 @@ export type CommandesScene = {
   vue: (nom: NomVue) => void
 }
 export type NomVue = 'ensemble' | 'atelier' | 'chantiers' | 'dessus'
-export type Mesures = { fps: number; appels: number; triangles: number; premiereImageMs: number | null; geometries: number }
+export type Mesures = { fps: number; appels: number; triangles: number; premiereImageMs: number | null; geometries: number; moment?: string }
 
 type Props = {
   scene: Scene
@@ -36,6 +38,11 @@ type Props = {
   /** Expose les mesures de rendu sur window.__atelier (page de démonstration et juge de performance). */
   mesure?: boolean
   vueInitiale?: NomVue
+  /** Colis qui vient d'arriver (drapeau crmAtelierVivant) : l'instant du départ (performance.now) et la place des colis dans `instances.box`. Ignoré avec « réduire les animations ». */
+  chute?: { debut: number; index: readonly number[] } | null
+  /** L'heure imposée (page de démonstration, `?heure=`) ; absente : l'heure de Paris, relue chaque minute. Lue seulement si la scène
+   *  porte l'infrastructure (drapeau crmAtelierVivant). */
+  heure?: number | null
 }
 
 const CIBLE: THREE.Vector3Tuple = [3, 0, 0]
@@ -52,16 +59,41 @@ function geometrie(f: Forme): THREE.BufferGeometry {
 }
 
 const mouvementReduit = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+/** La préférence « moins d'animations », lue une fois puis suivie par écouteur : si elle change en cours de marche, tout s'arrête net. */
+function useCalme() {
+  const calme = useRef(mouvementReduit())
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    const f = () => { calme.current = !!mq?.matches }
+    mq?.addEventListener?.('change', f)
+    return () => mq?.removeEventListener?.('change', f)
+  }, [])
+  return calme
+}
 
 // ── Une couche instanciée : toutes les instances d'une forme, un seul appel de dessin ──────────────────────────
-function Couche({ forme, insts, couleur, onPick, onSurvol, apparition }: {
+// `lumiere` : le calque des fenêtres et des lampes (infrastructure), une matière NON éclairée, sans ombre — elle luit le soir.
+// `marche` : les personnages qui vont à leur chantier (infrastructure) ; leur position posée est l'arrivée, le trajet est un décalage.
+function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = null, lumiere = false, marche = null }: {
   forme: Forme; insts: Inst[]; couleur: (it: Inst) => string
   onPick: (o: number) => void; onSurvol: (o: number | null) => void
   apparition: { debut: number; centre: THREE.Vector3 } | null
+  chute?: { debut: number; index: readonly number[] } | null
+  lumiere?: boolean
+  marche?: { debut: number; fin: number; mobiles: ReadonlyMap<number, Mobile> } | null
 }) {
   const ref = useRef<THREE.InstancedMesh>(null)
+  const calme = useCalme()
+  const marcheEnCours = useRef(false)
   const geo = useMemo(() => geometrie(forme), [forme])
   const fini = useRef(false)
+  // Les colis qui tombent : l'instance → son délai (90 ms de plus par colis quand plusieurs arrivent ensemble) ; `fin` = l'instant où le dernier se pose.
+  const colis = useMemo(() => {
+    if (!chute || !chute.index.length || mouvementReduit()) return null
+    const delais = new Map(chute.index.map((idx, k) => [idx, k * 90] as const))
+    return { delais, debut: chute.debut, fin: chute.debut + (chute.index.length - 1) * 90 + DUREE_CHUTE_MS }
+  }, [chute])
+  const chuteEnCours = useRef(false)
   const tmp = useMemo(() => ({ m: new THREE.Matrix4(), q: new THREE.Quaternion(), e: new THREE.Euler(), p: new THREE.Vector3(), s: new THREE.Vector3(), c: new THREE.Color() }), [])
   const poser = (k: number) => {
     const mesh = ref.current
@@ -74,8 +106,20 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition }: {
         const t = Math.min(1, Math.max(0, (k * 1.6 - d / 60)))
         f = 1 - Math.pow(1 - t, 3)
       }
-      tmp.p.set(it.p[0], it.p[1] * (k < 1 ? f : 1), it.p[2])
-      tmp.s.set(it.s[0] * Math.max(f, 0.0001), it.s[1] * Math.max(f, 0.0001), it.s[2] * Math.max(f, 0.0001))
+      // Colis qui arrive : caché jusqu'à son tour, puis il tombe de quatre mètres et rebondit deux fois (lib/crm/accueil.ts, hauteurChute).
+      let dy = 0, g = 1
+      const delai = colis?.delais.get(i)
+      if (colis && delai !== undefined) {
+        const a = (performance.now() - colis.debut - delai) / DUREE_CHUTE_MS
+        if (a <= 0) g = 0.0001
+        else if (a < 1) dy = hauteurChute(a)
+      }
+      // Un personnage en route : décalé de son arrivée le long du trajet (lib/crm/infrastructure.ts, decalageMarche).
+      let mx = 0, my = 0, mz = 0
+      const mb = marche?.mobiles.get(i)
+      if (mb && marche && !calme.current) [mx, my, mz] = decalageMarche(mb, performance.now() - marche.debut)
+      tmp.p.set(it.p[0] + mx, it.p[1] * (k < 1 ? f : 1) + dy + my, it.p[2] + mz)
+      tmp.s.set(it.s[0] * Math.max(f, 0.0001) * g, it.s[1] * Math.max(f, 0.0001) * g, it.s[2] * Math.max(f, 0.0001) * g)
       tmp.q.setFromEuler(tmp.e.set(it.r[0], it.r[1], it.r[2]))
       mesh.setMatrixAt(i, tmp.m.compose(tmp.p, tmp.q, tmp.s))
     })
@@ -87,10 +131,18 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition }: {
     const k = apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1
     fini.current = k >= 1
     poser(k)
-  }, [insts, apparition]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [insts, apparition, colis, marche]) // eslint-disable-line react-hooks/exhaustive-deps
   useFrame(() => {
-    if (fini.current || !apparition) return
-    const k = Math.min(1, (performance.now() - apparition.debut) / 950)
+    // La marche : une pose par image tant que quelqu'un est en route, puis une dernière, à l'arrivée.
+    const enMarche = !!marche && marche.mobiles.size > 0 && performance.now() < marche.fin && !calme.current
+    if (!enMarche && marcheEnCours.current) { marcheEnCours.current = false; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1); return }
+    if (enMarche) { marcheEnCours.current = true; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1); return }
+    const enChute = !!colis && performance.now() < colis.fin
+    // Une dernière pose quand la chute s'achève : le colis finit exactement au sol.
+    if (!enChute && chuteEnCours.current) { chuteEnCours.current = false; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1); return }
+    if (enChute) chuteEnCours.current = true
+    if (!enChute && (fini.current || !apparition)) return
+    const k = apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1
     poser(k)
     if (k >= 1) fini.current = true
   })
@@ -104,13 +156,13 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition }: {
   const objet = (e: ThreeEvent<PointerEvent | MouseEvent>) => (e.instanceId === undefined ? -1 : insts[e.instanceId]?.o ?? -1)
   return (
     <instancedMesh
-      ref={ref} args={[geo, undefined, insts.length]} castShadow receiveShadow frustumCulled={false}
+      ref={ref} args={[geo, undefined, insts.length]} castShadow={!lumiere} receiveShadow={!lumiere} frustumCulled={false}
       onClick={(e) => { if (e.delta > 6) return; const o = objet(e); if (o >= 0) { e.stopPropagation(); onPick(o) } }}
       // Pas de survol pendant un glisser (la caméra tourne) : chaque changement de survol redessine les couleurs.
       onPointerMove={(e) => { if (e.buttons) return; const o = objet(e); e.stopPropagation(); onSurvol(o >= 0 ? o : null) }}
       onPointerOut={() => onSurvol(null)}
     >
-      <meshStandardMaterial roughness={0.86} metalness={0} />
+      {lumiere ? <meshBasicMaterial toneMapped={false} /> : <meshStandardMaterial roughness={0.86} metalness={0} />}
     </instancedMesh>
   )
 }
@@ -160,7 +212,8 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
   const butPour = (nom: NomVue, az = azimut.current): But => {
     const polaire = nom === 'dessus' ? 0.12 : 0.96
     const dist = 60
-    const cible = new THREE.Vector3(...(nom === 'atelier' ? [0, 0, -1] as THREE.Vector3Tuple : CIBLE))
+    // La vue « atelier » vise la base dessinée quand la scène porte l'infrastructure (un petit bureau n'est pas au centre du dépôt).
+    const cible = new THREE.Vector3(...(nom === 'atelier' ? (scene.infra?.cible ?? [0, 0, -1]) as THREE.Vector3Tuple : CIBLE))
     const pos = new THREE.Vector3(cible.x + dist * Math.sin(polaire) * Math.sin(az), dist * Math.cos(polaire), cible.z + dist * Math.sin(polaire) * Math.cos(az))
     const zoom = nom === 'atelier' ? zoomAjuste * 2.1 : nom === 'chantiers' ? zoomAjuste * 0.85 : nom === 'dessus' ? zoomAjuste * 0.82 : zoomAjuste
     return { pos, cible, zoom }
@@ -220,13 +273,20 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
 
 // Ombres figées : la maquette ne bouge pas, ses ombres non plus. Elles sont recalculées pendant l'apparition des objets
 // (≈ 1 s) et quand la scène change, puis plus jamais — le passage d'ombre, qui doublait le coût de chaque image, disparaît.
-function OmbresFigees({ version, dureeMs }: { version: unknown; dureeMs: number }) {
+function OmbresFigees({ version, dureeMs, rafraichirA = null }: { version: unknown; dureeMs: number; rafraichirA?: number | null }) {
   const { gl } = useThree()
   const jusqua = useRef(0)
   const images = useRef(0)
+  const fait = useRef(false)
   useEffect(() => { gl.shadowMap.autoUpdate = false; gl.shadowMap.needsUpdate = true; jusqua.current = performance.now() + dureeMs; images.current = 0 }, [gl, version, dureeMs])
+  useEffect(() => { fait.current = false }, [rafraichirA])
   // Les trois premières images, puis toute la durée de l'apparition : même une première image lente a ses ombres justes.
-  useFrame(() => { images.current++; if (images.current <= 3 || performance.now() <= jusqua.current + 50) gl.shadowMap.needsUpdate = true })
+  // Infrastructure : une fois de plus quand le dernier personnage est arrivé sur son chantier (ses ombres le suivent, une seule fois).
+  useFrame(() => {
+    images.current++
+    if (images.current <= 3 || performance.now() <= jusqua.current + 50) gl.shadowMap.needsUpdate = true
+    if (rafraichirA !== null && !fait.current && performance.now() >= rafraichirA) { fait.current = true; gl.shadowMap.needsUpdate = true }
+  })
   return null
 }
 
@@ -265,7 +325,7 @@ function Projecteur({ cibles, racine, zoomEnsemble, dense }: { cibles: RefObject
 const ETAPES: Record<string, number> = { module: typeof performance !== 'undefined' ? performance.now() : 0 }
 const marquer = (k: string) => { if (!(k in ETAPES) && typeof performance !== 'undefined') ETAPES[k] = performance.now() }
 
-function Mesureur({ actif }: { actif: boolean }) {
+function Mesureur({ actif, moment = null }: { actif: boolean; moment?: string | null }) {
   const { gl, scene } = useThree()
   useEffect(() => { if (actif) (window as unknown as { __atelierRendu?: unknown; __atelierEtapes?: unknown }).__atelierRendu = { gl, scene } }, [actif, gl, scene])
   useEffect(() => { if (actif) (window as unknown as { __atelierEtapes?: unknown }).__atelierEtapes = ETAPES }, [actif])
@@ -278,19 +338,41 @@ function Mesureur({ actif }: { actif: boolean }) {
     const dt = performance.now() - e.depuis
     if (dt >= 1000) {
       const w = window as unknown as { __atelier?: Mesures }
-      w.__atelier = { fps: Math.round((e.images * 1000) / dt), appels: gl.info.render.calls, triangles: gl.info.render.triangles, premiereImageMs: e.premiere, geometries: gl.info.memory.geometries }
+      w.__atelier = { fps: Math.round((e.images * 1000) / dt), appels: gl.info.render.calls, triangles: gl.info.render.triangles, premiereImageMs: e.premiere, geometries: gl.info.memory.geometries, ...(moment ? { moment } : {}) }
       e.images = 0; e.depuis = performance.now()
     }
   })
   return null
 }
 
-const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allumes, filtreActif, selection, onSelection, mesure = false, vueInitiale = 'ensemble' }, ref) {
+const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allumes, filtreActif, selection, onSelection, mesure = false, vueInitiale = 'ensemble', chute = null, heure = null }, ref) {
   const controles = useRef<OrbitControlsImpl | null>(null)
   const [survol, setSurvol] = useState<number | null>(null)
   marquer('sceneRendue')
   // L'apparition en cascade ne se joue qu'à la PREMIÈRE image : quand les données se renouvellent en direct, la ville ne se reconstruit pas.
   const apparition = useMemo(() => (mouvementReduit() ? null : { debut: performance.now(), centre: new THREE.Vector3(0, 0, 0) }), [])
+  // ── L'infrastructure (drapeau crmAtelierVivant : la scène porte `infra`) : lumière du moment, fenêtres, marche vers les chantiers ──
+  const infra = scene.infra ?? null
+  const [heureReelle, setHeureReelle] = useState<number | null>(null)
+  useEffect(() => {
+    if (!infra || heure !== null) return
+    setHeureReelle(heureParis())
+    const t = setInterval(() => setHeureReelle(heureParis()), 60_000)
+    return () => clearInterval(t)
+  }, [infra, heure])
+  const amb = infra ? ambiance(heure ?? heureReelle ?? 12) : null
+  const nuit = !!amb?.lumieres
+  // La marche ne se joue, elle aussi, qu'à l'ouverture — et jamais avec « réduire les animations ».
+  const departMarche = useMemo(() => (mouvementReduit() ? null : performance.now()), [])
+  const marche = useMemo(() => {
+    if (departMarche === null || !scene.mobiles?.length) return null
+    const fin = departMarche + dureeMarche(scene.mobiles) + 50
+    // Par forme : les morceaux qui marchent, rangés par leur rang dans la couche (un objet stable par scène, pas un par rendu).
+    const parForme = new Map<Forme, { debut: number; fin: number; mobiles: Map<number, Mobile> }>()
+    for (const m of scene.mobiles) { const p = parForme.get(m.forme) ?? { debut: departMarche, fin, mobiles: new Map<number, Mobile>() }; p.mobiles.set(m.index, m); parForme.set(m.forme, p) }
+    return { fin, parForme }
+  }, [scene, departMarche])
+  const versionOmbres = useMemo(() => ({}), [scene, amb?.moment]) // eslint-disable-line react-hooks/exhaustive-deps
   const racine = useRef<HTMLDivElement | null>(null)
   const zoomEnsemble = useRef(14)
   const nbChantiers = useMemo(() => scene.objets.filter((o) => o.type === 'chantier').length, [scene])
@@ -304,11 +386,18 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
     if (it.o === survol && it.o >= 0) return melanger(it.c, '#FFFFFF', 0.28)
     return it.c
   }
+  // Une fenêtre : sa couleur du soir quand les lumières sont allumées ; estompée vers le fond (sombre la nuit) hors du filtre.
+  const couleurFenetre = (it: Inst): string => {
+    const c = nuit ? (it as Fenetre).nuit : it.c
+    if (filtreActif && (it.o < 0 || !allumes.has(it.o))) return melanger(c, amb?.fond ?? COULEURS.sol, 0.7)
+    if (it.o === selection && it.o >= 0) return melanger(c, COULEURS.corail, 0.28)
+    return c
+  }
   const objetSurvol = survol !== null ? scene.objets[survol] : null
   // Une cible par étiquette ; l'élément DOM est rattaché par ref, la position 3D est fixe (la maquette ne bouge pas).
   const etiquettes = useMemo(() => [
     ...scene.zones.map((z) => ({ cle: `zone:${z.libelle}`, p: new THREE.Vector3(...z.p), zone: z.libelle, i: -1 })),
-    ...scene.objets.flatMap((o, i) => (o.type === 'chantier' ? [{ cle: o.cle, p: new THREE.Vector3(o.centre[0], o.hauteur + 0.6, o.centre[2]), zone: null, i }] : [])),
+    ...scene.objets.flatMap((o, i) => (o.type === 'chantier' || o.type === 'assistants' ? [{ cle: o.cle, p: new THREE.Vector3(o.centre[0], o.hauteur + 0.6, o.centre[2]), zone: null, i }] : [])),
   ], [scene])
   const cibles = useRef<Cible[]>([])
   const bulle = useRef<HTMLSpanElement | null>(null)
@@ -324,32 +413,53 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       camera={{ position: [40, 36, 40], zoom: 14, near: -500, far: 1000 }}
       onPointerMissed={() => onSelection(null)}
       onCreated={() => marquer('toileCreee')}
-      style={{ background: COULEURS.sol }}
+      style={{ background: amb ? amb.fond : COULEURS.sol }}
       aria-hidden="true"
     >
-      <color attach="background" args={[COULEURS.sol]} />
-      <hemisphereLight args={['#FFFDF8', '#E4DACB', 1.55]} />
-      <directionalLight
-        castShadow position={[-24, 44, 14]} intensity={1.15} color="#FFF6EC"
-        shadow-mapSize={[1536, 1536]} shadow-bias={-0.0005} shadow-normalBias={0.02}
-        shadow-camera-left={-55} shadow-camera-right={55} shadow-camera-top={55} shadow-camera-bottom={-55} shadow-camera-near={1} shadow-camera-far={140}
-      />
+      {amb ? (
+        // Infrastructure : la lumière du moment (jour, crépuscule, nuit — heure de Paris) ; ombres douces (PCF, rayon 3), figées comme avant.
+        <>
+          <color attach="background" args={[amb.fond]} />
+          <hemisphereLight args={[amb.ciel, amb.terre, amb.hemi]} />
+          <directionalLight
+            castShadow position={amb.position} intensity={amb.intensite} color={amb.soleil}
+            shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} shadow-normalBias={0.02} shadow-radius={3}
+            shadow-camera-left={-55} shadow-camera-right={55} shadow-camera-top={55} shadow-camera-bottom={-55} shadow-camera-near={1} shadow-camera-far={160}
+          />
+        </>
+      ) : (
+        <>
+          <color attach="background" args={[COULEURS.sol]} />
+          <hemisphereLight args={['#FFFDF8', '#E4DACB', 1.55]} />
+          <directionalLight
+            castShadow position={[-24, 44, 14]} intensity={1.15} color="#FFF6EC"
+            shadow-mapSize={[1536, 1536]} shadow-bias={-0.0005} shadow-normalBias={0.02}
+            shadow-camera-left={-55} shadow-camera-right={55} shadow-camera-top={55} shadow-camera-bottom={-55} shadow-camera-near={1} shadow-camera-far={140}
+          />
+        </>
+      )}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow onClick={(e) => { if (e.delta <= 6) onSelection(null) }}>
         <planeGeometry args={[160, 160]} />
         <meshStandardMaterial color={COULEURS.sol} roughness={1} />
       </mesh>
       {FORMES.map((f) => (
-        <Couche key={`${f}-${scene.instances[f].length}`} forme={f} insts={scene.instances[f]} couleur={couleur} apparition={apparition}
-          onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol} />
+        <Couche key={`${f}-${scene.instances[f].length}`} forme={f} insts={scene.instances[f]} couleur={couleur} apparition={apparition} chute={f === 'box' ? chute : null}
+          onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol}
+          marche={marche?.parForme.get(f) ?? null} />
       ))}
+      {/* Infrastructure : les fenêtres et les lampes, UN calque de plus (un appel de dessin), allumé le soir. */}
+      {scene.fenetres && scene.fenetres.length > 0 && (
+        <Couche key={`fenetres-${scene.fenetres.length}`} forme="box" insts={scene.fenetres} couleur={couleurFenetre} apparition={apparition} lumiere
+          onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol} />
+      )}
       <Pulse insts={scene.pulse} visible={!filtreActif || scene.pulse.some((p) => allumes.has(p.o))} />
       <OrbitControls
         ref={controles} makeDefault enableDamping dampingFactor={0.12} target={CIBLE}
         minPolarAngle={0.05} maxPolarAngle={1.2} minZoom={4} maxZoom={110} screenSpacePanning={false}
       />
       <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />
-      <OmbresFigees version={scene} dureeMs={apparition ? 1100 : 0} />
-      <Mesureur actif={mesure} />
+      <OmbresFigees version={infra ? versionOmbres : scene} dureeMs={apparition ? 1100 : 0} rafraichirA={marche ? marche.fin + 30 : null} />
+      <Mesureur actif={mesure} moment={amb?.moment ?? null} />
       <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} />
     </Canvas>
     {/* Le calque des étiquettes (DOM, aucun appel de dessin). */}
@@ -358,6 +468,15 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
         const lier = (el: HTMLElement | null) => { if (cibles.current[k]) cibles.current[k].el = el }
         if (e.zone) return <span key={e.cle} ref={lier} className="atl-zone">{e.zone}</span>
         const o = scene.objets[e.i]
+        // Le poste des assistants (drapeau crmAtelierVivant) : une pastille, son nom et le nombre de choses à valider.
+        if (o.type === 'assistants') {
+          return (
+            <button key={e.cle} ref={lier} type="button" tabIndex={-1} className={`atl-carte atl-poste${selection === e.i ? ' choisie' : ''}${filtreActif && !allumes.has(e.i) ? ' estompe' : ''}`} onClick={() => onSelection(e.i)}>
+              <span className="atl-carte-tete"><i style={{ background: COULEURS.corail }} aria-hidden="true" /><b>{o.libelle}</b></span>
+              <span className="atl-carte-pied">{o.badges.map((b) => <span key={b.type} className="atl-badge atl-badge-valider">{b.libelle}</span>)}{o.badges.length === 0 && <span className="atl-carte-ligne">{o.detail}</span>}</span>
+            </button>
+          )
+        }
         const t = o.info?.taches ?? null
         const pct = t && t.total ? Math.round((t.faites / t.total) * 100) : null
         const equipe = o.info?.equipe ?? []

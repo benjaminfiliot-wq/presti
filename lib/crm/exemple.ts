@@ -124,7 +124,9 @@ const facture = (n: number, numero: number, devisN: number, statut: string, ttc:
 }
 const FACTURES: FactureLigne[] = [
   facture(601, 1, 501, 'payee', 2520, '2026-09-26', { acompte_pct: 30, objet: 'Acompte 30 % — Salle de bain, étage' }),
-  facture(602, 2, 507, 'emise', 2100, '2026-09-25', { date_echeance: '2026-10-25' }),
+  // Drapeau crmAtelierVivant levé : cette facture émise est échue depuis le 9 (poste des assistants, assistant « Encaissement ») ; baissé, elle
+  // reste à échoir le 25 comme avant (aucun autre chiffre de l'exemple ne bouge).
+  facture(602, 2, 507, 'emise', 2100, '2026-09-25', { date_echeance: actif('crmAtelierVivant') ? '2026-10-09' : '2026-10-25' }),
   facture(603, 3, 510, 'payee', 980, '2026-08-28'),
   facture(604, 4, 511, 'payee', 320, '2026-07-15'),
   facture(605, 5, 508, 'payee', 5580, '2026-09-03', { acompte_pct: 30, objet: 'Acompte 30 % — Colonne d’immeuble' }),

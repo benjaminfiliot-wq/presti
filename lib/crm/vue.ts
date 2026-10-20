@@ -14,6 +14,8 @@ import { clesDesNotes, regrouperClients, type ClientCarnet, type GroupeClient } 
 import { aFaire, devisARelancer, habillerRappels, LIBELLES_RAPPEL, prochainRendezVous, rappelsDe, type TypeRappel, type AFaire, type DevisARelancer, type Rappel, type RappelLigne } from './rappels.ts'
 import { chronologie, type EntreesChrono, type Evenement } from './chronologie.ts'
 import { facturesComptees, jourParis, type FacturePresti } from '../comptaTableau.ts'
+import { actif } from '../flags.ts'
+import { facturesEmises, type FactureEmise } from './assistants.ts'
 
 type Nb = number | string | null
 // ── Les lignes (colonnes de lib/crm/serveur.ts COLONNES) ─────────────────────────────────────────────────────────────
@@ -74,6 +76,8 @@ export type Vue = {
   atelier: DonneesAtelier
   /** Rappels et rendez-vous (plan du 18/10, n°1) : « À faire aujourd'hui », la liste, et les devis à relancer d'un geste. */
   rappels: VueRappels
+  /** « Atelier vivant » (drapeau crmAtelierVivant, 20/10) : ce que le poste des assistants lit en plus (lib/crm/assistants.ts). ABSENT drapeau baissé. */
+  vivant?: { facturesEmises: FactureEmise[] }
 }
 export type VueRappels = { disponibles: boolean; liste: Rappel[]; aFaire: AFaire; devisARelancer: DevisARelancer[] }
 export type Membre = { id: string; nom: string; role: string; telephone: string | null; actif: boolean }
@@ -102,7 +106,7 @@ function indicateursParChantier(uid: string, d: DossiersCrm, jour: string): Map<
   return sortie
 }
 
-export function construireVue(p: { uid: string; metier: string | null; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string }): Vue {
+export function construireVue(p: { uid: string; metier: string | null; formeJuridique?: string | null; d: DossiersCrm; maintenant: Date; idDe: (cle: string) => string }): Vue {
   const { uid, d, maintenant } = p
   const jour = jourParis(maintenant)
   const tachesPar = new Map<string, { faite: boolean | null }[]>()
@@ -119,7 +123,7 @@ export function construireVue(p: { uid: string; metier: string | null; d: Dossie
   const pl = pipeline(entreesPipeline)
   const af = aFaire(rappels, jour)
   for (const col of pl.colonnes) col.cartes = col.cartes.map((c) => { const r = prochainDe(c); return r ? { ...c, rappel: { echeance: r.echeance, heure: r.heure, type: r.type, retard: r.retard } } : c })
-  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: toutes, taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres })
+  const atelier = assemblerAtelier({ jour, metier: p.metier, chantiers: d.chantiers, cartes: toutes, taches: d.taches, reservations: d.reservations, commandes: d.commandes, commandesDisponibles: d.commandesDisponibles, equipe: d.equipe, materiaux: d.materiaux, vehicules: d.vehicules, membres: d.membres, ...(p.formeJuridique !== undefined ? { formeJuridique: p.formeJuridique } : {}) })
   // Le panneau de l'atelier montre la frise et les indicateurs du chantier : ceux de sa carte et de lib/crm/chantier.ts, les mêmes
   // que la fiche chantier (même fonction, mêmes lignes).
   const cartesChantier = new Map(toutes.filter((c) => c.chantierId).map((c) => [c.chantierId as string, c]))
@@ -152,6 +156,8 @@ export function construireVue(p: { uid: string; metier: string | null; d: Dossie
       aFaire: af,
       devisARelancer: devisARelancer({ artisanId: uid, devis: d.devis, rappels: lignesRappels, jour }),
     },
+    // Drapeau baissé : le champ n'existe pas, la réponse de GET /api/crm/vue est celle d'avant.
+    ...(actif('crmAtelierVivant') ? { vivant: { facturesEmises: facturesEmises(uid, d.factures) } } : {}),
     clients: groupes
       .map((c) => ({ id: c.id, nom: c.nom, email: c.email, telephone: c.telephone, demandes: c.leads.length, devis: c.devis.length, factures: c.factures.length, chantiers: c.chantiers.length, derniere: c.derniere })),
   }

@@ -378,7 +378,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
   const permis = ['app/crm/page.tsx', 'app/crm/FicheChantier.tsx', 'app/crm/clients/[ref]/page.tsx', 'app/atelier-demo/Demo.tsx']
   const pageCrm = lire('app/crm/page.tsx'), modeSrc = lire('app/crm/mode.tsx')
   T('G10 données d’exemple seulement dans lib/crm/exemple.ts ; importées seulement par les écrans qui l’affichent ; bandeau « fictives, rien n’est enregistré » ; maquette en mode démo',
-    donneesFictives.length === 0 && importeurs.length === 4 && importeurs.every((f) => permis.includes(f)) && /Exemple : données fictives, rien n’est enregistré\./.test(modeSrc) && /\{BANDEAU_EXEMPLE\}/.test(pageCrm) && /<Atelier key="exemple" donnees=\{DONNEES_EXEMPLE\} demo onVue2D=\{versVue\}( mesure=\{mesure\})? \/>/.test(pageCrm),
+    donneesFictives.length === 0 && importeurs.length === 4 && importeurs.every((f) => permis.includes(f)) && /Exemple : données fictives, rien n’est enregistré\./.test(modeSrc) && /\{BANDEAU_EXEMPLE\}/.test(pageCrm) && /<Atelier key="exemple" donnees=\{DONNEES_EXEMPLE\} demo onVue2D=\{versVue\}( mesure=\{mesure\})?( vue=\{vivant \? VUE_EXEMPLE : undefined\})? \/>/.test(pageCrm),
     [...donneesFictives, ...importeurs.filter((f) => !permis.includes(f)), `importeurs=${importeurs.length}`].join(' '))
   // Aucune écriture possible en exemple : le seul chemin réseau du CRM est appel() (plus la vérification d'accès, en GET),
   // et appel() refuse toute méthode autre que GET quand le mode est posé ; les pages le posent PENDANT le rendu.

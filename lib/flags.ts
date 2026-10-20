@@ -202,6 +202,19 @@ export const FLAGS = {
    *  20/10/2026 — LEVÉ (« règle ça », Benj) : 0167 appliquée (RLS sans politique, voulu), crm-lot5-qa 33/0, relecture de conformité GO
    *  (réserves mineures : titre du chantier visible du client, pas d'expiration du lien). */
   crmSuivi: true,
+  /** 20/10/2026 — CRM, « atelier vivant » : (1) l'ACCUEIL VIVANT, c'est-à-dire la salle d'attente en trois files dans le panneau de
+   *  l'accueil (nouvelles demandes, devis en attente du client, signés à planifier) et l'arrivée en direct d'une demande (bannière
+   *  discrète, colis qui tombe en 3D, accueil surligné en 2D) ; (2) le POSTE DES ASSISTANTS, un objet de la maquette près du bureau
+   *  (relanceur de devis, encaissement, facturation, agenda) dont le panneau liste ce qui attend la validation de l'artisan. Aucune
+   *  migration, aucune table, AUCUN envoi automatique : chaque ligne renvoie vers l'écran existant où l'artisan agit (mode « assistée »,
+   *  l'IA propose et l'artisan valide). Baissé : le panneau de l'accueil est celui d'avant, l'objet « assistants » n'existe pas dans la
+   *  scène, aucune bannière, et GET /api/crm/vue ne porte pas le champ `vivant` (factures émises). Se lève après scripts/crm-vivant-qa.mjs
+   *  vert, crm-lot1 à crm-lot5-qa toujours verts, un coup d'œil au rendu 3D réel (chute du colis, poste près du bureau) et l'accord de Benj.
+   *  Même soir, même drapeau — la 3D ADAPTÉE À L'ARTISAN (lib/crm/infrastructure.ts) : quatre bases aux bâtiments distincts (chez soi,
+   *  atelier, entrepôt, sans local = camion-atelier), structures et matériaux propres au métier, chantiers par type, statut à son compte /
+   *  société (artisans.forme_juridique, LU seulement drapeau levé), gabarit des véhicules déduit de leur nom, lieu déclarable (localStorage).
+   *  20/10/2026 — LEVÉ (« oui, lève le drapeau », Benj) : crm-vivant-qa 62/0, crm-atelier3d-qa 65/0, rendu relu sur deux planches. */
+  crmAtelierVivant: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

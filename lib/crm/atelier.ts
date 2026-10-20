@@ -18,6 +18,10 @@ import { calculerAlertes, chantierVisible, estAujourdhui, estStockBas, aEncaisse
 import type { CommandeA } from './commandes.ts'
 import type { Frise } from './pipeline.ts'
 import type { Indicateurs } from './chantier.ts'
+import {
+  accessoiresBase, avancementDessine, bureauInfra, camionnette, comptoirInfra, decorBase, maisonChantier, personnage, placeParking, placeRepos,
+  PLANS, profilInfrastructure, rayonnageInfra, type AjoutF, type Base, type Fenetre, type Mobile, type PlanBase, type Profil,
+} from './infrastructure.ts'
 
 // Les règles « chantier visible » et « prévu aujourd'hui » vivent dans alertes.ts (une seule écriture, partagée avec les urgences).
 export { chantierVisible, estAujourdhui }
@@ -61,6 +65,9 @@ export type DonneesAtelier = {
   commandes?: CommandeA[]
   /** Faux tant que la table des commandes n'existe pas sur la base (migration 0158 non appliquée) : l'écran le dit. */
   commandesDisponibles?: boolean
+  /** La forme juridique de la fiche artisan (artisans.forme_juridique), lue SEULEMENT drapeau crmAtelierVivant levé : le statut
+   *  « à son compte / société » de l'infrastructure (lib/crm/infrastructure.ts). Absente : l'équipe tranche. */
+  formeJuridique?: string | null
   /** Les rappels dus aujourd'hui et en retard (crm_rappels, 0162), pour le briefing du matin ; absent : rien n'est dit. */
   rappels?: { aujourdhui: number; enRetard: number; premiers: string[] }
 }
@@ -71,10 +78,11 @@ export const FORMES: readonly Forme[] = ['box', 'cyl', 'sph', 'toit', 'cone']
 export type V3 = [number, number, number]
 /** Une instance : centre, échelle (la forme unitaire fait 1 × 1 × 1), rotation (radians), couleur, objet porteur (-1 = décor). */
 export type Inst = { p: V3; s: V3; r: V3; c: string; o: number }
-export type TypeObjet = 'chantier' | 'categorie' | 'vehicule' | 'membre' | 'accueil' | 'bureau'
+// 'assistants' : le poste des assistants (drapeau crmAtelierVivant, lib/crm/assistants.ts) ; absent de la scène drapeau baissé.
+export type TypeObjet = 'chantier' | 'categorie' | 'vehicule' | 'membre' | 'accueil' | 'bureau' | 'assistants'
 export type EtatObjet = { aujourdhui: boolean; retard: boolean; aFacturer: boolean; stockBas: boolean; livraison: boolean }
 /** Une pastille d'alerte posée sur un objet de la maquette (retard, livraison, stock, tâches faites…). */
-export type BadgeObjet = { type: TypeAlerte | 'demandes' | 'taches'; libelle: string; gravite: Gravite }
+export type BadgeObjet = { type: TypeAlerte | 'demandes' | 'taches' | 'valider'; libelle: string; gravite: Gravite }
 /** Ce que la carte d'un chantier montre sans l'ouvrir : l'équipe, les tâches, le client. Tout vient des données. */
 export type InfoChantier = {
   equipe: { id: string; nom: string; role: string }[]
@@ -102,6 +110,23 @@ export type Scene = {
   prereglage: Prereglage
   /** Ce qui n'a pas pu être placé (au-delà des emplacements) : dit à l'écran, jamais caché. */
   horsScene: { chantiers: number; categories: number; vehicules: number; demandes: number }
+  /** Drapeau crmAtelierVivant seulement : le colis de chaque demande (son identifiant et sa place dans instances.box), pour que la scène
+   *  fasse tomber celui qui vient d'arriver (lib/crm/accueil.ts). Absent drapeau baissé. */
+  colis?: { id: string; index: number }[]
+  /** Drapeau crmAtelierVivant seulement (lib/crm/infrastructure.ts) : le profil, la base dessinée (automatique ou choisie), la cible
+   *  de la vue « atelier ». Absent drapeau baissé, comme `fenetres` et `mobiles`. */
+  infra?: { profil: Profil; base: Base; auto: boolean; cible: V3; structures: string[] }
+  /** Les fenêtres et les lampes : un calque à part (une seule matière, non éclairée), allumé le soir. */
+  fenetres?: Fenetre[]
+  /** Les morceaux des personnages qui partent de la base vers leur chantier du jour (la scène 3D les fait marcher). */
+  mobiles?: Mobile[]
+}
+
+/** Les ajouts de l'atelier vivant (drapeau crmAtelierVivant). Absents : la scène est celle d'avant, à l'identique. */
+export type OptionsScene = {
+  vivant?: { assistants: number }
+  /** L'infrastructure (même drapeau) : la base suit le profil de l'artisan (`base` absente ou null) ou celle qu'il a choisie. */
+  infra?: { base?: Base | null }
 }
 
 // ── Palette « maquette d'architecte » : crème, pierre, bois, corail. Ni bleu, ni rouge vif. ──────────────────
@@ -158,6 +183,8 @@ export function prereglageDe(metier: string | null | undefined): Prereglage {
 // ── Géométrie du plan (mètres de maquette) ───────────────────────────────────────────────────────────────────
 export const DEPOT = { x0: -11, x1: 11, z0: -7, z1: 7 }
 export const PARKING = { x0: 12.5, x1: 22, z0: -7, z1: 7 }
+/** Le centre du poste des assistants (drapeau crmAtelierVivant) : zone Bureau du dépôt, entre le bureau et la ligne de zone x = -3,7. */
+export const POSTE = { x: -5.2, z: 5.0 }
 export const LIMITES = { rayonnages: 10, camionnettes: 8, chantiers: 30, colis: 16, personnages: 16 }
 
 /** Un nombre pseudo-aléatoire STABLE tiré d'un identifiant (même chantier → même maison, à chaque ouverture). */
@@ -180,16 +207,26 @@ export function emplacementsChantiers(n: number): V3[] {
 }
 
 
-export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage): Scene {
+export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage, options?: OptionsScene): Scene {
   const prereglage = prereglageForce ?? prereglageDe(d.metier)
   const instances: Record<Forme, Inst[]> = { box: [], cyl: [], sph: [], toit: [], cone: [] }
   const pulse: Inst[] = []
   const objets: ObjetScene[] = []
   const zones: Scene['zones'] = []
-  const ajouter = (f: Forme, p: V3, s: V3, c: string, o = -1, r: V3 = [0, 0, 0]) => { instances[f].push({ p, s, r, c, o }) }
+  const colis: { id: string; index: number }[] = []
+  const ajouter = (f: Forme, p: V3, s: V3, c: string, o = -1, r: V3 = [0, 0, 0]) => { instances[f].push({ p, s, r, c, o }); return instances[f].length - 1 }
+  // L'infrastructure (drapeau crmAtelierVivant, lib/crm/infrastructure.ts) : absente, tout ce qui suit dessine la scène d'avant, à l'identique.
+  // Le lieu DÉCLARÉ par l'artisan (options.infra.base) prime sur la déduction (profilInfrastructure).
+  const profil = options?.infra ? profilInfrastructure(d, options.infra.base ?? null) : null
+  const plan: PlanBase | null = profil ? PLANS[profil.base] : null
+  const structures: string[] = []
+  const fenetres: Fenetre[] = [], mobiles: Mobile[] = []
+  const ajouterFenetre: AjoutF = (p, s, jour, nuit, o = -1) => { fenetres.push({ p, s, r: [0, 0, 0], c: jour, o, nuit }) }
   const objet = (o: Omit<ObjetScene, 'etat' | 'badges' | 'info'> & { etat?: Partial<EtatObjet>; badges?: BadgeObjet[]; info?: InfoChantier | null }) => { objets.push({ ...o, badges: o.badges ?? [], info: o.info ?? null, etat: { aujourdhui: false, retard: false, aFacturer: false, stockBas: false, livraison: false, ...o.etat } }); return objets.length - 1 }
 
   // — Sol, dalle du dépôt, murs bas à bandeau corail, porte au milieu de la façade —
+  if (plan && profil) structures.push(...decorBase(ajouter, ajouterFenetre, plan, profil, prereglage, zones))
+  else {
   ajouter('box', [(DEPOT.x0 + DEPOT.x1) / 2, 0.02, 0], [DEPOT.x1 - DEPOT.x0, 0.04, DEPOT.z1 - DEPOT.z0], COULEURS.dalle)
   ajouter('box', [(PARKING.x0 + PARKING.x1) / 2, 0.015, 0], [PARKING.x1 - PARKING.x0, 0.03, PARKING.z1 - PARKING.z0], '#E7E0D3')
   const mur = (x0: number, z0: number, x1: number, z1: number) => {
@@ -208,6 +245,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   ajouter('box', [-7.3, 0.05, 3.2], [7.2, 0.02, 0.08], COULEURS.corailClair)
   ajouter('box', [-3.7, 0.05, 5.1], [0.08, 0.02, 3.8], COULEURS.corailClair)
   zones.push({ libelle: 'Dépôt', p: [0, 0.1, -5.2] }, { libelle: 'Bureau', p: [-8.6, 0.1, 6.4] }, { libelle: 'Accueil', p: [0, 0.1, 10.3] }, { libelle: 'Parking', p: [17.2, 0.1, 6.6] }, { libelle: 'Atelier', p: [-3, 0.1, 2.4] })
+  }
 
   // — Accueil : le comptoir, et un colis à la porte par nouvelle demande —
   const demandes = d.demandes.slice(0, LIMITES.colis)
@@ -215,41 +253,76 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   const oAccueil = objet({
     cle: 'accueil', type: 'accueil', ref: 'accueil', libelle: 'Accueil',
     detail: d.demandes.length ? `${d.demandes.length} nouvelle${d.demandes.length > 1 ? 's' : ''} demande${d.demandes.length > 1 ? 's' : ''}` : 'Aucune nouvelle demande',
-    centre: [0, 0, 6.2], hauteur: 1.4, epingle: null, etat: { aujourdhui: auj > 0 },
+    centre: plan ? [plan.accueil.x, 0, plan.accueil.z + 0.6] : [0, 0, 6.2], hauteur: 1.4, epingle: null, etat: { aujourdhui: auj > 0 },
   })
+  if (plan) comptoirInfra(ajouter, plan, oAccueil)
+  else {
   ajouter('box', [0, 0.55, 5.6], [3.4, 1.1, 0.8], COULEURS.planche, oAccueil)
   ajouter('box', [0, 1.13, 5.6], [3.5, 0.06, 0.86], COULEURS.corail, oAccueil)
+  }
   demandes.forEach((x, i) => {
+    colis.push({ id: x.id, index: instances.box.length })
     const jourJ = (x.recue_le ?? '').slice(0, 10) === d.jour
-    ajouter('box', [-1.35 + (i % 4) * 0.9, 0.18 + Math.floor(i / 8) * 0.34, 8.1 + (Math.floor(i / 4) % 2) * 0.7], [0.6, 0.32, 0.45], jourJ ? COULEURS.corail : COULEURS.blanc, oAccueil)
+    // Avec l'infrastructure, les colis attendent devant la porte de la base dessinée (la même grille, décalée).
+    const p: V3 = plan ? [plan.colis.x + (i % 4) * 0.9, 0.18 + Math.floor(i / 8) * 0.34, plan.colis.z + (Math.floor(i / 4) % 2) * 0.6] : [-1.35 + (i % 4) * 0.9, 0.18 + Math.floor(i / 8) * 0.34, 8.1 + (Math.floor(i / 4) % 2) * 0.7]
+    ajouter('box', p, [0.6, 0.32, 0.45], jourJ ? COULEURS.corail : COULEURS.blanc, oAccueil)
   })
 
   // — Bureau : le poste qui bascule vers les vues 2D —
-  const oBureau = objet({ cle: 'bureau', type: 'bureau', ref: 'bureau', libelle: 'Bureau', detail: 'Tableau de bord, pipeline, clients', centre: [-8.4, 0, 4.9], hauteur: 1.7, epingle: null })
+  const oBureau = objet({ cle: 'bureau', type: 'bureau', ref: 'bureau', libelle: 'Bureau', detail: 'Tableau de bord, pipeline, clients', centre: plan ? [plan.bureau.x, 0, plan.bureau.z] : [-8.4, 0, 4.9], hauteur: 1.7, epingle: null })
+  if (plan && profil) bureauInfra(ajouter, ajouterFenetre, plan, profil, prereglage, oBureau)
+  else {
   ajouter('box', [-8.4, 0.4, 4.9], [2.6, 0.8, 1.2], COULEURS.planche, oBureau)
   ajouter('box', [-8.4, 1.22, 4.65], [1.3, 0.78, 0.08], COULEURS.ardoise, oBureau)
   ajouter('box', [-8.4, 1.24, 4.7], [1.12, 0.6, 0.02], COULEURS.corailClair, oBureau)
   ajouter('cyl', [-8.4, 0.35, 5.9], [0.6, 0.7, 0.6], COULEURS.boisFonce, oBureau)
+  }
+
+  // — Le poste des assistants (drapeau crmAtelierVivant) : un comptoir près du bureau, dans la zone Bureau du dépôt (x ∈ [-6,4 ; -4,0],
+  //   z ∈ [4,4 ; 5,6] : entre le bureau et la ligne de zone x = -3,7, sans toucher à rien). Quatre petits personnages, un par assistant ;
+  //   son badge dit combien de choses attendent la validation de l'artisan. Rien n'est posé drapeau baissé. —
+  if (options?.vivant) {
+    const n = options.vivant.assistants
+    const POSTE_ = plan ? plan.poste : POSTE
+    const oPoste = objet({
+      cle: 'assistants', type: 'assistants', ref: 'assistants', libelle: 'Poste des assistants',
+      detail: n > 0 ? `${n} chose${n > 1 ? 's' : ''} à valider` : 'Rien à valider',
+      centre: [POSTE_.x, 0, POSTE_.z], hauteur: 1.9, epingle: null,
+      badges: n > 0 ? [{ type: 'valider', libelle: `${n} à valider`, gravite: 'info' }] : [],
+    })
+    ajouter('box', [POSTE_.x, 0.4, POSTE_.z], [2.2, 0.8, 1.1], COULEURS.planche, oPoste)
+    ajouter('box', [POSTE_.x, 0.83, POSTE_.z], [2.3, 0.06, 1.2], COULEURS.corail, oPoste)
+    ajouter('box', [POSTE_.x, 1.3, POSTE_.z + 0.4], [1.5, 0.5, 0.06], COULEURS.ardoise, oPoste)
+    ;[COULEURS.corail, COULEURS.ambre, COULEURS.vert, COULEURS.sauge].forEach((c, k) => {
+      const x = POSTE_.x - 0.75 + k * 0.5
+      ajouter('cyl', [x, 1.12, POSTE_.z - 0.1], [0.26, 0.5, 0.26], c, oPoste)
+      ajouter('sph', [x, 1.48, POSTE_.z - 0.1], [0.28, 0.28, 0.28], COULEURS.blanc, oPoste)
+    })
+  }
 
   // — Dépôt : un rayonnage par catégorie d'inventaire —
   const parCat = new Map<string, MateriauA[]>()
   for (const m of d.materiaux) { const k = (m.categorie ?? '').trim() || 'Sans catégorie'; parCat.set(k, [...(parCat.get(k) ?? []), m]) }
   let cats = [...parCat.entries()].sort((a, b) => a[0].localeCompare(b[0], 'fr'))
   let catsHors = 0
-  if (cats.length > LIMITES.rayonnages) {
+  // L'infrastructure loge moins de rayonnages dans un atelier (5) ou une base légère (4) : le reste se range de même.
+  const maxRayonnages = plan ? plan.racks.max : LIMITES.rayonnages
+  if (cats.length > maxRayonnages) {
     // Au-delà de dix, les dernières se rangent ensemble — rien n'est perdu, le panneau les liste toutes.
-    const reste = cats.slice(LIMITES.rayonnages - 1)
+    const reste = cats.slice(maxRayonnages - 1)
     catsHors = reste.length - 1
-    cats = [...cats.slice(0, LIMITES.rayonnages - 1), ['Autres catégories', reste.flatMap(([, ms]) => ms)]]
+    cats = [...cats.slice(0, maxRayonnages - 1), ['Autres catégories', reste.flatMap(([, ms]) => ms)]]
   }
   cats.forEach(([nom, ms], i) => {
     const alertes = ms.filter((m) => m.seuil > 0 && m.reste <= m.seuil).length
-    const x = -9.9 + i * 2.2, z = -6.15
+    const x = plan ? plan.racks.x0 + i * plan.racks.pas : -9.9 + i * 2.2, z = plan ? plan.racks.z : -6.15
     const o = objet({
       cle: `categorie:${nom}`, type: 'categorie', ref: nom, libelle: nom,
       detail: `${ms.length} référence${ms.length > 1 ? 's' : ''}${alertes ? ` · ${alertes} alerte${alertes > 1 ? 's' : ''}` : ''}`,
       centre: [x, 0, z], hauteur: 2.2, epingle: alertes ? COULEURS.corail : null, etat: { stockBas: alertes > 0 },
     })
+    if (plan) rayonnageInfra(ajouter, x, z, ms.slice(0, 9).map((m) => (m.seuil > 0 && m.reste <= m.seuil ? COULEURS.corailClair : CARTONS[Math.floor(hacher(m.id) * CARTONS.length)])), alertes > 0, o)
+    else {
     const montant = alertes ? COULEURS.corail : COULEURS.pierre
     for (const [dx, dz] of [[-0.9, -0.27], [0.9, -0.27], [-0.9, 0.27], [0.9, 0.27]]) ajouter('box', [x + dx, 1.05, z + dz], [0.08, 2.1, 0.08], montant, o)
     for (const y of [0.12, 0.8, 1.48]) ajouter('box', [x, y, z], [1.9, 0.06, 0.62], COULEURS.planche, o)
@@ -259,11 +332,14 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
       const m = ms[k]
       ajouter('box', [x - 0.6 + col * 0.6, 0.15 + etage * 0.68 + 0.2, z], [0.48, 0.4, 0.46], m.seuil > 0 && m.reste <= m.seuil ? COULEURS.corailClair : CARTONS[Math.floor(hacher(m.id) * CARTONS.length)], o)
     }
+    }
     if (alertes) pulse.push({ p: [x, 1.1, z], s: [2.15, 2.3, 0.85], r: [0, 0, 0], c: COULEURS.corail, o })
   })
 
   // — Atelier : l'établi et les accessoires du métier —
-  for (const a of accessoires(prereglage)) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
+  const acc = plan ? accessoiresBase(prereglage, plan) : accessoires(prereglage)
+  for (const a of acc) ajouter(a.f, a.p, a.s, a.c, -1, a.r)
+  if (plan) for (const a of acc as ReturnType<typeof accessoiresBase>) if (!structures.includes(a.k)) structures.push(a.k)
 
   // — Chantiers : la petite ville autour du dépôt —
   const resume = calculerAlertes(d)
@@ -295,6 +371,11 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
     }
     const o = objet({ cle: `chantier:${c.id}`, type: 'chantier', ref: c.id, libelle: c.titre, detail: statutTxt, centre: [x, 0, z], hauteur: ht + 1.1 + 1.6, epingle: couleur, etat, badges, info })
     posChantier.set(c.id, [x, 0, z])
+    // Avec l'infrastructure, la maison montre le TYPE de travaux du métier et leur avancement (lib/crm/infrastructure.ts).
+    // Le sommet (l'épingle et la carte se posent au-dessus) : celui du bâtiment dessiné ; sans infrastructure, `ht + 1.1` comme avant.
+    let sommet = ht + 1.1
+    if (plan) { sommet = maisonChantier(ajouter, ajouterFenetre, { x, z, w, dd, ht, h, id: c.id, pct: avancementDessine(c), termine: c.statut === 'termine' || c.etape === 'a_facturer', enCours: c.statut === 'en_cours', o, base: plan.base }, prereglage) + 0.15; objets[o].hauteur = sommet + 1.6 }
+    else {
     ajouter('box', [x, 0.03, z], [4.2, 0.06, 4.2], '#E9E1D3', o)
     ajouter('box', [x, ht / 2 + 0.06, z], [w, ht, dd], MURS_MAISON[Math.floor(h * MURS_MAISON.length)], o)
     ajouter('toit', [x, ht + 0.06 + 0.55, z], [Math.max(w, dd) * 1.45, 1.1, Math.max(w, dd) * 1.45], TOITS[Math.floor(((h * 3) % 1) * TOITS.length)], o, [0, Math.PI / 4, 0])
@@ -305,7 +386,8 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
       ajouter('box', [x + w / 2 + 0.25, ht / 2, z + dd / 2 + 0.3], [0.06, ht, 0.06], COULEURS.ambre, o)
       ajouter('box', [x, ht * 0.62, z + dd / 2 + 0.3], [w + 0.6, 0.05, 0.4], COULEURS.ambre, o)
     }
-    const yEp = ht + 1.1 + 0.95
+    }
+    const yEp = sommet + 0.95
     ajouter('cone', [x, yEp, z], [0.42, 0.75, 0.42], couleur, o, [Math.PI, 0, 0])
     ajouter('sph', [x, yEp + 0.55, z], [0.62, 0.62, 0.62], couleur, o)
     // Les tâches : une barre au sol devant la maison — le fond gris, la part FAITE en vert (les chiffres exacts sont sur la carte).
@@ -328,15 +410,28 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
 
   // — Parking : une camionnette par véhicule actif —
   const vehicules = d.vehicules.filter((v) => v.actif).slice(0, LIMITES.camionnettes)
-  for (let i = 0; i <= 4; i++) ajouter('box', [PARKING.x0 + 0.6, 0.04, PARKING.z0 + 0.4 + i * 3.25], [0.05, 0.02, 0.08], COULEURS.blanc) // repères
+  if (!plan) for (let i = 0; i <= 4; i++) ajouter('box', [PARKING.x0 + 0.6, 0.04, PARKING.z0 + 0.4 + i * 3.25], [0.05, 0.02, 0.08], COULEURS.blanc) // repères
   vehicules.forEach((v, i) => {
-    const x = 14.6 + (i % 2) * 4.6, z = -5.2 + Math.floor(i / 2) * 3.3
     const chantierDuJour = d.chantiers.find((c) => c.vehicule_id === v.id && estAujourdhui(c, d.jour)) ?? null
+    // Avec l'infrastructure : sa place du parking de la base, ou — affectée à un chantier du jour posé sur la maquette — garée le
+    // long de ce chantier, sur la rue de droite (sa place reste marquée, vide).
+    // Sans local, le premier véhicule EST la base (le camion-atelier) : il reste à sa place, portes ouvertes.
+    const atelierRoulant = plan?.base === 'camion' && i === 0
+    const garee = plan && chantierDuJour && !atelierRoulant ? posChantier.get(chantierDuJour.id) ?? null : null
+    const gab = profil ? profil.gabarits[d.vehicules.filter((vv) => vv.actif).indexOf(v)] ?? 'fourgonnette' : 'fourgonnette'
+    const place = plan && profil ? placeParking(plan, i, profil.gabarits) : null
+    const [x, z] = plan ? (garee ? [garee[0] + 2.8, garee[2] - 0.3] : [place![0], place![1]]) : [14.6 + (i % 2) * 4.6, -5.2 + Math.floor(i / 2) * 3.3]
     const o = objet({
       cle: `vehicule:${v.id}`, type: 'vehicule', ref: v.id, libelle: v.nom,
       detail: [v.immatriculation, chantierDuJour ? `→ ${chantierDuJour.titre}` : null].filter(Boolean).join(' · ') || 'Au dépôt',
       centre: [x, 0, z], hauteur: 1.9, epingle: null, etat: { aujourdhui: !!chantierDuJour },
     })
+    if (plan) {
+      const sens = garee ? 'z' : place![2], lg = gab === 'camion' ? 5.4 : 3.9, la = gab === 'camion' ? 2.9 : 2.6
+      if (!garee && !atelierRoulant) ajouter('box', [x, 0.05, z], sens === 'x' ? [lg, 0.02, la] : [la, 0.02, lg], '#E1D9CB', o)
+      camionnette(ajouter, ajouterFenetre, x, z, sens, o, prereglage, gab, atelierRoulant)
+      return
+    }
     ajouter('box', [x, 0.05, z], [3.9, 0.02, 2.6], '#E1D9CB', o) // la place
     ajouter('box', [x - 0.25, 0.85, z], [2.3, 1.1, 1.25], COULEURS.blanc, o)
     ajouter('box', [x + 1.25, 0.68, z], [0.9, 0.76, 1.22], '#E3DDD2', o)
@@ -350,12 +445,20 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
   const membres = d.membres.filter((m) => m.actif).slice(0, LIMITES.personnages)
   let aLAtelier = 0
   const surPlace = new Map<string, number>()
-  membres.forEach((m) => {
+  membres.forEach((m, rang) => {
     const chantier = d.chantiers.find((c) => c.equipe.includes(m.id) && estAujourdhui(c, d.jour) && posChantier.has(c.id)) ?? null
     let x: number, z: number
     if (chantier) { const p = posChantier.get(chantier.id)!; const k = surPlace.get(chantier.id) ?? 0; surPlace.set(chantier.id, k + 1); x = p[0] + 1.6 - (k % 4) * 0.6; z = p[2] + 2.0 + Math.floor(k / 4) * 0.6 }
+    else if (plan) { [x, z] = placeRepos(plan, aLAtelier); aLAtelier++ }
     else { x = 2.6 + (aLAtelier % 4) * 1.15; z = -2.4 + Math.floor(aLAtelier / 4) * 1.3; aLAtelier++ }
     const o = objet({ cle: `membre:${m.id}`, type: 'membre', ref: m.id, libelle: m.nom, detail: chantier ? `Aujourd’hui : ${chantier.titre}` : 'À l’atelier', centre: [x, 0, z], hauteur: 1.8, epingle: null, etat: { aujourdhui: !!chantier } })
+    if (plan) {
+      // Un personnage affecté à un chantier du jour part de la base et marche jusqu'à lui (Scene3D anime le trajet ; la position posée
+      // est l'arrivée). Il part d'une place de repos après celles des présents, pour ne croiser personne au départ.
+      const morceaux = personnage(ajouter, x, z, ROLES[m.role] ?? ROLES.autre, o, m.role === 'artisan')
+      if (chantier) { const de = placeRepos(plan, membres.length + rang); const ordre = new Set(mobiles.map((mb) => mb.vers.join())).size; for (const mc of morceaux) mobiles.push({ ...mc, de, porte: plan.sortie, vers: [x, z], ordre }) }
+      return
+    }
     ajouter('cyl', [x, 0.55, z], [0.46, 1.1, 0.46], ROLES[m.role] ?? ROLES.autre, o)
     ajouter('sph', [x, 1.32, z], [0.36, 0.36, 0.36], COULEURS.peau, o)
   })
@@ -376,6 +479,8 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage)
 
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
+    ...(options?.vivant ? { colis } : {}),
+    ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures }, fenetres, mobiles } : {}),
     horsScene: {
       chantiers: Math.max(0, visibles.length - places.length), categories: catsHors,
       vehicules: Math.max(0, d.vehicules.filter((v) => v.actif).length - vehicules.length), demandes: Math.max(0, d.demandes.length - demandes.length),
@@ -573,6 +678,8 @@ export function assemblerAtelier(e: {
   materiaux: readonly { id: string; nom: string; unite?: string | null; categorie?: string | null; seuil_alerte?: Nb; stock?: { quantite?: Nb }[] | null; fournisseur_prefere?: string | null; fournisseur?: Four | Four[] | null; prix_vu_ht?: Nb; prix_vu_le?: string | null }[]
   vehicules: readonly VehiculeA[]
   membres: readonly MembreA[]
+  /** Drapeau crmAtelierVivant seulement (lib/crm/vue.ts) : la forme juridique de la fiche ; absente, rien n'est ajouté. */
+  formeJuridique?: string | null
 }): DonneesAtelier {
   const etapeChantier = new Map<string, string>()
   const clientChantier = new Map<string, string | null>()
@@ -591,6 +698,7 @@ export function assemblerAtelier(e: {
   for (const l of e.equipe) equipe.set(l.chantier_id, [...(equipe.get(l.chantier_id) ?? []), l.membre_id])
   return {
     jour: e.jour, metier: e.metier,
+    ...(e.formeJuridique !== undefined ? { formeJuridique: e.formeJuridique } : {}),
     chantiers: e.chantiers.map((c) => {
       const t = taches.get(c.id)
       return {

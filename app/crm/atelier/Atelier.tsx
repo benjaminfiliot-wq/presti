@@ -1,12 +1,17 @@
 'use client'
 
-import { Component, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Component, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import {
   chiffresFiltres, COULEURS, construireScene, FILTRES, LIBELLES_FILTRE, LIBELLES_PREREGLAGE, objetsAllumes, PREREGLAGES, prereglageDe,
   type DonneesAtelier, type Filtre, type Prereglage,
 } from '@/lib/crm/atelier'
 import { calculerAlertes, construireBriefing, urgencesDuJour, type EtapeBriefing, type Urgence } from '@/lib/crm/alertes'
+import { actif } from '@/lib/flags'
+import { arriveesDe, nouvellesArrivees, texteArrivee, type Arrivee } from '@/lib/crm/accueil'
+import { posteAssistants } from '@/lib/crm/assistants'
+import { BASES, LIBELLES_BASE, LIBELLES_LIEU, type Base } from '@/lib/crm/infrastructure'
+import type { Vue } from '@/lib/crm/vue'
 import type { CommandesScene, NomVue } from './Scene3D'
 import Plan2D from './Plan2D'
 import Panneau from './Panneau'
@@ -82,11 +87,27 @@ function Horloge() {
   return <time className="tnum" aria-hidden="true">{heure ?? '—'}</time>
 }
 
+// Le réglage de l'atelier (drapeau crmAtelierVivant) : le métier et la base que l'artisan a corrigés, gardés DANS CE NAVIGATEUR
+// seulement (aucune écriture serveur). Le stockage peut manquer (navigation privée, données effacées) : tout est sous try/catch.
+const CLE_REGLAGE = 'crm.atelier.reglage'
+type Reglage = { metier?: Prereglage; base?: Base | null }
+function lireReglage(): Reglage {
+  try {
+    const r = JSON.parse(window.localStorage.getItem(CLE_REGLAGE) ?? '{}') as Reglage
+    return { metier: (PREREGLAGES as readonly string[]).includes(r.metier ?? '') ? r.metier : undefined, base: (BASES as readonly string[]).includes(r.base ?? '') ? r.base : null }
+  } catch { return {} }
+}
+function ecrireReglage(r: Reglage) {
+  try { window.localStorage.setItem(CLE_REGLAGE, JSON.stringify(r)) } catch { /* rien : le réglage vaut pour cette visite */ }
+}
+
 const LIBELLE_LIEN = { connexion: 'Connexion…', direct: 'En direct', coupe: 'Hors ligne · relu chaque minute' } as const
 const calme = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-export default function Atelier({ donnees, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier }: {
+export default function Atelier({ donnees, vue, demo = false, mesure = false, onVue2D, prereglageInitial, vueInitiale, filtreInitial, forcer, onChange, lien, dernier, baseInitiale, heure }: {
   donnees: DonneesAtelier
+  /** La Vue entière du CRM (page /crm) : lue SEULEMENT drapeau crmAtelierVivant levé (salle d'attente, poste des assistants). Absente : l'atelier d'avant. */
+  vue?: Vue
   demo?: boolean
   mesure?: boolean
   onVue2D?: (vue: string) => void
@@ -101,6 +122,9 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
   lien?: 'connexion' | 'direct' | 'coupe'
   /** Le dernier évènement reçu : « Mis à jour : Tâche ». */
   dernier?: { libelle: string; a: number } | null
+  /** Page de démonstration, drapeau crmAtelierVivant levé : la base imposée (`?base=`) et l'heure (`?heure=`). Ignorés drapeau baissé. */
+  baseInitiale?: Base | null
+  heure?: number | null
 }) {
   const [detection, setDetection] = useState<Detection | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
@@ -112,6 +136,11 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
   const [visite, setVisite] = useState<{ etapes: EtapeBriefing[]; i: number; auto: boolean } | null>(null)
   const [flash, setFlash] = useState<string | null>(null)
   const commandes = useRef<CommandesScene>(null)
+  // — Arrivée en direct (drapeau crmAtelierVivant) : seules les demandes qui arrivent APRÈS le montage comptent ; le premier chargement ne déclenche rien. —
+  const connues = useRef<Arrivee[] | null>(null)
+  const [arrivee, setArrivee] = useState<Arrivee[] | null>(null)
+  const [chute, setChute] = useState<{ debut: number; index: number[] } | null>(null)
+  const [surligne, setSurligne] = useState<string | null>(null)
 
   useEffect(() => {
     if (mesure) (window as unknown as { __atelierMonte?: number }).__atelierMonte = performance.now()
@@ -127,7 +156,24 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
     }
   }, [forcer, mesure])
 
-  const scene = useMemo(() => construireScene(donnees, prereglage), [donnees, prereglage])
+  // L'atelier vivant (drapeau crmAtelierVivant) : il faut la Vue entière. Baissé, ou sans Vue : rien de ce qui suit n'existe.
+  const vivant = actif('crmAtelierVivant') && !!vue
+  const poste = useMemo(() => (vivant && vue ? posteAssistants(vue, donnees.jour) : null), [vivant, vue, donnees.jour])
+  const total = poste ? poste.total : null
+  // L'infrastructure (même drapeau, lib/crm/infrastructure.ts) : la base suit le profil de l'artisan, ou celle qu'il a choisie (null =
+  // automatique). Pas besoin de la Vue : la démonstration la montre aussi. Baissé : l'appel d'avant, à l'identique.
+  const infra = actif('crmAtelierVivant')
+  const [base, setBase] = useState<Base | null>(baseInitiale ?? null)
+  useEffect(() => {
+    if (!infra || prereglageInitial || baseInitiale) return
+    const r = lireReglage()
+    if (r.metier) setPrereglage(r.metier)
+    if (r.base) setBase(r.base)
+  }, [infra, prereglageInitial, baseInitiale])
+  const regler = (r: Reglage) => { if (r.metier) setPrereglage(r.metier); if (r.base !== undefined) setBase(r.base); if (infra) ecrireReglage({ metier: r.metier ?? prereglage, base: r.base !== undefined ? r.base : base }) }
+  const scene = useMemo(() => (infra
+    ? construireScene(donnees, prereglage, { ...(total !== null ? { vivant: { assistants: total } } : {}), infra: { base } })
+    : construireScene(donnees, prereglage, total !== null ? { vivant: { assistants: total } } : undefined)), [donnees, prereglage, total, infra, base])
   const resume = useMemo(() => calculerAlertes(donnees), [donnees])
   const urgences = useMemo(() => urgencesDuJour(donnees, resume), [donnees, resume])
   const allumes = useMemo(() => objetsAllumes(scene.objets, filtre), [scene, filtre])
@@ -136,6 +182,25 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
   const selection = indexDe(cleSel)
   const choisi = selection !== null ? scene.objets[selection] ?? null : null
   useEffect(() => { setCleSel(null) }, [prereglage])
+
+  // Une relecture temps réel apporte une demande inconnue de la précédente : bannière (toujours), colis qui tombe en 3D et accueil surligné
+  // en 2D (hors « réduire les animations » : alors la bannière seule). useLayoutEffect : l'état de la chute est posé avant la peinture, le
+  // colis n'apparaît pas une image au sol avant de tomber.
+  useLayoutEffect(() => {
+    if (!vivant) { connues.current = null; return }
+    const apres = arriveesDe(donnees.demandes)
+    const nouvelles = nouvellesArrivees(connues.current, apres)
+    connues.current = apres
+    if (!nouvelles.length) return
+    setArrivee(nouvelles)
+    if (calme()) return
+    const ids = new Set(nouvelles.map((n) => n.id))
+    setChute({ debut: performance.now(), index: (scene.colis ?? []).filter((c) => ids.has(c.id)).map((c) => c.index) })
+    setSurligne('accueil')
+  }, [vivant, donnees.demandes, scene])
+  // La bannière se ferme seule après 8 s, le surlignage de l'accueil (2D) après 5 s.
+  useEffect(() => { if (!arrivee) return; const t = setTimeout(() => setArrivee(null), 8000); return () => clearTimeout(t) }, [arrivee])
+  useEffect(() => { if (!surligne) return; const t = setTimeout(() => setSurligne(null), 5000); return () => clearTimeout(t) }, [surligne])
   const fermer = useCallback(() => setCleSel(null), [])
   const vers2D = useCallback((v: string) => onVue2D?.(v), [onVue2D])
   const choisirIndex = useCallback((i: number | null) => { setVisite(null); setCleSel(i === null ? null : scene.objets[i]?.cle ?? null) }, [scene])
@@ -191,10 +256,21 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
         </div>
         <label className="atl-metier">
           <span className="crm-sr">Préréglage de l’atelier</span>
-          <select value={prereglage} onChange={(e) => setPrereglage(e.target.value as Prereglage)}>
+          <select value={prereglage} onChange={(e) => (infra ? regler({ metier: e.target.value as Prereglage }) : setPrereglage(e.target.value as Prereglage))}>
             {PREREGLAGES.map((p) => <option key={p} value={p}>{LIBELLES_PREREGLAGE[p]}</option>)}
           </select>
         </label>
+        {infra && scene.infra && (
+          <label className="atl-metier" data-atelier-base={scene.infra.base}>
+            <span className="crm-sr">Votre lieu de travail</span>
+            <select value={base ?? ''} onChange={(e) => regler({ base: (e.target.value || null) as Base | null })} title="Le lieu se déduit de votre équipe, de vos véhicules, de votre stock et de votre statut ; vous pouvez le dire vous-même (gardé dans ce navigateur, rien n’est envoyé).">
+              <option value="">{`Automatique · ${LIBELLES_BASE[scene.infra.profil.baseDeduite]}`}</option>
+              {BASES.map((b) => <option key={b} value={b}>{LIBELLES_LIEU[b]}</option>)}
+            </select>
+            {/* D'où vient le choix : dit en toutes lettres. */}
+            <span className="atl-origine" data-atelier-origine={scene.infra.auto ? 'deduit' : 'choisi'}>{scene.infra.auto ? 'déduit de vos données' : 'choisi par vous'}</span>
+          </label>
+        )}
         <details className="atl-aide">
           <summary aria-label="Aide : lire la maquette">?</summary>
           <div className="atl-aide-corps">
@@ -218,6 +294,18 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
       <p className="crm-sr" aria-live="polite">{flash ?? annonce}</p>
 
       <div className="atl-cadre">
+        {/* La zone annoncée existe avant la bannière (un lecteur d'écran n'annonce de façon fiable que ce qui entre dans une zone déjà là). */}
+        {vivant && (
+          <div className="atl-arrivee-zone" role="status" aria-live="polite" data-atelier-arrivee-zone>
+            {arrivee && (
+              <div className="atl-arrivee" data-atelier-arrivee>
+                <span>{texteArrivee(arrivee)}</span>
+                <button type="button" className="psh-btn primary" onClick={() => { const i = scene.objets.findIndex((o) => o.type === 'accueil'); setArrivee(null); if (i >= 0) choisirIndex(i) }}>Voir</button>
+                <button type="button" className="atl-arrivee-fermer" aria-label="Fermer l’annonce" onClick={() => setArrivee(null)}>×</button>
+              </div>
+            )}
+          </div>
+        )}
         {mode === '3d' && (
           <>
             <div className="atl-outils" role="group" aria-label="Caméra">
@@ -233,7 +321,7 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
             </div>
             <div className="atl-toile">
               <GardeRendu onErreur={() => { setDetection((d) => d && { ...d, raison: 'Plan 2D affiché : la maquette 3D n’a pas pu s’afficher sur cet appareil.' }); setMode('2d') }}>
-                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} />
+                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} chute={vivant ? chute : null} heure={infra ? heure ?? null : null} />
               </GardeRendu>
             </div>
             <Urgences urgences={urgences} variante="carte" actif={choisi?.cle ?? etape?.objetCle ?? null} onChoisir={ouvrirUrgence} />
@@ -244,12 +332,12 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
             {/* Ce que la 3D montre, lisible sans elle : la liste des objets reste atteignable au clavier. */}
             <details className="atl-liste-3d">
               <summary>Liste des éléments de la maquette</summary>
-              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={null} />
+              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={null} surligne={vivant ? surligne : null} />
             </details>
           </>
         )}
         {mode === '2d' && (
-          <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null}
+          <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null} surligne={vivant ? surligne : null}
             avant={<>
               <Urgences urgences={urgences} variante="liste" actif={choisi?.cle ?? null} onChoisir={ouvrirUrgence} />
               {etape && visite && <CarteBriefing etape={etape} i={visite.i} n={visite.etapes.length} auto={false}
@@ -258,7 +346,7 @@ export default function Atelier({ donnees, demo = false, mesure = false, onVue2D
             </>} />
         )}
         {mode === null && <div className="atl-charge" role="status">Préparation de l’atelier…</div>}
-        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} />}
+        {choisi && <Panneau objet={choisi} donnees={donnees} demo={demo} resume={resume} onFermer={fermer} onVue2D={vers2D} onChange={onChange ?? (() => {})} vue={vivant ? vue : undefined} poste={poste} />}
       </div>
       <Legende horsScene={scene.horsScene} sansCommandes={donnees.commandesDisponibles === false} />
     </div>

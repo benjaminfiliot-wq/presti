@@ -68,3 +68,8 @@ export async function DELETE(req: Request) {
   if ('reponse' in g) return g.reponse
   return nonPermise('POST')
 }
+export async function OPTIONS(req: Request) {
+  const g = await gardeCrm(req, { drapeau: 'crmApresChantier' })
+  if ('reponse' in g) return g.reponse
+  return nonPermise('POST')
+}

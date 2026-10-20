@@ -143,7 +143,9 @@ const E64 = 'a'.repeat(64)
 {
   const Ex = await imp('lib/crm/exemple.ts')
   const v = Ex.VUE_EXEMPLE
-  T('E1 exemple : « À faire aujourd’hui » = 1 en retard (cuisine) + 2 aujourd’hui (relance du devis, prévenir le client des radiateurs)', v.rappels.aFaire.enRetard.length === 1 && v.rappels.aFaire.aujourdhui.length === 2 && v.rappels.disponibles, JSON.stringify(v.rappels.aFaire).slice(0, 300))
+  // 20/10 : avec l'après-chantier levé (crmApresChantier), l'exemple porte en plus la demande d'avis 856 (échue le 04/10) : un retard de plus.
+  const apres = (await imp('lib/flags.ts')).FLAGS.crmApresChantier, retards = apres ? 2 : 1
+  T('E1 exemple : « À faire aujourd’hui » = 1 en retard (cuisine ; + la demande d’avis si l’après-chantier est levé) + 2 aujourd’hui (relance du devis, prévenir le client des radiateurs)', v.rappels.aFaire.enRetard.length === retards && v.rappels.aFaire.aujourdhui.length === 2 && v.rappels.disponibles, JSON.stringify(v.rappels.aFaire).slice(0, 300))
   T('E2 exemple : l’adoucisseur (envoyé il y a 14 jours) est à relancer, avec la vraie date d’envoi ; et le compte = la tuile « Relances dues »', v.rappels.devisARelancer.some((d) => d.objet === 'Adoucisseur' && d.dateSure && d.jours === 14) && v.rappels.devisARelancer.length === v.tableau.relancesDues.nombre)
   const carte = v.pipeline.colonnes.flatMap((c) => c.cartes).find((c) => c.titre === 'Adoucisseur')
   T('E3 exemple : la carte du pipeline porte son rappel (badge)', carte?.rappel?.type === 'relancer_devis' && carte.rappel.echeance === '2026-10-12')
@@ -151,7 +153,7 @@ const E64 = 'a'.repeat(64)
   T('E4 exemple : la fiche de la cliente A a son prochain rendez-vous (réception des travaux, 16/10 17 h 30) et un fil daté', fa.prochainRendezVous?.type === 'rendez_vous' && fa.prochainRendezVous.echeance === '2026-10-16' && fa.chronologie.length >= 6 && fa.chronologie[0].quand >= fa.chronologie.at(-1).quand)
   const fc = Ex.ficheChantierExemple(U(2))
   T('E5 exemple : la fiche de la cuisine montre son rappel en retard', fc.rappels.some((r) => r.retard === 2 && !r.fait_le) && fc.jour === '2026-10-12')
-  T('E6 exemple : le briefing du matin de l’atelier dit « À faire aujourd’hui » (3 rappels, dont 1 en retard)', (await imp('lib/crm/alertes.ts')).construireBriefing(v.atelier).some((x) => x.cle === 'rappels' && /3 rappels, dont 1 en retard/.test(x.texte)))
+  T('E6 exemple : le briefing du matin de l’atelier dit « À faire aujourd’hui » (3 rappels dont 1 en retard ; 4 dont 2 avec l’après-chantier)', (await imp('lib/crm/alertes.ts')).construireBriefing(v.atelier).some((x) => x.cle === 'rappels' && (apres ? /4 rappels, dont 2 en retard/ : /3 rappels, dont 1 en retard/).test(x.texte)))
 
   // Le code des routes : garde, borne au compte, envoi seulement après décision et contrôle.
   const env = sansCommentaires(lire('app/api/crm/relances/envoyer/route.ts'))
