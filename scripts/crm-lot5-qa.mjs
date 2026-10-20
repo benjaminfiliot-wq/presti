@@ -101,7 +101,7 @@ const { FLAGS } = await imp('lib/flags.ts')
   const lignesSql = (x) => scSql(x).split('\n').map((l) => l.replace(/\s+$/, '')).filter((l) => l.trim())
   const j = lire('supabase/migrations/_A_COLLER_sql_editor_0167_NU.sql')
   T('V9 le jumeau _NU de 0167 porte le même SQL (pied de contrôle en lecture seule)', egal(lignesSql(j.split(MARQUE_CONTROLE)[0]), lignesSql(m)) && !/^\s*(insert|update|delete|alter|create|drop)\b/im.test(j.split(MARQUE_CONTROLE)[1] ?? ''))
-  T('V10 drapeau baissé tant que la conformité n’a pas relu (photos absentes de la page en attendant) ; la purge d’un compte efface ses liens', FLAGS.crmSuivi === false && lire('lib/purgeComptes.ts').includes("'chantier_suivi'") && /\{actif\('crmSuivi'\) && c\.statut !== 'annule' && <SuiviClient /.test(lire('app/crm/FicheChantier.tsx')))
+  T('V10 drapeau LEVÉ le 20/10 après relecture de conformité (aucune photo, aucun prix ni nom dans la page) ; la purge d’un compte efface ses liens', FLAGS.crmSuivi === true && lire('lib/purgeComptes.ts').includes("'chantier_suivi'") && /\{actif\('crmSuivi'\) && c\.statut !== 'annule' && <SuiviClient /.test(lire('app/crm/FicheChantier.tsx')))
 }
 
 // ═══════════════════════ B. Création depuis le devis ═══════════════════════
@@ -113,7 +113,7 @@ const { FLAGS } = await imp('lib/flags.ts')
 
 // ═══════════════════════ C. Code et migration ═══════════════════════
 {
-  T('C1 drapeau baissé tant que le lot n’est pas recetté : crmPlan', FLAGS.crmPlan === false)
+  T('C1 drapeau LEVÉ le 20/10 après recette et accord de Benj : crmPlan', FLAGS.crmPlan === true)
   const r1 = sansCommentaires(lire('app/api/crm/chantiers/route.ts')), r2 = sansCommentaires(lire('app/api/crm/chantiers/[id]/taches/route.ts')), r3 = sansCommentaires(lire('app/api/crm/taches/[id]/route.ts')), r4 = sansCommentaires(lire('app/api/crm/chantiers/[id]/route.ts'))
   T('C2 les deux créations depuis le devis passent par tacheAInserer(t, actif(\'crmPlan\'))', /tacheAInserer\(t, actif\('crmPlan'\)\)/.test(r1) && /tacheAInserer\(t, actif\('crmPlan'\)\)/.test(r2))
   T('C3 créer ou modifier une tâche avec `piece` est refusé drapeau baissé (400)', /if \('piece' in t && !actif\('crmPlan'\)\) return erreur\('Champ inconnu : piece\.', 400\)/.test(r2) && /if \('piece' in v\.valeur && !actif\('crmPlan'\)\) return erreur\('Champ inconnu : piece\.', 400\)/.test(r3))

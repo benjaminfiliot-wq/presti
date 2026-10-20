@@ -23,8 +23,9 @@ import { ajouterJours } from './crm/rappels.ts'
 export const DELAI_AVIS_JOURS = 2
 export const RATTRAPAGE_JOURS = 14
 export const PREAVIS_JOURS = 15
-/** Au-delà, un chantier fini n'est plus suivi pour l'entretien (le client a sans doute changé de prestataire). */
-export const ENTRETIEN_ANS_MAX = 5
+/** Au-delà, un chantier fini n'est plus suivi pour l'entretien. 3 ans : le référentiel CNIL « gestion commerciale » (3 ans après
+ *  la fin de la relation), aligné sur DUREES_MOIS.crm (36 mois) — audit de conformité du 20/10 (A2). */
+export const ENTRETIEN_ANS_MAX = 3
 export const MAX_PAR_COMPTE_JOUR = 10
 export const TEXTE_MIN = 20
 export const TEXTE_MAX = 1500
@@ -44,7 +45,7 @@ export const DESCRIPTION_VARIABLES_APRES: Record<VariableApres, string> = {
 }
 
 export const TEXTES_APRES_PAR_DEFAUT: Record<GenreApres, string> = {
-  avis: 'Bonjour {client},\n\nMerci de nous avoir fait confiance pour « {chantier} ». Si vous êtes satisfait du travail, quelques mots d’avis sur notre fiche en ligne nous aideraient beaucoup : ce sont eux que lisent les prochains clients.\n\nEt si quelque chose ne va pas, dites-le-nous simplement en répondant à ce message.\n\n{artisan}',
+  avis: 'Bonjour {client},\n\nMerci de nous avoir fait confiance pour « {chantier} ». Votre avis sur notre fiche en ligne, quel qu’il soit, nous intéresse et aide les prochains clients à se décider.\n\nPour toute question sur le chantier, répondez simplement à ce message.\n\n{artisan}',
   entretien: 'Bonjour {client},\n\nNous sommes intervenus chez vous pour « {chantier} ». L’entretien de votre {equipement} arrive bientôt : voulez-vous que nous convenions d’une date ? Répondez simplement à ce message.\n\n{artisan}',
 }
 export const PIED_APRES = 'Message envoyé à la suite de votre chantier. Si vous ne souhaitez plus en recevoir, dites-le simplement en répondant.'
@@ -162,10 +163,12 @@ export function propositions(p: { chantiers: readonly ChantierApres[]; reglages:
 }
 
 // ─── L'envoi ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
-export type EtatEnvoi = { email: string | null; envoyesAujourdhuiCompte: number; dejaEcritAujourdhuiAuClient: boolean; dejaEnvoye: boolean; reglageActif: boolean }
+export type EtatEnvoi = { email: string | null; envoyesAujourdhuiCompte: number; dejaEcritAujourdhuiAuClient: boolean; dejaEnvoye: boolean; reglageActif: boolean; oppose?: boolean }
 /** Peut-on envoyer ce message ? (le contenu est vérifié à part, par erreurTexteApres). */
 export function decisionEnvoiApres(e: EtatEnvoi): { ok: true } | { ok: false; statut: number; erreur: string } {
   if (!e.reglageActif) return { ok: false, statut: 409, erreur: 'Cet envoi est désactivé dans vos réglages de l’après-chantier.' }
+  // Le client a dit non (crm_apres_opposition, migration 0171) : plus aucun message d'après-chantier, sans condition (RGPD art. 21.2-3).
+  if (e.oppose) return { ok: false, statut: 409, erreur: 'Ce client a demandé à ne plus recevoir ces messages.' }
   if (e.dejaEnvoye) return { ok: false, statut: 409, erreur: 'Ce message est déjà parti.' }
   if (!e.email) return { ok: false, statut: 409, erreur: 'Aucune adresse e-mail pour ce client : appelez-le, ou ajoutez son adresse au devis.' }
   if (e.dejaEcritAujourdhuiAuClient) return { ok: false, statut: 429, erreur: 'Un message est déjà parti aujourd’hui à ce client : attendez demain.' }

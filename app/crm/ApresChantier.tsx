@@ -143,6 +143,15 @@ function DialogueApres({ rappel, genre, chantier, reglages, onFermer, onChange }
     setEtat('envoye'); setMessage({ texte: 'Message envoyé.', erreur: false })
     await onChange?.()
   }
+  // Le client a répondu qu'il ne veut plus de ces messages : noté pour de bon (plus aucun envoi possible), rien ne part.
+  async function noterOpposition() {
+    if (!confirm('Le client ne veut plus de messages d’après-chantier ? Plus aucun ne pourra lui être envoyé.')) return
+    setEtat('envoi'); setMessage(null)
+    const r = await appel('/api/crm/apres-chantier/opposition', { method: 'POST', body: { rappel_id: rappel.id } })
+    if (!r.ok) { setEtat('pret'); setMessage({ texte: r.erreur, erreur: estErreur(r) }); return }
+    setEtat('envoye'); setMessage({ texte: 'C’est noté : ce client ne recevra plus ces messages.', erreur: false })
+    await onChange?.()
+  }
   return (
     <div className="crm-notif crm-relance-dialogue">
       {etat === 'lecture' && !message && <p className="muted" role="status">Préparation du message…</p>}
@@ -156,6 +165,7 @@ function DialogueApres({ rappel, genre, chantier, reglages, onFermer, onChange }
           <div className="crm-boutons">
             <button type="button" className="psh-btn primary" disabled={!envoyable || etat === 'envoi' || texte.trim().length < 20} onClick={() => void envoyer()}>{etat === 'envoi' ? 'Envoi…' : 'Envoyer'}</button>
             <button type="button" className="psh-btn ghost" onClick={onFermer}>Annuler</button>
+            {!exemple && <button type="button" className="psh-btn ghost" disabled={etat === 'envoi'} onClick={() => void noterOpposition()}>Le client ne veut plus de messages</button>}
           </div>
         </>
       )}

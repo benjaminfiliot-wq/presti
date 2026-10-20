@@ -128,6 +128,16 @@ export async function DELETE(req: Request, ctx: Ctx) {
   if ('reponse' in g) return g.reponse
   const { id } = await ctx.params
   if (!estUuid(id)) return erreur('Chantier introuvable.', 404)
+  // 0163 — la cascade emporte les LIGNES de chantier_pieces, jamais les FICHIERS du bucket privé : sans ce retrait, des photos
+  // d'intérieurs que l'artisan croit supprimées resteraient sans référence, hors de portée de la purge (même ordre que purgesRgpd).
+  // Fichiers d'abord ; si le retrait échoue, le chantier reste et l'artisan réessaie.
+  const { data: pieces, error: ep } = await supabaseAdmin.from('chantier_pieces').select('chemin').eq('chantier_id', id).eq('artisan_id', g.uid)
+  if (ep) { const s = statutErreurBase(ep); console.error('[crm/chantier] pièces (lecture) :', ep.message); return erreur(s.message, s.status) }
+  const chemins = (pieces ?? []).map((p) => p.chemin as string).filter(Boolean)
+  if (chemins.length) {
+    const { error: es } = await supabaseAdmin.storage.from('chantier-pieces').remove(chemins)
+    if (es) { console.error('[crm/chantier] pièces (fichiers) :', es.message); return erreur('Les photos du chantier n’ont pas pu être supprimées : rien n’a été effacé, réessayez.', 500) }
+  }
   const { data, error } = await supabaseAdmin.from('chantiers').delete().eq('id', id).eq('artisan_id', g.uid).select('id')
   if (error) { const s = statutErreurBase(error); console.error('[crm/chantier] suppression :', error.message); return erreur(s.message, s.status) }
   if (!data?.length) return erreur('Chantier introuvable.', 404)

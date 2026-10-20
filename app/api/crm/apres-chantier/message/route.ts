@@ -4,6 +4,7 @@ import { erreur, gardeCrm, INDISPONIBLE, json, nonPermise } from '@/lib/crm/serv
 import { champsPermis, estObjet, estUuid, identifiant, lireCorps } from '@/lib/crm/valider'
 import { ajouterJours } from '@/lib/crm/rappels'
 import { sendEmail } from '@/lib/email'
+import { clientOppose } from '@/lib/crm/apresOpposition'
 import { consommerLimite } from '@/lib/limites'
 import {
   ajouterMois, decisionEnvoiApres, equipementDe, erreurTexteApres, finDe, messageCompletApres, PIED_APRES, PREAVIS_JOURS,
@@ -23,7 +24,7 @@ export const runtime = 'nodejs'
 type Contexte = {
   genre: GenreApres; rappel: { id: string; chantier_id: string; envoye_le: string | null; cle: string | null }
   email: string | null; variables: VariablesApres; sujet: string; clientAEcrit: boolean; reglageActif: boolean; texte: string
-  fin: string | null; moisEntretien: number | null; replyTo: string | undefined
+  fin: string | null; moisEntretien: number | null; replyTo: string | undefined; oppose: boolean
 }
 
 async function contexte(g: { uid: string }, rappelId: string): Promise<{ ok: true; c: Contexte } | { ok: false; statut: number; erreur: string }> {
@@ -63,10 +64,11 @@ async function contexte(g: { uid: string }, rappelId: string): Promise<{ ok: tru
   }
   const reglages = reg.data ?? { avis: false, entretien: false, texte_avis: null, texte_entretien: null }
   const email = typeof dv.data?.client_email === 'string' && dv.data.client_email.trim() ? dv.data.client_email.trim() : null
+  const oppose = await clientOppose(g.uid, email)
   return { ok: true, c: {
     genre, rappel: { id: r.data.id as string, chantier_id: r.data.chantier_id as string, envoye_le: r.data.envoye_le as string | null, cle: r.data.cle as string | null },
     email, variables, sujet: sujetApres(genre, variables.chantier, eq?.nom ?? null), clientAEcrit, reglageActif: genre === 'avis' ? !!reglages.avis : !!reglages.entretien,
-    texte: remplirApres(texteApres(genre, reglages), variables), fin, moisEntretien: eq?.mois ?? null, replyTo: (art.data?.email as string | null) || undefined,
+    texte: remplirApres(texteApres(genre, reglages), variables), fin, moisEntretien: eq?.mois ?? null, replyTo: (art.data?.email as string | null) || undefined, oppose,
   } }
 }
 
@@ -81,10 +83,11 @@ export async function GET(req: Request) {
   const avertissements = [
     ...(c.clientAEcrit ? ['Ce client vous a écrit depuis la fin du chantier : relisez la conversation avant d’envoyer.'] : []),
     ...(c.email ? [] : ['Aucune adresse e-mail pour ce client : appelez-le plutôt.']),
+    ...(c.oppose ? ['Ce client a demandé à ne plus recevoir ces messages.'] : []),
     ...(c.reglageActif ? [] : ['Cet envoi est désactivé dans vos réglages de l’après-chantier.']),
     ...(c.rappel.envoye_le ? ['Ce message est déjà parti.'] : []),
   ]
-  return json({ genre: c.genre, destinataire: c.email, sujet: c.sujet, texte: c.texte, pied: PIED_APRES, avertissements, envoyable: !!c.email && c.reglageActif && !c.rappel.envoye_le })
+  return json({ genre: c.genre, destinataire: c.email, sujet: c.sujet, texte: c.texte, pied: PIED_APRES, avertissements, envoyable: !!c.email && c.reglageActif && !c.rappel.envoye_le && !c.oppose, oppose: c.oppose })
 }
 
 export async function POST(req: Request) {
@@ -106,7 +109,7 @@ export async function POST(req: Request) {
 
   const envoyes = await supabaseAdmin.from('crm_rappels').select('id', { count: 'exact', head: true }).eq('artisan_id', g.uid).in('type', ['demande_avis', 'entretien']).gte('envoye_le', new Date(Date.now() - 86_400_000).toISOString()) // sur 24 heures glissantes
   if (envoyes.error) return erreur(INDISPONIBLE, 503)
-  const dec = decisionEnvoiApres({ email: c.email, envoyesAujourdhuiCompte: envoyes.count ?? 0, dejaEcritAujourdhuiAuClient: false, dejaEnvoye: !!c.rappel.envoye_le, reglageActif: c.reglageActif })
+  const dec = decisionEnvoiApres({ email: c.email, envoyesAujourdhuiCompte: envoyes.count ?? 0, dejaEcritAujourdhuiAuClient: false, dejaEnvoye: !!c.rappel.envoye_le, reglageActif: c.reglageActif, oppose: c.oppose })
   if (!dec.ok) return erreur(dec.erreur, dec.statut)
   // Un message par jour et par client (empreinte de l'adresse : la clé de débit ne garde pas l'adresse en clair). Couvre aussi le double clic.
   const empreinte = createHash('sha256').update(c.email!.toLowerCase()).digest('hex').slice(0, 32)

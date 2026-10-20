@@ -114,7 +114,9 @@ const EXE = new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0, 4, 0, 0, 0])
 
 // ═══════════════════════ D. Code, migrations, RGPD ═══════════════════════
 {
-  T('D1 drapeaux baissés tant que le lot n’est pas recetté : crmPieces, crmPlanning', FLAGS.crmPieces === false && FLAGS.crmPlanning === false)
+  T('D1 drapeaux LEVÉS le 20/10 après recette, audit de conformité et accord de Benj : crmPieces, crmPlanning', FLAGS.crmPieces === true && FLAGS.crmPlanning === true)
+  { const r = lire('app/api/crm/chantiers/[id]/route.ts'), i = (x) => r.indexOf(x)
+    T('D1b supprimer un chantier retire d’abord ses FICHIERS du bucket privé (la cascade n’emporte que les lignes ; audit du 20/10, P1)', i(".storage.from('chantier-pieces').remove(chemins)") > 0 && i(".storage.from('chantier-pieces').remove(chemins)") < i("from('chantiers').delete()")) }
   const routes = { 'app/api/crm/pieces/route.ts': 'crmPieces', 'app/api/crm/pieces/[id]/route.ts': 'crmPieces', 'app/api/crm/agenda/route.ts': 'crmPlanning' }
   T('D2 chaque route du lot passe par gardeCrm AVEC son drapeau (404 avant toute session si baissé)', Object.entries(routes).every(([f, d]) => { const s = lire(f).replace(/\r\n/g, '\n'); const n = (s.match(/export async function /g) ?? []).length; return n === 6 && (s.match(new RegExp(`const g = await gardeCrm\\(req, \\{ drapeau: '${d}' \\}\\)\\n\\s*if \\('reponse' in g\\) return g\\.reponse`, 'g')) ?? []).length === 6 }))
   const srv = sansCommentaires(lire('lib/crm/serveur.ts'))
