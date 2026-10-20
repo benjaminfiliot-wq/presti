@@ -5,6 +5,7 @@
 // pièce (à faire, en cours, fini). JAMAIS : un prix, une adresse, le nom du client, le nom d'un compagnon, un libellé de tâche
 // (qui peut citer une marque, un prix, un défaut), une note, une photo (à trancher par la conformité : visages, intérieurs).
 import { LIBELLES_ETAT_PIECE, planChantier, type EtatPiece, type TachePlan } from './plan.ts'
+import { JOURS_SUIVI_APRES_FIN } from '../legalArtisan.ts'
 
 export const LIBELLES_STATUT_SUIVI: Record<string, string> = {
   a_planifier: 'Bientôt planifié', planifie: 'Planifié', en_cours: 'En cours', en_pause: 'En pause', termine: 'Terminé', annule: 'Annulé',
@@ -44,6 +45,19 @@ export function vueSuivi(p: {
 /** Les clés autorisées dans la vue publique (le juge vérifie qu'aucune autre n'apparaît). */
 export const CLES_SUIVI = ['entreprise', 'titre', 'statut', 'debut', 'finPrevue', 'finReelle', 'avancement', 'pieces', 'majLe'] as const
 export const RE_JETON_SUIVI = /^[A-Za-z0-9_-]{43}$/
+
+/**
+ * Le lien de suivi a-t-il expiré ? JOURS_SUIVI_APRES_FIN jours (90) après la FIN RÉELLE du chantier (audit RGPD du 20/10 : un lien
+ * secret ne reste pas ouvert pour toujours). Calculé à la LECTURE, depuis chantiers.date_fin_reelle — aucune colonne, aucune
+ * migration. Le dernier jour valable est le 89e après la date de fin ; dès minuit UTC du 90e, le lien répond 404 comme un jeton
+ * inconnu. Un chantier sans fin réelle (encore ouvert, ou rouvert : la route des chantiers efface alors la date) n'expire pas.
+ */
+export function suiviExpire(dateFinReelle: string | null | undefined, maintenant: Date = new Date(), jours: number = JOURS_SUIVI_APRES_FIN): boolean {
+  if (!dateFinReelle || !/^\d{4}-\d{2}-\d{2}/.test(dateFinReelle)) return false
+  const fin = Date.parse(`${dateFinReelle.slice(0, 10)}T00:00:00Z`)
+  if (!Number.isFinite(fin)) return false
+  return maintenant.getTime() >= fin + jours * 86400000
+}
 
 // ─── La page HTML (autonome : aucun script, aucune ressource extérieure, styles en ligne ; CSP « default-src 'none' ») ──────
 const echapper = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)

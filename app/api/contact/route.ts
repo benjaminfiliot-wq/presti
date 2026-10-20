@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { notifierEntreprise } from '@/lib/email'
 
 // Le formulaire de contact public (§ mise en service du 05/09/2026).
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
 
     // Trois messages par heure et par adresse : de quoi écrire, se corriger, relancer — pas de
     // quoi transformer le formulaire en relais d'envoi.
-    if (!(await consommerLimite(`contact:${ip}`, 3, 3600))) {
+    if (!(await consommerLimiteStricte(`contact:${ip}`, 3, 3600))) {
       await recordAbuse(ip, 'flood /api/contact')
       return NextResponse.json({ error: 'Vous avez déjà écrit plusieurs fois : laissez-nous le temps de répondre.' }, { status: 429 })
     }

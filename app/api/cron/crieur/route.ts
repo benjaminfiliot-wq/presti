@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sortiePermise } from '@/lib/agents/sortie'
 import { signalerProgrammees } from '@/lib/crieur/pauseProgrammees'
@@ -18,7 +19,7 @@ type Ligne = { semaine: string; canal: string; fait_ids: string[]; statut: strin
 
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
-  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(req.headers.get('authorization'), secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   // La pause suspend aussi les publications déjà programmées ; une suspension non confirmée rend 503.
   if (!(await sortiePermise()).permise) {
     const bilan = await signalerProgrammees()

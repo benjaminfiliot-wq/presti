@@ -14,7 +14,8 @@ import crypto from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
 import { getIp, isBanned, ipPseudonyme } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { stripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { PRIX_SITE_CENTS } from '@/lib/siteCommande'
@@ -43,10 +44,10 @@ export async function POST(req: Request) {
   // Le piège : un champ caché que seul un robot remplit. Réponse neutre, rien d'écrit, aucun plafond consommé.
   if (typeof donnees.website === 'string' && donnees.website.trim()) return NextResponse.json({ ok: true })
 
-  if (!(await consommerLimite(`site-public:ip:${ipPseudonyme(ip) ?? 'inconnue'}`, 5, 3600))) {
+  if (!(await consommerLimiteStricte(`site-public:ip:${ipPseudonyme(ip) ?? 'inconnue'}`, 5, 3600))) {
     return NextResponse.json({ error: 'Trop de demandes depuis cette connexion : réessayez dans une heure.' }, { status: 429 })
   }
-  if (!(await consommerLimite('site-public:jour', 50, 86_400))) {
+  if (!(await consommerLimiteStricte('site-public:jour', 50, 86_400))) {
     return NextResponse.json({ error: 'Trop de commandes aujourd’hui : réessayez demain.' }, { status: 429 })
   }
 

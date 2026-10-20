@@ -1,5 +1,7 @@
 // Réglages IMAP/SMTP des principaux fournisseurs français (v4 §B2) : l'artisan saisit
 // son adresse et son mot de passe, on devine le reste — il n'a rien à aller chercher.
+import { MESSAGE_SERVEUR_INJOIGNABLE, verifierServeurImap } from '@/lib/hoteSur'
+
 const FOURNISSEURS: { motif: RegExp; imap: string; smtp: string; nom: string }[] = [
   { motif: /@gmail\.com$|@googlemail\.com$/i, imap: 'imap.gmail.com', smtp: 'smtp.gmail.com', nom: 'Gmail' },
   { motif: /@outlook\.|@hotmail\.|@live\./i, imap: 'outlook.office365.com', smtp: 'smtp-mail.outlook.com', nom: 'Outlook' },
@@ -81,11 +83,21 @@ export function canalEntreprise(): (typeof ENTREPRISE_MAIL & { identifiant: stri
  *  tout, et quand aucun ne tombe juste, une phrase générique ne permet plus d'avancer — on essaie
  *  des choses au hasard (constaté le 07/09, deux heures perdues sur « Connexion impossible »).
  *  Ce message ne contient ni identifiant ni mot de passe : c'est la réponse du serveur. */
-export async function testerImap(hote: string, port: number, user: string, pass: string): Promise<{ ok: true; ms: number } | { ok: false; erreur: string; brut: string; ms: number }> {
+export async function testerImap(hote: string, port: number, user: string, pass: string, opts: { artisan?: boolean } = {}): Promise<{ ok: true; ms: number } | { ok: false; erreur: string; brut: string; ms: number }> {
   const t0 = Date.now()
+  // Audit du 20/10 (SSRF) : quand l'hôte vient d'un ARTISAN (`opts.artisan`), il passe par `verifierServeurImap`
+  // (ports IMAP, nom DNS public, aucune adresse privée) et on se connecte à l'adresse validée, le nom en SNI.
+  // Les messages réseau y sont génériques : « fermé », « filtré » et « introuvable » ne doivent plus se distinguer.
+  const generique = opts.artisan === true
+  let cible = { host: hote, servername: undefined as string | undefined }
+  if (generique) {
+    const v = await verifierServeurImap(hote, port)
+    if (!v.ok) return { ok: false, erreur: MESSAGE_SERVEUR_INJOIGNABLE, brut: `refusé (${v.raison})`, ms: Date.now() - t0 }
+    cible = { host: v.adresse, servername: v.hote }
+  }
   try {
     const { ImapFlow } = await import('imapflow')
-    const client = new ImapFlow({ host: hote, port, secure: port === 993, auth: { user, pass }, logger: false })
+    const client = new ImapFlow({ host: cible.host, ...(cible.servername ? { servername: cible.servername } : {}), port, secure: port === 993, auth: { user, pass }, logger: false })
     await client.connect()
     await client.logout()
     return { ok: true, ms: Date.now() - t0 }
@@ -98,6 +110,8 @@ export async function testerImap(hote: string, port: number, user: string, pass:
       .filter(Boolean).join(' · ').slice(0, 160)
     const m = brut.toLowerCase()
     const ms = Date.now() - t0
+    // Côté artisan : seul un refus de LOGIN (le serveur a répondu, c'est un vrai serveur IMAP) est détaillé.
+    if (generique && detail?.authenticationFailed !== true) return { ok: false, erreur: MESSAGE_SERVEUR_INJOIGNABLE, brut: 'échec de connexion', ms }
     if (detail?.authenticationFailed === true) {
       return { ok: false, erreur: 'Identifiants refusés par le serveur. Le compte existe-t-il, et le mot de passe est-il bien celui de la boîte (pas celui de l’espace client) ? Avec Gmail ou Outlook, il faut un « mot de passe d’application ».', brut, ms }
     }

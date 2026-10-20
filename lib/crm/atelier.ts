@@ -538,7 +538,7 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   if (plan && trame) {
     const E = plan.chemin[plan.chemin.length - 1]
     routes = places.map((p) => cheminRues([E[0], E[1]], [p[0], Math.round((p[2] + 2.8) * 10) / 10], trame) ?? [])
-    decorCarte(ajouter, trame, places, routes)
+    decorCarte(ajouter, trame, places, routes, ajouterFenetre)
   } else decorVille(ajouter, places.length)
 
   return {
@@ -562,7 +562,7 @@ const CHAMPS = ['#E3D6B5', '#D9DEC2', '#E8DCC0', '#DCD3B4']
  * ceinture, et SEULEMENT les rues qui mènent à un chantier (le plus court chemin par la trame), comme des routes de campagne ; sur
  * les parcelles libres, des champs à sillons, des bosquets, des parcs. Décor pur, stable (hachage de la position).
  */
-function decorCarte(ajouter: Ajouter, trame: { xs: readonly number[]; zs: readonly number[] }, occupees: readonly V3[], routes: readonly (readonly [number, number])[][]) {
+function decorCarte(ajouter: Ajouter, trame: { xs: readonly number[]; zs: readonly number[] }, occupees: readonly V3[], routes: readonly (readonly [number, number])[][], ajouterFenetre?: AjoutF) {
   const r1 = (v: number) => Math.round(v * 10) / 10
   const vus = new Set<string>()
   const segment = (a: readonly [number, number], b: readonly [number, number]) => {
@@ -572,6 +572,17 @@ function decorCarte(ajouter: Ajouter, trame: { xs: readonly number[]; zs: readon
     const lx = Math.abs(b[0] - a[0]), lz = Math.abs(b[1] - a[1])
     if (lx < 0.05 && lz < 0.05) return
     ajouter('box', [(a[0] + b[0]) / 2, 0.03, (a[1] + b[1]) / 2], [lx > lz ? lx + 1.1 : 1.1, 0.03, lx > lz ? 1.1 : lz + 1.1], ROUTE)
+    // Lot 7 : des lampadaires le long des routes (un tous les 11,2 m, au bord) — la nuit, ils posent leurs halos chauds sur la chaussée.
+    if (ajouterFenetre) {
+      const L = Math.max(lx, lz), n = Math.floor(L / 11.2)
+      for (let k = 1; k <= n; k++) {
+        const t = k / (n + 1), x = a[0] + (b[0] - a[0]) * t + (lx > lz ? 0 : 0.78), z = a[1] + (b[1] - a[1]) * t + (lx > lz ? 0.78 : 0)
+        if (vus.has(`lampe:${r1(x)}:${r1(z)}`)) continue
+        vus.add(`lampe:${r1(x)}:${r1(z)}`)
+        ajouter('cyl', [x, 1.1, z], [0.09, 2.2, 0.09], COULEURS.gris); ajouter('cyl', [x, 2.24, z], [0.36, 0.1, 0.36], COULEURS.gris)
+        ajouterFenetre([x, 2.16, z], [0.3, 0.1, 0.3], '#EDE6DA', '#FFC979')
+      }
+    }
   }
   // La rue de ceinture de la base, puis les routes vers les chantiers.
   const E = ENCLOS

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { pauseGenerale } from '@/lib/agents/pause'
 
 // Cron « contenu » (fiche 026-212, C09) : le passage qui, un jour, publiera les Reels Instagram et les vidéos Facebook
@@ -14,7 +15,7 @@ export const maxDuration = 60
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(auth, secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const pause = await pauseGenerale()
   if (pause.active) return NextResponse.json({ pause: true, source: pause.source })

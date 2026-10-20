@@ -178,7 +178,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
       </section>
 
       {/* Lot 5 (plan du 18/10, n°8) : le plan du chantier par pièce, un schéma. */}
-      {actif('crmPlan') && <PlanChantier titre={c.titre} taches={taches} membres={membres} metier={f.metier ?? null} cocher={cocher} agir={agir} />}
+      {actif('crmPlan') && <PlanChantier titre={c.titre} taches={taches} membres={membres} metier={f.metier ?? null} typeBatiment={f.carte ? f.carte.type ?? f.carte.typeDeduit : null} cocher={cocher} agir={agir} />}
       {actif('crmSuivi') && c.statut !== 'annule' && <SuiviClient chantierId={c.id} />}
 
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>

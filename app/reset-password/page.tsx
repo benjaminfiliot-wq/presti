@@ -1,7 +1,7 @@
 'use client'
 import '@/app/globals.css'
 
-import { useEffect, useState, Suspense, type FormEvent } from 'react'
+import { useEffect, useRef, useState, Suspense, type FormEvent } from 'react'
 import { evaluerMotDePasse, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 import { useRouter } from 'next/navigation'
 import Marque from '@/app/Marque'
@@ -22,6 +22,7 @@ function ResetInner() {
   const force = evaluerMotDePasse(pw)
   const [fuite, setFuite] = useState<{ mdp: string; res: Fuite } | null>(null)
   const [verifEnCours, setVerifEnCours] = useState(false)
+  const champMdp = useRef<HTMLInputElement>(null)
   const verdict = fuite?.mdp === pw ? fuite.res : null
   const compromis = verdict?.compromis === true
 
@@ -55,12 +56,12 @@ function ResetInner() {
 
   async function definir(e: FormEvent) {
     e.preventDefault()
-    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); return }
+    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); champMdp.current?.focus(); return }
     if (pw !== pw2) { setMsg({ type: 'err', text: 'Les deux mots de passe ne correspondent pas.' }); return }
     setLoading(true); setMsg(null)
     let verifiee = verdict
     if (!verifiee) { verifiee = await verifierFuite(pw); setFuite({ mdp: pw, res: verifiee }) }
-    if (verifiee.compromis) { setLoading(false); setMsg({ type: 'err', text: messageFuite(verifiee) }); return }
+    if (verifiee.compromis) { setLoading(false); setMsg({ type: 'err', text: messageFuite(verifiee) }); champMdp.current?.focus(); return }
     const res = await fetch('/api/auth/reset-confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, password: pw }) })
     const d = await res.json().catch(() => ({}))
     setLoading(false)
@@ -79,7 +80,7 @@ function ResetInner() {
         {token ? (
           <form onSubmit={definir}>
             <label htmlFor="mdp-nouveau">Nouveau mot de passe</label>
-            <input id="mdp-nouveau" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={10} placeholder="10 caractères minimum" />
+            <input id="mdp-nouveau" ref={champMdp} type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={10} placeholder="10 caractères minimum" />
             {pw ? (
               <div className="mdp-force" data-niveau={compromis || !force.ok ? 0 : force.score}>
                 <span className="mdp-jauge" aria-hidden="true"><i /><i /><i /></span>

@@ -53,24 +53,55 @@ const { FLAGS } = await imp('lib/flags.ts')
   T('A7 sans tâche, pas de schéma (liste vide)', P.planChantier({ titre: 'X', membres: [], taches: [] }).length === 0)
 }
 
-// ═══════════════════════ M. Maquette 3D (version 2) ═══════════════════════
+// ═══════════════════════ M. Le plan dans SON bâtiment (lot 7, 21/10 : « le plan du chantier, le modèle est nul ») ═══════════════════════
 {
   const S = await imp('lib/crm/planScene.ts')
+  const PB = await imp('lib/crm/planBatiment.ts')
+  const C = await imp('lib/crm/carte.ts')
+  const tt = (id, libelle, faite, membre_id = null, piece = null) => ({ id, libelle, faite, membre_id, piece })
   const pieces = P.planChantier({ titre: 'Rénovation', membres: [{ id: 'M1', nom: 'Compagnon Un' }], taches: [
-    { id: '1', libelle: 'Pose baignoire', faite: true, membre_id: 'M1' }, { id: '2', libelle: 'Pose WC', faite: false, membre_id: null },
-    { id: '3', libelle: 'Évier cuisine', faite: false, membre_id: 'M1' }, { id: '4', libelle: 'Chambre : peinture', faite: true, membre_id: null }, { id: '5', libelle: 'Main d’œuvre', faite: false, membre_id: null },
+    tt('1', 'Pose baignoire', true, 'M1'), tt('2', 'Pose WC', false), tt('3', 'Évier cuisine', false, 'M1'), tt('4', 'Chambre : peinture', true), tt('5', 'Main d’œuvre', false),
+    tt('6', 'Réfection de la toiture', false), tt('7', 'Clôture du jardin', true), tt('8', 'Bureau', false, null, 'Atelier vélo'),
   ] })
-  const sc = S.sceneChantier({ pieces, prereglage: 'plombier', roles: new Map([['M1', 'compagnon']]) })
-  T('M1 une étiquette par pièce, à l’état et au pourcentage du schéma (mêmes chiffres que la version 1)', egal(sc.etiquettes.map((e) => [e.nom, e.pct, e.etat]), pieces.map((p) => [p.nom, p.pct, p.etat])))
-  T('M2 budget : au plus cinq appels de dessin (une couche par forme), quelle que soit la maison', S.appelsDeDessin(sc) <= 5 && S.appelsDeDessin(S.sceneChantier({ pieces: [...pieces, ...pieces, ...pieces].map((p, i) => ({ ...p, nom: p.nom + i })), prereglage: 'chauffagiste' })) <= 5)
-  const sol = (o) => sc.instances.box.find((b) => b.o === o && b.s[1] === 0.12)
-  T('M3 le sol de chaque pièce prend la couleur de son état', pieces.every((p, i) => sol(i)?.c === S.COULEUR_ETAT[p.etat]))
-  T('M4 l’équipe est dans sa pièce : un personnage (corps + tête) par membre qui y a des tâches', sc.instances.cyl.filter((c) => c.o === pieces.findIndex((p) => p.nom === 'Salle de bain') && c.s[1] === 0.72).length === 1 && sc.instances.sph.some((x) => x.o === pieces.findIndex((p) => p.nom === 'Cuisine')))
-  const vol = (m) => Object.values(S.sceneChantier({ pieces, prereglage: m }).instances).reduce((n, l) => n + l.length, 0)
-  T('M5 le décor change avec le métier (chauffagiste : une chaudière ; couvreur : la toiture en coupe)', vol('chauffagiste') > vol('general') && S.sceneChantier({ pieces, prereglage: 'couvreur' }).instances.toit.length > S.sceneChantier({ pieces, prereglage: 'general' }).instances.toit.length)
-  T('M6 la grille : 1 pièce = 1 colonne, 4 = 2 × 2, 7 = 3 × 3', egal(S.disposition(1), { colonnes: 1, rangees: 1 }) && egal(S.disposition(4), { colonnes: 2, rangees: 2 }) && egal(S.disposition(7), { colonnes: 3, rangees: 3 }))
+  const bat = PB.planBatiment('maison', pieces)
+  const z = (n) => bat.zones.find((x) => x.nom === n)
+  T('M1 les pièces des tâches prennent LEUR place dans le plan du bâtiment (salle de bain, WC, cuisine, chambre) ; une pièce inconnue devient une annexe ; toiture, extérieur et « Général » à part ; les pièces sans tâche restent, neutres',
+    z('Salle de bain')?.piece?.nom === 'Salle de bain' && z('WC')?.piece && z('Cuisine')?.piece?.pct === 0 && z('Chambre')?.piece?.etat === 'fini' && z('Séjour')?.piece === null && z('Chambre 2')?.piece === null
+      && bat.annexes.includes('Atelier vélo') && z('Atelier vélo')?.sorte === 'annexe' && bat.toiture?.nom === 'Toiture' && bat.general?.nom === 'Général' && bat.zones.some((x) => x.cle === 'abords' && x.piece?.nom === 'Extérieur'),
+    JSON.stringify(bat.zones.map((x) => [x.nom, x.piece?.nom ?? null])))
+  const chevauche = []
+  for (const t of C.TYPES_BATIMENT) {
+    const b = PB.planBatiment(t, pieces)
+    for (let i = 0; i < b.zones.length; i++) for (let j = i + 1; j < b.zones.length; j++) if (PB.zonesSeCoupent(b.zones[i], b.zones[j])) chevauche.push(`${t}:${b.zones[i].nom}/${b.zones[j].nom}`)
+    for (const x of b.zones) if (x.x < -1e-6 || x.z < -1e-6 || x.x + x.w > b.largeur + 1e-6 || x.z + x.d > b.profondeur + 1e-6) chevauche.push(`${t}:${x.nom} hors plan`)
+    const et = PB.etiquettesSchema(b, 46)
+    for (const e of et) { const zz = b.zones.find((x) => x.cle === e.cle); if (e.x < zz.x * 46 - 1e-6 || e.y < zz.z * 46 - 1e-6 || e.x + e.l > (zz.x + zz.w) * 46 + 1e-6 || e.y + e.h > (zz.z + zz.d) * 46 + 1e-6) chevauche.push(`${t}:${e.cle} déborde`) }
+    for (let i = 0; i < et.length; i++) for (let j = i + 1; j < et.length; j++) { const a = et[i], c = et[j]; if (a.x < c.x + c.l && c.x < a.x + a.l && a.y < c.y + c.h && c.y < a.y + a.h) chevauche.push(`${t}:${a.cle}×${c.cle}`) }
+  }
+  T('M2 SCHÉMA sans recouvrement, pour les 13 types : aucune pièce n’en chevauche une autre ni ne sort du plan ; chaque nom (ou son abrégé, ou le seul %) tient DANS sa pièce', chevauche.length === 0, chevauche.slice(0, 6).join(' | '))
+  T('M3 chaque type a SON plan d’étage (pièces et disposition différentes : maison, appartement au 2e, immeuble, hôtel, restaurant à terrasse, école et sa cour…)',
+    new Set(C.TYPES_BATIMENT.map((t) => JSON.stringify(PB.planBatiment(t, []).zones.map((x) => [x.nom, x.x, x.z, x.w, x.d])))).size === 13 && PB.GABARITS.appartement.sous === 2 && PB.GABARITS.restaurant.emplacements.some((e) => e.meuble === 'terrasse') && PB.GABARITS.ecole.emplacements.filter((e) => e.meuble === 'classe').length === 3)
+  const sc = S.sceneBatiment({ plan: bat, metier: 'plombier', roles: new Map([['M1', 'compagnon']]) })
+  const sol = (o) => sc.instances.box.find((b) => b.o === o && Math.abs(b.s[1] - 0.12 * S.ECHELLE) < 1e-9)
+  const iDe = (n) => sc.cibles.findIndex((c) => c.nom === n)
+  T('M4 MAQUETTE : une cible par pièce (plus toiture et « Général »), à l’état et au % du schéma ; le sol de chaque pièce prend la couleur de son état (neutre si pas de travaux)',
+    bat.zones.every((x, i) => sc.cibles[i].nom === x.nom && sc.cibles[i].pct === (x.piece ? x.piece.pct : null) && sol(i)?.c === (x.sorte === 'exterieur' && !x.piece ? '#B9CDA2' : S.COULEUR_ETAT[x.piece ? x.piece.etat : 'neutre'])) && sc.cibles.some((c) => c.sorte === 'toiture') && sc.cibles.some((c) => c.sorte === 'general'))
+  const nb = (n) => S.volumesDe(sc, iDe(n)).length
+  T('M5 chaque pièce est MEUBLÉE (au moins 4 volumes en plus de son sol et de ses murs) : lit, canapé, cuisine, baignoire…', ['Chambre', 'Séjour', 'Cuisine', 'Salle de bain', 'Chambre 2'].every((n) => nb(n) >= 8), ['Chambre', 'Séjour', 'Cuisine', 'Salle de bain'].map((n) => `${n}:${nb(n)}`).join(' '))
+  const avec = (m, n) => S.volumesDe(S.sceneBatiment({ plan: bat, metier: m }), iDe(n))
+  const cuivre = (m) => avec(m, 'Cuisine').filter((x) => x.c === '#C58A5C').length
+  T('M6 les TRAVAUX DU MÉTIER se voient dans les pièces du chantier (plombier : cuivre ; électricien : câbles ; carreleur : carreaux ; maçon : parpaings) et pas dans une pièce sans travaux',
+    cuivre('plombier') > 0 && cuivre('electricien') === 0 && avec('electricien', 'Cuisine').some((x) => x.c === '#3A3632' && x.s[1] < 0.05 * S.ECHELLE + 1e-9) && avec('carreleur', 'Chambre').length > avec('plombier', 'Chambre').length
+      && avec('macon', 'Cuisine').some((x) => x.c === '#BDB5A8') && S.volumesDe(S.sceneBatiment({ plan: bat, metier: 'plombier' }), iDe('Séjour')).every((x) => x.c !== '#C58A5C'))
+  T('M7 les compagnons sont dans la pièce où ils ont des tâches (corps + tête + casque), pas ailleurs', S.volumesDe(sc, iDe('Salle de bain')).filter((x) => x.c === '#E9CBB0').length === 1 && S.volumesDe(sc, iDe('Cuisine')).filter((x) => x.c === '#E9CBB0').length === 1 && S.volumesDe(sc, iDe('WC')).filter((x) => x.c === '#E9CBB0').length === 0)
+  T('M8 budget : au plus cinq appels de dessin (une couche par forme) pour chaque type, même avec annexes', C.TYPES_BATIMENT.every((t) => S.appelsDeDessin(S.sceneBatiment({ plan: PB.planBatiment(t, pieces), metier: 'chauffagiste' })) <= 5))
+  const p1 = P.planChantier({ titre: 'Salle de bain, étage', membres: [], taches: [tt('1', 'Dépose de l’ancienne baignoire', true), tt('2', 'Alimentations en PER', false)] })
+  T('M9 « Répartir les tâches par pièce » s’offre quand aucune pièce n’est choisie et que tout tombe dans une seule (ou « Général ») ; pas quand l’artisan a déjà rangé ses tâches',
+    PB.repartitionUtile(p1) && PB.repartitionUtile(P.planChantier({ titre: 'Dépannage', membres: [], taches: [tt('1', 'Main d’œuvre', false)] })) && !PB.repartitionUtile(P.planChantier({ titre: 'X', membres: [], taches: [tt('1', 'a', false, null, 'Cuisine')] })) && !PB.repartitionUtile(pieces))
   const ec = sansCommentaires(lire('app/crm/PlanChantier.tsx')), sc3 = sansCommentaires(lire('app/crm/atelier/SceneChantier.tsx'))
-  T('M7 la maquette est chargée À LA DEMANDE (next/dynamic, sans rendu serveur), jamais sur téléphone, avec « moins d’animations » ou sans WebGL ; ombres figées', ec.includes("dynamic(() => import('./atelier/SceneChantier'), { ssr: false") && ec.includes('min-width: 900px') && ec.includes('prefers-reduced-motion: reduce') && ec.includes("getContext('webgl2')") && sc3.includes('shadowMap.autoUpdate = false'))
+  T('M10 l’écran : la maquette chargée À LA DEMANDE (sans rendu serveur), jamais sur téléphone, avec « moins d’animations » ou sans WebGL (le schéma reste) ; ombres figées ; caméra orbitale BORNÉE et cadrage auto ; clic sur une pièce → ses tâches, survol → nom + % ; le type du bâtiment est celui de la carte',
+    ec.includes("dynamic(() => import('./atelier/SceneChantier'), { ssr: false") && ec.includes('min-width: 900px') && ec.includes('prefers-reduced-motion: reduce') && ec.includes("getContext('webgl2')") && sc3.includes('shadowMap.autoUpdate = false')
+      && /minPolarAngle=\{0\.3\} maxPolarAngle=\{1\.12\} minZoom=\{8\} maxZoom=\{140\}/.test(sc3) && /function Cadrage/.test(sc3) && /onPick=\{choisir\}/.test(sc3) && /data-crm-survol/.test(sc3) && /planBatiment\(type, plan\)/.test(ec) && /typeBatiment=\{f\.carte \? f\.carte\.type \?\? f\.carte\.typeDeduit : null\}/.test(lire('app/crm/FicheChantier.tsx')))
 }
 
 // ═══════════════════════ V. Lien de suivi pour le client (version 3) ═══════════════════════

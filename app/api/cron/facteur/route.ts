@@ -7,7 +7,8 @@
 //
 // Rien ne sort : la pause générale, la pause du Facteur. Aucun secret, texte de message, adresse ni jeton dans la console,
 // le passage ou la réponse (des compteurs seulement).
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { pauseGenerale } from '@/lib/agents/pause'
 import { ops_battement } from '@/lib/agents/bus'
 import { enregistrerPassage } from '@/lib/alertes'
@@ -54,7 +55,7 @@ async function lirePieceJointe(chemin: string): Promise<Uint8Array | null> {
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(auth, secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   let demandee: string | null = null
   try { demandee = new URL(req.url).searchParams.get('passe') } catch { demandee = null }

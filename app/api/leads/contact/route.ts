@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimiteStricte } from '@/lib/limites'
 import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
 export const runtime = 'nodejs'
@@ -40,6 +41,13 @@ export async function POST(req: Request) {
     if (typeof body?.website === 'string' && body.website.trim()) {
       await recordAbuse(ip, 'honeypot /api/leads/contact')
       return NextResponse.json({ ok: true })
+    }
+
+    // Audit du 20/10 : cette route déclenche un accusé de réception vers une adresse saisie par un inconnu. Sans plafond,
+    // elle servait à noyer n'importe quelle boîte (et à brûler la réputation d'envoi). 5 par heure et par IP, FAIL-CLOSED :
+    // si le comptage tombe, on refuse plutôt que d'envoyer sans limite. Posé AVANT toute lecture ou écriture en base.
+    if (!(await consommerLimiteStricte(`leads-contact:ip:${ip}`, 5, 3600))) {
+      return NextResponse.json({ error: 'Trop de demandes. Réessayez dans un moment.' }, { status: 429 })
     }
 
     const { data: lead } = await supabaseAdmin

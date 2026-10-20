@@ -1,6 +1,6 @@
 # Registre des traitements — l'entreprise Presti
 
-> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 28 septembre 2026 (ajout du § 11, la prospection des professionnels).
+> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 28 septembre 2026 (ajout du § 11, la prospection des professionnels). Mis à jour le 20 octobre 2026 (audit RGPD : §§ 15 à 24, le CRM, les essais gratuits, le traitement central de l’IA et les transferts hors UE).
 
 ## 1. Les comptes des artisans (clients de Presti)
 
@@ -185,3 +185,153 @@ depuis sa base. Rien n'est envoyé tant que le drapeau est baissé.
 | **Durée** | Celle du chantier dans le CRM ; supprimée avec lui |
 | **Destinataire** | La Base Adresse Nationale, service public de l'État : `api-adresse.data.gouv.fr` (appel par le serveur de Presti, délai 4 s, au plus 10 recherches par chargement de la vue) |
 | **Où** | `lib/crm/geocodage.ts`, `lib/crm/carte.ts`, `app/api/crm/vue/route.ts`, `supabase/migrations/0172_crm_carte_chantiers.sql` |
+
+
+## 14. Le contrôle des mots de passe fuités *(Have I Been Pwned, 20 octobre 2026)*
+
+| | |
+|---|---|
+| **Finalité** | Refuser, à l'inscription, à la réinitialisation et au changement de mot de passe, un mot de passe déjà présent dans des fuites de données (équivalent de la protection Supabase réservée au plan Pro) |
+| **Données envoyées** | **5 caractères hexadécimaux** de l'empreinte SHA-1 du mot de passe (principe de k-anonymat). **Aucun mot de passe**, ni empreinte complète, ni email ; la comparaison du suffixe se fait chez nous, et rien n'est journalisé |
+| **Base légale** | Intérêt légitime (sécurité des comptes) |
+| **Destinataire** | Have I Been Pwned, `api.pwnedpasswords.com` — appel par le serveur de Presti (relais `app/api/auth/mdp-fuite`), le navigateur ne contacte jamais HIBP (CSP inchangée) ; délai 3 s, en cas de panne on laisse passer |
+| **Où** | `lib/motDePasse.ts`, `app/api/auth/mdp-fuite/route.ts`, `scripts/mdp-compromis-qa.mjs` |
+
+## 15. Le CRM de l'artisan — chantiers, équipe, matériel, notes *(drapeau `crm`, mis à jour le 20 octobre 2026)*
+
+Presti agit ici **pour le compte de l'artisan** (sous-traitant, art. 28 ; contrat : annexe des CGU). Le responsable de traitement est l'artisan.
+
+| | |
+|---|---|
+| **Finalité** | Organiser les travaux de l'artisan : chantiers, tâches, planning, équipe, véhicules, matériel réservé et sorti de l'inventaire, notes sur un client ou une demande, rappels, journal des actions |
+| **Données** | Titre, adresse, code postal, ville, dates, statut et notes d'un chantier ; nom du client porté par le chantier ; tâches, affectations, réservations de matériel ; notes du CRM (une empreinte HMAC identifie le client, jamais son e-mail en clair) ; membres de l'équipe et véhicules ; rappels ; journal (statuts, tâches cochées, sorties de stock) |
+| **Base légale** | Exécution du contrat de l'artisan avec Presti |
+| **Personnes** | Les clients et prospects de l'artisan, les membres de son équipe |
+| **Durée** | Chantier, tâches, réservations, équipe affectée et notes de chantier : **36 mois** après la fin du chantier (`DUREES_MOIS.crm`) ; journal et rappels faits : **24 mois** (`crm_journal`) ; membre inactif rattaché à rien : **12 mois** (`equipe_inactif`) ; notes client : orphelines ou 36 mois sans nouvelle. Purge quotidienne `purgerCrm`, hors drapeau |
+| **Destinataires** | Supabase (UE). Aucun autre pour ce traitement hors § 13 (adresse du chantier) et § 20 (assistant) |
+| **Effacement à la demande d'un client de l'artisan** | `app/api/donnees/route.ts` + `lib/crm/effacement.ts` (`choisirEffacementCrm`) : notes du client et de la demande, nom, **photos et pièces, adresse, position et lien de suivi** des chantiers **sans devis envoyé ni facture** ; ce qui est légalement conservé (devis envoyés, factures) reste |
+| **Où** | `supabase/migrations/0141_crm_atelier.sql`, `lib/purgesRgpd.ts`, `lib/crm/effacement.ts`, `lib/purgeComptes.ts` (à l'anonymisation du compte) |
+
+## 16. Photos et pièces du chantier *(0163, drapeau `crmPieces`, 20 octobre 2026)*
+
+| | |
+|---|---|
+| **Finalité** | Garder l'état des lieux, l'avancement et les pièces d'un chantier (photos, plans, factures de fournisseurs) |
+| **Données** | Fichiers images (webp, jpeg, png) ou PDF de 4 Mo au plus, chemin `<compte>/<chantier>/<identifiant>`, type, légende (200 caractères), date, taille. **Ce sont des intérieurs de particuliers**, parfois des visages ou des adresses |
+| **Base légale** | Exécution du contrat de l'artisan ; intérêt légitime de l'artisan à garder la preuve de l'état des travaux — **à valider par le fondateur** |
+| **Personnes** | Les clients de l'artisan, toute personne visible sur une photo |
+| **Durée** | Celle du chantier : **36 mois** après sa fin. Les **fichiers du bucket privé sont retirés avant les lignes** (la base ne supprime jamais un fichier) : `purgerCrm`, `purgeComptes`, effacement à la demande |
+| **Garanties** | Bucket **privé** `chantier-pieces`, aucune politique de lecture publique (seule la clé de service lit) ; l'artisan reçoit des adresses signées de courte durée pour **ses** pièces ; quota par compte |
+| **Destinataires** | Supabase (UE). Les photos ne sont pas envoyées au modèle d'IA (aucune image dans les appels de `lib/ai.ts`, recherche du 20/10) |
+| **Où** | `supabase/migrations/0163_chantier_pieces.sql`, `app/api/crm/pieces`, `lib/purgesRgpd.ts`, `lib/purgeComptes.ts` |
+
+## 17. Le lien de suivi donné au client d'un chantier *(0167, drapeau `crmSuivi`, 20 octobre 2026)*
+
+| | |
+|---|---|
+| **Finalité** | Laisser le client de l'artisan suivre l'avancement de son chantier sur une page privée, en lecture seule |
+| **Données** | Côté base : l'**empreinte SHA-256** du lien (jamais le lien), le chantier, la date de création et du dernier accès. Côté page publique : nom de l'entreprise, titre du chantier, état, dates, avancement par pièce — **jamais** un prix, une adresse, un nom de client ou de compagnon, un libellé de tâche, une photo |
+| **Base légale** | Exécution du contrat de l'artisan |
+| **Personnes** | Les clients de l'artisan |
+| **Durée** | Le lien **cesse de répondre 90 jours après la fin réelle du chantier** (`JOURS_SUIVI_APRES_FIN`, calcul à la lecture dans `app/suivi/[jeton]/route.ts` : 404 sans un mot) ou plus tôt si l'artisan le révoque ; la ligne disparaît avec le chantier (36 mois après sa fin) ou à l'effacement à la demande |
+| **Garanties** | Jeton de 32 octets aléatoires ; 60 lectures par 10 minutes et par adresse (pseudonymisée) ; offre et suspension revérifiées à chaque lecture ; `noindex`, pas de cookie, pas de script |
+| **Où** | `supabase/migrations/0167_chantier_suivi.sql`, `lib/crm/suivi.ts`, `app/suivi/[jeton]/route.ts` |
+
+## 18. Le lien d'agenda de l'artisan *(0164, 20 octobre 2026)*
+
+| | |
+|---|---|
+| **Finalité** | Permettre à l'artisan d'abonner son agenda (Google Agenda, iPhone, Outlook) à ses chantiers et rendez-vous |
+| **Données** | Base : l'empreinte SHA-256 du lien et la date du dernier accès. Flux ICS : titre et adresse des chantiers, type et note des rendez-vous ; **jamais** l'e-mail ni le téléphone d'un client, ni un montant |
+| **Base légale** | Exécution du contrat de l'artisan |
+| **Personnes** | Les clients de l'artisan (par l'adresse de leur chantier) |
+| **Durée** | Tant que l'artisan garde son lien (révocation à tout moment) ; vidé avec le compte. Ce que l'agenda de l'artisan en a copié relève du fournisseur d'agenda qu'**il** a choisi |
+| **Destinataire** | Le fournisseur d'agenda de l'artisan, à sa demande (pas un sous-traitant de Presti) |
+| **Où** | `supabase/migrations/0164_crm_agenda.sql`, `lib/crm/ics.ts`, `app/api/agenda/[jeton]/route.ts` |
+
+## 19. L'après-chantier : avis et entretien *(0165, 0171, drapeau `crmApresChantier`, 20 octobre 2026)*
+
+| | |
+|---|---|
+| **Finalité** | Proposer à l'artisan, après un chantier terminé, de demander un avis au client ou de rappeler l'entretien d'un équipement (chaudière, pompe à chaleur, conduit) |
+| **Données** | Réglages et textes de l'artisan (désactivés par défaut) ; rappels posés (origine « système ») ; trace d'un envoi (date, jamais le texte) ; **refus du client** : empreinte sha256 (32 hex) de son adresse, jamais l'adresse |
+| **Base légale** | Intérêt légitime de l'artisan (art. 6.1.f), le client pouvant s'opposer à tout moment (art. 21) — **analyse à faire valider par le fondateur** |
+| **Personnes** | Les clients de l'artisan |
+| **Garanties** | **Aucun message ne part tout seul** : l'artisan relit et confirme chaque envoi ; pas de lien dans le texte ; 10 messages par compte et par jour ; le refus est lu avant chaque envoi (409) |
+| **Durée** | Rappels faits : 24 mois ; entretien suivi 36 mois au plus après la fin du chantier ; **le refus est gardé tant que le compte de l'artisan existe** (l'opposition doit tenir, art. 21.3), vidé à son anonymisation |
+| **Où** | `lib/apresChantier.ts`, `lib/apresChantierTour.ts`, `app/api/crm/apres-chantier/`, `supabase/migrations/0165_crm_apres_chantier.sql`, `0171_crm_apres_opposition.sql` |
+
+## 20. L'assistant de gestion de la console *(0150, 0157, drapeau `assistant`, 20 octobre 2026)*
+
+Presti agit **pour le compte de l'artisan** (sous-traitant) ; Anthropic est son sous-traitant ultérieur (§ 24).
+
+| | |
+|---|---|
+| **Finalité** | Aider l'artisan à lire sa gestion (devis, factures, conversations, chantiers, chiffres, stock, tarifs) et à préparer des documents ou des messages, qu'il confirme avant tout envoi |
+| **Données** | Les questions de l'artisan ; ce que les outils de lecture rendent au modèle (noms de clients, montants, lignes de devis, textes de messages) ; journal des appels d'outils (entrées résumées, résultat) ; cartes et actions préparées (texte exact d'un e-mail, lignes d'un devis) |
+| **Base légale** | Exécution du contrat de l'artisan ; instructions de l'artisan |
+| **Personnes** | L'artisan ; les clients et prospects dont les données sont lues |
+| **Durée** | Tant que le compte existe : **aucune purge automatique propre** (conversations, journal, actions) — effacées avec le compte ou à son anonymisation (`TABLES_A_VIDER`). **À trancher par le fondateur** : une durée de journal, si on veut en annoncer une |
+| **Destinataires** | Anthropic (États-Unis, § 24) ; Supabase (UE) |
+| **Où** | `lib/assistant/`, `supabase/migrations/0150_assistant.sql`, `0157_assistant_actions.sql`, `lib/purgeComptes.ts` |
+
+## 21. Le registre des essais gratuits *(0156, 20 octobre 2026)*
+
+Traitement de **Presti pour son propre compte** (responsable de traitement).
+
+| | |
+|---|---|
+| **Finalité** | Ne donner qu'un seul essai gratuit par adresse e-mail : un compte recréé avec la même boîte ne rouvre pas un essai |
+| **Données** | **Empreinte SHA-256** de l'adresse normalisée (minuscules, sans « +étiquette », sans points Gmail) précédée d'un préfixe fixe — un pseudonyme, pas une donnée anonyme ; identifiant du compte, offre d'essai et durée, identifiants Stripe (client, abonnement), début et fin de l'essai |
+| **Base légale** | Intérêt légitime (prévenir l'abus de l'essai gratuit) — **analyse à faire approuver par le fondateur** |
+| **Personnes** | Les artisans qui ont ouvert un essai |
+| **Durée** | **24 mois après la fin de l'essai** (`DUREES_MOIS.essai_gratuit`, ou après son début si la fin manque) ; purge quotidienne `purgerEssaisGratuits` (`lib/purgesRgpd.ts`). Pas de clé étrangère : la ligne **survit** à la suppression du compte, c'est cette purge qui l'efface. Conséquence assumée : au-delà, un nouvel essai redevient possible |
+| **Accès** | `service_role` seulement (RLS sans politique, droits retirés à `anon` et `authenticated`) |
+| **Destinataires** | Supabase ; Stripe pour les identifiants qui le concernent (§ 3) |
+| **Où** | `supabase/migrations/0156_essais_gratuits.sql`, `lib/essaiGratuitServeur.ts`, `lib/purgesRgpd.ts` |
+
+## 22. La relève de messagerie de l'artisan *(table `canaux`, cron de 7 h, 20 octobre 2026)*
+
+Presti agit **pour le compte de l'artisan** (sous-traitant), uniquement si l'artisan a relié sa boîte.
+
+| | |
+|---|---|
+| **Finalité** | Aller chercher les e-mails reçus sur la boîte professionnelle de l'artisan pour les ranger dans sa boîte de réception Presti, à côté des demandes de sa plateforme |
+| **Données** | Identifiants IMAP de la boîte (**chiffrés**, jamais réaffichés), adresse, date de la dernière relève ; les e-mails relevés (expéditeur, objet, texte), rangés comme des messages d'une conversation. Sont ignorés : expéditeurs automatiques, e-mails que l'artisan s'envoie à lui-même, doublons (identifiant de message) |
+| **Base légale** | Exécution du contrat de l'artisan, uniquement s'il a relié la boîte |
+| **Personnes** | Toute personne qui écrit à l'artisan sur cette boîte |
+| **Durée** | Identifiants : jusqu'à ce que l'artisan coupe la relève (ils sont alors effacés) ou ferme son compte. Messages relevés : comme une conversation, **36 mois** à compter du dernier échange, sauf si elle est liée à un devis signé ou à une facture |
+| **Destinataires** | Supabase (UE) ; le fournisseur de la boîte de l'artisan (sa propre messagerie) |
+| **Où** | `lib/releveCanal.ts`, `app/api/canaux/relever`, `supabase/migrations/0036_canaux.sql` |
+
+## 23. Le traitement central : le message d'un prospect envoyé à Anthropic pour rédiger la réponse *(20 octobre 2026)*
+
+C'est le cœur du produit. Presti agit **pour le compte de l'artisan** (sous-traitant) ; Anthropic est son sous-traitant ultérieur.
+
+| | |
+|---|---|
+| **Finalité** | Rédiger, pour l'artisan, la réponse à un prospect qui l'a contacté via sa page : première réponse, suite de la conversation, relance, brouillon de devis |
+| **Données envoyées au modèle** | Le **nom du prospect** tel qu'il l'a donné, le **canal** de contact (e-mail ou téléphone — pas l'adresse ni le numéro), le **texte de son message** et de la conversation ; côté artisan : métier, ton, services déclarés, prix, et en exemples ses dernières réponses et devis acceptés. **Aucune photo** n'est transmise (`lib/ai.ts`, 20/10). Le message du prospect est présenté au modèle comme une donnée, pas comme des instructions |
+| **Mode** | **Par défaut, l'IA propose et l'artisan valide** (`mode_reponse: 'assistee'`, `lib/plateformeConfig.ts`) ; l'envoi autonome n'existe qu'à partir de l'offre Studio |
+| **Garde-fous** | L'IA n'invente ni prix sourcé, ni fournisseur, ni délai précis, ni créneau (prompts de `lib/ai.ts`, `lib/ai/antiFabrication.ts`) ; une réclamation est escaladée à l'humain |
+| **Base légale** | Mesures précontractuelles prises à la demande du prospect (art. 6.1.b) ; l'information du prospect se fait à la collecte (`noticeCollecte`) et sur la page « Informations légales » du site de l'artisan |
+| **Personnes** | Les prospects et clients de l'artisan |
+| **Durée côté Presti** | Celle de la conversation : **36 mois** après le dernier échange, sauf devis signé ou facture |
+| **Durée côté Anthropic** | **À documenter par le fondateur** à partir des conditions de l'API d'Anthropic (conservation, non-entraînement) : les pages publiques affirment que le prestataire n'utilise pas ces données pour entraîner ses modèles ; la pièce qui le prouve est à archiver (§ 24) |
+| **Où** | `lib/ai.ts`, `lib/ai/`, `app/api/leads`, `lib/plateformeConfig.ts` |
+
+## 24. Transferts hors Union européenne et garanties
+
+Le tableau dit ce que les **textes publics annoncent** (`lib/legalArtisan.ts`, `app/cgu`, `app/confidentialite`) et ce qu'il reste à **archiver**. Il n'affirme la signature d'aucun accord : aucune pièce n'en est versionnée dans le dépôt (recherche du 20/10).
+
+| Prestataire | Rôle | Lieu annoncé | Garantie annoncée | Pièce à archiver par le fondateur (« à archiver » ≠ « signé ») | État |
+|---|---|---|---|---|---|
+| **Supabase** | Base de données, stockage des fichiers | Union européenne (Francfort) | Pas de transfert annoncé | Accord de traitement des données (DPA) ; confirmer la région du projet ; préciser tout accès depuis hors UE (support) | À archiver |
+| **Vercel** | Hébergement de l'application, journaux | États-Unis | Clauses contractuelles types (CCT) annoncées ; cadre de protection des données UE-États-Unis (Data Privacy Framework) à vérifier pour ce prestataire | DPA avec CCT / certification DPF à archiver | À archiver |
+| **Anthropic** | Modèle d'IA (réponses, assistant) | États-Unis | CCT annoncées ; non-entraînement annoncé | DPA / conditions commerciales de l'API, durée de conservation des appels | À archiver |
+| **Resend** | Envoi des e-mails (réponses, relances, devis, messages de service) | États-Unis | CCT annoncées | DPA avec CCT / certification DPF à archiver | À archiver |
+| **Stripe** | Paiement des abonnements (Presti, responsable de traitement) | UE et États-Unis | CCT annoncées (§ 3) | DPA de Stripe, accepté en ligne à conserver | À archiver |
+
+Les prestataires de la prospection (§ 11 : Google, Meta, OpenAI, Oracle, GitHub) et du contrôle des mots de passe (§ 14 : Have I Been Pwned) ont leur propre ligne de garanties à compléter de la même façon ; ils ne sont pas repris ici.
+
+**Rappel de la règle de rédaction** : citer les clauses contractuelles types ou le Data Privacy Framework comme garantie *annoncée* ou *à archiver*, jamais comme *signée* tant que la pièce n'est pas dans le dossier du fondateur.

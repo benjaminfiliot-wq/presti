@@ -15,6 +15,13 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 // Fail-open assumé, comme les garde-fous qu'il remplace et comme `consumeCredit` : si la
 // base ne répond pas (ou si la migration 0049 n'est pas encore appliquée), on ne bloque
 // pas un vrai prospect — et on le dit en console.error, fort.
+//
+// Audit du 20/10 : ce fail-open a un prix. Panne ou migration absente = plus AUCUN plafond, donc des appels IA
+// et des e-mails à des tiers sans limite (le coût et la réputation d'envoi, pas la disponibilité, sont alors
+// l'enjeu). Les routes qui dépensent de l'IA ou écrivent à un inconnu utilisent `consommerLimiteStricte`
+// (fail-closed : false en cas d'erreur) ; `consommerLimite` reste pour tout ce dont le refus ferait plus de mal
+// que l'excès (lecture publique, journaux, dédoublonnage d'alertes). `isBanned` (lib/security.ts) reste
+// volontairement fail-open : un faux positif y coûterait l'accès à un vrai client.
 
 export async function consommerLimite(cle: string, max: number, fenetreSec: number): Promise<boolean> {
   try {
@@ -24,6 +31,18 @@ export async function consommerLimite(cle: string, max: number, fenetreSec: numb
   } catch (e) {
     console.error('[limites] consommer_limite indisponible (fail-open):', e instanceof Error ? e.message : e)
     return true
+  }
+}
+
+/** Même contrat que `consommerLimite`, mais FAIL-CLOSED : si la base ne répond pas, la réponse est false (refus). */
+export async function consommerLimiteStricte(cle: string, max: number, fenetreSec: number): Promise<boolean> {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('consommer_limite', { p_cle: cle, p_max: max, p_fenetre_s: fenetreSec })
+    if (error) { console.error('[limites] rpc consommer_limite:', error.message, '— clé', cle, '(fail-closed)'); return false }
+    return data === true
+  } catch (e) {
+    console.error('[limites] consommer_limite indisponible (fail-closed):', e instanceof Error ? e.message : e)
+    return false
   }
 }
 

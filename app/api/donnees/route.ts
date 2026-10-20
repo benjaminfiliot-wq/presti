@@ -7,6 +7,7 @@ import { chargerDossiers } from '@/lib/crm/serveur'
 import { regrouperClients, NOM_EFFACE } from '@/lib/crm/clients'
 import { idClientPour } from '@/lib/crm/empreinte'
 import { choisirEffacementCrm } from '@/lib/crm/effacement'
+import { compterDeChantiers, effacerDossiersChantiers } from '@/lib/crm/effacementServeur'
 
 // Données & suppressions granulaires (v4 §C3). Principe : CHAQUE brique se réinitialise ou
 // se supprime indépendamment, sans jamais toucher au compte Presti.
@@ -38,7 +39,8 @@ const compte = async (table: string, filtre: Record<string, string>) => {
 
 /**
  * Ce que l'effacement d'une conversation emporte aussi dans le CRM (audit RGPD du 12/10, point a) : les notes du client
- * et de la demande, et le nom du client sur ses chantiers sans devis envoyé (lib/crm/effacement.ts). Calculé AVANT
+ * et de la demande, et le nom du client sur ses chantiers sans devis envoyé (lib/crm/effacement.ts) ; depuis le 20/10 aussi les
+ * photos, l'adresse, la position et le lien de suivi de ces chantiers quand ni devis envoyé ni facture ne les couvre. Calculé AVANT
  * d'anonymiser la demande — après, on ne saurait plus à quel client elle appartenait. null : le CRM n'a pas pu être lu ;
  * l'appelant n'efface alors RIEN (plutôt qu'un effacement à moitié fait présenté comme complet).
  */
@@ -46,7 +48,7 @@ async function impactCrm(uid: string, lead: { id: string; nom_prospect: string |
   const d = await chargerDossiers(uid)
   if (!d.ok) { console.error('[donnees] CRM illisible :', d.erreur.message); return null }
   const groupes = regrouperClients({ artisanId: uid, devis: d.devis, factures: d.factures, leads: d.leads, chantiers: d.chantiers, carnet: d.carnet, idDe: idClientPour(uid) })
-  const choix = choisirEffacementCrm({ groupes, leadId: lead.id, nomDemande: lead.nom_prospect, chantiers: d.chantiers, devis: d.devis })
+  const choix = choisirEffacementCrm({ groupes, leadId: lead.id, nomDemande: lead.nom_prospect, chantiers: d.chantiers, devis: d.devis, factures: d.factures })
   const notes = async (col: 'client_cle' | 'lead_id', v: string | null, aussi: string[] = []) => {
     if (!v) return 0
     const { count, error } = await supabaseAdmin.from('crm_notes').select('id', { count: 'exact', head: true }).eq('artisan_id', uid).in(col, [v, ...aussi])
@@ -54,7 +56,11 @@ async function impactCrm(uid: string, lead: { id: string; nom_prospect: string |
     return count ?? 0
   }
   try {
-    return { ...choix, notesClient: await notes('client_cle', choix.cleClient, choix.anciennesCles), notesDemande: await notes('lead_id', lead.id) }
+    return {
+      ...choix,
+      notesClient: await notes('client_cle', choix.cleClient, choix.anciennesCles), notesDemande: await notes('lead_id', lead.id),
+      pieces: await compterDeChantiers('chantier_pieces', uid, choix.chantiersAEffacer), suivis: await compterDeChantiers('chantier_suivi', uid, choix.chantiersAEffacer),
+    }
   } catch (e) { console.error('[donnees] notes CRM :', e instanceof Error ? e.message : e); return null }
 }
 const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`
@@ -120,6 +126,9 @@ export async function GET(req: Request) {
       Array.isArray(lead.photos) && lead.photos.length ? `${lead.photos.length} photo(s) de chantier` : null,
       notesCrm ? `${pluriel(notesCrm, 'note')} du CRM sur ce client` : null,
       crm.chantiersSansNom.length ? `Le nom du client sur ${pluriel(crm.chantiersSansNom.length, 'chantier')} sans devis envoyé (le chantier reste, sans nom)` : null,
+      crm.pieces ? `${pluriel(crm.pieces, 'photo')} ou pièce${crm.pieces > 1 ? 's' : ''} de chantier (fichiers compris)` : null,
+      crm.chantiersAEffacer.length ? `L’adresse et la position sur la carte de ${pluriel(crm.chantiersAEffacer.length, 'chantier')} sans devis envoyé ni facture` : null,
+      crm.suivis ? `${pluriel(crm.suivis, 'lien')} de suivi donné${crm.suivis > 1 ? 's' : ''} au client (ils cessent de répondre)` : null,
     ].filter(Boolean),
     conserve: aValeurLegale.length
       ? [`${aValeurLegale.length} devis déjà envoyé(s) — la loi impose de les conserver (ils sont archivés, pas supprimables)`, 'Les chantiers liés à ces devis, avec leurs tâches']
@@ -184,6 +193,9 @@ export async function POST(req: Request) {
       const { error } = await e
       if (error) { console.error('[donnees] effacement CRM :', error.message); return NextResponse.json({ error: 'L’effacement n’a pas pu se faire jusqu’au bout. Relancez-le : il reprendra où il s’est arrêté.' }, { status: 500 }) }
     }
+    // Photos (fichiers d'abord), lien de suivi, adresse et position des chantiers sans devis envoyé ni facture (audit RGPD du 20/10).
+    const echecDossiers = await effacerDossiersChantiers(uid, crm.chantiersAEffacer)
+    if (echecDossiers) { console.error('[donnees] effacement des dossiers de chantier :', echecDossiers); return NextResponse.json({ error: 'L’effacement n’a pas pu se faire jusqu’au bout. Relancez-le : il reprendra où il s’est arrêté.' }, { status: 500 }) }
 
     // Photos du chantier : suppression réelle des fichiers.
     if (Array.isArray(lead.photos) && lead.photos.length) {
@@ -200,7 +212,7 @@ export async function POST(req: Request) {
     }).eq('id', leadId)
 
     const notesCrm = crm.notesClient + crm.notesDemande
-    const crmFait = [notesCrm ? `${pluriel(notesCrm, 'note')} du CRM supprimée${notesCrm > 1 ? 's' : ''}` : null, crm.chantiersSansNom.length ? `nom effacé sur ${pluriel(crm.chantiersSansNom.length, 'chantier')}` : null].filter(Boolean)
+    const crmFait = [notesCrm ? `${pluriel(notesCrm, 'note')} du CRM supprimée${notesCrm > 1 ? 's' : ''}` : null, crm.chantiersSansNom.length ? `nom effacé sur ${pluriel(crm.chantiersSansNom.length, 'chantier')}` : null, crm.pieces ? `${pluriel(crm.pieces, 'photo')} de chantier supprimée${crm.pieces > 1 ? 's' : ''}` : null, crm.chantiersAEffacer.length ? `adresse effacée sur ${pluriel(crm.chantiersAEffacer.length, 'chantier')}` : null, crm.suivis ? `${pluriel(crm.suivis, 'lien')} de suivi retiré${crm.suivis > 1 ? 's' : ''}` : null].filter(Boolean)
     return NextResponse.json({ ok: true, message: `Conversation anonymisée${crmFait.length ? ` (${crmFait.join(', ')})` : ''}. Les documents déjà émis restent archivés, comme la loi l’exige.` })
   } catch (e) {
     console.error('[donnees] POST:', e)

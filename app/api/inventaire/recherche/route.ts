@@ -5,7 +5,8 @@ import { COLONNES_FOURNISSEUR, type Fournisseur } from '@/lib/inventaire/types'
 import { messageVerrou, peut, COUT_RECHERCHE } from '@/lib/plans'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
-import { consommerLimite, limiteAtteinte } from '@/lib/limites'
+import { consommerLimiteStricte, limiteAtteinte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { actif } from '@/lib/flags'
 import { rechercherChezFournisseurs } from '@/lib/recherche-fournisseurs'
 
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
     const fournisseurs = (data ?? []) as unknown as Fournisseur[]
     if (!fournisseurs.length) return NextResponse.json({ error: 'Cochez au moins un fournisseur — ou ajoutez-en dans « Mes fournisseurs ».' }, { status: 400 })
 
-    if (!(await consommerLimite(`recherche:${a.uid}`, LIMITE_PAR_HEURE, 3600))) {
+    if (!(await consommerLimiteStricte(`recherche:${a.uid}`, LIMITE_PAR_HEURE, 3600))) {
       return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_HEURE} recherches dans l’heure — c’est la limite. Réessayez un peu plus tard.` }, { status: 429 })
     }
 
@@ -97,8 +98,8 @@ export async function POST(req: Request) {
       // Attendus, jamais lancés dans le vide : sur une fonction serverless, une promesse non
       // attendue peut ne jamais s'exécuter — le compteur resterait à zéro et le plafond
       // n'existerait que sur le papier.
-      await consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)
-      await consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)
+      await consommerLimiteStricte(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)
+      await consommerLimiteStricte(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)
       const credit = await consumeCredit(a.uid, tier, a.isFounder, cout)
       if (credit.ok) creditsUtilises = a.isFounder ? 0 : cout
     }

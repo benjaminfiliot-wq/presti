@@ -489,7 +489,7 @@ if (LEVE) {
       && /const carte = actif\('crmAtelierVivant'\) \? ficheCarte\(/.test(rCh) && /if \('type_batiment' in v\.valeur && !actif\('crmAtelierVivant'\)\)/.test(sansCommentaires(lire('app/api/crm/chantiers/route.ts'))))
   T('K15 la vue géocode côté SERVEUR seulement drapeau levé (preparerCarte, au plus 10 recherches, adresse du siège sans nom) ; l’écriture est filtrée sur le compte et sur geocode_le IS NULL ; aucune autre source ne connaît l’adresse de la BAN ; les colonnes de la carte ne sont lues que drapeau levé',
     /if \(actif\('crmAtelierVivant'\)\) \{[\s\S]*preparerCarte\(\{ uid: g\.uid/.test(rVue) && /\.eq\('id', id\)\.eq\('artisan_id', p\.uid\)\.is\('geocode_le', null\)/.test(geoSrc) && !/client_nom/.test(geoSrc)
-      && [...lister('app'), ...lister('lib')].filter((f) => /\.(tsx?)$/.test(f) && sansCommentaires(lire(f)).includes('api-adresse.data.gouv.fr')).every((f) => f === 'lib/crm/carte.ts') && /export const colonnesChantiers = \(\): string => \(actif\('crmAtelierVivant'\) \? `\$\{COLONNES\.chantiers\}, \$\{COLONNES_CARTE\}` : COLONNES\.chantiers\)/.test(srvSrc))
+      && [...lister('app'), ...lister('lib')].filter((f) => /\.(tsx?)$/.test(f) && sansCommentaires(lire(f)).includes('api-adresse.data.gouv.fr')).every((f) => f === 'lib/crm/carte.ts' || f === 'lib/legalArtisan.ts') && /export const colonnesChantiers = \(\): string => \(actif\('crmAtelierVivant'\) \? `\$\{COLONNES\.chantiers\}, \$\{COLONNES_CARTE\}` : COLONNES\.chantiers\)/.test(srvSrc))
   const reg = lire('docs/registre-traitements.md')
   T('K16 le registre des traitements dit le géocodage : finalité, donnée envoyée (adresse, code postal, ville — pas le nom), destinataire (Base Adresse Nationale, api-adresse.data.gouv.fr)', /## 13\. Le géocodage des chantiers/.test(reg) && /\*\*Finalité\*\*/.test(reg.slice(reg.indexOf('## 13.'))) && /api-adresse\.data\.gouv\.fr/.test(reg) && /jamais le nom/.test(reg.slice(reg.indexOf('## 13.'))))
   const ate = sansCommentaires(lire('app/crm/atelier/Atelier.tsx')), carteUi = sansCommentaires(lire('app/crm/atelier/Carte.tsx')), fiche = sansCommentaires(lire('app/crm/FicheChantier.tsx')), liste = sansCommentaires(lire('app/crm/Chantiers.tsx')), pan = sansCommentaires(lire('app/crm/atelier/Panneau.tsx'))
@@ -536,6 +536,27 @@ if (LEVE) {
   T('L6 branché dans la scène : placement à chaque mouvement de caméra (et 4 fois par seconde pour les panneaux), priorité par l’épingle et la sélection, pastille (état + numéro) qui se déplie au survol et au clavier ; aucune couche 3D ajoutée (DOM seul) ; contraste : texte encre sur papier',
     /const places = placerEtiquettes\(entrees, \{ l: size\.width, h: size\.height \}, obstacles\)/.test(s3) && /prioriteChantier\(o, COULEURS, selection === e\.i\)/.test(s3) && /maintenant - dernier\.current < 250/.test(s3) && /className="atl-pastille"/.test(s3)
       && /\[data-mode="pastille"\]:hover/.test(css) && /\[data-mode="pastille"\]:focus-visible/.test(css) && (s3.match(/<Couche /g) ?? []).length === 2 && /\.atl-carte \{[^}]*background: var\(--paper\); color: var\(--ink\)/.test(css))
+}
+
+// ═══════════════════════ N. Lot 7 (21/10) : la nuit lisible et belle ; l'encart des urgences repliable ═══════════════════════
+{
+  const nuit = I.ambiance(23.5)
+  const rgb = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+  const lum = (h) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); return 0.2126 * r + 0.7152 * g + 0.0722 * b }
+  T('N1 nuit LISIBLE : ciel bleu nuit très désaturé (b − r < 25), sol et bâtiments plus clairs en valeur (lumière d’hémisphère ≥ 1,2, rebond du sol plus clair que l’ancien #3B3732), éclairage d’appoint CHAUD, halos au pied des lampadaires',
+    nuit.moment === 'nuit' && rgb(nuit.fond)[2] > rgb(nuit.fond)[0] && rgb(nuit.fond)[2] - rgb(nuit.fond)[0] < 25 && nuit.hemi >= 1.2 && lum(nuit.terre) > lum('#3B3732') + 20 && lum(nuit.ciel) > lum('#7E8796')
+      && !!nuit.chaude && rgb(nuit.chaude.couleur)[0] > rgb(nuit.chaude.couleur)[2] + 60 && nuit.halos === true && !I.ambiance(12).halos && !I.ambiance(12).chaude)
+  const Ex = await imp('lib/crm/exemple.ts')
+  const sc = scene(Ex.vitrineCarte(), 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const lampes = sc.fenetres.filter((f) => Math.abs(f.s[0] - 0.3) < 1e-6 && Math.abs(f.s[1] - 0.1) < 1e-6 && f.p[1] > 0.8)
+  const s3 = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx'))
+  T('N2 des lampadaires le long des routes (allumés le soir) ; leurs halos : UNE couche instanciée en mélange additif, le soir et la nuit seulement, sans clic ni ombre ; lumière chaude d’appoint la nuit',
+    lampes.length >= 12 && /\{amb\?\.halos && scene\.fenetres && <Halos fenetres=\{scene\.fenetres\} fort=\{amb\.moment === 'nuit'\} \/>\}/.test(s3) && /blending=\{THREE\.AdditiveBlending\} depthWrite=\{false\}/.test(s3) && /\{amb\.chaude && <ambientLight color=\{amb\.chaude\.couleur\} intensity=\{amb\.chaude\.intensite\} \/>\}/.test(s3), String(lampes.length))
+  const Ur = await imp('app/crm/atelier/Urgences.tsx').catch(() => null)
+  const urSrc = sansCommentaires(lire('app/crm/atelier/Urgences.tsx'))
+  T('N3 l’encart « Urgences du jour » se REPLIE (bouton, compteur toujours visible) : replié d’office au-delà de deux urgences, le choix de l’artisan retenu en localStorage sous try/catch',
+    /try \{ return window\.localStorage\.getItem\(CLE_URGENCES\) \} catch \{ return null \}/.test(urSrc) && /try \{ window\.localStorage\.setItem\(CLE_URGENCES, v\) \} catch/.test(urSrc) && /aria-expanded=\{ouvert\}/.test(urSrc) && /data-atelier-urgences-bascule/.test(urSrc) && /hidden=\{carte && !ouvert\}/.test(urSrc)
+      && (!Ur || (Ur.urgencesOuvertes(2, null) === true && Ur.urgencesOuvertes(3, null) === false && Ur.urgencesOuvertes(8, 'ouvert') === true && Ur.urgencesOuvertes(1, 'replie') === false)))
 }
 
 // ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════

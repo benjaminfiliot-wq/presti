@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { ronde, enregistrerPassage, MOTIFS, type Motif } from '@/lib/alertes'
 
 // La ronde quotidienne des alertes (prompt v6 §6).
@@ -19,7 +20,7 @@ export const maxDuration = 60
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(auth, secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const url = new URL(req.url)
   const aSec = url.searchParams.get('sec') === '1'

@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { pauseGenerale } from '@/lib/agents/pause'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 import { executerStandardiste, estStop } from '@/lib/agents/acquisition/standardiste'
@@ -20,7 +21,7 @@ function adresseExpediteur(brut: string): string | null {
 
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
-  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(req.headers.get('authorization'), secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   const releve = { messages: 0, stop: 0, etat: 'en_attente_gmail' }
   try {
     // La boîte dédiée, sinon le mode « fil seul » de la boîte de l'entreprise (boiteProspection.ts, décision du 07/10) : la

@@ -1850,15 +1850,19 @@ export type Ambiance = {
   soleil: string; intensite: number; position: V3
   /** Les fenêtres et les lampadaires sont-ils allumés ? */
   lumieres: boolean
+  /** Lot 7 : une lumière d'appoint CHAUDE (l'éclairage de la ville, qui valorise les volumes) et les halos doux au pied des lampadaires. */
+  chaude?: { couleur: string; intensite: number }
+  halos?: boolean
 }
 export function ambiance(heure: number): Ambiance {
   const moment = momentDe(heure)
   if (moment === 'jour') return { moment, fond: P.sol, ciel: '#FFFDF8', terre: '#DCD0BE', hemi: 1.4, soleil: '#FFF3E2', intensite: 1.5, position: [-24, 44, 14], lumieres: false }
   // Crépuscule : une lumière rasante dorée mais retenue (lot 3 : « moins orange saturé »).
-  if (moment === 'crepuscule') return { moment, fond: '#E7DCD2', ciel: '#F7E7DA', terre: '#B7A898', hemi: 1.15, soleil: '#F4C7A1', intensite: 1.05, position: [-40, 18, 10], lumieres: true }
-  // Nuit : ciel bleu nuit TRÈS désaturé (le bleu ne domine jamais : b − r < 25), lune froide et légère, sol encore lisible ;
-  // fenêtres et lampadaires chauds ressortent par contraste (lot 3 : « moins brun boueux »).
-  return { moment, fond: '#262A31', ciel: '#7E8796', terre: '#3B3732', hemi: 0.95, soleil: '#C9D1DB', intensite: 0.55, position: [-20, 40, -18], lumieres: true }
+  if (moment === 'crepuscule') return { moment, fond: '#E7DCD2', ciel: '#F7E7DA', terre: '#B7A898', hemi: 1.15, soleil: '#F4C7A1', intensite: 1.05, position: [-40, 18, 10], lumieres: true, halos: true }
+  // Nuit (lot 7, Benj : « gris terne, peu lisible ») : ciel bleu nuit TRÈS désaturé (b − r < 25), mais le sol et les bâtiments plus
+  // CLAIRS en valeur — ciel d'hémisphère plus lumineux, rebond du sol chaud, lune froide et légère — et une lumière d'appoint chaude
+  // (la ville éclairée) ; fenêtres, lampadaires et halos doux au pied des lampadaires font la belle nuit.
+  return { moment, fond: '#1F2734', ciel: '#9DA5B5', terre: '#6A5B4B', hemi: 1.32, soleil: '#D3DAE5', intensite: 0.5, position: [-20, 40, -18], lumieres: true, chaude: { couleur: '#FFB874', intensite: 0.42 }, halos: true }
 }
 
 // ── Démonstration : un jeu de données fictives ramené au cas voulu (page /atelier-demo, drapeau levé) ─────────

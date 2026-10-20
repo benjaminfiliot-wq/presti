@@ -2,7 +2,7 @@ import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
 import PublicPied from '@/app/PublicPied'
-import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
+import { TRAITEMENTS, SOUS_TRAITANTS, DESTINATAIRES_PUBLICS } from '@/lib/legalArtisan'
 import { ESSAI_JOURS } from '@/lib/plans'
 import { DELAI_LIVRAISON_JOURS_OUVRES, PRIX_PACK_STUDIO_TEXTE, VIDEOS_PACK_STUDIO } from '@/lib/studio/offre'
 
@@ -26,7 +26,7 @@ export default function CGU() {
           dans CGU_VERSION et l'écrit dans les métadonnées du compte. Si les deux divergent, on ne
           sait plus quel texte un abonné a accepté — la preuve du consentement tombe. Toute
           modification de fond ici doit donc être suivie de la même date dans app/signup/page.tsx. */}
-      <div className="legal-updated">Dernière mise à jour : 5 septembre 2026</div>
+      <div className="legal-updated">Dernière mise à jour : 20 octobre 2026</div>
 
       <p>Les présentes conditions (les « Conditions ») régissent l’accès et l’utilisation du service <strong>Presti</strong>, édité par Benjamin Filiot (voir <a href="/mentions-legales">Mentions légales</a>). En créant un compte, vous acceptez ces Conditions.</p>
 
@@ -175,7 +175,7 @@ export default function CGU() {
           <li key={t.finalite}><strong>{t.finalite}</strong> — données : {t.donnees.toLowerCase()} ; durée : {t.duree}.</li>
         ))}
       </ul>
-      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée.</p>
+      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée, et, si vous utilisez le CRM, gestion de vos chantiers (planning, photos et pièces du chantier, lien de suivi donné à votre client, messages d’après-chantier que vous relisez avant l’envoi, agenda, carte des chantiers) et assistant de gestion.</p>
 
       {/* Art. 28.3 exige que le contrat dise OÙ, COMBIEN DE TEMPS, avec QUELLES mesures, et ce que
           deviennent les données à la fin. Les trois premiers points étaient implicites ou éparpillés
@@ -187,7 +187,7 @@ export default function CGU() {
 
       <h3>Durées de conservation</h3>
       <ul>
-        <li>Les durées propres à chaque finalité figurent dans la liste ci-dessus ; elles courent tant que votre compte existe.</li>
+        <li>Les durées propres à chaque finalité figurent dans la liste ci-dessus ; elles courent tant que votre compte existe. Une conversation sans échange depuis trois ans est supprimée, sauf si elle est liée à un devis signé ou à une facture : elle suit alors la durée des pièces comptables.</li>
         <li>Quand vous demandez la suppression du compte, un <strong>délai de grâce de 30 jours</strong> s’ouvre — vous pouvez revenir en arrière et exporter — puis la purge est automatique.</li>
         <li>Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales), débarrassées des coordonnées qui ne sont pas nécessaires à leur valeur probante.</li>
         <li>Les traces techniques de protection contre les abus (empreinte pseudonymisée de l’adresse IP, horodatages) : <strong>12 mois</strong>.</li>
@@ -207,8 +207,11 @@ export default function CGU() {
         <li><strong>Sous-traitants ultérieurs</strong> : vous autorisez le recours aux prestataires suivants, chacun encadré par un contrat imposant les mêmes obligations. Aucun d’eux n’est autorisé à utiliser vos données pour son propre compte, ni à s’en servir pour entraîner ses modèles. Tout changement vous est notifié par email au moins 30 jours avant ; vous pouvez alors vous y opposer en résiliant.
           <ul>{SOUS_TRAITANTS.filter((s) => s.nom !== 'Presti').map((s) => <li key={s.nom}><strong>{s.nom}</strong> — {s.role} — {s.lieu}</li>)}</ul>
         </li>
+        <li><strong>Destinataires publics</strong> : pour placer un chantier sur la carte du CRM, le serveur de Presti interroge un service public, sans contrat de sous-traitance puisqu’il ne s’agit pas d’un prestataire de Presti. Il ne reçoit que ce qui suit, et rien d’autre.
+          <ul>{DESTINATAIRES_PUBLICS.map((s) => <li key={s.nom}><strong>{s.nom}</strong> — {s.role} — {s.lieu}</li>)}</ul>
+        </li>
         <li><strong>Assistance</strong> : Presti vous aide à répondre aux demandes d’exercice de droits de vos clients (accès, rectification, effacement, portabilité) — vous disposez pour cela de la suppression par brique et de l’export depuis Paramètres → Données &amp; confidentialité — et à respecter vos obligations de sécurité, d’analyse d’impact et de consultation de l’autorité, dans la mesure du possible.</li>
-        <li><strong>Violation de données</strong> : Presti vous notifie toute violation affectant ces données sans retard injustifié après en avoir eu connaissance, avec les éléments utiles à votre propre notification à la CNIL.</li>
+        <li><strong>Violation de données</strong> : Presti vous notifie toute violation affectant ces données sans retard injustifié après en avoir eu connaissance, avec les éléments utiles à votre propre notification à la CNIL. Presti tient un registre interne des violations (art. 33.5) et suit une procédure écrite de détection, de qualification et de notification.</li>
         <li><strong>Sort des données à la fin du contrat</strong> : à la résiliation ou à la suppression du compte, le choix vous appartient. <em>Restitution</em> : l’export complet (archive téléchargeable, formats ouverts) est à votre main pendant tout le délai de grâce de 30 jours, depuis Paramètres → Données &amp; confidentialité. <em>Suppression</em> : elle est automatique au terme de ces 30 jours, ou immédiate sur votre demande écrite. Presti efface alors les données de vos clients de ses systèmes actifs et demande la même chose à ses sous-traitants ultérieurs. Ne subsistent que les pièces comptables que la loi impose de conserver dix ans — anonymisées de ce qui n’y est pas nécessaire — et les traces techniques anti-abus, jusqu’à 12 mois. Aucune copie n’est conservée à une autre fin ; la suppression vous est confirmée par écrit si vous le demandez.</li>
         <li><strong>Information et audit</strong> : Presti met à votre disposition les informations nécessaires pour démontrer le respect de ces obligations (cette annexe, la politique de confidentialité, la liste des sous-traitants) et se prête à un audit raisonnable que vous mandateriez, à vos frais, avec un préavis de 30 jours.</li>
       </ul>

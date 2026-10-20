@@ -9,7 +9,8 @@
 //
 // Rien n'est préparé pendant la pause générale, ni quand le Répondeur est en pause. Aucun secret, texte de message, adresse
 // ni jeton dans la console, le passage ou la réponse : des compteurs seulement.
-import { pauseGenerale } from '@/lib/agents/pause'
+import { pauseGenerale } from '@/lib/agents/pause'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { ops_battement } from '@/lib/agents/bus'
 import { enregistrerPassage } from '@/lib/alertes'
 import { actif } from '@/lib/flags'
@@ -44,7 +45,7 @@ async function lireOffreStudio(): Promise<{ offre: OffreLue | null; lienCommande
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) return Response.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(auth, secret)) return Response.json({ error: 'unauthorized' }, { status: 401 })
 
   // Quand on ne sait pas si la pause est levée, rien n'est préparé.
   const pause = await pauseGenerale()

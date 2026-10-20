@@ -3,7 +3,8 @@ import { urlPlateforme } from '@/lib/urls'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { cleEmail, consommerLimite } from '@/lib/limites'
+import { cleEmail, consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { plateformeOuverte } from '@/lib/plateformeAcces'
 import { COOKIE_SESSION, cookieOptions, consommerLien, creerLienMagique, revoquerSession, sessionCourante } from '@/lib/clientAuth'
 
@@ -48,10 +49,10 @@ export async function POST(req: Request) {
 
       // Rate-limit : par IP et par email (anti-bombardement de boîtes aux lettres).
       // Compteurs ATOMIQUES (audit v4 §3, lib/limites) : 5 / 15 min par IP, 3 / 15 min par email.
-      if (ip !== 'unknown' && !(await consommerLimite(`lien:ip:${ip}`, 5, 15 * 60))) {
+      if (ip !== 'unknown' && !(await consommerLimiteStricte(`lien:ip:${ip}`, 5, 15 * 60))) {
         await recordAbuse(ip, 'flood liens magiques'); return NextResponse.json({ ok: true })
       }
-      if (!(await consommerLimite(cleEmail('lien:email', email), 3, 15 * 60))) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
+      if (!(await consommerLimiteStricte(cleEmail('lien:email', email), 3, 15 * 60))) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
 
       const { data: artisan } = await supabaseAdmin
         .from('artisans').select('id, nom, slug, email, plateforme_active, domaine, domaine_verifie, plan, is_founder').eq('slug', slug).maybeSingle()

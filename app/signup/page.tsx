@@ -1,7 +1,7 @@
 'use client'
 import '@/app/globals.css'
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { evaluerMotDePasse, messageAuth, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
@@ -10,7 +10,7 @@ import Marque from '@/app/Marque'
 // Version des CGU acceptées : la date de « Dernière mise à jour » de app/cgu/page.tsx. Elle est
 // gravée avec l'heure d'acceptation dans les métadonnées du compte (art. 1119 c. civ. : des
 // conditions générales n'ont d'effet que si elles ont été portées à la connaissance et acceptées).
-const CGU_VERSION = '2026-09-05'
+const CGU_VERSION = '2026-10-20'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -26,6 +26,7 @@ export default function SignupPage() {
   // sinon un verdict rendu pour l'ancienne saisie s'appliquerait à la nouvelle.
   const [fuite, setFuite] = useState<{ mdp: string; res: Fuite } | null>(null)
   const [cgu, setCgu] = useState(false)
+  const champMdp = useRef<HTMLInputElement>(null)
   const [verifEnCours, setVerifEnCours] = useState(false)
   const verdict = fuite?.mdp === password ? fuite.res : null
   const compromis = verdict?.compromis === true
@@ -47,7 +48,7 @@ export default function SignupPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); return }
+    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); champMdp.current?.focus(); return }
     setLoading(true)
     setMsg(null)
     // Filet : si la frappe a été trop rapide pour que la vérification de fond aboutisse,
@@ -60,6 +61,7 @@ export default function SignupPage() {
     if (res.compromis) {
       setLoading(false)
       setMsg({ type: 'err', text: messageFuite(res) })
+      champMdp.current?.focus()
       return
     }
     if (!cgu) { setLoading(false); setMsg({ type: 'err', text: 'Merci d’accepter les conditions générales pour créer votre compte.' }); return }
@@ -96,7 +98,7 @@ export default function SignupPage() {
           <input id="email-inscription" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <label htmlFor="mdp-inscription">Mot de passe</label>
           <div className="pw-field">
-            <input id="mdp-inscription" type={showPw ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+            <input id="mdp-inscription" ref={champMdp} type={showPw ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
             <button type="button" className="pw-eye" onClick={() => setShowPw((s) => !s)} aria-label={showPw ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
               {showPw
                 ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 7 10 7a17 17 0 0 1-3 3.6M6.6 6.6A17 17 0 0 0 2 11s3.5 7 10 7a10.9 10.9 0 0 0 4-.7" /><path d="m2 2 20 20" /><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2" /></svg>

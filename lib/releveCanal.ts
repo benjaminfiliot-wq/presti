@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { dechiffrer } from '@/lib/secretBox'
 import { lireMail } from '@/lib/mailLite'
+import { MESSAGE_SERVEUR_INJOIGNABLE, verifierServeurImap } from '@/lib/hoteSur'
 import { typeChantier } from '@/lib/qualification'
 import { villeDe } from '@/lib/ville'
 import { actif } from '@/lib/flags'
@@ -46,6 +47,14 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
   }
 
   const port = canal.imap_port || 993
+  // Audit du 20/10 (SSRF, rebinding DNS) : la validation faite à l'enregistrement ne vaut pas pour toujours — un nom
+  // public d'hier peut résoudre vers le réseau interne aujourd'hui. On revalide donc à CHAQUE relève, et on se
+  // connecte à l'adresse validée (le nom reste en SNI), pas à une seconde résolution que l'attaquant pourrait changer.
+  const verdict = await verifierServeurImap(canal.imap_hote, port)
+  if (!verdict.ok) {
+    await supabaseAdmin.from('canaux').update({ derniere_erreur: MESSAGE_SERVEUR_INJOIGNABLE }).eq('id', canal.id)
+    return { importes: 0, erreur: MESSAGE_SERVEUR_INJOIGNABLE }
+  }
   let client: import('imapflow').ImapFlow | null = null
   let importes = 0
   let metier: string | null | undefined
@@ -55,7 +64,7 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
   try {
     const { ImapFlow } = await import('imapflow')
     client = new ImapFlow({
-      host: canal.imap_hote, port, secure: port === 993,
+      host: verdict.adresse, servername: verdict.hote, port, secure: port === 993,
       auth: { user: canal.identifiant || canal.adresse, pass: motDePasse },
       logger: false,
     })

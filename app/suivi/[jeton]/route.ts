@@ -6,7 +6,7 @@ import { actif, enEssai } from '@/lib/flags'
 import { ouvertPour } from '@/lib/essais'
 import { peut } from '@/lib/plans'
 import { suspensionEnCours } from '@/lib/suspension'
-import { pageSuivi, RE_JETON_SUIVI, vueSuivi } from '@/lib/crm/suivi'
+import { pageSuivi, RE_JETON_SUIVI, suiviExpire, vueSuivi } from '@/lib/crm/suivi'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -49,6 +49,9 @@ export async function GET(req: Request, ctx: { params: Promise<{ jeton: string }
   ])
   if (ch.error || ta.error) { console.error('[suivi] lecture :', (ch.error ?? ta.error)?.message); return new Response('Indisponible.', { status: 503, headers: { 'Retry-After': '300' } }) }
   if (!ch.data || ch.data.statut === 'annule') return introuvable()
+  // Expiré 90 jours après la fin réelle du chantier (audit RGPD du 20/10) : calculé ici, à la lecture — aucune colonne. Un 404 sans un
+  // mot, comme un jeton inconnu : la page ne dit pas qu'un lien a existé. Placé AVANT la trace du dernier accès : un lien mort ne s'écrit pas.
+  if (suiviExpire(ch.data.date_fin_reelle as string | null)) return introuvable()
   void supabaseAdmin.from('chantier_suivi').update({ dernier_acces_le: new Date().toISOString() }).eq('chantier_id', lien.chantier_id).eq('artisan_id', uid).then(() => undefined, () => undefined)
   const vue = vueSuivi({ entreprise: art.nom as string | null, chantier: ch.data as Parameters<typeof vueSuivi>[0]['chantier'], taches: (ta.data ?? []) as unknown as Parameters<typeof vueSuivi>[0]['taches'] })
   return new Response(pageSuivi(vue), { status: 200, headers: ENTETES })

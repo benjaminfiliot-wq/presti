@@ -199,7 +199,7 @@ async function recupererDepuisNotreServeur(prefixe: string): Promise<string> {
 /** Appel direct à HIBP, pour le code qui tourne déjà sur le serveur (pas de CSP). */
 export async function recupererDepuisHibp(prefixe: string): Promise<string> {
   const ctrl = new AbortController()
-  const minuteur = setTimeout(() => ctrl.abort(), 4000)
+  const minuteur = setTimeout(() => ctrl.abort(), 3000)
   try {
     const res = await fetch(`https://api.pwnedpasswords.com/range/${prefixe}`, {
       // Add-Padding : HIBP complète la réponse avec de faux suffixes pour que sa TAILLE

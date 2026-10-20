@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
+import { BASE_PRESTI } from '@/lib/urls'
 
 // Portail de facturation Stripe (sprint J-1 §6 — Abonnement & usage).
 //
@@ -50,7 +51,8 @@ export async function POST(req: Request) {
   if (!stripe) return NextResponse.json({ error: 'Paiement non configuré' }, { status: 503 })
   if (!r.a?.stripe_customer_id) return NextResponse.json({ error: 'Aucun abonnement payant sur ce compte.' }, { status: 404 })
   try {
-    const origin = req.headers.get('origin') || 'https://prestiapp.fr'
+    // Audit du 20/10 : retour sur l'origine du site (constante), pas sur l'en-tête Origin que le client écrit lui-même.
+    const origin = BASE_PRESTI
     const session = await stripe.billingPortal.sessions.create({
       customer: r.a.stripe_customer_id,
       return_url: `${origin}/parametres?onglet=abonnement`,

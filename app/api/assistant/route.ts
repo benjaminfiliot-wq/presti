@@ -2,7 +2,8 @@ import crypto from 'node:crypto'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { genParams } from '@/lib/ai'
@@ -84,10 +85,10 @@ export async function POST(req: Request) {
   const { historique, ecartees } = lireHistorique(b?.historique, { cle, uid, conversationId: nouvelle ? null : conversationId })
   if (ecartees) console.warn(`[assistant] ${ecartees} réponse(s) d’historique sans signature valide écartée(s)`)
 
-  if (!(await consommerLimite(`assistant:${uid}`, LIMITE_REQUETES.max, LIMITE_REQUETES.fenetreSec))) {
+  if (!(await consommerLimiteStricte(`assistant:${uid}`, LIMITE_REQUETES.max, LIMITE_REQUETES.fenetreSec))) {
     return NextResponse.json({ error: 'Beaucoup de messages en peu de temps : reprenez dans quelques minutes.', code: 'debit' }, { status: 429 })
   }
-  if (!(await consommerLimite(`assistant-jour:${uid}`, LIMITE_JOUR.max, LIMITE_JOUR.fenetreSec))) {
+  if (!(await consommerLimiteStricte(`assistant-jour:${uid}`, LIMITE_JOUR.max, LIMITE_JOUR.fenetreSec))) {
     return NextResponse.json({ error: 'Limite de messages atteinte pour aujourd’hui : l’assistant revient demain.', code: 'debit' }, { status: 429 })
   }
 

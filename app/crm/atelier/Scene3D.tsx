@@ -220,6 +220,41 @@ function Pulse({ insts, visible }: { insts: Inst[]; visible: boolean }) {
   )
 }
 
+// ── Lot 7 : les HALOS doux au pied des lampadaires (le soir et la nuit) — un disque au dégradé radial par lampe, en mélange additif,
+// UNE couche instanciée (un appel de dessin, le soir seulement), sans ombre ni clic. Les lampes sont les petits carrés lumineux de
+// 0,3 × 0,1 × 0,3 m du calque des fenêtres (lib/crm/infrastructure.ts, lampe ; lib/crm/atelier.ts, lampadaires des routes).
+function textureHalo(): THREE.Texture {
+  const c = document.createElement('canvas'); c.width = c.height = 128
+  const g = c.getContext('2d')!
+  const d = g.createRadialGradient(64, 64, 0, 64, 64, 64)
+  d.addColorStop(0, 'rgba(255,255,255,1)'); d.addColorStop(0.35, 'rgba(255,255,255,0.55)'); d.addColorStop(1, 'rgba(255,255,255,0)')
+  g.fillStyle = d; g.fillRect(0, 0, 128, 128)
+  const t = new THREE.CanvasTexture(c); t.needsUpdate = true
+  return t
+}
+export const estLampe = (f: { s: readonly number[]; p: readonly number[] }): boolean => Math.abs(f.s[0] - 0.3) < 1e-6 && Math.abs(f.s[1] - 0.1) < 1e-6 && Math.abs(f.s[2] - 0.3) < 1e-6 && f.p[1] > 0.8
+function Halos({ fenetres, fort }: { fenetres: Fenetre[]; fort: boolean }) {
+  const ref = useRef<THREE.InstancedMesh>(null)
+  const lampes = useMemo(() => fenetres.filter(estLampe), [fenetres])
+  const texture = useMemo(() => textureHalo(), [])
+  const geo = useMemo(() => new THREE.PlaneGeometry(1, 1), [])
+  useLayoutEffect(() => {
+    const mesh = ref.current
+    if (!mesh) return
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0))
+    lampes.forEach((l, i) => { const r = 2.2 + l.p[1] * 1.1; mesh.setMatrixAt(i, m.compose(new THREE.Vector3(l.p[0], 0.045, l.p[2]), q, new THREE.Vector3(r * 2, r * 2, 1))) })
+    mesh.instanceMatrix.needsUpdate = true
+    mesh.computeBoundingSphere()
+  }, [lampes])
+  useEffect(() => () => { texture.dispose(); geo.dispose() }, [texture, geo])
+  if (!lampes.length) return null
+  return (
+    <instancedMesh ref={ref} args={[geo, undefined, lampes.length]} raycast={() => null} frustumCulled={false} renderOrder={2}>
+      <meshBasicMaterial map={texture} color="#FFB45E" transparent opacity={fort ? 0.5 : 0.28} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+    </instancedMesh>
+  )
+}
+
 // ── La caméra : vues enregistrées, rotation par quarts, glissements doux ──────────────────────────────────────
 type But = { pos: THREE.Vector3; cible: THREE.Vector3; zoom: number }
 const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<OrbitControlsImpl | null>; selection: number | null; vueInitiale: NomVue; zoomEnsemble: RefObject<number> }>(function Regie({ scene, controles, selection, vueInitiale, zoomEnsemble }, ref) {
@@ -531,6 +566,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
         <>
           <color attach="background" args={[amb.fond]} />
           <hemisphereLight args={[amb.ciel, amb.terre, amb.hemi]} />
+          {amb.chaude && <ambientLight color={amb.chaude.couleur} intensity={amb.chaude.intensite} />}
           <directionalLight
             castShadow position={amb.position} intensity={amb.intensite} color={amb.soleil}
             shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} shadow-normalBias={0.02} shadow-radius={3}
@@ -563,6 +599,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
           onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol} />
       )}
       <Pulse insts={scene.pulse} visible={!filtreActif || scene.pulse.some((p) => allumes.has(p.o))} />
+      {amb?.halos && scene.fenetres && <Halos fenetres={scene.fenetres} fort={amb.moment === 'nuit'} />}
       <OrbitControls
         ref={controles} makeDefault enableDamping dampingFactor={0.12} target={cibleDe(scene)}
         minPolarAngle={0.05} maxPolarAngle={1.2} minZoom={4} maxZoom={110} screenSpacePanning={false}

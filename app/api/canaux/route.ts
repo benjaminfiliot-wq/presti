@@ -60,8 +60,10 @@ export async function POST(req: Request) {
     const smtp_port = Number(b?.smtp_port) || 465
     if (!imap_hote) return NextResponse.json({ error: 'Serveur IMAP inconnu pour cette adresse — indiquez-le à la main.' }, { status: 400 })
 
+    // Audit du 20/10 (SSRF) : testerImap refuse les ports hors IMAP, les IP littérales et tout nom qui résout vers une
+    // adresse privée, et ne dit plus POURQUOI (message générique) : la route ne sert plus de scanner de ports.
     // On teste AVANT d'enregistrer : jamais de canal qui échoue en silence.
-    const test = await testerImap(imap_hote, imap_port, adresse, motDePasse)
+    const test = await testerImap(imap_hote, imap_port, adresse, motDePasse, { artisan: true })
     if (!test.ok) return NextResponse.json({ error: test.erreur }, { status: 400 })
 
     const ligne = {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { enregistrerPassage } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { releverCanal, type Canal } from '@/lib/releveCanal'
@@ -18,7 +19,7 @@ const CHAMPS = 'id, artisan_id, adresse, imap_hote, imap_port, identifiant, secr
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   // Fail-closed : sans secret configuré, la route reste fermée.
-  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) {
+  if (!bearerEgal(req.headers.get('authorization'), secret)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
   const { data } = await supabaseAdmin.from('canaux').select(CHAMPS).eq('actif', true).eq('type', 'email').limit(50)

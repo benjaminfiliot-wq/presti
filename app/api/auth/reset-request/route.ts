@@ -3,7 +3,8 @@ import crypto from 'crypto'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { EMAIL_ENTREPRISE, sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { cleEmail, consommerLimite } from '@/lib/limites'
+import { cleEmail, consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 
 export const runtime = 'nodejs'
 
@@ -31,11 +32,11 @@ export async function POST(req: Request) {
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase().slice(0, 200) : ''
     if (!email || !email.includes('@')) return generic
 
-    if (ip !== 'unknown' && !(await consommerLimite(`reset:ip:${ip}`, MAX_PAR_IP, 15 * 60))) {
+    if (ip !== 'unknown' && !(await consommerLimiteStricte(`reset:ip:${ip}`, MAX_PAR_IP, 15 * 60))) {
       await recordAbuse(ip, 'flood reset-request')
       return generic
     }
-    if (!(await consommerLimite(cleEmail('reset:email', email), MAX_PAR_EMAIL, 60 * 60))) return generic
+    if (!(await consommerLimiteStricte(cleEmail('reset:email', email), MAX_PAR_EMAIL, 60 * 60))) return generic
 
     // Recherche de l'utilisateur par email (stocké sur artisans). Introuvable → on renvoie
     // quand même le message générique (on ne révèle jamais si l'email existe).

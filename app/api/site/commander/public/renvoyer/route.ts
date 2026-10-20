@@ -9,7 +9,8 @@
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
 import { getIp, isBanned, ipPseudonyme } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { ouvrirCompteAcheteur } from '@/lib/siteAchatPublic'
 
@@ -28,8 +29,8 @@ export async function POST(req: Request) {
   if (!ID.test(commande)) return neutre
   const ip = getIp(req)
   if (await isBanned(ip)) return neutre
-  if (!(await consommerLimite(`site-public:renvoi-ip:${ipPseudonyme(ip) ?? 'inconnue'}`, 20, 3600))) return neutre
-  if (!(await consommerLimite(`site-public:renvoi:${commande}`, 3, 3600))) return neutre
+  if (!(await consommerLimiteStricte(`site-public:renvoi-ip:${ipPseudonyme(ip) ?? 'inconnue'}`, 20, 3600))) return neutre
+  if (!(await consommerLimiteStricte(`site-public:renvoi:${commande}`, 3, 3600))) return neutre
 
   try {
     const { data, error } = await supabaseAdmin.from('sites_commandes').select('id, etat, achat_public, artisan_id').eq('id', commande).maybeSingle()

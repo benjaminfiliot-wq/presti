@@ -53,6 +53,13 @@ const TABLES_A_VIDER = [
   'crm_rappels', 'chantier_pieces', 'crm_agenda',
   // 0165 — les réglages de l'après-chantier (textes de l'artisan).
   'crm_apres_chantier',
+  // 0171 — les refus d'après-chantier (empreintes des adresses de clients qui ont dit non) et 0172 — les réglages du CRM : colonnes
+  // du compte, à vider avec lui quand la ligne artisan est conservée (audit RGPD du 20/10 ; elles cascadent déjà à l'effacement complet).
+  'crm_apres_opposition', 'crm_reglages',
+  // 0158 — les commandes de matériel aux fournisseurs (nom et contact du fournisseur, lignes) et 0159 — le journal des relances d'impayés
+  // (l'ADRESSE du client relancé, en clair) : la facture reste, pas le journal ni les arrêts. Trouvées par scripts/rgpd-qa.mjs (D3), qui recalcule
+  // la liste depuis les migrations. Les arrêts et le journal partent avant les réglages ; aucun ne cite une table vidée plus bas.
+  'relances_impayes_arrets', 'relances_impayes', 'relances_impayes_reglages', 'commandes_fournisseur',
   // 0167 — les liens de suivi donnés aux clients (empreintes seulement) : plus aucun ne doit répondre.
   'chantier_suivi',
   'chantiers', 'vehicules', 'equipe_membres',

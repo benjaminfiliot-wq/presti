@@ -46,9 +46,12 @@ const SUITES = [
   { nom: 'Isolation entre artisans (RLS)', cmd: 'node', args: ['scripts/rls-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Force des mots de passe', cmd: 'node', args: ['--experimental-strip-types', 'scripts/motdepasse-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Mots de passe fuités (HIBP)', cmd: 'node', args: ['--experimental-strip-types', 'scripts/fuite-mdp-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Mots de passe compromis (HIBP, k-anonymat)', cmd: 'node', args: ['--experimental-strip-types', 'scripts/mdp-compromis-qa.mjs'], cout: 'gratuit' },
   // ── Sprint v5 (J-1 démo)
   // Essai gratuit sans carte (13/10) : Checkout par offre, un seul essai par compte, webhook (début, conversion, fin sans carte), textes ; 13 mutations
   { nom: 'Essai gratuit sans carte (Checkout, webhook, textes)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/essais-gratuits-qa.mjs'], cout: 'gratuit' },
+  // Audit RGPD du 20/10 : effacement étendu (photos, adresse, suivi), purge des essais (24 mois), conversations (devis signé ou facture), TABLES_A_VIDER, expiration du suivi, textes légaux et registre. Hors ligne.
+  { nom: 'RGPD — correctifs de l’audit du 20/10 (effacement, purges, suivi, textes légaux, registre)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/rgpd-qa.mjs'], cout: 'gratuit' },
   { nom: 'Accès aux automatisations (Mes chiffres : Signature ; relances d’impayés : dès Studio)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/acces-automatisations-qa.mjs'], cout: 'gratuit' },
   { nom: 'Offres = verrous (matrice)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/offres-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Limites atomiques', cmd: 'node', args: ['scripts/limites-e2e.mjs'], cout: 'gratuit' },
@@ -141,6 +144,8 @@ const SUITES = [
   { nom: 'CRM lot 3 — photos et pièces du chantier, planning, lien d’agenda, migrations 0163 et 0164', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot3-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM lot 4 — après-chantier : demande d’avis, entretien, migration 0165', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot4-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM lot 5 — plan du chantier par pièce, migration 0166', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-lot5-qa.mjs'], cout: 'gratuit' },
+  // Audit de sécurité du 20/10 : SSRF IMAP, limiteurs fail-closed, secrets en temps constant, Origin de Stripe, octets des photos (aucun réseau)
+  { nom: 'Durcissements de sécurité du 20/10 (SSRF IMAP, limiteurs stricts, secrets, photos)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/securite-durcissements-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM atelier vivant — salle d’attente, arrivée en direct, poste des assistants, garde du drapeau (aucun envoi)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-vivant-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM atelier 3D — profil d’infrastructure (base légère, atelier, entrepôt), métier visible, avancement des chantiers, jour et nuit, garde du drapeau', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-atelier3d-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — migration 0141 jouée (RLS, références croisées, journal, sortie de stock)', cmd: 'node', args: ['scripts/crm-sql-qa.mjs'], cout: 'gratuit' },

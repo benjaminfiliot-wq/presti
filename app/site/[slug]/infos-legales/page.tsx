@@ -6,7 +6,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
-import { mentionsObligatoires, TRAITEMENTS, SOUS_TRAITANTS, type ArtisanLegal } from '@/lib/legalArtisan'
+import { mentionsObligatoires, TRAITEMENTS, SOUS_TRAITANTS, DESTINATAIRES_PUBLICS, type ArtisanLegal } from '@/lib/legalArtisan'
 
 // Mentions légales et confidentialité de L'ARTISAN (correctif d'audit du 2026-09-03).
 //
@@ -143,6 +143,12 @@ export default async function InfosLegales({ params }: { params: Promise<{ slug:
           <p>Personne d’autre que moi et les prestataires techniques dont je me sers pour faire fonctionner ce site :</p>
           <ul className="legal-liste">
             {SOUS_TRAITANTS.map((s) => (
+              <li key={s.nom}><b>{s.nom}</b> — {s.role}. <span className="legal-lieu">{s.lieu}</span></li>
+            ))}
+          </ul>
+          <p>Et, quand un chantier est placé sur une carte, un service public (sans contrat de sous-traitance) :</p>
+          <ul className="legal-liste">
+            {DESTINATAIRES_PUBLICS.map((s) => (
               <li key={s.nom}><b>{s.nom}</b> — {s.role}. <span className="legal-lieu">{s.lieu}</span></li>
             ))}
           </ul>

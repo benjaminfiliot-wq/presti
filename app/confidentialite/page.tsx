@@ -6,6 +6,7 @@ import NePasCompter from './NePasCompter'
 import { actif } from '@/lib/flags'
 import { MOIS_AUDIENCE } from '@/lib/audience'
 import { SECTION_PROSPECTION } from '@/lib/confidentialite/prospection'
+import { DUREES_MOIS, DESTINATAIRES_PUBLICS, JOURS_SUIVI_APRES_FIN, libelleDuree } from '@/lib/legalArtisan'
 
 export const metadata = {
   title: 'Politique de confidentialité',
@@ -23,7 +24,7 @@ export default function Confidentialite() {
     <main className="legal-wrap">
       <Back />
       <h1>Politique de confidentialité</h1>
-      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '4 octobre 2026' : '4 octobre 2026'} · Conforme au RGPD</div>
+      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '20 octobre 2026' : '20 octobre 2026'} · Conforme au RGPD</div>
 
       <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
 
@@ -36,6 +37,7 @@ export default function Confidentialite() {
         <li><strong>Activité</strong> : demandes reçues, devis et factures créés, coordonnées de vos clients que vous renseignez.</li>
         <li><strong>Paiement</strong> : gérés par Stripe. <strong>Presti ne stocke jamais vos numéros de carte.</strong></li>
         <li><strong>Techniques</strong> : logs de connexion, données strictement nécessaires au fonctionnement.</li>
+        <li><strong>Chantiers (CRM)</strong>, si vous utilisez cette partie : chantiers (titre, adresse, dates, tâches, équipe, notes), position du chantier sur une carte (calculée à partir de l’adresse), photos et pièces du chantier (rangées dans un espace privé), liens de suivi donnés à vos clients (seule l’empreinte du lien est gardée), refus de recevoir les messages d’après-chantier (une empreinte de l’adresse du client, jamais l’adresse), lien d’agenda (empreinte), échanges avec l’assistant de gestion.</li>
         <li><strong>Messagerie connectée</strong> (option, si vous reliez votre boîte email professionnelle) : vos identifiants de messagerie, chiffrés et jamais réaffichés, et les emails reçus sur cette boîte, relevés chaque jour et rangés dans votre boîte de réception Presti. Leur contenu est traité pour votre compte, jamais pour un autre usage ; vous coupez la relève à tout moment et les identifiants sont alors effacés.</li>
       </ul>
 
@@ -46,6 +48,7 @@ export default function Confidentialite() {
         <li>Répondre à vos demandes et assurer le support — <em>intérêt légitime</em>.</li>
         <li>Améliorer le service — <em>intérêt légitime</em>.</li>
         {actif('audience') ? <li>Mesurer la fréquentation des pages publiques du site, sans cookie et en statistiques anonymes (voir <a href="#audience">§ 8</a>) — <em>intérêt légitime</em>.</li> : null}
+        <li>Organiser vos chantiers et leur suivi (planning, photos, lien de suivi pour votre client, rappels d’après-chantier que vous relisez avant tout envoi, agenda, assistant de gestion) — <em>exécution du contrat</em>.</li>
         <li>Relever votre messagerie connectée pour vous présenter les demandes reçues par email — <em>exécution du contrat</em>, uniquement si vous avez relié la boîte.</li>
       </ul>
 
@@ -60,8 +63,10 @@ export default function Confidentialite() {
       </ul>
       <p>Les transferts hors Union européenne sont encadrés par les <strong>clauses contractuelles types</strong> de la Commission européenne (décision d’exécution (UE) 2021/914). Aucun de ces prestataires n’est autorisé à utiliser ces données pour son propre compte, ni à s’en servir pour entraîner ses modèles. Quand vous utilisez Presti pour vos propres clients, c’est vous le responsable du traitement et Presti votre sous-traitant : le contrat écrit qu’exige l’article 28 du RGPD est l’<a href="/cgu#sous-traitance">annexe des conditions générales</a>.</p>
 
+      <p><strong>Destinataire public.</strong> Pour placer un chantier sur la carte du CRM, notre serveur interroge un service de l’État, sans contrat de sous-traitance puisqu’il ne s’agit pas d’un prestataire de Presti : {DESTINATAIRES_PUBLICS.map((d, i) => <span key={d.nom}>{i > 0 ? ' ; ' : ''}<strong>{d.nom}</strong> — {d.role} ({d.lieu})</span>)}.</p>
+
       <h2>5. Durée de conservation</h2>
-      <p>Vos données sont conservées le temps de votre utilisation du service, puis supprimées ou anonymisées. Vous pouvez demander la suppression de votre compte à tout moment : un <strong>délai de grâce de 30 jours</strong> s’ouvre alors — vous pouvez annuler la demande et exporter l’ensemble de vos données depuis <strong>Paramètres → Données &amp; confidentialité</strong> — puis la purge est automatique. Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales) ; les traces techniques de protection contre les abus, <strong>12 mois</strong>{actif('audience') ? <> ; le détail des visites des pages publiques, <strong>{MOIS_AUDIENCE} mois</strong>, et les empreintes du jour qui servent à les compter, jusqu’au lendemain</> : null}.</p>
+      <p>Vos données sont conservées le temps de votre utilisation du service, puis supprimées ou anonymisées. Vous pouvez demander la suppression de votre compte à tout moment : un <strong>délai de grâce de 30 jours</strong> s’ouvre alors — vous pouvez annuler la demande et exporter l’ensemble de vos données depuis <strong>Paramètres → Données &amp; confidentialité</strong> — puis la purge est automatique. Les pièces comptables (devis acceptés, factures) sont conservées <strong>10 ans</strong> (art. L. 102 B du livre des procédures fiscales) ; une conversation avec un client sans échange depuis <strong>{libelleDuree(DUREES_MOIS.conversation)}</strong> est supprimée, sauf si elle est liée à un devis signé ou à une facture ; les chantiers du CRM, leurs photos et pièces, sont supprimés <strong>{libelleDuree(DUREES_MOIS.crm)}</strong> après la fin du chantier, et le journal du CRM <strong>{libelleDuree(DUREES_MOIS.crm_journal)}</strong> après l’écriture ; le lien de suivi donné à un client cesse de répondre <strong>{JOURS_SUIVI_APRES_FIN} jours</strong> après la fin du chantier ; le registre des essais gratuits (une empreinte de l’adresse email, pour qu’un compte recréé ne rouvre pas un essai) est effacé <strong>{libelleDuree(DUREES_MOIS.essai_gratuit)}</strong> après la fin de l’essai ; les traces techniques de protection contre les abus, <strong>12 mois</strong>{actif('audience') ? <> ; le détail des visites des pages publiques, <strong>{MOIS_AUDIENCE} mois</strong>, et les empreintes du jour qui servent à les compter, jusqu’au lendemain</> : null}.</p>
 
       <h2>6. Vos droits</h2>
       <p>Conformément au RGPD, vous disposez des droits d’<strong>accès</strong>, de <strong>rectification</strong>, d’<strong>effacement</strong>, de <strong>portabilité</strong>, de <strong>limitation</strong> et d’<strong>opposition</strong>. Pour les exercer : <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a> ou <a href="/contact">le formulaire de contact</a>. Vous pouvez aussi exporter vos données et supprimer votre compte vous-même, depuis Paramètres → Données &amp; confidentialité.</p>

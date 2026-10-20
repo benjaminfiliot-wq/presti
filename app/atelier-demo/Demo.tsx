@@ -5,8 +5,10 @@ import '@/app/crm/crm.css'
 import { useEffect, useState } from 'react'
 import Atelier from '@/app/crm/atelier/Atelier'
 import { PREREGLAGES, FILTRES, type DonneesAtelier, type Filtre, type Prereglage } from '@/lib/crm/atelier'
-import { DONNEES_EXEMPLE, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineSerree, vitrineTypes } from '@/lib/crm/exemple'
-import { estTypeBat } from '@/lib/crm/carte'
+import { DONNEES_EXEMPLE, EQUIPE_EXEMPLE, ficheChantierExemple, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineSerree, vitrineTypes } from '@/lib/crm/exemple'
+import PlanChantier from '@/app/crm/PlanChantier'
+import { ModeExemple } from '@/app/crm/mode'
+import { estTypeBat, type TypeBat } from '@/lib/crm/carte'
 import type { NomVue } from '@/app/crm/atelier/Scene3D'
 import { actif } from '@/lib/flags'
 import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type Statut } from '@/lib/crm/infrastructure'
@@ -21,6 +23,8 @@ import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type 
 // Lot 5 (même drapeau) : &vitrine=etats&type=hotel (les quatre états d'un type), &vitrine=types (un chantier fini par type),
 // &vitrine=carte (douze chantiers à leur direction réelle), &sansbase=1 (la base de l'artisan n'est pas située : couronne de repli).
 // Lot 6 : &vitrine=serree (trente chantiers serrés : placement des étiquettes).
+// Lot 7 : ?plan=<n> (le plan du chantier n° n de l'exemple : schéma et maquette 3D, en mode exemple — rien n'est écrit) ; &type= force
+// le type du bâtiment (hotel, restaurant…).
 const JOUR = JOUR_EXEMPLE
 const FICTIF = DONNEES_EXEMPLE
 const VIDE: DonneesAtelier = { jour: JOUR, metier: null, chantiers: [], materiaux: [], vehicules: [], membres: [], demandes: [] }
@@ -45,6 +49,20 @@ export default function Demo() {
   const avecVitrine = vitrine === 'etats' ? vitrineEtats(estTypeBat(p.get('type')) ? (p.get('type') as string) : 'maison') : vitrine === 'types' ? vitrineTypes() : vitrine === 'carte' ? vitrineCarte() : vitrine === 'serree' ? vitrineSerree() : brut
   const sansBase = infra && p.get('sansbase') === '1' ? { ...avecVitrine, carte: undefined, chantiers: avecVitrine.chantiers.map((c) => ({ ...c, lat: null, lng: null })) } : avecVitrine
   const donnees = infra && p.get('stock') === 'vide' ? { ...sansBase, materiaux: [], reservations: [] } : sansBase
+  const nPlan = Number(p.get('plan'))
+  if (infra && Number.isInteger(nPlan) && nPlan > 0) {
+    const f = ficheChantierExemple(`00000000-0000-4000-8000-${String(nPlan).padStart(12, '0')}`)
+    if (!f) return <main style={{ padding: 16 }}><p>Ce chantier n’existe pas dans l’exemple.</p></main>
+    const type = estTypeBat(p.get('type')) ? (p.get('type') as TypeBat) : f.carte ? f.carte.type ?? f.carte.typeDeduit : null
+    return (
+      <main style={{ background: 'var(--paper)', minHeight: '100vh', padding: 16, maxWidth: 1180 }}>
+        <p className="crm-note" style={{ marginBottom: 8 }}>Démonstration interne · données fictives · rien n’est lu ni écrit. Chantier : {f.chantier.titre}</p>
+        <ModeExemple actif>
+          <PlanChantier titre={f.chantier.titre} taches={f.taches} membres={EQUIPE_EXEMPLE.membres} metier={p.get('metierPlan') ?? 'Plombier'} typeBatiment={type} cocher={() => {}} agir={async () => false} />
+        </ModeExemple>
+      </main>
+    )
+  }
   return (
     <main style={{ background: 'var(--paper)', minHeight: '100vh', padding: 16 }}>
       <p className="crm-note" style={{ marginBottom: 8 }}>Démonstration interne · données fictives · rien n’est lu ni écrit.</p>

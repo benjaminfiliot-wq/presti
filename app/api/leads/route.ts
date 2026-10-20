@@ -11,7 +11,9 @@ import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimite, consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
+import { detecterTypeImage } from '@/lib/typeImage'
 import { porteMonnaieConversation } from '@/lib/quotaMedia'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
@@ -83,7 +85,7 @@ export async function POST(req: Request) {
     // par IP sur 10 min, on refuse tout — et on journalise l'abus (peut déclencher un auto-ban).
     // Compteur ATOMIQUE (audit v4 §3) : « select count puis insert » laissait passer 11
     // demandes en rafale parallèle là où 6 sont permises. Ici, exactement 6 passent.
-    if (ip !== 'unknown' && !(await consommerLimite(`leads:ip:${ip}`, MAX_LEADS_PAR_IP, 10 * 60))) {
+    if (ip !== 'unknown' && !(await consommerLimiteStricte(`leads:ip:${ip}`, MAX_LEADS_PAR_IP, 10 * 60))) {
       await recordAbuse(ip, 'flood /api/leads')
       return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
     }
@@ -207,15 +209,19 @@ export async function POST(req: Request) {
         for (let i = 0; i < photosIn.length; i++) {
           const m = photosIn[i].match(/^data:image\/(webp|jpeg|png);base64,(.+)$/)
           if (!m) continue
-          const ext = m[1] === 'jpeg' ? 'jpg' : m[1]
           const buf = Buffer.from(m[2], 'base64')
           if (buf.length > 3 * 1024 * 1024) continue // borne dure (le bucket limite déjà à 3 Mo)
+          // Audit du 20/10 : l'en-tête `data:image/png` est déclaré par l'appelant, rien ne dit que les octets en sont.
+          // On lit la signature réelle (lib/typeImage) et on n'envoie au bucket que JPEG/PNG/WebP, avec le type TROUVÉ —
+          // pas celui annoncé. SVG, HTML ou exécutable déguisés sont écartés (la demande, elle, passe).
+          const vrai = detecterTypeImage(buf)
+          if (!vrai.ok) { console.warn('[leads] photo écartée : octets qui ne sont pas une image autorisée (' + vrai.raison + ')'); continue }
           // Plafond atteint : on écarte la photo, jamais la demande — le message du prospect
           // vaut infiniment plus que sa pièce jointe.
           if (!porte.accepte(buf.length)) { console.warn('[leads] photo écartée : plafond de stockage atteint pour', artisan.id); continue }
-          const path = `${lead.id}/${i}.${ext}`
+          const path = `${lead.id}/${i}.${vrai.ext}`
           const { error: upErr } = await supabaseAdmin.storage.from('lead-media').upload(path, buf, {
-            contentType: `image/${m[1]}`, cacheControl: '31536000', upsert: true,
+            contentType: vrai.type, cacheControl: '31536000', upsert: true,
           })
           if (upErr) { console.warn('[leads] upload photo:', upErr.message); continue }
           // On garde une URL de la même forme qu'avant pour ne pas casser l'existant,

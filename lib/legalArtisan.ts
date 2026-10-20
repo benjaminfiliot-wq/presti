@@ -140,10 +140,14 @@ export function versArtisanLegal(a: Record<string, unknown> | null | undefined):
 // deux d'un coup : le document et la base ne peuvent plus diverger.
 
 /** Clés des durées — sert à relier un traitement affiché à la purge qui l'applique. */
-export type CleDuree = 'conversation' | 'comptable' | 'anti_abus' | 'crm' | 'crm_journal' | 'equipe_inactif'
+export type CleDuree = 'conversation' | 'comptable' | 'anti_abus' | 'crm' | 'crm_journal' | 'equipe_inactif' | 'essai_gratuit'
 
 export const DUREES_MOIS: Record<CleDuree, number> = {
-  /** Conversation (lead + messages) sans nouvel échange. Purgée par `purgerConversationsSansSuite`. */
+  /**
+   * Conversation (lead + messages) sans nouvel échange. Purgée par `purgerConversationsSansSuite`, sauf si elle est liée à un
+   * devis SIGNÉ ou à une facture (pièces comptables : `comptable`). Un fil dont le devis n'est qu'un brouillon, envoyé, refusé ou
+   * expiré n'est pas une pièce comptable : il part avec les autres (audit RGPD du 20/10).
+   */
   conversation: 36,
   /**
    * Pièces comptables : facture émise, et le devis / le client qu'elle cite.
@@ -160,7 +164,19 @@ export const DUREES_MOIS: Record<CleDuree, number> = {
   crm_journal: 24,
   /** Membre de l'équipe marqué inactif et rattaché à aucun chantier, aucune tâche, aucun véhicule : depuis sa dernière modification. */
   equipe_inactif: 12,
+  /**
+   * Registre des essais gratuits (0156) — traitement de Presti pour son propre compte (registre-traitements.md), non affiché
+   * aux clients des artisans. Compté depuis la FIN de l'essai ; purgé par `purgerEssaisGratuits` (lib/purgesRgpd.ts).
+   */
+  essai_gratuit: 24,
 }
+
+/**
+ * Le lien de suivi donné au client d'un chantier (page publique /suivi/<jeton>, 0167) cesse de répondre ce nombre de jours après
+ * la FIN RÉELLE du chantier (calcul à la lecture, app/suivi/[jeton]/route.ts : aucune colonne, aucune migration). Un chantier
+ * sans fin réelle (encore ouvert) n'expire pas ; l'artisan peut toujours retirer le lien plus tôt.
+ */
+export const JOURS_SUIVI_APRES_FIN = 90
 
 /**
  * La durée telle qu'elle se lit sur les pages (« 12 mois », « 3 ans »), tirée du nombre
@@ -176,13 +192,17 @@ export function libelleDuree(mois: number): string {
  * Écrits ici une fois pour toutes : l'artisan n'a pas à rédiger une politique de
  * confidentialité, et surtout il ne doit pas avoir à deviner ce que l'outil collecte.
  */
-export const TRAITEMENTS: { cle: CleDuree; finalite: string; donnees: string; base: string; duree: string }[] = [
+// `cle` relie une ligne à la purge qui l'applique (null : aucune durée automatique propre, la ligne le dit). Chaque ligne qui a
+// une clé COMMENCE par la durée de cette clé — scripts/rgpd-qa.mjs et scripts/purges-rgpd-e2e.mjs le vérifient.
+export const TRAITEMENTS: { cle: CleDuree | null; finalite: string; donnees: string; base: string; duree: string }[] = [
   {
     cle: 'conversation',
     finalite: 'Répondre à votre demande de devis et échanger avec vous',
     donnees: 'Nom, coordonnées (email ou téléphone), description de votre projet, photos que vous envoyez, historique de la conversation',
     base: 'Mesures précontractuelles prises à votre demande (RGPD art. 6.1.b)',
-    duree: `${libelleDuree(DUREES_MOIS.conversation)} à compter de notre dernier échange`,
+    // Audit RGPD du 20/10 : la purge (purgerConversationsSansSuite) ne garde plus au-delà que les fils liés à un devis SIGNÉ ou à
+    // une facture — pas tout fil portant un devis. Le texte dit ce que la machine fait.
+    duree: `${libelleDuree(DUREES_MOIS.conversation)} à compter de notre dernier échange, sauf si la conversation est liée à un devis signé ou à une facture : elle suit alors la durée des pièces comptables`,
   },
   {
     cle: 'comptable',
@@ -201,6 +221,63 @@ export const TRAITEMENTS: { cle: CleDuree; finalite: string; donnees: string; ba
     base: 'Intérêt légitime à préserver le service',
     duree: libelleDuree(DUREES_MOIS.anti_abus),
   },
+  // ── Le CRM de l'artisan (drapeaux crmPieces, crmApresChantier, crmSuivi, crmAtelierVivant levés le 20/10/2026).
+  //    Mises à jour des textes légaux : audit RGPD du 20/10. Chaque ligne dit ce que le code fait (lib/purgesRgpd.ts, purgerCrm ;
+  //    app/suivi/[jeton]/route.ts ; lib/apresChantier.ts), pas ce qu'on voudrait qu'il fasse.
+  {
+    cle: 'crm',
+    finalite: 'Organiser et suivre les travaux quand un chantier est ouvert (planning, tâches, équipe, matériel, notes de suivi)',
+    donnees: 'Nom, adresse du chantier et sa position sur une carte (calculée à partir de l’adresse seule, jamais du nom), dates, tâches, notes',
+    base: 'Exécution du contrat (RGPD art. 6.1.b)',
+    duree: `${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier`,
+  },
+  {
+    cle: 'crm',
+    finalite: 'Garder la trace de l’état des lieux et de l’avancement du chantier (photos et pièces du chantier)',
+    donnees: 'Photos et documents ajoutés par l’artisan (état des lieux, avancement, plans, factures de fournisseurs), avec leur date et une légende ; rangés dans un espace privé, jamais public, que l’artisan seul consulte',
+    base: 'Exécution du contrat (RGPD art. 6.1.b) ; intérêt légitime à garder la preuve de l’état des travaux (art. 6.1.f)',
+    duree: `${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier, fichiers compris`,
+  },
+  {
+    cle: 'crm',
+    finalite: 'Vous laisser suivre l’avancement de votre chantier sur une page privée, si l’artisan vous en donne le lien',
+    donnees: 'Un lien secret par chantier ; la page montre l’avancement pièce par pièce et les dates, sans prix, sans adresse, sans photo ni nom de client. Presti ne garde que l’empreinte du lien et la date du dernier accès',
+    base: 'Exécution du contrat (RGPD art. 6.1.b)',
+    duree: `${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier pour la ligne qui porte le lien ; le lien cesse de répondre ${JOURS_SUIVI_APRES_FIN} jours après la fin réelle du chantier, ou plus tôt si l’artisan le retire`,
+  },
+  {
+    cle: 'crm_journal',
+    finalite: 'Après les travaux : vous proposer de laisser un avis, ou vous rappeler l’entretien d’un équipement (chaudière, pompe à chaleur, conduit de fumée)',
+    donnees: 'Nom, adresse email, titre du chantier. Si vous refusez ces messages, une empreinte de votre adresse (jamais l’adresse elle-même) est gardée pour qu’on ne vous réécrive plus',
+    base: 'Intérêt légitime de l’artisan à rester en contact avec ses clients (RGPD art. 6.1.f) ; vous pouvez vous y opposer à tout moment en répondant au message (art. 21)',
+    duree: `${libelleDuree(DUREES_MOIS.crm_journal)} pour la trace d’un message envoyé (son texte n’est pas gardé) ; l’entretien n’est suivi que jusqu’à ${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier ; le refus est gardé tant que le compte de l’artisan existe, pour qu’il soit respecté`,
+  },
+  {
+    cle: null,
+    finalite: 'Faire apparaître vos chantiers et rendez-vous dans l’agenda de l’artisan (Google Agenda, iPhone, Outlook), s’il l’a demandé',
+    donnees: 'Titre et adresse du chantier, type et note du rendez-vous ; jamais votre email ni votre téléphone. L’agenda de l’artisan les lit à une adresse secrète qu’il peut retirer à tout moment',
+    base: 'Exécution du contrat (RGPD art. 6.1.b)',
+    duree: 'Tant que l’artisan garde son lien d’agenda actif : seule l’empreinte du lien est conservée, et les données déjà copiées dans l’agenda de l’artisan relèvent de son fournisseur d’agenda',
+  },
+  {
+    cle: null,
+    finalite: 'Aider l’artisan à préparer ses devis, relances et messages (assistant de gestion de la console)',
+    donnees: 'Ce que l’assistant consulte pour préparer un document ou un message : coordonnées d’un client, lignes de devis, texte d’un message. Il n’agit que sur le compte de l’artisan, et chaque action est tracée dans son journal',
+    base: 'Exécution du contrat de l’artisan avec Presti ; instructions de l’artisan',
+    duree: 'Tant que le compte de l’artisan existe (journal et conversations de l’assistant) ; effacés avec le compte ou à son anonymisation',
+  },
+]
+
+/**
+ * Les destinataires PUBLICS : un service de l'État que Presti appelle sans contrat de sous-traitance (donc pas dans SOUS_TRAITANTS,
+ * dont les pages disent « chacun encadré par un contrat »). Ils ne reçoivent que ce qui est écrit ici.
+ */
+export const DESTINATAIRES_PUBLICS: { nom: string; role: string; lieu: string }[] = [
+  {
+    nom: 'Base Adresse Nationale (api-adresse.data.gouv.fr)',
+    role: 'Service public qui situe une adresse : le serveur de Presti lui envoie l’adresse, le code postal et la ville du chantier, et rien d’autre (jamais le nom du client), pour placer le chantier sur la carte du CRM',
+    lieu: 'France, service de l’État',
+  },
 ]
 
 /** Les sous-traitants réellement utilisés — ceux-là et pas d'autres. */
@@ -208,7 +285,7 @@ export const SOUS_TRAITANTS: { nom: string; role: string; lieu: string }[] = [
   { nom: 'Presti', role: 'Éditeur de l’outil : hébergement des demandes, rédaction assistée des réponses', lieu: 'France' },
   { nom: 'Supabase', role: 'Base de données et stockage des photos', lieu: 'Union européenne (Francfort)' },
   { nom: 'Vercel', role: 'Hébergement du site et de la plateforme', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
-  { nom: 'Anthropic', role: 'Modèle d’intelligence artificielle qui aide à rédiger les réponses', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
+  { nom: 'Anthropic', role: 'Modèle d’intelligence artificielle qui aide à rédiger les réponses (le message du prospect lui est transmis pour cela) et fait fonctionner l’assistant de gestion de la console (qui peut lire les devis, factures, conversations et chantiers du compte, donc des noms de clients et des montants)', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
   { nom: 'Resend', role: 'Envoi des emails (réponses, relances, devis)', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
 ]
 

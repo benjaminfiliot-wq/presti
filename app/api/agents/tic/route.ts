@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { actif } from '@/lib/flags'
 import { ops_baux_expirer } from '@/lib/agents/bus'
 import { balayerCommandesPayees, traiterFileArgent } from '@/lib/agents/fileArgent'
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
   if (!actif('busAgents')) return NextResponse.json({ error: 'introuvable' }, { status: 404 })
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (!bearerEgal(auth, secret)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const debut = Date.now()
   const reste = () => Math.max(0, 25_000 - (Date.now() - debut))

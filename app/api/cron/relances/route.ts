@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { signalerPanneIA } from '@/lib/alerteService'
 import { enregistrerPassage, ronde } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
   // Vercel Cron envoie automatiquement `Authorization: Bearer $CRON_SECRET` quand la variable existe.
   const secret = process.env.CRON_SECRET
   const auth = req.headers.get('authorization')
-  if (!secret || auth !== `Bearer ${secret}`) {
+  if (!bearerEgal(auth, secret)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { declencherRegles } from '@/lib/reglesServeur'
 import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     const token = typeof body?.token === 'string' ? body.token.trim() : ''
     if (!TOKEN_RE.test(token)) return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     // Par IP aussi : le chiffrage coûte des crédits à l'artisan (30 déclenchements / h / IP).
-    if (!(await consommerLimite(`regles-ip:${ip}`, 30, 3600))) { await recordAbuse(ip, 'flood /api/conversation/regles'); return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' }) }
+    if (!(await consommerLimiteStricte(`regles-ip:${ip}`, 30, 3600))) { await recordAbuse(ip, 'flood /api/conversation/regles'); return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' }) }
 
     const { data: lead } = await supabaseAdmin.from('leads')
       .select('id, artisan_id, nom_prospect, contact, message, type_chantier, photos, prise_en_main').eq('token', token).maybeSingle()
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
     const ferme = await refusSiSansPlateforme(lead.artisan_id)
     if (ferme) return ferme
     // Une conversation ne déclenche pas ses règles plus de 6 fois par heure (le chiffrage coûte).
-    if (!(await consommerLimite(`regles:${lead.id}`, 6, 3600))) return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' })
+    if (!(await consommerLimiteStricte(`regles:${lead.id}`, 6, 3600))) return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' })
 
     const { count } = await supabaseAdmin.from('messages').select('id', { count: 'exact', head: true }).eq('lead_id', lead.id).eq('sens', 'out').eq('type', 'reponse_auto').is('etat', null)
     const { data: artisan } = await supabaseAdmin.from('artisans').select('email, nom').eq('id', lead.artisan_id).maybeSingle()

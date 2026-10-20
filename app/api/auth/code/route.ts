@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { actif } from '@/lib/flags'
 import { getIp, isBanned } from '@/lib/security'
-import { consommerLimite, cleEmail } from '@/lib/limites'
+import { consommerLimiteStricte, cleEmail } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { sendEmail } from '@/lib/email'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import {
@@ -51,8 +52,8 @@ export async function POST(req: Request) {
   const renvoi = body?.renvoi === true
   if (!EMAIL_SIMPLE.test(email) || !password) return NextResponse.json({ error: ERREUR_IDENTIFIANTS }, { status: 400 })
 
-  if (!(await consommerLimite(`code:ip:${ip}`, 30, 600))) return NextResponse.json({ error: TROP }, { status: 429 })
-  if (!(await consommerLimite(cleEmail('code:mdp', email), 10, 600))) return NextResponse.json({ error: TROP }, { status: 429 })
+  if (!(await consommerLimiteStricte(`code:ip:${ip}`, 30, 600))) return NextResponse.json({ error: TROP }, { status: 429 })
+  if (!(await consommerLimiteStricte(cleEmail('code:mdp', email), 10, 600))) return NextResponse.json({ error: TROP }, { status: 429 })
 
   const pub = clientPublic()
   const { data, error } = await pub.auth.signInWithPassword({ email, password })
@@ -73,10 +74,10 @@ export async function POST(req: Request) {
   // Sinon cette session ne sert à rien : refermée tout de suite. Le navigateur n'en saura rien.
   await pub.auth.signOut({ scope: 'local' }).catch(() => {})
 
-  if (renvoi && !(await consommerLimite(cleEmail('code:renvoi', email), 3, 900))) {
+  if (renvoi && !(await consommerLimiteStricte(cleEmail('code:renvoi', email), 3, 900))) {
     return NextResponse.json({ error: 'Trop de codes demandés. Patientez 15 minutes.', code: 'renvoi_plafond' }, { status: 429 })
   }
-  if (!(await consommerLimite(cleEmail('code:envoi', email), 6, 900))) {
+  if (!(await consommerLimiteStricte(cleEmail('code:envoi', email), 6, 900))) {
     return NextResponse.json({ error: 'Trop de codes demandés. Patientez 15 minutes.', code: 'renvoi_plafond' }, { status: 429 })
   }
 

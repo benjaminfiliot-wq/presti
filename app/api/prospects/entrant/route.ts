@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { normaliserDemandeEntrante } from '@/lib/agents/acquisition/entrant'
 import { magasinSupabase } from '@/lib/agents/acquisition/magasinSupabase'
 
@@ -45,8 +46,8 @@ export async function POST(req: Request) {
     return NextResponse.json(SUCCES)
   }
 
-  if (!(await consommerLimite(`prospects-entrant:${ip}`, 3, 3600)) ||
-      !(await consommerLimite('prospects-entrant:tous', 50, 86400))) {
+  if (!(await consommerLimiteStricte(`prospects-entrant:${ip}`, 3, 3600)) ||
+      !(await consommerLimiteStricte('prospects-entrant:tous', 50, 86400))) {
     return NextResponse.json({ error: 'Nous avons déjà reçu plusieurs demandes : réessayez demain.' }, { status: 429 })
   }
 

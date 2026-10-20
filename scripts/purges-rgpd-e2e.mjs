@@ -49,6 +49,8 @@ T('la conversation est annoncée en trois ans', DUREES_MOIS.conversation === 36,
 T('l’anti-abus est annoncé en douze mois', DUREES_MOIS.anti_abus === 12, String(DUREES_MOIS.anti_abus))
 T('les pièces comptables sont annoncées en dix ans', DUREES_MOIS.comptable === 120, String(DUREES_MOIS.comptable))
 for (const t of TRAITEMENTS) {
+  // Une ligne sans clé (agenda, assistant : pas de purge propre) le dit dans son texte de durée ; scripts/rgpd-qa.mjs (F5) juge le reste hors ligne.
+  if (!t.cle) continue
   T(`le traitement « ${t.finalite.slice(0, 40)}… » affiche la durée qu’on applique`,
     t.duree.startsWith(libelleDuree(DUREES_MOIS[t.cle])), `${t.duree} vs ${libelleDuree(DUREES_MOIS[t.cle])}`)
 }
@@ -88,6 +90,14 @@ try {
   // A — fil mort, aucun devis : doit disparaître, avec ses messages.
   const filMort = await lead('mort', ANCIEN)
   await message(filMort, ANCIEN)
+  // A bis — fil mort dont le devis n'a jamais été signé (brouillon) : part aussi (audit RGPD du 20/10) ; le devis, lui, survit détaché.
+  const filBrouillon = await lead('brouillon', ANCIEN)
+  await message(filBrouillon, ANCIEN)
+  const { data: dvBrouillon, error: eDvB } = await admin.from('devis').insert({
+    artisan_id: artisanId, lead_id: filBrouillon, numero: `D-RGPD-${marque}-brouillon`, statut: 'brouillon',
+    total_ht: 10, total_tva: 0, total_ttc: 10, created_at: ANCIEN,
+  }).select('id').single()
+  if (eDvB) throw new Error('devis brouillon : ' + eDvB.message)
   // B — fil mort MAIS facturé : doit rester, intégralement.
   const filFacture = await lead('facture', ANCIEN)
   await message(filFacture, ANCIEN)
@@ -175,6 +185,7 @@ try {
     return !!data
   }
   T('le fil mort sans devis a disparu', !(await existe('leads', filMort)))
+  T('le fil dont le devis n’a jamais été signé (brouillon) a disparu aussi, le devis reste', !(await existe('leads', filBrouillon)) && await existe('devis', dvBrouillon.id))
   const { count: msgMort } = await admin.from('messages').select('id', { count: 'exact', head: true }).eq('lead_id', filMort)
   T('… et ses messages avec lui (cascade)', msgMort === 0, `${msgMort} message(s)`)
   const { data: lIp } = await admin.from('leads').select('id, ip').eq('id', filIp).maybeSingle()

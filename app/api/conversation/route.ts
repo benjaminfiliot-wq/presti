@@ -6,7 +6,8 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimiteStricte } from '@/lib/limites'
+// Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
@@ -141,13 +142,13 @@ export async function POST(req: Request) {
     // Compteur atomique par conversation (audit v4 §3) : 6 messages / 5 min, exactement,
     // même en rafale parallèle — l'ancien filtre sur l'historique laissait tout passer.
     const history = await loadHistory(lead.id)
-    if (!(await consommerLimite(`conv:${lead.id}`, 6, 5 * 60))) {
+    if (!(await consommerLimiteStricte(`conv:${lead.id}`, 6, 5 * 60))) {
       await recordAbuse(ip, 'flood /api/conversation')
       return NextResponse.json({ error: 'Un instant — laissez-moi le temps de vous répondre 🙂' }, { status: 429 })
     }
     // Au-delà d'une conversation : plafonds par adresse (/64 en IPv6) et par artisan. Sans eux, ouvrir N demandes
     // puis écrire en boucle sur chacune faisait générer sans fin aux frais de l'artisan (audit offensif du 11/10, E3).
-    if (!(await consommerLimite(`conv:ip:${ip}`, 30, 10 * 60)) || !(await consommerLimite(`conv:artisan:${lead.artisan_id}`, 60, 10 * 60))) {
+    if (!(await consommerLimiteStricte(`conv:ip:${ip}`, 30, 10 * 60)) || !(await consommerLimiteStricte(`conv:artisan:${lead.artisan_id}`, 60, 10 * 60))) {
       await recordAbuse(ip, 'flood /api/conversation (plafond adresse ou artisan)')
       return NextResponse.json({ error: 'Beaucoup de messages en ce moment. Réessayez dans quelques minutes.' }, { status: 429 })
     }

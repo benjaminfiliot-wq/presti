@@ -5,6 +5,7 @@ import { OFFRES, ESSAI_JOURS } from '@/lib/plans'
 import { champsCheckoutEssai } from '@/lib/essaiGratuit'
 import { evaluerEssai } from '@/lib/essaiGratuitServeur'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { BASE_PRESTI } from '@/lib/urls'
 
 // GET : cet artisan a-t-il droit à l'essai gratuit sans carte ? (7 / 14 / 21 jours, lib/plans.ts ESSAI_JOURS.) Sert aux écrans
 // d'offres pour n'écrire « jours gratuits, sans carte » QUE là où c'est vrai. Ne crée rien chez Stripe : il lit.
@@ -50,7 +51,9 @@ export async function POST(req: Request) {
     if (artisan?.stripe_subscription_id) {
       return NextResponse.json({ error: 'Vous êtes déjà abonné : changez d’offre ou résiliez depuis votre portail de facturation.', portail: true }, { status: 409 })
     }
-    const origin = req.headers.get('origin') || 'https://prestiapp.fr'
+    // Audit du 20/10 : l'en-tête Origin est écrit par le client. Un appel forgé (Origin: https://pirate.example) faisait
+    // revenir le payeur de Stripe sur un site tiers. L'origine de retour est une constante du site, jamais une entrée.
+    const origin = BASE_PRESTI
     const decision = await evaluerEssai({ uid, email: artisan?.email ?? userData.user.email, stripeCustomerId: artisan?.stripe_customer_id, stripeSubscriptionId: artisan?.stripe_subscription_id })
     // Les DEUX choix de l'artisan (Benj, 16/10) : « essai » (défaut) = les semaines gratuites sans carte, quand le compte y a droit ;
     // « payer » = s'abonner tout de suite, carte demandée au Checkout, sans essai (et sans consommer le droit à l'essai).

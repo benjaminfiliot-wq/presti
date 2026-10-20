@@ -7,11 +7,16 @@
 //   • les notes de la DEMANDE (crm_notes.lead_id) — l'appelant les supprime par lead_id ;
 //   • le NOM du client sur un chantier SANS devis envoyé : chantier du même client (lien ou regroupement), ou chantier
 //     sans devis au même nom (un dépannage saisi à la main, qu'aucun identifiant ne relie). Un chantier rattaché à un devis
-//     ENVOYÉ ou signé garde le sien : le devis, pièce à valeur légale, le porte de toute façon.
+//     ENVOYÉ ou signé garde le sien : le devis, pièce à valeur légale, le porte de toute façon ;
+//   • (audit RGPD du 20/10) tout ce que le CRM garde d'un chantier SANS devis envoyé ni facture : ses photos et pièces (lignes de
+//     chantier_pieces ET fichiers du bucket privé, fichiers d'abord), son adresse, sa position sur la carte (lat, lng, geocode_le)
+//     et son lien de suivi (chantier_suivi). Un chantier rattaché à un devis envoyé, signé ou facturé garde tout cela : c'est le
+//     dossier d'une pièce que la loi oblige à conserver (art. L. 102 B du LPF), et le CRM n'en distingue pas les photos.
 import { cleNom, clePortee, clesDesNotes, rattacherCle, type GroupeClient } from './clients.ts'
 
 export type ChantierE = { id: string; devis_id: string | null; client_nom: string | null }
 export type DevisE = { id: string; statut: string | null }
+export type FactureE = { devis_id: string | null }
 
 export function choisirEffacementCrm(p: {
   groupes: readonly GroupeClient[]
@@ -19,19 +24,26 @@ export function choisirEffacementCrm(p: {
   nomDemande: string | null
   chantiers: readonly ChantierE[]
   devis: readonly DevisE[]
-}): { cleClient: string | null; anciennesCles: string[]; chantiersSansNom: string[] } {
+  /** Les factures du compte : un chantier dont le devis a été facturé garde son dossier, quel que soit le statut du devis. */
+  factures?: readonly FactureE[]
+}): { cleClient: string | null; anciennesCles: string[]; chantiersSansNom: string[]; chantiersAEffacer: string[] } {
   const groupe = p.groupes.find((g) => g.leads.includes(p.leadId)) ?? null
   const statutDevis = new Map(p.devis.map((d) => [d.id, (d.statut ?? 'brouillon').toLowerCase()]))
   const sansDevisEnvoye = (c: ChantierE) => !c.devis_id || (statutDevis.get(c.devis_id) ?? 'brouillon') === 'brouillon'
   const nom = cleNom(p.nomDemande)
   const duClient = new Set(groupe?.chantiers ?? [])
+  const devisFactures = new Set((p.factures ?? []).map((f) => f.devis_id).filter((x): x is string => !!x))
+  const duClientSansPiece = (c: ChantierE) => sansDevisEnvoye(c) && !(c.devis_id && devisFactures.has(c.devis_id)) && (duClient.has(c.id) || (!c.devis_id && !!nom && !!c.client_nom && cleNom(c.client_nom) === nom))
   const chantiersSansNom = p.chantiers
-    .filter((c) => !!c.client_nom && sansDevisEnvoye(c) && (duClient.has(c.id) || (!c.devis_id && !!nom && cleNom(c.client_nom) === nom)))
+    .filter((c) => !!c.client_nom && duClientSansPiece(c))
     .map((c) => c.id)
     .sort()
+  // Les chantiers dont photos, adresse, position et lien de suivi partent : ceux du client, sans devis envoyé ni facture — qu'ils
+  // portent ou non un nom (un chantier lié au client par sa demande ou son devis brouillon n'en porte pas toujours).
+  const chantiersAEffacer = p.chantiers.filter(duClientSansPiece).map((c) => c.id).sort()
   // C4 (audit du 18/10) : les notes posées sous une ANCIENNE clé du client (avant l'ajout de son e-mail…) partent aussi.
   const anciennesCles = groupe ? clesDesNotes(p.groupes, groupe).filter((k) => k !== groupe.id) : []
-  return { cleClient: groupe?.id ?? null, anciennesCles, chantiersSansNom }
+  return { cleClient: groupe?.id ?? null, anciennesCles, chantiersSansNom, chantiersAEffacer }
 }
 
 // Purge (lib/purgesRgpd.ts, purgerCrm) : quelles notes CLIENT supprimer, pour UN artisan. Orphelines (plus aucune pièce ne

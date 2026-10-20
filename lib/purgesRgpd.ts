@@ -19,16 +19,18 @@ import { notesClientAPurger } from '@/lib/crm/effacement'
 //    mises à NULL, la ligne reste : un devis sans son IP d'acceptation reste un devis, un devis
 //    supprimé serait une pièce du dossier en moins ;
 //  · les conversations (`leads`, et par cascade `messages` et `relances`) sans échange depuis
-//    DUREES_MOIS.conversation ET sans devis rattaché ;
+//    DUREES_MOIS.conversation, SAUF celles liées à un devis SIGNÉ ou à une facture (audit RGPD du 20/10) ;
+//  · le registre des essais gratuits (`essais_gratuits`, 0156), DUREES_MOIS.essai_gratuit après la fin de l'essai ;
 //  · les jetons `password_resets`, `clients_sessions`, `clients_liens` expirés depuis une semaine.
 //
 // Ce que ce module NE TOUCHE JAMAIS :
 //  · `factures` et `factures_lignes` — dix ans (art. L. 102 B du LPF), et le trigger
 //    `factures_conservees` (0041) refuserait de toute façon ;
-//  · une conversation qui porte un devis : le devis peut avoir été facturé, et un fil dont la
-//    facture cite l'objet ne doit pas s'évaporer sous la pièce comptable. Le critère est
-//    volontairement large (TOUT devis rattaché, même brouillon) : mieux vaut garder un fil de
-//    trop que couper le contexte d'une facture.
+//  · une conversation liée à un devis SIGNÉ (statut « accepte », ou signature datée) ou à une facture : c'est le
+//    contexte d'une pièce comptable, conservé dix ans avec elle. Avant le 20/10 le critère était TOUT devis rattaché,
+//    même brouillon : un fil dont le devis n'a jamais été signé ni facturé était gardé pour toujours, alors que la
+//    page de confidentialité annonce trois ans (RGPD art. 5.1 e). Un devis non signé n'est pas une pièce comptable :
+//    le fil part (`devis.lead_id` passe à NULL), le devis lui-même n'est pas touché par cette purge.
 //
 // Deux exigences d'exploitation, tenues partout ici :
 //  · BORNÉ. Chaque purge lit au plus `PLAFOND_LIGNES` clés (les plus vieilles d'abord) puis
@@ -74,6 +76,8 @@ export type BilanPurges = {
   audience: number
   /** CRM (audit RGPD du 12/10, point b) : journal, chantiers clos, notes, membres inactifs (`purgerCrm`). */
   crm: number
+  /** Registre des essais gratuits (0156) : lignes dont l'essai est fini depuis plus de DUREES_MOIS.essai_gratuit (`purgerEssaisGratuits`). */
+  essais: number
   /** Vrai si un plafond a été atteint : il reste des lignes à purger au prochain passage. */
   reste: boolean
   erreurs: string[]
@@ -112,6 +116,9 @@ function colonneTexte(lignes: unknown[] | null, cle: string): string[] {
 
 type Resultat = { n: number; plein: boolean; erreur?: string }
 
+/** Le client de base des purges : `supabaseAdmin`, ou une doublure dans scripts/rgpd-qa.mjs (qui joue les vraies fonctions). */
+export type BaseRgpd = typeof supabaseAdmin
+
 /**
  * Supprime les lignes les plus anciennes d'une table, en deux temps : PostgREST ne sait pas
  * limiter un DELETE, donc on lit d'abord au plus `plafond` clés triées par date, puis on
@@ -121,9 +128,9 @@ type Resultat = { n: number; plein: boolean; erreur?: string }
  * naturellement épargnées — c'est voulu pour `ip_bans.expires_le` (ban permanent).
  */
 async function supprimerAnciennes(
-  table: string, cle: string, colonneDate: string, avant: string, plafond: number,
+  table: string, cle: string, colonneDate: string, avant: string, plafond: number, db: BaseRgpd = supabaseAdmin,
 ): Promise<Resultat> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await db
     .from(table).select(cle)
     .lt(colonneDate, avant)
     .order(colonneDate, { ascending: true })
@@ -133,7 +140,7 @@ async function supprimerAnciennes(
   const cles = colonneTexte(data, cle)
   let n = 0
   for (const lot of parLots(cles)) {
-    const { error: eSup } = await supabaseAdmin.from(table).delete().in(cle, lot)
+    const { error: eSup } = await db.from(table).delete().in(cle, lot)
     if (eSup) return { n, plein: false, erreur: `${table} (suppression) : ${eSup.message}` }
     n += lot.length
   }
@@ -167,20 +174,27 @@ async function effacerEmpreintesIp(
 }
 
 /**
- * Conversations sans suite : trois ans sans le moindre message, et aucun devis rattaché.
+ * Conversations sans suite : trois ans sans le moindre message, et ni devis signé ni facture derrière.
  *
  * L'ordre des filtres compte. On part des fils créés avant le seuil (un fil né il y a un an ne
  * peut pas avoir trois ans de silence), puis on écarte ceux qui ont échangé depuis, puis ceux
- * qui portent un devis — donc, indirectement, ceux qu'une facture cite, puisqu'une facture
- * naît d'un devis rattaché au fil. Ce qui reste est un fil mort sans pièce comptable derrière.
+ * qui sont liés à une PIÈCE COMPTABLE : un devis SIGNÉ (statut « accepte », ou une signature datée
+ * `accepte_le`) ou un devis qui a donné lieu à une facture (une facture naît d'un devis rattaché
+ * au fil). Ce qui reste est un fil mort sans pièce comptable derrière.
+ *
+ * Audit RGPD du 20/10 : le critère était « tout devis rattaché, même brouillon » — un fil dont le
+ * devis n'a jamais été signé restait pour toujours, contre les trois ans annoncés. Un devis
+ * brouillon, envoyé, refusé ou expiré n'est pas une pièce comptable (art. L. 102 B du LPF ne vise
+ * que les pièces justificatives : devis accepté, facture).
  *
  * La suppression du lead emporte `messages` et `relances` par cascade (0010) ; `devis.lead_id`
- * est `on delete set null`, mais aucun fil porteur de devis n'arrive jusqu'ici.
+ * est `on delete set null` : le devis non signé survit, détaché de la conversation — c'est à la
+ * purge du devis, pas à celle-ci, de décider de son sort. Aucun devis signé ni facturé n'arrive ici.
  */
 export async function purgerConversationsSansSuite(
-  avant: string, plafond: number = PLAFOND_CONVERSATIONS,
+  avant: string, plafond: number = PLAFOND_CONVERSATIONS, db: BaseRgpd = supabaseAdmin,
 ): Promise<Resultat> {
-  const { data: candidats, error } = await supabaseAdmin
+  const { data: candidats, error } = await db
     .from('leads').select('id')
     .lt('created_at', avant)
     .order('created_at', { ascending: true })
@@ -190,30 +204,68 @@ export async function purgerConversationsSansSuite(
   const ids = colonneTexte(candidats, 'id')
   if (!ids.length) return { n: 0, plein: false }
 
-  // À garder : un échange postérieur au seuil, ou un devis rattaché (même brouillon).
+  // À garder : un échange postérieur au seuil, un devis signé, ou un devis facturé.
   const garder = new Set<string>()
   for (const lot of parLots(ids)) {
-    const { data: recents, error: eM } = await supabaseAdmin
+    const { data: recents, error: eM } = await db
       .from('messages').select('lead_id').in('lead_id', lot).gte('sent_at', avant)
     if (eM) return { n: 0, plein: false, erreur: `messages (lecture) : ${eM.message}` }
     for (const id of colonneTexte(recents, 'lead_id')) garder.add(id)
 
-    const { data: devis, error: eD } = await supabaseAdmin
-      .from('devis').select('lead_id').in('lead_id', lot)
+    const { data: devis, error: eD } = await db
+      .from('devis').select('id, lead_id, statut, accepte_le').in('lead_id', lot)
     if (eD) return { n: 0, plein: false, erreur: `devis (lecture) : ${eD.message}` }
-    for (const id of colonneTexte(devis, 'lead_id')) garder.add(id)
+    const lignes = (devis ?? []) as unknown as { id: string; lead_id: string | null; statut: string | null; accepte_le: string | null }[]
+    const leadDeDevis = new Map<string, string>()
+    for (const d of lignes) {
+      if (!d.lead_id) continue
+      leadDeDevis.set(d.id, d.lead_id)
+      if (String(d.statut ?? '').toLowerCase() === 'accepte' || d.accepte_le) garder.add(d.lead_id)
+    }
+    // Un devis facturé (même si son statut n'est pas « accepte ») porte une pièce comptable : son fil reste.
+    for (const lotDevis of parLots([...leadDeDevis.keys()])) {
+      const { data: factures, error: eF } = await db.from('factures').select('devis_id').in('devis_id', lotDevis)
+      if (eF) return { n: 0, plein: false, erreur: `factures (lecture) : ${eF.message}` }
+      for (const idDevis of colonneTexte(factures, 'devis_id')) { const l = leadDeDevis.get(idDevis); if (l) garder.add(l) }
+    }
   }
 
   const aEffacer = ids.filter((id) => !garder.has(id))
   let n = 0
   for (const lot of parLots(aEffacer)) {
-    const { error: eSup } = await supabaseAdmin.from('leads').delete().in('id', lot)
+    const { error: eSup } = await db.from('leads').delete().in('id', lot)
     if (eSup) return { n, plein: false, erreur: `leads (suppression) : ${eSup.message}` }
     n += lot.length
   }
   // Le plafond porte sur les CANDIDATS lus : s'il est plein, il reste des fils vieux à examiner
   // demain, même si aucun n'a été effacé aujourd'hui.
   return { n, plein: ids.length >= plafond }
+}
+
+/**
+ * Registre des essais gratuits (0156) : une ligne par EMPREINTE d'adresse e-mail (SHA-256 — pseudonyme, pas anonyme), gardée
+ * pour qu'un compte recréé avec la même boîte ne rouvre pas un essai. Sa durée n'était écrite nulle part (audit RGPD du 20/10) :
+ * DUREES_MOIS.essai_gratuit (24 mois) après la FIN de l'essai, ou après son début si la fin manque. Passé ce délai l'empreinte
+ * n'a plus de raison d'être : un nouvel essai redevient possible, c'est la contrepartie assumée de la limitation de conservation
+ * (RGPD art. 5.1 e). Pas de clé étrangère vers `artisans` : la ligne survit au compte, c'est donc cette purge qui l'efface.
+ */
+export async function purgerEssaisGratuits(
+  maintenant: Date = new Date(), plafond: number = PLAFOND_LIGNES, db: BaseRgpd = supabaseAdmin,
+): Promise<Resultat> {
+  const avant = seuilMois(DUREES_MOIS.essai_gratuit, maintenant)
+  const parFin = await supprimerAnciennes('essais_gratuits', 'email_hash', 'fin', avant, plafond, db)
+  if (parFin.erreur) return parFin
+  // Une ligne sans date de fin (jamais écrite par le code, mais la colonne l'admet) se date sur son début.
+  const { data, error } = await db.from('essais_gratuits').select('email_hash').is('fin', null).lt('debut', avant).order('debut', { ascending: true }).limit(plafond)
+  if (error) return { n: parFin.n, plein: parFin.plein, erreur: tableAbsente(error.message) ? undefined : `essais_gratuits (lecture) : ${error.message}` }
+  const cles = colonneTexte(data, 'email_hash')
+  let n = parFin.n
+  for (const lot of parLots(cles)) {
+    const { error: eSup } = await db.from('essais_gratuits').delete().in('email_hash', lot)
+    if (eSup) return { n, plein: false, erreur: `essais_gratuits (suppression) : ${eSup.message}` }
+    n += lot.length
+  }
+  return { n, plein: parFin.plein || cles.length >= plafond }
 }
 
 /**
@@ -226,7 +278,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   const seuilJetons = seuilJours(JOURS_GRACE_JETONS, maintenant)
 
   const bilan: BilanPurges = {
-    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0,
+    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0, essais: 0,
     reste: false, erreurs: [],
   }
   const noter = (r: Resultat): number => {
@@ -248,7 +300,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   bilan.leads_ip = noter(await effacerEmpreintesIp('leads', 'ip', 'created_at', seuilAbus, PLAFOND_LIGNES))
   bilan.devis_ip = noter(await effacerEmpreintesIp('devis', 'accepte_ip', 'accepte_le', seuilAbus, PLAFOND_LIGNES))
 
-  // 3. Conversations sans suite (trois ans), factures et devis épargnés.
+  // 3. Conversations sans suite (trois ans). Épargnées : celles liées à un devis SIGNÉ ou à une facture (pièces comptables).
   bilan.conversations = noter(await purgerConversationsSansSuite(seuilConversation, PLAFOND_CONVERSATIONS))
 
   // 4. Jetons expirés. Rien d'annoncé dans la politique pour eux : ils n'ont aucune utilité
@@ -311,6 +363,9 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
     if (r.plein) bilan.reste = true
     bilan.erreurs.push(...r.erreurs)
   }
+
+  // 10. Registre des essais gratuits (0156) : 24 mois après la fin de l'essai. PAS derrière le drapeau : une table absente est tolérée.
+  bilan.essais = noter(await purgerEssaisGratuits(maintenant, PLAFOND_LIGNES))
 
   return bilan
 }
