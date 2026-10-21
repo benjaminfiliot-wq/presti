@@ -14,6 +14,10 @@ import { ARTICLES, chercher, type Article } from '@/lib/aide'
 import { actif } from '@/lib/flags'
 import { videosVisibles, type AideVideo } from '@/lib/aideVideos'
 import VideoAide from './VideoAide'
+import Automatique, { filtrer } from './Automatique'
+import TableauOffres from './TableauOffres'
+import PastilleOffre from './PastilleOffre'
+import { AUTOMATIQUE_AVEC_ASSISTANT, AUTOMATIQUE_SANS_ASSISTANT, offreAide, visibles } from '@/lib/aideAutomatique'
 
 // Ordre de lecture = ordre du menu de la console. Les articles dont la page n'est listée
 // nulle part tombent dans « Autres » : un nouvel article n'est jamais perdu.
@@ -25,6 +29,8 @@ const GROUPES: { id: string; titre: string; pages: string[] }[] = [
   { id: 'chiffres', titre: 'Mes chiffres', pages: ['/chiffres'] },
   { id: 'tarifs', titre: 'Mes tarifs', pages: ['/tarifs'] },
   { id: 'inventaire', titre: 'Inventaire', pages: ['/inventaire'] },
+  { id: 'crm', titre: 'CRM atelier', pages: ['/crm', '/crm#accueil', '/crm/chantiers/[id]', '/crm#agenda'] },
+  { id: 'assistant', titre: 'Assistant de gestion', pages: ['/assistant'] },
   { id: 'profil', titre: 'Ma page', pages: ['/profil'] },
   { id: 'plateforme', titre: 'Ma plateforme', pages: ['/plateforme'] },
   { id: 'abonnement', titre: 'Abonnement', pages: ['/abonnement'] },
@@ -37,6 +43,7 @@ function ArticleDetails({ article, ouvert }: { article: Article; ouvert: boolean
     <details className="aide-art" id={article.id} open={ouvert}>
       <summary>
         <span>{article.titre}</span>
+        <PastilleOffre offre={offreAide(article.id)} />
         <span className="pg">{libelle(article.page)}</span>
       </summary>
       <div className="aide-art-b"><ArticleCorps article={article} /></div>
@@ -98,6 +105,13 @@ export default function AidePage() {
   }, [])
 
   const enRecherche = q.trim().length > 0
+  // La recherche passe aussi par « Ce qui est automatique » (mêmes mots, accents ignorés).
+  const sansAccents = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const motsRecherche = useMemo(() => sansAccents(q.trim()).split(/\s+/).filter(Boolean), [q])
+  const autoTrouvees = useMemo(
+    () => filtrer(visibles(AUTOMATIQUE_SANS_ASSISTANT), motsRecherche, sansAccents).length + filtrer(visibles(AUTOMATIQUE_AVEC_ASSISTANT), motsRecherche, sansAccents).length,
+    [motsRecherche],
+  )
 
   return (
     <AppShell active="aide" title="Centre d’aide" crumb="Chaque outil, expliqué">
@@ -115,25 +129,33 @@ export default function AidePage() {
               aria-label="Rechercher dans l’aide"
               autoFocus
             />
-            {enRecherche && <span className="aide-rech-n" aria-live="polite">{resultats.length} {resultats.length > 1 ? 'articles' : 'article'} · {videosTrouvees.length} {videosTrouvees.length > 1 ? 'vidéos' : 'vidéo'}</span>}
+            {enRecherche && <span className="aide-rech-n" aria-live="polite">{resultats.length} {resultats.length > 1 ? 'articles' : 'article'} · {videosTrouvees.length} {videosTrouvees.length > 1 ? 'vidéos' : 'vidéo'} · {autoTrouvees} {autoTrouvees > 1 ? 'automatismes' : 'automatisme'}</span>}
           </div>
 
           {enRecherche ? (
-            resultats.length || videosTrouvees.length ? (
-              <div className="aide-grp">
-                <h2>Résultats pour « {q.trim()} »</h2>
-                {videosTrouvees.map((v) => <VideoAide key={v.id} video={v} ouvert={false} />)}
-                {resultats.map((a) => <ArticleDetails key={a.id} article={a} ouvert />)}
-              </div>
-            ) : (
-              <div className="aide-vide">Aucun article ne parle de « {q.trim()} ». Essayez un autre mot : devis, facture, assistant, site, crédits…</div>
-            )
+            <>
+              {resultats.length || videosTrouvees.length ? (
+                <div className="aide-grp">
+                  <h2>Résultats pour « {q.trim()} »</h2>
+                  {videosTrouvees.map((v) => <VideoAide key={v.id} video={v} ouvert={false} />)}
+                  {resultats.map((a) => <ArticleDetails key={a.id} article={a} ouvert />)}
+                </div>
+              ) : null}
+              {autoTrouvees > 0 ? <Automatique mots={motsRecherche} n={sansAccents} /> : null}
+              {!resultats.length && !videosTrouvees.length && !autoTrouvees ? (
+                <div className="aide-vide">Aucun article ne parle de « {q.trim()} ». Essayez un autre mot : devis, facture, assistant, site, crédits…</div>
+              ) : null}
+            </>
           ) : (
             <>
               <nav className="aide-chips" aria-label="Aller à un outil">
+                <a href="#grp-automatique">Ce qui est automatique</a>
+                <a href="#grp-offres">Qui a quoi</a>
                 {videos.length > 0 && <a href="#grp-videos">Vidéos pas à pas</a>}
                 {groupes.map((g) => <a key={g.id} href={`#grp-${g.id}`}>{g.titre}</a>)}
               </nav>
+              <Automatique />
+              <TableauOffres />
               {videos.length > 0 && (
                 <section id="grp-videos" className="aide-grp" aria-labelledby="grp-videos-t">
                   <h2 id="grp-videos-t">Vidéos pas à pas : chaque fonctionnalité, en images</h2>

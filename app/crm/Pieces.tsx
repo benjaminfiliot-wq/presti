@@ -24,6 +24,8 @@ export default function Pieces({ chantierId, leadId, clos }: { chantierId: strin
   const [legende, setLegende] = useState('')
   const [envoi, setEnvoi] = useState<{ fait: number; total: number } | null>(null)
   const [message, setMessage] = useState<Message>(null)
+  // Décision B du 21/10 : une photo « Après » d'une pièce propose de cocher ses tâches (le serveur les rend, l'artisan confirme).
+  const [proposition, setProposition] = useState<{ piece: string; taches: { id: string; libelle: string }[] } | null>(null)
   const champ = useRef<HTMLInputElement>(null)
 
   const charger = useCallback(async () => {
@@ -55,8 +57,9 @@ export default function Pieces({ chantierId, leadId, clos }: { chantierId: strin
       form.append('type', type)
       if (legende.trim()) form.append('legende', legende.trim())
       if (f.lastModified) form.append('pris_le', new Date(Math.min(f.lastModified, Date.now())).toISOString())
-      const r = await appel('/api/crm/pieces', { method: 'POST', body: form })
+      const r = await appel<{ avancement_propose?: { piece: string; taches: { id: string; libelle: string }[] } }>('/api/crm/pieces', { method: 'POST', body: form })
       if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); break }
+      if (r.corps.avancement_propose?.taches?.length) setProposition(r.corps.avancement_propose)
       ok++
       setEnvoi({ fait: i + 1, total: liste.length })
     }
@@ -64,6 +67,17 @@ export default function Pieces({ chantierId, leadId, clos }: { chantierId: strin
     if (ok) { setMessage({ texte: `${ok} fichier${ok > 1 ? 's' : ''} ajouté${ok > 1 ? 's' : ''}.`, erreur: false }); setLegende('') }
     if (champ.current) champ.current.value = ''
     await charger()
+  }
+  async function cocherProposees() {
+    if (!proposition) return
+    let n = 0
+    for (const t of proposition.taches) {
+      const r = await appel(`/api/crm/taches/${t.id}`, { method: 'PATCH', body: { faite: true } })
+      if (!r.ok) { setMessage({ texte: r.erreur, erreur: estErreur(r) }); break }
+      n++
+    }
+    setProposition(null)
+    if (n) setMessage({ texte: `${n} tâche${n > 1 ? 's' : ''} de la pièce « ${proposition.piece} » cochée${n > 1 ? 's' : ''}.`, erreur: false })
   }
   async function modifier(p: Piece, champs: { type?: TypePiece; legende?: string | null }) {
     const r = await appel(`/api/crm/pieces/${p.id}`, { method: 'PATCH', body: champs })
@@ -138,6 +152,16 @@ export default function Pieces({ chantierId, leadId, clos }: { chantierId: strin
               )}
             </>
           )}
+        {proposition && (
+          <div className="crm-message" role="status">
+            <p>Photo « Après » de la pièce <strong>{proposition.piece}</strong> : cocher {proposition.taches.length > 1 ? `ces ${proposition.taches.length} tâches` : 'cette tâche'} comme faite{proposition.taches.length > 1 ? 's' : ''} ?</p>
+            <ul>{proposition.taches.slice(0, 8).map((t) => <li key={t.id}>{t.libelle}</li>)}{proposition.taches.length > 8 && <li>et {proposition.taches.length - 8} autre(s)</li>}</ul>
+            <div className="crm-boutons">
+              <button type="button" className="psh-btn primary" onClick={() => void cocherProposees()}>Cocher</button>
+              <button type="button" className="psh-btn ghost" onClick={() => setProposition(null)}>Pas encore</button>
+            </div>
+          </div>
+        )}
         {message && <p className={`crm-message${message.erreur ? ' erreur' : ''}`} role={message.erreur ? 'alert' : 'status'}>{message.texte}</p>}
       </div>
     </section>

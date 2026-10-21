@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe, concerneAbonnementCourant } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
+import { actif } from '@/lib/flags'
 import { joursEssaiDeSession, creditsEssai, finEssai, finDEssaiSansPaiement, creditsApresEssaiPerdu, abonnementFerme, essaiDevenuPayant } from '@/lib/essaiGratuit'
 import { marquerEssai, alerteFinEssai } from '@/lib/essaiGratuitServeur'
 import { alignerSurAbonnement } from '@/lib/abonnementSync'
@@ -63,6 +64,8 @@ async function retourAGratuit(sub: Stripe.Subscription): Promise<void> {
     ...(essaiPerdu ? { credits: creditsApresEssaiPerdu(enBase?.credits) } : {}),
   }).eq('id', uid)
   if (eFin) throw new Error(`retour à l'offre gratuite impossible : ${eFin.message}`)
+  // Pilote automatique (audit du 21/10, F1) : plus de Signature, plus rien ne part seul — la file est annulée.
+  if (actif('piloteAutomatique')) await (await import('@/lib/pilote/serveur')).apresChangementOffre(uid, 'gratuit')
   const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
   await notifierEntreprise(
     essaiPerdu ? `Fin d’essai sans carte — ${a?.nom || uid}` : `Résiliation — ${a?.nom || uid}`,

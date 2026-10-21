@@ -64,13 +64,13 @@ console.log('\n── A. Fonctions pures')
 // Schémas
 {
   const defs = outils.outilsAssistant({ actions: false })
-  ok('sans les actions : 9 outils (7 de lecture dont tarifs et briefing, 2 de brouillon), noms = clés', defs.length === 9 && defs.every((d) => outils.NOMS_OUTILS.includes(d.name)))
+  ok('sans les actions : 14 outils (12 de lecture dont tarifs, briefing et — 21/10 — fil, détail de devis, plateforme, profil, relances auto ; 2 de brouillon), noms = clés', defs.length === 14 && defs.every((d) => outils.NOMS_OUTILS.includes(d.name)))
   ok('chaque schéma ferme ses champs (additionalProperties: false)', defs.every((d) => d.input_schema.additionalProperties === false))
   ok('les deux outils de brouillon exigent conversation_id', ['preparer_devis_brouillon', 'preparer_reponse'].every((n) => egal(outils.DEFINITIONS_OUTILS[n].input_schema.required, ['conversation_id'])))
   ok('sans les actions : aucun outil qui écrive hors brouillon (lire_*, briefing, preparer_* seulement)', defs.every((d) => /^(lire_|preparer_|briefing_)/.test(d.name)))
   // 13/10 — outils CRM en lecture : proposés seulement avec le CRM.
   const avecCrm = outils.outilsAssistant({ crm: true, actions: false })
-  ok('CRM : 4 outils de lecture en plus (13), absents sans le CRM', avecCrm.length === 13 && outils.OUTILS_CRM.every((n) => avecCrm.some((d) => d.name === n)) && !defs.some((d) => outils.OUTILS_CRM.includes(d.name)))
+  ok('CRM : 7 outils de lecture en plus (21 ; dont — 21/10 — où j’en suis, rappels, commandes), absents sans le CRM', avecCrm.length === 21 && outils.OUTILS_CRM.every((n) => avecCrm.some((d) => d.name === n)) && !defs.some((d) => outils.OUTILS_CRM.includes(d.name)))
   ok('CRM : les outils de lecture du CRM n’écrivent pas (noms en lire_), schémas fermés', outils.OUTILS_CRM.every((n) => n.startsWith('lire_')) && avecCrm.every((d) => d.input_schema.additionalProperties === false))
 }
 // Validation
@@ -586,10 +586,11 @@ console.log('\n── D. Le code')
   // 13/10 — CRM, RGPD, audit d'attaque (B2, B3, crédit atomique).
   ok('garde + route : le CRM suit la décision des routes /api/crm/* (decisionAcces, essai du compte) et est passé à la boucle', /decisionAcces\(\{ drapeau: ouvertPour\('crm', uid\)/.test(garde) && /crm,[\s\S]{0,260}actions: actionsOk && cadrage\.actionDemandee,\s+journaliser/.test(corps) && /systemeAssistant\(\{[^)]*crm[^)]*\}/.test(corps))
   ok('route (B2) : identifiant neuf tiré par le serveur ; un identifiant fourni doit exister et être au compte (RLS)', /crypto\.randomUUID\(\)/.test(corps) && /clientDeSession\(jeton\)\.from\('assistant_conversations'\)\.select\('id'\)\.eq\('id', fourni\.toLowerCase\(\)\)\.eq\('artisan_id', uid\)/.test(corps) && /code: 'conversation' \}, \{ status: 404 \}/.test(corps) && !/Conversation manquante/.test(corps))
-  ok('route (B2) : l’identifiant part en premier dans le flux', /envoyer\(\{ e: 'conversation', id: conversationId \}\)/.test(corps))
+  ok('route (B2) : l’identifiant part en premier dans le flux', /envoyer\(\{ e: 'conversation', id: conversationId(, contexte: [^\n]*)? \}\)/.test(corps))
   ok('route (B3) : historique lu par lireHistorique (signatures vérifiées), réponse signée dans « fin »', /lireHistorique\(b\?\.historique, \{ cle, uid, conversationId: nouvelle \? null : conversationId \}\)/.test(corps) && /signature: signerReponse\(cle, \{ uid, conversationId, texte: ev\.texte \}\)/.test(corps) && !/function lireHistorique/.test(route))
   ok('route : meilleurs clients seulement sur demande (cadrage → exécuteurs)', /meilleursClients: cadrage\.meilleursClients/.test(corps))
-  const page = lire('app/assistant/page.tsx')
+  // 21/10 : la conversation vit dans un crochet partagé par la page /assistant et le panneau du CRM (app/assistant/useConversation.ts).
+  const page = lire('app/assistant/page.tsx') + lire('app/assistant/useConversation.ts')
   ok('page (B2) : plus aucun identifiant tiré par l’écran (ni Math.random, ni randomUUID) ; il vient du serveur', !/Math\.random|randomUUID|nouvelId/.test(page) && /useState<string \| null>\(null\)/.test(page) && /ev\.e === 'conversation'/.test(page) && /conversation \? \{ conversation_id: conversation \}/.test(page))
   ok('page (B3) : la signature de chaque réponse est gardée et renvoyée', /signature: ev\.signature/.test(page) && /b\.signature \? \{ signature: b\.signature \}/.test(page))
   ok('page (transparence) : « assistant IA (Claude, Anthropic) » écrit à l’écran', /[Aa]ssistant IA \(Claude, Anthropic\)/.test(page))
@@ -620,18 +621,26 @@ const conf = await import('../lib/assistant/confirmation.ts')
 const acces = await import('../lib/assistant/acces.ts')
 
 const B_ID = '44444444-4444-4444-8444-444444444444'
-const CONFIRMEES_ATTENDUES = ['supprimer_devis_brouillon', 'envoyer_devis', 'relancer_devis', 'creer_facture', 'marquer_facture_payee', 'relancer_facture', 'augmenter_tarifs', 'supprimer_tarif', 'repondre_client', 'valider_reponse_proposee']
-const CRM_ATTENDUES = ['reserver_materiau', 'creer_chantier', 'modifier_chantier', 'affecter_equipe', 'ajouter_tache', 'cocher_tache', 'ajouter_note', 'ajouter_membre_equipe']
+const CONFIRMEES_ATTENDUES = ['supprimer_devis_brouillon', 'envoyer_devis', 'relancer_devis', 'creer_facture', 'marquer_facture_payee', 'relancer_facture', 'augmenter_tarifs', 'supprimer_tarif', 'repondre_client', 'valider_reponse_proposee',
+  // 21/10 — l'assistant relié à tout Presti (scripts/assistant-tout-qa.mjs) : ce qui part chez un client ou un fournisseur, ou ne se défait pas.
+  'envoyer_facture', 'regler_relances_impayes', 'relancer_commande', 'demander_avis', 'envoyer_rappel_entretien', 'noter_opposition_client',
+  // Audit offensif du 21/10 (M4) : la page publique (pause des demandes, message d'accueil, « Ma page ») se règle par une carte.
+  'regler_plateforme', 'modifier_ma_page']
+const CRM_ATTENDUES = ['reserver_materiau', 'creer_chantier', 'modifier_chantier', 'affecter_equipe', 'ajouter_tache', 'cocher_tache', 'ajouter_note', 'ajouter_membre_equipe',
+  'avancer_chantier', 'cloturer_chantier', 'remettre_chantier_carte', 'regler_validation_auto', 'repartir_taches_par_piece', 'creer_rappel', 'cocher_rappel', 'enregistrer_commande', 'recevoir_commande', 'revoquer_lien_suivi',
+  'relancer_commande', 'demander_avis', 'envoyer_rappel_entretien', 'noter_opposition_client']
+/** Les actions CRM qui partent chez un client ou un fournisseur (ou ne se défont pas) : à confirmer ; toutes les autres sont directes. */
+const CRM_A_CONFIRMER = ['relancer_commande', 'demander_avis', 'envoyer_rappel_entretien', 'noter_opposition_client']
 
 console.log('\n── E. Les actions : catalogue, schémas, validation, règles pures')
 {
-  ok('28 actions, chacune directe ou à confirmer, rien d’autre', oa.NOMS_ACTIONS.length === 28 && oa.NOMS_ACTIONS.every((n) => ['direct', 'confirmation'].includes(oa.categorieDe(n))))
+  ok('46 actions (28 + 18 le 21/10), chacune directe ou à confirmer, rien d’autre', oa.NOMS_ACTIONS.length === 46 && oa.NOMS_ACTIONS.every((n) => ['direct', 'confirmation'].includes(oa.categorieDe(n))))
   ok('LES actions à confirmer sont exactement celles qui partent chez un client, émettent, encaissent, suppriment ou changent un lot de prix', egal([...oa.ACTIONS_CONFIRMEES].sort(), [...CONFIRMEES_ATTENDUES].sort()), oa.ACTIONS_CONFIRMEES.join())
   ok('toute action au nom évocateur (envoyer, relancer, supprimer, répondre, valider, facture, payée, augmenter) est à confirmer', oa.NOMS_ACTIONS.filter((n) => /^(envoyer|relancer|supprimer|repondre|valider|marquer_facture|creer_facture|augmenter)/.test(n)).every((n) => oa.categorieDe(n) === 'confirmation'))
-  ok('les actions du CRM sont les 8 attendues, toutes directes', egal([...oa.ACTIONS_CRM].sort(), [...CRM_ATTENDUES].sort()) && oa.ACTIONS_CRM.every((n) => oa.categorieDe(n) === 'direct'))
+  ok('les actions du CRM sont les 22 attendues : directes, sauf les 4 envois (fournisseur, avis, entretien) et l’opposition, à confirmer', egal([...oa.ACTIONS_CRM].sort(), [...CRM_ATTENDUES].sort()) && oa.ACTIONS_CRM.every((n) => oa.categorieDe(n) === (CRM_A_CONFIRMER.includes(n) ? 'confirmation' : 'direct')))
   const tous = outils.outilsAssistant()
   const avecCrm = outils.outilsAssistant({ crm: true })
-  ok('outils proposés : 29 sans CRM (9 de lecture/brouillon + 20 actions), 41 avec', tous.length === 29 && avecCrm.length === 41, `${tous.length}/${avecCrm.length}`)
+  ok('outils proposés : 38 sans CRM (14 de lecture/brouillon + 24 actions), 67 avec', tous.length === 38 && avecCrm.length === 67, `${tous.length}/${avecCrm.length}`)
   ok('sans CRM, aucune action CRM ; sans les actions, aucune action', CRM_ATTENDUES.every((n) => !tous.some((t) => t.name === n)) && outils.outilsAssistant({ actions: false }).every((t) => !oa.estNomAction(t.name)))
   ok('chaque schéma d’action ferme ses champs et a une description', oa.NOMS_ACTIONS.every((n) => { const d = oa.DEFINITIONS_ACTIONS[n]; return d.input_schema.additionalProperties === false && d.description.length > 40 }))
   ok('le dernier outil porte le point de cache (la liste d’outils n’est facturée en plein qu’une fois)', tous.at(-1).cache_control?.type === 'ephemeral' && tous.slice(0, -1).every((t) => !t.cache_control))
@@ -691,7 +700,7 @@ console.log('\n── E. Les actions : catalogue, schémas, validation, règles 
   ok('relance de devis : numéro, objet, montant, date d’envoi, validité repris des données', /DEV-2026-0011/.test(d.texte) && /Chauffe-eau/.test(d.texte) && /1\s?800,00/.test(d.texte) && /01\/10\/2026/.test(d.texte) && /90 jours/.test(d.texte))
   ok('relance : sans client connu → « Bonjour, » ; déterministe', cartes.texteRelanceDevis({ client: null, numero: 'DEV-1', objet: null, totalTtc: null, envoyeLe: null, validiteJours: null, artisan: 'X', ton: 'cordial' }).texte.startsWith('Bonjour,\n') && cartes.texteRelanceDevis({ client: 'a', numero: 'DEV-1', objet: null, totalTtc: null, envoyeLe: null, validiteJours: null, artisan: 'X', ton: 'ferme' }).texte === cartes.texteRelanceDevis({ client: 'a', numero: 'DEV-1', objet: null, totalTtc: null, envoyeLe: null, validiteJours: null, artisan: 'X', ton: 'ferme' }).texte)
   const mail = await import('../lib/devisMail.ts')
-  ok('e-mail du devis : le texte de la carte est celui de la route d’envoi (une seule écriture, lib/devisMail.ts)', mail.mailDevis({ numero: 'DEV-2026-0011', client_nom: 'M. Durand', objet: 'Chauffe-eau', validite_jours: 30 }, 'Atelier').text.includes('votre devis pour : Chauffe-eau. Il est valable 30 jours.') && /mailDevis\(devis, nomEnt\)/.test(lire('app/api/devis/[id]/envoyer/route.ts')) && /mailDevis\(\{/.test(lire('lib/assistant/actions-serveur.ts')))
+  ok('e-mail du devis : le texte de la carte est celui de la route d’envoi (une seule écriture, lib/devisMail.ts)', mail.mailDevis({ numero: 'DEV-2026-0011', client_nom: 'M. Durand', objet: 'Chauffe-eau', validite_jours: 30 }, 'Atelier').text.includes('votre devis pour : Chauffe-eau. Il est valable 30 jours.') && /mailDevis\(devis, nomEnt\)/.test(lire('lib/envoisPdfServeur.ts')) && /envoyerDevisServeur\(userData\.user\.id, id\)/.test(lire('app/api/devis/[id]/envoyer/route.ts')) && /mailDevis\(\{/.test(lire('lib/assistant/actions-serveur.ts')))
   const maintenant = new Date('2026-10-15T10:00:00Z')
   ok('carte : expire après 24 h, une carte déjà traitée ne se reconfirme pas', cartes.peutConfirmer({ statut: 'en_attente', expire_le: '2026-10-16T09:00:00Z' }, maintenant).ok === true && cartes.peutConfirmer({ statut: 'en_attente', expire_le: '2026-10-15T09:00:00Z' }, maintenant).motif === 'expiree' && cartes.peutConfirmer({ statut: 'executee', expire_le: '2026-10-16T09:00:00Z' }, maintenant).motif === 'deja_traitee' && cartes.VALIDITE_CARTE_MS === 24 * 3600 * 1000)
 }
@@ -823,9 +832,9 @@ console.log('\n── G. La boucle avec des actions (faux modèle)')
   {
     const sans = await jouerA({ actions: false, message: 'Combien de devis ?', sequence: [reponse([texte('4 devis.')])] })
     const avec = await jouerA({ actions: true, message: 'Relance les impayés', sequence: [reponse([texte('Ok.')])] })
-    ok('sans demande d’action, AUCUN outil d’écriture n’est proposé au modèle ; avec, les 20 actions (sans CRM)', noms(sans).every((n) => !oa.estNomAction(n)) && noms(avec).filter(oa.estNomAction).length === 20 && !noms(avec).includes('reserver_materiau'))
+    ok('sans demande d’action, AUCUN outil d’écriture n’est proposé au modèle ; avec, les 24 actions (sans CRM)', noms(sans).every((n) => !oa.estNomAction(n)) && noms(avec).filter(oa.estNomAction).length === 24 && !noms(avec).includes('reserver_materiau'))
     const crmOui = await jouerA({ actions: true, crm: true, message: 'Coche la tâche', sequence: [reponse([texte('Ok.')])] })
-    ok('avec le CRM : les 28 actions', noms(crmOui).filter(oa.estNomAction).length === 28)
+    ok('avec le CRM : les 46 actions', noms(crmOui).filter(oa.estNomAction).length === 46)
   }
   {
     // Un message de client lu dans les données pousse le modèle à agir : pas de demande d'action → outil refusé, jamais exécuté.
@@ -911,7 +920,9 @@ console.log('\n── I. Le code des actions')
     const parcourir = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? parcourir(`${d}/${e.name}`) : /\.(ts|tsx)$/.test(e.name) ? [`${d}/${e.name}`] : []))
     for (const f of parcourir(dir)) if (/\bconfirmerAction\b/.test(lire(f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')) && !f.endsWith('lib/assistant/confirmation.ts')) qui.push(f)
   }
-  ok('confirmerAction n’est appelée que par la route /api/assistant/actions (le clic de l’artisan)', egal(qui, ['app/api/assistant/actions/route.ts']), qui.join())
+  // 21/10 (décision du fondateur) : un SECOND appelant, le pilote automatique — l'artisan l'a activé pour ce type d'action (Signature),
+  // la carte a attendu 10 minutes sans être annulée ; il ne passe QUE ses propres réalisateurs (envois, jamais d'argent : scripts/pilote-qa.mjs C10).
+  ok('confirmerAction n’est appelée que par la route /api/assistant/actions (le clic de l’artisan) et par le pilote automatique, avec ses seuls réalisateurs', egal(qui.sort(), ['app/api/assistant/actions/route.ts', 'lib/pilote/executeur.ts']) && /confirmerAction\(\{\s*magasin, realisateurs: realisateursPilote\(/.test(lire('lib/pilote/executeur.ts')), qui.join())
   ok('les réalisateurs ne sont jamais passés à executerTour : seuls les outils (directes / propositions) le sont', /executeursDeSession\(ctxSession, actionsSrv\)/.test(rAssistant) && !/realisateurs/.test(rAssistant) && /realisateurs: srv\.realisateurs/.test(rActions))
   ok('fail-closed : une action à confirmer sans proposition, ou une directe avec proposition, fait échouer la construction', /action à confirmer sans proposition/.test(srv) && /categorieDe\(nom\) === 'confirmation' \? proposee\(nom\) : directe\(nom\)/.test(srv))
   ok('la clé de service n’est jamais utilisée par les actions (tout passe par les routes de l’interface et la session)', !/supabaseAdmin/.test(srv))
@@ -925,7 +936,7 @@ console.log('\n── I. Le code des actions')
   ok('plafonds : 200 actions par jour et par compte (consommerLimite) ; débit des clics 120 / 10 min', /ACTIONS_JOUR_MAX = 200/.test(srv) && /assistant-actions:/.test(srv) && /assistant-decisions:/.test(rActions))
   ok('route /api/assistant : Pro par défaut (même crédit que Standard), outils d’écriture seulement si l’artisan en demande une ET la table est là', /demande: typeof b\?\.modele === 'string' \? b\.modele : 'pro'/.test(rAssistant) && /actions: actionsOk && cadrage\.actionDemandee/.test(rAssistant) && /actionsDisponibles\(\)/.test(rAssistant))
   ok('route /api/assistant/actions : identifiant UUID, décision fermée, 404 si la carte n’est pas au compte', /UUID\.test\(id\)/.test(rActions) && /\['confirmer', 'refuser', 'annuler'\]/.test(rActions) && /confirmerAction\(deps, g\.uid, id\)/.test(rActions))
-  const page = lire('app/assistant/page.tsx') + lire('app/assistant/CarteView.tsx')
+  const page = lire('app/assistant/page.tsx') + lire('app/assistant/CarteView.tsx') + lire('app/assistant/useConversation.ts')
   ok('page : cartes avec Confirmer / Écarter / Annuler appelant /api/assistant/actions ; trois onglets ; exemples de la demande', /\/api\/assistant\/actions/.test(page) && /Confirmer/.test(page) && /Écarter/.test(page) && /Annuler/.test(page) && /À confirmer/.test(page) && /Journal/.test(page) && /Fais le devis de Mme Martin pour 12 m² de carrelage/.test(page) && /Relance les factures impayées de plus de 30 jours/.test(page) && /Augmente mes tarifs de pose de 5 %/.test(page) && /Briefing du matin/.test(page))
   ok('page : le texte exact (message) et l’avant/après sont affichés sur la carte avant le clic', /c\.message \?/.test(page) && /c\.message\.texte/.test(page) && /c\.avant_apres\.length/.test(page))
   ok('page : aucun identifiant technique ni lien fabriqué ; pas de bleu ni de violet dans la feuille de style', !/#[0-9a-f]{3,6}/i.test(lire('app/assistant/assistant.css')))

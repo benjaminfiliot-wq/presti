@@ -27,7 +27,7 @@ export type Capacite =
   | 'inventaire.stock' | 'inventaire.recherche_ia'
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
-  | 'assistant'
+  | 'assistant' | 'assistant.pilote'
   | 'crm'
 
 type Plan = {
@@ -74,6 +74,9 @@ const SIGNATURE: Capacite[] = [
   // CRM « atelier vivant » (0141) : Signature (et Business, qui reprend Signature) seulement. Contrôlé côté serveur par
   // lib/crm/serveur.ts ; aucune ligne de la grille ne l'annonce tant que le drapeau `crm` est baissé.
   'crm',
+  // 21/10 (décision du fondateur) — le PILOTE AUTOMATIQUE : une action préparée part seule après 10 minutes d'annulation possible,
+  // type par type (lib/pilote/regles.ts). Signature (et Business) seulement ; caché tant que le drapeau `piloteAutomatique` est baissé.
+  'assistant.pilote',
 ]
 
 export const PLANS: Record<PlanId, Plan> = {
@@ -239,6 +242,8 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
     essentiel: '', studio: '',
     signature: `${ASSISTANT_TOURS_MAX} messages par conversation · ${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} avec le modèle Expert)`,
   }), flag: 'assistant' },
+  // Pilote automatique (lib/pilote/, migration 0174) : Signature seulement ; la ligne n'apparaît que drapeau levé.
+  { groupe: 'Assistant de gestion', label: 'Pilote automatique : ce que vous choisissez part seul après 10 minutes pour annuler (jamais un prix estimé, jamais un paiement)', capacites: ['assistant.pilote'], cellules: dePlan('assistant.pilote'), flag: 'piloteAutomatique' },
   { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', capacites: ['inventaire.stock'], cellules: dePlan('inventaire.stock') },
   { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', capacites: ['inventaire.recherche_ia'], cellules: texteSi('inventaire.recherche_ia', { essentiel: '', studio: 'Standard + Pro', signature: 'Standard, Pro + Expert' }), flag: 'inventaireRecherche' },
   { groupe: 'Canaux', label: 'Votre boîte email branchée', capacites: ['canaux.email'], cellules: dePlan('canaux.email') },

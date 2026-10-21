@@ -5,6 +5,7 @@ import { gardeAssistant } from '@/lib/assistant/garde'
 import { actionsDeSession, versCarte } from '@/lib/assistant/actions-serveur'
 import { journalEnBase } from '@/lib/assistant/executeurs'
 import { magasinSupabase } from '@/lib/assistant/magasin'
+import { annulerParRef } from '@/lib/pilote/serveur'
 import { annulerAction, confirmerAction, refuserAction, type CodeRefus, type DependancesDecision } from '@/lib/assistant/confirmation'
 
 export const runtime = 'nodejs'
@@ -49,6 +50,8 @@ export async function POST(req: Request) {
     journaliser: (l) => journalEnBase({ uid: g.uid, conversationId: l.conversationId, tour: l.tour })({ nom: l.nom, entree: l.entree, resultat: l.resultat, resume: l.resume, objet: l.objet ?? null }),
   }
   const r = decision === 'confirmer' ? await confirmerAction(deps, g.uid, id) : decision === 'refuser' ? await refuserAction(deps, g.uid, id) : await annulerAction(deps, g.uid, id)
+  // Pilote automatique (21/10) : une carte confirmée ou refusée à la main sort de la file (elle ne partira pas une seconde fois).
+  if (r.ok && decision !== 'annuler') await annulerParRef(g.uid, 'carte', id, decision === 'confirmer' ? 'confirmée par l’artisan' : 'refusée par l’artisan').catch(() => {})
   if (!r.ok) {
     const fiche = await magasin.lire(g.uid, id).catch(() => null)
     return NextResponse.json({ ok: false, code: r.code, error: r.erreur, ...(r.statut ? { statut: r.statut } : {}), ...(fiche ? { carte: versCarte(fiche) } : {}) }, { status: STATUT[r.code] ?? 400 })

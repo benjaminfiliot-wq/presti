@@ -249,7 +249,8 @@ const vueMin = (par = {}, rappels = { liste: [], devisARelancer: [], aFaire: { e
   // Tout est lu pour le compte connecté seulement : chaque lecture de chargerDossiers est filtrée par artisan_id = uid.
   const srv = sansCommentaires(lire('lib/crm/serveur.ts'))
   const corps = srv.slice(srv.indexOf('export async function chargerDossiers'), srv.indexOf('\n}\n', srv.indexOf('export async function chargerDossiers')))
-  const lectures = [...corps.matchAll(/supabaseAdmin\.from\('([a-z_]+)'\)\.select\([^)]*\)([^\n]*)/g)]
+  // 21/10 : chargerDossiers lit par `db` (la clé de service par défaut, une doublure dans scripts/crm-connecte-qa.mjs).
+  const lectures = [...corps.matchAll(/(?:supabaseAdmin|db)\.from\('([a-z_]+)'\)\.select\([^)]*\)([^\n]*)/g)]
   T('J4 chaque table lue par le CRM (devis, factures, demandes, chantiers, tâches, stock, équipe, véhicules, commandes, rappels…) est filtrée par .eq(\'artisan_id\', uid) : aucune donnée d’un autre compte', lectures.length >= 14 && lectures.every((m) => m[2].includes(".eq('artisan_id', uid)")), lectures.filter((m) => !m[2].includes(".eq('artisan_id', uid)")).map((m) => m[1]).join(','))
   // Table de vérification « le CRM est connecté à tout » : source → où ça apparaît → preuve.
   const branchements = [

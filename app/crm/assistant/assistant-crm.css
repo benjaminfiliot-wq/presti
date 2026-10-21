@@ -1,0 +1,75 @@
+/* L'assistant de gestion DANS le CRM (21/10) : bouton fixe, panneau latéral (plein écran sur téléphone), compteurs et fil d'activité du
+   poste des assistants. Jetons de app/globals.css seulement ; accent corail ; vert / jaune / rouge pour un état. Préfixes aca- et acp-. */
+
+/* ── Le bouton « Assistant » de la barre de l'atelier et de la fiche ── */
+.aca-bouton { display: inline-flex; align-items: center; gap: 7px; flex: none; background: var(--accent); color: var(--paper, #fff); border: 1px solid var(--accent); border-radius: 9px; padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap }
+.aca-bouton:hover { background: var(--accent-hover, var(--accent)) }
+.aca-bouton:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.aca-bouton[aria-expanded="true"] { box-shadow: 0 0 0 3px var(--accent-tint-2) }
+.aca-bouton.verrou { background: var(--surface-2); color: var(--ink-soft); border-color: var(--line) }
+.aca-offre { font-size: 11px; font-weight: 700; color: var(--accent-ink); background: var(--accent-tint); border-radius: 20px; padding: 1px 7px }
+.aca-pouls { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok); margin-right: 1px; flex: none }
+.aca-bouton .aca-pouls { background: currentColor }
+@media (prefers-reduced-motion: no-preference) {
+  .aca-pouls { animation: aca-pouls 2.2s ease-out infinite }
+  @keyframes aca-pouls { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 55%, transparent) } 70% { box-shadow: 0 0 0 7px transparent } 100% { box-shadow: 0 0 0 0 transparent } }
+}
+
+/* ── Le panneau latéral ── */
+.acp-fond { position: fixed; inset: 0; z-index: 80; background: color-mix(in srgb, var(--ink) 18%, transparent) }
+.acp { position: absolute; top: 0; right: 0; bottom: 0; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--line); box-shadow: var(--shadow-lg); outline: none;
+  /* Le panneau est rendu depuis la barre de l'atelier (boutons en une ligne) : il ne doit pas hériter de son « nowrap » (capture du 21/10 : texte coupé). */
+  white-space: normal; overflow-wrap: anywhere; overflow-x: hidden }
+.acp-tete > div, .acp-fil > * { min-width: 0 }
+@media (prefers-reduced-motion: no-preference) { .acp { animation: acp-entre .22s ease-out } @keyframes acp-entre { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } } }
+.acp-tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--line-2) }
+.acp-tete h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-family: var(--font-display); font-size: 18px; letter-spacing: -.01em; color: var(--ink) }
+.acp-regle { margin: 3px 0 0; font-size: 12.5px; color: var(--muted) }
+.acp-fermer { flex: none; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer }
+.acp-fermer:focus-visible, .acp-retirer:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.acp-contexte { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 10px 16px 0; padding: 8px 10px; border-radius: 9px; background: var(--accent-tint); border: 1px solid var(--accent-tint-2); color: var(--accent-ink); font-size: 13px }
+.acp-retirer { flex: none; border: 0; background: transparent; color: inherit; font-size: 18px; cursor: pointer; width: 28px; height: 28px; border-radius: 7px }
+.acp-exemple { margin: 10px 16px 0; padding: 7px 10px; border-radius: 9px; background: var(--warn-tint, var(--surface-2)); color: var(--ink); font-size: 12.5px }
+.acp-fil { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px }
+.acp-accueil { margin: auto 0 0; font-size: 14px }
+.acp-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 16px; border-top: 1px solid var(--line-2) }
+.acp-saisie { display: flex; flex-direction: column; gap: 8px; padding: 8px 16px 14px }
+.acp-saisie textarea { width: 100%; resize: vertical; min-height: 54px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; font: inherit; font-size: 14px; background: var(--surface-2); color: var(--ink) }
+.acp-saisie textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px }
+.acp-barre { display: flex; align-items: center; gap: 8px; justify-content: flex-end; flex-wrap: wrap }
+.acp-lien { margin-right: auto; font-size: 12.5px; color: var(--accent-ink) }
+@media (max-width: 760px) {
+  .acp { width: 100%; border-left: 0 }
+  .acp-fond { background: var(--surface) }
+}
+
+/* ── Le poste des assistants : compteurs, file du pilote, fil d'activité ── */
+.aca { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: var(--radius); border: 1px solid var(--accent-tint-2); background: linear-gradient(180deg, var(--accent-tint), transparent 70%) }
+.aca-tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.aca-tete .crm-sous { display: flex; align-items: center; gap: 8px; margin: 0 }
+.aca-compteurs { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px }
+.aca-compteur { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line) }
+.aca-compteur b { font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--ink) }
+.aca-compteur span { font-size: 12px; color: var(--muted) }
+.aca-compteur.alerte b { color: var(--warn) }
+.aca-compteur.pilote b { color: var(--accent) }
+.aca-sous { margin: 4px 0 0; font-size: 12.5px; font-weight: 700; color: var(--ink-soft); text-transform: none }
+.aca-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
+.aca-liste li { display: flex; align-items: center; gap: 8px; justify-content: space-between; padding: 7px 9px; border-radius: 9px; background: var(--surface); border: 1px solid var(--line-2); font-size: 13px }
+.aca-fil li { justify-content: flex-start }
+.aca-texte { flex: 1; min-width: 0; overflow-wrap: anywhere }
+.aca-decompte { color: var(--accent-ink) }
+.aca-note { margin: 0; font-size: 12px }
+@media (prefers-reduced-motion: no-preference) { .aca-fil li:first-child { animation: aca-arrive .4s ease-out } @keyframes aca-arrive { from { background: var(--accent-tint) } to { background: var(--surface) } } }
+
+/* ── Le tableau de l'assistant, en surimpression sur la maquette (références « bureau d'agents » : compteurs lisibles) ── */
+.aca-tableau { position: absolute; z-index: 30; left: 10px; bottom: 10px; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--line); box-shadow: var(--shadow-sm); font-size: 12.5px; color: var(--ink-soft); cursor: pointer; backdrop-filter: blur(6px) }
+.aca-tableau b { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin-right: 3px }
+.aca-tableau .alerte b { color: var(--warn) }
+.aca-tableau-titre { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ink) }
+.aca-tableau:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+@media (max-width: 760px) { .aca-tableau { position: static; margin: 6px 0; width: 100%; justify-content: space-between } }
+
+/* ── « Demander à l'assistant » dans le panneau d'un objet ── */
+.aca-demander-objet { margin: 0 15px 0; justify-self: start }
+.aca-statique .aca-tableau { position: static; margin: 0 0 8px }

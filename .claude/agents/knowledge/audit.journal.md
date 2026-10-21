@@ -285,3 +285,22 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
 - À retenir : un filtre d'écriture « encore vide » (`is(col, null)`) ne protège contre une course que si l'autre écrivain REMPLIT la
   colonne ; s'il la remet à NULL, il faut comparer la valeur source (adresse, maj_le). Tout appel externe dans une route de lecture
   doit avoir un coupe-circuit et ne jamais être en série avec un autre appel externe.
+
+## 2026-10-21 — presti-audit-attaque — Pilote automatique, pointage, temps réel complet (lot non commité, 0174/0175 non appliquées)
+- Contexte : lecture seule (aucun compte, aucune écriture, aucune requête prod) ; preuves statiques au fichier:ligne.
+- Constat : 0 critique, 2 élevés. (E1) le garde-fou « prix sourcé » se contourne : l'éditeur de devis ne renvoie jamais `source_prix`
+  (app/devis/[id]/page.tsx:139 chiffrerIA, :153 save) et regles.ts:103 lit une provenance vide comme « saisie par l'artisan » → un devis
+  chiffré par l'IA, ou un devis auto réenregistré, part seul. (E2) la réponse au prospect pilotée part par validerPropositionServeur
+  (lib/envoisServeur.ts:60) sans `anonyme` (pas de 3/j par destinataire, quota produit 80/j partagé vidable) ni mention IA (exigée
+  leads/route.ts:464-472), à une adresse déclarée par un anonyme ; limite_messages et plage horaire ne s'appliquent pas en assistée
+  (plateformeConfig.ts:162-164). Moyens : suspension non relue par le pilote ; traiterFile sans budget (lignes/cartes figées en_cours,
+  plafond dépassable si passages chevauchés) ; claim envoi-proposition consommé avant l'envoi (409 pendant 24 h après échec canal) ;
+  cartes repondre_client issues d'un tour ayant lu du [MESSAGE_CLIENT] pilotables.
+- Sain : filtre artisan_id partout (file, réclamation, magasin.lire, leadDuCompte, envois PDF), claim atomique a_partir→en_cours puis
+  carte en_attente→en_cours, annulation conditionnelle a_partir, drapeau+offre+réglages+plafond relus au départ, OUTILS_JAMAIS_AUTO,
+  pause générale au tic (fail-closed), /pointage (32 octets, SHA-256, regex 43, révocable, 3 filtres, CSP/noindex/no-referrer, échappement),
+  0174 RLS sans politique + revoke + déclencheurs, 0175 RLS SELECT own (0002:32, 0141:209).
+- Décision / action : rapport au dev principal ; aucun fichier modifié hors ce journal.
+- À retenir : une provenance « vide = sûre » ne vaut que si TOUS les écrans font l'aller-retour du champ — un formulaire qui le perd
+  blanchit la ligne. Un envoi qui perd sa validation humaine doit reprendre les garde-fous de l'envoi autonome (anonyme, mention IA,
+  limites de conversation), pas ceux du clic de l'artisan.

@@ -6,6 +6,8 @@
 import { useState } from 'react'
 import { PLANS } from '@/lib/plans'
 import { dureeTexte, urlAffiche, urlVideo, type AideVideo } from '@/lib/aideVideos'
+import { offreAide } from '@/lib/aideAutomatique'
+import PastilleOffre from './PastilleOffre'
 
 export default function VideoAide({ video: v, ouvert }: { video: AideVideo; ouvert: boolean }) {
   const [vu, setVu] = useState(ouvert)
@@ -14,7 +16,7 @@ export default function VideoAide({ video: v, ouvert }: { video: AideVideo; ouve
       <summary>
         <svg className="aide-vid-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m10 9.5 4.5 2.5-4.5 2.5z" fill="currentColor" /></svg>
         <span>{v.titre}</span>
-        {v.offre !== 'essentiel' && <span className="aide-vid-offre">Offre {PLANS[v.offre].label}</span>}
+        <PastilleOffre offre={offreAide(v.id)} />
         {v.duree ? <span className="pg"><span className="aide-sr">Durée </span>{dureeTexte(v.duree)}</span> : null}
       </summary>
       <div className="aide-art-b aide-vid-b">

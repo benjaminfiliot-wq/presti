@@ -1,0 +1,108 @@
+// PILOTE AUTOMATIQUE — l'ORCHESTRATEUR du départ (pur, injecté : ni réseau ni base). Le détail des étapes est en tête de
+// lib/pilote/executeur.ts, qui lui fournit les dépendances réelles ; scripts/pilote-qa.mjs le rejoue avec une file en mémoire.
+//
+// Audit offensif du 21/10 : un BUDGET de temps (le tic a 60 s, M2) — ce qui n'est pas traité attend le passage suivant ; les
+// lignes restées « en_cours » plus de 5 minutes (passage interrompu) sont REPRISES ; le plafond du jour est tenu par un jeton
+// atomique par compte (M2) ; un compte suspendu ne fait rien partir (M1) ; une carte née d'une conversation où l'assistant a lu
+// du contenu écrit par un tiers ne part jamais seule (M4) ; une réponse rejoue la limite de messages par conversation et la
+// plage horaire de Ma plateforme (E2).
+import {
+  LIBELLE_MOTIF, LOT_PAR_PASSAGE, OUTILS_EXECUTABLES_PILOTE, decisionPilote, etatEcheance, typePiloteDeOutil,
+  type LignePrix, type MotifManuel, type ReglagesPilote, type StatutFile, type TypePilote,
+} from './regles'
+
+export type LigneAuto = { id: string; artisan_id: string; type: TypePilote; source: 'carte' | 'proposition'; ref_id: string; lead_id: string | null; libelle: string; prete_le: string; part_le: string }
+export type ContexteCompte = { plan: string | null; leads_pause: boolean; suspendu: boolean; reglages: ReglagesPilote; parties: number }
+export type Issue = { ok: true; resume: string } | { ok: false; deja: boolean; erreur: string }
+/** L'état d'une conversation au moment de répondre (réponse à un prospect). */
+export type EtatConversation = 'ok' | 'prise_en_main' | 'limite' | 'horaire'
+
+/** Budget de temps d'un passage (le tic a 60 s et d'autres étapes) ; reprise des lignes « en_cours » après 5 min. */
+export const BUDGET_PASSAGE_MS = 20_000
+export const REPRISE_EN_COURS_MS = 5 * 60_000
+
+export type DependancesFile = {
+  drapeau: () => boolean
+  /** Remet « a_partir » les lignes « en_cours » réclamées avant `avant` (passage interrompu). Rend le nombre repris. */
+  reprendre: (avant: Date) => Promise<number>
+  /** Lignes a_partir dont part_le ≤ maintenant, les plus anciennes d'abord. */
+  mures: (maintenant: Date, n: number) => Promise<LigneAuto[]>
+  /** a_partir → en_cours en UNE instruction ; true seulement pour l'appelant qui a fait la transition. */
+  reclamer: (l: LigneAuto, maintenant: Date) => Promise<boolean>
+  /** en_cours → statut final (ou de nouveau a_partir pour attendre). */
+  terminer: (l: LigneAuto, statut: StatutFile, motif: string | null, maintenant: Date) => Promise<void>
+  contexte: (uid: string, maintenant: Date) => Promise<ContexteCompte>
+  /** Les lignes du devis visé (garde-fou des prix), null si introuvable. */
+  lignesDevis: (l: LigneAuto) => Promise<LignePrix[] | null>
+  /** La carte visée, si elle attend encore (null : introuvable ou déjà traitée) ; `contenuClientLu` : marque posée à sa création. */
+  carteDe: (l: LigneAuto) => Promise<{ outil: string; contenuClientLu: boolean } | null>
+  /** Pour une réponse à un prospect : prise en main, limite de réponses de l'IA atteinte, hors plage horaire, ou ok. */
+  etatConversation: (l: LigneAuto, maintenant: Date) => Promise<EtatConversation>
+  /** Le jeton du plafond quotidien (atomique, fail-closed) : false = plafond atteint. */
+  jeton: (uid: string) => Promise<boolean>
+  executer: (l: LigneAuto) => Promise<Issue>
+}
+
+export type Bilan = { prises: number; parties: number; manuel: number; annulees: number; echecs: number; attente: number; reprises: number; reportees: number }
+
+export async function traiterFile(d: DependancesFile, maintenant = new Date(), lot = LOT_PAR_PASSAGE, budgetMs = BUDGET_PASSAGE_MS, horloge: () => number = () => Date.now()): Promise<Bilan> {
+  const bilan: Bilan = { prises: 0, parties: 0, manuel: 0, annulees: 0, echecs: 0, attente: 0, reprises: 0, reportees: 0 }
+  if (!d.drapeau()) return bilan
+  const debut = horloge()
+  bilan.reprises = await d.reprendre(new Date(maintenant.getTime() - REPRISE_EN_COURS_MS))
+  const lignes = await d.mures(maintenant, lot)
+  const contextes = new Map<string, ContexteCompte>()
+  for (const l of lignes) {
+    // Budget épuisé : le reste attend le passage suivant (rien n'est réclamé, donc rien ne reste coincé).
+    if (horloge() - debut > budgetMs) { bilan.reportees++; continue }
+    if (!(await d.reclamer(l, maintenant))) continue
+    bilan.prises++
+    const fin = async (statut: StatutFile, motif: string | null) => {
+      await d.terminer(l, statut, motif, maintenant)
+      if (statut === 'partie') bilan.parties++
+      else if (statut === 'manuel') bilan.manuel++
+      else if (statut === 'annulee') bilan.annulees++
+      else if (statut === 'echec') bilan.echecs++
+      else if (statut === 'a_partir') bilan.attente++
+    }
+    const manuel = (m: MotifManuel) => fin('manuel', LIBELLE_MOTIF[m])
+    try {
+      if (etatEcheance(l, maintenant) === 'trop_ancienne') { await manuel('trop_ancienne'); continue }
+      let c = contextes.get(l.artisan_id)
+      if (!c) { c = await d.contexte(l.artisan_id, maintenant); contextes.set(l.artisan_id, c) }
+      if (c.suspendu) { await manuel('suspendu'); continue }
+      let outil: string | undefined
+      if (l.source === 'carte') {
+        const carte = await d.carteDe(l)
+        if (!carte) { await fin('annulee', 'carte introuvable ou déjà traitée'); continue }
+        if (!OUTILS_EXECUTABLES_PILOTE.includes(carte.outil) || typePiloteDeOutil(carte.outil) !== l.type) { await manuel('jamais_auto'); continue }
+        if (carte.contenuClientLu) { await manuel('contenu_client'); continue }
+        outil = carte.outil
+      }
+      const lignesPrix = l.type === 'envoi_devis' ? (await d.lignesDevis(l)) ?? [] : undefined
+      const dec = decisionPilote({ drapeau: d.drapeau(), plan: c.plan, reglages: c.reglages, type: l.type, outil, lignes: lignesPrix, partiesDepuis24h: c.parties })
+      if (!dec.auto) {
+        // Le pilote a été coupé (ou le type décoché) entre-temps : la ligne aurait dû être annulée ; elle l'est maintenant.
+        if (dec.motif === 'inactif' || dec.motif === 'type_inactif') await fin('annulee', LIBELLE_MOTIF[dec.motif])
+        else await manuel(dec.motif)
+        continue
+      }
+      if (l.type === 'reponse_prospect') {
+        if (c.leads_pause) { await fin('a_partir', null); continue } // pause de l'artisan : la file attend
+        const e = await d.etatConversation(l, maintenant)
+        if (e === 'prise_en_main') { await fin('annulee', 'conversation reprise en main par l’artisan'); continue }
+        if (e === 'limite') { await manuel('limite_conversation'); continue }
+        if (e === 'horaire') { await fin('a_partir', null); continue } // hors plage horaire : elle partira à l'ouverture (ou passera en manuel après 24 h)
+      }
+      // Le plafond du jour, tenu par un jeton atomique par compte (deux passages ou deux instances ne le dépassent pas).
+      if (!(await d.jeton(l.artisan_id))) { await manuel('plafond'); continue }
+      const r = await d.executer(l)
+      if (r.ok) { c.parties++; await fin('partie', r.resume.slice(0, 300)) }
+      else if (r.deja) await fin('annulee', `déjà traitée : ${r.erreur}`.slice(0, 300))
+      else await fin('echec', r.erreur.slice(0, 300))
+    } catch (e) {
+      await fin('echec', (e instanceof Error ? e.message : 'erreur inattendue').slice(0, 300)).catch(() => {})
+    }
+  }
+  return bilan
+}

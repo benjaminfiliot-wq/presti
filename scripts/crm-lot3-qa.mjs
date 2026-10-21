@@ -149,7 +149,7 @@ const EXE = new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0, 4, 0, 0, 0])
   const fiche = lire('app/crm/FicheChantier.tsx'), page = lire('app/crm/page.tsx')
   T('D13 écrans fermés par leur drapeau : la section Photos et l’onglet Planning', /\{actif\('crmPieces'\) && <Pieces /.test(fiche) && /o\.id !== 'planning' \|\| actif\('crmPlanning'\)/.test(page) && /onglet === 'planning' && actif\('crmPlanning'\)/.test(page))
   const comp = sansCommentaires(lire('app/crm/Pieces.tsx'))
-  T('D14 l’écran : la photo est réduite et ré-encodée dans le navigateur avant l’envoi (EXIF retiré), envoi par appel() (bloqué en exemple), suppression confirmée', /resizeToBlob\(f, 2000, 'image\/webp', 0\.8\)/.test(comp) && /appel\('\/api\/crm\/pieces', \{ method: 'POST', body: form \}\)/.test(comp) && /confirm\('Supprimer ce fichier/.test(comp) && !/\bfetch\(/.test(comp))
+  T('D14 l’écran : la photo est réduite et ré-encodée dans le navigateur avant l’envoi (EXIF retiré), envoi par appel() (bloqué en exemple), suppression confirmée', /resizeToBlob\(f, 2000, 'image\/webp', 0\.8\)/.test(comp) && /appel(<[^\n]*?>)?\('\/api\/crm\/pieces', \{ method: 'POST', body: form \}\)/.test(comp) && /confirm\('Supprimer ce fichier/.test(comp) && !/\bfetch\(/.test(comp))
 }
 
 // ═══════════════════════ L. En vrai ═══════════════════════

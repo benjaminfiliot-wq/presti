@@ -4,7 +4,7 @@ import '@/app/globals.css'
 import '@/app/crm/crm.css'
 import { useEffect, useState } from 'react'
 import Atelier from '@/app/crm/atelier/Atelier'
-import { PREREGLAGES, FILTRES, type DonneesAtelier, type Filtre, type Prereglage } from '@/lib/crm/atelier'
+import { PREREGLAGES, FILTRES, estAujourdhui, type DonneesAtelier, type Filtre, type Prereglage } from '@/lib/crm/atelier'
 import { DONNEES_EXEMPLE, EQUIPE_EXEMPLE, ficheChantierExemple, JOUR_EXEMPLE, VUE_EXEMPLE, vitrineCarte, vitrineEtats, vitrineSerree, vitrineTypes } from '@/lib/crm/exemple'
 import PlanChantier from '@/app/crm/PlanChantier'
 import { ModeExemple } from '@/app/crm/mode'
@@ -25,6 +25,8 @@ import { BASES, echantillonPourBase, METIERS_3D, type Base, type Metier3D, type 
 // Lot 6 : &vitrine=serree (trente chantiers serrés : placement des étiquettes).
 // Lot 7 : ?plan=<n> (le plan du chantier n° n de l'exemple : schéma et maquette 3D, en mode exemple — rien n'est écrit) ; &type= force
 // le type du bâtiment (hotel, restaurant…).
+// Lot 8 : &evenement=vehicule|livraison|tout — au bout de &apres= ms (5 000 par défaut), les données changent comme une relecture en
+// direct (un véhicule affecté au chantier du jour, une commande attendue aujourd'hui, une tâche cochée, une facture payée de l'exemple).
 const JOUR = JOUR_EXEMPLE
 const FICTIF = DONNEES_EXEMPLE
 const VIDE: DonneesAtelier = { jour: JOUR, metier: null, chantiers: [], materiaux: [], vehicules: [], membres: [], demandes: [] }
@@ -32,6 +34,8 @@ const VIDE: DonneesAtelier = { jour: JOUR, metier: null, chantiers: [], materiau
 export default function Demo() {
   const [p, setP] = useState<URLSearchParams | null>(null)
   useEffect(() => { setP(new URLSearchParams(window.location.search)) }, [])
+  const [apres, setApres] = useState(false)
+  useEffect(() => { if (!p?.get('evenement')) return; const t = setTimeout(() => setApres(true), Number(p.get('apres') ?? 5000) || 5000); return () => clearTimeout(t) }, [p])
   if (!p) return null
   const metier = (PREREGLAGES as readonly string[]).includes(p.get('metier') ?? '') ? (p.get('metier') as Prereglage) : undefined
   const vue = (['ensemble', 'atelier', 'chantiers', 'dessus'] as const).find((v) => v === p.get('vue'))
@@ -48,7 +52,11 @@ export default function Demo() {
   const vitrine = infra ? p.get('vitrine') : null
   const avecVitrine = vitrine === 'etats' ? vitrineEtats(estTypeBat(p.get('type')) ? (p.get('type') as string) : 'maison') : vitrine === 'types' ? vitrineTypes() : vitrine === 'carte' ? vitrineCarte() : vitrine === 'serree' ? vitrineSerree() : brut
   const sansBase = infra && p.get('sansbase') === '1' ? { ...avecVitrine, carte: undefined, chantiers: avecVitrine.chantiers.map((c) => ({ ...c, lat: null, lng: null })) } : avecVitrine
-  const donnees = infra && p.get('stock') === 'vide' ? { ...sansBase, materiaux: [], reservations: [] } : sansBase
+  const donneesAvant = infra && p.get('stock') === 'vide' ? { ...sansBase, materiaux: [], reservations: [] } : sansBase
+  // Le véhicule : AVANT, la camionnette du premier chantier du jour est encore au dépôt ; APRÈS, elle y est affectée (elle part).
+  const quoi = infra ? p.get('evenement') ?? '' : ''
+  const sansVehicule = (d: DonneesAtelier): DonneesAtelier => { const pris = d.chantiers.find((c) => c.vehicule_id && estAujourdhui(c, d.jour)); return pris ? { ...d, chantiers: d.chantiers.map((c) => (c.id === pris.id ? { ...c, vehicule_id: null } : c)) } : d }
+  const donnees = quoi && apres ? evenementDemo(donneesAvant, quoi) : quoi === 'vehicule' || quoi === 'tout' ? sansVehicule(donneesAvant) : donneesAvant
   const nPlan = Number(p.get('plan'))
   if (infra && Number.isInteger(nPlan) && nPlan > 0) {
     const f = ficheChantierExemple(`00000000-0000-4000-8000-${String(nPlan).padStart(12, '0')}`)
@@ -69,4 +77,23 @@ export default function Demo() {
       <Atelier donnees={donnees} demo mesure={p.get('mesure') === '1'} prereglageInitial={metier} vueInitiale={vue as NomVue | undefined} filtreInitial={filtre} forcer={mode} baseInitiale={base} heure={heure} metierInitial={metier3D} vue={infra && p.get('vide') !== '1' ? VUE_EXEMPLE : undefined} />
     </main>
   )
+}
+
+/** La relecture « en direct » de la démonstration : les mêmes données, avec ce qu'un artisan vient de faire (données fictives). */
+function evenementDemo(d: DonneesAtelier, quoi: string): DonneesAtelier {
+  let x = d
+  const tout = quoi === 'tout'
+  // (Le véhicule : les données d'origine l'affectent déjà — la vue d'avant l'avait laissé au dépôt.)
+  if (quoi === 'livraison' || tout) {
+    const c = (x.commandes ?? []).find((k) => k.statut === 'commandee' && k.livraison_prevue !== x.jour)
+    if (c) x = { ...x, commandes: (x.commandes ?? []).map((k) => (k.id === c.id ? { ...k, livraison_prevue: x.jour } : k)) }
+  }
+  if (tout) {
+    const c = x.chantiers.find((k) => k.taches && k.taches.faites < k.taches.total && k.statut === 'en_cours')
+    if (c && c.taches) x = { ...x, chantiers: x.chantiers.map((k) => (k.id === c.id && k.taches ? { ...k, avancement: Math.round(((k.taches.faites + 1) / k.taches.total) * 100), taches: { ...k.taches, faites: k.taches.faites + 1, ouvertes: k.taches.ouvertes.slice(1) } } : k)) }
+    // La facture émise de l'exemple (« Mise aux normes gaz », 2 100 € TTC) devient payée : son montant réel.
+    const ch = x.chantiers.find((k) => k.titre === 'Mise aux normes gaz')
+    if (ch) x = { ...x, paiements: [...(x.paiements ?? []), { id: 'facture-602', chantierId: ch.id, montant: 210000 }] }
+  }
+  return x
 }

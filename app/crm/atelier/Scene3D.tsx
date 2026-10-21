@@ -18,10 +18,15 @@ import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { COULEURS, FORMES, initiales, melanger, styleAvatar, type Forme, type Inst, type Scene } from '@/lib/crm/atelier'
 import { DUREE_CHUTE_MS, hauteurChute } from '@/lib/crm/accueil'
-import { ambiance, decalageMarche, dureeMarche, heureParis, type Fenetre, type Mobile } from '@/lib/crm/infrastructure'
+import { ambiance, decalageMarche, dureeMarche, heureParis, MARCHE, type Fenetre, type Mobile } from '@/lib/crm/infrastructure'
 import { placerEtiquettes, prioriteChantier, PRIORITES, type EntreeEtiquette } from '@/lib/crm/etiquettes'
+import { bornerCible } from '@/lib/crm/carte'
+import { evenementsScene, libellePaiement } from '@/lib/crm/evenements'
+import { routeEntre } from '@/lib/crm/atelier'
 
 export type CommandesScene = {
+  /** Lot 8 : se déplacer dans la carte — dx vers la droite, dy vers le haut de l'écran (en « pas » : un pas = 1/6 de la largeur vue). */
+  deplacer?: (dx: number, dy: number) => void
   zoomer: (facteur: number) => void
   tourner: (sens: 1 | -1) => void
   recentrer: () => void
@@ -86,13 +91,15 @@ function useCalme() {
 // ── Une couche instanciée : toutes les instances d'une forme, un seul appel de dessin ──────────────────────────
 // `lumiere` : le calque des fenêtres et des lampes (infrastructure), une matière NON éclairée, sans ombre — elle luit le soir.
 // `marche` : les personnages qui vont à leur chantier (infrastructure) ; leur position posée est l'arrivée, le trajet est un décalage.
-function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = null, lumiere = false, marche = null }: {
+function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = null, lumiere = false, marche = null, pousse = null }: {
   forme: Forme; insts: Inst[]; couleur: (it: Inst) => string
   onPick: (o: number) => void; onSurvol: (o: number | null) => void
   apparition: { debut: number; centre: THREE.Vector3 } | null
   chute?: { debut: number; index: readonly number[] } | null
   lumiere?: boolean
   marche?: { debut: number; fin: number; mobiles: ReadonlyMap<number, Mobile> } | null
+  /** Lot 8 : les objets dont une tâche vient d'être cochée — ils « montent » (0,5 → 1 de leur hauteur, 0,9 s). */
+  pousse?: { debut: number; objets: ReadonlySet<number> } | null
 }) {
   const ref = useRef<THREE.InstancedMesh>(null)
   const calme = useCalme()
@@ -130,8 +137,10 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = n
       let mx = 0, my = 0, mz = 0
       const mb = marche?.mobiles.get(i)
       if (mb && marche && !calme.current) [mx, my, mz] = decalageMarche(mb, performance.now() - marche.debut)
-      tmp.p.set(it.p[0] + mx, it.p[1] * (k < 1 ? f : 1) + dy + my, it.p[2] + mz)
-      tmp.s.set(it.s[0] * Math.max(f, 0.0001) * g, it.s[1] * Math.max(f, 0.0001) * g, it.s[2] * Math.max(f, 0.0001) * g)
+      let gy = 1
+      if (pousse && pousse.objets.has(it.o) && !calme.current) { const a = Math.min(1, Math.max(0, (performance.now() - pousse.debut) / 900)); gy = 0.5 + 0.5 * (1 - Math.pow(1 - a, 3)) }
+      tmp.p.set(it.p[0] + mx, it.p[1] * (k < 1 ? f : 1) * gy + dy + my, it.p[2] + mz)
+      tmp.s.set(it.s[0] * Math.max(f, 0.0001) * g, it.s[1] * Math.max(f, 0.0001) * g * gy, it.s[2] * Math.max(f, 0.0001) * g)
       tmp.q.setFromEuler(tmp.e.set(it.r[0], it.r[1], it.r[2]))
       mesh.setMatrixAt(i, tmp.m.compose(tmp.p, tmp.q, tmp.s))
     })
@@ -143,9 +152,11 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = n
     const k = apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1
     fini.current = k >= 1
     poser(k)
-  }, [insts, apparition, colis, marche]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [insts, apparition, colis, marche, pousse]) // eslint-disable-line react-hooks/exhaustive-deps
   useFrame(() => {
     // La marche : une pose par image tant que quelqu'un est en route, puis une dernière, à l'arrivée.
+    const enPousse = !!pousse && performance.now() < pousse.debut + 950 && !calme.current
+    if (enPousse) { poser(1); return }
     const enMarche = !!marche && marche.mobiles.size > 0 && performance.now() < marche.fin && !calme.current
     if (!enMarche && marcheEnCours.current) { marcheEnCours.current = false; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1); return }
     if (enMarche) { marcheEnCours.current = true; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1); return }
@@ -257,7 +268,7 @@ function Halos({ fenetres, fort }: { fenetres: Fenetre[]; fort: boolean }) {
 
 // ── La caméra : vues enregistrées, rotation par quarts, glissements doux ──────────────────────────────────────
 type But = { pos: THREE.Vector3; cible: THREE.Vector3; zoom: number }
-const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<OrbitControlsImpl | null>; selection: number | null; vueInitiale: NomVue; zoomEnsemble: RefObject<number> }>(function Regie({ scene, controles, selection, vueInitiale, zoomEnsemble }, ref) {
+const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<OrbitControlsImpl | null>; selection: number | null; vueInitiale: NomVue; zoomEnsemble: RefObject<number>; interne?: { current: CommandesScene | null } }>(function Regie({ scene, controles, selection, vueInitiale, zoomEnsemble, interne }, ref) {
   const { camera, size } = useThree()
   const anim = useRef<{ de: But; vers: But; debut: number; duree: number } | null>(null)
   const azimut = useRef(AZIMUT_DEFAUT)
@@ -310,7 +321,34 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
     controles.current?.update()
     if (t >= 1) anim.current = null
   })
-  useImperativeHandle(ref, () => ({
+  // Lot 8 : la cible ne quitte jamais la carte (glisser, flèches, ZQSD) — elle est ramenée dedans, la caméra suit du même écart.
+  const bornes = scene.carte ? { min: scene.carte.min, max: scene.carte.max } : { min: [scene.bornes.min[0], scene.bornes.min[2]] as [number, number], max: [scene.bornes.max[0], scene.bornes.max[2]] as [number, number] }
+  useEffect(() => {
+    const c = controles.current
+    if (!c) return
+    const borner = () => {
+      const [x, z] = bornerCible([c.target.x, c.target.z], bornes)
+      if (Math.abs(x - c.target.x) < 1e-6 && Math.abs(z - c.target.z) < 1e-6) return
+      const dx = x - c.target.x, dz = z - c.target.z
+      c.target.x += dx; c.target.z += dz; camera.position.x += dx; camera.position.z += dz
+    }
+    c.addEventListener('change', borner)
+    return () => c.removeEventListener('change', borner)
+  }, [controles, camera, bornes.min[0], bornes.min[1], bornes.max[0], bornes.max[1]]) // eslint-disable-line react-hooks/exhaustive-deps
+  const deplacer = (dx: number, dy: number) => {
+    const c = controles.current
+    if (!c) return
+    // Les axes de l'écran, ramenés au sol : la droite de la caméra, et « vers le haut de l'écran » = devant elle.
+    const devant = c.target.clone().sub(camera.position).setY(0).normalize()
+    const droite = new THREE.Vector3(-devant.z, 0, devant.x)
+    const pas = size.width / (camera as THREE.OrthographicCamera).zoom / 6
+    const d = droite.multiplyScalar(dx * pas).add(devant.multiplyScalar(dy * pas))
+    const [x, z] = bornerCible([c.target.x + d.x, c.target.z + d.z], bornes)
+    const cible = new THREE.Vector3(x, c.target.y, z)
+    aller({ pos: camera.position.clone().add(cible.clone().sub(c.target)), cible, zoom: (camera as THREE.OrthographicCamera).zoom }, 260)
+  }
+  const api: CommandesScene = {
+    deplacer,
     zoomer: (f) => {
       const c = controles.current
       aller({ pos: camera.position.clone(), cible: c ? c.target.clone() : new THREE.Vector3(...cibleDe(scene)), zoom: Math.min(110, Math.max(4, (camera as THREE.OrthographicCamera).zoom * f)) }, 300)
@@ -325,7 +363,9 @@ const Regie = forwardRef<CommandesScene, { scene: Scene; controles: RefObject<Or
     },
     recentrer: () => { azimut.current = AZIMUT_DEFAUT; aller(butPour('ensemble', AZIMUT_DEFAUT)) },
     vue: (nom) => aller(butPour(nom)),
-  }))
+  }
+  if (interne) interne.current = api
+  useImperativeHandle(ref, () => api)
   return null
 })
 
@@ -508,6 +548,55 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
     for (const m of scene.mobiles) { const p = parForme.get(m.forme) ?? { debut: departMarche, fin, mobiles: new Map<number, Mobile>() }; p.mobiles.set(m.index, m); parForme.set(m.forme, p) }
     return { fin, parForme }
   }, [scene, departMarche])
+  // ── Lot 8 : le TEMPS RÉEL VISIBLE — à chaque relecture, la scène d'avant et la nouvelle sont comparées (lib/crm/evenements.ts) ; les
+  //    vraies différences se jouent : le véhicule roule par les routes, le compagnon marche, le camion de livraison arrive aux quais
+  //    et repart, la maison « monte », « + x € » s'élève au-dessus du chantier payé. Jamais au premier chargement ; « réduire les
+  //    animations » : rien ne bouge, la scène est directement dans son nouvel état (téléportation). Aucune couche ajoutée.
+  const scenePrecedente = useRef<Scene | null>(null)
+  type Jeu = { parForme: Map<Forme, { debut: number; fin: number; mobiles: Map<number, Mobile> }>; pousse: { debut: number; objets: Set<number> } | null; bulles: { id: string; texte: string; p: THREE.Vector3 }[] }
+  const [jeu, setJeu] = useState<Jeu | null>(null)
+  useEffect(() => {
+    const avant = scenePrecedente.current
+    scenePrecedente.current = scene
+    if (!avant || !scene.infra || !scene.signaux || mouvementReduit()) return
+    const evs = evenementsScene(avant, scene, scene.signaux.jour)
+    if (!evs.length) return
+    const maintenant = performance.now(), debut = maintenant - MARCHE.departMs
+    const index = new Map(scene.objets.map((o, i) => [o.cle, i]))
+    const morceaux = (o: number) => FORMES.flatMap((f) => scene.instances[f].flatMap((it, i) => (it.o === o ? [{ forme: f, index: i }] : [])))
+    const mobiles: Mobile[] = [], pousse = new Set<number>(), bulles: Jeu['bulles'] = []
+    for (const e of evs) {
+      const o = 'cle' in e ? index.get(e.cle) : undefined
+      if (e.type === 'vehicule' && o !== undefined) { const chemin = routeEntre(scene, e.de, e.vers); for (const m of morceaux(o)) mobiles.push({ ...m, de: e.de, porte: e.de, vers: e.vers, ordre: 0, chemin }) }
+      if (e.type === 'compagnon' && o !== undefined) for (const m of scene.mobiles ?? []) if (scene.instances[m.forme][m.index]?.o === o) mobiles.push({ ...m, ordre: 0 })
+      if (e.type === 'avancement' && o !== undefined) pousse.add(o)
+      if (e.type === 'paiement' && o !== undefined) { const c = scene.objets[o]; bulles.push({ id: e.id, texte: libellePaiement(e.montant), p: new THREE.Vector3(c.centre[0], c.hauteur + 0.4, c.centre[2]) }) }
+      if (e.type === 'livraison' && scene.infra.sortie) {
+        // Le camion de livraison arrive par la rue de ceinture, manœuvre aux quais, puis repart (il finit hors de la base).
+        const ol = index.get('structure:livraison')
+        if (ol === undefined || mobiles.some((m) => scene.instances[m.forme][m.index]?.o === ol)) continue
+        const q: [number, number] = [scene.objets[ol].centre[0], scene.objets[ol].centre[2]], E = scene.infra.sortie, loin: [number, number] = [E[0] - 14, E[1] + 1.2]
+        const chemin: [number, number][] = [loin, E, q, [q[0] + 1.2, q[1]], q, E, [E[0] + 16, E[1] + 1.2]]
+        for (const m of morceaux(ol)) mobiles.push({ ...m, de: loin, porte: E, vers: q, ordre: 0, chemin, garderFin: true })
+      }
+    }
+    const parForme = new Map<Forme, { debut: number; fin: number; mobiles: Map<number, Mobile> }>()
+    const fin = debut + dureeMarche(mobiles) + 60
+    for (const m of mobiles) { const p = parForme.get(m.forme) ?? { debut, fin, mobiles: new Map<number, Mobile>() }; p.mobiles.set(m.index, m); parForme.set(m.forme, p) }
+    setJeu({ parForme, pousse: pousse.size ? { debut: maintenant, objets: pousse } : null, bulles })
+    if (bulles.length) { const t = setTimeout(() => setJeu((j) => (j ? { ...j, bulles: [] } : j)), 2800); return () => clearTimeout(t) }
+  }, [scene])
+  // Mesure seulement : la cible de la caméra (les tests vérifient qu'on se déplace vraiment dans la carte).
+  useEffect(() => { if (mesure) (window as unknown as { __atelierCamera?: () => { x: number; z: number } | null }).__atelierCamera = () => (controles.current ? { x: controles.current.target.x, z: controles.current.target.z } : null) }, [mesure])
+  const regie = useRef<CommandesScene | null>(null)
+  // Se déplacer au clavier quand la carte a le focus : flèches et ZQSD (clavier AZERTY) ou WASD.
+  const clavier = (e: React.KeyboardEvent) => {
+    const k = e.key.toLowerCase()
+    const d: [number, number] | null = k === 'arrowup' || k === 'z' || k === 'w' ? [0, 1] : k === 'arrowdown' || k === 's' ? [0, -1] : k === 'arrowleft' || k === 'q' || k === 'a' ? [-1, 0] : k === 'arrowright' || k === 'd' ? [1, 0] : null
+    if (!d) return
+    e.preventDefault()
+    regie.current?.deplacer?.(d[0], d[1])
+  }
   const versionOmbres = useMemo(() => ({}), [scene, amb?.moment]) // eslint-disable-line react-hooks/exhaustive-deps
   const racine = useRef<HTMLDivElement | null>(null)
   const zoomEnsemble = useRef(14)
@@ -548,11 +637,13 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       const priorite = !o ? PRIORITES.zone : o.type === 'assistants' ? (selection === e.i ? PRIORITES.selection : PRIORITES.poste) : prioriteChantier(o, COULEURS, selection === e.i)
       return { el: cibles.current[k]?.el ?? null, p: e.p, cle: e.cle, sorte: (e.zone ? 'zone' : o?.type === 'assistants' ? 'poste' : 'chantier') as Cible['sorte'], priorite, ...(e.bas ? { bas: e.bas } : {}) }
     }),
+    // Lot 8 : les pastilles « + x € » d'un paiement (centrées sur leur chantier, comme la bulle de survol).
+    ...(jeu?.bulles ?? []).map((b, k) => ({ el: cibles.current[etiquettes.length + k]?.el ?? null, p: b.p })),
     { el: bulle.current, p: objetSurvol ? new THREE.Vector3(objetSurvol.centre[0], objetSurvol.hauteur + 0.6, objetSurvol.centre[2]) : new THREE.Vector3(0, -999, 0) },
   ]
 
   return (
-    <div className="atl-scene">
+    <div className="atl-scene" tabIndex={0} onKeyDown={clavier} aria-label="Carte de l’atelier : glisser ou flèches (ZQSD) pour se déplacer, molette pour zoomer, clic droit pour tourner" data-atelier-carte-focus>
     <Canvas
       orthographic flat shadows="percentage" dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}
       camera={{ position: [40, 36, 40], zoom: 14, near: -500, far: 1000 }}
@@ -591,7 +682,7 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       {FORMES.map((f) => (
         <Couche key={`${f}-${scene.instances[f].length}`} forme={f} insts={scene.instances[f]} couleur={couleur} apparition={apparition} chute={f === 'box' ? chute : null}
           onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol}
-          marche={marche?.parForme.get(f) ?? null} />
+          marche={jeu?.parForme.get(f) ?? marche?.parForme.get(f) ?? null} pousse={jeu?.pousse ?? null} />
       ))}
       {/* Infrastructure : les fenêtres et les lampes, UN calque de plus (un appel de dessin), allumé le soir. */}
       {scene.fenetres && scene.fenetres.length > 0 && (
@@ -602,9 +693,11 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       {amb?.halos && scene.fenetres && <Halos fenetres={scene.fenetres} fort={amb.moment === 'nuit'} />}
       <OrbitControls
         ref={controles} makeDefault enableDamping dampingFactor={0.12} target={cibleDe(scene)}
+        // Lot 8 : comme une carte — glisser DÉPLACE (clic gauche, un doigt), clic droit ou deux doigts TOURNENT, molette ou pincement ZOOMENT.
+        mouseButtons={{ LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }} touches={{ ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE }}
         minPolarAngle={0.05} maxPolarAngle={1.2} minZoom={4} maxZoom={110} screenSpacePanning={false}
       />
-      <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} />
+      <Regie ref={ref} scene={scene} controles={controles} selection={selection} vueInitiale={vueInitiale} zoomEnsemble={zoomEnsemble} interne={regie} />
       <OmbresFigees version={infra ? versionOmbres : scene} dureeMs={apparition ? 1100 : 0} rafraichirA={marche ? marche.fin + 30 : null} />
       <Mesureur actif={mesure} moment={amb?.moment ?? null} objets={scene.objets} />
       <Projecteur cibles={cibles} racine={racine} zoomEnsemble={zoomEnsemble} dense={nbChantiers > 6} selection={selection} />
@@ -647,9 +740,18 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
           </button>
         )
       })}
+      {(jeu?.bulles ?? []).map((b, k) => <span key={b.id} ref={(el) => { const c = cibles.current[etiquettes.length + k]; if (c) c.el = el }} className="atl-paiement" aria-hidden="true"><b>{b.texte}</b></span>)}
       <span ref={(el) => { bulle.current = el; const c = cibles.current[cibles.current.length - 1]; if (c) c.el = el }} className={`atl-bulle${objetSurvol && objetSurvol.type !== 'chantier' ? '' : ' cachee'}`} aria-hidden="true">
         {objetSurvol && <><b>{objetSurvol.libelle}</b>{objetSurvol.detail}</>}
       </span>
+    </div>
+    {/* Lot 8 : se déplacer — un petit panneau propre à la scène, en bas à droite (la barre de l'atelier n'est pas touchée). */}
+    <div className="atl-nav" role="group" aria-label="Se déplacer dans la carte" data-atelier-nav>
+      <button type="button" className="haut" aria-label="Déplacer vers le haut" title="Vers le haut (flèche ↑ ou Z)" onClick={() => regie.current?.deplacer?.(0, 1)}>↑</button>
+      <button type="button" className="gauche" aria-label="Déplacer vers la gauche" title="Vers la gauche (flèche ← ou Q)" onClick={() => regie.current?.deplacer?.(-1, 0)}>←</button>
+      <button type="button" className="centre" aria-label="Recentrer la carte" title="Recentrer" onClick={() => regie.current?.recentrer()}>⌂</button>
+      <button type="button" className="droite" aria-label="Déplacer vers la droite" title="Vers la droite (flèche → ou D)" onClick={() => regie.current?.deplacer?.(1, 0)}>→</button>
+      <button type="button" className="bas" aria-label="Déplacer vers le bas" title="Vers le bas (flèche ↓ ou S)" onClick={() => regie.current?.deplacer?.(0, -1)}>↓</button>
     </div>
     </div>
   )

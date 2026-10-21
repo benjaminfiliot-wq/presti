@@ -323,7 +323,7 @@ const lister = (dir) => fs.readdirSync(path.join(RACINE, dir), { withFileTypes: 
     exportes += (src.match(/export async function /g) ?? []).length
     for (const m of src.replace(/\r\n/g, '\n').matchAll(/export async function (GET|POST|PATCH|DELETE|PUT|OPTIONS)\(([^)]*)\)\s*\{\n([^\n]*)\n([^\n]*)/g)) {
       handlers++
-      if (!/^\s*const g = await gardeCrm\(req(, \{ drapeau: '(crmPieces|crmPlanning|crmApresChantier|crmSuivi|crmAtelierVivant)' \})?\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
+      if (!/^\s*const g = await gardeCrm\(req(, \{ drapeau: '(crmPieces|crmPlanning|crmApresChantier|crmSuivi|crmAtelierVivant|crmPointage)' \})?\)$/.test(m[3]) || !/^\s*if \('reponse' in g\) return g\.reponse$/.test(m[4])) fautes.push(`${f} ${m[1]}`)
     }
     if (/export (const|let|function) (?!GET|POST|PATCH|DELETE|runtime|dynamic|maxDuration)/.test(src)) fautes.push(`${f} : export non permis`)
   }
@@ -795,7 +795,7 @@ const At2 = await imp('lib/crm/atelier.ts')
 {
   const uid = U(42)
   const ab = Tr.abonnements(uid)
-  T('M1 un abonnement par table, chacun filtré sur LE compte de la session (`artisan_id=eq.<uid>`), tous les évènements d’écriture', ab.length === Tr.TABLES_TEMPS_REEL.length && ab.every((x) => x.schema === 'public' && x.event === '*' && x.filter === `artisan_id=eq.${uid}`) && new Set(ab.map((x) => x.table)).size === ab.length)
+  T('M1 un abonnement par table, chacun filtré sur LE compte de la session (`artisan_id=eq.<uid>`), tous les évènements d’écriture', ab.length === Tr.tablesEcoutees().length && ab.every((x) => x.schema === 'public' && x.event === '*' && x.filter === `artisan_id=eq.${uid}`) && new Set(ab.map((x) => x.table)).size === ab.length)
   T('M2 un identifiant qui n’est pas un uuid ne fabrique AUCUN filtre (injection de filtre) ; la casse est normalisée', Tr.abonnements("x,artisan_id=neq.1").length === 0 && Tr.abonnements('').length === 0 && Tr.abonnements(uid.toUpperCase())[0].filter === `artisan_id=eq.${uid}` && Tr.filtreCompte("00000000-0000-4000-8000-000000000001 or 1=1") === null)
   const mig = lire('supabase/migrations/0158_crm_commandes_temps_reel.sql')
   const migSql = mig.replace(/^\s*--.*$/gm, '')
@@ -803,10 +803,13 @@ const At2 = await imp('lib/crm/atelier.ts')
   // 18/10 : 0162 ajoute crm_rappels à la publication (une table, un `alter publication … add table`).
   const sql0162 = lire('supabase/migrations/0162_crm_rappels.sql').replace(/^\s*--.*$/gm, '')
   const ajouts0162 = [...sql0162.matchAll(/alter publication supabase_realtime add table public\.(\w+)/g)].map((m) => m[1])
-  const liste = [...liste0158, ...ajouts0162]
-  T('M3 la publication `supabase_realtime` (0158 + 0162) écoute EXACTEMENT les tables du code (rien de plus, rien de moins)', egal([...liste].sort(), [...Tr.TABLES_TEMPS_REEL].sort()) && liste0158.length === 12 && egal(ajouts0162, ['crm_rappels']), liste.join())
+  // 21/10 : 0175 ajoute clients et crm_journal (écoutés seulement drapeau crmTempsReelComplet levé, lib/crm/tempsReel.ts).
+  const sql0175 = lire('supabase/migrations/0175_crm_temps_reel_complet.sql').replace(/^\s*--.*$/gm, '')
+  const ajouts0175 = (sql0175.match(/foreach t in array array\[([^\]]+)\]/)?.[1] ?? '').split(',').map((x) => x.replace(/['\s]/g, '')).filter(Boolean)
+  const liste = [...liste0158, ...ajouts0162, ...ajouts0175]
+  T('M3 la publication `supabase_realtime` (0158 + 0162 + 0175) écoute EXACTEMENT les tables du code (rien de plus, rien de moins)', egal([...liste].sort(), [...Tr.TABLES_TEMPS_REEL, ...Tr.TABLES_APRES_0175].sort()) && liste0158.length === 12 && egal(ajouts0162, ['crm_rappels']) && egal(ajouts0175, [...Tr.TABLES_APRES_0175]), liste.join())
   const tout = fs.readdirSync(path.join(RACINE, 'supabase/migrations')).filter((f) => /^\d{4}_.*\.sql$/.test(f)).map((f) => lire(`supabase/migrations/${f}`)).join('\n')
-  const sansArtisan = Tr.TABLES_TEMPS_REEL.filter((t) => { const m = tout.match(new RegExp(`create table (?:if not exists )?public\\.${t}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i')); return !m || !/\bartisan_id\b/.test(m[1]) })
+  const sansArtisan = [...Tr.TABLES_TEMPS_REEL, ...Tr.TABLES_APRES_0175].filter((t) => { const m = tout.match(new RegExp(`create table (?:if not exists )?public\\.${t}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i')); return !m || !/\bartisan_id\b/.test(m[1]) })
   T('M4 chaque table écoutée porte une colonne artisan_id (le filtre en a besoin) ; `stock`, qui n’en a pas, n’est PAS écoutée (ses variations passent par mouvements_stock)', sansArtisan.length === 0 && !Tr.TABLES_TEMPS_REEL.includes('stock') && /mouvements_stock/.test(migSql), sansArtisan.join())
   T('M5 migration 0158 : RLS activée, lecture de SES lignes, garde de session et de suspension, aucun droit d’écriture direct, rien pour anon, déclencheur anti-référence croisée',
     /alter table public\.commandes_fournisseur enable row level security/.test(migSql) && /create policy commandes_fournisseur_lecture on public\.commandes_fournisseur for select to authenticated\s+using \(\(select auth\.uid\(\)\) = artisan_id\)/.test(migSql)

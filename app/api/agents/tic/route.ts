@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+
 import { bearerEgal } from '@/lib/secretEgal' // audit du 20/10 : comparaison du secret en temps constant
 import { actif } from '@/lib/flags'
 import { ops_baux_expirer } from '@/lib/agents/bus'
@@ -80,6 +81,22 @@ export async function GET(req: Request) {
     }
   } catch {
     etapes.veilleur = { statut: 'echec' }
+    reussi = false
+  }
+
+  // PILOTE AUTOMATIQUE (21/10, lib/pilote) : les actions préparées dont le délai d'annulation (10 min) est écoulé partent ici,
+  // chaque minute. Drapeau baissé : étape sautée. Pause générale : rien ne part, la file attend (la pause est lue plus haut ;
+  // illisible, elle compte comme active — fail-closed).
+  if (!actif('piloteAutomatique')) etapes.pilote = { statut: 'saute', raison: 'hors_creneau' }
+  else if (pause) etapes.pilote = { statut: 'saute', raison: 'hors_creneau' }
+  else if (reste() <= 4_000) etapes.pilote = { statut: 'saute', raison: 'budget' }
+  else try {
+    // Chargé à la demande : le moteur d'envoi (PDF compris) ne pèse rien sur le tic tant que le drapeau est baissé.
+    const { dependancesSupabase, traiterFile } = await import('@/lib/pilote/executeur')
+    const bilan = await traiterFile(dependancesSupabase())
+    etapes.pilote = { statut: bilan.echecs > 0 ? 'echec' : 'ok' }
+  } catch {
+    etapes.pilote = { statut: 'echec' }
     reussi = false
   }
 

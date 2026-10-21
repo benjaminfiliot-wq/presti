@@ -35,7 +35,7 @@ export const LIMITE_DEBIT = { max: 120, fenetreSec: 60 } as const
 /** Méthode que la route ne sert pas — seulement APRÈS gardeCrm, pour qu'un compte hors essai reçoive 404 et non 405. */
 export const nonPermise = (permises: string) => new NextResponse(null, { status: 405, headers: { ...PAS_DE_CACHE, Allow: permises } })
 
-export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' | 'crmApresChantier' | 'crmSuivi' | 'crmAtelierVivant' } = {}): Promise<Garde> {
+export async function gardeCrm(req: Request, opts: { drapeau?: 'crmPieces' | 'crmPlanning' | 'crmApresChantier' | 'crmSuivi' | 'crmAtelierVivant' | 'crmPointage' } = {}): Promise<Garde> {
   // 1. Drapeau baissé : 404 sans corps, avant toute lecture (ni session, ni base). Une partie du CRM livrée sous son propre drapeau
   //    (18/10 : photos du chantier, planning) le vérifie ici aussi, AVANT la session : une route fermée ne dit rien.
   if (!enEssai('crm') || (opts.drapeau && !actif(opts.drapeau))) return { reponse: new NextResponse(null, { status: 404, headers: PAS_DE_CACHE }) }
@@ -96,29 +96,29 @@ export async function lireReglages(uid: string): Promise<{ validationAuto: boole
 /**
  * Tout ce que le pipeline, le tableau de bord et les fiches clients lisent, pour UN artisan. Chaque requête porte
  * `.eq('artisan_id', uid)`. Une requête en erreur fait échouer l'ensemble (jamais un tableau à moitié vide présenté
- * comme complet).
+ * comme complet). `db` : la clé de service, ou une doublure en mémoire (scripts/crm-connecte-qa.mjs joue CETTE fonction).
  */
-export async function chargerDossiers(uid: string) {
+export async function chargerDossiers(uid: string, db: Pick<typeof supabaseAdmin, 'from'> = supabaseAdmin) {
   // Lecture PAR PAGES de 1 000 lignes : PostgREST plafonne chaque réponse (réglage « max rows » du projet, 1 000 par défaut), et un
   // `.limit(2000)` serait coupé à 1 000 SANS erreur — des tâches, des factures ou des devis manquants, des chiffres faux, et le
   // drapeau `tronque` (≥ 2 000) qui ne se lèverait jamais. Un second tri sur la clé rend les pages stables d'une page à l'autre.
   // Les rappels (0162) : tous ceux à faire, plus ceux faits ces 60 derniers jours (historique des fiches, relances envoyées).
   const depuis = new Date(Date.now() - 60 * 86_400_000).toISOString()
   const [devis, factures, leads, chantiers, taches, materiaux, deplacements, carnet, vehicules, membres, equipe, reservations, commandes, rappels] = await Promise.all([
-    lirePages((de, a) => supabaseAdmin.from('devis').select(COLONNES.devis).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('factures').select(COLONNES.factures).eq('artisan_id', uid).order('date_emission', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('leads').select(COLONNES.leads).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('chantiers').select(colonnesChantiers()).eq('artisan_id', uid).order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('chantier_taches').select('id, chantier_id, faite, libelle, faite_le, membre_id, ordre').eq('artisan_id', uid).order('id').range(de, a), 20 * LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('materiaux').select(COLONNES.materiaux).eq('artisan_id', uid).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('crm_journal').select('artisan_id, objet, objet_id, vers, etape_derivee, cree_le').eq('artisan_id', uid).eq('champ', 'etape').order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('clients').select(COLONNES.clients).eq('artisan_id', uid).order('id').range(de, a), LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('vehicules').select('id, nom, immatriculation, conducteur_id, controle_technique_le, entretien_le, actif').eq('artisan_id', uid).order('nom').order('id').range(de, a), 200),
-    lirePages((de, a) => supabaseAdmin.from('equipe_membres').select('id, nom, role, actif').eq('artisan_id', uid).order('nom').order('id').range(de, a), 200),
-    lirePages((de, a) => supabaseAdmin.from('chantier_equipe').select('chantier_id, membre_id').eq('artisan_id', uid).order('chantier_id').order('membre_id').range(de, a), 20 * LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('chantier_materiaux').select('chantier_id, materiau_id, quantite, statut').eq('artisan_id', uid).in('statut', ['reserve', 'sorti']).order('id').range(de, a), 20 * LIMITE),
-    lirePages((de, a) => supabaseAdmin.from('commandes_fournisseur').select(COLONNES.commandes).eq('artisan_id', uid).in('statut', ['commandee']).order('livraison_prevue', { ascending: true }).order('id').range(de, a), 500),
-    lirePages((de, a) => supabaseAdmin.from('crm_rappels').select(COLONNES.rappels).eq('artisan_id', uid).or(`fait_le.is.null,fait_le.gte.${depuis}`).order('echeance').order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('devis').select(COLONNES.devis).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('factures').select(COLONNES.factures).eq('artisan_id', uid).order('date_emission', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('leads').select(COLONNES.leads).eq('artisan_id', uid).order('created_at', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('chantiers').select(colonnesChantiers()).eq('artisan_id', uid).order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('chantier_taches').select('id, chantier_id, faite, libelle, faite_le, membre_id, ordre').eq('artisan_id', uid).order('id').range(de, a), 20 * LIMITE),
+    lirePages((de, a) => db.from('materiaux').select(COLONNES.materiaux).eq('artisan_id', uid).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('crm_journal').select('artisan_id, objet, objet_id, vers, etape_derivee, cree_le').eq('artisan_id', uid).eq('champ', 'etape').order('cree_le', { ascending: false }).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('clients').select(COLONNES.clients).eq('artisan_id', uid).order('id').range(de, a), LIMITE),
+    lirePages((de, a) => db.from('vehicules').select('id, nom, immatriculation, conducteur_id, controle_technique_le, entretien_le, actif').eq('artisan_id', uid).order('nom').order('id').range(de, a), 200),
+    lirePages((de, a) => db.from('equipe_membres').select('id, nom, role, actif').eq('artisan_id', uid).order('nom').order('id').range(de, a), 200),
+    lirePages((de, a) => db.from('chantier_equipe').select('chantier_id, membre_id').eq('artisan_id', uid).order('chantier_id').order('membre_id').range(de, a), 20 * LIMITE),
+    lirePages((de, a) => db.from('chantier_materiaux').select('chantier_id, materiau_id, quantite, statut').eq('artisan_id', uid).in('statut', ['reserve', 'sorti']).order('id').range(de, a), 20 * LIMITE),
+    lirePages((de, a) => db.from('commandes_fournisseur').select(COLONNES.commandes).eq('artisan_id', uid).in('statut', ['commandee']).order('livraison_prevue', { ascending: true }).order('id').range(de, a), 500),
+    lirePages((de, a) => db.from('crm_rappels').select(COLONNES.rappels).eq('artisan_id', uid).or(`fait_le.is.null,fait_le.gte.${depuis}`).order('echeance').order('id').range(de, a), LIMITE),
   ])
   const premiere = [devis, factures, leads, chantiers, taches, materiaux, deplacements, carnet, vehicules, membres, equipe, reservations].find((r) => r.error)
   if (premiere?.error) return { ok: false as const, erreur: premiere.error }

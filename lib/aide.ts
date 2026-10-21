@@ -11,7 +11,7 @@
 // Vouvoiement partout. Aucune promesse chiffrée non mesurée (pas de « en quelques
 // minutes », pas de pourcentages inventés).
 
-import { CREDIT_COST, ESSAI_JOURS } from './plans'
+import { ASSISTANT_TOURS_MAX, CREDIT_COST, ESSAI_JOURS, PLAFOND_PIECES_CHANTIER_MO } from './plans'
 
 export type Article = {
   id: string
@@ -218,6 +218,7 @@ export const ARTICLES: Article[] = [
       'Revenez ici pour voir la liste de vos factures.',
       'Cliquez sur une ligne ou « PDF » pour ouvrir le document.',
       'Cliquez « Marquer payée » une fois réglée.',
+      'Cliquez « XML » sur une facture pour télécharger son fichier Factur-X, utile à votre comptable ou à un donneur d’ordre public. C’est un fichier à télécharger : il n’est pas transmis pour vous à une plateforme agréée.',
       'Avec l’offre Studio ou Signature, cochez « Relancer automatiquement mes factures échues » en haut de l’écran : les relances partent seules après l’échéance (J+3, J+10, J+21 réglables) et s’arrêtent dès que la facture est payée ou que le client répond. Avec l’Essentiel, ce réglage s’affiche verrouillé.',
       'En cas d’erreur, cliquez « Émettre un avoir » — il n’existe ni « Supprimer » ni « Annuler » : l’avoir est la façon légale d’annuler une facture.',
     ],
@@ -271,6 +272,121 @@ export const ARTICLES: Article[] = [
     credits: 'Aucun',
     reglagesLies: ['/abonnement'],
     disponibleAvec: 'studio',
+  },
+
+  // source: app/crm/page.tsx ; app/crm/atelier/Atelier.tsx (réglages : métier, lieu, statut) ; lib/crm/infrastructure.ts:127-131 (18 métiers), :342 Atelier.tsx (saisie libre) ;
+  // lib/crm/carte.ts:1-9 (position réelle, adresse sans le nom du client) ; app/crm/atelier/Stock.tsx:7-8 (le stock de l'atelier EST l'inventaire) ; app/crm/useTempsReel.ts
+  {
+    id: 'crm',
+    page: '/crm',
+    titre: 'CRM atelier : votre entreprise en maquette vivante',
+    aQuoiCaSert:
+      'Le CRM montre votre entreprise comme une maquette en 3D (avec un repli en 2D si votre appareil ne suit pas) : votre local, vos chantiers, votre équipe, vos véhicules, avec les alertes posées dessus. ' +
+      'La maquette s’adapte à vous : à votre métier (choisi dans la liste, rattaché à l’une des 18 maquettes de métier, ou écrit librement avec « Écrire mon métier »), à votre lieu (chez vous, atelier, entrepôt, ou un camion-atelier si vous n’avez pas de local), à votre statut (à votre compte ou en société) et à vos véhicules. ' +
+      'Chaque chantier est placé à sa position réelle d’après son adresse, avec un bâtiment qui change selon le type de chantier. Tout ce qui se voit est cliquable : un objet ouvre ce qui le concerne. ' +
+      'Le stock de l’atelier est votre inventaire : le remplir ici le remplit aussi dans Inventaire. La maquette se met à jour en direct.',
+    commentOnSenSert: [
+      'Ouvrez « CRM atelier » dans le menu : la maquette s’affiche.',
+      'Dans « Réglages de l’atelier », choisissez votre métier dans la liste ou écrivez-le, puis votre lieu de travail : la maquette change.',
+      'Cliquez sur un objet (bâtiment, chantier, véhicule, stock, bureau…) : un panneau s’ouvre avec ses informations et les actions possibles.',
+      'Ajoutez ou comptez du stock directement depuis une structure de stockage : c’est le même stock que dans Inventaire.',
+      'Surveillez les pastilles d’alerte : retard, livraison, stock sous le seuil, chantier à facturer ou sans équipe.',
+    ],
+    pourVosClients:
+      'Vos clients ne voient jamais le CRM. Pour placer un chantier sur la carte, son adresse (adresse, code postal, ville, jamais le nom du client) est envoyée à la Base Adresse Nationale, le service public de géolocalisation des adresses.',
+    credits: 'Aucun crédit : le CRM ne fait appel à l’IA pour rien.',
+    reglagesLies: ['/crm', '/inventaire', '/abonnement'],
+    disponibleAvec: 'signature',
+  },
+
+  // source: lib/crm/accueil.ts:1-14 (salle d'attente, arrivée en direct) ; lib/crm/assistants.ts:1-9 (poste des assistants) ; app/crm/atelier/Vivant.tsx
+  {
+    id: 'crm.accueil',
+    page: '/crm#accueil',
+    titre: 'L’accueil en direct et le poste des assistants',
+    aQuoiCaSert:
+      'L’accueil de la maquette est une salle d’attente en trois files : les nouvelles demandes, les devis en attente de votre client, et les devis signés à planifier. ' +
+      'Une nouvelle demande y apparaît en direct (une bannière discrète, un colis qui tombe dans la maquette en 3D). ' +
+      'Près du bureau, le poste des assistants regroupe quatre rôles : relancer les devis, encaisser, facturer, tenir l’agenda. Il ne fait que PRÉPARER : il compte ce qui attend votre validation, en montre trois éléments au plus, et vous renvoie vers l’écran où vous agissez.',
+    commentOnSenSert: [
+      'Cliquez sur l’accueil pour ouvrir la salle d’attente.',
+      'Sur une ligne, cliquez sur son action (« Répondre » ouvre la conversation, par exemple).',
+      'Cliquez sur le poste des assistants pour voir ce qui vous attend : devis à relancer, factures échues, chantiers à facturer, rappels du jour.',
+      'Cliquez sur un élément : l’écran habituel s’ouvre, vous relisez et vous décidez.',
+    ],
+    pourVosClients: 'Rien ne part chez un client depuis ces panneaux : chaque ligne renvoie vers un écran existant où c’est vous qui envoyez.',
+    credits: 'Aucun.',
+    reglagesLies: ['/crm', '/messages', '/devis', '/factures'],
+    disponibleAvec: 'signature',
+  },
+
+  // source: app/crm/FicheChantier.tsx ; lib/crm/plan.ts (plan par pièce) ; lib/crm/carte.ts:92-103 (valider) ; lib/crm/serveur.ts:89-93 (validation automatique, éteinte par défaut) ;
+  // app/crm/Pieces.tsx ; lib/plans.ts PLAFOND_PIECES_CHANTIER_MO ; app/crm/ApresChantier.tsx ; app/crm/SuiviClient.tsx ; lib/crm/suivi.ts:1-8
+  {
+    id: 'crm.chantier',
+    page: '/crm/chantiers/[id]',
+    titre: 'La fiche chantier : plan par pièces, validation, photos, suivi client',
+    aQuoiCaSert:
+      'Chaque chantier a sa fiche : ses tâches, son équipe, le matériel réservé, ses notes. Le plan du chantier est un schéma par pièce (pas un plan à l’échelle) : chaque tâche est rangée dans sa pièce, que l’on devine d’après son libellé et que vous pouvez corriger. ' +
+      'Quand toutes les tâches sont cochées, « Valider le chantier » le termine et le retire de la carte (vos données restent) ; vous pouvez aussi activer « Valider automatiquement ». ' +
+      `La section « Photos et pièces » garde les fichiers du chantier dans un espace privé (jusqu’à ${PLAFOND_PIECES_CHANTIER_MO.signature / 1024} Go). ` +
+      'L’encart « Après le chantier » prépare la demande d’avis et le rappel d’entretien (désactivé tant que vous ne l’activez pas). Le lien de suivi donne à votre client une page en lecture seule : le nom de votre entreprise, le titre du chantier, son état, ses dates et l’avancement, global et pièce par pièce, sans prix, sans adresse, sans nom de client.',
+    commentOnSenSert: [
+      'Ouvrez un chantier depuis la maquette ou l’onglet Chantiers.',
+      'Cochez les tâches au fil de l’eau : l’avancement et le dessin du bâtiment suivent.',
+      'Ajoutez photos et pièces dans « Photos et pièces ».',
+      'Quand tout est fait, cliquez « Valider le chantier » ; vous pouvez le remettre sur la carte si besoin.',
+      'Pour tenir votre client au courant, créez le lien de suivi et envoyez-le-lui vous-même.',
+    ],
+    pourVosClients:
+      'Seul le lien de suivi est visible de votre client. Le message de demande d’avis ou d’entretien ne part que lorsque vous l’avez relu et confirmé.',
+    credits: 'Aucun.',
+    reglagesLies: ['/crm', '/factures'],
+    disponibleAvec: 'signature',
+  },
+
+  // source: app/crm/Planning.tsx ; lib/crm/ics.ts:1-7 (flux d'agenda) ; lib/crm/rappelsTour.ts:1-6 (notification du matin) ; app/crm/Rappels.tsx
+  {
+    id: 'crm.agenda',
+    page: '/crm#agenda',
+    titre: 'Planning, rappels et lien d’agenda',
+    aQuoiCaSert:
+      'L’onglet Planning montre la semaine : les chantiers, les rendez-vous, les conflits, et vous permet de décaler un chantier. Les rappels (relancer un devis, passer un coup de fil…) se posent sur un dossier. ' +
+      '« Abonner mon agenda » vous donne un lien privé que Google Agenda, l’agenda de l’iPhone ou Outlook relisent seuls : il porte vos chantiers et vos rendez-vous, jamais l’e-mail ni le téléphone d’un client, ni un montant. ' +
+      'Chaque matin, si des rappels sont dus, une notification vous prévient.',
+    commentOnSenSert: [
+      'Ouvrez l’onglet Planning du CRM.',
+      'Repérez les conflits et décalez un chantier si besoin.',
+      'Dans « Abonner mon agenda », cliquez « Créer mon lien d’agenda », copiez le lien (il ne s’affiche qu’une fois) et collez-le dans votre agenda.',
+      'Activez les notifications sur votre appareil (Paramètres → Notifications) pour recevoir le rappel du matin.',
+    ],
+    pourVosClients: 'Rien ne part chez vos clients : le lien d’agenda est privé, à garder pour vous.',
+    credits: 'Aucun.',
+    reglagesLies: ['/crm', '/parametres?onglet=notifications'],
+    disponibleAvec: 'signature',
+  },
+
+  // source: app/assistant/page.tsx ; lib/assistant/outils-actions.ts:1-20 (direct ou confirmation) ; lib/assistant/cartes.ts:17 (carte valable 24 h) ; lib/plans.ts ASSISTANT_TOURS_MAX
+  {
+    id: 'assistant',
+    page: '/assistant',
+    titre: 'L’assistant de gestion : une phrase, et il prépare',
+    aQuoiCaSert:
+      'Vous écrivez ce que vous voulez dans la conversation : un devis, une facture, une relance, un ajustement de stock, une mise à jour de tarif, un chantier, une demande à classer. L’assistant le prépare avec vos propres données. ' +
+      'Ce qui part chez un client, ce qui ne se défait pas ou touche à la comptabilité (envoyer, relancer, émettre une facture, encaisser, supprimer, changer des prix en lot) n’est jamais fait seul : il vous présente une carte avec le texte exact, et rien ne se passe avant votre clic sur « Confirmer ». ' +
+      'Le reste (brouillons, tarifs, stock, tâches, notes) est fait tout de suite, noté au journal des actions et annulable quand c’est possible. Il n’agit que lorsque vous lui écrivez. Le bouton « Briefing du matin » résume ce qui est urgent, en retard ou en attente.',
+    commentOnSenSert: [
+      'Ouvrez « Assistant » dans le menu.',
+      'Écrivez votre demande avec vos mots, ou cliquez « Briefing du matin ».',
+      'Lisez la réponse. Si une carte apparaît, relisez le texte exact et les avant/après.',
+      'Cliquez « Confirmer » pour que ça parte, ou ignorez la carte : elle expire au bout de 24 heures.',
+      'Retrouvez ce qui a été fait dans le journal des actions et annulez ce qui peut l’être.',
+    ],
+    pourVosClients:
+      'Votre client ne reçoit rien tant que vous n’avez pas confirmé la carte correspondante.',
+    credits: `${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} crédits avec le modèle Expert), dans la limite de ${ASSISTANT_TOURS_MAX} messages par conversation.`,
+    reglagesLies: ['/crm', '/inventaire', '/tarifs'],
+    disponibleAvec: 'signature',
   },
 
   // source: app/profil/page.tsx (présentation, contacts, domaine et site à la demande)

@@ -559,6 +559,54 @@ if (LEVE) {
       && (!Ur || (Ur.urgencesOuvertes(2, null) === true && Ur.urgencesOuvertes(3, null) === false && Ur.urgencesOuvertes(8, 'ouvert') === true && Ur.urgencesOuvertes(1, 'replie') === false)))
 }
 
+// ═══════════════════════ O. Lot 8 (21/10) : le temps réel VISIBLE ; se déplacer dans la carte ═══════════════════════
+if (LEVE) {
+  const Ev = await imp('lib/crm/evenements.ts')
+  const C8 = await imp('lib/crm/carte.ts')
+  const base = (d) => scene(d, 'plombier', null, { infra: { base: null, metier: 'plombier' } })
+  const s0 = base(D)
+  T('O1 AUCUN événement au premier chargement (pas de scène d’avant), ni entre deux vues identiques', Ev.evenementsScene(null, s0, D.jour).length === 0 && Ev.evenementsScene(s0, base(D), D.jour).length === 0)
+  // Un véhicule libre affecté au chantier du jour : il quitte la base et roule par les routes jusqu'au chantier.
+  // L'exemple a ses quatre véhicules affectés : la vue d'AVANT a la camionnette du premier chantier du jour au dépôt ; la vue d'après, l'exemple.
+  const pris = D.chantiers.find((c) => c.vehicule_id && At.estAujourdhui(c, D.jour)), libre = { id: pris.vehicule_id }
+  const duJour = D.chantiers.find((c) => !c.vehicule_id && At.estAujourdhui(c, D.jour) && At.chantierVisible(c))
+  const sAvant = base({ ...D, chantiers: D.chantiers.map((c) => (c.id === pris.id ? { ...c, vehicule_id: null } : c)) })
+  const s1 = s0
+  const ev1 = Ev.evenementsScene(sAvant, s1, D.jour)
+  const v1 = ev1.find((e) => e.type === 'vehicule')
+  const route = v1 ? At.routeEntre(s1, v1.de, v1.vers) : []
+  const surRue = (p) => s1.carte.trame.xs.some((x) => Math.abs(p[0] - x) < 1e-6) || s1.carte.trame.zs.some((z) => Math.abs(p[1] - z) < 1e-6)
+  T('O2 un véhicule AFFECTÉ au chantier du jour part de la base et ROULE par les routes (sortie de la base, puis la trame) jusqu’au chantier ; l’événement inverse le ramène',
+    !!v1 && v1.cle === `vehicule:${libre.id}` && route.length >= 4 && egal(route[0], v1.de) && egal(route.at(-1), v1.vers) && egal(route[1], s1.infra.sortie) && route.slice(1, -1).every(surRue)
+      && Ev.evenementsScene(s1, sAvant, D.jour).some((e) => e.type === 'vehicule' && e.cle === v1.cle && egal(e.vers, v1.de)), JSON.stringify({ v1, n: route.length }))
+  const cmd = (D.commandes ?? []).find((k) => k.statut === 'commandee' && k.livraison_prevue !== D.jour)
+  const d2 = { ...D, commandes: D.commandes.map((k) => (k.id === cmd.id ? { ...k, livraison_prevue: D.jour } : k)) }
+  const due = (D.commandes ?? []).find((k) => k.statut === 'commandee' && k.livraison_prevue && k.livraison_prevue <= D.jour)
+  const d3 = { ...D, commandes: D.commandes.filter((k) => k.id !== due.id) }
+  T('O3 livraison : une commande désormais attendue AUJOURD’HUI, ou une commande due qui quitte les commandes en cours (reçue) → le camion arrive aux quais ; une commande non due qui disparaît ne déclenche rien',
+    Ev.evenementsScene(s0, base(d2), D.jour).some((e) => e.type === 'livraison' && e.commandeId === cmd.id && e.raison === 'attendue') && Ev.evenementsScene(s0, base(d3), D.jour).some((e) => e.type === 'livraison' && e.commandeId === due.id && e.raison === 'recue')
+      && !Ev.evenementsScene(s0, base({ ...D, commandes: D.commandes.filter((k) => !(k.livraison_prevue && k.livraison_prevue <= D.jour) && k.id !== due.id ? false : true) }), D.jour).some((e) => e.type === 'livraison' && e.raison === 'attendue')
+      && !Ev.evenementsScene(s0, base({ ...D, commandes: D.commandes.filter((k) => !(k.livraison_prevue && k.livraison_prevue > D.jour)) }), D.jour).some((e) => e.type === 'livraison'))
+  const ch = D.chantiers.find((k) => k.taches && k.taches.faites < k.taches.total && k.statut === 'en_cours')
+  const d4 = { ...D, chantiers: D.chantiers.map((k) => (k.id === ch.id ? { ...k, avancement: Math.round(((k.taches.faites + 1) / k.taches.total) * 100), taches: { ...k.taches, faites: k.taches.faites + 1 } } : k)) }
+  const av = Ev.evenementsScene(s0, base(d4), D.jour).find((e) => e.type === 'avancement')
+  T('O4 une tâche cochée fait « monter » la maison : événement avancement (de → vers, part des tâches faites) sur CE chantier', !!av && av.cle === `chantier:${ch.id}` && av.vers > av.de && Math.abs(av.vers - (ch.taches.faites + 1) / ch.taches.total) < 1e-9)
+  const ch7 = D.chantiers.find((k) => k.titre === 'Mise aux normes gaz')
+  const d5 = { ...D, paiements: [...(D.paiements ?? []), { id: 'facture-x', chantierId: ch7.id, montant: 210000 }] }
+  const pa = Ev.evenementsScene(s0, base(d5), D.jour).find((e) => e.type === 'paiement')
+  T('O5 une facture désormais PAYÉE : « + 2 100 € » (son montant réel, en centimes dans les données) au-dessus de SON chantier ; déjà payée avant : rien', !!pa && pa.montant === 210000 && pa.cle === `chantier:${ch7.id}` && /^\+ 2\s?100 €$/.test(Ev.libellePaiement(pa.montant).replace(/ | /g, ' ')) && !Ev.evenementsScene(base(d5), base(d5), D.jour).some((e) => e.type === 'paiement'))
+  const m = D.membres.find((x) => x.actif && !D.chantiers.some((c) => c.equipe.includes(x.id) && At.estAujourdhui(c, D.jour)))
+  const d6 = m && duJour ? { ...D, chantiers: D.chantiers.map((c) => (c.id === duJour.id ? { ...c, equipe: [...c.equipe, m.id] } : c)) } : null
+  T('O6 un compagnon AFFECTÉ au chantier du jour y marche (événement compagnon) ; les factures, commandes et tâches n’en créent pas d’autres', !!d6 && Ev.evenementsScene(s0, base(d6), D.jour).filter((e) => e.type === 'compagnon').length === 1 && Ev.evenementsScene(s0, base(d6), D.jour).every((e) => e.type === 'compagnon' || e.type === 'vehicule'))
+  T('O7 se déplacer reste DANS la carte : la cible est ramenée dans l’emprise (marge de 6 m), sans changer un point déjà dedans', egal(C8.bornerCible([500, -500], { min: [-40, -30], max: [50, 40] }), [56, -36]) && egal(C8.bornerCible([3, 4], { min: [-40, -30], max: [50, 40] }), [3, 4]) && egal(C8.bornerCible([-45, 0], { min: [-40, -30], max: [50, 40] }, 0), [-40, 0]))
+  const s3 = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx')), css = lire('app/crm/atelier/atelier.css')
+  T('O8 jouées par la scène : comparaison à chaque nouvelle vue (jamais la première), « réduire les animations » = aucune animation (la scène est déjà dans son nouvel état), AUCUNE couche ajoutée ; le camion repart (le trajet finit hors de la base)',
+    /if \(!avant \|\| !scene\.infra \|\| !scene\.signaux \|\| mouvementReduit\(\)\) return/.test(s3) && /evenementsScene\(avant, scene, scene\.signaux\.jour\)/.test(s3) && (s3.match(/<Couche /g) ?? []).length === 2 && /garderFin: true/.test(s3) && /if \(!m\.garderFin \|\| !l\.length\) return \[0, 0, 0\]/.test(lire('lib/crm/infrastructure.ts')) && /prefers-reduced-motion: no-preference\) \{\s*\.atl-paiement b/.test(css))
+  T('O9 se déplacer : glisser = déplacer (souris gauche, un doigt), clic droit / deux doigts = tourner, molette / pincement = zoomer ; flèches et ZQSD quand la carte a le focus ; panneau ↑ ← ⌂ → ↓ en bas à droite, accessible ; cible bornée à chaque mouvement ; même chose dans la maquette du chantier',
+    /mouseButtons=\{\{ LEFT: THREE\.MOUSE\.PAN, MIDDLE: THREE\.MOUSE\.DOLLY, RIGHT: THREE\.MOUSE\.ROTATE \}\} touches=\{\{ ONE: THREE\.TOUCH\.PAN, TWO: THREE\.TOUCH\.DOLLY_ROTATE \}\}/.test(s3) && /tabIndex=\{0\} onKeyDown=\{clavier\}/.test(s3) && /k === 'z' \|\| k === 'w'/.test(s3) && /k === 'q' \|\| k === 'a'/.test(s3)
+      && ['Déplacer vers le haut', 'Déplacer vers la gauche', 'Déplacer vers la droite', 'Déplacer vers le bas', 'Recentrer la carte'].every((x) => s3.includes(`aria-label="${x}"`)) && /c\.addEventListener\('change', borner\)/.test(s3) && /THREE\.MOUSE\.PAN/.test(lire('app/crm/atelier/SceneChantier.tsx')) && /bornerCible\(/.test(lire('app/crm/atelier/SceneChantier.tsx')))
+}
+
 // ═══════════════════════ H. La barre dans un vrai navigateur (si TEST_BASE est donné : serveur avec PRESTI_DEMO_ATELIER=1) ═══════════
 if (process.env.TEST_BASE) {
   const { createRequire } = await import('node:module')
@@ -645,12 +693,34 @@ if (process.env.TEST_BASE) {
     })) })
     await ctx7.close()
   }
+  // H8 (lot 8) : se déplacer dans la carte — flèche → (focus sur la carte), glisser à la souris, bouton ↑ du panneau : la cible bouge.
+  let navigation = null
+  if (LEVE) {
+    const p8 = await gpu.newPage({ viewport: { width: 1440, height: 900 } })
+    await p8.goto(`${process.env.TEST_BASE.replace(/\/$/, '')}/atelier-demo?metier=plombier&mode=3d&mesure=1&heure=11`, { waitUntil: 'networkidle' })
+    await p8.waitForFunction(() => window.__atelier && window.__atelier.fps > 0 && window.__atelierCamera, null, { timeout: 120000 })
+    await p8.waitForTimeout(2500)
+    const cam = () => p8.evaluate(() => window.__atelierCamera())
+    const c0 = await cam()
+    await p8.focus('[data-atelier-carte-focus]'); await p8.keyboard.press('ArrowRight'); await p8.waitForTimeout(700)
+    const c1 = await cam()
+    const b = await (await p8.$('[data-atelier-carte-focus] canvas')).boundingBox()
+    await p8.mouse.move(b.x + b.width * 0.55, b.y + b.height * 0.75); await p8.mouse.down(); await p8.mouse.move(b.x + b.width * 0.35, b.y + b.height * 0.55, { steps: 8 }); await p8.mouse.up(); await p8.waitForTimeout(700)
+    const c2 = await cam()
+    await p8.click('[aria-label="Déplacer vers le haut"]'); await p8.waitForTimeout(700)
+    const c3 = await cam()
+    const boutons = await p8.$$eval('[data-atelier-nav] button', (bs) => bs.map((x) => x.getAttribute('aria-label')))
+    const d = (a, c) => Math.hypot(a.x - c.x, a.z - c.z)
+    navigation = { fleche: d(c0, c1), glisser: d(c1, c2), bouton: d(c2, c3), boutons }
+    await p8.close()
+  }
   await gpu.close()
   await nav.close()
   T('H3 en entrepôt, un clic dans la 3D sur le camion benne ouvre SON panneau ; sur le camion de livraison, le panneau « Camion de livraison » (Playwright)', titreBenne !== null && /Camion benne/.test(titreBenne) && titreLivr === 'Camion de livraison', JSON.stringify({ titreBenne, titreLivr }))
   T('H4 la bande des indicateurs défile horizontalement ; « Réglages » et « Plan 2D » sont hors de la bande', bande?.defile === 'auto' && bande.reglagesHors && bande.planHors, JSON.stringify(bande))
   if (LEVE) T('H6 « Valider le chantier » (exemple, Playwright) : le bouton est dans le panneau du chantier terminé ; après le clic, le bandeau le dit et le bâtiment a QUITTÉ la carte ; « Remettre sur la carte » le fait revenir', !!validation && validation.avant && validation.surCarteAvant && validation.bandeau && !validation.surCarteApres && validation.revenu, JSON.stringify(validation))
   T('H7 lot 6 — sur la démo chargée (12 et 30 chantiers), à 1440 et 390 px : 0 intersection entre les étiquettes visibles (rectangles DOM mesurés), toujours au plus 14 appels de dessin', croisements.length === 4 && croisements.every((x) => x.intersections === 0 && x.visibles > 3 && x.appels <= 14), JSON.stringify(croisements))
+  if (LEVE) T('H8 lot 8 — se déplacer dans la carte (Playwright) : la flèche → (carte au focus), le glisser à la souris et le bouton ↑ du panneau déplacent la caméra (cible mesurée) ; cinq boutons nommés', !!navigation && navigation.fleche > 0.5 && navigation.glisser > 0.5 && navigation.bouton > 0.5 && navigation.boutons.length === 5 && navigation.boutons.every(Boolean), JSON.stringify(navigation))
   T('H5 « Répondre » dans l’exemple ouvre un vrai dialogue (message du client, réponse proposée) ; « Valider et envoyer » montre l’effet sans rien envoyer', dialogue && envoye, JSON.stringify({ dialogue, envoye }))
   T('H1 la barre tient sur UNE ligne à 1280, 1440 et 1920 px, « Plan 2D » visible (Playwright)', res.every((r) => r.lignes === 1 && r.plan2d), JSON.stringify(res))
   T('H2 sur téléphone (390 px), les sélecteurs métier et lieu ne prennent aucune hauteur (rangés dans le menu fermé)', selectsVisibles === 0, String(selectsVisibles))

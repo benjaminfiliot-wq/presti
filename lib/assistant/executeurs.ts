@@ -31,6 +31,7 @@ import { resumerChiffres, resumerConversations, resumerDevis, resumerFactures, r
 import { jourParis } from '@/lib/comptaTableau'
 import { resumerAFacturer, resumerChantiers, resumerEquipeDuJour, resumerMateriauxReserves, type DossiersCrm } from './crm'
 import { ligneJournal } from './journal'
+import { lecturesTout } from './lectures-tout'
 import { composerBriefing, type DevisSuivi } from './briefing'
 import { NOMS_ACTIONS, type NomAction } from './outils-actions'
 import type { ActionsServeur } from './actions-serveur'
@@ -291,7 +292,8 @@ export function executeursDeSession(ctx: ContexteSession, actions?: ActionsServe
     },
   }
   const stubs = Object.fromEntries(NOMS_ACTIONS.map((n) => [n, NON_OUVERT])) as Record<NomAction, () => Promise<ResultatExecution>>
-  return { ...lecture, ...stubs, ...(actions?.executeurs ?? {}) } as unknown as Executeurs
+  // 21/10 — les lectures ajoutées pour relier l'assistant à tout Presti (lib/assistant/lectures-tout.ts : mêmes règles, session seule).
+  return { ...lecture, ...lecturesTout(ctx, session), ...stubs, ...(actions?.executeurs ?? {}) } as unknown as Executeurs
 }
 
 /** L'écriture du journal (table 0150). Une erreur remonte : la boucle arrête alors le tour. */

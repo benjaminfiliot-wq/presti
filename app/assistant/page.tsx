@@ -8,10 +8,10 @@ import AppShell from '@/app/AppShell'
 import { enEssai } from '@/lib/flags'
 import { CREDIT_COST, messageVerrou, peut } from '@/lib/plans'
 import { TIERS, tierAllowed, type Tier } from '@/lib/models'
-import { PLAFOND_TOURS, MESSAGE_MAX, HISTORIQUE_MESSAGES_MAX } from '@/lib/assistant/cadrage'
-import type { Brouillon } from '@/lib/assistant/boucle'
+import { MESSAGE_MAX } from '@/lib/assistant/cadrage'
 import type { CarteAction, StatutAction } from '@/lib/assistant/cartes'
-import { CarteView, heure, libelleOutil, type Decision } from './CarteView'
+import { CarteView, heure, libelleOutil } from './CarteView'
+import { useConversationAssistant } from './useConversation'
 
 // L'assistant de gestion — le POSTE DE COMMANDE (plans/016-assistant.md, jalon A3). L'artisan gère sa plateforme en parlant :
 // l'assistant lit, prépare et AGIT (devis, factures, tarifs, stock, CRM, messages). Trois zones :
@@ -22,9 +22,8 @@ import { CarteView, heure, libelleOutil, type Decision } from './CarteView'
 // Tout ce qui part chez un client, toute facture émise, tout encaissement, toute suppression et tout lot de prix passe par une carte
 // que l'artisan confirme : rien n'est fait avant son clic (le serveur le garantit, pas seulement cet écran).
 
-// `signature` : posée par le serveur sur chaque réponse de l'assistant, renvoyée telle quelle dans l'historique (sans
-// elle, le serveur écarte la réponse : audit d'attaque du 12/10, B3).
-type Bulle = { role: 'artisan' | 'assistant'; texte: string; signature?: string | null; brouillons?: Brouillon[]; carteIds?: string[]; consultes?: string[]; erreur?: boolean }
+// La conversation elle-même (envoi, flux, cartes, décisions) vit dans ./useConversation.ts : le même moteur sert le panneau de
+// l'assistant dans le CRM (app/crm/assistant/PanneauAssistant.tsx).
 type LigneJournal = { id: string; cree_le: string; outil: string; resultat: string; resume: string; objet_type: string | null; objet_id: string | null }
 type LigneAction = { id: string; outil: string; mode: 'direct' | 'confirmation'; statut: StatutAction; titre: string; apercu: CarteAction | null; resultat_resume: string | null; cree_le: string; expire_le: string | null; libelle_annulation: string | null }
 
@@ -47,8 +46,6 @@ const EXEMPLES_CRM = [
   'Qui est sur quel chantier aujourd’hui ?',
   'Qu’est-ce qui est à facturer ?',
 ]
-const jetonDe = async () => (await supabase.auth.getSession()).data.session?.access_token
-
 /** Une ligne de la table des actions (lue sous la RLS) devient la carte que l'écran sait afficher. */
 function carteDeLigne(l: LigneAction): CarteAction {
   const a = (l.apercu ?? {}) as Partial<CarteAction>
@@ -74,25 +71,22 @@ function Assistant() {
   const [plan, setPlan] = useState('gratuit')
   const [tier, setTier] = useState<Tier>('pro')
   const [crm, setCrm] = useState(false)
-  // L'identifiant de la conversation est donné par le SERVEUR au premier message (audit d'attaque du 12/10, B2) : null
-  // tant qu'aucun échange n'a eu lieu.
-  const [conversation, setConversation] = useState<string | null>(null)
-  const [bulles, setBulles] = useState<Bulle[]>([])
   const [saisie, setSaisie] = useState('')
-  const [enCours, setEnCours] = useState(false)
-  const [consulte, setConsulte] = useState<string | null>(null)
-  const [restants, setRestants] = useState(PLAFOND_TOURS)
   const [onglet, setOnglet] = useState<'confirmer' | 'actions' | 'journal'>('confirmer')
   const [journal, setJournal] = useState<LigneJournal[] | null>(null)
   const [journalErreur, setJournalErreur] = useState(false)
   // Le journal ne garde que l'identifiant de l'objet (RGPD) : les noms se relisent ici, sous la RLS, à l'affichage.
   const [nomsObjets, setNomsObjets] = useState<Record<string, string>>({})
-  // Les cartes d'action, par identifiant : une carte vue dans la conversation et dans le poste est LA MÊME (une décision la met à jour partout).
-  const [cartes, setCartes] = useState<Record<string, CarteAction>>({})
   const [actionsLues, setActionsLues] = useState<boolean | null>(null)
-  const [occupees, setOccupees] = useState<Record<string, boolean>>({})
-  const [erreursCartes, setErreursCartes] = useState<Record<string, string>>({})
-  const [annonce, setAnnonce] = useState('')
+  // Après chaque réponse ou décision : relire les actions (et le journal s'il est ouvert). Une référence, posée plus bas, quand les
+  // deux lectures existent.
+  const apres = useRef<() => void>(() => {})
+  // Les cartes d'action, par identifiant : une carte vue dans la conversation et dans le poste est LA MÊME (une décision la met à jour partout).
+  const { bulles, enCours, consulte, restants, cartes, fusionnerCartes, occupees, erreursCartes, annonce, envoyer: envoyerAuServeur, decider, nouvelleConversation } = useConversationAssistant({
+    tier,
+    onCartes: (nouvelles) => { if (nouvelles.some((c) => c.statut === 'en_attente')) setOnglet('confirmer') },
+    onApres: () => apres.current(),
+  })
   const filRef = useRef<HTMLDivElement>(null)
   const saisieRef = useRef<HTMLTextAreaElement>(null)
 
@@ -127,9 +121,8 @@ function Assistant() {
       .eq('artisan_id', uid).order('cree_le', { ascending: false }).limit(40)
     if (error) { setActionsLues(false); return }
     setActionsLues(true)
-    const lues = ((data ?? []) as unknown as LigneAction[]).map(carteDeLigne)
-    setCartes((x) => ({ ...x, ...Object.fromEntries(lues.map((c) => [c.id, c])) }))
-  }, [uid])
+    fusionnerCartes(((data ?? []) as unknown as LigneAction[]).map(carteDeLigne))
+  }, [uid, fusionnerCartes])
   useEffect(() => { if (ready && uid && !bloque) void chargerActions() }, [ready, uid, bloque, chargerActions])
 
   const chargerJournal = useCallback(async () => {
@@ -156,94 +149,14 @@ function Assistant() {
   }, [uid])
   useEffect(() => { if (onglet === 'journal' && journal === null) void chargerJournal() }, [onglet, journal, chargerJournal])
 
-  const decider = async (id: string, decision: Decision) => {
-    if (occupees[id]) return
-    setOccupees((x) => ({ ...x, [id]: true }))
-    setErreursCartes((x) => { const { [id]: _, ...reste } = x; void _; return reste })
-    try {
-      const r = await fetch('/api/assistant/actions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await jetonDe()}` }, body: JSON.stringify({ id, decision }) })
-      const d = await r.json().catch(() => ({})) as { ok?: boolean; error?: string; carte?: CarteAction; resume?: string }
-      if (d.carte) setCartes((x) => ({ ...x, [d.carte!.id]: d.carte! }))
-      if (!r.ok || !d.ok) setErreursCartes((x) => ({ ...x, [id]: d.error || 'L’action n’a pas pu être traitée. Réessayez dans un instant.' }))
-      else setAnnonce(decision === 'confirmer' ? `Fait : ${d.resume ?? ''}` : decision === 'annuler' ? `Annulé : ${d.resume ?? ''}` : 'Carte écartée.')
-    } catch {
-      setErreursCartes((x) => ({ ...x, [id]: 'Connexion perdue. Réessayez dans un instant.' }))
-    } finally {
-      setOccupees((x) => ({ ...x, [id]: false }))
-      void chargerActions()
-      if (journal !== null) void chargerJournal()
-    }
-  }
+  apres.current = () => { void chargerActions(); if (journal !== null) void chargerJournal() }
 
   const envoyer = async (texte: string) => {
-    const message = texte.trim()
-    if (!message || enCours) return
-    const historique = bulles.filter((b) => !b.erreur).slice(-HISTORIQUE_MESSAGES_MAX).map((b) => ({ role: b.role, texte: b.texte, ...(b.role === 'assistant' && b.signature ? { signature: b.signature } : {}) }))
-    setBulles((x) => [...x, { role: 'artisan', texte: message }])
+    if (!texte.trim() || enCours) return
     setSaisie('')
-    setEnCours(true)
-    setConsulte(null)
-    const consultes: string[] = []
-    const ajouterAssistant = (b: Omit<Bulle, 'role'>) => setBulles((x) => [...x, { role: 'assistant', ...b }])
-    try {
-      const t = await jetonDe()
-      const r = await fetch('/api/assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-        body: JSON.stringify({ ...(conversation ? { conversation_id: conversation } : {}), message, historique, modele: tier }),
-      })
-      if (!r.ok || !r.body || !(r.headers.get('content-type') || '').includes('ndjson')) {
-        const d = await r.json().catch(() => ({}))
-        if (d?.code === 'plafond') setRestants(0)
-        // Conversation inconnue du serveur (expirée, autre compte) : la prochaine question en ouvre une nouvelle.
-        if (d?.code === 'conversation') setConversation(null)
-        if (typeof d?.conversation_id === 'string') setConversation(d.conversation_id)
-        ajouterAssistant({ texte: d?.error || 'L’assistant est indisponible pour l’instant.', erreur: true })
-        return
-      }
-      const lecteur = r.body.getReader()
-      const decodeur = new TextDecoder()
-      let reste = ''
-      let fini = false
-      for (;;) {
-        const { value, done } = await lecteur.read()
-        if (done) break
-        reste += decodeur.decode(value, { stream: true })
-        const lignes = reste.split('\n')
-        reste = lignes.pop() ?? ''
-        for (const l of lignes) {
-          if (!l.trim()) continue
-          let ev: { e?: string; id?: string; libelle?: string; texte?: string; signature?: string | null; brouillons?: Brouillon[]; cartes?: CarteAction[]; consultes?: string[]; restants?: number; message?: string }
-          try { ev = JSON.parse(l) } catch { continue }
-          if (ev.e === 'conversation' && typeof ev.id === 'string') setConversation(ev.id)
-          else if (ev.e === 'consulte' && ev.libelle) { consultes.push(ev.libelle); setConsulte(ev.libelle) }
-          else if (ev.e === 'fin') {
-            fini = true
-            if (typeof ev.restants === 'number') setRestants(ev.restants)
-            const nouvelles = ev.cartes ?? []
-            if (nouvelles.length) {
-              setCartes((x) => ({ ...x, ...Object.fromEntries(nouvelles.map((c) => [c.id, c])) }))
-              if (nouvelles.some((c) => c.statut === 'en_attente')) setOnglet('confirmer')
-            }
-            ajouterAssistant({ texte: ev.texte || '', signature: ev.signature ?? null, brouillons: ev.brouillons ?? [], carteIds: nouvelles.map((c) => c.id), consultes: ev.consultes ?? consultes })
-          } else if (ev.e === 'erreur') {
-            fini = true
-            ajouterAssistant({ texte: ev.message || 'L’assistant n’a pas pu répondre.', erreur: true })
-          }
-        }
-      }
-      if (!fini) ajouterAssistant({ texte: 'La réponse a été interrompue. Réessayez.', erreur: true })
-    } catch {
-      ajouterAssistant({ texte: 'Connexion perdue. Réessayez dans un instant.', erreur: true })
-    } finally {
-      setEnCours(false)
-      setConsulte(null)
-      void chargerActions()
-      if (journal !== null) void chargerJournal()
-    }
+    await envoyerAuServeur(texte)
   }
 
-  const nouvelleConversation = () => { setConversation(null); setBulles([]); setRestants(PLAFOND_TOURS) }
   const preparer = (texte: string) => { setSaisie(texte); saisieRef.current?.focus() }
 
   const liste = useMemo(() => Object.values(cartes).sort((a, b) => b.cree_le.localeCompare(a.cree_le)), [cartes])

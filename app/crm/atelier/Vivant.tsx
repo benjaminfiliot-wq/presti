@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from 'react'
 import { salleAttente, type ActionLigne, type LigneAttente } from '@/lib/crm/accueil'
-import { REGLE_ASSISTANTS, type PosteAssistants } from '@/lib/crm/assistants'
+import { REGLE_ASSISTANTS, REGLE_PILOTE, type PosteAssistants } from '@/lib/crm/assistants'
 import type { Vue } from '@/lib/crm/vue'
+import { actif } from '@/lib/flags'
 import { Lien, lienExemple } from '../mode'
 import { useSansEcriture } from './contexte'
 
@@ -115,7 +116,7 @@ export function SalleAttentePanneau({ vue, jour, onVue2D }: { vue: Vue; jour: st
 export function PosteAssistantsPanneau({ poste, onVue2D }: { poste: PosteAssistants; onVue2D: (vue: string) => void }) {
   return (
     <div className="atl-pile" data-atelier-assistants>
-      <p className="crm-note" role="note"><b>{REGLE_ASSISTANTS}</b></p>
+      <p className="crm-note" role="note"><b>{REGLE_ASSISTANTS}</b>{actif('piloteAutomatique') && <><br /><span className="muted">{REGLE_PILOTE}</span></>}</p>
       {poste.assistants.map((a) => (
         <section key={a.cle} className="atl-assistant" aria-labelledby={`atl-as-${a.cle}`} data-atelier-assistant={a.cle}>
           <h3 className="crm-sous" id={`atl-as-${a.cle}`}>{a.nom}<span className="tnum"> · {a.total}</span></h3>

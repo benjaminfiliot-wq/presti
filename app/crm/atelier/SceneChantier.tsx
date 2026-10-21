@@ -14,6 +14,7 @@ import * as THREE from 'three'
 import { COULEURS, FORMES, type Forme, type Inst } from '@/lib/crm/atelier'
 import { LIBELLES_ETAT_ZONE, type SceneChantier as Donnees } from '@/lib/crm/planScene'
 import { placerEtiquettes, type EntreeEtiquette } from '@/lib/crm/etiquettes'
+import { bornerCible } from '@/lib/crm/carte'
 
 function geometrie(f: Forme): THREE.BufferGeometry {
   switch (f) {
@@ -126,7 +127,10 @@ export default function SceneChantier({ scene, choisie, onChoisir }: { scene: Do
         {FORMES.map((f) => <Couche key={`${f}-${scene.instances[f].length}`} forme={f} insts={scene.instances[f]} choisie={indexChoisi !== null && indexChoisi >= 0 ? indexChoisi : null} survol={survol} onPick={choisir} onSurvol={setSurvol} />)}
         <Cadrage bornes={scene.bornes} />
         {/* Caméra orbitale BORNÉE : jamais sous le sol ni à plat, zoom limité, pas de glissement hors du chantier. */}
-        <OrbitControls makeDefault enableDamping dampingFactor={0.12} enablePan={false} minPolarAngle={0.3} maxPolarAngle={1.12} minZoom={8} maxZoom={140} target={[0, 0.6, 0]} />
+        <OrbitControls makeDefault enableDamping dampingFactor={0.12} minPolarAngle={0.3} maxPolarAngle={1.12} minZoom={8} maxZoom={140} target={[0, 0.6, 0]}
+          // Lot 8 : comme la carte — glisser déplace, clic droit ou deux doigts tournent ; la cible reste sur le bâtiment.
+          mouseButtons={{ LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }} touches={{ ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE }}
+          onChange={(e) => { const c = e?.target as unknown as { target: THREE.Vector3; object: THREE.Camera } | undefined; if (!c) return; const [x, z] = bornerCible([c.target.x, c.target.z], { min: [scene.bornes.min[0], scene.bornes.min[2]], max: [scene.bornes.max[0], scene.bornes.max[2]] }, 1); const dx = x - c.target.x, dz = z - c.target.z; if (dx || dz) { c.target.x += dx; c.target.z += dz; c.object.position.x += dx; c.object.position.z += dz } }} />
         <OmbresFigees version={scene} />
         <Projecteur cibles={cibles} />
       </Canvas>

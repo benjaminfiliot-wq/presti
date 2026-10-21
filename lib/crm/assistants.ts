@@ -52,6 +52,8 @@ export type PosteAssistants = { assistants: Assistant[]; total: number }
 export const ELEMENTS_PAR_ASSISTANT = 3
 /** La règle du produit (mode « assistée »), dite en tête du panneau. */
 export const REGLE_ASSISTANTS = 'Ils préparent, vous validez : rien ne part sans votre clic.'
+/** L'exception, dite sous la règle drapeau `piloteAutomatique` levé : le Pilote automatique (Signature), que l'artisan active lui-même. */
+export const REGLE_PILOTE = 'Sauf ce que vous confiez au Pilote automatique (Paramètres) : il part seul au bout de 10 minutes, sauf si vous l’annulez.'
 
 const euroTxt = (c: number) => `${(c / 100).toLocaleString('fr-FR', Number.isInteger(c / 100) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
 

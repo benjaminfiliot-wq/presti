@@ -7,7 +7,11 @@ import {
   type DonneesAtelier, type Filtre, type Prereglage,
 } from '@/lib/crm/atelier'
 import { calculerAlertes, construireBriefing, urgencesDuJour, type EtapeBriefing, type Urgence } from '@/lib/crm/alertes'
-import { actif } from '@/lib/flags'
+import { actif, enEssai } from '@/lib/flags'
+import { cleSceneDe, contexteDeObjet, DUREE_SURBRILLANCE_MS, EV_SURLIGNER } from '@/lib/crm/assistantCrm'
+import AssistantCrm from '../assistant/PanneauAssistant'
+import { CompteurAssistant } from '../assistant/Activite'
+import { ouvrirAssistant, type ObjetVise } from '../assistant/evenements'
 import { arriveesDe, nouvellesArrivees, texteArrivee, type Arrivee } from '@/lib/crm/accueil'
 import { posteAssistants } from '@/lib/crm/assistants'
 import { BASES, LIBELLES_BASE, LIBELLES_LIEU, LIBELLES_METIER_3D, METIERS_REFERENCE, metier3DDe, PROCHE, type Base, type Metier3D } from '@/lib/crm/infrastructure'
@@ -156,6 +160,11 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
   const [arrivee, setArrivee] = useState<Arrivee[] | null>(null)
   const [chute, setChute] = useState<{ debut: number; index: number[] } | null>(null)
   const [surligne, setSurligne] = useState<string | null>(null)
+  // L'assistant de gestion dans le CRM (21/10) : l'objet sur lequel il vient d'agir est mis en évidence 2 à 3 s (événement surligner,
+  // app/crm/assistant/evenements.ts). Faute d'API de halo dans Scene3D (TODO ci-dessous), c'est la marque de sélection qui le montre, en 3D comme en 2D.
+  const [halo, setHalo] = useState<string | null>(null)
+  // « ?assistant=1 » sur la démonstration ou l'exemple : le panneau de l'assistant s'ouvre tout de suite (captures).
+  const [assistantAuDemarrage, setAssistantAuDemarrage] = useState(false)
 
   useEffect(() => {
     if (mesure) (window as unknown as { __atelierMonte?: number }).__atelierMonte = performance.now()
@@ -242,6 +251,28 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
   const choisi = selection !== null ? scene.objets[selection] ?? null : null
   useEffect(() => { setCleSel(null) }, [prereglage])
 
+  // — L'assistant a agi : mettre l'objet en évidence. Les données et la scène les plus récentes sont lues par référence (pas de
+  //   réabonnement à chaque relecture en direct). TODO(Scene3D) : quand la scène exposera un halo dédié (prop `halo?: number | null`),
+  //   le passer ici au lieu de réutiliser la marque de sélection — Scene3D.tsx n'est pas modifié par ce lot (un autre chantier y travaille).
+  const derniers = useRef({ donnees, scene })
+  derniers.current = { donnees, scene }
+  useEffect(() => {
+    const f = (e: Event) => {
+      const objets = (e as CustomEvent<ObjetVise[]>).detail ?? []
+      const { donnees: d, scene: sc } = derniers.current
+      const cles = sc.objets.map((o) => o.cle)
+      const devisChantier = Object.fromEntries(d.chantiers.flatMap((c) => { const id = (c as { devis_id?: string | null }).devis_id; return id ? [[id, c.id]] : [] }))
+      const cle = objets.map((o) => cleSceneDe(o, { chantiers: d.chantiers, materiaux: d.materiaux, commandes: d.commandes, devisChantier }, cles)).find(Boolean) ?? null
+      if (cle) setHalo(cle)
+    }
+    window.addEventListener(EV_SURLIGNER, f)
+    return () => window.removeEventListener(EV_SURLIGNER, f)
+  }, [])
+  useEffect(() => { if (!halo) return; const t = setTimeout(() => setHalo(null), DUREE_SURBRILLANCE_MS); return () => clearTimeout(t) }, [halo])
+  useEffect(() => { if ((demo || exemple) && new URLSearchParams(window.location.search).get('assistant') === '1') setAssistantAuDemarrage(true) }, [demo, exemple])
+  const assistantOuvert = enEssai('assistant')
+  const ouvrirPoste = () => { const i = scene.objets.findIndex((o) => o.type === 'assistants'); if (i >= 0) choisirIndex(i); else ouvrirAssistant(null) }
+
   // Une relecture temps réel apporte une demande inconnue de la précédente : bannière (toujours), colis qui tombe en 3D et accueil surligné
   // en 2D (hors « réduire les animations » : alors la bannière seule). useLayoutEffect : l'état de la chute est posé avant la peinture, le
   // colis n'apparaît pas une image au sol avant de tomber.
@@ -293,7 +324,7 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
     if (cle) setCleSel(cle)
   }
 
-  const marque = selection ?? focus
+  const marque = selection ?? focus ?? indexDe(halo)
   return (
     <DemoAtelier.Provider value={demo}>
     <div className={`atl${choisi ? ' avec-panneau' : ''}`} data-atelier-mode={mode ?? 'attente'}>
@@ -368,6 +399,8 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
             </div>
           </details>
         )}
+        {/* L'assistant de gestion, dans l'atelier (21/10) : le bouton reste fixe, hors de la bande qui défile. */}
+        {assistantOuvert && <AssistantCrm simule={simule} contexteSelection={choisi ? contexteDeObjet(choisi) : null} onApres={simule ? undefined : onChange} ouvrirAuDemarrage={assistantAuDemarrage} />}
         <details className="atl-aide">
           <summary aria-label="Aide : lire la maquette">?</summary>
           <div className="atl-aide-corps">
@@ -378,7 +411,7 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
               <li><b>Accueil</b> : un colis par nouvelle demande. <b>Parking</b> : une camionnette par véhicule. <b>Bureau</b> : ouvre le tableau de bord, le pipeline et les clients.</li>
               <li><b>Briefing du matin</b> : la caméra passe de chantier en chantier et lit ce qui s’y passe.</li>
             </ul>
-            <p>Cliquez un objet pour ouvrir sa fiche. Glissez pour tourner, molette ou pincement pour zoomer, clic droit pour déplacer. Les filtres allument ce qui vous concerne et estompent le reste. Au clavier, ouvrez « Liste des éléments » ou passez au plan 2D.</p>
+            <p>Cliquez un objet pour ouvrir sa fiche. Glissez (ou un doigt) pour déplacer la carte, clic droit glissé (ou deux doigts) pour tourner, molette ou pincement pour zoomer ; au clavier, les flèches ou ZQSD, et les boutons ↑ ← ⌂ → ↓ en bas à droite. Les filtres allument ce qui vous concerne et estompent le reste. Au clavier, ouvrez « Liste des éléments » ou passez au plan 2D.</p>
           </div>
         </details>
         {detection && (
@@ -422,6 +455,7 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
               </GardeRendu>
             </div>
             <Urgences urgences={urgences} variante="carte" actif={choisi?.cle ?? etape?.objetCle ?? null} onChoisir={ouvrirUrgence} />
+            {vivant && assistantOuvert && !visite && <CompteurAssistant onOuvrir={ouvrirPoste} />}
             {flash && <p className="atl-flash" aria-hidden="true">{flash}</p>}
             {etape && visite && <CarteBriefing etape={etape} i={visite.i} n={visite.etapes.length} auto={visite.auto}
               onPrecedent={() => setVisite({ ...visite, i: Math.max(0, visite.i - 1) })} onSuivant={() => setVisite(visite.i < visite.etapes.length - 1 ? { ...visite, i: visite.i + 1 } : null)}
@@ -436,6 +470,7 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
         {mode === '2d' && (
           <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null} surligne={vivant ? surligne : null}
             avant={<>
+              {vivant && assistantOuvert && <div className="aca-statique"><CompteurAssistant onOuvrir={ouvrirPoste} /></div>}
               <Urgences urgences={urgences} variante="liste" actif={choisi?.cle ?? null} onChoisir={ouvrirUrgence} />
               {etape && visite && <CarteBriefing etape={etape} i={visite.i} n={visite.etapes.length} auto={false}
                 onPrecedent={() => setVisite({ ...visite, i: Math.max(0, visite.i - 1) })} onSuivant={() => setVisite(visite.i < visite.etapes.length - 1 ? { ...visite, i: visite.i + 1 } : null)}

@@ -255,3 +255,10 @@ export async function chercherAdresse(q: string, fetchImpl: typeof fetch, delai 
     clearTimeout(minuteur)
   }
 }
+
+// ── 6. Se déplacer dans la carte (lot 8) : la cible de la caméra reste dans la carte, avec une marge ─────────────────────────────
+/** Ramène la cible (x, z) dans l'emprise [min, max] élargie de `marge` : on ne perd jamais la carte de vue. */
+export function bornerCible(p: readonly [number, number], b: { min: readonly [number, number]; max: readonly [number, number] }, marge = 6): [number, number] {
+  const c = (v: number, a: number, z: number) => Math.min(z + marge, Math.max(a - marge, v))
+  return [c(p[0], b.min[0], b.max[0]), c(p[1], b.min[1], b.max[1])]
+}

@@ -57,6 +57,18 @@ export function cleEmail(prefixe: string, email: string): string {
  * une fois la dépense faite. En cas de panne du comptage, on laisse passer (comme `consommerLimite`) :
  * un compteur cassé ne doit pas fermer le service.
  */
+/**
+ * Rend une clé consommée (toutes ses fenêtres) : sert aux RÉCLAMATIONS d'un envoi unique (une clé à 1) quand l'envoi a échoué —
+ * sans cela, l'objet restait bloqué jusqu'à la fin de la fenêtre (audit du 21/10, M3). Ne lève jamais ; rend false en cas d'erreur.
+ */
+export async function libererLimite(cle: string): Promise<boolean> {
+  try {
+    const { error } = await supabaseAdmin.from('limites').delete().eq('cle', cle)
+    if (error) { console.error('[limites] libération :', error.message, '— clé', cle); return false }
+    return true
+  } catch { return false }
+}
+
 export async function limiteAtteinte(cle: string, max: number, fenetreSec: number): Promise<boolean> {
   try {
     const { data, error } = await supabaseAdmin.rpc('limite_atteinte', { p_cle: cle, p_max: max, p_fenetre_s: fenetreSec })

@@ -4,6 +4,8 @@ import { estUuid } from '@/lib/crm/valider'
 import { lirePages } from '@/lib/crm/pages'
 import { cheminPiece, DUREE_LIEN_SIGNE, TAILLE_MAX_PIECE, typeReel, validerChampsPiece, verdictQuotaPieces } from '@/lib/crm/pieces'
 import { consommerLimite } from '@/lib/limites'
+import { actif } from '@/lib/flags'
+import { tachesPourPhotoApres, type TacheAuto } from '@/lib/crm/avancementAuto'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -80,6 +82,13 @@ export async function POST(req: Request) {
     await supabaseAdmin.storage.from(BUCKET).remove([chemin]).catch(() => {})
     const s = statutErreurBase(error); console.error('[crm/pieces] enregistrement :', error.message)
     return erreur(s.status === 503 ? MANQUE_0163 : s.message, s.status)
+  }
+  // Décision B du 21/10 : une photo « Après » d'une pièce PROPOSE de cocher les tâches de cette pièce (lib/crm/avancementAuto.ts).
+  // Rien n'est coché ici : l'écran demande la confirmation de l'artisan, puis passe par PATCH /api/crm/taches/<id> comme un clic.
+  if (champs.valeur.type === 'apres' && actif('crmPlan')) {
+    const { data: taches } = await supabaseAdmin.from('chantier_taches').select('id, libelle, faite, piece').eq('chantier_id', chantierId).eq('artisan_id', g.uid).eq('faite', false).limit(500)
+    const prop = tachesPourPhotoApres({ type: 'apres', legende: champs.valeur.legende ?? null, taches: (taches ?? []) as TacheAuto[] })
+    if (prop.taches.length) return json({ ok: true, id, avancement_propose: prop }, 201)
   }
   return json({ ok: true, id }, 201)
 }

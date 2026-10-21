@@ -18,6 +18,7 @@ import Pieces from './Pieces'
 import ApresChantier from './ApresChantier'
 import PlanChantier from './PlanChantier'
 import SuiviClient from './SuiviClient'
+import PointageCompagnon from './PointageCompagnon'
 import { actif } from '@/lib/flags'
 import { ChoixTypeBatiment } from './atelier/Carte'
 import type { TypeBat } from '@/lib/crm/carte'
@@ -180,6 +181,7 @@ function Contenu({ f, compacte, membres, vehicules, inventaire, agir, message, s
       {/* Lot 5 (plan du 18/10, n°8) : le plan du chantier par pièce, un schéma. */}
       {actif('crmPlan') && <PlanChantier titre={c.titre} taches={taches} membres={membres} metier={f.metier ?? null} typeBatiment={f.carte ? f.carte.type ?? f.carte.typeDeduit : null} cocher={cocher} agir={agir} />}
       {actif('crmSuivi') && c.statut !== 'annule' && <SuiviClient chantierId={c.id} />}
+      {actif('crmPointage') && c.statut !== 'annule' && c.statut !== 'termine' && <PointageCompagnon chantierId={c.id} />}
 
       <div className={compacte ? 'crm-pile' : 'crm-grille2'}>
         <Taches f={f} taches={taches} faites={av.faites} cocher={cocher} base={base} membres={membres} agir={agir} />

@@ -268,6 +268,129 @@ export const SPEC = {
     desc: "Écarte la réponse préparée d'une conversation (elle ne partira pas). Ne peut pas être annulé : une nouvelle réponse se prépare avec preparer_reponse.",
     champs: { conversation_id: conversation },
   },
+  // ── 21/10 — l'assistant relié à TOUT Presti (décision du fondateur) : factures, plateforme, « Ma page », relances automatiques,
+  //    et le CRM récent (avancement, rappels, carte, pièces, commandes, après-chantier, lien de suivi). Mêmes règles : DIRECT =
+  //    écriture interne journalisée (annulable si possible) ; CONFIRMATION = tout ce qui part chez un client ou ne se défait pas.
+  envoyer_facture: {
+    cat: 'confirmation', libelle: 'envoyer une facture',
+    desc: "Propose d'ENVOYER au client par e-mail une facture DÉJÀ émise (PDF joint), comme le bouton « Envoyer » de l'écran Factures. N'émet rien, n'encaisse rien. Rien ne part avant le clic de l'artisan (ou, s'il l'a activé, son pilote automatique, après 10 minutes pendant lesquelles il peut l'annuler).",
+    champs: { numero: numeroFacture },
+  },
+  regler_relances_impayes: {
+    cat: 'confirmation', libelle: 'régler les relances automatiques d’impayés',
+    desc: "Propose d'ACTIVER ou de COUPER les relances automatiques des factures impayées (écran Factures : e-mails envoyés seuls aux clients aux jours réglés). Les jours et les textes réglés ne changent pas. L'artisan confirme sur une carte (activer fait partir des e-mails chez ses clients).",
+    champs: { actif: { t: 'bool', d: 'Vrai : activer ; faux : couper.' } },
+  },
+  regler_plateforme: {
+    cat: 'confirmation', libelle: 'régler la plateforme',
+    desc: "Change des réglages de « Ma plateforme » (comme l'écran) : mode de réponse assistee (l'IA prépare, l'artisan valide) ou manuelle, pause des demandes (congés), plage horaire de réponse (heures 0-23, ou 24 h/24), ton (sobre, chaleureux, direct), nombre de réponses de l'IA par conversation, message d'accueil, nom de l'assistant. Le mode « auto » (l'IA répond seule aux clients) ne se règle PAS ici : l'artisan le choisit lui-même dans Ma plateforme. Une CARTE montre l'avant / après : rien ne change avant le clic de l'artisan (la page est publique). Annulable ensuite.",
+    champs: {
+      mode_reponse: { t: 'enum', d: 'assistee ou manuelle.', valeurs: ['assistee', 'manuelle'] },
+      pause_demandes: { t: 'bool', d: 'Vrai : demandes en pause (rien n’est envoyé, tout est gardé) ; faux : rouvertes.' },
+      vingt_quatre_heures: { t: 'bool', d: 'Vrai : réponse 24 h/24 ; faux : seulement dans la plage heure_debut–heure_fin.' },
+      heure_debut: { t: 'nombre', d: 'Heure de début (0 à 23), celle de l’artisan.', min: 0, max: 23, sourcer: true },
+      heure_fin: { t: 'nombre', d: 'Heure de fin (0 à 23), celle de l’artisan.', min: 0, max: 23, sourcer: true },
+      ton_reponses: { t: 'enum', d: 'Ton des réponses : sobre, chaleureux ou direct.', valeurs: ['sobre', 'chaleureux', 'direct'] },
+      limite_messages: { t: 'nombre', d: 'Réponses de l’IA au plus par conversation (0 à 40), celle de l’artisan.', min: 0, max: 40, sourcer: true },
+      message_accueil: { t: 'texte', d: 'Message d’accueil de la page, dicté par l’artisan.', max: 500 },
+      nom_assistant: { t: 'texte', d: 'Nom de l’assistant sur la page, dicté par l’artisan.', max: 60 },
+    },
+  },
+  modifier_ma_page: {
+    cat: 'confirmation', libelle: 'modifier « Ma page »',
+    desc: "Modifie la page publique de l'artisan (écran Profil) : présentation (bio), zone d'intervention, horaires, prestations à ajouter ou retirer. Seulement les mots que l'artisan te dicte : n'invente ni qualité, ni certification, ni délai. Une CARTE montre l'avant / après : rien ne change avant le clic de l'artisan (la page est publique). Annulable ensuite.",
+    champs: {
+      bio: { t: 'texte', d: 'Nouvelle présentation, dictée par l’artisan.', max: 800 },
+      zone_intervention: { t: 'texte', d: 'Zone d’intervention (ex. La Rochelle et 30 km).', max: 160 },
+      horaires: { t: 'texte', d: 'Horaires (ex. Lun-Ven 8h-18h).', max: 200 },
+      ajouter_prestations: { t: 'liste', d: 'Noms de prestations à ajouter (12 au total au plus).', max: 12 },
+      retirer_prestations: { t: 'liste', d: 'Noms de prestations à retirer.', max: 12 },
+    },
+  },
+  avancer_chantier: {
+    cat: 'direct', crm: true, libelle: 'faire avancer un chantier',
+    desc: "L'artisan dit où en est un chantier (« carrelage salle de bain fini », « la cuisine est terminée ») : coche les tâches du chantier qui correspondent SANS ambiguïté (mots du travail + pièce), et rend l'avancement mis à jour. Ambigu : rien n'est coché, les tâches candidates te sont rendues : demande lesquelles (puis cocher_tache). Annulable.",
+    champs: { chantier, avancement: { t: 'texte', d: 'Ce que l’artisan a dit de l’avancement, tel quel (ex. « carrelage salle de bain fini »).', max: 300, req: true } },
+  },
+  cloturer_chantier: {
+    cat: 'direct', crm: true, libelle: 'valider un chantier',
+    desc: "Valide un chantier du CRM dont toutes les tâches sont faites (bouton « Valider » de la carte) : statut terminé, fin réelle posée, le bâtiment quitte la carte de l'atelier (le chantier reste dans les listes, factures et chiffres). Refus s'il reste des tâches : dis combien. Annulable.",
+    champs: { chantier },
+  },
+  remettre_chantier_carte: {
+    cat: 'direct', crm: true, libelle: 'remettre un chantier sur la carte',
+    desc: "Remet sur la carte de l'atelier un chantier validé (son statut ne change pas).",
+    champs: { chantier },
+  },
+  regler_validation_auto: {
+    cat: 'direct', crm: true, libelle: 'régler la validation automatique',
+    desc: "Active ou coupe la validation AUTOMATIQUE des chantiers du CRM (un chantier dont toutes les tâches sont faites quitte seul la carte). Annulable.",
+    champs: { actif: { t: 'bool', d: 'Vrai : activer ; faux : couper.' } },
+  },
+  repartir_taches_par_piece: {
+    cat: 'direct', crm: true, libelle: 'répartir les tâches par pièce',
+    desc: "Range les tâches d'un chantier par pièce (le plan du chantier) : avec tache et piece, range CETTE tâche ; sans, chaque tâche encore sans pièce reçoit celle que son libellé nomme (comme « Répartir les tâches par pièce » de la fiche). Annulable.",
+    champs: { chantier, tache: { t: 'texte', d: 'Libellé (ou mot) d’une tâche, pour la ranger seule.', max: 300, rech: true }, piece: { t: 'texte', d: 'La pièce (ex. Salle de bain, Cuisine, WC).', max: 40 } },
+  },
+  creer_rappel: {
+    cat: 'direct', crm: true, libelle: 'créer un rappel',
+    desc: "Crée un rappel ou un rendez-vous dans le CRM sur UN chantier, UN devis ou UNE conversation : type, échéance (date donnée par l'artisan), heure si donnée, texte court. Annulable.",
+    champs: {
+      chantier: { t: 'texte', d: 'Titre du chantier (ou absent).', max: 80, rech: true },
+      devis_numero: { t: 'texte', d: 'Numéro du devis (ou absent).', max: 24 },
+      conversation_id: { t: 'uuid', d: 'Conversation (lire_conversations), ou absent.' },
+      genre: { t: 'enum', d: 'rappeler (défaut), relancer_devis, visite, metre, rendez_vous ou autre.', valeurs: ['rappeler', 'relancer_devis', 'visite', 'metre', 'rendez_vous', 'autre'] },
+      echeance: { t: 'date', d: 'Échéance AAAA-MM-JJ, celle de l’artisan.' },
+      heure: { t: 'texte', d: 'Heure HH:MM, si l’artisan l’a donnée.', max: 5 },
+      texte: { t: 'texte', d: 'Ce qu’il faut faire, en quelques mots.', max: 300 },
+    },
+  },
+  cocher_rappel: {
+    cat: 'direct', crm: true, libelle: 'cocher un rappel',
+    desc: "Coche (fait) ou décoche un rappel à faire du CRM, retrouvé par son texte ou sa cible (lire_rappels). Annulable.",
+    champs: { rappel: { t: 'texte', d: 'Texte (ou mot) du rappel, ou nom de sa cible, tel que lire_rappels le rend.', max: 300, req: true, rech: true }, fait: { t: 'bool', d: 'Vrai : fait (défaut). Faux : à refaire.' } },
+  },
+  enregistrer_commande: {
+    cat: 'direct', crm: true, libelle: 'enregistrer une commande fournisseur',
+    desc: "Enregistre une commande que l'artisan A PASSÉE chez un fournisseur (rien n'est commandé d'ici) : fournisseur, lignes, livraison annoncée, chantier destinataire. Chaque ligne s'écrit « quantité unité désignation » (ex. « 20 u plaque BA13 ») ; une désignation qui est celle d'un article de l'inventaire y est rattachée. Quantités et date : celles de l'artisan. Annulable (la commande est alors annulée).",
+    champs: {
+      fournisseur: { t: 'texte', d: 'Nom du fournisseur.', max: 120, req: true },
+      livraison_prevue: { t: 'date', d: 'Livraison annoncée AAAA-MM-JJ, celle de l’artisan.' },
+      articles: { t: 'liste', d: 'Lignes « quantité unité désignation », telles que l’artisan les dit. 20 au plus.', max: 20 },
+      chantier: { t: 'texte', d: 'Chantier destinataire (ou absent).', max: 80, rech: true },
+      reference: { t: 'texte', d: 'Référence de la commande, si donnée.', max: 60 },
+    },
+  },
+  recevoir_commande: {
+    cat: 'direct', crm: true, libelle: 'marquer une commande reçue',
+    desc: "Marque reçue une commande fournisseur EN ATTENTE (retrouvée par fournisseur ou référence, lire_commandes) ; avec entrer_en_stock, chaque ligne liée à l'inventaire y entre (même chemin que l'écran). Ne se défait pas d'un clic (un stock se corrige avec ajuster_stock).",
+    champs: { commande: { t: 'texte', d: 'Fournisseur ou référence de la commande.', max: 120, req: true, rech: true }, entrer_en_stock: { t: 'bool', d: 'Vrai : faire entrer les lignes liées à l’inventaire.' } },
+  },
+  relancer_commande: {
+    cat: 'confirmation', crm: true, libelle: 'relancer un fournisseur',
+    desc: "Propose d'envoyer au FOURNISSEUR d'une commande en attente l'e-mail de relance de l'écran (texte fixe : date de commande, livraison annoncée, lignes). Rien ne part avant le clic de l'artisan.",
+    champs: { commande: { t: 'texte', d: 'Fournisseur ou référence de la commande.', max: 120, req: true, rech: true } },
+  },
+  demander_avis: {
+    cat: 'confirmation', crm: true, libelle: 'demander un avis au client',
+    desc: "Propose d'envoyer au client d'un chantier terminé la DEMANDE D'AVIS préparée par l'après-chantier (texte de l'artisan, réglé dans le CRM). Seulement si un rappel « Demander un avis » attend pour ce chantier. Rien ne part avant le clic de l'artisan.",
+    champs: { chantier },
+  },
+  envoyer_rappel_entretien: {
+    cat: 'confirmation', crm: true, libelle: 'proposer l’entretien au client',
+    desc: "Propose d'envoyer au client la PROPOSITION D'ENTRETIEN préparée par l'après-chantier pour ce chantier (rappel « Proposer l'entretien »). Rien ne part avant le clic de l'artisan.",
+    champs: { chantier },
+  },
+  noter_opposition_client: {
+    cat: 'confirmation', crm: true, libelle: 'noter que le client refuse les messages',
+    desc: "Propose de noter que le client d'un chantier ne veut plus recevoir de messages d'après-chantier (avis, entretien). Ne s'annule pas (droit d'opposition) : l'artisan confirme sur une carte.",
+    champs: { chantier },
+  },
+  revoquer_lien_suivi: {
+    cat: 'direct', crm: true, libelle: 'révoquer le lien de suivi',
+    desc: "Coupe le lien de suivi d'un chantier donné au client (la page cesse aussitôt de répondre). Un NOUVEAU lien se crée sur la fiche du chantier (il ne s'affiche qu'une fois, là-bas : l'assistant ne le montre ni ne le garde).",
+    champs: { chantier },
+  },
 } as const satisfies Record<string, SpecAction>
 
 export type NomAction = keyof typeof SPEC
@@ -336,7 +459,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const DATE = /^\d{4}-\d{2}-\d{2}$/
 const NUMERO = /^(DEV|FAC)-\d{4}-\d{1,6}$/i
-const DEFAUTS: Record<string, unknown> = { ton: 'cordial', type: 'complete', faite: true, lieu: 'atelier' }
+const DEFAUTS: Record<string, unknown> = { ton: 'cordial', type: 'complete', faite: true, fait: true, lieu: 'atelier', entrer_en_stock: false, genre: 'rappeler' }
 
 export type LigneEntree = { tarif_id: string | null; designation: string; quantite: number; unite: string | null; prix_unitaire_ht: number | null }
 export type EntreeAction = Record<string, unknown>
@@ -474,6 +597,31 @@ function validerCoherence(nom: NomAction, e: EntreeAction): string | null {
     case 'ajouter_note':
       if (!e.chantier && !e.conversation_id) return 'chantier ou conversation_id : obligatoire'
       return e.chantier && e.conversation_id ? 'chantier OU conversation_id, pas les deux' : null
+    case 'regler_relances_impayes':
+    case 'regler_validation_auto':
+      return e.actif === null ? 'actif : vrai (activer) ou faux (couper)' : null
+    case 'regler_plateforme': {
+      const cles = ['mode_reponse', 'pause_demandes', 'vingt_quatre_heures', 'heure_debut', 'heure_fin', 'ton_reponses', 'limite_messages', 'message_accueil', 'nom_assistant']
+      if (cles.every((k) => e[k] === null || e[k] === undefined)) return 'rien à modifier'
+      if ((e.heure_debut === null) !== (e.heure_fin === null)) return 'heure_debut et heure_fin : les deux ensemble'
+      if (e.heure_debut !== null && (!Number.isInteger(e.heure_debut) || !Number.isInteger(e.heure_fin))) return 'heures : entiers de 0 à 23'
+      if (e.limite_messages !== null && !Number.isInteger(e.limite_messages)) return 'limite_messages : un entier'
+      return null
+    }
+    case 'modifier_ma_page':
+      return !e.bio && !e.zone_intervention && !e.horaires && vide('ajouter_prestations') && vide('retirer_prestations') ? 'rien à modifier' : null
+    case 'repartir_taches_par_piece':
+      return (e.tache === null) !== (e.piece === null) ? 'tache et piece : les deux ensemble (ou aucun pour tout répartir)' : null
+    case 'creer_rappel': {
+      const cibles = [e.chantier, e.devis_numero, e.conversation_id].filter((x) => x !== null && x !== undefined && x !== '')
+      if (cibles.length !== 1) return 'un rappel se rattache à UN chantier, UN devis (devis_numero) ou UNE conversation'
+      if (!e.echeance) return 'echeance : obligatoire (la date donnée par l’artisan)'
+      if (e.heure !== null && !/^([01]\d|2[0-3]):[0-5]\d$/.test(String(e.heure))) return 'heure : HH:MM'
+      return null
+    }
+    case 'enregistrer_commande':
+      if (!e.livraison_prevue) return 'livraison_prevue : obligatoire (la date annoncée par le fournisseur)'
+      return vide('articles') ? 'articles : au moins une ligne' : null
     case 'ajouter_tarif':
       return e.tva_taux !== null && !(TVA_TAUX as readonly number[]).includes(e.tva_taux as number) ? 'tva_taux : 0, 5.5, 10 ou 20' : null
     default:
@@ -488,6 +636,13 @@ export function nombresASourcer(nom: NomAction, e: EntreeAction): { champ: strin
   const out: { champ: string; valeur: number }[] = []
   for (const [cle, c] of Object.entries(specDe(nom).champs)) {
     if (c.t === 'nombre' && c.sourcer && typeof e[cle] === 'number') out.push({ champ: cle, valeur: e[cle] as number })
+  }
+  // 21/10 — les quantités d'une commande fournisseur (« 20 u plaque BA13 ») : celles de l'artisan, comme toute quantité.
+  if (nom === 'enregistrer_commande' && Array.isArray(e.articles)) {
+    for (const [i, a] of (e.articles as string[]).entries()) {
+      const m = String(a).trim().match(/^(\d+(?:[.,]\d+)?)/)
+      if (m) out.push({ champ: `articles[${i + 1}].quantite`, valeur: Number(m[1].replace(',', '.')) })
+    }
   }
   for (const cle of ['lignes', 'ajouter_lignes']) {
     if (!Array.isArray(e[cle])) continue

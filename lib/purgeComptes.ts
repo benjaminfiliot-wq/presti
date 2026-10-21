@@ -62,6 +62,9 @@ const TABLES_A_VIDER = [
   'relances_impayes_arrets', 'relances_impayes', 'relances_impayes_reglages', 'commandes_fournisseur',
   // 0167 — les liens de suivi donnés aux clients (empreintes seulement) : plus aucun ne doit répondre.
   'chantier_suivi',
+  // 0174 — le pilote automatique (réglages, file et journal : libellés d'actions préparées pour des clients) et les liens de pointage
+  // donnés aux compagnons (empreintes seulement) : vidés avec le compte ; plus aucun lien ne répond.
+  'actions_auto', 'pilote_reglages', 'chantier_pointage',
   'chantiers', 'vehicules', 'equipe_membres',
 ]
 

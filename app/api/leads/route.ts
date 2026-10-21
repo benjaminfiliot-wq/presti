@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
 import { generateConversationReply, generateLeadReply, qualifyLead } from '@/lib/ai'
@@ -321,11 +322,14 @@ Répondez-lui directement. Sa demande est aussi conservée dans Presti ; elle s'
             [{ sens: 'in', contenu: message }], model, undefined, { persona: personaDe(cfgPlateforme) },
           )
           if (proposition?.trim()) {
-            const { error: eProp } = await supabaseAdmin.from('messages').insert({
+            const { data: mProp, error: eProp } = await supabaseAdmin.from('messages').insert({
               lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition.trim(), etat: 'proposition', modele: tier,
-            })
+            }).select('id').maybeSingle()
             proposee = !eProp
             if (eProp) console.error('[leads] insertion proposition:', eProp.message)
+            // Pilote automatique (21/10, Signature, réglage « Réponses aux prospects ») : la proposition partira seule dans 10 min,
+            // sauf annulation. Drapeau baissé, offre, réglage coupé : ne fait rien (lib/pilote/serveur.ts).
+            if (mProp?.id && actif('piloteAutomatique')) await (await import('@/lib/pilote/serveur')).piloterProposition(artisan.id, { leadId: lead.id, messageId: mProp.id as string, nomProspect: nom_prospect })
           }
         } catch (e) {
           console.error('[leads] proposition:', e)

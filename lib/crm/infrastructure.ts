@@ -326,6 +326,8 @@ export type Mobile = {
   forme: Forme; index: number; de: [number, number]; porte: [number, number]; vers: [number, number]; ordre: number
   /** Le trajet complet par les allées et les rues (lot 3) : du poste de repos à l'arrivée. Absent : de → porte → vers. */
   chemin?: [number, number][]
+  /** Lot 8 : le trajet finit ailleurs que la position posée (le camion de livraison qui repart) — à l'arrivée, le décalage reste. */
+  garderFin?: boolean
 }
 
 // ── Le pinceau : les gestes de construction communs (volumes, murs, toits, fenêtres, clôtures, arbres) ─────────
@@ -1813,7 +1815,7 @@ export function dureeMarche(mobiles: readonly Mobile[]): number {
 export function decalageMarche(m: Mobile, t: number): [number, number, number] {
   const l = trace(m), L = longueurMarche(m)
   const brut = Math.max(0, ((t - MARCHE.departMs - m.ordre * MARCHE.decalageMs) / 1000) * vitesseDe(m))
-  if (brut >= L) return [0, 0, 0]
+  if (brut >= L) { if (!m.garderFin || !l.length) return [0, 0, 0]; const f = l[l.length - 1]; return [f[0] - m.vers[0], 0, f[1] - m.vers[1]] }
   // Départ et arrêt en douceur (easeInOutSine sur la progression, même durée totale) : pas d'à-coup au premier ni au dernier pas.
   const s = L * (0.5 - 0.5 * Math.cos(Math.PI * (brut / L)))
   let reste = s

@@ -215,6 +215,31 @@ export const FLAGS = {
    *  société (artisans.forme_juridique, LU seulement drapeau levé), gabarit des véhicules déduit de leur nom, lieu déclarable (localStorage).
    *  20/10/2026 — LEVÉ (« oui, lève le drapeau », Benj) : crm-vivant-qa 62/0, crm-atelier3d-qa 65/0, rendu relu sur deux planches. */
   crmAtelierVivant: true,
+  /** 21/10/2026 — CRM « connecté à tout, en temps réel » (scripts/crm-connecte-qa.mjs) : l'écran écoute AUSSI `clients` (le carnet) et
+   *  `crm_journal` (un dossier déplacé dans le pipeline depuis un autre appareil) — lib/crm/tempsReel.ts, TABLES_APRES_0175. Migration
+   *  0175 ÉCRITE, NON APPLIQUÉE (elle ajoute ces deux tables à la publication supabase_realtime). Baissé : l'écran écoute les 13 tables
+   *  d'avant, ces deux-là sont relues par le filet de 60 s. Levé SANS 0175 : le canal temps réel entier tomberait (une table absente de
+   *  la publication fait échouer l'abonnement) — d'où l'ordre : coller 0175, contrôler (supabase/controles/0175_crm_temps_reel_complet.sql),
+   *  PUIS lever.
+   *  21/10/2026 — LEVÉ : 0175 appliquée, contrôle vert (les deux tables dans la publication, RLS active, deux politiques de lecture),
+   *  crm-connecte-qa 31/0. */
+  crmTempsReelComplet: true,
+  /** 21/10/2026 — PILOTE AUTOMATIQUE (décision du fondateur, offre Signature, capacité `assistant.pilote`) : réglage par type d'action
+   *  (réponses aux prospects, relances de devis et d'impayés, envoi de devis et de factures, messages de l'assistant à un client) ;
+   *  une action préparée part seule après 10 minutes d'annulation possible (file actions_auto, passage chaque minute de
+   *  /api/agents/tic), garde-fous non désactivables dans lib/pilote/regles.ts. Migration 0174 ÉCRITE, NON APPLIQUÉE. Baissé : rien
+   *  n'entre dans la file, le tic saute l'étape, les routes /api/pilote/* répondent 404, l'écran n'en parle pas, la grille non plus.
+   *  Se lève dans cet ordre : 0174 appliquée et contrôlée (supabase/controles/0174_pilote_automatique.sql), scripts/pilote-qa.mjs
+   *  vert, essai sur le compte de Benj, accord de Benj. Levé sans 0174 : les routes répondent 503 et rien n'entre en file (fail-closed).
+   *  21/10/2026 — LEVÉ (« oui, en Signature, avec un délai d'annulation », Benj) : 0174 appliquée, contrôle 9/9 ; audit du pilote (E1, E2,
+   *  M1-M4, F1-F4) corrigé ; pilote-qa 88/0. Le pilote reste COUPÉ sur chaque compte tant que l'artisan ne l'active pas lui-même. */
+  piloteAutomatique: true,
+  /** 21/10/2026 — CRM : le LIEN DE POINTAGE d'un chantier pour un compagnon (décision B du fondateur : l'avancement sans ressaisie ;
+   *  table chantier_pointage, migration 0174 ; routes /api/crm/chantiers/<id>/pointage, page publique /pointage/<jeton> : le compagnon
+   *  coche « fait » en fin de journée, sans compte, rien d'autre). Baissé : routes et page 404, rien dans la fiche. Se lève après 0174
+   *  appliquée et contrôlée, scripts/avancement-qa.mjs vert et l'accord de Benj.
+   *  21/10/2026 — LEVÉ : 0174 appliquée et contrôlée, avancement-qa 30/0 (« je te laisse faire », Benj). */
+  crmPointage: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

@@ -12,6 +12,7 @@ import SectionLegal from './SectionLegal'
 import SectionAbonnement from './SectionAbonnement'
 import SectionSecurite from './SectionSecurite'
 import SectionDonnees from './SectionDonnees'
+import SectionPilote from './SectionPilote'
 import type { Artisan, Message } from './commun'
 
 // Paramètres (sprint J-1 §6) : une page, une navigation à gauche, l'URL qui suit (`?onglet=`).
@@ -21,7 +22,7 @@ import type { Artisan, Message } from './commun'
 // les écrans qui existent déjà, avec une ligne qui dit ce qu'on y règle. On n'a pas déplacé
 // ces réglages pour le plaisir de déplacer.
 
-type Onglet = 'profil' | 'notifications' | 'application' | 'legal' | 'abonnement' | 'securite' | 'donnees'
+type Onglet = 'profil' | 'notifications' | 'application' | 'legal' | 'abonnement' | 'pilote' | 'securite' | 'donnees'
 type Entree = { id: string; label: string; detail: string; icone: ReactNode; href?: string }
 
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
@@ -35,6 +36,8 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
     { id: 'abonnement', label: 'Abonnement & usage', detail: 'Formule, crédits, paiements', icone: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
   ] },
   { groupe: 'Vos outils', entrees: [
+    // Pilote automatique (21/10, Signature) : l'entrée n'existe que drapeau levé.
+    ...(actif('piloteAutomatique') ? [{ id: 'pilote', label: 'Pilote automatique', detail: 'Ce qui part seul, après 10 minutes pour annuler (Signature)', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>) }] : []),
     { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main (dès l’offre Studio)', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
     { id: 'site', label: 'Site', detail: 'Votre nom de domaine', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
     { id: 'canaux', label: 'Canaux', detail: 'Votre boîte email branchée', href: '/messages/canaux', icone: ic(<><path d="M4 4h16v16H4z" /><path d="m4 7 8 6 8-6" /></>) },
@@ -45,8 +48,8 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
     { id: 'aide', label: 'Aide', detail: actif('aideCentre') ? 'Le centre d’aide, tout expliqué' : 'C’est quoi, cet écran ?', href: actif('aideCentre') ? '/aide' : undefined, icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>) },
   ] },
 ]
-const ONGLETS: Onglet[] = ['profil', 'notifications', 'application', 'legal', 'abonnement', 'securite', 'donnees']
-const TITRES: Record<Onglet, string> = { profil: 'Profil', notifications: 'Notifications', application: 'Application', legal: 'Entreprise & légal', abonnement: 'Abonnement & usage', securite: 'Sécurité', donnees: 'Données & confidentialité' }
+const ONGLETS: Onglet[] = ['profil', 'notifications', 'application', 'legal', 'abonnement', ...(actif('piloteAutomatique') ? ['pilote' as const] : []), 'securite', 'donnees']
+const TITRES: Record<Onglet, string> = { profil: 'Profil', notifications: 'Notifications', application: 'Application', legal: 'Entreprise & légal', abonnement: 'Abonnement & usage', pilote: 'Pilote automatique', securite: 'Sécurité', donnees: 'Données & confidentialité' }
 
 function ParametresInner() {
   const router = useRouter()
@@ -83,6 +86,7 @@ function ParametresInner() {
     : onglet === 'application' ? <SectionApplication a={a} patch={patch} signaler={signaler} />
     : onglet === 'legal' ? <SectionLegal key={a.id} a={a} patch={patch} signaler={signaler} />
     : onglet === 'abonnement' ? <SectionAbonnement a={a} patch={patch} signaler={signaler} />
+    : onglet === 'pilote' ? <SectionPilote a={a} patch={patch} signaler={signaler} />
     : onglet === 'securite' ? <SectionSecurite a={a} patch={patch} signaler={signaler} />
     : <SectionDonnees a={a} patch={patch} signaler={signaler} />
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours } from '@/lib/suspension'
@@ -131,8 +132,10 @@ export async function POST(req: Request) {
             turns, model, undefined, { persona: personaDe(cfg) },
           )
           if (proposition) {
-            await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier })
+            const { data: mProp } = await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier }).select('id').maybeSingle()
             await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString(), lu_le: null }).eq('id', lead.id)
+            // Pilote automatique (21/10) : la proposition partira seule dans 10 min si l'artisan l'a choisi (Signature) — sinon rien.
+            if (mProp?.id && actif('piloteAutomatique')) await (await import('@/lib/pilote/serveur')).piloterProposition(artisan.id, { leadId: lead.id, messageId: mProp.id as string, nomProspect: lead.nom_prospect })
           }
         } catch (e) { console.error('[conversation/stream] proposition:', e); await signalerPanneIA('proposition de réponse', e); await rendreCredit(artisan.id, tier, !!artisan.is_founder) }
       }

@@ -190,7 +190,7 @@ const E64 = 'a'.repeat(64)
   const Trr = await imp('lib/crm/tempsReel.ts')
   T('E16 temps réel : crm_rappels est écouté (filtre du compte) et publié par 0162', Trr.TABLES_TEMPS_REEL.includes('crm_rappels') && /alter publication supabase_realtime add table public\.crm_rappels/.test(sql))
   const ab = Trr.abonnements(U(42), ['crm_rappels'])
-  T('E17 table absente (0162 pas encore appliquée) : l’écran ne l’écoute pas — sinon TOUT le canal tombe — et garde les autres tables', ab.length === Trr.TABLES_TEMPS_REEL.length - 1 && !ab.some((a) => a.table === 'crm_rappels') && /sans: vue && vue\.rappels && !vue\.rappels\.disponibles \? \['crm_rappels'\] : \[\]/.test(lire('app/crm/page.tsx')))
+  T('E17 table absente (0162 pas encore appliquée) : l’écran ne l’écoute pas — sinon TOUT le canal tombe — et garde les autres tables', ab.length === Trr.tablesEcoutees().length - 1 && !ab.some((a) => a.table === 'crm_rappels') && /sans: vue && vue\.rappels && !vue\.rappels\.disponibles \? \['crm_rappels'\] : \[\]/.test(lire('app/crm/page.tsx')))
 }
 
 // ═══════════════════════ L. En vrai ═══════════════════════

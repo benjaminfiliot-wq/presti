@@ -12,7 +12,10 @@ import type { Tier } from '@/lib/models'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 import { mentionsManquantesEmission, OU_REMPLIR } from '@/lib/legalArtisan'
 
-type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
+// source_prix : la PROVENANCE du prix (lib/lignes.ts), gardée à la lecture et renvoyée à l'enregistrement (audit du 21/10, E1 : sans elle,
+// un prix estimé par l'IA perdait sa mention une fois le devis enregistré). Un prix tapé par l'artisan devient « prix donné par l'artisan ».
+type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number; source_prix?: string }
+const SOURCE_ARTISAN = 'prix donné par l’artisan'
 
 const k = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 const emptyLigne = (): Ligne => ({ key: k(), designation: '', quantite: '1', unite: 'u', prix_unitaire_ht: '0', tva_taux: 10 })
@@ -100,7 +103,7 @@ export default function DevisEditor() {
           setClientNom(d.client_nom ?? ''); setClientEmail(d.client_email ?? ''); setClientAdresse(d.client_adresse ?? '')
           setObjet(d.objet ?? ''); setValidite(String(d.validite_jours ?? 90)); setRemise(String(d.remise_pct ?? 0)); setAcompte(String(d.acompte_pct ?? 0))
           const { data: ls } = await supabase.from('devis_lignes').select('*').eq('devis_id', rawId).order('ordre')
-          if (ls && ls.length) setLignes(ls.map((l) => ({ key: k(), designation: l.designation ?? '', quantite: String(l.quantite ?? 1), unite: l.unite ?? 'u', prix_unitaire_ht: String(l.prix_unitaire_ht ?? 0), tva_taux: Number(l.tva_taux) || 20 })))
+          if (ls && ls.length) setLignes(ls.map((l) => ({ key: k(), designation: l.designation ?? '', quantite: String(l.quantite ?? 1), unite: l.unite ?? 'u', prix_unitaire_ht: String(l.prix_unitaire_ht ?? 0), tva_taux: Number(l.tva_taux) || 20, ...(typeof l.source_prix === 'string' && l.source_prix ? { source_prix: l.source_prix } : {}) })))
         }
       }
 
@@ -136,7 +139,7 @@ export default function DevisEditor() {
     setGenerating(false)
     const d = await res.json().catch(() => ({}))
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Erreur de génération.' }); return }
-    const nouvelles: Ligne[] = (d.lignes ?? []).map((l: { designation: string; quantite: number; unite: string; prix_unitaire_ht: number; tva_taux: number }) => ({ key: k(), designation: l.designation, quantite: String(l.quantite), unite: l.unite, prix_unitaire_ht: String(l.prix_unitaire_ht), tva_taux: Number(l.tva_taux) || 10 }))
+    const nouvelles: Ligne[] = (d.lignes ?? []).map((l: { designation: string; quantite: number; unite: string; prix_unitaire_ht: number; tva_taux: number; source_prix?: string }) => ({ key: k(), designation: l.designation, quantite: String(l.quantite), unite: l.unite, prix_unitaire_ht: String(l.prix_unitaire_ht), tva_taux: Number(l.tva_taux) || 10, source_prix: typeof l.source_prix === 'string' && l.source_prix ? l.source_prix : 'estimation' }))
     setLignes((prev) => [...prev.filter((l) => l.designation.trim() || Number(l.prix_unitaire_ht) > 0), ...nouvelles])
     if (d.note) setAiNote(d.note)
   }
@@ -150,7 +153,7 @@ export default function DevisEditor() {
       // C2 (audit du 18/10) : sans ce lien, le devis né d'une demande restait détaché d'elle (deux cartes au pipeline, pas de
       // relances J+2/5/10, pas d'acceptation possible dans la conversation). Seulement à la création : le serveur vérifie la demande.
       ...(!savedId && leadId ? { lead_id: leadId } : {}),
-      lignes: lignes.filter((l) => l.designation.trim()).map((l) => ({ designation: l.designation, quantite: Number(l.quantite) || 0, unite: l.unite, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })),
+      lignes: lignes.filter((l) => l.designation.trim()).map((l) => ({ designation: l.designation, quantite: Number(l.quantite) || 0, unite: l.unite, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux, ...(l.source_prix ? { source_prix: l.source_prix } : {}) })),
     }
     const { data } = await supabase.auth.getSession()
     const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }
@@ -294,7 +297,7 @@ export default function DevisEditor() {
                   <div className="lrow">
                     <input className="q" inputMode="decimal" value={l.quantite} onChange={(e) => setLigne(l.key, { quantite: e.target.value })} title="Quantité" />
                     <input className="u" list="unites" value={l.unite} onChange={(e) => setLigne(l.key, { unite: e.target.value })} title="Unité" />
-                    <input className="pu" inputMode="decimal" value={l.prix_unitaire_ht} onChange={(e) => setLigne(l.key, { prix_unitaire_ht: e.target.value })} title="Prix unitaire HT" />
+                    <input className="pu" inputMode="decimal" value={l.prix_unitaire_ht} onChange={(e) => setLigne(l.key, { prix_unitaire_ht: e.target.value, source_prix: SOURCE_ARTISAN })} title="Prix unitaire HT" />
                     <select className="tv" value={l.tva_taux} onChange={(e) => setLigne(l.key, { tva_taux: Number(e.target.value) })} title="TVA">
                       <option value={20}>20%</option><option value={10}>10%</option><option value={5.5}>5,5%</option>
                     </select>

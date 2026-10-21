@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { PLANS, planConf, type PlanId } from '@/lib/plans'
+import { actif } from '@/lib/flags'
 import type Stripe from 'stripe'
 
 // Aligner la base sur ce que Stripe facture RÉELLEMENT (revue du 07/09).
@@ -127,5 +128,7 @@ export async function alignerSurAbonnement(sub: Stripe.Subscription, relire?: (i
   const raison = aServir > 0
     ? `offre passée à ${conf.label} — ${aServir} crédit${aServir > 1 ? 's' : ''} ajouté${aServir > 1 ? 's' : ''}${dejaServi ? ` (${dejaServi} déjà servis cette période)` : ''}`
     : `offre passée à ${conf.label} — aucun crédit ajouté : le forfait de cette période est déjà servi`
+  // Pilote automatique (audit du 21/10, F1) : une offre sans la capacité annule la file du compte (chargé à la demande, drapeau levé).
+  if (actif('piloteAutomatique')) await (await import('@/lib/pilote/serveur')).apresChangementOffre(a.id, plan)
   return { applique: true, plan, avant, credits, raison }
 }

@@ -84,6 +84,8 @@ export type DonneesAtelier = {
   /** La carte (drapeau crmAtelierVivant, lot 5) : la position de la base de l'artisan (son adresse géocodée ; null = inconnue) et le
    *  réglage « valider automatiquement ». Absente : la maquette place les chantiers en couronne, comme avant. */
   carte?: { base: PointGeo | null; validationAuto: boolean }
+  /** Lot 8 (drapeau crmAtelierVivant) : les factures PAYÉES rattachées à un chantier (montant TTC réel, en centimes) — la pastille « + x € ». */
+  paiements?: { id: string; chantierId: string; montant: number }[]
 }
 
 // ── Sorties ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -132,14 +134,16 @@ export type Scene = {
   colis?: { id: string; index: number }[]
   /** Drapeau crmAtelierVivant seulement (lib/crm/infrastructure.ts) : le profil, la base dessinée (automatique ou choisie), la cible
    *  de la vue « atelier ». Absent drapeau baissé, comme `fenetres` et `mobiles`. */
-  infra?: { profil: Profil; base: Base; auto: boolean; cible: V3; structures: string[]; metier: Metier3D }
+  infra?: { profil: Profil; base: Base; auto: boolean; cible: V3; structures: string[]; metier: Metier3D; sortie?: [number, number] }
   /** Les fenêtres et les lampes : un calque à part (une seule matière, non éclairée), allumé le soir. */
   fenetres?: Fenetre[]
   /** Les morceaux des personnages qui partent de la base vers leur chantier du jour (la scène 3D les fait marcher). */
   mobiles?: Mobile[]
   /** La carte (infrastructure, lot 5) : son emprise au sol (le sol et les ombres de la scène 3D la couvrent), combien de chantiers sont
    *  posés à leur vraie place (adresse géocodée), combien de rues relient la base aux chantiers. Absente drapeau baissé. */
-  carte?: { min: [number, number]; max: [number, number]; reels: number; routes: number }
+  carte?: { min: [number, number]; max: [number, number]; reels: number; routes: number; trame?: { xs: readonly number[]; zs: readonly number[] } }
+  /** Lot 8 : les commandes en cours (et leur livraison prévue) et les factures payées des chantiers posés — comparés d'une vue à l'autre. */
+  signaux?: { jour: string; commandes: { id: string; prevue: string | null }[]; paiements: { id: string; chantierCle: string; montant: number }[] }
 }
 
 /** Les ajouts de l'atelier vivant (drapeau crmAtelierVivant). Absents : la scène est celle d'avant, à l'identique. */
@@ -544,8 +548,14 @@ export function construireScene(d: DonneesAtelier, prereglageForce?: Prereglage,
   return {
     instances, pulse, objets, zones, bornes: { min, max }, prereglage,
     ...(options?.vivant ? { colis } : {}),
-    ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures, metier: metierI }, fenetres, mobiles } : {}),
-    ...(plan && trame && placements ? { carte: { min: [trame.xs[0] - PAS_CARTE / 2, trame.zs[0] - PAS_CARTE / 2] as [number, number], max: [trame.xs[trame.xs.length - 1] + PAS_CARTE / 2, trame.zs[trame.zs.length - 1] + PAS_CARTE / 2] as [number, number], reels: placements.filter((p) => p.reel).length, routes: routes.filter((r) => r.length > 1).length } } : {}),
+    ...(profil && plan ? { infra: { profil, base: plan.base, auto: !profil.declare, cible: plan.cible, structures, metier: metierI, sortie: [plan.chemin[plan.chemin.length - 1][0], plan.chemin[plan.chemin.length - 1][1]] as [number, number] }, fenetres, mobiles,
+      // Lot 8 : ce que la scène 3D compare d'une vue à l'autre pour rendre le temps réel VISIBLE (lib/crm/evenements.ts).
+      signaux: {
+        jour: d.jour,
+        commandes: (d.commandes ?? []).filter((c) => c.statut === 'commandee').map((c) => ({ id: c.id, prevue: c.livraison_prevue ?? null })),
+        paiements: (d.paiements ?? []).filter((p) => posChantier.has(p.chantierId)).map((p) => ({ id: p.id, chantierCle: `chantier:${p.chantierId}`, montant: p.montant })),
+      } } : {}),
+    ...(plan && trame && placements ? { carte: { min: [trame.xs[0] - PAS_CARTE / 2, trame.zs[0] - PAS_CARTE / 2] as [number, number], max: [trame.xs[trame.xs.length - 1] + PAS_CARTE / 2, trame.zs[trame.zs.length - 1] + PAS_CARTE / 2] as [number, number], reels: placements.filter((p) => p.reel).length, routes: routes.filter((r) => r.length > 1).length, trame } } : {}),
     horsScene: {
       chantiers: Math.max(0, visibles.length - places.length), categories: catsHors,
       vehicules: Math.max(0, d.vehicules.filter((v) => v.actif).length - vehicules.length), demandes: Math.max(0, d.demandes.length - demandes.length),
@@ -780,6 +790,18 @@ export function texteCommande(c: Commande, quantites: Record<string, number>, si
   return [`Bonjour,`, ``, `Je souhaite commander :`, ...lignes, ``, `Merci de me confirmer la disponibilité et le délai.`, ...(signature ? [``, signature] : [])].join('\n')
 }
 
+// ── Lot 8 : le trajet d'un véhicule PAR LES ROUTES entre deux points de la carte (la base passe par sa sortie) ─────────────
+/** De `de` à `vers` : depuis (ou jusqu'à) la sortie de la base si le point est dans l'enclos, puis le plus court chemin par la trame. */
+export function routeEntre(s: Pick<Scene, 'carte' | 'infra'>, de: [number, number], vers: [number, number]): [number, number][] {
+  const trame = s.carte?.trame, E = s.infra?.sortie
+  if (!trame || !E) return [de, vers]
+  const dansBase = (p: [number, number]) => !horsEnclos([p[0], 0, p[1]])
+  const a: [number, number] = dansBase(de) ? E : de, b: [number, number] = dansBase(vers) ? E : vers
+  const rues = a[0] === b[0] && a[1] === b[1] ? [a] : cheminRues(a, b, trame) ?? [a, b]
+  const tout: [number, number][] = [de, ...rues, vers]
+  return tout.filter((p, i) => i === 0 || Math.hypot(p[0] - tout[i - 1][0], p[1] - tout[i - 1][1]) > 1e-6)
+}
+
 // ── Assemblage des données de la maquette à partir des lignes de la base (appelé par GET /api/crm/vue) ─────
 type Nb = number | string | null | undefined
 type Four = { nom?: string | null; contact?: string | null }
@@ -812,6 +834,8 @@ export function assemblerAtelier(e: {
   entreprise?: { nom: string | null; ville: string | null }
   /** Même drapeau (lot 5) : la base géocodée et le réglage de validation automatique. */
   carte?: { base: PointGeo | null; validationAuto: boolean }
+  /** Même drapeau (lot 8) : les factures payées rattachées à un chantier. */
+  paiements?: { id: string; chantierId: string; montant: number }[]
 }): DonneesAtelier {
   const etapeChantier = new Map<string, string>()
   const clientChantier = new Map<string, string | null>()
@@ -833,6 +857,7 @@ export function assemblerAtelier(e: {
     ...(e.formeJuridique !== undefined ? { formeJuridique: e.formeJuridique } : {}),
     ...(e.entreprise !== undefined ? { entreprise: e.entreprise } : {}),
     ...(e.carte !== undefined ? { carte: e.carte } : {}),
+    ...(e.paiements !== undefined ? { paiements: e.paiements } : {}),
     chantiers: e.chantiers.map((c) => {
       const t = taches.get(c.id)
       // La carte (0172) : seulement si la ligne porte ses colonnes (drapeau levé) ; sinon, l'objet d'avant à l'identique.

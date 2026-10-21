@@ -9,6 +9,8 @@ import { ARTICLES, type Article } from '@/lib/aide'
 import { PLANS } from '@/lib/plans'
 import { actif } from '@/lib/flags'
 import type { AideVideo } from '@/lib/aideVideos'
+import { offreAide } from '@/lib/aideAutomatique'
+import PastilleOffre from '@/app/aide/PastilleOffre'
 
 // Libellés humains des chemins cités dans `reglagesLies` — l'artisan lit « Ma plateforme »,
 // pas « /plateforme ».
@@ -33,6 +35,11 @@ const LIBELLES: Record<string, string> = {
   '/parametres?onglet=securite': 'Sécurité',
   '/parametres?onglet=donnees': 'Données & confidentialité',
   '/aide': 'Centre d’aide',
+  '/crm': 'CRM atelier',
+  '/crm#accueil': 'CRM atelier · accueil',
+  '/crm/chantiers/[id]': 'Fiche chantier',
+  '/crm#agenda': 'CRM atelier · planning',
+  '/assistant': 'Assistant de gestion',
 }
 export const libelle = (chemin: string): string => LIBELLES[chemin] ?? chemin
 
@@ -79,14 +86,15 @@ export function ArticleCorps({ article }: { article: Article }) {
           </div>
         </Section>
       )}
-      {article.disponibleAvec !== 'essentiel' && (
-        <Section titre="Offre">
-          <span className="aide-plan">
+      <Section titre="Offre">
+        <PastilleOffre offre={offreAide(article.id)} />
+        {article.disponibleAvec !== 'essentiel' && (
+          <span className="aide-plan" style={{ marginLeft: 8 }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
             Disponible avec l’offre {PLANS[article.disponibleAvec].label}
           </span>
-        </Section>
-      )}
+        )}
+      </Section>
     </div>
   )
 }

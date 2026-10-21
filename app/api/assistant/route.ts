@@ -17,14 +17,17 @@ import { actionsDisponibles, magasinSupabase } from '@/lib/assistant/magasin'
 import { jourLisible } from '@/lib/assistant/donnees'
 import { cleHistorique, lireHistorique, signerReponse } from '@/lib/assistant/historique'
 import { preparerTour } from '@/lib/assistant/tour'
+import { texteContexte } from '@/lib/crm/assistantCrm'
+import { resoudreContexte } from '@/lib/crm/contexteAssistantServeur'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
 // L'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture et A2 brouillons ; outils CRM le 13/10).
 //
-// POST { conversation_id?, message, historique?, modele? } → un flux NDJSON :
-//   { e: 'conversation', id }   d'abord : l'identifiant de la conversation, GÉNÉRÉ ICI pour une nouvelle ;
+// POST { conversation_id?, message, historique?, modele?, contexte? } → un flux NDJSON :
+//   { e: 'conversation', id, contexte }   d'abord : l'identifiant de la conversation, GÉNÉRÉ ICI pour une nouvelle, et le contexte
+//                               RETENU (ou null) ;
 //   { e: 'consulte', outil, libelle }   pendant le tour, à chaque outil appelé (« l'assistant consulte : stock… ») ;
 //   { e: 'fin', texte, signature, brouillons, consultes, tour, restants, palier, conversation_id }   à la fin ;
 //   { e: 'erreur', message }   si le modèle ou le journal tombe (le crédit et le tour sont rendus : lib/assistant/tour.ts).
@@ -92,6 +95,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Limite de messages atteinte pour aujourd’hui : l’assistant revient demain.', code: 'debit' }, { status: 429 })
   }
 
+  // 21/10 — le CONTEXTE de l'assistant ouvert depuis le CRM (« ce chantier », « cette commande ») : { type, id } seulement. L'objet est
+  // RELU sous la RLS et filtré par le compte (lib/crm/contexteAssistantServeur.ts) ; introuvable ou d'un autre compte → aucun contexte,
+  // sans erreur. Seul son libellé, lu en base, est donné au modèle (une phrase neutre) : aucun identifiant. Il va dans la CONSIGNE et non
+  // dans le message : le message de l'artisan est la source des nombres permis (lib/assistant/boucle.ts, anti-fabrication) — un numéro
+  // de devis ou une date du libellé ne doit jamais devenir un prix « donné par l'artisan ».
+  const contexte = b?.contexte !== undefined && b?.contexte !== null ? await resoudreContexte(clientDeSession(jeton), uid, b.contexte) : null
+
   // Le palier, choisi comme partout (lib/ai/routage.ts) : Standard par défaut, Pro ou Expert sur demande, borné par l'offre.
   // Un agent qui AGIT : Pro par défaut (1 crédit, comme Standard), Expert (3 crédits) sur demande de l'artisan.
   const routage = routerModele({ plan: art.plan, demande: typeof b?.modele === 'string' ? b.modele : 'pro' })
@@ -106,6 +116,7 @@ export async function POST(req: Request) {
   const actionsOk = await actionsDisponibles()
   let tourPris = 0
   const systeme = systemeAssistant({ nom: art.nom, metier: art.metier, jour, crm, actions: actionsOk }, cadrage)
+    + (contexte ? `\n\nCONTEXTE DE L'ÉCRAN : l'artisan t'écrit depuis le CRM, ${texteContexte(contexte)}. « Ce chantier », « ce devis », « cette commande »… désignent cet objet : retrouve-le avec tes outils de lecture, par son nom. Ce contexte n'est ni une demande ni une source de chiffres.` : '')
   const ctxSession = { uid, jeton, origine: new URL(req.url).origin, isFounder, crm, meilleursClients: cadrage.meilleursClients }
   const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase() }) : undefined
   const executeurs = executeursDeSession(ctxSession, actionsSrv)
@@ -148,7 +159,7 @@ export async function POST(req: Request) {
     async start(controller) {
       const envoyer = (o: unknown) => { try { controller.enqueue(encodeur.encode(JSON.stringify(o) + '\n')) } catch { /* client parti */ } }
       try {
-        envoyer({ e: 'conversation', id: conversationId })
+        envoyer({ e: 'conversation', id: conversationId, contexte: contexte ? { type: contexte.type, libelle: contexte.libelle } : null })
         // La réponse part signée (B3) : renvoyée dans l'historique du tour suivant, elle seule sera crue.
         await prep.jouer((ev) => envoyer(ev.e === 'fin' ? { ...ev, conversation_id: conversationId, signature: signerReponse(cle, { uid, conversationId, texte: ev.texte }) } : ev))
       } finally { try { controller.close() } catch { /* déjà fermé */ } }

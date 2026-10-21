@@ -339,3 +339,18 @@
 .atl-etiquettes > .atl-carte[data-mode="pastille"]:hover > .atl-pastille, .atl-etiquettes > .atl-carte[data-mode="pastille"]:focus-visible > .atl-pastille { display: none }
 .atl-etiquettes > [data-mode="cachee"] { visibility: hidden }
 
+/* ── Lot 8 : se déplacer dans la carte (panneau bas droit) ; le focus clavier de la carte ; « + x € » qui monte ── */
+.atl-scene:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px }
+.atl-nav { position: absolute; z-index: 30; right: 12px; bottom: 12px; display: grid; grid-template-columns: repeat(3, 34px); grid-template-rows: repeat(3, 34px); gap: 3px }
+.atl-nav button { width: 34px !important; height: 34px; padding: 0; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 700 15px var(--font-body); box-shadow: var(--shadow-sm); cursor: pointer }
+.atl-nav button:hover { background: var(--surface-2) }
+.atl-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px }
+.atl-nav .haut { grid-area: 1 / 2 } .atl-nav .gauche { grid-area: 2 / 1 } .atl-nav .centre { grid-area: 2 / 2 } .atl-nav .droite { grid-area: 2 / 3 } .atl-nav .bas { grid-area: 3 / 2 }
+.atl-paiement { pointer-events: none }
+.atl-paiement b { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--ok); color: var(--paper); font: 700 13px var(--font-body); box-shadow: var(--shadow-sm) }
+@media (prefers-reduced-motion: no-preference) {
+  .atl-paiement b { animation: atl-paiement 2.6s var(--ease-out, ease-out) forwards }
+  @keyframes atl-paiement { 0% { opacity: 0; transform: translateY(10px) scale(.9) } 15% { opacity: 1; transform: translateY(0) scale(1) } 80% { opacity: 1; transform: translateY(-34px) } 100% { opacity: 0; transform: translateY(-46px) } }
+}
+@media (max-width: 720px) { .atl-nav { grid-template-columns: repeat(3, 30px); grid-template-rows: repeat(3, 30px); right: 8px; bottom: 8px } .atl-nav button { width: 30px !important; height: 30px } }
+

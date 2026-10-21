@@ -57,6 +57,15 @@ const MOTS_DOMAINE: [NomOutil, readonly string[]][] = [
   ['lire_equipe_du_jour', ['equipe', 'compagnon', 'apprenti', 'ouvrier', 'salarie', 'qui est sur', 'qui travaille', 'qui bosse', 'camion', 'vehicule', 'utilitaire']],
   ['lire_materiaux_reserves', ['reserve', 'reservation', 'materiaux pour', 'materiel pour', 'sorti du stock', 'sortie de stock']],
   ['lire_a_facturer', ['a facturer', 'facturer', 'pas encore facture', 'reste a facturer', 'a encaisser']],
+  // 21/10 — l'assistant relié à tout Presti.
+  ['lire_ou_j_en_suis', ['ou j en suis', 'ou en suis je', 'salle d attente', 'poste des assistants', 'qu est ce qui m attend', 'a valider', 'a faire aujourd', 'qu ai je a faire', 'ce que j ai a faire']],
+  ['lire_rappels', ['rappel', 'rendez vous', 'rdv', 'visite', 'metre', 'a rappeler', 'a faire aujourd', 'qu ai je a faire', 'agenda']],
+  ['lire_commandes', ['commande fournisseur', 'commandes fournisseur', 'livraison', 'fournisseur', 'commande chez', 'pas ete livre', 'pas encore livre']],
+  ['lire_fil', ['resume la conversation', 'resumer la conversation', 'resume le fil', 'fil de la conversation', 'qu a dit', 'qu est ce qu il a dit', 'qu est ce qu elle a dit', 'ce qu il demande', 'ce qu elle demande']],
+  ['lire_devis_detail', ['detail du devis', 'lignes du devis', 'contenu du devis', 'ce qu il y a dans le devis', 'a chiffrer']],
+  ['lire_plateforme', ['plateforme', 'mode de reponse', 'mode assiste', 'mode auto', 'horaires de reponse', 'en pause', 'pause des demandes', 'message d accueil', 'conges']],
+  ['lire_profil', ['mon profil', 'ma page', 'mon offre', 'mon abonnement', 'quelle offre', 'mentions legales', 'siret', 'prestations', 'zone d intervention', 'est ce que j ai le', 'inclus dans']],
+  ['lire_relances_auto', ['relances automatiques', 'relance automatique', 'relances auto', 'relancer automatiquement']],
 ]
 
 // RGPD (audit du 12/10) : la liste des « meilleurs clients » (noms et montants) ne part au modèle que si l'artisan la demande.
@@ -69,7 +78,7 @@ const MOTS_MEILLEURS_CLIENTS = [
 const MOTS_ACTION_EFFET = [
   'envoie', 'envoyer', 'envoyez', 'expedie', 'transmet', 'transmettre', 'publie', 'publier', 'poste ', 'emets', 'emettre', 'emet ',
   'supprime', 'supprimer', 'efface', 'effacer', 'annule la facture', 'baisse mes prix', 'baisse les prix', 'modifie mes prix', 'change mes prix',
-  'passe commande', 'commande chez', 'commande aupres', 'relance le client', 'relance les clients', 'relancer le client', 'valide le devis', 'valide la reponse',
+  'passe commande', 'commande chez', 'commande aupres', 'relance le client', 'relance le fournisseur', 'demande un avis', 'demande lui un avis', 'propose l entretien', 'ne veut plus', 'relance les clients', 'relancer le client', 'valide le devis', 'valide la reponse',
   'marque comme payee', 'marquer comme payee', 'repond au client', 'reponds au client', 'repondre au client a ma place',
   'relanc', 'facturer', 'facturez', 'facture le', 'facture la', 'facture ce', 'facture les', 'encaiss', 'augment', 'baiss', 'reponds', 'repondre', 'repondez', 'valide', 'valider', 'marque ', 'marquer', 'cree une facture', 'cree la facture', 'fais une facture', 'fais la facture', 'facture d acompte',
 ]
@@ -87,6 +96,10 @@ const MOTS_ACTION = [
   'envoi', 'relanc', 'augment', 'baiss', 'reserv', 'coch', 'decoch', 'affect', 'supprim', 'efface', 'annule', 'prepare', 'valid', 'rejet', 'ecart', 'enregistr', 'note ', 'noter',
   'rentre', 'saisi', 'facturer', 'facturez', 'facture le', 'facture la', 'facture ce', 'facture les', 'encaiss', 'declar', 'signe', 'paye', 'regle', 'refuse', 'retire', 'remplace', 'corrige', 'planifi', 'termin', 'cloture', 'ajust', 'recompt',
   'reponds', 'repondre', 'repondez', 'ecris', 'redige', 'devis pour', 'acompte', 'solde',
+  // 21/10 — l'avancement dit par l'artisan, la carte, les rappels, les commandes, la plateforme.
+  'fini', 'finie', 'finis', 'acheve', 'avance', 'avancer', 'est fait', 'sont faits', 'est faite', 'sont faites', 'range', 'repartir', 'repartis',
+  'rappelle moi', 'rappelle', 'pose un rappel', 'arrive', 'livre', 'recu', 'recue', 'revoque', 'coupe', 'active', 'desactive', 'regle ', 'opposition',
+  'demande un avis', 'propose l entretien',
 ]
 const PROPOSITION = /voulez vous|souhaitez vous|dois je|je peux|puis je|veux tu/
 
@@ -145,17 +158,17 @@ export type ContexteArtisan = { nom: string | null; metier: string | null; jour:
 export function systemeAssistant(a: ContexteArtisan, cadrage: CadrageDemande): string {
   const nom = a.nom?.trim() || "l'artisan"
   const metier = a.metier?.trim() || 'artisan du bâtiment'
-  const crmLire = a.crm ? ', lire_chantiers (chantiers, avancement, retards), lire_equipe_du_jour (qui est sur quel chantier, camionnettes), lire_materiaux_reserves, lire_a_facturer' : ''
-  const crmAgir = a.crm ? " ; CRM : créer et modifier un chantier, affecter l'équipe, ajouter ou cocher une tâche, réserver du matériel, ajouter une note ou un membre d'équipe" : ''
+  const crmLire = a.crm ? ", lire_chantiers (chantiers, avancement, retards), lire_equipe_du_jour (qui est sur quel chantier, camionnettes), lire_materiaux_reserves, lire_a_facturer, lire_ou_j_en_suis (« où j'en suis » : salle d'attente, poste des assistants, rappels, livraisons), lire_rappels, lire_commandes" : ''
+  const crmAgir = a.crm ? " ; CRM : créer et modifier un chantier, affecter l'équipe, ajouter ou cocher une tâche, faire avancer un chantier d'après ce que l'artisan dit (avancer_chantier), valider un chantier ou le remettre sur la carte, régler la validation automatique, ranger les tâches par pièce, créer ou cocher un rappel, enregistrer ou recevoir une commande fournisseur, relancer un fournisseur, demander un avis ou proposer l'entretien à un client, noter son opposition, révoquer un lien de suivi, réserver du matériel, ajouter une note ou un membre d'équipe" : ''
   const agir = a.actions === false
     ? `3. AGIR : les outils d'action ne sont pas encore ouverts sur ce compte. Tu lis et tu prépares des brouillons, rien d'autre : si on te demande de faire quelque chose, dis-le simplement et indique l'écran (Devis, Factures, Messages, Inventaire, Mes tarifs${a.crm ? ', CRM' : ''}).`
-    : `3. AGIR, seulement quand l'artisan le demande dans CE message. Devis : créer, modifier, marquer signé ou refusé, envoyer, relancer, supprimer un brouillon. Factures : créer depuis un devis signé (complète ou acompte), marquer payée, relancer un impayé. Tarifs : ajouter, modifier, augmenter un lot, supprimer. Inventaire : ajouter un article, modifier sa fiche, ajuster le stock. Demandes et messages : changer le statut d'une demande, répondre à un client, envoyer ou écarter la réponse préparée${crmAgir}. Deux sortes d'outils :
+    : `3. AGIR, seulement quand l'artisan le demande dans CE message. Devis : créer, modifier, marquer signé ou refusé, envoyer, relancer, supprimer un brouillon. Factures : créer depuis un devis signé (complète ou acompte), envoyer une facture émise, marquer payée, relancer un impayé, activer ou couper les relances automatiques. Tarifs : ajouter, modifier, augmenter un lot, supprimer. Inventaire : ajouter un article, modifier sa fiche, ajuster le stock. Demandes et messages : changer le statut d'une demande, répondre à un client, envoyer ou écarter la réponse préparée. Ma plateforme : mode assisté ou manuel, pause, horaires, ton, message d'accueil (le mode « auto » se choisit dans l'écran par l'artisan). « Ma page » : présentation, zone, horaires, prestations, seulement avec ses mots${crmAgir}. Ce que son offre n'inclut pas : dis-le et renvoie à l'écran Abonnement. Deux sortes d'outils :
    - DIRECTS (écriture interne qui se défait : brouillon de devis, tarif, stock, tâche, note, statut) : exécutés tout de suite, inscrits au journal des actions, annulables d'un clic de l'artisan.
    - À CONFIRMER (tout ce qui part chez un client : devis, relance, message ; une facture émise et scellée ; un encaissement ; une suppression ; un lot de prix) : tu PROPOSES, une carte s'affiche sous ta réponse avec le texte exact et l'avant/après, et l'artisan clique « Confirmer ». Tant qu'il n'a pas cliqué, RIEN n'est fait. Écris « j'ai préparé… : confirmez-le sous ma réponse », jamais « c'est envoyé » ou « c'est fait ».`
   return `Tu es l'assistant de gestion de ${nom} (${metier}) dans sa console Presti. Tu parles À L'ARTISAN lui-même, en le vouvoyant, comme un collaborateur précis et bref. Nous sommes le ${a.jour} (heure de Paris). L'artisan gère toute sa plateforme en te parlant : tu n'es pas là pour bavarder, mais pour faire.
 
 CE QUE TU FAIS :
-1. LIRE ses données avec tes outils, avant toute réponse chiffrée : stock et alertes (lire_stock), devis (lire_devis), factures et impayés (lire_factures), conversations avec ses clients (lire_conversations), chiffres de « Mes chiffres » (lire_chiffres), ses tarifs (lire_tarifs), le point de la journée (briefing_du_matin : à appeler pour « briefing », « point du jour »)${crmLire}.
+1. LIRE ses données avec tes outils, avant toute réponse chiffrée : stock et alertes (lire_stock), devis (lire_devis), factures et impayés (lire_factures), conversations avec ses clients (lire_conversations), chiffres de « Mes chiffres » (lire_chiffres), ses tarifs (lire_tarifs), le fil d'une conversation (lire_fil, pour la résumer), le détail d'un devis (lire_devis_detail), Ma plateforme (lire_plateforme), son profil et son offre (lire_profil), ses relances automatiques (lire_relances_auto), le point de la journée (briefing_du_matin : à appeler pour « briefing », « point du jour »)${crmLire}.
 2. Préparer des BROUILLONS pour une conversation précise : preparer_devis_brouillon (chiffrage automatique du moteur) et preparer_reponse (réponse rédigée par le moteur de réponses). Ils consomment des crédits : seulement si l'artisan le demande explicitement.
 ${agir}
 

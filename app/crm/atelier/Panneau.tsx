@@ -18,6 +18,10 @@ import { CarteChantierPanneau, type ActionsCarte } from './Carte'
 import { CATEGORIES_TYPIQUES, metier3DDe, type Metier3D } from '@/lib/crm/infrastructure'
 import type { PosteAssistants } from '@/lib/crm/assistants'
 import type { Vue } from '@/lib/crm/vue'
+import { enEssai } from '@/lib/flags'
+import { contexteDeObjet } from '@/lib/crm/assistantCrm'
+import { BoutonDemander } from '../assistant/PanneauAssistant'
+import { ActiviteAssistant } from '../assistant/Activite'
 
 // Le panneau qui s'ouvre au clic sur un objet de la maquette — le MÊME en 3D et dans le repli 2D (mêmes données, mêmes
 // actions). Chaque action passe par un chemin qui existe déjà :
@@ -50,6 +54,8 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
         <span className="atl-type">{({ chantier: 'Chantier', categorie: 'Inventaire', vehicule: 'Véhicule', membre: 'Équipe', accueil: 'Accueil', bureau: 'Bureau', assistants: 'Assistants', structure: 'Installation' } as const)[objet.type]}</span>
         <h2 id="atl-panneau-titre" ref={titre} tabIndex={-1}>{objet.libelle}</h2>
         <button type="button" className="atl-fermer" onClick={onFermer} aria-label="Fermer le panneau">×</button>
+        {/* 21/10 — l'assistant de gestion, sur CET objet (« ce chantier ») : le panneau de conversation s'ouvre avec ce contexte. */}
+        {enEssai('assistant') && contexteDeObjet(objet) && <span className="aca-demander-objet"><BoutonDemander contexte={contexteDeObjet(objet)} /></span>}
       </header>
       <div className="atl-panneau-corps">
         {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} carte={carte} />}
@@ -58,6 +64,8 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
         {objet.type === 'vehicule' && <PanneauVehicule objet={objet} donnees={donnees} />}
         {objet.type === 'membre' && <PanneauMembre objet={objet} donnees={donnees} />}
         {objet.type === 'accueil' && (vue ? <SalleAttentePanneau vue={vue} jour={donnees.jour} onVue2D={onVue2D} /> : <PanneauAccueil donnees={donnees} />)}
+        {/* 21/10 — en tête du poste : ce que l'assistant de gestion vient de faire, ses compteurs et la file du pilote automatique. */}
+        {objet.type === 'assistants' && enEssai('assistant') && <ActiviteAssistant />}
         {objet.type === 'assistants' && poste && <PosteAssistantsPanneau poste={poste} onVue2D={onVue2D} />}
         {objet.type === 'bureau' && (
           <div className="atl-pile">

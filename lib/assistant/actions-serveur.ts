@@ -43,7 +43,10 @@ import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, resoudreLignes, 
 import { categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
 import type { FicheAction, MagasinActions, Realisateur, Realisation } from './confirmation'
 import type { ResultatExecution } from './boucle'
-import { appelerAvec, clientDeSession, erreurDe, type ContexteSession, type Gestionnaire } from './session'
+import { appelerAvec, clientDeSession, erreurDe, type ContexteSession, type Gestionnaire, type ReponseRoute } from './session'
+import { piloterCarte } from '@/lib/pilote/serveur'
+import { DELAI_ANNULATION_MIN, MARQUE_CONTENU_TIERS, OUTILS_CONTENU_TIERS, typePiloteDeOutil } from '@/lib/pilote/regles'
+import { actionsTout } from './actions-tout'
 
 /** Envois (e-mail ou message à un client) que l'assistant peut faire partir en un jour pour un compte. */
 export const ENVOIS_JOUR_MAX = 30
@@ -59,9 +62,15 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 export type DependancesActions = {
   /** POST /api/devis/[id]/envoyer (génère le PDF : chargé à la demande). */
   envoyerDevis?: Gestionnaire
+  /** POST /api/factures/[id]/envoyer (génère le PDF : chargé à la demande). */
+  envoyerFacture?: Gestionnaire
   creerFacture?: typeof creerFacture
   envoyerMail?: typeof sendEmail
   maintenant?: () => Date
+  /** L'appel des routes de l'interface (essais : une doublure qui enregistre la route atteinte, sans réseau). */
+  appeler?: (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> }) => Promise<ReponseRoute>
+  /** Mise en file du pilote automatique (essais : en mémoire). */
+  piloterCarte?: typeof piloterCarte
 }
 
 export type ContexteActions = ContexteSession & {
@@ -106,7 +115,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   const dep = ctx.dependances ?? {}
   const maintenant = () => (dep.maintenant ? dep.maintenant() : new Date())
   const aujourdhui = () => jourParis(maintenant())
-  const route = (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> } = {}) => appelerAvec(ctx, g, chemin, o)
+  const route = (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> } = {}) => (dep.appeler ? dep.appeler(g, chemin, o) : appelerAvec(ctx, g, chemin, o))
   const sansCrm = ko('Le CRM n’est pas ouvert sur ce compte.')
 
   // ── Lectures sous la session (RLS) ───────────────────────────────────────────────────────────────
@@ -908,6 +917,16 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     return { ok: true, entrees: { ...e, message_id: prop.id }, objet: { type: 'conversation', id: lead.id }, apercu: apercu(`Envoyer la réponse préparée à ${txt(lead.nom_prospect) ?? 'ce client'}`, { lignes: [{ label: 'Canal', valeur: to ? `e-mail (${to}) et fil de la conversation` : 'fil de la conversation (ou canal de la demande)' }], message: { a: to ?? 'la conversation', objet: '', texte: prop.contenu }, irreversible: true, lien: lienDe('conversation', lead.id) }) }
   }
 
+  // ═══════════════ 21/10 — l'assistant relié à TOUT Presti : factures, plateforme, « Ma page », CRM récent (lib/assistant/actions-tout.ts) ═══════════════
+  // Mêmes familles, mêmes routes, même session ; les recherches (chantier, devis, facture, conversation) sont celles de ce fichier.
+  {
+    const tout = actionsTout({
+      uid: ctx.uid, crm: ctx.crm, session, route, maintenant, chantierDe, devisDe, factureDe, leadDe, peutEnvoyer, plafondEnvois: ENVOIS_JOUR_MAX,
+      profil: async () => { const p = await profil(); return { nom: p.nom, email: p.email } }, envoyerFacture: dep.envoyerFacture,
+    })
+    Object.assign(R, tout.R); Object.assign(P, tout.P); Object.assign(INV, tout.INV)
+  }
+
   // ═══════════════════════════ Les outils vus par le modèle ═══════════════════════════
   const plafondJour = (): Promise<boolean> => consommerLimite(`assistant-actions:${ctx.uid}`, ACTIONS_JOUR_MAX, 24 * 3600)
   const refusJour: ResultatExecution = { donnees: { ok: false, erreur: `Limite de ${ACTIONS_JOUR_MAX} actions par jour atteinte : l'assistant reprend demain.` }, resume: 'plafond d’actions du jour atteint', resultat: 'refus' }
@@ -930,17 +949,32 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
       resume: r.resume.slice(0, 280), objet: r.objet ?? null, ...(carte ? { carte } : {}),
     }
   }
+  /** Cette conversation a-t-elle appelé un outil qui rend du texte écrit par un tiers ? (journal de l'assistant, sous la RLS ; erreur = oui). */
+  async function contenuTiersLu(): Promise<boolean> {
+    const { data, error } = await session.from('assistant_journal').select('id').eq('artisan_id', ctx.uid).eq('conversation_id', ctx.conversationId).in('outil', [...OUTILS_CONTENU_TIERS]).limit(1)
+    return !!error || (data ?? []).length > 0
+  }
   const proposee = (nom: NomAction) => async (entree: EntreeAction): Promise<ResultatExecution> => {
     if (!(await plafondJour())) return refusJour
     const p = await P[nom](entree)
     if (!p.ok) return { donnees: { ok: false, erreur: p.erreur }, resume: p.erreur.slice(0, 280), resultat: 'refus' }
+    // Audit du 21/10 (M4, injection de prompt indirecte) : une carte pilotable née d'une conversation où l'assistant a LU du texte
+    // écrit par un tiers (messages de prospects, demandes, fournisseurs) est MARQUÉE ; le pilote automatique ne la fait jamais partir.
+    const lu = typePiloteDeOutil(nom) ? await contenuTiersLu() : false
     const fiche = await ctx.magasin.creer({
       artisan_id: ctx.uid, conversation_id: ctx.conversationId, tour: Math.max(1, ctx.tour()), outil: nom, mode: 'confirmation', statut: 'en_attente',
-      titre: p.apercu.titre.slice(0, 200), entrees: p.entrees, apercu: p.apercu, annulation: null, resultat_resume: null,
+      titre: p.apercu.titre.slice(0, 200), entrees: lu ? { ...p.entrees, [MARQUE_CONTENU_TIERS]: true } : p.entrees, apercu: p.apercu, annulation: null, resultat_resume: null,
       objet_type: p.objet?.type ?? null, objet_id: p.objet?.id ?? null, expire_le: new Date(maintenant().getTime() + VALIDITE_CARTE_MS).toISOString(),
     })
+    // PILOTE AUTOMATIQUE (21/10, lib/pilote) : si l'artisan l'a activé pour ce type d'action (Signature, drapeau levé, garde-fous
+    // passés), la carte entre dans la file et partira seule après le délai d'annulation. Sinon : rien ne change, elle attend le clic.
+    const auto = await (dep.piloterCarte ?? piloterCarte)(ctx.uid, fiche)
     return {
-      donnees: { ok: true, en_attente_de_confirmation: true, carte: p.apercu.titre, contenu_de_la_carte: [...p.apercu.lignes.filter((l) => !['Client', 'À'].includes(l.label)).map((l) => `${l.label} : ${l.valeur}`), ...p.apercu.alertes], a_savoir: "RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé." },
+      donnees: { ok: true, en_attente_de_confirmation: true, carte: p.apercu.titre, contenu_de_la_carte: [...p.apercu.lignes.filter((l) => !['Client', 'À'].includes(l.label)).map((l) => `${l.label} : ${l.valeur}`), ...p.apercu.alertes],
+        a_savoir: auto
+          ? `RIEN n'est encore parti. Le pilote automatique de l'artisan enverra cette action seule à ${new Date(auto.part_le).toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })} (dans ${DELAI_ANNULATION_MIN} minutes), sauf s'il l'annule (Paramètres → Pilote automatique, ou le poste des assistants du CRM). Dis-le clairement.`
+          : "RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé.",
+        ...(auto ? { pilote_automatique: { part_le: auto.part_le } } : {}) },
       resume: `proposée, en attente de confirmation : ${p.apercu.titre}`.slice(0, 280), objet: p.objet ?? null, carte: versCarte(fiche),
     }
   }

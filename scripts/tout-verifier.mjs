@@ -53,6 +53,8 @@ const SUITES = [
   // Audit RGPD du 20/10 : effacement étendu (photos, adresse, suivi), purge des essais (24 mois), conversations (devis signé ou facture), TABLES_A_VIDER, expiration du suivi, textes légaux et registre. Hors ligne.
   { nom: 'RGPD — correctifs de l’audit du 20/10 (effacement, purges, suivi, textes légaux, registre)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/rgpd-qa.mjs'], cout: 'gratuit' },
   { nom: 'Accès aux automatisations (Mes chiffres : Signature ; relances d’impayés : dès Studio)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/acces-automatisations-qa.mjs'], cout: 'gratuit' },
+  // 21/10 : le centre d'aide dit ce que fait le code (automatismes, offre de chaque fonctionnalité, essai gratuit, règle de l'assistant, badge Studio retiré) ; mutations incluses.
+  { nom: 'Centre d’aide = code (automatique, offres, essai, assistant)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/aide-automatique-qa.mjs'], cout: 'gratuit' },
   { nom: 'Offres = verrous (matrice)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/offres-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Limites atomiques', cmd: 'node', args: ['scripts/limites-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Plafond de réinitialisation', cmd: 'node', args: ['scripts/reset-plafond-e2e.mjs'], cout: 'gratuit' },
@@ -148,6 +150,13 @@ const SUITES = [
   { nom: 'Durcissements de sécurité du 20/10 (SSRF IMAP, limiteurs stricts, secrets, photos)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/securite-durcissements-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM atelier vivant — salle d’attente, arrivée en direct, poste des assistants, garde du drapeau (aucun envoi)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-vivant-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM atelier 3D — profil d’infrastructure (base légère, atelier, entrepôt), métier visible, avancement des chantiers, jour et nuit, garde du drapeau', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-atelier3d-qa.mjs'], cout: 'gratuit' },
+  // 21/10 (décisions du fondateur) : le PILOTE AUTOMATIQUE (Signature, 10 min pour annuler, garde-fous), l'avancement sans ressaisie
+  // (photo « Après », lien de pointage), l'assistant relié à tout Presti, l'assistant dans l'atelier, le CRM connecté en temps réel.
+  { nom: 'Pilote automatique — délai de 10 min, annulation, prix non sourcé → manuel, plafond, idempotence, Signature seulement, drapeau baissé = rien (0174)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/pilote-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Avancement des chantiers sans ressaisie — assistant (avancer_chantier), photo « Après », lien de pointage du compagnon (0174)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/avancement-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Assistant relié à tout Presti', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/assistant-tout-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM — l’assistant dans l’atelier : panneau, contexte vérifié, verrou d’offre, exemple simulé, fil d’activité, file du pilote', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-assistant-panneau-qa.mjs'], cout: 'gratuit' },
+  { nom: 'CRM connecté à tout — devis, factures, inventaire, fiche, demande /p → vue, salle d’attente, assistants ; ce qui est lu est écouté (0175)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-connecte-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — migration 0141 jouée (RLS, références croisées, journal, sortie de stock)', cmd: 'node', args: ['scripts/crm-sql-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — drapeau baissé : chaque route et la page répondent 404', cmd: 'node', args: ['scripts/crm-e2e.mjs'], cout: 'gratuit' },
   // L'atelier 3D sur la page de démonstration interne (données fictives) : performance, repli 2D, interactions, contrastes.
