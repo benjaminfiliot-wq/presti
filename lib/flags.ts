@@ -278,8 +278,14 @@ export const FLAGS = {
    *  ouvrir LinkedIn » la copie et ouvre la conversation d'origine. Fixtures INVENTÉES. migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10).
    *  Baissé : la relève ignore ces e-mails comme avant. Se lève après 0177 appliquée et contrôlée, canaux-reseaux-qa vert, et au
    *  moins un vrai e-mail de notification par réseau passé au lecteur (caviardé) ; un réseau dont le gabarit réel ne passe pas
-   *  sort de RESEAUX_NOTIFICATION avant de lever. */
-  canauxNotifications: false,
+   *  sort de RESEAUX_NOTIFICATION avant de lever.
+   *  21/10/2026 — LEVÉ (« allume les notifications si c'est bon », Benj) : la vérification DKIM est éprouvée sur un VRAI e-mail
+   *  (TikTok Shop, Gmail de Benj, lu en lecture seule, gardé hors du dépôt) : copie exacte (17 581 octets, bh identique), signatures
+   *  email.tiktok.com et sendgrid.info VALIDES, corps / objet / expéditeur falsifiés REFUSÉS ; l'e-mail d'information n'est pas
+   *  rangé comme message ; l'en-tête d'authentification retenu est celui du serveur (mx.google.com). Repli DNS-over-HTTPS ajouté
+   *  (lib/releveCanal.ts). Non éprouvé : le gabarit RÉEL d'un message LinkedIn / Facebook / Instagram (aucun dans la boîte de Benj) —
+   *  un gabarit non reconnu est ignoré (rien de rangé, rien d'inventé), à surveiller au premier artisan qui branche sa boîte. */
+  canauxNotifications: true,
   /** 21/10/2026 — « VOS RÉSEAUX » (Messages → Canaux) : pour chaque réseau, le lien de la page de conversation marqué de sa source
    *  (?src=instagram, liste fermée lib/canaux/reseaux.ts), le texte à coller (bio, message d'accueil natif), un QR code fabriqué
    *  sur place (lib/qr.ts) ; l'origine est enregistrée (leads.origine, migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10)) et affichée en

@@ -31,7 +31,17 @@ const INDESIRABLE = /(facture[s]? ?orange|newsletter|se désinscrire|unsubscribe
 /** Réponses préparées par l'IA pour Le Bon Coin, par boîte et par passage : la relève de 50 boîtes tient en 60 s. */
 const MAX_PREPARATIONS_LBC = 2
 
-/** La lecture DNS des clés DKIM (lib/canaux/dkim.ts), bornée à 4 s, mémorisée le temps d'un passage. Muette : rien de vérifié. */
+/** Repli DNS-over-HTTPS (dns.google, enregistrements TXT) quand le DNS direct échoue ou se tait : la clé publique d'un domaine est
+ *  publique, seul son nom part. 21/10/2026 : le DNS direct a été refusé (ECONNREFUSED) sur un poste de test, alors que le même e-mail
+ *  TikTok réel était vérifié par cette voie — une panne DNS passagère ne doit pas éteindre la reconnaissance des notifications. */
+async function txtParDoh(nom: string): Promise<string[][]> {
+  const r = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(nom)}&type=TXT`, { signal: AbortSignal.timeout(4_000) })
+  if (!r.ok) return []
+  const j = await r.json() as { Answer?: { type: number; data: string }[] }
+  return (j.Answer ?? []).filter((a) => a.type === 16 && typeof a.data === 'string').map((a) => [a.data.replace(/^"|"$/g, '').split('" "').join('')])
+}
+
+/** La lecture DNS des clés DKIM (lib/canaux/dkim.ts), bornée à 4 s, mémorisée le temps d'un passage, avec repli DoH. Muette : rien de vérifié. */
 function resolveurDkim(): ResolveurTxt {
   const memo = new Map<string, Promise<string[][]>>()
   return (nom) => {
@@ -39,7 +49,7 @@ function resolveurDkim(): ResolveurTxt {
       memo.set(nom, Promise.race([
         dns.resolveTxt(nom),
         new Promise<string[][]>((_, non) => setTimeout(() => non(new Error('dns lent')), 4_000)),
-      ]).catch(() => []))
+      ]).then((r) => (r.length ? r : txtParDoh(nom))).catch(() => txtParDoh(nom).catch(() => [])))
     }
     return memo.get(nom) as Promise<string[][]>
   }

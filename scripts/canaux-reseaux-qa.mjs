@@ -70,14 +70,16 @@ const src = {
 // ═══════════════════════ A. Drapeaux et marque blanche ═══════════════════════
 {
   const flags = lire('lib/flags.ts')
-  // 21/10/2026 : canauxTelegram, canauxLiens, importProspects LEVÉS après 0177 et l'audit offensif ; canauxNotifications reste baissé
-  // tant que la vérification DKIM n'a pas lu un vrai e-mail de chaque réseau.
-  const LEVES = ['canauxTelegram', 'canauxLiens', 'importProspects']
-  T('A1 les 4 drapeaux neufs existent en FIN de lib/flags.ts, commentés et datés 21/10/2026 ; Telegram, liens et import LEVÉS, notifications BAISSÉ',
-    NEUFS.every((f) => new RegExp(`21/10/2026 — [\\s\\S]{0,1400}${f}: (true|false),`).test(flags))
-    && LEVES.every((f) => FLAGS[f] === true && new RegExp(`21/10/2026 — LEVÉ[\\s\\S]{0,600}${f}: true,`).test(flags))
-    && FLAGS.canauxNotifications === false && /canauxNotifications: false,/.test(flags)
+  // 21/10/2026 : les 4 drapeaux LEVÉS après 0177 et l'audit offensif ; canauxNotifications après la vérification DKIM d'un VRAI
+  // e-mail (TikTok, lecture seule, gardé hors du dépôt : zéro donnée réelle dans les tests).
+  T('A1 les 4 drapeaux neufs existent en FIN de lib/flags.ts, commentés et datés 21/10/2026, LEVÉS avec la preuve dans leur commentaire',
+    NEUFS.every((f) => FLAGS[f] === true && new RegExp(`21/10/2026 — LEVÉ[\\s\\S]{0,1000}${f}: true,`).test(flags))
+    && /VRAI e-mail[\s\S]{0,400}VALIDES[\s\S]{0,200}REFUSÉS[\s\S]{0,700}canauxNotifications: true,/.test(flags)
     && flags.indexOf('canauxTelegram: true') > flags.indexOf('facturesSituation: true') && /importProspects: true,\n\} as const/.test(flags))
+  const rc = lire('lib/releveCanal.ts')
+  T('A1b clés DKIM : DNS direct borné à 4 s, puis repli DNS-over-HTTPS (dns.google, TXT) sur échec ou réponse vide, nom encodé, hôte fixe',
+    /async function txtParDoh\(nom: string\)/.test(rc) && /https:\/\/dns\.google\/resolve\?name=\$\{encodeURIComponent\(nom\)\}&type=TXT/.test(rc)
+    && /\.then\(\(r\) => \(r\.length \? r : txtParDoh\(nom\)\)\)\.catch\(\(\) => txtParDoh\(nom\)\.catch\(\(\) => \[\]\)\)/.test(rc))
   T('A2 les drapeaux d’avant restent baissés (canauxWhatsapp, canauxReseaux, canauxLeboncoin) : aucun n’est levé par ce chantier',
     FLAGS.canauxWhatsapp === false && FLAGS.canauxReseaux === false && FLAGS.canauxLeboncoin === false)
   T('A3 drapeau baissé → routes 404 AVANT toute lecture (webhook Telegram, liaison GET/POST/DELETE, import)',
@@ -94,7 +96,7 @@ const src = {
     && /const ORIGINE_LUE = actif\('canauxLiens'\) \|\| actif\('importProspects'\)/.test(src.conv) && /\+ \(ORIGINE_LUE \? ', origine' : ''\)/.test(src.conv))
   T('A6 la règle des canaux : Telegram sous canauxTelegram (Studio, canaux.whatsapp), les 10 réseaux lus par notification sous canauxNotifications (canaux.email)',
     REG.canalOuvert('telegram') === FLAGS.canauxTelegram && REG.capaciteCanal('telegram') === 'canaux.whatsapp' && LIB.CANAUX_NOTIFICATION.length === 10
-    && LIB.CANAUX_NOTIFICATION.every((c) => !REG.canalOuvert(c) && REG.capaciteCanal(c) === 'canaux.email' && REG.estCanalConversation(c)))
+    && LIB.CANAUX_NOTIFICATION.every((c) => REG.canalOuvert(c) === FLAGS.canauxNotifications && REG.capaciteCanal(c) === 'canaux.email' && REG.estCanalConversation(c)))
   const textes = RES.ORIGINES.map((o) => RES.ficheReseau(o, 'Plomberie Fictive', RES.lienAvecSource('https://exemple-artisan.fr/demande', o)))
   const tout = JSON.stringify(textes)
   T('A7 MARQUE BLANCHE : aucun texte à coller (bio, accueil, note) ne dit « Presti », tous portent le nom de l’artisan ou son lien',
