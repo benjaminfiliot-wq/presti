@@ -252,6 +252,22 @@ export const TRAITEMENTS: { cle: CleDuree | null; finalite: string; donnees: str
     base: 'Intérêt légitime de l’artisan à rester en contact avec ses clients (RGPD art. 6.1.f) ; vous pouvez vous y opposer à tout moment en répondant au message (art. 21)',
     duree: `${libelleDuree(DUREES_MOIS.crm_journal)} pour la trace d’un message envoyé (son texte n’est pas gardé) ; l’entretien n’est suivi que jusqu’à ${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier ; le refus est gardé tant que le compte de l’artisan existe, pour qu’il soit respecté`,
   },
+  // 21/10 — Pilote automatique (lib/pilote, 0174) : purge lib/purgesRgpd.ts étape 11, même durée que le journal du CRM.
+  {
+    cle: 'crm_journal',
+    finalite: 'Vous répondre ou vous relancer sans attendre, quand l’artisan a choisi l’envoi automatique de ces messages (Pilote automatique)',
+    donnees: 'Le message préparé pour vous (réponse, relance, devis ou facture déjà émise), votre nom et votre adresse email ; il part au nom de l’artisan au bout de 10 minutes, sauf s’il l’annule. Une réponse à votre demande envoyée automatiquement porte la mention de l’assistant. Le journal des envois garde un intitulé court et l’heure, pas le texte',
+    base: 'Exécution du contrat ou de mesures précontractuelles prises à votre demande (RGPD art. 6.1.b) ; pour les relances, intérêt légitime de l’artisan à être payé et à suivre ses devis (art. 6.1.f)',
+    duree: `${libelleDuree(DUREES_MOIS.crm_journal)} après la préparation de l’envoi pour la ligne du journal ; le message lui-même suit la durée de la conversation`,
+  },
+  // 21/10 — lien de pointage d'un compagnon (chantier_pointage, 0174) : supprimé avec le chantier (cascade).
+  {
+    cle: 'crm',
+    finalite: 'Laisser un compagnon de l’artisan cocher, depuis son téléphone, les tâches terminées de votre chantier',
+    donnees: 'Les intitulés des tâches du chantier, et rien d’autre : ni prix, ni adresse, ni nom de client. Presti ne garde que l’empreinte du lien et la date du dernier accès ; le compagnon ne peut que cocher « fait »',
+    base: 'Exécution du contrat (RGPD art. 6.1.b)',
+    duree: `${libelleDuree(DUREES_MOIS.crm)} après la fin du chantier au plus, avec lequel le lien est supprimé ; plus tôt si l’artisan le retire`,
+  },
   {
     cle: null,
     finalite: 'Faire apparaître vos chantiers et rendez-vous dans l’agenda de l’artisan (Google Agenda, iPhone, Outlook), s’il l’a demandé',

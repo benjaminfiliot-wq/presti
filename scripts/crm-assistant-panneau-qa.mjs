@@ -13,9 +13,10 @@
 //  D. ROUTE D'ACTIVITÉ : garde du CRM, filtre de compte, ni entrées ni aperçu lus.
 //  E. ÉCRANS (sources) : un seul moteur (useConversation partagé avec /assistant), ouverture depuis l'atelier, la fiche et le panneau
 //     d'un objet, verrou hors Signature vers /abonnement, exemple simulé sans appel, accessibilité, téléphone, annulation du pilote,
-//     surbrillance sans réécrire Scene3D.
+//     HALO de l'objet touché (Scene3D et Plan2D ont leur prop `halo`, la marque de sélection n'est plus détournée, « réduire les
+//     animations » respecté, aucune allocation par image).
 //  R. RENDU RÉEL (facultatif) : avec BASE_URL_DEMO=http://localhost:<port> (serveur de production isolé lancé avec PRESTI_DEMO_ATELIER=1),
-//     un vrai navigateur ouvre /atelier-demo, le panneau, le contexte d'un chantier, Échap, et prend la capture
+//     un vrai navigateur ouvre /atelier-demo, le panneau, le contexte d'un chantier, Échap, le halo 2D d'un objet touché, et prend la capture
 //     .orchestre/preuves/crm-assistant-panneau/panneau-atelier.png. Sans la variable : section sautée (et dite).
 //
 // Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/crm-assistant-panneau-qa.mjs
@@ -182,11 +183,37 @@ const MOI = U(1), AUTRE = U(2)
   T('E15 PILOTE : lu par GET /api/pilote/file, montré seulement sur une réponse 200 complète (drapeau baissé → rien)', /appel<FilePilote>\('\/api\/pilote\/file'\)/.test(use) && /setPilote\(p\.ok && Array\.isArray\(p\.corps\?\.attente\) \? p\.corps : null\)/.test(use) && /\{pilote && \(/.test(act))
   T('E16 ANNULER depuis le poste : POST /api/pilote/file { id, decision: « annuler » }, puis relecture', /appel\('\/api\/pilote\/file', \{ method: 'POST', body: \{ id, decision: 'annuler' \} \}\)/.test(use) && /onClick=\{async \(\) => \{ setOccupe\(l\.id\); const r = await annuler\(l\.id\)/.test(act))
   T('E17 « Partira dans … » calculé par texteDecompte (lib/pilote/regles.ts), rafraîchi sans relire le serveur', /texteDecompte\(l\.part_le, maintenant\)/.test(act) && /useBattement\(/.test(act))
-  T('E18 SURBRILLANCE : l’atelier écoute surligner, résout la clé (cleSceneDe) et l’efface après la durée ; Scene3D n’est pas réécrit (TODO laissé)',
-    /addEventListener\(EV_SURLIGNER, f\)/.test(atl) && /cleSceneDe\(o,/.test(atl) && /setHalo\(null\), DUREE_SURBRILLANCE_MS/.test(atl) && /marque = selection \?\? focus \?\? indexDe\(halo\)/.test(atl) && /TODO\(Scene3D\)/.test(lire('app/crm/atelier/Atelier.tsx')))
+  T('E18 SURBRILLANCE : l’atelier écoute surligner, résout la clé (cleSceneDe), la garde dans `halo` et l’efface après la durée ; plus de TODO(Scene3D)',
+    /addEventListener\(EV_SURLIGNER, f\)/.test(atl) && /cleSceneDe\(o,/.test(atl) && /if \(cle\) setHalo\(cle\)/.test(atl) && /setHalo\(null\), DUREE_SURBRILLANCE_MS/.test(atl) && !/TODO\(Scene3D\)/.test(lire('app/crm/atelier/Atelier.tsx')))
   T('E19 OUVERTURE CONTEXTUELLE : « Demander à l’assistant » publie l’événement, le panneau l’écoute seulement si l’accès est ouvert', /window\.addEventListener\(EV_OUVRIR, f\)/.test(pan) && /if \(acces !== 'ok'\) return/.test(pan) && /onClick=\{\(\) => ouvrirAssistant\(contexte\)\}/.test(pan))
-  T('E20 aucun octet de contrôle dans les fichiers du lot', ['lib/crm/assistantCrm.ts', 'lib/crm/contexteAssistantServeur.ts', 'app/crm/assistant/PanneauAssistant.tsx', 'app/crm/assistant/Activite.tsx', 'app/crm/assistant/useActivite.ts', 'app/crm/assistant/evenements.ts', 'app/crm/assistant/assistant-crm.css', 'app/assistant/useConversation.ts', 'app/api/crm/assistants/activite/route.ts', 'scripts/crm-assistant-panneau-qa.mjs']
+  T('E20 aucun octet de contrôle dans les fichiers du lot', ['lib/crm/assistantCrm.ts', 'lib/crm/contexteAssistantServeur.ts', 'app/crm/assistant/PanneauAssistant.tsx', 'app/crm/assistant/Activite.tsx', 'app/crm/assistant/useActivite.ts', 'app/crm/assistant/evenements.ts', 'app/crm/assistant/assistant-crm.css', 'app/assistant/useConversation.ts', 'app/api/crm/assistants/activite/route.ts', 'scripts/crm-assistant-panneau-qa.mjs',
+    'app/crm/atelier/Atelier.tsx', 'app/crm/atelier/Scene3D.tsx', 'app/crm/atelier/Plan2D.tsx', 'app/crm/atelier/atelier.css']
     .every((f) => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(fs.readFileSync(path.join(RACINE, f), 'utf8'))))
+  // ── Le HALO de l'objet touché (21/10) : une API à lui dans la scène et le plan, la sélection de l'artisan n'est plus détournée ──
+  const s3h = sansCommentaires(lire('app/crm/atelier/Scene3D.tsx'))
+  const p2h = sansCommentaires(lire('app/crm/atelier/Plan2D.tsx'))
+  const cssA = lire('app/crm/atelier/atelier.css').replace(/\/\*[\s\S]*?\*\//g, '')
+  const tranche = (src, debut, fin) => { const i = src.indexOf(debut); return i < 0 ? '' : src.slice(i, fin ? src.indexOf(fin, i + debut.length) : undefined) }
+  const compo = tranche(s3h, 'function HaloAssistant(', '\nfunction ')
+  const image = tranche(compo, 'useFrame(() => {', '\n  })')
+  T('E21 MARQUE : la sélection n’est plus détournée (`marque = selection ?? focus`, sans halo), et c’est elle seule qui part en `selection=`',
+    /const marque = selection \?\? focus\n/.test(atl) && !/marque = [^\n]*halo/i.test(atl) && (atl.match(/selection=\{marque\}/g) ?? []).length === 3 && !/selection=\{[^}]*[Hh]alo/.test(atl))
+  T('E22 ATELIER passe `halo={indexHalo}` (indexDe(halo), même indexation que la sélection) à la scène 3D et aux DEUX plans 2D',
+    /const indexHalo = indexDe\(halo\)/.test(atl) && /<Scene3D [^>]*halo=\{indexHalo\}/.test(atl) && (atl.match(/<Plan2D [^>]*halo=\{indexHalo\}/g) ?? []).length === 2)
+  T('E23 SCENE3D : prop `halo?: number | null`, un HaloAssistant monté le seul temps du halo, l’objet soulevé dans ses deux couches (formes et fenêtres) ; rythme fini avant l’effacement (≤ DUREE_SURBRILLANCE_MS)',
+    /halo\?: number \| null/.test(s3h) && /heure = null, halo = null \}, ref\)/.test(s3h) && /\{animHalo && <HaloAssistant /.test(s3h) && (s3h.match(/<Couche [\s\S]{0,400}?halo=\{animHalo\} \/>/g) ?? []).length === 2
+    && /dy \+= leveeHalo\(/.test(s3h) && /const DUREE_HALO_MS = PULSATIONS_HALO \* 800/.test(s3h) && 3 * 800 <= A.DUREE_SURBRILLANCE_MS && /new THREE\.RingGeometry\(/.test(compo) && /textureHalo\(\)/.test(compo) && (compo.match(/raycast=\{\(\) => null\}/g) ?? []).length === 3)
+  T('E24 DISTINCT de la sélection : la scène ne teinte pas l’objet du halo (couleur() ne lit pas `halo`), le halo ne bouge pas la caméra (Regie ne le reçoit pas) ; couleur = accent corail, aucun bleu',
+    !/halo/i.test(tranche(s3h, 'const couleur = (it: Inst)', 'const objetSurvol')) && !/<Regie [^>]*halo/.test(s3h) && /color=\{COULEURS\.corail\}/.test(compo) && !/blue|bleu|#[0-9a-f]{4}[c-f][0-9a-f]\b/i.test(compo))
+  T('E25 RÉDUIRE LES ANIMATIONS : 3D → anneau fixe (branche calme qui sort avant toute pulsation), objet non soulevé ; 2D → contour fixe hors @media, écho animé SEULEMENT dans prefers-reduced-motion: no-preference',
+    /const calme = useCalme\(\)/.test(compo) && /if \(calme\.current\) \{[^}]*a\.scale\.set\(r, r, 1\)[^}]*b\.visible = false[^}]*return\s*\}/.test(image) && image.indexOf('if (calme.current)') >= 0 && image.indexOf('if (calme.current)') < image.indexOf('PULSATIONS_HALO')
+    && /if \(halo && it\.o === halo\.objet && !calme\.current\) dy \+=/.test(s3h) && /const enHalo = !!halo && !calme\.current/.test(s3h)
+    && /\.atl-plan-objet\.halo \{[^}]*outline: 2px solid var\(--accent\)/.test(cssA) && /@media \(prefers-reduced-motion: no-preference\) \{\s*\.atl-plan-objet\.halo::after \{ animation: atl-halo/.test(cssA)
+    && !/animation[^;}]*atl-halo/.test(cssA.replace(/@media \(prefers-reduced-motion: no-preference\) \{\s*\.atl-plan-objet\.halo::after[\s\S]*?\n\}/, '')) && /@keyframes atl-halo \{ from \{ opacity: [.0-9]+; transform: [^}]*\} to \{ opacity: 0; transform: [^}]*\} \}/.test(cssA))
+  T('E26 PAR IMAGE, ni allocation ni recherche : le corps de useFrame du halo n’a ni `new`, ni clone, ni tableau/objet littéral ; la couche repose les seules instances de l’objet (haloIdx, calculé hors image)',
+    image.length > 200 && !/\bnew\b|\.clone\(|\[\s*[^\]\s]|=\s*\{|\.map\(|\.filter\(|\.forEach\(/.test(image) && /const haloIdx = useMemo\(/.test(s3h) && /poser\([^\n]*, haloIdx\)/.test(s3h))
+  T('E27 PLAN 2D : prop `halo`, classe ` halo` posée sur l’objet d’indice `halo`, À CÔTÉ de ` choisi` (jamais à sa place)',
+    /halo\?: number \| null/.test(p2h) && /surligne = null, halo = null \}/.test(p2h) && /\$\{selection === i \? ' choisi' : ''\}[^`]*\$\{halo === i \? ' halo' : ''\}/.test(p2h))
 }
 
 // ═══════════════════════ R. Rendu réel (facultatif) ═══════════════════════
@@ -210,7 +237,19 @@ else {
     fs.mkdirSync(dossier, { recursive: true })
     await page.screenshot({ path: path.join(dossier, 'panneau-atelier.png') })
     await page.keyboard.press('Escape')
-    T('R3 Échap ferme le panneau et rend le focus au bouton « Assistant »', await dlg.count() === 0 && await page.evaluate(() => document.activeElement?.getAttribute('data-assistant-bouton')) === 'ouvrir')
+    // Le focus est rendu au tour suivant (PanneauAssistant.tsx : setTimeout 0 après la fermeture) : on l'attend, 2 s au plus, au lieu de lire trop tôt.
+    const focusRendu = await page.waitForFunction(() => document.activeElement?.getAttribute('data-assistant-bouton') === 'ouvrir', null, { timeout: 2000 }).then(() => true, () => false)
+    T('R3 Échap ferme le panneau et rend le focus au bouton « Assistant »', await dlg.count() === 0 && focusRendu)
+    // Le HALO en 2D (21/10) : l'assistant « touche » un chantier (événement surligner, comme après une vraie réponse) → contour pulsé sur
+    // CET objet, sans sélection ni panneau ; il s'efface seul après DUREE_SURBRILLANCE_MS.
+    const cleVisee = await page.locator('button.atl-plan-objet[data-atelier-objet^="chantier:"]').first().getAttribute('data-atelier-objet')
+    await page.evaluate(([ev, id]) => window.dispatchEvent(new CustomEvent(ev, { detail: [{ type: 'chantier', id }] })), [A.EV_SURLIGNER, String(cleVisee).slice('chantier:'.length)])
+    await page.locator('button.atl-plan-objet.halo').first().waitFor({ timeout: 3000 }).catch(() => {})
+    const halos = await page.locator('button.atl-plan-objet.halo').evaluateAll((l) => l.map((b) => b.getAttribute('data-atelier-objet')))
+    await page.screenshot({ path: path.join(dossier, 'halo-plan2d.png') })
+    T('R8 HALO 2D : l’objet touché porte la classe `halo` (et lui seul), aucune sélection détournée, aucun panneau ouvert', halos.length === 1 && halos[0] === cleVisee && await page.locator('button.atl-plan-objet.choisi').count() === 0 && await page.locator('[data-atelier-panneau]').count() === 0, JSON.stringify(halos))
+    await page.waitForTimeout(A.DUREE_SURBRILLANCE_MS + 400)
+    T('R9 le halo 2D s’efface seul après la durée de surbrillance', await page.locator('button.atl-plan-objet.halo').count() === 0)
     // Un chantier choisi dans le plan 2D, puis « Demander à l'assistant » de son panneau : le contexte suit.
     const premierChantier = page.locator('[data-atelier-panneau]')
     const boutonsPlan = page.locator('button.atl-plan-objet')

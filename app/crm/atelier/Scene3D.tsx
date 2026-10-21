@@ -49,6 +49,9 @@ type Props = {
   /** L'heure imposée (page de démonstration, `?heure=`) ; absente : l'heure de Paris, relue chaque minute. Lue seulement si la scène
    *  porte l'infrastructure (drapeau crmAtelierVivant). */
   heure?: number | null
+  /** L'objet que l'assistant de gestion vient de toucher (21/10), même indexation que `selection` (scene.objets) : un halo distinct de la
+   *  sélection (HaloAssistant + soulèvement), le temps qu'Atelier le garde (DUREE_SURBRILLANCE_MS). Ne déplace pas la caméra, n'ouvre rien. */
+  halo?: number | null
 }
 
 const CIBLE: THREE.Vector3Tuple = [3, 0, 0]
@@ -88,10 +91,23 @@ function useCalme() {
   return calme
 }
 
+// ── L'assistant de gestion vient d'agir sur un objet (21/10, prop `halo`) : le rythme partagé par l'anneau au sol et le soulèvement ──
+// Trois pulsations de 800 ms (2,4 s) : tout est fini avant qu'Atelier n'efface le halo (DUREE_SURBRILLANCE_MS, 2,6 s, lib/crm/assistantCrm.ts).
+type AnimHalo = { debut: number; objet: number }
+const AUCUN: readonly number[] = []
+const PULSATIONS_HALO = 3
+const DUREE_HALO_MS = PULSATIONS_HALO * 800
+/** La hauteur gagnée par l'objet touché, `ms` après le début : une montée-descente douce (≤ 0,25 m) qui bat avec les pulsations ; 0 hors du halo. */
+export function leveeHalo(ms: number): number {
+  if (!(ms > 0) || ms >= DUREE_HALO_MS) return 0
+  const u = ms / DUREE_HALO_MS
+  return Math.sin(Math.PI * u) * (0.2 + 0.05 * Math.sin(2 * Math.PI * PULSATIONS_HALO * u))
+}
+
 // ── Une couche instanciée : toutes les instances d'une forme, un seul appel de dessin ──────────────────────────
 // `lumiere` : le calque des fenêtres et des lampes (infrastructure), une matière NON éclairée, sans ombre — elle luit le soir.
 // `marche` : les personnages qui vont à leur chantier (infrastructure) ; leur position posée est l'arrivée, le trajet est un décalage.
-function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = null, lumiere = false, marche = null, pousse = null }: {
+function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = null, lumiere = false, marche = null, pousse = null, halo = null }: {
   forme: Forme; insts: Inst[]; couleur: (it: Inst) => string
   onPick: (o: number) => void; onSurvol: (o: number | null) => void
   apparition: { debut: number; centre: THREE.Vector3 } | null
@@ -100,10 +116,20 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = n
   marche?: { debut: number; fin: number; mobiles: ReadonlyMap<number, Mobile> } | null
   /** Lot 8 : les objets dont une tâche vient d'être cochée — ils « montent » (0,5 → 1 de leur hauteur, 0,9 s). */
   pousse?: { debut: number; objets: ReadonlySet<number> } | null
+  /** L'objet que l'assistant de gestion vient de toucher (21/10) : il se soulève doucement le temps du halo (leveeHalo). */
+  halo?: AnimHalo | null
 }) {
   const ref = useRef<THREE.InstancedMesh>(null)
   const calme = useCalme()
   const marcheEnCours = useRef(false)
+  // Le halo : les SEULES instances de l'objet touché, calculées une fois (pas de recherche par image) ; une dernière pose les rend au sol.
+  const haloIdx = useMemo(() => {
+    if (!halo) return AUCUN
+    const l: number[] = []
+    for (let i = 0; i < insts.length; i++) if (insts[i].o === halo.objet) l.push(i)
+    return l
+  }, [insts, halo])
+  const haloEnCours = useRef(false)
   const geo = useMemo(() => geometrie(forme), [forme])
   const fini = useRef(false)
   // Les colis qui tombent : l'instance → son délai (90 ms de plus par colis quand plusieurs arrivent ensemble) ; `fin` = l'instant où le dernier se pose.
@@ -114,46 +140,57 @@ function Couche({ forme, insts, couleur, onPick, onSurvol, apparition, chute = n
   }, [chute])
   const chuteEnCours = useRef(false)
   const tmp = useMemo(() => ({ m: new THREE.Matrix4(), q: new THREE.Quaternion(), e: new THREE.Euler(), p: new THREE.Vector3(), s: new THREE.Vector3(), c: new THREE.Color() }), [])
-  const poser = (k: number) => {
+  // Une instance à sa place (définie une fois par rendu, pas par image) ; `poser` les pose toutes, ou seulement `seuls` (le halo).
+  const placer = (mesh: THREE.InstancedMesh, it: Inst, i: number, k: number) => {
+    // Apparition : chaque objet grandit depuis le sol, en cascade depuis le centre du dépôt (≈ 0,9 s en tout).
+    let f = 1
+    if (k < 1 && apparition) {
+      const d = Math.hypot(it.p[0] - apparition.centre.x, it.p[2] - apparition.centre.z)
+      const t = Math.min(1, Math.max(0, (k * 1.6 - d / 60)))
+      f = 1 - Math.pow(1 - t, 3)
+    }
+    // Colis qui arrive : caché jusqu'à son tour, puis il tombe de quatre mètres et rebondit deux fois (lib/crm/accueil.ts, hauteurChute).
+    let dy = 0, g = 1
+    const delai = colis?.delais.get(i)
+    if (colis && delai !== undefined) {
+      const a = (performance.now() - colis.debut - delai) / DUREE_CHUTE_MS
+      if (a <= 0) g = 0.0001
+      else if (a < 1) dy = hauteurChute(a)
+    }
+    // Un personnage en route : décalé de son arrivée le long du trajet (lib/crm/infrastructure.ts, decalageMarche).
+    let mx = 0, my = 0, mz = 0
+    const mb = marche?.mobiles.get(i)
+    if (mb && marche && !calme.current) [mx, my, mz] = decalageMarche(mb, performance.now() - marche.debut)
+    let gy = 1
+    if (pousse && pousse.objets.has(it.o) && !calme.current) { const a = Math.min(1, Math.max(0, (performance.now() - pousse.debut) / 900)); gy = 0.5 + 0.5 * (1 - Math.pow(1 - a, 3)) }
+    // L'objet que l'assistant vient de toucher : soulevé de quelques centimètres, en mesure avec les pulsations de l'anneau (leveeHalo).
+    if (halo && it.o === halo.objet && !calme.current) dy += leveeHalo(performance.now() - halo.debut)
+    tmp.p.set(it.p[0] + mx, it.p[1] * (k < 1 ? f : 1) * gy + dy + my, it.p[2] + mz)
+    tmp.s.set(it.s[0] * Math.max(f, 0.0001) * g, it.s[1] * Math.max(f, 0.0001) * g * gy, it.s[2] * Math.max(f, 0.0001) * g)
+    tmp.q.setFromEuler(tmp.e.set(it.r[0], it.r[1], it.r[2]))
+    mesh.setMatrixAt(i, tmp.m.compose(tmp.p, tmp.q, tmp.s))
+  }
+  const poser = (k: number, seuls: readonly number[] | null = null) => {
     const mesh = ref.current
     if (!mesh) return
-    insts.forEach((it, i) => {
-      // Apparition : chaque objet grandit depuis le sol, en cascade depuis le centre du dépôt (≈ 0,9 s en tout).
-      let f = 1
-      if (k < 1 && apparition) {
-        const d = Math.hypot(it.p[0] - apparition.centre.x, it.p[2] - apparition.centre.z)
-        const t = Math.min(1, Math.max(0, (k * 1.6 - d / 60)))
-        f = 1 - Math.pow(1 - t, 3)
-      }
-      // Colis qui arrive : caché jusqu'à son tour, puis il tombe de quatre mètres et rebondit deux fois (lib/crm/accueil.ts, hauteurChute).
-      let dy = 0, g = 1
-      const delai = colis?.delais.get(i)
-      if (colis && delai !== undefined) {
-        const a = (performance.now() - colis.debut - delai) / DUREE_CHUTE_MS
-        if (a <= 0) g = 0.0001
-        else if (a < 1) dy = hauteurChute(a)
-      }
-      // Un personnage en route : décalé de son arrivée le long du trajet (lib/crm/infrastructure.ts, decalageMarche).
-      let mx = 0, my = 0, mz = 0
-      const mb = marche?.mobiles.get(i)
-      if (mb && marche && !calme.current) [mx, my, mz] = decalageMarche(mb, performance.now() - marche.debut)
-      let gy = 1
-      if (pousse && pousse.objets.has(it.o) && !calme.current) { const a = Math.min(1, Math.max(0, (performance.now() - pousse.debut) / 900)); gy = 0.5 + 0.5 * (1 - Math.pow(1 - a, 3)) }
-      tmp.p.set(it.p[0] + mx, it.p[1] * (k < 1 ? f : 1) * gy + dy + my, it.p[2] + mz)
-      tmp.s.set(it.s[0] * Math.max(f, 0.0001) * g, it.s[1] * Math.max(f, 0.0001) * g * gy, it.s[2] * Math.max(f, 0.0001) * g)
-      tmp.q.setFromEuler(tmp.e.set(it.r[0], it.r[1], it.r[2]))
-      mesh.setMatrixAt(i, tmp.m.compose(tmp.p, tmp.q, tmp.s))
-    })
+    if (seuls) for (let j = 0; j < seuls.length; j++) { const i = seuls[j]; if (insts[i]) placer(mesh, insts[i], i, k) }
+    else for (let i = 0; i < insts.length; i++) placer(mesh, insts[i], i, k)
     mesh.instanceMatrix.needsUpdate = true
-    mesh.computeBoundingSphere()
+    if (!seuls) mesh.computeBoundingSphere()
   }
-  // Pose les matrices quand les instances changent ; reprend l'apparition là où elle en est (un survol ne la relance pas).
+  // Pose les matrices quand les instances changent ; reprend l'apparition là où elle en est (un survol ne la relance pas). Un nouveau
+  // halo repose tout : l'objet du halo précédent, s'il était encore soulevé, retombe à sa place.
   useLayoutEffect(() => {
     const k = apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1
     fini.current = k >= 1
     poser(k)
-  }, [insts, apparition, colis, marche, pousse]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [insts, apparition, colis, marche, pousse, halo]) // eslint-disable-line react-hooks/exhaustive-deps
   useFrame(() => {
+    // Le halo : seules les instances de l'objet touché sont reposées à chaque image, puis une dernière fois, au sol (leveeHalo rend 0).
+    if (haloIdx.length) {
+      const enHalo = !!halo && !calme.current && performance.now() < halo.debut + DUREE_HALO_MS
+      if (enHalo || haloEnCours.current) { haloEnCours.current = enHalo; poser(apparition ? Math.min(1, (performance.now() - apparition.debut) / 950) : 1, haloIdx) }
+    }
     // La marche : une pose par image tant que quelqu'un est en route, puis une dernière, à l'arrivée.
     const enPousse = !!pousse && performance.now() < pousse.debut + 950 && !calme.current
     if (enPousse) { poser(1); return }
@@ -263,6 +300,69 @@ function Halos({ fenetres, fort }: { fenetres: Fenetre[]; fort: boolean }) {
     <instancedMesh ref={ref} args={[geo, undefined, lampes.length]} raycast={() => null} frustumCulled={false} renderOrder={2}>
       <meshBasicMaterial map={texture} color="#FFB45E" transparent opacity={fort ? 0.5 : 0.28} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
     </instancedMesh>
+  )
+}
+
+// ── Le HALO de l'assistant (21/10) : l'objet qu'il vient de toucher, montré par un effet DISTINCT de la sélection (qui teinte l'objet et
+// déplace la caméra). Un anneau corail au sol, autour de l'emprise de l'objet, que suit un écho qui s'élargit en s'effaçant à chaque
+// pulsation (trois) ; dessous, une lueur au dégradé radial (textureHalo) qui scintille ; l'objet lui-même se soulève (Couche, leveeHalo).
+// Trois maillages, montés le seul temps du halo (≈ 2,6 s) ; sans ombre ni clic. Par image : échelles et opacités seulement, aucune
+// allocation (géométries, texture et matières créées une fois). « Réduire les animations » : l'anneau et la lueur restent fixes.
+function HaloAssistant({ scene, anim }: { scene: Scene; anim: AnimHalo }) {
+  const calme = useCalme()
+  const anneau = useRef<THREE.Mesh>(null), echo = useRef<THREE.Mesh>(null), lueur = useRef<THREE.Mesh>(null)
+  const geoAnneau = useMemo(() => new THREE.RingGeometry(0.84, 1, 72), [])
+  const geoLueur = useMemo(() => new THREE.PlaneGeometry(1, 1), [])
+  const texture = useMemo(() => textureHalo(), [])
+  useEffect(() => () => { geoAnneau.dispose(); geoLueur.dispose(); texture.dispose() }, [geoAnneau, geoLueur, texture])
+  // L'emprise au sol : le morceau de l'objet le plus éloigné de son centre (+ 0,7 m de marge), bornée de 1,4 à 9 m — l'anneau ne coupe pas l'objet.
+  const pose = useMemo(() => {
+    const o = scene.objets[anim.objet]
+    if (!o) return null
+    let e = 0
+    for (const f of FORMES) for (const it of scene.instances[f]) if (it.o === anim.objet) e = Math.max(e, Math.hypot(it.p[0] - o.centre[0], it.p[2] - o.centre[2]) + Math.max(it.s[0], it.s[2]) / 2)
+    return { x: o.centre[0], z: o.centre[2], r: Math.min(9, Math.max(1.4, e + 0.7)) }
+  }, [scene, anim.objet])
+  useFrame(() => {
+    const a = anneau.current, b = echo.current, l = lueur.current
+    if (!a || !b || !l || !pose) return
+    const r = pose.r
+    const ma = a.material as THREE.MeshBasicMaterial, mb = b.material as THREE.MeshBasicMaterial, ml = l.material as THREE.MeshBasicMaterial
+    l.scale.set(r * 2.6, r * 2.6, 1)
+    if (calme.current) {
+      a.scale.set(r, r, 1); ma.opacity = 0.9
+      b.visible = false
+      ml.opacity = 0.32
+      return
+    }
+    const t = performance.now() - anim.debut
+    const fin = t >= DUREE_HALO_MS
+    const phi = fin ? 0 : ((Math.max(0, t) / DUREE_HALO_MS) * PULSATIONS_HALO) % 1
+    const bat = Math.sin(Math.PI * phi)
+    // L'anneau se gonfle légèrement à chaque pulsation, puis reste posé jusqu'à ce qu'Atelier efface le halo.
+    a.scale.set(r * (1 + 0.06 * bat), r * (1 + 0.06 * bat), 1)
+    ma.opacity = fin ? 0.7 : 0.95
+    // L'écho part de l'anneau et s'élargit de 55 % en s'effaçant.
+    b.visible = !fin
+    b.scale.set(r * (1 + 0.55 * phi), r * (1 + 0.55 * phi), 1)
+    mb.opacity = 0.75 * (1 - phi) * (1 - phi)
+    // La lueur scintille : elle bat avec la pulsation, avec un frémissement plus rapide par-dessus.
+    ml.opacity = fin ? 0.22 : 0.26 + 0.2 * bat + 0.05 * Math.sin(t * 0.05)
+  })
+  if (!pose) return null
+  // Les échelles de départ sont posées dès le montage (pas de première image à la mauvaise taille avant useFrame).
+  return (
+    <group position={[pose.x, 0.07, pose.z]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh ref={lueur} geometry={geoLueur} raycast={() => null} renderOrder={3} scale={[pose.r * 2.6, pose.r * 2.6, 1]}>
+        <meshBasicMaterial map={texture} color={COULEURS.corail} transparent opacity={0.3} depthWrite={false} toneMapped={false} />
+      </mesh>
+      <mesh ref={echo} geometry={geoAnneau} raycast={() => null} renderOrder={4} scale={[pose.r, pose.r, 1]} visible={false}>
+        <meshBasicMaterial color={COULEURS.corailClair} transparent opacity={0} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={anneau} geometry={geoAnneau} raycast={() => null} renderOrder={5} scale={[pose.r, pose.r, 1]}>
+        <meshBasicMaterial color={COULEURS.corail} transparent opacity={0.95} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+      </mesh>
+    </group>
   )
 }
 
@@ -520,12 +620,14 @@ function Mesureur({ actif, moment = null, objets = [] }: { actif: boolean; momen
   return null
 }
 
-const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allumes, filtreActif, selection, onSelection, mesure = false, vueInitiale = 'ensemble', chute = null, heure = null }, ref) {
+const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allumes, filtreActif, selection, onSelection, mesure = false, vueInitiale = 'ensemble', chute = null, heure = null, halo = null }, ref) {
   const controles = useRef<OrbitControlsImpl | null>(null)
   const [survol, setSurvol] = useState<number | null>(null)
   marquer('sceneRendue')
   // L'apparition en cascade ne se joue qu'à la PREMIÈRE image : quand les données se renouvellent en direct, la ville ne se reconstruit pas.
   const apparition = useMemo(() => (mouvementReduit() ? null : { debut: performance.now(), centre: new THREE.Vector3(0, 0, 0) }), [])
+  // Le halo de l'assistant : son départ est noté quand l'objet change (pas à chaque rendu) ; un indice hors de la scène n'affiche rien.
+  const animHalo = useMemo<AnimHalo | null>(() => (halo !== null && halo >= 0 && halo < scene.objets.length ? { debut: performance.now(), objet: halo } : null), [halo]) // eslint-disable-line react-hooks/exhaustive-deps
   // ── L'infrastructure (drapeau crmAtelierVivant : la scène porte `infra`) : lumière du moment, fenêtres, marche vers les chantiers ──
   const infra = scene.infra ?? null
   const [heureReelle, setHeureReelle] = useState<number | null>(null)
@@ -682,15 +784,17 @@ const Scene3D = forwardRef<CommandesScene, Props>(function Scene3D({ scene, allu
       {FORMES.map((f) => (
         <Couche key={`${f}-${scene.instances[f].length}`} forme={f} insts={scene.instances[f]} couleur={couleur} apparition={apparition} chute={f === 'box' ? chute : null}
           onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol}
-          marche={jeu?.parForme.get(f) ?? marche?.parForme.get(f) ?? null} pousse={jeu?.pousse ?? null} />
+          marche={jeu?.parForme.get(f) ?? marche?.parForme.get(f) ?? null} pousse={jeu?.pousse ?? null} halo={animHalo} />
       ))}
       {/* Infrastructure : les fenêtres et les lampes, UN calque de plus (un appel de dessin), allumé le soir. */}
       {scene.fenetres && scene.fenetres.length > 0 && (
         <Couche key={`fenetres-${scene.fenetres.length}`} forme="box" insts={scene.fenetres} couleur={couleurFenetre} apparition={apparition} lumiere
-          onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol} />
+          onPick={(o) => onSelection(o === selection ? null : o)} onSurvol={setSurvol} halo={animHalo} />
       )}
       <Pulse insts={scene.pulse} visible={!filtreActif || scene.pulse.some((p) => allumes.has(p.o))} />
       {amb?.halos && scene.fenetres && <Halos fenetres={scene.fenetres} fort={amb.moment === 'nuit'} />}
+      {/* L'assistant vient d'agir sur cet objet : anneau qui pulse et lueur au sol, monté le seul temps du halo. */}
+      {animHalo && <HaloAssistant key={animHalo.debut} scene={scene} anim={animHalo} />}
       <OrbitControls
         ref={controles} makeDefault enableDamping dampingFactor={0.12} target={cibleDe(scene)}
         // Lot 8 : comme une carte — glisser DÉPLACE (clic gauche, un doigt), clic droit ou deux doigts TOURNENT, molette ou pincement ZOOMENT.

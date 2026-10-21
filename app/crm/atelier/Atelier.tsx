@@ -161,7 +161,8 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
   const [chute, setChute] = useState<{ debut: number; index: number[] } | null>(null)
   const [surligne, setSurligne] = useState<string | null>(null)
   // L'assistant de gestion dans le CRM (21/10) : l'objet sur lequel il vient d'agir est mis en évidence 2 à 3 s (événement surligner,
-  // app/crm/assistant/evenements.ts). Faute d'API de halo dans Scene3D (TODO ci-dessous), c'est la marque de sélection qui le montre, en 3D comme en 2D.
+  // app/crm/assistant/evenements.ts) par un HALO à lui — prop `halo` de Scene3D (anneau qui pulse au sol, objet soulevé) et de Plan2D (contour
+  // pulsé) —, jamais par la marque de sélection : la sélection de l'artisan, son panneau et la caméra restent où il les a mis.
   const [halo, setHalo] = useState<string | null>(null)
   // « ?assistant=1 » sur la démonstration ou l'exemple : le panneau de l'assistant s'ouvre tout de suite (captures).
   const [assistantAuDemarrage, setAssistantAuDemarrage] = useState(false)
@@ -251,9 +252,8 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
   const choisi = selection !== null ? scene.objets[selection] ?? null : null
   useEffect(() => { setCleSel(null) }, [prereglage])
 
-  // — L'assistant a agi : mettre l'objet en évidence. Les données et la scène les plus récentes sont lues par référence (pas de
-  //   réabonnement à chaque relecture en direct). TODO(Scene3D) : quand la scène exposera un halo dédié (prop `halo?: number | null`),
-  //   le passer ici au lieu de réutiliser la marque de sélection — Scene3D.tsx n'est pas modifié par ce lot (un autre chantier y travaille).
+  // — L'assistant a agi : la clé de l'objet touché va dans `halo` (indice de scène calculé au rendu, indexHalo). Les données et la scène les plus
+  //   récentes sont lues par référence (pas de réabonnement à chaque relecture en direct) ; une relecture garde le halo sur le même objet.
   const derniers = useRef({ donnees, scene })
   derniers.current = { donnees, scene }
   useEffect(() => {
@@ -324,7 +324,9 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
     if (cle) setCleSel(cle)
   }
 
-  const marque = selection ?? focus ?? indexDe(halo)
+  // La marque : la sélection de l'artisan, ou l'étape du briefing — et rien d'autre. Le halo de l'assistant a sa propre prop.
+  const marque = selection ?? focus
+  const indexHalo = indexDe(halo)
   return (
     <DemoAtelier.Provider value={demo}>
     <div className={`atl${choisi ? ' avec-panneau' : ''}`} data-atelier-mode={mode ?? 'attente'}>
@@ -451,7 +453,7 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
             </div>
             <div className="atl-toile">
               <GardeRendu onErreur={() => { setDetection((d) => d && { ...d, raison: 'Plan 2D affiché : la maquette 3D n’a pas pu s’afficher sur cet appareil.' }); setMode('2d') }}>
-                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} chute={vivant ? chute : null} heure={infra ? heure ?? null : null} />
+                <Scene3D ref={commandes} scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} mesure={mesure} vueInitiale={vueInitiale ?? 'ensemble'} chute={vivant ? chute : null} heure={infra ? heure ?? null : null} halo={indexHalo} />
               </GardeRendu>
             </div>
             <Urgences urgences={urgences} variante="carte" actif={choisi?.cle ?? etape?.objetCle ?? null} onChoisir={ouvrirUrgence} />
@@ -463,12 +465,12 @@ export default function Atelier({ donnees: donneesSource, vue, demo = false, mes
             {/* Ce que la 3D montre, lisible sans elle : la liste des objets reste atteignable au clavier. */}
             <details className="atl-liste-3d">
               <summary>Liste des éléments de la maquette</summary>
-              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={null} surligne={vivant ? surligne : null} />
+              <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={null} surligne={vivant ? surligne : null} halo={indexHalo} />
             </details>
           </>
         )}
         {mode === '2d' && (
-          <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null} surligne={vivant ? surligne : null}
+          <Plan2D scene={scene} allumes={allumes} filtreActif={filtre !== null} selection={marque} onSelection={choisirIndex} raison={detection?.raison ?? null} surligne={vivant ? surligne : null} halo={indexHalo}
             avant={<>
               {vivant && assistantOuvert && <div className="aca-statique"><CompteurAssistant onOuvrir={ouvrirPoste} /></div>}
               <Urgences urgences={urgences} variante="liste" actif={choisi?.cle ?? null} onChoisir={ouvrirUrgence} />

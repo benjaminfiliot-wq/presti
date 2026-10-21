@@ -1,6 +1,6 @@
 # Mise à jour de nos conditions — annonce aux artisans existants
 
-> **BROUILLON — NON ENVOYÉ.** Préparé le 20 octobre 2026 avec les nouveaux textes (`app/cgu`, `app/confidentialite`, version `2026-10-20`
+> **BROUILLON — NON ENVOYÉ.** Préparé le 20 octobre 2026, complété le 21 (Pilote automatique, lien de pointage) avec les nouveaux textes (`app/cgu`, `app/confidentialite`, version `2026-10-21`
 > dans `app/signup/page.tsx`). L'art. 10 des conditions générales promet d'informer les utilisateurs des modifications substantielles ; la
 > poursuite de l'usage vaut acceptation. **Le fondateur relit, choisit la date d'entrée en vigueur, puis envoie lui-même.** Ce n'est pas un avis juridique.
 
@@ -28,7 +28,9 @@ Nous mettons à jour les conditions générales de Presti et notre politique de 
 2. **Un destinataire de plus, public.** Pour placer un chantier sur la carte, notre serveur interroge la **Base Adresse Nationale** (api-adresse.data.gouv.fr), un service de l'État. Elle reçoit l'adresse, le code postal et la ville du chantier — jamais le nom de votre client.
 3. **Les durées sont précisées.** Chantiers du CRM et photos : 3 ans après la fin du chantier. Lien de suivi donné à un client : il cesse de répondre 90 jours après la fin du chantier. Conversations : supprimées après 3 ans sans échange, **sauf** si elles sont liées à un devis signé ou à une facture (elles suivent alors les pièces comptables, 10 ans). Registre des essais gratuits : 24 mois après la fin de l'essai.
 4. **L'effacement à la demande d'un de vos clients va plus loin.** Quand vous effacez une conversation à sa demande, les photos, l'adresse, la position sur la carte et le lien de suivi des chantiers de ce client **sans devis envoyé ni facture** partent aussi. Ce que la loi oblige à conserver (devis envoyés, factures) reste.
-5. **Si un incident de sécurité touche les données de vos clients**, nous vous prévenons sans retard injustifié, avec de quoi faire votre propre notification à la CNIL ; nous tenons une procédure écrite et un registre des violations.
+5. **Le Pilote automatique (offre Signature), si vous l’activez.** Vous choisissez, type par type, les messages qui partent seuls en votre nom (réponses aux demandes, relances de devis ou d’impayés, envoi d’un devis ou d’une facture déjà émise) : chacun attend 10 minutes, pendant lesquelles vous pouvez l’annuler. Un devis dont un prix ne vient pas de vos tarifs, l’émission d’une facture et tout encaissement restent toujours à votre clic. Tant que vous ne l’activez pas, rien ne change.
+6. **Le lien de pointage d’un chantier.** Vous pouvez donner à un compagnon une page, sans compte, où il coche les tâches terminées ; il n’y voit ni prix, ni adresse, ni nom de client, et vous pouvez la couper à tout moment.
+7. **Si un incident de sécurité touche les données de vos clients**, nous vous prévenons sans retard injustifié, avec de quoi faire votre propre notification à la CNIL ; nous tenons une procédure écrite et un registre des violations.
 
 Vous êtes le responsable du traitement des données de vos clients ; Presti est votre sous-traitant. Le contrat qui le dit est l'annexe des conditions générales : elle a été mise à jour avec la liste ci-dessus.
 

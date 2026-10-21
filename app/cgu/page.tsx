@@ -26,12 +26,13 @@ export default function CGU() {
           dans CGU_VERSION et l'écrit dans les métadonnées du compte. Si les deux divergent, on ne
           sait plus quel texte un abonné a accepté — la preuve du consentement tombe. Toute
           modification de fond ici doit donc être suivie de la même date dans app/signup/page.tsx. */}
-      <div className="legal-updated">Dernière mise à jour : 20 octobre 2026</div>
+      <div className="legal-updated">Dernière mise à jour : 21 octobre 2026</div>
 
       <p>Les présentes conditions (les « Conditions ») régissent l’accès et l’utilisation du service <strong>Presti</strong>, édité par Benjamin Filiot (voir <a href="/mentions-legales">Mentions légales</a>). En créant un compte, vous acceptez ces Conditions.</p>
 
       <h2>1. Objet du service</h2>
       <p>Presti est un outil en ligne d’assistance pour artisans permettant, notamment, de répondre aux demandes de devis, de générer des devis et factures, et de gérer son activité. Presti fournit une <strong>assistance</strong> : les contenus proposés (réponses, devis, factures) sont des propositions que l’utilisateur doit vérifier et valider.</p>
+      <p>Par exception, l’abonné à l’offre Signature peut activer lui-même, type par type, le <strong>Pilote automatique</strong> : un message préparé (réponse à un prospect, relance de devis ou d’impayé, envoi d’un devis ou d’une facture déjà émise, message de l’assistant à un client) part alors <strong>en son nom</strong> au bout de 10 minutes, sauf s’il l’annule entre-temps. Restent toujours soumis à sa validation : un devis dont un prix ne provient pas de ses tarifs, l’émission d’une facture, tout encaissement ou remboursement. L’envoi automatique est limité à 20 messages par jour et par compte, s’arrête pendant une pause, et sa désactivation annule tout ce qui attendait.</p>
 
       <h2>2. Compte</h2>
       <p>L’utilisateur s’engage à fournir des informations exactes et à préserver la confidentialité de ses identifiants. Il est responsable de toute activité réalisée depuis son compte.</p>
@@ -120,6 +121,8 @@ export default function CGU() {
       <ul>
         <li>Utiliser le service conformément à la loi et aux présentes Conditions.</li>
         <li><strong>Vérifier, corriger et valider</strong> tout contenu généré avant de l’envoyer à un client ou de l’utiliser à des fins officielles (devis, facture, réponse).</li>
+        <li>S’il active le Pilote automatique, en choisir les types d’envoi en connaissance de cause et surveiller la liste des envois en attente : un message parti automatiquement est envoyé en son nom et sous sa responsabilité, comme s’il l’avait validé lui-même.</li>
+        <li>Ne donner le lien de pointage d’un chantier qu’à une personne qui y travaille, et le révoquer quand elle n’y travaille plus.</li>
         <li>S’assurer de la conformité de ses documents à la réglementation applicable à son activité (mentions obligatoires, TVA, assurance, etc.).</li>
         <li>Ne pas détourner le service, ni porter atteinte à sa sécurité.</li>
       </ul>
@@ -175,7 +178,7 @@ export default function CGU() {
           <li key={t.finalite}><strong>{t.finalite}</strong> — données : {t.donnees.toLowerCase()} ; durée : {t.duree}.</li>
         ))}
       </ul>
-      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée, et, si vous utilisez le CRM, gestion de vos chantiers (planning, photos et pièces du chantier, lien de suivi donné à votre client, messages d’après-chantier que vous relisez avant l’envoi, agenda, carte des chantiers) et assistant de gestion.</p>
+      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée, et, si vous utilisez le CRM, gestion de vos chantiers (planning, photos et pièces du chantier, lien de suivi donné à votre client, messages d’après-chantier que vous relisez avant l’envoi, agenda, carte des chantiers, lien de pointage donné à vos compagnons) et assistant de gestion ; si vous l’avez activé, envoi automatique des messages que vous avez choisis (Pilote automatique).</p>
 
       {/* Art. 28.3 exige que le contrat dise OÙ, COMBIEN DE TEMPS, avec QUELLES mesures, et ce que
           deviennent les données à la fin. Les trois premiers points étaient implicites ou éparpillés

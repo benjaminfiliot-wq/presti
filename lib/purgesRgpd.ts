@@ -78,6 +78,8 @@ export type BilanPurges = {
   crm: number
   /** Registre des essais gratuits (0156) : lignes dont l'essai est fini depuis plus de DUREES_MOIS.essai_gratuit (`purgerEssaisGratuits`). */
   essais: number
+  /** Pilote automatique (0174) : lignes de la file et du journal `actions_auto` préparées depuis plus de DUREES_MOIS.crm_journal. */
+  pilote: number
   /** Vrai si un plafond a été atteint : il reste des lignes à purger au prochain passage. */
   reste: boolean
   erreurs: string[]
@@ -278,7 +280,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   const seuilJetons = seuilJours(JOURS_GRACE_JETONS, maintenant)
 
   const bilan: BilanPurges = {
-    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0, essais: 0,
+    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0, essais: 0, pilote: 0,
     reste: false, erreurs: [],
   }
   const noter = (r: Resultat): number => {
@@ -366,6 +368,11 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
 
   // 10. Registre des essais gratuits (0156) : 24 mois après la fin de l'essai. PAS derrière le drapeau : une table absente est tolérée.
   bilan.essais = noter(await purgerEssaisGratuits(maintenant, PLAFOND_LIGNES))
+
+  // 11. Pilote automatique (0174) : la file est aussi le JOURNAL des envois automatiques (libellé qui peut nommer un client) ;
+  //     même durée que le journal du CRM, comptée depuis la préparation. Une ligne de cet âge ne peut plus être « à partir »
+  //     (départ 10 min après). Pas derrière le drapeau : une table absente est tolérée.
+  bilan.pilote = noter(await supprimerAnciennes('actions_auto', 'id', 'prete_le', seuilMois(DUREES_MOIS.crm_journal, maintenant), PLAFOND_LIGNES))
 
   return bilan
 }

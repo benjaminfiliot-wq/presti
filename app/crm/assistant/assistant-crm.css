@@ -62,8 +62,10 @@
 .aca-note { margin: 0; font-size: 12px }
 @media (prefers-reduced-motion: no-preference) { .aca-fil li:first-child { animation: aca-arrive .4s ease-out } @keyframes aca-arrive { from { background: var(--accent-tint) } to { background: var(--surface) } } }
 
-/* ── Le tableau de l'assistant, en surimpression sur la maquette (références « bureau d'agents » : compteurs lisibles) ── */
-.aca-tableau { position: absolute; z-index: 30; left: 10px; bottom: 10px; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--line); box-shadow: var(--shadow-sm); font-size: 12.5px; color: var(--ink-soft); cursor: pointer; backdrop-filter: blur(6px) }
+/* ── Le tableau de l'assistant, en surimpression sur la maquette (références « bureau d'agents » : compteurs lisibles). En HAUT à
+   droite (21/10) : en bas à gauche il recouvrait le résumé « Liste des éléments de la maquette » (.atl-liste-3d), qu'on ne pouvait plus
+   ouvrir à la souris (crm-atelier3d-qa H5, H6) ; le panneau d'un objet (z 40) et celui de l'assistant le recouvrent à leur tour ── */
+.aca-tableau { position: absolute; z-index: 30; right: 10px; top: 10px; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--line); box-shadow: var(--shadow-sm); font-size: 12.5px; color: var(--ink-soft); cursor: pointer; backdrop-filter: blur(6px) }
 .aca-tableau b { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin-right: 3px }
 .aca-tableau .alerte b { color: var(--warn) }
 .aca-tableau-titre { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ink) }

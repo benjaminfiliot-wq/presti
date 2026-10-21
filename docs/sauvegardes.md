@@ -24,7 +24,11 @@ secret). Seule la clé privée les ouvre :
 cle-sauvegarde.key.pem
 ```
 
-Elle n'est **pas** dans git (elle est dans `.gitignore`) et elle n'est pas régénérable. Mets-la
+Elle n'est **pas** dans git (elle est dans `.gitignore`) et elle n'est pas régénérable.
+**Depuis le 21/10/2026, elle n'est plus dans le dossier du dépôt** : elle est dans `C:\Users\benja\coffre-presti\` (hors
+git, hors de portée des agents qui travaillent dans le dépôt ; paire vérifiée après le déplacement). Pour restaurer :
+`node scripts/restaurer.mjs --cle-privee C:/Users/benja/coffre-presti/cle-sauvegarde.key.pem …`. Reste à faire à la main :
+la copier dans le gestionnaire de mots de passe et sur une clé USB. Mets-la
 dans ton gestionnaire de mots de passe **et** sur une clé USB rangée ailleurs que ton bureau.
 Perdre cette clé, c'est perdre toutes les sauvegardes — c'est le prix du fait que le serveur qui
 sauvegarde chaque nuit ne peut pas relire ce qu'il écrit.

@@ -21,12 +21,15 @@ const ZONES: { type: TypeObjet; titre: string; vide: string }[] = [
   { type: 'assistants', titre: 'Assistants', vide: '' },
 ]
 
-export default function Plan2D({ scene, allumes, filtreActif, selection, onSelection, raison, avant, surligne = null }: {
+export default function Plan2D({ scene, allumes, filtreActif, selection, onSelection, raison, avant, surligne = null, halo = null }: {
   scene: Scene; allumes: Set<number>; filtreActif: boolean; selection: number | null; onSelection: (i: number) => void; raison: string | null
   /** Ce qui se pose en tête du plan (urgences, briefing) : sur téléphone, c'est la première chose lue. */
   avant?: ReactNode
   /** Clé de l'objet surligné quelques secondes (l'accueil, quand une demande vient d'arriver en direct : drapeau crmAtelierVivant). */
   surligne?: string | null
+  /** L'objet que l'assistant de gestion vient de toucher (21/10), même indexation que `selection` : un contour corail qui pulse (classe
+   *  `halo`, atelier.css), distinct de la marque de sélection (`choisi`) — les deux peuvent se cumuler sans se confondre. */
+  halo?: number | null
 }) {
   return (
     <div className="atl-plan" data-atelier-plan>
@@ -52,7 +55,7 @@ export default function Plan2D({ scene, allumes, filtreActif, selection, onSelec
                     const allume = !filtreActif || allumes.has(i)
                     return (
                       <li key={o.cle}>
-                        <button type="button" className={`atl-plan-objet${allume ? '' : ' estompe'}${selection === i ? ' choisi' : ''}${surligne === o.cle ? ' arrivee' : ''}`}
+                        <button type="button" className={`atl-plan-objet${allume ? '' : ' estompe'}${selection === i ? ' choisi' : ''}${surligne === o.cle ? ' arrivee' : ''}${halo === i ? ' halo' : ''}`}
                           aria-pressed={selection === i} aria-describedby={`atl-d-${i}`} onClick={() => onSelection(i)}
                           data-atelier-objet={o.cle}>
                           {o.epingle && <i style={{ background: o.epingle }} aria-hidden="true" />}

@@ -326,11 +326,13 @@ Le tableau dit ce que les **textes publics annoncent** (`lib/legalArtisan.ts`, `
 
 | Prestataire | Rôle | Lieu annoncé | Garantie annoncée | Pièce à archiver par le fondateur (« à archiver » ≠ « signé ») | État |
 |---|---|---|---|---|---|
-| **Supabase** | Base de données, stockage des fichiers | Union européenne (Francfort) | Pas de transfert annoncé | Accord de traitement des données (DPA) ; confirmer la région du projet ; préciser tout accès depuis hors UE (support) | À archiver |
-| **Vercel** | Hébergement de l'application, journaux | États-Unis | Clauses contractuelles types (CCT) annoncées ; cadre de protection des données UE-États-Unis (Data Privacy Framework) à vérifier pour ce prestataire | DPA avec CCT / certification DPF à archiver | À archiver |
-| **Anthropic** | Modèle d'IA (réponses, assistant) | États-Unis | CCT annoncées ; non-entraînement annoncé | DPA / conditions commerciales de l'API, durée de conservation des appels | À archiver |
-| **Resend** | Envoi des e-mails (réponses, relances, devis, messages de service) | États-Unis | CCT annoncées | DPA avec CCT / certification DPF à archiver | À archiver |
-| **Stripe** | Paiement des abonnements (Presti, responsable de traitement) | UE et États-Unis | CCT annoncées (§ 3) | DPA de Stripe, accepté en ligne à conserver | À archiver |
+| **Supabase** | Base de données, stockage des fichiers | Union européenne (Francfort) | Pas de transfert annoncé | Accord de traitement des données (DPA) ; confirmer la région du projet ; préciser tout accès depuis hors UE (support) | Relevé le 21/10 : DPA v1 du 01/08/2026 intégré aux conditions (supabase.com/legal/customer-resources/data-processing-addendum) ; support « follow-the-sun » : accès hors UE possible ; PDF daté et capture de la région à archiver |
+| **Vercel** | Hébergement de l'application, journaux | États-Unis | Clauses contractuelles types (CCT) annoncées ; cadre de protection des données UE-États-Unis (Data Privacy Framework) à vérifier pour ce prestataire | DPA avec CCT / certification DPF à archiver | Relevé le 21/10 : ⚠️ DPA (vercel.com/legal/dpa, en vigueur le 31/03/2026) réservé aux offres **Pro et Enterprise** : en Hobby, aucun DPA ne couvre Presti. Offre à vérifier (Settings → Billing) |
+| **Anthropic** | Modèle d'IA (réponses, assistant) | États-Unis | CCT annoncées ; non-entraînement annoncé | DPA / conditions commerciales de l'API, durée de conservation des appels | Relevé le 21/10 : DPA du 24/02/2025 intégré « by reference » aux conditions commerciales (cocontractant Anthropic Ireland) ; non-entraînement contractuel ; entrées/sorties de l’API effacées sous 30 jours (sauf exceptions) ; PDF datés à archiver |
+| **Resend** | Envoi des e-mails (réponses, relances, devis, messages de service) | États-Unis | CCT annoncées | DPA avec CCT / certification DPF à archiver | Relevé le 21/10 : DPA du 31/12/2025 intégré aux conditions ; version exécutée dans le tableau de bord, à récupérer |
+| **Stripe** | Paiement des abonnements (Presti, responsable de traitement) | UE et États-Unis | CCT annoncées (§ 3) | DPA de Stripe, accepté en ligne à conserver | Relevé le 21/10 : DPA du 28/09/2026 et DTA intégrés « par référence » au contrat de services ; PDF datés à archiver |
+
+Relevé du 21/10/2026, sources et liens : `SaaS/Legal/DPA-prestataires-2026-10-21.md` (aucun DPA n’est à signer à part ; aucun n’est « signé » au sens d’une pièce versionnée).
 
 Les prestataires de la prospection (§ 11 : Google, Meta, OpenAI, Oracle, GitHub) et du contrôle des mots de passe (§ 14 : Have I Been Pwned) ont leur propre ligne de garanties à compléter de la même façon ; ils ne sont pas repris ici.
 
