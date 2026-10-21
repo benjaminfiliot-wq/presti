@@ -30,7 +30,7 @@ const GROUPES: { id: string; titre: string; pages: string[] }[] = [
   { id: 'tarifs', titre: 'Mes tarifs', pages: ['/tarifs'] },
   { id: 'inventaire', titre: 'Inventaire', pages: ['/inventaire'] },
   { id: 'crm', titre: 'CRM atelier', pages: ['/crm', '/crm#accueil', '/crm/chantiers/[id]', '/crm#agenda'] },
-  { id: 'assistant', titre: 'Assistant de gestion', pages: ['/assistant'] },
+  { id: 'assistant', titre: 'Assistant de gestion', pages: ['/assistant', '/parametres?onglet=pilote'] },
   { id: 'profil', titre: 'Ma page', pages: ['/profil'] },
   { id: 'plateforme', titre: 'Ma plateforme', pages: ['/plateforme'] },
   { id: 'abonnement', titre: 'Abonnement', pages: ['/abonnement'] },

@@ -320,7 +320,8 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'signature',
   },
 
-  // source: app/crm/FicheChantier.tsx ; lib/crm/plan.ts (plan par pièce) ; lib/crm/carte.ts:92-103 (valider) ; lib/crm/serveur.ts:89-93 (validation automatique, éteinte par défaut) ;
+  // source: app/crm/FicheChantier.tsx ; lib/crm/plan.ts (plan par pièce) ; app/crm/PointageCompagnon.tsx + app/pointage/[jeton] (lien de pointage, 21/10) ;
+  // lib/crm/avancementAuto.ts + app/api/crm/pieces/route.ts:86-92 (photo « Après » → proposition) ; lib/assistant/avancement.ts (avancer_chantier) ; lib/crm/carte.ts:92-103 (valider) ; lib/crm/serveur.ts:89-93 (validation automatique, éteinte par défaut) ;
   // app/crm/Pieces.tsx ; lib/plans.ts PLAFOND_PIECES_CHANTIER_MO ; app/crm/ApresChantier.tsx ; app/crm/SuiviClient.tsx ; lib/crm/suivi.ts:1-8
   {
     id: 'crm.chantier',
@@ -330,16 +331,18 @@ export const ARTICLES: Article[] = [
       'Chaque chantier a sa fiche : ses tâches, son équipe, le matériel réservé, ses notes. Le plan du chantier est un schéma par pièce (pas un plan à l’échelle) : chaque tâche est rangée dans sa pièce, que l’on devine d’après son libellé et que vous pouvez corriger. ' +
       'Quand toutes les tâches sont cochées, « Valider le chantier » le termine et le retire de la carte (vos données restent) ; vous pouvez aussi activer « Valider automatiquement ». ' +
       `La section « Photos et pièces » garde les fichiers du chantier dans un espace privé (jusqu’à ${PLAFOND_PIECES_CHANTIER_MO.signature / 1024} Go). ` +
-      'L’encart « Après le chantier » prépare la demande d’avis et le rappel d’entretien (désactivé tant que vous ne l’activez pas). Le lien de suivi donne à votre client une page en lecture seule : le nom de votre entreprise, le titre du chantier, son état, ses dates et l’avancement, global et pièce par pièce, sans prix, sans adresse, sans nom de client.',
+      'L’encart « Après le chantier » prépare la demande d’avis et le rappel d’entretien (désactivé tant que vous ne l’activez pas). Le lien de suivi donne à votre client une page en lecture seule : le nom de votre entreprise, le titre du chantier, son état, ses dates et l’avancement, global et pièce par pièce, sans prix, sans adresse, sans nom de client. ' +
+      'L’avancement se met aussi à jour sans ressaisie : une photo « Après » dont la légende nomme une pièce propose de cocher les tâches de cette pièce ; l’assistant de gestion coche ce que vous lui dites (« la cuisine des Martin est finie ») ; et le lien de pointage laisse un compagnon cocher, depuis son téléphone et sans compte, ce qu’il a terminé.',
     commentOnSenSert: [
       'Ouvrez un chantier depuis la maquette ou l’onglet Chantiers.',
       'Cochez les tâches au fil de l’eau : l’avancement et le dessin du bâtiment suivent.',
-      'Ajoutez photos et pièces dans « Photos et pièces ».',
+      'Ajoutez photos et pièces dans « Photos et pièces » ; pour une photo « Après », nommez la pièce dans la légende et confirmez les tâches proposées.',
+      'Pour un compagnon, cliquez « Créer le lien de pointage », copiez le lien (il ne s’affiche qu’une fois) et donnez-le-lui ; « Révoquer » le coupe.',
       'Quand tout est fait, cliquez « Valider le chantier » ; vous pouvez le remettre sur la carte si besoin.',
       'Pour tenir votre client au courant, créez le lien de suivi et envoyez-le-lui vous-même.',
     ],
     pourVosClients:
-      'Seul le lien de suivi est visible de votre client. Le message de demande d’avis ou d’entretien ne part que lorsque vous l’avez relu et confirmé.',
+      'Seul le lien de suivi est visible de votre client. Le message de demande d’avis ou d’entretien ne part que lorsque vous l’avez relu et confirmé. Le compagnon qui a le lien de pointage ne voit que les tâches du chantier : ni prix, ni client, et il ne peut que cocher « fait ».',
     credits: 'Aucun.',
     reglagesLies: ['/crm', '/factures'],
     disponibleAvec: 'signature',
@@ -366,15 +369,18 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'signature',
   },
 
-  // source: app/assistant/page.tsx ; lib/assistant/outils-actions.ts:1-20 (direct ou confirmation) ; lib/assistant/cartes.ts:17 (carte valable 24 h) ; lib/plans.ts ASSISTANT_TOURS_MAX
+  // source: app/assistant/page.tsx ; app/crm/assistant/PanneauAssistant.tsx (dans l'atelier, 21/10) ; lib/assistant/lectures-tout.ts, actions-tout.ts (relié à tout) ;
+  // lib/pilote/regles.ts (exception du Pilote automatique) ; lib/assistant/outils-actions.ts:1-20 (direct ou confirmation) ; lib/assistant/cartes.ts:17 (carte valable 24 h) ; lib/plans.ts ASSISTANT_TOURS_MAX
   {
     id: 'assistant',
     page: '/assistant',
     titre: 'L’assistant de gestion : une phrase, et il prépare',
     aQuoiCaSert:
-      'Vous écrivez ce que vous voulez dans la conversation : un devis, une facture, une relance, un ajustement de stock, une mise à jour de tarif, un chantier, une demande à classer. L’assistant le prépare avec vos propres données. ' +
+      'Vous écrivez ce que vous voulez dans la conversation : un devis, une facture, une relance, un ajustement de stock, une mise à jour de tarif, un chantier, une demande à classer, l’avancement d’un chantier, un réglage de votre plateforme. L’assistant le prépare avec vos propres données : demandes et messages, devis, factures, tarifs, inventaire, chantiers, profil et chiffres. ' +
+      'Il s’ouvre aussi dans l’atelier du CRM (bouton « Assistant », ou « Demander à l’assistant » sur un objet) : il sait de quel chantier ou de quel objet vous parlez, et l’objet qu’il touche s’illumine dans la maquette. ' +
       'Ce qui part chez un client, ce qui ne se défait pas ou touche à la comptabilité (envoyer, relancer, émettre une facture, encaisser, supprimer, changer des prix en lot) n’est jamais fait seul : il vous présente une carte avec le texte exact, et rien ne se passe avant votre clic sur « Confirmer ». ' +
-      'Le reste (brouillons, tarifs, stock, tâches, notes) est fait tout de suite, noté au journal des actions et annulable quand c’est possible. Il n’agit que lorsque vous lui écrivez. Le bouton « Briefing du matin » résume ce qui est urgent, en retard ou en attente.',
+      'Le reste (brouillons, tarifs, stock, tâches, notes) est fait tout de suite, noté au journal des actions et annulable quand c’est possible. Il n’agit que lorsque vous lui écrivez. Le bouton « Briefing du matin » résume ce qui est urgent, en retard ou en attente. ' +
+      'Seule exception, que vous activez vous-même : le Pilote automatique (article suivant).',
     commentOnSenSert: [
       'Ouvrez « Assistant » dans le menu.',
       'Écrivez votre demande avec vos mots, ou cliquez « Briefing du matin ».',
@@ -383,9 +389,32 @@ export const ARTICLES: Article[] = [
       'Retrouvez ce qui a été fait dans le journal des actions et annulez ce qui peut l’être.',
     ],
     pourVosClients:
-      'Votre client ne reçoit rien tant que vous n’avez pas confirmé la carte correspondante.',
+      'Votre client ne reçoit rien tant que vous n’avez pas confirmé la carte correspondante, sauf pour les types d’envoi que vous avez confiés au Pilote automatique.',
     credits: `${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} crédits avec le modèle Expert), dans la limite de ${ASSISTANT_TOURS_MAX} messages par conversation.`,
     reglagesLies: ['/crm', '/inventaire', '/tarifs'],
+    disponibleAvec: 'signature',
+  },
+
+  // source: lib/pilote/regles.ts:1-27 (garde-fous, DELAI_ANNULATION_MIN, PLAFOND_AUTO_JOUR), :37-44 (types) ; app/parametres/SectionPilote.tsx (« Partira bientôt »,
+  // « Annuler », « Journal », couper = tout annuler) ; lib/envoisServeur.ts:47-52 (mention de l'assistant sur une réponse automatique) ; lib/plans.ts `assistant.pilote`
+  {
+    id: 'pilote',
+    page: '/parametres?onglet=pilote',
+    titre: 'Pilote automatique : ce que vous choisissez part seul, avec 10 minutes pour annuler',
+    aQuoiCaSert:
+      'Par défaut, rien ne part chez un client sans votre clic. Le Pilote automatique vous laisse choisir, type par type, ce qui peut partir seul : réponses aux prospects, relances de devis, relances d’impayés, envoi de devis, envoi de factures déjà émises, autres messages de l’assistant à vos clients. ' +
+      'Chaque envoi préparé apparaît dans « Partira bientôt » et part au bout de 10 minutes, sauf si vous cliquez « Annuler ». ' +
+      'Certaines choses restent toujours à votre clic, quel que soit le réglage : un devis dont une ligne n’a pas un prix venant de vos tarifs (ou de vous), l’émission d’une facture, un encaissement ou un remboursement. Au plus 20 envois automatiques par jour, rien pendant une pause, jamais deux fois le même ; tout est inscrit au « Journal ».',
+    commentOnSenSert: [
+      'Ouvrez Paramètres → Pilote automatique.',
+      'Activez le pilote, puis cochez seulement les types d’envoi que vous voulez confier.',
+      'Surveillez « Partira bientôt » : « Annuler » arrête un envoi avant son départ.',
+      'Pour tout arrêter d’un coup, coupez le pilote : tout ce qui attendait est annulé immédiatement.',
+    ],
+    pourVosClients:
+      'Le message part en votre nom, comme si vous l’aviez validé. Une réponse à une demande envoyée automatiquement porte la mention de l’assistant.',
+    credits: 'Aucun crédit en plus : le pilote envoie ce qui a déjà été préparé.',
+    reglagesLies: ['/parametres?onglet=pilote', '/assistant', '/messages'],
     disponibleAvec: 'signature',
   },
 

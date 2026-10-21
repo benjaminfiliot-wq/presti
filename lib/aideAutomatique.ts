@@ -50,7 +50,7 @@ export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part'> = {
   devis: 'devis.ia', 'devis.editeur': 'devis.ia', factures: 'factures',
   outils: 'plateforme.conversation', messages: 'plateforme.conversation', canaux: 'canaux.email', plateforme: 'plateforme.gestion',
   chiffres: 'chiffres', inventaire: 'inventaire.stock',
-  crm: 'crm', 'crm.accueil': 'crm', 'crm.chantier': 'crm', 'crm.agenda': 'crm', assistant: 'assistant',
+  crm: 'crm', 'crm.accueil': 'crm', 'crm.chantier': 'crm', 'crm.agenda': 'crm', assistant: 'assistant', pilote: 'assistant.pilote',
   site: 'a_part',
 }
 

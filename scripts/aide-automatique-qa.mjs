@@ -136,6 +136,9 @@ T('la réponse commence par « Non »', /^Non/.test(A.REPONSE_ASSISTANT.titre))
   const pilote = A.AUTOMATIQUE_AVEC_ASSISTANT.find((e) => e.id === 'a-pilote')
   T('Pilote : l’entrée est réservée à assistant.pilote, sous son drapeau, et « à activer »', pilote?.cap === 'assistant.pilote' && pilote?.flag === 'piloteAutomatique' && pilote?.surDemande === true)
   const tout = A.REPONSE_ASSISTANT.paragraphes.join(' ')
+  const art = lire('lib/aide.ts'), artPilote = art.slice(art.indexOf("id: 'pilote'"), art.indexOf("id: 'pilote'") + 2500), artAssistant = art.slice(art.indexOf("id: 'assistant'"), art.indexOf("id: 'pilote'"))
+  T('Pilote : l’article du centre d’aide existe, Signature, avec le délai et le plafond du code', art.includes("id: 'pilote'") && /disponibleAvec: 'signature'/.test(artPilote) && artPilote.includes(`${delai} minutes`) && artPilote.includes(`${plafond} envois`) && A.offreAide('pilote') === 'signature')
+  T('Pilote : l’article de l’assistant ne promet plus « rien sans votre clic » sans nommer l’exception', /Pilote automatique/.test(artAssistant) && /sauf pour les types d’envoi que vous avez confiés au Pilote automatique/.test(artAssistant))
   T('Pilote : drapeau levé, la réponse nomme l’exception, le délai et les garde-fous', !F.FLAGS.piloteAutomatique || (/Pilote automatique/.test(A.REPONSE_ASSISTANT.titre) && tout.includes(`${delai} minutes`) && /prix ne vient pas de vos tarifs/.test(tout) && /encaissement/.test(tout) && tout.includes(`${plafond} envois`)))
 }
 
