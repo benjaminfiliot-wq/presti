@@ -1,0 +1,7 @@
+lead_id,create_time,ad_id,ad_name,name,phone_number,email,city,Quel est votre projet ?,Entreprise,Date de naissance
+7400000000000000001,2026-10-20 10:12:00,1800000000001,Pub cuisine,Camille Fictive,+33639980001,camille.fictive@exemple.test,Lyon,"Rénovation cuisine, 12 m2",Société Fictive,1980-01-01
+7400000000000000002,2026-10-20 11:40:00,1800000000001,Pub cuisine,Hugo Exemple,06 39 98 00 02,,Villeurbanne,"Salle de bain ""clé en main"""
+7400000000000000003,2026-10-20 12:05:00,1800000000001,Pub cuisine,Hugo Exemple bis,0033639980002,,Villeurbanne,doublon du précédent par le numéro
+7400000000000000004,2026-10-20 13:00:00,1800000000001,Pub cuisine,Sans Contact,,,Bron,pas de coordonnées
+7400000000000000005,2026-10-20 14:00:00,1800000000001,Pub cuisine,Déjà Client,,deja.client@exemple.test,Lyon,déjà dans les demandes
+7400000000000000006,2026-10-20 15:00:00,1800000000001,Pub cuisine,"=HYPERLINK(""https://evil.example"",""x"")",,formule@exemple.test,@Lyon,"+cmd|' /C calc'!A0"

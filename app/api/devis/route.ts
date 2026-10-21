@@ -3,6 +3,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { actif } from '@/lib/flags'
+import { normaliserLot, typeDevisDemande } from '@/lib/facturesTypes'
+import { colonnesLotsPresentes, INDISPONIBLE_0176 } from '@/lib/facturesTypesServeur'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -27,6 +30,16 @@ export async function POST(req: Request) {
     const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
     const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
+
+    // Devis PAR LOTS (drapeau `devisLots`, 0176) : `type_devis` et le `lot` de chaque ligne. Drapeau baissé : ignorés, rien n'est
+    // écrit de plus qu'avant. Drapeau levé sans 0176 : « par lots » refusé en 503, un devis simple s'enregistre comme avant.
+    const lotsOuverts = actif('devisLots')
+    const typeDevis = lotsOuverts ? typeDevisDemande(b?.type_devis) : null
+    const colonnesLots = lotsOuverts ? await colonnesLotsPresentes() : false
+    if (typeDevis === 'lots' && !colonnesLots) return NextResponse.json({ error: INDISPONIBLE_0176 }, { status: 503 })
+    const lignesEcrites = colonnesLots && typeDevis === 'lots'
+      ? eff.map((l, i) => { const lot = normaliserLot((lignes[i] as { lot?: unknown })?.lot); return lot ? { ...l, lot } : l })
+      : eff
 
     // C2 (audit de cohérence du 18/10) : le devis né d'une demande (« Créer un devis » depuis Messages ou le CRM, qui ouvrent
     // /devis/nouveau?lead=…) lui est RATTACHÉ. Sans ce lien : deux cartes au pipeline, pas de relances J+2/5/10 à l'envoi, pas
@@ -67,6 +80,7 @@ export async function POST(req: Request) {
         total_ht: totals.total_ht,
         total_tva: totals.total_tva,
         total_ttc: totals.total_ttc,
+        ...(colonnesLots ? { type_devis: typeDevis ?? 'simple' } : {}),
       })
       .select('id, numero')
       .single()
@@ -75,10 +89,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Création du devis impossible' }, { status: 500 })
     }
 
-    if (eff.length) {
-      await supabaseAdmin.from('devis_lignes').insert(
-        eff.map((l, i) => ({ devis_id: devis.id, ordre: i, ...l })),
+    if (lignesEcrites.length) {
+      const { error: lErr } = await supabaseAdmin.from('devis_lignes').insert(
+        lignesEcrites.map((l, i) => ({ devis_id: devis.id, ordre: i, ...l })),
       )
+      // Audit argent du 21/10 (M2) : l'erreur n'était pas lue — un devis enregistré sans ses lignes. Le brouillon tout juste créé
+      // est retiré (il n'a jamais quitté l'atelier), l'artisan garde sa saisie à l'écran.
+      if (lErr) {
+        console.error('[devis] lignes :', lErr.message)
+        await supabaseAdmin.from('devis').delete().eq('id', devis.id).eq('artisan_id', uid).eq('statut', 'brouillon')
+        return NextResponse.json({ error: 'Enregistrement des lignes impossible : le devis n’a pas été créé. Votre saisie est conservée à l’écran.' }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ ok: true, id: devis.id, numero: devis.numero })

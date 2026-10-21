@@ -6,6 +6,7 @@ import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { catalogueDe } from '@/lib/prix'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { actif } from '@/lib/flags'
 
 // Le modèle Expert (opus) peut mettre ~30 s : on dépasse le timeout Vercel par défaut (10 s).
 export const runtime = 'nodejs'
@@ -25,7 +26,9 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, plan, is_founder')
+      // tva_regime : lu comme /api/devis/auto le lit (vérification du 21/10). Sans lui, generateDevis recevait « aucun régime »,
+      // traité comme une franchise : l'IA chiffrait à 0 % pour un artisan au réel.
+      .select('nom, metier, plan, is_founder, tva_regime')
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
@@ -50,7 +53,9 @@ export async function POST(req: Request) {
       // pas de catalogue → on chiffre quand même, tout sera marqué « estimation »
     }
 
-    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier, tva_regime: (artisan as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model)
+    // Devis PAR LOTS (drapeau `devisLots`) : l'éditeur le demande (`par_lots`) ; drapeau baissé, le prompt d'avant.
+    const parLots = actif('devisLots') && body?.par_lots === true
+    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier, tva_regime: (artisan as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model, null, { parLots })
     return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
     console.error('[devis/generer] IA:', e)

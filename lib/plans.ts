@@ -219,6 +219,9 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
   // un fichier XML Factur-X (CII) à télécharger, non validé au Schematron officiel ni embarqué dans un PDF/A-3 (lib/facturx.ts).
   { groupe: 'Devis & factures', label: 'Factures + export XML Factur-X', capacites: ['factures', 'factures.electronique'], cellules: dePlan('factures') },
+  // 21/10 (0176) : devis par lots et types de facture — l'éditeur et la facturation de base, donc toutes les offres qui facturent.
+  { groupe: 'Devis & factures', label: 'Devis par lots : un sous-total par corps de métier', capacites: ['factures'], cellules: dePlan('factures'), flag: 'devisLots' },
+  { groupe: 'Devis & factures', label: 'Factures d’acompte, situations de travaux et facture de solde', capacites: ['factures'], cellules: dePlan('factures'), flag: 'facturesSituation' },
   // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
   { groupe: 'Devis & factures', label: 'Relances des factures impayées, automatiques une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
   // « Mes chiffres » (app/chiffres) : Studio et au-dessus. Les automatisations de cet écran (lib/comptaAutomatisations.ts) : Signature
@@ -249,6 +252,11 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Canaux', label: 'Votre boîte email branchée', capacites: ['canaux.email'], cellules: dePlan('canaux.email') },
   { groupe: 'Canaux', label: 'WhatsApp', capacites: ['canaux.whatsapp'], cellules: dePlan('canaux.whatsapp'), flag: 'canauxWhatsapp' },
   { groupe: 'Canaux', label: 'Réseaux sociaux', capacites: ['canaux.reseaux'], cellules: dePlan('canaux.reseaux'), flag: 'canauxReseaux' },
+  // 21/10 (0177) : les canaux sans API d'un réseau tiers — capacités lues par les routes (lib/canaux/*).
+  { groupe: 'Canaux', label: 'Telegram : votre bot, messages reçus et envoyés depuis Presti', capacites: ['canaux.whatsapp'], cellules: dePlan('canaux.whatsapp'), flag: 'canauxTelegram' },
+  { groupe: 'Canaux', label: 'Vos réseaux regroupés : LinkedIn, Facebook, Instagram, TikTok, plateformes de devis (par leurs e-mails de notification)', capacites: ['canaux.email'], cellules: dePlan('canaux.email'), flag: 'canauxNotifications' },
+  { groupe: 'Canaux', label: 'Un lien et un QR code par réseau vers votre page', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation'), flag: 'canauxLiens' },
+  { groupe: 'Canaux', label: 'Import des prospects de vos publicités (fichier CSV)', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation'), flag: 'importProspects' },
   { groupe: 'Inclus', label: 'Crédits chaque mois', capacites: [], cellules: { essentiel: String(PLANS.essentiel.creditsMois), studio: String(PLANS.studio.creditsMois), signature: String(PLANS.signature.creditsMois) } },
   { groupe: 'Inclus', label: 'Espace pour vos images (logo, réalisations)', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_IMAGES_MO.essentiel), studio: tailleMo(PLAFOND_IMAGES_MO.studio), signature: tailleMo(PLAFOND_IMAGES_MO.signature) } },
   { groupe: 'Inclus', label: 'Espace pour les photos de chantier envoyées par vos clients', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.essentiel), studio: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.studio), signature: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.signature) } },

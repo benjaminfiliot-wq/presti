@@ -75,7 +75,7 @@ try {
 
   console.log('\n── 4. Mentions remplies → le même devis part, la facture se crée')
   await admin.from('artisans').update({
-    forme_juridique: 'EI', siret: '55203253400646', adresse: '4 rue des Charpentiers', code_postal: '17000', ville: 'La Rochelle',
+    forme_juridique: 'EI', siret: '99990001200017' /* fictif, clé de Luhn valide (le précédent était un SIRET réel) */, adresse: '4 rue des Charpentiers', code_postal: '17000', ville: 'La Rochelle',
     assurance_nom: 'AXA France IARD', assurance_contrat: 'DEC-778812', assurance_activites: 'garantie décennale — maçonnerie',
   }).eq('id', u.user.id)
   const env2 = await fetch(`${BASE}/api/devis/${dev.id}/envoyer`, { method: 'POST', headers: H })

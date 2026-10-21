@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { partagerFichier, vibrer, estNatif } from '@/lib/natif'
@@ -11,10 +11,17 @@ import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 import { mentionsManquantesEmission, OU_REMPLIR } from '@/lib/legalArtisan'
+import { tauxTvaLu } from '@/lib/lignes'
+import { actif } from '@/lib/flags'
+import { grouperParLots, regrouperLignes, lotsDe, metierParLots, normaliserLot, lirePct, LIBELLES_FACTURE, HORS_LOT, type TypeDevis, type TypeFacture } from '@/lib/facturesTypes'
+
+// 0176 — drapeaux de la demande du 21/10 (entreprises tous corps d'état, chantiers longs). Baissés : l'écran est celui d'avant.
+const LOTS = actif('devisLots')
+const TYPES_FACTURE_ECRAN = actif('facturesSituation')
 
 // source_prix : la PROVENANCE du prix (lib/lignes.ts), gardée à la lecture et renvoyée à l'enregistrement (audit du 21/10, E1 : sans elle,
 // un prix estimé par l'IA perdait sa mention une fois le devis enregistré). Un prix tapé par l'artisan devient « prix donné par l'artisan ».
-type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number; source_prix?: string }
+type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number; lot?: string; source_prix?: string }
 const SOURCE_ARTISAN = 'prix donné par l’artisan'
 
 const k = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -77,6 +84,16 @@ export default function DevisEditor() {
   const [acompte, setAcompte] = useState('30')
 
   const [description, setDescription] = useState('')
+  // Devis simple ou PAR LOTS (drapeau devisLots, 0176).
+  const [typeDevis, setTypeDevis] = useState<TypeDevis>('simple')
+  // Le choix du TYPE de facture (drapeau facturesSituation, 0176) : ouvert par « Créer la facture ».
+  const [choixFacture, setChoixFacture] = useState(false)
+  const [typeFacture, setTypeFacture] = useState<TypeFacture>('standard')
+  const [pctAcompte, setPctAcompte] = useState('30')
+  const [pctSituation, setPctSituation] = useState('')
+  const [pctLots, setPctLots] = useState<Record<string, string>>({})
+  const [situationParLots, setSituationParLots] = useState(false)
+  const [historique, setHistorique] = useState<{ numero: string; objet: string; pct: number | null }[]>([])
   const [lignes, setLignes] = useState<Ligne[]>([emptyLigne()])
   const [aiNote, setAiNote] = useState('')
 
@@ -95,6 +112,8 @@ export default function DevisEditor() {
       setEntAdresse([a.adresse, a.code_postal, a.ville].filter(Boolean).join(', '))
       setAssNom(a.assurance_nom ?? ''); setAssContrat(a.assurance_contrat ?? ''); setAssActivites(a.assurance_activites ?? ''); setAssZone(a.assurance_zone ?? '')
       setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setMentionBase((a.mention_tva_base as BaseMention) ?? 'auto'); setPlan(a.plan ?? 'gratuit'); setLogoUrl(a.logo_url ?? null)
+      // Un nouveau devis d'une entreprise tous corps d'état ou de rénovation multi-lots part « par lots » (l'artisan peut changer).
+      if (isNew && LOTS && metierParLots(a.metier)) setTypeDevis('lots')
 
       if (!isNew) {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
@@ -102,8 +121,9 @@ export default function DevisEditor() {
           setNumero(d.numero); setStatut(d.statut ?? 'brouillon'); setStatutBase(d.statut ?? 'brouillon')
           setClientNom(d.client_nom ?? ''); setClientEmail(d.client_email ?? ''); setClientAdresse(d.client_adresse ?? '')
           setObjet(d.objet ?? ''); setValidite(String(d.validite_jours ?? 90)); setRemise(String(d.remise_pct ?? 0)); setAcompte(String(d.acompte_pct ?? 0))
+          if (LOTS) setTypeDevis(d.type_devis === 'lots' ? 'lots' : 'simple')
           const { data: ls } = await supabase.from('devis_lignes').select('*').eq('devis_id', rawId).order('ordre')
-          if (ls && ls.length) setLignes(ls.map((l) => ({ key: k(), designation: l.designation ?? '', quantite: String(l.quantite ?? 1), unite: l.unite ?? 'u', prix_unitaire_ht: String(l.prix_unitaire_ht ?? 0), tva_taux: Number(l.tva_taux) || 20, ...(typeof l.source_prix === 'string' && l.source_prix ? { source_prix: l.source_prix } : {}) })))
+          if (ls && ls.length) setLignes(ls.map((l) => ({ key: k(), ...(LOTS && typeof l.lot === 'string' && l.lot ? { lot: l.lot } : {}), designation: l.designation ?? '', quantite: String(l.quantite ?? 1), unite: l.unite ?? 'u', prix_unitaire_ht: String(l.prix_unitaire_ht ?? 0), tva_taux: tauxTvaLu(l.tva_taux, 20), ...(typeof l.source_prix === 'string' && l.source_prix ? { source_prix: l.source_prix } : {}) })))
         }
       }
 
@@ -135,11 +155,11 @@ export default function DevisEditor() {
     if (!description.trim()) { setMsg({ type: 'err', text: 'Décrivez le chantier pour que l\'IA le chiffre.' }); return }
     setGenerating(true); setMsg(null); setAiNote('')
     const { data } = await supabase.auth.getSession()
-    const res = await fetch('/api/devis/generer', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ description, model: tier }) })
+    const res = await fetch('/api/devis/generer', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ description, model: tier, ...(LOTS && typeDevis === 'lots' ? { par_lots: true } : {}) }) })
     setGenerating(false)
     const d = await res.json().catch(() => ({}))
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Erreur de génération.' }); return }
-    const nouvelles: Ligne[] = (d.lignes ?? []).map((l: { designation: string; quantite: number; unite: string; prix_unitaire_ht: number; tva_taux: number; source_prix?: string }) => ({ key: k(), designation: l.designation, quantite: String(l.quantite), unite: l.unite, prix_unitaire_ht: String(l.prix_unitaire_ht), tva_taux: Number(l.tva_taux) || 10, source_prix: typeof l.source_prix === 'string' && l.source_prix ? l.source_prix : 'estimation' }))
+    const nouvelles: Ligne[] = (d.lignes ?? []).map((l: { designation: string; quantite: number; unite: string; prix_unitaire_ht: number; tva_taux: number; lot?: string; source_prix?: string }) => ({ key: k(), designation: l.designation, quantite: String(l.quantite), unite: l.unite, prix_unitaire_ht: String(l.prix_unitaire_ht), tva_taux: tauxTvaLu(l.tva_taux, 10), source_prix: typeof l.source_prix === 'string' && l.source_prix ? l.source_prix : 'estimation', ...(LOTS && typeDevis === 'lots' && typeof l.lot === 'string' && l.lot ? { lot: l.lot } : {}) }))
     setLignes((prev) => [...prev.filter((l) => l.designation.trim() || Number(l.prix_unitaire_ht) > 0), ...nouvelles])
     if (d.note) setAiNote(d.note)
   }
@@ -153,7 +173,8 @@ export default function DevisEditor() {
       // C2 (audit du 18/10) : sans ce lien, le devis né d'une demande restait détaché d'elle (deux cartes au pipeline, pas de
       // relances J+2/5/10, pas d'acceptation possible dans la conversation). Seulement à la création : le serveur vérifie la demande.
       ...(!savedId && leadId ? { lead_id: leadId } : {}),
-      lignes: lignes.filter((l) => l.designation.trim()).map((l) => ({ designation: l.designation, quantite: Number(l.quantite) || 0, unite: l.unite, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux, ...(l.source_prix ? { source_prix: l.source_prix } : {}) })),
+      ...(LOTS ? { type_devis: typeDevis } : {}),
+      lignes: lignes.filter((l) => l.designation.trim()).map((l) => ({ ...(LOTS && typeDevis === 'lots' && normaliserLot(l.lot) ? { lot: normaliserLot(l.lot) } : {}), designation: l.designation, quantite: Number(l.quantite) || 0, unite: l.unite, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux, ...(l.source_prix ? { source_prix: l.source_prix } : {}) })),
     }
     const { data } = await supabase.auth.getSession()
     const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }
@@ -209,14 +230,52 @@ export default function DevisEditor() {
     setStatut('envoye'); setStatutBase('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' }); void vibrer('succes')
   }
 
+  // 0176 (drapeau facturesSituation) : « Créer la facture » ouvre d'abord le choix du type ; les factures déjà émises sur le devis
+  // disent où en est la facturation (dernière situation, son avancement cumulé, lot par lot).
+  async function ouvrirChoixFacture() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de créer la facture.' }); return }
+    setChoixFacture(true); setMsg(null)
+    const { data: fs } = await supabase.from('factures').select('*').eq('devis_id', savedId).order('created_at')
+    const toutes = (fs ?? []) as { id: string; numero: string | null; objet: string | null; statut: string | null; avoir_de: string | null; situation_numero?: number | null; avancement_pct?: number | string | null; avancement_lots?: Record<string, number> | null }[]
+    const annulees = new Set(toutes.map((f) => f.avoir_de).filter(Boolean))
+    const vivantes = toutes.filter((f) => !f.avoir_de && !annulees.has(f.id) && (f.statut === 'emise' || f.statut === 'payee'))
+    setHistorique(vivantes.map((f) => ({ numero: f.numero ?? '', objet: f.objet ?? '', pct: f.avancement_pct === null || f.avancement_pct === undefined ? null : Number(f.avancement_pct) })))
+    const derniere = [...vivantes].filter((f) => f.situation_numero).sort((a, b) => (b.situation_numero ?? 0) - (a.situation_numero ?? 0))[0]
+    if (derniere?.avancement_lots) { setSituationParLots(true); setPctLots(Object.fromEntries(Object.entries(derniere.avancement_lots).map(([lot, v]) => [lot, String(v)]))) }
+    setPctAcompte(String(Number(acompte) > 0 && Number(acompte) < 100 ? acompte : 30))
+    setTypeFacture(vivantes.some((f) => f.situation_numero) ? 'situation' : 'standard')
+  }
+
   async function creerFacture() {
     if (!savedId) { setMsg({ type: 'err', text: 'Enregistrez le devis avant de créer la facture.' }); return }
+    // Une saisie d'avancement illisible est SIGNALÉE ici, jamais envoyée comme « inchangé » (audit argent du 21/10).
+    if (TYPES_FACTURE_ECRAN && typeFacture === 'situation') {
+      const illisibles = situationParLots ? Object.entries(pctLots).filter(([, v]) => v.trim() && lirePct(v) === null).map(([lot]) => lot) : (lirePct(pctSituation) === null ? ['avancement cumulé'] : [])
+      if (illisibles.length) { setMsg({ type: 'err', text: `Pourcentage illisible : ${illisibles.join(', ')}. Saisissez un nombre, par exemple 70.` }); return }
+    }
     setSaving(true); setMsg(null)
     const { data } = await supabase.auth.getSession()
-    const res = await fetch('/api/factures', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ devis_id: savedId }) })
+    const corpsFacture = !TYPES_FACTURE_ECRAN ? { devis_id: savedId } : {
+      devis_id: savedId, type: typeFacture,
+      ...(typeFacture === 'acompte' ? { acompte_pct: lirePct(pctAcompte) } : {}),
+      ...(typeFacture === 'situation' ? { avancement: situationParLots ? { lots: Object.fromEntries(Object.entries(pctLots).filter(([, v]) => v.trim()).map(([lot, v]) => [lot, lirePct(v)])) } : { global: lirePct(pctSituation) } } : {}),
+    }
+    const res = await fetch('/api/factures', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify(corpsFacture) })
     const d = await res.json().catch(() => ({})); setSaving(false)
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Création de la facture échouée.' }); return }
     router.push('/factures')
+  }
+
+  // Devis PAR LOTS : affecter (champ « Lot » de chaque ligne), renommer (toutes les lignes du lot), regrouper (chaque lot d'un
+  // seul tenant, dans l'ordre de première apparition), ajouter un lot (une ligne vide qui le porte).
+  const lotsEnCours = LOTS && typeDevis === 'lots' ? lotsDe(lignes) : []
+  function renommerLot(ancien: string, nouveau: string) {
+    const n = normaliserLot(nouveau)
+    if (!n || n === ancien) return
+    setLignes((prev) => prev.map((l) => (normaliserLot(l.lot) === ancien ? { ...l, lot: n } : l)))
+  }
+  function ajouterLot() {
+    setLignes((prev) => [...prev, { ...emptyLigne(), lot: `Lot ${lotsDe(prev).length + 1}` }])
   }
 
   function recommencer() {
@@ -255,7 +314,7 @@ export default function DevisEditor() {
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={partagerPdf} data-partager>Partager</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
-      <button className="psh-btn ghost" onClick={creerFacture} disabled={!factureOuverte} title={factureOuverte ? undefined : raisonFacture}>Créer la facture</button>
+      <button className="psh-btn ghost" onClick={TYPES_FACTURE_ECRAN ? ouvrirChoixFacture : creerFacture} disabled={!factureOuverte} title={factureOuverte ? undefined : raisonFacture}>Créer la facture</button>
       {savedId && <button className="psh-btn ghost danger" onClick={supprimerDevis}>Supprimer</button>}
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
@@ -268,6 +327,47 @@ export default function DevisEditor() {
       <div className="editor">
           {/* ---------------- FORM (gauche) ---------------- */}
           <div className="editor-form">
+            {TYPES_FACTURE_ECRAN && choixFacture && (
+              <div className="tool-card" data-choix-facture>
+                <h2>Créer une facture</h2>
+                <p className="muted" style={{ margin: '0 0 .6rem' }}>Une facture est émise et scellée dès sa création : numéro définitif, une erreur se corrige par un avoir.</p>
+                <div className="inbox-model" role="radiogroup" aria-label="Type de facture" style={{ flexWrap: 'wrap' }}>
+                  {(['standard', 'acompte', 'situation', 'solde'] as const).map((t) => (
+                    <button key={t} type="button" role="radio" aria-checked={typeFacture === t} className={`inbox-model-b${typeFacture === t ? ' on' : ''}`} onClick={() => setTypeFacture(t)}>{LIBELLES_FACTURE[t]}</button>
+                  ))}
+                </div>
+                {historique.length > 0 && (
+                  <ul className="muted" style={{ margin: '.6rem 0 0', paddingLeft: '1.1rem', fontSize: '.85rem' }}>
+                    {historique.map((h) => <li key={h.numero}>{h.numero} — {h.objet}{h.pct !== null ? ` (avancement cumulé ${String(h.pct).replace('.', ',')} %)` : ''}</li>)}
+                  </ul>
+                )}
+                {typeFacture === 'standard' && <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.85rem' }}>Tout le devis. Si des acomptes ou des situations sont déjà facturés, c’est la facture de solde qui les déduit.</p>}
+                {typeFacture === 'acompte' && (
+                  <div style={{ marginTop: '.6rem' }}><label htmlFor="fx-acompte">Acompte (% du devis)</label><input id="fx-acompte" inputMode="decimal" value={pctAcompte} onChange={(e) => setPctAcompte(e.target.value)} /></div>
+                )}
+                {typeFacture === 'situation' && (
+                  <div style={{ marginTop: '.6rem' }}>
+                    <p className="muted" style={{ margin: '0 0 .4rem', fontSize: '.85rem' }}>Avancement CUMULÉ à date, depuis le début du chantier. Montant = cumul × devis − tout ce qui est déjà facturé (situations et acomptes). Il ne peut pas reculer.</p>
+                    {lotsDe(lignes).length > 0 && (
+                      <label style={{ display: 'flex', gap: '.4rem', alignItems: 'center', fontSize: '.88rem' }}><input type="checkbox" checked={situationParLots} onChange={(e) => setSituationParLots(e.target.checked)} style={{ width: 'auto' }} /> Lot par lot</label>
+                    )}
+                    {situationParLots && lotsDe(lignes).length > 0
+                      ? lotsDe(lignes).map((lot) => (
+                        <div key={lot} style={{ display: 'flex', gap: '.4rem', alignItems: 'center', marginTop: '.3rem' }}>
+                          <span style={{ flex: 1, fontSize: '.88rem' }}>{lot}</span>
+                          <input aria-label={`Avancement cumulé du lot ${lot} (%)`} inputMode="decimal" value={pctLots[lot] ?? ''} onChange={(e) => setPctLots((p) => ({ ...p, [lot]: e.target.value }))} style={{ width: '5rem' }} placeholder="%" />
+                        </div>
+                      ))
+                      : <div><label htmlFor="fx-situation">Avancement cumulé (%)</label><input id="fx-situation" inputMode="decimal" value={pctSituation} onChange={(e) => setPctSituation(e.target.value)} placeholder="ex. 70" /></div>}
+                  </div>
+                )}
+                {typeFacture === 'solde' && <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.85rem' }}>La dernière facture du devis : ses lignes, moins chaque acompte et chaque situation déjà facturés.</p>}
+                <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginTop: '.8rem' }}>
+                  <button type="button" className="psh-btn primary" disabled={saving} onClick={creerFacture}>{saving ? 'Émission…' : `Émettre : ${LIBELLES_FACTURE[typeFacture]}`}</button>
+                  <button type="button" className="psh-btn ghost" onClick={() => setChoixFacture(false)}>Annuler</button>
+                </div>
+              </div>
+            )}
             <div className="tool-card">
               <h2>Client</h2>
               <div className="grid2">
@@ -291,8 +391,32 @@ export default function DevisEditor() {
 
             <div className="tool-card">
               <h2>Lignes</h2>
+              {LOTS && (
+                <div className="inbox-model" role="radiogroup" aria-label="Type de devis" data-type-devis style={{ marginBottom: '.6rem' }}>
+                  {(['simple', 'lots'] as const).map((t) => (
+                    <button key={t} type="button" role="radio" aria-checked={typeDevis === t} className={`inbox-model-b${typeDevis === t ? ' on' : ''}`} onClick={() => setTypeDevis(t)}>{t === 'simple' ? 'Devis simple' : 'Devis par lots'}</button>
+                  ))}
+                </div>
+              )}
+              {LOTS && typeDevis === 'lots' && (
+                <div data-lots style={{ marginBottom: '.6rem' }}>
+                  <p className="muted" style={{ margin: '0 0 .4rem', fontSize: '.85rem' }}>Chaque ligne porte son lot ; le PDF titre chaque lot avec son sous-total HT. Les totaux ne changent pas.</p>
+                  {lotsEnCours.map((lot) => (
+                    <div key={lot} style={{ display: 'flex', gap: '.4rem', alignItems: 'center', marginTop: '.3rem' }}>
+                      <input aria-label={`Renommer le lot ${lot}`} defaultValue={lot} onBlur={(e) => renommerLot(lot, e.target.value)} style={{ flex: 1 }} />
+                      <span className="muted" style={{ fontSize: '.8rem', whiteSpace: 'nowrap' }}>{lignes.filter((l) => normaliserLot(l.lot) === lot).length} ligne(s)</span>
+                    </div>
+                  ))}
+                  <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginTop: '.5rem' }}>
+                    <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={ajouterLot}>+ Nouveau lot</button>
+                    <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => setLignes((prev) => regrouperLignes(prev))}>Regrouper les lignes par lot</button>
+                  </div>
+                  <datalist id="lots-devis">{lotsEnCours.map((lot) => <option key={lot} value={lot} />)}</datalist>
+                </div>
+              )}
               {lignes.map((l) => (
                 <div className="eline" key={l.key}>
+                  {LOTS && typeDevis === 'lots' && <input className="desig" list="lots-devis" value={l.lot ?? ''} onChange={(e) => setLigne(l.key, { lot: e.target.value })} placeholder="Lot (ex. Lot 1 — Démolition)" aria-label="Lot de la ligne" />}
                   <input className="desig" value={l.designation} onChange={(e) => setLigne(l.key, { designation: e.target.value })} placeholder="Désignation de la prestation" />
                   <div className="lrow">
                     <input className="q" inputMode="decimal" value={l.quantite} onChange={(e) => setLigne(l.key, { quantite: e.target.value })} title="Quantité" />
@@ -300,6 +424,8 @@ export default function DevisEditor() {
                     <input className="pu" inputMode="decimal" value={l.prix_unitaire_ht} onChange={(e) => setLigne(l.key, { prix_unitaire_ht: e.target.value, source_prix: SOURCE_ARTISAN })} title="Prix unitaire HT" />
                     <select className="tv" value={l.tva_taux} onChange={(e) => setLigne(l.key, { tva_taux: Number(e.target.value) })} title="TVA">
                       <option value={20}>20%</option><option value={10}>10%</option><option value={5.5}>5,5%</option>
+                      {/* 0 % : franchise de TVA (art. 293 B du CGI), ou un 0 déjà enregistré — jamais remplacé en silence. */}
+                      {(tvaRegime === 'franchise' || l.tva_taux === 0) && <option value={0}>0%</option>}
                     </select>
                     <span className="lt">{eur((Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0))}</span>
                     <button className="del" onClick={() => setLignes((prev) => prev.filter((x) => x.key !== l.key))} title="Supprimer">✕</button>
@@ -392,14 +518,20 @@ export default function DevisEditor() {
                 </thead>
                 <tbody>
                   {lignesPleines.length === 0 && <tr><td className="empty" colSpan={5}>Vos lignes apparaîtront ici au fur et à mesure.</td></tr>}
-                  {lignesPleines.map((l) => (
-                    <tr key={l.key}>
-                      <td>{l.designation}</td>
-                      <td className="num">{(Number(l.quantite) || 0).toLocaleString('fr-FR')} {l.unite}</td>
-                      <td className="num">{eur(Number(l.prix_unitaire_ht) || 0)}</td>
-                      <td className="num">{String(l.tva_taux).replace('.', ',')}%</td>
-                      <td className="num">{eur((Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0))}</td>
-                    </tr>
+                  {(LOTS && typeDevis === 'lots' ? grouperParLots(lignesPleines) : [{ lot: null, lignes: lignesPleines, sousTotalHt: 0 }]).map((g, gi) => (
+                    <Fragment key={`g-${gi}`}>
+                      {LOTS && typeDevis === 'lots' && <tr data-lot-titre><td colSpan={5} style={{ fontWeight: 700, paddingTop: '.6rem' }}>{g.lot ?? HORS_LOT}</td></tr>}
+                      {g.lignes.map((l) => (
+                        <tr key={l.key}>
+                          <td>{l.designation}</td>
+                          <td className="num">{(Number(l.quantite) || 0).toLocaleString('fr-FR')} {l.unite}</td>
+                          <td className="num">{eur(Number(l.prix_unitaire_ht) || 0)}</td>
+                          <td className="num">{String(l.tva_taux).replace('.', ',')}%</td>
+                          <td className="num">{eur((Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0))}</td>
+                        </tr>
+                      ))}
+                      {LOTS && typeDevis === 'lots' && <tr data-lot-sous-total><td colSpan={4} className="num" style={{ fontWeight: 600 }}>Sous-total {g.lot ?? HORS_LOT} HT</td><td className="num" style={{ fontWeight: 700 }}>{eur(g.sousTotalHt)}</td></tr>}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>

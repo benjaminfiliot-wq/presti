@@ -1,0 +1,11 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=tiktok.com; dkim=pass header.d=tiktok.com header.s=s1; dmarc=pass (p=REJECT) header.from=tiktok.com
+From: =?UTF-8?B?VGlrVG9r?= <no-reply@account.tiktok.com>
+To: atelier.fictif@exemple-artisan.fr
+Subject: =?UTF-8?B?Vm91cyBhdmV6IHJlw6d1IHVuIG5vdXZlYXUgbWVzc2FnZQ==?=
+Message-ID: <fixture-tt-0001@account.tiktok.com>
+Date: Wed, 21 Oct 2026 08:30:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+Vm91cyBhdmV6IHJlw6d1IHVuIG5vdXZlYXUgbWVzc2FnZSBkZSBIdWdvIEV4ZW1wbGUuCgpWb2lyIGxlIG1lc3NhZ2UgOiBodHRwczovL3d3dy50aWt0b2suY29tL21lc3NhZ2VzP2xhbmc9ZnIK

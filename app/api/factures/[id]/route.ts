@@ -44,6 +44,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   // moment exact de l'émission, et la base refuse ensuite toute modification de montant,
   // de numéro, de client ou de date. Une correction passe désormais par un avoir.
   const scelle: Record<string, unknown> = {}
+  // Audit argent du 21/10 (E2) : ce chemin scellait une facture SANS NUMÉRO (restée en route entre insertion et scellement) — une
+  // pièce définitive hors séquence. Une facture non numérotée ne se scelle pas ici : elle n'a jamais été émise.
+  if (next === 'emise' && !cur.verrouillee && !(typeof cur.numero === 'string' && cur.numero.trim())) {
+    return NextResponse.json({ error: 'Cette facture n’a pas de numéro : elle n’a jamais été émise et ne peut pas être scellée. Recréez-la depuis le devis.' }, { status: 409 })
+  }
   if (next === 'emise' && !cur.verrouillee) {
     const { data: lignes } = await supabaseAdmin.from('factures_lignes')
       .select('designation, quantite, unite, prix_unitaire_ht, tva_taux').eq('facture_id', id).order('ordre')

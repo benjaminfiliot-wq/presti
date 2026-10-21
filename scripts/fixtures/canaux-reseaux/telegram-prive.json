@@ -1,0 +1,21 @@
+{
+  "update_id": 900000001,
+  "message": {
+    "message_id": 11,
+    "from": {
+      "id": 700000001,
+      "is_bot": false,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "language_code": "fr"
+    },
+    "chat": {
+      "id": 700000001,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "type": "private"
+    },
+    "date": 1792564200,
+    "text": "Bonjour, vous faites les dépannages de chaudière le samedi ?"
+  }
+}

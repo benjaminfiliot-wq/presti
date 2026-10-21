@@ -35,6 +35,10 @@ const JOUR_MS = 86400000
  */
 export async function planifierRelances(leadId: string): Promise<number> {
   try {
+    // 21/10/2026 — une demande IMPORTÉE d'un formulaire publicitaire (canal 'import', lib/canaux/importProspects.ts) n'a jamais de
+    // relance automatique : la personne n'a pas écrit à l'artisan, c'est lui qui la contacte, à la main (RGPD : aucun envoi automatique).
+    const { data: lead } = await supabaseAdmin.from('leads').select('canal').eq('id', leadId).maybeSingle()
+    if (lead?.canal === 'import') return 0
     const { count } = await supabaseAdmin
       .from('relances')
       .select('id', { count: 'exact', head: true })

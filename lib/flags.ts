@@ -240,6 +240,62 @@ export const FLAGS = {
    *  appliquée et contrôlée, scripts/avancement-qa.mjs vert et l'accord de Benj.
    *  21/10/2026 — LEVÉ : 0174 appliquée et contrôlée, avancement-qa 30/0 (« je te laisse faire », Benj). */
   crmPointage: true,
+  /** 21/10/2026 — DEVIS PAR LOTS (demande du fondateur, entreprises tous corps d'état et chantiers longs) : à la création ou dans
+   *  l'éditeur, « Devis simple » ou « Devis par lots ». Chaque ligne porte un `lot` (« Lot 1 — Démolition ») ; l'éditeur affecte,
+   *  renomme et regroupe ; le PDF titre chaque lot avec son sous-total HT, puis le total HT, la TVA par taux et le TTC, au centime
+   *  près ceux du devis simple (lib/facturesTypes.ts, grouperParLots) ; le chiffrage IA renseigne le lot quand le devis est par
+   *  lots. Colonnes devis.type_devis, devis_lignes.lot et factures_lignes.lot : migration 0176 ÉCRITE, NON APPLIQUÉE. Baissé : aucun
+   *  choix dans l'éditeur, les routes ignorent `type_devis` et `lot`, le chiffrage IA garde son prompt d'avant. Levé SANS 0176 : un
+   *  devis demandé « par lots » est refusé en 503 (lib/facturesTypesServeur.ts), un devis simple s'enregistre comme avant
+   *  (fail-closed). Se lève dans cet ordre : 0176 appliquée et contrôlée (supabase/controles/0176_types_devis_factures.sql), puis
+   *  scripts/types-devis-factures-qa.mjs vert, puis l'accord de Benj.
+   *  21/10/2026 — LEVÉ : 0176 et 0180 appliquées et contrôlées (9/9, 11/11), audit argent indépendant corrigé (C1, E1-E3, M1-M5), types-devis-factures-qa 101/0 (« oui, fais les deux », Benj). */
+  devisLots: true,
+  /** 21/10/2026 — TYPES DE FACTURE (même demande) : à la création, « Facture », « Facture d'acompte », « Situation de travaux »
+   *  (avancement CUMULÉ à date, global ou lot par lot ; montant = cumul × marché − tout ce qui est déjà facturé sur le devis) et
+   *  « Facture de solde » (déduit acomptes et situations). Garde-fous en base (migration 0176, déclencheur
+   *  factures_situation_verifier) : cumul ≤ 100 %, avancement qui ne recule pas, jamais plus que le devis, situation immuable,
+   *  numéro de facture inchangé. La retenue de garantie n'est PAS faite (voir lib/facturesTypes.ts). Migration 0176 ÉCRITE, NON
+   *  APPLIQUÉE. Baissé : le bouton « Créer la facture » fait ce qu'il faisait, POST /api/factures refuse `type: situation|solde`
+   *  en 404, l'assistant ne connaît que « complète » et « acompte ». Levé SANS 0176 : « Situation » et « Solde » explicites
+   *  répondent 503 et rien n'est écrit (fail-closed). Se lève dans cet ordre : 0176 appliquée et contrôlée, puis
+   *  scripts/types-devis-factures-qa.mjs vert, puis l'accord de Benj.
+   *  21/10/2026 — LEVÉ : émission atomique facture_emettre (0180) éprouvée en base (double facture, acompte par-dessus, totaux faux refusés ; avoir ; situation ; compteur sans trou), audit argent corrigé, types-devis-factures-qa 101/0 (« oui, fais les deux », Benj). */
+  facturesSituation: true,
+  /** 21/10/2026 — TELEGRAM EN DIRECT (demande du fondateur : « tous nos réseaux dans la messagerie ») : l'artisan crée son bot avec
+   *  @BotFather et colle LUI-MÊME le jeton dans Messages → Canaux (lib/canaux/telegram.ts, app/api/canaux/telegram) ; jeton CHIFFRÉ
+   *  (CANAUX_KEY), webhook avec secret_token dérivé de la liaison, réception → conversation, réponse validée ou partie par le Pilote
+   *  automatique → sendMessage. Offre Studio (capacité canaux.whatsapp). migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10) (le type « telegram »
+   *  dans canaux, la fonction canaux_conversation_ouvrir). Baissé : routes 404, rien à l'écran, rien n'est lu. Levé SANS 0177 : la
+   *  liaison est refusée en 503 (contrainte de type) et rien n'est rangé. Se lève dans cet ordre : 0177 appliquée et contrôlée
+   *  (supabase/controles/0177_canaux_reseaux.sql), scripts/canaux-reseaux-qa.mjs vert, un vrai bot de test relié, un message reçu
+   *  et une réponse envoyée, puis l'accord de Benj.
+   *  21/10/2026 — LEVÉ (« le reste recevra et enverra direct », Benj) : 0177 appliquée (10/10), audit offensif corrigé (plafonds d'entrée, crédits IA, quota d'e-mails séparé), canaux-reseaux-qa 111/0. Non éprouvé avec un vrai bot : à surveiller au premier artisan qui relie le sien. */
+  canauxTelegram: true,
+  /** 21/10/2026 — LES RÉSEAUX SANS API, PAR LEURS E-MAILS DE NOTIFICATION (LinkedIn, Page Facebook, Instagram, TikTok, 123devis,
+   *  Habitatpresto, PagesJaunes, Houzz, Travaux.com, StarOfService ; lib/canaux/notifications.ts) : reconnus dans la relève de la
+   *  boîte branchée comme Le Bon Coin ; la conversation arrive avec la pastille du réseau, l'IA prépare la réponse, « Copier et
+   *  ouvrir LinkedIn » la copie et ouvre la conversation d'origine. Fixtures INVENTÉES. migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10).
+   *  Baissé : la relève ignore ces e-mails comme avant. Se lève après 0177 appliquée et contrôlée, canaux-reseaux-qa vert, et au
+   *  moins un vrai e-mail de notification par réseau passé au lecteur (caviardé) ; un réseau dont le gabarit réel ne passe pas
+   *  sort de RESEAUX_NOTIFICATION avant de lever. */
+  canauxNotifications: false,
+  /** 21/10/2026 — « VOS RÉSEAUX » (Messages → Canaux) : pour chaque réseau, le lien de la page de conversation marqué de sa source
+   *  (?src=instagram, liste fermée lib/canaux/reseaux.ts), le texte à coller (bio, message d'accueil natif), un QR code fabriqué
+   *  sur place (lib/qr.ts) ; l'origine est enregistrée (leads.origine, migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10)) et affichée en
+   *  pastille. Baissé : rien à l'écran, la page /p n'envoie pas l'origine, /api/leads ne l'écrit pas. Levé SANS 0177 : la demande
+   *  est enregistrée SANS son origine (second essai sans la colonne : on ne perd jamais un prospect) et la pastille manque — d'où
+   *  l'ordre : 0177 appliquée et contrôlée, canaux-reseaux-qa vert, puis lever.
+   *  21/10/2026 — LEVÉ : 0177 appliquée (10/10), canaux-reseaux-qa 111/0 (QR décodés par OpenCV). */
+  canauxLiens: true,
+  /** 21/10/2026 — IMPORT DES PROSPECTS DES FORMULAIRES PUBLICITAIRES (TikTok, Facebook / Instagram Lead Ads, LinkedIn Lead Gen) par
+   *  le fichier CSV exporté du réseau (lib/canaux/importProspects.ts, POST /api/demandes/import) : colonnes reconnues, aperçu avant
+   *  import, doublons écartés ; la demande arrive « à contacter » (canal `import`), AUCUN envoi automatique (ni IA, ni relance, ni
+   *  pilote : la personne n'a pas écrit à l'artisan). migration 0177 APPLIQUÉE le 21/10/2026 (contrôle 10/10) (leads.origine). Baissé : route 404,
+   *  rien à l'écran. Levé SANS 0177 : l'import répond 503 et rien n'est écrit. Se lève après 0177 appliquée et contrôlée,
+   *  canaux-reseaux-qa vert, un vrai export (caviardé) de chaque réseau passé à l'aperçu, et l'accord de Benj.
+   *  21/10/2026 — LEVÉ : 0177 appliquée, audit offensif corrigé (liste blanche, consentement tracé, purge à 6 mois, neutralisation des formules), canaux-reseaux-qa 111/0 ; aucun envoi à un prospect importé. Fichiers d'export réels non encore passés à l'aperçu. */
+  importProspects: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

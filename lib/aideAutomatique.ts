@@ -47,7 +47,7 @@ export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part'> = {
   // source : lib/plans.ts BASE (devis.ia, devis.prix_artisan, factures) ; STUDIO (plateforme.*, chiffres, inventaire.*, canaux.email) ; SIGNATURE (crm, assistant)
   dashboard: null, tarifs: 'devis.prix_artisan', profil: null, abonnement: null, support: null, parametres: null,
   'parametres.legal': null, 'parametres.notifications': null, 'parametres.securite': null, 'parametres.donnees': null,
-  devis: 'devis.ia', 'devis.editeur': 'devis.ia', factures: 'factures',
+  devis: 'devis.ia', 'devis.editeur': 'devis.ia', factures: 'factures', 'devis.lots': 'factures', 'factures.types': 'factures',
   outils: 'plateforme.conversation', messages: 'plateforme.conversation', canaux: 'canaux.email', plateforme: 'plateforme.gestion',
   chiffres: 'chiffres', inventaire: 'inventaire.stock',
   crm: 'crm', 'crm.accueil': 'crm', 'crm.chantier': 'crm', 'crm.agenda': 'crm', assistant: 'assistant', pilote: 'assistant.pilote',

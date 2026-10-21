@@ -17,6 +17,8 @@
 // membres et tâches par leur NOM : le serveur les retrouve dans les données de l'artisan (cartes.ts trouverUnique), et refuse
 // quand c'est ambigu. Les seuls UUID acceptés sont ceux que les outils de lecture rendent (conversation, tarif).
 
+import { FLAGS } from '../flags.ts'
+
 export type CategorieAction = 'direct' | 'confirmation'
 
 export type Champ =
@@ -39,7 +41,10 @@ export const STATUTS_DEMANDE = ['nouveau', 'en_discussion', 'repondu', 'gagne', 
 export const STATUTS_CHANTIER_ACTION = ['a_planifier', 'planifie', 'en_cours', 'en_pause', 'termine', 'annule'] as const
 export const MOUVEMENTS_STOCK = ['entree', 'sortie', 'inventaire', 'perte'] as const
 export const TONS_RELANCE = ['cordial', 'ferme'] as const
-export const TYPES_FACTURE = ['complete', 'acompte'] as const
+/** Les types de facture que l'assistant propose. « situation » et « solde » (0176) seulement drapeau `facturesSituation` levé :
+ *  baissé, l'outil ne les connaît pas (ni dans son schéma, ni à la validation). */
+export const TYPES_FACTURE_TOUS = ['complete', 'acompte', 'situation', 'solde'] as const
+export const TYPES_FACTURE: readonly (typeof TYPES_FACTURE_TOUS)[number][] = FLAGS.facturesSituation ? TYPES_FACTURE_TOUS : ['complete', 'acompte']
 
 const numeroDevis: Champ = { t: 'texte', d: 'Numéro du devis, tel que rendu par lire_devis (ex. DEV-2026-0011).', max: 24, req: true }
 const numeroFacture: Champ = { t: 'texte', d: 'Numéro de la facture, tel que rendu par lire_factures (ex. FAC-2026-0004).', max: 24, req: true }
@@ -102,11 +107,14 @@ export const SPEC = {
   // ── Factures ────────────────────────────────────────────────────────────────────────────────────
   creer_facture: {
     cat: 'confirmation', libelle: 'créer une facture',
-    desc: "Propose de créer la FACTURE d'un devis signé : complete (tout le devis) ou acompte (un pourcentage, que l'artisan a donné). Une facture est émise ET scellée à la création (numéro définitif, plus modifiable : une correction passe par un avoir) : l'artisan confirme sur une carte. Mêmes règles que l'écran Factures (mentions légales, TVA, numérotation). Pas de facture de solde avec déduction d'acompte dans Presti : si un acompte existe déjà, dis-le.",
+    desc: FLAGS.facturesSituation
+      ? "Propose de créer la FACTURE d'un devis signé : complete (tout le devis ; si des acomptes ou des situations sont déjà facturés, c'est la facture de SOLDE qui les déduit), acompte (un pourcentage, que l'artisan a donné), situation (situation de travaux : l'avancement CUMULÉ à date en %, que l'artisan a donné ; montant = cumul × devis − tout ce qui est déjà facturé) ou solde (dernière facture : déduit acomptes et situations). Une facture est émise ET scellée à la création (numéro définitif, plus modifiable : une correction passe par un avoir) : l'artisan confirme sur une carte. Mêmes règles que l'écran du devis (mentions légales, TVA, numérotation, avancement qui ne recule pas, jamais plus que le devis). Avancement lot par lot : depuis l'écran du devis, pas d'ici."
+      : "Propose de créer la FACTURE d'un devis signé : complete (tout le devis) ou acompte (un pourcentage, que l'artisan a donné). Une facture est émise ET scellée à la création (numéro définitif, plus modifiable : une correction passe par un avoir) : l'artisan confirme sur une carte. Mêmes règles que l'écran Factures (mentions légales, TVA, numérotation). Pas de facture de solde avec déduction d'acompte dans Presti : si un acompte existe déjà, dis-le.",
     champs: {
       devis_numero: numeroDevis,
-      type: { t: 'enum', d: 'complete (défaut) ou acompte.', valeurs: TYPES_FACTURE },
+      type: { t: 'enum', d: FLAGS.facturesSituation ? 'complete (défaut), acompte, situation ou solde.' : 'complete (défaut) ou acompte.', valeurs: TYPES_FACTURE },
       acompte_pct: { t: 'nombre', d: 'Pourcentage de l’acompte (entre 1 et 99), obligatoire pour type=acompte : celui que l’artisan a donné.', min: 1, max: 99, sourcer: true },
+      ...(FLAGS.facturesSituation ? { avancement_pct: { t: 'nombre', d: 'Avancement CUMULÉ du chantier à date, en % (entre 1 et 100), obligatoire pour type=situation : celui que l’artisan a donné.', min: 1, max: 100, sourcer: true } as const } : {}),
     },
   },
   marquer_facture_payee: {
@@ -580,6 +588,10 @@ function validerCoherence(nom: NomAction, e: EntreeAction): string | null {
     case 'creer_facture':
       if (e.type === 'acompte' && e.acompte_pct === null) return 'acompte_pct : obligatoire pour une facture d’acompte'
       if (e.type === 'complete' && e.acompte_pct !== null) return 'acompte_pct : réservé à type=acompte'
+      // 0176 (drapeau facturesSituation) : un pourcentage n'appartient qu'à son type.
+      if ((e.type === 'situation' || e.type === 'solde') && e.acompte_pct !== null) return 'acompte_pct : réservé à type=acompte'
+      if (e.type === 'situation' && (e.avancement_pct === null || e.avancement_pct === undefined)) return 'avancement_pct : obligatoire pour une situation de travaux'
+      if (e.type !== 'situation' && e.avancement_pct !== null && e.avancement_pct !== undefined) return 'avancement_pct : réservé à type=situation'
       return null
     case 'modifier_article':
       return e.seuil_alerte === null && !e.fournisseur_prefere && !e.categorie ? 'rien à modifier' : null

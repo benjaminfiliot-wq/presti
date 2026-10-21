@@ -7,8 +7,9 @@
 //
 // Module PUR. On ne se fie à aucune chaîne unique — le gabarit de ces e-mails change sans prévenir, et nos fixtures
 // (scripts/fixtures/leboncoin/) sont inventées faute d'e-mail réel :
-//   1. l'expéditeur est sur le domaine leboncoin.fr (ou un sous-domaine), et l'en-tête Authentication-Results, quand il existe,
-//      ne dit pas que la signature du domaine a échoué (un e-mail « Le Bon Coin » forgé ne doit pas fabriquer un client) ;
+//   1. l'expéditeur est sur le domaine leboncoin.fr (ou un sous-domaine), ET l'en-tête Authentication-Results posé par le serveur de
+//      la boîte (le premier) porte dkim=pass aligné sur leboncoin.fr — absent ou sans signature alignée : ignoré (audit du 21/10,
+//      E1 : un en-tête « dkim=pass » écrit par l'expéditeur lui-même ne compte pas ; un e-mail forgé ne doit pas fabriquer un client) ;
 //   2. l'e-mail parle d'un MESSAGE (objet ou corps), pas d'une alerte, d'une annonce mise en ligne ou d'un paiement ;
 //   3. le lien de réponse n'est retenu que s'il pointe en https vers leboncoin.fr — jamais un lien d'un autre domaine, même
 //      présent dans l'e-mail : c'est l'artisan qui va cliquer.
@@ -21,6 +22,8 @@ export type MailNotification = {
   html?: string | null
   /** L'en-tête Authentication-Results brut, s'il existe. */
   authentification?: string | null
+  /** 21/10/2026 (audit offensif, E1) : les domaines dont la signature DKIM a été VÉRIFIÉE par nous (lib/canaux/dkim.ts). Absent : rien de vérifié. */
+  dkim_valides?: readonly string[] | null
 }
 
 export type NotificationLeboncoin = {
@@ -37,6 +40,7 @@ export type NotificationLeboncoin = {
 }
 
 import { LIEN_MESSAGERIE_LEBONCOIN } from './libelles.ts'
+import { signeePar, verdictAuthentification } from './notifications.ts'
 export { LIEN_MESSAGERIE_LEBONCOIN }
 
 const DOMAINE = /(^|\.)leboncoin\.fr$/i
@@ -154,6 +158,10 @@ export function lireNotificationLeboncoin(mail: MailNotification): NotificationL
   try {
     if (!DOMAINE.test(domaineDe(mail.de.email))) return null
     if (authentificationEchouee(mail.authentification)) return null
+    // 21/10/2026 (audit offensif, E1) : il faut une PREUVE — dkim=pass aligné sur leboncoin.fr dans l'en-tête posé par le serveur de
+    // la boîte (le premier, lib/mailLite.ts). Absent ou sans signature alignée : ce n'est pas une notification Le Bon Coin.
+    if (verdictAuthentification(mail.authentification, ['leboncoin.fr']) !== 'ok') return null
+    if (!signeePar(mail.dkim_valides, ['leboncoin.fr'])) return null
     const sujet = (mail.sujet || '').slice(0, 300)
     const html = (mail.html || '').slice(0, 300_000)
     const corps = decoderEntites((mail.texte || '').slice(0, 20_000))

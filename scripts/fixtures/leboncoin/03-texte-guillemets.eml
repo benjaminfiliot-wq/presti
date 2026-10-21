@@ -1,3 +1,4 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=mail.leboncoin.fr; dkim=pass header.d=leboncoin.fr header.s=s1
 From: Leboncoin <notifications@mail.leboncoin.fr>
 To: menuiserie.fictive@exemple-artisan.fr
 Subject: =?UTF-8?Q?Th=C3=A9o_a_r=C3=A9pondu_=C3=A0_votre_annonce?=

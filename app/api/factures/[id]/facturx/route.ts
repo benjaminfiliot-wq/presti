@@ -4,6 +4,7 @@ import { genererFacturX, controlerAvantEmission, type DonneesFacturX } from '@/l
 import { mentionFranchise, codeExonerationParDefaut, MOTIFS_EXONERATION, type BaseMention } from '@/lib/facturation'
 import { mentionsReglement, MENTION_TVA_DEBITS } from '@/lib/devisPdfData'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { lireDetailSituation, noteSituationFacturX } from '@/lib/facturesTypes'
 
 // Le fichier XML de la facture (v4 §10.3).
 //
@@ -50,7 +51,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     // le client est un professionnel identifié (art. L. 441-10 c. com.), escompte « néant ».
     mentions_paiement: mentionsReglement(!!f.client_siren).join(' '),
     // Art. 77 ann. III CGI, et seulement si la TVA est collectée (sans objet en franchise).
-    notes: !franchise && (f.tva_sur_debits === true || a?.tva_sur_debits === true) ? [MENTION_TVA_DEBITS] : [],
+    notes: [
+      ...(!franchise && (f.tva_sur_debits === true || a?.tva_sur_debits === true) ? [MENTION_TVA_DEBITS] : []),
+      // 0176 — une situation de travaux porte ses mentions (marché, cumuls, montant) en note, comme sur le PDF. Type 380.
+      ...(f.type_facture === 'situation' && lireDetailSituation(f.situation_detail) ? [noteSituationFacturX(f.situation_numero, lireDetailSituation(f.situation_detail)!)] : []),
+    ],
     lignes: (lignes ?? []).map((l) => ({
       designation: l.designation ?? '', quantite: Number(l.quantite) || 0, unite: l.unite ?? 'u',
       prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 0,

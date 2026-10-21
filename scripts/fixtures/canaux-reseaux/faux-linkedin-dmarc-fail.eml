@@ -1,0 +1,11 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=fail smtp.mailfrom=forge.example; dkim=none; dmarc=fail (p=REJECT) header.from=linkedin.com
+From: =?UTF-8?B?TGlua2VkSW4=?= <messages-noreply@linkedin.com>
+To: atelier.fictif@exemple-artisan.fr
+Subject: =?UTF-8?B?Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQ==?=
+Message-ID: <fixture-faux-0004@forge.example>
+Date: Wed, 21 Oct 2026 08:30:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQoKUsOpcG9uZHJlIDogaHR0cHM6Ly93d3cubGlua2VkaW4uY29tL21lc3NhZ2luZy90aHJlYWQveC8=

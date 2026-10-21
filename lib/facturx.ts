@@ -59,6 +59,8 @@ const UNITES: Record<string, string> = {
   u: 'C62', unite: 'C62', 'ens.': 'C62', ens: 'C62', forfait: 'C62', lot: 'C62',
   ml: 'MTR', m: 'MTR', 'm²': 'MTK', m2: 'MTK', 'm³': 'MTQ', m3: 'MTQ',
   h: 'HUR', j: 'DAY', kg: 'KGM', l: 'LTR',
+  // Audit argent du 21/10 : la tonne (unité rendue par le chiffrage depuis le correctif des unités) partait en C62 (« unité »).
+  t: 'TNE', tonne: 'TNE', tonnes: 'TNE',
 }
 const codeUnite = (u: string) => UNITES[String(u || 'u').toLowerCase().trim()] ?? 'C62'
 

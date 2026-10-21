@@ -1,0 +1,11 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=linkedln.com; dkim=pass header.d=linkedln.com header.s=s1; dmarc=pass (p=REJECT) header.from=linkedln.com
+From: =?UTF-8?B?TGlua2VkSW4=?= <messages-noreply@linkedln.com>
+To: atelier.fictif@exemple-artisan.fr
+Subject: =?UTF-8?B?Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQ==?=
+Message-ID: <fixture-faux-0001@linkedln.com>
+Date: Wed, 21 Oct 2026 08:30:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQoKUsOpcG9uZHJlIDogaHR0cHM6Ly93d3cubGlua2VkbG4uY29tL21lc3NhZ2luZy90aHJlYWQveC8=

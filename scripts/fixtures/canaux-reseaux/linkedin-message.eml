@@ -1,0 +1,20 @@
+Authentication-Results: mx.exemple-artisan.fr; spf=pass smtp.mailfrom=linkedin.com; dkim=pass header.d=linkedin.com header.s=s1; dmarc=pass (p=REJECT) header.from=linkedin.com
+From: =?UTF-8?B?Q2FtaWxsZSBGaWN0aXZlIHZpYSBMaW5rZWRJbg==?= <messages-noreply@linkedin.com>
+To: atelier.fictif@exemple-artisan.fr
+Subject: =?UTF-8?B?Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQ==?=
+Message-ID: <fixture-li-0001@linkedin.com>
+Date: Wed, 21 Oct 2026 08:30:00 +0200
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="frontiere-fixture"
+
+--frontiere-fixture
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZQoKQ2FtaWxsZSBGaWN0aXZlIGEgw6ljcml0IDoKQm9uam91ciwgamUgY2hlcmNoZSB1biBhcnRpc2FuIHBvdXIgcsOpbm92ZXIgdW5lIGN1aXNpbmUgZGUgMTIgbTIgw6AgTHlvbi4gw4p0ZXMtdm91cyBkaXNwb25pYmxlIHBvdXIgdW4gZGV2aXMgZW4gbm92ZW1icmUgPwoKUsOpcG9uZHJlIDogaHR0cHM6Ly93d3cubGlua2VkaW4uY29tL21lc3NhZ2luZy90aHJlYWQvMi1GSVhUVVJFdGhyZWFkQUFBMTExPS8KClZvdXMgcmVjZXZleiBjZXQgZS1tYWlsIGNhciB2b3VzIMOqdGVzIG1lbWJyZSBkZSBMaW5rZWRJbi4=
+--frontiere-fixture
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+PHA+Q2FtaWxsZSBGaWN0aXZlIHZvdXMgYSBlbnZvecOpIHVuIG5vdXZlYXUgbWVzc2FnZTwvcD48YSBocmVmPSJodHRwczovL3d3dy5saW5rZWRpbi5jb20vY29tbS9tZXNzYWdpbmcvdGhyZWFkLzItRklYVFVSRXRocmVhZEFBQTExMT0vP3Ryaz1lbWwiPlLDqXBvbmRyZTwvYT4gPGEgaHJlZj0iaHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2NvbW0vam9icy8iPk9mZnJlczwvYT4=
+--frontiere-fixture--

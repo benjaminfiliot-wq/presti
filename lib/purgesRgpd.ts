@@ -59,6 +59,14 @@ export const JOURS_GRACE_JETONS = 7
 /** Une session vérifiée par le code email (v7 bloc 2) l'est pour 90 jours : au-delà, le code est redemandé. */
 export const JOURS_SESSIONS_VERIFIEES = 90
 
+/**
+ * 21/10/2026 (audit RGPD des canaux, M3) — un prospect IMPORTÉ d'un formulaire publicitaire (canal 'import', lib/canaux/importProspects.ts)
+ * que l'artisan n'a JAMAIS contacté n'est gardé que 6 mois : il a demandé à être rappelé pour UNE demande ; passé ce délai, le garder
+ * n'a plus de finalité (art. 5.1 e). Contacté (un message parti, un statut qui a bougé, un devis) : la règle commune s'applique
+ * (DUREES_MOIS.conversation).
+ */
+export const MOIS_IMPORT_SANS_CONTACT = 6
+
 export type BilanPurges = {
   /** Journal d'abus au-delà de douze mois. */
   ip_abus: number
@@ -80,6 +88,8 @@ export type BilanPurges = {
   essais: number
   /** Pilote automatique (0174) : lignes de la file et du journal `actions_auto` préparées depuis plus de DUREES_MOIS.crm_journal. */
   pilote: number
+  /** Prospects IMPORTÉS d'un formulaire publicitaire jamais contactés, au-delà de MOIS_IMPORT_SANS_CONTACT (`purgerImportsSansContact`). */
+  imports: number
   /** Vrai si un plafond a été atteint : il reste des lignes à purger au prochain passage. */
   reste: boolean
   erreurs: string[]
@@ -245,6 +255,40 @@ export async function purgerConversationsSansSuite(
 }
 
 /**
+ * Les prospects importés jamais contactés (M3, voir MOIS_IMPORT_SANS_CONTACT) : canal 'import', statut toujours 'nouveau', créés avant
+ * `avant`, sans AUCUN message parti (sens 'out') ni devis. Effacés avec leur fil (cascade). Borné, jamais bloquant.
+ */
+export async function purgerImportsSansContact(
+  avant: string, plafond: number = PLAFOND_CONVERSATIONS, db: BaseRgpd = supabaseAdmin,
+): Promise<Resultat> {
+  const { data: candidats, error } = await db
+    .from('leads').select('id')
+    .eq('canal', 'import').eq('statut', 'nouveau').lt('created_at', avant)
+    .order('created_at', { ascending: true })
+    .limit(plafond)
+  if (error) return { n: 0, plein: false, erreur: tableAbsente(error.message) ? undefined : `leads importés (lecture) : ${error.message}` }
+  const ids = colonneTexte(candidats, 'id')
+  if (!ids.length) return { n: 0, plein: false }
+  const garder = new Set<string>()
+  for (const lot of parLots(ids)) {
+    const { data: sortants, error: eM } = await db.from('messages').select('lead_id').in('lead_id', lot).eq('sens', 'out')
+    if (eM) return { n: 0, plein: false, erreur: `messages (lecture) : ${eM.message}` }
+    for (const id of colonneTexte(sortants, 'lead_id')) garder.add(id)
+    const { data: devis, error: eD } = await db.from('devis').select('lead_id').in('lead_id', lot)
+    if (eD) return { n: 0, plein: false, erreur: `devis (lecture) : ${eD.message}` }
+    for (const id of colonneTexte(devis, 'lead_id')) garder.add(id)
+  }
+  const aEffacer = ids.filter((id) => !garder.has(id))
+  let n = 0
+  for (const lot of parLots(aEffacer)) {
+    const { error: eSup } = await db.from('leads').delete().in('id', lot).eq('canal', 'import').eq('statut', 'nouveau')
+    if (eSup) return { n, plein: false, erreur: `leads importés (suppression) : ${eSup.message}` }
+    n += lot.length
+  }
+  return { n, plein: ids.length >= plafond }
+}
+
+/**
  * Registre des essais gratuits (0156) : une ligne par EMPREINTE d'adresse e-mail (SHA-256 — pseudonyme, pas anonyme), gardée
  * pour qu'un compte recréé avec la même boîte ne rouvre pas un essai. Sa durée n'était écrite nulle part (audit RGPD du 20/10) :
  * DUREES_MOIS.essai_gratuit (24 mois) après la FIN de l'essai, ou après son début si la fin manque. Passé ce délai l'empreinte
@@ -280,7 +324,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   const seuilJetons = seuilJours(JOURS_GRACE_JETONS, maintenant)
 
   const bilan: BilanPurges = {
-    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0, essais: 0, pilote: 0,
+    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0, crm: 0, essais: 0, pilote: 0, imports: 0,
     reste: false, erreurs: [],
   }
   const noter = (r: Resultat): number => {
@@ -373,6 +417,10 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   //     même durée que le journal du CRM, comptée depuis la préparation. Une ligne de cet âge ne peut plus être « à partir »
   //     (départ 10 min après). Pas derrière le drapeau : une table absente est tolérée.
   bilan.pilote = noter(await supprimerAnciennes('actions_auto', 'id', 'prete_le', seuilMois(DUREES_MOIS.crm_journal, maintenant), PLAFOND_LIGNES))
+
+  // 12. Prospects importés d'un formulaire publicitaire, jamais contactés : MOIS_IMPORT_SANS_CONTACT (6 mois). Pas derrière le drapeau
+  //     importProspects : des lignes importées doivent partir à l'heure dite même si l'import est refermé.
+  bilan.imports = noter(await purgerImportsSansContact(seuilMois(MOIS_IMPORT_SANS_CONTACT, maintenant), PLAFOND_CONVERSATIONS))
 
   return bilan
 }

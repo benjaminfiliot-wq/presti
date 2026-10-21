@@ -7,6 +7,8 @@ import { assainirApercu, fondEffectif, plateformeStyleToCss, plateformeStyleToDa
 import { lisibleSur } from '@/lib/contrast'
 import { FOND_THEME, fondDuTheme } from '@/lib/themeFonds'
 import { ETAPES_DEMANDE, type SuiviDemande } from '@/lib/suiviDemande'
+import { actif } from '@/lib/flags'
+import { lireOrigine, type Origine } from '@/lib/canaux/reseaux'
 
 // L'APPLICATION DE CONVERSATION de la plateforme (v4 §A2).
 // Ce n'est plus un formulaire décoré : c'est un client de chat — colonne des conversations,
@@ -67,6 +69,13 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   const [nom, setNom] = useState('')
   const [contact, setContact] = useState('')
   const [website, setWebsite] = useState('') // honeypot
+  // 21/10/2026 (« Vos réseaux », drapeau canauxLiens) : le réseau d'où vient le client (?src=…, liste fermée), joint à la PREMIÈRE
+  // demande seulement. Drapeau baissé : rien n'est lu.
+  const [origine, setOrigine] = useState<Origine | null>(null)
+  useEffect(() => {
+    if (!actif('canauxLiens')) return
+    try { setOrigine(lireOrigine(new URLSearchParams(window.location.search).get('src'))) } catch { /* adresse illisible : pas d'origine */ }
+  }, [])
   const [side, setSide] = useState(false)    // tiroir mobile
   const [err, setErr] = useState<string | null>(null)
   // Compte client (§6) : session portée par un cookie httpOnly, jamais lisible ici.
@@ -303,7 +312,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
     const marquer = (etat: Msg['etat']) => setMsgs((m) => m.map((x) => (x.id === localId ? { ...x, etat } : x)))
     try {
       if (!token) {
-        const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, message: contenu, photos: envoyees, website, variant: 'B', deferContact: true }) })
+        const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, message: contenu, photos: envoyees, website, variant: 'B', deferContact: true, ...(origine ? { origine } : {}) }) })
         const d = await res.json().catch(() => ({}))
         setThinking(false); setSending(false)
         if (!res.ok) { marquer('echec'); setErr(d.error ?? 'Envoi impossible.'); return }

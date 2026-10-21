@@ -22,7 +22,7 @@ import { texteRelanceDevis, texteRelanceFacture } from '@/lib/assistant/cartes'
 import { ENVOIS_JOUR_MAX, RELANCE_DELAI_JOURS } from '@/lib/assistant/actions-serveur'
 import { leadDuCompte, repondreServeur, validerPropositionServeur } from '@/lib/envoisServeur'
 import { envoyerDevisServeur, envoyerFactureServeur } from '@/lib/envoisPdfServeur'
-import { estCanalConversation } from '@/lib/canaux/regles'
+import { piloteInterdit } from '@/lib/canaux/regles'
 import { getPlateformeConfig, dansLaPlage } from '@/lib/plateformeConfig'
 import { suspensionEnCours } from '@/lib/suspension'
 import { jetonPlafond, lignesDuDevis, lireReglages, partiesDepuis24h } from './serveur'
@@ -197,7 +197,7 @@ export function dependancesSupabase(): DependancesFile {
       if (l.source === 'proposition') {
         const lead = l.lead_id ? await leadDuCompte(l.lead_id, l.artisan_id) : null
         if (!lead) return ko('conversation introuvable', true)
-        if (estCanalConversation(lead.canal)) return ko('canal de messagerie : à valider à la main', true)
+        if (piloteInterdit(lead.canal)) return ko('canal de messagerie : à valider à la main', true)
         const r = await validerPropositionServeur(l.artisan_id, lead, l.ref_id, null, { automatique: true })
         if (r.status === 200) return { ok: true, resume: `réponse envoyée${r.json.emailed ? ' (e-mail)' : ''}` }
         return ko(String(r.json.error ?? 'envoi impossible'), r.status === 404 || r.status === 409)

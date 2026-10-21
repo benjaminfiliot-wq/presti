@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import AppShell from '@/app/AppShell'
 import EcranVerrouille from '@/app/EcranVerrouille'
 import Conversations from '@/app/plateforme/Conversations'
@@ -17,18 +18,21 @@ export default function MessagesPage() {
   const [nonLus, setNonLus] = useState(0)
   const [plan, setPlan] = useState<string | null>(null)
   const [pret, setPret] = useState(false)
+  const router = useRouter()
   useEffect(() => {
     let vivant = true
     supabase.auth.getSession().then(async ({ data }) => {
       const uid = data.session?.user.id
-      if (!uid) { if (vivant) setPret(true); return }
+      // 21/10/2026 (vérification en production) : sans session, on va à la connexion, comme les autres pages protégées —
+      // pas à l'écran « Réservé à l'offre Studio », qui faisait croire à un visiteur déconnecté qu'il lui manquait une offre.
+      if (!uid) { router.replace('/login'); return }
       const { data: prof } = await supabase.from('artisans').select('plan').eq('id', uid).maybeSingle()
       if (!vivant) return
       setPlan((prof?.plan as string | null | undefined) ?? null)
       setPret(true)
     })
     return () => { vivant = false }
-  }, [])
+  }, [router])
 
   if (!pret) return <AppShell active="messages" title="Messages" wide><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
   if (!peut(plan, 'plateforme.conversation')) {

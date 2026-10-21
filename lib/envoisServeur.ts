@@ -15,6 +15,8 @@ import { planifierRelances } from '@/lib/relances'
 import { consommerLimiteStricte, libererLimite } from '@/lib/limites'
 import { avecMentionAssistant } from '@/lib/mentionAssistant'
 import { completerLeadCanal, envoyerReponseCanal, type IssueEnvoi } from '@/lib/canaux/serveur'
+import { estCanalConversation, piloteInterdit } from '@/lib/canaux/regles'
+import { LONGUEUR_MAX_TELEGRAM } from '@/lib/canaux/telegram'
 
 export type ReponseEnvoi = { status: number; json: Record<string, unknown> }
 const rep = (status: number, json: Record<string, unknown>): ReponseEnvoi => ({ status, json })
@@ -40,6 +42,24 @@ function reponseCanal(e: IssueEnvoi): { canal?: string; lien?: string } {
 
 /** Un envoi déclenché par le PILOTE AUTOMATIQUE (aucun clic de l'artisan au moment du départ). */
 export type OptionsEnvoi = { automatique?: boolean }
+
+/**
+ * 21/10/2026 — un envoi AUTOMATIQUE sur un canal où il est interdit (Le Bon Coin et réseaux lus par notification : l'artisan colle
+ * lui-même ; WhatsApp / Messenger / Instagram ; demande importée d'un formulaire publicitaire) est refusé ICI, au point d'envoi
+ * commun, quel que soit le chemin qui l'a demandé (proposition, carte de l'assistant). Rien n'est marqué envoyé.
+ */
+const refusAutomatique = (lead: { canal: string | null }, o: OptionsEnvoi): ReponseEnvoi | null =>
+  o.automatique && piloteInterdit(lead.canal) ? rep(409, { error: 'Ce canal ne part jamais automatiquement : à valider à la main.' }) : null
+
+/** Envoi automatique sur un canal de messagerie (Telegram) : la mention de l'assistant IA, comme pour l'e-mail (règlement IA, art. 50). */
+async function avecMentionSiAuto(uid: string, lead: { canal: string | null }, texte: string, o: OptionsEnvoi): Promise<string | null> {
+  if (!o.automatique || !estCanalConversation(lead.canal)) return texte
+  const { data: a } = await supabaseAdmin.from('artisans').select('nom').eq('id', uid).maybeSingle()
+  const avec = avecMentionAssistant(texte, a?.nom as string | null)
+  // La mention COMPTE dans la longueur permise par le canal (Telegram : 4 096 signes) : trop long avec elle, l'envoi automatique
+  // n'a pas lieu (null → 409, la réponse reste à valider à la main) plutôt que de partir coupée ou sans la mention.
+  return lead.canal === 'telegram' && [...avec].length > LONGUEUR_MAX_TELEGRAM ? null : avec
+}
 /** Fenêtre de la réclamation d'envoi d'une proposition (fenêtre fixe : une semaine rend la bascule de fenêtre négligeable). */
 const RECLAMATION_S = 7 * 86_400
 export const cleReclamation = (messageId: string) => `envoi-proposition:${messageId}`
@@ -70,11 +90,14 @@ async function emailProspect(uid: string, to: string, texte: string, o: OptionsE
 export async function validerPropositionServeur(uid: string, lead: LeadMsg, messageId: string, texteRetouche?: string | null, o: OptionsEnvoi = {}): Promise<ReponseEnvoi> {
   const { data: prop } = await supabaseAdmin.from('messages').select('id, contenu, etat').eq('id', messageId).eq('lead_id', lead.id).maybeSingle()
   if (!prop || prop.etat !== 'proposition') return rep(404, { error: 'Proposition introuvable ou déjà traitée.' })
+  const refus = refusAutomatique(lead, o)
+  if (refus) return refus
   const cle = cleReclamation(prop.id as string)
   if (!(await consommerLimiteStricte(cle, 1, RECLAMATION_S))) return rep(409, { error: 'Cette réponse est déjà en cours d’envoi.' })
   let envoyee = false
   try {
-    const texte = typeof texteRetouche === 'string' && texteRetouche.trim() ? texteRetouche.trim().slice(0, 4000) : (prop.contenu as string)
+    const texte = await avecMentionSiAuto(uid, lead, typeof texteRetouche === 'string' && texteRetouche.trim() ? texteRetouche.trim().slice(0, 4000) : (prop.contenu as string), o)
+    if (texte === null) return rep(409, { error: 'Trop long pour partir seul avec la mention de l’assistant : à valider à la main.' })
     const envoi = await envoyerReponseCanal(await completerLeadCanal(lead), texte)
     if (envoi.traite && !envoi.ok) return rep(envoi.statut, { error: envoi.erreur, hors_fenetre: !!envoi.hors_fenetre })
     const parEmail = !envoi.traite && !!lead.contact && lead.contact.includes('@')
@@ -99,8 +122,11 @@ export async function validerPropositionServeur(uid: string, lead: LeadMsg, mess
 
 /** Une réponse écrite (par l'artisan, ou par l'assistant et confirmée — ou partie par le pilote) part dans le fil et par le canal / l'e-mail. */
 export async function repondreServeur(uid: string, lead: LeadMsg, contenuBrut: string, o: OptionsEnvoi = {}): Promise<ReponseEnvoi> {
-  const contenu = contenuBrut.trim().slice(0, 4000)
-  if (!contenu) return rep(400, { error: 'Message vide' })
+  const refus = refusAutomatique(lead, o)
+  if (refus) return refus
+  if (!contenuBrut.trim()) return rep(400, { error: 'Message vide' })
+  const contenu = await avecMentionSiAuto(uid, lead, contenuBrut.trim().slice(0, 4000), o)
+  if (contenu === null) return rep(409, { error: 'Trop long pour partir seul avec la mention de l’assistant : à valider à la main.' })
   const envoi = await envoyerReponseCanal(await completerLeadCanal(lead), contenu)
   if (envoi.traite && !envoi.ok) return rep(envoi.statut, { error: envoi.erreur, hors_fenetre: !!envoi.hors_fenetre })
   const parEmail = !envoi.traite && !!lead.contact && lead.contact.includes('@')

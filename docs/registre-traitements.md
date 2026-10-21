@@ -304,6 +304,21 @@ Presti agit **pour le compte de l'artisan** (sous-traitant), uniquement si l'art
 | **Destinataires** | Supabase (UE) ; le fournisseur de la boîte de l'artisan (sa propre messagerie) |
 | **Où** | `lib/releveCanal.ts`, `app/api/canaux/relever`, `supabase/migrations/0036_canaux.sql` |
 
+## 22 bis. Les canaux sans API d'un réseau tiers *(0177, drapeaux `canauxTelegram`, `canauxNotifications`, `canauxLiens`, `importProspects`, 21 octobre 2026)*
+
+Presti agit **pour le compte de l'artisan** (sous-traitant), seulement pour les canaux que l'artisan a lui-même reliés ou utilisés.
+
+| | Bot Telegram de l'artisan | Notifications e-mail des réseaux | Prospects importés d'un formulaire publicitaire | Origine d'une demande |
+|---|---|---|---|---|
+| **Finalité** | Recevoir les demandes des clients qui écrivent au bot et y répondre | Regrouper dans Presti les messages reçus sur LinkedIn, une Page Facebook, Instagram, TikTok, les plateformes de devis, Le Bon Coin | Rappeler une personne qui a rempli le formulaire d'une publicité de l'artisan | Savoir de quel réseau vient une demande |
+| **Base légale** | Art. 6.1.b (mesures précontractuelles : la personne écrit la première) | Exécution du contrat de l'artisan (sa boîte reliée) | Art. 6.1.b : la personne a demandé à être recontactée ; l'information (art. 13) passe par la politique de confidentialité de l'artisan liée dans son formulaire | Exécution du contrat |
+| **Données** | Identifiant de conversation Telegram, prénom et nom affichés, texte et type de pièce jointe ; numéro de téléphone seulement si le client partage sa propre fiche | Nom affiché, extrait du message, lien vers la conversation d'origine ; seuls les e-mails dont la signature DKIM du réseau est vérifiée sont rangés | Liste fermée : nom, e-mail, téléphone, ville et code postal, réponses décrivant le besoin, nom du formulaire, date de remplissage, date d'import ; identifiants publicitaires et autres colonnes écartés | Nom du réseau (liste fermée, `leads.origine`) |
+| **Envoi automatique** | Réponse validée par l'artisan, ou par le Pilote automatique s'il l'a activé (mention de l'assistant IA) | Aucun : « Copier et ouvrir » sur le réseau | **Aucun** (ni IA, ni relance, ni Pilote) | — |
+| **Durée** | Celle des conversations : 36 mois sans échange | Celle des conversations | **6 mois** si l'artisan ne l'a jamais contacté (purge automatique, `lib/purgesRgpd.ts`), sinon celle des conversations | Celle de la demande |
+| **Destinataires** | Supabase (UE) ; **Telegram FZ-LLC** (hors UE), qui achemine les messages du bot | Aucun nouveau : les données viennent de la boîte de l'artisan | Aucun nouveau : fichier déposé par l'artisan | Aucun |
+| **Sécurité** | Jeton du bot chiffré (AES-256-GCM), webhook protégé par un secret propre à chaque bot, plafonds d'entrée | Expéditeur vérifié par signature DKIM alignée sur le domaine du réseau et en-tête du serveur de la boîte ; liens limités à la conversation du réseau | Valeurs neutralisées (= + - @), doublons écartés, plafonds horaires | — |
+| **Où** | `lib/canaux/telegram.ts`, `app/api/canaux/telegram/` | `lib/canaux/notifications.ts`, `lib/canaux/dkim.ts`, `lib/releveCanal.ts` | `lib/canaux/importProspects.ts`, `app/api/demandes/import` | `lib/canaux/reseaux.ts`, `app/api/leads` |
+
 ## 23. Le traitement central : le message d'un prospect envoyé à Anthropic pour rédiger la réponse *(20 octobre 2026)*
 
 C'est le cœur du produit. Presti agit **pour le compte de l'artisan** (sous-traitant) ; Anthropic est son sous-traitant ultérieur.

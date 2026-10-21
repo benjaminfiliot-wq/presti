@@ -44,7 +44,13 @@ function coupe(section: string): { entetes: Record<string, string>; corps: strin
   // Les en-têtes peuvent tenir sur plusieurs lignes (continuation indentée).
   for (const ligne of brutEntetes.replace(/\r?\n[ \t]+/g, ' ').split(/\r?\n/)) {
     const m = ligne.match(/^([\w-]+):\s*(.*)$/)
-    if (m) entetes[m[1].toLowerCase()] = m[2]
+    if (!m) continue
+    const nom = m[1].toLowerCase()
+    // 21/10/2026 (audit offensif, E1) : Authentication-Results, on garde le PREMIER — celui que le serveur de la boîte a posé EN
+    // TÊTE à la réception. Un expéditeur peut écrire le sien plus bas (« dkim=pass header.d=linkedin.com ») : garder le dernier
+    // revenait à croire l'attaquant sur parole.
+    if (nom === 'authentication-results' && nom in entetes) continue
+    entetes[nom] = m[2]
   }
   return { entetes, corps }
 }

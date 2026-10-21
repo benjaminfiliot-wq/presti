@@ -63,12 +63,21 @@ export function libelleSource(p: Poste): string {
  * Toute valeur inattendue retombe sur « estimation » : jamais un prix qui a l'air
  * sourcé alors qu'il ne l'est pas.
  */
-export function sourceLigneValide(brut: unknown, catalogue: Poste[]): string {
+export function sourceLigneValide(brut: unknown, catalogue: Poste[], prix?: number): string {
   const s = String(brut ?? '').trim()
   if (!s) return 'estimation'
   // On n'accepte qu'un libellé RÉELLEMENT présent dans le catalogue transmis à l'IA :
   // c'est ce qui l'empêche d'inventer « tarifs Rexel » pour un prix qu'elle a deviné.
-  const permis = new Set<string>(['estimation', 'ordre de grandeur du marché'])
-  for (const p of catalogue) permis.add(p.source_libelle)
-  return permis.has(s) ? s : 'estimation'
+  const generiques = new Set<string>(['estimation', 'ordre de grandeur du marché'])
+  if (generiques.has(s)) return s
+  const memeLibelle = catalogue.filter((p) => p.source_libelle === s)
+  if (!memeLibelle.length) return 'estimation'
+  // Vérification du 21/10 (en production) : le LIBELLÉ seul ne prouve rien — une ligne pouvait porter « vos tarifs · Rexel · … »
+  // avec un prix qui n'est pas celui du tarif. Quand le prix de la ligne est connu, il doit être, AU CENTIME, celui d'un poste
+  // du catalogue qui porte ce libellé ; sinon la ligne redevient « estimation » (un prix modifié n'est plus le prix du tarif).
+  if (typeof prix === 'number') {
+    const c = Math.round(prix * 100)
+    if (!memeLibelle.some((p) => Math.round(Number(p.prix_ht) * 100) === c)) return 'estimation'
+  }
+  return s
 }

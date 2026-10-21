@@ -19,6 +19,7 @@ import { porteMonnaieConversation } from '@/lib/quotaMedia'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
 import { MESSAGE_PUBLIC_SANS_PLATEFORME, plateformeOuverte } from '@/lib/plateformeAcces'
+import { lireOrigine } from '@/lib/canaux/reseaux'
 
 // 025-18 : la route rédige la proposition de réponse (IA) avant de répondre au prospect. Sans ce plafond, la limite par
 // défaut de Vercel pouvait couper la fonction en pleine rédaction : crédit non rendu, artisan non prévenu, prospect qui
@@ -53,6 +54,9 @@ export async function POST(req: Request) {
     // A/B (J8) : variante servie + « coordonnées différées » (variante B « 1 champ »).
     const variant = body?.variant === 'A' || body?.variant === 'B' ? body.variant : null
     const deferContact = body?.deferContact === true
+    // 21/10/2026 (« Vos réseaux », drapeau canauxLiens) : le réseau d'où vient le client (?src=instagram sur /p), LISTE FERMÉE
+    // (lib/canaux/reseaux.ts) ; toute autre valeur est ignorée. Drapeau baissé : rien n'est lu, rien n'est écrit.
+    const origine = actif('canauxLiens') ? lireOrigine(body?.origine) : null
 
     // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets).
     // En mode différé (variante B), le contact arrive APRÈS la 1re réponse → il n'est pas requis ici,
@@ -170,27 +174,34 @@ export async function POST(req: Request) {
     const qualif = qualifyLead(message, artisan.metier)
 
     // 2) Enregistrer le lead (chemin critique : on ne le perd jamais)
-    const { data: lead, error: lErr } = await supabaseAdmin
+    const ligneLead: Record<string, unknown> = {
+      artisan_id: artisan.id,
+      nom_prospect,
+      contact,
+      message,
+      canal: 'formulaire',
+      statut: 'nouveau',
+      urgence: qualif.urgence,
+      type_chantier: qualif.type_chantier,
+      // La commune nommée dans le message, sur une liste fermée (0133, lib/ville.ts) : le bloc « Villes » de /chiffres.
+      ville: villeDe(message),
+      ab_variant: variant,
+      ip: ipPseudonyme(ip),
+    }
+    let { data: lead, error: lErr } = await supabaseAdmin
       .from('leads')
-      .insert({
-        artisan_id: artisan.id,
-        nom_prospect,
-        contact,
-        message,
-        canal: 'formulaire',
-        statut: 'nouveau',
-        urgence: qualif.urgence,
-        type_chantier: qualif.type_chantier,
-        // La commune nommée dans le message, sur une liste fermée (0133, lib/ville.ts) : le bloc « Villes » de /chiffres.
-        ville: villeDe(message),
-        ab_variant: variant,
-        ip: ipPseudonyme(ip),
-      })
+      .insert(origine ? { ...ligneLead, origine } : ligneLead)
       .select('id, token')
       .single()
+    // Colonne leads.origine absente (migration 0177 pas encore collée) : la demande est gardée SANS son origine — on ne perd jamais
+    // un prospect pour une pastille.
+    if (lErr && origine && /origine/i.test(lErr.message)) {
+      console.warn('[leads] origine ignorée (migration 0177 posée ?)')
+      ;({ data: lead, error: lErr } = await supabaseAdmin.from('leads').insert(ligneLead).select('id, token').single())
+    }
 
-    if (lErr) {
-      console.error('[leads] insert lead:', lErr.message)
+    if (lErr || !lead) {
+      console.error('[leads] insert lead:', lErr?.message ?? 'aucune ligne')
       return NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 })
     }
 

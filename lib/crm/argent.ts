@@ -14,7 +14,16 @@
 //     moins ce qui est encaissé. Pour un devis non signé, rien n'est dû : seules ses factures déjà émises comptent.
 import { centimes, facturesComptees, type FacturePresti, type Nombre } from '../comptaTableau.ts'
 
-export type FactureArgent = FacturePresti & { acompte_pct?: Nombre; objet?: string | null }
+export type FactureArgent = FacturePresti & { acompte_pct?: Nombre; objet?: string | null; type_facture?: string | null }
+
+/**
+ * Une SITUATION DE TRAVAUX (0176, drapeau `facturesSituation`) : son type, ou l'objet « Situation n° … » que lui donne le seul
+ * chemin qui en crée (lib/factureDepuisDevis.ts). Ni acompte ni facture complète : elle compte dans le facturé comme toute
+ * facture, et « Facturer » reste possible après elle (il émet le SOLDE, situations et acomptes déduits).
+ */
+export function estSituation(f: { type_facture?: string | null; objet?: string | null }): boolean {
+  return f.type_facture === 'situation' || /^\s*situation n°/i.test(f.objet ?? '')
+}
 
 export type Argent = {
   /** TTC du devis, en centimes ; null sans devis. */

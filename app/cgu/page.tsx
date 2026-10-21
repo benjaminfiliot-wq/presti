@@ -123,6 +123,8 @@ export default function CGU() {
         <li><strong>Vérifier, corriger et valider</strong> tout contenu généré avant de l’envoyer à un client ou de l’utiliser à des fins officielles (devis, facture, réponse).</li>
         <li>S’il active le Pilote automatique, en choisir les types d’envoi en connaissance de cause et surveiller la liste des envois en attente : un message parti automatiquement est envoyé en son nom et sous sa responsabilité, comme s’il l’avait validé lui-même.</li>
         <li>Ne donner le lien de pointage d’un chantier qu’à une personne qui y travaille, et le révoquer quand elle n’y travaille plus.</li>
+        <li>Pour une situation de travaux, saisir l’avancement réel du chantier : le Service calcule le montant à partir de l’avancement cumulé déclaré par l’utilisateur, qui en reste seul responsable, sans constater ni vérifier l’avancement réel. Il refuse une situation dont l’avancement recule, dépasse 100 % ou ferait facturer plus que le devis ; les montants sont arrondis au centime. La retenue de garantie (loi n° 71-584 du 16 juillet 1971) n’est pas gérée par le Service : si elle est convenue, l’utilisateur la traite en dehors du Service.</li>
+        <li>Ne relier un bot Telegram, une boîte recevant des notifications de réseaux tiers, ou n’importer des prospects, que s’il en a le droit et que les personnes concernées ont demandé à être recontactées. Le Service n’utilise aucune voie non officielle d’accès aux réseaux et n’envoie jamais de message à un prospect importé.</li>
         <li>S’assurer de la conformité de ses documents à la réglementation applicable à son activité (mentions obligatoires, TVA, assurance, etc.).</li>
         <li>Ne pas détourner le service, ni porter atteinte à sa sécurité.</li>
       </ul>

@@ -9,6 +9,10 @@ import { actif } from '@/lib/flags'
 import EcranVerrouille from '@/app/EcranVerrouille'
 import { peut } from '@/lib/plans'
 import CanauxMeta from './CanauxMeta'
+import CanauxTelegram from './CanauxTelegram'
+import VosReseaux from './VosReseaux'
+import ImportProspects from './ImportProspects'
+import { LIBELLE_CANAL, CANAUX_NOTIFICATION } from '@/lib/canaux/libelles'
 
 // Messages → Canaux (v4 §B2). Voie IMAP/SMTP : marche avec N'IMPORTE QUELLE boîte email
 // (OVH, Gmail, Orange, Free…) sans dépendre d'une application OAuth tierce.
@@ -172,6 +176,23 @@ export default function CanauxPage() {
 
         {/* « Une fonctionnalité non finie n'apparaît pas » : ce bloc ne parle des autres canaux que lorsqu'ils existent. */}
         {(actif('canauxWhatsapp') || actif('canauxReseaux')) && <CanauxMeta />}
+
+        {/* 21/10/2026 — chaque bloc n'existe que drapeau levé (lib/flags.ts) : rien dans le DOM sinon. */}
+        {actif('canauxTelegram') && <CanauxTelegram />}
+
+        {actif('canauxNotifications') && <div className="tool-card">
+          <h2>Vos autres réseaux, par leurs notifications</h2>
+          <p className="muted" style={{ margin: 0 }}>
+            {Array.from(new Set(CANAUX_NOTIFICATION.map((c) => LIBELLE_CANAL[c]))).join(', ')} ne permettent à aucun logiciel de lire vos messages. Mais ils vous préviennent par e-mail à chaque nouveau message ou nouvelle demande : connectez ci-dessus la boîte qui reçoit ces e-mails, et chaque message arrive dans votre boîte de réception, avec le nom du réseau et une réponse préparée. Un clic la copie et ouvre la conversation sur le réseau : vous n’avez qu’à la coller.
+          </p>
+          <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.82rem' }}>
+            Activez les notifications par e-mail des messages dans chaque réseau. Un e-mail n’est reconnu que s’il porte la signature électronique du réseau (DKIM), vérifiée par votre messagerie ET par nous : un faux « LinkedIn » reste un e-mail ordinaire, sans pastille ni réponse préparée, et aucun lien qu’il contient n’est repris.
+          </p>
+        </div>}
+
+        {actif('canauxLiens') && <VosReseaux />}
+
+        {actif('importProspects') && <ImportProspects />}
 
         {actif('canauxLeboncoin') && <div className="tool-card">
           <h2>Le Bon Coin</h2>

@@ -319,7 +319,15 @@ const carte = (f, type = 'envoi_devis', ref = U(1)) => f.inserer({ artisan_id: A
     (env.match(/mentionsManquantesEmission\(versArtisanLegal\(artisan\)\)/g) ?? []).length === 2 && /statut === 'accepte'\) return rep\(409/.test(env) && /facture\.avoir_de\) return rep\(409/.test(env) && /statut !== 'emise' && facture\.statut !== 'payee'\) return rep\(409/.test(env))
   T('C15 devis : le prix est revérifié AU DÉPART (pas seulement à la mise en file), et un devis envoyé à la main depuis la préparation ne repart pas',
     /R\.envoyer_devis = async[\s\S]{0,900}prix non sourcé[\s\S]{0,400}envoyerDevisServeur/.test(realis) && /Date\.parse\(d\.envoye_le\) >= Date\.parse\(carteCreeLe\)/.test(realis))
-  T('C16 messageries (WhatsApp, Messenger, Instagram, Le Bon Coin) jamais en pilote : à la mise en file et au départ', /if \(estCanalConversation\(lead\.canal\)\) return null/.test(srv) && /estCanalConversation\(lead\.canal\)\) return ko\(/.test(exe))
+  // 21/10/2026 (canaux-reseaux) : Telegram devient pilotable (l'API du bot envoie pour de vrai) ; tout le reste reste manuel — la règle vit
+  // dans lib/canaux/regles.ts (piloteInterdit), lue à la mise en file, au départ ET au point d'envoi commun (lib/envoisServeur.ts).
+  const RC = await imp('lib/canaux/regles.ts')
+  const envC16 = sansCommentaires(lire('lib/envoisServeur.ts'))
+  T('C16 messageries jamais en pilote (WhatsApp, Messenger, Instagram, Le Bon Coin, réseaux lus par notification, demande importée) — sauf Telegram : à la mise en file, au départ et au point d’envoi commun',
+    /if \(piloteInterdit\(lead\.canal\)\) return null/.test(srv) && /piloteInterdit\(lead\.canal\)\) return ko\(/.test(exe)
+    && /const refusAutomatique = [\s\S]{0,120}o\.automatique && piloteInterdit\(lead\.canal\)/.test(envC16) && (envC16.match(/const refus = refusAutomatique\(lead, o\)\n\s*if \(refus\) return refus/g) ?? []).length === 2
+    && ['whatsapp', 'messenger', 'instagram', 'leboncoin', 'linkedin', 'facebook', 'tiktok', 'import'].every((c) => RC.piloteInterdit(c) === true)
+    && RC.piloteInterdit('telegram') === false && RC.piloteInterdit('formulaire') === false && RC.piloteInterdit('email') === false && RC.piloteInterdit(null) === false)
   for (const r of ['app/api/pilote/file/route.ts', 'app/api/pilote/reglages/route.ts']) {
     const s = lire(r)
     const handlers = [...s.matchAll(/export async function (GET|POST|PUT|PATCH|DELETE)\(([^)]*)\)/g)]

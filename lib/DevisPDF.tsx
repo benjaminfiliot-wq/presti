@@ -30,6 +30,16 @@ export type PDFData = {
   mentionsReglement?: string[]; mentionTvaDebits?: string
   /** Devis d'un particulier : « À l'attention de … » du formulaire de rétractation. */
   retractationDestinataire?: string
+  /** 0176 — devis PAR LOTS : chaque lot en titre, ses lignes, son sous-total HT (brut). Absent : le tableau d'avant. */
+  lots?: { titre: string; lignes: PDFLigne[]; sousTotalHt: number }[]
+  /** 0176 — le type de la facture sous le titre (« Situation de travaux n° 2 », « Facture d'acompte », « Facture de solde »). */
+  typeLibelle?: string
+  /** 0176 — les mentions d'une SITUATION DE TRAVAUX, figées à l'émission (lib/devisPdfData.ts). */
+  situation?: {
+    numero: number; devis_numero: string; marche_ht: number; avancement_pct: number; cumul_ht: number
+    cumul_anterieur_ht: number; cumul_anterieur_pct: number; deja_facture_ht: number; montant_ht: number
+    lots?: { lot: string; marche_ht: number; pct: number; cumul_ht: number }[]
+  }
 }
 
 const s = StyleSheet.create({
@@ -84,12 +94,37 @@ const s = StyleSheet.create({
   // Formulaire de rétractation : détachable, donc encadré et jamais coupé en deux pages.
   retract: { marginTop: 14, borderWidth: 1, borderStyle: 'dashed', borderColor: '#c9c3b3', borderRadius: 5, padding: 10, fontSize: 7.5, color: MUTED },
   legal: { marginTop: 18, borderTopWidth: 1, borderTopColor: LINE, paddingTop: 10, fontSize: 7.5, color: MUTED },
+  // 0176 — devis par lots : titre du lot, puis son sous-total.
+  lotTitre: { flexDirection: 'row', marginTop: 9, paddingVertical: 4, paddingHorizontal: 6, backgroundColor: '#FAF9F6', borderLeftWidth: 2, borderLeftColor: CLAY },
+  lotTitreText: { fontFamily: 'Helvetica-Bold', fontSize: 8.5, color: INK },
+  lotSous: { flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: LINE },
+  lotSousText: { fontFamily: 'Helvetica-Bold', color: INK },
+  metaType: { color: CLAY, fontSize: 9, fontFamily: 'Helvetica-Bold', marginTop: 2 },
+  // 0176 — situation de travaux : le récapitulatif du marché.
+  situ: { marginTop: 14, borderWidth: 1, borderColor: LINE, borderRadius: 6, padding: 10 },
+  situTitre: { fontSize: 7, color: FAINT, letterSpacing: 1, marginBottom: 5, fontFamily: 'Helvetica-Bold' },
+  situRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 1.5 },
+  situFort: { fontFamily: 'Helvetica-Bold', color: INK },
   legalTitle: { fontSize: 7, color: FAINT, letterSpacing: 1, marginBottom: 4, fontFamily: 'Helvetica-Bold' },
 })
 
 const STATUS: Record<string, { label: string; bg: string; color: string }> = {
   payee: { label: 'PAYÉE', bg: OK_SOFT, color: OK },
   annulee: { label: 'ANNULÉE', bg: '#F1EFEA', color: MUTED },
+}
+
+const pct = (n: number) => String(Math.round((Number.isFinite(n) ? n : 0) * 100) / 100).replace('.', ',')
+
+function LignePDF({ l }: { l: PDFLigne }) {
+  return (
+    <View style={s.tr} wrap={false}>
+      <Text style={s.cDesig}>{l.designation}</Text>
+      <Text style={s.cQte}>{l.quantite.toLocaleString('fr-FR')} {l.unite}</Text>
+      <Text style={s.cPu}>{eur(l.prix_unitaire_ht)}</Text>
+      <Text style={s.cTva}>{String(l.tva_taux).replace('.', ',')}%</Text>
+      <Text style={s.cTot}>{eur(l.quantite * l.prix_unitaire_ht)}</Text>
+    </View>
+  )
 }
 
 export function DevisPDF({ d }: { d: PDFData }) {
@@ -111,6 +146,7 @@ export function DevisPDF({ d }: { d: PDFData }) {
           <View style={s.metaWrap}>
             <Text style={s.title}>{d.avoir ? 'AVOIR' : isFacture ? 'FACTURE' : 'DEVIS'}</Text>
             <Text style={s.metaNum}>{d.numero}</Text>
+            {d.typeLibelle ? <Text style={s.metaType}>{d.typeLibelle}</Text> : null}
             <Text style={s.metaLine}>Émis le {d.date}</Text>
             {/* Art. 242 nonies A ann. II CGI : date de la prestation, quand elle est connue. */}
             {d.datePrestation ? <Text style={s.metaLine}>Prestation du {d.datePrestation}</Text> : null}
@@ -164,15 +200,31 @@ export function DevisPDF({ d }: { d: PDFData }) {
           <Text style={[s.cTva, s.thText]}>TVA</Text>
           <Text style={[s.cTot, s.thText]}>TOTAL HT</Text>
         </View>
-        {d.lignes.map((l, i) => (
-          <View key={i} style={s.tr} wrap={false}>
-            <Text style={s.cDesig}>{l.designation}</Text>
-            <Text style={s.cQte}>{l.quantite.toLocaleString('fr-FR')} {l.unite}</Text>
-            <Text style={s.cPu}>{eur(l.prix_unitaire_ht)}</Text>
-            <Text style={s.cTva}>{String(l.tva_taux).replace('.', ',')}%</Text>
-            <Text style={s.cTot}>{eur(l.quantite * l.prix_unitaire_ht)}</Text>
+        {d.lots && d.lots.length
+          ? d.lots.map((g, gi) => (
+            <View key={`lot-${gi}`}>
+              <View style={s.lotTitre} wrap={false}><Text style={s.lotTitreText}>{g.titre}</Text></View>
+              {g.lignes.map((l, i) => <LignePDF key={i} l={l} />)}
+              <View style={s.lotSous} wrap={false}><Text style={s.lotSousText}>Sous-total {g.titre} HT : {eur(g.sousTotalHt)}</Text></View>
+            </View>
+          ))
+          : d.lignes.map((l, i) => <LignePDF key={i} l={l} />)}
+
+        {/* Situation de travaux (0176) : les mentions du marché, figées à l'émission. */}
+        {d.situation ? (
+          <View style={s.situ} wrap={false}>
+            <Text style={s.situTitre}>SITUATION DE TRAVAUX N° {d.situation.numero}</Text>
+            <View style={s.situRow}><Text>Devis de référence</Text><Text style={s.situFort}>{d.situation.devis_numero}</Text></View>
+            <View style={s.situRow}><Text>Montant du marché HT</Text><Text style={s.situFort}>{eur(d.situation.marche_ht)}</Text></View>
+            {d.situation.lots?.map((l, i) => (
+              <View key={i} style={s.situRow}><Text>{l.lot} — {pct(l.pct)} % de {eur(l.marche_ht)}</Text><Text>{eur(l.cumul_ht)}</Text></View>
+            ))}
+            <View style={s.situRow}><Text>Cumul antérieur ({pct(d.situation.cumul_anterieur_pct)} %)</Text><Text>{eur(d.situation.cumul_anterieur_ht)}</Text></View>
+            <View style={s.situRow}><Text>Cumul à date ({pct(d.situation.avancement_pct)} %)</Text><Text style={s.situFort}>{eur(d.situation.cumul_ht)}</Text></View>
+            <View style={s.situRow}><Text>Déjà facturé sur ce devis (situations et acomptes) HT</Text><Text>- {eur(d.situation.deja_facture_ht)}</Text></View>
+            <View style={s.situRow}><Text style={s.situFort}>Montant de cette situation HT</Text><Text style={s.situFort}>{eur(d.situation.montant_ht)}</Text></View>
           </View>
-        ))}
+        ) : null}
 
         {/* Totaux */}
         <View style={s.totals}>

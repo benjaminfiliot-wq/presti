@@ -6,7 +6,10 @@ import { typeChantier } from '@/lib/qualification'
 import { villeDe } from '@/lib/ville'
 import { actif } from '@/lib/flags'
 import { contenuEntrantLeboncoin, lireNotificationLeboncoin } from '@/lib/canaux/leboncoin'
-import { rangerNotificationLeboncoin, type Range } from '@/lib/canaux/rangement'
+import { rangerNotificationLeboncoin, rangerNotificationReseau, type Range } from '@/lib/canaux/rangement'
+import { contenuEntrantReseau, expediteurDeReseau, lireNotificationReseau } from '@/lib/canaux/notifications'
+import { signaturesDkimValides, type ResolveurTxt } from '@/lib/canaux/dkim'
+import { promises as dns } from 'node:dns'
 import { magasinCanaux, preparerReponseCanal } from '@/lib/canaux/serveur'
 
 // Relève d'une boîte email (v4 §B2) : on va chercher les nouveaux messages et on les
@@ -27,6 +30,20 @@ const AUTOMATIQUE = /^(no-?reply|ne-?pas-?repondre|donotreply|mailer-daemon|post
 const INDESIRABLE = /(facture[s]? ?orange|newsletter|se désinscrire|unsubscribe|linkedin|no-reply)/i
 /** Réponses préparées par l'IA pour Le Bon Coin, par boîte et par passage : la relève de 50 boîtes tient en 60 s. */
 const MAX_PREPARATIONS_LBC = 2
+
+/** La lecture DNS des clés DKIM (lib/canaux/dkim.ts), bornée à 4 s, mémorisée le temps d'un passage. Muette : rien de vérifié. */
+function resolveurDkim(): ResolveurTxt {
+  const memo = new Map<string, Promise<string[][]>>()
+  return (nom) => {
+    if (!memo.has(nom)) {
+      memo.set(nom, Promise.race([
+        dns.resolveTxt(nom),
+        new Promise<string[][]>((_, non) => setTimeout(() => non(new Error('dns lent')), 4_000)),
+      ]).catch(() => []))
+    }
+    return memo.get(nom) as Promise<string[][]>
+  }
+}
 
 /** Un email ressemble-t-il à une vraie demande d'un humain ? */
 function estUneVraieDemande(deEmail: string | null, sujet: string, texte: string, adresseCanal: string): boolean {
@@ -58,6 +75,7 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
   let client: import('imapflow').ImapFlow | null = null
   let importes = 0
   let metier: string | null | undefined
+  let resolveur: ResolveurTxt | undefined
   // Le Bon Coin (drapeau canauxLeboncoin) : les conversations rangées pendant ce passage, préparées une fois la boîte refermée.
   const leboncoin: { r: Range; avecIA: boolean }[] = []
 
@@ -82,7 +100,12 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
       for await (const msg of client.fetch({ since: depuis }, { source: true })) {
         if (!msg.source) continue
         if (importes >= 40) break // garde-fou : jamais un déluge en une passe
-        const mail = lireMail(msg.source)
+        const lu = lireMail(msg.source)
+        if (!lu.messageId) continue
+        // 21/10/2026 (audit offensif, E1) : un e-mail qui SE DIT d'un réseau (Le Bon Coin, LinkedIn…) n'en est une notification que si
+        // NOUS vérifions sa signature DKIM (lib/canaux/dkim.ts) — l'en-tête Authentication-Results peut avoir été écrit par l'expéditeur.
+        const doitVerifier = (actif('canauxLeboncoin') || actif('canauxNotifications')) && expediteurDeReseau(lu.de.email)
+        const mail = doitVerifier ? { ...lu, dkim_valides: await signaturesDkimValides(msg.source, resolveur ??= resolveurDkim()) } : lu
         if (!mail.messageId) continue
 
         // Une notification Le Bon Coin vient d'un expéditeur automatique : elle est reconnue AVANT le filtre qui l'écarterait.
@@ -98,6 +121,26 @@ export async function releverCanal(canal: Canal): Promise<{ importes: number; er
             if (issue.etat === 'range') {
               importes++
               const avecIA = !!lbc.texte && leboncoin.filter((x) => x.avecIA).length < MAX_PREPARATIONS_LBC
+              leboncoin.push({ r: issue.r, avecIA })
+            }
+            continue
+          }
+        }
+
+        // 21/10/2026 — les réseaux sans API (LinkedIn, Page Facebook, Instagram, TikTok, plateformes de devis), par leurs e-mails de
+        // notification, sur le modèle de Le Bon Coin (lib/canaux/notifications.ts : domaine de l'expéditeur ET authentification). Même
+        // idempotence (Message-ID), même plafond de réponses préparées par passage.
+        if (actif('canauxNotifications')) {
+          const n = lireNotificationReseau(mail)
+          if (n) {
+            const issue = await rangerNotificationReseau(
+              { ...n, texte: contenuEntrantReseau(n) },
+              { id: canal.id, artisan_id: canal.artisan_id, type: 'email', actif: true },
+              mail.messageId, (mail.date || new Date()).toISOString(), magasinCanaux,
+            )
+            if (issue.etat === 'range') {
+              importes++
+              const avecIA = !!n.texte && leboncoin.filter((x) => x.avecIA).length < MAX_PREPARATIONS_LBC
               leboncoin.push({ r: issue.r, avecIA })
             }
             continue

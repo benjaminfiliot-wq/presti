@@ -1,0 +1,9 @@
+select 'devis.type_devis (attendu 1)' as quoi, count(*)::text as resultat from information_schema.columns where table_schema = 'public' and table_name = 'devis' and column_name = 'type_devis'
+union all select 'colonnes lot (attendu 2)', count(*)::text from information_schema.columns where table_schema = 'public' and table_name in ('devis_lignes', 'factures_lignes') and column_name = 'lot'
+union all select 'colonnes de situation sur factures (attendu 7)', count(*)::text from information_schema.columns where table_schema = 'public' and table_name = 'factures' and column_name in ('type_facture', 'situation_numero', 'avancement_pct', 'avancement_lots', 'marche_ht', 'cumul_ht', 'situation_detail')
+union all select 'index unique (devis_id, situation_numero) (attendu 1)', count(*)::text from pg_indexes where schemaname = 'public' and tablename = 'factures' and indexname = 'factures_situation_numero_unique'
+union all select 'declencheur factures_situation_verifier (attendu 1)', count(*)::text from pg_trigger where tgname = 'factures_situation_verifier' and tgrelid = 'public.factures'::regclass and not tgisinternal
+union all select 'declencheurs d immuabilite toujours la (attendu 3)', count(*)::text from pg_trigger where tgname in ('factures_immuables', 'factures_conservees', 'factures_lignes_immuables') and not tgisinternal
+union all select 'search_path fige de la fonction (attendu true)', (proconfig is not null and array_to_string(proconfig, ',') like 'search_path=%')::text from pg_proc where oid = 'public.factures_situation_verifier()'::regprocedure
+union all select 'factures deja emises sans type (avant 0176, attendu = total des factures)', count(*) filter (where type_facture is null)::text || ' / ' || count(*)::text from public.factures
+union all select 'devis existants restes simples (attendu = total des devis)', count(*) filter (where type_devis = 'simple')::text || ' / ' || count(*)::text from public.devis;

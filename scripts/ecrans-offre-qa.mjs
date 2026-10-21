@@ -131,7 +131,9 @@ for (const [f, motif, fois] of ROUTES) ok(routeGardee(lire(f), motif, fois), `${
   // Le cron ANNULE (marque traitée) les relances d'un compte sans plateforme : sinon elles encombrent le lot de chaque passage et repartent, périmées, à la montée en Studio.
   ok(/!plateformeOuverte\(artisan\)\) \{\s*await supabaseAdmin\.from\('relances'\)\.update\(\{ envoyee: true \}\)/.test(sansCommentaires(lire('app/api/cron/relances/route.ts'))), "cron des relances : une relance d'un compte sans plateforme est annulée, jamais envoyée ni laissée due")
   // L'envoi d'un devis n'arme plus de relance de conversation pour un compte sans plateforme.
-  ok(/plateformeOuverte\(artisan \?\? \{\}\)[\s\S]{0,400}planifierRelances\(lead\.id\)/.test(sansCommentaires(lire('app/api/devis/[id]/envoyer/route.ts'))), "devis/envoyer : les relances de conversation ne sont armées qu'avec la plateforme")
+  // 21/10 : l'envoi du devis vit dans lib/envoisPdfServeur.ts (partagé par la route et le Pilote automatique) ; la route ne fait que l'appeler.
+  ok(/plateformeOuverte\(artisan \?\? \{\}\)[\s\S]{0,400}planifierRelances\(lead\.id\)/.test(sansCommentaires(lire('lib/envoisPdfServeur.ts')))
+    && /envoisPdfServeur/.test(lire('app/api/devis/[id]/envoyer/route.ts')), "devis/envoyer : les relances de conversation ne sont armées qu'avec la plateforme")
   // La boîte e-mail : brancher exige la capacité, la relève (cron et bouton) l'écarte.
   const cx = sansCommentaires(lire('app/api/canaux/route.ts'))
   const post = cx.slice(cx.indexOf('export async function POST'), cx.indexOf('export async function DELETE'))

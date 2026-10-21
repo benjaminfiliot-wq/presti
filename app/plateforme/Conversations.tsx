@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
-import { LIEN_MESSAGERIE_LEBONCOIN, libelleCanalConversation } from '@/lib/canaux/libelles'
+import { estCanalManuel, lienReponseManuelle, libelleCanalConversation } from '@/lib/canaux/libelles'
+import { lireOrigine, LIBELLE_ORIGINE } from '@/lib/canaux/reseaux'
 
 // Le volet « Conversations » du poste de pilotage (v5 §9 G1) — et la boîte /messages, qui
 // rend ce même composant. Une conversation = ce que voit le client, en miroir, plus ce que
@@ -18,6 +19,8 @@ type Lead = {
   canal: string | null
   /** Le Bon Coin seulement (0139) : lu seulement drapeau levé, la colonne n'existant qu'après la migration. */
   canal_lien_reponse?: string | null
+  /** 21/10/2026 (0177) : le réseau d'où vient la demande (?src= sur la page, ou réseau d'un import) — lu seulement drapeau levé. */
+  origine?: string | null
 }
 type Msg = { id: string; sens: 'in' | 'out'; type: string | null; contenu: string; sent_at: string; etat: string | null; modele: string | null }
 
@@ -38,11 +41,21 @@ const heure = (s: string) => {
 }
 // Les colonnes de 0139 ne sont demandées que si un canal est ouvert : drapeaux baissés, la requête reste celle d'avant
 // (une colonne absente ferait échouer toute la liste).
-const CANAUX_OUVERTS = actif('canauxWhatsapp') || actif('canauxReseaux') || actif('canauxLeboncoin')
+const CANAUX_OUVERTS = actif('canauxWhatsapp') || actif('canauxReseaux') || actif('canauxLeboncoin') || actif('canauxTelegram') || actif('canauxNotifications')
+// 21/10/2026 : canal_lien_reponse sert aussi aux réseaux lus par notification ; origine (0177) à « Vos réseaux » et à l'import.
+const ORIGINE_LUE = actif('canauxLiens') || actif('importProspects')
 const COLONNES_LEADS = 'id, nom_prospect, contact, message, statut, created_at, updated_at, lu_le, urgence, type_chantier, photos, prise_en_main, canal'
-  + (actif('canauxLeboncoin') ? ', canal_lien_reponse' : '')
+  + (actif('canauxLeboncoin') || actif('canauxNotifications') ? ', canal_lien_reponse' : '')
+  + (ORIGINE_LUE ? ', origine' : '')
 /** Le nom du canal de messagerie d'une conversation, ou null (formulaire, e-mail : rien ne change). */
 const canalDe = (l: { canal: string | null } | null) => (CANAUX_OUVERTS && l ? libelleCanalConversation(l.canal) : null)
+/** La pastille d'origine : « via Instagram » (page), « À contacter · TikTok » (import d'un formulaire publicitaire). Liste fermée. */
+const origineDe = (l: { canal: string | null; origine?: string | null } | null): string | null => {
+  if (!ORIGINE_LUE || !l) return null
+  const o = lireOrigine(l.origine)
+  if (l.canal === 'import') return `À contacter${o ? ` · ${LIBELLE_ORIGINE[o]}` : ''}`
+  return o ? `via ${LIBELLE_ORIGINE[o]}` : null
+}
 const isUnread = (l: Lead) => !l.lu_le && (l.statut === 'nouveau' || l.statut === 'en_discussion' || !l.statut)
 const clos = (l: Lead) => l.statut === 'gagne' || l.statut === 'perdu'
 
@@ -74,7 +87,9 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   const threadRef = useRef<HTMLDivElement>(null)
   const selLead = leads.find((l) => l.id === sel) || null
   const canalSel = canalDe(selLead)
-  const leboncoinSel = !!canalSel && selLead?.canal === 'leboncoin'
+  // Le Bon Coin et (21/10/2026) les réseaux lus par notification : pas d'API d'envoi, l'artisan colle la réponse.
+  const leboncoinSel = !!canalSel && estCanalManuel(selLead?.canal)
+  const lienManuel = lienReponseManuelle(selLead?.canal, selLead?.canal_lien_reponse)
 
   const jeton = async () => (await supabase.auth.getSession()).data.session?.access_token
   const appel = async (corps: Record<string, unknown>) => {
@@ -185,11 +200,11 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
     }
   }
 
-  /** Le Bon Coin n'a pas d'API : la réponse est copiée, Le Bon Coin s'ouvre (dans le geste du clic, sinon le navigateur bloque l'onglet). */
+  /** Le Bon Coin (et les réseaux lus par notification) n'a pas d'API : la réponse est copiée, la conversation d'origine s'ouvre (dans le geste du clic, sinon le navigateur bloque l'onglet). */
   function copierEtOuvrirLeboncoin(texte: string): Promise<boolean> {
     // La copie d'abord : la page doit avoir le focus quand elle demande le presse-papiers, et le nouvel onglet le lui prend.
     const copie = navigator.clipboard?.writeText(texte).then(() => true, () => false) ?? Promise.resolve(false)
-    window.open(selLead?.canal_lien_reponse || LIEN_MESSAGERIE_LEBONCOIN, '_blank', 'noopener')
+    if (lienManuel) window.open(lienManuel, '_blank', 'noopener')
     return copie
   }
 
@@ -264,7 +279,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   }
 
   const contactEmail = !canalSel && selLead?.contact && selLead.contact.includes('@')
-  const libelleEnvoi = leboncoinSel ? 'Copier et ouvrir Le Bon Coin' : canalSel ? `Valider et envoyer sur ${canalSel}` : 'Valider et envoyer'
+  const libelleEnvoi = leboncoinSel ? `Copier et ouvrir ${canalSel}` : canalSel ? `Valider et envoyer sur ${canalSel}` : 'Valider et envoyer'
   const visibles = leads.filter((l) => {
     if (filtre === 'urgent') return l.urgence === 'urgent' && !clos(l)
     if (filtre === 'validation') return enAttente.has(l.id)
@@ -302,6 +317,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
                   {l.urgence === 'urgent' && !clos(l) ? <span className="qtag urgent">⚡ Urgent</span> : null}
                   {l.type_chantier ? <span className="qtag">{l.type_chantier}</span> : null}
                   {canalDe(l) ? <span className="qtag">{canalDe(l)}</span> : null}
+                  {origineDe(l) ? <span className="qtag">{origineDe(l)}</span> : null}
                   <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
                 </span>
               </span>
@@ -325,7 +341,8 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
                 {selLead.urgence === 'urgent' && !clos(selLead) ? <span className="qtag urgent">⚡ Urgent</span> : null}
                 {selLead.type_chantier ? <span className="qtag">{selLead.type_chantier}</span> : null}
                 {canalSel ? <span className="qtag">{canalSel}</span> : null}
-                {leboncoinSel ? <a className="qtag" href={selLead.canal_lien_reponse || LIEN_MESSAGERIE_LEBONCOIN} target="_blank" rel="noopener">Ouvrir sur Le Bon Coin ↗</a> : null}
+                {origineDe(selLead) ? <span className="qtag">{origineDe(selLead)}</span> : null}
+                {leboncoinSel && lienManuel ? <a className="qtag" href={lienManuel} target="_blank" rel="noopener">Ouvrir sur {canalSel} ↗</a> : null}
                 {Array.isArray(selLead.photos) && selLead.photos.length ? <span className="qtag">{selLead.photos.length} photo{selLead.photos.length > 1 ? 's' : ''}</span> : null}
               </span>
             </div>
@@ -362,7 +379,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
             {msgs.length === 0 && <div className="inbox-empty-thread muted">Cette conversation démarre. Écrivez le premier message.</div>}
             {msgs.map((m) => m.etat === 'proposition' ? (
               <div key={m.id} className="pil-prop">
-                <span className="pil-prop-k">Réponse proposée par l’assistant{m.modele ? ` (${MODELE[m.modele] ?? m.modele})` : ''} — rien n’est parti{leboncoinSel ? ' · Le Bon Coin n’a pas d’accès automatique : la réponse sera copiée, collez-la dans la conversation qui s’ouvre' : ''}</span>
+                <span className="pil-prop-k">Réponse proposée par l’assistant{m.modele ? ` (${MODELE[m.modele] ?? m.modele})` : ''} — rien n’est parti{leboncoinSel ? ` · ${canalSel} n’a pas d’accès automatique : la réponse sera copiée, collez-la dans la conversation qui s’ouvre` : ''}</span>
                 <textarea rows={4} value={edition[m.id] ?? m.contenu} onChange={(e) => setEdition((p) => ({ ...p, [m.id]: e.target.value }))} />
                 <div className="pil-prop-act">
                   <button type="button" className="btn btn--primary" disabled={busy === m.id} onClick={() => proposition('valider', m)}>{busy === m.id ? '…' : libelleEnvoi}</button>
@@ -380,12 +397,12 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
           <div className="inbox-compose">
             <textarea value={draft} onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); envoyer() } }}
-              placeholder={leboncoinSel ? 'Votre réponse (copiée, à coller dans Le Bon Coin)…' : canalSel ? `Votre réponse (envoyée sur ${canalSel})…` : contactEmail ? 'Votre réponse (envoyée par email au client)…' : 'Votre réponse (visible dans sa conversation)…'} rows={2} />
+              placeholder={leboncoinSel ? `Votre réponse (copiée, à coller dans ${canalSel})…` : canalSel ? `Votre réponse (envoyée sur ${canalSel})…` : contactEmail ? 'Votre réponse (envoyée par email au client)…' : 'Votre réponse (visible dans sa conversation)…'} rows={2} />
             <div className="inbox-cbar">
               <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={suggesting} onClick={suggererIA} title="Rédige un brouillon que vous relisez — rien n’est envoyé sans vous">
                 {suggesting ? 'Rédaction…' : 'Proposer une réponse'}
               </button>
-              <button className="btn btn--primary" style={{ width: 'auto', marginLeft: 'auto' }} disabled={sending || !draft.trim()} onClick={envoyer}>{sending ? 'Envoi…' : leboncoinSel ? 'Copier et ouvrir Le Bon Coin' : 'Envoyer'}</button>
+              <button className="btn btn--primary" style={{ width: 'auto', marginLeft: 'auto' }} disabled={sending || !draft.trim()} onClick={envoyer}>{sending ? 'Envoi…' : leboncoinSel ? `Copier et ouvrir ${canalSel}` : 'Envoyer'}</button>
             </div>
             {err && <div className="msg err" style={{ marginTop: '.6rem' }}>{err}</div>}
           </div>

@@ -304,3 +304,27 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
 - À retenir : une provenance « vide = sûre » ne vaut que si TOUS les écrans font l'aller-retour du champ — un formulaire qui le perd
   blanchit la ligne. Un envoi qui perd sa validation humaine doit reprendre les garde-fous de l'envoi autonome (anonyme, mention IA,
   limites de conversation), pas ceux du clic de l'artisan.
+
+## 2026-10-21 — presti-audit-attaque — Canaux : Telegram, notifications des réseaux, « Vos réseaux », import CSV (non commité, 0177 non appliquée)
+- Contexte : lecture seule, zéro requête prod, aucun compte créé ; `canaux-reseaux-qa.mjs` joué en local (86/0) ; sonde hors dépôt
+  (scratchpad `sonde-notif.mjs`) sur lireMail + lireNotificationReseau ; DMARC publics lus par DNS.
+- Constat : 0 critique, 2 élevés. (E1) `lib/mailLite.ts:47` garde le DERNIER en-tête d'un nom → l'Authentication-Results lu est celui
+  que l'EXPÉDITEUR a posé sous ceux du serveur : fixture `faux-linkedin-dmarc-fail.eml` + une ligne `Authentication-Results: x;
+  dkim=pass header.d=linkedin.com; dmarc=pass header.from=linkedin.com` → verdict `ok`, rangé « LinkedIn ». 123devis (sans DMARC),
+  habitatpresto, solocal, starofservice (p=none) livrent le faux en boîte de réception ; même faille pour Le Bon Coin (leboncoin.ts:145).
+  L'écran promet « un faux LinkedIn est ignoré » (canaux/page.tsx:189). (E2) webhook Telegram sans aucune limite d'entrée ;
+  preparerReponseCanal envoie une notification e-mail `transactionnel` à CHAQUE message (serveur.ts:184), clé GLOBALE
+  `emails:produit:jour` 80 (email.ts:86-89) → un compte Telegram anonyme, un message toutes les 5 s, vide en ~7 min les e-mails
+  produit de TOUS les artisans. Moyens : crédits IA vidables (8/10 min/artisan = 1 152/j), messages/leads illimités par bot,
+  registre RGPD sans Telegram/notifications/import, colonnes de consentement de l'import jetées. Faibles : redirecteurs des réseaux
+  admis par lienSur (l.facebook.com/l.php, linkedin.com/redir, fb.me), fils fusionnés par nom/objet, fil Telegram sans canal_id,
+  mention IA + 4000 car. > 4096, CANAUX_KEY réutilisée en HMAC et AES.
+- Sain : secret de webhook dérivé par liaison (401 avant toute lecture, temps constant), drapeaux statiques (aucune surcharge),
+  jeton jamais renvoyé ni journalisé, getMe lie jeton et id du bot, pas de SSRF, envoi borné à ligneCanal(…, artisan), origine en
+  liste fermée + CHECK, import : uid de session et fichier relu côté serveur, aucun envoi automatique à un importé (pilote, relances,
+  refusAutomatique), mention IA sur l'envoi auto Telegram, rien en innerHTML, 0177 sans droit anon/authenticated.
+- Décision / action : rapport au dev principal ; aucun fichier du dépôt modifié hors ce journal.
+- À retenir : (a) un analyseur d'en-têtes maison qui écrase par nom rend tout en-tête de confiance (Authentication-Results,
+  Received) falsifiable : ne lire que le PREMIER, et seulement si son authserv-id est celui du serveur de la boîte ; (b) une
+  entrée publique sans coût pour l'émetteur (bot, webhook) ne doit jamais déclencher un envoi qui puise dans un plafond PARTAGÉ
+  entre comptes ; (c) une suite qui teste le parseur sur des fixtures à UN seul en-tête ne voit pas l'attaque par doublon.

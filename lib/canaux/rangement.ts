@@ -3,10 +3,13 @@
 // production, lib/canaux/serveur.ts ; en mémoire dans scripts/canaux-meta-e2e.mjs). Aucun appel à l'IA ici : la réponse se
 // prépare APRÈS la réponse 200 au webhook (lib/canaux/serveur.ts, preparerReponseCanal).
 import { LIBELLE_CANAL, type CanalMeta, type EntrantMeta } from './meta.ts'
+import type { CanalNotification } from './libelles.ts'
+import type { EntrantTelegram } from './telegram.ts'
 
-export type CanalConversation = CanalMeta | 'leboncoin'
+/** 21/10/2026 : + Telegram (API du bot de l'artisan) et les réseaux lus par leurs e-mails de notification (lib/canaux/notifications.ts). */
+export type CanalConversation = CanalMeta | 'leboncoin' | 'telegram' | CanalNotification
 
-export type Liaison = { id: string; artisan_id: string; type: string; actif: boolean }
+export type Liaison = { id: string; artisan_id: string; type: string; actif: boolean; externe_id?: string | null }
 
 export type LeadTrouve = { id: string; statut: string | null }
 
@@ -32,7 +35,7 @@ export interface MagasinCanaux {
    */
   ouvrirConversation(l: NouveauLead, depuisIso: string): Promise<LeadTrouve & { nouveau: boolean }>
   /** Met à jour la conversation existante à l'arrivée d'un message du client. */
-  rafraichir(leadId: string, champs: { canal_dernier_entrant_le: string; statut?: string; canal_lien_reponse?: string | null }): Promise<void>
+  rafraichir(leadId: string, champs: { canal_dernier_entrant_le: string; canal_id?: string; statut?: string; canal_lien_reponse?: string | null }): Promise<void>
   ajouterMessage(m: NouveauMessage): Promise<string>
 }
 
@@ -64,7 +67,9 @@ async function rangerCommun(
     const nouveau = o.nouveau
     if (!nouveau) {
       const statut = statutApresEntrant(o.statut)
-      await magasin.rafraichir(leadId, { canal_dernier_entrant_le: p.recuLe, ...(statut ? { statut } : {}), ...(p.lien ? { canal_lien_reponse: p.lien } : {}) })
+      // 21/10/2026 (audit du 21/10) : canal_id suit la liaison ACTUELLE — un bot reconnecté (nouvelle ligne `canaux`) répond de nouveau
+      // dans les fils d'avant au lieu de dire « déconnecté ».
+      await magasin.rafraichir(leadId, { canal_dernier_entrant_le: p.recuLe, canal_id: p.liaison.id, ...(statut ? { statut } : {}), ...(p.lien ? { canal_lien_reponse: p.lien } : {}) })
     }
     const messageId = await magasin.ajouterMessage({ lead_id: leadId, canal: p.canal, canal_id: p.liaison.id, externe_id: p.idMessage, contenu: p.texte, sent_at: p.recuLe })
     return { etat: 'range', r: { lead_id: leadId, message_id: messageId, artisan_id: p.liaison.artisan_id, canal: p.canal, nouveau, texte: p.texte } }
@@ -96,5 +101,37 @@ export async function rangerNotificationLeboncoin(
     // Le contact reste VIDE : l'adresse de l'expéditeur est celle de Le Bon Coin, pas du client — y répondre par e-mail
     // écrirait à un robot (et la relance du jour 2 aussi).
     nom: n.prenom ?? nomProvisoire('leboncoin'), contact: null, texte: n.texte, recuLe, lien: n.lien, maintenant,
+  })
+}
+
+/** La clé d'un fil Telegram : <id du bot>:<chat.id>. */
+export const personneTelegram = (botId: string, chatId: string): string => `${botId}:${chatId}`
+
+/**
+ * Range un message privé reçu par le bot Telegram de l'artisan. `liaison` : la ligne `canaux` (type telegram) retrouvée par la route
+ * à partir de l'id de son adresse de webhook — APRÈS vérification du secret dérivé de cet id. Une liaison coupée : `inconnu`.
+ */
+export async function rangerEntrantTelegram(e: EntrantTelegram, liaison: Liaison, magasin: MagasinCanaux, maintenant = Date.now()): Promise<IssueRangement> {
+  if (!liaison.actif || liaison.type !== 'telegram' || !liaison.externe_id) return { etat: 'inconnu' }
+  return rangerCommun(magasin, {
+    // La personne = <identifiant du BOT>:<chat> : un même client qui écrit à deux bots du même artisan a deux fils ; le même bot
+    // reconnecté retrouve les siens (audit du 21/10).
+    liaison, canal: 'telegram', personne: personneTelegram(liaison.externe_id, e.chat_id), idMessage: e.id_message,
+    nom: e.nom ?? nomProvisoire('telegram'), contact: e.telephone, texte: e.texte, recuLe: e.recu_le, lien: null, maintenant,
+  })
+}
+
+/**
+ * Range la notification e-mail d'un réseau sans API (LinkedIn, Page Facebook, Instagram, TikTok, plateformes de devis) reçue dans la
+ * boîte branchée `boite`. Comme Le Bon Coin : le contact reste VIDE (l'adresse est celle du réseau, pas du client), le lien est celui
+ * où coller la réponse.
+ */
+export async function rangerNotificationReseau(
+  n: { canal: CanalNotification; cle_conversation: string; nom: string | null; texte: string; lien: string },
+  boite: Liaison, idMessage: string, recuLe: string, magasin: MagasinCanaux, maintenant = Date.now(),
+): Promise<IssueRangement> {
+  return rangerCommun(magasin, {
+    liaison: boite, canal: n.canal, personne: n.cle_conversation, idMessage,
+    nom: n.nom ?? nomProvisoire(n.canal), contact: null, texte: n.texte, recuLe, lien: n.lien, maintenant,
   })
 }

@@ -1,0 +1,25 @@
+{
+  "update_id": 900000003,
+  "message": {
+    "message_id": 13,
+    "from": {
+      "id": 700000001,
+      "is_bot": false,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "language_code": "fr"
+    },
+    "chat": {
+      "id": 700000001,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "type": "private"
+    },
+    "date": 1792564320,
+    "contact": {
+      "phone_number": "33639980001",
+      "first_name": "Nina",
+      "user_id": 700000001
+    }
+  }
+}

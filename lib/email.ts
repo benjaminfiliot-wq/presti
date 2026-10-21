@@ -58,6 +58,10 @@ export async function sendEmail(opts: {
    *  notifications des artisans payants, et 80 envois par jour étaient partagés par tout le monde (audit des promesses,
    *  produit, ligne 103). Les plafonds anti-abus des envois `anonyme` s'appliquent toujours. */
   transactionnel?: boolean
+  /** 21/10/2026 (audit offensif des canaux, E2) : la part du plafond quotidien où l'envoi puise. 'canaux' : les notifications de
+   *  messages reçus par Telegram et par les e-mails de notification des réseaux (lib/canaux/serveur.ts) — un inconnu peut les
+   *  provoquer, elles ont donc LEUR part (EMAILS_CANAUX_PAR_JOUR, 40 par défaut) et ne vident plus celle des devis et factures. */
+  part?: 'canaux'
 }): Promise<SendResult> {
   // Les suites de test créent des comptes en @presti-test.invalid : un envoi réel vers un TLD
   // réservé rebondit à coup sûr et 34 % de rebonds abîmaient la réputation du domaine
@@ -83,9 +87,11 @@ export async function sendEmail(opts: {
   }
   if (!opts.critique) {
     const { consommerLimite } = await import('@/lib/limites')
-    const [cle, plafond] = opts.transactionnel
-      ? ['emails:produit:jour', Number(process.env.EMAILS_PRODUIT_PAR_JOUR) || 80]
-      : ['emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80]
+    const [cle, plafond] = opts.part === 'canaux'
+      ? ['emails:canaux:jour', Number(process.env.EMAILS_CANAUX_PAR_JOUR) || 40]
+      : opts.transactionnel
+        ? ['emails:produit:jour', Number(process.env.EMAILS_PRODUIT_PAR_JOUR) || 80]
+        : ['emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80]
     if (!(await consommerLimite(cle, plafond, 86_400))) {
       // L'adresse ne va PAS dans le journal : deux chemins non critiques passent ici avec celle
       // d'un client d'artisan (le prospect qui vient d'écrire, la réponse de l'artisan). Le

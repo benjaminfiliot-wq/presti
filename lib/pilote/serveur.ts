@@ -13,7 +13,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { actif } from '@/lib/flags'
 import { consommerLimiteStricte } from '@/lib/limites'
 import { envoyerPushArtisan } from '@/lib/push'
-import { estCanalConversation } from '@/lib/canaux/regles'
+import { piloteInterdit } from '@/lib/canaux/regles'
 import { peut } from '@/lib/plans'
 import type { FicheAction } from '@/lib/assistant/confirmation'
 import {
@@ -123,8 +123,10 @@ export async function piloterProposition(uid: string, p: { leadId: string; messa
     // Le message doit être une proposition d'un fil de CE compte.
     const { data: lead } = await supabaseAdmin.from('leads').select('id, artisan_id, nom_prospect, canal, prise_en_main').eq('id', p.leadId).maybeSingle()
     if (!lead || lead.artisan_id !== uid || lead.prise_en_main === true) return null
-    // WhatsApp, Messenger, Instagram (fenêtre de 24 h, jeton) et Le Bon Coin (l'artisan colle lui-même la réponse) : jamais en pilote.
-    if (estCanalConversation(lead.canal)) return null
+    // WhatsApp, Messenger, Instagram (fenêtre de 24 h, jeton), Le Bon Coin et les réseaux lus par notification (l'artisan colle
+    // lui-même la réponse), demande importée (la personne n'a pas écrit) : jamais en pilote. Telegram (21/10/2026) : oui, l'API du bot
+    // envoie pour de vrai (lib/canaux/regles.ts, CANAUX_PILOTABLES).
+    if (piloteInterdit(lead.canal)) return null
     const { data: m } = await supabaseAdmin.from('messages').select('id, etat').eq('id', p.messageId).eq('lead_id', lead.id).maybeSingle()
     if (!m || m.etat !== 'proposition') return null
     const d = await decider(uid, 'reponse_prospect', undefined)

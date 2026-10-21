@@ -18,7 +18,8 @@
 //    par confirmerAction (confirmation.ts), sur le clic de l'artisan.
 import { consommerLimite } from '@/lib/limites'
 import { sendEmail } from '@/lib/email'
-import { creerFacture } from '@/lib/factureDepuisDevis'
+import { creerFacture, simulerFacture } from '@/lib/factureDepuisDevis'
+import { estSituation } from '@/lib/crm/argent'
 import { COLONNES_LEGALES, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 import { mailDevis } from '@/lib/devisMail'
 import { jourParis } from '@/lib/comptaTableau'
@@ -65,6 +66,8 @@ export type DependancesActions = {
   /** POST /api/factures/[id]/envoyer (génère le PDF : chargé à la demande). */
   envoyerFacture?: Gestionnaire
   creerFacture?: typeof creerFacture
+  /** La simulation d'une facture de situation ou de solde (0176) : le montant exact de la carte, sans rien émettre. */
+  simulerFacture?: typeof simulerFacture
   envoyerMail?: typeof sendEmail
   maintenant?: () => Date
   /** L'appel des routes de l'interface (essais : une doublure qui enregistre la route atteinte, sans réseau). */
@@ -131,16 +134,18 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (error) throw new Error('devis illisible')
     return (data as unknown as DevisRow | null) ?? null
   }
-  type LigneRow = { designation: string; quantite: number | string; unite: string | null; prix_unitaire_ht: number | string; tva_taux: number | string; source_prix?: string | null }
+  // `lot` (0176, devis par lots) : lu par `*` pour qu'une modification par l'assistant ne retire pas les lignes de leur lot ; absent
+  // tant que la migration n'est pas appliquée, et alors rien ne change.
+  type LigneRow = { designation: string; quantite: number | string; unite: string | null; prix_unitaire_ht: number | string; tva_taux: number | string; source_prix?: string | null; lot?: string | null }
   async function lignesDe(devisId: string): Promise<LigneRow[]> {
-    const { data, error } = await session.from('devis_lignes').select('designation, quantite, unite, prix_unitaire_ht, tva_taux, source_prix, ordre').eq('devis_id', devisId).order('ordre')
+    const { data, error } = await session.from('devis_lignes').select('*').eq('devis_id', devisId).order('ordre')
     if (error) throw new Error('lignes illisibles')
     return (data ?? []) as unknown as LigneRow[]
   }
   const corpsDevis = (d: DevisRow, lignes: readonly LigneRow[], sur: Obj = {}): Obj => ({
     objet: d.objet, validite_jours: d.validite_jours ?? 90, remise_pct: num(d.remise_pct), acompte_pct: num(d.acompte_pct), conditions: d.conditions, notes: d.notes,
     client_nom: d.client_nom, client_email: d.client_email, client_adresse: d.client_adresse,
-    lignes: lignes.map((l) => ({ designation: l.designation, quantite: num(l.quantite), unite: l.unite ?? 'u', prix_unitaire_ht: num(l.prix_unitaire_ht), tva_taux: num(l.tva_taux), ...(l.source_prix ? { source_prix: l.source_prix } : {}) })),
+    lignes: lignes.map((l) => ({ designation: l.designation, quantite: num(l.quantite), unite: l.unite ?? 'u', prix_unitaire_ht: num(l.prix_unitaire_ht), tva_taux: num(l.tva_taux), ...(l.source_prix ? { source_prix: l.source_prix } : {}), ...(l.lot ? { lot: l.lot } : {}) })),
     ...sur,
   })
   async function tarifsParIds(ids: readonly string[]): Promise<Map<string, TarifLu>> {
@@ -334,11 +339,18 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!d) return ko(`Devis ${e.devis_numero} introuvable.`)
     if (d.statut !== 'accepte') return ko(`Le devis ${d.numero} n'est pas signé (statut : ${d.statut}) : on ne facture qu'un devis accepté.`)
     const acompte = e.type === 'acompte' ? num(e.acompte_pct) : undefined
-    const r = await (dep.creerFacture ?? creerFacture)({ artisanId: ctx.uid, devisId: d.id, ...(acompte ? { acomptePct: acompte } : {}) })
+    // 0176 (drapeau facturesSituation, validé par outils-actions.ts) : situation de travaux et solde explicite.
+    const typeNeuf = e.type === 'situation' || e.type === 'solde' ? e.type : null
+    const r = await (dep.creerFacture ?? creerFacture)({
+      artisanId: ctx.uid, devisId: d.id, ...(acompte ? { acomptePct: acompte } : {}),
+      ...(typeNeuf ? { type: typeNeuf, ...(typeNeuf === 'situation' ? { avancement: { global: num(e.avancement_pct) } } : {}) } : {}),
+      // Le TTC que la carte a annoncé (situation, solde) : un montant recalculé différent = rien d'émis (M5).
+      ...(typeof e.ttc_attendu === 'number' && Number.isFinite(e.ttc_attendu) ? { ttcAttendu: e.ttc_attendu } : {}),
+    })
     if (!r.ok) return ko(r.error)
     return {
-      ok: true, resume: `facture ${r.numero} émise${acompte ? ` (acompte ${fmtNombre(acompte)} %)` : ''} pour le devis ${d.numero}`, objet: { type: 'facture', id: r.id },
-      donnees: { numero_facture: r.numero, devis: d.numero, type: acompte ? 'acompte' : 'complete' },
+      ok: true, resume: `facture ${r.numero} émise${acompte ? ` (acompte ${fmtNombre(acompte)} %)` : typeNeuf === 'situation' ? ` (situation de travaux, avancement cumulé ${fmtNombre(num(e.avancement_pct))} %)` : typeNeuf === 'solde' ? ' (solde)' : ''} pour le devis ${d.numero}`, objet: { type: 'facture', id: r.id },
+      donnees: { numero_facture: r.numero, devis: d.numero, type: acompte ? 'acompte' : typeNeuf ?? 'complete' },
       apercu: { irreversible: true, lien: lienDe('facture', r.id) },
     }
   }
@@ -827,6 +839,31 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     const annulees = new Set(lignes.map((f) => f.avoir_de).filter(Boolean))
     const vivantes = lignes.filter((f) => !f.avoir_de && !annulees.has(f.id))
     const acompte = e.type === 'acompte' ? num(e.acompte_pct) : 0
+    // 0176 — situation de travaux, solde explicite, ou facture « complète » d'un devis déjà facturé par situations (c'est alors le
+    // SOLDE) : la carte annonce le montant EXACT que le clic émettra, calculé par le chemin même de la création (simulation : ni
+    // numéro, ni écriture). Un refus (avancement qui recule, rien à facturer…) est dit ici, avant toute carte.
+    const parSituations = vivantes.some((f) => estSituation(f))
+    if (e.type === 'situation' || e.type === 'solde' || (parSituations && e.type !== 'acompte')) {
+      const type = e.type === 'situation' ? 'situation' as const : 'solde' as const
+      const sim = await (dep.simulerFacture ?? simulerFacture)({ artisanId: ctx.uid, devisId: d.id, type, ...(type === 'situation' ? { avancement: { global: num(e.avancement_pct) } } : {}) })
+      if (!sim.ok) return ko(sim.error)
+      const det = sim.situation?.detail
+      const alertesS = ['Une facture est émise et scellée dès sa création : numéro définitif, plus modifiable (une erreur se corrige par un avoir).']
+      if (det) alertesS.push('L’avancement est CUMULÉ depuis le début du chantier : la prochaine situation ne pourra pas descendre sous ce pourcentage.')
+      return {
+        // Le TTC annoncé part avec la carte (audit argent du 21/10, M5) : au clic, s'il a changé d'un centime, rien n'est émis.
+        ok: true, entrees: { ...e, ttc_attendu: sim.total_ttc }, objet: { type: 'devis', id: d.id },
+        apercu: apercu(sim.situation ? `Situation de travaux n° ${sim.situation.numero} — devis ${d.numero}` : `Facture de solde — devis ${d.numero}`, {
+          lignes: [
+            { label: 'Client', valeur: d.client_nom ?? '—' }, { label: 'Devis', valeur: `${d.numero} — ${d.objet ?? 'sans objet'}` },
+            ...(det ? [{ label: 'Avancement cumulé', valeur: `${fmtNombre(det.avancement_pct)} % — ${fmtEuros(det.cumul_ht)} HT sur ${fmtEuros(det.marche_ht)} HT` }, { label: 'Déjà facturé HT (déduit)', valeur: fmtEuros(det.deja_facture_ht) }] : []),
+            ...(!det && sim.deduites.length ? [{ label: 'Factures déduites', valeur: sim.deduites.join(', ') }] : []),
+            { label: 'Montant de cette facture TTC', valeur: fmtEuros(sim.total_ttc) }, { label: 'Échéance', valeur: '30 jours après l’émission' },
+          ],
+          alertes: alertesS, irreversible: true, lien: lienDe('devis', d.id),
+        }),
+      }
+    }
     const complete = vivantes.find((f) => !/^Acompte/i.test(f.objet ?? ''))
     if (!acompte && complete) return ko(`Ce devis est déjà facturé (${complete.numero}). Pour refaire la facture, il faut d'abord un avoir (écran Factures).`)
     const acomptes = vivantes.filter((f) => /^Acompte/i.test(f.objet ?? ''))

@@ -153,6 +153,9 @@ const SUITES = [
   // 21/10 (décisions du fondateur) : le PILOTE AUTOMATIQUE (Signature, 10 min pour annuler, garde-fous), l'avancement sans ressaisie
   // (photo « Après », lien de pointage), l'assistant relié à tout Presti, l'assistant dans l'atelier, le CRM connecté en temps réel.
   { nom: 'Pilote automatique — délai de 10 min, annulation, prix non sourcé → manuel, plafond, idempotence, Signature seulement, drapeau baissé = rien (0174)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/pilote-qa.mjs'], cout: 'gratuit' },
+  // 21/10 : types de devis (lots) et de factures (acompte, situation, solde), et canaux sans API (Telegram, notifications, liens, import).
+  { nom: 'Types de devis et de factures — lots, situations au centime, solde, garde-fous (0176)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/types-devis-factures-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Canaux réseaux — Telegram, notifications des réseaux, liens, import de prospects (0177)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/canaux-reseaux-qa.mjs'], cout: 'gratuit' },
   { nom: 'Avancement des chantiers sans ressaisie — assistant (avancer_chantier), photo « Après », lien de pointage du compagnon (0174)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/avancement-qa.mjs'], cout: 'gratuit' },
   { nom: 'Assistant relié à tout Presti', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/assistant-tout-qa.mjs'], cout: 'gratuit' },
   { nom: 'CRM — l’assistant dans l’atelier : panneau, contexte vérifié, verrou d’offre, exemple simulé, fil d’activité, file du pilote', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-assistant-panneau-qa.mjs'], cout: 'gratuit' },

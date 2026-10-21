@@ -1,6 +1,7 @@
 import { computeTotals } from './devisTotals'
 import type { PDFData } from './DevisPDF'
 import { mentionFranchise, formaterSiren, type BaseMention } from '@/lib/facturation'
+import { grouperParLots, lireDetailSituation, HORS_LOT, LIBELLES_FACTURE, TYPES_FACTURE, type TypeFacture } from './facturesTypes.ts'
 
 type ArtisanRow = {
   nom?: string | null; metier?: string | null; forme_juridique?: string | null
@@ -15,8 +16,10 @@ type DevisRow = {
   remise_pct?: number | null; acompte_pct?: number | null; statut?: string | null
   client_nom?: string | null; client_adresse?: string | null; objet?: string | null
   client_siren?: string | null; adresse_chantier?: string | null; date_prestation?: string | null; tva_sur_debits?: boolean | null
+  /** 0176 : devis par lots ; type de facture et détail figé d'une situation de travaux. Absents avant la migration. */
+  type_devis?: string | null; type_facture?: string | null; situation_numero?: number | null; situation_detail?: unknown
 }
-type LigneRow = { designation?: string | null; quantite?: number | null; unite?: string | null; prix_unitaire_ht?: number | null; tva_taux?: number | null }
+type LigneRow = { designation?: string | null; quantite?: number | null; unite?: string | null; prix_unitaire_ht?: number | null; tva_taux?: number | null; lot?: string | null }
 
 const dateFr = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
 
@@ -125,6 +128,22 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     ? [artisan.nom, adresseArtisan, artisan.email_public || artisan.email].filter(Boolean).join(' — ')
     : ''
 
+  // 0176 — DEVIS PAR LOTS : chaque lot en titre, ses lignes, son sous-total HT (brut, avant remise, comme la colonne des
+  // lignes). Les totaux ne bougent pas : ils restent ceux de computeTotals sur toutes les lignes, ci-dessus.
+  const lots = type === 'devis' && devis.type_devis === 'lots'
+    ? grouperParLots((lignes || []).map((l, i) => ({ ...ls[i], lot: l.lot ?? null }))).map((g) => ({
+      titre: g.lot ?? HORS_LOT, sousTotalHt: g.sousTotalHt,
+      lignes: g.lignes.map(({ designation, quantite, unite, prix_unitaire_ht, tva_taux }) => ({ designation, quantite, unite, prix_unitaire_ht, tva_taux })),
+    }))
+    : undefined
+  // 0176 — le TYPE de la facture (sous le titre) et, pour une situation, ses mentions : devis de référence, marché HT, cumul
+  // antérieur, cumul à date, déjà facturé, montant de la situation. Lues dans le détail FIGÉ à l'émission, jamais recalculées.
+  const typeFacture = type === 'facture' && !devis.avoir_de && (TYPES_FACTURE as readonly unknown[]).includes(devis.type_facture) ? devis.type_facture as TypeFacture : null
+  const detail = typeFacture === 'situation' ? lireDetailSituation(devis.situation_detail) : null
+  const typeLibelle = typeFacture === 'situation'
+    ? `${LIBELLES_FACTURE.situation} n° ${devis.situation_numero ?? '?'}`
+    : typeFacture && typeFacture !== 'standard' ? LIBELLES_FACTURE[typeFacture] : ''
+
   return {
     numero: devis.numero || '', date: dateFr(emission), validiteDate: dateFr(validiteDate), validiteJours,
     entNom: artisan.nom || '', entSub,
@@ -143,5 +162,8 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     mentionsReglement: type === 'facture' ? mentionsReglement(!!clientSiren) : [],
     mentionTvaDebits: tvaDebits ? MENTION_TVA_DEBITS : '',
     retractationDestinataire,
+    ...(lots ? { lots } : {}),
+    ...(typeLibelle ? { typeLibelle } : {}),
+    ...(detail ? { situation: { numero: Number(devis.situation_numero) || 0, ...detail } } : {}),
   }
 }

@@ -1,7 +1,7 @@
 // CRM — ce qui se calcule sur UN chantier : tâches nées du devis, avancement, retard, et les trois boutons de la fiche.
 // Module pur (un seul import, pur aussi) : rejoué par scripts/crm-qa.mjs.
 import { centimes, facturesComptees, type FacturePresti } from '../comptaTableau.ts'
-import { argentDossier, estAcompte, type Argent, type FactureArgent } from './argent.ts'
+import { argentDossier, estAcompte, estSituation, type Argent, type FactureArgent } from './argent.ts'
 import { pieceDe } from './plan.ts'
 
 export type LigneDevis = { id: string; ordre?: number | null; designation?: string | null; quantite?: number | string | null; unite?: string | null }
@@ -128,7 +128,8 @@ export function actionsChantier(p: {
   // Audit de cohérence du 18/10, C3 corrigé : sur un devis dont seuls des ACOMPTES sont facturés, le même chemin émet la facture
   // du SOLDE (lignes du devis moins chaque acompte, lib/factureDepuisDevis.ts). Une facture complète ou de solde existe : désactivé.
   const du = p.devis && p.devis.total_ttc !== undefined && p.devis.total_ttc !== null ? centimes(p.devis.total_ttc) : null
-  const completes = comptees.filter((f) => !estAcompte(f, du))
+  // 0176 : une situation de travaux n'est pas une facture complète — après elle, « Facturer » émet le solde (situations déduites).
+  const completes = comptees.filter((f) => !estAcompte(f, du) && !estSituation(f))
   const facturer: Bouton = !p.devis
     ? { actif: false, raison: 'Ce chantier n’a pas de devis : la facture se crée depuis l’écran Factures.' }
     : !signe

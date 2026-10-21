@@ -204,6 +204,14 @@ export const TRAITEMENTS: { cle: CleDuree | null; finalite: string; donnees: str
     // une facture — pas tout fil portant un devis. Le texte dit ce que la machine fait.
     duree: `${libelleDuree(DUREES_MOIS.conversation)} à compter de notre dernier échange, sauf si la conversation est liée à un devis signé ou à une facture : elle suit alors la durée des pièces comptables`,
   },
+  // 21/10 (0177, lib/canaux/importProspects.ts) : un prospect d'un formulaire publicitaire de l'artisan, importé par fichier ; aucun envoi automatique.
+  {
+    cle: 'conversation',
+    finalite: 'Vous recontacter après que vous avez rempli le formulaire d’une publicité de l’artisan (TikTok, Facebook, Instagram, LinkedIn…)',
+    donnees: 'Nom, coordonnées et message saisis dans le formulaire, nom du réseau d’origine ; aucun message ne vous est envoyé automatiquement',
+    base: 'Mesures précontractuelles prises à votre demande (RGPD art. 6.1.b) : vous avez demandé à être recontacté',
+    duree: `${libelleDuree(DUREES_MOIS.conversation)} sans échange avec l’artisan, puis suppression`,
+  },
   {
     cle: 'comptable',
     finalite: 'Établir un devis, puis une facture si les travaux sont réalisés',
@@ -303,6 +311,8 @@ export const SOUS_TRAITANTS: { nom: string; role: string; lieu: string }[] = [
   { nom: 'Vercel', role: 'Hébergement du site et de la plateforme', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
   { nom: 'Anthropic', role: 'Modèle d’intelligence artificielle qui aide à rédiger les réponses (le message du prospect lui est transmis pour cela) et fait fonctionner l’assistant de gestion de la console (qui peut lire les devis, factures, conversations et chantiers du compte, donc des noms de clients et des montants)', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
   { nom: 'Resend', role: 'Envoi des emails (réponses, relances, devis)', lieu: 'États-Unis, encadré par les clauses contractuelles types' },
+  // 21/10 (0177) : seulement si l'artisan relie son propre bot Telegram (drapeau canauxTelegram).
+  { nom: 'Telegram', role: 'Messagerie : transmet les messages échangés avec le bot Telegram de l’artisan, seulement s’il en a relié un (identifiant Telegram, prénom, texte des messages)', lieu: 'Hors Union européenne (Telegram FZ-LLC) ; canal choisi par l’artisan, sans clauses contractuelles types connues' },
 ]
 
 /** Phrase d'information affichée AU MOMENT de la collecte (RGPD art. 13). */

@@ -1,0 +1,28 @@
+{
+  "update_id": 900000002,
+  "message": {
+    "message_id": 12,
+    "from": {
+      "id": 700000001,
+      "is_bot": false,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "language_code": "fr"
+    },
+    "chat": {
+      "id": 700000001,
+      "first_name": "Nina",
+      "last_name": "Fictive",
+      "type": "private"
+    },
+    "date": 1792564260,
+    "photo": [
+      {
+        "file_id": "FIXTURE",
+        "width": 90,
+        "height": 90
+      }
+    ],
+    "caption": "Voilà la fuite"
+  }
+}

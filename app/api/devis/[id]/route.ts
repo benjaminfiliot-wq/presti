@@ -4,6 +4,10 @@ import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { datesDuStatut } from '@/lib/devisStatut'
 import { authArtisan as verifierSession, estEchec, getUserRevocable } from '@/lib/authArtisan'
+import { actif } from '@/lib/flags'
+import { normaliserLot, typeDevisDemande } from '@/lib/facturesTypes'
+import { colonnesLotsPresentes, INDISPONIBLE_0176 } from '@/lib/facturesTypesServeur'
+import { fonctionAbsente } from '@/lib/factureEmission'
 
 const DEVIS_STATUTS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expire']
 
@@ -19,17 +23,30 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const uid = session.uid
 
     // Vérifier la propriété
-    const { data: owned } = await supabaseAdmin.from('devis').select('id, statut, envoye_le, accepte_le').eq('id', id).eq('artisan_id', uid).maybeSingle()
+    // `*` : avec 0176, le type du devis (simple / par lots) — gardé quand la requête ne le dit pas (l'assistant, par exemple).
+    const { data: owned } = await supabaseAdmin.from('devis').select('*').eq('id', id).eq('artisan_id', uid).maybeSingle()
     if (!owned) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
 
     const b = await req.json()
     const lignes: LigneIn[] = Array.isArray(b?.lignes) ? b.lignes : []
+    if (lignes.length > 200) return NextResponse.json({ error: 'Trop de lignes (200 max).' }, { status: 400 })
 
     // Franchise de TVA (défaut) ⇒ 0 % ; taux normalisé une seule fois (totaux = stockage).
     const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
     const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
     const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
+
+    // Devis PAR LOTS (drapeau `devisLots`, 0176) — mêmes règles qu'à la création (app/api/devis/route.ts). Le type n'est changé
+    // que s'il est demandé ; les lots des lignes ne sont écrits que sur un devis par lots.
+    const lotsOuverts = actif('devisLots')
+    const typeDevis = lotsOuverts ? typeDevisDemande(b?.type_devis) : null
+    const colonnesLots = lotsOuverts ? await colonnesLotsPresentes() : false
+    if (typeDevis === 'lots' && !colonnesLots) return NextResponse.json({ error: INDISPONIBLE_0176 }, { status: 503 })
+    const typeFinal = typeDevis ?? ((owned as { type_devis?: unknown }).type_devis === 'lots' ? 'lots' : 'simple')
+    const lignesEcrites = colonnesLots && typeFinal === 'lots'
+      ? eff.map((l, i) => { const lot = normaliserLot((lignes[i] as { lot?: unknown })?.lot); return lot ? { ...l, lot } : l })
+      : eff
 
     const patch: Record<string, unknown> = {
       objet: b?.objet ?? null,
@@ -45,6 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       total_tva: totals.total_tva,
       total_ttc: totals.total_ttc,
       updated_at: new Date().toISOString(),
+      ...(colonnesLots && typeDevis ? { type_devis: typeDevis } : {}),
     }
     if (typeof b?.statut === 'string' && DEVIS_STATUTS.includes(b.statut)) {
       patch.statut = b.statut
@@ -53,22 +71,46 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       Object.assign(patch, datesDuStatut(owned, b.statut))
     }
 
+    // Les LIGNES d'abord, avec les totaux, en UNE transaction (0180, devis_lignes_remplacer). Audit argent du 21/10 (M2) : on
+    // supprimait les lignes puis on réinsérait sans lire l'erreur — un échec (un émoji coupé en deux suffisait) laissait le devis
+    // VIDE. Sans 0180 : suppression puis insertion vérifiée, et en cas d'échec les anciennes lignes sont remises.
+    const remplacees = await remplacerLignes(id, uid, lignesEcrites, totals)
+    if (!remplacees.ok) return NextResponse.json({ error: remplacees.error }, { status: 500 })
+
     const { error: upErr } = await supabaseAdmin.from('devis').update(patch).eq('id', id).eq('artisan_id', uid)
     if (upErr) { console.error('[devis PATCH]', upErr.message); return NextResponse.json({ error: 'Mise à jour impossible' }, { status: 500 }) }
-
-    // Remplacer les lignes
-    await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', id)
-    if (eff.length) {
-      await supabaseAdmin.from('devis_lignes').insert(
-        eff.map((l, i) => ({ devis_id: id, ordre: i, ...l })),
-      )
-    }
 
     return NextResponse.json({ ok: true, ...totals })
   } catch (e) {
     console.error('[devis PATCH] inattendu:', e)
     return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
   }
+}
+
+/** Remplace les lignes d'un devis et ses totaux sans jamais le laisser vide : la fonction atomique de 0180, sinon un chemin
+ *  compensé (anciennes lignes relues, puis remises si l'insertion échoue). */
+async function remplacerLignes(devisId: string, uid: string, lignes: Record<string, unknown>[], totaux: { total_ht: number; total_tva: number; total_ttc: number }): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { error } = await supabaseAdmin.rpc('devis_lignes_remplacer', { p_devis: devisId, p_artisan: uid, p_lignes: lignes, p_totaux: totaux })
+  if (!error) return { ok: true }
+  if (!fonctionAbsente(error)) { console.error('[devis PATCH] lignes :', error.message); return { ok: false, error: 'Enregistrement des lignes impossible : le devis est resté tel qu’il était.' } }
+  const { data: avant, error: lErr } = await supabaseAdmin.from('devis_lignes').select('*').eq('devis_id', devisId).order('ordre')
+  if (lErr) { console.error('[devis PATCH] lecture des lignes :', lErr.message); return { ok: false, error: 'Enregistrement des lignes impossible : le devis est resté tel qu’il était.' } }
+  const { error: dErr } = await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', devisId)
+  if (dErr) { console.error('[devis PATCH] suppression des lignes :', dErr.message); return { ok: false, error: 'Enregistrement des lignes impossible : le devis est resté tel qu’il était.' } }
+  if (lignes.length) {
+    const { error: iErr } = await supabaseAdmin.from('devis_lignes').insert(lignes.map((l, i) => ({ devis_id: devisId, ordre: i, ...l })))
+    if (iErr) {
+      console.error('[devis PATCH] insertion des lignes :', iErr.message)
+      if ((avant ?? []).length) {
+        const { error: rErr } = await supabaseAdmin.from('devis_lignes').insert(avant ?? [])
+        if (rErr) console.error('[devis PATCH] REMISE DES ANCIENNES LIGNES IMPOSSIBLE :', rErr.message)
+      }
+      return { ok: false, error: 'Enregistrement des lignes impossible : les lignes d’avant ont été remises, rien n’a changé.' }
+    }
+  }
+  const { error: tErr } = await supabaseAdmin.from('devis').update(totaux).eq('id', devisId).eq('artisan_id', uid)
+  if (tErr) console.error('[devis PATCH] totaux :', tErr.message)
+  return { ok: true }
 }
 
 // Supprime un devis (et ses lignes) — UNIQUEMENT tant qu'il est brouillon.

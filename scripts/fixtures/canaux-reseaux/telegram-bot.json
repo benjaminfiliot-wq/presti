@@ -1,0 +1,18 @@
+{
+  "update_id": 900000007,
+  "message": {
+    "message_id": 17,
+    "from": {
+      "id": 700000002,
+      "is_bot": true,
+      "first_name": "Robot"
+    },
+    "chat": {
+      "id": 700000002,
+      "first_name": "Robot",
+      "type": "private"
+    },
+    "date": 1792564560,
+    "text": "spam"
+  }
+}

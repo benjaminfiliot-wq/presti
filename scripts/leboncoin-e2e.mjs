@@ -9,7 +9,11 @@ import { lireNotificationLeboncoin, lienLeboncoinSur, authentificationEchouee, c
 
 let ok = 0, ko = 0
 const T = (nom, cond, detail = '') => { if (cond) { ok++; console.log(`  ✅ ${nom}`) } else { ko++; console.log(`  ❌ ${nom}${detail ? ` — ${detail}` : ''}`) } }
-const lire = (n) => lireMail(readFileSync(new URL(`./fixtures/leboncoin/${n}`, import.meta.url)))
+// 21/10/2026 (audit offensif, E1) : une notification exige aussi une signature DKIM VÉRIFIÉE par nous (lib/canaux/dkim.ts, éprouvé par
+// scripts/canaux-reseaux-qa.mjs avec de vraies signatures). Les fixtures ne sont pas signées : on part ici d'un e-mail dont la relève a
+// vérifié la signature de leboncoin.fr ; `lireBrut` montre qu'un e-mail SANS cette vérification n'est jamais reconnu.
+const lireBrut = (n) => lireMail(readFileSync(new URL(`./fixtures/leboncoin/${n}`, import.meta.url)))
+const lire = (n) => ({ ...lireBrut(n), dkim_valides: ['leboncoin.fr'] })
 const voir = (x) => JSON.stringify(x)
 
 console.log('\n── 1. Texte recopié, multipart quoted-printable (01)')
@@ -48,12 +52,25 @@ T('e-mail forgé (dmarc=fail) → ignoré', lireNotificationLeboncoin(lire('91-f
 T('« nouveau message » venant d’un autre domaine → ignoré', lireNotificationLeboncoin({ de: { nom: 'x', email: 'messagerie@leboncoin.fr.exemple.invalid' }, sujet: 'Nouveau message de Paul', texte: 'Paul vous a envoyé un message', html: '' }) === null)
 T('domaine ressemblant (faux-leboncoin.fr) → ignoré', lireNotificationLeboncoin({ de: { nom: 'x', email: 'a@faux-leboncoin.fr' }, sujet: 'Nouveau message', texte: 'Paul vous a envoyé un message', html: '' }) === null)
 T('e-mail sans expéditeur → ignoré, sans exception', lireNotificationLeboncoin({ de: { nom: null, email: null }, sujet: '', texte: '', html: null }) === null)
-const seulementPhishing = lireNotificationLeboncoin({ de: { nom: 'lbc', email: 'messagerie@leboncoin.fr' }, sujet: 'Nouveau message de Paul', texte: 'Paul vous a envoyé un message.', html: '<a href="https://evil.exemple.invalid/messages/1">Répondre</a><a href="http://www.leboncoin.fr/messages/123456">http</a>' })
+// 21/10/2026 (audit offensif, E1) : une notification n'est reconnue qu'avec dkim=pass ALIGNÉ dans l'en-tête posé par le serveur de la boîte.
+const AUTH_OK = 'mx.exemple-artisan.fr; spf=pass smtp.mailfrom=leboncoin.fr; dkim=pass header.d=leboncoin.fr'
+const seulementPhishing = lireNotificationLeboncoin({ authentification: AUTH_OK, dkim_valides: ['leboncoin.fr'], de: { nom: 'lbc', email: 'messagerie@leboncoin.fr' }, sujet: 'Nouveau message de Paul', texte: 'Paul vous a envoyé un message.', html: '<a href="https://evil.exemple.invalid/messages/1">Répondre</a><a href="http://www.leboncoin.fr/messages/123456">http</a>' })
 T('seuls des liens hors domaine ou en http → messagerie générale', seulementPhishing?.lien === LIEN_MESSAGERIE_LEBONCOIN, voir(seulementPhishing?.lien))
 T('lienLeboncoinSur : identifiants dans l’adresse refusés', lienLeboncoinSur('https://user:pass@www.leboncoin.fr/messages') === null)
 T('lienLeboncoinSur : &amp; décodé', lienLeboncoinSur('https://www.leboncoin.fr/messages?a=1&amp;b=2') === 'https://www.leboncoin.fr/messages?a=1&b=2')
 T('authentification : spf=fail sans dkim=pass → forgé ; absent → on ne conclut rien', authentificationEchouee('spf=fail; dkim=none') && !authentificationEchouee('spf=fail; dkim=pass') && !authentificationEchouee(null))
-T('sans lien dans l’e-mail : clé par annonce + prénom, stable', lireNotificationLeboncoin({ de: { nom: 'lbc', email: 'no-reply@leboncoin.fr' }, sujet: 'Nouveau message concernant « Pose de parquet »', texte: 'Léa vous a envoyé un message.', html: '' })?.cle_conversation === 'lbc:a:pose-de-parquet|lea')
+T('sans lien dans l’e-mail : clé par annonce + prénom, stable', lireNotificationLeboncoin({ authentification: AUTH_OK, dkim_valides: ['leboncoin.fr'], de: { nom: 'lbc', email: 'no-reply@leboncoin.fr' }, sujet: 'Nouveau message concernant « Pose de parquet »', texte: 'Léa vous a envoyé un message.', html: '' })?.cle_conversation === 'lbc:a:pose-de-parquet|lea')
+
+console.log('\n── 5. Authentification exigée (audit offensif du 21/10, E1)')
+const sansEntete = { dkim_valides: ['leboncoin.fr'], de: { nom: 'lbc', email: 'no-reply@leboncoin.fr' }, sujet: 'Nouveau message concernant « Pose de parquet »', texte: 'Léa vous a envoyé un message.', html: '' }
+T('sans Authentication-Results → ignoré (non vérifié : pas de pastille ni de réponse préparée)', lireNotificationLeboncoin(sansEntete) === null)
+T('dmarc=pass seul, sans signature DKIM alignée → ignoré', lireNotificationLeboncoin({ ...sansEntete, authentification: 'mx; dmarc=pass header.from=leboncoin.fr' }) === null)
+T('dkim=pass d’un AUTRE domaine → ignoré', lireNotificationLeboncoin({ ...sansEntete, authentification: 'mx; dkim=pass header.d=attaquant.example' }) === null)
+const m92 = lire('92-forge-deux-entetes.eml')
+T('deux en-têtes : on lit le PREMIER (celui du serveur de la boîte), pas celui que l’expéditeur a écrit plus bas', /dkim=none/.test(m92.authentification ?? '') && !/attaquant\.example; spf=pass/.test(m92.authentification ?? ''))
+T('e-mail forgé avec un faux « dkim=pass header.d=leboncoin.fr » sous l’en-tête du serveur → ignoré', lireNotificationLeboncoin(m92) === null)
+T('en-tête « dkim=pass » parfait mais signature NON vérifiée par nous (ou d’un autre domaine) → ignoré',
+  lireNotificationLeboncoin(lireBrut('01-texte-recopie.eml')) === null && lireNotificationLeboncoin({ ...lireBrut('01-texte-recopie.eml'), dkim_valides: ['attaquant.example'] }) === null && !!lireNotificationLeboncoin(lire('01-texte-recopie.eml')))
 
 console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} en échec`)
 process.exitCode = ko === 0 ? 0 : 1

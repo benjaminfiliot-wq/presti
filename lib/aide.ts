@@ -133,23 +133,32 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'studio'
   },
 
-  // source: app/messages/canaux/page.tsx:1-171 ; app/api/canaux/route.ts:1-40 (chiffrement + test avant enregistrement)
+  // source: app/messages/canaux/page.tsx ; app/api/canaux/route.ts:1-40 (chiffrement + test avant enregistrement) ; 21/10 : lib/canaux/telegram.ts
+  // (bot de l'artisan, jeton chiffré), lib/canaux/notifications.ts (e-mails de notification des réseaux, expéditeur vérifié), lib/canaux/reseaux.ts
+  // (liens ?src= et QR), lib/canaux/importProspects.ts (import CSV, aucun envoi) — drapeaux canauxTelegram, canauxNotifications, canauxLiens, importProspects
   {
     id: 'canaux',
     page: '/messages/canaux',
-    titre: 'Canaux : connectez votre boîte email',
+    titre: 'Canaux : tous vos messages au même endroit',
     aQuoiCaSert:
       'Reliez une adresse email (OVH, Gmail, Orange, Free…) pour que les demandes qui y arrivent se rangent aussi ' +
       "dans votre boîte de réception Presti. Votre mot de passe est chiffré avant d'être enregistré, et la connexion " +
       'est testée avant validation. Les boîtes connectées sont relevées automatiquement chaque matin, et à chaque ' +
-      'ouverture de vos messages.',
+      'ouverture de vos messages. ' +
+      'Telegram : créez votre bot avec @BotFather et collez son jeton ici ; vos clients écrivent à votre bot, et vous répondez depuis Presti. ' +
+      'LinkedIn, Facebook, Instagram, TikTok, PagesJaunes, Houzz, 123devis… : branchez la boîte qui reçoit leurs e-mails de notification ; chaque message arrive ici avec une réponse préparée, et « Copier et ouvrir » la colle dans la conversation d’origine. ' +
+      '« Vos réseaux » vous donne, pour chaque réseau, un lien vers votre page, un QR code et le texte à coller dans votre bio et votre message d’accueil : la demande arrive ici avec le nom du réseau. ' +
+      'Prospects de vos publicités : déposez l’export CSV du formulaire, ils arrivent « À contacter », et aucun message ne leur est envoyé.',
     commentOnSenSert: [
       "Saisissez votre adresse email et son mot de passe (un « mot de passe d'application » pour Gmail ou Outlook).",
       "Si votre hébergeur n'est pas reconnu, ouvrez « Mon serveur n'est pas reconnu » et indiquez le serveur IMAP et son port.",
       'Cliquez « Connecter ma boîte ».',
       'Au besoin, cliquez « Relever maintenant » pour forcer une relève immédiate.',
+      'Pour Telegram, ouvrez @BotFather dans Telegram, créez un bot, copiez son jeton et collez-le dans « Telegram ».',
+      'Dans « Vos réseaux », copiez le lien ou le QR code de chaque réseau et collez-le dans votre bio et vos messages d’accueil.',
+      'Pour une publicité, exportez les prospects du formulaire en CSV et déposez le fichier dans « Prospects de vos publicités » : vérifiez l’aperçu, puis importez.',
     ],
-    pourVosClients: "Rien de visible pour eux — c'est un canal de réception supplémentaire pour vous.",
+    pourVosClients: "Ils vous écrivent où ils veulent ; vous voyez tout ici. Votre nom reste le seul visible : la page et le bot sont à votre marque.",
     credits: 'Aucun',
     reglagesLies: ['/messages'],
     disponibleAvec: 'studio'
@@ -225,6 +234,51 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Le PDF de facture reprend automatiquement les lignes du devis accepté.',
     credits: 'Aucun — la facture reprend les lignes du devis, sans nouvel appel à l’IA.',
     reglagesLies: ['/devis', '/parametres?onglet=legal'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/devis/[id]/page.tsx (choix « Devis simple / par lots ») ; lib/DevisPDF.tsx (titre et sous-total HT par lot) ; lib/ai.ts (lot renseigné en mode lots)
+  // — drapeau devisLots, migration 0176 (devis.type_devis, devis_lignes.lot)
+  {
+    id: 'devis.lots',
+    page: '/devis/[id]',
+    titre: 'Devis par lots : un sous-total par corps de métier',
+    aQuoiCaSert:
+      'Pour un chantier tous corps d’état ou une rénovation en plusieurs corps de métier, choisissez « Devis par lots » au-dessus des lignes. ' +
+      'Chaque ligne porte son lot (« Lot 1 — Démolition »…) ; renommer un lot change toutes ses lignes, « Regrouper les lignes par lot » les remet à la suite. ' +
+      'Sur le PDF, chaque lot a son titre et son sous-total HT ; le total HT, la TVA et le TTC sont exactement ceux du devis. Le chiffrage IA renseigne les lots : vérifiez-les comme les prix.',
+    commentOnSenSert: [
+      'Ouvrez le devis et choisissez « Devis par lots ».',
+      'Affectez chaque ligne à un lot, ou laissez le chiffrage IA le faire, puis relisez.',
+      'Cliquez « Regrouper les lignes par lot » pour les remettre dans l’ordre.',
+      'Ouvrez le PDF : chaque lot a son sous-total.',
+    ],
+    pourVosClients: 'Votre client compare lot par lot ; les montants totaux ne changent pas.',
+    credits: 'Aucun en plus du chiffrage IA, s’il est utilisé.',
+    reglagesLies: ['/devis', '/tarifs'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: lib/facturesTypes.ts (calculs), lib/facturesTypesServeur.ts, lib/factureDepuisDevis.ts ; garde-fous en base : migration 0176
+  // (factures_situation_verifier : jamais plus que le devis, avancement qui ne recule pas, numéro de situation jamais réutilisé) — drapeau facturesSituation
+  {
+    id: 'factures.types',
+    page: '/factures',
+    titre: 'Facture, acompte, situation de travaux, solde : choisir le type',
+    aQuoiCaSert:
+      '« Créer la facture » vous laisse choisir : Facture (tout le devis, ou le solde si des acomptes ou des situations sont déjà facturés), Facture d’acompte (un pourcentage du devis), Situation de travaux, Facture de solde (la dernière : le devis moins chaque acompte et chaque situation). ' +
+      'Pour une situation, saisissez l’avancement CUMULÉ depuis le début du chantier (30 %, puis 70 %, puis 100 %), en global ou lot par lot. Montant = avancement cumulé × montant du devis − tout ce qui est déjà facturé. ' +
+      'L’avancement ne recule pas, ne dépasse pas 100 %, et rien n’est jamais facturé au-delà du devis. Chaque situation porte son numéro, la référence du devis, le montant du marché, le cumul antérieur, le cumul à date et son montant. ' +
+      'Une facture est émise et scellée dès sa création ; une erreur se corrige par un avoir, qui remet le reste à facturer à jour. La retenue de garantie n’est pas encore gérée.',
+    commentOnSenSert: [
+      'Ouvrez un devis accepté et cliquez « Créer la facture ».',
+      'Choisissez le type : Facture, Acompte, Situation de travaux ou Solde.',
+      'Pour une situation, saisissez l’avancement cumulé (global ou par lot) : le montant s’affiche avant de valider.',
+      'Validez : la facture est numérotée et scellée.',
+    ],
+    pourVosClients: 'Votre client reçoit des factures claires : sur chaque situation, il voit ce qui a déjà été facturé et ce qu’il paie cette fois.',
+    credits: 'Aucun.',
+    reglagesLies: ['/factures', '/devis'],
     disponibleAvec: 'essentiel',
   },
 
