@@ -291,7 +291,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
 
   if (!ready) return <p className="muted">Chargement…</p>
   if (leads.length === 0) return (
-    <div className="psh-panel"><div className="psh-empty">Aucune conversation pour l’instant.<br />Partagez votre lien (onglet « Ma page ») : chaque contact démarre ici une conversation : l’assistant vous prépare une réponse à valider, ou répond en direct si vous l’avez réglé en Automatique (dès l’offre Studio).</div></div>
+    <div className="psh-panel"><div className="psh-empty">Aucune conversation pour l’instant.<br />Partagez votre lien (onglet « Ma page ») : chaque contact démarre ici une conversation : l’assistant vous prépare une réponse à valider, ou répond en direct si vous l’avez réglé en Automatique (offre Signature).</div></div>
   )
 
   return (

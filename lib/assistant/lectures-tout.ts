@@ -117,7 +117,7 @@ export function lecturesTout(ctx: ContexteSession, session: SupabaseClient, appe
           pause_des_demandes: a?.leads_pause === true, page_active: a?.plateforme_active !== false,
           reponse_24h_sur_24: cfg.auto_24_7 !== false, plage: cfg.auto_24_7 === false ? { debut: cfg.auto_debut ?? null, fin: cfg.auto_fin ?? null } : null,
           ton: cfg.ton ?? 'chaleureux', reponses_ia_par_conversation: cfg.limite_messages ?? 8, message_accueil: cfg.message_accueil ?? null, nom_assistant: cfg.nom_assistant ?? null, modele: cfg.modele ?? 'standard',
-          a_savoir: "Le mode « auto » (l'IA répond seule) se choisit dans Ma plateforme par l'artisan lui-même ; tu peux régler le reste avec regler_plateforme.",
+          a_savoir: "Le mode « auto » (l'IA répond seule, offre Signature) se choisit dans Ma plateforme par l'artisan lui-même ; tu peux régler le reste avec regler_plateforme.",
         },
         resume: `plateforme : mode ${String(r.json.mode_effectif)}`,
       }

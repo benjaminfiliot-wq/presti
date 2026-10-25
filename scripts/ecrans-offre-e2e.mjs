@@ -1,8 +1,10 @@
 // LA PLATEFORME et « Mes chiffres » commencent avec Studio, pour TOUS les comptes (Benj, 15/10/2026 : « Dans Essentiel il n'y a PAS de plateforme ») :
 // la preuve par HTTP, sur de vrais comptes.
 //
-// Pour chaque offre (Essai, Essentiel, Studio, Signature), un compte de test est créé, connecté, et appelle les routes des deux écrans :
-//   Essai / Essentiel -> 403 { code: 'offre', offre: 'studio' } et AUCUNE donnée dans le corps ;
+// Pour chaque offre (Essai, Essentiel HÉRITÉ, Studio, Signature), un compte de test est créé, connecté, et appelle les routes des deux écrans.
+// 25/10 : l'Essentiel n'est plus vendu, mais son identifiant reste reconnu (capacités de base) — le compte hérité est gardé ici pour prouver
+// qu'il reste refusé exactement comme l'Essai (les attentes sont lues dans lib/plans.ts, il ne coûte qu'un compte de test de plus) :
+//   Essai / Essentiel hérité -> 403 { code: 'offre', offre: 'studio' } et AUCUNE donnée dans le corps ;
 //   Studio / Signature -> 200 ; les automatisations de « Mes chiffres » (champ `automatisations`) ne sont ouvertes qu'à Signature ;
 //   le rangement des fichiers (POST /api/compta/assistant) est refusé avant tout crédit (les crédits du compte ne bougent pas) ;
 //   la plateforme : Essai / Essentiel -> la page publique est NEUTRE (200, « ne reçoit pas de demandes en ligne », coordonnées publiques, aucune conversation),
@@ -43,7 +45,7 @@ const comptes = []
 const horodatage = Date.now()
 try {
   for (const plan of ['gratuit', 'essentiel', 'studio', 'signature']) {
-    console.log(`\n── ${PLANS[plan].label}`)
+    console.log(`\n── ${PLANS[plan].label}${plan === 'essentiel' ? ' (hérité, plus vendu)' : ''}`)
     const email = `ecrans-offre-${plan}-${horodatage}@presti-test.invalid`
     const mdp = crypto.randomBytes(18).toString('base64url')
     const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })

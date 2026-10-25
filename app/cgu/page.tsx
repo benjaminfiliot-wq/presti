@@ -26,12 +26,17 @@ export default function CGU() {
           dans CGU_VERSION et l'écrit dans les métadonnées du compte. Si les deux divergent, on ne
           sait plus quel texte un abonné a accepté — la preuve du consentement tombe. Toute
           modification de fond ici doit donc être suivie de la même date dans app/signup/page.tsx. */}
-      <div className="legal-updated">Dernière mise à jour : 21 octobre 2026</div>
+      <div className="legal-updated">Dernière mise à jour : 25 octobre 2026</div>
 
       <p>Les présentes conditions (les « Conditions ») régissent l’accès et l’utilisation du service <strong>Presti</strong>, édité par Benjamin Filiot (voir <a href="/mentions-legales">Mentions légales</a>). En créant un compte, vous acceptez ces Conditions.</p>
 
       <h2>1. Objet du service</h2>
       <p>Presti est un outil en ligne d’assistance pour artisans permettant, notamment, de répondre aux demandes de devis, de générer des devis et factures, et de gérer son activité. Presti fournit une <strong>assistance</strong> : les contenus proposés (réponses, devis, factures) sont des propositions que l’utilisateur doit vérifier et valider.</p>
+      {/* 25/10/2026 (décision de Benj) : deux offres. Studio prépare tout et n'envoie rien sans validation ; Signature envoie seule
+          la réponse (mode « Automatique », lib/plateformeConfig.ts modeEffectif), les relances de conversation (app/api/cron/relances)
+          et d'impayés une fois activées (lib/relancesImpayesTour.ts) — capacités `plateforme.ia.auto`, `relances.auto`,
+          `factures.relances.auto` (lib/plans.ts). */}
+      <p>Le service est proposé en <strong>deux offres</strong>. Avec l’offre <strong>Studio</strong>, les réponses aux demandes, les devis, les relances et les actions de l’assistant de gestion sont préparés automatiquement, mais <strong>rien n’est envoyé à un client sans la validation de l’utilisateur</strong>. Avec l’offre <strong>Signature</strong>, ces messages partent automatiquement en son nom : la réponse aux demandes lorsqu’il a choisi le mode « Automatique », les relances des conversations, et les relances des factures impayées lorsqu’il les a activées. L’abonné Signature qui laisse ces messages partir sans relecture en assume le contenu comme s’il l’avait validé ; il peut à tout moment repasser la réponse en mode « Assistée », ou mettre sa page en pause, ce qui arrête les envois automatiques.</p>
       <p>Par exception, l’abonné à l’offre Signature peut activer lui-même, type par type, le <strong>Pilote automatique</strong> : un message préparé (réponse à un prospect, relance de devis ou d’impayé, envoi d’un devis ou d’une facture déjà émise, message de l’assistant à un client) part alors <strong>en son nom</strong> au bout de 10 minutes, sauf s’il l’annule entre-temps. Restent toujours soumis à sa validation : un devis dont un prix ne provient pas de ses tarifs, l’émission d’une facture, tout encaissement ou remboursement. L’envoi automatique est limité à 20 messages par jour et par compte, s’arrête pendant une pause, et sa désactivation annule tout ce qui attendait.</p>
 
       <h2>2. Compte</h2>
@@ -41,7 +46,7 @@ export default function CGU() {
       <ul>
         <li>Le service s’adresse aux <strong>professionnels</strong> (artisans, entreprises du bâtiment et des services) agissant dans le cadre de leur activité. Il n’est pas destiné aux consommateurs.</li>
         <li>Presti propose une offre d’essai gratuite (limitée) et des abonnements payants fonctionnant à base de <strong>crédits</strong>. Les prix affichés sur la page <a href="/abonnement">Abonnement</a> sont exprimés en euros ; <strong>TVA non applicable, art. 293 B du CGI</strong> (franchise en base) : le montant affiché est le montant payé. Si Presti devient assujetti, les prix et la mention seront mis à jour avant tout prélèvement au nouveau régime.</li>
-        <li><strong>Essai gratuit sans carte</strong> : le premier abonnement payant (Essentiel, Studio, Signature) s’essaie gratuitement et sans carte bancaire, <strong>{ESSAI_JOURS.essentiel} jours</strong> en Essentiel, <strong>{ESSAI_JOURS.studio} jours</strong> en Studio, <strong>{ESSAI_JOURS.signature} jours</strong> en Signature, une seule fois par compte (et par adresse email). Les crédits de l’essai sont proportionnels à sa durée. À la fin de l’essai, si vous avez ajouté une carte, l’abonnement démarre et le premier prélèvement a lieu ce jour-là ; sans carte, l’abonnement s’arrête, rien n’est prélevé, et le compte repasse à l’offre d’essai, vos données restant en place.</li>
+        <li><strong>Essai gratuit sans carte</strong> : le premier abonnement payant (Studio ou Signature) s’essaie gratuitement et sans carte bancaire, <strong>{ESSAI_JOURS.studio} jours</strong> en Studio, <strong>{ESSAI_JOURS.signature} jours</strong> en Signature, une seule fois par compte (et par adresse email). Les crédits de l’essai sont proportionnels à sa durée. À la fin de l’essai, si vous avez ajouté une carte, l’abonnement démarre et le premier prélèvement a lieu ce jour-là ; sans carte, l’abonnement s’arrête, rien n’est prélevé, et le compte repasse à l’offre d’essai, vos données restant en place.</li>
         <li>Les paiements sont traités par <strong>Stripe</strong>. Les abonnements sont sans engagement et résiliables à tout moment ; l’accès reste actif jusqu’à la fin de la période payée.</li>
         <li>Les crédits inclus dans un abonnement sont valables pour la période concernée et ne sont pas reportables sauf mention contraire.</li>
         <li>Sauf disposition légale impérative, les sommes versées ne sont pas remboursables une fois le service consommé.</li>
@@ -53,7 +58,7 @@ export default function CGU() {
           commercial attaquable (art. L. 121-2 c. conso via L. 121-5). On écrit ici le minimum
           tenable par UNE personne : un délai de PREMIÈRE réponse, pas de résolution ; des jours
           ouvrés, pas du 24/7 ; une réparation bornée au prorata du mois, pas un dédommagement
-          ouvert. Le délai de l'Essai/Essentiel reste plus long que la promesse « en général sous
+          ouvert. Le délai de l'Essai (et de l'ancienne offre Essentiel, plus vendue depuis le 25/10) reste plus long que la promesse « en général sous
           24 h » du formulaire de contact : cette dernière décrit l'usage constaté, celui-ci est
           l'engagement — l'engagement ne doit jamais être plus court que ce qu'on peut tenir un
           jour de chantier. */}
@@ -106,7 +111,7 @@ export default function CGU() {
       <h2 id="support">4. Support et assistance</h2>
       <p>Le support se fait <strong>par écrit et en français</strong>, par <a href="/contact">le formulaire de contact</a> ou à l’adresse email des <a href="/mentions-legales">mentions légales</a> : les deux arrivent au même endroit.</p>
       <ul>
-        <li><strong>Délai de première réponse</strong>, décompté en <strong>jours ouvrés</strong> (du lundi au vendredi, hors jours fériés français, heure de Paris) : <strong>Essai et Essentiel — 3 jours ouvrés</strong> ; <strong>Studio — 2 jours ouvrés</strong> ; <strong>Signature — 1 jour ouvré</strong>. Un message reçu après 18 h, un samedi, un dimanche ou un jour férié est décompté à partir du jour ouvré suivant.</li>
+        <li><strong>Délai de première réponse</strong>, décompté en <strong>jours ouvrés</strong> (du lundi au vendredi, hors jours fériés français, heure de Paris) : <strong>Essai (et ancienne offre Essentiel) — 3 jours ouvrés</strong> ; <strong>Studio — 2 jours ouvrés</strong> ; <strong>Signature — 1 jour ouvré</strong>. Un message reçu après 18 h, un samedi, un dimanche ou un jour férié est décompté à partir du jour ouvré suivant.</li>
         <li><strong>Ce que « support prioritaire » veut dire</strong> (offre <a href="/abonnement">Signature</a>) : le délai d’un jour ouvré ci-dessus, et le passage en tête de file quand plusieurs demandes attendent. Rien d’autre : pas de ligne téléphonique dédiée, pas d’astreinte de nuit, de week-end ou de jour férié, pas d’interlocuteur attitré.</li>
         <li><strong>Première réponse, pas résolution</strong> : le délai porte sur une réponse humaine qui prend la demande en charge. Le temps de correction dépend de la nature du problème et parfois d’un prestataire tiers (hébergement, paiement, IA, email) sur lequel l’éditeur n’a pas la main.</li>
         <li><strong>Sécurité</strong> : une faille ou une violation de données se signale par les mêmes canaux et passe avant tout le reste, quelle que soit l’offre.</li>

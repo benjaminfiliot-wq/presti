@@ -36,17 +36,19 @@ const VERROUS = [
 const comptes = []
 try {
   console.log('\n── 0. La grille elle-même')
-  T('trois offres payantes, dans l’ordre des prix', OFFRES.map((o) => o.id).join(',') === 'essentiel,studio,signature' && OFFRES[0].prix < OFFRES[1].prix && OFFRES[2].prix > OFFRES[1].prix)
-  T('les capacités s’empilent (Studio ⊇ Essentiel, Signature ⊇ Studio)',
-    PLANS.essentiel.capacites.every((c) => PLANS.studio.capacites.includes(c)) && PLANS.studio.capacites.every((c) => PLANS.signature.capacites.includes(c)))
-  // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme » — elle commence avec Studio (ancienne attente : sur les trois offres).
-  T('la plateforme commence avec Studio : absente d’Essentiel, présente en Studio et Signature', !peut('essentiel', 'plateforme.conversation') && peut('studio', 'plateforme.conversation') && peut('signature', 'plateforme.conversation'))
+  // 25/10 (Benj) : deux offres vendues ; l'Essentiel n'est plus proposé (identifiant gardé pour les comptes hérités, capacités de l'Essai).
+  T('deux offres payantes, dans l’ordre des prix', OFFRES.map((o) => o.id).join(',') === 'studio,signature' && OFFRES[0].prix < OFFRES[1].prix)
+  T('les capacités s’empilent (Studio ⊇ Essai, Signature ⊇ Studio)',
+    PLANS.gratuit.capacites.every((c) => PLANS.studio.capacites.includes(c)) && PLANS.studio.capacites.every((c) => PLANS.signature.capacites.includes(c)))
+  // 15/10 (Benj) : la plateforme commence avec Studio (absente de l'Essai et de l'ancien Essentiel).
+  T('la plateforme commence avec Studio : absente de l’Essai et de l’ancien Essentiel, présente en Studio et Signature', !peut('gratuit', 'plateforme.conversation') && !peut('essentiel', 'plateforme.conversation') && peut('studio', 'plateforme.conversation') && peut('signature', 'plateforme.conversation'))
   T('la grille publique ne contient aucune ligne sous drapeau BAISSÉ', GRILLE.every((l) => !l.flag || FLAGS[l.flag]), GRILLE.filter((l) => l.flag && !FLAGS[l.flag]).map((l) => l.label).join(', '))
   // La grille s'ouvre sur le niveau d'automatisation (15/10), et la plateforme est la ligne qui suit.
   T('la plateforme est parmi les premières lignes de la grille (après le niveau d’automatisation)', GRILLE.slice(0, 3).some((l) => l.groupe === 'Plateforme'), GRILLE.slice(0, 3).map((l) => l.groupe).join(','))
 
   console.log('\n── 1. Le serveur respecte la matrice, formule par formule')
-  for (const plan of ['essentiel', 'studio', 'signature']) {
+  // L'Essai (sans offre) d'abord : il remplace l'Essentiel, plus vendu, comme compte « sans les capacités verrouillées ».
+  for (const plan of ['gratuit', 'studio', 'signature']) {
     const email = `verif-offres-${plan}-${Date.now()}@presti-test.invalid`
     const mdp = crypto.randomBytes(18).toString('base64url')
     const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })

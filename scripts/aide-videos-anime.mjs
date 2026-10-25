@@ -37,7 +37,8 @@ const W = 1920, H = 1200, FPS = 30
 const CARTE = { x: 256, y: 18, w: 1408, h: 880 }
 const SRC_W = 2160, SRC_H = 1350 // la capture (1440 × 900 CSS à 1,5)
 const BASE = CARTE.w / SRC_W // échelle de l'écran dans la carte
-const OFFRES = { essentiel: 'Essentiel', studio: 'Studio', signature: 'Signature' }
+// 25/10 : deux offres ; « toutes » = la fonctionnalité est dans toutes les offres (l'Essentiel n'est plus vendu).
+const OFFRES = { toutes: 'toutes les offres', studio: 'Studio', signature: 'Signature' }
 const MAX_ZOOM = 1.55
 
 const run = (cmd, a, opts = {}) => { const r = spawnSync(cmd, a, { encoding: 'utf8', maxBuffer: 1 << 28, shell: process.platform === 'win32' && cmd === 'npx', ...opts }); return r }
@@ -207,7 +208,7 @@ const enCoral = (s) => esc(s).replace(/«\s?([^»]+?)\s?»/g, '<em>« $1 »</em>
 function ecrireProjet(plan, I, O, total) {
   const gabarit = fs.readFileSync(path.join(import.meta.dirname, 'aide-videos-anime.gabarit.html'), 'utf8')
   const etapes = plan.etapes.map((t, i) => `<div class="cap" id="cap${i}"><b class="num">${i + 1}</b><p>${enCoral(t)}</p></div>`).join('\n      ')
-  const offre = plan.note ? esc(plan.note.replace(/\.$/, '')) : (plan.offre === 'signature' ? `Réservé à l’offre <strong>${OFFRES[plan.offre]}</strong>` : `Disponible dès l’offre <strong>${OFFRES[plan.offre]}</strong>`)
+  const offre = plan.note ? esc(plan.note.replace(/\.$/, '')) : (plan.offre === 'toutes' ? `Disponible dans <strong>${OFFRES.toutes}</strong>` : plan.offre === 'signature' ? `Réservé à l’offre <strong>${OFFRES[plan.offre]}</strong>` : `Disponible dès l’offre <strong>${OFFRES[plan.offre]}</strong>`)
   const sous = plan.sous.map((c, k) => `<div class="sub" id="sub${k}"><p>${esc(c.texte)}</p></div>`).join('\n      ')
   const data = { plan, I, O, total, CARTE, BASE, W, H, SRC_W, SRC_H }
   return gabarit

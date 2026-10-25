@@ -15,6 +15,9 @@
 //  • Les factures échues depuis très longtemps lors de l'activation ne sont pas relancées en rafale : RATTRAPAGE_JOURS de tolérance
 //    après le jour prévu, au-delà l'artisan les traite lui-même (relance préparée par l'assistant, ou « Mes chiffres »).
 //  • Le texte est celui de l'artisan (modifiable, prévisualisable) ; le message dit qu'il est automatique ; aucun lien n'y figure.
+//  • 25/10 (Benj, deux offres) : en SIGNATURE (`factures.relances.auto`) la relance part seule ; en STUDIO (`factures.relances` seule)
+//    elle est préparée (statut « a_valider », sujet et texte gardés), l'artisan est prévenu, et rien ne part tant qu'il ne l'a pas
+//    envoyée lui-même ; une relance préparée bloque sa facture jusqu'à ce qu'il l'envoie ou l'écarte (« rejetee »).
 import { centimes, euros, jourParis } from './comptaTableau.ts'
 
 export const MAX_RELANCES = 3
@@ -81,6 +84,37 @@ export const sujetDeLaRelance = (numero: string | null, artisan: string | null):
 /** Le message tel que le client le recevra (corps + pied automatique). */
 export const messageComplet = (corps: string): string => `${corps.trim()}\n\n—\n${PIED_AUTOMATIQUE}`
 
+// 25/10 (Benj) — offre Studio : la relance est PRÉPARÉE chaque matin, puis l'artisan la valide (capacité `factures.relances` sans
+// `factures.relances.auto`). Le message qui part alors n'a pas été « envoyé automatiquement » : son pied ne le prétend pas.
+export const PIED_VALIDE = 'Si vous avez déjà réglé cette facture, ou si quelque chose pose problème, répondez simplement à ce message.'
+/** Le message préparé, tel que le client le recevra une fois validé (corps + pied sans « automatiquement »). */
+export const messageAValider = (corps: string): string => `${corps.trim()}\n\n—\n${PIED_VALIDE}`
+/** Longueur maximale d'un message préparé, pied compris (l'artisan peut le retoucher avant de l'envoyer). */
+export const MESSAGE_VALIDE_MAX = TEXTE_MAX + 400
+export const SUJET_MAX = 150
+
+/** Valide le sujet et le texte d'une relance préparée, éventuellement retouchés par l'artisan. Rend le couple nettoyé, ou l'erreur. */
+export function lireRelanceRetouchee(sujet: unknown, texte: unknown): { ok: true; sujet: string; texte: string } | { ok: false; erreur: string } {
+  if (typeof sujet !== 'string' || typeof texte !== 'string') return { ok: false, erreur: 'Relance illisible.' }
+  const s = sujet.replace(/[\r\n]+/g, ' ').trim()
+  const t = texte.replace(/\r\n/g, '\n').trim()
+  if (!s) return { ok: false, erreur: 'Le sujet est vide.' }
+  if (s.length > SUJET_MAX) return { ok: false, erreur: `Le sujet est trop long (${SUJET_MAX} caractères au plus).` }
+  if (t.length < TEXTE_MIN) return { ok: false, erreur: `Le message est trop court (au moins ${TEXTE_MIN} caractères).` }
+  if (t.length > MESSAGE_VALIDE_MAX) return { ok: false, erreur: `Le message est trop long (${MESSAGE_VALIDE_MAX} caractères au plus).` }
+  if (/https?:\/\/|www\./i.test(t) || /https?:\/\/|www\./i.test(s)) return { ok: false, erreur: 'Pas de lien dans une relance : écrivez votre message sans adresse de site.' }
+  return { ok: true, sujet: s, texte: t }
+}
+
+/** La notification à l'artisan quand une relance attend sa validation (offre Studio). Le sujet est imposé par la décision du 25/10. */
+export function notificationPreparee(p: { numero: string | null; client: string | null; rang: number }): { sujet: string; texte: string } {
+  const numero = p.numero?.trim() || 'sans numéro'
+  return {
+    sujet: `Relance de facture prête à valider — ${numero}`.replace(/[\r\n]+/g, ' ').slice(0, SUJET_MAX),
+    texte: `La relance ${p.rang} de la facture ${numero}${p.client?.trim() ? ` (${p.client.trim()})` : ''} est prête. Ouvrez Factures pour la relire, la retoucher si besoin et l’envoyer d’un clic : rien ne part sans votre validation.`,
+  }
+}
+
 /** Valide un texte écrit par l'artisan : longueur, variables connues, aucun lien. Null = valable. */
 export function erreurTexte(t: string): string | null {
   const s = t.trim()
@@ -133,7 +167,7 @@ export type EntreeJournal = { facture_id: string; rang: number; jour: string; st
 
 export type RaisonRien =
   | 'inactif' | 'pas_emise' | 'annulee' | 'avoir' | 'payee' | 'sans_echeance' | 'pas_echue' | 'sans_email' | 'montant_nul'
-  | 'arretee' | 'client_a_repondu' | 'termine' | 'trop_ancienne' | 'trop_tot' | 'pas_encore' | 'deja_aujourdhui'
+  | 'arretee' | 'client_a_repondu' | 'termine' | 'trop_ancienne' | 'trop_tot' | 'pas_encore' | 'deja_aujourdhui' | 'a_valider'
 export type Decision = { action: 'envoyer'; rang: Rang; joursRetard: number; destinataire: string } | { action: 'rien'; raison: RaisonRien }
 
 export const ecartJours = (a: string, b: string): number =>
@@ -144,6 +178,7 @@ export const LIBELLE_RAISON: Record<RaisonRien, string> = {
   sans_echeance: 'Pas de date d’échéance', pas_echue: 'Pas encore échue', sans_email: 'Pas d’adresse e-mail client valable', montant_nul: 'Montant nul',
   arretee: 'Relances arrêtées', client_a_repondu: 'Le client a répondu', termine: 'Toutes les relances prévues sont parties', trop_ancienne: 'Échue depuis trop longtemps pour une relance automatique',
   trop_tot: 'Prochaine relance trop proche de la précédente', pas_encore: 'Prochaine relance pas encore due', deja_aujourdhui: 'Un message est déjà parti aujourd’hui vers ce client',
+  a_valider: 'Une relance préparée attend votre validation',
 }
 
 /**
@@ -175,6 +210,9 @@ export function decider(p: {
   if (retard <= 0) return rien('pas_echue')
 
   const siennes = p.journal.filter((e) => e.facture_id === f.id)
+  // Offre Studio : une relance préparée qui attend la validation de l'artisan bloque la facture — ni reproposée, ni suivie de la
+  // suivante, tant qu'il ne l'a ni envoyée ni écartée. Toute ligne du journal (prise, à valider, envoyée, écartée) occupe son rang.
+  if (siennes.some((e) => e.statut === 'a_valider')) return rien('a_valider')
   const rangsPris = new Set(siennes.map((e) => e.rang))
   // Les relances encore à faire, dans l'ordre. Celle qu'on envoie : la première dont le jour est venu ET dont la fenêtre
   // (jour prévu + RATTRAPAGE_JOURS) n'est pas close — un retard de passage se rattrape, une vieille facture ne déclenche pas de rafale.
@@ -206,6 +244,8 @@ export function etatPourEcran(p: { facture: FactureRelancable; reglages: Reglage
   const envoyees = p.journal.filter((e) => e.facture_id === f.id && e.statut === 'envoyee').sort((a, b) => a.rang - b.rang)
   const dernier = envoyees.at(-1)
   if (p.arret) return p.arret.raison === 'reponse_client' ? `Relances arrêtées : le client a répondu (${dateFr(p.arret.le)})` : `Relances arrêtées par vous (${dateFr(p.arret.le)})`
+  const enAttente = p.journal.find((e) => e.facture_id === f.id && e.statut === 'a_valider')
+  if (enAttente) return `Relance ${enAttente.rang} prête à valider (préparée le ${dateFr(enAttente.jour)})`
   if (dernier && envoyees.length >= p.reglages.jours.length) return `Relance ${dernier.rang} envoyée le ${dateFr(dernier.envoyee_le ?? dernier.jour)} — dernière prévue`
   if (dernier) return `Relance ${dernier.rang} envoyée le ${dateFr(dernier.envoyee_le ?? dernier.jour)}`
   if (!p.reglages.actif || f.statut !== 'emise' || f.avoir_de || !f.date_echeance) return null

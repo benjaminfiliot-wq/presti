@@ -302,7 +302,7 @@ button:disabled{opacity:.55;cursor:default}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
 .ai-note{margin-top:.8rem;background:var(--green-050);border:1px solid var(--green-300);border-radius:10px;padding:.8rem;font-size:.88rem}
 /* page abonnement */
-.abo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;align-items:stretch}
+.abo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;align-items:stretch;max-width:880px;margin:0 auto}
 .abo-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.6rem;display:flex;flex-direction:column;position:relative}
 .abo-card.feat{border-color:transparent;box-shadow:0 0 0 1.5px var(--accent),0 24px 60px -24px var(--glow)}
 .abo-tag{position:absolute;top:-.7rem;left:1.6rem;background:linear-gradient(120deg,var(--accent-2),var(--accent));color:#1a0f0a;font-family:var(--font-mono);font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.3rem .7rem;border-radius:999px}
@@ -1151,7 +1151,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* abonnements */
 .lp-trial{display:flex;gap:.8rem 1.1rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:2.3rem auto 0;max-width:700px;background:rgba(217,119,87,.08);border:1px solid rgba(217,119,87,.24);border-radius:15px;padding:1.05rem 1.4rem;text-align:center}
 .lp-trial b{color:var(--ink)}.lp-trial em{color:var(--ink2);font-style:normal;font-size:.95rem}
-.lp-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:1.5rem;align-items:start}
+.lp-plans{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:1.5rem;align-items:start;max-width:880px;margin-left:auto;margin-right:auto}
 .lp-plan{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:1.8rem;box-shadow:0 1px 2px rgba(0,0,0,.5);display:flex;flex-direction:column;height:100%}
 .lp-plan--feat{border-color:transparent;background:linear-gradient(180deg,var(--surf2),#0e0d12);position:relative;box-shadow:0 0 0 1.5px rgba(217,119,87,.5),0 30px 70px -25px var(--co-glow)}
 .lp-pn{font-family:var(--font-display);font-weight:700;font-size:1.18rem}
@@ -3056,7 +3056,6 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* Centre d'aide : pastilles d'offre, « Ce qui est automatique », « Qui a quoi » (app/aide/). */
 .aide-pastille{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;line-height:1.2;border-radius:999px;padding:2px 9px;white-space:nowrap;border:1px solid var(--line);color:var(--ink-soft);background:var(--surface-2)}
 .aide-pastille--gratuit{color:var(--ink-soft)}
-.aide-pastille--essentiel{color:var(--accent-ink);background:var(--accent-tint);border-color:transparent}
 .aide-pastille--studio{color:var(--accent-ink);background:var(--accent-tint);border-color:var(--accent-tint-2)}
 .aide-pastille--signature{color:var(--ink);background:var(--surface);border-color:var(--accent)}
 .aide-pastille--part{font-weight:600;color:var(--muted)}
@@ -3074,7 +3073,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .aide-auto-rep p{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--ink-soft)}
 .aide-auto-rep p b{color:var(--ink);font-size:15px}
 .aide-tab{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
-.aide-tab-r{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,minmax(0,5.6rem));gap:0 6px;align-items:center;padding:9px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft)}
+.aide-tab-r{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,minmax(0,5.6rem));gap:0 6px;align-items:center;padding:9px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft)}
 .aide-tab-r:first-child{border-top:0}
 .aide-tab-head{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);background:var(--surface-2)}
 .aide-tab-r span[role=cell],.aide-tab-head span:not(:first-child){text-align:center}
@@ -3087,7 +3086,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .aide-essai ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.6;color:var(--ink-soft)}
 @media(max-width:640px){
   .aide-tab-head{display:none}
-  .aide-tab-r{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:10px 12px}
+  .aide-tab-r{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:10px 12px}
   .aide-tab-l{grid-column:1/-1;font-weight:600}
   .aide-tab-r span[role=cell]{text-align:center;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;gap:1px}
   .aide-tab-r span[role=cell]::before{content:attr(data-o);font-size:10.5px;font-weight:600;color:var(--faint)}

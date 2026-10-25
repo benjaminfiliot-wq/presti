@@ -64,16 +64,17 @@ const clef = () => `e2e-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`
 const aNettoyer = { clients: [], comptes: [], utilisateurs: [] }
 const cents = (p) => Math.round(PLANS[p].prixMois * 100)
 
-/** Un client de test avec une carte qui marche, un abonnement Essentiel, et sa première facture payée. */
+/** Un client de test avec une carte qui marche, un abonnement Studio, et sa première facture payée.
+ *  (25/10 : l'Essentiel n'est plus vendu, prixOffre/changerOffre ne connaissent que Studio et Signature.) */
 async function abonneDeTest(nom) {
   const c = await s.customers.create({ name: nom, email: `${nom}-${Date.now()}@presti-test.invalid` })
   aNettoyer.clients.push(c.id)
   const pm = await s.paymentMethods.attach('pm_card_visa', { customer: c.id })
   await s.customers.update(c.id, { invoice_settings: { default_payment_method: pm.id } })
-  const prix = await prixOffre(s, 'essentiel')
+  const prix = await prixOffre(s, 'studio')
   const sub = await s.subscriptions.create({
     customer: c.id, items: [{ price: prix }],
-    metadata: { plan: 'essentiel', uid: 'e2e' },
+    metadata: { plan: 'studio', uid: 'e2e' },
     payment_behavior: 'error_if_incomplete',
   })
   return { client: c.id, sub }
@@ -96,29 +97,33 @@ async function main() {
   // ── 2. Changer d'offre ──────────────────────────────────────────────────────────────────────────────
   console.log('\n2. Changer d’offre : l’article est remplacé, le prorata est facturé')
   const A = await abonneDeTest('presti-e2e-offre')
-  T('l’abonné de test part bien sur Essentiel', A.sub.items.data[0].price.unit_amount === cents('essentiel'))
+  T('l’abonné de test part bien sur Studio', A.sub.items.data[0].price.unit_amount === cents('studio'))
 
   const k = clef()
-  const monte = await changerOffre(s, A.sub.id, 'studio', k)
-  T('la montée en Studio est acceptée', monte.ok, monte.ok ? '' : monte.message)
+  const monte = await changerOffre(s, A.sub.id, 'signature', k)
+  T('la montée en Signature est acceptée', monte.ok, monte.ok ? '' : monte.message)
   if (monte.ok) {
-    T('l’abonnement facture désormais le tarif Studio', monte.valeur.sub.items.data[0].price.unit_amount === cents('studio'))
+    T('l’abonnement facture désormais le tarif Signature', monte.valeur.sub.items.data[0].price.unit_amount === cents('signature'))
     T('un seul article sur l’abonnement (pas d’empilement)', monte.valeur.sub.items.data.length === 1, `${monte.valeur.sub.items.data.length} articles`)
-    T('la métadonnée de plan suit', monte.valeur.sub.metadata?.plan === 'studio', String(monte.valeur.sub.metadata?.plan))
+    T('la métadonnée de plan suit', monte.valeur.sub.metadata?.plan === 'signature', String(monte.valeur.sub.metadata?.plan))
     T('le prorata est annoncé avant d’écrire', monte.valeur.prorata !== null && monte.valeur.prorata > 0, `prorata = ${monte.valeur.prorata}`)
   }
 
-  const redite = await changerOffre(s, A.sub.id, 'studio', clef())
+  const redite = await changerOffre(s, A.sub.id, 'signature', clef())
   T('repasser sur l’offre déjà en cours est REFUSÉ', !redite.ok && redite.code === 'deja', redite.ok ? 'accepté' : redite.message)
 
-  // Idempotence : la même clé, deux fois, ne doit pas empiler deux changements facturés.
+  // Idempotence : la même clé, deux fois, ne doit pas empiler deux changements facturés (ici la descente vers Studio).
   const kIdem = clef()
-  const d1 = await changerOffre(s, A.sub.id, 'signature', kIdem)
-  const d2 = await changerOffre(s, A.sub.id, 'signature', kIdem)
-  T('premier passage en Signature accepté', d1.ok, d1.ok ? '' : d1.message)
+  const d1 = await changerOffre(s, A.sub.id, 'studio', kIdem)
+  const d2 = await changerOffre(s, A.sub.id, 'studio', kIdem)
+  T('premier retour en Studio accepté', d1.ok, d1.ok ? '' : d1.message)
   T('le second, même clé, ne refacture rien (refusé « déjà »)', !d2.ok && d2.code === 'deja', d2.ok ? 'accepté deux fois' : d2.message)
-  const apresSig = await s.subscriptions.retrieve(A.sub.id)
-  T('l’abonnement est sur Signature, une seule fois', apresSig.items.data.length === 1 && apresSig.items.data[0].price.unit_amount === cents('signature'))
+  const apresStudio = await s.subscriptions.retrieve(A.sub.id)
+  T('l’abonnement est sur Studio, une seule fois', apresStudio.items.data.length === 1 && apresStudio.items.data[0].price.unit_amount === cents('studio'))
+
+  // La partie 3 éprouve une MONTÉE alignée en base : l'abonnement repart sur Signature.
+  const remonte = await changerOffre(s, A.sub.id, 'signature', clef())
+  T('nouvelle montée en Signature acceptée (pour l’alignement en base)', remonte.ok, remonte.ok ? '' : remonte.message)
 
   const inconnue = await changerOffre(s, A.sub.id, 'business', clef())
   T('une offre hors matrice est refusée', !inconnue.ok, inconnue.ok ? 'acceptée' : '')
@@ -140,7 +145,7 @@ async function main() {
     if (eUser || !uid) return SAUT('alignement en base', `compte de test refusé : ${eUser?.message ?? 'sans identifiant'}`)
     const { error: eIns } = await admin.from('artisans').insert({
       id: uid, email: emailTest, nom: 'Argent E2E', metier: 'Plombier',
-      slug: `argent-e2e-${Date.now()}`, plan: 'essentiel', credits: 12,
+      slug: `argent-e2e-${Date.now()}`, plan: 'studio', credits: 12,
       stripe_customer_id: A.client, stripe_subscription_id: A.sub.id,
     })
     if (eIns) { aNettoyer.utilisateurs.push(uid); return SAUT('alignement en base', `insertion refusée : ${eIns.message}`) }
@@ -151,20 +156,20 @@ async function main() {
       const apres = (await admin.from('artisans').select('plan, credits').eq('id', uid).single()).data
       T('le plan en base est celui que Stripe facture', apres?.plan === 'signature', String(apres?.plan))
       // La montée sert la DIFFÉRENCE des forfaits, pas le forfait entier : l'artisan avait 12 crédits
-      // sur Essentiel (80), il en avait donc consommé 68 ; en Signature (600) il doit en avoir 532,
+      // sur Studio (250), il en avait donc consommé 238 ; en Signature (600) il doit en avoir 362,
       // pas 600. Servir le forfait entier était le bug trouvé par la revue du 07/09 — un aller-retour
       // d'offre donnait alors des crédits sans fin pour un prorata net nul.
-      const attendus = 12 + (PLANS.signature.creditsMois - PLANS.essentiel.creditsMois)
+      const attendus = 12 + (PLANS.signature.creditsMois - PLANS.studio.creditsMois)
       T('la montée sert la différence des forfaits, jamais le forfait entier', apres?.credits === attendus, `${apres?.credits} au lieu de ${attendus}`)
 
       // Descente : on ne retire RIEN de ce qui reste du mois.
       await admin.from('artisans').update({ credits: 40 }).eq('id', uid)
-      const bas = await changerOffre(s, A.sub.id, 'essentiel', clef())
-      T('la descente vers Essentiel est acceptée chez Stripe', bas.ok, bas.ok ? '' : bas.message)
+      const bas = await changerOffre(s, A.sub.id, 'studio', clef())
+      T('la descente vers Studio est acceptée chez Stripe', bas.ok, bas.ok ? '' : bas.message)
       if (bas.ok) {
         const r2 = await alignerSurAbonnement({ ...bas.valeur.sub, metadata: { ...bas.valeur.sub.metadata, uid } })
         const apres2 = (await admin.from('artisans').select('plan, credits').eq('id', uid).single()).data
-        T('le plan redescend en base', apres2?.plan === 'essentiel', `${apres2?.plan} — ${r2.raison}`)
+        T('le plan redescend en base', apres2?.plan === 'studio', `${apres2?.plan} — ${r2.raison}`)
         T('aucun crédit n’est REPRIS à la descente', apres2?.credits === 40, `${apres2?.credits} au lieu de 40`)
       }
 
@@ -179,7 +184,7 @@ async function main() {
   const B = await abonneDeTest('presti-e2e-remb')
   const facture = (await s.invoices.list({ customer: B.client, status: 'paid', limit: 1 })).data[0]
   const paye = (facture?.amount_paid ?? 0) / 100
-  T('la première facture de l’abonné est payée', paye === PLANS.essentiel.prixMois, `${paye} € au lieu de ${PLANS.essentiel.prixMois} €`)
+  T('la première facture de l’abonné est payée', paye === PLANS.studio.prixMois, `${paye} € au lieu de ${PLANS.studio.prixMois} €`)
 
   T('sans motif, c’est refusé', !(await rembourser(s, B.client, 5, '   ', clef())).ok)
   const trop = await rembourser(s, B.client, paye + 10, 'test dépassement', clef())

@@ -27,7 +27,8 @@ type Fiche = {
   journal: { id: string; action: string; acteur_email: string | null; avant: unknown; apres: unknown; cree_le: string }[]
   a: string
 }
-const OFFRES_POSSIBLES = ['essentiel', 'studio', 'signature'] as const
+// 25/10 : deux offres vendues ; l'Essentiel n'est plus proposé (la route n'accepte que les offres de OFFRES, lib/plans.ts).
+const OFFRES_POSSIBLES = ['studio', 'signature'] as const
 const STATUTS: Record<string, string> = { active: 'actif', trialing: 'en essai', past_due: 'impayé', canceled: 'résilié', unpaid: 'impayé', paused: 'en pause', incomplete: 'incomplet' }
 // Ce que dit chaque modèle, pour le montrer AVANT de l'envoyer : un email ne se rattrape pas.
 const MODELES = {
@@ -144,7 +145,7 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
     if (motif === null) return
     demander({ action: 'reactiver', motif: motif.trim() }, 'artisan', 'réactiver ce compte')
   }
-  function changerOffre(vers: 'essentiel' | 'studio' | 'signature') {
+  function changerOffre(vers: 'studio' | 'signature') {
     const motif = demanderTexte(`Pourquoi passer cet artisan en ${vers} ? (journalisé)`)
     if (motif === null) return
     demander({ action: 'offre', vers, motif }, 'argent', `passer en ${vers}`)

@@ -13,8 +13,8 @@ export type AideVideo = {
   titre: string
   /** L'écran de la console (sans paramètre) : le lien « Ouvrir l'écran » du centre d'aide. */
   route: string
-  /** Offre minimale qui donne accès à l'écran. */
-  offre: 'essentiel' | 'studio' | 'signature'
+  /** Offre minimale qui donne accès à l'écran ; « toutes » : dans toutes les offres (25/10 : deux offres, l'Essentiel n'est plus vendu). */
+  offre: 'toutes' | 'studio' | 'signature'
   /** Phrase en plus pour ce qui ne tient pas dans une offre (le site se commande à part). */
   note?: string
   /** Le drapeau qui cache l'entrée de menu : sans lui, la vidéo n'est pas proposée non plus. */

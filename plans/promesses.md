@@ -14,7 +14,7 @@
 | 7 | « TVA non applicable, art. 293 B du CGI » | tarifs, CGU, mentions | `audit-final-e2e` (A4 : même référence partout), `facturation-e2e` | 05/09 | ✅ |
 | 8 | « Créez votre lien Presti en 2 minutes » | CTA | auditeur D : inscription → onboarding → lien, mobile et desktop ; `audit-final-e2e` (slug ≤ 40 valide) | 05/09 | ✅ |
 | 9 | « Page de conversation à votre marque » | grille | `seo-e2e` §5 white-label absolu, `legal-e2e`, `fermeture-e2e` §4 (« Presti » seulement dans la liste légale des sous-traitants) | 05/09 | ✅ (emails : From encore `contact@prestiapp.fr` → **H10**) — **depuis le 15/10, dès Studio seulement** : voir la révision du 15/10 plus bas |
-| 10 | « Assistant IA » (autonome dès Studio ; pas de plateforme en Essentiel) | grille | `audit-final-e2e` (E-M2 : verrou serveur `plateforme.ia.auto`), `regles-verrou-e2e` 8/8 | 05/09 | ✅ |
+| 10 | « Assistant IA » (réponse préparée dès Studio, vous validez ; autonome en Signature) | grille | `audit-final-e2e` (E-M2 : verrou serveur `plateforme.ia.auto`), `regles-verrou-e2e` 8/8 ; depuis le 25/10 la capacité est en Signature (`lib/plans.ts`), `modeEffectif` rétrograde Studio en « assistée » (`lib/plateformeConfig.ts:184`) | 05/09 | ✅ |
 | 11 | « Comptes clients (lien magique, historique) » | grille | `comptes-clients-e2e`, auditeur D §3 (lien expiré annoncé depuis `23bfbef`) | 05/09 | ✅ |
 | 12 | « Site vitrine » (3 niveaux) | grille | `site-style-e2e`, `seo-e2e`, `slides-e2e` 14/14, `site-motion-e2e`, `a11y-e2e` 5/5 | 05/09 | ✅ |
 | 13 | « Votre nom de domaine (site et page de conversation) » | grille | **`domaine-perso-e2e`** (05/09) : `lib/urls`, liens internes, middleware exécuté, domaine non vérifié inerte, unicité (0061) ; ce que Vercel refuse sans DNS réel est dit dans le fichier | 05/09 | ✅ (preuve DNS réelle au premier artisan) |
@@ -25,7 +25,7 @@
 | 18 | « Recherche IA chez vos fournisseurs » | grille | **`recherche-e2e` 37/37 rejoué le 05/09** (un vrai appel, prix rejeté s'il n'est pas dans une page récupérée), `cache-prix-e2e` 38/38 | 05/09 | ✅ |
 | 19 | « Votre boîte email branchée » | grille | `canaux-e2e`, `maillite-e2e`, politique de confidentialité (C15 depuis `cf666ca`) | 05/09 | ✅ |
 | 20 | « Export de vos données » | grille | `parametres-e2e` (onglet Données), `suppressions-e2e`, `audit-final-e2e` (export sans IP) | 05/09 | ✅ |
-| 21 | « Support prioritaire » | grille (Signature) | CGU art. 4 « Support et assistance » : première réponse en 1 jour ouvré (Signature), 2 (Studio), 3 (Essai/Essentiel), passage en tête de file ; `legal-e2e` | 05/09 | ✅ |
+| 21 | « Support prioritaire » | grille (Signature) | CGU art. 4 « Support et assistance » : première réponse en 1 jour ouvré (Signature), 2 (Studio), 3 (Essai, ancienne offre Essentiel), passage en tête de file ; `legal-e2e` | 05/09 | ✅ |
 | 22 | « WhatsApp », « Réseaux sociaux » | grille cible | drapeaux baissés → **absents** de la landing et du comparatif (`fermeture-e2e` §6) | 05/09 | ✅ (non vendus tant que non construits) |
 | 23 | Étude HBR « The Short Life of Online Sales Leads » (2 241 entreprises) | hero | source citée avec titre et périmètre ; lien externe non vérifié par une suite | — | ✅ (citation sourcée) |
 
@@ -82,3 +82,14 @@ les comptes clients, les relances de conversation (J+2, J+5, J+10), le nom de do
 Les promesses 9, 10, 11, 13, 16 (relances de conversation) et 19 ne valent donc plus qu'à partir de Studio ; la page publique d'un compte sans
 plateforme est neutre et n'enregistre rien (`lib/plateformeAcces.ts`, `scripts/ecrans-offre-e2e.mjs`). Essentiel garde : clients, devis chiffrés
 par l'IA sur ses prix (14), factures + export Factur-X (15), tarifs, crédits, export de données, support.
+
+## Révision du 25/10 — deux offres : Studio prépare, Signature envoie
+
+Décision de Benj : « Studio : tout est automatisé, mais il faut valider, sinon ça ne s'envoie pas. Signature : tout part automatiquement. »
+L'Essentiel n'est plus vendu (identifiant gardé pour les comptes hérités, hors tunnel, grille et essais). Dans `lib/plans.ts`, la réponse qui part
+seule (`plateforme.ia.auto`), les relances de conversation envoyées seules (`relances.auto`) et les relances d'impayés envoyées seules
+(`factures.relances.auto`) passent en Signature ; l'assistant de gestion (`assistant`) passe en Studio.
+- Promesse 10 : la réponse est **préparée** dès Studio (l'artisan valide), **autonome** en Signature (`modeEffectif`, `lib/plateformeConfig.ts:184`).
+- Promesse 16 : les relances de conversation sont **proposées** dans le fil en Studio et partent au clic de l'artisan
+  (`app/api/cron/relances/route.ts:159-180`) ; elles partent seules en Signature. `relances-e2e` (10/09) a été joué avant ce changement : à rejouer.
+- Promesse 4 : le catalogue n'a plus que deux offres (59 / 99 €) ; les essais sans carte durent 14 jours (Studio) et 21 jours (Signature), `ESSAI_JOURS`.

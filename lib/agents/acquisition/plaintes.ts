@@ -30,7 +30,7 @@ export const THEMES: readonly Theme[] = Object.freeze([
     id: 'devis_sans_suite',
     libelle: 'Devis non relancés, sans réponse ou jamais signés',
     // (13/10) Les relances sont celles de la conversation (lib/relances.ts) : un devis créé seul n'en a pas (audit des promesses, C60).
-    reponse_presti: 'Avec la plateforme (dès l’offre Studio), un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail.',
+    reponse_presti: 'Avec la plateforme (dès l’offre Studio), un devis envoyé depuis la conversation avec le client est suivi de trois relances (J+2, J+5, J+10) par e-mail : préparées pour vous en Studio, envoyées seules en Signature.',
     familles: Object.freeze([
       f(/\bdevis\b/),
       f(/sans (suite|reponse|retour|nouvelles?)/, /pas (de|d'un|un) (retour|reponse|nouvelles?|appel|signe)/, /(aucun|aucune|jamais de) (retour|reponse|nouvelles?|suite)/,

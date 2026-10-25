@@ -23,6 +23,8 @@ import { magasinSupabase } from '@/lib/relancesImpayesMagasin'
 import { tourRappels } from '@/lib/crm/rappelsTour'
 import { tourApresChantier } from '@/lib/apresChantierTour'
 import { envoyerPushArtisan } from '@/lib/push'
+import { peut } from '@/lib/plans'
+import { notifierArtisan } from '@/lib/notifications'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -68,6 +70,7 @@ export async function GET(req: Request) {
   }
 
   let sent = 0
+  let prepared = 0
   let skipped = 0
   let interrompue = false
   let plafond = false
@@ -151,6 +154,28 @@ export async function GET(req: Request) {
     if (artisan?.is_founder) {
       await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
       skipped++
+      continue
+    }
+    // 25/10 (Benj) : en Studio, « tout est automatisé, mais il faut valider, sinon ça ne s'envoie pas ». La relance est rédigée puis
+    // PROPOSÉE dans le fil (messages.etat = 'proposition') ; elle part au clic de l'artisan (validerPropositionServeur), comme une
+    // réponse préparée. Seule l'offre qui a `relances.auto` (Signature) l'envoie seule. Une relance proposée plus tôt et jamais
+    // validée est remplacée par celle-ci : l'artisan n'a qu'une relance à valider par conversation.
+    if (!peut(artisan.plan, 'relances.auto')) {
+      await supabaseAdmin.from('messages').update({ etat: 'rejete' }).eq('lead_id', lead.id).eq('type', 'relance').eq('etat', 'proposition')
+      const proposee = await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'relance', contenu: text, etat: 'proposition' })
+      if (proposee.error) {
+        console.error('[cron/relances] proposition impossible', r.id, proposee.error.message)
+        await supabaseAdmin.from('relances').update({ envoyee: false }).eq('id', r.id)
+        skipped++
+        continue
+      }
+      contactes.add(lead.id)
+      await notifierArtisan(lead.artisan_id, 'proposition', artisan.email, {
+        leadId: lead.id,
+        subject: `Relance prête à valider — ${lead.nom_prospect || 'votre client'}`,
+        text: `${lead.nom_prospect || 'Votre client'} n'a pas encore répondu. Une relance est prête dans votre espace (Messages) : relisez-la et validez-la d'un clic pour qu'elle parte.`,
+      }).catch(() => {})
+      prepared++
       continue
     }
     if (isMail) {
@@ -323,8 +348,8 @@ export async function GET(req: Request) {
     : releveNonConfiguree ? 'boîte non configurée sur cet environnement'
     : `ÉCHEC — ${(courriers as { erreur?: string })?.erreur ?? 'raison inconnue'}`.slice(0, 180)
   await enregistrerPassage('relances', {
-    due: relances.length, sent, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
+    due: relances.length, sent, prepared, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, prepared, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier })
 }

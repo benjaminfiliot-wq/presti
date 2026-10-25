@@ -165,10 +165,12 @@ try {
 
   // ────────────────────────────────────────────────────────────────────────
   console.log('\n── 0. La matrice, telle que vendue')
-  T('trois offres payantes dans l’ordre des prix', OFFRES.map((o) => o.id).join(',') === 'essentiel,studio,signature' && OFFRES[0].prix < OFFRES[1].prix && OFFRES[1].prix < OFFRES[2].prix)
-  T('les crédits montent avec le prix', OFFRES[0].credits < OFFRES[1].credits && OFFRES[1].credits < OFFRES[2].credits)
-  T('l’essai a les capacités de l’Essentiel, en Standard seul, site niveau 1',
-    PLANS.gratuit.capacites.join() === PLANS.essentiel.capacites.join() && PLANS.gratuit.tiers.join() === 'standard' && PLANS.gratuit.siteMax === 1)
+  // 25/10 (Benj) : deux offres seulement, Studio puis Signature ; l'Essentiel n'est plus vendu (identifiant hérité, capacités de base).
+  T('deux offres payantes dans l’ordre des prix (Studio, Signature)', OFFRES.map((o) => o.id).join(',') === 'studio,signature' && OFFRES[0].prix < OFFRES[1].prix)
+  T('les crédits montent avec le prix', OFFRES[0].credits < OFFRES[1].credits)
+  T('l’Essentiel n’est plus proposé dans le tunnel', !OFFRES.some((o) => o.id === 'essentiel'))
+  T('l’essai a les capacités de base (devis IA, factures) sans la plateforme, en Standard seul, site niveau 1 — comme un compte Essentiel hérité',
+    PLANS.gratuit.capacites.join() === PLANS.essentiel.capacites.join() && !PLANS.gratuit.capacites.includes('plateforme.conversation') && PLANS.gratuit.tiers.join() === 'standard' && PLANS.gratuit.siteMax === 1)
   T('coût d’une génération : Standard 1, Pro 1, Expert 3', CREDIT_COST.standard === 1 && CREDIT_COST.pro === 1 && CREDIT_COST.expert === 3)
   T('coût d’une recherche fournisseurs à froid : 2 (3 en Expert)', COUT_RECHERCHE.standard === 2 && COUT_RECHERCHE.pro === 2 && COUT_RECHERCHE.expert === 3)
 
@@ -319,12 +321,12 @@ try {
 
     // 3h. Réabonnement, puis rejeu tardif de la résiliation de l'ANCIEN abonnement : ne doit rien casser.
     const subB = `sub_sim_B_${crypto.randomBytes(6).toString('hex')}`
-    r = await livrer(evenement('checkout.session.completed', sessionPayee(B.uid, 'essentiel', subB, cus)))
+    r = await livrer(evenement('checkout.session.completed', sessionPayee(B.uid, 'studio', subB, cus)))
     const b8 = await lire(B.uid)
-    T('réabonnement (Essentiel) → plan essentiel, nouvel abonnement enregistré', r.status === 200 && b8?.plan === 'essentiel' && b8?.stripe_subscription_id === subB, JSON.stringify(b8))
+    T('réabonnement (Studio) → plan studio, nouvel abonnement enregistré', r.status === 200 && b8?.plan === 'studio' && b8?.stripe_subscription_id === subB, JSON.stringify(b8))
     r = await livrer(evenement('customer.subscription.deleted', abonnement(B.uid, 'studio', subA, cus)))
     const b9 = await lire(B.uid)
-    E('la résiliation d’un ANCIEN abonnement (id ≠ enregistré) ne rétrograde pas l’abonné', b9?.plan === 'essentiel' && b9?.stripe_subscription_id === subB, `plan ${b9?.plan}, abonnement ${b9?.stripe_subscription_id} (le webhook ne compare pas l’identifiant)`)
+    E('la résiliation d’un ANCIEN abonnement (id ≠ enregistré) ne rétrograde pas l’abonné', b9?.plan === 'studio' && b9?.stripe_subscription_id === subB, `plan ${b9?.plan}, abonnement ${b9?.stripe_subscription_id} (le webhook ne compare pas l’identifiant)`)
     E('une erreur de traitement renvoie 5xx (Stripe réessaie) au lieu d’un 200 silencieux', !/renvoie 200 quand même/.test(routeWh) && /status:\s*5\d\d/.test(routeWh))
   }
 
@@ -350,7 +352,7 @@ try {
     if (confs.data[0]) {
       const f = confs.data[0].features ?? {}
       T('le portail permet de résilier', f.subscription_cancel?.enabled === true)
-      E('le portail permet de changer d’offre (produits du catalogue déclarés)', f.subscription_update?.enabled === true && (f.subscription_update?.products?.length ?? 0) >= 3)
+      E('le portail permet de changer d’offre (produits du catalogue déclarés : Studio et Signature)', f.subscription_update?.enabled === true && (f.subscription_update?.products?.length ?? 0) >= 2)
     }
   }
 
@@ -440,7 +442,7 @@ try {
       })
     }
   }
-  T('0 occurrence de 29/59/99 € ou 80/250/600 crédits hors lib/plans.ts (code livré)', trouves.length === 0, trouves.join(', '))
+  T(`0 occurrence de ${prix.join('/')} € ou ${volumes.join('/')} crédits hors lib/plans.ts (code livré)`, trouves.length === 0, trouves.join(', '))
   const simu = fs.readFileSync('lib/alertes.ts', 'utf8')
   E('le texte de simulation des alertes ne fige pas « sur 80 » (lire la matrice)', !/sur 80/.test(simu))
 } catch (e) {

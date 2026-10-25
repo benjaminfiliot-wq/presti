@@ -11,7 +11,7 @@
 // Vouvoiement partout. Aucune promesse chiffrée non mesurée (pas de « en quelques
 // minutes », pas de pourcentages inventés).
 
-import { ASSISTANT_TOURS_MAX, CREDIT_COST, ESSAI_JOURS, PLAFOND_PIECES_CHANTIER_MO } from './plans'
+import { ASSISTANT_TOURS_MAX, CREDIT_COST, ESSAI_JOURS, PLAFOND_PIECES_CHANTIER_MO, PLANS } from './plans'
 
 export type Article = {
   id: string
@@ -22,7 +22,8 @@ export type Article = {
   pourVosClients: string
   credits: string
   reglagesLies: string[]
-  disponibleAvec: 'essentiel' | 'studio' | 'signature'
+  /** « toutes » : la fonctionnalité est dans toutes les offres, essai compris (25/10 : deux offres, l'Essentiel n'est plus vendu). */
+  disponibleAvec: 'toutes' | 'studio' | 'signature'
 }
 
 export type InfoBulle = {
@@ -71,7 +72,7 @@ export const ARTICLES: Article[] = [
     page: '/dashboard',
     titre: 'Votre tableau de bord : demandes reçues et lien de contact (plateforme, dès Studio)',
     aQuoiCaSert:
-      "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager. La plateforme (le lien, les demandes, les réponses de l'assistant) commence avec l'offre Studio : avec l'offre Essentiel, cet écran se réduit à vos raccourcis (devis, factures, tarifs).",
+      "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager. La plateforme (le lien, les demandes, les réponses de l'assistant) commence avec l'offre Studio : pendant l'essai, cet écran se réduit à vos raccourcis (devis, factures, tarifs).",
     commentOnSenSert: [
       'Copiez votre lien de contact et partagez-le (fiche Google, page Facebook, signature mail…). Pas dans une annonce Le Bon Coin : ses règles interdisent les liens vers un autre site.',
       'Repérez les demandes marquées « à répondre ».',
@@ -82,7 +83,7 @@ export const ARTICLES: Article[] = [
       'Chaque client qui utilise votre lien crée ici une demande ; toute réponse qui lui a été envoyée est visible dans le détail.',
     credits: 'Aucun — cet écran ne fait que consulter et changer un statut.',
     reglagesLies: ['/plateforme', '/profil'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/plateforme/page.tsx:8-223 (réglages de l'assistant, appliqués côté serveur)
@@ -96,14 +97,14 @@ export const ARTICLES: Article[] = [
       'est appliqué côté serveur, à la première réponse comme aux suivantes et aux relances. Le devis brouillon ' +
       'créé par une règle (offre Signature) et la facture d’acompte se règlent dans l’onglet Automatisations.',
     commentOnSenSert: [
-      'Choisissez le mode de réponse : Automatique (offre Studio et au-delà), Assistée (vous validez) ou Manuelle.',
+      'Choisissez le mode de réponse : Automatique (offre Signature), Assistée (vous validez d’un clic, le mode de l’offre Studio) ou Manuelle.',
       'Choisissez le modèle et le ton utilisés par l’assistant.',
       "Réglez les horaires : 24h/24 ou seulement sur une plage horaire.",
       "Réglez les mots qui coupent l'assistant et vous alertent. Le devis brouillon créé par une règle (offre Signature) et la facture d’acompte : onglet Automatisations.",
       'Cliquez « Enregistrer ».',
     ],
     pourVosClients:
-      "En mode Automatique (offre Studio et au-delà), le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part " +
+      "En mode Automatique (offre Signature), le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part " +
       'sans votre validation. En Manuelle, vous répondez toujours vous-même.',
     credits: `Chaque réponse ou devis généré automatiquement consomme un crédit : ${creditsGeneration()}.`,
     reglagesLies: ['/messages', '/profil', '/abonnement'],
@@ -184,7 +185,7 @@ export const ARTICLES: Article[] = [
       "pour le client ; et la règle « Tout auto » (offre Signature, onglet Automatisations) l'envoie seule dans la conversation.",
     credits: `La génération IA du chiffrage consomme un crédit — voir l'article « Éditeur de devis ».`,
     reglagesLies: ['/devis/nouveau', '/tarifs'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/devis/[id]/page.tsx:20-432 (chiffrage IA, aperçu live, envoi, création de facture)
@@ -210,7 +211,7 @@ export const ARTICLES: Article[] = [
       'mention manuscrite « Devis reçu avant l’exécution des travaux » avant de signer.',
     credits: `« Chiffrer avec l'IA » consomme un crédit : ${creditsGeneration()}.`,
     reglagesLies: ['/tarifs', '/parametres?onglet=legal'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/factures/page.tsx:17-108 (émise/payée/annulée, jamais supprimable) ; app/api/factures/route.ts:1-30
@@ -228,13 +229,13 @@ export const ARTICLES: Article[] = [
       'Cliquez sur une ligne ou « PDF » pour ouvrir le document.',
       'Cliquez « Marquer payée » une fois réglée.',
       'Cliquez « XML » sur une facture pour télécharger son fichier Factur-X, utile à votre comptable ou à un donneur d’ordre public. C’est un fichier à télécharger : il n’est pas transmis pour vous à une plateforme agréée.',
-      'Avec l’offre Studio ou Signature, cochez « Relancer automatiquement mes factures échues » en haut de l’écran : les relances partent seules après l’échéance (J+3, J+10, J+21 réglables) et s’arrêtent dès que la facture est payée ou que le client répond. Avec l’Essentiel, ce réglage s’affiche verrouillé.',
+      'Avec l’offre Studio ou Signature, cochez « Relancer automatiquement mes factures échues » en haut de l’écran : une relance est prévue après l’échéance (J+3, J+10, J+21 réglables) et s’arrête dès que la facture est payée ou que le client répond. En Signature, elle part seule ; en Studio, elle est préparée et vous l’envoyez d’un clic depuis cet écran. Pendant l’essai, ce réglage s’affiche verrouillé.',
       'En cas d’erreur, cliquez « Émettre un avoir » — il n’existe ni « Supprimer » ni « Annuler » : l’avoir est la façon légale d’annuler une facture.',
     ],
     pourVosClients: 'Le PDF de facture reprend automatiquement les lignes du devis accepté.',
     credits: 'Aucun — la facture reprend les lignes du devis, sans nouvel appel à l’IA.',
     reglagesLies: ['/devis', '/parametres?onglet=legal'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/devis/[id]/page.tsx (choix « Devis simple / par lots ») ; lib/DevisPDF.tsx (titre et sous-total HT par lot) ; lib/ai.ts (lot renseigné en mode lots)
@@ -256,7 +257,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Votre client compare lot par lot ; les montants totaux ne changent pas.',
     credits: 'Aucun en plus du chiffrage IA, s’il est utilisé.',
     reglagesLies: ['/devis', '/tarifs'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: lib/facturesTypes.ts (calculs), lib/facturesTypesServeur.ts, lib/factureDepuisDevis.ts ; garde-fous en base : migration 0176
@@ -279,7 +280,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Votre client reçoit des factures claires : sur chaque situation, il voit ce qui a déjà été facturé et ce qu’il paie cette fois.',
     credits: 'Aucun.',
     reglagesLies: ['/factures', '/devis'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/chiffres/page.tsx ; app/api/compta/tableau/route.ts (lecture serveur, filtrée sur votre compte) ; lib/comptaTableau.ts (règles de calcul) ; app/chiffres/TableauCompta.tsx (affichage) ; app/chiffres/ComptaArtisan.tsx (vos fichiers)
@@ -423,6 +424,7 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'signature',
   },
 
+  // 25/10 : Studio et au-dessus (lib/plans.ts STUDIO `assistant`) ; ses outils CRM refusés sans `crm` (lib/assistant/garde.ts).
   // source: app/assistant/page.tsx ; app/crm/assistant/PanneauAssistant.tsx (dans l'atelier, 21/10) ; lib/assistant/lectures-tout.ts, actions-tout.ts (relié à tout) ;
   // lib/pilote/regles.ts (exception du Pilote automatique) ; lib/assistant/outils-actions.ts:1-20 (direct ou confirmation) ; lib/assistant/cartes.ts:17 (carte valable 24 h) ; lib/plans.ts ASSISTANT_TOURS_MAX
   {
@@ -430,11 +432,11 @@ export const ARTICLES: Article[] = [
     page: '/assistant',
     titre: 'L’assistant de gestion : une phrase, et il prépare',
     aQuoiCaSert:
-      'Vous écrivez ce que vous voulez dans la conversation : un devis, une facture, une relance, un ajustement de stock, une mise à jour de tarif, un chantier, une demande à classer, l’avancement d’un chantier, un réglage de votre plateforme. L’assistant le prépare avec vos propres données : demandes et messages, devis, factures, tarifs, inventaire, chantiers, profil et chiffres. ' +
-      'Il s’ouvre aussi dans l’atelier du CRM (bouton « Assistant », ou « Demander à l’assistant » sur un objet) : il sait de quel chantier ou de quel objet vous parlez, et l’objet qu’il touche s’illumine dans la maquette. ' +
+      'Vous écrivez ce que vous voulez dans la conversation : un devis, une facture, une relance, un ajustement de stock, une mise à jour de tarif, une demande à classer, un réglage de votre plateforme, et avec l’offre Signature un chantier ou son avancement. L’assistant le prépare avec vos propres données : demandes et messages, devis, factures, tarifs, inventaire, profil et chiffres (et vos chantiers avec le CRM). ' +
+      'Avec l’offre Signature, il s’ouvre aussi dans l’atelier du CRM (bouton « Assistant », ou « Demander à l’assistant » sur un objet) : il sait de quel chantier ou de quel objet vous parlez, et l’objet qu’il touche s’illumine dans la maquette. ' +
       'Ce qui part chez un client, ce qui ne se défait pas ou touche à la comptabilité (envoyer, relancer, émettre une facture, encaisser, supprimer, changer des prix en lot) n’est jamais fait seul : il vous présente une carte avec le texte exact, et rien ne se passe avant votre clic sur « Confirmer ». ' +
       'Le reste (brouillons, tarifs, stock, tâches, notes) est fait tout de suite, noté au journal des actions et annulable quand c’est possible. Il n’agit que lorsque vous lui écrivez. Le bouton « Briefing du matin » résume ce qui est urgent, en retard ou en attente. ' +
-      'Seule exception, que vous activez vous-même : le Pilote automatique (article suivant).',
+      'Seule exception, que vous activez vous-même avec l’offre Signature : le Pilote automatique (article suivant).',
     commentOnSenSert: [
       'Ouvrez « Assistant » dans le menu.',
       'Écrivez votre demande avec vos mots, ou cliquez « Briefing du matin ».',
@@ -444,9 +446,9 @@ export const ARTICLES: Article[] = [
     ],
     pourVosClients:
       'Votre client ne reçoit rien tant que vous n’avez pas confirmé la carte correspondante, sauf pour les types d’envoi que vous avez confiés au Pilote automatique.',
-    credits: `${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} crédits avec le modèle Expert), dans la limite de ${ASSISTANT_TOURS_MAX} messages par conversation.`,
+    credits: `${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} crédits avec le modèle Expert, offre Signature), dans la limite de ${ASSISTANT_TOURS_MAX} messages par conversation.`,
     reglagesLies: ['/crm', '/inventaire', '/tarifs'],
-    disponibleAvec: 'signature',
+    disponibleAvec: 'studio',
   },
 
   // source: lib/pilote/regles.ts:1-27 (garde-fous, DELAI_ANNULATION_MIN, PLAFOND_AUTO_JOUR), :37-44 (types) ; app/parametres/SectionPilote.tsx (« Partira bientôt »,
@@ -487,10 +489,10 @@ export const ARTICLES: Article[] = [
       'Pour supprimer un site existant : Paramètres → « Données & confidentialité ».',
     ],
     pourVosClients:
-      'Avec la plateforme (offre Studio et au-dessus), votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire. Avec l’offre Essentiel, il n’y a pas de plateforme : ils voient seulement vos coordonnées publiques.',
+      'Avec la plateforme (offre Studio et au-dessus), votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire. Pendant l’essai, il n’y a pas de plateforme : ils voient seulement vos coordonnées publiques.',
     credits: 'Aucun — modifier votre profil ne consomme pas de crédit.',
     reglagesLies: ['/plateforme', '/parametres?onglet=legal', '/abonnement'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/parametres/page.tsx:156-233 (onglet Entreprise & légal) ; lib/legalArtisan.ts (mentions manquantes)
@@ -514,7 +516,7 @@ export const ARTICLES: Article[] = [
       'Tant qu’il manque une mention bloquante (nom, forme juridique, SIRET, adresse, assurance décennale), un devis ne peut pas être envoyé et une facture ne peut pas être émise : Presti dit laquelle compléter. Sur votre site, une mention absente affiche « non communiqué ».',
     credits: 'Aucun',
     reglagesLies: ['/devis/nouveau', '/factures'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/parametres/SectionNotifications.tsx (v9 J2) ; lib/notifications.ts (email + push) ; app/api/push/*
@@ -544,7 +546,7 @@ export const ARTICLES: Article[] = [
       'Paramètres → Notifications → « Ce qui vous est envoyé » : Email et Push par événement.',
       'Se déconnecter retire les notifications de l’appareil ; « Fermer toutes mes sessions » (Sécurité) les retire de tous.',
     ],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/parametres/page.tsx:236-248 (onglet Sécurité) ; app/api/securite/sessions/route.ts (révocation réelle)
@@ -573,7 +575,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Aucun effet visible pour eux.',
     credits: 'Aucun',
     reglagesLies: [],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/parametres/page.tsx:250-261 (onglet Données & confidentialité) ; app/api/donnees/export/route.ts
@@ -593,7 +595,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Aucun effet, sauf si vous supprimez la plateforme ou le site : ils deviennent alors inaccessibles pour eux.',
     credits: 'Aucun',
     reglagesLies: ['/profil#donnees'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/abonnement/page.tsx:15-71 (formules, crédits, Stripe)
@@ -606,15 +608,15 @@ export const ARTICLES: Article[] = [
       'consomme plus), rechargés à chaque renouvellement, sans engagement. Vous comparez ici les formules et changez ' +
       'à tout moment.',
     commentOnSenSert: [
-      'Comparez les formules et ce qu’elles incluent.',
-      `Cliquez « Essayer … jours gratuits » (${ESSAI_JOURS.essentiel} jours en Essentiel, ${ESSAI_JOURS.studio} en Studio, ${ESSAI_JOURS.signature} en Signature, sans carte, une fois par compte) ou, si votre essai n’est plus disponible, « S’abonner à … ».`,
+      'Comparez les deux formules : Studio prépare tout et vous validez, Signature envoie tout seul.',
+      `Cliquez « Essayer … jours gratuits » (${ESSAI_JOURS.studio} jours en Studio, ${ESSAI_JOURS.signature} en Signature, sans carte, une fois par compte) ou, si votre essai n’est plus disponible, « S’abonner à … ».`,
       'Renseignez votre adresse de facturation sur la page Stripe sécurisée ; pendant l’essai, aucune carte n’est demandée.',
       'Vous êtes redirigé vers votre tableau de bord. À la fin de l’essai, ajoutez une carte pour continuer ; sans carte, rien n’est prélevé et vous repassez à l’offre d’Essai.',
     ],
     pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire).',
     credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',
     reglagesLies: ['/tarifs', '/plateforme'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 
   // source: app/cgu/page.tsx §4 « Support et assistance » (délais écrits) ; lib/plans.ts:139
@@ -628,7 +630,7 @@ export const ARTICLES: Article[] = [
     aQuoiCaSert:
       'Le support répond par écrit, par le formulaire « Nous écrire » ou à l’adresse email des mentions légales — ' +
       'les deux arrivent au même endroit. Le délai de première réponse dépend de votre formule : 3 jours ouvrés en ' +
-      'Essai et en Essentiel, 2 en Studio, 1 en Signature. C’est cela, le « support prioritaire » de Signature : un ' +
+      'Essai, 2 en Studio, 1 en Signature. C’est cela, le « support prioritaire » de Signature : un ' +
       'jour ouvré, et le passage en tête de file quand plusieurs demandes attendent.',
     commentOnSenSert: [
       'Écrivez depuis la page « Nous écrire », ou par email : décrivez ce que vous faisiez et ce que vous attendiez.',
@@ -640,7 +642,34 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Aucun effet direct — vos clients écrivent à vous, jamais à Presti.',
     credits: 'Aucun',
     reglagesLies: [],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
+  },
+
+  // source: lib/plans.ts STUDIO / SIGNATURE (25/10 : `plateforme.ia.auto`, `relances.auto`, `factures.relances.auto`, `assistant.pilote`, `plateforme.regles`,
+  // `chiffres.auto`, `crm`, `plateforme.ia.expert` en Signature ; `assistant` en Studio) ; lib/plateformeConfig.ts:184 (modeEffectif : sans l'offre, « assistée ») ;
+  // app/api/cron/relances/route.ts:159-180 (relance de conversation PROPOSÉE sans `relances.auto`) ; lib/relancesImpayesTour.ts:14-17, :81 (impayé « à valider ») ;
+  // lib/pilote/regles.ts:9-20 (jamais un prix hors tarifs, jamais un paiement), :24 (10 minutes)
+  {
+    id: 'offres',
+    page: '/abonnement',
+    titre: 'Studio ou Signature : ce qui part seul et ce que vous validez',
+    aQuoiCaSert:
+      `Les deux offres font le même travail pour vous : la réponse à chaque demande est préparée en moins d’une minute, le devis est chiffré sur vos prix, les relances et l’assistant de gestion sont prêts. La différence, c’est qui appuie sur « Envoyer ». ` +
+      `Avec ${PLANS.studio.label} (${PLANS.studio.prixMois} € par mois), tout est automatisé et préparé, mais rien ne part chez un client sans votre clic. ` +
+      `Avec ${PLANS.signature.label} (${PLANS.signature.prixMois} € par mois), tout part automatiquement, et vous gardez la main pour reprendre une conversation ou annuler.`,
+    commentOnSenSert: [
+      `${PLANS.studio.label} — la réponse à une demande vous attend dans Messages : vous la relisez, vous l’envoyez d’un clic.`,
+      `${PLANS.studio.label} — les relances des conversations (J+2, J+5, J+10) et, si vous les activez, celles des factures impayées sont rédigées pour vous : vous êtes prévenu, et elles ne partent qu’après votre clic.`,
+      `${PLANS.studio.label} — l’assistant de gestion prépare devis, factures et relances ; ce qui part chez un client attend votre confirmation.`,
+      `${PLANS.signature.label} — en mode « Automatique » (Ma plateforme), la réponse part seule, jour et nuit ; les relances des conversations et des impayés partent seules ; le Pilote automatique envoie ce que vous lui confiez après 10 minutes pour annuler ; vos règles d’automatisation préparent le devis.`,
+      `${PLANS.signature.label} — en plus : le CRM, le modèle Expert, l’alerte impayés et l’export mensuel à votre comptable.`,
+      'Dans les deux offres, jamais : un devis dont un prix ne vient pas de vos tarifs ne part seul, et aucun encaissement ni remboursement ne se fait sans vous.',
+    ],
+    pourVosClients:
+      'Vos clients reçoivent les mêmes messages, à votre nom. En Signature, ils les reçoivent sans attendre que vous soyez disponible ; un message envoyé seul par l’assistant le dit.',
+    credits: `Les mêmes règles dans les deux offres : ${creditsGeneration()} (Expert : offre Signature). ${PLANS.studio.label} : ${PLANS.studio.creditsMois} crédits par mois ; ${PLANS.signature.label} : ${PLANS.signature.creditsMois}.`,
+    reglagesLies: ['/abonnement', '/plateforme', '/parametres?onglet=pilote'],
+    disponibleAvec: 'toutes',
   },
 
   // source: app/tarifs/page.tsx:8-219 ; app/api/tarifs/route.ts:1-30 (aucun verrou de plan)
@@ -660,7 +689,7 @@ export const ARTICLES: Article[] = [
     pourVosClients: 'Leurs devis reflètent vos vrais prix fournisseurs, pas une moyenne nationale.',
     credits: 'Aucun',
     reglagesLies: ['/devis/nouveau'],
-    disponibleAvec: 'essentiel',
+    disponibleAvec: 'toutes',
   },
 ]
 
@@ -709,7 +738,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/plateforme',
     label: 'Mode de réponse',
     explication:
-      'Automatique : l’assistant répond tout de suite, en direct (offre Studio et au-delà ; la plateforme n’existe pas en Essai ni en Essentiel). Assistée : il prépare, vous validez ; le client voit « votre message est bien reçu ». Manuelle : rien n’est préparé, aucun crédit, vous écrivez tout. Et sur n’importe quel fil, « je prends la main » fait taire l’assistant jusqu’à « rendre la main ». Le choix s’enregistre au clic ; la ligne « mode appliqué par le serveur » dit ce qui est réellement en vigueur.',
+      'Automatique : l’assistant répond tout de suite, en direct (offre Signature). Assistée : il prépare, vous validez d’un clic (le mode de l’offre Studio ; la plateforme n’existe pas pendant l’essai) ; le client voit « votre message est bien reçu ». Manuelle : rien n’est préparé, aucun crédit, vous écrivez tout. Et sur n’importe quel fil, « je prends la main » fait taire l’assistant jusqu’à « rendre la main ». Le choix s’enregistre au clic ; la ligne « mode appliqué par le serveur » dit ce qui est réellement en vigueur.',
     exemple: 'En Assistée, un client écrit à 22 h ; vous voyez la réponse proposée le lendemain matin et l’envoyez d’un clic.',
   },
   // source: app/plateforme/page.tsx:43, 147-153 ; lib/models.ts:10-15

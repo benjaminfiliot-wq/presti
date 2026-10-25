@@ -91,8 +91,13 @@ console.log('\n── GF-6 escalade avant le mode assisté')
 const cfgAssistee = { ...CONFIG_DEFAUT, mode_reponse: 'assistee' }
 const d1 = iaDoitRepondre(cfgAssistee, { nbReponsesIA: 0, message: 'Grosse fuite sous l’évier !' })
 T('Assistée + « fuite » → escalade', !d1.ok && d1.raison === 'escalade', JSON.stringify(d1))
-const d2 = decisionReponse({ plan: 'essentiel' }, { prise_en_main: false }, { ...CONFIG_DEFAUT, mode_reponse: 'auto' }, { nbReponsesIA: 0, message: 'urgence, ça fuit' })
-T('Essentiel en auto verrouillé + mot d’escalade → silence (rien n’est préparé)', !d2.ok && d2.raison === 'escalade' && d2.comportement === 'silence', JSON.stringify(d2))
+// 25/10 : la réponse automatique est Signature (capacité `plateforme.ia.auto`) ; un Studio réglé sur « auto » est rétrogradé en assistée.
+const d2 = decisionReponse({ plan: 'studio' }, { prise_en_main: false }, { ...CONFIG_DEFAUT, mode_reponse: 'auto' }, { nbReponsesIA: 0, message: 'urgence, ça fuit' })
+T('Studio en auto verrouillé + mot d’escalade → silence (rien n’est préparé)', !d2.ok && d2.raison === 'escalade' && d2.comportement === 'silence', JSON.stringify(d2))
+const d2b = decisionReponse({ plan: 'studio' }, { prise_en_main: false }, { ...CONFIG_DEFAUT, mode_reponse: 'auto' }, { nbReponsesIA: 0, message: 'Bonjour, un devis pour une douche ?' })
+T('Studio en auto sans mot d’escalade → préparée (verrou_offre), pas envoyée', !d2b.ok && d2b.raison === 'verrou_offre' && d2b.comportement === 'preparer', JSON.stringify(d2b))
+const d2c = decisionReponse({ plan: 'signature' }, { prise_en_main: false }, { ...CONFIG_DEFAUT, mode_reponse: 'auto' }, { nbReponsesIA: 0, message: 'Bonjour, un devis pour une douche ?' })
+T('Signature en auto sans mot d’escalade → la réponse part', d2c.ok === true, JSON.stringify(d2c))
 const d3 = iaDoitRepondre(cfgAssistee, { nbReponsesIA: 0, message: 'Bonjour, un devis pour une douche ?' })
 T('Assistée sans mot d’escalade → assistée (inchangé)', !d3.ok && d3.raison === 'assistee', JSON.stringify(d3))
 

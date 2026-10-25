@@ -169,21 +169,23 @@ const dès = (cap: Parameters<typeof offreMinimale>[0]): string => { const o = o
 const jours = Object.values(ESSAI_JOURS)
 
 export const PRESTI: Record<CritereId, string> = {
-  prix: `${Math.min(...OFFRES.map((o) => o.prix))} € par mois (${PLANS.essentiel.label}), TVA non applicable ; ${PLANS.studio.label} ${PLANS.studio.prixMois} €, ${PLANS.signature.label} ${PLANS.signature.prixMois} €`,
+  // 25/10 (Benj) : deux offres ; le prix d'appel est le plus bas des offres vendues (OFFRES), lu dans lib/plans.ts.
+  prix: `dès ${Math.min(...OFFRES.map((o) => o.prix))} € par mois, TVA non applicable : ${PLANS.studio.label} ${PLANS.studio.prixMois} €, ${PLANS.signature.label} ${PLANS.signature.prixMois} €`,
   essai: `${Math.min(...jours)} à ${Math.max(...jours)} jours selon l’offre, sans carte`,
-  automatisation: `Oui : dès ${PLANS.studio.label} les réponses à vos clients partent sans vous, jour et nuit ; complète en ${PLANS.signature.label} (vos règles + l’assistant qui gère devis, factures, stock, tarifs et CRM) ; relances automatiques des factures impayées dès ${dès('factures.relances')}, alerte e-mail sur les impayés et export mensuel de vos factures en ${dès('chiffres.auto')}`,
+  // 25/10 (Benj) : Studio = tout est préparé, l'artisan valide ; Signature = tout part seul (plateforme.ia.auto, relances.auto, factures.relances.auto).
+  automatisation: `Oui, dans les deux offres : dès ${dès('plateforme.conversation')} tout est automatisé et préparé (réponses à vos clients, devis sur vos prix, relances, assistant de gestion), vous validez d’un clic ; complète en ${dès('plateforme.ia.auto')}, où tout part seul, jour et nuit (réponses, relances des conversations et des impayés, Pilote automatique, vos règles), avec l’alerte e-mail sur les impayés et l’export mensuel de vos factures (${dès('chiffres.auto')})`,
   devis_factures: 'Oui',
   // Honnête : un fichier XML Factur-X à télécharger, pas une plateforme agréée (lib/facturx.ts, lib/plans.ts).
   facture_electronique: 'Export XML Factur-X ; pas de plateforme agréée intégrée',
-  // 15/10 (Benj) : la plateforme n'existe pas en Essentiel — la réponse préparée est celle de la plateforme, dès Studio (prix et offre lus dans lib/plans.ts).
-  ia_reponse: `Oui, avec la plateforme dès l’offre ${dès('plateforme.conversation')} (${PLANS.studio.prixMois} € par mois) : la réponse est prête dans votre ton, vous l’envoyez, ou l’assistant l’envoie seul (réglable)`,
-  ia_devis: `Oui, chiffré sur vos propres prix, dès ${dès('devis.ia')}`,
-  assistant: `Oui, offre ${dès('assistant')} : devis, factures, stock, tarifs et CRM par la conversation ; vous confirmez ce qui part chez un client`,
+  // La réponse préparée est celle de la plateforme, dès Studio (prix et offre lus dans lib/plans.ts) ; envoyée seule en Signature (25/10).
+  ia_reponse: `Oui, avec la plateforme dès l’offre ${dès('plateforme.conversation')} (${PLANS.studio.prixMois} € par mois) : la réponse est prête dans votre ton, vous la validez d’un clic ; en ${dès('plateforme.ia.auto')}, elle part seule (réglable)`,
+  ia_devis: `Oui, chiffré sur vos propres prix, dans les deux offres`,
+  assistant: `Oui, dès l’offre ${dès('assistant')} : devis, factures, stock et tarifs par la conversation (le CRM en ${dès('crm')}) ; vous confirmez ce qui part chez un client`,
   crm: `Oui, offre ${dès('crm')} : pipeline, chantiers, équipe et carte Atelier en temps réel`,
   stock: `Oui, dès ${dès('inventaire.stock')} : stock par lieu, scan, seuils`,
   // Impayés : seulement ce qui est livré (drapeau relancesImpayes, migration 0159). Baissé, la ligne redit ce qui manque.
   relances: FLAGS.relancesImpayes
-    ? `Impayés : relances automatiques à cocher (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} réglables), dès ${dès('factures.relances')} ; relance préparée par l’assistant (${dès('assistant')}) ; conversations : J+2, J+5, J+10`
+    ? `Impayés : relances automatiques à cocher (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} réglables), préparées pour vous dès ${dès('factures.relances')}, envoyées seules en ${dès('factures.relances.auto')} ; relance préparée par l’assistant (${dès('assistant')}) ; conversations : J+2, J+5, J+10, envoyées seules en ${dès('relances.auto')}`
     : 'Conversations : J+2, J+5, J+10 ; pas de relance automatique des impayés',
   site: `Oui, à la demande : ${PRIX_SITE_TEXTE} une fois, sans abonnement ; une page par commune servie`,
 }
@@ -217,7 +219,7 @@ export type Avantage = {
   flag?: Flag
 }
 
-const prix = (id: 'essentiel' | 'studio' | 'signature') => PLANS[id].prixMois
+const prix = (id: 'studio' | 'signature') => PLANS[id].prixMois
 /** La phrase de comparaison d'un avantage, ou null. 'aucun' : valable seulement si les quatre éditeurs disent « Non indiqué » (le juge le recompte). */
 export const phraseAutres = (a: Avantage): string | null =>
   a.autres === null ? null : a.autres === 'aucun' ? 'Aucun des quatre éditeurs lus ne l’indique sur ses pages.' : a.autres.phrase
@@ -225,25 +227,27 @@ export const phraseAutres = (a: Avantage): string | null =>
 export const AVANTAGES: Avantage[] = [
   {
     id: 'automatisation', critere: 'automatisation', titre: 'Presti fait le travail à votre place',
-    texte: `Ce n’est pas qu’un outil où l’on saisit ses devis : dès l’offre ${PLANS.studio.label} (${prix('studio')} €), les réponses à vos clients partent sans vous, jour et nuit, et l’automatisation devient complète avec ${PLANS.signature.label} (${prix('signature')} €) : vos règles, et un assistant qui prépare devis, factures, relances, stock, tarifs et CRM. Vous gardez la main sur ce qui part chez un client.`,
+    texte: `Ce n’est pas qu’un outil où l’on saisit ses devis : tout est automatisé. Avec ${PLANS.studio.label} (${prix('studio')} €), la réponse à vos clients, le devis sur vos prix, les relances et l’assistant de gestion sont préparés pour vous : vous validez d’un clic. Avec ${PLANS.signature.label} (${prix('signature')} €), tout part seul, jour et nuit : réponses, relances, Pilote automatique et vos règles. Jamais un prix estimé ni un paiement sans vous.`,
     autres: { phrase: 'Parmi les quatre éditeurs lus, seul Henrri indique une automatisation, limitée à la relance des impayés (formule VIP).', motsCellule: [{ editeur: 'henrri', mot: 'relance automatique' }] },
-    preuves: [{ fichier: 'lib/ai/routage.ts', motif: 'plateforme\.ia\.auto' }, { fichier: 'lib/plateformeConfig.ts', motif: "'auto'" }],
+    // 25/10 : routage.ts ne teste plus `plateforme.ia.auto` (il teste `plateforme.conversation`) ; la preuve est la matrice (ce qui part seul est
+    // Signature) et le verrou qui rétrograde en « assistée » sans l'offre (modeEffectif).
+    preuves: [{ fichier: 'lib/plans.ts', motif: "'plateforme\\.ia\\.auto', 'relances\\.auto', 'factures\\.relances\\.auto'" }, { fichier: 'lib/plateformeConfig.ts', motif: "!peut\\(plan, 'plateforme\\.ia\\.auto'\\)\\) return \\{ mode: 'assistee'" }],
   },
   {
     id: 'reponse', critere: 'ia_reponse', titre: 'Chaque demande a déjà sa réponse',
-    texte: `Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la relisez, vous l’envoyez. C’est la plateforme, dès l’offre ${dès('plateforme.conversation')} (${prix('studio')} € par mois).`,
+    texte: `Quand un client vous écrit par votre lien, la réponse est prête en moins d’une minute, dans votre ton, avec les questions qui manquent et sans prix inventé : vous la validez d’un clic, ou elle part seule avec ${dès('plateforme.ia.auto')}. C’est la plateforme, dès l’offre ${dès('plateforme.conversation')} (${prix('studio')} € par mois).`,
     autres: 'aucun',
     preuves: [{ fichier: 'lib/ai.ts', motif: 'generateLeadReply' }, { fichier: 'lib/platStats.ts', motif: 'median < 60' }],
   },
   {
     id: 'assistant', critere: 'assistant', flag: 'assistant', titre: 'Un assistant qui fait le travail de gestion',
-    texte: `Une phrase suffit : il prépare le devis ou la facture, relance un impayé, met à jour le stock, les tarifs ou le CRM. Tout ce qui part chez un client attend votre confirmation, et chaque action est consignée dans un journal. Offre ${dès('assistant')}.`,
+    texte: `Une phrase suffit : il prépare le devis ou la facture, relance un impayé, met à jour le stock ou les tarifs (et le CRM en ${dès('crm')}). Tout ce qui part chez un client attend votre confirmation, et chaque action est consignée dans un journal. Dès l’offre ${dès('assistant')}.`,
     autres: 'aucun',
     preuves: [{ fichier: 'lib/assistant/actions-serveur.ts', motif: 'R\\.relancer_facture' }, { fichier: 'lib/assistant/cartes.ts', motif: 'texteRelanceFacture' }, { fichier: 'lib/assistant/acces.ts', motif: "peut\\(p\\.plan, 'assistant'\\)" }],
   },
   {
     id: 'impayes', critere: 'relances', flag: 'relancesImpayes', titre: 'Les impayés se relancent, et s’arrêtent à temps',
-    texte: `Une case à cocher : jusqu’à trois relances par e-mail après l’échéance (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} par défaut), dans un texte que vous avez relu. Elles s’arrêtent dès que la facture est payée ou annulée, ou que le client répond ; chaque relance est notée sur la facture. Dès l’offre ${dès('factures.relances')} (${prix('studio')} € par mois).`,
+    texte: `Une case à cocher : jusqu’à trois relances par e-mail après l’échéance (${JOURS_PAR_DEFAUT.map((j) => `J+${j}`).join(', ')} par défaut), dans un texte que vous avez relu, préparées pour vous avec ${dès('factures.relances')}, envoyées seules avec ${dès('factures.relances.auto')}. Elles s’arrêtent dès que la facture est payée ou annulée, ou que le client répond ; chaque relance est notée sur la facture. Dès l’offre ${dès('factures.relances')} (${prix('studio')} € par mois).`,
     autres: { phrase: 'Chez Henrri, les impayés sont automatiques dans la formule VIP, à 59 € HT par mois.', motsCellule: [{ editeur: 'henrri', mot: 'VIP' }, { editeur: 'henrri', mot: '59' }] },
     preuves: [{ fichier: 'lib/relancesImpayes.ts', motif: 'JOURS_PAR_DEFAUT' }, { fichier: 'lib/relancesImpayesTour.ts', motif: 'reponseClient' }, { fichier: 'app/factures/RelancesAuto.tsx', motif: 'Relancer automatiquement mes factures échues' }],
   },

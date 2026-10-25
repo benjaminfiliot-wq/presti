@@ -133,7 +133,7 @@ export default function Reglages({ uid, plan, pause, onPause }: { uid: string; p
         <div className="pcfg-modes">
           {MODES.map((m) => {
             // Le verrou d'offre est VISIBLE (v7, 1c) : avant, « Automatique » se laissait choisir en
-            // Essai/Essentiel et le serveur appliquait « assistée » sans le dire.
+            // Essai/Essentiel et le serveur appliquait « assistée » sans le dire. Depuis le 25/10, l'automatique est Signature seulement.
             const verrou = m.id === 'auto' && verrouAuto
             return (
               <button type="button" key={m.id} className={`pcfg-mode${cfg.mode_reponse === m.id ? ' on' : ''}${verrou ? ' verrou' : ''}`}

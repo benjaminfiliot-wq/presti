@@ -46,6 +46,9 @@ const I = {
 const OFFRE_CHIFFRES = (() => { const o = offreMinimale('chiffres'); return o ? PLANS[o].label : '' })()
 // 15/10 (Benj) : « La plateforme n'est disponible qu'à partir de Studio » — la landing nomme l'offre, lue dans lib/plans.ts, jamais recopiée.
 const OFFRE_PLATEFORME = (() => { const o = offreMinimale('plateforme.conversation'); return o ? PLANS[o].label : '' })()
+// 25/10 (Benj) : deux offres. Studio prépare tout et l'artisan valide ; l'offre qui envoie seule (réponse, relances) se lit dans
+// lib/plans.ts (capacité `plateforme.ia.auto`), jamais recopiée.
+const OFFRE_AUTO = (() => { const o = offreMinimale('plateforme.ia.auto'); return o ? PLANS[o].label : '' })()
 // Le prix d'appel se lit dans la grille (lib/plans.ts), jamais recopié à la main.
 const PRIX_MIN = Math.min(...OFFRES.map((o) => o.prix))
 
@@ -136,7 +139,7 @@ export default function Home() {
             operatingSystem: 'Web',
             url: 'https://prestiapp.fr',
             description:
-              "Dès l'offre Studio, chaque demande faite par votre lien arrive dans Presti : la réponse est prête en moins d'une minute, dans votre ton. Vous l'envoyez.",
+              "Chaque demande faite par votre lien a sa réponse prête en moins d'une minute : avec Studio, vous la validez d'un clic ; avec Signature, elle part seule.",
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: 'Essai gratuit' },
             provider: { '@type': 'Organization', name: 'Presti', url: 'https://prestiapp.fr' },
           }),
@@ -173,8 +176,8 @@ export default function Home() {
             {/* Deux versions de la même promesse : en 390 px, la longue faisait 6 lignes et repoussait l'appel à l'action
                 (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
             <p className="lp-lede">
-              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête : vous l&apos;envoyez (dès l&apos;offre {OFFRE_PLATEFORME}).</span>
-              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, vous l&apos;envoyez. Puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture. La plateforme de conversation commence avec l&apos;offre {OFFRE_PLATEFORME} ; le devis chiffré par l&apos;IA et la facture sont dès l&apos;offre {PLANS.essentiel.label}.</span>
+              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute : vous la validez d&apos;un clic, ou elle part seule avec {OFFRE_AUTO}.</span>
+              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture. Avec {OFFRE_PLATEFORME}, tout est préparé et vous validez d&apos;un clic ; avec {OFFRE_AUTO}, tout part automatiquement, jamais un prix estimé ni un paiement sans vous.</span>
             </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
@@ -199,7 +202,7 @@ export default function Home() {
         <section className="lp-blk" style={{ paddingTop: '1rem' }}>
           <div className="container">
             <div className="lp-reassure reveal-kids">
-              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : vous l&apos;envoyez (dès {OFFRE_PLATEFORME})</em></div></div>
+              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : validée d&apos;un clic, ou envoyée seule avec {OFFRE_AUTO}</em></div></div>
               <div className="lp-rc"><span className="i">{I.badge}</span><div><b>Fiable</b><em>Devis conformes, dans votre ton</em></div></div>
               <div className="lp-rc"><span className="i">{I.shield}</span><div><b>Sécurisé</b><em>Vos données isolées, chiffrées</em></div></div>
               <div className="lp-rc"><span className="i">{I.wallet}</span><div><b>Sans carte</b><em>Essai offert, résiliable</em></div></div>
@@ -212,17 +215,18 @@ export default function Home() {
           <div className="container lp-proof-in">
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
             <div>
-            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Avec la plateforme (dès l&apos;offre {OFFRE_PLATEFORME}), Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
+            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute : avec {OFFRE_PLATEFORME}, vous la validez d&apos;un clic ; avec {OFFRE_AUTO}, elle part seule, jour et nuit.</p>
             <div className="src">Source : Harvard Business Review, « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
             </div>
           </div>
         </section>
 
         {/* LA CHAÎNE — quatre cartes qui s'empilent au défilement (position: sticky, aucun script). Chaque étape dit
-            qui fait quoi : l'IA prépare, l'artisan relit et envoie (mode assisté par défaut, lib/plateformeConfig.ts). */}
+            qui fait quoi : l'IA prépare, l'artisan relit et envoie (mode assisté par défaut, lib/plateformeConfig.ts) ; en Signature (25/10),
+            la réponse et les relances partent seules (capacité `plateforme.ia.auto`, modeEffectif). */}
         <section className="lp-blk lp-chaine" id="comment">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, sans rien ressaisir.</h2><p>L&apos;IA prépare chaque étape. Vous relisez, vous envoyez. La plateforme (la demande qui arrive, la réponse prête, les relances) commence avec l&apos;offre {OFFRE_PLATEFORME} ; le devis et la facture, dès {PLANS.essentiel.label}.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, tout est automatisé.</h2><p>Avec {OFFRE_PLATEFORME}, l&apos;IA prépare chaque étape (la réponse, le devis sur vos prix, les relances) et rien ne part sans votre clic. Avec {OFFRE_AUTO}, les réponses et les relances partent seules{FLAGS.piloteAutomatique ? <>, et le Pilote automatique envoie ce que vous lui confiez après 10 minutes pour annuler</> : null}. Jamais un prix estimé, jamais un paiement sans vous.</p></div>
             <ol className="lp-pile">
               {CHAINE.map((e, i) => (
                 <li key={e.titre} className="lp-carte-pile" style={{ ['--i' as string]: i }}>
@@ -309,7 +313,7 @@ export default function Home() {
         {/* TARIFS */}
         <section className="lp-blk" id="tarifs">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Simple : un forfait mensuel, avec des crédits inclus.</h2><p>Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité. Vous montez en formule quand votre activité grandit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Deux formules : tout préparé, ou tout automatique.</h2><p>Avec {OFFRE_PLATEFORME}, tout est automatisé et préparé pour vous, et rien ne part sans votre clic. Avec {OFFRE_AUTO}, tout part automatiquement. Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité.</p></div>
 
             {/* Les prix d'abord : mesuré le 06/10 en 390 px, l'explication des crédits (529 px) passait
                 avant la première formule. Elle suit maintenant la grille. */}

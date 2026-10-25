@@ -1,19 +1,22 @@
-// scripts/essais-gratuits-qa.mjs — le juge de l'ESSAI GRATUIT SANS CARTE (décision de Benj, 13/10/2026) : une semaine d'Essentiel,
-// deux de Studio, trois de Signature, sans saisir de carte, une seule fois par compte.
+// scripts/essais-gratuits-qa.mjs — le juge de l'ESSAI GRATUIT SANS CARTE (décision de Benj, 13/10/2026) : deux semaines de Studio,
+// trois de Signature, sans saisir de carte, une seule fois par compte. Depuis le 25/10 l'Essentiel n'est plus vendu : son
+// identifiant reste reconnu (compte hérité) mais n'a ni essai ni Checkout — /api/subscribe le refuse comme une offre inconnue.
 //
 // Il juge lib/plans.ts (ESSAI_JOURS), lib/essaiGratuit.ts (règles pures), lib/essaiGratuitServeur.ts (registre + Stripe),
 // app/api/subscribe/route.ts (le Checkout) et app/api/stripe/webhook/route.ts (la vie de l'essai). Rien ne touche le réseau, la
 // base ni Stripe : les routes sont EXÉCUTÉES pour de vrai, avec des doublures de lib/supabaseAdmin, lib/stripe, lib/email,
 // lib/alertes, lib/authArtisan et next/server (fetch est remplacé par un piège ; la clé secrète Stripe est retirée de l'environnement).
 //
-//   EG-1  Règles pures : durées 7 / 14 / 21 ; crédits de l'essai (au prorata sur 30 jours, plafonnés à 150 : 18 / 116 / 150) ;
+//   EG-1  Règles pures : durées 14 / 21 ; crédits de l'essai (au prorata sur 30 jours, plafonnés à 150 : 116 / 150) ; aucun essai
+//         pour l'Essentiel hérité ;
 //         normalisation de l'e-mail (« +étiquette », points Gmail) ; table de décision « un seul essai » ; paramètres du Checkout
 //         par offre ; reconnaissance d'une fin d'essai non payée.
-//   EG-2  Le Checkout (POST /api/subscribe, exécuté) : par offre, trial_period_days = 7 / 14 / 21, payment_method_collection =
+//   EG-2  Le Checkout (POST /api/subscribe, exécuté) : par offre, trial_period_days = 14 / 21, payment_method_collection =
 //         if_required, trial_settings.end_behavior.missing_payment_method = cancel, essai_jours en métadonnée ; AUCUN de ces champs
 //         quand le compte a déjà eu son essai (par compte, par e-mail normalisé, par client Stripe, par autre client Stripe de même
 //         e-mail) ou quand Stripe est injoignable ; registre absent (migration 0156 pas appliquée) → l'essai reste permis si Stripe
-//         ne connaît rien ; déjà abonné → 409 ; fondateur → 403 ; GET dit la même chose que POST.
+//         ne connaît rien ; déjà abonné → 409 ; fondateur → 403 ; offre inconnue ou Essentiel (plus vendu) → 400 ; GET dit la même
+//         chose que POST.
 //   EG-3  Le webhook (POST /api/stripe/webhook, exécuté, faux événements) : début d'essai (plan, crédits au prorata, fin d'essai,
 //         registre) ; essai forgé (durée qui n'est pas celle de l'offre) servi comme un abonnement payé ; abonnement « trialing » non
 //         réaligné ; essai devenu payant (forfait entier servi) ; essai terminé sans carte (deleted) → plan gratuit, crédits ramenés
@@ -173,11 +176,12 @@ export async function resolve(spec, ctx, next) {
   const unDesJours = (val, n) => val === jourPlus(n) || val === jourPlus(n - 1) || val === jourPlus(n + 1)
 
   // ── l'oracle : la décision de Benj, écrite ici une fois, indépendamment du code jugé ──
+  // 25/10 (Benj) : deux offres vendues. L'Essentiel n'est plus dans l'oracle : il n'a plus d'essai (EG-1b/EG-1e) ni de Checkout (EG-2e).
   const OFFRES = [
-    { id: 'essentiel', jours: 7, credits: 18, prixCentimes: 2900, forfait: 80 },
     { id: 'studio', jours: 14, credits: 116, prixCentimes: 5900, forfait: 250 },
     { id: 'signature', jours: 21, credits: 150, prixCentimes: 9900, forfait: 600 },
   ]
+  const [STUDIO, SIGNATURE] = OFFRES
 
   let plans, pur, serveur
   try {
@@ -188,12 +192,13 @@ export async function resolve(spec, ctx, next) {
 
   // ══ EG-1 — règles pures ══
   const j = (x) => JSON.stringify(x)
-  T('EG-1a', j(plans.ESSAI_JOURS) === j({ essentiel: 7, studio: 14, signature: 21 }), `ESSAI_JOURS = ${j(plans.ESSAI_JOURS)}`)
+  // 25/10 (Benj) : deux offres ; l'Essentiel n'a plus d'essai (il n'est plus vendu).
+  T('EG-1a', j(plans.ESSAI_JOURS) === j({ studio: 14, signature: 21 }), `ESSAI_JOURS = ${j(plans.ESSAI_JOURS)}`)
   for (const o of OFFRES) {
     T(`EG-1b ${o.id}`, pur.creditsEssai(o.id) === o.credits, `creditsEssai(${o.id}) = ${pur.creditsEssai(o.id)}, attendu ${o.credits}`)
     T(`EG-1b ${o.id} sous le forfait`, pur.creditsEssai(o.id) < o.forfait, 'un essai ne doit jamais servir le forfait entier')
   }
-  T('EG-1b hors offre', ['gratuit', 'business', 'inconnu', null, undefined].every((p) => pur.creditsEssai(p) === 0 && pur.essaiJours(p) === 0), 'une offre sans essai doit donner 0 crédit et 0 jour')
+  T('EG-1b hors offre (Essentiel hérité compris)', ['gratuit', 'essentiel', 'business', 'inconnu', null, undefined].every((p) => pur.creditsEssai(p) === 0 && pur.essaiJours(p) === 0), 'une offre sans essai doit donner 0 crédit et 0 jour')
   const normalisations = [['Jean.Dupont+Pub@Gmail.com', 'jeandupont@gmail.com'], ['a.b@googlemail.com', 'ab@gmail.com'], ['Pierre.Martin+x@entreprise.fr', 'pierre.martin@entreprise.fr'], [' X@Y.fr ', 'x@y.fr']]
   for (const [entree, attendu] of normalisations) T(`EG-1c ${entree}`, pur.normaliserEmail(entree) === attendu, `→ ${pur.normaliserEmail(entree)}`)
   const rien = { abonnementEnCours: false, essaiDejaPris: false, abonnementDejaEu: false }
@@ -208,11 +213,11 @@ export async function resolve(spec, ctx, next) {
     const sans = pur.champsCheckoutEssai(o.id, false)
     T(`EG-1e ${o.id} sans essai`, !sans.payment_method_collection && !sans.subscription_data && sans.jours === 0, j(sans))
   }
-  T('EG-1e offre sans essai', ['gratuit', 'business', 'x'].every((p) => { const c = pur.champsCheckoutEssai(p, true); return !c.subscription_data && !c.payment_method_collection }), 'seules les trois offres payantes ont un essai')
+  T('EG-1e offre sans essai', ['gratuit', 'essentiel', 'business', 'x'].every((p) => { const c = pur.champsCheckoutEssai(p, true); return !c.subscription_data && !c.payment_method_collection }), 'seules les deux offres vendues (Studio, Signature) ont un essai')
   const T0 = 1_800_000_000
   T('EG-1f fin d’essai non payée', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 10 }, 0) === true && pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 - 86_400 }, 0) === true, 'annulé à la fin ou pendant l’essai')
   T('EG-1f abonnement payé puis résilié', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 20 * 86_400 }, 0) === false && pur.finDEssaiSansPaiement({ ended_at: T0 }, 0) === false, 'un abonnement payé garde ses crédits')
-  T('EG-1g session forgée', pur.joursEssaiDeSession({ essai_jours: '7' }, 'essentiel') === 7 && pur.joursEssaiDeSession({ essai_jours: '60' }, 'essentiel') === 0 && pur.joursEssaiDeSession({ essai_jours: '7' }, 'studio') === 0 && pur.joursEssaiDeSession(undefined, 'essentiel') === 0 && pur.joursEssaiDeSession({ essai_jours: '-7' }, 'essentiel') === 0)
+  T('EG-1g session forgée', pur.joursEssaiDeSession({ essai_jours: '14' }, 'studio') === 14 && pur.joursEssaiDeSession({ essai_jours: '60' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '14' }, 'signature') === 0 && pur.joursEssaiDeSession(undefined, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '-14' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '7' }, 'essentiel') === 0)
   T('EG-1h crédits après essai perdu', pur.creditsApresEssaiPerdu(18) === 3 && pur.creditsApresEssaiPerdu(2) === 2 && pur.creditsApresEssaiPerdu(null) === 0)
   T('EG-1i statuts', pur.abonnementFerme('canceled') && pur.abonnementFerme('incomplete_expired') && !pur.abonnementFerme('trialing') && !pur.abonnementFerme('active') && pur.essaiDevenuPayant('trialing', 'active') && !pur.essaiDevenuPayant('past_due', 'active'))
   T('EG-1j empreinte', serveur.empreinteEmail('Jean.Dupont+Pub@gmail.com') === sha('jeandupont@gmail.com') && !serveur.empreinteEmail('x@y.fr').includes('@'), 'l’empreinte suit la recette de la migration 0156 et ne contient pas l’adresse')
@@ -253,14 +258,15 @@ export async function resolve(spec, ctx, next) {
     T(`EG-2d ${o.id} mode « essai » explicite = l'essai`, rm.status === 200 && pm.sessions[0]?.subscription_data?.trial_period_days === o.jours, j(pm.sessions[0]?.subscription_data))
   }
   {
+    // un essai pris du temps de l'Essentiel (registre d'avant le 25/10) compte toujours : un seul essai par compte, quelle que soit l'offre
     const e = neuf({ registre: [{ email_hash: 'autre', artisan_id: 'u-0001', plan: 'essentiel', jours: 7 }] })
     const r = await poster('studio')
     T('EG-2b essai déjà pris (par compte)', r.status === 200 && sansEssai(e.sessions[0]), j(e.sessions[0]?.subscription_data))
     T('EG-2b GET', (await lire()).corps?.essai?.disponible === false)
   }
   {
-    const e = neuf({ emailAuth: 'Jean.Dupont+Pub@gmail.com', artisan: { id: 'u-0001', email: 'Jean.Dupont+Pub@gmail.com', plan: 'gratuit', credits: 3, stripe_customer_id: null, stripe_subscription_id: null, is_founder: false }, registre: [{ email_hash: sha('jeandupont@gmail.com'), artisan_id: 'ancien-compte', plan: 'essentiel', jours: 7 }] })
-    await poster('essentiel')
+    const e = neuf({ emailAuth: 'Jean.Dupont+Pub@gmail.com', artisan: { id: 'u-0001', email: 'Jean.Dupont+Pub@gmail.com', plan: 'gratuit', credits: 3, stripe_customer_id: null, stripe_subscription_id: null, is_founder: false }, registre: [{ email_hash: sha('jeandupont@gmail.com'), artisan_id: 'ancien-compte', plan: 'studio', jours: 14 }] })
+    await poster('signature')
     T('EG-2b compte recréé, même e-mail (alias Gmail)', sansEssai(e.sessions[0]) && e.sessions.length === 1, j(e.sessions[0]?.subscription_data))
   }
   {
@@ -270,17 +276,17 @@ export async function resolve(spec, ctx, next) {
   }
   {
     const e = neuf({ clientsParEmail: { 'neuf@exemple.fr': [{ id: 'cus_autre' }] }, abosParClient: { cus_autre: [{ id: 'sub_autre', status: 'canceled' }] } })
-    await poster('essentiel')
+    await poster('studio')
     T('EG-2b autre client Stripe de même e-mail', sansEssai(e.sessions[0]) && e.sessions.length === 1, j(e.sessions[0]?.subscription_data))
   }
   {
     const e = neuf({ clientsParEmail: { 'neuf@exemple.fr': [{ id: 'cus_vide' }] }, abosParClient: {} })
-    await poster('essentiel')
-    T('EG-2b un client Stripe sans abonnement n’ôte pas l’essai', e.sessions[0]?.subscription_data?.trial_period_days === 7, j(e.sessions[0]?.subscription_data))
+    await poster('studio')
+    T('EG-2b un client Stripe sans abonnement n’ôte pas l’essai', e.sessions[0]?.subscription_data?.trial_period_days === 14, j(e.sessions[0]?.subscription_data))
   }
   {
     const e = neuf({ stripeEchec: true })
-    const r = await poster('essentiel')
+    const r = await poster('signature')
     T('EG-2c Stripe injoignable : pas d’essai, Checkout normal', r.status === 200 && sansEssai(e.sessions[0]) && e.sessions.length === 1, j(e.sessions[0]?.subscription_data))
   }
   {
@@ -299,11 +305,17 @@ export async function resolve(spec, ctx, next) {
     const r2 = await poster('studio')
     T('EG-2e fondateur : 403, rien de créé', r2.status === 403 && e2.sessions.length === 0, j(r2))
     neuf()
-    const r3 = await poster('essentiel', 'invalide')
+    const r3 = await poster('studio', 'invalide')
     T('EG-2e sans session valide : 401', r3.status === 401 && globalThis.__eg.sessions.length === 0, j(r3))
     neuf()
     const r4 = await poster('inconnu')
     T('EG-2e offre inconnue : 400', r4.status === 400 && globalThis.__eg.sessions.length === 0, j(r4))
+    // 25/10 : l'Essentiel n'est plus vendu — ni essai ni paiement, l'identifiant hérité est refusé comme une offre inconnue.
+    for (const mode of [null, 'essai', 'payer']) {
+      neuf()
+      const r5 = await poster('essentiel', 'valide', mode)
+      T(`EG-2e Essentiel (plus vendu)${mode ? ` en mode « ${mode} »` : ''} : 400, rien de créé`, r5.status === 400 && globalThis.__eg.sessions.length === 0 && globalThis.__eg.registre.length === 0, j(r5))
+    }
   }
 
   // ══ EG-3 — le webhook ══
@@ -330,29 +342,29 @@ export async function resolve(spec, ctx, next) {
   }
   {
     const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'Gros solde', plan: 'gratuit', credits: 500, stripe_customer_id: null, stripe_subscription_id: null } })
-    await envoyer(evt('checkout.session.completed', sessionEssai(OFFRES[0])))
+    await envoyer(evt('checkout.session.completed', sessionEssai(STUDIO)))
     T('EG-3a les crédits offerts par la direction ne sont pas écrasés', ecrituresArtisans().find((x) => x.payload?.stripe_subscription_id)?.payload?.credits === 500)
   }
   {
     const e = neuf()
-    await envoyer(evt('checkout.session.completed', sessionEssai(OFFRES[0], { metadata: { uid: UID, plan: 'essentiel', credits: '80', essai_jours: '60' } })))
+    await envoyer(evt('checkout.session.completed', sessionEssai(STUDIO, { metadata: { uid: UID, plan: 'studio', credits: '250', essai_jours: '60' } })))
     const w = ecrituresArtisans().find((x) => x.payload?.stripe_subscription_id)?.payload
-    T('EG-3b durée forgée : servi comme un abonnement payé', w?.credits === 80 && !e.base.some((x) => x.table === 'essais_gratuits' && x.action === 'upsert'), `${j(w)}`)
+    T('EG-3b durée forgée : servi comme un abonnement payé', w?.credits === STUDIO.forfait && !e.base.some((x) => x.table === 'essais_gratuits' && x.action === 'upsert'), `${j(w)}`)
     const e2 = neuf()
-    await envoyer(evt('checkout.session.completed', sessionEssai(OFFRES[0], { payment_status: 'paid', metadata: { uid: UID, plan: 'essentiel', credits: '80' } })))
+    await envoyer(evt('checkout.session.completed', sessionEssai(STUDIO, { payment_status: 'paid', metadata: { uid: UID, plan: 'studio', credits: '250' } })))
     const w2 = ecrituresArtisans().find((x) => x.payload?.stripe_subscription_id)?.payload
-    T('EG-3b abonnement payé tout de suite : forfait entier, inchangé', w2?.credits === 80 && !!w2?.credits_reset_le, j(w2))
+    T('EG-3b abonnement payé tout de suite : forfait entier, inchangé', w2?.credits === STUDIO.forfait && !!w2?.credits_reset_le, j(w2))
   }
   {
-    const o = OFFRES[1]
-    // un changement d'offre pendant l'essai (le montant dit Studio, le compte est en Essentiel) ne sert AUCUN crédit
+    const o = SIGNATURE
+    // un changement d'offre pendant l'essai (le montant dit Signature, le compte est en Studio) ne sert AUCUN crédit
     const enEssai = abonnement(o, { status: 'trialing' })
-    const e = neuf({ abonnementRelu: enEssai, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'essentiel', credits: 10, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const e = neuf({ abonnementRelu: enEssai, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 10, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.updated', enEssai))
     T('EG-3c « trialing » : rien à aligner, aucun crédit servi', r.status === 200 && ecrituresArtisans().length === 0, `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
   }
   {
-    const o = OFFRES[1]
+    const o = STUDIO
     const actif = abonnement(o, { status: 'active', trial_end: Math.floor(Date.now() / 1000) - 60 })
     const e = neuf({ abonnementRelu: actif, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 5, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.updated', actif, { previous_attributes: { status: 'trialing' } }))
@@ -361,9 +373,9 @@ export async function resolve(spec, ctx, next) {
     T('EG-3d conversion signalée', e.notifs.some((n) => /conversion/i.test(n.sujet)), j(e.notifs.map((n) => n.sujet)))
   }
   {
-    const o = OFFRES[0]
+    const o = STUDIO
     const t = Math.floor(Date.now() / 1000)
-    const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'essentiel', credits: 14, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 14, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.deleted', abonnement(o, { status: 'canceled', trial_end: t - 10, ended_at: t - 5 })))
     const w = ecrituresArtisans()[0]?.payload
     T('EG-3e essai terminé sans carte : retour à l’Essai', r.status === 200 && w?.plan === 'gratuit' && w?.stripe_subscription_id === null, `${r.status} ${j(w)}`)
@@ -372,15 +384,15 @@ export async function resolve(spec, ctx, next) {
     T('EG-3e entreprise prévenue', e.notifs.some((n) => /fin d.essai sans carte/i.test(n.sujet)), j(e.notifs.map((n) => n.sujet)))
   }
   {
-    const o = OFFRES[0]
+    const o = STUDIO
     const t = Math.floor(Date.now() / 1000)
-    neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'essentiel', credits: 60, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 60, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.deleted', abonnement(o, { status: 'canceled', trial_end: t - 40 * 86_400, ended_at: t - 5 })))
     const w = ecrituresArtisans()[0]?.payload
     T('EG-3f abonnement payé puis résilié : plan gratuit, crédits intacts', r.status === 200 && w?.plan === 'gratuit' && w?.stripe_subscription_id === null && !('credits' in w), `${r.status} ${j(w)}`)
   }
   {
-    const o = OFFRES[2]
+    const o = SIGNATURE
     neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'signature', credits: 100, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.updated', abonnement(o, { status: 'incomplete_expired', trial_end: null })))
     const w = ecrituresArtisans()[0]?.payload
@@ -390,21 +402,21 @@ export async function resolve(spec, ctx, next) {
     T('EG-3g canceled (updated) : retour à l’Essai', ecrituresArtisans()[0]?.payload?.plan === 'gratuit')
   }
   {
-    const o = OFFRES[0]
+    const o = STUDIO
     const t = Math.floor(Date.now() / 1000)
     neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 100, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_courant' } })
     const r = await envoyer(evt('customer.subscription.deleted', abonnement(o, { id: 'sub_ancien', status: 'canceled', trial_end: t - 10, ended_at: t - 5 })))
     T('EG-3h fin d’un ANCIEN abonnement ignorée', r.status === 200 && ecrituresArtisans().length === 0, `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
   }
   {
-    const o = OFFRES[1]
-    const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'essentiel', credits: 10, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_premier' } })
+    const o = SIGNATURE
+    const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 10, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_premier' } })
     const r = await envoyer(evt('checkout.session.completed', sessionEssai(o, { subscription: 'sub_second' })))
     T('EG-3i second essai pour un compte déjà abonné : annulé chez Stripe', r.status === 200 && e.annulations.includes('sub_second'), `${r.status} annulations = ${j(e.annulations)}`)
     T('EG-3i … et le compte n’est pas écrasé', ecrituresArtisans().length === 0, j(ecrituresArtisans().map((x) => x.payload)))
   }
   {
-    const o = OFFRES[1]
+    const o = STUDIO
     const fin = Math.floor(Date.now() / 1000) + 3 * 86_400
     const e = neuf({ artisan: { id: UID, email: 'artisan@exemple.fr', nom: 'T', plan: 'studio', credits: 100, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
     const r = await envoyer(evt('customer.subscription.trial_will_end', abonnement(o, { trial_end: fin, default_payment_method: null })))
@@ -484,8 +496,8 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
   T('Paramètres : le choix « payer » existe à côté de l’essai', /souscrire\(id, 'payer'\)/.test(param) && /data-abo-payer=\{id\}/.test(param) && /mode\s*\}\)/.test(param))
   T('accueil : chaque offre propose « s’abonner directement » en plus de l’essai', /data-payer-direct=\{o\.id\}/.test(lire('app/page.tsx')) && /abonnement=\$\{o\.id\}/.test(lire('app/page.tsx')))
   const inscription = lire('app/signup/page.tsx'), suite = lire('lib/suiteSure.ts')
-  T('« s’abonner directement » (accueil) : l’inscription poursuit vers le paiement de CETTE offre, et seulement vers elle', /get\('abonnement'\)/.test(inscription) && /voulue === 'essentiel' \|\| voulue === 'studio' \|\| voulue === 'signature'/.test(inscription) && /\/onboarding\?suite=/.test(inscription)
-    && /\^\\\/abonnement\\\?offre=\(essentiel\|studio\|signature\)\$/.test(suite))
+  T('« s’abonner directement » (accueil) : l’inscription poursuit vers le paiement de CETTE offre, et seulement vers elle', /get\('abonnement'\)/.test(inscription) && /voulue === 'studio' \|\| voulue === 'signature'/.test(inscription) && !/voulue === 'essentiel'/.test(inscription) && /\/onboarding\?suite=/.test(inscription)
+    && /\^\\\/abonnement\\\?offre=\(studio\|signature\)\$/.test(suite))
   T('/api/subscribe : mode « payer » = Checkout sans essai (carte tout de suite), le droit à l’essai n’est pas consommé', /b\?\.mode === 'payer'/.test(route) && /champsCheckoutEssai\(offre\.id, decision\.essai && !payerTout\)/.test(route))
   const carte = toutes.filter(({ l }) => /sans carte/i.test(l))
   const PERMIS = new Set(['app/page.tsx', 'app/abonnement/page.tsx', 'app/cgu/page.tsx', 'app/parametres/SectionAbonnement.tsx', 'lib/aide.ts', 'lib/faq.ts', 'lib/plans.ts', 'lib/comparatifConcurrents.ts', 'lib/crieur/faits.ts', 'lib/essaiGratuitServeur.ts', 'app/api/stripe/webhook/route.ts',
@@ -501,8 +513,9 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
 
 // ── EG-6 (15/10) : ce que l'essai ouvre — « Ma plateforme » et « Mes chiffres » commencent avec Studio ──
 // L'essai sans carte sert le plan PAYANT lui-même (webhook : `plan` = celui de l'offre essayée), donc les capacités de l'offre : l'essai
-// de Studio ouvre « Ma plateforme » et « Mes chiffres », celui de Signature y ajoute leurs automatisations, celui d'Essentiel et l'Essai
-// (retour à `gratuit` à la fin d'un essai sans carte) n'ouvrent ni l'un ni l'autre. Une seule règle : lib/plans.ts.
+// de Studio ouvre « Ma plateforme » et « Mes chiffres », celui de Signature y ajoute leurs automatisations ; un compte Essentiel hérité
+// (plus vendu depuis le 25/10, plus d'essai) et l'Essai (retour à `gratuit` à la fin d'un essai sans carte) n'ouvrent ni l'un ni l'autre.
+// Une seule règle : lib/plans.ts.
 console.log("\n— EG-6 : l'essai et les écrans « Ma plateforme » / « Mes chiffres » —")
 {
   const plansMod = await import(pathToFileURL(path.join(RACINE, 'lib/plans.ts')).href)
@@ -511,10 +524,10 @@ console.log("\n— EG-6 : l'essai et les écrans « Ma plateforme » / « Mes ch
   T("l'essai sert le plan payant lui-même (plan écrit tel quel, jamais « gratuit » avant la fin)", /^\s+plan,\s*$/m.test(hook))
   T('un essai sans carte non converti ramène le compte à « gratuit »', /plan: 'gratuit'/.test(hook))
   for (const [plan, ecrans, auto] of [['essentiel', false, false], ['studio', true, false], ['signature', true, true], ['gratuit', false, false]]) {
-    T(`essai ${plan} : « Ma plateforme » et « Mes chiffres » ${ecrans ? 'ouverts' : 'fermés'}, automatique de Mes chiffres ${auto ? 'ouvert' : 'fermé'}`,
+    T(`${plan === 'essentiel' ? 'compte Essentiel hérité' : `essai ${plan}`} : « Ma plateforme » et « Mes chiffres » ${ecrans ? 'ouverts' : 'fermés'}, automatique de Mes chiffres ${auto ? 'ouvert' : 'fermé'}`,
       peut(plan, 'plateforme.gestion') === ecrans && peut(plan, 'chiffres') === ecrans && peut(plan, 'chiffres.auto') === auto)
   }
-  T("l'Essai (gratuit) n'a pas plus que l'Essentiel : mêmes capacités", JSON.stringify([...plansMod.PLANS.gratuit.capacites].sort()) === JSON.stringify([...plansMod.PLANS.essentiel.capacites].sort()))
+  T("l'Essai (gratuit) n'a pas plus qu'un Essentiel hérité : mêmes capacités", JSON.stringify([...plansMod.PLANS.gratuit.capacites].sort()) === JSON.stringify([...plansMod.PLANS.essentiel.capacites].sort()))
   const ev = lire('app/EcranVerrouille.tsx')
   T("l'écran verrouillé parle de « votre essai » pour le plan gratuit", /votre essai/.test(ev))
 }

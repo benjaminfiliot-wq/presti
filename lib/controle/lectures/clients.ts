@@ -17,6 +17,7 @@ export async function clients(q = '', filtre: string | null = null, apports = tr
     let req = seulsLesVrais(supabaseAdmin.from('artisans')
       .select('id, nom, email, metier, plan, credits, credits_reset_le, stripe_customer_id, stripe_subscription_id, created_at, suppression_demandee_le'))
       .order('created_at', { ascending: false }).limit(500)
+    // 'essentiel' reste filtrable : plus vendu depuis le 25/10, des comptes hérités peuvent encore le porter.
     if (filtre && ['gratuit', 'essentiel', 'studio', 'signature'].includes(filtre)) req = req.eq('plan', filtre)
     const { data, error } = await req
     if (error) throw new Error(error.message)

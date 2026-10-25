@@ -12,19 +12,19 @@ const TOUS: Canal[] = ['instagram', 'facebook', 'linkedin']
 
 /** Chaque formulation renvoie à une preuve vérifiable dans le dépôt. */
 export const FAITS: Fait[] = [
-  { id: 'reponse-rapide', texte: "Avec la plateforme (dès l'offre Studio), la réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez.", preuve: { fichier: 'plans/promesses.md', motif: "`pilotage-e2e` **18/18 rejoué le 05/09** (mode assisté, prise de main, règles, flux SSE) | 05/09 | ✅ |" }, canaux: TOUS },
+  { id: 'reponse-rapide', texte: "La réponse est prête en moins d'une minute : avec l'offre Studio, Presti la prépare et vous la validez d'un clic ; avec Signature, elle part seule.", preuve: { fichier: 'plans/promesses.md', motif: "`pilotage-e2e` **18/18 rejoué le 05/09** (mode assisté, prise de main, règles, flux SSE) | 05/09 | ✅ |" }, canaux: TOUS },
   { id: 'devis-prix', texte: "Presti prépare des devis chiffrés sur vos propres prix.", preuve: { fichier: 'plans/promesses.md', motif: '| 14 | « Devis chiffrés par l\'IA, sur vos prix »' }, canaux: TOUS },
   // (13/10) « factures électroniques » laissait croire à une facture conforme à la réforme, transmise par une plateforme agréée :
   // Presti fournit un fichier XML Factur-X à télécharger (lib/facturx.ts ; audit des promesses, site, ligne 42).
   { id: 'factures', texte: 'Presti permet de créer des factures et d’en exporter le fichier XML Factur-X.', preuve: { fichier: 'lib/plans.ts', motif: 'Factures + export XML Factur-X' }, canaux: TOUS },
-  { id: 'relances', texte: 'Avec la plateforme (dès l’offre Studio), les relances peuvent partir après 2, 5 et 10 jours de silence du prospect.', preuve: { fichier: 'lib/relances.ts', motif: 'CADENCE_RELANCES = [2, 5, 10]' }, canaux: TOUS },
+  { id: 'relances', texte: 'Les relances sont prévues après 2, 5 et 10 jours de silence du prospect : préparées pour vous dès l’offre Studio, envoyées seules avec Signature.', preuve: { fichier: 'lib/relances.ts', motif: 'CADENCE_RELANCES = [2, 5, 10]' }, canaux: TOUS },
   { id: 'stock', texte: 'Suivez votre stock par lieu, avec scan et seuils.', preuve: { fichier: 'plans/promesses.md', motif: '| 17 | « Stock par lieu, scan, seuils »' }, canaux: TOUS },
   { id: 'fournisseurs', texte: 'Recherchez des prix chez vos fournisseurs avec l’aide de l’IA.', preuve: { fichier: 'plans/promesses.md', motif: '| 18 | « Recherche IA chez vos fournisseurs »' }, canaux: TOUS },
   { id: 'boite-mail', texte: 'Dès l’offre Studio, branchez votre boîte e-mail à Presti.', preuve: { fichier: 'plans/promesses.md', motif: '| 19 | « Votre boîte email branchée »' }, canaux: TOUS },
   { id: 'export-donnees', texte: 'Exportez vos données depuis Presti.', preuve: { fichier: 'plans/promesses.md', motif: '| 20 | « Export de vos données »' }, canaux: TOUS },
   { id: 'page-marque', texte: 'Dès l’offre Studio, accueillez vos demandes sur une page de conversation à votre marque.', preuve: { fichier: 'plans/promesses.md', motif: '| 9 | « Page de conversation à votre marque »' }, canaux: TOUS },
   { id: 'essai-offert', texte: 'Essayez Presti sans carte bancaire, avec des crédits offerts.', preuve: { fichier: 'plans/promesses.md', motif: '| 4 | « Essai offert, résiliable » / « 3 crédits offerts · sans carte »' }, canaux: TOUS },
-  { id: 'assistant-ia', texte: 'Dès l’offre Studio, l’assistant IA peut répondre seul à vos clients (vous validez, si vous préférez) ; en Essentiel, il n’y a pas de plateforme.', preuve: { fichier: 'plans/promesses.md', motif: '| 10 | « Assistant IA » (autonome dès Studio ; pas de plateforme en Essentiel)' }, canaux: TOUS },
+  { id: 'assistant-ia', texte: 'Dès l’offre Studio, l’assistant IA prépare la réponse à vos clients et vous la validez ; avec Signature, il peut répondre seul, jour et nuit.', preuve: { fichier: 'plans/promesses.md', motif: '| 10 | « Assistant IA » (réponse préparée dès Studio, vous validez ; autonome en Signature)' }, canaux: TOUS },
   { id: 'comptes-clients', texte: 'Dès l’offre Studio, vos clients retrouvent leur historique grâce à un lien magique.', preuve: { fichier: 'plans/promesses.md', motif: '| 11 | « Comptes clients (lien magique, historique) »' }, canaux: TOUS },
   { id: 'site-sur-mesure', texte: 'Un site vitrine à la demande est proposé à 300 € une fois.', preuve: { fichier: 'lib/siteCommande.ts', motif: "PRIX_SITE_TEXTE = '300 €'" }, canaux: TOUS, drapeau: 'siteCommandeVente' },
 ]

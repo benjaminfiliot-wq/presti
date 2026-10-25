@@ -50,6 +50,8 @@ const TOUS = ['gratuit', 'essentiel', 'studio', 'signature', 'business']
 const ATTENDU = {
   'chiffres.auto': { gratuit: false, essentiel: false, studio: false, signature: true, business: true },
   'factures.relances': { gratuit: false, essentiel: false, studio: true, signature: true, business: true },
+  // 25/10 (Benj) : en Studio les relances d'impayés sont PRÉPARÉES (l'artisan les valide) ; elles partent seules en Signature.
+  'factures.relances.auto': { gratuit: false, essentiel: false, studio: false, signature: true, business: true },
 }
 for (const [cap, parPlan] of Object.entries(ATTENDU)) for (const p of TOUS) ok(peut(p, cap) === parPlan[p], `${cap} : ${p} devrait être ${parPlan[p]}`)
 ok(offreMinimale('chiffres.auto') === 'signature' && offreMinimale('factures.relances') === 'studio', 'offres minimales : Signature pour chiffres.auto, Studio pour factures.relances')
@@ -62,14 +64,18 @@ ok(['chiffres.auto', 'factures.relances'].every((c) => PLANS.essentiel.capacites
 ok(F.FLAGS.comptaAlerteImpayes === true && F.FLAGS.comptaExportMensuel === true && F.FLAGS.comptaDateReglement === true, 'drapeaux de la migration 0140 levés')
 ok(F.FLAGS.relancesImpayes === true, 'drapeau relancesImpayes levé')
 const grille = P.GRILLE_COMPLETE
+// 25/10 : la grille ne vend plus que Studio et Signature (l'Essentiel n'y a plus de colonne).
 for (const flag of ['comptaAlerteImpayes', 'comptaExportMensuel']) {
   const l = grille.find((x) => x.flag === flag)
-  ok(!!l && l.cellules.essentiel === false && l.cellules.studio === false && l.cellules.signature !== false, `grille : la ligne ${flag} n'est pas cochée pour Essentiel/Studio, l'est pour Signature`)
+  ok(!!l && !('essentiel' in l.cellules) && l.cellules.studio === false && l.cellules.signature !== false, `grille : la ligne ${flag} n'est pas cochée pour Studio, l'est pour Signature (aucune colonne Essentiel)`)
   ok(P.GRILLE.includes(l), `grille : la ligne ${flag} est visible drapeau levé`)
 }
 { const l = grille.find((x) => x.capacites.includes('factures.relances'))
-  ok(!!l && l.cellules.essentiel === false && l.cellules.studio !== false && l.cellules.signature !== false, 'grille : relances d’impayés — Essentiel « — », Studio et Signature oui') }
-ok(/relance seule vos factures impayées/.test(P.AUTOMATISATION.studio) && /alerte e-mail sur les impayés/.test(P.AUTOMATISATION.signature) && !/impayées/.test(P.AUTOMATISATION.essentiel), 'encart AUTOMATISATION : Studio relance les impayés, Signature ajoute l’alerte et l’export, Essentiel ni l’un ni l’autre')
+  ok(!!l && !('essentiel' in l.cellules) && /préparées/.test(String(l.cellules.studio)) && /valid/.test(String(l.cellules.studio)) && /partent seules/.test(String(l.cellules.signature)),
+    `grille : relances d’impayés — Studio « préparées, vous validez », Signature « partent seules » (${JSON.stringify(l?.cellules)})`) }
+ok(!('essentiel' in P.AUTOMATISATION) && /rien ne part sans vous/.test(P.AUTOMATISATION.studio) && /relances/.test(P.AUTOMATISATION.studio)
+  && /relances des devis et des factures impayées/.test(P.AUTOMATISATION.signature) && /alerte impayés et export/.test(P.AUTOMATISATION.signature),
+  'encart AUTOMATISATION : Studio prépare les relances (rien ne part sans validation), Signature les envoie seul et ajoute l’alerte et l’export ; plus d’Essentiel')
 
 // ── 3. Le passage quotidien de la compta, rejoué sur une base en mémoire ──────────────────────────────────────────────────────
 const { supabaseAdmin } = await imp('lib/supabaseAdmin.ts')
@@ -139,6 +145,7 @@ for (const m of ['GET', 'PUT', 'POST']) {
 ok(/ferme\(\)\) return NextResponse\.json\(\{ error: 'Introuvable' \}, \{ status: 404 \}\)/.test(relances), 'relances-auto : 404 drapeau baissé')
 const tourRel = lire('lib/relancesImpayesTour.ts')
 ok(/!peut\(art\.plan, 'factures\.relances'\)/.test(tourRel), 'passage quotidien des relances d’impayés : un compte sans la capacité est ignoré')
+ok(/peut\(art\.plan, 'factures\.relances\.auto'\)/.test(sansCommentaires(tourRel)) && /statut: 'a_valider'/.test(sansCommentaires(tourRel)), 'passage quotidien des relances d’impayés : l’envoi seul dépend de factures.relances.auto, sinon la relance est gardée « a_valider »')
 const tourCpt = lire('lib/comptaAutomatisationsTour.ts')
 ok(tourCpt.indexOf("peut(artisan.plan, 'chiffres.auto')") > 0 && tourCpt.indexOf("peut(artisan.plan, 'chiffres.auto')") < tourCpt.indexOf(".from('factures')"), 'passage quotidien de la compta : la capacité est contrôlée avant de lire les factures')
 const cron = sansCommentaires(lire('app/api/cron/relances/route.ts'))

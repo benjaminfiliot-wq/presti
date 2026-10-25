@@ -88,8 +88,13 @@ async function emailProspect(uid: string, to: string, texte: string, o: OptionsE
  * Envoi automatique : l'e-mail part AVANT que le message soit marqué envoyé ; refusé (plafond, panne), la proposition reste à valider.
  */
 export async function validerPropositionServeur(uid: string, lead: LeadMsg, messageId: string, texteRetouche?: string | null, o: OptionsEnvoi = {}): Promise<ReponseEnvoi> {
-  const { data: prop } = await supabaseAdmin.from('messages').select('id, contenu, etat').eq('id', messageId).eq('lead_id', lead.id).maybeSingle()
+  const { data: prop } = await supabaseAdmin.from('messages').select('id, contenu, etat, type').eq('id', messageId).eq('lead_id', lead.id).maybeSingle()
   if (!prop || prop.etat !== 'proposition') return rep(404, { error: 'Proposition introuvable ou déjà traitée.' })
+  // 25/10 : une relance proposée (Studio) n'a plus lieu d'être si le client a répondu entre-temps (le lead n'est plus « répondu »).
+  if (prop.type === 'relance' && lead.statut !== 'repondu') {
+    await supabaseAdmin.from('messages').update({ etat: 'rejete' }).eq('id', prop.id).eq('lead_id', lead.id)
+    return rep(409, { error: 'Le client a répondu entre-temps : cette relance a été retirée.' })
+  }
   const refus = refusAutomatique(lead, o)
   if (refus) return refus
   const cle = cleReclamation(prop.id as string)
@@ -111,7 +116,8 @@ export async function validerPropositionServeur(uid: string, lead: LeadMsg, mess
     // `repondu` : la balle est chez le prospect — c'est le statut que le cron des relances exige.
     await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'repondu', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id).eq('artisan_id', uid)
     if (envoi.traite) return rep(200, { ok: true, emailed: false, ...reponseCanal(envoi) })
-    if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
+    // 25/10 : une RELANCE proposée (Studio) et validée ne réarme pas un nouveau cycle — sinon valider la 3e relance en reposait trois.
+    if (lead.statut !== 'gagne' && lead.statut !== 'perdu' && prop.type !== 'relance') await planifierRelances(lead.id)
     if (!o.automatique && parEmail) emailed = await emailProspect(uid, lead.contact as string, texte, o)
     return rep(200, { ok: true, emailed })
   } finally {

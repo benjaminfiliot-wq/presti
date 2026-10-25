@@ -46,7 +46,8 @@ for (const [cap, parPlan] of Object.entries(ATTENDU)) {
   ok(offreMinimale(cap) === voulu, `${cap} : l'offre minimale devrait être ${voulu} (${offreMinimale(cap)})`)
 }
 // LA PLATEFORME : aucune de ses capacités dans Essai ni Essentiel, toutes à Studio et au-dessus.
-const PLATEFORME = ['plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso', 'site.domaine_perso', 'relances', 'canaux.email', 'plateforme.ia.auto', 'plateforme.personnalisation_avancee']
+// 25/10 (Benj, deux offres) : `plateforme.ia.auto` (la réponse qui part SEULE) n'est plus dans cette liste : elle est Signature seulement (vérifiée plus bas).
+const PLATEFORME = ['plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso', 'site.domaine_perso', 'relances', 'canaux.email', 'plateforme.personnalisation_avancee']
 for (const cap of PLATEFORME) {
   for (const id of ['gratuit', 'essentiel']) ok(!peut(id, cap), `${cap} : ${id} n'a PAS de plateforme`)
   for (const id of ['studio', 'signature', 'business']) ok(peut(id, cap), `${cap} : ${id} a la plateforme`)
@@ -56,7 +57,12 @@ for (const cap of PLATEFORME) {
 for (const cap of ['devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique']) for (const id of ['gratuit', 'essentiel', 'studio', 'signature']) ok(peut(id, cap), `${cap} doit rester dans ${id}`)
 ok(JSON.stringify([...PLANS.gratuit.capacites].sort()) === JSON.stringify([...PLANS.essentiel.capacites].sort()), "l'offre Essai a exactement les capacités d'Essentiel")
 ok(PLANS.essentiel.capacites.every((c) => !/^plateforme\.|^relances$|^canaux\.|domaine_perso$/.test(c)), 'Essentiel ne contient aucune capacité de la plateforme (préfixes plateforme., relances, canaux., domaine_perso)')
-ok(!peut('essentiel', 'plateforme.ia.auto') && peut('studio', 'plateforme.ia.auto'), 'la réponse automatique reste à Studio (la réponse préparée est dans toutes les offres)')
+// 25/10 : la réponse préparée est dans Studio et Signature ; celle qui part seule, et les relances envoyées seules, sont Signature seulement.
+for (const cap of ['plateforme.ia.auto', 'relances.auto', 'factures.relances.auto']) {
+  for (const id of ['gratuit', 'essentiel', 'studio']) ok(!peut(id, cap), `${cap} : ${id} ne doit rien envoyer seul`)
+  for (const id of ['signature', 'business']) ok(peut(id, cap), `${cap} : ${id} envoie seul`)
+  ok(offreMinimale(cap) === 'signature', `${cap} : l'offre minimale est Signature (${offreMinimale(cap)})`)
+}
 ok(!peut('studio', 'plateforme.regles') && peut('signature', 'plateforme.regles'), "les règles d'automatisation de la plateforme restent à Signature seulement")
 
 // ── 2. La décision pure ─────────────────────────────────────────────────────────────────────────────────────────────

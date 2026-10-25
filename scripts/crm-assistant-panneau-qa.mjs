@@ -12,7 +12,7 @@
 //     consigne, et le serveur dit ce qu'il a retenu.
 //  D. ROUTE D'ACTIVITÉ : garde du CRM, filtre de compte, ni entrées ni aperçu lus.
 //  E. ÉCRANS (sources) : un seul moteur (useConversation partagé avec /assistant), ouverture depuis l'atelier, la fiche et le panneau
-//     d'un objet, verrou hors Signature vers /abonnement, exemple simulé sans appel, accessibilité, téléphone, annulation du pilote,
+//     d'un objet, verrou hors offre (assistant dès Studio) vers /abonnement, exemple simulé sans appel, accessibilité, téléphone, annulation du pilote,
 //     HALO de l'objet touché (Scene3D et Plan2D ont leur prop `halo`, la marque de sélection n'est plus détournée, « réduire les
 //     animations » respecté, aucune allocation par image).
 //  R. RENDU RÉEL (facultatif) : avec BASE_URL_DEMO=http://localhost:<port> (serveur de production isolé lancé avec PRESTI_DEMO_ATELIER=1),
@@ -168,7 +168,10 @@ const MOI = U(1), AUTRE = U(2)
   T('E3 ATELIER : bouton « Assistant » dans la barre, avec l’objet sélectionné comme contexte', /<AssistantCrm simule=\{simule\} contexteSelection=\{choisi \? contexteDeObjet\(choisi\) : null\}/.test(atl) && atl.indexOf('<AssistantCrm') > atl.indexOf('data-atelier-barre') && atl.indexOf('<AssistantCrm') < atl.indexOf('className="atl-cadre"'))
   T('E4 FICHE CHANTIER : bouton « Assistant » de l’en-tête + « Demander à l’assistant », contexte = ce chantier', /<AssistantCrm simule=\{exemple === true\} contexteSelection=\{contexte\}/.test(fiche) && /<BoutonDemander contexte=\{contexte\}/.test(fiche) && /type: 'chantier', id, libelle: titre/.test(fiche))
   T('E5 PANNEAU D’UN OBJET : « Demander à l’assistant » avec le contexte de l’objet', /<BoutonDemander contexte=\{contexteDeObjet\(objet\)\}/.test(pnx))
-  T('E6 OFFRE : l’assistant est Signature (capacité `assistant`) : Studio → verrouillé, Signature → ouvert', peut('studio', 'assistant') === false && peut('essentiel', 'assistant') === false && peut('signature', 'assistant') === true)
+  // 25/10 (Benj) : l'assistant passe en Studio ; le CRM, lui, reste Signature (capacité `crm`).
+  T('E6 OFFRE : l’assistant est dès Studio (capacité `assistant`), le CRM reste Signature (capacité `crm`) : Essai / ancien Essentiel → verrouillé',
+    peut('studio', 'assistant') === true && peut('signature', 'assistant') === true && peut('essentiel', 'assistant') === false && peut('gratuit', 'assistant') === false
+    && peut('studio', 'crm') === false && peut('signature', 'crm') === true)
   T('E7 VERROU : hors offre, le bouton est un lien vers /abonnement (aucun panneau, aucun appel)', /peut\(plan, 'assistant'\) \? 'ok' : 'verrou'/.test(pan) && /acces === 'verrou'[^]*?href="\/abonnement"/.test(pan) && /acces === 'verrou'\) return <a className=\{className\} href="\/abonnement"/.test(pan))
   T('E8 drapeau ou essai fermé : rien n’apparaît (aucun bouton mort)', /if \(!enEssai\('assistant'\) \|\| acces === 'absent' \|\| acces === 'attente'\) return null/.test(pan) && /essai\.assistant !== true\) \{ setAcces\('absent'\)/.test(pan))
   const brancheSimule = pan.slice(pan.indexOf('if (simule) {\n      setBullesExemple'), pan.indexOf('await conv.envoyer(t)'))

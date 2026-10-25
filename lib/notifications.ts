@@ -29,7 +29,7 @@ export function chargePush(type: TypeNotification, lead?: string | null): Charge
   const url = leadId ? `/messages?lead=${leadId}` : '/messages'
   switch (type) {
     case 'nouvelle_demande': return { titre: 'Nouvelle demande', ligne: 'Un client vous a écrit. Ouvrez la conversation.', url, tag: leadId ? `conv-${leadId}` : 'conv', renotify: true }
-    case 'proposition': return { titre: 'Proposition à valider', ligne: 'L’assistant a préparé un devis. À vous de valider.', url, tag: leadId ? `prop-${leadId}` : 'prop' }
+    case 'proposition': return { titre: 'Proposition à valider', ligne: 'L’assistant a préparé un envoi (devis ou relance). À vous de valider.', url, tag: leadId ? `prop-${leadId}` : 'prop' }
     case 'devis_accepte': return { titre: 'Réponse à votre devis', ligne: 'Un client a répondu à votre devis.', url, tag: leadId ? `devis-${leadId}` : 'devis', renotify: true }
   }
 }

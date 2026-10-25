@@ -294,7 +294,7 @@ const Em = await imp('lib/crm/empreinte.ts')
   const dm = cgu.match(/Dernière mise à jour : (\d+)(?:er)? (\p{L}+) (\d{4})/u)
   const iso = dm ? `${dm[3]}-${mois[dm[2]]}-${String(dm[1]).padStart(2, '0')}` : null
   const ver = lire('app/signup/page.tsx').match(/const CGU_VERSION = '([^']+)'/)?.[1]
-  T('F9 CGU_VERSION (inscription) = date « Dernière mise à jour » des CGU = 2026-10-21', !!iso && iso === ver && ver === '2026-10-21', `${iso} / ${ver}`)
+  T('F9 CGU_VERSION (inscription) = date « Dernière mise à jour » des CGU = 2026-10-25', !!iso && iso === ver && ver === '2026-10-25', `${iso} / ${ver}`)
   T('F10 la politique de confidentialité porte la même date, et cite les durées via DUREES_MOIS (pas en dur)', /21 octobre 2026/.test(conf) && /libelleDuree\(DUREES_MOIS\.crm\)/.test(conf) && /JOURS_SUIVI_APRES_FIN/.test(conf) && /libelleDuree\(DUREES_MOIS\.essai_gratuit\)/.test(conf))
   // Registre des traitements.
   const reg = lire('docs/registre-traitements.md')

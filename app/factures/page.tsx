@@ -226,7 +226,7 @@ export default function FacturesList() {
                   <span className="dc-amt">{eur(f.total_ttc ?? 0)}</span>
                   <div className="dc-actions">
                     <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
-                    {/* Factur-X : vendu dans les trois offres, et jusqu'au 08/09 aucun écran ne
+                    {/* Factur-X : vendu dans toutes les offres, et jusqu'au 08/09 aucun écran ne
                         permettait de l'obtenir. Seulement sur une facture émise : un brouillon
                         n'a pas de pièce électronique à produire. */}
                     {f.statut && f.statut !== 'brouillon'

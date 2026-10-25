@@ -13,7 +13,10 @@
 //      vers une adresse `.invalid` (chaque rebond abîme la réputation du domaine) ;
 //   5. l'email est au nom de l'ARTISAN et ne dit jamais « Presti » — vérifié dans le journal
 //      Resend (expéditeur affiché, sujet, Reply-To), pas seulement dans la base ;
-//   6. la porte est fermée : sans `Authorization: Bearer <CRON_SECRET>`, la route rend 401.
+//   6. la porte est fermée : sans `Authorization: Bearer <CRON_SECRET>`, la route rend 401 ;
+//   7. 25/10 (deux offres) : en SIGNATURE (`relances.auto`) la relance part seule — c'est l'artisan des §1-8 ; en STUDIO elle est
+//      PROPOSÉE dans le fil (messages.etat = 'proposition', type 'relance') et ne part qu'au clic de l'artisan (§10) ; sans
+//      plateforme (Essai), elle est annulée (§11).
 //
 // Ce qu'elle NE prouve PAS, et pourquoi :
 //   · `CRON_SECRET` n'est pas dans `.env.local` : on ne peut pas appeler la route DÉPLOYÉE.
@@ -104,7 +107,8 @@ async function journalResend() {
   return Array.isArray(d?.data) ? d.data : null
 }
 
-async function creerArtisan(prefixe, nom, fondateur, plan = 'studio') {
+// 25/10 : par défaut Signature — la seule offre dont la relance de conversation part SEULE (`relances.auto`) ; Studio la propose (§10).
+async function creerArtisan(prefixe, nom, fondateur, plan = 'signature') {
   const email = `${prefixe}-${Date.now()}-${crypto.randomBytes(2).toString('hex')}@presti-test.invalid`
   const motDePasse = 'Relances-' + crypto.randomBytes(8).toString('hex') + '-Aa1'
   const { data: u, error } = await admin.auth.admin.createUser({ email, password: motDePasse, email_confirm: true })
@@ -145,7 +149,7 @@ async function creerLead(artisanId, { nomProspect, contact, statut, ilYAJours, r
 }
 
 const relancesDe = async (leadId) => (await admin.from('relances').select('rang, envoyee, planifiee_le').eq('lead_id', leadId).order('rang')).data ?? []
-const messagesDe = async (leadId) => (await admin.from('messages').select('type, sens, contenu').eq('lead_id', leadId).eq('type', 'relance')).data ?? []
+const messagesDe = async (leadId) => (await admin.from('messages').select('type, sens, contenu, etat').eq('lead_id', leadId).eq('type', 'relance')).data ?? []
 
 try {
   // ── 0. Aucune relance d'un artisan RÉEL ne doit être due : elle partirait à cause du test.
@@ -227,6 +231,7 @@ try {
   T('le texte ne dit jamais « Presti »', !/presti/i.test(texte), texte.slice(0, 120))
   T('le texte est bien celui du repli (IA injoignable, aucun appel au modèle)', texte === relanceTemplate(NOM_ARTISAN, 'Camille', 1))
   T('le message est sortant', msgs[0]?.sens === 'out')
+  T('Signature : la relance est PARTIE, pas laissée en proposition', msgs[0]?.etat !== 'proposition', `etat=${msgs[0]?.etat}`)
 
   console.log('\n── 5. Les conditions d’arrêt')
   for (const [nom, id] of [['le prospect a répondu (en_discussion)', repondu], ['le devis est accepté (gagne)', gagne]]) {
@@ -285,8 +290,8 @@ try {
   //
   // Le trou comblé le 10/09 : jusque-là, les trois relances n'étaient posées QUE dans la branche de
   // /api/leads qui suit une réponse écrite par l'assistant tout seul. Or l'assistant autonome se vend
-  // à partir de Studio (`plateforme.ia.auto`) et le mode par défaut est « assistée » : un artisan en
-  // Essentiel à 29 € — qui a pourtant « Relances automatiques » coché dans sa grille — n'en avait
+  // à partir de Studio (`plateforme.ia.auto`, Signature depuis le 25/10) et le mode par défaut est « assistée » : un artisan en
+  // Essentiel à 29 € (offre retirée le 25/10) — qui a pourtant « Relances automatiques » coché dans sa grille — n'en avait
   // jamais aucune, et un Studio en mode assisté non plus. Sur le code d'avant, cette section échoue :
   // zéro relance armée, et le lead restait en `en_discussion`, que le cron traite comme un ARRÊT.
   console.log('\n── 9. L’artisan répond de sa main (Studio, mode assisté)')
@@ -294,7 +299,7 @@ try {
   const { POST: posterMessage } = await import('../app/api/messages/route.ts')
   const { getPlateformeConfig } = await import('../lib/plateformeConfig.ts')
 
-  const solo = await creerArtisan('relances-studio', `Menuiserie du Pont ${MARQUE}`, false)
+  const solo = await creerArtisan('relances-studio', `Menuiserie du Pont ${MARQUE}`, false, 'studio')
   // Le mode par défaut, écrit noir sur blanc : l'assistant prépare, l'artisan envoie.
   const { error: eCfg } = await admin.from('plateforme_config').upsert({ artisan_id: solo.id, mode_reponse: 'assistee' })
   if (eCfg) throw new Error(`config plateforme : ${eCfg.message}`)
@@ -351,21 +356,27 @@ try {
   await admin.from('relances').update({ planifiee_le: new Date(Date.now() - 3_600_000).toISOString() }).eq('lead_id', aLaMain).eq('rang', 1)
   const res3 = await appel(`Bearer ${SECRET}`)
   T('la ronde répond 200', res3.status === 200, String(res3.status))
+  const j3 = await res3.json().catch(() => ({}))
   const apresCron = await relancesDe(aLaMain)
   T('la relance échue est traitée', apresCron.find((r) => r.rang === 1)?.envoyee === true, JSON.stringify(apresCron))
   T('les deux suivantes restent dues', apresCron.filter((r) => r.rang > 1).every((r) => r.envoyee === false))
   const filSolo = await messagesDe(aLaMain)
   T('une trace « relance » dans le fil, au nom de l’artisan', filSolo.length === 1 && filSolo[0].contenu.includes(solo.nom), `${filSolo.length} message(s)`)
+  // 25/10 (Benj) : « Studio : tout est automatisé, mais il faut valider, sinon ça ne s'envoie pas. » Le passage rédige la relance et
+  // la PROPOSE (app/api/cron/relances : messages.etat = 'proposition') ; elle ne part qu'au clic (validerPropositionServeur).
+  T('Studio : la relance est PROPOSÉE (etat = proposition, type relance), pas envoyée', filSolo.length === 1 && filSolo[0].etat === 'proposition' && filSolo[0].sens === 'out', JSON.stringify(filSolo.map((m) => m.etat)))
+  T('… et le passage la compte comme préparée (prepared ≥ 1)', (j3.prepared ?? 0) >= 1, JSON.stringify({ sent: j3.sent, prepared: j3.prepared }))
 
-  // ── 11. Pas de plateforme en Essentiel (15/10, Benj) : la relance de conversation d'un compte Essentiel n'est ni envoyée ni laissée due.
-  console.log('\n── 11. Essentiel : pas de plateforme, donc pas de relance de conversation')
-  const sans = await creerArtisan('relances-essentiel', `Plomberie sans plateforme ${MARQUE}`, false, 'essentiel')
+  // ── 11. Pas de plateforme (15/10, Benj) : la relance de conversation d'un compte sans plateforme (Essai ; l'Essentiel hérité pareil)
+  // n'est ni envoyée ni laissée due.
+  console.log('\n── 11. Essai : pas de plateforme, donc pas de relance de conversation')
+  const sans = await creerArtisan('relances-essai', `Plomberie sans plateforme ${MARQUE}`, false, 'gratuit')
   const dueSans = await creerLead(sans.id, { nomProspect: 'Paul', contact: CONTACT_INVALIDE, statut: 'repondu', ilYAJours: 3, rangs: [2] })
-  T('au départ, une relance J+2 est due pour le compte Essentiel', (await relancesDe(dueSans)).filter((r) => r.envoyee === false).length === 1)
+  T('au départ, une relance J+2 est due pour le compte sans plateforme', (await relancesDe(dueSans)).filter((r) => r.envoyee === false).length === 1)
   const res4 = await appel(`Bearer ${SECRET}`)
   T('la ronde répond 200', res4.status === 200, String(res4.status))
   const apresSans = await relancesDe(dueSans)
-  T('la relance du compte Essentiel est ANNULÉE (traitée), pas laissée due', apresSans.length === 1 && apresSans[0].envoyee === true, JSON.stringify(apresSans))
+  T('la relance du compte sans plateforme est ANNULÉE (traitée), pas laissée due', apresSans.length === 1 && apresSans[0].envoyee === true, JSON.stringify(apresSans))
   T('aucune trace « relance » dans le fil : rien n’est parti au nom d’un artisan sans plateforme', (await messagesDe(dueSans)).length === 0)
 } catch (e) {
   ko++; console.log('  ❌ exception —', e instanceof Error ? e.stack : e)

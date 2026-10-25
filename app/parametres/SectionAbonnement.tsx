@@ -17,8 +17,24 @@ import { estNatif } from '@/lib/natif'
 
 type Abo = { statut: string; fin_periode: string | null; essai_fin?: string | null; resiliation_prevue: boolean; fin_prevue: string | null } | null
 
-/** L'offre de référence pour comparer : l'essai a les capacités de l'Essentiel, les fondateurs celles de Signature. */
-const reference = (plan: string | null): PlanPayant => (plan === 'studio' || plan === 'signature' ? plan : plan === 'business' ? 'signature' : 'essentiel')
+/** L'offre de référence pour comparer : les fondateurs ont celles de Signature. L'essai et l'ancienne offre Essentiel (plus vendue
+ *  depuis le 25/10) n'ont aucune offre payante de référence : on compare alors aux capacités du compte (`deverrouilleDepuis`). */
+const reference = (plan: string | null): PlanPayant | null => (plan === 'studio' || plan === 'signature' ? plan : plan === 'business' ? 'signature' : null)
+
+/** Sans offre de référence (essai, Essentiel hérité) : les lignes de l'offre cible dont le compte n'a pas toutes les capacités,
+ *  plus les lignes de chiffres (crédits, espaces) et le niveau d'automatisation. */
+function deverrouilleDepuis(plan: string, cible: PlanPayant): string[] {
+  const a = planConf(plan).capacites
+  const out: string[] = []
+  for (const l of GRILLE) {
+    const vers = l.cellules[cible]
+    if (vers === false) continue
+    if (l.capacites.length && l.capacites.every((c) => a.includes(c))) continue
+    const t = texteCellule(l, vers)
+    if (t) out.push(l.label === 'Crédits chaque mois' ? `${t} (au lieu de ${planConf(plan).creditsMois})` : t)
+  }
+  return out
+}
 
 function deverrouille(actuel: PlanPayant, cible: PlanPayant): string[] {
   const out: string[] = []
@@ -48,9 +64,9 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
   const consommes = Math.max(0, Math.min(inclus, inclus - restants))
   const pct = inclus ? Math.round((consommes / inclus) * 100) : 0
   const ref = reference(plan)
-  const ordre: PlanPayant[] = ['essentiel', 'studio', 'signature']
-  // L'Essai a les capacités de l'Essentiel (ref), mais Essentiel reste une offre à CHOISIR depuis l'Essai (3 crédits → 80) : les trois offres lui sont proposées.
-  const superieures = plan === 'gratuit' ? ordre : ordre.filter((o) => ordre.indexOf(o) > ordre.indexOf(ref))
+  const ordre: PlanPayant[] = ['studio', 'signature']
+  // Sans offre de référence (essai, Essentiel hérité), les deux offres sont proposées.
+  const superieures = ref === null ? ordre : ordre.filter((o) => ordre.indexOf(o) > ordre.indexOf(ref))
 
   useEffect(() => {
     if (!a.stripe_subscription_id) return
@@ -135,7 +151,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
           <div className="abo-deverr">
             {superieures.map((id) => {
               const o = OFFRES.find((x) => x.id === id)!
-              const gains = plan === 'gratuit' && id === 'essentiel' ? [`${o.credits} crédits chaque mois (au lieu de ${PLANS.gratuit.creditsMois} pendant l’essai)`] : deverrouille(ref, id)
+              const gains = ref === null ? deverrouilleDepuis(plan, id) : deverrouille(ref, id)
               return (
                 <div key={id} className="abo-deverr-card">
                   <div className="abo-deverr-head"><b>{o.label}</b><span>{o.prix} €<small>/mois</small></span></div>

@@ -31,8 +31,8 @@ modele rep_rgpd_efface_meta 4fd970f87e51ee9d8b2ed13eec608fc08cbdfd7207ffbe0c6ec8
 modele stop_confirmation 18e713f4c2d09180182bbd2b3b5f1f740736943ab73eeb49c77c8a12b08cc7fa — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 affirmation prix_site 330adc2b45664848648433257c5d4fc61c717400f810e4937cf0d38fc692aea9 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 affirmation delai_48h ef46b344a00b9b14cdeb17d3416c9e9965c55bec7211a0b12bde627a848cc371 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
-affirmation formules de3dbdfbc3bac13b904e42c344e151e3d563e5ec294d60bc586ce8b099ac707d — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
-affirmation reponse_prete 892bd7f33f14816f6b74e42f6d700847a45c17c2433d81651ea46f780c756414 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
+# RETIRÉE le 25/10/2026 (texte corrigé : deux offres, Studio prépare / Signature envoie ; à réapprouver) : affirmation formules de3dbdfbc3bac13b904e42c344e151e3d563e5ec294d60bc586ce8b099ac707d — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
+# RETIRÉE le 25/10/2026 (texte corrigé : deux offres, Studio prépare / Signature envoie ; à réapprouver) : affirmation reponse_prete 892bd7f33f14816f6b74e42f6d700847a45c17c2433d81651ea46f780c756414 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 affirmation accuse_reception dbb75f830c674af71adf6cd74f03ea1d95f08b013a3012d60212678e5aaf70ad — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 affirmation domaine_a_votre_nom c13fb338c7f37e81f22b37783410ea6703e1a18350ee303c3c5a981081786e14 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 affirmation offre_site 68bc4511d5b34b1fcbdfe7abfb5fe046368800c4c53f68af861329099c23880a — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
@@ -45,8 +45,8 @@ faq photos 77f48876abb96b528fc9141ba0cd5b734859180f0b321395e864d841b4c5fe7d — 
 faq propriete adc19db9d28254141347d37e6114295de8f1c38b6a0588c4e4943a65f67e87c5 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 faq contenu 8815e726a958c92fdf1af677d2303b88efba7c055fdaffbd9db61a83eacd8a7b — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 faq qui_est_presti cd9de18bc484d79c7c97d8e61853be5c23b2d8f4e437d6f9ac2bdd578606be20 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
-faq formules 05a1265fc52b6e3e3eb86ece57606121394c82c2991db3c5a5818683d3f9d939 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
-faq reponse_client f50af5b8b333191cb7d0501154ec0367cdc932e5acd46b4ab862fad1ccc25d5f — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
+# RETIRÉE le 25/10/2026 (texte corrigé : deux offres, Studio prépare / Signature envoie ; à réapprouver) : faq formules 05a1265fc52b6e3e3eb86ece57606121394c82c2991db3c5a5818683d3f9d939 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
+# RETIRÉE le 25/10/2026 (texte corrigé : deux offres, Studio prépare / Signature envoie ; à réapprouver) : faq reponse_client f50af5b8b333191cb7d0501154ec0367cdc932e5acd46b4ab862fad1ccc25d5f — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 douleur plombier-plateforme-meme-demande d34c8fa0b2c321b73dc51a74a2384c5cffd0923a0b8d50800cb295c166a0d534 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 douleur plombier-plateforme-contact-bidon 96b998ec0361006ada1877bb6d4efe5170c1e7001e340106a7305a12f256c86a — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 douleur plombier-bureaucratie 3c85c6aefe1cbcce808089594942dc9a810e2040088e268ec24fb274c13b3eab — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
@@ -54,3 +54,7 @@ douleur chauffagiste-recherches-sponsorisees 8c6b933c320a09ddf07f7d6a23d3a93c8ea
 douleur electricien-devis-une-heure 12ee2ca14ba84fd551f5cb796a054fa82aeeda32aac13e8dbd6a56f5860f8a39 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 douleur electricien-devis-longs 50a1117d12ed138605a09525f86975ef155766f3a930db7a0dd08a4535fed9ed — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
 douleur tous-plateforme-curieux-du-prix 644fef036a291ba7bab07cbc9bfbdda0a650c9f91380d04ecbd06c67afcf0725 — approuvé le 29/09/2026 par Claude Code, par délégation de Benj
+affirmation formules b48a69af5a9f4dfdd9168f11625bc041af4ba981b1cad5c32ea7fd252da00859 — approuvé le 25/10/2026 par Claude Code, par délégation de Benj
+affirmation reponse_prete 30aad4dd89c3da218717a762f811d7a0709a27c318b02f2887812260d1bd8c70 — approuvé le 25/10/2026 par Claude Code, par délégation de Benj
+faq formules cc2d063f6534b7ba722f37f64abe6513b53c23d3712b218e473503c65e3a6e30 — approuvé le 25/10/2026 par Claude Code, par délégation de Benj
+faq reponse_client 76f82eb7039b101e13a5355971ddc65759a0473d18e02888f7c5754fd860857a — approuvé le 25/10/2026 par Claude Code, par délégation de Benj

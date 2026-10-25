@@ -27,7 +27,7 @@ export async function GET(req: Request) {
 }
 
 // Crée une session Stripe Checkout d'abonnement mensuel pour le plan demandé — avec l'ESSAI GRATUIT SANS CARTE (décision de
-// Benj, 13/10/2026) quand le compte y a droit : une semaine d'Essentiel, deux de Studio, trois de Signature. Un seul essai par
+// Benj, 13/10/2026) quand le compte y a droit : deux semaines de Studio, trois de Signature (ESSAI_JOURS ; l'Essentiel n'est plus vendu depuis le 25/10). Un seul essai par
 // compte (lib/essaiGratuitServeur.ts evaluerEssai) ; sinon, le Checkout d'avant, carte demandée tout de suite.
 export async function POST(req: Request) {
   try {

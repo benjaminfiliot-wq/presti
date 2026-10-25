@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic'
 
 // GET /api/controle/chiffres — les chiffres du jour (prompt v10 §2.1), chacun `{ valeur, source, a }`.
 // Jamais un nombre nu : sans source, la valeur est nulle et la raison est dite (`erreur` ou `manque`).
+// 'essentiel' reste compté : plus vendu depuis le 25/10, mais un abonné hérité qui y serait resté paie encore.
 const PAYANTS = ['essentiel', 'studio', 'signature']
 
 const payants = () => sourcer('chiffres:payants', 'supabase', async () => {

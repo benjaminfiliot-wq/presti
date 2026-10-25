@@ -5,7 +5,7 @@
 // Ce que le script fait, de bout en bout :
 //   1. lance le build de PRODUCTION local (next start, .next-simulation) branché à la vraie base, avec les garde-fous dans l'environnement
 //      du seul serveur : clé Stripe de TEST, aucun e-mail réel (interception + journal), appels IA comptés par un proxy (2 réels au plus) ;
-//   2. crée quatre comptes de test (Essai, Essentiel, Studio, Signature — @presti-test.invalid) et fait parcourir à chacun CHAQUE
+//   2. crée trois comptes de test (Essai, Studio, Signature — l'Essentiel n'est plus vendu depuis le 25/10 — @presti-test.invalid) et fait parcourir à chacun CHAQUE
 //      fonctionnalité de son offre (API réelle + écrans en vrai navigateur), puis vérifie que tout ce qui n'est pas inclus est FERMÉ
 //      (écran verrouillé + 403 serveur, sans donnée ni crédit consommé) ;
 //   3. pour chaque offre payante : les DEUX choix, « payer » (la session de paiement Stripe se crée en mode test, on ne paie pas) et
@@ -243,7 +243,7 @@ async function socle(c, { ia }) {
   // Devis : chiffrage par l'IA sur SES tarifs
   const avant = await creditsDe(c)
   const appelsAvant = ia.etat.journal.length
-  if (ia.etat.reelsUtilises < 2 && plan === 'essentiel') ia.autoriser(1)
+  if (ia.etat.reelsUtilises < 2 && plan === 'studio') ia.autoriser(1)
   ia.marqueur(MARQUEUR_TARIF)
   const gen = await http(c, 'POST', '/api/devis/generer', { description: 'Pose de carrelage 60x60 dans une salle de bain de 10 m², dépose de l’ancien revêtement comprise.' })
   ia.autoriser(0)
@@ -381,12 +381,23 @@ async function plateforme(c) {
   const demande = await http(null, 'POST', '/api/leads', { slug: c.slug, nom_prospect: 'Paul Client', contact, message: 'Bonjour, je voudrais faire remplacer mon chauffe-eau de 200 litres, pouvez-vous me faire un devis ?' })
   const leadA = demande.corps.leadId
   const msgsA = leadA ? (await admin.from('messages').select('sens, type, etat, contenu').eq('lead_id', leadA)).data ?? [] : []
-  verifier(plan, 'conversation publique : la demande du client est enregistrée et l’IA répond seule (mode automatique)',
-    demande.status === 200 && !!leadA && typeof demande.corps.reply === 'string' && demande.corps.reply.length > 20 && msgsA.some((m) => m.sens === 'in') && msgsA.some((m) => m.type === 'reponse_auto' && m.sens === 'out' && !m.etat),
-    'HTTP ' + demande.status + ' ' + JSON.stringify(demande.corps).slice(0, 200))
-  verifier(plan, 'réponse automatique : 1 crédit débité', cred0 - (await creditsDe(c)) === 1, cred0 + '→' + (await creditsDe(c)))
-  const suite = await http(null, 'POST', '/api/conversation', { token: demande.corps.token, message: 'Il est dans la cave, accès par un escalier étroit.' })
-  verifier(plan, 'conversation publique : le client poursuit la discussion, l’IA répond', suite.status === 200 && typeof suite.corps.reply === 'string' && suite.corps.reply.length > 10, 'HTTP ' + suite.status + ' ' + JSON.stringify(suite.corps).slice(0, 160))
+  // 25/10 (Benj) : la réponse qui part seule est Signature (`plateforme.ia.auto`). En Studio, le réglage « automatique » est rétrogradé
+  // en assisté (modeEffectif, motif verrou_offre) : l'IA prépare, rien ne part au client sans la validation de l'artisan.
+  if (peut(plan, 'plateforme.ia.auto')) {
+    verifier(plan, 'conversation publique : la demande du client est enregistrée et l’IA répond seule (mode automatique)',
+      demande.status === 200 && !!leadA && typeof demande.corps.reply === 'string' && demande.corps.reply.length > 20 && msgsA.some((m) => m.sens === 'in') && msgsA.some((m) => m.type === 'reponse_auto' && m.sens === 'out' && !m.etat),
+      'HTTP ' + demande.status + ' ' + JSON.stringify(demande.corps).slice(0, 200))
+    verifier(plan, 'réponse automatique : 1 crédit débité', cred0 - (await creditsDe(c)) === 1, cred0 + '→' + (await creditsDe(c)))
+    const suite = await http(null, 'POST', '/api/conversation', { token: demande.corps.token, message: 'Il est dans la cave, accès par un escalier étroit.' })
+    verifier(plan, 'conversation publique : le client poursuit la discussion, l’IA répond', suite.status === 200 && typeof suite.corps.reply === 'string' && suite.corps.reply.length > 10, 'HTTP ' + suite.status + ' ' + JSON.stringify(suite.corps).slice(0, 160))
+  } else {
+    verifier(plan, 'conversation publique (« automatique » réglé, offre sans envoi seul) : la demande est enregistrée, la réponse est PRÉPARÉE, rien ne part au client',
+      demande.status === 200 && !!leadA && demande.corps.reply == null && msgsA.some((m) => m.sens === 'in') && msgsA.some((m) => m.type === 'reponse_auto' && m.etat === 'proposition') && !msgsA.some((m) => m.sens === 'out' && !m.etat),
+      'HTTP ' + demande.status + ' ' + JSON.stringify(demande.corps).slice(0, 200) + ' messages ' + JSON.stringify(msgsA.map((m) => [m.sens, m.type, m.etat])))
+    verifier(plan, 'réponse préparée (verrou d’offre) : 1 crédit débité pour la proposition', cred0 - (await creditsDe(c)) === 1, cred0 + '→' + (await creditsDe(c)))
+    const suite = await http(null, 'POST', '/api/conversation', { token: demande.corps.token, message: 'Il est dans la cave, accès par un escalier étroit.' })
+    verifier(plan, 'conversation publique : le client poursuit, l’IA ne répond pas seule (motif verrou_offre)', suite.status === 200 && suite.corps.reply == null && suite.corps.raison === 'verrou_offre', 'HTTP ' + suite.status + ' ' + JSON.stringify(suite.corps).slice(0, 160))
+  }
 
   // Réponse PRÉPARÉE : l'IA rédige, l'artisan valide.
   await moi.from('plateforme_config').upsert({ artisan_id: c.id, mode_reponse: 'assistee', maj_le: new Date().toISOString() }, { onConflict: 'artisan_id' })
@@ -466,6 +477,7 @@ async function gestion(c) {
   if (dv.corps?.id) await admin.from('devis').update({ statut: 'accepte' }).eq('id', dv.corps.id) // on ne facture qu'un devis signé (C6)
   const fi = await http(c, 'POST', '/api/factures', { devis_id: dv.corps.id })
   const envois = []
+  const prevenus = []
   try {
     const { tourRelancesImpayes } = await import('../lib/relancesImpayesTour.ts')
     const { magasinSupabase } = await import('../lib/relancesImpayesMagasin.ts')
@@ -476,17 +488,31 @@ async function gestion(c) {
       ...magasinSupabase,
       comptes: async (n) => (await magasinSupabase.comptes(n)).filter((x) => x.artisan_id === c.id),
       factures: async (id) => id === c.id ? ((await admin.from('factures').select('*').eq('artisan_id', id).eq('statut', 'emise').is('avoir_de', null).not('date_echeance', 'is', null)).data ?? []) : [],
+      // L'avis « une relance vous attend » (offre Studio) est capté ici : ce processus n'est pas le serveur aux e-mails interceptés.
+      notifierPreparee: async (artisan, n) => { prevenus.push({ artisan: artisan.id, ...n }) },
     }
     const demain = (j) => new Date(Date.now() + j * 86400000)
     const b1 = await tourRelancesImpayes({ actif: true, magasin, envoyer: async (m) => { envois.push(m); return { ok: true } }, sortiePermise: async () => true, maintenant: demain(30 + 4) })
     const b2 = await tourRelancesImpayes({ actif: true, magasin, envoyer: async (m) => { envois.push(m); return { ok: true } }, sortiePermise: async () => true, maintenant: demain(30 + 4) })
     const miens = () => envois.filter((e) => e.to === `impaye-${plan}-${HORO}@example.org`)   // le compte peut avoir d’autres factures échues (l’acompte de Signature) : on juge CELLE-ci
-    verifier(plan, 'relances d’impayés (passage simulé à échéance +4 j) : une relance part, une seule, au nom de l’artisan', b1.comptes === 1 && miens().length === 1 && /Sim /.test(miens()[0].fromName ?? '') && /Rappel/.test(miens()[0].subject ?? '') && /FAC-/.test(miens()[0].subject ?? ''), JSON.stringify(b1) + ' ' + JSON.stringify(miens()[0] ?? {}).slice(0, 200))
-    verifier(plan, 'relances d’impayés : un second passage le même jour ne renvoie rien (idempotent)', b2.envoyees === 0 && miens().length === 1, JSON.stringify(b2))
+    // 25/10 (Benj) : en Signature (`factures.relances.auto`) la relance part seule ; en Studio (`factures.relances` seule) elle est PRÉPARÉE
+    // (statut « a_valider », sujet et texte gardés), l'artisan est prévenu, et rien ne part tant qu'il ne l'a pas validée.
+    const auto = peut(plan, 'factures.relances.auto')
+    if (auto) {
+      verifier(plan, 'relances d’impayés (passage simulé à échéance +4 j) : une relance part, une seule, au nom de l’artisan', b1.comptes === 1 && miens().length === 1 && /Sim /.test(miens()[0].fromName ?? '') && /Rappel/.test(miens()[0].subject ?? '') && /FAC-/.test(miens()[0].subject ?? ''), JSON.stringify(b1) + ' ' + JSON.stringify(miens()[0] ?? {}).slice(0, 200))
+      verifier(plan, 'relances d’impayés : un second passage le même jour ne renvoie rien (idempotent)', b2.envoyees === 0 && miens().length === 1, JSON.stringify(b2))
+    } else {
+      const lignes = (await admin.from('relances_impayes').select('statut, sujet, texte').eq('facture_id', fi.corps.id)).data ?? []
+      verifier(plan, 'relances d’impayés (passage simulé à échéance +4 j) : la relance est PRÉPARÉE « à valider » (sujet et texte gardés), l’artisan est prévenu, rien ne part au client',
+        b1.comptes === 1 && b1.preparees >= 1 && miens().length === 0 && lignes.length === 1 && lignes[0].statut === 'a_valider' && !!lignes[0].sujet && !!lignes[0].texte && prevenus.length >= 1,
+        JSON.stringify(b1) + ' lignes ' + JSON.stringify(lignes).slice(0, 200) + ' avis ' + prevenus.length)
+      verifier(plan, 'relances d’impayés : un second passage le même jour ne prépare ni n’envoie rien de plus (une relance attend déjà)', b2.preparees === 0 && b2.envoyees === 0 && miens().length === 0, JSON.stringify(b2))
+    }
+    const parti = miens().length
     // Facture payée → plus de relance
     await http(c, 'PATCH', '/api/factures/' + fi.corps.id, { statut: 'payee' })
     const b3 = await tourRelancesImpayes({ actif: true, magasin, envoyer: async (m) => { envois.push(m); return { ok: true } }, sortiePermise: async () => true, maintenant: demain(30 + 12) })
-    verifier(plan, 'relances d’impayés : une facture réglée n’est plus relancée', miens().length === 1, JSON.stringify(b3) + ' envois pour cette facture : ' + miens().length)
+    verifier(plan, 'relances d’impayés : une facture réglée n’est plus relancée', miens().length === parti, JSON.stringify(b3) + ' envois pour cette facture : ' + miens().length)
   } catch (e) { constat(plan, 'relances d’impayés (passage simulé)', 'defaut', e?.stack ?? e) }
 
   // Inventaire
@@ -613,8 +639,11 @@ async function ecranPlateforme(navigateur, c) {
     await p.waitForSelector('textarea[placeholder^="Décrivez votre besoin"]', { timeout: 20_000 })
     await p.fill('textarea[placeholder^="Décrivez votre besoin"]', 'Bonjour, mon radiateur ne chauffe plus, pouvez-vous me proposer un rendez-vous ?')
     await p.getByRole('button', { name: 'Envoyer' }).click()
-    await p.waitForFunction(() => /merci pour votre message/i.test(document.body.innerText), null, { timeout: 60_000 })
-    verifier(plan, 'page de conversation (vrai chat, mobile) : le client écrit, l’assistant répond dans le fil', true)
+    // 25/10 : la réponse ne part seule qu'en Signature (`plateforme.ia.auto`) ; en Studio le client lit l'accusé « Bien reçu ! » de PlatChat
+    // (app/p/[slug]/PlatChat.tsx) et la réponse préparée attend l'artisan.
+    const auto = peut(plan, 'plateforme.ia.auto')
+    await p.waitForFunction((a) => (a ? /merci pour votre message/i : /bien reçu/i).test(document.body.innerText), auto, { timeout: 60_000 })
+    verifier(plan, auto ? 'page de conversation (vrai chat, mobile) : le client écrit, l’assistant répond dans le fil' : 'page de conversation (vrai chat, mobile) : le client écrit, reçoit l’accusé ; la réponse préparée attend l’artisan', true)
     const contact = `chat-${plan}-${HORO}-${tentative}@presti-test.invalid`
     const champ = p.locator('input[placeholder="Email ou téléphone"]')
     if (await champ.count()) { await champ.fill(contact); await p.getByRole('button', { name: 'Être recontacté' }).click(); await p.waitForTimeout(1500) }
@@ -853,7 +882,7 @@ async function accesDeLOffre(c, P, quand, cle = P) {
 // ─────────────────────────────── main ───────────────────────────────
 const ETAPES_DEMANDEES = (process.argv.find((a) => a.startsWith('--etapes=')) || '').slice(9).split(',').filter(Boolean)
 const PLANS_DEMANDES = (process.argv.find((a) => a.startsWith('--plans=')) || '').slice(8).split(',').filter(Boolean)
-const PLANS_JOUES = ['gratuit', 'essentiel', 'studio', 'signature'].filter((p) => PLANS_DEMANDES.length === 0 || PLANS_DEMANDES.includes(p))
+const PLANS_JOUES = ['gratuit', 'studio', 'signature'].filter((p) => PLANS_DEMANDES.length === 0 || PLANS_DEMANDES.includes(p))
 /** Un écran qui se fige (machine chargée, page bloquée) ne fige pas la simulation : le parcours est rejoué UNE fois avec un navigateur neuf ; s'il échoue encore, c'est un défaut. */
 let tentative = 0
 async function garde(plan, nom, ms, fn) {
@@ -1045,7 +1074,7 @@ async function menage() {
 function ecrireRapport({ mailsInterceptes, appelsStripe }) {
   const SYMBOLE = { marche: '✅', ferme: '🔒', defaut: '❌', nt: '⚪' }
   const fichier = path.join(RACINE, 'plans', 'simulation-generale-1610.md')
-  const plans = ['gratuit', 'essentiel', 'studio', 'signature']
+  const plans = ['gratuit', 'studio', 'signature']
   const principal = constats.filter((c) => !c.section || c.section === 'ecrans')
   const abo = constats.filter((c) => c.section === 'abonnements')
   const rang = { defaut: 3, nt: 2, ferme: 1, marche: 0 }
@@ -1126,7 +1155,7 @@ function ecrireRapport({ mailsInterceptes, appelsStripe }) {
     '',
     '### Les deux choix de chaque offre payante (payer / semaines gratuites offertes)',
     '',
-    abo.length ? tableau(abo, ['essentiel', 'studio', 'signature'], (c) => c.plan) : '_non joué dans cette exécution_',
+    abo.length ? tableau(abo, OFFRES.map((o) => o.id), (c) => c.plan) : '_non joué dans cette exécution_',
     '',
     '### Appels IA',
     '',

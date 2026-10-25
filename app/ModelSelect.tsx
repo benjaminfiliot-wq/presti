@@ -2,7 +2,8 @@
 
 import { TIERS, type Tier, tierAllowed } from '@/lib/models'
 
-const PLAN_BADGE: Record<string, string> = { gratuit: 'Inclus', essentiel: 'Dès Essentiel', studio: 'Dès Studio', signature: 'Signature', pro: 'Offre Pro', business: 'Business' }
+// 25/10 : deux offres (Studio, Signature) ; l'Essentiel n'est plus vendu, aucun niveau de modèle ne s'y réfère (lib/models.ts TIERS).
+const PLAN_BADGE: Record<string, string> = { gratuit: 'Inclus', studio: 'Dès Studio', signature: 'Signature', pro: 'Offre Pro', business: 'Business' }
 
 const Lock = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>

@@ -49,8 +49,9 @@ export function routerModele(opts: { plan: string | null | undefined; demande?: 
     return { ...r, raison: r.downgraded ? 'repli_plan' : 'explicite', libelle: `répondu avec ${LIBELLE[r.tier]}` }
   }
 
-  // Standard (défaut) → Pro si la demande est complexe et que l'offre inclut l'assistant autonome.
-  if (estComplexe(signaux) && peut(opts.plan, 'plateforme.ia.auto')) {
+  // Standard (défaut) → Pro si la demande est complexe et que l'offre inclut la plateforme (Studio et au-dessus). Jusqu'au 25/10 la
+  // condition était `plateforme.ia.auto`, passée en Signature ce jour-là : Studio aurait perdu la bascule sans que rien ne le dise.
+  if (estComplexe(signaux) && peut(opts.plan, 'plateforme.conversation')) {
     const r = resolveModel('pro', opts.plan)
     if (!r.downgraded) return { ...r, raison: 'complexite', libelle: 'répondu avec Pro (demande complexe)' }
   }

@@ -147,7 +147,8 @@ export const FLAGS = {
    *  ordre : 0157 appliquée et contrôlée → scripts/assistant-qa.mjs vert → accord de Benj → `assistant: true` ici, `ESSAI` vidé (ci-dessous)
    *  et lib/essais.ts vidé. La grille des offres (lib/plans.ts) gagne seule sa ligne. Sans 0157, l'assistant ne propose aucun outil d'action.
    *  12/10/2026 — l'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture seule et A2 brouillons) :
-   *  page /assistant, POST /api/assistant, entrée « Assistant » du menu. Offre Signature (capacité `assistant`, lib/plans.ts).
+   *  page /assistant, POST /api/assistant, entrée « Assistant » du menu. Offre Signature à l'époque ; Studio et au-dessus depuis le 25/10
+   *  (capacité `assistant`, lib/plans.ts ; ses outils CRM restent Signature).
    *  Baissé : la page et la route répondent 404, rien dans le menu, rien dans la grille des offres. Se lève après la migration
    *  0150 appliquée (levé sans elle, la route refuse chaque tour : le plafond et le journal sont en base, fail-closed), puis la
    *  recette A5 du plan (évaluation, audits sécurité et RGPD par des agents distincts, parcours réel sur un compte de test) et
@@ -166,7 +167,8 @@ export const FLAGS = {
   crm: true,
   /** 15/10/2026 — relances AUTOMATIQUES des factures impayées (lib/relancesImpayes.ts, passage quotidien de /api/cron/relances, réglage
    *  et journal dans Factures, GET/PUT /api/factures/relances-auto). Désactivées par défaut pour chaque artisan (opt-in). Migration 0159
-   *  appliquée (15/10). Offre : Studio et au-dessus (capacité `factures.relances`, lib/plans.ts, décision de Benj du 15/10) : la route et
+   *  appliquée (15/10). Offre : Studio et au-dessus (capacité `factures.relances`, lib/plans.ts, décision de Benj du 15/10 ; depuis le 25/10,
+   *  préparées à valider en Studio, envoyées seules en Signature avec `factures.relances.auto`) : la route et
    *  le passage quotidien refusent les autres offres, l'écran Factures montre le réglage verrouillé avec renvoi vers /abonnement.
    *  La grille des offres, le comparatif de la landing et la page Tarifs gagnent seuls leur ligne. Baissé : tout cela disparaît. */
   relancesImpayes: true,

@@ -19,11 +19,13 @@ export const PILOTE_DELAI_MIN = 10
 export const PILOTE_PLAFOND_JOUR = 20
 
 // ─── Les offres, du plus petit au plus grand ──────────────────────────────────────────────────────────
-export type OffreAide = Extract<PlanId, 'gratuit' | 'essentiel' | 'studio' | 'signature'>
-export const OFFRES_AIDE: readonly OffreAide[] = ['gratuit', 'essentiel', 'studio', 'signature']
+// 25/10 (Benj) : deux offres vendues, Studio et Signature. L'Essentiel n'est plus vendu : l'aide ne le nomme plus (un compte resté
+// sur cet identifiant a les capacités de l'essai, lib/plans.ts BASE).
+export type OffreAide = Extract<PlanId, 'gratuit' | 'studio' | 'signature'>
+export const OFFRES_AIDE: readonly OffreAide[] = ['gratuit', 'studio', 'signature']
 
 /** Le nom de l'offre tel que l'artisan le lit. L'offre `gratuit` s'appelle « Essai » dans PLANS ; l'aide dit « Gratuit ». */
-export const NOM_OFFRE: Record<OffreAide, string> = { gratuit: 'Gratuit', essentiel: PLANS.essentiel.label, studio: PLANS.studio.label, signature: PLANS.signature.label }
+export const NOM_OFFRE: Record<OffreAide, string> = { gratuit: 'Gratuit', studio: PLANS.studio.label, signature: PLANS.signature.label }
 
 /** La première offre qui inclut une capacité (les offres au-dessus l'incluent aussi : les capacités s'empilent dans lib/plans.ts). */
 export function offrePremiere(cap: Capacite | null): OffreAide {
@@ -44,8 +46,8 @@ export function titrePastille(o: OffreAide): string {
  * `null` : aucun verrou d'offre sur l'écran. `'a_part'` : ne fait partie d'aucune offre (le site se commande à part).
  */
 export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part'> = {
-  // source : lib/plans.ts BASE (devis.ia, devis.prix_artisan, factures) ; STUDIO (plateforme.*, chiffres, inventaire.*, canaux.email) ; SIGNATURE (crm, assistant)
-  dashboard: null, tarifs: 'devis.prix_artisan', profil: null, abonnement: null, support: null, parametres: null,
+  // source : lib/plans.ts BASE (devis.ia, devis.prix_artisan, factures) ; STUDIO (plateforme.*, chiffres, inventaire.*, canaux.email, assistant) ; SIGNATURE (crm, assistant.pilote, *.auto)
+  dashboard: null, tarifs: 'devis.prix_artisan', profil: null, abonnement: null, support: null, offres: null, parametres: null,
   'parametres.legal': null, 'parametres.notifications': null, 'parametres.securite': null, 'parametres.donnees': null,
   devis: 'devis.ia', 'devis.editeur': 'devis.ia', factures: 'factures', 'devis.lots': 'factures', 'factures.types': 'factures',
   outils: 'plateforme.conversation', messages: 'plateforme.conversation', canaux: 'canaux.email', plateforme: 'plateforme.gestion',
@@ -94,26 +96,28 @@ export const AUTOMATIQUE_SANS_ASSISTANT: EntreeAuto[] = [
     texte: 'Quand un visiteur vous écrit sur votre page de conversation, l’assistant rédige la réponse à sa place. Par défaut (mode « Assistée »), elle vous attend dans Messages : rien ne part chez votre client sans votre validation.',
     cap: 'plateforme.conversation',
   },
-  // source : lib/plans.ts STUDIO (plateforme.ia.auto) ; lib/plateformeConfig.ts:57 (limite_messages), :56 (mots d'alerte), :184 (verrou d'offre) ; app/api/leads/route.ts:368-371 (alerte à l’artisan)
+  // source : lib/plans.ts SIGNATURE (plateforme.ia.auto, 25/10) ; lib/plateformeConfig.ts:57 (limite_messages), :56 (mots d'alerte), :184 (verrou d'offre) ; app/api/leads/route.ts:368-371 (alerte à l’artisan)
   {
     id: 'reponse-seule',
     titre: 'Réponse envoyée seule, jour et nuit (mode « Automatique », à choisir vous-même)',
-    texte: `Dans Ma plateforme, vous pouvez laisser l’assistant répondre sans vous, 24 h sur 24 ou sur la plage horaire de votre choix, dans la limite de ${REPONSES_PAR_CONVERSATION} réponses par conversation (réglable). Si le message contient un mot d’alerte (urgence, fuite, gaz…), il se tait et vous êtes prévenu. Sans l’offre qui l’inclut, un compte reste en « Assistée ».`,
+    texte: `Avec l’offre ${NOM_OFFRE[offrePremiere('plateforme.ia.auto')]}, dans Ma plateforme, vous pouvez laisser l’assistant répondre sans vous, 24 h sur 24 ou sur la plage horaire de votre choix, dans la limite de ${REPONSES_PAR_CONVERSATION} réponses par conversation (réglable). Si le message contient un mot d’alerte (urgence, fuite, gaz…), il se tait et vous êtes prévenu. Avec l’offre ${NOM_OFFRE[offrePremiere('plateforme.conversation')]}, le compte reste en « Assistée » : la réponse est préparée, vous la validez d’un clic.`,
     cap: 'plateforme.ia.auto',
     surDemande: true,
   },
-  // source : lib/relances.ts:21 (cadence), :34-51 (armement après une réponse) ; app/api/cron/relances/route.ts:87 (seule une conversation « répondue » est relancée), :102 (offre avec plateforme), :110-115 (compte suspendu, page en pause), :164 (mention de l’assistant)
+  // source : lib/relances.ts:21 (cadence), :34-51 (armement après une réponse) ; app/api/cron/relances/route.ts:87 (seule une conversation « répondue » est relancée), :102 (offre avec plateforme), :110-115 (compte suspendu, page en pause),
+  // :159-180 (25/10 : sans `relances.auto`, la relance est PROPOSÉE dans le fil et part au clic de l’artisan) ; mention de l’assistant à l’envoi seul
   {
     id: 'relances-conversation',
     titre: `Relances des conversations (${j(CADENCE_CONVERSATION)})`,
-    texte: `Après une réponse envoyée à un visiteur, trois relances partent seules s’il ne répond pas : ${j(CADENCE_CONVERSATION)}. Elles s’arrêtent dès que la conversation n’attend plus de lui, quand votre page est en pause, ou si le compte est suspendu. Chacune dit qu’elle vient de l’assistant. Elles partent sans relecture, y compris en mode « Assistée ».`,
+    texte: `Après une réponse envoyée à un visiteur, trois relances sont prévues s’il ne répond pas : ${j(CADENCE_CONVERSATION)}. Avec l’offre ${NOM_OFFRE[offrePremiere('relances')]}, chacune est rédigée pour vous et vous attend dans Messages : vous êtes prévenu, et elle ne part qu’après votre clic. Avec l’offre ${NOM_OFFRE[offrePremiere('relances.auto')]}, elles partent seules, sans relecture, et chacune dit qu’elle vient de l’assistant. Elles s’arrêtent dès que la conversation n’attend plus de lui, quand votre page est en pause, ou si le compte est suspendu.`,
     cap: 'relances',
   },
-  // source : lib/relancesImpayes.ts:6-16 (règles), :25 (10 par jour), :28 (J+3, J+10, J+21), :33 (désactivé par défaut), :52 (pied « envoyé automatiquement ») ; app/api/cron/relances/route.ts:251-258
+  // source : lib/relancesImpayes.ts:6-21 (règles ; 25/10 : préparée « a_valider » sans `factures.relances.auto`), :25 (10 par jour), :28 (J+3, J+10, J+21), :33 (désactivé par défaut), pied « envoyé automatiquement » à l’envoi seul ;
+  // lib/relancesImpayesTour.ts:14-17, :81 ; app/api/cron/relances/route.ts
   {
     id: 'relances-impayes',
     titre: `Relances des factures impayées (${j(CADENCE_IMPAYES)} après l’échéance)`,
-    texte: `Si vous cochez « Relancer automatiquement mes factures échues » (dans Factures), un e-mail part seul ${j(CADENCE_IMPAYES)} après l’échéance (réglable, de 1 à 3 relances), avec votre texte. Tant que vous ne cochez pas, rien ne part. Chaque relance s’arrête dès que la facture est payée ou annulée, ou que le client écrit ; au plus ${IMPAYES_MAX_PAR_JOUR} par jour et par compte ; le message précise qu’il est automatique.`,
+    texte: `Si vous cochez « Relancer automatiquement mes factures échues » (dans Factures), une relance est prévue ${j(CADENCE_IMPAYES)} après l’échéance (réglable, de 1 à 3 relances), avec votre texte. Avec l’offre ${NOM_OFFRE[offrePremiere('factures.relances.auto')]}, l’e-mail part seul et précise qu’il est automatique. Avec l’offre ${NOM_OFFRE[offrePremiere('factures.relances')]}, il est préparé, vous êtes prévenu, et il ne part que lorsque vous l’envoyez depuis Factures. Tant que vous ne cochez pas, rien n’est prévu. Chaque relance s’arrête dès que la facture est payée ou annulée, ou que le client écrit ; au plus ${IMPAYES_MAX_PAR_JOUR} par jour et par compte.`,
     cap: 'factures.relances',
     flag: 'relancesImpayes',
     surDemande: true,
@@ -199,10 +203,10 @@ export const AUTOMATIQUE_AVEC_ASSISTANT: EntreeAuto[] = [
   { id: 'a-devis', titre: 'Devis : d’une phrase à un brouillon', texte: 'Vous écrivez « fais un devis pour la demande de ce matin » : l’assistant crée le brouillon avec vos tarifs, le modifie, change son statut. L’envoi au client passe par une carte à confirmer.', cap: 'assistant', flag: 'assistant' },
   { id: 'a-factures', titre: 'Factures : préparer, encaisser, relancer', texte: 'Créer la facture, la marquer encaissée, relancer un devis ou une facture impayée : l’assistant prépare chaque geste, vous confirmez d’un clic.', cap: 'assistant', flag: 'assistant' },
   { id: 'a-tarifs', titre: 'Tarifs et stock', texte: 'Ajouter ou corriger un tarif, ajouter un article, ajuster une quantité : c’est fait tout de suite et noté au journal. Changer des prix en lot ou supprimer un tarif attend votre confirmation.', cap: 'assistant', flag: 'assistant' },
-  { id: 'a-chantiers', titre: 'Chantiers (CRM)', texte: 'Créer ou modifier un chantier, affecter l’équipe, ajouter ou cocher une tâche, réserver du matériel, ajouter une note : fait tout de suite, noté au journal.', cap: 'assistant', flag: 'assistant' },
+  { id: 'a-chantiers', titre: 'Chantiers (CRM)', texte: 'Créer ou modifier un chantier, affecter l’équipe, ajouter ou cocher une tâche, réserver du matériel, ajouter une note : fait tout de suite, noté au journal.', cap: 'crm', flag: 'crm' },
   { id: 'a-demandes', titre: 'Demandes et réponses aux clients', texte: 'Changer le statut d’une demande, écarter une réponse préparée. Répondre à un client ou envoyer la réponse préparée attend votre confirmation.', cap: 'assistant', flag: 'assistant' },
   // source : lib/assistant/avancement.ts ; lib/assistant/outils-actions.ts (avancer_chantier, écriture interne journalisée)
-  { id: 'a-avancement', titre: 'Avancement des chantiers', texte: 'Vous écrivez « la cuisine des Martin est finie » : l’assistant coche les tâches qui correspondent sans doute possible (sinon il vous demande lesquelles) et l’avancement se met à jour dans le CRM, noté au journal.', cap: 'assistant', flag: 'assistant' },
+  { id: 'a-avancement', titre: 'Avancement des chantiers', texte: 'Vous écrivez « la cuisine des Martin est finie » : l’assistant coche les tâches qui correspondent sans doute possible (sinon il vous demande lesquelles) et l’avancement se met à jour dans le CRM, noté au journal.', cap: 'crm', flag: 'crm' },
   // source : lib/pilote/regles.ts:1-20 (garde-fous), :24 (DELAI_ANNULATION_MIN), :27 (PLAFOND_AUTO_JOUR), :37-44 (types) ; app/parametres/SectionPilote.tsx
   { id: 'a-pilote', titre: 'Pilote automatique (en option, à activer)', texte: `Ce que vous choisissez, type par type (réponses aux prospects, relances de devis ou d’impayés, envoi de devis ou de factures), part seul au bout de ${PILOTE_DELAI_MIN} minutes, sauf si vous l’annulez entre-temps. Jamais un devis dont un prix ne vient pas de vos tarifs, jamais un encaissement ; ${PILOTE_PLAFOND_JOUR} envois automatiques par jour au plus.`, cap: 'assistant.pilote', flag: 'piloteAutomatique', surDemande: true },
   { id: 'a-briefing', titre: 'Briefing du matin, à la demande', texte: 'Le bouton « Briefing du matin » résume ce qui est urgent, en retard ou en attente de vous. Il ne se lance pas tout seul et ne fait rien d’autre que vous informer.', cap: 'assistant', flag: 'assistant' },
@@ -236,19 +240,22 @@ export const LIGNES_OFFRES: LigneOffres[] = [
   { id: 'tarifs', label: 'Mes tarifs : votre bibliothèque de prix', cap: 'devis.prix_artisan' },
   { id: 'factures', label: 'Factures et export XML Factur-X', cap: 'factures' },
   { id: 'plateforme', label: 'Plateforme : page de conversation à votre marque', cap: 'plateforme.conversation' },
-  { id: 'reponse-seule', label: 'Réponse envoyée seule par l’assistant', cap: 'plateforme.ia.auto' },
-  { id: 'relances-conv', label: 'Relances des conversations', cap: 'relances' },
+  { id: 'reponse-seule', label: 'Réponse envoyée seule par l’assistant (sinon préparée, vous validez)', cap: 'plateforme.ia.auto' },
+  { id: 'relances-conv', label: 'Relances des conversations, préparées pour vous', cap: 'relances' },
+  { id: 'relances-conv-auto', label: 'Relances des conversations envoyées seules', cap: 'relances.auto' },
   { id: 'comptes-clients', label: 'Comptes clients (lien magique, historique)', cap: 'plateforme.comptes_clients' },
   { id: 'email', label: 'Votre boîte e-mail branchée (Messages)', cap: 'canaux.email' },
   { id: 'chiffres', label: 'Mes chiffres', cap: 'chiffres' },
-  { id: 'relances-impayes', label: 'Relances automatiques des factures impayées', cap: 'factures.relances', flag: 'relancesImpayes' },
+  { id: 'relances-impayes', label: 'Relances des factures impayées, préparées pour vous', cap: 'factures.relances', flag: 'relancesImpayes' },
+  { id: 'relances-impayes-auto', label: 'Relances des factures impayées envoyées seules', cap: 'factures.relances.auto', flag: 'relancesImpayes' },
   { id: 'inventaire', label: 'Inventaire : stock par lieu, scan, seuils', cap: 'inventaire.stock' },
   { id: 'recherche', label: 'Recherche IA chez vos fournisseurs', cap: 'inventaire.recherche_ia', flag: 'inventaireRecherche' },
   { id: 'expert', label: 'Modèle Expert', cap: 'plateforme.ia.expert' },
   { id: 'regles', label: 'Règles d’automatisation', cap: 'plateforme.regles', flag: 'plateformeRegles' },
   { id: 'compta-auto', label: 'Alerte d’impayés par e-mail et export mensuel à votre comptable', cap: 'chiffres.auto', flag: 'comptaAlerteImpayes' },
   { id: 'crm', label: 'CRM atelier : maquette 3D vivante, chantiers, équipe, planning', cap: 'crm', flag: 'crm' },
-  { id: 'assistant', label: 'Assistant de gestion', cap: 'assistant', flag: 'assistant' },
+  { id: 'assistant', label: 'Assistant de gestion (vous confirmez ce qui part chez un client)', cap: 'assistant', flag: 'assistant' },
+  { id: 'pilote', label: `Pilote automatique : ce que vous choisissez part seul après ${PILOTE_DELAI_MIN} minutes pour annuler`, cap: 'assistant.pilote', flag: 'piloteAutomatique' },
 ]
 
 export const lignesOffresVisibles = (): LigneOffres[] => LIGNES_OFFRES.filter((l) => !l.flag || FLAGS[l.flag])
@@ -262,8 +269,8 @@ export const creditsParMois = (o: OffreAide): number => PLANS[o].creditsMois
 // ─── L'essai gratuit sans carte ───────────────────────────────────────────────────────────────────────
 export type LigneEssai = { offre: PlanPayant; nom: string; jours: number; credits: number }
 
-/** 7 / 14 / 21 jours (ESSAI_JOURS) et les crédits d'essai (creditsEssai : prorata, arrondi à l'inférieur, plafonné à ESSAI_CREDITS_PLAFOND). */
+/** 14 / 21 jours (ESSAI_JOURS) et les crédits d'essai (creditsEssai : prorata, arrondi à l'inférieur, plafonné à ESSAI_CREDITS_PLAFOND). */
 export const ESSAIS_AIDE = (): LigneEssai[] =>
-  (['essentiel', 'studio', 'signature'] as const).map((o) => ({ offre: o, nom: NOM_OFFRE[o], jours: ESSAI_JOURS[o], credits: creditsEssai(o) }))
+  (['studio', 'signature'] as const).map((o) => ({ offre: o, nom: NOM_OFFRE[o], jours: ESSAI_JOURS[o], credits: creditsEssai(o) }))
 
 export const PLAFOND_CREDITS_ESSAI = ESSAI_CREDITS_PLAFOND

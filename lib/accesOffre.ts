@@ -1,5 +1,5 @@
 // Qui passe sur un ÉCRAN réservé à une offre (15/10, Benj : la plateforme — « Ma plateforme », « Messages », « Réponses instantanées » —
-// et « Mes chiffres » commencent avec Studio, pour tous les comptes ; « Dans Essentiel il n'y a PAS de plateforme »). Décision PURE, rejouée par scripts/ecrans-offre-qa.mjs ; lib/accesOffreServeur.ts la nourrit de la
+// et « Mes chiffres » commencent avec Studio, pour tous les comptes ; ni l'Essai ni l'ancienne offre Essentiel, plus vendue depuis le 25/10, n'ont la plateforme). Décision PURE, rejouée par scripts/ecrans-offre-qa.mjs ; lib/accesOffreServeur.ts la nourrit de la
 // vraie offre du compte. Le verrou est celui de la matrice (lib/plans.ts) : jamais un `plan === 'studio'` en dur.
 import { PLANS, messageVerrou, offreMinimale, peut, type Capacite, type PlanPayant } from './plans.ts'
 

@@ -8,8 +8,11 @@
 import type { Tier } from './models'
 import { FLAGS, type Flag } from './flags'
 
+// 25/10 (Benj) : DEUX offres seulement. « Studio : tout est automatisé, mais il faut valider, sinon ça ne s'envoie pas. Signature :
+// tout part automatiquement. » L'Essentiel n'est plus vendu ; son identifiant reste reconnu (comptes hérités, aucun abonné payant
+// au 25/10), hors du tunnel, de la grille et des essais.
 export type PlanId = 'gratuit' | 'essentiel' | 'studio' | 'signature' | 'business'
-export type PlanPayant = 'essentiel' | 'studio' | 'signature'
+export type PlanPayant = 'studio' | 'signature'
 
 /** Ce qu'une offre débloque. Le nom dit le domaine, puis la capacité. */
 export type Capacite =
@@ -27,6 +30,9 @@ export type Capacite =
   | 'inventaire.stock' | 'inventaire.recherche_ia'
   | 'canaux.email' | 'canaux.whatsapp' | 'canaux.reseaux'
   | 'relances' | 'export' | 'support.prioritaire'
+  // 25/10 : `relances` et `factures.relances` = les relances sont PRÉPARÉES (Studio : l'artisan les valide) ; les variantes `.auto`
+  // = elles partent seules (Signature).
+  | 'relances.auto' | 'factures.relances.auto'
   | 'assistant' | 'assistant.pilote'
   | 'crm'
 
@@ -53,8 +59,9 @@ const STUDIO: Capacite[] = [
   'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.gestion',
   'plateforme.domaine_perso',
   'site.domaine_perso', // le nom de domaine sur la page de conversation (la décision du 04/09 « pour tous » est remplacée : Studio)
-  'canaux.email', 'relances', // la boîte e-mail branchée, et les relances de CONVERSATION (J+2/J+5/J+10, lib/relances.ts)
-  'plateforme.ia.auto', 'plateforme.personnalisation_avancee',
+  'canaux.email', 'relances', // la boîte e-mail branchée, et les relances de CONVERSATION (J+2/J+5/J+10, lib/relances.ts), préparées
+  // 25/10 (Benj) : en Studio rien ne part sans validation — `plateforme.ia.auto` (la réponse qui part seule) passe en Signature.
+  'plateforme.personnalisation_avancee',
   // 15/10 (Benj) : sinon « il n'y a pas d'intérêt à prendre la 2e ou la 3e offre, à part pour le CRM et l'assistant ».
   'chiffres',
   // 15/10 (Benj, « En Studio ») — relances automatiques des factures impayées (opt-in, J+3/J+10/J+21 par défaut) : Studio et au-dessus.
@@ -63,14 +70,17 @@ const STUDIO: Capacite[] = [
   'factures.relances',
   'inventaire.stock', 'inventaire.recherche_ia',
   'canaux.whatsapp', 'export',
+  // 25/10 (Benj) : l'assistant de gestion passe en Studio, « sinon le système ne fonctionnera pas ». En Studio il prépare et l'artisan
+  // confirme (cartes assistant_actions) ; sans CRM, ses outils CRM sont refusés (lib/assistant/garde.ts).
+  'assistant',
 ]
 const SIGNATURE: Capacite[] = [
   ...STUDIO,
+  // 25/10 (Benj) : en Signature tout part automatiquement — la réponse aux demandes, les relances de conversation et d'impayés.
+  'plateforme.ia.auto', 'relances.auto', 'factures.relances.auto',
   'plateforme.ia.expert', 'plateforme.regles',
   'chiffres.auto', // les automatisations de « Mes chiffres » (alerte impayés, export mensuel au comptable) : Signature
   'canaux.reseaux', 'support.prioritaire',
-  // 016 A1/A2 — l'assistant de gestion de la console (Signature, donc Business). Caché tant que le drapeau `assistant` est baissé.
-  'assistant',
   // CRM « atelier vivant » (0141) : Signature (et Business, qui reprend Signature) seulement. Contrôlé côté serveur par
   // lib/crm/serveur.ts ; aucune ligne de la grille ne l'annonce tant que le drapeau `crm` est baissé.
   'crm',
@@ -80,24 +90,26 @@ const SIGNATURE: Capacite[] = [
 ]
 
 export const PLANS: Record<PlanId, Plan> = {
-  // L'essai = l'Essentiel avec 3 crédits (mêmes capacités : BASE, donc sans plateforme), pour juger les devis chiffrés par l'IA avant de payer.
+  // Le compte sans abonnement (3 crédits, BASE, sans plateforme) : de quoi juger les devis chiffrés par l'IA. L'essai SANS CARTE
+  // des offres payantes, lui, est un abonnement Stripe en période d'essai (ESSAI_JOURS ci-dessous).
   gratuit: { label: 'Essai', accroche: 'Pour juger les devis chiffrés par l’IA, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  essentiel: { label: 'Essentiel', accroche: 'Pour chiffrer vos devis avec l’IA et facturer.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  studio: { label: 'Studio', accroche: 'La plateforme de conversation, avec un assistant qui répond seul.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
-  signature: { label: 'Signature', accroche: 'L’atelier à plein régime : modèle Expert et règles d’automatisation.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
+  // Hérité, plus vendu depuis le 25/10 (voir PlanId). Gardé pour qu'un compte resté sur cet identifiant ne tombe pas à 3 crédits.
+  essentiel: { label: 'Essentiel', accroche: 'Ancienne offre, plus proposée.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
+  studio: { label: 'Studio', accroche: 'Tout est automatisé et préparé pour vous : vous validez d’un clic, rien ne part sans vous.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
+  signature: { label: 'Signature', accroche: 'Tout part automatiquement : réponses, relances, Pilote et règles, plus le CRM.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Fondateurs : plan interne, illimité (jamais décompté).
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
 }
 
 // ─── L'essai gratuit SANS CARTE des abonnements payants (décision de Benj, 13/10/2026) ──────────────
-// Une semaine d'Essentiel, deux de Studio, trois de Signature, sans saisir de carte. UNE SEULE constante pour les
-// durées : le Checkout (app/api/subscribe), le webhook, les textes et le juge (scripts/essais-gratuits-qa.mjs) la lisent.
+// Deux semaines de Studio, trois de Signature, sans saisir de carte (l'Essentiel n'est plus vendu depuis le 25/10). UNE SEULE
+// constante pour les durées : le Checkout (app/api/subscribe), le webhook, les textes et le juge (scripts/essais-gratuits-qa.mjs) la lisent.
 // Règles : lib/essaiGratuit.ts (pures) et lib/essaiGratuitServeur.ts (base + Stripe).
-export const ESSAI_JOURS: Record<PlanPayant, number> = { essentiel: 7, studio: 14, signature: 21 }
+export const ESSAI_JOURS: Record<PlanPayant, number> = { studio: 14, signature: 21 }
 
 /** Plafond de crédits d'un essai, tous plans confondus. Sans carte, rien n'engage l'artisan : le coût IA d'un essai doit rester
  *  borné. La règle (lib/essaiGratuit.ts creditsEssai) : crédits du mois au prorata des jours d'essai sur 30, arrondis à
- *  l'entier inférieur, puis plafonnés ici. → Essentiel 18 · Studio 116 · Signature 150 (au lieu de 420 au prorata pur). */
+ *  l'entier inférieur, puis plafonnés ici. → Studio 116 · Signature 150 (au lieu de 420 au prorata pur). */
 export const ESSAI_CREDITS_PLAFOND = 150
 
 // Coût en crédits par niveau de modèle.
@@ -125,7 +137,7 @@ export function peut(plan: string | null | undefined, capacite: Capacite): boole
 
 /** La première offre (payante) qui débloque une capacité — pour dire « Disponible avec Studio ». */
 export function offreMinimale(capacite: Capacite): PlanPayant | null {
-  for (const id of ['essentiel', 'studio', 'signature'] as const) if (PLANS[id].capacites.includes(capacite)) return id
+  for (const id of ['studio', 'signature'] as const) if (PLANS[id].capacites.includes(capacite)) return id
   return null
 }
 
@@ -137,7 +149,7 @@ export function messageVerrou(capacite: Capacite): string {
 
 // Offres payantes proposées dans le tunnel d'abonnement (l'ordre est celui de l'affichage).
 export const OFFRES: { id: PlanPayant; label: string; prix: number; credits: number; accroche: string }[] =
-  (['essentiel', 'studio', 'signature'] as const).map((id) => ({ id, label: PLANS[id].label, prix: PLANS[id].prixMois, credits: PLANS[id].creditsMois, accroche: PLANS[id].accroche }))
+  (['studio', 'signature'] as const).map((id) => ({ id, label: PLANS[id].label, prix: PLANS[id].prixMois, credits: PLANS[id].creditsMois, accroche: PLANS[id].accroche }))
 
 // ─── Plafonds qui dépendent de l'offre (une seule écriture : la grille ci-dessous, lib/quotaMedia.ts et lib/assistant/cadrage.ts les lisent ici) ───
 const MO = 1024 * 1024
@@ -177,43 +189,43 @@ export type LigneGrille = {
 
 /** « oui / non » d'une capacité pour chaque offre payante, lu dans PLANS. */
 const dePlan = (cap: Capacite): Record<PlanPayant, boolean> =>
-  ({ essentiel: PLANS.essentiel.capacites.includes(cap), studio: PLANS.studio.capacites.includes(cap), signature: PLANS.signature.capacites.includes(cap) })
+  ({ studio: PLANS.studio.capacites.includes(cap), signature: PLANS.signature.capacites.includes(cap) })
 /** Un texte par offre quand la capacité est présente, « — » (false) sinon : le « non » vient de PLANS, le texte de la ligne. */
 const texteSi = (cap: Capacite, t: Record<PlanPayant, string>): Record<PlanPayant, CelluleGrille> => {
   const o = dePlan(cap)
-  return { essentiel: o.essentiel ? t.essentiel : false, studio: o.studio ? t.studio : false, signature: o.signature ? t.signature : false }
+  return { studio: o.studio ? t.studio : false, signature: o.signature ? t.signature : false }
 }
 
 /** Capacités qu'aucune offre n'a (le site vitrine est sorti des formules, 13/09 : il se commande à part). Déclarées ici pour que la
  *  vérification ne les confonde pas avec un oubli. */
 export const CAPACITES_HORS_FORMULES: Capacite[] = ['site.essentiel', 'site.pro', 'site.signature', 'site.slides3d']
 
-/** 15/10 (Benj) : le niveau d'automatisation de chaque offre, une seule écriture (grille des offres ET comparatif de l'accueil).
- *  Essentiel : pas de plateforme. L'automatisation commence avec Studio (la plateforme, l'IA répond seule) et devient complète avec
- *  Signature (règles + assistant de gestion). */
+/** Le niveau d'automatisation de chaque offre, une seule écriture (grille des offres ET comparatif de l'accueil).
+ *  25/10 (Benj) : Studio = tout est automatisé et préparé, rien ne part sans la validation de l'artisan ; Signature = tout part seul. */
 export const AUTOMATISATION: Record<PlanPayant, string> = {
-  essentiel: 'pas de plateforme : l’IA chiffre vos devis sur vos prix, vous les relisez, les envoyez et facturez vous-même',
-  studio: 'l’automatisation commence avec la plateforme : l’IA répond seule à vos clients, jour et nuit, et relance seule vos factures impayées (à cocher)',
-  signature: 'automatisation complète : réponses selon vos règles, alerte e-mail sur les impayés et export mensuel à votre comptable, et l’assistant gère devis, factures, stock, tarifs et CRM (vous confirmez ce qui part chez un client)',
+  studio: 'tout est automatisé et préparé pour vous : réponses à vos clients, devis, relances et assistant de gestion ; vous validez d’un clic, rien ne part sans vous',
+  signature: 'tout part automatiquement : réponses à vos clients jour et nuit, relances des devis et des factures impayées, Pilote automatique et règles, alerte impayés et export à votre comptable, plus le CRM (jamais un prix estimé ni un paiement sans vous)',
 }
 
 export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Automatisation', label: 'Niveau d’automatisation', capacites: [], cellules: AUTOMATISATION },
   { groupe: 'Plateforme', label: 'La plateforme : page de conversation à votre marque', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation') },
-  // 15/10 (Benj) : dire pour chaque offre ce qui est AUTOMATIQUE et ce que l'artisan valide lui-même. Essentiel : pas de plateforme, donc pas de réponse.
+  // Dire pour chaque offre ce qui est AUTOMATIQUE et ce que l'artisan valide lui-même (25/10 : Studio prépare, Signature envoie seul).
   { groupe: 'Plateforme', label: 'Réponse aux demandes de vos clients', capacites: ['plateforme.ia.auto', 'plateforme.ia.expert', 'plateforme.regles'], cellules: {
-    essentiel: false,
-    studio: 'automatique : l’IA répond seule, jour et nuit, ou vous validez (modèles Standard + Pro)',
-    signature: FLAGS.plateformeRegles ? 'automatique, avec vos règles d’automatisation (modèles Standard, Pro + Expert)' : 'automatique (modèles Standard, Pro + Expert)',
+    studio: 'préparée automatiquement en moins d’une minute, vous la validez d’un clic (modèles Standard + Pro)',
+    signature: FLAGS.plateformeRegles ? 'automatique : elle part seule, jour et nuit, avec vos règles d’automatisation (modèles Standard, Pro + Expert)' : 'automatique : elle part seule, jour et nuit (modèles Standard, Pro + Expert)',
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', capacites: ['plateforme.comptes_clients'], cellules: dePlan('plateforme.comptes_clients') },
   // 15/10 : l'écran « Ma plateforme » (réglages de l'assistant, apparence, règles) fait partie de la plateforme : Studio, comptes Essentiel compris.
   // Thème, couleur et le reste de la personnalisation s'y règlent : ils suivent l'écran.
   { groupe: 'Plateforme', label: 'Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page', capacites: ['plateforme.gestion'], cellules: dePlan('plateforme.gestion') },
-  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: texteSi('plateforme.personnalisation_avancee', { essentiel: '', studio: 'Thème, couleur, polices, fond, avatar, amorces', signature: 'Thème, couleur, polices, fond, avatar, amorces' }), flag: 'plateformePersona' },
+  { groupe: 'Plateforme', label: 'Personnalisation', capacites: ['plateforme.personnalisation_avancee'], cellules: texteSi('plateforme.personnalisation_avancee', { studio: 'Thème, couleur, polices, fond, avatar, amorces', signature: 'Thème, couleur, polices, fond, avatar, amorces' }), flag: 'plateformePersona' },
   // Les relances sont celles d'une CONVERSATION (J+2, J+5, J+10, lib/relances.ts) — après une réponse, ou un devis envoyé
-  // depuis la conversation (audit des promesses du 12/10).
-  { groupe: 'Plateforme', label: 'Relances des conversations, automatiques (J+2, J+5, J+10)', capacites: ['relances'], cellules: dePlan('relances') },
+  // depuis la conversation (audit des promesses du 12/10). 25/10 : préparées en Studio, envoyées seules en Signature.
+  { groupe: 'Plateforme', label: 'Relances des conversations (J+2, J+5, J+10)', capacites: ['relances', 'relances.auto'], cellules: {
+    studio: PLANS.studio.capacites.includes('relances.auto') ? 'automatiques' : 'préparées automatiquement, vous les validez',
+    signature: PLANS.signature.capacites.includes('relances.auto') ? 'automatiques : elles partent seules' : 'préparées automatiquement, vous les validez',
+  } },
   { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', capacites: ['site.domaine_perso', 'plateforme.domaine_perso'], cellules: dePlan('site.domaine_perso') },
   { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA sur vos prix : vous relisez et envoyez', capacites: ['devis.ia', 'devis.prix_artisan'], cellules: dePlan('devis.ia') },
   // « facture électronique » laissait croire à une facture conforme à la réforme et transmise par une plateforme agréée : c'est
@@ -223,7 +235,10 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Devis & factures', label: 'Devis par lots : un sous-total par corps de métier', capacites: ['factures'], cellules: dePlan('factures'), flag: 'devisLots' },
   { groupe: 'Devis & factures', label: 'Factures d’acompte, situations de travaux et facture de solde', capacites: ['factures'], cellules: dePlan('factures'), flag: 'facturesSituation' },
   // Relances d'impayés (lib/relancesImpayes.ts, migration 0159) : la ligne n'apparaît que drapeau levé.
-  { groupe: 'Devis & factures', label: 'Relances des factures impayées, automatiques une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances'], cellules: dePlan('factures.relances'), flag: 'relancesImpayes' },
+  { groupe: 'Devis & factures', label: 'Relances des factures impayées une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client', capacites: ['factures.relances', 'factures.relances.auto'], cellules: {
+    studio: PLANS.studio.capacites.includes('factures.relances.auto') ? 'automatiques' : 'préparées automatiquement, vous les validez',
+    signature: PLANS.signature.capacites.includes('factures.relances.auto') ? 'automatiques : elles partent seules' : 'préparées automatiquement, vous les validez',
+  }, flag: 'relancesImpayes' },
   // « Mes chiffres » (app/chiffres) : Studio et au-dessus. Les automatisations de cet écran (lib/comptaAutomatisations.ts) : Signature
   // (capacité `chiffres.auto`, vérifiée par /api/compta/reglages et le passage quotidien). Drapeaux levés le 15/10 (migration 0140 en base) ;
   // baissés, les lignes disparaîtraient de la grille.
@@ -236,19 +251,21 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'CRM', label: 'Chantiers : statuts, tâches, matériaux réservés', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
   { groupe: 'CRM', label: 'Équipe et véhicules affectés aux chantiers', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
   { groupe: 'CRM', label: 'Carte Atelier : chantiers, équipe et alertes (retards, livraisons, stock bas), en temps réel', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
-  // L'assistant de gestion (016) : Signature seulement (capacité `assistant`, vérifiée côté serveur par lib/assistant/acces.ts).
+  // L'assistant de gestion (016) : Studio et au-dessus depuis le 25/10 (capacité `assistant`, vérifiée côté serveur par
+  // lib/assistant/acces.ts). Ses outils CRM restent Signature (capacité `crm`).
   { groupe: 'Assistant de gestion', label: 'Devis, factures et relances menés par la conversation', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
-  { groupe: 'Assistant de gestion', label: 'Stock, tarifs et CRM pilotés par la conversation', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Stock et tarifs pilotés par la conversation', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
+  { groupe: 'Assistant de gestion', label: 'Le CRM piloté par la conversation', capacites: ['crm'], cellules: dePlan('crm'), flag: 'crm' },
   { groupe: 'Assistant de gestion', label: 'Briefing du matin : urgences, retards, ce qui vous attend', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
   { groupe: 'Assistant de gestion', label: 'Vous confirmez ce qui part chez un client ; journal des actions, annulables', capacites: ['assistant'], cellules: dePlan('assistant'), flag: 'assistant' },
   { groupe: 'Assistant de gestion', label: 'Limites', capacites: ['assistant'], cellules: texteSi('assistant', {
-    essentiel: '', studio: '',
+    studio: `${ASSISTANT_TOURS_MAX} messages par conversation · ${CREDIT_COST.standard} crédit par message`,
     signature: `${ASSISTANT_TOURS_MAX} messages par conversation · ${CREDIT_COST.standard} crédit par message (${CREDIT_COST.expert} avec le modèle Expert)`,
   }), flag: 'assistant' },
   // Pilote automatique (lib/pilote/, migration 0174) : Signature seulement ; la ligne n'apparaît que drapeau levé.
   { groupe: 'Assistant de gestion', label: 'Pilote automatique : ce que vous choisissez part seul après 10 minutes pour annuler (jamais un prix estimé, jamais un paiement)', capacites: ['assistant.pilote'], cellules: dePlan('assistant.pilote'), flag: 'piloteAutomatique' },
   { groupe: 'Inventaire', label: 'Stock par lieu, scan, seuils', capacites: ['inventaire.stock'], cellules: dePlan('inventaire.stock') },
-  { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', capacites: ['inventaire.recherche_ia'], cellules: texteSi('inventaire.recherche_ia', { essentiel: '', studio: 'Standard + Pro', signature: 'Standard, Pro + Expert' }), flag: 'inventaireRecherche' },
+  { groupe: 'Inventaire', label: 'Recherche IA chez vos fournisseurs', capacites: ['inventaire.recherche_ia'], cellules: texteSi('inventaire.recherche_ia', { studio: 'Standard + Pro', signature: 'Standard, Pro + Expert' }), flag: 'inventaireRecherche' },
   { groupe: 'Canaux', label: 'Votre boîte email branchée', capacites: ['canaux.email'], cellules: dePlan('canaux.email') },
   { groupe: 'Canaux', label: 'WhatsApp', capacites: ['canaux.whatsapp'], cellules: dePlan('canaux.whatsapp'), flag: 'canauxWhatsapp' },
   { groupe: 'Canaux', label: 'Réseaux sociaux', capacites: ['canaux.reseaux'], cellules: dePlan('canaux.reseaux'), flag: 'canauxReseaux' },
@@ -257,13 +274,13 @@ export const GRILLE_COMPLETE: LigneGrille[] = [
   { groupe: 'Canaux', label: 'Vos réseaux regroupés : LinkedIn, Facebook, Instagram, TikTok, plateformes de devis (par leurs e-mails de notification)', capacites: ['canaux.email'], cellules: dePlan('canaux.email'), flag: 'canauxNotifications' },
   { groupe: 'Canaux', label: 'Un lien et un QR code par réseau vers votre page', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation'), flag: 'canauxLiens' },
   { groupe: 'Canaux', label: 'Import des prospects de vos publicités (fichier CSV)', capacites: ['plateforme.conversation'], cellules: dePlan('plateforme.conversation'), flag: 'importProspects' },
-  { groupe: 'Inclus', label: 'Crédits chaque mois', capacites: [], cellules: { essentiel: String(PLANS.essentiel.creditsMois), studio: String(PLANS.studio.creditsMois), signature: String(PLANS.signature.creditsMois) } },
-  { groupe: 'Inclus', label: 'Espace pour vos images (logo, réalisations)', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_IMAGES_MO.essentiel), studio: tailleMo(PLAFOND_IMAGES_MO.studio), signature: tailleMo(PLAFOND_IMAGES_MO.signature) } },
-  { groupe: 'Inclus', label: 'Espace pour les photos de chantier envoyées par vos clients', capacites: [], cellules: { essentiel: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.essentiel), studio: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.studio), signature: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.signature) } },
+  { groupe: 'Inclus', label: 'Crédits chaque mois', capacites: [], cellules: { studio: String(PLANS.studio.creditsMois), signature: String(PLANS.signature.creditsMois) } },
+  { groupe: 'Inclus', label: 'Espace pour vos images (logo, réalisations)', capacites: [], cellules: { studio: tailleMo(PLAFOND_IMAGES_MO.studio), signature: tailleMo(PLAFOND_IMAGES_MO.signature) } },
+  { groupe: 'Inclus', label: 'Espace pour les photos de chantier envoyées par vos clients', capacites: [], cellules: { studio: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.studio), signature: tailleMo(PLAFOND_PHOTOS_CLIENTS_MO.signature) } },
   // L'export est ouvert à TOUS (app/api/donnees/export, portabilité RGPD).
   { groupe: 'Inclus', label: 'Export de vos données', capacites: ['export'], cellules: dePlan('export') },
   // Délais de première réponse des CGU (§4) ; la demande d'un Signature arrive marquée « prioritaire » (app/api/support/demande).
-  { groupe: 'Inclus', label: 'Support par écrit', capacites: ['support.prioritaire'], cellules: { essentiel: '3 jours ouvrés', studio: '2 jours ouvrés', signature: 'Prioritaire · 1 jour ouvré' } },
+  { groupe: 'Inclus', label: 'Support par écrit', capacites: ['support.prioritaire'], cellules: { studio: '2 jours ouvrés', signature: 'Prioritaire · 1 jour ouvré' } },
 ]
 
 /** La grille telle qu'on a le droit de la montrer aujourd'hui. */
@@ -287,7 +304,7 @@ export function pointsForts(id: PlanPayant): string[] {
 }
 
 export type LigneOffre = { groupe: LigneGrille['groupe']; texte: string; nouveau: boolean }
-const PRECEDENTE: Record<PlanPayant, PlanPayant | null> = { essentiel: null, studio: 'essentiel', signature: 'studio' }
+const PRECEDENTE: Record<PlanPayant, PlanPayant | null> = { studio: null, signature: 'studio' }
 
 /** Le détail d'une offre pour les cartes : toutes ses lignes, avec `nouveau` quand la ligne n'existe pas dans l'offre d'en dessous. */
 export function detailOffre(id: PlanPayant): { precedente: PlanPayant | null; lignes: LigneOffre[] } {

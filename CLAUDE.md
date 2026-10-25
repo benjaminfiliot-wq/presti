@@ -34,6 +34,14 @@ Propriétaire unique : Benjamin Filiot. Un seul compte fondateur.
 Conventions communes : identifiants et commentaires en français · zéro donnée réelle dans les tests · « une fonctionnalité non finie n'apparaît pas » (drapeau dans `lib/flags.ts`) · on ne touche jamais à `interdit`, même pour aider · aucun chiffre non sourcé, aucun secret dans un fichier versionné · une preuve est une sortie de commande, pas une paraphrase.
 <!-- orchestre:fin -->
 
+## Le cerveau d'abord (décision de Benj, 25/10/2026)
+
+Tout ce qu'on fait — session, sous-agent, workflow, skill, plugin, exécutant, Harvey — **part du cerveau
+Obsidian** : avant de produire, interroger les outils MCP `cerveau` (`regles_pour` avant une action à
+risque, `chercher` puis `lire` pour le reste) ou, à défaut, lire le vault `C:/Users/benja/Documents/SaaS`.
+Un prompt d'agent ou de workflow écrit ici dit explicitement quoi chercher dans le cerveau. Ce qu'on
+apprend en route (règle, retour d'artisan, format qui marche) retourne dans le vault.
+
 ## 0. Avant tout — le dossier d'ouverture compte
 
 Les 13 agents `presti-*` et les 53 skills de `.claude/` ne sont chargés que si la session Claude Code

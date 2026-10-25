@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     const nbReponsesIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length
 
     // UNE décision, la même que /api/conversation et /api/leads (v7, bloc 1b). Le verrou d'offre
-    // (assistant autonome dès Studio) y vit aussi et rend un motif explicite, `verrou_offre`,
+    // (assistant autonome en Signature depuis le 25/10) y vit aussi et rend un motif explicite, `verrou_offre`,
     // au lieu de se faire passer pour « assistée » : l'interface peut enfin dire la vérité.
     const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA, message })
 

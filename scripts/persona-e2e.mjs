@@ -2,7 +2,8 @@
 //
 //  1. style résolu : sans réglage, la page n'émet AUCUNE variable avancée (octets identiques
 //     avec un réglage explicitement égal au défaut) ;
-//  2. verrou d'offre : Essentiel → 403 sur l'apparence avancée, mais garde thème + accent ;
+//  2. verrou d'offre : une offre sans `plateforme.personnalisation_avancee` (l'Essai — 25/10, l'Essentiel n'est plus vendu et Studio
+//     a la personnalisation) → 403 sur l'apparence avancée, mais garde thème + accent ;
 //  3. accent illisible → corrigé côté serveur (renvoyé dans `corrections`) ;
 //  4. aperçu `?apercu=1&style=…` : noindex + style appliqué ; sans `apercu`, rien n'est appliqué ;
 //  5. Studio : enregistrement, colonne figée côté navigateur (déclencheur 0053), rendu réel ;
@@ -43,7 +44,7 @@ const st = Date.now(), slug = `pe-${st}`, email = `pe.${st}@presti-test.invalid`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pwd, email_confirm: true }) })).json()
 if (!u?.id) { console.error('création utilisateur impossible', u); process.exit(1) }
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
-  id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'essentiel', theme: 'atelier', accent: '#D97757',
+  id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'gratuit', theme: 'atelier', accent: '#D97757', // is_founder ouvre l'écran (exigerCapacite) ; le plan, lui, n'a pas la personnalisation avancée
   plateforme_active: true, reponse_auto: true, is_founder: true,
 }) })
 const session = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pwd }) })).json()
@@ -73,16 +74,16 @@ try {
     else skip('octets identiques avec une ligne apparence (migration 0053 absente, pas de route de test)')
   }
 
-  // ── 2) Verrou d'offre — Essentiel
+  // ── 2) Verrou d'offre — offre sans personnalisation avancée (Essai)
   const r1 = await api('/api/plateforme/apparence', { method: 'POST', body: JSON.stringify({ apparence: { couple: 'chantier' } }) })
   const d1 = await r1.json().catch(() => ({}))
-  ok(r1.status === 403 && /Studio/.test(d1.error || ''), `Essentiel : apparence avancée → 403 (${r1.status} « ${d1.error} »)`)
+  ok(r1.status === 403 && /Studio/.test(d1.error || ''), `Essai : apparence avancée → 403 (${r1.status} « ${d1.error} »)`)
   const r2 = await api('/api/plateforme/apparence', { method: 'POST', body: JSON.stringify({ amorces: ['Un devis pour une terrasse'] }) })
-  ok(r2.status === 403, `Essentiel : amorces → 403 (${r2.status})`)
+  ok(r2.status === 403, `Essai : amorces → 403 (${r2.status})`)
   const r3 = await api('/api/plateforme/apparence', { method: 'POST', body: JSON.stringify({ theme: 'bleu', accent: '#1E6FA8' }) })
   const d3 = await r3.json().catch(() => ({}))
   const art3 = await (await rest(`artisans?id=eq.${u.id}&select=theme,accent`)).json()
-  ok(r3.status === 200 && art3?.[0]?.theme === 'bleu' && art3?.[0]?.accent === '#1E6FA8', `Essentiel garde thème + accent (${r3.status}, ${art3?.[0]?.theme}/${art3?.[0]?.accent})`)
+  ok(r3.status === 200 && art3?.[0]?.theme === 'bleu' && art3?.[0]?.accent === '#1E6FA8', `Essai garde thème + accent (${r3.status}, ${art3?.[0]?.theme}/${art3?.[0]?.accent})`)
   ok(!Object.keys(d3.corrections || {}).length, 'accent lisible : aucune correction')
 
   // ── 3) Accent illisible → corrigé

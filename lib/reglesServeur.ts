@@ -28,7 +28,7 @@ export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number;
   if (!regle) return { fait: 'rien', pourquoi: 'aucune règle' }
   // Verrou SERVEUR (audit v5 §8, réellement posé le 05/09 : la première tentative avait échoué
   // sans que je m'en aperçoive). La règle est écrite depuis le navigateur (RLS), mais elle ne
-  // s'exécute que si l'offre le permet — sinon un Essentiel obtiendrait devis auto + acompte.
+  // s'exécute que si l'offre le permet (Signature) — sinon un Studio obtiendrait devis auto + acompte.
   const { data: art } = await supabaseAdmin.from('artisans').select('plan').eq('id', p.lead.artisan_id).maybeSingle()
   if (!peut(art?.plan, 'plateforme.regles')) return { fait: 'rien', pourquoi: `réservé à l'offre ${offreMinimale('plateforme.regles') ?? 'supérieure'}` }
 

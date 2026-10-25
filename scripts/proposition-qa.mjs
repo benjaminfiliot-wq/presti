@@ -19,7 +19,7 @@
 //         sans le texte (reply nul), aucun message sortant réel (etat nul), aucun e-mail au prospect qui porte la proposition
 //         (l'accusé « Bien reçu » d'aujourd'hui part, une fois), statut de la demande pas « repondu », aucune relance
 //         planifiée. L'artisan reçoit UNE notification qui dit « Réponse proposée » et « à valider » (pas « à vous de
-//         répondre »). Quatre scénarios : Essentiel sans ligne de configuration (le défaut), Essentiel qui a choisi « auto »
+//         répondre »). Quatre scénarios : Studio sans ligne de configuration (le défaut), Studio qui a choisi « auto »
 //         (verrou d'offre : servi en assisté), Signature en assisté avec le modèle Expert, et le premier message de la page
 //         /p/<slug> (PlatChat.tsx:306 : variant 'B', deferContact, sans contact) : la proposition est écrite de même, et,
 //         comme aujourd'hui, ni notification ni e-mail ne part avant la capture des coordonnées (/api/leads/contact).
@@ -31,7 +31,7 @@
 //   PQ-3  sans crédit (solde 0 ; solde 2 pour un modèle Expert à 3) : 200, demande et message gardés, aucune proposition,
 //         l'IA n'est pas appelée, aucun crédit perdu ni solde négatif, la notification d'aujourd'hui « à vous de répondre »,
 //         l'accusé part. (Non-régression : vert sur l'arbre d'aujourd'hui ; les sondes de mutation prouvent le détecteur.)
-//   PQ-4  les autres modes ne changent pas. Auto (Studio) : la réponse est rendue au prospect (reply = le texte), écrite en
+//   PQ-4  les autres modes ne changent pas. Auto (Signature, depuis le 25/10) : la réponse est rendue au prospect (reply = le texte), écrite en
 //         message sortant réel (etat nul), envoyée par e-mail, statut « repondu », trois relances planifiées, un crédit débité,
 //         aucune proposition. Manuel : ni IA, ni crédit, ni proposition, « à vous de répondre ». Pause : 200 paused, ni IA, ni
 //         crédit, ni proposition. Mot d'escalade en auto : ni IA, ni proposition, « à vous de répondre ». (Non-régression.)
@@ -324,7 +324,7 @@ function doublures(W) {
     },
     'lib/alerteService.ts': { signalerPanneIA: async (ou, e) => { W.pannes.push({ ou: String(ou), erreur: premiereLigne(e) }); return 'inconnu' }, motifDe: () => 'inconnu', estPanneDeCompte: () => false },
     'lib/security.ts': { getIp: () => '203.0.113.18', isBanned: async () => false, recordAbuse: async (ip, raison) => { W.abus.push(String(raison)); return false }, ipPseudonyme: () => 'ip-essai' },
-    'lib/limites.ts': { consommerLimite: async () => true, limiteAtteinte: async () => false, cleEmail: (p, e) => `${p}:${e}` },
+    'lib/limites.ts': { consommerLimite: async () => true, consommerLimiteStricte: async () => true, limiteAtteinte: async () => false, cleEmail: (p, e) => `${p}:${e}` },
     'lib/quotaMedia.ts': { porteMonnaieConversation: async () => ({ accepte: () => false, octets: () => 0 }) },
     'lib/stripe.ts': { stripe: muet() },
   }
@@ -386,10 +386,12 @@ export const SCENARIOS = [
   { id: 'PQ-2', nom: 'panne en Expert (Signature)', solde: 10, ia: 'leve', artisan: { plan: 'signature' }, config: { mode_reponse: 'assistee', modele: 'expert' }, attendu: 'echec', tier: 'expert', panne: true },
   { id: 'PQ-3', nom: 'solde 0 (Studio, assistée)', solde: 0, attendu: 'sans_credit' },
   { id: 'PQ-3', nom: 'solde 2 pour un modèle Expert à 3 (Signature)', solde: 2, artisan: { plan: 'signature' }, config: { mode_reponse: 'assistee', modele: 'expert' }, attendu: 'sans_credit' },
-  { id: 'PQ-4', nom: 'auto (Studio)', solde: 10, artisan: { plan: 'studio' }, config: { mode_reponse: 'auto' }, attendu: 'auto' },
+  // 25/10 (Benj) : la réponse qui part seule est Signature (capacité `plateforme.ia.auto`) ; un Studio réglé sur « auto » est servi en assisté (verrou d'offre).
+  { id: 'PQ-1', nom: 'Studio qui a choisi « auto » (verrou d’offre : servi en assisté)', solde: 10, artisan: { plan: 'studio' }, config: { mode_reponse: 'auto' }, attendu: 'proposition', tier: 'standard' },
+  { id: 'PQ-4', nom: 'auto (Signature)', solde: 10, artisan: { plan: 'signature' }, config: { mode_reponse: 'auto' }, attendu: 'auto' },
   { id: 'PQ-4', nom: 'manuel', solde: 10, config: { mode_reponse: 'manuelle' }, attendu: 'silence' },
   { id: 'PQ-4', nom: 'pause', solde: 10, artisan: { leads_pause: true }, attendu: 'pause' },
-  { id: 'PQ-4', nom: 'mot d’escalade en auto (Studio)', solde: 10, artisan: { plan: 'studio' }, config: { mode_reponse: 'auto' }, message: (m) => `Bonjour, j'ai une fuite sous l'évier depuis ce matin. Repère ${m}.`, attendu: 'silence' },
+  { id: 'PQ-4', nom: 'mot d’escalade en auto (Signature)', solde: 10, artisan: { plan: 'signature' }, config: { mode_reponse: 'auto' }, message: (m) => `Bonjour, j'ai une fuite sous l'évier depuis ce matin. Repère ${m}.`, attendu: 'silence' },
   { id: 'PQ-5', nom: 'la même demande envoyée deux fois, dix crédits', solde: 10, envois: 2, attendu: 'rejeu', tier: 'standard' },
   { id: 'PQ-5', nom: 'la même demande envoyée deux fois, un seul crédit', solde: 1, envois: 2, attendu: 'rejeu_un_credit', tier: 'standard' },
 ]

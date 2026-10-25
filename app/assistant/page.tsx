@@ -177,7 +177,7 @@ function Assistant() {
   const carteDe = (id: string) => cartes[id]
   const vue = (c: CarteAction) => c.statut === 'en_attente' && c.expire_le && Date.parse(c.expire_le) < maintenant ? { ...c, statut: 'expiree' as StatutAction } : c
   return (
-    <AppShell active="assistant" title="Assistant de gestion" crumb="Offre Signature · assistant IA (Claude, Anthropic) · il gère vos devis, factures, stock, tarifs et CRM à votre demande : ce qui part chez un client attend votre clic" wide
+    <AppShell active="assistant" title="Assistant de gestion" crumb={`Dès l’offre Studio · assistant IA (Claude, Anthropic) · il gère vos devis, factures, stock et tarifs à votre demande${crm ? ', et votre CRM' : ' (le CRM : offre Signature)'} : ce qui part chez un client attend votre clic${peut(plan, 'assistant.pilote') ? ', sauf ce que vous confiez au Pilote automatique' : ''}`} wide
       actions={<button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={nouvelleConversation} disabled={enCours}>Nouvelle conversation</button>}>
       <div className="asst">
         <section className="psh-panel asst-panneau" aria-label="Conversation avec l’assistant">

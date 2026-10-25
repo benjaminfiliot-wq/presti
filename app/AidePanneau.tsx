@@ -69,7 +69,7 @@ function Section({ titre, children }: { titre: string; children: ReactNode }) {
 }
 
 // Sections dans l'ordre du type Article : à quoi ça sert · comment on s'en sert · pour vos
-// clients · crédits · réglages liés · « Disponible avec … » (seulement si ce n'est pas Essentiel).
+// clients · crédits · réglages liés · « Disponible avec … » (seulement si la fonctionnalité n'est pas dans toutes les offres).
 export function ArticleCorps({ article }: { article: Article }) {
   return (
     <div className="aide-corps">
@@ -88,7 +88,7 @@ export function ArticleCorps({ article }: { article: Article }) {
       )}
       <Section titre="Offre">
         <PastilleOffre offre={offreAide(article.id)} />
-        {article.disponibleAvec !== 'essentiel' && (
+        {article.disponibleAvec !== 'toutes' && (
           <span className="aide-plan" style={{ marginLeft: 8 }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
             Disponible avec l’offre {PLANS[article.disponibleAvec].label}

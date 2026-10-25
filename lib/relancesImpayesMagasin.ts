@@ -1,5 +1,6 @@
 // La base derrière les relances automatiques de factures (lib/relancesImpayesTour.ts). Service uniquement : chaque lecture et chaque
-// écriture porte l'identifiant du compte traité. Tables : migration 0159 (relances_impayes_reglages, relances_impayes, relances_impayes_arrets).
+// écriture porte l'identifiant du compte traité. Tables : migration 0159 (relances_impayes_reglages, relances_impayes, relances_impayes_arrets),
+// élargie par 0181 (relances « à valider » de l'offre Studio : statuts a_valider et rejetee, colonnes sujet et texte).
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { jourParis } from './comptaTableau.ts'
 import { JOURS_PAR_DEFAUT, type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances } from './relancesImpayes.ts'
@@ -77,6 +78,16 @@ export const magasinSupabase: Magasin = {
   },
   async relacher(id) {
     lire(await supabaseAdmin.from('relances_impayes').delete().eq('id', id).eq('statut', 'prise').select('id').maybeSingle(), 'relâche')
+  },
+  // Offre Studio (migration 0181 : statut « a_valider », colonnes sujet et texte). Sans 0181 la mise à jour est refusée par la base :
+  // le passage rend alors la prise et n'envoie rien (fail-closed).
+  async aValider(id, contenu) {
+    const r = lire(await supabaseAdmin.from('relances_impayes').update({ statut: 'a_valider', sujet: contenu.sujet, texte: contenu.texte }).eq('id', id).eq('statut', 'prise').select('id').maybeSingle(), 'préparation')
+    if (!r) throw new Error('préparation : la relance prise a disparu')
+  },
+  async notifierPreparee(artisan, n) {
+    const { notifierArtisan } = await import('@/lib/notifications')
+    await notifierArtisan(artisan.id, 'proposition', artisan.email, { subject: n.sujet, text: n.texte })
   },
   async arreter(artisanId, factureId, raison, maintenant) {
     lire(await supabaseAdmin.from('relances_impayes_arrets').upsert({ facture_id: factureId, artisan_id: artisanId, raison, le: maintenant.toISOString(), reprise_le: null }, { onConflict: 'facture_id' }).select('facture_id'), 'arrêt')

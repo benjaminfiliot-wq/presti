@@ -46,7 +46,7 @@ export async function POST(req: Request) {
   // Le délai promis par les CGU (§4) et la grille (lib/plans.ts, « Support par écrit »), écrit EN TÊTE du sujet, là où la
   // personne qui répond le lit : jusqu'au 12/10, rien dans le produit ne distinguait la demande d'un Signature (« tête de
   // file ») de celle d'un essai (audit des promesses, site, ligne 47).
-  const marque = peut(a?.plan, 'support.prioritaire') ? '[Prioritaire · 1 jour ouvré]' : peut(a?.plan, 'plateforme.ia.auto') ? '[2 jours ouvrés]' : '[3 jours ouvrés]'
+  const marque = peut(a?.plan, 'support.prioritaire') ? '[Prioritaire · 1 jour ouvré]' : peut(a?.plan, 'plateforme.conversation') ? '[2 jours ouvrés]' : '[3 jours ouvrés]'
 
   // Le titre est résolu ICI, à partir de la base, et jamais recopié du navigateur : c'est ce que
   // l'artisan relira dans son écran de sécurité, et il doit venir de ses données, pas d'un champ.

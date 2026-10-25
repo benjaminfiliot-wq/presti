@@ -3,6 +3,8 @@
 Presti est un SaaS Next.js + Supabase pour les artisans du bâtiment (plateforme de conversation, devis, factures, site).
 Tu n'explores pas le dépôt : tu lis `.orchestre/contexte.md` (ce que le code fait) et, dans le vault voisin `../SaaS`,
 `CLAUDE.md` puis `Produit/Carte-du-code.md` (pourquoi). Puis tu prends une tâche.
+Règle de Benj (25/10/2026) : tout part du cerveau Obsidian. Si l'outil MCP `cerveau` est branché chez toi,
+interroge-le (`regles_pour`, `chercher`, `lire`) sur le sujet de ta tâche avant de produire ; sinon cherche dans `../SaaS`.
 
 ## La boucle d'un exécutant
 

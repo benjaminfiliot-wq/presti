@@ -44,7 +44,7 @@ ok(/<ComparatifConcurrents\b/.test(fs.readFileSync(path.join(RACINE, 'app/page.t
 // Presti honnête : la colonne dit ce qu'elle ne fait pas.
 ok(/pas de plateforme agréée/.test(C.PRESTI.facture_electronique), 'Presti doit dire qu\'il n\'a pas de plateforme agréée intégrée')
 // Les relances d'impayés : la ligne dit ce qui est livré, ni plus ni moins (drapeau lib/flags.ts relancesImpayes).
-if (F.FLAGS.relancesImpayes) ok(/relances automatiques à cocher/.test(C.PRESTI.relances) && /J\+3, J\+10, J\+21/.test(C.PRESTI.relances) && /assistant/.test(C.PRESTI.relances), "Presti : relances automatiques d'impayés (à cocher) ET relance préparée par l'assistant")
+if (F.FLAGS.relancesImpayes) ok(/relances automatiques à cocher/.test(C.PRESTI.relances) && /J\+3, J\+10, J\+21/.test(C.PRESTI.relances) && /assistant/.test(C.PRESTI.relances) && /envoyées seules en Signature/.test(C.PRESTI.relances), "Presti : relances automatiques d'impayés (à cocher ; préparées en Studio, envoyées seules en Signature) ET relance préparée par l'assistant")
 else ok(/pas de relance automatique des impayés/.test(C.PRESTI.relances), "drapeau relancesImpayes baissé : Presti doit dire qu'il ne relance pas les impayés tout seul")
 ok(!/pas de relance automatique des impayés/.test(C.PRESTI.relances) || !F.FLAGS.relancesImpayes, "la phrase « pas de relance automatique » ne reste pas quand la fonction est livrée")
 
@@ -91,23 +91,29 @@ ok(C.COMPARATIF_LIMITES.startsWith(C.COMPARATIF_LIMITES_TITRE), 'COMPARATIF_LIMI
   ok(/AVANTAGES_VISIBLES\.map/.test(comp) && /phraseAutres/.test(comp), 'le composant rend AVANTAGES_VISIBLES')
 }
 
-// 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio. Le comparatif ne dit rien d'Essentiel qui ne l'est plus : aucune cellule
-// Presti ne nomme ces écrans ni leur personnalisation, et chaque niveau d'automatisation cité (dès Studio / complète en Signature) est celui de lib/plans.ts.
+// 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio : aucune cellule Presti ne nomme ces écrans ni leur personnalisation.
+// 25/10 (Benj) : deux offres. Le niveau d'automatisation cité est celui de lib/plans.ts : tout est préparé dès Studio (vous validez), tout part seul
+// en Signature (`plateforme.ia.auto`). L'Essentiel, qui n'est plus vendu, n'est nommé nulle part dans le comparatif.
 {
   const textes = [...Object.values(C.PRESTI), ...C.AVANTAGES.flatMap((a) => [a.titre, a.texte])].join(' ')
   ok(!/Ma plateforme|Mes chiffres|compta/i.test(textes), 'le comparatif ne doit pas annoncer « Ma plateforme » ni « Mes chiffres » (écrans Studio) comme acquis à toutes les offres')
-  ok(C.PRESTI.automatisation.includes('dès Studio') && /complète en Signature/.test(C.PRESTI.automatisation), "la cellule d'automatisation doit dire « dès Studio » puis « complète en Signature »")
-  ok(!/dès Essentiel/.test(C.PRESTI.automatisation.replace(/relances automatiques dès Essentiel/, '')), "l'automatisation ne commence pas avec Essentiel (hors les relances)")
+  ok(!/Essentiel/.test(textes), "le comparatif ne nomme plus l'offre Essentiel (plus vendue depuis le 25/10)")
+  ok(P.offreMinimale('plateforme.ia.auto') === 'signature' && P.offreMinimale('plateforme.conversation') === 'studio', 'lib/plans.ts : la réponse préparée commence avec Studio, la réponse envoyée seule avec Signature')
+  ok(C.PRESTI.automatisation.includes(`dès ${P.PLANS.studio.label}`) && /vous validez/.test(C.PRESTI.automatisation) && C.PRESTI.automatisation.includes(`complète en ${P.PLANS[P.offreMinimale('plateforme.ia.auto')].label}`) && /part seul/.test(C.PRESTI.automatisation),
+    "la cellule d'automatisation doit dire « dès Studio » (préparé, vous validez) puis « complète en Signature » (tout part seul)")
+  ok(C.PRESTI.prix.startsWith(`dès ${Math.min(...P.OFFRES.map((o) => o.prix))} €`), "le prix d'appel est le plus bas des offres vendues (lib/plans.ts OFFRES)")
 }
 
-// 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme ». La réponse préparée aux demandes des clients (critère « IA qui prépare la réponse ») est celle
-// de la plateforme : le comparatif dit « dès Studio » (et son prix), jamais « dès Essentiel ». L'IA qui chiffre le devis, elle, reste dès Essentiel.
+// La réponse préparée aux demandes des clients (critère « IA qui prépare la réponse ») est celle de la plateforme : le comparatif dit « dès Studio » (et son
+// prix), et que l'envoi seul est Signature. L'IA qui chiffre le devis est dans les deux offres.
 {
-  ok(/dès l’offre Studio/.test(C.PRESTI.ia_reponse) && !/Essentiel/.test(C.PRESTI.ia_reponse), 'ia_reponse doit dire « dès l’offre Studio » et ne pas nommer Essentiel')
-  ok(C.PRESTI.ia_reponse.includes('59 €'), 'ia_reponse : le prix de Studio (lib/plans.ts) est écrit')
-  ok(/dès Essentiel/.test(C.PRESTI.ia_devis), 'ia_devis : le devis chiffré par l’IA reste dès Essentiel')
+  ok(/dès l’offre Studio/.test(C.PRESTI.ia_reponse) && C.PRESTI.ia_reponse.includes(P.PLANS.signature.label), 'ia_reponse doit dire « dès l’offre Studio » et nommer Signature pour l’envoi seul')
+  ok(C.PRESTI.ia_reponse.includes(`${P.PLANS.studio.prixMois} €`), 'ia_reponse : le prix de Studio (lib/plans.ts) est écrit')
+  ok(P.offreMinimale('devis.ia') === 'studio' && /dans les deux offres/.test(C.PRESTI.ia_devis), 'ia_devis : le devis chiffré par l’IA est dans les deux offres')
   const rep = C.AVANTAGES.find((a) => a.id === 'reponse')
-  ok(rep && /dès l’offre Studio/.test(rep.texte) && !/Essentiel/.test(rep.texte), 'avantage « Chaque demande a déjà sa réponse » : dit « dès l’offre Studio », sans Essentiel')
+  ok(rep && /dès l’offre Studio/.test(rep.texte) && rep.texte.includes(P.PLANS.signature.label), 'avantage « Chaque demande a déjà sa réponse » : dit « dès l’offre Studio », et Signature pour l’envoi seul')
+  const auto = C.AVANTAGES.find((a) => a.id === 'automatisation')
+  ok(auto && /vous validez/.test(auto.texte) && /tout part seul/.test(auto.texte), "avantage « automatisation » : Studio préparé (vous validez), Signature tout part seul")
 }
 
 if (echecs.length) { console.log(`❌ comparatif-qa : ${echecs.length} échec(s) sur ${n}`); for (const e of echecs) console.log('  - ' + e); process.exit(1) }

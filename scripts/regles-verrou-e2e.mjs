@@ -1,6 +1,6 @@
 // Le verrou SERVEUR des règles d'automatisation — sans aucun appel IA.
 //
-// Ce que ce test protège : un artisan Essentiel peut écrire une règle « réactif » depuis son
+// Ce que ce test protège : un artisan Studio (25/10 : l'offre d'entrée, qui a la plateforme mais pas les règles) peut écrire une règle « réactif » depuis son
 // navigateur (la RLS l'y autorise), mais le serveur ne doit JAMAIS l'exécuter — sinon il obtient
 // le chiffrage automatique et l'acompte, réservés à Signature. Le contrôle se fait AVANT tout
 // appel au modèle : si le verrou manquait, la fonction tenterait un chiffrage… et échouerait
@@ -37,16 +37,16 @@ async function compte(plan) {
 }
 
 console.log('\n── La matrice des offres')
-T('Essentiel n’a pas les règles', peut('essentiel', 'plateforme.regles') === false)
+T('Essentiel (hérité) n’a pas les règles', peut('essentiel', 'plateforme.regles') === false)
 T('Studio n’a pas les règles', peut('studio', 'plateforme.regles') === false)
 T('Signature a les règles', peut('signature', 'plateforme.regles') === true)
 
 try {
-  console.log('\n── Le serveur refuse d’exécuter la règle d’un Essentiel')
-  const E = await compte('essentiel')
+  console.log('\n── Le serveur refuse d’exécuter la règle d’un Studio')
+  const E = await compte('studio')
   const r = await declencherRegles({ lead: E.lead, nbReponsesIA: 2, artisanEmail: E.email, artisanNom: 'Verrou' })
   T('la règle ne fait rien', r.fait === 'rien', JSON.stringify(r).slice(0, 120))
-  T('… et dit pourquoi : réservé à une offre supérieure', /réservé/i.test(r.pourquoi ?? ''), r.pourquoi)
+  T('… et dit pourquoi : réservé à Signature', /réservé/i.test(r.pourquoi ?? '') && /signature/i.test(r.pourquoi ?? ''), r.pourquoi)
   const { data: dv } = await admin.from('devis').select('id').eq('artisan_id', E.uid)
   T('aucun devis n’a été créé', (dv ?? []).length === 0)
 

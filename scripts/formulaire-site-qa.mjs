@@ -1209,7 +1209,7 @@ function doublures(sb, journal) {
     'next/server': { NextResponse: { json: (corps, init = {}) => ({ __reponse: true, status: init.status ?? 200, corps }) } },
     '@/lib/supabaseAdmin': { supabaseAdmin: sb },
     '@/lib/security': { getIp: () => '203.0.113.25', isBanned: async () => false, recordAbuse: note('recordAbuse'), ipPseudonyme: () => 'ip-essai' },
-    '@/lib/limites': { consommerLimite: async () => true },
+    '@/lib/limites': { consommerLimite: async () => true, consommerLimiteStricte: async () => true },
     '@/lib/suspension': { suspensionEnCours: async () => false, MESSAGE_PUBLIC_INDISPONIBLE: 'Ce lien de contact n’est plus actif pour le moment.' },
     '@/lib/ai': { qualifyLead: () => ({ urgence: 'normale', type_chantier: null }), generateLeadReply: async () => ({ text: 'réponse d’essai' }) },
     '@/lib/plateformeConfig': { getPlateformeConfig: async () => ({}), decisionReponse: () => ({ ok: false, raison: 'assistee' }) },

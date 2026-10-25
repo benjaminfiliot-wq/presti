@@ -69,7 +69,7 @@ try {
   if (eU) throw new Error('compte : ' + eU.message)
   artisanId = u.user.id
   const { error: eA } = await admin.from('artisans').upsert({
-    id: artisanId, email, nom: 'Purge RGPD', metier: 'Plombier', slug: `purge-rgpd-${marque}`, plan: 'essentiel',
+    id: artisanId, email, nom: 'Purge RGPD', metier: 'Plombier', slug: `purge-rgpd-${marque}`, plan: 'studio', // 25/10 : Studio (l'Essentiel n'est plus vendu)
     siret: '12345678900012', adresse: '1 rue du Test', code_postal: '17230', ville: 'Marans',
   })
   if (eA) throw new Error('artisan : ' + eA.message)

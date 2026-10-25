@@ -26,7 +26,7 @@ export default function Abonnement() {
   const [essai, setEssai] = useState(false)
   // Venu de « s'abonner directement » (/abonnement?offre=studio) : cette offre est mise en avant.
   const [voulue, setVoulue] = useState<string | null>(null)
-  useEffect(() => { const o = new URLSearchParams(window.location.search).get('offre'); setVoulue(o === 'essentiel' || o === 'studio' || o === 'signature' ? o : null) }, [])
+  useEffect(() => { const o = new URLSearchParams(window.location.search).get('offre'); setVoulue(o === 'studio' || o === 'signature' ? o : null) }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -73,7 +73,7 @@ export default function Abonnement() {
           <p className="muted" style={{ margin: '0 0 1.3rem', maxWidth: '58ch' }}>
             Vous êtes en <b>{actuel?.label ?? 'Essai'}</b>{actuel?.creditsMois ? <> — {actuel.creditsMois} crédits chaque mois</> : null}.
             Chaque formule donne des crédits mensuels (1 crédit = 1 génération IA, le modèle Expert en consomme 3). Sans engagement.
-            {essai ? <> Premier abonnement : essai gratuit, sans carte ({ESSAI_JOURS.essentiel} jours en Essentiel, {ESSAI_JOURS.studio} en Studio, {ESSAI_JOURS.signature} en Signature). Les crédits de l’essai sont proportionnels à sa durée. Sans carte à la fin de l’essai, rien n’est prélevé : vous repassez à l’offre d’Essai.</> : null}
+            {essai ? <> Premier abonnement : essai gratuit, sans carte ({ESSAI_JOURS.studio} jours en Studio, {ESSAI_JOURS.signature} en Signature). Les crédits de l’essai sont proportionnels à sa durée. Sans carte à la fin de l’essai, rien n’est prélevé : vous repassez à l’offre d’Essai.</> : null}
           </p>
 
           <div className="abo-grid">

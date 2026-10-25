@@ -98,7 +98,7 @@ export default async function PlateformePage({ params, searchParams }: Params) {
   if (await suspensionEnCours(a.id)) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>{MESSAGE_PUBLIC_INDISPONIBLE}</span></div></div></main>
   }
-  // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme. » La page d'un artisan dont l'offre n'a pas la plateforme (Studio et au-dessus)
+  // 15/10 (Benj) : la plateforme commence avec Studio (l'Essai et l'ancienne offre Essentiel, plus vendue depuis le 25/10, ne l'ont pas). La page d'un artisan dont l'offre n'a pas la plateforme
   // ne casse pas : une page neutre et polie, ses coordonnées publiques s'il en a laissé, et rien ne se charge — pas de conversation, donc
   // aucune demande enregistrée, aucun crédit consommé (les routes refusent de toute façon, lib/plateformeAccesServeur.ts). Aucune mention de Presti.
   if (!plateformeOuverte(a)) {

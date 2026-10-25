@@ -39,3 +39,14 @@
 .rel-case-verrou { cursor: not-allowed; opacity: .7 }
 .rel-verrou .rel-pied .psh-btn { width: auto }
 @media (max-width: 560px) { .rel-verrou .rel-pied { flex-direction: column; align-items: stretch } .rel-verrou .rel-pied .psh-btn { justify-content: center; text-align: center } }
+/* 25/10 — offre Studio : les relances préparées qui attendent la validation de l'artisan. */
+.rel-valider { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--accent-2, var(--accent)); border-radius: var(--radius, 12px) }
+.rel-valider h3 { margin: 0; font-size: 16px }
+.rel-valider-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px }
+.rel-valider-item { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm, 10px); min-width: 0 }
+.rel-valider-tete { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 14px }
+.rel-valider-tete span { color: var(--muted); font-size: 13px }
+.rel-valider-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
+.rel-valider-actions .btn { width: auto; margin: 0; padding: 9px 16px; cursor: pointer }
+.rel-valider input[type="text"] { width: 100%; box-sizing: border-box; background: var(--surface-2, #15151a); color: var(--ink, inherit); border: 1px solid var(--line); border-radius: var(--radius-sm, 8px); padding: 8px 10px; font: inherit; font-size: 14px }
+.rel-valider button:focus-visible, .rel-valider input:focus-visible, .rel-valider textarea:focus-visible { outline: 2px solid var(--accent-2, var(--accent)); outline-offset: 3px }

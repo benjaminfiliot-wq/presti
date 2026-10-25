@@ -143,7 +143,7 @@ async function anonymiser(id: string): Promise<string | null> {
     domaine: null, domaine_verifie: false, slug: `${PREFIXE_ADRESSE_PURGEE}${id.slice(0, 8)}`, slugs_anciens: [],
     iban: null, bic: null, stripe_customer_id: null, stripe_subscription_id: null,
     assurance_nom: null, assurance_adresse: null, assurance_contrat: null, assurance_activites: null, assurance_zone: null,
-    notifications: {}, plan: 'essentiel', credits: 0, suppression_demandee_le: null,
+    notifications: {}, plan: 'gratuit', credits: 0, suppression_demandee_le: null, // 25/10 : plus d'offre Essentiel ; un compte purgé n'a aucune offre
   }).eq('id', id)
   if (eA) return `artisans : ${eA.message}`
 

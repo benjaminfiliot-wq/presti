@@ -10,7 +10,7 @@
 //  C. le déroulé d'un tour (lib/assistant/tour.ts) : plafond → rien débité ; crédit épuisé → refus propre et tour
 //     rendu ; panne → crédit ET tour rendus ;
 //  C2. l'historique SIGNÉ (audit d'attaque B3) et le crédit rendu d'un coup (rendre_credit, 0155, repli si absente) ;
-//  D. le CODE : drapeau baissé (route, page, menu), capacité Signature/Business, aucune lecture d'artisan par la clé de
+//  D. le CODE : drapeau baissé (route, page, menu), capacité Studio/Signature/Business, aucune lecture d'artisan par la clé de
 //     service dans les exécuteurs, migration 0150 avec RLS, rien dans la grille des offres ; et depuis le 13/10 : outils
 //     CRM en lecture sous la session (décision d'accès du CRM), identifiant de conversation tiré par le serveur (B2),
 //     minimisation RGPD (extraits de messages, coordonnées masquées, meilleurs clients sur demande, journal sans nom),
@@ -572,9 +572,10 @@ console.log('\n── D. Le code')
   ok('page : notFound() sans drapeau ni essai, puis retour au tableau de bord si /api/essais refuse ce compte', /if \(!enEssai\('assistant'\)\) notFound\(\)/.test(lire('app/assistant/page.tsx')) && /essai\.assistant !== true/.test(lire('app/assistant/page.tsx')))
   ok('menu : l’entrée n’existe que drapeau levé ou compte en essai (réponse de /api/essais)', /\.\.\.\(enEssai\('assistant'\) \? \[\{ key: 'assistant', essai: 'assistant'/.test(lire('app/AppShell.tsx')) && /essais\[it\.essai\] === true/.test(lire('app/AppShell.tsx')))
   ok('page : aucun bleu ni violet, jetons de la console', !/#[0-9a-f]{3,6}/i.test(lire('app/assistant/assistant.css')) && !/blue|violet|purple/i.test(lire('app/assistant/assistant.css')))
-  ok('drapeau `assistant` levé (15/10, décision de Benj : ouvert à l’offre Signature)', FLAGS.assistant === true)
-  ok('capacité : Signature et Business seulement, offre minimale Signature', ['signature', 'business'].every((p) => plans.peut(p, 'assistant')) && ['gratuit', 'essentiel', 'studio'].every((p) => !plans.peut(p, 'assistant')) && plans.offreMinimale('assistant') === 'signature')
-  ok('Tarifs : drapeau levé → la grille vend l’assistant, en Signature seulement (lignes déclarées dans lib/plans.ts, cellules calculées depuis la capacité)', plans.GRILLE.some((l) => /assistant|conversation/i.test(l.label) && l.capacites.includes('assistant')) && plans.GRILLE_COMPLETE.filter((l) => l.capacites.includes('assistant')).every((l) => l.flag === 'assistant' && l.cellules.essentiel === false && l.cellules.studio === false && l.cellules.signature !== false))
+  ok('drapeau `assistant` levé (15/10, décision de Benj ; ouvert à Studio depuis le 25/10)', FLAGS.assistant === true)
+  // 25/10 (Benj) : l'assistant de gestion passe en Studio (il prépare, l'artisan confirme) ; ses outils CRM restent Signature (capacité `crm`).
+  ok('capacité : Studio, Signature et Business ; ni Essai ni l’ancien Essentiel ; offre minimale Studio', ['studio', 'signature', 'business'].every((p) => plans.peut(p, 'assistant')) && ['gratuit', 'essentiel'].every((p) => !plans.peut(p, 'assistant')) && plans.offreMinimale('assistant') === 'studio')
+  ok('Tarifs : drapeau levé → la grille vend l’assistant dès Studio (lignes déclarées dans lib/plans.ts, cellules calculées depuis la capacité)', plans.GRILLE.some((l) => /assistant|conversation/i.test(l.label) && l.capacites.includes('assistant')) && plans.GRILLE_COMPLETE.filter((l) => l.capacites.includes('assistant')).every((l) => l.flag === 'assistant' && !('essentiel' in l.cellules) && l.cellules.studio !== false && l.cellules.signature !== false))
   const sql = lire('supabase/migrations/0150_assistant.sql')
   const numeros = fs.readdirSync('supabase/migrations').map((f) => f.match(/^(\d{4})_/)?.[1]).filter(Boolean).map(Number)
   // 0150 est appliquée depuis le 12/10 (0151 et 0152 sont venues après, pour le CRM) : l'en-tête dit son état.
@@ -891,18 +892,18 @@ console.log('\n── G. La boucle avec des actions (faux modèle)')
   }
 }
 
-console.log('\n── H. Qui passe : offre Signature, côté serveur')
+console.log('\n── H. Qui passe : offre Studio et au-dessus, côté serveur')
 {
   const d = acces.decisionAssistant
   const s = { ok: true }
   ok('drapeau baissé → 404 AVANT la session (même avec une session invalide ou le bon compte)', d({ drapeau: false, session: { ok: false, statut: 401, erreur: 'x' }, ouvertPourCeCompte: true, plan: 'signature' }).statut === 404 && d({ drapeau: false, session: s, ouvertPourCeCompte: true, plan: 'signature' }).statut === 404)
   ok('session invalide → son statut et son code (401 / 403 suspendu, mfa, code requis)', d({ drapeau: true, session: { ok: false, statut: 401, erreur: 'Non authentifié' }, ouvertPourCeCompte: true, plan: 'signature' }).statut === 401 && d({ drapeau: true, session: { ok: false, statut: 403, erreur: 's', code: 'suspendu' }, ouvertPourCeCompte: true, plan: 'signature' }).code === 'suspendu')
   ok('compte hors essai (tant que le drapeau est baissé) → 404 : il ne sait pas que l’assistant existe', d({ drapeau: true, session: s, ouvertPourCeCompte: false, plan: 'signature' }).statut === 404)
-  for (const plan of ['gratuit', 'essentiel', 'studio', null, undefined, 'pro', 'inconnu']) {
+  for (const plan of ['gratuit', 'essentiel', null, undefined, 'pro', 'inconnu']) {
     const r = d({ drapeau: true, session: s, ouvertPourCeCompte: true, plan })
-    ok(`offre « ${plan} » → 403 « offre », message de verrou Signature`, r.ok === false && r.statut === 403 && r.code === 'offre' && /Signature/.test(r.erreur))
+    ok(`offre « ${plan} » → 403 « offre », message de verrou Studio`, r.ok === false && r.statut === 403 && r.code === 'offre' && /Studio/.test(r.erreur))
   }
-  ok('Signature et Business → accès', d({ drapeau: true, session: s, ouvertPourCeCompte: true, plan: 'signature' }).ok === true && d({ drapeau: true, session: s, ouvertPourCeCompte: true, plan: 'business' }).ok === true)
+  ok('Studio, Signature et Business → accès', ['studio', 'signature', 'business'].every((plan) => d({ drapeau: true, session: s, ouvertPourCeCompte: true, plan }).ok === true))
   const garde = lire('lib/assistant/garde.ts')
   ok('les DEUX routes passent par la même garde serveur (pas seulement l’interface)', /gardeAssistant\(req\)/.test(lire('app/api/assistant/route.ts')) && /gardeAssistant\(req\)/.test(lire('app/api/assistant/actions/route.ts')) && /decisionAssistant\(/.test(garde))
 }

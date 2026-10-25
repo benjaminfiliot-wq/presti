@@ -35,9 +35,9 @@ export default function ComparatifConcurrents() {
         </table>
       </div>
       <section className="cc-auto" aria-label="Niveau d’automatisation selon l’offre">
-        <p className="cc-auto-titre"><b>L’automatisation commence avec {PLANS.studio.label} et devient complète avec {PLANS.signature.label}.</b></p>
+        <p className="cc-auto-titre"><b>Tout est automatisé dans les deux offres : avec {PLANS.studio.label}, tout est préparé et vous validez d’un clic ; avec {PLANS.signature.label}, tout part seul.</b></p>
         <ul className="cc-auto-liste">
-          {(['essentiel', 'studio', 'signature'] as const).map((id) => (
+          {(['studio', 'signature'] as const).map((id) => (
             <li key={id}><b>{PLANS[id].label} ({PLANS[id].prixMois} €)</b> : {AUTOMATISATION[id]}.</li>
           ))}
         </ul>

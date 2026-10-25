@@ -14,7 +14,7 @@ const CONTENUS = {
     points: [
       'Avec l’offre Studio, chaque demande faite par votre lien a sa réponse prête en moins d’une minute : vous l’envoyez.',
       'Le devis se prépare sur vos prix, en PDF conforme.',
-      'Avec la plateforme (dès Studio), trois relances (J+2, J+5, J+10) après la réponse au client ; la facture en un clic.',
+      'Avec la plateforme (dès Studio), trois relances (J+2, J+5, J+10) après la réponse au client, préparées pour vous ou envoyées seules avec Signature ; la facture en un clic.',
     ],
     fiche: [
       { b: 'Demande entrante', em: 'Mme Garnier · robinets', ok: false },

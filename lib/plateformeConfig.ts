@@ -156,7 +156,7 @@ export function iaDoitRepondre(
   if (cfg.mode_reponse === 'manuelle') return { ok: false, raison: 'manuelle' }
   // Le mot d'escalade passe AVANT le mode assisté (audit des promesses du 12/10, produit, ligne 49) : l'aide promet
   // « l'assistant se tait et vous recevez une alerte ». Testé après, il laissait le mode par défaut (Assistée, le seul
-  // possible en Essai et en Essentiel) rédiger une proposition — un crédit débité — sans que l'alerte parte.
+  // possible sans l'offre Signature) rédiger une proposition — un crédit débité — sans que l'alerte parte.
   const mot = motEscalade(cfg, ctx.message)
   if (mot) return { ok: false, raison: 'escalade', mot }
   if (cfg.mode_reponse === 'assistee') return { ok: false, raison: 'assistee' }
@@ -177,8 +177,8 @@ export type MotifDecision = Blocage | 'humain' | 'verrou_offre'
 
 /**
  * Le mode que le serveur APPLIQUE, et pourquoi il diffère du mode choisi le cas échéant.
- * L'assistant autonome est vendu à partir de Studio : un compte Essai ou Essentiel qui choisit
- * « auto » est servi en « assistée » — et le motif `verrou_offre` le dit, au lieu de se taire.
+ * L'assistant autonome est vendu avec Signature (25/10 ; avant : dès Studio) : un compte Essai, Essentiel hérité ou Studio qui
+ * choisit « auto » est servi en « assistée » — et le motif `verrou_offre` le dit, au lieu de se taire.
  */
 export function modeEffectif(plan: string | null | undefined, cfg: PlateformeConfig): { mode: ModeReponse; motif: 'verrou_offre' | null } {
   if (cfg.mode_reponse === 'auto' && !peut(plan, 'plateforme.ia.auto')) return { mode: 'assistee', motif: 'verrou_offre' }

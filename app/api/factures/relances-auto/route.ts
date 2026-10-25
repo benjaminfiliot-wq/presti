@@ -15,13 +15,14 @@ export const runtime = 'nodejs'
 const ferme = () => !actif('relancesImpayes')
 const NON_MISE_EN_PLACE = { error: 'Les relances automatiques ne sont pas encore disponibles. Réessayez plus tard.' }
 
-async function disponible(uid: string): Promise<{ ok: true } | { ok: false; statut: number; erreur: string; code?: 'offre'; offre?: string | null }> {
+async function disponible(uid: string): Promise<{ ok: true; auto: boolean } | { ok: false; statut: number; erreur: string; code?: 'offre'; offre?: string | null }> {
   const { data, error } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', uid).maybeSingle()
   if (error || !data) return { ok: false, statut: 503, erreur: 'Compte illisible.' }
   // 15/10 (Benj, « En Studio ») : la capacité est celle de Studio et au-dessus. Même forme de refus que les écrans réservés (lib/accesOffre.ts) :
   // { code: 'offre', offre } — l'écran Factures s'en sert pour montrer le réglage verrouillé.
   if (!data.is_founder && !peut(data.plan, 'factures.relances')) return { ok: false, statut: 403, code: 'offre', offre: offreMinimale('factures.relances'), erreur: `Les relances automatiques des factures ne sont pas dans votre offre. ${messageVerrou('factures.relances')}` }
-  return { ok: true }
+  // 25/10 (Benj) : Signature (`factures.relances.auto`) — elles partent seules ; Studio — elles sont préparées, l'artisan les valide.
+  return { ok: true, auto: peut(data.plan, 'factures.relances.auto') }
 }
 
 export async function GET(req: Request) {
@@ -36,10 +37,23 @@ export async function GET(req: Request) {
     supabaseAdmin.from('relances_impayes_arrets').select('facture_id, raison, le, reprise_le').eq('artisan_id', session.uid).limit(2000),
   ])
   if (r.error || j.error || a.error) { console.error('[factures/relances-auto] lecture', (r.error ?? j.error ?? a.error)?.message); return NextResponse.json(NON_MISE_EN_PLACE, { status: 503 }) }
+  // Les relances préparées qui attendent l'artisan (offre Studio, migration 0181). Lues à part et TOLÉRÉES en erreur : sans 0181 la
+  // colonne `texte` n'existe pas, la liste est vide, et le reste de l'écran (Signature compris) continue de marcher. Une facture qui
+  // n'est plus due (payée, annulée) ne s'y montre pas : sa relance ne pourrait plus partir.
+  const v = await supabaseAdmin.from('relances_impayes').select('id, facture_id, rang, jour, destinataire, sujet, texte, factures(numero, client_nom, statut, total_ttc)')
+    .eq('artisan_id', session.uid).eq('statut', 'a_valider').order('jour', { ascending: true }).limit(200)
+  if (v.error) console.error('[factures/relances-auto] à valider', v.error.message)
+  type FactureJointe = { numero: string | null; client_nom: string | null; statut: string | null; total_ttc: number | string | null }
+  const aValider = (v.error ? [] : (v.data ?? [])).map((x) => {
+    const fj = (Array.isArray(x.factures) ? x.factures[0] : x.factures) as FactureJointe | null | undefined
+    return { id: x.id as string, facture_id: x.facture_id as string, rang: x.rang as number, jour: x.jour as string, destinataire: x.destinataire as string, sujet: (x.sujet as string | null) ?? '', texte: (x.texte as string | null) ?? '', numero: fj?.numero ?? null, client_nom: fj?.client_nom ?? null, total_ttc: fj?.total_ttc ?? null, statut_facture: fj?.statut ?? null }
+  }).filter((x) => x.statut_facture === 'emise')
   return NextResponse.json({
     reglages: r.data ? reglagesDeLigne(r.data) : REGLAGES_RELANCES_PAR_DEFAUT,
     journal: j.data ?? [],
     arrets: (a.data ?? []).filter((x) => !x.reprise_le),
+    auto: dispo.auto,
+    a_valider: aValider,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }
 

@@ -50,6 +50,8 @@ const SUITES = [
   // ── Sprint v5 (J-1 démo)
   // Essai gratuit sans carte (13/10) : Checkout par offre, un seul essai par compte, webhook (début, conversion, fin sans carte), textes ; 13 mutations
   { nom: 'Essai gratuit sans carte (Checkout, webhook, textes)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/essais-gratuits-qa.mjs'], cout: 'gratuit' },
+  // Relances des factures impayées (0159) : passage quotidien rejoué sur une base EN MÉMOIRE et un e-mail espionné ; Studio prépare « à valider », Signature envoie. Hors ligne.
+  { nom: 'Relances des factures impayées (passage quotidien, Studio à valider / Signature envoie)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-impayes-qa.mjs'], cout: 'gratuit' },
   // Audit RGPD du 20/10 : effacement étendu (photos, adresse, suivi), purge des essais (24 mois), conversations (devis signé ou facture), TABLES_A_VIDER, expiration du suivi, textes légaux et registre. Hors ligne.
   { nom: 'RGPD — correctifs de l’audit du 20/10 (effacement, purges, suivi, textes légaux, registre)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/rgpd-qa.mjs'], cout: 'gratuit' },
   { nom: 'Accès aux automatisations (Mes chiffres : Signature ; relances d’impayés : dès Studio)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/acces-automatisations-qa.mjs'], cout: 'gratuit' },

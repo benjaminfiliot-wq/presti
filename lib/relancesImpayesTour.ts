@@ -11,10 +11,14 @@
 //  • Chaque lecture porte l'identifiant du compte traité : un compte ne relance jamais les factures d'un autre.
 //  • Borné : MAX_COMPTES comptes, MAX_PAR_COMPTE_JOUR relances par compte et par jour ; une erreur sur un compte n'arrête pas les autres.
 //  • Comptes fondateurs (démonstration), suspendus, en pause (« n'envoie plus rien automatiquement »), hors offre : ignorés.
+//  • 25/10 (Benj, deux offres) : SIGNATURE (`factures.relances.auto`) — la relance part seule, comme avant. STUDIO (`factures.relances`
+//    seule) — rien ne part : après la prise, la relance est enregistrée « à valider » avec son destinataire, son sujet et son texte,
+//    et l'artisan est prévenu (notification « proposition ») ; il l'envoie ou l'écarte depuis Factures
+//    (app/api/factures/relances-auto/a-valider). Tant qu'elle attend, sa facture n'est plus relancée (decider : « a_valider »).
 import { peut } from './plans'
 import { jourParis } from './comptaTableau.ts'
 import {
-  decider, MAX_PAR_COMPTE_JOUR, messageComplet, referenceReponse, sujetDeLaRelance, texteDeLaRelance, variablesDe,
+  decider, MAX_PAR_COMPTE_JOUR, messageAValider, messageComplet, notificationPreparee, referenceReponse, sujetDeLaRelance, texteDeLaRelance, variablesDe,
   type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances,
 } from './relancesImpayes.ts'
 
@@ -41,11 +45,15 @@ export interface Magasin {
   prendre(e: { facture_id: string; artisan_id: string; rang: number; jour: string; destinataire: string }): Promise<string | null>
   confirmer(id: string, maintenant: Date): Promise<void>
   relacher(id: string): Promise<void>
+  /** Offre Studio : la relance prise devient « à valider », avec le sujet et le texte que l'artisan relira. Jette si rien n'est écrit. */
+  aValider(id: string, contenu: { sujet: string; texte: string }): Promise<void>
+  /** Prévient l'artisan qu'une relance l'attend (notifierArtisan, type « proposition »). Ne doit pas faire échouer le passage. */
+  notifierPreparee(artisan: Compte, n: { sujet: string; texte: string }): Promise<void>
   arreter(artisanId: string, factureId: string, raison: 'reponse_client', maintenant: Date): Promise<void>
 }
 
 export type Envoyer = (m: { to: string; subject: string; text: string; fromName: string; replyTo?: string }) => Promise<{ ok: boolean; error?: string }>
-export type Bilan = { ferme?: true; comptes: number; envoyees: number; arretees: number; ignorees: number; plafond: boolean; interrompue: boolean; erreurs: string[] }
+export type Bilan = { ferme?: true; comptes: number; envoyees: number; preparees: number; arretees: number; ignorees: number; plafond: boolean; interrompue: boolean; erreurs: string[] }
 
 export async function tourRelancesImpayes(d: {
   actif: boolean; magasin: Magasin; envoyer: Envoyer
@@ -54,7 +62,7 @@ export async function tourRelancesImpayes(d: {
   maintenant?: Date
 }): Promise<Bilan> {
   const maintenant = d.maintenant ?? new Date()
-  const bilan: Bilan = { comptes: 0, envoyees: 0, arretees: 0, ignorees: 0, plafond: false, interrompue: false, erreurs: [] }
+  const bilan: Bilan = { comptes: 0, envoyees: 0, preparees: 0, arretees: 0, ignorees: 0, plafond: false, interrompue: false, erreurs: [] }
   if (!d.actif) return { ...bilan, ferme: true }
   const m = d.magasin
   const jour = jourParis(maintenant)
@@ -69,6 +77,8 @@ export async function tourRelancesImpayes(d: {
       const art = await m.artisan(artisan_id)
       if (!art || art.is_founder || !art.email || !peut(art.plan, 'factures.relances')) { bilan.ignorees++; continue }
       if (art.leads_pause === true || (await m.suspendu(artisan_id))) { bilan.ignorees++; continue }
+      // Signature : la relance part seule. Studio : elle est préparée, l'artisan la valide.
+      const auto = peut(art.plan, 'factures.relances.auto')
 
       const [factures, journal, arrets] = await Promise.all([m.factures(artisan_id), m.journal(artisan_id), m.arrets(artisan_id)])
       const arretee = (id: string) => { const a = arrets.get(id); return !!a && !a.reprise_le }
@@ -101,9 +111,29 @@ export async function tourRelancesImpayes(d: {
         if (!prise) continue
 
         const v = variablesDe({ client: fraiche.client_nom, numero: fraiche.numero, totalTtc: fraiche.total_ttc, echeance: fraiche.date_echeance!, joursRetard: decision.joursRetard, artisan: art.nom })
+        const sujet = sujetDeLaRelance(fraiche.numero, art.nom)
+
+        if (!auto) {
+          // STUDIO : rien ne part. La relance prise est gardée « à valider » ; si elle ne peut pas l'être, la prise est rendue.
+          try {
+            await m.aValider(prise, { sujet, texte: messageAValider(texteDeLaRelance(decision.rang, reglages, v)) })
+          } catch (e) {
+            await m.relacher(prise)
+            bilan.erreurs.push(`relance non préparée : ${msg(e)}`.slice(0, 160))
+            continue
+          }
+          journal.push({ id: prise, facture_id: f.id, rang: decision.rang, jour, statut: 'a_valider', envoyee_le: null, destinataire: decision.destinataire })
+          destinataires.add(decision.destinataire)
+          envoyeesCeJour++
+          bilan.preparees++
+          try { await m.notifierPreparee(art, notificationPreparee({ numero: fraiche.numero, client: fraiche.client_nom, rang: decision.rang })) }
+          catch (e) { bilan.erreurs.push(`notification non partie : ${msg(e)}`.slice(0, 160)) }
+          continue
+        }
+
         const envoi = await d.envoyer({
           to: decision.destinataire,
-          subject: sujetDeLaRelance(fraiche.numero, art.nom),
+          subject: sujet,
           text: messageComplet(texteDeLaRelance(decision.rang, reglages, v)),
           fromName: art.nom?.trim() || 'Votre artisan',
           replyTo: art.email,

@@ -274,7 +274,12 @@ async function juger(racine, pref = '') {
     const filtrees = tables.filter((t) => new RegExp(`supabaseAdmin\\.from\\('${t}'\\)\\.select\\([^)]*\\)\\.eq\\('artisan_id', uid\\)`).test(code))
     const ecriture = code.match(/\.(insert|update|delete|upsert|rpc)\s*\(/) || page.match(/\.(insert|update|delete|upsert|rpc)\s*\(|supabaseAdmin|SERVICE_ROLE|service_role|createClient\s*\(/)
     const selects = [...code.matchAll(/const COLONNES_[A-Z]+ = '([^']*)'/g)].map((m) => m[1]).join(',')
-    ok('TB-14 la route filtre CHACUNE de ses 3 requêtes (factures, devis, leads) sur .eq(\'artisan_id\', uid), l\'uid venant de la session vérifiée', egal(filtrees, tables) && /const uid = session\.uid/.test(code) && /await authArtisan\(req\)/.test(code), `filtrées : ${filtrees.join(',')}`)
+    // Depuis le 15/10 (« Mes chiffres » commence avec Studio), la route passe par exigerCapacite (lib/accesOffreServeur.ts) : c'est elle
+    // qui appelle authArtisan(req) et rend l'uid de la session vérifiée ; la route n'a pas d'autre source d'identifiant.
+    const garde = sansCommentaires(fs.existsSync(path.join(racine, 'lib/accesOffreServeur.ts')) ? lire(path.join(racine, 'lib/accesOffreServeur.ts')) : '')
+    const gardeSession = /const s = await authArtisan\(req\)/.test(garde) && /return \{ uid: s\.uid, plan \}/.test(garde)
+    const uidDeSession = /const garde = await exigerCapacite\(req, 'chiffres'/.test(code) && /const uid = garde\.uid\s*$/m.test(code) && !/searchParams|req\.json|params\b/.test(code)
+    ok('TB-14 la route filtre CHACUNE de ses 3 requêtes (factures, devis, leads) sur .eq(\'artisan_id\', uid), l\'uid venant de la session vérifiée (exigerCapacite → authArtisan)', egal(filtrees, tables) && uidDeSession && gardeSession, `filtrées : ${filtrees.join(',')} ; uid de la garde : ${uidDeSession} ; garde sur authArtisan : ${gardeSession}`)
     const selectLeads = code.match(/const COLONNES_DEMANDES = '([^']*)'/)?.[1] ?? ''
     ok('TB-14 les villes viennent des demandes : la requête des demandes lit `ville` (0133), et rien ne lit `clients`', selectLeads.split(/,\s*/).includes('ville') && !/from\('clients'\)/.test(code + page), selectLeads)
     ok('TB-14 la route et la page ne font que lire : ni insert/update/delete/upsert/rpc ; la page sans clé de service ; ni total_tva ni total_ht sélectionnés', !ecriture && !/total_tva|total_ht/.test(selects), ecriture?.[0] || selects)
@@ -290,7 +295,7 @@ async function juger(racine, pref = '') {
     const groupes = lire(path.join(racine, 'app/aide/page.tsx'))
     const entree = shell.match(/\{ key: '([^']+)', label: '([^']+)', href: '\/chiffres'/)
     ok('TB-15 la navigation de l\'espace connecté (AppShell, groupe Pilotage) a une entrée « Mes chiffres » vers /chiffres', !!entree && entree[2] === 'Mes chiffres' && shell.indexOf(entree[0]) > shell.indexOf("group: 'Pilotage'") && shell.indexOf(entree[0]) < shell.indexOf("group: 'Outils IA'"), entree?.[0])
-    ok('TB-15 la page se déclare avec la clé de cette entrée (la bonne ligne du menu s\'allume) et passe par AppShell', !!entree && new RegExp(`<AppShell active="${entree[1]}"`).test(page) && /import AppShell from '@\/app\/AppShell'/.test(page), entree?.[1])
+    ok('TB-15 la page se déclare avec la clé de cette entrée (la bonne ligne du menu s\'allume) et passe par AppShell', !!entree && [...page.matchAll(/<AppShell active="([^"]+)"/g)].length > 0 && [...page.matchAll(/<AppShell active="([^"]+)"/g)].every((m) => m[1] === entree[1]) &&/import AppShell from '@\/app\/AppShell'/.test(page), entree?.[1])
     ok('TB-15 la page existe et s\'exporte par défaut ; /chiffres est fermé aux robots', fs.existsSync(path.join(racine, 'app/chiffres/page.tsx')) && /export default function/.test(page) && /'\/chiffres'/.test(robots), 'robots.ts')
     ok('TB-15 le centre d\'aide a son article pour /chiffres, rangé dans un groupe', /id: 'chiffres',\s*page: '\/chiffres'/.test(aide) && /pages: \['\/chiffres'\]/.test(groupes), 'aide')
   }
@@ -369,14 +374,17 @@ const SABOTAGES = [
   ['TB-14', R, ".select(COLONNES_DEMANDES).eq('artisan_id', uid)", ".select(COLONNES_DEMANDES)"],
   ['TB-14', R, "type_chantier, ville'", "type_chantier'"],
   ['TB-14', P, "import TableauCompta from './TableauCompta'", "import TableauCompta from './TableauCompta'\nimport { supabaseAdmin } from '@/lib/supabaseAdmin'"],
-  ['TB-14', P, "const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()", "await supabase.from('artisans').update({ aide_vues: [] }).eq('id', uid)\n      const { data: prof } = await supabase.from('artisans').select('id').eq('id', uid).maybeSingle()"],
-  ['TB-14', R, "const [f, d, l] = await Promise.all([", "await supabaseAdmin.from('factures').update({ statut: 'payee' }).eq('artisan_id', uid)\n  const [f, d, l] = await Promise.all(["],
+  ['TB-14', P, "const { data: prof } = await supabase.from('artisans').select('id, plan').eq('id', uid).maybeSingle()", "await supabase.from('artisans').update({ aide_vues: [] }).eq('id', uid)\n      const { data: prof } = await supabase.from('artisans').select('id, plan').eq('id', uid).maybeSingle()"],
+  ['TB-14', R, 'const uid = garde.uid', "const uid = new URL(req.url).searchParams.get('uid') ?? garde.uid"],
+  ['TB-14', 'lib/accesOffreServeur.ts', 'return { uid: s.uid, plan }', "return { uid: new URL(req.url).searchParams.get('uid') ?? s.uid, plan }"],
+  ['TB-14', R, "const [f, d, l] = await Promise.all([","await supabaseAdmin.from('factures').update({ statut: 'payee' }).eq('artisan_id', uid)\n  const [f, d, l] = await Promise.all(["],
   ['TB-18', R, 'if (f.error || d.error || l.error)', 'if (f.error || d.error)'],
   ['TB-18', R, ", { status: 503 })", ", { status: 200 })"],
   ['TB-18', P, "setErreur(corps?.error ?? 'Vos chiffres n’ont pas pu être chargés. Rechargez la page dans un instant.')", "void 0"],
   ['TB-15', 'app/AppShell.tsx', "href: '/chiffres'", "href: '/chiffre'"],
   ['TB-15', 'app/AppShell.tsx', "label: 'Mes chiffres'", "label: 'Gestion'"],
-  ['TB-15', P, 'active="chiffres"', 'active="dashboard"'],
+  // l'écran ouvert (depuis le 15/10, l'écran verrouillé porte aussi active="chiffres", plus haut dans le fichier)
+  ['TB-15', P, '<AppShell active="chiffres" title="Mes chiffres" crumb="Tableau de bord comptable">', '<AppShell active="dashboard" title="Mes chiffres" crumb="Tableau de bord comptable">'],
   ['TB-15', 'app/robots.ts', "'/chiffres', ", ''],
   ['TB-15', 'lib/aide.ts', "page: '/chiffres',", "page: '/chiffres-aide',"],
   ['TB-16', T, 'role="img" aria-label={`${nom} :', 'aria-label={`${nom} :'],
@@ -386,7 +394,7 @@ const SABOTAGES = [
   ['TB-16', 'app/chiffres/chiffres.css', 'min-height: 52px', 'min-height: 30px'],
   ['TB-17', 'docs/produit/tableau-de-bord-artisan.md', 'DemoSequence', 'la démo'],
 ]
-const FICHIERS = [...new Set([C, T, P, R, 'app/chiffres/chiffres.css', 'app/AppShell.tsx', 'app/robots.ts', 'lib/aide.ts', 'app/aide/page.tsx', 'package.json', 'docs/produit/tableau-de-bord-artisan.md'])]
+const FICHIERS = [...new Set([C, T, P, R, 'lib/accesOffreServeur.ts', 'app/chiffres/chiffres.css', 'app/AppShell.tsx', 'app/robots.ts', 'lib/aide.ts', 'app/aide/page.tsx', 'package.json', 'docs/produit/tableau-de-bord-artisan.md'])]
 function copie(nom) {
   const d = path.join(TMP, nom)
   for (const f of FICHIERS) { if (!fs.existsSync(path.join(DEPOT, f))) continue; fs.mkdirSync(path.dirname(path.join(d, f)), { recursive: true }); fs.copyFileSync(path.join(DEPOT, f), path.join(d, f)) }
@@ -406,7 +414,7 @@ async function principal() {
   for (const [id, rel, avant, apres] of SABOTAGES) {
     n++
     const d = copie(`sab-${n}`), f = path.join(d, rel)
-    const t = fs.existsSync(f) ? lire(f) : ''
+    const t = fs.existsSync(f) ? lire(f).replace(/\r\n/g, '\n') : '' // copie de travail en CRLF sous Windows : les textes à saboter sont écrits en LF
     if (!t.includes(avant)) { console.log(`FAIL sabotage ${n} → ${id} : texte à saboter introuvable dans ${rel}`); ko++; continue }
     fs.writeFileSync(f, t.replace(avant, () => apres))
     const log = console.log; console.log = () => {}

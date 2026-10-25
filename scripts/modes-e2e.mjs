@@ -2,7 +2,7 @@
 //
 // Symptôme rapporté : « dès qu'on passe en assisté ou en manuel, la plateforme demande une
 // validation, on ne peut plus revenir en arrière, et les trois modes finissent par se comporter
-// pareil ». Ce que cette suite exige, pour CHAQUE offre (Essai, Essentiel, Signature), CHAQUE mode
+// pareil ». Ce que cette suite exige, pour CHAQUE offre (Essai, Studio, Signature), CHAQUE mode
 // et CHAQUE route qui décide (/api/conversation, /api/conversation/stream, et la première réponse
 // de /api/leads) :
 //   1. la décision ne dépend que de `plateforme_config.mode_reponse` — l'ancien booléen
@@ -71,11 +71,12 @@ const config = async (jeton) => { const r = await fetch(`${BASE}/api/plateforme/
 const attendu = (plan, mode) => mode === 'manuelle' ? 'manuelle' : mode === 'assistee' ? 'assistee' : (peut(plan, 'plateforme.ia.auto') ? 'credits' : 'verrou_offre')
 
 try {
-  const PLANS = ['gratuit', 'essentiel', 'signature']
+  // 25/10 : l'Essentiel n'est plus vendu ; Studio a la plateforme mais pas l'envoi autonome (`plateforme.ia.auto` = Signature).
+  const PLANS = ['gratuit', 'studio', 'signature']
   const MODES = ['auto', 'assistee', 'manuelle']
   const C = {}
   for (const p of PLANS) C[p] = await compte(p)
-  T('trois comptes de test connectés (Essai, Essentiel, Signature)', PLANS.every((p) => C[p].jeton))
+  T('trois comptes de test connectés (Essai, Studio, Signature)', PLANS.every((p) => C[p].jeton))
 
   console.log('\n── 1. La matrice : offre × mode × route — l’ancien booléen est ignoré, le motif est explicite')
   for (const p of PLANS) for (const mode of MODES) {
@@ -83,7 +84,10 @@ try {
     for (const route of ['/api/conversation', '/api/conversation/stream']) {
       const l = await lead(C[p].uid)
       const r = await ecrire(route, l.token, 'Bonjour, vous êtes disponible cette semaine ?')
-      T(`${p} · ${mode} · ${route.replace('/api/conversation', 'conv')} → ${attendu(p, mode)}`, r.status === 200 && r.raison === attendu(p, mode) && !r.flux, `HTTP ${r.status} · raison=${r.raison ?? '—'}${r.flux ? ' (flux !)' : ''}`)
+      // Sans plateforme (l'Essai), les routes de conversation refusent AVANT toute décision de mode : 403 { code: 'plateforme' }
+      // (lib/plateformeAccesServeur.ts, depuis le 15/10) — jamais un silence non plus.
+      if (!peut(p, 'plateforme.conversation')) T(`${p} · ${mode} · ${route.replace('/api/conversation', 'conv')} → 403 plateforme`, r.status === 403 && r.code === 'plateforme' && !r.flux, `HTTP ${r.status} · code=${r.code ?? '—'}${r.flux ? ' (flux !)' : ''}`)
+      else T(`${p} · ${mode} · ${route.replace('/api/conversation', 'conv')} → ${attendu(p, mode)}`, r.status === 200 && r.raison === attendu(p, mode) && !r.flux, `HTTP ${r.status} · raison=${r.raison ?? '—'}${r.flux ? ' (flux !)' : ''}`)
     }
   }
 
@@ -104,13 +108,13 @@ try {
   }
 
   console.log('\n── 4. Le serveur dit le mode qu’il applique vraiment (GET /api/plateforme/config)')
-  await regler(C.essentiel.uid, 'auto', true)
-  const ce = await config(C.essentiel.jeton)
-  T('Essentiel en « auto » → mode_effectif = assistee, motif = verrou_offre', ce.status === 200 && ce.mode_reponse === 'auto' && ce.mode_effectif === 'assistee' && ce.motif === 'verrou_offre', `HTTP ${ce.status} ${JSON.stringify(ce).slice(0, 120)}`)
+  await regler(C.studio.uid, 'auto', true)
+  const ce = await config(C.studio.jeton)
+  T('Studio en « auto » → mode_effectif = assistee, motif = verrou_offre', ce.status === 200 && ce.mode_reponse === 'auto' && ce.mode_effectif === 'assistee' && ce.motif === 'verrou_offre', `HTTP ${ce.status} ${JSON.stringify(ce).slice(0, 120)}`)
   await regler(C.signature.uid, 'auto', false)
   const cs = await config(C.signature.jeton)
   T('Signature en « auto » → mode_effectif = auto, sans motif', cs.status === 200 && cs.mode_effectif === 'auto' && !cs.motif, JSON.stringify(cs).slice(0, 120))
-  T('… et l’offre minimale de l’assistant autonome est annoncée (studio)', cs.offre_auto === 'studio' && ce.offre_auto === 'studio', `${ce.offre_auto} / ${cs.offre_auto}`)
+  T('… et l’offre minimale de l’assistant autonome est annoncée (signature)', cs.offre_auto === 'signature' && ce.offre_auto === 'signature', `${ce.offre_auto} / ${cs.offre_auto}`)
 
   console.log('\n── 5. Je prends la main, puis je la rends')
   const l5 = await lead(C.signature.uid)

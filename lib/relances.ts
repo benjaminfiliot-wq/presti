@@ -4,6 +4,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 //
 // La grille (`lib/plans.ts`, ligne « Relances des conversations ») vend cette ligne avec la plateforme, à partir de Studio (15/10 ; avant :
 // dès l'Essentiel — le passage quotidien, app/api/cron/relances, n'en envoie plus aux offres sans plateforme).
+// 25/10 (Benj, deux offres) : en Studio la relance est PRÉPARÉE et part au clic de l'artisan ; elle ne part seule qu'en Signature
+// (`relances.auto`). L'Essentiel n'est plus vendu ; le récit ci-dessous (10/09) est celui de l'époque.
 // Jusqu'au 10/09 elle était fausse pour lui : les trois relances n'étaient posées qu'à UN endroit,
 // la branche de /api/leads qui suit une réponse écrite par l'assistant tout seul. Or l'assistant
 // autonome se vend à partir de Studio (`plateforme.ia.auto`), et le mode par défaut est « assistée » :

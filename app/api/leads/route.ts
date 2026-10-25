@@ -143,7 +143,7 @@ export async function POST(req: Request) {
     // Compte suspendu par la direction (v15 §5) : le lien ne prend plus de demandes — refus neutre, sans trace.
     if (await suspensionEnCours(artisan.id)) return NextResponse.json({ error: MESSAGE_PUBLIC_INDISPONIBLE }, { status: 410 })
 
-    // 15/10 (Benj) : « Dans Essentiel il n'y a PAS de plateforme. » La page de conversation ne prend plus de demande d'un artisan dont l'offre
+    // 15/10 (Benj) : la plateforme commence avec Studio (pas en Essai, ni dans l'ancienne offre Essentiel). La page de conversation ne prend plus de demande d'un artisan dont l'offre
     // n'a pas la plateforme (Studio et au-dessus) : rien n'est enregistré (ni demande, ni message, ni photo, ni relance), aucun crédit n'est touché,
     // aucune réponse IA ne part. Refus neutre pour le client, sans détail sur l'offre.
     // Seule exception : le FORMULAIRE d'un site commandé (public/sites-demo/_kit/formulaire.js : `commande` renseignée). Le site vitrine s'achète à

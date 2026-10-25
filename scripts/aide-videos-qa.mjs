@@ -82,12 +82,14 @@ for (const v of VIDEOS) {
   T(`${v.id} : 3 à 6 étapes (${v.etapes.length})`, v.etapes.length >= 3 && v.etapes.length <= 6)
   T(`${v.id} : chaque étape est une phrase (8 à 140 caractères)`, v.etapes.every((e) => e.trim().length >= 8 && e.length <= 140 && !/^à écrire$/i.test(e)), v.etapes.find((e) => e.length > 140 || e.length < 8))
   T(`${v.id} : résumé écrit`, typeof v.resume === 'string' && v.resume.trim().length >= 20)
-  T(`${v.id} : offre valide`, ['essentiel', 'studio', 'signature'].includes(v.offre))
-  // L'offre de la vidéo = celle de l'article d'aide du même écran, quand il y en a un ; Signature pour CRM et assistant.
+  // 25/10 : deux offres ; « toutes » = la fonctionnalité est dans toutes les offres (l'Essentiel n'est plus vendu).
+  T(`${v.id} : offre valide`, ['toutes', 'studio', 'signature'].includes(v.offre))
+  // L'offre de la vidéo = celle de l'article d'aide du même écran, quand il y en a un ; Signature pour le CRM, Studio pour l'assistant (25/10).
   const m = aide.match(new RegExp(`id: '${v.id}',[\\s\\S]*?disponibleAvec: '(\\w+)'`))
   if (m) T(`${v.id} : offre « ${v.offre} » = celle de l'article d'aide`, m[1] === v.offre, `article : ${m[1]}`)
 }
-for (const id of ['crm', 'assistant']) T(`${id} : annoncé Signature`, VIDEOS.find((v) => v.id === id)?.offre === 'signature')
+T('crm : annoncé Signature', VIDEOS.find((v) => v.id === 'crm')?.offre === 'signature')
+T('assistant : annoncé Studio (lib/plans.ts : assistant, 25/10)', VIDEOS.find((v) => v.id === 'assistant')?.offre === 'studio')
 T('inventaire : annoncé Studio (lib/plans.ts : inventaire.stock)', VIDEOS.find((v) => v.id === 'inventaire')?.offre === 'studio')
 // 15/10 (Benj) : « Ma plateforme » et « Mes chiffres » commencent avec Studio. L'offre annoncée par la vidéo est lue dans la MATRICE (lib/plans.ts :
 // BASE = toutes les offres, STUDIO = le tableau des capacités ajoutées par Studio), jamais retapée ici.
@@ -97,7 +99,7 @@ T('inventaire : annoncé Studio (lib/plans.ts : inventaire.stock)', VIDEOS.find(
   const base = bloc('BASE'), studio = bloc('STUDIO')
   for (const [id, cap] of [['plateforme', 'plateforme.gestion'], ['chiffres', 'chiffres']]) {
     const dans = (b) => b.includes("'" + cap + "'")
-    const attendu = dans(base) ? 'essentiel' : dans(studio) ? 'studio' : 'signature'
+    const attendu = dans(base) ? 'toutes' : dans(studio) ? 'studio' : 'signature'
     T(id + ' : annoncé ' + attendu + ' (lib/plans.ts : ' + cap + ')', VIDEOS.find((v) => v.id === id)?.offre === attendu, 'vidéo : ' + VIDEOS.find((v) => v.id === id)?.offre)
   }
 }
@@ -155,7 +157,7 @@ T('affiche (poster)', /poster=\{/.test(comp))
 T('étapes écrites en HTML sous la vidéo (liste ordonnée)', /<ol[^>]*aide-vid-etapes/.test(comp) && /v\.etapes\.map/.test(comp))
 T('la vidéo est décrite par ses étapes (aria-describedby)', /aria-describedby=\{`etapes-/.test(comp))
 T('lien vers l’écran concerné', /href=\{v\.route\}/.test(comp))
-T('offre affichée quand ce n’est pas Essentiel', /Disponible avec l’offre/.test(comp))
+T('offre affichée quand la fonctionnalité n’est pas dans toutes les offres', /Disponible avec l’offre/.test(comp))
 T('pas de lecture automatique', !/autoPlay|autoplay/i.test(comp))
 const page = lire('app/aide/page.tsx')
 T('la page /aide affiche les vidéos selon les drapeaux', /videosVisibles\(\)/.test(page) && /<VideoAide/.test(page))

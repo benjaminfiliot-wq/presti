@@ -22,7 +22,7 @@ const COLONNES_DEVIS = 'id, artisan_id, numero, client_nom, statut, date_emissio
 const COLONNES_DEMANDES = 'id, artisan_id, canal, statut, created_at, type_chantier, ville'
 
 export async function GET(req: Request) {
-  // 15/10 (Benj) : « Mes chiffres » commence avec Studio, pour tous les comptes — Essentiel et Essai reçoivent 403, sans aucune donnée.
+  // 15/10 (Benj) : « Mes chiffres » commence avec Studio, pour tous les comptes — l'Essai (et l'ancienne offre Essentiel) reçoivent 403, sans aucune donnée.
   const garde = await exigerCapacite(req, 'chiffres', 'L’écran « Mes chiffres »')
   if ('reponse' in garde) return garde.reponse
   const uid = garde.uid

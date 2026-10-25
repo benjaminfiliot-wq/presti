@@ -291,7 +291,7 @@ export const SPEC = {
   },
   regler_plateforme: {
     cat: 'confirmation', libelle: 'régler la plateforme',
-    desc: "Change des réglages de « Ma plateforme » (comme l'écran) : mode de réponse assistee (l'IA prépare, l'artisan valide) ou manuelle, pause des demandes (congés), plage horaire de réponse (heures 0-23, ou 24 h/24), ton (sobre, chaleureux, direct), nombre de réponses de l'IA par conversation, message d'accueil, nom de l'assistant. Le mode « auto » (l'IA répond seule aux clients) ne se règle PAS ici : l'artisan le choisit lui-même dans Ma plateforme. Une CARTE montre l'avant / après : rien ne change avant le clic de l'artisan (la page est publique). Annulable ensuite.",
+    desc: "Change des réglages de « Ma plateforme » (comme l'écran) : mode de réponse assistee (l'IA prépare, l'artisan valide) ou manuelle, pause des demandes (congés), plage horaire de réponse (heures 0-23, ou 24 h/24), ton (sobre, chaleureux, direct), nombre de réponses de l'IA par conversation, message d'accueil, nom de l'assistant. Le mode « auto » (l'IA répond seule aux clients, offre Signature) ne se règle PAS ici : l'artisan le choisit lui-même dans Ma plateforme. Une CARTE montre l'avant / après : rien ne change avant le clic de l'artisan (la page est publique). Annulable ensuite.",
     champs: {
       mode_reponse: { t: 'enum', d: 'assistee ou manuelle.', valeurs: ['assistee', 'manuelle'] },
       pause_demandes: { t: 'bool', d: 'Vrai : demandes en pause (rien n’est envoyé, tout est gardé) ; faux : rouvertes.' },

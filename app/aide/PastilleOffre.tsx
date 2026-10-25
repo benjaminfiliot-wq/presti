@@ -1,4 +1,4 @@
-// La pastille d'offre du centre d'aide : « Gratuit », « Essentiel », « Studio » ou « Signature ». Elle dit la PREMIÈRE offre qui inclut
+// La pastille d'offre du centre d'aide : « Gratuit », « Studio » ou « Signature » (l'Essentiel n'est plus vendu depuis le 25/10). Elle dit la PREMIÈRE offre qui inclut
 // la fonctionnalité (lib/aideAutomatique.ts, lue dans lib/plans.ts) ; les offres au-dessus l'incluent aussi, ce que dit son info-bulle.
 import { NOM_OFFRE, titrePastille, type OffreAide } from '@/lib/aideAutomatique'
 

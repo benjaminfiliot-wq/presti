@@ -34,7 +34,7 @@ async function compte(nom, avecFacture) {
   const id = u.user.id
   comptes.push({ id, email })
   const demande = new Date(Date.now() - (JOURS_DE_GRACE + 1) * 86400000).toISOString()
-  const { error: eA } = await admin.from('artisans').upsert({ id, email, nom: `Purge ${nom}`, metier: 'Plombier', slug: `purge-${nom}-${Date.now()}`, plan: 'essentiel',
+  const { error: eA } = await admin.from('artisans').upsert({ id, email, nom: `Purge ${nom}`, metier: 'Plombier', slug: `purge-${nom}-${Date.now()}`, plan: 'studio', // 25/10 : un abonné (Studio), plus d'Essentiel vendu
     tel_public: '06 00 00 00 00', email_public: email, bio: 'Bio personnelle', siret: '12345678900012', adresse: '1 rue du Test', code_postal: '17230', ville: 'Marans',
     site_active: true, plateforme_active: true, suppression_demandee_le: demande })
   if (eA) throw new Error(eA.message)
@@ -82,6 +82,7 @@ try {
   T('la date de demande est effacée (plus jamais repris par la purge)', aA?.suppression_demandee_le == null)
   T('téléphone, email public, bio : effacés', aA && aA.tel_public == null && aA.email_public == null && aA.bio == null)
   T('site et plateforme : coupés', aA && aA.site_active === false && aA.plateforme_active === false)
+  T('plus aucune offre : plan gratuit, 0 crédit (lib/purgeComptes.ts)', aA && aA.plan === 'gratuit' && aA.credits === 0, `${aA?.plan} / ${aA?.credits}`)
   T('identité d’émetteur conservée (nom, SIRET, adresse — mentions légales de la facture)', aA && aA.nom === 'Purge avec' && aA.siret === '12345678900012' && aA.adresse === '1 rue du Test')
   const { count: nl } = await admin.from('leads').select('id', { count: 'exact', head: true }).eq('artisan_id', avec.id)
   T('conversations effacées', nl === 0, `${nl} lead(s)`)

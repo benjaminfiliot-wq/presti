@@ -48,8 +48,8 @@ const NAV: { group: string; items: Nav[] }[] = [
     group: 'Outils IA',
     items: [
       { key: 'outils', label: 'Réponses instantanées', href: '/outils', offre: 'Studio', cap: 'plateforme.conversation', icon: ic(<><path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7z" /><path d="m9 12 2 2 4-4" /></>) },
-      // 016 A1/A2 — l'assistant de gestion (Signature). Drapeau baissé : l'entrée n'existe pas.
-      ...(enEssai('assistant') ? [{ key: 'assistant', essai: 'assistant' as Flag, offre: 'Signature', label: 'Assistant de gestion', href: '/assistant', icon: ic(<><path d="M4 5h16v10H9l-5 4z" /><path d="M8 9h8M8 12h5" /><path d="M17 3l.6 1.4L19 5l-1.4.6L17 7l-.6-1.4L15 5l1.4-.6z" /></>) }] : []),
+      // 016 A1/A2 — l'assistant de gestion (Studio et au-dessus depuis le 25/10, capacité `assistant`). Drapeau baissé : l'entrée n'existe pas.
+      ...(enEssai('assistant') ? [{ key: 'assistant', essai: 'assistant' as Flag, offre: 'Studio', cap: 'assistant' as Capacite, label: 'Assistant de gestion', href: '/assistant', icon: ic(<><path d="M4 5h16v10H9l-5 4z" /><path d="M8 9h8M8 12h5" /><path d="M17 3l.6 1.4L19 5l-1.4.6L17 7l-.6-1.4L15 5l1.4-.6z" /></>) }] : []),
     ],
   },
   // §4 B4 — le centre d'aide n'apparaît que lorsqu'il est fini (drapeau).
@@ -82,7 +82,7 @@ const PROFIL_MENU: { href: string; label: string; icone: string }[] = [
   { href: '/parametres?onglet=securite', label: 'Sécurité', icone: '🔒' },
 ]
 
-const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
+const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel (ancienne)', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
 
 function initials(nom: string | null) {
   if (!nom) return 'P'

@@ -35,7 +35,7 @@ export async function rendreCredit(uid: string, tier: Tier, isFounder: boolean, 
   // On rend EXACTEMENT ce qui a été débité, sans plafonner au forfait de l'offre.
   //
   // Le plafond détruisait les crédits offerts par la direction (revue du 07/09) : un artisan de
-  // l'offre Essentiel (80 crédits) à qui on en avait offert 200 tombait à 80 dès le premier appel IA
+  // l'ancienne offre Essentiel (80 crédits) à qui on en avait offert 200 tombait à 80 dès le premier appel IA
   // qui échouait. Le débit ayant déjà été borné par `consume_credit`, la restitution n'a rien à
   // borner — elle rend ce qui a été pris, ni plus, ni moins.
   const cost = typeof coutForce === 'number' && coutForce >= 0 ? Math.round(coutForce) : (CREDIT_COST[tier] ?? 1)

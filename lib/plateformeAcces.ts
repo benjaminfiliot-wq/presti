@@ -1,5 +1,5 @@
 // La plateforme (page de conversation publique, réponse préparée par l'IA, comptes clients, relances de conversation, nom de domaine
-// sur la page) commence avec Studio — décision de Benj du 15/10 : « Dans Essentiel il n'y a PAS de plateforme », pour TOUS les comptes.
+// sur la page) commence avec Studio — décision de Benj du 15/10, pour TOUS les comptes (l'Essai et l'ancienne offre Essentiel, plus vendue depuis le 25/10, ne l'ont pas).
 // Une seule décision, lue dans la matrice (lib/plans.ts), pour toutes les routes publiques et le passage quotidien des relances :
 // jamais un `plan === 'studio'` en dur. Pure : testée par scripts/ecrans-offre-qa.mjs.
 import { peut } from './plans.ts'

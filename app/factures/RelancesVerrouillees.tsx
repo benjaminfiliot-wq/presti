@@ -1,5 +1,5 @@
 // Le réglage des relances automatiques, VERROUILLÉ (15/10, Benj : « En Studio »). Montré aux comptes dont l'offre n'a pas la capacité
-// `factures.relances` (Essai, Essentiel) quand le serveur a répondu 403 { code: 'offre' } : il dit quoi, ce qui reste inclus, et mène à /abonnement.
+// `factures.relances` (Essai, ancienne offre Essentiel) quand le serveur a répondu 403 { code: 'offre' } : il dit quoi, ce qui reste inclus, et mène à /abonnement.
 // Même esprit que app/EcranVerrouille.tsx ; le serveur refuse de toute façon (route et passage quotidien) — ceci n'est que l'explication.
 import { PLANS, planConf, type PlanPayant } from '@/lib/plans'
 import './relances-auto.css'

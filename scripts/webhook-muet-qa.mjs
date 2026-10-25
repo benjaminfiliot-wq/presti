@@ -72,7 +72,7 @@
 //     plan + type commande_site → commande_site) ; uid = metadata.uid, sinon client_reference_id (uid vide mais
 //     client_reference_id rempli → abonnement) ; un plan non vide suffit, quel que soit le mode (paiement avec uid + plan →
 //     abonnement, comme aujourd'hui) ; uid sans plan, plan sans uid, chaînes vides, objet vide → orphelin. Les plans essayés
-//     sont de vrais identifiants (essentiel, studio, signature), pour ne pas condamner un aiguillage qui les validerait.
+//     sont de vrais identifiants (les offres vendues : studio, signature), pour ne pas condamner un aiguillage qui les validerait.
 //   - WM-1, « pure » : réponse synchrone et session non modifiée ; le paquet stripe lui-même reste permis (import de classe ou
 //     de type), seul lib/stripe.ts, qui fabrique un client avec la clé secrète, est exclu (par new Stripe().
 //   - WM-2, le montant se reconnaît en centimes (« 12345 ») ou en euros avec point ou virgule (« 123.45 », « 123,45 ») ; la
@@ -114,7 +114,8 @@ const TEMOIN_SOURCES = path.join(FIXTURES, 'temoins', JUGE)
 const TEMOIN_ATTENDUS = [`${AIGUILLAGE}.temoin`, `${ROUTE}.temoin`]
 const CHARGEUR = path.join(R, 'scripts', 'ts-loader.mjs')
 const VOIES = ['commande_site', 'abonnement', 'orphelin']
-const PLANS_REELS = ['essentiel', 'studio', 'signature']
+// 25/10 : /api/subscribe ne crée plus de session que pour les offres vendues (OFFRES de lib/plans.ts : studio, signature) ; l'Essentiel n'est plus vendu.
+const PLANS_REELS = ['studio', 'signature']
 
 const premiereLigne = (e) => String((e && e.message) || e).split('\n')[0].slice(0, 300)
 const court = (s, n = 160) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t }

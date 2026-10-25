@@ -25,12 +25,12 @@ type Scene = {
 
 const TOUTES_SCENES: Scene[] = [
   { heure: '22 h 14', titre: 'Un client écrit sur votre page', texte: 'Sur son téléphone, depuis votre lien. Il décrit ce qu’il veut, avec ses mots.', appareil: 'telephone', image: '/demo/scene-1.webp', focus: '50% 100%' },
-  { heure: '22 h 14', titre: 'L’assistant répond seul (formule Studio)', texte: 'Avec Studio, l’assistant peut répondre seul, jour et nuit.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
+  { heure: '22 h 14', titre: 'L’assistant répond seul (formule Signature)', texte: 'Avec Signature, l’assistant peut répondre seul, jour et nuit. Avec Studio, la réponse est prête et vous la validez d’un clic.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
   { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. D’un clic, le devis se chiffre sur vos prix, chaque ligne avec sa provenance. Avec Signature, une règle d’automatisation l’a déjà préparé.', appareil: 'ordinateur', image: '/demo/scene-3.webp', focus: '50% 0%' },
   { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone : acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.webp', focus: '50% 100%' },
-  // 15/10 — règle « vitrine » : l'assistant qui AGIT et le CRM (offre Signature) sont dans la démo, captures du vrai écran
+  // 15/10 — règle « vitrine » : l'assistant qui AGIT (Studio et au-dessus depuis le 25/10) et le CRM (offre Signature) sont dans la démo, captures du vrai écran
   // (scripts/demo-gestion-videos.mjs, compte de test jetable, aucune photo du portfolio CC BY-SA). Sous leurs drapeaux.
-  { heure: 'Avec Signature', titre: 'L’assistant fait le devis à votre place', texte: 'Vous tapez « Fais le devis de Mme Martin pour 12 m² de carrelage ». Il lit vos tarifs, prépare le brouillon ; ce qui part chez un client attend votre clic « Confirmer ».', appareil: 'ordinateur', image: '/demo/scene-6.webp', focus: '50% 0%' },
+  { heure: 'Dès Studio', titre: 'L’assistant fait le devis à votre place', texte: 'Vous tapez « Fais le devis de Mme Martin pour 12 m² de carrelage ». Il lit vos tarifs, prépare le brouillon ; ce qui part chez un client attend votre clic « Confirmer ».', appareil: 'ordinateur', image: '/demo/scene-6.webp', focus: '50% 0%' },
   { heure: 'Avec Signature', titre: 'Le CRM : l’atelier sur une carte', texte: 'Vos chantiers, votre équipe et les alertes (retards, livraisons, stock bas) au même endroit, en temps réel. Ici sur des données d’exemple fictives.', appareil: 'ordinateur', image: '/demo/scene-7.webp', focus: '50% 0%' },
   // 18/10 — CRM, lot 1 (plans/crm-idees-twenty-1810.md n°3 et n°2) : la frise du dossier et l'argent du chantier. Capture du vrai
   // écran en mode exemple (scripts/crm-captures.mjs, aucun compte, aucune donnée réelle), sous le drapeau du CRM.

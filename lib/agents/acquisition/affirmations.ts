@@ -14,13 +14,14 @@ export interface Affirmation {
 }
 
 /** Approuvées le 29/09/2026 par Claude Code, par délégation de Benj. Les deux phrases d'offre du Studio restent non approuvées (conditions d'ads_archive non lues). */
-export const AFFIRMATIONS_APPROUVEES: readonly string[] = Object.freeze(['prix_site', 'delai_48h', 'formules', 'reponse_prete', 'accuse_reception', 'domaine_a_votre_nom', 'offre_site', 'offre_delai'])
+// 25/10/2026 : « formules » et « reponse_prete » corrigées (deux offres ; Studio prépare, Signature envoie) : approbation retirée, à redonner.
+export const AFFIRMATIONS_APPROUVEES: readonly string[] = Object.freeze(['formules', 'reponse_prete', 'prix_site', 'delai_48h', 'accuse_reception', 'domaine_a_votre_nom', 'offre_site', 'offre_delai'])
 
 export const AFFIRMATIONS_PERMISES: readonly Affirmation[] = Object.freeze(([
   { id: 'prix_site', texte: '300 €, une fois, TVA non applicable', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts ; franchise en base, art. 293 B du CGI' },
   { id: 'delai_48h', texte: 'en ligne sous 48 h ouvrées après validation par Presti ; sur votre domaine dès que ses DNS sont posés', source: 'Plan 2026-09-24 §3.1 ; procédure de mise en ligne' },
-  { id: 'formules', texte: 'formules 29, 59 et 99 € par mois', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts' },
-  { id: 'reponse_prete', texte: "la réponse est prête en moins d'une minute : Presti la prépare, vous l'envoyez ; avec Studio ou Signature, l'assistant peut répondre seul", source: 'Plan 2026-09-24 §3.1 ; lib/ai.ts' },
+  { id: 'formules', texte: 'formules 59 et 99 € par mois', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts (deux offres depuis le 25/10)' },
+  { id: 'reponse_prete', texte: "la réponse est prête en moins d'une minute : avec Studio, Presti la prépare et vous la validez d'un clic ; avec Signature, l'assistant peut répondre seul", source: 'Plan 2026-09-24 §3.1 ; lib/ai.ts' },
   { id: 'accuse_reception', texte: "un accusé de réception part par e-mail quand le client laisse son adresse", source: 'Plan 2026-09-24 §3.1 ; formulaire du site' },
   { id: 'domaine_a_votre_nom', texte: 'le domaine est à votre nom, et vous le réservez vous-même avec notre guide', source: 'Plan 2026-09-24 §3.1 (D9)' },
   { id: 'offre_site', texte: 'Le site complet : 300 €, une fois, TVA non applicable.', source: 'Rectification du 24/09 §3.7' },

@@ -1,6 +1,6 @@
 // La plateforme commence avec Studio (Benj, 15/10/2026 : « Dans Essentiel il n'y a PAS de plateforme »). Ce juge rejoue la VRAIE route POST /api/leads
 // (transpilée et lancée contre un faux Supabase, comme FS-11 / FS-12 de scripts/formulaire-site-qa.mjs) pour les deux entrées publiques :
-//   • la PAGE DE CONVERSATION (le slug seul) : un compte Essai ou Essentiel reçoit 403 { code: 'plateforme' } — rien n'est enregistré (ni demande, ni message,
+//   • la PAGE DE CONVERSATION (le slug seul) : un compte Essai ou resté sur l’ancien Essentiel (hérité, plus vendu depuis le 25/10 : capacités de base) reçoit 403 { code: 'plateforme' } — rien n'est enregistré (ni demande, ni message,
 //     ni relance), aucun crédit n'est débité ; Studio (et au-dessus) la sert comme avant ;
 //   • le FORMULAIRE d'un site commandé (la commande renseignée) : le site vitrine n'est pas la plateforme, la demande continue d'arriver même sans elle — elle est
 //     gardée (une demande, un message), l'artisan est prévenu, mais ni IA, ni crédit, ni relance ne partent.

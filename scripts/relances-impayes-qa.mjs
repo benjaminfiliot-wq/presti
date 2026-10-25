@@ -4,6 +4,8 @@
 // son ménage doit être dans un finally). Il vérifie : opt-in, calendrier, arrêt (payée, annulée, avoir, réponse du client, arrêt manuel),
 // idempotence (rejeu, passages simultanés), jamais deux le même jour, plafond par compte, isolation entre comptes, pause générale,
 // échec d'envoi, et les sources (cron, route, migration, écran, offre, comparatif). Il s'attaque aussi lui-même (mutations).
+// 25/10 (Benj, deux offres) : SIGNATURE — la relance part seule (comptes de ce juge par défaut) ; STUDIO — rien ne part, la relance
+// est gardée « a_valider » (sujet, texte), l'artisan est notifié (espionné), et elle n'est pas reproposée tant qu'il ne l'a pas traitée.
 // Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/relances-impayes-qa.mjs
 import fs from 'node:fs'
 import path from 'node:path'
@@ -39,12 +41,12 @@ const facture = (art, o = {}) => ({
 })
 
 function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse = null, sansUnicite = false }) {
-  const journal = []; const arrets = new Map(); const lectures = { n: 0 }
+  const journal = []; const arrets = new Map(); const lectures = { n: 0 }; const notifs = []
   const reg = new Map(comptes.map((c) => [c.id, c]))
   const m = {
-    rows: journal, arretsBd: arrets, lectures, facturesBd: factures,
+    rows: journal, arretsBd: arrets, lectures, facturesBd: factures, notifs, casseAValider: false,
     async comptes() { lectures.n++; return comptes.filter((c) => c.reglages).map((c) => ({ artisan_id: c.id, reglages: c.reglages })) },
-    async artisan(id) { lectures.n++; if (casse === id) throw new Error('base en panne pour ce compte'); const c = reg.get(id); return c ? { id, nom: c.nom ?? 'Dupont Rénovation', email: c.email === undefined ? `${id}@artisan.test` : c.email, plan: c.plan ?? 'studio', is_founder: !!c.fondateur, leads_pause: !!c.pause } : null },
+    async artisan(id) { lectures.n++; if (casse === id) throw new Error('base en panne pour ce compte'); const c = reg.get(id); return c ? { id, nom: c.nom ?? 'Dupont Rénovation', email: c.email === undefined ? `${id}@artisan.test` : c.email, plan: c.plan ?? 'signature', is_founder: !!c.fondateur, leads_pause: !!c.pause } : null },
     async suspendu(id) { return !!reg.get(id)?.suspendu },
     async factures(art) {
       lectures.n++
@@ -64,6 +66,12 @@ function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse 
     },
     async confirmer(id, maintenant) { const e = journal.find((x) => x.id === id); e.statut = 'envoyee'; e.envoyee_le = maintenant.toISOString() },
     async relacher(id) { const i = journal.findIndex((x) => x.id === id && x.statut === 'prise'); if (i >= 0) journal.splice(i, 1) },
+    async aValider(id, c) {
+      if (m.casseAValider) throw new Error('contrainte de statut (0181 non appliquée)')
+      const e = journal.find((x) => x.id === id && x.statut === 'prise'); if (!e) throw new Error('préparation : la relance prise a disparu')
+      e.statut = 'a_valider'; e.sujet = c.sujet; e.texte = c.texte
+    },
+    async notifierPreparee(art, n) { notifs.push({ artisan_id: art.id, email: art.email, type: 'proposition', ...n }) },
     async arreter(art, fid, raison, maintenant) { if (!arrets.has(art)) arrets.set(art, new Map()); arrets.get(art).set(fid, { raison, le: maintenant.toISOString(), reprise_le: null }) },
     avantRelecture: null,
   }
@@ -287,9 +295,94 @@ const compte = (id, o = {}) => ({ id, reglages: REG(), ...o })
   const m = monde({ comptes: [compte('ess', { plan: 'essentiel' }), compte('ess2', { plan: 'gratuit' }), compte('stu', { plan: 'studio' }), compte('sig', { plan: 'signature' })], factures: ['ess', 'ess2', 'stu', 'sig'].map((id) => facture(id)) }); const e = espion()
   const b = await tour(m, e)
   const aQui = new Set(m.rows.map((r) => r.artisan_id))
-  ok(e.envois.length === 2 && aQui.has('stu') && aQui.has('sig') && !aQui.has('ess') && !aQui.has('ess2'), 'Essentiel et Essai : aucune relance d’impayé ne part ; Studio et Signature : oui')
-  ok(m.rows.every((r) => r.statut === 'envoyee'), 'les relances des comptes servis sont confirmées')
+  ok(aQui.has('stu') && aQui.has('sig') && !aQui.has('ess') && !aQui.has('ess2'), 'Essentiel et Essai : aucune relance d’impayé (ni envoyée ni préparée) ; Studio et Signature : servis')
+  // 25/10 (Benj, deux offres) : Signature — elle part seule ; Studio — elle est préparée, rien ne part.
+  ok(e.envois.length === 1 && e.envois[0].replyTo === 'sig@artisan.test', `seul le compte Signature envoie (reçu ${e.envois.length} envoi(s))`)
+  ok(m.rows.find((r) => r.artisan_id === 'sig')?.statut === 'envoyee' && m.rows.find((r) => r.artisan_id === 'stu')?.statut === 'a_valider', 'Signature : confirmée « envoyee » ; Studio : « a_valider »')
+  ok(b.envoyees === 1 && b.preparees === 1, `bilan : 1 envoyée, 1 préparée (reçu ${b.envoyees}/${b.preparees})`)
   ok(b.erreurs.length === 0, 'un compte non servi n’est pas une erreur')
+}
+
+// ─── 3 bis. Offre STUDIO (décision du 25/10) : tout est préparé, RIEN ne part sans la validation de l'artisan ────────────────
+ok(P.peut('studio', 'factures.relances') === true && P.peut('studio', 'factures.relances.auto') === false, 'Studio : relances préparées, pas automatiques')
+for (const id of ['signature', 'business']) ok(P.peut(id, 'factures.relances.auto') === true, `${id} : les relances d’impayés partent seules`)
+for (const id of ['gratuit', 'essentiel']) ok(P.peut(id, 'factures.relances.auto') === false, `${id} : pas de relance automatique`)
+{
+  const S = 'art-studio'
+  const f = facture(S, { date_echeance: il(3), numero: 'F-2026-0777', total_ttc: 1280, client_nom: 'Mme Martin', client_email: 'Martin@Example.com' })
+  const m = monde({ comptes: [compte(S, { plan: 'studio', nom: 'Martin Plomberie' })], factures: [f] }); const e = espion()
+  const b = await tour(m, e)
+  ok(e.envois.length === 0 && b.envoyees === 0, `Studio : AUCUNE relance envoyée au client (reçu ${e.envois.length})`)
+  ok(b.preparees === 1, `Studio : le bilan compte 1 relance préparée (reçu ${b.preparees})`)
+  const r = m.rows[0] ?? {}
+  ok(m.rows.length === 1 && r.statut === 'a_valider' && r.rang === 1 && r.jour === '2026-10-20' && !r.envoyee_le, 'Studio : une relance « a_valider » au journal, rang 1, jamais marquée envoyée')
+  ok(r.destinataire === 'martin@example.com', 'Studio : le destinataire est gardé (normalisé)')
+  ok(/F-2026-0777/.test(r.sujet ?? '') && /Martin Plomberie/.test(r.sujet ?? ''), 'Studio : le sujet est gardé (numéro, artisan)')
+  ok(/Mme Martin/.test(r.texte ?? '') && /F-2026-0777/.test(r.texte ?? '') && /1\s?280/.test(r.texte ?? ''), 'Studio : le texte est gardé, rempli (client, numéro, montant)')
+  ok((r.texte ?? '').endsWith(R.PIED_VALIDE) && !/automatiquement/.test(r.texte ?? ''), 'Studio : le message préparé ne prétend pas être « envoyé automatiquement »')
+  ok(R.lireRelanceRetouchee(r.sujet, r.texte).ok === true, 'Studio : le message préparé passe la validation de la route (envoyable tel quel)')
+  // La notification à l'artisan : espionnée, type « proposition », sujet imposé.
+  ok(m.notifs.length === 1, `Studio : l’artisan est notifié une fois (reçu ${m.notifs.length})`)
+  const n = m.notifs[0] ?? {}
+  ok(n.artisan_id === S && n.email === `${S}@artisan.test` && n.type === 'proposition', 'Studio : notification à l’artisan du compte, type « proposition »')
+  ok(n.sujet === 'Relance de facture prête à valider — F-2026-0777', `Studio : sujet de la notification (reçu « ${n.sujet} »)`)
+  ok(/Factures/.test(n.texte ?? '') && /valid/.test(n.texte ?? ''), 'Studio : la notification invite à valider dans Factures')
+  ok(R.etatPourEcran({ facture: f, reglages: REG(), journal: m.rows, arret: null, maintenant: MAINTENANT }) === 'Relance 1 prête à valider (préparée le 20/10/2026)', 'Studio : l’écran dit « Relance 1 prête à valider »')
+  // Pas de reproposition : ni le même jour, ni plus tard, ni la suivante (J+10) tant qu'elle attend.
+  const b2 = await tour(m, e); ok(b2.preparees === 0 && m.rows.length === 1 && m.notifs.length === 1 && e.envois.length === 0, 'Studio : rejeu le même jour — rien de plus')
+  const b3 = await tour(m, e, { maintenant: plus(3) }); ok(b3.preparees === 0 && m.rows.length === 1 && m.notifs.length === 1, 'Studio : 3 jours plus tard — pas de reproposition')
+  f.date_echeance = il(10)
+  const b4 = await tour(m, e, { maintenant: plus(3) }); ok(b4.preparees === 0 && m.rows.length === 1 && e.envois.length === 0, 'Studio : J+10 atteint — la relance 2 attend que la 1 soit traitée')
+  // L'artisan l'envoie (simulé : ce que fait la route a-valider) → la suivante vient à son heure, préparée à son tour.
+  m.rows[0].statut = 'envoyee'; m.rows[0].envoyee_le = `${il(0)}T09:00:00Z`; m.rows[0].jour = il(0)
+  const b5 = await tour(m, e, { maintenant: plus(7) }); ok(b5.preparees === 1 && m.rows.length === 2 && m.rows[1].rang === 2 && m.rows[1].statut === 'a_valider' && e.envois.length === 0, 'Studio : après validation de la 1, la 2 est PRÉPARÉE (pas envoyée) à son heure')
+  // L'artisan l'écarte → son rang n'est pas reproposé ; la 3 viendra à son heure.
+  m.rows[1].statut = 'rejetee'
+  const b6 = await tour(m, e, { maintenant: plus(9) }); ok(b6.preparees === 0 && m.rows.length === 2, 'Studio : une relance écartée n’est pas reproposée')
+  f.date_echeance = il(21)
+  const b7 = await tour(m, e, { maintenant: plus(9) }); ok(b7.preparees === 1 && m.rows.at(-1).rang === 3 && m.rows.at(-1).statut === 'a_valider' && e.envois.length === 0, 'Studio : après un écart, la relance suivante est préparée à son heure')
+}
+{ // Studio : la décision pure — une relance à valider bloque la facture ; une écartée occupe son rang
+  const f = facture(A, { date_echeance: il(10) })
+  rienPour(f, 'a_valider', { journal: [{ facture_id: f.id, rang: 1, jour: il(7), statut: 'a_valider' }] })
+  rienPour(f, 'a_valider', { journal: [{ facture_id: f.id, rang: 1, jour: il(20), statut: 'a_valider' }] })
+  const d = dec(f, { journal: [{ facture_id: f.id, rang: 1, jour: il(7), statut: 'rejetee' }] }); ok(d.action === 'envoyer' && d.rang === 2, 'rang 1 écarté : la relance 2 vient à son heure')
+  rienPour({ ...f, statut: 'payee' }, 'payee', { journal: [{ facture_id: f.id, rang: 1, jour: il(7), statut: 'a_valider' }] })
+  const autre = facture(A, { date_echeance: il(3) }); const d2 = dec(autre, { journal: [{ facture_id: f.id, rang: 1, jour: il(7), statut: 'a_valider' }] }); ok(d2.action === 'envoyer', 'une relance à valider ne bloque que SA facture')
+  ok(!!R.LIBELLE_RAISON.a_valider && /validation/.test(R.LIBELLE_RAISON.a_valider), 'la raison « a_valider » a son libellé')
+}
+{ // Studio : sans 0181 (la base refuse « a_valider ») — la prise est rendue, rien ne part, l'erreur est notée
+  const S = 'art-studio2'
+  const m = monde({ comptes: [compte(S, { plan: 'studio' })], factures: [facture(S)] }); m.casseAValider = true; const e = espion()
+  const b = await tour(m, e)
+  ok(e.envois.length === 0 && m.rows.length === 0 && b.preparees === 0 && m.notifs.length === 0, 'Studio sans 0181 : rien ne part, rien n’est gardé, personne n’est notifié (fail-closed)')
+  ok(b.erreurs.some((x) => /non préparée/.test(x)), 'Studio sans 0181 : l’erreur est notée au bilan')
+  m.casseAValider = false; const b2 = await tour(m, e); ok(b2.preparees === 1 && e.envois.length === 0, 'Studio : 0181 posée, la relance est préparée au passage suivant')
+}
+{ // Studio : plafond par compte et par jour — les préparées comptent
+  const S = 'art-studio3'
+  const fs15 = Array.from({ length: 15 }, (_, i) => facture(S, { client_email: `s${i}@example.com` }))
+  const m = monde({ comptes: [compte(S, { plan: 'studio' })], factures: fs15 }); const e = espion()
+  const b = await tour(m, e); ok(b.preparees === R.MAX_PAR_COMPTE_JOUR && e.envois.length === 0 && m.notifs.length === R.MAX_PAR_COMPTE_JOUR, `Studio : au plus ${R.MAX_PAR_COMPTE_JOUR} relances préparées par jour, aucune envoyée`)
+}
+{ // Studio : la pause générale arrête aussi la préparation ; Signature reste inchangée dans le même passage
+  const S = 'art-studio4'
+  const m = monde({ comptes: [compte(S, { plan: 'studio' })], factures: [facture(S)] }); const e = espion()
+  const b = await tour(m, e, { sortiePermise: async () => false }); ok(b.interrompue && m.rows.length === 0 && m.notifs.length === 0, 'Studio : sous pause générale, rien n’est préparé ni notifié')
+  const m2 = monde({ comptes: [compte('s5', { plan: 'studio' }), compte('g5', { plan: 'signature' })], factures: [facture('s5'), facture('g5')] }); const e2 = espion()
+  const b2 = await tour(m2, e2); ok(b2.envoyees === 1 && b2.preparees === 1 && e2.envois.every((x) => x.replyTo === 'g5@artisan.test') && m2.notifs.every((x) => x.artisan_id === 's5'), 'même passage : Signature envoie, Studio prépare — chacun pour son compte')
+}
+{ // la validation d'une relance retouchée (règle partagée par l'écran et la route)
+  const L = R.lireRelanceRetouchee
+  const corps = 'Bonjour, la facture F-1 reste à régler. Merci.'
+  ok(L('Rappel — facture F-1', corps).ok, 'retouche valable acceptée')
+  ok(!L('', corps).ok, 'sujet vide refusé')
+  const inj = L('Rappel\r\nBcc: x@y.z', corps); ok(inj.ok && !/[\r\n]/.test(inj.sujet), 'sujet : retours à la ligne retirés (pas d’en-tête injecté)')
+  ok(!L('x'.repeat(151), corps).ok, 'sujet trop long refusé')
+  ok(!L('Rappel', 'Payez.').ok, 'message trop court refusé')
+  ok(!L('Rappel', 'x'.repeat(R.MESSAGE_VALIDE_MAX + 1)).ok, 'message trop long refusé')
+  ok(!L('Rappel', 'Bonjour, payez sur https://exemple.com/payer merci beaucoup.').ok, 'lien refusé dans le message')
+  ok(!L(42, null).ok, 'types illisibles refusés')
 }
 ok(reseau === 0, `aucune tentative réseau pendant les tests (${reseau})`)
 
@@ -304,7 +397,8 @@ ok(P.peut('essentiel', 'relances') === false && P.peut('gratuit', 'relances') ==
 const ligne = P.GRILLE_COMPLETE.find((l) => l.capacites.includes('factures.relances'))
 ok(!!ligne && ligne.flag === 'relancesImpayes' && /impayées/.test(ligne.label), 'la grille des offres annonce les relances d’impayés (une ligne, drapeau relancesImpayes)')
 ok(P.GRILLE.some((l) => l === ligne), 'la ligne est visible drapeau levé')
-ok(!P.pointsForts('essentiel').some((t) => /factures impayées/.test(t)) && P.pointsForts('studio').some((t) => /factures impayées/.test(t)) && P.pointsForts('signature').some((t) => /factures impayées/.test(t)), 'la ligne est dans les points forts de Studio et de Signature, pas d’Essentiel')
+// 25/10 : l'Essentiel n'est plus vendu — pointsForts ne prend plus que 'studio' | 'signature' (PlanPayant) ; la ligne dit la vérité de chaque offre.
+ok(P.pointsForts('studio').some((t) => /factures impayées/.test(t) && /vous les validez/.test(t)) && P.pointsForts('signature').some((t) => /factures impayées/.test(t) && /partent seules/.test(t)), 'la ligne est dans les points forts de Studio (préparées, vous validez) et de Signature (partent seules)')
 
 const cron = lire('app/api/cron/relances/route.ts')
 ok(/actif\('relancesImpayes'\)/.test(cron) && /tourRelancesImpayes\(/.test(cron), 'le cron appelle le passage derrière le drapeau')
@@ -333,7 +427,31 @@ ok((route.match(/session.uid/g) ?? []).length >= 10, 'route : chaque lecture/éc
 ok(/eq\('artisan_id', session\.uid\)/.test(route.slice(route.indexOf('export async function POST'))), 'route : la facture visée doit être celle du compte')
 ok(!/body\.artisan_id|b\.artisan_id|req\.json\(\)\)\.artisan/.test(route), 'route : jamais un identifiant de compte venu de la requête')
 
+// 25/10 — offre Studio : le passage choisit sur la capacité, la migration 0181 élargit le journal, la route a-valider envoie ou écarte.
+ok(/peut\(art\.plan, 'factures\.relances\.auto'\)/.test(tourSrc) && /if \(!auto\)/.test(tourSrc), 'le passage distingue Signature (auto) et Studio (à valider) sur la capacité factures.relances.auto')
+const mig181 = fs.readdirSync(path.join(RACINE, 'supabase/migrations')).filter((x) => x.startsWith('0181_'))
+ok(mig181.length === 1 && mig181[0] === '0181_relances_impayes_a_valider.sql', `une seule migration 0181 (${mig181.join(', ')})`)
+ok(fs.existsSync(path.join(RACINE, 'supabase/migrations/_A_COLLER_sql_editor_0181_NU.sql')), 'migration 0181 : son jumeau à coller existe')
+{
+  const s181 = lire('supabase/migrations/0181_relances_impayes_a_valider.sql').replace(/--.*$/gm, '')
+  ok(/add column if not exists sujet text;/.test(s181) && /add column if not exists texte text;/.test(s181), 'migration 0181 : colonnes sujet et texte, nullables')
+  ok(/check \(statut in \('prise', 'envoyee', 'a_valider', 'rejetee'\)\)/.test(s181), 'migration 0181 : statuts prise, envoyee, a_valider, rejetee')
+  ok(/statut <> 'a_valider' or \(sujet is not null and texte is not null\)/.test(s181), 'migration 0181 : une relance à valider porte son sujet et son texte')
+  ok(!/drop table|truncate|delete from|grant|to anon|disable row level security/i.test(s181), 'migration 0181 : additive, aucun droit ajouté, RLS intacte')
+}
+const routeAV = lire('app/api/factures/relances-auto/a-valider/route.ts')
+ok(/if \(ferme\(\)\) return NextResponse\.json\(\{ error: 'Introuvable' \}, \{ status: 404 \}\)/.test(routeAV) && /actif\('relancesImpayes'\)/.test(routeAV), 'route a-valider : 404 drapeau baissé')
+ok(/authArtisan\(req\)/.test(routeAV) && (routeAV.match(/eq\('artisan_id', session\.uid\)/g) ?? []).length >= 8, 'route a-valider : session exigée, chaque lecture/écriture filtrée sur le compte de la session')
+ok(!/b\??\.artisan_id|body\.artisan_id/.test(routeAV), 'route a-valider : jamais un identifiant de compte venu de la requête')
+ok(/update\(\{ statut: 'rejetee' \}\)[^\n]*eq\('statut', 'a_valider'\)/.test(routeAV), 'route a-valider : écarter = a_valider → rejetee, conditionnel')
+ok(/update\(\{ statut: 'prise', jour: aujourdhui/.test(routeAV) && routeAV.indexOf("statut: 'prise', jour") < routeAV.indexOf('await sendEmail('), 'route a-valider : la relance est PRISE (conditionnellement) AVANT l’envoi')
+ok(/update\(\{ statut: 'a_valider', jour: ligne\.jour \}\)/.test(routeAV) && /update\(\{ statut: 'envoyee', envoyee_le/.test(routeAV), 'route a-valider : envoi refusé → rendue à valider ; envoi réussi → envoyee')
+ok(/fromName: art\.data\.nom/.test(routeAV) && /replyTo: art\.data\.email/.test(routeAV) && /transactionnel: true/.test(routeAV), 'route a-valider : au nom de l’artisan, réponse vers lui')
+ok(/f\.data\.statut !== 'emise'/.test(routeAV) && /relances_impayes_arrets/.test(routeAV) && /lireRelanceRetouchee/.test(routeAV), 'route a-valider : facture relue (toujours impayée, non arrêtée), retouche validée')
+
 const ecran = lire('app/factures/RelancesAuto.tsx'); const page = lire('app/factures/page.tsx')
+ok(/À valider/.test(ecran) && />\{enCours === 'envoyer' \? 'Envoi…' : 'Envoyer'\}</.test(ecran) && /'Écarter'/.test(ecran) && /relances-auto\/a-valider/.test(ecran), 'écran : section « À valider » avec Envoyer et Écarter')
+ok(/préparées automatiquement/.test(ecran) && /rien ne part sans vous/.test(ecran) && /partent seules/.test(ecran) && /donnees\.auto === true/.test(ecran), 'écran : Studio « préparées automatiquement, rien ne part sans vous » ; Signature « partent seules » ; Studio par défaut')
 ok(/Relancer automatiquement mes factures échues/.test(ecran), 'écran : « Relancer automatiquement mes factures échues »')
 ok(/checked=\{actif\}/.test(ecran) && /useState\(donnees\.reglages\.actif\)/.test(ecran), 'écran : la case reflète le réglage enregistré (désactivé par défaut)')
 ok(/Aperçu/.test(ecran) && /textarea/.test(ecran) && /Rétablir le texte par défaut/.test(ecran), 'écran : texte prévisualisable, modifiable, rétablissable')

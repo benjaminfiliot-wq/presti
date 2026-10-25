@@ -4,7 +4,7 @@
       "id": "dashboard",
       "titre": "Tableau de bord",
       "route": "/dashboard",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Voir d’un coup d’œil les demandes reçues, copier votre lien de contact et suivre chaque demande.",
       "etapes": [
         "En haut : vos demandes reçues, celles à traiter, les chantiers gagnés.",
@@ -23,7 +23,7 @@
           "Cliquez sur Détail pour lire le message du client et la réponse envoyée.",
           "Faites avancer le statut au fil du suivi : nouveau, répondu, gagné ou perdu."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -186,7 +186,7 @@
       "id": "devis",
       "titre": "Devis",
       "route": "/devis",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Retrouver vos devis, en ouvrir un, le modifier et l’envoyer à votre client.",
       "etapes": [
         "Tous vos devis sont ici. Filtrez par statut : brouillons, envoyés, acceptés.",
@@ -205,7 +205,7 @@
           "Le bouton Chiffrer avec l’IA propose des lignes à partir de la description du chantier.",
           "Enregistrez, puis envoyez le devis à votre client ou téléchargez le PDF."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -249,7 +249,7 @@
       "id": "factures",
       "titre": "Factures",
       "route": "/factures",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Suivre vos factures, les marquer payées et émettre un avoir en cas d’erreur.",
       "etapes": [
         "Vos factures sont ici ; elles se créent depuis un devis accepté.",
@@ -268,7 +268,7 @@
           "Le client a payé ? Cliquez sur Marquer payée.",
           "Une erreur ? Émettez un avoir : la facture d’origine n’est jamais supprimée."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -446,7 +446,7 @@
       "id": "tarifs",
       "titre": "Mes tarifs",
       "route": "/tarifs",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Enregistrer vos prix pour que vos devis les reprennent tels quels.",
       "etapes": [
         "Vos prix sont la base de vos devis : l’IA les reprend tels quels.",
@@ -465,7 +465,7 @@
           "Retrouvez un prix avec le champ de recherche.",
           "Un prix n’est plus bon ? Retirez-le avec la croix."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -572,7 +572,7 @@
       "id": "profil",
       "titre": "Ma page",
       "route": "/profil",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Compléter la page qui présente votre entreprise à vos clients.",
       "etapes": [
         "Votre lien à partager : « Copier », puis collez-le dans votre bio, votre fiche Google ou votre signature.",
@@ -591,7 +591,7 @@
           "Ajoutez vos prestations avec Ajouter une prestation.",
           "Cliquez sur Enregistrer. Voir ma page montre le résultat, tel que vos clients le voient."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -635,7 +635,7 @@
       "id": "site",
       "titre": "Commander mon site",
       "route": "/site/commander",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Commander votre site vitrine en 6 étapes, du nom de domaine jusqu’au paiement.",
       "etapes": [
         "Commander mon site : un parcours en 6 étapes, du nom de domaine jusqu’au paiement.",
@@ -763,11 +763,11 @@
       "id": "abonnement",
       "titre": "Abonnement",
       "route": "/abonnement",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Voir votre formule et vos crédits, comparer les offres, essayer sans carte.",
       "etapes": [
         "En haut : votre formule actuelle et les crédits qui vous restent chaque mois.",
-        "Comparez les trois formules : Essentiel, Studio, Signature.",
+        "Comparez les deux formules : Studio et Signature.",
         "Chaque carte liste ce que la formule inclut.",
         "Pour changer, choisissez l’essai gratuit de la formule voulue : sans carte."
       ],
@@ -776,11 +776,11 @@
         "intro": "L’abonnement : votre formule, vos crédits, et les offres.",
         "etapes": [
           "En haut : votre formule actuelle et les crédits qui vous restent chaque mois.",
-          "Comparez les trois formules : Essentiel, Studio et Signature.",
+          "Comparez les deux formules : Studio et Signature.",
           "Chaque carte liste ce que la formule inclut.",
           "Pour changer, choisissez l’essai gratuit de la formule voulue, sans carte bancaire."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
@@ -819,7 +819,7 @@
       "id": "assistant",
       "titre": "Assistant de gestion",
       "route": "/assistant",
-      "offre": "signature",
+      "offre": "studio",
       "resume": "Demander à l’assistant de préparer un devis, une relance ou une mise à jour du stock.",
       "etapes": [
         "Dites ce qu’il y a à faire, comme à un collègue : devis, relance, stock, tarifs…",
@@ -839,7 +839,7 @@
           "Il vous répond avec ce qu’il a préparé. Rien ne part chez un client sans votre clic sur Confirmer.",
           "Cliquez sur Ouvrir le devis pour le relire, le corriger, puis l’envoyer."
         ],
-        "fin": "À vous de jouer ! Réservé à l’offre Signature."
+        "fin": "À vous de jouer ! Disponible dès l’offre Studio."
       },
       "sousTitres": [
         {
@@ -883,7 +883,7 @@
       "id": "parametres",
       "titre": "Paramètres",
       "route": "/parametres",
-      "offre": "essentiel",
+      "offre": "toutes",
       "resume": "Régler votre compte : profil, mentions légales, notifications, sécurité et données.",
       "etapes": [
         "Les Paramètres regroupent tout le compte, rangé par thème dans le menu de gauche.",
@@ -902,7 +902,7 @@
           "Notifications et sécurité : choisissez comment être prévenu, et protégez votre compte.",
           "Données et confidentialité : téléchargez une archive de vos données quand vous voulez."
         ],
-        "fin": "À vous de jouer ! Disponible dès l’offre Essentiel."
+        "fin": "À vous de jouer ! Disponible dans toutes les offres."
       },
       "sousTitres": [
         {
