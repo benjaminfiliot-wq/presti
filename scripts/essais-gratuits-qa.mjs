@@ -1,4 +1,4 @@
-// scripts/essais-gratuits-qa.mjs — le juge de l'ESSAI GRATUIT SANS CARTE (décision de Benj, 13/10/2026) : deux semaines de Studio,
+// scripts/essais-gratuits-qa.mjs — le juge de l'ESSAI GRATUIT SANS CARTE (décision de Benj, 13/10/2026 ; Studio ramené à une semaine le 26/10) : une semaine de Studio,
 // trois de Signature, sans saisir de carte, une seule fois par compte. Depuis le 25/10 l'Essentiel n'est plus vendu : son
 // identifiant reste reconnu (compte hérité) mais n'a ni essai ni Checkout — /api/subscribe le refuse comme une offre inconnue.
 //
@@ -7,11 +7,11 @@
 // base ni Stripe : les routes sont EXÉCUTÉES pour de vrai, avec des doublures de lib/supabaseAdmin, lib/stripe, lib/email,
 // lib/alertes, lib/authArtisan et next/server (fetch est remplacé par un piège ; la clé secrète Stripe est retirée de l'environnement).
 //
-//   EG-1  Règles pures : durées 14 / 21 ; crédits de l'essai (au prorata sur 30 jours, plafonnés à 150 : 116 / 150) ; aucun essai
+//   EG-1  Règles pures : durées 7 / 21 (Studio raccourci le 26/10) ; crédits de l'essai (au prorata sur 30 jours, plafonnés à 150 : 58 / 150) ; aucun essai
 //         pour l'Essentiel hérité ;
 //         normalisation de l'e-mail (« +étiquette », points Gmail) ; table de décision « un seul essai » ; paramètres du Checkout
 //         par offre ; reconnaissance d'une fin d'essai non payée.
-//   EG-2  Le Checkout (POST /api/subscribe, exécuté) : par offre, trial_period_days = 14 / 21, payment_method_collection =
+//   EG-2  Le Checkout (POST /api/subscribe, exécuté) : par offre, trial_period_days = 7 / 21, payment_method_collection =
 //         if_required, trial_settings.end_behavior.missing_payment_method = cancel, essai_jours en métadonnée ; AUCUN de ces champs
 //         quand le compte a déjà eu son essai (par compte, par e-mail normalisé, par client Stripe, par autre client Stripe de même
 //         e-mail) ou quand Stripe est injoignable ; registre absent (migration 0156 pas appliquée) → l'essai reste permis si Stripe
@@ -178,7 +178,7 @@ export async function resolve(spec, ctx, next) {
   // ── l'oracle : la décision de Benj, écrite ici une fois, indépendamment du code jugé ──
   // 25/10 (Benj) : deux offres vendues. L'Essentiel n'est plus dans l'oracle : il n'a plus d'essai (EG-1b/EG-1e) ni de Checkout (EG-2e).
   const OFFRES = [
-    { id: 'studio', jours: 14, credits: 116, prixCentimes: 5900, forfait: 250 },
+    { id: 'studio', jours: 7, credits: 58, prixCentimes: 5900, forfait: 250 },
     { id: 'signature', jours: 21, credits: 150, prixCentimes: 9900, forfait: 600 },
   ]
   const [STUDIO, SIGNATURE] = OFFRES
@@ -193,7 +193,7 @@ export async function resolve(spec, ctx, next) {
   // ══ EG-1 — règles pures ══
   const j = (x) => JSON.stringify(x)
   // 25/10 (Benj) : deux offres ; l'Essentiel n'a plus d'essai (il n'est plus vendu).
-  T('EG-1a', j(plans.ESSAI_JOURS) === j({ studio: 14, signature: 21 }), `ESSAI_JOURS = ${j(plans.ESSAI_JOURS)}`)
+  T('EG-1a', j(plans.ESSAI_JOURS) === j({ studio: 7, signature: 21 }), `ESSAI_JOURS = ${j(plans.ESSAI_JOURS)}`)
   for (const o of OFFRES) {
     T(`EG-1b ${o.id}`, pur.creditsEssai(o.id) === o.credits, `creditsEssai(${o.id}) = ${pur.creditsEssai(o.id)}, attendu ${o.credits}`)
     T(`EG-1b ${o.id} sous le forfait`, pur.creditsEssai(o.id) < o.forfait, 'un essai ne doit jamais servir le forfait entier')
@@ -217,7 +217,7 @@ export async function resolve(spec, ctx, next) {
   const T0 = 1_800_000_000
   T('EG-1f fin d’essai non payée', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 10 }, 0) === true && pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 - 86_400 }, 0) === true, 'annulé à la fin ou pendant l’essai')
   T('EG-1f abonnement payé puis résilié', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 20 * 86_400 }, 0) === false && pur.finDEssaiSansPaiement({ ended_at: T0 }, 0) === false, 'un abonnement payé garde ses crédits')
-  T('EG-1g session forgée', pur.joursEssaiDeSession({ essai_jours: '14' }, 'studio') === 14 && pur.joursEssaiDeSession({ essai_jours: '60' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '14' }, 'signature') === 0 && pur.joursEssaiDeSession(undefined, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '-14' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '7' }, 'essentiel') === 0)
+  T('EG-1g session forgée', pur.joursEssaiDeSession({ essai_jours: '7' }, 'studio') === 7 && pur.joursEssaiDeSession({ essai_jours: '14' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '60' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '14' }, 'signature') === 0 && pur.joursEssaiDeSession(undefined, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '-14' }, 'studio') === 0 && pur.joursEssaiDeSession({ essai_jours: '7' }, 'essentiel') === 0)
   T('EG-1h crédits après essai perdu', pur.creditsApresEssaiPerdu(18) === 3 && pur.creditsApresEssaiPerdu(2) === 2 && pur.creditsApresEssaiPerdu(null) === 0)
   T('EG-1i statuts', pur.abonnementFerme('canceled') && pur.abonnementFerme('incomplete_expired') && !pur.abonnementFerme('trialing') && !pur.abonnementFerme('active') && pur.essaiDevenuPayant('trialing', 'active') && !pur.essaiDevenuPayant('past_due', 'active'))
   T('EG-1j empreinte', serveur.empreinteEmail('Jean.Dupont+Pub@gmail.com') === sha('jeandupont@gmail.com') && !serveur.empreinteEmail('x@y.fr').includes('@'), 'l’empreinte suit la recette de la migration 0156 et ne contient pas l’adresse')
@@ -282,7 +282,7 @@ export async function resolve(spec, ctx, next) {
   {
     const e = neuf({ clientsParEmail: { 'neuf@exemple.fr': [{ id: 'cus_vide' }] }, abosParClient: {} })
     await poster('studio')
-    T('EG-2b un client Stripe sans abonnement n’ôte pas l’essai', e.sessions[0]?.subscription_data?.trial_period_days === 14, j(e.sessions[0]?.subscription_data))
+    T('EG-2b un client Stripe sans abonnement n’ôte pas l’essai', e.sessions[0]?.subscription_data?.trial_period_days === 7, j(e.sessions[0]?.subscription_data))
   }
   {
     const e = neuf({ stripeEchec: true })
@@ -292,7 +292,7 @@ export async function resolve(spec, ctx, next) {
   {
     const e = neuf({ registreAbsent: true })
     const r = await poster('studio')
-    T('EG-2d registre absent (0156 non appliquée) : l’essai reste permis', r.status === 200 && e.sessions[0]?.subscription_data?.trial_period_days === 14, j(e.sessions[0]?.subscription_data))
+    T('EG-2d registre absent (0156 non appliquée) : l’essai reste permis', r.status === 200 && e.sessions[0]?.subscription_data?.trial_period_days === 7, j(e.sessions[0]?.subscription_data))
     const e2 = neuf({ registreAbsent: true, clientsParEmail: { 'neuf@exemple.fr': [{ id: 'cus_x' }] }, abosParClient: { cus_x: [{ id: 's', status: 'canceled' }] } })
     await poster('studio')
     T('EG-2d registre absent : Stripe garde la mémoire', sansEssai(e2.sessions[0]) && e2.sessions.length === 1)
@@ -536,7 +536,7 @@ console.log("\n— EG-6 : l'essai et les écrans « Ma plateforme » / « Mes ch
 if (!args.includes('--sans-mutations')) {
   console.log('\n— EG-5 : 13 mutations, chacune doit être vue —')
   const MUTATIONS = [
-    { nom: 'la durée de Studio passe de 14 à 15 jours', fichier: 'lib/plans.ts', de: 'studio: 14,', vers: 'studio: 15,', attendu: 'EG-1a' },
+    { nom: 'la durée de Studio passe de 7 à 8 jours', fichier: 'lib/plans.ts', de: 'studio: 7,', vers: 'studio: 8,', attendu: 'EG-1a' },
     { nom: 'le mode « payer » est ignoré (l’essai part quand même)', fichier: 'app/api/subscribe/route.ts', de: 'decision.essai && !payerTout', vers: 'decision.essai', attendu: 'EG-2d' },
     { nom: 'le Checkout redemande la carte', fichier: 'lib/essaiGratuit.ts', de: "payment_method_collection: 'if_required',\n    jours,", vers: "payment_method_collection: 'always',\n    jours,", attendu: 'EG-2a' },
     { nom: 'sans carte à la fin, Stripe ne résilie plus', fichier: 'lib/essaiGratuit.ts', de: "trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } },\n  }", vers: "trial_settings: { end_behavior: { missing_payment_method: 'create_invoice' } } },\n  }", attendu: 'EG-2a' },

@@ -26,7 +26,7 @@ export default function CGU() {
           dans CGU_VERSION et l'écrit dans les métadonnées du compte. Si les deux divergent, on ne
           sait plus quel texte un abonné a accepté — la preuve du consentement tombe. Toute
           modification de fond ici doit donc être suivie de la même date dans app/signup/page.tsx. */}
-      <div className="legal-updated">Dernière mise à jour : 25 octobre 2026</div>
+      <div className="legal-updated">Dernière mise à jour : 26 octobre 2026</div>
 
       <p>Les présentes conditions (les « Conditions ») régissent l’accès et l’utilisation du service <strong>Presti</strong>, édité par Benjamin Filiot (voir <a href="/mentions-legales">Mentions légales</a>). En créant un compte, vous acceptez ces Conditions.</p>
 

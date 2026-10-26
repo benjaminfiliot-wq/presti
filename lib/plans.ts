@@ -102,14 +102,14 @@ export const PLANS: Record<PlanId, Plan> = {
 }
 
 // ─── L'essai gratuit SANS CARTE des abonnements payants (décision de Benj, 13/10/2026) ──────────────
-// Deux semaines de Studio, trois de Signature, sans saisir de carte (l'Essentiel n'est plus vendu depuis le 25/10). UNE SEULE
+// Une semaine de Studio (décision de Benj, 26/10/2026 ; deux semaines avant), trois de Signature, sans saisir de carte (l'Essentiel n'est plus vendu depuis le 25/10). UNE SEULE
 // constante pour les durées : le Checkout (app/api/subscribe), le webhook, les textes et le juge (scripts/essais-gratuits-qa.mjs) la lisent.
 // Règles : lib/essaiGratuit.ts (pures) et lib/essaiGratuitServeur.ts (base + Stripe).
-export const ESSAI_JOURS: Record<PlanPayant, number> = { studio: 14, signature: 21 }
+export const ESSAI_JOURS: Record<PlanPayant, number> = { studio: 7, signature: 21 }
 
 /** Plafond de crédits d'un essai, tous plans confondus. Sans carte, rien n'engage l'artisan : le coût IA d'un essai doit rester
  *  borné. La règle (lib/essaiGratuit.ts creditsEssai) : crédits du mois au prorata des jours d'essai sur 30, arrondis à
- *  l'entier inférieur, puis plafonnés ici. → Studio 116 · Signature 150 (au lieu de 420 au prorata pur). */
+ *  l'entier inférieur, puis plafonnés ici. → Studio 58 · Signature 150 (au lieu de 420 au prorata pur). */
 export const ESSAI_CREDITS_PLAFOND = 150
 
 // Coût en crédits par niveau de modèle.

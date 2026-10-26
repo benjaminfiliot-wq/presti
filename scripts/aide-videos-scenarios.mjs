@@ -389,7 +389,7 @@ export default {
     await page.mouse.wheel(0, 420); await sec(3000)
     await etape(3)
     await survoler(page.getByRole('button', { name: /Essayer 7 jours gratuits/ }), { pause: 3000 })
-    await survoler(page.getByRole('button', { name: /Essayer 14 jours gratuits/ }), { pause: 3000 })
+    await survoler(page.getByRole('button', { name: /Essayer 7 jours gratuits/ }), { pause: 3000 })
     await sec(4000)
   },
 

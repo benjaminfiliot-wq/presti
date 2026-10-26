@@ -7,7 +7,7 @@ import { evaluerEssai } from '@/lib/essaiGratuitServeur'
 import { getUserRevocable } from '@/lib/authArtisan'
 import { BASE_PRESTI } from '@/lib/urls'
 
-// GET : cet artisan a-t-il droit à l'essai gratuit sans carte ? (7 / 14 / 21 jours, lib/plans.ts ESSAI_JOURS.) Sert aux écrans
+// GET : cet artisan a-t-il droit à l'essai gratuit sans carte ? (7 / 21 jours, lib/plans.ts ESSAI_JOURS.) Sert aux écrans
 // d'offres pour n'écrire « jours gratuits, sans carte » QUE là où c'est vrai. Ne crée rien chez Stripe : il lit.
 export async function GET(req: Request) {
   try {
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
 }
 
 // Crée une session Stripe Checkout d'abonnement mensuel pour le plan demandé — avec l'ESSAI GRATUIT SANS CARTE (décision de
-// Benj, 13/10/2026) quand le compte y a droit : deux semaines de Studio, trois de Signature (ESSAI_JOURS ; l'Essentiel n'est plus vendu depuis le 25/10). Un seul essai par
+// Benj, 13/10/2026) quand le compte y a droit : une semaine de Studio (depuis le 26/10), trois de Signature (ESSAI_JOURS ; l'Essentiel n'est plus vendu depuis le 25/10). Un seul essai par
 // compte (lib/essaiGratuitServeur.ts evaluerEssai) ; sinon, le Checkout d'avant, carte demandée tout de suite.
 export async function POST(req: Request) {
   try {

@@ -10,7 +10,7 @@ import Marque from '@/app/Marque'
 // Version des CGU acceptées : la date de « Dernière mise à jour » de app/cgu/page.tsx. Elle est
 // gravée avec l'heure d'acceptation dans les métadonnées du compte (art. 1119 c. civ. : des
 // conditions générales n'ont d'effet que si elles ont été portées à la connaissance et acceptées).
-const CGU_VERSION = '2026-10-25'
+const CGU_VERSION = '2026-10-26'
 
 export default function SignupPage() {
   const router = useRouter()
