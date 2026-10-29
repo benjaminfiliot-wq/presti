@@ -15,7 +15,10 @@
 // Deux familles (outils-actions.ts) :
 //  • directes : exécutées tout de suite, journalisées (assistant_actions), annulables quand un inverse existe ;
 //  • à confirmer : l'outil du modèle ne fait que PROPOSER (une carte « en_attente ») ; la réalisation réelle n'est atteinte que
-//    par confirmerAction (confirmation.ts), sur le clic de l'artisan.
+//    par confirmerAction (confirmation.ts), sur le clic de l'artisan — SAUF en mode « fait tout seul » (décision de Benj du 29/10) :
+//    l'artisan l'a demandée dans SON message et aucun texte de tiers n'a été lu dans le tour (ctx.autonome, lib/assistant/cadrage.ts
+//    faitToutSeul). La proposition est alors faite (mêmes contrôles), puis exécutée aussitôt avec ses entrées, et inscrite au journal
+//    des actions comme une action directe (annulable quand un inverse existe). Plafonds inchangés : 30 envois, 200 actions par jour.
 import { consommerLimite } from '@/lib/limites'
 import { sendEmail } from '@/lib/email'
 import { creerFacture, simulerFacture } from '@/lib/factureDepuisDevis'
@@ -35,13 +38,16 @@ import { PATCH as chantierMaj, DELETE as chantierSupprimer } from '@/app/api/crm
 import { POST as tacheCreer } from '@/app/api/crm/chantiers/[id]/taches/route'
 import { POST as reserver } from '@/app/api/crm/chantiers/[id]/materiaux/route'
 import { PATCH as tacheMaj, DELETE as tacheSupprimer } from '@/app/api/crm/taches/[id]/route'
-import { DELETE as reservationSupprimer } from '@/app/api/crm/materiaux/[id]/route'
+import { DELETE as reservationSupprimer, PATCH as reservationSortir } from '@/app/api/crm/materiaux/[id]/route'
 import { POST as noteCreer } from '@/app/api/crm/notes/route'
 import { DELETE as noteSupprimer } from '@/app/api/crm/notes/[id]/route'
 import { POST as membreCreer } from '@/app/api/crm/equipe/route'
 import { DELETE as membreSupprimer } from '@/app/api/crm/equipe/[id]/route'
 import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, resoudreLignes, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
-import { categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
+import { NOMS_ACTIONS, categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
+import { encadrerClient } from './cadrage'
+import { ecrireClasseur, type Cellule, type Feuille } from '@/lib/comptaXlsx'
+import type { ResultatRecherche } from '@/lib/recherche-fournisseurs'
 import type { FicheAction, MagasinActions, Realisateur, Realisation } from './confirmation'
 import type { ResultatExecution } from './boucle'
 import { appelerAvec, clientDeSession, erreurDe, type ContexteSession, type Gestionnaire, type ReponseRoute } from './session'
@@ -74,6 +80,10 @@ export type DependancesActions = {
   appeler?: (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> }) => Promise<ReponseRoute>
   /** Mise en file du pilote automatique (essais : en mémoire). */
   piloterCarte?: typeof piloterCarte
+  /** 29/10 — POST /api/inventaire/recherche (le moteur de recherche chez les fournisseurs : chargé à la demande). */
+  rechercher?: Gestionnaire
+  /** 29/10 — POST /api/inventaire/recherche/retenir (chargé à la demande). */
+  retenir?: Gestionnaire
 }
 
 export type ContexteActions = ContexteSession & {
@@ -82,6 +92,12 @@ export type ContexteActions = ContexteSession & {
   tour: () => number
   magasin: MagasinActions
   dependances?: DependancesActions
+  /**
+   * 29/10 — mode « fait tout seul » : vrai quand l'ARTISAN a demandé une action dans SON message et qu'aucun texte écrit par un tiers
+   * n'a été lu dans le tour (lu au moment d'agir : lib/assistant/cadrage.ts faitToutSeul). Absent ou faux : une action à confirmer
+   * reste une carte.
+   */
+  autonome?: () => boolean
 }
 
 type Obj = Record<string, unknown>
@@ -539,14 +555,38 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     const type = String(e.mouvement)
     // Une sortie ou une perte plus grande que le stock rendrait le stock négatif (appliquer_mouvement ne l'interdit pas) : refus, avec ce qu'il reste.
     if ((type === 'sortie' || type === 'perte') && num(e.quantite) > avantLieu) return ko(`Stock insuffisant : il reste ${fmtNombre(avantLieu)} ${a.item.unite ?? ''} de « ${a.item.nom} » à ${lieu}, impossible d'en sortir ${fmtNombre(num(e.quantite))}. Si le stock réel est différent, fais un inventaire (recomptage).`.replace(/\s+/g, ' '))
-    const rep = await route(inventaireEcrire, '/api/inventaire', { corps: { mouvement: { materiau_id: a.item.id, type, quantite: e.quantite, lieu, source: 'manuel', note: txt(e.note) ?? 'Saisi par l’assistant' } } })
+    // 29/10 — une SORTIE pour un chantier du CRM : rattachée au chantier. Une réservation de MÊME quantité attend ce matériel sur ce chantier
+    // → elle est sortie par la route de la fiche du chantier (crm_sortir_materiau : verrou, mouvement rattaché au devis, réservation « sortie ») ;
+    // sinon, un mouvement de sortie rattaché au devis du chantier, refusé s'il rendrait le stock négatif (comme l'atelier du CRM).
+    let pourChantier: Chantier | null = null
+    if (txt(e.chantier)) {
+      if (!ctx.crm) return sansCrm
+      const c = await chantierDe(String(e.chantier)); if (!c.ok) return ko(c.erreur)
+      pourChantier = c.item
+      const { data: resas, error: eResa } = await session.from('chantier_materiaux').select('id, quantite').eq('artisan_id', ctx.uid).eq('chantier_id', c.item.id).eq('materiau_id', a.item.id).eq('statut', 'reserve').eq('lieu', lieu).limit(20)
+      if (eResa) throw new Error('réservations illisibles')
+      const resa = ((resas ?? []) as unknown as { id: string; quantite: number | string }[]).find((x) => num(x.quantite) === num(e.quantite))
+      if (resa) {
+        const rs = await route(reservationSortir, `/api/crm/materiaux/${resa.id}`, { methode: 'PATCH', corps: { action: 'sortir' }, params: { id: resa.id } })
+        if (rs.status !== 200) return ko(objetErreur(rs, 'La sortie de la réservation n’a pas pu se faire : rien n’a été décompté.'))
+        const resteR = num(rs.json?.reste)
+        return {
+          ok: true, resume: `stock « ${a.item.nom} » : sortie de ${fmtNombre(e.quantite as number)} (${lieu}) pour le chantier « ${c.item.titre} », réservation sortie, reste ${fmtNombre(resteR)}`, objet: { type: 'chantier', id: c.item.id },
+          annulation: { outil: 'mouvement_inverse', entrees: { materiau_id: a.item.id, lieu, type: 'entree', quantite: e.quantite }, libelle: 'Remettre ce matériel en stock' },
+          donnees: { article: a.item.nom, mouvement: 'sortie', quantite: e.quantite, lieu, chantier: c.item.titre, reservation_sortie: true, reste_en_stock: resteR, a_savoir: 'La réservation de ce chantier est passée « sortie ». Une annulation remet le matériel en stock (la réservation reste « sortie »).' },
+          apercu: { lignes: [{ label: 'Article', valeur: a.item.nom }, { label: 'Chantier', valeur: c.item.titre }, { label: 'Mouvement', valeur: `sortie · ${fmtNombre(e.quantite as number)} ${a.item.unite ?? ''} · ${lieu}`.trim() }], avant_apres: [{ libelle: `Stock (${lieu})`, avant: fmtNombre(avantLieu), apres: fmtNombre(resteR) }], lien: lienDe('chantier', c.item.id) },
+        }
+      }
+    }
+    const noteMvt = pourChantier ? `${txt(e.note) ? `${txt(e.note)} — ` : ''}Sortie pour le chantier « ${pourChantier.titre} »`.slice(0, 300) : txt(e.note) ?? 'Saisi par l’assistant'
+    const rep = await route(inventaireEcrire, '/api/inventaire', { corps: { mouvement: { materiau_id: a.item.id, type, quantite: e.quantite, lieu, source: 'manuel', note: noteMvt, ...(pourChantier ? { devis_id: pourChantier.devis_id ?? null, refuser_negatif: true } : {}) } } })
     if (rep.status !== 200) return ko(objetErreur(rep, 'Le mouvement n’a pas pu être enregistré (stock insuffisant ?).'))
     const reste = num(rep.json?.reste)
     const inverse = type === 'entree' ? { type: 'sortie', quantite: e.quantite } : type === 'inventaire' ? { type: 'inventaire', quantite: avantLieu } : { type: 'entree', quantite: e.quantite }
     return {
-      ok: true, resume: `stock « ${a.item.nom} » : ${type} de ${fmtNombre(e.quantite as number)} (${lieu}), reste ${fmtNombre(reste)}`, objet: { type: 'article', id: a.item.id },
+      ok: true, resume: `stock « ${a.item.nom} » : ${type} de ${fmtNombre(e.quantite as number)} (${lieu})${pourChantier ? ` pour le chantier « ${pourChantier.titre} »` : ''}, reste ${fmtNombre(reste)}`, objet: pourChantier ? { type: 'chantier', id: pourChantier.id } : { type: 'article', id: a.item.id },
       annulation: { outil: 'mouvement_inverse', entrees: { materiau_id: a.item.id, lieu, ...inverse }, libelle: 'Annuler ce mouvement de stock' },
-      donnees: { article: a.item.nom, mouvement: type, quantite: e.quantite, lieu, reste_en_stock: reste, seuil_alerte: num(a.item.seuil_alerte), sous_le_seuil: num(a.item.seuil_alerte) > 0 && reste <= num(a.item.seuil_alerte) },
+      donnees: { article: a.item.nom, mouvement: type, quantite: e.quantite, lieu, ...(pourChantier ? { chantier: pourChantier.titre } : {}), reste_en_stock: reste, seuil_alerte: num(a.item.seuil_alerte), sous_le_seuil: num(a.item.seuil_alerte) > 0 && reste <= num(a.item.seuil_alerte) },
       apercu: { lignes: [{ label: 'Article', valeur: a.item.nom }, { label: 'Mouvement', valeur: `${type} · ${fmtNombre(e.quantite as number)} ${a.item.unite ?? ''} · ${lieu}`.trim() }], avant_apres: [{ libelle: `Stock (${lieu})`, avant: fmtNombre(avantLieu), apres: fmtNombre(reste) }], lien: lienDe('article', a.item.id) },
     }
   }
@@ -954,6 +994,320 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     return { ok: true, entrees: { ...e, message_id: prop.id }, objet: { type: 'conversation', id: lead.id }, apercu: apercu(`Envoyer la réponse préparée à ${txt(lead.nom_prospect) ?? 'ce client'}`, { lignes: [{ label: 'Canal', valeur: to ? `e-mail (${to}) et fil de la conversation` : 'fil de la conversation (ou canal de la demande)' }], message: { a: to ?? 'la conversation', objet: '', texte: prop.contenu }, irreversible: true, lien: lienDe('conversation', lead.id) }) }
   }
 
+  // ═══════════════ 29/10 — l'assistant qui FAIT à la place de l'artisan (décision de Benj : « il doit tout faire à la place des artisans ») ═══════════════
+
+  // ── Facture SANS devis : le chemin même de l'écran Factures (creerFacture avec un corps, comme POST /api/factures sans devis_id) :
+  //    mentions bloquantes, nom du client obligatoire, numérotation continue, émission d'un seul tenant (lib/factureEmission.ts). La
+  //    proposition SIMULE la pièce (ni numéro, ni écriture) pour annoncer le montant exact ; l'émission refuse si ce montant a bougé.
+  async function corpsFactureLibre(e: EntreeAction): Promise<{ ok: true; corps: Obj; client: string; nb: number } | { ok: false; erreur: string }> {
+    let client = txt(e.client_nom)
+    let email = txt(e.client_email)
+    if (txt(e.conversation_id)) {
+      const lead = await leadDe(String(e.conversation_id))
+      if (!lead) return ko('Conversation introuvable.')
+      client = client ?? txt(lead.nom_prospect)
+      // L'e-mail du dossier est repris ici, côté serveur : le modèle ne le voit jamais.
+      if (!email && lead.contact && EMAIL.test(lead.contact.trim())) email = lead.contact.trim().toLowerCase()
+    }
+    if (!client) return ko('Le nom du client manque : c’est une mention obligatoire de la facture. Demande-le à l’artisan.')
+    const lignes = (e.lignes as LigneEntree[]) ?? []
+    const tarifs = await tarifsParIds(lignes.map((l) => l.tarif_id).filter((x): x is string => !!x))
+    const r = resoudreLignes(lignes, tarifs)
+    if (r.introuvables.length) return ko(`Tarif introuvable dans la bibliothèque de l'artisan : ${r.introuvables.slice(0, 3).join(' ; ')}. Relis-les avec lire_tarifs.`)
+    if (r.aChiffrer.length) return ko(`Ligne(s) sans prix : ${r.aChiffrer.slice(0, 4).join(' ; ')}. Une facture ne s’émet pas avec une ligne à 0 € : demande le prix à l’artisan (ou utilise un tarif de lire_tarifs). Rien n’a été émis.`)
+    const tva = typeof e.tva_taux === 'number' ? e.tva_taux : null
+    const lignesF = r.lignes.map((l, i) => ({ designation: l.designation, quantite: l.quantite, unite: l.unite, prix_unitaire_ht: l.prix_unitaire_ht, tva_taux: lignes[i]?.tarif_id ? l.tva_taux : tva ?? l.tva_taux }))
+    return { ok: true, client, nb: lignesF.length, corps: { objet: e.objet, client_nom: client, client_email: email, client_adresse: txt(e.client_adresse), conditions: txt(e.conditions), lignes: lignesF } }
+  }
+  P.creer_facture_libre = async (e) => {
+    const c = await corpsFactureLibre(e)
+    if (!c.ok) return ko(c.erreur)
+    const sim = await (dep.simulerFacture ?? simulerFacture)({ artisanId: ctx.uid, corps: c.corps })
+    if (!sim.ok) return ko(sim.error)
+    return {
+      // Le TTC annoncé part avec les entrées (audit argent du 21/10, M5) : à l'émission, s'il a changé d'un centime, rien n'est émis.
+      ok: true, entrees: { corps: c.corps, ttc_attendu: sim.total_ttc }, objet: null,
+      apercu: apercu(`Émettre une facture pour ${c.client}`, {
+        lignes: [{ label: 'Client', valeur: c.client }, { label: 'Objet', valeur: String(e.objet ?? '') }, { label: 'Lignes', valeur: String(c.nb) }, { label: 'Total HT', valeur: fmtEuros(sim.total_ht) }, { label: 'Montant TTC', valeur: fmtEuros(sim.total_ttc) }, { label: 'Échéance', valeur: '30 jours après l’émission' }],
+        alertes: ['Une facture est émise et scellée dès sa création : numéro définitif, plus modifiable (une erreur se corrige par un avoir).'],
+        irreversible: true, lien: lienDe('facture', null),
+      }),
+    }
+  }
+  R.creer_facture_libre = async (e) => {
+    const corps = e.corps && typeof e.corps === 'object' && !Array.isArray(e.corps) ? (e.corps as Obj) : null
+    if (!corps) return ko('Cette facture est à reproposer (contenu manquant) : rien n’a été émis.')
+    const r = await (dep.creerFacture ?? creerFacture)({ artisanId: ctx.uid, corps, ...(typeof e.ttc_attendu === 'number' && Number.isFinite(e.ttc_attendu) ? { ttcAttendu: e.ttc_attendu } : {}) })
+    if (!r.ok) return ko(r.error)
+    return {
+      ok: true, resume: `facture ${r.numero} émise (sans devis)`, objet: { type: 'facture', id: r.id },
+      donnees: { numero_facture: r.numero, ...(typeof e.ttc_attendu === 'number' ? { total_ttc: e.ttc_attendu } : {}), a_savoir: 'Facture émise et scellée (numéro définitif). Elle n’est PAS envoyée au client : envoyer_facture la fait partir.' },
+      apercu: { irreversible: true, lien: lienDe('facture', r.id) },
+    }
+  }
+
+  // ── Recherche chez les fournisseurs : la route même de l'Inventaire (drapeau inventaireRecherche, capacité inventaire.recherche_ia,
+  //    plafonds 20 / heure, 30 / jour, 200 / mois, crédit du niveau, cache mutualisé), appelée comme une fonction, avec la session.
+  //    Les prix sont ceux VUS sur les pages (montant tel quel, HT/TTC tel qu'écrit, page et date) ; les textes des pages sont du texte
+  //    de TIERS (emballés comme un message de client : ils ne commandent rien et leurs nombres ne sont pas des sources).
+  const RESULTATS_RECHERCHE_MAX = 12
+  const vuLe = (iso: unknown): string | null => {
+    const d = new Date(String(iso ?? ''))
+    return Number.isNaN(d.getTime()) ? null : `${fmtDate(jourParis(d))} à ${d.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })}`
+  }
+  const enTaxe = (h: unknown) => (h === 'HT' || h === 'TTC' ? String(h) : 'HT ou TTC non précisé sur la page')
+  R.rechercher_fournisseurs = async (e) => {
+    const g = dep.rechercher ?? (await import('@/app/api/inventaire/recherche/route')).POST
+    const rep = await route(g, '/api/inventaire/recherche', { corps: { requete: e.requete, ...(typeof e.quantite === 'number' && e.quantite > 0 ? { quantite: e.quantite } : {}) } })
+    if (rep.status !== 200 || rep.json?.ok !== true) return ko(objetErreur(rep, 'La recherche chez les fournisseurs n’a pas pu se faire.'))
+    const resultats = (Array.isArray(rep.json.resultats) ? rep.json.resultats : []).slice(0, RESULTATS_RECHERCHE_MAX) as ResultatRecherche[]
+    const nonVus = (Array.isArray(rep.json.nonVus) ? rep.json.nonVus : []) as { fournisseur?: unknown; raison?: unknown }[]
+    return {
+      ok: true, resume: `recherche chez les fournisseurs : ${resultats.length} résultat(s), ${nonVus.length} fournisseur(s) sans résultat`,
+      // Les résultats SCELLÉS par le moteur sont gardés sur la fiche du journal : retenir_resultat les relit tels quels (le sceau prouve à
+      // /recherche/retenir qu'ils sortent du moteur, pour ce compte ; la moindre retouche est refusée).
+      garder: { resultats_scelles: resultats },
+      donnees: {
+        requete: e.requete, nb_resultats: resultats.length,
+        resultats: resultats.map((x, i) => ({
+          resultat: i + 1, fournisseur: x.fournisseur, produit_vu: encadrerClient(x.designation_vue, 160), reference: encadrerClient(x.reference, 60),
+          prix_vu: x.prix_vu, prix_affiche_en: enTaxe(x.ht_ou_ttc), unite: x.unite, conditionnement: encadrerClient(x.conditionnement, 60),
+          disponibilite_vue: encadrerClient(x.disponibilite_vue, 80), source: `page de ${x.fournisseur}, vue le ${vuLe(x.vu_le) ?? 'date inconnue'}`,
+        })),
+        non_vus: nonVus.map((n) => ({ fournisseur: txt(n.fournisseur) ?? 'fournisseur', raison: encadrerClient(txt(n.raison), 160) })),
+        credits_de_recherche_utilises: num(rep.json.credits),
+        ...(rep.json.panne ? { panne_partielle: true } : {}),
+        a_savoir: "Prix VUS sur les pages des fournisseurs, tels qu'affichés : cite chacun avec son fournisseur et sa date (« vu chez … le … »), sans convertir HT/TTC ni en déduire un autre prix. Aucun prix n'est inventé : un fournisseur « non vu » se dit tel quel. Pour garder un résultat dans l'inventaire ou la liste d'achat : retenir_resultat avec son numéro.",
+      },
+      apercu: {
+        lignes: [{ label: 'Recherche', valeur: String(e.requete ?? '') }, ...resultats.slice(0, 6).map((x) => ({ label: x.fournisseur, valeur: `${fmtEuros(x.prix_vu)} ${x.ht_ou_ttc === 'inconnu' ? '(HT/TTC non précisé)' : x.ht_ou_ttc} — ${String(x.designation_vue ?? '').slice(0, 80)}` }))],
+        alertes: nonVus.length ? [`Sans résultat chez : ${nonVus.map((n) => txt(n.fournisseur) ?? '?').slice(0, 6).join(', ')}.`] : [],
+        lien: lienDe('article', null),
+      },
+    }
+  }
+  R.retenir_resultat = async (e) => {
+    const fiche = ctx.magasin.derniere ? await ctx.magasin.derniere(ctx.uid, ctx.conversationId, 'rechercher_fournisseurs') : null
+    const liste = Array.isArray(fiche?.entrees?.resultats_scelles) ? (fiche!.entrees.resultats_scelles as Obj[]) : []
+    if (!liste.length) return ko('Aucune recherche chez les fournisseurs avec résultat dans cette conversation : lance d’abord rechercher_fournisseurs.')
+    const res = liste[num(e.resultat) - 1]
+    if (!res) return ko(`Pas de résultat n° ${e.resultat} : la dernière recherche en a ${liste.length}.`)
+    const vers = e.vers === 'liste_achat' ? 'liste_achat' : 'inventaire'
+    let materiauId: string | null = null
+    let nomArticle: string | null = null
+    if (txt(e.article)) {
+      const a = await articleDe(String(e.article))
+      if (!a.ok) return ko(a.erreur)
+      materiauId = a.item.id; nomArticle = a.item.nom
+    }
+    // Une fiche CRÉÉE par ce geste se retire à l'annulation ; une fiche qui existait (même nom) n'est jamais touchée.
+    let creeIci = false
+    if (vers === 'inventaire' && !materiauId) {
+      const nom = String(res.designation_vue ?? '').trim().slice(0, 200)
+      const { data: memes, error: eMemes } = await session.from('materiaux').select('id').eq('artisan_id', ctx.uid).eq('nom', nom).limit(1)
+      if (eMemes) throw new Error('inventaire illisible')
+      creeIci = (memes ?? []).length === 0
+    }
+    const g = dep.retenir ?? (await import('@/app/api/inventaire/recherche/retenir/route')).POST
+    const rep = await route(g, '/api/inventaire/recherche/retenir', { corps: { action: vers, resultat: res, ...(materiauId ? { materiau_id: materiauId } : {}), ...(typeof e.quantite === 'number' ? { quantite: e.quantite } : {}) } })
+    if (rep.status !== 200 || rep.json?.ok !== true) return ko(objetErreur(rep, 'Le résultat n’a pas pu être gardé.'))
+    const prix = `${fmtEuros(res.prix_vu as number)} ${res.ht_ou_ttc === 'HT' || res.ht_ou_ttc === 'TTC' ? res.ht_ou_ttc : '(HT/TTC non précisé)'}`
+    const fournisseur = String(res.fournisseur ?? 'le fournisseur')
+    if (vers === 'liste_achat') {
+      const ligneId = txt(rep.json.ligne_id), listeId = txt(rep.json.liste_id)
+      return {
+        ok: true, resume: `résultat n° ${e.resultat} (${fournisseur}, ${prix}) ajouté à la liste d’achat`, objet: null,
+        annulation: ligneId && listeId ? { outil: 'retirer_lignes_achat', entrees: { liste_id: listeId, lignes: [ligneId], liste_creee: false }, libelle: 'Retirer cette ligne de la liste d’achat' } : null,
+        donnees: { fournisseur, prix_vu: res.prix_vu, prix_affiche_en: enTaxe(res.ht_ou_ttc), a_savoir: 'Ajouté à la liste d’achat ouverte (rien n’est commandé). Elle s’exporte en Excel : exporter_tableau, quoi=liste_achat.' },
+        apercu: { lignes: [{ label: 'Fournisseur', valeur: fournisseur }, { label: 'Prix vu', valeur: prix }], lien: lienDe('article', null) },
+      }
+    }
+    const matId = txt(rep.json.materiau_id)
+    return {
+      ok: true, resume: `prix vu chez ${fournisseur} (${prix}) gardé dans l’inventaire${nomArticle ? ` sur « ${nomArticle} »` : creeIci ? ' (fiche créée)' : ''}`, objet: matId ? { type: 'article', id: matId } : null,
+      annulation: creeIci && matId ? { outil: 'supprimer_article', entrees: { id: matId }, libelle: 'Retirer l’article créé' } : null,
+      donnees: { fournisseur, prix_vu: res.prix_vu, prix_affiche_en: enTaxe(res.ht_ou_ttc), fiche_creee: creeIci, a_savoir: 'Le prix est gardé comme une OBSERVATION (page et date), jamais converti : le dernier prix noté sur la fiche ne change pas.' },
+      apercu: { lignes: [{ label: 'Fournisseur', valeur: fournisseur }, { label: 'Prix vu', valeur: prix }, ...(nomArticle ? [{ label: 'Article', valeur: nomArticle }] : [])], lien: lienDe('article', matId) },
+    }
+  }
+
+  // ── Liste d'achat « à racheter » (table listes_achat, 0040 : écrite sous la RLS de l'artisan, ses lignes via leur liste). Les alertes
+  //    suivent la règle de l'écran Inventaire (GET /api/inventaire) : seuil > 0 et stock total ≤ seuil.
+  type ArticleAlerte = { id: string; nom: string; unite: string | null; seuil_alerte: number | string | null; fournisseur_prefere: string | null; prix_dernier_ht: number | string | null; stock: { lieu: string; quantite: number | string }[] | null }
+  const totalStock = (m: { stock: { quantite: number | string }[] | null }) => (m.stock ?? []).reduce((t, l) => t + num(l.quantite), 0)
+  const norme = (x: string) => sansAccent(String(x ?? '')).toLowerCase().replace(/\s+/g, ' ').trim()
+  R.preparer_liste_achat = async (e) => {
+    const { data, error } = await session.from('materiaux').select('id, nom, unite, seuil_alerte, fournisseur_prefere, prix_dernier_ht, stock(lieu, quantite)').eq('artisan_id', ctx.uid).limit(5000)
+    if (error) throw new Error('inventaire illisible')
+    let alertes = ((data ?? []) as unknown as ArticleAlerte[]).filter((m) => num(m.seuil_alerte) > 0 && totalStock(m) <= num(m.seuil_alerte))
+    const voulus = ((e.articles as string[]) ?? []).map(norme).filter(Boolean)
+    if (voulus.length) alertes = alertes.filter((m) => voulus.some((v) => norme(m.nom).includes(v)))
+    const fo = txt(e.fournisseur)
+    if (fo) alertes = alertes.filter((m) => norme(m.fournisseur_prefere ?? '').includes(norme(fo)))
+    if (!alertes.length) return ko(`${voulus.length || fo ? 'Aucun de ces articles n’est' : 'Aucun article n’est'} sous son seuil d’alerte : rien à racheter. (Un article sans seuil d’alerte ne déclenche jamais d’alerte : modifier_article en pose un.)`)
+    let listeId: string
+    let nomListe: string
+    let creee = false
+    const { data: ouvertes, error: eListe } = await session.from('listes_achat').select('id, nom').eq('artisan_id', ctx.uid).eq('statut', 'ouverte').order('cree_le', { ascending: false }).limit(1)
+    if (eListe) throw new Error('liste d’achat illisible')
+    const ouverte = ((ouvertes ?? []) as unknown as { id: string; nom: string | null }[])[0]
+    if (ouverte) { listeId = ouverte.id; nomListe = ouverte.nom ?? 'Liste d’achat' } else {
+      nomListe = `À racheter — ${fmtDate(aujourdhui())}`
+      const { data: neuve, error: eNeuve } = await session.from('listes_achat').insert({ artisan_id: ctx.uid, nom: nomListe, statut: 'ouverte' }).select('id').single()
+      if (eNeuve || !neuve) return ko('La liste d’achat n’a pas pu être créée.')
+      listeId = String((neuve as { id: string }).id); creee = true
+    }
+    // Les lignes d'une liste se lisent et s'écrivent par leur liste, qui vient d'être relue sur le compte (RLS « lignes achat propres »).
+    const { data: deja, error: eDeja } = await session.from('lignes_achat').select('materiau_id').eq('liste_id', listeId).eq('achete', false)
+    if (eDeja) throw new Error('liste d’achat illisible')
+    const dejaIds = new Set(((deja ?? []) as { materiau_id: string | null }[]).map((l) => l.materiau_id).filter(Boolean))
+    const nouvelles = alertes.filter((m) => !dejaIds.has(m.id))
+    if (!nouvelles.length) return ko(`Ces articles sont déjà tous sur la liste d’achat ouverte (« ${nomListe} ») : rien d’ajouté.`)
+    const aRacheter = (m: ArticleAlerte) => Math.max(1, Math.round((num(m.seuil_alerte) - totalStock(m)) * 100) / 100)
+    const { data: inserees, error: eIns } = await session.from('lignes_achat').insert(nouvelles.map((m) => ({
+      liste_id: listeId, materiau_id: m.id, quantite: aRacheter(m), achete: false, prix_cible_ht: m.prix_dernier_ht === null || m.prix_dernier_ht === undefined ? null : num(m.prix_dernier_ht), fournisseur: txt(m.fournisseur_prefere),
+    }))).select('id')
+    if (eIns) {
+      if (creee) await session.from('listes_achat').delete().eq('artisan_id', ctx.uid).eq('id', listeId)
+      return ko('La liste d’achat n’a pas pu être écrite : rien n’a été ajouté.')
+    }
+    const ids = ((inserees ?? []) as { id: string }[]).map((x) => x.id)
+    return {
+      ok: true, resume: `liste d’achat : ${nouvelles.length} article(s) à racheter ajouté(s)`, objet: null,
+      annulation: { outil: 'retirer_lignes_achat', entrees: { liste_id: listeId, lignes: ids, liste_creee: creee }, libelle: `Retirer ces ${nouvelles.length} ligne(s) de la liste d’achat` },
+      donnees: {
+        liste: nomListe, liste_creee: creee, lignes_ajoutees: nouvelles.length, deja_sur_la_liste: alertes.length - nouvelles.length,
+        articles: nouvelles.map((m) => ({ article: m.nom, a_racheter: aRacheter(m), unite: m.unite, reste_en_stock: totalStock(m), seuil_alerte: num(m.seuil_alerte), fournisseur_note: txt(m.fournisseur_prefere), dernier_prix_ht_note: m.prix_dernier_ht === null ? null : num(m.prix_dernier_ht) })),
+        a_savoir: "Rien n'est commandé : c'est la liste « à racheter ». Quantité = ce qui manque pour revenir au seuil d'alerte (1 au moins), calculée par Presti. Fournisseur et prix sont ceux NOTÉS sur la fiche, pas des prix actuels (rechercher_fournisseurs pour en voir). La liste s'exporte en Excel (exporter_tableau, quoi=liste_achat) ; aucun écran ne l'affiche encore.",
+      },
+      apercu: { lignes: [{ label: 'Liste', valeur: nomListe }, ...nouvelles.slice(0, 8).map((m) => ({ label: m.nom, valeur: `${fmtNombre(aRacheter(m))} ${m.unite ?? ''}`.trim() }))], lien: lienDe('article', null) },
+    }
+  }
+  INV.retirer_lignes_achat = async (e) => {
+    const listeId = String(e.liste_id ?? '')
+    const { data: l, error } = await session.from('listes_achat').select('id').eq('artisan_id', ctx.uid).eq('id', listeId).maybeSingle()
+    if (error) throw new Error('liste d’achat illisible')
+    if (!l) return ko('La liste d’achat n’existe plus.')
+    const ids = (Array.isArray(e.lignes) ? e.lignes : []).map(String).filter((x) => UUID.test(x))
+    if (ids.length) {
+      const { error: eSup } = await session.from('lignes_achat').delete().eq('liste_id', listeId).in('id', ids)
+      if (eSup) return ko('Les lignes n’ont pas pu être retirées.')
+    }
+    // Une liste créée par l'assistant et redevenue vide disparaît ; une liste où d'autres lignes ont été ajoutées entre-temps reste.
+    if (e.liste_creee === true) {
+      const { data: restes } = await session.from('lignes_achat').select('id').eq('liste_id', listeId).limit(1)
+      if (!(restes ?? []).length) await session.from('listes_achat').delete().eq('artisan_id', ctx.uid).eq('id', listeId)
+    }
+    return { ok: true, resume: `${ids.length} ligne(s) retirée(s) de la liste d’achat` }
+  }
+
+  // ── Supprimer un article : la route de l'écran Inventaire (DELETE /api/inventaire). Ne se défait pas (historique supprimé avec la fiche).
+  P.supprimer_article = async (e) => {
+    const a = await articleDe(String(e.article))
+    if (!a.ok) return ko(a.erreur)
+    return {
+      ok: true, entrees: { id: a.item.id, nom: a.item.nom }, objet: { type: 'article', id: a.item.id },
+      apercu: apercu(`Supprimer l’article « ${a.item.nom} »`, {
+        lignes: [{ label: 'Article', valeur: a.item.nom }, { label: 'En stock', valeur: `${fmtNombre(totalStock(a.item))} ${a.item.unite ?? ''}`.trim() }],
+        alertes: ['La fiche, son stock et son historique de mouvements sont supprimés : cela ne se défait pas.'], irreversible: true, lien: lienDe('article', null),
+      }),
+    }
+  }
+  R.supprimer_article = async (e) => {
+    const id = String(e.id ?? '')
+    if (!UUID.test(id)) return ko('Cette suppression est à reproposer : rien n’a été supprimé.')
+    const { data, error } = await session.from('materiaux').select('id, nom').eq('artisan_id', ctx.uid).eq('id', id).maybeSingle()
+    if (error) throw new Error('inventaire illisible')
+    if (!data) return ko('Article introuvable (déjà supprimé ?).')
+    const rep = await route(inventaireSupprimer, `/api/inventaire?id=${encodeURIComponent(id)}`, { methode: 'DELETE' })
+    return rep.status === 200 ? { ok: true, resume: `article « ${String((data as { nom: string }).nom)} » supprimé de l’inventaire` } : ko(objetErreur(rep, 'Suppression impossible.'))
+  }
+
+  // ── Exporter un tableau : un vrai classeur .xlsx (lib/comptaXlsx.ts, le même écrivain que l'export de Mes chiffres : textes inertes,
+  //    jamais de formule venue des données). Lu sous la session, filtré sur le compte ; rendu à l'ÉCRAN seulement (bouton Télécharger),
+  //    jamais au modèle ni au journal des actions.
+  const EXPORT_LIGNES_MAX = 5000
+  const EXPORT_OCTETS_MAX = 4_000_000
+  const MIME_XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  const cT = (v: unknown): Cellule => (txt(v) ? { t: 'texte', v: String(v).trim() } : null)
+  const cE = (v: unknown): Cellule => (v === null || v === undefined || v === '' ? null : { t: 'euros', v: Math.round(num(v) * 100) })
+  const cN = (v: unknown): Cellule => (v === null || v === undefined || v === '' ? null : { t: 'nombre', v: Math.round(num(v) * 100) / 100 })
+  const cD = (v: unknown): Cellule => { const d = typeof v === 'string' ? v.slice(0, 10) : ''; return /^\d{4}-\d{2}-\d{2}$/.test(d) ? { t: 'date', v: d } : null }
+  const enTete = (cols: string[]): Cellule[] => cols.map((c) => ({ t: 'texte', v: c }))
+  /** La ligne TOTAL : une SOMME (résultat déjà calculé) par colonne de montants. */
+  const ligneTotal = (nbCols: number, colonnes: number[], lignes: Cellule[][]): Cellule[] => {
+    const out: Cellule[] = Array.from({ length: nbCols }, () => null)
+    out[0] = { t: 'texte', v: 'TOTAL', gras: true }
+    for (const c of colonnes) out[c] = { t: 'somme', de: 2, a: lignes.length + 1, v: lignes.reduce((t, l) => t + (l[c]?.t === 'euros' ? (l[c] as { v: number }).v : 0), 0), euros: true }
+    return out
+  }
+  const STATUT_DEVIS: Record<string, string> = { brouillon: 'Brouillon', envoye: 'Envoyé', accepte: 'Signé', refuse: 'Refusé', expire: 'Expiré' }
+  const STATUT_FACTURE: Record<string, string> = { brouillon: 'Brouillon', emise: 'Émise', payee: 'Payée', annulee: 'Annulée' }
+  R.exporter_tableau = async (e) => {
+    const quoi = String(e.quoi)
+    let feuille: Feuille
+    let titre: string
+    let n = 0
+    if (quoi === 'devis' || quoi === 'factures') {
+      let q = quoi === 'devis'
+        ? session.from('devis').select('numero, date_emission, client_nom, objet, statut, total_ht, total_tva, total_ttc').eq('artisan_id', ctx.uid)
+        : session.from('factures').select('numero, date_emission, date_echeance, client_nom, objet, statut, avoir_de, total_ht, total_tva, total_ttc').eq('artisan_id', ctx.uid)
+      if (e.depuis) q = q.gte('date_emission', String(e.depuis))
+      if (e.jusqu_a) q = q.lte('date_emission', String(e.jusqu_a))
+      const { data, error } = await q.order('date_emission', { ascending: false }).limit(EXPORT_LIGNES_MAX)
+      if (error) throw new Error(`${quoi} illisibles`)
+      const rows = (data ?? []) as unknown as Obj[]
+      n = rows.length
+      const corps: Cellule[][] = quoi === 'devis'
+        ? rows.map((r) => [cT(r.numero), cD(r.date_emission), cT(r.client_nom), cT(r.objet), cT(STATUT_DEVIS[String(r.statut)] ?? r.statut), cE(r.total_ht), cE(r.total_tva), cE(r.total_ttc)])
+        : rows.map((r) => [cT(r.numero), cD(r.date_emission), cD(r.date_echeance), cT(r.client_nom), cT(r.objet), cT(r.avoir_de ? 'Avoir' : STATUT_FACTURE[String(r.statut)] ?? r.statut), cE(r.total_ht), cE(r.total_tva), cE(r.total_ttc)])
+      const cols = quoi === 'devis' ? ['Numéro', 'Date', 'Client', 'Objet', 'Statut', 'Total HT', 'TVA', 'Total TTC'] : ['Numéro', 'Émise le', 'Échéance', 'Client', 'Objet', 'Statut', 'Total HT', 'TVA', 'Total TTC']
+      const montants = quoi === 'devis' ? [5, 6, 7] : [6, 7, 8]
+      titre = quoi === 'devis' ? 'Devis' : 'Factures'
+      feuille = { nom: titre, largeurs: quoi === 'devis' ? [16, 12, 26, 40, 12, 14, 12, 14] : [16, 12, 12, 26, 40, 12, 14, 12, 14], lignes: [enTete(cols), ...corps, ...(corps.length ? [ligneTotal(cols.length, montants, corps)] : [])], filtre: true }
+    } else if (quoi === 'stock') {
+      const { data, error } = await session.from('materiaux').select('nom, reference, categorie, unite, seuil_alerte, fournisseur_prefere, prix_dernier_ht, stock(lieu, quantite)').eq('artisan_id', ctx.uid).order('nom').limit(EXPORT_LIGNES_MAX)
+      if (error) throw new Error('inventaire illisible')
+      const rows = (data ?? []) as unknown as (Obj & { stock: { lieu: string; quantite: number | string }[] | null })[]
+      n = rows.length
+      titre = 'Stock'
+      feuille = {
+        nom: titre, largeurs: [34, 16, 18, 8, 12, 12, 12, 24, 14], filtre: true,
+        lignes: [enTete(['Article', 'Référence', 'Catégorie', 'Unité', 'Quantité', 'Seuil d’alerte', 'À racheter', 'Fournisseur habituel', 'Dernier prix HT noté']),
+          ...rows.map((r) => { const t = totalStock(r); const seuil = num(r.seuil_alerte); return [cT(r.nom), cT(r.reference), cT(r.categorie), cT(r.unite), cN(t), cN(seuil), cT(seuil > 0 && t <= seuil ? 'Oui' : 'Non'), cT(r.fournisseur_prefere), cE(r.prix_dernier_ht)] })],
+      }
+    } else if (quoi === 'tarifs') {
+      const { data, error } = await session.from('prix_artisan').select('designation, unite, prix_ht, tva_taux, fournisseur, reference, date_prix').eq('artisan_id', ctx.uid).eq('actif', true).order('designation').limit(EXPORT_LIGNES_MAX)
+      if (error) throw new Error('tarifs illisibles')
+      const rows = (data ?? []) as unknown as Obj[]
+      n = rows.length
+      titre = 'Tarifs'
+      feuille = { nom: titre, largeurs: [40, 8, 14, 8, 22, 16, 12], filtre: true, lignes: [enTete(['Désignation', 'Unité', 'Prix HT', 'TVA %', 'Fournisseur', 'Référence', 'Prix du']), ...rows.map((r) => [cT(r.designation), cT(r.unite), cE(r.prix_ht), cN(r.tva_taux), cT(r.fournisseur), cT(r.reference), cD(r.date_prix)])] }
+    } else {
+      const { data: ouvertes, error: eL } = await session.from('listes_achat').select('id, nom').eq('artisan_id', ctx.uid).eq('statut', 'ouverte').order('cree_le', { ascending: false }).limit(1)
+      if (eL) throw new Error('liste d’achat illisible')
+      const liste = ((ouvertes ?? []) as unknown as { id: string; nom: string | null }[])[0]
+      if (!liste) return ko('Aucune liste d’achat ouverte : preparer_liste_achat en prépare une depuis les alertes de stock.')
+      // Les lignes d'une liste se lisent par leur liste, relue juste au-dessus sur le compte.
+      const { data, error } = await session.from('lignes_achat').select('designation_libre, quantite, prix_cible_ht, fournisseur, achete, materiaux(nom, unite)').eq('liste_id', liste.id).limit(EXPORT_LIGNES_MAX)
+      if (error) throw new Error('liste d’achat illisible')
+      const rows = (data ?? []) as unknown as (Obj & { materiaux?: { nom?: string; unite?: string } | null })[]
+      n = rows.length
+      titre = 'Liste d’achat'
+      feuille = { nom: 'Liste d achat', largeurs: [44, 10, 8, 22, 14, 10], filtre: true, lignes: [enTete(['Article', 'Quantité', 'Unité', 'Fournisseur', 'Prix cible HT', 'Acheté']), ...rows.map((r) => [cT(r.materiaux?.nom ?? r.designation_libre), cN(r.quantite), cT(r.materiaux?.unite), cT(r.fournisseur), cE(r.prix_cible_ht), cT(r.achete === true ? 'Oui' : 'Non')])] }
+    }
+    if (!n) return ko(`Rien à exporter : aucune ligne de ${titre.toLowerCase()}${e.depuis || e.jusqu_a ? ' sur cette période' : ''}.`)
+    const octets = ecrireClasseur([feuille])
+    if (octets.length > EXPORT_OCTETS_MAX) return ko('Le tableau est trop gros pour être rendu ici : précise une période (depuis / jusqu_a).')
+    const fichier = `${quoi.replace('_', '-')}-${aujourdhui()}.xlsx`
+    return {
+      ok: true, resume: `tableau Excel « ${titre} » prêt (${n} ligne${n > 1 ? 's' : ''})`, objet: null,
+      donnees: { fichier, feuille: titre, nb_lignes: n, tronque: n >= EXPORT_LIGNES_MAX, a_savoir: 'Le fichier Excel est prêt : un bouton « Télécharger » s’affiche sous ta réponse. Ne recopie pas son contenu : dis ce qu’il contient et combien de lignes.' },
+      apercu: { lignes: [{ label: 'Fichier', valeur: fichier }, { label: 'Lignes', valeur: String(n) }] },
+      brouillon: { type: 'tableau', lien: `data:${MIME_XLSX};base64,${Buffer.from(octets).toString('base64')}`, libelle: `${titre} — ${n} ligne${n > 1 ? 's' : ''}`, fichier },
+    }
+  }
+
   // ═══════════════ 21/10 — l'assistant relié à TOUT Presti : factures, plateforme, « Ma page », CRM récent (lib/assistant/actions-tout.ts) ═══════════════
   // Mêmes familles, mêmes routes, même session ; les recherches (chantier, devis, facture, conversation) sont celles de ce fichier.
   {
@@ -967,23 +1321,33 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   // ═══════════════════════════ Les outils vus par le modèle ═══════════════════════════
   const plafondJour = (): Promise<boolean> => consommerLimite(`assistant-actions:${ctx.uid}`, ACTIONS_JOUR_MAX, 24 * 3600)
   const refusJour: ResultatExecution = { donnees: { ok: false, erreur: `Limite de ${ACTIONS_JOUR_MAX} actions par jour atteinte : l'assistant reprend demain.` }, resume: 'plafond d’actions du jour atteint', resultat: 'refus' }
+  type Faite = Extract<Realisation, { ok: true }>
+  const JOURNAL_INDISPONIBLE = { journal_des_actions_indisponible: true, a_savoir_journal: "L'action est faite mais n'a pas pu être inscrite au journal des actions : dis-le à l'artisan, il ne pourra pas l'annuler d'un clic." }
+  /**
+   * Inscrit au journal des actions une action FAITE — directe, ou « à confirmer » exécutée en mode « fait tout seul » (alors `base` est
+   * l'aperçu de sa proposition : texte exact, avant / après). Mode « direct », statut « executee », annulable si un inverse existe.
+   */
+  async function inscrireFaite(nom: NomAction, entrees: Obj, r: Faite, base: Apercu | null): Promise<{ carte?: CarteAction; nonEnregistre: boolean }> {
+    const titre = r.resume.slice(0, 200)
+    try {
+      const fiche = await ctx.magasin.creer({
+        artisan_id: ctx.uid, conversation_id: ctx.conversationId, tour: Math.max(1, ctx.tour()), outil: nom, mode: 'direct', statut: 'executee',
+        titre, entrees: r.garder ? { ...entrees, ...r.garder } : entrees,
+        apercu: base ? { ...base, ...(r.apercu ?? {}), titre, alertes: r.apercu?.alertes ?? [] } : apercu(titre, r.apercu),
+        annulation: r.annulation ?? null, resultat_resume: r.resume.slice(0, 300),
+        objet_type: r.objet?.type ?? null, objet_id: r.objet?.id ?? null, expire_le: null,
+      })
+      return { carte: versCarte(fiche), nonEnregistre: false }
+    } catch (e) { console.error('[assistant] action non enregistrée :', e instanceof Error ? e.message : e); return { nonEnregistre: true } }
+  }
   const directe = (nom: NomAction) => async (entree: EntreeAction): Promise<ResultatExecution> => {
     if (!(await plafondJour())) return refusJour
     const r = await R[nom](entree)
     if (!r.ok) return { donnees: { ok: false, erreur: r.erreur }, resume: r.erreur.slice(0, 280), resultat: 'refus' }
-    let carte: CarteAction | undefined
-    let nonEnregistre = false
-    try {
-      const fiche = await ctx.magasin.creer({
-        artisan_id: ctx.uid, conversation_id: ctx.conversationId, tour: Math.max(1, ctx.tour()), outil: nom, mode: 'direct', statut: 'executee',
-        titre: r.resume.slice(0, 200), entrees: entree, apercu: apercu(r.resume.slice(0, 200), r.apercu), annulation: r.annulation ?? null, resultat_resume: r.resume.slice(0, 300),
-        objet_type: r.objet?.type ?? null, objet_id: r.objet?.id ?? null, expire_le: null,
-      })
-      carte = versCarte(fiche)
-    } catch (e) { nonEnregistre = true; console.error('[assistant] action non enregistrée :', e instanceof Error ? e.message : e) }
+    const { carte, nonEnregistre } = await inscrireFaite(nom, entree, r, null)
     return {
-      donnees: { ok: true, fait: r.resume, annulable_par_l_artisan: !!(r.annulation && carte), ...(nonEnregistre ? { journal_des_actions_indisponible: true, a_savoir_journal: "L'action est faite mais n'a pas pu être inscrite au journal des actions : dis-le à l'artisan, il ne pourra pas l'annuler d'un clic." } : {}), ...(r.donnees ?? {}) },
-      resume: r.resume.slice(0, 280), objet: r.objet ?? null, ...(carte ? { carte } : {}),
+      donnees: { ok: true, fait: r.resume, annulable_par_l_artisan: !!(r.annulation && carte), ...(nonEnregistre ? JOURNAL_INDISPONIBLE : {}), ...(r.donnees ?? {}) },
+      resume: r.resume.slice(0, 280), objet: r.objet ?? null, ...(carte ? { carte } : {}), ...(r.brouillon ? { brouillon: r.brouillon } : {}),
     }
   }
   /** Cette conversation a-t-elle appelé un outil qui rend du texte écrit par un tiers ? (journal de l'assistant, sous la RLS ; erreur = oui). */
@@ -995,6 +1359,24 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!(await plafondJour())) return refusJour
     const p = await P[nom](entree)
     if (!p.ok) return { donnees: { ok: false, erreur: p.erreur }, resume: p.erreur.slice(0, 280), resultat: 'refus' }
+    // 29/10 — MODE « FAIT TOUT SEUL » (choix de Benj) : l'artisan a demandé l'action dans SON message et aucun texte de tiers n'a été lu
+    // dans ce tour → la proposition (mêmes contrôles, même aperçu) est exécutée aussitôt, avec SES entrées (lot de prix, TTC annoncé…),
+    // et inscrite au journal comme une action faite. Les plafonds d'envois et d'actions sont ceux des réalisations et de plafondJour.
+    if (ctx.autonome?.() === true) {
+      const r = await R[nom](p.entrees)
+      if (!r.ok) return { donnees: { ok: false, erreur: r.erreur, rien_n_a_ete_fait: true }, resume: `demandée par l’artisan, non faite : ${r.erreur}`.slice(0, 280), resultat: 'refus' }
+      const objet = r.objet ?? p.objet ?? null
+      const { carte, nonEnregistre } = await inscrireFaite(nom, p.entrees, { ...r, objet }, p.apercu)
+      const annulable = !!(r.annulation && carte)
+      return {
+        donnees: {
+          ok: true, fait: r.resume, fait_tout_seul: true, annulable_par_l_artisan: annulable,
+          a_savoir: `C'est FAIT : l'artisan te l'a demandé lui-même, l'action est exécutée sans carte à confirmer. Dis-le simplement (« c'est fait : … »)${annulable ? ", et qu'il peut l'annuler d'un clic sous ta réponse" : " ; elle ne se défait pas d'un clic"}.`,
+          ...(nonEnregistre ? JOURNAL_INDISPONIBLE : {}), ...(r.donnees ?? {}),
+        },
+        resume: `faite à la demande de l’artisan : ${r.resume}`.slice(0, 280), objet, ...(carte ? { carte } : {}), ...(r.brouillon ? { brouillon: r.brouillon } : {}),
+      }
+    }
     // Audit du 21/10 (M4, injection de prompt indirecte) : une carte pilotable née d'une conversation où l'assistant a LU du texte
     // écrit par un tiers (messages de prospects, demandes, fournisseurs) est MARQUÉE ; le pilote automatique ne la fait jamais partir.
     const lu = typePiloteDeOutil(nom) ? await contenuTiersLu() : false
@@ -1010,7 +1392,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
       donnees: { ok: true, en_attente_de_confirmation: true, carte: p.apercu.titre, contenu_de_la_carte: [...p.apercu.lignes.filter((l) => !['Client', 'À'].includes(l.label)).map((l) => `${l.label} : ${l.valeur}`), ...p.apercu.alertes],
         a_savoir: auto
           ? `RIEN n'est encore parti. Le pilote automatique de l'artisan enverra cette action seule à ${new Date(auto.part_le).toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })} (dans ${DELAI_ANNULATION_MIN} minutes), sauf s'il l'annule (Paramètres → Pilote automatique, ou le poste des assistants du CRM). Dis-le clairement.`
-          : "RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé.",
+          : `RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé.${ctx.autonome ? " (Elle n'a pas été faite d'office parce que l'artisan ne l'a pas demandée lui-même dans ce message, ou parce qu'un texte écrit par un client ou un fournisseur a été lu dans ce tour.)" : ''}`,
         ...(auto ? { pilote_automatique: { part_le: auto.part_le } } : {}) },
       resume: `proposée, en attente de confirmation : ${p.apercu.titre}`.slice(0, 280), objet: p.objet ?? null, carte: versCarte(fiche),
     }
@@ -1024,5 +1406,10 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (categorieDe(nom) === 'direct' && P[nom]) throw new Error(`action directe avec proposition : ${nom}`)
     executeurs[nom] = categorieDe(nom) === 'confirmation' ? proposee(nom) : directe(nom)
   }
+  // 29/10 — mode « fait tout seul » : une action à confirmer peut aussi s'EXÉCUTER depuis le modèle (sa proposition, puis sa réalisation) ;
+  // toute proposition a donc sa réalisation. Et chaque outil du catalogue (SPEC) a son exécution : un outil montré au modèle qui ne ferait
+  // rien (ou répondrait « pas ouvert ») fait échouer la construction, au lieu de laisser l'assistant dire qu'il ne peut pas.
+  for (const nom of Object.keys(P)) if (!R[nom]) throw new Error(`proposition sans réalisation : ${nom}`)
+  for (const nom of NOMS_ACTIONS) if (!executeurs[nom]) throw new Error(`action sans exécution : ${nom}`)
   return { executeurs, realisateurs: R, inverses: INV }
 }

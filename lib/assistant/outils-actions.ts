@@ -5,13 +5,15 @@
 // peuvent pas diverger). L'exécution vit dans lib/assistant/actions-serveur.ts (qui appelle les mêmes routes et fonctions
 // que l'interface, avec la session de l'artisan).
 //
-// Deux catégories, et rien entre les deux :
+// Deux catégories, et rien entre les deux (29/10 : la catégorie dit ce qui se passe quand l'artisan N'A PAS demandé l'action lui-même,
+// ou quand un texte de tiers a été lu dans le tour ; sinon, une action « à confirmer » qu'il a demandée s'exécute aussitôt et
+// s'inscrit au journal — mode « fait tout seul », lib/assistant/actions-serveur.ts) :
 //  • DIRECT : une écriture interne, réversible (brouillon de devis, tarif, ligne de stock, tâche…). Elle s'exécute tout de
 //    suite, s'inscrit au journal des actions et, quand c'est possible, garde de quoi l'ANNULER.
 //  • CONFIRMATION : tout ce qui part vers l'extérieur (e-mail ou message à un client, devis envoyé), tout ce qui est
 //    irréversible ou comptable (facture émise et scellée, facture encaissée, suppression) et tout lot de prix. L'outil ne
-//    fait RIEN : il prépare une carte (le texte exact, l'avant/après) que l'artisan confirme d'un clic. Aucun outil de cette
-//    catégorie ne peut s'exécuter depuis le modèle (lib/assistant/confirmation.ts).
+//    fait RIEN : il prépare une carte (le texte exact, l'avant/après) que l'artisan confirme d'un clic (lib/assistant/confirmation.ts) —
+//    sauf en mode « fait tout seul » (l'artisan l'a demandé dans SON message, aucun texte de tiers lu dans le tour).
 //
 // Aucun identifiant de compte ne vient du modèle. Les devis et factures se désignent par leur NUMÉRO, les chantiers, articles,
 // membres et tâches par leur NOM : le serveur les retrouve dans les données de l'artisan (cartes.ts trouverUnique), et refuse
@@ -117,6 +119,20 @@ export const SPEC = {
       ...(FLAGS.facturesSituation ? { avancement_pct: { t: 'nombre', d: 'Avancement CUMULÉ du chantier à date, en % (entre 1 et 100), obligatoire pour type=situation : celui que l’artisan a donné.', min: 1, max: 100, sourcer: true } as const } : {}),
     },
   },
+  creer_facture_libre: {
+    cat: 'confirmation', libelle: 'créer une facture sans devis',
+    desc: "Crée une FACTURE SANS DEVIS (dépannage, petite intervention, vente de matériel) à partir de lignes que tu fournis, par le même chemin que l'écran Factures : mêmes mentions légales bloquantes, même numérotation continue, même émission d'un seul tenant (facture, lignes, numéro et scellement). Chaque ligne s'appuie sur un tarif de l'artisan (tarif_id, lire_tarifs) ou sur un prix qu'il t'a donné : une ligne SANS prix est refusée (une facture ne se chiffre pas après coup). Le nom du client est obligatoire. Émise, elle est scellée : une correction passe par un avoir. Pour facturer un devis signé : creer_facture.",
+    champs: {
+      client_nom: { t: 'texte', d: 'Nom du client (mention obligatoire).', max: 160 },
+      client_email: { t: 'email', d: 'E-mail du client, seulement si l’artisan l’a écrit lui-même.' },
+      client_adresse: { t: 'texte', d: 'Adresse du client, si l’artisan l’a donnée.', max: 300 },
+      conversation_id: { t: 'uuid', d: 'Conversation du client (lire_conversations) : reprend son nom et son e-mail.' },
+      objet: { t: 'texte', d: 'Objet de la facture (ex. Dépannage fuite sous évier).', max: 300, req: true },
+      lignes: { t: 'lignes', d: 'Les lignes de la facture, toutes avec un prix (tarif_id ou prix donné par l’artisan).', req: true },
+      tva_taux: { t: 'nombre', d: 'TVA des lignes sans tarif : 0, 5.5, 10 ou 20 (défaut : 10), celle de l’artisan.', min: 0, max: 20 },
+      conditions: { t: 'texte', d: 'Conditions de règlement, si l’artisan en a dicté.', max: 2000 },
+    },
+  },
   marquer_facture_payee: {
     cat: 'confirmation', libelle: 'encaisser une facture',
     desc: "Propose de marquer une facture PAYÉE (encaissée). Irréversible : une facture payée ne revient pas en arrière. L'artisan confirme sur une carte, après avoir vérifié l'encaissement.",
@@ -186,13 +202,55 @@ export const SPEC = {
   },
   ajuster_stock: {
     cat: 'direct', libelle: 'ajuster le stock',
-    desc: "Enregistre un mouvement de stock : entree (réception), sortie (consommation), perte, ou inventaire (recomptage : la quantité est la quantité COMPTÉE, pas une différence). Annulable.",
+    desc: "Enregistre un mouvement de stock : entree (réception), sortie (consommation), perte, ou inventaire (recomptage : la quantité est la quantité COMPTÉE, pas une différence). Une SORTIE pour un chantier du CRM (« sors 10 plaques pour le chantier Dupont ») : passe chantier — la sortie est rattachée au chantier (et sa réservation de même quantité, s'il y en a une, passe « sortie »). Annulable.",
     champs: {
       article,
       mouvement: { t: 'enum', d: 'entree, sortie, perte ou inventaire.', valeurs: MOUVEMENTS_STOCK, req: true },
       quantite: { t: 'nombre', d: 'Quantité (celle de l’artisan).', min: 0, max: 1_000_000, req: true, sourcer: true },
       lieu: { t: 'texte', d: 'Lieu (défaut : atelier).', max: 60 },
       note: { t: 'texte', d: 'Note courte.', max: 300 },
+      chantier: { t: 'texte', d: 'Chantier du CRM pour lequel le matériel SORT (mouvement sortie seulement), tel que lire_chantiers le rend.', max: 80, rech: true },
+    },
+  },
+  supprimer_article: {
+    cat: 'confirmation', libelle: 'supprimer un article',
+    desc: "Supprime un article de l'inventaire : sa fiche, son stock et son historique de mouvements partent avec (ne se défait pas). Seulement si l'artisan le demande.",
+    champs: { article },
+  },
+  preparer_liste_achat: {
+    cat: 'direct', libelle: 'préparer la liste d’achat',
+    desc: "Prépare la LISTE D'ACHAT « à racheter » à partir des ALERTES de stock (articles sous leur seuil) : une ligne par article, quantité = ce qui manque pour revenir au seuil d'alerte (calculée par Presti, 1 au moins), fournisseur et dernier prix NOTÉS sur la fiche. Rien n'est commandé chez personne : la liste se relit, s'exporte en Excel (exporter_tableau, quoi=liste_achat) ; une commande que l'artisan a passée s'enregistre avec enregistrer_commande. Un article déjà sur la liste ouverte n'est pas doublé. Annulable.",
+    champs: {
+      articles: { t: 'liste', d: 'Seulement ces articles (noms, ou mots des noms). Absent : toutes les alertes.', max: 40 },
+      fournisseur: { t: 'texte', d: 'Seulement les articles de ce fournisseur habituel.', max: 120, rech: true },
+    },
+  },
+  // ── 29/10 — l'assistant qui FAIT à la place de l'artisan (décision de Benj) : chercher chez les fournisseurs, exporter, facturer sans devis.
+  rechercher_fournisseurs: {
+    cat: 'direct', libelle: 'chercher chez les fournisseurs',
+    desc: "Cherche un matériau (prix, référence, disponibilité) sur les sites des fournisseurs de l'artisan (« Mes fournisseurs » de l'Inventaire), comme le bouton « Chercher » de l'écran Inventaire. Coûte des crédits de recherche : seulement quand l'artisan demande un prix, un produit ou une comparaison chez ses fournisseurs. Rend ce qui a été VU sur chaque page : le prix tel qu'affiché (HT, TTC ou non précisé), le fournisseur, la date. Tu cites chaque prix avec sa source (« vu chez Point P le 29/10, 12,90 € TTC ») ; tu n'en inventes jamais, tu ne convertis jamais HT/TTC, et un fournisseur « non vu » se dit tel quel. Rien n'est enregistré : pour garder un résultat, retenir_resultat.",
+    champs: {
+      requete: { t: 'texte', d: 'Ce que l’artisan cherche, avec ses mots (ex. « plaque de plâtre BA13 2,50 m »).', max: 200, req: true },
+      quantite: { t: 'nombre', d: 'Quantité voulue, seulement si l’artisan l’a donnée.', min: 0, max: 100_000, sourcer: true },
+    },
+  },
+  retenir_resultat: {
+    cat: 'direct', libelle: 'garder un résultat de recherche',
+    desc: "Garde un résultat de la DERNIÈRE recherche chez les fournisseurs de cette conversation (par son numéro, 1 = premier) : dans l'inventaire (fiche créée ou complétée, prix observé gardé avec sa page et sa date) ou dans la liste d'achat ouverte. Comme le bouton « Retenir » de l'écran : le résultat est celui que le moteur a vu, jamais retouché.",
+    champs: {
+      resultat: { t: 'nombre', d: 'Numéro du résultat dans la dernière recherche (1 = premier).', min: 1, max: 50, req: true },
+      vers: { t: 'enum', d: 'inventaire (défaut) ou liste_achat.', valeurs: ['inventaire', 'liste_achat'] },
+      article: { t: 'texte', d: 'Article EXISTANT de l’inventaire auquel rattacher ce prix (sinon une fiche est créée).', max: 80, rech: true },
+      quantite: { t: 'nombre', d: 'Quantité à mettre sur la liste d’achat, celle de l’artisan.', min: 0.01, max: 100_000, sourcer: true },
+    },
+  },
+  exporter_tableau: {
+    cat: 'direct', libelle: 'exporter un tableau Excel',
+    desc: "Fabrique un vrai classeur Excel (.xlsx) de ses données — devis, factures, stock, tarifs, ou la liste d'achat ouverte — rendu en bouton « Télécharger » sous ta réponse. Les montants sont ceux de la base, recopiés tels quels : tu ne les recalcules pas et tu ne les recopies pas dans ta réponse (dis seulement combien de lignes). Rien n'est modifié.",
+    champs: {
+      quoi: { t: 'enum', d: 'devis, factures, stock, tarifs ou liste_achat.', valeurs: ['devis', 'factures', 'stock', 'tarifs', 'liste_achat'], req: true },
+      depuis: { t: 'date', d: 'Devis ou factures émis à partir de cette date AAAA-MM-JJ, si l’artisan l’a donnée.' },
+      jusqu_a: { t: 'date', d: 'Devis ou factures émis jusqu’à cette date AAAA-MM-JJ, si l’artisan l’a donnée.' },
     },
   },
   // ── CRM ─────────────────────────────────────────────────────────────────────────────────────────
@@ -467,7 +525,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const DATE = /^\d{4}-\d{2}-\d{2}$/
 const NUMERO = /^(DEV|FAC)-\d{4}-\d{1,6}$/i
-const DEFAUTS: Record<string, unknown> = { ton: 'cordial', type: 'complete', faite: true, fait: true, lieu: 'atelier', entrer_en_stock: false, genre: 'rappeler' }
+const DEFAUTS: Record<string, unknown> = { ton: 'cordial', type: 'complete', faite: true, fait: true, lieu: 'atelier', entrer_en_stock: false, genre: 'rappeler', vers: 'inventaire' }
 
 export type LigneEntree = { tarif_id: string | null; designation: string; quantite: number; unite: string | null; prix_unitaire_ht: number | null }
 export type EntreeAction = Record<string, unknown>
@@ -595,6 +653,18 @@ function validerCoherence(nom: NomAction, e: EntreeAction): string | null {
       return null
     case 'modifier_article':
       return e.seuil_alerte === null && !e.fournisseur_prefere && !e.categorie ? 'rien à modifier' : null
+    // 29/10 — sortie de stock rattachée à un chantier ; facture sans devis ; résultat de recherche ; export.
+    case 'ajuster_stock':
+      return e.chantier && e.mouvement !== 'sortie' ? 'chantier : seulement pour une sortie de stock' : null
+    case 'creer_facture_libre':
+      if (!e.client_nom && !e.conversation_id) return 'client_nom (ou conversation_id) : obligatoire (mention légale de la facture)'
+      return e.tva_taux !== null && !(TVA_TAUX as readonly number[]).includes(e.tva_taux as number) ? 'tva_taux : 0, 5.5, 10 ou 20' : null
+    case 'retenir_resultat':
+      if (!Number.isInteger(e.resultat)) return 'resultat : le numéro (entier) d’un résultat de la dernière recherche'
+      return e.quantite !== null && e.vers !== 'liste_achat' ? 'quantite : seulement pour la liste d’achat (vers=liste_achat)' : null
+    case 'exporter_tableau':
+      if ((e.depuis || e.jusqu_a) && !['devis', 'factures'].includes(String(e.quoi))) return 'depuis / jusqu_a : seulement pour les devis ou les factures'
+      return e.depuis && e.jusqu_a && (e.jusqu_a as string) < (e.depuis as string) ? 'jusqu_a est avant depuis' : null
     case 'creer_chantier':
       if (!e.devis_numero && !e.titre) return 'titre (ou devis_numero d’un devis signé) : obligatoire'
       if (e.generer_taches === true && !e.devis_numero) return 'generer_taches : demande un devis'

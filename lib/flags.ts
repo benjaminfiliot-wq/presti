@@ -143,9 +143,14 @@ export const FLAGS = {
    *  comptaAlerteImpayes : LEVÉ le 15/10/2026 sur décision de Benj, offre Signature (`chiffres.auto`). */
   comptaExportMensuel: true,
   /** 15/10/2026 — A3 : l'assistant AGIT (devis, factures, tarifs, stock, CRM, messages ; cartes à confirmer pour tout ce qui part chez un
-   *  client, journal des actions annulables) — migration 0157 ÉCRITE, NON APPLIQUÉE. Pour ouvrir à tous les comptes Signature, dans cet
-   *  ordre : 0157 appliquée et contrôlée → scripts/assistant-qa.mjs vert → accord de Benj → `assistant: true` ici, `ESSAI` vidé (ci-dessous)
-   *  et lib/essais.ts vidé. La grille des offres (lib/plans.ts) gagne seule sa ligne. Sans 0157, l'assistant ne propose aucun outil d'action.
+   *  client, journal des actions annulables). Migration 0157 (table assistant_actions) APPLIQUÉE en production le 14/10 ; drapeau levé et
+   *  `ESSAI` vidé ensuite, sur accord de Benj. Sans 0157, l'assistant ne propose aucun outil d'action (lib/assistant/magasin.ts,
+   *  actionsDisponibles : fail-closed).
+   *  29/10/2026 — « il ne peut absolument pas agir » (Benj) : les outils d'action sont désormais TOUJOURS donnés au modèle (plus de
+   *  détecteur de mots-clés en barrière), avec le mode « fait tout seul » — une action « à confirmer » demandée par l'artisan lui-même, sans
+   *  texte de tiers lu dans le tour, est exécutée tout de suite et reste annulable quand un inverse existe (lib/assistant/cadrage.ts
+   *  faitToutSeul). Nouveaux outils : recherche chez les fournisseurs, export Excel, facture sans devis, liste d'achat, suppression d'article,
+   *  sortie de stock pour un chantier. Aucune migration nouvelle.
    *  12/10/2026 — l'assistant de gestion de la console (plans/016-assistant.md, jalons A1 lecture seule et A2 brouillons) :
    *  page /assistant, POST /api/assistant, entrée « Assistant » du menu. Offre Signature à l'époque ; Studio et au-dessus depuis le 25/10
    *  (capacité `assistant`, lib/plans.ts ; ses outils CRM restent Signature).

@@ -12,9 +12,10 @@
 //  • PRÉPARER (A2) : un devis brouillon depuis une demande, une réponse préparée dans une conversation. Le brouillon est
 //    enregistré là où l'interface range déjà les siens (devis au statut « brouillon », message « proposition ») ; rien
 //    ne part chez le client, l'artisan valide dans l'écran habituel.
-// Pas d'outil « liste de commande fournisseur » : l'application n'a aucun écran où un tel brouillon se relit (la table
-// `listes_achat` existe, mais aucune page ne l'affiche et sa seule route d'écriture exige un résultat scellé de la
-// recherche fournisseurs). Règle du plan : un outil n'existe que si la fonction existe dans le produit.
+// 29/10 (décision de Benj : « il doit tout faire à la place des artisans ») : la liste d'achat « à racheter » (table `listes_achat`,
+// écrite sous la RLS de l'artisan) se prépare depuis les alertes de stock et se relit en Excel (exporter_tableau) — aucun écran ne
+// l'affiche encore ; la recherche chez les fournisseurs passe par la route de l'Inventaire (même crédit, même offre, résultats scellés).
+// Voir outils-actions.ts : preparer_liste_achat, rechercher_fournisseurs, retenir_resultat, exporter_tableau.
 //
 // Aucun identifiant de compte ne vient du modèle : l'artisan est celui de la session. Les seuls identifiants acceptés
 // sont des conversations (UUID), revérifiées par la route appelée (la conversation doit être à lui).
@@ -83,6 +84,8 @@ export const VALEURS_FERMEES: ReadonlySet<string> = new Set<string>([
   ...STATUTS_DEVIS, ...STATUTS_FACTURES, ...PERIODES_CHIFFRES, ...STATUTS_CHANTIER, ...STATUTS_RESERVATION,
   ...STATUTS_DEMANDE, ...STATUTS_CHANTIER_ACTION, ...MOUVEMENTS_STOCK, ...TONS_RELANCE, ...TYPES_FACTURE, ...ROLES_EQUIPE,
   ...QUAND_RAPPELS, 'assistee', 'manuelle', 'sobre', 'chaleureux', 'direct', 'rappeler', 'relancer_devis', 'visite', 'metre', 'rendez_vous', 'autre',
+  // 29/10 — exporter_tableau (quoi) et retenir_resultat (vers).
+  'devis', 'factures', 'stock', 'tarifs', 'liste_achat', 'inventaire',
 ])
 
 /** Ce que l'écran affiche pendant l'appel (« l'assistant consulte : stock… »). */

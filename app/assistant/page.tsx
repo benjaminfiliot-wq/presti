@@ -206,7 +206,14 @@ function Assistant() {
                 ) : null}
                 {b.brouillons?.length ? (
                   <div className="asst-brouillons">
-                    {b.brouillons.map((d, j) => (
+                    {b.brouillons.map((d, j) => d.type === 'tableau' ? (
+                      // 29/10 — un classeur Excel fabriqué par l'assistant (exporter_tableau) : le lien EST le fichier, il se télécharge.
+                      <div key={j} className="asst-brouillon">
+                        <span className="asst-brouillon-lab">Tableau Excel · {d.libelle}</span>
+                        <span className="asst-brouillon-note">Fabriqué à partir de vos données, tel quel : rien n’a été modifié.</span>
+                        <a className="btn btn--primary" style={{ width: 'auto' }} href={d.lien} download={d.fichier}>Télécharger</a>
+                      </div>
+                    ) : (
                       <div key={j} className="asst-brouillon">
                         <span className="asst-brouillon-lab">{d.type === 'devis' ? 'Brouillon de devis' : 'Réponse préparée'} · {d.libelle}</span>
                         <span className="asst-brouillon-note">Rien n’est parti. Vous le relisez et le validez dans {d.type === 'devis' ? 'l’écran Devis' : 'Messages'}.</span>

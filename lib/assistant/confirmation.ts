@@ -13,6 +13,7 @@
 //    (son clic est sa confirmation), exécuté par les « inverses » du serveur, jamais par le modèle.
 // Un réalisateur qui échoue ou qui jette laisse la carte en « echec » avec le motif : jamais « en_cours » pour toujours.
 import { peutConfirmer, type Annulation, type Apercu, type StatutAction, type TypeObjet } from './cartes'
+import type { Brouillon } from './boucle'
 
 export type FicheAction = {
   id: string
@@ -43,10 +44,18 @@ export interface MagasinActions {
   transiter(artisanId: string, id: string, de: readonly StatutAction[], vers: StatutAction, maj?: Partial<Pick<FicheAction, 'resultat_resume' | 'annulation' | 'objet_type' | 'objet_id'>>): Promise<FicheAction | null>
   /** Date de la dernière exécution de cet outil sur cet objet (relances : pas deux fois de suite), null si jamais. */
   dernierEnvoi(artisanId: string, outil: string, objetId: string): Promise<string | null>
+  /** 29/10 — la dernière fiche EXÉCUTÉE de cet outil dans cette conversation (retenir_resultat relit la dernière recherche), null si aucune. */
+  derniere?(artisanId: string, conversationId: string, outil: string): Promise<FicheAction | null>
 }
 
 export type Realisation =
-  | { ok: true; resume: string; objet?: { type: TypeObjet; id: string } | null; annulation?: Annulation | null; donnees?: Record<string, unknown>; apercu?: Partial<Apercu> }
+  | {
+    ok: true; resume: string; objet?: { type: TypeObjet; id: string } | null; annulation?: Annulation | null; donnees?: Record<string, unknown>; apercu?: Partial<Apercu>
+    /** 29/10 — un fichier rendu sous la réponse (export Excel) : il va à l'écran, jamais au modèle ni au journal des actions. */
+    brouillon?: Brouillon
+    /** 29/10 — ce que la fiche du journal garde EN PLUS des entrées (les résultats scellés d'une recherche, relus par retenir_resultat). */
+    garder?: Record<string, unknown>
+  }
   | { ok: false; erreur: string }
 
 export type Realisateur = (entrees: Record<string, unknown>) => Promise<Realisation>
@@ -174,6 +183,11 @@ export function magasinEnMemoire(): MagasinActions & { toutes: () => FicheAction
     async dernierEnvoi(artisanId, outil, objetId) {
       const l = [...lignes.values()].filter((f) => f.artisan_id === artisanId && f.outil === outil && f.objet_id === objetId && f.statut === 'executee').sort((a, b) => b.maj_le.localeCompare(a.maj_le))[0]
       return l?.maj_le ?? null
+    },
+    async derniere(artisanId, conversationId, outil) {
+      // L'ordre de création (identifiants croissants) : deux fiches de la même milliseconde se départagent quand même.
+      const l = [...lignes.values()].filter((f) => f.artisan_id === artisanId && f.conversation_id === conversationId && f.outil === outil && f.statut === 'executee').sort((a, b) => b.id.localeCompare(a.id))[0]
+      return l ? { ...l } : null
     },
     toutes: () => [...lignes.values()].map((f) => ({ ...f })),
   }

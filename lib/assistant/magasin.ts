@@ -35,6 +35,11 @@ export function magasinSupabase(): MagasinActions {
       if (error) throw new Error(error.message)
       return (data?.maj_le as string | undefined) ?? null
     },
+    async derniere(artisanId, conversationId, outil) {
+      const { data, error } = await supabaseAdmin.from(TABLE).select(COLONNES).eq('artisan_id', artisanId).eq('conversation_id', conversationId).eq('outil', outil).eq('statut', 'executee').order('cree_le', { ascending: false }).limit(1).maybeSingle()
+      if (error) throw new Error(error.message)
+      return (data as unknown as FicheAction | null) ?? null
+    },
   }
 }
 

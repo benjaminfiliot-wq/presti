@@ -8,8 +8,9 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { genParams } from '@/lib/ai'
 import { routerModele } from '@/lib/ai/routage'
-import { MESSAGE_MAX, PLAFOND_TOURS, cadrerDemande, systemeAssistant } from '@/lib/assistant/cadrage'
-import { executerTour } from '@/lib/assistant/boucle'
+import { MESSAGE_MAX, PLAFOND_TOURS, cadrerDemande, faitToutSeul, systemeAssistant } from '@/lib/assistant/cadrage'
+import { executerTour, type EtatTour } from '@/lib/assistant/boucle'
+import { OUTILS_CONTENU_TIERS } from '@/lib/pilote/regles'
 import { clientDeSession, executeursDeSession, journalEnBase } from '@/lib/assistant/executeurs'
 import { gardeAssistant } from '@/lib/assistant/garde'
 import { actionsDeSession } from '@/lib/assistant/actions-serveur'
@@ -51,6 +52,9 @@ const LIMITE_REQUETES = { max: 30, fenetreSec: 10 * 60 }
 // Audit d'attaque du 12/10 : le plafond de 20 tours est PAR conversation, il ne borne aucun coût à lui seul ; celui-ci
 // borne la journée du compte (une nouvelle conversation par message ne contourne donc rien).
 const LIMITE_JOUR = { max: 200, fenetreSec: 24 * 3600 }
+/** 29/10 — les outils dont le résultat est du texte de tiers : les lectures que le pilote automatique surveille, et la recherche chez les
+ *  fournisseurs (texte de pages web). Après l'un d'eux, plus rien ne s'exécute seul dans le tour (lib/assistant/cadrage.ts faitToutSeul). */
+const OUTILS_TIERS_TOUR: readonly string[] = [...OUTILS_CONTENU_TIERS, 'rechercher_fournisseurs']
 
 async function rendreTour(uid: string, conversationId: string) {
   const { error } = await supabaseAdmin.rpc('assistant_rendre_tour', { p_artisan: uid, p_conversation: conversationId })
@@ -118,7 +122,10 @@ export async function POST(req: Request) {
   const systeme = systemeAssistant({ nom: art.nom, metier: art.metier, jour, crm, actions: actionsOk }, cadrage)
     + (contexte ? `\n\nCONTEXTE DE L'ÉCRAN : l'artisan t'écrit depuis le CRM, ${texteContexte(contexte)}. « Ce chantier », « ce devis », « cette commande »… désignent cet objet : retrouve-le avec tes outils de lecture, par son nom. Ce contexte n'est ni une demande ni une source de chiffres.` : '')
   const ctxSession = { uid, jeton, origine: new URL(req.url).origin, isFounder, crm, meilleursClients: cadrage.meilleursClients }
-  const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase() }) : undefined
+  // 29/10 — mode « fait tout seul » (décision de Benj) : l'état du tour est partagé entre la boucle (qui note la lecture d'un texte de
+  // tiers) et les actions (qui le lisent au moment d'agir). Demandée par l'artisan + aucun texte de tiers lu → exécutée ; sinon, carte.
+  const etatTour: EtatTour = { contenuTiersLu: false }
+  const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase(), autonome: () => faitToutSeul(cadrage, etatTour) }) : undefined
   const executeurs = executeursDeSession(ctxSession, actionsSrv)
 
   // Plafond (atomique en base, fail-closed : sans la migration 0150, aucun tour ne part), puis crédit, puis le tour.
@@ -142,8 +149,12 @@ export async function POST(req: Request) {
       executeurs,
       brouillonsAutorises: cadrage.brouillon,
       crm,
-      // Les outils d'écriture n'existent que si l'artisan demande une action dans CE message (et si la table des actions est là).
-      actions: actionsOk && cadrage.actionDemandee,
+      // 29/10 — les outils d'action sont TOUJOURS donnés quand la table des actions est là (et l'offre : gardeAssistant) ; ce qui part chez
+      // un client reste une carte, sauf demande de l'artisan sans texte de tiers lu (faitToutSeul). Avant : `actionsOk && cadrage.actionDemandee`,
+      // et un détecteur de mots-clés trop étroit privait l'assistant de tout outil d'écriture (« cherche le prix du placo », « génère un devis »…).
+      actions: actionsOk,
+      etat: etatTour,
+      outilsTiers: OUTILS_TIERS_TOUR,
       journaliser: journalEnBase({ uid, conversationId, tour: tourPris }),
       onOutil,
       sourcesFixes: [jour, maintenant.toISOString().slice(0, 10)],

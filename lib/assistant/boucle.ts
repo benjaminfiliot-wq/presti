@@ -18,6 +18,15 @@ import type { ObjetJournal, ResultatJournal } from './journal'
 export type Brouillon =
   | { type: 'devis'; id: string; numero: string | null; lien: string; libelle: string }
   | { type: 'reponse'; conversation_id: string; lien: string; libelle: string }
+  /** 29/10 — un classeur Excel fabriqué par exporter_tableau : `lien` est le fichier lui-même (data:…;base64), `fichier` son nom. */
+  | { type: 'tableau'; lien: string; libelle: string; fichier: string }
+
+/**
+ * 29/10 — l'état d'un tour, partagé avec les actions du serveur (mode « fait tout seul », lib/assistant/actions-serveur.ts) :
+ * `contenuTiersLu` passe à vrai dès qu'un résultat d'outil de CE tour porte un texte écrit par un tiers ([MESSAGE_CLIENT]) ou vient
+ * d'un outil qui en rend (`outilsTiers`). Il ne redescend jamais : après une telle lecture, une action « à confirmer » reste une carte.
+ */
+export type EtatTour = { contenuTiersLu: boolean }
 
 export type ResultatExecution = {
   /** Ce que le modèle lit (sérialisé en JSON). */
@@ -116,12 +125,19 @@ export async function executerTour(p: {
   /** Le compte a le CRM (drapeau ou essai, et capacité `crm`) : sinon ses outils n'existent pas pour le modèle. */
   crm?: boolean
   /**
-   * Les outils d'ACTION existent pour ce tour : l'artisan a demandé une action dans CE message (cadrerDemande) ET la table des
-   * actions est là (migration 0157). Sinon ils ne sont même pas proposés au modèle — un message de client lu dans les données
-   * ne peut donc rien déclencher, et une question de lecture ne modifie jamais rien.
+   * Les outils d'ACTION existent pour ce tour : la table des actions est là (migration 0157). Depuis le 29/10 (décision de Benj :
+   * « il ne peut absolument pas agir »), ils ne dépendent plus des mots du message : un détecteur de mots-clés laissait passer
+   * « cherche le prix du placo », « génère un devis », « exporte en Excel »… et l'assistant répondait qu'il ne pouvait pas.
+   * La protection contre un message de client qui ferait agir l'assistant est ailleurs : une action qui part chez un client ou ne
+   * se défait pas reste une CARTE à confirmer, sauf si l'artisan l'a demandée lui-même et qu'aucun texte de tiers n'a été lu dans
+   * le tour (EtatTour, lib/assistant/cadrage.ts faitToutSeul).
    */
   actions?: boolean
   journaliser: (a: AppelJournal) => Promise<void>
+  /** 29/10 — l'état du tour (voir EtatTour), lu par les actions du serveur au moment d'agir. */
+  etat?: EtatTour
+  /** 29/10 — les outils dont le résultat est, par nature, du texte de tiers (lib/pilote/regles.ts OUTILS_CONTENU_TIERS, recherche fournisseurs). */
+  outilsTiers?: readonly string[]
   /** Prévient l'écran qu'un outil est appelé (« l'assistant consulte : stock… »). */
   onOutil?: (nom: NomOutil) => void
   /** Sources de nombres admises en plus des données lues (date du jour…). */
@@ -160,6 +176,8 @@ export async function executerTour(p: {
   const executer = async (u: Anthropic.ToolUseBlock): Promise<Anthropic.ToolResultBlockParam> => {
     const reponse = (contenu: unknown, erreur = false): Anthropic.ToolResultBlockParam => {
       const json = JSON.stringify(contenu)
+      // 29/10 — un texte de tiers vient d'entrer dans le contexte du modèle : plus aucune action « à confirmer » ne s'exécute seule dans ce tour.
+      if (p.etat && (json.includes('[MESSAGE_CLIENT]') || (p.outilsTiers ?? []).includes(u.name))) p.etat.contenuTiersLu = true
       // Un nombre écrit par un client (entre [MESSAGE_CLIENT]) n'est pas une source : sinon « 4 850 € » glissé dans un nom de
       // prospect passait pour un chiffre lu (audit d'attaque du 12/10, M1).
       sources.push(json.replace(/\[MESSAGE_CLIENT\][\s\S]*?\[\/MESSAGE_CLIENT\]/g, ''))
@@ -182,10 +200,10 @@ export async function executerTour(p: {
       return reponse({ erreur: "Le CRM n'est pas ouvert sur ce compte : tu n'as aucune donnée de chantier, d'équipe ni de réservation. Dis-le à l'artisan." }, true)
     }
     if (OUTILS_ACTION.includes(nom)) {
-      // Défense en profondeur : l'outil n'a pas été proposé (pas de demande d'action dans ce message), mais un modèle peut halluciner un nom.
+      // Défense en profondeur : l'outil n'a pas été proposé (outils d'action fermés : table 0157 absente), mais un modèle peut halluciner un nom.
       if (!p.actions) {
-        await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'action non demandée par l’artisan dans ce message' })
-        return reponse({ erreur: "L'artisan n'a demandé aucune action dans ce message : propose-la-lui, ne la fais pas." }, true)
+        await journal({ nom, entree: v.entree, resultat: 'refus', resume: 'outils d’action fermés sur ce compte' })
+        return reponse({ erreur: "Les outils d'action ne sont pas ouverts sur ce compte : dis-le à l'artisan et indique l'écran où il le fait lui-même." }, true)
       }
       if (actionsDuTour >= ACTIONS_PAR_TOUR_MAX) {
         await journal({ nom, entree: v.entree, resultat: 'refus', resume: `plafond de ${ACTIONS_PAR_TOUR_MAX} actions par message` })

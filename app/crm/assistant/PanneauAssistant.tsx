@@ -234,7 +234,10 @@ function Panneau({ simule, uid, tier, contexte, onRetirerContexte, onFermer, onA
                   })}
                 </div>
               ) : null}
-              {b.brouillons?.length ? b.brouillons.map((d, j) => <a key={j} className="asst-carte-lien" href={d.lien}>{d.type === 'devis' ? 'Ouvrir le brouillon de devis' : 'Ouvrir la réponse préparée'} · {d.libelle}</a>) : null}
+              {b.brouillons?.length ? b.brouillons.map((d, j) => d.type === 'tableau'
+                // 29/10 — un classeur Excel fabriqué par l'assistant (exporter_tableau) : le lien EST le fichier, il se télécharge.
+                ? <a key={j} className="asst-carte-lien" href={d.lien} download={d.fichier}>Télécharger le tableau Excel · {d.libelle}</a>
+                : <a key={j} className="asst-carte-lien" href={d.lien}>{d.type === 'devis' ? 'Ouvrir le brouillon de devis' : 'Ouvrir la réponse préparée'} · {d.libelle}</a>) : null}
             </div>
           ))}
           {enCours && <div className="asst-bulle assistant attente" role="status"><span className="asst-point" aria-hidden="true" />{conv.consulte ? `L’assistant travaille : ${conv.consulte}…` : 'L’assistant réfléchit…'}</div>}
