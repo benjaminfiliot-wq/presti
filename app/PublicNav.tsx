@@ -47,7 +47,11 @@ export default function PublicNav({ accueil = false }: { accueil?: boolean }) {
   // Les ancres de la landing (#fonctionnalites, #tarifs) restent des ancres sur la landing elle-même.
   const lien = (href: string) => (accueil && href.startsWith('/#') ? href.slice(1) : href)
 
+  // 29/10/2026 — bug mobile signalé par Benj : le tiroir (position:fixed) était DANS l'en-tête, et le backdrop-filter de .lp-head
+  // en fait le bloc conteneur des descendants fixes ; le tiroir était donc cantonné à la hauteur de l'en-tête, sous le reste de la page.
+  // Le voile et le tiroir sont maintenant frères de l'en-tête, rattachés au viewport.
   return (
+    <>
     <header className="lp-head">
       <nav className="lp-nav" aria-label="Navigation principale">
         <a className="lp-brand" href="/"><i className="marque"><Marque size={26} /></i>Presti</a>
@@ -63,6 +67,7 @@ export default function PublicNav({ accueil = false }: { accueil?: boolean }) {
           </svg>
         </button>
       </nav>
+    </header>
       {ouvert ? <div className="lp-scrim" onClick={fermer} aria-hidden="true" /> : null}
       <div id="lp-tiroir" ref={tiroir} className={`lp-tiroir${ouvert ? ' on' : ''}`} role="dialog" aria-modal="true" aria-label="Menu" hidden={!ouvert}>
         <nav aria-label="Menu mobile">
@@ -73,6 +78,6 @@ export default function PublicNav({ accueil = false }: { accueil?: boolean }) {
           <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
         </div>
       </div>
-    </header>
+    </>
   )
 }

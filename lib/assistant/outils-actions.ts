@@ -129,7 +129,7 @@ export const SPEC = {
       conversation_id: { t: 'uuid', d: 'Conversation du client (lire_conversations) : reprend son nom et son e-mail.' },
       objet: { t: 'texte', d: 'Objet de la facture (ex. Dépannage fuite sous évier).', max: 300, req: true },
       lignes: { t: 'lignes', d: 'Les lignes de la facture, toutes avec un prix (tarif_id ou prix donné par l’artisan).', req: true },
-      tva_taux: { t: 'nombre', d: 'TVA des lignes sans tarif : 0, 5.5, 10 ou 20 (défaut : 10), celle de l’artisan.', min: 0, max: 20 },
+      tva_taux: { t: 'nombre', d: 'TVA des lignes sans tarif : 0, 5.5, 10 ou 20, celle de l’artisan (sans précision, 10). Si l’artisan est en franchise de TVA (article 293 B), la facture part SANS TVA quel que soit ce champ : dans ta réponse, dis « sans TVA (franchise) », jamais « TVA 10 % ».', min: 0, max: 20 },
       conditions: { t: 'texte', d: 'Conditions de règlement, si l’artisan en a dicté.', max: 2000 },
     },
   },
@@ -230,7 +230,7 @@ export const SPEC = {
     cat: 'direct', libelle: 'chercher chez les fournisseurs',
     desc: "Cherche un matériau (prix, référence, disponibilité) sur les sites des fournisseurs de l'artisan (« Mes fournisseurs » de l'Inventaire), comme le bouton « Chercher » de l'écran Inventaire. Coûte des crédits de recherche : seulement quand l'artisan demande un prix, un produit ou une comparaison chez ses fournisseurs. Rend ce qui a été VU sur chaque page : le prix tel qu'affiché (HT, TTC ou non précisé), le fournisseur, la date. Tu cites chaque prix avec sa source (« vu chez Point P le 29/10, 12,90 € TTC ») ; tu n'en inventes jamais, tu ne convertis jamais HT/TTC, et un fournisseur « non vu » se dit tel quel. Rien n'est enregistré : pour garder un résultat, retenir_resultat.",
     champs: {
-      requete: { t: 'texte', d: 'Ce que l’artisan cherche, avec ses mots (ex. « plaque de plâtre BA13 2,50 m »).', max: 200, req: true },
+      requete: { t: 'texte', d: 'Mots-clés COURTS, exactement ceux de l’artisan (ex. « placo BA13 », « vis inox 4x40 ») : ne reformule pas, n’ajoute rien (les sites des fournisseurs ne trouvent rien sur une phrase longue). Si 0 résultat, réessaie UNE fois avec 1 ou 2 mots plus généraux (ex. « BA13 ») avant de conclure.', max: 200, req: true },
       quantite: { t: 'nombre', d: 'Quantité voulue, seulement si l’artisan l’a donnée.', min: 0, max: 100_000, sourcer: true },
     },
   },
