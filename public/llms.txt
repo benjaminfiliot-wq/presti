@@ -1,19 +1,38 @@
 # Presti
 
-> Presti aide les artisans du bâtiment à traiter leurs demandes clients : une réponse est prête en moins d’une minute. Presti propose aussi un site à 300 €, TVA non applicable.
+> Presti est un logiciel en ligne pour les artisans du bâtiment en France : chaque demande d’un client faite par le lien de l’artisan a sa réponse prête en moins d’une minute, le devis est chiffré par l’IA à partir des prix de l’artisan, les relances sont prévues (J+2, J+5, J+10) et le devis accepté devient une facture. Le client de l’artisan ne voit jamais le nom « Presti » : tout part au nom de l’artisan. Presti propose aussi un site d’artisan à 300 €, payé une fois, TVA non applicable.
+
+Faits vérifiables (grille de prestiapp.fr, relue le 27/10/2026) :
+
+- Deux abonnements, sans engagement, TVA non applicable (art. 293 B du CGI) : Studio : 59 € par mois (250 crédits), Signature : 99 € par mois (600 crédits).
+- Studio : tout est préparé automatiquement (réponses, devis, relances), l’artisan valide d’un clic, rien ne part sans lui.
+- Signature : les réponses aux demandes et les relances partent seules, jour et nuit ; jamais un prix estimé ni un paiement sans l’artisan.
+- Essai gratuit sans carte : 7 jours en Studio, 21 jours en Signature, une fois par compte.
+- Le devis est chiffré par l’IA sur les tarifs de l’artisan. En Studio, l’artisan le relit avant envoi. En Signature, s’il l’active, le Pilote automatique envoie seul un devis dont tous les prix viennent de ses tarifs, après 10 minutes pendant lesquelles il peut l’annuler ; un prix estimé ne part jamais seul. Presti refuse d’émettre un devis ou une facture à qui il manque une mention obligatoire (SIRET, assurance, adresse…).
+- 1 crédit = 1 réponse préparée, 1 devis généré par l’IA ou 1 dépôt de fichiers de comptabilité.
+
+## Outils gratuits et guides (sans compte)
+
+- [Générateur de devis gratuit](https://prestiapp.fr/generateur-devis) : faire un devis en ligne sans inscription, mentions obligatoires vérifiées en direct, calcul des totaux et de la TVA, PDF ; rien n’est envoyé à un serveur.
+- [Comment faire un devis](https://prestiapp.fr/comment-faire-un-devis) : les mentions obligatoires d’un devis de travaux dans le bâtiment, avec les textes officiels (service-public.fr, arrêté du 24 janvier 2017, Code des assurances), la TVA, devis gratuit ou payant.
+- [Modèles de devis par métier](https://prestiapp.fr/modele-devis) : plombier, électricien, chauffagiste, maçon, peintre, menuisier, couvreur, carreleur ; questions à poser au client, lignes types sans prix, points de vigilance.
+- [Modèle de devis plombier](https://prestiapp.fr/modele-devis/plombier)
+- [Modèle de devis électricien](https://prestiapp.fr/modele-devis/electricien)
+- [Modèle de devis maçon](https://prestiapp.fr/modele-devis/macon)
 
 ## Découvrir Presti
 
-- [Accueil](https://prestiapp.fr/) : présentation de l’assistant IA, des réponses aux demandes, des devis, des factures et des abonnements.
-- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement de Presti, sécurité des données, essai, tarifs et validation des devis.
-- [Tarifs](https://prestiapp.fr/#tarifs) : formules d’abonnement et crédits.
+- [Logiciel de devis artisan](https://prestiapp.fr/logiciel-devis-artisan) : comment Presti va du message du client au devis signé, les deux offres et leur niveau d’automatisation.
+- [Accueil](https://prestiapp.fr/) : présentation, démonstrations, grille des offres.
+- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement, sécurité des données, essai, tarifs, validité des devis.
 
 ## Contacter et utiliser le service
 
-- [Contact](https://prestiapp.fr/contact) : adresser une question à l’équipe Presti.
-- [Commander un site](https://prestiapp.fr/site/commander) : demander un site à 300 € une fois, sans abonnement, TVA non applicable.
+- [Contact](https://prestiapp.fr/contact) : écrire à l’équipe Presti.
+- [Commander un site](https://prestiapp.fr/site/commander) : un site d’artisan à 300 €, payé une fois, sans abonnement, TVA non applicable.
 
 ## Conditions et confidentialité
 
-- [Conditions générales d’utilisation](https://prestiapp.fr/cgu) : conditions applicables au service.
-- [Confidentialité](https://prestiapp.fr/confidentialite) : traitement des données personnelles.
+- [Conditions générales d’utilisation](https://prestiapp.fr/cgu)
+- [Confidentialité](https://prestiapp.fr/confidentialite)
+- [Mentions légales](https://prestiapp.fr/mentions-legales)

@@ -26,7 +26,15 @@ import { FAQ } from '@/lib/faq'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
-export const metadata: Metadata = process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}
+//
+// 27/10 (SEO « devis ») : le titre et la description de l'ACCUEIL portent enfin la requête visée (« logiciel de devis artisan ») ;
+// le layout racine garde les siens pour les pages sans titre. `absolute` : pas de suffixe « · Presti », le nom est déjà en tête.
+export const metadata: Metadata = {
+  title: { absolute: 'Presti — Logiciel de devis artisan, réponses préparées par l’IA' },
+  description: 'Devis chiffrés par l’IA sur vos prix, réponse prête en moins d’une minute à chaque demande, relances et factures. Studio : vous validez d’un clic ; Signature : tout part seul.',
+  alternates: { canonical: '/' },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
+}
 
 /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
 const I = {

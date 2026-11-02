@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { METIERS_DEVIS, PAGES_DEVIS } from '@/lib/seoDevis'
 
 export const revalidate = 3600 // le sitemap se rafraîchit au plus une fois par heure
 
@@ -14,6 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/confidentialite', priority: 0.4 },
     { path: '/contact', priority: 0.6 },
     { path: '/mentions-legales', priority: 0.4 },
+    // 27/10 — la rubrique « devis » (lib/seoDevis.ts) : générateur, modèles par métier, guide, logiciel.
+    ...PAGES_DEVIS.map((p) => ({ path: p.path, priority: 0.9 })),
+    ...METIERS_DEVIS.map((m) => ({ path: `/modele-devis/${m.slug}`, priority: 0.7 })),
   ]
   const entries: MetadataRoute.Sitemap = pages.map((p) => ({
     url: `${base}${p.path}`, lastModified: now, changeFrequency: 'monthly', priority: p.priority,
