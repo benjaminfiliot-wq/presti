@@ -24,6 +24,12 @@ const DUREE_CACHE_MS = 10 * 60_000
 const DELAI_MS = 2000
 const LOCALAPPDATA = process.env.LOCALAPPDATA || join(homedir(), 'AppData', 'Local')
 const APPDATA = process.env.APPDATA || join(homedir(), 'AppData', 'Roaming')
+// 02/11 après-midi : le serveur Oracle héberge aussi des agents Claude Code (24 Go de mémoire, contre 8 au PC). Ils n'y
+// partent que par le lanceur de la session principale (~/agents/lancer.sh, qui pose PRESTI_HOTE_AGENTS=oracle), après que la
+// garde du PC a vu Hermes et Orca ; chaque agent s'affiche dans un onglet Orca du PC. Sur Oracle, n8n est local
+// (127.0.0.1:5678) : c'est lui qu'on sonde. Hors de ce lanceur, ou hors de Linux, rien ne change : la garde bloque comme avant.
+const HOTE_AGENTS_ORACLE = process.env.PRESTI_HOTE_AGENTS === 'oracle' && process.platform === 'linux'
+const PORT_N8N_LOCAL = Number(process.env.PRESTI_N8N_PORT_LOCAL || 5678)
 
 function lireCache() {
   try {
@@ -65,6 +71,10 @@ async function verifierN8n() {
     if (!c.mcpServers || !c.mcpServers['n8n-oracle']) return 'connecteur MCP n8n-oracle absent de Claude Code (~/.claude.json)'
   } catch { return 'impossible de lire ~/.claude.json pour vérifier le connecteur n8n-oracle' }
   return null
+}
+// Sur l'hôte d'agents Oracle : n8n tourne sur la même machine, sans tunnel ni connecteur MCP à vérifier.
+async function verifierN8nLocal() {
+  return (await sondeHttp(`http://127.0.0.1:${PORT_N8N_LOCAL}/healthz`, 4000)) ? null : `n8n injoignable sur 127.0.0.1:${PORT_N8N_LOCAL} (serveur Oracle)`
 }
 // 02/11 (audit du chantier 1) : la configuration est lue pour de vrai (scripts/hooks/config-hermes.mjs, banc
 // scripts/config-hermes-e2e.mjs) : modèle et replis, freellmapi hors du profil qui garde les MCP, outils n8n en lecture
@@ -117,8 +127,8 @@ function noter(issue) {
 
 if (lireCache()) noter('ok-cache')
 else {
-  const [n8n, orca] = await Promise.all([verifierN8n(), verifierOrca()])
-  const hermes = verifierHermes()
+  const [n8n, orca] = HOTE_AGENTS_ORACLE ? [await verifierN8nLocal(), null] : await Promise.all([verifierN8n(), verifierOrca()])
+  const hermes = HOTE_AGENTS_ORACLE ? null : verifierHermes()
   const manques = [n8n && `n8n : ${n8n}`, hermes && `Hermes : ${hermes}`, orca && `Orca : ${orca}`].filter(Boolean)
   if (manques.length) {
     try { writeFileSync(CACHE, JSON.stringify({ ok: false, le: Date.now(), manques })) } catch {}

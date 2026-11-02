@@ -159,6 +159,13 @@ export const MOTS_ESCALADE_TOUJOURS: readonly string[] = [
   // … et ses synonymes manqués (D5) : l'eau qui coule, l'escroquerie, la plainte, les dommages, le travail bâclé, la fraude, le disjoncteur.
   'coule du', 'ça coule', 'goutte du', 'escroqu', 'plaindre', 'plains', 'dommages et', 'consommateur', 'bâcl', 'mal fait', 'fraude',
   'disjoncteur saute', 'ça disjoncte', 'disjoncte sans',
+  // Sixième audit (032-008, M2) : « ça refuit », « le robinet refuit » — le préfixe colle « re » à la racine.
+  'refui', 'refuy',
+  // Lot 032-009 : les synonymes que 032-007 (E2, liste des 22) et 032-011 (M4) voyaient encore passer — l'humidité, l'eau qui coule,
+  // s'échappe, s'écoule, ruisselle, sort, se perd ou que l'appareil lâche ; l'urgence pressée ; l'odeur (« ça sent… » près d'une chaudière).
+  'humidit', 'humide', 'eau coule', 'coule le long', 'ruissel', 's’échapp', 's’écoul', 'eau qui sort', 'eau sort', 'eau se perd', 'de l’eau sous',
+  'lâche de l’eau', 'crache de l’eau', 'pisse de l’eau', 'se vide tout seul', 'perd du liquide', 'perte de liquide',
+  'c’est pressé', 'est très pressé', 'suis pressé', 'odeur',
 ]
 /**
  * 02/11 (contre-audit 032-004, D5) — les sujets repérés en MOT ENTIER seulement : leur début est celui de mots ordinaires (« gaz » de
@@ -175,6 +182,21 @@ const RACINES_ENTIERES: readonly (readonly [string, string])[] = MOTS_ESCALADE_E
 // « Pas d'urgence, quand vous pouvez » n'est pas une urgence (contre-audit 032-004, D5) ; ni « sans dégât » un dégât, ni une « chute de
 // neige » une chute (troisième audit 032-005).
 const FAUSSE_URGENCE = / (?:pas d|sans|aucune|rien d) urgen[a-z]*| pas urgent[a-z]*| (?:sans|aucun|pas de) degats?| une chute de (?:neige|pluie|grele|feuilles)/g
+// Sixième audit (032-008, E4) : « perdre de l'eau » se dit conjugué (« a perdu », « perdait ») ou entrecoupé (« perd beaucoup d'eau »,
+// « des pertes d'eau », « perd de leau ») ; une chaîne figée laissait passer la forme voisine. D'où une classe : toute forme de « perdre »
+// ou de « perte », suivie à trois mots au plus de « eau ». Côté sûr : « j'ai perdu ma facture d'eau » passe à la main.
+// Septième audit (032-011, E5) : un chiffre (« perd 2 litres d'eau ») ou plus de trois mots (« perd de plus en plus d'eau ») rompaient la
+// classe. Fenêtre de cinq mots, chiffres compris, « deau » collé ; « perte » seul (et non « pertinent », « perturbation ») ; jamais à travers
+// « chauffe » (« la notice du chauffe-eau » n'est pas une fuite).
+const PERTE_D_EAU = / (?:perd[a-z]*|pert|pertes?)(?: (?!chauffe )[a-z0-9]+){0,5}? (?:d |de l |de |l |d l )?d?l?eaux? /
+// Lot 032-009 (032-011, M4) : l'appareil qui « perd », sans complément (« Mon chauffe-eau perd, pouvez-vous passer ? », « Le ballon perd
+// depuis hier ») — jamais « perd de la pression », « perd en pression », « perd sa chaleur ».
+const APPAREIL_PERD = / (?:chauffe eau|ballon|cumulus|radiateur|radiateurs|robinet|chaudiere|tuyau|tuyaux|joint|wc|evier|lavabo|siphon|vanne) (?:perd|perdent|perdait|perdaient|a perdu|ont perdu)(?= $| pouvez| pourriez| depuis| encore| toujours| beaucoup| un peu| pas mal| partout| de partout| par terre| par le| sous| a nouveau| merci)/
+// Lot 032-009 (032-008, section 5 : faux positifs ordinaires, au coût réel d'une relance annulée) : des noms d'appareils et de documents
+// qui CONTIENNENT un mot d'escalade sans en être un — « le brûleur de ma chaudière », « une chaudière gaz », « l'attestation d'assurance
+// décennale ». Ôtés du texte avant la lecture (le plancher ET les mots de l'artisan) ; le reste du message est lu : « ça sent le gaz près
+// de la chaudière gaz » reste une escalade (« gaz », « ça sent »), et « le brûleur a brûlé » aussi.
+const NOMS_NEUTRES = /\b(?:chaudieres?|cuisinieres?|plaques?(?:[^a-z0-9]+de[^a-z0-9]+cuisson)?)[^a-z0-9]+(?:(?:a|au)[^a-z0-9]+)?gaz\b|\bbruleurs?\b|\battestations?[^a-z0-9]+(?:d[^a-z0-9]+)?(?:assurances?[^a-z0-9]*)?(?:decennale|rc pro|responsabilite civile)?/g
 
 /**
  * Le premier sujet d'escalade trouvé dans ces messages (ceux du CLIENT), ou null. Deux listes : MOTS_ESCALADE_TOUJOURS, au début d'un
@@ -185,10 +207,15 @@ export function sujetEscalade(messages: readonly unknown[], motsArtisan: readonl
   const artisan = liste.filter((m): m is string => typeof m === 'string').map((m) => [m, sansAccents(m).trim()] as const).filter(([, k]) => k !== '')
   for (const brut of messages) {
     if (typeof brut !== 'string' || !brut.trim()) continue
-    const mots = enMots(brut).replace(FAUSSE_URGENCE, ' ')
+    // 032-011 (M5) : l'incise ôtée (« perd, sans dégât, de l'eau ») laisse deux espaces, qui rompaient la classe PERTE_D_EAU.
+    const mots = enMots(brut).replace(NOMS_NEUTRES, ' ').replace(FAUSSE_URGENCE, ' ').replace(/ {2,}/g, ' ')
     for (const [m, k] of RACINES_TOUJOURS) if (k && mots.includes(` ${k}`)) return m
     for (const [m, k] of RACINES_ENTIERES) if (k && mots.includes(` ${k} `)) return m
-    const texte = sansAccents(brut)
+    if (PERTE_D_EAU.test(mots)) return 'perte d’eau'
+    if (APPAREIL_PERD.test(mots)) return 'perte d’eau'
+    // Lot 032-009 : « ça sent… » (une odeur près d'un appareil), lu APRÈS les mots entiers : « ça sent le gaz » garde son sujet, « gaz ».
+    if (mots.includes(' ca sent ')) return 'ça sent'
+    const texte = sansAccents(brut).replace(NOMS_NEUTRES, ' ')
     for (const [m, k] of artisan) if (texte.includes(k)) return m
   }
   return null

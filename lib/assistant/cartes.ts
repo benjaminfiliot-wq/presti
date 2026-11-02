@@ -172,22 +172,53 @@ export const SOURCE_REPRISE = 'prix repris d’une donnée, à vérifier'
  */
 const NOMBRE_PRIX = String.raw`\d{1,3}(?:[   .]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?`
 const PRIX_ECRIT = new RegExp(String.raw`€\s*(${NOMBRE_PRIX})|(${NOMBRE_PRIX})\s*(?:€|euros?\b|eur\b|e\s?ht\b|e\s?ttc\b|ht\b|ttc\b|(?:le|la|l'|l’|par|/)\s*(?:m2|m²|m3|m³|ml|m\b|mètre|metre|heure|h\b|pièce|piece|unité|unite|u\b|jour|forfait))`, 'gi')
-// 02/11 (quatrième audit 032-006) : un prix marqué TTC n'est pas un prix HT. On retient ses formes HT aux taux de TVA courants (5,5, 10 et
-// 20 %), jamais le nombre lui-même : « 450 € TTC » admet 409,09 € HT à 10 %, et refuse 450 posé dans un champ HT.
-const TTC = /^\s*(?:€\s*)?(?:ttc|t\.t\.c|toutes taxes)/i
-export function prixEcrits(textes: readonly string[]): Set<number> {
+// 02/11 (quatrième audit 032-006) : un prix marqué TTC n'est pas un prix HT ; jamais le nombre lui-même : « 450 € TTC » refuse 450 posé
+// dans un champ HT.
+// 02/11 (cinquième audit 032-007, « TTC ») : les autres graphies — « TVA comprise », « TVA incluse », « taxes comprises », « (TTC) »,
+// « TVAC », et « TTC » écrit AVANT le nombre (« Prix TTC 450 € », « TTC : 450 € ») — et le TAUX : seule la forme HT au taux de TVA de
+// la pièce est admise (450 € TTC à 10 % : 409,09 € HT ; 375 € HT, la forme à 20 %, ne l'est plus à 10 %).
+const TTC_APRES = /^\s*(?:€\s*)?\(?\s*(?:ttc|t\.t\.c|toutes taxes|tvac\b|t\.?v\.?a\.?\s*(?:compris|inclus)|taxes?\s*(?:compris|inclus))/i
+const HT_APRES = /^\s*(?:€\s*)?\(?\s*(?:h\.?t\b|hors tax)/i
+// « TTC » juste avant le nombre, séparé par une espace, « : », « = », « de » ou « à » ; jamais le « TTC » qui suit un nombre précédent
+// (« 450 € TTC, 300 € HT » : 300 reste HT — la virgule, ou l'« HT » qui suit, le disent).
+const TTC_AVANT = /(\d\s*(?:€|euros?|eur)?\s*\(?\s*)?(?:ttc|t\.t\.c\.?|toutes taxes comprises|tvac|t\.?v\.?a\.? (?:comprise|incluse)|taxes (?:comprises|incluses))\s*\)?\s*[:=]?\s*(?:de |à |a )?(?:€\s*)?$/i
+/** Le nombre trouvé à `debut` (match `m0`) dans `texte` est-il marqué TTC ? */
+function marqueTtc(texte: string, debut: number, m0: string): boolean {
+  if (/\bht\b/i.test(m0)) return false
+  if (/ttc/i.test(m0)) return true
+  const apres = texte.slice(debut + m0.length, debut + m0.length + 20)
+  if (HT_APRES.test(apres)) return false
+  if (TTC_APRES.test(apres)) return true
+  const avant = TTC_AVANT.exec(texte.slice(Math.max(0, debut - 28), debut))
+  return !!avant && !avant[1]
+}
+/** Les taux de TVA d'une pièce (lib/assistant/outils-actions.ts TVA_TAUX) ; défaut du produit : 10 %. */
+const TAUX_TVA = [0, 5.5, 10, 20] as const
+/**
+ * Les prix écrits par l'artisan, en centimes HT, pour une pièce au taux de TVA `tvaTaux` (défaut 10 %, celui des lignes sans tarif) :
+ * un prix sans marque de taxe tel quel ; un prix marqué TTC par sa seule forme HT à ce taux.
+ */
+export function prixEcrits(textes: readonly string[], tvaTaux: number = 10): Set<number> {
+  const taux = (TAUX_TVA as readonly number[]).includes(tvaTaux) ? tvaTaux : 10
   const s = new Set<number>()
   for (const t of textes) {
     const texte = String(t ?? '')
     for (const m of texte.matchAll(PRIX_ECRIT)) {
-      const ttc = /ttc/i.test(m[0]) || TTC.test(texte.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 16))
+      const ttc = marqueTtc(texte, m.index ?? 0, m[0])
       for (const n of nombresDe(m[1] ?? m[2] ?? '')) {
-        if (ttc) for (const taux of [1.055, 1.1, 1.2]) s.add(Math.round((Math.abs(n) / taux) * 100))
-        else s.add(Math.round(Math.abs(n) * 100))
+        s.add(Math.round((ttc ? Math.abs(n) / (1 + taux / 100) : Math.abs(n)) * 100))
       }
     }
   }
   return s
+}
+/**
+ * Le prix `prixHt` n'est la forme HT d'un prix TTC écrit par l'artisan qu'à un AUTRE taux que `tvaTaux` : rend ces taux (vide sinon).
+ * Sert à refuser par « prix TTC donné : quel taux de TVA ? » plutôt que d'enregistrer un HT au taux deviné (cinquième audit 032-007).
+ */
+export function tauxTtcPossibles(textes: readonly string[], prixHt: number, tvaTaux: number = 10): number[] {
+  const c = Math.round(prixHt * 100)
+  return TAUX_TVA.filter((t) => t !== tvaTaux && prixEcrits(textes, t).has(c) && !prixEcrits(textes, tvaTaux).has(c))
 }
 
 /**

@@ -45,7 +45,7 @@ import { POST as noteCreer } from '@/app/api/crm/notes/route'
 import { DELETE as noteSupprimer } from '@/app/api/crm/notes/[id]/route'
 import { POST as membreCreer } from '@/app/api/crm/equipe/route'
 import { DELETE as membreSupprimer } from '@/app/api/crm/equipe/[id]/route'
-import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, prixEcrits, resoudreLignes, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
+import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, prixEcrits, resoudreLignes, tauxTtcPossibles, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
 import { NOMS_ACTIONS, categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
 import { encadrerClient } from './cadrage'
 import { ecrireClasseur, type Cellule, type Feuille } from '@/lib/comptaXlsx'
@@ -54,7 +54,8 @@ import type { FicheAction, MagasinActions, Realisateur, Realisation } from './co
 import type { ResultatExecution } from './boucle'
 import { appelerAvec, clientDeSession, erreurDe, type ContexteSession, type Gestionnaire, type ReponseRoute } from './session'
 import { piloterCarte } from '@/lib/pilote/serveur'
-import { DELAI_ANNULATION_MIN, LIBELLE_MOTIF, MARQUE_CONTENU_TIERS, OUTILS_CONTENU_TIERS, jamaisAutomatique, prixSources, raisonJamaisAuto, typePiloteDeOutil } from '@/lib/pilote/regles'
+import { DELAI_ANNULATION_MIN, LIBELLE_MOTIF, MARQUE_CONTENU_TIERS, MESSAGES_ESCALADE_RELUS, OUTILS_CONTENU_TIERS, jamaisAutomatique, prixSources, raisonJamaisAuto, sujetEscalade, typePiloteDeOutil } from '@/lib/pilote/regles'
+import { CONFIG_DEFAUT } from '@/lib/plateformeConfig'
 import { actionsTout } from './actions-tout'
 import { historiqueRelances, phraseRefus, relanceRecente, RELANCE_DELAI_JOURS as DELAI_REGISTRE, type ObjetRelance } from '@/lib/relancesRegistre'
 
@@ -68,6 +69,8 @@ export const RELANCE_DELAI_JOURS = DELAI_REGISTRE
 const LOT_TARIFS_MAX = 300
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+/** La carte d'un outil pilotable dont la conversation n'a pas pu être relue (cinquième audit 032-007) : à la main, côté sûr. */
+const MOTIF_ESCALADE_ILLISIBLE = 'Les messages du client n’ont pas pu être relus : à valider à la main.'
 
 /** Ce qui peut être remplacé dans les essais (aucun e-mail réel, aucune facture scellée dans une base partagée). */
 export type DependancesActions = {
@@ -154,9 +157,16 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   const sansCrm = ko('Le CRM n’est pas ouvert sur ce compte.')
   // 02/11 (D1 bis, puis troisième audit A3) : les PRIX que l'artisan a écrits lui-même (un nombre marqué « € », « HT », « le m² »…), seuls à
   // pouvoir faire un « prix donné par l'artisan » sur une ligne, ou un prix de sa bibliothèque de tarifs.
+  // 02/11 (cinquième audit 032-007, « TTC ») : un prix marqué TTC n'entre que par sa forme HT AU TAUX de la pièce (lignes sans tarif d'un
+  // devis : 10 %). Un HT qui n'en serait la forme qu'à un autre taux est refusé par la question du taux, jamais deviné.
   const nombresArtisan = prixEcrits(ctx.textesArtisan ?? [])
-  const prixDeLArtisan = (v: unknown): boolean => { const n = Number(v); return Number.isFinite(n) && n > 0 && nombresArtisan.has(Math.round(n * 100)) }
-  const prixNonDonne = (v: unknown) => ko(`Le prix ${fmtEuros(num(v))} HT ne vient pas de ce que l'artisan t'a écrit (une donnée lue, un autre devis ou ta propre réponse n'en sont pas la source) : rien n'a été enregistré. Demande-lui son prix, en chiffres avec « € » ou « HT ».`)
+  const tauxDe = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 10)
+  const prixDeLArtisan = (v: unknown, tva: number): boolean => { const n = Number(v); return Number.isFinite(n) && n > 0 && prixEcrits(ctx.textesArtisan ?? [], tva).has(Math.round(n * 100)) }
+  const prixNonDonne = (v: unknown, tva: number) => {
+    const autres = tauxTtcPossibles(ctx.textesArtisan ?? [], num(v), tva)
+    if (autres.length) return ko(`Prix TTC donné : quel taux de TVA ? L'artisan a écrit un prix TTC ; ${fmtEuros(num(v))} HT n'en est la forme hors taxes qu'à ${autres.map((t) => `${fmtNombre(t)} %`).join(' ou ')}, pas à ${fmtNombre(tva)} %. Rien n'a été enregistré : demande-lui le taux de TVA (ou son prix HT), puis recalcule le HT.`)
+    return ko(`Le prix ${fmtEuros(num(v))} HT ne vient pas de ce que l'artisan t'a écrit (une donnée lue, un autre devis ou ta propre réponse n'en sont pas la source) : rien n'a été enregistré. Demande-lui son prix, en chiffres avec « € » ou « HT ».`)
+  }
   // 02/11 (S4) : avant toute relance (proposée ou envoyée), le registre commun des quatre chemins (assistant et pilote, CRM, impayés,
   // conversation) : déjà relancé depuis moins de RELANCE_DELAI_JOURS jours, ou registre illisible = rien ne part. Rend la phrase du refus.
   async function registre(objet: ObjetRelance): Promise<string | null> {
@@ -450,7 +460,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   R.ajouter_tarif = async (e) => {
     // 02/11 (troisième audit 032-005, A2) : la bibliothèque de tarifs n'enregistre que le prix que l'artisan a écrit lui-même. Sinon une
     // estimation lue dans un autre devis y devenait « tarif de l'artisan », et le devis fait avec partait seul.
-    if (!prixDeLArtisan(e.prix_ht)) return prixNonDonne(e.prix_ht)
+    if (!prixDeLArtisan(e.prix_ht, tauxDe(e.tva_taux))) return prixNonDonne(e.prix_ht, tauxDe(e.tva_taux))
     const designation = String(e.designation)
     const fournisseur = txt(e.fournisseur), reference = txt(e.reference)
     const avant = await tarifParCle(designation, fournisseur, reference)
@@ -474,9 +484,11 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   }
   R.modifier_tarif = async (e) => {
     // 02/11 (troisième audit 032-005, A2) : même règle que ajouter_tarif — un « ordre de grandeur » donné par l'assistant n'est pas un tarif.
-    if (!prixDeLArtisan(e.prix_ht)) return prixNonDonne(e.prix_ht)
+    // 032-007 : le taux est celui du tarif modifié (défaut 10 %).
     const t = await tarifDe(String(e.tarif_id))
     if (!t) return ko('Tarif introuvable dans la bibliothèque de l’artisan (relis-le avec lire_tarifs).')
+    const tvaTarif = t.tva_taux === null || t.tva_taux === undefined || !Number.isFinite(Number(t.tva_taux)) ? 10 : Number(t.tva_taux)
+    if (!prixDeLArtisan(e.prix_ht, tvaTarif)) return prixNonDonne(e.prix_ht, tvaTarif)
     const ancien = num(t.prix_ht)
     if (!(await ecrirePrix(t.id, e.prix_ht as number))) return ko('Le prix n’a pas pu être enregistré.')
     return {
@@ -1060,7 +1072,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!client) return ko('Le nom du client manque : c’est une mention obligatoire de la facture. Demande-le à l’artisan.')
     const lignes = (e.lignes as LigneEntree[]) ?? []
     const tarifs = await tarifsParIds(lignes.map((l) => l.tarif_id).filter((x): x is string => !!x))
-    const r = resoudreLignes(lignes, tarifs, nombresArtisan)
+    // 032-007 : les lignes sans tarif d'une facture libre sont au taux `tva_taux` (défaut 10 %) : un prix TTC n'y vaut que sa forme HT à ce taux.
+    const r = resoudreLignes(lignes, tarifs, prixEcrits(ctx.textesArtisan ?? [], tauxDe(e.tva_taux)))
     if (r.introuvables.length) return ko(`Tarif introuvable dans la bibliothèque de l'artisan : ${r.introuvables.slice(0, 3).join(' ; ')}. Relis-les avec lire_tarifs.`)
     if (r.aChiffrer.length) return ko(`Ligne(s) sans prix : ${r.aChiffrer.slice(0, 4).join(' ; ')}. Une facture ne s’émet pas avec une ligne à 0 € : demande le prix à l’artisan (ou utilise un tarif de lire_tarifs). Rien n’a été émis.`)
     const tva = typeof e.tva_taux === 'number' ? e.tva_taux : null
@@ -1403,6 +1416,48 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     const { data, error } = await session.from('assistant_journal').select('id').eq('artisan_id', ctx.uid).eq('conversation_id', ctx.conversationId).in('outil', [...OUTILS_CONTENU_TIERS]).limit(1)
     return !!error || (data ?? []).length > 0
   }
+  /**
+   * §3.2 (« parler au nom de l'artisan sur un sujet d'escalade » ne s'automatise jamais, « même au niveau 3 ») — cinquième audit 032-007,
+   * voisin moyen : le mode « fait tout seul » relit, comme le pilote au départ (lib/pilote/executeur.ts, `escalade`), la conversation où
+   * la carte écrit : la conversation elle-même (réponse, réponse préparée), celle du devis (relance, envoi), celle du devis de la facture
+   * (relance d'impayé, envoi). Les 10 derniers messages ENTRANTS et la demande d'origine, par sujetEscalade, avec les mots de l'artisan.
+   * Lectures sous la session (RLS). Rend le motif de la carte, ou null ; une lecture en erreur garde la carte (côté sûr).
+   */
+  async function escaladeDeLaCarte(objet: { type: TypeObjet; id: string } | null, entrees: Obj): Promise<string | null> {
+    // TOUTES les conversations rattachées à la carte (son objet, et un conversation_id d'entrée s'il y en a un) : une seule qui parle d'un
+    // sujet d'escalade suffit — jamais l'une à la place de l'autre.
+    const leads = new Set<string>()
+    const ajout = (v: unknown) => { const t = txt(v); if (t) leads.add(t) }
+    if (objet?.type === 'conversation') ajout(objet.id)
+    ajout(entrees.conversation_id)
+    let devisId = objet?.type === 'devis' ? txt(objet.id) : null
+    if (objet?.type === 'facture') {
+      const { data, error } = await session.from('factures').select('devis_id').eq('artisan_id', ctx.uid).eq('id', objet.id).maybeSingle()
+      if (error) throw new Error('facture illisible')
+      devisId = txt((data as { devis_id?: unknown } | null)?.devis_id)
+    }
+    if (devisId) {
+      const { data, error } = await session.from('devis').select('lead_id').eq('artisan_id', ctx.uid).eq('id', devisId).maybeSingle()
+      if (error) throw new Error('devis illisible')
+      ajout((data as { lead_id?: unknown } | null)?.lead_id)
+    }
+    if (!leads.size) return null
+    // Les mots de l'artisan (Ma plateforme), lus avec leur erreur, comme getPlateformeConfigStrict ; sans ligne ou table absente : les défauts.
+    const { data: cfg, error: errCfg } = await session.from('plateforme_config').select('escalade_mots').eq('artisan_id', ctx.uid).maybeSingle()
+    if (errCfg && !/PGRST205|42P01/.test(`${errCfg.code ?? ''}`)) throw new Error('réglages de la plateforme illisibles')
+    const mots = Array.isArray((cfg as { escalade_mots?: unknown } | null)?.escalade_mots) ? (cfg as { escalade_mots: unknown[] }).escalade_mots : CONFIG_DEFAUT.escalade_mots
+    for (const leadId of leads) {
+      const { data: lead, error: errLead } = await session.from('leads').select('id, message').eq('artisan_id', ctx.uid).eq('id', leadId).maybeSingle()
+      if (errLead) throw new Error('conversation illisible')
+      if (!lead) continue
+      const { data: msgs, error: errMsg } = await session.from('messages').select('contenu').eq('lead_id', leadId).eq('sens', 'in')
+        .order('sent_at', { ascending: false }).limit(MESSAGES_ESCALADE_RELUS)
+      if (errMsg) throw new Error('messages du client illisibles')
+      const textes = [...(msgs ?? []).map((m) => (m as { contenu?: unknown }).contenu), (lead as { message?: unknown }).message]
+      if (sujetEscalade(textes, mots) !== null) return LIBELLE_MOTIF.escalade
+    }
+    return null
+  }
   const proposee = (nom: NomAction) => async (entree: EntreeAction): Promise<ResultatExecution> => {
     if (!(await plafondJour())) return refusJour
     const p = await P[nom](entree)
@@ -1414,7 +1469,10 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     // encaissement, facture émise et scellée, suppression, lot de prix) ne s'exécute JAMAIS d'office, même demandé : carte d'un clic.
     const jamaisSeul = jamaisAutomatique(nom)
     // 02/11 (audit 032-001, D1) : la préparation peut aussi refuser le mode pour SON objet (un devis à prix non sourcé) : carte.
-    const horsAuto = p.horsAuto ?? null
+    let horsAuto = p.horsAuto ?? null
+    // 02/11 (cinquième audit 032-007) : un outil pilotable sur une conversation où le client parle d'un sujet d'escalade (litige, sinistre,
+    // avocat, fuite…) reste une carte, même demandé — le pilote la renverrait à la main au départ. Lecture en erreur : carte aussi.
+    if (!jamaisSeul && !horsAuto && ctx.autonome?.() === true && typePiloteDeOutil(nom)) horsAuto = await escaladeDeLaCarte(p.objet ?? null, p.entrees).catch(() => MOTIF_ESCALADE_ILLISIBLE)
     if (!jamaisSeul && !horsAuto && ctx.autonome?.() === true) {
       const r = await R[nom](p.entrees)
       if (!r.ok) return { donnees: { ok: false, erreur: r.erreur, rien_n_a_ete_fait: true }, resume: `demandée par l’artisan, non faite : ${r.erreur}`.slice(0, 280), resultat: 'refus' }

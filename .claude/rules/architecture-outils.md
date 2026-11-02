@@ -66,8 +66,15 @@ Tout tourne en Docker sur le serveur Oracle, à côté de n8n :
 - WaveSpeed : payant ; jamais sans accord explicite de Benj.
 
 ## Où chaque outil tourne (relevé du 01/11/2026)
-- n8n cible : Oracle, Docker `/opt/n8n-complet` (n8n 2.45.6, exécuteurs, bac à sable, SearXNG),
-  lié à `127.0.0.1:5678`, joint par tunnel SSH. Aucun workflow métier.
+- n8n cible : Oracle, Docker `/opt/n8n-complet` (n8n 2.45.7 depuis le 02/11, accord de Benj ; sauvegarde d'avant dans
+  `/root/sauvegardes/` ; exécuteurs, bac à sable, SearXNG), lié à `127.0.0.1:5678`, joint par tunnel SSH. Workflows métier : `presti-detecteurs`
+  (inactif) ; l'identifiant « Supabase account » vise la vraie API du projet depuis le 02/11 (Benj).
+- Hôte d'agents Claude Code (02/11, demande de Benj : « une armée d'agents » sans charger le PC) : Oracle (24 Go, 4 cœurs), utilisateur
+  `usine`, copies du dépôt dans `~/Documents/presti` et `~/Documents/presti-c2`, réseau neuronal branché (MCP `cerveau` sur une copie du
+  vault), pas de MCP n8n. Lancement par la session principale seulement (`~/agents/lancer.sh`, qui pose `PRESTI_HOTE_AGENTS=oracle` et
+  `ORCA_TERMINAL_HANDLE`) ; chaque agent s'affiche dans un onglet Orca du PC. Gardes : les crochets du dépôt (commit, push, build partagé,
+  migration refusés), une liste de refus dans `~/.claude/settings.json` (sudo, docker, ssh, curl, `/opt`, les identifiants). Les fichiers du
+  périmètre reviennent au PC par la session principale, qui rejoue `verifier`.
 - n8n cloud `presti.app.n8n.cloud` : branché à Claude Code par MCP, 0 workflow,
   ne reçoit aucune donnée personnelle.
 - n8n local (Docker Desktop du PC, `Documents/n8n`) : arrêté.

@@ -1,0 +1,476 @@
+// Juge HORS LIGNE du workflow n8n `presti-detecteurs` (chantier 4, lot L3 n8n, tâche 032-003).
+//
+// Il relit l'export du workflow (.orchestre/preuves/032-003/presti-detecteurs.workflow.json, tiré du n8n d'Oracle par le MCP) et :
+//   1. vérifie sa structure : inactif ; seuls des nœuds de lecture (Schedule Trigger, Supabase get/getAll sur regles_automatisation,
+//      HTTP Request en GET) et des nœuds Code ; chaque `select=` ne demande que des colonnes permises (brief
+//      plans/011-cadrage-01-11/briefs/c4-n8n-detecteurs.md) ; aucune colonne nom, email, contact, adresse, message, contenu, texte ;
+//      aucun nœud qui écrit, envoie ou appelle un modèle ; déclencheur à 6 h 45, fuseau Europe/Paris ;
+//   2. compare la copie figée des capacités à lib/plans.ts, et les listes d'outils à lib/pilote/regles.ts ; les seuils sourcés au code ;
+//   3. rejoue le code de chaque nœud Code sur des cas FICTIFS : chaque détecteur déclenche, se tait, tient à la limite et se tait
+//      quand la condition disparaît ; la clé change d'étape ; Studio reste aux niveaux 1 et 2 ; le n° 5 ne sort rien ; le n° 7
+//      n'atteint jamais le niveau 3 ; aucun constat ne porte un nom, une adresse, un e-mail ni un texte ;
+//   4. prouve qu'il sait rougir : des MUTANTS (comparateur inversé dans une copie du code, colonne interdite, écriture, copie des
+//      capacités faussée…) doivent tous faire échouer la suite.
+//
+// Aucun réseau, aucune base, aucun modèle. Lancement :
+//   node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/detecteurs-n8n-qa.mjs
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { PLANS } from '../lib/plans.ts'
+import { OUTILS_JAMAIS_AUTO, OUTILS_EXECUTABLES_PILOTE } from '../lib/pilote/regles.ts'
+import { JOURS_PAR_DEFAUT, RATTRAPAGE_JOURS as RATTRAPAGE_IMPAYES } from '../lib/relancesImpayes.ts'
+import { DELAI_AVIS_JOURS, RATTRAPAGE_JOURS as RATTRAPAGE_AVIS } from '../lib/apresChantier.ts'
+import { VALIDITE_PAR_DEFAUT_JOURS } from '../lib/tableau-de-bord/calculer.ts'
+
+const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const EXPORT = path.join(RACINE, '.orchestre/preuves/032-003/presti-detecteurs.workflow.json')
+const WF = JSON.parse(readFileSync(EXPORT, 'utf8'))
+
+// ─── Ce que n8n a le droit de lire (brief, « Les colonnes permises ») ─────────────────────────────────────────────────────────
+const BASE = 'https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/'
+const IDENTIFIANT = 'dTewDK98MLrNckNG'
+const PERMISES = {
+  artisans: ['id', 'plan', 'est_demo', 'suppression_demandee_le'],
+  factures: ['id', 'artisan_id', 'devis_id', 'statut', 'date_echeance', 'total_ttc', 'avoir_de', 'payee_le', 'type_facture'],
+  devis: ['id', 'artisan_id', 'statut', 'date_emission', 'validite_jours', 'acompte_pct', 'total_ttc', 'lead_id', 'accepte_le', 'envoye_le', 'created_at'],
+  leads: ['id', 'artisan_id', 'statut', 'urgence', 'type_chantier', 'created_at'],
+  chantiers: ['id', 'artisan_id', 'devis_id', 'statut', 'date_fin_reelle', 'maj_le'],
+  chantier_materiaux: ['id', 'artisan_id', 'chantier_id', 'materiau_id', 'quantite', 'statut'],
+  materiaux: ['id', 'artisan_id', 'seuil_alerte'],
+  stock: ['id', 'materiau_id', 'quantite'],
+  commandes_fournisseur: ['id', 'artisan_id', 'statut', 'chantier_id'],
+  relances_impayes: ['id', 'artisan_id', 'facture_id', 'rang', 'statut'],
+  relances_impayes_arrets: ['facture_id', 'artisan_id', 'raison', 'reprise_le'],
+  relances_impayes_reglages: ['artisan_id', 'actif', 'jours'],
+  plateforme_config: ['artisan_id', 'mode_reponse'],
+  prix_artisan: ['id', 'artisan_id', 'actif'],
+  crm_apres_chantier: ['artisan_id', 'avis'],
+}
+const INTERDIT = /nom|e-?mail|contact|adresse|message|contenu|texte/i
+const TYPES_PERMIS = new Set(['n8n-nodes-base.scheduleTrigger', 'n8n-nodes-base.supabase', 'n8n-nodes-base.httpRequest', 'n8n-nodes-base.code', 'n8n-nodes-base.stickyNote'])
+const CODE_INTERDIT = /fetch\s*\(|httpRequest|\$http|require\s*\(|\bimport\s|axios|this\.helpers|helpers\.|getWorkflowStaticData|\$execution\.|XMLHttpRequest|WebSocket/
+const PARAMS_PAGINATION = new Set(['select', 'order', 'limit', 'offset'])
+const DETECTEURS = ['Détecteur 01 facture échue', 'Détecteur 02 chantier à facturer', 'Détecteur 03 devis signé sans acompte', 'Détecteur 04 devis sans réponse',
+  'Détecteur 05 facture jamais envoyée (coupé)', 'Détecteur 06 demande sans réponse', 'Détecteur 07 demande sans devis', 'Détecteur 08 devis bientôt expiré',
+  'Détecteur 09 stock sous le seuil', 'Détecteur 10 demande d avis']
+
+const copie = (o) => JSON.parse(JSON.stringify(o))
+const noeud = (wf, nom) => wf.nodes.find((n) => n.name === nom)
+const codeDe = (wf, nom) => { const n = noeud(wf, nom); if (!n) throw new Error(`nœud absent : ${nom}`); return n.parameters.jsCode }
+const memes = (a, b) => a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|')
+
+// ─── 1. Structure ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+function structure(wf) {
+  const e = []
+  const ko = (m) => e.push(m)
+  if (wf.active !== false) ko('le workflow doit être inactif (active: false)')
+  if (wf.activeVersionId) ko('le workflow ne doit avoir aucune version publiée')
+  if (wf.name !== 'presti-detecteurs') ko(`nom inattendu : ${wf.name}`)
+  if (wf.settings?.timezone !== 'Europe/Paris') ko('fuseau du workflow : Europe/Paris attendu')
+  for (const n of wf.nodes) {
+    if (!TYPES_PERMIS.has(n.type)) ko(`type de nœud interdit : ${n.name} (${n.type})`)
+    if (n.disabled) ko(`nœud désactivé : ${n.name}`)
+  }
+  const declencheurs = wf.nodes.filter((n) => n.type === 'n8n-nodes-base.scheduleTrigger')
+  const r = declencheurs[0]?.parameters?.rule?.interval?.[0]
+  if (declencheurs.length !== 1 || !r || r.field !== 'days' || r.triggerAtHour !== 6 || r.triggerAtMinute !== 45) ko('un seul déclencheur, tous les jours à 6 h 45, attendu')
+
+  const supabases = wf.nodes.filter((n) => n.type === 'n8n-nodes-base.supabase')
+  if (supabases.length !== 1) ko(`un seul nœud Supabase attendu (${supabases.length})`)
+  for (const n of supabases) {
+    const p = n.parameters
+    if (!['get', 'getAll'].includes(p.operation)) ko(`nœud Supabase ${n.name} : opération ${p.operation} interdite (get ou getAll seulement)`)
+    if (p.tableId !== 'regles_automatisation') ko(`nœud Supabase ${n.name} : table ${p.tableId} interdite (regles_automatisation seulement)`)
+    if (p.operation === 'getAll' && (p.returnAll || Number(p.limit) !== 1)) ko(`nœud Supabase ${n.name} : une seule ligne attendue`)
+    if (n.credentials?.supabaseApi?.id !== IDENTIFIANT) ko(`nœud Supabase ${n.name} : identifiant « Supabase account » attendu`)
+  }
+
+  const https = wf.nodes.filter((n) => n.type === 'n8n-nodes-base.httpRequest')
+  if (https.length !== Object.keys(PERMISES).length) ko(`${Object.keys(PERMISES).length} lectures HTTP attendues (${https.length})`)
+  const tablesLues = new Set()
+  for (const n of https) {
+    const p = n.parameters
+    const m = (p.method ?? 'GET').toUpperCase()
+    if (m !== 'GET') ko(`${n.name} : méthode ${m} interdite (GET seulement)`)
+    if (p.sendBody) ko(`${n.name} : un corps de requête est interdit`)
+    if (p.sendHeaders) ko(`${n.name} : aucun en-tête (Prefer, etc.) n'est permis`)
+    if (p.authentication !== 'predefinedCredentialType' || p.nodeCredentialType !== 'supabaseApi' || n.credentials?.supabaseApi?.id !== IDENTIFIANT) ko(`${n.name} : identifiant prédéfini supabaseApi « Supabase account » attendu`)
+    if (typeof p.url !== 'string' || !p.url.startsWith(BASE)) { ko(`${n.name} : adresse hors de l'API REST du projet (${p.url})`); continue }
+    const table = p.url.slice(BASE.length)
+    if (!PERMISES[table]) { ko(`${n.name} : table non permise (${table})`); continue }
+    tablesLues.add(table)
+    const params = p.queryParameters?.parameters ?? []
+    if (!p.sendQuery || p.specifyQuery !== 'keypair') ko(`${n.name} : paramètres de requête en paires attendus`)
+    const select = params.filter((q) => q.name === 'select')
+    if (select.length !== 1) { ko(`${n.name} : un seul select= attendu`); continue }
+    const colonnes = String(select[0].value).split(',').map((c) => c.trim())
+    for (const c of colonnes) {
+      if (!PERMISES[table].includes(c)) ko(`${n.name} : colonne ${table}.${c} hors de la liste permise`)
+      if (INTERDIT.test(c)) ko(`${n.name} : colonne interdite ${table}.${c}`)
+    }
+    for (const q of params) {
+      if (PARAMS_PAGINATION.has(q.name)) continue
+      if (!PERMISES[table].includes(q.name)) ko(`${n.name} : filtre sur une colonne non permise (${q.name})`)
+      const v = String(q.value)
+      if (!/^(=\{\{|eq\.|in\.|is\.)/.test(v)) ko(`${n.name} : filtre ${q.name} hors de eq., in., is. (${v})`)
+    }
+    if (!params.some((q) => q.name === 'artisan_id') && !['artisans', 'stock'].includes(table)) ko(`${n.name} : lecture non filtrée par compte`)
+    const pag = p.options?.pagination?.pagination?.parameters?.parameters ?? []
+    for (const q of pag) if (q.type !== 'qs' || q.name !== 'offset') ko(`${n.name} : pagination autre que offset`)
+  }
+  for (const t of Object.keys(PERMISES)) if (!tablesLues.has(t)) ko(`table ${t} non lue`)
+
+  for (const n of wf.nodes.filter((x) => x.type === 'n8n-nodes-base.code')) {
+    const c = n.parameters.jsCode ?? ''
+    if ((n.parameters.language ?? 'javaScript') !== 'javaScript') ko(`${n.name} : JavaScript attendu`)
+    if (CODE_INTERDIT.test(c)) ko(`${n.name} : appel réseau, module ou état persistant interdit dans un nœud Code`)
+  }
+
+  // La chaîne : Départ → les dix détecteurs dans l'ordre → Niveau → Bilan, et rien après le bilan.
+  const chaine = chaineDepuis(wf, 'Départ des constats')
+  const attendue = ['Départ des constats', ...DETECTEURS, 'Niveau proposé selon l offre', 'Bilan par détecteur']
+  if (chaine.join('|') !== attendue.join('|')) ko(`chaîne des détecteurs inattendue : ${chaine.join(' → ')}`)
+  return e
+}
+
+function chaineDepuis(wf, depart) {
+  const ordre = []
+  let courant = depart
+  const vus = new Set()
+  while (courant && !vus.has(courant)) {
+    vus.add(courant); ordre.push(courant)
+    const sorties = wf.connections?.[courant]?.main?.flat() ?? []
+    if (sorties.length > 1) { ordre.push('(embranchement)'); break }
+    courant = sorties[0]?.node
+  }
+  return ordre
+}
+
+// ─── 2. Copies figées comparées au code ────────────────────────────────────────────────────────────────────────────────────────
+function copies(wf) {
+  const e = []
+  let cap, ctx
+  try { cap = executer(codeDe(wf, 'Capacités des offres'), {}, [{}], '2026-11-10')[0] } catch (err) { return [`Capacités des offres : ${err.message}`] }
+  try { ctx = executer(codeDe(wf, 'Contexte du passage'), {}, [{}], '2026-11-10')[0] } catch (err) { return [`Contexte du passage : ${err.message}`] }
+  for (const offre of ['studio', 'signature', 'entreprise']) {
+    if (!memes(cap.capacites?.[offre] ?? [], PLANS[offre].capacites)) e.push(`copie des capacités « ${offre} » différente de lib/plans.ts`)
+  }
+  if (Object.keys(cap.capacites ?? {}).some((k) => !['studio', 'signature', 'entreprise'].includes(k))) e.push('la copie ne doit porter que Studio, Signature et Entreprise')
+  if (!memes(cap.outils_jamais_auto ?? [], OUTILS_JAMAIS_AUTO)) e.push('copie de OUTILS_JAMAIS_AUTO différente de lib/pilote/regles.ts')
+  if (!memes(cap.outils_executables_pilote ?? [], OUTILS_EXECUTABLES_PILOTE)) e.push('copie de OUTILS_EXECUTABLES_PILOTE différente de lib/pilote/regles.ts')
+  const s = ctx.seuils ?? {}
+  if (ctx.mode !== 'simulation') e.push('mode simulation attendu')
+  if ((s.impayes_jours ?? []).join(',') !== JOURS_PAR_DEFAUT.join(',')) e.push('étapes des impayés différentes de lib/relancesImpayes.ts')
+  if (s.impayes_rattrapage !== RATTRAPAGE_IMPAYES) e.push('rattrapage des impayés différent de lib/relancesImpayes.ts')
+  if (s.avis_delai !== DELAI_AVIS_JOURS || s.avis_rattrapage !== RATTRAPAGE_AVIS) e.push('délai de la demande d\'avis différent de lib/apresChantier.ts')
+  if (s.devis_validite_defaut !== VALIDITE_PAR_DEFAUT_JOURS) e.push('validité par défaut d\'un devis différente du code')
+  if ((s.devis_jours ?? []).join(',') !== '3,7,14') e.push('étapes du devis sans réponse : 3, 7, 14 attendues (plan §9, n° 4)')
+  // Aucune décision par le nom de l'offre dans la logique : le niveau se lit dans la copie.
+  for (const nom of [...DETECTEURS, 'Niveau proposé selon l offre']) {
+    if (/plan\s*[!=]==?\s*['"]|['"](studio|signature|entreprise)['"]\s*[!=]==?/.test(codeDe(wf, nom))) e.push(`${nom} : décision par le nom de l'offre (plan === …) interdite`)
+  }
+  return e
+}
+
+// ─── 3. Rejeu des nœuds Code sur des données fictives ─────────────────────────────────────────────────────────────────────────
+function executer(jsCode, sorties, entree, jour) {
+  const enItems = (l) => (l ?? []).map((j) => ({ json: j }))
+  const $ = (nom) => {
+    if (!(nom in sorties)) throw new Error(`lecture d'un nœud inconnu : ${nom}`)
+    const items = enItems(sorties[nom])
+    return { all: () => items, first: () => items[0] }
+  }
+  const $input = { all: () => enItems(entree), first: () => enItems(entree)[0] }
+  const $now = { setZone: (z) => { if (z !== 'Europe/Paris') throw new Error('fuseau inattendu'); return { toISODate: () => jour } } }
+  // Bac à sable du rejeu : aucun réseau, aucun module, aucun processus (le juge reste hors ligne, même devant un mutant).
+  const interdit = (quoi) => () => { throw new Error(`${quoi} interdit dans un nœud Code`) }
+  const bloques = { fetch: interdit('fetch'), XMLHttpRequest: interdit('XMLHttpRequest'), WebSocket: interdit('WebSocket'), require: interdit('require'), process: undefined, globalThis: undefined }
+  // eslint-disable-next-line no-new-func
+  const f = new Function('$', '$input', '$now', ...Object.keys(bloques), jsCode)
+  return f($, $input, $now, ...Object.values(bloques)).map((i) => i.json)
+}
+
+const LECTURES = (wf) => wf.nodes.filter((n) => n.type === 'n8n-nodes-base.httpRequest').map((n) => n.name)
+
+/** Un passage complet, de « Départ des constats » au bilan, sur des lectures fictives. */
+function passer(wf, donnees, jour) {
+  const lectures = LECTURES(wf)
+  for (const k of Object.keys(donnees)) if (!lectures.includes(k)) throw new Error(`donnée fictive pour un nœud absent : ${k}`)
+  const sorties = {
+    'Contexte du passage': executer(codeDe(wf, 'Contexte du passage'), {}, [{}], jour),
+    'Capacités des offres': executer(codeDe(wf, 'Capacités des offres'), {}, [{}], jour),
+  }
+  // Une table vide rend un élément vide, comme alwaysOutputData dans n8n.
+  for (const l of lectures) sorties[l] = donnees[l]?.length ? donnees[l] : [{}]
+  let entree = [{}]
+  const parNoeud = {}
+  for (const nom of chaineDepuis(wf, 'Départ des constats')) {
+    entree = executer(codeDe(wf, nom), sorties, entree, jour)
+    parNoeud[nom] = entree
+  }
+  return { constats: parNoeud['Niveau proposé selon l offre']?.[0]?.constats ?? [], bilan: parNoeud['Bilan par détecteur'] ?? [], parNoeud }
+}
+
+// Données fictives : identifiants inventés, aucun nom, aucune adresse.
+const u = (n) => '00000000-0000-4000-8000-' + String(n).padStart(12, '0')
+const STUDIO = u(1), SIGNATURE = u(2), ENTREPRISE = u(3), HORS = u(9)
+const JOUR = '2026-11-10'
+const jourMoins = (n) => { const d = new Date(JOUR + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10) }
+const horodate = (n) => jourMoins(n) + 'T10:00:00+00:00'
+const COMPTES = [{ id: STUDIO, plan: 'studio' }, { id: SIGNATURE, plan: 'signature' }, { id: ENTREPRISE, plan: 'entreprise' }]
+const avec = (lignes) => ({ 'Lire comptes': COMPTES, ...lignes })
+const facture = (o) => ({ id: u(100), artisan_id: STUDIO, devis_id: null, statut: 'emise', date_echeance: jourMoins(3), total_ttc: 1000, avoir_de: null, payee_le: null, type_facture: 'standard', ...o })
+const devis = (o) => ({ id: u(200), artisan_id: STUDIO, statut: 'envoye', date_emission: jourMoins(3), validite_jours: 90, acompte_pct: 0, total_ttc: 800, lead_id: null, accepte_le: null, envoye_le: horodate(3), created_at: horodate(3), ...o })
+const demande = (o) => ({ id: u(300), artisan_id: STUDIO, statut: 'nouveau', urgence: null, type_chantier: null, created_at: horodate(1), ...o })
+const chantier = (o) => ({ id: u(400), artisan_id: SIGNATURE, devis_id: null, statut: 'termine', date_fin_reelle: jourMoins(2), maj_le: horodate(2), ...o })
+
+function cas(wf) {
+  const e = []
+  const ko = (m) => e.push(m)
+  const run = (donnees, jour = JOUR) => passer(wf, avec(donnees), jour)
+  const de = (r, n) => r.constats.filter((c) => c.numero === n)
+  const cles = (r, n) => de(r, n).map((c) => c.cle).sort().join(' ')
+  const seul = (titre, r, n, cle, extra = {}) => {
+    const l = de(r, n)
+    if (l.length !== 1 || l[0].cle !== cle) { ko(`${titre} : attendu ${cle}, obtenu [${cles(r, n)}]`); return null }
+    for (const [k, v] of Object.entries(extra)) if (l[0][k] !== v) ko(`${titre} : ${k} attendu ${v}, obtenu ${l[0][k]}`)
+    return l[0]
+  }
+  const rien = (titre, r, n) => { if (de(r, n).length) ko(`${titre} : rien attendu, obtenu [${cles(r, n)}]`) }
+  let r
+  try {
+    // n° 1 — facture échue
+    r = run({ 'Lire factures': [facture()] }); seul('1 J+3 pile', r, 1, `facture_echue:${u(100)}:j3`, { montant_centimes: 100000, jours: 3, niveau: 2 })
+    r = run({ 'Lire factures': [facture({ date_echeance: jourMoins(2) })] }); rien('1 J+2', r, 1)
+    r = run({ 'Lire factures': [facture({ date_echeance: jourMoins(10) })], 'Lire relances impayes': [{ id: u(801), artisan_id: STUDIO, facture_id: u(100), rang: 1, statut: 'envoyee' }] })
+    seul('1 étape suivante', r, 1, `facture_echue:${u(100)}:j10`)
+    r = run({ 'Lire factures': [facture({ payee_le: JOUR })] }); rien('1 payée', r, 1)
+    r = run({ 'Lire factures': [facture({ statut: 'payee' })] }); rien('1 statut payée', r, 1)
+    r = run({ 'Lire factures': [facture({ avoir_de: u(150) })] }); rien('1 avoir', r, 1)
+    r = run({ 'Lire factures': [facture()], 'Lire arrets de relance': [{ facture_id: u(100), artisan_id: STUDIO, raison: 'reponse_client', reprise_le: null }] }); rien('1 arrêtée', r, 1)
+    r = run({ 'Lire factures': [facture()], 'Lire arrets de relance': [{ facture_id: u(100), artisan_id: STUDIO, raison: 'artisan', reprise_le: horodate(1) }] }); seul('1 reprise', r, 1, `facture_echue:${u(100)}:j3`)
+    r = run({ 'Lire factures': [facture()], 'Lire relances impayes': [{ id: u(802), artisan_id: STUDIO, facture_id: u(100), rang: 1, statut: 'a_valider' }] }); rien('1 à valider en attente', r, 1)
+    r = run({ 'Lire factures': [facture({ date_echeance: jourMoins(40) })] }); rien('1 trop ancienne', r, 1)
+    r = run({ 'Lire factures': [facture({ artisan_id: HORS })] }); rien('1 compte hors offre', r, 1)
+    r = run({ 'Lire factures': [facture({ artisan_id: SIGNATURE })], 'Lire reglages des relances': [{ artisan_id: SIGNATURE, actif: true, jours: [3, 10, 21] }] }); seul('1 Signature cochée', r, 1, `facture_echue:${u(100)}:j3`, { niveau: 3 })
+    r = run({ 'Lire factures': [facture({ artisan_id: SIGNATURE })] }); seul('1 Signature non cochée', r, 1, `facture_echue:${u(100)}:j3`, { niveau: 2 })
+    r = run({ 'Lire factures': [facture()], 'Lire reglages des relances': [{ artisan_id: STUDIO, actif: true, jours: [3, 10, 21] }] }); seul('1 Studio cochée', r, 1, `facture_echue:${u(100)}:j3`, { niveau: 2 })
+
+    // n° 2 — chantier à facturer
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', total_ttc: 2000, accepte_le: horodate(5) })] }); seul('2 Studio devis accepté', r, 2, `chantier_a_facturer:${u(200)}:accepte`, { montant_centimes: 200000, niveau: 2 })
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', total_ttc: 2000 })], 'Lire factures': [facture({ devis_id: u(200), type_facture: 'standard', statut: 'emise' })] }); rien('2 Studio facturé', r, 2)
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', total_ttc: 2000 })], 'Lire factures': [facture({ devis_id: u(200), type_facture: 'acompte', total_ttc: 600 })] }); seul('2 reste après acompte', r, 2, `chantier_a_facturer:${u(200)}:accepte`, { montant_centimes: 140000 })
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', total_ttc: 2000 })], 'Lire factures': [facture({ devis_id: u(200), type_facture: 'solde', statut: 'annulee' })] }); seul('2 solde annulé', r, 2, `chantier_a_facturer:${u(200)}:accepte`)
+    r = run({ 'Lire devis': [devis({ artisan_id: SIGNATURE, statut: 'accepte', total_ttc: 3000 })], 'Lire chantiers': [chantier({ devis_id: u(200) })] }); seul('2 Signature chantier terminé', r, 2, `chantier_a_facturer:${u(400)}:termine`, { montant_centimes: 300000, niveau: 2 })
+    r = run({ 'Lire devis': [devis({ artisan_id: SIGNATURE, statut: 'accepte', total_ttc: 3000 })], 'Lire chantiers': [chantier({ devis_id: u(200), statut: 'en_cours' })] }); rien('2 Signature chantier en cours', r, 2)
+
+    // n° 3 — devis signé sans acompte
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', acompte_pct: 30, total_ttc: 2000, accepte_le: horodate(1) })] }); seul('3 acompte manquant', r, 3, `devis_signe_sans_acompte:${u(200)}:signe`, { montant_centimes: 60000, niveau: 2 })
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', acompte_pct: 30 })], 'Lire factures': [facture({ devis_id: u(200), type_facture: 'acompte' })] }); rien('3 acompte facturé', r, 3)
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', acompte_pct: 30 })], 'Lire factures': [facture({ devis_id: u(200), type_facture: 'acompte', statut: 'annulee' })] }); seul('3 acompte annulé', r, 3, `devis_signe_sans_acompte:${u(200)}:signe`)
+    r = run({ 'Lire devis': [devis({ statut: 'accepte', acompte_pct: 0 })] }); rien('3 sans acompte prévu', r, 3)
+    r = run({ 'Lire devis': [devis({ artisan_id: SIGNATURE, statut: 'accepte', acompte_pct: 30 })], 'Lire reglages des relances': [{ artisan_id: SIGNATURE, actif: true }] }); seul('3 Signature : une facture ne s’émet jamais seule', r, 3, `devis_signe_sans_acompte:${u(200)}:signe`, { niveau: 2 })
+
+    // n° 4 — devis sans réponse
+    r = run({ 'Lire devis': [devis()] }); seul('4 J+3 pile', r, 4, `devis_sans_reponse:${u(200)}:j3`, { montant_centimes: 80000, jours: 3, niveau: 2 })
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(2) })] }); rien('4 J+2', r, 4)
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(7) })] }); seul('4 étape J+7', r, 4, `devis_sans_reponse:${u(200)}:j7`)
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(20) })] }); seul('4 étape J+14', r, 4, `devis_sans_reponse:${u(200)}:j14`)
+    r = run({ 'Lire devis': [devis({ statut: 'accepte' })] }); rien('4 accepté', r, 4)
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(31), validite_jours: 30 })] }); rien('4 validité dépassée', r, 4)
+    r = run({ 'Lire devis': [devis({ artisan_id: SIGNATURE })] }); seul('4 Signature', r, 4, `devis_sans_reponse:${u(200)}:j3`, { niveau: 3 })
+
+    // n° 5 — coupé
+    r = run({ 'Lire factures': [facture(), facture({ id: u(101), date_echeance: jourMoins(60) })], 'Lire devis': [devis()] })
+    rien('5 coupé', r, 5)
+    const d5 = r.parNoeud['Détecteur 05 facture jamais envoyée (coupé)']?.[0]?.constats ?? []
+    const d4 = r.parNoeud['Détecteur 04 devis sans réponse']?.[0]?.constats ?? []
+    if (JSON.stringify(d5) !== JSON.stringify(d4)) ko('5 coupé : le nœud doit rendre ses entrées telles quelles')
+
+    // n° 6 — demande sans réponse
+    r = run({ 'Lire demandes': [demande()] }); seul('6 J+1 pile', r, 6, `demande_sans_reponse:${u(300)}:j1`, { niveau: 2 })
+    r = run({ 'Lire demandes': [demande({ created_at: horodate(0) })] }); rien('6 le jour même', r, 6)
+    r = run({ 'Lire demandes': [demande({ created_at: horodate(3) })] }); seul('6 étape J+3', r, 6, `demande_sans_reponse:${u(300)}:j3`)
+    r = run({ 'Lire demandes': [demande({ statut: 'repondu' })] }); rien('6 répondue', r, 6)
+    r = run({ 'Lire demandes': [demande({ artisan_id: SIGNATURE })], 'Lire reglages de la plateforme': [{ artisan_id: SIGNATURE, mode_reponse: 'auto' }] }); seul('6 Signature auto', r, 6, `demande_sans_reponse:${u(300)}:j1`, { niveau: 3 })
+    r = run({ 'Lire demandes': [demande({ artisan_id: SIGNATURE })], 'Lire reglages de la plateforme': [{ artisan_id: SIGNATURE, mode_reponse: 'assistee' }] }); seul('6 Signature assistée', r, 6, `demande_sans_reponse:${u(300)}:j1`, { niveau: 2 })
+    r = run({ 'Lire demandes': [demande()], 'Lire reglages de la plateforme': [{ artisan_id: STUDIO, mode_reponse: 'auto' }] }); seul('6 Studio en « auto » reste à 2', r, 6, `demande_sans_reponse:${u(300)}:j1`, { niveau: 2 })
+
+    // n° 7 — demande sans devis (jamais niveau 3)
+    const tarif = { 'Lire tarifs': [{ id: u(901), artisan_id: STUDIO, actif: true }, { id: u(902), artisan_id: SIGNATURE, actif: true }] }
+    r = run({ ...tarif, 'Lire demandes': [demande({ urgence: 'urgent' })] }); seul('7 qualifiée', r, 7, `demande_sans_devis:${u(300)}:brouillon`, { niveau: 2 })
+    r = run({ 'Lire demandes': [demande({ urgence: 'urgent' })] }); rien('7 sans tarifs', r, 7)
+    r = run({ ...tarif, 'Lire demandes': [demande()] }); rien('7 non qualifiée', r, 7)
+    r = run({ ...tarif, 'Lire demandes': [demande({ type_chantier: 'Plomberie' })], 'Lire devis': [devis({ lead_id: u(300), statut: 'brouillon' })] }); rien('7 devis lié', r, 7)
+    r = run({ ...tarif, 'Lire demandes': [demande({ urgence: 'urgent', statut: 'perdu' })] }); rien('7 perdue', r, 7)
+    r = run({ ...tarif, 'Lire demandes': [demande({ artisan_id: SIGNATURE, urgence: 'urgent' })], 'Lire reglages de la plateforme': [{ artisan_id: SIGNATURE, mode_reponse: 'auto' }], 'Lire reglages des relances': [{ artisan_id: SIGNATURE, actif: true }] })
+    seul('7 Signature tout coché : jamais 3', r, 7, `demande_sans_devis:${u(300)}:brouillon`, { niveau: 2 })
+
+    // n° 8 — devis bientôt expiré
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(23), validite_jours: 30 })] }); seul('8 J-7 pile', r, 8, `devis_bientot_expire:${u(200)}:expire`, { jours: 7, montant_centimes: 80000 })
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(22), validite_jours: 30 })] }); rien('8 J-8', r, 8)
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(30), validite_jours: 30 })] }); rien('8 dernier jour passé', r, 8)
+    r = run({ 'Lire devis': [devis({ envoye_le: horodate(23), validite_jours: 30, statut: 'refuse' })] }); rien('8 refusé', r, 8)
+
+    // n° 9 — stock sous le seuil
+    const resa = { 'Lire chantiers': [chantier({ id: u(402), statut: 'en_cours', date_fin_reelle: null })], 'Lire reservations': [{ id: u(501), artisan_id: SIGNATURE, chantier_id: u(402), materiau_id: u(601), quantite: 5, statut: 'reserve' }], 'Lire materiaux': [{ id: u(601), artisan_id: SIGNATURE, seuil_alerte: 0 }] }
+    r = run({ ...resa, 'Lire stock': [{ id: u(701), materiau_id: u(601), quantite: 2 }] }); seul('9 réservation qui manque', r, 9, `stock_sous_seuil:${u(402)}:chantier`, { niveau: 2 })
+    r = run({ ...resa, 'Lire stock': [{ id: u(701), materiau_id: u(601), quantite: 6 }] }); rien('9 stock suffisant', r, 9)
+    r = run({ ...resa, 'Lire stock': [{ id: u(701), materiau_id: u(601), quantite: 2 }], 'Lire commandes': [{ id: u(61), artisan_id: SIGNATURE, statut: 'commandee', chantier_id: u(402) }] }); rien('9 commande passée', r, 9)
+    r = run({ 'Lire materiaux': [{ id: u(602), artisan_id: STUDIO, seuil_alerte: 3 }], 'Lire stock': [{ id: u(702), materiau_id: u(602), quantite: 3 }] }); seul('9 Studio au seuil pile', r, 9, `stock_sous_seuil:${u(602)}:seuil`, { niveau: 2 })
+    r = run({ 'Lire materiaux': [{ id: u(602), artisan_id: STUDIO, seuil_alerte: 3 }], 'Lire stock': [{ id: u(702), materiau_id: u(602), quantite: 4 }] }); rien('9 Studio au-dessus du seuil', r, 9)
+
+    // n° 10 — demande d'avis
+    const avis = { 'Lire apres chantier': [{ artisan_id: SIGNATURE, avis: true }] }
+    r = run({ ...avis, 'Lire chantiers': [chantier()] }); seul('10 J+2 pile', r, 10, `demande_avis:${u(400)}:avis`, { jours: 2, niveau: 2 })
+    r = run({ ...avis, 'Lire chantiers': [chantier({ date_fin_reelle: jourMoins(1) })] }); rien('10 J+1', r, 10)
+    r = run({ ...avis, 'Lire chantiers': [chantier({ date_fin_reelle: jourMoins(16) })] }); seul('10 dernier jour de rattrapage', r, 10, `demande_avis:${u(400)}:avis`)
+    r = run({ ...avis, 'Lire chantiers': [chantier({ date_fin_reelle: jourMoins(17) })] }); rien('10 fenêtre close', r, 10)
+    r = run({ 'Lire chantiers': [chantier()] }); rien('10 avis non coché', r, 10)
+    r = run({ 'Lire apres chantier': [{ artisan_id: STUDIO, avis: true }], 'Lire chantiers': [chantier({ artisan_id: STUDIO })] }); rien('10 Studio sans CRM', r, 10)
+
+    // Règles transverses, sur un jeu riche : Studio ≤ 2 ; n° 7 jamais 3 ; aucun champ personnel ; clé bien formée ; bilan cohérent.
+    const riche = {
+      ...tarif, ...avis,
+      'Lire factures': [facture(), facture({ id: u(102), artisan_id: SIGNATURE }), facture({ id: u(103), artisan_id: ENTREPRISE })],
+      'Lire devis': [devis(), devis({ id: u(202), artisan_id: SIGNATURE }), devis({ id: u(203), artisan_id: ENTREPRISE, statut: 'accepte', acompte_pct: 20 })],
+      'Lire demandes': [demande({ urgence: 'urgent' }), demande({ id: u(302), artisan_id: SIGNATURE, urgence: 'urgent' })],
+      'Lire chantiers': [chantier()],
+      'Lire reglages des relances': [{ artisan_id: STUDIO, actif: true }, { artisan_id: SIGNATURE, actif: true }, { artisan_id: ENTREPRISE, actif: true }],
+      'Lire reglages de la plateforme': [{ artisan_id: STUDIO, mode_reponse: 'auto' }, { artisan_id: SIGNATURE, mode_reponse: 'auto' }, { artisan_id: ENTREPRISE, mode_reponse: 'auto' }],
+    }
+    r = run(riche)
+    if (!r.constats.length) ko('jeu riche : aucun constat')
+    for (const c of r.constats) {
+      if (c.offre === 'studio' && c.niveau > 2) ko(`Studio au niveau ${c.niveau} : ${c.cle}`)
+      if (c.numero === 7 && c.niveau >= 3) ko(`n° 7 au niveau 3 : ${c.cle}`)
+      if (c.numero === 5) ko(`n° 5 a sorti un constat : ${c.cle}`)
+      if (![1, 2, 3].includes(c.niveau)) ko(`niveau hors de 1-3 : ${c.cle}`)
+      if (!/^[a-z_]+:[0-9a-f-]{36}:[a-z0-9_]+$/.test(c.cle)) ko(`clé mal formée : ${c.cle}`)
+      const champs = []
+      const parcourir = (o, p = '') => { for (const [k, v] of Object.entries(o)) { champs.push(p + k); if (v && typeof v === 'object' && !Array.isArray(v)) parcourir(v, p + k + '.') } }
+      parcourir(c)
+      for (const k of champs) if (INTERDIT.test(k)) ko(`constat porteur d'un champ interdit (${k}) : ${c.cle}`)
+      if (['creer_facture', 'creer_facture_libre'].includes(c.outil) && c.niveau > 2) ko(`une facture partirait seule : ${c.cle}`)
+      if (OUTILS_JAMAIS_AUTO.includes(c.outil) && c.niveau > 2) ko(`geste §3.2 au niveau 3 : ${c.cle}`)
+    }
+    if (!r.constats.some((c) => c.offre === 'signature' && c.niveau === 3)) ko('jeu riche : aucun niveau 3 en Signature (le juge ne verrait plus rien)')
+    if (r.bilan.length !== 10) ko(`bilan : 10 lignes attendues (${r.bilan.length})`)
+    for (const b of r.bilan) {
+      const l = r.constats.filter((c) => c.numero === b.numero)
+      const somme = l.reduce((s, c) => s + (c.montant_centimes || 0), 0)
+      if (b.nombre !== l.length || b.montant_total_centimes !== somme) ko(`bilan n° ${b.numero} incohérent`)
+      const cles = Object.keys(b).sort().join(',')
+      if (cles !== 'detecteur,mode,montant_total_centimes,nombre,numero,par_niveau') ko(`bilan n° ${b.numero} : champs inattendus (${cles})`)
+      if (b.mode !== 'simulation') ko('bilan hors simulation')
+    }
+    // Idempotence : deux passages sur les mêmes données donnent les mêmes clés.
+    const r2 = run(riche)
+    if (r2.constats.map((c) => c.cle).join() !== r.constats.map((c) => c.cle).join()) ko('deux passages identiques ne donnent pas les mêmes clés')
+  } catch (err) {
+    ko(`exception pendant le rejeu : ${err.message}`)
+  }
+  return e
+}
+
+// ─── 4. Le jeu de l'essai n8n (test_workflow, exécution 320) rejoué hors ligne ──────────────────────────────────────────────────
+function essaiN8n(wf) {
+  const e = []
+  const A1 = u(1), A2 = u(2)
+  const donnees = {
+    'Lire comptes': [{ id: A1, plan: 'studio' }, { id: A2, plan: 'signature' }],
+    'Lire factures': [
+      { id: u(101), artisan_id: A2, devis_id: null, statut: 'emise', date_echeance: '2026-10-23', total_ttc: 1200, avoir_de: null, payee_le: null, type_facture: 'standard' },
+      { id: u(102), artisan_id: A1, devis_id: null, statut: 'emise', date_echeance: '2026-10-30', total_ttc: 500, avoir_de: null, payee_le: null, type_facture: null },
+      { id: u(103), artisan_id: A2, devis_id: u(202), statut: 'payee', date_echeance: '2026-09-30', total_ttc: 900, avoir_de: null, payee_le: '2026-09-28', type_facture: 'acompte' },
+    ],
+    'Lire devis': [
+      { id: u(201), artisan_id: A1, statut: 'accepte', date_emission: '2026-10-20', validite_jours: 90, acompte_pct: 30, total_ttc: 2000, lead_id: null, accepte_le: '2026-10-25T10:00:00+00:00', envoye_le: '2026-10-20T09:00:00+00:00', created_at: '2026-10-20T08:00:00+00:00' },
+      { id: u(202), artisan_id: A2, statut: 'accepte', date_emission: '2026-09-01', validite_jours: 90, acompte_pct: 0, total_ttc: 3000, lead_id: null, accepte_le: '2026-09-05T10:00:00+00:00', envoye_le: '2026-09-01T09:00:00+00:00', created_at: '2026-09-01T08:00:00+00:00' },
+      { id: u(203), artisan_id: A1, statut: 'envoye', date_emission: '2026-10-26', validite_jours: 90, acompte_pct: 0, total_ttc: 800, lead_id: null, accepte_le: null, envoye_le: '2026-10-26T09:00:00+00:00', created_at: '2026-10-26T08:00:00+00:00' },
+      { id: u(204), artisan_id: A2, statut: 'envoye', date_emission: '2026-08-09', validite_jours: 90, acompte_pct: 0, total_ttc: 1500, lead_id: null, accepte_le: null, envoye_le: '2026-08-09T09:00:00+00:00', created_at: '2026-08-09T08:00:00+00:00' },
+    ],
+    'Lire demandes': [
+      { id: u(301), artisan_id: A1, statut: 'nouveau', urgence: 'urgent', type_chantier: null, created_at: '2026-10-30T10:00:00+00:00' },
+      { id: u(302), artisan_id: A2, statut: 'nouveau', urgence: null, type_chantier: null, created_at: '2026-11-01T10:00:00+00:00' },
+    ],
+    'Lire chantiers': [
+      { id: u(401), artisan_id: A2, devis_id: u(202), statut: 'termine', date_fin_reelle: '2026-10-30', maj_le: '2026-10-30T17:00:00+00:00' },
+      { id: u(402), artisan_id: A2, devis_id: null, statut: 'en_cours', date_fin_reelle: null, maj_le: '2026-10-31T17:00:00+00:00' },
+    ],
+    'Lire reservations': [{ id: u(501), artisan_id: A2, chantier_id: u(402), materiau_id: u(601), quantite: 5, statut: 'reserve' }],
+    'Lire materiaux': [{ id: u(601), artisan_id: A2, seuil_alerte: 0 }, { id: u(602), artisan_id: A1, seuil_alerte: 3 }],
+    'Lire stock': [{ id: u(701), materiau_id: u(601), quantite: 2 }, { id: u(702), materiau_id: u(602), quantite: 1 }],
+    'Lire relances impayes': [{ id: u(801), artisan_id: A2, facture_id: u(101), rang: 1, statut: 'envoyee' }],
+    'Lire reglages des relances': [{ artisan_id: A2, actif: true, jours: [3, 10, 21] }],
+    'Lire reglages de la plateforme': [{ artisan_id: A1, mode_reponse: 'assistee' }, { artisan_id: A2, mode_reponse: 'auto' }],
+    'Lire tarifs': [{ id: u(901), artisan_id: A1, actif: true }],
+    'Lire apres chantier': [{ artisan_id: A2, avis: true }],
+  }
+  // Bilan rendu par n8n le 02/11 (exécution 320 du workflow J8pduyxn9seR8Z9t), recopié de .orchestre/preuves/032-003/resume.md.
+  const attendu = '1:2:170000:0/1/1 2:2:410000:0/2/0 3:1:60000:0/1/0 4:2:230000:0/1/1 5:0:0:0/0/0 6:2:0:0/1/1 7:1:0:0/1/0 8:1:150000:0/0/1 9:2:0:0/2/0 10:1:0:0/1/0'
+  try {
+    const { bilan } = passer(wf, donnees, '2026-11-02')
+    const obtenu = bilan.map((b) => `${b.numero}:${b.nombre}:${b.montant_total_centimes}:${b.par_niveau['1']}/${b.par_niveau['2']}/${b.par_niveau['3']}`).join(' ')
+    if (obtenu !== attendu) e.push(`bilan de l'essai n8n différent : ${obtenu}`)
+  } catch (err) { e.push(`essai n8n : ${err.message}`) }
+  return e
+}
+
+const suite = (wf) => [...structure(wf), ...copies(wf), ...cas(wf), ...essaiN8n(wf)]
+
+// ─── Les mutants : chacun doit faire rougir la suite ──────────────────────────────────────────────────────────────────────────
+function mutantCode(nom, de, vers) {
+  return (wf) => {
+    const m = copie(wf)
+    const n = noeud(m, nom)
+    if (!n.parameters.jsCode.includes(de)) throw new Error(`mutant introuvable dans ${nom} : ${de}`)
+    n.parameters.jsCode = n.parameters.jsCode.replace(de, vers)
+    return m
+  }
+}
+function mutantNoeud(nom, f) { return (wf) => { const m = copie(wf); f(noeud(m, nom), m); return m } }
+const MUTANTS = [
+  ['n° 4 : comparateur de validité inversé (age > validite → age < validite)', mutantCode('Détecteur 04 devis sans réponse', 'if (age > validite(d)) continue;', 'if (age < validite(d)) continue;')],
+  ['n° 1 : J+3 pile manqué (>= → >)', mutantCode('Détecteur 01 facture échue', 'retard >= x.jour', 'retard > x.jour')],
+  ['n° 6 : étape inversée (>= → <)', mutantCode('Détecteur 06 demande sans réponse', 'age >= j', 'age < j')],
+  ['n° 8 : borne inversée (> → <)', mutantCode('Détecteur 08 devis bientôt expiré', 'restant > S.devis_expire_avant_jours', 'restant < S.devis_expire_avant_jours')],
+  ['n° 10 : J+2 pile manqué (< → <=)', mutantCode('Détecteur 10 demande d avis', 'age < S.avis_delai', 'age <= S.avis_delai')],
+  ['n° 5 rallumé', mutantCode('Détecteur 05 facture jamais envoyée (coupé)', 'return [{ json: { constats: avant } }];', "return [{ json: { constats: avant.concat([{ numero: 5, detecteur: 'facture_jamais_envoyee', cle: 'facture_jamais_envoyee:x:j0', artisan_id: avant[0] && avant[0].artisan_id }]) } }];")],
+  ['niveau : pilote et capacités d’envoi ignorés', mutantCode('Niveau proposé selon l offre', "l.includes('assistant.pilote') && d.auto.every((x) => l.includes(x))", 'true')],
+  ['niveau : plafond du détecteur ignoré', mutantCode('Niveau proposé selon l offre', 'return Math.min(n, d.max);', "return d.outil === 'creer_devis' ? 3 : Math.min(n, d.max);")],
+  ['constat qui porte un e-mail', mutantCode('Détecteur 04 devis sans réponse', "constat(4, 'devis_sans_reponse'", "nouveaux.push({ numero: 4, cle: 'devis_sans_reponse:' + d.id + ':x', client_email: 'x', artisan_id: d.artisan_id, niveau: 2 }); constat(4, 'devis_sans_reponse'")],
+  ['copie des capacités faussée (crm retiré)', mutantCode('Capacités des offres', "'crm', 'assistant.pilote'", "'assistant.pilote'")],
+  ['décision par le nom de l’offre', mutantCode('Niveau proposé selon l offre', "let n = l.includes('assistant') ? 2 : 1;", "let n = comptes.get(c.artisan_id).plan === 'studio' ? 2 : (l.includes('assistant') ? 2 : 1);")],
+  ['colonne interdite dans select= (client_email)', mutantNoeud('Lire factures', (n) => { n.parameters.queryParameters.parameters[0].value += ',client_email' })],
+  ['colonne hors liste (objet)', mutantNoeud('Lire devis', (n) => { n.parameters.queryParameters.parameters[0].value += ',objet' })],
+  ['lecture HTTP en POST', mutantNoeud('Lire chantiers', (n) => { n.parameters.method = 'POST' })],
+  ['nœud Supabase qui écrit', mutantNoeud('Lecture de connexion (regles_automatisation)', (n) => { n.parameters.operation = 'update' })],
+  ['nœud Slack ajouté', (wf) => { const m = copie(wf); m.nodes.push({ name: 'Avertir', type: 'n8n-nodes-base.slack', parameters: {} }); return m }],
+  ['appel réseau dans un nœud Code', mutantCode('Bilan par détecteur', 'const vues = new Set();', "const vues = new Set(); fetch('https://exemple.invalid');")],
+  ['workflow actif', (wf) => { const m = copie(wf); m.active = true; return m }],
+]
+
+// ─── Lancement ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+const echecs = suite(WF)
+let mutantsVerts = 0
+for (const [titre, fabriquer] of MUTANTS) {
+  let rougit
+  try { rougit = suite(fabriquer(WF)).length > 0 } catch (err) { console.log(`  ✗ mutant « ${titre} » : ${err.message}`); rougit = false }
+  console.log(`  ${rougit ? '✓' : '✗'} mutant « ${titre} » ${rougit ? 'fait rougir la suite' : 'NE FAIT PAS rougir la suite'}`)
+  if (!rougit) mutantsVerts++
+}
+const nbCodes = WF.nodes.filter((n) => n.type === 'n8n-nodes-base.code').length
+console.log(`detecteurs-n8n-qa : ${WF.nodes.length} nœuds (${nbCodes} Code, ${LECTURES(WF).length} lectures GET), ${MUTANTS.length} mutants`)
+if (echecs.length || mutantsVerts) {
+  for (const e of echecs) console.log(`  ✗ ${e}`)
+  if (mutantsVerts) console.log(`  ✗ ${mutantsVerts} mutant(s) laissent la suite verte`)
+  console.log('ÉCHEC')
+  process.exit(1)
+}
+console.log('  ✓ structure : inactif, lectures seules, select= limité aux colonnes permises, aucune écriture, aucun envoi, aucun modèle')
+console.log('  ✓ copies : capacités = lib/plans.ts ; listes d’outils = lib/pilote/regles.ts ; seuils sourcés = le code')
+console.log('  ✓ détecteurs : déclenchent, se taisent, tiennent à la limite, changent de clé d’étape ; Studio ≤ 2 ; n° 5 muet ; n° 7 jamais 3')
+console.log('  ✓ essai n8n (exécution 320) rejoué hors ligne : même bilan')
+console.log('OK')

@@ -15,10 +15,14 @@
 //    seule) — rien ne part : après la prise, la relance est enregistrée « à valider » avec son destinataire, son sujet et son texte,
 //    et l'artisan est prévenu (notification « proposition ») ; il l'envoie ou l'écarte depuis Factures
 //    (app/api/factures/relances-auto/a-valider). Tant qu'elle attend, sa facture n'est plus relancée (decider : « a_valider »).
+//  • 02/11 (R1, audit 032-015 ; p3-assistant §3.2 « un geste sensible reste une carte ») : le client CONTESTE (sujet d'escalade dans
+//    ses messages depuis l'émission) — même en Signature, la relance devient une carte « à valider », l'artisan est prévenu avec le
+//    motif MOTIF_SENSIBLE ; rien ne part seul, et la relance n'est pas perdue. L'arrêt « le client a répondu » reste pour le client
+//    qui a vraiment écrit depuis la référence.
 import { peut } from './plans'
 import { jourParis } from './comptaTableau.ts'
 import {
-  decider, MAX_PAR_COMPTE_JOUR, messageAValider, messageComplet, notificationPreparee, referenceReponse, sujetDeLaRelance, texteDeLaRelance, variablesDe,
+  decider, MAX_PAR_COMPTE_JOUR, MOTIF_SENSIBLE, messageAValider, messageComplet, notificationPreparee, referenceReponse, sujetDeLaRelance, texteDeLaRelance, variablesDe,
   type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances,
 } from './relancesImpayes.ts'
 
@@ -43,6 +47,11 @@ export interface Magasin {
   /** 02/11 (S4) : relancé par un AUTRE chemin depuis moins de 3 jours (registre commun, lib/relancesRegistre.ts) ? Illisible = vrai. */
   relanceAilleurs(artisanId: string, facture: FactureRelancable, maintenant: Date): Promise<boolean>
   reponseClient(artisanId: string, facture: FactureRelancable, depuis: string): Promise<boolean>
+  /**
+   * 02/11 (R1, audit 032-015) : le client conteste-t-il la facture ? Lu dans ses SEULS messages entrants écrits depuis l'émission —
+   * jamais dans la demande d'origine du chantier. Rend le sujet trouvé, ou null. Une lecture en erreur lève : rien ne part.
+   */
+  contestation(artisanId: string, facture: FactureRelancable): Promise<string | null>
   /** Prend la relance. Rend son identifiant, ou null si elle est déjà prise (rang, ou destinataire du jour). */
   prendre(e: { facture_id: string; artisan_id: string; rang: number; jour: string; destinataire: string }): Promise<string | null>
   confirmer(id: string, maintenant: Date): Promise<void>
@@ -100,6 +109,9 @@ export async function tourRelancesImpayes(d: {
           continue
         }
 
+        // Le client conteste-t-il (messages entrants depuis l'émission, jamais la demande d'origine) ? Alors la relance est une carte.
+        const sensible = (await m.contestation(artisan_id, f)) !== null
+
         // Relecture fraîche : payée, annulée ou arrêtée depuis la lecture du début de passage ? Rien ne part.
         const fraiche = await m.facture(artisan_id, f.id)
         if (!fraiche || fraiche.artisan_id !== artisan_id) continue
@@ -118,8 +130,9 @@ export async function tourRelancesImpayes(d: {
         const v = variablesDe({ client: fraiche.client_nom, numero: fraiche.numero, totalTtc: fraiche.total_ttc, echeance: fraiche.date_echeance!, joursRetard: decision.joursRetard, artisan: art.nom })
         const sujet = sujetDeLaRelance(fraiche.numero, art.nom)
 
-        if (!auto) {
-          // STUDIO : rien ne part. La relance prise est gardée « à valider » ; si elle ne peut pas l'être, la prise est rendue.
+        if (!auto || sensible) {
+          // STUDIO, ou client qui conteste : rien ne part. La relance prise est gardée « à valider » ; si elle ne peut pas l'être, la
+          // prise est rendue.
           try {
             await m.aValider(prise, { sujet, texte: messageAValider(texteDeLaRelance(decision.rang, reglages, v)) })
           } catch (e) {
@@ -131,7 +144,7 @@ export async function tourRelancesImpayes(d: {
           destinataires.add(decision.destinataire)
           envoyeesCeJour++
           bilan.preparees++
-          try { await m.notifierPreparee(art, notificationPreparee({ numero: fraiche.numero, client: fraiche.client_nom, rang: decision.rang })) }
+          try { await m.notifierPreparee(art, notificationPreparee({ numero: fraiche.numero, client: fraiche.client_nom, rang: decision.rang, motif: sensible ? MOTIF_SENSIBLE : null })) }
           catch (e) { bilan.erreurs.push(`notification non partie : ${msg(e)}`.slice(0, 160)) }
           continue
         }

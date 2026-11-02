@@ -40,11 +40,11 @@ const facture = (art, o = {}) => ({
   date_echeance: il(3), total_ttc: 1200, client_nom: 'M. Durand', client_email: `client${seq}@example.com`, devis_id: null, ...o,
 })
 
-function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse = null, sansUnicite = false, ailleurs = new Set() }) {
+function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse = null, sansUnicite = false, ailleurs = new Set(), contestations = new Map() }) {
   const journal = []; const arrets = new Map(); const lectures = { n: 0 }; const notifs = []
   const reg = new Map(comptes.map((c) => [c.id, c]))
   const m = {
-    rows: journal, arretsBd: arrets, lectures, facturesBd: factures, notifs, casseAValider: false,
+    rows: journal, arretsBd: arrets, lectures, facturesBd: factures, notifs, casseAValider: false, casseContestation: false,
     async comptes() { lectures.n++; return comptes.filter((c) => c.reglages).map((c) => ({ artisan_id: c.id, reglages: c.reglages })) },
     async artisan(id) { lectures.n++; if (casse === id) throw new Error('base en panne pour ce compte'); const c = reg.get(id); return c ? { id, nom: c.nom ?? 'Dupont Rénovation', email: c.email === undefined ? `${id}@artisan.test` : c.email, plan: c.plan ?? 'signature', is_founder: !!c.fondateur, leads_pause: !!c.pause } : null },
     async suspendu(id) { return !!reg.get(id)?.suspendu },
@@ -59,6 +59,8 @@ function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse 
     async arrets(art) { return new Map([...(arrets.get(art) ?? new Map())].map(([k, v]) => [k, { ...v }])) },
     // 02/11 (S4) : le registre commun, en mémoire — `ailleurs` : les factures dont le client vient d'être relancé par un autre chemin.
     async relanceAilleurs(art, f) { lectures.n++; return ailleurs.has(f.id) },
+    // 02/11 (R1, 032-015) : `contestations` — les factures dont le client conteste (sujet trouvé dans ses messages depuis l'émission).
+    async contestation(art, f) { lectures.n++; if (m.casseContestation) throw new Error('messages du client illisibles'); return contestations.get(f.id) ?? null },
     async reponseClient(art, f, depuis) { return messages.some((x) => x.artisan_id === art && x.contact.toLowerCase() === String(f.client_email).toLowerCase() && x.sens === 'in' && x.sent_at > depuis) },
     async prendre(e) {
       await Promise.resolve() // laisse passer un autre passage : la concurrence est réelle
@@ -398,6 +400,40 @@ for (const id of ['gratuit', 'essentiel']) ok(P.peut(id, 'factures.relances.auto
   ok(!L('Rappel', 'Bonjour, payez sur https://exemple.com/payer merci beaucoup.').ok, 'lien refusé dans le message')
   ok(!L(42, null).ok, 'types illisibles refusés')
 }
+{ // 02/11 (cinquième audit 032-007, voisin moyen) : une contestation écrite AVANT l'échéance arrête les relances — la règle pure
+  const CONTESTE = ['Je conteste cette facture, les travaux ne sont pas finis', 'Litige : je ne paierai pas tant que la fuite n’est pas réparée',
+    'Mon avocat vous contactera', 'Je refuse de payer ce montant', 'Vous avez abîmé mon parquet, c’est un dégât']
+  const rates = CONTESTE.filter((t) => R.contestationDuClient([t], []) === null)
+  ok(rates.length === 0, `contestation (032-007) : les ${CONTESTE.length} contestations sont lues quelle qu’en soit la date — manquées : ${rates.join(' | ')}`)
+  ok(R.contestationDuClient(['Merci pour la facture, je règle la semaine prochaine', 'Bien reçu'], []) === null, 'contestation : un message ordinaire du client n’en est pas une')
+  ok(R.contestationDuClient(['Le carrelage est fissuré'], ['carrelage']) === 'carrelage' && R.contestationDuClient(['Je conteste'], []) !== null, 'contestation : les mots de l’artisan comptent, et le plancher reste sans eux')
+  ok(R.contestationDuClient([null, 42, '', 'Je conteste la facture'], null) !== null, 'contestation : les contenus illisibles sont ignorés, les autres lus')
+  ok(R.MESSAGES_CONTESTATION_RELUS >= 10, 'contestation : au moins 10 messages entrants relus, toutes dates')
+}
+{ // 02/11 (R1, audit 032-015) : une contestation ne coupe plus la relance, elle la rend en CARTE — même en Signature ; rien ne part seul.
+  const G = 'art-sig-conteste'
+  const f = facture(G, { date_echeance: il(3), numero: 'F-2026-0888', client_email: 'conteste@example.com' })
+  const m = monde({ comptes: [compte(G, { plan: 'signature' })], factures: [f], contestations: new Map([[f.id, 'conteste']]) }); const e = espion()
+  const b = await tour(m, e)
+  ok(e.envois.length === 0 && b.envoyees === 0 && b.preparees === 1 && b.arretees === 0, `R1 : Signature, client qui conteste — rien ne part, la relance est préparée, aucun arrêt (reçu ${JSON.stringify(b)})`)
+  ok(m.rows.length === 1 && m.rows[0].statut === 'a_valider' && !m.arretsBd.get(G)?.has(f.id), 'R1 : la relance contestée est « a_valider » au journal ; la facture n’est pas arrêtée (« le client a répondu » n’est pas écrit)')
+  ok(m.notifs.length === 1 && m.notifs[0].texte.includes(R.MOTIF_SENSIBLE), 'R1 : l’artisan est prévenu avec le motif « le client conteste ou parle d’un sujet sensible : à relire »')
+  const b2 = await tour(m, e, { maintenant: plus(3) }); ok(b2.preparees === 0 && e.envois.length === 0 && m.rows.length === 1, 'R1 : la carte bloque la facture tant qu’elle attend (ni renvoyée, ni reproposée)')
+  const S = 'art-stu-conteste'; const fs2 = facture(S, { date_echeance: il(3) })
+  const ms = monde({ comptes: [compte(S, { plan: 'studio' })], factures: [fs2], contestations: new Map([[fs2.id, 'litige']]) }); const es = espion()
+  const bs = await tour(ms, es); ok(bs.preparees === 1 && es.envois.length === 0 && ms.notifs[0]?.texte.includes(R.MOTIF_SENSIBLE), 'R1 : Studio, client qui conteste — la relance reste préparée, avec le motif')
+  const P = 'art-sig-panne'; const fp = facture(P, { date_echeance: il(3) })
+  const mp = monde({ comptes: [compte(P, { plan: 'signature' })], factures: [fp] }); mp.casseContestation = true; const ep = espion()
+  const bp = await tour(mp, ep); ok(ep.envois.length === 0 && bp.envoyees === 0 && bp.preparees === 0 && mp.rows.length === 0 && bp.erreurs.length === 1, 'R1 : messages du client illisibles — rien ne part, rien n’est pris, l’erreur est dite (côté sûr)')
+  const Q = 'art-sig-ordinaire'; const fq = facture(Q, { date_echeance: il(3) })
+  const mq = monde({ comptes: [compte(Q, { plan: 'signature' })], factures: [fq] }); const eq = espion()
+  const bq = await tour(mq, eq); ok(bq.envoyees === 1 && eq.envois.length === 1 && mq.notifs.length === 0, 'R1 témoin : Signature sans contestation — la relance part seule, personne n’est dérangé')
+  ok(R.debutContestation({ date_emission: '2026-10-01', emise_le: null }) === '2026-09-30T22:00:00.000Z' && R.debutContestation({ date_emission: '2026-10-01', emise_le: '2026-09-29T09:00:00Z' }) === '2026-09-29T09:00:00.000Z'
+    && R.debutContestation({ date_emission: null, emise_le: null }) === null && R.debutContestation({ date_emission: 'n’importe quoi', emise_le: 'pas une date' }) === null,
+    'R1 : debutContestation — le plus tôt de emise_le et du jour d’émission (minuit à Paris, pris large) ; illisible : null (lecture sans borne)')
+  const n0 = R.notificationPreparee({ numero: 'F-1', client: null, rang: 1 }); const n1 = R.notificationPreparee({ numero: 'F-1', client: null, rang: 1, motif: R.MOTIF_SENSIBLE })
+  ok(!n0.texte.includes('Attention') && n1.texte.includes(`Attention : ${R.MOTIF_SENSIBLE}.`) && n0.sujet === n1.sujet, 'R1 : la notification dit le motif seulement quand il y en a un ; le sujet imposé ne change pas')
+}
 ok(reseau === 0, `aucune tentative réseau pendant les tests (${reseau})`)
 
 // ─── 4. Les sources : offre, drapeau, cron, route, migration, écran, comparatif ───────────────────────────────────────────────
@@ -442,7 +478,7 @@ ok(/eq\('artisan_id', session\.uid\)/.test(route.slice(route.indexOf('export asy
 ok(!/body\.artisan_id|b\.artisan_id|req\.json\(\)\)\.artisan/.test(route), 'route : jamais un identifiant de compte venu de la requête')
 
 // 25/10 — offre Studio : le passage choisit sur la capacité, la migration 0181 élargit le journal, la route a-valider envoie ou écarte.
-ok(/peut\(art\.plan, 'factures\.relances\.auto'\)/.test(tourSrc) && /if \(!auto\)/.test(tourSrc), 'le passage distingue Signature (auto) et Studio (à valider) sur la capacité factures.relances.auto')
+ok(/peut\(art\.plan, 'factures\.relances\.auto'\)/.test(tourSrc) && /if \(!auto \|\| sensible\)/.test(tourSrc), 'le passage distingue Signature (auto) et Studio (à valider) sur la capacité factures.relances.auto ; une contestation rend la carte même en Signature')
 const mig181 = fs.readdirSync(path.join(RACINE, 'supabase/migrations')).filter((x) => x.startsWith('0181_'))
 ok(mig181.length === 1 && mig181[0] === '0181_relances_impayes_a_valider.sql', `une seule migration 0181 (${mig181.join(', ')})`)
 ok(fs.existsSync(path.join(RACINE, 'supabase/migrations/_A_COLLER_sql_editor_0181_NU.sql')), 'migration 0181 : son jumeau à coller existe')
@@ -475,6 +511,22 @@ ok(/Relancer automatiquement mes factures échues/.test(ecran), 'écran : « Rel
 ok(/checked=\{actif\}/.test(ecran) && /useState\(donnees\.reglages\.actif\)/.test(ecran), 'écran : la case reflète le réglage enregistré (désactivé par défaut)')
 ok(/Aperçu/.test(ecran) && /textarea/.test(ecran) && /Rétablir le texte par défaut/.test(ecran), 'écran : texte prévisualisable, modifiable, rétablissable')
 ok(/<RelancesAuto\b/.test(page) && /etatPourEcran/.test(page) && /Arrêter les relances/.test(page) && /Reprendre les relances/.test(page), 'page Factures : réglage, état par facture, arrêt et reprise')
+
+// 02/11 (cinquième audit 032-007, puis R1 de l'audit 032-015) : le magasin lit la contestation dans les SEULS messages entrants du client,
+// écrits depuis l'émission de la facture, avec les mots de l'artisan — jamais la demande d'origine (leads.message).
+{
+  const mag = lire('lib/relancesImpayesMagasin.ts')
+  const corps = mag.slice(mag.indexOf('async contestation('), mag.indexOf('async prendre('))
+  const repond = mag.slice(mag.indexOf('async reponseClient('), mag.indexOf('async contestation('))
+  ok(/supabaseAdmin\.from\('messages'\)\.select\('contenu'\)\.in\('lead_id', ids\)\.eq\('sens', 'in'\)/.test(corps) && /const debut = debutContestation\(facture\)/.test(corps)
+    && /if \(debut\) q = q\.gte\('sent_at', debut\)/.test(corps) && /\.limit\(MESSAGES_CONTESTATION_RELUS\)/.test(corps)
+    && /return contestationDuClient\(textes, cfg\.escalade_mots\)\n/.test(corps) && /getPlateformeConfigStrict\(artisanId\)/.test(corps),
+    'magasin : contestation lit les messages entrants du client depuis l’émission, avec les mots de l’artisan (contestationDuClient)')
+  ok(!/select\('message'\)|from\('leads'\)\.select\('[^']*message/.test(corps + repond) && !/contestationDuClient/.test(repond),
+    'magasin (R1, 032-015) : ni la contestation ni la réponse ne relisent la demande d’origine (leads.message) ; la réponse ne lit pas le lexique')
+  ok(/date_emission, emise_le/.test(mag.match(/const COLONNES = '[^']*'/)?.[0] ?? ''), 'magasin : la facture lue porte son émission (date_emission, emise_le), borne de la contestation')
+  ok(/import \{ sujetEscalade \} from '\.\/pilote\/regles\.ts'/.test(lire('lib/relancesImpayes.ts')) && !/'litige'|'avocat'/.test(lire('lib/relancesImpayes.ts')), 'contestation : le lexique est celui du pilote (sujetEscalade), aucune liste recopiée')
+}
 
 const comp = await imp('lib/comparatifConcurrents.ts')
 ok(/impay/i.test(comp.PRESTI.relances) && !/pas de relance automatique des impayés/.test(comp.PRESTI.relances), 'comparatif : la ligne relances de Presti parle des impayés automatiques (livrés)')

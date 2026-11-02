@@ -3,11 +3,13 @@
 // élargie par 0181 (relances « à valider » de l'offre Studio : statuts a_valider et rejetee, colonnes sujet et texte).
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { jourParis } from './comptaTableau.ts'
-import { JOURS_PAR_DEFAUT, type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances } from './relancesImpayes.ts'
+import { JOURS_PAR_DEFAUT, MESSAGES_CONTESTATION_RELUS, contestationDuClient, debutContestation, type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances } from './relancesImpayes.ts'
+import { getPlateformeConfigStrict } from '@/lib/plateformeConfig'
 import type { Magasin } from './relancesImpayesTour.ts'
 import { historiqueRelances, relanceRecente } from './relancesRegistre.ts'
 
-const COLONNES = 'id, artisan_id, numero, statut, avoir_de, date_echeance, total_ttc, client_nom, client_email, devis_id'
+// date_emission (0006) et emise_le (0041) : la borne de la contestation (debutContestation, R1 de l'audit 032-015).
+const COLONNES = 'id, artisan_id, numero, statut, avoir_de, date_emission, emise_le, date_echeance, total_ttc, client_nom, client_email, devis_id'
 const lire = <T>(r: { data: T | null; error: { message: string } | null }, quoi: string): T => {
   if (r.error) throw new Error(`${quoi} : ${r.error.message}`.slice(0, 160))
   return r.data as T
@@ -19,6 +21,21 @@ export function reglagesDeLigne(l: { actif?: boolean; jours?: number[] | null; t
   const textes: ReglagesRelances['textes'] = {}
   for (const k of ['1', '2', '3'] as const) if (typeof t[k] === 'string' && (t[k] as string).trim()) textes[+k as 1 | 2 | 3] = t[k] as string
   return { actif: l?.actif === true, jours: Array.isArray(l?.jours) && l!.jours!.length ? l!.jours!.map(Number) : [...JOURS_PAR_DEFAUT], textes, actif_depuis: l?.actif_depuis ?? null }
+}
+
+/** Les dossiers (leads) du client de la facture, toujours dans le compte : celui de son devis, et ceux de la même adresse e-mail. */
+async function dossiersDuClient(artisanId: string, facture: FactureRelancable): Promise<string[]> {
+  const email = String(facture.client_email ?? '').trim()
+  const ids = new Set<string>()
+  if (facture.devis_id) {
+    const dv = lire<{ lead_id: string | null } | null>(await supabaseAdmin.from('devis').select('lead_id').eq('id', facture.devis_id).eq('artisan_id', artisanId).maybeSingle(), 'devis')
+    if (dv?.lead_id) ids.add(dv.lead_id as string)
+  }
+  if (email) {
+    const ls = lire(await supabaseAdmin.from('leads').select('id').eq('artisan_id', artisanId).in('contact', [...new Set([email, email.toLowerCase()])]).limit(50), 'leads')
+    for (const l of ls ?? []) ids.add(l.id as string)
+  }
+  return [...ids]
 }
 
 export const magasinSupabase: Magasin = {
@@ -56,19 +73,26 @@ export const magasinSupabase: Magasin = {
     return relanceRecente(await historiqueRelances(artisanId, { type: 'facture', id: facture.id }), maintenant, { sauf: 'impayes' }).refus
   },
   async reponseClient(artisanId, facture, depuis) {
-    const email = String(facture.client_email ?? '').trim()
-    const ids = new Set<string>()
-    if (facture.devis_id) {
-      const dv = lire<{ lead_id: string | null } | null>(await supabaseAdmin.from('devis').select('lead_id').eq('id', facture.devis_id).eq('artisan_id', artisanId).maybeSingle(), 'devis')
-      if (dv?.lead_id) ids.add(dv.lead_id as string)
-    }
-    if (email) {
-      const ls = lire(await supabaseAdmin.from('leads').select('id').eq('artisan_id', artisanId).in('contact', [...new Set([email, email.toLowerCase()])]).limit(50), 'leads')
-      for (const l of ls ?? []) ids.add(l.id as string)
-    }
-    if (!ids.size) return false
-    const ms = lire(await supabaseAdmin.from('messages').select('id').in('lead_id', [...ids]).eq('sens', 'in').gt('sent_at', depuis).limit(1), 'messages')
+    const ids = await dossiersDuClient(artisanId, facture)
+    if (!ids.length) return false
+    const ms = lire(await supabaseAdmin.from('messages').select('id').in('lead_id', ids).eq('sens', 'in').gt('sent_at', depuis).limit(1), 'messages')
     return (ms ?? []).length > 0
+  },
+  async contestation(artisanId, facture) {
+    // 02/11 (cinquième audit 032-007, puis R1 de l'audit 032-015) : une contestation écrite AVANT la référence (« je conteste cette
+    // facture », le 05/10, échéance le 15/10) doit être lue. On ne lit QUE les messages ENTRANTS du client (sens « in »), écrits depuis
+    // l'émission de la facture — jamais leads.message : la demande d'origine décrit le chantier (« j'ai une fuite », « c'est urgent ») et
+    // arrêtait à tort 11 relances sur 13 (annexe E de 032-015). Les mots d'escalade de l'artisan comptent. Rend le sujet, ou null.
+    // Toute lecture en erreur lève (le passage saute ce compte : rien ne part).
+    const ids = await dossiersDuClient(artisanId, facture)
+    if (!ids.length) return null
+    const debut = debutContestation(facture)
+    let q = supabaseAdmin.from('messages').select('contenu').in('lead_id', ids).eq('sens', 'in')
+    if (debut) q = q.gte('sent_at', debut)
+    const entrants = lire(await q.order('sent_at', { ascending: false }).limit(MESSAGES_CONTESTATION_RELUS), 'messages du client')
+    const cfg = await getPlateformeConfigStrict(artisanId)
+    const textes = (entrants ?? []).map((x) => (x as { contenu?: unknown }).contenu)
+    return contestationDuClient(textes, cfg.escalade_mots)
   },
   async prendre(e) {
     const { data, error } = await supabaseAdmin.from('relances_impayes').insert({ ...e, statut: 'prise' }).select('id').maybeSingle()

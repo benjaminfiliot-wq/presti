@@ -1,0 +1,9 @@
+M lib/pilote/regles.ts
+ M scripts/securite-assistant-0211-qa.mjs
+ M scripts/verifier-outils-obligatoires.mjs
+?? .orchestre/en-cours/032-010.lock
+?? .orchestre/en-cours/032-010.md
+?? .orchestre/file/032-011.md
+?? .orchestre/preuves/032-003/resume.md
+?? .orchestre/preuves/032-008/rapport.md
+?? scripts/detecteurs-n8n-qa.mjs

@@ -204,7 +204,13 @@ function nieQuelqueChose(n: string): boolean {
 // 02/11 (troisième audit 032-005, D2) : les jours, « après… », « la fin du mois », « la semaine d'après » sont des reports.
 // Quatrième audit 032-006 (D2) : une date (« le 15 », un mois, « mi-novembre », « ce week-end », « à 18 h »), « une fois signé »,
 // « dès réception », « au retour de… », les fêtes.
-const REPORT = / (?:plus tard|tout a l heure|demain|apres demain|semaine prochaine|mois prochain|prochain|prochaine|ce soir|cet apres midi|un de ces jours|bientot|qu apres|apres|une fois|des que|des reception|des signature|des son retour|quand|lorsque|d ici|fin du|fin de|fin des|debut du|debut de|debut|mi|week end|weekend|soiree|matinee|huitaine|vacances|rentree|toussaint|noel|paques|au retour|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre|le \d{1,2}|a \d{1,2} ?(?:h|heures?)|dans (?:[a-z0-9]+ ){0,2}(?:minute|minutes|heure|heures|jour|jours|semaine|semaines|mois))(?= )/
+// Cinquième audit 032-007 (D2) : « à 14h30 », « vers 10h », « à midi », « cet aprèm », « la semaine pro », « la semaine qui vient »,
+// « dans un moment », « tantôt ».
+// … mais une date qui FILTRE les destinataires (« ceux qui n'ont pas signé depuis le 15 octobre ») ou qui DÉCRIT le chantier
+// (« chantier le 15/11 ») n'est pas un report : elle est ôtée avant la lecture de REPORT (032-007, faible : vrais ordres devenus cartes).
+const MOIS = 'janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre'
+const DATE_QUI_DECRIT = new RegExp(String.raw` (?:depuis (?:le |la |l |debut |mi |fin )?|(?:chantier|travaux|intervention|pose|livraison|visite|passage) (?:du |le |prevu le |prevue le |prevus le |prevues le )?)(?:\d{1,2}(?: \d{1,2}(?: \d{2,4})?)?(?: (?:${MOIS}))?(?: \d{4})?|(?:${MOIS})(?: \d{4})?)(?= )`, 'g')
+const REPORT = / (?:plus tard|tout a l heure|demain|apres demain|semaine prochaine|mois prochain|prochain|prochaine|ce soir|cet apres midi|un de ces jours|bientot|qu apres|apres|une fois|des que|des reception|des signature|des son retour|quand|lorsque|d ici|fin du|fin de|fin des|debut du|debut de|debut|mi|week end|weekend|soiree|matinee|huitaine|vacances|rentree|toussaint|noel|paques|au retour|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre|le \d{1,2}|a \d{1,2} ?(?:h|heures?)|a \d{1,2} ?h\d{2}|vers \d{1,2}(?: ?h\d{0,2}| heures?)?|midi|aprem|apres midi|semaine pro|qui vient|un moment|tantot|dans (?:[a-z0-9]+ ){0,2}(?:minute|minutes|heure|heures|jour|jours|semaine|semaines|mois))(?= )/
 const CONDITION = / (?:si|s il|s ils|s elle|s elles|sauf|seulement|a condition|au cas|en cas|au besoin|a moins|eventuellement|le cas echeant|sinon|selon|je te laisse|je vous laisse|a toi de voir|a vous de voir|comme tu veux|comme vous voulez|a valider)(?= )/
 const HESITATION_ORDRE = ['j hesite', 'si tu veux', 'si vous voulez', 'tu pourrais', 'vous pourriez', 'je ne pense pas', 'je pense pas', 'pas sur', 'pas certain', 'a voir', 'on verra', 'je vais voir']
 // 02/11 (troisième audit 032-005, D2) : la rétractation et le « je m'en occupe » (« … non », « en fait non », « attends », « je préfère »,
@@ -212,18 +218,24 @@ const HESITATION_ORDRE = ['j hesite', 'si tu veux', 'si vous voulez', 'tu pourra
 const RETRACTATION = / (?:non|nan|bof|mouais|euh|bah non|en fait|enfin|attends|attendez|attendre|patiente|patientez|je prefere|on prefere|je m en occupe|je m occupe|je gere|je vais gerer|on gere|moi meme|je vais reflechir|je reflechis|on en reparle|feu vert|je verifie|je vais verifier|je dois verifier|laisse|laissez)(?= )/
 // Un participe dit un fait (« Relance de Dupont faite », « Facture FAC-2026-0021 payée », « Relance Dupont envoyée ce matin »), pas un ordre ;
 // « déjà » et « a été » aussi (« Note : Dupont a déjà été relancé »).
-const FAIT_EN_FIN = / (?:fait|faite|faits|faites|envoye|envoyee|envoyes|envoyees|relancee|relancees|regle|reglee|reglees|paye|payee|payes|payees|livree|signee|terminee|finie|c est fait|c est bon|c est parti) $/
+// Cinquième audit 032-007 (D2) : « … partie », « … effectuée », « … transmise », « … expédiée ».
+const FAIT_EN_FIN = / (?:fait|faite|faits|faites|envoye|envoyee|envoyes|envoyees|relancee|relancees|regle|reglee|reglees|paye|payee|payes|payees|livree|signee|terminee|finie|partie|parties|parti|partis|effectue|effectuee|effectues|effectuees|transmis|transmise|transmises|expedie|expediee|expedies|expediees|c est fait|c est bon|c est parti) $/
 // Le participe suivi d'un moment passé (« envoyée ce matin », « réglée hier ») ; « les devis envoyés il y a plus de 5 jours », lui, désigne
 // les devis d'un ordre et le reste.
 const FAIT_PARTOUT = / (?:fait|faite|faites|envoye|envoyee|envoyes|envoyees|relance|relancee|relancees|regle|reglee|reglees|paye|payee|payees|livree|signee|terminee) (?:ce matin|hier|avant hier|aujourd hui|tout a l heure|a l instant|deja|par cheque|par virement|en especes|la semaine derniere)(?= )| deja(?= )| (?:a|ont) ete(?= )/
 // Un accord en tête (« oui », « ok », « c'est bon »…) n'ouvre le mode que SEUL (« oui », « oui s'il te plaît », « ok, vas-y ») ou suivi d'un
 // ordre à l'impératif (« oui, et ajoute la pose ») : « C'est bon, je m'en occupe » est un refus (troisième audit 032-005, D2).
-const ACCORD_EN_TETE = /^ (?:(?:oui|ok|okay|d accord|vas y|allez y|allez|c est bon|parfait|banco|go|volontiers|je veux bien|top|super) )+/
+// 032-007 (faible) : « Ok ça marche » après une proposition est un oui (« ok » + « ça marche », sans « merci ») ; « ça marche » seul ne l'est pas.
+const ACCORD_EN_TETE = /^ (?:(?:oui|ok|okay|d accord|vas y|allez y|allez|c est bon|parfait|banco|go|volontiers|je veux bien|top|super|ca marche) )+/
 
 // « Relance ceux qui ne m'ont pas payé » : le participe d'une relative décrit les destinataires de l'ordre, il ne dit pas un fait.
+// « Facture la première partie » : après un article ou un ordinal, « partie » est un nom, pas un participe.
 function faitEnFin(n: string): boolean {
   const m = FAIT_EN_FIN.exec(n)
-  return m !== null && !/ (?:qui|que|qu|dont)(?: [a-z]+){0,4} $/.test(n.slice(0, m.index + 1))
+  if (m === null) return false
+  const avant = n.slice(0, m.index + 1)
+  if (/^ parties? $/.test(m[0]) && / (?:la|les|une|des|l|cette|ces|premiere|deuxieme|seconde|troisieme|derniere|autre|grosse|petite) $/.test(avant)) return false
+  return !/ (?:qui|que|qu|dont)(?: [a-z]+){0,4} $/.test(avant)
 }
 
 /** L'artisan donne-t-il un ORDRE NET (voir plus haut) ? Seul un ordre net ouvre le « fait tout seul » (faitToutSeul). */
@@ -241,7 +253,7 @@ export function ordreNet(n: string): boolean {
   const ouiNet = fort || faible
   const noteSeul = (premier === 'note' || premier === 'notez') && (second === undefined || second === 'merci')
   const enTete = (ouiNet && premier === undefined) || (VERBES_ORDRE.has(premier ?? '') && !noteSeul && !['de', 'd', 'du'].includes(second ?? ''))
-  return enTete && !nieQuelqueChose(texte) && !REPORT.test(texte) && !CONDITION.test(texte) && !RETRACTATION.test(texte) && !contient(texte, HESITATION)
+  return enTete && !nieQuelqueChose(texte) && !REPORT.test(texte.replace(DATE_QUI_DECRIT, ' ')) && !CONDITION.test(texte) && !RETRACTATION.test(texte) && !contient(texte, HESITATION)
     && !contient(texte, HESITATION_ORDRE) && !DEJA_FAIT.test(texte) && !faitEnFin(texte) && !FAIT_PARTOUT.test(texte)
 }
 

@@ -94,6 +94,9 @@ const BRIEFS = {
   'sante-reseau': { brief: 'plans/011-cadrage-01-11/briefs/sante-reseau.md', executant: 'hermes' },
   // 02/11 (031-013, vidéo metakaihos) : la relecture hebdomadaire des notes « à revoir » revient à Claude Code, jamais à Hermes
   'revoir-notes': { brief: 'plans/011-cadrage-01-11/briefs/revoir-notes.md', executant: 'claude' },
+  // 02/11 au soir (prompt 5, sources ; annexe 2 : les fiches de lecture de vidéos sont du volume pour Hermes) : les vidéos de
+  // @restructureai, transcrites sur Oracle ; Claude Code écrit ensuite « ce qui s'applique à Presti »
+  'fiches-videos-restructureai': { brief: 'plans/011-cadrage-01-11/briefs/fiches-videos-restructureai.md', executant: 'hermes' },
 }
 const TAILLE_MAX_BRIEF = 50_000
 const DOSSIER_BRIEFS = path.resolve(RACINE, 'plans', '011-cadrage-01-11', 'briefs')

@@ -18,7 +18,14 @@
 //  • 25/10 (Benj, deux offres) : en SIGNATURE (`factures.relances.auto`) la relance part seule ; en STUDIO (`factures.relances` seule)
 //    elle est préparée (statut « a_valider », sujet et texte gardés), l'artisan est prévenu, et rien ne part tant qu'il ne l'a pas
 //    envoyée lui-même ; une relance préparée bloque sa facture jusqu'à ce qu'il l'envoie ou l'écarte (« rejetee »).
+//  • 02/11 (cinquième audit 032-007, §3.2 « parler au nom de l'artisan sur un sujet d'escalade » ne s'automatise jamais) : un message
+//    du client qui conteste, menace ou parle d'un litige ou d'un sinistre, écrit DEPUIS L'ÉMISSION de la facture (même avant
+//    l'échéance), est lu (contestationDuClient, le lexique du pilote). 02/11 (R1, audit 032-015) : il ne coupe pas la relance, il la
+//    rend en CARTE — préparée « à valider », l'artisan prévenu avec MOTIF_SENSIBLE, rien ne part sans lui, en Signature comme en Studio.
+//    La demande d'origine du chantier (« j'ai une fuite », « c'est urgent ») n'est jamais relue : elle décrit le chantier, pas la facture.
+//    « Le client a répondu » reste réservé au client qui a VRAIMENT écrit depuis la référence (échéance, relance, reprise).
 import { centimes, euros, jourParis } from './comptaTableau.ts'
+import { sujetEscalade } from './pilote/regles.ts'
 
 export const MAX_RELANCES = 3
 export const JOUR_MIN = 1
@@ -106,12 +113,19 @@ export function lireRelanceRetouchee(sujet: unknown, texte: unknown): { ok: true
   return { ok: true, sujet: s, texte: t }
 }
 
-/** La notification à l'artisan quand une relance attend sa validation (offre Studio). Le sujet est imposé par la décision du 25/10. */
-export function notificationPreparee(p: { numero: string | null; client: string | null; rang: number }): { sujet: string; texte: string } {
+/** Le motif d'une relance rendue en carte parce que le client conteste (R1, audit 032-015 ; p3-assistant §3.2 : un geste sensible reste une carte). */
+export const MOTIF_SENSIBLE = 'le client conteste ou parle d’un sujet sensible : à relire'
+
+/**
+ * La notification à l'artisan quand une relance attend sa validation (offre Studio, ou contestation du client en Signature). Le sujet est
+ * imposé par la décision du 25/10. `motif` (02/11, R1) : la relance est une carte parce que le client conteste — le texte le dit.
+ */
+export function notificationPreparee(p: { numero: string | null; client: string | null; rang: number; motif?: string | null }): { sujet: string; texte: string } {
   const numero = p.numero?.trim() || 'sans numéro'
+  const motif = p.motif?.replace(/[\r\n]+/g, ' ').trim()
   return {
     sujet: `Relance de facture prête à valider — ${numero}`.replace(/[\r\n]+/g, ' ').slice(0, SUJET_MAX),
-    texte: `La relance ${p.rang} de la facture ${numero}${p.client?.trim() ? ` (${p.client.trim()})` : ''} est prête. Ouvrez Factures pour la relire, la retoucher si besoin et l’envoyer d’un clic : rien ne part sans votre validation.`,
+    texte: `La relance ${p.rang} de la facture ${numero}${p.client?.trim() ? ` (${p.client.trim()})` : ''} est prête.${motif ? ` Attention : ${motif}.` : ''} Ouvrez Factures pour la relire, la retoucher si besoin et l’envoyer d’un clic : rien ne part sans votre validation.`,
   }
 }
 
@@ -162,6 +176,8 @@ export function lireReglagesRelances(brut: unknown): { ok: true; reglages: Pick<
 export type FactureRelancable = {
   id: string; artisan_id: string; numero: string | null; statut: string | null; avoir_de: string | null
   date_echeance: string | null; total_ttc: number | string | null; client_nom: string | null; client_email: string | null; devis_id?: string | null
+  /** L'émission (migrations 0006 et 0041) : la contestation ne se lit que dans les messages écrits depuis (debutContestation). */
+  date_emission?: string | null; emise_le?: string | null
 }
 export type EntreeJournal = { facture_id: string; rang: number; jour: string; statut: string; envoyee_le?: string | null }
 
@@ -232,6 +248,33 @@ export function decider(p: {
   if (p.reponseClient) return rien('client_a_repondu')
   if (p.relanceeAilleurs) return rien('deja_relancee_ailleurs')
   return { action: 'envoyer', rang, joursRetard: retard, destinataire }
+}
+
+/** Les messages ENTRANTS du client relus pour une contestation, écrits depuis l'émission de la facture (les plus récents). */
+export const MESSAGES_CONTESTATION_RELUS = 50
+/**
+ * Cinquième audit 032-007 (voisin moyen, déjà relevé par 032-006) : le client a-t-il écrit, depuis l'émission de la facture (même avant
+ * l'échéance), un sujet d'escalade (litige, contestation, avocat, sinistre, refus de payer…) ? Rend le sujet, ou null. Le lexique est celui
+ * du pilote et de la réponse seule (sujetEscalade : le plancher qu'aucun réglage ne retire, et les mots de l'artisan). PURE : l'appelant
+ * (lib/relancesImpayesMagasin.ts, contestation) ne lui passe QUE les messages entrants du client (sens « in ») écrits depuis
+ * debutContestation — jamais la demande d'origine (R1, audit 032-015). Un sujet trouvé : la relance devient une carte, rien ne part seul.
+ */
+export function contestationDuClient(textes: readonly unknown[], motsArtisan: readonly unknown[] | null = []): string | null {
+  return sujetEscalade(textes, motsArtisan)
+}
+
+/**
+ * Depuis quand un message du client peut contester la facture : son émission. Le plus tôt de `emise_le` (scellement, 0041) et du jour
+ * `date_emission` (minuit à Paris, pris large : 22 h UTC la veille). Aucune des deux lisible : null (l'appelant lit alors sans borne —
+ * le côté sûr, puisqu'une contestation trouvée ne fait qu'une carte).
+ */
+export function debutContestation(f: Pick<FactureRelancable, 'date_emission' | 'emise_le'>): string | null {
+  const bornes: number[] = []
+  if (typeof f.emise_le === 'string') { const t = Date.parse(f.emise_le); if (Number.isFinite(t)) bornes.push(t) }
+  if (typeof f.date_emission === 'string' && /^\d{4}-\d{2}-\d{2}/.test(f.date_emission)) {
+    const t = Date.parse(`${f.date_emission.slice(0, 10)}T00:00:00Z`); if (Number.isFinite(t)) bornes.push(t - 2 * 3_600_000)
+  }
+  return bornes.length ? new Date(Math.min(...bornes)).toISOString() : null
 }
 
 /** Le moment à partir duquel un message du client compte comme une réponse : la dernière relance envoyée ou la reprise par l'artisan, sinon l'échéance. */

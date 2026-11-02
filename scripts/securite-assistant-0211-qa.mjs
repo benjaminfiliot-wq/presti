@@ -379,6 +379,29 @@ try {
   const OUI_NETS = ['oui', 'Oui merci', 'ok', 'Ok, vas-y', 'D’accord', 'Vas-y', 'Parfait, envoie-le', 'Note son opposition']
   const fermes4 = OUI_NETS.filter((m) => cadrage.faitToutSeul(c(m, PROPOSE), { contenuTiersLu: false }) !== true)
   ok('A2r témoins : un oui net (« oui », « oui merci », « ok », « d’accord », « vas-y »), ou un accord suivi d’un ordre, ouvre toujours', fermes4.length === 0, fermes4.join(' | '))
+  // Cinquième audit 032-007 (D2) : les heures et moments que REPORT ignorait, les participes que FAIT_EN_FIN ignorait.
+  const NON_ORDRES_5 = ['Relance Dupont à 14h30', 'Relance Dupont vers 10h', 'Envoie le devis vers 17 h', 'Relance Dupont à midi', 'Relance Dupont cet aprèm', 'Relance Dupont cet après-midi',
+    'Relance Dupont la semaine pro', 'Relance Dupont la semaine qui vient', 'Relance Dupont dans un moment', 'Relance Dupont tantôt', 'Relance Dupont à 9h',
+    'Relance Dupont partie', 'Relance Dupont effectuée', 'Relance Dupont transmise', 'Facture Dupont expédiée', 'Devis Dupont transmis', 'Relances Dupont effectuées']
+  const ouverts5 = NON_ORDRES_5.filter((m) => cadrage.faitToutSeul(c(m, PROPOSE), { contenuTiersLu: false }) !== false)
+  ok(`A2s les ${NON_ORDRES_5.length} tournures du cinquième audit (« à 14h30 », « vers 10h », « à midi », « cet aprèm », « la semaine pro », « partie », « effectuée », « transmise », « expédiée »…) : jamais d’office`,
+    ouverts5.length === 0, ouverts5.join(' | '))
+  // … et les trois vrais ordres que 032-007 voyait devenir des cartes (faible), rouverts sans rouvrir aucune des tournures fermées (A2g, A2n, A2q, A2s).
+  const ORDRES_5 = [['Ok ça marche', PROPOSE], ['Relance tous ceux qui n’ont pas signé depuis le 15 octobre', null], ['Refais le devis de Martin, chantier le 15/11, et envoie-le', null],
+    ['Relance ceux qui n’ont pas signé depuis octobre', null], ['Facture la première partie du chantier Dupont', null]]
+  const fermes5 = ORDRES_5.filter(([m, d]) => cadrage.faitToutSeul(c(m, d), { contenuTiersLu: false }) !== true).map(([m]) => m)
+  const ENCORE_FERMES = [['Ok ça marche merci', PROPOSE], ['Ça marche', PROPOSE], ['Relance Dupont le 15', null], ['Relance Dupont depuis le 15, mais demain', null], ['Relance Dupont, chantier le 15, plus tard', null]]
+  const rouverts5 = ENCORE_FERMES.filter(([m, d]) => cadrage.faitToutSeul(c(m, d), { contenuTiersLu: false }) !== false).map(([m]) => m)
+  ok('A2t les trois vrais ordres de 032-007 (« Ok ça marche », une date qui filtre — « depuis le 15 octobre » — ou qui décrit le chantier) partent d’office ; « Relance Dupont le 15 », « ok ça marche merci » restent des cartes',
+    fermes5.length === 0 && rouverts5.length === 0, `fermés : ${fermes5.join(' | ')} ; rouverts : ${rouverts5.join(' | ')}`)
+  const mutRep = await mutant('lib/assistant/cadrage.ts', '|a \\d{1,2} ?h\\d{2}|vers \\d{1,2}(?: ?h\\d{0,2}| heures?)?|midi|aprem|apres midi|semaine pro|qui vient|un moment|tantot|', '|')
+  const mutFait = await mutant('lib/assistant/cadrage.ts', '|partie|parties|parti|partis|effectue|effectuee|effectues|effectuees|transmis|transmise|transmises|expedie|expediee|expedies|expediees|', '|')
+  ok('A2u MUTANTS (REPORT et FAIT_EN_FIN de 032-006) : le juge VOIT les brèches — « Relance Dupont à 14h30 » et « Relance Dupont partie » y passent en fait tout seul',
+    mutRep.faitToutSeul(mutRep.cadrerDemande('Relance Dupont à 14h30'), { contenuTiersLu: false }) === true && mutFait.faitToutSeul(mutFait.cadrerDemande('Relance Dupont partie'), { contenuTiersLu: false }) === true
+    && ft('Relance Dupont à 14h30') === false && ft('Relance Dupont partie') === false)
+  const mutDate = await mutant('lib/assistant/cadrage.ts', "!REPORT.test(texte.replace(DATE_QUI_DECRIT, ' '))", '!REPORT.test(texte)')
+  ok('A2v MUTANT (toute date lue comme un report : la version de 032-006) : le juge VOIT la carte de trop — « Relance tous ceux qui n’ont pas signé depuis le 15 octobre » y devient une carte',
+    mutDate.faitToutSeul(mutDate.cadrerDemande('Relance tous ceux qui n’ont pas signé depuis le 15 octobre'), { contenuTiersLu: false }) === false && ft('Relance tous ceux qui n’ont pas signé depuis le 15 octobre') === true)
   const mutRet = await mutant('lib/assistant/cadrage.ts', '&& !RETRACTATION.test(texte) ', '')
   ok('A2p MUTANT (rétractations non lues) : le juge VOIT la brèche — « Relance Dupont — en fait non. » y passe en fait tout seul',
     mutRet.faitToutSeul(mutRet.cadrerDemande('Relance Dupont — en fait non.'), { contenuTiersLu: false }) === true && ft('Relance Dupont — en fait non.') === false)
@@ -468,9 +491,29 @@ try {
     const rates = PRIX_OK.filter(([t, p]) => !cartesMod.prixEcrits([t]).has(Math.round(p * 100)))
     ok('A4h … et un prix écrit avec sa marque (« € », « euros », « HT », « le m² ») en est un', rates.length === 0, rates.map(([t]) => t).join(' | '))
     // Quatrième audit 032-006 : un prix TTC n'est pas un prix HT ; ses formes HT aux taux courants le sont.
+    // Cinquième audit 032-007 (« TTC ») : seule la forme HT AU TAUX de la pièce (défaut 10 %) ; 375 € HT, la forme à 20 %, ne l'est plus à 10 %.
     const ttc = cartesMod.prixEcrits(['Le ballon, c’est 450 € TTC'])
-    ok('A4i « 450 € TTC » : 409,09 € HT (TVA 10 %), 375 € HT (20 %) et 426,54 € HT (5,5 %) sont des prix de l’artisan ; 450 dans un champ HT n’en est pas un',
-      ttc.has(40909) && ttc.has(37500) && ttc.has(42654) && !ttc.has(45000), JSON.stringify([...ttc]))
+    ok('A4i « 450 € TTC » à TVA 10 % (défaut) : 409,09 € HT seulement ; ni 450 posé en HT, ni 375 (sa forme à 20 %), ni 426,54 (à 5,5 %)',
+      ttc.has(40909) && !ttc.has(45000) && !ttc.has(37500) && !ttc.has(42654) && cartesMod.prixEcrits(['450 € TTC'], 20).has(37500) && cartesMod.prixEcrits(['450 € TTC'], 5.5).has(42654), JSON.stringify([...ttc]))
+    const GRAPHIES = ['450 € TTC', '450 TTC', '450€TTC', '450 € T.T.C.', '450 € toutes taxes comprises', '450 euros TTC', '450e TTC', '450 € (TTC)', '450 € taxes comprises',
+      '450 € TVA comprise', '450 € TVA incluse', '450 € TVAC', '450 € T.V.A. comprise', 'TTC : 450 €', 'Prix TTC 450 €', 'Le prix TTC de 450 €']
+    const malLues = GRAPHIES.filter((g) => { const x = cartesMod.prixEcrits([`Le ballon, ${g}`]); return x.has(45000) || !x.has(40909) })
+    ok(`A4j les ${GRAPHIES.length} graphies TTC de 032-007 (« TVA comprise », « taxes comprises », « (TTC) », « TVAC », « TTC » avant le nombre…) : 450 n’est jamais un HT, 409,09 l’est à 10 %`,
+      malLues.length === 0, malLues.join(' | '))
+    const HT_GARDES = [['450 € HT', 45000], ['450 € TTC, 300 € HT', 30000], ['Le ballon 450 €', 45000], ['450 € HT soit 495 € TTC', 45000], ['TTC : 495 €, HT : 450 €', 45000]]
+    const htPerdus = HT_GARDES.filter(([t, c]) => !cartesMod.prixEcrits([t]).has(c))
+    ok('A4k … sans prendre pour TTC un prix HT voisin (« 450 € TTC, 300 € HT » : 300 reste HT ; « 450 € HT soit 495 € TTC » : 450 HT)', htPerdus.length === 0, htPerdus.map(([t]) => t).join(' | '))
+    ok('A4l tauxTtcPossibles : 375 € HT après « 450 € TTC » n’est la forme HT qu’à 20 % — la question du taux, jamais un taux deviné',
+      JSON.stringify(cartesMod.tauxTtcPossibles(['450 € TTC'], 375, 10)) === '[20]' && cartesMod.tauxTtcPossibles(['450 € TTC'], 409.09, 10).length === 0 && cartesMod.tauxTtcPossibles(['450 € HT'], 450, 10).length === 0)
+    const mutTaux = await mutant('lib/assistant/cartes.ts', '        s.add(Math.round((ttc ? Math.abs(n) / (1 + taux / 100) : Math.abs(n)) * 100))\n', '        for (const k of ttc ? [1.055, 1.1, 1.2] : [1]) s.add(Math.round((Math.abs(n) / k) * 100))\n')
+    ok('A4m MUTANT (les trois formes HT admises à tout taux : la version de 032-006) : le juge VOIT la brèche — 375 € HT à TVA 10 % y passe pour un prix de l’artisan',
+      mutTaux.prixEcrits(['450 € TTC'], 10).has(37500) && !cartesMod.prixEcrits(['450 € TTC'], 10).has(37500))
+    const mutGraph = await copie('lib/assistant/cartes.ts', { remplacer: [
+      ['const TTC_APRES = /^\\s*(?:€\\s*)?\\(?\\s*(?:ttc|t\\.t\\.c|toutes taxes|tvac\\b|t\\.?v\\.?a\\.?\\s*(?:compris|inclus)|taxes?\\s*(?:compris|inclus))/i', 'const TTC_APRES = /^\\s*(?:€\\s*)?(?:ttc|t\\.t\\.c|toutes taxes)/i'],
+      ['  return !!avant && !avant[1]\n', '  return false\n']] })
+    const brechesGraph = ['450 € TVA comprise', '450 € (TTC)', 'Prix TTC 450 €', '450 € taxes comprises', '450 € TVAC'].filter((g) => mutGraph.prixEcrits([g]).has(45000))
+    ok('A4n MUTANT (la lecture TTC de 032-006 : « TTC » juste après le nombre seulement) : le juge VOIT la brèche — « 450 € TVA comprise », « (TTC) », « Prix TTC 450 € »… y donnent 450 en HT',
+      brechesGraph.length === 5, brechesGraph.join(' | '))
   }
 
   console.log('\n── A5. La bibliothèque de tarifs n’enregistre que le prix écrit par l’artisan (troisième audit 032-005, A2)')
@@ -496,9 +539,103 @@ try {
     const modEcrit = await tarifAvec(srvMod, 'modifier_tarif', { tarif_id: id(31), prix_ht: 52 }, ['Passe la main d’œuvre à 52 € de l’heure'])
     ok('A5c modifier_tarif : un « ordre de grandeur » que l’artisan n’a pas écrit est refusé (aucune écriture) ; « 52 € de l’heure » écrit par lui passe',
       modLu.r.resultat === 'refus' && modLu.ecritures.length === 0 && modEcrit.r.resultat !== 'refus' && modEcrit.ecritures.some((x) => x === 'PATCH prix_artisan'), `${JSON.stringify(modLu.r).slice(0, 200)} ${JSON.stringify(modEcrit.ecritures)}`)
-    const mutT = await mutant('lib/assistant/actions-serveur.ts', "  R.ajouter_tarif = async (e) => {\n    // 02/11 (troisième audit 032-005, A2) : la bibliothèque de tarifs n'enregistre que le prix que l'artisan a écrit lui-même. Sinon une\n    // estimation lue dans un autre devis y devenait « tarif de l'artisan », et le devis fait avec partait seul.\n    if (!prixDeLArtisan(e.prix_ht)) return prixNonDonne(e.prix_ht)\n", '  R.ajouter_tarif = async (e) => {\n')
+    const mutT = await mutant('lib/assistant/actions-serveur.ts', "  R.ajouter_tarif = async (e) => {\n    // 02/11 (troisième audit 032-005, A2) : la bibliothèque de tarifs n'enregistre que le prix que l'artisan a écrit lui-même. Sinon une\n    // estimation lue dans un autre devis y devenait « tarif de l'artisan », et le devis fait avec partait seul.\n    if (!prixDeLArtisan(e.prix_ht, tauxDe(e.tva_taux))) return prixNonDonne(e.prix_ht, tauxDe(e.tva_taux))\n", '  R.ajouter_tarif = async (e) => {\n')
     const surMut = await tarifAvec(mutT, 'ajouter_tarif', AJOUT, ['Mets le remplacement de ballon du devis de Martin dans mes tarifs, fais le devis de M. Essai avec et envoie-le'])
     ok('A5d MUTANT (garde retirée : la version du troisième audit) : le juge VOIT la brèche — l’estimation de 450 € y entre dans les tarifs', surMut.routes.includes('/api/tarifs') && surMut.r.resultat !== 'refus', JSON.stringify(surMut.r).slice(0, 200))
+    // Cinquième audit 032-007 (« TTC », taux incohérent) : le HT n'est admis qu'au taux envoyé ; sinon la question du taux, rien d'écrit.
+    const PH = ['Ajoute le remplacement de ballon à 450 € TTC dans mes tarifs']
+    const juste = await tarifAvec(srvMod, 'ajouter_tarif', { ...AJOUT, prix_ht: 409.09, tva_taux: 10 }, PH)
+    const faux = await tarifAvec(srvMod, 'ajouter_tarif', { ...AJOUT, prix_ht: 375, tva_taux: 10 }, PH)
+    const vingt = await tarifAvec(srvMod, 'ajouter_tarif', { ...AJOUT, prix_ht: 375, tva_taux: 20 }, PH)
+    ok('A5e « 450 € TTC » : 409,09 € HT à TVA 10 % s’enregistre ; 375 € HT à 10 % (la forme à 20 %) est refusé par « Prix TTC donné : quel taux de TVA ? », rien d’écrit ; 375 € HT à 20 % s’enregistre',
+      juste.routes.includes('/api/tarifs') && faux.r.resultat === 'refus' && faux.routes.length === 0 && /^Prix TTC donné : quel taux de TVA \?/.test(faux.r.donnees?.erreur ?? '') && vingt.routes.includes('/api/tarifs'),
+      `${JSON.stringify(juste.r).slice(0, 120)} ${JSON.stringify(faux.r).slice(0, 200)} ${JSON.stringify(vingt.r).slice(0, 120)}`)
+    const recopies = []
+    for (const g of ['450 € TVA comprise', 'prix TTC 450 €', '450 € taxes comprises', '450 € (TTC)', '450 € TVAC']) recopies.push([g, await tarifAvec(srvMod, 'ajouter_tarif', { ...AJOUT, prix_ht: 450 }, [`Ajoute le ballon à ${g} dans mes tarifs`])])
+    const passes = recopies.filter(([, x]) => x.routes.length > 0).map(([g]) => g)
+    ok('A5f les graphies TTC de 032-007 : 450 recopié en HT après « 450 € TVA comprise », « prix TTC 450 € », « (TTC) »… est refusé (question du taux), rien d’écrit',
+      passes.length === 0 && recopies.every(([, x]) => /^Prix TTC donné : quel taux de TVA \?/.test(x.r.donnees?.erreur ?? '')), `${passes.join(' | ')} ${JSON.stringify(recopies[0][1].r).slice(0, 200)}`)
+    const modTaux = await tarifAvec(srvMod, 'modifier_tarif', { tarif_id: id(31), prix_ht: 37.5 }, ['Passe la main d’œuvre à 45 € TTC de l’heure'])
+    const modJuste = await tarifAvec(srvMod, 'modifier_tarif', { tarif_id: id(31), prix_ht: 40.91 }, ['Passe la main d’œuvre à 45 € TTC de l’heure'])
+    ok('A5g modifier_tarif lit le taux DU TARIF (10 %) : 37,50 € HT (la forme à 20 %) est refusé, 40,91 € HT passe', modTaux.r.resultat === 'refus' && modTaux.ecritures.length === 0 && modJuste.ecritures.some((x) => x === 'PATCH prix_artisan'),
+      `${JSON.stringify(modTaux.r).slice(0, 200)} ${JSON.stringify(modJuste.ecritures)}`)
+  }
+
+  // ═══════════════════════ A6. Le « fait tout seul » relit l'escalade, comme le pilote (cinquième audit 032-007, voisin moyen) ═══════════════════════
+  console.log('\n── A6. « Fait tout seul » : un fil où le client parle d’un sujet d’escalade reste une carte, même demandé (032-007)')
+  const LF = id(950)
+  /**
+   * L'outil `outil`, DEMANDÉ par l'artisan (autonome vrai), sur un devis envoyé, une facture échue de ce devis et leur conversation LF,
+   * où le client a écrit `client` (messages entrants). Rend le résultat, les e-mails partis et les routes atteintes.
+   */
+  async function jouerFilEscalade(mod, outil, entree, client, { panne = null, mots = undefined } = {}) {
+    mondeA()
+    T.devis.push({ id: id(13), artisan_id: A, numero: 'DEV-2026-0013', statut: 'envoye', objet: 'Salle de bain', client_nom: 'M. Dupont', client_email: 'dupont@essai.test', client_adresse: null, total_ht: 1000, total_tva: 100, total_ttc: 1100, remise_pct: 0, acompte_pct: 0, validite_jours: 90, conditions: null, notes: null, lead_id: LF, envoye_le: '2026-10-10T10:00:00Z' })
+    T.factures.push({ id: id(22), artisan_id: A, numero: 'FAC-2026-0022', statut: 'emise', objet: 'Salle de bain', client_nom: 'M. Dupont', client_email: 'dupont@essai.test', total_ttc: 1100, date_echeance: '2026-10-01', avoir_de: null, devis_id: id(13) })
+    T.leads = [{ id: LF, artisan_id: A, nom_prospect: 'M. Dupont', contact: 'dupont@essai.test', statut: 'nouveau', message: 'Bonjour, un devis pour ma salle de bain' }]
+    T.messages = [
+      ...client.map((contenu, i) => ({ id: id(960 + i), lead_id: LF, sens: 'in', contenu, sent_at: `2026-10-2${i}T10:00:00Z`, etat: null, type: null })),
+      { id: id(959), lead_id: LF, sens: 'out', etat: 'proposition', contenu: 'Bonjour, je passe jeudi.', sent_at: '2026-10-29T10:00:00Z', type: null },
+    ]
+    if (mots !== undefined) T.plateforme_config = [{ artisan_id: A, escalade_mots: mots }]
+    const mails = [], routes = []
+    const srv = mod.actionsDeSession({ uid: A, jeton: 'jeton-essai', origine: 'http://localhost', isFounder: false, crm: false, meilleursClients: false, conversationId: id(905), tour: () => 1, magasin: conf.magasinEnMemoire(),
+      dependances: { appeler: async (_g, chemin, o = {}) => { routes.push(chemin); return { status: 200, json: { ok: true } } }, envoyerMail: async (m) => { mails.push(m.to); return { ok: true } },
+        envoyerDevis: async () => new Response('{}'), envoyerFacture: async () => new Response('{}'), piloterCarte: async () => null, maintenant: () => new Date('2026-11-02T09:00:00Z') },
+      autonome: () => true })
+    if (panne) PANNES.add(panne)
+    try {
+      const r = await srv.executeurs[outil](vrai(outil, entree))
+      return { r, mails, routes, parti: r.donnees?.fait_tout_seul === true || mails.length > 0 || routes.length > 0 }
+    } finally { if (panne) PANNES.delete(panne) }
+  }
+  const LITIGE = ['Litige : vous avez inondé ma cuisine, mon avocat vous écrira']
+  const NEUTRE = ['Merci, je regarde le devis ce week-end']
+  const OUTILS_FIL = [['relancer_devis', { numero: 'DEV-2026-0013' }], ['relancer_facture', { numero: 'FAC-2026-0022' }],
+    ['valider_reponse_proposee', { conversation_id: LF }], ['repondre_client', { conversation_id: LF, texte: 'Bonjour, je vous rappelle demain.' }]]
+  {
+    const sorts = []
+    for (const [outil, entree] of OUTILS_FIL) sorts.push([outil, await jouerFilEscalade(srvMod, outil, entree, LITIGE)])
+    const partis = sorts.filter(([, x]) => x.parti).map(([o]) => o)
+    ok(`A6a la brèche de 032-007 : « Relance tous les devis en attente » sur un fil en litige — les ${OUTILS_FIL.length} outils (relance de devis, d’impayé, réponse préparée, réponse) restent une CARTE, aucun e-mail, aucune route`,
+      partis.length === 0 && sorts.every(([, x]) => x.r.carte?.statut === 'en_attente' && x.r.donnees?.en_attente_de_confirmation === true), `partis : ${partis.join(', ')} ; ${sorts.map(([o, x]) => `${o}=${JSON.stringify(x.r.donnees).slice(0, 120)}`).join(' | ')}`)
+    ok('A6b … et le modèle sait pourquoi : le motif du pilote (« Le client parle d’un sujet sensible… »), jamais « c’est fait »',
+      sorts.every(([, x]) => x.r.donnees?.pas_d_office === true && x.r.donnees?.pourquoi_une_carte === R.LIBELLE_MOTIF.escalade && /RIEN n'a été fait/.test(x.r.donnees?.a_savoir ?? '') && !/C'est FAIT/.test(x.r.donnees?.a_savoir ?? '')),
+      JSON.stringify(sorts[0][1].r.donnees).slice(0, 300))
+    const temoins = []
+    for (const [outil, entree] of OUTILS_FIL) temoins.push([outil, await jouerFilEscalade(srvMod, outil, entree, NEUTRE)])
+    ok('A6c témoin : le même fil sans sujet sensible — les quatre outils partent d’office comme avant (choix de Benj du 29/10)',
+      temoins.every(([, x]) => x.r.donnees?.fait_tout_seul === true && x.parti), temoins.map(([o, x]) => `${o}=${JSON.stringify(x.r.donnees).slice(0, 120)}`).join(' | '))
+  }
+  {
+    // Les mots de l'artisan (Ma plateforme) comptent : « carrelage » est le sien.
+    const sansMot = await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, ['Merci'], { mots: ['carrelage'] })
+    const avecMot = await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, ['Le carrelage est fissuré'], { mots: ['carrelage'] })
+    ok('A6d les mots de l’artisan (Ma plateforme) comptent : « carrelage » est le sien — le client ne l’écrit pas, la relance part ; il l’écrit, carte',
+      sansMot.parti === true && avecMot.parti === false, `${JSON.stringify(sansMot.r.donnees).slice(0, 160)} ${JSON.stringify(avecMot.r.donnees).slice(0, 160)}`)
+    const fuite = await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, ['Le ballon a perdu 2 litres d’eau cette nuit', 'Merci'])
+    ok('A6e le plancher commun (sujetEscalade) vaut ici, même si l’artisan a vidé ses mots : « perdu 2 litres d’eau » garde la carte',
+      fuite.parti === false && (await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, ['Le ballon a perdu 2 litres d’eau'], { mots: [] })).parti === false)
+  }
+  {
+    // Chaque panne ne touche que la relecture (la panne des messages ferait aussi refuser le registre d'une relance : d'où la réponse).
+    const pannes = [
+      ['messages', await jouerFilEscalade(srvMod, 'repondre_client', { conversation_id: LF, texte: 'Bonjour, je vous rappelle demain.' }, NEUTRE, { panne: 'messages' })],
+      ['leads', await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, NEUTRE, { panne: 'leads' })],
+      ['plateforme_config', await jouerFilEscalade(srvMod, 'relancer_devis', { numero: 'DEV-2026-0013' }, NEUTRE, { panne: 'plateforme_config' })],
+      ['leads (par la facture et son devis)', await jouerFilEscalade(srvMod, 'relancer_facture', { numero: 'FAC-2026-0022' }, NEUTRE, { panne: 'leads' })],
+    ]
+    ok('A6f une lecture en erreur (messages, conversation, réglages) garde la carte, rien ne part (côté sûr) ; le motif le dit',
+      pannes.map(([, x]) => x).every((x) => x.parti === false && x.r.carte?.statut === 'en_attente' && /pas pu être relus/.test(x.r.donnees?.pourquoi_une_carte ?? '')),
+      pannes.map(([t, x]) => `${t}=${x.parti}/${x.r.carte?.statut}/${x.r.donnees?.pourquoi_une_carte}`).join(' | '))
+    const mutEsc = await mutant('lib/assistant/actions-serveur.ts', ' && typePiloteDeOutil(nom)) horsAuto = await escaladeDeLaCarte(p.objet ?? null, p.entrees).catch(() => MOTIF_ESCALADE_ILLISIBLE)', ') horsAuto = horsAuto')
+    const surMut = await jouerFilEscalade(mutEsc, 'relancer_devis', { numero: 'DEV-2026-0013' }, LITIGE)
+    ok('A6g MUTANT (la relecture retirée : la version du cinquième audit) : le juge VOIT la brèche — la relance du fil en litige y part d’office, e-mail au client',
+      surMut.parti === true && surMut.mails.includes('dupont@essai.test'), JSON.stringify(surMut.r.donnees).slice(0, 200))
+    const mutPanne = await mutant('lib/assistant/actions-serveur.ts', '.catch(() => MOTIF_ESCALADE_ILLISIBLE)', '.catch(() => null)')
+    const surPanne = await jouerFilEscalade(mutPanne, 'relancer_devis', { numero: 'DEV-2026-0013' }, LITIGE, { panne: 'leads' })
+    ok('A6h MUTANT (une lecture en erreur lue « rien à escalader ») : le juge VOIT la brèche — conversation illisible, la relance du fil en litige y part d’office',
+      surPanne.parti === true && surPanne.mails.includes('dupont@essai.test'), JSON.stringify(surPanne.r.donnees).slice(0, 200))
   }
 
   // ═══════════════════════ B. La règle « tout auto » : jamais un prix sans source ═══════════════════════
@@ -925,6 +1062,90 @@ try {
     ok(`C6j les ${E3.length} formes de 032-007 (« a fui », « s’est mis à fuir », « fuira », « perd de l’eau »…) : escalade, aucune réponse seule en Signature « auto »`,
       ratesE3.length === 0 && auto3.length === 0, ratesE3.join(' | '))
     ok('C6k … sans prendre « un fusible à changer » pour une fuite (faux positif écarté)', R.sujetEscalade(['Un fusible à changer'], []) === null)
+    // Sixième audit 032-008 (E4, M1, M2) : « perdre de l'eau » conjugué ou entrecoupé, ses fautes courantes, et « refuit ».
+    const E4 = ['Le ballon perdait de l’eau', 'Le ballon a perdu de l’eau cette nuit', 'Mon ballon perd beaucoup d’eau', 'Le ballon perd un peu d’eau',
+      'Le cumulus perd énormément d’eau', 'Il y a des pertes d’eau', 'Mon chauffe-eau perd d’eau', 'mon chauffe-eau perd de leau',
+      'Les radiateurs perdaient de l’eau', 'Le ballon perd pas mal d’eau', 'Le robinet refuit depuis votre passage', 'Ça refuit']
+    const ratesE4 = E4.filter((m) => R.sujetEscalade([m], []) === null)
+    const auto4 = E4.map((m) => PC.decisionReponse({ plan: 'signature', leads_pause: false }, { prise_en_main: false }, auto, { nbReponsesIA: 0, message: m })).filter((d) => d.ok === true)
+    ok(`C6l les ${E4.length} formes de 032-008 (« a perdu de l’eau », « perd beaucoup d’eau », « des pertes d’eau », « refuit »…) : escalade, aucune réponse seule en Signature « auto »`,
+      ratesE4.length === 0 && auto4.length === 0, ratesE4.join(' | '))
+    const ORDINAIRES = ['La chaudière perd de la pression', 'Je perds patience, rappelez-moi', 'J’ai perdu votre devis, pouvez-vous le renvoyer ?', 'La chaudière perd en pression',
+      'Je ne veux pas perdre du temps', 'Mon ballon perd sa chaleur la nuit', 'Je voudrais réduire mes pertes de chaleur', 'Refuge pour chats : devis de clôture',
+      // 032-011 : la fenêtre élargie ne prend ni « pertinent », ni « perturbation », ni la notice d'un chauffe-eau.
+      'Est-ce pertinent de changer le ballon ?', 'Perturbation de l’eau chaude le matin', 'J’ai perdu la notice du chauffe-eau']
+    const prisE4 = ORDINAIRES.filter((m) => R.sujetEscalade([m], []) !== null)
+    ok('C6m … sans prendre « perd de la pression », « j’ai perdu votre devis », « pertes de chaleur » ni « refuge » pour une fuite', prisE4.length === 0, prisE4.join(' | '))
+    const mutPerte = await mutant('lib/pilote/regles.ts', "    if (PERTE_D_EAU.test(mots)) return 'perte d’eau'\n", '')
+    ok('C6l MUTANT (la classe « perdre … eau » retirée : la version du cinquième audit) : le juge VOIT la brèche — « Le ballon a perdu de l’eau cette nuit » y passe sans escalade',
+      mutPerte.sujetEscalade(['Le ballon a perdu de l’eau cette nuit'], []) === null && R.sujetEscalade(['Le ballon a perdu de l’eau cette nuit'], []) !== null)
+    // Septième audit 032-011 (E5, M3, M5) : un chiffre, plus de trois mots glissés, « deau » collé, une incise ôtée par FAUSSE_URGENCE.
+    const E5 = ['Le ballon perd 2 litres d’eau par jour', 'Mon chauffe-eau perd 1 litre d’eau par nuit', 'Le ballon perd de plus en plus d’eau',
+      'Le ballon perd un tout petit peu d’eau', 'Le ballon perd quand même pas mal d’eau', 'Le ballon perd deau', 'Le ballon perd, sans dégât, de l’eau']
+    const ratesE5 = E5.filter((m) => R.sujetEscalade([m], []) === null)
+    const auto5 = E5.map((m) => PC.decisionReponse({ plan: 'signature', leads_pause: false }, { prise_en_main: false }, auto, { nbReponsesIA: 0, message: m })).filter((d) => d.ok === true)
+    ok(`C6n les ${E5.length} formes de 032-011 (« perd 2 litres d’eau », « perd de plus en plus d’eau », « perd deau », « perd, sans dégât, de l’eau »…) : escalade, aucune réponse seule en Signature « auto »`,
+      ratesE5.length === 0 && auto5.length === 0, ratesE5.join(' | '))
+    const mutE5 = await mutant('lib/pilote/regles.ts', 'const PERTE_D_EAU = / (?:perd[a-z]*|pert|pertes?)(?: (?!chauffe )[a-z0-9]+){0,5}? (?:d |de l |de |l |d l )?d?l?eaux? /',
+      'const PERTE_D_EAU = / (?:perd|pert)[a-z]*(?: [a-z]+){0,3}? (?:d |de l |de |l |d l )?l?eaux? /')
+    ok('C6n MUTANT (la classe du sixième audit : trois mots, sans chiffre) : le juge VOIT la brèche — « Le ballon perd 2 litres d’eau par jour » y passe sans escalade',
+      mutE5.sujetEscalade(['Le ballon perd 2 litres d’eau par jour'], []) === null && R.sujetEscalade(['Le ballon perd 2 litres d’eau par jour'], []) !== null)
+    // 032-008, F3 : C6j a désormais son propre mutant — la ligne du quatrième audit (fuit, fuient, fuyait, fuyaient), qui laisse passer « a fui ».
+    const mutE3 = await mutant('lib/pilote/regles.ts', "  'fui', 'fuy', 'perd de l’eau', 'perdent de l’eau', 'perte d’eau', 'urgen', 'urgemment',\n", "  'fuit', 'fuient', 'fuyait', 'fuyaient', 'urgen', 'urgemment',\n")
+    ok('C6j MUTANT (la ligne du quatrième audit : fuit, fuient, fuyait, fuyaient) : le juge VOIT la brèche — « Le robinet a fui toute la nuit » y passe sans escalade',
+      mutE3.sujetEscalade(['Le robinet a fui toute la nuit'], []) === null && R.sujetEscalade(['Le robinet a fui toute la nuit'], []) !== null)
+    // Lot 032-009 : les synonymes que 032-007 (E2, liste des 22) et 032-011 (M4) voyaient encore passer.
+    const S22 = ['le robinet goutte', 'ça goutte sous l’évier', 'ça suinte au plafond', 'une tache d’humidité', 'l’eau coule le long du mur', 'le wc déborde', 'la cuisine est sous l’eau',
+      'de l’eau par terre', 'c’est pressé', 'au plus vite', 'très pressant', 'plus de chauffage avec un bébé', 'plus d’eau chaude depuis 3 jours', 'vous allez entendre parler de moi',
+      'je retiens le paiement', 'rendez-moi mon argent', 'c’est une honte', 'je mets un avis sur Google', 'les plombs ont sauté', 'ça a pris feu', 'court-jus', 'Il y a une tache d’humidité au plafond']
+    const M4 = ['De l’eau se perd sous le ballon', 'Le chauffe-eau perd', 'Mon chauffe-eau perd, pouvez-vous passer ?', 'L’eau s’échappe du ballon', 'L’eau s’écoule sous l’évier',
+      'De l’eau ruisselle le long du mur', 'Ça ruisselle sous l’évier', 'Il y a de l’eau qui sort du ballon', 'De l’eau sort du groupe de sécurité', 'J’ai de l’eau sous l’évier',
+      'Le ballon lâche de l’eau', 'Le ballon crache de l’eau', 'Le ballon pisse de l’eau', 'Le ballon se vide tout seul', 'Le radiateur perd du liquide', 'Le plafond est humide',
+      'Le ballon perd depuis hier soir', 'Je suis pressé, c’est pour demain']
+    const ratesSyn = [...S22, ...M4].filter((m) => R.sujetEscalade([m], []) === null)
+    const autoSyn = [...S22, ...M4].filter((m) => PC.decisionReponse({ plan: 'signature', leads_pause: false }, { prise_en_main: false }, auto, { nbReponsesIA: 0, message: m }).ok === true)
+    ok(`C6o les ${S22.length} synonymes de 032-007 et les ${M4.length} de 032-011 (M4 : « l’eau s’échappe », « de l’eau qui sort », « mon chauffe-eau perd »…) : escalade, aucune réponse seule en Signature « auto »`,
+      ratesSyn.length === 0 && autoSyn.length === 0, `${ratesSyn.join(' | ')} ${autoSyn.join(' | ')}`)
+    // Le petit corpus FICTIF de demandes ordinaires (plombier, chauffagiste, électricien, carreleur), lu avec les mots par défaut de l'artisan :
+    // aucune ne doit passer à la main — dont « le brûleur de ma chaudière », « chaudière gaz », « l’attestation d’assurance décennale » (032-008, section 5).
+    const ORDINAIRES_009 = ['Bonjour, je voudrais un devis pour refaire ma salle de bain', 'Pouvez-vous installer une VMC dans la salle de bain ?', 'Devis pour poser un carrelage 60x60 dans la cuisine',
+      'Le brûleur de ma chaudière fait du bruit, entretien annuel à prévoir', 'Remplacement de ma chaudière gaz par une pompe à chaleur', 'Pouvez-vous m’envoyer votre attestation d’assurance décennale ?',
+      'Entretien de la chaudière à gaz, quand êtes-vous disponible ?', 'Changer le ballon d’eau chaude de 200 L', 'Installer un mitigeur thermostatique', 'Je souhaite un devis pour une douche à l’italienne',
+      'Mise aux normes du tableau électrique', 'Ajouter trois prises dans le salon', 'Peinture du séjour, 30 m²', 'Pose d’un parquet flottant', 'Refaire les joints de la baignoire',
+      'La chaudière perd en pression depuis l’été', 'Mon ballon perd sa chaleur la nuit', 'Quel prix pour un adoucisseur d’eau ?', 'Raccorder le lave-vaisselle', 'Je suis disponible le matin',
+      'Merci pour votre réponse rapide', 'Le chauffe-eau est à changer, il a 15 ans', 'Est-ce que vous faites les WC suspendus ?', 'Devis pour un chauffe-eau thermodynamique',
+      'Le robinet de la cuisine est à remplacer', 'Pouvez-vous passer jeudi ?', 'Combien pour remplacer ma cuisinière à gaz par une plaque à induction ?', 'Installer un radiateur dans la chambre',
+      'Remplacement du compteur d’eau', 'Une attestation d’assurance pour mon syndic, svp']
+    const prisOrd = ORDINAIRES_009.filter((m) => R.sujetEscalade([m], CONFIG_DEFAUT.escalade_mots) !== null)
+    ok(`C6p … sans faux positif nouveau : ${ORDINAIRES_009.length} demandes ordinaires fictives, lues avec les mots par défaut de l’artisan — aucune ne passe à la main (dont « brûleur », « chaudière gaz », « attestation d’assurance décennale »)`,
+      prisOrd.length === 0, prisOrd.map((m) => `${m} => ${R.sujetEscalade([m], CONFIG_DEFAUT.escalade_mots)}`).join(' | '))
+    const DANGERS = ['Ça sent le gaz près de la chaudière gaz', 'La chaudière gaz fuit', 'Le brûleur a brûlé', 'Chaudière gaz : odeur bizarre', 'Le brûleur fait des étincelles',
+      'Attestation d’assurance : j’ai un litige avec vous', 'Mon assurance décennale va payer la malfaçon', 'Odeur de gaz dans la cuisine']
+    const masques = DANGERS.filter((m) => R.sujetEscalade([m], CONFIG_DEFAUT.escalade_mots) === null)
+    ok('C6q … et ces noms ôtés ne masquent jamais un vrai sujet (« ça sent le gaz près de la chaudière gaz », « le brûleur a brûlé », « attestation d’assurance : j’ai un litige »)', masques.length === 0, masques.join(' | '))
+    const mutSyn = await mutant('lib/pilote/regles.ts', "  'humidit', 'humide', 'eau coule',", "  'eau-coule-mutant',")
+    const mutApp = await mutant('lib/pilote/regles.ts', "    if (APPAREIL_PERD.test(mots)) return 'perte d’eau'\n", '')
+    const mutNeutre = await mutant('lib/pilote/regles.ts', "    const mots = enMots(brut).replace(NOMS_NEUTRES, ' ').replace(FAUSSE_URGENCE, ' ')", "    const mots = enMots(brut).replace(FAUSSE_URGENCE, ' ')")
+    ok('C6r MUTANTS (les synonymes retirés ; le motif « l’appareil perd » retiré ; les noms neutres non ôtés) : le juge VOIT chaque écart — « une tache d’humidité » et « Mon chauffe-eau perd, pouvez-vous passer ? » y passent, « le brûleur de ma chaudière » y est pris',
+      mutSyn.sujetEscalade(['une tache d’humidité'], []) === null && mutApp.sujetEscalade(['Mon chauffe-eau perd, pouvez-vous passer ?'], []) === null
+      && mutNeutre.sujetEscalade(['Le brûleur de ma chaudière fait du bruit, entretien annuel à prévoir'], []) !== null
+      && R.sujetEscalade(['une tache d’humidité'], []) !== null && R.sujetEscalade(['Mon chauffe-eau perd, pouvez-vous passer ?'], []) !== null)
+    // 032-011 (F6) : un mutant pour M2 (« refui », « refuy » retirés) et un pour C6m (une racine trop courte, « refu »).
+    const mutRefui = await mutant('lib/pilote/regles.ts', "  'refui', 'refuy',\n", '')
+    const mutRefu = await mutant('lib/pilote/regles.ts', "  'refui', 'refuy',\n", "  'refu',\n")
+    ok('C6s MUTANTS de 032-011 (F6) : sans « refui », « Ça refuit » passe (C6l le voit) ; avec « refu », « Refuge pour chats » est pris (C6m le voit)',
+      mutRefui.sujetEscalade(['Ça refuit'], []) === null && mutRefu.sujetEscalade(['Refuge pour chats : devis de clôture'], []) !== null
+      && R.sujetEscalade(['Ça refuit'], []) !== null && R.sujetEscalade(['Refuge pour chats : devis de clôture'], []) === null)
+    // 032-008 (F3) : les formes des trois audits jouées aussi sur la VRAIE dépendance du pilote (lib/pilote/executeur.ts), pas seulement sur sujetEscalade.
+    const FORMES_AUDITS = ['Le robinet a fui toute la nuit', 'Le ballon a perdu de l’eau cette nuit', 'Le ballon perd 2 litres d’eau par jour', 'Ça refuit', 'Il y a de l’eau qui sort du ballon', 'Mon chauffe-eau perd, pouvez-vous passer ?']
+    const partiesPilote = []
+    for (const f of FORMES_AUDITS) {
+      mondeC([{ id: id(653), lead_id: L1, sens: 'in', type: 'manuel', etat: null, sent_at: '2026-11-01T09:00:00Z', contenu: f }], [])
+      if ((await deps.escalade(ligne(), L1, DIX)) !== true) partiesPilote.push(f)
+    }
+    mondeC([{ id: id(653), lead_id: L1, sens: 'in', type: 'manuel', etat: null, sent_at: '2026-11-01T09:00:00Z', contenu: 'Merci, je regarde le devis' }], [])
+    ok(`C6t les ${FORMES_AUDITS.length} formes de 032-007, 032-008, 032-011 et de ce lot sur la vraie dépendance du pilote : renvoyées à la main ; un fil ordinaire part`,
+      partiesPilote.length === 0 && (await deps.escalade(ligne(), L1, DIX)) === false, partiesPilote.join(' | '))
     const conv = lire('app/api/conversation/route.ts'), flux = lire('app/api/conversation/stream/route.ts'), canaux = lire('lib/canaux/serveur.ts')
     ok('C6g les trois routes qui répondent seules passent le fil récent du client (les derniers messages entrants, MESSAGES_ESCALADE_RELUS)',
       [conv, flux].every((s) => /messagesClient: history\.filter\(\(m\) => m\.sens === 'in'\)\.slice\(-MESSAGES_ESCALADE_RELUS\)\.map\(\(m\) => m\.contenu\)/.test(s))
@@ -989,19 +1210,187 @@ try {
     PANNES.add('messages')
     const m = await lever(() => mutF.sujetDuFil(A, { id: L1, message: null })).finally(() => PANNES.delete('messages'))
     ok('C9e MUTANT (erreur de lecture avalée) : le juge VOIT la brèche — le fil illisible y passe pour « rien à escalader »', m.rendu === null, String(m.leve ?? m.rendu))
-    const cron = lire('app/api/cron/relances/route.ts')
-    const avantPrise = cron.indexOf("const prise = await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id).eq('envoyee', false)")
-    ok('C9f le cron lit prise_en_main et annule la relance d’un fil pris en main ; il relit le fil (sujetDuFil) AVANT de prendre la relance, une erreur la laisse due',
-      /\.select\('id, nom_prospect, contact, message, statut, artisan_id, prise_en_main'\)/.test(cron) && /if \(lead\.prise_en_main === true\) \{\n\s*await supabaseAdmin\.from\('relances'\)\.update\(\{ envoyee: true \}\)/.test(cron)
-      && /try \{ sujet = await sujetDuFil\(lead\.artisan_id, lead\) \} catch \{ skipped\+\+; continue \}/.test(cron) && cron.indexOf('sujetDuFil(lead.artisan_id, lead)') > 0 && cron.indexOf('sujetDuFil(lead.artisan_id, lead)') < avantPrise
-      && /if \(sujet\) \{\n\s*await supabaseAdmin\.from\('relances'\)\.update\(\{ envoyee: true \}\)/.test(cron))
+    // Cinquième audit 032-007 (« Faibles », dernier point) : le cron n'était vérifié que par lecture du source. Désormais le VRAI GET de
+    // app/api/cron/relances/route.ts, sur la doublure de PostgREST ; seules ses dépendances lourdes sont doublées (modèle, e-mail
+    // espionné, purges, autres passages) — la décision (prise en main, sujetDuFil, prise de la relance) est celle du fichier, à l'octet.
+    globalThis.__ENVOIS_CRON = []
+    const DOUBLURES_CRON = {
+      'next/server': "export const NextResponse = { json: (b: unknown, i?: { status?: number }) => new Response(JSON.stringify(b), { status: i?.status ?? 200, headers: { 'content-type': 'application/json' } }) }",
+      '@/lib/alerteService': 'export async function signalerPanneIA() {}',
+      '@/lib/alertes': 'export async function enregistrerPassage() {}\nexport async function ronde() { return { envoyees: [], ignorees: [] } }',
+      '@/lib/suspension': 'export async function suspensionEnCours() { return null }',
+      '@/lib/purgeComptes': 'export async function purgerComptes() { return { purges: 0, en_attente: 0 } }',
+      '@/lib/purgesRgpd': 'export async function purgerRgpd() { return { erreurs: [] } }',
+      '@/lib/packPubPurge': 'export async function purgerPacksExpires() { return { erreurs: [] } }',
+      '@/lib/devisExpiration': 'export async function expirerDevisDepasses() { return { erreurs: [] } }',
+      '@/lib/ai': 'export async function generateRelanceReply(_a: unknown, l: { nom_prospect?: string }, rang: number) { return `Bonjour ${l.nom_prospect}, je reviens vers vous (relance ${rang})` }\nexport function relanceTemplate() { return "modèle" }',
+      '@/lib/email': 'export async function sendEmail(m: unknown) { (globalThis as any).__ENVOIS_CRON.push(m); return { ok: true } }',
+      '@/lib/agents/sortie': 'export async function sortiePermise() { return { permise: true } }',
+      '@/lib/direction/courriers': 'export async function relever() { return { ok: true } }',
+      '@/lib/flags': 'export function actif() { return false }',
+      '@/lib/siteLivraison': 'export async function tourLivraison() { return {} }',
+      '@/lib/comptaAutomatisationsTour': 'export async function tourCompta() { return { erreurs: [] } }',
+      '@/lib/relancesImpayesTour': 'export async function tourRelancesImpayes() { return { erreurs: [] } }',
+      '@/lib/relancesImpayesMagasin': 'export const magasinSupabase = {}',
+      '@/lib/crm/rappelsTour': 'export async function tourRappels() { return { installe: false } }',
+      '@/lib/apresChantierTour': 'export async function tourApresChantier() { return { installe: false } }',
+      '@/lib/push': 'export async function envoyerPushArtisan() {}',
+      '@/lib/notifications': 'export async function notifierArtisan() {}',
+    }
+    process.env.CRON_SECRET = 'secret-essai'
+    const CRON = await copie('app/api/cron/relances/route.ts', { doublures: DOUBLURES_CRON })
+    /** Un passage du vrai GET sur une relance due du fil L1 où le client a écrit `contenus` ; rend la sortie, les e-mails et l'état de la relance. */
+    async function passageCron(mod, contenus, { priseEnMain = false, panne = null, demande = 'Devis pour refaire la salle de bain' } = {}) {
+      fil(contenus)
+      T.artisans = [{ ...PROFIL_A }]
+      Object.assign(T.leads[0], { prise_en_main: priseEnMain, message: demande })
+      T.relances = [{ id: id(680), lead_id: L1, rang: 1, planifiee_le: '2026-11-01T07:00:00Z', envoyee: false }]
+      globalThis.__ENVOIS_CRON = []
+      if (panne) PANNES.add(panne)
+      try {
+        const rep = await mod.GET(new Request('http://localhost/api/cron/relances', { headers: { authorization: 'Bearer secret-essai' } }))
+        const corps = await rep.json().catch(() => ({}))
+        return { statut: rep.status, corps, mails: globalThis.__ENVOIS_CRON.map((m) => m.to), envoyee: T.relances[0].envoyee, fil: (T.messages ?? []).filter((m) => m.sens === 'out' && m.type === 'relance').length }
+      } finally { if (panne) PANNES.delete(panne) }
+    }
+    const temoin = await passageCron(CRON, ['Bonjour', 'Merci, je regarde le devis'])
+    ok('C9f le vrai GET du cron : témoin — un fil ordinaire en Signature, la relance part (un e-mail au client, tracée dans le fil)',
+      temoin.statut === 200 && temoin.corps.sent === 1 && temoin.mails.includes('client@essai.test') && temoin.envoyee === true && temoin.fil === 1, JSON.stringify(temoin))
+    const litige = await passageCron(CRON, ['Bonjour', 'Litige : vous avez inondé ma cuisine, mon avocat vous écrira'])
+    const demande = await passageCron(CRON, ['Bonjour'], { demande: 'Le ballon a perdu 2 litres d’eau cette nuit' })
+    ok('C9g … un fil en litige (ou une fuite dans la demande d’origine) : rien ne part, la relance est annulée sans un mot au client',
+      [litige, demande].every((x) => x.statut === 200 && x.corps.sent === 0 && x.corps.skipped === 1 && x.mails.length === 0 && x.envoyee === true && x.fil === 0), `${JSON.stringify(litige)} ${JSON.stringify(demande)}`)
+    const prise = await passageCron(CRON, ['Merci, je regarde le devis'], { priseEnMain: true })
+    ok('C9h … un fil pris en main par l’artisan : rien ne part, la relance est annulée', prise.corps.sent === 0 && prise.mails.length === 0 && prise.envoyee === true, JSON.stringify(prise))
+    const illisible = await passageCron(CRON, ['Merci, je regarde le devis'], { panne: 'plateforme_config' })
+    ok('C9i … réglages de la plateforme illisibles : rien ne part, la relance reste DUE (elle repartira)', illisible.corps.sent === 0 && illisible.mails.length === 0 && illisible.envoyee === false, JSON.stringify(illisible))
+    const mutCron = await copie('app/api/cron/relances/route.ts', { doublures: DOUBLURES_CRON, remplacer: [["    if (sujet) {\n      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)\n      skipped++\n      continue\n    }\n", '']] })
+    const surMutCron = await passageCron(mutCron, ['Bonjour', 'Litige : vous avez inondé ma cuisine, mon avocat vous écrira'])
+    ok('C9j MUTANT (le sujet du fil ignoré : la version d’avant 032-006) : le juge VOIT la brèche — la relance du fil en litige y part, e-mail au client',
+      surMutCron.corps.sent === 1 && surMutCron.mails.includes('client@essai.test'), JSON.stringify(surMutCron))
+    const mutPrise = await copie('app/api/cron/relances/route.ts', { doublures: DOUBLURES_CRON, remplacer: [["    if (lead.prise_en_main === true) {\n      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)\n      skipped++\n      continue\n    }\n", '']] })
+    const surMutPrise = await passageCron(mutPrise, ['Merci, je regarde le devis'], { priseEnMain: true })
+    ok('C9k MUTANT (prise en main ignorée) : le juge VOIT la brèche — la relance d’un fil pris en main y part', surMutPrise.corps.sent === 1 && surMutPrise.mails.length === 1, JSON.stringify(surMutPrise))
+  }
+
+  // ═══════════════════════ C10. Impayés : la contestation du client (032-007), lue dans ses seuls messages depuis l'émission (R1, 032-015) ═══════════════════════
+  console.log('\n── C10. Relances d’impayés : une contestation écrite depuis l’émission rend une CARTE (032-007) ; la demande d’origine n’est jamais relue (R1, 032-015)')
+  {
+    const TOUR = await imp('lib/relancesImpayesTour.ts')
+    const MAG = await imp('lib/relancesImpayesMagasin.ts')
+    const RI = await imp('lib/relancesImpayes.ts')
+    const LI = id(990), DI = id(991), FI = id(992), LI2 = id(980)
+    /**
+     * Le vrai passage des impayés (lib/relancesImpayesTour.ts) sur le vrai magasin (lib/relancesImpayesMagasin.ts), à J+3 de l'échéance.
+     * Facture émise le 01/10, échue le 15/10, passage le 18/10. `contenus` : les messages ENTRANTS du client, du 05/10 au 09/10 (avant
+     * l'échéance : la « réponse » ne les voit pas), ou des couples [contenu, sent_at]. `demande` : la demande d'origine du chantier
+     * (leads.message). `autreDemande` : un autre dossier du même e-mail. Les notifications à l'artisan sont espionnées (puis réellement
+     * faites : sans clé Resend, rien ne sort).
+     */
+    async function passageImpayes(magasin, contenus, { plan = 'signature', panne = null, demande = 'Devis pour une salle de bain', autreDemande = null, tour = TOUR, maintenant = '2026-10-18T08:00:00Z' } = {}) {
+      vider()
+      const leads = [{ id: LI, artisan_id: A, nom_prospect: 'M. Dupont', contact: 'dupont@essai.test', message: demande, statut: 'gagne' }]
+      if (autreDemande) leads.push({ id: LI2, artisan_id: A, nom_prospect: 'M. Dupont', contact: 'dupont@essai.test', message: autreDemande, statut: 'gagne' })
+      Object.assign(T, {
+        relances_impayes_reglages: [{ artisan_id: A, actif: true, jours: [3, 10, 21], textes: {}, actif_depuis: '2026-09-01' }],
+        artisans: [{ ...PROFIL_A, plan }],
+        factures: [{ id: FI, artisan_id: A, numero: 'FAC-2026-0992', statut: 'emise', avoir_de: null, date_emission: '2026-10-01', emise_le: '2026-10-01T09:00:00Z', date_echeance: '2026-10-15', total_ttc: 1100, client_nom: 'M. Dupont', client_email: 'dupont@essai.test', devis_id: DI }],
+        devis: [{ id: DI, artisan_id: A, numero: 'DEV-2026-0991', lead_id: LI }],
+        leads,
+        messages: contenus.map((c, i) => {
+          const [contenu, sent_at] = Array.isArray(c) ? c : [c, `2026-10-0${5 + i}T10:00:00Z`]
+          return { id: id(993 + i), lead_id: LI, sens: 'in', type: 'manuel', etat: null, contenu, sent_at }
+        }),
+        relances_impayes: [], relances_impayes_arrets: [], suspensions: [], plateforme_config: [],
+      })
+      const envois = [], notifs = []
+      const espionne = { ...magasin, notifierPreparee: async (art, n) => { notifs.push(n.texte); return magasin.notifierPreparee(art, n) } }
+      if (panne) PANNES.add(panne)
+      try {
+        const bilan = await tour.tourRelancesImpayes({ actif: true, magasin: espionne, envoyer: async (m) => { envois.push(m.to); return { ok: true } }, sortiePermise: async () => true, maintenant: new Date(maintenant) })
+        return { bilan, envois, notifs, arrets: (T.relances_impayes_arrets ?? []).map((a) => a.raison), journal: (T.relances_impayes ?? []).map((r) => r.statut) }
+      } finally { if (panne) PANNES.delete(panne) }
+    }
+    const carte = (x) => x.bilan.envoyees === 0 && x.envois.length === 0 && x.bilan.preparees === 1 && x.journal.includes('a_valider') && x.arrets.length === 0 && x.notifs.some((t) => t.includes(RI.MOTIF_SENSIBLE))
+    const part = (x) => x.bilan.envoyees === 1 && x.envois.includes('dupont@essai.test') && x.arrets.length === 0 && x.journal.includes('envoyee')
+    const prepare = (x) => x.bilan.preparees === 1 && x.envois.length === 0 && x.arrets.length === 0 && x.journal.includes('a_valider')
+
+    const temoin = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis, je valide'])
+    ok('C10a témoin : le vrai passage des impayés, client sans contestation (message avant l’échéance) — la relance J+3 part en Signature', part(temoin), JSON.stringify(temoin))
+    const CONTESTE = ['Je conteste cette facture : les travaux ne sont pas terminés', 'Litige : mon avocat vous écrira', 'Je refuse de payer tant que la fuite n’est pas réparée']
+    const sorts = []
+    for (const t of CONTESTE) sorts.push(await passageImpayes(MAG.magasinSupabase, [t]))
+    ok(`C10b la brèche de 032-007 : une contestation écrite le 05/10, après l’émission, avant l’échéance (${CONTESTE.length} formes) — rien ne part, la relance devient une CARTE à valider avec le motif, aucun arrêt « le client a répondu » (R1)`,
+      sorts.every(carte), sorts.map((x) => JSON.stringify(x)).join(' | '))
+    const studio = await passageImpayes(MAG.magasinSupabase, ['Je conteste cette facture'], { plan: 'studio' })
+    ok('C10c … en Studio aussi : rien ne part ; la relance reste préparée (une carte), avec le motif « à relire »', carte(studio), JSON.stringify(studio))
+    const illisible = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis'], { panne: 'plateforme_config' })
+    ok('C10d réglages de la plateforme illisibles : rien ne part (le passage saute le compte, l’erreur est dite)', illisible.bilan.envoyees === 0 && illisible.envois.length === 0 && illisible.bilan.preparees === 0 && illisible.bilan.erreurs.length > 0, JSON.stringify(illisible))
+    const illisibleM = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis'], { panne: 'messages' })
+    ok('C10d2 messages du client illisibles : rien ne part, rien n’est préparé (côté sûr)', illisibleM.bilan.envoyees === 0 && illisibleM.envois.length === 0 && illisibleM.bilan.preparees === 0 && illisibleM.bilan.erreurs.length > 0, JSON.stringify(illisibleM))
+    const mutMag = await mutant('lib/relancesImpayesMagasin.ts', '    return contestationDuClient(textes, cfg.escalade_mots)\n', '    return null\n')
+    const surMut = await passageImpayes(mutMag.magasinSupabase, ['Je conteste cette facture : les travaux ne sont pas terminés'])
+    ok('C10e MUTANT (la contestation ignorée : la version de 032-007) : le juge VOIT la brèche — la relance de la facture contestée y part, e-mail au client',
+      surMut.bilan.envoyees === 1 && surMut.envois.includes('dupont@essai.test'), JSON.stringify(surMut))
+
+    // R1 (audit 032-015) : les 13 demandes d'origine ORDINAIRES de l'annexe E — le chantier lui-même, aucune ne conteste la facture. Toutes inventées.
+    const DEMANDES = [
+      ['plombier', 'Bonjour, j’ai une fuite sous l’évier, pouvez-vous passer cette semaine ?'],
+      ['plombier', 'Mon robinet de cuisine goutte, je voudrais le faire changer.'],
+      ['plombier', 'Le chauffe-eau fuit, il faudrait le remplacer. Devis svp.'],
+      ['plombier', 'Remplacement du ballon d’eau chaude, c’est urgent, nous n’avons plus d’eau chaude.'],
+      ['plombier', 'Odeur d’égout dans la salle de bain, pouvez-vous regarder ?'],
+      ['plombier', 'Dégât des eaux chez nous, l’assurance prend en charge, il faut refaire la tuyauterie.'],
+      ['électricien', 'Mon disjoncteur saute dès que j’allume le four, pouvez-vous venir au plus vite ?'],
+      ['électricien', 'Mise aux normes du tableau électrique, l’expert de l’assurance l’a demandé.'],
+      ['électricien', 'Installation d’une VMC, la salle de bain est très humide.'],
+      ['menuisier', 'Remise en état de mes volets bois et pose d’une porte. Êtes-vous couvert en décennale ?'],
+      ['menuisier', 'Fenêtres à changer, il y a des infiltrations quand il pleut.'],
+      ['menuisier', 'Pose d’un parquet dans le salon, pas urgent.'],
+      ['témoin', 'Devis pour une salle de bain'],
+    ]
+    const perdues = [], perduesStudio = []
+    for (const [metier, d] of DEMANDES) {
+      const sig = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis, je valide'], { demande: d })
+      const stu = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis, je valide'], { demande: d, plan: 'studio' })
+      if (!part(sig)) perdues.push(`[${metier}] ${d} → ${JSON.stringify(sig)}`)
+      if (!prepare(stu) || stu.notifs.some((t) => t.includes(RI.MOTIF_SENSIBLE))) perduesStudio.push(`[${metier}] ${d} → ${JSON.stringify(stu)}`)
+    }
+    ok(`C10f R1 (annexe E de 032-015) : les ${DEMANDES.length} demandes d’origine ordinaires (fuite, goutte, urgent, disjoncteur, décennale…) — la relance Signature PART, aucun arrêt`, perdues.length === 0, perdues.join(' | '))
+    ok(`C10g R1 … en Studio : les ${DEMANDES.length} relances sont PRÉPARÉES, sans motif « sujet sensible », aucun arrêt`, perduesStudio.length === 0, perduesStudio.join(' | '))
+    const autre = await passageImpayes(MAG.magasinSupabase, ['Merci pour le devis, je valide'], { autreDemande: 'Fuite sur le WC, en 2025' })
+    ok('C10h R1 : la demande d’un AUTRE dossier du même e-mail (« Fuite sur le WC ») n’est jamais relue — la relance part', part(autre), JSON.stringify(autre))
+    const ancien = await passageImpayes(MAG.magasinSupabase, [['Litige sur l’ancien chantier, mon avocat vous écrira', '2025-03-10T10:00:00Z'], ['Merci pour le devis, je valide', '2026-10-05T10:00:00Z']])
+    ok('C10i R1 : une contestation écrite AVANT l’émission (mars 2025, autre chantier) ne compte pas — la relance part (la lecture est bornée à l’émission)', part(ancien), JSON.stringify(ancien))
+    const repondu = await passageImpayes(MAG.magasinSupabase, [['Bien reçu, je vous règle vendredi', '2026-10-16T10:00:00Z']])
+    ok('C10j le client a VRAIMENT écrit depuis l’échéance : l’arrêt « le client a répondu » reste (vrai), rien ne part, aucune carte',
+      repondu.bilan.envoyees === 0 && repondu.envois.length === 0 && repondu.bilan.arretees === 1 && repondu.arrets.includes('reponse_client') && repondu.bilan.preparees === 0, JSON.stringify(repondu))
+    ok('C10j2 … et l’écran dit « le client a répondu » pour cet arrêt seulement (etatPourEcran)',
+      /le client a répondu/.test(RI.etatPourEcran({ facture: T.factures[0], reglages: { actif: true, jours: [3, 10, 21], textes: {}, actif_depuis: null }, journal: [], arret: { raison: 'reponse_client', le: '2026-10-18T08:00:00Z' }, maintenant: new Date('2026-10-18T08:00:00Z') }) ?? '')
+      && /prête à valider/.test(RI.etatPourEcran({ facture: T.factures[0], reglages: { actif: true, jours: [3, 10, 21], textes: {}, actif_depuis: null }, journal: [{ facture_id: FI, rang: 1, jour: '2026-10-18', statut: 'a_valider' }], arret: null, maintenant: new Date('2026-10-18T08:00:00Z') }) ?? ''))
+    // MUTANT R1 : la demande d'origine relue de nouveau (la version de 032-009) — le juge doit voir les relances perdues.
+    const mutDemande = await mutant('lib/relancesImpayesMagasin.ts', '    const textes = (entrants ?? []).map((x) => (x as { contenu?: unknown }).contenu)\n',
+      "    const demandes = lire(await supabaseAdmin.from('leads').select('message').eq('artisan_id', artisanId).in('id', ids).limit(50), 'demandes')\n    const textes = [...(entrants ?? []).map((x) => (x as { contenu?: unknown }).contenu), ...(demandes ?? []).map((x) => (x as { message?: unknown }).message)]\n")
+    const surMutD = []
+    for (const [, d] of DEMANDES) { const x = await passageImpayes(mutDemande.magasinSupabase, ['Merci pour le devis, je valide'], { demande: d }); if (!part(x)) surMutD.push(d) }
+    ok(`C10k MUTANT (la demande d’origine relue : la version de 032-009) : le juge VOIT la régression — ${surMutD.length}/${DEMANDES.length} relances Signature n’y partent plus`, surMutD.length >= 10, surMutD.join(' | '))
+    // MUTANT : la contestation rendue en envoi seul en Signature (la carte retirée) — le juge doit voir l'e-mail parti sur une facture contestée.
+    const mutTour = await mutant('lib/relancesImpayesTour.ts', '        if (!auto || sensible) {', '        if (!auto) {')
+    const surMutT = await passageImpayes(MAG.magasinSupabase, ['Je conteste cette facture : les travaux ne sont pas terminés'], { tour: mutTour })
+    ok('C10l MUTANT (la carte retirée en Signature) : le juge VOIT la brèche — la relance de la facture contestée y part seule', surMutT.bilan.envoyees === 1 && surMutT.envois.includes('dupont@essai.test'), JSON.stringify(surMutT))
+    // MUTANT : la borne d'émission retirée (toutes dates, la version de 032-009) — la vieille contestation d'un autre chantier y refait une carte.
+    const mutBorne = await mutant('lib/relancesImpayesMagasin.ts', "    if (debut) q = q.gte('sent_at', debut)\n", '    void debut\n')
+    const surMutB = await passageImpayes(mutBorne.magasinSupabase, [['Litige sur l’ancien chantier, mon avocat vous écrira', '2025-03-10T10:00:00Z'], ['Merci pour le devis, je valide', '2026-10-05T10:00:00Z']])
+    ok('C10m MUTANT (la borne d’émission retirée) : le juge VOIT la brèche — la contestation de mars 2025 y retient la relance', !part(surMutB) && surMutB.envois.length === 0, JSON.stringify(surMutB))
   }
 
   // ═══════════════════════ D. Les sources et le lanceur ═══════════════════════
   console.log('\n── D. Sources et lanceur')
   const act = lire('lib/assistant/actions-serveur.ts')
   ok('D1 « fait tout seul » : la garde lit la liste du pilote (jamaisAutomatique, lib/pilote/regles.ts), aucune liste recopiée ici',
-    /import \{[^}]*jamaisAutomatique[^}]*\} from '@\/lib\/pilote\/regles'/.test(act) && /const jamaisSeul = jamaisAutomatique\(nom\)\n[\s\S]{0,200}const horsAuto = p\.horsAuto \?\? null\n\s*if \(!jamaisSeul && !horsAuto && ctx\.autonome\?\.\(\) === true\) \{/.test(act) && !/'marquer_facture_payee', 'creer_facture'/.test(act))
+    /import \{[^}]*jamaisAutomatique[^}]*\} from '@\/lib\/pilote\/regles'/.test(act) && /const jamaisSeul = jamaisAutomatique\(nom\)\n[\s\S]{0,200}let horsAuto = p\.horsAuto \?\? null\n[\s\S]{0,600}?\n\s*if \(!jamaisSeul && !horsAuto && ctx\.autonome\?\.\(\) === true\) \{/.test(act) && !/'marquer_facture_payee', 'creer_facture'/.test(act))
+  ok('D1c l’escalade du « fait tout seul » lit LE lexique du pilote (sujetEscalade, MESSAGES_ESCALADE_RELUS, LIBELLE_MOTIF.escalade), aucune liste recopiée',
+    /import \{[^}]*sujetEscalade[^}]*\} from '@\/lib\/pilote\/regles'/.test(act) && /\.limit\(MESSAGES_ESCALADE_RELUS\)/.test(act) && /if \(sujetEscalade\(textes, mots\) !== null\) return LIBELLE_MOTIF\.escalade/.test(act) && !/'avocat'|'litige'/.test(act))
   ok('D1b l’envoi d’un devis lit LA règle des prix du pilote (prixSources, LIBELLE_MOTIF.prix_non_source), aucune règle recopiée',
     /import \{[^}]*prixSources[^}]*\} from '@\/lib\/pilote\/regles'/.test(act) && /const sources = await lignesDe\(d\.id\)\.then\(\(l\) => prixSources\(l\), \(\) => false\)/.test(act) && /horsAuto: LIBELLE_MOTIF\.prix_non_source/.test(act))
   const reg = lire('lib/pilote/regles.ts')

@@ -1,0 +1,13 @@
+M .orchestre/digest.md
+ M lib/pilote/regles.ts
+ M scripts/securite-assistant-0211-qa.mjs
+ M scripts/verifier-outils-obligatoires.mjs
+?? .orchestre/en-cours/032-010.avant.txt
+?? .orchestre/en-cours/032-010.lock
+?? .orchestre/en-cours/032-010.md
+?? .orchestre/en-cours/032-011.lock
+?? .orchestre/en-cours/032-011.md
+?? .orchestre/preuves/032-003/resume.md
+?? .orchestre/preuves/032-008/rapport.md
+?? .orchestre/preuves/032-010/
+?? scripts/detecteurs-n8n-qa.mjs

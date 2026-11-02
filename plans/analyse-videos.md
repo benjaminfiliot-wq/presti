@@ -533,7 +533,7 @@ Synthèse lisible : `videos/references-2026-11-01/youtube/fiches/k1adsrTHwPg.syn
       "pertinent": true,
       "actions": [
         "Relance d'impayé : quand le client répond, l'assistant lit la réponse, classe le motif (contestation, oubli, trésorerie, échéancier demandé), le range sur la facture dans Supabase (migration à poser par Claude Code après accord) et propose l'étape suivante en carte ; aujourd'hui la relance s'arrête à la réponse (lib/aide.ts:232) et le mot « motif » n'apparaît dans aucun lib/relancesImpayes*.ts (idée « jusqu'au paiement ou jusqu'à la raison », 49,8-51,8 s)",
-        "Détecteur « chantier terminé → proposer l'entretien » planifié dans n8n (Oracle, route Presti à clé limitée, cadrage P3 §9.7) qui dépose une opportunité dans la boîte « À valider » (§9.4) et s'appuie sur l'outil existant envoyer_rappel_entretien (lib/assistant/outils-actions.ts:445, confirmé par l'artisan) (60,8-82,7 s)",
+        "Détecteur « chantier terminé → proposer l'entretien » planifié dans n8n (Oracle ; n8n lit lui-même Supabase par l'identifiant « Supabase account » : la route Presti à clé limitée du cadrage P3 §9.7 est abandonnée le 02/11, règle n8n-first, plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0.1) qui dépose une opportunité dans la boîte « À valider » (§9.4) et s'appuie sur l'outil existant envoyer_rappel_entretien (lib/assistant/outils-actions.ts:445, confirmé par l'artisan) (60,8-82,7 s)",
         "Chiffrage : garder la règle actuelle, prix de la source « artisan » (lib/prix/artisan.ts:5) affiché avec sa source (lib/prix/types.ts:24-26) ; si Benj veut un « prix pratiqué sur tes derniers chantiers » (85,3-104,5 s), c'est une nouvelle source déclarée dans SourceId (lib/prix/types.ts:13), datée et liée au devis d'origine — décision d'argent"
       ]
     },
@@ -637,7 +637,7 @@ Synthèse lisible : `videos/references-2026-11-01/youtube/fiches/k1adsrTHwPg.syn
       "actions": [
         "Compétences de l'assistant : un dossier par geste sur le modèle de lib/ai/cerveaux/ (instructions pas à pas + cas.jsonl + evaluer.mjs + score.json, cf. LISEZMOI.md), chargé selon l'intention que repère cadrerDemande (lib/assistant/cadrage.ts:137) ; le texte part du playbook du vault, la production n'appelle jamais le vault (108,7-116,9 s ; 166,6-173,2 s)",
         "Double chemin vérifié : un test qui parcourt les 52 actions de SPEC (lib/assistant/outils-actions.ts:58) et échoue si l'une n'a pas d'écran ou de route manuelle équivalente — règle déjà posée dans plans/016-assistant.md §3 (209,6-221,4 s ; 222,0-236,0 s)",
-        "Détecteurs de la boîte « À valider » planifiés dans n8n qui appelle les routes Presti (cadrage P3 §9.7) plutôt qu'une nouvelle boucle d'agent codée ; l'effort va aux compétences (229,9-236,0 s)"
+        "Détecteurs de la boîte « À valider » planifiés dans n8n, qui lit lui-même Supabase par l'identifiant « Supabase account » (le schéma du cadrage P3 §9.7, n8n qui appelle les routes Presti avec une clé, est abandonné le 02/11 : règle n8n-first, plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0.1), plutôt qu'une nouvelle boucle d'agent codée ; l'effort va aux compétences (229,9-236,0 s)"
       ]
     },
     "contenu_videos": {
