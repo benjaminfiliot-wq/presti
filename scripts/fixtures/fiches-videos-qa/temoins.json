@@ -1,0 +1,75 @@
+{
+  "_lisez-moi": "Témoins du juge scripts/fiches-videos-qa.mjs (tâche 035-008). Exemple. Tout est fictif : comptes, vidéos, identifiants, transcriptions, chiffres. Aucune donnée réelle. Le banc (--temoins, --mutants) matérialise ces fichiers dans un dossier temporaire, les mute un par un et exige le bon verdict.",
+  "md": {
+    "fiche.md": [
+      "# Témoin du juge des fiches de lecture (Exemple. Données fictives)",
+      "",
+      "### 1. Exemple. Une boulangerie fictive et ses agents",
+      "",
+      "**Source :** « Exemple. A fictional bakery run by agents », @compte-exemple, https://www.tiktok.com/@compte-exemple/video/7000000000000000001 · publiée le 01/10/2026 · lue le 2026-11-02 · intégralement : oui",
+      "",
+      "**Ce qu'elle montre :**",
+      "- [00:00]-[00:12] Exemple. Une boulangerie fictive confie son arrière-boutique à une petite équipe d'agents.",
+      "- [00:12]-[00:27] Chaque matin, un agent planificateur lit les commandes et prépare une liste à valider [12,0-27,0 s].",
+      "- [00:27]-[00:41] Rien ne part chez un client sans le bouton vert de la file d'approbation (image 030).",
+      "- [00:41]-[00:58] Un retard de livraison arrive préparé : un brouillon et une solution.",
+      "",
+      "**Principes et patterns réutilisables :**",
+      "- Une file d'approbation avant toute sortie [00:27].",
+      "- Une exception arrive avec sa solution [00:41]-[00:58].",
+      "",
+      "**Erreurs à éviter :**",
+      "- Constaté : aucun journal d'exécution n'est montré.",
+      "",
+      "**Ce qui s'applique à Presti / à ce client :**",
+      "- Exemple. La file d'approbation est la boîte « À valider ».",
+      "",
+      "**Ce qui ne s'applique pas, et pourquoi :**",
+      "- Exemple. La boulangerie est fictive : aucune donnée réelle.",
+      "",
+      "**Licence (dépôt) :** sans objet (vidéo).",
+      "",
+      "**Chiffres annoncés :**",
+      "- « douze heures par semaine » gagnées [00:58] : annoncé par l'auteur, non vérifié.",
+      "- Par l'auteur, tous annoncés par l'auteur, non vérifiés :",
+      "  - « 40 dollars par mois » [01:05] ;",
+      "  - 2 agents nommés à l'écran (image 045).",
+      ""
+    ],
+    "transcriptions": {
+      "7000000000000000001.transcription.json": {
+        "fichier": "7000000000000000001.mp4",
+        "langue": "en",
+        "duree": 90.0,
+        "segments": [
+          { "debut": 0.0, "fin": 12.0, "texte": "This is an example video about a fictional bakery that uses a small team of software agents." },
+          { "debut": 12.0, "fin": 27.0, "texte": "Every morning the planner agent reads the orders, checks the stock and prepares a short list for the owner to approve." },
+          { "debut": 27.0, "fin": 41.0, "texte": "Nothing is sent to a customer until the owner presses the green button in the approval queue." },
+          { "debut": 41.0, "fin": 58.0, "texte": "When a delivery is late the support agent writes a draft message and puts it on the desk with a ready solution." },
+          { "debut": 58.0, "fin": 74.0, "texte": "The owner says the system saved twelve hours a week and costs about forty dollars a month to run." },
+          { "debut": 74.0, "fin": 90.0, "texte": "At the end of the day a single page report shows what was sold, what it cost and what to do next." }
+        ]
+      }
+    }
+  },
+  "dossier": {
+    "liste.json": [
+      { "identifiant": "7000000000000000002", "date": "2026-10-15", "legende": "Exemple. A fictional garage", "duree": 75 }
+    ],
+    "7000000000000000002.transcription.txt": "Exemple fictif. This garage gets a request every evening and the assistant writes a reply before the owner wakes up. The owner checks the draft, presses approve and the message leaves with the quote attached. The author says it brings three new jobs a week.",
+    "7000000000000000002.fiche.json": {
+      "Source": "« Exemple. A fictional garage », @compte-exemple, https://www.tiktok.com/@compte-exemple/video/7000000000000000002 · publiée le 15/10/2026 · lue le 2026-11-02 · intégralement : oui",
+      "Ce qu'elle montre": [
+        "[00:00]-[00:20] Exemple. Un garage fictif reçoit une demande chaque soir.",
+        "[00:20]-[00:45] L'assistant rédige une réponse avant le réveil du gérant.",
+        "[00:45]-[01:10] Le gérant valide le brouillon ; le devis part joint."
+      ],
+      "Principes et patterns réutilisables": ["Un brouillon prêt au réveil [00:20]."],
+      "Erreurs à éviter": ["Constaté : rien sur le consentement du client."],
+      "Ce qui s'applique à Presti / à ce client": "à remplir par Claude Code",
+      "Ce qui ne s'applique pas, et pourquoi": ["Exemple. Le garage est fictif."],
+      "Licence (dépôt)": "sans objet (vidéo)",
+      "Chiffres annoncés": ["« trois nouveaux chantiers par semaine » [01:05] : annoncé par l'auteur, non vérifié."]
+    }
+  }
+}

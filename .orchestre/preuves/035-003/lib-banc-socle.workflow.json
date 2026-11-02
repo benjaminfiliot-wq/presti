@@ -1,0 +1,432 @@
+{
+  "id": "rAAqj7NSVJoA3grm",
+  "name": "lib-banc-socle",
+  "active": false,
+  "isArchived": false,
+  "versionId": "3ec3e1dc-9b71-48a8-aaf3-6c87ca672818",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 13,
+  "createdAt": "2026-11-02T21:31:04.542Z",
+  "updatedAt": "2026-11-02T21:31:21.097Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "c5ygtRhpSRski0N5",
+      "name": "couche-essai"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "Tâche 035-003 : banc d'essai du socle lib-* — seul appelant permis des cinq gabarits enfants tant qu'aucun parent ent-* n'existe. Cas fictifs, simulation partout. Inactif, jamais publié.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : dédoublonner",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : journaliser",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : alerter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : disjoncteur",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : dédoublonner": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-dedoublonner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-dedoublonner": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : journaliser": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : alerter": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-alerter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-alerter": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : disjoncteur": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-disjoncteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-disjoncteur": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : battement": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-battement": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "c927457b-5382-4d1b-ba94-9f788f0dae9d",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4e8994be-cc6b-4c9e-8583-0674f8ba26aa",
+      "name": "Cas : dédoublonner",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Deux objets, dont un en double dans le même lot.\nconst env = (contrat, donnees, config) => ({ contrat: contrat, organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:' + contrat.split('@')[0].slice(4), trace: { execution_parent: 'Exemple. banc', declencheur: 'banc', tentative: 0 }, config: config || {}, donnees: donnees });\nreturn [1, 2, 1].map((i) => ({ json: env('lib-dedoublonner@1', { type: 'relance', objet_id: '00000000-0000-4000-8000-00000000010' + i, etape: 'palier-1' }) }));"
+      }
+    },
+    {
+      "id": "f7b100eb-b3a8-41cb-99e5-152192d3ef70",
+      "name": "Appeler lib-dedoublonner",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "MnNHht0kG7S6ehDV"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "1a49e98a-538d-474a-a057-0e72732e747c",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut. Un effet fait en simulation, ou un appel en erreur, compte en défaut.\nconst bilan = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n}\nreturn [{ json: { bilan: bilan, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "397f3412-7af1-4ff6-9875-e0b2efedc0f2",
+      "name": "Cas : journaliser",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Deux décisions fictives.\nconst env = (contrat, donnees, config) => ({ contrat: contrat, organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:' + contrat.split('@')[0].slice(4), trace: { execution_parent: 'Exemple. banc', declencheur: 'banc', tentative: 0 }, config: config || {}, donnees: donnees });\nreturn [{ json: env('lib-journaliser@1', { entrees: [1, 2].map((i) => ({ evenement: 'decision', agent: 'ent-exemple-relance', objet_ref: 'Exemple. devis-000' + i, decision: 'Exemple. relance ' + i, simulation: true })) }) }];"
+      }
+    },
+    {
+      "id": "ea974fe0-4b79-4c68-98f2-0fb0e70ccbf0",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "c14e3bdb-6796-4a07-bb86-473ca81f9935",
+      "name": "Cas : alerter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Trois pannes du même workflow en une minute : une seule alerte.\nconst env = (contrat, donnees, config) => ({ contrat: contrat, organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:' + contrat.split('@')[0].slice(4), trace: { execution_parent: 'Exemple. banc', declencheur: 'banc', tentative: 0 }, config: config || {}, donnees: donnees });\nreturn [0, 20, 40].map((s) => ({ json: env('lib-alerter@1', { categorie: 'workflow_en_panne', workflow: 'ent-exemple-relance', lien_execution: null, destinataire_role: 'benj', survenue_le: new Date(Date.UTC(2026, 10, 2, 12, 0, s)).toISOString() }) }));"
+      }
+    },
+    {
+      "id": "efb8e710-eeb7-483f-ac52-5f3b38e6fa86",
+      "name": "Appeler lib-alerter",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "meYNTqcDsMzcFjdr"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "616a7aa4-5294-46c0-9b88-f87d1a3780db",
+      "name": "Cas : disjoncteur",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Trois échecs de suite : le troisième coupe l'agent.\nconst env = (contrat, donnees, config) => ({ contrat: contrat, organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:' + contrat.split('@')[0].slice(4), trace: { execution_parent: 'Exemple. banc', declencheur: 'banc', tentative: 0 }, config: config || {}, donnees: donnees });\nreturn [1, 2, 3].map(() => ({ json: env('lib-disjoncteur@1', { agent: 'ent-exemple-relance', issue: 'echec' }, { seuil: 3 }) }));"
+      }
+    },
+    {
+      "id": "f62ecb56-53ee-424f-8a7c-20c4c3b90709",
+      "name": "Appeler lib-disjoncteur",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "zmmR9U9S0gc3X6tC"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "91e16bd0-3bc0-4601-9996-1c17e655a59b",
+      "name": "Cas : battement",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Un parent muet depuis 27 h.\nconst env = (contrat, donnees, config) => ({ contrat: contrat, organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:' + contrat.split('@')[0].slice(4), trace: { execution_parent: 'Exemple. banc', declencheur: 'banc', tentative: 0 }, config: config || {}, donnees: donnees });\nreturn [{ json: env('lib-battement@1', { workflow: 'ent-exemple-controle', passe_le: '2026-11-02T11:00:00.000Z', operation: 'controler', battements: [{ workflow: 'ent-exemple-parent', dernier_le: '2026-11-01T08:00:00.000Z', alerte_levee_le: null }] }) }];"
+      }
+    },
+    {
+      "id": "7f5cfd86-e237-4f59-a552-c8e65e4b0a5e",
+      "name": "Appeler lib-battement",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "XwjyA6PFjzlI2vpd"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "c1c4d29e-c391-4517-9d05-06c716fe2987",
+      "name": "Sticky Note e6598ff1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-banc-socle (035-003)\nBanc d'essai du socle : le seul appelant permis des cinq gabarits enfants tant qu'aucun parent ent-* n'existe (035-007).\nINACTIF, jamais publié. Cas fictifs « Exemple. », simulation partout. Ne lit ni n'écrit rien en base, n'envoie rien.",
+        "color": 4,
+        "width": 416,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-003), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

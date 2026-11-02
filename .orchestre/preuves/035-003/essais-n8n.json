@@ -1,0 +1,2011 @@
+[
+  {
+    "workflow": "lib-dedoublonner",
+    "titre": "lot de quatre : deux objets, un doublon dans le lot, une adresse e-mail (rejetée)",
+    "execution": "363",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "lib-dedoublonner@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:dedoublonner:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "cles_connues": []
+        },
+        "donnees": {
+          "type": "relance",
+          "objet_id": "00000000-0000-4000-8000-000000000101",
+          "etape": "palier-2"
+        }
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:dedoublonner:0002",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "cles_connues": []
+        },
+        "donnees": {
+          "type": "relance",
+          "objet_id": "00000000-0000-4000-8000-000000000102",
+          "etape": "palier-2"
+        }
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:dedoublonner:0003",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "cles_connues": []
+        },
+        "donnees": {
+          "type": "relance",
+          "objet_id": "00000000-0000-4000-8000-000000000101",
+          "etape": "palier-2"
+        }
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:dedoublonner:0004",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "note": "Exemple. gerant@exemple.invalid"
+        },
+        "donnees": {
+          "type": "relance",
+          "objet_id": "00000000-0000-4000-8000-000000000103",
+          "etape": "palier-2"
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-dedoublonner@1",
+        "statut": "rejete",
+        "cle_idempotence": "exemple:dedoublonner:0004",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "contrat_rejete",
+            "agent": "lib-dedoublonner@1",
+            "objet_ref": null,
+            "decision": "entrée hors contrat : aucun effet",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)"
+        ]
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:dedoublonner:0001",
+        "simulation": true,
+        "resultat": {
+          "cle": "h:relance:94d6fbfefae13dea181ba656f4e9979a59ddb2e6543931d8",
+          "deja_fait": false
+        },
+        "effets_prevus": [
+          {
+            "effet": "reserver_cle",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:relance:94d6fbfefae13dea181ba656f4e9979a59ddb2e6543931d8"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "dedoublonnage",
+            "agent": "lib-dedoublonner",
+            "objet_ref": "00000000-0000-4000-8000-000000000101",
+            "decision": "clé neuve : réservation prévue",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:dedoublonner:0002",
+        "simulation": true,
+        "resultat": {
+          "cle": "h:relance:3516cb8588b1993f1be388b354fe3d52f6ead4fabeeef0f8",
+          "deja_fait": false
+        },
+        "effets_prevus": [
+          {
+            "effet": "reserver_cle",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:relance:3516cb8588b1993f1be388b354fe3d52f6ead4fabeeef0f8"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "dedoublonnage",
+            "agent": "lib-dedoublonner",
+            "objet_ref": "00000000-0000-4000-8000-000000000102",
+            "decision": "clé neuve : réservation prévue",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-dedoublonner@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:dedoublonner:0003",
+        "simulation": true,
+        "resultat": {
+          "cle": "h:relance:94d6fbfefae13dea181ba656f4e9979a59ddb2e6543931d8",
+          "deja_fait": true
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "dedoublonnage",
+            "agent": "lib-dedoublonner",
+            "objet_ref": "00000000-0000-4000-8000-000000000101",
+            "decision": "déjà fait : rien à refaire",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-journaliser",
+    "titre": "trois entrées (dont un coût sans source) et un lot porteur d’une adresse (rejeté)",
+    "execution": "371",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "lib-journaliser@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:journaliser:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "entrees": [
+            {
+              "evenement": "decision",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "Exemple. devis-0001",
+              "decision": "Exemple. relance 1",
+              "simulation": true
+            },
+            {
+              "evenement": "decision",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "Exemple. devis-0002",
+              "decision": "Exemple. relance 2",
+              "simulation": true,
+              "cout_eur": 0.12
+            },
+            {
+              "evenement": "decision",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "Exemple. devis-0003",
+              "decision": "Exemple. relance 3",
+              "simulation": false,
+              "cout_eur": 0.12,
+              "source_tarif": "Exemple. grille mesurée"
+            }
+          ]
+        }
+      },
+      {
+        "contrat": "lib-journaliser@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:journaliser:0002",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "entrees": [
+            {
+              "evenement": "decision",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "Exemple. devis-0004",
+              "decision": "Exemple. écrire à gerant@exemple.invalid",
+              "simulation": true
+            }
+          ]
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-journaliser@1",
+        "statut": "rejete",
+        "cle_idempotence": "exemple:journaliser:0002",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "contrat_rejete",
+            "agent": "lib-journaliser@1",
+            "objet_ref": null,
+            "decision": "entrée hors contrat : aucun effet",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)"
+        ]
+      },
+      {
+        "contrat": "lib-journaliser@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:journaliser:0001",
+        "simulation": true,
+        "resultat": {
+          "ecrites": 3
+        },
+        "effets_prevus": [
+          {
+            "effet": "inserer_journal",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lignes": 3,
+            "cles": [
+              "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:0",
+              "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:1",
+              "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:2"
+            ]
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:0",
+            "evenement": "decision",
+            "agent": "ent-exemple-relance",
+            "objet_ref": "Exemple. devis-0001",
+            "decision": "[simulation] aurait été fait : Exemple. relance 1",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:1",
+            "evenement": "decision",
+            "agent": "ent-exemple-relance",
+            "objet_ref": "Exemple. devis-0002",
+            "decision": "[simulation] aurait été fait : Exemple. relance 2",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "j:2150802dd84109784bff9e8beda65c346cd3eba1f810e8e4:2",
+            "evenement": "decision",
+            "agent": "ent-exemple-relance",
+            "objet_ref": "Exemple. devis-0003",
+            "decision": "[simulation] aurait été fait : Exemple. relance 3",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": 0.12,
+            "source_tarif": "Exemple. grille mesurée",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée 1 : coût sans source de tarif, remis à null"
+        ]
+      }
+    ]
+  },
+  {
+    "workflow": "lib-alerter",
+    "titre": "dix pannes en une minute, à cheval sur deux fenêtres de 5 min, et une autre catégorie au lien porteur de jeton",
+    "execution": "372",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:30.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:36.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:42.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:48.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:54.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:05:00.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:05:06.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:05:12.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:05:18.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "workflow_en_panne",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:05:24.000Z"
+        }
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:alerter:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "categorie": "cout_qui_derive",
+          "workflow": "ent-exemple-relance",
+          "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412?jeton=sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "destinataire_role": "benj",
+          "survenue_le": "2026-11-02T12:04:40.000Z"
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 10
+        },
+        "effets_prevus": [
+          {
+            "effet": "envoyer_alerte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "canaux": [
+              "slack:#presti-auto",
+              "telegram:benj"
+            ],
+            "texte": "[Workflow en panne] ent-exemple-relance · exécution : http://localhost:5679/workflow/AbCdEf123456/executions/412 · 10 occurrences en 5 min"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "alerte workflow_en_panne prévue (10 occurrence(s))",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte_regroupee",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "même workflow et même catégorie depuis moins de 5 min : regroupée",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-alerter@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:alerter:0001",
+        "simulation": true,
+        "resultat": {
+          "envoyee": false,
+          "regroupees": 1
+        },
+        "effets_prevus": [
+          {
+            "effet": "envoyer_alerte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "canaux": [
+              "slack:#presti-auto",
+              "telegram:benj"
+            ],
+            "texte": "[Coût qui dérive] ent-exemple-relance"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "alerte",
+            "agent": "lib-alerter",
+            "objet_ref": null,
+            "decision": "alerte cout_qui_derive prévue (1 occurrence(s))",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-disjoncteur",
+    "titre": "quatre échecs de suite, une autre organisation, un succès sur un disjoncteur ouvert",
+    "execution": "373",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-relance",
+          "issue": "echec"
+        }
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-relance",
+          "issue": "echec"
+        }
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-relance",
+          "issue": "echec"
+        }
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-relance",
+          "issue": "echec"
+        }
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000002",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-relance",
+          "issue": "echec"
+        }
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "seuil": 3
+        },
+        "donnees": {
+          "agent": "ent-exemple-qualification",
+          "issue": "succes",
+          "etat_precedent": {
+            "etat": "ouvert",
+            "echecs_consecutifs": 3
+          }
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ferme",
+          "echecs_consecutifs": 1
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "agent": "ent-exemple-relance",
+            "etat": "ferme",
+            "echecs_consecutifs": 1
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-relance",
+            "objet_ref": null,
+            "decision": "echec, 1 échec(s) de suite, état ferme",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ferme",
+          "echecs_consecutifs": 2
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "agent": "ent-exemple-relance",
+            "etat": "ferme",
+            "echecs_consecutifs": 2
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-relance",
+            "objet_ref": null,
+            "decision": "echec, 2 échec(s) de suite, état ferme",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ouvert",
+          "echecs_consecutifs": 3
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "agent": "ent-exemple-relance",
+            "etat": "ouvert",
+            "echecs_consecutifs": 3
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "disjoncteur_ouvert",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": null,
+              "destinataire_role": "benj"
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-relance",
+            "objet_ref": null,
+            "decision": "coupé : echec, 3 échec(s) de suite, état ouvert",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ouvert",
+          "echecs_consecutifs": 4
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "agent": "ent-exemple-relance",
+            "etat": "ouvert",
+            "echecs_consecutifs": 4
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-relance",
+            "objet_ref": null,
+            "decision": "echec, 4 échec(s) de suite, état ouvert",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ferme",
+          "echecs_consecutifs": 1
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000002",
+            "agent": "ent-exemple-relance",
+            "etat": "ferme",
+            "echecs_consecutifs": 1
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-relance",
+            "objet_ref": null,
+            "decision": "echec, 1 échec(s) de suite, état ferme",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-disjoncteur@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:disjoncteur:0001",
+        "simulation": true,
+        "resultat": {
+          "etat": "ouvert",
+          "echecs_consecutifs": 0
+        },
+        "effets_prevus": [
+          {
+            "effet": "maj_disjoncteur",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "agent": "ent-exemple-qualification",
+            "etat": "ouvert",
+            "echecs_consecutifs": 0
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "disjoncteur",
+            "agent": "ent-exemple-qualification",
+            "objet_ref": null,
+            "decision": "succes, 0 échec(s) de suite, état ouvert",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-battement",
+    "titre": "un battement, puis un contrôle à trois parents (muet, vivant, déjà signalé)",
+    "execution": "374",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "lib-battement@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:battement:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "workflow": "ent-exemple-parent",
+          "passe_le": "2026-11-02T12:00:00.000Z"
+        }
+      },
+      {
+        "contrat": "lib-battement@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:battement:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "workflow": "ent-exemple-controle",
+          "passe_le": "2026-11-02T10:00:00.000Z",
+          "operation": "controler",
+          "battements": [
+            {
+              "workflow": "ent-exemple-parent",
+              "dernier_le": "2026-11-01T08:00:00.000Z",
+              "alerte_levee_le": null
+            },
+            {
+              "workflow": "ent-exemple-relance",
+              "dernier_le": "2026-11-01T09:00:00.000Z",
+              "alerte_levee_le": null
+            },
+            {
+              "workflow": "ent-exemple-alerte",
+              "dernier_le": "2026-11-01T07:00:00.000Z",
+              "alerte_levee_le": "2026-11-02T09:00:00.000Z"
+            }
+          ]
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-battement@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:battement:0001",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "operation": "battre"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_battement",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "workflow": "ent-exemple-parent",
+            "passe_le": "2026-11-02T12:00:00.000Z"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "battement",
+            "agent": "ent-exemple-parent",
+            "objet_ref": null,
+            "decision": "battement prévu",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-battement@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:battement:0001",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "operation": "controler",
+          "muets": [
+            "ent-exemple-parent",
+            "ent-exemple-alerte"
+          ],
+          "alertes": 1
+        },
+        "effets_prevus": [
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "battement_absent",
+              "workflow": "ent-exemple-parent",
+              "lien_execution": null,
+              "destinataire_role": "benj",
+              "survenue_le": "2026-11-02T10:00:00.000Z"
+            }
+          },
+          {
+            "effet": "noter_alerte_levee",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "workflow": "ent-exemple-parent",
+            "alerte_levee_le": "2026-11-02T10:00:00.000Z"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "controle_battements",
+            "agent": "ent-exemple-controle",
+            "objet_ref": null,
+            "decision": "2 muet(s), 1 alerte(s) prévue(s)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-battement",
+    "titre": "hors simulation : arrêt avant tout effet",
+    "execution": "375",
+    "statut_n8n": "error",
+    "entrees": [
+      {
+        "contrat": "lib-battement@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "exemple:battement:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "workflow": "ent-exemple-parent",
+          "passe_le": "2026-11-02T12:00:00.000Z"
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-003). Rien n'a été écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-dedoublonner",
+    "titre": "hors simulation : arrêt avant tout effet",
+    "execution": "376",
+    "statut_n8n": "error",
+    "entrees": [
+      {
+        "contrat": "lib-dedoublonner@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "exemple:dedoublonner:0001",
+        "trace": {
+          "execution_parent": "Exemple. 1",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "type": "relance",
+          "objet_id": "00000000-0000-4000-8000-000000000101",
+          "etape": "palier-2"
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-003). Rien n'a été écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-erreur-commune",
+    "titre": "sept erreurs fictives (une par catégorie), un message chargé à masquer, l’échec d’un déclencheur",
+    "execution": "377",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeApiError",
+            "message": "Exemple. Authorization failed - please check your credentials",
+            "httpCode": "401"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeApiError",
+            "message": "Exemple. Too Many Requests",
+            "httpCode": "429"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeApiError",
+            "message": "Exemple. connect ETIMEDOUT 10.0.0.1:443"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeApiError",
+            "message": "Exemple. getaddrinfo ENOTFOUND api.exemple.invalid"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeOperationError",
+            "message": "Exemple. contrat lib-relancer@1 : entrée hors contrat"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "ExpressionError",
+            "message": "Exemple. Cannot read properties of undefined (reading 'id')"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeOperationError",
+            "message": "Exemple. Le nœud a renvoyé un résultat inattendu"
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "presti-detecteurs"
+        }
+      },
+      {
+        "execution": {
+          "id": "412",
+          "url": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+          "retryOf": null,
+          "error": {
+            "name": "NodeApiError",
+            "message": "Exemple. Échec pour gerant@exemple.invalid, Bearer abcdefghijklmnopqrstuvwxyz012345 cle sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tél 06 12 34 56 78 IBAN FR76 3000 6000 0112 3456 7890 189 sur https://exemple.invalid/x?token=abc \"Exemple. Bonjour, je voudrais refaire ma salle de bain au plus vite\""
+          },
+          "lastNodeExecuted": "Lire les devis",
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-relance"
+        }
+      },
+      {
+        "trigger": {
+          "error": {
+            "name": "WorkflowActivationError",
+            "message": "Exemple. There was a problem activating the workflow"
+          },
+          "mode": "trigger"
+        },
+        "workflow": {
+          "id": "AbCdEf123456",
+          "name": "ent-exemple-parent"
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "authentification",
+          "message_masque": "NodeApiError Exemple. Authorization failed - please check your credentials 401",
+          "etape_suivante": "Vérifier l'identifiant du nœud dans n8n (geste de Benj) ; ne rien rejouer avant."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[authentification] NodeApiError Exemple. Authorization failed - please check your credentials 401",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie authentification au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "quota",
+          "message_masque": "NodeApiError Exemple. Too Many Requests 429",
+          "etape_suivante": "Attendre la fin de la fenêtre du fournisseur, puis rejouer une seule fois."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[quota] NodeApiError Exemple. Too Many Requests 429",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie quota au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "delai",
+          "message_masque": "NodeApiError Exemple. connect ETIMEDOUT 10.0.0.1:443",
+          "etape_suivante": "Rejouer une fois ; si le délai revient, réduire le lot ou relever le délai du nœud."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[delai] NodeApiError Exemple. connect ETIMEDOUT 10.0.0.1:443",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie delai au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "reseau",
+          "message_masque": "NodeApiError Exemple. getaddrinfo ENOTFOUND api.exemple.invalid",
+          "etape_suivante": "Vérifier que le service joint répond, puis rejouer une fois."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[reseau] NodeApiError Exemple. getaddrinfo ENOTFOUND api.exemple.invalid",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie reseau au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "entree_invalide",
+          "message_masque": "NodeOperationError Exemple. contrat lib-relancer@1 : entrée hors contrat",
+          "etape_suivante": "Corriger l'appelant : l'entrée ne respecte pas le contrat ; ne pas rejouer telle quelle."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[entree_invalide] NodeOperationError Exemple. contrat lib-relancer@1 : entrée hors contrat",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie entree_invalide au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "expression",
+          "message_masque": "ExpressionError Exemple. Cannot read properties of undefined (reading 'id')",
+          "etape_suivante": "Corriger l'expression du nœud fautif dans une tâche, puis rejouer."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[expression] ExpressionError Exemple. Cannot read properties of undefined (reading 'id')",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie expression au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "execution",
+          "message_masque": "NodeOperationError Exemple. Le nœud a renvoyé un résultat inattendu",
+          "etape_suivante": "Lire l'exécution dans n8n (Oracle) avant de décider d'un rejeu."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "presti-detecteurs",
+              "objet_ref": "412",
+              "decision": "[execution] NodeOperationError Exemple. Le nœud a renvoyé un résultat inattendu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "presti-detecteurs",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie execution au nœud Lire les devis ; journal, alerte prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:412",
+        "simulation": true,
+        "resultat": {
+          "categorie": "execution",
+          "message_masque": "NodeApiError Exemple. Échec pour [adresse masquée], Bearer [masqué] cle [clé masquée] tél [téléphone masqué] IBAN [compte masqué] sur [adresse web masquée] « [texte masqué] »",
+          "etape_suivante": "Lire l'exécution dans n8n (Oracle) avant de décider d'un rejeu."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-relance",
+              "objet_ref": "412",
+              "decision": "[execution] NodeApiError Exemple. Échec pour [adresse masquée], Bearer [masqué] cle [clé masquée] tél [téléphone masqué] IBAN [compte masqué] sur [adresse web masquée] « [texte masqué] »",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-relance",
+              "lien_execution": "http://localhost:5679/workflow/AbCdEf123456/executions/412",
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-relance",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": "412",
+            "decision": "catégorie execution au nœud Lire les devis ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-erreur-commune@1",
+        "statut": "ok",
+        "cle_idempotence": "err:AbCdEf123456:declencheur",
+        "simulation": true,
+        "resultat": {
+          "categorie": "execution",
+          "message_masque": "WorkflowActivationError Exemple. There was a problem activating the workflow",
+          "etape_suivante": "Lire l'exécution dans n8n (Oracle) avant de décider d'un rejeu."
+        },
+        "effets_prevus": [
+          {
+            "effet": "journaliser",
+            "contrat": "lib-journaliser@1",
+            "entree": {
+              "evenement": "erreur_workflow",
+              "agent": "ent-exemple-parent",
+              "objet_ref": null,
+              "decision": "[execution] WorkflowActivationError Exemple. There was a problem activating the workflow",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          },
+          {
+            "effet": "alerter",
+            "contrat": "lib-alerter@1",
+            "donnees": {
+              "categorie": "workflow_en_panne",
+              "workflow": "ent-exemple-parent",
+              "lien_execution": null,
+              "destinataire_role": "benj"
+            }
+          },
+          {
+            "effet": "compter_echec",
+            "contrat": "lib-disjoncteur@1",
+            "donnees": {
+              "agent": "ent-exemple-parent",
+              "issue": "echec"
+            },
+            "organisation_id": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "diagnostic",
+            "agent": "lib-erreur-commune",
+            "objet_ref": null,
+            "decision": "catégorie execution au nœud déclencheur ; journal, alerte et compteur prévus, rien écrit ni envoyé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  }
+]

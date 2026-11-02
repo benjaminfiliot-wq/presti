@@ -1,0 +1,220 @@
+{
+  "id": "yekMM9ewk03F9y2q",
+  "name": "lib-erreur-commune",
+  "active": false,
+  "isArchived": false,
+  "versionId": "b8d6a7b4-c9e2-42b5-9e4f-925a941a1690",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 7,
+  "createdAt": "2026-11-02T21:18:46.218Z",
+  "updatedAt": "2026-11-02T21:31:20.303Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 60,
+    "callerPolicy": "none",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "beh8KqgFxQKBlrJx",
+      "name": "couche-erreurs"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "Tâche 035-003 : workflow d'erreur commun des ent-* et lib-* (diagnostic en 7 catégories, masquage), en simulation : journal, alerte et compteur du disjoncteur prévus, rien écrit ni envoyé. Inactif. Ne remplace pas presti-erreurs.",
+  "canExecute": true,
+  "connections": {
+    "Échec d'un workflow": {
+      "main": [
+        [
+          {
+            "node": "Diagnostic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diagnostic": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Effets prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Effets prévus": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "26cda3db-c7a6-478b-885d-90c87933ebdf",
+      "name": "Échec d'un workflow",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "e6abd717-d6cf-40db-aadf-e5665fae99c7",
+      "name": "Diagnostic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-erreur-commune (PR § 5.5 ; FM § 3.6) : diagnostic en 7 catégories et masquage. Le message brut ne sort jamais de ce nœud :\n// seule sa version masquée (300 caractères au plus) est rendue, avec le nom du workflow, le nœud, le numéro et le lien de l'exécution.\n// Mode A : SIMULATION vaut vrai ; elle ne passe à faux qu'au « go » de Benj, avec la table et l'identifiant Telegram dans n8n.\nconst SIMULATION = true;\nconst CONTRAT = 'lib-erreur-commune@1';\nconst CATEGORIES = [\n  ['authentification', /\\b40[13]\\b|unauthori[sz]ed|forbidden|authenticat|credential|identifiant|jwt|invalid api key|permission denied/i],\n  ['quota', /\\b429\\b|rate.?limit|quota|too many requests/i],\n  ['delai', /timed? ?out|timeout|ETIMEDOUT|ESOCKETTIMEDOUT|délai dépassé|deadline/i],\n  ['reseau', /ECONNREFUSED|ECONNRESET|ENOTFOUND|EAI_AGAIN|EHOSTUNREACH|socket hang up|network|réseau|\\b50[234]\\b|bad gateway|service unavailable/i],\n  ['entree_invalide', /contrat|schema|schéma|invalid input|validation|\\b4(00|22)\\b|bad request|hors contrat/i],\n  ['expression', /ExpressionError|expression|cannot read propert|is not defined|referenced node|paired item/i],\n];\nconst ETAPES = {\n  authentification: \"Vérifier l'identifiant du nœud dans n8n (geste de Benj) ; ne rien rejouer avant.\",\n  quota: 'Attendre la fin de la fenêtre du fournisseur, puis rejouer une seule fois.',\n  delai: 'Rejouer une fois ; si le délai revient, réduire le lot ou relever le délai du nœud.',\n  reseau: \"Vérifier que le service joint répond, puis rejouer une fois.\",\n  entree_invalide: \"Corriger l'appelant : l'entrée ne respecte pas le contrat ; ne pas rejouer telle quelle.\",\n  expression: \"Corriger l'expression du nœud fautif dans une tâche, puis rejouer.\",\n  execution: \"Lire l'exécution dans n8n (Oracle) avant de décider d'un rejeu.\",\n};\nconst NOM = /^(lib|ent|gabarit|presti)-[a-z0-9-]{1,60}$/;\nconst LIEN = /^https?:\\/\\/[A-Za-z0-9.-]{1,80}(:\\d{2,5})?\\/workflow\\/[A-Za-z0-9]{6,64}\\/executions\\/\\d{1,12}$/;\nfunction masquer(t) {\n  return String(t || '')\n    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g, '[adresse masquée]')\n    .replace(/\\bBearer\\s+\\S+/gi, 'Bearer [masqué]')\n    .replace(/\\beyJ[A-Za-z0-9_-]{8,}(\\.[A-Za-z0-9_-]+)*/g, '[jeton masqué]')\n    .replace(/\\b(sk|rk|pk|sb)[-_][A-Za-z0-9_-]{8,}/g, '[clé masquée]')\n    .replace(/(api[_-]?key|apikey|token|secret|password|mot de passe)\\s*[:=]\\s*\\S+/gi, '$1=[masqué]')\n    .replace(/\\bhttps?:\\/\\/\\S+/g, '[adresse web masquée]')\n    .replace(/\\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\b/gi, '[identifiant masqué]')\n    .replace(/\\b[A-Z]{2}\\d{2}( ?[A-Z0-9]{4}){3,7}( ?[A-Z0-9]{1,3})?\\b/g, '[compte masqué]')\n    .replace(/(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g, '[téléphone masqué]')\n    .replace(/\\d{6,}/g, '[nombre masqué]')\n    .replace(/[\"«“][^\"»”]{30,}[\"»”]/g, '« [texte masqué] »')\n    .replace(/\\s+/g, ' ').trim().slice(0, 300) || 'aucun message';\n}\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const wf = e.workflow && typeof e.workflow === 'object' ? e.workflow : {};\n  const ex = e.execution && typeof e.execution === 'object' ? e.execution : {};\n  const er = (ex.error && typeof ex.error === 'object' ? ex.error : null) || (e.trigger && e.trigger.error && typeof e.trigger.error === 'object' ? e.trigger.error : {});\n  const brut = [er.name, er.message, er.description, er.httpCode].filter((x) => x !== undefined && x !== null).join(' ');\n  const categorie = (CATEGORIES.find((c) => c[1].test(brut)) || ['execution'])[0];\n  const nom = NOM.test(String(wf.name || '')) ? wf.name : 'workflow hors liste';\n  const idWf = /^[A-Za-z0-9]{6,64}$/.test(String(wf.id || '')) ? String(wf.id) : 'inconnu';\n  const noeudBrut = typeof ex.lastNodeExecuted === 'string' ? ex.lastNodeExecuted : (e.trigger ? 'déclencheur' : '');\n  const noeud = /^[\\p{L}\\p{N} ()'’«»#._?-]{1,60}$/u.test(noeudBrut) ? noeudBrut : 'inconnu';\n  const numero = /^\\d{1,12}$/.test(String(ex.id === undefined || ex.id === null ? '' : ex.id)) ? String(ex.id) : null;\n  const lien = LIEN.test(String(ex.url || '')) ? ex.url : null;\n  return { json: {\n    enveloppe: { contrat: CONTRAT, simulation: SIMULATION, cle_idempotence: ('err:' + idWf + ':' + (numero || 'declencheur')).slice(0, 80) },\n    statut: 'ok',\n    resultat: { categorie: categorie, message_masque: masquer(brut), etape_suivante: ETAPES[categorie] },\n    contexte: { workflow: nom, workflow_id: idWf, noeud: noeud, execution: numero, lien: lien, declencheur_en_echec: Boolean(e.trigger && !ex.error) },\n  } };\n});"
+      }
+    },
+    {
+      "id": "b65f8a31-7a9f-4177-9adc-ddfe8079ef08",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : journal, alerte et compteur réels, non branchés en mode A."
+    },
+    {
+      "id": "3ff476ca-0dd0-4ec2-8a5e-ef04a348b058",
+      "name": "Effets prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-erreur-commune, branche « simulation » : rien n'est écrit ni envoyé. Le journal, l'alerte (#presti-auto et Telegram de Benj)\n// et le compteur du disjoncteur partent dans effets_prevus, sous la forme exacte des contrats de lib-journaliser, lib-alerter, lib-disjoncteur.\nreturn $input.all().map((item) => {\n  const j = item.json, c = j.contexte, r = j.resultat;\n  const agent = /^(ent|lib)-[a-z0-9-]+$/.test(c.workflow);\n  const effets = [\n    { effet: 'journaliser', contrat: 'lib-journaliser@1', entree: { evenement: 'erreur_workflow', agent: c.workflow, objet_ref: c.execution, decision: ('[' + r.categorie + '] ' + r.message_masque).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: true } },\n    { effet: 'alerter', contrat: 'lib-alerter@1', donnees: { categorie: 'workflow_en_panne', workflow: c.workflow, lien_execution: c.lien, destinataire_role: 'benj' } },\n  ];\n  if (agent) effets.push({ effet: 'compter_echec', contrat: 'lib-disjoncteur@1', donnees: { agent: c.workflow, issue: 'echec' }, organisation_id: null });\n  return { json: { ...j, effets_prevus: effets,\n    journal: [{ evenement: 'diagnostic', agent: 'lib-erreur-commune', objet_ref: c.execution, decision: 'catégorie ' + r.categorie + ' au nœud ' + c.noeud + ' ; journal, alerte' + (agent ? ' et compteur' : '') + ' prévus, rien écrit ni envoyé', simulation: true }] } };\n});"
+      }
+    },
+    {
+      "id": "0c5b7855-804c-46b6-ac5c-a613ec253e0a",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-erreur-commune@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-erreur-commune@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "745ef678-3307-4342-ad58-d4cd72bc5d5a",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        720,
+        80
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-003). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (base, envoi) n'est pas branché. Il le sera au « go » de Benj, avec sa table, derrière cette même porte."
+    },
+    {
+      "id": "904481f4-7cff-4e5d-92ff-da01e66a6211",
+      "name": "Sticky Note c450aebf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-erreur-commune (035-003)\nWorkflow d'erreur commun des ent-* et lib-* : diagnostic en 7 catégories, masquage, puis journal, alerte (#presti-auto, Telegram de Benj) et compteur du disjoncteur.\nINACTIF, en simulation : rien n'est écrit ni envoyé ; tout part dans effets_prevus. Ne remplace pas presti-erreurs.\nUn Error Trigger ne part que sur l'échec d'une exécution de production : il se prouve par un rejeu hors ligne (juge) et par test_workflow épinglé.",
+        "color": 4,
+        "width": 400,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-003), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

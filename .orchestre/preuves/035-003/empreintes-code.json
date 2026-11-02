@@ -1,0 +1,40 @@
+{
+  "lib-alerter": {
+    "Contrat d'entrée": "a561a7f57a8d9aed90cb1bd010ae062733209444cb5ad0a6924c9477567f90b1",
+    "Regrouper et rédiger": "ed37b6c36491ba0d9d06af792ed987dea3b991ba0d68b0330eb71423a8d921bc",
+    "Contrat de sortie": "d888c1ff8610458dcbf5e54e52f72276b0b4b22c0b17cf9d136634afa785e2f0"
+  },
+  "lib-banc-socle": {
+    "Cas : dédoublonner": "dcca001e925f9ed2be9b9659533f475ec7962811a09b1b9e7e3f40d48ff19ac5",
+    "Bilan du banc": "cf76a91d7459b33a5ef6e1a942f8e3be54d6a152a7a238cb4eba4d6ecaf64250",
+    "Cas : journaliser": "6ebd4560fcafffc0fd7ef0de6398e6d46137738351f07db0ddff73372a0e25b4",
+    "Cas : alerter": "7435c373c272821f8a5271bcb20ece7fd433084afad8a1143ecf22ac4bb027d1",
+    "Cas : disjoncteur": "b31799e577a408244f9fa8e1416d5f73dfbba321e117d056ffcc5f98ecda94e7",
+    "Cas : battement": "3f5f09759df8954d48e12a7a7d5fd2f588c37dadfba29394379e8fc49f976dfc"
+  },
+  "lib-battement": {
+    "Contrat d'entrée": "0363b7e974f22fb39cb063a1947fb0e04def935368d966837625cb999f3895f9",
+    "Battre ou contrôler": "49f2ef043f7e1b38c0d6b00b3e352dbfdc4c3881120c0ea3c502f11e80d4499a",
+    "Contrat de sortie": "c63fc24ddef4a3ae0fded648fb9f21c69682069242e1d6f17e7d1224e6826c89"
+  },
+  "lib-dedoublonner": {
+    "Contrat d'entrée": "2c140674ade9f34e6b241d4529fb9c91b575b0abbc9685419d3c4127b8c973b5",
+    "Calculer la clé": "6757a281fc2b91b95efa65c90105f0a939ecb7f99a87fd04e3b98f812d97af90",
+    "Contrat de sortie": "18f852040b4c1eca8902a3973050726486f94012336a01d9eb1948e06d084ed6"
+  },
+  "lib-disjoncteur": {
+    "Contrat d'entrée": "16de234a104d3a972267b92eaa5c44585f5b138af6b4007e8de031b952204156",
+    "Compter les échecs": "5e77f89ec3cb68a7279051644f1401fcfd5331cc0193b7ab295a3659f7c7df88",
+    "Contrat de sortie": "1875f8b33415f7f73c6a2ed5446ea1ba81af41a326b50342cb6d64007aab12c1"
+  },
+  "lib-erreur-commune": {
+    "Diagnostic": "ff55f33ec9fb8864a449bd81654e86af0da77815434d124a93d755d0168f413a",
+    "Effets prévus": "002feccba4871446be8800d7a7b793c6f3aa512bcbea6d951ce71fd1622390d9",
+    "Contrat de sortie": "9b33de00259d7899e51ab0ca21e4745a93cc76e2cdfd3bbc446714f5c5268e95"
+  },
+  "lib-journaliser": {
+    "Contrat d'entrée": "1fff0ee5b2556abf00934a4bc0a15d0a23a40f8f94683bfbe157ed4d85e53c1f",
+    "Préparer les lignes": "9b733890821e9d842b7d92546e488111c0d92b0cf49a094d40c8c90999f038af",
+    "Contrat de sortie": "dcc210127163fb70b97b0efa624cc19811031cf42e66121e12708f5d86bfed98"
+  }
+}

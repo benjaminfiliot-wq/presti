@@ -1,0 +1,3099 @@
+{
+  "presti-detecteurs": {
+    "workflow": {
+      "id": "J8pduyxn9seR8Z9t",
+      "name": "presti-detecteurs",
+      "active": true,
+      "isArchived": false,
+      "versionId": "9106bdf6-2b45-45cb-b274-8f672ef12b12",
+      "activeVersionId": "9106bdf6-2b45-45cb-b274-8f672ef12b12",
+      "triggerCount": 1,
+      "nodeCount": 41,
+      "createdAt": "2026-11-02T15:02:52.663Z",
+      "updatedAt": "2026-11-02T20:40:00.537Z",
+      "settings": {
+        "executionOrder": "v1",
+        "availableInMCP": true,
+        "timezone": "Europe/Paris",
+        "saveDataErrorExecution": "all",
+        "saveDataSuccessExecution": "none",
+        "errorWorkflow": "AQeHiC58UgbMR4Kr"
+      },
+      "tags": [],
+      "parentFolderId": null,
+      "description": "Chantier 4, lots L3 et L12 (tâches 032-003, 032-019) : douze détecteurs en simulation, lectures GET seulement, bilan agrégé, branche d'erreur sans envoi. Inactif jusqu'au « go » de Benj.",
+      "scopes": [
+        "execution:delete",
+        "execution:list",
+        "execution:read",
+        "execution:reveal",
+        "workflow:create",
+        "workflow:delete",
+        "workflow:disableRedaction",
+        "workflow:enableRedaction",
+        "workflow:execute",
+        "workflow:execute-chat",
+        "workflow:export",
+        "workflow:import",
+        "workflow:list",
+        "workflow:move",
+        "workflow:publish",
+        "workflow:read",
+        "workflow:share",
+        "workflow:unpublish",
+        "workflow:unshare",
+        "workflow:update"
+      ],
+      "canExecute": true,
+      "connections": {
+        "Déclencheur 6 h 45": {
+          "main": [
+            [
+              {
+                "node": "Lecture de connexion (regles_automatisation)",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lecture de connexion (regles_automatisation)": {
+          "main": [
+            [
+              {
+                "node": "Preuve de connexion",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Contexte du passage": {
+          "main": [
+            [
+              {
+                "node": "Capacités des offres",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Capacités des offres": {
+          "main": [
+            [
+              {
+                "node": "Lire comptes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire comptes": {
+          "main": [
+            [
+              {
+                "node": "Lire factures",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire factures": {
+          "main": [
+            [
+              {
+                "node": "Lire devis",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire devis": {
+          "main": [
+            [
+              {
+                "node": "Lire demandes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire demandes": {
+          "main": [
+            [
+              {
+                "node": "Lire chantiers",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire chantiers": {
+          "main": [
+            [
+              {
+                "node": "Lire reservations",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire reservations": {
+          "main": [
+            [
+              {
+                "node": "Lire materiaux",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire materiaux": {
+          "main": [
+            [
+              {
+                "node": "Lire stock",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire stock": {
+          "main": [
+            [
+              {
+                "node": "Lire commandes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire commandes": {
+          "main": [
+            [
+              {
+                "node": "Lire relances impayes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire relances impayes": {
+          "main": [
+            [
+              {
+                "node": "Lire arrets de relance",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire arrets de relance": {
+          "main": [
+            [
+              {
+                "node": "Lire reglages des relances",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire reglages des relances": {
+          "main": [
+            [
+              {
+                "node": "Lire reglages de la plateforme",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire reglages de la plateforme": {
+          "main": [
+            [
+              {
+                "node": "Lire tarifs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire tarifs": {
+          "main": [
+            [
+              {
+                "node": "Lire apres chantier",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Départ des constats": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 01 facture échue",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 01 facture échue": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 02 chantier à facturer",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 02 chantier à facturer": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 03 devis signé sans acompte",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 03 devis signé sans acompte": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 04 devis sans réponse",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 04 devis sans réponse": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 05 facture jamais envoyée (coupé)",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 05 facture jamais envoyée (coupé)": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 06 demande sans réponse",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 06 demande sans réponse": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 07 demande sans devis",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 07 demande sans devis": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 08 devis bientôt expiré",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 08 devis bientôt expiré": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 09 stock sous le seuil",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 09 stock sous le seuil": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 10 demande d avis",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Niveau proposé selon l offre": {
+          "main": [
+            [
+              {
+                "node": "Bilan par détecteur",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire apres chantier": {
+          "main": [
+            [
+              {
+                "node": "Lire rappels",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire rappels": {
+          "main": [
+            [
+              {
+                "node": "Lire reglages du pilote",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire reglages du pilote": {
+          "main": [
+            [
+              {
+                "node": "Lire cartes refusees",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire cartes refusees": {
+          "main": [
+            [
+              {
+                "node": "Départ des constats",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 10 demande d avis": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 11 réponse à une relance d impayé",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 11 réponse à une relance d impayé": {
+          "main": [
+            [
+              {
+                "node": "Détecteur 12 entretien à proposer",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Détecteur 12 entretien à proposer": {
+          "main": [
+            [
+              {
+                "node": "Niveau proposé selon l offre",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Échec du passage": {
+          "main": [
+            [
+              {
+                "node": "Message d échec",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Preuve de connexion": {
+          "main": [
+            [
+              {
+                "node": "Contexte du passage",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "4817ab36-6a21-4674-91c6-feb044a9fd82",
+          "name": "Déclencheur 6 h 45",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.4,
+          "position": [
+            0,
+            0
+          ],
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "days",
+                  "daysInterval": 1,
+                  "triggerAtHour": 6,
+                  "triggerAtMinute": 45
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "dedee01f-e8d7-474e-a903-83743beef838",
+          "name": "Lecture de connexion (regles_automatisation)",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            224,
+            0
+          ],
+          "parameters": {
+            "resource": "row",
+            "operation": "getAll",
+            "tableId": "regles_automatisation",
+            "returnAll": false,
+            "limit": 1,
+            "filterType": "none"
+          },
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "fa78d436-0bc6-4492-bbc2-dae4d5d9b8ec",
+          "name": "Preuve de connexion",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            448,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Ne garde que la preuve : rien de la ligne lue ne descend dans le workflow.\n// Stricte (032-019, M12) : exactement UNE ligne, aux colonnes exactes de regles_automatisation (0050_pilotage.sql:47-52). Une page HTML,\n// une liste vide, un texte, une erreur ou une autre table arrêtent le passage (et la branche d'erreur le dit).\nconst COLONNES = 'actif,artisan_id,maillons,maj_le,prereglage';\nconst rendus = $input.all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nif (rendus.length !== 1) {\n  throw new Error('Lecture de connexion : une ligne de regles_automatisation attendue, ' + rendus.length + ' rendue(s) (hôte de l identifiant Supabase mal réglé ?)');\n}\nconst r = rendus[0];\nconst forme = Object.keys(r).sort().join(',') === COLONNES && typeof r.artisan_id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(r.artisan_id)\n  && typeof r.actif === 'boolean' && typeof r.prereglage === 'string' && r.maillons !== null && typeof r.maillons === 'object';\nif (!forme) {\n  throw new Error('Lecture de connexion : la réponse n est pas une ligne de regles_automatisation (hôte de l identifiant Supabase mal réglé ?)');\n}\nreturn [{ json: { connexion: 'ok', lignes: 1 } }];"
+          }
+        },
+        {
+          "id": "eccb374e-facc-41db-ae96-254318191a4b",
+          "name": "Contexte du passage",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            672,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Le jour de Paris, le mode et les seuils (sources : plans/011-cadrage-01-11/briefs/c4-n8n-detecteurs.md).\nconst jour = $now.setZone('Europe/Paris').toISODate();\nreturn [{ json: {\n  jour,\n  mode: 'simulation',\n  seuils: {\n    impayes_jours: [3, 10, 21],\n    impayes_rattrapage: 10,\n    impayes_ecart_min: 2,\n    devis_jours: [3, 7, 14],\n    devis_validite_defaut: 90,\n    devis_expire_avant_jours: 7,\n    demande_jours: [1, 3],\n    demande_borne_jours: 10,\n    avis_delai: 2,\n    avis_rattrapage: 14\n  }\n} }];"
+          }
+        },
+        {
+          "id": "3193975e-c861-400c-905a-c1a2fd331553",
+          "name": "Capacités des offres",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            896,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// COPIE FIGÉE de lib/plans.ts (STUDIO, SIGNATURE, ENTREPRISE) et de lib/pilote/regles.ts (OUTILS_JAMAIS_AUTO,\n// OUTILS_EXECUTABLES_PILOTE, OUTIL_TYPE). scripts/detecteurs-n8n-qa.mjs rougit si elle s'écarte du code.\nconst STUDIO = ['devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',\n  'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.gestion', 'plateforme.domaine_perso', 'site.domaine_perso',\n  'canaux.email', 'relances', 'plateforme.personnalisation_avancee', 'chiffres', 'factures.relances', 'inventaire.stock',\n  'inventaire.recherche_ia', 'canaux.whatsapp', 'export', 'assistant'];\nconst SIGNATURE = STUDIO.concat(['plateforme.ia.auto', 'relances.auto', 'factures.relances.auto', 'plateforme.ia.expert',\n  'plateforme.regles', 'chiffres.auto', 'canaux.reseaux', 'support.prioritaire', 'crm', 'assistant.pilote']);\nconst ENTREPRISE = SIGNATURE.concat(['organisation.membres']);\nreturn [{ json: {\n  capacites: { studio: STUDIO, signature: SIGNATURE, entreprise: ENTREPRISE },\n  outils_jamais_auto: ['marquer_facture_payee', 'creer_facture', 'creer_facture_libre', 'rembourser', 'payer', 'creer_avoir',\n    'supprimer_devis_brouillon', 'supprimer_tarif', 'supprimer_article', 'augmenter_tarifs'],\n  outils_executables_pilote: ['valider_reponse_proposee', 'relancer_devis', 'relancer_facture', 'envoyer_devis', 'envoyer_facture', 'repondre_client'],\n  outil_type: { valider_reponse_proposee: 'reponse_prospect', relancer_devis: 'relance_devis', relancer_facture: 'relance_impaye', envoyer_devis: 'envoi_devis',\n    envoyer_facture: 'envoi_facture', repondre_client: 'assistant_client', relancer_commande: 'assistant_client', demander_avis: 'assistant_client',\n    envoyer_rappel_entretien: 'assistant_client' }\n} }];"
+          }
+        },
+        {
+          "id": "fb706ab9-2928-44d2-baf7-df233579443b",
+          "name": "Lire comptes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1168,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,plan,est_demo,suppression_demandee_le,leads_pause"
+                },
+                {
+                  "name": "plan",
+                  "value": "in.(studio,signature,entreprise)"
+                },
+                {
+                  "name": "est_demo",
+                  "value": "is.false"
+                },
+                {
+                  "name": "suppression_demandee_le",
+                  "value": "is.null"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "34aae1ef-c90e-4960-80dc-3fbcae6c66c5",
+          "name": "Lire factures",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1392,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/factures",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,devis_id,statut,date_echeance,total_ttc,avoir_de,payee_le,type_facture"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "2ec07ac4-f0d9-455d-b1cd-09135976bf1b",
+          "name": "Lire devis",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1616,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/devis",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,date_emission,validite_jours,acompte_pct,total_ttc,lead_id,accepte_le,envoye_le,created_at"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "0a8efb32-79b8-4ee0-8887-b53cd11d305e",
+          "name": "Lire demandes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1840,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,urgence,type_chantier,prise_en_main,created_at,updated_at"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "d30e8add-3401-46df-b39d-3632263145ac",
+          "name": "Lire chantiers",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2064,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/chantiers",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,devis_id,statut,date_fin_reelle,maj_le"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "a2c890c3-3f34-4cad-8993-0e97864eef6a",
+          "name": "Lire reservations",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2288,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/chantier_materiaux",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,chantier_id,materiau_id,quantite,statut"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "statut",
+                  "value": "eq.reserve"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "e714291b-f80e-4aac-a254-69f11d150904",
+          "name": "Lire materiaux",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2512,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/materiaux",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,seuil_alerte"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "83996c08-f0af-4c61-960d-ecb0b26630e6",
+          "name": "Lire stock",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2736,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/stock",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,materiau_id,quantite"
+                },
+                {
+                  "name": "materiau_id",
+                  "value": "={{ 'in.(' + ($('Lire materiaux').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "1ee8188a-a78a-47b9-b3c6-9da7ba53e9fa",
+          "name": "Lire commandes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2960,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/commandes_fournisseur",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,chantier_id"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "statut",
+                  "value": "eq.commandee"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "042fb6cf-9200-4900-a2ef-8c9e6c7b3ba5",
+          "name": "Lire relances impayes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            3184,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/relances_impayes",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,facture_id,rang,jour,statut"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "8bc037a3-3c1c-4c48-b371-c4623e9785f9",
+          "name": "Lire arrets de relance",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            3408,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/relances_impayes_arrets",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "facture_id,artisan_id,raison,le,reprise_le"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "facture_id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "73331f94-f944-481a-b858-18e1f438260b",
+          "name": "Lire reglages des relances",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            3632,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/relances_impayes_reglages",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "artisan_id,actif,jours"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "artisan_id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "106258d7-1d22-43bc-b7ab-85b7bc58eff0",
+          "name": "Lire reglages de la plateforme",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            3856,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "artisan_id,mode_reponse"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "artisan_id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "e101ab81-197f-4950-95ae-8437a5000604",
+          "name": "Lire tarifs",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            4080,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/prix_artisan",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,actif"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "actif",
+                  "value": "is.true"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "43eef8c1-9227-4084-9571-5e1d923c2f88",
+          "name": "Lire apres chantier",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            4304,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/crm_apres_chantier",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "artisan_id,avis,entretien,actif_depuis"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "artisan_id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "executeOnce": true,
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "760d4d51-2ae3-4617-94c5-70aac83250ce",
+          "name": "Départ des constats",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1696,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "return [{ json: { constats: [] } }];"
+          },
+          "executeOnce": true
+        },
+        {
+          "id": "6fcb2a17-d871-460b-9680-23fa3e15eb68",
+          "name": "Détecteur 01 facture échue",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1920,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 1 — facture échue à J+3, J+10, J+21 (règle decider, lib/relancesImpayes.ts:211-251), écart minimal de 2 jours (ECART_MIN, :33 ; M6).\nconst reglages = new Map(lignes('Lire reglages des relances').map((r) => [r.artisan_id, r]));\nconst arretees = new Set(lignes('Lire arrets de relance').filter((a) => !a.reprise_le).map((a) => paire(a.artisan_id, a.facture_id)));\nconst journal = lignes('Lire relances impayes');\nfor (const f of lignes('Lire factures')) {\n  if (!aLaCapacite(f.artisan_id, 'factures.relances')) continue;\n  if (f.statut !== 'emise' || f.payee_le || f.avoir_de) continue;\n  const montant = centimes(f.total_ttc);\n  if (montant <= 0) continue;\n  const echeance = jourParis(f.date_echeance);\n  if (!echeance || arretees.has(paire(f.artisan_id, f.id))) continue;\n  const retard = ecart(JOUR, echeance);\n  if (retard <= 0) continue;\n  const siennes = journal.filter((e) => e.facture_id === f.id && e.artisan_id === f.artisan_id);\n  if (siennes.some((e) => e.statut === 'a_valider')) continue;\n  const pris = new Set(siennes.map((e) => Number(e.rang)));\n  const r = reglages.get(f.artisan_id);\n  const jours = r && Array.isArray(r.jours) && r.jours.length ? r.jours.map(Number) : S.impayes_jours;\n  const libres = jours.map((j, i) => ({ rang: i + 1, jour: j })).filter((x) => !pris.has(x.rang));\n  const choisie = libres.find((x) => retard >= x.jour && retard <= x.jour + S.impayes_rattrapage);\n  if (!choisie) continue;\n  const dernier = siennes.map((e) => jourParis(e.jour)).filter(Boolean).sort().pop();\n  if (dernier && ecart(JOUR, dernier) < S.impayes_ecart_min) continue;\n  constat(1, 'facture_echue', f.artisan_id, 'facture', f.id, 'j' + choisie.jour, montant, retard, { type: 'facture', id: f.id });\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "8cda5bc0-b367-4954-adae-7f96903f992d",
+          "name": "Détecteur 02 chantier à facturer",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2144,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 2 — chantier terminé (avec le CRM) ou devis accepté (sans CRM) sans facture standard ni de solde. Factures et devis du MÊME compte (M2) ;\n// la fin est la date de fin réelle, sans repli sur maj_le (M7).\nconst parDevis = new Map();\nfor (const f of lignes('Lire factures')) {\n  if (f.statut === 'annulee' || f.avoir_de || !f.devis_id) continue;\n  const k = paire(f.artisan_id, f.devis_id);\n  if (!parDevis.has(k)) parDevis.set(k, []);\n  parDevis.get(k).push(f);\n}\nconst devis = new Map(lignes('Lire devis').map((d) => [paire(d.artisan_id, d.id), d]));\nconst facturees = (d) => parDevis.get(paire(d.artisan_id, d.id)) || [];\nconst aSolde = (d) => facturees(d).some((f) => !f.type_facture || f.type_facture === 'standard' || f.type_facture === 'solde');\nconst reste = (d) => centimes(d.total_ttc) - facturees(d).reduce((s, f) => s + centimes(f.total_ttc), 0);\nfor (const c of lignes('Lire chantiers')) {\n  if (!aLaCapacite(c.artisan_id, 'crm')) continue;\n  if (c.statut !== 'termine' || !c.devis_id) continue;\n  const d = devis.get(paire(c.artisan_id, c.devis_id));\n  if (!d || aSolde(d)) continue;\n  const m = reste(d);\n  if (m <= 0) continue;\n  const fin = jourParis(c.date_fin_reelle);\n  constat(2, 'chantier_a_facturer', c.artisan_id, 'chantier', c.id, 'termine', m, fin ? Math.max(0, ecart(JOUR, fin)) : null, { type: 'devis', id: d.id });\n}\nfor (const d of devis.values()) {\n  if (!caps(d.artisan_id) || aLaCapacite(d.artisan_id, 'crm')) continue;\n  if (d.statut !== 'accepte' || aSolde(d)) continue;\n  const m = reste(d);\n  if (m <= 0) continue;\n  const signe = jourParis(d.accepte_le);\n  constat(2, 'chantier_a_facturer', d.artisan_id, 'devis', d.id, 'accepte', m, signe ? Math.max(0, ecart(JOUR, signe)) : null, { type: 'devis', id: d.id });\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "1b5004c3-6e45-4065-ae2e-bff7ab69b19c",
+          "name": "Détecteur 03 devis signé sans acompte",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2368,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 3 — devis accepté avec un acompte prévu, sans facture d'acompte liée DU MÊME COMPTE (M2).\nconst avecAcompte = new Set(lignes('Lire factures').filter((f) => f.statut !== 'annulee' && !f.avoir_de && f.type_facture === 'acompte' && f.devis_id).map((f) => paire(f.artisan_id, f.devis_id)));\nfor (const d of lignes('Lire devis')) {\n  if (!caps(d.artisan_id)) continue;\n  const pct = Number(d.acompte_pct);\n  if (d.statut !== 'accepte' || !(pct > 0) || avecAcompte.has(paire(d.artisan_id, d.id))) continue;\n  const m = Math.round(centimes(d.total_ttc) * pct / 100);\n  if (m <= 0) continue;\n  const signe = jourParis(d.accepte_le);\n  constat(3, 'devis_signe_sans_acompte', d.artisan_id, 'devis', d.id, 'signe', m, signe ? Math.max(0, ecart(JOUR, signe)) : null, { type: 'devis', id: d.id });\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "9477813f-7447-4a9f-9ea8-b96633fd0e1d",
+          "name": "Détecteur 04 devis sans réponse",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2592,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 4 — devis envoyé, encore valable, sans réponse à J+3, J+7, J+14 (devisDepasse, lib/comptaTableau.ts:178-185).\n// S'il entre aussi dans la fenêtre du n° 8, c'est le n° 8 qui l'emporte (un seul constat de relance par devis et par jour, M5).\nconst envoiDe = (d) => jourParis(d.envoye_le) || jourParis(d.date_emission) || jourParis(d.created_at);\nconst validite = (d) => { const v = Number(d.validite_jours); return Number.isFinite(v) && v > 0 ? v : S.devis_validite_defaut; };\nfor (const d of lignes('Lire devis')) {\n  if (!aLaCapacite(d.artisan_id, 'relances') || d.statut !== 'envoye') continue;\n  const envoi = envoiDe(d);\n  if (!envoi) continue;\n  const age = ecart(JOUR, envoi);\n  if (age > validite(d)) continue;\n  const atteintes = S.devis_jours.filter((j) => age >= j);\n  if (!atteintes.length) continue;\n  constat(4, 'devis_sans_reponse', d.artisan_id, 'devis', d.id, 'j' + atteintes[atteintes.length - 1], centimes(d.total_ttc), age, { type: 'devis', id: d.id });\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "5fdaf345-e523-4c6b-92fe-8e21ab34e2cc",
+          "name": "Détecteur 05 facture jamais envoyée (coupé)",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2816,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// n° 5 — COUPÉ : aucune donnée ne dit qu'une facture est partie (envoisPdfServeur.ts:101-138) ; il attend la migration 0187.\nconst avant = $input.first().json.constats || [];\nreturn [{ json: { constats: avant } }];"
+          }
+        },
+        {
+          "id": "e89dc8bb-3b40-4310-ac79-143ebbbf0843",
+          "name": "Détecteur 06 demande sans réponse",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3040,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 6 — demande restée sans réponse (M4) : statut « nouveau », « en_discussion » (le client a écrit, lib/canaux/rangement.ts:47-50)\n// ou vide (non lue, lib/assistant/donnees.ts:197). Étapes J+1 et J+3 ; plus rien au-delà de 10 jours (M8 : dernière relance de\n// conversation, CADENCE_RELANCES, lib/relances.ts:38). « en_discussion » se compte depuis la dernière mise à jour de la demande.\nconst sansReponse = (s) => s === 'nouveau' || s === 'en_discussion' || s === null || s === undefined || s === '';\nfor (const l of lignes('Lire demandes')) {\n  if (!aLaCapacite(l.artisan_id, 'plateforme.conversation') || !sansReponse(l.statut)) continue;\n  const recu = l.statut === 'en_discussion' ? (jourParis(l.updated_at) || jourParis(l.created_at)) : jourParis(l.created_at);\n  if (!recu) continue;\n  const age = ecart(JOUR, recu);\n  if (age > S.demande_borne_jours) continue;\n  const atteintes = S.demande_jours.filter((j) => age >= j);\n  if (!atteintes.length) continue;\n  constat(6, 'demande_sans_reponse', l.artisan_id, 'lead', l.id, 'j' + atteintes[atteintes.length - 1], null, age, null);\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "887d1be1-f89a-4e05-81a9-80656fafb410",
+          "name": "Détecteur 07 demande sans devis",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3264,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 7 — demande ouverte (M4 : nouveau, en_discussion, repondu, ou vide) et qualifiée (urgence ou type de chantier, 0026:4-5), sans devis\n// du même compte (M2), compte qui a des tarifs. Jamais le texte.\nconst avecDevis = new Set(lignes('Lire devis').filter((d) => d.lead_id).map((d) => paire(d.artisan_id, d.lead_id)));\nconst tarifs = new Set(lignes('Lire tarifs').filter((p) => p.actif !== false).map((p) => p.artisan_id));\nconst ouverte = (s) => s === 'nouveau' || s === 'en_discussion' || s === 'repondu' || s === null || s === undefined || s === '';\nfor (const l of lignes('Lire demandes')) {\n  if (!aLaCapacite(l.artisan_id, 'devis.prix_artisan')) continue;\n  if (!ouverte(l.statut) || avecDevis.has(paire(l.artisan_id, l.id)) || !tarifs.has(l.artisan_id)) continue;\n  if (!l.urgence && !l.type_chantier) continue;\n  const recu = jourParis(l.created_at);\n  constat(7, 'demande_sans_devis', l.artisan_id, 'lead', l.id, 'brouillon', null, recu ? Math.max(0, ecart(JOUR, recu)) : null, null);\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "8066e070-825d-471c-9b54-12d5257d8b02",
+          "name": "Détecteur 08 devis bientôt expiré",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3488,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 8 — devis envoyé dont il reste de 0 à 7 jours de validité (le dernier jour compte : devisDepasse, lib/comptaTableau.ts:178-185 ; M8).\n// Il remplace le constat du n° 4 sur le même devis : une seule relance proposée par devis et par jour (M5).\nconst envoiDe = (d) => jourParis(d.envoye_le) || jourParis(d.date_emission) || jourParis(d.created_at);\nconst validite = (d) => { const v = Number(d.validite_jours); return Number.isFinite(v) && v > 0 ? v : S.devis_validite_defaut; };\nconst remplaces = new Set();\nfor (const d of lignes('Lire devis')) {\n  if (!aLaCapacite(d.artisan_id, 'relances') || d.statut !== 'envoye') continue;\n  const envoi = envoiDe(d);\n  if (!envoi) continue;\n  const restant = validite(d) - ecart(JOUR, envoi);\n  if (restant < 0 || restant > S.devis_expire_avant_jours) continue;\n  remplaces.add(paire(d.artisan_id, d.id));\n  constat(8, 'devis_bientot_expire', d.artisan_id, 'devis', d.id, 'expire', centimes(d.total_ttc), restant, { type: 'devis', id: d.id });\n}\nconst gardes = avant.filter((c) => !(c.numero === 4 && remplaces.has(paire(c.artisan_id, c.objet.id))));\nreturn [{ json: { constats: gardes.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "45526d79-69ae-4c44-8f9a-3da74cd17877",
+          "name": "Détecteur 09 stock sous le seuil",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3712,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 9 — avec le CRM : réservation d'un chantier ouvert qui manque (lib/crm/alertes.ts:109-125) ; sans CRM : matériau au seuil.\n// Chantier, matériau et commande du même compte (M2). Écart déclaré (M9) : une commande quelconque sur le chantier vaut couverture.\nconst materiaux = new Map(lignes('Lire materiaux').map((m) => [paire(m.artisan_id, m.id), m]));\nconst reste = new Map();\nfor (const s of lignes('Lire stock')) reste.set(s.materiau_id, (reste.get(s.materiau_id) || 0) + Number(s.quantite || 0));\nconst resteDe = (id) => reste.get(id) || 0;\nconst seuilDe = (m) => Number(m.seuil_alerte || 0);\nconst auSeuil = (m) => seuilDe(m) > 0 && resteDe(m.id) <= seuilDe(m);\nconst commandes = new Set(lignes('Lire commandes').filter((c) => c.statut === 'commandee' && c.chantier_id).map((c) => paire(c.artisan_id, c.chantier_id)));\nconst chantiers = new Map(lignes('Lire chantiers').map((c) => [paire(c.artisan_id, c.id), c]));\nconst vus = new Set();\nfor (const r of lignes('Lire reservations')) {\n  if (!aLaCapacite(r.artisan_id, 'crm') || r.statut !== 'reserve') continue;\n  const c = chantiers.get(paire(r.artisan_id, r.chantier_id));\n  if (!c || c.statut === 'termine' || c.statut === 'annule') continue;\n  if (commandes.has(paire(c.artisan_id, c.id)) || vus.has(c.id)) continue;\n  const m = materiaux.get(paire(r.artisan_id, r.materiau_id));\n  if (!m) continue;\n  if (resteDe(m.id) < Number(r.quantite) || auSeuil(m)) {\n    vus.add(c.id);\n    constat(9, 'stock_sous_seuil', r.artisan_id, 'chantier', c.id, 'chantier', null, null, null);\n  }\n}\nfor (const m of materiaux.values()) {\n  if (!aLaCapacite(m.artisan_id, 'inventaire.stock') || aLaCapacite(m.artisan_id, 'crm')) continue;\n  if (auSeuil(m)) constat(9, 'stock_sous_seuil', m.artisan_id, 'materiau', m.id, 'seuil', null, null, null);\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "8f04a876-495f-4765-ba19-c6fa106f9a8f",
+          "name": "Détecteur 10 demande d avis",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3936,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 10 — demande d'avis, comme propositions (lib/apresChantier.ts:135-149 ; M7) : capacité crm, « avis » coché, chantier terminé à sa\n// date de fin RÉELLE (aucun repli), au moins 2 jours après (DELAI_AVIS_JOURS, :23), fini au plus 14 jours avant l'activation\n// (RATTRAPAGE_JOURS, :24 ; activation = actif_depuis, sinon aujourd'hui) ; tu dès que le rappel « avis:<chantier> » est fait ou envoyé.\nconst apres = new Map(lignes('Lire apres chantier').map((a) => [a.artisan_id, a]));\nconst faits = new Set(lignes('Lire rappels').filter((r) => r.fait_le || r.envoye_le).map((r) => paire(r.artisan_id, r.cle)));\nfor (const c of lignes('Lire chantiers')) {\n  const a = apres.get(c.artisan_id);\n  if (!aLaCapacite(c.artisan_id, 'crm') || !a || a.avis !== true || c.statut !== 'termine') continue;\n  const fin = jourParis(c.date_fin_reelle);\n  if (!fin) continue;\n  const age = ecart(JOUR, fin);\n  if (age < S.avis_delai) continue;\n  const activation = jourParis(a.actif_depuis) || JOUR;\n  if (ecart(activation, fin) > S.avis_rattrapage) continue;\n  if (faits.has(paire(c.artisan_id, 'avis:' + c.id))) continue;\n  constat(10, 'demande_avis', c.artisan_id, 'chantier', c.id, 'avis', null, age, null);\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "3e072635-127a-42d1-8432-951d21df2763",
+          "name": "Niveau proposé selon l offre",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4608,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// Le niveau se lit dans la copie des capacités, jamais dans le nom de l'offre. 1 repéré, 2 carte préparée, 3 « partirait seul, sous réserve\n// du pilote » : n8n n'envoie JAMAIS sur son propre niveau ; l'app redécide avant tout départ (decisionPilote, lib/pilote/regles.ts:251-271 :\n// drapeau, plafond de 20 par jour, sujet d'escalade, contenu tiers), d'où `reserve: 'pilote'` sur chaque niveau 3.\n// M3 (032-010) : le niveau 3 exige aussi le pilote activé ET le type de l'outil activé (pilote_reglages, 0174:21-25), aucune pause des\n// demandes (artisans.leads_pause), et pour le n° 6 une demande que l'artisan n'a pas prise en main (leads.prise_en_main, 0050:11).\n// Rang 8 (§0 bis) : une carte refusée sur le même outil et le même objet dans les 7 derniers jours fait taire le constat.\nconst relancesActives = new Set(lignes('Lire reglages des relances').filter((r) => r.actif === true).map((r) => r.artisan_id));\nconst modeAuto = new Set(lignes('Lire reglages de la plateforme').filter((p) => p.mode_reponse === 'auto').map((p) => p.artisan_id));\nconst pilote = new Map(lignes('Lire reglages du pilote').map((p) => [p.artisan_id, p]));\nconst enPause = new Set(lignes('Lire comptes').filter((a) => a.leads_pause === true).map((a) => a.id));\nconst prises = new Set(lignes('Lire demandes').filter((l) => l.prise_en_main === true).map((l) => paire(l.artisan_id, l.id)));\nconst refusees = new Set(lignes('Lire cartes refusees').filter((x) => x.statut === 'refusee' && x.objet_id).map((x) => x.artisan_id + '|' + x.outil + '|' + x.objet_id));\nconst CATALOGUE = {\n  1: { outil: 'relancer_facture', max: 3, auto: ['factures.relances.auto'], condition: (a) => relancesActives.has(a), drapeaux: ['detecteurs', 'relancesImpayes'] },\n  2: { outil: 'creer_facture', max: 2, auto: [], drapeaux: ['detecteurs', 'crm', 'facturesSituation'] },\n  3: { outil: 'creer_facture', max: 2, auto: [], drapeaux: ['detecteurs', 'facturesSituation'] },\n  4: { outil: 'relancer_devis', max: 3, auto: ['relances.auto'], drapeaux: ['detecteurs'] },\n  5: { outil: 'envoyer_facture', max: 0, auto: [], drapeaux: ['detecteurs'] },\n  6: { outil: 'valider_reponse_proposee', max: 3, auto: ['plateforme.ia.auto'], condition: (a) => modeAuto.has(a), drapeaux: ['detecteurs'] },\n  7: { outil: 'creer_devis', max: 2, auto: [], drapeaux: ['detecteurs'] },\n  8: { outil: 'relancer_devis', max: 3, auto: ['relances.auto'], drapeaux: ['detecteurs'] },\n  9: { outil: 'preparer_liste_achat', max: 2, auto: [], drapeaux: ['detecteurs', 'crm'] },\n  10: { outil: 'demander_avis', max: 2, auto: [], drapeaux: ['detecteurs', 'crm', 'crmApresChantier'] },\n  11: { outil: 'relancer_facture', max: 2, auto: [], drapeaux: ['detecteurs', 'relancesImpayes'] },\n  12: { outil: 'envoyer_rappel_entretien', max: 2, auto: [], drapeaux: ['detecteurs', 'crm', 'crmApresChantier'] }\n};\nconst piloteOuvert = (c, d) => {\n  const p = pilote.get(c.artisan_id);\n  const type = offres.outil_type[d.outil];\n  if (!p || p.actif !== true || !type || !p.types || typeof p.types !== 'object' || p.types[type] !== true) return false;\n  if (enPause.has(c.artisan_id)) return false;\n  if (c.numero === 6 && prises.has(paire(c.artisan_id, c.objet.id))) return false;\n  return true;\n};\nconst niveauDe = (c, l, d) => {\n  let n = l.includes('assistant') ? 2 : 1;\n  const peutPartirSeul = d.max >= 3 && l.includes('assistant.pilote') && d.auto.every((x) => l.includes(x))\n    && !offres.outils_jamais_auto.includes(d.outil) && offres.outils_executables_pilote.includes(d.outil)\n    && (!d.condition || d.condition(c.artisan_id)) && piloteOuvert(c, d);\n  if (peutPartirSeul) n = 3;\n  return Math.min(n, d.max);\n};\nconst sortie = [];\nfor (const c of avant) {\n  const l = caps(c.artisan_id);\n  const d = CATALOGUE[c.numero];\n  if (!l || !d || d.max < 1) continue;\n  if (refusees.has(c.artisan_id + '|' + d.outil + '|' + c.objet.id)) continue;\n  const niveau = niveauDe(c, l, d);\n  if (niveau < 1) continue;\n  sortie.push(Object.assign({}, c, { offre: comptes.get(c.artisan_id).plan, niveau, outil: d.outil, drapeaux: d.drapeaux, reserve: niveau === 3 ? 'pilote' : null }));\n}\nreturn [{ json: { constats: sortie } }];"
+          }
+        },
+        {
+          "id": "018e15b6-7a8d-407f-9836-5f437ea65089",
+          "name": "Bilan par détecteur",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4832,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// La seule sortie : une ligne par détecteur, dans l'ordre de l'argent récupéré, puis le total de l'argent qui dort (numéro 0), où chaque\n// pièce (facture ou devis) ne compte qu'une fois, à son plus haut montant (M5). Aucune écriture, aucun envoi.\nconst ctx = $('Contexte du passage').first().json;\nconst NOMS = { 1: 'facture_echue', 2: 'chantier_a_facturer', 3: 'devis_signe_sans_acompte', 4: 'devis_sans_reponse', 5: 'facture_jamais_envoyee',\n  6: 'demande_sans_reponse', 7: 'demande_sans_devis', 8: 'devis_bientot_expire', 9: 'stock_sous_seuil', 10: 'demande_avis',\n  11: 'reponse_impaye', 12: 'entretien_a_proposer' };\nconst ORDRE = [1, 11, 2, 3, 4, 8, 5, 6, 7, 9, 10, 12];\nconst vues = new Set();\nconst uniques = ($input.first().json.constats || []).filter((c) => { if (vues.has(c.cle)) return false; vues.add(c.cle); return true; });\nconst niveaux = (l) => ({ '1': l.filter((c) => c.niveau === 1).length, '2': l.filter((c) => c.niveau === 2).length, '3': l.filter((c) => c.niveau === 3).length });\nconst montant = (c) => (Number.isFinite(c.montant_centimes) ? c.montant_centimes : 0);\nconst lignesBilan = ORDRE.map((n) => {\n  const l = uniques.filter((c) => c.numero === n);\n  return { json: { numero: n, detecteur: NOMS[n], nombre: l.length, montant_total_centimes: l.reduce((s, c) => s + montant(c), 0), par_niveau: niveaux(l), mode: ctx.mode } };\n});\nconst pieces = new Map();\nfor (const c of uniques) {\n  if (!c.argent || !c.argent.id || montant(c) <= 0) continue;\n  const k = c.artisan_id + '|' + c.argent.type + '|' + c.argent.id;\n  const p = pieces.get(k);\n  if (!p || montant(c) > montant(p)) pieces.set(k, c);\n}\nconst total = [...pieces.values()];\nlignesBilan.push({ json: { numero: 0, detecteur: 'argent_qui_dort', nombre: total.length, montant_total_centimes: total.reduce((s, c) => s + montant(c), 0), par_niveau: niveaux(total), mode: ctx.mode } });\nreturn lignesBilan;"
+          }
+        },
+        {
+          "id": "3ff852cc-f03e-446a-b91b-bf7238c66b62",
+          "name": "Sticky Note 695327ae",
+          "type": "n8n-nodes-base.stickyNote",
+          "typeVersion": 1,
+          "position": [
+            -32,
+            -96
+          ],
+          "parameters": {
+            "content": "## presti-detecteurs — simulation\nLecture seule (GET, select= limité), constats sans nom, adresse, e-mail ni texte, bilan agrégé. Aucune écriture, aucun envoi, aucun modèle. Inactif jusqu au « go » de Benj. Brief : plans/011-cadrage-01-11/briefs/c4-n8n-detecteurs.md",
+            "color": 4,
+            "width": 608,
+            "height": 224
+          }
+        },
+        {
+          "id": "0c3db693-30c5-4355-bca1-506ec718eae3",
+          "name": "Lire rappels",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            4528,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/crm_rappels",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,chantier_id,type,echeance,fait_le,envoye_le,origine,cle"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "type",
+                  "value": "in.(demande_avis,entretien)"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "bbf384dd-2b17-481e-b83d-3945f7e73645",
+          "name": "Lire reglages du pilote",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            4752,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/pilote_reglages",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "artisan_id,actif,types"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "artisan_id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "96d35d92-d9ad-4e34-8ae9-1b4668acb119",
+          "name": "Lire cartes refusees",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            4976,
+            128
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,outil,statut,objet_id,maj_le"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "statut",
+                  "value": "eq.refusee"
+                },
+                {
+                  "name": "maj_le",
+                  "value": "={{ 'gte.' + $now.setZone('Europe/Paris').minus({ days: 7 }).toISODate() }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "f09e2a02-83d2-469a-a716-adb45450f468",
+          "name": "Détecteur 11 réponse à une relance d impayé",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4160,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 11 — relance d'impayé arrêtée par une réponse du client (plan §9, n° 11 ; §0 bis, rang 1) : relances_impayes_arrets.raison\n// « reponse_client », reprise_le vide (0159_relances_impayes.sql:59-66), facture du même compte encore due (émise, ni payée ni avoir).\n// Jamais messages : n8n ne sait pas ce que le client a dit ; la carte le demande à l'artisan, qui range le motif d'un geste (L13).\n// L'étape est le jour de l'arrêt : un nouvel arrêt après une reprise donne une clé neuve.\nconst factures = new Map(lignes('Lire factures').map((f) => [paire(f.artisan_id, f.id), f]));\nfor (const a of lignes('Lire arrets de relance')) {\n  if (a.raison !== 'reponse_client' || a.reprise_le) continue;\n  if (!aLaCapacite(a.artisan_id, 'factures.relances')) continue;\n  const f = factures.get(paire(a.artisan_id, a.facture_id));\n  if (!f || f.statut !== 'emise' || f.payee_le || f.avoir_de) continue;\n  const m = centimes(f.total_ttc);\n  if (m <= 0) continue;\n  const le = jourParis(a.le);\n  if (!le) continue;\n  constat(11, 'reponse_impaye', a.artisan_id, 'facture', f.id, 'r' + le.replace(/-/g, ''), m, Math.max(0, ecart(JOUR, le)), { type: 'facture', id: f.id });\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "d4eed6ef-53df-4b38-a817-af204354c020",
+          "name": "Détecteur 12 entretien à proposer",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4384,
+            128
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "const ctx = $('Contexte du passage').first().json;\nconst offres = $('Capacités des offres').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  if (v.length === 10) return v;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst centimes = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) : 0; };\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant, jamais par l'identifiant seul.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst caps = (artisanId) => { const c = comptes.get(artisanId); return c && offres.capacites[c.plan] ? offres.capacites[c.plan] : null; };\nconst aLaCapacite = (artisanId, cap) => { const l = caps(artisanId); return !!l && l.includes(cap); };\nconst avant = $input.first().json.constats || [];\nconst nouveaux = [];\n// `argent` : la pièce dont l'argent dort (facture ou devis), pour un total qui ne compte jamais deux fois la même (M5).\nconst constat = (numero, detecteur, artisanId, typeObjet, idObjet, etape, montant, jours, argent) => {\n  nouveaux.push({ numero, detecteur, cle: detecteur + ':' + idObjet + ':' + etape, artisan_id: artisanId, objet: { type: typeObjet, id: idObjet }, etape, montant_centimes: montant, jours, argent: argent || null });\n};\n// n° 12 — entretien à proposer (plan §9, n° 12 ; §0 bis, rang 6) : rappel posé par l'après-chantier (crm_rappels, 0162_crm_rappels.sql:22-38 ;\n// type « entretien », 0165:32 ; clé « entretien:<chantier>:<n> », lib/apresChantier.ts:156), origine « systeme », échu, ni fait ni envoyé ;\n// capacité crm, « entretien » coché, chantier du même compte terminé. Jamais crm_rappels.texte. Une opposition du client efface ces\n// rappels (app/api/crm/apres-chantier/opposition/route.ts:43-44) ; l'envoi la revérifie (decisionEnvoiApres, lib/apresChantier.ts:170).\nconst apres = new Map(lignes('Lire apres chantier').map((a) => [a.artisan_id, a]));\nconst chantiers = new Map(lignes('Lire chantiers').map((c) => [paire(c.artisan_id, c.id), c]));\nfor (const r of lignes('Lire rappels')) {\n  if (r.type !== 'entretien' || r.origine !== 'systeme' || r.fait_le || r.envoye_le || !r.chantier_id) continue;\n  const morceaux = typeof r.cle === 'string' ? r.cle.split(':') : [];\n  if (morceaux.length !== 3 || morceaux[0] !== 'entretien' || morceaux[1] !== r.chantier_id || !/^[0-9]{1,3}$/.test(morceaux[2])) continue;\n  const a = apres.get(r.artisan_id);\n  if (!aLaCapacite(r.artisan_id, 'crm') || !a || a.entretien !== true) continue;\n  const c = chantiers.get(paire(r.artisan_id, r.chantier_id));\n  if (!c || c.statut !== 'termine') continue;\n  const echeance = jourParis(r.echeance);\n  if (!echeance || echeance > JOUR) continue;\n  constat(12, 'entretien_a_proposer', r.artisan_id, 'chantier', c.id, 'e' + morceaux[2], null, ecart(JOUR, echeance), null);\n}\nreturn [{ json: { constats: avant.concat(nouveaux) } }];"
+          }
+        },
+        {
+          "id": "51b4b2a4-f3ca-4748-bab4-fb3b13e99f00",
+          "name": "Échec du passage",
+          "type": "n8n-nodes-base.errorTrigger",
+          "typeVersion": 1,
+          "position": [
+            0,
+            400
+          ],
+          "parameters": {}
+        },
+        {
+          "id": "6b337de5-6dc1-4769-9039-25b31203e6b2",
+          "name": "Message d échec",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            224,
+            400
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Branche d'erreur (plan §0 bis, rang 26) : le message d'alerte, sans aucune donnée lue ni texte d'erreur (qui pourrait en porter).\n// L'envoi vers #presti-auto et le Telegram du fondateur attend l'identifiant Telegram et le « go » de Benj : aucun nœud d'envoi ici.\nconst e = $input.first().json || {};\nconst x = e.execution && typeof e.execution === 'object' ? e.execution : {};\nconst propre = (v, n) => String(v === undefined || v === null ? '' : v).replace(/[^A-Za-z0-9 _()'éèêàâçôîûù-]/g, '').slice(0, n);\nreturn [{ json: { alerte: 'presti-detecteurs a échoué', noeud: propre(x.lastNodeExecuted, 80) || 'inconnu', execution: propre(x.id, 40), mode: propre(x.mode, 20) } }];"
+          }
+        }
+      ],
+      "nodeGroups": [
+        {
+          "id": "e2737371-448b-46aa-86e5-52e94845cb11",
+          "name": "Lectures (GET seulement)",
+          "nodeNames": [
+            "Lire comptes",
+            "Lire factures",
+            "Lire devis",
+            "Lire demandes",
+            "Lire chantiers",
+            "Lire reservations",
+            "Lire materiaux",
+            "Lire stock",
+            "Lire commandes",
+            "Lire relances impayes",
+            "Lire arrets de relance",
+            "Lire reglages des relances",
+            "Lire reglages de la plateforme",
+            "Lire tarifs",
+            "Lire apres chantier",
+            "Lire rappels",
+            "Lire reglages du pilote",
+            "Lire cartes refusees"
+          ],
+          "description": "Une lecture GET par table, select= limité aux colonnes permises, filtrée par compte"
+        },
+        {
+          "id": "4437b423-01c5-4fee-9481-03ac15d8d3da",
+          "name": "Détecteurs",
+          "nodeNames": [
+            "Départ des constats",
+            "Détecteur 01 facture échue",
+            "Détecteur 02 chantier à facturer",
+            "Détecteur 03 devis signé sans acompte",
+            "Détecteur 04 devis sans réponse",
+            "Détecteur 05 facture jamais envoyée (coupé)",
+            "Détecteur 06 demande sans réponse",
+            "Détecteur 07 demande sans devis",
+            "Détecteur 08 devis bientôt expiré",
+            "Détecteur 09 stock sous le seuil",
+            "Détecteur 10 demande d avis",
+            "Détecteur 11 réponse à une relance d impayé",
+            "Détecteur 12 entretien à proposer"
+          ],
+          "description": "Douze détecteurs en nœuds Code ; le n° 5 est coupé"
+        },
+        {
+          "id": "d9a671ce-8d14-4107-8ad1-e9053a9111ec",
+          "name": "Niveau et bilan",
+          "nodeNames": [
+            "Niveau proposé selon l offre",
+            "Bilan par détecteur"
+          ],
+          "description": "Niveau 1, 2 ou 3 lu dans la copie des capacités ; bilan agrégé par détecteur, seule sortie"
+        },
+        {
+          "id": "c5004fd5-2e40-4762-bf40-127c58ea1ebf",
+          "name": "Préparation",
+          "nodeNames": [
+            "Lecture de connexion (regles_automatisation)",
+            "Preuve de connexion",
+            "Contexte du passage",
+            "Capacités des offres"
+          ],
+          "description": "Lecture de connexion (une ligne, rien ne descend), jour de Paris, seuils, copie figée des capacités des offres"
+        }
+      ],
+      "activeVersion": {
+        "sameAsDraft": true
+      },
+      "meta": {
+        "aiBuilderAssisted": true,
+        "builderVariant": "mcp"
+      }
+    },
+    "triggerInfo": "This workflow has the following trigger(s):\n\n\nSchedule trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: Déclencheur 6 h 45\n\t\t\t\t</trigger 1>\n\nScheduled workflows do not take inputs. To execute a specific schedule trigger, pass triggerNodeName only: { triggerNodeName: \"<node name>\" }."
+  },
+  "presti-briefing-matin": {
+    "workflow": {
+      "id": "xPIDCvkp8Gk08A2E",
+      "name": "presti-briefing-matin",
+      "active": true,
+      "isArchived": false,
+      "versionId": "d19fec51-b268-41be-bea2-9999bdfff1fe",
+      "activeVersionId": "d19fec51-b268-41be-bea2-9999bdfff1fe",
+      "triggerCount": 1,
+      "nodeCount": 19,
+      "createdAt": "2026-11-02T18:24:22.045Z",
+      "updatedAt": "2026-11-02T20:39:59.464Z",
+      "settings": {
+        "executionOrder": "v1",
+        "availableInMCP": true,
+        "timezone": "Europe/Paris",
+        "saveDataErrorExecution": "all",
+        "saveDataSuccessExecution": "none",
+        "errorWorkflow": "AQeHiC58UgbMR4Kr"
+      },
+      "tags": [],
+      "parentFolderId": null,
+      "description": "Point du jour de chaque compte à 7 h 30 (Paris), trois priorités, en simulation : lit Supabase en GET, n'écrit et n'envoie rien. Inactif. Juge : scripts/briefing-n8n-qa.mjs (tâche 032-013).",
+      "scopes": [
+        "execution:delete",
+        "execution:list",
+        "execution:read",
+        "execution:reveal",
+        "workflow:create",
+        "workflow:delete",
+        "workflow:disableRedaction",
+        "workflow:enableRedaction",
+        "workflow:execute",
+        "workflow:execute-chat",
+        "workflow:export",
+        "workflow:import",
+        "workflow:list",
+        "workflow:move",
+        "workflow:publish",
+        "workflow:read",
+        "workflow:share",
+        "workflow:unpublish",
+        "workflow:unshare",
+        "workflow:update"
+      ],
+      "canExecute": true,
+      "connections": {
+        "Déclencheur 7 h 30": {
+          "main": [
+            [
+              {
+                "node": "Contexte du passage",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Contexte du passage": {
+          "main": [
+            [
+              {
+                "node": "Capacités des offres",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Capacités des offres": {
+          "main": [
+            [
+              {
+                "node": "Lire comptes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire comptes": {
+          "main": [
+            [
+              {
+                "node": "Comptes retenus",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Comptes retenus": {
+          "main": [
+            [
+              {
+                "node": "Lire demandes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire demandes": {
+          "main": [
+            [
+              {
+                "node": "Paquets de demandes ouvertes",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Paquets de demandes ouvertes": {
+          "main": [
+            [
+              {
+                "node": "Lire messages",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire messages": {
+          "main": [
+            [
+              {
+                "node": "Lire devis envoyés",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire devis envoyés": {
+          "main": [
+            [
+              {
+                "node": "Lire factures",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire factures": {
+          "main": [
+            [
+              {
+                "node": "Lire matériaux suivis",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire matériaux suivis": {
+          "main": [
+            [
+              {
+                "node": "Lire stock",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Lire stock": {
+          "main": [
+            [
+              {
+                "node": "Contrôle des lectures",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Contrôle des lectures": {
+          "main": [
+            [
+              {
+                "node": "Conversations qui attendent",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Conversations qui attendent": {
+          "main": [
+            [
+              {
+                "node": "Devis sans réponse",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Devis sans réponse": {
+          "main": [
+            [
+              {
+                "node": "Impayés",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Impayés": {
+          "main": [
+            [
+              {
+                "node": "Stock sous le seuil",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Stock sous le seuil": {
+          "main": [
+            [
+              {
+                "node": "Point du jour par compte",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Point du jour par compte": {
+          "main": [
+            [
+              {
+                "node": "Bilan du passage",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "aac158ff-8023-4043-8bc0-86095fcb1730",
+          "name": "Déclencheur 7 h 30",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.4,
+          "position": [
+            0,
+            0
+          ],
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "days",
+                  "daysInterval": 1,
+                  "triggerAtHour": 7,
+                  "triggerAtMinute": 30
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "3ce870fd-9703-432d-9cca-d522be3724ed",
+          "name": "Contexte du passage",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            240,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Le passage du matin. L'instant vient du déclencheur (jamais l'horloge du serveur) ; le jour se compte à Paris, comme jourParis\n// (lib/comptaTableau.ts:159-160). Seuils : lib/assistant/briefing.ts:35, :37, :38. Limites : lib/assistant/executeurs.ts:164-174\n// (200 demandes, paquets de 100, 1 000 messages), :259-264 (50 conversations, 50 impayés, 200 devis), app/api/compta/tableau/route.ts:19\n// (2 000 factures). Pages de 1 000 lignes, 50 pages au plus par lecture.\nconst brut = $('Déclencheur 7 h 30').first().json.timestamp;\nconst ms = typeof brut === 'string' ? Date.parse(brut) : NaN;\nif (!Number.isFinite(ms)) throw new Error('instant du déclencheur illisible');\nconst instant = new Date(ms);\nconst jour = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(instant);\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(jour)) throw new Error('jour de Paris illisible');\nreturn [{ json: {\n  mode: 'simulation',\n  instant: instant.toISOString(),\n  jour,\n  seuils: { devis_sans_reponse_jours: 7, impaye_urgent_jours: 30, lignes_max: 8 },\n  limites: { demandes: 200, paquet_demandes: 100, messages_par_paquet: 1000, conversations: 50, impayes_listes: 50, devis: 200, factures: 2000, lignes_par_page: 1000, pages_max: 50 }\n} }];"
+          }
+        },
+        {
+          "id": "ad3c35a4-08fe-4c8c-989b-c3681725035c",
+          "name": "Capacités des offres",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            480,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Copie figée de lib/plans.ts (offres l.66-103, peut() l.149) pour les quatre capacités que lit le point du jour.\n// Le juge (scripts/briefing-n8n-qa.mjs) la compare à peut() pour Studio, Signature et Entreprise.\nreturn [{ json: { capacites: {\n  studio: { assistant: true, chiffres: true, 'inventaire.stock': true, crm: false },\n  signature: { assistant: true, chiffres: true, 'inventaire.stock': true, crm: true },\n  entreprise: { assistant: true, chiffres: true, 'inventaire.stock': true, crm: true }\n} } }];"
+          }
+        },
+        {
+          "id": "507db79a-62b1-49c8-aa52-72c016f06328",
+          "name": "Lire comptes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            720,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,plan,est_demo,suppression_demandee_le"
+                },
+                {
+                  "name": "plan",
+                  "value": "in.(studio,signature,entreprise)"
+                },
+                {
+                  "name": "est_demo",
+                  "value": "is.false"
+                },
+                {
+                  "name": "suppression_demandee_le",
+                  "value": "is.null"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "4904e151-9377-405a-9a32-18d6b7f552e5",
+          "name": "Comptes retenus",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            960,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les comptes lus (Studio, Signature, Entreprise ; ni démonstration, ni suppression demandée), vérifiés ligne par ligne.\n// Une lecture qui atteint son plafond de pages, ou une ligne inattendue, arrête le passage : jamais un point du jour tronqué.\nconst L = $('Contexte du passage').first().json.limites;\nconst CAP = $('Capacités des offres').first().json.capacites;\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst lignes = $('Lire comptes').all().map((i) => i.json);\nconst rangs = lignes.length === 1 && Object.keys(lignes[0] || {}).length === 0 ? [] : lignes;\nif (rangs.length >= L.lignes_par_page * L.pages_max) throw new Error('Lire comptes : plafond de pages atteint, lecture incomplète');\nconst vus = new Map();\nfor (const a of rangs) {\n  if (!a || typeof a !== 'object' || Object.keys(a).sort().join(',') !== 'est_demo,id,plan,suppression_demandee_le') throw new Error('Lire comptes : ligne inattendue');\n  if (typeof a.id !== 'string' || !UUID.test(a.id)) throw new Error('Lire comptes : identifiant illisible');\n  if (a.est_demo !== false || a.suppression_demandee_le !== null || !Object.prototype.hasOwnProperty.call(CAP, a.plan)) throw new Error('Lire comptes : compte hors du filtre');\n  if (vus.has(a.id) && vus.get(a.id) !== a.plan) throw new Error('Lire comptes : compte lu deux fois');\n  vus.set(a.id, a.plan);\n}\nconst comptes = [...vus.entries()].map(([id, plan]) => ({ id, plan })).sort((x, y) => (x.id < y.id ? -1 : x.id > y.id ? 1 : 0));\nreturn [{ json: { comptes, ids: comptes.map((c) => c.id).join(',') || '00000000-0000-0000-0000-000000000000' } }];"
+          }
+        },
+        {
+          "id": "c209be22-ad23-4d34-8b3a-375934e38eb7",
+          "name": "Lire demandes",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1200,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,urgence,lu_le,updated_at"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + $('Comptes retenus').first().json.ids + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "9902631a-45c2-43b4-9874-db576894ab2a",
+          "name": "Paquets de demandes ouvertes",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1440,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les demandes de chaque compte comme les lit l'assistant (lib/assistant/executeurs.ts:164-166) : les 200 plus récentes par\n// updated_at (vides en dernier ; à égalité, par identifiant), puis les ouvertes (ni gagnée ni perdue), par paquets de 100 pour lire\n// leurs messages (l.168-174). Une donnée se range par (compte, identifiant).\nconst L = $('Contexte du passage').first().json.limites;\nconst comptes = new Set($('Comptes retenus').first().json.comptes.map((c) => c.id));\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst lignes = $('Lire demandes').all().map((i) => i.json);\nconst rangs = lignes.length === 1 && Object.keys(lignes[0] || {}).length === 0 ? [] : lignes;\nif (rangs.length >= L.lignes_par_page * L.pages_max) throw new Error('Lire demandes : plafond de pages atteint, lecture incomplète');\nconst cleTemps = (s) => {\n  if (typeof s !== 'string') return null;\n  const m = /^(.*T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?(.*)$/.exec(s);\n  const base = Date.parse(m ? m[1] + m[3] : s);\n  if (!Number.isFinite(base)) return null;\n  return base * 1000 + (m && m[2] ? Number(m[2].padEnd(6, '0').slice(0, 6)) : 0);\n};\nconst ordre = (a, b) => (a < b ? -1 : a > b ? 1 : 0);\nconst parCompte = new Map();\nconst vus = new Set();\nfor (const l of rangs) {\n  if (!l || typeof l !== 'object' || Object.keys(l).sort().join(',') !== 'artisan_id,id,lu_le,statut,updated_at,urgence') throw new Error('Lire demandes : ligne inattendue');\n  if (typeof l.id !== 'string' || !UUID.test(l.id) || typeof l.artisan_id !== 'string' || !UUID.test(l.artisan_id)) throw new Error('Lire demandes : identifiant illisible');\n  if (!comptes.has(l.artisan_id)) continue;\n  const cle = l.artisan_id + '|' + l.id;\n  if (vus.has(cle)) continue;\n  vus.add(cle);\n  if (!parCompte.has(l.artisan_id)) parCompte.set(l.artisan_id, []);\n  parCompte.get(l.artisan_id).push(l);\n}\nconst paquets = [];\nfor (const compte of [...parCompte.keys()].sort(ordre)) {\n  const triees = parCompte.get(compte).map((l) => ({ l, t: cleTemps(l.updated_at) })).sort((a, b) => {\n    if (a.t === null || b.t === null) return a.t === b.t ? ordre(a.l.id, b.l.id) : a.t === null ? 1 : -1;\n    return b.t - a.t || ordre(a.l.id, b.l.id);\n  }).map((x) => x.l);\n  const ouvertes = triees.slice(0, L.demandes).filter((l) => l.statut !== 'gagne' && l.statut !== 'perdu');\n  for (let i = 0; i < ouvertes.length; i += L.paquet_demandes) {\n    paquets.push({ json: { artisan_id: compte, rang: i / L.paquet_demandes, lead_ids: ouvertes.slice(i, i + L.paquet_demandes).map((l) => l.id).join(',') } });\n  }\n}\nif (!paquets.length) paquets.push({ json: { artisan_id: null, rang: 0, lead_ids: '00000000-0000-0000-0000-000000000000' } });\nreturn paquets;"
+          }
+        },
+        {
+          "id": "bdf4c611-3f5d-4d8d-ab78-a01004170f07",
+          "name": "Lire messages",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1680,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/messages",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "lead_id,sens,etat,sent_at"
+                },
+                {
+                  "name": "lead_id",
+                  "value": "={{ 'in.(' + $json.lead_ids + ')' }}"
+                },
+                {
+                  "name": "or",
+                  "value": "(etat.is.null,etat.eq.proposition)"
+                },
+                {
+                  "name": "order",
+                  "value": "sent_at.desc"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000
+            }
+          },
+          "alwaysOutputData": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "ba2958ba-5363-4736-aa5e-fef6150b6474",
+          "name": "Lire devis envoyés",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            1920,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/devis",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,total_ttc,envoye_le"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + $('Comptes retenus').first().json.ids + ')' }}"
+                },
+                {
+                  "name": "statut",
+                  "value": "eq.envoye"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "332f3e1b-c380-4445-b2ed-3c03a66b981d",
+          "name": "Lire factures",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2160,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/factures",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,statut,date_emission,date_echeance,total_ttc,avoir_de"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + $('Comptes retenus').first().json.ids + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "56329b87-7734-437d-aa3b-69a6ca382184",
+          "name": "Lire matériaux suivis",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2400,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/materiaux",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,artisan_id,seuil_alerte"
+                },
+                {
+                  "name": "artisan_id",
+                  "value": "={{ 'in.(' + $('Comptes retenus').first().json.ids + ')' }}"
+                },
+                {
+                  "name": "seuil_alerte",
+                  "value": "gt.0"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "8a3dee40-c3d8-480d-aa76-4106cba3cfa8",
+          "name": "Lire stock",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.5,
+          "position": [
+            2640,
+            0
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/stock",
+            "authentication": "predefinedCredentialType",
+            "nodeCredentialType": "supabaseApi",
+            "sendQuery": true,
+            "specifyQuery": "keypair",
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "select",
+                  "value": "id,materiau_id,quantite"
+                },
+                {
+                  "name": "materiau_id",
+                  "value": "={{ 'in.(' + ($('Lire matériaux suivis').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+                },
+                {
+                  "name": "order",
+                  "value": "id"
+                },
+                {
+                  "name": "limit",
+                  "value": "1000"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 30000,
+              "pagination": {
+                "pagination": {
+                  "paginationMode": "updateAParameterInEachRequest",
+                  "parameters": {
+                    "parameters": [
+                      {
+                        "type": "qs",
+                        "name": "offset",
+                        "value": "={{ $pageCount * 1000 }}"
+                      }
+                    ]
+                  },
+                  "paginationCompleteWhen": "other",
+                  "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                  "limitPagesFetched": true,
+                  "maxRequests": 50
+                }
+              }
+            }
+          },
+          "alwaysOutputData": true,
+          "executeOnce": true,
+          "credentials": {
+            "supabaseApi": {
+              "id": "dTewDK98MLrNckNG",
+              "name": "Supabase account"
+            }
+          }
+        },
+        {
+          "id": "7a5800e5-7cd4-4fca-8385-c5eb1bddc6c7",
+          "name": "Contrôle des lectures",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2880,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les autres lectures, vérifiées avant tout calcul : colonnes exactes, identifiants lisibles, plafond de pages non atteint.\n// Une seule anomalie arrête le passage : jamais un point du jour tronqué, jamais « rien à signaler » sur une source en panne.\n// Les messages sont lus par paquets de 100 demandes, 1 000 au plus par paquet, comme l'assistant (lib/assistant/executeurs.ts:168-174).\nconst L = $('Contexte du passage').first().json.limites;\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst LECTURES = [\n  ['Lire messages', 'etat,lead_id,sens,sent_at', ['lead_id']],\n  ['Lire devis envoyés', 'artisan_id,envoye_le,id,statut,total_ttc', ['id', 'artisan_id']],\n  ['Lire factures', 'artisan_id,avoir_de,date_echeance,date_emission,id,statut,total_ttc', ['id', 'artisan_id', 'avoir_de']],\n  ['Lire matériaux suivis', 'artisan_id,id,seuil_alerte', ['id', 'artisan_id']],\n  ['Lire stock', 'id,materiau_id,quantite', ['id', 'materiau_id']],\n];\nconst paquets = $('Paquets de demandes ouvertes').all().length;\nconst nombres = {};\nfor (const [nom, colonnes, ids] of LECTURES) {\n  const lignes = $(nom).all().map((i) => i.json);\n  const rangs = lignes.length === 1 && Object.keys(lignes[0] || {}).length === 0 ? [] : lignes;\n  if (nom === 'Lire messages' ? rangs.length > paquets * L.messages_par_paquet : rangs.length >= L.lignes_par_page * L.pages_max) throw new Error(nom + ' : plafond atteint, lecture incomplète');\n  for (const r of rangs) {\n    if (!r || typeof r !== 'object' || Object.keys(r).sort().join(',') !== colonnes) throw new Error(nom + ' : ligne inattendue');\n    for (const k of ids) if (r[k] !== null && (typeof r[k] !== 'string' || !UUID.test(r[k]))) throw new Error(nom + ' : identifiant illisible');\n  }\n  nombres[nom] = rangs.length;\n}\nreturn [{ json: { lectures_completes: true, nombres } }];"
+          }
+        },
+        {
+          "id": "8d9d5d60-b667-4220-a2b3-1521ae921636",
+          "name": "Conversations qui attendent",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3120,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les conversations qui attendent l'artisan : attenteDe et resumerConversations (lib/assistant/donnees.ts:190-245, en attente\n// seulement, 50 au plus), puis le tri de composerBriefing (lib/assistant/briefing.ts:53-55 : les urgentes d'abord, ordre gardé).\n// Aucune fenêtre de temps : une demande arrivée la veille à 23 h et jamais lue attend toujours l'artisan.\nconst L = $('Contexte du passage').first().json.limites;\nconst comptes = new Set($('Comptes retenus').first().json.comptes.map((c) => c.id));\nconst demandes = new Map();\nfor (const i of $('Lire demandes').all()) {\n  const l = i.json;\n  if (!l || typeof l.id !== 'string' || !comptes.has(l.artisan_id)) continue;\n  const cle = l.artisan_id + '|' + l.id;\n  if (!demandes.has(cle)) demandes.set(cle, l);\n}\nconst messages = new Map();\nfor (const i of $('Lire messages').all()) {\n  const m = i.json;\n  if (!m || typeof m.lead_id !== 'string') continue;\n  if (!messages.has(m.lead_id)) messages.set(m.lead_id, []);\n  messages.get(m.lead_id).push(m);\n}\nconst attente = (l, siens) => {\n  if (l.statut === 'gagne' || l.statut === 'perdu') return null;\n  if (siens.some((m) => m.etat === 'proposition')) return 'reponse_a_valider';\n  const reels = siens.filter((m) => m.etat == null).sort((a, b) => String(a.sent_at ?? '').localeCompare(String(b.sent_at ?? '')));\n  const dernier = reels[reels.length - 1];\n  if (dernier && dernier.sens === 'in') return 'client_a_ecrit';\n  if (!l.lu_le && (l.statut === 'nouveau' || l.statut === 'en_discussion' || !l.statut)) return 'non_lue';\n  return null;\n};\nconst ouvertes = new Map();\nfor (const p of $('Paquets de demandes ouvertes').all()) {\n  const q = p.json;\n  if (!q || !comptes.has(q.artisan_id)) continue;\n  if (!ouvertes.has(q.artisan_id)) ouvertes.set(q.artisan_id, []);\n  for (const id of String(q.lead_ids).split(',')) ouvertes.get(q.artisan_id).push(id);\n}\nconst parCompte = {};\nfor (const compte of [...ouvertes.keys()].sort()) {\n  const enAttente = [];\n  for (const id of ouvertes.get(compte)) {\n    const l = demandes.get(compte + '|' + id);\n    if (!l) throw new Error('demande d’un paquet introuvable');\n    if (attente(l, messages.get(id) || [])) enAttente.push(l);\n  }\n  const triees = enAttente.slice(0, L.conversations).map((l, rang) => ({ l, rang }))\n    .sort((a, b) => Number(b.l.urgence === 'urgent') - Number(a.l.urgence === 'urgent') || a.rang - b.rang).map((x) => x.l);\n  parCompte[compte] = { nb_en_attente: enAttente.length, liste: triees.map((l) => l.id), urgentes: triees.filter((l) => l.urgence === 'urgent').map((l) => l.id) };\n}\nreturn [{ json: { parCompte } }];"
+          }
+        },
+        {
+          "id": "a7dfdaf2-0aee-4b15-a843-fb41ebc57682",
+          "name": "Devis sans réponse",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3360,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les devis envoyés sans réponse : la lecture de briefing_du_matin (lib/assistant/executeurs.ts:264 : statut envoyé, envoye_le\n// croissant, vides en dernier, 200 au plus ; à égalité, par identifiant), le jour d'envoi compté à Paris (l.277), puis\n// composerBriefing (lib/assistant/briefing.ts:40, :58-61 : 7 jours ou plus, le plus ancien d'abord, ordre gardé à égalité).\nconst C = $('Contexte du passage').first().json;\nconst comptes = new Set($('Comptes retenus').first().json.comptes.map((c) => c.id));\nconst format = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(de.slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst cleTemps = (s) => {\n  if (typeof s !== 'string') return null;\n  const m = /^(.*T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?(.*)$/.exec(s);\n  const base = Date.parse(m ? m[1] + m[3] : s);\n  if (!Number.isFinite(base)) return null;\n  return base * 1000 + (m && m[2] ? Number(m[2].padEnd(6, '0').slice(0, 6)) : 0);\n};\nconst ordre = (a, b) => (a < b ? -1 : a > b ? 1 : 0);\nconst parCompteLu = new Map();\nconst vus = new Set();\nfor (const i of $('Lire devis envoyés').all()) {\n  const d = i.json;\n  if (!d || typeof d.id !== 'string' || !comptes.has(d.artisan_id) || d.statut !== 'envoye') continue;\n  const cle = d.artisan_id + '|' + d.id;\n  if (vus.has(cle)) continue;\n  vus.add(cle);\n  if (!parCompteLu.has(d.artisan_id)) parCompteLu.set(d.artisan_id, []);\n  parCompteLu.get(d.artisan_id).push(d);\n}\nconst parCompte = {};\nfor (const compte of [...parCompteLu.keys()].sort(ordre)) {\n  const lus = parCompteLu.get(compte).map((d) => ({ d, t: cleTemps(d.envoye_le) })).sort((a, b) => {\n    if (a.t === null || b.t === null) return a.t === b.t ? ordre(a.d.id, b.d.id) : a.t === null ? 1 : -1;\n    return a.t - b.t || ordre(a.d.id, b.d.id);\n  }).map((x) => x.d).slice(0, C.limites.devis);\n  const retenus = lus.map((d, rang) => ({ id: d.id, rang, jours: d.envoye_le ? joursEntre(format.format(new Date(d.envoye_le)), C.jour) : null }))\n    .filter((x) => x.jours !== null && x.jours >= C.seuils.devis_sans_reponse_jours)\n    .sort((a, b) => b.jours - a.jours || a.rang - b.rang);\n  parCompte[compte] = { liste: retenus.map((x) => x.id) };\n}\nreturn [{ json: { parCompte } }];"
+          }
+        },
+        {
+          "id": "e303a676-c1f3-4823-b6a8-de9dc646460e",
+          "name": "Impayés",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3600,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Les impayés de « Mes chiffres » : la lecture de la route (app/api/compta/tableau/route.ts:19, :37 : 2 000 factures au plus, date\n// d'émission décroissante, vides d'abord, puis identifiant), le calcul de l'écran (lib/comptaTableau.ts:211-215 factures comptées,\n// :316-337 impayés et leur tri, jours à Paris l.159-169), la liste de resumerFactures (lib/assistant/donnees.ts:111-142, 50 au plus),\n// puis les échues de composerBriefing (lib/assistant/briefing.ts:65-68 ; urgentes à 30 jours de retard ou plus).\nconst C = $('Contexte du passage').first().json;\nconst comptes = new Set($('Comptes retenus').first().json.comptes.map((c) => c.id));\nconst format = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst jourDe = (v) => {\n  if (typeof v !== 'string') return null;\n  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(v)) return v;\n  const t = Date.parse(v);\n  return Number.isNaN(t) ? null : format.format(new Date(t));\n};\nconst ecartJours = (a, b) => Math.round((Date.UTC(+a.slice(0, 4), +a.slice(5, 7) - 1, +a.slice(8, 10)) - Date.UTC(+b.slice(0, 4), +b.slice(5, 7) - 1, +b.slice(8, 10))) / 86400000);\nconst centimes = (v) => {\n  const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v.replace(',', '.')) : NaN;\n  return Number.isFinite(n) ? Math.round(n * 100) : 0;\n};\nconst ordre = (a, b) => (a < b ? -1 : a > b ? 1 : 0);\nconst parCompteLu = new Map();\nconst vus = new Set();\nfor (const i of $('Lire factures').all()) {\n  const f = i.json;\n  if (!f || typeof f.id !== 'string' || !comptes.has(f.artisan_id)) continue;\n  const cle = f.artisan_id + '|' + f.id;\n  if (vus.has(cle)) continue;\n  vus.add(cle);\n  if (!parCompteLu.has(f.artisan_id)) parCompteLu.set(f.artisan_id, []);\n  parCompteLu.get(f.artisan_id).push(f);\n}\nconst jour = C.jour;\nconst parCompte = {};\nfor (const compte of [...parCompteLu.keys()].sort(ordre)) {\n  const lues = parCompteLu.get(compte).slice().sort((a, b) => {\n    const x = typeof a.date_emission === 'string' ? a.date_emission : null, y = typeof b.date_emission === 'string' ? b.date_emission : null;\n    if (x === null || y === null) return x === y ? ordre(a.id, b.id) : x === null ? -1 : 1;\n    return ordre(y, x) || ordre(a.id, b.id);\n  }).slice(0, C.limites.factures);\n  const annulees = new Set();\n  for (const f of lues) if (typeof f.avoir_de === 'string' && f.avoir_de) annulees.add(f.avoir_de);\n  const impayes = [];\n  for (const f of lues) {\n    if (f.avoir_de || annulees.has(f.id) || f.statut !== 'emise') continue;\n    const emission = jourDe(f.date_emission) ?? jour;\n    const echeance = jourDe(f.date_echeance);\n    impayes.push({ id: f.id, cle: 'presti:' + f.id, montant: centimes(f.total_ttc), emission, joursRetard: echeance && echeance < jour ? ecartJours(jour, echeance) : 0 });\n  }\n  impayes.sort((a, b) => b.joursRetard - a.joursRetard || a.emission.localeCompare(b.emission) || a.cle.localeCompare(b.cle));\n  const echues = impayes.slice(0, C.limites.impayes_listes).filter((i) => i.joursRetard > 0);\n  parCompte[compte] = {\n    nombre: impayes.length,\n    total_centimes: impayes.reduce((s, i) => s + i.montant, 0),\n    echues: echues.map((i) => i.id),\n    urgentes: echues.filter((i) => i.joursRetard >= C.seuils.impaye_urgent_jours).map((i) => i.id),\n  };\n}\nreturn [{ json: { parCompte } }];"
+          }
+        },
+        {
+          "id": "ff7e25d8-3b16-46ec-ade3-f574d1c62a5d",
+          "name": "Stock sous le seuil",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3840,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Le stock sous le seuil : l'alerte de l'écran Inventaire (app/api/inventaire/route.ts:68-75 : seuil > 0, reste = somme des lieux,\n// reste ≤ seuil), épuisé si le reste est à zéro ou moins (lib/assistant/briefing.ts:71). L'écran range par nom (l.63), que ce\n// passage ne lit pas : ici, par identifiant (écart déclaré au brief ; le juge compare cette rubrique comme un ensemble).\nconst comptes = new Set($('Comptes retenus').first().json.comptes.map((c) => c.id));\nconst ordre = (a, b) => (a < b ? -1 : a > b ? 1 : 0);\nconst materiaux = new Map();\nfor (const i of $('Lire matériaux suivis').all()) {\n  const m = i.json;\n  if (!m || typeof m.id !== 'string' || !comptes.has(m.artisan_id)) continue;\n  const cle = m.artisan_id + '|' + m.id;\n  if (!materiaux.has(cle)) materiaux.set(cle, { compte: m.artisan_id, id: m.id, seuil: Number(m.seuil_alerte), reste: 0 });\n}\nconst parMateriau = new Map();\nfor (const m of materiaux.values()) {\n  if (!parMateriau.has(m.id)) parMateriau.set(m.id, []);\n  parMateriau.get(m.id).push(m);\n}\nconst lignes = $('Lire stock').all().map((i) => i.json).filter((s) => s && typeof s.materiau_id === 'string').sort((a, b) => ordre(a.id, b.id));\nfor (const s of lignes) for (const m of parMateriau.get(s.materiau_id) || []) m.reste += Number(s.quantite);\nconst parCompte = {};\nfor (const m of [...materiaux.values()].sort((a, b) => ordre(a.compte, b.compte) || ordre(a.id, b.id))) {\n  if (!(m.seuil > 0 && m.reste <= m.seuil)) continue;\n  const e = parCompte[m.compte] || (parCompte[m.compte] = { liste: [], epuises: [] });\n  e.liste.push(m.id);\n  if (Number.isFinite(m.reste) && m.reste <= 0) e.epuises.push(m.id);\n}\nreturn [{ json: { parCompte } }];"
+          }
+        },
+        {
+          "id": "5dd97ffd-e6d2-43b5-8e75-310519bd350d",
+          "name": "Point du jour par compte",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4080,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// Le point du jour de chaque compte : les rubriques dans l'ordre de composerBriefing (lib/assistant/briefing.ts:52-72), 8 objets\n// montrés au plus, les urgences et les chiffres, puis les trois priorités (défaut de la question Q1 : l'argent qui dort d'abord,\n// P3:584 ; puis les clients qui attendent ; puis le reste dans l'ordre de composerBriefing). Un compte sans rubrique se tait.\n// Simulation : ces lignes seront écrites dans la table de la voie (a) après sa migration ; rien ne s'écrit ni ne part d'ici.\nconst C = $('Contexte du passage').first().json;\nconst CAP = $('Capacités des offres').first().json.capacites;\nconst comptes = $('Comptes retenus').first().json.comptes;\nconst R = {\n  conversations: $('Conversations qui attendent').first().json.parCompte,\n  devis: $('Devis sans réponse').first().json.parCompte,\n  impayes: $('Impayés').first().json.parCompte,\n  stock: $('Stock sous le seuil').first().json.parCompte,\n};\nconst MAX = C.seuils.lignes_max;\nconst ORDRE_PRIORITES = ['impayes', 'conversations', 'devis_sans_reponse', 'stock_bas'];\nconst HORS_N8N = ['chantiers_du_jour', 'chantiers_en_retard', 'a_facturer'];\nconst aEcrire = [];\nlet horsOffre = 0, muets = 0, muetsCrm = 0;\nfor (const { id, plan } of comptes) {\n  const cap = CAP[plan];\n  if (!cap || cap.assistant !== true) { horsOffre++; continue; }\n  const conv = R.conversations[id] || { nb_en_attente: 0, liste: [], urgentes: [] };\n  const dv = R.devis[id] || { liste: [] };\n  const im = cap.chiffres === true ? (R.impayes[id] || { nombre: 0, total_centimes: 0, echues: [], urgentes: [] }) : null;\n  const st = cap['inventaire.stock'] === true ? (R.stock[id] || { liste: [], epuises: [] }) : null;\n  const rubriques = [];\n  const ajouter = (rubrique, objets) => {\n    if (objets.length) rubriques.push({ rubrique, nombre: objets.length, lignes_non_montrees: Math.max(0, objets.length - MAX), objets: objets.slice(0, MAX) });\n  };\n  ajouter('conversations', conv.liste);\n  ajouter('devis_sans_reponse', dv.liste);\n  if (im) ajouter('impayes', im.echues);\n  if (st) ajouter('stock_bas', st.liste);\n  const horsN8n = cap.crm === true ? HORS_N8N.slice() : [];\n  if (!rubriques.length) { muets++; if (horsN8n.length) muetsCrm++; continue; }\n  const urgences = [\n    ...conv.urgentes.map((x) => ({ rubrique: 'conversations', id: x })),\n    ...(im ? im.urgentes.map((x) => ({ rubrique: 'impayes', id: x })) : []),\n    ...(st ? st.epuises.map((x) => ({ rubrique: 'stock_bas', id: x })) : []),\n  ];\n  const priorites = ORDRE_PRIORITES.map((r) => rubriques.find((x) => x.rubrique === r)).filter(Boolean).slice(0, 3)\n    .map((x, i) => ({ rang: i + 1, rubrique: x.rubrique, nombre: x.nombre, premier_objet: x.objets[0] }));\n  aEcrire.push({\n    cle: 'point_du_jour:' + id + ':' + C.jour,\n    artisan_id: id,\n    jour: C.jour,\n    mode: C.mode,\n    priorites,\n    point_du_jour: {\n      rubriques,\n      urgences: { nombre: urgences.length, objets: urgences.slice(0, MAX) },\n      chiffres: {\n        conversations_en_attente: conv.nb_en_attente,\n        devis_sans_reponse: dv.liste.length,\n        factures_impayees: im ? im.nombre : null,\n        factures_echues: im ? im.echues.length : null,\n        total_impaye_centimes: im ? im.total_centimes : null,\n        alertes_de_stock: st ? st.liste.length : null,\n      },\n      rubriques_hors_n8n: horsN8n,\n      rubriques_hors_offre: [im ? null : 'impayes', st ? null : 'stock_bas'].filter(Boolean),\n    },\n  });\n}\nreturn [{ json: { mode: C.mode, jour: C.jour, comptes_lus: comptes.length, comptes_hors_offre: horsOffre, comptes_muets: muets, comptes_muets_crm: muetsCrm, a_ecrire: aEcrire } }];"
+          }
+        },
+        {
+          "id": "4726ea37-b7a0-4096-8156-d63aaf8acb85",
+          "name": "Bilan du passage",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            4320,
+            0
+          ],
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "language": "javaScript",
+            "jsCode": "// La seule sortie du passage : un bilan agrégé, sans aucun identifiant de compte. Les lignes « à écrire » restent dans le nœud\n// précédent, en simulation, jusqu'à la table de la voie (a) (migration et « go » de Benj).\nconst P = $('Point du jour par compte').first().json;\nconst par = { impayes: 0, conversations: 0, devis_sans_reponse: 0, stock_bas: 0 };\nfor (const l of P.a_ecrire) for (const p of l.priorites) {\n  if (!Object.prototype.hasOwnProperty.call(par, p.rubrique)) throw new Error('rubrique de priorité inconnue');\n  par[p.rubrique] += 1;\n}\nreturn [{ json: {\n  mode: P.mode,\n  jour: P.jour,\n  comptes_lus: P.comptes_lus,\n  comptes_avec_point_du_jour: P.a_ecrire.length,\n  comptes_muets: P.comptes_muets,\n  comptes_muets_rubriques_hors_n8n: P.comptes_muets_crm,\n  comptes_hors_offre: P.comptes_hors_offre,\n  priorites_par_rubrique: par,\n} }];"
+          }
+        }
+      ],
+      "nodeGroups": [
+        {
+          "id": "2235c2cc-6266-4891-8171-11e9a9d2e580",
+          "name": "Lectures",
+          "nodeNames": [
+            "Lire comptes",
+            "Comptes retenus",
+            "Lire demandes",
+            "Paquets de demandes ouvertes",
+            "Lire messages",
+            "Lire devis envoyés",
+            "Lire factures",
+            "Lire matériaux suivis",
+            "Lire stock",
+            "Contrôle des lectures"
+          ],
+          "description": "Comptes, demandes et messages, devis envoyés, factures, matériaux et stock : GET seulement, colonnes permises, filtrés par compte"
+        },
+        {
+          "id": "664c5a8a-6d2e-476d-8505-88469a116969",
+          "name": "Rubriques",
+          "nodeNames": [
+            "Conversations qui attendent",
+            "Devis sans réponse",
+            "Impayés",
+            "Stock sous le seuil"
+          ],
+          "description": "Les quatre rubriques de composerBriefing : conversations, devis sans réponse, impayés, stock sous le seuil"
+        },
+        {
+          "id": "c3338937-60d9-4012-98a9-318f429feea6",
+          "name": "Point du jour",
+          "nodeNames": [
+            "Point du jour par compte",
+            "Bilan du passage"
+          ],
+          "description": "Trois priorités par compte, silence sans priorité, bilan agrégé en simulation (rien n'est écrit ni envoyé)"
+        }
+      ],
+      "activeVersion": {
+        "sameAsDraft": true
+      },
+      "meta": {
+        "aiBuilderAssisted": true,
+        "builderVariant": "mcp"
+      }
+    },
+    "triggerInfo": "This workflow has the following trigger(s):\n\n\nSchedule trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: Déclencheur 7 h 30\n\t\t\t\t</trigger 1>\n\nScheduled workflows do not take inputs. To execute a specific schedule trigger, pass triggerNodeName only: { triggerNodeName: \"<node name>\" }."
+  }
+}
