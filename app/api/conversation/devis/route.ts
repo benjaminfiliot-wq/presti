@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { acompteApresAcceptation } from '@/lib/reglesServeur'
-import { creerFacture } from '@/lib/factureDepuisDevis'
+import { acompteALAcceptationDuDevis } from '@/lib/reglesServeur'
 import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimiteStricte } from '@/lib/limites'
@@ -88,18 +87,12 @@ export async function POST(req: Request) {
       // Règle d'automatisation (v5 §9) : « quand le client accepte → facture d'acompte de N % ».
       // Même chemin que la facture manuelle : mentions bloquantes, numérotation, scellement.
       // Un refus (mentions manquantes) ne casse pas l'acceptation — l'artisan est prévenu.
+      // 02/11 (S5 du chantier 4) : jamais sans l'offre qui porte les règles (verrou dans lib/reglesServeur.ts) ; et, au choix de
+      // l'artisan (décision de Benj), la facture part seule ou elle est préparée pour un clic (maillon acompte_seul).
       let facture: { numero: string } | null = null
       try {
-        const pct = await acompteApresAcceptation(lead.artisan_id)
-        if (pct) {
-          const f = await creerFacture({ artisanId: lead.artisan_id, devisId: devis.id, acomptePct: pct })
-          if (f.ok) {
-            facture = { numero: f.numero }
-            await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'facture_emise', contenu: `Facture d'acompte ${f.numero} (${pct} %)` })
-          } else if (artisan?.email) {
-            await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, { leadId: lead.id, subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`}).catch(() => {})
-          }
-        }
+        const r = await acompteALAcceptationDuDevis({ artisanId: lead.artisan_id, leadId: lead.id, devisId: devis.id, devisNumero: devis.numero ?? null, artisanEmail: artisan?.email ?? null, qui })
+        if (r.fait === 'facture_emise') facture = { numero: r.numero }
       } catch (e) { console.error('[conversation/devis] acompte:', e) }
       return NextResponse.json({ ok: true, statut: 'accepte', ...(facture ? { facture } : {}) })
     }

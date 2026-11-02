@@ -17,6 +17,7 @@ import { avecMentionAssistant } from '@/lib/mentionAssistant'
 import { completerLeadCanal, envoyerReponseCanal, type IssueEnvoi } from '@/lib/canaux/serveur'
 import { estCanalConversation, piloteInterdit } from '@/lib/canaux/regles'
 import { LONGUEUR_MAX_TELEGRAM } from '@/lib/canaux/telegram'
+import { historiqueRelances, phraseRefus, relanceRecente } from '@/lib/relancesRegistre'
 
 export type ReponseEnvoi = { status: number; json: Record<string, unknown> }
 const rep = (status: number, json: Record<string, unknown>): ReponseEnvoi => ({ status, json })
@@ -27,6 +28,17 @@ type LeadMsg = { id: string; artisan_id: string; nom_prospect: string | null; co
 
 export async function leadDuCompte(leadId: string, uid: string): Promise<LeadMsg | null> {
   const { data } = await supabaseAdmin.from('leads').select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main, canal').eq('id', leadId).maybeSingle()
+  const lead = (data as LeadMsg | null) ?? null
+  return lead && lead.artisan_id === uid ? lead : null
+}
+
+/**
+ * Comme leadDuCompte, mais une lecture en ERREUR lève au lieu de rendre « introuvable » (02/11, audit 032-001 D3) : pour une garde qui
+ * doit rester fermée quand la base ne répond pas (l'escalade du pilote, §3.2). Seule une conversation absente, ou d'un autre compte, rend null.
+ */
+export async function leadDuCompteStrict(leadId: string, uid: string): Promise<LeadMsg | null> {
+  const { data, error } = await supabaseAdmin.from('leads').select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main, canal').eq('id', leadId).maybeSingle()
+  if (error) throw new Error('conversation illisible : rien ne part')
   const lead = (data as LeadMsg | null) ?? null
   return lead && lead.artisan_id === uid ? lead : null
 }
@@ -94,6 +106,16 @@ export async function validerPropositionServeur(uid: string, lead: LeadMsg, mess
   if (prop.type === 'relance' && lead.statut !== 'repondu') {
     await supabaseAdmin.from('messages').update({ etat: 'rejete' }).eq('id', prop.id).eq('lead_id', lead.id)
     return rep(409, { error: 'Le client a répondu entre-temps : cette relance a été retirée.' })
+  }
+  // 02/11 (audit 032-001, D6 ; S4) : proposée par le cron du matin, la relance part au clic (ou par le pilote) plus tard. Le registre
+  // commun est relu AU DÉPART, comme à la proposition : un autre chemin (assistant, pilote, CRM, impayés) a-t-il relancé ce dossier depuis ?
+  // Les relances de conversation gardent leur calendrier (sauf « conversation »). Registre illisible : rien ne part (côté sûr).
+  if (prop.type === 'relance') {
+    const reg = relanceRecente(await historiqueRelances(uid, { type: 'lead', id: lead.id }), new Date(), { sauf: 'conversation' })
+    if (reg.refus) {
+      const phrase = phraseRefus(reg, (iso) => new Date(iso).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }))
+      return reg.raison === 'illisible' ? rep(503, { error: phrase }) : rep(409, { error: phrase, code: 'deja_relance' })
+    }
   }
   const refus = refusAutomatique(lead, o)
   if (refus) return refus

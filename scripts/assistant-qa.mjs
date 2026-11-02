@@ -909,7 +909,17 @@ console.log('\n── G. La boucle avec des actions (faux modèle)')
     const faux = LECTURES.filter((m) => c(m).actionDemandee !== false)
     ok('les questions de lecture restent des lectures (elles ne déclenchent pas le mode « fait tout seul »)', faux.length === 0, faux.join(' | '))
     const ft = cadrage.faitToutSeul
-    ok('faitToutSeul : demandée par l’artisan ET aucun texte de tiers lu → exécutée ; texte de tiers lu, ou pas demandée → carte', ft({ actionDemandee: true }, { contenuTiersLu: false }) === true && ft({ actionDemandee: true }, { contenuTiersLu: true }) === false && ft({ actionDemandee: false }, { contenuTiersLu: false }) === false && ft({}, { contenuTiersLu: false }) === false)
+    // 02/11 (§3.2 du prompt de Benj du 01/11) : une QUESTION n'exécute jamais rien d'office — faitToutSeul exige `question === false`
+    // (absent = carte, fail-closed). Détail, mutants et gestes jamais d'office : scripts/securite-assistant-0211-qa.mjs.
+    // 02/11 (contre-audit 032-004, D2) : et seul un ORDRE NET l'ouvre (`ordre`, absent = carte).
+    ok('faitToutSeul : demandée par l’artisan, PAS une question, un ordre net, ET aucun texte de tiers lu → exécutée ; texte de tiers lu, question, `question` ou `ordre` absent, ou pas demandée → carte',
+      ft({ actionDemandee: true, question: false, ordre: true }, { contenuTiersLu: false }) === true && ft({ actionDemandee: true, question: false, ordre: true }, { contenuTiersLu: true }) === false
+      && ft({ actionDemandee: true, question: true, ordre: true }, { contenuTiersLu: false }) === false && ft({ actionDemandee: true, ordre: true }, { contenuTiersLu: false }) === false
+      && ft({ actionDemandee: true, question: false }, { contenuTiersLu: false }) === false
+      && ft({ actionDemandee: false, question: false, ordre: true }, { contenuTiersLu: false }) === false && ft({}, { contenuTiersLu: false }) === false)
+    const ordresBenj = BENJ.filter((m) => c(m).question !== false)
+    ok(`les ${BENJ.length} phrases de Benj sont des ORDRES (question === false) : leurs actions directes se font, et une action « à confirmer » part d’office quand c’est un ordre net ; « Quels devis dois-je relancer ? » est une question`,
+      ordresBenj.length === 0 && c('Quels devis dois-je relancer ?').actionDemandee === true && c('Quels devis dois-je relancer ?').question === true && ft(c('Quels devis dois-je relancer ?'), { contenuTiersLu: false }) === false, ordresBenj.join(' | '))
     const s = cadrage.systemeAssistant({ nom: 'Marc', metier: 'Plombier', jour: '29/10/2026', crm: true, actions: true }, c('Envoie la facture FAC-2026-0004'))
     ok('prompt (29/10) : « fait tout seul » expliqué, le résultat de l’outil fait foi, outils nouveaux nommés, tableau = fichier Excel', /fait tout seul/.test(s) && /fie-toi à lui/.test(s) && ['creer_facture_libre', 'preparer_liste_achat', 'rechercher_fournisseurs', 'retenir_resultat', 'exporter_tableau'].every((o) => s.includes(o)) && /TABLEAU demandé/.test(s) && !/ni tableaux\)/.test(s) && /tu FAIS le travail/.test(s))
     const sLecture = cadrage.systemeAssistant({ nom: 'Marc', metier: 'Plombier', jour: '29/10/2026', actions: true }, c('Combien de devis ?'))
@@ -994,7 +1004,8 @@ console.log('\n── I. Le code des actions')
   ok('chaque lecture / écriture sous la session est filtrée sur le compte (artisan_id ou id = ctx.uid) — sauf les messages d’une conversation déjà contrôlée', lectures.length >= 20 && sansCompte.length === 0, sansCompte.map((m) => m[1]).join())
   ok('envois : un seul chemin d’e-mail (envoyerRelance), plafonné par jour ; les devis et messages passent par les routes', (srv.match(/\(dep\.envoyerMail \?\? sendEmail\)/g) ?? []).length === 1 && (srv.match(/await peutEnvoyer\(\)/g) ?? []).length === 4 && /ENVOIS_JOUR_MAX = 30/.test(srv))
   ok('factures : la création passe par creerFacture (mentions, numérotation, TVA, scellement) ; l’encaissement par PATCH /api/factures/[id]', (srv.match(/creerFacture\)\(/g) ?? []).length === 2 && /creerFacture\)\(\{ artisanId: ctx\.uid, corps,/.test(srv) && /simulerFacture\)\(\{ artisanId: ctx\.uid, corps: c\.corps \}\)/.test(srv) && /factureMaj, `\/api\/factures\/\$\{f\.id\}`/.test(srv) && /statut: 'payee'/.test(srv))
-  ok('relances : pas deux fois en moins de 3 jours (journal des actions)', /dernierEnvoi\(ctx\.uid, 'relancer_devis'/.test(srv) && /dernierEnvoi\(ctx\.uid, 'relancer_facture'/.test(srv) && /RELANCE_DELAI_JOURS = 3/.test(srv))
+  // 02/11 (S4) : le délai vit dans le registre commun des relances (lib/relancesRegistre.ts, juge scripts/relances-registre-qa.mjs).
+  ok('relances : pas deux fois en moins de 3 jours (journal des actions, puis registre commun des quatre chemins)', /dernierEnvoi\(ctx\.uid, 'relancer_devis'/.test(srv) && /dernierEnvoi\(ctx\.uid, 'relancer_facture'/.test(srv) && /RELANCE_DELAI_JOURS = DELAI_REGISTRE/.test(srv) && /export const RELANCE_DELAI_JOURS = 3\b/.test(lire('lib/relancesRegistre.ts')))
   ok('lot de prix : au plus 300 lignes, écriture conditionnée au prix de la carte, inverse gardé', /LOT_TARIFS_MAX = 300/.test(srv) && /\.eq\('prix_ht', l\.avant\)/.test(srv) && /restaurer_prix_lot/.test(srv))
   ok('plafonds : 200 actions par jour et par compte (consommerLimite) ; débit des clics 120 / 10 min', /ACTIONS_JOUR_MAX = 200/.test(srv) && /assistant-actions:/.test(srv) && /assistant-decisions:/.test(rActions))
   // 29/10 — « il ne peut absolument pas agir » (Benj) : les outils d'action ne dépendent plus d'un détecteur de mots-clés.

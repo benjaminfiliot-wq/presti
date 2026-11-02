@@ -55,8 +55,8 @@ const plus = (ms) => new Date(T0.getTime() + ms)
   T('A8 PRIX NON SOURCÉ → validation manuelle : une ligne « estimation », « ordre de grandeur du marché », « à chiffrer », ou à 0 €, ou un devis sans ligne',
     ['estimation', 'ordre de grandeur du marché', 'à chiffrer'].every((s) => D({ lignes: [...sources, { prix_unitaire_ht: 50, source_prix: s }] }).motif === 'prix_non_source')
     && D({ lignes: [...sources, { prix_unitaire_ht: 0, source_prix: 'tarif de l’artisan' }] }).motif === 'prix_non_source' && D({ lignes: [] }).motif === 'prix_non_source' && D({ lignes: undefined }).motif === 'prix_non_source')
-  T('A9 jamais d’argent : marquer_facture_payee, creer_facture, rembourser, augmenter_tarifs, supprimer_* → « jamais_auto », type introuvable',
-    ['marquer_facture_payee', 'creer_facture', 'rembourser', 'payer', 'augmenter_tarifs', 'supprimer_tarif', 'supprimer_devis_brouillon'].every((o) => R.typePiloteDeOutil(o) === null && D({ outil: o }).motif === 'jamais_auto'))
+  T('A9 jamais d’argent : marquer_facture_payee, creer_facture (et sans devis, 02/11), rembourser, augmenter_tarifs, supprimer_* (et l’article, 02/11) → « jamais_auto », type introuvable',
+    ['marquer_facture_payee', 'creer_facture', 'creer_facture_libre', 'rembourser', 'payer', 'augmenter_tarifs', 'supprimer_tarif', 'supprimer_devis_brouillon', 'supprimer_article'].every((o) => R.typePiloteDeOutil(o) === null && D({ outil: o }).motif === 'jamais_auto'))
   T('A10 liste FERMÉE des outils pilotables, chacun avec son type ; un outil client sans exécuteur serveur (relancer_commande, demander_avis, rappel d’entretien) reste manuel',
     R.typePiloteDeOutil('envoyer_devis') === 'envoi_devis' && R.typePiloteDeOutil('relancer_devis') === 'relance_devis' && R.typePiloteDeOutil('relancer_facture') === 'relance_impaye'
     && R.typePiloteDeOutil('envoyer_facture') === 'envoi_facture' && R.typePiloteDeOutil('valider_reponse_proposee') === 'reponse_prospect' && R.typePiloteDeOutil('repondre_client') === 'assistant_client'
@@ -211,7 +211,8 @@ const carte = (f, type = 'envoi_devis', ref = U(1)) => f.inserer({ artisan_id: A
   b = await traiterFile(f.deps, plus(10 * MIN))
   T('E2d hors plage horaire de Ma plateforme : rien ne part, la réponse attend en file', f.envois.length === 0 && [...f.lignes.values()][0].statut === 'a_partir')
   const exeConv = exeE1.slice(exeE1.indexOf('async etatConversation('), exeE1.indexOf('jeton: (uid)'))
-  T('E2e la limite et la plage sont lues dans la config de l’artisan (getPlateformeConfig, limite_messages, dansLaPlage), réponses envoyées de l’IA comptées', /getPlateformeConfig\(l\.artisan_id\)/.test(exeConv) && /cfg\.limite_messages/.test(exeConv) && /dansLaPlage\(cfg, maintenant\)/.test(exeConv) && /\.eq\('type', 'reponse_auto'\)\.is\('etat', null\)/.test(exeConv))
+  // 02/11 (contre-audit 032-004, D3) : lue par getPlateformeConfigStrict — une lecture en erreur lève au lieu de rendre les défauts.
+  T('E2e la limite et la plage sont lues dans la config de l’artisan (getPlateformeConfigStrict, limite_messages, dansLaPlage), réponses envoyées de l’IA comptées', /getPlateformeConfigStrict\(l\.artisan_id\)/.test(exeConv) && /cfg\.limite_messages/.test(exeConv) && /dansLaPlage\(cfg, maintenant\)/.test(exeConv) && /\.eq\('type', 'reponse_auto'\)\.is\('etat', null\)/.test(exeConv))
   const srvE2 = sansCommentaires(lire('lib/pilote/serveur.ts'))
   T('E2f l’artisan est prévenu par PUSH seul : aucun e-mail par action (le quota global des e-mails n’est plus consommé)', /async function prevenir\(uid: string, libelle: string, type: TypePilote\)/.test(srvE2) && !/sendEmail/.test(srvE2) && /envoyerPushArtisan\(uid,/.test(srvE2))
 

@@ -11,7 +11,12 @@ import { FLAGS, type Flag } from './flags'
 // 25/10 (Benj) : DEUX offres seulement. « Studio : tout est automatisé, mais il faut valider, sinon ça ne s'envoie pas. Signature :
 // tout part automatiquement. » L'Essentiel n'est plus vendu ; son identifiant reste reconnu (comptes hérités, aucun abonné payant
 // au 25/10), hors du tunnel, de la grille et des essais.
-export type PlanId = 'gratuit' | 'essentiel' | 'studio' | 'signature' | 'business'
+// 01/11 (Benj, bloc des offres corrigé : plans/011-cadrage-01-11/prompts-benj/p3-assistant-bloc-offres-corrige-0111.md) : une troisième
+// offre, « Presti pour l'entreprise », sur mesure, sur démonstration et sur devis, SANS prix public. C'est la même autonomie que
+// Signature (« pas un niveau d'autonomie différent »), avec un CRM et des automatisations adaptés à l'entreprise, et ses membres.
+// Elle reste hors du tunnel en libre-service (PlanPayant ne bouge pas : ni Checkout, ni essai, ni colonne de la grille) :
+// l'abonnement se crée à la main chez Stripe, avec metadata.plan = 'entreprise' (lib/abonnementSync.ts).
+export type PlanId = 'gratuit' | 'essentiel' | 'studio' | 'signature' | 'entreprise' | 'business'
 export type PlanPayant = 'studio' | 'signature'
 
 /** Ce qu'une offre débloque. Le nom dit le domaine, puis la capacité. */
@@ -35,6 +40,9 @@ export type Capacite =
   | 'relances.auto' | 'factures.relances.auto'
   | 'assistant' | 'assistant.pilote'
   | 'crm'
+  // 02/11 (chantier 4) : inviter des membres dans son organisation, avec des rôles (titulaire, associé, administratif, compagnon,
+  // invité). Offre Entreprise seulement ; rien ne l'annonce tant que le drapeau `organisations` est baissé.
+  | 'organisation.membres'
 
 type Plan = {
   label: string
@@ -47,6 +55,8 @@ type Plan = {
    *  cette valeur ne sert qu'à continuer de servir les sites qui existaient, tels quels. */
   siteMax: 1 | 2 | 3
   capacites: Capacite[]
+  /** Prix sur devis (offre Entreprise) : `prixMois` vaut 0 sans que l'offre soit gratuite ni un essai. */
+  surDevis?: boolean
 }
 
 // Les capacités s'empilent : chaque palier reprend le précédent et ajoute.
@@ -88,6 +98,9 @@ const SIGNATURE: Capacite[] = [
   // type par type (lib/pilote/regles.ts). Signature (et Business) seulement ; caché tant que le drapeau `piloteAutomatique` est baissé.
   'assistant.pilote',
 ]
+// 01/11 (Benj) : l'Entreprise reprend Signature à l'identique (même autonomie, même moteur n8n + Hermes + Orca) et ajoute les membres.
+// Le CRM et les automatisations sur mesure se règlent par contrat, pas par une capacité de plus.
+const ENTREPRISE: Capacite[] = [...SIGNATURE, 'organisation.membres']
 
 export const PLANS: Record<PlanId, Plan> = {
   // Le compte sans abonnement (3 crédits, BASE, sans plateforme) : de quoi juger les devis chiffrés par l'IA. L'essai SANS CARTE
@@ -97,8 +110,10 @@ export const PLANS: Record<PlanId, Plan> = {
   essentiel: { label: 'Essentiel', accroche: 'Ancienne offre, plus proposée.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
   studio: { label: 'Studio', accroche: 'Tout est automatisé et préparé pour vous : vous validez d’un clic, rien ne part sans vous.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
   signature: { label: 'Signature', accroche: 'Tout part automatiquement : réponses, relances, Pilote et règles, plus le CRM.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
-  // Fondateurs : plan interne, illimité (jamais décompté).
-  business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
+  // Sur devis : prixMois 0 ne veut pas dire gratuit (surDevis) ; les crédits sont ceux de Signature tant que le contrat n'en fixe pas d'autres.
+  entreprise: { label: 'Presti pour l’entreprise', accroche: 'Sur mesure : votre équipe, vos outils, vos automatisations. Sur démonstration et sur devis.', creditsMois: 600, prixMois: 0, surDevis: true, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: ENTREPRISE },
+  // Fondateurs : plan interne, illimité (jamais décompté). Il reprend l'Entreprise, pour essayer l'écran d'équipe.
+  business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: ENTREPRISE },
 }
 
 // ─── L'essai gratuit SANS CARTE des abonnements payants (décision de Benj, 13/10/2026) ──────────────
@@ -144,7 +159,16 @@ export function offreMinimale(capacite: Capacite): PlanPayant | null {
 /** Message uniforme pour un 🔒 dans la console ou un 403 côté serveur. */
 export function messageVerrou(capacite: Capacite): string {
   const o = offreMinimale(capacite)
-  return o ? `Disponible avec l’offre ${PLANS[o].label}.` : 'Non disponible.'
+  if (o) return `Disponible avec l’offre ${PLANS[o].label}.`
+  return PLANS.entreprise.capacites.includes(capacite) ? `Disponible avec ${PLANS.entreprise.label}, sur démonstration.` : 'Non disponible.'
+}
+
+/** L'offre payante de référence d'un compte, pour comparer et pour proposer « l'offre au-dessus » : Signature pour Signature, Business
+ *  (fondateurs) et Entreprise (même autonomie) ; Studio pour Studio ; aucune pour l'essai et l'Essentiel hérité. */
+export function offreDeReference(plan: string | null | undefined): PlanPayant | null {
+  if (plan === 'studio') return 'studio'
+  if (plan === 'signature' || plan === 'business' || plan === 'entreprise') return 'signature'
+  return null
 }
 
 // Offres payantes proposées dans le tunnel d'abonnement (l'ordre est celui de l'affichage).
@@ -154,14 +178,14 @@ export const OFFRES: { id: PlanPayant; label: string; prix: number; credits: num
 // ─── Plafonds qui dépendent de l'offre (une seule écriture : la grille ci-dessous, lib/quotaMedia.ts et lib/assistant/cadrage.ts les lisent ici) ───
 const MO = 1024 * 1024
 /** Espace d'images de l'artisan (logo, réalisations, avatars, photos d'inventaire), en Mo. Appliqué par lib/quotaMedia.ts. */
-export const PLAFOND_IMAGES_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 400, signature: 1024, business: 5120 }
+export const PLAFOND_IMAGES_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 400, signature: 1024, entreprise: 1024, business: 5120 }
 /** Espace des photos de chantier envoyées par les clients, en Mo. Appliqué par lib/quotaMedia.ts. */
-export const PLAFOND_PHOTOS_CLIENTS_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 250, signature: 500, business: 2048 }
+export const PLAFOND_PHOTOS_CLIENTS_MO: Record<PlanId, number> = { gratuit: 25, essentiel: 100, studio: 250, signature: 500, entreprise: 500, business: 2048 }
 /**
  * 18/10 — Photos et pièces des chantiers du CRM (bucket privé chantier-pieces, migration 0163) : le CRM n'existe qu'en Signature et
  * Business (capacité `crm`), les autres offres n'ont donc rien. Pas de ligne dans la grille publique tant que le chantier n'est pas livré.
  */
-export const PLAFOND_PIECES_CHANTIER_MO: Record<PlanId, number> = { gratuit: 0, essentiel: 0, studio: 0, signature: 2048, business: 5120 }
+export const PLAFOND_PIECES_CHANTIER_MO: Record<PlanId, number> = { gratuit: 0, essentiel: 0, studio: 0, signature: 2048, entreprise: 2048, business: 5120 }
 export const enOctets = (mo: Record<PlanId, number>): Record<PlanId, number> =>
   Object.fromEntries(Object.entries(mo).map(([k, v]) => [k, v * MO])) as Record<PlanId, number>
 /** Messages au plus par conversation avec l'assistant de gestion (décision de Benj du 12/10, plan 016 §9.2). Appliqué par lib/assistant/cadrage.ts. */

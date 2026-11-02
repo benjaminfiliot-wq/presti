@@ -5,6 +5,7 @@ import { ajouterJours, controlerMessageRelance, decisionRelance, MAX_RELANCES_DE
 import { jourParis } from '@/lib/comptaTableau'
 import { sendEmail } from '@/lib/email'
 import { consommerLimite } from '@/lib/limites'
+import { historiqueRelances, phraseRefus, relanceRecente } from '@/lib/relancesRegistre'
 
 export const runtime = 'nodejs'
 
@@ -40,6 +41,10 @@ export async function POST(req: Request) {
   const dec = decisionRelance(devisR.data, envoyees)
   if (!dec.ok) return erreur(dec.erreur, dec.statut)
   if (!(await consommerLimite(`crm-relance:${g.uid}:${devisId}`, 1, 60))) return erreur('Cette relance vient de partir : patientez une minute avant d’en envoyer une autre.', 429, { code: 'debit' })
+  // 02/11 (S4) : le registre commun des relances — ce client a-t-il été relancé, par n'importe quel chemin (assistant, pilote, CRM,
+  // impayés, conversation), depuis moins de 3 jours ? Registre illisible : rien ne part (côté sûr).
+  const reg = relanceRecente(await historiqueRelances(g.uid, { type: 'devis', id: devisId }), new Date())
+  if (reg.refus) return reg.raison === 'illisible' ? erreur(INDISPONIBLE, 503) : erreur(phraseRefus(reg, (iso) => new Date(iso).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' })), 409, { code: 'deja_relance' })
 
   const d = devisR.data!
   const nom = (artR.data?.nom as string | null)?.trim() || 'Votre artisan'

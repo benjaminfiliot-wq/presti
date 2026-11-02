@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { GRILLE, OFFRES, PLANS, ESSAI_JOURS, planConf, texteCellule, type PlanPayant } from '@/lib/plans'
+import { GRILLE, OFFRES, PLANS, ESSAI_JOURS, offreDeReference, planConf, texteCellule, type PlanPayant } from '@/lib/plans'
 import { creditsEssai } from '@/lib/essaiGratuit'
 import { api, dateFr, type SectionProps } from './commun'
 import { estNatif } from '@/lib/natif'
@@ -19,7 +19,7 @@ type Abo = { statut: string; fin_periode: string | null; essai_fin?: string | nu
 
 /** L'offre de référence pour comparer : les fondateurs ont celles de Signature. L'essai et l'ancienne offre Essentiel (plus vendue
  *  depuis le 25/10) n'ont aucune offre payante de référence : on compare alors aux capacités du compte (`deverrouilleDepuis`). */
-const reference = (plan: string | null): PlanPayant | null => (plan === 'studio' || plan === 'signature' ? plan : plan === 'business' ? 'signature' : null)
+const reference = (plan: string | null): PlanPayant | null => offreDeReference(plan)
 
 /** Sans offre de référence (essai, Essentiel hérité) : les lignes de l'offre cible dont le compte n'a pas toutes les capacités,
  *  plus les lignes de chiffres (crédits, espaces) et le niveau d'automatisation. */
@@ -104,7 +104,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
         <div className="abo-etat">
           <div>
             <b>{illimite ? 'Fondateur · accès total' : conf.label}</b>
-            <span className="muted">{illimite ? 'Crédits jamais décomptés.' : enEssai ? `Essai gratuit jusqu’au ${dateFr(abo!.essai_fin!)}.` : conf.prixMois ? `${conf.prixMois} € par mois, sans engagement.` : 'Essai gratuit, sans carte.'}</span>
+            <span className="muted">{illimite ? 'Crédits jamais décomptés.' : enEssai ? `Essai gratuit jusqu’au ${dateFr(abo!.essai_fin!)}.` : conf.surDevis ? 'Contrat sur mesure.' : conf.prixMois ? `${conf.prixMois} € par mois, sans engagement.` : 'Essai gratuit, sans carte.'}</span>
           </div>
           {enEssai ? <span className="abo-pill" data-essai-gratuit-en-cours>Essai gratuit jusqu’au {dateFr(abo!.essai_fin!)}</span>
             : abo?.resiliation_prevue && abo.fin_prevue ? <span className="abo-pill warn">Résiliation le {dateFr(abo.fin_prevue)}</span>

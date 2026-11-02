@@ -158,12 +158,48 @@ export type TarifLu = { id: string; designation: string; unite: string | null; p
 export type LigneDevisResolue = { designation: string; quantite: number; unite: string; prix_unitaire_ht: number; tva_taux: number; source_prix: string }
 
 /**
+ * 02/11 (contre-audit 032-004, D1 bis) — la provenance d'un prix sans tarif que l'artisan n'a PAS écrit lui-même : recopié d'une donnée lue
+ * (un autre devis, peut-être une estimation) ou d'une réponse de l'assistant. La ligne garde son prix, mais ce prix n'est pas sourcé
+ * (lib/pilote/regles.ts ligneSourcee) : le devis ne part jamais seul, l'artisan le relit d'abord.
+ */
+export const SOURCE_REPRISE = 'prix repris d’une donnée, à vérifier'
+
+/**
+ * Les PRIX (en centimes) écrits par l'ARTISAN lui-même : son message et ses messages de l'historique, jamais une réponse de l'assistant ni
+ * une donnée lue. Un prix est un nombre qui porte une marque de prix : « 450 € », « 450 euros », « 450 HT », « 45 le m² », « € 450 ».
+ * 02/11 (troisième audit 032-005, A3) : une quantité (« 45 m² »), une date (« le 15/11 »), un numéro (« 12 rue… », « DEV-2026-0120 »)
+ * n'en est pas — ils coïncidaient avec une estimation recopiée et en faisaient un « prix donné par l'artisan ».
+ */
+const NOMBRE_PRIX = String.raw`\d{1,3}(?:[   .]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?`
+const PRIX_ECRIT = new RegExp(String.raw`€\s*(${NOMBRE_PRIX})|(${NOMBRE_PRIX})\s*(?:€|euros?\b|eur\b|e\s?ht\b|e\s?ttc\b|ht\b|ttc\b|(?:le|la|l'|l’|par|/)\s*(?:m2|m²|m3|m³|ml|m\b|mètre|metre|heure|h\b|pièce|piece|unité|unite|u\b|jour|forfait))`, 'gi')
+// 02/11 (quatrième audit 032-006) : un prix marqué TTC n'est pas un prix HT. On retient ses formes HT aux taux de TVA courants (5,5, 10 et
+// 20 %), jamais le nombre lui-même : « 450 € TTC » admet 409,09 € HT à 10 %, et refuse 450 posé dans un champ HT.
+const TTC = /^\s*(?:€\s*)?(?:ttc|t\.t\.c|toutes taxes)/i
+export function prixEcrits(textes: readonly string[]): Set<number> {
+  const s = new Set<number>()
+  for (const t of textes) {
+    const texte = String(t ?? '')
+    for (const m of texte.matchAll(PRIX_ECRIT)) {
+      const ttc = /ttc/i.test(m[0]) || TTC.test(texte.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 16))
+      for (const n of nombresDe(m[1] ?? m[2] ?? '')) {
+        if (ttc) for (const taux of [1.055, 1.1, 1.2]) s.add(Math.round((Math.abs(n) / taux) * 100))
+        else s.add(Math.round(Math.abs(n) * 100))
+      }
+    }
+  }
+  return s
+}
+
+/**
  * Chaque ligne s'appuie sur un tarif de l'artisan (le prix vient de lui, pas du modèle) ou sur un prix que l'artisan a donné
  * (déjà vérifié par verifierSources). Une ligne sans prix reste à 0 € et est SIGNALÉE : « à chiffrer ».
+ * 02/11 (D1 bis) : « prix donné par l'artisan » seulement si ce nombre est dans `nombresArtisan` (prixEcrits de ce qu'il a écrit) ;
+ * sinon SOURCE_REPRISE, signalé dans `aVerifier`. Absent : aucun nombre n'est le sien (côté sûr).
  */
-export function resoudreLignes(lignes: readonly LigneEntree[], tarifs: ReadonlyMap<string, TarifLu>): { lignes: LigneDevisResolue[]; aChiffrer: string[]; introuvables: string[] } {
+export function resoudreLignes(lignes: readonly LigneEntree[], tarifs: ReadonlyMap<string, TarifLu>, nombresArtisan: ReadonlySet<number> = new Set()): { lignes: LigneDevisResolue[]; aChiffrer: string[]; aVerifier: string[]; introuvables: string[] } {
   const out: LigneDevisResolue[] = []
   const aChiffrer: string[] = []
+  const aVerifier: string[] = []
   const introuvables: string[] = []
   for (const l of lignes) {
     if (l.tarif_id) {
@@ -175,9 +211,11 @@ export function resoudreLignes(lignes: readonly LigneEntree[], tarifs: ReadonlyM
     }
     const donne = l.prix_unitaire_ht !== null && l.prix_unitaire_ht > 0
     if (!donne) aChiffrer.push(l.designation)
-    out.push({ designation: l.designation, quantite: l.quantite, unite: l.unite || 'u', prix_unitaire_ht: donne ? (l.prix_unitaire_ht as number) : 0, tva_taux: 10, source_prix: donne ? 'prix donné par l’artisan' : 'à chiffrer' })
+    const parLArtisan = donne && nombresArtisan.has(Math.round((l.prix_unitaire_ht as number) * 100))
+    if (donne && !parLArtisan) aVerifier.push(l.designation)
+    out.push({ designation: l.designation, quantite: l.quantite, unite: l.unite || 'u', prix_unitaire_ht: donne ? (l.prix_unitaire_ht as number) : 0, tva_taux: 10, source_prix: !donne ? 'à chiffrer' : parLArtisan ? 'prix donné par l’artisan' : SOURCE_REPRISE })
   }
-  return { lignes: out, aChiffrer, introuvables }
+  return { lignes: out, aChiffrer, aVerifier, introuvables }
 }
 
 /** Les lignes retirées d'un devis : par position (« 2 », 1 = première) ou par désignation. Rend les indices (0-based) à retirer, et ce qui n'a pas été trouvé. */

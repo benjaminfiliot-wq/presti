@@ -55,9 +55,35 @@ const bloc = src.match(/export type Capacite =([\s\S]*?)type Plan = /)?.[1] ?? '
 const toutes = [...bloc.matchAll(/'([a-z_.]+)'/g)].map((m) => m[1])
 ok(toutes.length >= 20, `type Capacite illisible (${toutes.length} capacités trouvées)`)
 for (const c of toutes) {
-  const dansUneOffre = PAYANTS.some((id) => PLANS[id].capacites.includes(c)) || PLANS.business.capacites.includes(c)
+  const dansUneOffre = PAYANTS.some((id) => PLANS[id].capacites.includes(c)) || PLANS.entreprise.capacites.includes(c) || PLANS.business.capacites.includes(c)
   ok(dansUneOffre || CAPACITES_HORS_FORMULES.includes(c), `la capacité « ${c} » n'est dans aucune offre ni déclarée hors formules`)
 }
+
+// 2 bis. 02/11 (chantier 4) : l'offre Entreprise sur mesure. Elle reprend Signature À L'IDENTIQUE et ajoute les membres d'organisation ;
+// elle reste hors du tunnel en libre-service (ni OFFRES, ni ESSAI_JOURS, ni colonne de la grille) et n'a pas de prix public.
+const ENTREPRISE_ATTENDUE = [...PLANS.signature.capacites, 'organisation.membres']
+ok(JSON.stringify(PLANS.entreprise?.capacites) === JSON.stringify(ENTREPRISE_ATTENDUE), `Entreprise doit valoir Signature plus organisation.membres (lu : ${PLANS.entreprise?.capacites?.join(', ')})`)
+ok(PLANS.entreprise?.surDevis === true && PLANS.entreprise?.prixMois === 0, 'Entreprise : sur devis, sans prix public')
+ok(!P.OFFRES.some((o) => o.id === 'entreprise'), 'Entreprise ne doit pas entrer dans OFFRES (le Checkout en libre-service)')
+ok(!Object.hasOwn(P.ESSAI_JOURS, 'entreprise'), 'Entreprise ne doit pas avoir d’essai sans carte')
+ok(GRILLE_COMPLETE.every((l) => !Object.hasOwn(l.cellules, 'entreprise')), 'la grille publique n’a pas de colonne Entreprise')
+ok(P.offreDeReference('entreprise') === 'signature' && P.offreDeReference('business') === 'signature' && P.offreDeReference('studio') === 'studio' && P.offreDeReference('gratuit') === null, 'offreDeReference : Signature pour Signature, Business et Entreprise ; Studio pour Studio ; rien pour l’essai')
+ok(/Presti pour l’entreprise/.test(P.messageVerrou('organisation.membres')), `messageVerrou('organisation.membres') doit nommer l’offre Entreprise (lu : ${P.messageVerrou('organisation.membres')})`)
+// Studio, Signature, le tunnel, les essais, la promesse d'automatisation et la grille n'ont pas bougé d'un octet (empreintes relevées
+// le 02/11 vers 5 h, AVANT l'ajout de l'Entreprise).
+const { createHash } = await import('node:crypto')
+const empreinte = async (x) => createHash('sha256').update(JSON.stringify(x)).digest('hex')
+const AVANT = {
+  studio: '488dadcb6e126ae7561e2dcd44e85df27ae66979060135a4e7e90c8720e77fcb',
+  signature: '5a4c3086b1a007f14e3e811ea3bee20dfbd66b61746ee1a5ce1ebe5d9ccc8283',
+  offres: '9db31c0e063d63dabcc10e2cdaa1b51770ebe8c149ed47d84f20b8d682025d76',
+  essai: 'bb4f9f97bf486334548cf26490f51b3ce71bf98e38bd3e3989fb8b1fa72be165',
+  automatisation: 'c8e896fd40a88fd67cf92da84b4b1997507734e7b2453582a3f46c003eff3112',
+  grille: '5687bafb906f1adfeea908b5770ccef09f4d4edfc96c57c83b081de664ddee1e',
+}
+const grilleEmpreinte = (g) => g.map((l) => ({ g: l.groupe, l: l.label, c: l.capacites, k: l.cellules, f: l.flag ?? null }))
+const MAINTENANT = { studio: await empreinte(PLANS.studio), signature: await empreinte(PLANS.signature), offres: await empreinte(P.OFFRES), essai: await empreinte(P.ESSAI_JOURS), automatisation: await empreinte(P.AUTOMATISATION), grille: await empreinte(grilleEmpreinte(GRILLE_COMPLETE)) }
+for (const k of Object.keys(AVANT)) ok(MAINTENANT[k] === AVANT[k], `${k} a changé depuis l’ajout de l’Entreprise (empreinte ${MAINTENANT[k].slice(0, 12)}… au lieu de ${AVANT[k].slice(0, 12)}…)`)
 
 // 3. Les cellules disent ce que PLANS dit.
 for (const l of GRILLE_COMPLETE) {
@@ -177,6 +203,13 @@ const m7 = clone(); m7.studio.capacites.push('plateforme.ia.auto')
 ok(contradictionsAuto(m7).some((x) => /\(studio\)/.test(x)), 'mutation 7 non vue : Studio dont la réponse partirait seule contredirait « vous la validez »')
 const m8 = clone(); m8.signature.capacites = m8.signature.capacites.filter((c) => c !== 'relances.auto')
 ok(contradictionsAuto(m8).some((x) => /Relances des conversations.*\(signature\)/.test(x)), 'mutation 8 non vue : Signature sans relances.auto contredirait « elles partent seules »')
+// 02/11 : les mutations de l'Entreprise et de l'empreinte DOIVENT être vues.
+const m9 = clone(); m9.studio.capacites = m9.studio.capacites.filter((c) => c !== 'assistant')
+ok((await empreinte(m9.studio)) !== AVANT.studio, 'mutation 9 non vue : une capacité ôtée à Studio ne change pas son empreinte')
+const m10 = [...P.OFFRES, { id: 'entreprise', label: 'Entreprise', prix: 0, credits: 600, accroche: '' }]
+ok(m10.some((o) => o.id === 'entreprise') && (await empreinte(m10)) !== AVANT.offres, 'mutation 10 non vue : l’Entreprise ajoutée à OFFRES ne change pas l’empreinte du tunnel')
+const m11 = clone(); m11.entreprise.capacites = m11.entreprise.capacites.filter((c) => c !== 'crm')
+ok(JSON.stringify(m11.entreprise.capacites) !== JSON.stringify(ENTREPRISE_ATTENDUE), 'mutation 11 non vue : une Entreprise qui perd le CRM de Signature passerait')
 
 if (echecs.length) {
   console.log(`❌ offres-affichage-qa : ${echecs.length} échec(s) sur ${n} contrôles`)

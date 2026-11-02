@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { Persona } from '@/lib/ai'
 import { peut } from '@/lib/plans'
+import { sujetEscalade } from '@/lib/pilote/regles'
 
 // Panneau de contrôle IA de la plateforme (v4 §A4).
 //
@@ -114,6 +115,17 @@ export async function getPlateformeConfig(artisanId: string): Promise<Plateforme
   return { ...CONFIG_DEFAUT }
 }
 
+/**
+ * Comme getPlateformeConfig, mais une lecture en ERREUR lève au lieu de rendre les réglages par défaut (02/11, contre-audit 032-004, D3) :
+ * pour le pilote, qui doit relire au départ les mots d'escalade, la plage horaire et la limite de l'artisan — un défaut à leur place
+ * laisserait partir ce que l'artisan a interdit. Sans ligne, ou table absente (migration non collée) : les défauts, comme avant.
+ */
+export async function getPlateformeConfigStrict(artisanId: string): Promise<PlateformeConfig> {
+  const { data, error } = await supabaseAdmin.from('plateforme_config').select('*').eq('artisan_id', artisanId).maybeSingle()
+  if (error && !/PGRST205|42P01/.test(`${error.code ?? ''}`)) throw new Error('réglages de la plateforme illisibles : rien ne part')
+  return data ? { ...CONFIG_DEFAUT, ...(data as Partial<PlateformeConfig>) } : { ...CONFIG_DEFAUT }
+}
+
 const sansAccents = (s: string) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 
 /** Un mot d'escalade est-il présent dans le message du prospect ? */
@@ -150,7 +162,7 @@ export type Blocage = 'pause' | 'manuelle' | 'assistee' | 'limite' | 'escalade' 
  */
 export function iaDoitRepondre(
   cfg: PlateformeConfig,
-  ctx: { nbReponsesIA: number; message: string; pause?: boolean },
+  ctx: { nbReponsesIA: number; message: string; pause?: boolean; /** Les derniers messages ENTRANTS du fil (le plus récent d'abord ou non, l'ordre ne compte pas). */ messagesClient?: readonly string[] },
 ): { ok: true } | { ok: false; raison: Blocage; mot?: string } {
   if (ctx.pause) return { ok: false, raison: 'pause' }
   if (cfg.mode_reponse === 'manuelle') return { ok: false, raison: 'manuelle' }
@@ -160,6 +172,13 @@ export function iaDoitRepondre(
   const mot = motEscalade(cfg, ctx.message)
   if (mot) return { ok: false, raison: 'escalade', mot }
   if (cfg.mode_reponse === 'assistee') return { ok: false, raison: 'assistee' }
+  // 02/11 (contre-audit 032-004, I3 ; §3.2 du prompt de Benj : parler au nom de l'artisan sur un sujet d'escalade ne s'automatise jamais) :
+  // une réponse qui PART SEULE lit aussi les sujets qu'aucun réglage ne retire (litige, avocat, plainte, sinistre… : la liste du pilote).
+  // Après le mode assisté : un brouillon que l'artisan relit reste possible.
+  // Troisième audit 032-005 : sur TOUT le fil récent du client (`messagesClient`, comme le pilote relit ses MESSAGES_ESCALADE_RELUS), avec
+  // les mots de l'artisan — sinon « Alors, vous me répondez ? », juste après « mon avocat vous écrira », recevait une réponse seule.
+  const sujet = sujetEscalade([ctx.message, ...(ctx.messagesClient ?? [])], cfg.escalade_mots)
+  if (sujet) return { ok: false, raison: 'escalade', mot: sujet }
   if (ctx.nbReponsesIA >= (cfg.limite_messages ?? 8)) return { ok: false, raison: 'limite' }
   if (!dansLaPlage(cfg)) return { ok: false, raison: 'horaire' }
   return { ok: true }
@@ -198,12 +217,12 @@ export function decisionReponse(
   artisan: { plan?: string | null; leads_pause?: boolean | null },
   lead: { prise_en_main?: boolean | null },
   cfg: PlateformeConfig,
-  ctx: { nbReponsesIA: number; message: string },
+  ctx: { nbReponsesIA: number; message: string; messagesClient?: readonly string[] },
 ): Decision {
   // La main prise sur CE fil prime sur tout : l'artisan a dit « je m'en occupe ».
   if (lead.prise_en_main) return { ok: false, raison: 'humain', comportement: 'silence' }
   const eff = modeEffectif(artisan.plan, cfg)
-  const base = iaDoitRepondre({ ...cfg, mode_reponse: eff.mode }, { nbReponsesIA: ctx.nbReponsesIA, message: ctx.message, pause: artisan.leads_pause === true })
+  const base = iaDoitRepondre({ ...cfg, mode_reponse: eff.mode }, { nbReponsesIA: ctx.nbReponsesIA, message: ctx.message, pause: artisan.leads_pause === true, messagesClient: ctx.messagesClient })
   if (base.ok) return { ok: true }
   if (base.raison === 'assistee') return { ok: false, raison: eff.motif ?? 'assistee', comportement: 'preparer' }
   return { ok: false, raison: base.raison, mot: base.mot, comportement: 'silence' }

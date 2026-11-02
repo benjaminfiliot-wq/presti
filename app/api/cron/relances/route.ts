@@ -25,6 +25,8 @@ import { tourApresChantier } from '@/lib/apresChantierTour'
 import { envoyerPushArtisan } from '@/lib/push'
 import { peut } from '@/lib/plans'
 import { notifierArtisan } from '@/lib/notifications'
+import { historiqueRelances, relanceRecente } from '@/lib/relancesRegistre'
+import { sujetDuFil } from '@/lib/relances'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -82,12 +84,19 @@ export async function GET(req: Request) {
     // Charger le lead
     const { data: lead } = await supabaseAdmin
       .from('leads')
-      .select('id, nom_prospect, contact, message, statut, artisan_id')
+      .select('id, nom_prospect, contact, message, statut, artisan_id, prise_en_main')
       .eq('id', r.lead_id)
       .maybeSingle()
 
     // Lead absent, ou plus en attente (gagné/perdu/nouveau) → on annule la relance
     if (!lead || lead.statut !== 'repondu') {
+      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
+      skipped++
+      continue
+    }
+    // 02/11 (quatrième audit 032-006, E1) : l'artisan a pris la main sur ce fil (« Je prends la main », « Escalader ») — aucune relance
+    // automatique n'y part, ni envoyée ni proposée : elle est annulée.
+    if (lead.prise_en_main === true) {
       await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
       skipped++
       continue
@@ -119,6 +128,20 @@ export async function GET(req: Request) {
 
     // Un prospect ne reçoit qu'une relance par passage ; la suivante reste due et repart demain.
     if (contactes.has(lead.id)) { skipped++; continue }
+    // 02/11 (S4) : le registre commun des relances. Le dossier de cette conversation (ses devis, leurs factures) a-t-il été relancé par un
+    // AUTRE chemin (assistant, pilote, CRM, impayés) depuis moins de 3 jours ? La relance reste due et repart demain ; registre illisible :
+    // pareil (côté sûr). Les relances de conversation gardent leur propre calendrier (table relances).
+    if (relanceRecente(await historiqueRelances(lead.artisan_id, { type: 'lead', id: lead.id }), new Date(), { sauf: 'conversation' }).refus) { skipped++; continue }
+    // 02/11 (quatrième audit 032-006, E1 ; §3.2) : un sujet d'escalade dans le fil (litige, avocat, sinistre, fuite… : la liste toujours
+    // appliquée et les mots de l'artisan, sur les derniers messages du client et sa demande, lib/relances.ts sujetDuFil) — aucune relance
+    // ne part ni ne se propose au nom de l'artisan : elle est annulée, il répond lui-même. Lecture en erreur : elle reste due, rien ne part.
+    let sujet: string | null
+    try { sujet = await sujetDuFil(lead.artisan_id, lead) } catch { skipped++; continue }
+    if (sujet) {
+      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
+      skipped++
+      continue
+    }
     // Prise de la relance AVANT toute dépense (modèle, mail) : la mise à jour est conditionnelle, donc atomique. Un second passage
     // (simultané, rejoué par le bouton, ou après une écriture en panne) ne la prend pas et n'envoie rien.
     const prise = await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id).eq('envoyee', false).select('id')

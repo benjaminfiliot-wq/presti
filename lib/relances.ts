@@ -1,4 +1,19 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getPlateformeConfigStrict } from '@/lib/plateformeConfig'
+import { MESSAGES_ESCALADE_RELUS, sujetEscalade } from '@/lib/pilote/regles'
+
+/**
+ * 02/11 (quatrième audit 032-006, E1 ; §3.2 du prompt de Benj : parler au nom de l'artisan sur un sujet d'escalade ne s'automatise jamais) —
+ * le fil d'une conversation parle-t-il d'un sujet d'escalade ? Ses derniers messages ENTRANTS (MESSAGES_ESCALADE_RELUS) et la demande
+ * d'origine, lus avec les mots de l'artisan (Ma plateforme) et la liste toujours appliquée (sujetEscalade), comme le pilote. Rend le sujet
+ * trouvé, ou null. Une lecture en erreur LÈVE : l'appelant ne laisse rien partir.
+ */
+export async function sujetDuFil(artisanId: string, lead: { id: string; message?: string | null }): Promise<string | null> {
+  const cfg = await getPlateformeConfigStrict(artisanId)
+  const { data, error } = await supabaseAdmin.from('messages').select('contenu').eq('lead_id', lead.id).eq('sens', 'in').order('sent_at', { ascending: false }).limit(MESSAGES_ESCALADE_RELUS)
+  if (error) throw new Error('messages du client illisibles : rien ne part')
+  return sujetEscalade([...(data ?? []).map((m) => (m as { contenu?: unknown }).contenu), lead.message ?? null], cfg.escalade_mots)
+}
 
 // ── Relances automatiques : la cadence, et QUAND on l'arme ────────────────────────────────────
 //

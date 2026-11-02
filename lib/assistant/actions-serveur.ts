@@ -19,6 +19,8 @@
 //    l'artisan l'a demandée dans SON message et aucun texte de tiers n'a été lu dans le tour (ctx.autonome, lib/assistant/cadrage.ts
 //    faitToutSeul). La proposition est alors faite (mêmes contrôles), puis exécutée aussitôt avec ses entrées, et inscrite au journal
 //    des actions comme une action directe (annulable quand un inverse existe). Plafonds inchangés : 30 envois, 200 actions par jour.
+//    SAUF les gestes §3.2 du prompt de Benj du 01/11 (lib/pilote/regles.ts OUTILS_JAMAIS_AUTO : encaissement, facture émise et scellée,
+//    suppressions, lot de prix) : même demandés par l'artisan, ils restent une carte d'un clic, toujours (02/11).
 import { consommerLimite } from '@/lib/limites'
 import { sendEmail } from '@/lib/email'
 import { creerFacture, simulerFacture } from '@/lib/factureDepuisDevis'
@@ -43,7 +45,7 @@ import { POST as noteCreer } from '@/app/api/crm/notes/route'
 import { DELETE as noteSupprimer } from '@/app/api/crm/notes/[id]/route'
 import { POST as membreCreer } from '@/app/api/crm/equipe/route'
 import { DELETE as membreSupprimer } from '@/app/api/crm/equipe/[id]/route'
-import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, resoudreLignes, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
+import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, prixEcrits, resoudreLignes, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
 import { NOMS_ACTIONS, categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
 import { encadrerClient } from './cadrage'
 import { ecrireClasseur, type Cellule, type Feuille } from '@/lib/comptaXlsx'
@@ -52,15 +54,17 @@ import type { FicheAction, MagasinActions, Realisateur, Realisation } from './co
 import type { ResultatExecution } from './boucle'
 import { appelerAvec, clientDeSession, erreurDe, type ContexteSession, type Gestionnaire, type ReponseRoute } from './session'
 import { piloterCarte } from '@/lib/pilote/serveur'
-import { DELAI_ANNULATION_MIN, MARQUE_CONTENU_TIERS, OUTILS_CONTENU_TIERS, typePiloteDeOutil } from '@/lib/pilote/regles'
+import { DELAI_ANNULATION_MIN, LIBELLE_MOTIF, MARQUE_CONTENU_TIERS, OUTILS_CONTENU_TIERS, jamaisAutomatique, prixSources, raisonJamaisAuto, typePiloteDeOutil } from '@/lib/pilote/regles'
 import { actionsTout } from './actions-tout'
+import { historiqueRelances, phraseRefus, relanceRecente, RELANCE_DELAI_JOURS as DELAI_REGISTRE, type ObjetRelance } from '@/lib/relancesRegistre'
 
 /** Envois (e-mail ou message à un client) que l'assistant peut faire partir en un jour pour un compte. */
 export const ENVOIS_JOUR_MAX = 30
 /** Actions (directes et cartes) qu'un compte peut faire proposer ou faire en un jour : borne le travail et l'envoi en masse. */
 export const ACTIONS_JOUR_MAX = 200
 /** Une relance n'est pas redemandée avant ce délai. */
-export const RELANCE_DELAI_JOURS = 3
+// 02/11 (S4) : le délai vit dans le registre commun des relances (lib/relancesRegistre.ts), lu par les quatre chemins.
+export const RELANCE_DELAI_JOURS = DELAI_REGISTRE
 const LOT_TARIFS_MAX = 300
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -75,6 +79,8 @@ export type DependancesActions = {
   /** La simulation d'une facture de situation ou de solde (0176) : le montant exact de la carte, sans rien émettre. */
   simulerFacture?: typeof simulerFacture
   envoyerMail?: typeof sendEmail
+  /** 02/11 (S4) : le registre commun des relances (essais : en mémoire). */
+  historiqueRelances?: typeof historiqueRelances
   maintenant?: () => Date
   /** L'appel des routes de l'interface (essais : une doublure qui enregistre la route atteinte, sans réseau). */
   appeler?: (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> }) => Promise<ReponseRoute>
@@ -95,13 +101,23 @@ export type ContexteActions = ContexteSession & {
   /**
    * 29/10 — mode « fait tout seul » : vrai quand l'ARTISAN a demandé une action dans SON message et qu'aucun texte écrit par un tiers
    * n'a été lu dans le tour (lu au moment d'agir : lib/assistant/cadrage.ts faitToutSeul). Absent ou faux : une action à confirmer
-   * reste une carte.
+   * reste une carte. Jamais lu pour un geste de OUTILS_JAMAIS_AUTO (lib/pilote/regles.ts, §3.2) : celui-là reste une carte, toujours.
    */
   autonome?: () => boolean
+  /**
+   * 02/11 (contre-audit 032-004, D1 bis) — ce que l'ARTISAN a écrit lui-même dans la conversation (son message, ses messages de
+   * l'historique ; jamais une réponse de l'assistant ni une donnée lue) : seul un prix qui y figure prend la provenance « prix donné par
+   * l'artisan » (lib/assistant/cartes.ts resoudreLignes). Absent : aucun prix n'est le sien (côté sûr).
+   */
+  textesArtisan?: readonly string[]
 }
 
 type Obj = Record<string, unknown>
-type Preparation = { ok: true; entrees: Obj; apercu: Apercu; objet?: { type: TypeObjet; id: string } | null } | { ok: false; erreur: string }
+/**
+ * `horsAuto` (02/11, audit 032-001 D1) : la préparation refuse le mode « fait tout seul » pour SON objet et dit pourquoi (un devis
+ * dont un prix n'est pas sourcé) ; l'action reste alors une carte, comme un geste de OUTILS_JAMAIS_AUTO.
+ */
+type Preparation = { ok: true; entrees: Obj; apercu: Apercu; objet?: { type: TypeObjet; id: string } | null; horsAuto?: string } | { ok: false; erreur: string }
 
 const num = (v: unknown): number => { const n = Number(v); return Number.isFinite(n) ? n : 0 }
 const txt = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null)
@@ -136,6 +152,17 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
   const aujourdhui = () => jourParis(maintenant())
   const route = (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> } = {}) => (dep.appeler ? dep.appeler(g, chemin, o) : appelerAvec(ctx, g, chemin, o))
   const sansCrm = ko('Le CRM n’est pas ouvert sur ce compte.')
+  // 02/11 (D1 bis, puis troisième audit A3) : les PRIX que l'artisan a écrits lui-même (un nombre marqué « € », « HT », « le m² »…), seuls à
+  // pouvoir faire un « prix donné par l'artisan » sur une ligne, ou un prix de sa bibliothèque de tarifs.
+  const nombresArtisan = prixEcrits(ctx.textesArtisan ?? [])
+  const prixDeLArtisan = (v: unknown): boolean => { const n = Number(v); return Number.isFinite(n) && n > 0 && nombresArtisan.has(Math.round(n * 100)) }
+  const prixNonDonne = (v: unknown) => ko(`Le prix ${fmtEuros(num(v))} HT ne vient pas de ce que l'artisan t'a écrit (une donnée lue, un autre devis ou ta propre réponse n'en sont pas la source) : rien n'a été enregistré. Demande-lui son prix, en chiffres avec « € » ou « HT ».`)
+  // 02/11 (S4) : avant toute relance (proposée ou envoyée), le registre commun des quatre chemins (assistant et pilote, CRM, impayés,
+  // conversation) : déjà relancé depuis moins de RELANCE_DELAI_JOURS jours, ou registre illisible = rien ne part. Rend la phrase du refus.
+  async function registre(objet: ObjetRelance): Promise<string | null> {
+    const v = relanceRecente(await (dep.historiqueRelances ?? historiqueRelances)(ctx.uid, objet), maintenant())
+    return v.refus ? phraseRefus(v, (iso) => { const t = new Date(iso); return Number.isFinite(t.getTime()) ? fmtDate(jourParis(t)) : 'récemment' }) : null
+  }
 
   // ── Lectures sous la session (RLS) ───────────────────────────────────────────────────────────────
   type DevisRow = { id: string; numero: string | null; statut: string | null; objet: string | null; client_nom: string | null; client_email: string | null; client_adresse: string | null; total_ht: number | string | null; total_tva: number | string | null; total_ttc: number | string | null; remise_pct: number | string | null; acompte_pct: number | string | null; validite_jours: number | null; conditions: string | null; notes: string | null; lead_id: string | null; envoye_le: string | null }
@@ -221,7 +248,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     }
     const lignes = (e.lignes as LigneEntree[]) ?? []
     const tarifs = await tarifsParIds(lignes.map((l) => l.tarif_id).filter((x): x is string => !!x))
-    const r = resoudreLignes(lignes, tarifs)
+    const r = resoudreLignes(lignes, tarifs, nombresArtisan)
     if (r.introuvables.length) return ko(`Tarif introuvable dans la bibliothèque de l'artisan : ${r.introuvables.slice(0, 3).join(' ; ')}. Relis-les avec lire_tarifs.`)
     const rep = await route(devisCreer, '/api/devis', {
       corps: { objet: e.objet, client_nom: client, client_email: email, remise_pct: e.remise_pct ?? 0, acompte_pct: e.acompte_pct ?? 0, validite_jours: e.validite_jours ?? undefined, conditions: e.conditions, lignes: r.lignes },
@@ -236,13 +263,14 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
       donnees: {
         numero, statut: 'brouillon', client_renseigne: !!client, nb_lignes: r.lignes.length,
         total_ht: num(d?.total_ht), total_tva: num(d?.total_tva), total_ttc: num(d?.total_ttc),
-        lignes_a_chiffrer: r.aChiffrer, lignes_au_tarif_de_l_artisan: lignes.filter((l) => l.tarif_id).length,
+        lignes_a_chiffrer: r.aChiffrer, lignes_prix_a_verifier: r.aVerifier, lignes_au_tarif_de_l_artisan: lignes.filter((l) => l.tarif_id).length,
         e_mail_client_present: !!email,
-        a_savoir: "Devis BROUILLON créé : rien n'est envoyé. Les totaux sont ceux calculés par Presti (cite-les tels quels)." + (r.aChiffrer.length ? ` Des lignes n'ont AUCUN prix (à chiffrer) : dis-le et demande-le à l'artisan.` : '') + (email ? '' : " Le client n'a pas d'e-mail : il faudra le renseigner avant l'envoi."),
+        a_savoir: "Devis BROUILLON créé : rien n'est envoyé. Les totaux sont ceux calculés par Presti (cite-les tels quels)." + (r.aChiffrer.length ? ` Des lignes n'ont AUCUN prix (à chiffrer) : dis-le et demande-le à l'artisan.` : '')
+          + (r.aVerifier.length ? " Des prix viennent d'une donnée lue ou de ta propre réponse, pas de l'artisan : dis-lui de les vérifier. Le devis ne partira pas sans qu'il les confirme." : '') + (email ? '' : " Le client n'a pas d'e-mail : il faudra le renseigner avant l'envoi."),
       },
       apercu: {
-        lignes: [{ label: 'Client', valeur: client ?? '—' }, { label: 'Objet', valeur: String(e.objet ?? '') }, { label: 'Lignes', valeur: String(r.lignes.length) }, { label: 'Total TTC', valeur: fmtEuros(d?.total_ttc) }, ...(r.aChiffrer.length ? [{ label: 'À chiffrer', valeur: r.aChiffrer.join(' ; ') }] : [])],
-        alertes: r.aChiffrer.length ? [`${r.aChiffrer.length} ligne(s) sans prix : à chiffrer avant l’envoi.`] : [],
+        lignes: [{ label: 'Client', valeur: client ?? '—' }, { label: 'Objet', valeur: String(e.objet ?? '') }, { label: 'Lignes', valeur: String(r.lignes.length) }, { label: 'Total TTC', valeur: fmtEuros(d?.total_ttc) }, ...(r.aChiffrer.length ? [{ label: 'À chiffrer', valeur: r.aChiffrer.join(' ; ') }] : []), ...(r.aVerifier.length ? [{ label: 'Prix à vérifier', valeur: r.aVerifier.join(' ; ') }] : [])],
+        alertes: [...(r.aChiffrer.length ? [`${r.aChiffrer.length} ligne(s) sans prix : à chiffrer avant l’envoi.`] : []), ...(r.aVerifier.length ? [`${r.aVerifier.length} prix repris d’une donnée : à vérifier avant l’envoi.`] : [])],
         lien: lienDe('devis', id),
       },
     }
@@ -261,7 +289,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (ret.introuvables.length) return ko(`Ligne(s) à retirer introuvable(s) : ${ret.introuvables.join(' ; ')}. Positions : 1 à ${avant.length}.`)
     const ajout = (e.ajouter_lignes as LigneEntree[]) ?? []
     const tarifs = await tarifsParIds(ajout.map((l) => l.tarif_id).filter((x): x is string => !!x))
-    const r = resoudreLignes(ajout, tarifs)
+    const r = resoudreLignes(ajout, tarifs, nombresArtisan)
     if (r.introuvables.length) return ko(`Tarif introuvable dans la bibliothèque de l'artisan : ${r.introuvables.slice(0, 3).join(' ; ')}.`)
     const gardees = avant.filter((_, i) => !ret.indices.includes(i))
     const sur: Obj = {}
@@ -278,7 +306,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     return {
       ok: true, resume: `devis ${d.numero} modifié`, objet: { type: 'devis', id: d.id },
       annulation: { outil: 'restaurer_devis', entrees: { devis_id: d.id, corps: corpsDevis(d, avant) }, libelle: `Remettre le devis ${d.numero} comme avant` },
-      donnees: { numero: d.numero, lignes_ajoutees: r.lignes.length, lignes_retirees: ret.indices.length, total_ht: num(apres?.total_ht), total_ttc: num(apres?.total_ttc), lignes_a_chiffrer: r.aChiffrer, a_savoir: 'Totaux recalculés par Presti : cite-les tels quels.' },
+      donnees: { numero: d.numero, lignes_ajoutees: r.lignes.length, lignes_retirees: ret.indices.length, total_ht: num(apres?.total_ht), total_ttc: num(apres?.total_ttc), lignes_a_chiffrer: r.aChiffrer, lignes_prix_a_verifier: r.aVerifier,
+        a_savoir: 'Totaux recalculés par Presti : cite-les tels quels.' + (r.aVerifier.length ? " Des prix ajoutés viennent d'une donnée lue ou de ta propre réponse, pas de l'artisan : dis-lui de les vérifier ; le devis ne partira pas sans qu'il les confirme." : '') },
       apercu: {
         lignes: [{ label: 'Devis', valeur: String(d.numero) }, { label: 'Lignes ajoutées', valeur: String(r.lignes.length) }, { label: 'Lignes retirées', valeur: String(ret.indices.length) }],
         avant_apres: [{ libelle: 'Total TTC', avant: fmtEuros(d.total_ttc), apres: fmtEuros(apres?.total_ttc) }],
@@ -340,6 +369,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!to || !EMAIL.test(to)) return ko('Le devis n’a pas d’e-mail client.')
     const p = await profil()
     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+    const reg = await registre({ type: 'devis', id: d.id })
+    if (reg) return ko(reg)
     const echec = await envoyerRelance(to, t.objet, t.texte)
     return echec ?? { ok: true, resume: `relance du devis ${d.numero} envoyée au client`, objet: { type: 'devis', id: d.id } }
   }
@@ -386,6 +417,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!to || !EMAIL.test(to)) return ko('La facture n’a pas d’e-mail client.')
     const p = await profil()
     const t = texteRelanceFacture({ client: f.client_nom, numero: String(f.numero), totalTtc: f.total_ttc === null ? null : num(f.total_ttc), echeance: f.date_echeance, joursRetard: joursDepuis(f.date_echeance), artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+    const reg = await registre({ type: 'facture', id: f.id })
+    if (reg) return ko(reg)
     const echec = await envoyerRelance(to, t.objet, t.texte)
     return echec ?? { ok: true, resume: `relance de la facture ${f.numero} envoyée au client`, objet: { type: 'facture', id: f.id } }
   }
@@ -415,6 +448,9 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     return !error && (data ?? []).length === 1
   }
   R.ajouter_tarif = async (e) => {
+    // 02/11 (troisième audit 032-005, A2) : la bibliothèque de tarifs n'enregistre que le prix que l'artisan a écrit lui-même. Sinon une
+    // estimation lue dans un autre devis y devenait « tarif de l'artisan », et le devis fait avec partait seul.
+    if (!prixDeLArtisan(e.prix_ht)) return prixNonDonne(e.prix_ht)
     const designation = String(e.designation)
     const fournisseur = txt(e.fournisseur), reference = txt(e.reference)
     const avant = await tarifParCle(designation, fournisseur, reference)
@@ -437,6 +473,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     return rep.status === 200 ? { ok: true, resume: 'tarif retiré' } : ko(objetErreur(rep, 'Suppression impossible.'))
   }
   R.modifier_tarif = async (e) => {
+    // 02/11 (troisième audit 032-005, A2) : même règle que ajouter_tarif — un « ordre de grandeur » donné par l'assistant n'est pas un tarif.
+    if (!prixDeLArtisan(e.prix_ht)) return prixNonDonne(e.prix_ht)
     const t = await tarifDe(String(e.tarif_id))
     if (!t) return ko('Tarif introuvable dans la bibliothèque de l’artisan (relis-le avec lire_tarifs).')
     const ancien = num(t.prix_ht)
@@ -840,13 +878,19 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     }
     if (!email) return ko('Le client n’a pas d’e-mail sur ce devis : renseigne-le d’abord (modifier_devis avec client_email, si l’artisan te l’a donné).')
     const deja = d.statut === 'envoye'
+    // 02/11 (audit 032-001, D1 ; §3.2 du prompt de Benj : « envoyer un devis […] avec un prix sans source » ne s'automatise jamais ;
+    // promesse de lib/plans.ts) : une ligne au prix estimé, à chiffrer ou nul, et le devis ne part JAMAIS d'office, même demandé —
+    // LA règle du pilote et de « Tout auto » (lib/pilote/regles.ts prixSources). Lignes illisibles : pareil (côté sûr). La carte le dit ;
+    // confirmée d'un clic par l'artisan, elle part comme avant.
+    const sources = await lignesDe(d.id).then((l) => prixSources(l), () => false)
     const mail = mailDevis({ numero: d.numero, client_nom: d.client_nom, objet: d.objet, validite_jours: d.validite_jours }, p.nom)
     return {
-      ok: true, entrees: { ...e }, objet: { type: 'devis', id: d.id },
+      ok: true, entrees: { ...e }, objet: { type: 'devis', id: d.id }, ...(sources ? {} : { horsAuto: LIBELLE_MOTIF.prix_non_source }),
       apercu: apercu(`Envoyer le devis ${d.numero} à ${d.client_nom ?? 'votre client'}`, {
         lignes: [{ label: 'À', valeur: email }, { label: 'Devis', valeur: `${d.numero} — ${d.objet ?? 'sans objet'}` }, { label: 'Total TTC', valeur: fmtEuros(d.total_ttc) }, { label: 'Pièce jointe', valeur: `${d.numero}.pdf` }],
         message: { a: email, objet: mail.subject, texte: mail.text },
-        alertes: [...(deja ? ['Ce devis a déjà été envoyé : il repartira une seconde fois.'] : []), ...(repris ? ['L’e-mail est celui de la conversation du client.'] : [])],
+        alertes: [...(deja ? ['Ce devis a déjà été envoyé : il repartira une seconde fois.'] : []), ...(repris ? ['L’e-mail est celui de la conversation du client.'] : []),
+          ...(sources ? [] : ['Une ligne a un prix estimé, à chiffrer ou nul : relisez-la avant de confirmer.'])],
         irreversible: true,
       }),
     }
@@ -860,6 +904,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!to || !EMAIL.test(to)) return ko('Le devis n’a pas d’e-mail client : pas de relance par e-mail possible.')
     const dernier = await ctx.magasin.dernierEnvoi(ctx.uid, 'relancer_devis', d.id).catch(() => null)
     if (dernier && Date.now() - Date.parse(dernier) < RELANCE_DELAI_JOURS * 86_400_000) return ko(`Ce devis a déjà été relancé le ${fmtDate(jourParis(new Date(dernier)))} : on ne renvoie pas de message avant ${RELANCE_DELAI_JOURS} jours.`)
+    const regP = await registre({ type: 'devis', id: d.id })
+    if (regP) return ko(regP)
     const p = await profil()
     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
     return { ok: true, entrees: { ...e }, objet: { type: 'devis', id: d.id }, apercu: apercu(`Relancer ${d.client_nom ?? 'le client'} pour le devis ${d.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Devis', valeur: `${d.numero} — ${fmtEuros(d.total_ttc)} TTC` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true }) }
@@ -940,6 +986,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!to || !EMAIL.test(to)) return ko(`La facture ${f.numero} n'a pas d'e-mail client : pas de relance par e-mail possible.`)
     const dernier = await ctx.magasin.dernierEnvoi(ctx.uid, 'relancer_facture', f.id).catch(() => null)
     if (dernier && Date.now() - Date.parse(dernier) < RELANCE_DELAI_JOURS * 86_400_000) return ko(`Cette facture a déjà été relancée le ${fmtDate(jourParis(new Date(dernier)))} : on ne renvoie pas de message avant ${RELANCE_DELAI_JOURS} jours.`)
+    const regP = await registre({ type: 'facture', id: f.id })
+    if (regP) return ko(regP)
     const p = await profil()
     const t = texteRelanceFacture({ client: f.client_nom, numero: String(f.numero), totalTtc: f.total_ttc === null ? null : num(f.total_ttc), echeance: f.date_echeance, joursRetard: retard, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
     return { ok: true, entrees: { ...e }, objet: { type: 'facture', id: f.id }, apercu: apercu(`Relancer ${f.client_nom ?? 'le client'} — facture ${f.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Facture', valeur: `${f.numero} — ${fmtEuros(f.total_ttc)} TTC` }, { label: 'Retard', valeur: `${retard} jour${retard > 1 ? 's' : ''}` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true, lien: lienDe('facture', f.id) }) }
@@ -1012,7 +1060,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     if (!client) return ko('Le nom du client manque : c’est une mention obligatoire de la facture. Demande-le à l’artisan.')
     const lignes = (e.lignes as LigneEntree[]) ?? []
     const tarifs = await tarifsParIds(lignes.map((l) => l.tarif_id).filter((x): x is string => !!x))
-    const r = resoudreLignes(lignes, tarifs)
+    const r = resoudreLignes(lignes, tarifs, nombresArtisan)
     if (r.introuvables.length) return ko(`Tarif introuvable dans la bibliothèque de l'artisan : ${r.introuvables.slice(0, 3).join(' ; ')}. Relis-les avec lire_tarifs.`)
     if (r.aChiffrer.length) return ko(`Ligne(s) sans prix : ${r.aChiffrer.slice(0, 4).join(' ; ')}. Une facture ne s’émet pas avec une ligne à 0 € : demande le prix à l’artisan (ou utilise un tarif de lire_tarifs). Rien n’a été émis.`)
     const tva = typeof e.tva_taux === 'number' ? e.tva_taux : null
@@ -1360,9 +1408,14 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
     const p = await P[nom](entree)
     if (!p.ok) return { donnees: { ok: false, erreur: p.erreur }, resume: p.erreur.slice(0, 280), resultat: 'refus' }
     // 29/10 — MODE « FAIT TOUT SEUL » (choix de Benj) : l'artisan a demandé l'action dans SON message et aucun texte de tiers n'a été lu
-    // dans ce tour → la proposition (mêmes contrôles, même aperçu) est exécutée aussitôt, avec SES entrées (lot de prix, TTC annoncé…),
+    // dans ce tour → la proposition (mêmes contrôles, même aperçu) est exécutée aussitôt, avec SES entrées (TTC annoncé…),
     // et inscrite au journal comme une action faite. Les plafonds d'envois et d'actions sont ceux des réalisations et de plafondJour.
-    if (ctx.autonome?.() === true) {
+    // 02/11 — §3.2 du prompt de Benj du 01/11 : un geste de OUTILS_JAMAIS_AUTO (lib/pilote/regles.ts, la liste même du pilote :
+    // encaissement, facture émise et scellée, suppression, lot de prix) ne s'exécute JAMAIS d'office, même demandé : carte d'un clic.
+    const jamaisSeul = jamaisAutomatique(nom)
+    // 02/11 (audit 032-001, D1) : la préparation peut aussi refuser le mode pour SON objet (un devis à prix non sourcé) : carte.
+    const horsAuto = p.horsAuto ?? null
+    if (!jamaisSeul && !horsAuto && ctx.autonome?.() === true) {
       const r = await R[nom](p.entrees)
       if (!r.ok) return { donnees: { ok: false, erreur: r.erreur, rien_n_a_ete_fait: true }, resume: `demandée par l’artisan, non faite : ${r.erreur}`.slice(0, 280), resultat: 'refus' }
       const objet = r.objet ?? p.objet ?? null
@@ -1371,7 +1424,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
       return {
         donnees: {
           ok: true, fait: r.resume, fait_tout_seul: true, annulable_par_l_artisan: annulable,
-          a_savoir: `C'est FAIT : l'artisan te l'a demandé lui-même, l'action est exécutée sans carte à confirmer. Dis-le simplement (« c'est fait : … »)${annulable ? ", et qu'il peut l'annuler d'un clic sous ta réponse" : " ; elle ne se défait pas d'un clic"}.`,
+          a_savoir: `C'est FAIT : l'artisan te l'a demandé lui-même, l'action est exécutée sans attendre de confirmation. Dis-le simplement (« c'est fait : … »)${annulable ? ", et qu'il peut l'annuler d'un clic sous ta réponse" : " ; elle ne se défait pas d'un clic"}.`,
           ...(nonEnregistre ? JOURNAL_INDISPONIBLE : {}), ...(r.donnees ?? {}),
         },
         resume: `faite à la demande de l’artisan : ${r.resume}`.slice(0, 280), objet, ...(carte ? { carte } : {}), ...(r.brouillon ? { brouillon: r.brouillon } : {}),
@@ -1392,7 +1445,11 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
       donnees: { ok: true, en_attente_de_confirmation: true, carte: p.apercu.titre, contenu_de_la_carte: [...p.apercu.lignes.filter((l) => !['Client', 'À'].includes(l.label)).map((l) => `${l.label} : ${l.valeur}`), ...p.apercu.alertes],
         a_savoir: auto
           ? `RIEN n'est encore parti. Le pilote automatique de l'artisan enverra cette action seule à ${new Date(auto.part_le).toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })} (dans ${DELAI_ANNULATION_MIN} minutes), sauf s'il l'annule (Paramètres → Pilote automatique, ou le poste des assistants du CRM). Dis-le clairement.`
-          : `RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé.${ctx.autonome ? " (Elle n'a pas été faite d'office parce que l'artisan ne l'a pas demandée lui-même dans ce message, ou parce qu'un texte écrit par un client ou un fournisseur a été lu dans ce tour.)" : ''}`,
+          : `RIEN n'a été fait. Une carte attend le clic de l'artisan (bouton « Confirmer ») sous ta réponse. Dis-le clairement : ne prétends jamais que c'est envoyé, émis ou supprimé.${jamaisSeul
+            ? ` Ce geste ne se fait JAMAIS d'office, même quand l'artisan le demande lui-même : ${raisonJamaisAuto(nom)}. Dis-lui pourquoi en une phrase : c'est lui qui confirme d'un clic.`
+            : horsAuto ? ` Elle ne se fait pas d'office, même demandée : ${horsAuto} Dis-lui pourquoi en une phrase : c'est lui qui relit et confirme d'un clic.`
+            : ctx.autonome ? " (Elle n'a pas été faite d'office parce que l'artisan ne l'a pas demandée lui-même dans ce message, parce que son message était une question, ou parce qu'un texte écrit par un client ou un fournisseur a été lu dans ce tour.)" : ''}`,
+        ...(jamaisSeul ? { jamais_d_office: true, pourquoi_une_carte: raisonJamaisAuto(nom) } : horsAuto ? { pas_d_office: true, pourquoi_une_carte: horsAuto } : {}),
         ...(auto ? { pilote_automatique: { part_le: auto.part_le } } : {}) },
       resume: `proposée, en attente de confirmation : ${p.apercu.titre}`.slice(0, 280), objet: p.objet ?? null, carte: versCarte(fiche),
     }

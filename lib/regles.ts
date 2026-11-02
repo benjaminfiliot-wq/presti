@@ -4,7 +4,7 @@
 //   « Quand l'assistant a qualifié le besoin [et reçu au moins une photo]
 //      → créer un devis brouillon avec le modèle X → me notifier
 //      → si je valide → l'envoyer dans la conversation
-//      → quand le client accepte → créer la facture d'acompte de N % »
+//      → quand le client accepte → créer la facture d'acompte de N % (ou me la préparer, émise d'un clic) »
 //
 // Deux principes non négociables (audit v5 §11) :
 //  - aucun envoi au client sans le maillon « validation » quand il est activé ;
@@ -28,8 +28,14 @@ export type Maillons = {
   validation: boolean
   /** Après validation (ou sans validation si désactivée) : envoyer dans la conversation. */
   envoyer_apres_validation: boolean
-  /** À l'acceptation par le client : facture d'acompte de N %. null = pas de facture auto. */
+  /** À l'acceptation par le client : facture d'acompte de N %. null = pas de facture d'acompte. */
   acompte_pct: number | null
+  /**
+   * 02/11 (décision de Benj) : la facture d'acompte part SEULE (émise et scellée à l'acceptation), ou elle est PRÉPARÉE et l'artisan
+   * l'émet d'un clic. Au choix de l'artisan ; seule par défaut, comme avant. Réservé, comme toute la règle, aux offres qui portent
+   * `plateforme.regles` (verrou serveur dans lib/reglesServeur.ts).
+   */
+  acompte_seul: boolean
 }
 
 export type Prereglage = 'prudent' | 'equilibre' | 'reactif' | 'tout_auto' | 'perso'
@@ -39,22 +45,22 @@ export const PREREGLAGES: Record<Exclude<Prereglage, 'perso'>, { nom: string; ph
   prudent: {
     nom: 'Prudent',
     phrase: 'L’assistant qualifie, vous faites le reste.',
-    maillons: { devis_auto: false, photo_requise: true, modele: 'standard', notifier: true, validation: true, envoyer_apres_validation: false, acompte_pct: null },
+    maillons: { devis_auto: false, photo_requise: true, modele: 'standard', notifier: true, validation: true, envoyer_apres_validation: false, acompte_pct: null, acompte_seul: true },
   },
   equilibre: {
     nom: 'Équilibré',
     phrase: 'Un brouillon de devis vous attend, rien ne part sans vous.',
-    maillons: { devis_auto: true, photo_requise: true, modele: 'pro', notifier: true, validation: true, envoyer_apres_validation: true, acompte_pct: null },
+    maillons: { devis_auto: true, photo_requise: true, modele: 'pro', notifier: true, validation: true, envoyer_apres_validation: true, acompte_pct: null, acompte_seul: true },
   },
   reactif: {
     nom: 'Réactif',
     phrase: 'Devis prêt sans photo, vous validez, l’acompte suit l’acceptation.',
-    maillons: { devis_auto: true, photo_requise: false, modele: 'pro', notifier: true, validation: true, envoyer_apres_validation: true, acompte_pct: 30 },
+    maillons: { devis_auto: true, photo_requise: false, modele: 'pro', notifier: true, validation: true, envoyer_apres_validation: true, acompte_pct: 30, acompte_seul: true },
   },
   tout_auto: {
     nom: 'Tout auto',
     phrase: 'Le devis part seul dans la conversation, l’acompte se facture à l’acceptation.',
-    maillons: { devis_auto: true, photo_requise: false, modele: 'pro', notifier: true, validation: false, envoyer_apres_validation: true, acompte_pct: 30 },
+    maillons: { devis_auto: true, photo_requise: false, modele: 'pro', notifier: true, validation: false, envoyer_apres_validation: true, acompte_pct: 30, acompte_seul: true },
   },
 }
 
@@ -74,6 +80,8 @@ export function normaliserMaillons(brut: unknown): Maillons {
     validation: b('validation', MAILLONS_DEFAUT.validation),
     envoyer_apres_validation: b('envoyer_apres_validation', MAILLONS_DEFAUT.envoyer_apres_validation),
     acompte_pct: pct,
+    // Une règle écrite avant le 02/11 n'a pas ce maillon : elle garde son comportement (la facture d'acompte part seule).
+    acompte_seul: b('acompte_seul', true),
   }
 }
 
@@ -86,7 +94,7 @@ export function phraseRegle(m: Maillons): string {
     m.notifier ? 'me notifier' : null,
     m.validation ? 'si je valide' : null,
     m.envoyer_apres_validation ? 'l’envoyer dans la conversation' : null,
-    m.acompte_pct ? `quand le client accepte → créer la facture d’acompte de ${m.acompte_pct} %` : null,
+    m.acompte_pct ? (m.acompte_seul ? `quand le client accepte → créer la facture d’acompte de ${m.acompte_pct} %` : `quand le client accepte → me préparer la facture d’acompte de ${m.acompte_pct} % (je l’émets d’un clic)`) : null,
   ].filter(Boolean)
   return parts.join(' → ') + '.'
 }
@@ -126,4 +134,9 @@ export function decider(m: Maillons, actif: boolean, ctx: ContexteConversation):
 /** Le pourcentage d'acompte à facturer à l'acceptation, ou null. */
 export function acompteALAcceptation(m: Maillons, actif: boolean): number | null {
   return actif && m.acompte_pct ? m.acompte_pct : null
+}
+
+/** 02/11 : la facture d'acompte part-elle seule (true), ou est-elle préparée pour un clic de l'artisan (false) ? */
+export function acompteSeul(m: Maillons): boolean {
+  return m.acompte_seul !== false
 }

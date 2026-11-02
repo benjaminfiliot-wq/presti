@@ -91,10 +91,13 @@ export default function Automatisations({ uid, plan }: Props) {
           <label className="prof-toggle"><input type="checkbox" checked={m.validation} disabled={!reglesOk} onChange={(e) => set('validation', e.target.checked)} /><span><Maillon on={m.validation}>Attendre ma validation</Maillon> avant que le devis parte{!m.validation ? <em className="regle-alerte"> — sans ce maillon, le devis part seul dans la conversation</em> : null}</span></label>
           <label className="prof-toggle"><input type="checkbox" checked={m.envoyer_apres_validation} disabled={!reglesOk} onChange={(e) => set('envoyer_apres_validation', e.target.checked)} /><span><Maillon on={m.envoyer_apres_validation}>L’envoyer dans la conversation</Maillon>{m.validation ? ' une fois validé' : ' immédiatement'}</span></label>
           <div className="prof-toggle" style={{ alignItems: 'center' }}>
-            <input type="checkbox" checked={m.acompte_pct != null} onChange={(e) => set('acompte_pct', e.target.checked ? 30 : null)} />
+            <input type="checkbox" checked={m.acompte_pct != null} disabled={!reglesOk} onChange={(e) => set('acompte_pct', e.target.checked ? 30 : null)} />
             <span>Quand le client accepte, <Maillon on={m.acompte_pct != null}>créer la facture d’acompte</Maillon> de
               <input type="number" min={5} max={100} step={5} value={m.acompte_pct ?? 30} disabled={m.acompte_pct == null} onChange={(e) => set('acompte_pct', Math.max(5, Math.min(100, Number(e.target.value) || 30)))} style={{ width: 70, margin: '0 .4rem', display: 'inline-block' }} /> %</span>
           </div>
+          {m.acompte_pct != null ? (
+            <label className="prof-toggle"><input type="checkbox" checked={m.acompte_seul} disabled={!reglesOk} onChange={(e) => set('acompte_seul', e.target.checked)} /><span><Maillon on={m.acompte_seul}>L’émettre seule</Maillon>{m.acompte_seul ? ' : elle est numérotée et scellée dès l’acceptation' : ' : non, elle vous attend et vous l’émettez d’un clic'}</span></label>
+          ) : null}
         </div>
 
         <p className="muted" style={{ fontSize: '.82rem', margin: '1rem 0 0' }}>Garde-fous, quoi que vous régliez : jamais deux devis automatiques pour une même conversation ; rien ne part jamais sans les mentions obligatoires (SIRET, assurance) ; si vous prenez la main sur une conversation, la règle s’y tait.</p>

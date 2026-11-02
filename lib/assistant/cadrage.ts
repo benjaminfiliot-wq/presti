@@ -117,6 +117,134 @@ const MOTS_ACTION = [
 const RE_ACTION = / (nouveau|nouvelle|nouvel|autre) (devis|facture|client|article|tarif|prix|chantier|tache|rappel|liste|commande|note) /
 const PROPOSITION = /voulez vous|souhaitez vous|dois je|je peux|puis je|veux tu/
 
+// 02/11 (§3.2 du prompt de Benj du 01/11) — une QUESTION n'est jamais une demande d'action exécutée d'office : « Quels devis dois-je
+// relancer ? » contient « relanc », mais l'artisan demande une liste, pas un envoi. Les mots qui OUVRENT une question, sur le texte
+// normalisé (« où » y devient « ou », « qu'est-ce » « qu est ce », « y a-t-il » « y a t il »).
+const MOTS_QUESTION = [
+  'quel', 'quels', 'quelle', 'quelles', 'combien', 'est ce que', 'est ce qu', 'qu est ce', 'pourquoi', 'comment', 'ou', 'quand', 'qui',
+  'lequel', 'laquelle', 'lesquels', 'lesquelles', 'auquel', 'auxquels', 'duquel', 'desquels',
+  'dois je', 'devrais je', 'faut il', 'faudrait il', 'ai je', 'suis je', 'puis je', 'peut on', 'y a t il', 'y en a t il', 'a t il', 'a t elle',
+  'est il', 'est elle', 'sont ils', 'sont elles', 'as tu', 'avez vous', 'peux tu', 'pouvez vous', 'pourrais tu', 'pourriez vous',
+  'sais tu', 'savez vous', 'je voudrais savoir', 'j aimerais savoir', 'je me demande', 'dis moi', 'dites moi',
+  // 02/11 (audit 032-001, D2) : les questions sans « ? » qu'il laissait passer en ordre (« Est-ce utile de relancer Dupont », « Vaut-il
+  // mieux relancer ou attendre », « Tu penses qu'il faut relancer », « Je me demandais s'il fallait… », « Et si on relançait… »).
+  'est ce', 'vaut il', 'vaudrait il', 'serait il', 'serait ce', 'ce serait', 'tu penses', 'vous pensez', 'tu crois', 'vous croyez',
+  'tu trouves', 'vous trouvez', 'je me demandais', 'on se demandait', 'si on', 'si je', 'si tu', 'si vous', 'si nous',
+]
+// Un salut ou une amorce avant la question (« Bonjour, quels devis… », « Et combien… ») ne la change pas en ordre.
+const AMORCE_QUESTION = /^ (?:(?:bonjour|bonsoir|salut|hello|coucou|alors|et|au fait|du coup|sinon) )+/
+// 02/11 (audit 032-001, D2) : une hésitation, n'importe où dans le message, en fait une question (« Relancer Dupont maintenant, bonne
+// idée ou pas », « …ou attendre », « à ton avis »). Dans le doute, une carte : c'est le côté sûr.
+const HESITATION = [
+  'ou pas', 'ou non', 'ou attendre', 'ou bien attendre', 'bonne idee', 'mauvaise idee', 'a ton avis', 'a votre avis', 'selon toi', 'selon vous',
+  'tu en penses quoi', 'vous en pensez quoi', 'qu en penses tu', 'qu en pensez vous', 'je me demandais', 'je me demande', 'on se demandait',
+  'je sais pas si', 'je ne sais pas si', 'je sais pas s', 'je ne sais pas s', 'tu crois que', 'tu penses que', 'vous croyez que', 'vous pensez que',
+  'peut etre', 'devrait on', 'devrions nous', 'devrais je',
+]
+
+/**
+ * Le message est-il une QUESTION ? Sur le message BRUT : il finit par « ? » (suivi au plus de ponctuation, d'espaces ou d'émojis) ;
+ * sur le texte NORMALISÉ : il commence (après un salut éventuel) par un mot interrogatif de MOTS_QUESTION, ou il hésite (HESITATION).
+ */
+export function estQuestion(message: string, n: string = normaliser(message)): boolean {
+  // La fin du message après sa dernière lettre ou son dernier chiffre (lue à rebours : pas d'expression qui revient en arrière).
+  const brut = String(message ?? '')
+  let i = brut.length
+  while (i > 0 && !/[\p{L}\p{N}]/u.test(brut[i - 1])) i--
+  if (/[?？]/.test(brut.slice(i))) return true
+  const debut = n.replace(AMORCE_QUESTION, ' ')
+  return MOTS_QUESTION.some((m) => debut.startsWith(` ${m} `)) || contient(n, HESITATION)
+}
+
+// 02/11 (audit 032-001, D2) — l'artisan INTERDIT l'action (« Ne relance surtout pas Dupont », « Il ne faut pas relancer le devis »,
+// « Pas besoin de relancer », « Arrête de relancer Dupont ») : jamais d'exécution d'office, jamais « FAIS-LA ». Sur le texte NORMALISÉ.
+// Une négation qui décrit un tiers (« relance ceux qui n'ont pas répondu », « il ne veut plus ») ne compte pas : aucune forme ci-dessous
+// ne la lit. « N'oublie pas », « n'hésite pas », « ne t'inquiète pas », « ne quitte pas » sont des ordres, pas des interdits.
+const VERBE_NIE = String.raw`(?:ne|n) (?!oubli|hesit|t inquiet|vous inquiet|inquiet|quitt)[a-z]+(?: [a-z]+){0,2} (?:pas|plus|jamais|rien|aucun|aucune)(?= )`
+const INTERDIT = new RegExp([
+  String.raw`^ (?:(?:non|mais|et|alors|surtout|attention|stop|bon) )*${VERBE_NIE}`,
+  String.raw` (?:mais|et|non|surtout) ${VERBE_NIE}`,
+  String.raw` ne (?:pas|plus|jamais) `,
+  String.raw` (?:il )?(?:ne )?faut (?:pas|plus|surtout pas|jamais) `,
+  String.raw` (?:tu|vous) (?:ne|n) [a-z]+(?: [a-z]+)? (?:pas|plus|jamais|rien) `,
+  String.raw` je (?:ne |n )?(?:veux|voudrais|souhaite) (?:pas|plus) `,
+  String.raw` (?:pas la peine|pas besoin|inutile|evite|evitez|arrete|arretez|cesse|cessez) d`,
+  String.raw` surtout pas `,
+  String.raw` jamais de `,
+].join('|'))
+// … ou dit que c'est DÉJÀ fait (« J'ai déjà relancé Dupont hier, rien à faire ») : rien d'office non plus.
+const DEJA_FAIT = / (?:j ai|je l ai|je les ai|on a|on l a|nous avons|je viens de) (?:[a-z]+ ){0,2}?(?:relance|relances|relancee|envoye|envoyee|envoyes|envoyees|facture|factures|encaisse|supprime|paye|regle|repondu|transmis|fait|faite|faits)(?= )| deja (?:fait|relance|envoye|envoyee|regle|paye|facture|encaisse|repondu)(?= )| rien a faire /
+
+// 02/11 (contre-audit 032-004, D2) — la charge est RENVERSÉE. Le mode « fait tout seul » ne s'ouvre que sur un ORDRE NET : le message
+// commence (après un salut ou une politesse) par un verbe d'action à l'impératif (VERBES_ORDRE) ou par un accord (« oui… »), et rien
+// dans le message ne le contredit — ni négation (hors d'une relative : « relance ceux qui n'ont pas répondu » reste un ordre), ni report
+// (« plus tard », « demain »), ni condition (« si », « seulement »), ni hésitation, ni « déjà fait ». Tout le reste est une carte, d'un
+// clic : « N'oublie pas de relancer Dupont » ou « Relance Dupont si ce n'est pas fait » en deviennent une. C'est le côté sûr.
+const AMORCE_ORDRE = /^ (?:(?:bonjour|bonsoir|salut|hello|coucou|alors|bon|du coup|stp|svp|merci|aussi|et|puis|ensuite|maintenant|bien) )+/
+const VERBES_ORDRE = new Set([
+  'relance', 'relancez', 'envoie', 'envoyez', 'renvoie', 'renvoyez', 'reponds', 'repondez', 'transmets', 'transmettez', 'expedie', 'expediez',
+  'emets', 'emettez', 'facture', 'facturez', 'encaisse', 'encaissez', 'marque', 'marquez', 'supprime', 'supprimez', 'efface', 'effacez',
+  'valide', 'validez', 'cree', 'creez', 'fais', 'faites', 'refais', 'refaites', 'prepare', 'preparez', 'redige', 'redigez', 'ecris', 'ecrivez',
+  'ajoute', 'ajoutez', 'modifie', 'modifiez', 'change', 'changez', 'corrige', 'corrigez', 'mets', 'mettez', 'passe', 'passez',
+  'commande', 'commandez', 'cherche', 'cherchez', 'trouve', 'trouvez', 'ouvre', 'ouvrez', 'note', 'notez', 'enregistre', 'enregistrez',
+  'planifie', 'planifiez', 'programme', 'programmez', 'rappelle', 'rappelez', 'propose', 'proposez', 'demande', 'demandez', 'annule', 'annulez',
+  'augmente', 'augmentez', 'baisse', 'baissez', 'applique', 'appliquez', 'genere', 'generez', 'exporte', 'exportez', 'imprime', 'imprimez',
+  'sors', 'sortez', 'retire', 'retirez', 'range', 'rangez', 'coche', 'cochez', 'decoche', 'decochez', 'affecte', 'affectez', 'reserve',
+  'reservez', 'termine', 'terminez', 'cloture', 'cloturez', 'avance', 'avancez', 'etablis', 'etablissez', 'chiffre', 'chiffrez', 'calcule',
+  'calculez', 'compare', 'comparez', 'duplique', 'dupliquez', 'active', 'activez', 'desactive', 'desactivez', 'coupe', 'coupez', 'revoque',
+  'revoquez', 'accepte', 'acceptez', 'refuse', 'refusez', 'rejette', 'rejetez', 'ecarte', 'ecartez', 'regle', 'reglez', 'solde', 'soldez',
+])
+// Une négation qui n'est pas dans une relative (« qui n'ont pas répondu »), et les formes qui arrêtent une action.
+const RELATIVE_AVANT = / (?:qui|que|qu|dont|ou|lequel|laquelle|lesquels|lesquelles)(?: [a-z]+){0,3} $/
+const ARRET = / (?:ne|n) (?:[a-z]+ ){0,2}plus(?= )| plus jamais | plus de relance| plus d envoi| plus de rappel| non plus | stop | pas question| hors de question| laisse tomber| oublie | oubliez /
+function nieQuelqueChose(n: string): boolean {
+  for (const m of n.matchAll(/ (?:pas|jamais|rien|aucun|aucune)(?= )/g)) if (!RELATIVE_AVANT.test(n.slice(0, (m.index ?? 0) + 1))) return true
+  return ARRET.test(n)
+}
+// 02/11 (troisième audit 032-005, D2) : les jours, « après… », « la fin du mois », « la semaine d'après » sont des reports.
+// Quatrième audit 032-006 (D2) : une date (« le 15 », un mois, « mi-novembre », « ce week-end », « à 18 h »), « une fois signé »,
+// « dès réception », « au retour de… », les fêtes.
+const REPORT = / (?:plus tard|tout a l heure|demain|apres demain|semaine prochaine|mois prochain|prochain|prochaine|ce soir|cet apres midi|un de ces jours|bientot|qu apres|apres|une fois|des que|des reception|des signature|des son retour|quand|lorsque|d ici|fin du|fin de|fin des|debut du|debut de|debut|mi|week end|weekend|soiree|matinee|huitaine|vacances|rentree|toussaint|noel|paques|au retour|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre|le \d{1,2}|a \d{1,2} ?(?:h|heures?)|dans (?:[a-z0-9]+ ){0,2}(?:minute|minutes|heure|heures|jour|jours|semaine|semaines|mois))(?= )/
+const CONDITION = / (?:si|s il|s ils|s elle|s elles|sauf|seulement|a condition|au cas|en cas|au besoin|a moins|eventuellement|le cas echeant|sinon|selon|je te laisse|je vous laisse|a toi de voir|a vous de voir|comme tu veux|comme vous voulez|a valider)(?= )/
+const HESITATION_ORDRE = ['j hesite', 'si tu veux', 'si vous voulez', 'tu pourrais', 'vous pourriez', 'je ne pense pas', 'je pense pas', 'pas sur', 'pas certain', 'a voir', 'on verra', 'je vais voir']
+// 02/11 (troisième audit 032-005, D2) : la rétractation et le « je m'en occupe » (« … non », « en fait non », « attends », « je préfère »,
+// « je gère », « moi-même ») défont l'ordre, où qu'ils soient.
+const RETRACTATION = / (?:non|nan|bof|mouais|euh|bah non|en fait|enfin|attends|attendez|attendre|patiente|patientez|je prefere|on prefere|je m en occupe|je m occupe|je gere|je vais gerer|on gere|moi meme|je vais reflechir|je reflechis|on en reparle|feu vert|je verifie|je vais verifier|je dois verifier|laisse|laissez)(?= )/
+// Un participe dit un fait (« Relance de Dupont faite », « Facture FAC-2026-0021 payée », « Relance Dupont envoyée ce matin »), pas un ordre ;
+// « déjà » et « a été » aussi (« Note : Dupont a déjà été relancé »).
+const FAIT_EN_FIN = / (?:fait|faite|faits|faites|envoye|envoyee|envoyes|envoyees|relancee|relancees|regle|reglee|reglees|paye|payee|payes|payees|livree|signee|terminee|finie|c est fait|c est bon|c est parti) $/
+// Le participe suivi d'un moment passé (« envoyée ce matin », « réglée hier ») ; « les devis envoyés il y a plus de 5 jours », lui, désigne
+// les devis d'un ordre et le reste.
+const FAIT_PARTOUT = / (?:fait|faite|faites|envoye|envoyee|envoyes|envoyees|relance|relancee|relancees|regle|reglee|reglees|paye|payee|payees|livree|signee|terminee) (?:ce matin|hier|avant hier|aujourd hui|tout a l heure|a l instant|deja|par cheque|par virement|en especes|la semaine derniere)(?= )| deja(?= )| (?:a|ont) ete(?= )/
+// Un accord en tête (« oui », « ok », « c'est bon »…) n'ouvre le mode que SEUL (« oui », « oui s'il te plaît », « ok, vas-y ») ou suivi d'un
+// ordre à l'impératif (« oui, et ajoute la pose ») : « C'est bon, je m'en occupe » est un refus (troisième audit 032-005, D2).
+const ACCORD_EN_TETE = /^ (?:(?:oui|ok|okay|d accord|vas y|allez y|allez|c est bon|parfait|banco|go|volontiers|je veux bien|top|super) )+/
+
+// « Relance ceux qui ne m'ont pas payé » : le participe d'une relative décrit les destinataires de l'ordre, il ne dit pas un fait.
+function faitEnFin(n: string): boolean {
+  const m = FAIT_EN_FIN.exec(n)
+  return m !== null && !/ (?:qui|que|qu|dont)(?: [a-z]+){0,4} $/.test(n.slice(0, m.index + 1))
+}
+
+/** L'artisan donne-t-il un ORDRE NET (voir plus haut) ? Seul un ordre net ouvre le « fait tout seul » (faitToutSeul). */
+export function ordreNet(n: string): boolean {
+  const texte = n.replace(/ s il (?:te|vous) plait(?= )/g, '')
+  const sansSalut = texte.replace(AMORCE_ORDRE, ' ')
+  const accord = ACCORD_EN_TETE.exec(sansSalut)
+  const apresAccord = accord ? sansSalut.slice(accord[0].length - 1) : sansSalut
+  const reste = accord ? apresAccord.replace(AMORCE_ORDRE, ' ') : sansSalut
+  const [premier, second] = reste.trim().split(' ').filter(Boolean)
+  // Quatrième audit 032-006 (D2) : seul un OUI net vaut accord sans rien après — « oui », « d'accord », « vas-y », « ok » seul. « Ok merci »,
+  // « c'est bon », « parfait » sont souvent un « non merci » ; et « noté » seul (« Ok noté », « Bien noté ») accuse réception, il n'ordonne rien.
+  const fort = accord !== null && /^ (?:oui|ouais|d accord|vas y|allez y|allez|go|banco|volontiers|je veux bien)(?= )/.test(accord[0])
+  const faible = accord !== null && /^ (?:ok|okay)(?= )/.test(accord[0]) && !/ merci(?= )/.test(apresAccord)
+  const ouiNet = fort || faible
+  const noteSeul = (premier === 'note' || premier === 'notez') && (second === undefined || second === 'merci')
+  const enTete = (ouiNet && premier === undefined) || (VERBES_ORDRE.has(premier ?? '') && !noteSeul && !['de', 'd', 'du'].includes(second ?? ''))
+  return enTete && !nieQuelqueChose(texte) && !REPORT.test(texte) && !CONDITION.test(texte) && !RETRACTATION.test(texte) && !contient(texte, HESITATION)
+    && !contient(texte, HESITATION_ORDRE) && !DEJA_FAIT.test(texte) && !faitEnFin(texte) && !FAIT_PARTOUT.test(texte)
+}
+
 export type CadrageDemande = {
   /** Outils de lecture probables, dans l'ordre de la liste (déterministe). */
   outilsProbables: NomOutil[]
@@ -124,6 +252,25 @@ export type CadrageDemande = {
   actionAEffet: boolean
   /** L'artisan demande une action dans CE message (verbe d'action, ou une réponse qui commence par « oui ») : décide du mode « fait tout seul » (faitToutSeul). */
   actionDemandee: boolean
+  /**
+   * 02/11 — le message est une QUESTION (il finit par « ? », ou commence par quel, combien, est-ce que, pourquoi, comment, où, quand,
+   * qui, dois-je, faut-il, y a-t-il, peux-tu… : estQuestion). Une question n'exécute jamais rien d'office : faitToutSeul exige
+   * `question === false` ; les cartes restent proposées normalement.
+   */
+  question: boolean
+  /**
+   * 02/11 (audit 032-001, D2) — l'artisan INTERDIT une action dans ce message (« ne relance surtout pas Dupont », « il ne faut pas
+   * relancer », « pas besoin de… ») : `actionDemandee` est alors faux, rien ne s'exécute d'office et le modèle ne la fait pas.
+   */
+  interdit: boolean
+  /** 02/11 (audit 032-001, D2) — l'artisan dit que c'est DÉJÀ fait (« j'ai déjà relancé Dupont hier ») : `actionDemandee` faux aussi. */
+  dejaFait: boolean
+  /**
+   * 02/11 (contre-audit 032-004, D2) — un ORDRE NET (ordreNet) : un verbe d'action à l'impératif en tête, ou un « oui », sans négation,
+   * report, condition, hésitation ni « déjà fait ». Seul un ordre net ouvre le « fait tout seul » ; une demande d'action qui n'en est pas
+   * un (« relance Dupont plus tard ») reste une carte.
+   */
+  ordre: boolean
   /**
    * L'artisan demande lui-même un brouillon dans CE message (préparer, rédiger, faire un devis…), ou dit « oui » à une
    * proposition de brouillon de l'assistant. Sans cela, les outils de brouillon ne sont même pas proposés au modèle : un
@@ -140,10 +287,14 @@ export function cadrerDemande(message: string, dernierAssistant: string | null =
   const accord = OUI.test(n) || DEBUT_OUI.test(n)
   const accepteProposition = accord && /prepar|brouillon|redig/.test(normaliser(dernierAssistant ?? ''))
   const accepteAction = accord && PROPOSITION.test(normaliser(dernierAssistant ?? ''))
+  const interdit = INTERDIT.test(n)
+  const dejaFait = DEJA_FAIT.test(n)
   return {
     outilsProbables, actionAEffet: contient(n, MOTS_ACTION_EFFET), brouillon: contient(n, MOTS_BROUILLON) || accepteProposition,
     // 29/10 — « toute réponse qui commence par oui » (Benj) : DEBUT_OUI, même sans proposition relue (l'historique n'est cru que signé).
-    actionDemandee: contient(n, MOTS_ACTION) || contient(n, MOTS_ACTION_EFFET) || contient(n, MOTS_BROUILLON) || RE_ACTION.test(n) || DEBUT_OUI.test(n) || accepteProposition || accepteAction,
+    // 02/11 (D2) : jamais quand l'artisan interdit l'action ou la dit déjà faite.
+    actionDemandee: !interdit && !dejaFait && (contient(n, MOTS_ACTION) || contient(n, MOTS_ACTION_EFFET) || contient(n, MOTS_BROUILLON) || RE_ACTION.test(n) || DEBUT_OUI.test(n) || accepteProposition || accepteAction),
+    question: estQuestion(message, n), interdit, dejaFait, ordre: ordreNet(n),
     meilleursClients: contient(n, MOTS_MEILLEURS_CLIENTS),
   }
 }
@@ -152,13 +303,17 @@ export function cadrerDemande(message: string, dernierAssistant: string | null =
  * 29/10 — le mode « FAIT TOUT SEUL » (choix de Benj : « il crée et enregistre directement, sans carte à confirmer ; tu peux annuler
  * après coup »). Une action « à confirmer » (envoi, facture émise, encaissement, suppression, lot de prix…) est EXÉCUTÉE tout de
  * suite seulement si les DEUX conditions tiennent :
- *  • l'ARTISAN l'a demandée dans SON message (cadrerDemande ; jamais un texte lu dans les données) ;
+ *  • l'ARTISAN l'a demandée dans SON message (cadrerDemande ; jamais un texte lu dans les données), et ce message n'est PAS une
+ *    question (02/11 : « Quels devis dois-je relancer ? » ne relance personne d'office ; `question` absent = carte, fail-closed) ;
  *  • aucun texte écrit par un tiers (client, prospect, fournisseur, page web) n'est entré dans le contexte du modèle pendant ce tour
  *    (EtatTour, lib/assistant/boucle.ts) — sinon un message de client pourrait orienter l'action.
- * Sinon la carte « Confirmer » reste. Les plafonds (30 envois, 200 actions par jour) s'appliquent dans les deux cas.
+ * Sinon la carte « Confirmer » reste. Les plafonds (30 envois, 200 actions par jour) s'appliquent dans les deux cas. Et les gestes §3.2
+ * (lib/pilote/regles.ts OUTILS_JAMAIS_AUTO) restent une carte même quand ce mode est vrai (lib/assistant/actions-serveur.ts).
  */
-export function faitToutSeul(c: Pick<CadrageDemande, 'actionDemandee'>, etat: { contenuTiersLu: boolean }): boolean {
-  return c.actionDemandee === true && etat.contenuTiersLu === false
+export function faitToutSeul(c: Pick<CadrageDemande, 'actionDemandee' | 'question' | 'ordre'> & Partial<Pick<CadrageDemande, 'interdit' | 'dejaFait'>>, etat: { contenuTiersLu: boolean }): boolean {
+  // 02/11 (D2) : un interdit ou un « déjà fait » ferme aussi le mode, même si un appelant passait un actionDemandee levé ; et
+  // (contre-audit 032-004) seul un ORDRE NET l'ouvre (`ordre` absent : carte, fail-closed).
+  return c.actionDemandee === true && c.question === false && c.ordre === true && c.interdit !== true && c.dejaFait !== true && etat.contenuTiersLu === false
 }
 
 /** Le bloc d'analyse ajouté au prompt système pour CE tour (comme buildLeadGuidance dans lib/ai.ts). */
@@ -168,9 +323,18 @@ export function blocCadrage(c: CadrageDemande, o: { crm?: boolean; actions?: boo
   const crmAbsent = !o.crm && c.outilsProbables.some((x) => OUTILS_CRM.includes(x) && x !== 'lire_a_facturer')
   if (disponibles.length) lignes.push(`Données probablement utiles : ${disponibles.map((x) => `${LIBELLE_OUTIL[x]} (${x})`).join(', ')}. Lis-les avec l'outil avant de répondre ; ne réponds jamais de mémoire.`)
   if (crmAbsent) lignes.push("L'artisan parle de chantiers, d'équipe, de véhicules ou de matériaux réservés : le CRM n'est pas ouvert sur son compte, tu n'as AUCUNE donnée de ce genre. Dis-le en une phrase qui nomme le CRM (« Le CRM n'est pas ouvert sur votre compte : je n'ai pas vos chantiers. »), sans rien supposer, puis dis ce que tu peux lire à la place.")
-  if (c.actionDemandee && o.actions !== false) {
+  // 02/11 (audit 032-001, D2) : un interdit ou un « déjà fait » n'est pas un ordre.
+  if (c.interdit) lignes.push("L'artisan te dit de NE PAS faire quelque chose, ou de ne plus le faire : ne le fais surtout pas, n'appelle pas l'outil de cette action. S'il veut qu'une action cesse (« ne relance plus Dupont »), l'outil qui l'arrête (noter son opposition, couper les relances) se propose en carte, qu'il confirme.")
+  else if (c.dejaFait) lignes.push("L'artisan dit que c'est DÉJÀ fait : n'appelle aucun outil pour le refaire. Prends-en acte en une phrase, et propose la suite seulement si elle est utile (« Voulez-vous que je… ? »).")
+  if (c.actionDemandee && o.actions !== false && c.question !== true && c.ordre === false) {
+    // 02/11 (contre-audit 032-004, D2) : une demande d'action qui n'est pas un ordre net — jamais « fais-la tout de suite ».
+    lignes.push("L'artisan parle d'une ACTION, mais son message n'est pas un ordre net (un report, une condition, une hésitation ou une négation) : rien ne s'exécute d'office. Un outil « à confirmer » que tu appelles PROPOSE une carte « Confirmer », qu'il valide d'un clic. Pour un report (« plus tard », « demain »), ne programme rien : dis-le, et propose la carte ou un rappel ; pour une condition, vérifie-la d'abord avec tes lectures. Le résultat de l'outil te dit ce qui s'est passé : fie-toi à lui (« en attente de confirmation » : dis qu'une carte attend son clic, jamais que c'est fait).")
+    if (c.actionAEffet) lignes.push("Ce qu'il demande part chez un client ou ne se défait pas : vérifie le numéro ou le nom exact avant d'appeler l'outil.")
+  } else if (c.actionDemandee && o.actions !== false) {
     lignes.push("L'artisan demande une ACTION : FAIS-LA avec l'outil correspondant, tout de suite, sans te contenter de l'expliquer ni lui renvoyer le travail. Lis d'abord ce qu'il faut (lire_tarifs pour chiffrer, lire_devis / lire_factures pour retrouver un numéro, lire_stock pour un article). Il te manque une information indispensable (le client, une quantité) : pose UNE question courte ; un prix manquant ne bloque pas un devis (ligne à chiffrer).")
-    lignes.push("Il l'a demandée lui-même : les outils « à confirmer » l'EXÉCUTENT directement (mode « fait tout seul », annulable après coup quand c'est possible), sauf si un texte écrit par un client ou un fournisseur a été lu dans ce tour — alors une carte « Confirmer » s'affiche. Le résultat de l'outil te dit lequel des deux : fie-toi à lui (« fait » : dis que c'est fait ; « en attente de confirmation » : dis qu'une carte attend son clic).")
+    lignes.push(c.question === true
+      ? "Son message est une QUESTION : réponds-y d'abord. Rien ne s'exécute d'office : un outil « à confirmer » que tu appelles PROPOSE une carte « Confirmer », qu'il valide d'un clic. Le résultat de l'outil te le dit : fie-toi à lui (« en attente de confirmation » : dis qu'une carte attend son clic, jamais que c'est fait)."
+      : "Il l'a demandée lui-même : les outils « à confirmer » l'EXÉCUTENT directement (mode « fait tout seul », annulable après coup quand c'est possible), sauf si un texte écrit par un client ou un fournisseur a été lu dans ce tour — alors une carte « Confirmer » s'affiche. Encaisser, émettre une facture, supprimer ou changer des prix en lot restent TOUJOURS une carte. Le résultat de l'outil te dit lequel des deux : fie-toi à lui (« fait » : dis que c'est fait ; « en attente de confirmation » : dis qu'une carte attend son clic).")
     if (c.actionAEffet) lignes.push("Ce qu'il demande part chez un client ou ne se défait pas : vérifie le numéro ou le nom exact avant d'appeler l'outil.")
   } else if (c.actionDemandee) {
     lignes.push("L'artisan demande une action, mais les outils d'action ne sont pas disponibles pour l'instant (mise en service en cours). Dis-le en une phrase, lis ce qui peut l'aider, et indique l'écran où il la fait lui-même.")
@@ -194,7 +358,7 @@ export function systemeAssistant(a: ContexteArtisan, cadrage: CadrageDemande): s
     ? `3. AGIR : les outils d'action ne sont pas encore ouverts sur ce compte. Tu lis et tu prépares des brouillons, rien d'autre : si on te demande de faire quelque chose, dis-le simplement et indique l'écran (Devis, Factures, Messages, Inventaire, Mes tarifs${a.crm ? ', CRM' : ''}).`
     : `3. AGIR à sa place : tu n'es pas un guide qui renvoie vers les écrans, tu FAIS le travail quand il le demande. Devis : créer, modifier, marquer signé ou refusé, envoyer, relancer, supprimer un brouillon. Factures : créer depuis un devis signé (complète ou acompte), créer une facture SANS devis (creer_facture_libre), envoyer une facture émise, marquer payée, relancer un impayé, activer ou couper les relances automatiques. Tarifs : ajouter, modifier, augmenter un lot, supprimer. Inventaire : ajouter un article, modifier sa fiche, ajuster le stock (une sortie peut être rattachée à un chantier), supprimer un article, préparer la liste d'achat « à racheter » depuis les alertes (preparer_liste_achat), chercher un prix ou un produit chez ses fournisseurs (rechercher_fournisseurs) et garder un résultat (retenir_resultat). Tableaux : un vrai fichier Excel de ses devis, factures, stock, tarifs ou de la liste d'achat (exporter_tableau). Demandes et messages : changer le statut d'une demande, répondre à un client, envoyer ou écarter la réponse préparée. Ma plateforme : mode assisté ou manuel, pause, horaires, ton, message d'accueil (le mode « auto » se choisit dans l'écran par l'artisan). « Ma page » : présentation, zone, horaires, prestations, seulement avec ses mots${crmAgir}. Ce que son offre n'inclut pas : dis-le et renvoie à l'écran Abonnement. Deux sortes d'outils :
    - DIRECTS (écriture interne qui se défait : brouillon de devis, tarif, stock, tâche, note, statut, liste d'achat) : exécutés tout de suite, inscrits au journal des actions, annulables d'un clic de l'artisan.
-   - À CONFIRMER (tout ce qui part chez un client : devis, relance, message ; une facture émise et scellée ; un encaissement ; une suppression ; un lot de prix). Quand l'artisan te l'a demandé LUI-MÊME dans son message, ils sont EXÉCUTÉS tout de suite (il a choisi que tu fasses tout seul ; il annule après coup quand c'est possible) : dis « c'est fait » et ce qui a été fait. Sinon, ou si tu as lu dans ce tour un texte écrit par un client ou un fournisseur, tu PROPOSES : une carte s'affiche sous ta réponse avec le texte exact et l'avant/après, et tant qu'il n'a pas cliqué « Confirmer », RIEN n'est fait : écris alors « j'ai préparé… : confirmez-le sous ma réponse », jamais « c'est envoyé ». Le résultat de chaque outil te dit lequel des deux s'est produit.`
+   - À CONFIRMER (tout ce qui part chez un client : devis, relance, message ; une facture émise et scellée ; un encaissement ; une suppression ; un lot de prix). Quand l'artisan te l'a demandé LUI-MÊME dans son message (un ordre, pas une question), ils sont EXÉCUTÉS tout de suite (il a choisi que tu fasses tout seul ; il annule après coup quand c'est possible) : dis « c'est fait » et ce qui a été fait — SAUF l'encaissement, la facture émise, une suppression et un lot de prix, qui restent TOUJOURS une carte, même demandés. Sinon, ou si tu as lu dans ce tour un texte écrit par un client ou un fournisseur, tu PROPOSES : une carte s'affiche sous ta réponse avec le texte exact et l'avant/après, et tant qu'il n'a pas cliqué « Confirmer », RIEN n'est fait : écris alors « j'ai préparé… : confirmez-le sous ma réponse », jamais « c'est envoyé ». Le résultat de chaque outil te dit lequel des deux s'est produit.`
   return `Tu es l'assistant de gestion de ${nom} (${metier}) dans sa console Presti. Tu parles À L'ARTISAN lui-même, en le vouvoyant, comme un collaborateur précis et bref. Nous sommes le ${a.jour} (heure de Paris). L'artisan gère toute sa plateforme en te parlant : tu n'es pas là pour bavarder, mais pour faire.
 
 CE QUE TU FAIS :

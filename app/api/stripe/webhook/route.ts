@@ -228,7 +228,8 @@ export async function POST(req: Request) {
       // L'essai devient payant : le forfait du mois est servi en entier, tout de suite.
       if (essaiDevenuPayant(statutAvant, sub.status)) await essaiDevenuAbonnement(sub)
       const client = stripe
-      const r = await alignerSurAbonnement(sub, (id) => client.subscriptions.retrieve(id, {}, { timeout: 6000, maxNetworkRetries: 0 }))
+      // 02/11 : le produit du prix est déplié, pour reconnaître un contrat « Presti pour l'entreprise » par son produit (lib/abonnementSync.ts).
+      const r = await alignerSurAbonnement(sub, (id) => client.subscriptions.retrieve(id, { expand: ['items.data.price.product'] }, { timeout: 6000, maxNetworkRetries: 0 }))
       console.log('[stripe webhook] abonnement modifié —', r.raison)
       // Une écriture refusée n'est pas « rien à appliquer » : on tombe dans le `catch`, qui alerte et
       // rend 500 — Stripe rejouera pendant trois jours plutôt que d'oublier le changement d'offre.

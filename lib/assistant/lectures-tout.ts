@@ -95,7 +95,8 @@ export function lecturesTout(ctx: ContexteSession, session: SupabaseClient, appe
         donnees: {
           numero: d.numero, statut: d.statut, objet: d.objet, client: encadrerClient(d.client_nom as string | null, 120), total_ht: Number(d.total_ht), total_ttc: Number(d.total_ttc),
           remise_pct: Number(d.remise_pct ?? 0), acompte_pct: Number(d.acompte_pct ?? 0), validite_jours: d.validite_jours, envoye_le: d.envoye_le ? jourParis(new Date(d.envoye_le as string)) : null,
-          lignes: lignes.map((x, i) => ({ position: i + 1, designation: x.designation, quantite: Number(x.quantite), unite: x.unite ?? 'u', prix_unitaire_ht: Number(x.prix_unitaire_ht), tva_taux: Number(x.tva_taux), provenance_du_prix: x.source_prix || 'saisi par l’artisan' })),
+          // 02/11 (contre-audit 032-004) : une provenance VIDE n'est pas « saisie par l'artisan » (règle E1 de lib/pilote/regles.ts ligneSourcee).
+          lignes: lignes.map((x, i) => ({ position: i + 1, designation: x.designation, quantite: Number(x.quantite), unite: x.unite ?? 'u', prix_unitaire_ht: Number(x.prix_unitaire_ht), tva_taux: Number(x.tva_taux), provenance_du_prix: x.source_prix || 'non précisée (à vérifier)' })),
           lignes_a_chiffrer: lignes.filter((x) => !(Number(x.prix_unitaire_ht) > 0) || /chiffrer|estimation|ordre de grandeur/i.test(x.source_prix ?? '')).length,
         },
         resume: `devis ${d.numero} : ${lignes.length} ligne(s)`, objet: { type: 'devis', id: d.id as string },

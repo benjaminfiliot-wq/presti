@@ -9,6 +9,7 @@ import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimiteStricte } from '@/lib/limites'
 // Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
+import { MESSAGES_ESCALADE_RELUS } from '@/lib/pilote/regles'
 import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
 import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
@@ -181,7 +182,9 @@ export async function POST(req: Request) {
     // l'ancien booléen `reponse_auto` AVANT la config : remettre « auto » dans Ma plateforme ne
     // changeait rien ici. Le motif est toujours rendu — jamais un silence.
     const cfg = await getPlateformeConfig(artisan.id)
-    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA: history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length, message })
+    // 02/11 (troisième audit 032-005, I3) : le fil récent du client est relu pour l'escalade, comme le pilote.
+    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA: history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length, message,
+      messagesClient: history.filter((m) => m.sens === 'in').slice(-MESSAGES_ESCALADE_RELUS).map((m) => m.contenu) })
     if (!decision.ok) {
       // En pause, le message attend dans Messages sans notification — comme sur /stream (l'aide le dit).
       if (artisan.email && decision.raison !== 'pause') {

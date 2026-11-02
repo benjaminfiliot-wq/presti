@@ -1157,3 +1157,13 @@
 {"id":"031-010","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:21:12Z","duree_s":10,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
 {"id":"031-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:02:02Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":970,"dossier":"en-cours"}
 {"id":"031-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:02:12Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":970,"dossier":"fait"}
+{"id":"032-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:33:05Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":1005,"dossier":"en-cours"}
+{"id":"032-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:33:22Z","duree_s":5,"agent":"claude-code","executant":"claude-code","lignes":1005,"dossier":"fait"}
+{"id":"032-004","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T12:07:18Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":1497,"dossier":"en-cours"}
+{"id":"032-004","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T12:07:27Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":1497,"dossier":"fait"}
+{"id":"032-005","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T12:55:14Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":1618,"dossier":"en-cours"}
+{"id":"032-005","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T12:55:27Z","duree_s":5,"agent":"claude-code","executant":"claude-code","lignes":1618,"dossier":"fait"}
+{"id":"032-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T13:33:44Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":1830,"dossier":"en-cours"}
+{"id":"032-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T13:33:58Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":1830,"dossier":"fait"}
+{"id":"032-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T14:04:28Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":1814,"dossier":"en-cours"}
+{"id":"032-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T14:05:10Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":1814,"dossier":"fait"}

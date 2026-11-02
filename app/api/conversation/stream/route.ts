@@ -10,6 +10,7 @@ import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimiteStricte } from '@/lib/limites'
 // Audit du 20/10 : plafond FAIL-CLOSED (consommerLimiteStricte) — cette route dépense de l'IA ou écrit à un tiers ; base muette = refus, pas « tout passe ».
 import { getPlateformeConfig, decisionReponse, personaDe, tonDeReponse } from '@/lib/plateformeConfig'
+import { MESSAGES_ESCALADE_RELUS } from '@/lib/pilote/regles'
 import { resolveModel } from '@/lib/models'
 import { refusSiSansPlateforme } from '@/lib/plateformeAccesServeur'
 
@@ -106,7 +107,8 @@ export async function POST(req: Request) {
     // UNE décision, la même que /api/conversation et /api/leads (v7, bloc 1b). Le verrou d'offre
     // (assistant autonome en Signature depuis le 25/10) y vit aussi et rend un motif explicite, `verrou_offre`,
     // au lieu de se faire passer pour « assistée » : l'interface peut enfin dire la vérité.
-    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA, message })
+    // 02/11 (troisième audit 032-005, I3) : le fil récent du client est relu pour l'escalade, comme le pilote.
+    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA, message, messagesClient: history.filter((m) => m.sens === 'in').slice(-MESSAGES_ESCALADE_RELUS).map((m) => m.contenu) })
 
     // « Je prends la main » (v5 §9) : l'artisan répond lui-même sur CE fil. L'assistant se tait,
     // le client le voit (GET /api/conversation rend prise_en_main), l'artisan est prévenu.

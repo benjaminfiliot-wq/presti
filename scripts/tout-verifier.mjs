@@ -50,6 +50,11 @@ const SUITES = [
   // ── Sprint v5 (J-1 démo)
   // Essai gratuit sans carte (13/10) : Checkout par offre, un seul essai par compte, webhook (début, conversion, fin sans carte), textes ; 13 mutations
   { nom: 'Essai gratuit sans carte (Checkout, webhook, textes)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/essais-gratuits-qa.mjs'], cout: 'gratuit' },
+  // 02/11 (troisième audit 032-005) : le garde-fou des envois (l'escalade passe avant le mode assisté, GF-6), joué par personne jusqu'ici. Hors ligne.
+  { nom: 'Garde-fou des envois — escalade avant le mode assisté, décision de réponse en un seul endroit', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/garde-fou-envoi-qa.mjs'], cout: 'gratuit' },
+  // 02/11 (audit 032-001, D7) : les empreintes de Studio, Signature, du tunnel, des essais et de la grille (rien n'y bouge sans le vouloir),
+  // et l'affichage des offres. N'était jouée que par simulation-generale, hors lanceur. Hors ligne.
+  { nom: 'Offres — affichage, empreintes de Studio et Signature (l’offre Entreprise n’y touche pas)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/offres-affichage-qa.mjs'], cout: 'gratuit' },
   // Relances des factures impayées (0159) : passage quotidien rejoué sur une base EN MÉMOIRE et un e-mail espionné ; Studio prépare « à valider », Signature envoie. Hors ligne.
   { nom: 'Relances des factures impayées (passage quotidien, Studio à valider / Signature envoie)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-impayes-qa.mjs'], cout: 'gratuit' },
   // Audit RGPD du 20/10 : effacement étendu (photos, adresse, suivi), purge des essais (24 mois), conversations (devis signé ou facture), TABLES_A_VIDER, expiration du suivi, textes légaux et registre. Hors ligne.
@@ -183,6 +188,11 @@ const SUITES = [
   // file vide, onglets fermés sur leur handle, jeton jamais affiché, résumé masqué avant la coupe, balisage Slack neutralisé.
   // Environ 4 à 5 min.
   { nom: 'File n8n de Hermes — banc hors ligne (34 scénarios des constats de l’audit)', cmd: 'node', args: ['scripts/hermes-file-banc.mjs'], cout: 'gratuit' },
+  // 02/11 (§3.2 du prompt de Benj du 01/11, « ce qui ne s'automatise jamais ») : le « fait tout seul » de l'assistant n'exécute jamais
+  // d'office un geste de OUTILS_JAMAIS_AUTO ni une question ; la règle « tout auto » n'envoie pas un prix non sourcé ; le pilote relit
+  // l'escalade (litige, sinistre, avocat…) au départ. Chaque essai est rejoué sur un mutant (correctif retiré) qui doit rougir. Hors ligne.
+  { nom: 'Sécurité de l’assistant et du pilote (§3.2) — gestes jamais d’office, question ≠ ordre, prix sourcés en « tout auto », escalade au départ (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/securite-assistant-0211-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Registre commun des relances (S4) — assistant, pilote, CRM, impayés, conversation : jamais deux relances en 3 jours, lecture en erreur = refus (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-registre-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },

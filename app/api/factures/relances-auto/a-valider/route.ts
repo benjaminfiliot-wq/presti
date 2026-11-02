@@ -6,6 +6,7 @@ import { messageVerrou, offreMinimale, peut } from '@/lib/plans'
 import { jourParis, centimes } from '@/lib/comptaTableau'
 import { sendEmail } from '@/lib/email'
 import { adresseValable, lireRelanceRetouchee } from '@/lib/relancesImpayes'
+import { historiqueRelances, phraseRefus, relanceRecente } from '@/lib/relancesRegistre'
 
 export const runtime = 'nodejs'
 
@@ -75,6 +76,14 @@ export async function POST(req: Request) {
   const arret = await supabaseAdmin.from('relances_impayes_arrets').select('reprise_le').eq('facture_id', ligne.facture_id).eq('artisan_id', session.uid).maybeSingle()
   if (arret.error) return NextResponse.json({ error: 'Facture illisible.' }, { status: 503 })
   if (arret.data && !arret.data.reprise_le) return NextResponse.json({ error: 'Les relances de cette facture sont arrêtées : reprenez-les d’abord, ou écartez cette relance.' }, { status: 409 })
+  // 02/11 (audit 032-001, D6 ; S4) : préparée le matin, elle part au clic, parfois des jours plus tard. Le registre commun est donc relu AU
+  // DÉPART : ce client a-t-il été relancé depuis par un autre chemin (assistant, pilote, CRM, conversation) ? Les impayés gardent leur propre
+  // rythme (sauf « impayes », comme le passage du matin). Registre illisible : rien ne part (côté sûr).
+  const reg = relanceRecente(await historiqueRelances(session.uid, { type: 'facture', id: ligne.facture_id }), new Date(), { sauf: 'impayes' })
+  if (reg.refus) {
+    const phrase = phraseRefus(reg, (iso) => new Date(iso).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }))
+    return reg.raison === 'illisible' ? NextResponse.json({ error: phrase }, { status: 503 }) : NextResponse.json({ error: `${phrase} Vous pouvez écarter cette relance.`, code: 'deja_relance' }, { status: 409 })
+  }
 
   // Prise : a_valider → prise, conditionnelle. Le jour devient aujourd'hui : la clé unique (artisan, destinataire, jour) refuse un
   // second message au même client le même jour.

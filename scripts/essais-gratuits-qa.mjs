@@ -198,7 +198,7 @@ export async function resolve(spec, ctx, next) {
     T(`EG-1b ${o.id}`, pur.creditsEssai(o.id) === o.credits, `creditsEssai(${o.id}) = ${pur.creditsEssai(o.id)}, attendu ${o.credits}`)
     T(`EG-1b ${o.id} sous le forfait`, pur.creditsEssai(o.id) < o.forfait, 'un essai ne doit jamais servir le forfait entier')
   }
-  T('EG-1b hors offre (Essentiel hérité compris)', ['gratuit', 'essentiel', 'business', 'inconnu', null, undefined].every((p) => pur.creditsEssai(p) === 0 && pur.essaiJours(p) === 0), 'une offre sans essai doit donner 0 crédit et 0 jour')
+  T('EG-1b hors offre (Essentiel hérité et Entreprise compris)', ['gratuit', 'essentiel', 'entreprise', 'business', 'inconnu', null, undefined].every((p) => pur.creditsEssai(p) === 0 && pur.essaiJours(p) === 0), 'une offre sans essai doit donner 0 crédit et 0 jour')
   const normalisations = [['Jean.Dupont+Pub@Gmail.com', 'jeandupont@gmail.com'], ['a.b@googlemail.com', 'ab@gmail.com'], ['Pierre.Martin+x@entreprise.fr', 'pierre.martin@entreprise.fr'], [' X@Y.fr ', 'x@y.fr']]
   for (const [entree, attendu] of normalisations) T(`EG-1c ${entree}`, pur.normaliserEmail(entree) === attendu, `→ ${pur.normaliserEmail(entree)}`)
   const rien = { abonnementEnCours: false, essaiDejaPris: false, abonnementDejaEu: false }
@@ -213,7 +213,7 @@ export async function resolve(spec, ctx, next) {
     const sans = pur.champsCheckoutEssai(o.id, false)
     T(`EG-1e ${o.id} sans essai`, !sans.payment_method_collection && !sans.subscription_data && sans.jours === 0, j(sans))
   }
-  T('EG-1e offre sans essai', ['gratuit', 'essentiel', 'business', 'x'].every((p) => { const c = pur.champsCheckoutEssai(p, true); return !c.subscription_data && !c.payment_method_collection }), 'seules les deux offres vendues (Studio, Signature) ont un essai')
+  T('EG-1e offre sans essai', ['gratuit', 'essentiel', 'entreprise', 'business', 'x'].every((p) => { const c = pur.champsCheckoutEssai(p, true); return !c.subscription_data && !c.payment_method_collection }), 'seules les deux offres vendues (Studio, Signature) ont un essai')
   const T0 = 1_800_000_000
   T('EG-1f fin d’essai non payée', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 10 }, 0) === true && pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 - 86_400 }, 0) === true, 'annulé à la fin ou pendant l’essai')
   T('EG-1f abonnement payé puis résilié', pur.finDEssaiSansPaiement({ trial_end: T0, ended_at: T0 + 20 * 86_400 }, 0) === false && pur.finDEssaiSansPaiement({ ended_at: T0 }, 0) === false, 'un abonnement payé garde ses crédits')
@@ -373,6 +373,51 @@ export async function resolve(spec, ctx, next) {
     T('EG-3d conversion signalée', e.notifs.some((n) => /conversion/i.test(n.sujet)), j(e.notifs.map((n) => n.sujet)))
   }
   {
+    // 02/11 (chantier 4, puis contre-audit 032-004) : un contrat Entreprise au montant de Signature (99 €) se reconnaît par son PRIX
+    // dédié (price.metadata.plan = 'entreprise') : l'Entreprise l'emporte alors sur le montant, sans servir un crédit de plus (même forfait).
+    const ent = abonnement(SIGNATURE, { status: 'active', trial_end: null, metadata: { uid: UID, plan: 'entreprise' }, items: { data: [{ price: { unit_amount: SIGNATURE.prixCentimes, metadata: { plan: 'entreprise' } } }] } })
+    neuf({ abonnementRelu: ent, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'signature', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r = await envoyer(evt('customer.subscription.updated', ent))
+    const w = ecrituresArtisans()[0]?.payload
+    T('EG-3l contrat Entreprise au prix de Signature : l’offre passe à Entreprise', r.status === 200 && w?.plan === 'entreprise', `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+    T('EG-3l … sans crédit ajouté (même forfait que Signature)', w?.credits === 120, `credits = ${w?.credits}`)
+    // Le même montant SANS la mention Entreprise reste Signature : rien à écrire pour un compte déjà en Signature.
+    const sig = abonnement(SIGNATURE, { status: 'active', trial_end: null, metadata: { uid: UID } })
+    neuf({ abonnementRelu: sig, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'signature', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r2 = await envoyer(evt('customer.subscription.updated', sig))
+    T('EG-3l le prix de Signature sans la mention Entreprise reste Signature', r2.status === 200 && ecrituresArtisans().length === 0, `${r2.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+  }
+  {
+    // 02/11 (audit 032-001, D4) : la mention Entreprise survit à un changement d'offre au portail de facturation. Descendu au prix de Studio,
+    // le contrat suit son montant ; seul un montant hors des offres publiques (sur devis), ou celui de Signature, garde l'Entreprise.
+    const bas = abonnement(STUDIO, { status: 'active', trial_end: null, metadata: { uid: UID, plan: 'entreprise' } })
+    neuf({ abonnementRelu: bas, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'entreprise', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r = await envoyer(evt('customer.subscription.updated', bas))
+    const w = ecrituresArtisans()[0]?.payload
+    T('EG-3m contrat Entreprise passé au prix de Studio (portail) : l’offre suit le montant, Studio', r.status === 200 && w?.plan === 'studio', `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+    T('EG-3m … sans retirer de crédit (une descente ne reprend rien du mois)', w?.credits === undefined || w.credits >= 120, `credits = ${w?.credits}`)
+    const surDevis = abonnement({ id: 'entreprise', prixCentimes: 24_900 }, { status: 'active', trial_end: null, metadata: { uid: UID, plan: 'entreprise' } })
+    neuf({ abonnementRelu: surDevis, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'signature', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r2 = await envoyer(evt('customer.subscription.updated', surDevis))
+    T('EG-3m un montant sur devis (249 €, aucune offre publique) avec la mention Entreprise : Entreprise', r2.status === 200 && ecrituresArtisans()[0]?.payload?.plan === 'entreprise', `${r2.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+  }
+  {
+    // 02/11 (contre-audit 032-004, D4) : le contrat Entreprise vendu sur devis, ramené au prix de Signature au portail, métadonnée de
+    // l'abonnement intacte et sans prix dédié : il suit son montant (Signature), il ne garde pas les membres pour 99 €.
+    const descendu = abonnement(SIGNATURE, { status: 'active', trial_end: null, metadata: { uid: UID, plan: 'entreprise' } })
+    neuf({ abonnementRelu: descendu, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'entreprise', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r = await envoyer(evt('customer.subscription.updated', descendu))
+    T('EG-3n contrat Entreprise ramené au prix de Signature, sans prix dédié : l’offre suit le montant, Signature', r.status === 200 && ecrituresArtisans()[0]?.payload?.plan === 'signature', `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+  }
+  {
+    // 02/11 : le prix d'un contrat est propre au client et change avec le temps (Benj) ; il vit sur le PRODUIT « Presti pour l'entreprise »
+    // (scripts/stripe-entreprise.mjs), que la relecture déplie. Même à un montant public (59 €), un prix de ce produit reste l'Entreprise.
+    const surProduit = abonnement(STUDIO, { status: 'active', trial_end: null, metadata: { uid: UID }, items: { data: [{ price: { unit_amount: STUDIO.prixCentimes, metadata: {}, product: { id: 'prod_entreprise', metadata: { plan: 'entreprise' } } } }] } })
+    neuf({ abonnementRelu: surProduit, artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'signature', credits: 120, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
+    const r = await envoyer(evt('customer.subscription.updated', surProduit))
+    T('EG-3o prix d’un contrat sur le produit Entreprise (déplié à la relecture), même à 59 € : Entreprise', r.status === 200 && ecrituresArtisans()[0]?.payload?.plan === 'entreprise', `${r.status} ${j(ecrituresArtisans().map((x) => x.payload))}`)
+  }
+  {
     const o = STUDIO
     const t = Math.floor(Date.now() / 1000)
     const e = neuf({ artisan: { id: UID, email: 'neuf@exemple.fr', nom: 'T', plan: 'studio', credits: 14, stripe_customer_id: 'cus_nouveau', stripe_subscription_id: 'sub_nouveau' } })
@@ -502,7 +547,9 @@ console.log('\n— EG-4 : migration, lanceur, textes —')
   const carte = toutes.filter(({ l }) => /sans carte/i.test(l))
   const PERMIS = new Set(['app/page.tsx', 'app/abonnement/page.tsx', 'app/cgu/page.tsx', 'app/parametres/SectionAbonnement.tsx', 'lib/aide.ts', 'lib/faq.ts', 'lib/plans.ts', 'lib/comparatifConcurrents.ts', 'lib/crieur/faits.ts', 'lib/essaiGratuitServeur.ts', 'app/api/stripe/webhook/route.ts',
     // 21/10 : le centre d'aide dit l'essai des abonnements (durées et crédits LUS dans le code, contrôlés par scripts/aide-automatique-qa.mjs, section 7)
-    'app/aide/TableauOffres.tsx'])
+    'app/aide/TableauOffres.tsx',
+    // 02/11 : les pages SEO du 27/10 (encore hors git) disent l'essai des abonnements, durées LUES dans ESSAI_JOURS ; relues ligne à ligne.
+    'app/SeoBlocs.tsx', 'app/logiciel-devis-artisan/page.tsx'])
   const intrus = carte.filter((x) => !PERMIS.has(x.f))
   T('« sans carte » : uniquement dans les fichiers relus (offre d’Essai gratuite ou essai des abonnements)', intrus.length === 0, intrus.map((x) => `${x.f}:${x.n}`).join(', '))
   const gratuitSeul = carte.filter(({ f, l }) => ['app/page.tsx', 'lib/plans.ts', 'lib/crieur/faits.ts'].includes(f) && !/ESSAI_JOURS/.test(l))
@@ -550,6 +597,9 @@ if (!args.includes('--sans-mutations')) {
     { nom: 'l’essai perdu garde ses crédits', fichier: 'app/api/stripe/webhook/route.ts', de: '...(essaiPerdu ? { credits: creditsApresEssaiPerdu(enBase?.credits) } : {}),', vers: '', attendu: 'EG-3e' },
     { nom: 'incomplete_expired / canceled ne ramènent plus à l’Essai', fichier: 'app/api/stripe/webhook/route.ts', de: 'if (abonnementFerme(sub.status)) {', vers: 'if (false) {', attendu: 'EG-3g' },
     { nom: 'un second essai n’est plus annulé', fichier: 'app/api/stripe/webhook/route.ts', de: "if (joursEssai && abo && avant?.stripe_subscription_id && avant.stripe_subscription_id !== abo) {", vers: 'if (false) {', attendu: 'EG-3i' },
+    { nom: 'le contrat Entreprise est lu au montant (donc Signature)', fichier: 'lib/abonnementSync.ts', de: "(prixEntreprise || (meta === 'entreprise' && auMontant === null) ? 'entreprise' : null) ?? ", vers: '', attendu: 'EG-3l' },
+    { nom: 'la mention Entreprise l’emporte sur tout montant (la version de l’audit 032-001, D4)', fichier: 'lib/abonnementSync.ts', de: "(prixEntreprise || (meta === 'entreprise' && auMontant === null) ? 'entreprise' : null)", vers: "(meta === 'entreprise' ? 'entreprise' : null)", attendu: 'EG-3m' },
+    { nom: 'au prix de Signature, la mention de l’abonnement suffit (la version du contre-audit 032-004, D4)', fichier: 'lib/abonnementSync.ts', de: "(prixEntreprise || (meta === 'entreprise' && auMontant === null) ? 'entreprise' : null)", vers: "(prixEntreprise || (meta === 'entreprise' && (auMontant === null || auMontant === 'signature')) ? 'entreprise' : null)", attendu: 'EG-3n' },
   ]
   const copier = (src, dst) => fs.cpSync(src, dst, { recursive: true, filter: (p) => !/[\\/](node_modules|\.next|\.git)([\\/]|$)/.test(p) })
   for (const m of MUTATIONS) {

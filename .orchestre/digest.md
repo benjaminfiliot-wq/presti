@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-02T11:02:13Z
+# Digest — 2026-11-02T14:05:10Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 117 tâche(s) PASS, 99486 ligne(s).
-**État** — file : 60 · en cours : 0 · faites : 386 · refusées : 13
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 122 tâche(s) PASS, 107250 ligne(s).
+**État** — file : 60 · en cours : 0 · faites : 391 · refusées : 13
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,7 +19,7 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 530 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 533 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -81,8 +81,13 @@
 | 028-020 | feature | file | codex | — | Entraîner le TROISIÈME modèle maison de l'écosystème Presti : le rédacteur de contenu (scripts TikTok, légendes, commentaires épinglés, réponses de relance), petit modèle ouvert affiné sur les textes validés par Benj, branché au registre des modèles et au relais comme moteur local gratuit |
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
-| 032-001 | audit | file | claude-code | — | Auditer en attaquant, et en lecture seule, les lots L1 (sécurité S1 à S5 de l'assistant, du pilote, des règles et des relances) et L2 (offre Entreprise) du chantier 4, avant leur mise en production |
 | 032-003 | feature | file | claude-code | — | Construire dans le n8n d'Oracle le workflow presti-detecteurs (lot L3 du chantier 4, règle n8n-first) — les dix détecteurs en lectures Supabase (opérations get et getAll seulement) et nœuds Code, bilan agrégé par détecteur, en simulation, essayé sur des données fictives et non publié |
+| 033-001 | feature | file | claude-code | — | Écrire le texte complet de la landing v2 (les 7 sections imposées par le prompt 4 de Benj, direction A avec le hero de B), sa microcopie, son title et sa meta description, le bloc de démo Entreprise, et une maquette HTML statique en 390 et 1440 px, pour que Benj valide le texte et la maquette avant tout code (chantier 2, lot 4) |
+| 032-007 | audit | fait | claude-code | PASS | 2026-11-02T14:05:10Z · 6s · 1814 l. |
+| 032-006 | audit | fait | claude-code | PASS | 2026-11-02T13:33:58Z · 4s · 1830 l. |
+| 032-005 | audit | fait | claude-code | PASS | 2026-11-02T12:55:27Z · 5s · 1618 l. |
+| 032-004 | audit | fait | claude-code | PASS | 2026-11-02T12:07:27Z · 2s · 1497 l. |
+| 032-001 | audit | fait | claude-code | PASS | 2026-11-02T11:33:22Z · 5s · 1005 l. |
 | 031-014 | audit | fait | claude-code | PASS | 2026-11-02T11:02:12Z · 0s · 970 l. |
 | 031-010 | feature | fait | claude-code | PASS | 2026-11-02T10:21:12Z · 10s · 0 l. |
 | 031-011 | contenu | fait | claude-code | PASS | 2026-11-02T10:18:38Z · 2s · 0 l. |
@@ -118,10 +123,5 @@
 | 026-170 | test | fait | claude-code | FAIL | ✅ JA-1 référence 1c87006 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (5823 fichiers), ancêtre de HEAD, sans app/c |
 | 026-094 | feature | fait | codex | PASS | 2026-10-04T21:19:18Z · 129s · 0 l. |
 | 026-179 | feature | fait | codex | PASS | 2026-10-04T20:58:45Z · 313s · 0 l. |
-| 026-200 | feature | fait | codex | PASS | 2026-10-04T20:40:29Z · 46s · 0 l. |
-| 026-249 | feature | fait | claude-code | PASS | 2026-10-04T20:10:21Z · 247s · 1850 l. |
-| 026-097 | feature | fait | claude-code | PASS | 2026-10-04T19:56:14Z · 70s · 3225 l. |
-| 026-162 | feature | fait | claude-code | PASS | 2026-10-04T19:33:49Z · 4s · 0 l. |
-| 026-227 | feature | fait | codex | PASS | 2026-10-04T19:07:25Z · 83s · 0 l. |
 
-… 359 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 364 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

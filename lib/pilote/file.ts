@@ -6,6 +6,8 @@
 // atomique par compte (M2) ; un compte suspendu ne fait rien partir (M1) ; une carte née d'une conversation où l'assistant a lu
 // du contenu écrit par un tiers ne part jamais seule (M4) ; une réponse rejoue la limite de messages par conversation et la
 // plage horaire de Ma plateforme (E2).
+// 02/11 (§3.2 du prompt de Benj du 01/11) : toute ligne rattachée à une conversation relit, juste avant de partir, les derniers messages
+// ENTRANTS du client ; un sujet d'escalade (litige, sinistre, avocat, urgence…) la renvoie à la main (motif « escalade »).
 import {
   LIBELLE_MOTIF, LOT_PAR_PASSAGE, OUTILS_EXECUTABLES_PILOTE, decisionPilote, etatEcheance, typePiloteDeOutil,
   type LignePrix, type MotifManuel, type ReglagesPilote, type StatutFile, type TypePilote,
@@ -34,10 +36,20 @@ export type DependancesFile = {
   contexte: (uid: string, maintenant: Date) => Promise<ContexteCompte>
   /** Les lignes du devis visé (garde-fou des prix), null si introuvable. */
   lignesDevis: (l: LigneAuto) => Promise<LignePrix[] | null>
-  /** La carte visée, si elle attend encore (null : introuvable ou déjà traitée) ; `contenuClientLu` : marque posée à sa création. */
-  carteDe: (l: LigneAuto) => Promise<{ outil: string; contenuClientLu: boolean } | null>
+  /**
+   * La carte visée, si elle attend encore (null : introuvable ou déjà traitée) ; `contenuClientLu` : marque posée à sa création ;
+   * `leadId` (facultatif) : la conversation où elle écrit (réponse, relance du devis ou de la facture d'une conversation), pour relire
+   * les messages du client avant le départ (§3.2) — absent ou null : aucune conversation connue.
+   */
+  carteDe: (l: LigneAuto) => Promise<{ outil: string; contenuClientLu: boolean; leadId?: string | null } | null>
   /** Pour une réponse à un prospect : prise en main, limite de réponses de l'IA atteinte, hors plage horaire, ou ok. */
   etatConversation: (l: LigneAuto, maintenant: Date) => Promise<EtatConversation>
+  /**
+   * §3.2 (02/11) — les derniers messages ENTRANTS de cette conversation parlent-ils d'un sujet d'escalade (MOTS_ESCALADE_TOUJOURS ou
+   * les mots de l'artisan, lib/pilote/regles.ts sujetEscalade) ? Lecture impossible : lever (la ligne passe en échec, rien ne part).
+   * Facultative pour les faux d'avant le 02/11 ; la vraie (lib/pilote/executeur.ts) la fournit toujours.
+   */
+  escalade?: (l: LigneAuto, leadId: string, maintenant: Date) => Promise<boolean>
   /** Le jeton du plafond quotidien (atomique, fail-closed) : false = plafond atteint. */
   jeton: (uid: string) => Promise<boolean>
   executer: (l: LigneAuto) => Promise<Issue>
@@ -72,12 +84,14 @@ export async function traiterFile(d: DependancesFile, maintenant = new Date(), l
       if (!c) { c = await d.contexte(l.artisan_id, maintenant); contextes.set(l.artisan_id, c) }
       if (c.suspendu) { await manuel('suspendu'); continue }
       let outil: string | undefined
+      let leadCarte: string | null = null
       if (l.source === 'carte') {
         const carte = await d.carteDe(l)
         if (!carte) { await fin('annulee', 'carte introuvable ou déjà traitée'); continue }
         if (!OUTILS_EXECUTABLES_PILOTE.includes(carte.outil) || typePiloteDeOutil(carte.outil) !== l.type) { await manuel('jamais_auto'); continue }
         if (carte.contenuClientLu) { await manuel('contenu_client'); continue }
         outil = carte.outil
+        leadCarte = carte.leadId ?? null
       }
       const lignesPrix = l.type === 'envoi_devis' ? (await d.lignesDevis(l)) ?? [] : undefined
       const dec = decisionPilote({ drapeau: d.drapeau(), plan: c.plan, reglages: c.reglages, type: l.type, outil, lignes: lignesPrix, partiesDepuis24h: c.parties })
@@ -94,6 +108,11 @@ export async function traiterFile(d: DependancesFile, maintenant = new Date(), l
         if (e === 'limite') { await manuel('limite_conversation'); continue }
         if (e === 'horaire') { await fin('a_partir', null); continue } // hors plage horaire : elle partira à l'ouverture (ou passera en manuel après 24 h)
       }
+      // §3.2 (prompt de Benj du 01/11) : jamais parler au nom de l'artisan sur un sujet d'escalade. Chaque type de la file écrit à un
+      // client ; rattachée à une conversation, la ligne relit juste avant de partir les derniers messages ENTRANTS (mots de l'artisan et
+      // MOTS_ESCALADE_TOUJOURS) : un sujet sensible → validation manuelle. Sans conversation connue, rien n'est relu et la ligne part.
+      const leadId = l.lead_id ?? leadCarte
+      if (leadId && d.escalade && (await d.escalade(l, leadId, maintenant))) { await manuel('escalade'); continue }
       // Le plafond du jour, tenu par un jeton atomique par compte (deux passages ou deux instances ne le dépassent pas).
       if (!(await d.jeton(l.artisan_id))) { await manuel('plafond'); continue }
       const r = await d.executer(l)

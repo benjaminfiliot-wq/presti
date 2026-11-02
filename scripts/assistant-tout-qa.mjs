@@ -16,7 +16,8 @@
 //  E. les nouvelles lectures (fil, devis, profil, plateforme, où j'en suis, rappels, commandes), filtrées, offre respectée ;
 //  F. le code : aucune clé de service dans les nouveaux modules, crochet du pilote conservé, outils proposés selon le CRM ;
 //  G. (29/10, « il ne peut absolument pas agir ») le mode « fait tout seul » — une action à confirmer demandée par l'artisan, sans texte
-//     de tiers lu, est exécutée aussitôt (plafonds gardés) ; de bout en bout avec la boucle, un message de client lu garde la carte —
+//     de tiers lu, est exécutée aussitôt (plafonds gardés), SAUF les gestes §3.2 (02/11 : encaissement, facture émise, suppression, lot de
+//     prix — lib/pilote/regles.ts OUTILS_JAMAIS_AUTO) qui restent une carte ; de bout en bout avec la boucle, un message de client lu garde la carte —
 //     et les nouveaux outils : facture sans devis, recherche fournisseurs + retenir, liste d'achat, export Excel, sortie pour un chantier,
 //     suppression d'article.
 //
@@ -563,18 +564,24 @@ console.log('\n── G. 29/10 — l’assistant FAIT : « fait tout seul », fa
   ok('fait tout seul : le plafond de 200 actions par jour s’applique avant tout', f4.resultat === 'refus' && /200 actions/.test(f4.donnees.erreur) && depuis() === n)
   limitesRefusees.length = 0
 
-  // Un lot de prix demandé : la proposition calcule le lot, la réalisation l'applique avec CES entrées ; annulable.
+  // 02/11 (§3.2 du prompt de Benj du 01/11) : un lot de prix DEMANDÉ reste une CARTE (lib/pilote/regles.ts OUTILS_JAMAIS_AUTO) ;
+  // confirmé d'un clic, la réalisation l'applique avec les entrées de la proposition ; annulable ensuite.
   const lot = await exA.augmenter_tarifs(vrai('augmenter_tarifs', { pourcentage: 5 }))
-  ok('fait tout seul : « augmente mes tarifs de 5 % » → lot appliqué aussitôt avec les entrées de la proposition (45 → 47,25), chez A seulement, annulable', T.prix_artisan.find((t) => t.id === id(91)).prix_ht === 47.25 && T.prix_artisan.find((t) => t.id === id(92)).prix_ht === 99 && lot.donnees.annulable_par_l_artisan === true && lot.carte?.annulable === true)
+  ok('fait tout seul : « augmente mes tarifs de 5 % » → CARTE (geste §3.2, jamais d’office), aucun prix changé', lot.carte?.statut === 'en_attente' && lot.donnees.jamais_d_office === true && T.prix_artisan.find((t) => t.id === id(91)).prix_ht === 45 && T.prix_artisan.find((t) => t.id === id(92)).prix_ht === 99)
+  const cLot = await conf.confirmerAction(depsA, A, lot.carte.id)
+  ok('… confirmé d’un clic : lot appliqué avec les entrées de la proposition (45 → 47,25), chez A seulement, annulable', cLot.ok === true && T.prix_artisan.find((t) => t.id === id(91)).prix_ht === 47.25 && T.prix_artisan.find((t) => t.id === id(92)).prix_ht === 99 && !!cLot.fiche?.annulation)
   const anLot = await conf.annulerAction(depsA, A, lot.carte.id)
   ok('… et annulé d’un clic : prix remis à 45', anLot.ok === true && T.prix_artisan.find((t) => t.id === id(91)).prix_ht === 45)
 
   // ── Facture sans devis
   const LIGNES_F = [{ tarif_id: id(91), quantite: 2 }, { designation: 'Déplacement', quantite: 1, prix_unitaire_ht: 45 }]
+  // 02/11 (§3.2) : une facture émise est scellée — DEMANDÉE, elle reste une CARTE avec le montant simulé ; confirmée, elle est émise une fois.
+  const nAvantFl = facturesCreees.length
   const fl = await exA.creer_facture_libre(vrai('creer_facture_libre', { client_nom: 'M. Leroy', objet: 'Dépannage fuite', lignes: LIGNES_F, tva_taux: 20 }))
+  ok('facture SANS devis demandée (fait tout seul) : CARTE avec le montant simulé (geste §3.2, jamais d’office), rien d’émis, et le modèle sait pourquoi', fl.carte?.statut === 'en_attente' && fl.donnees.jamais_d_office === true && /comptabilit/.test(fl.donnees.a_savoir) && facturesCreees.length === nAvantFl && fl.carte.lignes.some((l) => /148,50/.test(l.valeur)), JSON.stringify(fl.donnees).slice(0, 300))
+  const cFl = await conf.confirmerAction(depsA, A, fl.carte.id)
   const p0 = facturesCreees.at(-1)
-  ok('facture SANS devis (fait tout seul) : creerFacture avec un CORPS (aucun devis), ligne au tarif de A (45 € HT, TVA du tarif 10 %) et prix donné (TVA 20 % demandée), TTC simulé vérifié à l’émission', fl.donnees.fait_tout_seul === true && fl.donnees.numero_facture === 'FAC-2026-0042' && !!p0 && p0.devisId === undefined && p0.artisanId === A && p0.corps.client_nom === 'M. Leroy' && p0.corps.lignes.length === 2 && p0.corps.lignes[0].prix_unitaire_ht === 45 && p0.corps.lignes[0].tva_taux === 10 && p0.corps.lignes[1].tva_taux === 20 && p0.ttcAttendu === 148.5 && simulations.at(-1)?.corps === p0.corps, JSON.stringify(p0 ?? fl.donnees).slice(0, 300))
-  ok('facture sans devis : scellée, donc PAS annulable ; le modèle sait qu’elle n’est pas envoyée', fl.carte?.annulable === false && /PAS envoyée/.test(fl.donnees.a_savoir))
+  ok('… CONFIRMÉE : creerFacture avec un CORPS (aucun devis), ligne au tarif de A (45 € HT, TVA du tarif 10 %) et prix donné (TVA 20 % demandée), TTC simulé vérifié à l’émission ; scellée, donc PAS annulable', cFl.ok === true && facturesCreees.length === nAvantFl + 1 && !!p0 && p0.devisId === undefined && p0.artisanId === A && p0.corps.client_nom === 'M. Leroy' && p0.corps.lignes.length === 2 && p0.corps.lignes[0].prix_unitaire_ht === 45 && p0.corps.lignes[0].tva_taux === 10 && p0.corps.lignes[1].tva_taux === 20 && p0.ttcAttendu === 148.5 && JSON.stringify(simulations.at(-1)?.corps) === JSON.stringify(p0.corps) && !cFl.fiche?.annulation, JSON.stringify(p0 ?? cFl).slice(0, 300))
   const nbF = facturesCreees.length
   const flB = await exA.creer_facture_libre(vrai('creer_facture_libre', { client_nom: 'M. Leroy', objet: 'x', lignes: [{ tarif_id: id(92), quantite: 1 }] }))
   ok('facture sans devis : un tarif d’un AUTRE compte est introuvable, rien d’émis', flB.resultat === 'refus' && /introuvable/i.test(flB.donnees.erreur) && facturesCreees.length === nbF)
@@ -652,7 +659,9 @@ console.log('\n── G. 29/10 — l’assistant FAIT : « fait tout seul », fa
   // ── Supprimer un article
   n = depuis()
   const sa = await exA.supprimer_article(vrai('supprimer_article', { article: 'Colle carrelage' }))
-  ok('supprimer un article (fait tout seul) : DELETE /api/inventaire?id=<article de A>, irréversible (pas d’annulation)', routesDepuis(n).join() === 'inventaireSupprimer' && appels[n].chemin === `/api/inventaire?id=${encodeURIComponent(id(54))}` && sa.donnees.fait_tout_seul === true && sa.carte?.annulable === false)
+  ok('supprimer un article DEMANDÉ (fait tout seul) : CARTE (geste §3.2, jamais d’office), aucune route appelée', sa.carte?.statut === 'en_attente' && sa.donnees.jamais_d_office === true && depuis() === n)
+  const cSa = await conf.confirmerAction(depsA, A, sa.carte.id)
+  ok('… confirmée d’un clic : DELETE /api/inventaire?id=<article de A>, irréversible (pas d’annulation)', cSa.ok === true && routesDepuis(n).join() === 'inventaireSupprimer' && appels[n].chemin === `/api/inventaire?id=${encodeURIComponent(id(54))}` && !cSa.fiche?.annulation)
 
   ok('chaque outil du catalogue (52) a son exécution côté serveur ; la fabrique refuse une proposition sans réalisation', oa.NOMS_ACTIONS.length === 52 && oa.NOMS_ACTIONS.every((nm) => typeof srvA.executeurs[nm] === 'function') && /action sans exécution/.test(lire('lib/assistant/actions-serveur.ts')) && /proposition sans réalisation/.test(lire('lib/assistant/actions-serveur.ts')))
 

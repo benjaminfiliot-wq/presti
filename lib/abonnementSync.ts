@@ -58,7 +58,21 @@ export async function alignerSurAbonnement(sub: Stripe.Subscription, relire?: (i
   }
 
   const item = sub.items?.data?.[0]
-  const plan = planDepuisMontant(item?.price?.unit_amount) ?? (sub.metadata?.plan as PlanId | undefined) ?? null
+  // 02/11 : un contrat Entreprise se crée à la main chez Stripe, à un prix propre à chaque client, qui change avec le temps (Benj). La
+  // métadonnée d'un ABONNEMENT survit à un changement d'offre au portail — la faille même de l'en-tête (audits 032-001 D4 et 032-004) : un
+  // contrat ramené au prix de Studio, ou de Signature, garderait l'Entreprise (Signature plus les membres) pour moins cher. L'Entreprise se
+  // reconnaît donc :
+  //  • par son PRODUIT « Presti pour l'entreprise » (metadata plan = entreprise, posé par scripts/stripe-entreprise.mjs), quand la relecture
+  //    le déplie, ou par la métadonnée de son PRIX (posée sur chaque prix de contrat par le même script) — à n'importe quel montant : un
+  //    changement d'offre au portail change de prix et de produit, donc perd l'Entreprise ;
+  //  • à défaut, par la métadonnée de l'abonnement, mais seulement à un montant qui n'est celui d'AUCUNE offre publique (un vrai « sur devis »).
+  // Au prix d'une offre publique, sans produit ni prix Entreprise, le contrat suit son montant (côté sûr : jamais plus que ce qui est payé).
+  // Le portail de ces contrats ne permet ni changement d'offre ni résiliation (STRIPE_PORTAIL_ENTREPRISE, app/api/stripe/portail/route.ts).
+  const meta = sub.metadata?.plan as PlanId | undefined
+  const auMontant = planDepuisMontant(item?.price?.unit_amount)
+  const prixLu = item?.price as { metadata?: Record<string, string>; product?: string | { metadata?: Record<string, string> } } | undefined
+  const prixEntreprise = prixLu?.metadata?.plan === 'entreprise' || (typeof prixLu?.product === 'object' && prixLu.product?.metadata?.plan === 'entreprise')
+  const plan = (prixEntreprise || (meta === 'entreprise' && auMontant === null) ? 'entreprise' : null) ?? auMontant ?? (meta !== 'entreprise' ? meta : null) ?? null
   if (!plan || !PLANS[plan]) return rien(`montant ${item?.price?.unit_amount ?? '—'} : aucune offre ne correspond`)
 
   // On retrouve l'artisan par l'abonnement d'abord (le lien le plus sûr), puis par le client Stripe.

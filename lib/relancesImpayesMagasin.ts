@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { jourParis } from './comptaTableau.ts'
 import { JOURS_PAR_DEFAUT, type ArretFacture, type EntreeJournal, type FactureRelancable, type ReglagesRelances } from './relancesImpayes.ts'
 import type { Magasin } from './relancesImpayesTour.ts'
+import { historiqueRelances, relanceRecente } from './relancesRegistre.ts'
 
 const COLONNES = 'id, artisan_id, numero, statut, avoir_de, date_echeance, total_ttc, client_nom, client_email, devis_id'
 const lire = <T>(r: { data: T | null; error: { message: string } | null }, quoi: string): T => {
@@ -49,6 +50,10 @@ export const magasinSupabase: Magasin = {
   async arrets(artisanId) {
     const r = lire(await supabaseAdmin.from('relances_impayes_arrets').select('facture_id, raison, le, reprise_le').eq('artisan_id', artisanId).limit(5000), 'arrêts')
     return new Map((r ?? []).map((x) => [x.facture_id as string, { raison: x.raison, le: x.le, reprise_le: x.reprise_le } as ArretFacture]))
+  },
+  async relanceAilleurs(artisanId, facture, maintenant) {
+    // Le registre commun, SAUF les impayés eux-mêmes (leur rythme J+3, J+10, J+21 est tenu par decider). Illisible = refus.
+    return relanceRecente(await historiqueRelances(artisanId, { type: 'facture', id: facture.id }), maintenant, { sauf: 'impayes' }).refus
   },
   async reponseClient(artisanId, facture, depuis) {
     const email = String(facture.client_email ?? '').trim()

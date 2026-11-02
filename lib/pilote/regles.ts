@@ -10,7 +10,10 @@
 //  • jamais de prix hors des tarifs de l'artisan : un devis dont UNE ligne est estimée, « à chiffrer » ou à 0 € reste en
 //    validation manuelle (`prixSources`) ;
 //  • jamais de paiement ni de remboursement, ni rien d'irréversible côté comptable : ces outils ne sont pas pilotables
-//    (`OUTILS_JAMAIS_AUTO`, et seule la liste fermée `OUTIL_TYPE` l'est) ;
+//    (`OUTILS_JAMAIS_AUTO`, et seule la liste fermée `OUTIL_TYPE` l'est) — et la même liste garde le mode « fait tout seul » de
+//    l'assistant (lib/assistant/actions-serveur.ts) : ces gestes restent une carte d'un clic, toujours (§3.2, prompt de Benj du 01/11) ;
+//  • jamais parler au nom de l'artisan sur un sujet d'escalade : au départ, les derniers messages du client sont relus
+//    (`MOTS_ESCALADE_TOUJOURS` et les mots de l'artisan, `sujetEscalade`) ; un sujet sensible renvoie l'action à la main ;
 //  • un plafond d'envois automatiques par jour et par compte (`PLAFOND_AUTO_JOUR`) ;
 //  • la pause générale et la pause de l'artisan sont respectées (rien ne part, la file attend) ;
 //  • idempotence : une seule ligne par objet préparé (`cleIdempotence`, contrainte unique en base), réclamée en une transition
@@ -66,11 +69,27 @@ export const OUTIL_TYPE: Readonly<Record<string, TypePilote>> = {
  */
 export const OUTILS_EXECUTABLES_PILOTE: readonly string[] = ['valider_reponse_proposee', 'relancer_devis', 'relancer_facture', 'envoyer_devis', 'envoyer_facture', 'repondre_client']
 
-/** Jamais automatiques, quel que soit le réglage : argent, comptabilité scellée, suppressions, lots de prix. */
+/**
+ * Jamais automatiques, quel que soit le réglage : argent, comptabilité scellée, suppressions, lots de prix — la liste §3.2 du prompt
+ * de Benj du 01/11 (plans/011-cadrage-01-11/prompts-benj/p3-assistant.md, annexe 2 : « Ces gestes restent des cartes, toujours »).
+ * UNE seule liste, lue par le pilote (typePiloteDeOutil, decisionPilote) ET par le mode « fait tout seul » de l'assistant
+ * (lib/assistant/actions-serveur.ts, `proposee`) : même demandé par l'artisan dans son message, un de ces gestes reste une carte d'un
+ * clic. 02/11 : + creer_facture_libre (facture sans devis, émise et scellée à la confirmation) et supprimer_article.
+ */
 export const OUTILS_JAMAIS_AUTO: readonly string[] = [
-  'marquer_facture_payee', 'creer_facture', 'rembourser', 'payer', 'creer_avoir',
-  'supprimer_devis_brouillon', 'supprimer_tarif', 'augmenter_tarifs',
+  'marquer_facture_payee', 'creer_facture', 'creer_facture_libre', 'rembourser', 'payer', 'creer_avoir',
+  'supprimer_devis_brouillon', 'supprimer_tarif', 'supprimer_article', 'augmenter_tarifs',
 ]
+export const jamaisAutomatique = (outil: string): boolean => OUTILS_JAMAIS_AUTO.includes(outil)
+
+/** Pourquoi un geste de OUTILS_JAMAIS_AUTO attend toujours le clic de l'artisan (la phrase que l'assistant lui redit) ; null sinon. */
+export function raisonJamaisAuto(outil: string): string | null {
+  if (!jamaisAutomatique(outil)) return null
+  if (outil.startsWith('supprimer_')) return 'c’est une suppression de données, qui ne se défait pas d’office'
+  if (outil === 'augmenter_tarifs') return 'c’est un changement de prix en lot'
+  if (outil === 'marquer_facture_payee' || outil === 'rembourser' || outil === 'payer') return 'c’est de l’argent (encaissement, paiement ou remboursement)'
+  return 'c’est de la comptabilité : une facture émise est scellée (numéro définitif, correction par un avoir)'
+}
 
 export function typePiloteDeOutil(outil: string): TypePilote | null {
   if (OUTILS_JAMAIS_AUTO.includes(outil) || !OUTILS_EXECUTABLES_PILOTE.includes(outil)) return null
@@ -104,9 +123,80 @@ export function ligneSourcee(l: LignePrix): boolean {
 }
 export const prixSources = (lignes: readonly LignePrix[]): boolean => lignes.length > 0 && lignes.every(ligneSourcee)
 
+// ── §3.2 — l'ESCALADE (prompt de Benj du 01/11 : « parler au nom de l'artisan sur un sujet d'escalade (litige, sinistre, « fuite »,
+// menace, avocat) » ne s'automatise jamais). Relue AU DÉPART de toute ligne de la file rattachée à une conversation (lib/pilote/file.ts).
+
+/**
+ * Les sujets d'escalade qu'aucun réglage ne retire, en plus des mots de l'artisan (Ma plateforme, `escalade_mots`, défaut
+ * lib/plateformeConfig.ts CONFIG_DEFAUT). Repérés au DÉBUT d'un mot, accents et majuscules ignorés : « litiges », « sinistré »,
+ * « menacé », « contesté », « l'avocat », « porter plainte » comptent. Quelques formes sont écrites à part (« tribunaux »,
+ * « mis en demeure », « dégâts des eaux », « inondé »), parce qu'elles ne commencent pas comme le mot de base. Un mot de trop renvoie
+ * l'action à la main : c'est le côté sûr ; un mot manqué ferait parler l'assistant à la place de l'artisan. Les mots dont le début est
+ * celui de mots ordinaires (« gaz » et « gazon ») sont lus en mot entier : MOTS_ESCALADE_ENTIERS.
+ */
+export const MOTS_ESCALADE_TOUJOURS: readonly string[] = [
+  'litige', 'litigieux', 'sinistre', 'avocat', 'menace', 'mise en demeure', 'en demeure', 'plainte', 'tribunal', 'tribunaux', 'huissier',
+  'contentieux', 'conteste', 'contestation', 'arnaque', 'escroquerie', 'escroc',
+  'urgence', 'fuite', 'dégât des eaux', 'dégâts des eaux', 'dégât d’eau', 'dégâts d’eau', 'inondation', 'inondé', 'assurance',
+  // 02/11 (audits 032-001 D5 et 032-004) : les synonymes courants que la liste laissait passer — la justice, les dommages et les blessures,
+  // le refus de payer, la réputation. Le lexique par métier reste à venir (plan du chantier 4, §3 S3).
+  'justice', 'prud’hom', 'juridique', 'médiateur', 'conciliat', 'dgccrf', 'gendarme', 'préjudice', 'indemni', 'dédommag', 'réclamation',
+  'lettre recommandée', 'recommandé avec', 'en recommandé', 'accusé de réception', 'vice caché', 'vices cachés', 'opposition',
+  'malfaçon', 'décennale', 'expert', 'dégât', 'incendie', 'brûl', 'blessé', 'blessure', 'électrocut', 'monoxyde', 'intoxi', 'effondr', 'écroul',
+  'infiltr', 'court-circuit', 'court circuit', 'danger', 'eau partout', 'est tombé', 'est tombée', 'sont tombés', 'une chute', 'fait une chute',
+  'paierai pas', 'payerai pas', 'réglerai pas', 'paie pas', 'paye pas', 'pas payer cette', 'pas payer la', 'pas payer tant', 'refuse de payer',
+  'refuse de régler', 'rembours', 'avis négatif', 'mauvais avis', 'mauvaise pub',
+  // Troisième audit 032-005 (D5) : l'assureur, la menace, le vol, la poursuite, le refus de payer, la sécurité électrique, le signalement.
+  'assureur', 'menaç', 'voleur', 'poursuiv', 'vous attaquer', 'paierai rien', 'payerai rien', 'pas un centime', 'bloque le paiement', 'retiens le solde',
+  'retenir le solde', 'une étoile', 'explos', 'étincel', 'ça fume', 'pris une décharge', 'décharge électrique', 's’est coupé', 's’est blessé',
+  'signalement', 'réclame', 'remise en état', 'conflit', 'dénonce',
+  // Quatrième et cinquième audits (032-006 E2, 032-007 E3) : toutes les formes de « fuir » par leurs racines — fuit, fuite, fuient, a fui,
+  // fuir, fuira, fuyait, fuyant (le §3.2 nomme la fuite) — et « perd de l'eau » ; « urgent ». Côté sûr : « fuir les ennuis » passe à la main.
+  'fui', 'fuy', 'perd de l’eau', 'perdent de l’eau', 'perte d’eau', 'urgen', 'urgemment',
+  // … et les synonymes courants relevés par 032-007 (moyens) : l'eau qui goutte, suinte ou déborde, la panne de chauffage, l'argent réclamé.
+  'goutte', 'suinte', 'déborde', 'sous l’eau', 'de l’eau par terre', 'plus de chauffage', 'plus d’eau chaude', 'au plus vite', 'pressant',
+  'entendre parler de moi', 'retiens le paiement', 'rendez-moi mon argent', 'une honte', 'avis sur google', 'plombs ont sauté', 'pris feu', 'court-jus',
+  // … et ses synonymes manqués (D5) : l'eau qui coule, l'escroquerie, la plainte, les dommages, le travail bâclé, la fraude, le disjoncteur.
+  'coule du', 'ça coule', 'goutte du', 'escroqu', 'plaindre', 'plains', 'dommages et', 'consommateur', 'bâcl', 'mal fait', 'fraude',
+  'disjoncteur saute', 'ça disjoncte', 'disjoncte sans',
+]
+/**
+ * 02/11 (contre-audit 032-004, D5) — les sujets repérés en MOT ENTIER seulement : leur début est celui de mots ordinaires (« gaz » de
+ * « gazon », « gazinière » ou d'un nom propre, « procès » de « processus », « accident » d'« accidentellement »).
+ */
+export const MOTS_ESCALADE_ENTIERS: readonly string[] = ['gaz', 'procès', 'police', 'accident', 'accidents', 'pompiers', 'juge', 'ufc', 'vol', 'samu', 'urssaf']
+/** Les messages ENTRANTS relus au départ (les plus récents de la conversation). */
+export const MESSAGES_ESCALADE_RELUS = 10
+
+const sansAccents = (s: string): string => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+const enMots = (s: string): string => ` ${sansAccents(s).replace(/[^a-z0-9]+/g, ' ').trim()} `
+const RACINES_TOUJOURS: readonly (readonly [string, string])[] = MOTS_ESCALADE_TOUJOURS.map((m) => [m, enMots(m).trim()] as const)
+const RACINES_ENTIERES: readonly (readonly [string, string])[] = MOTS_ESCALADE_ENTIERS.map((m) => [m, enMots(m).trim()] as const)
+// « Pas d'urgence, quand vous pouvez » n'est pas une urgence (contre-audit 032-004, D5) ; ni « sans dégât » un dégât, ni une « chute de
+// neige » une chute (troisième audit 032-005).
+const FAUSSE_URGENCE = / (?:pas d|sans|aucune|rien d) urgen[a-z]*| pas urgent[a-z]*| (?:sans|aucun|pas de) degats?| une chute de (?:neige|pluie|grele|feuilles)/g
+
+/**
+ * Le premier sujet d'escalade trouvé dans ces messages (ceux du CLIENT), ou null. Deux listes : MOTS_ESCALADE_TOUJOURS, au début d'un
+ * mot ; et les mots de l'artisan, lus comme motEscalade (lib/plateformeConfig.ts) : n'importe où dans le texte, accents ignorés.
+ */
+export function sujetEscalade(messages: readonly unknown[], motsArtisan: readonly unknown[] | null = []): string | null {
+  const liste: readonly unknown[] = Array.isArray(motsArtisan) ? motsArtisan : []
+  const artisan = liste.filter((m): m is string => typeof m === 'string').map((m) => [m, sansAccents(m).trim()] as const).filter(([, k]) => k !== '')
+  for (const brut of messages) {
+    if (typeof brut !== 'string' || !brut.trim()) continue
+    const mots = enMots(brut).replace(FAUSSE_URGENCE, ' ')
+    for (const [m, k] of RACINES_TOUJOURS) if (k && mots.includes(` ${k}`)) return m
+    for (const [m, k] of RACINES_ENTIERES) if (k && mots.includes(` ${k} `)) return m
+    const texte = sansAccents(brut)
+    for (const [m, k] of artisan) if (texte.includes(k)) return m
+  }
+  return null
+}
+
 export type MotifManuel =
   | 'drapeau' | 'offre' | 'inactif' | 'type_inactif' | 'jamais_auto' | 'prix_non_source' | 'plafond' | 'pause' | 'trop_ancienne'
-  | 'suspendu' | 'limite_conversation' | 'contenu_client'
+  | 'suspendu' | 'limite_conversation' | 'contenu_client' | 'escalade'
 
 export const LIBELLE_MOTIF: Record<MotifManuel, string> = {
   drapeau: 'Le pilote automatique n’est pas ouvert.',
@@ -121,6 +211,7 @@ export const LIBELLE_MOTIF: Record<MotifManuel, string> = {
   suspendu: 'Compte suspendu : rien ne part.',
   limite_conversation: 'Limite de réponses de l’assistant atteinte dans cette conversation (Ma plateforme) : à valider à la main.',
   contenu_client: 'Préparée après la lecture de messages écrits par des tiers : elle ne part jamais seule, à valider à la main.',
+  escalade: 'Le client parle d’un sujet sensible (litige, sinistre, avocat, urgence…) : à valider à la main.',
 }
 
 /**

@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
-import { PLANS, planConf, enOctets, PLAFOND_IMAGES_MO, PLAFOND_PHOTOS_CLIENTS_MO, type PlanId } from '@/lib/plans'
+import { PLANS, planConf, enOctets, offreDeReference, PLAFOND_IMAGES_MO, PLAFOND_PHOTOS_CLIENTS_MO, type PlanId } from '@/lib/plans'
 
 // Quota de stockage par compte (audit final, auditeur F, majeur 4.3 et 4.4).
 //
@@ -82,9 +82,8 @@ export function formaterOctets(octets: number): string {
   return `${String(mo >= 10 ? Math.round(mo) : Math.round(mo * 10) / 10).replace('.', ',')} Mo`
 }
 
-/** Signature et Business n'ont pas d'offre au-dessus : leur proposer d'y passer serait une impasse. */
-const aUneOffreAuDessus = (plan: string | null | undefined): boolean =>
-  idPlan(plan) !== 'signature' && idPlan(plan) !== 'business'
+/** Signature, Business et Entreprise n'ont pas d'offre au-dessus : leur proposer d'y passer serait une impasse. */
+const aUneOffreAuDessus = (plan: string | null | undefined): boolean => offreDeReference(idPlan(plan)) !== 'signature'
 
 /** Le message que voit l'artisan. Il dit la limite, l'offre, et les DEUX portes de sortie. */
 export function messagePlafondImages(plan: string | null | undefined, utilise: number): string {

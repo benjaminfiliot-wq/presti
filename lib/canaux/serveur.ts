@@ -27,6 +27,7 @@ import { idEnvoyeTelegram, lireErreurTelegram, messageErreurTelegram, requeteEnv
 import { actif } from '@/lib/flags'
 import { nomProvisoire, type CanalConversation, type Liaison, type MagasinCanaux } from './rangement'
 import { canalOuvert, capaciteCanal, estCanalConversation, formuleCanal, piloteInterdit } from './regles'
+import { MESSAGES_ESCALADE_RELUS } from '@/lib/pilote/regles'
 
 const version = () => versionGraph(process.env.META_GRAPH_VERSION)
 
@@ -152,7 +153,9 @@ export async function preparerReponseCanal(p: { lead_id: string; message_id: str
 
     // La même décision que les autres entrées (lib/plateformeConfig) ; sur ces canaux, même « auto » ne fait que PRÉPARER.
     const cfg = await getPlateformeConfig(artisan.id)
-    const decision = decisionReponse(artisan, { prise_en_main: lead.prise_en_main as boolean | null }, cfg, { nbReponsesIA: 0, message: dernierTexte })
+    // 02/11 (troisième audit 032-005, I3) : le fil récent du client est relu pour l'escalade, comme le pilote.
+    const decision = decisionReponse(artisan, { prise_en_main: lead.prise_en_main as boolean | null }, cfg, { nbReponsesIA: 0, message: dernierTexte,
+      messagesClient: tours.filter((t) => t.sens === 'in').slice(-MESSAGES_ESCALADE_RELUS).map((t) => t.contenu) })
     const preparer = p.avecIA !== false && (decision.ok || decision.comportement === 'preparer')
       && formuleCanal(p.canal, artisan.plan as string | null, artisan.is_founder as boolean | null)
       && tours.some((t) => t.sens === 'in')

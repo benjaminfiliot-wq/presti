@@ -167,7 +167,7 @@ export type EntreeJournal = { facture_id: string; rang: number; jour: string; st
 
 export type RaisonRien =
   | 'inactif' | 'pas_emise' | 'annulee' | 'avoir' | 'payee' | 'sans_echeance' | 'pas_echue' | 'sans_email' | 'montant_nul'
-  | 'arretee' | 'client_a_repondu' | 'termine' | 'trop_ancienne' | 'trop_tot' | 'pas_encore' | 'deja_aujourdhui' | 'a_valider'
+  | 'arretee' | 'client_a_repondu' | 'termine' | 'trop_ancienne' | 'trop_tot' | 'pas_encore' | 'deja_aujourdhui' | 'a_valider' | 'deja_relancee_ailleurs'
 export type Decision = { action: 'envoyer'; rang: Rang; joursRetard: number; destinataire: string } | { action: 'rien'; raison: RaisonRien }
 
 export const ecartJours = (a: string, b: string): number =>
@@ -179,6 +179,7 @@ export const LIBELLE_RAISON: Record<RaisonRien, string> = {
   arretee: 'Relances arrêtées', client_a_repondu: 'Le client a répondu', termine: 'Toutes les relances prévues sont parties', trop_ancienne: 'Échue depuis trop longtemps pour une relance automatique',
   trop_tot: 'Prochaine relance trop proche de la précédente', pas_encore: 'Prochaine relance pas encore due', deja_aujourdhui: 'Un message est déjà parti aujourd’hui vers ce client',
   a_valider: 'Une relance préparée attend votre validation',
+  deja_relancee_ailleurs: 'Ce client a été relancé il y a moins de 3 jours par un autre chemin (assistant, CRM ou conversation)',
 }
 
 /**
@@ -188,10 +189,12 @@ export const LIBELLE_RAISON: Record<RaisonRien, string> = {
  *  • `reponseClient` : le client a écrit depuis la référence (échéance, ou relance précédente). Calculée par l'appelant, seulement
  *    quand une relance serait due (c'est une lecture de plus).
  *  • `destinatairesDuJour` : les adresses déjà jointes aujourd'hui par ce compte.
+ *  • `relanceeAilleurs` (02/11, S4) : le registre commun (lib/relancesRegistre.ts) dit que ce client a été relancé par un AUTRE chemin
+ *    depuis moins de 3 jours, ou qu'il est illisible. Calculée par l'appelant, seulement quand une relance serait due.
  */
 export function decider(p: {
   facture: FactureRelancable; reglages: ReglagesRelances; journal: readonly EntreeJournal[]; arretee: boolean
-  reponseClient?: boolean; destinatairesDuJour?: ReadonlySet<string>; maintenant: Date
+  reponseClient?: boolean; destinatairesDuJour?: ReadonlySet<string>; relanceeAilleurs?: boolean; maintenant: Date
 }): Decision {
   const { facture: f, reglages: r } = p
   const rien = (raison: RaisonRien): Decision => ({ action: 'rien', raison })
@@ -227,6 +230,7 @@ export function decider(p: {
   const destinataire = f.client_email!.trim().toLowerCase()
   if (p.destinatairesDuJour?.has(destinataire)) return rien('deja_aujourdhui')
   if (p.reponseClient) return rien('client_a_repondu')
+  if (p.relanceeAilleurs) return rien('deja_relancee_ailleurs')
   return { action: 'envoyer', rang, joursRetard: retard, destinataire }
 }
 

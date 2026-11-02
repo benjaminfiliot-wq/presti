@@ -50,12 +50,19 @@ export async function POST(req: Request) {
   if ('error' in r) return NextResponse.json({ error: r.error }, { status: r.status })
   if (!stripe) return NextResponse.json({ error: 'Paiement non configuré' }, { status: 503 })
   if (!r.a?.stripe_customer_id) return NextResponse.json({ error: 'Aucun abonnement payant sur ce compte.' }, { status: 404 })
+  // 02/11 (contre-audit 032-004, D4) : un contrat « Presti pour l'entreprise » s'ouvre sur SON portail (moyen de paiement, factures,
+  // coordonnées), sans changement d'offre ni résiliation en libre-service — un contrat sur mesure se modifie avec nous. Portail non
+  // configuré : rien ne s'ouvre (le portail par défaut permettrait de changer d'offre et de résilier).
+  const entreprise = r.a.plan === 'entreprise'
+  const portailEntreprise = process.env.STRIPE_PORTAIL_ENTREPRISE?.trim() || null
+  if (entreprise && !portailEntreprise) return NextResponse.json({ error: 'Pour votre contrat Entreprise, écrivez-nous : nous mettons à jour votre facturation avec vous.' }, { status: 503 })
   try {
     // Audit du 20/10 : retour sur l'origine du site (constante), pas sur l'en-tête Origin que le client écrit lui-même.
     const origin = BASE_PRESTI
     const session = await stripe.billingPortal.sessions.create({
       customer: r.a.stripe_customer_id,
       return_url: `${origin}/parametres?onglet=abonnement`,
+      ...(entreprise && portailEntreprise ? { configuration: portailEntreprise } : {}),
     })
     return NextResponse.json({ url: session.url })
   } catch (e) {

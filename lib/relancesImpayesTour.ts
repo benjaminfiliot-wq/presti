@@ -40,6 +40,8 @@ export interface Magasin {
   /** Les arrêts du compte, par facture (reprise_le non nul : l'artisan a repris les relances). */
   arrets(artisanId: string): Promise<Map<string, ArretFacture>>
   /** Le client a-t-il écrit depuis `depuis` ? (lead de la facture ou de son devis, ou même adresse e-mail) */
+  /** 02/11 (S4) : relancé par un AUTRE chemin depuis moins de 3 jours (registre commun, lib/relancesRegistre.ts) ? Illisible = vrai. */
+  relanceAilleurs(artisanId: string, facture: FactureRelancable, maintenant: Date): Promise<boolean>
   reponseClient(artisanId: string, facture: FactureRelancable, depuis: string): Promise<boolean>
   /** Prend la relance. Rend son identifiant, ou null si elle est déjà prise (rang, ou destinataire du jour). */
   prendre(e: { facture_id: string; artisan_id: string; rang: number; jour: string; destinataire: string }): Promise<string | null>
@@ -101,7 +103,10 @@ export async function tourRelancesImpayes(d: {
         // Relecture fraîche : payée, annulée ou arrêtée depuis la lecture du début de passage ? Rien ne part.
         const fraiche = await m.facture(artisan_id, f.id)
         if (!fraiche || fraiche.artisan_id !== artisan_id) continue
-        const encore = decider({ facture: fraiche, reglages, journal, arretee: arretee(f.id), destinatairesDuJour: destinataires, maintenant })
+        // 02/11 (S4) : un autre chemin (assistant, pilote, CRM, conversation) a-t-il relancé ce client depuis moins de 3 jours ? La relance
+        // n'est pas prise : elle reste due et repart à un passage suivant (dans sa fenêtre de rattrapage).
+        const ailleurs = await m.relanceAilleurs(artisan_id, fraiche, maintenant)
+        const encore = decider({ facture: fraiche, reglages, journal, arretee: arretee(f.id), destinatairesDuJour: destinataires, relanceeAilleurs: ailleurs, maintenant })
         if (encore.action !== 'envoyer' || encore.rang !== decision.rang) continue
 
         // La pause générale est relue avant CHAQUE envoi.

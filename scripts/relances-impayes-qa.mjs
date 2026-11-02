@@ -40,7 +40,7 @@ const facture = (art, o = {}) => ({
   date_echeance: il(3), total_ttc: 1200, client_nom: 'M. Durand', client_email: `client${seq}@example.com`, devis_id: null, ...o,
 })
 
-function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse = null, sansUnicite = false }) {
+function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse = null, sansUnicite = false, ailleurs = new Set() }) {
   const journal = []; const arrets = new Map(); const lectures = { n: 0 }; const notifs = []
   const reg = new Map(comptes.map((c) => [c.id, c]))
   const m = {
@@ -57,6 +57,8 @@ function monde({ comptes, factures = [], messages = [], fuiteDans = null, casse 
     async facture(art, id) { lectures.n++; if (m.avantRelecture) m.avantRelecture(id); return factures.find((f) => f.id === id && f.artisan_id === art) ?? null },
     async journal(art) { return journal.filter((e) => e.artisan_id === art).map((e) => ({ ...e })) },
     async arrets(art) { return new Map([...(arrets.get(art) ?? new Map())].map(([k, v]) => [k, { ...v }])) },
+    // 02/11 (S4) : le registre commun, en mémoire — `ailleurs` : les factures dont le client vient d'être relancé par un autre chemin.
+    async relanceAilleurs(art, f) { lectures.n++; return ailleurs.has(f.id) },
     async reponseClient(art, f, depuis) { return messages.some((x) => x.artisan_id === art && x.contact.toLowerCase() === String(f.client_email).toLowerCase() && x.sens === 'in' && x.sent_at > depuis) },
     async prendre(e) {
       await Promise.resolve() // laisse passer un autre passage : la concurrence est réelle
@@ -88,7 +90,7 @@ const tour = (m, e, o = {}) => T.tourRelancesImpayes({ actif: true, magasin: m, 
 // ─── 1. Le calendrier et la décision (pure) ────────────────────────────────────────────────────────────────────────────────
 ok(JSON.stringify(R.JOURS_PAR_DEFAUT) === '[3,10,21]', 'calendrier par défaut J+3, J+10, J+21')
 ok(R.REGLAGES_RELANCES_PAR_DEFAUT.actif === false, 'désactivé par défaut (opt-in)')
-const dec = (f, o = {}) => R.decider({ facture: f, reglages: REG(o.reglages), journal: o.journal ?? [], arretee: !!o.arretee, reponseClient: o.reponse, destinatairesDuJour: o.dest, maintenant: o.maintenant ?? MAINTENANT })
+const dec = (f, o = {}) => R.decider({ facture: f, reglages: REG(o.reglages), journal: o.journal ?? [], arretee: !!o.arretee, reponseClient: o.reponse, destinatairesDuJour: o.dest, relanceeAilleurs: o.ailleurs, maintenant: o.maintenant ?? MAINTENANT })
 const A = 'art-A'
 const rienPour = (f, raison, o) => { const d = dec(f, o); ok(d.action === 'rien' && d.raison === raison, `décision attendue « ${raison} », reçue ${JSON.stringify(d)}`) }
 rienPour(facture(A, { date_echeance: il(-2) }), 'pas_echue')
@@ -129,6 +131,9 @@ rienPour(facture(A), 'client_a_repondu', { reponse: true })
 }
 { const d = dec(facture(A, { date_echeance: il(1) }), { reglages: { jours: [1, 4] } }); ok(d.action === 'envoyer' && d.rang === 1, 'calendrier personnalisé [1,4] : J+1 part') }
 { const f = facture(A, { client_email: 'Client@Example.com' }); rienPour(f, 'deja_aujourdhui', { dest: new Set(['client@example.com']) }) }
+// 02/11 (S4) : relancé par un AUTRE chemin depuis moins de 3 jours (registre commun) : rien ; sans cela, la relance part.
+{ const f = facture(A); rienPour(f, 'deja_relancee_ailleurs', { ailleurs: true }); ok(dec(f, { ailleurs: false }).action === 'envoyer', 'sans relance ailleurs, la même facture part') }
+ok(/autre chemin/.test(R.LIBELLE_RAISON.deja_relancee_ailleurs ?? ''), 'la raison « deja_relancee_ailleurs » a son libellé')
 
 // ─── 2. La validation des réglages et des textes ──────────────────────────────────────────────────────────────────────────
 const lu = (b) => R.lireReglagesRelances(b)
@@ -187,6 +192,15 @@ const compte = (id, o = {}) => ({ id, reglages: REG(), ...o })
   const b3 = await tour(m, e, { maintenant: plus(1) }); ok(b3.envoyees === 0, 'lendemain : pas de 2e relance (calendrier)')
   f.date_echeance = il(10)
   const b4 = await tour(m, e); ok(b4.envoyees === 0, 'J+10 le même jour que la 1re (sic) : rien ne part, une relance par jour et par client')
+}
+{ // 02/11 (S4) : le client vient d'être relancé par un AUTRE chemin (assistant, pilote, CRM, conversation) — registre commun
+  const f = facture(A); const ailleurs = new Set([f.id])
+  const m = monde({ comptes: [compte(A)], factures: [f], ailleurs }); const e = espion()
+  const b = await tour(m, e)
+  ok(b.envoyees === 0 && e.envois.length === 0 && m.rows.length === 0, `relancé ailleurs depuis moins de 3 jours : rien ne part, rien n’est pris (reçu ${e.envois.length} envoi(s), ${m.rows.length} prise(s))`)
+  ailleurs.clear()
+  const b2 = await tour(m, e, { maintenant: plus(1) })
+  ok(b2.envoyees === 1 && e.envois.length === 1, 'le registre libre, la relance due part au passage suivant (rien n’est perdu)')
 }
 { // idempotence sous concurrence : deux passages SIMULTANÉS
   const m = monde({ comptes: [compte(A)], factures: [facture(A)] }); const e = espion()
@@ -448,6 +462,11 @@ ok(/update\(\{ statut: 'prise', jour: aujourdhui/.test(routeAV) && routeAV.index
 ok(/update\(\{ statut: 'a_valider', jour: ligne\.jour \}\)/.test(routeAV) && /update\(\{ statut: 'envoyee', envoyee_le/.test(routeAV), 'route a-valider : envoi refusé → rendue à valider ; envoi réussi → envoyee')
 ok(/fromName: art\.data\.nom/.test(routeAV) && /replyTo: art\.data\.email/.test(routeAV) && /transactionnel: true/.test(routeAV), 'route a-valider : au nom de l’artisan, réponse vers lui')
 ok(/f\.data\.statut !== 'emise'/.test(routeAV) && /relances_impayes_arrets/.test(routeAV) && /lireRelanceRetouchee/.test(routeAV), 'route a-valider : facture relue (toujours impayée, non arrêtée), retouche validée')
+// 02/11 (audit 032-001, D6) : préparée le matin, la relance part au clic parfois des jours plus tard — le registre commun est relu AU DÉPART.
+ok(/relanceRecente\(await historiqueRelances\(session\.uid, \{ type: 'facture', id: ligne\.facture_id \}\), new Date\(\), \{ sauf: 'impayes' \}\)/.test(routeAV)
+  && routeAV.indexOf('historiqueRelances(session.uid') > 0 && routeAV.indexOf('historiqueRelances(session.uid') < routeAV.indexOf("statut: 'prise', jour")
+  && /reg\.raison === 'illisible' \? NextResponse\.json\(\{ error: phrase \}, \{ status: 503 \}\)/.test(routeAV) && /code: 'deja_relance' \}, \{ status: 409 \}/.test(routeAV),
+  'route a-valider : le registre commun des relances est relu AVANT la prise (sauf les impayés eux-mêmes) ; déjà relancé ailleurs = 409, illisible = 503 (audit 032-001, D6)')
 
 const ecran = lire('app/factures/RelancesAuto.tsx'); const page = lire('app/factures/page.tsx')
 ok(/À valider/.test(ecran) && />\{enCours === 'envoyer' \? 'Envoi…' : 'Envoyer'\}</.test(ecran) && /'Écarter'/.test(ecran) && /relances-auto\/a-valider/.test(ecran), 'écran : section « À valider » avec Envoyer et Écarter')

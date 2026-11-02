@@ -30,9 +30,8 @@ Toutes les suites ont été jouées hors ligne, une à la fois ; aucune n'a touc
 | `crm-lot2-qa` (partie hors ligne), `crm-lot4-qa`, `crm-assistant-panneau-qa` | 46, 30 et 63 verts, 0 rouge |
 | `acces-automatisations-qa`, `aide-automatique-qa`, `canaux-reseaux-qa`, `compta-tableau-qa` | 62/62, 62/62, 112 verts, tous verts |
 
-**Pas encore joués** : `npm run typecheck` et `npm run build` (RAM du PC trop basse pendant que deux sessions Orca tournaient) ; l'audit par
-un agent distinct (`presti-audit-attaque`) ; les suites contre la production (`pilotage-e2e`, `relances-e2e`), qui ne se jouent qu'après
-déploiement.
+**Joués depuis** : `npm run typecheck` (code 0, après chaque cycle de correctifs) et les audits distincts (plus bas). **Restent** :
+`npm run build`, puis les suites contre la production (`pilotage-e2e`, `relances-e2e`), qui ne se jouent qu'après déploiement.
 
 ## Défauts trouvés en route
 
@@ -53,6 +52,46 @@ déploiement.
   d'origine.
 - **Règle n8n-first** (Benj, 02/11) : S1 à S5 sont des exceptions justifiées. Ce sont des correctifs de sécurité dans des automatisations déjà
   codées en production, qui ne font que restreindre ; ces chemins migrent un par un dans n8n (`migration-production.md`).
+
+## Audits distincts et correctifs (02/11, midi et après-midi)
+
+Deux audits offensifs, chacun par une session Claude Code distincte lancée dans Orca, ont rendu « ne tient pas » ; tout a été corrigé
+par la session principale, avec un essai et un mutant pour chaque défaut (`scripts/securite-assistant-0211-qa.mjs`, 108 essais, 68 avant).
+
+| Audit | Défaut | Correctif |
+|---|---|---|
+| 032-001 D1 (élevé) | « fait tout seul » envoyait un devis à ligne estimée ou à 0 € | `P.envoyer_devis` relit les lignes (`prixSources`) ; non sourcé ou illisible → carte (`horsAuto`) |
+| 032-001 D2 | négation, hésitation, fait passé lus comme un ordre | remplacé par l'ordre net (032-004 D2) |
+| 032-001 D3 | conversation illisible lue « rien à escalader » | `leadDuCompteStrict` dans l'escalade : une erreur lève |
+| 032-001 D4 | la métadonnée Entreprise survivait à une descente d'offre | remplacé par le prix dédié (032-004 D4) |
+| 032-001 D5 | synonymes d'escalade manqués | lexique élargi, puis repris (032-004 D5) |
+| 032-001 D6 | deux envois au clic ne relisaient pas le registre | la route `a-valider` et `validerPropositionServeur` le relisent au départ |
+| 032-001 D7 | `offres-affichage-qa` hors lanceur | inscrite à `SUITES` |
+| 032-004 D1 bis (élevé) | un prix recopié d'un autre devis devenait « prix donné par l'artisan » | l'étiquette n'est posée que sur un nombre écrit par l'artisan (`nombresEcrits`, `textesArtisan`) ; sinon « prix repris d'une donnée, à vérifier » |
+| 032-004 D2 | 27 tournures ouvraient encore le mode | charge renversée : seul un ordre net (impératif en tête ou « oui », sans négation, report, condition, hésitation ni « déjà fait ») ouvre le « fait tout seul » |
+| 032-004 D3 | réglages et compte des réponses lus sans leur erreur | `getPlateformeConfigStrict`, erreur du compte lue : une erreur lève |
+| 032-004 D4 (argent) | descendu au prix de Signature, le contrat gardait l'Entreprise | l'Entreprise se reconnaît par un prix Stripe dédié (`price.metadata.plan`), ou par la métadonnée à un montant hors offres publiques |
+| 032-004 D5 | 18 tournures manquées, 12 faux positifs | lexique élargi ; mots entiers (`gaz`, `procès`, `accident`…) ; « pas d'urgence » ignoré |
+| 032-004 D6 | une colonne absente passait pour une table absente | seuls `PGRST205` et `42P01` sont ignorés |
+| 032-004 I3 | la réponse seule au prospect ignorait la liste d'escalade | `iaDoitRepondre` la lit en mode « auto » ; le mode « assistée » garde son brouillon |
+
+| 032-005 A2 (élevé) | une estimation entrait dans « mes tarifs » (`ajouter_tarif`, `modifier_tarif`, écritures directes) et le devis au tarif partait seul | la bibliothèque n'enregistre que le prix écrit par l'artisan (`prixDeLArtisan`) |
+| 032-005 A3 | une quantité, une date, un numéro écrits par l'artisan passaient pour un prix | `prixEcrits` : seul un nombre marqué (« € », « euros », « HT », « le m² »…) est un prix |
+| 032-005 D2 | « C'est bon, je m'en occupe », rétractations, reports et conditions ouvraient encore le mode | un accord n'ouvre que seul ou suivi d'un impératif ; rétractations, jours, « après… », « à moins que », participes datés défont l'ordre |
+| 032-005 I3 | la réponse seule ne relisait que le dernier message (la suite d'un litige recevait une réponse) | `messagesClient` : les trois routes qui répondent seules relisent les derniers messages entrants du fil |
+| 032-005 D5 | 22 tournures manquées (assureur, menace, vol, explosion, Urssaf…) | lexique élargi ; « sans dégât » et « chute de neige » écartés |
+| 032-005 réserve | `garde-fou-envoi-qa` joué par personne | inscrite à `SUITES` |
+
+**Prix du côté sûr** : des demandes qui ne sont pas un ordre net deviennent une carte d'un clic (« N'oublie pas de relancer Dupont »,
+« Relance Dupont si ce n'est pas fait », « Réponds-lui que je passe jeudi »). Écrit dans l'essai A2h2. La suite de sécurité compte 123 essais.
+
+**Règle du quatrième audit (032-006)** : le code en production a encore les brèches d'origine (S1 à S5) ; garder ce lot hors de la
+production garde le produit dans son état le moins sûr. Le lot part donc s'il ne reste aucun défaut ÉLEVÉ (un chemin courant qui fait
+partir sans le clic de l'artisan un prix non sourcé, un geste §3.2 ou une parole sur un sujet d'escalade) ; les défauts moyens et faibles
+restants sont listés pour le lot suivant.
+
+**Reste à Benj** (argent, compte Stripe) : un contrat Entreprise se crée avec un prix Stripe dédié portant `metadata.plan = entreprise` ; et
+le portail de facturation ne doit pas permettre de changer d'offre pour ces contrats (réglage du compte Stripe).
 
 ## Décisions de Benj (02/11 au matin)
 

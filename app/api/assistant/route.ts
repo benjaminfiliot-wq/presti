@@ -125,7 +125,10 @@ export async function POST(req: Request) {
   // 29/10 — mode « fait tout seul » (décision de Benj) : l'état du tour est partagé entre la boucle (qui note la lecture d'un texte de
   // tiers) et les actions (qui le lisent au moment d'agir). Demandée par l'artisan + aucun texte de tiers lu → exécutée ; sinon, carte.
   const etatTour: EtatTour = { contenuTiersLu: false }
-  const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase(), autonome: () => faitToutSeul(cadrage, etatTour) }) : undefined
+  // 02/11 (contre-audit 032-004, D1 bis) : ce que l'ARTISAN a écrit lui-même (son message, ses messages de l'historique) — seul un prix qui y
+  // figure devient « prix donné par l'artisan » ; un prix recopié d'une donnée lue ou d'une réponse de l'assistant reste à vérifier.
+  const textesArtisan = [message, ...historique.filter((e) => e.role === 'artisan').map((e) => e.texte)]
+  const actionsSrv = actionsOk ? actionsDeSession({ ...ctxSession, conversationId, tour: () => tourPris, magasin: magasinSupabase(), autonome: () => faitToutSeul(cadrage, etatTour), textesArtisan }) : undefined
   const executeurs = executeursDeSession(ctxSession, actionsSrv)
 
   // Plafond (atomique en base, fail-closed : sans la migration 0150, aucun tour ne part), puis crédit, puis le tour.

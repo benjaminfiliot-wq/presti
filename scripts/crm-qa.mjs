@@ -105,9 +105,10 @@ var A_TEST = 'art-A'
     T(`B5 offre ${plan} → 403 « Disponible avec l’offre Signature »`, !d.ok && d.statut === 403 && d.code === 'offre' && /Signature/.test(d.erreur), JSON.stringify(d))
   }
   for (const plan of ['signature', 'business']) T(`B6 offre ${plan} → accès`, decisionAcces({ drapeau: true, session: sOk, plan }).ok)
-  T('B7 la capacité crm : Signature et Business seulement', Object.keys(PLANS).filter((p) => peut(p, 'crm')).sort().join(',') === 'business,signature')
+  // 02/11 (chantier 4) : l'offre Entreprise sur mesure reprend Signature, CRM compris.
+  T('B7 la capacité crm : Signature, Entreprise et Business seulement', Object.keys(PLANS).filter((p) => peut(p, 'crm')).sort().join(',') === 'business,entreprise,signature')
   // 13/10 soir — drapeau levé : la grille annonce le CRM, en Signature SEULEMENT (une ligne, Essentiel et Studio à « — »).
-  T('B8 la grille Tarifs annonce le CRM en Signature seulement (lignes de la capacité crm, cellules calculées depuis PLANS)', (() => { const l = GRILLE.filter((x) => x.capacites.includes('crm')); return l.length >= 1 && l.every((x) => x.flag === 'crm' && x.cellules.essentiel === false && x.cellules.studio === false && x.cellules.signature === true) })())
+  T('B8 la grille Tarifs annonce le CRM en Signature seulement (lignes de la capacité crm, cellules calculées depuis PLANS)', (() => { const l = GRILLE.filter((x) => x.capacites.includes('crm')); return l.length >= 1 && l.every((x) => x.flag === 'crm' && Object.keys(x.cellules).sort().join() === 'signature,studio' && x.cellules.studio === false && x.cellules.signature === true) })())
 }
 
 // ═══════════════════════ C. Pipeline ═══════════════════════

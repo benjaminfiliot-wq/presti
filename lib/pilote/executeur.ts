@@ -4,7 +4,8 @@
 //  1. il prend les lignes mûres (part_le ≤ maintenant), les RÉCLAME une à une (a_partir → en_cours, une seule instruction : un
 //     second passage ou une seconde instance ne prend jamais la même) ;
 //  2. il RELIT tout juste avant l'envoi : drapeau, offre Signature, réglages (pilote et type toujours actifs), plafond du jour,
-//     prix sourcés pour un devis, ancienneté, pause de l'artisan pour une réponse — le moindre « non » rend l'action à la main ;
+//     prix sourcés pour un devis, ancienneté, pause de l'artisan pour une réponse, et (02/11, §3.2) les derniers messages ENTRANTS
+//     de la conversation visée : un sujet d'escalade (litige, sinistre, avocat, urgence…) — le moindre « non » rend l'action à la main ;
 //  3. il fait partir par les fonctions d'envoi PARTAGÉES (lib/envoisServeur.ts : celles des boutons de l'interface) ; une carte
 //     de l'assistant passe par confirmerAction (lib/assistant/confirmation.ts) : même réclamation atomique de la carte, même
 //     journal de l'assistant, comme si l'artisan avait cliqué « Confirmer » ;
@@ -15,18 +16,19 @@ import { actif } from '@/lib/flags'
 import { sendEmail } from '@/lib/email'
 import { consommerLimite } from '@/lib/limites'
 import { jourParis } from '@/lib/comptaTableau'
-import { confirmerAction, type Realisateur, type Realisation } from '@/lib/assistant/confirmation'
+import { confirmerAction, type FicheAction, type Realisateur, type Realisation } from '@/lib/assistant/confirmation'
 import { magasinSupabase } from '@/lib/assistant/magasin'
 import { journalEnBase } from '@/lib/assistant/executeurs'
 import { texteRelanceDevis, texteRelanceFacture } from '@/lib/assistant/cartes'
-import { ENVOIS_JOUR_MAX, RELANCE_DELAI_JOURS } from '@/lib/assistant/actions-serveur'
-import { leadDuCompte, repondreServeur, validerPropositionServeur } from '@/lib/envoisServeur'
+import { ENVOIS_JOUR_MAX } from '@/lib/assistant/actions-serveur'
+import { historiqueRelances, relanceRecente, RELANCE_DELAI_JOURS } from '@/lib/relancesRegistre'
+import { leadDuCompte, leadDuCompteStrict, repondreServeur, validerPropositionServeur } from '@/lib/envoisServeur'
 import { envoyerDevisServeur, envoyerFactureServeur } from '@/lib/envoisPdfServeur'
 import { piloteInterdit } from '@/lib/canaux/regles'
-import { getPlateformeConfig, dansLaPlage } from '@/lib/plateformeConfig'
+import { getPlateformeConfigStrict, dansLaPlage } from '@/lib/plateformeConfig'
 import { suspensionEnCours } from '@/lib/suspension'
 import { jetonPlafond, lignesDuDevis, lireReglages, partiesDepuis24h } from './serveur'
-import { MARQUE_CONTENU_TIERS, OUTILS_EXECUTABLES_PILOTE, prixSources } from './regles'
+import { MARQUE_CONTENU_TIERS, MESSAGES_ESCALADE_RELUS, OUTILS_EXECUTABLES_PILOTE, prixSources, sujetEscalade } from './regles'
 import type { DependancesFile, Issue, LigneAuto } from './file'
 export { traiterFile, type Bilan, type DependancesFile, type LigneAuto, type Issue } from './file'
 
@@ -39,6 +41,28 @@ const txt = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? 
 const ko = (erreur: string, deja = false): Issue => ({ ok: false, deja, erreur })
 
 /**
+ * §3.2 (02/11) — la CONVERSATION où écrit une carte de l'assistant, pour relire les messages du client avant le départ : la
+ * conversation elle-même (réponse, réponse préparée), celle du devis (relance, envoi), celle du devis de la facture (relance
+ * d'impayé, envoi). Chaque lecture est filtrée par le compte ; illisible : lever (la ligne passe en échec, rien ne part). null : la
+ * carte n'écrit dans aucune conversation connue (elle n'est pas bloquée pour autant).
+ */
+async function conversationDeLaCarte(uid: string, f: Pick<FicheAction, 'objet_type' | 'objet_id' | 'entrees'>): Promise<string | null> {
+  const directe = f.objet_type === 'conversation' ? txt(f.objet_id) : txt(f.entrees?.conversation_id)
+  if (directe) return directe
+  let devisId = f.objet_type === 'devis' ? txt(f.objet_id) : null
+  const factureId = f.objet_type === 'facture' ? txt(f.objet_id) : null
+  if (factureId) {
+    const { data, error } = await supabaseAdmin.from('factures').select('devis_id').eq('artisan_id', uid).eq('id', factureId).maybeSingle()
+    if (error) throw new Error('facture illisible : rien ne part')
+    devisId = txt(data?.devis_id)
+  }
+  if (!devisId) return null
+  const { data, error } = await supabaseAdmin.from('devis').select('lead_id').eq('artisan_id', uid).eq('id', devisId).maybeSingle()
+  if (error) throw new Error('devis illisible : rien ne part')
+  return txt(data?.lead_id)
+}
+
+/**
  * Les réalisateurs du pilote pour les cartes de l'assistant : ceux de lib/assistant/actions-serveur.ts, sans la session —
  * mêmes contrôles (objet du compte, statut, e-mail, plafond d'envois et délai entre deux relances de l'assistant), mêmes
  * fonctions d'envoi (lib/envoisServeur.ts) et mêmes textes (lib/assistant/cartes.ts).
@@ -46,7 +70,6 @@ const ko = (erreur: string, deja = false): Issue => ({ ok: false, deja, erreur }
 export function realisateursPilote(uid: string, carteCreeLe: string): Record<string, Realisateur> {
   const ko2 = (erreur: string): Realisation => ({ ok: false, erreur })
   const peutEnvoyer = () => consommerLimite(`assistant-envois:${uid}`, ENVOIS_JOUR_MAX, 24 * 3600)
-  const magasin = magasinSupabase()
   async function profil() {
     const { data } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
     return { nom: txt(data?.nom) ?? 'Votre artisan', email: txt(data?.email) }
@@ -59,9 +82,12 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
     const { data } = await supabaseAdmin.from('factures').select('id, numero, statut, client_nom, client_email, total_ttc, date_echeance, avoir_de').eq('artisan_id', uid).eq('numero', numero).maybeSingle()
     return data as { id: string; numero: string; statut: string | null; client_nom: string | null; client_email: string | null; total_ttc: number | string | null; date_echeance: string | null; avoir_de: string | null } | null
   }
-  const dejaRelance = async (outil: string, objetId: string) => {
-    const dernier = await magasin.dernierEnvoi(uid, outil, objetId).catch(() => null)
-    return !!dernier && Date.now() - Date.parse(dernier) < RELANCE_DELAI_JOURS * 86_400_000
+  // 02/11 (S4) : le registre commun des relances (lib/relancesRegistre.ts) — assistant et pilote, CRM, impayés, conversation. Une lecture
+  // en erreur REFUSE : jusqu'ici `.catch(() => null)` la faisait valoir « jamais relancé ». Rend la phrase du refus, ou null.
+  const dejaRelance = async (type: 'devis' | 'facture', objetId: string): Promise<string | null> => {
+    const v = relanceRecente(await historiqueRelances(uid, { type, id: objetId }), new Date())
+    if (!v.refus) return null
+    return v.raison === 'illisible' ? 'Le registre des relances est illisible : rien ne part.' : `${type === 'devis' ? 'Ce devis a déjà été relancé' : 'Cette facture a déjà été relancée'} il y a moins de ${RELANCE_DELAI_JOURS} jours.`
   }
   async function mail(to: string, objet: string, texte: string): Promise<Realisation | null> {
     if (!(await peutEnvoyer())) return ko2(`Limite d'envois du jour atteinte (${ENVOIS_JOUR_MAX}).`)
@@ -96,7 +122,8 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
     if (d.statut !== 'envoye') return ko2(`Le devis ${d.numero} n'attend plus de réponse (statut : ${d.statut}).`)
     const to = txt(d.client_email)
     if (!to || !EMAIL.test(to)) return ko2('Le devis n’a pas d’e-mail client.')
-    if (await dejaRelance('relancer_devis', d.id)) return ko2('Ce devis a déjà été relancé il y a moins de 3 jours.')
+    const dejaD = await dejaRelance('devis', d.id)
+    if (dejaD) return ko2(dejaD)
     const p = await profil()
     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
     return (await mail(to, t.objet, t.texte)) ?? { ok: true, resume: `relance du devis ${d.numero} envoyée (pilote automatique)`, objet: { type: 'devis', id: d.id } }
@@ -107,7 +134,8 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
     if (f.statut !== 'emise' || f.avoir_de) return ko2(`La facture ${f.numero} n'est plus un impayé (statut : ${f.avoir_de ? 'avoir' : f.statut}).`)
     const to = txt(f.client_email)
     if (!to || !EMAIL.test(to)) return ko2('La facture n’a pas d’e-mail client.')
-    if (await dejaRelance('relancer_facture', f.id)) return ko2('Cette facture a déjà été relancée il y a moins de 3 jours.')
+    const dejaF = await dejaRelance('facture', f.id)
+    if (dejaF) return ko2(dejaF)
     const retard = f.date_echeance ? Math.floor((Date.parse(jourParis(new Date()) + 'T00:00:00Z') - Date.parse(f.date_echeance.slice(0, 10) + 'T00:00:00Z')) / 86_400_000) : null
     if (retard === null || retard <= 0) return ko2(`La facture ${f.numero} n'est pas échue.`)
     const p = await profil()
@@ -179,20 +207,37 @@ export function dependancesSupabase(): DependancesFile {
     async carteDe(l) {
       const f = await magasin.lire(l.artisan_id, l.ref_id).catch(() => null)
       if (!f || f.mode !== 'confirmation' || f.statut !== 'en_attente') return null
-      return { outil: f.outil, contenuClientLu: f.entrees?.[MARQUE_CONTENU_TIERS] === true }
+      return { outil: f.outil, contenuClientLu: f.entrees?.[MARQUE_CONTENU_TIERS] === true, leadId: await conversationDeLaCarte(l.artisan_id, f) }
     },
     async etatConversation(l, maintenant) {
       if (!l.lead_id) return 'prise_en_main'
       const lead = await leadDuCompte(l.lead_id, l.artisan_id)
       if (!lead || lead.prise_en_main === true) return 'prise_en_main'
       // E2 : la limite de réponses de l'IA par conversation et la plage horaire de Ma plateforme, comme une réponse automatique.
-      const cfg = await getPlateformeConfig(l.artisan_id)
-      const { count } = await supabaseAdmin.from('messages').select('id', { count: 'exact', head: true }).eq('lead_id', lead.id).eq('sens', 'out').eq('type', 'reponse_auto').is('etat', null)
+      // 02/11 (contre-audit 032-004, D3) : réglages et compte lus avec leur erreur — une erreur lève (la ligne finit en échec, rien ne part),
+      // au lieu de remplacer la limite et la plage de l'artisan par les défauts, ou de compter zéro réponse.
+      const cfg = await getPlateformeConfigStrict(l.artisan_id)
+      const { count, error: errCompte } = await supabaseAdmin.from('messages').select('id', { count: 'exact', head: true }).eq('lead_id', lead.id).eq('sens', 'out').eq('type', 'reponse_auto').is('etat', null)
+      if (errCompte) throw new Error('réponses de la conversation illisibles : rien ne part')
       if ((count ?? 0) >= (cfg.limite_messages ?? 8)) return 'limite'
       if (!dansLaPlage(cfg, maintenant)) return 'horaire'
       return 'ok'
     },
     jeton: (uid) => jetonPlafond(uid),
+    async escalade(l, leadId) {
+      // §3.2 : les derniers messages ENTRANTS (ceux du client) de la conversation du compte, et sa première demande ; les mots
+      // d'escalade de l'artisan (Ma plateforme) ET ceux qu'aucun réglage ne retire. Messages illisibles : lever (rien ne part).
+      // 02/11 (audit 032-001, D3) : la conversation illisible aussi — leadDuCompte rendait null sur une erreur, lue « rien à escalader ».
+      const lead = await leadDuCompteStrict(leadId, l.artisan_id)
+      if (!lead) return false
+      // 02/11 (contre-audit 032-004, D3) : les mots de l'artisan aussi — illisibles, ils lèvent au lieu de disparaître.
+      const cfg = await getPlateformeConfigStrict(l.artisan_id)
+      const { data, error } = await supabaseAdmin.from('messages').select('contenu').eq('lead_id', lead.id).eq('sens', 'in')
+        .order('sent_at', { ascending: false }).limit(MESSAGES_ESCALADE_RELUS)
+      if (error) throw new Error('messages du client illisibles : rien ne part')
+      const textes = [...(data ?? []).map((m) => (m as { contenu?: unknown }).contenu), lead.message]
+      return sujetEscalade(textes, cfg.escalade_mots) !== null
+    },
     async executer(l) {
       if (l.source === 'proposition') {
         const lead = l.lead_id ? await leadDuCompte(l.lead_id, l.artisan_id) : null
